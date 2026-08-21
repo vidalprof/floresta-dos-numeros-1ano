@@ -10065,14 +10065,40 @@ MEC["contadores"] = function(f, cen, fim){
    precisa CONTINUAR a contagem, não recomeçar do um); a 3ª começa com SEMENTE
    DEMAIS — tirar é tão parte de montar quanto pôr, e é o degrau que ninguém
    costuma dar. */
+/* Campos opcionais de tema (para o montador conhecê-los): `item` (arte da coisa
+   contada), `pl`/`sing` (nome no plural/singular), `verbo` (ex.: "Ponha"/"Junte"),
+   `onde` ("na cesta"), `label` ("NA CESTA"), `selo` ("A CESTA"). Sem eles, é o
+   canteiro de sementes de sempre. */
 var CNT=[
- {alvo:5, ini:0},
+ {alvo:5, ini:0, item:"", pl:"sementes", sing:"semente", verbo:"Ponha", onde:"na terra", label:"NA TERRA", selo:"O CANTEIRO"},
  {alvo:8, ini:3},
  {alvo:6, ini:9}
 ];
 var NUM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez", /*TECNICA*/
          "onze","doze"];
 var MAXSEM=12;   /* teto: acima disto o canteiro não caberia na tela */
+
+/* ⭐ TEMA DA RODADA (Marcos, ago/2026). Se a rodada declara `item` (arte de IA da
+   atividade), a contagem deixa de ser "sementes na terra" e passa a ser a coisa
+   que a criança conta e ouve (maçãs na cesta). Sem `item`, é o canteiro de sempre
+   — nenhuma atividade antiga muda. */
+function temaR(){
+  var r=CNT[ri]||{};
+  return {
+    item:  r.item || null,
+    pl:    r.pl   || "sementes",
+    sing:  r.sing || "semente",
+    verbo: r.verbo|| "Ponha",
+    onde:  r.onde || "na terra",
+    label: r.label|| "NA TERRA",
+    selo:  r.selo || "O CANTEIRO"
+  };
+}
+function fazSem(cls){
+  var t=temaR(), s=el("div",cls,"");
+  if(t.item){ s.className+=" temfoto"; s.style.backgroundImage="url(\"img/"+t.item+".png\")"; }
+  return s;
+}
 
 var ri=0;        /* rodada de agora */
 var qtd=0;       /* quantas sementes estão na terra */
@@ -10113,6 +10139,25 @@ function nomeNum(n){ return (n>=0&&n<NUM.length) ? NUM[n] : (""+n); }
        tocada em paralelo, sem controlar o compasso.
    A luz não pula porque o passo (850ms) é um pouco maior que a palavra falada. */
 function dizConta(txt, pronto){
+  /* ⭐ SINCRONIA PERFEITA (Marcos, ago/2026: "tem que contar em pausa, em
+     sintonia com a luz... ela pula os números, tudo tem que estar em sintonia").
+     A PRÓXIMA semente só acende quando a VOZ GRAVADA deste número TERMINA — usa o
+     `falar(id, cb)` do motor, cujo `cb` vem do evento `ended` do áudio. Assim a
+     luz nunca corre na frente da voz e nunca pula. Um respiro curto (220ms) entre
+     os números dá o compasso de "contar junto". Rede de segurança: se o áudio não
+     vier (bloqueado/lento), um teto solta o passo — nunca trava. */
+  try{
+    if(typeof temVoz==="function" && typeof falar==="function"){
+      var k=temVoz(txt);
+      if(k){
+        var foi=false, segue=function(){ if(foi) return; foi=true; if(pronto) setTimeout(pronto,220); };
+        falar("op_"+k, segue);
+        setTimeout(segue, 2600);      /* teto de segurança: nunca trava */
+        return;
+      }
+    }
+  }catch(e){}
+  /* bancada / sem gravação: voz best-effort + ritmo fixo (não trava) */
   try{ if(typeof diz==="function") diz(txt); }catch(e){}
   setTimeout(function(){ if(pronto) pronto(); }, 850);
 }
@@ -10128,12 +10173,13 @@ function pecaContadores(){
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/CNT.length));
   var c=el("div","centro");
-  c.appendChild(el("div","selo","O CANTEIRO"));
-  c.appendChild(el("div","balao","Ponha <b>"+r.alvo+"</b> sementes na terra."));
+  var TM=temaR();
+  c.appendChild(el("div","selo",TM.selo));
+  c.appendChild(el("div","balao",TM.verbo+" <b>"+r.alvo+"</b> "+TM.pl+" "+TM.onde+"."));
                    /* ⚠️ Marcos (ago/2026): NAO repetir o numero por extenso entre
                       parenteses ("10 (dez)") — o digito basta no enunciado; a VOZ
                       ja diz o numero. Redundancia polui a leitura da crianca. */
-  elCant=el("div","canteiro","");
+  elCant=el("div","canteiro"+(TM.item?"":" terra"),"");
   c.appendChild(elCant);
   elMolde=el("div","molde","");
   c.appendChild(elMolde);
@@ -10166,11 +10212,11 @@ function desenha(novas){
   var i,s;
   elCant.innerHTML="";
   for(i=0;i<qtd;i++){
-    s=el("div",(novas>0&&i>=qtd-novas)?"sem nova":"sem","");
+    s=fazSem((novas>0&&i>=qtd-novas)?"sem nova":"sem");
     elCant.appendChild(s);
   }
   if(qtd===0) elCant.appendChild(el("div","sem vazia",""));
-  elMostra.innerHTML="<i>NA TERRA</i><b>"+qtd+"</b>";
+  elMostra.innerHTML="<i>"+temaR().label+"</i><b>"+qtd+"</b>";
   desenhaMolde();
   atualizaBotoes();
 }
@@ -10185,7 +10231,7 @@ function desenhaMolde(){
     v=el("div",(i<qtd)?"mvaga cheia":"mvaga","");
     elMolde.appendChild(v);
   }
-  elMolde.appendChild(el("div","molderot","um lugar para cada semente"));
+  elMolde.appendChild(el("div","molderot","um lugar para cada "+temaR().sing));
 }
 
 function atualizaBotoes(){
@@ -10239,7 +10285,7 @@ function contaComigo(){
     contando=false;
     atualizaBotoes();
     elTotal.className="total";
-    elTotal.innerHTML="A terra est&aacute; vazia: <b>zero</b>. Quantas faltam?";
+    elTotal.innerHTML="Est&aacute; vazio: <b>zero</b>. Quantas faltam?";
     diz("zero");
     naoBateu();
     return;
@@ -10247,6 +10293,10 @@ function contaComigo(){
   var passo=function(){
     if(g!==ger) return;
     if(i>=qtd){ fechaContagem(); return; }
+    /* ⭐ Marcos (ago/2026): na hora de CONTAR, o item vira a BOLA com o NÚMERO
+       dentro (para o número aparecer bem claro). A fruta é só no ATO de pôr; ao
+       ser contada, ela acende como bola numerada. */
+    itens[i].style.backgroundImage="";
     itens[i].className="sem acesa";
     itens[i].innerHTML=""+(i+1);
     sConta();
@@ -10271,7 +10321,7 @@ function fechaContagem(){
     var dv=document.getElementById("dicaP");
     if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
     elTotal.className="total ok";
-    elTotal.innerHTML="Contamos <b>"+qtd+"</b>: s&atilde;o "+nomeNum(qtd)+" sementes!";
+    elTotal.innerHTML="Contamos <b>"+qtd+"</b>: s&atilde;o "+nomeNum(qtd)+" "+temaR().pl+"!";
     diz("Total: "+nomeNum(qtd)+". Você conseguiu!");
     sCerto();
     setTimeout(function(){
@@ -10299,12 +10349,12 @@ function naoBateu(){
   if(err===1){
     mostraDica("Conte de novo bem devagar, uma de cada vez. "+
                (falta>0?"Falta muito para chegar em <b>"+a+"</b>?"
-                       :"Ser&aacute; que tem semente <b>sobrando</b>?"));
+                       :"Ser&aacute; que tem "+temaR().sing+" <b>sobrando</b>?"));
   }else if(err===2){
     molde=true;
     desenhaMolde();
-    mostraDica("Olhe os lugares a&iacute; embaixo: <b>um lugar para cada semente</b>. "+
-               (falta>0?"Ainda tem lugar vazio?":"Sobrou semente fora do lugar?"));
+    mostraDica("Olhe os lugares a&iacute; embaixo: <b>um lugar para cada "+temaR().sing+"</b>. "+
+               (falta>0?"Ainda tem lugar vazio?":"Sobrou "+temaR().sing+" fora do lugar?"));
   }else{
     if(falta>0){
       mostraDica("Faltam <b>"+falta+"</b>. Toque em <b>+ p&ocirc;r</b> "+falta+
@@ -27657,6 +27707,7 @@ var TINTAS=[ /*TECNICA*/
 var di=0;                 /* desenho de agora */
 var CW=600, CH=600;       /* tamanho interno do canvas */
 var _cor="#e53935", _corNome="vermelho", _ctx=null, _img=null;
+var _mask=null;           /* ⭐ máscara do CONTORNO original (1=linha) — a barreira do balde */
 var telaAtual=null;
 
 function pintarCanvas(){
@@ -27705,13 +27756,14 @@ function pintarCanvas(){
   t.appendChild(c); app.appendChild(t);
 
   _ctx=cv.getContext("2d");
+  _mask=null;
   _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0,CW,CH);
   if(d0.img){
     _img=new Image();
-    _img.onload=function(){ if(_ctx){ _ctx.drawImage(_img,0,0,CW,CH); } };
+    _img.onload=function(){ if(_ctx){ _ctx.drawImage(_img,0,0,CW,CH); capturaMascara(); } };
     _img.src="img/"+d0.img+".png";
   }else{
-    _img=null; desenhaReserva(_ctx);
+    _img=null; desenhaReserva(_ctx); capturaMascara();
   }
   instalar(cv);
   marcaCorSel();
@@ -27762,17 +27814,49 @@ function instalar(cv){
 }
 function hexRgb(h){h=(""+h).replace("#","");if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}
   return [parseInt(h.substring(0,2),16),parseInt(h.substring(2,4),16),parseInt(h.substring(4,6),16)];}
-/* O BALDE: flood fill parando nas linhas pretas (igual ao circo). */
+/* ⭐ A MÁSCARA DO CONTORNO — capturada UMA vez, do desenho ORIGINAL (antes de
+   qualquer tinta). É ela a barreira do balde, no lugar de "pixel escuro = linha".
+   ⚠️ LIÇÃO PAGA (Marcos, Ateliê do Pré, ago/2026: *"trocar a cor depois que o
+   aluno escolhe outra e pinta novamente o que está pintado"*). O balde antigo
+   tratava QUALQUER pixel escuro como linha (soma<360): vermelho, verde, roxo,
+   marrom e preto — quase a paleta toda — caíam nessa faixa, então a criança
+   NÃO conseguia repintar por cima. Com a máscara, a barreira é o traço original;
+   qualquer cor pintada pode ser trocada por outra à vontade. */
+function capturaMascara(){
+  if(!_ctx) return;
+  var W=CW,H=CH,img;
+  try{ img=_ctx.getImageData(0,0,W,H); }catch(e){ _mask=null; return; }
+  /* Array simples (não Uint8Array — o integrador só libera os globais do motor) */
+  var d=img.data, n=W*H, m=[], i, r, g, b, mx, mn;
+  for(i=0;i<n;i++){
+    r=d[i*4]; g=d[i*4+1]; b=d[i*4+2];
+    mx=(r>g?(r>b?r:b):(g>b?g:b)); mn=(r<g?(r<b?r:b):(g<b?g:b));
+    /* linha = ESCURA e ACINZENTADA (traço preto/cinza do desenho). Cor pintada
+       tem canal alto (viva) ou é bem clara — nunca cai aqui. */
+    m[i]=(mx<120 && (mx-mn)<45)?1:0;
+  }
+  _mask=m;
+}
+/* O BALDE: flood fill parando no CONTORNO ORIGINAL (a máscara). */
 function baldePintar(sx,sy){ if(!_ctx)return; if(sx<0||sy<0||sx>=CW||sy>=CH)return;
+  /* ⭐ rede: se a máscara ainda não foi capturada (a imagem do desenho pode
+     carregar depois do 1º toque, ou o onload não veio), captura AGORA — como
+     este é o 1º balde, o canvas ainda é o desenho original, então a máscara sai
+     certa. Sem isto o 1º toque cairia na reserva "escuro=linha" e a repintura de
+     cor viva (que soma < 360) falhava — foi o defeito do Ateliê. */
+  if(!_mask) capturaMascara();
   var nc=hexRgb(_cor),W=CW,H=CH;
   var img,d;
   try{ img=_ctx.getImageData(0,0,W,H); d=img.data; }catch(e){ return; }
-  var si=(sy*W+sx)*4, tr=d[si], tg=d[si+1], tb=d[si+2];
-  if((tr+tg+tb)<330) return;                          /* tocou numa linha preta */
+  var startI=sy*W+sx, si=startI*4, tr=d[si], tg=d[si+1], tb=d[si+2];
+  /* barreira: a máscara do contorno; sem máscara (falha ao ler), volta ao
+     antigo "escuro = linha" para nunca ficar sem comportamento. */
+  function ehLinha(idx,r,g,b){ return _mask ? (_mask[idx]===1) : ((r+g+b)<360); }
+  if(ehLinha(startI,tr,tg,tb)) return;                /* tocou no traço */
   if(tr===nc[0]&&tg===nc[1]&&tb===nc[2]) return;      /* ja esta dessa cor */
-  var stack=[sy*W+sx], pintou=false;
+  var stack=[startI], pintou=false;
   while(stack.length){ var idx=stack.pop(), i=idx*4; var r=d[i],g=d[i+1],b=d[i+2];
-    if((r+g+b)<360) continue;                          /* barreira: linha */
+    if(ehLinha(idx,r,g,b)) continue;                   /* barreira: contorno */
     if(Math.abs(r-tr)>60||Math.abs(g-tg)>60||Math.abs(b-tb)>60) continue;
     d[i]=nc[0];d[i+1]=nc[1];d[i+2]=nc[2];d[i+3]=255;pintou=true;
     var x=idx%W, y=(idx-x)/W;
@@ -27782,7 +27866,8 @@ function baldePintar(sx,sy){ if(!_ctx)return; if(sx<0||sy<0||sx>=CW||sy>=CH)retu
   if(pintou){ _ctx.putImageData(img,0,0); nota(600+Math.min(di,8)*40,.09,.12,"triangle",0); }
 }
 function limpar(){ sTap(); if(_ctx){ _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0,CW,CH);
-  if(_img&&_img.complete){ _ctx.drawImage(_img,0,0,CW,CH); } else if(!(_img)){ desenhaReserva(_ctx); } }
+  if(_img&&_img.complete){ _ctx.drawImage(_img,0,0,CW,CH); } else if(!(_img)){ desenhaReserva(_ctx); }
+  capturaMascara(); }
   fala("Limpei o desenho! Pode pintar de novo."); }
 function pronto(){ sTap(); di++; pintarCanvas(); }
     if(f && f.dados) PINTAR = f.dados;

@@ -1762,9 +1762,17 @@
 /* ==== PECA: contadores ==== */
 @-webkit-keyframes kf-contadores-pula{0%{-webkit-transform:scale(.2);opacity:.2}70%{-webkit-transform:scale(1.15)}100%{-webkit-transform:scale(1);opacity:1}}@keyframes kf-contadores-pula{0%{transform:scale(.2);opacity:.2}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
 
-.mec-contadores .canteiro{background:#4a3626;border:3px solid #6b4b2a;border-radius:16px; min-height:84px;padding:8px 6px;margin:13px auto 0;max-width:430px; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.mec-contadores .canteiro{background:-webkit-linear-gradient(#f0e2c4,#dcc196);background:linear-gradient(#f0e2c4,#dcc196); border:3px solid #c2a468;border-radius:18px; -webkit-box-shadow:inset 0 2px 6px rgba(255,255,255,.6),inset 0 -7px 14px rgba(150,110,50,.22),0 6px 14px rgba(0,0,0,.22); box-shadow:inset 0 2px 6px rgba(255,255,255,.6),inset 0 -7px 14px rgba(150,110,50,.22),0 6px 14px rgba(0,0,0,.22); min-height:88px;padding:12px 8px;margin:13px auto 0;max-width:430px; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:center;-webkit-align-items:center;align-items:center}
+
+.mec-contadores .canteiro.terra{background:#4a3626;border-color:#6b4b2a; -webkit-box-shadow:inset 0 2px 8px rgba(0,0,0,.35);box-shadow:inset 0 2px 8px rgba(0,0,0,.35)}
 
 .mec-contadores .sem{width:32px;height:32px;margin:3px;border-radius:50%;background:#e8c46a; border:3px solid #b3903c;color:#3a2c07;font-size:15px;font-weight:800;line-height:26px; text-align:center}
+
+.mec-contadores .sem.temfoto{width:44px;height:44px;background:transparent !important;border:0 !important; border-radius:0;background-repeat:no-repeat;background-position:center; -webkit-background-size:contain;background-size:contain;position:relative;line-height:0}
+
+.mec-contadores .sem.temfoto.acesa{-webkit-box-shadow:none;box-shadow:none; -webkit-filter:drop-shadow(0 0 6px #ffd54a);filter:drop-shadow(0 0 6px #ffd54a)}
+
+.mec-contadores .sem.temfoto .nrot{position:absolute;right:-4px;top:-4px;min-width:18px;height:18px; line-height:18px;border-radius:9px;background:#1f6b12;color:#fff;font-size:12px; font-weight:800;padding:0 3px}
 
 .mec-contadores .sem.nova{-webkit-animation:kf-contadores-pula .32s ease-out;animation:kf-contadores-pula .32s ease-out}
 

@@ -111,10 +111,23 @@ def reta(selo, mn, mx, alvo, num, ap1, ap2, bal, dica):
 # ==================================================================
 
 # ---------- JUNTAR (objetivo1) ----------
+# ⭐ tema da contagem (Marcos): a criança PÕE a fruta que a Coruja fala (maçã),
+#   não bolinhas; ao CONTAR, a fruta acende como bola numerada (a peça faz isso).
+def _cnt(ini, alvo, item, pl, sing, verbo=u"Ponha", onde=u"na cesta",
+         label=u"NA CESTA", selo=u"A CESTA"):
+    return {u"ini":ini, u"alvo":alvo, u"item":item, u"pl":pl, u"sing":sing,
+            u"verbo":verbo, u"onde":onde, u"label":label, u"selo":selo}
+
 add(id=u"f01", mec=u"contadores", selo=u"CONTE JUNTO", conceito=u"objetivo1",
     enunciado=u"A Dona Coruja tem <b>3</b> maçãs e ganhou mais <b>2</b>. Toque para juntar e conte quantas ficam.",
     dica=u"Comece do 3 e continue: 4... 5.",
-    dados=[{u"ini":3, u"alvo":5}, {u"ini":4, u"alvo":7}, {u"ini":5, u"alvo":9}])
+    # variedade de frutas do banco (Marcos): cada rodada uma fruta diferente,
+    # numa bandeja bonita. Mais rodadas ("essa fase pode ter mais fases").
+    dados=[_cnt(3,5,u"fe_maca",u"maçãs",u"maçã"),
+           _cnt(4,7,u"fe_morango",u"morangos",u"morango"),
+           _cnt(5,9,u"fe_laranja",u"laranjas",u"laranja"),
+           _cnt(2,6,u"fe_uva",u"uvas",u"uva"),
+           _cnt(4,8,u"fe_banana",u"bananas",u"banana")])
 
 add(id=u"f02", mec=u"escolher", selo=u"JUNTAR", conceito=u"objetivo1",
     enunciado=u"Numa cesta há <b>4</b> laranjas e na outra <b>3</b>. Juntando, quantas são?",
@@ -172,7 +185,8 @@ add(id=u"f06", mec=u"escolher", selo=u"ACRESCENTAR", conceito=u"objetivo2",
 add(id=u"f07", mec=u"contadores", selo=u"CONTE JUNTO", conceito=u"objetivo2",
     enunciado=u"Havia <b>6</b> morangos na tigela e você coloca mais <b>5</b>. Conte quantos ficam.",
     dica=u"Comece do 6 e continue: 7, 8...",
-    dados=[{u"ini":6, u"alvo":11}, {u"ini":7, u"alvo":10}])
+    dados=[_cnt(6,11,u"fe_morango",u"morangos",u"morango",onde=u"na tigela",label=u"NA TIGELA",selo=u"A TIGELA"),
+           _cnt(7,10,u"fe_morango",u"morangos",u"morango",onde=u"na tigela",label=u"NA TIGELA",selo=u"A TIGELA")])
 
 add(id=u"f08", mec=u"completar", selo=u"QUANTO FALTA", conceito=u"objetivo2",
     enunciado=u"A Coruja está enchendo a banca. Toque em quanto ela precisa acrescentar.",
@@ -254,9 +268,10 @@ add(id=u"f14", mec=u"escolher", selo=u"RETIRAR", conceito=u"objetivo4",
     dadosExtra={u"TITULO":u"QUANTOS RESTARAM", u"FECHO":u"Você retirou certinho!"})
 
 add(id=u"f15", mec=u"contadores", selo=u"CONTE O QUE SOBRA", conceito=u"objetivo4",
-    enunciado=u"Havia <b>14</b> mangas e a Coruja tirou <b>6</b> estragadas. Conte quantas boas sobraram.",
-    dica=u"Conte só as mangas boas que ficaram.",
-    dados=[{u"ini":0, u"alvo":8}, {u"ini":0, u"alvo":7}])
+    enunciado=u"Havia <b>14</b> laranjas e a Coruja tirou <b>6</b> estragadas. Conte quantas boas sobraram.",
+    dica=u"Conte só as laranjas boas que ficaram.",
+    dados=[_cnt(0,8,u"fe_laranja",u"laranjas",u"laranja",onde=u"na caixa",label=u"NA CAIXA",selo=u"A CAIXA"),
+           _cnt(0,7,u"fe_laranja",u"laranjas",u"laranja",onde=u"na caixa",label=u"NA CAIXA",selo=u"A CAIXA")])
 
 add(id=u"f16", mec=u"comparar", selo=u"QUANTAS A MAIS?", conceito=u"objetivo5",
     enunciado=u"Compare as duas bancas. <b>Quantas cenouras a mais</b> que tomates?",

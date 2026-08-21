@@ -293,7 +293,8 @@ function capturaMascara(){
   if(!_ctx) return;
   var W=CW,H=CH,img;
   try{ img=_ctx.getImageData(0,0,W,H); }catch(e){ _mask=null; return; }
-  var d=img.data, n=W*H, m=new Uint8Array(n), i, r, g, b, mx, mn;
+  /* Array simples (não Uint8Array — o integrador só libera os globais do motor) */
+  var d=img.data, n=W*H, m=[], i, r, g, b, mx, mn;
   for(i=0;i<n;i++){
     r=d[i*4]; g=d[i*4+1]; b=d[i*4+2];
     mx=(r>g?(r>b?r:b):(g>b?g:b)); mn=(r<g?(r<b?r:b):(g<b?g:b));

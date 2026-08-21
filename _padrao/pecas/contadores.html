@@ -73,16 +73,38 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
      font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
 /* ====== CSS DESTA PEÇA ====== */
-/* O CANTEIRO: a terra onde as sementes vão caindo. Tudo desenhado com div. */
-.canteiro{background:#4a3626;border:3px solid #6b4b2a;border-radius:16px;
-          min-height:84px;padding:8px 6px;margin:13px auto 0;max-width:430px;
+/* ⭐ A BANDEJA (Marcos, ago/2026: "uma bandeja para colocar as coisas... deixe
+   mais bonita, premium"). Antes era a "terra" marrom escura; virou uma bandeja
+   de madeira clara com brilho, rima com as frutas. Quando a rodada é de semente
+   (sem `item`), o `.canteiro.terra` volta a ser o canteiro escuro de sempre. */
+.canteiro{background:-webkit-linear-gradient(#f0e2c4,#dcc196);background:linear-gradient(#f0e2c4,#dcc196);
+          border:3px solid #c2a468;border-radius:18px;
+          -webkit-box-shadow:inset 0 2px 6px rgba(255,255,255,.6),inset 0 -7px 14px rgba(150,110,50,.22),0 6px 14px rgba(0,0,0,.22);
+          box-shadow:inset 0 2px 6px rgba(255,255,255,.6),inset 0 -7px 14px rgba(150,110,50,.22),0 6px 14px rgba(0,0,0,.22);
+          min-height:88px;padding:12px 8px;margin:13px auto 0;max-width:430px;
+          /* segue abaixo o flex; o `.terra` (rodada de semente) reverte a cor */
           display:-webkit-box;display:-webkit-flex;display:flex;
           -webkit-flex-wrap:wrap;flex-wrap:wrap;
           -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
           -webkit-box-align:center;-webkit-align-items:center;align-items:center}
+/* rodada de SEMENTE (sem `item`): volta a ser o canteiro escuro de terra */
+.canteiro.terra{background:#4a3626;border-color:#6b4b2a;
+  -webkit-box-shadow:inset 0 2px 8px rgba(0,0,0,.35);box-shadow:inset 0 2px 8px rgba(0,0,0,.35)}
 .sem{width:32px;height:32px;margin:3px;border-radius:50%;background:#e8c46a;
      border:3px solid #b3903c;color:#3a2c07;font-size:15px;font-weight:800;line-height:26px;
      text-align:center}
+/* ⭐ ITEM DE VERDADE (Marcos, ago/2026: "o certo ao clicar era aparecer a fruta
+   que ela fala, e não bolinhas"). Quando a rodada traz `item` (arte de IA), a
+   contagem mostra A FRUTA — sem o círculo/borda, imagem limpa. O número contado
+   aparece numa etiqueta no canto para não tapar a fruta. */
+.sem.temfoto{width:44px;height:44px;background:transparent !important;border:0 !important;
+     border-radius:0;background-repeat:no-repeat;background-position:center;
+     -webkit-background-size:contain;background-size:contain;position:relative;line-height:0}
+.sem.temfoto.acesa{-webkit-box-shadow:none;box-shadow:none;
+     -webkit-filter:drop-shadow(0 0 6px #ffd54a);filter:drop-shadow(0 0 6px #ffd54a)}
+.sem.temfoto .nrot{position:absolute;right:-4px;top:-4px;min-width:18px;height:18px;
+     line-height:18px;border-radius:9px;background:#1f6b12;color:#fff;font-size:12px;
+     font-weight:800;padding:0 3px}
 .sem.nova{-webkit-animation:pula .32s ease-out;animation:pula .32s ease-out}
 @-webkit-keyframes pula{0%{-webkit-transform:scale(.2);opacity:.2}70%{-webkit-transform:scale(1.15)}100%{-webkit-transform:scale(1);opacity:1}}
 @keyframes pula{0%{transform:scale(.2);opacity:.2}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
@@ -194,14 +216,40 @@ document.addEventListener("pointerdown",function(){ac();},false);
    precisa CONTINUAR a contagem, não recomeçar do um); a 3ª começa com SEMENTE
    DEMAIS — tirar é tão parte de montar quanto pôr, e é o degrau que ninguém
    costuma dar. */
+/* Campos opcionais de tema (para o montador conhecê-los): `item` (arte da coisa
+   contada), `pl`/`sing` (nome no plural/singular), `verbo` (ex.: "Ponha"/"Junte"),
+   `onde` ("na cesta"), `label` ("NA CESTA"), `selo` ("A CESTA"). Sem eles, é o
+   canteiro de sementes de sempre. */
 var CNT=[
- {alvo:5, ini:0},
+ {alvo:5, ini:0, item:"", pl:"sementes", sing:"semente", verbo:"Ponha", onde:"na terra", label:"NA TERRA", selo:"O CANTEIRO"},
  {alvo:8, ini:3},
  {alvo:6, ini:9}
 ];
 var NUM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez", /*TECNICA*/
          "onze","doze"];
 var MAXSEM=12;   /* teto: acima disto o canteiro não caberia na tela */
+
+/* ⭐ TEMA DA RODADA (Marcos, ago/2026). Se a rodada declara `item` (arte de IA da
+   atividade), a contagem deixa de ser "sementes na terra" e passa a ser a coisa
+   que a criança conta e ouve (maçãs na cesta). Sem `item`, é o canteiro de sempre
+   — nenhuma atividade antiga muda. */
+function temaR(){
+  var r=CNT[ri]||{};
+  return {
+    item:  r.item || null,
+    pl:    r.pl   || "sementes",
+    sing:  r.sing || "semente",
+    verbo: r.verbo|| "Ponha",
+    onde:  r.onde || "na terra",
+    label: r.label|| "NA TERRA",
+    selo:  r.selo || "O CANTEIRO"
+  };
+}
+function fazSem(cls){
+  var t=temaR(), s=el("div",cls,"");
+  if(t.item){ s.className+=" temfoto"; s.style.backgroundImage="url(\"img/"+t.item+".png\")"; }
+  return s;
+}
 
 var ri=0;        /* rodada de agora */
 var qtd=0;       /* quantas sementes estão na terra */
@@ -242,6 +290,25 @@ function nomeNum(n){ return (n>=0&&n<NUM.length) ? NUM[n] : (""+n); }
        tocada em paralelo, sem controlar o compasso.
    A luz não pula porque o passo (850ms) é um pouco maior que a palavra falada. */
 function dizConta(txt, pronto){
+  /* ⭐ SINCRONIA PERFEITA (Marcos, ago/2026: "tem que contar em pausa, em
+     sintonia com a luz... ela pula os números, tudo tem que estar em sintonia").
+     A PRÓXIMA semente só acende quando a VOZ GRAVADA deste número TERMINA — usa o
+     `falar(id, cb)` do motor, cujo `cb` vem do evento `ended` do áudio. Assim a
+     luz nunca corre na frente da voz e nunca pula. Um respiro curto (220ms) entre
+     os números dá o compasso de "contar junto". Rede de segurança: se o áudio não
+     vier (bloqueado/lento), um teto solta o passo — nunca trava. */
+  try{
+    if(typeof temVoz==="function" && typeof falar==="function"){
+      var k=temVoz(txt);
+      if(k){
+        var foi=false, segue=function(){ if(foi) return; foi=true; if(pronto) setTimeout(pronto,220); };
+        falar("op_"+k, segue);
+        setTimeout(segue, 2600);      /* teto de segurança: nunca trava */
+        return;
+      }
+    }
+  }catch(e){}
+  /* bancada / sem gravação: voz best-effort + ritmo fixo (não trava) */
   try{ if(typeof diz==="function") diz(txt); }catch(e){}
   setTimeout(function(){ if(pronto) pronto(); }, 850);
 }
@@ -257,12 +324,13 @@ function pecaContadores(){
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/CNT.length));
   var c=el("div","centro");
-  c.appendChild(el("div","selo","O CANTEIRO"));
-  c.appendChild(el("div","balao","Ponha <b>"+r.alvo+"</b> sementes na terra."));
+  var TM=temaR();
+  c.appendChild(el("div","selo",TM.selo));
+  c.appendChild(el("div","balao",TM.verbo+" <b>"+r.alvo+"</b> "+TM.pl+" "+TM.onde+"."));
                    /* ⚠️ Marcos (ago/2026): NAO repetir o numero por extenso entre
                       parenteses ("10 (dez)") — o digito basta no enunciado; a VOZ
                       ja diz o numero. Redundancia polui a leitura da crianca. */
-  elCant=el("div","canteiro","");
+  elCant=el("div","canteiro"+(TM.item?"":" terra"),"");
   c.appendChild(elCant);
   elMolde=el("div","molde","");
   c.appendChild(elMolde);
@@ -295,11 +363,11 @@ function desenha(novas){
   var i,s;
   elCant.innerHTML="";
   for(i=0;i<qtd;i++){
-    s=el("div",(novas>0&&i>=qtd-novas)?"sem nova":"sem","");
+    s=fazSem((novas>0&&i>=qtd-novas)?"sem nova":"sem");
     elCant.appendChild(s);
   }
   if(qtd===0) elCant.appendChild(el("div","sem vazia",""));
-  elMostra.innerHTML="<i>NA TERRA</i><b>"+qtd+"</b>";
+  elMostra.innerHTML="<i>"+temaR().label+"</i><b>"+qtd+"</b>";
   desenhaMolde();
   atualizaBotoes();
 }
@@ -314,7 +382,7 @@ function desenhaMolde(){
     v=el("div",(i<qtd)?"mvaga cheia":"mvaga","");
     elMolde.appendChild(v);
   }
-  elMolde.appendChild(el("div","molderot","um lugar para cada semente"));
+  elMolde.appendChild(el("div","molderot","um lugar para cada "+temaR().sing));
 }
 
 function atualizaBotoes(){
@@ -368,7 +436,7 @@ function contaComigo(){
     contando=false;
     atualizaBotoes();
     elTotal.className="total";
-    elTotal.innerHTML="A terra est&aacute; vazia: <b>zero</b>. Quantas faltam?";
+    elTotal.innerHTML="Est&aacute; vazio: <b>zero</b>. Quantas faltam?";
     diz("zero");
     naoBateu();
     return;
@@ -376,6 +444,10 @@ function contaComigo(){
   var passo=function(){
     if(g!==ger) return;
     if(i>=qtd){ fechaContagem(); return; }
+    /* ⭐ Marcos (ago/2026): na hora de CONTAR, o item vira a BOLA com o NÚMERO
+       dentro (para o número aparecer bem claro). A fruta é só no ATO de pôr; ao
+       ser contada, ela acende como bola numerada. */
+    itens[i].style.backgroundImage="";
     itens[i].className="sem acesa";
     itens[i].innerHTML=""+(i+1);
     sConta();
@@ -400,7 +472,7 @@ function fechaContagem(){
     var dv=document.getElementById("dicaP");
     if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
     elTotal.className="total ok";
-    elTotal.innerHTML="Contamos <b>"+qtd+"</b>: s&atilde;o "+nomeNum(qtd)+" sementes!";
+    elTotal.innerHTML="Contamos <b>"+qtd+"</b>: s&atilde;o "+nomeNum(qtd)+" "+temaR().pl+"!";
     diz("Total: "+nomeNum(qtd)+". Você conseguiu!");
     sCerto();
     setTimeout(function(){
@@ -428,12 +500,12 @@ function naoBateu(){
   if(err===1){
     mostraDica("Conte de novo bem devagar, uma de cada vez. "+
                (falta>0?"Falta muito para chegar em <b>"+a+"</b>?"
-                       :"Ser&aacute; que tem semente <b>sobrando</b>?"));
+                       :"Ser&aacute; que tem "+temaR().sing+" <b>sobrando</b>?"));
   }else if(err===2){
     molde=true;
     desenhaMolde();
-    mostraDica("Olhe os lugares a&iacute; embaixo: <b>um lugar para cada semente</b>. "+
-               (falta>0?"Ainda tem lugar vazio?":"Sobrou semente fora do lugar?"));
+    mostraDica("Olhe os lugares a&iacute; embaixo: <b>um lugar para cada "+temaR().sing+"</b>. "+
+               (falta>0?"Ainda tem lugar vazio?":"Sobrou "+temaR().sing+" fora do lugar?"));
   }else{
     if(falta>0){
       mostraDica("Faltam <b>"+falta+"</b>. Toque em <b>+ p&ocirc;r</b> "+falta+
