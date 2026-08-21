@@ -89,7 +89,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* ⚠️ margem PROPRIA em cima: a regra `.balao + *` tem a mesma forca e perde por
    vir ANTES no arquivo — sem isto a fita nasce COLADA no enunciado (regra 9 do
    _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
-.fita{max-width:300px;height:58px;margin:13px auto 0;font-size:0;cursor:pointer;
+.fita{max-width:340px;height:92px;margin:13px auto 0;font-size:0;cursor:pointer;
       padding:3px;border-radius:12px;background:rgba(255,255,255,.12)}
 /* A PARTE. A largura vem da CONTA (pedacinhos da parte / pedacinhos da fita),
    nunca do olho — e box-sizing:border-box faz as bordas caberem dentro, entao
@@ -99,6 +99,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .tira.certa{border-color:#1f6b12;background:#e2f0c8}
 .uns{position:absolute;left:0;top:0;right:0;bottom:0;font-size:0}
 .umped{display:inline-block;height:100%;border-right:1px dashed rgba(51,40,10,.5)}
+/* ⭐ unidade = FRUTA de verdade (Marcos: "use o banco de imagens"). Cada
+   pedacinho da fita vira uma fruta — "repartir a fila de frutas em bancas
+   iguais", concreto para o 1º ano. */
+.umped.fruta{border-right:0;background-repeat:no-repeat;background-position:center;
+  -webkit-background-size:80% 80%;background-size:80% 80%}
 /* ⚠️ O SELETOR TEM QUE DIZER ONDE ELE MORA (ago/2026). Esta letra cai numa
    superficie que a PROPRIA peca pinta, entao a tinta e escrita aqui — e o
    seletor nomeia a superficie, senao o portao `_qa/cor_fixa.py` nao tem
@@ -154,7 +159,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* tela baixa (projetor, janela do PC da escola): tudo encolhe JUNTO para que
    nada que se toca saia da area visivel. */
 @media(max-height:520px){
-  .fita{height:48px}
+  .fita{height:72px}
   .tira .tnum{font-size:17px}
   .pc{height:46px;line-height:40px}
   .cam{width:76px;height:52px}
@@ -209,8 +214,11 @@ document.addEventListener("pointerdown",function(){ac();},false);
 /* AS RODADAS. `un` = quantos pedacinhos a fita tem; `n` = quantos vão repartir.
    `un` sempre divisível por `n`, senão não existe divisão justa. O NOME da
    fração vem por último, na hora do fecho — nunca antes.                    */
+/* Campos opcionais de tema (Marcos): `img` (fruta do banco na unidade),
+   `coisa` (nome no plural: "maçãs"), `grupo`/`grupos` (rótulo do destino:
+   "banca"/"bancas"). Sem eles, é a fita/pratos de fração de sempre. */
 var RODADAS=[
-  {un:8,  n:2, nome:"a <b>metade</b>",     selo:"REPARTIR IGUAL"},
+  {un:8,  n:2, img:"", coisa:"pedacinhos", grupo:"prato", grupos:"pratos", nome:"a <b>metade</b>", selo:"REPARTIR IGUAL"},
   {un:12, n:3, nome:"<b>um ter&#231;o</b>",     selo:"REPARTIR IGUAL"},
   {un:12, n:4, nome:"<b>um quarto</b>",    selo:"REPARTIR IGUAL"}
 ];
@@ -266,7 +274,12 @@ function pecaRepartir(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo",r.selo));
-  c.appendChild(el("div","balao","S&#227;o <b>"+r.n+" pratos</b> e uma fita s&#243;. Corte a fita em partes <b>iguais</b>."));
+  /* ⭐ texto temável: se a rodada traz `coisa`/`grupos` (frutas/bancas), fala a
+     língua da atividade; senão, a fita/pratos de sempre. */
+  var _coisa=r.coisa||"pedacinhos", _grupos=r.grupos||"pratos", _grupo=r.grupo||"prato";
+  c.appendChild(el("div","balao", r.img
+    ? ("Reparta as <b>"+r.un+" "+_coisa+"</b> em <b>"+r.n+" "+_grupos+"</b> iguais. Toque na fila para dividir.")
+    : ("S&#227;o <b>"+r.n+" "+_grupos+"</b> e uma fita s&#243;. Corte a fita em partes <b>iguais</b>.")));
 
   elFita=el("div","fita");
   elFita.onclick=function(){ corta(); };
@@ -302,7 +315,8 @@ function desenhaFita(){
     tr.style.width=(tam[i]*100/r.un)+"%";
     uns=el("div","uns");
     for(j=0;j<tam[i];j++){
-      u=el("i","umped","");
+      u=el("i","umped"+(rodada().img?" fruta":""),"");
+      if(rodada().img) u.style.backgroundImage="url(\"img/"+rodada().img+".png\")";
       u.style.width=(100/tam[i])+"%";
       uns.appendChild(u);
     }
@@ -312,7 +326,7 @@ function desenhaFita(){
   }
   if(partes===1){
     elStat.className="mstat";
-    elStat.innerHTML="A fita est&#225; inteira: <b>"+r.un+"</b> pedacinhos.";
+    elStat.innerHTML=(r.img?"A fila tem <b>":"A fita est&#225; inteira: <b>")+r.un+"</b> "+(r.coisa||"pedacinhos")+".";
   } else if(igual){
     elStat.className="mstat igual";
     elStat.innerHTML="<b>"+partes+"</b> partes <b>IGUAIS</b>, de <b>"+tam[0]+"</b> pedacinhos cada.";
@@ -375,17 +389,18 @@ function etapaDois(){
   elFita.style.display="none";
   elBts.style.display="none";
   elFita.onclick=null;
+  var _coisa2=r.coisa||"pedacinhos", _grupo2=r.grupo||"prato";
   elStat.className="mstat igual";
-  elStat.innerHTML="<b>"+r.n+"</b> partes iguais, de <b>"+tam[0]+"</b> pedacinhos. Agora d&#234; <b>uma para cada</b>.";
+  elStat.innerHTML="<b>"+r.n+"</b> partes iguais, de <b>"+tam[0]+"</b> "+_coisa2+". Agora leve <b>uma para cada "+_grupo2+"</b>.";
   var bal=telaAtual.getElementsByClassName("balao")[0];
-  if(bal) bal.innerHTML="Cada prato leva <b>uma parte</b> &#8212; nem mais, nem menos.";
+  if(bal) bal.innerHTML="Cada <b>"+_grupo2+"</b> leva <b>uma parte igual</b> &#8212; nem mais, nem menos.";
   elBanco.style.display="block"; elPratos.style.display="block";
   elBanco.innerHTML=""; elPratos.innerHTML="";
   for(i=0;i<r.n;i++){
     p=fazParte(tam[i]);
     elBanco.appendChild(p); pecas.push(p);
     v=el("div","cam");
-    v.appendChild(el("i","pnome","PRATO "+(i+1)));
+    v.appendChild(el("i","pnome",(r.grupo?r.grupo.toUpperCase():"PRATO")+" "+(i+1)));
     v.onclick=cliqueVaga;
     elPratos.appendChild(v); vagas.push(v);
   }

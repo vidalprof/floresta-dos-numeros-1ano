@@ -14102,6 +14102,19 @@ function responde(o,certa){
        filhos e o alto-falante perderia o `onclick` — ficaria um botão bonito e
        mudo justamente depois do acerto. */
     o.appendChild(el("span","marca","certo"));
+    /* ⭐ CONFIRMA A RESPOSTA (Marcos, ago/2026: "na atividade de juntar ela
+       esqueceu de dizer na última quantas SÃO, só falou quantas"). No acerto, o
+       motor CONFIRMA em voz a resposta escolhida (ex.: "sete laranjas") — antes
+       só dizia a resposta quando a criança ERRAVA e precisava da revelação. Usa a
+       voz gravada da opção; calado se não houver. Um respiro (450ms) tira do
+       encalço do som de acerto. */
+    try{
+      var _av=o.getAttribute("data-voz");
+      if(_av && typeof temVoz==="function" && typeof falar==="function"){
+        var _ak=temVoz(_av);
+        if(_ak){ var _gc=ger; setTimeout(function(){ if(_gc===ger) falar("op_"+_ak); }, 450); }
+      }
+    }catch(e){}
     festeja(o);
     trancaTudo();
     var g=ger;
@@ -14110,9 +14123,10 @@ function responde(o,certa){
       qi++;
       if(qi<QZ.length) pecaEscolher();
       else mostraBanner(FECHO, fimDaPeca);
-    },900);   /* ⚠️ 560ms punha a narracao da PROXIMA rodada dentro da janela de
+    },1300);  /* ⚠️ 560ms punha a narracao da PROXIMA rodada dentro da janela de
                  700ms do som de acerto -> duas vozes (portao voz_dupla, Feirinha
-                 ago/2026). 900ms tira a proxima pergunta do encalco do acerto. */
+                 ago/2026). Agora 1300ms: dá espaço para a CONFIRMAÇÃO da resposta
+                 ("são sete") ser ouvida antes de a próxima pergunta narrar. */
     return;
   }
   /* ERRO: não pune. Som grave curto + a opção sai do alcance + o andaime CRESCE. */
@@ -31797,8 +31811,11 @@ MEC["repartir"] = function(f, cen, fim){
 /* AS RODADAS. `un` = quantos pedacinhos a fita tem; `n` = quantos vão repartir.
    `un` sempre divisível por `n`, senão não existe divisão justa. O NOME da
    fração vem por último, na hora do fecho — nunca antes.                    */
+/* Campos opcionais de tema (Marcos): `img` (fruta do banco na unidade),
+   `coisa` (nome no plural: "maçãs"), `grupo`/`grupos` (rótulo do destino:
+   "banca"/"bancas"). Sem eles, é a fita/pratos de fração de sempre. */
 var RODADAS=[
-  {un:8,  n:2, nome:"a <b>metade</b>",     selo:"REPARTIR IGUAL"},
+  {un:8,  n:2, img:"", coisa:"pedacinhos", grupo:"prato", grupos:"pratos", nome:"a <b>metade</b>", selo:"REPARTIR IGUAL"},
   {un:12, n:3, nome:"<b>um ter&#231;o</b>",     selo:"REPARTIR IGUAL"},
   {un:12, n:4, nome:"<b>um quarto</b>",    selo:"REPARTIR IGUAL"}
 ];
@@ -31854,7 +31871,12 @@ function pecaRepartir(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo",r.selo));
-  c.appendChild(el("div","balao","S&#227;o <b>"+r.n+" pratos</b> e uma fita s&#243;. Corte a fita em partes <b>iguais</b>."));
+  /* ⭐ texto temável: se a rodada traz `coisa`/`grupos` (frutas/bancas), fala a
+     língua da atividade; senão, a fita/pratos de sempre. */
+  var _coisa=r.coisa||"pedacinhos", _grupos=r.grupos||"pratos", _grupo=r.grupo||"prato";
+  c.appendChild(el("div","balao", r.img
+    ? ("Reparta as <b>"+r.un+" "+_coisa+"</b> em <b>"+r.n+" "+_grupos+"</b> iguais. Toque na fila para dividir.")
+    : ("S&#227;o <b>"+r.n+" "+_grupos+"</b> e uma fita s&#243;. Corte a fita em partes <b>iguais</b>.")));
 
   elFita=el("div","fita");
   elFita.onclick=function(){ corta(); };
@@ -31890,7 +31912,8 @@ function desenhaFita(){
     tr.style.width=(tam[i]*100/r.un)+"%";
     uns=el("div","uns");
     for(j=0;j<tam[i];j++){
-      u=el("i","umped","");
+      u=el("i","umped"+(rodada().img?" fruta":""),"");
+      if(rodada().img) u.style.backgroundImage="url(\"img/"+rodada().img+".png\")";
       u.style.width=(100/tam[i])+"%";
       uns.appendChild(u);
     }
@@ -31900,7 +31923,7 @@ function desenhaFita(){
   }
   if(partes===1){
     elStat.className="mstat";
-    elStat.innerHTML="A fita est&#225; inteira: <b>"+r.un+"</b> pedacinhos.";
+    elStat.innerHTML=(r.img?"A fila tem <b>":"A fita est&#225; inteira: <b>")+r.un+"</b> "+(r.coisa||"pedacinhos")+".";
   } else if(igual){
     elStat.className="mstat igual";
     elStat.innerHTML="<b>"+partes+"</b> partes <b>IGUAIS</b>, de <b>"+tam[0]+"</b> pedacinhos cada.";
@@ -31963,17 +31986,18 @@ function etapaDois(){
   elFita.style.display="none";
   elBts.style.display="none";
   elFita.onclick=null;
+  var _coisa2=r.coisa||"pedacinhos", _grupo2=r.grupo||"prato";
   elStat.className="mstat igual";
-  elStat.innerHTML="<b>"+r.n+"</b> partes iguais, de <b>"+tam[0]+"</b> pedacinhos. Agora d&#234; <b>uma para cada</b>.";
+  elStat.innerHTML="<b>"+r.n+"</b> partes iguais, de <b>"+tam[0]+"</b> "+_coisa2+". Agora leve <b>uma para cada "+_grupo2+"</b>.";
   var bal=telaAtual.getElementsByClassName("balao")[0];
-  if(bal) bal.innerHTML="Cada prato leva <b>uma parte</b> &#8212; nem mais, nem menos.";
+  if(bal) bal.innerHTML="Cada <b>"+_grupo2+"</b> leva <b>uma parte igual</b> &#8212; nem mais, nem menos.";
   elBanco.style.display="block"; elPratos.style.display="block";
   elBanco.innerHTML=""; elPratos.innerHTML="";
   for(i=0;i<r.n;i++){
     p=fazParte(tam[i]);
     elBanco.appendChild(p); pecas.push(p);
     v=el("div","cam");
-    v.appendChild(el("i","pnome","PRATO "+(i+1)));
+    v.appendChild(el("i","pnome",(r.grupo?r.grupo.toUpperCase():"PRATO")+" "+(i+1)));
     v.onclick=cliqueVaga;
     elPratos.appendChild(v); vagas.push(v);
   }

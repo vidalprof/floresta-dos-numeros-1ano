@@ -566,6 +566,19 @@ function responde(o,certa){
        filhos e o alto-falante perderia o `onclick` — ficaria um botão bonito e
        mudo justamente depois do acerto. */
     o.appendChild(el("span","marca","certo"));
+    /* ⭐ CONFIRMA A RESPOSTA (Marcos, ago/2026: "na atividade de juntar ela
+       esqueceu de dizer na última quantas SÃO, só falou quantas"). No acerto, o
+       motor CONFIRMA em voz a resposta escolhida (ex.: "sete laranjas") — antes
+       só dizia a resposta quando a criança ERRAVA e precisava da revelação. Usa a
+       voz gravada da opção; calado se não houver. Um respiro (450ms) tira do
+       encalço do som de acerto. */
+    try{
+      var _av=o.getAttribute("data-voz");
+      if(_av && typeof temVoz==="function" && typeof falar==="function"){
+        var _ak=temVoz(_av);
+        if(_ak){ var _gc=ger; setTimeout(function(){ if(_gc===ger) falar("op_"+_ak); }, 450); }
+      }
+    }catch(e){}
     festeja(o);
     trancaTudo();
     var g=ger;
@@ -574,9 +587,10 @@ function responde(o,certa){
       qi++;
       if(qi<QZ.length) pecaEscolher();
       else mostraBanner(FECHO, fimDaPeca);
-    },900);   /* ⚠️ 560ms punha a narracao da PROXIMA rodada dentro da janela de
+    },1300);  /* ⚠️ 560ms punha a narracao da PROXIMA rodada dentro da janela de
                  700ms do som de acerto -> duas vozes (portao voz_dupla, Feirinha
-                 ago/2026). 900ms tira a proxima pergunta do encalco do acerto. */
+                 ago/2026). Agora 1300ms: dá espaço para a CONFIRMAÇÃO da resposta
+                 ("são sete") ser ouvida antes de a próxima pergunta narrar. */
     return;
   }
   /* ERRO: não pune. Som grave curto + a opção sai do alcance + o andaime CRESCE. */

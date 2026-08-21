@@ -229,11 +229,14 @@ add(id=u"f10", mec=u"base-dez", selo=u"CAIXA DE 10", conceito=u"objetivo3",
                           u"Quando a caixa enche, ela vira 1 caixa de 10.",
                           u"Deixa comigo: eu encho esta caixa e você segue."]})
 
+# repartir com FRUTAS do banco (Marcos): a fila de frutas se divide em bancas
+# iguais; frutas e resultados variados (5, 4, 3 em cada).
 add(id=u"f11", mec=u"repartir", selo=u"REPARTIR IGUAL", conceito=u"objetivo3",
-    enunciado=u"Separe <b>10</b> frutas em <b>2</b> bancas iguais. Quantas em cada?",
-    dica=u"Ponha uma de cada vez, uma para cada banca.",
-    dados=[{u"un":10, u"n":2, u"nome":u"a <b>metade</b>", u"selo":u"REPARTIR IGUAL"},
-           {u"un":8, u"n":2, u"nome":u"a <b>metade</b>", u"selo":u"REPARTIR IGUAL"}],
+    enunciado=u"Reparta as <b>10</b> maçãs em <b>2</b> bancas iguais. Quantas ficam em cada banca?",
+    dica=u"Dá uma para cada banca, por vez, até acabar.",
+    dados=[{u"un":10, u"n":2, u"img":u"fe_maca", u"coisa":u"maçãs", u"grupo":u"banca", u"grupos":u"bancas", u"nome":u"a <b>metade</b>", u"selo":u"REPARTIR IGUAL"},
+           {u"un":8, u"n":2, u"img":u"fe_morango", u"coisa":u"morangos", u"grupo":u"banca", u"grupos":u"bancas", u"nome":u"a <b>metade</b>", u"selo":u"REPARTIR IGUAL"},
+           {u"un":9, u"n":3, u"img":u"fe_laranja", u"coisa":u"laranjas", u"grupo":u"banca", u"grupos":u"bancas", u"nome":u"<b>um terço</b>", u"selo":u"REPARTIR IGUAL"}],
     dadosExtra={u"DICAS":[u"Dê uma fruta para cada banca, por vez.",
                           u"Quando acabar, conte quantas ficaram em uma banca.",
                           u"Deixa comigo: eu reparto e você confere."]})
