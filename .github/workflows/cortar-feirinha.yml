@@ -1,0 +1,45 @@
+name: "Cortar Feirinha (recorta a arte do Marcos)"
+on:
+  workflow_dispatch: {}
+jobs:
+  cortar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout da branch de trabalho"
+        uses: actions/checkout@v4
+        with:
+          ref: claude/vc-nao-funcionando-0pya0w
+          token: ${{ secrets.PAGES_TOKEN }}
+          fetch-depth: 0
+      - name: "Pegar a arte subida na main"
+        run: |
+          set -e
+          git fetch origin main
+          mkdir -p /tmp/subiu
+          for f in IMG_3181.jpeg IMG_3183.jpeg IMG_3184.jpeg IMG_3185.jpeg IMG_3186.jpeg IMG_3187.jpeg IMG_3188.jpeg; do
+            git show origin/main:$f > /tmp/subiu/$f
+            echo "peguei $f ($(wc -c < /tmp/subiu/$f) bytes)"
+          done
+      - name: "Python e libs de imagem"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: "Instalar rembg"
+        run: pip install --quiet rembg pillow numpy scipy onnxruntime pooch
+      - name: "Escrever o cortador (gate sha256)"
+        run: |
+          set -e
+          echo "IyAtKi0gY29kaW5nOiB1dGYtOCAtKi0KdSIiIlJlY29ydGEgYSBhcnRlIHF1ZSBvIE1hcmNvcyBzdWJpdSAoSU1HXzMxODEuLjMxODgsIGZ1bmRvIHByZXRvL2JyYW5jbykgbm9zCm5vbWVzIHF1ZSBhIEZlaXJpbmhhIHVzYSwgc2FsdmFuZG8gUE5HIHRyYW5zcGFyZW50ZSBlbSBfZmVpcmluaGEvaW1nLy4KUm9kYSBubyBDSSAocmVtYmcgKyBwaWxsb3cgKyBudW1weSkuIEZ1bmRvIChjZW5hIGxhcmdhKSBuYW8gcmVjb3J0YS4iIiIKaW1wb3J0IG9zLCBzeXMKaW1wb3J0IG51bXB5IGFzIG5wCmZyb20gUElMIGltcG9ydCBJbWFnZQpmcm9tIHJlbWJnIGltcG9ydCByZW1vdmUsIG5ld19zZXNzaW9uCgpTUkMgPSAiL3RtcC9zdWJpdSIgICAgICAgICAgIyBvbmRlIG8gd29ya2Zsb3cgZGVwb3NpdGEgb3MgSU1HXyouanBlZwpJTUcgPSAiX2ZlaXJpbmhhL2ltZyIKb3MubWFrZWRpcnMoSU1HLCBleGlzdF9vaz1UcnVlKQpzZXNzID0gbmV3X3Nlc3Npb24oInUybmV0IikKCmRlZiBjYXJyZWdhKG5vbWUpOgogICAgcmV0dXJuIEltYWdlLm9wZW4ob3MucGF0aC5qb2luKFNSQywgbm9tZSkpLmNvbnZlcnQoIlJHQiIpCgpkZWYgYXV0b2Nyb3AoaW0sIHBhZD0xMCk6CiAgICBhID0gbnAuYXNhcnJheShpbSkKICAgIGlmIGEuc2hhcGVbMl0gPT0gNDoKICAgICAgICBtYXNrID0gYVs6LCA6LCAzXSA+IDgKICAgIGVsc2U6CiAgICAgICAgbWFzayA9IG5wLm9uZXMoYS5zaGFwZVs6Ml0sIGJvb2wpCiAgICB5cywgeHMgPSBucC53aGVyZShtYXNrKQogICAgaWYgbGVuKHlzKSA9PSAwOgogICAgICAgIHJldHVybiBpbQogICAgeTAsIHkxLCB4MCwgeDEgPSB5cy5taW4oKSwgeXMubWF4KCksIHhzLm1pbigpLCB4cy5tYXgoKQogICAgeTAgPSBtYXgoMCwgeTAgLSBwYWQpOyB4MCA9IG1heCgwLCB4MCAtIHBhZCkKICAgIHkxID0gbWluKGltLmhlaWdodCwgeTEgKyBwYWQpOyB4MSA9IG1pbihpbS53aWR0aCwgeDEgKyBwYWQpCiAgICByZXR1cm4gaW0uY3JvcCgoeDAsIHkwLCB4MSwgeTEpKQoKZGVmIG1haW9yX2NvbXBvbmVudGUoaW0pOgogICAgdSIiIm1hbnRlbSBzbyBvIG1haW9yIGJsb2Igb3BhY28gKHRpcmEgcmVzcGluZ29zKS4iIiIKICAgIGZyb20gc2NpcHkgaW1wb3J0IG5kaW1hZ2UKICAgIGEgPSBucC5hc2FycmF5KGltKS5jb3B5KCkKICAgIG9wID0gYVs6LCA6LCAzXSA+IDIwCiAgICBsYmwsIG4gPSBuZGltYWdlLmxhYmVsKG9wKQogICAgaWYgbiA8PSAxOgogICAgICAgIHJldHVybiBpbQogICAgdGFtID0gbmRpbWFnZS5zdW0obnAub25lc19saWtlKGxibCksIGxibCwgcmFuZ2UoMSwgbiArIDEpKQogICAgbWF4aSA9IGludChucC5hcmdtYXgodGFtKSkgKyAxCiAgICBhWzosIDosIDNdID0gbnAud2hlcmUobGJsID09IG1heGksIGFbOiwgOiwgM10sIDApCiAgICByZXR1cm4gSW1hZ2UuZnJvbWFycmF5KGEsICJSR0JBIikKCmRlZiByZWNvcnRhKGltKToKICAgIG91dCA9IHJlbW92ZShpbSwgc2Vzc2lvbj1zZXNzLCBhbHBoYV9tYXR0aW5nPVRydWUsCiAgICAgICAgICAgICAgICAgYWxwaGFfbWF0dGluZ19mb3JlZ3JvdW5kX3RocmVzaG9sZD0yNTAsCiAgICAgICAgICAgICAgICAgYWxwaGFfbWF0dGluZ19iYWNrZ3JvdW5kX3RocmVzaG9sZD0xNSwKICAgICAgICAgICAgICAgICBhbHBoYV9tYXR0aW5nX2Vyb2RlX3NpemU9MykKICAgIHJldHVybiBvdXQuY29udmVydCgiUkdCQSIpCgpkZWYgcmV6KGltLCBhbHQpOgogICAgaWYgaW0uaGVpZ2h0IDw9IGFsdDoKICAgICAgICByZXR1cm4gaW0KICAgIHJldHVybiBpbS5yZXNpemUoKGludChpbS53aWR0aCAqIGFsdCAvIGltLmhlaWdodCksIGFsdCksIEltYWdlLkxBTkNaT1MpCgpkZWYgc2FsdmEoaW0sIG5vbWUsIGFsdD1Ob25lKToKICAgIGlmIGFsdDoKICAgICAgICBpbSA9IHJleihpbSwgYWx0KQogICAgaW0uc2F2ZShvcy5wYXRoLmpvaW4oSU1HLCBub21lICsgIi5wbmciKSwgb3B0aW1pemU9VHJ1ZSkKICAgIHByaW50KCIgIC0+Iiwgbm9tZSArICIucG5nIiwgaW0uc2l6ZSkKCiMgLS0tLSAxKSBNQVNDT1RFIGZlbGl6IChJTUdfMzE4MSkgKyBwaXNjYSAoSU1HXzMxODMpIC0tLS0KZmVsaXogPSBhdXRvY3JvcChtYWlvcl9jb21wb25lbnRlKHJlY29ydGEoY2FycmVnYSgiSU1HXzMxODEuanBlZyIpKSkpCnNhbHZhKGZlbGl6LCAiZmVfY29ydWphX2ZlbGl6IiwgNTIwKQpwaXNjYSA9IGF1dG9jcm9wKG1haW9yX2NvbXBvbmVudGUocmVjb3J0YShjYXJyZWdhKCJJTUdfMzE4My5qcGVnIikpKSkKc2FsdmEocGlzY2EsICJmZV9jb3J1amFfcGlzY2EiLCA1MjApCiMgZmFsYSA9IGNvcGlhIGRhIGZlbGl6IChwbGFjZWhvbGRlciBhdGUgdGVyIGEgYm9jYSBhYmVydGEgLyBHZW1pbmkpIOKAlCBuYW8gdHJlbWUKc2FsdmEoZmVsaXosICJmZV9jb3J1amFfZmFsYSIsIDUyMCkKCiMgLS0tLSAyKSBNRURBTEhBIChJTUdfMzE4NiksIGZ1bmRvIGJyYW5jbyAtLS0tCm1lZCA9IGF1dG9jcm9wKG1haW9yX2NvbXBvbmVudGUocmVjb3J0YShjYXJyZWdhKCJJTUdfMzE4Ni5qcGVnIikpKSkKc2FsdmEobWVkLCAibWVkX2ZlIiwgNDAwKQoKIyAtLS0tIDMpIEJBTkFOQSAoSU1HXzMxODcpIGUgTElNQU8gKElNR18zMTg4KSwgZnVuZG8gYnJhbmNvIC0tLS0Kc2FsdmEoYXV0b2Nyb3AobWFpb3JfY29tcG9uZW50ZShyZWNvcnRhKGNhcnJlZ2EoIklNR18zMTg3LmpwZWciKSkpKSwgImZlX2JhbmFuYSIsIDMwMCkKc2FsdmEoYXV0b2Nyb3AobWFpb3JfY29tcG9uZW50ZShyZWNvcnRhKGNhcnJlZ2EoIklNR18zMTg4LmpwZWciKSkpKSwgImZlX2xpbWFvIiwgMzAwKQoKIyAtLS0tIDQpIENSQUNIQVMgKElNR18zMTg0KTogMiBsaW5oYXMgeCAzIGNvbHVuYXMgLS0tLQpzaGVldCA9IGNhcnJlZ2EoIklNR18zMTg0LmpwZWciKQpXLCBIID0gc2hlZXQuc2l6ZQpjdywgY2ggPSBXIC8vIDMsIEggLy8gMgpuID0gMApmb3IgciBpbiByYW5nZSgyKToKICAgIGZvciBjIGluIHJhbmdlKDMpOgogICAgICAgIG4gKz0gMQogICAgICAgIGNlbGwgPSBzaGVldC5jcm9wKChjICogY3csIHIgKiBjaCwgKGMgKyAxKSAqIGN3LCAociArIDEpICogY2gpKQogICAgICAgIGN1dCA9IGF1dG9jcm9wKG1haW9yX2NvbXBvbmVudGUocmVjb3J0YShjZWxsKSkpCiAgICAgICAgc2FsdmEoY3V0LCAiZmVfY3IlZCIgJSBuLCAyNjApCgojIC0tLS0gNSkgRlVORE8gKElNR18zMTg1KTogY2VuYSBsYXJnYSwgTkFPIHJlY29ydGEgLS0tLQpmdW5kbyA9IGNhcnJlZ2EoIklNR18zMTg1LmpwZWciKQpmdW5kbyA9IGZ1bmRvLnJlc2l6ZSgoMTIwMCwgaW50KGZ1bmRvLmhlaWdodCAqIDEyMDAgLyBmdW5kby53aWR0aCkpLCBJbWFnZS5MQU5DWk9TKQpmdW5kby5zYXZlKG9zLnBhdGguam9pbihJTUcsICJmZV9mdW5kby5wbmciKSwgb3B0aW1pemU9VHJ1ZSkKcHJpbnQoIiAgLT4gZmVfZnVuZG8ucG5nIiwgZnVuZG8uc2l6ZSkKCnByaW50KCJGSU06IGFydGUgZGEgRmVpcmluaGEgcmVjb3J0YWRhIGVtIiwgSU1HKQo=" | base64 -d > /tmp/cortar_feirinha.py
+          GOT=$(sha256sum /tmp/cortar_feirinha.py | cut -c1-16)
+          echo "sha: $GOT (esperado 1eea62e02c0d5bd9)"
+          test "$GOT" = "1eea62e02c0d5bd9"
+      - name: "Recortar a arte"
+        run: python3 /tmp/cortar_feirinha.py
+      - name: "Commitar as imagens na branch"
+        run: |
+          set -e
+          git config user.name "Claude"
+          git config user.email "marcosandersonlana@gmail.com"
+          git add _feirinha/img
+          git commit -m "Feirinha: recorta a arte do Marcos (coruja feliz/pisca/fala, 6 crachas, banana/limao, medalha, fundo) para _feirinha/img" || echo "nada a commitar"
+          git push origin HEAD:claude/vc-nao-funcionando-0pya0w
