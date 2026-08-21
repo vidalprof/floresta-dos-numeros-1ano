@@ -10065,6 +10065,30 @@ function diz(txt){
   }catch(e){}
 }
 function nomeNum(n){ return (n>=0&&n<NUM.length) ? NUM[n] : (""+n); }
+/* ⭐ FALA UM NÚMERO e avisa quando TERMINOU — para a luz acompanhar a voz e
+   nunca pular (Marcos, ago/2026, cobrado 3x). `pronto()` só dispara quando a
+   voz acabou de dizer o número INTEIRO **e** já passou um tempo mínimo de
+   contagem (para não correr num PC que devolve `onend` na hora / sem voz).
+   Antes a contagem tinha DOIS relógios (setTimeout fixo × Web Speech), que
+   desencontravam; agora quem manda no ritmo é a VOZ. */
+function dizConta(txt, pronto){
+  var vozFim=false, tempoOk=false, disparou=false;
+  var tenta=function(){ if(disparou) return; if(vozFim&&tempoOk){ disparou=true; if(pronto) pronto(); } };
+  setTimeout(function(){ tempoOk=true; tenta(); }, 650);   /* ritmo mínimo p/ contar junto */
+  var fimVoz=function(){ vozFim=true; tenta(); };
+  try{
+    if(window.speechSynthesis&&window.SpeechSynthesisUtterance){
+      var u=new SpeechSynthesisUtterance(txt);
+      u.lang="pt-BR"; u.rate=0.85; u.pitch=1.05;   /* rate menor = número mais claro */
+      u.onend=fimVoz; u.onerror=fimVoz;
+      try{ window.speechSynthesis.cancel(); }catch(e){}
+      window.speechSynthesis.speak(u);
+      setTimeout(fimVoz, 2000);   /* rede: se onend nunca vier, não trava */
+      return;
+    }
+  }catch(e){}
+  vozFim=true; tenta();           /* sem Web Speech: o tempo mínimo governa */
+}
 function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",.05); }
 function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
 function sConta(){ nota(659.25,.05,.10,"triangle",0); }
@@ -10198,16 +10222,14 @@ function contaComigo(){
     if(i>=qtd){ fechaContagem(); return; }
     itens[i].className="sem acesa";
     itens[i].innerHTML=""+(i+1);
-    diz(nomeNum(i+1));
     sConta();
+    var n=i+1;
     i++;
-    /* ⚠️ Marcos (ago/2026, DUAS vezes): contar/acender MAIS DEVAGAR e PAUSADO — a
-       crianca precisa CONTAR JUNTO, apontando cada semente e ouvindo o numero
-       inteiro antes do proximo. 520ms corria demais; 950ms ainda corria; 1300ms
-       é o ritmo de quem conta em voz alta com a turma (~1 número por segundo e
-       um respiro). Se um dia a voz gravada de contagem ficar mais longa que
-       isto, subir junto — o compasso é a fala, não o número na tela. */
-    setTimeout(passo,1300);
+    /* ⚠️ Marcos (ago/2026, 3x): a LUZ acompanha a VOZ e NÃO pula números. A
+       próxima semente só acende quando a voz TERMINA de dizer este número
+       (`dizConta` avisa no fim) e depois de um respiro curto. A voz manda no
+       compasso — nada de setTimeout fixo correndo por fora. */
+    dizConta(nomeNum(n), function(){ if(g===ger) setTimeout(passo,260); });
   };
   passo();
 }
