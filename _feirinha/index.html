@@ -1625,7 +1625,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 /* ==== PECA: reta-numerica ==== */
 
 
-.mec-reta-numerica .reta{position:relative;max-width:430px;height:96px;margin:13px auto 0;border-radius:16px; background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.22)}
+.mec-reta-numerica .reta{position:relative;width:100%;max-width:430px;height:96px;margin:13px auto 0;border-radius:16px; background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.22)}
 
 .mec-reta-numerica .rn_zona{cursor:pointer}
 
@@ -1737,6 +1737,20 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   color:#fff3df !important}
 /* legendas .span do comparar sobre bloco marrom — creme. */
 .mec-comparar .span, .mec-comparar .cxrot, .mec-comparar .mrot{
+  color:#fff3df !important}
+
+/* A RÉGUA DAS BANCAS cai sobre a FOTO da feira. O painel da peça é translúcido
+   (branco .10) e some no fundo movimentado → a criança "não vê a régua"
+   (Marcos, ago/2026: "não vi a régua como funcional"). Escurece o painel numa
+   tábua de madeira: o trilho, os tracinhos e os números creme aparecem nítidos,
+   e a régua vira mesmo a "rua das bancas numeradas". */
+.mec-reta-numerica .reta{
+  background:rgba(36,22,10,.93) !important;
+  background-image:none !important;
+  border-color:#6b4420 !important;
+  box-shadow:0 5px 16px rgba(0,0,0,.4) !important}
+.mec-reta-numerica .rnum, .mec-reta-numerica .rlinha,
+.mec-reta-numerica .rtick, .mec-reta-numerica .rtick.gr{
   color:#fff3df !important}
 
 /* Botões DENTRO das peças de matemática: vinham em AMARELO com texto branco (o

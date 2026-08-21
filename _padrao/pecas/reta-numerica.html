@@ -92,7 +92,16 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    e escondia justamente o 50 — que e a referencia que a dica manda usar.
    Andares: plaquinha da crianca 0-20 · marcas 24-70 · numeros 65 · plaquinha
    da resposta 74-93.                                                       */
-.reta{position:relative;max-width:430px;height:96px;margin:13px auto 0;border-radius:16px;
+/* ⚠️⚠️ LICAO PAGA (ago/2026, o Marcos pegou: "nao vi a regua como funcional"):
+   TODO filho da .reta e position:absolute (trilho, tracos, numeros, rint), entao
+   a .reta NAO tem largura intrinseca nenhuma. Na peca avulsa ela enchia porque o
+   pai era bloco comum; DENTRO da atividade montada o motor centra a coluna com
+   `align-items:center`, que NAO estica um bloco de conteudo zero — e a reta
+   COLAPSAVA para ~4px, uma tirinha invisivel no alto. So a `max-width` nao basta
+   (max de 430 sobre largura 0 = 0). Precisa de `width:100%` explicito para a
+   regua ocupar a coluna em qualquer pai. O portao que passou a medir isto e o
+   _qa/leiaute.js (regra: superficie interativa colapsada). */
+.reta{position:relative;width:100%;max-width:430px;height:96px;margin:13px auto 0;border-radius:16px;
       background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.22)}
 /* a faixa INTEIRA recebe o toque: o alvo nunca e um pixel */
 .zona{cursor:pointer}

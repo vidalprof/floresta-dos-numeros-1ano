@@ -43,8 +43,15 @@ const TAMANHOS=[
   {w:1366,h:768,n:'PC 1366 tela cheia'},
   {w:1024,h:420,n:'janela baixa'},
 ];
-/* o que a crianca precisa TOCAR para a fase andar */
-const RESPOSTA='.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.btn,.pc,.peca';
+/* o que a crianca precisa TOCAR para a fase andar
+   ⚠️ `.reta` entrou em ago/2026 (o Marcos pegou: "nao vi a regua como funcional").
+   A regua da reta-numerica tem TODOS os filhos position:absolute, entao o div
+   nao tem largura propria; dentro do motor (coluna flex align-center) ela
+   COLAPSAVA para ~4px — uma tirinha invisivel que a crianca nao conseguia tocar.
+   O jogador-robo passava (crava pelo data-alvo, sem coordenada) e o leiaute nao
+   media a regua porque ela nao estava nesta lista. Agora esta: a regra 4 reprova
+   a superficie interativa que encolheu abaixo de 40px. */
+const RESPOSTA='.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.btn,.pc,.peca,.reta';
 /* tudo que a crianca pode TOCAR — inclui os botoes de apoio (dica, ouvir,
    alto-falante) e os alvos das mecanicas. Usado so na regra 5.            */
 const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
