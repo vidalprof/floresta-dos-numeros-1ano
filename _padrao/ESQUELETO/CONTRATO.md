@@ -3951,3 +3951,21 @@ injetado por último e vence a cascata):** rótulos de madeira → creme forçad
 botões de peça de matemática → verde+branco (uniforme, como a casa); prateleira →
 FUNDO escurecido (`#3a2410`) para o creme passar folgado. Lição: em fundo
 marrom-médio, nenhuma cor de texto fecha o WCAG — muda o FUNDO, não só a letra.
+
+## 📏 SUPERFÍCIE INTERATIVA QUE COLAPSA: a régua sumiu (reta-numerica, ago/2026)
+O Marcos pegou: *"não vi a régua como funcional"*. A peça `reta-numerica` tem
+TODOS os filhos da `.reta` em `position:absolute` (trilho, tracinhos, números,
+`.rint`) → o `<div>` não tem largura própria nenhuma. Na peça avulsa ela enchia
+porque o pai era bloco comum; DENTRO do motor a coluna é `flex; align-items:center`,
+que **não estica** um item de conteúdo zero → a régua colapsava para ~4px, uma
+tirinha invisível no alto. Pior: **o jogador-robô passava** (ele "crava" pelo
+`data-alvo`, sem coordenada), e nenhum portão media a largura da régua → defeito
+que só existia na mão da criança, invisível para a banca.
+**Conserto (as duas partes da casa):** (1) código — `.reta{width:100%}` na peça
+(recompilar com `integrar.py --escrever`) enche a coluna em qualquer pai; e, por
+atividade, `tema.css` escurece o painel (tábua de madeira) para o trilho/números
+creme lerem sobre a foto. (2) portão — `.reta` entrou na lista `RESPOSTA` do
+`_qa/leiaute.js`: superfície interativa que encolhe abaixo de 40px passa a
+reprovar sozinha. Lição: alvo cujos filhos são TODOS absolutos não tem largura
+intrínseca — precisa de `width` explícito, e o portão de leiaute tem que MEDIR a
+superfície, não confiar no robô que clica por `data-alvo`.
