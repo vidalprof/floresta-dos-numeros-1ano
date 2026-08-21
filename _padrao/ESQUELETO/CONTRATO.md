@@ -3969,3 +3969,50 @@ creme lerem sobre a foto. (2) portão — `.reta` entrou na lista `RESPOSTA` do
 reprovar sozinha. Lição: alvo cujos filhos são TODOS absolutos não tem largura
 intrínseca — precisa de `width` explícito, e o portão de leiaute tem que MEDIR a
 superfície, não confiar no robô que clica por `data-alvo`.
+
+## 🧬 GAVETA QUE NÃO ABRE: a peça rodava com o EXEMPLO dela (Sólidos, ago/2026)
+O Marcos: *"a fase 'qual não é' não tem nada a ver com sólidos"*. A peça INTRUSO
+mostrava frutas (banana/uva/maçã/cenoura) dentro de uma atividade de sólidos.
+**Causa raiz no `integrar.py`:** a detecção de gaveta era `^var\s+X\s*=\s*[\[{]`.
+Oito peças declaram a gaveta como `var RODADAS= /*TECNICA*/[...]` — com o
+comentário TECNICA ENTRE o `=` e o `[`. A regex parava no `=` e não via o `[`
+depois do comentário → a gaveta não era detectada, `f.dados` não entrava, e a
+peça caía no EXEMPLO próprio. Não dá erro de JS, o print fica bonito, o jogador-robô
+passa — só a criança vê o conteúdo errado. Afetava: bussola, calendario,
+camadas-mapa, criar-desafio, intruso, mapa-conceitual, passo-a-passo, teia-alimentar.
+**Conserto:** a regex pula um comentário opcional antes do vetor/objeto
+(`=\s*(?:/\*[^*]*\*/\s*)?[\[{]`). Lição: exemplo de peça que "vaza" para a
+atividade é resto-de-clone MUDO; o detector de gaveta tem que enxergar a var mesmo
+com a marca TECNICA colada nela.
+
+## 🌐 SW REGISTRADO E INEXISTENTE: "página sem conexão" (Lojinha, ago/2026)
+O motor sempre faz `navigator.serviceWorker.register("sw.js")`, mas o montador
+NUNCA escrevia o sw.js → 404. Com a internet instável da escola, a navegação caía
+na "página sem conexão" em ALGUNS PCs (intermitente = depende da rede de cada
+máquina). Conserto: o montador GERA um sw.js rede-primeiro (online = fresco;
+rede caindo = volta ao index.html do cache), cache-primeiro em imagem/áudio,
+skipWaiting+clients.claim, com hash no nome do cache. Lição: se o motor registra
+um SW, o montador tem que ENTREGAR o arquivo — e SW de HTML tem que ser
+rede-primeiro com fallback pro shell, nunca deixar a navegação morrer.
+
+## 🎬 BANNER QUE DESLIZA PRA FORA: botão Próximo some (Lojinha, ago/2026)
+O banner de fim de fase se escondia com `transform:translateY(115%)` e só voltava
+ao fim da transição. Em PC antigo (fixed+transform) a transição às vezes não
+fechava e o botão Próximo ficava abaixo da dobra → "trava/não avança" em alguns
+dos 30 PCs. Conserto: esconder por opacity+visibility e deslizar só 16px (no pior
+caso 16px mais baixo, sempre inteiro na tela). Lição: reveal de elemento fixed
+não pode depender de um transform grande terminar — opacity é à prova de strand.
+
+## 🧾 RELATÓRIO COM RESTO DE CLONE: BNCC de plantas em toda atividade (ago/2026)
+O `segredoRelatorio` do motor trazia PLANTAS fixo (EF02CI05/06, "água e luz",
+"partes da planta", "sol+água") — clone do Jardim no parecer de TODA atividade.
+Conserto: o montador injeta `RELBNCC` a partir da mesa/currículo da própria
+atividade; o motor usa isso; "antes×depois" e "como ler" viram genéricos. Lição:
+texto de disciplina no MOTOR é clone garantido — tem que vir do `dados`.
+
+## 🔊 PISTA MUDA: "quem sou eu" sem áudio na pista (Sólidos, ago/2026)
+A pista chegava escrita e muda. A voz de cada pista JÁ existia (op_<hash>, o
+montador grava tudo do `dados`); faltava só o alto-falante. Bastou pôr `.ptxt`
+(o texto da pista) no `ZAPSEL` do motor — o observador põe o botão sozinho em
+todo elemento cujo texto tenha voz. Lição: antes de "gerar voz", conferir se ela
+já existe e só falta o elemento entrar no ZAPSEL.
