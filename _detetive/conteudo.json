@@ -6,6 +6,7 @@
  "mascote": "raposa",
  "mascoteNome": "Detetive Vera",
  "crachas": 6,
+ "mesa": "Pedagogo do 5º ano + especialista em Língua Portuguesa (revisão de reforço).",
  "fundo": "dp_fundo",
  "voz": "feminina",
  "abertura": "Bem-vindo(a) à Agência! Sou a detetive Vera. Cada caso só se resolve LENDO com atenção e usando as palavras certas. Vamos?",
@@ -16,7 +17,12 @@
   "objetivo3": "Interpretar texto injuntivo (finalidade e passos)",
   "objetivo4": "Mau (adjetivo) × Mal (advérbio)"
  },
- "curriculo": "Reconhecer e usar pronomes (pessoais, possessivos, demonstrativos e de tratamento) na coesão do texto; localizar informações e inferir sentidos em textos narrativos e injuntivos; e empregar corretamente MAU/MAL conforme a classe (adjetivo × advérbio). EF05LP a EF35LP (revisão).",
+ "curriculo": {
+  "objetivo1": "Reconhecer e usar pronomes (pessoais, possessivos, demonstrativos, de tratamento) na coesão do texto. EF05LP (revisão).",
+  "objetivo2": "Localizar informações explícitas e inferir sentidos em textos NARRATIVOS. EF35LP03/EF05LP (revisão).",
+  "objetivo3": "Identificar finalidade e ordenar passos em textos INJUNTIVOS (receita, regras). EF05LP (revisão).",
+  "objetivo4": "Empregar corretamente MAU (adjetivo, = bom) e MAL (advérbio, = bem). EF05LP (revisão)."
+ },
  "fases": [
   {
    "id": "f01",
@@ -184,7 +190,7 @@
    "mec": "completar",
    "selo": "CASO 1: COMPLETE A PISTA",
    "conceito": "objetivo1",
-   "enunciado": "Complete a frase com o <b>pronome</b> que falta.",
+   "enunciado": "Preencha a frase com o <b>pronome</b> que falta.",
    "dica": "O pronome tem que combinar com a palavra que ele substitui.",
    "dados": [
     {
@@ -253,6 +259,575 @@
      "p4",
      "p5"
     ]
+   }
+  },
+  {
+   "id": "f06",
+   "mec": "escolher",
+   "selo": "CASO 2: O QUE O TEXTO CONTA",
+   "conceito": "objetivo2",
+   "enunciado": "Leia com atenção de detetive e responda o que o texto conta.",
+   "dica": "A resposta está NO texto. Volte e leia de novo se precisar.",
+   "dados": [
+    {
+     "img": "",
+     "p": "Leia: <i>“Bidu, o gato, subiu no telhado atrás de um pássaro e ficou preso.”</i> Quem ficou preso?",
+     "c": "O gato Bidu",
+     "e": [
+      "O pássaro",
+      "O telhado"
+     ],
+     "d": [
+      "Quem é o personagem que subiu?",
+      "O texto diz que <b>Bidu</b> ficou preso.",
+      "É <b>o gato Bidu</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia a mesma cena: por que Bidu subiu no telhado?",
+     "c": "Atrás de um pássaro",
+     "e": [
+      "Para dormir",
+      "Fugindo da chuva"
+     ],
+     "d": [
+      "Procure o motivo no texto.",
+      "Ele subiu <b>atrás de um pássaro</b>.",
+      "É <b>atrás de um pássaro</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“De manhã, os bombeiros resgataram o gato do telhado.”</i> Quando o gato foi resgatado?",
+     "c": "De manhã",
+     "e": [
+      "À noite",
+      "Na hora do almoço"
+     ],
+     "d": [
+      "Procure a palavra de TEMPO no texto.",
+      "O texto começa com <b>De manhã</b>.",
+      "É <b>de manhã</b>. Toque para seguir."
+     ]
+    }
+   ],
+   "dadosExtra": {
+    "TITULO": "O QUE O TEXTO CONTA",
+    "FECHO": "Você achou as informações no texto!"
+   }
+  },
+  {
+   "id": "f07",
+   "mec": "linha-do-tempo",
+   "selo": "CASO 2: A ORDEM DOS FATOS",
+   "conceito": "objetivo2",
+   "enunciado": "Coloque os fatos da história na <b>ordem</b> em que aconteceram.",
+   "dica": "Pense: o que veio primeiro? O que aconteceu por último?",
+   "dados": [
+    {
+     "t": 1,
+     "n": "O menino perdeu o cachorro no parque."
+    },
+    {
+     "t": 2,
+     "n": "A detetive Vera achou pegadas na lama."
+    },
+    {
+     "t": 3,
+     "n": "As pegadas levaram at&#233; uma &#225;rvore."
+    },
+    {
+     "t": 4,
+     "n": "O cachorro estava l&#225;, assustado."
+    },
+    {
+     "t": 5,
+     "n": "O menino abra&#231;ou o cachorro, feliz."
+    }
+   ]
+  },
+  {
+   "id": "f08",
+   "mec": "quem-sou-eu",
+   "selo": "CASO 2: QUEM É O PERSONAGEM?",
+   "conceito": "objetivo2",
+   "enunciado": "Ouça as pistas do texto e descubra <b>quem é o personagem</b>.",
+   "dica": "Junte as três pistas antes de responder.",
+   "dados": [
+    {
+     "resp": "O CARTEIRO",
+     "pistas": [
+      "Eu levo <b>cartas</b> de casa em casa.",
+      "Uso um <b>bon&#233;</b> e uma bolsa grande a tiracolo.",
+      "Fui eu que trouxe a <b>carta misteriosa</b> para a agência."
+     ],
+     "outros": [
+      "O PADEIRO",
+      "O M&#201;DICO",
+      "O PROFESSOR"
+     ]
+    },
+    {
+     "resp": "A VIZINHA",
+     "pistas": [
+      "Eu moro na casa <b>ao lado</b> da agência.",
+      "Estou sempre na <b>janela</b>, vendo tudo o que passa.",
+      "Eu <b>vi</b> quem deixou a carta na porta."
+     ],
+     "outros": [
+      "A PROFESSORA",
+      "A M&#195;E",
+      "A DELEGADA"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f09",
+   "mec": "escolher",
+   "selo": "CASO 2: LENDO NAS ENTRELINHAS",
+   "conceito": "objetivo2",
+   "enunciado": "Às vezes o texto não diz tudo: descubra pela pista.",
+   "dica": "O texto não fala direto, mas dá para concluir pelo que conta.",
+   "dados": [
+    {
+     "img": "",
+     "p": "Leia: <i>“Ana pegou o guarda-chuva e as botas antes de sair.”</i> Como estava o tempo?",
+     "c": "Estava chovendo",
+     "e": [
+      "Estava um sol quente",
+      "Estava nevando"
+     ],
+     "d": [
+      "Por que alguém pega guarda-chuva e botas?",
+      "Guarda-chuva + botas = <b>chuva</b>.",
+      "É <b>estava chovendo</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“O prato estava vazio e o gato lambia os bigodes.”</i> O que aconteceu?",
+     "c": "O gato comeu a comida",
+     "e": [
+      "O gato dormiu",
+      "O gato fugiu"
+     ],
+     "d": [
+      "Prato vazio + gato lambendo os bigodes...",
+      "Ele <b>comeu</b> tudo.",
+      "É <b>o gato comeu a comida</b>. Toque para seguir."
+     ]
+    }
+   ],
+   "dadosExtra": {
+    "TITULO": "LENDO NAS ENTRELINHAS",
+    "FECHO": "Você leu até o que estava escondido!"
+   }
+  },
+  {
+   "id": "aquecimento",
+   "mec": "ligar",
+   "selo": "AQUECIMENTO DO DETETIVE",
+   "conceito": "objetivo1",
+   "enunciado": "<b>Aquecimento!</b> Ligue cada <b>pronome</b> à palavra que ele substitui.",
+   "dica": "Revisão rápida: veja número (singular/plural) e gênero.",
+   "dados": [
+    {
+     "k": "p0",
+     "t": "ELE",
+     "s": "o carteiro"
+    },
+    {
+     "k": "p1",
+     "t": "ELA",
+     "s": "a vizinha"
+    },
+    {
+     "k": "p2",
+     "t": "ELES",
+     "s": "os detetives"
+    },
+    {
+     "k": "p3",
+     "t": "NÓS",
+     "s": "eu e a Vera"
+    }
+   ],
+   "dadosExtra": {
+    "DICAS": [
+     "Quantos são? Menino ou menina?",
+     "ELE = um; ELA = uma; ELES = vários; NÓS = eu + você.",
+     "A resposta certa acende no fim da linha. Toque nela."
+    ],
+    "FEITOS": [],
+    "ENUN": "Ligue o pronome à palavra que ele substitui.",
+    "FECHO": "Aquecido! Agora os últimos casos."
+   }
+  },
+  {
+   "id": "f10",
+   "mec": "escolher",
+   "selo": "CASO 3: PARA QUE SERVE?",
+   "conceito": "objetivo3",
+   "enunciado": "O texto injuntivo <b>ensina a fazer</b> algo. Descubra para que ele serve.",
+   "dica": "Texto injuntivo dá ordens/instruções: receita, regra de jogo, manual.",
+   "dados": [
+    {
+     "img": "",
+     "p": "Leia: <i>“Misture a farinha, quebre os ovos e leve ao forno por 30 minutos.”</i> Este texto serve para...",
+     "c": "Ensinar a fazer um bolo",
+     "e": [
+      "Contar uma história",
+      "Descrever um lugar"
+     ],
+     "d": [
+      "Ele manda FAZER passos, um atrás do outro.",
+      "Farinha + ovos + forno = uma <b>receita</b>.",
+      "É <b>ensinar a fazer um bolo</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“Não corra. Aperte o botão. Espere a luz verde para atravessar.”</i> Este texto serve para...",
+     "c": "Ensinar a atravessar com segurança",
+     "e": [
+      "Vender um carro",
+      "Contar uma piada"
+     ],
+     "d": [
+      "São ordens para você fazer certo.",
+      "Botão + luz verde = <b>atravessar a rua</b>.",
+      "É <b>ensinar a atravessar com segurança</b>. Toque para seguir."
+     ]
+    }
+   ],
+   "dadosExtra": {
+    "TITULO": "PARA QUE SERVE?",
+    "FECHO": "Você descobriu a finalidade dos textos!"
+   }
+  },
+  {
+   "id": "f11",
+   "mec": "linha-do-tempo",
+   "selo": "CASO 3: A ORDEM DOS PASSOS",
+   "conceito": "objetivo3",
+   "enunciado": "Coloque os <b>passos</b> da receita na ordem certa.",
+   "dica": "O que se faz primeiro? Não dá para assar antes de misturar.",
+   "dados": [
+    {
+     "t": 1,
+     "n": "Separe os ingredientes."
+    },
+    {
+     "t": 2,
+     "n": "Misture a farinha e os ovos."
+    },
+    {
+     "t": 3,
+     "n": "Bata bem a massa."
+    },
+    {
+     "t": 4,
+     "n": "Leve ao forno."
+    },
+    {
+     "t": 5,
+     "n": "Espere esfriar e sirva."
+    }
+   ]
+  },
+  {
+   "id": "f12",
+   "mec": "intruso",
+   "selo": "CASO 3: A FRASE INTRUSA",
+   "conceito": "objetivo3",
+   "enunciado": "Três frases dão <b>ordens</b>. <b>Qual NÃO é uma instrução?</b>",
+   "dica": "Instrução manda fazer (verbo de comando): misture, corte, ligue.",
+   "dados": [
+    {
+     "selo": "AS INSTRUÇÕES",
+     "tipo": "texto",
+     "enun": "Três frases mandam fazer algo. <b>Qual NÃO manda?</b>",
+     "itens": [
+      {
+       "k": "a",
+       "n": "MISTURE OS OVOS"
+      },
+      {
+       "k": "b",
+       "n": "CORTE O PAPEL"
+      },
+      {
+       "k": "c",
+       "n": "LIGUE A LUZ"
+      },
+      {
+       "k": "d",
+       "n": "O BOLO É GOSTOSO"
+      }
+     ],
+     "fora": "d",
+     "nomeFora": "O BOLO É GOSTOSO",
+     "d1": "Qual frase NÃO manda você fazer nada?",
+     "d2": "Misture, corte, ligue são ORDENS. Uma só conta uma coisa.",
+     "d3": "A de fora é <b>O BOLO É GOSTOSO</b>: ela apenas afirma, não manda fazer.",
+     "razoes": [
+      {
+       "t": "As outras mandam fazer (verbo de comando); esta só afirma.",
+       "ok": 1
+      },
+      {
+       "t": "Porque ela fala de bolo.",
+       "ok": 0
+      },
+      {
+       "t": "Porque ela é a mais curta.",
+       "ok": 0
+      },
+      {
+       "t": "Porque ela tem a letra O.",
+       "ok": 0
+      }
+     ],
+     "enunPorque": "O que <b>O BOLO É GOSTOSO</b> faz de diferente das outras três? Toque na razão certa.",
+     "p1": "Pode ser verdade, mas olhe o que as OUTRAS três fazem.",
+     "p2": "As outras começam com um verbo que MANDA: misture, corte, ligue.",
+     "p3": "“O bolo é gostoso” só AFIRMA; as outras dão ORDEM — por isso ela é a diferente.",
+     "regra": "instrução manda fazer (verbo de comando); afirmação só conta"
+    }
+   ]
+  },
+  {
+   "id": "f13",
+   "mec": "completar",
+   "selo": "CASO 3: COMPLETE A INSTRUÇÃO",
+   "conceito": "objetivo3",
+   "enunciado": "Preencha a instrução com o <b>verbo de comando</b> certo.",
+   "dica": "Verbo de comando manda fazer: misture, aperte, espere.",
+   "dados": [
+    {
+     "img": "",
+     "ante": "Para o bolo crescer, ",
+     "dep": " bem a massa.",
+     "cer": "bata",
+     "out": [
+      "batia",
+      "batendo"
+     ],
+     "dic": "Uma ORDEM curta e direta: 'bata!'"
+    },
+    {
+     "img": "",
+     "ante": "Antes de atravessar, ",
+     "dep": " a luz verde.",
+     "cer": "espere",
+     "out": [
+      "esperava",
+      "esperando"
+     ],
+     "dic": "Comando: 'espere!'"
+    },
+    {
+     "img": "",
+     "ante": "Para acender, ",
+     "dep": " o botão.",
+     "cer": "aperte",
+     "out": [
+      "apertava",
+      "apertei"
+     ],
+     "dic": "Comando direto: 'aperte!'"
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Toque no pedaço que <b>falta</b> na instrução.",
+    "DEPOIS": "Leia a instrução inteira antes de escolher.",
+    "FECHO": "Você completou as instruções!"
+   }
+  },
+  {
+   "id": "f14",
+   "mec": "escolher",
+   "selo": "CASO 4: MAU OU MAL?",
+   "conceito": "objetivo4",
+   "enunciado": "Truque de detetive: se trocar por <b>BOM</b>, é MAU; se trocar por <b>BEM</b>, é MAL.",
+   "dica": "MAU (com U) = adjetivo, o contrário de BOM. MAL (com L) = advérbio, o contrário de BEM.",
+   "dados": [
+    {
+     "img": "",
+     "p": "O lobo da história era um lobo ___ . (troque por BOM/BEM para decidir)",
+     "c": "MAU",
+     "e": [
+      "MAL"
+     ],
+     "d": [
+      "Cabe 'bom' ou 'bem'? 'Um lobo BOM' faz sentido.",
+      "Combina com BOM = <b>MAU</b> (adjetivo).",
+      "É <b>MAU</b> (o contrário de bom). Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Ele dormiu ___ e acordou cansado. (troque por BOM/BEM)",
+     "c": "MAL",
+     "e": [
+      "MAU"
+     ],
+     "d": [
+      "Cabe 'bom' ou 'bem'? 'Dormiu BEM' faz sentido.",
+      "Combina com BEM = <b>MAL</b> (advérbio).",
+      "É <b>MAL</b> (o contrário de bem). Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Que cheiro ___ ! (troque por BOM/BEM)",
+     "c": "MAU",
+     "e": [
+      "MAL"
+     ],
+     "d": [
+      "'Que cheiro BOM!' faz sentido.",
+      "Combina com BOM = <b>MAU</b>.",
+      "É <b>MAU</b> (o contrário de bom). Toque para seguir."
+     ]
+    }
+   ],
+   "dadosExtra": {
+    "TITULO": "MAU OU MAL?",
+    "FECHO": "Você desvendou o mau e o mal!"
+   }
+  },
+  {
+   "id": "f15",
+   "mec": "classificar",
+   "selo": "CASO 4: SEPARE MAU E MAL",
+   "conceito": "objetivo4",
+   "enunciado": "Cada palavra na gaveta certa: <b>MAU</b> (= bom) ou <b>MAL</b> (= bem)?",
+   "dica": "Se dá para trocar por BOM, vai em MAU. Se dá para trocar por BEM, vai em MAL.",
+   "dados": [
+    {
+     "k": "mau",
+     "n": "MAU<br>(= bom)",
+     "img": "",
+     "voz": "mau",
+     "rot": false
+    },
+    {
+     "k": "mal",
+     "n": "MAL<br>(= bem)",
+     "img": "",
+     "voz": "mal",
+     "rot": false
+    }
+   ],
+   "dadosExtra": {
+    "FICHAS": [
+     {
+      "t": "um cão MAU",
+      "alvo": "mau"
+     },
+     {
+      "t": "um dia MAU",
+      "alvo": "mau"
+     },
+     {
+      "t": "um filme MAU",
+      "alvo": "mau"
+     },
+     {
+      "t": "escreve MAL",
+      "alvo": "mal"
+     },
+     {
+      "t": "passou MAL",
+      "alvo": "mal"
+     },
+     {
+      "t": "fez MAL a lição",
+      "alvo": "mal"
+     }
+    ],
+    "DICAS": [
+     "Troque por bom/bem: 'um cão BOM' → MAU; 'escreve BEM' → MAL.",
+     "MAU descreve uma COISA (adjetivo); MAL diz COMO se faz (advérbio).",
+     "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."
+    ],
+    "ENUN": "Toque na <b>ficha</b>. Depois toque na gaveta: <b>MAU</b> ou <b>MAL</b>?"
+   }
+  },
+  {
+   "id": "f16",
+   "mec": "completar",
+   "selo": "CASO 4: COMPLETE COM MAU/MAL",
+   "conceito": "objetivo4",
+   "enunciado": "Preencha a frase com <b>mau</b> (com U) ou <b>mal</b> (com L).",
+   "dica": "Troca-BOM = mau; troca-BEM = mal.",
+   "dados": [
+    {
+     "img": "",
+     "ante": "Ele teve um ",
+     "dep": " pensamento.",
+     "cer": "mau",
+     "out": [
+      "mal"
+     ],
+     "dic": "'Um BOM pensamento' → mau."
+    },
+    {
+     "img": "",
+     "ante": "A porta range porque foi ",
+     "dep": " instalada.",
+     "cer": "mal",
+     "out": [
+      "mau"
+     ],
+     "dic": "'Foi BEM instalada' → mal."
+    },
+    {
+     "img": "",
+     "ante": "Não seja ",
+     "dep": " com os colegas.",
+     "cer": "mau",
+     "out": [
+      "mal"
+     ],
+     "dic": "'Seja BOM' → mau."
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Toque no pedaço que <b>falta</b> na frase.",
+    "DEPOIS": "Troque por bom/bem para conferir.",
+    "FECHO": "Você nunca mais confunde mau e mal!"
+   }
+  },
+  {
+   "id": "f17",
+   "mec": "digitar",
+   "selo": "CASO 4: ESCREVA CERTO",
+   "conceito": "objetivo4",
+   "enunciado": "Escreva a palavra certa, letra por letra.",
+   "dica": "Diga a frase trocando por bom/bem e escolha U ou L no fim.",
+   "dados": [
+    {
+     "palavra": "MAU",
+     "img": "",
+     "voz": "mau",
+     "pista": "O contrário de BOM (um lobo ___). Escreva com U no fim.",
+     "dic": "Troca por BOM: então é <b>MAU</b>."
+    },
+    {
+     "palavra": "MAL",
+     "img": "",
+     "voz": "mal",
+     "pista": "O contrário de BEM (dormiu ___). Escreva com L no fim.",
+     "dic": "Troca por BEM: então é <b>MAL</b>."
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Escreva a palavra, letra por letra.",
+    "FECHO": "Você escreveu mau e mal do jeito certo!"
    }
   }
  ]
