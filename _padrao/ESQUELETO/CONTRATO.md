@@ -3922,3 +3922,32 @@ a animação completa e a tela aparece: medido, `.tela` fica opacity 1.
   e (b) o canvas de pintar real aparecendo SOBRE o fundo. O conserto de verdade
   foi no `tema.css` da atividade: quadrado **branco sólido** (`.pintawrap{background:#fff}`),
   cartão opaco e o fundo do cenário **borrado** atrás — não mexer no motor.
+
+---
+
+## 🔊 VOZ DUPLA: o carimbo do `.play()` (Feirinha, ago/2026)
+Defeito pego pelo portão `_qa/voz_dupla.js` (só na banca MONTADA): na fase de
+`escolher`, quando a criança tocava o 🔊 da pergunta e respondia no MESMO instante,
+o som de acerto (`falar`, no `narr`) partia por cima da voz da opção (`tocaVoz`, no
+`vz`) — duas `.play()` em <700ms. A causa: logo após `.play()` o `currentTime`
+ainda é 0, então `_vozTocando()` NÃO via a voz recém-iniciada e deixava a 2ª
+partir. Isso NÃO se pega isolado (peca.sh); só jogando montado.
+**Conserto (motor):** um carimbo `_lastPlayT` gravado a cada `.play()` (narr e vz);
+`_vozTocando()` conta como "tocando" por 500ms após qualquer play → a 2ª fala entra
+na FILA em vez de sobrepor. E `falar` passou a calar o `vz` também (simétrico ao
+`tocaVoz`, que já cala o `narr`). **Peça `escolher`:** o respiro pós-acerto subiu
+de 560→900ms (a narração da PRÓXIMA rodada não parte no encalço do som de acerto).
+Lição: fala nova disparada no MESMO tick de outra é uma corrida — o guardião de
+voz tem que cobrir a janela do play(), não só o `currentTime>0`.
+
+## 🎨 CONTRASTE sobre MADEIRA: creme não basta, escurecer o fundo (Feirinha, ago/2026)
+Portão `_qa/contraste_fundo.py` reprovou rótulos das peças de matemática:
+`.cxrot/.mrot/.numr` usam `var(--texto,#f4efe6)` (creme, previsto pela peça), mas
+o motor sobrescreve `--texto` para ESCURO → texto escuro no caixote marrom (razão
+~1.6). E os botões de peça (amarelo #ffd54a) ficavam com texto BRANCO do motor
+(razão 1.4). E a prateleira do `base-dez` (marrom-claro 188,107,66) não fecha 4.5
+NEM com creme NEM com escuro. **Conserto (por atividade, `<pasta>/tema.css`, que é
+injetado por último e vence a cascata):** rótulos de madeira → creme forçado;
+botões de peça de matemática → verde+branco (uniforme, como a casa); prateleira →
+FUNDO escurecido (`#3a2410`) para o creme passar folgado. Lição: em fundo
+marrom-médio, nenhuma cor de texto fecha o WCAG — muda o FUNDO, não só a letra.
