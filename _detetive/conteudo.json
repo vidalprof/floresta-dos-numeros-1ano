@@ -36,7 +36,13 @@
     "ELE",
     "ELA",
     "MEU",
-    "ESTE"
+    "ESTE",
+    "TEU",
+    "NOSSO",
+    "ELES",
+    "ESSA",
+    "ISTO",
+    "ELAS"
    ],
    "dadosExtra": {
     "MODO": "lista",
@@ -48,7 +54,13 @@
      "p2",
      "p3",
      "p4",
-     "p5"
+     "p5",
+     "p6",
+     "p7",
+     "p8",
+     "p9",
+     "p1",
+     "p2"
     ]
    }
   },
@@ -79,6 +91,16 @@
      "k": "p3",
      "t": "NÓS",
      "s": "eu e você"
+    },
+    {
+     "k": "p4",
+     "t": "ELAS",
+     "s": "as detetives"
+    },
+    {
+     "k": "p5",
+     "t": "EU",
+     "s": "quem está falando"
     }
    ],
    "dadosExtra": {
@@ -133,6 +155,10 @@
       "alvo": "pes"
      },
      {
+      "t": "TU",
+      "alvo": "pes"
+     },
+     {
       "t": "MEU",
       "alvo": "pos"
      },
@@ -141,11 +167,31 @@
       "alvo": "pos"
      },
      {
+      "t": "TEU",
+      "alvo": "pos"
+     },
+     {
       "t": "ESTE",
       "alvo": "dem"
      },
      {
       "t": "AQUELE",
+      "alvo": "dem"
+     },
+     {
+      "t": "ESSE",
+      "alvo": "dem"
+     },
+     {
+      "t": "ELA",
+      "alvo": "pes"
+     },
+     {
+      "t": "MINHA",
+      "alvo": "pos"
+     },
+     {
+      "t": "AQUILO",
       "alvo": "dem"
      }
     ],
@@ -251,6 +297,93 @@
       "Feminino singular = ELA.",
       "Era <b>ELA</b>. Eu troquei para voc&#234; ler a frase certa."
      ]
+    },
+    {
+     "selo": "A PISTA DOS DETETIVES",
+     "cab": "O PRONOME CERTO",
+     "bal": "Ache a palavra trocada e conserte.",
+     "pecas": [
+      "OS DETETIVES",
+      "CHEGARAM.",
+      "ELA",
+      "ABRIRAM O CASO."
+     ],
+     "erro": 2,
+     "certa": "ELES",
+     "ops": [
+      "ELES",
+      "ELA",
+      "ELE"
+     ],
+     "por": "S&#227;o v&#225;rios (masculino): <b>ELES</b> abriram o caso.",
+     "dicas": [
+      "O pronome fala dos DETETIVES. Quantos s&#227;o?",
+      "S&#227;o v&#225;rios.",
+      "Era este. Eu marquei para voc&#234;."
+     ],
+     "dicas2": [
+      "V&#225;rios, no masculino.",
+      "Plural masculino = ELES.",
+      "Era <b>ELES</b>. Eu troquei para a frase ficar certa."
+     ]
+    },
+    {
+     "selo": "A PISTA DO REL&#211;GIO",
+     "cab": "O PRONOME CERTO",
+     "bal": "Uma palavra n&#227;o combina. Ache e conserte.",
+     "pecas": [
+      "O REL&#211;GIO",
+      "PAROU.",
+      "ELAS",
+      "ATRASOU TUDO."
+     ],
+     "erro": 2,
+     "certa": "ELE",
+     "ops": [
+      "ELE",
+      "ELAS",
+      "N&#211;S"
+     ],
+     "por": "Rel&#243;gio &#233; 'o' (masculino, singular): <b>ELE</b> atrasou tudo.",
+     "dicas": [
+      "O pronome fala do REL&#211;GIO. &#201; 'o' ou 'a'?",
+      "Rel&#243;gio &#233; masculino, um s&#243;.",
+      "Era este. Eu marquei para voc&#234;."
+     ],
+     "dicas2": [
+      "Masculino singular.",
+      "Combina com 'o' = ELE.",
+      "Era <b>ELE</b>. Eu troquei para voc&#234; ler a frase certa."
+     ]
+    },
+    {
+     "selo": "A PISTA DA JANELA",
+     "cab": "O PRONOME CERTO",
+     "bal": "Ache a palavra trocada e conserte.",
+     "pecas": [
+      "A JANELA",
+      "ESTAVA ABERTA.",
+      "ELE",
+      "DEIXOU O VENTO ENTRAR."
+     ],
+     "erro": 2,
+     "certa": "ELA",
+     "ops": [
+      "ELA",
+      "ELE",
+      "ELES"
+     ],
+     "por": "Janela &#233; 'a' (feminino, singular): <b>ELA</b> deixou o vento entrar.",
+     "dicas": [
+      "O pronome fala da JANELA. &#201; 'o' ou 'a'?",
+      "Janela &#233; feminino, uma s&#243;.",
+      "Era este. Eu marquei para voc&#234;."
+     ],
+     "dicas2": [
+      "Feminino singular.",
+      "Combina com 'a' = ELA.",
+      "Era <b>ELA</b>. Eu troquei para a frase ficar certa."
+     ]
     }
    ]
   },
@@ -302,6 +435,34 @@
       "Eu + você = a gente, juntos.",
       "Quem inclui quem fala: nós.",
       "É <b>NÓS</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "<b>O livro</b> caiu da estante. ___ estava aberto na última página.",
+     "c": "ELE",
+     "e": [
+      "ELA",
+      "ELES"
+     ],
+     "d": [
+      "Livro é 'o' — masculino, singular.",
+      "Um objeto masculino: qual serve?",
+      "É <b>ELE</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "<b>As detetives</b> chegaram cedo. ___ já tinham a pista.",
+     "c": "ELAS",
+     "e": [
+      "ELES",
+      "ELA"
+     ],
+     "d": [
+      "São várias, no feminino.",
+      "Plural feminino: qual serve?",
+      "É <b>ELAS</b>. Toque para seguir."
      ]
     }
    ],
@@ -359,6 +520,76 @@
       "O texto começa com <b>De manhã</b>.",
       "É <b>de manhã</b>. Toque para seguir."
      ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“No sábado, Lia guardou a bicicleta na garagem e trancou o portão.”</i> Onde Lia guardou a bicicleta?",
+     "c": "Na garagem",
+     "e": [
+      "No quintal",
+      "Na sala"
+     ],
+     "d": [
+      "Procure a palavra de LUGAR no texto.",
+      "O texto diz <b>na garagem</b>.",
+      "É <b>na garagem</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia a mesma cena: o que Lia fez depois de guardar a bicicleta?",
+     "c": "Trancou o portão",
+     "e": [
+      "Foi dormir",
+      "Chamou a Vera"
+     ],
+     "d": [
+      "O que vem DEPOIS no texto?",
+      "Ela <b>trancou o portão</b>.",
+      "É <b>trancou o portão</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“Theo achou uma carteira na calçada e correu para entregá-la ao dono.”</i> O que Theo achou?",
+     "c": "Uma carteira",
+     "e": [
+      "Um cachorro",
+      "Um guarda-chuva"
+     ],
+     "d": [
+      "O que estava na calçada?",
+      "O texto diz <b>uma carteira</b>.",
+      "É <b>uma carteira</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia a mesma cena: por que Theo correu?",
+     "c": "Para entregar a carteira ao dono",
+     "e": [
+      "Para fugir",
+      "Para pegar o ônibus"
+     ],
+     "d": [
+      "Qual foi o motivo no texto?",
+      "Ele correu para <b>devolver</b> a carteira.",
+      "É <b>para entregar a carteira ao dono</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“À tarde, dona Rosa regou as flores da varanda com um regador azul.”</i> Quando dona Rosa regou as flores?",
+     "c": "À tarde",
+     "e": [
+      "De manhã",
+      "À noite"
+     ],
+     "d": [
+      "Procure a palavra de TEMPO.",
+      "O texto começa com <b>À tarde</b>.",
+      "É <b>à tarde</b>. Toque para seguir."
+     ]
     }
    ],
    "dadosExtra": {
@@ -400,6 +631,62 @@
       "Prato vazio + gato lambendo os bigodes...",
       "Ele <b>comeu</b> tudo.",
       "É <b>o gato comeu a comida</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“Pedro chegou encharcado e pendurou o casaco pingando.”</i> Como estava o tempo lá fora?",
+     "c": "Estava chovendo",
+     "e": [
+      "Estava seco",
+      "Estava ventando só"
+     ],
+     "d": [
+      "Por que ele chegou encharcado?",
+      "Encharcado + casaco pingando = <b>chuva</b>.",
+      "É <b>estava chovendo</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“A mochila estava aberta e os cadernos espalhados pelo chão.”</i> O que dá para concluir?",
+     "c": "A mochila caiu ou foi mexida",
+     "e": [
+      "Os cadernos são novos",
+      "A mochila é azul"
+     ],
+     "d": [
+      "Mochila aberta + cadernos no chão...",
+      "Alguém <b>mexeu</b> ou ela <b>caiu</b>.",
+      "É <b>a mochila caiu ou foi mexida</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“João apagou as velas e todos cantaram batendo palmas.”</i> Que dia era?",
+     "c": "Aniversário do João",
+     "e": [
+      "Um dia de aula",
+      "Um dia de chuva"
+     ],
+     "d": [
+      "Velas + cantar + palmas...",
+      "Isso é uma festa de <b>aniversário</b>.",
+      "É <b>aniversário do João</b>. Toque para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "Leia: <i>“A Vera bocejou, esfregou os olhos e deitou na caminha.”</i> Como a Vera estava?",
+     "c": "Com sono",
+     "e": [
+      "Com fome",
+      "Com raiva"
+     ],
+     "d": [
+      "Bocejar + esfregar os olhos + deitar...",
+      "Ela estava <b>com sono</b>.",
+      "É <b>com sono</b>. Toque para seguir."
      ]
     }
    ],
@@ -480,6 +767,71 @@
       "A PROFESSORA",
       "A M&#195;E",
       "A DELEGADA"
+     ]
+    },
+    {
+     "resp": "O PADEIRO",
+     "pistas": [
+      "Eu acordo de <b>madrugada</b> para trabalhar.",
+      "Trabalho perto do <b>forno</b> quente o dia todo.",
+      "Fa&#231;o o <b>p&#227;o</b> quentinho que voc&#234; come no caf&#233;."
+     ],
+     "outros": [
+      "O JARDINEIRO",
+      "O DENTISTA",
+      "O MOTORISTA"
+     ]
+    },
+    {
+     "resp": "A JARDINEIRA",
+     "pistas": [
+      "Eu cuido das <b>plantas</b> da pra&#231;a.",
+      "Uso <b>luvas</b> e um regador todos os dias.",
+      "Foi perto do meu <b>canteiro</b> que achei a pegada."
+     ],
+     "outros": [
+      "A COZINHEIRA",
+      "A M&#201;DICA",
+      "A PILOTO"
+     ]
+    },
+    {
+     "resp": "O M&#201;DICO",
+     "pistas": [
+      "Eu uso um <b>jaleco</b> branco no trabalho.",
+      "Escuto o seu cora&#231;&#227;o com um <b>estetosc&#243;pio</b>.",
+      "Foi na minha <b>sala</b> que a testemunha se sentiu mal."
+     ],
+     "outros": [
+      "O PINTOR",
+      "O BOMBEIRO",
+      "O GARÇOM"
+     ]
+    },
+    {
+     "resp": "A PROFESSORA",
+     "pistas": [
+      "Eu escrevo no <b>quadro</b> todos os dias.",
+      "Corrijo as <b>li&#231;&#245;es</b> da turma toda.",
+      "A pista apareceu dentro do meu <b>caderno</b> de chamada."
+     ],
+     "outros": [
+      "A DENTISTA",
+      "A COZINHEIRA",
+      "A MOTORISTA"
+     ]
+    },
+    {
+     "resp": "O BOMBEIRO",
+     "pistas": [
+      "Eu visto uma roupa que aguenta o <b>fogo</b>.",
+      "Subo na <b>escada</b> alta do caminh&#227;o vermelho.",
+      "Fui eu que salvei o gato do <b>telhado</b> do primeiro caso."
+     ],
+     "outros": [
+      "O CARTEIRO",
+      "O PADEIRO",
+      "O DENTISTA"
      ]
     }
    ]
@@ -602,6 +954,57 @@
      "p2": "As outras começam com um verbo que MANDA: misture, corte, ligue.",
      "p3": "“O bolo é gostoso” só AFIRMA; as outras dão ORDEM — por isso ela é a diferente.",
      "regra": "instrução manda fazer (verbo de comando); afirmação só conta"
+    },
+    {
+     "selo": "AS INSTRUÇÕES",
+     "tipo": "texto",
+     "enun": "Três frases mandam fazer algo. <b>Qual NÃO manda?</b>",
+     "itens": [
+      {
+       "k": "a",
+       "n": "FECHE A JANELA"
+      },
+      {
+       "k": "b",
+       "n": "REGUE AS PLANTAS"
+      },
+      {
+       "k": "c",
+       "n": "A RUA É COMPRIDA"
+      },
+      {
+       "k": "d",
+       "n": "GUARDE OS LIVROS"
+      }
+     ],
+     "fora": "c",
+     "nomeFora": "A RUA É COMPRIDA",
+     "d1": "Qual frase NÃO manda você fazer nada?",
+     "d2": "Feche, regue, guarde são ORDENS. Uma só descreve.",
+     "d3": "A de fora é <b>A RUA É COMPRIDA</b>: ela apenas descreve, não manda fazer.",
+     "razoes": [
+      {
+       "t": "As outras mandam fazer (verbo de comando); esta só descreve.",
+       "ok": 1
+      },
+      {
+       "t": "Porque ela fala de rua.",
+       "ok": 0
+      },
+      {
+       "t": "Porque ela não tem plantas.",
+       "ok": 0
+      },
+      {
+       "t": "Porque ela é a maior.",
+       "ok": 0
+      }
+     ],
+     "enunPorque": "O que <b>A RUA É COMPRIDA</b> faz de diferente das outras três? Toque na razão certa.",
+     "p1": "Pode ser verdade, mas olhe o que as OUTRAS três fazem.",
+     "p2": "As outras começam com um verbo que MANDA: feche, regue, guarde.",
+     "p3": "“A rua é comprida” só DESCREVE; as outras dão ORDEM — por isso ela é a diferente.",
+     "regra": "instrução manda fazer (verbo de comando); descrição só conta"
     }
    ]
   },
@@ -645,6 +1048,50 @@
       "apertei"
      ],
      "dic": "Comando direto: 'aperte!'"
+    },
+    {
+     "img": "",
+     "ante": "Antes de guardar, ",
+     "dep": " a mesa.",
+     "cer": "limpe",
+     "out": [
+      "limpava",
+      "limpando"
+     ],
+     "dic": "Uma ORDEM: 'limpe!'"
+    },
+    {
+     "img": "",
+     "ante": "No fim da receita, ",
+     "dep": " o bolo em fatias.",
+     "cer": "corte",
+     "out": [
+      "cortava",
+      "cortei"
+     ],
+     "dic": "Comando: 'corte!'"
+    },
+    {
+     "img": "",
+     "ante": "Com a tinta pronta, ",
+     "dep": " o desenho devagar.",
+     "cer": "pinte",
+     "out": [
+      "pintava",
+      "pintei"
+     ],
+     "dic": "Uma ORDEM: 'pinte!'"
+    },
+    {
+     "img": "",
+     "ante": "Para não errar, ",
+     "dep": " as instruções em voz alta.",
+     "cer": "leia",
+     "out": [
+      "lia",
+      "lendo"
+     ],
+     "dic": "Comando: 'leia!'"
     }
    ],
    "dadosExtra": {
@@ -690,6 +1137,66 @@
       "mal"
      ],
      "dic": "'Seja BOM' → mau."
+    },
+    {
+     "img": "",
+     "ante": "O time jogou ",
+     "dep": " e perdeu.",
+     "cer": "mal",
+     "out": [
+      "mau"
+     ],
+     "dic": "'Jogou BEM' → mal."
+    },
+    {
+     "img": "",
+     "ante": "Aquele foi um ",
+     "dep": " negócio.",
+     "cer": "mau",
+     "out": [
+      "mal"
+     ],
+     "dic": "'Um BOM negócio' → mau."
+    },
+    {
+     "img": "",
+     "ante": "Ela se sentiu ",
+     "dep": " com a notícia.",
+     "cer": "mal",
+     "out": [
+      "mau"
+     ],
+     "dic": "'Sentiu BEM' → mal."
+    },
+    {
+     "img": "",
+     "ante": "O vilão tinha um coração ",
+     "dep": ".",
+     "cer": "mau",
+     "out": [
+      "mal"
+     ],
+     "dic": "'Um coração BOM' → mau."
+    },
+    {
+     "img": "",
+     "ante": "O rádio funciona ",
+     "dep": " quando chove.",
+     "cer": "mal",
+     "out": [
+      "mau"
+     ],
+     "dic": "'Funciona BEM' → mal."
+    },
+    {
+     "img": "",
+     "ante": "Não faça um ",
+     "dep": " juízo dos outros.",
+     "cer": "mau",
+     "out": [
+      "mal"
+     ],
+     "dic": "'Um BOM juízo' → mau."
     }
    ],
    "dadosExtra": {
@@ -720,6 +1227,16 @@
      "p": "MAU",
      "ac": "MAU",
      "d": "'Que cheiro ___!' Troque por BOM ('que cheiro BOM'): termina em U."
+    },
+    {
+     "p": "MAL",
+     "ac": "MAL",
+     "d": "'Ele foi ___ educado.' Troque por BEM ('foi BEM educado'): termina em L."
+    },
+    {
+     "p": "MAU",
+     "ac": "MAU",
+     "d": "'Foi um ___ dia.' Troque por BOM ('um BOM dia'): termina em U."
     }
    ]
   },
@@ -744,6 +1261,20 @@
      "voz": "mal",
      "pista": "O contrário de BEM (dormiu ___). Escreva com L no fim.",
      "dic": "Troca por BEM: então é <b>MAL</b>."
+    },
+    {
+     "palavra": "MAU",
+     "img": "",
+     "voz": "mau",
+     "pista": "'Que cheiro ___!' — troque por BOM. Escreva com U no fim.",
+     "dic": "Cabe BOM: então é <b>MAU</b>."
+    },
+    {
+     "palavra": "MAL",
+     "img": "",
+     "voz": "mal",
+     "pista": "'A porta foi ___ instalada' — troque por BEM. Escreva com L no fim.",
+     "dic": "Cabe BEM: então é <b>MAL</b>."
     }
    ],
    "dadosExtra": {
