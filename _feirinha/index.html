@@ -2133,7 +2133,15 @@ function limpa(){ telaNarrou=false;
      saiu: troquei de tela, ela morre. NAO paro o `vz` (o elogio do acerto, que a
      peca dispara ao mudar de rodada — cortar ele foi o motivo de eu nao parar
      nada antes; mas elogio toca no `vz`, nao no `narr`). */
-  try{ if(narr){ narr.pause(); } }catch(_e){}
+  try{ if(narr){ narr.pause(); narr.currentTime=0; } }catch(_e){}
+  /* ⚠️ Marcos (ago/2026): *"nao deixar a fala tocar ao passar para outra fase"*.
+     `limpa()` roda na TROCA DE TELA/FASE (as rodadas dentro da fase NAO chamam
+     limpa — o elogio do acerto fica intacto). Aqui a gente cala TAMBEM o `vz`
+     (alto-falante), mata um `_tocaSeq` (fala bilingue) em curso e zera o alvo da
+     fala, para NADA da tela anterior vazar para a nova. */
+  try{ if(typeof vz!=="undefined"&&vz){ vz.pause(); vz.currentTime=0; } }catch(_e){}
+  try{ if(typeof paraZap==="function") paraZap(); }catch(_e){}
+  _seqId++; falaAtual="";
   try{ paraBoca(); }catch(_e){}
   tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML=""; btnOuvir=null; btnDica=null;
   /* solta o teclado de verdade: so a fase que o pediu escuta as teclas */
