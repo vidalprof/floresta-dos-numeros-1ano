@@ -1150,6 +1150,50 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-completar .zap:active, .mec-completar .zap.tocando{background-color:rgba(255,212,59,.85)}
 
 .mec-completar .medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%; background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center; box-shadow:0 6px 0 #c9a52f}
+/* ==== PECA: conserte-o-erro ==== */
+@-webkit-keyframes kf-conserte-o-erro-ceshine{0%{left:-45%}55%{left:120%}100%{left:120%}}@keyframes kf-conserte-o-erro-ceshine{0%{left:-45%}55%{left:120%}100%{left:120%}}@-webkit-keyframes kf-conserte-o-erro-treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-conserte-o-erro-treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}@-webkit-keyframes kf-conserte-o-erro-pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}@keyframes kf-conserte-o-erro-pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+
+.mec-conserte-o-erro .qfig{position:relative;width:186px;max-width:70vw;margin:2px auto 12px;padding:5px; border-radius:16px;overflow:hidden;text-align:center; background:rgba(255,255,255,.12); -webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1); border:1px solid rgba(255,255,255,.5); box-shadow:0 12px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.5)}
+
+.mec-conserte-o-erro .qfig:before{content:"";position:absolute;top:-60%;left:-45%;width:55%;height:220%;z-index:2;pointer-events:none; background:-webkit-linear-gradient(305deg,transparent,rgba(255,255,255,.5),transparent); background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent); -webkit-transform:rotate(8deg);transform:rotate(8deg); -webkit-animation:kf-conserte-o-erro-ceshine 3.6s ease-in-out infinite;animation:kf-conserte-o-erro-ceshine 3.6s ease-in-out infinite}
+
+.mec-conserte-o-erro .qfig img{position:relative;z-index:1;width:100%;height:auto;display:block; margin:0 auto;border-radius:12px;-o-object-fit:contain;object-fit:contain;object-position:center; -webkit-filter:drop-shadow(0 6px 9px rgba(0,0,0,.32));filter:drop-shadow(0 6px 9px rgba(0,0,0,.32))}@media (max-height:560px){
+
+.mec-conserte-o-erro .qfig{width:140px;padding:4px}}@media (min-height:760px){
+
+.mec-conserte-o-erro .qfig{width:200px}}@media (prefers-reduced-motion:reduce){
+
+.mec-conserte-o-erro .qfig:before{-webkit-animation:none;animation:none;display:none}}
+
+.mec-conserte-o-erro .cadr{max-width:430px;margin:13px auto 0;padding:10px 8px 12px;border-radius:16px; background:rgba(255,253,246,.93);border:3px solid #a08e73;color:#3a2c1a;}
+
+.mec-conserte-o-erro .cadt{font-size:13px;font-weight:700;letter-spacing:.5px;margin-bottom:8px;}
+
+.mec-conserte-o-erro .fila{display:block;text-align:center}
+
+.mec-conserte-o-erro .pt{display:inline-block;vertical-align:middle;position:relative;min-width:52px;min-height:52px; padding:9px 11px;margin:4px 3px;line-height:34px;border-radius:14px; background:#fffdf6;color:#221a12;font-size:19px;font-weight:800;cursor:pointer; box-shadow:0 4px 0 #c9bda6}
+
+.mec-conserte-o-erro .pt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+
+.mec-conserte-o-erro .pt.achei{background:#ffeeb0;box-shadow:0 0 0 4px #ffd54a;border:3px dashed #8a6b14;line-height:28px}
+
+.mec-conserte-o-erro .pt.novo{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+
+.mec-conserte-o-erro .pt.treme{-webkit-animation:kf-conserte-o-erro-treme .32s;animation:kf-conserte-o-erro-treme .32s}
+
+.mec-conserte-o-erro .pt.coe_pisca{-webkit-animation:kf-conserte-o-erro-pisca .7s infinite;animation:kf-conserte-o-erro-pisca .7s infinite}
+
+.mec-conserte-o-erro .bdg{position:absolute;right:-6px;top:-8px;min-width:24px;height:24px;line-height:24px; border-radius:12px;font-size:13px;font-weight:800;font-style:normal;padding:0 5px}
+
+.mec-conserte-o-erro .bdg.b1{background:#ffd54a;color:#33280a}
+
+.mec-conserte-o-erro .bdg.b2{background:#1f6b12;color:#fff}
+
+.mec-conserte-o-erro .escolha{display:block;min-height:6px;margin-top:6px}
+
+.mec-conserte-o-erro .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
+
+.mec-conserte-o-erro .medal:before{content:"\2605"}
 /* ==== PECA: digitar ==== */
 
 
@@ -1290,6 +1334,126 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-escolher .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
 
 .mec-escolher .medal:before{content:"\2605"}
+/* ==== PECA: forca ==== */
+@-webkit-keyframes kf-forca-pul{50%{-webkit-transform:scale(1.2)}}@keyframes kf-forca-pul{50%{transform:scale(1.2)}}@-webkit-keyframes kf-forca-sobe{0%{opacity:0;-webkit-transform:scale(.6)}30%{opacity:1;-webkit-transform:scale(1.1)}100%{opacity:0;-webkit-transform:translateY(-40px)}}@keyframes kf-forca-sobe{0%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-40px)}}
+
+.mec-forca .fclin{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-align:center;-webkit-align-items:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+
+.mec-forca .fcpista{-webkit-box-flex:0;-webkit-flex:0 1 auto;flex:0 1 auto;text-align:center}
+
+.mec-forca .zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none; width:46px;height:46px;min-width:46px;margin-left:10px;padding:0;border:0; border-radius:50%;cursor:pointer; background-color:#efe6d2; background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E"); background-repeat:no-repeat;background-position:center center; -webkit-background-size:24px 24px;background-size:24px 24px; -webkit-transition:background-color .15s;transition:background-color .15s}
+
+.mec-forca .zap:hover{background-color:#ded3b8}
+
+.mec-forca .zap:active, .mec-forca .zap.tocando{background-color:#ffd54a}
+
+.mec-forca .fcfig{position:relative;width:100%;max-width:190px;margin:11px auto 0;border-radius:16px; background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.34);overflow:hidden;box-shadow:0 4px 0 rgba(201,189,166,.5)}
+
+.mec-forca .fcimg{position:relative;width:100%;height:0;padding-bottom:75%; background-repeat:no-repeat;background-position:center center; -webkit-background-size:contain;background-size:contain}
+
+.mec-forca .fcimg img{position:absolute;left:0;top:0;width:100%;height:100%; object-fit:contain;-o-object-fit:contain}
+
+.mec-forca .fctampa{position:absolute;left:0;top:0;right:0;bottom:0;background:#3c6ee0;color:#fff; padding:8px 10px;font-size:14px;font-weight:700;line-height:1.2;text-align:center; -webkit-transition:opacity .5s;transition:opacity .5s}
+
+.mec-forca .fctampa b{display:block;font-size:30px;line-height:1.15}
+
+.mec-forca .fcfig.tapada{max-width:300px;box-shadow:none;background:transparent}
+
+.mec-forca .fcfig.tapada .fcimg{display:none}
+
+.mec-forca .fcfig.tapada .fctampa{position:static;border-radius:16px;font-size:13px;padding:9px 12px}
+
+.mec-forca .fcfig.tapada .fctampa b{display:inline-block;font-size:18px;margin-right:7px;line-height:1}
+
+.mec-forca .fcfig.aberta .fctampa{opacity:0;visibility:hidden}
+
+.mec-forca .fcfig.aberta{-webkit-animation:kf-forca-pul .5s;animation:kf-forca-pul .5s}
+
+.mec-forca .casas{margin-top:13px;text-align:center}
+
+.mec-forca .letrafc{display:inline-block;width:38px;height:44px;line-height:40px;margin:3px;border-radius:8px; background:#fffdf6;color:#221a12;font-size:22px;font-weight:800; border-bottom:4px solid #c9bda6;vertical-align:middle}
+
+.mec-forca .letrafc.achada{background:#d6f5c8;border-bottom-color:#7cb464}
+
+.mec-forca .letrafc.fechou{background:#2e7a1c;color:#fff;border-bottom-color:#1f5010; -webkit-animation:kf-forca-pul .5s;animation:kf-forca-pul .5s}
+
+.mec-forca .letrafc.dada{background:#fff0bd;border-bottom-color:#c9a52f}
+
+.mec-forca .chances{margin-top:8px;font-size:15px;font-weight:700}
+
+.mec-forca .chance{display:inline-block;width:20px;height:20px;border-radius:50% 50% 45% 45%; background:#f6c23a;border:2px solid #fff3c9;margin:0 3px;vertical-align:middle}
+
+.mec-forca .chance.foi{background:transparent;border-style:dashed;border-color:#9c8f7a}
+
+.mec-forca .f2_ctx{display:inline-block;margin-top:6px;color:#f4efe6; background:rgba(24,20,14,.62);padding:3px 10px;border-radius:9px}
+
+.mec-forca .teclado{margin-top:10px;display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+
+.mec-forca .tecl{width:44px;height:46px;line-height:46px;margin:2px;border:0;border-radius:11px; background:#fffdf6;color:#221a12;font-size:19px;font-weight:800;cursor:pointer; box-shadow:0 3px 0 #c9bda6}
+
+.mec-forca .tecl:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #c9bda6}
+
+.mec-forca .tecl.usada{background:#5c5245;color:#e6e1d8;box-shadow:none;cursor:default;pointer-events:none}
+
+.mec-forca .tecl.usada.certa{background:#2e7a1c;color:#fff}
+
+.mec-forca .tecl.usada.fora{text-decoration:line-through}
+
+.mec-forca .achouf{position:fixed;left:0;right:0;top:34%;text-align:center;font-size:32px;font-weight:800; color:var(--texto,#fff);text-shadow:0 3px 10px rgba(0,0,0,.6);pointer-events:none; -webkit-animation:kf-forca-sobe 1.4s ease-out;animation:kf-forca-sobe 1.4s ease-out}
+
+.mec-forca .achouf.alta{top:13%}
+
+.mec-forca .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
+
+.mec-forca .medal:before{content:"\2605"}@media (max-width:400px){
+
+.mec-forca .letrafc{width:34px;height:42px;line-height:38px;font-size:20px;margin:2px}
+
+.mec-forca .balao{font-size:15px;padding:10px 12px}
+
+.mec-forca .fcfig{max-width:78px;margin-top:6px}
+
+.mec-forca .fcfig.tapada{max-width:290px}
+
+.mec-forca .casas{margin-top:7px}
+
+.mec-forca .chances{margin-top:3px}
+
+.mec-forca .teclado{margin-top:5px}
+
+.mec-forca .tecl{width:40px;height:40px;line-height:40px;font-size:18px;margin:2px}}@media (min-width:860px) and (max-height:520px){
+
+.mec-forca .fcfig{position:fixed;left:14px;top:62px;width:200px;max-width:200px;margin:0}
+
+.mec-forca .fcfig.tapada{position:static;width:100%;max-width:300px;margin:9px auto 0}}@media (max-height:470px){
+
+.mec-forca .prog{margin:4px 0 6px}
+
+.mec-forca .selo{font-size:11px;padding:3px 10px;margin-bottom:5px}
+
+.mec-forca .balao{font-size:13px;padding:7px 11px}
+
+.mec-forca .balao + *{margin-top:8px}
+
+.mec-forca .casas{margin-top:8px}
+
+.mec-forca .letrafc{width:32px;height:38px;line-height:34px;font-size:18px;margin:2px}
+
+.mec-forca .chances{margin-top:5px;font-size:13px}
+
+.mec-forca .teclado{margin-top:7px}
+
+.mec-forca .tecl{height:42px;line-height:42px;font-size:17px}
+
+.mec-forca .hint{font-size:12px;margin-top:6px}
+
+.mec-forca .fcfig{max-width:104px;margin-top:6px}
+
+.mec-forca .fcfig.tapada .fctampa{font-size:12px;padding:6px 9px}
+
+.mec-forca .fcfig.tapada .fctampa b{font-size:16px}
+
+.mec-forca .zap{width:44px;height:44px;min-width:44px;margin-left:7px}}
 /* ==== PECA: intruso ==== */
 @-webkit-keyframes kf-intruso-intr{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-intruso-intr{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
@@ -1566,14 +1730,14 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    ⚠️ A chave do localStorage E CRITICA: no GitHub Pages TODAS as atividades
    moram na MESMA origem (vidalprof.github.io). Duas atividades com a chave
    "jardim_med" apagariam o progresso uma da outra na mesma tarde. */
-var ID = {"pre": "dp", "mascote": "raposa", "mascoteNome": "Detetive Vera", "titulo": "A Agência dos Detetives das Palavras", "sub": "Português · 5º ano · Pronomes, interpretação (narrativo/injuntivo), mau × mal", "fundo": "dp_fundo", "fundoSuave": false, "crachas": 6, "convite": "<b>Quem vai jogar</b> hoje?", "narrar": "instrucao"};
+var ID = {"pre": "dp", "mascote": "raposa", "mascoteNome": "Detetive Filó", "titulo": "A Agência dos Detetives das Palavras", "sub": "Português · 5º ano · Pronomes, interpretação (narrativo/injuntivo), mau × mal", "fundo": "dp_fundo", "fundoSuave": false, "crachas": 6, "convite": "<b>Quem vai jogar</b> hoje?", "narrar": "instrucao"};
 
 "use strict";
 /* ============ IMAGENS ============ */
 /* ⚠️ O NOME DO MASCOTE, DECLARADO. Nao e enfeite: o `_qa/clone.py`
    le esta linha de TODAS as atividades e reprova se o nome de um
    mascote alheio aparecer no texto desta.                            */
-var MASCOTE_NOME="Detetive Vera";  /* ID.mascoteNome */
+var MASCOTE_NOME="Detetive Filó";  /* ID.mascoteNome */
 var IMGS=[];
 var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
@@ -4740,6 +4904,406 @@ function recomeca(){ rodada=0; telaCompletar(); }
   })();
 };
 
+/* ==== PECA: conserte-o-erro ==== */
+MEC["conserte-o-erro"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-conserte-o-erro";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — DECLARACAO NO <script> ERRADO.
+   O integrador leva para a atividade **o SEGUNDO <script>** da peca (o
+   primeiro e o motorzinho da bancada, que o motor de verdade ja tem).
+   Eu declarei o `figEl` la em cima, junto do `el()`, e ele simplesmente
+   nao viajou: dentro da atividade a fase estourava com "figEl is not
+   defined" e o jogador ficava PRESO. Na bancada passava, porque la o
+   arquivo inteiro roda. Tudo o que a MECANICA usa mora no segundo. */
+var figEl = window.imgEl || null;
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (neutro, 8 a 10 anos). Ao copiar a peça para uma
+   atividade troque APENAS este bloco. As três regras do conteúdo:
+     1. o erro é UM só e é PLAUSÍVEL — o erro que a criança comete de verdade;
+     2. as opções de conserto também são plausíveis (nada de 2, 4, 6, 500);
+     3. `por` explica o PORQUÊ em uma frase — é o fecho da rodada.          */
+var RODS=[
+ {img:"", selo:"O CADERNO DO TÉO", cab:"CONTANDO DE 2 EM 2",
+  bal:"O T&#233;o contou de <b>2 em 2</b>. Um peda&#231;o ficou errado. Ache e conserte.",
+  pecas:["2","4","6","9","10"], erro:3, certa:"8", ops:["8","7","12"],
+  por:"Depois do 6, pulando de 2 em 2, vem o <b>8</b>. O T&#233;o pulou 3.",
+  dicas:["Conte baixinho: 2, 4, 6... qual vem depois do 6?",
+         "Todos os peda&#231;os pulam de 2 em 2. Procure o que pulou 3.",
+         "Era este aqui. Eu marquei para voc&#234;: agora escolha o certo."],
+  dicas2:["Comece no 6 e conte mais dois: 7, <b>8</b>.",
+          "Entre o 6 e o 10 s&#243; cabe um n&#250;mero par. Ele est&#225; piscando.",
+          "Era o <b>8</b>. Eu troquei para voc&#234; ver: 6, 8, 10."]},
+
+ {selo:"A FRASE DO TÉO", cab:"O QUE A ABELHA FAZ",
+  bal:"Uma palavra desta frase est&#225; trocada. Ache e conserte.",
+  pecas:["A","ABELHA","FAZ","O","NINHO"], erro:4, certa:"MEL", ops:["MEL","LEITE","P&#195;O"],
+  por:"Quem faz ninho &#233; o passarinho. A abelha faz o <b>mel</b>.",
+  dicas:["Leia a frase baixinho, do come&#231;o ao fim.",
+         "Pense na abelha de verdade: o que ela guarda na colmeia?",
+         "Era a &#250;ltima palavra. Eu marquei para voc&#234;."],
+  dicas2:["&#201; algo do&#231;inho que a gente come no p&#227;o.",
+          "N&#227;o vem de vaca nem de forno. Est&#225; piscando.",
+          "Era o <b>mel</b>. Eu troquei para voc&#234; ler a frase inteira."]},
+
+ {selo:"A CONTA DO TÉO", cab:"SOMANDO",
+  bal:"O T&#233;o somou e um n&#250;mero n&#227;o bateu. Ache e conserte.",
+  pecas:["10","+","5","=","14"], erro:4, certa:"15", ops:["15","16","13"],
+  por:"10 mais 5 d&#225; <b>15</b>. O T&#233;o contou um a menos.",
+  dicas:["Comece no 10 e conte mais 5 nos dedos.",
+         "Os n&#250;meros da conta est&#227;o certos. O erro est&#225; depois do igual.",
+         "Era o resultado. Eu marquei para voc&#234;."],
+  dicas2:["11, 12, 13, 14, <b>15</b> — cinco dedos a partir do 10.",
+          "&#201; um a mais do que o T&#233;o escreveu. Est&#225; piscando.",
+          "Era o <b>15</b>. Eu troquei para voc&#234; ver a conta certa."]}
+];
+
+var rod=0;            /* rodada da vez */
+var etapa="achar";    /* achar -> trocar -> pronto */
+var errosA=0, errosT=0;
+var pecas=[], opcoes=[], elHint=null, elEsc=null, barraP=null, telaA=null, ger=0;
+
+/* som proprio de "achei o erro": nao e o acerto da fase, e um passo dentro dela.
+   Reusar o sCerto aqui faria a crianca achar que ja terminou.               */
+function sAchou(){ nota(659.25,.10,.15,"triangle",0); nota(880,.13,.14,"triangle",.075); }
+
+function pecaConserta(){
+  rod=0; ger++;
+  limpa();
+  desenha();
+}
+
+function desenha(){
+  limpa(); apagaDica(); ger++;
+  etapa="achar"; errosA=0; errosT=0; pecas=[]; opcoes=[];
+  var R=RODS[rod], i, b;
+  var t=el("div","tela"); telaA=t;
+  setProg(t,Math.round(rod*100/RODS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  if(R.img&&figEl){ var _qf=el("div","qfig",""); _qf.appendChild(figEl(R.img));
+                    c.appendChild(_qf); }
+  c.appendChild(el("div","balao",R.bal));
+
+  /* o "caderno do colega": a resposta JA FEITA, com o erro dentro */
+  var q=el("div","cadr");
+  q.appendChild(el("div","cadt",R.cab));
+  var f=el("div","fila");
+  for(i=0;i<R.pecas.length;i++){
+    b=el("span","pt",R.pecas[i]);
+    b._i=i;
+    b.onclick=(function(x){ return function(){ tocaPeca(x); }; })(b);
+    f.appendChild(b); pecas.push(b);
+  }
+  q.appendChild(f);
+  c.appendChild(q);
+
+  elEsc=el("div","escolha","");
+  c.appendChild(elEsc);
+  elHint=el("div","hint","Toque no peda&#231;o que est&#225; <b>errado</b>.");
+  c.appendChild(elHint);
+  t.appendChild(c); app.appendChild(t);
+  marcaVez();
+}
+
+/* ---------------- ETAPA 1: ACHAR O ERRO ---------------- */
+function tocaPeca(b){
+  if(etapa!=="achar"){ sTap(); return; }
+  var R=RODS[rod];
+  if(b._i===R.erro){ achou(b); return; }
+  /* ERRO NAO PUNE: tremidinha, som grave curto e o andaime CRESCE. */
+  sErro(); errosA++;
+  b.className="pt treme";
+  destreme(b);
+  ajudaAchar(errosA);
+}
+
+function achou(b){
+  sAchou();
+  b.className="pt achei";
+  b.appendChild(el("i","bdg b1","?"));
+  etapa="trocar";
+  apagaDica();
+  elHint.innerHTML="Agora escolha o peda&#231;o <b>certo</b> para o lugar.";
+  montaOpcoes();
+  marcaVez();
+}
+
+/* ⚠️ A ORDEM AQUI E O CONSERTO (defeito medido ago/2026): antes a dica saia
+   PRIMEIRO e o `achou()` logo atras chamava `apagaDica()` — a fala do 3o
+   degrau, justamente a que EXPLICA ("era este aqui, eu marquei para voce"),
+   aparecia e sumia no mesmo quadro. A crianca via a peca se marcar sozinha
+   sem entender por que. Revela-se PRIMEIRO, e a dica vem DEPOIS, para ficar
+   na tela enquanto ela escolhe o conserto. */
+function ajudaAchar(n){
+  var R=RODS[rod];
+  /* 3o toque errado: a peca marca sozinha e SEGUE. Nunca trava. */
+  if(n>=3){ achou(pecas[R.erro]); mostraDica(R.dicas[2]); return; }
+  mostraDica(R.dicas[n-1]);
+}
+
+/* ---------------- ETAPA 2: CONSERTAR ---------------- */
+function montaOpcoes(){
+  var R=RODS[rod], i, o, lista=[];
+  for(i=0;i<R.ops.length;i++) lista.push(R.ops[i]);
+  /* EMBARALHADAS: com a certa sempre na 1a posicao a crianca aprende o lugar,
+     nao o conteudo (defeito da Fabrica de Estrelas). */
+  baguncar(lista);
+  var cx=el("div","opts");
+  for(i=0;i<lista.length;i++){
+    o=el("div","opt",lista[i]);
+    o._t=lista[i];
+    o.onclick=(function(x){ return function(){ escolhe(x); }; })(o);
+    cx.appendChild(o); opcoes.push(o);
+  }
+  elEsc.innerHTML="";
+  elEsc.appendChild(cx);
+}
+
+function escolhe(o){
+  if(etapa!=="trocar"){ sTap(); return; }
+  var R=RODS[rod];
+  if(o._t===R.certa){ conserta(o._t); return; }
+  sErro(); errosT++;
+  o.className="opt no";
+  devolve(o);
+  ajudaTrocar(errosT);
+}
+
+function ajudaTrocar(n){
+  var R=RODS[rod], i;
+  /* revela e SEGUE — a peca nunca trava. A dica vem DEPOIS do conserto (ver a
+     nota em `ajudaAchar`), senao o `apagaDica()` de dentro do `conserta()` a
+     engolia no mesmo quadro. */
+  if(n>=3){ conserta(R.certa); mostraDica(R.dicas2[2]); return; }
+  mostraDica(R.dicas2[n-1]);
+  if(n===2){                       /* apoio concreto: a certa acende */
+    for(i=0;i<opcoes.length;i++)
+      if(opcoes[i]._t===R.certa) opcoes[i].className="opt ok";
+  }
+}
+
+function conserta(txt){
+  var R=RODS[rod], b=pecas[R.erro];
+  b.innerHTML=txt;
+  b.className="pt novo";
+  b.appendChild(el("i","bdg b2","✓"));
+  sCerto();
+  etapa="pronto";
+  marcaVez();
+  apagaDica();
+  elHint.innerHTML="Consertado!";
+  if(barraP) barraP.style.width=Math.round((rod+1)*100/RODS.length)+"%";
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!telaA||!telaA.parentNode) return;
+    /* o FECHO EXPLICA (autoexplicacao induzida): nao basta "parabens", tem de
+       dizer o que estava errado e por que. E o que fica depois da rodada. */
+    mostraBanner("Consertado! "+R.por, proxima);
+  },700);
+}
+
+function proxima(){
+  rod++;
+  if(rod>=RODS.length){ fimConserta(); return; }
+  desenha();
+}
+
+/* ---------------- os ajudantes ---------------- */
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda de
+   geracao ele mexeria numa tela que ja saiu da frente da crianca. */
+function destreme(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!telaA||!telaA.parentNode) return;
+    if(b.className.indexOf("achei")<0&&b.className.indexOf("novo")<0) b.className="pt";
+  },340);
+}
+function devolve(o){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!telaA||!telaA.parentNode) return;
+    if(o.className.indexOf("ok")<0) o.className="opt";
+  },700);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* data-qa: UM alvo de cada vez, e so para o auditor-jogador (_qa/jogador.js).
+   Na etapa 1 e o peda&#231;o errado; na etapa 2 e a opcao certa. Dois "1" ao
+   mesmo tempo fariam o jogador tocar no da frente para sempre.            */
+function marcaVez(){
+  var R=RODS[rod], i;
+  for(i=0;i<pecas.length;i++)
+    pecas[i].setAttribute("data-qa",(etapa==="achar"&&i===R.erro)?"1":"0");
+  for(i=0;i<opcoes.length;i++)
+    opcoes[i].setAttribute("data-qa",(etapa==="trocar"&&opcoes[i]._t===R.certa)?"1":"0");
+}
+
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — O BECO, e este era o gemeo do `relampago`.
+   Esta tela e chamada DIRETO quando as rodadas acabam, entao ela APARECE
+   dentro da atividade — e o botao dela so sabia voltar para `pecaConserta`, o
+   comeco da propria fase. A crianca fechava a fase e ficava presa refazendo a
+   mesma, para sempre. O integrador tem a ponte que desvia, mas ela so alcanca
+   quem chama `fimDaPeca()`.
+   Agora sao DUAS telas: esta, que a crianca ve e que segue em frente, e a de
+   bancada logo abaixo, com o "jogar de novo" — a unica que o integrador troca.
+   Medido pelo `_qa/beco.py`. */
+function fimConserta(){
+  limpa(); apagaDica(); ger++;
+  var t=el("div","tela"); telaA=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CONFERENTE DE PRIMEIRA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; achou e consertou <b>3 erros</b>. Quem confere aprende duas vezes."));
+  var b=el("button","btn","Continuar &#187;");
+  b.onclick=function(){ fimDaPeca(); };
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+
+/* o fim NA BANCADA: dentro da atividade o integrador aponta isto para a
+   proxima fase, e a tela abaixo nunca chega a existir. */
+function fimDaPeca(){
+  limpa(); apagaDica(); ger++;
+  var t=el("div","tela"); telaA=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Esta &#233; a pe&#231;a <b>CONSERTE O ERRO</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=pecaConserta;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+    if(f && f.dados) RODS = f.dados;
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    pecaConserta();
+  })();
+};
+
 /* ==== PECA: digitar ==== */
 MEC["digitar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-digitar";
@@ -5520,6 +6084,451 @@ function fimDaPeca(){
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaEscolher();
+  })();
+};
+
+/* ==== PECA: forca ==== */
+MEC["forca"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-forca";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (bichos do Brasil, 8 anos). Ao copiar a peça para
+   uma atividade, troque APENAS esta lista.
+
+   ⚠️ `p`  = a palavra que a criança DIGITA — sempre SEM acento e sem Ç.
+   ⚠️ `ac` = a palavra como ela se escreve DE VERDADE — é esta que sobe na
+             faixa quando a criança fecha. Errado seria ensinar "JACARE".  */
+/* ⚠️ `fig` (OPCIONAL, ago/2026) = a ARTE da palavra. Numa atividade de verdade
+      aqui entra a arte de IA (o motor monta com `imgEl`, e basta o NOME sem a
+      pasta e sem o `.png`); na bancada vai um SVG embutido, para a peça rodar
+      sozinha e para o modo poder ser MEDIDO. Item sem `fig` = a peça de sempre,
+      só com a pista escrita. */
+var ARTE={
+ LEAO:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'>"+
+  "<circle cx='100' cy='76' r='60' fill='#c8802f'/>"+
+  "<circle cx='52' cy='44' r='15' fill='#a9661f'/><circle cx='148' cy='44' r='15' fill='#a9661f'/>"+
+  "<circle cx='100' cy='78' r='43' fill='#f2c078'/>"+
+  "<circle cx='84' cy='70' r='5' fill='#3a2b1c'/><circle cx='116' cy='70' r='5' fill='#3a2b1c'/>"+
+  "<path d='M100 90 L91 82 h18 z' fill='#8a4b2a'/>"+
+  "<g stroke='#8a4b2a' stroke-width='3' fill='none' stroke-linecap='round'>"+
+   "<path d='M100 90 v7'/><path d='M100 97 q-11 9 -19 1'/><path d='M100 97 q11 9 19 1'/></g>"+
+  "<g stroke='#a9661f' stroke-width='2' stroke-linecap='round'>"+
+   "<path d='M74 92 L54 88'/><path d='M74 98 L55 100'/>"+
+   "<path d='M126 92 L146 88'/><path d='M126 98 L145 100'/></g></svg>",
+ TUCANO:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'>"+
+  "<rect x='30' y='120' width='140' height='10' rx='5' fill='#8a5a34'/>"+
+  "<path d='M58 96 L24 122 L54 114 Z' fill='#2b2b2b'/>"+
+  "<ellipse cx='92' cy='82' rx='40' ry='36' fill='#2b2b2b'/>"+
+  "<ellipse cx='84' cy='92' rx='23' ry='22' fill='#ffe08a'/>"+
+  "<path d='M124 62 q52 4 44 26 q-14 14 -44 4 z' fill='#f4941f'/>"+
+  "<path d='M124 74 q40 2 44 14' stroke='#c96f12' stroke-width='3' fill='none'/>"+
+  "<circle cx='110' cy='58' r='8' fill='#fffdf6'/><circle cx='110' cy='58' r='4' fill='#1a1a1a'/>"+
+  "<g stroke='#f4941f' stroke-width='4' stroke-linecap='round'>"+
+   "<path d='M86 116 v6'/><path d='M100 116 v6'/></g></svg>",
+ JACARE:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'>"+
+  "<rect x='0' y='108' width='200' height='42' fill='#7ec8e3'/>"+
+  "<path d='M16 108 q4 -22 34 -26 l104 -4 q30 2 32 14 q2 12 -18 14 l-152 2 z' fill='#4e8f3a'/>"+
+  "<path d='M20 110 l150 -3 q14 3 2 9 l-140 2 z' fill='#3f7a2e'/>"+
+  "<g fill='#fffdf6'><path d='M40 104 l6 -8 l6 8 z'/><path d='M62 103 l6 -8 l6 8 z'/>"+
+   "<path d='M84 102 l6 -8 l6 8 z'/><path d='M106 101 l6 -8 l6 8 z'/></g>"+
+  "<ellipse cx='150' cy='74' rx='13' ry='11' fill='#4e8f3a'/>"+
+  "<circle cx='150' cy='74' r='6' fill='#f6f1d8'/><circle cx='150' cy='74' r='3' fill='#1a1a1a'/>"+
+  "<g fill='#3f7a2e'><path d='M96 82 l8 -12 l8 12 z'/><path d='M116 80 l8 -12 l8 12 z'/></g></svg>"
+};
+var FORCAP=[
+ {p:"LEAO",   ac:"LEÃO",   d:"O bicho de juba que dorme quase o dia todo.", fig:ARTE.LEAO},
+ {p:"TUCANO", ac:"TUCANO",      d:"O p&#225;ssaro do bico grande e colorido da floresta.", fig:ARTE.TUCANO},
+ {p:"JACARE", ac:"JACARÉ", d:"Vive no rio, tem couro duro e boca bem comprida.", fig:ARTE.JACARE}
+];
+/* ⭐ O MODO DA FIGURA (opcional — o de hoje continua o PADRÃO):
+   · "pista"  = a figura aparece junto com a pista, desde o começo;
+   · "premio" = fica tapada e só se revela quando a palavra é descoberta.   */
+var FORCA_FIG="pista"; /*TECNICA*/
+var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; /*TECNICA*/
+var MAXE=6;      /* seis baloes: erro tem que caber, senao a peca vira prova */
+
+var ger=0;       /* geracao da tela: mata setTimeout de fase que ja saiu */
+var idx=0;       /* palavra da vez */
+
+/* ⚠️⚠️ A VOZ É GRAVADA, SEMPRE. Dentro da atividade montada a ponte do
+   integrador injeta o `diz` que toca o mp3 da casa (Edge TTS); sozinha, na
+   bancada, a peça fica calada de propósito — voz-robô do navegador nunca vai
+   para a criança (portão `_qa/vozrobo.py`). Daí a guarda `typeof`.
+   O que a voz fala é EXATAMENTE o que está escrito ao lado do botão. */
+function voz(txt){
+  if(!txt) return;
+  var t=String(txt).replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){
+    return String.fromCharCode(Number(n)); });
+  if(typeof diz==="function") diz(t);
+}
+/* ⚠️ A FIGURA vem do MOTOR quando é arte de IA (`imgEl` sabe onde mora a pasta
+   `img/`). Pegar por `window.imgEl` — e não por `typeof imgEl` — deixa o nome
+   DECLARADO, e o portão "função que não existe" consegue medir. */
+var figEl = window.imgEl || null;
+/* a caixa da figura: SVG embutido (bancada) ou a arte de IA (atividade).
+   Figura que não existe NÃO vai para a tela: quadradinho vazio é pior que
+   figura nenhuma. */
+function caixaFig(f){
+  var cx,im,s;
+  if(!f) return null;
+  s=String(f);
+  cx=el("div","fcfig","");
+  im=el("div","fcimg","");
+  if(s.charAt(0)==="<"){                  /* SVG embutido: a bancada */
+    im.style.backgroundImage="url(\"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s)+"\")";
+  }else if(s.indexOf("data:")===0||s.indexOf("/")>=0){
+    im.style.backgroundImage="url(\""+s+"\")";
+  }else if(figEl){                        /* a arte de IA da atividade */
+    im.appendChild(figEl(s));
+  }else return null;                      /* sem motor e sem desenho: nada */
+  cx.appendChild(im);
+  return cx;
+}
+/* ⭐ O ALTO-FALANTE. Ele recebe um OBJETO (`{t:texto, rot:rótulo}`) e não uma
+   string: assim, quando a palavra fecha e a pista vira a palavra certa, o
+   MESMO botão passa a falar a palavra — sem botão novo e sem ficar dizendo a
+   pista de uma palavra que a criança já descobriu.
+   ⚠️ o evento para nele: tocar no botão nunca pode contar como letra. */
+function fazZap(alvo){
+  var z=el("button","zap","");
+  z.type="button";
+  z.setAttribute("aria-label","Ouvir "+alvo.rot);
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    if(e.preventDefault) e.preventDefault();
+    sPing(); voz(alvo.t);
+    z.className="zap tocando";
+    setTimeout(function(){ z.className="zap"; },900);
+    return false;
+  };
+  return z;
+}
+
+function pecaForca(){
+  ger++;
+  var meu=ger;
+  limpa();
+  document.onkeydown=null;
+  if(idx>=FORCAP.length){ fimDaPeca(); return; }
+
+  var it=FORCAP[idx], pal=it.p;
+  var achou={}, erros=0, fim=false, caixas=[], teclas={}, i;
+  var t=el("div","tela");
+  setProg(t, Math.round(idx*100/FORCAP.length));
+  var barraP=t.getElementsByTagName("i")[0];
+
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A PALAVRA ESCONDIDA"));
+  /* ⭐ A PISTA E O ALTO-FALANTE MORAM DENTRO DO BALÃO. O texto fica num
+     <span> próprio porque a peça REESCREVE a pista ao fechar a palavra —
+     trocando o innerHTML do balão inteiro, o botão de ouvir sumiria junto. */
+  var bal=el("div","balao","");
+  var pistaEl=el("span","fcpista",it.d);
+  var linha=el("div","fclin","");
+  var falado={t:it.d, rot:"a pista"};
+  var zapBtn=fazZap(falado);
+  linha.appendChild(pistaEl);
+  linha.appendChild(zapBtn);
+  bal.appendChild(linha);
+  c.appendChild(bal);
+
+  /* ⭐ A FIGURA (só quando o item tem `fig`). No modo "premio" ela nasce
+     TAPADA, e a tampa diz por escrito que a figura está guardada. */
+  var cxFig=caixaFig(it.fig), tampa=null;
+  if(cxFig){
+    if(FORCA_FIG==="premio"){
+      cxFig.className="fcfig tapada";
+      tampa=el("div","fctampa","<b>?</b>Uma figura est&#225; guardada aqui. Descubra a palavra para ver!");
+      cxFig.appendChild(tampa);
+    }
+    c.appendChild(cxFig);
+  }
+
+  /* as casinhas da palavra */
+  var casas=el("div","casas");
+  for(i=0;i<pal.length;i++){
+    var q=el("div","letrafc","");
+    casas.appendChild(q);
+    caixas.push(q);
+  }
+  c.appendChild(casas);
+
+  /* os balões que sobram + o número escrito (nunca só a cor, nunca só a figura) */
+  var chan=el("div","chances");
+  var bolas=[];
+  for(i=0;i<MAXE;i++){ var bo=el("i","chance",""); chan.appendChild(bo); bolas.push(bo); }
+  var ctx=el("b","f2_ctx","Voc&#234; tem "+MAXE+" tentativas.");
+  chan.appendChild(ctx);
+  c.appendChild(chan);
+
+  var tec=el("div","teclado");
+  for(i=0;i<ALFA.length;i++){(function(L){
+    var b=el("button","tecl",L);
+    /* ⭐ data-qa="1" = "esta letra está na palavra". Existe SÓ para o
+       auditor-jogador; a criança não vê diferença nenhuma. */
+    b.setAttribute("data-qa", pal.indexOf(L)>=0 ? "1" : "0");
+    b.onclick=function(){ ac(); tenta(L,b); };
+    teclas[L]=b;
+    tec.appendChild(b);
+  })(ALFA.charAt(i));}
+  c.appendChild(tec);
+  c.appendChild(el("div","hint","Toque nas letras ou use o teclado do computador. O alto-falante diz a pista. A palavra vai sem acento."));
+  t.appendChild(c);
+  app.appendChild(t);
+
+  /* ⭐ AS DUAS PORTAS: teclado na tela E teclado de verdade.
+     ⚠️ o guarda `!t.parentNode` impede que uma tela que já saiu continue
+     respondendo por cima da tela seguinte.                                */
+  document.onkeydown=function(ev){
+    if(!t.parentNode){ document.onkeydown=null; return; }
+    var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+    if(!/^[A-Z]$/.test(L)) return;
+    ac();
+    if(teclas[L]&&teclas[L].className.indexOf("usada")<0) tenta(L,teclas[L]);
+  };
+
+  function mostra(){
+    var z,todas=true,n=0;
+    for(z=0;z<pal.length;z++){
+      if(achou[pal.charAt(z)]){
+        caixas[z].innerHTML=pal.charAt(z);
+        if(caixas[z].className.indexOf("achada")<0) caixas[z].className="letrafc achada";
+        n++;
+      } else todas=false;
+    }
+    barraP.style.width=Math.round((idx*100+n*100/pal.length)/FORCAP.length)+"%";
+    return todas;
+  }
+  function faixa(txt){
+    var f=el("div","achouf"+(cxFig?" alta":""),txt+"!");
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1400);
+  }
+  function segue(ms){
+    setTimeout(function(){
+      if(meu!==ger) return;
+      idx++;
+      if(idx<FORCAP.length) pecaForca();
+      else mostraBanner("Voc&#234; descobriu as <b>"+FORCAP.length+"</b> palavras, letra por letra!",fimDaPeca);
+    },ms);
+  }
+  /* ⭐ A REVELAÇÃO DA FIGURA (o prêmio). Serve para os dois fins: quando ela
+     descobre (é festa) e quando os balões acabam (aí é consolo, não castigo —
+     a criança fica conhecendo o bicho de qualquer jeito). E o alto-falante
+     passa a falar a PALAVRA CERTA, com acento. */
+  function revelaFig(){
+    if(cxFig&&cxFig.className.indexOf("aberta")<0) cxFig.className="fcfig aberta";
+  }
+  function trocaFalado(txt,rot){
+    falado.t=txt; falado.rot=rot;
+    if(zapBtn) zapBtn.setAttribute("aria-label","Ouvir "+rot);
+  }
+  function fecha(){
+    var z, msg="&#201; <b>"+(it.ac||pal)+"</b> mesmo! Olhe como ela se escreve.";
+    fim=true;
+    document.onkeydown=null;
+    for(z=0;z<caixas.length;z++) caixas[z].className="letrafc fechou";
+    sCerto();
+    faixa(it.ac||pal);
+    revelaFig();
+    pistaEl.innerHTML=msg;
+    trocaFalado(it.ac||pal,"a palavra");
+    voz(msg);
+    segue(cxFig?2400:1900);   /* com figura, o prêmio precisa de tempo na tela */
+  }
+  function entrega(){
+    /* ⭐ NUNCA TRAVA: acabaram os balões, a palavra aparece inteira e a peça
+       segue. Sem bronca, sem X vermelho, sem a palavra "errou".          */
+    var z;
+    fim=true;
+    document.onkeydown=null;
+    for(z=0;z<pal.length;z++){
+      achou[pal.charAt(z)]=1;
+      caixas[z].innerHTML=pal.charAt(z);
+      caixas[z].className="letrafc dada";
+    }
+    barraP.style.width=Math.round((idx+1)*100/FORCAP.length)+"%";
+    var msg="Era <b>"+(it.ac||pal)+"</b>. Olhe bem para ela &#8212; a pr&#243;xima voc&#234; pega.";
+    revelaFig();
+    pistaEl.innerHTML=msg;
+    trocaFalado(it.ac||pal,"a palavra");
+    voz(msg);
+    mostraDica("Dica de quem joga bem: comece sempre pelas vogais A, E, I, O, U.");
+    segue(3000);
+  }
+  function tenta(L,b){
+    if(fim) return;
+    if(b.className.indexOf("usada")>=0){ sTap(); return; }
+    /* ⭐ ARMADILHA Nº 2: a letra usada sai do alcance E perde o data-qa */
+    b.setAttribute("data-qa","0");
+    if(pal.indexOf(L)>=0){
+      achou[L]=1;
+      b.className="tecl usada certa";
+      sPop(pal.indexOf(L)+1);
+      if(mostra()) fecha();
+    } else {
+      erros++;
+      b.className="tecl usada fora";
+      sErro();
+      if(bolas[MAXE-erros]) bolas[MAXE-erros].className="chance foi";
+      /* ⚠️ "Faltam 0 tentativas" é o tipo de frase que soa como bronca. No
+         último balão a peça muda de tom: ela vai MOSTRAR a palavra, e isso
+         é ajuda, não castigo. */
+      ctx.innerHTML = (MAXE-erros)>1 ? "Faltam <b>"+(MAXE-erros)+"</b> tentativas."
+                    : ((MAXE-erros)===1 ? "Falta <b>1</b> tentativa."
+                                        : "Vamos olhar a palavra <b>juntos</b>.");
+      if(erros===2) mostraDica("Tente as <b>vogais</b> que ainda faltam: A, E, I, O, U.");
+      if(erros===4) mostraDica("A palavra come&#231;a com <b>"+pal.charAt(0)+"</b>.");
+      if(erros>=MAXE) entrega();
+    }
+  }
+  mostra();
+}
+
+function fimDaPeca(){
+  ger++;
+  document.onkeydown=null;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; descobriu as "+FORCAP.length+" palavras escondidas."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ idx=0; pecaForca(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a FORCA: palavra sem acento para digitar, com acento na festa, letra usada fora do alcance."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+    if(f && f.dados) FORCAP = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.FORCA_FIG !== undefined) FORCA_FIG = _d.FORCA_FIG;
+      if(_d.ALFA !== undefined) ALFA = _d.ALFA;
+    }
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    pecaForca();
   })();
 };
 
@@ -7333,12 +8342,12 @@ function recomecaQ(){ mist=0; ganhas=0; telaQuem(); }
 /* ====== O CONTEUDO DESTA ATIVIDADE (escrito pelo montador) ====== */
 ROTULOS = {"objetivo1": "Pronomes (pessoais, possessivos, demonstrativos, tratamento)", "objetivo2": "Interpretar texto narrativo (quem, o quê, sequência)", "objetivo3": "Interpretar texto injuntivo (finalidade e passos)", "objetivo4": "Mau (adjetivo) × Mal (advérbio)"};
 IMGS = ["dp_raposa_feliz", "dp_raposa_fala", "dp_raposa_pisca", "dp_cr1", "dp_cr2", "dp_cr3", "dp_cr4", "dp_cr5", "dp_cr6", "med_dp"];
-VITRINE = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
+VITRINE = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
 FIM = {titulo:"A Agência dos Detetives das Palavras!", texto:"Caso encerrado, detetive! Você lê como quem enxerga o que os outros não veem.", cracha:"A Agência dos Detetives das Palavras"};
-ABERTURA = {texto:"Bem-vindo(a) à Agência! Sou a detetive Vera. Cada caso só se resolve LENDO com atenção e usando as palavras certas. Vamos?", voz:"dp_abertura"};
-FASES = [{"id": "f01", "mec": "escolher", "selo": "CASO 1: O PRONOME CERTO", "conceito": "objetivo1", "enunciado": "Leia a pista e escolha o <b>pronome</b> que substitui a palavra grifada.", "dica": "Pronome pessoal troca o nome: ele, ela, nós, eles...", "dados": [{"img": "", "p": "<b>Ana</b> achou a pista. ___ sorriu.", "c": "ELA", "e": ["ELE", "NÓS"], "d": ["Ana é uma menina, no singular.", "Uma pessoa, feminino: qual serve?", "É <b>ELA</b>. Toque para seguir."]}, {"img": "", "p": "<b>Os detetives</b> voltaram. ___ resolveram o caso.", "c": "ELES", "e": ["ELE", "ELA"], "d": ["São vários, no masculino.", "Vários homens: plural masculino.", "É <b>ELES</b>. Toque para seguir."]}, {"img": "", "p": "<b>Eu e você</b> vamos investigar. ___ formamos a dupla.", "c": "NÓS", "e": ["ELES", "VOCÊS"], "d": ["Eu + você = a gente, juntos.", "Quem inclui quem fala: nós.", "É <b>NÓS</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "O PRONOME CERTO", "FECHO": "Você trocou os nomes pelos pronomes certos!"}, "vozIntro": "dp_f01_intro", "dicaVoz": "dp_f01_dica"}, {"id": "f02", "mec": "ligar", "selo": "CASO 1: LIGUE AS PISTAS", "conceito": "objetivo1", "enunciado": "Ligue cada <b>pronome</b> à palavra que ele substitui.", "dica": "Veja o número (singular/plural) e o gênero (masculino/feminino).", "dados": [{"k": "p0", "t": "ELA", "s": "a menina"}, {"k": "p1", "t": "ELE", "s": "o cachorro"}, {"k": "p2", "t": "ELES", "s": "os meninos"}, {"k": "p3", "t": "NÓS", "s": "eu e você"}], "dadosExtra": {"DICAS": ["Pense em quantos são e se é menino ou menina.", "ELA = uma menina; ELES = vários; NÓS = eu + você.", "A resposta certa acende no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue o pronome à palavra que ele substitui.", "FECHO": "Cada pronome no lugar certo!"}, "vozIntro": "dp_f02_intro", "dicaVoz": "dp_f02_dica"}, {"id": "f03", "mec": "classificar", "selo": "CASO 1: SEPARE OS PRONOMES", "conceito": "objetivo1", "enunciado": "Cada <b>pronome</b> na sua gaveta: pessoal, possessivo ou demonstrativo?", "dica": "Pessoal = quem fala/ouve (eu, tu, ele); possessivo = de quem é (meu, teu); demonstrativo = onde está (este, esse, aquele).", "dados": [{"k": "pes", "n": "PESSOAL", "img": "", "voz": "pessoal", "rot": false}, {"k": "pos", "n": "POSSESSIVO", "img": "", "voz": "possessivo", "rot": false}, {"k": "dem", "n": "DEMONSTRATIVO", "img": "", "voz": "demonstrativo", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "EU", "alvo": "pes"}, {"t": "ELE", "alvo": "pes"}, {"t": "MEU", "alvo": "pos"}, {"t": "NOSSO", "alvo": "pos"}, {"t": "ESTE", "alvo": "dem"}, {"t": "AQUELE", "alvo": "dem"}], "DICAS": ["EU e ELE dizem QUEM; MEU e NOSSO dizem DE QUEM; ESTE e AQUELE dizem ONDE.", "Possessivo combina com 'é meu, é nosso'. Demonstrativo com 'este aqui, aquele lá'.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque no <b>pronome</b>. Depois toque na <b>gaveta do tipo</b> dele."}, "vozIntro": "dp_f03_intro", "dicaVoz": "dp_f03_dica"}, {"id": "f04", "mec": "completar", "selo": "CASO 1: COMPLETE A PISTA", "conceito": "objetivo1", "enunciado": "Preencha a frase com o <b>pronome</b> que falta.", "dica": "O pronome tem que combinar com a palavra que ele substitui.", "dados": [{"img": "", "ante": "Cadê o meu caderno? ", "dep": " está na mochila.", "cer": "Ele", "out": ["Ela", "Eles"], "dic": "Caderno é 'o' — masculino, singular."}, {"img": "", "ante": "As lupas são novas. ", "dep": " brilham.", "cer": "Elas", "out": ["Ele", "Eles"], "dic": "Lupas são 'as' — feminino, plural."}, {"img": "", "ante": "Esta é a casa de vocês? Sim, ", "dep": " é nossa.", "cer": "ela", "out": ["ele", "eles"], "dic": "Casa é 'a' — feminino, singular."}], "dadosExtra": {"ENUN": "Toque no pedaço que <b>falta</b> na frase.", "DEPOIS": "Leia a frase inteira antes de escolher.", "FECHO": "Você completou as pistas com os pronomes!"}, "vozIntro": "dp_f04_intro", "dicaVoz": "dp_f04_dica"}, {"id": "f05", "mec": "caca-palavras", "selo": "CASO 1: PRONOMES ESCONDIDOS", "conceito": "objetivo1", "enunciado": "Ache os <b>pronomes</b> escondidos no quadro.", "dica": "Estão deitados (→) e em pé (↓): EU, ELE, ELA, MEU, ESTE.", "dados": ["EU", "ELE", "ELA", "MEU", "ESTE"], "dadosExtra": {"MODO": "lista", "TITULO": "PRONOMES ESCONDIDOS", "LETRAS": "ABCDEHILMNOPRSTU", "DIFICIL": "", "CORP": ["p1", "p2", "p3", "p4", "p5"]}, "vozIntro": "dp_f05_intro", "dicaVoz": "dp_f05_dica"}, {"id": "f06", "mec": "escolher", "selo": "CASO 2: O QUE O TEXTO CONTA", "conceito": "objetivo2", "enunciado": "Leia com atenção de detetive e responda o que o texto conta.", "dica": "A resposta está NO texto. Volte e leia de novo se precisar.", "dados": [{"img": "", "p": "Leia: <i>“Bidu, o gato, subiu no telhado atrás de um pássaro e ficou preso.”</i> Quem ficou preso?", "c": "O gato Bidu", "e": ["O pássaro", "O telhado"], "d": ["Quem é o personagem que subiu?", "O texto diz que <b>Bidu</b> ficou preso.", "É <b>o gato Bidu</b>. Toque para seguir."]}, {"img": "", "p": "Leia a mesma cena: por que Bidu subiu no telhado?", "c": "Atrás de um pássaro", "e": ["Para dormir", "Fugindo da chuva"], "d": ["Procure o motivo no texto.", "Ele subiu <b>atrás de um pássaro</b>.", "É <b>atrás de um pássaro</b>. Toque para seguir."]}, {"img": "", "p": "Leia: <i>“De manhã, os bombeiros resgataram o gato do telhado.”</i> Quando o gato foi resgatado?", "c": "De manhã", "e": ["À noite", "Na hora do almoço"], "d": ["Procure a palavra de TEMPO no texto.", "O texto começa com <b>De manhã</b>.", "É <b>de manhã</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "O QUE O TEXTO CONTA", "FECHO": "Você achou as informações no texto!"}, "vozIntro": "dp_f06_intro", "dicaVoz": "dp_f06_dica"}, {"id": "f07", "mec": "linha-do-tempo", "selo": "CASO 2: A ORDEM DOS FATOS", "conceito": "objetivo2", "enunciado": "Coloque os fatos da história na <b>ordem</b> em que aconteceram.", "dica": "Pense: o que veio primeiro? O que aconteceu por último?", "dados": [{"t": 1, "n": "O menino perdeu o cachorro no parque."}, {"t": 2, "n": "A detetive Vera achou pegadas na lama."}, {"t": 3, "n": "As pegadas levaram at&#233; uma &#225;rvore."}, {"t": 4, "n": "O cachorro estava l&#225;, assustado."}, {"t": 5, "n": "O menino abra&#231;ou o cachorro, feliz."}], "vozIntro": "dp_f07_intro", "dicaVoz": "dp_f07_dica"}, {"id": "f08", "mec": "quem-sou-eu", "selo": "CASO 2: QUEM É O PERSONAGEM?", "conceito": "objetivo2", "enunciado": "Ouça as pistas do texto e descubra <b>quem é o personagem</b>.", "dica": "Junte as três pistas antes de responder.", "dados": [{"resp": "O CARTEIRO", "pistas": ["Eu levo <b>cartas</b> de casa em casa.", "Uso um <b>bon&#233;</b> e uma bolsa grande a tiracolo.", "Fui eu que trouxe a <b>carta misteriosa</b> para a agência."], "outros": ["O PADEIRO", "O M&#201;DICO", "O PROFESSOR"]}, {"resp": "A VIZINHA", "pistas": ["Eu moro na casa <b>ao lado</b> da agência.", "Estou sempre na <b>janela</b>, vendo tudo o que passa.", "Eu <b>vi</b> quem deixou a carta na porta."], "outros": ["A PROFESSORA", "A M&#195;E", "A DELEGADA"]}], "vozIntro": "dp_f08_intro", "dicaVoz": "dp_f08_dica"}, {"id": "f09", "mec": "escolher", "selo": "CASO 2: LENDO NAS ENTRELINHAS", "conceito": "objetivo2", "enunciado": "Às vezes o texto não diz tudo: descubra pela pista.", "dica": "O texto não fala direto, mas dá para concluir pelo que conta.", "dados": [{"img": "", "p": "Leia: <i>“Ana pegou o guarda-chuva e as botas antes de sair.”</i> Como estava o tempo?", "c": "Estava chovendo", "e": ["Estava um sol quente", "Estava nevando"], "d": ["Por que alguém pega guarda-chuva e botas?", "Guarda-chuva + botas = <b>chuva</b>.", "É <b>estava chovendo</b>. Toque para seguir."]}, {"img": "", "p": "Leia: <i>“O prato estava vazio e o gato lambia os bigodes.”</i> O que aconteceu?", "c": "O gato comeu a comida", "e": ["O gato dormiu", "O gato fugiu"], "d": ["Prato vazio + gato lambendo os bigodes...", "Ele <b>comeu</b> tudo.", "É <b>o gato comeu a comida</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "LENDO NAS ENTRELINHAS", "FECHO": "Você leu até o que estava escondido!"}, "vozIntro": "dp_f09_intro", "dicaVoz": "dp_f09_dica"}, {"id": "aquecimento", "mec": "ligar", "selo": "AQUECIMENTO DO DETETIVE", "conceito": "objetivo1", "enunciado": "<b>Aquecimento!</b> Ligue cada <b>pronome</b> à palavra que ele substitui.", "dica": "Revisão rápida: veja número (singular/plural) e gênero.", "dados": [{"k": "p0", "t": "ELE", "s": "o carteiro"}, {"k": "p1", "t": "ELA", "s": "a vizinha"}, {"k": "p2", "t": "ELES", "s": "os detetives"}, {"k": "p3", "t": "NÓS", "s": "eu e a Vera"}], "dadosExtra": {"DICAS": ["Quantos são? Menino ou menina?", "ELE = um; ELA = uma; ELES = vários; NÓS = eu + você.", "A resposta certa acende no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue o pronome à palavra que ele substitui.", "FECHO": "Aquecido! Agora os últimos casos."}, "vozIntro": "dp_aquecimento_intro", "dicaVoz": "dp_aquecimento_dica"}, {"id": "f10", "mec": "escolher", "selo": "CASO 3: PARA QUE SERVE?", "conceito": "objetivo3", "enunciado": "O texto injuntivo <b>ensina a fazer</b> algo. Descubra para que ele serve.", "dica": "Texto injuntivo dá ordens/instruções: receita, regra de jogo, manual.", "dados": [{"img": "", "p": "Leia: <i>“Misture a farinha, quebre os ovos e leve ao forno por 30 minutos.”</i> Este texto serve para...", "c": "Ensinar a fazer um bolo", "e": ["Contar uma história", "Descrever um lugar"], "d": ["Ele manda FAZER passos, um atrás do outro.", "Farinha + ovos + forno = uma <b>receita</b>.", "É <b>ensinar a fazer um bolo</b>. Toque para seguir."]}, {"img": "", "p": "Leia: <i>“Não corra. Aperte o botão. Espere a luz verde para atravessar.”</i> Este texto serve para...", "c": "Ensinar a atravessar com segurança", "e": ["Vender um carro", "Contar uma piada"], "d": ["São ordens para você fazer certo.", "Botão + luz verde = <b>atravessar a rua</b>.", "É <b>ensinar a atravessar com segurança</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "PARA QUE SERVE?", "FECHO": "Você descobriu a finalidade dos textos!"}, "vozIntro": "dp_f10_intro", "dicaVoz": "dp_f10_dica"}, {"id": "f11", "mec": "linha-do-tempo", "selo": "CASO 3: A ORDEM DOS PASSOS", "conceito": "objetivo3", "enunciado": "Coloque os <b>passos</b> da receita na ordem certa.", "dica": "O que se faz primeiro? Não dá para assar antes de misturar.", "dados": [{"t": 1, "n": "Separe os ingredientes."}, {"t": 2, "n": "Misture a farinha e os ovos."}, {"t": 3, "n": "Bata bem a massa."}, {"t": 4, "n": "Leve ao forno."}, {"t": 5, "n": "Espere esfriar e sirva."}], "vozIntro": "dp_f11_intro", "dicaVoz": "dp_f11_dica"}, {"id": "f12", "mec": "intruso", "selo": "CASO 3: A FRASE INTRUSA", "conceito": "objetivo3", "enunciado": "Três frases dão <b>ordens</b>. <b>Qual NÃO é uma instrução?</b>", "dica": "Instrução manda fazer (verbo de comando): misture, corte, ligue.", "dados": [{"selo": "AS INSTRUÇÕES", "tipo": "texto", "enun": "Três frases mandam fazer algo. <b>Qual NÃO manda?</b>", "itens": [{"k": "a", "n": "MISTURE OS OVOS"}, {"k": "b", "n": "CORTE O PAPEL"}, {"k": "c", "n": "LIGUE A LUZ"}, {"k": "d", "n": "O BOLO É GOSTOSO"}], "fora": "d", "nomeFora": "O BOLO É GOSTOSO", "d1": "Qual frase NÃO manda você fazer nada?", "d2": "Misture, corte, ligue são ORDENS. Uma só conta uma coisa.", "d3": "A de fora é <b>O BOLO É GOSTOSO</b>: ela apenas afirma, não manda fazer.", "razoes": [{"t": "As outras mandam fazer (verbo de comando); esta só afirma.", "ok": 1}, {"t": "Porque ela fala de bolo.", "ok": 0}, {"t": "Porque ela é a mais curta.", "ok": 0}, {"t": "Porque ela tem a letra O.", "ok": 0}], "enunPorque": "O que <b>O BOLO É GOSTOSO</b> faz de diferente das outras três? Toque na razão certa.", "p1": "Pode ser verdade, mas olhe o que as OUTRAS três fazem.", "p2": "As outras começam com um verbo que MANDA: misture, corte, ligue.", "p3": "“O bolo é gostoso” só AFIRMA; as outras dão ORDEM — por isso ela é a diferente.", "regra": "instrução manda fazer (verbo de comando); afirmação só conta"}], "vozIntro": "dp_f12_intro", "dicaVoz": "dp_f12_dica"}, {"id": "f13", "mec": "completar", "selo": "CASO 3: COMPLETE A INSTRUÇÃO", "conceito": "objetivo3", "enunciado": "Preencha a instrução com o <b>verbo de comando</b> certo.", "dica": "Verbo de comando manda fazer: misture, aperte, espere.", "dados": [{"img": "", "ante": "Para o bolo crescer, ", "dep": " bem a massa.", "cer": "bata", "out": ["batia", "batendo"], "dic": "Uma ORDEM curta e direta: 'bata!'"}, {"img": "", "ante": "Antes de atravessar, ", "dep": " a luz verde.", "cer": "espere", "out": ["esperava", "esperando"], "dic": "Comando: 'espere!'"}, {"img": "", "ante": "Para acender, ", "dep": " o botão.", "cer": "aperte", "out": ["apertava", "apertei"], "dic": "Comando direto: 'aperte!'"}], "dadosExtra": {"ENUN": "Toque no pedaço que <b>falta</b> na instrução.", "DEPOIS": "Leia a instrução inteira antes de escolher.", "FECHO": "Você completou as instruções!"}, "vozIntro": "dp_f13_intro", "dicaVoz": "dp_f13_dica"}, {"id": "f14", "mec": "escolher", "selo": "CASO 4: MAU OU MAL?", "conceito": "objetivo4", "enunciado": "Truque de detetive: se trocar por <b>BOM</b>, é MAU; se trocar por <b>BEM</b>, é MAL.", "dica": "MAU (com U) = adjetivo, o contrário de BOM. MAL (com L) = advérbio, o contrário de BEM.", "dados": [{"img": "", "p": "O lobo da história era um lobo ___ . (troque por BOM/BEM para decidir)", "c": "MAU", "e": ["MAL"], "d": ["Cabe 'bom' ou 'bem'? 'Um lobo BOM' faz sentido.", "Combina com BOM = <b>MAU</b> (adjetivo).", "É <b>MAU</b> (o contrário de bom). Toque para seguir."]}, {"img": "", "p": "Ele dormiu ___ e acordou cansado. (troque por BOM/BEM)", "c": "MAL", "e": ["MAU"], "d": ["Cabe 'bom' ou 'bem'? 'Dormiu BEM' faz sentido.", "Combina com BEM = <b>MAL</b> (advérbio).", "É <b>MAL</b> (o contrário de bem). Toque para seguir."]}, {"img": "", "p": "Que cheiro ___ ! (troque por BOM/BEM)", "c": "MAU", "e": ["MAL"], "d": ["'Que cheiro BOM!' faz sentido.", "Combina com BOM = <b>MAU</b>.", "É <b>MAU</b> (o contrário de bom). Toque para seguir."]}], "dadosExtra": {"TITULO": "MAU OU MAL?", "FECHO": "Você desvendou o mau e o mal!"}, "vozIntro": "dp_f14_intro", "dicaVoz": "dp_f14_dica"}, {"id": "f15", "mec": "classificar", "selo": "CASO 4: SEPARE MAU E MAL", "conceito": "objetivo4", "enunciado": "Cada palavra na gaveta certa: <b>MAU</b> (= bom) ou <b>MAL</b> (= bem)?", "dica": "Se dá para trocar por BOM, vai em MAU. Se dá para trocar por BEM, vai em MAL.", "dados": [{"k": "mau", "n": "MAU<br>(= bom)", "img": "", "voz": "mau", "rot": false}, {"k": "mal", "n": "MAL<br>(= bem)", "img": "", "voz": "mal", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "um cão MAU", "alvo": "mau"}, {"t": "um dia MAU", "alvo": "mau"}, {"t": "um filme MAU", "alvo": "mau"}, {"t": "escreve MAL", "alvo": "mal"}, {"t": "passou MAL", "alvo": "mal"}, {"t": "fez MAL a lição", "alvo": "mal"}], "DICAS": ["Troque por bom/bem: 'um cão BOM' → MAU; 'escreve BEM' → MAL.", "MAU descreve uma COISA (adjetivo); MAL diz COMO se faz (advérbio).", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque na <b>ficha</b>. Depois toque na gaveta: <b>MAU</b> ou <b>MAL</b>?"}, "vozIntro": "dp_f15_intro", "dicaVoz": "dp_f15_dica"}, {"id": "f16", "mec": "completar", "selo": "CASO 4: COMPLETE COM MAU/MAL", "conceito": "objetivo4", "enunciado": "Preencha a frase com <b>mau</b> (com U) ou <b>mal</b> (com L).", "dica": "Troca-BOM = mau; troca-BEM = mal.", "dados": [{"img": "", "ante": "Ele teve um ", "dep": " pensamento.", "cer": "mau", "out": ["mal"], "dic": "'Um BOM pensamento' → mau."}, {"img": "", "ante": "A porta range porque foi ", "dep": " instalada.", "cer": "mal", "out": ["mau"], "dic": "'Foi BEM instalada' → mal."}, {"img": "", "ante": "Não seja ", "dep": " com os colegas.", "cer": "mau", "out": ["mal"], "dic": "'Seja BOM' → mau."}], "dadosExtra": {"ENUN": "Toque no pedaço que <b>falta</b> na frase.", "DEPOIS": "Troque por bom/bem para conferir.", "FECHO": "Você nunca mais confunde mau e mal!"}, "vozIntro": "dp_f16_intro", "dicaVoz": "dp_f16_dica"}, {"id": "f17", "mec": "digitar", "selo": "CASO 4: ESCREVA CERTO", "conceito": "objetivo4", "enunciado": "Escreva a palavra certa, letra por letra.", "dica": "Diga a frase trocando por bom/bem e escolha U ou L no fim.", "dados": [{"palavra": "MAU", "img": "", "voz": "mau", "pista": "O contrário de BOM (um lobo ___). Escreva com U no fim.", "dic": "Troca por BOM: então é <b>MAU</b>."}, {"palavra": "MAL", "img": "", "voz": "mal", "pista": "O contrário de BEM (dormiu ___). Escreva com L no fim.", "dic": "Troca por BEM: então é <b>MAL</b>."}], "dadosExtra": {"ENUN": "Escreva a palavra, letra por letra.", "FECHO": "Você escreveu mau e mal do jeito certo!"}, "vozIntro": "dp_f17_intro", "dicaVoz": "dp_f17_dica"}];
+ABERTURA = {texto:"Bem-vindo(a) à Agência! Sou a detetive Filó. Cada caso só se resolve LENDO com atenção e usando as palavras certas. Vamos?", voz:"dp_abertura"};
+FASES = [{"id": "f05", "mec": "caca-palavras", "selo": "CASO 1: PRONOMES ESCONDIDOS", "conceito": "objetivo1", "enunciado": "Ache os <b>pronomes</b> escondidos no quadro.", "dica": "Estão deitados (→) e em pé (↓): EU, ELE, ELA, MEU, ESTE.", "dados": ["EU", "ELE", "ELA", "MEU", "ESTE"], "dadosExtra": {"MODO": "lista", "TITULO": "PRONOMES ESCONDIDOS", "LETRAS": "ABCDEHILMNOPRSTU", "DIFICIL": "", "CORP": ["p1", "p2", "p3", "p4", "p5"]}, "vozIntro": "dp_f05_intro", "dicaVoz": "dp_f05_dica"}, {"id": "f02", "mec": "ligar", "selo": "CASO 1: LIGUE AS PISTAS", "conceito": "objetivo1", "enunciado": "Ligue cada <b>pronome</b> à palavra que ele substitui.", "dica": "Veja o número (singular/plural) e o gênero (masculino/feminino).", "dados": [{"k": "p0", "t": "ELA", "s": "a menina"}, {"k": "p1", "t": "ELE", "s": "o cachorro"}, {"k": "p2", "t": "ELES", "s": "os meninos"}, {"k": "p3", "t": "NÓS", "s": "eu e você"}], "dadosExtra": {"DICAS": ["Pense em quantos são e se é menino ou menina.", "ELA = uma menina; ELES = vários; NÓS = eu + você.", "A resposta certa acende no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue o pronome à palavra que ele substitui.", "FECHO": "Cada pronome no lugar certo!"}, "vozIntro": "dp_f02_intro", "dicaVoz": "dp_f02_dica"}, {"id": "f03", "mec": "classificar", "selo": "CASO 1: SEPARE OS PRONOMES", "conceito": "objetivo1", "enunciado": "Cada <b>pronome</b> na sua gaveta: pessoal, possessivo ou demonstrativo?", "dica": "Pessoal = quem fala/ouve (eu, tu, ele); possessivo = de quem é (meu, teu); demonstrativo = onde está (este, esse, aquele).", "dados": [{"k": "pes", "n": "PESSOAL", "img": "", "voz": "pessoal", "rot": false}, {"k": "pos", "n": "POSSESSIVO", "img": "", "voz": "possessivo", "rot": false}, {"k": "dem", "n": "DEMONSTRATIVO", "img": "", "voz": "demonstrativo", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "EU", "alvo": "pes"}, {"t": "ELE", "alvo": "pes"}, {"t": "MEU", "alvo": "pos"}, {"t": "NOSSO", "alvo": "pos"}, {"t": "ESTE", "alvo": "dem"}, {"t": "AQUELE", "alvo": "dem"}], "DICAS": ["EU e ELE dizem QUEM; MEU e NOSSO dizem DE QUEM; ESTE e AQUELE dizem ONDE.", "Possessivo combina com 'é meu, é nosso'. Demonstrativo com 'este aqui, aquele lá'.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque no <b>pronome</b>. Depois toque na <b>gaveta do tipo</b> dele."}, "vozIntro": "dp_f03_intro", "dicaVoz": "dp_f03_dica"}, {"id": "f04", "mec": "conserte-o-erro", "selo": "CASO 1: CONSERTE A PISTA", "conceito": "objetivo1", "enunciado": "Uma frase de cada caso tem o <b>pronome trocado</b>. Ache e conserte.", "dica": "Leia a frase inteira: o pronome combina com quem ele substitui?", "dados": [{"selo": "A PISTA DO CADERNO", "cab": "O PRONOME CERTO", "bal": "Uma palavra desta frase est&#225; trocada. Ache e conserte.", "pecas": ["O CADERNO", "SUMIU.", "ELA", "EST&#193; NA MOCHILA."], "erro": 2, "certa": "ELE", "ops": ["ELE", "ELAS", "N&#211;S"], "por": "Caderno &#233; 'o' (masculino, singular). O pronome certo &#233; <b>ELE</b>.", "dicas": ["Leia a frase baixinho, do come&#231;o ao fim.", "O pronome fala do CADERNO. Caderno &#233; 'o' ou 'a'?", "Era este aqui. Eu marquei para voc&#234;: agora troque pelo certo."], "dicas2": ["Caderno &#233; masculino: combina com 'o'.", "Combina com 'o' &#8594; ELE; com 'a' &#8594; ELA.", "Era <b>ELE</b>. Eu troquei para voc&#234; ler a frase certa."]}, {"selo": "A PISTA DAS LUPAS", "cab": "O PRONOME CERTO", "bal": "Ache a palavra trocada e conserte.", "pecas": ["AS LUPAS", "S&#195;O NOVAS.", "ELE", "BRILHAM."], "erro": 2, "certa": "ELAS", "ops": ["ELAS", "ELE", "ELA"], "por": "Lupas s&#227;o 'as' (feminino, plural): <b>ELAS</b> brilham.", "dicas": ["O pronome fala das LUPAS. Quantas s&#227;o?", "S&#227;o v&#225;rias e femininas.", "Era este. Eu marquei: agora escolha o certo."], "dicas2": ["Feminino e plural pede um pronome no plural.", "Plural feminino = ELAS.", "Era <b>ELAS</b>. Eu troquei para a frase ficar certa."]}, {"selo": "A PISTA DA ANA", "cab": "O PRONOME CERTO", "bal": "Uma palavra n&#227;o combina. Ache e conserte.", "pecas": ["ANA", "ACHOU A PISTA.", "ELE", "SORRIU."], "erro": 2, "certa": "ELA", "ops": ["ELA", "ELE", "ELES"], "por": "Ana &#233; uma menina: <b>ELA</b> sorriu.", "dicas": ["O pronome fala da ANA. Menino ou menina?", "Ana &#233; menina, uma s&#243;.", "Era este. Eu marquei para voc&#234;."], "dicas2": ["Uma menina, no singular.", "Feminino singular = ELA.", "Era <b>ELA</b>. Eu troquei para voc&#234; ler a frase certa."]}], "vozIntro": "dp_f04_intro", "dicaVoz": "dp_f04_dica"}, {"id": "f01", "mec": "escolher", "selo": "CASO 1: O PRONOME CERTO", "conceito": "objetivo1", "enunciado": "Leia a pista e escolha o <b>pronome</b> que substitui a palavra grifada.", "dica": "Pronome pessoal troca o nome: ele, ela, nós, eles...", "dados": [{"img": "", "p": "<b>Ana</b> achou a pista. ___ sorriu.", "c": "ELA", "e": ["ELE", "NÓS"], "d": ["Ana é uma menina, no singular.", "Uma pessoa, feminino: qual serve?", "É <b>ELA</b>. Toque para seguir."]}, {"img": "", "p": "<b>Os detetives</b> voltaram. ___ resolveram o caso.", "c": "ELES", "e": ["ELE", "ELA"], "d": ["São vários, no masculino.", "Vários homens: plural masculino.", "É <b>ELES</b>. Toque para seguir."]}, {"img": "", "p": "<b>Eu e você</b> vamos investigar. ___ formamos a dupla.", "c": "NÓS", "e": ["ELES", "VOCÊS"], "d": ["Eu + você = a gente, juntos.", "Quem inclui quem fala: nós.", "É <b>NÓS</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "O PRONOME CERTO", "FECHO": "Você trocou os nomes pelos pronomes certos!"}, "vozIntro": "dp_f01_intro", "dicaVoz": "dp_f01_dica"}, {"id": "f06", "mec": "escolher", "selo": "CASO 2: O QUE O TEXTO CONTA", "conceito": "objetivo2", "enunciado": "Leia com atenção de detetive e responda o que o texto conta.", "dica": "A resposta está NO texto. Volte e leia de novo se precisar.", "dados": [{"img": "", "p": "Leia: <i>“Bidu, o gato, subiu no telhado atrás de um pássaro e ficou preso.”</i> Quem ficou preso?", "c": "O gato Bidu", "e": ["O pássaro", "O telhado"], "d": ["Quem é o personagem que subiu?", "O texto diz que <b>Bidu</b> ficou preso.", "É <b>o gato Bidu</b>. Toque para seguir."]}, {"img": "", "p": "Leia a mesma cena: por que Bidu subiu no telhado?", "c": "Atrás de um pássaro", "e": ["Para dormir", "Fugindo da chuva"], "d": ["Procure o motivo no texto.", "Ele subiu <b>atrás de um pássaro</b>.", "É <b>atrás de um pássaro</b>. Toque para seguir."]}, {"img": "", "p": "Leia: <i>“De manhã, os bombeiros resgataram o gato do telhado.”</i> Quando o gato foi resgatado?", "c": "De manhã", "e": ["À noite", "Na hora do almoço"], "d": ["Procure a palavra de TEMPO no texto.", "O texto começa com <b>De manhã</b>.", "É <b>de manhã</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "O QUE O TEXTO CONTA", "FECHO": "Você achou as informações no texto!"}, "vozIntro": "dp_f06_intro", "dicaVoz": "dp_f06_dica"}, {"id": "f09", "mec": "escolher", "selo": "CASO 2: LENDO NAS ENTRELINHAS", "conceito": "objetivo2", "enunciado": "Às vezes o texto não diz tudo: descubra pela pista.", "dica": "O texto não fala direto, mas dá para concluir pelo que conta.", "dados": [{"img": "", "p": "Leia: <i>“Ana pegou o guarda-chuva e as botas antes de sair.”</i> Como estava o tempo?", "c": "Estava chovendo", "e": ["Estava um sol quente", "Estava nevando"], "d": ["Por que alguém pega guarda-chuva e botas?", "Guarda-chuva + botas = <b>chuva</b>.", "É <b>estava chovendo</b>. Toque para seguir."]}, {"img": "", "p": "Leia: <i>“O prato estava vazio e o gato lambia os bigodes.”</i> O que aconteceu?", "c": "O gato comeu a comida", "e": ["O gato dormiu", "O gato fugiu"], "d": ["Prato vazio + gato lambendo os bigodes...", "Ele <b>comeu</b> tudo.", "É <b>o gato comeu a comida</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "LENDO NAS ENTRELINHAS", "FECHO": "Você leu até o que estava escondido!"}, "vozIntro": "dp_f09_intro", "dicaVoz": "dp_f09_dica"}, {"id": "aquecimento", "mec": "ligar", "selo": "AQUECIMENTO DO DETETIVE", "conceito": "objetivo1", "enunciado": "<b>Aquecimento!</b> Ligue cada <b>pronome</b> à palavra que ele substitui.", "dica": "Revisão rápida: veja número (singular/plural) e gênero.", "dados": [{"k": "p0", "t": "ELE", "s": "o carteiro"}, {"k": "p1", "t": "ELA", "s": "a vizinha"}, {"k": "p2", "t": "ELES", "s": "os detetives"}, {"k": "p3", "t": "NÓS", "s": "eu e a Filó"}], "dadosExtra": {"DICAS": ["Quantos são? Menino ou menina?", "ELE = um; ELA = uma; ELES = vários; NÓS = eu + você.", "A resposta certa acende no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue o pronome à palavra que ele substitui.", "FECHO": "Aquecido! Agora os últimos casos."}, "vozIntro": "dp_aquecimento_intro", "dicaVoz": "dp_aquecimento_dica"}, {"id": "f08", "mec": "quem-sou-eu", "selo": "CASO 2: QUEM É O PERSONAGEM?", "conceito": "objetivo2", "enunciado": "Ouça as pistas do texto e descubra <b>quem é o personagem</b>.", "dica": "Junte as três pistas antes de responder.", "dados": [{"resp": "O CARTEIRO", "pistas": ["Eu levo <b>cartas</b> de casa em casa.", "Uso um <b>bon&#233;</b> e uma bolsa grande a tiracolo.", "Fui eu que trouxe a <b>carta misteriosa</b> para a agência."], "outros": ["O PADEIRO", "O M&#201;DICO", "O PROFESSOR"]}, {"resp": "A VIZINHA", "pistas": ["Eu moro na casa <b>ao lado</b> da agência.", "Estou sempre na <b>janela</b>, vendo tudo o que passa.", "Eu <b>vi</b> quem deixou a carta na porta."], "outros": ["A PROFESSORA", "A M&#195;E", "A DELEGADA"]}], "vozIntro": "dp_f08_intro", "dicaVoz": "dp_f08_dica"}, {"id": "f07", "mec": "linha-do-tempo", "selo": "CASO 2: A ORDEM DOS FATOS", "conceito": "objetivo2", "enunciado": "Coloque os fatos da história na <b>ordem</b> em que aconteceram.", "dica": "Pense: o que veio primeiro? O que aconteceu por último?", "dados": [{"t": 1, "n": "O menino perdeu o cachorro no parque."}, {"t": 2, "n": "A detetive Filó achou pegadas na lama."}, {"t": 3, "n": "As pegadas levaram at&#233; uma &#225;rvore."}, {"t": 4, "n": "O cachorro estava l&#225;, assustado."}, {"t": 5, "n": "O menino abra&#231;ou o cachorro, feliz."}], "vozIntro": "dp_f07_intro", "dicaVoz": "dp_f07_dica"}, {"id": "f11", "mec": "linha-do-tempo", "selo": "CASO 3: A ORDEM DOS PASSOS", "conceito": "objetivo3", "enunciado": "Esta receita <b>ensina a fazer</b> um bolo. Coloque os <b>passos</b> na ordem certa.", "dica": "Texto injuntivo dá instruções em passos. O que se faz primeiro?", "dados": [{"t": 1, "n": "Separe os ingredientes."}, {"t": 2, "n": "Misture a farinha e os ovos."}, {"t": 3, "n": "Bata bem a massa."}, {"t": 4, "n": "Leve ao forno."}, {"t": 5, "n": "Espere esfriar e sirva."}], "vozIntro": "dp_f11_intro", "dicaVoz": "dp_f11_dica"}, {"id": "f12", "mec": "intruso", "selo": "CASO 3: A FRASE INTRUSA", "conceito": "objetivo3", "enunciado": "Três frases dão <b>ordens</b>. <b>Qual NÃO é uma instrução?</b>", "dica": "Instrução manda fazer (verbo de comando): misture, corte, ligue.", "dados": [{"selo": "AS INSTRUÇÕES", "tipo": "texto", "enun": "Três frases mandam fazer algo. <b>Qual NÃO manda?</b>", "itens": [{"k": "a", "n": "MISTURE OS OVOS"}, {"k": "b", "n": "CORTE O PAPEL"}, {"k": "c", "n": "LIGUE A LUZ"}, {"k": "d", "n": "O BOLO É GOSTOSO"}], "fora": "d", "nomeFora": "O BOLO É GOSTOSO", "d1": "Qual frase NÃO manda você fazer nada?", "d2": "Misture, corte, ligue são ORDENS. Uma só conta uma coisa.", "d3": "A de fora é <b>O BOLO É GOSTOSO</b>: ela apenas afirma, não manda fazer.", "razoes": [{"t": "As outras mandam fazer (verbo de comando); esta só afirma.", "ok": 1}, {"t": "Porque ela fala de bolo.", "ok": 0}, {"t": "Porque ela é a mais curta.", "ok": 0}, {"t": "Porque ela tem a letra O.", "ok": 0}], "enunPorque": "O que <b>O BOLO É GOSTOSO</b> faz de diferente das outras três? Toque na razão certa.", "p1": "Pode ser verdade, mas olhe o que as OUTRAS três fazem.", "p2": "As outras começam com um verbo que MANDA: misture, corte, ligue.", "p3": "“O bolo é gostoso” só AFIRMA; as outras dão ORDEM — por isso ela é a diferente.", "regra": "instrução manda fazer (verbo de comando); afirmação só conta"}], "vozIntro": "dp_f12_intro", "dicaVoz": "dp_f12_dica"}, {"id": "f13", "mec": "completar", "selo": "CASO 3: COMPLETE A INSTRUÇÃO", "conceito": "objetivo3", "enunciado": "Preencha a instrução com o <b>verbo de comando</b> certo.", "dica": "Verbo de comando manda fazer: misture, aperte, espere.", "dados": [{"img": "", "ante": "Para o bolo crescer, ", "dep": " bem a massa.", "cer": "bata", "out": ["batia", "batendo"], "dic": "Uma ORDEM curta e direta: 'bata!'"}, {"img": "", "ante": "Antes de atravessar, ", "dep": " a luz verde.", "cer": "espere", "out": ["esperava", "esperando"], "dic": "Comando: 'espere!'"}, {"img": "", "ante": "Para acender, ", "dep": " o botão.", "cer": "aperte", "out": ["apertava", "apertei"], "dic": "Comando direto: 'aperte!'"}], "dadosExtra": {"ENUN": "Toque no pedaço que <b>falta</b> na instrução.", "DEPOIS": "Leia a instrução inteira antes de escolher.", "FECHO": "Você completou as instruções!"}, "vozIntro": "dp_f13_intro", "dicaVoz": "dp_f13_dica"}, {"id": "f16", "mec": "completar", "selo": "CASO 4: COMPLETE COM MAU/MAL", "conceito": "objetivo4", "enunciado": "Preencha a frase com <b>mau</b> (com U) ou <b>mal</b> (com L).", "dica": "Truque de detetive: troque por BOM = mau; troque por BEM = mal.", "dados": [{"img": "", "ante": "Ele teve um ", "dep": " pensamento.", "cer": "mau", "out": ["mal"], "dic": "'Um BOM pensamento' → mau."}, {"img": "", "ante": "A porta range porque foi ", "dep": " instalada.", "cer": "mal", "out": ["mau"], "dic": "'Foi BEM instalada' → mal."}, {"img": "", "ante": "Não seja ", "dep": " com os colegas.", "cer": "mau", "out": ["mal"], "dic": "'Seja BOM' → mau."}], "dadosExtra": {"ENUN": "Toque no pedaço que <b>falta</b> na frase.", "DEPOIS": "Troque por bom/bem para conferir.", "FECHO": "Você nunca mais confunde mau e mal!"}, "vozIntro": "dp_f16_intro", "dicaVoz": "dp_f16_dica"}, {"id": "f14", "mec": "forca", "selo": "CASO 4: ESCREVA A PALAVRA CERTA", "conceito": "objetivo4", "enunciado": "Descubra a palavra pela pista e monte, letra por letra: <b>MAU</b> ou <b>MAL</b>?", "dica": "Troque a frase por BOM/BEM: BOM → termina em U; BEM → termina em L.", "dados": [{"p": "MAU", "ac": "MAU", "d": "O contr&#225;rio de BOM: 'o lobo era ___'. Troque por BOM: termina em U."}, {"p": "MAL", "ac": "MAL", "d": "O contr&#225;rio de BEM: 'ele dormiu ___'. Troque por BEM: termina em L."}, {"p": "MAU", "ac": "MAU", "d": "'Que cheiro ___!' Troque por BOM ('que cheiro BOM'): termina em U."}], "vozIntro": "dp_f14_intro", "dicaVoz": "dp_f14_dica"}, {"id": "f17", "mec": "digitar", "selo": "CASO 4: ESCREVA CERTO", "conceito": "objetivo4", "enunciado": "Escreva a palavra certa, letra por letra.", "dica": "Diga a frase trocando por bom/bem e escolha U ou L no fim.", "dados": [{"palavra": "MAU", "img": "", "voz": "mau", "pista": "O contrário de BOM (um lobo ___). Escreva com U no fim.", "dic": "Troca por BOM: então é <b>MAU</b>."}, {"palavra": "MAL", "img": "", "voz": "mal", "pista": "O contrário de BEM (dormiu ___). Escreva com L no fim.", "dic": "Troca por BEM: então é <b>MAL</b>."}], "dadosExtra": {"ENUN": "Escreva a palavra, letra por letra.", "FECHO": "Você escreveu mau e mal do jeito certo!"}, "vozIntro": "dp_f17_intro", "dicaVoz": "dp_f17_dica"}];
 AMBI = "poeira";
-VOZOK = {"17t6ypw": 1, "3776c7": 1, "3776cb": 1, "377hcp": 1, "bosaj9": 1, "1nbxf8l": 1, "1v3s0l9": 1, "11shg2w": 1, "ykgre6": 1, "qfa1k0": 1, "gqndra": 1, "5i2agk": 1, "9srf2k": 1, "4lmp2i": 1, "ym4t7u": 1, "16qdbjd": 1, "aylsjj": 1, "1c46wj5": 1, "zx3bsu": 1, "19xs5vi": 1, "1y3cof9": 1, "12zuhmo": 1, "upoyeu": 1, "iqb8ig": 1, "zo7yad": 1, "1h5neai": 1, "1t4d5po": 1, "1jjjiv8": 1, "19u7pq4": 1, "alswg3": 1, "t18txw": 1, "3ho73": 1, "377cwc": 1, "4fzmzb": 1, "ykgxna": 1, "1v93kea": 1, "11g1mih": 1, "1igrwnj": 1, "1t5zox6": 1, "s3dla": 1, "1cwr2aw": 1, "1u4qwlo": 1, "11ktv5x": 1, "avki9k": 1, "dmpsya": 1, "ykgrai": 1, "m9oyuc": 1, "12e5xp2": 1, "c3ea2o": 1, "8ne9st": 1, "siqqjl": 1, "m88xhh": 1, "d3qiq4": 1, "eypktf": 1, "141lxp2": 1, "127szmr": 1, "1gzw3n1": 1, "1m145bp": 1, "hy0sew": 1, "1ny4mob": 1, "13nqnbd": 1, "1itglze": 1, "1dkt9no": 1, "1hjlxsm": 1, "1nl7tu5": 1, "1v5j3ld": 1, "81uoq8": 1, "j5jt1m": 1, "40a5nz": 1, "wxqbyt": 1, "1d7pnfo": 1, "sh0ik0": 1, "1faaz7e": 1, "api0k1": 1, "4dg3iz": 1, "1jidp6f": 1, "xuy3n1": 1, "1nk8za0": 1, "c1frnv": 1, "17f63jo": 1, "17uf153": 1, "sv5j0v": 1, "8zzua5": 1, "v0l9bg": 1, "1izwdr0": 1, "azx3k1": 1, "14voy6w": 1, "16v00vd": 1, "1hoz0nr": 1, "69y3a7": 1, "ed3n1v": 1, "1i4qfwf": 1, "6m4hzn": 1, "j29eyy": 1, "454ad7": 1, "1x2x5m5": 1, "uefz0i": 1, "rudp7j": 1, "11qrr7v": 1, "p6l2t0": 1, "vbz0k2": 1, "1ib135v": 1, "1tvh1tx": 1, "sagi0n": 1, "1t5qzae": 1, "1ug6kdr": 1, "1hpqpkv": 1, "rhbzn9": 1, "65pjxa": 1, "kq3bbg": 1, "thu46u": 1, "1y4y7v6": 1, "11rq0fo": 1, "1bk7s4z": 1, "1o0h25x": 1, "efod59": 1, "zw8vsm": 1, "1bf4uwt": 1, "1sj2a64": 1, "10hgz2u": 1, "hrncw5": 1, "4olvgw": 1, "1u19uru": 1, "y5qu5e": 1, "g46dd5": 1, "m0jw6m": 1, "108wgoy": 1, "vpt80e": 1, "gvhrri": 1, "n9ajc8": 1, "gaw0fo": 1, "1xg2iew": 1, "1h77kdj": 1, "6mve0m": 1, "7y9nlw": 1, "wy4ff9": 1, "eg2a4z": 1, "1glmo6l": 1, "1vszl02": 1, "yn7yae": 1, "1u6mvyv": 1, "1hj4xgj": 1, "qg3kuv": 1, "6g1is7": 1, "11rkm1z": 1, "j0860l": 1, "56bcs9": 1, "twcjwi": 1, "grtdt6": 1, "osx1sk": 1, "48t9cf": 1, "1la7yyq": 1, "dguv1z": 1, "1nzil3r": 1, "1a7o36r": 1, "xxfwno": 1, "aqze53": 1, "a9t4n1": 1, "yke7bx": 1, "477uli": 1, "sd6cle": 1, "b5m35p": 1, "xtieep": 1, "1mk9a85": 1, "1xvlsa1": 1, "mydni4": 1, "1b7dtae": 1, "cgumfn": 1, "to1ulj": 1, "xcz9zt": 1, "1v824sm": 1, "18yiimx": 1, "gfgp2n": 1, "r7cmv": 1, "lr9ofi": 1, "hhs7de": 1, "2xeo9p": 1, "wycdco": 1, "377cso": 1, "377csf": 1, "pbuh4w": 1, "pfblv4": 1, "1dgs1vq": 1, "25dd2c": 1, "zi2xzs": 1, "o1xd2v": 1, "15233kj": 1, "1n0hvm3": 1, "1gllvjw": 1, "1r6tpe1": 1, "wfugbp": 1, "bso30l": 1, "19b19ro": 1, "nkrnlt": 1, "3v4av3": 1, "h0mneg": 1, "1m2gf7b": 1, "5ngzcc": 1, "1pskkey": 1, "w8nj03": 1, "1g541hp": 1, "9c6cjo": 1, "1sjt6gu": 1, "141k2fl": 1, "gjrjt9": 1, "c6sels": 1, "1vgo6z7": 1, "1o367lw": 1, "vfkvkg": 1, "jsd3ig": 1, "lfnvhu": 1, "1kxg63b": 1, "kfw3sx": 1, "17xranf": 1, "186o3oa": 1, "1kjr72y": 1, "149ulbd": 1, "modd47": 1, "1xkj9yp": 1, "16xgppj": 1, "1v8u0y8": 1, "1ih8zjc": 1, "1uzgvic": 1, "1g9t37q": 1, "mk7v51": 1, "yqzdtt": 1};
+VOZOK = {"3ho73": 1, "3776cb": 1, "3776c7": 1, "377cwc": 1, "ykgxna": 1, "eypktf": 1, "19xs5vi": 1, "1y3cof9": 1, "ykgre6": 1, "12zuhmo": 1, "377hcp": 1, "upoyeu": 1, "iqb8ig": 1, "zo7yad": 1, "1h5neai": 1, "1t4d5po": 1, "1jjjiv8": 1, "19u7pq4": 1, "alswg3": 1, "t18txw": 1, "4fzmzb": 1, "1v93kea": 1, "11g1mih": 1, "1igrwnj": 1, "1t5zox6": 1, "s3dla": 1, "oquhdi": 1, "1c46wj5": 1, "17m76wh": 1, "1bcd1qo": 1, "7y1nie": 1, "1u4qwlo": 1, "ykgrai": 1, "hxszyz": 1, "15ce1yv": 1, "cz1p2x": 1, "qbaycv": 1, "dhdkya": 1, "4a4opp": 1, "196vkz0": 1, "bwy02s": 1, "1trw8z6": 1, "1s9bby6": 1, "t7q6u7": 1, "dmpsya": 1, "1a7urj3": 1, "12nyo0k": 1, "1l8e54t": 1, "1wnef8n": 1, "17wu23u": 1, "bloepm": 1, "1rpw59n": 1, "f616f0": 1, "8v2ebh": 1, "377311": 1, "ztgr1h": 1, "19c3c6v": 1, "1m4vwuv": 1, "eddd8": 1, "uk2lcp": 1, "1nbuyz2": 1, "1nt2wik": 1, "i8f4cc": 1, "1fkssx4": 1, "17t6ypw": 1, "bosaj9": 1, "1nbxf8l": 1, "1v3s0l9": 1, "11shg2w": 1, "qfa1k0": 1, "gqndra": 1, "5i2agk": 1, "9srf2k": 1, "4lmp2i": 1, "ym4t7u": 1, "16qdbjd": 1, "aylsjj": 1, "zx3bsu": 1, "141lxp2": 1, "127szmr": 1, "1gzw3n1": 1, "1m145bp": 1, "hy0sew": 1, "1ny4mob": 1, "13nqnbd": 1, "1itglze": 1, "1dkt9no": 1, "1hjlxsm": 1, "1nl7tu5": 1, "1v5j3ld": 1, "81uoq8": 1, "j5jt1m": 1, "40a5nz": 1, "wxqbyt": 1, "1d7pnfo": 1, "sh0ik0": 1, "1faaz7e": 1, "api0k1": 1, "4dg3iz": 1, "1jidp6f": 1, "xuy3n1": 1, "uefz0i": 1, "rudp7j": 1, "11qrr7v": 1, "p6l2t0": 1, "vbz0k2": 1, "1ib135v": 1, "1tvh1tx": 1, "sagi0n": 1, "1t5qzae": 1, "1ug6kdr": 1, "1hpqpkv": 1, "rhbzn9": 1, "65pjxa": 1, "kq3bbg": 1, "thu46u": 1, "1y4y7v6": 1, "8zzua5": 1, "69y3a7": 1, "11rq0fo": 1, "1bjvjsj": 1, "1o0h25x": 1, "efod59": 1, "zw8vsm": 1, "v0l9bg": 1, "1izwdr0": 1, "azx3k1": 1, "14voy6w": 1, "16v00vd": 1, "1hoz0nr": 1, "ed3n1v": 1, "1i4qfwf": 1, "6m4hzn": 1, "j29eyy": 1, "454ad7": 1, "1x2x5m5": 1, "1nk8za0": 1, "1avjcln": 1, "17f63jo": 1, "17uf153": 1, "sv5j0v": 1, "6mve0m": 1, "7y9nlw": 1, "wy4ff9": 1, "eg2a4z": 1, "1glmo6l": 1, "1vszl02": 1, "yn7yae": 1, "1u6mvyv": 1, "1hj4xgj": 1, "qg3kuv": 1, "6g1is7": 1, "11rkm1z": 1, "j0860l": 1, "56bcs9": 1, "twcjwi": 1, "grtdt6": 1, "osx1sk": 1, "48t9cf": 1, "1la7yyq": 1, "dguv1z": 1, "1nzil3r": 1, "1a7o36r": 1, "xxfwno": 1, "aqze53": 1, "a9t4n1": 1, "yke7bx": 1, "477uli": 1, "sd6cle": 1, "b5m35p": 1, "xtieep": 1, "1mk9a85": 1, "1xvlsa1": 1, "mydni4": 1, "1b7dtae": 1, "cgumfn": 1, "to1ulj": 1, "xcz9zt": 1, "1v824sm": 1, "18yiimx": 1, "gfgp2n": 1, "r7cmv": 1, "lr9ofi": 1, "hhs7de": 1, "2xeo9p": 1, "141k2fl": 1, "gjrjt9": 1, "377cso": 1, "377csf": 1, "c6sels": 1, "1vgo6z7": 1, "1o367lw": 1, "vfkvkg": 1, "jsd3ig": 1, "lfnvhu": 1, "1kxg63b": 1, "siqqjl": 1, "kfw3sx": 1, "17xranf": 1, "yks04g": 1, "60ob1y": 1, "14crthi": 1, "186o3oa": 1, "1kjr72y": 1, "149ulbd": 1, "modd47": 1, "1xkj9yp": 1, "16xgppj": 1, "1v8u0y8": 1, "k1nt3v": 1, "14yehap": 1, "1ih8zjc": 1, "1uzgvic": 1, "1g9t37q": 1, "mk7v51": 1, "yqzdtt": 1, "1bk7s4z": 1, "c1frnv": 1, "1cwr2aw": 1, "11ktv5x": 1, "avki9k": 1, "m9oyuc": 1, "12e5xp2": 1, "c3ea2o": 1, "8ne9st": 1, "m88xhh": 1, "d3qiq4": 1, "1bf4uwt": 1, "1sj2a64": 1, "10hgz2u": 1, "hrncw5": 1, "4olvgw": 1, "1u19uru": 1, "y5qu5e": 1, "g46dd5": 1, "m0jw6m": 1, "108wgoy": 1, "vpt80e": 1, "gvhrri": 1, "n9ajc8": 1, "gaw0fo": 1, "1xg2iew": 1, "1h77kdj": 1, "wycdco": 1, "pbuh4w": 1, "pfblv4": 1, "1dgs1vq": 1, "25dd2c": 1, "zi2xzs": 1, "o1xd2v": 1, "15233kj": 1, "1n0hvm3": 1, "1gllvjw": 1, "1r6tpe1": 1, "wfugbp": 1, "bso30l": 1, "19b19ro": 1, "nkrnlt": 1, "3v4av3": 1, "h0mneg": 1, "1m2gf7b": 1, "5ngzcc": 1, "1pskkey": 1, "w8nj03": 1, "1g541hp": 1, "9c6cjo": 1, "1sjt6gu": 1};
 RELBNCC = "EF35LP03";
 </script>
 </body></html>

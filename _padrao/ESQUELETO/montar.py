@@ -184,13 +184,33 @@ def confere(c, mecs):
             if n and q / float(n) > 0.40:
                 p.append(u"a mecanica '%s' ocupa %d%% das fases (teto: 40%%)"
                          % (m, round(100.0 * q / n)))
-        # ⚠️ vizinhança: duas fases seguidas com o mesmo gesto e "a mesma tela pela
-        #    terceira vez", mesmo que o conteudo mude
-        for i in range(1, len(ordem)):
-            if ordem[i] == ordem[i - 1]:
-                p.append(u"as fases %d e %d usam a MESMA mecanica ('%s') coladas — "
-                         u"a segunda vez tem que vir depois, e um degrau acima"
-                         % (i, i + 1, ordem[i]))
+        # ⭐ REGRA VIRADA (Marcos, ago/2026): "as repeticoes das interatividades
+        #    tem que ser SEGUIDAS e nao ESPACADAS — as criancas me dizem 'mas
+        #    professor isso eu ja fiz, to fazendo de novo'". ANTES este portao
+        #    cobrava o CONTRARIO: mecanica igual colada era erro e tinha que
+        #    espacar. O espacamento e JUSTAMENTE o que faz a crianca sentir que
+        #    voltou. Agora: cada mecanica que se repete tem que aparecer em
+        #    BLOCO (fases seguidas, subindo um degrau a cada vez). Reaparecer
+        #    depois de outra mecanica no meio = o "ja fiz isso". EXCECAO unica: o
+        #    AQUECIMENTO — revisao proposital e ANUNCIADA como tal, pode reusar
+        #    uma mecanica anterior fora do bloco (por isso sai da contagem aqui).
+        def _e_aquecimento(f):
+            alvo = (f.get("id", "") + f.get("mec", "")).lower()
+            return "quec" in alvo or "quec" in texto_limpo(f.get("selo", "")).lower()
+        posicoes = {}
+        for i, f in enumerate(fases):
+            if _e_aquecimento(f):
+                continue
+            m = f.get("mec")
+            if m:
+                posicoes.setdefault(m, []).append(i)
+        for m, idxs in sorted(posicoes.items()):
+            if len(idxs) >= 2 and (max(idxs) - min(idxs) + 1) != len(idxs):
+                p.append(u"a mecanica '%s' aparece ESPACADA (fases %s) — as "
+                         u"repeticoes tem que vir SEGUIDAS, em bloco, subindo um "
+                         u"degrau a cada vez. Espacada, a crianca sente que esta "
+                         u"'fazendo de novo'. Junte-as." %
+                         (m, ", ".join(str(j + 1) for j in idxs)))
         # aquecimento no meio
         aq = next((i for i, f in enumerate(fases)
                    if "quec" in (f.get("id", "") + f.get("mec", "")).lower()

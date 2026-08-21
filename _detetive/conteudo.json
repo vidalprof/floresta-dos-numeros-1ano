@@ -4,12 +4,12 @@
  "ano": "5º ano",
  "prefixo": "dp",
  "mascote": "raposa",
- "mascoteNome": "Detetive Vera",
+ "mascoteNome": "Detetive Filó",
  "crachas": 6,
  "mesa": "Pedagogo do 5º ano + especialista em Língua Portuguesa (revisão de reforço).",
  "fundo": "dp_fundo",
  "voz": "feminina",
- "abertura": "Bem-vindo(a) à Agência! Sou a detetive Vera. Cada caso só se resolve LENDO com atenção e usando as palavras certas. Vamos?",
+ "abertura": "Bem-vindo(a) à Agência! Sou a detetive Filó. Cada caso só se resolve LENDO com atenção e usando as palavras certas. Vamos?",
  "fim": "Caso encerrado, detetive! Você lê como quem enxerga o que os outros não veem.",
  "conceitos": {
   "objetivo1": "Pronomes (pessoais, possessivos, demonstrativos, tratamento)",
@@ -25,59 +25,31 @@
  },
  "fases": [
   {
-   "id": "f01",
-   "mec": "escolher",
-   "selo": "CASO 1: O PRONOME CERTO",
+   "id": "f05",
+   "mec": "caca-palavras",
+   "selo": "CASO 1: PRONOMES ESCONDIDOS",
    "conceito": "objetivo1",
-   "enunciado": "Leia a pista e escolha o <b>pronome</b> que substitui a palavra grifada.",
-   "dica": "Pronome pessoal troca o nome: ele, ela, nós, eles...",
+   "enunciado": "Ache os <b>pronomes</b> escondidos no quadro.",
+   "dica": "Estão deitados (→) e em pé (↓): EU, ELE, ELA, MEU, ESTE.",
    "dados": [
-    {
-     "img": "",
-     "p": "<b>Ana</b> achou a pista. ___ sorriu.",
-     "c": "ELA",
-     "e": [
-      "ELE",
-      "NÓS"
-     ],
-     "d": [
-      "Ana é uma menina, no singular.",
-      "Uma pessoa, feminino: qual serve?",
-      "É <b>ELA</b>. Toque para seguir."
-     ]
-    },
-    {
-     "img": "",
-     "p": "<b>Os detetives</b> voltaram. ___ resolveram o caso.",
-     "c": "ELES",
-     "e": [
-      "ELE",
-      "ELA"
-     ],
-     "d": [
-      "São vários, no masculino.",
-      "Vários homens: plural masculino.",
-      "É <b>ELES</b>. Toque para seguir."
-     ]
-    },
-    {
-     "img": "",
-     "p": "<b>Eu e você</b> vamos investigar. ___ formamos a dupla.",
-     "c": "NÓS",
-     "e": [
-      "ELES",
-      "VOCÊS"
-     ],
-     "d": [
-      "Eu + você = a gente, juntos.",
-      "Quem inclui quem fala: nós.",
-      "É <b>NÓS</b>. Toque para seguir."
-     ]
-    }
+    "EU",
+    "ELE",
+    "ELA",
+    "MEU",
+    "ESTE"
    ],
    "dadosExtra": {
-    "TITULO": "O PRONOME CERTO",
-    "FECHO": "Você trocou os nomes pelos pronomes certos!"
+    "MODO": "lista",
+    "TITULO": "PRONOMES ESCONDIDOS",
+    "LETRAS": "ABCDEHILMNOPRSTU",
+    "DIFICIL": "",
+    "CORP": [
+     "p1",
+     "p2",
+     "p3",
+     "p4",
+     "p5"
+    ]
    }
   },
   {
@@ -187,78 +159,155 @@
   },
   {
    "id": "f04",
-   "mec": "completar",
-   "selo": "CASO 1: COMPLETE A PISTA",
+   "mec": "conserte-o-erro",
+   "selo": "CASO 1: CONSERTE A PISTA",
    "conceito": "objetivo1",
-   "enunciado": "Preencha a frase com o <b>pronome</b> que falta.",
-   "dica": "O pronome tem que combinar com a palavra que ele substitui.",
+   "enunciado": "Uma frase de cada caso tem o <b>pronome trocado</b>. Ache e conserte.",
+   "dica": "Leia a frase inteira: o pronome combina com quem ele substitui?",
+   "dados": [
+    {
+     "selo": "A PISTA DO CADERNO",
+     "cab": "O PRONOME CERTO",
+     "bal": "Uma palavra desta frase est&#225; trocada. Ache e conserte.",
+     "pecas": [
+      "O CADERNO",
+      "SUMIU.",
+      "ELA",
+      "EST&#193; NA MOCHILA."
+     ],
+     "erro": 2,
+     "certa": "ELE",
+     "ops": [
+      "ELE",
+      "ELAS",
+      "N&#211;S"
+     ],
+     "por": "Caderno &#233; 'o' (masculino, singular). O pronome certo &#233; <b>ELE</b>.",
+     "dicas": [
+      "Leia a frase baixinho, do come&#231;o ao fim.",
+      "O pronome fala do CADERNO. Caderno &#233; 'o' ou 'a'?",
+      "Era este aqui. Eu marquei para voc&#234;: agora troque pelo certo."
+     ],
+     "dicas2": [
+      "Caderno &#233; masculino: combina com 'o'.",
+      "Combina com 'o' &#8594; ELE; com 'a' &#8594; ELA.",
+      "Era <b>ELE</b>. Eu troquei para voc&#234; ler a frase certa."
+     ]
+    },
+    {
+     "selo": "A PISTA DAS LUPAS",
+     "cab": "O PRONOME CERTO",
+     "bal": "Ache a palavra trocada e conserte.",
+     "pecas": [
+      "AS LUPAS",
+      "S&#195;O NOVAS.",
+      "ELE",
+      "BRILHAM."
+     ],
+     "erro": 2,
+     "certa": "ELAS",
+     "ops": [
+      "ELAS",
+      "ELE",
+      "ELA"
+     ],
+     "por": "Lupas s&#227;o 'as' (feminino, plural): <b>ELAS</b> brilham.",
+     "dicas": [
+      "O pronome fala das LUPAS. Quantas s&#227;o?",
+      "S&#227;o v&#225;rias e femininas.",
+      "Era este. Eu marquei: agora escolha o certo."
+     ],
+     "dicas2": [
+      "Feminino e plural pede um pronome no plural.",
+      "Plural feminino = ELAS.",
+      "Era <b>ELAS</b>. Eu troquei para a frase ficar certa."
+     ]
+    },
+    {
+     "selo": "A PISTA DA ANA",
+     "cab": "O PRONOME CERTO",
+     "bal": "Uma palavra n&#227;o combina. Ache e conserte.",
+     "pecas": [
+      "ANA",
+      "ACHOU A PISTA.",
+      "ELE",
+      "SORRIU."
+     ],
+     "erro": 2,
+     "certa": "ELA",
+     "ops": [
+      "ELA",
+      "ELE",
+      "ELES"
+     ],
+     "por": "Ana &#233; uma menina: <b>ELA</b> sorriu.",
+     "dicas": [
+      "O pronome fala da ANA. Menino ou menina?",
+      "Ana &#233; menina, uma s&#243;.",
+      "Era este. Eu marquei para voc&#234;."
+     ],
+     "dicas2": [
+      "Uma menina, no singular.",
+      "Feminino singular = ELA.",
+      "Era <b>ELA</b>. Eu troquei para voc&#234; ler a frase certa."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f01",
+   "mec": "escolher",
+   "selo": "CASO 1: O PRONOME CERTO",
+   "conceito": "objetivo1",
+   "enunciado": "Leia a pista e escolha o <b>pronome</b> que substitui a palavra grifada.",
+   "dica": "Pronome pessoal troca o nome: ele, ela, nós, eles...",
    "dados": [
     {
      "img": "",
-     "ante": "Cadê o meu caderno? ",
-     "dep": " está na mochila.",
-     "cer": "Ele",
-     "out": [
-      "Ela",
-      "Eles"
+     "p": "<b>Ana</b> achou a pista. ___ sorriu.",
+     "c": "ELA",
+     "e": [
+      "ELE",
+      "NÓS"
      ],
-     "dic": "Caderno é 'o' — masculino, singular."
+     "d": [
+      "Ana é uma menina, no singular.",
+      "Uma pessoa, feminino: qual serve?",
+      "É <b>ELA</b>. Toque para seguir."
+     ]
     },
     {
      "img": "",
-     "ante": "As lupas são novas. ",
-     "dep": " brilham.",
-     "cer": "Elas",
-     "out": [
-      "Ele",
-      "Eles"
+     "p": "<b>Os detetives</b> voltaram. ___ resolveram o caso.",
+     "c": "ELES",
+     "e": [
+      "ELE",
+      "ELA"
      ],
-     "dic": "Lupas são 'as' — feminino, plural."
+     "d": [
+      "São vários, no masculino.",
+      "Vários homens: plural masculino.",
+      "É <b>ELES</b>. Toque para seguir."
+     ]
     },
     {
      "img": "",
-     "ante": "Esta é a casa de vocês? Sim, ",
-     "dep": " é nossa.",
-     "cer": "ela",
-     "out": [
-      "ele",
-      "eles"
+     "p": "<b>Eu e você</b> vamos investigar. ___ formamos a dupla.",
+     "c": "NÓS",
+     "e": [
+      "ELES",
+      "VOCÊS"
      ],
-     "dic": "Casa é 'a' — feminino, singular."
+     "d": [
+      "Eu + você = a gente, juntos.",
+      "Quem inclui quem fala: nós.",
+      "É <b>NÓS</b>. Toque para seguir."
+     ]
     }
    ],
    "dadosExtra": {
-    "ENUN": "Toque no pedaço que <b>falta</b> na frase.",
-    "DEPOIS": "Leia a frase inteira antes de escolher.",
-    "FECHO": "Você completou as pistas com os pronomes!"
-   }
-  },
-  {
-   "id": "f05",
-   "mec": "caca-palavras",
-   "selo": "CASO 1: PRONOMES ESCONDIDOS",
-   "conceito": "objetivo1",
-   "enunciado": "Ache os <b>pronomes</b> escondidos no quadro.",
-   "dica": "Estão deitados (→) e em pé (↓): EU, ELE, ELA, MEU, ESTE.",
-   "dados": [
-    "EU",
-    "ELE",
-    "ELA",
-    "MEU",
-    "ESTE"
-   ],
-   "dadosExtra": {
-    "MODO": "lista",
-    "TITULO": "PRONOMES ESCONDIDOS",
-    "LETRAS": "ABCDEHILMNOPRSTU",
-    "DIFICIL": "",
-    "CORP": [
-     "p1",
-     "p2",
-     "p3",
-     "p4",
-     "p5"
-    ]
+    "TITULO": "O PRONOME CERTO",
+    "FECHO": "Você trocou os nomes pelos pronomes certos!"
    }
   },
   {
@@ -316,72 +365,6 @@
     "TITULO": "O QUE O TEXTO CONTA",
     "FECHO": "Você achou as informações no texto!"
    }
-  },
-  {
-   "id": "f07",
-   "mec": "linha-do-tempo",
-   "selo": "CASO 2: A ORDEM DOS FATOS",
-   "conceito": "objetivo2",
-   "enunciado": "Coloque os fatos da história na <b>ordem</b> em que aconteceram.",
-   "dica": "Pense: o que veio primeiro? O que aconteceu por último?",
-   "dados": [
-    {
-     "t": 1,
-     "n": "O menino perdeu o cachorro no parque."
-    },
-    {
-     "t": 2,
-     "n": "A detetive Vera achou pegadas na lama."
-    },
-    {
-     "t": 3,
-     "n": "As pegadas levaram at&#233; uma &#225;rvore."
-    },
-    {
-     "t": 4,
-     "n": "O cachorro estava l&#225;, assustado."
-    },
-    {
-     "t": 5,
-     "n": "O menino abra&#231;ou o cachorro, feliz."
-    }
-   ]
-  },
-  {
-   "id": "f08",
-   "mec": "quem-sou-eu",
-   "selo": "CASO 2: QUEM É O PERSONAGEM?",
-   "conceito": "objetivo2",
-   "enunciado": "Ouça as pistas do texto e descubra <b>quem é o personagem</b>.",
-   "dica": "Junte as três pistas antes de responder.",
-   "dados": [
-    {
-     "resp": "O CARTEIRO",
-     "pistas": [
-      "Eu levo <b>cartas</b> de casa em casa.",
-      "Uso um <b>bon&#233;</b> e uma bolsa grande a tiracolo.",
-      "Fui eu que trouxe a <b>carta misteriosa</b> para a agência."
-     ],
-     "outros": [
-      "O PADEIRO",
-      "O M&#201;DICO",
-      "O PROFESSOR"
-     ]
-    },
-    {
-     "resp": "A VIZINHA",
-     "pistas": [
-      "Eu moro na casa <b>ao lado</b> da agência.",
-      "Estou sempre na <b>janela</b>, vendo tudo o que passa.",
-      "Eu <b>vi</b> quem deixou a carta na porta."
-     ],
-     "outros": [
-      "A PROFESSORA",
-      "A M&#195;E",
-      "A DELEGADA"
-     ]
-    }
-   ]
   },
   {
    "id": "f09",
@@ -451,7 +434,7 @@
     {
      "k": "p3",
      "t": "NÓS",
-     "s": "eu e a Vera"
+     "s": "eu e a Filó"
     }
    ],
    "dadosExtra": {
@@ -466,54 +449,78 @@
    }
   },
   {
-   "id": "f10",
-   "mec": "escolher",
-   "selo": "CASO 3: PARA QUE SERVE?",
-   "conceito": "objetivo3",
-   "enunciado": "O texto injuntivo <b>ensina a fazer</b> algo. Descubra para que ele serve.",
-   "dica": "Texto injuntivo dá ordens/instruções: receita, regra de jogo, manual.",
+   "id": "f08",
+   "mec": "quem-sou-eu",
+   "selo": "CASO 2: QUEM É O PERSONAGEM?",
+   "conceito": "objetivo2",
+   "enunciado": "Ouça as pistas do texto e descubra <b>quem é o personagem</b>.",
+   "dica": "Junte as três pistas antes de responder.",
    "dados": [
     {
-     "img": "",
-     "p": "Leia: <i>“Misture a farinha, quebre os ovos e leve ao forno por 30 minutos.”</i> Este texto serve para...",
-     "c": "Ensinar a fazer um bolo",
-     "e": [
-      "Contar uma história",
-      "Descrever um lugar"
+     "resp": "O CARTEIRO",
+     "pistas": [
+      "Eu levo <b>cartas</b> de casa em casa.",
+      "Uso um <b>bon&#233;</b> e uma bolsa grande a tiracolo.",
+      "Fui eu que trouxe a <b>carta misteriosa</b> para a agência."
      ],
-     "d": [
-      "Ele manda FAZER passos, um atrás do outro.",
-      "Farinha + ovos + forno = uma <b>receita</b>.",
-      "É <b>ensinar a fazer um bolo</b>. Toque para seguir."
+     "outros": [
+      "O PADEIRO",
+      "O M&#201;DICO",
+      "O PROFESSOR"
      ]
     },
     {
-     "img": "",
-     "p": "Leia: <i>“Não corra. Aperte o botão. Espere a luz verde para atravessar.”</i> Este texto serve para...",
-     "c": "Ensinar a atravessar com segurança",
-     "e": [
-      "Vender um carro",
-      "Contar uma piada"
+     "resp": "A VIZINHA",
+     "pistas": [
+      "Eu moro na casa <b>ao lado</b> da agência.",
+      "Estou sempre na <b>janela</b>, vendo tudo o que passa.",
+      "Eu <b>vi</b> quem deixou a carta na porta."
      ],
-     "d": [
-      "São ordens para você fazer certo.",
-      "Botão + luz verde = <b>atravessar a rua</b>.",
-      "É <b>ensinar a atravessar com segurança</b>. Toque para seguir."
+     "outros": [
+      "A PROFESSORA",
+      "A M&#195;E",
+      "A DELEGADA"
      ]
     }
-   ],
-   "dadosExtra": {
-    "TITULO": "PARA QUE SERVE?",
-    "FECHO": "Você descobriu a finalidade dos textos!"
-   }
+   ]
+  },
+  {
+   "id": "f07",
+   "mec": "linha-do-tempo",
+   "selo": "CASO 2: A ORDEM DOS FATOS",
+   "conceito": "objetivo2",
+   "enunciado": "Coloque os fatos da história na <b>ordem</b> em que aconteceram.",
+   "dica": "Pense: o que veio primeiro? O que aconteceu por último?",
+   "dados": [
+    {
+     "t": 1,
+     "n": "O menino perdeu o cachorro no parque."
+    },
+    {
+     "t": 2,
+     "n": "A detetive Filó achou pegadas na lama."
+    },
+    {
+     "t": 3,
+     "n": "As pegadas levaram at&#233; uma &#225;rvore."
+    },
+    {
+     "t": 4,
+     "n": "O cachorro estava l&#225;, assustado."
+    },
+    {
+     "t": 5,
+     "n": "O menino abra&#231;ou o cachorro, feliz."
+    }
+   ]
   },
   {
    "id": "f11",
    "mec": "linha-do-tempo",
    "selo": "CASO 3: A ORDEM DOS PASSOS",
    "conceito": "objetivo3",
-   "enunciado": "Coloque os <b>passos</b> da receita na ordem certa.",
-   "dica": "O que se faz primeiro? Não dá para assar antes de misturar.",
+   "enunciado": "Esta receita <b>ensina a fazer</b> um bolo. Coloque os <b>passos</b> na ordem certa.",
+   "dica": "Texto injuntivo dá instruções em passos. O que se faz primeiro?",
    "dados": [
     {
      "t": 1,
@@ -647,123 +654,12 @@
    }
   },
   {
-   "id": "f14",
-   "mec": "escolher",
-   "selo": "CASO 4: MAU OU MAL?",
-   "conceito": "objetivo4",
-   "enunciado": "Truque de detetive: se trocar por <b>BOM</b>, é MAU; se trocar por <b>BEM</b>, é MAL.",
-   "dica": "MAU (com U) = adjetivo, o contrário de BOM. MAL (com L) = advérbio, o contrário de BEM.",
-   "dados": [
-    {
-     "img": "",
-     "p": "O lobo da história era um lobo ___ . (troque por BOM/BEM para decidir)",
-     "c": "MAU",
-     "e": [
-      "MAL"
-     ],
-     "d": [
-      "Cabe 'bom' ou 'bem'? 'Um lobo BOM' faz sentido.",
-      "Combina com BOM = <b>MAU</b> (adjetivo).",
-      "É <b>MAU</b> (o contrário de bom). Toque para seguir."
-     ]
-    },
-    {
-     "img": "",
-     "p": "Ele dormiu ___ e acordou cansado. (troque por BOM/BEM)",
-     "c": "MAL",
-     "e": [
-      "MAU"
-     ],
-     "d": [
-      "Cabe 'bom' ou 'bem'? 'Dormiu BEM' faz sentido.",
-      "Combina com BEM = <b>MAL</b> (advérbio).",
-      "É <b>MAL</b> (o contrário de bem). Toque para seguir."
-     ]
-    },
-    {
-     "img": "",
-     "p": "Que cheiro ___ ! (troque por BOM/BEM)",
-     "c": "MAU",
-     "e": [
-      "MAL"
-     ],
-     "d": [
-      "'Que cheiro BOM!' faz sentido.",
-      "Combina com BOM = <b>MAU</b>.",
-      "É <b>MAU</b> (o contrário de bom). Toque para seguir."
-     ]
-    }
-   ],
-   "dadosExtra": {
-    "TITULO": "MAU OU MAL?",
-    "FECHO": "Você desvendou o mau e o mal!"
-   }
-  },
-  {
-   "id": "f15",
-   "mec": "classificar",
-   "selo": "CASO 4: SEPARE MAU E MAL",
-   "conceito": "objetivo4",
-   "enunciado": "Cada palavra na gaveta certa: <b>MAU</b> (= bom) ou <b>MAL</b> (= bem)?",
-   "dica": "Se dá para trocar por BOM, vai em MAU. Se dá para trocar por BEM, vai em MAL.",
-   "dados": [
-    {
-     "k": "mau",
-     "n": "MAU<br>(= bom)",
-     "img": "",
-     "voz": "mau",
-     "rot": false
-    },
-    {
-     "k": "mal",
-     "n": "MAL<br>(= bem)",
-     "img": "",
-     "voz": "mal",
-     "rot": false
-    }
-   ],
-   "dadosExtra": {
-    "FICHAS": [
-     {
-      "t": "um cão MAU",
-      "alvo": "mau"
-     },
-     {
-      "t": "um dia MAU",
-      "alvo": "mau"
-     },
-     {
-      "t": "um filme MAU",
-      "alvo": "mau"
-     },
-     {
-      "t": "escreve MAL",
-      "alvo": "mal"
-     },
-     {
-      "t": "passou MAL",
-      "alvo": "mal"
-     },
-     {
-      "t": "fez MAL a lição",
-      "alvo": "mal"
-     }
-    ],
-    "DICAS": [
-     "Troque por bom/bem: 'um cão BOM' → MAU; 'escreve BEM' → MAL.",
-     "MAU descreve uma COISA (adjetivo); MAL diz COMO se faz (advérbio).",
-     "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."
-    ],
-    "ENUN": "Toque na <b>ficha</b>. Depois toque na gaveta: <b>MAU</b> ou <b>MAL</b>?"
-   }
-  },
-  {
    "id": "f16",
    "mec": "completar",
    "selo": "CASO 4: COMPLETE COM MAU/MAL",
    "conceito": "objetivo4",
    "enunciado": "Preencha a frase com <b>mau</b> (com U) ou <b>mal</b> (com L).",
-   "dica": "Troca-BOM = mau; troca-BEM = mal.",
+   "dica": "Truque de detetive: troque por BOM = mau; troque por BEM = mal.",
    "dados": [
     {
      "img": "",
@@ -801,6 +697,31 @@
     "DEPOIS": "Troque por bom/bem para conferir.",
     "FECHO": "Você nunca mais confunde mau e mal!"
    }
+  },
+  {
+   "id": "f14",
+   "mec": "forca",
+   "selo": "CASO 4: ESCREVA A PALAVRA CERTA",
+   "conceito": "objetivo4",
+   "enunciado": "Descubra a palavra pela pista e monte, letra por letra: <b>MAU</b> ou <b>MAL</b>?",
+   "dica": "Troque a frase por BOM/BEM: BOM → termina em U; BEM → termina em L.",
+   "dados": [
+    {
+     "p": "MAU",
+     "ac": "MAU",
+     "d": "O contr&#225;rio de BOM: 'o lobo era ___'. Troque por BOM: termina em U."
+    },
+    {
+     "p": "MAL",
+     "ac": "MAL",
+     "d": "O contr&#225;rio de BEM: 'ele dormiu ___'. Troque por BEM: termina em L."
+    },
+    {
+     "p": "MAU",
+     "ac": "MAU",
+     "d": "'Que cheiro ___!' Troque por BOM ('que cheiro BOM'): termina em U."
+    }
+   ]
   },
   {
    "id": "f17",

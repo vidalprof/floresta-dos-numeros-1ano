@@ -48,7 +48,7 @@ Vem nela: **dp_raposa_feliz**
 
 ```
 A SHEET of 1 separate objects arranged in a clean 1x1 GRID on a PLAIN PURE BLACK background (#000000), each object fully inside its own cell, well separated from the others, none touching, all at the SAME scale and the SAME lighting. Soft matte clay 3D illustration, children's storybook style, rich saturated colours, soft shadows. No text, no letters, no numbers, no labels, no frames, no background scenery. The objects, in reading order (left to right, top to bottom), are:
-  1. a friendly cartoon character named Detetive Vera, the guide of this activity about A Agência dos Detetives das Palavras, standing, full body, facing the viewer, smiling warmly, mouth closed, eyes open. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  1. a friendly cartoon character named Detetive Filó, the guide of this activity about A Agência dos Detetives das Palavras, standing, full body, facing the viewer, smiling warmly, mouth closed, eyes open. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
 ```
 
 ## Folha `cart_medalha.png`
@@ -67,7 +67,7 @@ A SHEET of 1 separate objects arranged in a clean 1x1 GRID on a PLAIN PURE BLACK
 ## `dp_raposa_feliz.png`
 
 ```
-a friendly cartoon character named Detetive Vera, the guide of this activity about A Agência dos Detetives das Palavras, standing, full body, facing the viewer, smiling warmly, mouth closed, eyes open. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
+a friendly cartoon character named Detetive Filó, the guide of this activity about A Agência dos Detetives das Palavras, standing, full body, facing the viewer, smiling warmly, mouth closed, eyes open. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
 ```
 
 ---

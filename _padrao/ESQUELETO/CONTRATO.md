@@ -119,12 +119,38 @@ banco ou na lista de arte, e **gera o `falas.json` a partir dos próprios textos
 - fase 1 é **problema**, nunca explicação;
 - o primeiro símbolo só depois do primeiro figural;
 - **aquecimento entre 25% e 65%** do caminho;
-- a mesma mecânica **nunca em fases vizinhas**, e a segunda vez é **um degrau
-  acima** (a primeira com apoio, a segunda sem);
+- a mesma mecânica, quando repete, vem em **BLOCO — fases SEGUIDAS, não
+  espaçadas** (regra VIRADA pelo Marcos, ago/2026, ver §6b), subindo **um
+  degrau a cada vez** (a primeira com apoio, a última sem). Só o **aquecimento**
+  pode reusar uma mecânica anterior fora do bloco — é revisão anunciada;
 - fecho com gancho.
 
 
 ---
+
+## 6b. ⭐ REPETIÇÃO SEGUIDA, NÃO ESPAÇADA (regra VIRADA — Marcos, ago/2026)
+
+Palavras dele: *"as repetições das interatividades têm que ser seguidas e não
+espaçadas — as crianças têm me dito 'mas professor isso eu já fiz, tô fazendo
+de novo'"*.
+
+**O que mudou:** o portão do montador cobrava o CONTRÁRIO — mecânica igual
+colada era erro, tinha que espaçar ("nunca em fases vizinhas"). Só que o
+espaçamento é JUSTAMENTE o que faz a criança sentir que voltou: ela faz
+`escolher` na fase 1, mais quatro coisas, e reencontra `escolher` na fase 6 →
+*"isso eu já fiz"*. Colada, ela lê como "mesmo jogo, próximo nível" (progressão);
+espaçada, lê como "de novo o mesmo" (regressão).
+
+**A regra agora:** cada mecânica que se repete aparece em **BLOCO** (fases
+seguidas), subindo um degrau a cada vez (1ª com apoio → última sem). Reaparecer
+depois de outra mecânica no meio = reprova (`a mecanica 'X' aparece ESPACADA`).
+**Exceção única:** o **AQUECIMENTO** — revisão anunciada como tal, pode reusar
+uma mecânica anterior fora do bloco (por isso sai da contagem do portão).
+
+**Como o portão mede** (`montar.py`, na variedade por gesto): junta as posições
+de cada mecânica (menos o aquecimento) e reprova se elas não forem contíguas
+(`max-min+1 != quantidade` = tem buraco). A variedade continua valendo por cima
+(≥4 gestos, nenhum > 40%): agrupar não reduz variedade, só muda a ordem.
 
 ## 6. LIÇÕES DAS PRIMEIRAS PEÇAS (achadas construindo, ago/2026)
 

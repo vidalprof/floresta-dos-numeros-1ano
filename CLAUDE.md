@@ -297,6 +297,12 @@ Leia tudo antes de agir e responda sempre em **português**.
 >       cruzadinha onde a PALAVRA é o conteúdo). Mecânica enfiada à força cansa igual.
 >    - **Regra prática:** nenhum gesto acima de 40% e no mínimo 4 gestos por atividade —
 >       medido pelo `_qa/padrao.py`. Numa atividade de ~20 fases, mirar **8 a 12 gestos**.
+>    - **⭐ REPETIÇÃO SEGUIDA, NÃO ESPAÇADA** (Marcos, ago/2026: *"as repetições das
+>       interatividades têm que ser seguidas e não espaçadas — as crianças me dizem
+>       'isso eu já fiz, tô fazendo de novo'"*). A regra do montador VIROU: mecânica que
+>       repete vem em **BLOCO** (fases coladas, subindo um degrau), nunca espalhada.
+>       Espaçada = a criança sente que voltou. Só o **aquecimento** reusa fora do bloco.
+>       Medido pelo `montar.py`; detalhes no `CONTRATO.md §6b`.
 >
 > **Auditor: `_qa/padrao.py`** (portão 0b da banca) — conta o gesto de cada fase e
 > **reprova** se um só gesto passar de **40%**, se houver menos de **4 gestos**
