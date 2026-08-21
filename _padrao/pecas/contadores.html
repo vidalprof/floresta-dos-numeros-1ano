@@ -231,23 +231,19 @@ function nomeNum(n){ return (n>=0&&n<NUM.length) ? NUM[n] : (""+n); }
    contagem (para não correr num PC que devolve `onend` na hora / sem voz).
    Antes a contagem tinha DOIS relógios (setTimeout fixo × Web Speech), que
    desencontravam; agora quem manda no ritmo é a VOZ. */
+/* ⚠️⚠️ LIÇÃO PAGA (Marcos, ago/2026, Feirinha da Dona Coruja): a versão
+   "guiada pela voz" (esperava `speechSynthesis.onend` para andar) TRAVAVA no
+   Chrome real — depois da 1ª contagem os números PARAVAM de aparecer, porque o
+   `onend` do navegador não vinha e a cadeia de `passo` ficava esperando para
+   sempre. Também era a voz-ROBÔ do navegador, diferente da voz gravada do resto
+   (por isso "não conta junto"). Conserto:
+     · RITMO = relógio fixo (850ms). Nunca trava; os números sempre aparecem.
+     · VOZ = a GRAVADA da casa (`diz`, a mesma de todo o resto → "contar junto"),
+       tocada em paralelo, sem controlar o compasso.
+   A luz não pula porque o passo (850ms) é um pouco maior que a palavra falada. */
 function dizConta(txt, pronto){
-  var vozFim=false, tempoOk=false, disparou=false;
-  var tenta=function(){ if(disparou) return; if(vozFim&&tempoOk){ disparou=true; if(pronto) pronto(); } };
-  setTimeout(function(){ tempoOk=true; tenta(); }, 650);   /* ritmo mínimo p/ contar junto */
-  var fimVoz=function(){ vozFim=true; tenta(); };
-  try{
-    if(window.speechSynthesis&&window.SpeechSynthesisUtterance){
-      var u=new SpeechSynthesisUtterance(txt);
-      u.lang="pt-BR"; u.rate=0.85; u.pitch=1.05;   /* rate menor = número mais claro */
-      u.onend=fimVoz; u.onerror=fimVoz;
-      try{ window.speechSynthesis.cancel(); }catch(e){}
-      window.speechSynthesis.speak(u);
-      setTimeout(fimVoz, 2000);   /* rede: se onend nunca vier, não trava */
-      return;
-    }
-  }catch(e){}
-  vozFim=true; tenta();           /* sem Web Speech: o tempo mínimo governa */
+  try{ if(typeof diz==="function") diz(txt); }catch(e){}
+  setTimeout(function(){ if(pronto) pronto(); }, 850);
 }
 function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",.05); }
 function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
