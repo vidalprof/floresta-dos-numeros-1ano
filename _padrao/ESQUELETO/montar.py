@@ -1350,6 +1350,44 @@ def escreve_index(pasta, c, falas):
     saida = saida.replace(u"<title>MOTOR — esqueleto</title>",
                           u"<title>%s</title>" % c.get("titulo", "Atividade"), 1)
     io.open(os.path.join(pasta, "index.html"), "w", encoding="utf-8").write(saida)
+    escreve_sw(pasta, c, saida)
+
+
+def escreve_sw(pasta, c, html):
+    u"""⚠️ LIÇÃO PAGA (Lojinha, ago/2026 — Marcos: 'ao clicar no Próximo dá página
+    sem conexão'). O motor SEMPRE registra `navigator.serviceWorker.register("sw.js")`,
+    mas o montador NUNCA escrevia o sw.js: o arquivo dava 404 e, com a internet
+    instável da escola, a navegação caía na 'página sem conexão'. Agora o montador
+    gera um sw.js REDE-PRIMEIRO no HTML (online = sempre a tela fresca; offline/rede
+    caindo = volta para o index.html do cache, nunca a tela de erro) e CACHE-PRIMEIRO
+    em imagem/áudio. `skipWaiting`+`clients.claim` derrubam qualquer SW velho preso.
+    O nome do cache leva um HASH do index → cada build novo limpa o cache anterior
+    (senão voz regravada continuaria saindo a antiga). O prefixo isola dos outros
+    apps no mesmo vidalprof.github.io."""
+    import hashlib
+    ver = hashlib.md5(html.encode("utf-8")).hexdigest()[:10]
+    pre = re.sub(r"[^a-z0-9]+", "", (c.get("prefixo", "app") or "app").lower()) or "app"
+    sw = (
+        u'/* GERADO por montar.py — NAO editar a mao.\n'
+        u'   REDE PRIMEIRO no HTML (nunca prende versao velha; se a rede cair, volta\n'
+        u'   ao index.html do cache em vez da "pagina sem conexao"); CACHE PRIMEIRO\n'
+        u'   em imagem/audio. O HASH no nome do cache troca a cada build. */\n'
+        u'var PREFIXO="%s-";\n'
+        u'var CACHE=PREFIXO+"%s";\n'
+        u'var ATIVOS=["./","./index.html","./manifest.json"];\n'
+        u'self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ATIVOS).catch(function(){});}));});\n'
+        u'self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE&&k.indexOf(PREFIXO)===0)return caches.delete(k);}));}));self.clients.claim();});\n'
+        u'function guardar(req,resp){try{if(resp&&resp.status===200&&resp.type==="basic"){var cp=resp.clone();caches.open(CACHE).then(function(c){c.put(req,cp);});}}catch(x){}return resp;}\n'
+        u'self.addEventListener("fetch",function(e){\n'
+        u'  if(e.request.method!=="GET")return;\n'
+        u'  var req=e.request,aceita=req.headers.get("accept")||"";\n'
+        u'  var ehPagina=(req.mode==="navigate")||aceita.indexOf("text/html")>=0;\n'
+        u'  if(ehPagina){e.respondWith(fetch(req).then(function(r){return guardar(req,r);}).catch(function(){return caches.match(req).then(function(c){return c||caches.match("./index.html");});}));}\n'
+        u'  else{e.respondWith(caches.match(req).then(function(c){var rede=fetch(req).then(function(r){return guardar(req,r);}).catch(function(){return c;});return c||rede;}));}\n'
+        u'});\n'
+    ) % (pre, ver)
+    io.open(os.path.join(pasta, "sw.js"), "w", encoding="utf-8").write(sw)
+    print(u"   sw.js gerado (rede-primeiro, cache %s-%s)" % (pre, ver))
 
 
 def jstr(s):

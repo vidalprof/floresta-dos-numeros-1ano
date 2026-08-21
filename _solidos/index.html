@@ -1770,6 +1770,21 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-escolher .opt.ok{background:rgba(214,245,200,.45) !important;border-radius:14px}
 .mec-escolher .opt.no{background:rgba(247,217,210,.45) !important;border-radius:14px}
 
+/* ⭐ fase "QUEM SOU EU?" (Marcos, ago/2026): as opções (aqui são TEXTO — o nome
+   do sólido) também na HORIZONTAL, em vez de empilhadas. Viram pastilhas numa
+   linha (quebram para a linha de baixo em tela estreita). Mantêm o cartão do
+   próprio botão — são texto, não figura, então não entram na regra "sem fundo". */
+.mec-quem-sou-eu .opts{
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-flex-direction:row;flex-direction:row;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch;
+  gap:8px;max-width:min(460px,calc(100vw - 20px));margin:10px auto 0}
+.mec-quem-sou-eu .opts .opt{
+  width:auto;min-width:0;-webkit-box-flex:1;-webkit-flex:1 1 120px;flex:1 1 120px;
+  max-width:220px;margin:0}
+
 </style></head>
 <body>
 
