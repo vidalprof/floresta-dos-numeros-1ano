@@ -139,7 +139,7 @@ add(id=u"f03", mec=u"reta-numerica", selo=u"A RÉGUA DOS PASSOS", conceito=u"obj
     dadosExtra={u"ERROS":[]})
 
 add(id=u"f04", mec=u"completar", selo=u"QUANTO FALTA", conceito=u"objetivo1",
-    enunciado=u"Preencha a conta para chegar ao total.",
+    enunciado=u"A Dona Coruja quer encher as cestas da feira. Toque no número que falta para chegar ao total.",
     dica=u"Conte de 6 até 9 nos dedos: quantos você subiu?",
     dados=[{u"img":u"fe_maca", u"ante":u"Tinha 6 maçãs, quero 9. Faltam ", u"dep":u" maçãs.",
             u"cer":u"3", u"out":[u"2", u"4"], u"dic":u"De 6 para 9: 7, 8, 9 — são 3."},
@@ -175,7 +175,7 @@ add(id=u"f07", mec=u"contadores", selo=u"CONTE JUNTO", conceito=u"objetivo2",
     dados=[{u"ini":6, u"alvo":11}, {u"ini":7, u"alvo":10}])
 
 add(id=u"f08", mec=u"completar", selo=u"QUANTO FALTA", conceito=u"objetivo2",
-    enunciado=u"Preencha: quanto a Coruja precisa acrescentar?",
+    enunciado=u"A Coruja está enchendo a banca. Toque em quanto ela precisa acrescentar.",
     dica=u"Conte de 7 até 13.",
     dados=[{u"img":u"fe_tomate", u"ante":u"Tinha 7 tomates, quer 13. Precisa de mais ", u"dep":u".",
             u"cer":u"6", u"out":[u"5", u"7"], u"dic":u"De 7 até 13: 8, 9, 10, 11, 12, 13 — são 6."},
@@ -312,7 +312,7 @@ add(id=u"f19", mec=u"comparar", selo=u"QUANTAS A MENOS?", conceito=u"objetivo5",
                        u"Conte quantas faltaram e toque no número."]})
 
 add(id=u"f20", mec=u"completar", selo=u"QUANTO FALTA", conceito=u"objetivo5",
-    enunciado=u"Preencha: quanto falta na banca menor para ficar igual?",
+    enunciado=u"A Coruja quer deixar as duas bancas iguais. Toque em quanto falta na banca menor.",
     dica=u"De 4 até 6, quantos faltam?",
     dados=[{u"img":u"fe_tomate", u"ante":u"Uma banca tem 6 e a outra 4. Faltam ", u"dep":u" para ficarem iguais.",
             u"cer":u"2", u"out":[u"1", u"3"], u"dic":u"De 4 até 6: 5, 6 — faltam 2."},
@@ -411,7 +411,7 @@ add(id=u"f27", mec=u"base-dez", selo=u"DEZ E SOLTAS", conceito=u"objetivo1",
                           u"Deixa comigo: eu encho e você lê o total."]})
 
 add(id=u"f28", mec=u"completar", selo=u"AS DUAS PARTES", conceito=u"objetivo3",
-    enunciado=u"O todo é <b>12</b>. Uma parte é <b>8</b>. Qual é a outra parte?",
+    enunciado=u"A Dona Coruja separou as frutas em dois pratos. Sabendo o que tem em um prato, descubra quantas ficaram no outro.",
     dica=u"De 8 até 12, quantos faltam?",
     dados=[{u"img":u"fe_uva", u"ante":u"12 uvas em dois pratos. Num prato há 8, no outro há ", u"dep":u".",
             u"cer":u"4", u"out":[u"3", u"5"], u"dic":u"De 8 até 12: 9, 10, 11, 12 — são 4."},
