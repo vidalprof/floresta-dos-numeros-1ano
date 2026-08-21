@@ -1308,6 +1308,7 @@ def confere_contra_motor(js_out):
 def main():
     escrever = "--escrever" in sys.argv
     prontas, sem_porta, sem_gaveta, sem_css = [], [], [], []
+    gaveta_perdida = []   # TECNICA que é array/objeto mas escapou da detecção (bug do intruso)
     gavetas = {}
     _do_motor = classes_do_motor()
     _siglas = set()
@@ -1326,6 +1327,18 @@ def main():
             sem_porta.append(nome)
             continue
         gav, exemplo, regra, todas, exemplos, tecnicas = gaveta(js)
+        # ⭐ GUARDA (Sólidos, ago/2026 — o bug do intruso): uma gaveta marcada
+        #    `/*TECNICA*/` cujo valor é ARRAY/OBJETO É conteúdo e TEM que ser
+        #    detectada (entrar em `todas`). Se escapar, a peça roda com o EXEMPLO
+        #    dela dentro da atividade (frutas nos sólidos), sem erro de JS nenhum.
+        #    Aqui o build GRITA — é a "regra em _qa" que faltava para o defeito
+        #    não voltar por outra peça.
+        for _t in tecnicas:
+            if _t in todas:
+                continue
+            if re.search(r"^var\s+%s\s*=\s*(?:/\*[^*]*\*/\s*)?[\[{]" % re.escape(_t),
+                         js, re.M):
+                gaveta_perdida.append("%s:%s" % (nome, _t))
         # ⭐ AQUI a atividade deixa de ser código: a última linha da peça (a
         #    chamada dela mesma) vira "troque o conteúdo de exemplo pelo desta
         #    fase, DEPOIS comece". A peça não sabe de nada; nada nela mudou.
@@ -1540,6 +1553,12 @@ def main():
     if sem_porta:
         print(u"  %d sem porta (nao chamam a propria funcao no fim): %s"
               % (len(sem_porta), ", ".join(sem_porta)))
+    if gaveta_perdida:
+        print(u"  ❌ GAVETA TECNICA NAO DETECTADA (a peca vai rodar com o EXEMPLO"
+              u" dela — foi o bug do intruso/frutas nos solidos): %s"
+              % ", ".join(gaveta_perdida))
+        print(u"     -> conteudo da atividade nao entra; conserte a deteccao em "
+              u"`gaveta()` antes de publicar.")
     if vazam:
         print(u"  ⚠️ %d CLASSE(S) QUE O MOTOR TAMBEM ESTILIZA — o que a peca nao"
               u" declara vem de la: %s" % (len(vazam), ", ".join(vazam[:12])))
