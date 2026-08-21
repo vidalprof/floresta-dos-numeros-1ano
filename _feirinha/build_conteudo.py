@@ -598,6 +598,52 @@ def _numvoz(x):
     if isinstance(x, str) and x.isdigit():
         return _EXT.get(int(x), x)
     return x
+
+# ==================================================================
+# RETA-NUMERICA = SITUAÇÃO-PROBLEMA DA FEIRA (pedido do Marcos, ago/2026):
+# a rua da feira tem bancas numeradas; a Dona Coruja CAMINHA (juntar) ou VOLTA
+# (separar/retirar) bancas. A reta deixa de ser "ande 3" abstrato e vira uma
+# historinha do cotidiano — a régua é a ESTRATÉGIA para resolver o problema.
+# A operação de cada rodada é lida do `selo` atual ("5 + 3" / "12 − 5").
+# ==================================================================
+import re as _re
+def _reta_historia(a, b, frente):
+    if frente:
+        bal = (u"A Dona Coruja está na banca <b>%d</b> e caminha <b>%d</b> bancas "
+               u"para a frente, entregando frutas. Em que banca ela chega?" % (a, b))
+        passos = u", ".join(str(x) for x in range(a+1, a+b+1))
+        dica = u"Ande com o dedo pelas bancas: %s." % passos
+    else:
+        bal = (u"A Dona Coruja está na banca <b>%d</b> e volta <b>%d</b> bancas "
+               u"para buscar o troco. Em que banca ela para?" % (a, b))
+        passos = u", ".join(str(x) for x in range(a-1, a-b-1, -1))
+        dica = u"Volte com o dedo pelas bancas: %s." % passos
+    return bal, dica
+
+for _f in CONTEUDO[u"fases"]:
+    if _f.get(u"mec") != u"reta-numerica":
+        continue
+    _f[u"selo"] = u"A RUA DA FEIRA"
+    _primeiro = None
+    for _r in _f[u"dados"]:
+        _m = _re.match(r"\s*(\d+)\s*([+−-])\s*(\d+)", _r.get(u"selo", u""))
+        if not _m:
+            continue
+        _a = int(_m.group(1)); _op = _m.group(2); _bb = int(_m.group(3))
+        _frente = (_op == u"+")
+        _r[u"selo"] = u"A RUA DA FEIRA"
+        _r[u"bal"], _r[u"dica"] = _reta_historia(_a, _bb, _frente)
+        if _primeiro is None:
+            _primeiro = (_a, _bb, _frente)
+    if _primeiro:
+        _a, _bb, _frente = _primeiro
+        if _frente:
+            _f[u"enunciado"] = (u"A Dona Coruja está na banca <b>%d</b> e caminha "
+                u"<b>%d</b> bancas para a frente. Ajude a achar onde ela chega." % (_a, _bb))
+        else:
+            _f[u"enunciado"] = (u"A Dona Coruja está na banca <b>%d</b> e volta "
+                u"<b>%d</b> bancas. Ajude a achar onde ela para." % (_a, _bb))
+        _f[u"dica"] = u"Ponha o dedo na banca e ande de uma em uma, contando."
 for _f in CONTEUDO[u"fases"]:
     if _f.get(u"mec") == u"completar":
         for _r in _f.get(u"dados", []):
