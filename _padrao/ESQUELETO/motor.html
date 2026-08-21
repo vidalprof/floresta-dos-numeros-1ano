@@ -256,10 +256,20 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .medal{width:190px;height:190px;object-fit:contain;-webkit-animation:med 1s cubic-bezier(.2,1.4,.4,1);animation:med 1s cubic-bezier(.2,1.4,.4,1);-webkit-filter:drop-shadow(0 10px 14px rgba(0,0,0,.3));filter:drop-shadow(0 10px 14px rgba(0,0,0,.3))}
 @-webkit-keyframes med{from{-webkit-transform:scale(.2) rotate(-25deg);opacity:0}to{-webkit-transform:scale(1) rotate(0);opacity:1}}
 @keyframes med{from{transform:scale(.2) rotate(-25deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-/* banner */
+/* banner
+   ⚠️ LIÇÃO PAGA (Lojinha, ago/2026 — Marcos: "o botão não aparece em alguns"):
+   o banner de fim de fase se escondia com `transform:translateY(115%)` e só
+   voltava ao FIM da transição. No PC antigo da escola (fixed+transform) a
+   transição às vezes NÃO fechava e o banner — com o botão Continuar — ficava
+   ABAIXO DA DOBRA: a criança ficava presa. Agora esconde por opacity+visibility
+   (que não tira o elemento do lugar) e desliza só 16px — no pior caso fica 16px
+   mais baixo, mas SEMPRE inteiro na tela; nunca 115% fora dela. */
 .banner{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:18px 18px calc(20px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;
-  -webkit-transform:translateY(115%);transform:translateY(115%);-webkit-transition:-webkit-transform .35s cubic-bezier(.2,.8,.3,1);transition:transform .35s cubic-bezier(.2,.8,.3,1);border-top-left-radius:26px;border-top-right-radius:26px}
-.banner.show{-webkit-transform:none;transform:none}.banner.bom{background:#dcffbe}
+  opacity:0;visibility:hidden;pointer-events:none;
+  -webkit-transform:translateY(16px);transform:translateY(16px);
+  -webkit-transition:opacity .28s ease,-webkit-transform .28s ease;transition:opacity .28s ease,transform .28s ease;
+  border-top-left-radius:26px;border-top-right-radius:26px}
+.banner.show{opacity:1;visibility:visible;pointer-events:auto;-webkit-transform:none;transform:none}.banner.bom{background:#dcffbe}
 .banner .msg{font-size:18px;font-weight:700;color:#3f7d04;margin-bottom:12px;text-align:center}
 /* ⚠️ LICAO PAGA (ago/2026), e o Marcos viu no fim do jogo da memoria: *"o
    botao continuar ao final ficou horrivel, muito grande"*. MEDIDO: 376px de

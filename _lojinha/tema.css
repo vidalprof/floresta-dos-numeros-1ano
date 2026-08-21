@@ -1,0 +1,38 @@
+/* ===== A Lojinha de Brinquedos do Pipo — tema =====
+   Injetado por ÚLTIMO → vence a cascata do motor/peça.
+
+   Marcos (ago/2026): a fase de PINTAR tem que ser IGUAL ao Ateliê do Pré
+   (_colorir) — "sem barra de rolagem; só o quadrado no meio com desenho e
+   cores; não pode ficar pequeno". As mesmas regras do Ateliê, aqui ESCOPADAS
+   em `.mec-pintar-canvas` para não tocar nas outras 35 fases da Lojinha. */
+
+/* reduced-motion não pode deixar a tela invisível (a .tela entra com fade-in
+   opacity:0→1; sem animação ficaria em 0). O fade é só enfeite. */
+.tela{opacity:1 !important}
+
+/* cartão da fase de pintar OPACO e centrado — o desenho não fica sobre a cena
+   da loja (senão fica "transparente", como o Marcos reclamou no Ateliê). */
+.centro.mec-pintar-canvas, .mec-pintar-canvas .centro{
+  background:#fffdf6;padding:8px 10px 10px;max-width:520px;margin:0 auto}
+
+/* enunciado curto; a dica é narrada e mora no botão Dica */
+.mec-pintar-canvas .balao{font-size:15px;padding:6px 12px;margin:0 auto 4px;max-width:380px}
+.mec-pintar-canvas .dica{display:none}
+
+/* ⭐ O QUADRADO: BRANCO SÓLIDO e GRANDE, limitado pela altura só o suficiente
+   para NÃO precisar rolar (min entre a largura boa e 46% da altura da tela). */
+.mec-pintar-canvas .pintawrap{max-width:min(380px,46vh);margin:4px auto;
+  background:#fff;border-radius:14px}
+.mec-pintar-canvas .pintatela{background:#fff !important}
+
+/* cores logo abaixo, generosas */
+.mec-pintar-canvas .paleta{margin:6px auto 2px;max-width:360px}
+.mec-pintar-canvas .tcor{width:44px;height:44px;margin:3px}
+.mec-pintar-canvas .pc_ferr{margin:4px 0}
+.mec-pintar-canvas .acoes{margin-top:6px}
+.mec-pintar-canvas .btn{min-height:46px;padding:10px 22px;font-size:16px}
+
+@media (max-height:620px){
+  .mec-pintar-canvas .pintawrap{max-width:min(320px,40vh)}
+  .mec-pintar-canvas .tcor{width:40px;height:40px;margin:2px}
+}
