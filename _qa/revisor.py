@@ -44,7 +44,11 @@ lápis(nao) sofa(nao) pijama dia maquinista salta""".split())
 FEM_O = set("foto moto tribo libido".split())
 # palavras curtas/ambíguas que NÃO devem entrar no teste de gênero
 PULA_GENERO = set("""isso isto aquilo tudo todo toda um uma dois duas
-o a os as ao aos caixa outro outra outros outras mesmo mesma""".split())
+o a os as ao aos caixa outro outra outros outras mesmo mesma
+piloto tiracolo""".split())
+# ⚠️ "piloto" e bigenero (o/a piloto). "tiracolo" so aparece na expressao fixa
+#    "a tiracolo" (bolsa cruzada) — o "a" e da expressao, nao artigo. Falsos-
+#    positivos pegos no Detetive das Palavras (ago/2026).
 # ⚠️ "outro/outra" sao determinantes que concordam com um nome implicito; o
 #    "a"/"o" antes deles costuma ser PREPOSICAO, nao artigo ("de um lugar a
 #    outro", "levam de um lado a outro"). Falso-positivo pego na prova Viagem
@@ -72,6 +76,12 @@ def _genero_suspeito(artigo, palavra):
     p = palavra.lower()
     base = re.sub(r"[^a-zãáâàéêíóôõúüç-]", "", p)
     if not base or base in PULA_GENERO or len(base) < 3:
+        return ""
+    # ⚠️ profissoes/nomes em -ISTA sao BIGENERO (o/a dentista, motorista,
+    #    artista, jornalista, maquinista, pianista...). O artigo decide; nenhum
+    #    dos dois esta errado. Falso-positivo pego no Detetive (o dentista, o
+    #    motorista) — ago/2026.
+    if base.endswith("ista"):
         return ""
     # -ão é ambíguo (o coração, a mão) — fora
     if base.endswith("ão") or base.endswith("ções") or base.endswith("ao"):
