@@ -4109,3 +4109,23 @@ narra (só narra `.balao`). Agora a peça narra a conta (ante+dep) com a voz gra
 **Campo novo na gaveta = campo novo no EXEMPLO da peça.** Todo campo opcional novo
 (`item`, `pImg`, `pool`, `enunPorque`, `g`...) precisa aparecer no exemplo `var`
 da peça, senão o montador reprova ("campo não existe no exemplo"). Regra por gesto.
+
+## Robustez em máquina antiga / rede filtrada (Marcos, ago/2026: "trava aleatório só em alguns PCs")
+Análise de por que ALGUMAS máquinas travam ALEATORIAMENTE em ALGUMAS fases — e os
+consertos no MOTOR (valem para toda atividade REMONTADA):
+1. **`new AudioContext()` sem try/catch (o pior).** Rodava no topo do script; em PC
+   cujo navegador já está no limite de 6 contextos de hardware (outras abas/
+   extensões) ele ESTOURA e, sem proteção e no topo, derruba TODO o resto — a
+   atividade nem monta. É "aleatório e só em algumas máquinas" (depende do que o
+   navegador tem aberto). Conserto: `try{ac=new AC()}catch(e){ac=null}`.
+2. **Faltava `window.onerror`.** Sem rede de segurança, qualquer exceção não tratada
+   num clique/timer deixava a fase PRESA, sem avançar e sem aviso. Agora um erro não
+   tratado mostra um botão de RESGATE "Continuar ▶" que pula para a próxima fase.
+3. **`falar(id,cb)` sem watchdog.** Se o áudio emperra (rede filtrada: `play()`
+   resolve mas `ended` nunca vem), o `cb` de quem esperava a voz para avançar nunca
+   chegava e a fase congelava. Agora um teto de 10s força `fimFala` — o `cb` sempre
+   dispara. (O `depoisDaFala` já tinha o dele.)
+4. **Voz que morre no meio.** O mesmo watchdog pausa o `narr` travado e drena a fila
+   de vozes (`_puxaFila`), senão a criança perdia a voz do resto da atividade.
+Regra que fica: nenhum `new X()` de API de navegador (AudioContext, etc.) sem
+try/catch; nenhum avanço de fase dependente SÓ de um evento de áudio.
