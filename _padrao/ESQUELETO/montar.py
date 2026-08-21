@@ -1295,6 +1295,22 @@ def escreve_index(pasta, c, falas):
     dados.append(u"VOZOK = " + json.dumps(
         dict((x["id"][3:], 1) for x in falas if x["id"].startswith("op_")),
         ensure_ascii=False) + u";")
+    # ⚠️ BNCC do RELATORIO do professor. Antes o motor trazia PLANTAS hardcoded
+    #    (EF02CI05/06, "agua e luz", "partes da planta") — resto de clone do
+    #    Jardim que aparecia no parecer de TODA atividade (o Marcos pegou, ago/2026).
+    #    Agora sai da propria atividade: campo `bncc` se existir; senao os codigos
+    #    EF que estiverem escritos na `mesa`/`curriculo`/`conceitos`.
+    _bncc = c.get("bncc")
+    if not _bncc:
+        _txt = (json.dumps(c.get("curriculo") or {}, ensure_ascii=False) + u" "
+                + str(c.get("mesa", "")) + u" "
+                + json.dumps(c.get("conceitos") or {}, ensure_ascii=False))
+        _codes = []
+        for _m in re.findall(r"EF\d{2}[A-Z]{2}\d{2}", _txt):
+            if _m not in _codes:
+                _codes.append(_m)
+        _bncc = u", ".join(_codes)
+    dados.append(u"RELBNCC = %s;" % json.dumps(_bncc or u"", ensure_ascii=False))
 
     saida = motor
     # ⚠️⚠️ LICAO PAGA, da familia da ORDEM DE BOOT: o `ID` era escrito no FIM,

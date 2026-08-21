@@ -1736,9 +1736,13 @@ function telaPainel(){
   h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
   var ganho="não medido";
   if(MED.pre!==null&&MED.pos!==null){ ganho = (MED.pre===0&&MED.pos===1) ? "GANHO REAL (errou antes, acertou depois)" : (MED.pre===1&&MED.pos===1) ? "já sabia e manteve" : (MED.pos===0) ? "ainda não consolidou" : "-"; }
-  h+="<div class='bloco'><b>Antes x depois:</b> "+ganho+"<br><small>Previs&#227;o no come&#231;o (sol+&#225;gua) comparada com a explica&#231;&#227;o no fim.</small></div>";
-  h+="<div class='bloco'><b>BNCC:</b> EF02CI05 (import&#226;ncia da &#225;gua e da luz para as plantas) e EF02CI06 (partes da planta e suas fun&#231;&#245;es).</div>";
-  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Tudo foi medido enquanto ela brincava: prever antes, testar, ordenar, classificar, apontar as partes e explicar no fim.</div>";
+  h+="<div class='bloco'><b>Antes x depois:</b> "+ganho+"<br><small>Compara a primeira tentativa com o fim, no mesmo objetivo.</small></div>";
+  /* ⚠️ o BNCC vem da PROPRIA atividade (RELBNCC, injetado pelo montador a partir
+     da mesa/curriculo). Antes era PLANTAS fixo aqui — resto de clone do Jardim
+     que saia no parecer de toda atividade. O typeof protege builds antigos. */
+  var _bncc=(typeof RELBNCC!=="undefined"&&RELBNCC)?RELBNCC:"definida no planejamento da atividade";
+  h+="<div class='bloco'><b>BNCC:</b> "+_bncc+"</div>";
+  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Tudo foi medido enquanto ela jogava.</div>";
   h+="<p class='noprint'><button onclick='window.print()'>Imprimir</button> <button onclick='location.href=location.pathname'>Voltar ao jogo</button></p>";
   d.innerHTML=h;
   document.body.appendChild(d);
