@@ -213,27 +213,24 @@ add(id="f08", mec="classificar", selo="SEPARE", conceito="objetivo2",
         "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."],
       "ENUN":"Toque no <b>sólido</b>. Depois toque na gaveta certa: <b>ROLA</b> ou <b>FICA FIRME</b>?"})
 
-# 9) ESCOLHER — qual rola / qual empilha
-add(id="f09", mec="escolher", selo="ESCOLHA", conceito="objetivo2",
-    enunciado="Responda sobre <b>rolar</b> e <b>empilhar</b>.",
-    dica="Pense no formato: redondo rola; lado reto empilha.",
+# 9) COMPLETAR — a frase da propriedade (rola x fica firme). Era um ESCOLHER;
+#    virou COMPLETE (lacuna) para variar o gesto e trabalhar a frase inteira.
+add(id="f09", mec="completar", selo="COMPLETE A FRASE", conceito="objetivo2",
+    enunciado="Termine a frase sobre o <b>sólido</b>: toque no pedaço que falta.",
+    dica="Pense: redondo rola; lado reto fica firme.",
     dados=[
-      {"img":"","p":"Qual destes <b>rola</b> pela rampa?",
-       "c":"ESFERA","e":["CUBO","BLOCO","PIRÂMIDE"],
-       "d":["Procure o que é redondo, sem cantos.",
-            "É o que foge rolando quando você empurra.",
-            "É a ESFERA. Toque nela para seguir."]},
-      {"img":"","p":"Para fazer uma <b>torre firme</b>, qual é melhor empilhar?",
-       "c":"CUBO","e":["ESFERA","CONE","CILINDRO deitado"],
-       "d":["A torre precisa de lados retos, que não escorregam.",
-            "A bola rolaria e cairia; escolha o que tem faces planas.",
-            "É o CUBO. Toque nele para seguir."]},
-      {"img":"","p":"Qual sólido <b>rola</b> mas também <b>fica em pé</b>?",
-       "c":"CILINDRO","e":["ESFERA","CUBO","PIRÂMIDE"],
-       "d":["Deitado ele rola; em pé ele para, apoiado no círculo.",
-            "Pense numa lata: rola no chão, mas fica em pé na mesa.",
-            "É o CILINDRO. Toque nele para seguir."]},
-    ], dadosExtra={"TITULO":"ROLA OU FICA FIRME?","FECHO":"Você entende como cada sólido se mexe!"})
+      {"img":"sg_esfera_v","ante":"A esfera é toda redonda, por isso ela ","dep":".",
+       "cer":"rola","out":["fica firme","empilha"],
+       "dic":"O que a bola faz quando você empurra?"},
+      {"img":"sg_cubo_v","ante":"O cubo tem lados retos e planos, por isso ele ","dep":".",
+       "cer":"fica firme","out":["rola","escorrega"],
+       "dic":"O dado sai rolando ou fica parado no lugar?"},
+      {"img":"sg_cilindro_v","ante":"A lata é um cilindro: em pé ela empilha, mas deitada ela ","dep":".",
+       "cer":"rola","out":["fica firme","voa"],
+       "dic":"Deite a lata e dê um empurrão: o que acontece?"},
+    ], dadosExtra={"ENUN":"Toque no pedaço que <b>falta</b> na frase.",
+                   "DEPOIS":"Leia a frase inteira antes de escolher.",
+                   "FECHO":"Você completou as frases dos sólidos!"})
 
 # 10) ARRASTAR-SOMBRA — sólido -> silhueta
 add(id="f10", mec="arrastar-sombra", selo="CADA UM, SUA SOMBRA", conceito="objetivo2",
@@ -402,33 +399,25 @@ add(id="f17", mec="quem-sou-eu", selo="QUEM SOU EU?", conceito="objetivo3",
        "outros":["CILINDRO","ESFERA","CUBO"]},
     ])
 
-# 17b) DIGITAR — escrever o nome do sólido (nomes LONGOS: o degrau simbólico).
-#      Progressão em relação à f06b (nomes curtos). `palavra` SEM acento; a `voz`
-#      guarda a pronúncia certa (PIRAMIDE escrita -> "pirâmide" falada).
-add(id="f17b", mec="digitar", selo="ESCREVA O NOME", conceito="objetivo3",
-    enunciado="Escreva o nome destes sólidos, letra por letra.",
-    dica="São nomes maiores: diga por partes e ache cada letra.",
+# 17b) FORCA — descobrir o sólido pela pista e montar o nome letra a letra.
+#      (Era um 2º DIGITAR; virou FORCA para variar o gesto — Marcos pediu forca no
+#      cardápio. Os nomes LONGOS (o degrau simbólico); `p` SEM acento, `ac` com.)
+add(id="f17b", mec="forca", selo="FORCA", conceito="objetivo1",
+    enunciado="Descubra o <b>sólido</b> pela pista e monte o nome, letra por letra.",
+    dica="Leia a pista e pense na forma antes de escolher as letras.",
     dados=[
-      {"palavra":"CILINDRO","img":"sg_cilindro_v","voz":"cilindro",
-       "pista":"Rola deitado e fica firme em pé, igual a uma lata. Escreva o nome.",
-       "dic":"Vá por partes: <b>CI-LIN-DRO</b>."},
-      {"palavra":"PIRAMIDE","img":"sg_piramide_v","voz":"pirâmide",
-       "pista":"Tem base quadrada e sobe até uma ponta. Escreva o nome.",
-       "dic":"Diga por partes: <b>PI-RÂ-MI-DE</b>."},
-    ], dadosExtra={"ENUN":"Escreva o nome do sólido, letra por letra.",
-                   "FECHO":"Você escreveu os nomes grandes!"})
+      {"p":"CILINDRO","ac":"CILINDRO","fig":"sg_cilindro_v",
+       "d":"Rola deitado e fica firme em pé, igual a uma lata."},
+      {"p":"PIRAMIDE","ac":"PIRÂMIDE","fig":"sg_piramide_v",
+       "d":"Tem base quadrada e sobe até uma ponta, como no Egito."},
+      {"p":"ESFERA","ac":"ESFERA","fig":"sg_esfera_v",
+       "d":"É toda redonda, sem nenhum canto, e rola para todo lado."},
+    ])
 
-# 18) VITRINE — a vitrine dos objetos (sólido no dia a dia)
-add(id="f18", mec="vitrine", selo="VITRINE", conceito="objetivo3",
-    enunciado="Toque em cada sólido e descubra <b>onde ele mora</b> no seu dia.",
-    dica="Cada sólido lembra um objeto que você conhece.",
-    dados=[{"img":SOL[s]["v"], "nome":SOL[s]["nome"], "grupo":SOL[s]["obj"][0][1],
-            "info":("Parece %s e %s." % (SOL[s]["obj"][0][1].lower(), SOL[s]["obj"][1][1].lower())),
-            "voz":("%s %s aparece %s: parece %s e %s." %
-                   (SOL[s]["art"].capitalize(), SOL[s]["nome"].lower(), "no seu dia",
-                    SOL[s]["obj"][0][1].lower(), SOL[s]["obj"][1][1].lower()))}
-           for s in ORD])
-
+# 18) [REMOVIDA] — VITRINE "onde ele mora no dia a dia": repetia o gesto de
+#     vitrine (f01/f12/f32/f30) e o conteúdo do dia a dia já mora no f30 (grande
+#     vitrine final) e nas fases de ligar/classificar de objetos. Cortada para
+#     reduzir repetição (Marcos, ago/2026: "muito repetitiva").
 # 19) [REMOVIDA] — classificar face->sólido: o enunciado "toque na face e na gaveta
 #     do sólido" confundia (Marcos, ago/2026: "não me pareceu fazer sentido").
 
@@ -444,20 +433,8 @@ add(id="f20", mec="caca-palavras", selo="CAÇA-PALAVRAS", conceito="objetivo1",
       "DIFICIL":"",
       "CORP":["p1","p2","p3","p4"]})
 
-# 21) LIGAR — objeto -> nome do sólido
-add(id="f21", mec="ligar", selo="LIGUE", conceito="objetivo3",
-    enunciado="Ligue o <b>objeto</b> ao nome do sólido dele.",
-    dica="Pense na forma de cada objeto.",
-    dados=[{"k":"p0","img":"sg_sorvete","voz":"sorvete","s":"CONE"},
-           {"k":"p1","img":"sg_sapato","voz":"CAIXA DE SAPATO","s":"BLOCO RETANGULAR"},
-           {"k":"p2","img":"sg_bola","voz":"BOLA","s":"ESFERA"},
-           {"k":"p3","img":"sg_lata","voz":"LATA","s":"CILINDRO"}],
-    dadosExtra={"DICAS":[
-      "Pense na forma de cada objeto.",
-      "Casquinha é cone; caixa de sapato é bloco; bola é esfera; lata é cilindro. Siga a linha.",
-      "A resposta certa está acesa, no fim da linha. Toque nela."],
-      "FEITOS":[], "ENUN":"Ligue o objeto ao nome do sólido.",
-      "FECHO":"Você ligou todos!"})
+# 21) [REMOVIDA] — LIGAR objeto->nome do sólido: duplicava o f31 (mesmo gesto e
+#     mesmo conteúdo, outros objetos). Cortada para reduzir repetição (Marcos).
 
 # 22) QUEM SOU EU — descobrir o sólido pelas pistas de rolar x ficar firme
 add(id="f22", mec="quem-sou-eu", selo="QUEM SOU EU?", conceito="objetivo2",
@@ -622,21 +599,10 @@ add(id="f32", mec="vitrine", selo="VITRINE", conceito="objetivo3",
                    ("%s %s é toda redonda, não tem face plana." % (SOL[s]["art"].capitalize(), SOL[s]["nome"].lower())))}
            for s in ORD])
 
-# 30d) ESCOLHER — mais uma rodada do dia a dia
-add(id="f33", mec="escolher", selo="ESCOLHA", conceito="objetivo3",
-    enunciado="Mais uma! Que <b>sólido</b> tem a forma do objeto?",
-    dica="Compare com os sólidos que você conhece.",
-    dados=[
-      {"img":"sg_presente","p":"A <b>caixa de presente</b> quadrada tem a forma de qual sólido?",
-       "c":"CUBO","e":["ESFERA","CILINDRO","CONE"],
-       "d":["Tem 6 lados iguais, todos quadrados.","É a mesma forma do dado.","É o CUBO. Toque para seguir."]},
-      {"img":"sg_laranja","p":"A <b>laranja</b> tem a forma de qual sólido?",
-       "c":"ESFERA","e":["CUBO","BLOCO","PIRÂMIDE"],
-       "d":["É toda redonda, sem cantos.","É a mesma forma da bola.","É a ESFERA. Toque para seguir."]},
-      {"img":"sg_chapeu","p":"O <b>chapéu de festa</b> tem a forma de qual sólido?",
-       "c":"CONE","e":["CILINDRO","CUBO","ESFERA"],
-       "d":["Tem ponta em cima e é redondo embaixo.","É a mesma forma da casquinha de sorvete.","É o CONE. Toque para seguir."]},
-    ], dadosExtra={"TITULO":"MAIS FORMAS NO DIA A DIA","FECHO":"Você reconhece os sólidos em tudo!"})
+# 30d) [REMOVIDA] — ESCOLHER "que sólido tem a forma do objeto": era a 5ª rodada
+#     do mesmo gesto (f02/f06/aquecimento/f27 já cobrem). Cortada para reduzir
+#     repetição (Marcos, ago/2026). O reconhecimento do dia a dia continua no f34
+#     (classificar objetos) e no f30 (grande vitrine final).
 
 # 30e) CLASSIFICAR — objetos por sólido (2 gavetas novas)
 add(id="f34", mec="classificar", selo="SEPARE", conceito="objetivo3",
@@ -654,6 +620,21 @@ add(id="f34", mec="classificar", selo="SEPARE", conceito="objetivo3",
         "Cilindro é reto com círculo em cima e embaixo; cone tem uma ponta.",
         "Olhe a gaveta com a borda amarela: é ali que este objeto mora."],
       "ENUN":"Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."})
+
+# 30f) CRUZADINHA — os nomes dos sólidos se cruzam (mecânica NOVA, Marcos).
+#      Grade conferida: CUBO(↓) cruza BLOCO(→) no B; BLOCO(→) cruza CONE(↓) no C.
+#      `p` SEM acento (as três não têm). BANCO = letras disponíveis + alguns chamarizes.
+add(id="f35", mec="cruzadinha", selo="CRUZADINHA", conceito="objetivo1",
+    enunciado="Monte a <b>cruzadinha</b> com os nomes dos sólidos.",
+    dica="Leia a pista de cada número e escreva o nome do sólido.",
+    dados=[
+      {"p":"CUBO","ac":"CUBO","r":0,"c":0,"pLin":1,"pCol":0,"n":1,
+       "d":"Tenho 6 faces quadradas iguais; sou o dado."},
+      {"p":"BLOCO","ac":"BLOCO","r":2,"c":0,"pLin":0,"pCol":1,"n":2,
+       "d":"Sou uma caixa comprida de lados retos, como a caixa de sapato."},
+      {"p":"CONE","ac":"CONE","r":2,"c":3,"pLin":1,"pCol":0,"n":3,
+       "d":"Tenho uma ponta em cima; sou a casquinha do sorvete."},
+    ], dadosExtra={"BANCO":"ABCDEILNORSU"})
 
 # 30) VITRINE — a grande vitrine final (fecho + gancho)
 add(id="f30", mec="vitrine", selo="A GRANDE VITRINE", conceito="objetivo1",
