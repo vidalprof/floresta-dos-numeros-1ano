@@ -174,6 +174,7 @@ var TINTAS=[ /*TECNICA*/
 var di=0;                 /* desenho de agora */
 var CW=600, CH=600;       /* tamanho interno do canvas */
 var _cor="#e53935", _corNome="vermelho", _ctx=null, _img=null;
+var _mask=null;           /* ⭐ máscara do CONTORNO original (1=linha) — a barreira do balde */
 var telaAtual=null;
 
 function pintarCanvas(){
@@ -222,13 +223,14 @@ function pintarCanvas(){
   t.appendChild(c); app.appendChild(t);
 
   _ctx=cv.getContext("2d");
+  _mask=null;
   _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0,CW,CH);
   if(d0.img){
     _img=new Image();
-    _img.onload=function(){ if(_ctx){ _ctx.drawImage(_img,0,0,CW,CH); } };
+    _img.onload=function(){ if(_ctx){ _ctx.drawImage(_img,0,0,CW,CH); capturaMascara(); } };
     _img.src="img/"+d0.img+".png";
   }else{
-    _img=null; desenhaReserva(_ctx);
+    _img=null; desenhaReserva(_ctx); capturaMascara();
   }
   instalar(cv);
   marcaCorSel();
@@ -279,17 +281,48 @@ function instalar(cv){
 }
 function hexRgb(h){h=(""+h).replace("#","");if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}
   return [parseInt(h.substring(0,2),16),parseInt(h.substring(2,4),16),parseInt(h.substring(4,6),16)];}
-/* O BALDE: flood fill parando nas linhas pretas (igual ao circo). */
+/* ⭐ A MÁSCARA DO CONTORNO — capturada UMA vez, do desenho ORIGINAL (antes de
+   qualquer tinta). É ela a barreira do balde, no lugar de "pixel escuro = linha".
+   ⚠️ LIÇÃO PAGA (Marcos, Ateliê do Pré, ago/2026: *"trocar a cor depois que o
+   aluno escolhe outra e pinta novamente o que está pintado"*). O balde antigo
+   tratava QUALQUER pixel escuro como linha (soma<360): vermelho, verde, roxo,
+   marrom e preto — quase a paleta toda — caíam nessa faixa, então a criança
+   NÃO conseguia repintar por cima. Com a máscara, a barreira é o traço original;
+   qualquer cor pintada pode ser trocada por outra à vontade. */
+function capturaMascara(){
+  if(!_ctx) return;
+  var W=CW,H=CH,img;
+  try{ img=_ctx.getImageData(0,0,W,H); }catch(e){ _mask=null; return; }
+  var d=img.data, n=W*H, m=new Uint8Array(n), i, r, g, b, mx, mn;
+  for(i=0;i<n;i++){
+    r=d[i*4]; g=d[i*4+1]; b=d[i*4+2];
+    mx=(r>g?(r>b?r:b):(g>b?g:b)); mn=(r<g?(r<b?r:b):(g<b?g:b));
+    /* linha = ESCURA e ACINZENTADA (traço preto/cinza do desenho). Cor pintada
+       tem canal alto (viva) ou é bem clara — nunca cai aqui. */
+    m[i]=(mx<120 && (mx-mn)<45)?1:0;
+  }
+  _mask=m;
+}
+/* O BALDE: flood fill parando no CONTORNO ORIGINAL (a máscara). */
 function baldePintar(sx,sy){ if(!_ctx)return; if(sx<0||sy<0||sx>=CW||sy>=CH)return;
+  /* ⭐ rede: se a máscara ainda não foi capturada (a imagem do desenho pode
+     carregar depois do 1º toque, ou o onload não veio), captura AGORA — como
+     este é o 1º balde, o canvas ainda é o desenho original, então a máscara sai
+     certa. Sem isto o 1º toque cairia na reserva "escuro=linha" e a repintura de
+     cor viva (que soma < 360) falhava — foi o defeito do Ateliê. */
+  if(!_mask) capturaMascara();
   var nc=hexRgb(_cor),W=CW,H=CH;
   var img,d;
   try{ img=_ctx.getImageData(0,0,W,H); d=img.data; }catch(e){ return; }
-  var si=(sy*W+sx)*4, tr=d[si], tg=d[si+1], tb=d[si+2];
-  if((tr+tg+tb)<330) return;                          /* tocou numa linha preta */
+  var startI=sy*W+sx, si=startI*4, tr=d[si], tg=d[si+1], tb=d[si+2];
+  /* barreira: a máscara do contorno; sem máscara (falha ao ler), volta ao
+     antigo "escuro = linha" para nunca ficar sem comportamento. */
+  function ehLinha(idx,r,g,b){ return _mask ? (_mask[idx]===1) : ((r+g+b)<360); }
+  if(ehLinha(startI,tr,tg,tb)) return;                /* tocou no traço */
   if(tr===nc[0]&&tg===nc[1]&&tb===nc[2]) return;      /* ja esta dessa cor */
-  var stack=[sy*W+sx], pintou=false;
+  var stack=[startI], pintou=false;
   while(stack.length){ var idx=stack.pop(), i=idx*4; var r=d[i],g=d[i+1],b=d[i+2];
-    if((r+g+b)<360) continue;                          /* barreira: linha */
+    if(ehLinha(idx,r,g,b)) continue;                   /* barreira: contorno */
     if(Math.abs(r-tr)>60||Math.abs(g-tg)>60||Math.abs(b-tb)>60) continue;
     d[i]=nc[0];d[i+1]=nc[1];d[i+2]=nc[2];d[i+3]=255;pintou=true;
     var x=idx%W, y=(idx-x)/W;
@@ -299,7 +332,8 @@ function baldePintar(sx,sy){ if(!_ctx)return; if(sx<0||sy<0||sx>=CW||sy>=CH)retu
   if(pintou){ _ctx.putImageData(img,0,0); nota(600+Math.min(di,8)*40,.09,.12,"triangle",0); }
 }
 function limpar(){ sTap(); if(_ctx){ _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0,CW,CH);
-  if(_img&&_img.complete){ _ctx.drawImage(_img,0,0,CW,CH); } else if(!(_img)){ desenhaReserva(_ctx); } }
+  if(_img&&_img.complete){ _ctx.drawImage(_img,0,0,CW,CH); } else if(!(_img)){ desenhaReserva(_ctx); }
+  capturaMascara(); }
   fala("Limpei o desenho! Pode pintar de novo."); }
 function pronto(){ sTap(); di++; pintarCanvas(); }
 
