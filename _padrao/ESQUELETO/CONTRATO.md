@@ -4076,3 +4076,36 @@ exato das vagas); vaga vazia com borda escura para ler no vidro.
 cheio some com elas: a atividade põe uma MESA de vidro (`.chao`/`.banco` no tema.css)
 como palco; a peça em si fica limpa. `pool`+`n` na rodada sorteia formas a cada
 jogada (aleatoriedade); `semSom` deixa o encaixe só visual.
+
+## Lote Feirinha da Dona Coruja (ago/2026, Marcos ao vivo)
+
+**⚠️⚠️ CRÍTICO — integrar ABORTA a escrita em silêncio.** A peça pintar-canvas
+passou a chamar `Uint8Array` (fora dos globais do motor). O `integrar.py` imprimiu
+`✗ AS PECAS CHAMAM 1 NOME(S) QUE NAO EXISTEM NO MOTOR: Uint8Array -> a peca nao se
+reescreve` e **NÃO regravou pecas.js/json** — ou seja, NENHUMA peça recompilou
+desde então, e uma correção já commitada (a máscara de repintura do Ateliê) **não
+tinha ido ao ar**. Regra: depois de `integrar.py --escrever`, conferir que saiu
+`escrito: pecas.js ... e pecas.css` e que NÃO há linha `✗ ... NAO EXISTEM` — se
+houver, a build está velha. Nas peças, usar só globais do motor (Array, não
+Uint8Array).
+
+**Contagem (contadores) — sincronia e tema (o Marcos revisou fase a fase):**
+- SINCRONIA: a versão guiada por `speechSynthesis.onend` travava no Chrome real
+  (o `onend` não vinha e a cadeia de passos parava) e ainda era voz-robô. Agora
+  `dizConta` avança quando a VOZ GRAVADA do número termina (`falar(id,cb)` do
+  motor, cujo cb vem do `ended` do áudio) — nunca pula, nunca desincroniza.
+- FRUTA, não bolinhas: ao PÔR aparece a fruta do banco (`item`/`pImg`); ao CONTAR,
+  cada fruta acende como BOLA com o número dentro (o número precisa aparecer).
+- Premium: a "terra" virou BANDEJA de madeira clara; variedade de frutas por
+  rodada; campos de tema opcionais na gaveta (`item,pl,sing,verbo,onde,label,selo`).
+
+**base-dez "caixa de 10":** as unidades aceitam `pImg` (fruta do banco) no lugar do
+quadradinho abstrato — concreto para o 1º ano. Sem `pImg`, o bloco de sempre.
+
+**completar "quanto falta":** a frase-problema morava num `.frase` que o motor NÃO
+narra (só narra `.balao`). Agora a peça narra a conta (ante+dep) com a voz gravada
+(o `falar` do motor enfileira depois do enunciado); calado se não houver gravação.
+
+**Campo novo na gaveta = campo novo no EXEMPLO da peça.** Todo campo opcional novo
+(`item`, `pImg`, `pool`, `enunPorque`, `g`...) precisa aparecer no exemplo `var`
+da peça, senão o montador reprova ("campo não existe no exemplo"). Regra por gesto.
