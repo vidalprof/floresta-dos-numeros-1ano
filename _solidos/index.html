@@ -1768,6 +1768,24 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   -webkit-box-shadow:none !important;box-shadow:none !important}
 .mec-escolher .opt img{-webkit-filter:none !important;filter:none !important}
 
+/* ⭐ fase "ESCREVA O NOME" (digitar): a figura do sólido LIMPA — sem fundo
+   branco, sem borda, sem sombra retangular — dentro de UM vidro com brilho, como
+   as opções (Marcos, ago/2026). */
+.mec-digitar .dgfig{
+  width:auto;min-width:150px;max-width:230px;height:auto;
+  padding:14px 18px;margin:12px auto 6px;
+  background:rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1);
+  border:1px solid rgba(255,255,255,.5);border-radius:20px;
+  -webkit-box-shadow:0 6px 20px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.6);
+  box-shadow:0 6px 20px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.6)}
+.mec-digitar .dgfig img{
+  background:transparent !important;padding:0 !important;border:0 !important;
+  border-radius:0 !important;
+  -webkit-box-shadow:none !important;box-shadow:none !important;
+  -webkit-filter:none !important;filter:none !important;
+  width:128px;height:128px;max-width:100%;max-height:none}
+
 .mec-escolher .opt:active, .mec-quem-sou-eu .opt:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
 .mec-escolher .opt.ok, .mec-quem-sou-eu .opt.ok{background:#d9f5c8 !important;border-color:#7cb464 !important}
 .mec-escolher .opt.no, .mec-quem-sou-eu .opt.no{background:#f8dcd4 !important;border-color:#c08c80 !important}
@@ -2292,7 +2310,18 @@ function mostraBanner(msg,cb){
      nao entende literal de regex e perde a conta das aspas, fazendo os enunciados
      seguintes vazarem como "funcao que nao existe". String o portao limpa certo. */
   if(msg) msg = String(msg).replace(new RegExp("<div[^>]*medal[^>]*>[\\s\\S]*?</div>", "gi"), "");
-  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();bcta.onclick=function(){arma();banner.className="banner";cb();};}
+  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();
+  /* ⚠️ LICAO PAGA (Marcos, ago/2026): "as vezes aparece o botao Proximo, eu
+     clico e nao faz nada". O onclick fazia `arma();...;cb();` TUDO SEM GUARDA:
+     se `cb` fosse indefinido, ou `cb()` estourasse (fase seguinte com problema),
+     ou `arma()` tropecasse num PC, o clique MORRIA no meio e a fase nao andava —
+     de forma intermitente, so em algumas maquinas/fases. Agora cada passo tem
+     guarda e o AVANCO (cb) roda de todo jeito. */
+  bcta.onclick=function(){
+    try{ arma(); }catch(e){}
+    banner.className="banner";
+    try{ if(typeof cb==="function") cb(); }catch(e){}
+  };}
 function elogio(){ var n=[ID.pre+"_acerto1",ID.pre+"_acerto2",ID.pre+"_acerto3"]; falar(n[Math.floor(Math.random()*3)]); }
 function consolo(){ falar(Math.random()<0.5?ID.pre+"_erro1":ID.pre+"_erro2"); }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============
