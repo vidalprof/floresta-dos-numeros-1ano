@@ -157,9 +157,16 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
            centro do alvo? Se quem recebe nao e o proprio alvo (nem filho/pai
            dele), a crianca mira num botao e aciona outro.
            A barra de baixo (Ouvir/Dica) e camada FIXA de proposito e fica por
-           cima; quem cuida dela e a regra 3, que sabe perdoar quando a tela rola. */
+           cima; quem cuida dela e a regra 3, que sabe perdoar quando a tela rola.
+           ⚠️ LICAO PAGA (ago/2026, pego no Detetive): o `#banner` (o "Continuar"
+           do fim da fase) e overlay FIXO que fica `visibility:hidden` ate a fase
+           acabar — mas escondido assim ele AINDA tem offsetParent, entao o botao
+           dele passava o filtro e o `elementFromPoint` batia na `.tela` atras
+           (banner tem pointer-events:none escondido). Resultado: "cta2 tapado por
+           .tela" em TODA tela de moldura, um alarme falso. A regra 3 (resposta
+           fora da tela) ja pulava `#banner`; a regra 5 tinha que pular tambem. */
         const cl=[...document.querySelectorAll(clic)]
-          .filter(e=>e.offsetParent!==null && !e.closest("#barra"));
+          .filter(e=>e.offsetParent!==null && !e.closest("#barra") && !e.closest("#banner"));
         let sobre=0, exemplo="";
         for(const A of cl){
           const ra=A.getBoundingClientRect();
