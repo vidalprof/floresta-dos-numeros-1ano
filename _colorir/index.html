@@ -256,10 +256,20 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .medal{width:190px;height:190px;object-fit:contain;-webkit-animation:med 1s cubic-bezier(.2,1.4,.4,1);animation:med 1s cubic-bezier(.2,1.4,.4,1);-webkit-filter:drop-shadow(0 10px 14px rgba(0,0,0,.3));filter:drop-shadow(0 10px 14px rgba(0,0,0,.3))}
 @-webkit-keyframes med{from{-webkit-transform:scale(.2) rotate(-25deg);opacity:0}to{-webkit-transform:scale(1) rotate(0);opacity:1}}
 @keyframes med{from{transform:scale(.2) rotate(-25deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
-/* banner */
+/* banner
+   ⚠️ LIÇÃO PAGA (Lojinha, ago/2026 — Marcos: "o botão não aparece em alguns"):
+   o banner de fim de fase se escondia com `transform:translateY(115%)` e só
+   voltava ao FIM da transição. No PC antigo da escola (fixed+transform) a
+   transição às vezes NÃO fechava e o banner — com o botão Continuar — ficava
+   ABAIXO DA DOBRA: a criança ficava presa. Agora esconde por opacity+visibility
+   (que não tira o elemento do lugar) e desliza só 16px — no pior caso fica 16px
+   mais baixo, mas SEMPRE inteiro na tela; nunca 115% fora dela. */
 .banner{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:18px 18px calc(20px + env(safe-area-inset-bottom));max-width:520px;margin:0 auto;
-  -webkit-transform:translateY(115%);transform:translateY(115%);-webkit-transition:-webkit-transform .35s cubic-bezier(.2,.8,.3,1);transition:transform .35s cubic-bezier(.2,.8,.3,1);border-top-left-radius:26px;border-top-right-radius:26px}
-.banner.show{-webkit-transform:none;transform:none}.banner.bom{background:#dcffbe}
+  opacity:0;visibility:hidden;pointer-events:none;
+  -webkit-transform:translateY(16px);transform:translateY(16px);
+  -webkit-transition:opacity .28s ease,-webkit-transform .28s ease;transition:opacity .28s ease,transform .28s ease;
+  border-top-left-radius:26px;border-top-right-radius:26px}
+.banner.show{opacity:1;visibility:visible;pointer-events:auto;-webkit-transform:none;transform:none}.banner.bom{background:#dcffbe}
 .banner .msg{font-size:18px;font-weight:700;color:#3f7d04;margin-bottom:12px;text-align:center}
 /* ⚠️ LICAO PAGA (ago/2026), e o Marcos viu no fim do jogo da memoria: *"o
    botao continuar ao final ficou horrivel, muito grande"*. MEDIDO: 376px de
@@ -978,6 +988,7 @@ function sPoe(){ tom(300,0.09,"triangle",0.12); tom(190,0.13,"sine",0.10,0.045);
 function sVira(){ tom(1100,0.05,"sine",0.07); tom(1500,0.06,"sine",0.05,0.035); }
 /* ============ NARRAÇÃO + LIP-SYNC ============ */
 var narr=document.getElementById("narr");
+var _lastPlayT=0;  /* carimbo do ultimo .play() (anti voz-dupla, ver _vozTocando) */
 var anaNode=null,anaBuf=null,anaOk=false,anaTent=false,bocaAlvo=0,bocaSuave=0,falaTimer=0,falaAtual="",falaTela="",telaNarrou=false,falandoCb=null,_seqId=0;
 function ligaAnalisador(){
   if(anaOk||anaTent)return; anaTent=true;
@@ -1020,11 +1031,18 @@ function falar(id,cb){
   /* ⭐ fala bilingue: se esta fala tem pedacos por idioma, toca em sequencia. */
   if(VOZSEQ[id]&&VOZSEQ[id].length){ falandoCb=null; _tocaSeq(VOZSEQ[id],0,cb); return; }
   try{ narr.pause(); narr.currentTime=0; }catch(e){}
+  /* ⚠️ LICAO PAGA (Feirinha, ago/2026): o acerto (elogio->falar, no `narr`) podia
+     entrar POR CIMA do alto-falante (`vz`) quando a crianca tocava o 🔊 e respondia
+     no mesmo instante — `vz` acabara de dar play() e `currentTime` ainda era 0, entao
+     `_vozTocando()` nao o via. Duas mp3 juntas (portao voz_dupla). Agora `falar`
+     SEMPRE cala o `vz` antes (simetrico ao `tocaVoz`, que ja cala o `narr`). */
+  try{ if(typeof vz!=="undefined"&&vz){ vz.pause(); vz.currentTime=0; } if(typeof paraZap==="function") paraZap(); }catch(e){}
   narr.src="audio/"+id+".mp3";
   /* ⚠️ LICAO PAGA (ago/2026, o Marcos na sala de informatica): play() bloqueado
      (autoplay) ou mp3 lenta (rede filtrada) = o 'ended' nunca vinha e o botao
      PROXIMO (via depoisDaFala) so aparecia no teto de ~10s: a tela parecia
      travada. play recusado = tratamos como fim da fala na hora. */
+  _lastPlayT=(new Date()).getTime();
   var p=narr.play(); if(p&&p["catch"]){ p["catch"](function(){ fimFala(); }); }
   if(btnOuvir) btnOuvir.className="mini tocando";
   iniciaBoca();
@@ -1038,6 +1056,7 @@ function _tocaSeq(list,i,cb){
   falandoCb=function(){ if(meu!==_seqId) return; _tocaSeq(list,i+1,cb); };
   try{ narr.pause(); narr.currentTime=0; }catch(_e){}
   narr.src="audio/"+list[i]+".mp3";
+  _lastPlayT=(new Date()).getTime();
   var pr=narr.play(); if(pr&&pr["catch"]){ pr["catch"](function(){ if(meu===_seqId) _tocaSeq(list,i+1,cb); }); }
   if(btnOuvir) btnOuvir.className="mini tocando";
   iniciaBoca();
@@ -1294,7 +1313,15 @@ function limpa(){ telaNarrou=false;
      saiu: troquei de tela, ela morre. NAO paro o `vz` (o elogio do acerto, que a
      peca dispara ao mudar de rodada — cortar ele foi o motivo de eu nao parar
      nada antes; mas elogio toca no `vz`, nao no `narr`). */
-  try{ if(narr){ narr.pause(); } }catch(_e){}
+  try{ if(narr){ narr.pause(); narr.currentTime=0; } }catch(_e){}
+  /* ⚠️ Marcos (ago/2026): *"nao deixar a fala tocar ao passar para outra fase"*.
+     `limpa()` roda na TROCA DE TELA/FASE (as rodadas dentro da fase NAO chamam
+     limpa — o elogio do acerto fica intacto). Aqui a gente cala TAMBEM o `vz`
+     (alto-falante), mata um `_tocaSeq` (fala bilingue) em curso e zera o alvo da
+     fala, para NADA da tela anterior vazar para a nova. */
+  try{ if(typeof vz!=="undefined"&&vz){ vz.pause(); vz.currentTime=0; } }catch(_e){}
+  try{ if(typeof paraZap==="function") paraZap(); }catch(_e){}
+  _seqId++; falaAtual="";
   try{ paraBoca(); }catch(_e){}
   tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML=""; btnOuvir=null; btnDica=null;
   /* solta o teclado de verdade: so a fase que o pediu escuta as teclas */
@@ -1423,7 +1450,18 @@ function mostraBanner(msg,cb){
      nao entende literal de regex e perde a conta das aspas, fazendo os enunciados
      seguintes vazarem como "funcao que nao existe". String o portao limpa certo. */
   if(msg) msg = String(msg).replace(new RegExp("<div[^>]*medal[^>]*>[\\s\\S]*?</div>", "gi"), "");
-  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();bcta.onclick=function(){arma();banner.className="banner";cb();};}
+  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();
+  /* ⚠️ LICAO PAGA (Marcos, ago/2026): "as vezes aparece o botao Proximo, eu
+     clico e nao faz nada". O onclick fazia `arma();...;cb();` TUDO SEM GUARDA:
+     se `cb` fosse indefinido, ou `cb()` estourasse (fase seguinte com problema),
+     ou `arma()` tropecasse num PC, o clique MORRIA no meio e a fase nao andava —
+     de forma intermitente, so em algumas maquinas/fases. Agora cada passo tem
+     guarda e o AVANCO (cb) roda de todo jeito. */
+  bcta.onclick=function(){
+    try{ arma(); }catch(e){}
+    banner.className="banner";
+    try{ if(typeof cb==="function") cb(); }catch(e){}
+  };}
 function elogio(){ var n=[ID.pre+"_acerto1",ID.pre+"_acerto2",ID.pre+"_acerto3"]; falar(n[Math.floor(Math.random()*3)]); }
 function consolo(){ falar(Math.random()<0.5?ID.pre+"_erro1":ID.pre+"_erro2"); }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============
@@ -1452,6 +1490,12 @@ var vz=document.getElementById("vz"), zapAtual=null;
    ultima que ela pediu, nao uma enfileirada de vozes atrasadas. */
 var _fila=null;
 function _vozTocando(){
+  /* ⚠️ LICAO PAGA (Feirinha, ago/2026): logo apos `.play()` o `currentTime` ainda
+     e 0, entao uma 2a fala disparada no mesmo instante (resposta rapida sobre a
+     pergunta ainda no ar) NAO via a 1a e as duas partiam juntas — portao voz_dupla
+     (duas .play() em <700ms). O carimbo cobre essa janela: por 500ms apos qualquer
+     play(), conta como tocando -> a 2a entra na FILA em vez de sobrepor. */
+  try{ if((new Date()).getTime()-_lastPlayT < 500) return true; }catch(e){}
   try{ if(narr && !narr.paused && !narr.ended && narr.currentTime>0) return true; }catch(e){}
   try{ if(vz   && !vz.paused   && !vz.ended   && vz.currentTime>0)   return true; }catch(e){}
   return false;
@@ -1511,6 +1555,7 @@ function tocaVoz(k,bt){
   paraZap();
   try{ vz.pause(); vz.currentTime=0; }catch(e){}
   vz.src="audio/op_"+k+".mp3";
+  _lastPlayT=(new Date()).getTime();
   var pr=vz.play(); if(pr&&pr["catch"]) pr["catch"](function(){ paraZap(); });
   if(bt){ bt.className="zap tocando"; zapAtual=bt; }
 }
@@ -1602,7 +1647,13 @@ function poeZap(elm){
   };
   elm.appendChild(bt);
 }
-var ZAPSEL=".opt,.lig,.pc,.bin";
+/* ⚠️ `.ptxt` (Solidos, ago/2026 — Marcos: "a pista tem que ter audio"): na peca
+   QUEM SOU EU a pista chega escrita mas MUDA. A voz de cada pista JA existe
+   (op_<hash>, o montador grava tudo do `dados`); faltava so o alto-falante. O
+   motor poe o botao sozinho em todo elemento do ZAPSEL cujo TEXTO tenha voz —
+   entao basta a pista entrar aqui. Vai no `.ptxt` (so o texto da pista), nao no
+   `.pista` inteiro, senao o "PISTA 1" entraria no hash e a voz nao casaria. */
+var ZAPSEL=".opt,.lig,.pc,.bin,.ptxt";
 /* ⭐ o alto-falante do ENUNCIADO: toca de novo a MESMA narracao da tela.
    Vale para todo balao de pergunta; os baloezinhos de apoio (.pequeno, .porque)
    ficam de fora para nao encher a tela de botao.                            */
@@ -2003,9 +2054,13 @@ function telaPainel(){
   h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
   var ganho="não medido";
   if(MED.pre!==null&&MED.pos!==null){ ganho = (MED.pre===0&&MED.pos===1) ? "GANHO REAL (errou antes, acertou depois)" : (MED.pre===1&&MED.pos===1) ? "já sabia e manteve" : (MED.pos===0) ? "ainda não consolidou" : "-"; }
-  h+="<div class='bloco'><b>Antes x depois:</b> "+ganho+"<br><small>Previs&#227;o no come&#231;o (sol+&#225;gua) comparada com a explica&#231;&#227;o no fim.</small></div>";
-  h+="<div class='bloco'><b>BNCC:</b> EF02CI05 (import&#226;ncia da &#225;gua e da luz para as plantas) e EF02CI06 (partes da planta e suas fun&#231;&#245;es).</div>";
-  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Tudo foi medido enquanto ela brincava: prever antes, testar, ordenar, classificar, apontar as partes e explicar no fim.</div>";
+  h+="<div class='bloco'><b>Antes x depois:</b> "+ganho+"<br><small>Compara a primeira tentativa com o fim, no mesmo objetivo.</small></div>";
+  /* ⚠️ o BNCC vem da PROPRIA atividade (RELBNCC, injetado pelo montador a partir
+     da mesa/curriculo). Antes era PLANTAS fixo aqui — resto de clone do Jardim
+     que saia no parecer de toda atividade. O typeof protege builds antigos. */
+  var _bncc=(typeof RELBNCC!=="undefined"&&RELBNCC)?RELBNCC:"definida no planejamento da atividade";
+  h+="<div class='bloco'><b>BNCC:</b> "+_bncc+"</div>";
+  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Tudo foi medido enquanto ela jogava.</div>";
   h+="<p class='noprint'><button onclick='window.print()'>Imprimir</button> <button onclick='location.href=location.pathname'>Voltar ao jogo</button></p>";
   d.innerHTML=h;
   document.body.appendChild(d);
@@ -2823,6 +2878,7 @@ FIM = {titulo:"O Ateliê de Cores da Rai!", texto:"Que artista! Você encheu tud
 ABERTURA = {texto:"Bem-vindo ao ateliê da Rai! Aqui não tem certo nem errado: você escolhe as cores e pinta do seu jeito. Toque numa cor e depois no desenho. Vamos criar?", voz:"co_abertura"};
 FASES = [{"id": "f_p1", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte o sol do jeito que você quiser.", "conceito": "objetivo1", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "o sol", "voz": "o sol", "img": "co_pg1"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "co_f_p1_intro", "dicaVoz": "co_f_p1_dica"}, {"id": "f_p2", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte o peixinho do jeito que você quiser.", "conceito": "objetivo1", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "o peixinho", "voz": "o peixinho", "img": "co_pg2"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "co_f_p2_intro", "dicaVoz": "co_f_p2_dica"}, {"id": "f_p3", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte a borboleta do jeito que você quiser.", "conceito": "objetivo1", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "a borboleta", "voz": "a borboleta", "img": "co_pg3"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "co_f_p3_intro", "dicaVoz": "co_f_p3_dica"}, {"id": "f_p4", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte a flor do jeito que você quiser.", "conceito": "objetivo2", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "a flor", "voz": "a flor", "img": "co_pg4"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "co_f_p4_intro", "dicaVoz": "co_f_p4_dica"}, {"id": "f_p5", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte o gatinho do jeito que você quiser.", "conceito": "objetivo2", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "o gatinho", "voz": "o gatinho", "img": "co_pg5"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "co_f_p5_intro", "dicaVoz": "co_f_p5_dica"}, {"id": "f_p6", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte a casinha do jeito que você quiser.", "conceito": "objetivo2", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "a casinha", "voz": "a casinha", "img": "co_pg6"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "co_f_p6_intro", "dicaVoz": "co_f_p6_dica"}, {"id": "f_p7", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte o patinho do jeito que você quiser.", "conceito": "objetivo3", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "o patinho", "voz": "o patinho", "img": "co_pg7"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "co_f_p7_intro", "dicaVoz": "co_f_p7_dica"}, {"id": "f_p8", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte o balão do jeito que você quiser.", "conceito": "objetivo3", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "o balão", "voz": "o balão", "img": "co_pg8"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "co_f_p8_intro", "dicaVoz": "co_f_p8_dica"}];
 AMBI = "poeira";
-VOZOK = {"1hmuuva": 1, "4f07c2": 1, "1mfu9s7": 1, "steoe6": 1, "eeq97q": 1, "4lf8yj": 1, "yke0n5": 1, "ykquvh": 1, "ykquqi": 1, "3o8hzn": 1, "4hggjz": 1, "1vwola2": 1, "hh5p3s": 1, "dn270g": 1, "1tnlad5": 1, "1q298f2": 1, "lc1v0d": 1, "1572u1z": 1, "1eibgxh": 1, "8yo70q": 1, "4546q0": 1};
+VOZOK = {"1hmuuva": 1, "4f07c2": 1, "1mfu9s7": 1, "steoe6": 1, "eeq97q": 1, "4lf8yj": 1, "yke0n5": 1, "ykquvh": 1, "ykquqi": 1, "3o8hzn": 1, "4hggjz": 1, "1vwola2": 1, "hh5p3s": 1, "dn270g": 1, "1tnlad5": 1, "1q298f2": 1, "lc1v0d": 1, "1572u1z": 1, "1eibgxh": 1};
+RELBNCC = "";
 </script>
 </body></html>
