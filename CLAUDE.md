@@ -316,22 +316,30 @@ Leia tudo antes de agir e responda sempre em **português**.
 > rolar. Em tela baixa encolhe a LETRA (`font-size`), nunca a carta. Piso medido
 > pelo auditor: **130 × 88 px** (`_qa/leiaute.js`, regra 6) — abaixo disso reprova.
 
-> **🚫⭐ NUNCA COPIAR AVATAR DE OUTRA ATIVIDADE — ARTE SEMPRE NOVA E TEMÁTICA**
-> (decisão do Marcos, ago/2026: *"nunca copiar avatares, sempre ser temático,
-> nunca repetir o avatar, sempre novo e temático"*). Ele pegou os brotinhos verdes
-> do Jardim reaproveitados dentro do Observatório do Órbi — no meio de um céu
-> estrelado. **A tela "Quem vai jogar?" é onde a criança se coloca dentro da
-> história**, então os avatares fazem parte do tema tanto quanto o mascote:
-> exploradores espaciais no espaço, jardineiros no jardim, repórteres no jornal.
-> Vale para TODA arte, não só os avatares — clonar o MOTOR é obrigatório, clonar a
-> ARTE é proibido. Custa 6 imagens; é o preço de a atividade não parecer remendo.
-> Sempre com **tons de pele, cabelos e detalhes variados** (é escola pública, a
-> criança tem que se achar ali) — e **SEMPRE incluir ao menos um(a) LOIRO(A)**
-> (regra do Marcos, ago/2026: *"nunca sai loira"*; a IA puxa para cabelo escuro,
-> então o prompt tem que PEDIR loiro explicitamente) — e **retrato do peito para
-> cima** (o rosto precisa ser legível a 62px no crachá). O auditor
-> **`_qa/arte_propria.py`** (portão 3c da banca) reprova qualquer imagem byte a
-> byte igual à de outra atividade.
+> **♻️⭐ REAPROVEITAR O BANCO DE IMAGENS — REGRA NOVA (Marcos, ago/2026, REVERTE a
+> antiga "arte sempre nova").** Palavras dele: *"mascote e imagens do banco de
+> imagens podem ser reaproveitados em outras atividades; mascote novo só quando eu
+> pedir; todas as imagens que eu gero você coloca no banco de imagens para
+> aproveitar; ao desenvolver atividades consulte o banco para verificar se a imagem
+> já existe — se existir, aproveite; senão, me passe o prompt para gerar"*. Ou seja,
+> o padrão agora é **REUSO**, não arte nova a cada vez. Regras práticas:
+> 1. **Antes de pedir arte, CONSULTE O BANCO** (`_banco/index.json`; o montador já
+>    reporta `no_banco` × `gerar`). Se a figura existe no banco, **aproveite** (não
+>    peça para gerar). O que faltar, **passe o prompt em bloco copiável** para o
+>    Marcos gerar (o Claude não gera arte — só recorta/trata o que ele sobe).
+> 2. **Toda imagem que o Marcos gera, o Claude põe no banco** (rodar o
+>    `_banco/montar.py`, que varre as pastas e cataloga) — assim a próxima atividade
+>    aproveita.
+> 3. **Mascote pode ser reaproveitado** entre atividades. **Mascote NOVO só quando o
+>    Marcos pedir** — na dúvida, reusar um mascote que já existe no banco.
+> 4. Avatares/crachás ("Quem vai jogar?") **podem** reusar do banco também; ainda
+>    valem **variedade de tons de pele/cabelo** e **ao menos um(a) LOIRO(A)** (a IA
+>    puxa para escuro; o prompt tem que PEDIR loiro) e **retrato do peito para cima**
+>    (rosto legível a 62px). Só peça avatar novo quando não houver um adequado.
+> **⚠️ O portão `_qa/arte_propria.py` NÃO reprova mais reuso** (a regra virou):
+> ele agora é **informativo** — lista o que foi reaproveitado, exit 0. Quem ainda
+> pega **resto de clone de verdade** (asset com o PREFIXO de outra atividade
+> vazando) é o `_qa/clone.py`, item 8 — esse continua reprovando.
 
 > **CRIAR ATIVIDADE PREMIUM (conteúdo + ano/disciplina):** siga o **"PROCESSO
 > OFICIAL"** no topo do `MANUAL-MESTRE.md` — ler os manuais na íntegra; primeiro

@@ -5468,3 +5468,14 @@ e devolver a medalha do tamanho da criança).
 casa já tinha.** O `_padrao/cartela.py cortar` existia, era melhor que o meu, e
 eu só descobri depois de entregar um corte que comeu os ponteiros do relógio.
 Antes de escrever qualquer coisa: procurar se já existe.
+
+## ♻️ REGRA NOVA (ago/2026): reaproveitar o banco de imagens
+Marcos reverteu a regra "arte sempre nova". Agora:
+- **Mascote e imagens do banco PODEM ser reaproveitados** entre atividades.
+- **Mascote novo só quando o Marcos pedir** — na dúvida, reusar do banco.
+- **Toda imagem que o Marcos gera → o Claude põe no banco** (`python3 _banco/montar.py`).
+- **Ao desenvolver, CONSULTAR o banco** (`_banco/index.json`; o montador reporta
+  `no_banco` × `gerar`): se existe, aproveita; senão, passa o prompt para o Marcos gerar.
+- O portão `_qa/arte_propria.py` **não reprova mais reuso** (virou informativo, exit 0);
+  quem pega resto de clone de verdade (prefixo alheio) é o `_qa/clone.py` item 8.
+Detalhe completo no CLAUDE.md (seção "REAPROVEITAR O BANCO DE IMAGENS").

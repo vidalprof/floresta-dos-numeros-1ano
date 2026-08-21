@@ -102,11 +102,16 @@ for d in outras:
 
 print("%s -> %d imagens conferidas contra %d outra(s) atividade(s)"
       % (pasta, len(minhas), len(outras)))
+# ⚠️ REGRA MUDOU (Marcos, ago/2026): "mascote e imagens do banco podem ser
+#    reaproveitados". Reuso deixou de ser ERRO — este portão virou INFORMATIVO
+#    (sempre exit 0). Ele só LISTA o que está reaproveitado, para ficar visível.
+#    Quem ainda pega resto de clone de verdade (prefixo de OUTRA atividade
+#    vazando) é o `_qa/clone.py` item 8, que continua reprovando.
 if not copiadas:
-    print("   arte ok: nenhuma imagem copiada de outra atividade")
+    print("   arte ok: nada reaproveitado de outra atividade")
     sys.exit(0)
-print("   %d IMAGEM(NS) COPIADA(S) DE OUTRA ATIVIDADE (tem que ser arte própria e temática):" % len(copiadas))
+print("   %d imagem(ns) REAPROVEITADA(S) de outra atividade (permitido — regra do banco):" % len(copiadas))
 for meu, dele in sorted(copiadas):
     print("    %s  ==  %s" % (meu, dele))
-print("   gere as suas pelo gerar-imagens.yml, no tema desta atividade.")
-sys.exit(1)
+print("   (reuso é OK agora; ideal é vir do _banco. Mascote novo só quando o Marcos pedir.)")
+sys.exit(0)
