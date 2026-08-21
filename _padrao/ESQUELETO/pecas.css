@@ -3740,7 +3740,7 @@
 
 .mec-memoria .mfig img{width:100%;height:100%;object-fit:contain}
 
-.mec-memoria .mfig.mfoto{width:100%;height:104px;margin:0 auto 6px;border-radius:12px; background:#fff;border:3px solid #efe7d3;-webkit-box-shadow:0 3px 9px rgba(30,40,20,.22); box-shadow:0 3px 9px rgba(30,40,20,.22);overflow:hidden}
+.mec-memoria .mfig.mfoto{width:100%;height:104px;margin:0 auto 6px;border-radius:12px; background:transparent;border:0;-webkit-box-shadow:none;box-shadow:none;overflow:visible}
 
 .mec-memoria .mfig.mfoto img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
 
@@ -4936,7 +4936,9 @@
 
 .mec-quebra-cabeca .medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a; border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
 
-.mec-quebra-cabeca .qctab{position:relative;width:100%;max-width:300px;margin:13px auto 0; border-radius:14px;background:#181109;box-shadow:0 4px 0 #0d0905}
+.mec-quebra-cabeca .qcmold{-webkit-box-sizing:border-box;box-sizing:border-box; width:-webkit-fit-content;width:fit-content;max-width:calc(100vw - 20px); margin:14px auto 0;padding:16px;border-radius:22px; background:rgba(255,255,255,.18); -webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1); border:2px solid rgba(255,255,255,.55); -webkit-box-shadow:0 10px 26px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.6); box-shadow:0 10px 26px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.6)}
+
+.mec-quebra-cabeca .qctab{position:relative;width:100%;max-width:300px;margin:0 auto; border-radius:12px;background:rgba(28,18,6,.16)}
 
 .mec-quebra-cabeca .qcfundo{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:14px; background-repeat:no-repeat;background-position:center;background-size:100% 100%; opacity:0;-webkit-transition:opacity .7s;transition:opacity .7s}
 
@@ -4944,7 +4946,7 @@
 
 .mec-quebra-cabeca .qcfundo.forte{opacity:.32}
 
-.mec-quebra-cabeca .qcvaga{position:absolute;background-repeat:no-repeat;border-radius:9px;cursor:pointer; border:2px dashed rgba(255,255,255,.45)}
+.mec-quebra-cabeca .qcvaga{position:absolute;background-repeat:no-repeat;border-radius:9px;cursor:pointer; border:2px dashed rgba(30,20,8,.42)}
 
 .mec-quebra-cabeca .qcvaga.mira{border:3px solid #ffd54a;-webkit-box-shadow:inset 0 0 0 3px rgba(255,213,74,.5); box-shadow:inset 0 0 0 3px rgba(255,213,74,.5)}
 
@@ -5029,6 +5031,8 @@
 .mec-quem-sou-eu .opts{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch; gap:10px;max-width:min(720px,calc(100vw - 14px));margin:10px auto 0}
 
 .mec-quem-sou-eu .opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 92px;flex:1 1 92px;min-width:86px;max-width:200px;margin:0;width:auto;font-size:14.5px;padding:10px 8px}
+
+.mec-quem-sou-eu .opts + .btn{margin-top:22px}
 /* ==== PECA: raios-x ==== */
 @-webkit-keyframes kf-raios-x-rxpulsa{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 9px rgba(0,0,0,.30)}
   50%{box-shadow:0 0 0 7px rgba(255,213,74,.95),0 0 0 12px rgba(0,0,0,.30)}}@keyframes kf-raios-x-rxpulsa{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 9px rgba(0,0,0,.30)}

@@ -240,8 +240,13 @@ var FORMAS={
    — a folha e o coracao — sao silhuetas PARECIDAS: sem olhar o contorno de
    verdade, nao sai. Quem so acerta quando as formas sao obvias nao aprendeu
    a comparar; aprendeu a chutar. */
+/* Campos opcionais desta gaveta (para o montador conhecê-los):
+   · `pool` + `n` = sorteia `n` formas do `pool` a CADA jogada (aleatoriedade);
+     quando há `pool`, mantenha `quais` também como reserva (a peça o percorre).
+   · `semSom` = encaixe só visual, sem o som (acabamento limpo). */
 var RODADAS=[
- {selo:"CADA COISA, SUA SOMBRA", quais:["estrela","casa","peixe"]},
+ {selo:"CADA COISA, SUA SOMBRA", quais:["estrela","casa","peixe"],
+  pool:["estrela","casa","peixe","arvore"], n:3, semSom:false},
  {selo:"OLHE BEM O CONTORNO",    quais:["arvore","coracao","folha","casa"]}
 ];
 /* O ANDAIME. O 3o degrau revela — e a dica dele fica DE PE enquanto isso. */
@@ -317,8 +322,13 @@ function sMadeira(){
 /* modo imagem (arte de IA) = pecas de madeira -> som de madeira; clip-path
    (folha, coracao do Museu) mantem o "ding" claro de sempre. */
 function usaImagem(){ for(var k in FORMAS){ if(FORMAS[k]&&FORMAS[k].img&&window.imgEl) return true; } return false; }
-function sEncaixa(){ if(usaImagem()){ sMadeira(); return; } nota(587.33,.10,.13,"triangle",0); nota(880,.14,.11,"triangle",.07); }
-function sNao(){ nota(330,.12,.10,"sine",0); nota(262,.14,.09,"sine",.07); }
+/* ⭐ SEM SOM (Marcos, ago/2026, sólidos: *"não precisa ter som também, e só
+   encaixar a imagem na sombra, para ficar bem profissional"*). Quando a rodada
+   pede `semSom`, o encaixe é só visual — o silêncio faz parte do acabamento
+   limpo. A narração e o alto-falante do enunciado continuam (pilar SONORA). */
+function _mudo(){ var r=rodada(); return !!(r&&r.semSom); }
+function sEncaixa(){ if(_mudo()) return; if(usaImagem()){ sMadeira(); return; } nota(587.33,.10,.13,"triangle",0); nota(880,.14,.11,"triangle",.07); }
+function sNao(){ if(_mudo()) return; nota(330,.12,.10,"sine",0); nota(262,.14,.09,"sine",.07); }
 
 /* o recorte: o mesmo para o objeto, para a sombra e para o fantasma */
 function forma(k,escura){
@@ -350,6 +360,14 @@ function telaSombras(){
   ger++; travada=false; errosSeg=0;
   limpa(); soltaFantasma();
   var rd=RODADAS[ri], i, k, v;
+  /* ⭐ ALEATORIEDADE (Marcos, ago/2026: *"e de aleatoriedade nessa fase"*). Se a
+     rodada declara `pool` (o conjunto de onde tirar) e `n` (quantas), sorteia n
+     formas do pool a CADA jogada — assim a fase não fica igual toda vez. Sem
+     `pool`, usa o `quais` fixo de sempre (compatível). */
+  if(rd.pool && rd.pool.length){
+    var _p=baguncar(rd.pool.slice(0));
+    rd={selo:rd.selo, semSom:rd.semSom, quais:_p.slice(0, rd.n||3)};
+  }
   sombras={}; pecas=[]; postas=0; marcada=null; tropecouEm=null;
   var t=el("div","tela"); telaAtual=t;
   setProg(t, Math.round(ri*100/RODADAS.length));

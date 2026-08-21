@@ -310,6 +310,10 @@ document.addEventListener("pointerdown",function(){ac();},false);
 var RODADAS= /*TECNICA*/[
  { selo:"A CESTA DA FEIRA", tipo:"texto",
    enun:"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>",
+   /* `enunPorque` (opcional) = o balão do passo POR QUÊ, já dizendo o que a de
+      fora NÃO faz igual às outras. Sem ele, a reserva genérica pergunta o porquê
+      sem a fórmula estranha "é a de fora". Aqui fica de exemplo. */
+   enunPorque:"O que a <b>cenoura</b> tem de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.",
    itens:[{k:"maca",n:"MA&#199;&#195;",img:""},{k:"banana",n:"BANANA",img:""},
           {k:"uva",n:"UVA",img:""},{k:"cenoura",n:"CENOURA",img:""}],
    fora:"cenoura", nomeFora:"CENOURA",
@@ -589,7 +593,13 @@ function telaPorque(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo","POR QU&#202;?"));
-  c.appendChild(el("div","balao","<b>"+R.nomeFora+"</b> &#233; a de fora. E <b>por qu&#234;</b> ela n&#227;o pertence ao grupo?"));
+  /* ⚠️ LIÇÃO PAGA (Marcos, ago/2026): "esse é a de fora e pq não pertence ao
+     grupo fica muito estranho — melhor dizer O QUE O OBJETO NÃO FAZ e por que
+     não pertence". Cada rodada pode trazer `enunPorque` já dizendo o que a de
+     fora não faz igual às outras ("O cubo NÃO rola como os outros..."). Sem
+     esse campo, a reserva genérica pergunta o porquê sem a fórmula estranha. */
+  c.appendChild(el("div","balao", R.enunPorque ||
+    ("O que a <b>"+R.nomeFora+"</b> faz de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.")));
   var box=el("div","opts"), i;
   var ordem=baguncar(R.razoes.slice(0));
   for(i=0;i<ordem.length;i++) box.appendChild(fazRazao(ordem[i]));

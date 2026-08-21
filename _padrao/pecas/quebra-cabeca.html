@@ -104,8 +104,24 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
    forca e perde por vir ANTES no arquivo — sem isto o tabuleiro nasce COLADO
    no enunciado (defeito ja cobrado duas vezes).                              */
-.qctab{position:relative;width:100%;max-width:300px;margin:13px auto 0;
-       border-radius:14px;background:#181109;box-shadow:0 4px 0 #0d0905}
+/* ⭐ MOLDURA DE VIDRO CENTRALIZADA (Marcos, ago/2026: *"os quebra-cabeças,
+   melhor colocá-los em uma moldura de vidro mais centralizada... pois se
+   confundem ao fundo, ajuste como é feito no de pintar"*). O tabuleiro escuro
+   fazia as peças (fotos recortadas) somirem no fundo. Agora o tabuleiro (do
+   tamanho EXATO das vagas) mora DENTRO de uma moldura fosca, clara e centrada —
+   as peças ganham contraste e o conjunto fica destacado. A moldura leva o
+   padding/brilho; o `.qctab` continua do tamanho medido, senão as vagas
+   (absolutas, left:0) sairiam do lugar. */
+.qcmold{-webkit-box-sizing:border-box;box-sizing:border-box;
+        width:-webkit-fit-content;width:fit-content;max-width:calc(100vw - 20px);
+        margin:14px auto 0;padding:16px;border-radius:22px;
+        background:rgba(255,255,255,.18);
+        -webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1);
+        border:2px solid rgba(255,255,255,.55);
+        -webkit-box-shadow:0 10px 26px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.6);
+        box-shadow:0 10px 26px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.6)}
+.qctab{position:relative;width:100%;max-width:300px;margin:0 auto;
+       border-radius:12px;background:rgba(28,18,6,.16)}
 /* a figura inteira, apagadinha, atras das vagas: e o MODELO. Ajuda a crianca
    a decidir onde o pedaco mora sem entregar a resposta.
    ⭐ ELA COMECA INVISIVEL (opacity:0) e so aparece quando a crianca precisa:
@@ -116,8 +132,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
          opacity:0;-webkit-transition:opacity .7s;transition:opacity .7s}
 .qcfundo.fraco{opacity:.13}
 .qcfundo.forte{opacity:.32}
+/* vaga vazia sobre a moldura CLARA: a borda tracejada branca sumia; agora é
+   escura o bastante para o contorno do slot ler no vidro. */
 .qcvaga{position:absolute;background-repeat:no-repeat;border-radius:9px;cursor:pointer;
-        border:2px dashed rgba(255,255,255,.45)}
+        border:2px dashed rgba(30,20,8,.42)}
 /* A MIRA: forma (borda grossa) + brilho, nunca so cor */
 .qcvaga.mira{border:3px solid #ffd54a;-webkit-box-shadow:inset 0 0 0 3px rgba(255,213,74,.5);
              box-shadow:inset 0 0 0 3px rgba(255,213,74,.5)}
@@ -318,9 +336,11 @@ function telaQuebra(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo","MONTE A FIGURA"));
-  c.appendChild(el("div","balao","Ponha cada <b>peda&#231;o</b> na vaga certa."));
+  c.appendChild(el("div","balao","Monte o <b>quebra-cabe&#231;a</b>: cada pe&#231;a no seu lugar."));
+  var mold=el("div","qcmold");   /* a moldura de vidro que centraliza o tabuleiro */
   var tab=el("div","qctab");
-  c.appendChild(tab);
+  mold.appendChild(tab);
+  c.appendChild(mold);
   var banco=el("div","qcbanco");
   c.appendChild(banco);
   elPlacar=el("div","placar","");
@@ -338,7 +358,7 @@ function telaQuebra(){
 
   /* o fundo entra sempre no DOM (a figura já vem carregada), mas invisível:
      quem manda nele é o nível do andaime, não a existência do elemento. */
-  var f=el("div","qcfundo");
+  var f=el("div","qcfundo fraco");  /* guia fraca desde o inicio (Marcos, ago/2026: ajuda os menores) */
   f.style.backgroundImage=FIGURA;
   tab.appendChild(f);
   elFundo=f; nivelFundo=0;

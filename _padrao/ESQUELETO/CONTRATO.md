@@ -4035,3 +4035,44 @@ caberem numa LINHA quando a tela permite, quebrando só nas estreitas; (3) a FIG
 fica LIMPA (sem fundo branco/borda/sombra) dentro do vidro, com o brilho que já
 existia (`.opfig:before`); (4) o `.dgfig` do digitar vira o mesmo vidro com brilho.
 Atividade pode sobrescrever no seu `tema.css` (a Cidade dos Sólidos tem o dela).
+
+## Lote de reparos ao vivo — sólidos (ago/2026, Marcos)
+
+**RELATÓRIO mostrava conceitos de PLANTA (clone do Jardim).** O `telaPainel`
+iterava `var CONC={luz_agua...partes da planta...}` cravado no motor, então TODA
+atividade exibia objetivos de planta — e, como as fases registram sob os conceitos
+DELAS (`objetivo1/2/3`), o domínio saía 0% em tudo. Conserto: o relatório itera
+`ROTULOS` (os conceitos reais que o montador injeta de `conteudo["conceitos"]`);
+`CONC` virou `{}`. Toda atividade precisa de `conceitos` no conteudo.json (o
+montador avisa se faltar). Foi bug de MOTOR: valia para todas as atividades.
+
+**Voz dizia "feice" em "face".** A voz pt-BR do Edge lê "face"/"faces" com sotaque
+inglês. Não dá para mudar a tela (a professora quer ler "face") nem a CHAVE (o
+`id`/hash sai do texto da tela, é o que casa o mp3). Conserto: `_fonetica_voz` em
+`montar.py` reescreve SÓ o `texto` que vai ao TTS (face→fásse), aplicado depois do
+`id` e numa varredura final sobre TODAS as falas (inclusive colhidas antigas).
+Palavra nova que a voz erra entra só nesse dicionário (fonte única).
+
+**Narração só na 1ª rodada (escolher etc.).** O motor narrava o balão UMA vez, ao
+abrir a fase; peças de várias rodadas trocam o texto do balão e ficavam mudas da 2ª
+em diante. Conserto: `narraBalao()` (fonte única) roda no abrir E no MutationObserver;
+só fala quando o TEXTO do balão mudou (`__balaoNarrado`) e não reinicia o áudio em
+curso — padrão da casa, vale para toda peça multi-rodada.
+
+**Ligar muitos-para-um.** Cubo e pirâmide ambos "ficam firmes"; a criança era
+reprovada por ligar ao "fica firme" do gênero errado. `casa()` na peça ligar aceita
+par por `k` (exato) OU por `data-g` (grupo). Gaveta sem `g` = comportamento antigo.
+
+**Gaveta de classificar quase invisível.** `fazGaveta` mostrava SÓ a marca d'água a
+12% e, com `rot:false`, nem o nome — a gaveta virava fantasma. Conserto: `rot:true`
+mostra figura NÍTIDA (`.gfig`) + nome (modo "aprender a categoria"); `rot:false`+img
+segue marca d'água (legado dinheiro); sem img, só nome.
+
+**Quebra-cabeça sumia no fundo.** Tabuleiro escuro fazia as peças (fotos) somirem.
+`.qcmold` = moldura de vidro fosca centralizada em volta do tabuleiro (do tamanho
+exato das vagas); vaga vazia com borda escura para ler no vidro.
+
+**Arrastar-sombra "profissional".** Peça e sombra sem caixa (Marcos), mas o cenário
+cheio some com elas: a atividade põe uma MESA de vidro (`.chao`/`.banco` no tema.css)
+como palco; a peça em si fica limpa. `pool`+`n` na rodada sorteia formas a cada
+jogada (aleatoriedade); `semSom` deixa o encaixe só visual.

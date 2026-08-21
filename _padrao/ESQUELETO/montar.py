@@ -552,6 +552,28 @@ def _fala_natural(t):
     return None
 
 
+# ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"na atividade onde fala face está
+#    dizendo feice"*. A voz pt-BR do Edge le "face"/"faces" com sotaque ingles
+#    ("feice"), porque e palavra que tambem existe em ingles. O conserto NAO
+#    pode mudar a tela (a professora quer ler "face"/"faces" escrito certo) nem
+#    a CHAVE da voz (o `id`/hash sai do texto da tela — e o que casa o MP3 com
+#    o que a crianca ve). Por isso a troca vale SO para o TEXTO que vai ao TTS,
+#    aplicada DEPOIS que o id ja foi calculado: o arquivo continua com o nome do
+#    texto original, mas o AUDIO dele sai com a pronuncia certa ("fásse").
+#    Palavra nova que a voz erra e so por AQUI (uma fonte de verdade), sempre em
+#    minusculas foneticas — caixa alta empurra a voz a soletrar.
+_FONETICA_VOZ = [
+    (re.compile(r"\bfaces\b", re.I), u"fásses"),
+    (re.compile(r"\bface\b",  re.I), u"fásse"),
+]
+def _fonetica_voz(t):
+    u"""Reescreve foneticamente as palavras que a voz erra. Vale SO para o texto
+    que vai ao TTS — nunca para a tela nem para a chave da voz."""
+    for rx, sub in _FONETICA_VOZ:
+        t = rx.sub(sub, t)
+    return t
+
+
 def falas_de(c):
     u"""O falas.json sai do TEXTO DA TELA. É isto que torna impossível a voz
     dizer uma coisa e a tela outra."""
@@ -566,7 +588,8 @@ def falas_de(c):
         _tl = _nome_fonetico_letra(t)
         if _tl is None:
             _tl = _fala_natural(t)
-        reg = {"id": ident, "texto": (_tl if _tl is not None else t)}
+        _base = _tl if _tl is not None else t
+        reg = {"id": ident, "texto": _fonetica_voz(_base)}
         if _tl is None and _idioma(t) == "en":
             reg["lang"] = "en"     # a voz do workflow troca para ingles
         out.append(reg)
@@ -1383,6 +1406,12 @@ def escreve_sw(pasta, c, html):
     import hashlib
     ver = hashlib.md5(html.encode("utf-8")).hexdigest()[:10]
     pre = re.sub(r"[^a-z0-9]+", "", (c.get("prefixo", "app") or "app").lower()) or "app"
+    # ⚠️ so pre-cacheia manifest.json se ELE existir (o clone.py acusava a atividade
+    #    sem PWA pedindo o manifest da origem). Sem manifest, cacheia so a casca.
+    _ativos = u'["./","./index.html"'
+    if os.path.exists(os.path.join(pasta, "manifest.json")):
+        _ativos += u',"./manifest.json"'
+    _ativos += u']'
     sw = (
         u'/* GERADO por montar.py — NAO editar a mao.\n'
         u'   REDE PRIMEIRO no HTML (nunca prende versao velha; se a rede cair, volta\n'
@@ -1390,7 +1419,7 @@ def escreve_sw(pasta, c, html):
         u'   em imagem/audio. O HASH no nome do cache troca a cada build. */\n'
         u'var PREFIXO="%s-";\n'
         u'var CACHE=PREFIXO+"%s";\n'
-        u'var ATIVOS=["./","./index.html","./manifest.json"];\n'
+        u'var ATIVOS=%s;\n'
         u'self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ATIVOS).catch(function(){});}));});\n'
         u'self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE&&k.indexOf(PREFIXO)===0)return caches.delete(k);}));}));self.clients.claim();});\n'
         u'function guardar(req,resp){try{if(resp&&resp.status===200&&resp.type==="basic"){var cp=resp.clone();caches.open(CACHE).then(function(c){c.put(req,cp);});}}catch(x){}return resp;}\n'
@@ -1401,7 +1430,7 @@ def escreve_sw(pasta, c, html):
         u'  if(ehPagina){e.respondWith(fetch(req).then(function(r){return guardar(req,r);}).catch(function(){return caches.match(req).then(function(c){return c||caches.match("./index.html");});}));}\n'
         u'  else{e.respondWith(caches.match(req).then(function(c){var rede=fetch(req).then(function(r){return guardar(req,r);}).catch(function(){return c;});return c||rede;}));}\n'
         u'});\n'
-    ) % (pre, ver)
+    ) % (pre, ver, _ativos)
     io.open(os.path.join(pasta, "sw.js"), "w", encoding="utf-8").write(sw)
     print(u"   sw.js gerado (rede-primeiro, cache %s-%s)" % (pre, ver))
 
@@ -1483,7 +1512,8 @@ def main():
             continue
         _id = "op_" + chave_voz(texto_limpo(_t))
         if _id not in _ids:
-            falas.append({"id": _id, "texto": texto_limpo(_t)})
+            # id/hash no texto original; AUDIO com pronuncia corrigida (ver _fonetica_voz)
+            falas.append({"id": _id, "texto": _fonetica_voz(texto_limpo(_t))})
             _ids.add(_id)
     # ⚠️ A COLHEITA NAO PODE SER APAGADA. O `colher.py` joga a atividade e anota
     #    as frases que so existem em tempo de jogo ("Achou as 4 palavras da
@@ -1520,6 +1550,13 @@ def main():
     falas.extend(guardadas)
     if guardadas:
         print(u"   %d fala(s) colhida(s) em jogo preservada(s)" % len(guardadas))
+    # ⭐ VARREDURA FONETICA FINAL: garante que NENHUM texto que vai ao TTS carregue
+    #    palavra que a voz erra (face->fásse), inclusive as colhidas antigas
+    #    preservadas acima (que nasceram antes do conserto). Só mexe no `texto`;
+    #    o `id`/hash continua o do texto da tela, então o mp3 casa igual.
+    for _f in falas:
+        if _f.get("texto"):
+            _f["texto"] = _fonetica_voz(_f["texto"])
     arte = arte_de(c, pasta)
     print(u"   escada ok | %d fala(s) a gravar | %d figura(s): %d ja na pasta, "
           u"%d ja no banco, %d a gerar"

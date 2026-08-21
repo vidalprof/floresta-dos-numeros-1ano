@@ -180,10 +180,13 @@ add(id="f06b", mec="digitar", selo="ESCREVA O NOME", conceito="objetivo1",
 add(id="f07", mec="ligar", selo="LIGUE", conceito="objetivo2",
     enunciado="Ligue cada <b>sólido</b> ao que ele faz na rampa.",
     dica="Redondo escorrega rolando; lado reto fica parado, firme.",
-    dados=[{"k":"p0","img":"sg_esfera_v","voz":"esfera","s":"Rola pela rampa"},
-           {"k":"p1","img":"sg_cubo_v","voz":"cubo","s":"Fica firme, parado"},
-           {"k":"p2","img":"sg_cilindro_v","voz":"cilindro","s":"Rola deitado"},
-           {"k":"p3","img":"sg_piramide_v","voz":"pirâmide","s":"Fica firme, parada"}],
+    # ⭐ grupos p/ muitos-para-um (Marcos): esfera e cilindro ROLAM (qualquer
+    #    destino "rola" serve); cubo e pirâmide FICAM FIRMES (idem). O gênero da
+    #    frase (parado/parada) deixa de reprovar a criança.
+    dados=[{"k":"p0","img":"sg_esfera_v","voz":"esfera","s":"Rola pela rampa","g":"rola"},
+           {"k":"p1","img":"sg_cubo_v","voz":"cubo","s":"Fica firme, parado","g":"firme"},
+           {"k":"p2","img":"sg_cilindro_v","voz":"cilindro","s":"Rola deitado","g":"rola"},
+           {"k":"p3","img":"sg_piramide_v","voz":"pirâmide","s":"Fica firme, parada","g":"firme"}],
     dadosExtra={"DICAS":[
       "Pergunte de cada um: se eu soltar na rampa, ele rola ou fica parado?",
       "Esfera e cilindro têm parte redonda: rolam. Cubo e pirâmide têm lados retos: ficam firmes. Siga a linha tracejada.",
@@ -208,7 +211,7 @@ add(id="f08", mec="classificar", selo="SEPARE", conceito="objetivo2",
         "Pergunte: se eu empurrar, ele rola ou fica parado?",
         "Esfera, cilindro e cone têm parte redonda: rolam. Cubo, pirâmide e bloco têm lados retos: ficam firmes.",
         "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."],
-      "ENUN":"Toque na ficha e depois na gaveta certa."})
+      "ENUN":"Toque no <b>sólido</b>. Depois toque na gaveta certa: <b>ROLA</b> ou <b>FICA FIRME</b>?"})
 
 # 9) ESCOLHER — qual rola / qual empilha
 add(id="f09", mec="escolher", selo="ESCOLHA", conceito="objetivo2",
@@ -236,13 +239,19 @@ add(id="f09", mec="escolher", selo="ESCOLHA", conceito="objetivo2",
 add(id="f10", mec="arrastar-sombra", selo="CADA UM, SUA SOMBRA", conceito="objetivo2",
     enunciado="Leve cada <b>sólido</b> até a sombra com o mesmo contorno.",
     dica="Compare o contorno: a sombra tem o mesmo formato do sólido.",
-    dados=[{"selo":"CADA UM, SUA SOMBRA","quais":["quad","circ","tri"]},
-           {"selo":"OLHE BEM O CONTORNO","quais":["quad","circ","tri","ret"]}],
+    # pool + n = sorteio a cada jogada (aleatoriedade, Marcos); semSom = encaixe
+    #   só visual (imagem limpa na sombra limpa, "bem profissional").
+    dados=[{"selo":"CADA UM, SUA SOMBRA","semSom":True,
+            "pool":["circ","quad","tri","cil"],"n":3,"quais":["circ","quad","tri"]},
+           {"selo":"OLHE BEM O CONTORNO","semSom":True,
+            "pool":["quad","circ","tri","ret","cil","con"],"n":4,"quais":["quad","circ","tri","ret"]}],
     dadosExtra={"FORMAS":{
       "quad":{"n":"CUBO","voz":"CUBO","img":"sg_cubo_v"},
       "circ":{"n":"ESFERA","voz":"ESFERA","img":"sg_esfera_v"},
       "tri":{"n":"PIRÂMIDE","voz":"PIRÂMIDE","img":"sg_piramide_v"},
-      "ret":{"n":"BLOCO","voz":"BLOCO","img":"sg_bloco_v"}},
+      "ret":{"n":"BLOCO","voz":"BLOCO","img":"sg_bloco_v"},
+      "cil":{"n":"CILINDRO","voz":"CILINDRO","img":"sg_cilindro_v"},
+      "con":{"n":"CONE","voz":"CONE","img":"sg_cone_v"}},
       "DICAS":[
         "Compare o <b>contorno</b>: a sombra tem o mesmo formato.",
         "A sombra certa está <b>piscando</b>. Leve o sólido até ela.",
@@ -250,11 +259,11 @@ add(id="f10", mec="arrastar-sombra", selo="CADA UM, SUA SOMBRA", conceito="objet
 
 # 11) INTRUSO — qual não pertence
 add(id="f11", mec="intruso", selo="QUAL NÃO É?", conceito="objetivo2",
-    enunciado="Três combinam. <b>Qual não pertence?</b>",
+    enunciado="Três fazem a mesma coisa. <b>Qual é o diferente?</b>",
     dica="Descubra o que três têm em comum e ache o diferente.",
     dados=[
       {"selo":"OS QUE ROLAM","tipo":"texto",
-       "enun":"Três destes rolam. <b>Qual não pertence?</b>",
+       "enun":"Três destes rolam. <b>Qual NÃO rola?</b>",
        "itens":[{"k":"esfera","n":"ESFERA","img":"sg_esfera_v"},
                 {"k":"cilindro","n":"CILINDRO","img":"sg_cilindro_v"},
                 {"k":"cone","n":"CONE","img":"sg_cone_v"},
@@ -267,12 +276,13 @@ add(id="f11", mec="intruso", selo="QUAL NÃO É?", conceito="objetivo2",
                  {"t":"Porque o cubo é o maior.","ok":0},
                  {"t":"Porque o cubo é azul.","ok":0},
                  {"t":"Porque o cubo é de brincar.","ok":0}],
+       "enunPorque":"O <b>cubo</b> n&#227;o rola como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ele de fora?",
        "p1":"O que você tocou até pode ser verdade. Mas olhe o que os OUTROS três fazem.",
        "p2":"Cor e tamanho não decidem. O que decide é <b>rolar ou não</b>.",
-       "p3":"Esfera, cilindro e cone rolam. O cubo fica firme — por isso não pertence ao grupo.",
+       "p3":"Esfera, cilindro e cone rolam. O cubo <b>não rola</b>: fica firme — por isso ele é o diferente.",
        "regra":"esfera, cilindro e cone rolam; o cubo fica firme"},
       {"selo":"OS QUE FICAM FIRMES","tipo":"texto",
-       "enun":"Três ficam firmes. <b>Qual não pertence?</b>",
+       "enun":"Três ficam firmes. <b>Qual NÃO fica firme?</b>",
        "itens":[{"k":"cubo","n":"CUBO","img":"sg_cubo_v"},
                 {"k":"bloco","n":"BLOCO","img":"sg_bloco_v"},
                 {"k":"piramide","n":"PIRÂMIDE","img":"sg_piramide_v"},
@@ -285,9 +295,10 @@ add(id="f11", mec="intruso", selo="QUAL NÃO É?", conceito="objetivo2",
                  {"t":"Porque a esfera é a menor.","ok":0},
                  {"t":"Porque a esfera é laranja.","ok":0},
                  {"t":"Porque a esfera é de futebol.","ok":0}],
+       "enunPorque":"A <b>esfera</b> n&#227;o fica firme como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ela de fora?",
        "p1":"Pode ser verdade, mas olhe o que os outros três têm em comum.",
        "p2":"O que junta os três é <b>ficar firme</b>, não a cor nem o tamanho.",
-       "p3":"Cubo, bloco e pirâmide ficam firmes. A esfera rola — por isso não pertence ao grupo.",
+       "p3":"Cubo, bloco e pirâmide ficam firmes. A esfera <b>não fica firme</b>: ela rola — por isso ela é a diferente.",
        "regra":"cubo, bloco e pirâmide ficam firmes; a esfera rola"},
     ])
 
@@ -326,8 +337,10 @@ add(id="f13", mec="ligar", selo="LIGUE", conceito="objetivo3",
 add(id="f14", mec="classificar", selo="SEPARE", conceito="objetivo3",
     enunciado="Cada objeto na gaveta do <b>sólido</b> dele.",
     dica="Pense na forma do objeto: é redondo de rolar ou tem cantos?",
-    dados=[{"k":"esfera","n":"ESFERA","img":"sg_esfera_v","voz":"esfera","rot":False},
-           {"k":"cubo","n":"CUBO","img":"sg_cubo_v","voz":"cubo","rot":False}],
+    # rot:True -> a gaveta mostra o sólido NÍTIDO + o nome (não a marca d'água
+    #   quase invisível): a criança vê claramente onde cada objeto mora.
+    dados=[{"k":"esfera","n":"ESFERA","img":"sg_esfera_v","voz":"esfera","rot":True},
+           {"k":"cubo","n":"CUBO","img":"sg_cubo_v","voz":"cubo","rot":True}],
     dadosExtra={"FICHAS":[
       {"t":"BOLA","alvo":"esfera","img":"sg_bola"},
       {"t":"LARANJA","alvo":"esfera","img":"sg_laranja"},
@@ -337,7 +350,7 @@ add(id="f14", mec="classificar", selo="SEPARE", conceito="objetivo3",
         "A bola e a laranja são redondas; o dado e a caixa têm cantos.",
         "Objeto redondo é esfera; objeto quadradinho é cubo.",
         "Olhe a gaveta com a borda amarela: é ali que este objeto mora."],
-      "ENUN":"Toque no objeto e depois na gaveta certa."})
+      "ENUN":"Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."})
 
 # 15) QUEBRA-CABECA — a casinha de sólidos
 add(id="f15", mec="quebra-cabeca", selo="QUEBRA-CABEÇA", conceito="objetivo3",
@@ -416,22 +429,8 @@ add(id="f18", mec="vitrine", selo="VITRINE", conceito="objetivo3",
                     SOL[s]["obj"][0][1].lower(), SOL[s]["obj"][1][1].lower()))}
            for s in ORD])
 
-# 19) CLASSIFICAR — face plana -> sólido (bridge EF02MA15)
-add(id="f19", mec="classificar", selo="SEPARE", conceito="objetivo3",
-    enunciado="Cada <b>face</b> na gaveta do sólido dela.",
-    dica="Que figura plana aparece no lado de cada sólido?",
-    dados=[{"k":"cubo","n":"CUBO<br>(faces quadradas)","img":"sg_cubo_v","voz":"cubo","rot":False},
-           {"k":"piramide","n":"PIRÂMIDE<br>(faces triângulo)","img":"sg_piramide_v","voz":"pirâmide","rot":False}],
-    dadosExtra={"FICHAS":[
-      {"t":"QUADRADO","alvo":"cubo"},
-      {"t":"QUADRADO","alvo":"cubo"},
-      {"t":"TRIÂNGULO","alvo":"piramide"},
-      {"t":"TRIÂNGULO","alvo":"piramide"}],
-      "DICAS":[
-        "Olhe um lado de cada sólido: que figura plana aparece?",
-        "O cubo tem faces quadradas; a pirâmide tem faces de triângulo.",
-        "Olhe a gaveta com a borda amarela: é ali que esta face mora."],
-      "ENUN":"Toque na face e depois na gaveta do sólido."})
+# 19) [REMOVIDA] — classificar face->sólido: o enunciado "toque na face e na gaveta
+#     do sólido" confundia (Marcos, ago/2026: "não me pareceu fazer sentido").
 
 # 20) ESCOLHER — revisão misturada (aquecimento leve)
 add(id="f20", mec="caca-palavras", selo="CAÇA-PALAVRAS", conceito="objetivo1",
@@ -484,11 +483,11 @@ add(id="f22", mec="quem-sou-eu", selo="QUEM SOU EU?", conceito="objetivo2",
 
 # 23) INTRUSO — objetos: qual não tem a mesma forma
 add(id="f23", mec="intruso", selo="QUAL NÃO É?", conceito="objetivo3",
-    enunciado="Três têm a mesma forma. <b>Qual não pertence?</b>",
-    dica="Pense na forma de cada objeto.",
+    enunciado="Três fazem a mesma coisa. <b>Qual é o diferente?</b>",
+    dica="Pense na forma de cada objeto: rola ou fica firme?",
     dados=[
-      {"selo":"OS REDONDOS","tipo":"texto",
-       "enun":"Três têm forma de rolar. <b>Qual não pertence?</b>",
+      {"selo":"OS QUE ROLAM","tipo":"texto",
+       "enun":"Três destes rolam. <b>Qual NÃO rola?</b>",
        "itens":[{"k":"bola","n":"BOLA","img":"sg_bola"},
                 {"k":"laranja","n":"LARANJA","img":"sg_laranja"},
                 {"k":"lata","n":"LATA","img":"sg_lata"},
@@ -501,9 +500,10 @@ add(id="f23", mec="intruso", selo="QUAL NÃO É?", conceito="objetivo3",
                  {"t":"Porque o dado tem números.","ok":0},
                  {"t":"Porque o dado é pequeno.","ok":0},
                  {"t":"Porque o dado é de jogar.","ok":0}],
+       "enunPorque":"O <b>dado</b> n&#227;o rola como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ele de fora?",
        "p1":"O número no dado não decide a forma. Olhe o que os outros fazem.",
        "p2":"O que junta os três é a forma <b>redonda de rolar</b>.",
-       "p3":"Bola, laranja e lata rolam. O dado (cubo) fica firme — por isso não pertence ao grupo.",
+       "p3":"Bola, laranja e lata rolam. O dado <b>não rola</b>: fica firme — por isso ele é o diferente.",
        "regra":"bola, laranja e lata rolam; o dado fica firme"},
     ])
 
@@ -527,13 +527,18 @@ add(id="f25", mec="memoria", selo="MEMÓRIA", conceito="objetivo3",
 add(id="f26", mec="arrastar-sombra", selo="CADA UM, SUA SOMBRA", conceito="objetivo2",
     enunciado="Leve cada <b>objeto</b> até a sombra da forma dele.",
     dica="Compare o contorno da sombra com o objeto.",
-    dados=[{"selo":"CADA UM, SUA SOMBRA","quais":["circ","quad","tri"]},
-           {"selo":"OLHE BEM O CONTORNO","quais":["circ","quad","tri","ret"]}],
+    # f26 usa OBJETOS DO DIA A DIA (não os sólidos de vidro do f10) — silhuetas
+    #   bem distintas: bola=círculo, lata=cilindro, dado=quadrado, sorvete=cone.
+    #   Assim as duas fases de sombra não são a mesma coisa (menos repetição).
+    dados=[{"selo":"CADA UM, SUA SOMBRA","semSom":True,
+            "pool":["bola","lata","dado","sorvete"],"n":3,"quais":["bola","lata","dado"]},
+           {"selo":"OLHE BEM O CONTORNO","semSom":True,
+            "pool":["bola","lata","dado","sorvete"],"n":4,"quais":["bola","lata","dado","sorvete"]}],
     dadosExtra={"FORMAS":{
-      "quad":{"n":"CUBO","voz":"CUBO","img":"sg_cubo_v"},
-      "circ":{"n":"ESFERA","voz":"ESFERA","img":"sg_esfera_v"},
-      "tri":{"n":"PIRÂMIDE","voz":"PIRÂMIDE","img":"sg_piramide_v"},
-      "ret":{"n":"CILINDRO","voz":"CILINDRO","img":"sg_cilindro_v"}},
+      "bola":{"n":"BOLA","voz":"BOLA","img":"sg_bola"},
+      "lata":{"n":"LATA","voz":"LATA","img":"sg_lata"},
+      "dado":{"n":"DADO","voz":"DADO","img":"sg_dado"},
+      "sorvete":{"n":"SORVETE","voz":"SORVETE","img":"sg_sorvete"}},
       "DICAS":[
         "Compare o <b>contorno</b>: a sombra tem o mesmo formato.",
         "A sombra certa está <b>piscando</b>. Leve até ela.",
@@ -570,7 +575,7 @@ add(id="f28", mec="classificar", selo="SEPARE", conceito="objetivo2",
         "Imagine empilhar dois iguais: fica em pé ou cai?",
         "Cubo e bloco têm topo plano: empilham. Esfera e cone têm parte redonda: escorregam.",
         "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."],
-      "ENUN":"Toque na ficha e depois na gaveta certa."})
+      "ENUN":"Toque no <b>sólido</b>. Depois toque na gaveta: <b>EMPILHA FIRME</b> ou <b>ESCORREGA</b>?"})
 
 # 29) QUEM-SOU-EU — fecho conceitual
 add(id="f29", mec="quem-sou-eu", selo="QUEM SOU EU?", conceito="objetivo1",
@@ -637,8 +642,8 @@ add(id="f33", mec="escolher", selo="ESCOLHA", conceito="objetivo3",
 add(id="f34", mec="classificar", selo="SEPARE", conceito="objetivo3",
     enunciado="Cada objeto na gaveta do <b>sólido</b> dele.",
     dica="Redondo de rolar ou com cantos retos?",
-    dados=[{"k":"cilindro","n":"CILINDRO","img":"sg_cilindro_v","voz":"cilindro","rot":False},
-           {"k":"cone","n":"CONE","img":"sg_cone_v","voz":"cone","rot":False}],
+    dados=[{"k":"cilindro","n":"CILINDRO","img":"sg_cilindro_v","voz":"cilindro","rot":True},
+           {"k":"cone","n":"CONE","img":"sg_cone_v","voz":"cone","rot":True}],
     dadosExtra={"FICHAS":[
       {"t":"LATA","alvo":"cilindro","img":"sg_lata"},
       {"t":"COPO","alvo":"cilindro","img":"sg_copo"},
@@ -648,7 +653,7 @@ add(id="f34", mec="classificar", selo="SEPARE", conceito="objetivo3",
         "Lata e copo são retos e redondos (cilindro); casquinha e chapéu têm ponta (cone).",
         "Cilindro é reto com círculo em cima e embaixo; cone tem uma ponta.",
         "Olhe a gaveta com a borda amarela: é ali que este objeto mora."],
-      "ENUN":"Toque no objeto e depois na gaveta certa."})
+      "ENUN":"Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."})
 
 # 30) VITRINE — a grande vitrine final (fecho + gancho)
 add(id="f30", mec="vitrine", selo="A GRANDE VITRINE", conceito="objetivo1",

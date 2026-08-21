@@ -1639,8 +1639,13 @@ var FORMAS={
    — a folha e o coracao — sao silhuetas PARECIDAS: sem olhar o contorno de
    verdade, nao sai. Quem so acerta quando as formas sao obvias nao aprendeu
    a comparar; aprendeu a chutar. */
+/* Campos opcionais desta gaveta (para o montador conhecê-los):
+   · `pool` + `n` = sorteia `n` formas do `pool` a CADA jogada (aleatoriedade);
+     quando há `pool`, mantenha `quais` também como reserva (a peça o percorre).
+   · `semSom` = encaixe só visual, sem o som (acabamento limpo). */
 var RODADAS=[
- {selo:"CADA COISA, SUA SOMBRA", quais:["estrela","casa","peixe"]},
+ {selo:"CADA COISA, SUA SOMBRA", quais:["estrela","casa","peixe"],
+  pool:["estrela","casa","peixe","arvore"], n:3, semSom:false},
  {selo:"OLHE BEM O CONTORNO",    quais:["arvore","coracao","folha","casa"]}
 ];
 /* O ANDAIME. O 3o degrau revela — e a dica dele fica DE PE enquanto isso. */
@@ -1716,8 +1721,13 @@ function sMadeira(){
 /* modo imagem (arte de IA) = pecas de madeira -> som de madeira; clip-path
    (folha, coracao do Museu) mantem o "ding" claro de sempre. */
 function usaImagem(){ for(var k in FORMAS){ if(FORMAS[k]&&FORMAS[k].img&&window.imgEl) return true; } return false; }
-function sEncaixa(){ if(usaImagem()){ sMadeira(); return; } nota(587.33,.10,.13,"triangle",0); nota(880,.14,.11,"triangle",.07); }
-function sNao(){ nota(330,.12,.10,"sine",0); nota(262,.14,.09,"sine",.07); }
+/* ⭐ SEM SOM (Marcos, ago/2026, sólidos: *"não precisa ter som também, e só
+   encaixar a imagem na sombra, para ficar bem profissional"*). Quando a rodada
+   pede `semSom`, o encaixe é só visual — o silêncio faz parte do acabamento
+   limpo. A narração e o alto-falante do enunciado continuam (pilar SONORA). */
+function _mudo(){ var r=rodada(); return !!(r&&r.semSom); }
+function sEncaixa(){ if(_mudo()) return; if(usaImagem()){ sMadeira(); return; } nota(587.33,.10,.13,"triangle",0); nota(880,.14,.11,"triangle",.07); }
+function sNao(){ if(_mudo()) return; nota(330,.12,.10,"sine",0); nota(262,.14,.09,"sine",.07); }
 
 /* o recorte: o mesmo para o objeto, para a sombra e para o fantasma */
 function forma(k,escura){
@@ -1749,6 +1759,14 @@ function telaSombras(){
   ger++; travada=false; errosSeg=0;
   limpa(); soltaFantasma();
   var rd=RODADAS[ri], i, k, v;
+  /* ⭐ ALEATORIEDADE (Marcos, ago/2026: *"e de aleatoriedade nessa fase"*). Se a
+     rodada declara `pool` (o conjunto de onde tirar) e `n` (quantas), sorteia n
+     formas do pool a CADA jogada — assim a fase não fica igual toda vez. Sem
+     `pool`, usa o `quais` fixo de sempre (compatível). */
+  if(rd.pool && rd.pool.length){
+    var _p=baguncar(rd.pool.slice(0));
+    rd={selo:rd.selo, semSom:rd.semSom, quais:_p.slice(0, rd.n||3)};
+  }
   sombras={}; pecas=[]; postas=0; marcada=null; tropecouEm=null;
   var t=el("div","tela"); telaAtual=t;
   setProg(t, Math.round(ri*100/RODADAS.length));
@@ -8382,7 +8400,21 @@ function fazGaveta(g){
      gaveta e a FIGURA do dinheiro — grande, CENTRALIZADA e levemente
      transparente (~20%) — moeda numa, cedula na outra. A crianca reconhece
      pelo desenho e, se precisar, toca no alto-falante e OUVE o nome. */
-  if(g.img){ var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w); }
+  /* ⚠️⚠️ LICAO PAGA (Marcos, sólidos, ago/2026: *"as imagens quase
+     desaparecendo... precisa ficar mais claro para o estudante o que tem que
+     fazer"*). Toda gaveta com figura recebia SO a marca d'agua a 12% e, com
+     `rot:false`, NEM o nome — a gaveta ficava um fantasma sem rótulo. Isso serve
+     ao dinheiro (moeda/nota, 1o ano, ficha tambem é imagem), mas NAO ao caso em
+     que a GAVETA é o conceito que a crianca esta aprendendo (o sólido). Agora:
+       · `rot:true`  -> figura NITIDA no topo + NOME em faixa (modo "aprender a
+                        categoria": a identidade da gaveta tem que estar clara);
+       · `rot:false` + img -> marca d'agua fraca (legado dinheiro), inalterado;
+       · sem img -> só o nome. */
+  if(g.img && g.rot){
+    d.appendChild(figura(g.img,"gfig"));            /* figura nitida, 66px */
+  }else if(g.img){
+    var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w);
+  }
   /* ⚠️ LICAO PAGA (Teatro das Palavras, 5o ano, ago/2026): a gaveta SO mostrava
      a figura (regra do 1o ano, que nao le). Numa atividade de texto — separar
      PRONOME PESSOAL x DEMONSTRATIVO — as gavetas nao tem figura (img:"") e
@@ -17345,6 +17377,10 @@ MEC["intruso"] = function(f, cen, fim){
 var RODADAS= /*TECNICA*/[
  { selo:"A CESTA DA FEIRA", tipo:"texto",
    enun:"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>",
+   /* `enunPorque` (opcional) = o balão do passo POR QUÊ, já dizendo o que a de
+      fora NÃO faz igual às outras. Sem ele, a reserva genérica pergunta o porquê
+      sem a fórmula estranha "é a de fora". Aqui fica de exemplo. */
+   enunPorque:"O que a <b>cenoura</b> tem de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.",
    itens:[{k:"maca",n:"MA&#199;&#195;",img:""},{k:"banana",n:"BANANA",img:""},
           {k:"uva",n:"UVA",img:""},{k:"cenoura",n:"CENOURA",img:""}],
    fora:"cenoura", nomeFora:"CENOURA",
@@ -17624,7 +17660,13 @@ function telaPorque(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo","POR QU&#202;?"));
-  c.appendChild(el("div","balao","<b>"+R.nomeFora+"</b> &#233; a de fora. E <b>por qu&#234;</b> ela n&#227;o pertence ao grupo?"));
+  /* ⚠️ LIÇÃO PAGA (Marcos, ago/2026): "esse é a de fora e pq não pertence ao
+     grupo fica muito estranho — melhor dizer O QUE O OBJETO NÃO FAZ e por que
+     não pertence". Cada rodada pode trazer `enunPorque` já dizendo o que a de
+     fora não faz igual às outras ("O cubo NÃO rola como os outros..."). Sem
+     esse campo, a reserva genérica pergunta o porquê sem a fórmula estranha. */
+  c.appendChild(el("div","balao", R.enunPorque ||
+    ("O que a <b>"+R.nomeFora+"</b> faz de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.")));
   var box=el("div","opts"), i;
   var ordem=baguncar(R.razoes.slice(0));
   for(i=0;i<ordem.length;i++) box.appendChild(fazRazao(ordem[i]));
@@ -20527,7 +20569,11 @@ MEC["ligar"] = function(f, cen, fim){
    `ver`. Aqui ele nao entrega a resposta de graca: a crianca ainda tem de
    escolher a ponta e fazer o gesto ate o outro lado.                       */
 var LIG=[
-  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra"},
+  /* `g` (opcional) = GRUPO para muitos-para-um: pontas com o mesmo `g` casam
+     entre si (o cubo liga a qualquer "fica firme"). Vazio/ausente = par exato
+     por `k`, como sempre. Aqui fica "" só para o montador saber que o campo
+     existe. */
+  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra", g:""},
   {k:"p1", t:"O CAULE", s:"Leva a água para cima"},
   {k:"p2", t:"A FOLHA", s:"Faz o alimento com o sol"},
   {k:"p3", t:"A FLOR",  s:"Vira fruto e semente"}
@@ -20644,6 +20690,7 @@ function fazPonta(dado,lado,texto){
   /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
      consegue fechar a fase. A criança não vê diferença nenhuma. */
   l.setAttribute("data-qa",dado.k);
+  if(dado.g) l.setAttribute("data-g",dado.g);   /* grupo p/ muitos-para-um (ver casa()) */
   l._lado=lado;
   l._ver=!!dado.ver;   /* ⭐ modo facil pedido na gaveta (ver acima) */
   l.onclick=function(){
@@ -20764,10 +20811,10 @@ function desmarca(){
    de vez, e a peça continua deixando a crianca fechar o par com a mao.    */
 function mostraDestino(l,nivel){
   if(!l||temClasse(l,"feita")) return;
-  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa"), alvo=null;
+  var a=app.getElementsByClassName("lig"), i, alvo=null;
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")||a[i]===l) continue;
-    if(a[i]._lado!==l._lado&&a[i].getAttribute("data-qa")===k){ alvo=a[i]; break; }
+    if(casa(l,a[i])){ alvo=a[i]; break; }   /* aponta para um destino AINDA válido (par exato OU grupo) */
   }
   if(!alvo) return;
   destDe=l; destAlvo=alvo; destNivel=nivel;
@@ -20782,11 +20829,26 @@ function apagaDestino(){
   redesenha();   /* a linha fantasma some junto */
 }
 
+/* ⭐ MUITOS-PARA-UM (Marcos, ago/2026: *"tanto o quadrado quanto a pirâmide
+   ficam firmes, então ao clicar com qualquer um em qualquer que diga que fica
+   firme do outro lado seria interessante funcionar"*). Duas pontas casam quando
+   têm a MESMA chave `k` (o par exato de sempre) OU quando compartilham um GRUPO
+   (`data-g`): assim o cubo liga a QUALQUER destino "fica firme", e a pirâmide ao
+   outro — sem precisar acertar o gênero da frase. Compatível: gaveta sem `g`
+   segue casando só por `k`. Os alvos se consomem (`feita`), então N sólidos do
+   grupo preenchem os N destinos do grupo em qualquer ordem. */
+function casa(a,b){
+  if(a._lado===b._lado) return false;
+  var ka=a.getAttribute("data-qa"), kb=b.getAttribute("data-qa");
+  if(ka!==null&&ka===kb) return true;
+  var ga=a.getAttribute("data-g"), gb=b.getAttribute("data-g");
+  return !!(ga&&gb&&ga===gb);
+}
 function juntar(a,b){
   if(!a||!b||a===b) return;
   if(temClasse(a,"feita")||temClasse(b,"feita")) return;
   if(a._lado===b._lado) return;
-  if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
+  if(casa(a,b)){
     sCerto();
     a.className="lig feita"; b.className="lig feita";
     marcada=null;
@@ -29166,9 +29228,11 @@ function telaQuebra(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo","MONTE A FIGURA"));
-  c.appendChild(el("div","balao","Ponha cada <b>peda&#231;o</b> na vaga certa."));
+  c.appendChild(el("div","balao","Monte o <b>quebra-cabe&#231;a</b>: cada pe&#231;a no seu lugar."));
+  var mold=el("div","qcmold");   /* a moldura de vidro que centraliza o tabuleiro */
   var tab=el("div","qctab");
-  c.appendChild(tab);
+  mold.appendChild(tab);
+  c.appendChild(mold);
   var banco=el("div","qcbanco");
   c.appendChild(banco);
   elPlacar=el("div","qc_placar","");
@@ -29186,7 +29250,7 @@ function telaQuebra(){
 
   /* o fundo entra sempre no DOM (a figura já vem carregada), mas invisível:
      quem manda nele é o nível do andaime, não a existência do elemento. */
-  var f=el("div","qcfundo");
+  var f=el("div","qcfundo fraco");  /* guia fraca desde o inicio (Marcos, ago/2026: ajuda os menores) */
   f.style.backgroundImage=FIGURA;
   tab.appendChild(f);
   elFundo=f; nivelFundo=0;

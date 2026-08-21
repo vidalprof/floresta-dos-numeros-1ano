@@ -178,9 +178,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    mata branca (estilo foto instant&#226;nea da c&#226;mera do mascote). A mata resolve de
    uma vez os tr&#234;s formatos que a IA devolve &#8212; cena cheia, figura em fundo branco
    e recorte transparente &#8212; porque todas passam a parecer "foto no papel branco". */
+/* ⭐ PADRAO DA CASA (Marcos, ago/2026: "imagem sem fundo e sem borda, so a borda
+   da interatividade"): a figura fica LIMPA na carta — sem a mata branca/borda/
+   sombra. Quem emoldura e a PROPRIA carta (.mcarta/.mface). */
 .mfig.mfoto{width:100%;height:104px;margin:0 auto 6px;border-radius:12px;
-  background:#fff;border:3px solid #efe7d3;-webkit-box-shadow:0 3px 9px rgba(30,40,20,.22);
-  box-shadow:0 3px 9px rgba(30,40,20,.22);overflow:hidden}
+  background:transparent;border:0;-webkit-box-shadow:none;box-shadow:none;overflow:visible}
 .mfig.mfoto img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
 .mtxt{font-size:16px;font-weight:800;line-height:1.2}
 /* ⭐ palavra SOZINHA (par nome×imagem): sem figura em cima, ela ocupa a carta

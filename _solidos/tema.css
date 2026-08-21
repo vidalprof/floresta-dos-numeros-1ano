@@ -70,6 +70,39 @@
   -webkit-filter:none !important;filter:none !important;
   width:128px;height:128px;max-width:100%;max-height:none}
 
+/* ⭐ "CADA UM, SUA SOMBRA" LIMPO E PROFISSIONAL (Marcos, ago/2026: *"seria
+   interessante não ter fundo nem borda na imagem, e também na sombra, não
+   precisa ter som também, e só encaixar a imagem na sombra, para ficar bem
+   profissional"*). A figura e a silhueta ficam SEM o cartão beje/tracejado: a
+   imagem limpa encaixa direto na sombra limpa. (O silêncio vem do `semSom` no
+   conteúdo.) O alvo de toque continua grande — só o enfeite sai. */
+/* a IMAGEM e a SOMBRA ficam sem caixa (Marcos), mas o CENÁRIO é muito cheio
+   (cidade de blocos), então as peças sumiam. Solução: uma MESA de vidro fosca
+   atrás da fileira das sombras e do banco de peças — a peça em si continua
+   limpa, sem borda; quem dá o contraste é a mesa, não um quadrado por peça. */
+.mec-arrastar-sombra .chao,.mec-arrastar-sombra .banco{
+  background:rgba(247,249,253,.82);
+  -webkit-backdrop-filter:blur(6px) saturate(1.05);backdrop-filter:blur(6px) saturate(1.05);
+  border:2px solid rgba(255,255,255,.85);border-radius:20px;
+  -webkit-box-shadow:0 10px 22px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.9);
+  box-shadow:0 10px 22px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.9);
+  padding:12px 10px;max-width:360px}
+.mec-arrastar-sombra .chao{margin:14px auto 0}
+.mec-arrastar-sombra .banco{margin:12px auto 0}
+.mec-arrastar-sombra .cam{background:transparent !important;border:0 !important;
+  padding:2px !important;-webkit-box-shadow:none !important;box-shadow:none !important}
+.mec-arrastar-sombra .cam.alvo,.mec-arrastar-sombra .cam.chama{background:transparent !important}
+/* a sombra do alvo, quando pisca/acende, mostra-se pelo BRILHO na silhueta, não
+   por uma caixa: um halo suave atrás do contorno preto. */
+.mec-arrastar-sombra .cam.alvo .frmimg.sombra img,
+.mec-arrastar-sombra .cam.chama .frmimg.sombra img{
+  -webkit-filter:brightness(0) drop-shadow(0 0 6px #ffd54a);
+  filter:brightness(0) drop-shadow(0 0 6px #ffd54a)}
+/* a peça (objeto que se arrasta) também limpa: sem cartão creme atrás da arte */
+.mec-arrastar-sombra .pc{background:transparent !important;border:0 !important;
+  -webkit-box-shadow:none !important;box-shadow:none !important}
+.mec-arrastar-sombra .pc.sel{-webkit-box-shadow:0 0 0 4px #ffd54a !important;box-shadow:0 0 0 4px #ffd54a !important}
+
 .mec-escolher .opt:active, .mec-quem-sou-eu .opt:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
 .mec-escolher .opt.ok, .mec-quem-sou-eu .opt.ok{background:#d9f5c8 !important;border-color:#7cb464 !important}
 .mec-escolher .opt.no, .mec-quem-sou-eu .opt.no{background:#f8dcd4 !important;border-color:#c08c80 !important}
