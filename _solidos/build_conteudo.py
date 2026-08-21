@@ -621,20 +621,9 @@ add(id="f34", mec="classificar", selo="SEPARE", conceito="objetivo3",
         "Olhe a gaveta com a borda amarela: é ali que este objeto mora."],
       "ENUN":"Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."})
 
-# 30f) CRUZADINHA — os nomes dos sólidos se cruzam (mecânica NOVA, Marcos).
-#      Grade conferida: CUBO(↓) cruza BLOCO(→) no B; BLOCO(→) cruza CONE(↓) no C.
-#      `p` SEM acento (as três não têm). BANCO = letras disponíveis + alguns chamarizes.
-add(id="f35", mec="cruzadinha", selo="CRUZADINHA", conceito="objetivo1",
-    enunciado="Monte a <b>cruzadinha</b> com os nomes dos sólidos.",
-    dica="Leia a pista de cada número e escreva o nome do sólido.",
-    dados=[
-      {"p":"CUBO","ac":"CUBO","r":0,"c":0,"pLin":1,"pCol":0,"n":1,
-       "d":"Tenho 6 faces quadradas iguais; sou o dado."},
-      {"p":"BLOCO","ac":"BLOCO","r":2,"c":0,"pLin":0,"pCol":1,"n":2,
-       "d":"Sou uma caixa comprida de lados retos, como a caixa de sapato."},
-      {"p":"CONE","ac":"CONE","r":2,"c":3,"pLin":1,"pCol":0,"n":3,
-       "d":"Tenho uma ponta em cima; sou a casquinha do sorvete."},
-    ], dadosExtra={"BANCO":"ABCDEILNORSU"})
+# 30f) [REMOVIDA] — CRUZADINHA: o Marcos avaliou que cruzadinha não é boa para os
+#      pequenos (2º ano). A variedade nova fica por conta da FORCA (com figura +
+#      pista falada) e do COMPLETAR, que são mais concretos para essa idade.
 
 # 30) VITRINE — a grande vitrine final (fecho + gancho)
 add(id="f30", mec="vitrine", selo="A GRANDE VITRINE", conceito="objetivo1",
