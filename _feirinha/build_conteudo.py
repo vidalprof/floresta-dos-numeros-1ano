@@ -75,6 +75,14 @@ CONTEUDO = {
    u"Ouça: morango. Ache a figura igual.",
    u"Ouça: cenoura. Ache a figura igual.",
    u"Ouça: manga. Ache a figura igual.",
+   # balão do contadores (sem o "(por extenso)") — um por alvo usado (f01/f07/f15)
+   u"Ponha 5 sementes na terra.",
+   u"Ponha 7 sementes na terra.",
+   u"Ponha 8 sementes na terra.",
+   u"Ponha 9 sementes na terra.",
+   u"Ponha 10 sementes na terra.",
+   u"Ponha 11 sementes na terra.",
+   u"Ponha 12 sementes na terra.",
  ],
  u"fases": [],
 }

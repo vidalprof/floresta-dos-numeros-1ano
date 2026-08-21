@@ -238,8 +238,10 @@ function pecaContadores(){
   setProg(t, Math.round(ri*100/CNT.length));
   var c=el("div","centro");
   c.appendChild(el("div","selo","O CANTEIRO"));
-  c.appendChild(el("div","balao","Ponha <b>"+r.alvo+"</b> ("+nomeNum(r.alvo)+
-                   ") sementes na terra."));
+  c.appendChild(el("div","balao","Ponha <b>"+r.alvo+"</b> sementes na terra."));
+                   /* ⚠️ Marcos (ago/2026): NAO repetir o numero por extenso entre
+                      parenteses ("10 (dez)") — o digito basta no enunciado; a VOZ
+                      ja diz o numero. Redundancia polui a leitura da crianca. */
   elCant=el("div","canteiro","");
   c.appendChild(elCant);
   elMolde=el("div","molde","");
@@ -359,7 +361,10 @@ function contaComigo(){
     diz(nomeNum(i+1));
     sConta();
     i++;
-    setTimeout(passo,520);
+    /* ⚠️ Marcos (ago/2026): contar/acender MAIS DEVAGAR e PAUSADO — a crianca
+       precisa acompanhar cada semente e ouvir o numero inteiro antes do proximo.
+       520ms corria demais; 950ms dá o respiro. */
+    setTimeout(passo,950);
   };
   passo();
 }
