@@ -1335,7 +1335,13 @@ function poeZap(elm){
   };
   elm.appendChild(bt);
 }
-var ZAPSEL=".opt,.lig,.pc,.bin";
+/* ⚠️ `.ptxt` (Solidos, ago/2026 — Marcos: "a pista tem que ter audio"): na peca
+   QUEM SOU EU a pista chega escrita mas MUDA. A voz de cada pista JA existe
+   (op_<hash>, o montador grava tudo do `dados`); faltava so o alto-falante. O
+   motor poe o botao sozinho em todo elemento do ZAPSEL cujo TEXTO tenha voz —
+   entao basta a pista entrar aqui. Vai no `.ptxt` (so o texto da pista), nao no
+   `.pista` inteiro, senao o "PISTA 1" entraria no hash e a voz nao casaria. */
+var ZAPSEL=".opt,.lig,.pc,.bin,.ptxt";
 /* ⭐ o alto-falante do ENUNCIADO: toca de novo a MESMA narracao da tela.
    Vale para todo balao de pergunta; os baloezinhos de apoio (.pequeno, .porque)
    ficam de fora para nao encher a tela de botao.                            */

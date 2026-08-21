@@ -262,7 +262,16 @@ def gaveta(js):
     so depois do defeito. Agora quem sabe e a PECA: escrever `/*TECNICA*/` na
     linha da `var` marca a gaveta como tecnica e ela sai dos avisos."""
     achados = []
-    for m in re.finditer(r"^var\s+([A-Za-z_$][\w$]*)\s*=\s*([\[{])", js, re.M):
+    # ⚠️ LICAO PAGA (Solidos, ago/2026 — o Marcos: "a fase 'qual nao e' nao tem
+    #    nada a ver com solidos"): o INTRUSO declara a gaveta como
+    #    `var RODADAS= /*TECNICA*/[...]` — o comentario TECNICA entre o `=` e o
+    #    `[`. A regex parava em `=\s*[` e NAO enxergava o `[` depois do
+    #    comentario, entao a gaveta nao era detectada, `f.dados` nao entrava, e a
+    #    peca rodava com o EXEMPLO dela (frutas: banana/uva/maca/cenoura) dentro
+    #    de uma atividade de SOLIDOS. Agora a regex pula um comentario opcional
+    #    entre o `=` e o vetor/objeto. Vale para qualquer peca que marque a
+    #    gaveta assim.
+    for m in re.finditer(r"^var\s+([A-Za-z_$][\w$]*)\s*=\s*(?:/\*[^*]*\*/\s*)?([\[{])", js, re.M):
         if m.group(1) in NAO_E_CONTEUDO:
             continue
         i = m.end() - 1

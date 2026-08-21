@@ -4796,11 +4796,11 @@ function telaFim(){
 }
     if(f && f.dados) POS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.REF !== undefined) REF = _d.REF;
+      if(_d.SETA !== undefined) SETA = _d.SETA;
       if(_d.DIRS !== undefined) DIRS = _d.DIRS;
       if(_d.LUGARES !== undefined) LUGARES = _d.LUGARES;
-      if(_d.REF !== undefined) REF = _d.REF;
       if(_d.RODADAS !== undefined) RODADAS = _d.RODADAS;
-      if(_d.SETA !== undefined) SETA = _d.SETA;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     telaBussola();
@@ -6958,13 +6958,13 @@ function fimCal(){
 }
     if(f && f.dados) MES = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
-      if(_d.FASES !== undefined) FASES = _d.FASES;
-      if(_d.ORD !== undefined) ORD = _d.ORD;
       if(_d.SEM !== undefined) SEM = _d.SEM;
-      if(_d.SEMD !== undefined) SEMD = _d.SEMD;
       if(_d.SEMH !== undefined) SEMH = _d.SEMH;
       if(_d.SEMV !== undefined) SEMV = _d.SEMV;
+      if(_d.SEMD !== undefined) SEMD = _d.SEMD;
+      if(_d.ORD !== undefined) ORD = _d.ORD;
       if(_d.UNM !== undefined) UNM = _d.UNM;
+      if(_d.FASES !== undefined) FASES = _d.FASES;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     telaCal();
@@ -7428,11 +7428,10 @@ function fim(){
                +'Rio, morro e cidade contam a mesma hist&#243;ria juntos.<br>'
                +'E na sua cidade: ela nasceu perto de qu&#234;?', telaCamadas);
 }
-    if(f && f.dados) ligada = f.dados;
+    if(f && f.dados) CIDADES = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
-      if(_d.CAMADAS !== undefined) CAMADAS = _d.CAMADAS;
-      if(_d.CIDADES !== undefined) CIDADES = _d.CIDADES;
       if(_d.MORROS !== undefined) MORROS = _d.MORROS;
+      if(_d.CAMADAS !== undefined) CAMADAS = _d.CAMADAS;
       if(_d.PERG !== undefined) PERG = _d.PERG;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
@@ -11199,6 +11198,11 @@ function fimDaPeca(){
   t.appendChild(c);
   app.appendChild(t);
 }
+    if(f && f.dados) COLUNAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PISTAS !== undefined) PISTAS = _d.PISTAS;
+      if(_d.ESC !== undefined) ESC = _d.ESC;
+    }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaDesafio();
   })();
@@ -17720,10 +17724,7 @@ function regrasTodas(){
   return r;
 }
 function recomeca(){ rodada=0; feitos=0; descobertas=[]; pecaIntruso(); }
-    if(f && f.dados) caixas = f.dados;
-    if(f && f.dadosExtra){ var _d = f.dadosExtra;
-      if(_d.RODADAS !== undefined) RODADAS = _d.RODADAS;
-    }
+    if(f && f.dados) RODADAS = f.dados;
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaIntruso();
   })();
@@ -21832,10 +21833,9 @@ function fimMapa(){
   c.appendChild(b);
   t.appendChild(c); app.appendChild(t);
 }
-    if(f && f.dados) botoes = f.dados;
+    if(f && f.dados) NOS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.LIGS !== undefined) LIGS = _d.LIGS;
-      if(_d.NOS !== undefined) NOS = _d.NOS;
       if(_d.SVGNS !== undefined) SVGNS = _d.SVGNS;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
@@ -27438,11 +27438,10 @@ function fimReceita(){
 }
 
 document.addEventListener("mouseup",function(){ mouseDown=false; },false);
-    if(f && f.dados) ordem = f.dados;
+    if(f && f.dados) RECEITAS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.CE !== undefined) CE = _d.CE;
       if(_d.EFEITO !== undefined) EFEITO = _d.EFEITO;
-      if(_d.RECEITAS !== undefined) RECEITAS = _d.RECEITAS;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaReceita();
@@ -36524,16 +36523,16 @@ function fimDaPeca(){
   t.appendChild(c);
   app.appendChild(t);
 }
-    if(f && f.dados) FEITOS = f.dados;
+    if(f && f.dados) COME = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
-      if(_d.NIV !== undefined) NIV = _d.NIV;
-      if(_d.LINHAS !== undefined) LINHAS = _d.LINHAS;
-      if(_d.COME !== undefined) COME = _d.COME;
       if(_d.DICAS !== undefined) DICAS = _d.DICAS;
       if(_d.ESP !== undefined) ESP = _d.ESP;
       if(_d.INICIAL !== undefined) INICIAL = _d.INICIAL;
       if(_d.PALAVRA !== undefined) PALAVRA = _d.PALAVRA;
       if(_d.RODADAS !== undefined) RODADAS = _d.RODADAS;
+      if(_d.FEITOS !== undefined) FEITOS = _d.FEITOS;
+      if(_d.NIV !== undefined) NIV = _d.NIV;
+      if(_d.LINHAS !== undefined) LINHAS = _d.LINHAS;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaTeia();

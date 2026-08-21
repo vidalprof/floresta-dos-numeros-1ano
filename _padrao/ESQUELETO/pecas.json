@@ -130,12 +130,18 @@
    "exemplos": {
     "DIRS": "[\"NORTE\",\"SUL\",\"LESTE\",\"OESTE\"]",
     "LUGARES": "[{k:\"escola\",n:\"ESCOLA\",art:\"a\"},{k:\"padaria\",n:\"PADARIA\",art:\"a\"},\n             {k:\"parque\",n:\"PARQUE\",art:\"o\"},{k:\"mercado\",n:\"MERCADO\",art:\"o\"}]",
-    "POS": "[{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}]"
+    "POS": "[{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}]",
+    "REF": "{NORTE:\"o lado de <b>cima</b> do mapa\",\n         SUL:\"o lado de <b>baixo</b> do mapa\",\n         LESTE:\"o lado da sua <b>direita</b>\",\n         OESTE:\"o lado da sua <b>esquerda</b>\"}",
+    "RODADAS": "[\n {tipo:\"achalugar\", ref:true,  selo:\"ACHE O LUGAR\"},\n {tipo:\"achalugar\", ref:false, selo:\"ACHE O LUGAR\"},\n {tipo:\"achadir\",   ref:true,  selo:\"QUE DIRE&#199;&#195;O?\"},\n {tipo:\"achadir\",   ref:false, selo:\"QUE DIRE&#199;&#195;O?\"}\n]",
+    "SETA": "{NORTE:\"&#9650;\",SUL:\"&#9660;\",LESTE:\"&#9654;\",OESTE:\"&#9664;\"}"
    },
    "gavetas": [
     "POS",
+    "REF",
+    "SETA",
     "DIRS",
-    "LUGARES"
+    "LUGARES",
+    "RODADAS"
    ],
    "regra": "primeiro vetor",
    "tecnicas": [
@@ -212,10 +218,24 @@
   "calendario": {
    "exemplo": "{nome:\"MAIO\", dias:31, inicio:4}",
    "exemplos": {
-    "MES": "{nome:\"MAIO\", dias:31, inicio:4}"
+    "FASES": "[\n {t:\"achar\", alvo:12, selo:\"ACHE O DIA\",\n  enun:\"Hoje &eacute; dia <b>12</b>. Toque no dia <b>12</b> no quadro.\",\n  voz:\"Hoje é dia doze. Toque no dia doze no quadro.\"},\n {t:\"vizinho\", base:12, alvo:13, palavra:\"amanh&atilde;\", selo:\"ONTEM E AMANH&Atilde;\",\n  enun:\"Hoje &eacute; <b>12</b>. Toque no dia de <b>amanh&atilde;</b>.\",\n  voz:\"Hoje é doze. Toque no dia de amanhã.\"},\n {t:\"vizinho\", base:12, alvo:11, palavra:\"ontem\", selo:\"ONTEM E AMANH&Atilde;\",\n  enun:\"Hoje &eacute; <b>12</b>. Toque no dia de <b>ontem</b>.\",\n  voz:\"Hoje é doze. Toque no dia de ontem.\"},\n {t:\"semana\", dia:20, selo:\"QUE DIA DA SEMANA?\",\n  enun:\"Em que dia da semana cai o dia <b>20</b>? Toque no nome, l&aacute; em cima.\",\n  voz:\"Em que dia da semana cai o dia vinte? Toque no nome, lá em cima.\"},\n {t:\"pulos\", de:12, ate:17, selo:\"CONTE OS PULOS\",\n  enun:\"Faltam quantos dias para o dia <b>17</b>? Pule de <b>um em um</b>.\",\n  voz:\"Faltam quantos dias para o dia dezessete? Pule de um em um.\"},\n {t:\"daqui\", de:12, n:3, selo:\"DAQUI A 3 DIAS\",\n  enun:\"A festa &eacute; <b>daqui a 3 dias</b>. D&ecirc; 3 pulos e veja onde cai.\",\n  voz:\"A festa é daqui a três dias. Dê três pulos e veja onde cai.\"},\n {t:\"quantos\", cert:31, ops:[28,29,30,31], selo:\"O M&Ecirc;S INTEIRO\",\n  enun:\"Quantos dias tem este m&ecirc;s? Conte at&eacute; a &uacute;ltima casinha.\",\n  voz:\"Quantos dias tem este mês? Conte até a última casinha.\"}\n]",
+    "MES": "{nome:\"MAIO\", dias:31, inicio:4}",
+    "ORD": "[\"primeira\",\"segunda\",\"terceira\",\"quarta\",\"quinta\",\"sexta\"]",
+    "SEM": "[\"DOM\",\"SEG\",\"TER\",\"QUA\",\"QUI\",\"SEX\",\"SAB\"]",
+    "SEMD": "[\"domingo\",\"segunda-feira\",\"ter&ccedil;a-feira\",\"quarta-feira\",\"quinta-feira\",\n          \"sexta-feira\",\"s&aacute;bado\"]",
+    "SEMH": "[\"DOMINGO\",\"SEGUNDA\",\"TER&Ccedil;A\",\"QUARTA\",\"QUINTA\",\"SEXTA\",\"S&Aacute;BADO\"]",
+    "SEMV": "[\"domingo\",\"segunda-feira\",\"terça-feira\",\"quarta-feira\",\"quinta-feira\",\"sexta-feira\",\"sábado\"]",
+    "UNM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\"]"
    },
    "gavetas": [
-    "MES"
+    "MES",
+    "SEM",
+    "SEMH",
+    "SEMV",
+    "SEMD",
+    "ORD",
+    "UNM",
+    "FASES"
    ],
    "regra": "marca na peca",
    "tecnicas": [
@@ -230,17 +250,27 @@
    "var": "MES"
   },
   "camadas-mapa": {
-   "exemplo": "{relevo:0, rios:0, cidades:0}",
-   "exemplos": {},
-   "gavetas": [],
-   "regra": "primeiro objeto",
+   "exemplo": "[[9.5,16],[15.5,41],[23.5,58],[35.5,83],[47.5,77]]",
+   "exemplos": {
+    "CAMADAS": "[\n {k:\"relevo\", n:\"RELEVO\",\n  novo:\"Apareceram <b>3 morros</b>. Onde tem morro, o ch&#227;o &#233; alto e inclinado.\",\n  monta:function(){\n    var d=el(\"div\",\"cmcam\"), i, m, mo, pc;\n    for(i=0;i<MORROS.length;i++){\n      m=MORROS[i];\n      mo=el(\"i\",\"morro\");\n      mo.style.left=m.l+\"%\"; mo.style.top=m.t+\"%\";\n      mo.style.width=m.w+\"%\"; mo.style.height=m.h+\"%\";\n      d.appendChild(mo);\n      if(m.pico){\n        pc=el(\"i\",\"pico\");\n        pc.style.left=(m.l+m.w*0.3)+\"%\"; pc.style.top=(m.t+m.h*0.06)+\"%\";\n        pc.style.width=(m.w*0.4)+\"%\"; pc.style.height=(m.h*0.22)+\"%\";\n        d.appendChild(pc);\n      }\n    }\n    return d;\n  }},\n {k:\"rios\", n:\"RIOS\",\n  novo:\"Apareceram <b>2 rios</b> e um lago. Rio &#233; &#225;gua que corre sempre no mesmo lugar.\",\n  monta:function(){ return el(\"div\",\"cmcam\",RIOS); }},\n {k:\"cidades\", n:\"CIDADES\",\n  novo:\"Apareceram <b>5 cidades</b> (os quadradinhos). Cada uma &#233; um lugar onde mora gente.\",\n  monta:function(){\n    var d=el(\"div\",\"cmcam\"), i, c;\n    for(i=0;i<CIDADES.length;i++){\n      c=el(\"i\",\"cid\",\"<i></i>\");\n      c.style.left=CIDADES[i][0]+\"%\"; c.style.top=CIDADES[i][1]+\"%\";\n      d.appendChild(c);\n    }\n    return d;\n  }}\n]",
+    "CIDADES": "[[9.5,16],[15.5,41],[23.5,58],[35.5,83],[47.5,77]]",
+    "MORROS": "[\n {l:56,t:6,w:30,h:34,pico:1},\n {l:76,t:36,w:24,h:30,pico:0},\n {l:60,t:54,w:26,h:28,pico:0}\n]",
+    "PERG": "[\n {selo:\"RIO E CIDADE\",\n  pede:[\"rios\",\"cidades\"],\n  p:\"Ligue <b>RIOS</b> e <b>CIDADES</b> juntas. O que d&#225; para ver s&#243; com as duas ligadas?\",\n  c:\"Quase todas as cidades est&#227;o coladas nos rios\",\n  e:[\"As cidades est&#227;o em cima dos morros\",\n     \"As cidades est&#227;o longe da &#225;gua\",\n     \"As cidades est&#227;o todas no canto de cima\"],\n  fecha:\"Gente precisa de &#225;gua todo dia: por isso as cidades nasceram na beira do rio.\",\n  d:[\"Olhe os quadradinhos das cidades e veja o que passa <b>do lado</b> de cada um.\",\n     \"Estou acendendo as duas camadas. Siga o rio com o dedo e conte quantas cidades ele encosta.\",\n     \"&#201; esta: quase todas as cidades est&#227;o <b>coladas nos rios</b>. Toque nela para seguir.\"]},\n {selo:\"MORRO E CIDADE\",\n  pede:[\"relevo\",\"cidades\"],\n  p:\"Agora ligue <b>RELEVO</b> e <b>CIDADES</b>. Onde <b>n&#227;o tem nenhuma</b> cidade?\",\n  c:\"Em cima dos morros\",\n  e:[\"Na beira dos rios\",\n     \"No canto de baixo do mapa\",\n     \"No meio do mapa\"],\n  fecha:\"Morro alto &#233; inclinado e dif&#237;cil de subir: quase ningu&#233;m constr&#243;i casa l&#225; em cima.\",\n  d:[\"Ache as bolhas dos morros e veja se algum quadradinho caiu dentro delas.\",\n     \"Estou acendendo as duas camadas. Passe o dedo por cima de cada morro e procure quadradinho.\",\n     \"&#201; esta: <b>em cima dos morros</b> n&#227;o tem cidade nenhuma. Toque nela para seguir.\"]}\n]"
+   },
+   "gavetas": [
+    "CIDADES",
+    "MORROS",
+    "CAMADAS",
+    "PERG"
+   ],
+   "regra": "primeiro vetor",
    "tecnicas": [
     "CAMADAS",
     "CIDADES",
     "MORROS",
     "PERG"
    ],
-   "var": "ligada"
+   "var": "CIDADES"
   },
   "circuito": {
    "exemplo": "[                                   /* o que já vem ligado */\n  {t:\"h\", x1:38, x2:62, y:YTOP},             /* atrás da lâmpada */\n  {t:\"h\", x1:38, x2:62, y:YBASE},            /* atrás da pilha */\n  {t:\"h\", x1:62, x2:88, y:YBASE, id:\"fbd\"},  /* onde mora o interruptor */\n  {t:\"v\", x:12, y1:YTOP, y2:YBASE},          /* trilho da esquerda */\n  {t:\"v\", x:88, y1:YTOP, y2:YBASE}           /* trilho da direita */\n]",
@@ -359,16 +389,24 @@
    "var": "LETRAS"
   },
   "criar-desafio": {
-   "exemplo": "",
-   "exemplos": {},
-   "gavetas": [],
-   "regra": "nenhuma",
+   "exemplo": "[\"A\",\"B\",\"C\",\"D\"]",
+   "exemplos": {
+    "COLUNAS": "[\"A\",\"B\",\"C\",\"D\"]",
+    "ESC": "[]",
+    "PISTAS": "[\n  {t:\"As três moedas estão na <b>mesma linha</b>.\",\n   f:function(p){ return p[0].r===p[1].r&&p[1].r===p[2].r; }},\n  {t:\"As três moedas estão na <b>mesma coluna</b>.\",\n   f:function(p){ return p[0].c===p[1].c&&p[1].c===p[2].c; }},\n  {t:\"Cada moeda está numa <b>linha diferente</b>.\",\n   f:function(p){ return p[0].r!==p[1].r&&p[1].r!==p[2].r&&p[0].r!==p[2].r; }},\n  {t:\"Cada moeda está numa <b>coluna diferente</b>.\",\n   f:function(p){ return p[0].c!==p[1].c&&p[1].c!==p[2].c&&p[0].c!==p[2].c; }},\n  {t:\"Pelo menos uma moeda está na <b>metade de cima</b> (linhas 1 e 2).\",\n   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r<2) return true; return false; }},\n  {t:\"Pelo menos uma moeda está na <b>metade de baixo</b> (linhas 3 e 4).\",\n   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r>=2) return true; return false; }},\n  {t:\"<b>Nenhuma</b> moeda está na coluna A.\",\n   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].c===0) return false; return true; }},\n  {t:\"<b>Nenhuma</b> moeda está na linha 1.\",\n   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r===0) return false; return true; }},\n  {t:\"Duas moedas estão <b>grudadas</b>, lado a lado na mesma linha.\",\n   f:function(p){ var i,j; for(i=0;i<p.length;i++) for(j=i+1;j<p.length;j++)\n       if(p[i].r===p[j].r&&Math.abs(p[i].c-p[j].c)===1) return true; return false; }},\n  {t:\"Pelo menos uma moeda está num <b>canto</b> do mapa.\",\n   f:function(p){ var i,c; for(i=0;i<p.length;i++){ c=p[i];\n       if((c.r===0||c.r===LINHAS-1)&&(c.c===0||c.c===COLUNAS.length-1)) return true; } return false; }}\n]"
+   },
+   "gavetas": [
+    "COLUNAS",
+    "PISTAS",
+    "ESC"
+   ],
+   "regra": "marca na peca",
    "tecnicas": [
     "COLUNAS",
     "ESC",
     "PISTAS"
    ],
-   "var": null
+   "var": "COLUNAS"
   },
   "cruzadinha": {
    "exemplo": "[\n {p:\"CHUVA\", ac:\"CHUVA\", r:0, c:0, pLin:0, pCol:1, n:1,\n  d:\"&#193;gua que cai do c&#233;u e molha tudo l&#225; fora.\"},\n {p:\"VENTO\", ac:\"VENTO\", r:0, c:3, pLin:1, pCol:0, n:2,\n  d:\"Voc&#234; n&#227;o v&#234;, mas ele balan&#231;a as folhas da &#225;rvore.\"},\n {p:\"SOL\",   ac:\"SOL\",   r:4, c:2, pLin:0, pCol:1, n:3,\n  d:\"A bola de luz que esquenta o dia e some de noite.\"}\n]",
@@ -596,14 +634,18 @@
    "var": "DADOS"
   },
   "intruso": {
-   "exemplo": "[]",
-   "exemplos": {},
-   "gavetas": [],
+   "exemplo": "[\n { selo:\"A CESTA DA FEIRA\", tipo:\"texto\",\n   enun:\"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"maca\",n:\"MA&#199;&#195;\",img:\"\"},{k:\"banana\",n:\"BANANA\",img:\"\"},\n          {k:\"uva\",n:\"UVA\",img:\"\"},{k:\"cenoura\",n:\"CENOURA\",img:\"\"}],\n   fora:\"cenoura\", nomeFora:\"CENOURA\",\n   d1:\"Pense em <b>onde cada uma cresce</b>. Alguma delas cresce debaixo da terra?\",\n   d2:\"Tr&#234;s delas nascem da flor de uma planta e a gente chama de <b>fruta</b>. Procure a que n&#227;o &#233;.\",\n   d3:\"A de fora &#233; a <b>cenoura</b>: as outras tr&#234;s s&#227;o frutas.\",\n   razoes:[\n     {t:\"As outras tr&#234;s s&#227;o frutas; a cenoura &#233; raiz.\",ok:1},\n     {t:\"Porque a cenoura &#233; laranja.\",ok:0},\n     {t:\"Porque a cenoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a cenoura a gente come cozida.\",ok:0}],\n   p1:\"O que voc&#234; tocou at&#233; pode ser verdade. Mas olhe as OUTRAS tr&#234;s: o que elas t&#234;m em comum?\",\n   p2:\"Cor e tamanho mudam de uma cenoura para outra. O que n&#227;o muda &#233; o <b>tipo</b> de alimento.\",\n   p3:\"Ma&#231;&#227;, banana e uva s&#227;o <b>frutas</b>. A cenoura &#233; a raiz da planta &#8212; por isso ela &#233; a de fora.\",\n   regra:\"ma&#231;&#227;, banana e uva s&#227;o frutas; cenoura &#233; raiz\" },\n\n { selo:\"AS QUATRO FIGURAS\", tipo:\"forma\",\n   enun:\"Tr&#234;s figuras t&#234;m uma coisa igual. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"quad\",n:\"QUADRADO\",fig:\"inquad\"},{k:\"ret\",n:\"RET&#194;NGULO\",fig:\"inret\"},\n          {k:\"los\",n:\"LOSANGO\",fig:\"inlos\"},{k:\"tri\",n:\"TRI&#194;NGULO\",fig:\"intri\"}],\n   fora:\"tri\", nomeFora:\"TRI&#194;NGULO\",\n   d1:\"<b>Conte os lados</b> de cada figura com o dedo, uma por uma.\",\n   d2:\"Tr&#234;s delas t&#234;m <b>4 lados</b>, mesmo estando viradas de jeitos diferentes.\",\n   d3:\"A de fora &#233; o <b>tri&#226;ngulo</b>: ele tem 3 lados e os outros t&#234;m 4.\",\n   razoes:[\n     {t:\"As outras tr&#234;s t&#234;m 4 lados; o tri&#226;ngulo tem 3.\",ok:1},\n     {t:\"Porque o tri&#226;ngulo tem uma ponta para cima.\",ok:0},\n     {t:\"Porque o tri&#226;ngulo &#233; a figura mais baixa.\",ok:0},\n     {t:\"Porque o tri&#226;ngulo n&#227;o tem todos os lados iguais.\",ok:0}],\n   p1:\"Isso at&#233; pode ser verdade. Mas virar a figura n&#227;o muda o que ela &#233;. O que d&#225; para <b>contar</b> em todas?\",\n   p2:\"Conte os lados de novo: 4, 4, 4 e... quantos no &#250;ltimo?\",\n   p3:\"Quadrado, ret&#226;ngulo e losango t&#234;m <b>4 lados</b>. O tri&#226;ngulo tem 3 &#8212; por isso ele &#233; o de fora.\",\n   regra:\"quadrado, ret&#226;ngulo e losango t&#234;m 4 lados; tri&#226;ngulo tem 3\" },\n\n { selo:\"A FILA DOS N&#218;MEROS\", tipo:\"numero\",\n   enun:\"Tr&#234;s n&#250;meros t&#234;m algo em comum. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"2\",n:\"2\"},{k:\"4\",n:\"4\"},{k:\"6\",n:\"6\"},{k:\"9\",n:\"9\"}],\n   fora:\"9\", nomeFora:\"9\",\n   d1:\"Tente separar cada n&#250;mero em <b>duas partes iguais</b>. Com qual deles n&#227;o d&#225;?\",\n   d2:\"2 s&#227;o 1 e 1; 4 s&#227;o 2 e 2; 6 s&#227;o 3 e 3. Um deles sempre <b>sobra um</b>.\",\n   d3:\"O de fora &#233; o <b>9</b>: ele n&#227;o d&#225; para partir ao meio sem sobrar.\",\n   razoes:[\n     {t:\"Os outros tr&#234;s s&#227;o pares; o 9 &#233; &#237;mpar.\",ok:1},\n     {t:\"Porque o 9 &#233; o maior de todos.\",ok:0},\n     {t:\"Porque o 9 vem depois do 6.\",ok:0},\n     {t:\"Porque o 9 &#233; quase 10.\",ok:0}],\n   p1:\"Isso at&#233; &#233; verdade sobre o 9. Mas separa o grupo? Pense no que d&#225; para <b>dividir no meio</b>.\",\n   p2:\"Troque o 9 pelo 11: ele deixa de ser o maior e continua sendo o de fora. Ent&#227;o o que decide?\",\n   p3:\"2, 4 e 6 s&#227;o <b>pares</b>: partem ao meio sem sobrar. O 9 &#233; &#237;mpar &#8212; por isso ele &#233; o de fora.\",\n   regra:\"2, 4 e 6 s&#227;o pares; 9 &#233; &#237;mpar\" },\n\n { selo:\"A CAIXA DE FERRAMENTAS\", tipo:\"texto\",\n   enun:\"Tr&#234;s servem para a mesma coisa. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"martelo\",n:\"MARTELO\"},{k:\"serrote\",n:\"SERROTE\"},{k:\"alicate\",n:\"ALICATE\"},{k:\"vassoura\",n:\"VASSOURA\"}],\n   fora:\"vassoura\", nomeFora:\"VASSOURA\",\n   d1:\"Pergunte de cada uma: <b>para que ela serve</b>?\",\n   d2:\"Tr&#234;s delas ajudam a <b>construir e consertar</b>. Uma ajuda a cuidar da casa.\",\n   d3:\"A de fora &#233; a <b>vassoura</b>: ela serve para limpar, n&#227;o para consertar.\",\n   razoes:[\n     {t:\"As outras tr&#234;s servem para consertar; a vassoura serve para limpar.\",ok:1},\n     {t:\"Porque a vassoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a vassoura n&#227;o &#233; de metal.\",ok:0},\n     {t:\"Porque a vassoura fica na cozinha.\",ok:0}],\n   p1:\"Isso pode ser verdade. Mas o que junta as outras tr&#234;s &#233; o <b>trabalho</b> que elas fazem.\",\n   p2:\"Uma chave de fenda &#233; pequena e n&#227;o &#233; toda de metal &#8212; e mesmo assim ficaria no grupo. O que decide?\",\n   p3:\"Martelo, serrote e alicate servem para <b>construir e consertar</b>. A vassoura serve para limpar &#8212; por isso ela &#233; a de fora.\",\n   regra:\"martelo, serrote e alicate consertam; vassoura limpa\" }\n]",
+   "exemplos": {
+    "RODADAS": "[\n { selo:\"A CESTA DA FEIRA\", tipo:\"texto\",\n   enun:\"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"maca\",n:\"MA&#199;&#195;\",img:\"\"},{k:\"banana\",n:\"BANANA\",img:\"\"},\n          {k:\"uva\",n:\"UVA\",img:\"\"},{k:\"cenoura\",n:\"CENOURA\",img:\"\"}],\n   fora:\"cenoura\", nomeFora:\"CENOURA\",\n   d1:\"Pense em <b>onde cada uma cresce</b>. Alguma delas cresce debaixo da terra?\",\n   d2:\"Tr&#234;s delas nascem da flor de uma planta e a gente chama de <b>fruta</b>. Procure a que n&#227;o &#233;.\",\n   d3:\"A de fora &#233; a <b>cenoura</b>: as outras tr&#234;s s&#227;o frutas.\",\n   razoes:[\n     {t:\"As outras tr&#234;s s&#227;o frutas; a cenoura &#233; raiz.\",ok:1},\n     {t:\"Porque a cenoura &#233; laranja.\",ok:0},\n     {t:\"Porque a cenoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a cenoura a gente come cozida.\",ok:0}],\n   p1:\"O que voc&#234; tocou at&#233; pode ser verdade. Mas olhe as OUTRAS tr&#234;s: o que elas t&#234;m em comum?\",\n   p2:\"Cor e tamanho mudam de uma cenoura para outra. O que n&#227;o muda &#233; o <b>tipo</b> de alimento.\",\n   p3:\"Ma&#231;&#227;, banana e uva s&#227;o <b>frutas</b>. A cenoura &#233; a raiz da planta &#8212; por isso ela &#233; a de fora.\",\n   regra:\"ma&#231;&#227;, banana e uva s&#227;o frutas; cenoura &#233; raiz\" },\n\n { selo:\"AS QUATRO FIGURAS\", tipo:\"forma\",\n   enun:\"Tr&#234;s figuras t&#234;m uma coisa igual. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"quad\",n:\"QUADRADO\",fig:\"inquad\"},{k:\"ret\",n:\"RET&#194;NGULO\",fig:\"inret\"},\n          {k:\"los\",n:\"LOSANGO\",fig:\"inlos\"},{k:\"tri\",n:\"TRI&#194;NGULO\",fig:\"intri\"}],\n   fora:\"tri\", nomeFora:\"TRI&#194;NGULO\",\n   d1:\"<b>Conte os lados</b> de cada figura com o dedo, uma por uma.\",\n   d2:\"Tr&#234;s delas t&#234;m <b>4 lados</b>, mesmo estando viradas de jeitos diferentes.\",\n   d3:\"A de fora &#233; o <b>tri&#226;ngulo</b>: ele tem 3 lados e os outros t&#234;m 4.\",\n   razoes:[\n     {t:\"As outras tr&#234;s t&#234;m 4 lados; o tri&#226;ngulo tem 3.\",ok:1},\n     {t:\"Porque o tri&#226;ngulo tem uma ponta para cima.\",ok:0},\n     {t:\"Porque o tri&#226;ngulo &#233; a figura mais baixa.\",ok:0},\n     {t:\"Porque o tri&#226;ngulo n&#227;o tem todos os lados iguais.\",ok:0}],\n   p1:\"Isso at&#233; pode ser verdade. Mas virar a figura n&#227;o muda o que ela &#233;. O que d&#225; para <b>contar</b> em todas?\",\n   p2:\"Conte os lados de novo: 4, 4, 4 e... quantos no &#250;ltimo?\",\n   p3:\"Quadrado, ret&#226;ngulo e losango t&#234;m <b>4 lados</b>. O tri&#226;ngulo tem 3 &#8212; por isso ele &#233; o de fora.\",\n   regra:\"quadrado, ret&#226;ngulo e losango t&#234;m 4 lados; tri&#226;ngulo tem 3\" },\n\n { selo:\"A FILA DOS N&#218;MEROS\", tipo:\"numero\",\n   enun:\"Tr&#234;s n&#250;meros t&#234;m algo em comum. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"2\",n:\"2\"},{k:\"4\",n:\"4\"},{k:\"6\",n:\"6\"},{k:\"9\",n:\"9\"}],\n   fora:\"9\", nomeFora:\"9\",\n   d1:\"Tente separar cada n&#250;mero em <b>duas partes iguais</b>. Com qual deles n&#227;o d&#225;?\",\n   d2:\"2 s&#227;o 1 e 1; 4 s&#227;o 2 e 2; 6 s&#227;o 3 e 3. Um deles sempre <b>sobra um</b>.\",\n   d3:\"O de fora &#233; o <b>9</b>: ele n&#227;o d&#225; para partir ao meio sem sobrar.\",\n   razoes:[\n     {t:\"Os outros tr&#234;s s&#227;o pares; o 9 &#233; &#237;mpar.\",ok:1},\n     {t:\"Porque o 9 &#233; o maior de todos.\",ok:0},\n     {t:\"Porque o 9 vem depois do 6.\",ok:0},\n     {t:\"Porque o 9 &#233; quase 10.\",ok:0}],\n   p1:\"Isso at&#233; &#233; verdade sobre o 9. Mas separa o grupo? Pense no que d&#225; para <b>dividir no meio</b>.\",\n   p2:\"Troque o 9 pelo 11: ele deixa de ser o maior e continua sendo o de fora. Ent&#227;o o que decide?\",\n   p3:\"2, 4 e 6 s&#227;o <b>pares</b>: partem ao meio sem sobrar. O 9 &#233; &#237;mpar &#8212; por isso ele &#233; o de fora.\",\n   regra:\"2, 4 e 6 s&#227;o pares; 9 &#233; &#237;mpar\" },\n\n { selo:\"A CAIXA DE FERRAMENTAS\", tipo:\"texto\",\n   enun:\"Tr&#234;s servem para a mesma coisa. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"martelo\",n:\"MARTELO\"},{k:\"serrote\",n:\"SERROTE\"},{k:\"alicate\",n:\"ALICATE\"},{k:\"vassoura\",n:\"VASSOURA\"}],\n   fora:\"vassoura\", nomeFora:\"VASSOURA\",\n   d1:\"Pergunte de cada uma: <b>para que ela serve</b>?\",\n   d2:\"Tr&#234;s delas ajudam a <b>construir e consertar</b>. Uma ajuda a cuidar da casa.\",\n   d3:\"A de fora &#233; a <b>vassoura</b>: ela serve para limpar, n&#227;o para consertar.\",\n   razoes:[\n     {t:\"As outras tr&#234;s servem para consertar; a vassoura serve para limpar.\",ok:1},\n     {t:\"Porque a vassoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a vassoura n&#227;o &#233; de metal.\",ok:0},\n     {t:\"Porque a vassoura fica na cozinha.\",ok:0}],\n   p1:\"Isso pode ser verdade. Mas o que junta as outras tr&#234;s &#233; o <b>trabalho</b> que elas fazem.\",\n   p2:\"Uma chave de fenda &#233; pequena e n&#227;o &#233; toda de metal &#8212; e mesmo assim ficaria no grupo. O que decide?\",\n   p3:\"Martelo, serrote e alicate servem para <b>construir e consertar</b>. A vassoura serve para limpar &#8212; por isso ela &#233; a de fora.\",\n   regra:\"martelo, serrote e alicate consertam; vassoura limpa\" }\n]"
+   },
+   "gavetas": [
+    "RODADAS"
+   ],
    "regra": "primeiro vetor",
    "tecnicas": [
     "RODADAS"
    ],
-   "var": "caixas"
+   "var": "RODADAS"
   },
   "investigar-fonte": {
    "exemplo": "[\n  {aut:\"Cartaz da prefeitura\",\n   meta:\"3 de março · feito para AVISAR os moradores\",\n   txt:\"“A feira passa para a Praça Nova enquanto a rua for consertada.”\"},\n  {aut:\"Bilhete de dona Alzira, que vende frutas na feira\",\n   meta:\"5 de março · escrito para o filho, no mesmo dia\",\n   txt:\"“Hoje quase ninguém veio. A rua está toda aberta, com máquinas trabalhando nela.”\"},\n  {aut:\"Jornal do bairro\",\n   meta:\"20 de março · escrito para CONTAR a notícia, 17 dias depois\",\n   txt:\"“Moradores contam que a feira mudou porque a Praça Nova é mais bonita.”\"}\n]",
@@ -737,16 +779,22 @@
    "var": "FATOS"
   },
   "mapa-conceitual": {
-   "exemplo": "[]",
-   "exemplos": {},
-   "gavetas": [],
+   "exemplo": "[\n {k:\"sol\",    n:\"O SOL\",    px:4,  py:1},\n {k:\"chuva\",  n:\"A CHUVA\",  px:60, py:1},\n {k:\"planta\", n:\"A PLANTA\", px:24, py:40},\n {k:\"coelho\", n:\"O COELHO\", px:58, py:80}\n]",
+   "exemplos": {
+    "LIGS": "[\n {a:\"sol\", b:\"planta\", r:\"d&#225; energia\",\n  ops:[\"d&#225; energia\",\"bebe\",\"mora em\"],\n  por:\"O sol <b>d&#225; energia</b> para a planta crescer.\",\n  dicas:[\"Pense no que o sol manda para a planta o dia inteiro.\",\n         \"N&#227;o &#233; &#225;gua: &#233; luz e calor. A resposta certa est&#225; acesa.\",\n         \"Era <b>d&#225; energia</b>. Eu escrevi na seta para voc&#234;.\"]},\n {a:\"chuva\", b:\"planta\", r:\"d&#225; &#225;gua\",\n  ops:[\"d&#225; &#225;gua\",\"d&#225; energia\",\"foge da\"],\n  por:\"A chuva <b>d&#225; &#225;gua</b>, e a raiz bebe essa &#225;gua.\",\n  dicas:[\"O que cai da nuvem e entra na terra?\",\n         \"Energia quem d&#225; &#233; o sol. A certa est&#225; acesa.\",\n         \"Era <b>d&#225; &#225;gua</b>. Eu escrevi na seta para voc&#234;.\"]},\n {a:\"planta\", b:\"coelho\", r:\"vira comida de\",\n  ops:[\"vira comida de\",\"d&#225; &#225;gua para\",\"ca&#231;a o\"],\n  por:\"O coelho come a planta: a energia do sol chega at&#233; ele.\",\n  dicas:[\"O que o coelho faz com a folha?\",\n         \"Planta n&#227;o ca&#231;a ningu&#233;m. A certa est&#225; acesa.\",\n         \"Era <b>vira comida de</b>. Eu escrevi na seta para voc&#234;.\"]}\n]",
+    "NOS": "[\n {k:\"sol\",    n:\"O SOL\",    px:4,  py:1},\n {k:\"chuva\",  n:\"A CHUVA\",  px:60, py:1},\n {k:\"planta\", n:\"A PLANTA\", px:24, py:40},\n {k:\"coelho\", n:\"O COELHO\", px:58, py:80}\n]"
+   },
+   "gavetas": [
+    "NOS",
+    "LIGS"
+   ],
    "regra": "marca na peca",
    "tecnicas": [
     "LIGS",
     "NOS",
     "SVGNS"
    ],
-   "var": "botoes"
+   "var": "NOS"
   },
   "medir": {
    "exemplo": "[\n {selo:\"A FITA AZUL\",\n  enun:\"Encoste o <b>zero</b> da r&eacute;gua na ponta da fita azul.\",\n  voz:\"Encoste o zero da régua na ponta da fita azul.\",\n  objs:[{n:\"FITA AZUL\",art:\"a\",nome:\"fita azul\",voz:\"fita azul\",cm:6,cls:\"oazul\",ini:1,ops:[4,5,6,7]}]},\n {selo:\"O PALITO\",\n  enun:\"Agora o palito. Encoste o <b>zero</b> na ponta dele.\",\n  voz:\"Agora o palito. Encoste o zero na ponta dele.\",\n  objs:[{n:\"PALITO\",art:\"o\",nome:\"palito\",voz:\"palito\",cm:4.5,cls:\"opalito\",ini:1.6,ops:[4,4.5,5,5.5]}]},\n {selo:\"DUAS FITAS\",\n  enun:\"Me&ccedil;a as duas fitas, uma de cada vez.\",\n  voz:\"Meça as duas fitas, uma de cada vez.\",\n  objs:[{n:\"VERMELHA\",art:\"a\",nome:\"fita vermelha\",voz:\"fita vermelha\",cm:5,cls:\"overm\",ini:1,ops:[3,4,5,6]},\n        {n:\"VERDE\",art:\"a\",nome:\"fita verde\",voz:\"fita verde\",cm:8,cls:\"overde\",ini:1.6,ops:[6,7,8,9]}],\n  comp:{p:\"Quantos cent&iacute;metros a <b>fita verde</b> tem a mais que a <b>fita vermelha</b>?\",\n        voz:\"Quantos centímetros a fita verde tem a mais que a fita vermelha?\",\n        ops:[1,2,3,4],cert:3}}\n]",
@@ -899,16 +947,24 @@
    "var": "RODADAS"
   },
   "passo-a-passo": {
-   "exemplo": "[]",
-   "exemplos": {},
-   "gavetas": [],
+   "exemplo": "[\n {selo:\"A RECEITA DO FEIJ&Atilde;O\", cena:\"canteiro\",\n  enun:\"Ponha os passos na <b>ordem</b> e aperte <b>Come&#231;ar</b>. O canteiro faz \"+\n       \"exatamente o que voc&#234; mandar.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"A semente ficou no escurinho, coberta e molhada &#8212; e brotou!\",\n  torto:\"O feij&#227;o n&#227;o brotou. Olhe a cena: d&#225; para ver o que faltou acontecer antes.\",\n  passos:[\n   {k:\"cavar\", rot:\"CAVAR\", sub:\"o buraco\", ic:\"pa\", precisa:[], melhor:[],\n    bom:\"Voc&#234; <b>cavou</b> o buraco na terra.\",\n    ruim:\"Voc&#234; <b>cavou</b> o buraco na terra.\"},\n   {k:\"semear\", rot:\"SEMEAR\", sub:\"p&#244;r a semente\", ic:\"sem\", precisa:[\"cavar\"], melhor:[],\n    bom:\"A semente <b>caiu dentro</b> do buraco.\",\n    ruim:\"N&#227;o tinha buraco: a semente ficou <b>por cima</b> da terra, no vento.\"},\n   {k:\"cobrir\", rot:\"COBRIR\", sub:\"com terra\", ic:\"ter\", precisa:[\"semear\"], melhor:[],\n    bom:\"A terra <b>cobriu</b> a semente. Agora est&#225; no escurinho.\",\n    ruim:\"Voc&#234; cobriu <b>terra com terra</b>: a semente n&#227;o estava l&#225; dentro.\"},\n   {k:\"regar\", rot:\"REGAR\", sub:\"com &#225;gua\", ic:\"agu\", precisa:[\"cobrir\"], melhor:[],\n    bom:\"A &#225;gua <b>molhou</b> a terra por cima da semente.\",\n    ruim:\"A &#225;gua caiu na terra dura e virou <b>po&#231;a</b>: n&#227;o tinha nada plantado.\"}]},\n\n {selo:\"A RECEITA DO SUCO\", cena:\"banc\",\n  enun:\"Agora s&#227;o <b>cinco</b> passos. Um deles n&#227;o trava a receita, mas <b>estraga</b> \"+\n       \"o suco se ficar para depois.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"Suco limpo, coado e geladinho. Que del&#237;cia!\",\n  torto:\"O suco n&#227;o ficou bom. Olhe o copo: ele mostra o que aconteceu.\",\n  passos:[\n   {k:\"lavar\", rot:\"LAVAR\", sub:\"a laranja\", ic:\"lav\", precisa:[], melhor:[],\n    bom:\"A &#225;gua tirou a <b>sujeira</b> da casca.\",\n    ruim:\"A &#225;gua tirou a <b>sujeira</b> da casca.\"},\n   {k:\"cortar\", rot:\"CORTAR\", sub:\"ao meio\", ic:\"cor\", precisa:[], melhor:[\"lavar\"],\n    bom:\"A laranja virou <b>duas metades</b>.\",\n    ruim:\"Cortou! Mas a casca estava <b>suja</b>, e a sujeira entrou junto.\"},\n   {k:\"espremer\", rot:\"ESPREMER\", sub:\"as metades\", ic:\"esp\", precisa:[\"cortar\"], melhor:[],\n    bom:\"O suco <b>escorreu</b> das metades para o pote.\",\n    ruim:\"A laranja <b>inteira</b> n&#227;o solta suco: ela s&#243; rolou na m&#227;o.\"},\n   {k:\"encher\", rot:\"ENCHER\", sub:\"o copo\", ic:\"cop\", precisa:[\"espremer\"], melhor:[],\n    bom:\"O copo <b>encheu</b> de suco.\",\n    ruim:\"N&#227;o tinha suco no pote: o copo ficou <b>vazio</b>.\"},\n   {k:\"beber\", rot:\"BEBER\", sub:\"com canudo\", ic:\"beb\", precisa:[\"encher\"], melhor:[],\n    bom:\"Glup, glup: o copo <b>esvaziou</b>.\",\n    ruim:\"O canudo fez <b>shhh</b> num copo vazio.\"}]}\n]",
+   "exemplos": {
+    "CE": "{}",
+    "EFEITO": "{\n cavar:function(ok){ CE.buraco.className=\"buraco on\"; nota(180,.12,.12,\"sine\",0); },\n semear:function(ok){ CE.sem.className=ok?\"csem on dentro\":\"csem on\"; sPasso(); },\n cobrir:function(ok){\n   CE.monte.className=\"cmonte on\";\n   /* a semente que estava no buraco fica COBERTA — some debaixo da terra. A que\n      ficou por fora continua a vista, que e justamente a cena a ser lida. */\n   if(ok) CE.sem.className=\"csem off\";\n   nota(200,.14,.11,\"sine\",0);\n },\n regar:function(ok){ chuva(ger); if(!ok) CE.poca.className=\"cpoca on\"; nota(620,.10,.10,\"sine\",0); },\n lavar:function(ok){\n   chuva(ger);\n   var i; for(i=0;i<CE.suj.length;i++) CE.suj[i].className=\"bsuj off\";\n   nota(620,.10,.10,\"sine\",0);\n },\n cortar:function(ok){\n   CE.lar.className=\"blar off\"; CE.met.className=\"bmet on\";\n   if(!ok) mundo.sujeira=true;\n   nota(300,.08,.12,\"square\",0);\n },\n espremer:function(ok){\n   if(ok){ CE.psu.className=\"bpsu on\"; nota(520,.14,.11,\"sine\",0); }\n   else { CE.lar.className=\"blar treme\"; sTropeco(); }\n },\n encher:function(ok){\n   if(ok){\n     CE.suco.className=\"bsuco on\";\n     if(mundo.sujeira){ var i; for(i=0;i<CE.pont.length;i++) CE.pont[i].className=\"bpont on\"; }\n     nota(440,.16,.11,\"sine\",0);\n   }else{ sTropeco(); }\n },\n beber:function(ok){\n   CE.can.className=\"bcan on\";\n   if(ok){ CE.suco.className=\"bsuco\"; nota(660,.10,.11,\"triangle\",0); nota(880,.12,.10,\"triangle\",.10); }\n   else { sTropeco(); }\n }\n}",
+    "RECEITAS": "[\n {selo:\"A RECEITA DO FEIJ&Atilde;O\", cena:\"canteiro\",\n  enun:\"Ponha os passos na <b>ordem</b> e aperte <b>Come&#231;ar</b>. O canteiro faz \"+\n       \"exatamente o que voc&#234; mandar.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"A semente ficou no escurinho, coberta e molhada &#8212; e brotou!\",\n  torto:\"O feij&#227;o n&#227;o brotou. Olhe a cena: d&#225; para ver o que faltou acontecer antes.\",\n  passos:[\n   {k:\"cavar\", rot:\"CAVAR\", sub:\"o buraco\", ic:\"pa\", precisa:[], melhor:[],\n    bom:\"Voc&#234; <b>cavou</b> o buraco na terra.\",\n    ruim:\"Voc&#234; <b>cavou</b> o buraco na terra.\"},\n   {k:\"semear\", rot:\"SEMEAR\", sub:\"p&#244;r a semente\", ic:\"sem\", precisa:[\"cavar\"], melhor:[],\n    bom:\"A semente <b>caiu dentro</b> do buraco.\",\n    ruim:\"N&#227;o tinha buraco: a semente ficou <b>por cima</b> da terra, no vento.\"},\n   {k:\"cobrir\", rot:\"COBRIR\", sub:\"com terra\", ic:\"ter\", precisa:[\"semear\"], melhor:[],\n    bom:\"A terra <b>cobriu</b> a semente. Agora est&#225; no escurinho.\",\n    ruim:\"Voc&#234; cobriu <b>terra com terra</b>: a semente n&#227;o estava l&#225; dentro.\"},\n   {k:\"regar\", rot:\"REGAR\", sub:\"com &#225;gua\", ic:\"agu\", precisa:[\"cobrir\"], melhor:[],\n    bom:\"A &#225;gua <b>molhou</b> a terra por cima da semente.\",\n    ruim:\"A &#225;gua caiu na terra dura e virou <b>po&#231;a</b>: n&#227;o tinha nada plantado.\"}]},\n\n {selo:\"A RECEITA DO SUCO\", cena:\"banc\",\n  enun:\"Agora s&#227;o <b>cinco</b> passos. Um deles n&#227;o trava a receita, mas <b>estraga</b> \"+\n       \"o suco se ficar para depois.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"Suco limpo, coado e geladinho. Que del&#237;cia!\",\n  torto:\"O suco n&#227;o ficou bom. Olhe o copo: ele mostra o que aconteceu.\",\n  passos:[\n   {k:\"lavar\", rot:\"LAVAR\", sub:\"a laranja\", ic:\"lav\", precisa:[], melhor:[],\n    bom:\"A &#225;gua tirou a <b>sujeira</b> da casca.\",\n    ruim:\"A &#225;gua tirou a <b>sujeira</b> da casca.\"},\n   {k:\"cortar\", rot:\"CORTAR\", sub:\"ao meio\", ic:\"cor\", precisa:[], melhor:[\"lavar\"],\n    bom:\"A laranja virou <b>duas metades</b>.\",\n    ruim:\"Cortou! Mas a casca estava <b>suja</b>, e a sujeira entrou junto.\"},\n   {k:\"espremer\", rot:\"ESPREMER\", sub:\"as metades\", ic:\"esp\", precisa:[\"cortar\"], melhor:[],\n    bom:\"O suco <b>escorreu</b> das metades para o pote.\",\n    ruim:\"A laranja <b>inteira</b> n&#227;o solta suco: ela s&#243; rolou na m&#227;o.\"},\n   {k:\"encher\", rot:\"ENCHER\", sub:\"o copo\", ic:\"cop\", precisa:[\"espremer\"], melhor:[],\n    bom:\"O copo <b>encheu</b> de suco.\",\n    ruim:\"N&#227;o tinha suco no pote: o copo ficou <b>vazio</b>.\"},\n   {k:\"beber\", rot:\"BEBER\", sub:\"com canudo\", ic:\"beb\", precisa:[\"encher\"], melhor:[],\n    bom:\"Glup, glup: o copo <b>esvaziou</b>.\",\n    ruim:\"O canudo fez <b>shhh</b> num copo vazio.\"}]}\n]"
+   },
+   "gavetas": [
+    "RECEITAS",
+    "CE",
+    "EFEITO"
+   ],
    "regra": "primeiro vetor",
    "tecnicas": [
     "CE",
     "EFEITO",
     "RECEITAS"
    ],
-   "var": "ordem"
+   "var": "RECEITAS"
   },
   "pintar": {
    "exemplo": "[\n {t:\"No quintal da \"},{p:\"ESCOLA\"},{t:\" tem um \"},{p:\"GATO\",alvo:1},\n {t:\" dormindo na \"},{p:\"SOMBRA\"},{t:\" fresca. Uma \"},{p:\"ABELHA\",alvo:1},\n {t:\" voa perto da \"},{p:\"FLOR\"},{t:\" amarela. O \"},{p:\"CACHORRO\",alvo:1},\n {t:\" late para o \"},{p:\"PASSARINHO\",alvo:1},{t:\" que canta no \"},{p:\"GALHO\"},{t:\" alto.\"}\n /* ⚠️ nenhuma palavra tocavel encosta em pontuacao: a palavra e um bloco com\n    folga, e o ponto final ficava solto (\"SOMBRA .\") como se fosse erro de\n    digitacao. Palavra tocavel sempre seguida de outra palavra.              */\n]",
@@ -1216,13 +1272,25 @@
    "var": "VAGAS"
   },
   "teia-alimentar": {
-   "exemplo": "[]",
+   "exemplo": "[\n  {k:\"c0\", t:\"O GAFANHOTO\", s:\"Come folhas e capim\"},\n  {k:\"c1\", t:\"O SAPO\",      s:\"Come insetos que pulam\"},\n  {k:\"c2\", t:\"A COBRA\",     s:\"Come sapos perto da &#225;gua\"},\n  {k:\"c3\", t:\"O GAVI&#195;O\",   s:\"Pega cobras l&#225; do alto\"}\n]",
    "exemplos": {
+    "COME": "[\n  {k:\"c0\", t:\"O GAFANHOTO\", s:\"Come folhas e capim\"},\n  {k:\"c1\", t:\"O SAPO\",      s:\"Come insetos que pulam\"},\n  {k:\"c2\", t:\"A COBRA\",     s:\"Come sapos perto da &#225;gua\"},\n  {k:\"c3\", t:\"O GAVI&#195;O\",   s:\"Pega cobras l&#225; do alto\"}\n]",
+    "DICAS": "[\n  \"Pense no tamanho: bicho grande come bicho menor.\",\n  \"O gafanhoto come planta. O sapo come inseto. A cobra pega o sapo. O gavi&#227;o v&#234; tudo do alto.\",\n  \"A resposta certa est&#225; com a borda amarela do outro lado. Toque nela.\"\n]",
+    "ESP": "[\n  {k:\"capim\",  n:\"O CAPIM\"},\n  {k:\"gafa\",   n:\"O GAFANHOTO\"},\n  {k:\"sapo\",   n:\"O SAPO\"},\n  {k:\"cobra\",  n:\"A COBRA\"},\n  {k:\"gaviao\", n:\"O GAVI&#195;O\"}\n]",
     "FEITOS": "[]",
+    "INICIAL": "{capim:3, gafa:2, sapo:2, cobra:2, gaviao:2}",
     "LINHAS": "{}",
-    "NIV": "{}"
+    "NIV": "{}",
+    "PALAVRA": "[\"SUMIU\",\"POUCOS\",\"M&#201;DIO\",\"MUITOS\"]",
+    "RODADAS": "[\n  {tira:\"sapo\", nome:\"O SAPO\",\n   passos:[[\"gafa\",3,\"SUBIU\"],[\"capim\",1,\"CAIU\"],[\"cobra\",1,\"CAIU\"],[\"gaviao\",1,\"CAIU\"]],\n   p:\"Sem o sapo, o que aconteceu com os <b>gafanhotos</b>?\",\n   c:\"Ficaram MAIS: ningu&#233;m come eles\",\n   e:[\"Ficaram MENOS\",\"Sumiram de uma vez\",\"Ficou tudo igual\"],\n   d:[\"Olhe a barra do gafanhoto: ela subiu ou desceu?\",\n      \"O sapo era quem comia gafanhoto. Sem ele, sobrou gafanhoto solto no campo.\",\n      \"A resposta certa est&#225; acesa: os gafanhotos ficaram MAIS.\"]},\n  {tira:\"capim\", nome:\"O CAPIM\",\n   passos:[[\"gafa\",0,\"CAIU\"],[\"sapo\",1,\"CAIU\"],[\"cobra\",1,\"CAIU\"],[\"gaviao\",1,\"CAIU\"]],\n   p:\"Sem o capim, <b>quem sentiu falta primeiro</b>?\",\n   c:\"O gafanhoto, que come capim\",\n   e:[\"O gavi&#227;o, que voa alto\",\"A cobra, que fica na &#225;gua\",\"Ningu&#233;m sentiu falta\"],\n   d:[\"Procure quem estava comendo o capim.\",\n      \"A planta &#233; o come&#231;o da teia: quem come planta sente primeiro.\",\n      \"A resposta certa est&#225; acesa: o gafanhoto come capim.\"]}\n]"
    },
    "gavetas": [
+    "COME",
+    "DICAS",
+    "ESP",
+    "INICIAL",
+    "PALAVRA",
+    "RODADAS",
     "FEITOS",
     "NIV",
     "LINHAS"
@@ -1237,7 +1305,7 @@
     "PALAVRA",
     "RODADAS"
    ],
-   "var": "FEITOS"
+   "var": "COME"
   },
   "termometro": {
    "exemplo": "[\n {ped:\"O ch&#225; est&#225; fervendo. Deixe ele <b>MORNO</b>.\",\n  coisa:\"CH&#193;\", alvo:1,\n  paradas:[{r:\"GELADO\",  h:12,c:\"#7ab7ff\",e:.85},\n           {r:\"MORNO\",   h:38,c:\"#ffd54a\",e:.95},\n           {r:\"QUENTE\",  h:66,c:\"#ef9a3a\",e:1.05},\n           {r:\"FERVENDO\",h:94,c:\"#e0503a\",e:1.15}],\n  d1:\"Leia o r&#243;tulo embaixo do controle antes de confirmar.\",\n  d2:\"MORNO fica <b>entre</b> gelado e quente.\"},\n {ped:\"A horta pede <b>BASTANTE</b> &#225;gua &#8212; nem pouca, nem demais.\",\n  coisa:\"&#193;GUA\", alvo:2,\n  paradas:[{r:\"NADA\",    h:6, c:\"#8fa3b8\",e:.6},\n           {r:\"POUCO\",   h:34,c:\"#7ab7ff\",e:.85},\n           {r:\"BASTANTE\",h:68,c:\"#3c9ae0\",e:1.1},\n           {r:\"MUITO\",   h:96,c:\"#1f5fa8\",e:1.3}],\n  d1:\"BASTANTE &#233; mais que pouco, mas ainda n&#227;o &#233; o m&#225;ximo.\",\n  d2:\"Conte as paradas: nada, pouco, <b>bastante</b>, muito.\"},\n {ped:\"Encha o bal&#227;o at&#233; ficar <b>GRANDE</b> (n&#227;o enorme).\",\n  coisa:\"BAL&#195;O\", alvo:2,\n  paradas:[{r:\"PEQUENO\",h:18,c:\"#c9a8e0\",e:.55},\n           {r:\"NORMAL\", h:44,c:\"#b07ae0\",e:.85},\n           {r:\"GRANDE\", h:72,c:\"#8f4ad0\",e:1.15},\n           {r:\"ENORME\", h:98,c:\"#6a2ab0\",e:1.4}],\n  d1:\"Olhe o tamanho E o r&#243;tulo: os dois contam a mesma coisa.\",\n  d2:\"Depois de GRANDE ainda tem ENORME: n&#227;o &#233; a &#250;ltima parada.\"}\n]",
