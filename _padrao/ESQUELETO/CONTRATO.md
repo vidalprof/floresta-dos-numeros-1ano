@@ -95,6 +95,24 @@ MEC["nome-da-mecanica"] = function (f, cen, fim) {
 `sCerto() sErro() sTap() sPop()` · `festa()` · `faisca(x,y,cor,n)` ·
 `centroTela(el)` · `depoisDaFala(id,ms,cb)`
 
+### ⭐ GAME-FEEL no `sCerto`/`sErro` (ago/2026) — a peça não faz nada, ganha de graça
+A pesquisa de engajamento (`_pesquisa/COMO-FAZER-MELHORIAS-2026-08.md`) pede
+feedback **multimodal sincronizado**: som + vibração juntos, texto flutuante
+logo depois. Como o integrador **joga fora o motorzinho da peça** e usa o
+`sCerto`/`sErro` do MOTOR, foi ali que entrou — então **toda mecânica** ganha
+sem mudar uma linha:
+- **`sCerto()`** = 3 notas + `vibra(32)` (pulso curto) + `_flutua("Boa!"/"Isso!"/
+  "+1"…)` nascendo no ponto do último toque, subindo e sumindo em ~1 s;
+- **`sErro()`** = som grave + `vibra([14,46,14])` (pulso duplo leve) e **sem
+  texto** — o erro não pune; quem responde ao erro é a ajuda escrita/dita.
+- **`vibra(p)`** só existe em tablet/celular (no PC é no-op, protegido por try);
+  nunca full-strength (cansa). **`_flutua(txt)`** respeita
+  `prefers-reduced-motion` (quem pediu menos movimento no sistema não recebe o
+  floater) e é `pointer-events:none` (nunca rouba o toque).
+⚠️ O ponto do toque vem de um rastreador global (`pointerdown`/`touchstart` em
+captura, `_ptrX/_ptrY`); sem toque ainda, o floater nasce no centro. A peça NÃO
+precisa chamar nada disto — só chamar `sCerto()`/`sErro()` como sempre.
+
 ## 4. O FORMATO DE UMA FASE NO `conteudo.json`
 
 ```json

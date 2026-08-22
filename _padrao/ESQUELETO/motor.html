@@ -281,6 +281,21 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .banner .cta2{width:auto;min-width:190px;max-width:300px;display:block;margin:0 auto;
   border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:18px;color:#fff;padding:15px 30px;border-radius:18px;background:var(--verde);-webkit-box-shadow:0 4px 0 var(--verde-d);box-shadow:0 4px 0 var(--verde-d);text-transform:uppercase}
 #conf{position:fixed;inset:0;width:100%;height:100%;z-index:15;pointer-events:none}/* ⚠️ o `width/height:100%` NAO e redundante com o `inset:0`: <canvas> e elemento SUBSTITUIDO, e para esses o `width:auto` resolve para o tamanho INTRINSECO (300x150), nao para a caixa do pai. Sem estas duas medidas o canvas do confete ficava em 300x150 e TODA particula nascia fora dele — a festa existia no codigo e nunca aparecia na tela. */
+/* ⭐ GAME-FEEL: TEXTO FLUTUANTE no acerto (pesquisa ago/2026,
+   `_pesquisa/COMO-FAZER-MELHORIAS-2026-08.md`: "Boa!/+1 perto do toque, sem tapar
+   o alvo, ~1-2s e some"). Nasce no ponto do ultimo toque (`_flutua`), sobe e
+   apaga. z-index acima de tudo, `pointer-events:none` (nunca rouba o toque).
+   Desligado por `prefers-reduced-motion` (a criacao dele e pulada no JS). */
+.flut{position:fixed;z-index:60;pointer-events:none;-webkit-transform:translate(-50%,0);
+  transform:translate(-50%,0);color:#ffe07a;font-weight:800;font-size:22px;
+  text-shadow:0 2px 6px rgba(0,0,0,.55),0 0 2px rgba(0,0,0,.6);white-space:nowrap;
+  -webkit-animation:flutua 1.05s ease-out forwards;animation:flutua 1.05s ease-out forwards}
+@-webkit-keyframes flutua{0%{opacity:0;-webkit-transform:translate(-50%,0) scale(.7)}
+  18%{opacity:1;-webkit-transform:translate(-50%,-10px) scale(1.08)}
+  100%{opacity:0;-webkit-transform:translate(-50%,-52px) scale(1)}}
+@keyframes flutua{0%{opacity:0;transform:translate(-50%,0) scale(.7)}
+  18%{opacity:1;transform:translate(-50%,-10px) scale(1.08)}
+  100%{opacity:0;transform:translate(-50%,-52px) scale(1)}}
 .hint{margin-top:10px;font-size:13px;color:#fff;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.4);background:rgba(40,52,20,.82);padding:6px 13px;border-radius:999px;max-width:340px;text-align:center;line-height:1.3}
 @media (max-height:620px){ .tela{padding-bottom:calc(104px + env(safe-area-inset-bottom))} }
 .dicain{background:#fff6d8;margin-top:9px;-webkit-animation:pop .3s;animation:pop .3s}
@@ -699,8 +714,45 @@ function arma(){ if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}} lig
 function tom(f,d,tp,v,w){ if(!ac)return; try{var o=ac.createOscillator(),g=ac.createGain();o.type=tp||"sine";o.frequency.value=f;o.connect(g);g.connect(ac.destination);var t=ac.currentTime+(w||0);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||0.2,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.start(t);o.stop(t+d+0.03);}catch(e){} }
 function sTap(){ tom(500,0.07,"triangle",0.12); }
 function sPop(i){ tom(520+((i||0)%6)*70,0.12,"triangle",0.14); }
-function sCerto(){ tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); }
-function sErro(){ tom(200,0.18,"sawtooth",0.12); tom(150,0.24,"sawtooth",0.12,0.08); }
+/* ============ GAME-FEEL: HÁPTICO + TEXTO FLUTUANTE ============
+   Pesquisa profunda (ago/2026, `_pesquisa/COMO-FAZER-MELHORIAS-2026-08.md`, item
+   "juice"): o impacto vem de feedback MULTIMODAL SINCRONIZADO — som + vibração
+   juntos, e o texto flutuante logo depois. Aqui os três saem do MESMO lugar
+   (dentro de `sCerto`/`sErro`), então nascem juntos. Ganho em TODA atividade de
+   uma vez, porque o integrador joga fora o motorzinho da peça e usa ESTES nomes.
+   ⚠️ REGRAS: `navigator.vibrate` só existe em tablet/celular (no PC é no-op, e é
+   protegido por try); nunca full-strength (cansa) — acerto = pulso curto, erro =
+   pulso duplo leve; e o texto flutuante respeita `prefers-reduced-motion` (quem
+   pediu menos movimento no sistema não recebe o floater). */
+var _reduzMov=false;
+try{ _reduzMov = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }catch(e){}
+var _ptrX=-1, _ptrY=-1;   /* onde a criança tocou por último — o floater nasce aqui */
+function _marcaPonto(x,y){ if(typeof x==="number"){ _ptrX=x; _ptrY=y; } }
+document.addEventListener("pointerdown", function(ev){ _marcaPonto(ev.clientX,ev.clientY); }, true);
+document.addEventListener("touchstart", function(ev){ try{ var t=ev.touches&&ev.touches[0]; if(t) _marcaPonto(t.clientX,t.clientY); }catch(e){} }, true);
+function vibra(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
+var _ELOGIOS=["Boa!","Isso!","Muito bem!","Uhu!","Mandou bem!","+1"];
+function _elogioCurto(){ return _ELOGIOS[Math.floor(Math.random()*_ELOGIOS.length)]; }
+/* o texto flutuante: nasce no ponto do toque (ou no centro, se ainda não houve
+   toque), sobe e apaga sozinho. NUNCA tapa o alvo — sobe para cima do dedo. */
+function _flutua(txt){
+  if(_reduzMov) return;
+  try{
+    var f=document.createElement("div"); f.className="flut";
+    f.textContent = txt || "Boa!";
+    var x=(_ptrX>=0)?_ptrX:(window.innerWidth/2);
+    var y=(_ptrY>=0)?_ptrY:(window.innerHeight*0.42);
+    f.style.left=Math.round(x)+"px";
+    f.style.top=Math.round(Math.max(24,y-34))+"px";   /* acima do toque, nunca em cima do alvo */
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f&&f.parentNode) f.parentNode.removeChild(f); }, 1100);
+  }catch(e){}
+}
+/* acerto: som (3 notas) + pulso háptico curto + "Boa!" subindo — os três juntos */
+function sCerto(){ tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
+/* erro: som grave + pulso háptico DUPLO e leve (não pune) — sem texto (a ajuda
+   escrita/dita é que responde ao erro; um "errou!" flutuante seria castigo). */
+function sErro(){ tom(200,0.18,"sawtooth",0.12); tom(150,0.24,"sawtooth",0.12,0.08); vibra([14,46,14]); }
 function sFesta(){ var n=[523,659,784,1046,1318],i; for(i=0;i<n.length;i++) tom(n[i],0.3,"triangle",0.18,i*0.085); }
 function sAgua(){ tom(900,0.18,"sine",0.08); tom(650,0.2,"sine",0.08,0.05); }
 /* ⭐ O SOM DO GESTO — o que faz o app PARECER profissional.
