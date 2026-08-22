@@ -35,7 +35,7 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
     Ligue com COLHEITA=<arquivo.json>. */
  if(process.env.COLHEITA) await p.evaluate(()=>{
    window.__colh={op:{},bal:{}};
-   var SELC=".opt,.lig,.pc,.bin,.alim,.ficha,.pt,.gav,.carta";
+   var SELC=".opt,.lig,.pc,.bin,.alim,.ficha,.pt,.gav,.carta,.rmc,.sic";
    function varre(){
      /* ⚠️ LICAO PAGA (ago/2026): a colheita trouxe a fala "Dcerto" — e nao
         existe fala nenhuma assim. A peca `escolher` CARIMBA a resposta acertada
@@ -121,7 +121,9 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
    +',.jsSil,.jsVaga,.bsBatida,.bsPronto'
    /* rima (ago/2026): a carta do tabuleiro de rimas. Peca nova = alvo novo AQUI,
       no mesmo commit — mesma historia da rosa dos ventos e do marca-texto. */
-   +',.rmc';
+   +',.rmc'
+   /* som-inicial (ago/2026): a carta e a casa do som. Alvo novo no mesmo commit. */
+   +',.sic,.sicasa';
  for(let i=0;i<5200;i++){
    const est=await p.evaluate(()=>{
      const s=document.querySelector('.selo'), h1=document.querySelector('h1');
@@ -293,6 +295,19 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
        if(!sel){ ligs[0].click(); return 1; }
        const par=ligs.find(e=>e!==sel&&e.getAttribute('data-qa')===sel.getAttribute('data-qa'));
        if(par){ par.click(); return 1; }
+     }
+     /* SOM INICIAL (a casa do som): a carta `.sic` publica em data-qa a casa
+        certa, e a casa `.sicasa` publica a mesma chave. E o "levar ao lugar" por
+        toque: toca na carta e depois na casa. Peca nova = solucionador novo AQUI,
+        no mesmo commit. */
+     const sics=[...document.querySelectorAll('.sic[data-qa]')]
+       .filter(e=>e.offsetParent!==null&&e.className.indexOf('usada')<0);
+     if(sics.length){
+       const sc=sics[0];
+       if(sc.className.indexOf('sel')<0){ sc.click(); return 1; }
+       const casa=[...document.querySelectorAll('.sicasa[data-qa]')]
+         .find(e=>e.getAttribute('data-qa')===sc.getAttribute('data-qa'));
+       if(casa){ casa.click(); return 1; }
      }
      /* RIMA (tabuleiro de cartas viradas): mesmo par por data-qa que o LIGAR, so
         que num tabuleiro so (`.rmc`). Peca nova = solucionador novo AQUI, no

@@ -35377,6 +35377,316 @@ function fimDaPeca(){
   })();
 };
 
+/* ==== PECA: som-inicial ==== */
+MEC["som-inicial"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-som-inicial";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO. Ao copiar a peça para uma atividade, troque APENAS
+   este bloco: as casas de som, as cartas e as três dicas. Duas ou três casas
+   (mais que isso a criança não segura de uma vez). ⭐ 1ª rodada por SOM CONTÍNUO
+   (M, S, F, V, N, L, R, Z), nunca de parada (B, P, T, D, K, G). */
+/* `n` = a LETRA grande (pista visual); `voz` = o SOM que o alto-falante diz
+   (o SOM, não o nome da letra: "o som M", nunca "ême"). */
+var CASAS=[
+  {k:"m", n:"M", voz:"o som M, de MÃO"},
+  {k:"s", n:"S", voz:"o som S, de SOL"}
+];
+/* cada carta: a palavra `t` e o `alvo` = a casa do som com que ela COMEÇA.
+   A carta NÃO destaca a letra inicial — a criança tem que ESCUTAR o começo. */
+var CARTAS=[
+  {t:"MALA",  alvo:"m"},
+  {t:"MEL",   alvo:"m"},
+  {t:"SAPO",  alvo:"s"},
+  {t:"SINO",  alvo:"s"}
+];
+var ENUN="Cada palavra vai na casa do som com que ela <b>começa</b>. Toque na carta e depois na casa.";
+var DICAS=[
+  "Escute só o COMEÇO da palavra: qual é o primeiro som?",
+  "Fale a palavra devagar: Sssapo começa com o som S; Mmmala começa com o som M.",
+  "A casa certa está com a borda amarela: é ali que esta palavra começa."
+];
+
+var CASOS=0;       /* total de cartas */
+var feitos=0;      /* cartas ja guardadas */
+var fila=[], vez=0;/* a esteira e a posicao nela */
+var marcada=null;  /* a carta escolhida */
+var passo=null;
+var barraP=null;
+var ger=0;         /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+/* ---------- a ajuda é ESCRITA e DITA ----------
+   O `diz` é do motor (voz GRAVADA, Edge TTS) e não existe na peça solta — por
+   isso a guarda. Tudo o que a voz diz está TAMBÉM escrito, então PC sem caixa de
+   som joga a peça inteira. ⚠️ NUNCA `speechSynthesis` (o `_qa/vozrobo.py` reprova). */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){ var t=semTag(txt); if(!t) return; if(typeof diz==="function") diz(t); }
+
+function pecaSomInicial(){
+  feitos=0; marcada=null; ger++;
+  CASOS=CARTAS.length;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A CASA DO SOM"));
+  c.appendChild(el("div","balao",ENUN));
+
+  /* a esteira: uma carta por vez, grande — uma ideia por tela (Sweller) */
+  fila=[]; vez=0;
+  var i;
+  for(i=0;i<CARTAS.length;i++) fila.push(CARTAS[i]);
+  baguncar(fila);
+  var band=el("div","siband"); band.id="siesteira";
+  c.appendChild(band);
+
+  var cs=el("div","sicasas");
+  for(i=0;i<CASAS.length;i++) cs.appendChild(fazCasa(CASAS[i]));
+  c.appendChild(cs);
+
+  passo=el("div","sipasso","");
+  c.appendChild(passo);
+  c.appendChild(el("div","hint","Toque na carta e depois na casa do som. No PC dá para clicar com o mouse. No alto-falante dá para ouvir de novo."));
+  t.appendChild(c);
+  app.appendChild(t);
+  poeAVez();
+}
+
+/* poe na esteira a carta da vez. Fase acabada = esteira vazia. */
+function poeAVez(){
+  var e=document.getElementById("siesteira");
+  if(!e) return;
+  e.innerHTML="";
+  if(vez<fila.length){
+    var f=fila[vez];
+    e.appendChild(fazCarta(f));
+    fala(f.t);   /* a carta ja chega falando o proprio nome */
+  }
+  if(passo){
+    passo.innerHTML = (vez<fila.length ? ("carta "+(vez+1)+" de "+fila.length) : "todas guardadas");
+  }
+}
+
+function fazCarta(f){
+  /* `.ptxt` = o motor poe o alto-falante; `.sic` = a carta desta peca. Sem a
+     letra inicial destacada de proposito: a criança tem que ESCUTAR o começo. */
+  var p=el("div","sic ptxt", (f.t===undefined||f.t===null)?"":f.t);
+  p.setAttribute("data-qa",f.alvo);   /* carta e casa publicam a MESMA chave */
+  p.onclick=function(){ if(p.className.indexOf("usada")>=0) return; seleciona(p); };
+  return p;
+}
+
+function seleciona(p){
+  var a=app.getElementsByClassName("sic"), i;
+  for(i=0;i<a.length;i++) if(a[i].className.indexOf("usada")<0) a[i].className="sic ptxt";
+  p.className="sic ptxt sel";
+  sTap();
+  marcada=p;
+}
+
+function fazCasa(g){
+  var d=el("div","sicasa ptxt");
+  d.setAttribute("data-qa",g.k);
+  d.setAttribute("data-voz", g.voz || g.n);   /* o motor le O SOM, nao a letra */
+  d.appendChild(el("div","siletra",g.n));
+  d.appendChild(el("div","sicap","o som "+g.n));
+  d.onclick=function(){
+    if(!marcada){ sTap(); fala(g.voz || g.n);
+      mostraDica("Primeiro toque na carta lá de cima. Depois toque na casa do som."); return; }
+    guarda(marcada,d);
+  };
+  return d;
+}
+
+function guarda(p,g){
+  if(!p||!g) return;
+  if(p.className.indexOf("usada")>=0) return;
+  if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
+    sCerto();
+    p.className="sic ptxt usada"; p.onclick=null;
+    g.appendChild(p);
+    g.className="sicasa ptxt luz";
+    marcada=null; feitos++; vez++;
+    if(barraP) barraP.style.width=Math.round(feitos*100/CASOS)+"%";
+    var ge=ger, gg=g;
+    setTimeout(function(){ if(ge===ger) poeAVez(); },300);
+    setTimeout(function(){ if(ge!==ger) return; if(gg.className.indexOf("luz")>=0) gg.className="sicasa ptxt"; },600);
+    if(feitos>=CASOS){
+      setTimeout(function(){ if(ge!==ger) return;
+        mostraBanner("Você achou o som do começo de todas!", fimDaPeca); },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, a carta volta, e o andaime CRESCE. */
+  sErro();
+  p._err=(p._err||0)+1;
+  var dtx=DICAS[Math.min(p._err,DICAS.length)-1];
+  mostraDica(dtx); fala(dtx);
+  if(p._err>=3) revela(p);
+}
+
+/* 3º erro: acende a casa certa e DEIXA seguir — nunca trava. A informação vai
+   também escrita na dica (nada só na cor). */
+function revela(p){
+  var a=app.getElementsByClassName("sicasa"), i, k=p.getAttribute("data-qa");
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")===k) a[i].className="sicasa ptxt alvo";
+    else a[i].className="sicasa ptxt";
+  }
+}
+
+function fimDaPeca(){
+  ger++;
+  marcada=null;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Todas as "+CASOS+" palavras estão na casa do som certo."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaSomInicial(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça SOM INICIAL: a casa do som do começo, toque e mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+    if(f && f.dados) CASAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.CARTAS !== undefined) CARTAS = _d.CARTAS;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+    }
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    pecaSomInicial();
+  })();
+};
+
 /* ==== PECA: sombra ==== */
 MEC["sombra"] = function(f, cen, fim){
   cen.className = cen.className + " mec-sombra";

@@ -200,6 +200,39 @@ def analisa(js, css, baixo, html=None):
             avisos.append(u"rima: nao achei o 3o degrau do andaime (revela). Sem ele, quem erra "
                           u"tres vezes fica sem o par aceso e pode travar.")
 
+    # ---------------------------------------------------- SOM INICIAL (a casa do som)
+    # Mecanica nova (ago/2026, da pesquisa fonologica): agrupar por SOM DO COMECO,
+    # nao por categoria de sentido (isso e o classificar). Regra da casa: mecanica
+    # nova = linha no _padrao/DINAMICAS.md E regra AQUI, no mesmo commit. Gatilho
+    # honesto: so esta peca tem a CASA `.sicasa` E a carta `.sic`.
+    if re.search(r'\.sicasa\b', css) and re.search(r'\.sic\b', css):
+        usa.append("som inicial")
+        # ⭐ ARMADILHA UM: cartas nao embaralhadas -> a crianca decora a POSICAO em
+        #    vez de escutar o comeco. `baguncar` vem DECLARADO no motorzinho: so
+        #    conta CHAMADA de verdade (a mesma pedra de rima/ligar-pontos).
+        _mist = [m for m in re.finditer(r'\b(?:baguncar|embaralhar?|shuffle)\s*\(', js)
+                 if not js[max(0, m.start() - 9):m.start()].rstrip().endswith("function")]
+        if not _mist:
+            ruins.append(u"som inicial: as cartas nao sao EMBARALHADAS. A crianca decora a "
+                         u"posicao em vez de escutar o som do comeco.")
+        # ⭐ ARMADILHA DOIS: o som e do OUVIDO. Carta e casa tem que poder falar
+        #    (classe `.ptxt` / data-voz); sem isso a crianca decide pela LETRA e a
+        #    fase nao mede o som — que e todo o conteudo dela.
+        if not re.search(r'\bptxt\b', css + js) and not re.search(r'data-voz', js):
+            ruins.append(u"som inicial: carta/casa sem alto-falante (.ptxt / data-voz). O som "
+                         u"inicial e do ouvido — sem a voz a crianca escolhe pela letra e a "
+                         u"fase nao mede nada.")
+        # ⭐ ARMADILHA TRES: a casa tem que falar o SOM, nao o nome da letra. Se a
+        #    voz da casa diz "eme"/"esse", a crianca liga a LETRA, nao o SOM. Aviso
+        #    (so o texto da gaveta diz de verdade): a voz certa comeca por "o som".
+        if not re.search(r'o som', baixo):
+            avisos.append(u"som inicial: confira que a casa fala O SOM ('o som M'), nunca o "
+                          u"nome da letra ('eme') — senao a crianca liga a letra, nao o som.")
+        # erro NAO pune: o andaime tem que crescer (dica -> casa acende -> revela)
+        if not re.search(r'function\s+revela\b', js):
+            avisos.append(u"som inicial: nao achei o 3o degrau do andaime (revela). Sem ele, "
+                          u"quem erra tres vezes fica sem a casa acesa e pode travar.")
+
     # ------------------------------------------- BATER AS SILABAS (contar)
     # Gatilho honesto: so esta mecanica publica um TAMBOR (`.bsBater`) junto com
     # marcas que NASCEM do dedo (`.bsBatida`). E mecanica de CONTAGEM POR GESTO —

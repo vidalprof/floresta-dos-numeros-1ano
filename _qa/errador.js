@@ -53,6 +53,22 @@ const RECEITA={
        a.click(); t[i].click(); return 'juntou duas cartas que nao rimam (chaves diferentes)'; }
    return null;
  },
+ /* SOM INICIAL: a carta da vez (`.sic`) publica em data-qa a casa certa; as casas
+    (`.sicasa`) publicam a mesma chave. Errar de proposito e mandar a carta para a
+    casa do som ERRADO. Sem esta receita a generica tocava ao acaso e as vezes
+    acertava, sem medir o andaime. */
+ 'som-inicial':()=>{
+   var c=[].slice.call(document.querySelectorAll('.sic')).filter(function(e){
+     return e.offsetParent!==null && e.className.indexOf('usada')<0; });
+   if(!c.length) return null;
+   var carta=c[0]; carta.click();
+   var casas=[].slice.call(document.querySelectorAll('.sicasa'));
+   var i;
+   for(i=0;i<casas.length;i++)
+     if(casas[i].getAttribute('data-qa')!==carta.getAttribute('data-qa')){
+       casas[i].click(); return 'levou a carta para a casa do som errado'; }
+   return null;
+ },
  /* DIGITAR: o teclado da tela publica a PALAVRA da vez em `data-qa` (no
     container das teclas) e as vagas ja cheias dizem em que letra estamos.
     Errar de proposito e apertar uma tecla que NAO e a proxima letra. A

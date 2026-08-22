@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — som inicial (a casa do som do começo)</title>
+<!-- ============================================================
+     PEÇA: SOM INICIAL — cada palavra vai na CASA DO SOM com que ela COMEÇA.
+     Gesto próprio: agrupar por som do começo. Não é "classificar" (categoria de
+     sentido: fruta/animal), é FONOLÓGICO — o par é o som inicial, e a letra vem
+     por último. É o degrau onde a criança trava para decodificar (pesquisa
+     ago/2026, `_pesquisa/web/como-fazer-fonologica-rima.md`: "som inicial é onde
+     a criança trava; agrupar por som do começo é de alto valor").
+
+     ⭐ REGRA DE OURO DAS FONOLÓGICAS (DINAMICAS.md): SOM CONTÍNUO ANTES DE SOM DE
+     PARADA. Os sons que se esticam (/m/, /s/, /f/, /v/, /n/, /l/, /r/, /z/) são
+     mais fáceis de isolar que os de parada (/b/, /p/, /t/, /d/, /k/, /g/). O
+     exemplo começa por M e S de propósito; ao montar, a 1ª rodada usa contínuos.
+
+     As armadilhas desta mecânica (DINAMICAS.md, linha "Som inicial"):
+       · o par é por SOM, nunca por posição → as cartas vão EMBARALHADAS
+         (`baguncar`), senão a criança decora onde a carta está;
+       · alto-falante em TODA carta E em cada casa (classe `.ptxt`): o som inicial
+         é do OUVIDO — quem ainda soletra escolhe pela letra e a fase não mede o
+         som. A casa fala o SOM ("o som M"), não o nome da letra ("ême");
+       · a LETRA é a pista visual da casa, mas o que decide é o SOM — por isso a
+         voz da casa diz o som, e as cartas vêm SÓ com a palavra (nunca a letra
+         inicial destacada, que entregaria a resposta sem ouvir);
+       · erro NÃO pune: som grave curto, a carta volta, e o andaime CRESCE —
+         dica (escute o começo) → apoio (a casa certa acende) → revela;
+       · duas portas: toque simples E clique de mouse (o `onclick` cobre os dois);
+       · a carta e a casa publicam a MESMA chave em `data-qa` — é assim que o
+         auditor-jogador fecha a fase.
+
+     Mais o que o contrato cobra: alvo >= 44px, nada essencial só na cor (a casa
+     certa acende E a carta guardada aparece dentro), funciona no mudo, `data-qa`
+     para o auditor, e nunca trava. ES5 puro, um arquivo só (Chrome 109 / FF 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#12233a;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#155a86;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#155a86}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#155a86;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* `.ptxt` = "texto que fala": na atividade o motor injeta o alto-falante por esta
+   classe (ZAPSEL). Carta E casa a usam — o som inicial é do ouvido. */
+.ptxt{position:relative}
+.ptxt .zap{-webkit-flex:none;flex:none;margin-left:6px}
+/* A ESTEIRA: a carta da vez vem grande e sozinha, uma ideia por tela. */
+.siband{min-height:96px;margin:12px 0 4px;display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center}
+/* A CARTA (.sic): a palavra, grande, sem a letra inicial destacada (isso
+   entregaria a resposta sem ouvir). Fundo proprio creme -> passa em tema claro
+   e escuro. */
+.sic{display:-webkit-inline-box;display:-webkit-inline-flex;display:inline-flex;
+     -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+     -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+     background:#fffdf6;color:#221a12;border:0;border-radius:18px;
+     min-width:150px;min-height:70px;padding:14px 20px;font-size:24px;font-weight:800;
+     letter-spacing:.5px;cursor:pointer;box-shadow:0 5px 0 #c9bda6,0 8px 16px rgba(0,0,0,.24);
+     -webkit-user-select:none;user-select:none;
+     -webkit-transition:-webkit-transform .12s;transition:transform .12s}
+.sic:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 2px 0 #c9bda6}
+.sic.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 5px 0 #c9a52f;
+         -webkit-transform:translateY(-2px);transform:translateY(-2px)}
+/* AS CASAS DO SOM, lado a lado. `.sicasa` = a casa; a LETRA grande é a pista
+   visual, a voz diz o SOM. */
+.sicasas{display:-webkit-box;display:-webkit-flex;display:flex;width:100%;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch;
+  -webkit-column-gap:18px;column-gap:18px;gap:18px;margin-top:12px;max-width:440px;
+  margin-left:auto;margin-right:auto}
+.sicasa{position:relative;-webkit-box-flex:1;-webkit-flex:1 1 40%;flex:1 1 40%;
+  min-height:150px;padding:12px 8px 14px;cursor:pointer;
+  background:rgba(255,255,255,.14);
+  background:-webkit-linear-gradient(top,rgba(255,255,255,.24),rgba(255,255,255,.1));
+  background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.1));
+  -webkit-backdrop-filter:blur(10px) saturate(1.15);backdrop-filter:blur(10px) saturate(1.15);
+  border:2px solid rgba(255,255,255,.6);border-radius:22px;
+  box-shadow:0 10px 22px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.7);
+  -webkit-transition:background .18s,border-color .18s,-webkit-transform .12s;
+  transition:background .18s,border-color .18s,transform .12s}
+.sicasa:hover{border-color:rgba(255,255,255,.85);-webkit-transform:translateY(-2px);transform:translateY(-2px)}
+.sicasa.luz{border-color:#8fe07a;background:rgba(143,224,122,.22)}
+.sicasa.alvo{border-color:#ffd54a;background:rgba(255,213,74,.22)}
+/* a LETRA grande da casa (a pista visual). Faixa escura propria -> legivel em
+   qualquer tema. */
+.siletra{display:block;font-size:40px;font-weight:800;line-height:1;color:#fff;
+  text-align:center;margin:2px auto 4px;width:64px;height:64px;line-height:64px;border-radius:16px;
+  background:rgba(18,22,32,.72);text-shadow:0 1px 4px rgba(0,0,0,.55)}
+/* ⚠️ o caption carrega a MESA dele (rgba escura) — sem isso, sobre o vidro da
+   casa numa atividade de tema CLARO, o texto claro sumia (1,09:1, portao 5c). */
+.sicap{display:inline-block;text-align:center;font-size:12.5px;font-weight:700;color:#f7f3ea;
+  background:rgba(18,20,28,.62);border-radius:8px;padding:2px 8px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+/* a carta guardada encolhe dentro da casa: ali ela e recibo do que ja foi feito */
+.sicasa .sic{font-size:14px;min-width:0;min-height:0;padding:7px 10px;margin:5px 3px 0;
+  border-radius:12px;box-shadow:0 3px 0 #7cb464;background:#d6f5c8;cursor:default}
+.sicasa .sic.usada{opacity:.96}
+/* o rodape que conta a fase: quantas faltam */
+.sipasso{display:inline-block;text-align:center;font-size:11.5px;font-weight:700;margin-top:8px;
+  background:rgba(18,20,28,.62);border-radius:10px;padding:4px 10px;color:#f7f3ea}
+@media (max-width:360px){
+  .sic{min-width:0;width:96%;font-size:20px}
+  .sicasas{-webkit-column-gap:8px;column-gap:8px;gap:8px;max-width:100%}
+  .siletra{width:52px;height:52px;line-height:52px;font-size:32px}
+}
+@media (max-height:520px){
+  .hint{display:none}
+  .siband{min-height:78px}
+  .sic{min-height:56px;font-size:20px}
+  .sicasa{min-height:120px}
+  .siletra{width:50px;height:50px;line-height:50px;font-size:30px}
+}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* a dica entra LOGO DEPOIS do enunciado (onde o olho ja esta), nunca no fim da tela */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO. Ao copiar a peça para uma atividade, troque APENAS
+   este bloco: as casas de som, as cartas e as três dicas. Duas ou três casas
+   (mais que isso a criança não segura de uma vez). ⭐ 1ª rodada por SOM CONTÍNUO
+   (M, S, F, V, N, L, R, Z), nunca de parada (B, P, T, D, K, G). */
+/* `n` = a LETRA grande (pista visual); `voz` = o SOM que o alto-falante diz
+   (o SOM, não o nome da letra: "o som M", nunca "ême"). */
+var CASAS=[
+  {k:"m", n:"M", voz:"o som M, de MÃO"},
+  {k:"s", n:"S", voz:"o som S, de SOL"}
+];
+/* cada carta: a palavra `t` e o `alvo` = a casa do som com que ela COMEÇA.
+   A carta NÃO destaca a letra inicial — a criança tem que ESCUTAR o começo. */
+var CARTAS=[
+  {t:"MALA",  alvo:"m"},
+  {t:"MEL",   alvo:"m"},
+  {t:"SAPO",  alvo:"s"},
+  {t:"SINO",  alvo:"s"}
+];
+var ENUN="Cada palavra vai na casa do som com que ela <b>começa</b>. Toque na carta e depois na casa.";
+var DICAS=[
+  "Escute só o COMEÇO da palavra: qual é o primeiro som?",
+  "Fale a palavra devagar: Sssapo começa com o som S; Mmmala começa com o som M.",
+  "A casa certa está com a borda amarela: é ali que esta palavra começa."
+];
+
+var CASOS=0;       /* total de cartas */
+var feitos=0;      /* cartas ja guardadas */
+var fila=[], vez=0;/* a esteira e a posicao nela */
+var marcada=null;  /* a carta escolhida */
+var passo=null;
+var barraP=null;
+var ger=0;         /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+/* ---------- a ajuda é ESCRITA e DITA ----------
+   O `diz` é do motor (voz GRAVADA, Edge TTS) e não existe na peça solta — por
+   isso a guarda. Tudo o que a voz diz está TAMBÉM escrito, então PC sem caixa de
+   som joga a peça inteira. ⚠️ NUNCA `speechSynthesis` (o `_qa/vozrobo.py` reprova). */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){ var t=semTag(txt); if(!t) return; if(typeof diz==="function") diz(t); }
+
+function pecaSomInicial(){
+  feitos=0; marcada=null; ger++;
+  CASOS=CARTAS.length;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A CASA DO SOM"));
+  c.appendChild(el("div","balao",ENUN));
+
+  /* a esteira: uma carta por vez, grande — uma ideia por tela (Sweller) */
+  fila=[]; vez=0;
+  var i;
+  for(i=0;i<CARTAS.length;i++) fila.push(CARTAS[i]);
+  baguncar(fila);
+  var band=el("div","siband"); band.id="siesteira";
+  c.appendChild(band);
+
+  var cs=el("div","sicasas");
+  for(i=0;i<CASAS.length;i++) cs.appendChild(fazCasa(CASAS[i]));
+  c.appendChild(cs);
+
+  passo=el("div","sipasso","");
+  c.appendChild(passo);
+  c.appendChild(el("div","hint","Toque na carta e depois na casa do som. No PC dá para clicar com o mouse. No alto-falante dá para ouvir de novo."));
+  t.appendChild(c);
+  app.appendChild(t);
+  poeAVez();
+}
+
+/* poe na esteira a carta da vez. Fase acabada = esteira vazia. */
+function poeAVez(){
+  var e=document.getElementById("siesteira");
+  if(!e) return;
+  e.innerHTML="";
+  if(vez<fila.length){
+    var f=fila[vez];
+    e.appendChild(fazCarta(f));
+    fala(f.t);   /* a carta ja chega falando o proprio nome */
+  }
+  if(passo){
+    passo.innerHTML = (vez<fila.length ? ("carta "+(vez+1)+" de "+fila.length) : "todas guardadas");
+  }
+}
+
+function fazCarta(f){
+  /* `.ptxt` = o motor poe o alto-falante; `.sic` = a carta desta peca. Sem a
+     letra inicial destacada de proposito: a criança tem que ESCUTAR o começo. */
+  var p=el("div","sic ptxt", (f.t===undefined||f.t===null)?"":f.t);
+  p.setAttribute("data-qa",f.alvo);   /* carta e casa publicam a MESMA chave */
+  p.onclick=function(){ if(p.className.indexOf("usada")>=0) return; seleciona(p); };
+  return p;
+}
+
+function seleciona(p){
+  var a=app.getElementsByClassName("sic"), i;
+  for(i=0;i<a.length;i++) if(a[i].className.indexOf("usada")<0) a[i].className="sic ptxt";
+  p.className="sic ptxt sel";
+  sTap();
+  marcada=p;
+}
+
+function fazCasa(g){
+  var d=el("div","sicasa ptxt");
+  d.setAttribute("data-qa",g.k);
+  d.setAttribute("data-voz", g.voz || g.n);   /* o motor le O SOM, nao a letra */
+  d.appendChild(el("div","siletra",g.n));
+  d.appendChild(el("div","sicap","o som "+g.n));
+  d.onclick=function(){
+    if(!marcada){ sTap(); fala(g.voz || g.n);
+      mostraDica("Primeiro toque na carta lá de cima. Depois toque na casa do som."); return; }
+    guarda(marcada,d);
+  };
+  return d;
+}
+
+function guarda(p,g){
+  if(!p||!g) return;
+  if(p.className.indexOf("usada")>=0) return;
+  if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
+    sCerto();
+    p.className="sic ptxt usada"; p.onclick=null;
+    g.appendChild(p);
+    g.className="sicasa ptxt luz";
+    marcada=null; feitos++; vez++;
+    if(barraP) barraP.style.width=Math.round(feitos*100/CASOS)+"%";
+    var ge=ger, gg=g;
+    setTimeout(function(){ if(ge===ger) poeAVez(); },300);
+    setTimeout(function(){ if(ge!==ger) return; if(gg.className.indexOf("luz")>=0) gg.className="sicasa ptxt"; },600);
+    if(feitos>=CASOS){
+      setTimeout(function(){ if(ge!==ger) return;
+        mostraBanner("Você achou o som do começo de todas!", fimDaPeca); },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, a carta volta, e o andaime CRESCE. */
+  sErro();
+  p._err=(p._err||0)+1;
+  var dtx=DICAS[Math.min(p._err,DICAS.length)-1];
+  mostraDica(dtx); fala(dtx);
+  if(p._err>=3) revela(p);
+}
+
+/* 3º erro: acende a casa certa e DEIXA seguir — nunca trava. A informação vai
+   também escrita na dica (nada só na cor). */
+function revela(p){
+  var a=app.getElementsByClassName("sicasa"), i, k=p.getAttribute("data-qa");
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")===k) a[i].className="sicasa ptxt alvo";
+    else a[i].className="sicasa ptxt";
+  }
+}
+
+function fimDaPeca(){
+  ger++;
+  marcada=null;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Todas as "+CASOS+" palavras estão na casa do som certo."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaSomInicial(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça SOM INICIAL: a casa do som do começo, toque e mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaSomInicial();
+</script>
+</body></html>
