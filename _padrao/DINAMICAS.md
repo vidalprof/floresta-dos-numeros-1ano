@@ -318,6 +318,18 @@ não tinha a mecânica: a atividade não tinha como chegar lá nem que quisesse.
 **Medida na bancada:** código 0 nos 9 portões, com o errador medindo o andaime
 (3 dicas distintas e crescentes, chega à medalha depois de errar).
 
+### ⭐ REGRA DE OURO DAS FONOLÓGICAS: SOM CONTÍNUO ANTES DE SOM DE PARADA
+Pesquisa profunda (ago/2026, `_pesquisa/web/como-fazer-fonologica-rima.md`): sons
+que **se esticam** — /m/, /s/, /f/, /v/, /n/, /l/, /r/, /z/ — são muito mais
+fáceis de **juntar e segmentar** do que os sons de **parada** — /b/, /p/, /t/,
+/d/, /k/, /g/ (que não dá para "segurar" sem virar "bê", "tê"). Então, em
+`caixas-de-som`, `juntar-silabas`, `bater-silabas` (e na futura `rima`), a
+**primeira rodada começa por palavras de som contínuo** (ex.: MEL, SOL, FADA,
+LUA, RÃ) e só depois entram as de parada (BOLA, PATO, GATO). Começar por som de
+parada é pôr o degrau mais difícil primeiro — a criança trava logo na entrada.
+Vale também: a escada da consciência fonológica é **frase → palavra → sílaba →
+onset-rime (RIMA) → fonema**; não pular etapa.
+
 ---
 
 ## 🔤🕳️ A PEÇA QUE VEIO DO EDILIM — LETRAS ESCONDIDAS (ago/2026)
