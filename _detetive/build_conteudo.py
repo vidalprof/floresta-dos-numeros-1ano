@@ -78,22 +78,22 @@ CONTEUDO = {
 #  seguida). Ordem dos CASOS preservada; aquecimento no meio (~44%).
 #
 #  idx  CASO           gesto            (o gesto se repete SEMPRE colado)
-#   0   1 pronomes     caca-palavras
-#   1   1 pronomes     ligar
-#   2   1 pronomes     classificar
-#   3   1 pronomes     conserte-o-erro  (conserta o pronoun errado — coesão)
-#   4   1 pronomes     escolher         ┐
-#   5   2 narrativo    escolher         ├ bloco de 'escolher' (leitura)
-#   6   2 narrativo    escolher         ┘
-#   7   —              AQUECIMENTO (ligar, revisão de pronomes) — EXCEÇÃO
-#   8   2 narrativo    quem-sou-eu
-#   9   2 narrativo    linha-do-tempo   ┐ bloco de 'ordenar'
-#  10   3 injuntivo    linha-do-tempo   ┘
-#  11   3 injuntivo    intruso
-#  12   3 injuntivo    completar        ┐ bloco de 'completar'
-#  13   4 mau×mal      completar        ┘
-#  14   4 mau×mal      forca            (fixa a grafia U × L, letra por letra)
-#  15   4 mau×mal      digitar
+#   0   1 pronomes     ligar
+#   1   1 pronomes     classificar
+#   2   1 pronomes     conserte-o-erro  (conserta o pronoun errado — coesão)
+#   3   1 pronomes     escolher         ┐
+#   4   2 narrativo    escolher         ├ bloco de 'escolher' (leitura)
+#   5   2 narrativo    escolher         ┘
+#   6   —              AQUECIMENTO (ligar, revisão de pronomes) — EXCEÇÃO
+#   7   2 narrativo    quem-sou-eu
+#   8   2 narrativo    linha-do-tempo   ┐ bloco de 'ordenar'
+#   9   3 injuntivo    linha-do-tempo   ┘
+#  10   3 injuntivo    intruso
+#  11   3 injuntivo    completar        ┐ bloco de 'completar'
+#  12   4 mau×mal      completar        ┘
+#  13   4 mau×mal      forca            (fixa a grafia U × L, letra por letra)
+#  14   4 mau×mal      digitar
+#  15   —  REVISÃO     caca-palavras    (fecho leve: pronomes + mau/mal) — por ÚLTIMO
 #
 #  FIM: boletim animado + relatório do professor (FIM-DE-ATIVIDADE.md) +
 #       gancho (um novo caso na caixa de correio).
@@ -110,16 +110,7 @@ def esc(p, c, e, d):
 # CASO 1 — PRONOMES (objetivo1)
 # ============================================================
 
-# idx0 — CAÇA-PALAVRAS: achar pronomes escondidos (entrada leve, sem prova)
-add(id=u"f05", mec=u"caca-palavras", selo=u"CASO 1: PRONOMES ESCONDIDOS", conceito=u"objetivo1",
-    enunciado=u"Ache os <b>pronomes</b> escondidos no quadro.",
-    dica=u"Estão deitados (→) e em pé (↓): EU, ELE, ELA, MEU, ESTE.",
-    dados=[u"EU", u"ELE", u"ELA", u"MEU", u"ESTE", u"TEU", u"NOSSO", u"ELES", u"ESSA", u"ISTO", u"ELAS", u"TUA", u"SUA"],
-    dadosExtra={u"MODO":u"lista", u"TITULO":u"PRONOMES ESCONDIDOS",
-                u"LETRAS":u"ABCDEHILMNOPRSTU", u"DIFICIL":u"",
-                u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5", u"p6", u"p7", u"p8", u"p9", u"p1", u"p2", u"p3", u"p4"]})
-
-# idx1 — LIGAR: pronome <-> a palavra que ele substitui
+# idx0 — LIGAR: pronome <-> a palavra que ele substitui (abre o CASO 1)
 add(id=u"f02", mec=u"ligar", selo=u"CASO 1: LIGUE AS PISTAS", conceito=u"objetivo1",
     enunciado=u"Ligue cada <b>pronome</b> à palavra que ele substitui.",
     dica=u"Veja o número (singular/plural) e o gênero (masculino/feminino).",
@@ -570,6 +561,18 @@ add(id=u"f17", mec=u"digitar", selo=u"CASO 4: ESCREVA CERTO", conceito=u"objetiv
             u"dic":u"Cabe BEM: então é <b>MAL</b>."}],
     dadosExtra={u"ENUN":u"Escreva a palavra, letra por letra.",
                 u"FECHO":u"Você escreveu mau e mal do jeito certo!"})
+
+# idx15 (ÚLTIMA) — CAÇA-PALAVRAS de REVISÃO: fecha a atividade com um gesto leve,
+# achando as palavras do caso INTEIRO (pronomes + o mau/mal que treinou).
+# Marcos (ago/2026): "reorganize — caça-palavras por último". Sai da entrada
+# (era a 1ª fase) e vira o fecho de revisão.
+add(id=u"f05", mec=u"caca-palavras", selo=u"CAÇA FINAL: AS PALAVRAS DO CASO", conceito=u"objetivo1",
+    enunciado=u"Para fechar o caso: ache as <b>palavras</b> escondidas no quadro.",
+    dica=u"Estão deitadas (→) e em pé (↓): pronomes e o MAU/MAL que você treinou.",
+    dados=[u"EU", u"ELE", u"ELA", u"MEU", u"ESTE", u"NOSSO", u"ELES", u"MAU", u"MAL", u"BOM", u"BEM"],
+    dadosExtra={u"MODO":u"lista", u"TITULO":u"AS PALAVRAS DO CASO",
+                u"LETRAS":u"ABCDEHILMNOPRSTU", u"DIFICIL":u"",
+                u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5", u"p6", u"p7", u"p8", u"p9", u"p1", u"p2"]})
 
 
 CONTEUDO[u"fases"] = fases
