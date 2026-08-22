@@ -117,16 +117,26 @@ add(id=u"f02", mec=u"ligar", selo=u"CASO 1: LIGUE AS PISTAS", conceito=u"objetiv
     dados=[{u"k":u"p0", u"t":u"ELA", u"s":u"a menina"},
            {u"k":u"p1", u"t":u"ELE", u"s":u"o cachorro"},
            {u"k":u"p2", u"t":u"ELES", u"s":u"os meninos"},
-           {u"k":u"p3", u"t":u"NÓS", u"s":u"eu e você"},
-           {u"k":u"p4", u"t":u"ELAS", u"s":u"as detetives"},
-           {u"k":u"p5", u"t":u"EU", u"s":u"quem está falando"},
-           {u"k":u"p6", u"t":u"VOCÊ", u"s":u"quem está ouvindo"},
-           {u"k":u"p7", u"t":u"ELE", u"s":u"o carteiro"}],
+           {u"k":u"p3", u"t":u"NÓS", u"s":u"eu e você"}],
     dadosExtra={u"DICAS":[u"Pense em quantos são e se é menino ou menina.",
                           u"ELA = uma menina; ELES = vários; NÓS = eu + você.",
                           u"A resposta certa acende no fim da linha. Toque nela."],
                 u"FEITOS":[], u"ENUN":u"Ligue o pronome à palavra que ele substitui.",
                 u"FECHO":u"Cada pronome no lugar certo!"})
+
+# idx1 — LIGAR (2ª, um degrau acima): repetição EM SEQUÊNCIA (bloco), tela leve
+add(id=u"f02b", mec=u"ligar", selo=u"CASO 1: LIGUE MAIS PISTAS", conceito=u"objetivo1",
+    enunciado=u"Mais pistas: ligue cada <b>pronome</b> à palavra que ele substitui.",
+    dica=u"Veja o número (singular/plural) e o gênero (masculino/feminino).",
+    dados=[{u"k":u"p0", u"t":u"ELAS", u"s":u"as detetives"},
+           {u"k":u"p1", u"t":u"EU", u"s":u"quem está falando"},
+           {u"k":u"p2", u"t":u"VOCÊ", u"s":u"quem está ouvindo"},
+           {u"k":u"p3", u"t":u"ELE", u"s":u"o carteiro"}],
+    dadosExtra={u"DICAS":[u"Pense em quantos são e se é menino ou menina.",
+                          u"ELAS = várias; EU = quem fala; VOCÊ = quem ouve.",
+                          u"A resposta certa acende no fim da linha. Toque nela."],
+                u"FEITOS":[], u"ENUN":u"Ligue o pronome à palavra que ele substitui.",
+                u"FECHO":u"Mais pistas ligadas!"})
 
 # idx2 — CLASSIFICAR: os TIPOS de pronome (gavetas)
 add(id=u"f03", mec=u"classificar", selo=u"CASO 1: SEPARE OS PRONOMES", conceito=u"objetivo1",
@@ -137,17 +147,26 @@ add(id=u"f03", mec=u"classificar", selo=u"CASO 1: SEPARE OS PRONOMES", conceito=
            {u"k":u"dem", u"n":u"DEMONSTRATIVO", u"img":u"", u"voz":u"demonstrativo", u"rot":False}],
     dadosExtra={u"FICHAS":[
       {u"t":u"EU", u"alvo":u"pes"}, {u"t":u"ELE", u"alvo":u"pes"},
-      {u"t":u"TU", u"alvo":u"pes"},
       {u"t":u"MEU", u"alvo":u"pos"}, {u"t":u"NOSSO", u"alvo":u"pos"},
-      {u"t":u"TEU", u"alvo":u"pos"},
-      {u"t":u"ESTE", u"alvo":u"dem"}, {u"t":u"AQUELE", u"alvo":u"dem"},
-      {u"t":u"ESSE", u"alvo":u"dem"},
-      {u"t":u"ELA", u"alvo":u"pes"}, {u"t":u"MINHA", u"alvo":u"pos"},
-      {u"t":u"AQUILO", u"alvo":u"dem"},
-      {u"t":u"NÓS", u"alvo":u"pes"}, {u"t":u"SUA", u"alvo":u"pos"},
-      {u"t":u"ISSO", u"alvo":u"dem"}],
+      {u"t":u"ESTE", u"alvo":u"dem"}, {u"t":u"AQUELE", u"alvo":u"dem"}],
       u"DICAS":[u"EU e ELE dizem QUEM; MEU e NOSSO dizem DE QUEM; ESTE e AQUELE dizem ONDE.",
                 u"Possessivo combina com 'é meu, é nosso'. Demonstrativo com 'este aqui, aquele lá'.",
+                u"Olhe a gaveta com a borda amarela: é ali que esta ficha mora."],
+      u"ENUN":u"Toque no <b>pronome</b>. Depois toque na <b>gaveta do tipo</b> dele."})
+
+# idx3 — CLASSIFICAR (2ª, bloco em sequência): mais pronomes, mesmas gavetas
+add(id=u"f03b", mec=u"classificar", selo=u"CASO 1: SEPARE MAIS PRONOMES", conceito=u"objetivo1",
+    enunciado=u"Mais pronomes: cada um na sua gaveta — pessoal, possessivo ou demonstrativo?",
+    dica=u"Pessoal = quem (eu, tu, ela); possessivo = de quem (meu, teu, sua); demonstrativo = onde (este, esse, aquilo).",
+    dados=[{u"k":u"pes", u"n":u"PESSOAL", u"img":u"", u"voz":u"pessoal", u"rot":False},
+           {u"k":u"pos", u"n":u"POSSESSIVO", u"img":u"", u"voz":u"possessivo", u"rot":False},
+           {u"k":u"dem", u"n":u"DEMONSTRATIVO", u"img":u"", u"voz":u"demonstrativo", u"rot":False}],
+    dadosExtra={u"FICHAS":[
+      {u"t":u"TU", u"alvo":u"pes"}, {u"t":u"ELA", u"alvo":u"pes"},
+      {u"t":u"TEU", u"alvo":u"pos"}, {u"t":u"MINHA", u"alvo":u"pos"},
+      {u"t":u"ESSE", u"alvo":u"dem"}, {u"t":u"AQUILO", u"alvo":u"dem"}],
+      u"DICAS":[u"TU e ELA dizem QUEM; TEU e MINHA dizem DE QUEM; ESSE e AQUILO dizem ONDE.",
+                u"Possessivo combina com 'é meu, é sua'. Demonstrativo com 'esse aqui, aquilo lá'.",
                 u"Olhe a gaveta com a borda amarela: é ali que esta ficha mora."],
       u"ENUN":u"Toque no <b>pronome</b>. Depois toque na <b>gaveta do tipo</b> dele."})
 
@@ -569,10 +588,19 @@ add(id=u"f17", mec=u"digitar", selo=u"CASO 4: ESCREVA CERTO", conceito=u"objetiv
 add(id=u"f05", mec=u"caca-palavras", selo=u"CAÇA FINAL: AS PALAVRAS DO CASO", conceito=u"objetivo1",
     enunciado=u"Para fechar o caso: ache as <b>palavras</b> escondidas no quadro.",
     dica=u"Estão deitadas (→) e em pé (↓): pronomes e o MAU/MAL que você treinou.",
-    dados=[u"EU", u"ELE", u"ELA", u"MEU", u"ESTE", u"NOSSO", u"ELES", u"MAU", u"MAL", u"BOM", u"BEM"],
+    dados=[u"ELE", u"NÓS", u"MEU", u"MAU", u"MAL", u"BOM"],
     dadosExtra={u"MODO":u"lista", u"TITULO":u"AS PALAVRAS DO CASO",
                 u"LETRAS":u"ABCDEHILMNOPRSTU", u"DIFICIL":u"",
-                u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5", u"p6", u"p7", u"p8", u"p9", u"p1", u"p2"]})
+                u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5", u"p6"]})
+
+# idx17 — CAÇA-PALAVRAS (2ª, o resto — bloco em sequência): fecha a revisão
+add(id=u"f05b", mec=u"caca-palavras", selo=u"CAÇA FINAL: MAIS PALAVRAS DO CASO", conceito=u"objetivo1",
+    enunciado=u"Últimas pistas: ache as <b>palavras</b> que faltam no quadro.",
+    dica=u"Estão deitadas (→) e em pé (↓): mais pronomes e o BEM/MAL.",
+    dados=[u"ELA", u"ELES", u"ESTE", u"MAL", u"BEM"],
+    dadosExtra={u"MODO":u"lista", u"TITULO":u"MAIS PALAVRAS DO CASO",
+                u"LETRAS":u"ABCDEHILMNOPRSTU", u"DIFICIL":u"",
+                u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5"]})
 
 
 CONTEUDO[u"fases"] = fases

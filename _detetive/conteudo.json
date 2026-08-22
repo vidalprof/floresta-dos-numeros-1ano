@@ -51,26 +51,6 @@
      "k": "p3",
      "t": "NÓS",
      "s": "eu e você"
-    },
-    {
-     "k": "p4",
-     "t": "ELAS",
-     "s": "as detetives"
-    },
-    {
-     "k": "p5",
-     "t": "EU",
-     "s": "quem está falando"
-    },
-    {
-     "k": "p6",
-     "t": "VOCÊ",
-     "s": "quem está ouvindo"
-    },
-    {
-     "k": "p7",
-     "t": "ELE",
-     "s": "o carteiro"
     }
    ],
    "dadosExtra": {
@@ -82,6 +62,46 @@
     "FEITOS": [],
     "ENUN": "Ligue o pronome à palavra que ele substitui.",
     "FECHO": "Cada pronome no lugar certo!"
+   }
+  },
+  {
+   "id": "f02b",
+   "mec": "ligar",
+   "selo": "CASO 1: LIGUE MAIS PISTAS",
+   "conceito": "objetivo1",
+   "enunciado": "Mais pistas: ligue cada <b>pronome</b> à palavra que ele substitui.",
+   "dica": "Veja o número (singular/plural) e o gênero (masculino/feminino).",
+   "dados": [
+    {
+     "k": "p0",
+     "t": "ELAS",
+     "s": "as detetives"
+    },
+    {
+     "k": "p1",
+     "t": "EU",
+     "s": "quem está falando"
+    },
+    {
+     "k": "p2",
+     "t": "VOCÊ",
+     "s": "quem está ouvindo"
+    },
+    {
+     "k": "p3",
+     "t": "ELE",
+     "s": "o carteiro"
+    }
+   ],
+   "dadosExtra": {
+    "DICAS": [
+     "Pense em quantos são e se é menino ou menina.",
+     "ELAS = várias; EU = quem fala; VOCÊ = quem ouve.",
+     "A resposta certa acende no fim da linha. Toque nela."
+    ],
+    "FEITOS": [],
+    "ENUN": "Ligue o pronome à palavra que ele substitui.",
+    "FECHO": "Mais pistas ligadas!"
    }
   },
   {
@@ -125,19 +145,11 @@
       "alvo": "pes"
      },
      {
-      "t": "TU",
-      "alvo": "pes"
-     },
-     {
       "t": "MEU",
       "alvo": "pos"
      },
      {
       "t": "NOSSO",
-      "alvo": "pos"
-     },
-     {
-      "t": "TEU",
       "alvo": "pos"
      },
      {
@@ -147,39 +159,76 @@
      {
       "t": "AQUELE",
       "alvo": "dem"
-     },
+     }
+    ],
+    "DICAS": [
+     "EU e ELE dizem QUEM; MEU e NOSSO dizem DE QUEM; ESTE e AQUELE dizem ONDE.",
+     "Possessivo combina com 'é meu, é nosso'. Demonstrativo com 'este aqui, aquele lá'.",
+     "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."
+    ],
+    "ENUN": "Toque no <b>pronome</b>. Depois toque na <b>gaveta do tipo</b> dele."
+   }
+  },
+  {
+   "id": "f03b",
+   "mec": "classificar",
+   "selo": "CASO 1: SEPARE MAIS PRONOMES",
+   "conceito": "objetivo1",
+   "enunciado": "Mais pronomes: cada um na sua gaveta — pessoal, possessivo ou demonstrativo?",
+   "dica": "Pessoal = quem (eu, tu, ela); possessivo = de quem (meu, teu, sua); demonstrativo = onde (este, esse, aquilo).",
+   "dados": [
+    {
+     "k": "pes",
+     "n": "PESSOAL",
+     "img": "",
+     "voz": "pessoal",
+     "rot": false
+    },
+    {
+     "k": "pos",
+     "n": "POSSESSIVO",
+     "img": "",
+     "voz": "possessivo",
+     "rot": false
+    },
+    {
+     "k": "dem",
+     "n": "DEMONSTRATIVO",
+     "img": "",
+     "voz": "demonstrativo",
+     "rot": false
+    }
+   ],
+   "dadosExtra": {
+    "FICHAS": [
      {
-      "t": "ESSE",
-      "alvo": "dem"
+      "t": "TU",
+      "alvo": "pes"
      },
      {
       "t": "ELA",
       "alvo": "pes"
      },
      {
+      "t": "TEU",
+      "alvo": "pos"
+     },
+     {
       "t": "MINHA",
       "alvo": "pos"
      },
      {
-      "t": "AQUILO",
+      "t": "ESSE",
       "alvo": "dem"
      },
      {
-      "t": "NÓS",
-      "alvo": "pes"
-     },
-     {
-      "t": "SUA",
-      "alvo": "pos"
-     },
-     {
-      "t": "ISSO",
+      "t": "AQUILO",
       "alvo": "dem"
      }
     ],
     "DICAS": [
-     "EU e ELE dizem QUEM; MEU e NOSSO dizem DE QUEM; ESTE e AQUELE dizem ONDE.",
-     "Possessivo combina com 'é meu, é nosso'. Demonstrativo com 'este aqui, aquele lá'.",
+     "TU e ELA dizem QUEM; TEU e MINHA dizem DE QUEM; ESSE e AQUILO dizem ONDE.",
+     "Possessivo combina com 'é meu, é sua'. Demonstrativo com 'esse aqui, aquilo lá'.",
      "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."
     ],
     "ENUN": "Toque no <b>pronome</b>. Depois toque na <b>gaveta do tipo</b> dele."
@@ -1356,17 +1405,12 @@
    "enunciado": "Para fechar o caso: ache as <b>palavras</b> escondidas no quadro.",
    "dica": "Estão deitadas (→) e em pé (↓): pronomes e o MAU/MAL que você treinou.",
    "dados": [
-    "EU",
     "ELE",
-    "ELA",
+    "NÓS",
     "MEU",
-    "ESTE",
-    "NOSSO",
-    "ELES",
     "MAU",
     "MAL",
-    "BOM",
-    "BEM"
+    "BOM"
    ],
    "dadosExtra": {
     "MODO": "lista",
@@ -1379,12 +1423,35 @@
      "p3",
      "p4",
      "p5",
-     "p6",
-     "p7",
-     "p8",
-     "p9",
+     "p6"
+    ]
+   }
+  },
+  {
+   "id": "f05b",
+   "mec": "caca-palavras",
+   "selo": "CAÇA FINAL: MAIS PALAVRAS DO CASO",
+   "conceito": "objetivo1",
+   "enunciado": "Últimas pistas: ache as <b>palavras</b> que faltam no quadro.",
+   "dica": "Estão deitadas (→) e em pé (↓): mais pronomes e o BEM/MAL.",
+   "dados": [
+    "ELA",
+    "ELES",
+    "ESTE",
+    "MAL",
+    "BEM"
+   ],
+   "dadosExtra": {
+    "MODO": "lista",
+    "TITULO": "MAIS PALAVRAS DO CASO",
+    "LETRAS": "ABCDEHILMNOPRSTU",
+    "DIFICIL": "",
+    "CORP": [
      "p1",
-     "p2"
+     "p2",
+     "p3",
+     "p4",
+     "p5"
     ]
    }
   }
