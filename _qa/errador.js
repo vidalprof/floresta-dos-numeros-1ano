@@ -38,6 +38,21 @@ const RECEITA={
        a.click(); t[i].click(); return 'ligou o par errado (lados opostos, chaves diferentes)'; }
    return null;
  },
+ /* RIMA: tabuleiro de cartas viradas (`.rmc`); cartas que rimam publicam a MESMA
+    chave em `data-qa`. Errar de proposito e juntar duas cartas de grupos
+    DIFERENTES — o par que NAO rima, que e exatamente o erro que a crianca faz.
+    Sem esta receita a generica clicava em duas cartas quaisquer e as vezes caia
+    no mesmo par certo, sem medir o andaime. */
+ 'rima':()=>{
+   var t=[].slice.call(document.querySelectorAll('.rmc')).filter(function(e){
+     return e.offsetParent!==null && e.className.indexOf('feita')<0; });
+   if(t.length<2) return null;
+   var a=t[0], i;
+   for(i=1;i<t.length;i++)
+     if(t[i].getAttribute('data-qa')!==a.getAttribute('data-qa')){
+       a.click(); t[i].click(); return 'juntou duas cartas que nao rimam (chaves diferentes)'; }
+   return null;
+ },
  /* DIGITAR: o teclado da tela publica a PALAVRA da vez em `data-qa` (no
     container das teclas) e as vagas ja cheias dizem em que letra estamos.
     Errar de proposito e apertar uma tecla que NAO e a proxima letra. A

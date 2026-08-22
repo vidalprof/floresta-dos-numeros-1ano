@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — rima (achar os pares que rimam)</title>
+<!-- ============================================================
+     PEÇA: RIMA — achar, num tabuleiro de cartas VIRADAS PARA CIMA, as duas
+     palavras que RIMAM (terminam com o mesmo som). Gesto próprio: não é
+     "escolher" (uma pergunta, opções), não é "ligar" (duas colunas + linhas),
+     não é "memória" (cartas escondidas). É o par por SOM DO FIM.
+
+     Por que uma peça só de RIMA (pesquisa ago/2026, `_pesquisa/web/como-fazer-
+     fonologica-rima.md` + COMPARACAO-LEQUE): a escada da consciência fonológica
+     é frase → palavra → sílaba → ONSET-RIME → fonema. A rima mora no degrau
+     onset-rime, entre a sílaba e o fonema, e é habilidade PRÓPRIA — o 3º tema
+     mais pedido nas pesquisas (33 menções) e o único gap real do nosso leque.
+
+     As armadilhas desta mecânica (DINAMICAS.md, linha "Rima"):
+       · o par é por SOM, nunca por posição — o tabuleiro vai EMBARALHADO
+         (`baguncar`), senão a criança decora onde a carta está;
+       · alto-falante em TODA carta (na atividade o motor põe sozinho pela classe
+         `.ptxt`) — a rima é do OUVIDO; quem ainda soletra escolhe pelo desenho e
+         a fase vira loteria sem a voz;
+       · erro NÃO pune: som grave curto, a carta volta, e o andaime CRESCE —
+         dica (escute o fim) → apoio (o par pisca) → revela (o par acende e a
+         criança só toca). Nunca trava;
+       · AS DUAS PORTAS: toque simples E clique de mouse (no PC da escola a
+         criança clica). Guarda contra o clique/mouse FANTASMA que o celular
+         dispara depois do dedo (`ultimoToque`/`souDedo`);
+       · NUNCA `preventDefault` no `touchstart` (mata o toque no celular);
+       · os dois lados do par publicam a MESMA chave em `data-qa` (o grupo da
+         rima) — é assim que o auditor-jogador fecha a fase.
+
+     Mais o que o contrato cobra: alvo >= 44px, nada essencial só na cor (o par
+     feito ganha ANEL dourado + zoom, não só verde), funciona no mudo, `data-qa`
+     em toda carta, e nunca trava. ES5 puro, um arquivo só, sem biblioteca
+     (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA: sozinha, a peca precisa de um token de
+   reserva que combine com o fundo DELA; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#221a2b;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#7a4ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#7a2fb0}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do leitor
+   de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#5a2fa0;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* o tabuleiro: cartas viradas para cima, em grade que quebra a linha. `font-size:0`
+   mata o espaco entre os inline-block. Largura cheia p/ os 44% renderem largos. */
+.rmboard{margin:14px auto 0;width:100%;max-width:400px;font-size:0;text-align:center}
+/* ⚠️ CARTA GRANDE: alvo confortavel (bem acima dos 44px do contrato) e palavra
+   legivel. 44% em duas colunas com folga; sobe a fonte. Fundo proprio (creme) —
+   texto escuro carrega a mesa dele, entao passa em tema claro E escuro. */
+.rmc{display:-webkit-inline-box;display:-webkit-inline-flex;display:inline-flex;
+     -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+     -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+     vertical-align:top;width:44%;min-height:74px;margin:1.5% 2%;padding:12px 8px;
+     background:#fffdf6;color:#221a12;border:0;border-radius:16px;
+     font-size:19px;font-weight:800;line-height:1.15;letter-spacing:.5px;cursor:pointer;
+     box-shadow:0 5px 0 #c9bda6;-webkit-user-select:none;user-select:none;
+     -webkit-transition:-webkit-transform .12s;transition:transform .12s}
+.rmc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 2px 0 #c9bda6}
+@media (max-width:380px){ .rmc{font-size:16px;min-height:64px} }
+@media (max-height:560px){ .rmc{min-height:56px;font-size:16px;margin:1% 2%} }
+/* `.ptxt` = marca de "texto que fala": na atividade o motor injeta o alto-falante
+   por esta classe (ZAPSEL). A carta ja e `.rmc` tambem, entao aqui a regra so
+   garante que o par palavra+alto-falante fique numa linha so, centrado. */
+.ptxt{white-space:normal}
+/* alto-falante que o motor injeta fica ao lado da palavra */
+.rmc .zap{-webkit-flex:none;flex:none;margin-left:6px}
+/* escolhida: NAO e so cor — borda grossa e sobe um degrau */
+.rmc.sel{background:#fff3c9;color:#221a12;box-shadow:0 0 0 4px #ffd54a,0 5px 0 #c9a52f;
+         -webkit-transform:translateY(-2px);transform:translateY(-2px)}
+/* par fechado: alem do verde, ANEL dourado + leve zoom, para saltar do tabuleiro */
+.rmc.feita{background:#cdf3bd !important;color:#123a10 !important;
+           box-shadow:0 0 0 4px #ffd54a,0 10px 20px rgba(0,0,0,.3) !important;cursor:default;
+           -webkit-transform:scale(1.05);transform:scale(1.05)}
+/* ⭐ VER O PAR (andaime que cresce SEM UMA PALAVRA escrita, para quem nao le):
+   no 2o erro o par certo pisca com contorno tracejado; no 3o acende de vez.
+   ⚠️ quem respira e o `outline-offset` (geometria pura), NUNCA a opacidade do
+   cartao — animar opacity apagaria a palavra que veio ajudar a ler (licao paga
+   na peca ligar). */
+.rmc.dest{outline:3px dashed #ffd54a;outline-offset:-3px;
+          -webkit-animation:rmp 2.2s ease-in-out infinite;animation:rmp 2.2s ease-in-out infinite}
+.rmc.destf{background:#fff3c9;color:#221a12;outline:4px solid #ffd54a;outline-offset:-3px;
+           box-shadow:0 0 0 4px rgba(255,213,74,.5),0 5px 0 #c9a52f;
+           -webkit-animation:none;animation:none}
+@-webkit-keyframes rmp{0%,100%{outline-offset:-3px}50%{outline-offset:-8px}}
+@keyframes rmp{0%,100%{outline-offset:-3px}50%{outline-offset:-8px}}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA: entra LOGO DEPOIS do enunciado, que e onde o
+   olho ja esta — nao no fim da tela, onde a crianca que errou teria de rolar. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (rimas fáceis). Ao copiar a peça para uma atividade
+   troque APENAS este bloco: pares de palavras que RIMAM (mesma chave `k`), texto
+   curto, e as três dicas (dica -> apoio concreto -> revela). Duas cartas com a
+   MESMA chave `k` formam um par de rima; use de 3 a 5 pares (6 a 10 cartas).   */
+/* ⚠️ REGRA DE OURO: todo texto que a crianca le mora numa GAVETA (aqui, `t`).
+   Assim o enunciado nunca fala de outra aula (o "resto de clone" do enunciado). */
+var RIMAS=[
+  {k:"r0", t:"PATO"},  {k:"r0", t:"GATO"},
+  {k:"r1", t:"FACA"},  {k:"r1", t:"VACA"},
+  {k:"r2", t:"MÃO"},   {k:"r2", t:"PÃO"},
+  {k:"r3", t:"BOLA"},  {k:"r3", t:"MOLA"}
+];
+var ENUN="Toque em duas palavras que <b>rimam</b> (terminam com o mesmo som).";
+var FECHO="Você achou todos os pares que rimam!";
+var DICAS=[
+  "Escute o FIM das palavras: PA-TO... procure outra que termina com o mesmo som.",
+  "Uma carta está piscando: é o par que rima. Toque nela.",
+  "O par certo está aceso, no fim do som. Toque nele para juntar."
+];
+
+var PARES=0;         /* quantos pares ha no total (RIMAS.length/2) */
+var FEITOS=0;        /* pares ja fechados */
+var marcada=null;    /* a carta escolhida */
+var destAlvo=null;   /* a carta que esta se mostrando (ver o par) */
+var destNivel=0;     /* 1 = tracejado que pulsa, 2 = aceso de vez */
+var barraP=null;
+var ger=0;           /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA: o celular dispara um clique FALSO logo depois do
+   toque; sem este carimbo ele desmarcaria a carta que a crianca acabou de tocar. */
+var ultimoToque=0;
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+/* ---------- a ajuda é ESCRITA e DITA ----------
+   Quem lê ganha as duas coisas; quem não lê ganha pelo menos a voz. O `diz` é do
+   motor (voz GRAVADA, Edge TTS) e não existe na peça solta — por isso a guarda.
+   ⚠️ NUNCA a voz-robô do navegador direto (o `_qa/vozrobo.py` reprova). */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){ var t=semTag(txt); if(!t) return; if(typeof diz==="function") diz(t); }
+function ajuda(txt){ mostraDica(txt); fala(txt); }
+
+function pecaRima(){
+  FEITOS=0; marcada=null; destAlvo=null; destNivel=0; ger++;
+  PARES=RIMAS.length/2;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","AS PALAVRAS QUE RIMAM"));
+  c.appendChild(el("div","balao",ENUN));
+
+  var board=el("div","rmboard"), i;
+  /* embaralha: o par e por SOM, nunca por posicao */
+  var lista=[]; for(i=0;i<RIMAS.length;i++) lista.push(RIMAS[i]);
+  baguncar(lista);
+  for(i=0;i<lista.length;i++) board.appendChild(fazCarta(lista[i]));
+  c.appendChild(board);
+
+  c.appendChild(el("div","hint","Toque numa carta e depois na que rima com ela. No PC dá para clicar com o mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazCarta(dado){
+  /* `.ptxt` = na atividade o motor poe o alto-falante sozinho (a rima e do
+     ouvido); `.rmc` = a carta desta peca. */
+  var l=el("div","rmc ptxt", (dado.t===undefined||dado.t===null)?"":dado.t);
+  /* os dois lados do par publicam a MESMA chave: e assim que o auditor-jogador
+     fecha a fase, e a crianca nao ve diferenca nenhuma. */
+  l.setAttribute("data-qa",dado.k);
+  l.onclick=function(){ if(souDedo()) return; toca(l); };   /* mouse de verdade */
+  l.addEventListener("touchend",function(ev){
+    ultimoToque=agora();
+    /* nao dar preventDefault no touchstart — mata o toque; aqui no touchend e seguro */
+    toca(l);
+  },false);
+  l.addEventListener("touchstart",function(){ ultimoToque=agora(); },false);
+  return l;
+}
+
+/* ---- o gesto: escolhe uma carta, escolhe outra ---- */
+function toca(l){
+  if(temClasse(l,"feita")) return;
+  if(!marcada){ sTap(); marca(l); apagaDest(); return; }
+  if(marcada===l){ sTap(); desmarca(); return; }
+  juntar(marcada,l);
+}
+
+function rimam(a,b){
+  if(!a||!b||a===b) return false;
+  var ka=a.getAttribute("data-qa"), kb=b.getAttribute("data-qa");
+  return ka!==null && ka===kb;
+}
+
+function marca(l){ desmarca(); l.className="rmc ptxt sel"; marcada=l; }
+function desmarca(){
+  var a=app.getElementsByClassName("rmc"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=classeCarta(a[i]);
+  marcada=null;
+}
+/* a repintura passa por aqui, o unico lugar que sabe quem esta se mostrando —
+   senao o "ver o par" seria apagado no toque seguinte. */
+function classeCarta(l){
+  if(destAlvo&&l===destAlvo) return "rmc ptxt"+(destNivel>=2?" destf":" dest");
+  return "rmc ptxt";
+}
+
+function juntar(a,b){
+  if(temClasse(a,"feita")||temClasse(b,"feita")) return;
+  if(rimam(a,b)){
+    sCerto();
+    a.className="rmc ptxt feita"; b.className="rmc ptxt feita";
+    marcada=null;
+    if(destAlvo===a||destAlvo===b){ destAlvo=null; destNivel=0; }
+    FEITOS++;
+    if(barraP) barraP.style.width=Math.round(FEITOS*100/PARES)+"%";
+    if(FEITOS>=PARES){
+      var ge=ger;
+      setTimeout(function(){ if(ge!==ger) return; mostraBanner(FECHO, fimDaPeca); },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, a carta volta, e o andaime CRESCE. */
+  sErro();
+  a._err=(a._err||0)+1;
+  ajuda(DICAS[Math.min(a._err,DICAS.length)-1]);
+  var guardar=a;
+  desmarca();
+  /* o VER O PAR entra JUNTO com a dica escrita, nunca no lugar dela:
+     2o erro -> o par pisca; 3o erro -> acende de vez e a carta fica escolhida. */
+  if(guardar._err===2) mostraDest(guardar,1);
+  if(guardar._err>=3) revela(guardar);
+}
+
+/* mostra o par certo da carta `l` (o outro membro do grupo ainda livre) */
+function mostraDest(l,nivel){
+  if(!l||temClasse(l,"feita")) return;
+  var a=app.getElementsByClassName("rmc"), i, alvo=null;
+  for(i=0;i<a.length;i++){
+    if(temClasse(a[i],"feita")||a[i]===l) continue;
+    if(rimam(l,a[i])){ alvo=a[i]; break; }
+  }
+  if(!alvo) return;
+  destAlvo=alvo; destNivel=nivel;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")&&a[i]!==marcada) a[i].className=classeCarta(a[i]);
+}
+function apagaDest(){
+  var velho=destAlvo; destAlvo=null; destNivel=0;
+  if(velho&&!temClasse(velho,"feita")&&velho!==marcada) velho.className="rmc ptxt";
+}
+/* 3º erro: acende o par e DEIXA seguir (a carta erra fica escolhida; basta tocar
+   na acesa) — é o que garante que a peça nunca trava. */
+function revela(l){
+  mostraDest(l,2);
+  if(!destAlvo) return;
+  marca(l);
+}
+
+function fimDaPeca(){
+  ger++;
+  marcada=null; destAlvo=null; destNivel=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Você achou os "+PARES+" pares que rimam."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaRima(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça RIMA: par por SOM do fim, toque e mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaRima();
+</script>
+</body></html>

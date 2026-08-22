@@ -1138,6 +1138,24 @@
    "tecnicas": [],
    "var": "RETAS"
   },
+  "rima": {
+   "exemplo": "[\n  {k:\"r0\", t:\"PATO\"},  {k:\"r0\", t:\"GATO\"},\n  {k:\"r1\", t:\"FACA\"},  {k:\"r1\", t:\"VACA\"},\n  {k:\"r2\", t:\"MÃO\"},   {k:\"r2\", t:\"PÃO\"},\n  {k:\"r3\", t:\"BOLA\"},  {k:\"r3\", t:\"MOLA\"}\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Escute o FIM das palavras: PA-TO... procure outra que termina com o mesmo som.\",\n  \"Uma carta está piscando: é o par que rima. Toque nela.\",\n  \"O par certo está aceso, no fim do som. Toque nele para juntar.\"\n]",
+    "ENUN": "\"Toque em duas palavras que <b>rimam</b> (terminam com o mesmo som).\"",
+    "FECHO": "\"Você achou todos os pares que rimam!\"",
+    "RIMAS": "[\n  {k:\"r0\", t:\"PATO\"},  {k:\"r0\", t:\"GATO\"},\n  {k:\"r1\", t:\"FACA\"},  {k:\"r1\", t:\"VACA\"},\n  {k:\"r2\", t:\"MÃO\"},   {k:\"r2\", t:\"PÃO\"},\n  {k:\"r3\", t:\"BOLA\"},  {k:\"r3\", t:\"MOLA\"}\n]"
+   },
+   "gavetas": [
+    "RIMAS",
+    "DICAS",
+    "ENUN",
+    "FECHO"
+   ],
+   "regra": "marca na peca",
+   "tecnicas": [],
+   "var": "RIMAS"
+  },
   "rotular": {
    "exemplo": "[\n { selo:\"AS PLAQUINHAS DO JARDINEIRO\", cena:\"planta\",\n   enun:\"Ponha cada <b>plaquinha</b> na parte certa da planta.\",\n   fecho:\"A planta ficou toda com nome!\",\n   partes:[\n    {k:\"flor\",  n:\"FLOR\",  esc:\"FLOR\",  x:60,y:3, w:38,h:22, tk:[36,15,24],\n     d1:\"A flor &#233; a parte mais colorida da planta. Procure bem <b>em cima</b>.\",\n     d3:\"A <b>flor</b> &#233; a parte colorida, l&#225; no alto da planta.\",\n     info:\"Eu sou a <b>flor</b>. &#201; em mim que nasce a semente da planta nova.\"},\n    {k:\"folha\", n:\"FOLHA\", esc:\"FOLHA\", x:60,y:33,w:38,h:22, tk:[48,45,12],\n     d1:\"A folha &#233; larga e chata, e sai do <b>lado</b> do caule.\",\n     d3:\"A <b>folha</b> &#233; larga e sai do lado do caule.\",\n     info:\"Eu sou a <b>folha</b>. Eu pego a luz do sol e fa&#231;o comida para a planta.\"},\n    {k:\"caule\", n:\"CAULE\", esc:\"CAULE\", x:60,y:56,w:38,h:22, tk:[30,62,30],\n     d1:\"O caule &#233; comprido e fica <b>no meio</b>, ligando tudo.\",\n     d3:\"O <b>caule</b> &#233; o corpo comprido que segura a planta em p&#233;.\",\n     info:\"Eu sou o <b>caule</b>. Eu seguro a planta em p&#233; e levo a &#225;gua para cima.\"},\n    {k:\"raiz\",  n:\"RAIZ\",  esc:\"RAIZ\",  x:60,y:79,w:38,h:20, tk:[36,86,24],\n     d1:\"A raiz mora <b>dentro da terra</b>. Olhe para baixo.\",\n     d3:\"A <b>raiz</b> fica embaixo da terra e segura a planta.\",\n     info:\"Eu sou a <b>raiz</b>. Eu bebo a &#225;gua da terra e seguro a planta no ch&#227;o.\"}\n   ]},\n { selo:\"O MAPA MUDO\", cena:\"mapa\",\n   enun:\"Este mapa perdeu os nomes. Ponha cada <b>plaquinha</b> no lugar dela.\",\n   fecho:\"Agora d&#225; para ler o mapa!\",\n   partes:[\n    {k:\"titulo\", n:\"T&#205;TULO\", esc:\"TITULO\", voz:\"t&#237;tulo\", x:16,y:4, w:54,h:16,\n     d1:\"O nome do mapa fica sempre <b>no alto</b>, na faixa de cima.\",\n     d3:\"O <b>t&#237;tulo</b> fica no alto e diz do que o mapa fala.\",\n     info:\"Eu sou o <b>t&#237;tulo</b>. Eu digo, em uma linha, do que este mapa fala.\"},\n    {k:\"rosa\",   n:\"ROSA DOS VENTOS\", esc:\"ROSA\", x:76,y:5, w:20,h:24,\n     d1:\"Ela parece uma <b>estrela</b> guardada num canto do mapa.\",\n     d3:\"A <b>rosa dos ventos</b> mostra onde fica o norte.\",\n     info:\"Eu sou a <b>rosa dos ventos</b>. Eu mostro para que lado fica o norte.\"},\n    {k:\"legenda\",n:\"LEGENDA\", esc:\"LEGENDA\", x:4, y:60,w:30,h:34,\n     d1:\"&#201; a <b>caixinha com as cores</b> explicadas, num canto de baixo.\",\n     d3:\"A <b>legenda</b> explica o que cada cor do mapa quer dizer.\",\n     info:\"Eu sou a <b>legenda</b>. Eu conto o que cada cor do mapa quer dizer.\"},\n    {k:\"escala\", n:\"ESCALA\", esc:\"ESCALA\", x:52,y:76,w:42,h:16,\n     d1:\"Ela parece uma <b>r&#233;guazinha</b> deitada no p&#233; do mapa.\",\n     d3:\"A <b>escala</b> diz quanto vale, no mapa, uma dist&#226;ncia de verdade.\",\n     info:\"Eu sou a <b>escala</b>. Eu digo quanto vale, no ch&#227;o de verdade, \"+\n          \"um peda&#231;o deste mapa.\"}\n   ]}\n]",
    "exemplos": {

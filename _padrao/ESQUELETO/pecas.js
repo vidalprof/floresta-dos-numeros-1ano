@@ -32660,6 +32660,325 @@ function recomeca(){
   })();
 };
 
+/* ==== PECA: rima ==== */
+MEC["rima"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-rima";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (rimas fáceis). Ao copiar a peça para uma atividade
+   troque APENAS este bloco: pares de palavras que RIMAM (mesma chave `k`), texto
+   curto, e as três dicas (dica -> apoio concreto -> revela). Duas cartas com a
+   MESMA chave `k` formam um par de rima; use de 3 a 5 pares (6 a 10 cartas).   */
+/* ⚠️ REGRA DE OURO: todo texto que a crianca le mora numa GAVETA (aqui, `t`).
+   Assim o enunciado nunca fala de outra aula (o "resto de clone" do enunciado). */
+var RIMAS=[
+  {k:"r0", t:"PATO"},  {k:"r0", t:"GATO"},
+  {k:"r1", t:"FACA"},  {k:"r1", t:"VACA"},
+  {k:"r2", t:"MÃO"},   {k:"r2", t:"PÃO"},
+  {k:"r3", t:"BOLA"},  {k:"r3", t:"MOLA"}
+];
+var ENUN="Toque em duas palavras que <b>rimam</b> (terminam com o mesmo som).";
+var FECHO="Você achou todos os pares que rimam!";
+var DICAS=[
+  "Escute o FIM das palavras: PA-TO... procure outra que termina com o mesmo som.",
+  "Uma carta está piscando: é o par que rima. Toque nela.",
+  "O par certo está aceso, no fim do som. Toque nele para juntar."
+];
+
+var PARES=0;         /* quantos pares ha no total (RIMAS.length/2) */
+var FEITOS=0;        /* pares ja fechados */
+var marcada=null;    /* a carta escolhida */
+var destAlvo=null;   /* a carta que esta se mostrando (ver o par) */
+var destNivel=0;     /* 1 = tracejado que pulsa, 2 = aceso de vez */
+var barraP=null;
+var ger=0;           /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA: o celular dispara um clique FALSO logo depois do
+   toque; sem este carimbo ele desmarcaria a carta que a crianca acabou de tocar. */
+var ultimoToque=0;
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+/* ---------- a ajuda é ESCRITA e DITA ----------
+   Quem lê ganha as duas coisas; quem não lê ganha pelo menos a voz. O `diz` é do
+   motor (voz GRAVADA, Edge TTS) e não existe na peça solta — por isso a guarda.
+   ⚠️ NUNCA a voz-robô do navegador direto (o `_qa/vozrobo.py` reprova). */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){ var t=semTag(txt); if(!t) return; if(typeof diz==="function") diz(t); }
+function ajuda(txt){ mostraDica(txt); fala(txt); }
+
+function pecaRima(){
+  FEITOS=0; marcada=null; destAlvo=null; destNivel=0; ger++;
+  PARES=RIMAS.length/2;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","AS PALAVRAS QUE RIMAM"));
+  c.appendChild(el("div","balao",ENUN));
+
+  var board=el("div","rmboard"), i;
+  /* embaralha: o par e por SOM, nunca por posicao */
+  var lista=[]; for(i=0;i<RIMAS.length;i++) lista.push(RIMAS[i]);
+  baguncar(lista);
+  for(i=0;i<lista.length;i++) board.appendChild(fazCarta(lista[i]));
+  c.appendChild(board);
+
+  c.appendChild(el("div","hint","Toque numa carta e depois na que rima com ela. No PC dá para clicar com o mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazCarta(dado){
+  /* `.ptxt` = na atividade o motor poe o alto-falante sozinho (a rima e do
+     ouvido); `.rmc` = a carta desta peca. */
+  var l=el("div","rmc ptxt", (dado.t===undefined||dado.t===null)?"":dado.t);
+  /* os dois lados do par publicam a MESMA chave: e assim que o auditor-jogador
+     fecha a fase, e a crianca nao ve diferenca nenhuma. */
+  l.setAttribute("data-qa",dado.k);
+  l.onclick=function(){ if(souDedo()) return; toca(l); };   /* mouse de verdade */
+  l.addEventListener("touchend",function(ev){
+    ultimoToque=agora();
+    /* nao dar preventDefault no touchstart — mata o toque; aqui no touchend e seguro */
+    toca(l);
+  },false);
+  l.addEventListener("touchstart",function(){ ultimoToque=agora(); },false);
+  return l;
+}
+
+/* ---- o gesto: escolhe uma carta, escolhe outra ---- */
+function toca(l){
+  if(temClasse(l,"feita")) return;
+  if(!marcada){ sTap(); marca(l); apagaDest(); return; }
+  if(marcada===l){ sTap(); desmarca(); return; }
+  juntar(marcada,l);
+}
+
+function rimam(a,b){
+  if(!a||!b||a===b) return false;
+  var ka=a.getAttribute("data-qa"), kb=b.getAttribute("data-qa");
+  return ka!==null && ka===kb;
+}
+
+function marca(l){ desmarca(); l.className="rmc ptxt sel"; marcada=l; }
+function desmarca(){
+  var a=app.getElementsByClassName("rmc"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=classeCarta(a[i]);
+  marcada=null;
+}
+/* a repintura passa por aqui, o unico lugar que sabe quem esta se mostrando —
+   senao o "ver o par" seria apagado no toque seguinte. */
+function classeCarta(l){
+  if(destAlvo&&l===destAlvo) return "rmc ptxt"+(destNivel>=2?" destf":" dest");
+  return "rmc ptxt";
+}
+
+function juntar(a,b){
+  if(temClasse(a,"feita")||temClasse(b,"feita")) return;
+  if(rimam(a,b)){
+    sCerto();
+    a.className="rmc ptxt feita"; b.className="rmc ptxt feita";
+    marcada=null;
+    if(destAlvo===a||destAlvo===b){ destAlvo=null; destNivel=0; }
+    FEITOS++;
+    if(barraP) barraP.style.width=Math.round(FEITOS*100/PARES)+"%";
+    if(FEITOS>=PARES){
+      var ge=ger;
+      setTimeout(function(){ if(ge!==ger) return; mostraBanner(FECHO, fimDaPeca); },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, a carta volta, e o andaime CRESCE. */
+  sErro();
+  a._err=(a._err||0)+1;
+  ajuda(DICAS[Math.min(a._err,DICAS.length)-1]);
+  var guardar=a;
+  desmarca();
+  /* o VER O PAR entra JUNTO com a dica escrita, nunca no lugar dela:
+     2o erro -> o par pisca; 3o erro -> acende de vez e a carta fica escolhida. */
+  if(guardar._err===2) mostraDest(guardar,1);
+  if(guardar._err>=3) revela(guardar);
+}
+
+/* mostra o par certo da carta `l` (o outro membro do grupo ainda livre) */
+function mostraDest(l,nivel){
+  if(!l||temClasse(l,"feita")) return;
+  var a=app.getElementsByClassName("rmc"), i, alvo=null;
+  for(i=0;i<a.length;i++){
+    if(temClasse(a[i],"feita")||a[i]===l) continue;
+    if(rimam(l,a[i])){ alvo=a[i]; break; }
+  }
+  if(!alvo) return;
+  destAlvo=alvo; destNivel=nivel;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")&&a[i]!==marcada) a[i].className=classeCarta(a[i]);
+}
+function apagaDest(){
+  var velho=destAlvo; destAlvo=null; destNivel=0;
+  if(velho&&!temClasse(velho,"feita")&&velho!==marcada) velho.className="rmc ptxt";
+}
+/* 3º erro: acende o par e DEIXA seguir (a carta erra fica escolhida; basta tocar
+   na acesa) — é o que garante que a peça nunca trava. */
+function revela(l){
+  mostraDest(l,2);
+  if(!destAlvo) return;
+  marca(l);
+}
+
+function fimDaPeca(){
+  ger++;
+  marcada=null; destAlvo=null; destNivel=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Você achou os "+PARES+" pares que rimam."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaRima(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça RIMA: par por SOM do fim, toque e mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+    if(f && f.dados) RIMAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+      if(_d.FECHO !== undefined) FECHO = _d.FECHO;
+    }
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    pecaRima();
+  })();
+};
+
 /* ==== PECA: rotular ==== */
 MEC["rotular"] = function(f, cen, fim){
   cen.className = cen.className + " mec-rotular";
@@ -33075,7 +33394,7 @@ function pecaRotular(){
     montaLinhaFala(c);
     if(modoAtual==="escrever"){
       vagasBox=el("div","vagas",""); c.appendChild(vagasBox);
-      letrasEl=el("div","r4_letras",""); c.appendChild(letrasEl);
+      letrasEl=el("div","r5_letras",""); c.appendChild(letrasEl);
       c.appendChild(el("div","hint","Toque nas letras <b>ou</b> use o teclado do computador."));
     }else if(modoAtual==="mostrar"){
       c.appendChild(el("div","hint","Toque em uma parte por vez. Ningu&#233;m erra aqui: aqui a gente descobre."));
@@ -33431,11 +33750,11 @@ function ajudaEscrever(n){
 function acendeCerta(){
   var b=achaTecla(palavra.charAt(posL));
   limpaPisca();
-  if(b) b.className="tecl r4_pisca";
+  if(b) b.className="tecl r5_pisca";
 }
 function limpaPisca(){
   var i;
-  for(i=0;i<teclas.length;i++) if(temClasse(teclas[i],"r4_pisca")) teclas[i].className="tecl";
+  for(i=0;i<teclas.length;i++) if(temClasse(teclas[i],"r5_pisca")) teclas[i].className="tecl";
 }
 function revelaLetra(){
   var k=palavra.charAt(posL);

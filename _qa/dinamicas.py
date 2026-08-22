@@ -170,6 +170,36 @@ def analisa(js, css, baixo, html=None):
             ruins.append(u"memoria: o VERSO da carta nao usa imagem — retangulo liso nao e "
                          u"ilustracao. Regra da casa: verso de arte de IA.")
 
+    # ---------------------------------------------------- RIMA (achar o par que rima)
+    # Mecanica nova (ago/2026, da pesquisa fonologica): o par e por SOM do fim,
+    # num tabuleiro de cartas viradas para cima. Regra da casa: mecanica nova =
+    # linha no _padrao/DINAMICAS.md E regra AQUI, no mesmo commit. Gatilho honesto:
+    # so esta peca tem a carta `.rmc` E casa por `rimam(`.
+    if re.search(r'\.rmc\b', css) and re.search(r'\brimam\s*\(', js):
+        usa.append("rima")
+        # ⭐ A ARMADILHA NUMERO UM: tabuleiro NAO embaralhado. Se as cartas ficam na
+        #    ordem em que foram escritas, a crianca decora a POSICAO do par em vez
+        #    de escutar o fim da palavra — a fase perde a razao de existir.
+        #    ⚠️ `baguncar` vem DECLARADO no motorzinho de toda peca: declarar nao e
+        #    usar (a mesma pedra de colorir/ligar-pontos/letras-escondidas). So
+        #    conta CHAMADA de verdade.
+        _mist = [m for m in re.finditer(r'\b(?:baguncar|embaralhar?|shuffle)\s*\(', js)
+                 if not js[max(0, m.start() - 9):m.start()].rstrip().endswith("function")]
+        if not _mist:
+            ruins.append(u"rima: o tabuleiro nao e EMBARALHADO. A crianca decora a posicao do "
+                         u"par em vez de escutar o som do fim — a rima e do ouvido, nao do lugar.")
+        # a rima e do OUVIDO: cada carta tem que poder falar. Na atividade o motor
+        # poe o alto-falante pela classe `.ptxt`; sem ela, quem ainda soletra
+        # escolhe pelo desenho e a fase vira loteria.
+        if not re.search(r'\bptxt\b', css + js) and not re.search(r'data-voz', js):
+            ruins.append(u"rima: as cartas nao tem alto-falante (classe .ptxt / data-voz). A "
+                         u"rima e do ouvido — quem ainda le devagar fica de fora justo no "
+                         u"conteudo da fase.")
+        # erro NAO pune: o andaime tem que crescer (dica -> ver o par -> revela)
+        if not re.search(r'function\s+revela\b', js):
+            avisos.append(u"rima: nao achei o 3o degrau do andaime (revela). Sem ele, quem erra "
+                          u"tres vezes fica sem o par aceso e pode travar.")
+
     # ------------------------------------------- BATER AS SILABAS (contar)
     # Gatilho honesto: so esta mecanica publica um TAMBOR (`.bsBater`) junto com
     # marcas que NASCEM do dedo (`.bsBatida`). E mecanica de CONTAGEM POR GESTO —

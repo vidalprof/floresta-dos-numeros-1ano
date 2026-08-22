@@ -118,7 +118,10 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
    /* juntar-silabas (ago/2026): a peca nova entra na lista NO MESMO COMMIT —
       sem isto o jogador nao enxerga onde tocar e da "PRESO" numa peca que
       funciona. Foi assim com a rosa dos ventos e com o marca-texto. */
-   +',.jsSil,.jsVaga,.bsBatida,.bsPronto';
+   +',.jsSil,.jsVaga,.bsBatida,.bsPronto'
+   /* rima (ago/2026): a carta do tabuleiro de rimas. Peca nova = alvo novo AQUI,
+      no mesmo commit — mesma historia da rosa dos ventos e do marca-texto. */
+   +',.rmc';
  for(let i=0;i<5200;i++){
    const est=await p.evaluate(()=>{
      const s=document.querySelector('.selo'), h1=document.querySelector('h1');
@@ -289,6 +292,18 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
        const sel=ligs.find(e=>e.className.indexOf('sel')>=0);
        if(!sel){ ligs[0].click(); return 1; }
        const par=ligs.find(e=>e!==sel&&e.getAttribute('data-qa')===sel.getAttribute('data-qa'));
+       if(par){ par.click(); return 1; }
+     }
+     /* RIMA (tabuleiro de cartas viradas): mesmo par por data-qa que o LIGAR, so
+        que num tabuleiro so (`.rmc`). Peca nova = solucionador novo AQUI, no
+        mesmo commit — senao o jogador toca ao acaso e da "PRESO" numa fase que
+        a crianca fecha. */
+     const rms=[...document.querySelectorAll('.rmc[data-qa]')]
+       .filter(e=>e.offsetParent!==null&&e.className.indexOf('feita')<0);
+     if(rms.length>1){
+       const sel=rms.find(e=>e.className.indexOf('sel')>=0);
+       if(!sel){ rms[0].click(); return 1; }
+       const par=rms.find(e=>e!==sel&&e.getAttribute('data-qa')===sel.getAttribute('data-qa'));
        if(par){ par.click(); return 1; }
      }
      /* a mesma ideia com .peca -> linha de destino que publica data-vaga
