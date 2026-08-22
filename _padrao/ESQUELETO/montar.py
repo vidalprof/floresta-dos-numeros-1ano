@@ -162,6 +162,18 @@ def confere(c, mecs):
                  u"\"feminina\"). Mascote feminino com voz masculina e a crianca "
                  u"vendo uma personagem e ouvindo outra.")
 
+    # ⚠️ LICAO PAGA (Detetive, ago/2026): o campo `fundo` vai DIRETO no CSS do
+    #    motor (`url(img/<fundo>)`), sem acrescentar extensao — ao contrario do
+    #    `imgEl`, que poe `.png` sozinho. Com `fundo:"dp_fundo"` (sem extensao) o
+    #    navegador buscava `img/dp_fundo` e o pano de fundo NAO carregava (a
+    #    crianca via um quadradinho vazio); so o portao 1e pegava, tarde, depois
+    #    de publicar. Agora o montador cobra a extensao aqui.
+    fundo = c.get("fundo")
+    if fundo and isinstance(fundo, str) and "." not in fundo:
+        p.append(u"o campo 'fundo' precisa da EXTENSAO do arquivo (ex.: "
+                 u"\"%s.png\"). Sem ela o motor busca 'img/%s' e o pano de fundo "
+                 u"nao carrega." % (fundo, fundo))
+
     cur = c.get("curriculo") or {}
     usados = sorted(set(f.get("conceito") for f in fases if f.get("conceito")))
     for k in usados:

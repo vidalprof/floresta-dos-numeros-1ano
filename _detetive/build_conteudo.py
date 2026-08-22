@@ -50,7 +50,7 @@ CONTEUDO = {
  u"crachas": 6,
  # quem planejou (até o 5º ano manda o PEDAGOGO; ver _padrao/RECEITA.md)
  u"mesa": u"Pedagogo do 5º ano + especialista em Língua Portuguesa (revisão de reforço).",
- u"fundo": u"dp_fundo",
+ u"fundo": u"dp_fundo.png",
  u"voz": u"feminina",
  u"abertura": (u"Bem-vindo(a) à Agência! Sou a detetive Filó. Cada caso só se "
                u"resolve LENDO com atenção e usando as palavras certas. Vamos?"),
