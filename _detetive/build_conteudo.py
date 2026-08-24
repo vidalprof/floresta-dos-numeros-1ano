@@ -361,6 +361,34 @@ add(id=u"f09", mec=u"escolher", selo=u"CASO 2: LENDO NAS ENTRELINHAS", conceito=
            u"É <b>com sono</b>. Toque para seguir."]),
     ], dadosExtra={u"TITULO":u"LENDO NAS ENTRELINHAS", u"FECHO":u"Você leu até o que estava escondido!"})
 
+# +obj2 (reequilíbrio ago/2026): 3º escolher DO MESMO BLOCO (fica colado ao f06/f09),
+# agora sobre QUEM/ONDE/POR QUÊ num texto narrativo — informação explícita + inferência.
+add(id=u"f06c", mec=u"escolher", selo=u"CASO 2: PISTAS NO TEXTO", conceito=u"objetivo2",
+    enunciado=u"Leia como detetive e ache a informação certa no texto.",
+    dica=u"A resposta está NO texto (explícita) ou dá para concluir dele.",
+    dados=[
+      esc(u"Leia: <i>“Na segunda-feira, Lena guardou a bicicleta na garagem e trancou o portão.”</i> Onde Lena guardou a bicicleta?",
+          u"Na garagem", [u"No quintal", u"Na escola"],
+          [u"A resposta está escrita na frase.", u"“…guardou a bicicleta na <b>garagem</b>.”",
+           u"É <b>na garagem</b>. Toque para seguir."]),
+      esc(u"Leia: <i>“O Téo correu para a cozinha assim que sentiu cheiro de bolo.”</i> Por que o Téo correu?",
+          u"Por causa do cheiro de bolo", [u"Porque estava com medo", u"Porque ia dormir"],
+          [u"O que ele sentiu antes de correr?", u"Ele sentiu <b>cheiro de bolo</b>.",
+           u"É <b>por causa do cheiro de bolo</b>. Toque para seguir."]),
+      esc(u"Leia: <i>“Quando a professora entrou, a turma toda ficou em silêncio.”</i> O que a turma fez?",
+          u"Ficou em silêncio", [u"Saiu correndo", u"Começou a cantar"],
+          [u"A frase diz o que a turma fez.", u"“…ficou em <b>silêncio</b>.”",
+           u"É <b>ficou em silêncio</b>. Toque para seguir."]),
+      esc(u"Leia: <i>“Nico esqueceu o casaco e voltou tremendo de frio para casa.”</i> Como Nico se sentia ao voltar?",
+          u"Com frio", [u"Com calor", u"Com fome"],
+          [u"Por que ele voltou tremendo?", u"Sem casaco, <b>tremendo</b> = frio.",
+           u"É <b>com frio</b>. Toque para seguir."]),
+      esc(u"Leia: <i>“A vovó pegou os óculos, a linha e a agulha e sentou na poltrona.”</i> O que a vovó vai fazer?",
+          u"Costurar", [u"Cozinhar", u"Nadar"],
+          [u"Linha + agulha + óculos servem para quê?", u"Isso é coisa de <b>costurar</b>.",
+           u"É <b>costurar</b>. Toque para seguir."]),
+    ], dadosExtra={u"TITULO":u"PISTAS NO TEXTO", u"FECHO":u"Você achou as pistas no texto!"})
+
 # idx7 — AQUECIMENTO — revisão espaçada NO MEIO (~44%): revê PRONOMES (já
 # treinados) por um gesto diferente (ligar). ÚNICO reuso fora do bloco (regra).
 add(id=u"aquecimento", mec=u"ligar", selo=u"AQUECIMENTO DO DETETIVE", conceito=u"objetivo1",
@@ -452,6 +480,17 @@ add(id=u"f11", mec=u"linha-do-tempo", selo=u"CASO 3: A ORDEM DOS PASSOS", concei
            {u"t":4, u"n":u"Leve ao forno."},
            {u"t":5, u"n":u"Espere esfriar e sirva."}])
 
+# +obj3 (reequilíbrio ago/2026): 2ª linha-do-tempo DO MESMO BLOCO (colada ao f11),
+# outro texto injuntivo — o passo a passo de PLANTAR uma semente, em ordem.
+add(id=u"f11b", mec=u"linha-do-tempo", selo=u"CASO 3: PASSO A PASSO DA HORTA", conceito=u"objetivo3",
+    enunciado=u"Estas instruções <b>ensinam a plantar</b> uma semente. Ponha os <b>passos</b> na ordem.",
+    dica=u"Texto injuntivo dá os passos na ordem: o que se faz primeiro de tudo?",
+    dados=[{u"t":1, u"n":u"Fa&#231;a um buraquinho na terra."},
+           {u"t":2, u"n":u"Coloque a semente dentro."},
+           {u"t":3, u"n":u"Cubra a semente com terra."},
+           {u"t":4, u"n":u"Regue com um pouco de &#225;gua."},
+           {u"t":5, u"n":u"Espere a plantinha nascer."}])
+
 # idx11 — INTRUSO: qual frase NÃO é uma instrução (não tem verbo de comando)
 add(id=u"f12", mec=u"intruso", selo=u"CASO 3: A FRASE INTRUSA", conceito=u"objetivo3",
     enunciado=u"Três frases dão <b>ordens</b>. <b>Qual NÃO é uma instrução?</b>",
@@ -491,6 +530,48 @@ add(id=u"f12", mec=u"intruso", selo=u"CASO 3: A FRASE INTRUSA", conceito=u"objet
        u"p2":u"As outras começam com um verbo que MANDA: feche, regue, guarde.",
        u"p3":u"“A rua é comprida” só DESCREVE; as outras dão ORDEM — por isso ela é a diferente.",
        u"regra":u"instrução manda fazer (verbo de comando); descrição só conta"},
+    ])
+
+# +obj3 (reequilíbrio ago/2026): 2º intruso DO MESMO BLOCO (colado ao f12), subindo
+# o degrau — agora achar a frase que NÃO é um passo dentro de instruções mais longas.
+add(id=u"f12b", mec=u"intruso", selo=u"CASO 3: O PASSO INTRUSO", conceito=u"objetivo3",
+    enunciado=u"Três frases são <b>passos de uma instrução</b>. <b>Qual NÃO é um passo?</b>",
+    dica=u"Passo manda fazer algo (verbo de comando): pegue, dobre, cole.",
+    dados=[
+      {u"selo":u"OS PASSOS", u"tipo":u"texto",
+       u"enun":u"Três frases mandam fazer um passo. <b>Qual NÃO manda?</b>",
+       u"itens":[{u"k":u"a", u"n":u"PEGUE A FOLHA"}, {u"k":u"b", u"n":u"DOBRE AO MEIO"},
+                 {u"k":u"c", u"n":u"COLE AS PONTAS"}, {u"k":u"d", u"n":u"O PAPEL &#201; AZUL"}],
+       u"fora":u"d", u"nomeFora":u"O PAPEL &#201; AZUL",
+       u"d1":u"Qual frase NÃO manda você fazer nada?",
+       u"d2":u"Pegue, dobre, cole são PASSOS. Uma só descreve.",
+       u"d3":u"A de fora é <b>O PAPEL &#201; AZUL</b>: ela apenas descreve, não manda fazer.",
+       u"razoes":[{u"t":u"As outras mandam fazer (verbo de comando); esta só descreve.", u"ok":1},
+                  {u"t":u"Porque ela fala de papel.", u"ok":0},
+                  {u"t":u"Porque ela é a mais curta.", u"ok":0},
+                  {u"t":u"Porque ela tem a cor azul.", u"ok":0}],
+       u"enunPorque":u"O que <b>O PAPEL &#201; AZUL</b> faz de diferente das outras três? Toque na razão certa.",
+       u"p1":u"Pode ser verdade, mas olhe o que as OUTRAS três fazem.",
+       u"p2":u"As outras começam com um verbo que MANDA: pegue, dobre, cole.",
+       u"p3":u"“O papel é azul” só DESCREVE; as outras dão um PASSO — por isso ela é a diferente.",
+       u"regra":u"passo manda fazer (verbo de comando); descrição só conta"},
+      {u"selo":u"OS PASSOS", u"tipo":u"texto",
+       u"enun":u"Três frases mandam fazer um passo. <b>Qual NÃO manda?</b>",
+       u"itens":[{u"k":u"a", u"n":u"LAVE AS M&#195;OS"}, {u"k":u"b", u"n":u"ABRA A TORNEIRA"},
+                 {u"k":u"c", u"n":u"A &#193;GUA &#201; FRIA"}, {u"k":u"d", u"n":u"SEQUE COM A TOALHA"}],
+       u"fora":u"c", u"nomeFora":u"A &#193;GUA &#201; FRIA",
+       u"d1":u"Qual frase NÃO manda você fazer nada?",
+       u"d2":u"Lave, abra, seque são PASSOS. Uma só descreve.",
+       u"d3":u"A de fora é <b>A &#193;GUA &#201; FRIA</b>: ela apenas descreve, não manda fazer.",
+       u"razoes":[{u"t":u"As outras mandam fazer (verbo de comando); esta só descreve.", u"ok":1},
+                  {u"t":u"Porque ela fala de água.", u"ok":0},
+                  {u"t":u"Porque ela não tem mãos.", u"ok":0},
+                  {u"t":u"Porque ela é a maior.", u"ok":0}],
+       u"enunPorque":u"O que <b>A &#193;GUA &#201; FRIA</b> faz de diferente das outras três? Toque na razão certa.",
+       u"p1":u"Pode ser verdade, mas olhe o que as OUTRAS três fazem.",
+       u"p2":u"As outras começam com um verbo que MANDA: lave, abra, seque.",
+       u"p3":u"“A água é fria” só DESCREVE; as outras dão um PASSO — por isso ela é a diferente.",
+       u"regra":u"passo manda fazer (verbo de comando); descrição só conta"},
     ])
 
 # idx12 — COMPLETAR: o verbo de comando (imperativo) que falta (abre bloco 'completar')
@@ -562,6 +643,24 @@ add(id=u"f14", mec=u"forca", selo=u"CASO 4: ESCREVA A PALAVRA CERTA", conceito=u
        u"d":u"'Foi um ___ dia.' Troque por BOM ('um BOM dia'): termina em U."},
     ])
 
+# +obj4 (reequilíbrio ago/2026): 2ª forca DO MESMO BLOCO (colada ao f14), mais casos
+# de MAU × MAL para fixar a grafia U × L pelo truque BOM/BEM.
+add(id=u"f14b", mec=u"forca", selo=u"CASO 4: A PALAVRA DO CASO", conceito=u"objetivo4",
+    enunciado=u"Descubra pela pista e monte, letra por letra: <b>MAU</b> ou <b>MAL</b>?",
+    dica=u"Troque por BOM/BEM: BOM → termina em U (mau); BEM → termina em L (mal).",
+    dados=[
+      {u"p":u"MAL", u"ac":u"MAL",
+       u"d":u"'O rem&#233;dio tem gosto ___.' Troque por BEM? N&#227;o — aqui cabe 'ruim', &#233; adv&#233;rbio: termina em L."},
+      {u"p":u"MAU", u"ac":u"MAU",
+       u"d":u"'Ele fez cara de ___.' Troque por BOM ('cara de BOM')? &#201; adjetivo: termina em U."},
+      {u"p":u"MAL", u"ac":u"MAL",
+       u"d":u"'A carta foi ___ escrita.' Troque por BEM ('BEM escrita'): termina em L."},
+      {u"p":u"MAU", u"ac":u"MAU",
+       u"d":u"'O ___ humor dele passou.' Troque por BOM ('BOM humor'): termina em U."},
+      {u"p":u"MAL", u"ac":u"MAL",
+       u"d":u"'Dormi ___ esta noite.' Troque por BEM ('dormi BEM'): termina em L."},
+    ])
+
 # idx15 — DIGITAR: escrever mau/mal certo (fecha o caso, sem apoio)
 add(id=u"f17", mec=u"digitar", selo=u"CASO 4: ESCREVA CERTO", conceito=u"objetivo4",
     enunciado=u"Escreva a palavra certa, letra por letra.",
@@ -580,6 +679,26 @@ add(id=u"f17", mec=u"digitar", selo=u"CASO 4: ESCREVA CERTO", conceito=u"objetiv
             u"dic":u"Cabe BEM: então é <b>MAL</b>."}],
     dadosExtra={u"ENUN":u"Escreva a palavra, letra por letra.",
                 u"FECHO":u"Você escreveu mau e mal do jeito certo!"})
+
+# +obj4 (reequilíbrio ago/2026): 2º digitar DO MESMO BLOCO (colado ao f17), fechando
+# o caso do MAU/MAL sem apoio — a criança decide U ou L pelo truque BOM/BEM.
+add(id=u"f17b", mec=u"digitar", selo=u"CASO 4: FECHE O CASO", conceito=u"objetivo4",
+    enunciado=u"Última prova do caso: escreva a palavra certa, letra por letra.",
+    dica=u"Diga a frase trocando por bom/bem e escolha U ou L no fim.",
+    dados=[{u"palavra":u"MAU", u"img":u"", u"voz":u"mau",
+            u"pista":u"'Um ___ exemplo' — troque por BOM ('um BOM exemplo'). Escreva com U no fim.",
+            u"dic":u"Cabe BOM: então é <b>MAU</b>."},
+           {u"palavra":u"MAL", u"img":u"", u"voz":u"mal",
+            u"pista":u"'Ele se comportou ___' — troque por BEM ('comportou BEM'). Escreva com L no fim.",
+            u"dic":u"Cabe BEM: então é <b>MAL</b>."},
+           {u"palavra":u"MAU", u"img":u"", u"voz":u"mau",
+            u"pista":u"'O ___ tempo estragou o passeio' — troque por BOM ('BOM tempo'). Escreva com U no fim.",
+            u"dic":u"Cabe BOM: então é <b>MAU</b>."},
+           {u"palavra":u"MAL", u"img":u"", u"voz":u"mal",
+            u"pista":u"'A televis&#227;o pega ___' — troque por BEM ('pega BEM'). Escreva com L no fim.",
+            u"dic":u"Cabe BEM: então é <b>MAL</b>."}],
+    dadosExtra={u"ENUN":u"Escreva a palavra, letra por letra.",
+                u"FECHO":u"Caso encerrado: você domina o mau e o mal!"})
 
 # idx15 (ÚLTIMA) — CAÇA-PALAVRAS de REVISÃO: fecha a atividade com um gesto leve,
 # achando as palavras do caso INTEIRO (pronomes + o mau/mal que treinou).
