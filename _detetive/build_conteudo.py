@@ -379,7 +379,7 @@ add(id=u"f06c", mec=u"escolher", selo=u"CASO 2: PISTAS NO TEXTO", conceito=u"obj
           u"Ficou em silêncio", [u"Saiu correndo", u"Começou a cantar"],
           [u"A frase diz o que a turma fez.", u"“…ficou em <b>silêncio</b>.”",
            u"É <b>ficou em silêncio</b>. Toque para seguir."]),
-      esc(u"Leia: <i>“Nico esqueceu o casaco e voltou tremendo de frio para casa.”</i> Como Nico se sentia ao voltar?",
+      esc(u"Leia: <i>“Rafa esqueceu o casaco e voltou tremendo de frio para casa.”</i> Como Rafa se sentia ao voltar?",
           u"Com frio", [u"Com calor", u"Com fome"],
           [u"Por que ele voltou tremendo?", u"Sem casaco, <b>tremendo</b> = frio.",
            u"É <b>com frio</b>. Toque para seguir."]),
