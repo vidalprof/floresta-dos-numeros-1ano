@@ -276,9 +276,23 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    atividade de tema CLARO o mesmo branco caia para 1,18:1 — sumia. O texto nao
    pode apostar no fundo da atividade: carrega a mesa escura DELE (rgba(18,22,12,.80)
    -> >=4,5:1 com branco em qualquer tema). */
-.cam .gnome{position:relative;z-index:1;color:#fff;font-weight:800;font-size:18px;line-height:1.25;
-   text-align:center;padding:8px 12px;border-radius:14px;background:rgba(18,22,12,.80);
-   text-shadow:0 1px 4px rgba(0,0,0,.55)}
+/* ⚠️ LICAO PAGA (Detetive, 5o ano, ago/2026 — o Marcos no CELULAR): com 3 gavetas
+   o nome comprido (ex.: "DEMONSTRATIVO") estourava a largura e, como `.cam` tem
+   `overflow:hidden`, ficava CORTADO — nao dava rolagem nem aviso, so sumia a
+   ponta da palavra. O leiaute.js nao pegou porque o corte e por overflow, nao por
+   sair da tela. Cura: o nome vira FLUIDO (encolhe com a tela) e QUEBRA a palavra
+   (o mesmo tratamento que o `.temrot` ja tinha). Nunca px fixo em rotulo de gaveta. */
+.cam .gnome{position:relative;z-index:1;color:#fff;font-weight:800;
+   font-size:clamp(13px,4.2vw,18px);line-height:1.2;max-width:100%;
+   -webkit-box-sizing:border-box;box-sizing:border-box;
+   word-break:break-word;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto;
+   text-align:center;padding:8px 10px;border-radius:14px;background:rgba(18,22,12,.80);
+   text-shadow:0 1px 4px rgba(0,0,0,.55);
+   /* ⚠️ o alto-falante (.gzap) mora no CANTO SUPERIOR DIREITO (absolute). O nome
+      tem que comecar ABAIXO dele, senao o botao TAPA a ponta da palavra — foi o
+      corte que o Marcos viu no celular (PESSOAL virava "PESS"). Empurra o rotulo
+      para baixo do botao; assim a palavra usa a largura inteira e aparece toda. */
+   margin-top:36px}
 /* ⭐ gaveta com figura fraca + NOME (classificar em GRUPOS): a faixa do nome
    fica EMBAIXO, larga, longe do alto-falante do topo (senao o botao tapa a
    palavra — portao do diretor de arte). Fonte fluida cabe "INVERTEBRADO" em
