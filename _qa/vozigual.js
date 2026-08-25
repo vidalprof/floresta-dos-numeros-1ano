@@ -30,9 +30,15 @@ const {chromium} = require('/opt/node22/lib/node_modules/playwright/index.js');
 const path = require('path');
 const fs = require('fs');
 
+/* ⚠️ LICAO PAGA (Detetive, ago/2026): a LACUNA do completar ("___" na tela) vira
+   uma PAUSA no audio (o `montar._fonetica_voz` troca por "…", senao a voz lia
+   "underline"). Como o `_` e caractere de palavra (\w), a norma ANTIGA mantinha
+   o "___" na tela mas apagava o "…" da voz -> "diferentes" numa fase que esta
+   certa. O buraco do preenchimento e um GAP nos dois lados: ele sai da conta.
+   Por isso a classe agora e `[^a-z0-9 ]` (tira `_` e `…`), como o achata do 0n. */
 const norm = t => (t || '').toLowerCase()
   .normalize('NFD').replace(/[̀-ͯ]/g, '')
-  .replace(/[^\w ]/g, ' ').replace(/\s+/g, ' ').trim();
+  .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 
 (async () => {
   const arq = process.argv[2];

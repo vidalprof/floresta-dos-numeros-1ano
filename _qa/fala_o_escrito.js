@@ -100,7 +100,10 @@ const path = require('path');
      ("He is eating a sandwich") — as duas certas, e a voz identica nas duas.
      Comparar com a caixa fazia o portao acusar uma diferenca que NAO EXISTE
      para a crianca, que ouve. O que ele tem que medir e o que se OUVE. */
-  const norm = s => (s || '').replace(/\s+/g, ' ').trim().toLowerCase();
+  /* ⚠️ a LACUNA do completar ("___" na tela) vira PAUSA no audio ("…"): e um GAP
+     nos dois lados, entao sai da conta (senao "___" != "…" reprova uma fase certa).
+     Detetive, ago/2026. */
+  const norm = s => (s || '').replace(/[_…]+/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
   /* ⭐ LICAO PAGA (ago/2026, Trem do Alfabeto). O `montar.py` (eh_fala) grava,
      DE PROPOSITO, uma letra sozinha pelo NOME dela: o vagao "D" fala "Dê", o "I"
      fala "Í". E o certo — a crianca do 1o ano aprende a NOMEAR a letra, e a voz

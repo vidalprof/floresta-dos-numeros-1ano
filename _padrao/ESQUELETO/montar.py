@@ -611,9 +611,11 @@ def _fonetica_voz(t):
     #    a chave/hash sai do texto da tela (com o "___"), o mp3 continua casando; so
     #    o que a voz DIZ muda. Uma pausa curta (reticencias) no lugar do traco.
     t = _LACUNA.sub(u"…", t)
-    # nao deixar espaco duplo nem pontuacao colada na reticencia
+    # ⚠️ NAO tirar a pontuacao depois da lacuna: a TELA mantem "___." (com ponto),
+    #    entao a VOZ tambem tem de manter ("….") — senao o portao 0n ve a tela com
+    #    ponto e a voz sem, e reprova uma fase certa (Detetive, ago/2026). So limpa
+    #    espaco duplo. O `_` e o "…" saem da conta nos dois lados, no proprio portao.
     t = re.sub(r"\s+…", u" …", t)
-    t = re.sub(r"…\s*([.!?,;:])", u"…", t)
     return t
 
 
