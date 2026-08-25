@@ -11,6 +11,18 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **✂️🏆 RECORTE PROFISSIONAL = `rembg` (isnet), NÃO flood-fill (Marcos, ago/2026:
+> "use ferramentas profissionais para recortar, tudo perfeito e lindo, sem mancha,
+> tudo sem fundo" + "para o processo ficar mais rápido, confiável, com menos erros").**
+> O flood-fill de cor NÃO separa peça PRETA em fundo PRETO — a cartola do Homem-Batata
+> saía manchada de branco (o flood comia a peça). A cura é o **rembg** (modelo treinado),
+> que já está **instalado aqui** (`pip install rembg onnxruntime`, funciona pelo proxy;
+> o modelo `isnet-general-use` baixa sozinho na 1ª vez — melhor que `u2netp`, que deixava
+> halo cinza). Utilitário pronto: **`_padrao/recortar.py`** (`grade LxC`, `um`, `mascote`).
+> Recorta preto-no-preto perfeito, borda limpa; depois zera alfa < 60 (tira sombra) e apara.
+> **Regra:** todo recorte de peça/cartela/mascote passa a ser pelo `_padrao/recortar.py`.
+> Para o MASCOTE, o comando `mascote` recorta as 3 poses na MESMA bbox de união (não treme).
+>
 > **⚡ CHECK-RELÂMPAGO ANTES DA BANCA COMPLETA (cobrança do Marcos, ago/2026:
 > "o processo tem que ser muito mais rápido").** O que faz uma atividade nova
 > demorar NÃO é a banca (roda em minutos) — é o CICLO: descobrir um defeito só
