@@ -11,6 +11,25 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **⛔⏱️ LIÇÃO PAGA (ago/2026) — BANCA COMPLETA NUNCA SE RODA EM CONSERTO.**
+> Cobrança do Marcos, DUAS vezes no mesmo dia: *"lembra que não é passado banca
+> completa em consertos"* e *"vc tem que lembrar disso, não posso ficar perdendo
+> tempo com essas coisas"*. Eu tinha acabado de rodar `bash _qa/auditar.sh` inteiro
+> (26 Chromiums, vários minutos, custo/tempo dele) só para validar um ajuste de VOZ
+> no motor. **ERRADO.** A regra é MEDIDA e não pode depender de eu lembrar:
+> - **CONSERTO / ajuste** (texto, cor, um dado, um comportamento pontual — mesmo que
+>   toque o motor): rodar **SÓ os portões do que mexi** + `node --check` +
+>   `python3 _qa/revisor.py <pasta>`. Para voz: `voz_dupla.js`, `vozigual.js`,
+>   `fala_o_escrito.js`. Nada de banca inteira. (`auditar.sh --reparo <html>` roda só
+>   os portões de texto, em segundos, quando serve.)
+> - **BANCA COMPLETA** (`bash _qa/auditar.sh <html>`): **só** para atividade/fase
+>   NOVA, ou quando o Marcos PEDIR. "Mudança de motor" NÃO é gatilho automático de
+>   banca inteira — se a mudança é um conserto, valida-se pelos portões DAQUELE
+>   assunto. Um conserto de voz se prova com os portões de voz saindo 0, não com a
+>   banca toda.
+> - **Nunca dizer que passou sem código 0** continua valendo — mas "código 0" é dos
+>   portões CERTOS, não de todos sempre.
+
 > **⚠️ LIÇÃO PAGA (ago/2026) — ATIVIDADE NOVA NASCE DO ESQUELETO, NUNCA HTML SOLTO.**
 > O Marcos pediu uma atividade de matemática (2º ano) e eu saí montando um HTML
 > avulso (emoji/CSS), do jeito ANTIGO — fora do nosso padrão do app Broto. Ele
