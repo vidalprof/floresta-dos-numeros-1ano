@@ -830,7 +830,13 @@ function narraBalao(force){
      a narracao da rodada nova entra na fila ATRAS dele (sequencial, sem voz dupla).
      `__balaoNarrado` vazio = 1o desenho da fase (o `limpa` ja limpou tudo); so
      limpo em troca REAL de rodada. */
-  if(__balaoNarrado){ _fila=null; try{ if(narr){ narr.pause(); narr.currentTime=0; } }catch(_e){} }
+  /* ⚠️ SÓ paro a voz velha quando NÃO há callback pendente (`!falandoCb`). Se
+     houver, é a fala de FIM de fase (o `depoisDaFala`, que faz nascer o botão
+     PRÓXIMO) ou uma fala bilíngue: pausar o `narr` aqui NÃO dispara o 'ended',
+     o callback fica preso e o botão PRÓXIMO só aparecia lá no teto de 6s — o
+     "próximo atrasado" que o Marcos pegou. Sem callback pendente (narração de
+     rodada, elogio) pode parar à vontade: corta o vazamento sem prender ninguém. */
+  if(__balaoNarrado){ _fila=null; try{ if(narr && !falandoCb){ narr.pause(); narr.currentTime=0; } }catch(_e){} }
   __balaoNarrado=txt;
   if(typeof temVoz==="function"){
     var k=temVoz(txt);
