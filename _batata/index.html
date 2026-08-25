@@ -1,0 +1,283 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>O Ateliê do Sr. Batata</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;font-family:"Segoe UI",'Baloo 2',Arial,sans-serif;}
+html,body{margin:0;height:100%;overflow:hidden;background:#2b1c46;color:#3a2a18;-webkit-user-select:none;user-select:none;}
+#app{position:fixed;inset:0;}
+.tela{position:absolute;inset:0;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;text-align:center;padding:16px;-webkit-animation:ap .4s;animation:ap .4s;}
+@-webkit-keyframes ap{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+@keyframes ap{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+.capa{background:radial-gradient(circle at 50% 30%,#7b52c9,#3a2560);}
+h1{font-size:8vw;margin:6px 0;color:#fff;text-shadow:0 3px 0 #00000030;font-weight:800;letter-spacing:.5px;}
+@media(min-width:760px){h1{font-size:52px}}
+.sub{color:#ffe08a;font-size:4.4vw;margin:0 0 14px;font-weight:700}@media(min-width:760px){.sub{font-size:22px}}
+.mascote{width:44vw;max-width:280px;filter:drop-shadow(0 10px 14px #00000040);}
+.bt{border:none;border-radius:22px;padding:16px 30px;font-size:5.5vw;font-weight:800;color:#fff;background:#ff8a3d;box-shadow:0 6px 0 #c85e1e;cursor:pointer;margin:8px;transition:transform .08s;}
+@media(min-width:760px){.bt{font-size:24px}}
+.bt:active{transform:translateY(3px);box-shadow:0 3px 0 #c85e1e}
+.bt.verde{background:#43c463;box-shadow:0 6px 0 #2f9247}
+.bt.azul{background:#3d9bff;box-shadow:0 6px 0 #1e6ec8}
+.campo{font-size:5vw;padding:12px 16px;border-radius:16px;border:3px solid #b98cf0;text-align:center;width:80%;max-width:340px;margin:8px;}
+@media(min-width:760px){.campo{font-size:22px}}
+.figs{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-justify-content:center;justify-content:center;gap:10px;margin:8px 0;}
+.fig{width:20vw;max-width:96px;height:20vw;max-height:96px;border-radius:50%;background:#fff;border:4px solid transparent;padding:4px;cursor:pointer;overflow:hidden;}
+.fig.sel{border-color:#ffd23f;box-shadow:0 0 0 4px #ffd23f66;}
+.fig img{width:100%;height:100%;object-fit:contain;}
+/* ==== ATELIE ==== */
+#atelie{padding:0;}
+.topo{-webkit-flex:none;flex:none;width:100%;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:8px;padding:6px 10px;background:#4a2f7a;color:#fff;}
+.topo .tt{font-weight:800;font-size:4.2vw}@media(min-width:760px){.topo .tt{font-size:20px}}
+.topo .guia{height:38px}
+.topo .zap{margin-left:auto;background:#ffffff22;border:none;color:#fff;border-radius:12px;padding:8px 12px;font-size:18px;cursor:pointer}
+#palco{-webkit-flex:1;flex:1;position:relative;width:100%;overflow:hidden;background:#222;}
+#palcobg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+#boneco{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(46vh,72vw);height:min(62vh,96vw);}
+#boneco .cam{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}
+#boneco .cam img{position:absolute;object-fit:contain;}
+.tocaflutua{-webkit-animation:fl 3s ease-in-out infinite;animation:fl 3s ease-in-out infinite;}
+@-webkit-keyframes fl{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,-54%)}}
+@keyframes fl{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,-54%)}}
+/* barra de categorias */
+.cats{-webkit-flex:none;flex:none;width:100%;display:-webkit-flex;display:flex;overflow-x:auto;gap:6px;padding:6px;background:#5a3d90;}
+.cat{-webkit-flex:none;flex:none;min-width:66px;border:none;border-radius:14px;background:#ffffff1a;color:#fff;padding:8px 6px;font-size:12px;font-weight:700;cursor:pointer;}
+.cat .ic{font-size:22px;display:block}
+.cat.on{background:#ffd23f;color:#4a2f7a}
+/* bandeja de opções */
+.bandeja{-webkit-flex:none;flex:none;width:100%;background:#efe6d3;display:-webkit-flex;display:flex;overflow-x:auto;gap:8px;padding:8px;min-height:96px;-webkit-align-items:center;align-items:center;}
+.op{-webkit-flex:none;flex:none;width:78px;height:78px;background:#fff;border-radius:14px;border:3px solid #d8c9a8;display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:5px;cursor:grab;touch-action:none;}
+.op img{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none;}
+.op.nenhum{font-size:12px;font-weight:700;color:#8a7f68;text-align:center;line-height:1.1}
+.acoes{-webkit-flex:none;flex:none;width:100%;display:-webkit-flex;display:flex;gap:8px;padding:8px;background:#4a2f7a;}
+.acoes .bt{-webkit-flex:1;flex:1;margin:0;font-size:4.4vw;padding:14px 8px}@media(min-width:760px){.acoes .bt{font-size:20px}}
+.dragimg{position:fixed;pointer-events:none;z-index:60;width:80px;height:80px;object-fit:contain;transform:translate(-50%,-50%);filter:drop-shadow(0 6px 8px #0006);}
+/* festa */
+.conf{position:fixed;top:-20px;width:12px;height:16px;z-index:70;border-radius:2px;-webkit-animation:cai linear forwards;animation:cai linear forwards;}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(600deg)}}
+@keyframes cai{to{transform:translateY(105vh) rotate(600deg)}}
+.galeria{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;-webkit-justify-content:center;justify-content:center;max-height:40vh;overflow:auto}
+.galeria img{width:28vw;max-width:150px;border-radius:12px;border:3px solid #fff;background:#fff}
+</style></head>
+<body><div id="app"></div>
+<audio id="au"></audio>
+<script>
+/* ===================== O ATELIÊ DO SR. BATATA (Pré) ===================== */
+var IMG="img/", AUD="audio/";
+var PRE="hb";
+/* --- catálogo de peças (arquivos já recortados) --- */
+var CAT=[
+ {k:"corpo", nome:"corpo",  ic:"🥔", itens:["hb_corpo1","hb_corpo2","hb_corpo3","hb_corpo4"], obrig:true},
+ {k:"olho",  nome:"olhos",  ic:"👀", itens:["hb_olho1","hb_olho2","hb_olho3","hb_olho4","hb_olho5","hb_olho6"]},
+ {k:"nariz", nome:"nariz",  ic:"👃", itens:["hb_nariz1","hb_nariz2","hb_nariz3","hb_nariz4"]},
+ {k:"boca",  nome:"boca",   ic:"👄", itens:["hb_boca1","hb_boca2","hb_boca3","hb_boca4"]},
+ {k:"sobra", nome:"sobrancelha", ic:"〰️", itens:["hb_sobrancelha1","hb_sobrancelha2"]},
+ {k:"orelha",nome:"orelhas",ic:"👂", itens:["hb_orelha1","hb_orelha2"]},
+ {k:"oculos",nome:"óculos", ic:"👓", itens:["hb_oculos1","hb_oculos2"]},
+ {k:"bigode",nome:"bigode", ic:"👨", itens:["hb_bigode1","hb_bigode2"]},
+ {k:"chapeu",nome:"chapéu", ic:"🎩", itens:["hb_chapeu1","hb_chapeu2","hb_chapeu3","hb_chapeu4","hb_chapeu5","hb_chapeu6"]},
+ {k:"roupa", nome:"roupa",  ic:"👕", itens:["hb_roupa_chef","hb_roupa_astro","hb_roupa_medico","hb_roupa_fazenda","hb_roupa_heroi","hb_roupa_artista","hb_roupa_musico","hb_roupa_jardim","hb_roupa_bombeiro","hb_roupa_prof"]}
+];
+/* z-order das camadas (baixo->cima) e âncora (em % da caixa do boneco) */
+var CAMADAS=["orelha","corpo","roupa","sobra","olho","oculos","nariz","bigode","boca","chapeu"];
+var ANCORA={
+ corpo:{cx:50,cy:50,w:100},
+ orelha:{cx:50,cy:34,w:82},
+ roupa:{cx:50,cy:74,w:80},
+ sobra:{cx:50,cy:27,w:50},
+ olho:{cx:50,cy:33,w:50},
+ oculos:{cx:50,cy:34,w:54},
+ nariz:{cx:50,cy:42,w:16},
+ bigode:{cx:50,cy:50,w:26},
+ boca:{cx:50,cy:52,w:30},
+ chapeu:{cx:50,cy:9,w:56}
+};
+var FUNDOS=[["cozinha","a cozinha"],["fazenda","a fazenda"],["cidade","a cidade"],["jardim","o jardim"],
+            ["espaco","o espaço"],["hospital","o hospital"],["atelie","o ateliê"],["palco","o palco"],
+            ["bombeiros","os bombeiros"],["sala","a sala de aula"]];
+
+var perfil={nome:"",fig:"hb_cr1"};
+var estado={}, catSel="corpo", fundoIdx=0;
+
+function $(s){return document.getElementById(s);}
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+
+/* ---------- VOZ (mp3 gravado; cai em silêncio se faltar) ---------- */
+var _au=$("au"), _armado=false;
+function arma(){ if(_armado)return; _armado=true; try{_au.play().catch(function(){});}catch(e){} }
+function falar(id){ try{ _au.pause(); _au.src=AUD+id+".mp3"; _au.currentTime=0; var p=_au.play(); if(p&&p.catch)p.catch(function(){}); }catch(e){} }
+/* beep de toque (Web Audio) */
+var _ac=null;
+function tom(f,d){ try{ if(!_ac)_ac=new (window.AudioContext||window.webkitAudioContext)(); var o=_ac.createOscillator(),g=_ac.createGain(); o.frequency.value=f; o.connect(g); g.connect(_ac.destination); g.gain.setValueAtTime(.14,_ac.currentTime); g.gain.exponentialRampToValueAtTime(.001,_ac.currentTime+(d||.15)); o.start(); o.stop(_ac.currentTime+(d||.15)); }catch(e){} }
+
+/* ======================= TELAS ======================= */
+function telaCapa(){
+  var t=el("div","tela capa");
+  t.appendChild(el("h1",null,"O Ateliê do Sr. Batata"));
+  t.appendChild(el("div","sub","Monte e vista o seu amigo batata!"));
+  var m=el("img","mascote"); m.src=IMG+"hb_batata_feliz.png"; m.alt="Tato"; t.appendChild(m);
+  var b=el("button","bt","▶ Começar"); b.onclick=function(){arma();tom(660);falar("hb_abertura");telaQuem();};
+  t.appendChild(b);
+  render(t); falar("hb_capa");
+}
+function telaQuem(){
+  var t=el("div","tela capa");
+  t.appendChild(el("h1",null,"Quem vai brincar?"));
+  var inp=el("input","campo"); inp.type="text"; inp.placeholder="Escreva o seu nome"; inp.maxLength=16; inp.value=perfil.nome||"";
+  t.appendChild(inp);
+  t.appendChild(el("div","sub","Escolha a sua figurinha:"));
+  var figs=el("div","figs"),i;
+  for(i=1;i<=6;i++){(function(n){ var f=el("div","fig"+(perfil.fig==n?" sel":"")); var im=el("img");im.src=IMG+n+".png";f.appendChild(im);
+    f.onclick=function(){arma();tom(600);perfil.fig=n; var a=figs.getElementsByClassName("fig"),k;for(k=0;k<a.length;k++)a[k].className="fig"; f.className="fig sel";};
+    figs.appendChild(f);})(PRE+"_cr"+i);}
+  t.appendChild(figs);
+  var b=el("button","bt verde","Vamos! ✨"); b.onclick=function(){arma();tom(720);perfil.nome=(inp.value||"").substring(0,16);telaAtelie();};
+  t.appendChild(b);
+  render(t); falar("hb_quem");
+}
+
+function telaAtelie(){
+  if(!estado.corpo) estado.corpo="hb_corpo1";
+  var t=el("div"); t.id="atelie"; t.className="tela";
+  /* topo */
+  var topo=el("div","topo");
+  var g=el("img","guia"); g.src=IMG+"hb_batata_feliz.png"; g.id="guia"; topo.appendChild(g);
+  topo.appendChild(el("div","tt","Monte o seu Sr. Batata!"));
+  var z=el("button","zap","🔊"); z.onclick=function(){falar("hb_ajuda");}; topo.appendChild(z);
+  t.appendChild(topo);
+  /* palco */
+  var palco=el("div"); palco.id="palco";
+  var bg=el("img"); bg.id="palcobg"; bg.src=IMG+"hb_fundo_"+FUNDOS[fundoIdx][0]+".png"; palco.appendChild(bg);
+  var bon=el("div"); bon.id="boneco"; bon.className="tocaflutua"; palco.appendChild(bon);
+  t.appendChild(palco);
+  /* categorias */
+  var cats=el("div","cats"),i;
+  for(i=0;i<CAT.length;i++){(function(c){ var b=el("button","cat"+(catSel==c.k?" on":"")); b.innerHTML='<span class="ic">'+c.ic+'</span>'+c.nome; b.dataset.k=c.k;
+    b.onclick=function(){arma();tom(560);catSel=c.k;marcaCat();bandeja();falar("hb_nome_"+c.k);};
+    cats.appendChild(b);})(CAT[i]);}
+  t.appendChild(cats);
+  /* bandeja */
+  var bj=el("div","bandeja"); bj.id="bandeja"; t.appendChild(bj);
+  /* ações */
+  var ac=el("div","acoes");
+  var bf=el("button","bt azul","🖼️ Trocar fundo"); bf.onclick=trocaFundo;
+  var bl=el("button","bt","🧽 Limpar"); bl.onclick=limpar;
+  var bp=el("button","bt verde","✅ Pronto!"); bp.onclick=pronto;
+  ac.appendChild(bf); ac.appendChild(bl); ac.appendChild(bp);
+  t.appendChild(ac);
+  render(t);
+  desenhaBoneco(); bandeja(); falar("hb_atelie");
+}
+function marcaCat(){ var a=document.querySelectorAll(".cat"),i; for(i=0;i<a.length;i++)a[i].className="cat"+(a[i].dataset.k==catSel?" on":""); }
+
+function desenhaBoneco(){
+  var bon=$("boneco"); if(!bon)return; bon.innerHTML="";
+  for(var i=0;i<CAMADAS.length;i++){ var k=CAMADAS[i]; var v=estado[k]; if(!v)continue;
+    var an=ANCORA[k]; var cam=el("div","cam"); var im=el("img"); im.src=IMG+v+".png";
+    im.onload=(function(img,anc){return function(){ posiciona(img,anc); };})(im,an);
+    im.style.left=an.cx+"%"; im.style.width=an.w+"%"; im.style.top=an.cy+"%"; im.style.transform="translate(-50%,-50%)";
+    cam.appendChild(im); bon.appendChild(cam);
+  }
+}
+function posiciona(img,an){ /* mantém centralizado pela âncora após carregar */ img.style.left=an.cx+"%"; img.style.top=an.cy+"%"; img.style.transform="translate(-50%,-50%)"; }
+
+function bandeja(){
+  var bj=$("bandeja"); if(!bj)return; bj.innerHTML="";
+  var c=null,i; for(i=0;i<CAT.length;i++) if(CAT[i].k==catSel)c=CAT[i];
+  if(!c)return;
+  if(!c.obrig){ var non=el("div","op nenhum","sem "+c.nome); non.onclick=function(){arma();tom(400);estado[c.k]=null;desenhaBoneco();}; bj.appendChild(non); }
+  for(i=0;i<c.itens.length;i++){(function(it){
+    var o=el("div","op"); var im=el("img"); im.src=IMG+it+".png"; o.appendChild(im);
+    o.onclick=function(){ aplica(c.k,it); };
+    arrastavel(o,c.k,it,im);
+    bj.appendChild(o);
+  })(c.itens[i]);}
+}
+function aplica(k,it){ arma(); tom(700); estado[k]=it; desenhaBoneco(); festinha(1); falar("hb_nome_"+k); }
+
+/* --------- arrastar (mouse + dedo), com encaixe no boneco --------- */
+function arrastavel(o,k,it,imgel){
+  var ghost=null, arrastando=false, ultimoToque=0;
+  function down(e){
+    if(e.type==="mousedown" && (Date.now()-ultimoToque)<600) return; /* mouse fantasma pós-toque */
+    if(e.type==="touchstart") ultimoToque=Date.now();
+    arma();
+    var p=ponto(e); arrastando=true;
+    ghost=el("img","dragimg"); ghost.src=IMG+it+".png"; document.body.appendChild(ghost);
+    mover(p);
+    document.addEventListener("mousemove",move); document.addEventListener("touchmove",move,{passive:false});
+    document.addEventListener("mouseup",up); document.addEventListener("touchend",up);
+  }
+  function move(e){ if(!arrastando)return; if(e.cancelable)e.preventDefault(); mover(ponto(e)); }
+  function mover(p){ if(ghost){ghost.style.left=p.x+"px";ghost.style.top=p.y+"px";} }
+  function up(e){
+    if(!arrastando)return; arrastando=false;
+    var p=ponto(e.changedTouches?e:e), pal=$("palco");
+    if(ghost&&ghost.parentNode)ghost.parentNode.removeChild(ghost); ghost=null;
+    document.removeEventListener("mousemove",move); document.removeEventListener("touchmove",move);
+    document.removeEventListener("mouseup",up); document.removeEventListener("touchend",up);
+    if(pal){ var r=pal.getBoundingClientRect(); if(p.x>=r.left&&p.x<=r.right&&p.y>=r.top&&p.y<=r.bottom){ aplica(k,it); } }
+  }
+  o.addEventListener("mousedown",down); o.addEventListener("touchstart",down,{passive:true});
+}
+function ponto(e){ var t=e.touches&&e.touches[0]?e.touches[0]:(e.changedTouches&&e.changedTouches[0]?e.changedTouches[0]:e); return {x:t.clientX,y:t.clientY}; }
+
+function trocaFundo(){ arma(); tom(520); fundoIdx=(fundoIdx+1)%FUNDOS.length; var bg=$("palcobg"); if(bg)bg.src=IMG+"hb_fundo_"+FUNDOS[fundoIdx][0]+".png"; falar("hb_fundo_"+FUNDOS[fundoIdx][0]); }
+function limpar(){ arma(); tom(300); var corpo=estado.corpo; estado={corpo:corpo}; desenhaBoneco(); falar("hb_limpar"); }
+
+function festinha(n){ var cores=["#ff5d5d","#ffd23f","#43c463","#3d9bff","#c86bff","#ff9a3d"],i;
+  for(i=0;i<(n||18);i++){ var c=el("div","conf"); c.style.left=(Math.random()*100)+"vw"; c.style.background=cores[i%cores.length];
+   var dur=(1+Math.random()*1.2); c.style.webkitAnimationDuration=dur+"s"; c.style.animationDuration=dur+"s"; document.body.appendChild(c);
+   (function(cc){setTimeout(function(){if(cc.parentNode)cc.parentNode.removeChild(cc);},2600);})(c); } }
+
+function pronto(){
+  arma(); tom(880); festinha(60);
+  salvaNaGaleria();
+  var t=el("div","tela capa");
+  t.appendChild(el("h1",null,"Que batata linda! 🎉"));
+  t.appendChild(el("div","sub",(perfil.nome?perfil.nome+", v":"V")+"ocê é um artista!"));
+  /* miniatura do que ele montou */
+  var mini=el("div"); mini.style.cssText="position:relative;width:44vw;max-width:260px;height:60vw;max-height:340px;margin:6px auto;border-radius:18px;overflow:hidden;box-shadow:0 8px 20px #0005;";
+  var bg=el("img"); bg.src=IMG+"hb_fundo_"+FUNDOS[fundoIdx][0]+".png"; bg.style.cssText="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"; mini.appendChild(bg);
+  var box=el("div"); box.style.cssText="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:78%;height:88%";
+  for(var i=0;i<CAMADAS.length;i++){var k=CAMADAS[i],v=estado[k];if(!v)continue;var an=ANCORA[k];var im=el("img");im.src=IMG+v+".png";im.style.cssText="position:absolute;left:"+an.cx+"%;top:"+an.cy+"%;width:"+an.w+"%;transform:translate(-50%,-50%);object-fit:contain";box.appendChild(im);}
+  mini.appendChild(box); t.appendChild(mini);
+  var b1=el("button","bt verde","🥔 Fazer outro"); b1.onclick=function(){arma();tom(660);telaAtelie();};
+  var b2=el("button","bt azul","🖼️ Minha galeria"); b2.onclick=telaGaleria;
+  t.appendChild(b1); t.appendChild(b2);
+  render(t); falar("hb_pronto");
+}
+
+/* galeria simples em localStorage (por 55 min a mesma criança; aqui guardamos as últimas) */
+function chaveG(){ return "batata_galeria"; }
+function salvaNaGaleria(){ try{ var g=JSON.parse(localStorage.getItem(chaveG())||"[]"); g.unshift({e:estado,f:fundoIdx,q:(perfil.nome||"")}); g=g.slice(0,12); localStorage.setItem(chaveG(),JSON.stringify(g)); }catch(e){} }
+function telaGaleria(){
+  arma();tom(600);
+  var g=[]; try{g=JSON.parse(localStorage.getItem(chaveG())||"[]");}catch(e){}
+  var t=el("div","tela capa");
+  t.appendChild(el("h1",null,"Minha galeria 🖼️"));
+  if(!g.length) t.appendChild(el("div","sub","Ainda não tem nenhum. Faça o seu!"));
+  var gal=el("div","galeria"),i;
+  for(i=0;i<g.length;i++){(function(item){
+    var card=el("div"); card.style.cssText="position:relative;width:28vw;max-width:150px;height:38vw;max-height:200px;border-radius:12px;overflow:hidden;border:3px solid #fff;background:#fff";
+    var bg=el("img"); bg.src=IMG+"hb_fundo_"+FUNDOS[item.f||0][0]+".png"; bg.style.cssText="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"; card.appendChild(bg);
+    var box=el("div"); box.style.cssText="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:78%;height:88%";
+    var e=item.e||{}; for(var j=0;j<CAMADAS.length;j++){var k=CAMADAS[j],v=e[k];if(!v)continue;var an=ANCORA[k];var im=el("img");im.src=IMG+v+".png";im.style.cssText="position:absolute;left:"+an.cx+"%;top:"+an.cy+"%;width:"+an.w+"%;transform:translate(-50%,-50%);object-fit:contain";box.appendChild(im);}
+    card.appendChild(box); gal.appendChild(card);
+  })(g[i]);}
+  t.appendChild(gal);
+  var b=el("button","bt verde","🥔 Fazer outro"); b.onclick=function(){arma();tom(660);telaAtelie();};
+  t.appendChild(b);
+  render(t); falar("hb_galeria");
+}
+
+function render(t){ var a=$("app"); a.innerHTML=""; a.appendChild(t); }
+
+/* mascote pisca/fala leve no topo (troca a imagem de vez em quando) */
+setInterval(function(){ var g=$("guia"); if(!g)return; g.src=IMG+"hb_batata_pisca.png"; setTimeout(function(){ if($("guia"))$("guia").src=IMG+"hb_batata_feliz.png"; },180); }, 4200);
+
+/* destrava o áudio no 1º gesto */
+["click","touchstart","mousedown"].forEach(function(ev){ document.addEventListener(ev,arma,{once:true}); });
+telaCapa();
+</script>
+</body></html>
