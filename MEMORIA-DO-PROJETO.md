@@ -11,6 +11,14 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **📋 PREFERÊNCIA DO MARCOS (ago/2026) — PROMPTS DE IMAGEM SEMPRE EM BLOCO DE
+> CÓDIGO NO CHAT.** Palavras dele: *"mande os prompts aqui com um botão copiar, e
+> sempre desse jeito"* e *"quero o conteúdo com botão copiar aqui no chat mesmo, sem
+> página"*. Ou seja: cada prompt vai **num bloco ```code``` direto na resposta do
+> chat** (o cliente já põe o botão de copiar no bloco). NÃO mandar como página/
+> artifact e NÃO só como arquivo `.md` anexo. Cada figura/cartela = um bloco próprio,
+> com o nome do arquivo (`ef_...png`) e uma linha de descrição por cima.
+
 > **⛔⏱️ LIÇÃO PAGA (ago/2026) — BANCA COMPLETA NUNCA SE RODA EM CONSERTO.**
 > Cobrança do Marcos, DUAS vezes no mesmo dia: *"lembra que não é passado banca
 > completa em consertos"* e *"vc tem que lembrar disso, não posso ficar perdendo
