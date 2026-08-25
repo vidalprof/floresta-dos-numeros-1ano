@@ -203,7 +203,7 @@ add(id=u"f08", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo2",
                 u"FECHO":u"Você escolheu os nomes com a letra grande no lugar certo!"})
 
 add(id=u"f09", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
-    enunciado=u"Complete com o nome do lugar do jeito <b>certo</b>.",
+    enunciado=u"Preencha com o nome do lugar do jeito <b>certo</b>.",
     dica=u"Cidade e país são nomes próprios: começam com letra grande.",
     dados=[{u"img":u"", u"ante":u"Eu moro em ", u"dep":u".",
             u"cer":u"Blumenau", u"out":[u"blumenau", u"BLUMENAU"],
@@ -211,7 +211,7 @@ add(id=u"f09", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
            {u"img":u"", u"ante":u"Eu vivo no ", u"dep":u".",
             u"cer":u"Brasil", u"out":[u"brasil", u"BRASIL"],
             u"dic":u"Nome de país: só o B é grande."}],
-    dadosExtra={u"ENUN":u"Complete com o nome do lugar do jeito <b>certo</b>.",
+    dadosExtra={u"ENUN":u"Preencha com o nome do lugar do jeito <b>certo</b>.",
                 u"FECHO":u"Isso! Cidade e país são nomes próprios."})
 
 # ============================================================
