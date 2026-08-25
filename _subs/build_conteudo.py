@@ -31,7 +31,7 @@ CONTEUDO = {
  u"crachas": 6,
  u"mesa": u"Pedagogo do 2º ano + especialista em Língua Portuguesa (alfabetização).",
  u"fundo": u"sn_fundo.png",
- u"voz": u"feminina",
+ u"voz": u"masculina",
  u"abertura": (u"Oi! Eu sou o Téo, o castor, e faço as plaquinhas desta loja. "
               u"Cada coisa tem um nome. Vamos descobrir quando o nome é de QUALQUER "
               u"um e quando é de UM só? Vem comigo!"),
@@ -70,7 +70,7 @@ D_PRO = [u"O nome próprio é de UM só e começa com letra GRANDE.",
          u"Isso! Esse é o nome <b>próprio</b>. Toque para seguir."]
 
 # ============================================================
-# BLOCO 1 — ESCOLHER (f01 comum, f02 próprio) — 4 rodadas cada
+# BLOCO 1 — ESCOLHER (f01 comum, f02 próprio) — 6 rodadas cada
 # ============================================================
 add(id=u"f01", mec=u"escolher", selo=u"NOME DE QUALQUER UM", conceito=u"objetivo1",
     enunciado=u"O nome <b>comum</b> serve para <b>qualquer um</b>. Ache o nome comum.",
@@ -82,6 +82,14 @@ add(id=u"f01", mec=u"escolher", selo=u"NOME DE QUALQUER UM", conceito=u"objetivo
          u"GATO", u"gato", [(u"MIMI", u"mimi"), (u"NINA", u"nina")], D_COM),
      esc(u"", u"Qual palavra serve para <b>qualquer</b> uma?",
          u"MENINA", u"menina", [(u"LIA", u"lia"), (u"DUDA", u"duda")], D_COM),
+     esc(u"sn_bola", u"Qual palavra vale para <b>qualquer</b> uma dessas?",
+         u"BOLA", u"bola", [(u"PIPOCA", u"pipoca"), (u"NINA", u"nina")], D_COM),
+     esc(u"sn_arvore", u"Qual palavra serve para <b>qualquer</b> uma?",
+         u"ÁRVORE", u"árvore", [(u"IPÊ", u"ipê"), (u"FLORA", u"flora")], D_COM),
+     esc(u"sn_casa", u"Qual palavra vale para <b>qualquer</b> uma?",
+         u"CASA", u"casa", [(u"LAR", u"lar"), (u"VILA", u"vila")], D_COM),
+     esc(u"sn_papagaio", u"Qual palavra vale para <b>qualquer</b> um deles?",
+         u"PAPAGAIO", u"papagaio", [(u"LOURO", u"louro"), (u"ZÉ", u"zé")], D_COM),
      esc(u"", u"Qual palavra vale para <b>qualquer</b> lugar assim?",
          u"CIDADE", u"cidade", [(u"BLUMENAU", u"blumenau"), (u"BRASIL", u"brasil")], D_COM),
     ])
@@ -98,10 +106,32 @@ add(id=u"f02", mec=u"escolher", selo=u"NOME DE UM SÓ", conceito=u"objetivo2",
          u"BLUMENAU", u"blumenau", [(u"cidade", u"cidade"), (u"lugar", u"lugar")], D_PRO),
      esc(u"sn_papagaio", u"Qual é o nome <b>próprio</b> do papagaio?",
          u"LOURO", u"louro", [(u"papagaio", u"papagaio"), (u"ave", u"ave")], D_PRO),
+     esc(u"sn_cachorro", u"Qual é o nome <b>próprio</b> do cachorro?",
+         u"REX", u"rex", [(u"cachorro", u"cachorro"), (u"bicho", u"bicho")], D_PRO),
+     esc(u"sn_gato", u"Qual é o nome <b>próprio</b> da gata?",
+         u"MIMI", u"mimi", [(u"gata", u"gata"), (u"bichana", u"bichana")], D_PRO),
+     esc(u"sn_casa", u"Qual é o nome <b>próprio</b> do país?",
+         u"BRASIL", u"brasil", [(u"país", u"país"), (u"lugar", u"lugar")], D_PRO),
+     esc(u"sn_menina", u"Qual é o nome <b>próprio</b> desta menina?",
+         u"LIA", u"lia", [(u"menina", u"menina"), (u"garota", u"garota")], D_PRO),
+    ])
+
+add(id=u"f02b", mec=u"escolher", selo=u"PRÓPRIO OU COMUM?", conceito=u"objetivo3",
+    enunciado=u"Agora misturado: ache o nome <b>próprio</b> (o de UM só, letra grande).",
+    dica=u"Próprio é de um só e começa com letra MAIÚSCULA.",
+    dados=[
+     esc(u"sn_cachorro", u"Qual é o nome <b>próprio</b> deste cachorro?",
+         u"BIDU", u"bidu", [(u"cachorro", u"cachorro"), (u"bicho", u"bicho")], D_PRO),
+     esc(u"sn_cidade", u"Qual é o nome <b>próprio</b> deste lugar?",
+         u"RECIFE", u"recife", [(u"cidade", u"cidade"), (u"praia", u"praia")], D_PRO),
+     esc(u"sn_menino", u"Qual é o nome <b>próprio</b> deste menino?",
+         u"GAEL", u"gael", [(u"menino", u"menino"), (u"colega", u"colega")], D_PRO),
+     esc(u"sn_gato", u"Qual é o nome <b>próprio</b> desta gata?",
+         u"NINA", u"nina", [(u"gata", u"gata"), (u"bichana", u"bichana")], D_PRO),
     ])
 
 # ============================================================
-# BLOCO 2 — LIGAR (f03 próprio, f04 comum) — 4 pares cada
+# BLOCO 2 — LIGAR (f03/f03b próprio, f04/f04b comum) — 4 pares cada
 # ============================================================
 add(id=u"f03", mec=u"ligar", selo=u"DÊ UM NOME PRÓPRIO", conceito=u"objetivo2",
     enunciado=u"Ligue cada bichinho ao seu <b>nome próprio</b> (com letra grande).",
@@ -115,6 +145,18 @@ add(id=u"f03", mec=u"ligar", selo=u"DÊ UM NOME PRÓPRIO", conceito=u"objetivo2"
                           u"Rex é o cachorro, Mimi é a gata, Louro é o papagaio, Bento é o menino."],
                 u"FECHO":u"Você deu um nome próprio para cada um!"})
 
+add(id=u"f03b", mec=u"ligar", selo=u"DÊ UM NOME PRÓPRIO", conceito=u"objetivo2",
+    enunciado=u"De novo: ligue cada figura ao seu <b>nome próprio</b>.",
+    dica=u"O nome próprio é de UM só e tem letra grande.",
+    dados=[{u"k":u"m0", u"img":u"sn_menina",  u"voz":u"menina",  u"s":u"DUDA"},
+           {u"k":u"m1", u"img":u"sn_cidade",  u"voz":u"cidade",  u"s":u"BLUMENAU"},
+           {u"k":u"m2", u"img":u"sn_cachorro",u"voz":u"cachorro",u"s":u"BIDU"},
+           {u"k":u"m3", u"img":u"sn_gato",    u"voz":u"gato",    u"s":u"NINA"}],
+    dadosExtra={u"ENUN":u"De novo: ligue cada figura ao seu <b>nome próprio</b>.",
+                u"DICAS":[u"Nome de um só, com letra grande.",
+                          u"Duda é a menina, Blumenau é a cidade, Bidu é o cachorro, Nina é a gata."],
+                u"FECHO":u"Cada um com o seu nome próprio!"})
+
 add(id=u"f04", mec=u"ligar", selo=u"QUAL É O NOME COMUM?", conceito=u"objetivo1",
     enunciado=u"Ligue cada figura ao seu <b>nome comum</b>.",
     dica=u"O nome comum é o tipo da coisa: o que é isso?",
@@ -127,8 +169,20 @@ add(id=u"f04", mec=u"ligar", selo=u"QUAL É O NOME COMUM?", conceito=u"objetivo1
                           u"Pergunte: o que é isso? Casa, bola, árvore, cidade."],
                 u"FECHO":u"Você nomeou cada coisa!"})
 
+add(id=u"f04b", mec=u"ligar", selo=u"QUAL É O NOME COMUM?", conceito=u"objetivo1",
+    enunciado=u"Mais uma: ligue cada figura ao seu <b>nome comum</b>.",
+    dica=u"Pergunte: o que é isso? É o tipo da coisa.",
+    dados=[{u"k":u"d0", u"img":u"sn_cachorro",u"voz":u"cachorro",u"s":u"CACHORRO"},
+           {u"k":u"d1", u"img":u"sn_gato",    u"voz":u"gato",    u"s":u"GATO"},
+           {u"k":u"d2", u"img":u"sn_papagaio",u"voz":u"papagaio",u"s":u"PAPAGAIO"},
+           {u"k":u"d3", u"img":u"sn_menina",  u"voz":u"menina",  u"s":u"MENINA"}],
+    dadosExtra={u"ENUN":u"Mais uma: ligue cada figura ao seu <b>nome comum</b>.",
+                u"DICAS":[u"O nome comum vale para qualquer um do tipo.",
+                          u"Cachorro, gato, papagaio, menina — todos são nomes comuns."],
+                u"FECHO":u"Todo mundo tem um nome comum!"})
+
 # ============================================================
-# BLOCO 3 — CLASSIFICAR (f05, f06) — 6 fichas cada
+# BLOCO 3 — CLASSIFICAR (f05, f06, f06b) — 6 fichas cada
 # ============================================================
 def classif(idf, fichas):
     return dict(id=idf, mec=u"classificar", selo=u"SEPARE AS PLAQUINHAS", conceito=u"objetivo3",
@@ -144,9 +198,18 @@ def classif(idf, fichas):
 add(**classif(u"f05", [{u"t":u"Gael",u"alvo":u"pro"},{u"t":u"menina",u"alvo":u"com"},
                        {u"t":u"Rex",u"alvo":u"pro"},{u"t":u"cachorro",u"alvo":u"com"},
                        {u"t":u"Blumenau",u"alvo":u"pro"},{u"t":u"cidade",u"alvo":u"com"}]))
+add(**classif(u"f05b", [{u"t":u"Lia",u"alvo":u"pro"},{u"t":u"amiga",u"alvo":u"com"},
+                        {u"t":u"Louro",u"alvo":u"pro"},{u"t":u"papagaio",u"alvo":u"com"},
+                        {u"t":u"Bidu",u"alvo":u"pro"},{u"t":u"cachorro",u"alvo":u"com"}]))
 add(**classif(u"f06", [{u"t":u"Brasil",u"alvo":u"pro"},{u"t":u"país",u"alvo":u"com"},
                        {u"t":u"Maria",u"alvo":u"pro"},{u"t":u"professora",u"alvo":u"com"},
                        {u"t":u"Louro",u"alvo":u"pro"},{u"t":u"papagaio",u"alvo":u"com"}]))
+add(**classif(u"f06b", [{u"t":u"Bento",u"alvo":u"pro"},{u"t":u"menino",u"alvo":u"com"},
+                        {u"t":u"Mimi",u"alvo":u"pro"},{u"t":u"gato",u"alvo":u"com"},
+                        {u"t":u"Duda",u"alvo":u"pro"},{u"t":u"amiga",u"alvo":u"com"}]))
+add(**classif(u"f06c", [{u"t":u"Nina",u"alvo":u"pro"},{u"t":u"gata",u"alvo":u"com"},
+                        {u"t":u"Recife",u"alvo":u"pro"},{u"t":u"cidade",u"alvo":u"com"},
+                        {u"t":u"Gael",u"alvo":u"pro"},{u"t":u"colega",u"alvo":u"com"}]))
 
 # ============================================================
 # AQUECIMENTO (revisão) — escolher, no meio
@@ -161,10 +224,12 @@ add(id=u"aquecimento", mec=u"escolher", selo=u"AQUECIMENTO", conceito=u"objetivo
          u"CASA", u"casa", [(u"BLUMENAU", u"blumenau"), (u"BRASIL", u"brasil")], D_COM),
      esc(u"", u"Qual é o nome <b>comum</b>?",
          u"MENINO", u"menino", [(u"BENTO", u"bento"), (u"PEDRO", u"pedro")], D_COM),
+     esc(u"sn_papagaio", u"Qual palavra vale para <b>qualquer</b> um?",
+         u"PAPAGAIO", u"papagaio", [(u"LOURO", u"louro"), (u"VERDE", u"verde")], D_COM),
     ])
 
 # ============================================================
-# BLOCO 4 — COMPLETAR (f07 bicho/pessoa, f08 lugar) — a letra grande
+# BLOCO 4 — COMPLETAR (f07, f07b, f08) — a letra grande
 # ============================================================
 add(id=u"f07", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
     enunciado=u"Todo nome próprio começa com <b>letra maiúscula</b>. Escolha o certo.",
@@ -176,6 +241,16 @@ add(id=u"f07", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
     dadosExtra={u"ENUN":u"Todo nome próprio começa com <b>letra maiúscula</b>. Escolha o certo.",
                 u"FECHO":u"Você acertou a letra grande em todos!"})
 
+add(id=u"f07b", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
+    enunciado=u"De novo: escolha o nome com a <b>letra grande</b> no lugar certo.",
+    dica=u"Nome próprio começa com letra MAIÚSCULA.",
+    dados=[{u"img":u"", u"ante":u"O papagaio se chama ", u"dep":u".", u"cer":u"Louro", u"out":[u"louro", u"LOURO"], u"dic":u"Só o L é grande: Louro."},
+           {u"img":u"", u"ante":u"O outro cachorro é o ", u"dep":u".", u"cer":u"Bidu", u"out":[u"bidu", u"BIDU"], u"dic":u"Só o B é grande: Bidu."},
+           {u"img":u"", u"ante":u"A colega nova é a ", u"dep":u".", u"cer":u"Duda", u"out":[u"duda", u"DUDA"], u"dic":u"Só o D é grande: Duda."},
+           {u"img":u"", u"ante":u"A gatinha é a ", u"dep":u".", u"cer":u"Nina", u"out":[u"nina", u"NINA"], u"dic":u"Só o N é grande: Nina."}],
+    dadosExtra={u"ENUN":u"De novo: escolha o nome com a <b>letra grande</b> no lugar certo.",
+                u"FECHO":u"Todo nome próprio: letra grande no começo!"})
+
 add(id=u"f08", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
     enunciado=u"Preencha o nome do lugar do jeito <b>certo</b>.",
     dica=u"Cidade e país são nomes próprios: letra grande.",
@@ -185,8 +260,18 @@ add(id=u"f08", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
     dadosExtra={u"ENUN":u"Preencha o nome do lugar do jeito <b>certo</b>.",
                 u"FECHO":u"Isso! Nome de lugar e de pessoa é próprio."})
 
+add(id=u"f08b", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
+    enunciado=u"Complete com o nome próprio escrito do jeito <b>certo</b>.",
+    dica=u"Nome de pessoa, bicho e lugar é próprio: letra grande.",
+    dados=[{u"img":u"", u"ante":u"O menino novo é o ", u"dep":u".", u"cer":u"Gael", u"out":[u"gael", u"GAEL"], u"dic":u"Só o G é grande: Gael."},
+           {u"img":u"", u"ante":u"A cidade da praia é ", u"dep":u".", u"cer":u"Recife", u"out":[u"recife", u"RECIFE"], u"dic":u"Só o R é grande: Recife."},
+           {u"img":u"", u"ante":u"O papagaio é o ", u"dep":u".", u"cer":u"Louro", u"out":[u"louro", u"LOURO"], u"dic":u"Só o L é grande: Louro."},
+           {u"img":u"", u"ante":u"A gatinha nova é a ", u"dep":u".", u"cer":u"Nina", u"out":[u"nina", u"NINA"], u"dic":u"Só o N é grande: Nina."}],
+    dadosExtra={u"ENUN":u"Complete com o nome próprio escrito do jeito <b>certo</b>.",
+                u"FECHO":u"Nome próprio: sempre com letra grande no começo!"})
+
 # ============================================================
-# BLOCO 5 — DIGITAR (f09 bicho, f10 lugar)
+# BLOCO 5 — DIGITAR (f09 bicho, f10 lugar, f10b nomes)
 # ============================================================
 add(id=u"f09", mec=u"digitar", selo=u"ESCREVA O NOME PRÓPRIO", conceito=u"objetivo2",
     enunciado=u"Escreva o <b>nome próprio</b> do bichinho, letra por letra.",
@@ -198,16 +283,27 @@ add(id=u"f09", mec=u"digitar", selo=u"ESCREVA O NOME PRÓPRIO", conceito=u"objet
     dadosExtra={u"ENUN":u"Escreva o <b>nome próprio</b> do bichinho, letra por letra.",
                 u"FECHO":u"Você escreveu os nomes próprios!"})
 
+add(id=u"f09b", mec=u"digitar", selo=u"ESCREVA O NOME PRÓPRIO", conceito=u"objetivo2",
+    enunciado=u"Escreva mais um <b>nome próprio</b>, letra por letra.",
+    dica=u"Nome próprio começa com letra grande.",
+    dados=[{u"palavra":u"DUDA", u"img":u"", u"voz":u"duda", u"pista":u"O nome da menina. Escreva: Duda.", u"dic":u"Nome próprio: <b>Duda</b>."},
+           {u"palavra":u"NINA", u"img":u"", u"voz":u"nina", u"pista":u"O nome da outra gata. Escreva: Nina.", u"dic":u"Nome próprio: <b>Nina</b>."},
+           {u"palavra":u"BIDU", u"img":u"", u"voz":u"bidu", u"pista":u"O nome do outro cachorro. Escreva: Bidu.", u"dic":u"Nome próprio: <b>Bidu</b>."},
+           {u"palavra":u"GAEL", u"img":u"", u"voz":u"gael", u"pista":u"O nome do menino novo. Escreva: Gael.", u"dic":u"Nome próprio: <b>Gael</b>."}],
+    dadosExtra={u"ENUN":u"Escreva mais um <b>nome próprio</b>, letra por letra.",
+                u"FECHO":u"Mais nomes próprios escritos com letra grande!"})
+
 add(id=u"f10", mec=u"digitar", selo=u"ESCREVA O NOME DO LUGAR", conceito=u"objetivo3",
     enunciado=u"Agora escreva o <b>nome próprio</b> do lugar, letra por letra.",
     dica=u"Nome de cidade e de país é próprio.",
     dados=[{u"palavra":u"BLUMENAU", u"img":u"", u"voz":u"blumenau", u"pista":u"A cidade da nossa escola. Escreva: Blumenau.", u"dic":u"Nome próprio: <b>Blumenau</b>."},
-           {u"palavra":u"BRASIL", u"img":u"", u"voz":u"brasil", u"pista":u"O nosso país. Escreva: Brasil.", u"dic":u"Nome próprio: <b>Brasil</b>."}],
+           {u"palavra":u"BRASIL", u"img":u"", u"voz":u"brasil", u"pista":u"O nosso país. Escreva: Brasil.", u"dic":u"Nome próprio: <b>Brasil</b>."},
+           {u"palavra":u"DUDA", u"img":u"", u"voz":u"duda", u"pista":u"O nome da menina. Escreva: Duda.", u"dic":u"Nome próprio: <b>Duda</b>."}],
     dadosExtra={u"ENUN":u"Agora escreva o <b>nome próprio</b> do lugar, letra por letra.",
-                u"FECHO":u"Muito bem! Nome de lugar é próprio."})
+                u"FECHO":u"Muito bem! Nome de lugar e de pessoa é próprio."})
 
 # ============================================================
-# QUEM-SOU-EU (f11) — 4 rodadas
+# QUEM-SOU-EU (f11) — 6 rodadas
 # ============================================================
 add(id=u"f11", mec=u"quem-sou-eu", selo=u"ADIVINHE O NOME", conceito=u"objetivo2",
     enunciado=u"Ouça as pistas e ache o <b>nome próprio</b>.",
@@ -217,10 +313,14 @@ add(id=u"f11", mec=u"quem-sou-eu", selo=u"ADIVINHE O NOME", conceito=u"objetivo2
      {u"resp":u"REX", u"pistas":[u"Sou o nome de um <b>cachorro</b>.", u"Começo com <b>letra grande</b>.", u"Sou de UM cachorro só."], u"outros":[u"CACHORRO", u"BICHO", u"AMIGO"]},
      {u"resp":u"BRASIL", u"pistas":[u"Sou o nome de um <b>país</b>.", u"Começo com <b>letra grande</b>.", u"É o país onde a gente mora."], u"outros":[u"PAÍS", u"LUGAR", u"MUNDO"]},
      {u"resp":u"DUDA", u"pistas":[u"Sou o nome de uma <b>menina</b>.", u"Começo com <b>letra grande</b>.", u"Sou de UMA menina só."], u"outros":[u"MENINA", u"AMIGA", u"COLEGA"]},
+     {u"resp":u"MIMI", u"pistas":[u"Sou o nome de uma <b>gata</b>.", u"Começo com <b>letra grande</b>.", u"Sou de UMA gata só."], u"outros":[u"GATA", u"BICHANA", u"AMIGA"]},
+     {u"resp":u"LOURO", u"pistas":[u"Sou o nome de um <b>papagaio</b>.", u"Começo com <b>letra grande</b>.", u"Sou de UM papagaio só."], u"outros":[u"PAPAGAIO", u"AVE", u"PÁSSARO"]},
+     {u"resp":u"BENTO", u"pistas":[u"Sou o nome de um <b>menino</b>.", u"Começo com <b>letra grande</b>.", u"Sou de UM menino só."], u"outros":[u"MENINO", u"COLEGA", u"AMIGO"]},
+     {u"resp":u"GAEL", u"pistas":[u"Sou o nome de outro <b>menino</b>.", u"Começo com <b>letra grande</b>.", u"Sou de UM menino só."], u"outros":[u"MENINO", u"GAROTO", u"COLEGA"]},
     ])
 
 # ============================================================
-# INTRUSO (f12) — 4 rodadas (ache o COMUM)
+# INTRUSO (f12, f12b) — ache o COMUM
 # ============================================================
 def intruso(idf, itens, fora, nomeFora, d2):
     return dict(id=idf, mec=u"intruso", selo=u"ACHE O INTRUSO", conceito=u"objetivo1",
@@ -242,9 +342,11 @@ def intruso(idf, itens, fora, nomeFora, d2):
               u"p3":u"A letra não importa; pense no que o nome nomeia."}])
 add(**intruso(u"f12", [(u"a",u"Gael"),(u"b",u"Rex"),(u"c",u"Blumenau"),(u"d",u"menino")], u"d", u"menino",
               u"Gael, Rex e Blumenau começam com letra grande; menino, não."))
+add(**intruso(u"f12b", [(u"a",u"Maria"),(u"b",u"Bento"),(u"c",u"Brasil"),(u"d",u"cidade")], u"d", u"cidade",
+              u"Maria, Bento e Brasil começam com letra grande; cidade, não."))
 
 # ============================================================
-# CAÇA-PALAVRAS (fecho) — nomes próprios
+# CAÇA-PALAVRAS (fecho) — f13 nomes próprios, f13b nomes comuns
 # ============================================================
 add(id=u"f13", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES PRÓPRIOS", conceito=u"objetivo2",
     enunciado=u"Ache os <b>nomes próprios</b> escondidos no quadro. Eles têm letra grande!",
@@ -253,6 +355,22 @@ add(id=u"f13", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES PRÓPRIOS", conceito
     dadosExtra={u"MODO":u"lista", u"TITULO":u"OS NOMES PRÓPRIOS",
                 u"LETRAS":u"ABEILMNORSTUX", u"DIFICIL":u"",
                 u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5"]})
+
+add(id=u"f13b", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES COMUNS", conceito=u"objetivo1",
+    enunciado=u"Agora ache os <b>nomes comuns</b> escondidos no quadro.",
+    dica=u"Nome comum é o tipo da coisa: gato, casa, bola...",
+    dados=[u"GATO", u"CASA", u"BOLA", u"CIDADE", u"ARVORE"],
+    dadosExtra={u"MODO":u"lista", u"TITULO":u"OS NOMES COMUNS",
+                u"LETRAS":u"ABCDEILORSTVZ", u"DIFICIL":u"",
+                u"CORP":[u"c1", u"c2", u"c3", u"c4", u"c5"]})
+
+add(id=u"f13c", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES DE LUGAR", conceito=u"objetivo3",
+    enunciado=u"Ache os <b>nomes próprios de lugar</b> escondidos. Eles têm letra grande!",
+    dica=u"Nomes de cidade e de país são próprios: letra grande.",
+    dados=[u"BRASIL", u"BLUMENAU", u"BAHIA", u"PARANA", u"RECIFE"],
+    dadosExtra={u"MODO":u"lista", u"TITULO":u"OS NOMES DE LUGAR",
+                u"LETRAS":u"ABCEFHILMNPRSU", u"DIFICIL":u"",
+                u"CORP":[u"l1", u"l2", u"l3", u"l4", u"l5"]})
 
 # ============================================================
 CONTEUDO[u"fases"] = fases
