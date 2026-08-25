@@ -842,7 +842,23 @@ function falar(id,cb){
      ainda partiriam juntos quando o id fosse igual. */
   var _ag2=(new Date()).getTime();
   if(_ultVoz.k===id && (_ag2-_ultVoz.t)<1200){ if(cb) try{cb();}catch(e){} return; }
-  if(_vozTocando()){ _fila=function(){ falar(id,cb); }; return; }
+  if(_vozTocando()){
+    /* ⭐ LICAO PAGA (Marcos, ago/2026: "está respondendo as questões anteriores
+       quando está em outra, na fala"). Quando a TELA ou a RODADA muda, a narração
+       nova chega com `telaNarrou` zerado (via `falaDaTela`/`limpa`). Se ainda toca
+       algo da tela que saiu (o elogio ou a CONFIRMAÇÃO falada da resposta), a fila
+       antiga fazia a narração NOVA esperar atrás — e a criança via a pergunta nova
+       OUVINDO a resposta velha. Agora a PRIMEIRA fala da tela nova PREEMPTA o que
+       estiver tocando, em vez de enfileirar. Reação na MESMA tela (telaNarrou já
+       verdadeiro) continua na fila, como antes. Vale para TODAS as mecânicas. */
+    if(!ehSecundaria(id) && !telaNarrou){
+      try{ narr.pause(); narr.currentTime=0; }catch(e){}
+      try{ if(typeof vz!=="undefined"&&vz){ vz.pause(); vz.currentTime=0; } }catch(e){}
+      _fila=null;   /* nao retorna: toca a narracao da tela nova AGORA */
+    }else{
+      _fila=function(){ falar(id,cb); }; return;
+    }
+  }
   _ultVoz.k=id; _ultVoz.t=_ag2;
   _seqId++;               /* qualquer fala nova invalida uma SEQUENCIA em curso */
   /* ⚠️ a voz da tela e a PRIMEIRA narracao depois que a tela foi montada
