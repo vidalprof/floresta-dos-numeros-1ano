@@ -30,7 +30,35 @@
 const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
 (async()=>{ const sair=async(c)=>{process.exitCode=c;}; const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome',args:['--no-sandbox','--disable-gpu','--autoplay-policy=no-user-gesture-required']});
 const p=await b.newPage({viewport:{width:1366,height:640}});
-await p.addInitScript(()=>{window.__t=[];const P=HTMLMediaElement.prototype.play;HTMLMediaElement.prototype.play=function(){window.__t.push([Date.now(),(this.src||'').split('/').pop()]);return P.apply(this,arguments);};});
+/* ⚠️ LICAO PAGA (ago/2026): a versao antiga acusava DOIS `play()` em <700ms como
+   "voz dupla". Mas uma preempcao legitima (calar a voz velha e comecar a nova) sao
+   TAMBEM dois play() colados — e no MESMO tocador, em sequencia, sem se atropelar.
+   O portao reprovava o conserto do "resposta atrasada". O defeito REAL e outro:
+   dois tocadores DIFERENTES no ar AO MESMO TEMPO (o `narr` do enunciado + o `vz`
+   da resposta soando juntos). Agora medimos isso: a cada play(), se JA houver
+   OUTRO elemento tocando (nao pausado, nao terminado), e sobreposicao de verdade.
+   play() seguido de play() no mesmo elemento = troca de faixa, nao conta. */
+await p.addInitScript(()=>{
+  window.__t=[];        // carimbos de play() — so p/ saber se ainda ha audio (drenar)
+  window.__ov=[];       // SOBREPOSICOES REAIS: dois tocadores distintos juntos
+  window.__ativos=[];   // elementos tocando agora
+  const P=HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play=function(){
+    const me=this, nome=(me.src||'').split('/').pop();
+    window.__t.push([Date.now(),nome]);
+    // limpa mortos e ve se sobra OUTRO tocador vivo
+    window.__ativos=window.__ativos.filter(e=>e!==me && !e.paused && !e.ended);
+    if(window.__ativos.length){
+      window.__ov.push(((window.__ativos[0].src||'').split('/').pop())+' + '+nome);
+    }
+    window.__ativos.push(me);
+    const off=function(){ window.__ativos=window.__ativos.filter(e=>e!==me); };
+    me.addEventListener('pause',off,{once:true});
+    me.addEventListener('ended',off,{once:true});
+    me.addEventListener('error',off,{once:true});
+    return P.apply(this,arguments);
+  };
+});
 await p.goto('file://'+require('path').resolve(process.argv[2]||'_padaria','index.html'));await p.waitForTimeout(600);
 /* ⚠️ LICAO PAGA (ago/2026, na Oficina da Lina): este portao so sabia andar pela
    `FASES` da atividade MONTADA. Numa atividade ESCRITA A MAO as fases sao
@@ -67,22 +95,21 @@ for(let i=0;i<n;i++){
    const sobrou=await p.evaluate(()=>window.__t.length);
    if(!sobrou) break;
  }
- await p.evaluate(()=>{window.__t=[];});
+ await p.evaluate(()=>{window.__t=[];window.__ov=[];});
  try{await p.evaluate(([k,f])=>{try{perfil={nome:'ANA',fig:(typeof ID!=='undefined'?ID.pre:'lt')+'_cr1'};}catch(e){}
    if(f) window[f](); else montaFase(k,function(){});},[i,forma.tipo==='mao'?forma.telas[i]:null]);}catch(e){continue;}
  await p.waitForTimeout(900);
- const ab=await p.evaluate(()=>window.__t);
- let dab=[]; for(let a=1;a<ab.length;a++) if(ab[a][0]-ab[a-1][0]<700) dab.push(ab[a-1][1]+' + '+ab[a][1]);
- if(dab.length){ruim++;console.log('fase',i+1,'ABERTURA -> JUNTOS:',dab.join(' , '));}
- await p.evaluate(()=>{window.__t=[];});
+ let dab=await p.evaluate(()=>window.__ov);
+ dab=[...new Set(dab)];
+ if(dab.length){ruim++;console.log('fase',i+1,'ABERTURA -> SOBREPOSTOS:',dab.join(' , '));}
+ await p.evaluate(()=>{window.__t=[];window.__ov=[];});
  const clicou=await p.evaluate(()=>{const c=document.querySelector('[data-qa="1"]');if(!c)return false;c.click();return true;});
  if(!clicou){continue;}
  await p.waitForTimeout(1400);
- const t=await p.evaluate(()=>window.__t);
- // sobreposicao = dois play() com menos de 700ms de diferenca
- let dup=[];
- for(let a=1;a<t.length;a++) if(t[a][0]-t[a-1][0]<700) dup.push(t[a-1][1]+' + '+t[a][1]);
- if(dup.length){ruim++;} if(dup.length) console.log('fase',i+1,'ACERTO ->',t.length,'audios | JUNTOS:',dup.join(' , '));
+ // sobreposicao REAL = dois tocadores DIFERENTES no ar ao mesmo tempo
+ let dup=await p.evaluate(()=>window.__ov);
+ dup=[...new Set(dup)];
+ if(dup.length){ruim++;console.log('fase',i+1,'ACERTO -> SOBREPOSTOS:',dup.join(' , '));}
 }
 if(!ruim){console.log('voz ok: nenhuma fase toca duas vozes juntas (abertura e acerto)');}
 process.exitCode = ruim?1:0;

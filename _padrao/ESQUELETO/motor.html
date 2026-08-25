@@ -820,6 +820,17 @@ function narraBalao(force){
   txt=txt.replace(/\s+/g," ").replace(/^ | $/g,"");
   if(!txt) return;
   if(!force && txt===__balaoNarrado) return;   /* mesmo balao: nao repete */
+  /* ⭐⭐ RODADA NOVA DENTRO DA FASE (Marcos, ago/2026: *"esta falando atrasado a
+     resposta da questao anterior em algumas questoes"*). O balao trocou de texto =
+     nova rodada — e a fase NAO chama `limpa()` nas rodadas (so na troca de fase).
+     Entao a voz da rodada ANTERIOR que ficou na `_fila`, ou o enunciado dela ainda
+     tocando no `narr`, sao agora VELHOS: sem soltar, a "resposta da questao
+     anterior" cai em cima da nova. Solto a fila e calo o `narr` (enunciado que
+     saiu). NAO toco no `vz`: o elogio do acerto toca nele e pode terminar sozinho —
+     a narracao da rodada nova entra na fila ATRAS dele (sequencial, sem voz dupla).
+     `__balaoNarrado` vazio = 1o desenho da fase (o `limpa` ja limpou tudo); so
+     limpo em troca REAL de rodada. */
+  if(__balaoNarrado){ _fila=null; try{ if(narr){ narr.pause(); narr.currentTime=0; } }catch(_e){} }
   __balaoNarrado=txt;
   if(typeof temVoz==="function"){
     var k=temVoz(txt);
@@ -1340,7 +1351,13 @@ function _vozTocando(){
      pergunta ainda no ar) NAO via a 1a e as duas partiam juntas — portao voz_dupla
      (duas .play() em <700ms). O carimbo cobre essa janela: por 500ms apos qualquer
      play(), conta como tocando -> a 2a entra na FILA em vez de sobrepor. */
-  try{ if((new Date()).getTime()-_lastPlayT < 500) return true; }catch(e){}
+  /* ⚠️ o carimbo so vale enquanto ALGUEM esta de fato tocando (nao pausado). Depois
+     de um `narr.pause()` na troca de rodada, o carimbo dizia "tocando" por mais 500ms
+     e a narracao nova ficava na `_fila` SEM ninguem para puxa-la (pause nao dispara
+     'ended'), deixando a rodada nova MUDA. O && com `!paused` corta essa janela morta
+     sem reabrir a corrida do Feirinha (logo apos play(), `paused` e false). */
+  try{ if((new Date()).getTime()-_lastPlayT < 500 &&
+         ((narr&&!narr.paused)||(typeof vz!=="undefined"&&vz&&!vz.paused)) ) return true; }catch(e){}
   try{ if(narr && !narr.paused && !narr.ended && narr.currentTime>0) return true; }catch(e){}
   try{ if(vz   && !vz.paused   && !vz.ended   && vz.currentTime>0)   return true; }catch(e){}
   return false;

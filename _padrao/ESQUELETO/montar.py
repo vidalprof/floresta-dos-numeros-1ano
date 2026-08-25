@@ -1413,6 +1413,16 @@ def escreve_index(pasta, c, falas):
                              u'var TIPO_ATIVIDADE="criativa"; \\1', saida, count=1)
         if not _qt:
             saida = saida.replace("<script>", '<script>var TIPO_ATIVIDADE="criativa";', 1)
+    # ⭐ AVALIAÇÃO (Marcos, ago/2026: "avaliação trimestral"): é um instrumento de
+    #    NOTA, mais curto que uma aula de 55 min e SEM aquecimento (não há revisão
+    #    espaçada numa prova). Marca `TIPO_ATIVIDADE="avaliacao"` para o piso de
+    #    duração (que só cobra "jogo") não reprovar — mas MANTÉM variedade e
+    #    cobertura por objetivo (uma avaliação boa é variada e cobre o trimestre).
+    elif str(c.get("tipo", "")).strip().lower() in ("avaliacao", "avaliação", "prova"):
+        saida, _qt = re.subn(r'(var MASCOTE_NOME\s*=)',
+                             u'var TIPO_ATIVIDADE="avaliacao"; \\1', saida, count=1)
+        if not _qt:
+            saida = saida.replace("<script>", '<script>var TIPO_ATIVIDADE="avaliacao";', 1)
     # ⭐ O TEMA DA ATIVIDADE — `<pasta>/tema.css`, se existir.
     #    Entra por ULTIMO de proposito: e a camada que da IDENTIDADE (a lousa da
     #    padaria, a bandeja de metal, o toldo listrado) e por isso tem que
