@@ -387,6 +387,7 @@ var FRASES=[
    dic:"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover."}
 ];
 var rodada=0, errosSeg=0, respondida=false, telaAtual=null, barraP=null;
+var _ultOkComp=-1;  /* posicao do pedaco certo na rodada passada (anti-repeticao) */
 var lacuna=null, botoes=[];
 
 /* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui
@@ -500,6 +501,15 @@ function telaCompletar(){
   var certo=pedacoDe(f.cer), lista=[certo], i, b, p;
   for(i=0;i<f.out.length;i++) lista.push(pedacoDe(f.out[i]));
   baguncar(lista);
+  /* ⭐ ANTI-REPETICAO (Marcos, ago/2026: "todas as respostas estao sendo a 1").
+     Com so 2 opcoes (mau/mal) o acaso deixa a certa no mesmo lugar metade das
+     rodadas, e a crianca decora a POSICAO. Se caiu onde caiu na rodada passada,
+     troca de lugar: a resposta certa ANDA de rodada em rodada. */
+  if(lista.length>1){
+    var _ok=-1,_kk; for(_kk=0;_kk<lista.length;_kk++){ if(lista[_kk]===certo){_ok=_kk;break;} }
+    if(_ok===_ultOkComp){ var _al=(_ok+1)%lista.length,_tp=lista[_ok]; lista[_ok]=lista[_al]; lista[_al]=_tp; _ok=_al; }
+    _ultOkComp=_ok;
+  }
   /* pedaco curto (letra, silaba) -> ladrilhos lado a lado em vez de tarjas
      empilhadas. Ver a licao no CSS de `.opts.curtas`. */
   var curtas=true, soLetra=true, temfig=false;

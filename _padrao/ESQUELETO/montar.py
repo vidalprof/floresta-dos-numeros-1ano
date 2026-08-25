@@ -598,11 +598,22 @@ _FONETICA_VOZ = [
     (re.compile(r"\bfaces\b", re.I), u"fásses"),
     (re.compile(r"\bface\b",  re.I), u"fásse"),
 ]
+_LACUNA = re.compile(r"_+")
 def _fonetica_voz(t):
     u"""Reescreve foneticamente as palavras que a voz erra. Vale SO para o texto
     que vai ao TTS — nunca para a tela nem para a chave da voz."""
     for rx, sub in _FONETICA_VOZ:
         t = rx.sub(sub, t)
+    # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): nas fases de COMPLETAR a lacuna e um
+    #    "___" na frase ("Ana achou a pista. ___ sorriu."), e a voz pt-BR lia isso
+    #    em voz alta como "underline"/"anderline" — repetido em toda rodada, feio.
+    #    A lacuna e VISUAL (fica na TELA), mas no AUDIO ela vira so uma pausa. Como
+    #    a chave/hash sai do texto da tela (com o "___"), o mp3 continua casando; so
+    #    o que a voz DIZ muda. Uma pausa curta (reticencias) no lugar do traco.
+    t = _LACUNA.sub(u"…", t)
+    # nao deixar espaco duplo nem pontuacao colada na reticencia
+    t = re.sub(r"\s+…", u" …", t)
+    t = re.sub(r"…\s*([.!?,;:])", u"…", t)
     return t
 
 

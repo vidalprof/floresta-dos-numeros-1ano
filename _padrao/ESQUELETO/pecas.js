@@ -9306,6 +9306,7 @@ var FRASES=[
    dic:"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover."}
 ];
 var rodada=0, errosSeg=0, respondida=false, telaAtual=null, barraP=null;
+var _ultOkComp=-1;  /* posicao do pedaco certo na rodada passada (anti-repeticao) */
 var lacuna=null, botoes=[];
 
 /* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui
@@ -9419,6 +9420,15 @@ function telaCompletar(){
   var certo=pedacoDe(f.cer), lista=[certo], i, b, p;
   for(i=0;i<f.out.length;i++) lista.push(pedacoDe(f.out[i]));
   baguncar(lista);
+  /* ⭐ ANTI-REPETICAO (Marcos, ago/2026: "todas as respostas estao sendo a 1").
+     Com so 2 opcoes (mau/mal) o acaso deixa a certa no mesmo lugar metade das
+     rodadas, e a crianca decora a POSICAO. Se caiu onde caiu na rodada passada,
+     troca de lugar: a resposta certa ANDA de rodada em rodada. */
+  if(lista.length>1){
+    var _ok=-1,_kk; for(_kk=0;_kk<lista.length;_kk++){ if(lista[_kk]===certo){_ok=_kk;break;} }
+    if(_ok===_ultOkComp){ var _al=(_ok+1)%lista.length,_tp=lista[_ok]; lista[_ok]=lista[_al]; lista[_al]=_tp; _ok=_al; }
+    _ultOkComp=_ok;
+  }
   /* pedaco curto (letra, silaba) -> ladrilhos lado a lado em vez de tarjas
      empilhadas. Ver a licao no CSS de `.opts.curtas`. */
   var curtas=true, soLetra=true, temfig=false;
@@ -13972,6 +13982,7 @@ var QZ=[
 var qi=0;      /* rodada de agora */
 var err=0;     /* erros DESTA rodada (o andaime cresce com ele) */
 var ger=0;     /* geracao da tela: mata setTimeout de fase que ja saiu */
+var _ultOkEsc=-1;  /* posicao da certa na rodada passada (anti-repeticao) */
 
 /* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui
    na bancada ela não existe, e a opção fica só com a palavra — que é o próprio
@@ -14041,6 +14052,18 @@ function pecaEscolher(){
   var lista=[{op:opcao(f.c),ok:1}], i;
   for(i=0;i<f.e.length;i++) lista.push({op:opcao(f.e[i]),ok:0});
   baguncar(lista);
+  /* ⭐ ANTI-REPETICAO (Marcos, ago/2026: "todas as respostas estao sendo a 1").
+     baguncar() e aleatorio, entao a certa PODE cair no mesmo lugar varias rodadas
+     seguidas — e ai a crianca decora a POSICAO, nao o conteudo. Com so 2 opcoes
+     (mau/mal) isso acontece metade das vezes. Se a certa caiu onde caiu na rodada
+     passada, troca de lugar: a resposta ANDA de rodada em rodada. */
+  if(lista.length>1){
+    var _ok=-1, _kk; for(_kk=0;_kk<lista.length;_kk++){ if(lista[_kk].ok){_ok=_kk;break;} }
+    if(_ok===_ultOkEsc){
+      var _alvo=(_ok+1)%lista.length, _tmp=lista[_ok]; lista[_ok]=lista[_alvo]; lista[_alvo]=_tmp; _ok=_alvo;
+    }
+    _ultOkEsc=_ok;
+  }
   /* com figura a lista vira grade de duas colunas (ver a lição no CSS) */
   var temfig=false;
   for(i=0;i<lista.length;i++) if(lista[i].op.img&&figEl) temfig=true;
@@ -14102,31 +14125,38 @@ function responde(o,certa){
        filhos e o alto-falante perderia o `onclick` — ficaria um botão bonito e
        mudo justamente depois do acerto. */
     o.appendChild(el("span","marca","certo"));
-    /* ⭐ CONFIRMA A RESPOSTA (Marcos, ago/2026: "na atividade de juntar ela
-       esqueceu de dizer na última quantas SÃO, só falou quantas"). No acerto, o
-       motor CONFIRMA em voz a resposta escolhida (ex.: "sete laranjas") — antes
-       só dizia a resposta quando a criança ERRAVA e precisava da revelação. Usa a
-       voz gravada da opção; calado se não houver. Um respiro (450ms) tira do
-       encalço do som de acerto. */
-    try{
-      var _av=o.getAttribute("data-voz");
-      if(_av && typeof temVoz==="function" && typeof falar==="function"){
-        var _ak=temVoz(_av);
-        if(_ak){ var _gc=ger; setTimeout(function(){ if(_gc===ger) falar("op_"+_ak); }, 450); }
-      }
-    }catch(e){}
     festeja(o);
     trancaTudo();
     var g=ger;
-    setTimeout(function(){
+    var _avanca=function(){
       if(g!==ger) return;                    /* a fase ja mudou: nao mexe */
       qi++;
       if(qi<QZ.length) pecaEscolher();
       else mostraBanner(FECHO, fimDaPeca);
-    },1300);  /* ⚠️ 560ms punha a narracao da PROXIMA rodada dentro da janela de
-                 700ms do som de acerto -> duas vozes (portao voz_dupla, Feirinha
-                 ago/2026). Agora 1300ms: dá espaço para a CONFIRMAÇÃO da resposta
-                 ("são sete") ser ouvida antes de a próxima pergunta narrar. */
+    };
+    /* ⭐ CONFIRMA A RESPOSTA (Marcos: "diga na última quantas SÃO"): no acerto o
+       motor confirma em voz a resposta escolhida (ex.: "sete laranjas").
+       ⚠️ LIÇÃO PAGA (Marcos ouviu no celular, ago/2026): a confirmação começava
+       450ms depois do acerto, mas a PRÓXIMA rodada entrava com 1300ms FIXOS. Se a
+       confirmação fosse mais longa que isso, ela CONTINUAVA tocando por cima da
+       pergunta seguinte — "fala a resposta da questão anterior quando está em
+       outra". A `falar` do motor ENFILEIRA a narração da nova tela atrás da
+       confirmação ainda tocando, então a criança via a pergunta 2 e ouvia a
+       resposta 1. Cura: a rodada só vira DEPOIS que a confirmação TERMINA (callback
+       do `falar`), com uma rede de segurança por tempo se a voz não vier (PC mudo
+       / mp3 bloqueada). Sem confirmação, mantém o tempo normal. */
+    var _av=null; try{ _av=o.getAttribute("data-voz"); }catch(e){}
+    var _ak=(_av && typeof temVoz==="function") ? temVoz(_av) : null;
+    if(_ak && typeof falar==="function"){
+      var _gc=ger;
+      setTimeout(function(){
+        if(_gc!==ger) return;
+        falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
+      }, 450);
+      setTimeout(_avanca, 4000);             /* rede: voz bloqueada/lenta nunca prende */
+    }else{
+      setTimeout(_avanca, 1300);
+    }
     return;
   }
   /* ERRO: não pune. Som grave curto + a opção sai do alcance + o andaime CRESCE. */
