@@ -190,7 +190,7 @@ add(id=u"aquecimento", mec=u"escolher", selo=u"AQUECIMENTO", conceito=u"objetivo
 # ============================================================
 # BLOCO 4 — COMPLETAR (f08, f09)  — a letra maiúscula do próprio
 # ============================================================
-add(id=u"f08", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo2",
+add(id=u"f08", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
     enunciado=u"Todo nome próprio começa com <b>letra maiúscula</b>. Escolha o certo.",
     dica=u"Só a PRIMEIRA letra é grande.",
     dados=[{u"img":u"", u"ante":u"O cachorro se chama ", u"dep":u".",
@@ -261,7 +261,7 @@ add(id=u"f12", mec=u"quem-sou-eu", selo=u"ADIVINHE O NOME", conceito=u"objetivo2
 # ============================================================
 # INTRUSO (f13)
 # ============================================================
-add(id=u"f13", mec=u"intruso", selo=u"ACHE O INTRUSO", conceito=u"objetivo3",
+add(id=u"f13", mec=u"intruso", selo=u"ACHE O INTRUSO", conceito=u"objetivo1",
     enunciado=u"Três são nomes <b>próprios</b>. Ache o que NÃO é (o comum).",
     dica=u"O intruso serve para qualquer um e começa com letra pequena.",
     dados=[{u"selo":u"ACHE O INTRUSO", u"tipo":u"texto",
