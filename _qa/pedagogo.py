@@ -244,13 +244,23 @@ def main():
     alvo = sys.argv[1]
     # ⭐ atividade CRIATIVA (livro de colorir): producao, nao treino — nao tem
     #    escada de dificuldade nem aquecimento. Isencao declarada no conteudo.
+    # ⭐ AVALIACAO (prova): correcao do Marcos (ago/2026): *"nao entendi pq banca
+    #    completa, a do segundo ano e PROVA, nao atividade"*. Uma prova MEDE o que a
+    #    crianca ja sabe — nao ENSINA. Logo nao tem escada didatica progressiva nem
+    #    fase de AQUECIMENTO (revisao espacada), que sao ferramentas de TREINO. O
+    #    portao do pedagogo (feito para atividade de aprender) nao se aplica: exigia
+    #    aquecimento numa prova. `tipo:"avaliacao"` isenta, como a criativa.
     _lado = os.path.join(os.path.dirname(os.path.abspath(alvo)), "conteudo.json")
     try:
         if os.path.exists(_lado):
-            _t = json.load(io.open(_lado, encoding="utf-8")).get("tipo", "")
-            if str(_t).strip().lower() in ("criativa", "livre", "colorir"):
+            _t = str(json.load(io.open(_lado, encoding="utf-8")).get("tipo", "")).strip().lower()
+            if _t in ("criativa", "livre", "colorir"):
                 print(u"%s -> atividade CRIATIVA (colorir): producao, sem escada/"
                       u"aquecimento. Nada a conferir aqui." % alvo)
+                return 0
+            if _t in ("avaliacao", "prova"):
+                print(u"%s -> AVALIACAO (prova): mede, nao ensina — sem escada "
+                      u"didatica progressiva nem aquecimento. Nada a conferir aqui." % alvo)
                 return 0
     except Exception:
         pass
