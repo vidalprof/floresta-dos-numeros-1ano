@@ -233,7 +233,7 @@ add(id=u"ef08", mec=u"memoria", selo=u"MEMÓRIA DOS MATERIAIS", conceito=u"objet
 add(id=u"ef09", mec=u"quebra-cabeca", selo=u"MONTE A TURMA BRINCANDO", conceito=u"objetivo3",
     enunciado=u"Monte o quebra-cabeça! É a turma brincando junta, cooperando.",
     dica=u"Olhe as bordas e as cores de cada pedaço para achar o lugar.",
-    dados={u"img":u"ef_turma_puzzle", u"cols":3, u"lins":2, u"w":336, u"h":384, u"fundo":True})
+    dados={u"img":u"ef_turma_puzzle", u"cols":3, u"lins":2, u"w":453, u"h":302, u"fundo":True})
 
 # ============================================================
 # BLOCO 6 — ESCREVER A LEGENDA (Q4)
