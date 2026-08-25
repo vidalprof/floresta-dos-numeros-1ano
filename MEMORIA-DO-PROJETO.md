@@ -11,6 +11,18 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **🎨🆓 ARTE: FLUX (Pollinations) PARA PEÇAS/CENAS, ChatGPT SÓ PARA O MASCOTE
+> (decisão do Marcos, ago/2026: "pode ser, o ChatGPT usamos para o mascote, daí vc me
+> passa o prompt; se o FLUX ficar ruim mudamos de novo").** Isto ATUALIZA a regra antiga
+> "o Claude não gera arte". Agora:
+> - **Peças, cenas, fundos, objetos** → `gerar-imagens.yml` (Pollinations/**FLUX**, grátis,
+>   rembg recorta no runner). O Claude PODE acionar o workflow e gerar (poupa o Marcos).
+> - **Mascote (e "mesmo personagem em várias poses")** → **ChatGPT** (o Claude PASSA o
+>   prompt em bloco; o Marcos gera e edita fala/piscar). FLUX não edita base com fidelidade;
+>   Gemini editava mas está sem cota.
+> - **Fallback:** se o FLUX sair ruim numa peça, volta pro ChatGPT naquela peça.
+> - Recorte de tudo (venha do FLUX ou do ChatGPT) → `_padrao/recortar.py` (rembg/isnet).
+>
 > **✂️🏆 RECORTE PROFISSIONAL = `rembg` (isnet), NÃO flood-fill (Marcos, ago/2026:
 > "use ferramentas profissionais para recortar, tudo perfeito e lindo, sem mancha,
 > tudo sem fundo" + "para o processo ficar mais rápido, confiável, com menos erros").**
