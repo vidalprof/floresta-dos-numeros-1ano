@@ -11,6 +11,27 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **⚡ CHECK-RELÂMPAGO ANTES DA BANCA COMPLETA (cobrança do Marcos, ago/2026:
+> "o processo tem que ser muito mais rápido").** O que faz uma atividade nova
+> demorar NÃO é a banca (roda em minutos) — é o CICLO: descobrir um defeito só
+> DEPOIS de 5 min de banca, consertar, re-gravar voz, e rodar a banca DE NOVO.
+> Cada volta custa a voz + a banca inteira. Para cortar isso, **antes** de gastar
+> a banca completa, rodar os portões DETERMINÍSTICOS que custam segundos e pegam
+> os erros mais comuns de atividade nova (tudo sem Chromium pesado, exceto encaixe
+> que é rápido):
+> - `python3 _qa/duracao.py <pasta>` → 40 min? (o Marcos exige ≥40)
+> - `node _qa/encaixe.js <pasta>/index.html 360 640 412 732 800 1280` → nenhuma
+>   `.ligfig`/figura < 44px (figura EM PÉ, ratio < 0,82, fica fina quando o
+>   `.ligfig` trava a altura em 54 — recortar mais QUADRADA, ratio ≥ 0,92).
+> - conferir **voz × mascote**: mascote masculino → `"voz":"masculina"` no
+>   `build_conteudo.py` (Téo, Nino… castor/menino = macho → Antonio, não Francisca).
+> - `python3 _qa/padrao.py` + `_qa/cobertura.py` (gesto ≤40%, objetivos com peso).
+> - `python3 _padrao/ESQUELETO/colher.py <pasta>` (colher os banners de tempo real)
+>   → montar → gravar a voz. Só ENTÃO a banca completa, UMA vez.
+> **Regra de ouro:** grave a voz UMA vez só, no fim, com o conteúdo já fechado e o
+> check-relâmpago verde — nunca gravar, achar defeito, re-gravar. E a voz do
+> mascote definida ANTES da 1ª gravação (masculina/feminina), senão re-grava tudo.
+>
 > **📋 PREFERÊNCIA DO MARCOS (ago/2026) — PROMPTS DE IMAGEM SEMPRE EM BLOCO DE
 > CÓDIGO NO CHAT.** Palavras dele: *"mande os prompts aqui com um botão copiar, e
 > sempre desse jeito"* e *"quero o conteúdo com botão copiar aqui no chat mesmo, sem
