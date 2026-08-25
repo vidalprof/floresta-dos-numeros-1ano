@@ -38,18 +38,18 @@ PASTA = os.path.dirname(os.path.abspath(__file__))
 HAB = (u"Reconhecer e usar pronomes (pessoais, possessivos, demonstrativos e de "
        u"tratamento) na coesão do texto; localizar informações e inferir sentidos "
        u"em textos narrativos e injuntivos; e empregar corretamente MAU/MAL "
-       u"conforme a classe (adjetivo × advérbio). EF05LP a EF35LP (revisão).")
+       u"conforme a classe (adjetivo × advérbio). EF04LP e EF35LP (revisão/reforço; mau×mal e demonstrativos são desafio, revistos do 5º).")
 
 CONTEUDO = {
  u"titulo": u"A Agência dos Detetives das Palavras",
- u"sub": u"Português · 5º ano · Pronomes, interpretação (narrativo/injuntivo), mau × mal",
- u"ano": u"5º ano",
+ u"sub": u"Português · 4º ano · Pronomes, interpretação (narrativo/injuntivo), mau × mal",
+ u"ano": u"4º ano",
  u"prefixo": u"dp",
  u"mascote": u"raposa",
  u"mascoteNome": u"Detetive Filó",
  u"crachas": 6,
  # quem planejou (até o 5º ano manda o PEDAGOGO; ver _padrao/RECEITA.md)
- u"mesa": u"Pedagogo do 5º ano + especialista em Língua Portuguesa (revisão de reforço).",
+ u"mesa": u"Pedagogo do 4º ano + especialista em Língua Portuguesa (revisão de reforço).",
  u"fundo": u"dp_fundo.png",
  u"voz": u"feminina",
  u"abertura": (u"Bem-vindo(a) à Agência! Sou a detetive Filó. Cada caso só se "
@@ -65,10 +65,10 @@ CONTEUDO = {
  # curriculo = mapa conceito -> habilidade BNCC (o montador confere que cada
  # objetivo diz QUE habilidade trabalha; é o que vai ao parecer do professor).
  u"curriculo": {
-   u"objetivo1": u"Reconhecer e usar pronomes (pessoais, possessivos, demonstrativos, de tratamento) na coesão do texto. EF05LP (revisão).",
-   u"objetivo2": u"Localizar informações explícitas e inferir sentidos em textos NARRATIVOS. EF35LP03/EF05LP (revisão).",
-   u"objetivo3": u"Identificar finalidade e ordenar passos em textos INJUNTIVOS (receita, regras). EF05LP (revisão).",
-   u"objetivo4": u"Empregar corretamente MAU (adjetivo, = bom) e MAL (advérbio, = bem). EF05LP (revisão).",
+   u"objetivo1": u"Reconhecer e usar pronomes (pessoais, possessivos, demonstrativos, de tratamento) na coesão do texto. EF04LP (revisão/reforço).",
+   u"objetivo2": u"Localizar informações explícitas e inferir sentidos em textos NARRATIVOS. EF35LP03/EF04LP (revisão).",
+   u"objetivo3": u"Identificar finalidade e ordenar passos em textos INJUNTIVOS (receita, regras). EF04LP (revisão).",
+   u"objetivo4": u"Empregar corretamente MAU (adjetivo, = bom) e MAL (advérbio, = bem). EF04LP/EF05LP (desafio, reforço).",
  },
  u"fases": [],   # <- preenchido pelos blocos abaixo
 }
