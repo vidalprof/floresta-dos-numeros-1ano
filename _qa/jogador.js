@@ -53,7 +53,7 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
           de gravacao. Quando a peca DECLARA a voz (`data-voz`), e ela que vale —
           a mesma regra que o motor (`poeZap`) e o portao (`vozresposta`) ja usam. */
        if(e.getAttribute && e.getAttribute("data-voz")) return e.getAttribute("data-voz");
-       var c=e.cloneNode(true), i, fora=c.querySelectorAll(".marca,.fmarca,.zap,.zapb,.tent");
+       var c=e.cloneNode(true), i, fora=c.querySelectorAll(".marca,.fmarca,.zap,.zapb,.tent,.inmarca");
        for(i=0;i<fora.length;i++) if(fora[i].parentNode) fora[i].parentNode.removeChild(fora[i]);
        return (c.textContent||"").replace(/\s+/g," ").replace(/^ | $/g,"");
      }
