@@ -15,8 +15,13 @@
 > (decisão do Marcos, ago/2026: "pode ser, o ChatGPT usamos para o mascote, daí vc me
 > passa o prompt; se o FLUX ficar ruim mudamos de novo").** Isto ATUALIZA a regra antiga
 > "o Claude não gera arte". Agora:
-> - **Peças, cenas, fundos, objetos** → `gerar-imagens.yml` (Pollinations/**FLUX**, grátis,
->   rembg recorta no runner). O Claude PODE acionar o workflow e gerar (poupa o Marcos).
+> - **⚠️ TESTADO ago/2026: o Pollinations/FLUX NÃO chega no ChatGPT** — ele usa uma versão
+>   RÁPIDA/DESTILADA do FLUX e sai **borrado nas bordas** (o Marcos reprovou a cozinha de
+>   teste, 2 tentativas com prompt anti-desfoque). NÃO oferecer o Pollinations como "nível
+>   ChatGPT". Para peças/cenas de qualidade, seguir no **ChatGPT** (o Marcos gera; o Claude
+>   passa prompt + recorta). O único grátis que PODE bater o ChatGPT é o **FLUX.1 cheio no
+>   Hugging Face** (Inference API, precisa de `HF_TOKEN` grátis) — ainda NÃO testado; só
+>   montar se o Marcos pedir e der o token.
 > - **Mascote (e "mesmo personagem em várias poses")** → **ChatGPT** (o Claude PASSA o
 >   prompt em bloco; o Marcos gera e edita fala/piscar). FLUX não edita base com fidelidade;
 >   Gemini editava mas está sem cota.
