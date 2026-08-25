@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Brincar e Aprender com a Dona Coruja — Prova de Educação Física</title>
+<title>Brincar e Aprender com o Léo — Prova de Educação Física</title>
 <style>
 /* ===== PROVA de Educação Física — 2º ano =====
    Tema INFANTIL, LÚDICO e COLORIDO: céu + gramado, cartões brancos arredondados,
@@ -136,7 +136,7 @@ var AVATARES=[
 var SLUG="educacao-fisica-2ano";   /* caminho no Firebase: /provas/<SLUG> */
 var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 var URL_PLANILHA="";
-var HISTORIA="Oi! Eu sou a Dona Coruja. Hoje você vai responder dez perguntas sobre as nossas brincadeiras e sobre o nosso corpo. Eu vou ler cada pergunta e cada resposta em voz alta, e você toca na resposta certa. Agora escreva o seu nome, escolha a sua turma e o seu personagem, e toque em começar!";
+var HISTORIA="Oi! Eu sou o Léo, o treinador. Hoje você vai responder dez perguntas sobre as nossas brincadeiras e sobre o nosso corpo. Eu vou ler cada pergunta e cada resposta em voz alta, e você toca na resposta certa. Agora escreva o seu nome, escolha a sua turma e o seu personagem, e toque em começar!";
 var _histTocada=false;
 
 /* ====== As 10 questões (múltipla escolha) — resposta controlada aqui ======
@@ -223,11 +223,11 @@ function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b
 function telaCapa(){
   var h='';
   h+='<div class="card">';
-  h+='<img class="masc-capa" src="img/ef_coruja_feliz.png" alt="Dona Coruja" onerror="this.style.display=\'none\'">';
-  h+='<h1>Brincar e Aprender com a Dona Coruja</h1>';
+  h+='<img class="masc-capa" src="img/ef_leo.png" alt="Léo, o leão treinador" onerror="this.style.display=\'none\'">';
+  h+='<h1>Brincar e Aprender com o Léo</h1>';
   h+='<h2>Educação Física &middot; 2º ano</h2>';
-  h+='<p class="grande">Eu sou a Dona Coruja! Leio cada pergunta e cada resposta em voz alta. É só ouvir e tocar na certa.</p>';
-  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir a Dona Coruja</button>';
+  h+='<p class="grande">Eu sou o Léo, o treinador! Leio cada pergunta e cada resposta em voz alta. É só ouvir e tocar na certa.</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir o Léo</button>';
   h+='<div class="formrow">';
   h+='<div class="fcol">';
   h+='<label>Qual é o seu nome?</label>';
@@ -274,7 +274,7 @@ function telaPergunta(){
   h+=passaporte();
   h+='<div class="card qcard">';
   h+=crachaHTML();
-  h+='<img class="guia" src="img/ef_coruja_feliz.png" alt="Dona Coruja" onerror="this.style.display=\'none\'">';
+  h+='<img class="guia" src="img/ef_leo.png" alt="Léo, o leão treinador" onerror="this.style.display=\'none\'">';
   h+='<span class="disc '+q.disc+'">'+(DISCNOME[q.disc]||"")+'</span>';
   if(q.img){h+='<img class="qfig" src="img/'+q.img+'" alt="" onerror="this.style.display=\'none\'">';}
   h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
@@ -315,10 +315,10 @@ function telaFinal(){
   h+='<h1>Prontinho!</h1>';
   h+=medalhaHTML();
   h+='<h2>'+esc(nomeAluno)+', você terminou a prova!</h2>';
-  h+='<p class="grande">A Dona Coruja gostou muito de brincar e aprender com você. Parabéns!</p>';
+  h+='<p class="grande">O Léo gostou muito de treinar com você. Parabéns!</p>';
   h+='<p id="statusenvio"></p></div>';
   $("app").innerHTML=h;
-  falar("Prontinho! Você terminou a prova. A Dona Coruja gostou muito de brincar e aprender com você. Parabéns!");
+  falar("Prontinho! Você terminou a prova. O Léo gostou muito de treinar com você. Parabéns!");
   enviarResultado(ac);
 }
 
