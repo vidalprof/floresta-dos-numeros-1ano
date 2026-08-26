@@ -20,11 +20,11 @@ HAB = (u"Reconhecer lugares e serviços públicos e privados; identificar ativid
 
 C = {
  u"titulo": u"Blumenau, a Nossa Cidade", u"sub": u"Geografia · 3º ano · A cidade e o mapa",
- u"ano": u"3º ano", u"prefixo": u"bl", u"mascote": u"capivara", u"mascoteNome": u"Bruna",
+ u"ano": u"3º ano", u"prefixo": u"bl", u"mascote": u"doutor", u"mascoteNome": u"Dr. Blumenau",
  u"crachas": 6, u"mesa": u"Pedagogo do 3º ano + especialista em Geografia (município/cartografia).",
- u"fundo": u"bl_fundo.png", u"voz": u"feminina",
- u"abertura": (u"Oi! Eu sou a Bruna, a capivara guia. Moro aqui em Blumenau, à beira do rio "
-              u"Itajaí-Açu. Vem conhecer a nossa cidade: os lugares, o trabalho das pessoas e o mapa!"),
+ u"fundo": u"bl_fundo.png", u"voz": u"masculina",
+ u"abertura": (u"Olá! Eu sou o Doutor Blumenau, o fundador desta cidade, à beira do rio "
+              u"Itajaí-Açu. Venha conhecer a nossa Blumenau: os lugares, o trabalho das pessoas e o mapa!"),
  u"fim": (u"Que passeio! Você já conhece os lugares de Blumenau, quem morava aqui antes, o que a "
           u"cidade produz e como ler um mapa com legenda. Você é guia de verdade!"),
  u"conceitos": {

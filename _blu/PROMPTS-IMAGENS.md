@@ -56,21 +56,21 @@ A SHEET of 2 separate objects arranged in a clean 1x2 GRID on a PLAIN PURE BLACK
 
 ## Folha `cart_mascote.png`
 
-Vem nela: **bl_capivara_feliz**
+Vem nela: **bl_doutor_feliz**
 
 ```
 A SHEET of 1 separate objects arranged in a clean 1x1 GRID on a PLAIN PURE BLACK background (#000000), each object fully inside its own cell, well separated from the others, none touching, all at the SAME scale and the SAME lighting. Soft matte clay 3D illustration, children's storybook style, rich saturated colours, soft shadows. No text, no letters, no numbers, no labels, no frames, no background scenery. The objects, in reading order (left to right, top to bottom), are:
-  1. a friendly cartoon character named Bruna, the guide of this activity about Blumenau, a Nossa Cidade, standing, full body, facing the viewer, smiling warmly, mouth closed, eyes open. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  1. a friendly cartoon character named Dr. Blumenau, the guide of this activity about Blumenau, a Nossa Cidade, standing, full body, facing the viewer, smiling warmly, mouth closed, eyes open. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
 ```
 
 ---
 
 # O MASCOTE (pose parada)
 
-## `bl_capivara_feliz.png`
+## `bl_doutor_feliz.png`
 
 ```
-a friendly cartoon character named Bruna, the guide of this activity about Blumenau, a Nossa Cidade, standing, full body, facing the viewer, smiling warmly, mouth closed, eyes open. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
+a friendly cartoon character named Dr. Blumenau, the guide of this activity about Blumenau, a Nossa Cidade, standing, full body, facing the viewer, smiling warmly, mouth closed, eyes open. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
 ```
 
 ---
@@ -83,17 +83,17 @@ segundo para a boca acompanhar a voz, e tres desenhos
 diferentes viram tremor. No print parado nao aparece; so com
 a crianca na frente. Suba a pose parada e peca a EDICAO.
 
-## `bl_capivara_fala.png`
+## `bl_doutor_fala.png`
 
 ```
-[EDICAO da pose parada — subir bl_capivara_feliz.png como base]
+[EDICAO da pose parada — subir bl_doutor_feliz.png como base]
 Keep this exact same character, exact same pose, exact same colours, exact same position and size in the frame. Change ONLY the mouth: open the mouth into a rounded "ah" shape as if speaking. Do not move anything else. Do not redraw the character.
 ```
 
-## `bl_capivara_pisca.png`
+## `bl_doutor_pisca.png`
 
 ```
-[EDICAO da pose parada — subir bl_capivara_feliz.png como base]
+[EDICAO da pose parada — subir bl_doutor_feliz.png como base]
 Keep this exact same character, exact same pose, exact same colours, exact same position and size in the frame. Change ONLY the eyes: close the eyes into two happy curved lines, as if blinking. Do not move anything else. Do not redraw the character.
 ```
 
