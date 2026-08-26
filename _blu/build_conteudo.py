@@ -22,7 +22,7 @@ C = {
  u"titulo": u"Blumenau, a Nossa Cidade", u"sub": u"Geografia · 3º ano · A cidade e o mapa",
  u"ano": u"3º ano", u"prefixo": u"bl", u"mascote": u"doutor", u"mascoteNome": u"Dr. Blumenau",
  u"crachas": 6, u"mesa": u"Pedagogo do 3º ano + especialista em Geografia (município/cartografia).",
- u"fundo": u"bl_fundo.png", u"voz": u"masculina",
+ u"fundo": u"bl_fundo.png", u"fundoSuave": True, u"voz": u"masculina",
  u"abertura": (u"Olá! Eu sou o Doutor Blumenau, o fundador desta cidade, à beira do rio "
               u"Itajaí-Açu. Venha conhecer a nossa Blumenau: os lugares, o trabalho das pessoas e o mapa!"),
  u"fim": (u"Que passeio! Você já conhece os lugares de Blumenau, quem morava aqui antes, o que a "
@@ -49,7 +49,11 @@ def esc(img,p,c,cvoz,erradas,dicas,cimg=None,eimgs=None):
         o={u"t":t,u"voz":v}
         if eimgs and i<len(eimgs) and eimgs[i]: o[u"img"]=eimgs[i]
         es.append(o)
-    return {u"img":img,u"p":p,u"c":cop,u"e":es,u"d":dicas}
+    # Se as OPÇÕES já têm figura, NÃO mostrar figura no topo — senão a foto do
+    # topo (que é a resposta certa) entrega a fase. A figura de topo fica só
+    # quando as opções são TEXTO (ex.: perguntas sobre o mapa).
+    topo = u"" if (cimg and eimgs) else img
+    return {u"img":topo,u"p":p,u"c":cop,u"e":es,u"d":dicas}
 DPUB=[u"Público é de TODOS: qualquer um pode usar.",u"É da cidade, para todo mundo? É público.",u"Isso! Lugar <b>público</b>. Toque para seguir."]
 DPRI=[u"Privado é de UMA pessoa ou família.",u"Tem dono? Nem todos entram? É privado.",u"Isso! Lugar <b>privado</b>. Toque para seguir."]
 
