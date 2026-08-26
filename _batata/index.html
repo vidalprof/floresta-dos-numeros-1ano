@@ -16,7 +16,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--card);color:var(
 .capa .capabg{position:absolute;inset:0;width:100%;height:100%;-o-object-fit:cover;object-fit:cover;z-index:0;}
 .capa::after{content:"";position:absolute;inset:0;background:-webkit-linear-gradient(top,rgba(20,15,8,.06),rgba(20,15,8,.42));background:linear-gradient(180deg,rgba(20,15,8,.06),rgba(20,15,8,.42));z-index:0;}
 .capa .mascote,.capa .card{position:relative;z-index:1;}
-.capacard{background:rgba(255,253,246,.82);-webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1);border-color:rgba(255,255,255,.75);box-shadow:0 16px 36px rgba(30,20,8,.34),inset 0 1px 0 rgba(255,255,255,.8);}
+.capa .centro{position:relative;z-index:1;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;width:100%;max-width:520px;min-height:100%;padding:12px 0;box-sizing:border-box;}
+.capa h1{font-size:clamp(24px,7vw,38px);font-weight:800;color:#fff;margin:10px auto 4px;text-align:center;background:rgba(40,52,20,.80);padding:8px 20px;border-radius:22px;max-width:94%;box-sizing:border-box;line-height:1.14;text-shadow:0 2px 0 #1e5410,0 4px 10px rgba(0,0,0,.45);}
+.capa .sub{color:#fff;font-weight:700;font-size:clamp(15px,4.2vw,19px);margin:4px 0 6px;background:rgba(40,52,20,.82);padding:6px 16px;border-radius:999px;}
 .card{background:var(--card);border:3px solid var(--linha);border-radius:26px;padding:20px 18px 24px;max-width:440px;width:94%;box-shadow:0 12px 28px rgba(60,48,32,.18);}
 h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:.3px;line-height:1.05}
 @media(min-width:760px){h1{font-size:44px}}
@@ -111,8 +113,8 @@ function tom(f,d){ try{ if(!_ac)_ac=new (window.AudioContext||window.webkitAudio
 function telaCapa(){
   var t=el("div","tela capa");
   var bg=el("img","capabg"); bg.src=IMG+"hb_fundo_atelie.png"; bg.alt=""; bg.onerror=function(){this.style.display='none';}; t.appendChild(bg);
-  var m=el("img","mascote"); m.src=IMG+"hb_batata_feliz.png"; m.alt="Tato"; m.onerror=function(){this.style.display='none';}; t.appendChild(m);
-  var c=el("div","card capacard");
+  var c=el("div","centro");
+  var m=el("img","mascote"); m.src=IMG+"hb_batata_feliz.png"; m.alt="Tato"; m.onerror=function(){this.style.display='none';}; c.appendChild(m);
   c.appendChild(el("h1",null,"O Ateliê do Sr. Batata"));
   c.appendChild(el("div","sub","Monte e vista o seu amigo batata!"));
   var b=el("button","bt","▶ Começar"); b.onclick=function(){arma();tom(660);falar("hb_abertura");telaQuem();};
@@ -122,7 +124,7 @@ function telaCapa(){
 function telaQuem(){
   var t=el("div","tela capa");
   var bg=el("img","capabg"); bg.src=IMG+"hb_fundo_atelie.png"; bg.alt=""; bg.onerror=function(){this.style.display='none';}; t.appendChild(bg);
-  var c=el("div","card capacard");
+  var c=el("div","centro");
   c.appendChild(el("h1",null,"Quem vai brincar?"));
   var inp=el("input","campo"); inp.type="text"; inp.placeholder="Escreva o seu nome"; inp.maxLength=16; inp.value=perfil.nome||"";
   c.appendChild(inp);
