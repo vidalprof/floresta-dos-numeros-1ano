@@ -28,6 +28,18 @@
 > - **Fallback:** se o FLUX sair ruim numa peça, volta pro ChatGPT naquela peça.
 > - Recorte de tudo (venha do FLUX ou do ChatGPT) → `_padrao/recortar.py` (rembg/isnet).
 >
+> **🖼️ MONTADOR — 2 lições da Blumenau (ago/2026, pegas pela banca):**
+> - **`fundoSuave: True` quando o `fundo` é CENA detalhada** (mapa da cidade, feira cheia).
+>   Sem isso o motor deixa o fundo NÍTIDO atrás do jogo e os cards de vidro somem no meio da
+>   poluição. Com `fundoSuave`, a capa fica nítida e SÓ o jogo desfoca/escurece o fundo. Fundo
+>   liso/gradiente não precisa.
+> - **ESCOLHER: se as OPÇÕES têm figura, NÃO pôr figura no topo** — a foto do topo é a
+>   resposta certa e entrega a fase. O helper `esc()` já faz: `topo="" if (cimg and eimgs)`.
+>   Figura de topo fica só quando as opções são TEXTO (ex.: perguntas sobre o mapa).
+> - **LIGAR: figura precisa de proporção ~0.9–1.5** (nem alta-fina nem larga-demais), senão o
+>   portão `encaixe` reprova (largura < 44px) ou `vazamento` (a figura larga empurra o
+>   alto-falante para fora do card). Padroniza com pad transparente antes de montar.
+>
 > **✂️🏆 RECORTE PROFISSIONAL = `rembg` (isnet), NÃO flood-fill (Marcos, ago/2026:
 > "use ferramentas profissionais para recortar, tudo perfeito e lindo, sem mancha,
 > tudo sem fundo" + "para o processo ficar mais rápido, confiável, com menos erros").**
