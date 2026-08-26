@@ -85,8 +85,8 @@ add(id=u"f04", mec=u"escolher", selo=u"JÁ FOI OU VAI SER?", conceito=u"objetivo
     enunciado=u"O verbo no <b>passado</b> já aconteceu; no <b>futuro</b> vai acontecer.",
     dica=u"Passado = ontem. Futuro = amanhã.",
     dados=[
-     esc(u"",u"“O menino <b>correu</b>.” Isso...",u"JÁ ACONTECEU",u"já aconteceu, é passado",[(u"VAI ACONTECER",u"vai acontecer"),(u"NÃO É VERBO",u"não é verbo")],DTMP),
-     esc(u"",u"“Amanhã eu <b>vou viajar</b>.” Isso...",u"VAI ACONTECER",u"vai acontecer, é futuro",[(u"JÁ ACONTECEU",u"já aconteceu"),(u"NÃO É VERBO",u"não é verbo")],DTMP),
+     esc(u"",u"“O menino <b>correu</b>.” Esse verbo está no...",u"PASSADO",u"passado, já aconteceu",[(u"FUTURO",u"futuro"),(u"NÃO É VERBO",u"não é verbo")],DTMP),
+     esc(u"",u"“Amanhã eu <b>vou viajar</b>.” Esse verbo está no...",u"FUTURO",u"futuro, vai acontecer",[(u"PASSADO",u"passado"),(u"NÃO É VERBO",u"não é verbo")],DTMP),
      esc(u"",u"Qual verbo está no <b>passado</b>?",u"BRINCOU",u"brincou",[(u"VAI BRINCAR",u"vai brincar"),(u"BRINCAR",u"brincar")],DTMP),
     ])
 
