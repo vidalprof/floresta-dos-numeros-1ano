@@ -92,6 +92,23 @@ add(id=u"f04", mec=u"escolher", selo=u"JÁ FOI OU VAI SER?", conceito=u"objetivo
      esc(u"",u"Qual verbo está no <b>passado</b>?",u"BRINCOU",u"brincou",[(u"VAI BRINCAR",u"vai brincar"),(u"BRINCAR",u"brincar")],DTMP),
     ])
 
+add(id=u"f04b", mec=u"escolher", selo=u"GRANDÃO", conceito=u"objetivo1",
+    enunciado=u"Ache o <b>aumentativo</b> (o grande).",
+    dica=u"Aumentativo termina em -ão.",
+    dados=[
+     esc(u"pw_bola",u"Qual é o <b>aumentativo</b> de BOLA?",u"BOLÃO",u"bolão",[(u"BOLINHA",u"bolinha"),(u"BOLA",u"bola")],DAUM,cimg=u"pw_bola"),
+     esc(u"pw_pato",u"Qual é o <b>aumentativo</b> de PATO?",u"PATÃO",u"patão",[(u"PATINHO",u"patinho"),(u"PATO",u"pato")],DAUM,cimg=u"pw_pato"),
+     esc(u"pw_sapo",u"Qual é o <b>aumentativo</b> de SAPO?",u"SAPÃO",u"sapão",[(u"SAPINHO",u"sapinho"),(u"SAPO",u"sapo")],DAUM,cimg=u"pw_sapo"),
+    ])
+add(id=u"f04c", mec=u"escolher", selo=u"CONTE OS PEDAÇOS", conceito=u"objetivo2",
+    enunciado=u"Quantas <b>sílabas</b> tem a palavra?",
+    dica=u"Bata uma palma para cada pedaço.",
+    dados=[
+     esc(u"pw_pato",u"Quantas sílabas tem <b>PATO</b> (pa-to)?",u"2",u"duas",[(u"1",u"uma"),(u"3",u"três")],DSIL,cimg=u"pw_pato"),
+     esc(u"pw_navio",u"Quantas sílabas tem <b>NAVIO</b> (na-vi-o)?",u"3",u"três",[(u"2",u"duas"),(u"4",u"quatro")],DSIL,cimg=u"pw_navio"),
+     esc(u"pw_vaca",u"Quantas sílabas tem <b>VACA</b> (va-ca)?",u"2",u"duas",[(u"3",u"três"),(u"1",u"uma")],DSIL,cimg=u"pw_vaca"),
+    ])
+
 # ============ BLOCO 2 — CLASSIFICAR (aum×dim · passado×futuro) ============
 def classif(idf,selo,ka,na,kb,nb,fichas,dicas,conc):
     return dict(id=idf, mec=u"classificar", selo=selo, conceito=conc,
@@ -115,6 +132,12 @@ add(**classif(u"f06",u"ONTEM OU AMANHÃ",u"pas",u"PASSADO",u"fut",u"FUTURO",
      {u"t":u"comeu",u"alvo":u"pas"},{u"t":u"vai correr",u"alvo":u"fut"},
      {u"t":u"estudou",u"alvo":u"pas"},{u"t":u"vai cantar",u"alvo":u"fut"}],
     [u"Já aconteceu (ontem)? PASSADO.",u"Ainda vai acontecer (amanhã)? FUTURO.",u"Isso mesmo! Toque para seguir."],u"objetivo3"))
+
+add(**classif(u"f06b",u"ONTEM OU AMANHÃ",u"pas",u"PASSADO",u"fut",u"FUTURO",
+    [{u"t":u"cantou",u"alvo":u"pas"},{u"t":u"vai dançar",u"alvo":u"fut"},
+     {u"t":u"dormiu",u"alvo":u"pas"},{u"t":u"vai viajar",u"alvo":u"fut"},
+     {u"t":u"jogou",u"alvo":u"pas"},{u"t":u"vai ler",u"alvo":u"fut"}],
+    [u"Já aconteceu (ontem)? PASSADO.",u"Ainda vai acontecer (amanhã)? FUTURO.",u"Você separa muito bem! Toque para seguir."],u"objetivo3"))
 
 # ============ BLOCO 3 — BATER-SÍLABAS ============
 add(id=u"f07", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objetivo2",
@@ -140,6 +163,18 @@ add(id=u"f07b", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objet
       u"d":[u"Diga <b>JACARÉ</b> bem devagar.",u"São três pulinhos: ja... ca... ré.",u"São <b>3</b> pedaços: ja... ca... ré. Toque em Pronto."]},
     ])
 
+add(id=u"f07c", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objetivo2",
+    enunciado=u"<b>Bata 1 vez</b> para cada sílaba e toque em <b>Pronto</b>.",
+    dica=u"Palavra bem comprida bate muitas vezes.",
+    dados=[
+     {u"pal":u"RATO",u"sil":[u"RA",u"TO"],u"voz":u"ra... to",u"fig":u"pw_rato",
+      u"d":[u"Diga <b>RATO</b> devagar: ra... to.",u"Bata a cada pedaço.",u"São <b>2</b> pedaços: ra... to. Toque em Pronto."]},
+     {u"pal":u"NAVIO",u"sil":[u"NA",u"VI",u"O"],u"voz":u"na... vi... o",u"fig":u"pw_navio",
+      u"d":[u"Diga <b>NAVIO</b> devagar: na... vi... o.",u"São três pulinhos.",u"São <b>3</b> pedaços: na... vi... o. Toque em Pronto."]},
+     {u"pal":u"ELEFANTE",u"sil":[u"E",u"LE",u"FAN",u"TE"],u"voz":u"e... le... fan... te",u"fig":u"pw_elefante",
+      u"d":[u"Diga <b>ELEFANTE</b> bem devagar: e... le... fan... te.",u"Conte os quatro pedaços.",u"São <b>4</b> pedaços: e... le... fan... te. Toque em Pronto."]},
+    ])
+
 # ============ BLOCO 4 — JUNTAR-SÍLABAS (monte a palavra) ============
 add(id=u"f08", mec=u"juntar-silabas", selo=u"MONTE A PALAVRA", conceito=u"objetivo2",
     enunciado=u"Junte os <b>pedaços</b> na ordem certa e forme a palavra.",
@@ -160,6 +195,16 @@ add(id=u"f08b", mec=u"juntar-silabas", selo=u"MONTE A PALAVRA", conceito=u"objet
       u"d":[u"Diga <b>NA-VI-O</b> devagar.",u"Começa com <b>NA</b>, depois <b>VI</b>, depois <b>O</b>.",u"A ordem é NA, VI, O. Toque no pedaço aceso."]},
      {u"pal":u"ZEBRA",u"sil":[u"ZE",u"BRA"],u"img":u"pw_zebra",u"iscas":[u"TU",u"LO"],u"lento":u"ZE... BRA",
       u"d":[u"Diga <b>ZE-BRA</b> devagar. Qual pedaço vem primeiro?",u"Começa com <b>ZE</b>, depois <b>BRA</b>.",u"A ordem é ZE, BRA. Toque no pedaço aceso."]},
+    ])
+
+add(id=u"f08c", mec=u"juntar-silabas", selo=u"MONTE A PALAVRA", conceito=u"objetivo2",
+    enunciado=u"Junte os <b>pedaços</b> na ordem certa e forme a palavra.",
+    dica=u"Diga a palavra devagar e escute os pedaços.",
+    dados=[
+     {u"pal":u"ABELHA",u"sil":[u"A",u"BE",u"LHA"],u"img":u"pw_abelha",u"iscas":[u"MO",u"TU"],u"lento":u"A... BE... LHA",
+      u"d":[u"Diga <b>A-BE-LHA</b> devagar.",u"Começa com <b>A</b>, depois <b>BE</b>, depois <b>LHA</b>.",u"A ordem é A, BE, LHA. Toque no pedaço aceso."]},
+     {u"pal":u"JACARÉ",u"sil":[u"JA",u"CA",u"RÉ"],u"img":u"pw_jacare",u"iscas":[u"BO",u"LI"],u"lento":u"JA... CA... RÉ",
+      u"d":[u"Diga <b>JA-CA-RÉ</b> devagar.",u"Começa com <b>JA</b>, depois <b>CA</b>, depois <b>RÉ</b>.",u"A ordem é JA, CA, RÉ. Toque no pedaço aceso."]},
     ])
 
 # ============ BLOCO 5 — LIGAR (figura -> diminutivo / aumentativo) ============
@@ -183,6 +228,17 @@ add(id=u"f09b", mec=u"ligar", selo=u"CADA UM NO SEU GRANDE", conceito=u"objetivo
     dadosExtra={u"ENUN":u"Ligue cada figura ao seu <b>aumentativo</b> (o grande).",
                 u"DICAS":[u"Gato vira gatão; rato vira ratão.",u"Sapo vira sapão; casa vira casarão."],
                 u"FECHO":u"Você formou todos os aumentativos!"})
+
+add(id=u"f09c", mec=u"ligar", selo=u"CADA UM NO SEU PEQUENO", conceito=u"objetivo1",
+    enunciado=u"Ligue cada <b>figura</b> ao seu <b>diminutivo</b>.",
+    dica=u"Diminutivo deixa pequeno: -inho, -inha.",
+    dados=[{u"k":u"e0",u"img":u"pw_bola",u"voz":u"bola",u"s":u"BOLINHA"},
+           {u"k":u"e1",u"img":u"pw_sapo",u"voz":u"sapo",u"s":u"SAPINHO"},
+           {u"k":u"e2",u"img":u"pw_vaca",u"voz":u"vaca",u"s":u"VAQUINHA"},
+           {u"k":u"e3",u"img":u"pw_rato",u"voz":u"rato",u"s":u"RATINHO"}],
+    dadosExtra={u"ENUN":u"Ligue cada figura ao seu <b>diminutivo</b> (o pequeno).",
+                u"DICAS":[u"Bola vira bolinha; sapo vira sapinho.",u"Vaca vira vaquinha; rato vira ratinho."],
+                u"FECHO":u"Você formou todos os diminutivos!"})
 
 # ============ AQUECIMENTO (revisão espaçada) — no MEIO ============
 add(id=u"aquecimento", mec=u"escolher", selo=u"AQUECIMENTO", conceito=u"objetivo1",
@@ -240,6 +296,20 @@ add(id=u"f12b", mec=u"intruso", selo=u"ACHE O INTRUSO", conceito=u"objetivo3",
       u"enunPorque":u"Por que <b>vai pular</b> é o intruso? Toque na razão certa.",
       u"p1":u"Pense se a ação já foi feita.",u"p2":u"Não é sobre o número de palavras.",u"p3":u"É sobre passado (ontem) × futuro (amanhã)."}])
 
+add(id=u"f12c", mec=u"intruso", selo=u"ACHE O INTRUSO", conceito=u"objetivo1",
+    enunciado=u"Três são <b>aumentativos</b>. Ache o que NÃO é.",
+    dica=u"Um deles é o pequenininho, não o grandão.",
+    dados=[{u"selo":u"ACHE O INTRUSO", u"tipo":u"texto",
+      u"enun":u"Três são <b>aumentativos</b> (grandes). Qual NÃO é?",
+      u"itens":[{u"k":u"a",u"n":u"gatão"},{u"k":u"b",u"n":u"ratão"},{u"k":u"c",u"n":u"casarão"},{u"k":u"d",u"n":u"gatinho"}],
+      u"fora":u"d", u"nomeFora":u"gatinho",
+      u"d1":u"Três deixam a palavra grande; um deixa pequena.",
+      u"d2":u"Gatão, ratão e casarão terminam em -ão.",
+      u"d3":u"O de fora é <b>gatinho</b>: termina em -inho, é diminutivo (pequeno).",
+      u"razoes":[{u"t":u"Termina em -inho: é diminutivo, não aumentativo.",u"ok":1},{u"t":u"Porque é a menor palavra.",u"ok":0},{u"t":u"Porque fala de gato.",u"ok":0}],
+      u"enunPorque":u"Por que <b>gatinho</b> é o intruso? Toque na razão certa.",
+      u"p1":u"Olhe o final da palavra.",u"p2":u"Não é sobre o tamanho da escrita.",u"p3":u"É sobre -ão (grande) × -inho (pequeno)."}])
+
 # ============ BLOCO 9 — MEMÓRIA (figura ↔ diminutivo) ============
 add(id=u"f13", mec=u"memoria", selo=u"MEMÓRIA DAS PALAVRAS", conceito=u"objetivo1",
     enunciado=u"Ache os pares: a <b>figura</b> e o seu <b>diminutivo</b>.",
@@ -280,6 +350,14 @@ add(id=u"f14c", mec=u"completar", selo=u"GRANDE OU PEQUENO", conceito=u"objetivo
            {u"img":u"",u"ante":u"A flor pequena é a ",u"dep":u".",u"cer":u"florzinha",u"out":[u"florão",u"flor"],u"dic":u"Pequena: <b>florzinha</b>."}],
     dadosExtra={u"ENUN":u"Preencha com o diminutivo ou o aumentativo.",u"FECHO":u"Você forma o grande e o pequeno!"})
 
+add(id=u"f14d", mec=u"completar", selo=u"GRANDE OU PEQUENO", conceito=u"objetivo1",
+    enunciado=u"Preencha com o <b>diminutivo</b> ou o <b>aumentativo</b>.",
+    dica=u"Pequeno: -inho/-inha. Grande: -ão.",
+    dados=[{u"img":u"",u"ante":u"O rato grande é o ",u"dep":u".",u"cer":u"ratão",u"out":[u"ratinho",u"rato"],u"dic":u"Grande: <b>ratão</b>."},
+           {u"img":u"",u"ante":u"O sapo pequeno é o ",u"dep":u".",u"cer":u"sapinho",u"out":[u"sapão",u"sapo"],u"dic":u"Pequeno: <b>sapinho</b>."},
+           {u"img":u"",u"ante":u"A bola grande é o ",u"dep":u".",u"cer":u"bolão",u"out":[u"bolinha",u"bola"],u"dic":u"Grande: <b>bolão</b>."}],
+    dadosExtra={u"ENUN":u"Preencha com o diminutivo ou o aumentativo.",u"FECHO":u"Você forma o grande e o pequeno!"})
+
 # ============ BLOCO 11 — DIGITAR (escreva a palavra) ============
 add(id=u"f15", mec=u"digitar", selo=u"ESCREVA O PEQUENO", conceito=u"objetivo1",
     enunciado=u"Escreva o <b>diminutivo</b> da figura, letra por letra.",
@@ -302,6 +380,14 @@ add(id=u"f15c", mec=u"digitar", selo=u"ESCREVA O VERBO", conceito=u"objetivo3",
            {u"palavra":u"PULOU",u"img":u"",u"voz":u"pulou",u"pista":u"O que o sapo fez ontem. De pular, no passado. Escreva: Pulou.",u"dic":u"<b>Pulou</b>."},
            {u"palavra":u"CANTOU",u"img":u"",u"voz":u"cantou",u"pista":u"O que o pássaro fez ontem. De cantar, no passado. Escreva: Cantou.",u"dic":u"<b>Cantou</b>."}],
     dadosExtra={u"ENUN":u"Escreva o verbo no <b>passado</b>.",u"FECHO":u"Você escreveu os verbos no passado!"})
+
+add(id=u"f15d", mec=u"digitar", selo=u"ESCREVA O PEQUENO", conceito=u"objetivo1",
+    enunciado=u"Escreva o <b>diminutivo</b> da figura, letra por letra.",
+    dica=u"Diminutivo termina em -inho ou -inha.",
+    dados=[{u"palavra":u"BOLINHA",u"img":u"pw_bola",u"voz":u"bolinha",u"pista":u"A bola pequena. Escreva: Bolinha.",u"dic":u"<b>Bolinha</b>."},
+           {u"palavra":u"SAPINHO",u"img":u"pw_sapo",u"voz":u"sapinho",u"pista":u"O sapo pequeno. Escreva: Sapinho.",u"dic":u"<b>Sapinho</b>."},
+           {u"palavra":u"RATINHO",u"img":u"pw_rato",u"voz":u"ratinho",u"pista":u"O rato pequeno. Escreva: Ratinho.",u"dic":u"<b>Ratinho</b>."}],
+    dadosExtra={u"ENUN":u"Escreva o <b>diminutivo</b> da figura.",u"FECHO":u"Você escreveu mais diminutivos!"})
 
 # ============ FECHO — CAÇA-PALAVRAS ============
 add(id=u"f16", mec=u"caca-palavras", selo=u"CAÇA AOS PEQUENOS", conceito=u"objetivo1",
