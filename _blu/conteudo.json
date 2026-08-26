@@ -329,6 +329,54 @@
       "Ele ajuda a encontrar o caminho.",
       "Isso! Toque para seguir."
      ]
+    },
+    {
+     "img": "bl_mapa",
+     "p": "O mapa mostra a cidade vista de onde?",
+     "c": {
+      "t": "DE CIMA",
+      "voz": "de cima",
+      "img": "bl_mapa"
+     },
+     "e": [
+      {
+       "t": "DE LADO",
+       "voz": "de lado"
+      },
+      {
+       "t": "DE BAIXO",
+       "voz": "de baixo"
+      }
+     ],
+     "d": [
+      "O mapa mostra a cidade vista de cima.",
+      "Ele ajuda a encontrar o caminho.",
+      "Isso! Toque para seguir."
+     ]
+    },
+    {
+     "img": "bl_mapa",
+     "p": "Para ir de um lugar a outro, o mapa mostra o quê?",
+     "c": {
+      "t": "O CAMINHO",
+      "voz": "o caminho",
+      "img": "bl_mapa"
+     },
+     "e": [
+      {
+       "t": "A COMIDA",
+       "voz": "a comida"
+      },
+      {
+       "t": "A HORA",
+       "voz": "a hora"
+      }
+     ],
+     "d": [
+      "O mapa mostra a cidade vista de cima.",
+      "Ele ajuda a encontrar o caminho.",
+      "Isso! Toque para seguir."
+     ]
     }
    ]
   },
@@ -993,6 +1041,32 @@
       "A FÁBRICA",
       "A LOJA"
      ]
+    },
+    {
+     "resp": "HERMANN BLUMENAU",
+     "pistas": [
+      "Eu <b>fundei</b> a cidade em 1850.",
+      "Vim da <b>Alemanha</b> com 17 pessoas.",
+      "A cidade leva o meu <b>nome</b>."
+     ],
+     "outros": [
+      "UM TURISTA",
+      "UM ÍNDIO",
+      "UM REI"
+     ]
+    },
+    {
+     "resp": "A OKTOBERFEST",
+     "pistas": [
+      "Sou uma grande <b>festa</b> de outubro.",
+      "Tem música, comida e <b>cerveja</b>.",
+      "Sou a festa alemã de Blumenau."
+     ],
+     "outros": [
+      "O CARNAVAL",
+      "O NATAL",
+      "A PÁSCOA"
+     ]
     }
    ]
   },
@@ -1109,6 +1183,76 @@
    ]
   },
   {
+   "id": "f08m",
+   "mec": "memoria",
+   "selo": "MEMÓRIA DA CIDADE",
+   "conceito": "objetivo2",
+   "enunciado": "Ache os pares: a <b>foto</b> do lugar e o seu <b>nome</b>.",
+   "dica": "Vire duas cartas e ache o par: foto e nome do mesmo lugar.",
+   "dados": [
+    {
+     "k": "vila",
+     "pal": "VILA GERMÂNICA",
+     "fig": "bl_foto_vila",
+     "sen": "onde tem a Oktoberfest",
+     "figsen": "bl_foto_vila"
+    },
+    {
+     "k": "ponte",
+     "pal": "PONTE DOS ARCOS",
+     "fig": "bl_foto_ponte",
+     "sen": "atravessa o rio com arcos",
+     "figsen": "bl_foto_ponte"
+    },
+    {
+     "k": "teatro",
+     "pal": "TEATRO CARLOS GOMES",
+     "fig": "bl_foto_teatro",
+     "sen": "tem palco giratório",
+     "figsen": "bl_foto_teatro"
+    },
+    {
+     "k": "castelo",
+     "pal": "CASTELINHO",
+     "fig": "bl_foto_castelinho",
+     "sen": "parece um castelo alemão",
+     "figsen": "bl_foto_castelinho"
+    }
+   ],
+   "dadosExtra": {
+    "PARES": [
+     {
+      "k": "vila",
+      "pal": "VILA GERMÂNICA",
+      "fig": "bl_foto_vila",
+      "sen": "onde tem a Oktoberfest",
+      "figsen": "bl_foto_vila"
+     },
+     {
+      "k": "ponte",
+      "pal": "PONTE DOS ARCOS",
+      "fig": "bl_foto_ponte",
+      "sen": "atravessa o rio com arcos",
+      "figsen": "bl_foto_ponte"
+     },
+     {
+      "k": "teatro",
+      "pal": "TEATRO CARLOS GOMES",
+      "fig": "bl_foto_teatro",
+      "sen": "tem palco giratório",
+      "figsen": "bl_foto_teatro"
+     },
+     {
+      "k": "castelo",
+      "pal": "CASTELINHO",
+      "fig": "bl_foto_castelinho",
+      "sen": "parece um castelo alemão",
+      "figsen": "bl_foto_castelinho"
+     }
+    ]
+   }
+  },
+  {
    "id": "f09",
    "mec": "completar",
    "selo": "NOME PRÓPRIO",
@@ -1203,6 +1347,53 @@
    }
   },
   {
+   "id": "f09c",
+   "mec": "completar",
+   "selo": "NOME PRÓPRIO",
+   "conceito": "objetivo3",
+   "enunciado": "Preencha com o nome próprio escrito do jeito <b>certo</b>.",
+   "dica": "Nome de pessoa, ponte e teatro é próprio: letra grande.",
+   "dados": [
+    {
+     "img": "",
+     "ante": "O fundador foi o Dr. ",
+     "dep": ".",
+     "cer": "Blumenau",
+     "out": [
+      "blumenau",
+      "BLUMENAU"
+     ],
+     "dic": "Só o B é grande: Blumenau."
+    },
+    {
+     "img": "",
+     "ante": "A ponte cartão-postal é a Ponte dos ",
+     "dep": ".",
+     "cer": "Arcos",
+     "out": [
+      "arcos",
+      "ARCOS"
+     ],
+     "dic": "Só o A é grande: Arcos."
+    },
+    {
+     "img": "",
+     "ante": "O teatro se chama Carlos ",
+     "dep": ".",
+     "cer": "Gomes",
+     "out": [
+      "gomes",
+      "GOMES"
+     ],
+     "dic": "Só o G é grande: Gomes."
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Preencha com o nome próprio escrito do jeito <b>certo</b>.",
+    "FECHO": "Nome próprio: sempre com letra grande!"
+   }
+  },
+  {
    "id": "f10",
    "mec": "digitar",
    "selo": "ESCREVA O NOME",
@@ -1273,6 +1464,41 @@
    }
   },
   {
+   "id": "f10c",
+   "mec": "digitar",
+   "selo": "ESCREVA O NOME",
+   "conceito": "objetivo2",
+   "enunciado": "Escreva os nomes dos nossos lugares e festas, letra por letra.",
+   "dica": "Nome próprio começa com letra grande.",
+   "dados": [
+    {
+     "palavra": "VILA",
+     "img": "",
+     "voz": "vila",
+     "pista": "A Vila Germânica das festas. Escreva: Vila.",
+     "dic": "<b>Vila</b>."
+    },
+    {
+     "palavra": "TEATRO",
+     "img": "",
+     "voz": "teatro",
+     "pista": "O Teatro Carlos Gomes. Escreva: Teatro.",
+     "dic": "<b>Teatro</b>."
+    },
+    {
+     "palavra": "FESTA",
+     "img": "",
+     "voz": "festa",
+     "pista": "A Oktoberfest é uma grande festa. Escreva: Festa.",
+     "dic": "<b>Festa</b>."
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Escreva os nomes dos nossos lugares e festas, letra por letra.",
+    "FECHO": "Você escreveu os nomes dos passeios!"
+   }
+  },
+  {
    "id": "f11",
    "mec": "caca-palavras",
    "selo": "CAÇA À CIDADE",
@@ -1284,7 +1510,9 @@
     "ITAJAI",
     "XOKLENG",
     "PONTE",
-    "MAPA"
+    "MAPA",
+    "RIO",
+    "CIDADE"
    ],
    "dadosExtra": {
     "MODO": "lista",
@@ -1296,7 +1524,9 @@
      "c2",
      "c3",
      "c4",
-     "c5"
+     "c5",
+     "c6",
+     "c7"
     ]
    }
   },
@@ -1312,7 +1542,9 @@
     "PRACA",
     "HOSPITAL",
     "LOJA",
-    "CASA"
+    "CASA",
+    "MERCADO",
+    "PADARIA"
    ],
    "dadosExtra": {
     "MODO": "lista",
@@ -1324,7 +1556,9 @@
      "l2",
      "l3",
      "l4",
-     "l5"
+     "l5",
+     "l6",
+     "l7"
     ]
    }
   },
@@ -1340,7 +1574,9 @@
     "CERVEJA",
     "ROCA",
     "FEIRA",
-    "LOJA"
+    "LOJA",
+    "FABRICA",
+    "MERCADO"
    ],
    "dadosExtra": {
     "MODO": "lista",
@@ -1352,7 +1588,9 @@
      "t2",
      "t3",
      "t4",
-     "t5"
+     "t5",
+     "t6",
+     "t7"
     ]
    }
   },
@@ -1368,7 +1606,9 @@
     "TEATRO",
     "PONTE",
     "PARQUE",
-    "MUSEU"
+    "MUSEU",
+    "PRACA",
+    "CASTELO"
    ],
    "dadosExtra": {
     "MODO": "lista",
@@ -1380,7 +1620,41 @@
      "p2",
      "p3",
      "p4",
-     "p5"
+     "p5",
+     "p6",
+     "p7"
+    ]
+   }
+  },
+  {
+   "id": "f11e",
+   "mec": "caca-palavras",
+   "selo": "CAÇA À NATUREZA",
+   "conceito": "objetivo3",
+   "enunciado": "Ache as palavras da <b>natureza</b> de Blumenau no quadro.",
+   "dica": "Estão deitadas (→), em pé (↓) e na diagonal.",
+   "dados": [
+    "RIO",
+    "MORRO",
+    "FLORESTA",
+    "ARVORE",
+    "AGUA",
+    "PEIXE",
+    "MATA"
+   ],
+   "dadosExtra": {
+    "MODO": "lista",
+    "TITULO": "A NATUREZA",
+    "LETRAS": "AEFGHILMOPRSTUVXZ",
+    "DIFICIL": "",
+    "CORP": [
+     "n1",
+     "n2",
+     "n3",
+     "n4",
+     "n5",
+     "n6",
+     "n7"
     ]
    }
   }

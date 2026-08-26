@@ -21,7 +21,7 @@ proposito**: os geradores entendem melhor e erram menos.
 
 Peca gerada UMA A UMA sai com a luz e a escala daquela
 geracao, e ao lado das outras ela DESTOA. Na mesma folha,
-saem irmas — e sao 3 chamada(s) no lugar de 11.
+saem irmas — e sao 3 chamada(s) no lugar de 15.
 
 Salve cada folha com o nome dela (`cart_...png`) e me mande:
 eu recorto cada peca com o nome certo
@@ -30,28 +30,32 @@ conferencia para o senhor olhar antes de embutir.
 
 ## Folha `cart_peca1.png`
 
-Vem nela: **bl_camiseta, bl_caneca, bl_computador, bl_hospital, bl_loja, bl_mercado, bl_padaria, bl_praca**
+Vem nela: **bl_camiseta, bl_caneca, bl_computador, bl_foto_castelinho, bl_foto_ponte, bl_foto_teatro, bl_foto_vila, bl_hospital**
 
 ```
 A SHEET of 8 separate objects arranged in a clean 3x3 GRID on a PLAIN PURE BLACK background (#000000), each object fully inside its own cell, well separated from the others, none touching, all at the SAME scale and the SAME lighting. Soft matte clay 3D illustration, children's storybook style, rich saturated colours, soft shadows. No text, no letters, no numbers, no labels, no frames, no background scenery. The objects, in reading order (left to right, top to bottom), are:
   1. camiseta, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
   2. caneca, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
   3. computador, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
-  4. hospital, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
-  5. loja, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
-  6. mercado, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
-  7. padaria, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
-  8. praca, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  4. foto castelinho, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  5. foto ponte, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  6. foto teatro, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  7. foto vila, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  8. hospital, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
 ```
 
 ## Folha `cart_peca2.png`
 
-Vem nela: **bl_prefeitura, bl_verduras**
+Vem nela: **bl_loja, bl_mercado, bl_padaria, bl_praca, bl_prefeitura, bl_verduras**
 
 ```
-A SHEET of 2 separate objects arranged in a clean 1x2 GRID on a PLAIN PURE BLACK background (#000000), each object fully inside its own cell, well separated from the others, none touching, all at the SAME scale and the SAME lighting. Soft matte clay 3D illustration, children's storybook style, rich saturated colours, soft shadows. No text, no letters, no numbers, no labels, no frames, no background scenery. The objects, in reading order (left to right, top to bottom), are:
-  1. prefeitura, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
-  2. verduras, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+A SHEET of 6 separate objects arranged in a clean 2x3 GRID on a PLAIN PURE BLACK background (#000000), each object fully inside its own cell, well separated from the others, none touching, all at the SAME scale and the SAME lighting. Soft matte clay 3D illustration, children's storybook style, rich saturated colours, soft shadows. No text, no letters, no numbers, no labels, no frames, no background scenery. The objects, in reading order (left to right, top to bottom), are:
+  1. loja, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  2. mercado, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  3. padaria, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  4. praca, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  5. prefeitura, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
+  6. verduras, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain, no scenery, no floor, no horizon, no other objects.
 ```
 
 ## Folha `cart_mascote.png`
@@ -127,6 +131,30 @@ caneca, a single clear object, easy for a child to recognise at a glance. Soft m
 
 ```
 computador, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
+```
+
+## `bl_foto_castelinho.png`
+
+```
+foto castelinho, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
+```
+
+## `bl_foto_ponte.png`
+
+```
+foto ponte, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
+```
+
+## `bl_foto_teatro.png`
+
+```
+foto teatro, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
+```
+
+## `bl_foto_vila.png`
+
+```
+foto vila, a single clear object, easy for a child to recognise at a glance. Soft matte CLAY 3D illustration, handmade plasticine model photographed in a studio, rounded chunky friendly shapes, rich saturated colours, soft gentle shadows, smooth matte surface, children's storybook look. Not a photograph, not flat vector. No text, no letters, no numbers, no logo, no watermark. ONE single object, centered, filling the frame, isolated on a plain pure white background, no scenery, no floor, no horizon, no other objects.
 ```
 
 ## `bl_hospital.png`
