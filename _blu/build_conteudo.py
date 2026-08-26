@@ -81,6 +81,24 @@ add(id=u"f03", mec=u"escolher", selo=u"O MAPA", conceito=u"objetivo3",
      esc(u"bl_mapa",u"No mapa, a <b>linha azul</b> que corta a cidade é o quê?",u"O RIO ITAJAÍ",u"o rio Itajaí",[(u"UMA RUA",u"uma rua"),(u"UM MURO",u"um muro")],DMAP,cimg=u"bl_mapa"),
      esc(u"bl_mapa",u"O que explica os <b>símbolos</b> do mapa?",u"A LEGENDA",u"a legenda",[(u"A CAPA",u"a capa"),(u"O TÍTULO",u"o título")],DMAP,cimg=u"bl_mapa"),
     ])
+add(id=u"f01b", mec=u"escolher", selo=u"DE TODOS", conceito=u"objetivo1",
+    enunciado=u"De novo: ache o lugar <b>público</b> (de todos).",
+    dica=u"Público é de todo mundo.",
+    dados=[
+     esc(u"bl_hospital",u"Qual é <b>público</b>?",u"O HOSPITAL",u"o hospital",[(u"A LOJA",u"a loja"),(u"A CASA",u"a casa")],DPUB,cimg=u"bl_hospital",eimgs=[u"bl_loja",u"bl_casa"]),
+     esc(u"bl_praca",u"Qual lugar é de <b>todos</b>?",u"A PRAÇA",u"a praça",[(u"O MERCADO",u"o mercado"),(u"A PADARIA",u"a padaria")],DPUB,cimg=u"bl_praca",eimgs=[u"bl_mercado",u"bl_padaria"]),
+     esc(u"bl_escola",u"Qual é <b>público</b>?",u"A ESCOLA",u"a escola",[(u"A LOJA",u"a loja"),(u"O MERCADO",u"o mercado")],DPUB,cimg=u"bl_escola",eimgs=[u"bl_loja",u"bl_mercado"]),
+     esc(u"bl_prefeitura",u"Qual prédio é <b>público</b>?",u"A PREFEITURA",u"a prefeitura",[(u"A PADARIA",u"a padaria"),(u"A CASA",u"a casa")],DPUB,cimg=u"bl_prefeitura",eimgs=[u"bl_padaria",u"bl_casa"]),
+    ])
+add(id=u"f02b", mec=u"escolher", selo=u"DE UM DONO", conceito=u"objetivo1",
+    enunciado=u"De novo: ache o lugar <b>privado</b> (de um dono).",
+    dica=u"Privado tem dono; nem todos entram.",
+    dados=[
+     esc(u"bl_loja",u"Qual é <b>privado</b>?",u"A LOJA",u"a loja",[(u"A PRAÇA",u"a praça"),(u"A ESCOLA",u"a escola")],DPRI,cimg=u"bl_loja",eimgs=[u"bl_praca",u"bl_escola"]),
+     esc(u"bl_padaria",u"Qual é <b>privado</b>?",u"A PADARIA",u"a padaria",[(u"O HOSPITAL",u"o hospital"),(u"A PREFEITURA",u"a prefeitura")],DPRI,cimg=u"bl_padaria",eimgs=[u"bl_hospital",u"bl_prefeitura"]),
+     esc(u"bl_casa",u"Qual é <b>privado</b>, de uma família?",u"A CASA",u"a casa",[(u"A PRAÇA",u"a praça"),(u"A ESCOLA",u"a escola")],DPRI,cimg=u"bl_casa",eimgs=[u"bl_praca",u"bl_escola"]),
+     esc(u"bl_mercado",u"Qual é <b>privado</b>?",u"O MERCADO",u"o mercado",[(u"O HOSPITAL",u"o hospital"),(u"A PRAÇA",u"a praça")],DPRI,cimg=u"bl_mercado",eimgs=[u"bl_hospital",u"bl_praca"]),
+    ])
 
 # ============ BLOCO 2 — CLASSIFICAR (público × privado) ============
 def classif(idf,fichas,dicas):
@@ -98,6 +116,18 @@ add(**classif(u"f04b",[{u"t":u"prefeitura",u"alvo":u"pub"},{u"t":u"padaria",u"al
     {u"t":u"biblioteca",u"alvo":u"pub"},{u"t":u"farmácia",u"alvo":u"pri"},
     {u"t":u"posto de saúde",u"alvo":u"pub"},{u"t":u"restaurante",u"alvo":u"pri"}],
     [u"Biblioteca e posto de saúde são de todos.",u"Farmácia e restaurante têm dono.",u"Muito bem! Toque para seguir."]))
+add(**classif(u"f04c",[{u"t":u"parque",u"alvo":u"pub"},{u"t":u"cinema",u"alvo":u"pri"},
+    {u"t":u"correios",u"alvo":u"pub"},{u"t":u"salão",u"alvo":u"pri"},
+    {u"t":u"delegacia",u"alvo":u"pub"},{u"t":u"oficina",u"alvo":u"pri"}],
+    [u"Parque, correios e delegacia são da cidade, de todos.",u"Cinema, salão e oficina têm dono.",u"Boa! Toque para seguir."]))
+add(**classif(u"f04d",[{u"t":u"rua",u"alvo":u"pub"},{u"t":u"fazenda",u"alvo":u"pri"},
+    {u"t":u"ponte",u"alvo":u"pub"},{u"t":u"fábrica",u"alvo":u"pri"},
+    {u"t":u"posto de gasolina",u"alvo":u"pri"},{u"t":u"museu",u"alvo":u"pub"}],
+    [u"Rua, ponte e museu são de todos.",u"Fazenda, fábrica e posto têm dono.",u"Muito bem! Toque para seguir."]))
+add(**classif(u"f04e",[{u"t":u"praça",u"alvo":u"pub"},{u"t":u"padaria",u"alvo":u"pri"},
+    {u"t":u"escola",u"alvo":u"pub"},{u"t":u"mercado",u"alvo":u"pri"},
+    {u"t":u"hospital",u"alvo":u"pub"},{u"t":u"loja",u"alvo":u"pri"}],
+    [u"Praça, escola e hospital: de todos.",u"Padaria, mercado e loja: têm dono.",u"Você já sabe separar! Toque para seguir."]))
 
 # ============ BLOCO 3 — LIGAR (economia; legenda do mapa) ============
 add(id=u"f05", mec=u"ligar", selo=u"O TRABALHO DA CIDADE", conceito=u"objetivo2",
@@ -128,6 +158,8 @@ add(id=u"f07", mec=u"quem-sou-eu", selo=u"QUEM MORAVA AQUI?", conceito=u"objetiv
     dados=[
      {u"resp":u"OS XOKLENG",u"pistas":[u"Vivíamos aqui <b>antes</b> da cidade.",u"Morávamos na <b>floresta</b> e perto do <b>rio</b>.",u"Somos o povo <b>indígena</b> Xokleng."],u"outros":[u"OS ALEMÃES",u"OS TURISTAS",u"OS COLONOS"]},
      {u"resp":u"A CANOA",u"pistas":[u"Os Xokleng me usavam no rio Itajaí.",u"Sou feita de <b>madeira</b>.",u"Ando na <b>água</b>, sem motor."],u"outros":[u"O AVIÃO",u"O ÔNIBUS",u"O TREM"]},
+     {u"resp":u"O RIO ITAJAÍ",u"pistas":[u"Eu corto a cidade no <b>meio</b>.",u"As canoas andavam em mim.",u"Sou o rio <b>Itajaí-Açu</b>."],u"outros":[u"A RUA",u"A PONTE",u"A PRAÇA"]},
+     {u"resp":u"A FLORESTA",u"pistas":[u"Os Xokleng tiravam de mim comida e abrigo.",u"Sou cheia de <b>árvores</b>.",u"Ficava ao redor da aldeia."],u"outros":[u"O MERCADO",u"A FÁBRICA",u"A LOJA"]},
     ])
 
 # ============ BLOCO 5 — INTRUSO (pontos turísticos) ============
@@ -144,6 +176,19 @@ add(id=u"f08", mec=u"intruso", selo=u"ACHE O INTRUSO", conceito=u"objetivo2",
       u"razoes":[{u"t":u"Fica em outra cidade, não em Blumenau.",u"ok":1},{u"t":u"Porque é a mais bonita.",u"ok":0},{u"t":u"Porque é a maior.",u"ok":0}],
       u"enunPorque":u"Por que a <b>Praia de Copacabana</b> é o intruso? Toque na razão certa.",
       u"p1":u"Pense onde cada lugar fica.",u"p2":u"Beleza e tamanho não importam aqui.",u"p3":u"O que importa é a cidade onde fica."}])
+add(id=u"f08b", mec=u"intruso", selo=u"ACHE O INTRUSO", conceito=u"objetivo2",
+    enunciado=u"Três são <b>trabalhos fortes de Blumenau</b>. Ache o que NÃO é daqui.",
+    dica=u"Um deles não é típico de Blumenau.",
+    dados=[{u"selo":u"ACHE O INTRUSO", u"tipo":u"texto",
+      u"enun":u"Três são trabalhos fortes de <b>Blumenau</b>. Qual NÃO é?",
+      u"itens":[{u"k":u"a",u"n":u"malharia"},{u"k":u"b",u"n":u"cervejaria"},{u"k":u"c",u"n":u"informática"},{u"k":u"d",u"n":u"pesca no mar"}],
+      u"fora":u"d", u"nomeFora":u"pesca no mar",
+      u"d1":u"Blumenau não fica na praia.",
+      u"d2":u"Malharia, cervejaria e informática são fortes aqui.",
+      u"d3":u"O de fora é a <b>pesca no mar</b>: Blumenau fica longe do mar.",
+      u"razoes":[{u"t":u"Blumenau não fica no mar; fica à beira do rio.",u"ok":1},{u"t":u"Porque é a mais difícil.",u"ok":0},{u"t":u"Porque é a mais antiga.",u"ok":0}],
+      u"enunPorque":u"Por que a <b>pesca no mar</b> é o intruso? Toque na razão certa.",
+      u"p1":u"Pense onde fica Blumenau.",u"p2":u"Não é sobre ser difícil.",u"p3":u"É sobre o mar estar longe daqui."}])
 
 # ============ BLOCO 6 — COMPLETAR + DIGITAR (nomes próprios) ============
 add(id=u"f09", mec=u"completar", selo=u"NOME PRÓPRIO", conceito=u"objetivo3",
@@ -153,6 +198,13 @@ add(id=u"f09", mec=u"completar", selo=u"NOME PRÓPRIO", conceito=u"objetivo3",
            {u"img":u"",u"ante":u"O rio da cidade é o ",u"dep":u".",u"cer":u"Itajaí",u"out":[u"itajaí",u"ITAJAÍ"],u"dic":u"Só o I é grande: Itajaí."},
            {u"img":u"",u"ante":u"O povo indígena daqui é o ",u"dep":u".",u"cer":u"Xokleng",u"out":[u"xokleng",u"XOKLENG"],u"dic":u"Só o X é grande: Xokleng."}],
     dadosExtra={u"ENUN":u"Preencha com o nome próprio do jeito <b>certo</b> (letra grande).",u"FECHO":u"Nome de lugar e de povo: sempre com letra grande!"})
+add(id=u"f09b", mec=u"completar", selo=u"NOME PRÓPRIO", conceito=u"objetivo3",
+    enunciado=u"Preencha com o nome do lugar do jeito <b>certo</b>.",
+    dica=u"Cidade, estado e festa têm nome próprio: letra grande.",
+    dados=[{u"img":u"",u"ante":u"Blumenau fica no estado de ",u"dep":u".",u"cer":u"Santa Catarina",u"out":[u"santa catarina",u"SANTA CATARINA"],u"dic":u"S e C grandes: Santa Catarina."},
+           {u"img":u"",u"ante":u"A festa da cerveja é a ",u"dep":u".",u"cer":u"Oktoberfest",u"out":[u"oktoberfest",u"OKTOBERFEST"],u"dic":u"Só o O é grande: Oktoberfest."},
+           {u"img":u"",u"ante":u"A vila das festas é a Vila ",u"dep":u".",u"cer":u"Germânica",u"out":[u"germânica",u"GERMÂNICA"],u"dic":u"Só o G é grande: Germânica."}],
+    dadosExtra={u"ENUN":u"Preencha com o nome do lugar do jeito <b>certo</b>.",u"FECHO":u"Muito bem! Nome próprio com letra grande."})
 add(id=u"f10", mec=u"digitar", selo=u"ESCREVA O NOME", conceito=u"objetivo3",
     enunciado=u"Escreva o <b>nome</b> da nossa cidade e do rio, letra por letra.",
     dica=u"Nome próprio começa com letra grande.",
@@ -160,6 +212,13 @@ add(id=u"f10", mec=u"digitar", selo=u"ESCREVA O NOME", conceito=u"objetivo3",
            {u"palavra":u"ITAJAI",u"img":u"",u"voz":u"itajaí",u"pista":u"O rio que corta a cidade. Escreva: Itajaí.",u"dic":u"Nome próprio: <b>Itajaí</b>."},
            {u"palavra":u"PONTE",u"img":u"",u"voz":u"ponte",u"pista":u"O que atravessa o rio. Escreva: Ponte.",u"dic":u"<b>Ponte</b>."}],
     dadosExtra={u"ENUN":u"Escreva o <b>nome</b> da nossa cidade e do rio, letra por letra.",u"FECHO":u"Muito bem! Você escreveu os nomes da cidade."})
+add(id=u"f10b", mec=u"digitar", selo=u"ESCREVA O NOME", conceito=u"objetivo3",
+    enunciado=u"Escreva mais nomes da nossa cidade, letra por letra.",
+    dica=u"Nome próprio começa com letra grande.",
+    dados=[{u"palavra":u"XOKLENG",u"img":u"",u"voz":u"xokleng",u"pista":u"O povo indígena daqui. Escreva: Xokleng.",u"dic":u"Nome próprio: <b>Xokleng</b>."},
+           {u"palavra":u"PRACA",u"img":u"",u"voz":u"praça",u"pista":u"Lugar público de todos. Escreva: Praça.",u"dic":u"<b>Praça</b>."},
+           {u"palavra":u"MAPA",u"img":u"",u"voz":u"mapa",u"pista":u"Mostra a cidade de cima. Escreva: Mapa.",u"dic":u"<b>Mapa</b>."}],
+    dadosExtra={u"ENUN":u"Escreva mais nomes da nossa cidade, letra por letra.",u"FECHO":u"Você escreveu tudo certinho!"})
 
 # ============ FECHO — CAÇA-PALAVRAS ============
 add(id=u"f11", mec=u"caca-palavras", selo=u"CAÇA À CIDADE", conceito=u"objetivo3",
@@ -167,6 +226,21 @@ add(id=u"f11", mec=u"caca-palavras", selo=u"CAÇA À CIDADE", conceito=u"objetiv
     dica=u"Estão deitadas (→), em pé (↓) e na diagonal.",
     dados=[u"BLUMENAU",u"ITAJAI",u"XOKLENG",u"PONTE",u"MAPA"],
     dadosExtra={u"MODO":u"lista",u"TITULO":u"A NOSSA CIDADE",u"LETRAS":u"ABEGIJKLMNOPTUX",u"DIFICIL":u"",u"CORP":[u"c1",u"c2",u"c3",u"c4",u"c5"]})
+add(id=u"f11b", mec=u"caca-palavras", selo=u"CAÇA AOS LUGARES", conceito=u"objetivo1",
+    enunciado=u"Ache os <b>lugares</b> da cidade escondidos no quadro.",
+    dica=u"Estão deitados (→), em pé (↓) e na diagonal.",
+    dados=[u"ESCOLA",u"PRACA",u"HOSPITAL",u"LOJA",u"CASA"],
+    dadosExtra={u"MODO":u"lista",u"TITULO":u"OS LUGARES",u"LETRAS":u"ACDEHILOPRSTUJ",u"DIFICIL":u"",u"CORP":[u"l1",u"l2",u"l3",u"l4",u"l5"]})
+add(id=u"f11c", mec=u"caca-palavras", selo=u"CAÇA AO TRABALHO", conceito=u"objetivo2",
+    enunciado=u"Ache os <b>trabalhos</b> de Blumenau escondidos no quadro.",
+    dica=u"Estão deitados (→), em pé (↓) e na diagonal.",
+    dados=[u"MALHA",u"CERVEJA",u"ROCA",u"FEIRA",u"LOJA"],
+    dadosExtra={u"MODO":u"lista",u"TITULO":u"O TRABALHO",u"LETRAS":u"ACEFGHIJLMORV",u"DIFICIL":u"",u"CORP":[u"t1",u"t2",u"t3",u"t4",u"t5"]})
+add(id=u"f11d", mec=u"caca-palavras", selo=u"CAÇA AOS PASSEIOS", conceito=u"objetivo2",
+    enunciado=u"Ache os <b>pontos turísticos</b> escondidos no quadro.",
+    dica=u"Estão deitados (→), em pé (↓) e na diagonal.",
+    dados=[u"VILA",u"TEATRO",u"PONTE",u"PARQUE",u"MUSEU"],
+    dadosExtra={u"MODO":u"lista",u"TITULO":u"OS PASSEIOS",u"LETRAS":u"AEILMNOPQRSTUV",u"DIFICIL":u"",u"CORP":[u"p1",u"p2",u"p3",u"p4",u"p5"]})
 
 C[u"fases"]=fases; C[u"habilidades"]=HAB
 with io.open(os.path.join(PASTA,u"conteudo.json"),u"w",encoding=u"utf-8") as f:
