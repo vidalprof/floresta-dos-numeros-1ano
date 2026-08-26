@@ -20,14 +20,14 @@ HAB = (u"Formar e reconhecer aumentativo e diminutivo; separar palavras em síla
 
 C = {
  u"titulo": u"A Oficina das Palavras", u"sub": u"Português · 4º ano · Palavras que crescem, encolhem, se dividem e viajam no tempo",
- u"ano": u"4º ano", u"prefixo": u"pw", u"mascote": u"castor", u"mascoteNome": u"Téo",
+ u"ano": u"4º ano", u"prefixo": u"pw", u"mascote": u"robo", u"mascoteNome": u"Léxi",
  u"crachas": 6, u"mesa": u"Pedagogo do 4º ano + especialista em Língua Portuguesa (morfologia e verbos).",
  u"fundo": u"pw_fundo.png", u"fundoSuave": True, u"voz": u"masculina",
- u"abertura": (u"Olá! Eu sou o Téo, o carpinteiro das palavras. Bem-vindo à minha oficina! "
+ u"abertura": (u"Olá! Eu sou o Léxi, o robô das palavras. Bem-vindo ao laboratório! "
               u"Aqui a gente faz a palavra CRESCER, ENCOLHER, corta ela em pedacinhos e até "
-              u"faz ela viajar no tempo. Vamos trabalhar as palavras?"),
- u"fim": (u"Que trabalho bonito! Você já sabe deixar a palavra grande e pequena, cortar em "
-          u"sílabas e fazer o verbo ir para o passado e para o futuro. Você é carpinteiro de "
+              u"faz ela viajar no tempo. Vamos brincar com as palavras?"),
+ u"fim": (u"Que trabalho incrível! Você já sabe deixar a palavra grande e pequena, cortar em "
+          u"sílabas e fazer o verbo ir para o passado e para o futuro. Você é um mestre das "
           u"palavras de verdade!"),
  u"conceitos": {
    u"objetivo1": u"Aumentativo e diminutivo (a palavra grande × pequena)",
@@ -130,10 +130,10 @@ add(id=u"f07", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objeti
     ])
 add(id=u"f07b", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objetivo2",
     enunciado=u"<b>Bata 1 vez</b> para cada sílaba e toque em <b>Pronto</b>.",
-    dica=u"Palavra curtinha bate poucas vezes; palavra comprida bate mais.",
+    dica=u"Palavra comprida bate mais vezes.",
     dados=[
-     {u"pal":u"FLOR",u"sil":[u"FLOR"],u"voz":u"flor",u"fig":u"pw_flor",
-      u"d":[u"Diga <b>FLOR</b>. A boca abre só uma vez.",u"É uma palavra de UM pedaço só.",u"É <b>1</b> pedaço: flor. Toque em Pronto."]},
+     {u"pal":u"SAPO",u"sil":[u"SA",u"PO"],u"voz":u"sa... po",u"fig":u"pw_sapo",
+      u"d":[u"Diga <b>SAPO</b> devagar e bata a cada pedaço.",u"Conte: sa... po.",u"São <b>2</b> pedaços: sa... po. Toque em Pronto."]},
      {u"pal":u"ABELHA",u"sil":[u"A",u"BE",u"LHA"],u"voz":u"a... be... lha",u"fig":u"pw_abelha",
       u"d":[u"Diga <b>ABELHA</b> devagar: a... be... lha.",u"Conte as batidas com o queixo.",u"São <b>3</b> pedaços: a... be... lha. Toque em Pronto."]},
      {u"pal":u"JACARÉ",u"sil":[u"JA",u"CA",u"RÉ"],u"voz":u"ja... ca... ré",u"fig":u"pw_jacare",
@@ -156,10 +156,10 @@ add(id=u"f08b", mec=u"juntar-silabas", selo=u"MONTE A PALAVRA", conceito=u"objet
     enunciado=u"Junte os <b>três pedaços</b> na ordem certa.",
     dica=u"Fale a palavra devagar e escute os três pedaços.",
     dados=[
-     {u"pal":u"SAPATO",u"sil":[u"SA",u"PA",u"TO"],u"img":u"",u"iscas":[u"LO",u"MI"],u"lento":u"SA... PA... TO",
-      u"d":[u"Diga <b>SA-PA-TO</b> devagar.",u"Começa com <b>SA</b>, depois <b>PA</b>, depois <b>TO</b>.",u"A ordem é SA, PA, TO. Toque no pedaço aceso."]},
-     {u"pal":u"CAVALO",u"sil":[u"CA",u"VA",u"LO"],u"img":u"",u"iscas":[u"TE",u"RU"],u"lento":u"CA... VA... LO",
-      u"d":[u"Diga <b>CA-VA-LO</b> devagar.",u"Começa com <b>CA</b>, depois <b>VA</b>, depois <b>LO</b>.",u"A ordem é CA, VA, LO. Toque no pedaço aceso."]},
+     {u"pal":u"NAVIO",u"sil":[u"NA",u"VI",u"O"],u"img":u"pw_navio",u"iscas":[u"LO",u"MI"],u"lento":u"NA... VI... O",
+      u"d":[u"Diga <b>NA-VI-O</b> devagar.",u"Começa com <b>NA</b>, depois <b>VI</b>, depois <b>O</b>.",u"A ordem é NA, VI, O. Toque no pedaço aceso."]},
+     {u"pal":u"ZEBRA",u"sil":[u"ZE",u"BRA"],u"img":u"pw_zebra",u"iscas":[u"TU",u"LO"],u"lento":u"ZE... BRA",
+      u"d":[u"Diga <b>ZE-BRA</b> devagar. Qual pedaço vem primeiro?",u"Começa com <b>ZE</b>, depois <b>BRA</b>.",u"A ordem é ZE, BRA. Toque no pedaço aceso."]},
     ])
 
 # ============ BLOCO 5 — LIGAR (figura -> diminutivo / aumentativo) ============
