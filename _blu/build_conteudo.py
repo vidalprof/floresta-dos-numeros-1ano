@@ -81,11 +81,11 @@ add(id=u"f03", mec=u"escolher", selo=u"O MAPA", conceito=u"objetivo3",
     enunciado=u"O <b>mapa</b> mostra a cidade vista de <b>cima</b>. Responda:",
     dica=u"Pense para que a gente usa um mapa.",
     dados=[
-     esc(u"bl_mapa",u"Para que serve um <b>mapa</b> da cidade?",u"PARA ACHAR OS LUGARES",u"para achar os lugares",[(u"PARA COMER",u"para comer"),(u"PARA DORMIR",u"para dormir")],DMAP,cimg=u"bl_mapa"),
-     esc(u"bl_mapa",u"No mapa, a <b>linha azul</b> que corta a cidade é o quê?",u"O RIO ITAJAÍ",u"o rio Itajaí",[(u"UMA RUA",u"uma rua"),(u"UM MURO",u"um muro")],DMAP,cimg=u"bl_mapa"),
-     esc(u"bl_mapa",u"O que explica os <b>símbolos</b> do mapa?",u"A LEGENDA",u"a legenda",[(u"A CAPA",u"a capa"),(u"O TÍTULO",u"o título")],DMAP,cimg=u"bl_mapa"),
-     esc(u"bl_mapa",u"O mapa mostra a cidade vista de onde?",u"DE CIMA",u"de cima",[(u"DE LADO",u"de lado"),(u"DE BAIXO",u"de baixo")],DMAP,cimg=u"bl_mapa"),
-     esc(u"bl_mapa",u"Para ir de um lugar a outro, o mapa mostra o quê?",u"O CAMINHO",u"o caminho",[(u"A COMIDA",u"a comida"),(u"A HORA",u"a hora")],DMAP,cimg=u"bl_mapa"),
+     esc(u"bl_mapa",u"Para que serve um <b>mapa</b> da cidade?",u"PARA ACHAR OS LUGARES",u"para achar os lugares",[(u"PARA COMER",u"para comer"),(u"PARA DORMIR",u"para dormir")],DMAP),
+     esc(u"bl_mapa",u"No mapa, a <b>linha azul</b> que corta a cidade é o quê?",u"O RIO ITAJAÍ",u"o rio Itajaí",[(u"UMA RUA",u"uma rua"),(u"UM MURO",u"um muro")],DMAP),
+     esc(u"bl_mapa",u"O que explica os <b>símbolos</b> do mapa?",u"A LEGENDA",u"a legenda",[(u"A CAPA",u"a capa"),(u"O TÍTULO",u"o título")],DMAP),
+     esc(u"bl_mapa",u"O mapa mostra a cidade vista de onde?",u"DE CIMA",u"de cima",[(u"DE LADO",u"de lado"),(u"DE BAIXO",u"de baixo")],DMAP),
+     esc(u"bl_mapa",u"Para ir de um lugar a outro, o mapa mostra o quê?",u"O CAMINHO",u"o caminho",[(u"A COMIDA",u"a comida"),(u"A HORA",u"a hora")],DMAP),
     ])
 add(id=u"f01b", mec=u"escolher", selo=u"DE TODOS", conceito=u"objetivo1",
     enunciado=u"De novo: ache o lugar <b>público</b> (de todos).",
@@ -157,6 +157,16 @@ add(id=u"f06", mec=u"ligar", selo=u"A LEGENDA DO MAPA", conceito=u"objetivo3",
                 u"DICAS":[u"Cruz = hospital; livro = escola.",u"Arco = ponte; linha azul = rio."],
                 u"FECHO":u"Você leu a legenda do mapa!"})
 
+# ============ AQUECIMENTO (revisão espaçada) — no MEIO da aula ============
+add(id=u"aquecimento", mec=u"escolher", selo=u"AQUECIMENTO", conceito=u"objetivo1",
+    enunciado=u"Vamos <b>lembrar</b>: qual lugar é <b>público</b> (de todos)?",
+    dica=u"Público é de todo mundo; privado tem dono.",
+    dados=[
+     esc(u"bl_praca",u"Qual é <b>público</b>, de todos?",u"A PRAÇA",u"a praça",[(u"A CASA",u"a casa"),(u"A LOJA",u"a loja")],DPUB,cimg=u"bl_praca",eimgs=[u"bl_casa",u"bl_loja"]),
+     esc(u"bl_hospital",u"E qual lugar é <b>público</b>?",u"O HOSPITAL",u"o hospital",[(u"A PADARIA",u"a padaria"),(u"O MERCADO",u"o mercado")],DPUB,cimg=u"bl_hospital",eimgs=[u"bl_padaria",u"bl_mercado"]),
+     esc(u"bl_escola",u"E agora, qual é de <b>todos</b>?",u"A ESCOLA",u"a escola",[(u"A LOJA",u"a loja"),(u"A CASA",u"a casa")],DPUB,cimg=u"bl_escola",eimgs=[u"bl_loja",u"bl_casa"]),
+    ])
+
 # ============ BLOCO 4 — QUEM-SOU-EU (indígenas) ============
 add(id=u"f07", mec=u"quem-sou-eu", selo=u"QUEM MORAVA AQUI?", conceito=u"objetivo2",
     enunciado=u"Antes da cidade, quem já morava nestas terras? Ouça as pistas.",
@@ -227,7 +237,7 @@ add(id=u"f09b", mec=u"completar", selo=u"NOME PRÓPRIO", conceito=u"objetivo3",
     enunciado=u"Preencha com o nome do lugar do jeito <b>certo</b>.",
     dica=u"Cidade, estado e festa têm nome próprio: letra grande.",
     dados=[{u"img":u"",u"ante":u"Blumenau fica no estado de ",u"dep":u".",u"cer":u"Santa Catarina",u"out":[u"santa catarina",u"SANTA CATARINA"],u"dic":u"S e C grandes: Santa Catarina."},
-           {u"img":u"",u"ante":u"A festa da cerveja é a ",u"dep":u".",u"cer":u"Oktoberfest",u"out":[u"oktoberfest",u"OKTOBERFEST"],u"dic":u"Só o O é grande: Oktoberfest."},
+           {u"img":u"",u"ante":u"A festa da cerveja é a ",u"dep":u".",u"cer":u"Oktoberfest",u"out":[u"oktoberfest",u"OKTOBERFEST"],u"dic":u"Só a primeira letra é grande: Oktoberfest."},
            {u"img":u"",u"ante":u"A vila das festas é a Vila ",u"dep":u".",u"cer":u"Germânica",u"out":[u"germânica",u"GERMÂNICA"],u"dic":u"Só o G é grande: Germânica."}],
     dadosExtra={u"ENUN":u"Preencha com o nome do lugar do jeito <b>certo</b>.",u"FECHO":u"Muito bem! Nome próprio com letra grande."})
 add(id=u"f09c", mec=u"completar", selo=u"NOME PRÓPRIO", conceito=u"objetivo3",
