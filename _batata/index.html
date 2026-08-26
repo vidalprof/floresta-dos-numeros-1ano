@@ -10,6 +10,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--card);color:var(
 .tela{position:absolute;inset:0;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;text-align:center;padding:16px;-webkit-animation:ap .4s;animation:ap .4s;}
 @-webkit-keyframes ap{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
 @keyframes ap{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
+@-webkit-keyframes pop{0%{transform:translate(-50%,-50%) scale(.2)}70%{transform:translate(-50%,-50%) scale(1.15)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(.2)}70%{transform:translate(-50%,-50%) scale(1.15)}100%{transform:translate(-50%,-50%) scale(1)}}
 .capa{background:-webkit-linear-gradient(top,#cdeafe,#eaf7d6);background:linear-gradient(#cdeafe,#eaf7d6);}
 .card{background:var(--card);border:3px solid var(--linha);border-radius:26px;padding:20px 18px 24px;max-width:440px;width:94%;box-shadow:0 12px 28px rgba(60,48,32,.18);}
 h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:.3px;line-height:1.05}
@@ -79,7 +81,8 @@ var CAT=[
  {k:"orelha",nome:"orelhas",ic:"👂", itens:["hb_orelha1","hb_orelha2"]},
  {k:"oculos",nome:"óculos", ic:"👓", itens:["hb_oculos1","hb_oculos2"]},
  {k:"bigode",nome:"bigode", ic:"🧔", itens:["hb_bigode1","hb_bigode2"]},
- {k:"chapeu",nome:"chapéu", ic:"🎩", itens:["hb_chapeu1","hb_chapeu2","hb_chapeu3","hb_chapeu4","hb_chapeu5","hb_chapeu6"]}
+ {k:"chapeu",nome:"chapéu", ic:"🎩", itens:["hb_chapeu1","hb_chapeu2","hb_chapeu3","hb_chapeu4","hb_chapeu5","hb_chapeu6"]},
+ {k:"carimbo",nome:"carimbos",ic:"⭐", stamp:true, itens:["hb_carimbo_estrela","hb_carimbo_coracao","hb_carimbo_flor","hb_carimbo_sol","hb_carimbo_arcoiris","hb_carimbo_balao"]}
 ];
 var CAMADAS=["orelha","corpo","sobra","olho","oculos","nariz","bigode","boca","chapeu"];
 var ANCORA={corpo:{cx:50,cy:50,w:100},orelha:{cx:50,cy:30,w:84},
@@ -89,7 +92,7 @@ var FUNDOS=[["cozinha","a cozinha"],["fazenda","a fazenda"],["cidade","a cidade"
  ["espaco","o espaço"],["hospital","o hospital"],["atelie","o ateliê"],["palco","o palco"],
  ["bombeiros","o quartel dos bombeiros"],["sala","a sala de aula"]];
 
-var perfil={nome:"",fig:"hb_cr1"}, estado={}, catSel="corpo", fundoIdx=0;
+var perfil={nome:"",fig:"hb_cr1"}, estado={}, catSel="corpo", fundoIdx=0, carimboSel=null;
 function $(s){return document.getElementById(s);}
 function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
 
@@ -137,7 +140,11 @@ function telaAtelie(){
   var palco=el("div"); palco.id="palco";
   var bg=el("img"); bg.id="palcobg"; bg.src=IMG+"hb_fundo_"+FUNDOS[fundoIdx][0]+".png"; palco.appendChild(bg);
   var bon=el("div"); bon.id="boneco"; bon.className="tocaflutua"; palco.appendChild(bon);
+  var cbox=el("div"); cbox.id="carimbos"; cbox.style.cssText="position:absolute;inset:0;pointer-events:none;overflow:hidden"; palco.appendChild(cbox);
   palco.appendChild(el("div","dica","Toque numa peça embaixo 👇 (ou arraste)"));
+  palco.addEventListener("click",function(e){ if(catSel!=="carimbo"||!carimboSel)return;
+    var r=palco.getBoundingClientRect(); var x=((e.clientX-r.left)/r.width)*100, y=((e.clientY-r.top)/r.height)*100;
+    if(!estado.carimbos)estado.carimbos=[]; estado.carimbos.push({it:carimboSel,x:x,y:y}); arma(); tom(760); desenhaCarimbos(); });
   t.appendChild(palco);
   var cats=el("div","cats"),i;
   for(i=0;i<CAT.length;i++){(function(c){ var b=el("button","cat"+(catSel==c.k?" on":"")); b.innerHTML='<span class="ic">'+c.ic+'</span>'+c.nome; b.dataset.k=c.k;
@@ -152,7 +159,15 @@ function telaAtelie(){
   ac.appendChild(bf); ac.appendChild(bl); ac.appendChild(bp);
   t.appendChild(ac);
   render(t);
-  desenhaBoneco(); bandeja(); falar("hb_atelie");
+  desenhaBoneco(); desenhaCarimbos(); bandeja(); falar("hb_atelie");
+}
+function desenhaCarimbos(){
+  var box=$("carimbos"); if(!box)return; box.innerHTML="";
+  var cs=estado.carimbos||[],i;
+  for(i=0;i<cs.length;i++){ var im=el("img"); im.src=IMG+cs[i].it+".png"; im.onerror=function(){this.style.display='none';};
+    im.style.cssText="position:absolute;left:"+cs[i].x+"%;top:"+cs[i].y+"%;width:16%;transform:translate(-50%,-50%);object-fit:contain;-webkit-animation:pop .3s;animation:pop .3s;filter:drop-shadow(0 3px 5px #0005)";
+    box.appendChild(im);
+  }
 }
 function marcaCat(){ var a=document.querySelectorAll(".cat"),i; for(i=0;i<a.length;i++)a[i].className="cat"+(a[i].dataset.k==catSel?" on":""); }
 function desenhaBoneco(){
@@ -167,6 +182,16 @@ function bandeja(){
   var bj=$("bandeja"); if(!bj)return; bj.innerHTML="";
   var c=null,i; for(i=0;i<CAT.length;i++) if(CAT[i].k==catSel)c=CAT[i];
   if(!c)return;
+  if(c.stamp){ /* CARIMBOS: escolher o carimbo e depois tocar no quadro */
+    var aviso=el("div","op nenhum","toque no quadro"); bj.appendChild(aviso);
+    for(i=0;i<c.itens.length;i++){(function(it){
+      var o=el("div","op"+(carimboSel==it?" sel":"")); var im=el("img"); im.src=IMG+it+".png";
+      im.onerror=function(){ if(o.parentNode)o.parentNode.removeChild(o); }; o.appendChild(im);
+      o.onclick=function(){ arma();tom(640); carimboSel=it; var a=bj.getElementsByClassName("op"),k;for(k=0;k<a.length;k++)a[k].className="op"; o.className="op sel"; falar("hb_nome_carimbo"); };
+      bj.appendChild(o);
+    })(c.itens[i]);}
+    return;
+  }
   if(!c.obrig){ var non=el("div","op nenhum","sem "+c.nome); non.onclick=function(){arma();tom(400);estado[c.k]=null;desenhaBoneco();}; bj.appendChild(non); }
   for(i=0;i<c.itens.length;i++){(function(it){
     var o=el("div","op"); var im=el("img"); im.src=IMG+it+".png"; im.onerror=function(){this.style.display='none';}; o.appendChild(im);
@@ -201,7 +226,8 @@ function festinha(n){ var cores=["#ff5d5d","#ffd23f","#43c463","#3d9bff","#c86bf
    (function(cc){setTimeout(function(){if(cc.parentNode)cc.parentNode.removeChild(cc);},2600);})(c); } }
 function miniBatata(box,e,f){ var bg=el("img"); bg.src=IMG+"hb_fundo_"+FUNDOS[f||0][0]+".png"; bg.style.cssText="position:absolute;inset:0;width:100%;height:100%;object-fit:cover"; box.appendChild(bg);
   var inner=el("div"); inner.style.cssText="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:78%;height:88%";
-  for(var j=0;j<CAMADAS.length;j++){var k=CAMADAS[j],v=(e||{})[k];if(!v)continue;var an=ANCORA[k];var im=el("img");im.src=IMG+v+".png";im.style.cssText="position:absolute;left:"+an.cx+"%;top:"+an.cy+"%;width:"+an.w+"%;transform:translate(-50%,-50%);object-fit:contain";inner.appendChild(im);} box.appendChild(inner); }
+  for(var j=0;j<CAMADAS.length;j++){var k=CAMADAS[j],v=(e||{})[k];if(!v)continue;var an=ANCORA[k];var im=el("img");im.src=IMG+v+".png";im.style.cssText="position:absolute;left:"+an.cx+"%;top:"+an.cy+"%;width:"+an.w+"%;transform:translate(-50%,-50%);object-fit:contain";inner.appendChild(im);} box.appendChild(inner);
+  var cs=(e||{}).carimbos||[]; for(var m=0;m<cs.length;m++){var ci=el("img");ci.src=IMG+cs[m].it+".png";ci.style.cssText="position:absolute;left:"+cs[m].x+"%;top:"+cs[m].y+"%;width:16%;transform:translate(-50%,-50%);object-fit:contain";box.appendChild(ci);} }
 function pronto(){
   arma(); tom(880); festinha(60); salvaNaGaleria();
   var t=el("div","tela capa"); var c=el("div","card");
