@@ -144,6 +144,7 @@ function telaAtelie(){
   palco.appendChild(el("div","dica","Toque numa peça embaixo 👇 (ou arraste)"));
   palco.addEventListener("click",function(e){ if(catSel!=="carimbo"||!carimboSel)return;
     var r=palco.getBoundingClientRect(); var x=((e.clientX-r.left)/r.width)*100, y=((e.clientY-r.top)/r.height)*100;
+    x=Math.max(9,Math.min(91,x)); y=Math.max(12,Math.min(86,y)); /* trava dentro do quadro: carimbo nao corta na beira */
     if(!estado.carimbos)estado.carimbos=[]; estado.carimbos.push({it:carimboSel,x:x,y:y}); arma(); tom(760); desenhaCarimbos(); });
   t.appendChild(palco);
   var cats=el("div","cats"),i;
