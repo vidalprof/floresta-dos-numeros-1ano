@@ -44,15 +44,13 @@ C = {
 fases=[]
 def add(**k): fases.append(k)
 def esc(img,p,c,cvoz,erradas,dicas,cimg=None,eimgs=None):
+    # Neste Português as OPÇÕES são TEXTO (casinha, gatão, "2"...). A resposta é a
+    # palavra TRANSFORMADA — que nunca casa com a figura da base. Por isso NÃO se
+    # põe figura nas opções (o portão 1i reprovaria "CASINHA" com o desenho da
+    # casa). A figura fica só no TOPO, ilustrando a palavra-base da pergunta.
     cop={u"t":c,u"voz":cvoz}
-    if cimg: cop[u"img"]=cimg
-    es=[]
-    for i,(t,v) in enumerate(erradas):
-        o={u"t":t,u"voz":v}
-        if eimgs and i<len(eimgs) and eimgs[i]: o[u"img"]=eimgs[i]
-        es.append(o)
-    topo = u"" if (cimg and eimgs) else img
-    return {u"img":topo,u"p":p,u"c":cop,u"e":es,u"d":dicas}
+    es=[{u"t":t,u"voz":v} for (t,v) in erradas]
+    return {u"img":img,u"p":p,u"c":cop,u"e":es,u"d":dicas}
 DDIM=[u"Diminutivo deixa a palavra PEQUENA: -inho, -inha.",u"A casa pequena é a casinha; o gato pequeno é o gatinho.",u"Isso! É o <b>diminutivo</b>. Toque para seguir."]
 DAUM=[u"Aumentativo deixa a palavra GRANDE: -ão.",u"A casa grande é o casarão; o gato grande é o gatão.",u"Isso! É o <b>aumentativo</b>. Toque para seguir."]
 DSIL=[u"Bata uma palma para cada pedaço da palavra.",u"Diga devagar e conte os pedaços.",u"Isso! Toque para seguir."]
@@ -362,16 +360,16 @@ add(id=u"f14d", mec=u"completar", selo=u"GRANDE OU PEQUENO", conceito=u"objetivo
 add(id=u"f15", mec=u"digitar", selo=u"ESCREVA O PEQUENO", conceito=u"objetivo1",
     enunciado=u"Escreva o <b>diminutivo</b> da figura, letra por letra.",
     dica=u"Diminutivo termina em -inho ou -inha.",
-    dados=[{u"palavra":u"CASINHA",u"img":u"pw_casa",u"voz":u"casinha",u"pista":u"A casa pequena. Escreva: Casinha.",u"dic":u"<b>Casinha</b>."},
-           {u"palavra":u"GATINHO",u"img":u"pw_gato",u"voz":u"gatinho",u"pista":u"O gato pequeno. Escreva: Gatinho.",u"dic":u"<b>Gatinho</b>."},
-           {u"palavra":u"PATINHO",u"img":u"pw_pato",u"voz":u"patinho",u"pista":u"O pato pequeno. Escreva: Patinho.",u"dic":u"<b>Patinho</b>."}],
+    dados=[{u"palavra":u"CASINHA",u"img":u"",u"voz":u"casinha",u"pista":u"A casa pequena. Escreva: Casinha.",u"dic":u"<b>Casinha</b>."},
+           {u"palavra":u"GATINHO",u"img":u"",u"voz":u"gatinho",u"pista":u"O gato pequeno. Escreva: Gatinho.",u"dic":u"<b>Gatinho</b>."},
+           {u"palavra":u"PATINHO",u"img":u"",u"voz":u"patinho",u"pista":u"O pato pequeno. Escreva: Patinho.",u"dic":u"<b>Patinho</b>."}],
     dadosExtra={u"ENUN":u"Escreva o <b>diminutivo</b> da figura.",u"FECHO":u"Você escreveu os diminutivos!"})
 add(id=u"f15b", mec=u"digitar", selo=u"ESCREVA O GRANDE", conceito=u"objetivo1",
     enunciado=u"Escreva o <b>aumentativo</b> da figura, letra por letra.",
     dica=u"Aumentativo termina em -ão.",
-    dados=[{u"palavra":u"GATAO",u"img":u"pw_gato",u"voz":u"gatão",u"pista":u"O gato grande. Escreva: Gatão.",u"dic":u"<b>Gatão</b>."},
-           {u"palavra":u"RATAO",u"img":u"pw_rato",u"voz":u"ratão",u"pista":u"O rato grande. Escreva: Ratão.",u"dic":u"<b>Ratão</b>."},
-           {u"palavra":u"SAPAO",u"img":u"pw_sapo",u"voz":u"sapão",u"pista":u"O sapo grande. Escreva: Sapão.",u"dic":u"<b>Sapão</b>."}],
+    dados=[{u"palavra":u"GATAO",u"img":u"",u"voz":u"gatão",u"pista":u"O gato grande. Escreva: Gatão.",u"dic":u"<b>Gatão</b>."},
+           {u"palavra":u"RATAO",u"img":u"",u"voz":u"ratão",u"pista":u"O rato grande. Escreva: Ratão.",u"dic":u"<b>Ratão</b>."},
+           {u"palavra":u"SAPAO",u"img":u"",u"voz":u"sapão",u"pista":u"O sapo grande. Escreva: Sapão.",u"dic":u"<b>Sapão</b>."}],
     dadosExtra={u"ENUN":u"Escreva o <b>aumentativo</b> da figura.",u"FECHO":u"Você escreveu os aumentativos!"})
 add(id=u"f15c", mec=u"digitar", selo=u"ESCREVA O VERBO", conceito=u"objetivo3",
     enunciado=u"Escreva o verbo no <b>passado</b>, letra por letra.",
@@ -384,9 +382,9 @@ add(id=u"f15c", mec=u"digitar", selo=u"ESCREVA O VERBO", conceito=u"objetivo3",
 add(id=u"f15d", mec=u"digitar", selo=u"ESCREVA O PEQUENO", conceito=u"objetivo1",
     enunciado=u"Escreva o <b>diminutivo</b> da figura, letra por letra.",
     dica=u"Diminutivo termina em -inho ou -inha.",
-    dados=[{u"palavra":u"BOLINHA",u"img":u"pw_bola",u"voz":u"bolinha",u"pista":u"A bola pequena. Escreva: Bolinha.",u"dic":u"<b>Bolinha</b>."},
-           {u"palavra":u"SAPINHO",u"img":u"pw_sapo",u"voz":u"sapinho",u"pista":u"O sapo pequeno. Escreva: Sapinho.",u"dic":u"<b>Sapinho</b>."},
-           {u"palavra":u"RATINHO",u"img":u"pw_rato",u"voz":u"ratinho",u"pista":u"O rato pequeno. Escreva: Ratinho.",u"dic":u"<b>Ratinho</b>."}],
+    dados=[{u"palavra":u"BOLINHA",u"img":u"",u"voz":u"bolinha",u"pista":u"A bola pequena. Escreva: Bolinha.",u"dic":u"<b>Bolinha</b>."},
+           {u"palavra":u"SAPINHO",u"img":u"",u"voz":u"sapinho",u"pista":u"O sapo pequeno. Escreva: Sapinho.",u"dic":u"<b>Sapinho</b>."},
+           {u"palavra":u"RATINHO",u"img":u"",u"voz":u"ratinho",u"pista":u"O rato pequeno. Escreva: Ratinho.",u"dic":u"<b>Ratinho</b>."}],
     dadosExtra={u"ENUN":u"Escreva o <b>diminutivo</b> da figura.",u"FECHO":u"Você escreveu mais diminutivos!"})
 
 # ============ FECHO — CAÇA-PALAVRAS ============
