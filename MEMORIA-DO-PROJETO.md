@@ -11,6 +11,29 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **🎛️ TAMANHO DA ATIVIDADE: ~7–8 DINÂMICAS (com repetições em bloco), NÃO 12
+> (cobrança do Marcos, ago/2026: "eram 7 ou 8 dinâmicas com algumas repetições").**
+> O padrão da casa é **7 a 8 mecânicas DIFERENTES**, cada uma repetida em BLOCO
+> seguido (subindo o degrau) para encher a aula — e NÃO enfiar 10–12 mecânicas
+> diferentes. Mais dinâmicas ≠ melhor: cada mecânica nova é mais superfície para
+> bug (na Oficina das Palavras eu botei 12 e paguei com várias rodadas de conserto).
+> Para aumentar a atividade: **mais fases da MESMA dinâmica em bloco**, não mais
+> tipos. Alvo: ~7–8 gestos, nenhum acima de 40%, ~30–37 fases.
+>
+> **⏱️ POR QUE ÀS VEZES DEMORA (e a banca É rápida): a banca roda em poucos
+> minutos; o que demora é a CADEIA DE CONSERTOS quando eu erro/exagero.** Cada
+> defeito real (mascote desalinhado, jogador preso numa mecânica, figura≠palavra,
+> contraste) obriga a: conserto → re-montar → re-banca. Menos dinâmicas e seguir a
+> RECEITA antes de montar = menos rodadas. A banca não é o gargalo; o retrabalho é.
+>
+> **🎭 MASCOTE — as 3 poses TÊM que sair da MESMA base (senão treme OU vira cópia
+> parada, e a banca reprova nos DOIS).** Se o Marcos gerar 3 imagens SEPARADAS
+> (não-editadas), elas não alinham (tremor ~98%). O certo: gerar a FELIZ e EDITAR
+> (boca aberta = fala; olhos fechados = pisca). Sem edição do Marcos, dá para
+> **editar o rosto na mão** (PIL): abrir a boca / fechar os olhos SÓ na região do
+> rosto sobre a pose feliz (funcionou no robô Léxi: fala 0,4%, pisca 3,2%). Um
+> mascote 100% estático (fala=pisca=feliz) NÃO passa (`_qa/mascote.py` acusa "cópia").
+>
 > **🎨🆓 ARTE: FLUX (Pollinations) PARA PEÇAS/CENAS, ChatGPT SÓ PARA O MASCOTE
 > (decisão do Marcos, ago/2026: "pode ser, o ChatGPT usamos para o mascote, daí vc me
 > passa o prompt; se o FLUX ficar ruim mudamos de novo").** Isto ATUALIZA a regra antiga
