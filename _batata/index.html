@@ -12,7 +12,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--card);color:var(
 @keyframes ap{from{opacity:0;transform:translateY(10px)}to{opacity:1}}
 @-webkit-keyframes pop{0%{transform:translate(-50%,-50%) scale(.2)}70%{transform:translate(-50%,-50%) scale(1.15)}100%{transform:translate(-50%,-50%) scale(1)}}
 @keyframes pop{0%{transform:translate(-50%,-50%) scale(.2)}70%{transform:translate(-50%,-50%) scale(1.15)}100%{transform:translate(-50%,-50%) scale(1)}}
-.capa{background:-webkit-linear-gradient(top,#cdeafe,#eaf7d6);background:linear-gradient(#cdeafe,#eaf7d6);}
+.capa{background:-webkit-linear-gradient(top,#cdeafe,#eaf7d6);background:linear-gradient(#cdeafe,#eaf7d6);overflow:hidden;}
+.capa .capabg{position:absolute;inset:0;width:100%;height:100%;-o-object-fit:cover;object-fit:cover;z-index:0;}
+.capa::after{content:"";position:absolute;inset:0;background:-webkit-linear-gradient(top,rgba(20,15,8,.06),rgba(20,15,8,.42));background:linear-gradient(180deg,rgba(20,15,8,.06),rgba(20,15,8,.42));z-index:0;}
+.capa .mascote,.capa .card{position:relative;z-index:1;}
+.capacard{background:rgba(255,253,246,.82);-webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1);border-color:rgba(255,255,255,.75);box-shadow:0 16px 36px rgba(30,20,8,.34),inset 0 1px 0 rgba(255,255,255,.8);}
 .card{background:var(--card);border:3px solid var(--linha);border-radius:26px;padding:20px 18px 24px;max-width:440px;width:94%;box-shadow:0 12px 28px rgba(60,48,32,.18);}
 h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:.3px;line-height:1.05}
 @media(min-width:760px){h1{font-size:44px}}
@@ -81,8 +85,8 @@ var CAT=[
  {k:"orelha",nome:"orelhas",ic:"👂", itens:["hb_orelha1","hb_orelha2"]},
  {k:"oculos",nome:"óculos", ic:"👓", itens:["hb_oculos1","hb_oculos2"]},
  {k:"bigode",nome:"bigode", ic:"🧔", itens:["hb_bigode1","hb_bigode2"]},
- {k:"chapeu",nome:"chapéu", ic:"🎩", itens:["hb_chapeu3","hb_chapeu4","hb_chapeu5","hb_chapeu6"]},
- {k:"carimbo",nome:"carimbos",ic:"⭐", stamp:true, itens:["hb_carimbo_sol","hb_carimbo_flor","hb_carimbo_arvore","hb_carimbo_casa","hb_carimbo_foguete","hb_carimbo_abelha"]}
+ {k:"chapeu",nome:"chapéu", ic:"🎩", itens:["hb_chapeu7","hb_chapeu3","hb_chapeu4","hb_chapeu5","hb_chapeu6"]},
+ {k:"carimbo",nome:"carimbos",ic:"⭐", stamp:true, itens:["hb_carimbo_estrela","hb_carimbo_coracao","hb_carimbo_arcoiris","hb_carimbo_balao","hb_carimbo_sol","hb_carimbo_flor","hb_carimbo_arvore","hb_carimbo_casa","hb_carimbo_foguete","hb_carimbo_abelha"]}
 ];
 var CAMADAS=["orelha","corpo","sobra","olho","oculos","nariz","bigode","boca","chapeu"];
 var ANCORA={corpo:{cx:50,cy:50,w:100},orelha:{cx:50,cy:42,w:92},
@@ -106,8 +110,9 @@ function tom(f,d){ try{ if(!_ac)_ac=new (window.AudioContext||window.webkitAudio
 /* ======================= TELAS ======================= */
 function telaCapa(){
   var t=el("div","tela capa");
+  var bg=el("img","capabg"); bg.src=IMG+"hb_fundo_atelie.png"; bg.alt=""; bg.onerror=function(){this.style.display='none';}; t.appendChild(bg);
   var m=el("img","mascote"); m.src=IMG+"hb_batata_feliz.png"; m.alt="Tato"; m.onerror=function(){this.style.display='none';}; t.appendChild(m);
-  var c=el("div","card");
+  var c=el("div","card capacard");
   c.appendChild(el("h1",null,"O Ateliê do Sr. Batata"));
   c.appendChild(el("div","sub","Monte e vista o seu amigo batata!"));
   var b=el("button","bt","▶ Começar"); b.onclick=function(){arma();tom(660);falar("hb_abertura");telaQuem();};
@@ -115,7 +120,9 @@ function telaCapa(){
   render(t); falar("hb_capa");
 }
 function telaQuem(){
-  var t=el("div","tela capa"); var c=el("div","card");
+  var t=el("div","tela capa");
+  var bg=el("img","capabg"); bg.src=IMG+"hb_fundo_atelie.png"; bg.alt=""; bg.onerror=function(){this.style.display='none';}; t.appendChild(bg);
+  var c=el("div","card capacard");
   c.appendChild(el("h1",null,"Quem vai brincar?"));
   var inp=el("input","campo"); inp.type="text"; inp.placeholder="Escreva o seu nome"; inp.maxLength=16; inp.value=perfil.nome||"";
   c.appendChild(inp);
