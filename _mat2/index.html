@@ -57,7 +57,20 @@ img{max-width:100%;}
 
 /* chip do tema */
 .disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:14px;padding:5px 13px;margin:2px 0 8px;color:#fff;}
-.disc.jun{background:#3fb356;} .disc.tir{background:#3a7bd5;} .disc.comp{background:#ef6d3a;} .disc.conc{background:#8a63d2;}
+.disc.jun{background:#3fb356;} .disc.acr{background:#2aa9b0;} .disc.sep{background:#ef6d3a;} .disc.ret{background:#d64b7a;} .disc.conc{background:#8a63d2;}
+/* material dourado (ajuda visual) */
+.dourado{margin:2px auto 12px;padding:10px 8px;background:#fffdf4;border:3px solid #f0d488;border-radius:16px;max-width:480px;-webkit-box-shadow:0 4px 12px rgba(150,120,20,.16);box-shadow:0 4px 12px rgba(150,120,20,.16);}
+.dourado .dlbl{font-size:13px;font-weight:bold;color:#9a7b16;margin-bottom:5px;letter-spacing:.4px;}
+.dourado .drow{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:4px 10px;}
+.dourado .dop{font-size:30px;font-weight:bold;color:#c58b12;margin:0 4px;}
+.dgrp{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:flex-end;-webkit-align-items:flex-end;align-items:flex-end;gap:5px;padding:3px;}
+.mdd{display:inline-block;width:15px;height:130px;border:1.5px solid #b9860f;border-radius:2px;
+  background:#f6c945;background-image:-webkit-repeating-linear-gradient(top,#f6c945 0,#f6c945 11px,#b9860f 11px,#b9860f 12.5px);background-image:repeating-linear-gradient(#f6c945 0,#f6c945 11px,#b9860f 11px,#b9860f 12.5px);}
+.mdunits{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;width:38px;-webkit-box-align:flex-end;align-items:flex-end;-webkit-align-content:flex-end;align-content:flex-end;gap:3px;}
+.mdu{display:inline-block;width:15px;height:15px;background:#f6c945;border:1.5px solid #b9860f;border-radius:2px;}
+.mdframe{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;width:100px;gap:4px;-webkit-box-pack:center;justify-content:center;margin:0 auto;}
+.mdslot{width:26px;height:26px;border-radius:4px;border:2px dashed #d8b84e;background:#fffef7;}
+.mdslot.on{background:#f6c945;border-style:solid;border-color:#b9860f;}
 
 /* foto da questão */
 .qfig{display:block;max-height:186px;margin:2px auto 10px;padding:6px;background:#fff;border:3px solid #ffe0a3;border-radius:16px;
@@ -136,54 +149,54 @@ var AVATARES=[
 var SLUG="matematica-2ano";   /* caminho no Firebase: /provas/<SLUG> */
 var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 var URL_PLANILHA="";
-var HISTORIA="Oi! Eu sou a Cora, a coruja da matemática. Hoje você vai resolver dez probleminhas de somar e de tirar. Leia com atenção: em uns a gente JUNTA, em outros a gente TIRA ou COMPARA. Eu leio cada problema e cada resposta em voz alta, e você toca na resposta certa. Agora escreva o seu nome, escolha a sua turma e o seu personagem, e toque em começar!";
+var HISTORIA="Oi! Eu sou a Cora, a coruja da matemática. Hoje você vai resolver dez probleminhas de somar e de tirar. Em uns a gente JUNTA ou ACRESCENTA, em outros a gente SEPARA ou RETIRA. Embaixo de cada problema tem o material dourado para você contar e se ajudar. Eu leio cada problema e cada resposta em voz alta, e você toca na resposta certa. Agora escreva o seu nome, escolha a sua turma e o seu personagem, e toque em começar!";
 var _histTocada=false;
 
 /* ====== As 10 questões (múltipla escolha) — resposta controlada aqui ======
    disc: brinc = brincadeiras e jogos | corpo = o corpo em movimento | conviv = convivência
    img: figura da questão (aparece se existir em img/). */
 var QUESTOES=[
- {disc:"jun", img:"ma_p1.png", pergunta:"Na festa, Ana encheu 3 balões e o papai encheu mais 4. Quantos balões ficaram no total?",
+ {disc:"jun", img:"ma_p1.png", dourado:{a:3,b:4,op:"+"}, pergunta:"Na festa, Ana encheu 3 balões e o papai encheu mais 4. JUNTANDO os dois, quantos balões ficaram?",
   opcoes:["6 balões.","7 balões.","8 balões."], correta:1,
-  fala:"Pergunta um. Na festa, Ana encheu três balões e o papai encheu mais quatro. Quantos balões ficaram no total? Letra A: seis balões. Letra B: sete balões. Letra C: oito balões."},
+  fala:"Pergunta um. Na festa, Ana encheu três balões e o papai encheu mais quatro. Juntando os dois, quantos balões ficaram? Olhe o material dourado para ajudar. Letra A: seis balões. Letra B: sete balões. Letra C: oito balões."},
 
- {disc:"jun", img:"ma_p2.png", pergunta:"No pote havia 8 pipocas. A vovó colocou mais 5. Com quantas pipocas o pote ficou?",
+ {disc:"acr", img:"ma_p2.png", dourado:{a:8,b:5,op:"+"}, pergunta:"No pote havia 8 pipocas. A vovó ACRESCENTOU mais 5. Com quantas pipocas o pote ficou?",
   opcoes:["12 pipocas.","13 pipocas.","14 pipocas."], correta:1,
-  fala:"Pergunta dois. No pote havia oito pipocas. A vovó colocou mais cinco. Com quantas pipocas o pote ficou? Letra A: doze pipocas. Letra B: treze pipocas. Letra C: quatorze pipocas."},
+  fala:"Pergunta dois. No pote havia oito pipocas. A vovó acrescentou mais cinco. Com quantas pipocas o pote ficou? Olhe o material dourado para ajudar. Letra A: doze pipocas. Letra B: treze pipocas. Letra C: quatorze pipocas."},
 
- {disc:"tir", img:"ma_p3.png", pergunta:"No prato havia 9 morangos. O Téo comeu 4. Quantos morangos sobraram no prato?",
+ {disc:"ret", img:"ma_p3.png", dourado:{a:9,b:4,op:"-"}, pergunta:"No prato havia 9 morangos. O Téo comeu 4. Quantos morangos SOBRARAM no prato?",
   opcoes:["4 morangos.","5 morangos.","6 morangos."], correta:1,
-  fala:"Pergunta três. No prato havia nove morangos. O Téo comeu quatro. Quantos morangos sobraram no prato? Letra A: quatro morangos. Letra B: cinco morangos. Letra C: seis morangos."},
+  fala:"Pergunta três. No prato havia nove morangos. O Téo comeu quatro. Quantos morangos sobraram no prato? Olhe o material dourado para ajudar. Letra A: quatro morangos. Letra B: cinco morangos. Letra C: seis morangos."},
 
- {disc:"tir", img:"ma_p4.png", pergunta:"Numa caixa havia 15 lápis. A professora tirou 6. Quantos lápis ficaram na caixa?",
+ {disc:"ret", img:"ma_p4.png", dourado:{a:15,b:6,op:"-"}, pergunta:"Numa caixa havia 15 lápis. A professora tirou 6. Quantos lápis FICARAM na caixa?",
   opcoes:["8 lápis.","9 lápis.","11 lápis."], correta:1,
-  fala:"Pergunta quatro. Numa caixa havia quinze lápis. A professora tirou seis. Quantos lápis ficaram na caixa? Letra A: oito lápis. Letra B: nove lápis. Letra C: onze lápis."},
+  fala:"Pergunta quatro. Numa caixa havia quinze lápis. A professora tirou seis. Quantos lápis ficaram na caixa? Olhe o material dourado para ajudar. Letra A: oito lápis. Letra B: nove lápis. Letra C: onze lápis."},
 
- {disc:"comp", img:"ma_p5.png", pergunta:"João quer juntar 10 figurinhas. Ele já tem 7. Quantas figurinhas ainda faltam?",
+ {disc:"sep", img:"ma_p5.png", dourado:{a:10,b:7,op:"falta"}, pergunta:"João quer completar 10 figurinhas. Ele já tem 7. Quantas figurinhas ainda FALTAM?",
   opcoes:["3 figurinhas.","4 figurinhas.","5 figurinhas."], correta:0,
-  fala:"Pergunta cinco. João quer juntar dez figurinhas. Ele já tem sete. Quantas figurinhas ainda faltam? Letra A: três figurinhas. Letra B: quatro figurinhas. Letra C: cinco figurinhas."},
+  fala:"Pergunta cinco. João quer completar dez figurinhas. Ele já tem sete. Quantas figurinhas ainda faltam? Olhe o material dourado: já tem sete, quantas faltam para dez? Letra A: três figurinhas. Letra B: quatro figurinhas. Letra C: cinco figurinhas."},
 
- {disc:"comp", img:"ma_p6.png", pergunta:"Lia tem 12 balas e Bia tem 8 balas. Quantas balas Lia tem A MAIS que a Bia?",
+ {disc:"sep", img:"ma_p6.png", dourado:{a:12,b:8,op:"-"}, pergunta:"Havia 12 balas na mesa. A mãe SEPAROU 8 para levar. Quantas balas ficaram na mesa?",
   opcoes:["3 balas.","4 balas.","5 balas."], correta:1,
-  fala:"Pergunta seis. Lia tem doze balas e Bia tem oito balas. Quantas balas a Lia tem a mais que a Bia? Letra A: três balas. Letra B: quatro balas. Letra C: cinco balas."},
+  fala:"Pergunta seis. Havia doze balas na mesa. A mãe separou oito para levar. Quantas balas ficaram na mesa? Olhe o material dourado para ajudar. Letra A: três balas. Letra B: quatro balas. Letra C: cinco balas."},
 
- {disc:"conc", img:"ma_p7.png", pergunta:"Para saber quantos ficaram ao JUNTAR duas quantidades, qual conta a gente faz?",
+ {disc:"conc", img:"ma_p7.png", dourado:null, pergunta:"Para saber quantos ficaram ao JUNTAR duas quantidades, qual conta a gente faz?",
   opcoes:["A conta de somar, o mais.","A conta de tirar, o menos.","Não precisa fazer conta."], correta:0,
   fala:"Pergunta sete. Para saber quantos ficaram ao juntar duas quantidades, qual conta a gente faz? Letra A: a conta de somar, o mais. Letra B: a conta de tirar, o menos. Letra C: não precisa fazer conta."},
 
- {disc:"conc", img:"ma_p8.png", pergunta:"Para saber quanto SOBROU depois de tirar ou dar alguma coisa, qual conta a gente faz?",
+ {disc:"conc", img:"ma_p8.png", dourado:null, pergunta:"Para saber quanto SOBROU depois de tirar ou separar alguma coisa, qual conta a gente faz?",
   opcoes:["A conta de somar, o mais.","A conta de subtrair, o menos.","A conta de contar até dez."], correta:1,
-  fala:"Pergunta oito. Para saber quanto sobrou depois de tirar ou dar alguma coisa, qual conta a gente faz? Letra A: a conta de somar, o mais. Letra B: a conta de subtrair, o menos. Letra C: a conta de contar até dez."},
+  fala:"Pergunta oito. Para saber quanto sobrou depois de tirar ou separar alguma coisa, qual conta a gente faz? Letra A: a conta de somar, o mais. Letra B: a conta de subtrair, o menos. Letra C: a conta de contar até dez."},
 
- {disc:"comp", img:"ma_p9.png", pergunta:"No ônibus havia 6 crianças. Desceram 2 e depois subiram 3. Com quantas crianças o ônibus ficou?",
-  opcoes:["5 crianças.","7 crianças.","9 crianças."], correta:1,
-  fala:"Pergunta nove. No ônibus havia seis crianças. Desceram duas e depois subiram três. Com quantas crianças o ônibus ficou? Letra A: cinco crianças. Letra B: sete crianças. Letra C: nove crianças."},
+ {disc:"jun", img:"ma_p9.png", dourado:{a:7,b:6,op:"+"}, pergunta:"Na caixa de brinquedos há 7 carrinhos e 6 bonecas. JUNTANDO tudo, quantos brinquedos há ao todo?",
+  opcoes:["12 brinquedos.","13 brinquedos.","14 brinquedos."], correta:1,
+  fala:"Pergunta nove. Na caixa de brinquedos há sete carrinhos e seis bonecas. Juntando tudo, quantos brinquedos há ao todo? Olhe o material dourado para ajudar. Letra A: doze brinquedos. Letra B: treze brinquedos. Letra C: quatorze brinquedos."},
 
- {disc:"jun", img:"ma_p10.png", pergunta:"A turma tinha 14 estrelinhas e ganhou mais 5. Com quantas estrelinhas a turma ficou?",
+ {disc:"acr", img:"ma_p10.png", dourado:{a:14,b:5,op:"+"}, pergunta:"A turma tinha 14 estrelinhas e GANHOU mais 5. Com quantas estrelinhas a turma ficou?",
   opcoes:["18 estrelinhas.","19 estrelinhas.","20 estrelinhas."], correta:1,
-  fala:"Pergunta dez, a última. A turma tinha quatorze estrelinhas e ganhou mais cinco. Com quantas estrelinhas a turma ficou? Letra A: dezoito estrelinhas. Letra B: dezenove estrelinhas. Letra C: vinte estrelinhas."}
+  fala:"Pergunta dez, a última. A turma tinha quatorze estrelinhas e ganhou mais cinco. Com quantas estrelinhas a turma ficou? Olhe o material dourado para ajudar. Letra A: dezoito estrelinhas. Letra B: dezenove estrelinhas. Letra C: vinte estrelinhas."}
 ];
-var DISCNOME={jun:"JUNTAR", tir:"TIRAR", comp:"COMPARAR", conc:"A CONTA CERTA"};
+var DISCNOME={jun:"JUNTAR", acr:"ACRESCENTAR", sep:"SEPARAR", ret:"RETIRAR", conc:"A CONTA CERTA"};
 
 /* ====== estado ====== */
 var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, turmaSel="", avatarSel="", avatarAluno="";
@@ -215,6 +228,25 @@ function falar(texto,_forcar){
   try{var a=new Audio("audio/"+_chaveVoz(texto)+".mp3");_falaAudio=a;a.play();}catch(e){}
 }
 function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
+/* ====== MATERIAL DOURADO (ajuda visual — currículo: material manipulável) ====== */
+function mdNum(n){
+  var dez=Math.floor(n/10), uni=n%10, h='<div class="dgrp">', i;
+  for(i=0;i<dez;i++){h+='<span class="mdd" title="uma dezena"></span>';}
+  if(uni>0){h+='<span class="mdunits">';for(i=0;i<uni;i++){h+='<span class="mdu"></span>';}h+='</span>';}
+  return h+'</div>';
+}
+function renderDourado(d){
+  if(!d){return '';}
+  var h='<div class="dourado"><div class="dlbl">&#128176; Material dourado &mdash; conte para ajudar</div>';
+  if(d.op==="falta"){
+    h+='<div class="dlbl" style="color:#7a6a2a">Ele já tem '+d.b+'. Quantos faltam para '+d.a+'?</div><div class="mdframe">';
+    var i;for(i=0;i<d.a;i++){h+='<span class="mdslot'+(i<d.b?' on':'')+'"></span>';}
+    h+='</div>';
+  }else{
+    h+='<div class="drow">'+mdNum(d.a)+'<span class="dop">'+(d.op==="-"?"&minus;":"+")+'</span>'+mdNum(d.b)+'</div>';
+  }
+  return h+'</div>';
+}
 function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
 function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("mat2prova_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
 function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
@@ -278,6 +310,7 @@ function telaPergunta(){
   h+='<span class="disc '+q.disc+'">'+(DISCNOME[q.disc]||"")+'</span>';
   if(q.img){h+='<img class="qfig" src="img/'+q.img+'" alt="" onerror="this.style.display=\'none\'">';}
   h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
+  h+=renderDourado(q.dourado);
   h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pergunta</button>';
   h+='<div class="opcoes">';
   var letras=["A","B","C","D"],i;
