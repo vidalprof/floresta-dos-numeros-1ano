@@ -34,7 +34,7 @@ import sys, os, io, json, re
 # palavras terminadas em -a que são MASCULINAS (não reprovar "o dia")
 MASC_A = set("""dia mapa planeta planetinha problema clima sistema tema poema programa dilema
 cinema mapa telefonema esquema drama panorama diagrama grama(peso) alerta guarda-chuva
-lápis(nao) sofa(nao) pijama dia maquinista salta""".split())
+lápis(nao) sofa(nao) pijama dia maquinista salta zeca""".split())
 # ⚠️ "salta" = nome do personagem pulador da peca saltos-na-fita ("o Salta pula de
 #    2 em 2"). Termina em -a mas e masculino (nome proprio). Falso-positivo pego
 #    na Feirinha da Dona Coruja (ago/2026).
