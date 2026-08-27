@@ -88,7 +88,7 @@ label{font-size:16px;font-weight:bold;color:#0a5a60;display:block;margin-top:8px
 .pnav{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;-webkit-box-align:center;-webkit-align-items:center;align-items:center;margin:8px 14px 2px;}
 .navb{font-family:"Trebuchet MS",sans-serif;font-size:17px;font-weight:bold;border:none;border-radius:16px;padding:11px 18px;cursor:pointer;color:#fff;background:#1f7a86;-webkit-box-shadow:0 4px 0 #145a63;box-shadow:0 4px 0 #145a63;}
 .navb:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
-.navb[disabled]{opacity:.4;cursor:default;}
+.navb[disabled]{background:#c3d0d0;color:#40514f;-webkit-box-shadow:0 4px 0 #a3b3b3;box-shadow:0 4px 0 #a3b3b3;cursor:default;}
 .ouvirp{background:#fdeccb;border:3px solid #f0a94a;color:#8a4d00;border-radius:16px;font-size:16px;font-weight:bold;padding:9px 15px;cursor:pointer;font-family:"Trebuchet MS",sans-serif;}
 .ppasso{text-align:center;color:#eaf4f6;font-size:14px;font-weight:bold;margin:4px 0 0;text-shadow:0 1px 3px rgba(0,0,0,.4);}
 
@@ -96,25 +96,30 @@ label{font-size:16px;font-weight:bold;color:#0a5a60;display:block;margin-top:8px
 .svgwrap{background:#eaf3f6;border:2px solid #cfe4ea;border-radius:14px;padding:8px;}
 .pfoto{display:block;margin:8px auto 2px;max-width:300px;width:100%;border-radius:12px;border:3px solid #e4d3a8;-webkit-box-shadow:0 6px 14px rgba(80,60,20,.25);box-shadow:0 6px 14px rgba(80,60,20,.25);}
 .pleg{font-size:13px;color:#8a6a3a;font-style:italic;text-align:center;margin:3px 0 2px;}
-.rosa{transform-origin:50% 50%;-webkit-animation:girarosa 6s ease-in-out infinite;animation:girarosa 6s ease-in-out infinite;}
-@-webkit-keyframes girarosa{0%,100%{-webkit-transform:rotate(-8deg);}50%{-webkit-transform:rotate(8deg);}}
-@keyframes girarosa{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
-.zoomcity{-webkit-animation:zoomc 5s ease-in-out infinite;animation:zoomc 5s ease-in-out infinite;transform-origin:50% 60%;}
-@-webkit-keyframes zoomc{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(.45);}}
-@keyframes zoomc{0%,100%{transform:scale(1);}50%{transform:scale(.45);}}
-.flipbox{-webkit-animation:flipc 5s ease-in-out infinite;animation:flipc 5s ease-in-out infinite;}
-@-webkit-keyframes flipc{0%,40%{opacity:1;}50%,90%{opacity:0;}100%{opacity:1;}}
-@keyframes flipc{0%,40%{opacity:1;}50%,90%{opacity:0;}100%{opacity:1;}}
-.flipbox2{opacity:0;-webkit-animation:flipc2 5s ease-in-out infinite;animation:flipc2 5s ease-in-out infinite;}
-@-webkit-keyframes flipc2{0%,40%{opacity:0;}50%,90%{opacity:1;}100%{opacity:0;}}
-@keyframes flipc2{0%,40%{opacity:0;}50%,90%{opacity:1;}100%{opacity:0;}}
-.simb{opacity:0;-webkit-animation:surge 4s ease-in-out infinite;animation:surge 4s ease-in-out infinite;}
-.simb.s2{-webkit-animation-delay:.6s;animation-delay:.6s;} .simb.s3{-webkit-animation-delay:1.2s;animation-delay:1.2s;} .simb.s4{-webkit-animation-delay:1.8s;animation-delay:1.8s;}
-@-webkit-keyframes surge{0%,20%{opacity:0;}40%,100%{opacity:1;}}
-@keyframes surge{0%,20%{opacity:0;}40%,100%{opacity:1;}}
-.rota{stroke-dasharray:6 6;-webkit-animation:anda 1.2s linear infinite;animation:anda 1.2s linear infinite;}
-@-webkit-keyframes anda{to{stroke-dashoffset:-24;}}
-@keyframes anda{to{stroke-dashoffset:-24;}}
+/* diagramas = imagens (cartelas) animadas */
+.cimg{display:block;max-width:340px;width:100%;margin:0 auto;border-radius:12px;}
+.pfoto.peq{max-width:170px;border-width:2px;margin:8px auto 2px;}
+.cgira{-webkit-transform-origin:50% 50%;transform-origin:50% 50%;-webkit-animation:cgira 7s ease-in-out infinite;animation:cgira 7s ease-in-out infinite;}
+@-webkit-keyframes cgira{0%,100%{-webkit-transform:rotate(-7deg);}50%{-webkit-transform:rotate(7deg);}}
+@keyframes cgira{0%,100%{transform:rotate(-7deg);}50%{transform:rotate(7deg);}}
+.cflip{position:relative;height:210px;max-width:320px;margin:0 auto;}
+.cflip .cimg{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;margin:0;}
+.fq1{-webkit-animation:cross 5s ease-in-out infinite;animation:cross 5s ease-in-out infinite;}
+.fq2{-webkit-animation:cross2 5s ease-in-out infinite;animation:cross2 5s ease-in-out infinite;}
+@-webkit-keyframes cross{0%,42%{opacity:1;}52%,92%{opacity:0;}100%{opacity:1;}}
+@keyframes cross{0%,42%{opacity:1;}52%,92%{opacity:0;}100%{opacity:1;}}
+@-webkit-keyframes cross2{0%,42%{opacity:0;}52%,92%{opacity:1;}100%{opacity:0;}}
+@keyframes cross2{0%,42%{opacity:0;}52%,92%{opacity:1;}100%{opacity:0;}}
+.ctipos{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:6px;max-width:360px;margin:0 auto;}
+.ctipos img{width:47%;border-radius:10px;-webkit-animation:surge 3.6s ease-in-out infinite;animation:surge 3.6s ease-in-out infinite;}
+.ctipos img:nth-child(2){-webkit-animation-delay:.4s;animation-delay:.4s;} .ctipos img:nth-child(3){-webkit-animation-delay:.8s;animation-delay:.8s;} .ctipos img:nth-child(4){-webkit-animation-delay:1.2s;animation-delay:1.2s;}
+@-webkit-keyframes surge{0%,15%{opacity:.15;-webkit-transform:scale(.94);}35%,100%{opacity:1;-webkit-transform:scale(1);}}
+@keyframes surge{0%,15%{opacity:.15;transform:scale(.94);}35%,100%{opacity:1;transform:scale(1);}}
+.cmapa{position:relative;max-width:340px;margin:0 auto;}
+.cmapa .cimg{margin:0;}
+.vocevai{position:absolute;left:16%;top:68%;width:16px;height:16px;border-radius:50%;background:#e07a3f;border:3px solid #fff;-webkit-box-shadow:0 0 0 4px rgba(224,122,63,.4);box-shadow:0 0 0 4px rgba(224,122,63,.4);-webkit-animation:vaipulsa 1.2s infinite;animation:vaipulsa 1.2s infinite;}
+@-webkit-keyframes vaipulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.4);}}
+@keyframes vaipulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.4);}}
 
 /* ================= JOGOS ================= */
 .disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:14px;padding:5px 13px;margin:2px 0 8px;color:#fff;background:#1f7a86;}
@@ -129,7 +134,12 @@ label{font-size:16px;font-weight:bold;color:#0a5a60;display:block;margin-top:8px
 .cracha .cav img{width:100%;height:100%;object-fit:cover;display:block;}
 .cracha .cnm{font-size:13px;font-weight:bold;color:#0a5a60;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .guia{position:absolute;right:8px;top:6px;height:82px;pointer-events:none;-webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
-.qfig{display:block;max-height:190px;margin:2px auto 10px;padding:6px;background:#eaf3f6;border:3px solid #cfe4ea;border-radius:16px;}
+.qfig{display:block;max-width:290px;margin:2px auto 10px;padding:6px;background:#eaf3f6;border:3px solid #cfe4ea;border-radius:16px;}
+.qfig .cimg{max-height:160px;width:auto;max-width:100%;}
+.qfig .cflip{height:160px;max-width:230px;}
+.qfig .ctipos{max-width:250px;gap:5px;}
+.qfig .cmapa{max-width:250px;}
+.qfig .cmapa .cimg{max-height:none;width:100%;}
 .pergunta{font-family:"Trebuchet MS",sans-serif;font-size:22px;font-weight:bold;color:#20303f;line-height:1.32;margin:2px 8px 10px;}
 #btnOuvir{background:#fdeccb;border:3px solid #f0a94a;color:#8a4d00;border-radius:18px;font-size:18px;font-weight:bold;padding:10px 16px;cursor:pointer;font-family:inherit;margin:6px auto;}
 .opcoes{margin-top:2px;}
@@ -228,58 +238,18 @@ function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("carto_mudo"
 function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
 
 /* ====== DIAGRAMAS SVG (as animações = os "vídeos curtos") ====== */
-function diag(tipo){
- if(tipo==="mapa"){return '<svg class="pdiag" viewBox="0 0 300 200" width="300" height="200" role="img" aria-label="mapa de um bairro visto de cima">'+
-   '<rect x="0" y="0" width="300" height="200" rx="10" fill="#dff0d8"/>'+
-   '<rect x="0" y="86" width="300" height="26" fill="#c9c9c9"/><rect x="132" y="0" width="26" height="200" fill="#c9c9c9"/>'+
-   '<rect x="24" y="20" width="46" height="40" rx="4" fill="#e58a5a"/><rect x="80" y="24" width="34" height="34" rx="4" fill="#7cb7e8"/>'+
-   '<rect x="180" y="18" width="70" height="44" rx="4" fill="#f2c14e"/>'+
-   '<circle cx="60" cy="150" r="22" fill="#78c47a"/><circle cx="95" cy="158" r="16" fill="#78c47a"/>'+
-   '<rect x="188" y="128" width="52" height="46" rx="4" fill="#c48ad0"/>'+
-   '</svg>';}
- if(tipo==="cima"){return '<svg class="pdiag" viewBox="0 0 300 200" width="300" height="200" role="img" aria-label="a mesma casa vista de lado e vista de cima">'+
-   '<g class="flipbox"><text x="150" y="20" text-anchor="middle" font-family="Trebuchet MS" font-size="15" fill="#1f4e79" font-weight="bold">de lado</text>'+
-   '<rect x="90" y="70" width="120" height="80" fill="#e58a5a"/><polygon points="80,70 150,34 220,70" fill="#b4573a"/><rect x="120" y="100" width="30" height="50" fill="#8a4a2a"/><rect x="165" y="92" width="26" height="26" fill="#7cb7e8"/></g>'+
-   '<g class="flipbox2"><text x="150" y="20" text-anchor="middle" font-family="Trebuchet MS" font-size="15" fill="#1f4e79" font-weight="bold">de cima</text>'+
-   '<rect x="95" y="60" width="110" height="90" rx="4" fill="#e58a5a"/><polygon points="95,60 150,105 205,60" fill="#b4573a" opacity=".55"/><polygon points="95,150 150,105 205,150" fill="#b4573a" opacity=".35"/></g>'+
-   '</svg>';}
- if(tipo==="titulo"){return '<svg class="pdiag" viewBox="0 0 300 200" width="300" height="200" role="img" aria-label="mapa com um título em cima">'+
-   '<rect class="simb" x="40" y="18" width="220" height="34" rx="8" fill="#1f4e79"/><text class="simb" x="150" y="41" text-anchor="middle" font-family="Trebuchet MS" font-size="17" fill="#fff" font-weight="bold">MEU BAIRRO</text>'+
-   '<rect x="30" y="66" width="240" height="120" rx="8" fill="#dff0d8"/><rect x="30" y="120" width="240" height="20" fill="#c9c9c9"/>'+
-   '<rect x="60" y="80" width="40" height="30" rx="3" fill="#f2c14e"/><circle cx="210" cy="100" r="18" fill="#78c47a"/><rect x="120" y="150" width="44" height="26" rx="3" fill="#7cb7e8"/></svg>';}
- if(tipo==="legenda"){return '<svg class="pdiag" viewBox="0 0 300 210" width="300" height="210" role="img" aria-label="mapa e a legenda com os símbolos aparecendo">'+
-   '<rect x="8" y="10" width="180" height="190" rx="8" fill="#dff0d8"/><rect x="8" y="90" width="180" height="18" fill="#7cb7e8"/>'+
-   '<rect class="simb" x="30" y="30" width="26" height="26" rx="3" fill="#f2c14e"/><circle class="simb s2" cx="140" cy="45" r="15" fill="#78c47a"/><rect class="simb s3" x="60" y="130" width="30" height="24" rx="3" fill="#c48ad0"/>'+
-   '<rect x="198" y="20" width="96" height="170" rx="8" fill="#fffef7" stroke="#e4d3a8" stroke-width="2"/><text x="246" y="38" text-anchor="middle" font-family="Trebuchet MS" font-size="13" font-weight="bold" fill="#1f4e79">Legenda</text>'+
-   '<rect class="simb" x="208" y="52" width="16" height="16" fill="#f2c14e"/><text class="simb" x="232" y="65" font-family="Segoe UI" font-size="12" fill="#33475a">casa</text>'+
-   '<circle class="simb s2" cx="216" cy="92" r="8" fill="#78c47a"/><text class="simb s2" x="232" y="96" font-family="Segoe UI" font-size="12" fill="#33475a">parque</text>'+
-   '<rect class="simb s3" x="208" y="116" width="16" height="16" fill="#c48ad0"/><text class="simb s3" x="232" y="129" font-family="Segoe UI" font-size="12" fill="#33475a">escola</text>'+
-   '<rect class="simb s4" x="208" y="150" width="16" height="10" fill="#7cb7e8"/><text class="simb s4" x="232" y="160" font-family="Segoe UI" font-size="12" fill="#33475a">rio</text></svg>';}
- if(tipo==="rosa"){return '<svg class="pdiag" viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="rosa dos ventos com Norte, Sul, Leste e Oeste">'+
-   '<circle cx="110" cy="110" r="80" fill="#eaf3f6" stroke="#1f7a86" stroke-width="3"/>'+
-   '<g class="rosa"><polygon points="110,26 122,110 110,98 98,110" fill="#e07a3f"/><polygon points="110,194 98,110 110,122 122,110" fill="#1f7a86"/>'+
-   '<polygon points="26,110 110,98 98,110 110,122" fill="#3a7bd5"/><polygon points="194,110 110,122 122,110 110,98" fill="#f2c14e"/></g>'+
-   '<text x="110" y="20" text-anchor="middle" font-family="Trebuchet MS" font-size="18" font-weight="bold" fill="#e07a3f">N</text>'+
-   '<text x="110" y="212" text-anchor="middle" font-family="Trebuchet MS" font-size="18" font-weight="bold" fill="#1f7a86">S</text>'+
-   '<text x="206" y="116" text-anchor="middle" font-family="Trebuchet MS" font-size="18" font-weight="bold" fill="#f2c14e">L</text>'+
-   '<text x="14" y="116" text-anchor="middle" font-family="Trebuchet MS" font-size="18" font-weight="bold" fill="#3a7bd5">O</text></svg>';}
- if(tipo==="escala"){return '<svg class="pdiag" viewBox="0 0 300 210" width="300" height="210" role="img" aria-label="uma cidade grande que encolhe para caber no mapa">'+
-   '<rect x="6" y="120" width="180" height="84" rx="8" fill="#fffef7" stroke="#e4d3a8" stroke-width="2"/><text x="96" y="138" text-anchor="middle" font-family="Trebuchet MS" font-size="12" font-weight="bold" fill="#1f4e79">no mapa (pequeno)</text>'+
-   '<g class="zoomcity"><rect x="40" y="20" width="220" height="120" rx="8" fill="#dff0d8"/>'+
-   '<rect x="60" y="50" width="34" height="70" fill="#7cb7e8"/><rect x="104" y="34" width="34" height="86" fill="#e58a5a"/><rect x="148" y="60" width="34" height="60" fill="#f2c14e"/><rect x="192" y="44" width="34" height="76" fill="#c48ad0"/></g></svg>';}
- if(tipo==="tipos"){return '<svg class="pdiag" viewBox="0 0 320 180" width="320" height="180" role="img" aria-label="quatro jeitos de representar: desenho, planta, mapa e globo">'+
-   '<g><rect x="10" y="24" width="66" height="66" rx="6" fill="#fff" stroke="#cfe4ea" stroke-width="2"/><polygon points="24,80 43,44 62,80" fill="#78c47a"/><rect x="36" y="66" width="14" height="14" fill="#8a4a2a"/><text x="43" y="108" text-anchor="middle" font-family="Segoe UI" font-size="12" fill="#33475a">desenho</text></g>'+
-   '<g><rect x="86" y="24" width="66" height="66" rx="6" fill="#dff0d8" stroke="#cfe4ea" stroke-width="2"/><rect x="96" y="34" width="46" height="46" fill="none" stroke="#1f4e79" stroke-width="2"/><line x1="119" y1="34" x2="119" y2="80" stroke="#1f4e79" stroke-width="2"/><text x="119" y="108" text-anchor="middle" font-family="Segoe UI" font-size="12" fill="#33475a">planta</text></g>'+
-   '<g><rect x="162" y="24" width="66" height="66" rx="6" fill="#dff0d8" stroke="#cfe4ea" stroke-width="2"/><rect x="162" y="52" width="66" height="12" fill="#c9c9c9"/><circle cx="180" cy="40" r="8" fill="#78c47a"/><rect x="200" y="66" width="16" height="14" fill="#f2c14e"/><text x="195" y="108" text-anchor="middle" font-family="Segoe UI" font-size="12" fill="#33475a">mapa</text></g>'+
-   '<g><circle cx="271" cy="57" r="33" fill="#7cb7e8" stroke="#1f7a86" stroke-width="2"/><path d="M250 50 q12 -10 24 0 q10 8 -2 16 q-14 6 -22 -4z" fill="#78c47a"/><text x="271" y="108" text-anchor="middle" font-family="Segoe UI" font-size="12" fill="#33475a">globo</text></g></svg>';}
- if(tipo==="rota"){return '<svg class="pdiag" viewBox="0 0 300 200" width="300" height="200" role="img" aria-label="um caminho marcado no mapa do você-está-aqui até a escola">'+
-   '<rect x="0" y="0" width="300" height="200" rx="10" fill="#dff0d8"/><rect x="0" y="90" width="300" height="20" fill="#c9c9c9"/><rect x="140" y="0" width="20" height="200" fill="#c9c9c9"/>'+
-   '<path class="rota" d="M40 160 L40 100 L150 100 L150 40 L240 40" fill="none" stroke="#e07a3f" stroke-width="5" stroke-linecap="round"/>'+
-   '<circle cx="40" cy="160" r="9" fill="#3a7bd5"/><text x="40" y="184" text-anchor="middle" font-family="Segoe UI" font-size="11" fill="#1f4e79" font-weight="bold">você</text>'+
-   '<rect x="228" y="26" width="30" height="28" rx="3" fill="#c48ad0"/><text x="243" y="70" text-anchor="middle" font-family="Segoe UI" font-size="11" fill="#1f4e79" font-weight="bold">escola</text></svg>';}
+function diag(t){
+ var b='img/';
+ function one(src,cls){return '<img class="cimg '+(cls||'')+'" src="'+b+src+'" alt="" onerror="this.style.display=\'none\'">';}
+ if(t==='mapa'||t==='titulo') return one('carto_bairro.jpg');
+ if(t==='rota') return '<div class="cmapa">'+one('carto_bairro.jpg')+'<span class="vocevai"></span></div>';
+ if(t==='cima') return '<div class="cflip">'+one('carto_cima1.jpg','fq1')+one('carto_cima2.jpg','fq2')+'</div>';
+ if(t==='escala') return '<div class="cflip">'+one('carto_esc1.jpg','fq1')+one('carto_esc2.jpg','fq2')+'</div>';
+ if(t==='rosa') return one('carto_rosa.jpg','cgira');
+ if(t==='legenda') return one('carto_legenda.jpg');
+ if(t==='tipos') return '<div class="ctipos"><img src="'+b+'carto_t1.jpg" alt=""><img src="'+b+'carto_t2.jpg" alt=""><img src="'+b+'carto_t3.jpg" alt=""><img src="'+b+'carto_t4.jpg" alt=""></div>';
  return '';
 }
-
 /* ====== PÁGINAS DO LIVRO ====== */
 var PAGINAS=[
  {tag:"Capítulo 1", tit:"O que é um mapa?", d:"mapa", foto:"carto_mundi.jpg", leg:"Um mapa-múndi de verdade: o mundo todo no papel.",
@@ -386,8 +356,8 @@ function telaLivro(dir){
   h+='<div class="livro"><div class="pagina '+ent+'">';
   h+='<span class="ptag">'+esc(p.tag)+'</span>';
   h+='<div class="ptit">'+esc(p.tit)+'</div>';
-  if(p.foto){h+='<img class="pfoto" src="img/'+p.foto+'" alt="'+esc(p.leg||"")+'" onerror="this.style.display=\'none\'">';if(p.leg){h+='<div class="pleg">'+esc(p.leg)+'</div>';}}
-  else{h+='<div class="svgwrap">'+diag(p.d)+'</div>';}
+  h+='<div class="svgwrap">'+diag(p.d)+'</div>';
+  if(p.foto){h+='<img class="pfoto peq" src="img/'+p.foto+'" alt="'+esc(p.leg||"")+'" onerror="this.style.display=\'none\'">';if(p.leg){h+='<div class="pleg">No mundo real: '+esc(p.leg)+'</div>';}}
   h+='<p class="ptx">'+p.texto+'</p>';
   h+='<div style="text-align:center;margin-top:4px"><button class="ouvirp" onclick="ouvirPagina('+paginaAtual+')">&#128266; Ouvir esta página</button></div>';
   h+='<span class="pnum">'+(paginaAtual+1)+'</span></div></div>';
