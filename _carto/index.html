@@ -313,13 +313,15 @@ var QUIZ=[
 /* grade 10x10; palavras só na horizontal (h:1) e vertical (h:0). pos[] publica
    r,c,n para o auditor-jogador; célula em % (regra da casa). */
 var CACA_N=10;
+/* posições SEM cruzamento (palavras horizontais em linhas distintas + 1 vertical
+   na coluna 9, que nenhuma horizontal alcança) — evita célula-ponta compartilhada */
 var CACA=[
- {p:"MAPA",   r:1,c:1,h:1},
- {p:"NORTE",  r:3,c:2,h:1},
- {p:"GLOBO",  r:5,c:0,h:1},
- {p:"LEGENDA",r:7,c:1,h:1},
- {p:"ESCALA", r:0,c:8,h:0},
- {p:"TITULO", r:2,c:5,h:0}
+ {p:"MAPA",   r:0,c:1,h:1},
+ {p:"NORTE",  r:2,c:2,h:1},
+ {p:"GLOBO",  r:4,c:3,h:1},
+ {p:"LEGENDA",r:6,c:1,h:1},
+ {p:"ESCALA", r:8,c:3,h:1},
+ {p:"TITULO", r:0,c:9,h:0}
 ];
 var cacaGrade=[], cacaAchou={}, pos={};
 
