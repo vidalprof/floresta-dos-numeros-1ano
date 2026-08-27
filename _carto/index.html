@@ -83,6 +83,8 @@ label{font-size:16px;font-weight:bold;color:#0a5a60;display:block;margin-top:8px
 
 /* ---- diagramas SVG (animações) ---- */
 .svgwrap{background:#eaf3f6;border:2px solid #cfe4ea;border-radius:14px;padding:8px;}
+.pfoto{display:block;margin:8px auto 2px;max-width:300px;width:100%;border-radius:12px;border:3px solid #e4d3a8;-webkit-box-shadow:0 6px 14px rgba(80,60,20,.25);box-shadow:0 6px 14px rgba(80,60,20,.25);}
+.pleg{font-size:13px;color:#8a6a3a;font-style:italic;text-align:center;margin:3px 0 2px;}
 .rosa{transform-origin:50% 50%;-webkit-animation:girarosa 6s ease-in-out infinite;animation:girarosa 6s ease-in-out infinite;}
 @-webkit-keyframes girarosa{0%,100%{-webkit-transform:rotate(-8deg);}50%{-webkit-transform:rotate(8deg);}}
 @keyframes girarosa{0%,100%{transform:rotate(-8deg);}50%{transform:rotate(8deg);}}
@@ -269,10 +271,10 @@ function diag(tipo){
 
 /* ====== PÁGINAS DO LIVRO ====== */
 var PAGINAS=[
- {tag:"Capítulo 1", tit:"O que é um mapa?", d:"mapa",
+ {tag:"Capítulo 1", tit:"O que é um mapa?", d:"mapa", foto:"carto_mundi.jpg", leg:"Um mapa-múndi de verdade: o mundo todo no papel.",
   tx:"Um <b>mapa</b> é um desenho de um lugar visto <b>de cima</b>, como se um passarinho olhasse lá do alto. No mapa a gente vê as ruas, as casas, os parques e os rios do nosso bairro ou da nossa cidade.",
   fala:"Capítulo um. O que é um mapa? Um mapa é um desenho de um lugar visto de cima, como se um passarinho olhasse lá do alto. No mapa a gente vê as ruas, as casas, os parques e os rios do nosso bairro ou da nossa cidade."},
- {tag:"Capítulo 2", tit:"Olhar de cima", d:"cima",
+ {tag:"Capítulo 2", tit:"Olhar de cima", d:"cima", foto:"carto_planta.jpg", leg:"Uma planta: a construção vista de cima.",
   tx:"No mapa, olhamos tudo <b>de cima</b>. Uma casa vista de lado tem telhado e porta; vista de cima, ela fica parecendo um quadradinho. Aprender a ver de cima é o primeiro segredo para ler um mapa!",
   fala:"Capítulo dois. Olhar de cima. No mapa, olhamos tudo de cima. Uma casa vista de lado tem telhado e porta; vista de cima, ela fica parecendo um quadradinho. Aprender a ver de cima é o primeiro segredo para ler um mapa!"},
  {tag:"Capítulo 3", tit:"O título do mapa", d:"titulo",
@@ -281,13 +283,13 @@ var PAGINAS=[
  {tag:"Capítulo 4", tit:"A legenda e os símbolos", d:"legenda",
   tx:"O mapa usa <b>símbolos</b>: desenhinhos e cores que representam as coisas. A <b>legenda</b> é um quadro que explica o que cada símbolo quer dizer — o verde é parque, o azul é rio, o quadradinho é uma casa.",
   fala:"Capítulo quatro. A legenda e os símbolos. O mapa usa símbolos: desenhinhos e cores que representam as coisas. A legenda é um quadro que explica o que cada símbolo quer dizer. O verde é parque, o azul é rio, o quadradinho é uma casa."},
- {tag:"Capítulo 5", tit:"A rosa dos ventos", d:"rosa",
+ {tag:"Capítulo 5", tit:"A rosa dos ventos", d:"rosa", foto:"carto_bussola.jpg", leg:"Uma bússola de verdade ajuda a achar o Norte.",
   tx:"A <b>rosa dos ventos</b> mostra os <b>pontos cardeais</b>: <b>Norte</b>, <b>Sul</b>, <b>Leste</b> e <b>Oeste</b>. Ela ajuda a saber para que lado ir. No mapa, o Norte quase sempre fica para cima.",
   fala:"Capítulo cinco. A rosa dos ventos. A rosa dos ventos mostra os pontos cardeais: Norte, Sul, Leste e Oeste. Ela ajuda a saber para que lado ir. No mapa, o Norte quase sempre fica para cima."},
  {tag:"Capítulo 6", tit:"A escala: tudo cabe no papel", d:"escala",
   tx:"Uma cidade é enorme e não caberia numa folha. Por isso, no mapa, tudo fica <b>menor</b> para caber no papel — mas na mesma ordem do lugar de verdade. Isso se chama <b>escala</b>.",
   fala:"Capítulo seis. A escala: tudo cabe no papel. Uma cidade é enorme e não caberia numa folha. Por isso, no mapa, tudo fica menor para caber no papel, mas na mesma ordem do lugar de verdade. Isso se chama escala."},
- {tag:"Capítulo 7", tit:"Vários jeitos de representar", d:"tipos",
+ {tag:"Capítulo 7", tit:"Vários jeitos de representar", d:"tipos", foto:"carto_globo.jpg", leg:"Um globo: a Terra inteira, redondinha.",
   tx:"Podemos representar os lugares de vários jeitos: um <b>desenho</b>, uma <b>planta</b> (o mapa de dentro de uma casa ou escola), um <b>mapa</b> do bairro ou da cidade, e o <b>globo</b>, que mostra a Terra inteira, redondinha.",
   fala:"Capítulo sete. Vários jeitos de representar. Podemos representar os lugares de vários jeitos: um desenho, uma planta, que é o mapa de dentro de uma casa ou escola, um mapa do bairro ou da cidade, e o globo, que mostra a Terra inteira, redondinha."},
  {tag:"Capítulo 8", tit:"Para que serve o mapa?", d:"rota",
@@ -373,6 +375,7 @@ function telaLivro(){
   h+='<span class="ptag">'+esc(p.tag)+'</span>';
   h+='<div class="ptit">'+esc(p.tit)+'</div>';
   h+='<div class="svgwrap">'+diag(p.d)+'</div>';
+  if(p.foto){h+='<img class="pfoto" src="img/'+p.foto+'" alt="'+esc(p.leg||"")+'" onerror="this.style.display=\'none\'">';if(p.leg){h+='<div class="pleg">'+esc(p.leg)+'</div>';}}
   h+='<p class="ptx">'+p.tx+'</p>';
   h+='<div style="text-align:center;margin-top:4px"><button class="ouvirp" onclick="ouvirPagina('+paginaAtual+')">&#128266; Ouvir esta página</button></div>';
   h+='<span class="pnum">'+(paginaAtual+1)+'</span></div></div>';
