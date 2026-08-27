@@ -465,7 +465,7 @@ function telaPergunta(){
   h+='<div class="opcoes">';
   var letras=["A","B","C","D"],i;
   for(i=0;i<q.opcoes.length;i++){
-    h+='<div class="opc c'+i+'" role="button" tabindex="0" onclick="responder('+i+')">'+
+    h+='<div class="opc c'+i+' opt" role="button" tabindex="0"'+(i===q.correta?' data-qa="1"':'')+' onclick="responder('+i+')">'+
        '<span class="let">'+letras[i]+'</span>'+
        '<span class="otx">'+esc(q.opcoes[i])+'</span>'+
        '<button class="ospk" title="Ouvir esta resposta" onclick="event.stopPropagation();ouvirOpc('+i+')">&#128266;</button>'+
@@ -484,7 +484,7 @@ function responder(idx){
 }
 function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
 function medalhaHTML(){
-  return '<div class="medalha"><span class="fita e"></span><span class="fita d"></span>'+
+  return '<div class="medalha medal"><span class="fita e"></span><span class="fita d"></span>'+
     '<div class="disco"><span class="estrela"></span>'+
     (avatarAluno?'<img class="mav" src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'">':'')+
     '</div></div>';
