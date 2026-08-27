@@ -5591,3 +5591,39 @@ Marcos reverteu a regra "arte sempre nova". Agora:
 - O portão `_qa/arte_propria.py` **não reprova mais reuso** (virou informativo, exit 0);
   quem pega resto de clone de verdade (prefixo alheio) é o `_qa/clone.py` item 8.
 Detalhe completo no CLAUDE.md (seção "REAPROVEITAR O BANCO DE IMAGENS").
+
+## 🗺️🌐 FORMATO "SITE/LIVRO DE PESQUISA" (EXCEÇÃO) — contrato p/ passar jogador+banca (ago/2026)
+
+O Marcos pediu atividades **em forma de site/pesquisa** (5º ano SC = portal rolável;
+3º ano Cartografia = **livro de páginas**) — HTML custom, NÃO o ESQUELETO. Reaproveitei
+o motor de **voz (`_chaveVoz`+audio/), Firebase (`/provas/<slug>`), avatares, medalha e
+quiz** da prova. Para o **jogador** e a **banca** aprovarem um custom, tem que casar o
+CONTRATO das mecânicas (li o `_qa/jogador.js` — ele espera marcação exata):
+
+- **Quiz:** opção = `class="opc c<i> opt"` + `data-qa="1"` na CERTA. `#trilha` fica no
+  fundo escuro → texto BRANCO (teal dá 1.4:1). Medalha precisa da classe **`.medal`**
+  (não só `.medalha`), senão "NÃO CHEGOU NA MEDALHA".
+- **Navegação (livro/portal):** botões "Próxima/Aos desafios" precisam da classe **`opt`**
+  (o robô só clica os seletores de `SEL`). "Voltar" fica SEM `opt` (senão o robô volta).
+- **Caça-palavras:** `<div class="grade" data-qa='{"MAPA":{"r":0,"c":0,"n":4,"dl":0,"dc":1},...}'>`
+  (o robô lê as posições do JSON no data-qa da grade); células `.cel` em ORDEM row-major,
+  largura em **%** (`100/N` + border-box), **NENHUMA palavra cruzando** (célula-ponta
+  compartilhada trava o toque e a fase não fecha), **grade ≤ 8 colunas** (célula ≥30px no
+  celular, senão leiaute reprova); chips `.pchip` com `data-qa="PALAVRA"` e ganham a classe
+  **`feito`** ao achar. Ao fechar a última, avançar SÍNCRONO (setTimeout longo faz o robô
+  desistir por "sem ação").
+- **Digitar:** `<input data-qa="RESPOSTA">` escondido (o robô preenche) + teclado na tela
+  + `document.onkeydown` (teclado real) + **auto-avança quando o texto == resposta**
+  (o robô não clica OK sozinho). Resposta SEM acento.
+- **Banca:** custom sem função `limpa()` → o auditor NÃO detecta as telas sozinho; rodar
+  `bash _qa/auditar.sh <html> telaCapa telaLivro telaPergunta telaCaca telaDigitar`
+  (passar as telas na mão). `crachaHTML` sem `<img>` de src vazio (senão "imagem quebrada"
+  na renderização sem estado). Vidro fosco = `backdrop-filter:blur` (isenta do "quadrado
+  branco"). Branco no laranja `#e07a3f` = 2.99:1 → usar `#c25f28`.
+- **Duração:** o `_qa/duracao.py` foi ESTENDIDO p/ contar LEITURA de portal (item com
+  `texto:`+`fala:` = 70s "ler", não 9s "tocar"). Mesmo assim, site curto (3º ano) fica
+  <40min → é **EXCEÇÃO** que o Marcos autoriza ("não precisa ser como o auditor quer").
+- **Imagens reais (cartografia):** Commons rende melhor com termo em INGLÊS
+  (`globe Earth`, `magnetic compass`, `world map political`, `floor plan`).
+- **Mascote estático** (sem lip-sync): publicar só a pose parada (`_feliz`); fala/pisca
+  juntas disparam o portão de tremor. Reuso de coruja do banco serve de placeholder.
