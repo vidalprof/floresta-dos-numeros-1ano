@@ -1,0 +1,512 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Expedição Santa Catarina — 5º ano</title>
+<style>
+/* ===== EXPEDIÇÃO SANTA CATARINA — 5º ano =====
+   PORTAL DE PESQUISA (revista com fotos reais + narração + efeito cinema Ken Burns)
+   seguido de QUIZ de 30 perguntas. Motor de quiz reaproveitado da prova (Firebase,
+   avatares, medalha, voz por arquivo). 1 HTML autossuficiente, sem sair da página.
+   Compatível com PC antigo (prefixos -webkit-, fallback antes de flex/gradiente). */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;min-height:100%;}
+body{
+  font-family:"Segoe UI",Verdana,Geneva,sans-serif;color:#12283a;
+  background:#0b3d5c;
+  background:-webkit-linear-gradient(top,#0b3d5c 0%,#0e7c86 55%,#f3e7cf 100%);
+  background:linear-gradient(to bottom,#0b3d5c 0%,#0e7c86 55%,#f3e7cf 100%);
+  min-height:100vh;-webkit-text-size-adjust:100%;
+}
+#app{max-width:900px;margin:0 auto;min-height:100vh;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 40px;position:relative;}
+
+/* barra de progresso do portal (topo) */
+#topbar{position:fixed;left:0;top:0;height:6px;width:0;z-index:9997;background:#ef6d3a;
+  background:-webkit-linear-gradient(left,#f6bf31,#ef6d3a);background:linear-gradient(to right,#f6bf31,#ef6d3a);
+  -webkit-transition:width .15s linear;transition:width .15s linear;}
+
+/* ---------- CARTÃO genérico (capa/quiz) ---------- */
+.card{position:relative;color:#12283a;background:#ffffff;
+  border:4px solid #ffd23f;border-radius:24px;padding:16px 16px 16px;margin:12px 14px;text-align:center;
+  -webkit-box-shadow:0 14px 30px rgba(6,30,50,.30), inset 0 0 0 3px #fff;box-shadow:0 14px 30px rgba(6,30,50,.30), inset 0 0 0 3px #fff;
+  -webkit-animation:aparece .35s ease-out;animation:aparece .35s ease-out;}
+@-webkit-keyframes aparece{from{opacity:0;-webkit-transform:translateY(12px);}to{opacity:1;-webkit-transform:none;}}
+@keyframes aparece{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+h1{font-family:Georgia,"Times New Roman",serif;font-size:30px;margin:2px 0 0;color:#0b3d5c;letter-spacing:.3px;}
+h2{font-family:"Trebuchet MS",sans-serif;font-size:18px;margin:2px 0 2px;color:#0e7c86;}
+p{font-size:17px;line-height:1.4;margin:6px 4px;}
+.grande{font-size:17px;font-weight:bold;color:#2f6b4f;margin:8px 6px;}
+img{max-width:100%;}
+
+/* ---------- CAPA ---------- */
+.masc-capa{height:132px;margin:0 auto 2px;-webkit-animation:balanca 2.8s ease-in-out infinite;animation:balanca 2.8s ease-in-out infinite;}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg);}50%{-webkit-transform:rotate(3deg);}}
+@keyframes balanca{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+.selo-capa{display:inline-block;font-family:"Trebuchet MS",sans-serif;font-size:12px;font-weight:bold;letter-spacing:1.5px;color:#a05a00;background:#fff2dd;border:2px solid #ffcf80;border-radius:20px;padding:4px 14px;margin:4px 0 2px;text-transform:uppercase;}
+.formrow{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-align-items:flex-start;align-items:flex-start;margin:6px auto 0;gap:2px 22px;}
+.fcol{-webkit-box-flex:1;-webkit-flex:1 1 280px;flex:1 1 280px;max-width:380px;}
+input{font-family:inherit;font-size:19px;padding:11px 10px;border:3px solid #7fbfd0;border-radius:16px;width:86%;max-width:320px;margin:4px auto;display:block;text-align:center;color:#12283a;background:#fbfeff;}
+label{font-size:16px;font-weight:bold;color:#0e7c86;display:block;margin-top:8px;}
+.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
+.tbox{margin:6px;min-width:80px;padding:13px 12px;border:3px solid #7fbfd0;border-radius:18px;background:#fbfeff;color:#0e7c86;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #cfe6ec;box-shadow:0 4px 0 #cfe6ec;}
+.tbox.on{background:#0e7c86;color:#fff;border-color:#0a5a62;-webkit-box-shadow:0 4px 0 #0a5a62;box-shadow:0 4px 0 #0a5a62;}
+.tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
+.avs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 6px;max-width:560px;}
+.avbox{width:76px;height:76px;margin:5px;border-radius:50%;border:3px solid #7fbfd0;background:#fbfeff;cursor:pointer;overflow:hidden;padding:0;-webkit-box-shadow:0 3px 0 #cfe6ec;box-shadow:0 3px 0 #cfe6ec;}
+.avbox.on{border-color:#0a5a62;-webkit-box-shadow:0 3px 0 #0a5a62;box-shadow:0 3px 0 #0a5a62;-webkit-transform:translateY(-2px);transform:translateY(-2px);}
+.avbox img{width:100%;height:100%;display:block;object-fit:cover;}
+
+.btn{display:inline-block;font-family:"Trebuchet MS",sans-serif;font-size:23px;font-weight:bold;border:none;border-radius:20px;padding:16px 30px;margin:10px 6px;cursor:pointer;color:#fff;background:#ef6d3a;-webkit-box-shadow:0 6px 0 #c14e22;box-shadow:0 6px 0 #c14e22;}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 3px 0 #c14e22;box-shadow:0 3px 0 #c14e22;}
+.btn.verde{background:#2f9e57;-webkit-box-shadow:0 6px 0 #23773f;box-shadow:0 6px 0 #23773f;}
+#btnOuvir,#btnHist{background:#fff2dd;border:3px solid #ff9e2c;color:#a05a00;border-radius:18px;font-size:18px;font-weight:bold;padding:10px 16px;cursor:pointer;font-family:inherit;margin:6px auto 6px;}
+#btnHist{-webkit-animation:pulsa 1.6s ease-in-out infinite;animation:pulsa 1.6s ease-in-out infinite;}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.08);}}
+@keyframes pulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+/* ================= PORTAL (revista) ================= */
+#portalTop{text-align:center;padding:16px 14px 2px;color:#fff;}
+#portalTop .selo-capa{color:#fff;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.5);}
+#portalTop h1{color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.35);}
+#portalTop p{color:#eaf6f8;}
+.sec{position:relative;margin:16px 14px 22px;border-radius:22px;overflow:hidden;background:#fff;
+  -webkit-box-shadow:0 16px 34px rgba(6,30,50,.34);box-shadow:0 16px 34px rgba(6,30,50,.34);
+  opacity:0;-webkit-transform:translateY(30px);transform:translateY(30px);-webkit-transition:opacity .7s ease,-webkit-transform .7s ease;transition:opacity .7s ease,transform .7s ease;}
+.sec.vis{opacity:1;-webkit-transform:none;transform:none;}
+.foto{position:relative;height:230px;overflow:hidden;background:#0b3d5c;}
+.foto .kb{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;
+  -webkit-animation:ken 26s ease-in-out infinite alternate;animation:ken 26s ease-in-out infinite alternate;}
+@-webkit-keyframes ken{0%{-webkit-transform:scale(1.02) translate(0,0);}100%{-webkit-transform:scale(1.16) translate(-2%,-2%);}}
+@keyframes ken{0%{transform:scale(1.02) translate(0,0);}100%{transform:scale(1.16) translate(-2%,-2%);}}
+.foto .scrim{position:absolute;inset:0;background:-webkit-linear-gradient(top,rgba(0,0,0,.05) 30%,rgba(0,0,0,.62) 100%);background:linear-gradient(to bottom,rgba(0,0,0,.05) 30%,rgba(0,0,0,.62) 100%);}
+.foto .badge{position:absolute;left:14px;top:14px;font-family:"Trebuchet MS",sans-serif;font-size:12px;font-weight:bold;letter-spacing:1px;color:#fff;padding:5px 12px;border-radius:16px;text-transform:uppercase;-webkit-box-shadow:0 3px 8px rgba(0,0,0,.3);box-shadow:0 3px 8px rgba(0,0,0,.3);}
+.foto .stit{position:absolute;left:16px;right:16px;bottom:12px;font-family:Georgia,"Times New Roman",serif;font-size:26px;line-height:1.15;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6);margin:0;}
+.stx{padding:14px 18px 16px;}
+.stx p{font-size:17.5px;line-height:1.5;color:#22384a;margin:4px 2px 10px;text-align:left;}
+.stx .destaque{font-weight:bold;color:#0e7c86;}
+.ouvirsec{background:#eaf7f9;border:3px solid #7fc4d0;color:#0a5a62;border-radius:16px;font-size:16px;font-weight:bold;padding:9px 15px;cursor:pointer;font-family:"Trebuchet MS",sans-serif;}
+.ouvirsec:active{background:#d6eef2;}
+.fatos{list-style:none;margin:6px 0 2px;padding:0;text-align:left;}
+.fatos li{position:relative;font-size:16px;color:#2f4a5c;margin:6px 0;padding-left:26px;line-height:1.4;}
+.fatos li:before{content:"\2691";position:absolute;left:2px;top:0;color:#ef6d3a;font-size:16px;}
+.chamada{margin:6px 14px 10px;text-align:center;}
+
+/* cor por seção */
+.est{background:#2f6b4f;} .flo{background:#0e7c86;} .blu{background:#c1573a;} .cul{background:#8a63d2;} .eco{background:#2f6f8f;} .cur{background:#d64b7a;}
+
+/* ================= QUIZ ================= */
+#trilha{display:block;text-align:center;margin:6px 0 4px;font-size:16px;color:#0a5a62;font-weight:bold;}
+#passa{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:3px;margin:2px auto 8px;max-width:520px;}
+.selo{-webkit-flex:none;flex:none;width:22px;height:22px;line-height:18px;text-align:center;border-radius:50%;border:2px dashed #7fc4d0;background:#eaf7f9;color:#0a5a62;font-size:11px;font-weight:bold;}
+.selo.feito{border-style:solid;border-color:#2f9e57;background:#dbf3e3;color:#1f7a41;}
+.selo.agora{border-style:solid;border-color:#ff9e2c;background:#fff2dd;color:#a05a00;-webkit-box-shadow:0 0 0 3px rgba(255,158,44,.22);box-shadow:0 0 0 3px rgba(255,158,44,.22);}
+.qcard{padding-top:56px;text-align:center;}
+.cracha{position:absolute;left:8px;top:8px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background:#fbfeff;border:3px solid #d7e6ec;border-radius:22px;padding:2px 10px 2px 2px;-webkit-box-shadow:0 2px 5px rgba(0,0,0,.15);box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.cracha .cav{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#dff0f4;-webkit-flex:none;flex:none;margin-right:6px;}
+.cracha .cav img{width:100%;height:100%;object-fit:cover;display:block;}
+.cracha .cnm{font-size:13px;font-weight:bold;color:#0a5a62;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.guia{position:absolute;right:8px;top:8px;height:64px;pointer-events:none;-webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+.disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:14px;padding:5px 13px;margin:2px 0 8px;color:#fff;}
+.qfig{display:block;max-height:190px;margin:2px auto 10px;padding:5px;background:#fff;border:3px solid #cfe6ec;border-radius:16px;-webkit-box-shadow:0 6px 14px rgba(6,30,50,.20);box-shadow:0 6px 14px rgba(6,30,50,.20);}
+.pergunta{font-family:"Trebuchet MS",sans-serif;font-size:22px;font-weight:bold;color:#12283a;line-height:1.32;margin:2px 8px 10px;}
+.opcoes{margin-top:2px;}
+.opc{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;width:94%;max-width:520px;margin:10px auto;padding:14px 12px;border:3px solid #d7e6ec;border-radius:18px;cursor:pointer;text-align:left;font-family:"Trebuchet MS",sans-serif;font-size:20px;font-weight:bold;color:#12283a;background:#f4fbfc;-webkit-box-shadow:0 5px 0 #cfe0e6;box-shadow:0 5px 0 #cfe0e6;}
+.opc:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 1px 0 #cfe0e6;box-shadow:0 1px 0 #cfe0e6;}
+.opc .let{-webkit-flex:none;flex:none;width:40px;height:40px;line-height:40px;text-align:center;border-radius:50%;background:#2f9e57;color:#fff;font-size:21px;margin-right:12px;-webkit-box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);}
+.opc.c1 .let{background:#0e7c86;} .opc.c2 .let{background:#ef6d3a;}
+.opc .otx{-webkit-box-flex:1;-webkit-flex:1;flex:1;padding-right:6px;}
+.ospk{-webkit-flex:none;flex:none;width:42px;height:42px;border-radius:50%;border:3px solid #7fc4d0;background:#eaf7f9;color:#0a5a62;font-size:19px;line-height:36px;text-align:center;cursor:pointer;padding:0;margin-left:4px;}
+.ospk:active{background:#d6eef2;}
+.medalha{position:relative;width:172px;height:196px;margin:8px auto 2px;-webkit-animation:pop .55s ease-out;animation:pop .55s ease-out;}
+@-webkit-keyframes pop{0%{-webkit-transform:scale(0) rotate(-18deg);}70%{-webkit-transform:scale(1.12);}100%{-webkit-transform:scale(1);}}
+@keyframes pop{0%{transform:scale(0) rotate(-18deg);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+.medalha .fita{position:absolute;top:0;left:50%;width:26px;height:74px;background:#ef6d3a;}
+.medalha .fita.e{-webkit-transform:translateX(-26px) rotate(13deg);transform:translateX(-26px) rotate(13deg);}
+.medalha .fita.d{-webkit-transform:translateX(0) rotate(-13deg);transform:translateX(0) rotate(-13deg);}
+.medalha .disco{position:absolute;left:50%;top:52px;margin-left:-72px;width:144px;height:144px;border-radius:50%;overflow:hidden;background:#f6bf31;background:-webkit-radial-gradient(36% 30%,circle,#fff0a8,#f6bf31 62%,#d68a00);background:radial-gradient(circle at 36% 30%,#fff0a8,#f6bf31 62%,#d68a00);border:7px solid #ffd94a;-webkit-box-shadow:0 8px 18px rgba(120,90,0,.4),inset 0 0 18px rgba(255,255,255,.5);box-shadow:0 8px 18px rgba(120,90,0,.4),inset 0 0 18px rgba(255,255,255,.5);display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;}
+.medalha .estrela{position:absolute;width:74px;height:74px;background:#fff6cf;-webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+.medalha .mav{position:relative;width:118px;height:118px;border-radius:50%;object-fit:cover;}
+#barra{position:fixed;right:8px;bottom:8px;z-index:9999;}
+#barra .cv-bt{-webkit-appearance:none;appearance:none;width:48px;height:48px;border:3px solid #0a5a62;border-radius:50%;background:#fbfeff;color:#0a5a62;font-size:20px;line-height:42px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
+@media(min-width:680px){ .foto{height:300px;} .foto .stit{font-size:30px;} }
+</style>
+
+<div id="topbar"></div>
+<div id="app" class="tela"></div>
+<div id="barra">
+  <button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>
+  <button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">&#8635;</button>
+</div>
+
+<script>
+/* ====== CONFIG ====== */
+var TURMAS=["5º A","5º B","5º C","5º D"];
+var AVATARES=[
+ {id:"av1.png"},{id:"av2.png"},{id:"av3.png"},
+ {id:"av4.png"},{id:"av5.png"},{id:"av6.png"}
+];
+var SLUG="santa-catarina-5ano";  /* Firebase: /provas/<SLUG> */
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+var GUIA="img/guia_feliz.png";   /* mascote-guia (a gaivota Zeca) */
+var HISTORIA="Olá, explorador! Eu sou o Zeca, a gaivota. Hoje a gente vai viajar pelo nosso estado, Santa Catarina, e conhecer a capital Florianópolis e a nossa Blumenau: os bairros, os pontos turísticos, o lugar mais alto e um monte de curiosidades. Primeiro a gente explora a revista, com fotos e narração, e depois você responde a um quiz de trinta perguntas sobre tudo o que viu. Escreva o seu nome, escolha a sua turma e o seu personagem, e vamos começar a expedição!";
+var _histTocada=false;
+
+/* ====== falas fixas (também lidas pelo gerador de voz) ====== */
+var TXT_PORTAL_INTRO="Vamos explorar! Role a página, veja as fotos e toque em ouvir em cada parada. No fim, tem o quiz.";
+var TXT_FINAL="Expedição concluída! Você terminou a viagem por Santa Catarina. O Zeca adorou explorar o nosso estado com você. Parabéns, explorador!";
+var MSG_NOME="Escreva o seu nome para começar.";
+var MSG_TURMA="Escolha a sua turma.";
+var MSG_AVATAR="Escolha o seu personagem.";
+var FRASES_NEXT=["Próxima pergunta!","Vamos continuar!","Muito bem, siga em frente!","Continue, explorador!"];
+/* a pergunta narra só o enunciado; cada opção tem alto-falante próprio (ordem
+   embaralhada). Assim não dá para "chutar sempre o A" e a voz nunca desencontra. */
+function falaPergunta(q,n){
+  return "Pergunta "+n+". "+q.pergunta+" Ouça as respostas e toque na certa.";
+}
+
+/* ====== SEÇÕES DO PORTAL (revista) ====== */
+var SECOES=[
+ {cls:"est", tag:"O nosso estado", img:"sc_serra.jpg", titulo:"Santa Catarina",
+  texto:"Santa Catarina fica na região Sul do Brasil, ao lado do Paraná e do Rio Grande do Sul. A capital é Florianópolis. O estado tem duas paisagens bem diferentes: o litoral, cheio de praias, e a serra, cheia de montanhas. Santa Catarina é um dos menores estados do país, mas um dos mais bonitos e mais visitados.",
+  fatos:["Região: Sul do Brasil","Capital: Florianópolis","Paisagens: litoral (praias) e serra (montanhas)"],
+  fala:"O nosso estado, Santa Catarina. Santa Catarina fica na região Sul do Brasil, ao lado do Paraná e do Rio Grande do Sul. A capital é Florianópolis. O estado tem duas paisagens bem diferentes: o litoral, cheio de praias, e a serra, cheia de montanhas. Santa Catarina é um dos menores estados do país, mas um dos mais bonitos e mais visitados."},
+
+ {cls:"est", tag:"Lá no alto", img:"sc_serra2.jpg", titulo:"O ponto mais alto do estado",
+  texto:"Bem no alto da serra fica o ponto culminante de Santa Catarina, o Morro da Boa Vista, com mais de mil e oitocentos metros de altura. Pertinho dali, em Urubici, está o Morro da Igreja, com a famosa Pedra Furada. Essa região é um dos lugares mais frios do Brasil: no inverno faz muito frio e às vezes até neva!",
+  fatos:["Ponto mais alto: Morro da Boa Vista (mais de 1.800 m)","Perto: Morro da Igreja e a Pedra Furada, em Urubici","Um dos lugares mais frios do Brasil — às vezes neva"],
+  fala:"O ponto mais alto do estado. Bem no alto da serra fica o ponto culminante de Santa Catarina, o Morro da Boa Vista, com mais de mil e oitocentos metros de altura. Pertinho dali, em Urubici, está o Morro da Igreja, com a famosa Pedra Furada. Essa região é um dos lugares mais frios do Brasil: no inverno faz muito frio e às vezes até neva!"},
+
+ {cls:"flo", tag:"A capital", img:"sc_lagoa.jpg", titulo:"Florianópolis, a Ilha da Magia",
+  texto:"Florianópolis é a capital de Santa Catarina e fica quase toda numa ilha. Por ser tão bonita, ganhou o apelido de Ilha da Magia. Para ir do continente até a ilha, a gente atravessa pontes. A cidade tem centro histórico, muitos bairros — como a Lagoa da Conceição, os Ingleses e o Ribeirão da Ilha — e mais de quarenta praias!",
+  fatos:["É a capital e fica numa ilha","Apelido: Ilha da Magia","Ligada ao continente por pontes","Bairros: Lagoa da Conceição, Ingleses, Ribeirão da Ilha…"],
+  fala:"A capital: Florianópolis, a Ilha da Magia. Florianópolis é a capital de Santa Catarina e fica quase toda numa ilha. Por ser tão bonita, ganhou o apelido de Ilha da Magia. Para ir do continente até a ilha, a gente atravessa pontes. A cidade tem centro histórico, muitos bairros, como a Lagoa da Conceição, os Ingleses e o Ribeirão da Ilha, e mais de quarenta praias!"},
+
+ {cls:"flo", tag:"Cartão-postal", img:"sc_ponte.jpg", titulo:"A Ponte Hercílio Luz",
+  texto:"A Ponte Hercílio Luz é o cartão-postal de Florianópolis. Ela foi inaugurada em 1926 e foi a primeira ponte a ligar a ilha ao continente. É toda de ferro e, à noite, fica iluminada e linda. Hoje ela é um patrimônio histórico que todo mundo quer visitar e fotografar.",
+  fatos:["Cartão-postal de Florianópolis","Inaugurada em 1926","Primeira ponte a ligar a ilha ao continente"],
+  fala:"Cartão-postal: a Ponte Hercílio Luz. A Ponte Hercílio Luz é o cartão-postal de Florianópolis. Ela foi inaugurada em mil novecentos e vinte e seis e foi a primeira ponte a ligar a ilha ao continente. É toda de ferro e, à noite, fica iluminada e linda. Hoje ela é um patrimônio histórico que todo mundo quer visitar e fotografar."},
+
+ {cls:"flo", tag:"No centro histórico", img:"sc_catedral.jpg", titulo:"Praças, mercado e catedral",
+  texto:"No centro histórico de Florianópolis ficam a Catedral, o Mercado Público — onde se vende peixe fresco e se come pastel de camarão — e a Praça XV de Novembro, que tem uma figueira gigante com mais de cem anos. É ali que a cidade começou, há muito tempo.",
+  fatos:["Catedral e Mercado Público","Praça XV: figueira gigante centenária","O lugar onde a cidade começou"],
+  fala:"No centro histórico: praças, mercado e catedral. No centro histórico de Florianópolis ficam a Catedral, o Mercado Público, onde se vende peixe fresco e se come pastel de camarão, e a Praça Quinze de Novembro, que tem uma figueira gigante com mais de cem anos. É ali que a cidade começou, há muito tempo."},
+
+ {cls:"flo", tag:"Mar e lagoa", img:"sc_praia.jpg", titulo:"Praias e Lagoa da Conceição",
+  texto:"Florianópolis é famosa pelas praias. A Praia da Joaquina tem dunas de areia enormes, onde as pessoas descem de sandboard. Já a Lagoa da Conceição é uma laguna no meio da ilha, cheia de gente praticando esportes na água, como caiaque e stand-up. Tem praia calma para a família e praia de ondas fortes para o surfe.",
+  fatos:["Joaquina: dunas e sandboard","Lagoa da Conceição: esportes na água","Praias para a família e para o surfe"],
+  fala:"Mar e lagoa: praias e Lagoa da Conceição. Florianópolis é famosa pelas praias. A Praia da Joaquina tem dunas de areia enormes, onde as pessoas descem de sandboard. Já a Lagoa da Conceição é uma laguna no meio da ilha, cheia de gente praticando esportes na água, como caiaque e stand-up. Tem praia calma para a família e praia de ondas fortes para o surfe."},
+
+ {cls:"cul", tag:"Cultura", img:"sc_praia2.jpg", titulo:"A herança dos açorianos",
+  texto:"Muita gente de Florianópolis descende dos açorianos, que vieram das ilhas dos Açores, em Portugal, há mais de duzentos anos. Deles vêm tradições que existem até hoje: a renda de bilro, feita à mão, e o boi-de-mamão, uma brincadeira de rua com bonecos. No mar, os pescadores criam ostras — e Florianópolis é a maior produtora de ostras do Brasil!",
+  fatos:["Vieram dos Açores, em Portugal","Tradições: renda de bilro e boi-de-mamão","Floripa é a maior produtora de ostras do Brasil"],
+  fala:"Cultura: a herança dos açorianos. Muita gente de Florianópolis descende dos açorianos, que vieram das ilhas dos Açores, em Portugal, há mais de duzentos anos. Deles vêm tradições que existem até hoje: a renda de bilro, feita à mão, e o boi-de-mamão, uma brincadeira de rua com bonecos. No mar, os pescadores criam ostras, e Florianópolis é a maior produtora de ostras do Brasil!"},
+
+ {cls:"blu", tag:"A nossa cidade", img:"sc_blumenau.jpg", titulo:"Blumenau, terra dos imigrantes",
+  texto:"Blumenau fica no Vale do Itajaí, às margens do rio Itajaí-Açu. A cidade foi fundada em 1850 por Hermann Blumenau e recebeu muitos imigrantes alemães. Por causa deles, Blumenau tem casas no estilo enxaimel, com a madeira aparente formando desenhos nas paredes — parecem casas de conto de fadas.",
+  fatos:["No Vale do Itajaí, no rio Itajaí-Açu","Fundada em 1850 por Hermann Blumenau","Imigrantes alemães e casas em estilo enxaimel"],
+  fala:"A nossa cidade: Blumenau, terra dos imigrantes. Blumenau fica no Vale do Itajaí, às margens do rio Itajaí-Açu. A cidade foi fundada em mil oitocentos e cinquenta por Hermann Blumenau e recebeu muitos imigrantes alemães. Por causa deles, Blumenau tem casas no estilo enxaimel, com a madeira aparente formando desenhos nas paredes. Parecem casas de conto de fadas."},
+
+ {cls:"blu", tag:"Festa e sabor", img:"sc_vila.jpg", titulo:"A Oktoberfest e a Vila Germânica",
+  texto:"A festa mais famosa de Blumenau é a Oktoberfest, uma das maiores festas alemãs do mundo, que acontece todo mês de outubro na Vila Germânica. Tem música, danças típicas e desfiles pela Rua XV de Novembro. E tem as comidas alemãs: a cuca, o joelho de porco e o chucrute, que é repolho preparado de um jeito especial.",
+  fatos:["Oktoberfest: em outubro, na Vila Germânica","Uma das maiores festas alemãs do mundo","Comidas típicas: cuca, joelho de porco, chucrute"],
+  fala:"Festa e sabor: a Oktoberfest e a Vila Germânica. A festa mais famosa de Blumenau é a Oktoberfest, uma das maiores festas alemãs do mundo, que acontece todo mês de outubro na Vila Germânica. Tem música, danças típicas e desfiles pela Rua Quinze de Novembro. E tem as comidas alemãs: a cuca, o joelho de porco e o chucrute, que é repolho preparado de um jeito especial."},
+
+ {cls:"eco", tag:"O trabalho", img:"sc_vila2.jpg", titulo:"A economia catarinense",
+  texto:"Santa Catarina trabalha em muitas coisas. Blumenau é forte na indústria têxtil, que é a fabricação de roupas e tecidos, e também na tecnologia, com empresas de computadores e programas. Florianópolis vive do turismo, dos serviços e da tecnologia. No litoral, muita gente vive da pesca; na serra e no campo, da agricultura.",
+  fatos:["Blumenau: indústria têxtil (roupas) e tecnologia","Florianópolis: turismo, serviços e tecnologia","Litoral: pesca — Serra e campo: agricultura"],
+  fala:"O trabalho: a economia catarinense. Santa Catarina trabalha em muitas coisas. Blumenau é forte na indústria têxtil, que é a fabricação de roupas e tecidos, e também na tecnologia, com empresas de computadores e programas. Florianópolis vive do turismo, dos serviços e da tecnologia. No litoral, muita gente vive da pesca; na serra e no campo, da agricultura."},
+
+ {cls:"cur", tag:"Você sabia?", img:"sc_bc.jpg", titulo:"Curiosidades de Santa Catarina",
+  texto:"Santa Catarina tem 295 municípios e surpresas por toda parte! Em Balneário Camboriú há arranha-céus enormes bem na beira da praia, e por isso muita gente chama a cidade de Dubai brasileira. Na serra, faz tanto frio que às vezes neva. E o estado tem festas, parques e praias para todos os gostos.",
+  fatos:["Santa Catarina tem 295 municípios","Balneário Camboriú: arranha-céus na beira da praia","Na serra às vezes neva no inverno"],
+  fala:"Você sabia? Curiosidades de Santa Catarina. Santa Catarina tem duzentos e noventa e cinco municípios e surpresas por toda parte! Em Balneário Camboriú há arranha-céus enormes bem na beira da praia, e por isso muita gente chama a cidade de Dubai brasileira. Na serra, faz tanto frio que às vezes neva. E o estado tem festas, parques e praias para todos os gostos."}
+];
+
+/* ====== QUIZ — 30 perguntas (múltipla escolha, resposta controlada aqui) ====== */
+var QUESTOES=[
+ {sec:"est", pergunta:"Em que região do Brasil fica Santa Catarina?",
+  opcoes:["Na região Nordeste.","Na região Sul.","Na região Norte."], correta:1},
+ {sec:"est", pergunta:"Qual é a capital de Santa Catarina?",
+  opcoes:["Florianópolis.","Blumenau.","Curitiba."], correta:0},
+ {sec:"est", pergunta:"Santa Catarina tem duas grandes paisagens. Quais são?",
+  opcoes:["O deserto e a floresta.","O litoral, com praias, e a serra, com montanhas.","Só cidades grandes."], correta:1},
+ {sec:"est", img:"sc_serra2.jpg", pergunta:"Qual é o ponto mais alto (ponto culminante) de Santa Catarina?",
+  opcoes:["A Ponte Hercílio Luz.","O Morro da Boa Vista.","A Praia da Joaquina."], correta:1},
+ {sec:"est", pergunta:"O Morro da Igreja, em Urubici, com a Pedra Furada, é conhecido por quê?",
+  opcoes:["Por ser um dos lugares mais frios do Brasil.","Por ser a maior praia do estado.","Por ser o centro de Florianópolis."], correta:0},
+ {sec:"flo", pergunta:"Florianópolis é chamada de “Ilha da Magia” porque:",
+  opcoes:["fica no meio de um deserto.","fica quase toda numa ilha.","não tem praias."], correta:1},
+ {sec:"flo", pergunta:"Como se vai do continente até a ilha de Florianópolis?",
+  opcoes:["Atravessando pontes.","De trem.","A pé pela areia."], correta:0},
+ {sec:"flo", img:"sc_ponte.jpg", pergunta:"Que cartão-postal de Florianópolis aparece nesta foto?",
+  opcoes:["A Vila Germânica.","A Ponte Hercílio Luz.","O Morro da Igreja."], correta:1},
+ {sec:"flo", pergunta:"Em que ano a Ponte Hercílio Luz foi inaugurada?",
+  opcoes:["Em 1926.","Em 2010.","Em 1500."], correta:0},
+ {sec:"flo", pergunta:"O que a Praça XV de Novembro, no centro de Florianópolis, tem de especial?",
+  opcoes:["Uma figueira gigante com mais de cem anos.","Uma montanha de neve.","Um estádio de futebol."], correta:0},
+ {sec:"flo", pergunta:"No centro histórico de Florianópolis, onde se vende peixe fresco e se come pastel de camarão?",
+  opcoes:["No Mercado Público.","Na Oktoberfest.","Na Pedra Furada."], correta:0},
+ {sec:"flo", img:"sc_praia.jpg", pergunta:"A Praia da Joaquina, em Florianópolis, é famosa por quê?",
+  opcoes:["Por suas dunas de areia, onde se anda de sandboard.","Por ter neve o ano todo.","Por ser um shopping."], correta:0},
+ {sec:"flo", pergunta:"O que é a Lagoa da Conceição, em Florianópolis?",
+  opcoes:["Uma laguna onde se pratica esporte na água.","Uma montanha muito alta.","Uma fábrica de roupas."], correta:0},
+ {sec:"flo", pergunta:"Quantas praias, mais ou menos, tem Florianópolis?",
+  opcoes:["Apenas uma.","Mais de quarenta.","Nenhuma."], correta:1},
+ {sec:"cul", pergunta:"De onde vieram os açorianos que colonizaram Florianópolis?",
+  opcoes:["Das ilhas dos Açores, em Portugal.","Do Japão.","Da Argentina."], correta:0},
+ {sec:"cul", pergunta:"Qual destes é um artesanato típico da cultura açoriana em Florianópolis?",
+  opcoes:["A renda de bilro, feita à mão.","O carro de corrida.","O tênis de corrida."], correta:0},
+ {sec:"cul", pergunta:"O boi-de-mamão, herança açoriana, é:",
+  opcoes:["uma brincadeira de rua com bonecos.","um prato de comida alemã.","um tipo de barco."], correta:0},
+ {sec:"cul", pergunta:"Florianópolis é a maior produtora do Brasil de qual alimento do mar?",
+  opcoes:["Ostras.","Maçãs.","Milho."], correta:0},
+ {sec:"blu", img:"sc_blumenau.jpg", pergunta:"Às margens de qual rio fica a cidade de Blumenau?",
+  opcoes:["Rio Amazonas.","Rio Itajaí-Açu.","Rio São Francisco."], correta:1},
+ {sec:"blu", pergunta:"Blumenau recebeu principalmente imigrantes de qual país?",
+  opcoes:["Alemanha.","Estados Unidos.","China."], correta:0},
+ {sec:"blu", pergunta:"Em que ano a cidade de Blumenau foi fundada?",
+  opcoes:["Em 1850.","Em 1990.","Em 1700."], correta:0},
+ {sec:"blu", pergunta:"Quem deu nome à cidade de Blumenau, ao fundá-la?",
+  opcoes:["Hermann Blumenau.","Pedro Álvares Cabral.","Dom Pedro Primeiro."], correta:0},
+ {sec:"blu", img:"sc_vila2.jpg", pergunta:"As casas de Blumenau com a madeira aparente nas paredes têm qual estilo?",
+  opcoes:["Estilo enxaimel.","Estilo praia.","Estilo moderno de vidro."], correta:0},
+ {sec:"blu", img:"sc_vila.jpg", pergunta:"Qual é a festa mais famosa de Blumenau?",
+  opcoes:["O Carnaval.","A Oktoberfest.","A Festa Junina."], correta:1},
+ {sec:"blu", pergunta:"Em que mês do ano acontece a Oktoberfest de Blumenau?",
+  opcoes:["Em outubro.","Em janeiro.","Em julho."], correta:0},
+ {sec:"blu", pergunta:"Qual destas é uma comida típica alemã servida em Blumenau?",
+  opcoes:["A cuca.","O acarajé.","O tacacá."], correta:0},
+ {sec:"eco", pergunta:"Blumenau é muito forte em qual tipo de indústria?",
+  opcoes:["A indústria têxtil, que faz roupas e tecidos.","A indústria do petróleo.","A pesca da baleia."], correta:0},
+ {sec:"eco", pergunta:"Do que vive, principalmente, a cidade de Florianópolis?",
+  opcoes:["Do turismo, dos serviços e da tecnologia.","Da mineração de ouro.","Da plantação de café."], correta:0},
+ {sec:"cur", img:"sc_bc.jpg", pergunta:"Esta cidade catarinense é famosa pelos arranha-céus na beira da praia. Que cidade é essa?",
+  opcoes:["Balneário Camboriú.","Urubici.","Ribeirão da Ilha."], correta:0},
+ {sec:"cur", pergunta:"Quantos municípios (cidades) tem o estado de Santa Catarina?",
+  opcoes:["Apenas 5.","295 municípios.","Mais de mil."], correta:1}
+];
+var SECNOME={est:"SANTA CATARINA", flo:"FLORIANÓPOLIS", blu:"BLUMENAU", cul:"CULTURA", eco:"ECONOMIA", cur:"CURIOSIDADE"};
+
+/* embaralha as opções de cada questão (mantendo a resposta certa) — evita padrão */
+function embaralharOpcoes(){
+  var qi;for(qi=0;qi<QUESTOES.length;qi++){
+    var q=QUESTOES[qi], ordem=[],k;
+    for(k=0;k<q.opcoes.length;k++){ordem.push(k);}
+    for(k=ordem.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var tmp=ordem[k];ordem[k]=ordem[j];ordem[j]=tmp;}
+    var novas=[],nova=0;
+    for(k=0;k<ordem.length;k++){novas.push(q.opcoes[ordem[k]]);if(ordem[k]===q.correta){nova=k;}}
+    q.opcoes=novas;q.correta=nova;
+  }
+}
+
+/* ====== estado ====== */
+var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, turmaSel="", avatarSel="", avatarAluno="";
+var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
+function $(id){return document.getElementById(id);}
+function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+/* ====== VOZ (arquivos audio/v<hash>.mp3) ====== */
+var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("sc5_mudo")==="1");}catch(e){}
+var _falaAudio=null, _ultimaFala="";
+function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
+function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
+var _actx=null;
+function somToque(){
+  if(VOZ_MUDA){return;}
+  try{
+    if(!_actx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC){return;}_actx=new AC();}
+    if(_actx.state==="suspended"&&_actx.resume){_actx.resume();}
+    var t=_actx.currentTime,o=_actx.createOscillator(),g=_actx.createGain();
+    o.type="triangle";o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(760,t+0.10);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+    o.connect(g);g.connect(_actx.destination);o.start(t);o.stop(t+0.18);
+  }catch(e){}
+}
+function falar(texto,_forcar){
+  _ultimaFala=texto;
+  if(VOZ_MUDA&&!_forcar){return;}
+  pararFala();
+  try{var a=new Audio("audio/"+_chaveVoz(texto)+".mp3");_falaAudio=a;a.play();}catch(e){}
+}
+function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
+function ouvirSecao(i){ pararFala(); falar(SECOES[i].fala,true); }
+function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
+function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("sc5_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
+function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
+
+/* ====== CAPA ====== */
+function telaCapa(){
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="'+GUIA+'" alt="Zeca, a gaivota guia" onerror="this.style.display=\'none\'">';
+  h+='<div class="selo-capa">Expedição &middot; 5º ano &middot; Santa Catarina</div>';
+  h+='<h1>Expedição Santa Catarina</h1>';
+  h+='<h2>A nossa cidade e o nosso estado</h2>';
+  h+='<p class="grande">Oi! Eu sou o Zeca, a gaivota. Vamos explorar Florianópolis e Blumenau com fotos e narração, e depois responder a um quiz de 30 perguntas!</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir o Zeca</button>';
+  h+='<div class="formrow">';
+  h+='<div class="fcol">';
+  h+='<label>Qual é o seu nome?</label>';
+  h+='<input id="cNome" maxlength="26" placeholder="Escreva o seu nome">';
+  h+='<label>Qual é a sua turma?</label><div class="turmas">';
+  var i;for(i=0;i<TURMAS.length;i++){h+='<button type="button" class="tbox" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>';}
+  h+='</div></div>';
+  h+='<div class="fcol">';
+  h+='<label>Escolha o seu personagem!</label><div class="avs">';
+  for(i=0;i<AVATARES.length;i++){var a=AVATARES[i];
+    h+='<button type="button" class="avbox" onclick="selAvatar(this,\''+a.id+'\')">'+
+       '<img src="img/'+a.id+'" alt="Personagem '+(i+1)+'" onerror="this.style.display=\'none\'"></button>';}
+  h+='</div></div>';
+  h+='</div>';
+  h+='<div><button class="btn" onclick="comecar()">Começar a explorar!</button></div>';
+  h+='</div>';
+  $("app").innerHTML=h;$("app").scrollTop=0;setBarra(0);
+}
+function ouvirHistoria(){ _histTocada=true; falar(HISTORIA,true); }
+function selTurma(b,t){turmaSel=t;var els=document.getElementsByClassName("tbox"),i;for(i=0;i<els.length;i++){els[i].className="tbox";}b.className="tbox on";somToque();}
+function selAvatar(b,id){avatarSel=id;var els=document.getElementsByClassName("avbox"),i;for(i=0;i<els.length;i++){els[i].className="avbox";}b.className="avbox on";somToque();}
+function comecar(){
+  var nm=($("cNome")&&$("cNome").value||"").replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
+  if(!nm){falar(MSG_NOME,true);if($("cNome"))$("cNome").focus();return;}
+  if(!turmaSel){falar(MSG_TURMA,true);return;}
+  if(!avatarSel){falar(MSG_AVATAR,true);return;}
+  nomeAluno=nm;turmaAluno=turmaSel;avatarAluno=avatarSel;somToque();telaPortal();
+}
+
+/* ====== PORTAL (revista) ====== */
+function telaPortal(){
+  var h='';
+  h+='<div id="portalTop"><div class="selo-capa">Revista de descobertas</div>';
+  h+='<h1>Vamos explorar!</h1>';
+  h+='<p>Role a página, veja as fotos e toque em <b>&#128266; Ouvir</b> em cada parada. No fim, o quiz!</p></div>';
+  var i;
+  for(i=0;i<SECOES.length;i++){var s=SECOES[i];
+    h+='<div class="sec" data-i="'+i+'">';
+    h+='<div class="foto"><div class="kb" style="background-image:url(\'img/'+s.img+'\')"></div><div class="scrim"></div>';
+    h+='<span class="badge '+s.cls+'">'+esc(s.tag)+'</span>';
+    h+='<div class="stit">'+esc(s.titulo)+'</div></div>';
+    h+='<div class="stx"><p>'+esc(s.texto)+'</p>';
+    if(s.fatos&&s.fatos.length){h+='<ul class="fatos">';var k;for(k=0;k<s.fatos.length;k++){h+='<li>'+esc(s.fatos[k])+'</li>';}h+='</ul>';}
+    h+='<div style="text-align:center;margin-top:6px"><button class="ouvirsec" onclick="ouvirSecao('+i+')">&#128266; Ouvir esta parte</button></div>';
+    h+='</div></div>';
+  }
+  h+='<div class="chamada"><div class="card" style="border-color:#2f9e57">';
+  h+='<h1 style="color:#23773f">Pronto para o quiz?</h1>';
+  h+='<p class="grande">Agora vamos ver o que você descobriu! São 30 perguntas sobre Santa Catarina, Florianópolis e Blumenau. O Zeca lê cada pergunta em voz alta.</p>';
+  h+='<button class="btn verde" onclick="irQuiz()">&#127942; Começar o quiz!</button>';
+  h+='</div></div>';
+  $("app").innerHTML=h;$("app").scrollTop=0;setBarra(0);
+  ativarRevista();
+  falar(TXT_PORTAL_INTRO);
+}
+function ativarRevista(){
+  var app=$("app"), secs=document.getElementsByClassName("sec");
+  /* barra de progresso do portal + revelar ao rolar (sem IntersectionObserver p/ compatibilidade) */
+  function checa(){
+    var vh=app.clientHeight, top=app.scrollTop, i;
+    var max=app.scrollHeight-vh; setBarra(max>0?(top/max):0);
+    for(i=0;i<secs.length;i++){var r=secs[i].offsetTop; if(r < top+vh-70){secs[i].className="sec vis";}}
+  }
+  app.onscroll=checa; checa();
+}
+function setBarra(f){var b=$("topbar");if(b){f=Math.max(0,Math.min(1,f));b.style.width=(f*100)+"%";}}
+
+/* ====== QUIZ ====== */
+function irQuiz(){atual=0;somToque();$("app").onscroll=null;setBarra(0);telaPergunta();}
+function crachaHTML(){
+  return '<div class="cracha"><div class="cav"><img src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'"></div>'+
+    '<span class="cnm">'+esc(nomeAluno)+'</span></div>';
+}
+function passaporte(){
+  var h='<div id="passa">',i;
+  for(i=0;i<QUESTOES.length;i++){
+    var st=(i<atual?"feito":(i===atual?"agora":""));
+    h+='<span class="selo '+st+'">'+(i<atual?"&#10003;":(i+1))+'</span>';
+  }
+  return h+'</div>';
+}
+function telaPergunta(){
+  var q=QUESTOES[atual],h='';
+  h+='<div id="trilha">&#127959;️ Pergunta '+(atual+1)+' de '+QUESTOES.length+'</div>';
+  h+=passaporte();
+  h+='<div class="card qcard">';
+  h+=crachaHTML();
+  h+='<img class="guia" src="'+GUIA+'" alt="Zeca, a gaivota" onerror="this.style.display=\'none\'">';
+  h+='<span class="disc '+q.sec+'">'+(SECNOME[q.sec]||"")+'</span>';
+  if(q.img){h+='<img class="qfig" src="img/'+q.img+'" alt="" onerror="this.style.display=\'none\'">';}
+  h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
+  h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pergunta</button>';
+  h+='<div class="opcoes">';
+  var letras=["A","B","C","D"],i;
+  for(i=0;i<q.opcoes.length;i++){
+    h+='<div class="opc c'+i+'" role="button" tabindex="0" onclick="responder('+i+')">'+
+       '<span class="let">'+letras[i]+'</span>'+
+       '<span class="otx">'+esc(q.opcoes[i])+'</span>'+
+       '<button class="ospk" title="Ouvir esta resposta" onclick="event.stopPropagation();ouvirOpc('+i+')">&#128266;</button>'+
+       '</div>';
+  }
+  h+='</div></div>';
+  $("app").innerHTML=h;$("app").scrollTop=0;
+  falar(falaPergunta(q,atual+1));
+}
+function responder(idx){
+  somToque();respostas[atual]=idx;pararFala();atual++;
+  if(atual>=QUESTOES.length){telaFinal();}
+  else{
+    falar(FRASES_NEXT[atual%FRASES_NEXT.length]);setTimeout(telaPergunta,60);
+  }
+}
+function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
+function medalhaHTML(){
+  return '<div class="medalha"><span class="fita e"></span><span class="fita d"></span>'+
+    '<div class="disco"><span class="estrela"></span>'+
+    (avatarAluno?'<img class="mav" src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'">':'')+
+    '</div></div>';
+}
+function telaFinal(){
+  var ac=calcularAcertos();confete();
+  var h='';
+  h+='<div class="card">';
+  h+='<h1>Expedição concluída!</h1>';
+  h+=medalhaHTML();
+  h+='<h2>'+esc(nomeAluno)+', você terminou a viagem por Santa Catarina!</h2>';
+  h+='<p class="grande">O Zeca adorou explorar o nosso estado com você. Parabéns, explorador!</p>';
+  h+='<p id="statusenvio"></p></div>';
+  $("app").innerHTML=h;$("app").scrollTop=0;setBarra(1);
+  falar(TXT_FINAL);
+  enviarResultado(ac);
+}
+
+/* ====== ENVIO (Firebase), SEM mostrar nota ao aluno ====== */
+function enviarResultado(ac){
+  if(enviado){return;}enviado=true;
+  var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":(respostas[i]===QUESTOES[i].correta?"C":"E"));}
+  var quando=new Date().toLocaleString("pt-BR");
+  var nota10=QUESTOES.length?Math.round(ac/QUESTOES.length*100)/10:0;
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  try{
+    var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
+    var x=new XMLHttpRequest();
+    x.open("PUT",FIREBASE_DB+"/provas/"+SLUG+"/"+chave+".json",true);
+    x.setRequestHeader("Content-Type","application/json");
+    x.send(JSON.stringify(reg));
+  }catch(e){}
+}
+
+/* ====== confete leve ====== */
+function confete(){try{
+  var c=document.createElement("canvas");c.style.position="fixed";c.style.left=0;c.style.top=0;c.style.pointerEvents="none";c.style.zIndex=9998;
+  c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+  var x=c.getContext("2d"),ps=[],i,cores=["#ef6d3a","#2f9e57","#0e7c86","#8a63d2","#f6bf31"];
+  for(i=0;i<90;i++){ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,r:6+Math.random()*6,vy:2+Math.random()*3,co:cores[i%cores.length],vx:-1.5+Math.random()*3});}
+  var t=0,tot=150;function loop(){x.clearRect(0,0,c.width,c.height);var k;for(k=0;k<ps.length;k++){var p=ps[k];p.y+=p.vy;p.x+=p.vx;x.fillStyle=p.co;x.fillRect(p.x,p.y,p.r,p.r);}t++;if(t<tot){requestAnimationFrame(loop);}else{if(c.parentNode){c.parentNode.removeChild(c);}}}loop();
+}catch(e){}}
+
+/* ====== boot ====== */
+function boot(){embaralharOpcoes();attMudo();telaCapa();}
+document.addEventListener("click",function(){
+  if(_histTocada){return;}
+  if(!document.getElementById("cNome")){return;}
+  _histTocada=true;falar(HISTORIA,true);
+},false);
+boot();
+</script>
