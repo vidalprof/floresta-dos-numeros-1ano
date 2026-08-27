@@ -24,9 +24,10 @@ body{
   -webkit-transition:width .15s linear;transition:width .15s linear;}
 
 /* ---------- CARTÃO genérico (capa/quiz) ---------- */
-.card{position:relative;color:#12283a;background:#ffffff;
+.card{position:relative;color:#12283a;background:#ffffff;background:rgba(255,255,255,.9);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
   border:4px solid #ffd23f;border-radius:24px;padding:16px 16px 16px;margin:12px 14px;text-align:center;
-  -webkit-box-shadow:0 14px 30px rgba(6,30,50,.30), inset 0 0 0 3px #fff;box-shadow:0 14px 30px rgba(6,30,50,.30), inset 0 0 0 3px #fff;
+  -webkit-box-shadow:0 14px 30px rgba(6,30,50,.30), inset 0 0 0 3px rgba(255,255,255,.7);box-shadow:0 14px 30px rgba(6,30,50,.30), inset 0 0 0 3px rgba(255,255,255,.7);
   -webkit-animation:aparece .35s ease-out;animation:aparece .35s ease-out;}
 @-webkit-keyframes aparece{from{opacity:0;-webkit-transform:translateY(12px);}to{opacity:1;-webkit-transform:none;}}
 @keyframes aparece{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
@@ -51,7 +52,7 @@ label{font-size:16px;font-weight:bold;color:#0e7c86;display:block;margin-top:8px
 .tbox.on{background:#0e7c86;color:#fff;border-color:#0a5a62;-webkit-box-shadow:0 4px 0 #0a5a62;box-shadow:0 4px 0 #0a5a62;}
 .tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
 .avs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 6px;max-width:560px;}
-.avbox{width:76px;height:76px;margin:5px;border-radius:50%;border:3px solid #7fbfd0;background:#fbfeff;cursor:pointer;overflow:hidden;padding:0;-webkit-box-shadow:0 3px 0 #cfe6ec;box-shadow:0 3px 0 #cfe6ec;}
+.avbox{width:76px;height:76px;margin:5px;border-radius:50%;border:3px solid #7fbfd0;background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:pointer;overflow:hidden;padding:0;-webkit-box-shadow:0 3px 0 #cfe6ec;box-shadow:0 3px 0 #cfe6ec;}
 .avbox.on{border-color:#0a5a62;-webkit-box-shadow:0 3px 0 #0a5a62;box-shadow:0 3px 0 #0a5a62;-webkit-transform:translateY(-2px);transform:translateY(-2px);}
 .avbox img{width:100%;height:100%;display:block;object-fit:cover;}
 
@@ -89,6 +90,16 @@ label{font-size:16px;font-weight:bold;color:#0e7c86;display:block;margin-top:8px
 .fatos li{position:relative;font-size:16px;color:#2f4a5c;margin:6px 0;padding-left:26px;line-height:1.4;}
 .fatos li:before{content:"\2691";position:absolute;left:2px;top:0;color:#ef6d3a;font-size:16px;}
 .chamada{margin:6px 14px 10px;text-align:center;}
+
+/* Mapa da Expedição (trilha de paradas navegável) */
+.trilhaexp{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:8px 4px;margin:8px 12px 2px;padding:12px 8px;background:rgba(255,255,255,.12);border-radius:18px;}
+.parada{position:relative;width:60px;text-align:center;cursor:pointer;color:#eaf6f8;font-size:10.5px;font-weight:bold;background:none;border:none;font-family:inherit;padding:2px;}
+.parada .pnum{display:block;width:34px;height:34px;line-height:30px;margin:0 auto 3px;border-radius:50%;border:2px dashed rgba(255,255,255,.7);background:rgba(255,255,255,.14);color:#fff;font-size:15px;-webkit-transition:all .25s;transition:all .25s;}
+.parada.visitado .pnum{border-style:solid;border-color:#f6bf31;background:#f6bf31;color:#0b3d5c;-webkit-box-shadow:0 0 0 3px rgba(246,191,49,.32);box-shadow:0 0 0 3px rgba(246,191,49,.32);}
+.parada .plbl{display:block;line-height:1.12;opacity:.9;}
+.passe{display:inline-block;margin:8px auto 0;padding:5px 14px;border-radius:16px;background:rgba(246,191,49,.18);border:2px solid rgba(246,191,49,.55);color:#ffe6a6;font-size:13px;font-weight:bold;font-family:"Trebuchet MS",sans-serif;}
+.selo-explorado{position:absolute;right:12px;top:12px;background:#f6bf31;color:#0b3d5c;font-family:"Trebuchet MS",sans-serif;font-size:11px;font-weight:bold;letter-spacing:.5px;padding:4px 10px;border-radius:14px;-webkit-transform:rotate(7deg);transform:rotate(7deg);-webkit-box-shadow:0 3px 8px rgba(0,0,0,.3);box-shadow:0 3px 8px rgba(0,0,0,.3);opacity:0;-webkit-transition:opacity .4s;transition:opacity .4s;z-index:3;}
+.sec.visitado .selo-explorado{opacity:1;}
 
 /* cor por seção */
 .est{background:#2f6b4f;} .flo{background:#0e7c86;} .blu{background:#c1573a;} .cul{background:#8a63d2;} .eco{background:#2f6f8f;} .cur{background:#d64b7a;}
@@ -328,7 +339,7 @@ function falar(texto,_forcar){
   try{var a=new Audio("audio/"+_chaveVoz(texto)+".mp3");_falaAudio=a;a.play();}catch(e){}
 }
 function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
-function ouvirSecao(i){ pararFala(); falar(SECOES[i].fala,true); }
+function ouvirSecao(i){ pararFala(); falar(SECOES[i].fala,true); marcarParada(i); }
 function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
 function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("sc5_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
 function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
@@ -346,14 +357,14 @@ function telaCapa(){
   h+='<div class="formrow">';
   h+='<div class="fcol">';
   h+='<label>Qual é o seu nome?</label>';
-  h+='<input id="cNome" maxlength="26" placeholder="Escreva o seu nome">';
+  h+='<input id="cNome" maxlength="26" placeholder="Escreva o seu nome" data-qa="Ana Clara">';
   h+='<label>Qual é a sua turma?</label><div class="turmas">';
-  var i;for(i=0;i<TURMAS.length;i++){h+='<button type="button" class="tbox" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>';}
+  var i;for(i=0;i<TURMAS.length;i++){h+='<button type="button" class="tbox opt" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>';}
   h+='</div></div>';
   h+='<div class="fcol">';
   h+='<label>Escolha o seu personagem!</label><div class="avs">';
   for(i=0;i<AVATARES.length;i++){var a=AVATARES[i];
-    h+='<button type="button" class="avbox" onclick="selAvatar(this,\''+a.id+'\')">'+
+    h+='<button type="button" class="avbox opt" onclick="selAvatar(this,\''+a.id+'\')">'+
        '<img src="img/'+a.id+'" alt="Personagem '+(i+1)+'" onerror="this.style.display=\'none\'"></button>';}
   h+='</div></div>';
   h+='</div>';
@@ -362,8 +373,8 @@ function telaCapa(){
   $("app").innerHTML=h;$("app").scrollTop=0;setBarra(0);
 }
 function ouvirHistoria(){ _histTocada=true; falar(HISTORIA,true); }
-function selTurma(b,t){turmaSel=t;var els=document.getElementsByClassName("tbox"),i;for(i=0;i<els.length;i++){els[i].className="tbox";}b.className="tbox on";somToque();}
-function selAvatar(b,id){avatarSel=id;var els=document.getElementsByClassName("avbox"),i;for(i=0;i<els.length;i++){els[i].className="avbox";}b.className="avbox on";somToque();}
+function selTurma(b,t){turmaSel=t;var els=document.getElementsByClassName("tbox"),i;for(i=0;i<els.length;i++){els[i].className="tbox opt";}b.className="tbox opt on";somToque();}
+function selAvatar(b,id){avatarSel=id;var els=document.getElementsByClassName("avbox"),i;for(i=0;i<els.length;i++){els[i].className="avbox opt";}b.className="avbox opt on";somToque();}
 function comecar(){
   var nm=($("cNome")&&$("cNome").value||"").replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
   if(!nm){falar(MSG_NOME,true);if($("cNome"))$("cNome").focus();return;}
@@ -375,14 +386,18 @@ function comecar(){
 /* ====== PORTAL (revista) ====== */
 function telaPortal(){
   var h='';
-  h+='<div id="portalTop"><div class="selo-capa">Revista de descobertas</div>';
+  h+='<div id="portalTop"><div class="selo-capa">Mapa da expedição</div>';
   h+='<h1>Vamos explorar!</h1>';
-  h+='<p>Role a página, veja as fotos e toque em <b>&#128266; Ouvir</b> em cada parada. No fim, o quiz!</p></div>';
+  h+='<p>Toque numa parada do mapa para viajar até ela, ou role a página. Cada parada que você explora ganha um carimbo de ouro. No fim, o quiz!</p>';
   var i;
+  h+='<div class="trilhaexp">';
+  for(i=0;i<SECOES.length;i++){h+='<button class="parada" id="par'+i+'" onclick="irPara('+i+')" title="'+esc(SECOES[i].titulo)+'"><span class="pnum">'+(i+1)+'</span><span class="plbl">'+esc(SECOES[i].tag)+'</span></button>';}
+  h+='</div><div><span class="passe" id="passe">Carimbos: 0 de '+SECOES.length+'</span></div></div>';
   for(i=0;i<SECOES.length;i++){var s=SECOES[i];
     h+='<div class="sec" data-i="'+i+'">';
     h+='<div class="foto"><div class="kb" style="background-image:url(\'img/'+s.img+'\')"></div><div class="scrim"></div>';
     h+='<span class="badge '+s.cls+'">'+esc(s.tag)+'</span>';
+    h+='<span class="selo-explorado">Explorado ✓</span>';
     h+='<div class="stit">'+esc(s.titulo)+'</div></div>';
     h+='<div class="stx"><p>'+esc(s.texto)+'</p>';
     if(s.fatos&&s.fatos.length){h+='<ul class="fatos">';var k;for(k=0;k<s.fatos.length;k++){h+='<li>'+esc(s.fatos[k])+'</li>';}h+='</ul>';}
@@ -398,16 +413,28 @@ function telaPortal(){
   ativarRevista();
   falar(TXT_PORTAL_INTRO);
 }
+var _visit={};
 function ativarRevista(){
   var app=$("app"), secs=document.getElementsByClassName("sec");
-  /* barra de progresso do portal + revelar ao rolar (sem IntersectionObserver p/ compatibilidade) */
+  /* barra de progresso do portal + revelar ao rolar + carimbar parada (sem IntersectionObserver p/ compatibilidade) */
   function checa(){
     var vh=app.clientHeight, top=app.scrollTop, i;
     var max=app.scrollHeight-vh; setBarra(max>0?(top/max):0);
-    for(i=0;i<secs.length;i++){var r=secs[i].offsetTop; if(r < top+vh-70){secs[i].className="sec vis";}}
+    for(i=0;i<secs.length;i++){var r=secs[i].offsetTop;
+      if(r < top+vh-70 && secs[i].className.indexOf("vis")<0){secs[i].className+=" vis";}
+      if(r < top+vh-150){ marcarParada(i); }
+    }
   }
   app.onscroll=checa; checa();
 }
+function marcarParada(i){
+  if(_visit[i])return; _visit[i]=1;
+  var p=$("par"+i); if(p){p.className="parada visitado";}
+  var secs=document.getElementsByClassName("sec"); if(secs[i]&&secs[i].className.indexOf("visitado")<0){secs[i].className+=" visitado";}
+  var n=0,k; for(k in _visit){if(_visit.hasOwnProperty(k)){n++;}}
+  var ps=$("passe"); if(ps){ps.innerHTML=(n>=SECOES.length?"Expedição completa! "+n+" carimbos &#11088;":"Carimbos: "+n+" de "+SECOES.length);}
+}
+function irPara(i){var secs=document.getElementsByClassName("sec"),s=secs[i];if(s){if(s.className.indexOf("vis")<0){s.className+=" vis";}$("app").scrollTop=Math.max(0,s.offsetTop-8);marcarParada(i);}somToque();}
 function setBarra(f){var b=$("topbar");if(b){f=Math.max(0,Math.min(1,f));b.style.width=(f*100)+"%";}}
 
 /* ====== QUIZ ====== */
