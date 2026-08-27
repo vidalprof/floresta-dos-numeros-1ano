@@ -386,8 +386,8 @@ function telaLivro(dir){
   h+='<div class="livro"><div class="pagina '+ent+'">';
   h+='<span class="ptag">'+esc(p.tag)+'</span>';
   h+='<div class="ptit">'+esc(p.tit)+'</div>';
-  h+='<div class="svgwrap">'+diag(p.d)+'</div>';
   if(p.foto){h+='<img class="pfoto" src="img/'+p.foto+'" alt="'+esc(p.leg||"")+'" onerror="this.style.display=\'none\'">';if(p.leg){h+='<div class="pleg">'+esc(p.leg)+'</div>';}}
+  else{h+='<div class="svgwrap">'+diag(p.d)+'</div>';}
   h+='<p class="ptx">'+p.texto+'</p>';
   h+='<div style="text-align:center;margin-top:4px"><button class="ouvirp" onclick="ouvirPagina('+paginaAtual+')">&#128266; Ouvir esta página</button></div>';
   h+='<span class="pnum">'+(paginaAtual+1)+'</span></div></div>';
