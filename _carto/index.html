@@ -376,8 +376,8 @@ function telaLivro(){
   h+='<span class="pnum">'+(paginaAtual+1)+'</span></div></div>';
   h+='<div class="pnav">';
   h+='<button class="navb" onclick="virarPagina(-1)"'+(paginaAtual===0?' disabled':'')+'>&#9664; Voltar</button>';
-  if(paginaAtual<PAGINAS.length-1){h+='<button class="navb" onclick="virarPagina(1)">Próxima &#9654;</button>';}
-  else{h+='<button class="navb" style="background:#2e9e57;-webkit-box-shadow:0 4px 0 #22773f;box-shadow:0 4px 0 #22773f" onclick="irJogos()">Aos desafios! &#127942;</button>';}
+  if(paginaAtual<PAGINAS.length-1){h+='<button class="navb opt" onclick="virarPagina(1)">Próxima &#9654;</button>';}
+  else{h+='<button class="navb opt" style="background:#2e9e57;-webkit-box-shadow:0 4px 0 #22773f;box-shadow:0 4px 0 #22773f" onclick="irJogos()">Aos desafios! &#127942;</button>';}
   h+='</div>';
   $("app").innerHTML=h;$("app").scrollTop=0;
   setBarra((paginaAtual+1)/(PAGINAS.length+3));
