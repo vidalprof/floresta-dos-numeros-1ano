@@ -266,6 +266,18 @@ def analisa(js, css, baixo, html=None):
         if not re.search(r'onkeydown|keydown', js):
             ruins.append(u"bater silabas: so da para bater com o dedo. No PC da escola tem "
                          u"teclado — a barra de espaco tambem tem que bater (as duas portas).")
+        # ⚠️ LICAO PAGA (Marcos jogando, ago/2026): *"na bata a silaba a do elefante
+        #    nao passa, bugou"*. A comemoracao do acerto dura segundos (uma silaba
+        #    por vez); nesse tempo o Pronto/Enter continuavam vivos e a crianca
+        #    impaciente tocava de novo — `confere` reentrava, `acerta` rodava 2x e
+        #    agendava outro avanco de rodada: a peca embaralhava e ficava presa.
+        #    Quanto mais longa a palavra, maior a janela (por isso so o ELEFANTE).
+        #    A porta tem que FECHAR durante a festa: um cadeado (`travando`) que o
+        #    `confere` respeita e a proxima rodada reabre.
+        if not (re.search(r'\btravando\b', js) and re.search(r'if\s*\(\s*travando\s*\)', js)):
+            ruins.append(u"bater silabas: sem cadeado de re-entrada. Se a crianca tocar Pronto "
+                         u"de novo durante a comemoracao (palavra longa como ELEFANTE), a peca "
+                         u"conta o acerto duas vezes e trava. Falta o `travando` que o `confere` respeita.")
         # o andaime do 2o degrau desta mecanica e pelo OUVIDO, nao escrito
         if not re.search(r'ecoDoRitmo|ritmo\s*\(', js):
             avisos.append(u"bater silabas: nao achei o eco do RITMO (a peca batendo junto). "

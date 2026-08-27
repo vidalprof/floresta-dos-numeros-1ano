@@ -3509,6 +3509,15 @@ var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
    vozes ao mesmo tempo, e a segunda corta a primeira no motor. Erro novo cala
    o eco velho. */
 var eco=0;
+/* ⚠️⚠️ LICAO PAGA (Marcos jogando, ago/2026): *"na bata a silaba a do elefante
+   nao passa, bugou"*. A comemoracao do ELEFANTE dura ~5,5s (4 silabas: cada uma
+   acende no compasso de 820ms + a palavra inteira + o respiro). Nesse tempo o
+   botao Pronto (e o Enter) continuavam VIVOS — a crianca, achando que travou,
+   toca de novo. `confere` reentrava com `bat` ainda cheio, `acerta` rodava pela
+   2a vez e agendava OUTRO `ri++`: a peca pulava/embaralhava a rodada e ficava
+   presa. Quanto mais longa a palavra, maior a janela — por isso so o ELEFANTE.
+   `travando` fecha a porta enquanto a festa acontece; reabre na proxima rodada. */
+var travando=0;
 
 /* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui na
    bancada ela não existe, e a peça mostra a palavra escrita no lugar. Pegar por
@@ -3592,7 +3601,7 @@ function piscaBatida(){
 function pecaBater(){
   var r=BATIDAS[ri];
   if(!r){ fimDaPeca(); return; }
-  err=0; bat=0; ger++;
+  err=0; bat=0; ger++; travando=0;   /* nova rodada: reabre o Pronto/Enter */
   limpa();
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/BATIDAS.length));
@@ -3663,6 +3672,7 @@ function marcaDeBatida(r, cls){
 }
 
 function bate(r){
+  if(travando) return;               /* festa em andamento: nao aceita mais batidas */
   var bx=document.getElementById("bsBx");
   if(!bx) return;
   if(bat===0) bx.innerHTML="";
@@ -3674,6 +3684,7 @@ function bate(r){
 }
 
 function zera(r){
+  if(travando) return;               /* festa em andamento: nao apaga nada */
   var bx=document.getElementById("bsBx");
   bat=0;
   if(bx){ bx.innerHTML=""; bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui")); }
@@ -3682,6 +3693,7 @@ function zera(r){
 }
 
 function confere(r){
+  if(travando) return;               /* festa em andamento: ignora 2o toque */
   if(bat===r.sil.length){ acerta(r); return; }
   /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
      Contar errado no 1º ano é o normal — é justamente o que está em treino. */
@@ -3692,6 +3704,9 @@ function confere(r){
 
 function acerta(r){
   var meu=ger;
+  travando=1;                        /* tranca Pronto/Enter durante a comemoracao */
+  var pr=document.getElementById("bsPr"); if(pr){ pr.disabled=true; pr.setAttribute("data-qa","0"); }
+  var bt=document.getElementById("bsBt"); if(bt){ bt.setAttribute("data-qa","0"); }
   sCerto(); festa();
   var c=app.querySelector(".centro");
   /* ⭐ AQUI A FALA É PICADA, de propósito: esta peça treina SEPARAR (a irmã

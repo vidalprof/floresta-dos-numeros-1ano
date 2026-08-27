@@ -151,7 +151,7 @@ add(id=u"f07", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objeti
     ])
 add(id=u"f07b", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objetivo2",
     enunciado=u"<b>Bata 1 vez</b> para cada sílaba e toque em <b>Pronto</b>.",
-    dica=u"Palavra comprida bate mais vezes.",
+    dica=u"Diga a palavra devagar e bata uma vez a cada pedaço.",
     dados=[
      {u"pal":u"SAPO",u"sil":[u"SA",u"PO"],u"voz":u"sa... po",u"fig":u"pw_sapo",
       u"d":[u"Diga <b>SAPO</b> devagar e bata a cada pedaço.",u"Conte: sa... po.",u"São <b>2</b> pedaços: sa... po. Toque em Pronto."]},
@@ -163,7 +163,7 @@ add(id=u"f07b", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objet
 
 add(id=u"f07c", mec=u"bater-silabas", selo=u"BATA AS SÍLABAS", conceito=u"objetivo2",
     enunciado=u"<b>Bata 1 vez</b> para cada sílaba e toque em <b>Pronto</b>.",
-    dica=u"Palavra bem comprida bate muitas vezes.",
+    dica=u"Quanto mais pedaços tem a palavra, mais vezes você bate.",
     dados=[
      {u"pal":u"RATO",u"sil":[u"RA",u"TO"],u"voz":u"ra... to",u"fig":u"pw_rato",
       u"d":[u"Diga <b>RATO</b> devagar: ra... to.",u"Bata a cada pedaço.",u"São <b>2</b> pedaços: ra... to. Toque em Pronto."]},

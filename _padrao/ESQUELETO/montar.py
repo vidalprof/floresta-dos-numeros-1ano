@@ -599,9 +599,31 @@ _FONETICA_VOZ = [
     (re.compile(r"\bface\b",  re.I), u"fásse"),
 ]
 _LACUNA = re.compile(r"_+")
+# ⚠️ LICAO PAGA (Marcos ouviu, ago/2026), TRES defeitos de UMA raiz — CAIXA ALTA
+#    e DICA DE SILABA no texto que vai ao TTS:
+#      · "VACA (va-ca)" saia "veaca"  · "JACARÉ" saia "jacarré"
+#      · "ABELHA" saia em INGLES      · "-ão" na dica saia arrastado/pouco claro
+#    A voz pt-BR do Edge SOLETRA ou troca de idioma diante de palavra em CAIXA
+#    ALTA (ja estava escrito aqui: "caixa alta empurra a voz a soletrar"), e le o
+#    hint silabico entre parenteses "(va-ca)" letra a letra. O conserto vale SO
+#    para o AUDIO (a tela continua com VACA, o "(va-ca)", o "-ão"): a chave/hash
+#    sai do texto da tela, calculada ANTES daqui, entao o mp3 continua casando.
+_HINT_SILABA = re.compile(r"\s*\([A-Za-zÀ-ÿ]+(?:-[A-Za-zÀ-ÿ]+)+\)")   # "(va-ca)", "(e-le-fan-te)"
+_SUFIXO_HIFEN = re.compile(r"(?<=\s)-(?=[a-zà-ÿ])")                     # " -ão" -> " ão"
+_PAL_ALFA = re.compile(r"[A-Za-zÀ-ÿ]{2,}")
+def _sem_caixa_alta(t):
+    u"""Baixa a caixa de palavras TODAS em maiuscula (2+ letras) — so no audio.
+    Palavra de UMA letra fica de fora (o `_nome_fonetico_letra` ja cuida dela)."""
+    def _low(m):
+        w = m.group(0)
+        return w.lower() if (w.isupper() and any(c.isalpha() for c in w)) else w
+    return _PAL_ALFA.sub(_low, t)
 def _fonetica_voz(t):
     u"""Reescreve foneticamente as palavras que a voz erra. Vale SO para o texto
     que vai ao TTS — nunca para a tela nem para a chave da voz."""
+    t = _HINT_SILABA.sub(u"", t)      # tira o "(va-ca)" que a voz soletrava
+    t = _SUFIXO_HIFEN.sub(u"", t)     # "-ão" -> "ão" (o traco somia/arrastava)
+    t = _sem_caixa_alta(t)            # VACA/ABELHA/JACARÉ -> minusculas (fim do sotaque)
     for rx, sub in _FONETICA_VOZ:
         t = rx.sub(sub, t)
     # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): nas fases de COMPLETAR a lacuna e um
