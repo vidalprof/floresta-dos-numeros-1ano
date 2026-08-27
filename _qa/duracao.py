@@ -163,6 +163,13 @@ def confere(pasta, piso_min=40.0):
             n = len(re.findall(r'"[^"]*"|\[[^\[\]]*\]', corpo))
         if n:
             custo, gesto = custo_da_lista(nome)
+            # ⚠️ PORTAL DE LEITURA (formato site/revista — ago/2026): uma lista
+            #    cujos itens trazem `texto:` + `fala:` NAO e um toque de 9 s. E uma
+            #    SECAO que a crianca LE (paragrafo + fatos + foto) e OUVE narrada.
+            #    Ler+ouvir uma secao dessas leva ~1 min no 5o ano. Precificar como
+            #    "tocar" media 23 min num portal que na pratica enche a aula.
+            if re.search(r'\btexto\s*:', corpo) and re.search(r'\bfala\s*:', corpo):
+                custo, gesto = 70.0, u"ler"
             itens += n
             seg_itens += n * custo
             detalhe.append((nome, n, gesto))
