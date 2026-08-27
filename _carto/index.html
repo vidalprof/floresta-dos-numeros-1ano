@@ -423,13 +423,12 @@ function telaCaca(){
   var N=CACA_N,h='';
   h+='<div class="card"><h1>Desafio 2: Caça-palavras</h1>'+crachaHTML();
   h+='<p class="cacatop">Ache as palavras dos mapas! Toque na 1ª e na última letra de cada palavra (elas estão deitadas &#8594; ou em pé &#8595;).</p>';
-  h+='<div class="grade" id="grade">';
+  h+='<div class="grade" id="grade" data-qa=\''+JSON.stringify(pos)+'\'>';
   var i,j;for(i=0;i<N;i++){for(j=0;j<N;j++){h+='<button class="cel" data-r="'+i+'" data-c="'+j+'" onclick="tocaCel('+i+','+j+')">'+cacaGrade[i][j]+'</button>';}}
   h+='</div><div class="palavras">';
-  for(i=0;i<CACA.length;i++){h+='<span class="pchip" id="chip'+i+'">'+CACA[i].p+'</span>';}
+  for(i=0;i<CACA.length;i++){h+='<span class="pchip" id="chip'+i+'" data-qa="'+CACA[i].p+'">'+CACA[i].p+'</span>';}
   h+='</div><p id="cacamsg" class="grande" style="min-height:22px"></p></div>';
   $("app").innerHTML=h;$("app").scrollTop=0;
-  publicaCacaQA();
   falar(TXT_CACAINTRO);
 }
 var cacaSel=null;
@@ -445,7 +444,7 @@ function tocaCel(i,j){
   if(achou>=0&&!cacaAchou[achou]){
     var w=CACA[achou],k;cacaAchou[achou]=1;
     for(k=0;k<w.p.length;k++){var rr=w.r+(w.h?0:k),cc=w.c+(w.h?k:0);var cc2=cel(rr,cc);if(cc2){cc2.className="cel ok";}}
-    var chip=$("chip"+achou);if(chip){chip.className="pchip achou";}
+    var chip=$("chip"+achou);if(chip){chip.className="pchip achou feito";}
     if(el1)el1.className="cel ok";cacaSel=null;
     falar(falaAchou(w.p),true);
     var n=0;for(k=0;k<CACA.length;k++){if(cacaAchou[k])n++;}
@@ -456,8 +455,6 @@ function tocaCel(i,j){
     $("cacamsg").innerHTML="Tente de novo: a 1ª e a última letra da mesma palavra.";
   }
 }
-/* publica data-qa nas células das PONTAS (o auditor-jogador toca 1a e última) */
-function publicaCacaQA(){var pi;for(pi=0;pi<CACA.length;pi++){var w=CACA[pi];var a=cel(w.r,w.c);var er=w.r+(w.h?0:w.p.length-1),ec=w.c+(w.h?w.p.length-1:0);var b=cel(er,ec);if(a)a.setAttribute("data-qa","P"+pi);if(b)b.setAttribute("data-qa","P"+pi);}}
 
 /* ====== DIGITAR ====== */
 function telaDigitarIntro(){
