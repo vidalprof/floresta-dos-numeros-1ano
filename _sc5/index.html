@@ -105,22 +105,22 @@ label{font-size:16px;font-weight:bold;color:#0a5560;display:block;margin-top:8px
 .est{background:#2f6b4f;} .flo{background:#0e7c86;} .blu{background:#c1573a;} .cul{background:#8a63d2;} .eco{background:#2f6f8f;} .cur{background:#d64b7a;}
 
 /* ================= QUIZ ================= */
-#trilha{display:block;text-align:center;margin:6px 0 4px;font-size:16px;color:#0a5a62;font-weight:bold;}
+#trilha{display:block;text-align:center;margin:6px 0 4px;font-size:16px;color:#ffffff;font-weight:bold;text-shadow:0 1px 3px rgba(0,0,0,.5);}
 #passa{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:3px;margin:2px auto 8px;max-width:520px;}
 .selo{-webkit-flex:none;flex:none;width:22px;height:22px;line-height:18px;text-align:center;border-radius:50%;border:2px dashed #7fc4d0;background:#eaf7f9;color:#0a5a62;font-size:11px;font-weight:bold;}
 .selo.feito{border-style:solid;border-color:#2f9e57;background:#dbf3e3;color:#1f7a41;}
-.selo.agora{border-style:solid;border-color:#ff9e2c;background:#fff2dd;color:#a05a00;-webkit-box-shadow:0 0 0 3px rgba(255,158,44,.22);box-shadow:0 0 0 3px rgba(255,158,44,.22);}
+.selo.agora{border-style:solid;border-color:#ff9e2c;background:#fff2dd;color:#6e3d00;-webkit-box-shadow:0 0 0 3px rgba(255,158,44,.22);box-shadow:0 0 0 3px rgba(255,158,44,.22);}
 .qcard{padding-top:56px;text-align:center;}
 .cracha{position:absolute;left:8px;top:8px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background:#fbfeff;border:3px solid #d7e6ec;border-radius:22px;padding:2px 10px 2px 2px;-webkit-box-shadow:0 2px 5px rgba(0,0,0,.15);box-shadow:0 2px 5px rgba(0,0,0,.15);}
 .cracha .cav{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#dff0f4;-webkit-flex:none;flex:none;margin-right:6px;}
 .cracha .cav img{width:100%;height:100%;object-fit:cover;display:block;}
 .cracha .cnm{font-size:13px;font-weight:bold;color:#0a5a62;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.guia{position:absolute;right:8px;top:8px;height:64px;pointer-events:none;-webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+.guia{position:absolute;right:8px;top:6px;height:84px;pointer-events:none;-webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
 .disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:14px;padding:5px 13px;margin:2px 0 8px;color:#fff;}
 .qfig{display:block;max-height:190px;margin:2px auto 10px;padding:5px;background:#fff;border:3px solid #cfe6ec;border-radius:16px;-webkit-box-shadow:0 6px 14px rgba(6,30,50,.20);box-shadow:0 6px 14px rgba(6,30,50,.20);}
 .pergunta{font-family:"Trebuchet MS",sans-serif;font-size:22px;font-weight:bold;color:#12283a;line-height:1.32;margin:2px 8px 10px;}
 .opcoes{margin-top:2px;}
-.opc{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;width:94%;max-width:520px;margin:10px auto;padding:14px 12px;border:3px solid #d7e6ec;border-radius:18px;cursor:pointer;text-align:left;font-family:"Trebuchet MS",sans-serif;font-size:20px;font-weight:bold;color:#12283a;background:#f4fbfc;-webkit-box-shadow:0 5px 0 #cfe0e6;box-shadow:0 5px 0 #cfe0e6;}
+.opc{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;width:94%;max-width:430px;margin:10px auto;padding:16px 14px;min-height:60px;border:3px solid #d7e6ec;border-radius:18px;cursor:pointer;text-align:left;font-family:"Trebuchet MS",sans-serif;font-size:20px;font-weight:bold;color:#12283a;background:#f4fbfc;-webkit-box-shadow:0 5px 0 #cfe0e6;box-shadow:0 5px 0 #cfe0e6;}
 .opc:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 1px 0 #cfe0e6;box-shadow:0 1px 0 #cfe0e6;}
 .opc .let{-webkit-flex:none;flex:none;width:40px;height:40px;line-height:40px;text-align:center;border-radius:50%;background:#2f9e57;color:#fff;font-size:21px;margin-right:12px;-webkit-box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);}
 .opc.c1 .let{background:#0e7c86;} .opc.c2 .let{background:#ef6d3a;}
@@ -472,8 +472,9 @@ function setBarra(f){var b=$("topbar");if(b){f=Math.max(0,Math.min(1,f));b.style
 /* ====== QUIZ ====== */
 function irQuiz(){atual=0;somToque();$("app").onscroll=null;setBarra(0);telaPergunta();}
 function crachaHTML(){
-  return '<div class="cracha"><div class="cav"><img src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'"></div>'+
-    '<span class="cnm">'+esc(nomeAluno)+'</span></div>';
+  var av=avatarAluno?'<img src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'">':'';
+  return '<div class="cracha"><div class="cav">'+av+'</div>'+
+    '<span class="cnm">'+esc(nomeAluno||"")+'</span></div>';
 }
 function passaporte(){
   var h='<div id="passa">',i;
