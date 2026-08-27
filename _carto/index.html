@@ -104,12 +104,14 @@ label{font-size:16px;font-weight:bold;color:#0a5a60;display:block;margin-top:8px
 @keyframes cgira{0%,100%{transform:rotate(-7deg);}50%{transform:rotate(7deg);}}
 .cflip{position:relative;height:210px;max-width:320px;margin:0 auto;}
 .cflip .cimg{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;margin:0;}
-.fq1{-webkit-animation:cross 5s ease-in-out infinite;animation:cross 5s ease-in-out infinite;}
-.fq2{-webkit-animation:cross2 5s ease-in-out infinite;animation:cross2 5s ease-in-out infinite;}
-@-webkit-keyframes cross{0%,42%{opacity:1;}52%,92%{opacity:0;}100%{opacity:1;}}
-@keyframes cross{0%,42%{opacity:1;}52%,92%{opacity:0;}100%{opacity:1;}}
-@-webkit-keyframes cross2{0%,42%{opacity:0;}52%,92%{opacity:1;}100%{opacity:0;}}
-@keyframes cross2{0%,42%{opacity:0;}52%,92%{opacity:1;}100%{opacity:0;}}
+/* ⚠️ TROCA LIMPA (pedido do Marcos, ago/2026): antes as DUAS imagens somiam
+   juntas no cruzamento e aparecia o fundo + pedacos da outra. Agora a de baixo
+   (fq1) fica SEMPRE solida e so a de cima (fq2) acende/apaga de vez — nunca se
+   ve mistura, sempre UMA imagem inteira. O corte e instantaneo (49.99%->50%). */
+.fq1{opacity:1;}
+.fq2{-webkit-animation:swapimg 6s infinite;animation:swapimg 6s infinite;}
+@-webkit-keyframes swapimg{0%,49.99%{opacity:0;}50%,99.99%{opacity:1;}100%{opacity:0;}}
+@keyframes swapimg{0%,49.99%{opacity:0;}50%,99.99%{opacity:1;}100%{opacity:0;}}
 .ctipos{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:6px;max-width:360px;margin:0 auto;}
 .ctipos img{width:47%;border-radius:10px;-webkit-animation:surge 3.6s ease-in-out infinite;animation:surge 3.6s ease-in-out infinite;}
 .ctipos img:nth-child(2){-webkit-animation-delay:.4s;animation-delay:.4s;} .ctipos img:nth-child(3){-webkit-animation-delay:.8s;animation-delay:.8s;} .ctipos img:nth-child(4){-webkit-animation-delay:1.2s;animation-delay:1.2s;}
