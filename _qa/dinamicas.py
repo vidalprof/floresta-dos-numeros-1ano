@@ -693,6 +693,15 @@ def analisa(js, css, baixo, html=None):
         if re.search(r'[+\-]=\s*[2-9]\b', js):
             ruins.append(u"contadores: ha botao que anda mais de UM por vez. O pulo esconde a "
                          u"contagem um-a-um, que e o conteudo da fase.")
+        # ⚠️ Marcos (ago/2026): "na hora de contar os desenhos somem para dar lugar
+        #    a contagem". Quando a fase tem ARTE (temfoto), a fruta NAO pode ser
+        #    apagada para virar bola numerada — ela fica na tela e o numero entra
+        #    como selinho (`.nrot`). Se o codigo desenha frutas (temfoto) mas nao
+        #    usa `nrot` para numerar, o desenho foi trocado por bola: reprova.
+        if re.search(r'temfoto', js) and not re.search(r'nrot', js):
+            ruins.append(u"contadores: a contagem apaga o DESENHO da fruta (nao ha `.nrot`). "
+                         u"Marcos: o desenho fica na tela e o numero entra como selinho no canto — "
+                         u"nao vira bola numerada. Numerar so o canteiro de sementes SEM arte.")
 
     # ---------------------------------------------------- ESCREVER (producao)
     if re.search(r'\.apoios\b', css) and re.search(r'\.campo\b', css):

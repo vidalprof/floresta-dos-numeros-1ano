@@ -1101,6 +1101,14 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-contadores .sem.vazia{background:transparent;border:3px dashed #9c8156;color:#c9bda6}
 
+.mec-contadores .sem.addslot{width:44px;height:44px;line-height:36px;font-size:26px;font-weight:800; background:rgba(255,248,230,.5);border:3px dashed #b3903c;color:#7a5f1f;cursor:pointer; -webkit-animation:kf-contadores-pisca 1.3s ease-in-out infinite;animation:kf-contadores-pisca 1.3s ease-in-out infinite}
+
+.mec-contadores .sem.addslot:hover{background:#fff3c9}
+
+.mec-contadores .sem.addslot:active{background:#ffe9a8;-webkit-transform:scale(.92);transform:scale(.92)}
+
+@-webkit-keyframes kf-contadores-pisca{0%,100%{-webkit-box-shadow:0 0 0 0 rgba(255,213,74,.0)}50%{-webkit-box-shadow:0 0 0 5px rgba(255,213,74,.4)}}@keyframes kf-contadores-pisca{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 5px rgba(255,213,74,.4)}}
+
 .mec-contadores .molde{margin-top:8px;display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
 
 .mec-contadores .mvaga{width:24px;height:24px;margin:2px;border-radius:50%;border:3px dashed #9c8156}
@@ -5298,7 +5306,20 @@ function desenha(novas){
     s=fazSem((novas>0&&i>=qtd-novas)?"sem nova":"sem");
     elCant.appendChild(s);
   }
-  if(qtd===0) elCant.appendChild(el("div","sem vazia",""));
+  /* ⭐ Marcos (ago/2026): "acrescentar as frutas... ter os desenhos em miniaturas
+     e completar clicando aparecendo outros". Enquanto falta pôr, um lugarzinho
+     com "+" fica no fim do canteiro: a criança TOCA nele e a fruta aparece (é a
+     "porta do dedo", a par do botão "+ pôr" — as duas portas da casa). Some
+     durante a contagem e quando o canteiro está cheio. */
+  if(!contando && qtd<MAXSEM){
+    var add=el("div","sem addslot","+");
+    add.setAttribute("role","button");
+    add.setAttribute("aria-label","Acrescentar uma "+temaR().sing);
+    add.onclick=function(){ poe(); };
+    elCant.appendChild(add);
+  }else if(qtd===0){
+    elCant.appendChild(el("div","sem vazia",""));
+  }
   elMostra.innerHTML="<i>"+temaR().label+"</i><b>"+qtd+"</b>";
   desenhaMolde();
   atualizaBotoes();
@@ -5340,6 +5361,7 @@ function poe(){
   desenha(1);
   diz(nomeNum(qtd));            /* a voz conta junto com a semente que cai */
   limpaTotal();
+  talvezReconta();
 }
 function tira(){
   if(contando) return;
@@ -5349,6 +5371,20 @@ function tira(){
   desenha(0);
   diz(nomeNum(qtd));
   limpaTotal();
+  talvezReconta();
+}
+/* ⭐ Marcos (ago/2026): "mesmo que o aluno erre, e conserte, seria interessante
+   contar novamente". Depois de UMA contagem que não bateu (err>0), quando a
+   criança ajusta e chega no alvo, a peça CONTA DE NOVO sozinha, do 1 — para ela
+   ouvir a contagem certa fechar. Só reconta se houve erro antes (não atrapalha
+   quem acerta de primeira) e nunca durante a própria contagem. */
+function talvezReconta(){
+  if(err<=0 || contando || qtd!==alvoAtual()) return;
+  var g=ger;
+  mostraDica("Agora est&aacute; certo! Vamos contar de novo, juntos.");
+  setTimeout(function(){
+    if(g===ger && !contando && qtd===alvoAtual()) contaComigo();
+  }, 1100);
 }
 function limpaTotal(){
   elTotal.className="total";
@@ -5361,6 +5397,10 @@ function limpaTotal(){
 function contaComigo(){
   if(contando) return;
   contando=true;
+  /* tira o lugarzinho de "+" durante a contagem: some a piscada e garante que a
+     contagem só percorra as frutas de verdade (o addslot também é `.sem`). */
+  var _as=elCant.getElementsByClassName("addslot")[0];
+  if(_as&&_as.parentNode) _as.parentNode.removeChild(_as);
   atualizaBotoes();
   limpaTotal();
   var itens=elCant.getElementsByClassName("sem"), i=0, g=ger;
@@ -5376,12 +5416,21 @@ function contaComigo(){
   var passo=function(){
     if(g!==ger) return;
     if(i>=qtd){ fechaContagem(); return; }
-    /* ⭐ Marcos (ago/2026): na hora de CONTAR, o item vira a BOLA com o NÚMERO
-       dentro (para o número aparecer bem claro). A fruta é só no ATO de pôr; ao
-       ser contada, ela acende como bola numerada. */
-    itens[i].style.backgroundImage="";
-    itens[i].className="sem acesa";
-    itens[i].innerHTML=""+(i+1);
+    /* ⭐ Marcos (ago/2026, REVISTO): na hora de contar, o DESENHO CONTINUA na tela
+       — some não! A fruta acende (brilho) e ganha um SELINHO com o número no canto
+       (`.nrot`), para a criança ligar "esta maçã = o número 3". Antes a fruta virava
+       bola numerada e o desenho desaparecia; o Marcos pediu para o desenho ficar
+       ("na hora de contar os desenhos somem para dar lugar a contagem"). Só o
+       canteiro de sementes SEM arte (sem `item`) segue mostrando o número dentro. */
+    var _tm=temaR();
+    if(_tm.item){
+      itens[i].className="sem temfoto acesa";
+      itens[i].innerHTML="<span class=\"nrot\">"+(i+1)+"</span>";
+    }else{
+      itens[i].style.backgroundImage="";
+      itens[i].className="sem acesa";
+      itens[i].innerHTML=""+(i+1);
+    }
     sConta();
     var n=i+1;
     i++;
