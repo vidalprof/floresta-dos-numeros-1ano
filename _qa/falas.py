@@ -88,6 +88,18 @@ def checa(itens):
                             u"isto nao e fala: e chave de imagem. Tire da fila de "
                             u"gravacao (CHAVES_MUDAS no montar.py)",
                             texto))
+        # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala rato em ingles"*. Uma fala
+        #    de PORTUGUES marcada `lang:"en"` (detector antigo confundia o pedaco de
+        #    silaba "to" com o ingles "to") sai com VOZ AMERICANA. Se o texto tem
+        #    reticencias de silaba ou acento portugues, ele NAO pode estar marcado
+        #    ingles.
+        _pt_diacr = u"ãõáéíóúâêôàçÃÕÁÉÍÓÚÂÊÔÀÇ"
+        if it.get("lang") == "en" and (u"…" in texto or "..." in texto
+                                       or any(ch in texto for ch in _pt_diacr)):
+            achados.append((it.get("id", "?"), u"voz inglesa em texto PT",
+                            u"a fala esta marcada lang:en e sai com sotaque americano",
+                            u"tire o lang:en (o montar.py se cura ao remontar; ver _idioma)",
+                            texto))
         for pedaco in sons_lidos_como_letra(texto):
             achados.append((it.get("id", "?"), u"som %s" % pedaco,
                             u"a voz diz o NOME da letra, nao o SOM",

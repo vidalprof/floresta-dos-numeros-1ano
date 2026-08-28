@@ -597,6 +597,16 @@ def _fala_natural(t):
 _FONETICA_VOZ = [
     (re.compile(r"\bfaces\b", re.I), u"fásses"),
     (re.compile(r"\bface\b",  re.I), u"fásse"),
+    # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala jacaré errado"* — no ritmo de
+    #    silabas "ja... ca... ré", o pedaco "ré" comeca depois da pausa e a voz o
+    #    trata como INICIO de palavra: r forte ("jacarré"). Colando "ca... ré" em
+    #    "caré" o r volta a ser BRANDO (entre vogais). Vale so no audio; a tela
+    #    mantem os tres pedacos "ja... ca... ré".
+    (re.compile(r"ca\.\.\.\s*ré", re.I), u"caré"),
+    # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala ilefante"* — o "e" atono do
+    #    comeco reduz para "i" na voz pt-BR. "ele fante" faz o primeiro "e" sair
+    #    CLARO (como no pronome "ele"). So no audio; a tela mantem "elefante".
+    (re.compile(r"\belefante\b", re.I), u"ele fante"),
 ]
 _LACUNA = re.compile(r"_+")
 # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026), TRES defeitos de UMA raiz — CAIXA ALTA
@@ -1007,16 +1017,24 @@ def _idioma(s):
     t = re.sub(r"<[^>]+>", " ", s or "")
     if any(ch in t for ch in _PT_DIACR):
         return "pt"
+    # ⚠️⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala rato em ingles"*. A dica de
+    #    silaba "Diga rato devagar: ra... to." nao tem acento nenhum, e o pedaco
+    #    "to" e palavra inglesa — o detector marcava a FRASE INTEIRA como ingles e
+    #    o workflow gravava "rato" com voz americana. Reticencias ("..."/"…") sao a
+    #    marca do ritmo de SILABAS (fonica em portugues): quem as tem e sempre PT.
+    if "…" in t or "..." in t:
+        return "pt"
     palavras = re.findall(r"[A-Za-z']+", t.lower())
     if not palavras:
         return "pt"
-    # ⚠️ "a"/"no"/"do" existem nos DOIS idiomas — nao servem de sinal. Fora eles,
-    #    conta sinal ingles vs portugues; ingles ganha quando DOMINA (>=2x), o que
-    #    deixa passar um "a" solto de "riding a bike" sem virar portugues.
-    ambiguas = {"a", "no", "do", "i"}
+    # ⚠️ "a"/"no"/"do"/"to" existem nos DOIS idiomas (e sao PEDACOS de silaba) —
+    #    nao servem de sinal. Fora eles, conta sinal ingles vs portugues; ingles
+    #    ganha quando DOMINA (>=2x) E aparece ao menos DUAS vezes (uma palavra
+    #    solta como "to" nunca vira o idioma de uma frase toda em portugues).
+    ambiguas = {"a", "no", "do", "i", "to", "da", "de", "me", "se", "la", "ra", "na", "ta"}
     en = sum(1 for p in palavras if p in _EN_PALAVRAS and p not in ambiguas)
     pt = sum(1 for p in palavras if p in _PT_PALAVRAS and p not in ambiguas)
-    if en >= 1 and en >= 2 * pt:
+    if en >= 2 and en >= 2 * pt:
         return "en"
     return "pt"
 
@@ -1634,6 +1652,12 @@ def main():
     for _f in falas:
         if _f.get("texto"):
             _f["texto"] = _fonetica_voz(_f["texto"])
+            # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala rato em ingles"*. Uma
+            #    marca `lang:"en"` VELHA (de antes de o detector melhorar) ficava
+            #    presa nas falas preservadas da colheita e a voz inglesa voltava.
+            #    Aqui ela se cura: se hoje o texto e claramente PT, a marca cai.
+            if _f.get("lang") == "en" and _idioma(_f["texto"]) != "en":
+                _f.pop("lang", None)
     arte = arte_de(c, pasta)
     print(u"   escada ok | %d fala(s) a gravar | %d figura(s): %d ja na pasta, "
           u"%d ja no banco, %d a gerar"
