@@ -42,10 +42,7 @@ main{flex:1;display:flex;min-height:0;}
 .tool.on.perigo{background:#ffeef2;color:#d43f63;box-shadow:inset 0 0 0 3px var(--perigo),0 4px 10px rgba(255,106,134,.28);}
 /* ---------- PALCO / CANVAS ---------- */
 .palco{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;min-width:0;position:relative;overflow:auto;}
-.quadro{background:
-   linear-gradient(45deg,#d9e2f0 25%,transparent 25%,transparent 75%,#d9e2f0 75%),
-   linear-gradient(45deg,#d9e2f0 25%,#eef3fb 25%,#eef3fb 75%,#d9e2f0 75%);
-  background-size:22px 22px;background-position:0 0,11px 11px;image-rendering:pixelated;
+.quadro{background:#ffffff;image-rendering:pixelated;
   border-radius:16px;box-shadow:0 12px 30px rgba(30,50,100,.18),0 0 0 3px #fff,0 0 0 7px var(--linha2);touch-action:none;display:block;margin:auto;}
 /* ---------- PALETA ---------- */
 .paleta{display:flex;flex-direction:column;gap:12px;padding:14px 12px;width:150px;
@@ -197,7 +194,7 @@ function montaCores(){ var g=$("cores"); g.innerHTML="";
     d.onclick=function(){ corIdx=i; corAtual=c[1]; ferramenta="pincel"; marcaFerr(); marcaCor(); amostra(); falaCor(i,c[0]); };
     g.appendChild(d); }); }
 function marcaCor(){ var e=document.querySelectorAll(".cor"),i; for(i=0;i<e.length;i++)e[i].className="cor"+(i===corIdx&&ferramenta!=="borracha"?" on":""); }
-function amostra(){ $("amostra").style.background=(ferramenta==="borracha"?"repeating-conic-gradient(#e9edf4 0% 25%,#fff 0% 50%) 50%/12px 12px":corAtual);
+function amostra(){ $("amostra").style.background=(ferramenta==="borracha"?"#ffffff":corAtual);
   $("corNome").textContent=(ferramenta==="borracha"?"Borracha":CORES[corIdx][0]); }
 function marcaFerr(){ [["Pincel","pincel"],["Balde","balde"],["Borracha","borracha"]].forEach(function(p){
   var b=$("t"+p[0]); if(b)b.className="tool"+(p[0]==="Borracha"?" perigo":"")+(ferramenta===p[1]?" on":""); }); }
@@ -225,6 +222,7 @@ $("btNovo").onclick=function(){ if(temDesenho() && !confirm("Apagar tudo e comeÃ
 /* ---------- SALVAR (escolhendo a pasta quando o navegador deixa) ---------- */
 function fazBlob(cb){ var esc=Math.max(12,Math.round(512/N));
   var oc=document.createElement("canvas"); oc.width=N*esc; oc.height=N*esc; var o=oc.getContext("2d");
+  o.fillStyle="#ffffff"; o.fillRect(0,0,oc.width,oc.height);          /* fundo branco no arquivo salvo */
   for(var y=0;y<N;y++)for(var x=0;x<N;x++){ var c=grade[idx(x,y)]; if(c){o.fillStyle=c;o.fillRect(x*esc,y*esc,esc,esc);} }
   oc.toBlob(cb,"image/png"); }
 $("btSalvar").onclick=function(){ fazBlob(function(blob){ salvaArquivo(blob); }); };
