@@ -1101,13 +1101,9 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-contadores .sem.vazia{background:transparent;border:3px dashed #9c8156;color:#c9bda6}
 
-.mec-contadores .sem.addslot{width:44px;height:44px;line-height:36px;font-size:26px;font-weight:800; background:rgba(255,248,230,.5);border:3px dashed #b3903c;color:#7a5f1f;cursor:pointer; -webkit-animation:kf-contadores-pisca 1.3s ease-in-out infinite;animation:kf-contadores-pisca 1.3s ease-in-out infinite}
+.mec-contadores .canteiro.toca{cursor:pointer}
 
-.mec-contadores .sem.addslot:hover{background:#fff3c9}
-
-.mec-contadores .sem.addslot:active{background:#ffe9a8;-webkit-transform:scale(.92);transform:scale(.92)}
-
-@-webkit-keyframes kf-contadores-pisca{0%,100%{-webkit-box-shadow:0 0 0 0 rgba(255,213,74,.0)}50%{-webkit-box-shadow:0 0 0 5px rgba(255,213,74,.4)}}@keyframes kf-contadores-pisca{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 5px rgba(255,213,74,.4)}}
+.mec-contadores .canteiro.toca:active{-webkit-box-shadow:inset 0 2px 6px rgba(255,255,255,.6),inset 0 -7px 14px rgba(150,110,50,.22),0 3px 8px rgba(0,0,0,.22);box-shadow:inset 0 2px 6px rgba(255,255,255,.6),inset 0 -7px 14px rgba(150,110,50,.22),0 3px 8px rgba(0,0,0,.22)}
 
 .mec-contadores .molde{margin-top:8px;display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
 
@@ -5270,7 +5266,10 @@ function pecaContadores(){
                    /* ⚠️ Marcos (ago/2026): NAO repetir o numero por extenso entre
                       parenteses ("10 (dez)") — o digito basta no enunciado; a VOZ
                       ja diz o numero. Redundancia polui a leitura da crianca. */
-  elCant=el("div","canteiro"+(TM.item?"":" terra"),"");
+  elCant=el("div","canteiro"+(TM.item?"":" terra")+" toca","");
+  /* toque na PRÓPRIA cesta planta uma fruta (Marcos: "aparecer mais maçãs quando
+     o aluno clica"). poe() já ignora toque durante a contagem. */
+  elCant.onclick=function(){ poe(); };
   c.appendChild(elCant);
   elMolde=el("div","molde","");
   c.appendChild(elMolde);
@@ -5306,20 +5305,11 @@ function desenha(novas){
     s=fazSem((novas>0&&i>=qtd-novas)?"sem nova":"sem");
     elCant.appendChild(s);
   }
-  /* ⭐ Marcos (ago/2026): "acrescentar as frutas... ter os desenhos em miniaturas
-     e completar clicando aparecendo outros". Enquanto falta pôr, um lugarzinho
-     com "+" fica no fim do canteiro: a criança TOCA nele e a fruta aparece (é a
-     "porta do dedo", a par do botão "+ pôr" — as duas portas da casa). Some
-     durante a contagem e quando o canteiro está cheio. */
-  if(!contando && qtd<MAXSEM){
-    var add=el("div","sem addslot","+");
-    add.setAttribute("role","button");
-    add.setAttribute("aria-label","Acrescentar uma "+temaR().sing);
-    add.onclick=function(){ poe(); };
-    elCant.appendChild(add);
-  }else if(qtd===0){
-    elCant.appendChild(el("div","sem vazia",""));
-  }
+  /* ⭐ Marcos (ago/2026): "aparecer mais maçãs quando o aluno clica". Quem planta
+     é o botão "+ pôr" E o toque na PRÓPRIA cesta (canteiro clicável — ver
+     pecaContadores). Sem símbolo "+" solto no canteiro (o Marcos pediu que não
+     aparecesse). Cesta vazia mostra só um lugar tracejado, convidando o toque. */
+  if(qtd===0) elCant.appendChild(el("div","sem vazia",""));
   elMostra.innerHTML="<i>"+temaR().label+"</i><b>"+qtd+"</b>";
   desenhaMolde();
   atualizaBotoes();
@@ -5397,10 +5387,6 @@ function limpaTotal(){
 function contaComigo(){
   if(contando) return;
   contando=true;
-  /* tira o lugarzinho de "+" durante a contagem: some a piscada e garante que a
-     contagem só percorra as frutas de verdade (o addslot também é `.sem`). */
-  var _as=elCant.getElementsByClassName("addslot")[0];
-  if(_as&&_as.parentNode) _as.parentNode.removeChild(_as);
   atualizaBotoes();
   limpaTotal();
   var itens=elCant.getElementsByClassName("sem"), i=0, g=ger;
