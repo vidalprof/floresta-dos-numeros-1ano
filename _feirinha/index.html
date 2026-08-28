@@ -5416,21 +5416,14 @@ function contaComigo(){
   var passo=function(){
     if(g!==ger) return;
     if(i>=qtd){ fechaContagem(); return; }
-    /* ⭐ Marcos (ago/2026, REVISTO): na hora de contar, o DESENHO CONTINUA na tela
-       — some não! A fruta acende (brilho) e ganha um SELINHO com o número no canto
-       (`.nrot`), para a criança ligar "esta maçã = o número 3". Antes a fruta virava
-       bola numerada e o desenho desaparecia; o Marcos pediu para o desenho ficar
-       ("na hora de contar os desenhos somem para dar lugar a contagem"). Só o
-       canteiro de sementes SEM arte (sem `item`) segue mostrando o número dentro. */
-    var _tm=temaR();
-    if(_tm.item){
-      itens[i].className="sem temfoto acesa";
-      itens[i].innerHTML="<span class=\"nrot\">"+(i+1)+"</span>";
-    }else{
-      itens[i].style.backgroundImage="";
-      itens[i].className="sem acesa";
-      itens[i].innerHTML=""+(i+1);
-    }
+    /* ⭐ Marcos (ago/2026): a criança PÕE as maçãs (desenho); na hora de CONTAR,
+       "as maçãs somem e aparece a bola com os números contando". Cada fruta, ao
+       ser contada, dá lugar à BOLA NUMERADA que acende — o número aparece grande e
+       claro, um de cada vez. A arte é o ato de pôr; a contagem é a bola com o
+       número (a cardinalidade fica visível: a última bola é o total). */
+    itens[i].style.backgroundImage="";
+    itens[i].className="sem acesa";
+    itens[i].innerHTML=""+(i+1);
     sConta();
     var n=i+1;
     i++;
