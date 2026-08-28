@@ -1,0 +1,274 @@
+<!doctype html><html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Meu Pixel Art</title>
+<style>
+:root{--fundo:#eef2f8;--painel:#ffffff;--linha:#c9d3e4;--tinta:#26314a;--sol:#ffd23f;--verde:#2e9e57;--verdes:#22773f;--azul:#3a7bd5;--vermelho:#e05a5a;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;height:100%;}
+body{font-family:"Trebuchet MS","Segoe UI",sans-serif;background:linear-gradient(160deg,#f3f6fc,#e6ecf7);color:var(--tinta);
+  display:flex;flex-direction:column;height:100%;overflow:hidden;-webkit-user-select:none;user-select:none;}
+header{display:flex;align-items:center;gap:10px;padding:8px 14px;background:linear-gradient(90deg,#3a7bd5,#5b8def);color:#fff;box-shadow:0 3px 10px #0003;}
+header .logo{font-size:26px;}
+header h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px;}
+header .sub{font-size:12px;opacity:.92;margin-left:2px;}
+.spacer{flex:1;}
+.hbtn{background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.55);color:#fff;font-weight:800;border-radius:12px;
+  padding:8px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.hbtn:active{transform:translateY(1px);}
+.hbtn.salvar{background:var(--sol);color:#5a4200;border-color:#e7b400;}
+main{flex:1;display:flex;min-height:0;}
+/* barra de ferramentas esquerda */
+.ferramentas{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--painel);border-right:2px solid var(--linha);overflow:auto;}
+.tool{width:58px;height:58px;border-radius:14px;border:3px solid var(--linha);background:#f7f9fd;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:800;color:#48566f;}
+.tool .ic{font-size:22px;line-height:1;}
+.tool.on{border-color:var(--verde);background:#eafce0;color:#1f6b12;}
+.tool:active{transform:translateY(1px);}
+.tool.perigo.on,.tool.perigo:active{border-color:var(--vermelho);}
+/* área central: canvas */
+.palco{flex:1;display:flex;align-items:center;justify-content:center;padding:12px;min-width:0;position:relative;overflow:auto;}
+.quadro{background:
+   linear-gradient(45deg,#dfe6f1 25%,transparent 25%,transparent 75%,#dfe6f1 75%),
+   linear-gradient(45deg,#dfe6f1 25%,#eef2f8 25%,#eef2f8 75%,#dfe6f1 75%);
+  background-size:24px 24px;background-position:0 0,12px 12px;
+  border-radius:14px;box-shadow:0 8px 24px #0002, 0 0 0 3px #fff, 0 0 0 6px var(--linha);touch-action:none;display:block;}
+/* paleta direita */
+.paleta{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--painel);border-left:2px solid var(--linha);width:118px;}
+.corAtual{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#48566f;}
+.corAtual .amostra{width:30px;height:30px;border-radius:8px;border:3px solid #fff;box-shadow:0 0 0 2px var(--linha);}
+.grade-cores{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.cor{width:100%;padding-top:100%;border-radius:9px;border:3px solid #fff;box-shadow:0 0 0 2px var(--linha);cursor:pointer;position:relative;}
+.cor.on{box-shadow:0 0 0 3px var(--verde),0 3px 6px #0004;transform:scale(1.06);}
+.cor:active{transform:scale(.94);}
+/* rodapé: tamanhos da grade */
+footer{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--painel);border-top:2px solid var(--linha);flex-wrap:wrap;}
+footer .rot{font-size:13px;font-weight:800;color:#48566f;}
+.tam{border:3px solid var(--linha);background:#f7f9fd;color:#48566f;border-radius:11px;padding:7px 12px;font-weight:800;font-size:14px;cursor:pointer;}
+.tam.on{border-color:var(--azul);background:#e7f0fd;color:#1a4a9e;}
+.aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#26314a;color:#fff;padding:10px 16px;border-radius:14px;
+  font-weight:700;font-size:14px;box-shadow:0 6px 16px #0005;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50;}
+.aviso.ver{opacity:1;}
+/* telefone em pé: paleta e ferramentas encolhem */
+@media(max-width:620px){
+  .paleta{width:96px;} .tool{width:50px;height:50px;} .tool .ic{font-size:19px;}
+  header h1{font-size:17px;} header .sub{display:none;}
+}
+@media(max-width:430px){
+  .grade-cores{grid-template-columns:repeat(3,1fr);}
+}
+</style></head>
+<body>
+<header>
+  <span class="logo">🎨</span>
+  <div><h1>Meu Pixel Art</h1><div class="sub">desenhe quadradinho por quadradinho</div></div>
+  <span class="spacer"></span>
+  <button class="hbtn" id="btNovo" title="Começar de novo">🧽 Novo</button>
+  <button class="hbtn salvar" id="btSalvar" title="Salvar no computador">💾 Salvar</button>
+</header>
+<main>
+  <div class="ferramentas">
+    <button class="tool on" id="tPincel"><span class="ic">🖌️</span>Pincel</button>
+    <button class="tool" id="tBalde"><span class="ic">🪣</span>Balde</button>
+    <button class="tool perigo" id="tBorracha"><span class="ic">🧼</span>Borracha</button>
+    <button class="tool" id="tDesfazer"><span class="ic">↩️</span>Voltar</button>
+    <button class="tool" id="tRefazer"><span class="ic">↪️</span>Refazer</button>
+  </div>
+  <div class="palco"><canvas class="quadro" id="cv"></canvas></div>
+  <div class="paleta">
+    <div class="corAtual"><span class="amostra" id="amostra"></span><span id="corNome">cor</span></div>
+    <div class="grade-cores" id="cores"></div>
+  </div>
+</main>
+<footer>
+  <span class="rot">Tamanho:</span>
+  <button class="tam" data-n="8">8×8</button>
+  <button class="tam on" data-n="16">16×16</button>
+  <button class="tam" data-n="24">24×24</button>
+  <button class="tam" data-n="32">32×32</button>
+  <span class="spacer"></span>
+  <span class="rot">Zoom:</span>
+  <button class="tam" id="zoomMenos">🔍−</button>
+  <button class="tam" id="zoomNum" title="Voltar ao tamanho da tela">100%</button>
+  <button class="tam" id="zoomMais">🔍+</button>
+</footer>
+<div class="aviso" id="aviso"></div>
+<script>
+/* ================= PALETA — 24 CORES CONHECIDAS ================= */
+var CORES=[
+ ["Preto","#1b1b1b"],["Cinza escuro","#5b5b5b"],["Cinza","#a7a7a7"],["Branco","#ffffff"],
+ ["Vermelho","#e6261f"],["Vermelho escuro","#9c1b16"],["Laranja","#f7921e"],["Amarelo","#ffd400"],
+ ["Amarelo claro","#fff59d"],["Verde-limão","#8cc63f"],["Verde","#33a457"],["Verde escuro","#1c6b37"],
+ ["Ciano","#25c4da"],["Azul claro","#4fc3f7"],["Azul","#2b6de6"],["Azul escuro","#1a3fa0"],
+ ["Roxo","#7e57c2"],["Lilás","#b98cff"],["Rosa","#ff7ab6"],["Rosa-choque","#e91e8c"],
+ ["Bege","#f3c8a2"],["Marrom","#a5642e"],["Marrom escuro","#5a3410"],["Dourado","#d4af37"]
+];
+var VAZIO=null;                 /* célula sem tinta = transparente */
+var N=16;                       /* tamanho da grade */
+var grade=[];                   /* N*N de hex ou null */
+var corAtual=CORES[0][1];
+var ferramenta="pincel";        /* pincel | balde | borracha */
+var undo=[], redo=[];
+var CHAVE="pixelart_salvo_v1";
+
+function $(s){return document.getElementById(s);}
+function novaGrade(n){ N=n; grade=new Array(N*N).fill(VAZIO); }
+function idx(x,y){return y*N+x;}
+
+/* ---------- CANVAS ---------- */
+var cv=$("cv"), ctx=cv.getContext("2d"), cel=20, zoom=1;
+function ajustaCanvas(){
+  var palco=document.querySelector(".palco");
+  var disp=Math.min(palco.clientWidth, palco.clientHeight)-8;
+  disp=Math.max(160,disp);
+  var base=Math.max(4,Math.floor(disp/N));    /* célula que enche a tela (100%) */
+  cel=Math.max(3,Math.round(base*zoom));      /* aplica o zoom */
+  var lado=cel*N;
+  cv.width=lado; cv.height=lado;               /* nitidez real */
+  cv.style.width=lado+"px"; cv.style.height=lado+"px";
+  cv.style.margin="auto";                      /* centra e deixa rolar quando maior que a tela */
+  var zn=$("zoomNum"); if(zn)zn.textContent=Math.round(zoom*100)+"%";
+  desenha();
+}
+function setZoom(z){ zoom=Math.max(0.5,Math.min(6,z)); ajustaCanvas(); }
+function desenha(){
+  ctx.clearRect(0,0,cv.width,cv.height);
+  for(var y=0;y<N;y++)for(var x=0;x<N;x++){
+    var c=grade[idx(x,y)];
+    if(c){ ctx.fillStyle=c; ctx.fillRect(x*cel,y*cel,cel,cel); }
+  }
+  /* grade suave por cima */
+  ctx.strokeStyle="rgba(120,140,170,.35)"; ctx.lineWidth=1;
+  for(var i=0;i<=N;i++){
+    ctx.beginPath();ctx.moveTo(i*cel+.5,0);ctx.lineTo(i*cel+.5,N*cel);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,i*cel+.5);ctx.lineTo(N*cel,i*cel+.5);ctx.stroke();
+  }
+}
+function celDoPonto(clientX,clientY){
+  var r=cv.getBoundingClientRect();
+  var x=Math.floor((clientX-r.left)/(r.width/N));
+  var y=Math.floor((clientY-r.top)/(r.height/N));
+  if(x<0||y<0||x>=N||y>=N)return null; return {x:x,y:y};
+}
+
+/* ---------- PINTAR ---------- */
+var pintando=false, mudou=false;
+function aplica(x,y){
+  var i=idx(x,y), cor=(ferramenta==="borracha")?VAZIO:corAtual;
+  if(ferramenta==="balde"){ balde(x,y); mudou=true; return; }
+  if(grade[i]!==cor){ grade[i]=cor; mudou=true; }
+}
+function balde(x,y){                 /* preenche a região da mesma cor (flood fill) */
+  var alvo=grade[idx(x,y)], nova=corAtual; if(alvo===nova)return;
+  var pilha=[[x,y]];
+  while(pilha.length){ var p=pilha.pop(), px=p[0],py=p[1];
+    if(px<0||py<0||px>=N||py>=N)continue;
+    if(grade[idx(px,py)]!==alvo)continue;
+    grade[idx(px,py)]=nova;
+    pilha.push([px+1,py],[px-1,py],[px,py+1],[px,py-1]);
+  }
+}
+function comeca(clientX,clientY){
+  var c=celDoPonto(clientX,clientY); if(!c)return;
+  snapshot();                        /* guarda estado ANTES do traço (para o Voltar) */
+  pintando=true; mudou=false; aplica(c.x,c.y); desenha();
+}
+function move(clientX,clientY){
+  if(!pintando)return; var c=celDoPonto(clientX,clientY); if(!c)return;
+  aplica(c.x,c.y); desenha();
+}
+function solta(){ if(!pintando)return; pintando=false; if(mudou){ salva(); } else { undo.pop(); } }
+
+/* mouse */
+cv.addEventListener("mousedown",function(e){ comeca(e.clientX,e.clientY); e.preventDefault(); });
+window.addEventListener("mousemove",function(e){ move(e.clientX,e.clientY); });
+window.addEventListener("mouseup",solta);
+/* toque */
+cv.addEventListener("touchstart",function(e){ var t=e.touches[0]; comeca(t.clientX,t.clientY); if(e.cancelable)e.preventDefault(); },{passive:false});
+cv.addEventListener("touchmove",function(e){ var t=e.touches[0]; move(t.clientX,t.clientY); if(e.cancelable)e.preventDefault(); },{passive:false});
+window.addEventListener("touchend",solta);
+
+/* ---------- DESFAZER / REFAZER ---------- */
+function snapshot(){ undo.push(grade.slice()); if(undo.length>60)undo.shift(); redo=[]; }
+function desfazer(){ if(!undo.length){toast("Nada para voltar");return;} redo.push(grade.slice()); grade=undo.pop(); desenha(); salva(); }
+function refazer(){ if(!redo.length){toast("Nada para refazer");return;} undo.push(grade.slice()); grade=redo.pop(); desenha(); salva(); }
+
+/* ---------- PALETA / FERRAMENTAS ---------- */
+function montaCores(){
+  var g=$("cores"); g.innerHTML="";
+  CORES.forEach(function(c,i){
+    var d=document.createElement("div"); d.className="cor"+(c[1]===corAtual?" on":"");
+    d.style.background=c[1]; d.title=c[0];
+    d.onclick=function(){ corAtual=c[1]; ferramenta="pincel"; marcaFerr(); marcaCor(); atualizaAmostra(c); };
+    g.appendChild(d);
+  });
+}
+function marcaCor(){ var e=document.querySelectorAll(".cor"),i; for(i=0;i<e.length;i++)e[i].className="cor"+(CORES[i][1]===corAtual&&ferramenta!=="borracha"?" on":""); }
+function atualizaAmostra(c){ $("amostra").style.background=(ferramenta==="borracha"?"#fff":corAtual); $("corNome").textContent=(ferramenta==="borracha"?"borracha":(c?c[0]:corNomeDe(corAtual))); }
+function corNomeDe(h){ for(var i=0;i<CORES.length;i++)if(CORES[i][1]===h)return CORES[i][0]; return "cor"; }
+function marcaFerr(){ ["Pincel","Balde","Borracha"].forEach(function(nm){ var b=$("t"+nm); if(b)b.className="tool"+(nm==="Borracha"?" perigo":"")+((ferramenta===nm.toLowerCase())?" on":""); }); }
+$("tPincel").onclick=function(){ ferramenta="pincel"; marcaFerr(); marcaCor(); atualizaAmostra(); };
+$("tBalde").onclick=function(){ ferramenta="balde"; marcaFerr(); marcaCor(); atualizaAmostra(); };
+$("tBorracha").onclick=function(){ ferramenta="borracha"; marcaFerr(); marcaCor(); atualizaAmostra(); };
+$("tDesfazer").onclick=desfazer;
+$("tRefazer").onclick=refazer;
+$("zoomMais").onclick=function(){ setZoom(zoom+0.5); };
+$("zoomMenos").onclick=function(){ setZoom(zoom-0.5); };
+$("zoomNum").onclick=function(){ setZoom(1); };
+
+/* ---------- TAMANHO DA GRADE ---------- */
+document.querySelectorAll(".tam").forEach(function(b){
+  b.onclick=function(){
+    var n=parseInt(b.dataset.n,10); if(n===N)return;
+    if(temDesenho() && !confirm("Trocar o tamanho vai começar um desenho novo. Continuar?"))return;
+    document.querySelectorAll(".tam").forEach(function(x){x.className="tam";}); b.className="tam on";
+    novaGrade(n); undo=[];redo=[]; ajustaCanvas(); salva();
+  };
+});
+function temDesenho(){ for(var i=0;i<grade.length;i++)if(grade[i])return true; return false; }
+
+/* ---------- NOVO ---------- */
+$("btNovo").onclick=function(){
+  if(temDesenho() && !confirm("Apagar tudo e começar um desenho novo?"))return;
+  snapshot(); novaGrade(N); desenha(); salva(); toast("Quadro novo!");
+};
+
+/* ---------- SALVAR NO COMPUTADOR (baixa a imagem) ---------- */
+$("btSalvar").onclick=function(){
+  var esc=Math.max(12, Math.round(480/N));      /* cada célula com bom tamanho no arquivo */
+  var oc=document.createElement("canvas"); oc.width=N*esc; oc.height=N*esc;
+  var o=oc.getContext("2d");
+  for(var y=0;y<N;y++)for(var x=0;x<N;x++){ var c=grade[idx(x,y)]; if(c){ o.fillStyle=c; o.fillRect(x*esc,y*esc,esc,esc); } }
+  oc.toBlob(function(blob){
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement("a"); a.href=url; a.download="meu-pixel-art.png";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url);},1500);
+    toast("Imagem salva no computador! 🎉");
+  },"image/png");
+};
+
+/* ---------- NÃO PERDER O TRABALHO (salva sozinho) ---------- */
+function salva(){ try{ localStorage.setItem(CHAVE, JSON.stringify({N:N,grade:grade})); }catch(e){} }
+function carrega(){
+  try{ var s=localStorage.getItem(CHAVE); if(!s)return false; var d=JSON.parse(s);
+    if(d&&d.N&&d.grade&&d.grade.length===d.N*d.N){ N=d.N; grade=d.grade.slice();
+      document.querySelectorAll(".tam").forEach(function(x){x.className="tam"+(parseInt(x.dataset.n,10)===N?" on":"");});
+      return true; } }catch(e){}
+  return false;
+}
+
+/* ---------- AVISO ---------- */
+var _tAviso;
+function toast(m){ var a=$("aviso"); a.textContent=m; a.className="aviso ver"; clearTimeout(_tAviso); _tAviso=setTimeout(function(){a.className="aviso";},1800); }
+
+/* ---------- BOOT ---------- */
+function boot(){
+  if(!carrega()) novaGrade(16);
+  montaCores(); marcaFerr(); marcaCor(); atualizaAmostra();
+  ajustaCanvas();
+}
+window.addEventListener("resize",function(){ ajustaCanvas(); });
+boot();
+</script>
+</body></html>
