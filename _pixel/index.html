@@ -3,98 +3,121 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Meu Pixel Art</title>
 <style>
-:root{--fundo:#eef2f8;--painel:#ffffff;--linha:#c9d3e4;--tinta:#26314a;--sol:#ffd23f;--verde:#2e9e57;--verdes:#22773f;--azul:#3a7bd5;--vermelho:#e05a5a;}
+:root{
+ --fundo1:#eef3fb;--fundo2:#e2e9f6;--painel:#ffffff;--linha:#dbe3f0;--linha2:#c7d2e6;
+ --tinta:#26314a;--suave:#657594;--sol:#ffcf3f;--verde:#2fbf71;--verdeE:#1f9a57;
+ --azul:#4a86ff;--azulE:#2b5fd0;--rosa:#ff7aa8;--perigo:#ff6a86;
+ --sombra:0 8px 22px rgba(40,60,110,.12);--sombraF:0 4px 10px rgba(40,60,110,.16);
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;height:100%;}
-body{font-family:"Trebuchet MS","Segoe UI",sans-serif;background:linear-gradient(160deg,#f3f6fc,#e6ecf7);color:var(--tinta);
-  display:flex;flex-direction:column;height:100%;overflow:hidden;-webkit-user-select:none;user-select:none;}
-header{display:flex;align-items:center;gap:10px;padding:8px 14px;background:linear-gradient(90deg,#3a7bd5,#5b8def);color:#fff;box-shadow:0 3px 10px #0003;}
-header .logo{font-size:26px;}
-header h1{font-size:20px;margin:0;font-weight:800;letter-spacing:.3px;}
-header .sub{font-size:12px;opacity:.92;margin-left:2px;}
+body{font-family:"Nunito","Trebuchet MS","Segoe UI",system-ui,sans-serif;color:var(--tinta);
+ background:radial-gradient(1200px 600px at 20% -10%,#ffffff,transparent),linear-gradient(160deg,var(--fundo1),var(--fundo2));
+ display:flex;flex-direction:column;height:100%;overflow:hidden;-webkit-user-select:none;user-select:none;}
+/* ---------- HEADER ---------- */
+header{display:flex;align-items:center;gap:12px;padding:11px 18px;
+ background:linear-gradient(100deg,#4a86ff,#6f9dff 60%,#8ab0ff);color:#fff;box-shadow:0 4px 16px rgba(40,70,160,.28);z-index:5;}
+header .logo{width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5);}
+header h1{font-size:21px;margin:0;font-weight:900;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.12);}
+header .sub{font-size:12px;opacity:.95;margin-top:1px;font-weight:600;}
 .spacer{flex:1;}
-.hbtn{background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.55);color:#fff;font-weight:800;border-radius:12px;
-  padding:8px 12px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:6px;}
-.hbtn:active{transform:translateY(1px);}
-.hbtn.salvar{background:var(--sol);color:#5a4200;border-color:#e7b400;}
+.hbtn{background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.6);color:#fff;font-weight:800;border-radius:14px;
+ padding:9px 14px;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:transform .08s,background .15s;}
+.hbtn:hover{background:rgba(255,255,255,.26);}
+.hbtn:active{transform:translateY(2px);}
+.hbtn svg{width:19px;height:19px;}
+.hbtn.salvar{background:var(--sol);color:#5a4300;border-color:#f0b400;box-shadow:0 4px 0 #d89e00;}
+.hbtn.salvar:active{box-shadow:0 1px 0 #d89e00;}
 main{flex:1;display:flex;min-height:0;}
-/* barra de ferramentas esquerda */
-.ferramentas{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--painel);border-right:2px solid var(--linha);overflow:auto;}
-.tool{width:58px;height:58px;border-radius:14px;border:3px solid var(--linha);background:#f7f9fd;cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:800;color:#48566f;}
-.tool .ic{font-size:22px;line-height:1;}
-.tool.on{border-color:var(--verde);background:#eafce0;color:#1f6b12;}
-.tool:active{transform:translateY(1px);}
-.tool.perigo.on,.tool.perigo:active{border-color:var(--vermelho);}
-/* área central: canvas */
-.palco{flex:1;display:flex;align-items:center;justify-content:center;padding:12px;min-width:0;position:relative;overflow:auto;}
+/* ---------- FERRAMENTAS ---------- */
+.ferramentas{display:flex;flex-direction:column;gap:10px;padding:14px 12px;overflow:auto;
+ background:linear-gradient(180deg,#ffffff,#f6f9ff);border-right:1px solid var(--linha);box-shadow:var(--sombra);z-index:2;}
+.tool{width:70px;height:70px;border-radius:18px;border:0;background:#f1f5fd;cursor:pointer;position:relative;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:800;color:#5a6b8c;
+ box-shadow:inset 0 0 0 2px var(--linha),0 2px 4px rgba(40,60,110,.06);transition:transform .08s,box-shadow .15s,background .15s;}
+.tool svg{width:30px;height:30px;}
+.tool:hover{background:#e9f0fe;}
+.tool:active{transform:translateY(2px);}
+.tool.on{background:#e7f7ee;color:var(--verdeE);box-shadow:inset 0 0 0 3px var(--verde),0 4px 10px rgba(47,191,113,.28);}
+.tool.on.perigo{background:#ffeef2;color:#d43f63;box-shadow:inset 0 0 0 3px var(--perigo),0 4px 10px rgba(255,106,134,.28);}
+/* ---------- PALCO / CANVAS ---------- */
+.palco{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;min-width:0;position:relative;overflow:auto;}
 .quadro{background:
-   linear-gradient(45deg,#dfe6f1 25%,transparent 25%,transparent 75%,#dfe6f1 75%),
-   linear-gradient(45deg,#dfe6f1 25%,#eef2f8 25%,#eef2f8 75%,#dfe6f1 75%);
-  background-size:24px 24px;background-position:0 0,12px 12px;
-  border-radius:14px;box-shadow:0 8px 24px #0002, 0 0 0 3px #fff, 0 0 0 6px var(--linha);touch-action:none;display:block;}
-/* paleta direita */
-.paleta{display:flex;flex-direction:column;gap:8px;padding:10px;background:var(--painel);border-left:2px solid var(--linha);width:118px;}
-.corAtual{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#48566f;}
-.corAtual .amostra{width:30px;height:30px;border-radius:8px;border:3px solid #fff;box-shadow:0 0 0 2px var(--linha);}
-.grade-cores{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
-.cor{width:100%;padding-top:100%;border-radius:9px;border:3px solid #fff;box-shadow:0 0 0 2px var(--linha);cursor:pointer;position:relative;}
-.cor.on{box-shadow:0 0 0 3px var(--verde),0 3px 6px #0004;transform:scale(1.06);}
-.cor:active{transform:scale(.94);}
-/* rodapé: tamanhos da grade */
-footer{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--painel);border-top:2px solid var(--linha);flex-wrap:wrap;}
-footer .rot{font-size:13px;font-weight:800;color:#48566f;}
-.tam{border:3px solid var(--linha);background:#f7f9fd;color:#48566f;border-radius:11px;padding:7px 12px;font-weight:800;font-size:14px;cursor:pointer;}
-.tam.on{border-color:var(--azul);background:#e7f0fd;color:#1a4a9e;}
-.aviso{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#26314a;color:#fff;padding:10px 16px;border-radius:14px;
-  font-weight:700;font-size:14px;box-shadow:0 6px 16px #0005;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50;}
-.aviso.ver{opacity:1;}
-/* telefone em pé: paleta e ferramentas encolhem */
-@media(max-width:620px){
-  .paleta{width:96px;} .tool{width:50px;height:50px;} .tool .ic{font-size:19px;}
-  header h1{font-size:17px;} header .sub{display:none;}
-}
-@media(max-width:430px){
-  .grade-cores{grid-template-columns:repeat(3,1fr);}
-}
+   linear-gradient(45deg,#d9e2f0 25%,transparent 25%,transparent 75%,#d9e2f0 75%),
+   linear-gradient(45deg,#d9e2f0 25%,#eef3fb 25%,#eef3fb 75%,#d9e2f0 75%);
+  background-size:22px 22px;background-position:0 0,11px 11px;image-rendering:pixelated;
+  border-radius:16px;box-shadow:0 12px 30px rgba(30,50,100,.18),0 0 0 3px #fff,0 0 0 7px var(--linha2);touch-action:none;display:block;margin:auto;}
+/* ---------- PALETA ---------- */
+.paleta{display:flex;flex-direction:column;gap:12px;padding:14px 12px;width:150px;
+ background:linear-gradient(180deg,#ffffff,#f6f9ff);border-left:1px solid var(--linha);box-shadow:var(--sombra);z-index:2;}
+.corAtual{display:flex;align-items:center;gap:10px;background:#f1f5fd;border-radius:14px;padding:8px 10px;box-shadow:inset 0 0 0 2px var(--linha);}
+.corAtual .amostra{width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--linha2),0 3px 6px rgba(0,0,0,.12);flex:none;}
+.corAtual .nome{font-size:13px;font-weight:900;color:#3a4763;line-height:1.15;}
+.grade-cores{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+.cor{width:100%;padding-top:100%;border-radius:50%;cursor:pointer;position:relative;
+ box-shadow:0 0 0 3px #fff,0 0 0 4px var(--linha2),0 3px 5px rgba(0,0,0,.12);transition:transform .1s;}
+.cor.on{box-shadow:0 0 0 3px #fff,0 0 0 6px var(--verde),0 4px 8px rgba(0,0,0,.2);transform:scale(1.08);}
+.cor:active{transform:scale(.9);}
+/* ---------- FOOTER ---------- */
+footer{display:flex;align-items:center;gap:8px;padding:9px 14px;background:linear-gradient(180deg,#ffffff,#f4f8ff);
+ border-top:1px solid var(--linha);flex-wrap:wrap;box-shadow:0 -4px 14px rgba(40,60,110,.06);z-index:2;}
+footer .rot{font-size:13px;font-weight:900;color:#5a6b8c;}
+.pill{border:0;background:#eef3fc;color:#5a6b8c;border-radius:13px;padding:8px 14px;font-weight:800;font-size:14px;cursor:pointer;
+ box-shadow:inset 0 0 0 2px var(--linha);transition:transform .08s,background .15s;display:flex;align-items:center;gap:5px;}
+.pill:hover{background:#e6eefb;} .pill:active{transform:translateY(2px);}
+.pill.on{background:#e7f0ff;color:var(--azulE);box-shadow:inset 0 0 0 3px var(--azul);}
+.pill svg{width:17px;height:17px;}
+.zval{min-width:52px;text-align:center;}
+.aviso{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(10px);background:#26314a;color:#fff;padding:11px 18px;border-radius:16px;
+ font-weight:800;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50;}
+.aviso.ver{opacity:1;transform:translateX(-50%) translateY(0);}
+@media(max-width:640px){ .paleta{width:120px;} .tool{width:58px;height:58px;} .tool svg{width:26px;height:26px;} header h1{font-size:18px;} header .sub{display:none;} }
+@media(max-width:440px){ .grade-cores{grid-template-columns:repeat(3,1fr);} .paleta{width:104px;} }
 </style></head>
 <body>
 <header>
   <span class="logo">🎨</span>
   <div><h1>Meu Pixel Art</h1><div class="sub">desenhe quadradinho por quadradinho</div></div>
   <span class="spacer"></span>
-  <button class="hbtn" id="btNovo" title="Começar de novo">🧽 Novo</button>
-  <button class="hbtn salvar" id="btSalvar" title="Salvar no computador">💾 Salvar</button>
+  <button class="hbtn" id="btNovo" title="Começar um desenho novo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 14h10l1-14"/></svg>Novo</button>
+  <button class="hbtn salvar" id="btSalvar" title="Salvar no computador">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v5h7"/><path d="M8 21v-6h8v6"/></svg>Salvar</button>
 </header>
 <main>
   <div class="ferramentas">
-    <button class="tool on" id="tPincel"><span class="ic">🖌️</span>Pincel</button>
-    <button class="tool" id="tBalde"><span class="ic">🪣</span>Balde</button>
-    <button class="tool perigo" id="tBorracha"><span class="ic">🧼</span>Borracha</button>
-    <button class="tool" id="tDesfazer"><span class="ic">↩️</span>Voltar</button>
-    <button class="tool" id="tRefazer"><span class="ic">↪️</span>Refazer</button>
+    <button class="tool on" id="tPincel" title="Pincel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 14.5 4 20c-.6.6-.6 1.4 0 2s1.4.6 2 0l5.5-5.5"/><path d="m13 4 7 7-6.5 6.5-7-7z"/><path d="m13 4 2-2a2.1 2.1 0 0 1 3 3l-2 2"/></svg>Pincel</button>
+    <button class="tool" id="tBalde" title="Balde (preenche uma área)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 3 4 10a2 2 0 0 0 0 3l5 5a2 2 0 0 0 3 0l6-6z"/><path d="m8 6 5 5"/><path d="M20 15c0 1.4-1 2.5-2.2 2.5S15.6 16.4 15.6 15s2.2-3.5 2.2-3.5S20 13.6 20 15z" fill="currentColor" stroke="none"/></svg>Balde</button>
+    <button class="tool perigo" id="tBorracha" title="Borracha">
+      <svg viewBox="0 0 24 24"><g transform="rotate(-38 12 12)"><rect x="3" y="8" width="18" height="9.4" rx="2.6" fill="#ff9ec0"/><rect x="3" y="13.2" width="18" height="4.2" fill="#ec6f9c"/><rect x="3.6" y="8.6" width="16.8" height="8.2" rx="2" fill="none" stroke="#cf5680" stroke-width="1.3"/></g></svg>Borracha</button>
+    <button class="tool" id="tDesfazer" title="Voltar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7 4 12l5 5"/><path d="M4 12h10a6 6 0 0 1 0 12"/></svg>Voltar</button>
+    <button class="tool" id="tRefazer" title="Refazer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="m15 7 5 5-5 5"/><path d="M20 12H10a6 6 0 0 0 0 12"/></svg>Refazer</button>
   </div>
   <div class="palco"><canvas class="quadro" id="cv"></canvas></div>
   <div class="paleta">
-    <div class="corAtual"><span class="amostra" id="amostra"></span><span id="corNome">cor</span></div>
+    <div class="corAtual"><span class="amostra" id="amostra"></span><span class="nome" id="corNome">Preto</span></div>
     <div class="grade-cores" id="cores"></div>
   </div>
 </main>
 <footer>
-  <span class="rot">Tamanho:</span>
-  <button class="tam" data-n="8">8×8</button>
-  <button class="tam on" data-n="16">16×16</button>
-  <button class="tam" data-n="24">24×24</button>
-  <button class="tam" data-n="32">32×32</button>
+  <span class="rot">Tamanho</span>
+  <button class="pill" data-n="8">8×8</button>
+  <button class="pill on" data-n="16">16×16</button>
+  <button class="pill" data-n="24">24×24</button>
+  <button class="pill" data-n="32">32×32</button>
   <span class="spacer"></span>
-  <span class="rot">Zoom:</span>
-  <button class="tam" id="zoomMenos">🔍−</button>
-  <button class="tam" id="zoomNum" title="Voltar ao tamanho da tela">100%</button>
-  <button class="tam" id="zoomMais">🔍+</button>
+  <span class="rot">Zoom</span>
+  <button class="pill" id="zoomMenos" title="Diminuir zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.2-4.2M7.5 10.5h6"/></svg></button>
+  <button class="pill zval" id="zoomNum" title="Voltar ao tamanho da tela">100%</button>
+  <button class="pill" id="zoomMais" title="Aumentar zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.2-4.2M10.5 7.5v6M7.5 10.5h6"/></svg></button>
 </footer>
 <div class="aviso" id="aviso"></div>
 <script>
-/* ================= PALETA — 24 CORES CONHECIDAS ================= */
+/* ================= 24 CORES CONHECIDAS ================= */
 var CORES=[
  ["Preto","#1b1b1b"],["Cinza escuro","#5b5b5b"],["Cinza","#a7a7a7"],["Branco","#ffffff"],
  ["Vermelho","#e6261f"],["Vermelho escuro","#9c1b16"],["Laranja","#f7921e"],["Amarelo","#ffd400"],
@@ -103,113 +126,84 @@ var CORES=[
  ["Roxo","#7e57c2"],["Lilás","#b98cff"],["Rosa","#ff7ab6"],["Rosa-choque","#e91e8c"],
  ["Bege","#f3c8a2"],["Marrom","#a5642e"],["Marrom escuro","#5a3410"],["Dourado","#d4af37"]
 ];
-var VAZIO=null;                 /* célula sem tinta = transparente */
-var N=16;                       /* tamanho da grade */
-var grade=[];                   /* N*N de hex ou null */
-var corAtual=CORES[0][1];
-var ferramenta="pincel";        /* pincel | balde | borracha */
-var undo=[], redo=[];
-var CHAVE="pixelart_salvo_v1";
-
+var VAZIO=null, N=16, grade=[], corIdx=0, corAtual=CORES[0][1], ferramenta="pincel";
+var undo=[], redo=[], CHAVE="pixelart_salvo_v1";
 function $(s){return document.getElementById(s);}
 function novaGrade(n){ N=n; grade=new Array(N*N).fill(VAZIO); }
 function idx(x,y){return y*N+x;}
+
+/* ---------- FALAR O NOME DA COR (mp3 gravado; se faltar, voz do navegador) ---------- */
+var _cvoz=null;
+function falaCor(i,nome){
+  try{ if(_cvoz){_cvoz.pause();} _cvoz=new Audio("audio/c"+i+".mp3");
+    _cvoz.play().catch(function(){ falaNav(nome); }); }
+  catch(e){ falaNav(nome); }
+}
+function falaNav(nome){ try{ if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)return;
+  window.speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(nome); u.lang="pt-BR"; u.rate=.98; u.pitch=1.06;
+  window.speechSynthesis.speak(u);}catch(e){} }
 
 /* ---------- CANVAS ---------- */
 var cv=$("cv"), ctx=cv.getContext("2d"), cel=20, zoom=1;
 function ajustaCanvas(){
   var palco=document.querySelector(".palco");
-  var disp=Math.min(palco.clientWidth, palco.clientHeight)-8;
-  disp=Math.max(160,disp);
-  var base=Math.max(4,Math.floor(disp/N));    /* célula que enche a tela (100%) */
-  cel=Math.max(3,Math.round(base*zoom));      /* aplica o zoom */
+  var disp=Math.min(palco.clientWidth,palco.clientHeight)-10; disp=Math.max(160,disp);
+  var base=Math.max(4,Math.floor(disp/N));
+  cel=Math.max(3,Math.round(base*zoom));
   var lado=cel*N;
-  cv.width=lado; cv.height=lado;               /* nitidez real */
-  cv.style.width=lado+"px"; cv.style.height=lado+"px";
-  cv.style.margin="auto";                      /* centra e deixa rolar quando maior que a tela */
+  cv.width=lado; cv.height=lado; cv.style.width=lado+"px"; cv.style.height=lado+"px"; cv.style.margin="auto";
   var zn=$("zoomNum"); if(zn)zn.textContent=Math.round(zoom*100)+"%";
   desenha();
 }
-function setZoom(z){ zoom=Math.max(0.5,Math.min(6,z)); ajustaCanvas(); }
+function setZoom(z){ zoom=Math.max(0.5,Math.min(8,Math.round(z*10)/10)); ajustaCanvas(); }
 function desenha(){
   ctx.clearRect(0,0,cv.width,cv.height);
-  for(var y=0;y<N;y++)for(var x=0;x<N;x++){
-    var c=grade[idx(x,y)];
-    if(c){ ctx.fillStyle=c; ctx.fillRect(x*cel,y*cel,cel,cel); }
-  }
-  /* grade suave por cima */
-  ctx.strokeStyle="rgba(120,140,170,.35)"; ctx.lineWidth=1;
-  for(var i=0;i<=N;i++){
-    ctx.beginPath();ctx.moveTo(i*cel+.5,0);ctx.lineTo(i*cel+.5,N*cel);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(0,i*cel+.5);ctx.lineTo(N*cel,i*cel+.5);ctx.stroke();
-  }
+  for(var y=0;y<N;y++)for(var x=0;x<N;x++){ var c=grade[idx(x,y)]; if(c){ctx.fillStyle=c;ctx.fillRect(x*cel,y*cel,cel,cel);} }
+  ctx.strokeStyle="rgba(120,140,175,.30)"; ctx.lineWidth=1;
+  for(var i=0;i<=N;i++){ ctx.beginPath();ctx.moveTo(i*cel+.5,0);ctx.lineTo(i*cel+.5,N*cel);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,i*cel+.5);ctx.lineTo(N*cel,i*cel+.5);ctx.stroke(); }
 }
-function celDoPonto(clientX,clientY){
-  var r=cv.getBoundingClientRect();
-  var x=Math.floor((clientX-r.left)/(r.width/N));
-  var y=Math.floor((clientY-r.top)/(r.height/N));
-  if(x<0||y<0||x>=N||y>=N)return null; return {x:x,y:y};
-}
+function celDoPonto(cx,cy){ var r=cv.getBoundingClientRect();
+  var x=Math.floor((cx-r.left)/(r.width/N)), y=Math.floor((cy-r.top)/(r.height/N));
+  if(x<0||y<0||x>=N||y>=N)return null; return {x:x,y:y}; }
 
 /* ---------- PINTAR ---------- */
 var pintando=false, mudou=false;
-function aplica(x,y){
-  var i=idx(x,y), cor=(ferramenta==="borracha")?VAZIO:corAtual;
+function aplica(x,y){ var i=idx(x,y);
   if(ferramenta==="balde"){ balde(x,y); mudou=true; return; }
-  if(grade[i]!==cor){ grade[i]=cor; mudou=true; }
-}
-function balde(x,y){                 /* preenche a região da mesma cor (flood fill) */
-  var alvo=grade[idx(x,y)], nova=corAtual; if(alvo===nova)return;
-  var pilha=[[x,y]];
-  while(pilha.length){ var p=pilha.pop(), px=p[0],py=p[1];
-    if(px<0||py<0||px>=N||py>=N)continue;
-    if(grade[idx(px,py)]!==alvo)continue;
-    grade[idx(px,py)]=nova;
-    pilha.push([px+1,py],[px-1,py],[px,py+1],[px,py-1]);
-  }
-}
-function comeca(clientX,clientY){
-  var c=celDoPonto(clientX,clientY); if(!c)return;
-  snapshot();                        /* guarda estado ANTES do traço (para o Voltar) */
-  pintando=true; mudou=false; aplica(c.x,c.y); desenha();
-}
-function move(clientX,clientY){
-  if(!pintando)return; var c=celDoPonto(clientX,clientY); if(!c)return;
-  aplica(c.x,c.y); desenha();
-}
-function solta(){ if(!pintando)return; pintando=false; if(mudou){ salva(); } else { undo.pop(); } }
-
-/* mouse */
+  var cor=(ferramenta==="borracha")?VAZIO:corAtual; if(grade[i]!==cor){ grade[i]=cor; mudou=true; } }
+function balde(x,y){ var alvo=grade[idx(x,y)], nova=corAtual; if(alvo===nova)return; var p=[[x,y]];
+  while(p.length){ var q=p.pop(),px=q[0],py=q[1]; if(px<0||py<0||px>=N||py>=N)continue;
+    if(grade[idx(px,py)]!==alvo)continue; grade[idx(px,py)]=nova; p.push([px+1,py],[px-1,py],[px,py+1],[px,py-1]); } }
+function comeca(cx,cy){ var c=celDoPonto(cx,cy); if(!c)return; snapshot(); pintando=true; mudou=false; aplica(c.x,c.y); desenha(); }
+function move(cx,cy){ if(!pintando)return; var c=celDoPonto(cx,cy); if(!c)return; aplica(c.x,c.y); desenha(); }
+function solta(){ if(!pintando)return; pintando=false; if(mudou)salva(); else undo.pop(); }
 cv.addEventListener("mousedown",function(e){ comeca(e.clientX,e.clientY); e.preventDefault(); });
 window.addEventListener("mousemove",function(e){ move(e.clientX,e.clientY); });
 window.addEventListener("mouseup",solta);
-/* toque */
 cv.addEventListener("touchstart",function(e){ var t=e.touches[0]; comeca(t.clientX,t.clientY); if(e.cancelable)e.preventDefault(); },{passive:false});
 cv.addEventListener("touchmove",function(e){ var t=e.touches[0]; move(t.clientX,t.clientY); if(e.cancelable)e.preventDefault(); },{passive:false});
 window.addEventListener("touchend",solta);
 
 /* ---------- DESFAZER / REFAZER ---------- */
-function snapshot(){ undo.push(grade.slice()); if(undo.length>60)undo.shift(); redo=[]; }
+function snapshot(){ undo.push(grade.slice()); if(undo.length>80)undo.shift(); redo=[]; }
 function desfazer(){ if(!undo.length){toast("Nada para voltar");return;} redo.push(grade.slice()); grade=undo.pop(); desenha(); salva(); }
 function refazer(){ if(!redo.length){toast("Nada para refazer");return;} undo.push(grade.slice()); grade=redo.pop(); desenha(); salva(); }
 
 /* ---------- PALETA / FERRAMENTAS ---------- */
-function montaCores(){
-  var g=$("cores"); g.innerHTML="";
-  CORES.forEach(function(c,i){
-    var d=document.createElement("div"); d.className="cor"+(c[1]===corAtual?" on":"");
+function montaCores(){ var g=$("cores"); g.innerHTML="";
+  CORES.forEach(function(c,i){ var d=document.createElement("div"); d.className="cor"+(i===corIdx?" on":"");
     d.style.background=c[1]; d.title=c[0];
-    d.onclick=function(){ corAtual=c[1]; ferramenta="pincel"; marcaFerr(); marcaCor(); atualizaAmostra(c); };
-    g.appendChild(d);
-  });
-}
-function marcaCor(){ var e=document.querySelectorAll(".cor"),i; for(i=0;i<e.length;i++)e[i].className="cor"+(CORES[i][1]===corAtual&&ferramenta!=="borracha"?" on":""); }
-function atualizaAmostra(c){ $("amostra").style.background=(ferramenta==="borracha"?"#fff":corAtual); $("corNome").textContent=(ferramenta==="borracha"?"borracha":(c?c[0]:corNomeDe(corAtual))); }
-function corNomeDe(h){ for(var i=0;i<CORES.length;i++)if(CORES[i][1]===h)return CORES[i][0]; return "cor"; }
-function marcaFerr(){ ["Pincel","Balde","Borracha"].forEach(function(nm){ var b=$("t"+nm); if(b)b.className="tool"+(nm==="Borracha"?" perigo":"")+((ferramenta===nm.toLowerCase())?" on":""); }); }
-$("tPincel").onclick=function(){ ferramenta="pincel"; marcaFerr(); marcaCor(); atualizaAmostra(); };
-$("tBalde").onclick=function(){ ferramenta="balde"; marcaFerr(); marcaCor(); atualizaAmostra(); };
-$("tBorracha").onclick=function(){ ferramenta="borracha"; marcaFerr(); marcaCor(); atualizaAmostra(); };
+    d.onclick=function(){ corIdx=i; corAtual=c[1]; ferramenta="pincel"; marcaFerr(); marcaCor(); amostra(); falaCor(i,c[0]); };
+    g.appendChild(d); }); }
+function marcaCor(){ var e=document.querySelectorAll(".cor"),i; for(i=0;i<e.length;i++)e[i].className="cor"+(i===corIdx&&ferramenta!=="borracha"?" on":""); }
+function amostra(){ $("amostra").style.background=(ferramenta==="borracha"?"repeating-conic-gradient(#e9edf4 0% 25%,#fff 0% 50%) 50%/12px 12px":corAtual);
+  $("corNome").textContent=(ferramenta==="borracha"?"Borracha":CORES[corIdx][0]); }
+function marcaFerr(){ [["Pincel","pincel"],["Balde","balde"],["Borracha","borracha"]].forEach(function(p){
+  var b=$("t"+p[0]); if(b)b.className="tool"+(p[0]==="Borracha"?" perigo":"")+(ferramenta===p[1]?" on":""); }); }
+$("tPincel").onclick=function(){ ferramenta="pincel"; marcaFerr(); marcaCor(); amostra(); };
+$("tBalde").onclick=function(){ ferramenta="balde"; marcaFerr(); marcaCor(); amostra(); };
+$("tBorracha").onclick=function(){ ferramenta="borracha"; marcaFerr(); marcaCor(); amostra(); };
 $("tDesfazer").onclick=desfazer;
 $("tRefazer").onclick=refazer;
 $("zoomMais").onclick=function(){ setZoom(zoom+0.5); };
@@ -217,57 +211,52 @@ $("zoomMenos").onclick=function(){ setZoom(zoom-0.5); };
 $("zoomNum").onclick=function(){ setZoom(1); };
 
 /* ---------- TAMANHO DA GRADE ---------- */
-document.querySelectorAll(".tam").forEach(function(b){
-  b.onclick=function(){
-    var n=parseInt(b.dataset.n,10); if(n===N)return;
-    if(temDesenho() && !confirm("Trocar o tamanho vai começar um desenho novo. Continuar?"))return;
-    document.querySelectorAll(".tam").forEach(function(x){x.className="tam";}); b.className="tam on";
-    novaGrade(n); undo=[];redo=[]; ajustaCanvas(); salva();
-  };
-});
+document.querySelectorAll(".pill[data-n]").forEach(function(b){ b.onclick=function(){
+  var n=parseInt(b.dataset.n,10); if(n===N)return;
+  if(temDesenho() && !confirm("Trocar o tamanho vai começar um desenho novo. Continuar?"))return;
+  document.querySelectorAll(".pill[data-n]").forEach(function(x){x.className="pill";}); b.className="pill on";
+  novaGrade(n); undo=[];redo=[]; zoom=1; ajustaCanvas(); salva(); }; });
 function temDesenho(){ for(var i=0;i<grade.length;i++)if(grade[i])return true; return false; }
 
 /* ---------- NOVO ---------- */
-$("btNovo").onclick=function(){
-  if(temDesenho() && !confirm("Apagar tudo e começar um desenho novo?"))return;
-  snapshot(); novaGrade(N); desenha(); salva(); toast("Quadro novo!");
-};
+$("btNovo").onclick=function(){ if(temDesenho() && !confirm("Apagar tudo e começar um desenho novo?"))return;
+  snapshot(); novaGrade(N); desenha(); salva(); toast("Quadro novo!"); };
 
-/* ---------- SALVAR NO COMPUTADOR (baixa a imagem) ---------- */
-$("btSalvar").onclick=function(){
-  var esc=Math.max(12, Math.round(480/N));      /* cada célula com bom tamanho no arquivo */
-  var oc=document.createElement("canvas"); oc.width=N*esc; oc.height=N*esc;
-  var o=oc.getContext("2d");
-  for(var y=0;y<N;y++)for(var x=0;x<N;x++){ var c=grade[idx(x,y)]; if(c){ o.fillStyle=c; o.fillRect(x*esc,y*esc,esc,esc); } }
-  oc.toBlob(function(blob){
-    var url=URL.createObjectURL(blob);
-    var a=document.createElement("a"); a.href=url; a.download="meu-pixel-art.png";
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){URL.revokeObjectURL(url);},1500);
-    toast("Imagem salva no computador! 🎉");
-  },"image/png");
-};
+/* ---------- SALVAR (escolhendo a pasta quando o navegador deixa) ---------- */
+function fazBlob(cb){ var esc=Math.max(12,Math.round(512/N));
+  var oc=document.createElement("canvas"); oc.width=N*esc; oc.height=N*esc; var o=oc.getContext("2d");
+  for(var y=0;y<N;y++)for(var x=0;x<N;x++){ var c=grade[idx(x,y)]; if(c){o.fillStyle=c;o.fillRect(x*esc,y*esc,esc,esc);} }
+  oc.toBlob(cb,"image/png"); }
+$("btSalvar").onclick=function(){ fazBlob(function(blob){ salvaArquivo(blob); }); };
+function salvaArquivo(blob){
+  /* File System Access API: abre a janela para ESCOLHER A PASTA (Chrome/Edge) */
+  if(window.showSaveFilePicker){
+    window.showSaveFilePicker({suggestedName:"meu-pixel-art.png",types:[{description:"Imagem PNG",accept:{"image/png":[".png"]}}]})
+      .then(function(h){ return h.createWritable(); })
+      .then(function(w){ return w.write(blob).then(function(){return w.close();}); })
+      .then(function(){ toast("Salvo no computador! 🎉"); })
+      .catch(function(err){ if(err&&err.name==="AbortError")return; baixaSimples(blob); });
+    return;
+  }
+  baixaSimples(blob);
+}
+function baixaSimples(blob){ var url=URL.createObjectURL(blob);
+  var a=document.createElement("a"); a.href=url; a.download="meu-pixel-art.png";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function(){URL.revokeObjectURL(url);},1500); toast("Imagem salva! 🎉"); }
 
 /* ---------- NÃO PERDER O TRABALHO (salva sozinho) ---------- */
-function salva(){ try{ localStorage.setItem(CHAVE, JSON.stringify({N:N,grade:grade})); }catch(e){} }
-function carrega(){
-  try{ var s=localStorage.getItem(CHAVE); if(!s)return false; var d=JSON.parse(s);
-    if(d&&d.N&&d.grade&&d.grade.length===d.N*d.N){ N=d.N; grade=d.grade.slice();
-      document.querySelectorAll(".tam").forEach(function(x){x.className="tam"+(parseInt(x.dataset.n,10)===N?" on":"");});
-      return true; } }catch(e){}
-  return false;
-}
+function salva(){ try{ localStorage.setItem(CHAVE,JSON.stringify({N:N,grade:grade})); }catch(e){} }
+function carrega(){ try{ var s=localStorage.getItem(CHAVE); if(!s)return false; var d=JSON.parse(s);
+  if(d&&d.N&&d.grade&&d.grade.length===d.N*d.N){ N=d.N; grade=d.grade.slice();
+    document.querySelectorAll(".pill[data-n]").forEach(function(x){x.className="pill"+(parseInt(x.dataset.n,10)===N?" on":"");});
+    return true; } }catch(e){} return false; }
 
 /* ---------- AVISO ---------- */
-var _tAviso;
-function toast(m){ var a=$("aviso"); a.textContent=m; a.className="aviso ver"; clearTimeout(_tAviso); _tAviso=setTimeout(function(){a.className="aviso";},1800); }
+var _ta; function toast(m){ var a=$("aviso"); a.textContent=m; a.className="aviso ver"; clearTimeout(_ta); _ta=setTimeout(function(){a.className="aviso";},1800); }
 
 /* ---------- BOOT ---------- */
-function boot(){
-  if(!carrega()) novaGrade(16);
-  montaCores(); marcaFerr(); marcaCor(); atualizaAmostra();
-  ajustaCanvas();
-}
+function boot(){ if(!carrega()) novaGrade(16); montaCores(); marcaFerr(); marcaCor(); amostra(); ajustaCanvas(); }
 window.addEventListener("resize",function(){ ajustaCanvas(); });
 boot();
 </script>
