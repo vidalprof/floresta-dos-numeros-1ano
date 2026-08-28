@@ -7300,6 +7300,25 @@ function ouvidos(r){
   return box;
 }
 
+/* ⚠️⚠️ LICAO PAGA (Marcos jogando, ago/2026): *"no monte a palavra, no pato, nao
+   deixa colocar as silabas no lugar certo, bugou"*. Na tela de TOQUE, o `touchend`
+   (e o `solta` do arrasto) chamava `b.onclick()` — mas o `onclick` tem o guarda do
+   MOUSE FANTASMA (`_ultimoToque` < 700ms) e o proprio `touchend` acabara de
+   carimbar `_ultimoToque`: o clique de verdade caia no guarda e a silaba NUNCA
+   entrava. No mouse (PC) funcionava, por isso escapou. Agora a COLOCACAO mora numa
+   funcao so; o toque a chama DIRETO, e o guarda fica so no `onclick` (contra o
+   fantasma). */
+function tentaColocar(b, r){
+  if(!b || b.className.indexOf("usada")>=0) return;
+  var esperada=r.sil[posto];
+  if(b._sil===esperada){
+    deslizaAte(b, document.getElementById("jsv"+posto), r);
+  } else {
+    err++; sErro(); sVolta();
+    b.className="jsSil";
+    ajuda(err, r);
+  }
+}
 function fazSilaba(item, r){
   var b=el("button","jsSil", item.s);
   b.type="button";
@@ -7314,19 +7333,10 @@ function fazSilaba(item, r){
      pego duas vezes na casa. */
   arrastavel(b, r);
   b.onclick=function(){
+    /* guarda do FANTASMA: so o clique do MOUSE passa por aqui; o do toque entra
+       por `tentaColocar` direto (senao o carimbo recem-feito do touchend o mata) */
     if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
-    if(b.className.indexOf("usada")>=0) return;
-    var esperada=r.sil[posto];
-    if(item.s===esperada && b.className.indexOf("usada")<0){
-      deslizaAte(b, document.getElementById("jsv"+posto), r);
-    } else {
-      /* ⚠️ ERRO NÃO PUNE: a peça devolve o pedaço com som GRAVE E CURTO, de
-         retorno, nunca de tropeço. O gesto está em treino, e no 1º ano errar a
-         ordem é o normal. */
-      err++; sErro(); sVolta();
-      b.className="jsSil";
-      ajuda(err, r);
-    }
+    tentaColocar(b, r);
   };
   return b;
 }
@@ -7363,7 +7373,7 @@ function arrastavel(b, r){
     if(v){
       var q=v.getBoundingClientRect();
       /* margem generosa: dedo de 6 anos nao acerta o pixel */
-      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ b.onclick(); return; }
+      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ tentaColocar(b, r); return; }
     }
     sVolta();
   }
@@ -7387,7 +7397,7 @@ function arrastavel(b, r){
     if(q){ var g=q.getBoundingClientRect();
       if(!(t.clientX>g.left-30&&t.clientX<g.right+30&&t.clientY>g.top-30&&t.clientY<g.bottom+30)){
         arr=false; b.style.webkitTransform=""; b.style.transform="";
-        b.onclick(); return; } }
+        tentaColocar(b, r); return; } }
     solta(t.clientX,t.clientY);
   },false);
 }

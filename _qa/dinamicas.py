@@ -311,6 +311,22 @@ def analisa(js, css, baixo, html=None):
             avisos.append(u"arrastar: nao achei o guarda contra o evento de mouse FANTASMA que o "
                           u"celular dispara depois do toque (ele desmarca a peca). "
                           u"Defeito ja pego DUAS vezes.")
+        # ⚠️ LICAO PAGA (Marcos jogando, ago/2026): *"no monte a palavra nao deixa
+        #    colocar as silabas"*. O `touchend` chamava `b.onclick()` para AGIR, mas
+        #    o `onclick` tinha o guarda do fantasma (`_ultimoToque < 700`) e o proprio
+        #    touchend acabara de carimbar o toque: o gesto REAL caia no guarda e nada
+        #    acontecia. No mouse funcionava, por isso escapou. Regra: quem for
+        #    guardado contra o fantasma NAO pode ser o mesmo caminho que o toque usa
+        #    para agir. Se o handler de toque chama `.onclick()` E existe um onclick
+        #    guardado por _ultimoToque, e este defeito.
+        _tem_guarda_onclick = re.search(r'_?ultimoToque[^\n;]{0,40}<\s*\d', js) or \
+                              re.search(r'onclick\s*=\s*function[^{]*\{[^}]*ultimoToque', js)
+        _toque_chama_onclick = re.search(r'touch(?:end|start)[\s\S]{0,600}?\.onclick\s*\(', js)
+        if _tem_guarda_onclick and _toque_chama_onclick:
+            ruins.append(u"arrastar/toque: o handler de TOQUE aciona `.onclick()`, que esta "
+                         u"guardado contra o mouse fantasma (_ultimoToque). O toque de verdade "
+                         u"cai no proprio guarda e a peca NAO age. Faca o toque chamar a acao "
+                         u"DIRETO (uma funcao a parte), deixando o guarda so no onclick do mouse.")
 
     # ---------------------------------------------------- TECLADO NA TELA
     tecla_tela = re.search(r'\.tec\b|\.tecl\b|teclafc|tecladofc', css) or re.search(r'"tec"|"tecl"', js)
