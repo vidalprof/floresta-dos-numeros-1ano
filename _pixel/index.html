@@ -143,12 +143,18 @@ function falaNav(nome){ try{ if(!window.speechSynthesis||!window.SpeechSynthesis
 /* ---------- CANVAS ---------- */
 var cv=$("cv"), ctx=cv.getContext("2d"), cel=20, zoom=1;
 function ajustaCanvas(){
+  /* ⚠️ COLUNAS IGUAIS EM QUALQUER TELA: desenho no PIXEL REAL do dispositivo.
+     Se eu dimensionasse em px de CSS, telas com densidade/zoom != 1 (Chrome dos
+     alunos) arredondavam e uma coluna saía 1px mais larga. Aqui cada célula tem
+     um número INTEIRO de pixels de dispositivo -> todas idênticas. */
   var palco=document.querySelector(".palco");
+  var dpr=window.devicePixelRatio||1;
   var disp=Math.min(palco.clientWidth,palco.clientHeight)-10; disp=Math.max(160,disp);
-  var base=Math.max(4,Math.floor(disp/N));
-  cel=Math.max(3,Math.round(base*zoom));
-  var lado=cel*N;
-  cv.width=lado; cv.height=lado; cv.style.width=lado+"px"; cv.style.height=lado+"px"; cv.style.margin="auto";
+  var baseCSS=Math.max(4,disp/N);                       /* px de CSS por célula (pode ser fracionário) */
+  cel=Math.max(3,Math.floor(baseCSS*zoom*dpr));         /* px de DISPOSITIVO por célula: INTEIRO -> iguais */
+  var ladoDev=cel*N;
+  cv.width=ladoDev; cv.height=ladoDev;                  /* buffer real */
+  cv.style.width=(ladoDev/dpr)+"px"; cv.style.height=(ladoDev/dpr)+"px"; cv.style.margin="auto";  /* mapeia 1:1 no dispositivo */
   var zn=$("zoomNum"); if(zn)zn.textContent=Math.round(zoom*100)+"%";
   desenha();
 }
