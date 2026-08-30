@@ -735,6 +735,27 @@ add(id=u"fq01", mec=u"quem-sou-eu", selo=u"ADIVINHE O NÚMERO", conceito=u"objet
       {u"resp":u"6", u"pistas":[u"Sou o resultado de <b>10 − 4</b>.", u"Sou um número <b>par</b>.", u"Sou menor que 7."], u"outros":[u"4", u"8", u"5"]},
     ])
 
+# ⚡ DESAFIO RELÂMPAGO (Marcos, ago/2026: "interatividades boas, use criatividade").
+#    Jogo arcade de TOQUE, já provado (Agora/Central/RightNow): oito perguntas
+#    rápidas com placar. Fura o tédio do quiz lento. Duas rodadas: somar rápido e
+#    tirar/comparar rápido.
+def _rel(idf, selo, intro, qs):
+    return dict(id=idf, mec=u"relampago", selo=selo, conceito=u"objetivo1",
+        enunciado=intro, dica=u"Não corra demais: leia a conta e responda.",
+        dados=[{u"p":p, u"c":c, u"e":e} for (p, c, e) in qs])
+add(**_rel(u"fr01", u"DESAFIO RELÂMPAGO",
+    u"Oito contas rápidas de somar! Toque na resposta certa antes do tempo.",
+    [(u"5 + 3 = ?", u"8", [u"7", u"9"]), (u"6 + 2 = ?", u"8", [u"9", u"6"]),
+     (u"4 + 3 = ?", u"7", [u"6", u"8"]), (u"7 + 2 = ?", u"9", [u"8", u"10"]),
+     (u"3 + 5 = ?", u"8", [u"7", u"9"]), (u"8 + 1 = ?", u"9", [u"7", u"10"]),
+     (u"6 + 3 = ?", u"9", [u"8", u"10"]), (u"5 + 4 = ?", u"9", [u"8", u"7"])]))
+add(**_rel(u"fr02", u"DESAFIO RELÂMPAGO",
+    u"Agora rápidas de tirar e comparar! Toque na resposta certa.",
+    [(u"9 − 4 = ?", u"5", [u"4", u"6"]), (u"10 − 3 = ?", u"7", [u"6", u"8"]),
+     (u"8 − 2 = ?", u"6", [u"5", u"7"]), (u"7 − 5 = ?", u"2", [u"3", u"1"]),
+     (u"12 − 4 = ?", u"8", [u"7", u"9"]), (u"6 + 6 = ?", u"12", [u"11", u"10"]),
+     (u"9 + 3 = ?", u"12", [u"13", u"11"]), (u"11 − 5 = ?", u"6", [u"5", u"7"])]))
+
 # 🚫 SÓ TOQUE (Marcos, ago/2026: "essas dinâmicas de ARRASTAR não funcionam" —
 #    no iPhone/iPad o toque briga com o arrasto). A Feirinha fica 100% de TOQUE:
 #    removidas TODAS as mecânicas de arrasto e as que eu tinha adicionado.
@@ -751,11 +772,14 @@ CONTEUDO[u"fases"] = [f for f in CONTEUDO[u"fases"] if f.get(u"mec") not in _ARR
 #     · TETO de fases por mecânica — as lentas (contar, reta) caem para 1-2, e o
 #       aquecimento (memória) fica com 4 pares, não 8.
 _MAX_ROD = 2
+# mecânicas cujas "dados" NÃO são rodadas repetidas e sim o conteúdo do jogo:
+# relâmpago = as 8 perguntas rápidas; memória = os pares. Não cortar como rodada.
+_ROD_LIVRE = {u"relampago": 8, u"memoria": 4}
 for _f in CONTEUDO[u"fases"]:
-    if isinstance(_f.get(u"dados"), list) and len(_f[u"dados"]) > _MAX_ROD:
-        # memória conta em PARES; 4 pares é o suficiente para o descanso
-        _lim = 4 if _f.get(u"mec") == u"memoria" else _MAX_ROD
-        _f[u"dados"] = _f[u"dados"][:_lim]
+    if isinstance(_f.get(u"dados"), list):
+        _lim = _ROD_LIVRE.get(_f.get(u"mec"), _MAX_ROD)
+        if len(_f[u"dados"]) > _lim:
+            _f[u"dados"] = _f[u"dados"][:_lim]
 _TETO_MEC = {u"contadores":2, u"escolher":3, u"completar":2,
              u"comparar":2, u"saltos-na-fita":1, u"base-dez":1, u"repartir":1,
              u"estimar":1, u"intruso":2, u"quem-sou-eu":1}
@@ -777,7 +801,7 @@ CONTEUDO[u"fases"] = _enxuto
 #    preserva a ordem interna de cada bloco (a escada didática que já vinha certa).
 _MEC_ORDEM = [u"contadores", u"escolher", u"saltos-na-fita", u"completar",
               u"memoria", u"comparar", u"base-dez", u"repartir",
-              u"intruso", u"quem-sou-eu", u"estimar"]
+              u"intruso", u"quem-sou-eu", u"relampago", u"estimar"]
 def _ordem_mec(par):
     _i, _f = par
     _m = _f.get(u"mec", u"")

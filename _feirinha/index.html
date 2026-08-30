@@ -1675,6 +1675,62 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-quem-sou-eu .opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 92px;flex:1 1 92px;min-width:86px;max-width:200px;margin:0;width:auto;font-size:14.5px;padding:10px 8px}
 
 .mec-quem-sou-eu .opts + .btn{margin-top:22px}
+/* ==== PECA: relampago ==== */
+
+
+.mec-relampago .balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px; padding:12px 16px;font-size:17px;font-weight:600;text-align:center;line-height:1.3; box-shadow:0 5px 16px rgba(0,0,0,.28)}
+
+.mec-relampago .balao + *{margin-top:12px}
+
+.mec-relampago .opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:11px 14px; margin:7px auto;font-size:16px;font-weight:700;min-height:46px;max-width:430px;cursor:pointer; box-shadow:0 4px 0 #c9bda6}
+
+.mec-relampago .hint{font-size:14px;opacity:.85;margin-top:6px}
+
+.mec-relampago .relbar{display:block;margin:2px 0 8px}
+
+.mec-relampago .reltopo{display:block;font-size:13px;font-weight:800;letter-spacing:.5px;color:var(--texto,#f4efe6); margin-bottom:4px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;}
+
+.mec-relampago .reltempo{color:#ffd54a}
+
+.mec-relampago .reltrilho{display:block;height:14px;border-radius:9px;background:rgba(255,255,255,.16);overflow:hidden}
+
+.mec-relampago .relcheio{display:block;height:100%;width:100%;background:#59c24b; -webkit-transition:width .9s linear;transition:width .9s linear}
+
+.mec-relampago .relcheio.curto{background:#f6a13a}
+
+.mec-relampago .relcheio.fim{background:#e0603f}
+
+.mec-relampago .r_placar{display:inline-block;background:rgba(255,255,255,.12);border-radius:12px;padding:5px 12px; font-size:13px;font-weight:800;color:#f4efe6;margin-bottom:2px;background:rgba(22,24,30,.82);color:#f4efe6;}
+
+.mec-relampago .marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800; border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+
+.mec-relampago .marca.fria{background:#6b5a2a}
+
+.mec-relampago .passar{display:inline-block;background:rgba(255,255,255,.14);color:#f4efe6;border:2px solid #a08e73; border-radius:14px;padding:10px 18px;margin-top:8px;font-size:14px;font-weight:700; min-height:44px;cursor:pointer;background:rgba(22,24,30,.82);color:#f4efe6;}
+
+.mec-relampago .r_lista{display:block;max-width:430px;margin:8px auto 0;text-align:left; max-height:210px;overflow-y:auto}
+
+.mec-relampago .item{display:block;background:rgba(255,255,255,.10);border-radius:12px;padding:8px 12px; margin:5px 0;font-size:14px;font-weight:600;color:#f4efe6;background:rgba(22,24,30,.82);color:#f4efe6;}
+
+.mec-relampago .item.acertou{background:#d6f5c8;color:#1c3a12}
+
+.mec-relampago .tit{display:block;font-size:14px;font-weight:800;letter-spacing:.4px;color:#ffd54a;margin:12px 0 2px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;}
+
+.mec-relampago .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
+
+.mec-relampago .medal:before{content:"\2605"}@media (max-height:660px){
+
+.mec-relampago .medal{width:74px;height:74px;line-height:62px;font-size:32px;margin-bottom:8px}
+
+.mec-relampago .r_lista{max-height:98px}
+
+.mec-relampago .balao{font-size:15px;padding:10px 14px}
+
+.mec-relampago .item{padding:6px 10px;margin:4px 0;font-size:13px}
+
+.mec-relampago .tit{margin:8px 0 2px;font-size:13px}
+
+.mec-relampago .hint{font-size:12px}}
 /* ==== PECA: repartir ==== */
 @-webkit-keyframes kf-repartir-treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-repartir-treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
@@ -7969,6 +8025,392 @@ function recomecaQ(){ mist=0; ganhas=0; telaQuem(); }
   })();
 };
 
+/* ==== PECA: relampago ==== */
+MEC["relampago"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-relampago";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (a planta, 8 anos) e é DE PROPÓSITO coisa já vista:
+   relâmpago não ensina, RECUPERA. Ao copiar a peça, troque só este bloco —
+   perguntas curtas, respostas curtas, tudo que a criança já encontrou antes
+   na atividade. Pergunta comprida mata a velocidade.                        */
+var RAIO=[
+ {p:"Que parte fica <b>embaixo da terra</b>?", c:"A RAIZ", e:["A FLOR","A FOLHA"]},
+ {p:"Quem faz o alimento com a <b>luz do sol</b>?", c:"A FOLHA", e:["A RAIZ","A SEMENTE"]},
+ {p:"O que a planta <b>bebe</b>?", c:"&#193;GUA", e:["AREIA","PEDRA"]},
+ {p:"De onde nasce a planta?", c:"DA SEMENTE", e:["DA PEDRA","DO VENTO"]},
+ {p:"Que parte &#233; <b>colorida e cheirosa</b>?", c:"A FLOR", e:["A RAIZ","O CAULE"]},
+ {p:"Qual &#233; o caminho da &#225;gua at&#233; as folhas?", c:"O CAULE", e:["A FLOR","A TERRA"]},
+ {p:"O que a planta precisa que vem do c&#233;u?", c:"A CHUVA", e:["A NEVE","A FUMA&#199;A"]},
+ {p:"Onde a semente &#233; plantada?", c:"NA TERRA", e:["NA PEDRA","NO VIDRO"]}
+];
+
+var TEMPO=45;          /* segundos da rodada inteira */
+var ri=0;              /* pergunta da vez */
+var acertos=[];        /* o que ela acertou (vira estrela no fim) */
+var faltou=[];         /* o que ficou para treinar — nunca "erros" */
+var resta=TEMPO;
+var relogio=null;      /* o setInterval do relogio */
+var ger=0;             /* geracao da tela: mata setTimeout de tela que ja saiu */
+var travado=0;         /* entre uma pergunta e a proxima, nao aceita toque */
+
+function telaComecarRelampago(){
+  paraRelogio(); ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","REL&#194;MPAGO"));
+  /* ⚠️ o balao PRINCIPAL e o enunciado (narrado pelo motor); a chamada com o
+     numero de perguntas desce para um hint (nao precisa de voz e muda o tempo). */
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:"Agora &#233; <b>r&#225;pido</b>!";
+  c.appendChild(el("div","balao", _enun));
+  c.appendChild(el("div","hint",
+    "S&#227;o "+RAIO.length+" perguntas do que voc&#234; j&#225; viu, em "+TEMPO+" segundos."));
+  var b=el("button","btn","Come&#231;ar");
+  b.onclick=function(){ iniciaRelampago(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint",
+    "Sem dica e sem pressa no fim: quando o tempo acabar, a pe&#231;a fecha sozinha e mostra o que voc&#234; acertou."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function iniciaRelampago(){
+  ri=0; acertos=[]; faltou=[]; resta=TEMPO;
+  RAIO=baguncar(RAIO);              /* a ordem das perguntas tambem muda */
+  telaRelampago();
+}
+
+function telaRelampago(){
+  var f=RAIO[ri];
+  if(!f){ telaFimRelampago(); return; }
+  ger++; travado=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,Math.round(ri*100/RAIO.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","REL&#194;MPAGO"));
+  c.appendChild(el("div","r_placar","Pergunta "+(ri+1)+" de "+RAIO.length+
+                                  " &#183; acertos: "+acertos.length));
+  /* o relogio: numero E barra */
+  var rb=el("div","relbar");
+  var rt=el("div","reltopo",'TEMPO: <span class="reltempo" id="relnum">'+resta+'</span> segundos');
+  var tr=el("div","reltrilho");
+  var ch=el("div","relcheio"); ch.id="relcheio";
+  tr.appendChild(ch); rb.appendChild(rt); rb.appendChild(tr);
+  c.appendChild(rb);
+  c.appendChild(el("div","balao",f.p));
+  /* ⭐ A ARMADILHA DA MECANICA ESCOLHER, que vale aqui tambem: embaralhar. */
+  var lista=[{txt:f.c,ok:1}], i;
+  for(i=0;i<f.e.length;i++) lista.push({txt:f.e[i],ok:0});
+  baguncar(lista);
+  var box=el("div","opts");
+  for(i=0;i<lista.length;i++) box.appendChild(fazRaio(lista[i],f));
+  c.appendChild(box);
+  /* passar e um DIREITO: sem isso a crianca que travou fica olhando o relogio */
+  var ps=el("div","passar","Passar esta &#187;");
+  ps.onclick=function(){ passa(f); };
+  c.appendChild(ps);
+  t.appendChild(c);
+  app.appendChild(t);
+  pintaRelogio();
+  ligaRelogio();
+}
+
+function fazRaio(it,f){
+  var o=el("div","opt",it.txt);
+  /* data-qa="1" = "esta serve AGORA". Existe SÓ para o auditor-jogador
+     conseguir terminar a peça; a criança não vê diferença nenhuma. */
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ responde(o,it.ok,f); };
+  return o;
+}
+
+/* ---------- o relógio: mede, mas NUNCA prende ---------- */
+function ligaRelogio(){
+  if(relogio) return;
+  relogio=setInterval(passaSegundo,1000);
+}
+function paraRelogio(){
+  if(relogio){ clearInterval(relogio); relogio=null; }
+}
+function passaSegundo(){
+  resta--;
+  if(resta<=0){
+    resta=0;
+    pintaRelogio();
+    paraRelogio();
+    acabouOTempo();
+    return;
+  }
+  pintaRelogio();
+  if(resta<=5) sTap();     /* o tique-taque final tem gemeo visual: o numero */
+}
+function pintaRelogio(){
+  var n=document.getElementById("relnum"), ch=document.getElementById("relcheio");
+  if(n) n.innerHTML=""+resta;
+  if(ch){
+    ch.style.width=Math.round(resta*100/TEMPO)+"%";
+    ch.className="relcheio"+(resta<=5?" fim":(resta<=15?" curto":""));
+  }
+}
+/* ⭐ o tempo acabou: a peca FECHA SOZINHA com o resultado. O relogio nunca
+   deixa a crianca parada numa tela que nao anda. */
+function acabouOTempo(){
+  var i;
+  for(i=ri;i<RAIO.length;i++) if(faltou.indexOf(RAIO[i].c)<0&&acertos.indexOf(RAIO[i].c)<0)
+    faltou.push(RAIO[i].c);
+  ri=RAIO.length;
+  mostraBanner("Tempo! Vamos ver o que voc&#234; j&#225; sabe de cor.",telaFimRelampago);
+}
+
+/* ---------- responder ---------- */
+function responde(o,certa,f){
+  if(travado) return;
+  travado=1;
+  trancaTudo();
+  if(certa){
+    sCerto();
+    o.className="opt ok";
+    o.innerHTML=o.innerHTML+'<span class="marca">isso!</span>';
+    acertos.push(f.c);
+    proxima(430);
+    return;
+  }
+  /* ⚠️ SEM ANDAIME e SEM CASTIGO: a certa acende com a marca escrita, a
+     rodada anda, e o que faltou volta no boletim como "treinar de novo".
+     Nada de X vermelho, nada da palavra "errou". */
+  sErro();
+  o.className="opt no";
+  acendeCerta(f);
+  if(faltou.indexOf(f.c)<0) faltou.push(f.c);
+  proxima(900);
+}
+function passa(f){
+  if(travado) return;
+  travado=1;
+  sTap();
+  trancaTudo();
+  acendeCerta(f);
+  if(faltou.indexOf(f.c)<0) faltou.push(f.c);
+  proxima(800);
+}
+function acendeCerta(f){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")==="1"&&a[i].className.indexOf("marca")<0){
+      a[i].className="opt ok";
+      a[i].innerHTML=a[i].innerHTML+'<span class="marca fria">era esta</span>';
+    }
+  }
+}
+function trancaTudo(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) a[i].onclick=null;
+  var p=app.getElementsByClassName("passar");
+  for(i=0;i<p.length;i++) p[i].onclick=null;
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
+   geracao ele passaria de pergunta numa tela que ja saiu. */
+function proxima(ms){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger) return;
+    ri++;
+    if(ri<RAIO.length&&resta>0) telaRelampago();
+    else { paraRelogio(); telaFimRelampago(); }
+  },ms);
+}
+
+/* ---------- o fim: mostra O QUE ACERTOU. "Errou" não existe aqui. ------- */
+function telaFimRelampago(){
+  paraRelogio(); ger++;
+  /* tela de fim aberta sem ninguem ter respondido (o tempo acabou com a
+     crianca parada, ou o auditor chamou a tela direto): e o mesmo estado, e
+     ele tem que aparecer INTEIRO — senao a lista do boletim nunca e medida
+     pelos portoes de contraste e leiaute. */
+  if(!acertos.length&&!faltou.length){
+    for(var k=0;k<RAIO.length;k++) faltou.push(RAIO[k].c);
+  }
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","DE CABE&#199;A"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao",
+    "Voc&#234; respondeu de cabe&#231;a e acertou <b>"+acertos.length+" de "+RAIO.length+"</b>."));
+  var li=el("div","r_lista"), i;
+  if(acertos.length){
+    li.appendChild(el("div","tit","VOC&#202; ACERTOU"));
+    for(i=0;i<acertos.length;i++) li.appendChild(el("div","item acertou","&#10003; "+acertos[i]));
+  }
+  if(faltou.length){
+    li.appendChild(el("div","tit","PARA TREINAR DE NOVO"));
+    for(i=0;i<faltou.length;i++) li.appendChild(el("div","item","&#183; "+faltou[i]));
+  }
+  c.appendChild(li);
+  /* ⚠️⚠️ LICAO PAGA (ago/2026) — O BECO. Esta peca fechava com um botao
+     "Jogar de novo" que chamava `telaComecarRelampago` DIRETO. Na bancada isso
+     e certo; DENTRO da atividade e um beco: a crianca termina o aquecimento da
+     fase 13 de 39 e o unico caminho e refazer o MESMO aquecimento, para sempre.
+     O integrador tem a ponte que conserta isso (`fimDaPeca = _seguir`), so que
+     ela so funciona para quem CHAMA `fimDaPeca` — e esta peca nao chamava,
+     porque nem tinha a funcao. A ponte estava armada e mirando no vazio.
+     Agora o botao chama `fimDaPeca()`: na bancada ele fecha a peca, na
+     atividade ele vai para a fase seguinte. Uma linha, dois lugares certos. */
+  var b=el("button","btn","Continuar &#187;");
+  b.onclick=function(){ fimDaPeca(); };
+  c.appendChild(b);
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+/* ---------- o fim NA BANCADA (dentro da atividade o integrador troca) ------
+   ⚠️ o texto que fala de "peca" mora AQUI e so aqui. Antes ele estava na tela
+   de resultado, que a crianca ve dentro da atividade: ela lia "esta e a peca
+   RELAMPAGO" no meio da historia da Central de Entregas. */
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao",
+    "Esta &#233; a pe&#231;a <b>REL&#194;MPAGO</b>: sem dica no meio, sem castigo no fim."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaComecarRelampago;
+  c.appendChild(b);
+  t.appendChild(c);
+  app.appendChild(t);
+}
+    if(f && f.dados) RAIO = f.dados;
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    telaComecarRelampago();
+  })();
+};
+
 /* ==== PECA: repartir ==== */
 MEC["repartir"] = function(f, cen, fim){
   cen.className = cen.className + " mec-repartir";
@@ -8835,12 +9277,12 @@ function recomecaSaltos(){ rodadaF=0; telaSaltos(); }
 /* ====== O CONTEUDO DESTA ATIVIDADE (escrito pelo montador) ====== */
 ROTULOS = {"objetivo1": "Juntar duas partes e ver quanto fica ao todo", "objetivo2": "Acrescentar: eu tinha, ganhei mais, quanto tenho agora", "objetivo3": "Separar o todo em partes e ver quanto ficou de um lado", "objetivo4": "Retirar: tirei um tanto, quanto sobrou", "objetivo5": "Comparar: quantos a mais (ou a menos) um tem que o outro"};
 IMGS = ["fe_coruja_feliz", "fe_coruja_fala", "fe_coruja_pisca", "fe_cr1", "fe_cr2", "fe_cr3", "fe_cr4", "fe_cr5", "fe_cr6", "med_fe"];
-VITRINE = ["fe_maca", "fe_morango", "fe_laranja", "fe_banana", "fe_limao", "fe_maca", "fe_maca", "fe_tomate", "fe_maca", "fe_cenoura", "fe_maca", "fe_laranja", "fe_maca", "fe_morango", "fe_laranja", "fe_banana", "fe_limao"];
+VITRINE = ["fe_maca", "fe_morango", "fe_laranja", "fe_banana", "fe_limao", "fe_maca", "fe_maca", "fe_tomate", "fe_maca", "fe_cenoura", "fe_maca", "fe_laranja", "fe_maca", "fe_morango", "fe_laranja", "fe_banana", "fe_limao", "fe_tomate", "fe_cenoura"];
 FIM = {titulo:"A Feirinha da Dona Coruja!", texto:"Você salvou a feira, que alegria! Amanhã chega um caminhão cheio de frutas novas... será que vamos precisar juntar tudo outra vez? Volte amanhã para a gente descobrir!", cracha:"A Feirinha da Dona Coruja"};
 ABERTURA = {texto:"Bom dia! A minha feirinha vai abrir e as frutas estão todas para contar. Sozinha eu não dou conta... você me ajuda a descobrir quanto tem em cada banca?", voz:"fe_abertura"};
-FASES = [{"id": "f01", "mec": "contadores", "selo": "CONTE JUNTO", "conceito": "objetivo1", "enunciado": "A Dona Coruja tem <b>3</b> maçãs e ganhou mais <b>2</b>. Toque para juntar e conte quantas ficam.", "dica": "Comece do 3 e continue: 4... 5.", "dados": [{"ini": 3, "alvo": 5, "item": "fe_maca", "pl": "maçãs", "sing": "maçã", "verbo": "Ponha", "onde": "na cesta", "label": "NA CESTA", "selo": "A CESTA"}, {"ini": 4, "alvo": 7, "item": "fe_morango", "pl": "morangos", "sing": "morango", "verbo": "Ponha", "onde": "na cesta", "label": "NA CESTA", "selo": "A CESTA"}], "vozIntro": "fe_f01_intro", "dicaVoz": "fe_f01_dica"}, {"id": "f07", "mec": "contadores", "selo": "CONTE JUNTO", "conceito": "objetivo2", "enunciado": "Havia <b>6</b> morangos na tigela e você coloca mais <b>5</b>. Conte quantos ficam.", "dica": "Comece do 6 e continue: 7, 8...", "dados": [{"ini": 6, "alvo": 11, "item": "fe_morango", "pl": "morangos", "sing": "morango", "verbo": "Ponha", "onde": "na tigela", "label": "NA TIGELA", "selo": "A TIGELA"}, {"ini": 7, "alvo": 10, "item": "fe_morango", "pl": "morangos", "sing": "morango", "verbo": "Ponha", "onde": "na tigela", "label": "NA TIGELA", "selo": "A TIGELA"}], "vozIntro": "fe_f07_intro", "dicaVoz": "fe_f07_dica"}, {"id": "f02", "mec": "escolher", "selo": "JUNTAR", "conceito": "objetivo1", "enunciado": "Numa cesta há <b>4</b> laranjas e na outra <b>3</b>. Juntando, quantas são?", "dica": "Conte as duas cestas de uma vez só.", "dados": [{"img": "fe_laranja", "p": "Numa cesta há <b>4</b> laranjas e na outra <b>3</b>. Juntando, quantas são?", "c": {"t": "7", "voz": "sete"}, "e": [{"t": "6", "voz": "seis"}, {"t": "8", "voz": "oito"}, {"t": "5", "voz": "cinco"}], "d": ["Comece nas 4 e continue nas outras 3.", "4... 5, 6, 7.", "São <b>7</b> laranjas. Toque para seguir."]}, {"img": "fe_maca", "p": "Há <b>5</b> maçãs numa banca e <b>4</b> na outra. Juntando, quantas são?", "c": {"t": "9", "voz": "nove"}, "e": [{"t": "8", "voz": "oito"}, {"t": "10", "voz": "dez"}, {"t": "7", "voz": "sete"}], "d": ["Comece nas 5 e continue nas outras 4.", "5... 6, 7, 8, 9.", "São <b>9</b> maçãs. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTAS AO TODO", "FECHO": "Você juntou tudo certinho!"}, "vozIntro": "fe_f02_intro", "dicaVoz": "fe_f02_dica"}, {"id": "f06", "mec": "escolher", "selo": "ACRESCENTAR", "conceito": "objetivo2", "enunciado": "A Coruja tinha <b>8</b> bananas e ganhou mais <b>4</b>. Quantas tem agora?", "dica": "Comece do 8 e acrescente 4.", "dados": [{"img": "fe_banana", "p": "Tinha <b>8</b> bananas e ganhou mais <b>4</b>. Quantas agora?", "c": {"t": "12", "voz": "doze"}, "e": [{"t": "11", "voz": "onze"}, {"t": "13", "voz": "treze"}, {"t": "10", "voz": "dez"}], "d": ["Guarde o 8 e conte mais 4.", "8... 9, 10, 11, 12.", "São <b>12</b> bananas. Toque para seguir."]}, {"img": "fe_morango", "p": "Havia <b>6</b> morangos e você colocou mais <b>3</b>. Quantos agora?", "c": {"t": "9", "voz": "nove"}, "e": [{"t": "8", "voz": "oito"}, {"t": "10", "voz": "dez"}, {"t": "7", "voz": "sete"}], "d": ["Comece do 6 e conte mais 3.", "6... 7, 8, 9.", "São <b>9</b> morangos. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTAS AGORA", "FECHO": "Você acrescentou certinho!"}, "vozIntro": "fe_f06_intro", "dicaVoz": "fe_f06_dica"}, {"id": "f14", "mec": "escolher", "selo": "RETIRAR", "conceito": "objetivo4", "enunciado": "A Coruja tinha <b>8</b> limões e vendeu <b>3</b>. Quantos restaram na banca?", "dica": "Tire os 3 vendidos e conte o que sobra.", "dados": [{"img": "fe_limao", "p": "Tinha <b>8</b> limões e vendeu <b>3</b>. Quantos restaram?", "c": {"t": "5", "voz": "cinco"}, "e": [{"t": "6", "voz": "seis"}, {"t": "4", "voz": "quatro"}, {"t": "11", "voz": "onze"}], "d": ["Comece do 8 e volte 3.", "8... 7, 6, 5.", "Restaram <b>5</b> limões. Toque para seguir."]}, {"img": "fe_maca", "p": "Tinha <b>10</b> maçãs e vendeu <b>4</b>. Quantas restaram?", "c": {"t": "6", "voz": "seis"}, "e": [{"t": "5", "voz": "cinco"}, {"t": "7", "voz": "sete"}, {"t": "14", "voz": "catorze"}], "d": ["Comece do 10 e volte 4.", "10... 9, 8, 7, 6.", "Restaram <b>6</b> maçãs. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTOS RESTARAM", "FECHO": "Você retirou certinho!"}, "vozIntro": "fe_f14_intro", "dicaVoz": "fe_f14_dica"}, {"id": "f05", "mec": "saltos-na-fita", "selo": "PULOS DE 2", "conceito": "objetivo2", "enunciado": "A cada cesta a Coruja guarda <b>2</b> frutas. Dê os pulos de 2 em 2 até o fim.", "dica": "Um pulo tem sempre 2 passinhos: conte um, dois.", "dados": [{"p": 2, "ate": 12, "dic": "Um pulo tem sempre <b>2</b> passinhos. Conte a partir de onde ela está."}, {"p": 2, "ate": 16, "dic": "De 2 em 2: 2, 4, 6, 8, 10, 12, 14, 16."}], "vozIntro": "fe_f05_intro", "dicaVoz": "fe_f05_dica"}, {"id": "f04", "mec": "completar", "selo": "QUANTO FALTA", "conceito": "objetivo1", "enunciado": "A Dona Coruja quer encher as cestas da feira. Toque no número que falta para chegar ao total.", "dica": "Conte de 6 até 9 nos dedos: quantos você subiu?", "dados": [{"img": "fe_maca", "ante": "Tinha 6 maçãs, quero 9. Faltam ", "dep": " maçãs.", "cer": "três", "out": ["dois", "quatro"], "dic": "De 6 para 9: 7, 8, 9 — são 3."}, {"img": "fe_uva", "ante": "Tinha 4 cachos, quero 10. Faltam ", "dep": " cachos.", "cer": "seis", "out": ["cinco", "sete"], "dic": "De 4 até 10: 5, 6, 7, 8, 9, 10 — são 6."}], "dadosExtra": {"ENUN": "Toque no número que <b>falta</b> para fechar a conta.", "DEPOIS": "Leia a conta inteira antes de escolher.", "FECHO": "Você fechou as contas!"}, "vozIntro": "fe_f04_intro", "dicaVoz": "fe_f04_dica"}, {"id": "f08", "mec": "completar", "selo": "QUANTO FALTA", "conceito": "objetivo2", "enunciado": "A Coruja está enchendo a banca. Toque em quanto ela precisa acrescentar.", "dica": "Conte de 7 até 13.", "dados": [{"img": "fe_tomate", "ante": "Tinha 7 tomates, quer 13. Precisa de mais ", "dep": ".", "cer": "seis", "out": ["cinco", "sete"], "dic": "De 7 até 13: 8, 9, 10, 11, 12, 13 — são 6."}, {"img": "fe_banana", "ante": "Tinha 9 bananas, quer 14. Precisa de mais ", "dep": ".", "cer": "cinco", "out": ["quatro", "seis"], "dic": "De 9 até 14: 10, 11, 12, 13, 14 — são 5."}], "dadosExtra": {"ENUN": "Toque no número que <b>falta</b>.", "DEPOIS": "Leia a conta inteira antes de escolher.", "FECHO": "Você completou!"}, "vozIntro": "fe_f08_intro", "dicaVoz": "fe_f08_dica"}, {"id": "aquecimento", "mec": "memoria", "selo": "AQUECIMENTO", "conceito": "objetivo1", "enunciado": "Pare para descansar: ache os <b>pares</b> de frutas iguais.", "dica": "Vire duas cartas e veja se combinam.", "dados": [{"k": "m", "img": "fe_maca", "imgsen": "fe_maca", "voz": "maçã", "vozsen": "maçã"}, {"k": "l", "img": "fe_laranja", "imgsen": "fe_laranja", "voz": "laranja", "vozsen": "laranja"}, {"k": "u", "img": "fe_uva", "imgsen": "fe_uva", "voz": "uva", "vozsen": "uva"}, {"k": "b", "img": "fe_banana", "imgsen": "fe_banana", "voz": "banana", "vozsen": "banana"}], "vozIntro": "fe_aquecimento_intro", "dicaVoz": "fe_aquecimento_dica"}, {"id": "f16", "mec": "comparar", "selo": "QUANTAS A MAIS?", "conceito": "objetivo5", "enunciado": "Compare as duas bancas. <b>Quantas cenouras a mais</b> que tomates?", "dica": "Case cada cenoura com um tomate e veja quantas sobram.", "dados": [{"a": 6, "b": 4, "modo": "blocos", "imgA": "fe_cenoura", "imgB": "fe_tomate", "pergunta": "mais", "semSinal": true, "selo": "QUANTAS A MAIS?", "enun": "Quantas <b>cenouras a mais</b> que tomates?", "voz": "Quantas cenouras a mais que tomates?"}, {"a": 7, "b": 5, "modo": "blocos", "imgA": "fe_cenoura", "imgB": "fe_tomate", "pergunta": "mais", "semSinal": true, "selo": "QUANTAS A MAIS?", "enun": "Agora: quantas <b>cenouras a mais</b> que tomates?", "voz": "Quantas cenouras a mais que tomates?"}], "dadosExtra": {"D1": ["Ponha uma cenoura em frente de cada tomate.", "As cenouras que sobram sem par são as “a mais”.", "Conte as que sobraram e toque no número."]}, "vozIntro": "fe_f16_intro", "dicaVoz": "fe_f16_dica"}, {"id": "f19", "mec": "comparar", "selo": "QUANTAS A MENOS?", "conceito": "objetivo5", "enunciado": "Uma banca tem <b>9</b> maçãs e outra <b>5</b>. <b>Quantas a menos</b> tem a segunda?", "dica": "Case as frutas e veja quantas faltam na banca menor.", "dados": [{"a": 9, "b": 5, "modo": "blocos", "imgA": "fe_maca", "imgB": "fe_maca", "pergunta": "menos", "semSinal": true, "selo": "QUANTAS A MENOS?", "enun": "Quantas maçãs a <b>segunda</b> banca tem a menos?", "voz": "Quantas maçãs a segunda banca tem a menos?"}, {"a": 8, "b": 6, "modo": "blocos", "imgA": "fe_uva", "imgB": "fe_uva", "pergunta": "menos", "semSinal": true, "selo": "QUANTAS A MENOS?", "enun": "Quantos cachos a <b>segunda</b> banca tem a menos?", "voz": "Quantos cachos a segunda banca tem a menos?"}], "dadosExtra": {"D1": ["Case cada fruta de cima com uma de baixo.", "As que faltam embaixo são as “a menos”.", "Conte quantas faltaram e toque no número."]}, "vozIntro": "fe_f19_intro", "dicaVoz": "fe_f19_dica"}, {"id": "f10", "mec": "base-dez", "selo": "CAIXA DE 10", "conceito": "objetivo3", "enunciado": "Junte as frutas soltas em <b>caixas de 10</b> e veja quantas caixas e soltas ficam.", "dica": "Cada 10 soltas enchem 1 caixa.", "dados": [{"selo": "CAIXA DE 10", "soltos": 13, "pTipo": "dsuni", "pImg": "fe_laranja", "tTipo": "dsdez", "vale": 1, "valeT": 10, "nomeP": "laranjas soltas", "nomeT": "caixa de 10", "nomeTs": "caixas de 10", "fala": "Arraste <b>10 laranjas</b> para a caixa. Cada 10 viram <b>1 caixa</b>."}, {"selo": "CAIXA DE 10", "soltos": 16, "pTipo": "dsuni", "pImg": "fe_maca", "tTipo": "dsdez", "vale": 1, "valeT": 10, "nomeP": "maçãs soltas", "nomeT": "caixa de 10", "nomeTs": "caixas de 10", "fala": "Encha a <b>caixa de 10</b> com maçãs e veja quantas sobram soltas."}], "dadosExtra": {"DICAS": ["Conte 10 frutas soltas e arraste para a caixa.", "Quando a caixa enche, ela vira 1 caixa de 10.", "Deixa comigo: eu encho esta caixa e você segue."]}, "vozIntro": "fe_f10_intro", "dicaVoz": "fe_f10_dica"}, {"id": "f11", "mec": "repartir", "selo": "REPARTIR IGUAL", "conceito": "objetivo3", "enunciado": "Reparta as <b>10</b> maçãs em <b>2</b> bancas iguais. Quantas ficam em cada banca?", "dica": "Dá uma para cada banca, por vez, até acabar.", "dados": [{"un": 10, "n": 2, "img": "fe_maca", "coisa": "maçãs", "grupo": "banca", "grupos": "bancas", "nome": "a <b>metade</b>", "selo": "REPARTIR IGUAL"}, {"un": 8, "n": 2, "img": "fe_morango", "coisa": "morangos", "grupo": "banca", "grupos": "bancas", "nome": "a <b>metade</b>", "selo": "REPARTIR IGUAL"}], "dadosExtra": {"DICAS": ["Dê uma fruta para cada banca, por vez.", "Quando acabar, conte quantas ficaram em uma banca.", "Deixa comigo: eu reparto e você confere."]}, "vozIntro": "fe_f11_intro", "dicaVoz": "fe_f11_dica"}, {"id": "fi01", "mec": "intruso", "selo": "ACHE O INTRUSO", "conceito": "objetivo1", "enunciado": "Três destas contas dão o <b>mesmo total</b>. Ache a que NÃO dá.", "dica": "Faça cada continha de cabeça e veja qual é a diferente.", "dados": [{"selo": "ACHE O INTRUSO", "tipo": "texto", "enun": "Três destas contas dão <b>10</b>. Qual NÃO dá?", "itens": [{"k": "a", "n": "6 + 4"}, {"k": "b", "n": "7 + 3"}, {"k": "c", "n": "5 + 5"}, {"k": "d", "n": "8 + 3"}], "fora": "d", "nomeFora": "8 + 3", "d1": "Some cada continha devagar, uma de cada vez.", "d2": "6+4, 7+3 e 5+5 dão 10; 8+3 dá 11.", "d3": "A de fora é <b>8 + 3</b>: ela dá um total diferente das outras.", "razoes": [{"t": "As outras três dão 10; essa dá outro número.", "ok": 1}, {"t": "Porque é a conta mais comprida.", "ok": 0}, {"t": "Porque tem o número maior.", "ok": 0}], "enunPorque": "Por que <b>8 + 3</b> é a diferente? Toque na razão certa.", "p1": "Olhe o TOTAL de cada uma, não os números soltos.", "p2": "O tamanho dos números não importa; importa quanto dá.", "p3": "Some de novo: qual não chega no mesmo total?"}], "vozIntro": "fe_fi01_intro", "dicaVoz": "fe_fi01_dica"}, {"id": "fi02", "mec": "intruso", "selo": "ACHE O INTRUSO", "conceito": "objetivo1", "enunciado": "Três destas contas dão o <b>mesmo total</b>. Ache a que NÃO dá.", "dica": "Faça cada continha de cabeça e veja qual é a diferente.", "dados": [{"selo": "ACHE O INTRUSO", "tipo": "texto", "enun": "Três destas contas dão <b>7</b>. Qual NÃO dá?", "itens": [{"k": "a", "n": "9 − 2"}, {"k": "b", "n": "5 + 2"}, {"k": "c", "n": "3 + 4"}, {"k": "d", "n": "6 + 3"}], "fora": "d", "nomeFora": "6 + 3", "d1": "Some cada continha devagar, uma de cada vez.", "d2": "9−2, 5+2 e 3+4 dão 7; 6+3 dá 9.", "d3": "A de fora é <b>6 + 3</b>: ela dá um total diferente das outras.", "razoes": [{"t": "As outras três dão 7; essa dá outro número.", "ok": 1}, {"t": "Porque é a conta mais comprida.", "ok": 0}, {"t": "Porque tem o número maior.", "ok": 0}], "enunPorque": "Por que <b>6 + 3</b> é a diferente? Toque na razão certa.", "p1": "Olhe o TOTAL de cada uma, não os números soltos.", "p2": "O tamanho dos números não importa; importa quanto dá.", "p3": "Some de novo: qual não chega no mesmo total?"}], "vozIntro": "fe_fi02_intro", "dicaVoz": "fe_fi02_dica"}, {"id": "fq01", "mec": "quem-sou-eu", "selo": "ADIVINHE O NÚMERO", "conceito": "objetivo1", "enunciado": "Ouça as pistas e descubra o <b>número</b>.", "dica": "Vá tirando os que não servem, uma pista de cada vez.", "dados": [{"resp": "8", "pistas": ["Sou o resultado de <b>5 + 3</b>.", "Sou um número <b>par</b>.", "Venho logo depois do 7."], "outros": ["7", "9", "6"]}, {"resp": "6", "pistas": ["Sou o resultado de <b>10 − 4</b>.", "Sou um número <b>par</b>.", "Sou menor que 7."], "outros": ["4", "8", "5"]}], "vozIntro": "fe_fq01_intro", "dicaVoz": "fe_fq01_dica"}, {"id": "f22", "mec": "estimar", "selo": "CHUTE ESPERTO", "conceito": "objetivo5", "enunciado": "Sem contar de um em um: quantas frutas você acha que tem neste pote?", "dica": "Olhe um punhado e imagine quantos punhados cabem.", "dados": [{"n": 14, "max": 30, "ini": 15, "qa": 10, "cls": "", "seed": 41, "ancora": 1, "selo": "O POTE DE FRUTAS", "coisa": "frutas", "voz": "frutas", "atalhos": [5, 10, 20]}, {"n": 19, "max": 30, "ini": 15, "qa": 12, "cls": "grao", "seed": 58, "ancora": 1, "selo": "O SACO DE GRÃOS", "coisa": "grãos", "voz": "grãos", "atalhos": [5, 10, 20]}], "dadosExtra": {"ESTRAT": ["Escolha um cantinho, conte quantas tem ali.", "Veja quantas vezes aquele cantinho cabe no pote.", "Chegou perto? Ótimo! Estimar é chegar perto sem contar tudo."]}, "vozIntro": "fe_f22_intro", "dicaVoz": "fe_f22_dica"}];
+FASES = [{"id": "f01", "mec": "contadores", "selo": "CONTE JUNTO", "conceito": "objetivo1", "enunciado": "A Dona Coruja tem <b>3</b> maçãs e ganhou mais <b>2</b>. Toque para juntar e conte quantas ficam.", "dica": "Comece do 3 e continue: 4... 5.", "dados": [{"ini": 3, "alvo": 5, "item": "fe_maca", "pl": "maçãs", "sing": "maçã", "verbo": "Ponha", "onde": "na cesta", "label": "NA CESTA", "selo": "A CESTA"}, {"ini": 4, "alvo": 7, "item": "fe_morango", "pl": "morangos", "sing": "morango", "verbo": "Ponha", "onde": "na cesta", "label": "NA CESTA", "selo": "A CESTA"}], "vozIntro": "fe_f01_intro", "dicaVoz": "fe_f01_dica"}, {"id": "f07", "mec": "contadores", "selo": "CONTE JUNTO", "conceito": "objetivo2", "enunciado": "Havia <b>6</b> morangos na tigela e você coloca mais <b>5</b>. Conte quantos ficam.", "dica": "Comece do 6 e continue: 7, 8...", "dados": [{"ini": 6, "alvo": 11, "item": "fe_morango", "pl": "morangos", "sing": "morango", "verbo": "Ponha", "onde": "na tigela", "label": "NA TIGELA", "selo": "A TIGELA"}, {"ini": 7, "alvo": 10, "item": "fe_morango", "pl": "morangos", "sing": "morango", "verbo": "Ponha", "onde": "na tigela", "label": "NA TIGELA", "selo": "A TIGELA"}], "vozIntro": "fe_f07_intro", "dicaVoz": "fe_f07_dica"}, {"id": "f02", "mec": "escolher", "selo": "JUNTAR", "conceito": "objetivo1", "enunciado": "Numa cesta há <b>4</b> laranjas e na outra <b>3</b>. Juntando, quantas são?", "dica": "Conte as duas cestas de uma vez só.", "dados": [{"img": "fe_laranja", "p": "Numa cesta há <b>4</b> laranjas e na outra <b>3</b>. Juntando, quantas são?", "c": {"t": "7", "voz": "sete"}, "e": [{"t": "6", "voz": "seis"}, {"t": "8", "voz": "oito"}, {"t": "5", "voz": "cinco"}], "d": ["Comece nas 4 e continue nas outras 3.", "4... 5, 6, 7.", "São <b>7</b> laranjas. Toque para seguir."]}, {"img": "fe_maca", "p": "Há <b>5</b> maçãs numa banca e <b>4</b> na outra. Juntando, quantas são?", "c": {"t": "9", "voz": "nove"}, "e": [{"t": "8", "voz": "oito"}, {"t": "10", "voz": "dez"}, {"t": "7", "voz": "sete"}], "d": ["Comece nas 5 e continue nas outras 4.", "5... 6, 7, 8, 9.", "São <b>9</b> maçãs. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTAS AO TODO", "FECHO": "Você juntou tudo certinho!"}, "vozIntro": "fe_f02_intro", "dicaVoz": "fe_f02_dica"}, {"id": "f06", "mec": "escolher", "selo": "ACRESCENTAR", "conceito": "objetivo2", "enunciado": "A Coruja tinha <b>8</b> bananas e ganhou mais <b>4</b>. Quantas tem agora?", "dica": "Comece do 8 e acrescente 4.", "dados": [{"img": "fe_banana", "p": "Tinha <b>8</b> bananas e ganhou mais <b>4</b>. Quantas agora?", "c": {"t": "12", "voz": "doze"}, "e": [{"t": "11", "voz": "onze"}, {"t": "13", "voz": "treze"}, {"t": "10", "voz": "dez"}], "d": ["Guarde o 8 e conte mais 4.", "8... 9, 10, 11, 12.", "São <b>12</b> bananas. Toque para seguir."]}, {"img": "fe_morango", "p": "Havia <b>6</b> morangos e você colocou mais <b>3</b>. Quantos agora?", "c": {"t": "9", "voz": "nove"}, "e": [{"t": "8", "voz": "oito"}, {"t": "10", "voz": "dez"}, {"t": "7", "voz": "sete"}], "d": ["Comece do 6 e conte mais 3.", "6... 7, 8, 9.", "São <b>9</b> morangos. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTAS AGORA", "FECHO": "Você acrescentou certinho!"}, "vozIntro": "fe_f06_intro", "dicaVoz": "fe_f06_dica"}, {"id": "f14", "mec": "escolher", "selo": "RETIRAR", "conceito": "objetivo4", "enunciado": "A Coruja tinha <b>8</b> limões e vendeu <b>3</b>. Quantos restaram na banca?", "dica": "Tire os 3 vendidos e conte o que sobra.", "dados": [{"img": "fe_limao", "p": "Tinha <b>8</b> limões e vendeu <b>3</b>. Quantos restaram?", "c": {"t": "5", "voz": "cinco"}, "e": [{"t": "6", "voz": "seis"}, {"t": "4", "voz": "quatro"}, {"t": "11", "voz": "onze"}], "d": ["Comece do 8 e volte 3.", "8... 7, 6, 5.", "Restaram <b>5</b> limões. Toque para seguir."]}, {"img": "fe_maca", "p": "Tinha <b>10</b> maçãs e vendeu <b>4</b>. Quantas restaram?", "c": {"t": "6", "voz": "seis"}, "e": [{"t": "5", "voz": "cinco"}, {"t": "7", "voz": "sete"}, {"t": "14", "voz": "catorze"}], "d": ["Comece do 10 e volte 4.", "10... 9, 8, 7, 6.", "Restaram <b>6</b> maçãs. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTOS RESTARAM", "FECHO": "Você retirou certinho!"}, "vozIntro": "fe_f14_intro", "dicaVoz": "fe_f14_dica"}, {"id": "f05", "mec": "saltos-na-fita", "selo": "PULOS DE 2", "conceito": "objetivo2", "enunciado": "A cada cesta a Coruja guarda <b>2</b> frutas. Dê os pulos de 2 em 2 até o fim.", "dica": "Um pulo tem sempre 2 passinhos: conte um, dois.", "dados": [{"p": 2, "ate": 12, "dic": "Um pulo tem sempre <b>2</b> passinhos. Conte a partir de onde ela está."}, {"p": 2, "ate": 16, "dic": "De 2 em 2: 2, 4, 6, 8, 10, 12, 14, 16."}], "vozIntro": "fe_f05_intro", "dicaVoz": "fe_f05_dica"}, {"id": "f04", "mec": "completar", "selo": "QUANTO FALTA", "conceito": "objetivo1", "enunciado": "A Dona Coruja quer encher as cestas da feira. Toque no número que falta para chegar ao total.", "dica": "Conte de 6 até 9 nos dedos: quantos você subiu?", "dados": [{"img": "fe_maca", "ante": "Tinha 6 maçãs, quero 9. Faltam ", "dep": " maçãs.", "cer": "três", "out": ["dois", "quatro"], "dic": "De 6 para 9: 7, 8, 9 — são 3."}, {"img": "fe_uva", "ante": "Tinha 4 cachos, quero 10. Faltam ", "dep": " cachos.", "cer": "seis", "out": ["cinco", "sete"], "dic": "De 4 até 10: 5, 6, 7, 8, 9, 10 — são 6."}], "dadosExtra": {"ENUN": "Toque no número que <b>falta</b> para fechar a conta.", "DEPOIS": "Leia a conta inteira antes de escolher.", "FECHO": "Você fechou as contas!"}, "vozIntro": "fe_f04_intro", "dicaVoz": "fe_f04_dica"}, {"id": "f08", "mec": "completar", "selo": "QUANTO FALTA", "conceito": "objetivo2", "enunciado": "A Coruja está enchendo a banca. Toque em quanto ela precisa acrescentar.", "dica": "Conte de 7 até 13.", "dados": [{"img": "fe_tomate", "ante": "Tinha 7 tomates, quer 13. Precisa de mais ", "dep": ".", "cer": "seis", "out": ["cinco", "sete"], "dic": "De 7 até 13: 8, 9, 10, 11, 12, 13 — são 6."}, {"img": "fe_banana", "ante": "Tinha 9 bananas, quer 14. Precisa de mais ", "dep": ".", "cer": "cinco", "out": ["quatro", "seis"], "dic": "De 9 até 14: 10, 11, 12, 13, 14 — são 5."}], "dadosExtra": {"ENUN": "Toque no número que <b>falta</b>.", "DEPOIS": "Leia a conta inteira antes de escolher.", "FECHO": "Você completou!"}, "vozIntro": "fe_f08_intro", "dicaVoz": "fe_f08_dica"}, {"id": "aquecimento", "mec": "memoria", "selo": "AQUECIMENTO", "conceito": "objetivo1", "enunciado": "Pare para descansar: ache os <b>pares</b> de frutas iguais.", "dica": "Vire duas cartas e veja se combinam.", "dados": [{"k": "m", "img": "fe_maca", "imgsen": "fe_maca", "voz": "maçã", "vozsen": "maçã"}, {"k": "l", "img": "fe_laranja", "imgsen": "fe_laranja", "voz": "laranja", "vozsen": "laranja"}, {"k": "u", "img": "fe_uva", "imgsen": "fe_uva", "voz": "uva", "vozsen": "uva"}, {"k": "b", "img": "fe_banana", "imgsen": "fe_banana", "voz": "banana", "vozsen": "banana"}], "vozIntro": "fe_aquecimento_intro", "dicaVoz": "fe_aquecimento_dica"}, {"id": "f16", "mec": "comparar", "selo": "QUANTAS A MAIS?", "conceito": "objetivo5", "enunciado": "Compare as duas bancas. <b>Quantas cenouras a mais</b> que tomates?", "dica": "Case cada cenoura com um tomate e veja quantas sobram.", "dados": [{"a": 6, "b": 4, "modo": "blocos", "imgA": "fe_cenoura", "imgB": "fe_tomate", "pergunta": "mais", "semSinal": true, "selo": "QUANTAS A MAIS?", "enun": "Quantas <b>cenouras a mais</b> que tomates?", "voz": "Quantas cenouras a mais que tomates?"}, {"a": 7, "b": 5, "modo": "blocos", "imgA": "fe_cenoura", "imgB": "fe_tomate", "pergunta": "mais", "semSinal": true, "selo": "QUANTAS A MAIS?", "enun": "Agora: quantas <b>cenouras a mais</b> que tomates?", "voz": "Quantas cenouras a mais que tomates?"}], "dadosExtra": {"D1": ["Ponha uma cenoura em frente de cada tomate.", "As cenouras que sobram sem par são as “a mais”.", "Conte as que sobraram e toque no número."]}, "vozIntro": "fe_f16_intro", "dicaVoz": "fe_f16_dica"}, {"id": "f19", "mec": "comparar", "selo": "QUANTAS A MENOS?", "conceito": "objetivo5", "enunciado": "Uma banca tem <b>9</b> maçãs e outra <b>5</b>. <b>Quantas a menos</b> tem a segunda?", "dica": "Case as frutas e veja quantas faltam na banca menor.", "dados": [{"a": 9, "b": 5, "modo": "blocos", "imgA": "fe_maca", "imgB": "fe_maca", "pergunta": "menos", "semSinal": true, "selo": "QUANTAS A MENOS?", "enun": "Quantas maçãs a <b>segunda</b> banca tem a menos?", "voz": "Quantas maçãs a segunda banca tem a menos?"}, {"a": 8, "b": 6, "modo": "blocos", "imgA": "fe_uva", "imgB": "fe_uva", "pergunta": "menos", "semSinal": true, "selo": "QUANTAS A MENOS?", "enun": "Quantos cachos a <b>segunda</b> banca tem a menos?", "voz": "Quantos cachos a segunda banca tem a menos?"}], "dadosExtra": {"D1": ["Case cada fruta de cima com uma de baixo.", "As que faltam embaixo são as “a menos”.", "Conte quantas faltaram e toque no número."]}, "vozIntro": "fe_f19_intro", "dicaVoz": "fe_f19_dica"}, {"id": "f10", "mec": "base-dez", "selo": "CAIXA DE 10", "conceito": "objetivo3", "enunciado": "Junte as frutas soltas em <b>caixas de 10</b> e veja quantas caixas e soltas ficam.", "dica": "Cada 10 soltas enchem 1 caixa.", "dados": [{"selo": "CAIXA DE 10", "soltos": 13, "pTipo": "dsuni", "pImg": "fe_laranja", "tTipo": "dsdez", "vale": 1, "valeT": 10, "nomeP": "laranjas soltas", "nomeT": "caixa de 10", "nomeTs": "caixas de 10", "fala": "Arraste <b>10 laranjas</b> para a caixa. Cada 10 viram <b>1 caixa</b>."}, {"selo": "CAIXA DE 10", "soltos": 16, "pTipo": "dsuni", "pImg": "fe_maca", "tTipo": "dsdez", "vale": 1, "valeT": 10, "nomeP": "maçãs soltas", "nomeT": "caixa de 10", "nomeTs": "caixas de 10", "fala": "Encha a <b>caixa de 10</b> com maçãs e veja quantas sobram soltas."}], "dadosExtra": {"DICAS": ["Conte 10 frutas soltas e arraste para a caixa.", "Quando a caixa enche, ela vira 1 caixa de 10.", "Deixa comigo: eu encho esta caixa e você segue."]}, "vozIntro": "fe_f10_intro", "dicaVoz": "fe_f10_dica"}, {"id": "f11", "mec": "repartir", "selo": "REPARTIR IGUAL", "conceito": "objetivo3", "enunciado": "Reparta as <b>10</b> maçãs em <b>2</b> bancas iguais. Quantas ficam em cada banca?", "dica": "Dá uma para cada banca, por vez, até acabar.", "dados": [{"un": 10, "n": 2, "img": "fe_maca", "coisa": "maçãs", "grupo": "banca", "grupos": "bancas", "nome": "a <b>metade</b>", "selo": "REPARTIR IGUAL"}, {"un": 8, "n": 2, "img": "fe_morango", "coisa": "morangos", "grupo": "banca", "grupos": "bancas", "nome": "a <b>metade</b>", "selo": "REPARTIR IGUAL"}], "dadosExtra": {"DICAS": ["Dê uma fruta para cada banca, por vez.", "Quando acabar, conte quantas ficaram em uma banca.", "Deixa comigo: eu reparto e você confere."]}, "vozIntro": "fe_f11_intro", "dicaVoz": "fe_f11_dica"}, {"id": "fi01", "mec": "intruso", "selo": "ACHE O INTRUSO", "conceito": "objetivo1", "enunciado": "Três destas contas dão o <b>mesmo total</b>. Ache a que NÃO dá.", "dica": "Faça cada continha de cabeça e veja qual é a diferente.", "dados": [{"selo": "ACHE O INTRUSO", "tipo": "texto", "enun": "Três destas contas dão <b>10</b>. Qual NÃO dá?", "itens": [{"k": "a", "n": "6 + 4"}, {"k": "b", "n": "7 + 3"}, {"k": "c", "n": "5 + 5"}, {"k": "d", "n": "8 + 3"}], "fora": "d", "nomeFora": "8 + 3", "d1": "Some cada continha devagar, uma de cada vez.", "d2": "6+4, 7+3 e 5+5 dão 10; 8+3 dá 11.", "d3": "A de fora é <b>8 + 3</b>: ela dá um total diferente das outras.", "razoes": [{"t": "As outras três dão 10; essa dá outro número.", "ok": 1}, {"t": "Porque é a conta mais comprida.", "ok": 0}, {"t": "Porque tem o número maior.", "ok": 0}], "enunPorque": "Por que <b>8 + 3</b> é a diferente? Toque na razão certa.", "p1": "Olhe o TOTAL de cada uma, não os números soltos.", "p2": "O tamanho dos números não importa; importa quanto dá.", "p3": "Some de novo: qual não chega no mesmo total?"}], "vozIntro": "fe_fi01_intro", "dicaVoz": "fe_fi01_dica"}, {"id": "fi02", "mec": "intruso", "selo": "ACHE O INTRUSO", "conceito": "objetivo1", "enunciado": "Três destas contas dão o <b>mesmo total</b>. Ache a que NÃO dá.", "dica": "Faça cada continha de cabeça e veja qual é a diferente.", "dados": [{"selo": "ACHE O INTRUSO", "tipo": "texto", "enun": "Três destas contas dão <b>7</b>. Qual NÃO dá?", "itens": [{"k": "a", "n": "9 − 2"}, {"k": "b", "n": "5 + 2"}, {"k": "c", "n": "3 + 4"}, {"k": "d", "n": "6 + 3"}], "fora": "d", "nomeFora": "6 + 3", "d1": "Some cada continha devagar, uma de cada vez.", "d2": "9−2, 5+2 e 3+4 dão 7; 6+3 dá 9.", "d3": "A de fora é <b>6 + 3</b>: ela dá um total diferente das outras.", "razoes": [{"t": "As outras três dão 7; essa dá outro número.", "ok": 1}, {"t": "Porque é a conta mais comprida.", "ok": 0}, {"t": "Porque tem o número maior.", "ok": 0}], "enunPorque": "Por que <b>6 + 3</b> é a diferente? Toque na razão certa.", "p1": "Olhe o TOTAL de cada uma, não os números soltos.", "p2": "O tamanho dos números não importa; importa quanto dá.", "p3": "Some de novo: qual não chega no mesmo total?"}], "vozIntro": "fe_fi02_intro", "dicaVoz": "fe_fi02_dica"}, {"id": "fq01", "mec": "quem-sou-eu", "selo": "ADIVINHE O NÚMERO", "conceito": "objetivo1", "enunciado": "Ouça as pistas e descubra o <b>número</b>.", "dica": "Vá tirando os que não servem, uma pista de cada vez.", "dados": [{"resp": "8", "pistas": ["Sou o resultado de <b>5 + 3</b>.", "Sou um número <b>par</b>.", "Venho logo depois do 7."], "outros": ["7", "9", "6"]}, {"resp": "6", "pistas": ["Sou o resultado de <b>10 − 4</b>.", "Sou um número <b>par</b>.", "Sou menor que 7."], "outros": ["4", "8", "5"]}], "vozIntro": "fe_fq01_intro", "dicaVoz": "fe_fq01_dica"}, {"id": "fr01", "mec": "relampago", "selo": "DESAFIO RELÂMPAGO", "conceito": "objetivo1", "enunciado": "Oito contas rápidas de somar! Toque na resposta certa antes do tempo.", "dica": "Não corra demais: leia a conta e responda.", "dados": [{"p": "5 + 3 = ?", "c": "8", "e": ["7", "9"]}, {"p": "6 + 2 = ?", "c": "8", "e": ["9", "6"]}, {"p": "4 + 3 = ?", "c": "7", "e": ["6", "8"]}, {"p": "7 + 2 = ?", "c": "9", "e": ["8", "10"]}, {"p": "3 + 5 = ?", "c": "8", "e": ["7", "9"]}, {"p": "8 + 1 = ?", "c": "9", "e": ["7", "10"]}, {"p": "6 + 3 = ?", "c": "9", "e": ["8", "10"]}, {"p": "5 + 4 = ?", "c": "9", "e": ["8", "7"]}], "vozIntro": "fe_fr01_intro", "dicaVoz": "fe_fr01_dica"}, {"id": "fr02", "mec": "relampago", "selo": "DESAFIO RELÂMPAGO", "conceito": "objetivo1", "enunciado": "Agora rápidas de tirar e comparar! Toque na resposta certa.", "dica": "Não corra demais: leia a conta e responda.", "dados": [{"p": "9 − 4 = ?", "c": "5", "e": ["4", "6"]}, {"p": "10 − 3 = ?", "c": "7", "e": ["6", "8"]}, {"p": "8 − 2 = ?", "c": "6", "e": ["5", "7"]}, {"p": "7 − 5 = ?", "c": "2", "e": ["3", "1"]}, {"p": "12 − 4 = ?", "c": "8", "e": ["7", "9"]}, {"p": "6 + 6 = ?", "c": "12", "e": ["11", "10"]}, {"p": "9 + 3 = ?", "c": "12", "e": ["13", "11"]}, {"p": "11 − 5 = ?", "c": "6", "e": ["5", "7"]}], "vozIntro": "fe_fr02_intro", "dicaVoz": "fe_fr02_dica"}, {"id": "f22", "mec": "estimar", "selo": "CHUTE ESPERTO", "conceito": "objetivo5", "enunciado": "Sem contar de um em um: quantas frutas você acha que tem neste pote?", "dica": "Olhe um punhado e imagine quantos punhados cabem.", "dados": [{"n": 14, "max": 30, "ini": 15, "qa": 10, "cls": "", "seed": 41, "ancora": 1, "selo": "O POTE DE FRUTAS", "coisa": "frutas", "voz": "frutas", "atalhos": [5, 10, 20]}, {"n": 19, "max": 30, "ini": 15, "qa": 12, "cls": "grao", "seed": 58, "ancora": 1, "selo": "O SACO DE GRÃOS", "coisa": "grãos", "voz": "grãos", "atalhos": [5, 10, 20]}], "dadosExtra": {"ESTRAT": ["Escolha um cantinho, conte quantas tem ali.", "Veja quantas vezes aquele cantinho cabe no pote.", "Chegou perto? Ótimo! Estimar é chegar perto sem contar tudo."]}, "vozIntro": "fe_f22_intro", "dicaVoz": "fe_f22_dica"}];
 AMBI = "poeira";
-VOZOK = {"4f281c": 1, "ykmrdp": 1, "4hecm3": 1, "ylatgk": 1, "zmvaza": 1, "10z0xij": 1, "1n8im9k": 1, "g3rxvu": 1, "1ejk01o": 1, "1ldwp27": 1, "ykrdtl": 1, "ykoejk": 1, "483ab5": 1, "1nkq4he": 1, "19k3iei": 1, "1yqu685": 1, "3775c8": 1, "ykre3a": 1, "1mfq7o": 1, "pgi4x7": 1, "1pll8lk": 1, "17o687p": 1, "1o83g72": 1, "ykoiw1": 1, "4ka4y7": 1, "1ty94we": 1, "18kkhsu": 1, "1tz2uc4": 1, "1ixbjib": 1, "o974py": 1, "lg3p4c": 1, "e55cvk": 1, "lcsdo6": 1, "6n71up": 1, "hybxf0": 1, "1i0g2f9": 1, "1dqtlxq": 1, "1dqasv1": 1, "122xd86": 1, "cex1nm": 1, "oukez3": 1, "1mgfyim": 1, "zsbgih": 1, "1lxuyf8": 1, "yutzvy": 1, "3qt9b2": 1, "yksjrc": 1, "ykg2ac": 1, "t29v4l": 1, "ysqxju": 1, "1de57yc": 1, "79lew": 1, "666mmn": 1, "msnao9": 1, "1q5vdou": 1, "68cv6": 1, "1ihmy9h": 1, "ss3gkc": 1, "faxudb": 1, "193da30": 1, "zs8z4": 1, "steoe6": 1, "377k1d": 1, "1vky71i": 1, "ykmo33": 1, "bytwx8": 1, "txd5lg": 1, "1mdjdx4": 1, "8gdqvf": 1, "38c1p7": 1, "4tbn9p": 1, "4f2ebr": 1, "13usdhg": 1, "19bxhu": 1, "30u9k6": 1, "yknrwd": 1, "wr2px7": 1, "1vggdep": 1, "ztncs": 1, "2h2ayd": 1, "490ktk": 1, "4906bj": 1, "1iuswqv": 1, "ymwa2w": 1, "92j28b": 1, "yt549y": 1, "16rmnkf": 1, "1m47jru": 1, "6rt9di": 1, "1gegr1c": 1, "1vky8el": 1, "19xwl9y": 1, "1jgwwow": 1, "1rb90je": 1, "1vi4h10": 1, "j1ew3q": 1, "1o8pkrd": 1, "22d8ds": 1, "onzfxw": 1, "lgxaz6": 1, "1uzpbvr": 1, "bs2w9r": 1, "zc7aav": 1, "12cq1x3": 1, "p71fbj": 1, "1qqwysj": 1, "7odyz2": 1, "m36nxm": 1, "h343ae": 1, "183v51b": 1, "1s25cit": 1, "1m51rkl": 1, "se01al": 1, "179izzc": 1, "o02o22": 1, "kswrg2": 1, "80lrlo": 1, "17wmjnx": 1, "r0gaju": 1, "1yibd3u": 1, "1ps4x7l": 1, "4b6mqr": 1, "1z0jft2": 1, "1aerp10": 1, "1ri6sf2": 1, "56ncca": 1, "1c7nbp8": 1, "1v8u0y8": 1, "d4vsjf": 1, "1fxqmec": 1, "16qqrhn": 1, "c6drdg": 1, "1uzgvic": 1, "yqzdtt": 1, "11j2htz": 1, "14fbyi7": 1, "14zf6fy": 1, "1pf05xd": 1, "1yjoeea": 1, "1iqno0l": 1, "yfzk22": 1, "11fiitv": 1, "z9h7rw": 1, "1vm0r06": 1, "18im19": 1, "1cyhab3": 1, "k6pl4h": 1, "5stqj6": 1, "1qg1xwz": 1, "o8b89n": 1, "9ufdoc": 1, "1uhnl25": 1, "4bba0b": 1, "b5aml": 1, "4bba0d": 1, "a7uz6k": 1, "tolx5n": 1, "1r6kzmk": 1, "6jlyc5": 1, "3rgj3n": 1, "2n5m2i": 1, "1e5z3gd": 1, "1sc09vt": 1, "15m3apr": 1, "12y8ha1": 1, "1o2xt1z": 1, "yvb00p": 1, "1p516t0": 1, "1suwlds": 1, "1fkcf2": 1, "4f07rq": 1, "uuy9cx": 1, "jfctks": 1, "6x9x6u": 1, "19qe2oe": 1, "19cgctb": 1, "7naae4": 1, "4gplry": 1, "1faldi7": 1, "w6q19y": 1, "1g0f6at": 1, "1w4izga": 1, "4r29yf": 1, "145rp61": 1, "9mnbq": 1, "1fm7p1p": 1, "1367fai": 1, "1h8giu5": 1, "m4u8cr": 1, "512rbf": 1, "4f9vrf": 1, "yknruf": 1, "18rcgvd": 1, "1hsduqb": 1, "l2pewm": 1, "1wi4fyf": 1, "ig7hn0": 1, "s8ur89": 1, "17obw0n": 1, "rjzne9": 1, "oq8zoy": 1, "qp3mpj": 1, "uqpl1w": 1, "ixwe70": 1, "d7cyk4": 1, "jghpxh": 1, "134lysc": 1, "1kbbmry": 1, "gni56g": 1, "a80sja": 1, "m2mdj0": 1, "1mrr1f8": 1, "18exxt3": 1, "9eonfb": 1, "132hlvx": 1, "k1nt3v": 1, "14yehap": 1, "l1fi9q": 1, "ugter0": 1, "yktbd0": 1, "yl7i8q": 1, "zmrzrg": 1, "1c2xm10": 1, "ep9dub": 1, "e448bi": 1, "5kb601": 1, "1cn18km": 1, "f23say": 1, "1qe9x3p": 1, "p7ed66": 1, "7koa5x": 1, "1hbo85o": 1, "l2f3as": 1, "xqztp6": 1, "bhrr7x": 1, "1yamzs2": 1, "1fnvq2g": 1, "1cuuwdz": 1, "p1a07n": 1, "k09mp1": 1, "7sodqz": 1, "bc6pk": 1, "1wmuu3k": 1, "1340r79": 1, "afcool": 1, "a9niyq": 1, "4dzwo4": 1, "fgt2kx": 1, "1i4wdqd": 1, "jmgz9z": 1, "6mkyrj": 1, "py70io": 1, "10xnt3v": 1, "b7wvj4": 1, "vgjuo4": 1, "127q2tp": 1, "a00slj": 1, "cf2nw4": 1, "1p52osh": 1, "dvsaxh": 1, "j1ebe2": 1, "d9bi4z": 1, "1rxbk95": 1, "w4hg6d": 1, "1wy8kr8": 1, "45ghz2": 1, "1aodvj2": 1, "1kzfu2c": 1, "z2xqax": 1, "1fbfno2": 1, "wp1ahq": 1, "1l65ig9": 1, "1n313oe": 1, "1mfug4v": 1, "hy7m1h": 1, "p7ivbf": 1, "v6jy3d": 1, "1wzg0rs": 1, "17ztr3s": 1, "1ou2kde": 1, "ufyzp4": 1, "1dkogfg": 1, "gw48ag": 1, "1qr6kx1": 1, "f3fw56": 1, "eykz04": 1, "sbs872": 1, "1cnu7cr": 1, "tdvly3": 1, "lma2bm": 1, "1ygif7k": 1, "jfuldc": 1, "t2d6lb": 1, "cskarr": 1, "8h3rhr": 1, "1g79l1u": 1, "4ezb6x": 1, "1k2kc7u": 1, "3sqqzn": 1, "19h9exy": 1, "se7wag": 1, "n0wr6a": 1, "1lw4j3r": 1, "184q84h": 1, "u4i5gw": 1, "3holj": 1, "wsw05s": 1, "1eecjvo": 1, "1ro7d22": 1, "1utu79": 1, "1hlk7j5": 1, "1cc50ut": 1, "m88xhh": 1, "1l6kuwc": 1, "1cne9pt": 1, "c0b6xr": 1, "1pr4ld": 1, "r58ma": 1, "1qfnl73": 1, "1a99af3": 1, "1o4cgzp": 1, "ooz20e": 1, "gwp0iy": 1, "1omcqe2": 1, "1hp94wg": 1, "t9z0ux": 1, "1wzr81m": 1, "ykg2pj": 1, "1x4v5wv": 1, "rirjf7": 1, "7tsm6z": 1, "1pwhwm2": 1, "y97dyb": 1, "41j6xy": 1, "1uwfbyx": 1, "109ua91": 1, "184qfx7": 1, "144jdp6": 1, "1sofj4t": 1, "13senm0": 1, "1wib2e9": 1, "ex7vek": 1, "1gw3hms": 1, "166id76": 1, "1wfnfne": 1, "13gjra3": 1, "939cpg": 1, "54hixm": 1, "1ekb3gp": 1, "1sxguz2": 1, "dtg997": 1, "1h4yflj": 1, "wq969x": 1, "mh0vqt": 1, "103ym76": 1, "cgo78d": 1, "1bly45y": 1, "y870r7": 1, "9cucl1": 1, "dw9tkl": 1, "15irq2e": 1, "a4i7ty": 1, "1bsjb28": 1, "1perkas": 1, "1g4y8av": 1, "hybxe3": 1, "1k1fiha": 1, "19nuatk": 1, "vjaa9a": 1, "skau5n": 1, "g0g1gz": 1, "4ddkln": 1, "137r4ah": 1, "6b8k6i": 1, "122xdax": 1, "1q8mylo": 1, "xfi4is": 1, "1t8u2yk": 1, "tbevxu": 1, "dp48x9": 1, "1n0u1a1": 1, "1yl8a5v": 1, "1skqs81": 1, "16o8tx5": 1, "105chak": 1, "l2f3kh": 1, "1t8u2vt": 1, "1wtw5a3": 1, "opqeun": 1, "4li8x7": 1, "ldmqkc": 1, "wmdk4x": 1, "da4ceq": 1, "1rar79v": 1, "1cjjg7z": 1, "z9nnx7": 1, "1j3ywfm": 1, "8tkosn": 1, "1au3thj": 1, "nlymqz": 1, "ckxlle": 1, "m9iozr": 1, "1h7c4wh": 1, "gs5zyf": 1, "8t4i44": 1, "uew86k": 1, "g2tsgj": 1, "1h0sc6g": 1, "1y3navt": 1, "1hwxwb3": 1, "syntsi": 1, "obnwl3": 1, "1rejeto": 1, "1igwyne": 1, "md2ae3": 1, "1ga5jbu": 1, "1d1pve1": 1, "2riwv7": 1, "1e557e6": 1, "n66m86": 1, "ml5f3o": 1, "1olqovi": 1, "1cjv62q": 1, "2q2350": 1, "x58so1": 1, "uf12fl": 1, "1y91gu4": 1, "ze264w": 1, "u9ggfc": 1, "1077zk9": 1, "s706n6": 1, "oj8axx": 1, "19ot6mg": 1, "4ddkmk": 1, "gsyjfv": 1, "1j7t5qi": 1, "vjaab4": 1, "1ft6all": 1};
+VOZOK = {"4f281c": 1, "ykmrdp": 1, "4hecm3": 1, "ylatgk": 1, "zmvaza": 1, "10z0xij": 1, "1n8im9k": 1, "g3rxvu": 1, "1ejk01o": 1, "1ldwp27": 1, "ykrdtl": 1, "ykoejk": 1, "483ab5": 1, "1nkq4he": 1, "19k3iei": 1, "1yqu685": 1, "3775c8": 1, "ykre3a": 1, "1mfq7o": 1, "pgi4x7": 1, "1pll8lk": 1, "17o687p": 1, "1o83g72": 1, "ykoiw1": 1, "4ka4y7": 1, "1ty94we": 1, "18kkhsu": 1, "1tz2uc4": 1, "1ixbjib": 1, "o974py": 1, "lg3p4c": 1, "e55cvk": 1, "lcsdo6": 1, "6n71up": 1, "hybxf0": 1, "1i0g2f9": 1, "1dqtlxq": 1, "1dqasv1": 1, "122xd86": 1, "cex1nm": 1, "oukez3": 1, "1mgfyim": 1, "zsbgih": 1, "1lxuyf8": 1, "yutzvy": 1, "3qt9b2": 1, "yksjrc": 1, "ykg2ac": 1, "t29v4l": 1, "ysqxju": 1, "1de57yc": 1, "79lew": 1, "666mmn": 1, "msnao9": 1, "1q5vdou": 1, "68cv6": 1, "1ihmy9h": 1, "ss3gkc": 1, "faxudb": 1, "193da30": 1, "zs8z4": 1, "steoe6": 1, "377k1d": 1, "1vky71i": 1, "ykmo33": 1, "bytwx8": 1, "txd5lg": 1, "1mdjdx4": 1, "8gdqvf": 1, "38c1p7": 1, "4tbn9p": 1, "4f2ebr": 1, "13usdhg": 1, "19bxhu": 1, "30u9k6": 1, "yknrwd": 1, "wr2px7": 1, "1vggdep": 1, "ztncs": 1, "2h2ayd": 1, "490ktk": 1, "4906bj": 1, "1iuswqv": 1, "ymwa2w": 1, "92j28b": 1, "yt549y": 1, "16rmnkf": 1, "1m47jru": 1, "6rt9di": 1, "1gegr1c": 1, "1vky8el": 1, "19xwl9y": 1, "1jgwwow": 1, "1rb90je": 1, "1vi4h10": 1, "j1ew3q": 1, "1o8pkrd": 1, "22d8ds": 1, "onzfxw": 1, "lgxaz6": 1, "1uzpbvr": 1, "bs2w9r": 1, "zc7aav": 1, "12cq1x3": 1, "p71fbj": 1, "1qqwysj": 1, "7odyz2": 1, "m36nxm": 1, "h343ae": 1, "183v51b": 1, "1s25cit": 1, "1m51rkl": 1, "se01al": 1, "179izzc": 1, "o02o22": 1, "kswrg2": 1, "80lrlo": 1, "17wmjnx": 1, "r0gaju": 1, "1yibd3u": 1, "1ps4x7l": 1, "4b6mqr": 1, "1z0jft2": 1, "1aerp10": 1, "1ri6sf2": 1, "56ncca": 1, "1c7nbp8": 1, "1v8u0y8": 1, "d4vsjf": 1, "1fxqmec": 1, "16qqrhn": 1, "c6drdg": 1, "1uzgvic": 1, "yqzdtt": 1, "178lvnv": 1, "11j2htz": 1, "14fbyi7": 1, "14zf6fy": 1, "1pf05xd": 1, "1yjoeea": 1, "1iqno0l": 1, "yfzk22": 1, "11fiitv": 1, "z9h7rw": 1, "1vm0r06": 1, "18im19": 1, "1cyhab3": 1, "k6pl4h": 1, "5stqj6": 1, "1qg1xwz": 1, "o8b89n": 1, "9ufdoc": 1, "1uhnl25": 1, "4bba0b": 1, "b5aml": 1, "4bba0d": 1, "a7uz6k": 1, "tolx5n": 1, "1r6kzmk": 1, "6jlyc5": 1, "3rgj3n": 1, "2n5m2i": 1, "1e5z3gd": 1, "1sc09vt": 1, "15m3apr": 1, "12y8ha1": 1, "1o2xt1z": 1, "yvb00p": 1, "1p516t0": 1, "1suwlds": 1, "1fkcf2": 1, "4f07rq": 1, "uuy9cx": 1, "jfctks": 1, "6x9x6u": 1, "19qe2oe": 1, "19cgctb": 1, "7naae4": 1, "4gplry": 1, "1faldi7": 1, "w6q19y": 1, "1g0f6at": 1, "1w4izga": 1, "4r29yf": 1, "145rp61": 1, "9mnbq": 1, "1fm7p1p": 1, "1367fai": 1, "1h8giu5": 1, "m4u8cr": 1, "512rbf": 1, "4f9vrf": 1, "yknruf": 1, "18rcgvd": 1, "1hsduqb": 1, "l2pewm": 1, "1wi4fyf": 1, "ig7hn0": 1, "s8ur89": 1, "17obw0n": 1, "rjzne9": 1, "oq8zoy": 1, "qp3mpj": 1, "uqpl1w": 1, "ixwe70": 1, "d7cyk4": 1, "jghpxh": 1, "134lysc": 1, "1kbbmry": 1, "gni56g": 1, "a80sja": 1, "m2mdj0": 1, "1mrr1f8": 1, "18exxt3": 1, "9eonfb": 1, "132hlvx": 1, "k1nt3v": 1, "14yehap": 1, "l1fi9q": 1, "ugter0": 1, "yktbd0": 1, "yl7i8q": 1, "zmrzrg": 1, "1c2xm10": 1, "ep9dub": 1, "e448bi": 1, "5kb601": 1, "1cn18km": 1, "f23say": 1, "1qe9x3p": 1, "p7ed66": 1, "7koa5x": 1, "1hbo85o": 1, "l2f3as": 1, "xqztp6": 1, "bhrr7x": 1, "1yamzs2": 1, "1fnvq2g": 1, "1cuuwdz": 1, "p1a07n": 1, "k09mp1": 1, "7sodqz": 1, "bc6pk": 1, "1wmuu3k": 1, "1340r79": 1, "afcool": 1, "a9niyq": 1, "4dzwo4": 1, "fgt2kx": 1, "1i4wdqd": 1, "jmgz9z": 1, "6mkyrj": 1, "py70io": 1, "10xnt3v": 1, "b7wvj4": 1, "vgjuo4": 1, "127q2tp": 1, "a00slj": 1, "cf2nw4": 1, "1p52osh": 1, "dvsaxh": 1, "j1ebe2": 1, "d9bi4z": 1, "1rxbk95": 1, "w4hg6d": 1, "1wy8kr8": 1, "45ghz2": 1, "1aodvj2": 1, "1kzfu2c": 1, "z2xqax": 1, "1fbfno2": 1, "wp1ahq": 1, "1l65ig9": 1, "1n313oe": 1, "1mfug4v": 1, "hy7m1h": 1, "p7ivbf": 1, "v6jy3d": 1, "1wzg0rs": 1, "17ztr3s": 1, "1ou2kde": 1, "ufyzp4": 1, "1dkogfg": 1, "gw48ag": 1, "1qr6kx1": 1, "f3fw56": 1, "eykz04": 1, "sbs872": 1, "1cnu7cr": 1, "tdvly3": 1, "lma2bm": 1, "1ygif7k": 1, "jfuldc": 1, "t2d6lb": 1, "cskarr": 1, "8h3rhr": 1, "1g79l1u": 1, "4ezb6x": 1, "1k2kc7u": 1, "3sqqzn": 1, "19h9exy": 1, "se7wag": 1, "n0wr6a": 1, "1lw4j3r": 1, "184q84h": 1, "u4i5gw": 1, "3holj": 1, "wsw05s": 1, "1eecjvo": 1, "1ro7d22": 1, "1utu79": 1, "1hlk7j5": 1, "1cc50ut": 1, "m88xhh": 1, "1l6kuwc": 1, "1cne9pt": 1, "c0b6xr": 1, "1pr4ld": 1, "r58ma": 1, "1qfnl73": 1, "1a99af3": 1, "1o4cgzp": 1, "ooz20e": 1, "gwp0iy": 1, "1omcqe2": 1, "1hp94wg": 1, "t9z0ux": 1, "1wzr81m": 1, "ykg2pj": 1, "1x4v5wv": 1, "rirjf7": 1, "7tsm6z": 1, "1pwhwm2": 1, "y97dyb": 1, "41j6xy": 1, "1uwfbyx": 1, "109ua91": 1, "184qfx7": 1, "144jdp6": 1, "1sofj4t": 1, "13senm0": 1, "1wib2e9": 1, "ex7vek": 1, "1gw3hms": 1, "166id76": 1, "1wfnfne": 1, "13gjra3": 1, "939cpg": 1, "54hixm": 1, "1ekb3gp": 1, "1sxguz2": 1, "dtg997": 1, "1h4yflj": 1, "wq969x": 1, "mh0vqt": 1, "103ym76": 1, "cgo78d": 1, "1bly45y": 1, "y870r7": 1, "9cucl1": 1, "dw9tkl": 1, "15irq2e": 1, "a4i7ty": 1, "1bsjb28": 1, "1perkas": 1, "1g4y8av": 1, "hybxe3": 1, "1k1fiha": 1, "19nuatk": 1, "vjaa9a": 1, "skau5n": 1, "g0g1gz": 1, "4ddkln": 1, "137r4ah": 1, "6b8k6i": 1, "122xdax": 1, "1q8mylo": 1, "xfi4is": 1, "1t8u2yk": 1, "tbevxu": 1, "dp48x9": 1, "1n0u1a1": 1, "1yl8a5v": 1, "1skqs81": 1, "16o8tx5": 1, "105chak": 1, "l2f3kh": 1, "1t8u2vt": 1, "1wtw5a3": 1, "opqeun": 1, "4li8x7": 1, "ldmqkc": 1, "wmdk4x": 1, "da4ceq": 1, "1rar79v": 1, "1cjjg7z": 1, "z9nnx7": 1, "1j3ywfm": 1, "8tkosn": 1, "1au3thj": 1, "nlymqz": 1, "ckxlle": 1, "m9iozr": 1, "1h7c4wh": 1, "gs5zyf": 1, "8t4i44": 1, "uew86k": 1, "g2tsgj": 1, "1h0sc6g": 1, "1y3navt": 1, "1hwxwb3": 1, "syntsi": 1, "obnwl3": 1, "1rejeto": 1, "1igwyne": 1, "md2ae3": 1, "1ga5jbu": 1, "1d1pve1": 1, "2riwv7": 1, "1e557e6": 1, "n66m86": 1, "ml5f3o": 1, "1olqovi": 1, "1cjv62q": 1, "2q2350": 1, "x58so1": 1, "uf12fl": 1, "1y91gu4": 1, "ze264w": 1, "u9ggfc": 1, "1077zk9": 1, "s706n6": 1, "oj8axx": 1, "19ot6mg": 1, "4ddkmk": 1, "gsyjfv": 1, "1j7t5qi": 1, "vjaab4": 1, "1ft6all": 1};
 RELBNCC = "EF02MA06";
 </script>
 </body></html>
