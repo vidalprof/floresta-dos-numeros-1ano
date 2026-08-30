@@ -973,6 +973,45 @@ def main():
     else:
         usa, ruins, avisos = analisa(js, css, baixo, html)
 
+    # ⭐ PORTAO DA LETRA MUDA (Marcos ouviu no "ratão", ago/2026: a digitacao so
+    #    falava A e O; R e T calados). A peca `digitar`/`forca` diz CADA letra ao
+    #    ser tocada (`diz(this.letra)` -> `temVoz(letra)`); se a letra nao foi
+    #    gravada, a tecla fica MUDA. Confere no falas.json IRMAO se cada letra
+    #    A-Z das palavras-resposta tem gravacao (chave nua, como o motor procura).
+    if any(m in usa for m in (u"digitar", u"forca", u"teclado na tela")):
+        import os as _os
+        import json as _json
+        _fj = _os.path.join(_os.path.dirname(_os.path.abspath(alvo)), "falas.json")
+        if _os.path.exists(_fj):
+            try:
+                _ids = set(x.get("id") for x in _json.load(io.open(_fj, encoding="utf-8")))
+            except Exception:
+                _ids = None
+            if _ids:
+                def _b36(h):
+                    if h == 0:
+                        return "0"
+                    d, o = "0123456789abcdefghijklmnopqrstuvwxyz", ""
+                    while h > 0:
+                        o = d[h % 36] + o; h //= 36
+                    return o
+                def _cv(s):
+                    s = re.sub(r"\s+", " ", s or "").strip().lower()
+                    h = 5381
+                    for ch in s:
+                        h = ((h << 5) + h + ord(ch)) & 0xFFFFFFFF
+                    return _b36(h)
+                _falta = set()
+                for w in re.findall(r'"palavra"\s*:\s*"([^"]+)"', js):
+                    for ch in set(w.upper()):
+                        if u"A" <= ch <= u"Z" and _cv(ch) not in _ids:
+                            _falta.add(ch)
+                if _falta:
+                    ruins.append(u"digitar/forca: letra(s) SEM gravacao (a tecla fica "
+                                 u"muda ao ser tocada): %s. O montar tem de colher cada "
+                                 u"letra da palavra-resposta (harvest de letras em "
+                                 u"montar.py)." % u", ".join(sorted(_falta)))
+
     print(u"%s -> %d dinamica(s) reconhecida(s): %s"
           % (alvo, len(usa), ", ".join(usa) if usa else "nenhuma"))
     # ⚠️ A CURA GERAL DO "PASSOU SEM SER MEDIDO" (ago/2026). Duas vezes hoje uma

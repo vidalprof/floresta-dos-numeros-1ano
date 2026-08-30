@@ -75,7 +75,7 @@ add(id=u"f02", mec=u"escolher", selo=u"GRANDÃO", conceito=u"objetivo1",
     ])
 add(id=u"f03", mec=u"escolher", selo=u"CONTE OS PEDAÇOS", conceito=u"objetivo2",
     enunciado=u"Cada <b>sílaba</b> é um pedaço da palavra. Quantas sílabas?",
-    dica=u"Bata uma palma para cada pedaço: bo-la.",
+    dica=u"Diga a palavra devagar e bata uma palma para cada pedaço.",
     dados=[
      esc(u"pw_bola",u"Quantas sílabas tem <b>BOLA</b> (bo-la)?",u"2",u"duas",[(u"1",u"uma"),(u"3",u"três")],DSIL,cimg=u"pw_bola"),
      esc(u"pw_sapo",u"Quantas sílabas tem <b>SAPO</b> (sa-po)?",u"2",u"duas",[(u"3",u"três"),(u"1",u"uma")],DSIL,cimg=u"pw_sapo"),
@@ -357,15 +357,15 @@ add(id=u"f14d", mec=u"completar", selo=u"GRANDE OU PEQUENO", conceito=u"objetivo
     dadosExtra={u"ENUN":u"Preencha com o diminutivo ou o aumentativo.",u"FECHO":u"Você forma o grande e o pequeno!"})
 
 # ============ BLOCO 11 — DIGITAR (escreva a palavra) ============
-add(id=u"f15", mec=u"digitar", selo=u"ESCREVA O PEQUENO", conceito=u"objetivo1",
-    enunciado=u"Escreva o <b>diminutivo</b> da figura, letra por letra.",
+add(id=u"f15", mec=u"digitar", selo=u"ESCREVA O DIMINUTIVO", conceito=u"objetivo1",
+    enunciado=u"Escreva o <b>diminutivo</b> (o pequeno) da figura, letra por letra.",
     dica=u"Diminutivo termina em -inho ou -inha.",
     dados=[{u"palavra":u"CASINHA",u"img":u"",u"voz":u"casinha",u"pista":u"A casa pequena. Escreva: Casinha.",u"dic":u"<b>Casinha</b>."},
            {u"palavra":u"GATINHO",u"img":u"",u"voz":u"gatinho",u"pista":u"O gato pequeno. Escreva: Gatinho.",u"dic":u"<b>Gatinho</b>."},
            {u"palavra":u"PATINHO",u"img":u"",u"voz":u"patinho",u"pista":u"O pato pequeno. Escreva: Patinho.",u"dic":u"<b>Patinho</b>."}],
     dadosExtra={u"ENUN":u"Escreva o <b>diminutivo</b> da figura.",u"FECHO":u"Você escreveu os diminutivos!"})
-add(id=u"f15b", mec=u"digitar", selo=u"ESCREVA O GRANDE", conceito=u"objetivo1",
-    enunciado=u"Escreva o <b>aumentativo</b> da figura, letra por letra.",
+add(id=u"f15b", mec=u"digitar", selo=u"ESCREVA O AUMENTATIVO", conceito=u"objetivo1",
+    enunciado=u"Escreva o <b>aumentativo</b> (o grande) da figura, letra por letra.",
     dica=u"Aumentativo termina em -ão.",
     dados=[{u"palavra":u"GATAO",u"img":u"",u"voz":u"gatão",u"pista":u"O gato grande. Escreva: Gatão.",u"dic":u"<b>Gatão</b>."},
            {u"palavra":u"RATAO",u"img":u"",u"voz":u"ratão",u"pista":u"O rato grande. Escreva: Ratão.",u"dic":u"<b>Ratão</b>."},
@@ -379,8 +379,8 @@ add(id=u"f15c", mec=u"digitar", selo=u"ESCREVA O VERBO", conceito=u"objetivo3",
            {u"palavra":u"CANTOU",u"img":u"",u"voz":u"cantou",u"pista":u"O que o pássaro fez ontem. De cantar, no passado. Escreva: Cantou.",u"dic":u"<b>Cantou</b>."}],
     dadosExtra={u"ENUN":u"Escreva o verbo no <b>passado</b>.",u"FECHO":u"Você escreveu os verbos no passado!"})
 
-add(id=u"f15d", mec=u"digitar", selo=u"ESCREVA O PEQUENO", conceito=u"objetivo1",
-    enunciado=u"Escreva o <b>diminutivo</b> da figura, letra por letra.",
+add(id=u"f15d", mec=u"digitar", selo=u"ESCREVA O DIMINUTIVO", conceito=u"objetivo1",
+    enunciado=u"Escreva o <b>diminutivo</b> (o pequeno) da figura, letra por letra.",
     dica=u"Diminutivo termina em -inho ou -inha.",
     dados=[{u"palavra":u"BOLINHA",u"img":u"",u"voz":u"bolinha",u"pista":u"A bola pequena. Escreva: Bolinha.",u"dic":u"<b>Bolinha</b>."},
            {u"palavra":u"SAPINHO",u"img":u"",u"voz":u"sapinho",u"pista":u"O sapo pequeno. Escreva: Sapinho.",u"dic":u"<b>Sapinho</b>."},

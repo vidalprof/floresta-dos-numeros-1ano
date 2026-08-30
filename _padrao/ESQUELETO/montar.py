@@ -603,10 +603,14 @@ _FONETICA_VOZ = [
     #    "caré" o r volta a ser BRANDO (entre vogais). Vale so no audio; a tela
     #    mantem os tres pedacos "ja... ca... ré".
     (re.compile(r"ca\.\.\.\s*ré", re.I), u"caré"),
-    # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala ilefante"* — o "e" atono do
-    #    comeco reduz para "i" na voz pt-BR. "ele fante" faz o primeiro "e" sair
-    #    CLARO (como no pronome "ele"). So no audio; a tela mantem "elefante".
-    (re.compile(r"\belefante\b", re.I), u"ele fante"),
+    # ⚠️ LICAO PAGA, DUAS VEZES (Marcos ouviu, ago/2026): *"fala ilefante"*. O "e"
+    #    atono do comeco reduz para "i" na voz pt-BR. A 1a tentativa, "ele fante"
+    #    (com espaco), FEZ PIOR: a voz leu o pedaco "ele" como o PRONOME [ˈeli], e
+    #    saiu "eli-fante" — de novo "ilefante". O conserto certo e UMA palavra so
+    #    com acento agudo no 1o "e": "élefante" -> "é-le-fan-te", com o "e" aberto e
+    #    claro, e o "le" fica interno (nao vira "li"). So no audio; a tela mantem
+    #    "elefante".
+    (re.compile(r"\belefante\b", re.I), u"élefante"),
 ]
 _LACUNA = re.compile(r"_+")
 # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026), TRES defeitos de UMA raiz — CAIXA ALTA
@@ -694,6 +698,22 @@ def falas_de(c):
         # ...e de TUDO o que a mecanica mostra a partir do `dados` dela
         if f.get("dados") is not None:
             falas_dos_dados(f["dados"], poe)
+        # ⭐ LICAO PAGA (Marcos ouviu, ago/2026): no "ratão" a digitacao so falava
+        #    o A e o O — R e T ficavam MUDOS. A peca `digitar`/`forca` diz CADA
+        #    letra ao ser tocada (`diz(this.letra)` -> `temVoz(letra)`), mas o
+        #    colhedor so gravava STRINGS do `dados`; as letras avulsas do teclado
+        #    nunca entravam. Aqui colhemos cada letra A-Z da palavra-resposta, com
+        #    a chave NUA (sem "op_") que o `temVoz(letra)` procura, e o `poe` grava
+        #    o NOME da letra (Érre, Tê...). Acentuadas nao entram: sao preenchidas
+        #    sozinhas, nao digitadas (ver LETRAS na peca).
+        if f.get("mec") in ("digitar", "forca"):
+            for it in (f.get("dados") or []):
+                if not isinstance(it, dict):
+                    continue
+                w = (it.get("palavra") or it.get("pal") or it.get("resposta") or u"")
+                for ch in set((w or u"").upper()):
+                    if u"A" <= ch <= u"Z":
+                        poe(chave_voz(ch), ch)
         # ⭐ COMPARAR: o painel fala a QUANTIDADE por extenso (ver `data-voz` em
         #    `fazPainel`). Os valores `a`/`b` sao INTEIROS, entao o
         #    `falas_dos_dados` (que so grava STRING) nunca os via, e o painel
