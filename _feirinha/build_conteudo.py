@@ -202,18 +202,21 @@ add(id=u"f08", mec=u"completar", selo=u"QUANTO FALTA", conceito=u"objetivo2",
 # ---------- SEPARAR (objetivo3) ----------
 # ⭐ resultados VARIADOS (Marcos: "estão sempre dando 3"): 6, 5 e 4 — nunca o mesmo;
 #   3 rodadas, frutas variadas. (A peça escolher já embaralha as opções na tela.)
-add(id=u"f09", mec=u"escolher", selo=u"SEPARAR", conceito=u"objetivo3",
-    enunciado=u"Você tinha <b>8</b> uvas e separou <b>2</b> num pratinho. Quantas sobraram no cacho?",
-    dica=u"Tire as que separou e veja quantas ficam.",
-    dados=[
-      esc(u"fe_uva", u"Tinha <b>8</b> uvas e separou <b>2</b>. Quantas sobraram?",
-          6, [5,7,4], [u"Comece do 8 e volte 2.", u"8... 7, 6.", u"Sobraram <b>6</b> uvas. Toque para seguir."]),
-      esc(u"fe_tomate", u"Tinha <b>9</b> tomates e separou <b>4</b> para o molho. Quantos sobraram?",
-          5, [6,4,3], [u"Comece do 9 e volte 4.", u"9... 8, 7, 6, 5.", u"Sobraram <b>5</b> tomates. Toque para seguir."]),
-      esc(u"fe_laranja", u"Tinha <b>7</b> laranjas e separou <b>3</b> na cesta. Quantas sobraram?",
-          4, [3,5,6], [u"Comece do 7 e volte 3.", u"7... 6, 5, 4.", u"Sobraram <b>4</b> laranjas. Toque para seguir."]),
-    ],
-    dadosExtra={u"TITULO":u"QUANTAS SOBRARAM", u"FECHO":u"Você separou certinho!"})
+add(id=u"f09", mec=u"classificar", selo=u"ARRASTE PRO RESULTADO", conceito=u"objetivo1",
+    enunciado=u"Arraste cada continha para a cesta do <b>resultado certo</b>: dá <b>10</b> ou dá <b>12</b>?",
+    dica=u"Some os dois números da continha e veja em qual cesta ela cai.",
+    dados=[{u"k":u"dez", u"n":u"DÁ 10", u"rot":False, u"voz":u"dá dez", u"img":u""},
+           {u"k":u"doze", u"n":u"DÁ 12", u"rot":False, u"voz":u"dá doze", u"img":u""}],
+    dadosExtra={u"ENUN":u"Cada continha na cesta certa: <b>dá 10</b> ou <b>dá 12</b>?",
+                u"DICAS":[u"Some os dois números devagar, nos dedos se quiser.",
+                         u"Arraste a continha até a cesta e solte.",
+                         u"Isso! Toque para seguir."],
+                u"FICHAS":[{u"alvo":u"dez", u"t":u"6 + 4"},
+                          {u"alvo":u"doze", u"t":u"8 + 4"},
+                          {u"alvo":u"dez", u"t":u"7 + 3"},
+                          {u"alvo":u"doze", u"t":u"9 + 3"},
+                          {u"alvo":u"dez", u"t":u"5 + 5"},
+                          {u"alvo":u"doze", u"t":u"7 + 5"}]})
 
 add(id=u"f10", mec=u"base-dez", selo=u"CAIXA DE 10", conceito=u"objetivo3",
     enunciado=u"Junte as frutas soltas em <b>caixas de 10</b> e veja quantas caixas e soltas ficam.",
@@ -296,16 +299,35 @@ add(id=u"f16", mec=u"comparar", selo=u"QUANTAS A MAIS?", conceito=u"objetivo5",
                        u"As cenouras que sobram sem par são as “a mais”.",
                        u"Conte as que sobraram e toque no número."]})
 
-add(id=u"f17", mec=u"escolher", selo=u"RETIRAR", conceito=u"objetivo4",
-    enunciado=u"Havia <b>9</b> pães e a Coruja vendeu <b>4</b>. Quantos sobraram?",
-    dica=u"Comece do 9 e volte 4.",
+add(id=u"f17", mec=u"conserte-o-erro", selo=u"CONSERTE A CONTA", conceito=u"objetivo4",
+    enunciado=u"A Coruja errou uma conta! Ache o <b>resultado errado</b> e conserte.",
+    dica=u"Refaça a conta na sua cabeça e compare com o resultado escrito.",
     dados=[
-      esc(u"fe_pao", u"Havia <b>9</b> pães e vendeu <b>4</b>. Quantos sobraram?",
-          5, [4,6,13], [u"Comece do 9 e volte 4.", u"9... 8, 7, 6, 5.", u"Sobraram <b>5</b> pães. Toque para seguir."]),
-      esc(u"fe_pao", u"Havia <b>12</b> pães e vendeu <b>5</b>. Quantos sobraram?",
-          7, [6,8,17], [u"Comece do 12 e volte 5.", u"12... 11, 10, 9, 8, 7.", u"Sobraram <b>7</b> pães. Toque para seguir."]),
-    ],
-    dadosExtra={u"TITULO":u"QUANTOS SOBRARAM", u"FECHO":u"Você acertou o resto!"})
+      {u"cab":u"O RESTO CERTO", u"selo":u"O PÃO", u"certa":u"5", u"erro":1,
+       u"bal":u"Esta conta tem o resultado errado. Ache e conserte.",
+       u"pecas":[u"9 &minus; 4 =", u"4"], u"ops":[u"5", u"4", u"6"],
+       u"dicas":[u"Comece do 9 e volte 4: 8, 7, 6, 5.", u"Quanto deu? Compare com o que está escrito.",
+                 u"Era este. Eu marquei: agora toque no número certo."],
+       u"dicas2":[u"9 menos 4: conte para trás quatro vezes.", u"8, 7, 6, 5 — parou no 5.",
+                  u"Era <b>5</b>. Eu troquei para a conta ficar certa."],
+       u"por":u"9 &minus; 4 &eacute; <b>5</b>: do 9, volte 4 &mdash; 8, 7, 6, 5."},
+      {u"cab":u"O RESTO CERTO", u"selo":u"AS LARANJAS", u"certa":u"7", u"erro":1,
+       u"bal":u"Ache o resultado trocado e conserte.",
+       u"pecas":[u"12 &minus; 5 =", u"6"], u"ops":[u"7", u"6", u"8"],
+       u"dicas":[u"Do 12, volte 5: 11, 10, 9, 8, 7.", u"Quanto deu? Compare com o escrito.",
+                 u"Era este. Toque no número certo."],
+       u"dicas2":[u"12 menos 5: cinco passos para trás.", u"11, 10, 9, 8, 7 — parou no 7.",
+                  u"Era <b>7</b>. Eu troquei para ficar certa."],
+       u"por":u"12 &minus; 5 &eacute; <b>7</b>: do 12, volte 5 &mdash; 11, 10, 9, 8, 7."},
+      {u"cab":u"O RESTO CERTO", u"selo":u"OS TOMATES", u"certa":u"5", u"erro":1,
+       u"bal":u"Uma conta n&atilde;o est&aacute; certa. Ache e conserte.",
+       u"pecas":[u"8 &minus; 3 =", u"6"], u"ops":[u"5", u"6", u"4"],
+       u"dicas":[u"Do 8, volte 3: 7, 6, 5.", u"Quanto deu? Compare com o escrito.",
+                 u"Era este. Toque no número certo."],
+       u"dicas2":[u"8 menos 3: três passos para trás.", u"7, 6, 5 — parou no 5.",
+                  u"Era <b>5</b>. Eu troquei para ficar certa."],
+       u"por":u"8 &minus; 3 &eacute; <b>5</b>: do 8, volte 3 &mdash; 7, 6, 5."},
+    ])
 
 add(id=u"f18", mec=u"reta-numerica", selo=u"A RÉGUA DOS PASSOS", conceito=u"objetivo4",
     enunciado=u"A caixa tinha <b>15</b> frutas e a Coruja tirou <b>3</b> estragadas. Onde você chega na régua?",
@@ -345,16 +367,26 @@ add(id=u"f20", mec=u"completar", selo=u"QUANTO FALTA", conceito=u"objetivo5",
                 u"DEPOIS":u"Leia a frase inteira antes de escolher.",
                 u"FECHO":u"Agora as bancas estão iguais!"})
 
-add(id=u"f21", mec=u"escolher", selo=u"COMPARAR", conceito=u"objetivo5",
-    enunciado=u"Na feira há <b>13</b> laranjas e <b>8</b> limões. Quantas laranjas a mais?",
-    dica=u"Quantos passos de 8 até 13?",
-    dados=[
-      esc(u"fe_laranja", u"Há <b>13</b> laranjas e <b>8</b> limões. Quantas laranjas a mais?",
-          5, [4,6,21], [u"Case cada limão com uma laranja.", u"De 8 até 13: 9, 10, 11, 12, 13 — são 5.", u"São <b>5</b> a mais. Toque para seguir."]),
-      esc(u"fe_maca", u"Há <b>15</b> maçãs e <b>9</b> mangas. Quantas maçãs a mais?",
-          6, [5,7,24], [u"Case cada manga com uma maçã.", u"De 9 até 15: 10, 11, 12, 13, 14, 15 — são 6.", u"São <b>6</b> a mais. Toque para seguir."]),
-    ],
-    dadosExtra={u"TITULO":u"QUANTOS A MAIS", u"FECHO":u"Você comparou certinho!"})
+_FEDIN = [{u"img":u"fe_moeda1", u"t":u"moeda", u"v":1},
+          {u"img":u"fe_nota2", u"t":u"nota", u"v":2},
+          {u"img":u"fe_nota5", u"t":u"nota", u"v":5},
+          {u"img":u"fe_nota10", u"t":u"nota", u"v":10}]
+add(id=u"f21", mec=u"caixa-dinheiro", selo=u"VOCÊ É O CAIXA", conceito=u"objetivo2",
+    enunciado=u"Você é o caixa da feira! Monte o valor certo na <b>bandeja</b>.",
+    dica=u"Olhe a régua verde: ela mostra quanto ainda falta.",
+    dados=list(_FEDIN),
+    dadosExtra={u"CAIXAIMG":u"fe_registradora",
+                u"DINHEIRO":list(_FEDIN),
+                u"DICAS":[u"Olhe a régua verde: ela mostra quanto ainda falta.",
+                         u"Escolha um dinheiro que <b>caiba</b> no que falta. Os que cabem estão piscando.",
+                         u"Deixa comigo: eu ponho esta peça e você continua."],
+                u"RODADAS":[
+                  {u"alvo":3, u"base":0, u"img":u"fe_maca", u"nome":u"MAÇÃS", u"selo":u"COMPRA",
+                   u"fala":u"As maçãs custam <b>3 reais</b>. Monte o dinheiro na bandeja."},
+                  {u"alvo":5, u"base":0, u"img":u"fe_banana", u"nome":u"BANANAS", u"selo":u"COMPRA",
+                   u"fala":u"As bananas custam <b>5 reais</b>. Monte o dinheiro na bandeja."},
+                  {u"alvo":8, u"base":0, u"img":u"fe_laranja", u"nome":u"LARANJAS", u"selo":u"COMPRA",
+                   u"fala":u"As laranjas custam <b>8 reais</b>. Monte o dinheiro na bandeja."}]})
 
 add(id=u"f22", mec=u"estimar", selo=u"CHUTE ESPERTO", conceito=u"objetivo5",
     enunciado=u"Sem contar de um em um: quantas frutas você acha que tem neste pote?",
@@ -368,16 +400,20 @@ add(id=u"f22", mec=u"estimar", selo=u"CHUTE ESPERTO", conceito=u"objetivo5",
                            u"Chegou perto? Ótimo! Estimar é chegar perto sem contar tudo."]})
 
 # ---------- REVISÃO / PROFUNDIDADE ----------
-add(id=u"f23", mec=u"escolher", selo=u"JUNTAR", conceito=u"objetivo1",
-    enunciado=u"De manhã a Coruja vendeu <b>12</b> frutas e de tarde <b>7</b>. Quantas no dia?",
-    dica=u"Junte a manhã com a tarde.",
+_FEIMGS = {u"1":u"fe_moeda1", u"2":u"fe_nota2", u"5":u"fe_nota5",
+           u"10":u"fe_nota10", u"20":u"fe_nota20", u"50":u"fe_nota50", u"100":u"fe_nota100"}
+add(id=u"f23", mec=u"domino", selo=u"DOMINÓ DO DINHEIRO", conceito=u"objetivo1",
+    enunciado=u"Encaixe cada <b>dinheiro</b> na ponta do <b>número igual</b>.",
+    dica=u"Olhe o número da nota e ache a ponta com esse mesmo número.",
     dados=[
-      esc(u"fe_morango", u"Vendeu <b>12</b> de manhã e <b>7</b> de tarde. Quantas no dia?",
-          19, [18,20,5], [u"Comece do 12 e acrescente 7.", u"12... 13, 14, 15, 16, 17, 18, 19.", u"São <b>19</b> frutas. Toque para seguir."]),
-      esc(u"fe_uva", u"Colheu <b>14</b> cachos numa parreira e <b>5</b> na outra. Quantos ao todo?",
-          19, [18,20,9], [u"Comece do 14 e acrescente 5.", u"14... 15, 16, 17, 18, 19.", u"São <b>19</b> cachos. Toque para seguir."]),
-    ],
-    dadosExtra={u"TITULO":u"O DIA INTEIRO", u"FECHO":u"Você juntou o dia todo!"})
+      {u"cadeia":[1,2,5,10], u"dir":u"num", u"esq":u"dinheiro", u"semente":1,
+       u"imgs":dict(_FEIMGS), u"selo":u"DOMINÓ DO DINHEIRO",
+       u"enun":u"Encaixe cada <b>dinheiro</b> na ponta do <b>número igual</b>.",
+       u"voz":u"Encaixe cada dinheiro na ponta do número igual."},
+      {u"cadeia":[2,5,10,20], u"dir":u"num", u"esq":u"dinheiro", u"semente":1,
+       u"imgs":dict(_FEIMGS), u"selo":u"MAIS UMA CORRENTE",
+       u"enun":u"Encaixe cada <b>dinheiro</b> na ponta do <b>número igual</b>.",
+       u"voz":u"Encaixe cada dinheiro na ponta do número igual."}])
 
 add(id=u"f24", mec=u"ordenar", selo=u"DO MENOR AO MAIOR", conceito=u"objetivo5",
     enunciado=u"Ponha as bancas em ordem, <b>da que tem menos à que tem mais</b>.",
@@ -498,16 +534,10 @@ _R3 = {
              8, [7,9,6], [u"Comece nas 6 e continue nas outras 2.", u"6... 7, 8.", u"São <b>8</b> uvas. Toque para seguir."]),
  u"f06": esc(u"fe_maca", u"Tinha <b>7</b> maçãs e ganhou mais <b>5</b>. Quantas agora?",
              12, [11,13,10], [u"Guarde o 7 e conte mais 5.", u"7... 8, 9, 10, 11, 12.", u"São <b>12</b> maçãs. Toque para seguir."]),
- u"f09": esc(u"fe_morango", u"Tinha <b>10</b> morangos e separou <b>7</b>. Quantos sobraram?",
-             3, [4,2,5], [u"Comece do 10 e volte 7.", u"10... 9, 8, 7, 6, 5, 4, 3.", u"Sobraram <b>3</b>. Toque para seguir."]),
  u"f14": esc(u"fe_limao", u"Tinha <b>11</b> limões e vendeu <b>5</b>. Quantos restaram?",
              6, [5,7,16], [u"Comece do 11 e volte 5.", u"11... 10, 9, 8, 7, 6.", u"Restaram <b>6</b>. Toque para seguir."]),
- u"f17": esc(u"fe_pao", u"Havia <b>14</b> pães e vendeu <b>6</b>. Quantos sobraram?",
-             8, [7,9,20], [u"Comece do 14 e volte 6.", u"14... 13, 12, 11, 10, 9, 8.", u"Sobraram <b>8</b>. Toque para seguir."]),
- u"f21": esc(u"fe_banana", u"Há <b>12</b> bananas e <b>7</b> limões. Quantas bananas a mais?",
-             5, [4,6,19], [u"Case cada limão com uma banana.", u"De 7 até 12: 8, 9, 10, 11, 12 — são 5.", u"São <b>5</b> a mais. Toque para seguir."]),
- u"f23": esc(u"fe_laranja", u"A Coruja juntou <b>16</b> laranjas de um caixote e <b>3</b> de outro. Quantas ao todo?",
-             19, [18,20,13], [u"Comece do 16 e junte mais 3.", u"16... 17, 18, 19.", u"São <b>19</b>. Toque para seguir."]),
+ # f09/f17/f21/f23 viraram classificar/conserte-o-erro/caixa-dinheiro/domino —
+ # cada uma traz as próprias rodadas; não recebem rodada de escolher aqui.
  u"f30": {u"p":u"“Tinha 12 e <b>separou 5</b> num pote.” Que conta acha o que sobrou?",
           u"c":{u"t":u"12 − 5", u"voz":u"doze menos cinco"},
           u"e":[{u"t":u"12 + 5", u"voz":u"doze mais cinco"}, {u"t":u"5 + 5", u"voz":u"cinco mais cinco"}],
@@ -558,20 +588,14 @@ _R4 = {
              12, [11,13,10], [u"Comece nas 7 e some 5.", u"7... 8, 9, 10, 11, 12.", u"São <b>12</b>. Toque para seguir."]),
  u"f06": esc(u"fe_uva", u"Tinha <b>9</b> uvas e ganhou mais <b>6</b>. Quantas agora?",
              15, [14,16,13], [u"Comece do 9 e some 6.", u"9... 10, 11, 12, 13, 14, 15.", u"São <b>15</b>. Toque para seguir."]),
- u"f09": esc(u"fe_tomate", u"Tinha <b>12</b> tomates e separou <b>8</b>. Quantos sobraram?",
-             4, [5,3,6], [u"Comece do 12 e volte 8.", u"12... até 4.", u"Sobraram <b>4</b>. Toque para seguir."]),
  u"f14": esc(u"fe_maca", u"Tinha <b>13</b> maçãs e vendeu <b>6</b>. Quantas restaram?",
              7, [6,8,19], [u"Comece do 13 e volte 6.", u"13... 12, 11, 10, 9, 8, 7.", u"Restaram <b>7</b>. Toque para seguir."]),
- u"f21": esc(u"fe_laranja", u"Há <b>14</b> laranjas e <b>6</b> mangas. Quantas laranjas a mais?",
-             8, [7,9,20], [u"Case cada manga com uma laranja.", u"De 6 até 14: são 8.", u"São <b>8</b> a mais. Toque para seguir."]),
  u"f16": {u"a":9, u"b":6, u"modo":u"blocos", u"imgA":u"fe_cenoura", u"imgB":u"fe_tomate",
           u"pergunta":u"mais", u"semSinal":True, u"selo":u"QUANTAS A MAIS?",
           u"enun":u"Quantas <b>cenouras a mais</b> que tomates?", u"voz":u"Quantas cenouras a mais que tomates?"},
  u"f19": {u"a":11, u"b":7, u"modo":u"blocos", u"imgA":u"fe_uva", u"imgB":u"fe_uva",
           u"pergunta":u"menos", u"semSinal":True, u"selo":u"QUANTAS A MENOS?",
           u"enun":u"Quantos cachos a <b>segunda</b> banca tem a menos?", u"voz":u"Quantos cachos a segunda banca tem a menos?"},
- u"f17": esc(u"fe_pao", u"Havia <b>16</b> pães e vendeu <b>7</b>. Quantos sobraram?",
-             9, [8,10,23], [u"Comece do 16 e volte 7.", u"16... até 9.", u"Sobraram <b>9</b>. Toque para seguir."]),
  u"f26": {u"a":14, u"b":8, u"modo":u"blocos", u"imgA":u"fe_maca", u"imgB":u"fe_manga",
           u"pergunta":u"mais", u"semSinal":True, u"selo":u"QUANTAS A MAIS?",
           u"enun":u"Quantas <b>maçãs a mais</b> que mangas?", u"voz":u"Quantas maçãs a mais que mangas?"},
@@ -676,6 +700,23 @@ for _f in CONTEUDO[u"fases"]:
                 _r[u"out"] = [_numvoz(x) for x in _r[u"out"]]
 
 # ------------------------------------------------------------------
+# ⭐ REPETIÇÃO SEGUIDA, NÃO ESPAÇADA (Marcos: as crianças dizem "isso eu já fiz").
+#    O montador/pedagogo reprova mecânica espaçada. Aqui as fases são reordenadas
+#    em BLOCOS da mesma mecânica (cada bloco sobe um degrau), com o AQUECIMENTO
+#    (memória) no meio, como descanso e revisão espaçada. Ordena de forma estável:
+#    preserva a ordem interna de cada bloco (a escada didática que já vinha certa).
+_MEC_ORDEM = [u"contadores", u"escolher", u"classificar", u"saltos-na-fita",
+              u"reta-numerica", u"memoria", u"completar", u"comparar",
+              u"base-dez", u"repartir", u"conserte-o-erro", u"caixa-dinheiro",
+              u"domino", u"ordenar", u"estimar"]
+def _ordem_mec(par):
+    _i, _f = par
+    _m = _f.get(u"mec", u"")
+    _g = _MEC_ORDEM.index(_m) if _m in _MEC_ORDEM else len(_MEC_ORDEM)
+    return (_g, _i)
+CONTEUDO[u"fases"] = [f for _, f in sorted(
+    list(enumerate(CONTEUDO[u"fases"])), key=_ordem_mec)]
+
 if __name__ == "__main__":
     out = os.path.join(PASTA, u"conteudo.json")
     io.open(out, "w", encoding="utf-8").write(
