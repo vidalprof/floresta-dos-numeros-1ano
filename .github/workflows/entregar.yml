@@ -102,6 +102,7 @@ jobs:
                 node --check /tmp/_pre.js || { echo "::error::$pasta: JS invalido (node --check)"; FALHOU=1; }
               fi
               python3 _qa/dinamicas.py "$idx" || { echo "::error::$pasta: portao das dinamicas reprovou"; FALHOU=1; }
+              python3 _qa/toque.py "$idx" || { echo "::error::$pasta: usa ARRASTAR (nao funciona no toque da escola). Troque por mecanica de TOQUE ou marque <!-- TOQUE-CONFERIDO --> apos testar no aparelho real."; FALHOU=1; }
             fi
             if [ -f "$fal" ]; then
               python3 _qa/falas.py "$fal" || { echo "::error::$pasta: portao da narracao reprovou (voz/ingles/complite)"; FALHOU=1; }
