@@ -353,7 +353,7 @@ add(id=u"f13", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES PRÓPRIOS", conceito
     dica=u"Estão deitados (→), em pé (↓) e na diagonal.",
     dados=[u"LIA", u"REX", u"MIMI", u"BENTO", u"BRASIL"],
     dadosExtra={u"MODO":u"lista", u"TITULO":u"OS NOMES PRÓPRIOS",
-                u"LETRAS":u"ABEILMNORSTUX", u"DIFICIL":u"",
+                u"LETRAS":u"ABEILMNORSTUX", u"DIFICIL":True,
                 u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5"]})
 
 add(id=u"f13b", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES COMUNS", conceito=u"objetivo1",
@@ -361,7 +361,7 @@ add(id=u"f13b", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES COMUNS", conceito=u
     dica=u"Nome comum é o tipo da coisa: gato, casa, bola...",
     dados=[u"GATO", u"CASA", u"BOLA", u"CIDADE", u"ARVORE"],
     dadosExtra={u"MODO":u"lista", u"TITULO":u"OS NOMES COMUNS",
-                u"LETRAS":u"ABCDEILORSTVZ", u"DIFICIL":u"",
+                u"LETRAS":u"ABCDEILORSTVZ", u"DIFICIL":True,
                 u"CORP":[u"c1", u"c2", u"c3", u"c4", u"c5"]})
 
 add(id=u"f13c", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES DE LUGAR", conceito=u"objetivo3",
@@ -369,7 +369,7 @@ add(id=u"f13c", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES DE LUGAR", conceito
     dica=u"Nomes de cidade e de país são próprios: letra grande.",
     dados=[u"BRASIL", u"BLUMENAU", u"BAHIA", u"PARANA", u"RECIFE"],
     dadosExtra={u"MODO":u"lista", u"TITULO":u"OS NOMES DE LUGAR",
-                u"LETRAS":u"ABCEFHILMNPRSU", u"DIFICIL":u"",
+                u"LETRAS":u"ABCEFHILMNPRSU", u"DIFICIL":True,
                 u"CORP":[u"l1", u"l2", u"l3", u"l4", u"l5"]})
 
 # ============================================================
