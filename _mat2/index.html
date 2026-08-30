@@ -1,8 +1,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>A Prova da Coruja Cora — Matemática 2º ano</title>
+<title>A Prova da Coruja Cora — Matemática 3º ano</title>
 <style>
-/* ===== PROVA de Matemática — 2º ano (adição e subtração) =====
+/* ===== PROVA de Matemática — 3º ano (adição e subtração com reagrupamento) =====
    Tema INFANTIL, LÚDICO e COLORIDO: céu + gramado, cartões brancos arredondados,
    opções coloridas grandes com alto-falante, barra de progresso "pegadinhas".
    Clone do motor de prova (Viagem pelo Brasil): 10 questões de MÚLTIPLA ESCOLHA,
@@ -57,7 +57,7 @@ img{max-width:100%;}
 
 /* chip do tema */
 .disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:14px;padding:5px 13px;margin:2px 0 8px;color:#fff;}
-.disc.jun{background:#3fb356;} .disc.acr{background:#2aa9b0;} .disc.sep{background:#ef6d3a;} .disc.ret{background:#d64b7a;} .disc.conc{background:#8a63d2;}
+.disc.jun{background:#3fb356;} .disc.acr{background:#2aa9b0;} .disc.sep{background:#ef6d3a;} .disc.ret{background:#d64b7a;} .disc.conc{background:#8a63d2;} .disc.cmp{background:#e0a41f;}
 /* material dourado (ajuda visual) */
 .dourado{margin:2px auto 12px;padding:10px 8px;background:#fffdf4;border:3px solid #f0d488;border-radius:16px;max-width:480px;-webkit-box-shadow:0 4px 12px rgba(150,120,20,.16);box-shadow:0 4px 12px rgba(150,120,20,.16);}
 .dourado .dlbl{font-size:13px;font-weight:bold;color:#9a7b16;margin-bottom:5px;letter-spacing:.4px;}
@@ -66,6 +66,9 @@ img{max-width:100%;}
 .dgrp{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:flex-end;-webkit-align-items:flex-end;align-items:flex-end;gap:5px;padding:3px;}
 .mdd{display:inline-block;width:14px;height:105px;border:1.5px solid #b9860f;border-radius:2px;
   background:#f6c945;background-image:-webkit-repeating-linear-gradient(top,#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px);background-image:repeating-linear-gradient(#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px);}
+.mdc{display:inline-block;width:105px;height:105px;border:1.5px solid #b9860f;border-radius:2px;background:#f6c945;
+  background-image:-webkit-repeating-linear-gradient(top,#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px),-webkit-repeating-linear-gradient(left,#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px);
+  background-image:repeating-linear-gradient(#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px),repeating-linear-gradient(90deg,#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px);}
 .mdunits{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;width:34px;-webkit-box-align:flex-end;align-items:flex-end;-webkit-align-content:flex-end;align-content:flex-end;gap:3px;}
 .mdu{display:inline-block;width:13px;height:13px;background:#f6c945;border:1.5px solid #b9860f;border-radius:2px;}
 .mdframe{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;width:100px;gap:4px;-webkit-box-pack:center;justify-content:center;margin:0 auto;}
@@ -139,7 +142,7 @@ label{font-size:16px;font-weight:bold;color:#2f6f8f;display:block;margin-top:6px
 
 <script>
 /* ====== CONFIG ====== */
-var TURMAS=["2º A","2º B","2º C","2º D"];
+var TURMAS=["3º A","3º B","3º C","3º D"];
 /* avatares: reaproveitados dos crachás da casa (a criança escolhe o seu). */
 var AVATARES=[
  {id:"ma_cr1.png", cor:"#3fb356"},{id:"ma_cr2.png", cor:"#3a7bd5"},
@@ -149,54 +152,54 @@ var AVATARES=[
 var SLUG="matematica-2ano";   /* caminho no Firebase: /provas/<SLUG> */
 var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 var URL_PLANILHA="";
-var HISTORIA="Oi! Eu sou a Cora, a coruja da matemática. Hoje você vai resolver dez probleminhas de somar e de tirar. Em uns a gente JUNTA ou ACRESCENTA, em outros a gente SEPARA ou RETIRA. Embaixo de cada problema tem o material dourado para você contar e se ajudar. Eu leio cada problema e cada resposta em voz alta, e você toca na resposta certa. Agora escreva o seu nome, escolha a sua turma e o seu personagem, e toque em começar!";
+var HISTORIA="Oi! Eu sou a Cora, a coruja da matemática. Hoje você vai resolver dez problemas de somar e de tirar com números maiores. Em uns a gente JUNTA ou ACRESCENTA, em outros a gente SEPARA, RETIRA ou COMPARA. Embaixo de cada problema tem o material dourado, com dezenas e centenas, para você contar e se ajudar. Eu leio cada problema e cada resposta em voz alta, e você toca na resposta certa. Agora escreva o seu nome, escolha a sua turma e o seu personagem, e toque em começar!";
 var _histTocada=false;
 
 /* ====== As 10 questões (múltipla escolha) — resposta controlada aqui ======
    disc: brinc = brincadeiras e jogos | corpo = o corpo em movimento | conviv = convivência
    img: figura da questão (aparece se existir em img/). */
 var QUESTOES=[
- {disc:"jun", img:"ma_p1.png", dourado:{a:3,b:4,op:"+"}, pergunta:"Na festa, Ana encheu 3 balões e o papai encheu mais 4. JUNTANDO os dois, quantos balões ficaram?",
-  opcoes:["6 balões.","7 balões.","8 balões."], correta:1,
-  fala:"Pergunta um. Na festa, Ana encheu três balões e o papai encheu mais quatro. Juntando os dois, quantos balões ficaram? Olhe o material dourado para ajudar. Letra A: seis balões. Letra B: sete balões. Letra C: oito balões."},
+ {disc:"jun", img:"ma_p1.png", dourado:{a:28,b:15,op:"+"}, pergunta:"Na festa, Ana encheu 28 balões e o papai encheu mais 15. JUNTANDO os dois, quantos balões ficaram?",
+  opcoes:["33 balões.","43 balões.","44 balões."], correta:1,
+  fala:"Pergunta um. Na festa, Ana encheu vinte e oito balões e o papai encheu mais quinze. Juntando os dois, quantos balões ficaram? Olhe o material dourado para ajudar. Letra A: trinta e três balões. Letra B: quarenta e três balões. Letra C: quarenta e quatro balões."},
 
- {disc:"acr", img:"ma_p2.png", dourado:{a:8,b:5,op:"+"}, pergunta:"No pote havia 8 pipocas. A vovó ACRESCENTOU mais 5. Com quantas pipocas o pote ficou?",
-  opcoes:["12 pipocas.","13 pipocas.","14 pipocas."], correta:1,
-  fala:"Pergunta dois. No pote havia oito pipocas. A vovó acrescentou mais cinco. Com quantas pipocas o pote ficou? Olhe o material dourado para ajudar. Letra A: doze pipocas. Letra B: treze pipocas. Letra C: quatorze pipocas."},
+ {disc:"acr", img:"ma_p2.png", dourado:{a:45,b:27,op:"+"}, pergunta:"No pote havia 45 pipocas. A vovó ACRESCENTOU mais 27. Com quantas pipocas o pote ficou?",
+  opcoes:["62 pipocas.","72 pipocas.","73 pipocas."], correta:1,
+  fala:"Pergunta dois. No pote havia quarenta e cinco pipocas. A vovó acrescentou mais vinte e sete. Com quantas pipocas o pote ficou? Olhe o material dourado para ajudar. Letra A: sessenta e duas pipocas. Letra B: setenta e duas pipocas. Letra C: setenta e três pipocas."},
 
- {disc:"ret", img:"ma_p3.png", dourado:{a:9,b:4,op:"-"}, pergunta:"No prato havia 9 morangos. O Téo comeu 4. Quantos morangos SOBRARAM no prato?",
-  opcoes:["4 morangos.","5 morangos.","6 morangos."], correta:1,
-  fala:"Pergunta três. No prato havia nove morangos. O Téo comeu quatro. Quantos morangos sobraram no prato? Olhe o material dourado para ajudar. Letra A: quatro morangos. Letra B: cinco morangos. Letra C: seis morangos."},
+ {disc:"ret", img:"ma_p3.png", dourado:{a:34,b:8,op:"-"}, pergunta:"No prato havia 34 morangos. O Téo comeu 8. Quantos morangos SOBRARAM no prato?",
+  opcoes:["24 morangos.","26 morangos.","28 morangos."], correta:1,
+  fala:"Pergunta três. No prato havia trinta e quatro morangos. O Téo comeu oito. Quantos morangos sobraram no prato? Olhe o material dourado para ajudar. Letra A: vinte e quatro morangos. Letra B: vinte e seis morangos. Letra C: vinte e oito morangos."},
 
- {disc:"ret", img:"ma_p4.png", dourado:{a:15,b:6,op:"-"}, pergunta:"Numa caixa havia 15 lápis. A professora tirou 6. Quantos lápis FICARAM na caixa?",
-  opcoes:["8 lápis.","9 lápis.","11 lápis."], correta:1,
-  fala:"Pergunta quatro. Numa caixa havia quinze lápis. A professora tirou seis. Quantos lápis ficaram na caixa? Olhe o material dourado para ajudar. Letra A: oito lápis. Letra B: nove lápis. Letra C: onze lápis."},
+ {disc:"ret", img:"ma_p4.png", dourado:{a:60,b:25,op:"-"}, pergunta:"Numa caixa havia 60 lápis. A professora tirou 25. Quantos lápis FICARAM na caixa?",
+  opcoes:["25 lápis.","35 lápis.","45 lápis."], correta:1,
+  fala:"Pergunta quatro. Numa caixa havia sessenta lápis. A professora tirou vinte e cinco. Quantos lápis ficaram na caixa? Olhe o material dourado para ajudar. Letra A: vinte e cinco lápis. Letra B: trinta e cinco lápis. Letra C: quarenta e cinco lápis."},
 
- {disc:"sep", img:"ma_p5.png", dourado:{a:10,b:7,op:"falta"}, pergunta:"João quer completar 10 figurinhas. Ele já tem 7. Quantas figurinhas ainda FALTAM?",
-  opcoes:["3 figurinhas.","4 figurinhas.","5 figurinhas."], correta:0,
-  fala:"Pergunta cinco. João quer completar dez figurinhas. Ele já tem sete. Quantas figurinhas ainda faltam? Olhe o material dourado: já tem sete, quantas faltam para dez? Letra A: três figurinhas. Letra B: quatro figurinhas. Letra C: cinco figurinhas."},
+ {disc:"cmp", img:"ma_p5.png", dourado:{a:24,b:15,op:"-"}, pergunta:"Lia tem 24 figurinhas e Bia tem 15. Quantas figurinhas Lia tem A MAIS que Bia?",
+  opcoes:["8 figurinhas.","9 figurinhas.","11 figurinhas."], correta:1,
+  fala:"Pergunta cinco. Lia tem vinte e quatro figurinhas e Bia tem quinze. Quantas figurinhas Lia tem a mais que Bia? Para comparar, a gente tira. Olhe o material dourado para ajudar. Letra A: oito figurinhas. Letra B: nove figurinhas. Letra C: onze figurinhas."},
 
- {disc:"sep", img:"ma_p6.png", dourado:{a:12,b:8,op:"-"}, pergunta:"Havia 12 balas na mesa. A mãe SEPAROU 8 para levar. Quantas balas ficaram na mesa?",
-  opcoes:["3 balas.","4 balas.","5 balas."], correta:1,
-  fala:"Pergunta seis. Havia doze balas na mesa. A mãe separou oito para levar. Quantas balas ficaram na mesa? Olhe o material dourado para ajudar. Letra A: três balas. Letra B: quatro balas. Letra C: cinco balas."},
+ {disc:"sep", img:"ma_p6.png", dourado:{a:43,b:16,op:"-"}, pergunta:"Havia 43 balas na mesa. A mãe SEPAROU 16 para levar. Quantas balas ficaram na mesa?",
+  opcoes:["27 balas.","33 balas.","37 balas."], correta:0,
+  fala:"Pergunta seis. Havia quarenta e três balas na mesa. A mãe separou dezesseis para levar. Quantas balas ficaram na mesa? Olhe o material dourado para ajudar. Letra A: vinte e sete balas. Letra B: trinta e três balas. Letra C: trinta e sete balas."},
 
- {disc:"conc", img:"ma_p7.png", dourado:null, pergunta:"Para saber quantos ficaram ao JUNTAR duas quantidades, qual conta a gente faz?",
-  opcoes:["A conta de somar, o mais.","A conta de tirar, o menos.","Não precisa fazer conta."], correta:0,
-  fala:"Pergunta sete. Para saber quantos ficaram ao juntar duas quantidades, qual conta a gente faz? Letra A: a conta de somar, o mais. Letra B: a conta de tirar, o menos. Letra C: não precisa fazer conta."},
+ {disc:"conc", img:"ma_p7.png", dourado:null, pergunta:"Ao somar 28 + 15, a gente junta 8 + 5, que dá 13. O que a gente faz com esse 13?",
+  opcoes:["Escrevo 13 tudo junto.","Escrevo o 3 e levo 1 dezena.","Escrevo só o 1."], correta:1,
+  fala:"Pergunta sete. Ao somar vinte e oito mais quinze, a gente junta oito mais cinco, que dá treze. O que a gente faz com esse treze? Letra A: escrevo treze tudo junto. Letra B: escrevo o três e levo uma dezena. Letra C: escrevo só o um."},
 
- {disc:"conc", img:"ma_p8.png", dourado:null, pergunta:"Para saber quanto SOBROU depois de tirar ou separar alguma coisa, qual conta a gente faz?",
-  opcoes:["A conta de somar, o mais.","A conta de subtrair, o menos.","A conta de contar até dez."], correta:1,
-  fala:"Pergunta oito. Para saber quanto sobrou depois de tirar ou separar alguma coisa, qual conta a gente faz? Letra A: a conta de somar, o mais. Letra B: a conta de subtrair, o menos. Letra C: a conta de contar até dez."},
+ {disc:"conc", img:"ma_p8.png", dourado:null, pergunta:"Para tirar 34 − 8, não dá para tirar 8 das 4 unidades. O que a gente faz?",
+  opcoes:["Deixo a conta para lá.","Pego 1 dezena emprestada: viram 14 unidades.","Tiro 4 de 8."], correta:1,
+  fala:"Pergunta oito. Para tirar trinta e quatro menos oito, não dá para tirar oito de quatro unidades. O que a gente faz? Letra A: deixo a conta para lá. Letra B: pego uma dezena emprestada, e viram quatorze unidades. Letra C: tiro quatro de oito."},
 
- {disc:"jun", img:"ma_p9.png", dourado:{a:7,b:6,op:"+"}, pergunta:"Na caixa de brinquedos há 7 carrinhos e 6 bonecas. JUNTANDO tudo, quantos brinquedos há ao todo?",
-  opcoes:["12 brinquedos.","13 brinquedos.","14 brinquedos."], correta:1,
-  fala:"Pergunta nove. Na caixa de brinquedos há sete carrinhos e seis bonecas. Juntando tudo, quantos brinquedos há ao todo? Olhe o material dourado para ajudar. Letra A: doze brinquedos. Letra B: treze brinquedos. Letra C: quatorze brinquedos."},
+ {disc:"jun", img:"ma_p9.png", dourado:{a:36,b:29,op:"+"}, pergunta:"Na caixa de brinquedos há 36 carrinhos e 29 bonecas. JUNTANDO tudo, quantos brinquedos há ao todo?",
+  opcoes:["55 brinquedos.","65 brinquedos.","66 brinquedos."], correta:1,
+  fala:"Pergunta nove. Na caixa de brinquedos há trinta e seis carrinhos e vinte e nove bonecas. Juntando tudo, quantos brinquedos há ao todo? Olhe o material dourado para ajudar. Letra A: cinquenta e cinco brinquedos. Letra B: sessenta e cinco brinquedos. Letra C: sessenta e seis brinquedos."},
 
- {disc:"acr", img:"ma_p10.png", dourado:{a:14,b:5,op:"+"}, pergunta:"A turma tinha 14 estrelinhas e GANHOU mais 5. Com quantas estrelinhas a turma ficou?",
-  opcoes:["18 estrelinhas.","19 estrelinhas.","20 estrelinhas."], correta:1,
-  fala:"Pergunta dez, a última. A turma tinha quatorze estrelinhas e ganhou mais cinco. Com quantas estrelinhas a turma ficou? Olhe o material dourado para ajudar. Letra A: dezoito estrelinhas. Letra B: dezenove estrelinhas. Letra C: vinte estrelinhas."}
+ {disc:"acr", img:"ma_p10.png", dourado:{a:148,b:25,op:"+"}, pergunta:"A turma tinha 148 estrelinhas e GANHOU mais 25. Com quantas estrelinhas a turma ficou?",
+  opcoes:["163 estrelinhas.","173 estrelinhas.","172 estrelinhas."], correta:1,
+  fala:"Pergunta dez, a última. A turma tinha cento e quarenta e oito estrelinhas e ganhou mais vinte e cinco. Com quantas estrelinhas a turma ficou? Olhe o material dourado para ajudar. Letra A: cento e sessenta e três estrelinhas. Letra B: cento e setenta e três estrelinhas. Letra C: cento e setenta e duas estrelinhas."}
 ];
-var DISCNOME={jun:"JUNTAR", acr:"ACRESCENTAR", sep:"SEPARAR", ret:"RETIRAR", conc:"A CONTA CERTA"};
+var DISCNOME={jun:"JUNTAR", acr:"ACRESCENTAR", sep:"SEPARAR", ret:"RETIRAR", cmp:"COMPARAR", conc:"A CONTA CERTA"};
 
 /* ====== estado ====== */
 var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, turmaSel="", avatarSel="", avatarAluno="";
@@ -230,7 +233,8 @@ function falar(texto,_forcar){
 function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
 /* ====== MATERIAL DOURADO (ajuda visual — currículo: material manipulável) ====== */
 function mdNum(n){
-  var dez=Math.floor(n/10), uni=n%10, h='<div class="dgrp">', i;
+  var cen=Math.floor(n/100), dez=Math.floor((n%100)/10), uni=n%10, h='<div class="dgrp">', i;
+  for(i=0;i<cen;i++){h+='<span class="mdc" title="uma centena"></span>';}
   for(i=0;i<dez;i++){h+='<span class="mdd" title="uma dezena"></span>';}
   if(uni>0){h+='<span class="mdunits">';for(i=0;i<uni;i++){h+='<span class="mdu"></span>';}h+='</span>';}
   return h+'</div>';
@@ -257,7 +261,7 @@ function telaCapa(){
   h+='<div class="card">';
   h+='<img class="masc-capa" src="img/ma_coruja.png" alt="Cora, a coruja" onerror="this.style.display=\'none\'">';
   h+='<h1>A Prova da Coruja Cora</h1>';
-  h+='<h2>Matemática &middot; 2º ano &middot; Somar e tirar</h2>';
+  h+='<h2>Matemática &middot; 3º ano &middot; Somar e tirar</h2>';
   h+='<p class="grande">Eu sou a Cora, a coruja! Leio cada probleminha e cada resposta em voz alta. É só ouvir com atenção e tocar na resposta certa.</p>';
   h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir a Cora</button>';
   h+='<div class="formrow">';

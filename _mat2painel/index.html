@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Painel — Prova de Matemática (2º ano)</title>
+<title>Painel — Prova de Matemática (3º ano)</title>
 <style>
 *{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
 body{margin:0;background:#0f2740;color:#eaf1f8;}
@@ -35,20 +35,20 @@ function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace
 
 function telaTrava(){
   $("root").innerHTML='<div class="wrap"><div class="trava"><h1>Painel do Professor</h1>'+
-   '<p class="sub">A Prova da Coruja Cora &middot; Matemática &middot; 2º ano · Adição e subtração</p>'+
+   '<p class="sub">A Prova da Coruja Cora &middot; Matemática &middot; 3º ano · Adição e subtração</p>'+
    '<input id="s" type="password" placeholder="senha" onkeydown="if(event.keyCode===13)destravar()">'+
    '<div><button class="bt" onclick="destravar()">Entrar</button></div></div></div>';
 }
 function destravar(){ if($("s").value===SENHA){ telaPainel(); carregar(); if(!timer)timer=setInterval(carregar,10000);} else { $("s").value=""; $("s").placeholder="senha errada"; } }
 
 function telaPainel(){
-  $("root").innerHTML='<div class="wrap"><h1>&#128202; Matemática — 2º ano · Notas</h1>'+
+  $("root").innerHTML='<div class="wrap"><h1>&#128202; Matemática — 3º ano · Notas</h1>'+
    '<p class="sub">Prova trimestral &middot; a lista atualiza sozinha a cada 10 segundos.</p>'+
    '<div class="bar">Ordenar: '+
      '<button class="bt sec" id="o_chegada" onclick="setOrdem(\'chegada\')">Chegada</button>'+
      '<button class="bt sec" id="o_nome" onclick="setOrdem(\'nome\')">Nome A→Z</button>'+
      '<button class="bt sec" id="o_nota" onclick="setOrdem(\'nota\')">Maior nota</button>'+
-     ' &nbsp;Turma: <select id="fturma" onchange="filtroTurma=this.value;pintar()"><option value="">todas</option><option>2º A</option><option>2º B</option><option>2º C</option><option>2º D</option></select>'+
+     ' &nbsp;Turma: <select id="fturma" onchange="filtroTurma=this.value;pintar()"><option value="">todas</option><option>3º A</option><option>3º B</option><option>3º C</option><option>3º D</option></select>'+
      ' &nbsp;<button class="bt" onclick="baixarCSV()">Baixar CSV</button>'+
      '<button class="bt sec" onclick="window.print()">Imprimir / PDF</button>'+
      '<button class="bt sec" onclick="carregar()">Atualizar</button></div>'+
