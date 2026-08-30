@@ -232,13 +232,13 @@ add(id=u"aquecimento", mec=u"escolher", selo=u"AQUECIMENTO", conceito=u"objetivo
 # BLOCO 4 — COMPLETAR (f07, f07b, f08) — a letra grande
 # ============================================================
 add(id=u"f07", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
-    enunciado=u"Todo nome próprio começa com <b>letra maiúscula</b>. Escolha o certo.",
+    enunciado=u"No nome próprio, <b>só a primeira letra é maiúscula</b>. Escolha o certo.",
     dica=u"Só a PRIMEIRA letra é grande.",
     dados=[{u"img":u"", u"ante":u"O cachorro se chama ", u"dep":u".", u"cer":u"Rex", u"out":[u"rex", u"REX"], u"dic":u"Só o R é grande: Rex."},
            {u"img":u"", u"ante":u"A menina se chama ",   u"dep":u".", u"cer":u"Lia", u"out":[u"lia", u"LIA"], u"dic":u"Só o L é grande: Lia."},
            {u"img":u"", u"ante":u"A gata se chama ",      u"dep":u".", u"cer":u"Mimi", u"out":[u"mimi", u"MIMI"], u"dic":u"Só o M é grande: Mimi."},
            {u"img":u"", u"ante":u"O menino se chama ",    u"dep":u".", u"cer":u"Bento", u"out":[u"bento", u"BENTO"], u"dic":u"Só o B é grande: Bento."}],
-    dadosExtra={u"ENUN":u"Todo nome próprio começa com <b>letra maiúscula</b>. Escolha o certo.",
+    dadosExtra={u"ENUN":u"No nome próprio, <b>só a primeira letra é maiúscula</b>. Escolha o certo.",
                 u"FECHO":u"Você acertou a letra grande em todos!"})
 
 add(id=u"f07b", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
@@ -261,13 +261,13 @@ add(id=u"f08", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
                 u"FECHO":u"Isso! Nome de lugar e de pessoa é próprio."})
 
 add(id=u"f08b", mec=u"completar", selo=u"A LETRA GRANDE", conceito=u"objetivo3",
-    enunciado=u"Complete com o nome próprio escrito do jeito <b>certo</b>.",
+    enunciado=u"Preencha com o nome próprio escrito do jeito <b>certo</b>.",
     dica=u"Nome de pessoa, bicho e lugar é próprio: letra grande.",
     dados=[{u"img":u"", u"ante":u"O menino novo é o ", u"dep":u".", u"cer":u"Gael", u"out":[u"gael", u"GAEL"], u"dic":u"Só o G é grande: Gael."},
            {u"img":u"", u"ante":u"A cidade da praia é ", u"dep":u".", u"cer":u"Recife", u"out":[u"recife", u"RECIFE"], u"dic":u"Só o R é grande: Recife."},
            {u"img":u"", u"ante":u"O papagaio é o ", u"dep":u".", u"cer":u"Louro", u"out":[u"louro", u"LOURO"], u"dic":u"Só o L é grande: Louro."},
            {u"img":u"", u"ante":u"A gatinha nova é a ", u"dep":u".", u"cer":u"Nina", u"out":[u"nina", u"NINA"], u"dic":u"Só o N é grande: Nina."}],
-    dadosExtra={u"ENUN":u"Complete com o nome próprio escrito do jeito <b>certo</b>.",
+    dadosExtra={u"ENUN":u"Preencha com o nome próprio escrito do jeito <b>certo</b>.",
                 u"FECHO":u"Nome próprio: sempre com letra grande no começo!"})
 
 # ============================================================
@@ -373,6 +373,45 @@ add(id=u"f13c", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES DE LUGAR", conceito
                 u"CORP":[u"l1", u"l2", u"l3", u"l4", u"l5"]})
 
 # ============================================================
+# ⭐ CAIXA CERTA (Marcos, ago/2026): esta lição É sobre maiúscula/minúscula. Logo,
+#    nome COMUM aparece em minúsculo e nome PRÓPRIO com a Inicial Maiúscula (só a
+#    1ª letra). Sem isto, tudo em CAIXA ALTA apaga a própria distinção que a
+#    atividade ensina (o Marcos pegou: "no comum está tudo maiúsculo; o próprio Rex
+#    fica igual ao comum; a régua não diferencia certo do errado").
+#    NÃO mexe em: completar (A LETRA GRANDE — as opções Rex/rex/REX são de caso, de
+#    propósito), intruso (já vem no caso certo) e caça-palavras (grade é maiúscula).
+_PROPRIOS = set((u"rex bidu mimi nina lia duda bento gael louro zé ze ipê ipe flora "
+                 u"pipoca blumenau brasil recife maria bahia paraná parana").split())
+def _caso(w):
+    s = (w or u"").strip()
+    if not s:
+        return w
+    return (s[0].upper() + s[1:].lower()) if s.lower() in _PROPRIOS else s.lower()
+for _f in fases:
+    _m = _f.get(u"mec")
+    if _m == u"escolher":
+        for _r in _f.get(u"dados", []):
+            if isinstance(_r.get(u"c"), dict) and u"t" in _r[u"c"]:
+                _r[u"c"][u"t"] = _caso(_r[u"c"][u"t"])
+            for _e in _r.get(u"e", []):
+                if isinstance(_e, dict) and u"t" in _e:
+                    _e[u"t"] = _caso(_e[u"t"])
+    elif _m == u"ligar":
+        for _r in _f.get(u"dados", []):
+            if isinstance(_r, dict) and u"s" in _r:
+                _r[u"s"] = _caso(_r[u"s"])
+    elif _m == u"quem-sou-eu":
+        for _r in _f.get(u"dados", []):
+            if u"resp" in _r:
+                _r[u"resp"] = _caso(_r[u"resp"])
+            _r[u"outros"] = [_caso(x) for x in _r.get(u"outros", [])]
+    elif _m == u"digitar":
+        # nome próprio escrito com a Inicial Maiúscula (o motor agora respeita o
+        # caso das teclas — ver digitar case-aware em pecas.js)
+        for _r in _f.get(u"dados", []):
+            if u"palavra" in _r:
+                _r[u"palavra"] = _caso(_r[u"palavra"])
+
 CONTEUDO[u"fases"] = fases
 CONTEUDO[u"habilidades"] = HAB
 with io.open(os.path.join(PASTA, u"conteudo.json"), u"w", encoding=u"utf-8") as f:

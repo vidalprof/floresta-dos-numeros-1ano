@@ -12268,9 +12268,13 @@ function teclaReal(ev){
   usaLetra(k,achaTecla(k));
 }
 function achaTecla(k){
-  var i;
+  /* ⭐ case-aware (Marcos, ago/2026, atividade de substantivos): a palavra pode
+     vir em caso MISTO ("Rex"), porque a lição É sobre maiúscula/minúscula. A tecla
+     guarda a letra REAL ("R","e","x"); o teclado FÍSICO chega em maiúscula. Casar
+     ignorando o caso acha a tecla certa nos dois caminhos. */
+  var i, ku=String(k).toUpperCase();
   for(i=0;i<teclas.length;i++)
-    if(teclas[i].letra===k&&teclas[i].className.indexOf("usada")<0) return teclas[i];
+    if(String(teclas[i].letra).toUpperCase()===ku&&teclas[i].className.indexOf("usada")<0) return teclas[i];
   return null;
 }
 
@@ -12278,7 +12282,10 @@ function achaTecla(k){
 function usaLetra(k,bot){
   if(!telaAtual||!telaAtual.parentNode) return;
   if(pos>=palavra.length) return;
-  if(k===palavra.charAt(pos)) poeLetra(k,bot||achaTecla(k)); else erraLetra(bot);
+  /* compara sem caso; COLOCA a letra canônica da palavra (preserva "Rex", não
+     vira "REX" quando digitado no teclado físico). */
+  if(String(k).toUpperCase()===palavra.charAt(pos).toUpperCase())
+    poeLetra(palavra.charAt(pos),bot||achaTecla(k)); else erraLetra(bot);
 }
 function poeLetra(k,bot){
   vagas[pos].className="vaga cheia";
