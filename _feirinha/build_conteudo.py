@@ -700,6 +700,32 @@ for _f in CONTEUDO[u"fases"]:
                 _r[u"out"] = [_numvoz(x) for x in _r[u"out"]]
 
 # ------------------------------------------------------------------
+# ⭐ RITMO — ~45 min ÁGEIS (Marcos, ago/2026: "muito lenta, desmotivante").
+#    Antes eram 118 rodadas (~1h40) porque cada fase repetia 3-4 vezes e mecânica
+#    lenta (contar, reta) vinha 3-4 fases. Corte em duas frentes:
+#     · no MÁXIMO 2 rodadas por fase (chega de encher a aula com repetição);
+#     · TETO de fases por mecânica — as lentas (contar, reta) caem para 1-2, e o
+#       aquecimento (memória) fica com 4 pares, não 8.
+_MAX_ROD = 2
+for _f in CONTEUDO[u"fases"]:
+    if isinstance(_f.get(u"dados"), list) and len(_f[u"dados"]) > _MAX_ROD:
+        # memória conta em PARES; 4 pares é o suficiente para o descanso
+        _lim = 4 if _f.get(u"mec") == u"memoria" else _MAX_ROD
+        _f[u"dados"] = _f[u"dados"][:_lim]
+_TETO_MEC = {u"contadores":1, u"escolher":2, u"reta-numerica":2, u"completar":2,
+             u"comparar":2, u"saltos-na-fita":1, u"base-dez":1, u"repartir":1,
+             u"estimar":1}
+_visto = {}
+_enxuto = []
+for _f in CONTEUDO[u"fases"]:
+    _m = _f.get(u"mec")
+    _visto[_m] = _visto.get(_m, 0) + 1
+    _lim = _TETO_MEC.get(_m)
+    if _lim is not None and _visto[_m] > _lim:
+        continue   # fase repetida além do teto: cai, para não arrastar
+    _enxuto.append(_f)
+CONTEUDO[u"fases"] = _enxuto
+
 # ⭐ REPETIÇÃO SEGUIDA, NÃO ESPAÇADA (Marcos: as crianças dizem "isso eu já fiz").
 #    O montador/pedagogo reprova mecânica espaçada. Aqui as fases são reordenadas
 #    em BLOCOS da mesma mecânica (cada bloco sobe um degrau), com o AQUECIMENTO
