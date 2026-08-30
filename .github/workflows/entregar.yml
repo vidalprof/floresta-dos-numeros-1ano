@@ -79,6 +79,40 @@ jobs:
           echo "lista=$lista" >> "$GITHUB_OUTPUT"
           echo "alvos: $lista"
 
+      # ---------------------------------------------------------------
+      # 🛡️ PORTÃO PRÉ-ENTREGA (Marcos, ago/2026: "faça algo para esses erros bobos
+      #    que acontecem toda hora não se repetirem"). Antes de gravar voz OU
+      #    publicar, rodam os portões RÁPIDOS (sem navegador) em cada pasta. Se
+      #    QUALQUER um reprovar, o job PARA aqui e NADA vai ao ar — o erro conhecido
+      #    (inglês na voz, "complite", JS quebrado, armadilha de mecânica) nunca
+      #    mais chega na criança sem alguém ver.
+      - name: Portão pré-entrega (recusa publicar com erro conhecido)
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          FALHOU=0
+          IFS=',' read -ra ALVS <<< "$LISTA"
+          for a in "${ALVS[@]}"; do
+            pasta="${a%%:*}"
+            [ -z "$pasta" ] && continue
+            echo "==================== Portao: $pasta ===================="
+            idx="$pasta/index.html"; fal="$pasta/falas.json"
+            if [ -f "$idx" ]; then
+              if python3 _qa/extrai_js.py "$idx" /tmp/_pre.js; then
+                node --check /tmp/_pre.js || { echo "::error::$pasta: JS invalido (node --check)"; FALHOU=1; }
+              fi
+              python3 _qa/dinamicas.py "$idx" || { echo "::error::$pasta: portao das dinamicas reprovou"; FALHOU=1; }
+            fi
+            if [ -f "$fal" ]; then
+              python3 _qa/falas.py "$fal" || { echo "::error::$pasta: portao da narracao reprovou (voz/ingles/complite)"; FALHOU=1; }
+            fi
+          done
+          if [ "$FALHOU" != "0" ]; then
+            echo "::error::PORTÃO PRÉ-ENTREGA REPROVOU — NADA foi publicado. Conserte os erros acima e rode de novo."
+            exit 1
+          fi
+          echo "✅ Portão pré-entrega: tudo verde — pode gravar e publicar."
+
       - name: Instalar edge-tts
         run: pip3 install --quiet edge-tts
 
