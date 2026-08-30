@@ -699,6 +699,50 @@ for _f in CONTEUDO[u"fases"]:
             if u"out" in _r:
                 _r[u"out"] = [_numvoz(x) for x in _r[u"out"]]
 
+# ==================================================================
+# ⭐ DUAS INTERATIVIDADES NOVAS DE TOQUE (Marcos, ago/2026: "outras
+#    interatividades" + "as de arrastar não funcionam"). Ambas são 100% TOQUE e
+#    já provadas em produção (intruso e quem-sou-eu vêm do Detetive/Plaquinhas).
+# ==================================================================
+def _intruso(idf, itens, fora, nomeFora, alvo, d2):
+    return dict(id=idf, mec=u"intruso", selo=u"ACHE O INTRUSO", conceito=u"objetivo1",
+      enunciado=u"Três destas contas dão o <b>mesmo total</b>. Ache a que NÃO dá.",
+      dica=u"Faça cada continha de cabeça e veja qual é a diferente.",
+      dados=[{u"selo":u"ACHE O INTRUSO", u"tipo":u"texto",
+        u"enun":u"Três destas contas dão <b>%d</b>. Qual NÃO dá?" % alvo,
+        u"itens":[{u"k":k, u"n":n} for k, n in itens],
+        u"fora":fora, u"nomeFora":nomeFora,
+        u"d1":u"Some cada continha devagar, uma de cada vez.",
+        u"d2":d2,
+        u"d3":u"A de fora é <b>%s</b>: ela dá um total diferente das outras." % nomeFora,
+        u"razoes":[{u"t":u"As outras três dão %d; essa dá outro número." % alvo, u"ok":1},
+                   {u"t":u"Porque é a conta mais comprida.", u"ok":0},
+                   {u"t":u"Porque tem o número maior.", u"ok":0}],
+        u"enunPorque":u"Por que <b>%s</b> é a diferente? Toque na razão certa." % nomeFora,
+        u"p1":u"Olhe o TOTAL de cada uma, não os números soltos.",
+        u"p2":u"O tamanho dos números não importa; importa quanto dá.",
+        u"p3":u"Some de novo: qual não chega no mesmo total?"}])
+add(**_intruso(u"fi01", [(u"a",u"6 + 4"),(u"b",u"7 + 3"),(u"c",u"5 + 5"),(u"d",u"8 + 3")],
+               u"d", u"8 + 3", 10, u"6+4, 7+3 e 5+5 dão 10; 8+3 dá 11."))
+add(**_intruso(u"fi02", [(u"a",u"9 − 2"),(u"b",u"5 + 2"),(u"c",u"3 + 4"),(u"d",u"6 + 3")],
+               u"d", u"6 + 3", 7, u"9−2, 5+2 e 3+4 dão 7; 6+3 dá 9."))
+
+add(id=u"fq01", mec=u"quem-sou-eu", selo=u"ADIVINHE O NÚMERO", conceito=u"objetivo1",
+    enunciado=u"Ouça as pistas e descubra o <b>número</b>.",
+    dica=u"Vá tirando os que não servem, uma pista de cada vez.",
+    dados=[
+      {u"resp":u"8", u"pistas":[u"Sou o resultado de <b>5 + 3</b>.", u"Sou um número <b>par</b>.", u"Venho logo depois do 7."], u"outros":[u"7", u"9", u"6"]},
+      {u"resp":u"6", u"pistas":[u"Sou o resultado de <b>10 − 4</b>.", u"Sou um número <b>par</b>.", u"Sou menor que 7."], u"outros":[u"4", u"8", u"5"]},
+    ])
+
+# 🚫 SÓ TOQUE (Marcos, ago/2026: "essas dinâmicas de ARRASTAR não funcionam" —
+#    no iPhone/iPad o toque briga com o arrasto). A Feirinha fica 100% de TOQUE:
+#    removidas TODAS as mecânicas de arrasto e as que eu tinha adicionado.
+_ARRASTO = {u"reta-numerica", u"classificar", u"caixa-dinheiro", u"domino",
+            u"ligar", u"ordenar", u"arrastar-lugar", u"arrastar-sombra",
+            u"conserte-o-erro"}
+CONTEUDO[u"fases"] = [f for f in CONTEUDO[u"fases"] if f.get(u"mec") not in _ARRASTO]
+
 # ------------------------------------------------------------------
 # ⭐ RITMO — ~45 min ÁGEIS (Marcos, ago/2026: "muito lenta, desmotivante").
 #    Antes eram 118 rodadas (~1h40) porque cada fase repetia 3-4 vezes e mecânica
@@ -712,9 +756,9 @@ for _f in CONTEUDO[u"fases"]:
         # memória conta em PARES; 4 pares é o suficiente para o descanso
         _lim = 4 if _f.get(u"mec") == u"memoria" else _MAX_ROD
         _f[u"dados"] = _f[u"dados"][:_lim]
-_TETO_MEC = {u"contadores":1, u"escolher":2, u"reta-numerica":2, u"completar":2,
+_TETO_MEC = {u"contadores":2, u"escolher":3, u"completar":2,
              u"comparar":2, u"saltos-na-fita":1, u"base-dez":1, u"repartir":1,
-             u"estimar":1}
+             u"estimar":1, u"intruso":2, u"quem-sou-eu":1}
 _visto = {}
 _enxuto = []
 for _f in CONTEUDO[u"fases"]:
@@ -731,10 +775,9 @@ CONTEUDO[u"fases"] = _enxuto
 #    em BLOCOS da mesma mecânica (cada bloco sobe um degrau), com o AQUECIMENTO
 #    (memória) no meio, como descanso e revisão espaçada. Ordena de forma estável:
 #    preserva a ordem interna de cada bloco (a escada didática que já vinha certa).
-_MEC_ORDEM = [u"contadores", u"escolher", u"classificar", u"saltos-na-fita",
-              u"reta-numerica", u"memoria", u"completar", u"comparar",
-              u"base-dez", u"repartir", u"conserte-o-erro", u"caixa-dinheiro",
-              u"domino", u"ordenar", u"estimar"]
+_MEC_ORDEM = [u"contadores", u"escolher", u"saltos-na-fita", u"completar",
+              u"memoria", u"comparar", u"base-dez", u"repartir",
+              u"intruso", u"quem-sou-eu", u"estimar"]
 def _ordem_mec(par):
     _i, _f = par
     _m = _f.get(u"mec", u"")
