@@ -14,7 +14,7 @@
 > Link = `https://vidalprof.github.io/<repositório>/`. Pasta = onde mora o código
 > neste repo (`_xxx/`).
 
-Última atualização: 2026-08-31.
+Última atualização: 2026-08-31 (slugs conferidos com o Marcos).
 
 ---
 
@@ -43,7 +43,7 @@
 | **A Feirinha da Dona Coruja** | Adição/subtração: juntar, acrescentar, separar, retirar, comparar (com digitar-resultado e arrastar) | `_feirinha` | https://vidalprof.github.io/feirinha-da-coruja/ |
 | **As Plaquinhas do Téo** | Substantivos próprios e comuns | `_subs` | https://vidalprof.github.io/as-plaquinhas-da-coruja/ |
 | **A Cidade dos Sólidos** | Sólidos geométricos | `_solidos` | https://vidalprof.github.io/a-cidade-dos-solidos/ |
-| **Brincar e Aprender com o Léo — Prova de Ed. Física** | Educação Física (avaliação trimestral) | `_edf2` (+ `_edf2painel`) | https://vidalprof.github.io/educacao-fisica-2ano/ · [painel](https://vidalprof.github.io/educacao-fisica-2ano-painel/) |
+| **Brincar e Aprender com o Léo — Prova de Ed. Física** | Educação Física (avaliação trimestral) | `_edf2` (+ `_edf2painel`) | https://vidalprof.github.io/educacao-fisica-2ano/ · [painel](https://vidalprof.github.io/painel-ef-2ano/) |
 | **Mundo dos Números — Juntar e Tirar** | Adição/subtração | — | https://vidalprof.github.io/AdicaoSubtra-o2-2-ano/ |
 | **Caça-Letras — A Aventura das Palavras** | Ortografia | — | https://vidalprof.github.io/ortografia2-/ |
 
@@ -53,8 +53,9 @@
 |---|---|---|---|
 | **Prova de Matemática — Coruja Cora** | Adição/subtração: conceitos, significados e algoritmos (com reagrupamento) | `_mat2` (+ `_mat2painel`) | https://vidalprof.github.io/matematica-2ano/ · [painel](https://vidalprof.github.io/matematica-2ano-painel/) |
 | **O Museu Vivo dos Bichos** | Ciências: vertebrados e invertebrados | `_museu` | https://vidalprof.github.io/o-museu-vivo-dos-bichos/ |
+| **Prova de Ciências** | Ciências (avaliação, 3º ano) | — | https://vidalprof.github.io/prova-ciencias-3ano/ · [painel](https://vidalprof.github.io/painel-ciencias-3ano/) |
 | **O Livro dos Mapas** (cartografia) | Geografia: representação cartográfica de Blumenau, mapa, planta, bússola | `_carto` (+ `_cartopainel`) | https://vidalprof.github.io/cartografia-3ano/ · [painel](https://vidalprof.github.io/cartografia-3ano-painel/) |
-| **Blumenau, a Nossa Cidade** | Geografia: a cidade e o mapa | `_blu` | https://vidalprof.github.io/blumenau-3ano/ |
+| **Blumenau, a Nossa Cidade** | Geografia: a cidade e o mapa | `_blu` | https://vidalprof.github.io/blumenau-nossa-cidade/ |
 | **Aventura no Espaço — Sistema Solar** | Ciências (sistema solar) | — | https://vidalprof.github.io/Sistemasolar3ano/ |
 | **O Observatório do Órbi** | Ciências | — | https://vidalprof.github.io/observatorio-do-orbi/ |
 
@@ -62,8 +63,7 @@
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
-| **A Oficina das Palavras** | Aumentativo/diminutivo, sílabas, mau×mal, verbos | `_por4` | https://vidalprof.github.io/a-oficina-das-palavras/ |
-| **A Agência dos Detetives das Palavras** | Pronomes, interpretação (narrativo/injuntivo), mau×mal | `_detetive` | https://vidalprof.github.io/detetives-das-palavras/ |
+| **A Oficina das Palavras** | Aumentativo/diminutivo, sílabas, mau×mal, verbos | `_por4` | https://vidalprof.github.io/a-oficina-das-palavras/ (painel embutido) |
 
 ## 5º ano
 
@@ -71,6 +71,7 @@
 |---|---|---|---|
 | **Expedição Santa Catarina** | Geografia: Florianópolis, Blumenau e o estado (revista + quiz 30q) | `_sc5` (+ `_sc5painel`) | https://vidalprof.github.io/santa-catarina-5ano/ · [painel](https://vidalprof.github.io/santa-catarina-5ano-painel/) |
 | **O Teatro das Palavras** | Português (5º ano) | `_teatro` | https://vidalprof.github.io/o-teatro-das-palavras/ |
+| **A Agência dos Detetives das Palavras** | Pronomes, interpretação (narrativo/injuntivo), mau×mal | `_detetive` | https://vidalprof.github.io/detetives-das-palavras/ |
 
 ## 6º ano
 
@@ -92,6 +93,7 @@
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
 | **Meu Pixel Art** | Arte digital / pixel | — | https://vidalprof.github.io/meu-pixel-art/ |
+| **Prova — Viagem pelo Brasil** | Geografia do Brasil (avaliação) | — | https://vidalprof.github.io/prova-viagem-brasil/ · [painel](https://vidalprof.github.io/painel-viagem-brasil/) |
 | **O Tangram da Vovó Marta** | Geometria / tangram | — | https://vidalprof.github.io/o-tangram-da-vovo-marta/ |
 | **Jardim do Broto** | — | `_jardim` | https://vidalprof.github.io/jardim-do-broto/ |
 | **A Terra dos Papagaios** | — | `_naveg` | https://vidalprof.github.io/a-terra-dos-papagaios/ |
