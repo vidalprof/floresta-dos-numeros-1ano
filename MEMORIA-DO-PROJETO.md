@@ -11,6 +11,21 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **🖥️ REPOS-CHAVE (ferramentas do professor — para eu NÃO esquecer, ago/2026).**
+> O catálogo de ATIVIDADES é o `ATIVIDADES.md`. As FERRAMENTAS ficam aqui:
+> - **Controle do Laboratório** → pasta `_lab/` → repo **`controle-lab`** →
+>   `https://vidalprof.github.io/controle-lab/controle.html?sala=sala1` (professor)
+>   e `.../controle-lab/index.html?sala=sala1` (aluno). Publica por `atualizar.yml`
+>   (`repo_name=controle-lab`, `source_dir=_lab`). Firebase `/labstatus`.
+> - **Agenda de Aulas** → pasta `_agenda/` → repo **`agenda-aulas`** →
+>   `https://vidalprof.github.io/agenda-aulas/` (ver CLAUDE.md §7).
+> - **Painéis de prova** (senha do professor, leem `/provas/<slug>`): matemática 3º
+>   =`matematica-2ano-painel` (_mat2painel); ed. física 2º=`painel-ef-2ano` (_edf2painel);
+>   viagem Brasil=`painel-viagem-brasil` (_painelviagem); ciências=`painel-ciencias-3ano`
+>   (_painelciencias); Santa Catarina 5º=`santa-catarina-5ano-painel` (_sc5painel);
+>   cartografia 3º=`cartografia-3ano-painel` (_cartopainel). Todos têm o botão
+>   "Remover provas de teste" (ago/2026). Publica por `atualizar.yml`.
+>
 > **🎛️ TAMANHO DA ATIVIDADE: ~7–8 DINÂMICAS (com repetições em bloco), NÃO 12
 > (cobrança do Marcos, ago/2026: "eram 7 ou 8 dinâmicas com algumas repetições").**
 > O padrão da casa é **7 a 8 mecânicas DIFERENTES**, cada uma repetida em BLOCO
