@@ -77,11 +77,6 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
   </div>
 
   <div class="card">
-    <label>Painel de presen&ccedil;a &middot; m&aacute;quinas</label>
-    <div id="presencaLista"><div class="subtle">Ligue as telas dos alunos que elas aparecem aqui.</div></div>
-  </div>
-
-  <div class="card">
     <label>Atalhos</label>
     <div id="presets"></div>
     <span class="link-add" id="addAtalhoBtn">+ Novo atalho</span>
@@ -190,36 +185,6 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     var a=getP(); a.push({nome:n,url:u}); setP(a); $("novoLink").value=""; $("novoNome").value=""; $("addForm").className="hide"; pintaP();
   };
   pintaP();
-
-  /* ===== PAINEL DE PRESENCA: mostra o que cada maquina esta fazendo (le do Firebase) ===== */
-  function pintaPresenca(obj){
-    var wrap=$("presencaLista"); if(!wrap){ return; }
-    obj=obj||{}; var now=(new Date()).getTime(); var keys=[],k;
-    for(k in obj){ if(obj.hasOwnProperty(k)){ keys.push(k); } }
-    keys.sort(function(a,b){ var na=parseInt((""+a).replace(/\D/g,""),10)||0, nb=parseInt((""+b).replace(/\D/g,""),10)||0; return na-nb; });
-    if(!keys.length){ wrap.innerHTML='<div class="subtle">Ligue as telas dos alunos que elas aparecem aqui.</div>'; return; }
-    var h="",i;
-    for(i=0;i<keys.length;i++){ var s=obj[keys[i]]||{}; var off=(now-(s.ts||0))>25000; var cls,txt;
-      if(off){ cls="off"; txt="fora / desligada"; }
-      else if(s.e==="atividade"){ cls="on"; txt="na atividade"+(s.r?(" · "+s.r):""); }
-      else if(s.e==="novaaba"){ cls="on"; txt="site aberto"+(s.r?(" · "+s.r):""); }
-      else if(s.e==="pausada"){ cls="pause"; txt="pausada"; }
-      else { cls="wait"; txt="aguardando"; }
-      h+='<div class="preslin"><b>'+keys[i]+'</b><span class="st"><span class="dot '+cls+'"></span>'+txt+'</span></div>';
-    }
-    wrap.innerHTML=h;
-  }
-  function pollPresenca(){
-    if(!DB()){ agP(); return; }
-    var x=new XMLHttpRequest();
-    try{ x.open("GET", DB()+"/labstatus/"+encodeURIComponent(SALA())+".json", true); }catch(e){ return agP(); }
-    x.timeout=8000;
-    x.onreadystatechange=function(){ if(x.readyState!==4) return; if(x.status>=200&&x.status<300){ try{ pintaPresenca(JSON.parse(x.responseText||"null")); }catch(e){} } agP(); };
-    x.ontimeout=function(){ agP(); }; x.onerror=function(){ agP(); };
-    try{ x.send(); }catch(e){ agP(); }
-  }
-  var tP=null; function agP(){ if(tP)clearTimeout(tP); tP=setTimeout(pollPresenca,5000); }
-  pollPresenca();
 
   /* mostrar/esconder painel de configuracoes e formulario de novo atalho */
   $("cfgBtn").onclick=function(){ var c=$("cfgPanel"); c.className=(c.className.indexOf("hide")>=0?"card":"card hide"); };
