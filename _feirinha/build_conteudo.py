@@ -758,11 +758,11 @@ add(**_rel(u"fr01", u"DESAFIO RELÂMPAGO",
      (u"3 + 5 = ?", u"8", [u"7", u"9"]), (u"8 + 1 = ?", u"9", [u"7", u"10"]),
      (u"6 + 3 = ?", u"9", [u"8", u"10"]), (u"5 + 4 = ?", u"9", [u"8", u"7"])]))
 add(**_rel(u"fr02", u"DESAFIO RELÂMPAGO",
-    u"Agora rápidas de tirar e comparar! Toque na resposta certa.",
+    u"Agora oito contas rápidas de tirar! Toque na resposta certa.",
     [(u"9 − 4 = ?", u"5", [u"4", u"6"]), (u"10 − 3 = ?", u"7", [u"6", u"8"]),
      (u"8 − 2 = ?", u"6", [u"5", u"7"]), (u"7 − 5 = ?", u"2", [u"3", u"1"]),
-     (u"12 − 4 = ?", u"8", [u"7", u"9"]), (u"6 + 6 = ?", u"12", [u"11", u"10"]),
-     (u"9 + 3 = ?", u"12", [u"13", u"11"]), (u"11 − 5 = ?", u"6", [u"5", u"7"])]))
+     (u"12 − 4 = ?", u"8", [u"7", u"9"]), (u"13 − 6 = ?", u"7", [u"6", u"8"]),
+     (u"14 − 5 = ?", u"9", [u"8", u"10"]), (u"11 − 5 = ?", u"6", [u"5", u"7"])]))
 
 # ⭐⭐ DIGITAR O RESULTADO COM SUPORTE VISUAL (Marcos, ago/2026: "digitar
 #    resultado com suporte visual" — a estrela desta versão). A criança CONTA as
@@ -846,9 +846,9 @@ for _f in CONTEUDO[u"fases"]:
 # ⭐ ENCHER A AULA (55 min): a versão enxuta batia só 40 min (piso). O portão 3g
 #    reprovou. Mais fases nas listas que já existem (sai de graça, sem arte/voz
 #    nova): escolher/completar 2, comparar/reta 3, intruso 2. Mira ~48-50 min.
-_TETO_MEC = {u"digitar-numero":2, u"escolher":1, u"completar":1,
-             u"comparar":1, u"reta-numerica":1, u"classificar":1,
-             u"ordenar":1, u"caixa-dinheiro":1, u"intruso":2, u"estimar":1}
+_TETO_MEC = {u"digitar-numero":3, u"escolher":2, u"completar":3,
+             u"comparar":3, u"reta-numerica":3, u"classificar":2,
+             u"ordenar":2, u"caixa-dinheiro":1, u"intruso":2, u"estimar":2}
 _visto = {}
 _enxuto = []
 for _f in CONTEUDO[u"fases"]:
