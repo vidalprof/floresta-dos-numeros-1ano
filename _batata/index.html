@@ -57,6 +57,10 @@ h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:
 @-webkit-keyframes flb{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,-53%)}}
 @keyframes flb{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,-53%)}}
 .dica{position:absolute;left:0;right:0;bottom:6px;text-align:center;color:#fff;font-weight:700;font-size:12px;text-shadow:0 1px 3px #0009;pointer-events:none}
+/* LIXEIRA no canto: arrastar a peça até aqui apaga (acende quando a peça chega) */
+.lixo{position:absolute;right:12px;bottom:12px;width:68px;height:68px;border-radius:16px;background:rgba(255,255,255,.92);border:3px solid #c0455e;color:#c0455e;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;z-index:40;-webkit-box-shadow:0 4px 10px #0004;box-shadow:0 4px 10px #0004;-webkit-transition:-webkit-transform .1s;transition:transform .1s,background .1s;pointer-events:none}
+.lixo .lxt{font-size:10px;font-weight:800;line-height:1;margin-top:1px}
+.lixo.hot{background:#c0455e;color:#fff;-webkit-transform:scale(1.2);transform:scale(1.2)}
 /* barra de categorias — ROLA de lado */
 .cats{-webkit-flex:none;flex:none;width:100%;display:-webkit-flex;display:flex;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;gap:6px;padding:7px 8px;background:var(--sol);}
 .cats::-webkit-scrollbar{height:6px}.cats::-webkit-scrollbar-thumb{background:#0002;border-radius:3px}
@@ -84,7 +88,7 @@ h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:
 <script>
 /* ===================== O ATELIÊ DO SR. BATATA (Pré) ===================== */
 var IMG="img/", AUD="audio/", PRE="hb";
-var CARIMBO_W=11;   /* tamanho padrao do carimbo (%) — menor; a crianca aumenta/diminui com − e + */
+var CARIMBO_W=9;   /* carimbo PEQUENO e fixo (Marcos: sem ferramenta de tamanho) */
 var CAT=[
  {k:"corpo", nome:"corpo",  itens:["hb_corpo1","hb_corpo2","hb_corpo3","hb_corpo4"], obrig:true},
  {k:"olho",  nome:"olhos",  itens:["hb_olho1","hb_olho2","hb_olho3","hb_olho4","hb_olho5","hb_olho6"]},
@@ -101,6 +105,18 @@ var CAT=[
 var CAMADAS=["orelha","corpo","sobra","olho","oculos","nariz","bigode","boca","chapeu"];  /* orelha PRIMEIRO = atras do corpo; o par encaixa sozinho (nao ajusta) */
 /* a orelha é um PAR: duas imagens (_e e _d) em posições fixas e simétricas. */
 var ORELHA={le:{cx:16,cy:42,w:22}, ri:{cx:84,cy:42,w:22}};
+/* VÁRIAS ORELHAS DE CORES (Marcos) — a partir das 2 formas de IA, recoloridas
+   por filtro (a mesma arte, várias cores; encaixe automático, sem ajuste). */
+function _corOre(h){ return "brightness(1.06) grayscale(.35) sepia(.75) saturate(3.4) hue-rotate("+h+"deg)"; }
+var ORELHA_ESTILOS=[
+ {img:"hb_orelha1", filt:"",          n:"natural"},
+ {img:"hb_orelha2", filt:"",          n:"natural"},
+ {img:"hb_orelha1", filt:_corOre(300),n:"rosa"},
+ {img:"hb_orelha1", filt:_corOre(195),n:"azul"},
+ {img:"hb_orelha1", filt:_corOre(95), n:"verde"},
+ {img:"hb_orelha2", filt:_corOre(250),n:"roxa"},
+ {img:"hb_orelha2", filt:_corOre(25), n:"amarela"}
+];
 var ANCORA={corpo:{cx:50,cy:50,w:100},
  sobra:{cx:50,cy:24,w:50},olho:{cx:50,cy:32,w:52},oculos:{cx:50,cy:33,w:56},
  nariz:{cx:50,cy:43,w:16},bigode:{cx:50,cy:52,w:26},boca:{cx:50,cy:54,w:30},chapeu:{cx:50,cy:8,w:56}};
@@ -136,18 +152,25 @@ function tom(f,d){ try{ if(!_ac)_ac=new (window.AudioContext||window.webkitAudio
 var _arr=null, _arrQuando=0;
 function _refPct(ref,cx,cy){ if(!ref)return null; var r=ref.getBoundingClientRect();
   return {x:Math.max(3,Math.min(97,((cx-r.left)/r.width)*100)), y:Math.max(4,Math.min(96,((cy-r.top)/r.height)*100))}; }
+/* a LIXEIRA no canto: arrastar a peça até ela APAGA (Marcos). */
+function sobreLixo(cx,cy){ var l=$("lixo"); if(!l)return false; var r=l.getBoundingClientRect();
+  return cx>=r.left-16&&cx<=r.right+16&&cy>=r.top-16&&cy<=r.bottom+16; }
 function _arrMove(cx,cy){ if(!_arr)return; if(Math.abs(cx-_arr.sx)>5||Math.abs(cy-_arr.sy)>5)_arr.moved=true;
+  _arr.lastx=cx; _arr.lasty=cy;
+  var l=$("lixo"); if(l&&_arr.del) l.className="lixo"+(sobreLixo(cx,cy)?" hot":"");
   var q=_refPct(_arr.ref,cx,cy); if(!q)return; _arr.img.style.left=q.x+"%"; _arr.img.style.top=q.y+"%"; _arr.set(q.x,q.y); }
-function _arrFim(){ if(!_arr)return; var a=_arr; _arr=null; a.img.style.zIndex=""; a.img.className=a.cls;
+function _arrFim(){ if(!_arr)return; var a=_arr; _arr=null; var l=$("lixo"); if(l)l.className="lixo";
+  a.img.style.zIndex=""; a.img.className=a.cls;
+  if(a.moved && a.del && sobreLixo(a.lastx,a.lasty)){ tom(300); a.del(); return; }   /* soltou na lixeira = apaga */
   if(!a.moved && a.tap){ a.tap(); }   /* soltou sem arrastar = TOQUE simples: seleciona */ }
 document.addEventListener("mousemove",function(e){ if(_arr)_arrMove(e.clientX,e.clientY); });
 document.addEventListener("mouseup",_arrFim);
 document.addEventListener("touchmove",function(e){ if(_arr){var t=e.touches[0]; if(t){_arrMove(t.clientX,t.clientY); if(e.cancelable)e.preventDefault();}} },{passive:false});
 document.addEventListener("touchend",_arrFim); document.addEventListener("touchcancel",_arrFim);
-function movivel(img,ref,set,onTap){
+function movivel(img,ref,set,onTap,onDel){
   img.style.pointerEvents="auto"; img.style.cursor="grab"; img.style.touchAction="none";
   var cls=img.className||"";
-  function pega(cx,cy){ arma(); _arr={img:img,ref:ref,set:set,cls:cls,tap:onTap,sx:cx,sy:cy,moved:false}; _arrQuando=(new Date()).getTime(); img.style.zIndex="55"; img.className=(cls?cls+" ":"")+"pegando"; tom(680,.08); }
+  function pega(cx,cy){ arma(); _arr={img:img,ref:ref,set:set,cls:cls,tap:onTap,del:onDel,sx:cx,sy:cy,lastx:cx,lasty:cy,moved:false}; _arrQuando=(new Date()).getTime(); img.style.zIndex="55"; img.className=(cls?cls+" ":"")+"pegando"; tom(680,.08); }
   img.addEventListener("mousedown",function(e){ pega(e.clientX,e.clientY); if(e.preventDefault)e.preventDefault(); if(e.stopPropagation)e.stopPropagation(); });
   img.addEventListener("touchstart",function(e){ var t=e.touches[0]; pega(t?t.clientX:0,t?t.clientY:0); if(e.stopPropagation)e.stopPropagation(); },{passive:true});
 }
@@ -193,7 +216,8 @@ function telaAtelie(){
   var bg=el("img"); bg.id="palcobg"; bg.src=IMG+"hb_fundo_"+FUNDOS[fundoIdx][0]+".png"; palco.appendChild(bg);
   var bon=el("div"); bon.id="boneco"; bon.className="tocaflutua"; palco.appendChild(bon);
   var cbox=el("div"); cbox.id="carimbos"; cbox.style.cssText="position:absolute;inset:0;pointer-events:none;overflow:hidden"; palco.appendChild(cbox);
-  palco.appendChild(el("div","dica","Toque numa peça e arraste no rosto para mover"));
+  palco.appendChild(el("div","dica","Arraste as peças no rosto. Para tirar, leve até a lixeira."));
+  var lix=el("div","lixo"); lix.id="lixo"; lix.innerHTML=SVG.lixeira+'<span class="lxt">apagar</span>'; palco.appendChild(lix);
   palco.addEventListener("click",function(e){ if(!carimboSel)return;
     var cc=null,ii; for(ii=0;ii<CAT.length;ii++)if(CAT[ii].k===catSel)cc=CAT[ii];
     if(!cc||!cc.stamp)return;   /* so as categorias de CARIMBO e ORELHA colocam tocando no quadro */
@@ -237,39 +261,25 @@ function desenhaCarimbos(){
     var sel=(escolha&&escolha.t==='c'&&escolha.i===idx), w=(ci.w||CARIMBO_W);
     im.style.cssText="position:absolute;left:"+ci.x+"%;top:"+ci.y+"%;width:"+w+"%;transform:translate(-50%,-50%);object-fit:contain;-webkit-animation:pop .3s;animation:pop .3s;filter:drop-shadow(0 3px 5px #0005)"+(sel?";outline:3px dashed #ffcf3f;outline-offset:4px;border-radius:10px":"");
     movivel(im,$("palco"),function(x,y){ ci.x=x; ci.y=y; },
-            function(){ escolha=(sel?null:{t:'c',i:idx}); tom(620); redesenha(); });
+            function(){ escolha=(sel?null:{t:'c',i:idx}); tom(620); redesenha(); },
+            function(){ var a=estado.carimbos||[]; a.splice(idx,1); escolha=null; redesenha(); });  /* arrastou p/ lixeira */
     box.appendChild(im);
   })(cs[i],i);}
   box.style.pointerEvents="none";  /* a caixa nao pega; so os itens (auto) pegam */
   ctrlTamanho();
 }
-/* barra de TAMANHO/apagar (fixa no alto do palco: alvo grande e facil) — serve
-   tanto para o carimbo/orelha selecionado quanto para a peca do rosto */
-function ctrlTamanho(){
-  var pal=$("palco"); if(!pal)return; var v=$("cctrl"); if(v)v.parentNode.removeChild(v);
-  if(!escolha)return; var cs=estado.carimbos||[], isC=(escolha.t==='c');
-  if(isC && !cs[escolha.i]){escolha=null;return;} if(!isC && !estado[escolha.k]){escolha=null;return;}
-  var c=el("div"); c.id="cctrl";
-  c.style.cssText="position:absolute;left:50%;top:8px;transform:translateX(-50%);display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:8px;background:rgba(255,255,255,.94);border:3px solid var(--linha);border-radius:18px;padding:5px 10px;z-index:45;box-shadow:0 4px 12px #0005";
-  c.appendChild(el("span",null,"peça")).style.cssText="font-weight:800;color:#6a5a3a;font-size:14px";
-  function bt(txt,bg,fn){ var b=el("button",null,txt); b.type="button";
-    b.style.cssText="width:46px;height:46px;border-radius:50%;border:3px solid #fff;background:"+bg+";color:#fff;font-size:23px;font-weight:900;line-height:1;padding:0;cursor:pointer;box-shadow:0 3px 6px #0006";
-    b.onclick=function(e){ if(e.stopPropagation)e.stopPropagation(); arma(); fn(); }; return b; }
-  function passo(d){ if(isC){ var ci=cs[escolha.i]; ci.w=Math.max(5,Math.min(38,(ci.w||CARIMBO_W)+d*2.5)); }
-    else { estado.tam=estado.tam||{}; var t=estado.tam[escolha.k]||1; estado.tam[escolha.k]=Math.max(0.45,Math.min(2.3,t+d*0.15)); }
-    tom(d>0?780:500); redesenha(); }
-  function apaga(){ if(isC){ cs.splice(escolha.i,1); } else { estado[escolha.k]=null; } escolha=null; tom(300); redesenha(); }
-  /* sem "diminuir" (Marcos: as crianças se atrapalham) — só CRESCER e APAGAR */
-  c.appendChild(bt("+","#2e9e57",function(){passo(1);}));
-  c.appendChild(bt(SVG.lixeira,"#c0455e",apaga));
-  pal.appendChild(c);
-}
+/* SEM ferramenta de tamanho (Marcos: "não precisam aumentar ou diminuir").
+   Apagar agora é ARRASTAR a peça até a LIXEIRA do canto (ver movivel/_arrFim). */
+function ctrlTamanho(){ var v=$("cctrl"); if(v&&v.parentNode)v.parentNode.removeChild(v); }
 function marcaCat(){ var a=document.querySelectorAll(".cat"),i; for(i=0;i<a.length;i++)a[i].className="cat"+(a[i].dataset.k==catSel?" on":""); }
 /* AS DUAS ORELHAS JUNTAS — o par encaixa sozinho (fixo, simetrico, sem ajuste). */
-function desenhaOrelhas(bon,style){ var lados=[["_e",ORELHA.le],["_d",ORELHA.ri]],s;
+function desenhaOrelhas(bon,style){ if(!style)return;
+  if(typeof style==="string")style={img:style,filt:""};   /* galeria antiga */
+  var lados=[["_e",ORELHA.le],["_d",ORELHA.ri]],s;
   for(s=0;s<2;s++){ var a=lados[s][1]; var cam=el("div","cam"); var im=el("img");
-    im.src=IMG+style+lados[s][0]+".png"; im.onerror=function(){this.style.display='none';};
+    im.src=IMG+style.img+lados[s][0]+".png"; im.onerror=function(){this.style.display='none';};
     im.style.left=a.cx+"%"; im.style.top=a.cy+"%"; im.style.width=a.w+"%"; im.style.transform="translate(-50%,-50%)";
+    if(style.filt) im.style.filter=style.filt;
     cam.appendChild(im); bon.appendChild(cam); } }
 function desenhaBoneco(){
   var bon=$("boneco"); if(!bon)return; bon.innerHTML=""; estado.pos=estado.pos||{}; estado.tam=estado.tam||{};
@@ -281,7 +291,8 @@ function desenhaBoneco(){
     im.style.left=p.cx+"%"; im.style.width=w+"%"; im.style.top=p.cy+"%"; im.style.transform="translate(-50%,-50%)";
     if(sel){ im.style.outline="3px dashed #ffcf3f"; im.style.outlineOffset="3px"; im.style.borderRadius="10px"; }
     if(k!=="corpo"){ (function(kk){ movivel(im,bon,function(x,y){ estado.pos[kk]={cx:x,cy:y}; },
-        function(){ escolha=(escolha&&escolha.t==='p'&&escolha.k===kk?null:{t:'p',k:kk}); tom(620); redesenha(); }); })(k); }
+        function(){ escolha=(escolha&&escolha.t==='p'&&escolha.k===kk?null:{t:'p',k:kk}); tom(620); redesenha(); },
+        function(){ estado[kk]=null; escolha=null; redesenha(); }); })(k); }   /* arrastou p/ lixeira = apaga a peça */
     cam.appendChild(im); bon.appendChild(cam);
   }
 }
@@ -297,6 +308,16 @@ function bandeja(){
       o.onclick=function(){ arma();tom(640); carimboSel=it; var a=bj.getElementsByClassName("op"),k;for(k=0;k<a.length;k++)a[k].className="op"; o.className="op sel"; falar("hb_nome_carimbo"); };
       bj.appendChild(o);
     })(c.itens[i]);}
+    return;
+  }
+  if(c.k==="orelha"){ /* PAR de orelhas, várias cores; encaixa sozinho ao tocar */
+    var no=el("div","op nenhum","sem orelhas"); no.onclick=function(){arma();tom(400);estado.orelha=null;redesenha();}; bj.appendChild(no);
+    for(i=0;i<ORELHA_ESTILOS.length;i++){(function(est){
+      var o=el("div","op"); var im=el("img"); im.src=IMG+est.img+"_e.png"; im.onerror=function(){this.style.display='none';};
+      if(est.filt)im.style.filter=est.filt; o.appendChild(im);
+      o.onclick=function(){ aplica("orelha",est); };
+      bj.appendChild(o);
+    })(ORELHA_ESTILOS[i]);}
     return;
   }
   if(!c.obrig){ var non=el("div","op nenhum","sem "+c.nome); non.onclick=function(){arma();tom(400);estado[c.k]=null;if(escolha&&escolha.t==='p'&&escolha.k===c.k)escolha=null;redesenha();}; bj.appendChild(non); }
@@ -335,7 +356,10 @@ function miniBatata(box,e,f){ var bg=el("img"); bg.src=IMG+"hb_fundo_"+FUNDOS[f|
   var inner=el("div"); inner.style.cssText="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:78%;height:88%";
   var ps=(e||{}).pos||{};
   var ts=(e||{}).tam||{};
-  for(var j=0;j<CAMADAS.length;j++){var k=CAMADAS[j],v=(e||{})[k];if(!v)continue;var an=ANCORA[k];var pp=ps[k]||an;var tw=an.w*(ts[k]||1);var im=el("img");im.src=IMG+v+".png";im.style.cssText="position:absolute;left:"+pp.cx+"%;top:"+pp.cy+"%;width:"+tw+"%;transform:translate(-50%,-50%);object-fit:contain";inner.appendChild(im);} box.appendChild(inner);
+  for(var j=0;j<CAMADAS.length;j++){var k=CAMADAS[j],v=(e||{})[k];if(!v)continue;
+    if(k==="orelha"){ var st=(typeof v==="string")?{img:v,filt:""}:v; var L=[["_e",ORELHA.le],["_d",ORELHA.ri]],q;
+      for(q=0;q<2;q++){var aa=L[q][1];var oi=el("img");oi.src=IMG+st.img+L[q][0]+".png";oi.style.cssText="position:absolute;left:"+aa.cx+"%;top:"+aa.cy+"%;width:"+aa.w+"%;transform:translate(-50%,-50%);object-fit:contain"+(st.filt?";filter:"+st.filt:"");inner.appendChild(oi);} continue; }
+    var an=ANCORA[k];var pp=ps[k]||an;var tw=an.w*(ts[k]||1);var im=el("img");im.src=IMG+v+".png";im.style.cssText="position:absolute;left:"+pp.cx+"%;top:"+pp.cy+"%;width:"+tw+"%;transform:translate(-50%,-50%);object-fit:contain";inner.appendChild(im);} box.appendChild(inner);
   var cs=(e||{}).carimbos||[]; for(var m=0;m<cs.length;m++){var ci=el("img");ci.src=IMG+cs[m].it+".png";ci.style.cssText="position:absolute;left:"+cs[m].x+"%;top:"+cs[m].y+"%;width:"+(cs[m].w||CARIMBO_W)+"%;transform:translate(-50%,-50%);object-fit:contain";box.appendChild(ci);} }
 function pronto(){
   arma(); tom(880); festinha(60); salvaNaGaleria();
