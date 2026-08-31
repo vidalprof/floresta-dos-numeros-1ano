@@ -345,6 +345,27 @@ echo "--- 0o) O REVISOR (testador humano de TEXTO: digitacao, concordancia) -"
 #    duplo, HTML vazando na fala. Roda sobre a PASTA (falas.json + conteudo.json).
 portao "0o revisor de texto" python3 _qa/revisor.py "$PASTA"
 
+# ⭐ 0p) A SEGUNDA LEITURA (portao de SENTIDO). Os portoes acima medem TEXTO
+#    mecanico (digitacao, concordancia, HTML vazando). NENHUM le o SIGNIFICADO:
+#    a resposta marcada como CERTA esta certa? a DICA leva a ELA? a VOZ diz o
+#    mesmo que o texto? Isso so um LEITOR resolve. Aqui a banca MONTA o payload
+#    (conteudo.json -> um bloco por fase) e o deixa gravado, com um aviso LOUD de
+#    PENDENTE — nunca finge que a revisao de sentido aconteceu (seria confianca
+#    falsa). Quem fecha o veredito e o revisor (LLM no entregar.yml, ou o Claude
+#    na sessao lendo o payload). Ver o cabecalho de _qa/sentido.py.
+if [ -f "$PASTA/conteudo.json" ]; then
+  echo "--- 0p) SEGUNDA LEITURA DE SENTIDO (payload p/ o revisor) -"
+  _SENT="$(mktemp -t sentido.XXXXXX.txt)"
+  if python3 _qa/sentido.py "$PASTA" --out "$_SENT" >/dev/null 2>&1; then
+    echo "  payload de sentido montado: $_SENT ($(grep -c '^FASE ' "$_SENT") fase(s))."
+    echo "  ⚠️ REVISAO DE SENTIDO PENDENTE — isto NAO e aprovacao. Um revisor"
+    echo "     (LLM/Claude) tem que LER o payload e responder, por fase: a CERTA"
+    echo "     esta certa? a DICA leva a ela? a VOZ diz o mesmo que o texto?"
+  else
+    echo "  (nao consegui montar o payload de sentido — conferir conteudo.json)"
+  fi
+fi
+
 echo
 echo "--- 0l) A ARTE PEDIDA FOI DESENHADA? (lista de compras x pasta img/) -"
 # ⚠️ nasceu de um defeito medido: o montador dizia "0 figura(s) a gerar" e a
