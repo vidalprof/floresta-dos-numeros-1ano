@@ -160,44 +160,44 @@ var _histTocada=false;
    img: figura da questão (aparece se existir em img/). */
 var QUESTOES=[
  {disc:"jun", img:"ma_p1.png", dourado:{a:28,b:15,op:"+"}, pergunta:"Na festa, Ana encheu 28 balões e o papai encheu mais 15. JUNTANDO os dois, quantos balões ficaram?",
-  opcoes:["33 balões.","43 balões.","44 balões."], correta:1,
-  fala:"Pergunta um. Na festa, Ana encheu vinte e oito balões e o papai encheu mais quinze. Juntando os dois, quantos balões ficaram? Olhe o material dourado para ajudar. Letra A: trinta e três balões. Letra B: quarenta e três balões. Letra C: quarenta e quatro balões."},
+  opcoes:["43 balões.","33 balões.","44 balões."], correta:0,
+  fala:"Pergunta um. Na festa, Ana encheu vinte e oito balões e o papai encheu mais quinze. Juntando os dois, quantos balões ficaram? Olhe o material dourado para ajudar. Letra A: quarenta e três balões. Letra B: trinta e três balões. Letra C: quarenta e quatro balões."},
 
  {disc:"acr", img:"ma_p2.png", dourado:{a:45,b:27,op:"+"}, pergunta:"No pote havia 45 pipocas. A vovó ACRESCENTOU mais 27. Com quantas pipocas o pote ficou?",
-  opcoes:["62 pipocas.","72 pipocas.","73 pipocas."], correta:1,
-  fala:"Pergunta dois. No pote havia quarenta e cinco pipocas. A vovó acrescentou mais vinte e sete. Com quantas pipocas o pote ficou? Olhe o material dourado para ajudar. Letra A: sessenta e duas pipocas. Letra B: setenta e duas pipocas. Letra C: setenta e três pipocas."},
+  opcoes:["62 pipocas.","73 pipocas.","72 pipocas."], correta:2,
+  fala:"Pergunta dois. No pote havia quarenta e cinco pipocas. A vovó acrescentou mais vinte e sete. Com quantas pipocas o pote ficou? Olhe o material dourado para ajudar. Letra A: sessenta e duas pipocas. Letra B: setenta e três pipocas. Letra C: setenta e duas pipocas."},
 
  {disc:"ret", img:"ma_p3.png", dourado:{a:34,b:8,op:"-"}, pergunta:"No prato havia 34 morangos. O Téo comeu 8. Quantos morangos SOBRARAM no prato?",
   opcoes:["24 morangos.","26 morangos.","28 morangos."], correta:1,
   fala:"Pergunta três. No prato havia trinta e quatro morangos. O Téo comeu oito. Quantos morangos sobraram no prato? Olhe o material dourado para ajudar. Letra A: vinte e quatro morangos. Letra B: vinte e seis morangos. Letra C: vinte e oito morangos."},
 
  {disc:"ret", img:"ma_p4.png", dourado:{a:60,b:25,op:"-"}, pergunta:"Numa caixa havia 60 lápis. A professora tirou 25. Quantos lápis FICARAM na caixa?",
-  opcoes:["25 lápis.","35 lápis.","45 lápis."], correta:1,
-  fala:"Pergunta quatro. Numa caixa havia sessenta lápis. A professora tirou vinte e cinco. Quantos lápis ficaram na caixa? Olhe o material dourado para ajudar. Letra A: vinte e cinco lápis. Letra B: trinta e cinco lápis. Letra C: quarenta e cinco lápis."},
+  opcoes:["35 lápis.","25 lápis.","45 lápis."], correta:0,
+  fala:"Pergunta quatro. Numa caixa havia sessenta lápis. A professora tirou vinte e cinco. Quantos lápis ficaram na caixa? Olhe o material dourado para ajudar. Letra A: trinta e cinco lápis. Letra B: vinte e cinco lápis. Letra C: quarenta e cinco lápis."},
 
  {disc:"cmp", img:"ma_p5.png", dourado:{a:24,b:15,op:"-"}, pergunta:"Lia tem 24 figurinhas e Bia tem 15. Quantas figurinhas Lia tem A MAIS que Bia?",
-  opcoes:["8 figurinhas.","9 figurinhas.","11 figurinhas."], correta:1,
-  fala:"Pergunta cinco. Lia tem vinte e quatro figurinhas e Bia tem quinze. Quantas figurinhas Lia tem a mais que Bia? Para comparar, a gente tira. Olhe o material dourado para ajudar. Letra A: oito figurinhas. Letra B: nove figurinhas. Letra C: onze figurinhas."},
+  opcoes:["8 figurinhas.","11 figurinhas.","9 figurinhas."], correta:2,
+  fala:"Pergunta cinco. Lia tem vinte e quatro figurinhas e Bia tem quinze. Quantas figurinhas Lia tem a mais que Bia? Para comparar, a gente tira. Olhe o material dourado para ajudar. Letra A: oito figurinhas. Letra B: onze figurinhas. Letra C: nove figurinhas."},
 
  {disc:"sep", img:"ma_p6.png", dourado:{a:43,b:16,op:"-"}, pergunta:"Havia 43 balas na mesa. A mãe SEPAROU 16 para levar. Quantas balas ficaram na mesa?",
-  opcoes:["27 balas.","33 balas.","37 balas."], correta:0,
-  fala:"Pergunta seis. Havia quarenta e três balas na mesa. A mãe separou dezesseis para levar. Quantas balas ficaram na mesa? Olhe o material dourado para ajudar. Letra A: vinte e sete balas. Letra B: trinta e três balas. Letra C: trinta e sete balas."},
+  opcoes:["33 balas.","27 balas.","37 balas."], correta:1,
+  fala:"Pergunta seis. Havia quarenta e três balas na mesa. A mãe separou dezesseis para levar. Quantas balas ficaram na mesa? Olhe o material dourado para ajudar. Letra A: trinta e três balas. Letra B: vinte e sete balas. Letra C: trinta e sete balas."},
 
- {disc:"conc", img:"ma_p7.png", dourado:null, pergunta:"Ao somar 28 + 15, a gente junta 8 + 5, que dá 13. O que a gente faz com esse 13?",
-  opcoes:["Escrevo 13 tudo junto.","Escrevo o 3 e levo 1 dezena.","Escrevo só o 1."], correta:1,
-  fala:"Pergunta sete. Ao somar vinte e oito mais quinze, a gente junta oito mais cinco, que dá treze. O que a gente faz com esse treze? Letra A: escrevo treze tudo junto. Letra B: escrevo o três e levo uma dezena. Letra C: escrevo só o um."},
+ {disc:"jun", img:"ma_p7.png", dourado:{a:27,b:18,op:"+"}, pergunta:"No recreio, 27 crianças brincavam e mais 18 vieram brincar. JUNTANDO todas, quantas crianças ficaram no recreio?",
+  opcoes:["35 crianças.","46 crianças.","45 crianças."], correta:2,
+  fala:"Pergunta sete. No recreio, vinte e sete crianças brincavam e mais dezoito vieram brincar. Juntando todas, quantas crianças ficaram no recreio? Olhe o material dourado para ajudar. Letra A: trinta e cinco crianças. Letra B: quarenta e seis crianças. Letra C: quarenta e cinco crianças."},
 
- {disc:"conc", img:"ma_p8.png", dourado:null, pergunta:"Para tirar 34 − 8, não dá para tirar 8 das 4 unidades. O que a gente faz?",
-  opcoes:["Deixo a conta para lá.","Pego 1 dezena emprestada: viram 14 unidades.","Tiro 4 de 8."], correta:1,
-  fala:"Pergunta oito. Para tirar trinta e quatro menos oito, não dá para tirar oito de quatro unidades. O que a gente faz? Letra A: deixo a conta para lá. Letra B: pego uma dezena emprestada, e viram quatorze unidades. Letra C: tiro quatro de oito."},
+ {disc:"ret", img:"ma_p8.png", dourado:{a:52,b:17,op:"-"}, pergunta:"No cesto havia 52 bolinhas. O Téo TIROU 17 para brincar. Quantas bolinhas FICARAM no cesto?",
+  opcoes:["35 bolinhas.","45 bolinhas.","25 bolinhas."], correta:0,
+  fala:"Pergunta oito. No cesto havia cinquenta e duas bolinhas. O Téo tirou dezessete para brincar. Quantas bolinhas ficaram no cesto? Olhe o material dourado para ajudar. Letra A: trinta e cinco bolinhas. Letra B: quarenta e cinco bolinhas. Letra C: vinte e cinco bolinhas."},
 
  {disc:"jun", img:"ma_p9.png", dourado:{a:36,b:29,op:"+"}, pergunta:"Na caixa de brinquedos há 36 carrinhos e 29 bonecas. JUNTANDO tudo, quantos brinquedos há ao todo?",
   opcoes:["55 brinquedos.","65 brinquedos.","66 brinquedos."], correta:1,
   fala:"Pergunta nove. Na caixa de brinquedos há trinta e seis carrinhos e vinte e nove bonecas. Juntando tudo, quantos brinquedos há ao todo? Olhe o material dourado para ajudar. Letra A: cinquenta e cinco brinquedos. Letra B: sessenta e cinco brinquedos. Letra C: sessenta e seis brinquedos."},
 
  {disc:"acr", img:"ma_p10.png", dourado:{a:148,b:25,op:"+"}, pergunta:"A turma tinha 148 estrelinhas e GANHOU mais 25. Com quantas estrelinhas a turma ficou?",
-  opcoes:["163 estrelinhas.","173 estrelinhas.","172 estrelinhas."], correta:1,
-  fala:"Pergunta dez, a última. A turma tinha cento e quarenta e oito estrelinhas e ganhou mais vinte e cinco. Com quantas estrelinhas a turma ficou? Olhe o material dourado para ajudar. Letra A: cento e sessenta e três estrelinhas. Letra B: cento e setenta e três estrelinhas. Letra C: cento e setenta e duas estrelinhas."}
+  opcoes:["163 estrelinhas.","172 estrelinhas.","173 estrelinhas."], correta:2,
+  fala:"Pergunta dez, a última. A turma tinha cento e quarenta e oito estrelinhas e ganhou mais vinte e cinco. Com quantas estrelinhas a turma ficou? Olhe o material dourado para ajudar. Letra A: cento e sessenta e três estrelinhas. Letra B: cento e setenta e duas estrelinhas. Letra C: cento e setenta e três estrelinhas."}
 ];
 var DISCNOME={jun:"JUNTAR", acr:"ACRESCENTAR", sep:"SEPARAR", ret:"RETIRAR", cmp:"COMPARAR", conc:"A CONTA CERTA"};
 
