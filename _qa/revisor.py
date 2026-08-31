@@ -64,6 +64,17 @@ GEN_FIXO = {
 }
 # ⚠️ "caixa" e AMBIGUO: "a caixa" (de guardar) e feminino, "o caixa" (quem atende
 #    no mercado) e MASCULINO. Os dois estao certos — fora do teste de genero.
+# ⭐ NOME PROPRIO COM INICIAL MINUSCULA (Marcos, ago/2026: achou "pedro" numa
+#    resposta; cobrou VARIAS vezes). O revisor nem OLHAVA o texto das opcoes — por
+#    isso passava. Lista CONSERVADORA: so nomes/lugares que NUNCA sao palavra
+#    comum em PT (nada de "lia"=verbo ler, "cora"=corar, "nina"=ninar), para o
+#    portao nunca acusar inocente (falso-positivo ensina a ignorar o portao).
+#    Nome novo que chegar minusculo -> some aqui, no mesmo commit.
+NOMES_PROPRIOS = set(u"""pedro joao joão maria ana bento duda gael bidu rex mimi
+teo téo juca orbi órbi nico poli davi caio bia zeca teco miga bruno cauã gabriel
+lucas rafael sofia alice laura helena heitor arthur bernardo miguel
+brasil blumenau joinville recife bahia parana paraná florianopolis florianópolis
+itajai itajaí curitiba joinvile""".split())
 
 def _limpa_html(s):
     return re.sub(r"<[^>]+>", "", s or "")
@@ -189,6 +200,35 @@ def main():
                 continue
             vistos.add(chave)
             (erros if nivel=="ERRO" else avisos).append(u"%s  [%s]" % (msg, ident))
+
+    # ⭐ NOME PROPRIO MINUSCULO nas OPÇOES/RESPOSTAS que a crianca VE (o revisor
+    #    nao olhava as opcoes do conteudo — foi por ai que "pedro" passou).
+    if os.path.exists(cj):
+        try:
+            cc = json.load(io.open(cj, encoding="utf-8"))
+        except Exception:
+            cc = {}
+        def _labels(node):
+            if isinstance(node, dict):
+                for k in ("t", "nome", "s", "resp", "pal", "palavra", "cer"):
+                    v = node.get(k)
+                    if isinstance(v, str):
+                        yield v
+                for v in node.values():
+                    for x in _labels(v):
+                        yield x
+            elif isinstance(node, list):
+                for it in node:
+                    for x in _labels(it):
+                        yield x
+        vistos_nome = set()
+        for f in (cc.get("fases") or []):
+            for lab in _labels(f.get("dados")):
+                for w in re.findall(r"[A-Za-zÀ-ÿ]+", lab):
+                    if w.lower() in NOMES_PROPRIOS and w[:1].islower() and w not in vistos_nome:
+                        vistos_nome.add(w)
+                        erros.append(u'nome próprio com inicial minúscula: "%s" (deveria ser "%s")  [conteudo:opção]'
+                                     % (w, w[:1].upper() + w[1:]))
 
     print(u"%s -> revisor de texto: %d fala(s)/campo(s) conferido(s)" % (pasta, len(alvos)))
     if avisos:
