@@ -81,6 +81,26 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
    await p.waitForTimeout(350);
  }
  let visto=[]; const encaixe=[]; let ultimo='', paradas=0;
+ /* ⭐ MODO "JOGAR CERTO" (ago/2026, a classe do "Monte o seu prato" que o Marcos
+    pegou): o jogo ao ACASO e cego para CORRECAO — numa fase onde a opcao ERRADA
+    esta declarada como certa, ou onde a regra de fechamento nao aceita a resposta
+    declarada, o acaso ainda tropeca noutra saida e diz "jogavel". Aqui a garantia
+    e outra: a peca de escolha PUBLICA a resposta que serve AGORA em `data-qa="1"`
+    (a MESMA marca que ela ja usa por dentro — nao invento detector), o loop ja a
+    prioriza (ramo generico, `return 2`), e o `data-qa` PERSISTE na opcao mesmo
+    depois de tocada. Logo: se clicar a resposta DECLARADA certa NAO faz a fase
+    andar, o estado CONGELA. Quando congela com o ultimo clique sendo o da resposta
+    declarada, e contradicao entre a resposta do conteudo e a regra de fechamento —
+    REPROVA, e mais rapido e mais preciso que esperar o "PRESO" generico (420).
+    So a familia de escolha (escolher/completar/comparar/intruso/relampago/estimar/
+    quem-sou-eu) chega ao `return 2`; as mecanicas que NAO expoem qual e a certa de
+    forma legivel (memoria/ordenar/arrastar/...) tem solucionador proprio ANTES e
+    retornam 1 — ficam de fora em silencio, como manda a ordem (cobrir bem as claras
+    em vez de reprovar por engano). CUSTO: zero por iteracao (reusa `est`/`paradas`
+    e o retorno do clique); so 1 evaluate barato na hora de reprovar. */
+ let ultCerto=false, certoQuebrado=false;
+ const LIMCERTO=70; /* ~16s frozen: bem acima da espera entre rodadas (rede de voz
+    de 4s = ~20 iter), bem abaixo do PRESO generico (420 = ~96s). */
  /* ⚠️ LICAO PAGA (ago/2026): o "Proximo" que o Marcos pediu ("tem que ter o
     botao de proximo como no Broto") PRENDEU o auditor — ele nao sabia clica-lo
     e dava "PRESO em OUCA E ACHE [4%]" numa fase que a crianca passa sem
@@ -157,6 +177,21 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
        +'|'+((bn&&bn.className.indexOf('show')>=0)?'BANNER':'');
    });
    if(est!==ultimo){ visto.push(i+' '+est.replace(/\{[^}]*\}/,'').replace(/<\d+>/,'')); ultimo=est; paradas=0; } else paradas++;
+   /* ⭐ resposta DECLARADA certa nao fecha a fase: o ultimo clique foi na opcao
+      marcada `data-qa="1"` (return 2) e o estado esta congelado ha LIMCERTO
+      iteracoes. Reprova com o motivo exato ANTES do PRESO generico. */
+   if(ultCerto && paradas>LIMCERTO){
+     const info=await p.evaluate(()=>{
+       var f=(typeof IFASE==='number')?IFASE:-1;
+       var fs=(typeof FASES!=='undefined'&&FASES[f])?FASES[f]:null;
+       return {f:f, mec:(fs&&fs.mec)||'?', selo:(fs&&fs.selo)||''};
+     });
+     const sel=String(info.selo).replace(/<[^>]*>/g,'').replace(/\s+/g,' ').trim();
+     visto.push(i+' >>> RESPOSTA DECLARADA CERTA NAO FECHOU: fase '+(info.f+1)
+       +' ('+info.mec+(sel?' / '+sel:'')+') — clicar a resposta declarada certa'
+       +' nao fechou a fase (resposta declarada != regra de fechamento)');
+     certoQuebrado=true; break;
+   }
    if(paradas>420){ visto.push('>>> PRESO em '+est); break; }
    /* fim do TRECHO paralelo: cheguei na fase-limite deste trabalhador */
    if(process.env.JSTOP){
@@ -461,9 +496,14 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
         estavam disputando o processador. Se ha resposta marcada, e nela que
         ele toca; no resto continua ao acaso, que e o teste honesto.        */
      const marcado=els.find(e=>e.getAttribute&&e.getAttribute('data-qa')==='1');
-     const e=marcado||els[Math.floor(Math.random()*els.length)];
+     /* ⭐ resposta DECLARADA certa (data-qa="1") -> clica ELA e avisa (return 2),
+        para o portao acima poder cobrar que fechou a fase. So no acaso quando a
+        peca nao declara resposta (botao "continuar", etc.). */
+     if(marcado){ marcado.click(); return 2; }
+     const e=els[Math.floor(Math.random()*els.length)];
      e.click(); return 1;
    },SEL);
+   ultCerto=(n===2);
    await p.waitForTimeout(230);
    /* ⚠️ FIGURA MAIOR QUE O LUGAR DELA — e so DEPOIS de jogar que da para ver.
       A planta da sala so mostra os moveis quando a crianca ja os colocou; o
@@ -556,11 +596,12 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
  const encaixeOk = process.env.JSTART ? true : (encaixe.length===0);
  if(encaixe.length && process.env.JSTART)
    console.log('  (segmento/paralelo: encaixe in-play e so AVISO — quem reprova e o encaixe.js)');
- if(!chegou) console.log('  !! O JOGADOR NAO CHEGOU '+(process.env.JSTOP?'AO FIM DO TRECHO':'NA MEDALHA')+' — a crianca pode empacar aqui');
+ if(certoQuebrado) console.log('  !! RESPOSTA DECLARADA CERTA NAO FECHOU A FASE — o conteudo diz uma resposta e a regra de fechamento cobra outra (a crianca acerta e nada acontece)');
+ if(!chegou && !certoQuebrado) console.log('  !! O JOGADOR NAO CHEGOU '+(process.env.JSTOP?'AO FIM DO TRECHO':'NA MEDALHA')+' — a crianca pode empacar aqui');
  if(reais.length) console.log('  !! '+reais.length+' ERRO(S) DE JS durante a partida');
  await b.close();
  /* ⚠️ ate ago/2026 este portao NAO reprovava nada: a saida ia para um `tail -4`
     e o codigo de saida se perdia no cano. Ou seja, o auditor jogava a partida
     inteira e o resultado dele era decorativo. Agora ele vota como os outros. */
- process.exit(chegou&&!reais.length&&encaixeOk ? 0 : 1);
+ process.exit(chegou&&!reais.length&&encaixeOk&&!certoQuebrado ? 0 : 1);
 })();
