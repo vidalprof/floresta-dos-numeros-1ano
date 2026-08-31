@@ -377,6 +377,21 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
          if(alvo){ alvo.click(); return 1; }
        }
      }
+     /* digitar-numero (calcular e digitar o resultado): o teclado numerico
+        publica a RESPOSTA em data-qa, so para o auditor. Bate digito por
+        digito, na ORDEM — o passo e quantas VAGAS ja estao cheias, nao da para
+        contar tecla "usada" (a mesma tecla serve dois digitos, tipo o "5" de
+        55). Cada digito certo preenche uma vaga; ao completar, a peca confere e
+        avanca sozinha. */
+     const nt=document.querySelector('.numtecs[data-qa]');
+     if(nt&&nt.offsetParent!==null){
+       const rp=nt.getAttribute('data-qa')||'';
+       const feitas=document.querySelectorAll('.dnvagas .vaga.cheia').length;
+       if(feitas<rp.length){
+         const alvo=[...nt.children].find(b=>b.textContent.trim()===rp.charAt(feitas));
+         if(alvo){ alvo.click(); return 1; }
+       }
+     }
      /* ⚠️ o botao do banner (#bcta) fica SEMPRE no DOM: o banner se esconde por
         transform, nao por display, entao offsetParent nao e null. Fora do banner
         aberto ele guarda o onclick do banner ANTERIOR — clicar nele jogava o

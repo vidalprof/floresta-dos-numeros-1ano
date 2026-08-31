@@ -104,6 +104,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    4-5px do cartao estreito (portao 1h vaza.js, atividade montada): a cura foi
    um alto-falante MENOR e mais justo AQUI (34px, margem 3), que cabe sem sair —
    e o texto pode encolher a fonte na tela estreita para nunca encostar. */
+/* ⚠️ GESTO NO CELULAR: sem touch-action o navegador ROLA a pagina ao arrastar
+   a peca — o dedo mexe a tela, nao a peca. `-ms-` cobre o Edge/IE antigo
+   do PC da escola. Regenerado no pecas.css pelo integrar.py. */
+.lig{-ms-touch-action:none;touch-action:none}
 .lig{display:-webkit-box;display:-webkit-flex;display:flex;
      -webkit-box-align:center;-webkit-align-items:center;align-items:center;
      -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;

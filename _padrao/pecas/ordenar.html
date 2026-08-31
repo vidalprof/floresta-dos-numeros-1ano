@@ -103,6 +103,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 @-webkit-keyframes opoe{0%{-webkit-transform:scale(.8)}60%{-webkit-transform:scale(1.08)}100%{-webkit-transform:scale(1)}}
 @keyframes opoe{0%{transform:scale(.8)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
 .banco{display:block;text-align:center;margin-top:6px}
+/* ⚠️ GESTO NO CELULAR: sem touch-action o navegador ROLA a pagina ao arrastar
+   a peca — o dedo mexe a tela, nao a peca. `-ms-` cobre o Edge/IE antigo
+   do PC da escola. Regenerado no pecas.css pelo integrar.py. */
+.pc{-ms-touch-action:none;touch-action:none}
 .pc{display:inline-block;vertical-align:top;color:#221a12;border:0;border-radius:16px;
     background:#fffdf6;
     background:-webkit-gradient(linear,left top,left bottom,from(#fffdf6),to(#f2e6cb));

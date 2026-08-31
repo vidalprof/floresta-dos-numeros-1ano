@@ -119,6 +119,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .cam.pisca{-webkit-animation:pisca .8s infinite;animation:pisca .8s infinite}
 /* A MAO: as pecas soltas da crianca */
 .banco{margin-top:8px;line-height:0}
+/* ⚠️ GESTO NO CELULAR: sem touch-action o navegador ROLA a pagina ao arrastar
+   a peca — o dedo mexe a tela, nao a peca. `-ms-` cobre o Edge/IE antigo
+   do PC da escola. Regenerado no pecas.css pelo integrar.py. */
+.pc{-ms-touch-action:none;touch-action:none}
 .pc{display:inline-block;vertical-align:middle;width:120px;height:60px;margin:5px 4px;
     border-radius:12px;background:#fffdf6;background:-webkit-linear-gradient(#fffef9,#f5eede);background:linear-gradient(#fffef9,#f5eede);
     border:1px solid #e6dcc4;cursor:pointer;

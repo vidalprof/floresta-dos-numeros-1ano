@@ -322,6 +322,7 @@
 
 .mec-andar-ate .hint{display:none}}
 /* ==== PECA: arrastar-lugar ==== */
+.mec-arrastar-lugar .pc{-ms-touch-action:none;touch-action:none} /* toque no iPad */
 @-webkit-keyframes kf-arrastar-lugar-destp{0%,100%{opacity:.62}50%{opacity:1}}@keyframes kf-arrastar-lugar-destp{0%,100%{opacity:.62}50%{opacity:1}}@-webkit-keyframes kf-arrastar-lugar-pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}@keyframes kf-arrastar-lugar-pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}@-webkit-keyframes kf-arrastar-lugar-treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-arrastar-lugar-treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 .mec-arrastar-lugar .casa{position:relative;width:100%;max-width:260px;height:170px;margin:13px auto 4px; border-radius:14px;overflow:hidden;background:#8fc4de; background:-webkit-linear-gradient(top,#9ed3ea 0%,#cfeaf5 68%); background:linear-gradient(to bottom,#9ed3ea 0%,#cfeaf5 68%); box-shadow:0 5px 14px rgba(0,0,0,.3)}
@@ -392,6 +393,7 @@
 
 .mec-arrastar-lugar .hint{display:none}}
 /* ==== PECA: arrastar-sombra ==== */
+.mec-arrastar-sombra .pc{-ms-touch-action:none;touch-action:none} /* toque no iPad */
 @-webkit-keyframes kf-arrastar-sombra-chamaS{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 6px rgba(255,213,74,.95)}}@keyframes kf-arrastar-sombra-chamaS{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 6px rgba(255,213,74,.95)}}@-webkit-keyframes kf-arrastar-sombra-tremeS{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-arrastar-sombra-tremeS{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 .mec-arrastar-sombra .chao{margin:13px auto 0;line-height:0}
@@ -1002,6 +1004,7 @@
 
 .mec-caca-palavras .zap{width:44px;height:44px;min-width:44px;margin-left:6px}}
 /* ==== PECA: caixa-dinheiro ==== */
+.mec-caixa-dinheiro .moeda{-ms-touch-action:none;touch-action:none} /* toque no iPad */
 @-webkit-keyframes kf-caixa-dinheiro-pisca{0%,100%{box-shadow:0 4px 0 #9c7420}50%{box-shadow:0 0 0 6px #ffd54a}}@keyframes kf-caixa-dinheiro-pisca{0%,100%{box-shadow:0 4px 0 #9c7420}50%{box-shadow:0 0 0 6px #ffd54a}}@-webkit-keyframes kf-caixa-dinheiro-treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-caixa-dinheiro-treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 .mec-caixa-dinheiro .balcao{margin:13px auto 0;max-width:430px;min-height:74px;padding:8px 8px 6px; border-radius:14px 14px 6px 6px;background:#4a3a26; border:3px solid #6b543a;border-bottom:6px solid #33280a;text-align:center}
@@ -1404,6 +1407,7 @@
 
 .mec-circuito .hint{font-size:12px;margin-top:6px}}
 /* ==== PECA: classificar ==== */
+.mec-classificar .pc{-ms-touch-action:none;touch-action:none} /* toque no iPad */
 @-webkit-keyframes kf-classificar-clcaiu{from{opacity:.35;-webkit-transform:translateY(-16px) scale(1.08)}}@keyframes kf-classificar-clcaiu{from{opacity:.35;transform:translateY(-16px) scale(1.08)}}@-webkit-keyframes kf-classificar-clchega{from{opacity:0;-webkit-transform:translateY(12px) scale(.93)}}@keyframes kf-classificar-clchega{from{opacity:0;transform:translateY(12px) scale(.93)}}@-webkit-keyframes kf-classificar-clbate{40%{-webkit-transform:scale(1.035)}}@keyframes kf-classificar-clbate{40%{transform:scale(1.035)}}
 
 .mec-classificar .bandeja{background:none;border:0; border-radius:20px;padding:8px 8px;min-height:150px;margin:10px 0 2px; display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center; -webkit-box-align:center;align-items:center}
@@ -2093,6 +2097,88 @@
 .mec-digitar .zap:active, .mec-digitar .zap.tocando{background-color:#ffd54a}
 
 .mec-digitar .medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%; background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center; box-shadow:0 6px 0 #c9a52f}
+/* ==== PECA: digitar-numero ==== */
+/* a pergunta + alto-falante (copiado do `digitar`) */
+.mec-digitar-numero .dglin{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center; margin:8px auto 0;max-width:430px}
+
+.mec-digitar-numero .dgpista{display:inline-block;font-size:15px;font-weight:700;line-height:1.25; text-align:center;background:rgba(18,16,12,.62);border-radius:10px;padding:4px 10px;color:#f7f3ea}
+
+/* ⭐ O SUPORTE VISUAL: a conta desenhada com frutas. Flex-WRAP para que contas
+   grandes quebrem em varias linhas sem estourar a tela. */
+.mec-digitar-numero .dncontas{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; max-width:520px;margin:12px auto 6px;padding:12px 14px; background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.45);border-radius:20px; -webkit-transition:box-shadow .18s ease;transition:box-shadow .18s ease}
+
+/* 2o degrau do andaime: a conta ACENDE (sem @keyframes — a mesma licao do molde) */
+.mec-digitar-numero .dncontas.dnpisca{-webkit-box-shadow:0 0 0 4px #ffd54a;box-shadow:0 0 0 4px #ffd54a}
+
+/* cada grupo de frutas (o `a` e o `b`) fica junto, tambem quebrando por dentro */
+.mec-digitar-numero .dngrupo{max-width:300px;display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; max-width:260px}
+
+.mec-digitar-numero .dnfruta{display:-webkit-inline-box;display:inline-flex; -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center; width:50px;height:50px;margin:3px}
+
+.mec-digitar-numero .dnfruta img{width:48px;height:48px;max-width:100%; -o-object-fit:contain;object-fit:contain;object-position:center}
+
+/* ficha neutra da BANCADA (quando nao ha arte de IA) — a crianca da atividade nunca ve */
+.mec-digitar-numero .dnfruta.dnvazia{border-radius:50%;background:#ff8a5c; -webkit-box-shadow:inset 0 -3px 0 rgba(0,0,0,.18);box-shadow:inset 0 -3px 0 rgba(0,0,0,.18)}
+
+/* fruta RISCADA (o que se TIRA na subtracao): opacidade baixa + um risco */
+.mec-digitar-numero .dnfruta.dnriscada{opacity:.32;position:relative}
+.mec-digitar-numero .dnfruta.dnriscada:after{content:"";position:absolute;left:2px;right:2px;top:50%; height:3px;margin-top:-1px;background:#c0392b; -webkit-transform:rotate(-18deg);transform:rotate(-18deg);border-radius:2px}
+
+/* os sinais + − = , grandes */
+.mec-digitar-numero .dnsinal{display:inline-block;margin:0 6px;font-size:30px;font-weight:800; color:#221a12;background:#fff8e7;border-radius:10px;padding:2px 11px; -webkit-box-shadow:0 2px 4px rgba(0,0,0,.22);box-shadow:0 2px 4px rgba(0,0,0,.22)} /* chip claro + texto escuro: contraste garantido (portao contraste_fundo) */
+
+/* as vagas da resposta, logo depois do "=" (reusa .vaga, ver abaixo) */
+.mec-digitar-numero .dnvagas{display:inline-block;margin:0 0 0 4px}
+/* ⚠️ as vagas da resposta: base PROPRIA (nao herdar do `digitar`, que pode nao
+   estar nesta atividade — o portao designer pegou `.vagas SEM CSS`). */
+.mec-digitar-numero .vagas{display:inline-block;text-align:center}
+.mec-digitar-numero .vaga{display:inline-block;vertical-align:top;width:46px;height:52px;line-height:46px;margin:0 2px; border:3px dashed #a08e73;border-radius:12px;background:rgba(255,255,255,.12); color:#f4efe6;font-size:26px;font-weight:800;text-align:center; -webkit-transition:-webkit-transform .16s ease;transition:transform .16s ease}
+.mec-digitar-numero .vaga.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12; -webkit-transform:scale(1.14);transform:scale(1.14)}
+.mec-digitar-numero .vaga.cheia.pousa{-webkit-transform:none;transform:none}
+.mec-digitar-numero .vaga.treme,.mec-digitar-numero .vaga.treme2{border-color:#e05a4a}
+
+.mec-digitar-numero .vaga{display:inline-block;vertical-align:top;width:44px;height:50px;line-height:44px;margin:0 2px; border:3px dashed #a08e73;border-radius:12px;background:rgba(255,255,255,.10); color:#f4efe6;font-size:24px;font-weight:800;text-align:center; -webkit-transition:-webkit-transform .16s ease;transition:transform .16s ease}
+
+.mec-digitar-numero .vaga.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12; -webkit-transform:scale(1.14);transform:scale(1.14)}
+
+.mec-digitar-numero .vaga.cheia.pousa{-webkit-transform:none;transform:none}
+
+/* tremor do erro: DUAS classes + transicao, NUNCA @keyframes (licao do molde) */
+.mec-digitar-numero .vaga.cheia.treme{-webkit-transform:translateX(-7px);transform:translateX(-7px)}
+.mec-digitar-numero .vaga.cheia.treme2{-webkit-transform:translateX(7px);transform:translateX(7px)}
+
+/* ⭐ O TECLADO NUMERICO: teclas grandes (alvo >=48px, regra da casa) */
+.mec-digitar-numero .numtecs{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; max-width:320px;margin:12px auto 4px}
+
+.mec-digitar-numero .numtec{-webkit-box-flex:0;-webkit-flex:0 0 auto;flex:0 0 auto; width:58px;height:58px;line-height:58px;margin:5px;padding:0; background:#fffdf6;color:#221a12;border:0;border-radius:14px;font-size:26px;font-weight:800; text-align:center;cursor:pointer;-webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6; -webkit-transition:-webkit-transform .12s ease, box-shadow .12s ease; transition:transform .12s ease, box-shadow .12s ease}
+
+.mec-digitar-numero .numtec:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px); background:#fffefa;-webkit-box-shadow:0 6px 0 #c9bda6;box-shadow:0 6px 0 #c9bda6}
+
+.mec-digitar-numero .numtec:active{-webkit-transform:translateY(3px);transform:translateY(3px); -webkit-box-shadow:0 1px 0 #c9bda6;box-shadow:0 1px 0 #c9bda6}
+
+/* a tecla APAGAR: mesma altura, um tom mais quente */
+.mec-digitar-numero .numtec.numdel{background:#f6e0ae;font-size:22px}
+
+/* o alto-falante da conta (SVG no background, igual ao `digitar`) */
+.mec-digitar-numero .zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none; width:46px;height:46px;min-width:46px;margin-left:10px;padding:0;border:0; border-radius:50%;cursor:pointer;opacity:1; background-color:#efe6d2; background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E"); background-repeat:no-repeat;background-position:center center; -webkit-background-size:24px 24px;background-size:24px 24px; -webkit-transition:background-color .15s;transition:background-color .15s}
+
+.mec-digitar-numero .zap:hover{background-color:#ded3b8}
+.mec-digitar-numero .zap:active, .mec-digitar-numero .zap.tocando{background-color:#ffd54a}
+
+/* a medalha do FIM da fase (mesma do `digitar`) */
+.mec-digitar-numero .medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%; background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center; box-shadow:0 6px 0 #c9a52f}
+
+/* respeitar quem pediu menos movimento */
+@media (prefers-reduced-motion:reduce){
+.mec-digitar-numero .numtec, .mec-digitar-numero .vaga, .mec-digitar-numero .dncontas{-webkit-transition:none;transition:none}
+.mec-digitar-numero .numtec:hover{-webkit-transform:none;transform:none;box-shadow:0 4px 0 #c9bda6}
+.mec-digitar-numero .vaga.cheia{-webkit-transform:none;transform:none}}
+
+/* tela baixa: encolhe as teclas e as frutas, nunca some com elas */
+@media (max-height:560px){
+.mec-digitar-numero .numtec{width:50px;height:50px;line-height:50px;font-size:22px;margin:4px}
+.mec-digitar-numero .dnfruta,.mec-digitar-numero .dnfruta.dnvazia{width:48px;height:48px}
+.mec-digitar-numero .dnfruta img{width:46px;height:46px}}
 /* ==== PECA: ditado ==== */
 @-webkit-keyframes kf-ditado-vozpulsa{0%,100%{box-shadow:0 0 0 0 rgba(143,224,122,.55)}50%{box-shadow:0 0 0 9px rgba(143,224,122,0)}}@keyframes kf-ditado-vozpulsa{0%,100%{box-shadow:0 0 0 0 rgba(143,224,122,.55)}50%{box-shadow:0 0 0 9px rgba(143,224,122,0)}}@-webkit-keyframes kf-ditado-piscat{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}@keyframes kf-ditado-piscat{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}@-webkit-keyframes kf-ditado-tremet{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-ditado-tremet{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
@@ -2134,6 +2220,7 @@
 
 .mec-ditado .medal:before{content:"\2605"}
 /* ==== PECA: domino ==== */
+.mec-domino .pc{-ms-touch-action:none;touch-action:none} /* toque no iPad */
 @-webkit-keyframes kf-domino-pisca{0%,100%{opacity:1}50%{opacity:.4}}@keyframes kf-domino-pisca{0%,100%{opacity:1}50%{opacity:.4}}@-webkit-keyframes kf-domino-treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-domino-treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}@-webkit-keyframes kf-domino-pousa{0%{-webkit-transform:scale(.6);opacity:0}100%{-webkit-transform:scale(1);opacity:1}}@keyframes kf-domino-pousa{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
 
 .mec-domino .mesa{margin:12px auto 0;padding:8px 4px;border-radius:16px;max-width:470px; background:rgba(255,255,255,.08);line-height:0}
@@ -3468,6 +3555,7 @@
 
 .mec-ligar-pontos .folha .pt, .mec-ligar-pontos .folha .pt.prox, .mec-ligar-pontos .folha .pt.vez, .mec-ligar-pontos .folha .pnum{color:#241d12}
 /* ==== PECA: ligar ==== */
+.mec-ligar .lig{-ms-touch-action:none;touch-action:none} /* toque no iPad */
 @-webkit-keyframes kf-ligar-destp{0%,100%{outline-offset:-3px}50%{outline-offset:-8px}}@keyframes kf-ligar-destp{0%,100%{outline-offset:-3px}50%{outline-offset:-8px}}@-webkit-keyframes kf-ligar-destl{0%,100%{opacity:.55}50%{opacity:1}}@keyframes kf-ligar-destl{0%,100%{opacity:.55}50%{opacity:1}}
 
 .mec-ligar .ligbox{position:relative;font-size:0;margin:13px auto 0;width:94%;max-width:360px}
@@ -4042,6 +4130,7 @@
 
 .mec-mudanca-permanencia .medal:before{content:"\2605"}
 /* ==== PECA: ordenar ==== */
+.mec-ordenar .pc{-ms-touch-action:none;touch-action:none} /* toque no iPad */
 @-webkit-keyframes kf-ordenar-opoe{0%{-webkit-transform:scale(.8)}60%{-webkit-transform:scale(1.08)}100%{-webkit-transform:scale(1)}}@keyframes kf-ordenar-opoe{0%{transform:scale(.8)}60%{transform:scale(1.08)}100%{transform:scale(1)}}@-webkit-keyframes kf-ordenar-pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}@keyframes kf-ordenar-pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}@-webkit-keyframes kf-ordenar-treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-ordenar-treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 .mec-ordenar .fila{display:block;text-align:center;margin:13px auto 12px}
@@ -5354,6 +5443,7 @@
 
 .mec-repartir .hint{display:none}}
 /* ==== PECA: reta-numerica ==== */
+.mec-reta-numerica .chip{-ms-touch-action:none;touch-action:none} /* toque no iPad */
 
 
 .mec-reta-numerica .reta{position:relative;width:100%;max-width:430px;height:96px;margin:13px auto 0;border-radius:16px; background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.22)}

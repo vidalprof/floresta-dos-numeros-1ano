@@ -123,6 +123,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .marc{position:absolute;top:24px;width:5px;height:46px;margin-left:-2px;border-radius:3px}
 .marc.mvoce{background:#ffd54a}
 .marc.mcerto{background:#59c24b}
+/* ⚠️ GESTO NO CELULAR: sem touch-action o navegador ROLA a pagina ao arrastar
+   a peca — o dedo mexe a tela, nao a peca. `-ms-` cobre o Edge/IE antigo
+   do PC da escola. Regenerado no pecas.css pelo integrar.py. */
+.chip{-ms-touch-action:none;touch-action:none}
 .chip{position:absolute;font-size:12px;font-weight:800;padding:3px 7px;border-radius:9px;
       white-space:nowrap;-webkit-transform:translateX(-50%);transform:translateX(-50%)}
 .chip.mvoce{background:#ffd54a;color:#33280a;top:0}

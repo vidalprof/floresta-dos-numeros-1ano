@@ -131,6 +131,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .cam.ok{border-style:solid;border-color:#59c24b;background:transparent;box-shadow:none;cursor:default}
 /* a bandeja das pecas soltas */
 .banco{display:block;text-align:center;margin-top:6px}
+/* ⚠️ GESTO NO CELULAR: sem touch-action o navegador ROLA a pagina ao arrastar
+   a peca — o dedo mexe a tela, nao a peca. `-ms-` cobre o Edge/IE antigo
+   do PC da escola. Regenerado no pecas.css pelo integrar.py. */
+.pc{-ms-touch-action:none;touch-action:none}
 .pc{display:inline-block;vertical-align:top;background:#fffdf6;color:#221a12;border:0;
     border-radius:14px;width:74px;height:70px;margin:5px 4px;padding:4px 3px 2px;cursor:pointer;
     box-shadow:0 4px 0 #c9bda6;-webkit-user-select:none;user-select:none}

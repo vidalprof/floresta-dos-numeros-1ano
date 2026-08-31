@@ -110,6 +110,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    branca atras do desenho — o portao 5b mede e reprova. Baixando um
    pouco a opacidade o cartao continua claro (a tinta escura segue
    legivel) e a figura passa a assentar na cena em vez de flutuar. */
+/* ⚠️ GESTO NO CELULAR: sem touch-action o navegador ROLA a pagina ao arrastar
+   a peca — o dedo mexe a tela, nao a peca. `-ms-` cobre o Edge/IE antigo
+   do PC da escola. Regenerado no pecas.css pelo integrar.py. */
+.pc{-ms-touch-action:none;touch-action:none}
 .pc{display:inline-block;vertical-align:middle;background:rgba(255,253,246,.88);color:#221a12;border:0;
     border-radius:18px;padding:12px 14px;margin:5px 4px;font-size:15px;font-weight:700;
     min-height:48px;min-width:96px;cursor:pointer;

@@ -113,6 +113,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 @keyframes chamaS{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 6px rgba(255,213,74,.95)}}
 /* A BANDEJA e os objetos coloridos que a crianca puxa */
 .banco{margin-top:8px;line-height:0}
+/* ⚠️ GESTO NO CELULAR: sem touch-action o navegador ROLA a pagina ao arrastar
+   a peca — o dedo mexe a tela, nao a peca. `-ms-` cobre o Edge/IE antigo
+   do PC da escola. Regenerado no pecas.css pelo integrar.py. */
+.pc{-ms-touch-action:none;touch-action:none}
 .pc{display:inline-block;position:relative;width:80px;height:92px;margin:5px 4px;padding:5px 3px 2px;
     border:0;border-radius:16px;background:#fffdf6;color:#221a12;cursor:pointer;vertical-align:top;
     -webkit-user-select:none;user-select:none;

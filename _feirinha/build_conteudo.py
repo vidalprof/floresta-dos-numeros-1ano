@@ -75,14 +75,6 @@ CONTEUDO = {
    u"Ouça: morango. Ache a figura igual.",
    u"Ouça: cenoura. Ache a figura igual.",
    u"Ouça: manga. Ache a figura igual.",
-   # balão do contadores (sem o "(por extenso)") — um por alvo usado (f01/f07/f15)
-   u"Ponha 5 sementes na terra.",
-   u"Ponha 7 sementes na terra.",
-   u"Ponha 8 sementes na terra.",
-   u"Ponha 9 sementes na terra.",
-   u"Ponha 10 sementes na terra.",
-   u"Ponha 11 sementes na terra.",
-   u"Ponha 12 sementes na terra.",
  ],
  u"fases": [],
 }
@@ -756,13 +748,46 @@ add(**_rel(u"fr02", u"DESAFIO RELÂMPAGO",
      (u"12 − 4 = ?", u"8", [u"7", u"9"]), (u"6 + 6 = ?", u"12", [u"11", u"10"]),
      (u"9 + 3 = ?", u"12", [u"13", u"11"]), (u"11 − 5 = ?", u"6", [u"5", u"7"])]))
 
-# 🚫 SÓ TOQUE (Marcos, ago/2026: "essas dinâmicas de ARRASTAR não funcionam" —
-#    no iPhone/iPad o toque briga com o arrasto). A Feirinha fica 100% de TOQUE:
-#    removidas TODAS as mecânicas de arrasto e as que eu tinha adicionado.
-_ARRASTO = {u"reta-numerica", u"classificar", u"caixa-dinheiro", u"domino",
-            u"ligar", u"ordenar", u"arrastar-lugar", u"arrastar-sombra",
-            u"conserte-o-erro"}
-CONTEUDO[u"fases"] = [f for f in CONTEUDO[u"fases"] if f.get(u"mec") not in _ARRASTO]
+# ⭐⭐ DIGITAR O RESULTADO COM SUPORTE VISUAL (Marcos, ago/2026: "digitar
+#    resultado com suporte visual" — a estrela desta versão). A criança CONTA as
+#    frutas desenhadas e DIGITA quanto dá num teclado de números. Mecânica NOVA
+#    do motor (`digitar-numero`): concreto → figural → simbólico (Bruner/CPA).
+#    3 contas por fase (não são rodadas repetidas: cada uma é um problema).
+def _dn(idf, selo, intro, contas):
+    return dict(id=idf, mec=u"digitar-numero", selo=selo, conceito=u"objetivo1",
+        enunciado=intro, dica=u"Conte as frutas do desenho e digite quanto dá.",
+        dados=[{u"a":a, u"b":b, u"op":op, u"img":img, u"resp":r, u"dic":dic}
+               for (a, b, op, img, r, dic) in contas],
+        dadosExtra={u"ENUN":u"Conte as frutas e digite quanto dá.",
+                    u"FECHO":u"Você calculou contando as frutas!"})
+add(**_dn(u"fdn01", u"DIGITE QUANTO DÁ",
+    u"Conte as frutas e digite o resultado no teclado de números.",
+    [(3,2,u"+",u"fe_maca",5,u"Conte as 3 maçãs e siga: 4, 5."),
+     (4,3,u"+",u"fe_morango",7,u"Conte as 4 e siga: 5, 6, 7."),
+     (5,4,u"+",u"fe_laranja",9,u"Conte as 5 e siga: 6, 7, 8, 9.")]))
+add(**_dn(u"fdn02", u"DIGITE O QUE SOBRA",
+    u"Agora as frutas riscadas foram tiradas. Digite quantas sobraram.",
+    [(8,3,u"-",u"fe_laranja",5,u"Das 8, tire 3: 7, 6, 5."),
+     (9,4,u"-",u"fe_uva",5,u"Das 9, tire 4: 8, 7, 6, 5."),
+     (7,2,u"-",u"fe_tomate",5,u"Das 7, tire 2: 6, 5.")]))
+add(**_dn(u"fdn03", u"CONTAS MAIORES",
+    u"Chegou fruta a mais! Conte tudo e digite o total.",
+    [(8,5,u"+",u"fe_banana",13,u"8 e mais 5: passe do 10 até 13."),
+     (6,6,u"+",u"fe_morango",12,u"6 e mais 6 são 12."),
+     (12,4,u"-",u"fe_maca",8,u"De 12, tire 4: 11, 10, 9, 8.")]))
+
+# ✅ ARRASTAR VOLTA — AGORA BLINDADO (Marcos, ago/2026: "quero de arrastar").
+#    A versão anterior BANIA todo arrasto por causa do "não funciona no iPad". Um
+#    teste de toque sintético (Chromium headless) PROVOU que classificar, ordenar
+#    e ligar respondem ao dedo, e que o dinheiro (caixa-dinheiro) é TAP. O que
+#    faltava era `touch-action:none` na peça (agora no pecas.css; medido pelo
+#    _qa/toque.py). Então NÃO removemos mais o arrasto. Só tiramos as mecânicas
+#    que o Marcos não quis nesta atividade e a "conte junto" (contadores), lenta.
+_FORA = {u"contadores",        # a "conte junto" lenta — o Marcos não gostou
+         u"conserte-o-erro",   # fora do leque desta versão
+         u"base-dez", u"repartir", u"saltos-na-fita",  # enxugar p/ caber em 45 min
+         u"domino", u"quem-sou-eu"}
+CONTEUDO[u"fases"] = [f for f in CONTEUDO[u"fases"] if f.get(u"mec") not in _FORA]
 
 # ------------------------------------------------------------------
 # ⭐ RITMO — ~45 min ÁGEIS (Marcos, ago/2026: "muito lenta, desmotivante").
@@ -773,16 +798,22 @@ CONTEUDO[u"fases"] = [f for f in CONTEUDO[u"fases"] if f.get(u"mec") not in _ARR
 #       aquecimento (memória) fica com 4 pares, não 8.
 _MAX_ROD = 2
 # mecânicas cujas "dados" NÃO são rodadas repetidas e sim o conteúdo do jogo:
-# relâmpago = as 8 perguntas rápidas; memória = os pares. Não cortar como rodada.
-_ROD_LIVRE = {u"relampago": 8, u"memoria": 4}
+# relâmpago = as 8 perguntas rápidas; memória = os pares; digitar-numero = as
+# contas (cada uma é um problema). Não cortar como rodada.
+_ROD_LIVRE = {u"relampago": 8, u"memoria": 4, u"digitar-numero": 3}
 for _f in CONTEUDO[u"fases"]:
     if isinstance(_f.get(u"dados"), list):
         _lim = _ROD_LIVRE.get(_f.get(u"mec"), _MAX_ROD)
         if len(_f[u"dados"]) > _lim:
             _f[u"dados"] = _f[u"dados"][:_lim]
-_TETO_MEC = {u"contadores":2, u"escolher":3, u"completar":2,
-             u"comparar":2, u"saltos-na-fita":1, u"base-dez":1, u"repartir":1,
-             u"estimar":1, u"intruso":2, u"quem-sou-eu":1}
+# TETO de fases por mecânica — segura o leque grande em ~45 min. A estrela
+# (digitar-numero) fica com 3; os arrastáveis com 1-2 cada; o resto 1-2.
+# ⭐ ENCHER A AULA (55 min): a versão enxuta batia só 40 min (piso). O portão 3g
+#    reprovou. Mais fases nas listas que já existem (sai de graça, sem arte/voz
+#    nova): escolher/completar 2, comparar/reta 3, intruso 2. Mira ~48-50 min.
+_TETO_MEC = {u"digitar-numero":3, u"escolher":2, u"completar":2,
+             u"comparar":3, u"reta-numerica":3, u"classificar":1,
+             u"ordenar":1, u"caixa-dinheiro":1, u"intruso":2, u"estimar":1}
 _visto = {}
 _enxuto = []
 for _f in CONTEUDO[u"fases"]:
@@ -799,9 +830,12 @@ CONTEUDO[u"fases"] = _enxuto
 #    em BLOCOS da mesma mecânica (cada bloco sobe um degrau), com o AQUECIMENTO
 #    (memória) no meio, como descanso e revisão espaçada. Ordena de forma estável:
 #    preserva a ordem interna de cada bloco (a escada didática que já vinha certa).
-_MEC_ORDEM = [u"contadores", u"escolher", u"saltos-na-fita", u"completar",
-              u"memoria", u"comparar", u"base-dez", u"repartir",
-              u"intruso", u"quem-sou-eu", u"relampago", u"estimar"]
+#    A estrela (digitar-numero) abre; depois o bloco de ARRASTAR/dinheiro
+#    (classificar, caixa, ordenar, reta = a rua da feira); memória no meio
+#    (descanso); e fecha no arcade (relâmpago) + estimar.
+_MEC_ORDEM = [u"digitar-numero", u"classificar", u"caixa-dinheiro", u"ordenar",
+              u"reta-numerica", u"comparar", u"memoria", u"completar",
+              u"escolher", u"intruso", u"relampago", u"estimar"]
 def _ordem_mec(par):
     _i, _f = par
     _m = _f.get(u"mec", u"")

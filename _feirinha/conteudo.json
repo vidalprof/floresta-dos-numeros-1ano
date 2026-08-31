@@ -38,79 +38,740 @@
   "Ouça: tomate. Ache a figura igual.",
   "Ouça: morango. Ache a figura igual.",
   "Ouça: cenoura. Ache a figura igual.",
-  "Ouça: manga. Ache a figura igual.",
-  "Ponha 5 sementes na terra.",
-  "Ponha 7 sementes na terra.",
-  "Ponha 8 sementes na terra.",
-  "Ponha 9 sementes na terra.",
-  "Ponha 10 sementes na terra.",
-  "Ponha 11 sementes na terra.",
-  "Ponha 12 sementes na terra."
+  "Ouça: manga. Ache a figura igual."
  ],
  "fases": [
   {
-   "id": "f01",
-   "mec": "contadores",
-   "selo": "CONTE JUNTO",
+   "id": "fdn01",
+   "mec": "digitar-numero",
+   "selo": "DIGITE QUANTO DÁ",
    "conceito": "objetivo1",
-   "enunciado": "A Dona Coruja tem <b>3</b> maçãs e ganhou mais <b>2</b>. Toque para juntar e conte quantas ficam.",
-   "dica": "Comece do 3 e continue: 4... 5.",
+   "enunciado": "Conte as frutas e digite o resultado no teclado de números.",
+   "dica": "Conte as frutas do desenho e digite quanto dá.",
    "dados": [
     {
-     "ini": 3,
-     "alvo": 5,
-     "item": "fe_maca",
-     "pl": "maçãs",
-     "sing": "maçã",
-     "verbo": "Ponha",
-     "onde": "na cesta",
-     "label": "NA CESTA",
-     "selo": "A CESTA"
+     "a": 3,
+     "b": 2,
+     "op": "+",
+     "img": "fe_maca",
+     "resp": 5,
+     "dic": "Conte as 3 maçãs e siga: 4, 5."
     },
     {
-     "ini": 4,
+     "a": 4,
+     "b": 3,
+     "op": "+",
+     "img": "fe_morango",
+     "resp": 7,
+     "dic": "Conte as 4 e siga: 5, 6, 7."
+    },
+    {
+     "a": 5,
+     "b": 4,
+     "op": "+",
+     "img": "fe_laranja",
+     "resp": 9,
+     "dic": "Conte as 5 e siga: 6, 7, 8, 9."
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Conte as frutas e digite quanto dá.",
+    "FECHO": "Você calculou contando as frutas!"
+   }
+  },
+  {
+   "id": "fdn02",
+   "mec": "digitar-numero",
+   "selo": "DIGITE O QUE SOBRA",
+   "conceito": "objetivo1",
+   "enunciado": "Agora as frutas riscadas foram tiradas. Digite quantas sobraram.",
+   "dica": "Conte as frutas do desenho e digite quanto dá.",
+   "dados": [
+    {
+     "a": 8,
+     "b": 3,
+     "op": "-",
+     "img": "fe_laranja",
+     "resp": 5,
+     "dic": "Das 8, tire 3: 7, 6, 5."
+    },
+    {
+     "a": 9,
+     "b": 4,
+     "op": "-",
+     "img": "fe_uva",
+     "resp": 5,
+     "dic": "Das 9, tire 4: 8, 7, 6, 5."
+    },
+    {
+     "a": 7,
+     "b": 2,
+     "op": "-",
+     "img": "fe_tomate",
+     "resp": 5,
+     "dic": "Das 7, tire 2: 6, 5."
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Conte as frutas e digite quanto dá.",
+    "FECHO": "Você calculou contando as frutas!"
+   }
+  },
+  {
+   "id": "fdn03",
+   "mec": "digitar-numero",
+   "selo": "CONTAS MAIORES",
+   "conceito": "objetivo1",
+   "enunciado": "Chegou fruta a mais! Conte tudo e digite o total.",
+   "dica": "Conte as frutas do desenho e digite quanto dá.",
+   "dados": [
+    {
+     "a": 8,
+     "b": 5,
+     "op": "+",
+     "img": "fe_banana",
+     "resp": 13,
+     "dic": "8 e mais 5: passe do 10 até 13."
+    },
+    {
+     "a": 6,
+     "b": 6,
+     "op": "+",
+     "img": "fe_morango",
+     "resp": 12,
+     "dic": "6 e mais 6 são 12."
+    },
+    {
+     "a": 12,
+     "b": 4,
+     "op": "-",
+     "img": "fe_maca",
+     "resp": 8,
+     "dic": "De 12, tire 4: 11, 10, 9, 8."
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Conte as frutas e digite quanto dá.",
+    "FECHO": "Você calculou contando as frutas!"
+   }
+  },
+  {
+   "id": "f09",
+   "mec": "classificar",
+   "selo": "ARRASTE PRO RESULTADO",
+   "conceito": "objetivo1",
+   "enunciado": "Arraste cada continha para a cesta do <b>resultado certo</b>: dá <b>10</b> ou dá <b>12</b>?",
+   "dica": "Some os dois números da continha e veja em qual cesta ela cai.",
+   "dados": [
+    {
+     "k": "dez",
+     "n": "DÁ 10",
+     "rot": false,
+     "voz": "dá dez",
+     "img": ""
+    },
+    {
+     "k": "doze",
+     "n": "DÁ 12",
+     "rot": false,
+     "voz": "dá doze",
+     "img": ""
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Cada continha na cesta certa: <b>dá 10</b> ou <b>dá 12</b>?",
+    "DICAS": [
+     "Some os dois números devagar, nos dedos se quiser.",
+     "Arraste a continha até a cesta e solte.",
+     "Isso! Toque para seguir."
+    ],
+    "FICHAS": [
+     {
+      "alvo": "dez",
+      "t": "6 + 4"
+     },
+     {
+      "alvo": "doze",
+      "t": "8 + 4"
+     },
+     {
+      "alvo": "dez",
+      "t": "7 + 3"
+     },
+     {
+      "alvo": "doze",
+      "t": "9 + 3"
+     },
+     {
+      "alvo": "dez",
+      "t": "5 + 5"
+     },
+     {
+      "alvo": "doze",
+      "t": "7 + 5"
+     }
+    ]
+   }
+  },
+  {
+   "id": "f21",
+   "mec": "caixa-dinheiro",
+   "selo": "VOCÊ É O CAIXA",
+   "conceito": "objetivo2",
+   "enunciado": "Você é o caixa da feira! Monte o valor certo na <b>bandeja</b>.",
+   "dica": "Olhe a régua verde: ela mostra quanto ainda falta.",
+   "dados": [
+    {
+     "img": "fe_moeda1",
+     "t": "moeda",
+     "v": 1
+    },
+    {
+     "img": "fe_nota2",
+     "t": "nota",
+     "v": 2
+    }
+   ],
+   "dadosExtra": {
+    "CAIXAIMG": "fe_registradora",
+    "DINHEIRO": [
+     {
+      "img": "fe_moeda1",
+      "t": "moeda",
+      "v": 1
+     },
+     {
+      "img": "fe_nota2",
+      "t": "nota",
+      "v": 2
+     },
+     {
+      "img": "fe_nota5",
+      "t": "nota",
+      "v": 5
+     },
+     {
+      "img": "fe_nota10",
+      "t": "nota",
+      "v": 10
+     }
+    ],
+    "DICAS": [
+     "Olhe a régua verde: ela mostra quanto ainda falta.",
+     "Escolha um dinheiro que <b>caiba</b> no que falta. Os que cabem estão piscando.",
+     "Deixa comigo: eu ponho esta peça e você continua."
+    ],
+    "RODADAS": [
+     {
+      "alvo": 3,
+      "base": 0,
+      "img": "fe_maca",
+      "nome": "MAÇÃS",
+      "selo": "COMPRA",
+      "fala": "As maçãs custam <b>3 reais</b>. Monte o dinheiro na bandeja."
+     },
+     {
+      "alvo": 5,
+      "base": 0,
+      "img": "fe_banana",
+      "nome": "BANANAS",
+      "selo": "COMPRA",
+      "fala": "As bananas custam <b>5 reais</b>. Monte o dinheiro na bandeja."
+     },
+     {
+      "alvo": 8,
+      "base": 0,
+      "img": "fe_laranja",
+      "nome": "LARANJAS",
+      "selo": "COMPRA",
+      "fala": "As laranjas custam <b>8 reais</b>. Monte o dinheiro na bandeja."
+     }
+    ]
+   }
+  },
+  {
+   "id": "f24",
+   "mec": "ordenar",
+   "selo": "DO MENOR AO MAIOR",
+   "conceito": "objetivo5",
+   "enunciado": "Ponha as bancas em ordem, <b>da que tem menos à que tem mais</b>.",
+   "dica": "Ache primeiro a banca com menos frutas.",
+   "dados": [
+    {
+     "v": 5,
+     "img": "fe_maca",
+     "nome": "5 maçãs"
+    },
+    {
+     "v": 8,
+     "img": "fe_uva",
+     "nome": "8 uvas"
+    }
+   ],
+   "dadosExtra": {
+    "ORDTXT": {
+     "selo": "EM ORDEM",
+     "balao": "Ponha as bancas <b>da que tem menos à que tem mais</b>.",
+     "hint": "Toque na banca ou arraste até a fila.",
+     "d": [
+      "Procure o <b>menor</b> número de frutas.",
+      "A menor que sobrou está piscando. Toque nela.",
+      "Era esta! Eu ponho e você segue."
+     ],
+     "fim": "Fila pronta! Da que tem menos à que tem mais."
+    }
+   }
+  },
+  {
+   "id": "f03",
+   "mec": "reta-numerica",
+   "selo": "A RUA DA FEIRA",
+   "conceito": "objetivo1",
+   "enunciado": "A Dona Coruja está na banca <b>5</b> e caminha <b>3</b> bancas para a frente. Ajude a achar onde ela chega.",
+   "dica": "Ponha o dedo na banca e ande de uma em uma, contando.",
+   "dados": [
+    {
+     "selo": "A RUA DA FEIRA",
+     "min": 0,
+     "max": 10,
+     "alvo": 8,
+     "tol": 0,
+     "traco": 1,
+     "num": [
+      0,
+      5,
+      10
+     ],
+     "ap1": [
+      3,
+      8
+     ],
+     "ap2": [
+      1,
+      2,
+      4,
+      6,
+      7,
+      9
+     ],
+     "bal": "A Dona Coruja está na banca <b>5</b> e caminha <b>3</b> bancas para a frente, entregando frutas. Em que banca ela chega?",
+     "dica": "Ande com o dedo pelas bancas: 6, 7, 8."
+    },
+    {
+     "selo": "A RUA DA FEIRA",
+     "min": 0,
+     "max": 10,
+     "alvo": 10,
+     "tol": 0,
+     "traco": 1,
+     "num": [
+      0,
+      5,
+      10
+     ],
+     "ap1": [
+      6,
+      10
+     ],
+     "ap2": [
+      1,
+      2,
+      3,
+      4,
+      7,
+      8,
+      9
+     ],
+     "bal": "A Dona Coruja está na banca <b>6</b> e caminha <b>4</b> bancas para a frente, entregando frutas. Em que banca ela chega?",
+     "dica": "Ande com o dedo pelas bancas: 7, 8, 9, 10."
+    }
+   ],
+   "dadosExtra": {
+    "ERROS": []
+   }
+  },
+  {
+   "id": "f12",
+   "mec": "reta-numerica",
+   "selo": "A RUA DA FEIRA",
+   "conceito": "objetivo3",
+   "enunciado": "A Dona Coruja está na banca <b>12</b> e volta <b>5</b> bancas. Ajude a achar onde ela para.",
+   "dica": "Ponha o dedo na banca e ande de uma em uma, contando.",
+   "dados": [
+    {
+     "selo": "A RUA DA FEIRA",
+     "min": 0,
+     "max": 15,
      "alvo": 7,
-     "item": "fe_morango",
-     "pl": "morangos",
-     "sing": "morango",
-     "verbo": "Ponha",
-     "onde": "na cesta",
-     "label": "NA CESTA",
-     "selo": "A CESTA"
+     "tol": 0,
+     "traco": 1,
+     "num": [
+      0,
+      5,
+      10,
+      15
+     ],
+     "ap1": [
+      7,
+      12
+     ],
+     "ap2": [
+      2,
+      4,
+      6,
+      8,
+      9,
+      11,
+      13,
+      14
+     ],
+     "bal": "A Dona Coruja está na banca <b>12</b> e volta <b>5</b> bancas para buscar o troco. Em que banca ela para?",
+     "dica": "Volte com o dedo pelas bancas: 11, 10, 9, 8, 7."
+    },
+    {
+     "selo": "A RUA DA FEIRA",
+     "min": 0,
+     "max": 15,
+     "alvo": 6,
+     "tol": 0,
+     "traco": 1,
+     "num": [
+      0,
+      5,
+      10,
+      15
+     ],
+     "ap1": [
+      6,
+      10
+     ],
+     "ap2": [
+      2,
+      4,
+      7,
+      8,
+      9,
+      11,
+      12,
+      13,
+      14
+     ],
+     "bal": "A Dona Coruja está na banca <b>10</b> e volta <b>4</b> bancas para buscar o troco. Em que banca ela para?",
+     "dica": "Volte com o dedo pelas bancas: 9, 8, 7, 6."
+    }
+   ],
+   "dadosExtra": {
+    "ERROS": []
+   }
+  },
+  {
+   "id": "f18",
+   "mec": "reta-numerica",
+   "selo": "A RUA DA FEIRA",
+   "conceito": "objetivo4",
+   "enunciado": "A Dona Coruja está na banca <b>15</b> e volta <b>3</b> bancas. Ajude a achar onde ela para.",
+   "dica": "Ponha o dedo na banca e ande de uma em uma, contando.",
+   "dados": [
+    {
+     "selo": "A RUA DA FEIRA",
+     "min": 0,
+     "max": 20,
+     "alvo": 12,
+     "tol": 0,
+     "traco": 1,
+     "num": [
+      0,
+      5,
+      10,
+      15,
+      20
+     ],
+     "ap1": [
+      12,
+      15
+     ],
+     "ap2": [
+      2,
+      4,
+      6,
+      8,
+      11,
+      14,
+      16,
+      18
+     ],
+     "bal": "A Dona Coruja está na banca <b>15</b> e volta <b>3</b> bancas para buscar o troco. Em que banca ela para?",
+     "dica": "Volte com o dedo pelas bancas: 14, 13, 12."
+    },
+    {
+     "selo": "A RUA DA FEIRA",
+     "min": 0,
+     "max": 20,
+     "alvo": 10,
+     "tol": 0,
+     "traco": 1,
+     "num": [
+      0,
+      5,
+      10,
+      15,
+      20
+     ],
+     "ap1": [
+      10,
+      14
+     ],
+     "ap2": [
+      2,
+      4,
+      6,
+      8,
+      12,
+      16,
+      18
+     ],
+     "bal": "A Dona Coruja está na banca <b>14</b> e volta <b>4</b> bancas para buscar o troco. Em que banca ela para?",
+     "dica": "Volte com o dedo pelas bancas: 13, 12, 11, 10."
+    }
+   ],
+   "dadosExtra": {
+    "ERROS": []
+   }
+  },
+  {
+   "id": "f16",
+   "mec": "comparar",
+   "selo": "QUANTAS A MAIS?",
+   "conceito": "objetivo5",
+   "enunciado": "Compare as duas bancas. <b>Quantas cenouras a mais</b> que tomates?",
+   "dica": "Case cada cenoura com um tomate e veja quantas sobram.",
+   "dados": [
+    {
+     "a": 6,
+     "b": 4,
+     "modo": "blocos",
+     "imgA": "fe_cenoura",
+     "imgB": "fe_tomate",
+     "pergunta": "mais",
+     "semSinal": true,
+     "selo": "QUANTAS A MAIS?",
+     "enun": "Quantas <b>cenouras a mais</b> que tomates?",
+     "voz": "Quantas cenouras a mais que tomates?"
+    },
+    {
+     "a": 7,
+     "b": 5,
+     "modo": "blocos",
+     "imgA": "fe_cenoura",
+     "imgB": "fe_tomate",
+     "pergunta": "mais",
+     "semSinal": true,
+     "selo": "QUANTAS A MAIS?",
+     "enun": "Agora: quantas <b>cenouras a mais</b> que tomates?",
+     "voz": "Quantas cenouras a mais que tomates?"
+    }
+   ],
+   "dadosExtra": {
+    "D1": [
+     "Ponha uma cenoura em frente de cada tomate.",
+     "As cenouras que sobram sem par são as “a mais”.",
+     "Conte as que sobraram e toque no número."
+    ]
+   }
+  },
+  {
+   "id": "f19",
+   "mec": "comparar",
+   "selo": "QUANTAS A MENOS?",
+   "conceito": "objetivo5",
+   "enunciado": "Uma banca tem <b>9</b> maçãs e outra <b>5</b>. <b>Quantas a menos</b> tem a segunda?",
+   "dica": "Case as frutas e veja quantas faltam na banca menor.",
+   "dados": [
+    {
+     "a": 9,
+     "b": 5,
+     "modo": "blocos",
+     "imgA": "fe_maca",
+     "imgB": "fe_maca",
+     "pergunta": "menos",
+     "semSinal": true,
+     "selo": "QUANTAS A MENOS?",
+     "enun": "Quantas maçãs a <b>segunda</b> banca tem a menos?",
+     "voz": "Quantas maçãs a segunda banca tem a menos?"
+    },
+    {
+     "a": 8,
+     "b": 6,
+     "modo": "blocos",
+     "imgA": "fe_uva",
+     "imgB": "fe_uva",
+     "pergunta": "menos",
+     "semSinal": true,
+     "selo": "QUANTAS A MENOS?",
+     "enun": "Quantos cachos a <b>segunda</b> banca tem a menos?",
+     "voz": "Quantos cachos a segunda banca tem a menos?"
+    }
+   ],
+   "dadosExtra": {
+    "D1": [
+     "Case cada fruta de cima com uma de baixo.",
+     "As que faltam embaixo são as “a menos”.",
+     "Conte quantas faltaram e toque no número."
+    ]
+   }
+  },
+  {
+   "id": "f26",
+   "mec": "comparar",
+   "selo": "QUANTAS A MAIS?",
+   "conceito": "objetivo5",
+   "enunciado": "A banca de maçãs tem <b>11</b> e a de mangas <b>7</b>. Quantas maçãs a mais?",
+   "dica": "Case cada manga com uma maçã.",
+   "dados": [
+    {
+     "a": 11,
+     "b": 7,
+     "modo": "blocos",
+     "imgA": "fe_maca",
+     "imgB": "fe_manga",
+     "pergunta": "mais",
+     "semSinal": true,
+     "selo": "QUANTAS A MAIS?",
+     "enun": "Quantas <b>maçãs a mais</b> que mangas?",
+     "voz": "Quantas maçãs a mais que mangas?"
+    },
+    {
+     "a": 12,
+     "b": 8,
+     "modo": "blocos",
+     "imgA": "fe_banana",
+     "imgB": "fe_limao",
+     "pergunta": "mais",
+     "semSinal": true,
+     "selo": "QUANTAS A MAIS?",
+     "enun": "Quantas <b>bananas a mais</b> que limões?",
+     "voz": "Quantas bananas a mais que limões?"
+    }
+   ],
+   "dadosExtra": {
+    "D1": [
+     "Case cada fruta menor com uma da banca maior.",
+     "As que sobram são as “a mais”.",
+     "Conte as que sobraram e toque no número."
+    ]
+   }
+  },
+  {
+   "id": "aquecimento",
+   "mec": "memoria",
+   "selo": "AQUECIMENTO",
+   "conceito": "objetivo1",
+   "enunciado": "Pare para descansar: ache os <b>pares</b> de frutas iguais.",
+   "dica": "Vire duas cartas e veja se combinam.",
+   "dados": [
+    {
+     "k": "m",
+     "img": "fe_maca",
+     "imgsen": "fe_maca",
+     "voz": "maçã",
+     "vozsen": "maçã"
+    },
+    {
+     "k": "l",
+     "img": "fe_laranja",
+     "imgsen": "fe_laranja",
+     "voz": "laranja",
+     "vozsen": "laranja"
+    },
+    {
+     "k": "u",
+     "img": "fe_uva",
+     "imgsen": "fe_uva",
+     "voz": "uva",
+     "vozsen": "uva"
+    },
+    {
+     "k": "b",
+     "img": "fe_banana",
+     "imgsen": "fe_banana",
+     "voz": "banana",
+     "vozsen": "banana"
     }
    ]
   },
   {
-   "id": "f07",
-   "mec": "contadores",
-   "selo": "CONTE JUNTO",
-   "conceito": "objetivo2",
-   "enunciado": "Havia <b>6</b> morangos na tigela e você coloca mais <b>5</b>. Conte quantos ficam.",
-   "dica": "Comece do 6 e continue: 7, 8...",
+   "id": "f04",
+   "mec": "completar",
+   "selo": "QUANTO FALTA",
+   "conceito": "objetivo1",
+   "enunciado": "A Dona Coruja quer encher as cestas da feira. Toque no número que falta para chegar ao total.",
+   "dica": "Conte de 6 até 9 nos dedos: quantos você subiu?",
    "dados": [
     {
-     "ini": 6,
-     "alvo": 11,
-     "item": "fe_morango",
-     "pl": "morangos",
-     "sing": "morango",
-     "verbo": "Ponha",
-     "onde": "na tigela",
-     "label": "NA TIGELA",
-     "selo": "A TIGELA"
+     "img": "fe_maca",
+     "ante": "Tinha 6 maçãs, quero 9. Faltam ",
+     "dep": " maçãs.",
+     "cer": "três",
+     "out": [
+      "dois",
+      "quatro"
+     ],
+     "dic": "De 6 para 9: 7, 8, 9 — são 3."
     },
     {
-     "ini": 7,
-     "alvo": 10,
-     "item": "fe_morango",
-     "pl": "morangos",
-     "sing": "morango",
-     "verbo": "Ponha",
-     "onde": "na tigela",
-     "label": "NA TIGELA",
-     "selo": "A TIGELA"
+     "img": "fe_uva",
+     "ante": "Tinha 4 cachos, quero 10. Faltam ",
+     "dep": " cachos.",
+     "cer": "seis",
+     "out": [
+      "cinco",
+      "sete"
+     ],
+     "dic": "De 4 até 10: 5, 6, 7, 8, 9, 10 — são 6."
     }
-   ]
+   ],
+   "dadosExtra": {
+    "ENUN": "Toque no número que <b>falta</b> para fechar a conta.",
+    "DEPOIS": "Leia a conta inteira antes de escolher.",
+    "FECHO": "Você fechou as contas!"
+   }
+  },
+  {
+   "id": "f08",
+   "mec": "completar",
+   "selo": "QUANTO FALTA",
+   "conceito": "objetivo2",
+   "enunciado": "A Coruja está enchendo a banca. Toque em quanto ela precisa acrescentar.",
+   "dica": "Conte de 7 até 13.",
+   "dados": [
+    {
+     "img": "fe_tomate",
+     "ante": "Tinha 7 tomates, quer 13. Precisa de mais ",
+     "dep": ".",
+     "cer": "seis",
+     "out": [
+      "cinco",
+      "sete"
+     ],
+     "dic": "De 7 até 13: 8, 9, 10, 11, 12, 13 — são 6."
+    },
+    {
+     "img": "fe_banana",
+     "ante": "Tinha 9 bananas, quer 14. Precisa de mais ",
+     "dep": ".",
+     "cer": "cinco",
+     "out": [
+      "quatro",
+      "seis"
+     ],
+     "dic": "De 9 até 14: 10, 11, 12, 13, 14 — são 5."
+    }
+   ],
+   "dadosExtra": {
+    "ENUN": "Toque no número que <b>falta</b>.",
+    "DEPOIS": "Leia a conta inteira antes de escolher.",
+    "FECHO": "Você completou!"
+   }
   },
   {
    "id": "f02",
@@ -249,368 +910,6 @@
    }
   },
   {
-   "id": "f14",
-   "mec": "escolher",
-   "selo": "RETIRAR",
-   "conceito": "objetivo4",
-   "enunciado": "A Coruja tinha <b>8</b> limões e vendeu <b>3</b>. Quantos restaram na banca?",
-   "dica": "Tire os 3 vendidos e conte o que sobra.",
-   "dados": [
-    {
-     "img": "fe_limao",
-     "p": "Tinha <b>8</b> limões e vendeu <b>3</b>. Quantos restaram?",
-     "c": {
-      "t": "5",
-      "voz": "cinco"
-     },
-     "e": [
-      {
-       "t": "6",
-       "voz": "seis"
-      },
-      {
-       "t": "4",
-       "voz": "quatro"
-      },
-      {
-       "t": "11",
-       "voz": "onze"
-      }
-     ],
-     "d": [
-      "Comece do 8 e volte 3.",
-      "8... 7, 6, 5.",
-      "Restaram <b>5</b> limões. Toque para seguir."
-     ]
-    },
-    {
-     "img": "fe_maca",
-     "p": "Tinha <b>10</b> maçãs e vendeu <b>4</b>. Quantas restaram?",
-     "c": {
-      "t": "6",
-      "voz": "seis"
-     },
-     "e": [
-      {
-       "t": "5",
-       "voz": "cinco"
-      },
-      {
-       "t": "7",
-       "voz": "sete"
-      },
-      {
-       "t": "14",
-       "voz": "catorze"
-      }
-     ],
-     "d": [
-      "Comece do 10 e volte 4.",
-      "10... 9, 8, 7, 6.",
-      "Restaram <b>6</b> maçãs. Toque para seguir."
-     ]
-    }
-   ],
-   "dadosExtra": {
-    "TITULO": "QUANTOS RESTARAM",
-    "FECHO": "Você retirou certinho!"
-   }
-  },
-  {
-   "id": "f05",
-   "mec": "saltos-na-fita",
-   "selo": "PULOS DE 2",
-   "conceito": "objetivo2",
-   "enunciado": "A cada cesta a Coruja guarda <b>2</b> frutas. Dê os pulos de 2 em 2 até o fim.",
-   "dica": "Um pulo tem sempre 2 passinhos: conte um, dois.",
-   "dados": [
-    {
-     "p": 2,
-     "ate": 12,
-     "dic": "Um pulo tem sempre <b>2</b> passinhos. Conte a partir de onde ela está."
-    },
-    {
-     "p": 2,
-     "ate": 16,
-     "dic": "De 2 em 2: 2, 4, 6, 8, 10, 12, 14, 16."
-    }
-   ]
-  },
-  {
-   "id": "f04",
-   "mec": "completar",
-   "selo": "QUANTO FALTA",
-   "conceito": "objetivo1",
-   "enunciado": "A Dona Coruja quer encher as cestas da feira. Toque no número que falta para chegar ao total.",
-   "dica": "Conte de 6 até 9 nos dedos: quantos você subiu?",
-   "dados": [
-    {
-     "img": "fe_maca",
-     "ante": "Tinha 6 maçãs, quero 9. Faltam ",
-     "dep": " maçãs.",
-     "cer": "três",
-     "out": [
-      "dois",
-      "quatro"
-     ],
-     "dic": "De 6 para 9: 7, 8, 9 — são 3."
-    },
-    {
-     "img": "fe_uva",
-     "ante": "Tinha 4 cachos, quero 10. Faltam ",
-     "dep": " cachos.",
-     "cer": "seis",
-     "out": [
-      "cinco",
-      "sete"
-     ],
-     "dic": "De 4 até 10: 5, 6, 7, 8, 9, 10 — são 6."
-    }
-   ],
-   "dadosExtra": {
-    "ENUN": "Toque no número que <b>falta</b> para fechar a conta.",
-    "DEPOIS": "Leia a conta inteira antes de escolher.",
-    "FECHO": "Você fechou as contas!"
-   }
-  },
-  {
-   "id": "f08",
-   "mec": "completar",
-   "selo": "QUANTO FALTA",
-   "conceito": "objetivo2",
-   "enunciado": "A Coruja está enchendo a banca. Toque em quanto ela precisa acrescentar.",
-   "dica": "Conte de 7 até 13.",
-   "dados": [
-    {
-     "img": "fe_tomate",
-     "ante": "Tinha 7 tomates, quer 13. Precisa de mais ",
-     "dep": ".",
-     "cer": "seis",
-     "out": [
-      "cinco",
-      "sete"
-     ],
-     "dic": "De 7 até 13: 8, 9, 10, 11, 12, 13 — são 6."
-    },
-    {
-     "img": "fe_banana",
-     "ante": "Tinha 9 bananas, quer 14. Precisa de mais ",
-     "dep": ".",
-     "cer": "cinco",
-     "out": [
-      "quatro",
-      "seis"
-     ],
-     "dic": "De 9 até 14: 10, 11, 12, 13, 14 — são 5."
-    }
-   ],
-   "dadosExtra": {
-    "ENUN": "Toque no número que <b>falta</b>.",
-    "DEPOIS": "Leia a conta inteira antes de escolher.",
-    "FECHO": "Você completou!"
-   }
-  },
-  {
-   "id": "aquecimento",
-   "mec": "memoria",
-   "selo": "AQUECIMENTO",
-   "conceito": "objetivo1",
-   "enunciado": "Pare para descansar: ache os <b>pares</b> de frutas iguais.",
-   "dica": "Vire duas cartas e veja se combinam.",
-   "dados": [
-    {
-     "k": "m",
-     "img": "fe_maca",
-     "imgsen": "fe_maca",
-     "voz": "maçã",
-     "vozsen": "maçã"
-    },
-    {
-     "k": "l",
-     "img": "fe_laranja",
-     "imgsen": "fe_laranja",
-     "voz": "laranja",
-     "vozsen": "laranja"
-    },
-    {
-     "k": "u",
-     "img": "fe_uva",
-     "imgsen": "fe_uva",
-     "voz": "uva",
-     "vozsen": "uva"
-    },
-    {
-     "k": "b",
-     "img": "fe_banana",
-     "imgsen": "fe_banana",
-     "voz": "banana",
-     "vozsen": "banana"
-    }
-   ]
-  },
-  {
-   "id": "f16",
-   "mec": "comparar",
-   "selo": "QUANTAS A MAIS?",
-   "conceito": "objetivo5",
-   "enunciado": "Compare as duas bancas. <b>Quantas cenouras a mais</b> que tomates?",
-   "dica": "Case cada cenoura com um tomate e veja quantas sobram.",
-   "dados": [
-    {
-     "a": 6,
-     "b": 4,
-     "modo": "blocos",
-     "imgA": "fe_cenoura",
-     "imgB": "fe_tomate",
-     "pergunta": "mais",
-     "semSinal": true,
-     "selo": "QUANTAS A MAIS?",
-     "enun": "Quantas <b>cenouras a mais</b> que tomates?",
-     "voz": "Quantas cenouras a mais que tomates?"
-    },
-    {
-     "a": 7,
-     "b": 5,
-     "modo": "blocos",
-     "imgA": "fe_cenoura",
-     "imgB": "fe_tomate",
-     "pergunta": "mais",
-     "semSinal": true,
-     "selo": "QUANTAS A MAIS?",
-     "enun": "Agora: quantas <b>cenouras a mais</b> que tomates?",
-     "voz": "Quantas cenouras a mais que tomates?"
-    }
-   ],
-   "dadosExtra": {
-    "D1": [
-     "Ponha uma cenoura em frente de cada tomate.",
-     "As cenouras que sobram sem par são as “a mais”.",
-     "Conte as que sobraram e toque no número."
-    ]
-   }
-  },
-  {
-   "id": "f19",
-   "mec": "comparar",
-   "selo": "QUANTAS A MENOS?",
-   "conceito": "objetivo5",
-   "enunciado": "Uma banca tem <b>9</b> maçãs e outra <b>5</b>. <b>Quantas a menos</b> tem a segunda?",
-   "dica": "Case as frutas e veja quantas faltam na banca menor.",
-   "dados": [
-    {
-     "a": 9,
-     "b": 5,
-     "modo": "blocos",
-     "imgA": "fe_maca",
-     "imgB": "fe_maca",
-     "pergunta": "menos",
-     "semSinal": true,
-     "selo": "QUANTAS A MENOS?",
-     "enun": "Quantas maçãs a <b>segunda</b> banca tem a menos?",
-     "voz": "Quantas maçãs a segunda banca tem a menos?"
-    },
-    {
-     "a": 8,
-     "b": 6,
-     "modo": "blocos",
-     "imgA": "fe_uva",
-     "imgB": "fe_uva",
-     "pergunta": "menos",
-     "semSinal": true,
-     "selo": "QUANTAS A MENOS?",
-     "enun": "Quantos cachos a <b>segunda</b> banca tem a menos?",
-     "voz": "Quantos cachos a segunda banca tem a menos?"
-    }
-   ],
-   "dadosExtra": {
-    "D1": [
-     "Case cada fruta de cima com uma de baixo.",
-     "As que faltam embaixo são as “a menos”.",
-     "Conte quantas faltaram e toque no número."
-    ]
-   }
-  },
-  {
-   "id": "f10",
-   "mec": "base-dez",
-   "selo": "CAIXA DE 10",
-   "conceito": "objetivo3",
-   "enunciado": "Junte as frutas soltas em <b>caixas de 10</b> e veja quantas caixas e soltas ficam.",
-   "dica": "Cada 10 soltas enchem 1 caixa.",
-   "dados": [
-    {
-     "selo": "CAIXA DE 10",
-     "soltos": 13,
-     "pTipo": "dsuni",
-     "pImg": "fe_laranja",
-     "tTipo": "dsdez",
-     "vale": 1,
-     "valeT": 10,
-     "nomeP": "laranjas soltas",
-     "nomeT": "caixa de 10",
-     "nomeTs": "caixas de 10",
-     "fala": "Arraste <b>10 laranjas</b> para a caixa. Cada 10 viram <b>1 caixa</b>."
-    },
-    {
-     "selo": "CAIXA DE 10",
-     "soltos": 16,
-     "pTipo": "dsuni",
-     "pImg": "fe_maca",
-     "tTipo": "dsdez",
-     "vale": 1,
-     "valeT": 10,
-     "nomeP": "maçãs soltas",
-     "nomeT": "caixa de 10",
-     "nomeTs": "caixas de 10",
-     "fala": "Encha a <b>caixa de 10</b> com maçãs e veja quantas sobram soltas."
-    }
-   ],
-   "dadosExtra": {
-    "DICAS": [
-     "Conte 10 frutas soltas e arraste para a caixa.",
-     "Quando a caixa enche, ela vira 1 caixa de 10.",
-     "Deixa comigo: eu encho esta caixa e você segue."
-    ]
-   }
-  },
-  {
-   "id": "f11",
-   "mec": "repartir",
-   "selo": "REPARTIR IGUAL",
-   "conceito": "objetivo3",
-   "enunciado": "Reparta as <b>10</b> maçãs em <b>2</b> bancas iguais. Quantas ficam em cada banca?",
-   "dica": "Dá uma para cada banca, por vez, até acabar.",
-   "dados": [
-    {
-     "un": 10,
-     "n": 2,
-     "img": "fe_maca",
-     "coisa": "maçãs",
-     "grupo": "banca",
-     "grupos": "bancas",
-     "nome": "a <b>metade</b>",
-     "selo": "REPARTIR IGUAL"
-    },
-    {
-     "un": 8,
-     "n": 2,
-     "img": "fe_morango",
-     "coisa": "morangos",
-     "grupo": "banca",
-     "grupos": "bancas",
-     "nome": "a <b>metade</b>",
-     "selo": "REPARTIR IGUAL"
-    }
-   ],
-   "dadosExtra": {
-    "DICAS": [
-     "Dê uma fruta para cada banca, por vez.",
-     "Quando acabar, conte quantas ficaram em uma banca.",
-     "Deixa comigo: eu reparto e você confere."
-    ]
-   }
-  },
-  {
    "id": "fi01",
    "mec": "intruso",
    "selo": "ACHE O INTRUSO",
@@ -719,42 +1018,6 @@
      "p1": "Olhe o TOTAL de cada uma, não os números soltos.",
      "p2": "O tamanho dos números não importa; importa quanto dá.",
      "p3": "Some de novo: qual não chega no mesmo total?"
-    }
-   ]
-  },
-  {
-   "id": "fq01",
-   "mec": "quem-sou-eu",
-   "selo": "ADIVINHE O NÚMERO",
-   "conceito": "objetivo1",
-   "enunciado": "Ouça as pistas e descubra o <b>número</b>.",
-   "dica": "Vá tirando os que não servem, uma pista de cada vez.",
-   "dados": [
-    {
-     "resp": "8",
-     "pistas": [
-      "Sou o resultado de <b>5 + 3</b>.",
-      "Sou um número <b>par</b>.",
-      "Venho logo depois do 7."
-     ],
-     "outros": [
-      "7",
-      "9",
-      "6"
-     ]
-    },
-    {
-     "resp": "6",
-     "pistas": [
-      "Sou o resultado de <b>10 − 4</b>.",
-      "Sou um número <b>par</b>.",
-      "Sou menor que 7."
-     ],
-     "outros": [
-      "4",
-      "8",
-      "5"
-     ]
     }
    ]
   },

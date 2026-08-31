@@ -850,6 +850,68 @@ def analisa(js, css, baixo, html=None):
                               u"dada e o 3o degrau vira codigo morto.")
                 break
 
+    # ---------------------------------------------------- DIGITAR-NUMERO (calcular e digitar o resultado)
+    # Mecanica nova (ago/2026), pedido do Marcos: "digitar resultado com suporte
+    # visual". A crianca calcula uma conta e digita a resposta num teclado
+    # numerico; as frutas da conta ficam desenhadas para ela contar. Regra da
+    # casa: mecanica nova = linha no `_padrao/DINAMICAS.md` E regra AQUI, no
+    # mesmo commit — senao o defeito dela nao tem quem pegue na proxima
+    # atividade. Gatilho honesto: so esta peca publica a CONTA visual `.dncontas`
+    # E o teclado numerico `.numtec`.
+    if re.search(r'\.dncontas\b', css) and re.search(r'\.numtec\b', css):
+        usa.append("digitar-numero")
+        # ⭐ ARMADILHA UM — AS DUAS PORTAS (regra da casa, medida pelo padrao.py):
+        #    o teclado numerico da tela (0-9) E o teclado de verdade. No PC da
+        #    escola a crianca digita; no celular, toca. Nunca so uma porta.
+        #    ⚠️ nao basta a palavra `document.onkeydown` aparecer: toda peca a
+        #    escreve para DESLIGAR o teclado da fase anterior
+        #    (`document.onkeydown=null`). Cobra-se o teclado que LIGA de verdade
+        #    (handler != null), como na regra "modo escrever".
+        _liga = re.search(r'onkeydown\s*=\s*(?!null\b)\S', js)
+        if not _liga:
+            ruins.append(u"digitar-numero: a fase nao liga o teclado de VERDADE "
+                         u"(document.onkeydown = handler). Regra das DUAS PORTAS: no PC "
+                         u"da escola tem teclado e a crianca vai digitar.")
+        # e o teclado da TELA tem que existir: as dez teclas 0-9 (o motorzinho as
+        # monta num laco de 0 a 9 e cada uma leva o digito num `.dig`).
+        if not re.search(r'\bnumtec\b', js) or not re.search(r'\bdig\b', js):
+            ruins.append(u"digitar-numero: nao achei o teclado numerico da TELA (as teclas "
+                         u"0-9). No celular nao ha teclado fisico — a porta da tela e "
+                         u"obrigatoria.")
+        # ⭐ ARMADILHA DOIS — A VOZ DO DIGITO (Marcos, ago/2026: "o alto-falante
+        #    nas respostas tambem, para ajudar os alunos que nao sabem ler"). Ao
+        #    tocar cada tecla, a peca DIZ o numero por extenso (mapa dos nomes +
+        #    `diz`). Sem isso, quem ainda nao le o algarismo escolhe as cegas.
+        if not re.search(r'NOMEDIG', js) or not re.search(r'diz\s*\(\s*NOMEDIG', js):
+            ruins.append(u"digitar-numero: a tecla nao FALA o numero ao ser tocada "
+                         u"(mapa NOMEDIG + diz). Quem ainda nao le o algarismo fica de "
+                         u"fora justo na resposta.")
+        # ⭐ ARMADILHA TRES — O SUPORTE VISUAL E ARTE DE IA, NAO CSS (regra do
+        #    Marcos, ago/2026: "nas interacoes dinamicas sempre usar imagens
+        #    geradas pela IA"). A fruta da conta vem do motor (`figEl`/`imgEl`),
+        #    nunca um retangulo de CSS. Sem isso a peca perde a razao de existir:
+        #    o "suporte visual" pedido vira enfeite.
+        if not re.search(r'\bfigEl\b', js) or not re.search(r'window\.imgEl', js):
+            ruins.append(u"digitar-numero: o SUPORTE VISUAL nao usa arte de IA "
+                         u"(figEl/window.imgEl). A fruta desenhada e o coracao do pedido "
+                         u"(\"digitar resultado com suporte visual\"); ficha de CSS nao conta.")
+        # ⭐ ARMADILHA QUATRO — O TREMOR SEM @keyframes (a licao paga do molde
+        #    `digitar`): os keyframes da peca se perdem quando o integrador
+        #    prefixa o CSS dela, e o erro deixava de responder DENTRO da
+        #    atividade. O tremor tem que ser DUAS classes + transicao.
+        if re.search(r'@(?:-webkit-)?keyframes', css) \
+                and (re.search(r'\btreme\b', css) or re.search(r'\bpisca\b', css)):
+            ruins.append(u"digitar-numero: ha @keyframes no tremor/pisca da peca. Os "
+                         u"keyframes se perdem quando o integrador prefixa o CSS — use "
+                         u"DUAS classes + setTimeout (como no molde `digitar`).")
+        # o alvo da tecla >= 48px (regra da casa, dedo de crianca)
+        m = re.search(r'\.numtec\{([^}]*)\}', css)
+        if m:
+            w = re.search(r'(?:^|;)\s*width\s*:\s*(\d+)px', m.group(1))
+            if w and int(w.group(1)) < 48:
+                ruins.append(u"digitar-numero: a tecla numerica tem menos de 48px. Alvo de "
+                             u"dedo de crianca >= 48px (regra da casa).")
+
     # ---------------------------------------------------- A REVELACAO QUE SOME
     # ⚠️ DEFEITO DE FAMILIA, achado duas vezes pelo `_qa/errador.js` (ago/2026):
     #    na `linha-do-tempo` e na `ordenar`, o 3o degrau do andaime escreve a

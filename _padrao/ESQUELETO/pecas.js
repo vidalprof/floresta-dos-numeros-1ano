@@ -12413,6 +12413,463 @@ function recomeca(){ rodada=0; telaDigitar(); }
   })();
 };
 
+/* ==== PECA: digitar-numero ==== */
+MEC["digitar-numero"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-digitar-numero";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* DIGITE O RESULTADO — a crianca CALCULA uma conta e digita a resposta num
+   TECLADO NUMERICO na tela, COM SUPORTE VISUAL: as frutas da conta desenhadas
+   para ela CONTAR. Pedido do Marcos (ago/2026): "digitar resultado com suporte
+   visual". Concreto -> figural -> simbolico (Bruner/CPA): a crianca conta as
+   frutas, ve a conta e escreve o numero.
+   ⭐ Cada conta traz:
+     · a, b     = os dois numeros; op = "+" ou "-";
+     · img      = a arte de IA da fruta (sem a pasta e sem o `.png`), que vira o
+                  SUPORTE VISUAL. OPCIONAL: sem ela (ou sem o motor) a conta
+                  aparece com fichas neutras — a fase roda, e o contrato;
+     · resp     = o resultado (define QUANTAS vagas tem a resposta);
+     · dic      = o 1o degrau do andaime.                                        */
+var ENUN="Digite quanto d&#225;.";
+var FECHO="Voc&#234; calculou todas as contas!";
+var CONTAS=[
+  {a:3,b:2,op:"+",img:"",resp:5,dic:"Conte as 3 e continue: <b>4, 5</b>."},
+  {a:8,b:3,op:"-",img:"",resp:5,dic:"Do 8, tire 3: <b>7, 6, 5</b>."}
+];
+var DIGS="0123456789"; /*TECNICA*/
+var rodada=0, escrito="", errosSeg=0, telaAtual=null, barraP=null;
+var resp="", vagas=[], numteclas=[];
+
+/* o digito por extenso: a tecla FALA o numero ao ser tocada (apoio de quem
+   ainda nao le o algarismo — Marcos, ago/2026: "o alto-falante nas respostas
+   tambem, para ajudar os alunos que nao sabem ler"). */
+var NOMEDIG={"0":"zero","1":"um","2":"dois","3":"três","4":"quatro",
+  "5":"cinco","6":"seis","7":"sete","8":"oito","9":"nove"};
+/* o sinal por extenso, para o alto-falante da conta */
+var OPNOME={"+":"mais","-":"menos","−":"menos"};
+
+/* ⚠️ A FIGURA (a fruta do suporte visual) vem do MOTOR (`imgEl`, que sabe onde
+   mora a pasta `img/`). Aqui na bancada ela nao existe, e a conta aparece com
+   fichas neutras — que e o proprio contrato: `img` e OPCIONAL. Pegar por
+   `window.imgEl` (e nao `typeof imgEl`) deixa o nome DECLARADO, e o portao
+   "funcao que nao existe" consegue medir. */
+var figEl = window.imgEl || null;
+
+function sPing(){ nota(880,.09,.12,"triangle",0); }
+
+/* a conta por extenso, para o alto-falante: "tres mais dois" / "oito menos tres" */
+function contaFalada(r){
+  return String(NOMEDIG[String(r.a)]||r.a)+" "+(OPNOME[r.op]||r.op)+" "
+    +String(NOMEDIG[String(r.b)]||r.b);
+}
+
+/* ⭐ O ALTO-FALANTE QUE DIZ A CONTA — o apoio de quem ainda nao le os sinais.
+   ⚠️ ele NAO digita nada: so fala. O evento para nele para que tocar no botao
+   nunca conte como digito. (copiado do `digitar`) */
+function fazZap(txt,rot){
+  var z=el("button","zap","");
+  z.type="button";
+  z.setAttribute("aria-label","Ouvir "+(rot||txt));
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    if(e.preventDefault) e.preventDefault();
+    sPing(); diz(txt);
+    z.className="zap tocando";
+    setTimeout(function(){ z.className="zap"; },900);
+    return false;
+  };
+  return z;
+}
+
+/* ---------- o SUPORTE VISUAL: a conta desenhada com frutas ---------- */
+/* ⭐🎨 REGRA DA CASA (Marcos, ago/2026): "nas interacoes dinamicas sempre usar
+   imagens geradas pela IA". A fruta e ARTE DE IA (`figEl`), nunca desenho de
+   CSS. So na bancada, quando nao ha `figEl`, cai numa ficha neutra (`.dnvazia`)
+   — que a crianca da atividade NUNCA ve. */
+function grupoFrutas(n,img,riscarDoFim){
+  var g=el("div","dngrupo",""), i, corte=(riscarDoFim||0);
+  for(i=0;i<n;i++){
+    var celf=el("span","dnfruta","");
+    if(img&&figEl){ celf.appendChild(figEl(img)); }
+    else{ celf.className="dnfruta dnvazia"; } /* reserva neutra de bancada */
+    /* na subtracao, as ULTIMAS `corte` frutas saem riscadas: e o que se TIRA */
+    if(corte&&i>=n-corte) celf.className=celf.className+" dnriscada";
+    g.appendChild(celf);
+  }
+  return g;
+}
+/* monta a linha da conta e devolve a caixa; a crianca le da esquerda para a
+   direita: [frutas] [sinal] ... [=] [vagas]. Para grupos grandes o CSS quebra
+   em varias linhas (flex-wrap), para nao estourar a tela. */
+function suporteVisual(r){
+  var box=el("div","dncontas","");
+  if(r.op==="-"){
+    /* MODELO "TIRAR": um grupo de `a` frutas com as ULTIMAS `b` riscadas.
+       Nao ha 2o grupo — as riscadas JA sao o que se subtrai. */
+    box.appendChild(grupoFrutas(r.a,r.img,r.b));
+    box.appendChild(el("span","dnsinal","−"));
+  }else{
+    /* MODELO "JUNTAR": `a` frutas, o sinal `+`, `b` frutas. */
+    box.appendChild(grupoFrutas(r.a,r.img,0));
+    box.appendChild(el("span","dnsinal","+"));
+    box.appendChild(grupoFrutas(r.b,r.img,0));
+  }
+  box.appendChild(el("span","dnsinal","="));
+  return box;
+}
+
+function telaConta(){
+  limpa();
+  escrito=""; errosSeg=0; vagas=[]; numteclas=[];
+  var r=CONTAS[rodada];
+  resp=String(r.resp);
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(rodada*100/CONTAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro"), i;
+  c.appendChild(el("div","selo","CONTA "+(rodada+1)+" DE "+CONTAS.length));
+  c.appendChild(el("div","balao",ENUN));
+  /* a pergunta com o alto-falante que fala a conta por extenso: o que a crianca
+     VE (a conta) e o que ela OUVE ("tres mais dois"), juntos. */
+  var ln=el("div","dglin","");
+  ln.appendChild(el("span","dgpista","Quanto d&#225;?"));
+  ln.appendChild(fazZap(contaFalada(r),"a conta"));
+  c.appendChild(ln);
+  /* O SUPORTE VISUAL + as vagas da resposta, logo depois do "=" */
+  var box=suporteVisual(r);
+  var cx=el("span","vagas dnvagas","");
+  for(i=0;i<resp.length;i++){ var v=el("div","vaga",""); cx.appendChild(v); vagas.push(v); }
+  box.appendChild(cx);
+  c.appendChild(box);
+  /* O TECLADO NUMERICO na tela: 0-9 grandes + APAGAR. `data-qa` na caixa e so
+     para o auditor-jogador (ele bate digito por digito, na ordem da resposta);
+     a crianca nao ve nada disso. */
+  var tec=el("div","numtecs");
+  tec.setAttribute("data-qa",resp);
+  var d;
+  for(i=0;i<=9;i++){
+    d=el("button","numtec",String(i));
+    d.type="button";
+    d.dig=String(i);
+    d.onclick=toqueNum;
+    tec.appendChild(d); numteclas.push(d);
+  }
+  /* a tecla APAGAR (tira o ultimo digito) */
+  var del=el("button","numtec numdel","⌫");
+  del.type="button";
+  del.setAttribute("aria-label","Apagar");
+  del.onclick=function(){ if(!telaAtual||!telaAtual.parentNode) return; sTap(); apagaUm(); };
+  tec.appendChild(del);
+  c.appendChild(tec);
+  c.appendChild(el("div","hint","Toque nos n&#250;meros <b>ou</b> use o teclado do computador."));
+  t.appendChild(c); app.appendChild(t);
+  /* PORTA 2: o teclado de verdade. No PC da escola tem teclado e a crianca vai
+     digitar; no celular, nao tem. Nunca so uma porta (regra das DUAS PORTAS). */
+  document.onkeydown=teclaReal;
+}
+
+/* ---------- as DUAS portas de entrada do mesmo digito ---------- */
+/* ⭐ a tecla DIZ O PROPRIO NUMERO ao ser tocada (voz da casa): a crianca ouve
+   "cinco" enquanto escreve o 5 — apoio de quem ainda nao le o algarismo. */
+function toqueNum(){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  sTap(); diz(NOMEDIG[this.dig]||this.dig);
+  poeDigito(this.dig);
+}
+/* ⚠️ o guarda `!telaAtual.parentNode` aqui e o que impede o teclado de ficar
+   preso na fase anterior quando a tela ja trocou. */
+function teclaReal(ev){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  var k=ev.key||"";
+  if(!k&&(ev.keyCode||ev.which)) k=String.fromCharCode(ev.keyCode||ev.which);
+  k=String(k);
+  if(k==="Backspace"||k==="Delete"){ sTap(); apagaUm(); return; }
+  if(k.length!==1||DIGS.indexOf(k)<0) return;
+  sTap(); diz(NOMEDIG[k]||k);
+  poeDigito(k);
+}
+
+/* ---------- a regra da fase ---------- */
+function poeDigito(d){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  if(escrito.length>=resp.length) return;
+  var v=vagas[escrito.length];
+  v.className="vaga cheia";
+  v.innerHTML=d;
+  /* ⭐ o digito entra COMEMORANDO: cresce e pousa de volta (duas transicoes,
+     sem `@keyframes` — ver a licao no destreme/CSS). */
+  pousaVaga(v);
+  escrito=escrito+d;
+  sCerto();
+  if(escrito.length>=resp.length) confere();
+}
+function apagaUm(){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  if(!escrito.length) return;
+  escrito=escrito.slice(0,-1);
+  var v=vagas[escrito.length];
+  v.className="vaga"; v.innerHTML="";
+}
+function pousaVaga(v){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(v.className.indexOf("cheia")>=0&&v.className.indexOf("pousa")<0)
+      v.className=v.className+" pousa";
+  },170);
+}
+function confere(){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  if(escrito===resp){
+    errosSeg=0;
+    apagaDica(); limpaPisca();
+    if(barraP) barraP.style.width=Math.round((rodada+1)*100/CONTAS.length)+"%";
+    fechaRodada();
+  }else{
+    erraConta();
+  }
+}
+function erraConta(){
+  sErro(); errosSeg++;
+  /* as vagas TREMEM (duas classes + transicao, NUNCA @keyframes — a licao do
+     molde `digitar`: os keyframes da peca se perdem quando o integrador prefixa
+     o CSS, e o erro deixava de responder DENTRO da atividade). */
+  var i;
+  for(i=0;i<vagas.length;i++){ if(vagas[i].className.indexOf("cheia")>=0){ vagas[i].className="vaga cheia treme"; destreme(vagas[i]); } }
+  /* LIMPA as vagas para ela tentar de novo, e sobe o ANDAIME. */
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    var j;
+    for(j=0;j<vagas.length;j++){ vagas[j].className="vaga"; vagas[j].innerHTML=""; }
+    escrito="";
+    ajuda(errosSeg);
+  },300);
+}
+/* ⚠️ o tremor e feito com DUAS classes e transicao, nao com `@keyframes` — os
+   keyframes da peca se perdem quando o integrador prefixa o CSS dela (medido
+   no `pecas.css`), e o erro deixava de responder DENTRO da atividade, que e
+   justamente onde a crianca esta. Esquerda -> direita -> parado. */
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("cheia")>=0) b.className="vaga cheia treme2";
+  },110);
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("cheia")>=0) b.className="vaga cheia";
+  },240);
+}
+/* o andaime CRESCE: dica -> as frutas PISCAM/contam -> revelar e seguir.
+   Nunca X, nunca "errou", nunca fica travado. */
+function ajuda(n){
+  if(n===1){
+    mostraDica(CONTAS[rodada].dic);
+  }else if(n===2){
+    /* 2o degrau: destaca o SUPORTE VISUAL e manda contar as frutas do resultado */
+    mostraDica("Conte as frutas: s&#227;o <b>"+resp+"</b>.");
+    acendeFrutas();
+  }else{
+    /* 3o degrau: revela, poe a resposta certa e segue */
+    mostraDica("Era <b>"+resp+"</b>! Eu coloco e voc&#234; segue.");
+    seguraDica(4000);
+    revela();
+  }
+}
+function acendeFrutas(){
+  limpaPisca();
+  var box=telaAtual&&telaAtual.getElementsByClassName("dncontas")[0];
+  if(box) box.className="dncontas dnpisca";
+}
+function limpaPisca(){
+  var box=telaAtual&&telaAtual.getElementsByClassName("dncontas")[0];
+  if(box) box.className="dncontas";
+}
+function revela(){
+  /* poe a resposta certa, digito a digito, e confere (que ai avanca) */
+  limpaPisca();
+  var i;
+  escrito="";
+  for(i=0;i<resp.length;i++){
+    vagas[i].className="vaga cheia";
+    vagas[i].innerHTML=resp.charAt(i);
+    pousaVaga(vagas[i]);
+    escrito=escrito+resp.charAt(i);
+  }
+  sCerto();
+  if(barraP) barraP.style.width=Math.round((rodada+1)*100/CONTAS.length)+"%";
+  fechaRodada();
+}
+/* ⚠️ LICAO PAGA (ago/2026), a mesma da `linha-do-tempo` e da `ordenar`: o 3o
+   degrau do andaime escreve "Era N! Eu coloco e voce segue" e chama `revela()`
+   — que poe a resposta e, no caminho do acerto, APAGA A DICA. A frase aparecia
+   e sumia no mesmo pisco, justo para a crianca que mais precisava dela. A dica
+   presa sai sozinha depois, para nao entulhar a tela. */
+var dicaPresaAte = 0;
+function seguraDica(ms){ dicaPresaAte = (new Date()).getTime() + (ms||4000); }
+function apagaDica(){
+  var dd=document.getElementById("dicaP");
+  if(!dd||!dd.parentNode) return;
+  var falta = dicaPresaAte - (new Date()).getTime();
+  if(falta > 0){ setTimeout(apagaDica, falta + 30); return; }
+  dd.parentNode.removeChild(dd);
+}
+/* ⚠️ o temporizador da rodada continua correndo depois que a tela sai. Sem o
+   guarda `!telaAtual.parentNode` ele montaria a rodada seguinte por cima de
+   outra tela — e o `onkeydown` ficaria preso na fase anterior. */
+function fechaRodada(){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    proxima();
+  },900);
+}
+function proxima(){
+  rodada++;
+  if(rodada<CONTAS.length){ telaConta(); return; }
+  document.onkeydown=null;
+  mostraBanner(FECHO,telaFim);
+}
+
+function telaFim(){
+  limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; calculou <b>contando as frutas</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){ rodada=0; telaConta(); }
+    if(f && f.dados) CONTAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+      if(_d.FECHO !== undefined) FECHO = _d.FECHO;
+    }
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    telaConta();
+  })();
+};
+
 /* ==== PECA: ditado ==== */
 MEC["ditado"] = function(f, cen, fim){
   cen.className = cen.className + " mec-ditado";
