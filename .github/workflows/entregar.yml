@@ -107,6 +107,13 @@ jobs:
             if [ -f "$fal" ]; then
               python3 _qa/falas.py "$fal" || { echo "::error::$pasta: portao da narracao reprovou (voz/ingles/complite)"; FALHOU=1; }
             fi
+            # ⭐ a VOZ da resposta diz a PALAVRA que a crianca VE? (o defeito do
+            #    'ilefante'/'voz do rato'). Sai 2 = "nao medi" (atividade sem
+            #    campo `voz` a mao) e NAO reprova; so o 1 reprova.
+            if [ -f "$pasta/conteudo.json" ]; then
+              python3 _qa/voz_bate.py "$pasta"; rc=$?
+              if [ "$rc" = "1" ]; then echo "::error::$pasta: portao voz_bate reprovou (a voz da resposta fala diferente do texto que a crianca ve)"; FALHOU=1; fi
+            fi
           done
           if [ "$FALHOU" != "0" ]; then
             echo "::error::PORTÃO PRÉ-ENTREGA REPROVOU — NADA foi publicado. Conserte os erros acima e rode de novo."

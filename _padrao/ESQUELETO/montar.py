@@ -611,6 +611,12 @@ _FONETICA_VOZ = [
     #    claro, e o "le" fica interno (nao vira "li"). So no audio; a tela mantem
     #    "elefante".
     (re.compile(r"\belefante\b", re.I), u"élefante"),
+    # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"o nome Mimi é dito Mimí"*. A voz
+    #    pt-BR do Edge le "mimi" como OXITONA (mi-MÍ, sotaque de "Mimí" espanhol),
+    #    quando o nome da gata e PAROXITONA (MÍ-mi). O acento agudo no 1o "i"
+    #    reancora a tonica na 1a silaba — mesmo truque do "élefante"/"fásse". So no
+    #    audio; a tela e a chave da voz continuam "Mimi".
+    (re.compile(r"\bmimi\b", re.I), u"mími"),
 ]
 _LACUNA = re.compile(r"_+")
 # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026), TRES defeitos de UMA raiz — CAIXA ALTA
@@ -995,12 +1001,24 @@ def falas_dos_dados(dados, poe):
             if chave in CHAVES_MUDAS:
                 # ⚠️ LICAO PAGA (ago/2026, ingles 9o ano): `c` e COLUNA (int) na
                 #    cruzadinha/coord — muda de proposito. MAS na `escolher` `c` e
-                #    a RESPOSTA CERTA (str), a unica opcao que a crianca toca e
-                #    ficava SEM alto-falante (as erradas, em `e`, tinham voz; a
-                #    certa nao). Quando `c` (ou `r`) vem como frase, e fala.
-                if chave in ("c", "r") and isinstance(val, str) \
-                        and eh_fala(texto_limpo(val)):
-                    poe("op_" + chave_voz(texto_limpo(val)), val)
+                #    a RESPOSTA CERTA, a unica opcao que a crianca toca e ficava
+                #    SEM alto-falante (as erradas, em `e`, tinham voz; a certa
+                #    nao). Quando `c` (ou `r`) vem como frase, e fala.
+                # ⚠️⚠️ SEGUNDA LICAO, a que o `voz_bate.py` provou (Trem do
+                #    Alfabeto, ago/2026): quando a resposta certa e uma OPCAO COM
+                #    FIGURA (`c:{t:"LEÃO",img,voz:"leão"}`), o `c` vem DICT, nao
+                #    str — o `isinstance(val,str)` falhava, o `continue` pulava, e
+                #    a resposta certa ("LEÃO") nunca era gravada: a crianca tocava
+                #    o alto-falante dela e ouvia SILENCIO (so as erradas falavam).
+                #    Aqui o `c`/`r` DICT/LIST e DESCIDO como qualquer opcao — o
+                #    proprio `eh_fala` filtra o que grava. So o `c`/`r` ESCALAR
+                #    (coluna/linha int) continua mudo.
+                if chave in ("c", "r"):
+                    if isinstance(val, str):
+                        if eh_fala(texto_limpo(val)):
+                            poe("op_" + chave_voz(texto_limpo(val)), val)
+                    else:
+                        falas_dos_dados(val, poe)
                 continue
             falas_dos_dados(val, poe)
     elif isinstance(dados, list):
