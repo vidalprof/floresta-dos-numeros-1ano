@@ -88,7 +88,7 @@ h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:
 <script>
 /* ===================== O ATELIÊ DO SR. BATATA (Pré) ===================== */
 var IMG="img/", AUD="audio/", PRE="hb";
-var CARIMBO_W=9;   /* carimbo PEQUENO e fixo (Marcos: sem ferramenta de tamanho) */
+var CARIMBO_W=5;   /* carimbo PEQUENO e fixo — metade do anterior (Marcos: "o dobro menor") */
 var CAT=[
  {k:"corpo", nome:"corpo",  itens:["hb_corpo1","hb_corpo2","hb_corpo3","hb_corpo4"], obrig:true},
  {k:"olho",  nome:"olhos",  itens:["hb_olho1","hb_olho2","hb_olho3","hb_olho4","hb_olho5","hb_olho6"]},
@@ -225,7 +225,7 @@ function telaAtelie(){
     if(e.target&&e.target.className&&(""+e.target.className).indexOf("pegando")>=0)return;
     var r=palco.getBoundingClientRect(); var x=((e.clientX-r.left)/r.width)*100, y=((e.clientY-r.top)/r.height)*100;
     x=Math.max(9,Math.min(91,x)); y=Math.max(12,Math.min(86,y)); /* trava dentro do quadro: carimbo nao corta na beira */
-    if(!estado.carimbos)estado.carimbos=[]; var nw=(carimboSel.indexOf("orelha")>=0?16:CARIMBO_W); estado.carimbos.push({it:carimboSel,x:x,y:y,w:nw}); escolha={t:'c',i:estado.carimbos.length-1}; arma(); tom(760); redesenha(); });
+    if(!estado.carimbos)estado.carimbos=[]; estado.carimbos.push({it:carimboSel,x:x,y:y,w:CARIMBO_W}); escolha={t:'c',i:estado.carimbos.length-1}; arma(); tom(760); redesenha(); });
   /* categorias no TOPO; a foto do 1o item vira o icone (a crianca do Pre NAO le,
      reconhece pela figura — nada de emoji, que nem aparece no PC da escola). */
   var cats=el("div","cats"),i;
