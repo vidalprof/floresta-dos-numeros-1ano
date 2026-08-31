@@ -43,9 +43,13 @@ h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:
 .topo .tt{font-weight:800;font-size:4.4vw}@media(min-width:760px){.topo .tt{font-size:20px}}
 .topo .guia{height:44px;filter:drop-shadow(0 3px 4px #0004)}
 .topo .zap{margin-left:auto;background:#ffffff2e;border:none;color:#fff;border-radius:14px;padding:8px 13px;font-size:20px;cursor:pointer}
-#palco{-webkit-flex:1;flex:1;position:relative;width:100%;overflow:hidden;background:#dfeef7;}
+#main{-webkit-flex:1;flex:1;display:-webkit-flex;display:flex;width:100%;min-height:0;}
+#palco{-webkit-flex:1;flex:1;position:relative;height:100%;overflow:hidden;background:#dfeef7;}
 #palcobg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-#boneco{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(46vh,74vw);height:min(64vh,98vw);}
+/* o boneco cabe SEMPRE com folga (Marcos: "ele parece cortado ou saindo da área"):
+   altura menor que o palco (deixa margem p/ o chapéu em cima, os pés embaixo e a
+   flutuação), centrado um pouco abaixo p/ dar teto ao chapéu. */
+#boneco{position:absolute;left:50%;top:53%;transform:translate(-50%,-50%);width:min(46vh,54vw);height:min(62vh,70vw);}
 #boneco .cam{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}
 #boneco .cam img{position:absolute;object-fit:contain;}
 .pegando{filter:brightness(1.07) drop-shadow(0 7px 11px #0007)!important;cursor:grabbing!important;}
@@ -57,12 +61,13 @@ h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:
 .cats{-webkit-flex:none;flex:none;width:100%;display:-webkit-flex;display:flex;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;gap:6px;padding:7px 8px;background:var(--sol);}
 .cats::-webkit-scrollbar{height:6px}.cats::-webkit-scrollbar-thumb{background:#0002;border-radius:3px}
 .cat{-webkit-flex:none;flex:none;min-width:64px;border:none;border-radius:14px;background:#ffffff8c;color:#5a4200;padding:7px 6px;font-size:12px;font-weight:800;cursor:pointer;}
-.cat .ic{font-size:22px;display:block}
+.cat .ici{width:34px;height:34px;-o-object-fit:contain;object-fit:contain;display:block;margin:0 auto 2px}
+.cat .cnm{display:block;font-size:11px;line-height:1}
 .cat.on{background:var(--verde);color:#fff}
 /* bandeja de opções — ROLA de lado */
-.bandeja{-webkit-flex:none;flex:none;width:100%;background:#f3ecd9;display:-webkit-flex;display:flex;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;gap:8px;padding:8px;min-height:100px;-webkit-align-items:center;align-items:center;}
+.bandeja{-webkit-flex:none;flex:none;width:98px;height:100%;background:#f3ecd9;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;gap:8px;padding:8px;-webkit-align-items:center;align-items:center;}
 .bandeja::-webkit-scrollbar{height:6px}.bandeja::-webkit-scrollbar-thumb{background:#0002;border-radius:3px}
-.op{-webkit-flex:none;flex:none;width:82px;height:82px;background:#fff;border-radius:16px;border:3px solid var(--linha);display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:6px;cursor:pointer;}
+.op{-webkit-flex:none;flex:none;width:80px;height:80px;background:#fff;border-radius:16px;border:3px solid var(--linha);display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;-webkit-justify-content:center;justify-content:center;padding:6px;cursor:pointer;}
 .op:active{border-color:var(--verde);background:#eafce0}
 .op img{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none;}
 .op.nenhum{font-size:12px;font-weight:800;color:#8a7f68;text-align:center;line-height:1.1}
@@ -81,20 +86,22 @@ h1{font-size:8vw;margin:4px 0;color:var(--terra);font-weight:800;letter-spacing:
 var IMG="img/", AUD="audio/", PRE="hb";
 var CARIMBO_W=11;   /* tamanho padrao do carimbo (%) — menor; a crianca aumenta/diminui com − e + */
 var CAT=[
- {k:"corpo", nome:"corpo",  ic:"🥔", itens:["hb_corpo1","hb_corpo2","hb_corpo3","hb_corpo4"], obrig:true},
- {k:"olho",  nome:"olhos",  ic:"👀", itens:["hb_olho1","hb_olho2","hb_olho3","hb_olho4","hb_olho5","hb_olho6"]},
- {k:"nariz", nome:"nariz",  ic:"👃", itens:["hb_nariz1","hb_nariz2","hb_nariz3","hb_nariz4"]},
- {k:"boca",  nome:"boca",   ic:"👄", itens:["hb_boca1","hb_boca2","hb_boca3","hb_boca4","hb_boca5","hb_boca6","hb_boca7","hb_boca8","hb_boca9"]},
- {k:"sobra", nome:"sobrancelha", ic:"〰️", itens:["hb_sobrancelha1","hb_sobrancelha2","hb_sobrancelha3","hb_sobrancelha4","hb_sobrancelha5","hb_sobrancelha6","hb_sobrancelha7","hb_sobrancelha8"]},
- {k:"orelha",nome:"orelhas",ic:"👂", stamp:true, itens:["hb_orelha1_e","hb_orelha1_d","hb_orelha2_e","hb_orelha2_d"]},
- {k:"oculos",nome:"óculos", ic:"👓", itens:["hb_oculos1","hb_oculos2"]},
- {k:"bigode",nome:"bigode", ic:"🧔", itens:["hb_bigode1","hb_bigode2","hb_bigode3","hb_bigode4","hb_bigode5","hb_bigode6","hb_bigode7","hb_bigode8"]},
- {k:"chapeu",nome:"chapéu", ic:"🎩", itens:["hb_chapeu7","hb_chapeu3","hb_chapeu4","hb_chapeu5","hb_chapeu6"]},
- {k:"carimbo",nome:"carimbos",ic:"⭐", stamp:true, itens:["hb_carimbo_estrela","hb_carimbo_coracao","hb_carimbo_arcoiris","hb_carimbo_balao","hb_carimbo_sol","hb_carimbo_flor","hb_carimbo_arvore","hb_carimbo_casa","hb_carimbo_foguete","hb_carimbo_abelha","hb_carimbo_borboleta","hb_carimbo_peixe"]}
+ {k:"corpo", nome:"corpo",  itens:["hb_corpo1","hb_corpo2","hb_corpo3","hb_corpo4"], obrig:true},
+ {k:"olho",  nome:"olhos",  itens:["hb_olho1","hb_olho2","hb_olho3","hb_olho4","hb_olho5","hb_olho6"]},
+ {k:"nariz", nome:"nariz",  itens:["hb_nariz1","hb_nariz2","hb_nariz3","hb_nariz4"]},
+ {k:"boca",  nome:"boca",   itens:["hb_boca1","hb_boca2","hb_boca3","hb_boca4","hb_boca5","hb_boca6","hb_boca7","hb_boca8","hb_boca9"]},
+ {k:"sobra", nome:"sobrancelha", itens:["hb_sobrancelha1","hb_sobrancelha2","hb_sobrancelha3","hb_sobrancelha4","hb_sobrancelha5","hb_sobrancelha6","hb_sobrancelha7","hb_sobrancelha8"]},
+ {k:"orelha",nome:"orelhas", itens:["hb_orelha1","hb_orelha2"]},  /* PAR junto, encaixe automatico (nao e stamp, nao ajusta) */
+ {k:"oculos",nome:"óculos", itens:["hb_oculos1","hb_oculos2"]},
+ {k:"bigode",nome:"bigode", itens:["hb_bigode1","hb_bigode2","hb_bigode3","hb_bigode4","hb_bigode5","hb_bigode6","hb_bigode7","hb_bigode8"]},
+ {k:"chapeu",nome:"chapéu", itens:["hb_chapeu7","hb_chapeu3","hb_chapeu4","hb_chapeu5","hb_chapeu6"]},
+ {k:"carimbo",nome:"carimbos",stamp:true, itens:["hb_carimbo_estrela","hb_carimbo_coracao","hb_carimbo_arcoiris","hb_carimbo_balao","hb_carimbo_sol","hb_carimbo_flor","hb_carimbo_arvore","hb_carimbo_casa","hb_carimbo_foguete","hb_carimbo_abelha","hb_carimbo_borboleta","hb_carimbo_peixe"]}
  /* foguete e abelha voltaram em estilo massinha/alta resolucao; + borboleta e peixe. */
 ];
-var CAMADAS=["corpo","sobra","olho","oculos","nariz","bigode","boca","chapeu"];  /* orelha saiu: virou peca AVULSA (o aluno coloca cada orelha) */
-var ANCORA={corpo:{cx:50,cy:50,w:100},orelha:{cx:50,cy:40,w:72},
+var CAMADAS=["orelha","corpo","sobra","olho","oculos","nariz","bigode","boca","chapeu"];  /* orelha PRIMEIRO = atras do corpo; o par encaixa sozinho (nao ajusta) */
+/* a orelha é um PAR: duas imagens (_e e _d) em posições fixas e simétricas. */
+var ORELHA={le:{cx:16,cy:42,w:22}, ri:{cx:84,cy:42,w:22}};
+var ANCORA={corpo:{cx:50,cy:50,w:100},
  sobra:{cx:50,cy:24,w:50},olho:{cx:50,cy:32,w:52},oculos:{cx:50,cy:33,w:56},
  nariz:{cx:50,cy:43,w:16},bigode:{cx:50,cy:52,w:26},boca:{cx:50,cy:54,w:30},chapeu:{cx:50,cy:8,w:56}};
 var FUNDOS=[["cozinha","a cozinha"],["fazenda","a fazenda"],["cidade","a cidade"],["jardim","o jardim"],
@@ -104,6 +111,15 @@ var FUNDOS=[["cozinha","a cozinha"],["fazenda","a fazenda"],["cidade","a cidade"
 var perfil={nome:"",fig:"hb_cr1"}, estado={}, catSel="corpo", fundoIdx=0, carimboSel=null;
 function $(s){return document.getElementById(s);}
 function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+/* ÍCONES SVG (NUNCA emoji — emoji nao renderiza no PC da escola: Win7/Chrome109).
+   `currentColor` faz o icone herdar a cor do texto do botao (branco). */
+var SVG={
+ som:'<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10H3zm13 2a4 4 0 00-2.2-3.6v7.2A4 4 0 0016 12zm-2.2-8v2.1a6 6 0 010 11.8V22a8 8 0 000-16z"/></svg>',
+ lixeira:'<svg viewBox="0 0 24 24" width="25" height="25" fill="currentColor" aria-hidden="true"><path d="M9 3l-1 1H4v2h16V4h-4l-1-1H9zM6 7l1.1 13h9.8L18 7H6zm4 2h1.2v9H10V9zm2.8 0H14v9h-1.2V9z"/></svg>',
+ fundo:'<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M4 5h16v14H4V5zm2 12h12l-3.8-5-3 3.8L9 12l-3 5zM8.5 8A1.5 1.5 0 108.5 11 1.5 1.5 0 008.5 8z"/></svg>',
+ limpar:'<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M15.5 3.5l5 5-8.5 8.5H8l-1.5 1.5H3v-2l1.5-1.5v-4L13 2.9zM7 13v3h3l7-7-3-3-7 7z"/></svg>',
+ ok:'<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M9.2 16.4L4.8 12l-1.5 1.5 5.9 5.9L21 7.6 19.5 6z"/></svg>'
+};
 
 /* ---------- VOZ ---------- */
 var _au=$("au"), _armado=false;
@@ -144,7 +160,7 @@ function telaCapa(){
   var m=el("img","mascote"); m.src=IMG+"hb_batata_feliz.png"; m.alt="Tato"; m.onerror=function(){this.style.display='none';}; c.appendChild(m);
   c.appendChild(el("h1",null,"O Ateliê do Sr. Batata"));
   c.appendChild(el("div","sub","Monte e vista o seu amigo batata!"));
-  var b=el("button","bt","▶ Começar"); b.onclick=function(){arma();tom(660);falar("hb_abertura");telaQuem();};
+  var b=el("button","bt","Começar"); b.onclick=function(){arma();tom(660);falar("hb_abertura");telaQuem();};
   c.appendChild(b); t.appendChild(c);
   render(t); falar("hb_capa");
 }
@@ -161,7 +177,7 @@ function telaQuem(){
     f.onclick=function(){arma();tom(600);perfil.fig=n; var a=figs.getElementsByClassName("fig"),k;for(k=0;k<a.length;k++)a[k].className="fig"; f.className="fig sel";};
     figs.appendChild(f);})(PRE+"_cr"+i);}
   c.appendChild(figs);
-  var b=el("button","bt","Vamos! ✨"); b.onclick=function(){arma();tom(720);perfil.nome=(inp.value||"").substring(0,16);telaAtelie();};
+  var b=el("button","bt","Vamos!"); b.onclick=function(){arma();tom(720);perfil.nome=(inp.value||"").substring(0,16);telaAtelie();};
   c.appendChild(b); t.appendChild(c);
   render(t); falar("hb_quem");
 }
@@ -171,13 +187,13 @@ function telaAtelie(){
   var topo=el("div","topo");
   var g=el("img","guia"); g.src=IMG+"hb_batata_feliz.png"; g.id="guia"; g.onerror=function(){this.style.display='none';}; topo.appendChild(g);
   topo.appendChild(el("div","tt","Monte o seu Sr. Batata!"));
-  var z=el("button","zap","🔊"); z.onclick=function(){falar("hb_ajuda");}; topo.appendChild(z);
+  var z=el("button","zap",SVG.som); z.setAttribute("aria-label","Ouvir"); z.onclick=function(){falar("hb_ajuda");}; topo.appendChild(z);
   t.appendChild(topo);
   var palco=el("div"); palco.id="palco";
   var bg=el("img"); bg.id="palcobg"; bg.src=IMG+"hb_fundo_"+FUNDOS[fundoIdx][0]+".png"; palco.appendChild(bg);
   var bon=el("div"); bon.id="boneco"; bon.className="tocaflutua"; palco.appendChild(bon);
   var cbox=el("div"); cbox.id="carimbos"; cbox.style.cssText="position:absolute;inset:0;pointer-events:none;overflow:hidden"; palco.appendChild(cbox);
-  palco.appendChild(el("div","dica","Toque numa peça 👇 — e arraste no rosto para mover ✋"));
+  palco.appendChild(el("div","dica","Toque numa peça e arraste no rosto para mover"));
   palco.addEventListener("click",function(e){ if(!carimboSel)return;
     var cc=null,ii; for(ii=0;ii<CAT.length;ii++)if(CAT[ii].k===catSel)cc=CAT[ii];
     if(!cc||!cc.stamp)return;   /* so as categorias de CARIMBO e ORELHA colocam tocando no quadro */
@@ -186,17 +202,24 @@ function telaAtelie(){
     var r=palco.getBoundingClientRect(); var x=((e.clientX-r.left)/r.width)*100, y=((e.clientY-r.top)/r.height)*100;
     x=Math.max(9,Math.min(91,x)); y=Math.max(12,Math.min(86,y)); /* trava dentro do quadro: carimbo nao corta na beira */
     if(!estado.carimbos)estado.carimbos=[]; var nw=(carimboSel.indexOf("orelha")>=0?16:CARIMBO_W); estado.carimbos.push({it:carimboSel,x:x,y:y,w:nw}); escolha={t:'c',i:estado.carimbos.length-1}; arma(); tom(760); redesenha(); });
-  t.appendChild(palco);
+  /* categorias no TOPO; a foto do 1o item vira o icone (a crianca do Pre NAO le,
+     reconhece pela figura — nada de emoji, que nem aparece no PC da escola). */
   var cats=el("div","cats"),i;
-  for(i=0;i<CAT.length;i++){(function(c){ var b=el("button","cat"+(catSel==c.k?" on":"")); b.innerHTML='<span class="ic">'+c.ic+'</span>'+c.nome; b.dataset.k=c.k;
+  for(i=0;i<CAT.length;i++){(function(c){ var b=el("button","cat"+(catSel==c.k?" on":""));
+    var ic0=c.itens[0]+(c.k==="orelha"?"_e":"");
+    b.innerHTML='<img class="ici" src="'+IMG+ic0+'.png" alt="" onerror="this.style.display=\'none\'"><span class="cnm">'+c.nome+'</span>'; b.dataset.k=c.k;
     b.onclick=function(){arma();tom(560);catSel=c.k;carimboSel=null;marcaCat();bandeja();falar("hb_nome_"+c.k);};
     cats.appendChild(b);})(CAT[i]);}
   t.appendChild(cats);
-  var bj=el("div","bandeja"); bj.id="bandeja"; t.appendChild(bj);
+  /* CORPO: itens numa COLUNA a ESQUERDA (pedido do Marcos) + palco grande a direita */
+  var main=el("div"); main.id="main";
+  var bj=el("div","bandeja"); bj.id="bandeja"; main.appendChild(bj);
+  main.appendChild(palco);
+  t.appendChild(main);
   var ac=el("div","acoes");
-  var bf=el("button","bt sol","🖼️ Fundo"); bf.onclick=trocaFundo;
-  var bl=el("button","bt roxo","🧽 Limpar"); bl.onclick=limpar;
-  var bp=el("button","bt","✅ Pronto!"); bp.onclick=pronto;
+  var bf=el("button","bt sol",'<span class="bti">'+SVG.fundo+'</span> Fundo'); bf.onclick=trocaFundo;
+  var bl=el("button","bt roxo",'<span class="bti">'+SVG.limpar+'</span> Limpar'); bl.onclick=limpar;
+  var bp=el("button","bt",'<span class="bti">'+SVG.ok+'</span> Pronto'); bp.onclick=pronto;
   ac.appendChild(bf); ac.appendChild(bl); ac.appendChild(bp);
   t.appendChild(ac);
   render(t);
@@ -228,7 +251,7 @@ function ctrlTamanho(){
   if(isC && !cs[escolha.i]){escolha=null;return;} if(!isC && !estado[escolha.k]){escolha=null;return;}
   var c=el("div"); c.id="cctrl";
   c.style.cssText="position:absolute;left:50%;top:8px;transform:translateX(-50%);display:-webkit-flex;display:flex;-webkit-align-items:center;align-items:center;gap:8px;background:rgba(255,255,255,.94);border:3px solid var(--linha);border-radius:18px;padding:5px 10px;z-index:45;box-shadow:0 4px 12px #0005";
-  c.appendChild(el("span",null,"tamanho")).style.cssText="font-weight:800;color:#6a5a3a;font-size:14px";
+  c.appendChild(el("span",null,"peça")).style.cssText="font-weight:800;color:#6a5a3a;font-size:14px";
   function bt(txt,bg,fn){ var b=el("button",null,txt); b.type="button";
     b.style.cssText="width:46px;height:46px;border-radius:50%;border:3px solid #fff;background:"+bg+";color:#fff;font-size:23px;font-weight:900;line-height:1;padding:0;cursor:pointer;box-shadow:0 3px 6px #0006";
     b.onclick=function(e){ if(e.stopPropagation)e.stopPropagation(); arma(); fn(); }; return b; }
@@ -236,15 +259,22 @@ function ctrlTamanho(){
     else { estado.tam=estado.tam||{}; var t=estado.tam[escolha.k]||1; estado.tam[escolha.k]=Math.max(0.45,Math.min(2.3,t+d*0.15)); }
     tom(d>0?780:500); redesenha(); }
   function apaga(){ if(isC){ cs.splice(escolha.i,1); } else { estado[escolha.k]=null; } escolha=null; tom(300); redesenha(); }
-  c.appendChild(bt("−","#e07a3f",function(){passo(-1);}));
+  /* sem "diminuir" (Marcos: as crianças se atrapalham) — só CRESCER e APAGAR */
   c.appendChild(bt("+","#2e9e57",function(){passo(1);}));
-  c.appendChild(bt("🗑","#c0455e",apaga));
+  c.appendChild(bt(SVG.lixeira,"#c0455e",apaga));
   pal.appendChild(c);
 }
 function marcaCat(){ var a=document.querySelectorAll(".cat"),i; for(i=0;i<a.length;i++)a[i].className="cat"+(a[i].dataset.k==catSel?" on":""); }
+/* AS DUAS ORELHAS JUNTAS — o par encaixa sozinho (fixo, simetrico, sem ajuste). */
+function desenhaOrelhas(bon,style){ var lados=[["_e",ORELHA.le],["_d",ORELHA.ri]],s;
+  for(s=0;s<2;s++){ var a=lados[s][1]; var cam=el("div","cam"); var im=el("img");
+    im.src=IMG+style+lados[s][0]+".png"; im.onerror=function(){this.style.display='none';};
+    im.style.left=a.cx+"%"; im.style.top=a.cy+"%"; im.style.width=a.w+"%"; im.style.transform="translate(-50%,-50%)";
+    cam.appendChild(im); bon.appendChild(cam); } }
 function desenhaBoneco(){
   var bon=$("boneco"); if(!bon)return; bon.innerHTML=""; estado.pos=estado.pos||{}; estado.tam=estado.tam||{};
   for(var i=0;i<CAMADAS.length;i++){ var k=CAMADAS[i]; var v=estado[k]; if(!v)continue;
+    if(k==="orelha"){ desenhaOrelhas(bon,v); continue; }   /* PAR fixo, nao ajusta */
     var an=ANCORA[k]; var p=estado.pos[k]||{cx:an.cx,cy:an.cy}; var w=an.w*(estado.tam[k]||1);
     var sel=(escolha&&escolha.t==='p'&&escolha.k===k);
     var cam=el("div","cam"); var im=el("img"); im.src=IMG+v+".png"; im.onerror=function(){this.style.display='none';};
@@ -310,12 +340,12 @@ function miniBatata(box,e,f){ var bg=el("img"); bg.src=IMG+"hb_fundo_"+FUNDOS[f|
 function pronto(){
   arma(); tom(880); festinha(60); salvaNaGaleria();
   var t=el("div","tela capa"); var c=el("div","card");
-  c.appendChild(el("h1",null,"Que batata linda! 🎉"));
+  c.appendChild(el("h1",null,"Que batata linda!"));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", v":"V")+"ocê é um artista!"));
   var mini=el("div"); mini.style.cssText="position:relative;width:46vw;max-width:250px;height:60vw;max-height:330px;margin:6px auto;border-radius:18px;overflow:hidden;box-shadow:0 8px 20px #0004;border:3px solid var(--linha)";
   miniBatata(mini,estado,fundoIdx); c.appendChild(mini);
-  var b1=el("button","bt","🥔 Fazer outro"); b1.onclick=function(){arma();tom(660);telaAtelie();};
-  var b2=el("button","bt sol","🖼️ Galeria"); b2.onclick=telaGaleria;
+  var b1=el("button","bt","Fazer outro"); b1.onclick=function(){arma();tom(660);telaAtelie();};
+  var b2=el("button","bt sol","Galeria"); b2.onclick=telaGaleria;
   c.appendChild(b1); c.appendChild(b2); t.appendChild(c);
   render(t); falar("hb_pronto");
 }
@@ -324,12 +354,12 @@ function salvaNaGaleria(){ try{ var g=JSON.parse(localStorage.getItem(chaveG())|
 function telaGaleria(){
   arma();tom(600); var g=[]; try{g=JSON.parse(localStorage.getItem(chaveG())||"[]");}catch(e){}
   var t=el("div","tela capa"); var c=el("div","card"); c.style.maxWidth="620px";
-  c.appendChild(el("h1",null,"Minha galeria 🖼️"));
+  c.appendChild(el("h1",null,"Minha galeria"));
   if(!g.length) c.appendChild(el("div","sub","Ainda não tem nenhum. Faça o seu!"));
   var gal=el("div","galeria"),i;
   for(i=0;i<g.length;i++){(function(item){ var card=el("div"); card.style.cssText="position:relative;width:29vw;max-width:150px;height:39vw;max-height:200px;border-radius:12px;overflow:hidden;border:3px solid var(--linha)"; miniBatata(card,item.e,item.f); gal.appendChild(card); })(g[i]);}
   c.appendChild(gal);
-  var b=el("button","bt","🥔 Fazer outro"); b.onclick=function(){arma();tom(660);telaAtelie();};
+  var b=el("button","bt","Fazer outro"); b.onclick=function(){arma();tom(660);telaAtelie();};
   c.appendChild(b); t.appendChild(c);
   render(t); falar("hb_galeria");
 }
