@@ -12,6 +12,10 @@ h1{font-size:23px;color:#ffd98a;margin:8px 0 2px;}
 .bt{font-family:inherit;font-size:15px;font-weight:bold;border:none;border-radius:12px;padding:10px 16px;margin:4px 4px;cursor:pointer;color:#0f2740;background:#ffd98a;}
 .bt.sec{background:#2b567e;color:#eaf1f8;}
 .bt.on{background:#5ec26a;color:#08240f;}
+.bt.del{background:#c9463a;color:#fff;}
+.seltool{background:#3a1f1c;border:1px solid #c9463a;border-radius:12px;padding:8px 12px;margin:8px 0;font-size:14px;color:#ffd0c8;}
+td.sel,th.sel{text-align:center;width:34px;}
+td.sel input{width:20px;height:20px;}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0;}
 .stat{display:inline-block;background:#16334f;border:1px solid #2b567e;border-radius:12px;padding:8px 12px;margin:3px 4px;font-size:14px;}
 .stat b{color:#ffd98a;font-size:18px;}
@@ -29,7 +33,7 @@ select{font-size:14px;padding:6px 8px;border-radius:10px;border:2px solid #2b567
 var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 var SLUG="ciencias-estacoes-3ano";
 var SENHA="1275";          /* atalho do professor (nao e seguranca, so um portao) */
-var dados=[], ordem="chegada", filtroTurma="", timer=null;
+var dados=[], ordem="chegada", filtroTurma="", timer=null, selMode=false, sel={};
 function $(id){return document.getElementById(id);}
 function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
@@ -51,7 +55,9 @@ function telaPainel(){
      ' &nbsp;Turma: <select id="fturma" onchange="filtroTurma=this.value;pintar()"><option value="">todas</option><option>3º A</option><option>3º B</option><option>3º C</option><option>3º D</option></select>'+
      ' &nbsp;<button class="bt" onclick="baixarCSV()">Baixar CSV</button>'+
      '<button class="bt sec" onclick="window.print()">Imprimir / PDF</button>'+
-     '<button class="bt sec" onclick="carregar()">Atualizar</button></div>'+
+     '<button class="bt sec" onclick="carregar()">Atualizar</button>'+
+     '<button class="bt del" id="btDel" onclick="toggleSel()">&#128465; Remover provas de teste</button></div>'+
+   '<div id="seltool"></div>'+
    '<div id="stats"></div><div id="tabela"><p class="mut">Carregando…</p></div></div>';
   setOrdem(ordem);
 }
@@ -81,10 +87,11 @@ function pintar(){
   var media=n?(soma/n):0;
   $("stats").innerHTML='<span class="stat">Provas: <b>'+n+'</b></span>'+
     '<span class="stat">Média da turma: <b>'+(n?media.toFixed(1):"—")+'</b></span>';
+  pintarSeltool();
   if(!n){ $("tabela").innerHTML='<p class="mut">Nenhuma prova enviada ainda. Assim que um aluno terminar, a nota aparece aqui.</p>'; return; }
-  var h='<table><tr><th>#</th><th>Nome</th><th>Turma</th><th>Nota</th><th>Acertos</th><th>Quando</th></tr>';
+  var h='<table><tr>'+selTh()+'<th>#</th><th>Nome</th><th>Turma</th><th>Nota</th><th>Acertos</th><th>Quando</th></tr>';
   for(i=0;i<lista.length;i++){ var r=lista[i];
-    h+='<tr><td class="num">'+(i+1)+'</td><td>'+esc(r.nome||"—")+'</td><td>'+esc(r.turma||"—")+'</td>'+
+    h+='<tr>'+selCb(r)+'<td class="num">'+(i+1)+'</td><td>'+esc(r.nome||"—")+'</td><td>'+esc(r.turma||"—")+'</td>'+
        '<td class="num"><span class="pill" style="background:'+corNota(r.nota)+'">'+esc((r.nota===0||r.nota)?r.nota:"—")+'</span></td>'+
        '<td class="num">'+esc(r.acertos||"—")+'</td><td class="mut">'+esc(r.data||"")+'</td></tr>';
   }
@@ -100,5 +107,12 @@ function baixarCSV(){
   var blob=new Blob(["﻿"+lin.join("\r\n")],{type:"text/csv;charset=utf-8;"});
   var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="viagem-brasil-notas.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
+function nSel(){ var n=0,z; for(z in sel){ if(sel.hasOwnProperty(z))n++; } return n; }
+function selTh(){ return selMode?'<th class="sel">&#10003;</th>':''; }
+function selCb(r){ return selMode?'<td class="sel"><input type="checkbox" onchange="selToggle(\''+r._k+'\',this.checked)"'+(sel[r._k]?' checked':'')+'></td>':''; }
+function pintarSeltool(){ var el=$("seltool"); if(!el)return; var b=$("btDel"); if(b)b.className="bt "+(selMode?"on":"del"); if(!selMode){el.innerHTML="";return;} el.innerHTML='<div class="seltool">Marque as provas de TESTE que quer apagar (a atualizacao automatica fica pausada). <button class="bt del" onclick="removerSelecionadas()">Remover selecionadas (<b id="selN">'+nSel()+'</b>)</button><button class="bt sec" onclick="toggleSel()">Cancelar</button></div>'; }
+function selToggle(k,c){ if(c)sel[k]=1; else delete sel[k]; var b=$("selN"); if(b)b.textContent=nSel(); }
+function toggleSel(){ selMode=!selMode; sel={}; if(selMode){ if(timer){clearInterval(timer);timer=null;} } else { if(!timer)timer=setInterval(carregar,10000); } pintar(); }
+function removerSelecionadas(){ var ks=[],k; for(k in sel){ if(sel.hasOwnProperty(k))ks.push(k); } if(!ks.length){ alert("Marque ao menos uma prova para remover."); return; } if(!confirm("Remover "+ks.length+" prova(s)? Isso apaga do painel para sempre e nao da para desfazer."))return; var falta=ks.length, erros=0; ks.forEach(function(k){ try{ var x=new XMLHttpRequest(); x.open("DELETE",FIREBASE_DB+"/provas/"+SLUG+"/"+encodeURIComponent(k)+".json",true); x.onreadystatechange=function(){ if(x.readyState===4){ if(x.status<200||x.status>=300)erros++; falta--; if(falta===0){ sel={}; selMode=false; if(!timer)timer=setInterval(carregar,10000); carregar(); if(erros)alert(erros+" prova(s) nao puderam ser removidas (verifique a conexao)."); } }}; x.send(); }catch(e){ falta--; erros++; if(falta===0){ sel={}; selMode=false; carregar(); } } }); }
 telaTrava();
 </script>
