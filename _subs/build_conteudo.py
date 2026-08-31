@@ -110,8 +110,8 @@ add(id=u"f02", mec=u"escolher", selo=u"NOME DE UM SÓ", conceito=u"objetivo2",
          u"REX", u"rex", [(u"cachorro", u"cachorro"), (u"bicho", u"bicho")], D_PRO),
      esc(u"sn_gato", u"Qual é o nome <b>próprio</b> da gata?",
          u"MIMI", u"mimi", [(u"gata", u"gata"), (u"bichana", u"bichana")], D_PRO),
-     esc(u"sn_casa", u"Qual é o nome <b>próprio</b> do país?",
-         u"BRASIL", u"brasil", [(u"país", u"país"), (u"lugar", u"lugar")], D_PRO),
+     esc(u"sn_cidade", u"Qual é o nome <b>próprio</b> deste lugar?",
+         u"JOINVILLE", u"joinville", [(u"cidade", u"cidade"), (u"lugar", u"lugar")], D_PRO),
      esc(u"sn_menina", u"Qual é o nome <b>próprio</b> desta menina?",
          u"LIA", u"lia", [(u"menina", u"menina"), (u"garota", u"garota")], D_PRO),
     ])
@@ -380,8 +380,8 @@ add(id=u"f13c", mec=u"caca-palavras", selo=u"CAÇA AOS NOMES DE LUGAR", conceito
 #    fica igual ao comum; a régua não diferencia certo do errado").
 #    NÃO mexe em: completar (A LETRA GRANDE — as opções Rex/rex/REX são de caso, de
 #    propósito), intruso (já vem no caso certo) e caça-palavras (grade é maiúscula).
-_PROPRIOS = set((u"rex bidu mimi nina lia duda bento gael louro zé ze ipê ipe flora "
-                 u"pipoca blumenau brasil recife maria bahia paraná parana").split())
+_PROPRIOS = set((u"rex bidu mimi nina lia duda bento pedro gael louro zé ze ipê ipe flora "
+                 u"pipoca blumenau brasil recife joinville maria bahia paraná parana").split())
 def _caso(w):
     s = (w or u"").strip()
     if not s:
