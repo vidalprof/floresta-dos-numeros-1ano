@@ -348,7 +348,7 @@ function telaConta(){
   /* a pergunta com o alto-falante que fala a conta por extenso: o que a crianca
      VE (a conta) e o que ela OUVE ("tres mais dois"), juntos. */
   var ln=el("div","dglin","");
-  ln.appendChild(el("span","dgpista","Quanto d&#225;?"));
+  ln.appendChild(el("span","dgpista",(r.op==="-"?"Quanto sobra?":"Quanto d&#225;?")));
   ln.appendChild(fazZap(contaFalada(r),"a conta"));
   c.appendChild(ln);
   /* O SUPORTE VISUAL + as vagas da resposta, logo depois do "=" */

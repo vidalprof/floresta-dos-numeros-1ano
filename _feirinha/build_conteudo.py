@@ -769,34 +769,47 @@ add(**_rel(u"fr02", u"DESAFIO RELÂMPAGO",
 #    frutas desenhadas e DIGITA quanto dá num teclado de números. Mecânica NOVA
 #    do motor (`digitar-numero`): concreto → figural → simbólico (Bruner/CPA).
 #    3 contas por fase (não são rodadas repetidas: cada uma é um problema).
-def _dn(idf, selo, intro, contas):
-    return dict(id=idf, mec=u"digitar-numero", selo=selo, conceito=u"objetivo1",
-        enunciado=intro, dica=u"Conte as frutas do desenho e digite quanto dá.",
+def _dn(idf, selo, intro, contas, dica, enun, fecho, conceito=u"objetivo1"):
+    return dict(id=idf, mec=u"digitar-numero", selo=selo, conceito=conceito,
+        enunciado=intro, dica=dica,
         dados=[{u"a":a, u"b":b, u"op":op, u"img":img, u"resp":r, u"dic":dic}
                for (a, b, op, img, r, dic) in contas],
-        dadosExtra={u"ENUN":u"Conte as frutas e digite quanto dá.",
-                    u"FECHO":u"Você calculou contando as frutas!"})
+        dadosExtra={u"ENUN":enun, u"FECHO":fecho})
+# fdn01 é toda de ADIÇÃO — a palavra "quanto dá" cabe (Marcos: "nas de adição tudo bem").
 add(**_dn(u"fdn01", u"DIGITE QUANTO DÁ",
     u"Conte as frutas e digite o resultado no teclado de números.",
     [(3,2,u"+",u"fe_maca",5,u"Conte as 3 maçãs e siga: 4, 5."),
      (4,3,u"+",u"fe_morango",7,u"Conte as 4 e siga: 5, 6, 7."),
      (5,4,u"+",u"fe_laranja",9,u"Conte as 5 e siga: 6, 7, 8, 9."),
      (6,3,u"+",u"fe_uva",9,u"Conte as 6 e siga: 7, 8, 9."),
-     (4,4,u"+",u"fe_tomate",8,u"4 e mais 4 são 8.")]))
+     (4,4,u"+",u"fe_tomate",8,u"4 e mais 4 são 8.")],
+    dica=u"Conte todas as frutas dos dois blocos e digite quanto dá.",
+    enun=u"Conte as frutas dos dois blocos e digite quanto dá.",
+    fecho=u"Você juntou e contou certinho!"))
+# fdn02 é toda de SUBTRAÇÃO — NÃO "conte as frutas e quanto dá" (induz a somar: 8 e 3
+# são 11, mas a resposta é 5). O bloco da direita é o que se TIRA; digite quanto sobra.
 add(**_dn(u"fdn02", u"DIGITE O QUE SOBRA",
-    u"Agora conte quantas sobram e digite.",
+    u"Agora é de menos: o bloco da direita é o que você TIRA. Digite quantas sobram.",
     [(8,3,u"-",u"fe_laranja",5,u"Das 8, tire 3: 7, 6, 5."),
      (9,4,u"-",u"fe_uva",5,u"Das 9, tire 4: 8, 7, 6, 5."),
      (7,2,u"-",u"fe_tomate",5,u"Das 7, tire 2: 6, 5."),
      (6,2,u"-",u"fe_maca",4,u"Das 6, tire 2: 5, 4."),
-     (10,5,u"-",u"fe_banana",5,u"De 10, tire 5: sobram 5.")]))
+     (10,5,u"-",u"fe_banana",5,u"De 10, tire 5: sobram 5.")],
+    dica=u"O sinal de menos quer dizer TIRAR: tire as frutas da direita e conte quantas sobram.",
+    enun=u"É a conta de menos: tire o bloco da direita e digite quantas sobram.",
+    fecho=u"Você tirou e viu quanto sobrou!", conceito=u"objetivo4"))
+# fdn03 agora é TODA de adição (contas maiores, passando do 10) — assim "conte tudo,
+# quanto dá" fica sempre certo (a subtração já é praticada em bloco na fdn02).
 add(**_dn(u"fdn03", u"CONTAS MAIORES",
     u"Chegou fruta a mais! Conte tudo e digite o total.",
     [(8,5,u"+",u"fe_banana",13,u"8 e mais 5: uma fileira de 5 e mais 3, dá 13."),
      (6,6,u"+",u"fe_morango",12,u"6 e mais 6 são 12: dois blocos de 6."),
-     (10,4,u"-",u"fe_maca",6,u"De 10, tire 4: sobram 6."),
+     (7,5,u"+",u"fe_maca",12,u"7 e mais 5: passa do 10, dá 12."),
      (7,4,u"+",u"fe_laranja",11,u"7 e mais 4: passa do 10, dá 11."),
-     (9,3,u"+",u"fe_uva",12,u"9 e mais 3: 10, 11, 12.")]))
+     (9,3,u"+",u"fe_uva",12,u"9 e mais 3: 10, 11, 12.")],
+    dica=u"Conte todas as frutas dos dois blocos e digite quanto dá ao todo.",
+    enun=u"Conte as frutas e digite quanto dá ao todo.",
+    fecho=u"Você calculou contas maiores!"))
 
 # ✅ ARRASTAR VOLTA — AGORA BLINDADO (Marcos, ago/2026: "quero de arrastar").
 #    A versão anterior BANIA todo arrasto por causa do "não funciona no iPad". Um
