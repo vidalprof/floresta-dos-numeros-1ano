@@ -120,6 +120,16 @@ Leia tudo antes de agir e responda sempre em **português**.
 > que são EDIÇÃO da pose parada, senão ele treme) e as cenas largas (Pollinations,
 > de graça). ⛔ **O GEMINI ESTÁ SEM COTA — medido em 2026-08-12**: `gerar-imagens.yml` com `modelo=gemini` volta **HTTP 429 "You exceeded your current quota, please check your plan and billing details"** nos três modelos de imagem. (Em 2026-08-07 tinha crédito; acabou entre as duas datas.) **Enquanto isso, TODA imagem sai pelo caminho GRÁTIS**: `gerar-imagens.yml` com o input `lote=<arquivo.json>` — Pollinations desenha, o `rembg` recorta o fundo dentro do próprio runner e a peça sai transparente, por R$ 0,00. O que esse caminho **não** faz é EDITAR imagem base, então as três camadas do mascote ficam bloqueadas até o crédito voltar. ⚠️ REGRA: aviso de saldo/serviço externo tem **data** e se **remede** antes de repetir. E o workflow agora **registra quem desenhou de verdade** (`_novo/<nome>.origem.txt` e a mensagem do commit): ele cai para o Pollinations quando o Gemini falha, e antes o commit dizia “(gemini)” mesmo assim — eu diagnostiquei em cima de registro falso.
 
+> ## 🎛️ ÍNDICE "CLONE DAQUI" — `_padrao/INTERATIVIDADES.md` (ler ANTES de montar)
+> Cobrança do Marcos (set/2026): *"temos várias atividades boas; catalogue as
+> interatividades que JÁ funcionam, guarde, e quando for criar já use a pronta;
+> compare com o banco para ver quantas faltam lapidar"*. O **`_padrao/INTERATIVIDADES.md`**
+> é esse índice, gerado das atividades reais: para cada mecânica diz **de qual
+> atividade clonar a versão que já funciona** (✅ PRONTAS) e quais ainda **faltam
+> lapidar** (existem no motor, nunca usadas). **Montar atividade = escolher as
+> mecânicas na tabela ✅ e CLONAR delas — não redesenhar.** Ao lapidar uma nova,
+> mover para ✅ no mesmo commit. Armadilhas/detalhes por mecânica: o `DINAMICAS.md`.
+
 > ## 🧰 A MECÂNICA JÁ EXISTE — COPIE, NÃO REESCREVA (`_padrao/DINAMICAS.md`)
 > Cobrança do Marcos (ago/2026): *"temos um leque de interatividades muito grande,
 > precisam ser TREINADAS, para quando for posta em prática não dar todos esses
