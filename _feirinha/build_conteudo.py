@@ -609,6 +609,19 @@ _R5 = {
  u"f25": reta(u"17 − 8", 0,20,9, [0,5,10,15,20],[9,17],[2,4,6,11,13,16,18],
               u"Comece no <b>17</b> e volte <b>8</b>. Onde você chega?", u"Para trás do 17: até 9."),
 }
+# 5ª rodada nas fases que SOBREVIVEM ao TETO=1 (Marcos: "pelo menos umas 5 por
+# fase"). Uma rodada a mais, números novos, MESMAS figuras.
+_R6 = {
+ u"f02": esc(u"fe_uva", u"Há <b>3</b> uvas e <b>5</b> morangos na cesta. Quantas frutas ao todo?",
+             8, [7,9,6], [u"Junte as 3 e as 5.", u"3... 4, 5, 6, 7, 8.", u"São <b>8</b> frutas. Toque para seguir."]),
+ u"f04": {u"img":u"fe_tomate", u"ante":u"Tinha 5 tomates, quero 11. Faltam ", u"dep":u".",
+          u"cer":u"6", u"out":[u"5", u"7"], u"dic":u"De 5 até 11: 6,7,8,9,10,11 — são 6."},
+ u"f16": {u"a":10, u"b":6, u"modo":u"blocos", u"imgA":u"fe_cenoura", u"imgB":u"fe_tomate",
+          u"pergunta":u"mais", u"semSinal":True, u"selo":u"QUANTAS A MAIS?",
+          u"enun":u"Quantas <b>cenouras a mais</b> que tomates?", u"voz":u"Quantas cenouras a mais que tomates?"},
+ u"f03": reta(u"8 + 2", 0,10,10, [0,5,10],[8,10],[1,2,3,4,6,7,9],
+              u"Comece no <b>8</b> e ande <b>2</b>. Onde você chega?", u"A partir do 8: 9, 10."),
+}
 for _f in CONTEUDO[u"fases"]:
     _add = _R3.get(_f[u"id"])
     if _add is not None:
@@ -616,6 +629,9 @@ for _f in CONTEUDO[u"fases"]:
     _a4 = _R4.get(_f[u"id"])
     if _a4 is not None:
         _f[u"dados"].append(_a4)
+    _a6 = _R6.get(_f[u"id"])
+    if _a6 is not None:
+        _f[u"dados"].append(_a6)
     _a5 = _R5.get(_f[u"id"])
     if _a5 is not None:
         _f[u"dados"].append(_a5)
@@ -764,17 +780,23 @@ add(**_dn(u"fdn01", u"DIGITE QUANTO DÁ",
     u"Conte as frutas e digite o resultado no teclado de números.",
     [(3,2,u"+",u"fe_maca",5,u"Conte as 3 maçãs e siga: 4, 5."),
      (4,3,u"+",u"fe_morango",7,u"Conte as 4 e siga: 5, 6, 7."),
-     (5,4,u"+",u"fe_laranja",9,u"Conte as 5 e siga: 6, 7, 8, 9.")]))
+     (5,4,u"+",u"fe_laranja",9,u"Conte as 5 e siga: 6, 7, 8, 9."),
+     (6,3,u"+",u"fe_uva",9,u"Conte as 6 e siga: 7, 8, 9."),
+     (4,4,u"+",u"fe_tomate",8,u"4 e mais 4 são 8.")]))
 add(**_dn(u"fdn02", u"DIGITE O QUE SOBRA",
-    u"Agora as frutas riscadas foram tiradas. Digite quantas sobraram.",
+    u"Agora conte quantas sobram e digite.",
     [(8,3,u"-",u"fe_laranja",5,u"Das 8, tire 3: 7, 6, 5."),
      (9,4,u"-",u"fe_uva",5,u"Das 9, tire 4: 8, 7, 6, 5."),
-     (7,2,u"-",u"fe_tomate",5,u"Das 7, tire 2: 6, 5.")]))
+     (7,2,u"-",u"fe_tomate",5,u"Das 7, tire 2: 6, 5."),
+     (6,2,u"-",u"fe_maca",4,u"Das 6, tire 2: 5, 4."),
+     (10,5,u"-",u"fe_banana",5,u"De 10, tire 5: sobram 5.")]))
 add(**_dn(u"fdn03", u"CONTAS MAIORES",
     u"Chegou fruta a mais! Conte tudo e digite o total.",
-    [(8,5,u"+",u"fe_banana",13,u"8 e mais 5: passe do 10 até 13."),
-     (6,6,u"+",u"fe_morango",12,u"6 e mais 6 são 12."),
-     (12,4,u"-",u"fe_maca",8,u"De 12, tire 4: 11, 10, 9, 8.")]))
+    [(8,5,u"+",u"fe_banana",13,u"8 e mais 5: uma fileira de 5 e mais 3, dá 13."),
+     (6,6,u"+",u"fe_morango",12,u"6 e mais 6 são 12: dois blocos de 6."),
+     (10,4,u"-",u"fe_maca",6,u"De 10, tire 4: sobram 6."),
+     (7,4,u"+",u"fe_laranja",11,u"7 e mais 4: passa do 10, dá 11."),
+     (9,3,u"+",u"fe_uva",12,u"9 e mais 3: 10, 11, 12.")]))
 
 # ✅ ARRASTAR VOLTA — AGORA BLINDADO (Marcos, ago/2026: "quero de arrastar").
 #    A versão anterior BANIA todo arrasto por causa do "não funciona no iPad". Um
@@ -796,11 +818,11 @@ CONTEUDO[u"fases"] = [f for f in CONTEUDO[u"fases"] if f.get(u"mec") not in _FOR
 #     · no MÁXIMO 2 rodadas por fase (chega de encher a aula com repetição);
 #     · TETO de fases por mecânica — as lentas (contar, reta) caem para 1-2, e o
 #       aquecimento (memória) fica com 4 pares, não 8.
-_MAX_ROD = 2
-# mecânicas cujas "dados" NÃO são rodadas repetidas e sim o conteúdo do jogo:
-# relâmpago = as 8 perguntas rápidas; memória = os pares; digitar-numero = as
-# contas (cada uma é um problema). Não cortar como rodada.
-_ROD_LIVRE = {u"relampago": 8, u"memoria": 4, u"digitar-numero": 3}
+# ⭐ Marcos (ago/2026): "aumentar as repetições de cada fase para pelo menos umas 5".
+#    Cada fase pratica ~5 rodadas (o aluno fixa a habilidade). Para não estourar os
+#    55 min, o leque tem 1 fase por mecânica (TETO abaixo) — menos tipos, mais reps.
+_MAX_ROD = 5
+_ROD_LIVRE = {u"relampago": 8, u"memoria": 4, u"digitar-numero": 5}
 for _f in CONTEUDO[u"fases"]:
     if isinstance(_f.get(u"dados"), list):
         _lim = _ROD_LIVRE.get(_f.get(u"mec"), _MAX_ROD)
@@ -811,8 +833,8 @@ for _f in CONTEUDO[u"fases"]:
 # ⭐ ENCHER A AULA (55 min): a versão enxuta batia só 40 min (piso). O portão 3g
 #    reprovou. Mais fases nas listas que já existem (sai de graça, sem arte/voz
 #    nova): escolher/completar 2, comparar/reta 3, intruso 2. Mira ~48-50 min.
-_TETO_MEC = {u"digitar-numero":3, u"escolher":2, u"completar":2,
-             u"comparar":3, u"reta-numerica":3, u"classificar":1,
+_TETO_MEC = {u"digitar-numero":2, u"escolher":1, u"completar":1,
+             u"comparar":1, u"reta-numerica":1, u"classificar":1,
              u"ordenar":1, u"caixa-dinheiro":1, u"intruso":2, u"estimar":1}
 _visto = {}
 _enxuto = []

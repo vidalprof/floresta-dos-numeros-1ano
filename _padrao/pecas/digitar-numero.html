@@ -97,17 +97,20 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
       -webkit-flex-wrap:wrap;flex-wrap:wrap;
       -webkit-box-align:center;align-items:center;
       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
-      max-width:520px;margin:12px auto 6px;padding:12px 14px;
+      max-width:900px;margin:12px auto 6px;padding:12px 14px;
       background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.45);border-radius:20px;
       -webkit-transition:box-shadow .18s ease;transition:box-shadow .18s ease}
 /* 2o degrau do andaime: a conta ACENDE (sem @keyframes — a mesma licao do molde) */
 .dncontas.dnpisca{-webkit-box-shadow:0 0 0 4px #ffd54a;box-shadow:0 0 0 4px #ffd54a}
-/* cada grupo de frutas (o `a` e o `b`) fica junto, tambem quebrando por dentro */
+/* cada grupo = BANDEJA com 5 frutas por fileira (quadro de dez): quantidade
+   maior fica facil de contar ("5 e mais 2"), nunca um amontoado. */
 .dngrupo{display:-webkit-box;display:-webkit-flex;display:flex;
       -webkit-flex-wrap:wrap;flex-wrap:wrap;
       -webkit-box-align:center;align-items:center;
       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
-      max-width:260px}
+      width:288px;max-width:288px;padding:8px 6px;
+      background:rgba(255,255,255,.66);border:2px solid rgba(120,80,40,.20);border-radius:16px;
+      -webkit-box-shadow:inset 0 1px 0 #fff,0 2px 5px rgba(0,0,0,.12);box-shadow:inset 0 1px 0 #fff,0 2px 5px rgba(0,0,0,.12)}
 .dnfruta{display:-webkit-inline-box;display:-webkit-inline-flex;display:inline-flex;
       -webkit-box-align:center;align-items:center;
       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
@@ -321,18 +324,12 @@ function grupoFrutas(n,img,riscarDoFim){
    direita: [frutas] [sinal] ... [=] [vagas]. Para grupos grandes o CSS quebra
    em varias linhas (flex-wrap), para nao estourar a tela. */
 function suporteVisual(r){
+  /* ⭐ DOIS BLOCOS (Marcos, ago/2026): bloco à esquerda, sinal no meio, bloco à
+     direita, `=` e resposta — tudo numa linha, sinais alinhados. Vale para + e −. */
   var box=el("div","dncontas","");
-  if(r.op==="-"){
-    /* MODELO "TIRAR": um grupo de `a` frutas com as ULTIMAS `b` riscadas.
-       Nao ha 2o grupo — as riscadas JA sao o que se subtrai. */
-    box.appendChild(grupoFrutas(r.a,r.img,r.b));
-    box.appendChild(el("span","dnsinal","−"));
-  }else{
-    /* MODELO "JUNTAR": `a` frutas, o sinal `+`, `b` frutas. */
-    box.appendChild(grupoFrutas(r.a,r.img,0));
-    box.appendChild(el("span","dnsinal","+"));
-    box.appendChild(grupoFrutas(r.b,r.img,0));
-  }
+  box.appendChild(grupoFrutas(r.a,r.img,0));
+  box.appendChild(el("span","dnsinal",(r.op==="-"?"−":"+")));
+  box.appendChild(grupoFrutas(r.b,r.img,0));
   box.appendChild(el("span","dnsinal","="));
   return box;
 }

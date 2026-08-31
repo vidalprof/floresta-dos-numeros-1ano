@@ -2105,13 +2105,15 @@
 
 /* ⭐ O SUPORTE VISUAL: a conta desenhada com frutas. Flex-WRAP para que contas
    grandes quebrem em varias linhas sem estourar a tela. */
-.mec-digitar-numero .dncontas{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; max-width:520px;margin:12px auto 6px;padding:12px 14px; background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.45);border-radius:20px; -webkit-transition:box-shadow .18s ease;transition:box-shadow .18s ease}
+.mec-digitar-numero .dncontas{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; max-width:900px;margin:12px auto 6px;padding:12px 14px; background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.45);border-radius:20px; -webkit-transition:box-shadow .18s ease;transition:box-shadow .18s ease}
 
 /* 2o degrau do andaime: a conta ACENDE (sem @keyframes — a mesma licao do molde) */
 .mec-digitar-numero .dncontas.dnpisca{-webkit-box-shadow:0 0 0 4px #ffd54a;box-shadow:0 0 0 4px #ffd54a}
 
 /* cada grupo de frutas (o `a` e o `b`) fica junto, tambem quebrando por dentro */
-.mec-digitar-numero .dngrupo{max-width:300px;display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; max-width:260px}
+/* ⭐ BLOCO = BANDEJA com 5 frutas por fileira (quadro de dez): quantidade maior
+   fica fácil de contar ("5 e mais 2"), nunca um amontoado (Marcos, ago/2026). */
+.mec-digitar-numero .dngrupo{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; width:288px;max-width:288px;padding:8px 6px; background:rgba(255,255,255,.66);border:2px solid rgba(120,80,40,.20);border-radius:16px; -webkit-box-shadow:inset 0 1px 0 #fff,0 2px 5px rgba(0,0,0,.12);box-shadow:inset 0 1px 0 #fff,0 2px 5px rgba(0,0,0,.12)}
 
 .mec-digitar-numero .dnfruta{display:-webkit-inline-box;display:inline-flex; -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center; width:50px;height:50px;margin:3px}
 
@@ -2128,7 +2130,9 @@
 .mec-digitar-numero .dnsinal{display:inline-block;margin:0 6px;font-size:30px;font-weight:800; color:#221a12;background:#fff8e7;border-radius:10px;padding:2px 11px; -webkit-box-shadow:0 2px 4px rgba(0,0,0,.22);box-shadow:0 2px 4px rgba(0,0,0,.22)} /* chip claro + texto escuro: contraste garantido (portao contraste_fundo) */
 
 /* as vagas da resposta, logo depois do "=" (reusa .vaga, ver abaixo) */
-.mec-digitar-numero .dnvagas{display:inline-block;margin:0 0 0 4px}
+.mec-digitar-numero .dnvagas{display:inline-block;margin:0 0 0 6px}
+/* a linha da resposta: `=` + vagas, própria e centrada, embaixo dos dois blocos */
+.mec-digitar-numero .dnresp{-webkit-flex-basis:100%;flex-basis:100%; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:center;align-items:center;margin-top:10px}
 /* ⚠️ as vagas da resposta: base PROPRIA (nao herdar do `digitar`, que pode nao
    estar nesta atividade — o portao designer pegou `.vagas SEM CSS`). */
 .mec-digitar-numero .vagas{display:inline-block;text-align:center}

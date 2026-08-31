@@ -12621,19 +12621,18 @@ function grupoFrutas(n,img,riscarDoFim){
    direita: [frutas] [sinal] ... [=] [vagas]. Para grupos grandes o CSS quebra
    em varias linhas (flex-wrap), para nao estourar a tela. */
 function suporteVisual(r){
+  /* ⭐ DOIS BLOCOS (Marcos, ago/2026): "um bloco à esquerda, o sinal no meio e um
+     bloco à direita" — para o 2º ano não confundir 3+2 com uma fileira de 5.
+     Cada grupo é um BLOCO próprio (bandeja, ver .dngrupo no CSS); vale para + e −
+     (na subtração o `−` diz a operação; o bloco da direita é o que se tira). */
   var box=el("div","dncontas","");
-  if(r.op==="-"){
-    /* MODELO "TIRAR": um grupo de `a` frutas com as ULTIMAS `b` riscadas.
-       Nao ha 2o grupo — as riscadas JA sao o que se subtrai. */
-    box.appendChild(grupoFrutas(r.a,r.img,r.b));
-    box.appendChild(el("span","dnsinal","−"));
-  }else{
-    /* MODELO "JUNTAR": `a` frutas, o sinal `+`, `b` frutas. */
-    box.appendChild(grupoFrutas(r.a,r.img,0));
-    box.appendChild(el("span","dnsinal","+"));
-    box.appendChild(grupoFrutas(r.b,r.img,0));
-  }
+  box.appendChild(grupoFrutas(r.a,r.img,0));
+  box.appendChild(el("span","dnsinal",(r.op==="-"?"−":"+")));
+  box.appendChild(grupoFrutas(r.b,r.img,0));
   box.appendChild(el("span","dnsinal","="));
+  /* tudo numa LINHA só, centrado verticalmente: os sinais + e = alinham no mesmo
+     eixo (Marcos: "deixe os sinais alinhados, tem que ficar bonito"). A resposta
+     entra logo depois do `=`, ainda nesta linha (ver telaConta/.dncontas). */
   return box;
 }
 
