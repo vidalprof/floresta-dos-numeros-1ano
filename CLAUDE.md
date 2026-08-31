@@ -15,6 +15,16 @@ Leia tudo antes de agir e responda sempre em **português**.
 > Como eu começo cada sessão sem memória, tudo importante fica escrito ali: é a
 > cura do "esquecimento". Toda capacidade/decisão nova → anotar lá.
 >
+> **📚 O `ATIVIDADES.md` é o CATÁLOGO — a fonte única da verdade das atividades**
+> (decisão do Marcos, ago/2026: *"crie um documento no git, sempre que criar uma
+> atividade insira nessa tabela o ano, o nome da atividade, o que ela trabalha e o
+> link... e faça com que qualquer chat leia esse documento"*). Regra:
+> 1. **Antes de listar atividades** para o Marcos, LEIA o `ATIVIDADES.md` e
+>    responda a partir dele (não reconstruir de memória nem só dos `_status/`).
+> 2. **Ao criar/publicar uma atividade nova**, adicione UMA LINHA na tabela do ano
+>    (Ano · Nome · O que trabalha · Link) e commite junto. Sem isso, a próxima
+>    sessão não sabe que ela existe.
+>
 > **🕵️ A BANCA DE AUDITORES roda ANTES de entregar:** `bash _qa/auditar.sh <arquivo.html>`.
 > São DOZE portões, cada um nascido de um defeito que chegou perto da criança:
 > engenheiro (`node --check`), **função que não existe** (`_qa/funcoes.py` — o app

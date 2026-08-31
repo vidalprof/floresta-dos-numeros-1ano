@@ -1,61 +1,121 @@
-# 📇 ÍNDICE DAS ATIVIDADES — o que já existe
+# 📚 CATÁLOGO DE ATIVIDADES — fonte única da verdade
 
-> Gerado por `python3 _qa/indice.py`. **Ler ANTES de dizer que algo não
-> existe.** Nasceu de uma cobrança do Marcos: eu disse que a atividade de
-> inglês do 9º ano não existia, e ela estava pronta e no ar — o nome dela
-> é *RIGHT NOW — Flagra na Cidade*, e nem "inglês" nem "english" aparecem
-> nele. **O assunto mora dentro do `conteudo.json`, não no nome da pasta.**
+> **⭐ LEIA ISTO ANTES DE LISTAR ATIVIDADES.** Este é o registro oficial de TODAS
+> as atividades criadas (o "site de atividades" em forma de tabela). Sempre que
+> o Marcos pedir "a lista das atividades", responda a partir DESTE arquivo — não
+> reconstrua de memória nem só dos `_status/` (que só cobrem o que foi publicado
+> por workflow).
+>
+> **⭐ TODA ATIVIDADE NOVA ENTRA AQUI.** Ao criar/publicar uma atividade, adicione
+> UMA LINHA na tabela do ano correspondente: **Ano · Nome · O que trabalha ·
+> Link**. Commit + push junto com a atividade. Sem isso, a próxima sessão não
+> sabe que ela existe (foi essa a cobrança do Marcos, ago/2026).
+>
+> Link = `https://vidalprof.github.io/<repositório>/`. Pasta = onde mora o código
+> neste repo (`_xxx/`).
 
-| pasta | atividade | ano | fases | no ar |
-|---|---|---|---|---|
-| `_2d` | Ilha dos Cocos — ANDA e explora (2D) | — | — | — |
-| `_agenda` | Agenda Aulas | — | — | — |
-| `_anim` | A Floresta dos Bichos — juntar quantidades | — | — | — |
-| `_aventura` | Ilha dos Passos — EducaVerso | — | — | — |
-| `_circo` | O Grande Circo do Teo | — | — | — |
-| `_doceria` | A Doceria do Cacau | — | — | — |
-| `_educaverso` | EducaVerso | — | — | — |
-| `_esporte` | Desafio Esportivo — jogo educativo | — | — | — |
-| `_estudio` | EduVerse — Cena de Referência (2D vivo) | — | — | — |
-| `_fazenda` | Fazenda do Saber — jogo educativo | — | — | — |
-| `_fofo` | Teste — 3D fofo (arredondado, com sombra) | — | — | — |
-| `_historia` | A M&#225;quina do Tempo do Vale | — | — | — |
-| `_kenney` | O Tesouro dos Dois Montes — juntar quantidades (Kenney) | — | — | — |
-| `_lab` | Painel do Laboratório | — | — | — |
-| `_mapa` | O Voo do Nico | — | — | [o-voo-do-nico](https://vidalprof.github.io/o-voo-do-nico/) |
-| `_naveg` | A Terra dos Papagaios | — | — | [a-terra-dos-papagaios](https://vidalprof.github.io/a-terra-dos-papagaios/) |
-| `_nomes` | A Legenda do Clique | — | — | — |
-| `_painel` | Painel de Respostas &mdash; Aventura das Direcoes | — | — | — |
-| `_painel-prof` | EducaVerso — Painel do Professor | — | — | — |
-| `_portal` | EducaVerso — Portal | — | — | — |
-| `_pub_aventura` | Aventura das Direções | — | — | — |
-| `_pub_confeitaria` | Confeitaria Mágica — Divisão | — | — | — |
-| `_repartir` | A Festa da Vila — Repartir Justo | — | — | — |
-| `_site` | Ilhas do Saber - E.B.M. Vidal Ramos | — | — | — |
-| `_trilha` | EduVerse — A Vila que Acorda | — | — | — |
-| `_voxel` | Ilha das Trinta Moedas — aventura pirata (números até 30) | — | — | — |
-| `_padaria` | A Padaria das Letras | 1º ano | 32 | [a-padaria-das-letras](https://vidalprof.github.io/a-padaria-das-letras/) |
-| `_jardim` | O Jardim do Broto — 2º ano | 2º ano | — | [jardim-do-broto](https://vidalprof.github.io/jardim-do-broto/) |
-| `_estrelas` | A Fábrica de Estrelas — 3º ano | 3º ano | — | — |
-| `_orbi` | O Observatório do Órbi — 3º ano | 3º ano | — | — |
-| `_prova30` | A Prova do Esqueleto | 3º ano | 32 | — |
-| `_fabrica` | A Fábrica de Brinquedos do Bento — 4º ano | 4º ano | — | — |
-| `_generos` | A Banca do Pingo — Gêneros textuais · 4º ano | 4º ano | — | — |
-| `_redacao` | A Redação do Pingo — Verbos e Gêneros · 4º ano | 4º ano | — | — |
-| `_verbos` | Plantão na Redação — Verbos · 4º ano | 4º ano | — | — |
-| `_lina` | A Oficina de Letreiros da Lina — 5º ano | 5º ano | — | [a-oficina-de-letreiros](https://vidalprof.github.io/a-oficina-de-letreiros/) |
-| `_tangram` | O Tangram da Vovó Marta — 3º ao 5º ano | 5º ano | — | — |
-| `_central` | A Central de Entregas | 6º ano | 39 | [a-central-de-entregas](https://vidalprof.github.io/a-central-de-entregas/) |
-| `_clima` | Planeta Vivo — Climas do Mundo (6º ano) | 6º ano | — | — |
-| `_agora` | RIGHT NOW - Flagra na Cidade | 9º ano | 33 | [right-now-flagra-na-cidade](https://vidalprof.github.io/right-now-flagra-na-cidade/) |
+Última atualização: 2026-08-31.
 
-## O que cada uma ENSINA (o assunto, para procurar por ele)
+---
 
-- **`_agora` — RIGHT NOW - Flagra na Cidade**: Ver a ação do momento As duas peças da legenda Escolher am, is ou are Escrever a ação com -ing A pergunta do repórter RETOMADA no 9º ano de objeto do 6º: o \ RETOMADA no 9º ano de objeto do 6º: o \ RETOMADA no 9º ano de objeto do 6º: o \ RETOMADA no 9º ano de objeto do 6º: o \ RETOMADA no 9º ano de 
+## Pré-escola (Educação Infantil)
 
-- **`_central` — A Central de Entregas**: Cada texto tem uma CARA Todo texto veio fazer alguma coisa Quem escreve fala com alguém O jeito de falar muda com o lugar O mesmo assunto em textos diferentes Texto que pede, texto que reclama Reconhecer sem ler tudo Blumenau, 6º ano, Língua Portuguesa — Campo de atuação na vida pública · Leitura · 
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **O Ateliê do Sr. Batata** | Partes do rosto/corpo, criação livre, coordenação | `_batata` | https://vidalprof.github.io/atelie-do-sr-batata/ |
+| **O Ateliê de Cores da Rai** | Cores, formas, expressão | `_colorir` | https://vidalprof.github.io/o-atelie-de-cores/ |
+| **Mundo Mágico — Brincar e Aprender** | Pré (rota geral) | — | https://vidalprof.github.io/pr-escola-1/ |
 
-- **`_padaria` — A Padaria das Letras**: O alfabeto tem uma ordem Cada letra guarda um som Palavras que começam igual Bater os pedaços da palavra Juntar os pedaços e ler Palavras que terminam igual Cada som ganha um lugar Blumenau, 1º ano, Língua Portuguesa — Todos os campos de atuação · Análise linguística/semiótica (alfabetização) · obje
+## 1º ano
 
-- **`_prova30` — A Prova do Esqueleto**: «nome em linguagem de criança» «nome em linguagem de criança» «nome em linguagem de criança» «nome em linguagem de criança» «nome em linguagem de criança» «nome em linguagem de criança» «nome em linguagem de criança» «nome em linguagem de criança» Blumenau, 3º ano, Matemática — Números · objeto de c
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **O Trem do Alfabeto** | Alfabeto, sílabas e palavras | `_trem` | https://vidalprof.github.io/o-trem-do-alfabeto/ |
+| **A Padaria das Letras** | Alfabeto e pedaços das palavras | `_padaria` | https://vidalprof.github.io/a-padaria-das-letras/ |
+| **A Lojinha de Brinquedos do Pipo** | Sistema monetário (moedas e cédulas) | `_lojinha` | https://vidalprof.github.io/a-lojinha-de-brinquedos-do-pipo/ |
+| **A Floresta dos Números** | Números (1º ano) | — | https://vidalprof.github.io/floresta-dos-numeros-1ano/ |
+| **Ilha das Letras — Aventura do Alfabeto** | Alfabeto / sequência | — | https://vidalprof.github.io/alfbetosequencia1-/ |
 
+## 2º ano
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **A Feirinha da Dona Coruja** | Adição/subtração: juntar, acrescentar, separar, retirar, comparar (com digitar-resultado e arrastar) | `_feirinha` | https://vidalprof.github.io/feirinha-da-coruja/ |
+| **As Plaquinhas do Téo** | Substantivos próprios e comuns | `_subs` | https://vidalprof.github.io/as-plaquinhas-da-coruja/ |
+| **A Cidade dos Sólidos** | Sólidos geométricos | `_solidos` | https://vidalprof.github.io/a-cidade-dos-solidos/ |
+| **Brincar e Aprender com o Léo — Prova de Ed. Física** | Educação Física (avaliação trimestral) | `_edf2` (+ `_edf2painel`) | ⚠️ confirmar repo |
+| **Mundo dos Números — Juntar e Tirar** | Adição/subtração | — | https://vidalprof.github.io/AdicaoSubtra-o2-2-ano/ |
+| **Caça-Letras — A Aventura das Palavras** | Ortografia | — | https://vidalprof.github.io/ortografia2-/ |
+
+## 3º ano
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **Prova de Matemática — Coruja Cora** | Adição/subtração: conceitos, significados e algoritmos (com reagrupamento) | `_mat2` (+ `_mat2painel`) | https://vidalprof.github.io/matematica-2ano/ |
+| **O Museu Vivo dos Bichos** | Ciências: vertebrados e invertebrados | `_museu` | https://vidalprof.github.io/o-museu-vivo-dos-bichos/ |
+| **O Livro dos Mapas** (cartografia) | Geografia: representação cartográfica de Blumenau, mapa, planta, bússola | `_carto` (+ `_cartopainel`) | ⚠️ provável `cartografia-3ano` — confirmar |
+| **Blumenau, a Nossa Cidade** | Geografia: a cidade e o mapa | `_blu` | ⚠️ provável `blumenau-3ano` — confirmar |
+| **Aventura no Espaço — Sistema Solar** | Ciências (sistema solar) | — | https://vidalprof.github.io/Sistemasolar3ano/ |
+| **O Observatório do Órbi** | Ciências | — | https://vidalprof.github.io/observatorio-do-orbi/ |
+
+## 4º ano
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **A Oficina das Palavras** | Aumentativo/diminutivo, sílabas, mau×mal, verbos | `_por4` | https://vidalprof.github.io/a-oficina-das-palavras/ |
+| **A Agência dos Detetives das Palavras** | Pronomes, interpretação (narrativo/injuntivo), mau×mal | `_detetive` | https://vidalprof.github.io/detetives-das-palavras/ |
+
+## 5º ano
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **Expedição Santa Catarina** | Geografia: Florianópolis, Blumenau e o estado (revista + quiz 30q) | `_sc5` (+ `_sc5painel`) | https://vidalprof.github.io/santa-catarina-5ano/ |
+| **O Teatro das Palavras** | Português (5º ano) | `_teatro` | https://vidalprof.github.io/o-teatro-das-palavras/ |
+
+## 6º ano
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **A Central de Entregas** | Língua Portuguesa: gêneros textuais | `_central` | https://vidalprof.github.io/a-central-de-entregas/ |
+| **Mundo das Palavras — Substantivos e Adjetivos** | Classes de palavras | — | https://vidalprof.github.io/classesdepalavras6-/ |
+| **Climas do Mundo — A Volta ao Mundo de Nimbo** | Geografia: climas | — | https://vidalprof.github.io/climas-do-mundo-6ano/ |
+
+## 8º / 9º ano (Inglês)
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **RIGHT NOW — Flagra na Cidade** | Inglês 9º: Present Continuous | `_rightnow9` / `_agora` | https://vidalprof.github.io/right-now-flagra-na-cidade/ |
+| **Relative Pronouns — Connecting Ideas** | Inglês 8º: pronomes relativos | — | https://vidalprof.github.io/InglesRelativePronouns8/ |
+
+## Outras / diversas
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **Meu Pixel Art** | Arte digital / pixel | — | https://vidalprof.github.io/meu-pixel-art/ |
+| **O Tangram da Vovó Marta** | Geometria / tangram | — | https://vidalprof.github.io/o-tangram-da-vovo-marta/ |
+| **Jardim do Broto** | — | `_jardim` | https://vidalprof.github.io/jardim-do-broto/ |
+| **A Terra dos Papagaios** | — | `_naveg` | https://vidalprof.github.io/a-terra-dos-papagaios/ |
+| **O Voo do Nico** | — | `_mapa` | https://vidalprof.github.io/o-voo-do-nico/ |
+| **Letreiros de Blumenau** | — | — | https://vidalprof.github.io/o-letreiro-de-blumenau/ · https://vidalprof.github.io/a-oficina-de-letreiros/ |
+| **O Grande Circo do Teo** (base premium) | — | — | https://vidalprof.github.io/circo-do-teo/ |
+| **A Fábrica de Brinquedos do Bento** | — | — | https://vidalprof.github.io/fabrica-do-bento/ |
+| **A Fazendinha do Teco** | — | — | https://vidalprof.github.io/fazendinha-do-teco/ |
+| **Vila da Tabuada** | Matemática: tabuada | — | https://vidalprof.github.io/vila-tabuada/ |
+| **Cidade do Dinheiro — Sistema Monetário** | Sistema monetário | — | https://vidalprof.github.io/sistemamonetario2-5ano/ |
+| **Poli e o Tesouro do Mar** | — | — | https://vidalprof.github.io/poli-tesouro-do-mar/ |
+| **A Vila do Miau** | — | — | https://vidalprof.github.io/vila-dos-livros-miau/ |
+
+## Portal / hub
+
+| — | — | — | — |
+|---|---|---|---|
+| **Ilhas do Saber** (mapa com os cards) | Portal que reúne as atividades | `_site` | https://vidalprof.github.io/mundo-das-atividades/ |
+
+---
+
+### ⚠️ Links a confirmar (marcados acima)
+As atividades **Ed. Física 2º (`_edf2`)**, **O Livro dos Mapas / cartografia 3º
+(`_carto`)** e **Blumenau, a Nossa Cidade 3º (`_blu`)** foram construídas e o
+Marcos confirma que foram publicadas, mas o slug exato do repositório ainda não
+está 100% confirmado neste registro. Ao confirmar (ou republicar), corrigir o
+link aqui e tirar o ⚠️.
