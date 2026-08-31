@@ -742,6 +742,27 @@ def falas_de(c):
     # ...e o BALAO QUE A PROPRIA PECA ESCREVE (ver `balaoes_das_pecas`)
     balaoes_das_pecas(c, poe)
     poe(pre + "_fim", c.get("fim") or u"Você conseguiu!")
+    # ⭐⭐ CINTURAO-E-SUSPENSORIO (ago/2026, o LEÃO mudo do Trem): a RESPOSTA CERTA
+    #    das mecanicas de escolha mora em `c` (dict) e as erradas em `e` (lista),
+    #    por RODADA. A crianca TOCA o alto-falante de cada uma (op_<chaveVoz>). Se
+    #    qualquer caminho acima deixar a certa de fora, ela ouve SILENCIO — o
+    #    defeito que o voz_bate.py pegou. Aqui varremos TODA opcao tocavel (c + e)
+    #    e garantimos o op_ dela, pela MESMA chave que a peca toca (voz||texto).
+    #    `poe` deduplica, entao repetir e inofensivo; o que importa e NUNCA faltar.
+    def _opvoz(op):
+        if not isinstance(op, dict):
+            return
+        nm = op.get("voz") or op.get("t") or op.get("n") or op.get("nome") or u""
+        tl = texto_limpo(nm)
+        if tl and eh_fala(tl):
+            poe("op_" + chave_voz(tl), nm)
+    for f in c["fases"]:
+        for r in (f.get("dados") or []):
+            if not isinstance(r, dict):
+                continue
+            _opvoz(r.get("c"))
+            for e in (r.get("e") or []):
+                _opvoz(e)
     return out
 
 
