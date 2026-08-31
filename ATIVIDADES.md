@@ -43,7 +43,7 @@
 | **A Feirinha da Dona Coruja** | Adição/subtração: juntar, acrescentar, separar, retirar, comparar (com digitar-resultado e arrastar) | `_feirinha` | https://vidalprof.github.io/feirinha-da-coruja/ |
 | **As Plaquinhas do Téo** | Substantivos próprios e comuns | `_subs` | https://vidalprof.github.io/as-plaquinhas-da-coruja/ |
 | **A Cidade dos Sólidos** | Sólidos geométricos | `_solidos` | https://vidalprof.github.io/a-cidade-dos-solidos/ |
-| **Brincar e Aprender com o Léo — Prova de Ed. Física** | Educação Física (avaliação trimestral) | `_edf2` (+ `_edf2painel`) | ⚠️ confirmar repo |
+| **Brincar e Aprender com o Léo — Prova de Ed. Física** | Educação Física (avaliação trimestral) | `_edf2` (+ `_edf2painel`) | https://vidalprof.github.io/educacao-fisica-2ano/ · [painel](https://vidalprof.github.io/educacao-fisica-2ano-painel/) |
 | **Mundo dos Números — Juntar e Tirar** | Adição/subtração | — | https://vidalprof.github.io/AdicaoSubtra-o2-2-ano/ |
 | **Caça-Letras — A Aventura das Palavras** | Ortografia | — | https://vidalprof.github.io/ortografia2-/ |
 
@@ -51,10 +51,10 @@
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
-| **Prova de Matemática — Coruja Cora** | Adição/subtração: conceitos, significados e algoritmos (com reagrupamento) | `_mat2` (+ `_mat2painel`) | https://vidalprof.github.io/matematica-2ano/ |
+| **Prova de Matemática — Coruja Cora** | Adição/subtração: conceitos, significados e algoritmos (com reagrupamento) | `_mat2` (+ `_mat2painel`) | https://vidalprof.github.io/matematica-2ano/ · [painel](https://vidalprof.github.io/matematica-2ano-painel/) |
 | **O Museu Vivo dos Bichos** | Ciências: vertebrados e invertebrados | `_museu` | https://vidalprof.github.io/o-museu-vivo-dos-bichos/ |
-| **O Livro dos Mapas** (cartografia) | Geografia: representação cartográfica de Blumenau, mapa, planta, bússola | `_carto` (+ `_cartopainel`) | ⚠️ provável `cartografia-3ano` — confirmar |
-| **Blumenau, a Nossa Cidade** | Geografia: a cidade e o mapa | `_blu` | ⚠️ provável `blumenau-3ano` — confirmar |
+| **O Livro dos Mapas** (cartografia) | Geografia: representação cartográfica de Blumenau, mapa, planta, bússola | `_carto` (+ `_cartopainel`) | https://vidalprof.github.io/cartografia-3ano/ · [painel](https://vidalprof.github.io/cartografia-3ano-painel/) |
+| **Blumenau, a Nossa Cidade** | Geografia: a cidade e o mapa | `_blu` | https://vidalprof.github.io/blumenau-3ano/ |
 | **Aventura no Espaço — Sistema Solar** | Ciências (sistema solar) | — | https://vidalprof.github.io/Sistemasolar3ano/ |
 | **O Observatório do Órbi** | Ciências | — | https://vidalprof.github.io/observatorio-do-orbi/ |
 
@@ -69,7 +69,7 @@
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
-| **Expedição Santa Catarina** | Geografia: Florianópolis, Blumenau e o estado (revista + quiz 30q) | `_sc5` (+ `_sc5painel`) | https://vidalprof.github.io/santa-catarina-5ano/ |
+| **Expedição Santa Catarina** | Geografia: Florianópolis, Blumenau e o estado (revista + quiz 30q) | `_sc5` (+ `_sc5painel`) | https://vidalprof.github.io/santa-catarina-5ano/ · [painel](https://vidalprof.github.io/santa-catarina-5ano-painel/) |
 | **O Teatro das Palavras** | Português (5º ano) | `_teatro` | https://vidalprof.github.io/o-teatro-das-palavras/ |
 
 ## 6º ano
@@ -113,9 +113,3 @@
 
 ---
 
-### ⚠️ Links a confirmar (marcados acima)
-As atividades **Ed. Física 2º (`_edf2`)**, **O Livro dos Mapas / cartografia 3º
-(`_carto`)** e **Blumenau, a Nossa Cidade 3º (`_blu`)** foram construídas e o
-Marcos confirma que foram publicadas, mas o slug exato do repositório ainda não
-está 100% confirmado neste registro. Ao confirmar (ou republicar), corrigir o
-link aqui e tirar o ⚠️.
