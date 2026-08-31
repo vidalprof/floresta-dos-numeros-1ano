@@ -64,6 +64,8 @@
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
 | **A Oficina das Palavras** | Aumentativo/diminutivo, sílabas, mau×mal, verbos | `_por4` | https://vidalprof.github.io/a-oficina-das-palavras/ (painel embutido) |
+| **A Viagem no Tempo do Vale** | História (EF04HI01): colonização do Vale do Itajaí — Xokleng, açorianos, alemães (1850), italianos (1875), africanos; mudanças e permanências. Site de pesquisa + quiz | `_vale4` (+ painel) | https://vidalprof.github.io/a-viagem-no-tempo-do-vale/ |
+| **A Máquina do Tempo do Vale** | História 4º: mesma temática, formato app-trilha com simuladores | `_historia` | https://vidalprof.github.io/maquina-do-tempo-do-vale/ |
 
 ## 5º ano
 

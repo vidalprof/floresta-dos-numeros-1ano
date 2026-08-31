@@ -45,7 +45,11 @@ FEM_O = set("foto moto tribo libido".split())
 # palavras curtas/ambíguas que NÃO devem entrar no teste de gênero
 PULA_GENERO = set("""isso isto aquilo tudo todo toda um uma dois duas
 o a os as ao aos caixa outro outra outros outras mesmo mesma
-piloto tiracolo""".split())
+piloto tiracolo
+juca zeca teco nico cuca coru""".split())
+# ⚠️ nomes MASCULINOS terminados em -a (o Juca, o Zeca, o Teco...) — a heurística
+#    de -a=feminino acusava "o Juca" como concordância errada. Mascotes/nomes de
+#    menino em -a entram aqui. (Pego no portal de colonização do 4º ano, ago/2026.)
 # ⚠️ "piloto" e bigenero (o/a piloto). "tiracolo" so aparece na expressao fixa
 #    "a tiracolo" (bolsa cruzada) — o "a" e da expressao, nao artigo. Falsos-
 #    positivos pegos no Detetive das Palavras (ago/2026).

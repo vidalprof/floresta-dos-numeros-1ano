@@ -1,0 +1,528 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>A Viagem no Tempo do Vale — 4º ano</title>
+<style>
+/* ===== EXPEDIÇÃO SANTA CATARINA — 5º ano =====
+   PORTAL DE PESQUISA (revista com fotos reais + narração + efeito cinema Ken Burns)
+   seguido de QUIZ de 30 perguntas. Motor de quiz reaproveitado da prova (Firebase,
+   avatares, medalha, voz por arquivo). 1 HTML autossuficiente, sem sair da página.
+   Compatível com PC antigo (prefixos -webkit-, fallback antes de flex/gradiente). */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;min-height:100%;}
+body{
+  font-family:"Segoe UI",Verdana,Geneva,sans-serif;color:#12283a;
+  background:#0b3d5c;
+  background:-webkit-linear-gradient(top,#0b3d5c 0%,#0e7c86 55%,#f3e7cf 100%);
+  background:linear-gradient(to bottom,#0b3d5c 0%,#0e7c86 55%,#f3e7cf 100%);
+  min-height:100vh;-webkit-text-size-adjust:100%;
+}
+/* quem ROLA é a PÁGINA (barra de rolagem na beira, como um site) — não mais o
+   #app de 900px, cuja barra caía no MEIO da tela e ficava feia (Marcos). */
+#app{max-width:900px;margin:0 auto;min-height:100vh;padding:0 0 40px;position:relative;}
+
+/* barra de progresso do portal (topo) */
+#topbar{position:fixed;left:0;top:0;height:6px;width:0;z-index:9997;background:#ef6d3a;
+  background:-webkit-linear-gradient(left,#f6bf31,#ef6d3a);background:linear-gradient(to right,#f6bf31,#ef6d3a);
+  -webkit-transition:width .15s linear;transition:width .15s linear;}
+
+/* ---------- CARTÃO genérico (capa/quiz) ---------- */
+.card{position:relative;color:#12283a;background:#ffffff;background:rgba(255,255,255,.96);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  border:4px solid #ffd23f;border-radius:24px;padding:16px 16px 16px;margin:12px 14px;text-align:center;
+  -webkit-box-shadow:0 14px 30px rgba(6,30,50,.30), inset 0 0 0 3px rgba(255,255,255,.7);box-shadow:0 14px 30px rgba(6,30,50,.30), inset 0 0 0 3px rgba(255,255,255,.7);
+  -webkit-animation:aparece .35s ease-out;animation:aparece .35s ease-out;}
+@-webkit-keyframes aparece{from{opacity:0;-webkit-transform:translateY(12px);}to{opacity:1;-webkit-transform:none;}}
+@keyframes aparece{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+h1{font-family:Georgia,"Times New Roman",serif;font-size:30px;margin:2px 0 0;color:#0b3d5c;letter-spacing:.3px;}
+h2{font-family:"Trebuchet MS",sans-serif;font-size:18px;margin:2px 0 2px;color:#0a5560;}
+p{font-size:17px;line-height:1.4;margin:6px 4px;}
+.grande{font-size:17px;font-weight:bold;color:#2f6b4f;margin:8px 6px;}
+img{max-width:100%;}
+
+/* ---------- CAPA ---------- */
+.masc-capa{height:132px;margin:0 auto 2px;-webkit-animation:balanca 2.8s ease-in-out infinite;animation:balanca 2.8s ease-in-out infinite;}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg);}50%{-webkit-transform:rotate(3deg);}}
+@keyframes balanca{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+.selo-capa{display:inline-block;font-family:"Trebuchet MS",sans-serif;font-size:12px;font-weight:bold;letter-spacing:1.5px;color:#a05a00;background:#fff2dd;border:2px solid #ffcf80;border-radius:20px;padding:4px 14px;margin:4px 0 2px;text-transform:uppercase;}
+.formrow{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-align-items:flex-start;align-items:flex-start;margin:6px auto 0;gap:2px 22px;}
+.fcol{-webkit-box-flex:1;-webkit-flex:1 1 280px;flex:1 1 280px;max-width:380px;}
+input{font-family:inherit;font-size:19px;padding:11px 10px;border:3px solid #7fbfd0;border-radius:16px;width:86%;max-width:320px;margin:4px auto;display:block;text-align:center;color:#12283a;background:#fbfeff;}
+label{font-size:16px;font-weight:bold;color:#0a5560;display:block;margin-top:8px;}
+.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
+.tbox{margin:6px;min-width:80px;padding:13px 12px;border:3px solid #7fbfd0;border-radius:18px;background:#fbfeff;color:#0e7c86;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #cfe6ec;box-shadow:0 4px 0 #cfe6ec;}
+.tbox.on{background:#0e7c86;color:#fff;border-color:#0a5a62;-webkit-box-shadow:0 4px 0 #0a5a62;box-shadow:0 4px 0 #0a5a62;}
+.tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
+.avs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 6px;max-width:560px;}
+.avbox{width:76px;height:76px;margin:5px;border-radius:50%;border:3px solid #7fbfd0;background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:pointer;overflow:hidden;padding:0;-webkit-box-shadow:0 3px 0 #cfe6ec;box-shadow:0 3px 0 #cfe6ec;}
+.avbox.on{border-color:#0a5a62;-webkit-box-shadow:0 3px 0 #0a5a62;box-shadow:0 3px 0 #0a5a62;-webkit-transform:translateY(-2px);transform:translateY(-2px);}
+.avbox img{width:100%;height:100%;display:block;object-fit:cover;}
+
+.btn{display:inline-block;font-family:"Trebuchet MS",sans-serif;font-size:23px;font-weight:bold;border:none;border-radius:20px;padding:16px 30px;margin:10px 6px;cursor:pointer;color:#fff;background:#ef6d3a;-webkit-box-shadow:0 6px 0 #c14e22;box-shadow:0 6px 0 #c14e22;}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 3px 0 #c14e22;box-shadow:0 3px 0 #c14e22;}
+.btn.verde{background:#2f9e57;-webkit-box-shadow:0 6px 0 #23773f;box-shadow:0 6px 0 #23773f;}
+#btnOuvir,#btnHist{background:#fff2dd;border:3px solid #ff9e2c;color:#a05a00;border-radius:18px;font-size:18px;font-weight:bold;padding:10px 16px;cursor:pointer;font-family:inherit;margin:6px auto 6px;}
+#btnHist{-webkit-animation:pulsa 1.6s ease-in-out infinite;animation:pulsa 1.6s ease-in-out infinite;}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.08);}}
+@keyframes pulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+/* ================= PORTAL (revista) ================= */
+#portalTop{text-align:center;padding:16px 14px 2px;color:#fff;}
+#portalTop .selo-capa{color:#fff;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.5);}
+#portalTop h1{color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.35);}
+#portalTop p{color:#eaf6f8;}
+.sec{position:relative;margin:16px 14px 22px;border-radius:22px;overflow:hidden;background:#fff;
+  -webkit-box-shadow:0 16px 34px rgba(6,30,50,.34);box-shadow:0 16px 34px rgba(6,30,50,.34);
+  opacity:0;-webkit-transform:translateY(30px);transform:translateY(30px);-webkit-transition:opacity .7s ease,-webkit-transform .7s ease;transition:opacity .7s ease,transform .7s ease;}
+.sec.vis{opacity:1;-webkit-transform:none;transform:none;}
+.foto{position:relative;height:230px;overflow:hidden;background:#0b3d5c;}
+.foto .kb{position:absolute;inset:0;background-position:center;background-size:cover;background-repeat:no-repeat;
+  -webkit-animation:ken 26s ease-in-out infinite alternate;animation:ken 26s ease-in-out infinite alternate;}
+@-webkit-keyframes ken{0%{-webkit-transform:scale(1.02) translate(0,0);}100%{-webkit-transform:scale(1.16) translate(-2%,-2%);}}
+@keyframes ken{0%{transform:scale(1.02) translate(0,0);}100%{transform:scale(1.16) translate(-2%,-2%);}}
+.foto .scrim{position:absolute;inset:0;background:-webkit-linear-gradient(top,rgba(0,0,0,.05) 30%,rgba(0,0,0,.62) 100%);background:linear-gradient(to bottom,rgba(0,0,0,.05) 30%,rgba(0,0,0,.62) 100%);}
+.foto .badge{position:absolute;left:14px;top:14px;font-family:"Trebuchet MS",sans-serif;font-size:12px;font-weight:bold;letter-spacing:1px;color:#fff;padding:5px 12px;border-radius:16px;text-transform:uppercase;-webkit-box-shadow:0 3px 8px rgba(0,0,0,.3);box-shadow:0 3px 8px rgba(0,0,0,.3);}
+.foto .stit{position:absolute;left:16px;right:16px;bottom:12px;font-family:Georgia,"Times New Roman",serif;font-size:26px;line-height:1.15;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.6);margin:0;}
+.stx{padding:14px 18px 16px;}
+.stx p{font-size:17.5px;line-height:1.5;color:#22384a;margin:4px 2px 10px;text-align:left;}
+.stx .destaque{font-weight:bold;color:#0e7c86;}
+.ouvirsec{background:#eaf7f9;border:3px solid #7fc4d0;color:#0a5a62;border-radius:16px;font-size:16px;font-weight:bold;padding:9px 15px;cursor:pointer;font-family:"Trebuchet MS",sans-serif;}
+.ouvirsec:active{background:#d6eef2;}
+.fatos{list-style:none;margin:6px 0 2px;padding:0;text-align:left;}
+.fatos li{position:relative;font-size:16px;color:#2f4a5c;margin:6px 0;padding-left:26px;line-height:1.4;}
+.fatos li:before{content:"\2691";position:absolute;left:2px;top:0;color:#ef6d3a;font-size:16px;}
+.chamada{margin:6px 14px 10px;text-align:center;}
+
+/* Mapa da Expedição (trilha de paradas navegável) */
+.trilhaexp{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:8px 4px;margin:8px 12px 2px;padding:12px 8px;background:rgba(255,255,255,.12);border-radius:18px;}
+.parada{position:relative;width:60px;text-align:center;cursor:pointer;color:#eaf6f8;font-size:10.5px;font-weight:bold;background:none;border:none;font-family:inherit;padding:2px;}
+.parada .pnum{display:block;width:34px;height:34px;line-height:30px;margin:0 auto 3px;border-radius:50%;border:2px dashed rgba(255,255,255,.7);background:rgba(255,255,255,.14);color:#fff;font-size:15px;-webkit-transition:all .25s;transition:all .25s;}
+.parada.visitado .pnum{border-style:solid;border-color:#f6bf31;background:#f6bf31;color:#0b3d5c;-webkit-box-shadow:0 0 0 3px rgba(246,191,49,.32);box-shadow:0 0 0 3px rgba(246,191,49,.32);}
+.parada .plbl{display:block;line-height:1.12;opacity:.9;}
+.passe{display:inline-block;margin:8px auto 0;padding:5px 14px;border-radius:16px;background:rgba(246,191,49,.18);border:2px solid rgba(246,191,49,.55);color:#ffe6a6;font-size:13px;font-weight:bold;font-family:"Trebuchet MS",sans-serif;}
+.selo-explorado{position:absolute;right:12px;top:12px;background:#f6bf31;color:#0b3d5c;font-family:"Trebuchet MS",sans-serif;font-size:11px;font-weight:bold;letter-spacing:.5px;padding:4px 10px;border-radius:14px;-webkit-transform:rotate(7deg);transform:rotate(7deg);-webkit-box-shadow:0 3px 8px rgba(0,0,0,.3);box-shadow:0 3px 8px rgba(0,0,0,.3);opacity:0;-webkit-transition:opacity .4s;transition:opacity .4s;z-index:3;}
+.sec.visitado .selo-explorado{opacity:1;}
+
+/* cor por seção */
+.est{background:#2f6b4f;} .flo{background:#0e7c86;} .blu{background:#c1573a;} .cul{background:#8a63d2;} .eco{background:#2f6f8f;} .cur{background:#d64b7a;}
+
+/* ================= QUIZ ================= */
+#trilha{display:block;text-align:center;margin:6px 0 4px;font-size:16px;color:#ffffff;font-weight:bold;text-shadow:0 1px 3px rgba(0,0,0,.5);}
+#passa{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:3px;margin:2px auto 8px;max-width:520px;}
+.selo{-webkit-flex:none;flex:none;width:22px;height:22px;line-height:18px;text-align:center;border-radius:50%;border:2px dashed #7fc4d0;background:#eaf7f9;color:#0a5a62;font-size:11px;font-weight:bold;}
+.selo.feito{border-style:solid;border-color:#2f9e57;background:#dbf3e3;color:#1f7a41;}
+.selo.agora{border-style:solid;border-color:#ff9e2c;background:#fff2dd;color:#6e3d00;-webkit-box-shadow:0 0 0 3px rgba(255,158,44,.22);box-shadow:0 0 0 3px rgba(255,158,44,.22);}
+.qcard{padding-top:56px;text-align:center;}
+.cracha{position:absolute;left:8px;top:8px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background:#fbfeff;border:3px solid #d7e6ec;border-radius:22px;padding:2px 10px 2px 2px;-webkit-box-shadow:0 2px 5px rgba(0,0,0,.15);box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.cracha .cav{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#dff0f4;-webkit-flex:none;flex:none;margin-right:6px;}
+.cracha .cav img{width:100%;height:100%;object-fit:cover;display:block;}
+.cracha .cnm{font-size:13px;font-weight:bold;color:#0a5a62;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.guia{position:absolute;right:8px;top:6px;height:84px;pointer-events:none;-webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+.disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:14px;padding:5px 13px;margin:2px 0 8px;color:#fff;}
+.qfig{display:block;max-height:190px;margin:2px auto 10px;padding:5px;background:#fff;border:3px solid #cfe6ec;border-radius:16px;-webkit-box-shadow:0 6px 14px rgba(6,30,50,.20);box-shadow:0 6px 14px rgba(6,30,50,.20);}
+.pergunta{font-family:"Trebuchet MS",sans-serif;font-size:22px;font-weight:bold;color:#12283a;line-height:1.32;margin:2px 8px 10px;}
+.opcoes{margin-top:2px;}
+.opc{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;width:94%;max-width:430px;margin:10px auto;padding:16px 14px;min-height:60px;border:3px solid #d7e6ec;border-radius:18px;cursor:pointer;text-align:left;font-family:"Trebuchet MS",sans-serif;font-size:20px;font-weight:bold;color:#12283a;background:#f4fbfc;-webkit-box-shadow:0 5px 0 #cfe0e6;box-shadow:0 5px 0 #cfe0e6;}
+.opc:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 1px 0 #cfe0e6;box-shadow:0 1px 0 #cfe0e6;}
+.opc .let{-webkit-flex:none;flex:none;width:40px;height:40px;line-height:40px;text-align:center;border-radius:50%;background:#2f9e57;color:#fff;font-size:21px;margin-right:12px;-webkit-box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);}
+.opc.c1 .let{background:#0e7c86;} .opc.c2 .let{background:#ef6d3a;}
+.opc .otx{-webkit-box-flex:1;-webkit-flex:1;flex:1;padding-right:6px;}
+.ospk{-webkit-flex:none;flex:none;width:42px;height:42px;border-radius:50%;border:3px solid #7fc4d0;background:#eaf7f9;color:#0a5a62;font-size:19px;line-height:36px;text-align:center;cursor:pointer;padding:0;margin-left:4px;}
+.ospk:active{background:#d6eef2;}
+.medalha{position:relative;width:172px;height:196px;margin:8px auto 2px;-webkit-animation:pop .55s ease-out;animation:pop .55s ease-out;}
+@-webkit-keyframes pop{0%{-webkit-transform:scale(0) rotate(-18deg);}70%{-webkit-transform:scale(1.12);}100%{-webkit-transform:scale(1);}}
+@keyframes pop{0%{transform:scale(0) rotate(-18deg);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+.medalha .fita{position:absolute;top:0;left:50%;width:26px;height:74px;background:#ef6d3a;}
+.medalha .fita.e{-webkit-transform:translateX(-26px) rotate(13deg);transform:translateX(-26px) rotate(13deg);}
+.medalha .fita.d{-webkit-transform:translateX(0) rotate(-13deg);transform:translateX(0) rotate(-13deg);}
+.medalha .disco{position:absolute;left:50%;top:52px;margin-left:-72px;width:144px;height:144px;border-radius:50%;overflow:hidden;background:#f6bf31;background:-webkit-radial-gradient(36% 30%,circle,#fff0a8,#f6bf31 62%,#d68a00);background:radial-gradient(circle at 36% 30%,#fff0a8,#f6bf31 62%,#d68a00);border:7px solid #ffd94a;-webkit-box-shadow:0 8px 18px rgba(120,90,0,.4),inset 0 0 18px rgba(255,255,255,.5);box-shadow:0 8px 18px rgba(120,90,0,.4),inset 0 0 18px rgba(255,255,255,.5);display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;}
+.medalha .estrela{position:absolute;width:74px;height:74px;background:#fff6cf;-webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+.medalha .mav{position:relative;width:118px;height:118px;border-radius:50%;object-fit:cover;}
+#barra{position:fixed;right:8px;bottom:8px;z-index:9999;}
+#barra .cv-bt{-webkit-appearance:none;appearance:none;width:48px;height:48px;border:3px solid #0a5a62;border-radius:50%;background:#fbfeff;color:#0a5a62;font-size:20px;line-height:42px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
+.opt{cursor:pointer;}
+.medal{position:relative;}
+@media(min-width:680px){ .foto{height:300px;} .foto .stit{font-size:30px;} }
+</style>
+
+<div id="topbar"></div>
+<div id="app" class="tela"></div>
+<div id="barra">
+  <button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>
+  <button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">&#8635;</button>
+</div>
+
+<script>
+/* ====== CONFIG ====== */
+var TURMAS=["4º A","4º B","4º C","4º D"];
+var AVATARES=[
+ {id:"hv_cr1.png"},{id:"hv_cr2.png"},{id:"hv_cr3.png"},
+ {id:"hv_cr4.png"},{id:"hv_cr5.png"},{id:"hv_cr6.png"}
+];
+var SLUG="colonizacao-vale-4ano";  /* Firebase: /provas/<SLUG> */
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+var GUIA="img/hv_base.png";   /* mascote-guia (o bugio Juca) */
+var HISTORIA="Olá, explorador do tempo! Eu sou o Juca, o bugio-ruivo, e moro no Vale do Itajaí há muito, muito tempo. Hoje a gente vai fazer uma viagem pela história do nosso Vale: de quando só havia mata e rio, passando pelos primeiros povos, os Xokleng, e a chegada dos açorianos, dos alemães, dos italianos e dos africanos, até a cidade de hoje. Vamos ver o que MUDOU e o que ficou. Primeiro a gente explora a revista, com imagens e narração, e depois você responde a um quiz sobre tudo o que descobriu. Escreva o seu nome, escolha a sua turma e o seu personagem, e vamos começar!";
+var _histTocada=false;
+
+/* ====== falas fixas (também lidas pelo gerador de voz) ====== */
+var TXT_PORTAL_INTRO="Vamos explorar a história do Vale! Role a página, veja as imagens e toque em ouvir em cada parada. No fim, tem o quiz.";
+var TXT_FINAL="Viagem no tempo concluída! Você percorreu a história do Vale do Itajaí, dos primeiros povos até a cidade de hoje. O Juca adorou descobrir tudo isso com você. Parabéns, explorador do tempo!";
+var MSG_NOME="Escreva o seu nome para começar.";
+var MSG_TURMA="Escolha a sua turma.";
+var MSG_AVATAR="Escolha o seu personagem.";
+var FRASES_NEXT=["Próxima pergunta!","Vamos continuar!","Muito bem, siga em frente!","Continue, explorador!"];
+/* a pergunta narra só o enunciado; cada opção tem alto-falante próprio (ordem
+   embaralhada). Assim não dá para "chutar sempre o A" e a voz nunca desencontra. */
+function falaPergunta(q,n){
+  return "Pergunta "+n+". "+q.pergunta+" Ouça as respostas e toque na certa.";
+}
+
+/* ====== SEÇÕES DO PORTAL (revista) ====== */
+var SECOES=[
+ {cls:"est", tag:"O começo", img:"hv_mata.jpg", titulo:"O Vale antes de tudo",
+  texto:"Há muito, muito tempo, o Vale do Itajaí era só mata, rio e bichos — nenhuma casa, nenhuma rua. A natureza mandava em tudo. Estudar história é descobrir o que MUDOU e o que PERMANECEU ao longo do tempo. Nesta viagem, a gente vai ver o Vale se transformar, aos poucos, no lugar onde vivemos hoje.",
+  fatos:["Antes: só mata, rio e bichos","História é o que MUDOU e o que PERMANECEU no tempo","O Vale foi mudando pouco a pouco"],
+  fala:"O Vale antes de tudo. Há muito, muito tempo, o Vale do Itajaí era só mata, rio e bichos, nenhuma casa, nenhuma rua. A natureza mandava em tudo. Estudar história é descobrir o que mudou e o que permaneceu ao longo do tempo. Nesta viagem, a gente vai ver o Vale se transformar, aos poucos, no lugar onde vivemos hoje."},
+
+ {cls:"cul", tag:"Os primeiros", img:"hv_povo_indigena.png", titulo:"Os primeiros povos do Vale",
+  texto:"Muito antes de qualquer cidade, o Vale já tinha gente: os Xokleng viviam na beira do rio. Nas terras altas viviam os Kaingang, e perto do litoral, os Guarani. Eles caçavam, pescavam e conheciam a floresta como ninguém. O Vale nunca esteve vazio — ele já era a casa dos povos indígenas.",
+  fatos:["Xokleng: na beira do rio, no Vale","Kaingang: nas terras altas — Guarani: perto do litoral","O Vale nunca esteve vazio"],
+  fala:"Os primeiros povos do Vale. Muito antes de qualquer cidade, o Vale já tinha gente: os Xokleng viviam na beira do rio. Nas terras altas viviam os Kaingang, e perto do litoral, os Guarani. Eles caçavam, pescavam e conheciam a floresta como ninguém. O Vale nunca esteve vazio: ele já era a casa dos povos indígenas."},
+
+ {cls:"est", tag:"A estrada de água", img:"hv_rio.png", titulo:"O rio era a estrada",
+  texto:"No começo não havia estradas nem pontes. Como as pessoas e as coisas chegavam ao Vale? Pelo rio! O rio Itajaí-Açu era a estrada de todos: as canoas e os barcos traziam gente, comida e ferramentas. Por isso as primeiras casas nasceram bem na beira do rio.",
+  fatos:["Não havia estradas: o rio era o caminho","O rio Itajaí-Açu era a estrada do Vale","As primeiras casas nasceram na beira do rio"],
+  fala:"O rio era a estrada. No começo não havia estradas nem pontes. Como as pessoas e as coisas chegavam ao Vale? Pelo rio! O rio Itajaí-Açu era a estrada de todos: as canoas e os barcos traziam gente, comida e ferramentas. Por isso as primeiras casas nasceram bem na beira do rio."},
+
+ {cls:"cul", tag:"Do oceano", img:"hv_povo_acoriano.png", titulo:"Os açorianos chegam ao litoral",
+  texto:"Antes mesmo da colônia de Blumenau, o litoral de Santa Catarina recebeu os açorianos, a partir de 1748. Eles vieram das ilhas dos Açores, no meio do oceano Atlântico, em Portugal. Trouxeram a pesca, a renda de bilro e festas como o boi-de-mamão, que existem até hoje no litoral catarinense.",
+  fatos:["Açorianos: chegaram ao litoral a partir de 1748","Vieram das ilhas dos Açores, em Portugal","Trouxeram a pesca, a renda de bilro e o boi-de-mamão"],
+  fala:"Os açorianos chegam ao litoral. Antes mesmo da colônia de Blumenau, o litoral de Santa Catarina recebeu os açorianos, a partir de 1748. Eles vieram das ilhas dos Açores, no meio do oceano Atlântico, em Portugal. Trouxeram a pesca, a renda de bilro e festas como o boi-de-mamão, que existem até hoje no litoral catarinense."},
+
+ {cls:"blu", tag:"1850", img:"hv_povo_alemao.png", titulo:"A colônia começa: os alemães",
+  texto:"No dia 2 de setembro de 1850, apenas 17 pessoas desceram do barco e começaram a colônia de Blumenau. Eram imigrantes alemães, que vieram de longe em busca de terra e trabalho. O nome da cidade veio do Dr. Hermann Blumenau, que fundou a colônia. Aos poucos, chegaram mais famílias e o povoado cresceu.",
+  fatos:["2 de setembro de 1850: começa a colônia, com só 17 pessoas","Eram imigrantes alemães","O nome vem do Dr. Hermann Blumenau, o fundador"],
+  fala:"A colônia começa: os alemães. No dia 2 de setembro de 1850, apenas 17 pessoas desceram do barco e começaram a colônia de Blumenau. Eram imigrantes alemães, que vieram de longe em busca de terra e trabalho. O nome da cidade veio do Doutor Hermann Blumenau, que fundou a colônia. Aos poucos, chegaram mais famílias e o povoado cresceu."},
+
+ {cls:"flo", tag:"1875", img:"hv_povo_italiano.png", titulo:"Os italianos chegam ao Vale",
+  texto:"Por volta de 1875, chegaram ao Vale famílias italianas. Elas começaram lugares como Rio dos Cedros e Rodeio. Trouxeram a polenta, o vinho e o seu jeito de trabalhar a terra. O Vale não foi feito por um povo só: alemães, italianos, açorianos e os indígenas que já estavam aqui, todos ajudaram a formar a nossa região.",
+  fatos:["Por volta de 1875: chegam famílias italianas","Começaram Rio dos Cedros e Rodeio","Trouxeram a polenta e o vinho — o Vale foi feito por muitos povos"],
+  fala:"Os italianos chegam ao Vale. Por volta de 1875, chegaram ao Vale famílias italianas. Elas começaram lugares como Rio dos Cedros e Rodeio. Trouxeram a polenta, o vinho e o seu jeito de trabalhar a terra. O Vale não foi feito por um povo só: alemães, italianos, açorianos e os indígenas que já estavam aqui, todos ajudaram a formar a nossa região."},
+
+ {cls:"cul", tag:"Trazidos à força", img:"hv_povo_africano.png", titulo:"Os africanos e a sua herança",
+  texto:"Nem todos vieram por vontade. Muitos africanos foram trazidos ao Brasil à força, escravizados, sem poder escolher. Mesmo passando por tanta injustiça, deixaram uma herança enorme: comidas, ritmos e músicas, danças e muitas palavras que a gente usa todos os dias. A cultura brasileira tem muito da força desse povo.",
+  fatos:["Africanos: trazidos ao Brasil à força, escravizados","Deixaram comida, música, dança e palavras","A cultura brasileira tem muito dessa herança"],
+  fala:"Os africanos e a sua herança. Nem todos vieram por vontade. Muitos africanos foram trazidos ao Brasil à força, escravizados, sem poder escolher. Mesmo passando por tanta injustiça, deixaram uma herança enorme: comidas, ritmos e músicas, danças e muitas palavras que a gente usa todos os dias. A cultura brasileira tem muito da força desse povo."},
+
+ {cls:"eco", tag:"O que mudou", img:"hv_roca.jpg", titulo:"A mata, a roça e a cidade",
+  texto:"Com o tempo, muita coisa MUDOU. A mata foi derrubada para abrir roças, que subiram os morros. Depois vieram as fábricas, as ruas e a cidade grande de hoje. Mas algumas coisas PERMANECERAM: o mesmo rio Itajaí-Açu continua passando no meio de Blumenau, do jeito que passava quando só havia mata.",
+  fatos:["Mudou: a mata virou roça, e a roça virou cidade","Permaneceu: o mesmo rio passa no meio da cidade","História é mudança E permanência"],
+  fala:"A mata, a roça e a cidade. Com o tempo, muita coisa mudou. A mata foi derrubada para abrir roças, que subiram os morros. Depois vieram as fábricas, as ruas e a cidade grande de hoje. Mas algumas coisas permaneceram: o mesmo rio Itajaí-Açu continua passando no meio de Blumenau, do jeito que passava quando só havia mata."},
+
+ {cls:"cur", tag:"Você sabia?", img:"hv_cidade.jpg", titulo:"O rio, as cheias e a festa",
+  texto:"O rio que ajudou a cidade a nascer também traz as enchentes. A maior cheia já medida em Blumenau foi em 1880, quando o rio subiu mais de 17 metros! Depois de duas grandes enchentes em 1983 e 1984, a cidade criou a Oktoberfest, em 1984, para se animar e chamar visitantes. Foi um jeito de a cidade se levantar.",
+  fatos:["Maior cheia medida: 1880, o rio subiu mais de 17 metros","Grandes enchentes também em 1983 e 1984","A Oktoberfest começou em 1984, para a cidade se levantar"],
+  fala:"O rio, as cheias e a festa. O rio que ajudou a cidade a nascer também traz as enchentes. A maior cheia já medida em Blumenau foi em 1880, quando o rio subiu mais de 17 metros! Depois de duas grandes enchentes em 1983 e 1984, a cidade criou a Oktoberfest, em 1984, para se animar e chamar visitantes. Foi um jeito de a cidade se levantar."}
+];
+
+/* ====== QUIZ (múltipla escolha, resposta controlada aqui) ====== */
+var QUESTOES=[
+ {sec:"est", pergunta:"Estudar história é, principalmente:",
+  opcoes:["descobrir o que MUDOU e o que PERMANECEU ao longo do tempo.","decorar só datas.","falar do futuro."], correta:0},
+ {sec:"est", img:"hv_mata.jpg", pergunta:"Há muito tempo, antes de qualquer cidade, o Vale do Itajaí era:",
+  opcoes:["cheio de fábricas.","só mata, rio e bichos.","uma praia com hotéis."], correta:1},
+ {sec:"cul", img:"hv_povo_indigena.png", pergunta:"Quem já vivia na beira do rio, no Vale, muito antes das cidades?",
+  opcoes:["Os Xokleng.","Os alemães.","Os italianos."], correta:0},
+ {sec:"cul", pergunta:"Além dos Xokleng, quais povos indígenas viviam na região?",
+  opcoes:["Kaingang, nas terras altas, e Guarani, perto do litoral.","Apenas os portugueses.","Ninguém mais."], correta:0},
+ {sec:"cul", pergunta:"É certo dizer que, antes dos imigrantes, o Vale estava vazio?",
+  opcoes:["Não: os povos indígenas já viviam aqui.","Sim, não havia ninguém.","Sim, só havia fábricas."], correta:0},
+ {sec:"est", img:"hv_rio.png", pergunta:"No começo, sem estradas nem pontes, como tudo chegava ao Vale?",
+  opcoes:["De avião.","Pelo rio, de canoa e de barco.","De trem."], correta:1},
+ {sec:"est", pergunta:"Qual é o rio que passa no meio de Blumenau?",
+  opcoes:["O rio Amazonas.","O rio Itajaí-Açu.","O rio São Francisco."], correta:1},
+ {sec:"est", pergunta:"Por que as primeiras casas nasceram na beira do rio?",
+  opcoes:["Porque o rio era o caminho de todos.","Porque lá fazia menos frio.","Porque o rio tinha ouro."], correta:0},
+ {sec:"cul", img:"hv_povo_acoriano.png", pergunta:"De onde vieram os açorianos, que chegaram ao litoral a partir de 1748?",
+  opcoes:["Das ilhas dos Açores, em Portugal.","Do Japão.","Da Argentina."], correta:0},
+ {sec:"cul", pergunta:"Qual destas heranças é dos açorianos, no litoral catarinense?",
+  opcoes:["A renda de bilro e o boi-de-mamão.","A polenta e o vinho.","A Oktoberfest."], correta:0},
+ {sec:"blu", img:"hv_povo_alemao.png", pergunta:"Em que dia começou a colônia de Blumenau?",
+  opcoes:["Em 2 de setembro de 1850.","Em 1990.","Em 1500."], correta:0},
+ {sec:"blu", pergunta:"Quantas pessoas desceram do barco quando a colônia começou?",
+  opcoes:["Apenas 17 pessoas.","Mil pessoas.","Um milhão de pessoas."], correta:0},
+ {sec:"blu", pergunta:"Os primeiros colonos de Blumenau eram imigrantes de qual país?",
+  opcoes:["Da Alemanha.","Dos Estados Unidos.","Da China."], correta:0},
+ {sec:"blu", pergunta:"De quem veio o nome da cidade de Blumenau?",
+  opcoes:["Do Dr. Hermann Blumenau, que fundou a colônia.","De Pedro Álvares Cabral.","De um rio da Alemanha."], correta:0},
+ {sec:"flo", img:"hv_povo_italiano.png", pergunta:"Por volta de 1875, que povo chegou ao Vale e começou Rio dos Cedros e Rodeio?",
+  opcoes:["As famílias italianas.","Os japoneses.","Os açorianos."], correta:0},
+ {sec:"flo", pergunta:"Qual destas comidas os italianos trouxeram para o Vale?",
+  opcoes:["A polenta e o vinho.","O acarajé.","O sushi."], correta:0},
+ {sec:"flo", pergunta:"“O Vale foi feito por um povo só.” Essa frase está:",
+  opcoes:["errada: muitos povos ajudaram a formar a região.","certa: só os alemães.","certa: só os italianos."], correta:0},
+ {sec:"cul", img:"hv_povo_africano.png", pergunta:"Como muitos africanos foram trazidos ao Brasil?",
+  opcoes:["À força, escravizados, sem poder escolher.","De férias, por vontade.","Para passear."], correta:0},
+ {sec:"cul", pergunta:"Que herança o povo africano deixou na cultura brasileira?",
+  opcoes:["Comidas, músicas, danças e muitas palavras.","Apenas a neve.","Apenas as fábricas."], correta:0},
+ {sec:"eco", img:"hv_roca.jpg", pergunta:"Com o tempo, o que aconteceu com a mata do Vale?",
+  opcoes:["Foi derrubada para abrir roças, e depois veio a cidade.","Ficou exatamente igual até hoje.","Virou um deserto."], correta:0},
+ {sec:"eco", img:"hv_cidade.jpg", pergunta:"Mesmo com tanta mudança, o que PERMANECEU no meio de Blumenau?",
+  opcoes:["O mesmo rio Itajaí-Açu.","A floresta fechada.","A aldeia dos Xokleng."], correta:0},
+ {sec:"cur", pergunta:"O rio ajuda a cidade, mas também traz um problema. Qual?",
+  opcoes:["As enchentes (cheias).","A neve.","O deserto."], correta:0},
+ {sec:"cur", pergunta:"Em que ano foi a maior cheia já medida em Blumenau, com o rio subindo mais de 17 metros?",
+  opcoes:["Em 1880.","Em 2020.","Em 1500."], correta:0},
+ {sec:"cur", pergunta:"Depois das grandes enchentes, que festa a cidade criou em 1984 para se levantar?",
+  opcoes:["A Oktoberfest.","O Carnaval.","A Festa Junina."], correta:0},
+ {sec:"blu", pergunta:"Qual destas é uma comida alemã conhecida em Blumenau?",
+  opcoes:["A cuca.","O tacacá.","O vatapá."], correta:0},
+ {sec:"est", pergunta:"Qual frase mostra MUDANÇA e PERMANÊNCIA ao mesmo tempo?",
+  opcoes:["A mata virou cidade, mas o mesmo rio continua passando no meio.","Nada nunca mudou no Vale.","Tudo mudou e nada ficou."], correta:0}
+];
+var SECNOME={est:"O VALE ANTES", cul:"OS POVOS", blu:"A COLÔNIA", flo:"OS IMIGRANTES", eco:"O QUE MUDOU", cur:"VOCÊ SABIA?"};
+
+/* embaralha as opções de cada questão (mantendo a resposta certa) — evita padrão */
+function embaralharOpcoes(){
+  var qi;for(qi=0;qi<QUESTOES.length;qi++){
+    var q=QUESTOES[qi], ordem=[],k;
+    for(k=0;k<q.opcoes.length;k++){ordem.push(k);}
+    for(k=ordem.length-1;k>0;k--){var j=Math.floor(Math.random()*(k+1));var tmp=ordem[k];ordem[k]=ordem[j];ordem[j]=tmp;}
+    var novas=[],nova=0;
+    for(k=0;k<ordem.length;k++){novas.push(q.opcoes[ordem[k]]);if(ordem[k]===q.correta){nova=k;}}
+    q.opcoes=novas;q.correta=nova;
+  }
+}
+
+/* ====== estado ====== */
+var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, turmaSel="", avatarSel="", avatarAluno="";
+var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
+function $(id){return document.getElementById(id);}
+function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+/* ====== VOZ (arquivos audio/v<hash>.mp3) ====== */
+var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("sc5_mudo")==="1");}catch(e){}
+var _falaAudio=null, _ultimaFala="";
+function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
+function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
+var _actx=null;
+function somToque(){
+  if(VOZ_MUDA){return;}
+  try{
+    if(!_actx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC){return;}_actx=new AC();}
+    if(_actx.state==="suspended"&&_actx.resume){_actx.resume();}
+    var t=_actx.currentTime,o=_actx.createOscillator(),g=_actx.createGain();
+    o.type="triangle";o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(760,t+0.10);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+    o.connect(g);g.connect(_actx.destination);o.start(t);o.stop(t+0.18);
+  }catch(e){}
+}
+function falar(texto,_forcar){
+  _ultimaFala=texto;
+  if(VOZ_MUDA&&!_forcar){return;}
+  pararFala();
+  try{var a=new Audio("audio/"+_chaveVoz(texto)+".mp3");_falaAudio=a;a.play();}catch(e){}
+}
+function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
+function ouvirSecao(i){ pararFala(); falar(SECOES[i].fala,true); marcarParada(i); }
+function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
+function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("sc5_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
+function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
+
+/* ====== CAPA ====== */
+function telaCapa(){
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="'+GUIA+'" alt="Juca, o bugio guia" onerror="this.style.display=\'none\'">';
+  h+='<div class="selo-capa">Viagem no tempo &middot; 4º ano &middot; Colonização do Vale</div>';
+  h+='<h1>A Viagem no Tempo do Vale</h1>';
+  h+='<h2>A colonização do Vale do Itajaí</h2>';
+  h+='<p class="grande">Oi! Eu sou o Juca, o bugio. Vamos viajar pela história do Vale do Itajaí com imagens e narração, e depois responder a um quiz!</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir o Juca</button>';
+  h+='<div class="formrow">';
+  h+='<div class="fcol">';
+  h+='<label>Qual é o seu nome?</label>';
+  h+='<input id="cNome" maxlength="26" placeholder="Escreva o seu nome" data-qa="Ana Clara">';
+  h+='<label>Qual é a sua turma?</label><div class="turmas">';
+  var i;for(i=0;i<TURMAS.length;i++){h+='<button type="button" class="tbox opt" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>';}
+  h+='</div></div>';
+  h+='<div class="fcol">';
+  h+='<label>Escolha o seu personagem!</label><div class="avs">';
+  for(i=0;i<AVATARES.length;i++){var a=AVATARES[i];
+    h+='<button type="button" class="avbox opt" onclick="selAvatar(this,\''+a.id+'\')">'+
+       '<img src="img/'+a.id+'" alt="Personagem '+(i+1)+'" onerror="this.style.display=\'none\'"></button>';}
+  h+='</div></div>';
+  h+='</div>';
+  h+='<div><button class="btn" onclick="comecar()">Começar a viagem!</button></div>';
+  h+='</div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);setBarra(0);
+}
+function ouvirHistoria(){ _histTocada=true; falar(HISTORIA,true); }
+function selTurma(b,t){turmaSel=t;var els=document.getElementsByClassName("tbox"),i;for(i=0;i<els.length;i++){els[i].className="tbox opt";}b.className="tbox opt on";somToque();}
+function selAvatar(b,id){avatarSel=id;var els=document.getElementsByClassName("avbox"),i;for(i=0;i<els.length;i++){els[i].className="avbox opt";}b.className="avbox opt on";somToque();}
+function comecar(){
+  var nm=($("cNome")&&$("cNome").value||"").replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
+  if(!nm){falar(MSG_NOME,true);if($("cNome"))$("cNome").focus();return;}
+  if(!turmaSel){falar(MSG_TURMA,true);return;}
+  if(!avatarSel){falar(MSG_AVATAR,true);return;}
+  nomeAluno=nm;turmaAluno=turmaSel;avatarAluno=avatarSel;somToque();telaPortal();
+}
+
+/* ====== PORTAL (revista) ====== */
+function telaPortal(){
+  var h='';
+  h+='<div id="portalTop"><div class="selo-capa">Mapa da expedição</div>';
+  h+='<h1>Vamos explorar!</h1>';
+  h+='<p>Toque numa parada do mapa para viajar até ela, ou role a página. Cada parada que você explora ganha um carimbo de ouro. No fim, o quiz!</p>';
+  var i;
+  h+='<div class="trilhaexp">';
+  for(i=0;i<SECOES.length;i++){h+='<button class="parada" id="par'+i+'" onclick="irPara('+i+')" title="'+esc(SECOES[i].titulo)+'"><span class="pnum">'+(i+1)+'</span><span class="plbl">'+esc(SECOES[i].tag)+'</span></button>';}
+  h+='</div><div><span class="passe" id="passe">Carimbos: 0 de '+SECOES.length+'</span></div></div>';
+  for(i=0;i<SECOES.length;i++){var s=SECOES[i];
+    h+='<div class="sec" data-i="'+i+'">';
+    h+='<div class="foto"><div class="kb" style="background-image:url(\'img/'+s.img+'\')"></div><div class="scrim"></div>';
+    h+='<span class="badge '+s.cls+'">'+esc(s.tag)+'</span>';
+    h+='<span class="selo-explorado">Explorado ✓</span>';
+    h+='<div class="stit">'+esc(s.titulo)+'</div></div>';
+    h+='<div class="stx"><p>'+esc(s.texto)+'</p>';
+    if(s.fatos&&s.fatos.length){h+='<ul class="fatos">';var k;for(k=0;k<s.fatos.length;k++){h+='<li>'+esc(s.fatos[k])+'</li>';}h+='</ul>';}
+    h+='<div style="text-align:center;margin-top:6px"><button class="ouvirsec" onclick="ouvirSecao('+i+')">&#128266; Ouvir esta parte</button></div>';
+    h+='</div></div>';
+  }
+  h+='<div class="chamada"><div class="card" style="border-color:#2f9e57">';
+  h+='<h1 style="color:#23773f">Pronto para o quiz?</h1>';
+  h+='<p class="grande">Agora vamos ver o que você descobriu! São perguntas sobre a história e a colonização do Vale. O Juca lê cada pergunta em voz alta.</p>';
+  h+='<button class="btn verde" onclick="irQuiz()">&#127942; Começar o quiz!</button>';
+  h+='</div></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);setBarra(0);
+  ativarRevista();
+  falar(TXT_PORTAL_INTRO);
+}
+var _visit={};
+function ativarRevista(){
+  var app=$("app"), secs=document.getElementsByClassName("sec");
+  /* barra de progresso do portal + revelar ao rolar + carimbar parada (sem IntersectionObserver p/ compatibilidade) */
+  var doc=document.documentElement;
+  function checa(){
+    var vh=window.innerHeight||doc.clientHeight, i;
+    var top=window.pageYOffset||doc.scrollTop||0;
+    var max=(doc.scrollHeight||document.body.scrollHeight)-vh; setBarra(max>0?(top/max):0);
+    for(i=0;i<secs.length;i++){var rt=secs[i].getBoundingClientRect().top; /* relativo à viewport */
+      if(rt < vh-70 && secs[i].className.indexOf("vis")<0){secs[i].className+=" vis";}
+      if(rt < vh-150){ marcarParada(i); }
+    }
+  }
+  window.onscroll=checa; checa();
+}
+function marcarParada(i){
+  if(_visit[i])return; _visit[i]=1;
+  var p=$("par"+i); if(p){p.className="parada visitado";}
+  var secs=document.getElementsByClassName("sec"); if(secs[i]&&secs[i].className.indexOf("visitado")<0){secs[i].className+=" visitado";}
+  var n=0,k; for(k in _visit){if(_visit.hasOwnProperty(k)){n++;}}
+  var ps=$("passe"); if(ps){ps.innerHTML=(n>=SECOES.length?"Expedição completa! "+n+" carimbos &#11088;":"Carimbos: "+n+" de "+SECOES.length);}
+}
+function irPara(i){var secs=document.getElementsByClassName("sec"),s=secs[i];if(s){if(s.className.indexOf("vis")<0){s.className+=" vis";}window.scrollTo(0,Math.max(0,s.getBoundingClientRect().top+(window.pageYOffset||0)-8));marcarParada(i);}somToque();}
+function setBarra(f){var b=$("topbar");if(b){f=Math.max(0,Math.min(1,f));b.style.width=(f*100)+"%";}}
+
+/* ====== QUIZ ====== */
+function irQuiz(){atual=0;somToque();window.onscroll=null;setBarra(0);telaPergunta();}
+function crachaHTML(){
+  var av=avatarAluno?'<img src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'">':'';
+  return '<div class="cracha"><div class="cav">'+av+'</div>'+
+    '<span class="cnm">'+esc(nomeAluno||"")+'</span></div>';
+}
+function passaporte(){
+  var h='<div id="passa">',i;
+  for(i=0;i<QUESTOES.length;i++){
+    var st=(i<atual?"feito":(i===atual?"agora":""));
+    h+='<span class="selo '+st+'">'+(i<atual?"&#10003;":(i+1))+'</span>';
+  }
+  return h+'</div>';
+}
+function telaPergunta(){
+  var q=QUESTOES[atual],h='';
+  h+='<div id="trilha">&#127959;️ Pergunta '+(atual+1)+' de '+QUESTOES.length+'</div>';
+  h+=passaporte();
+  h+='<div class="card qcard">';
+  h+=crachaHTML();
+  h+='<img class="guia" src="'+GUIA+'" alt="Juca, o bugio" onerror="this.style.display=\'none\'">';
+  h+='<span class="disc '+q.sec+'">'+(SECNOME[q.sec]||"")+'</span>';
+  if(q.img){h+='<img class="qfig" src="img/'+q.img+'" alt="" onerror="this.style.display=\'none\'">';}
+  h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
+  h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pergunta</button>';
+  h+='<div class="opcoes">';
+  var letras=["A","B","C","D"],i;
+  for(i=0;i<q.opcoes.length;i++){
+    h+='<div class="opc c'+i+' opt" role="button" tabindex="0"'+(i===q.correta?' data-qa="1"':'')+' onclick="responder('+i+')">'+
+       '<span class="let">'+letras[i]+'</span>'+
+       '<span class="otx">'+esc(q.opcoes[i])+'</span>'+
+       '<button class="ospk" title="Ouvir esta resposta" onclick="event.stopPropagation();ouvirOpc('+i+')">&#128266;</button>'+
+       '</div>';
+  }
+  h+='</div></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);
+  falar(falaPergunta(q,atual+1));
+}
+function responder(idx){
+  somToque();respostas[atual]=idx;pararFala();atual++;
+  if(atual>=QUESTOES.length){telaFinal();}
+  else{
+    falar(FRASES_NEXT[atual%FRASES_NEXT.length]);setTimeout(telaPergunta,60);
+  }
+}
+function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
+function medalhaHTML(){
+  return '<div class="medalha medal"><span class="fita e"></span><span class="fita d"></span>'+
+    '<div class="disco"><span class="estrela"></span>'+
+    (avatarAluno?'<img class="mav" src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'">':'')+
+    '</div></div>';
+}
+function telaFinal(){
+  var ac=calcularAcertos();confete();
+  var h='';
+  h+='<div class="card">';
+  h+='<h1>Viagem concluída!</h1>';
+  h+=medalhaHTML();
+  h+='<h2>'+esc(nomeAluno)+', você terminou a viagem no tempo pelo Vale!</h2>';
+  h+='<p class="grande">O Juca adorou descobrir a história do Vale com você. Parabéns, explorador do tempo!</p>';
+  h+='<p id="statusenvio"></p></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);setBarra(1);
+  falar(TXT_FINAL);
+  enviarResultado(ac);
+}
+
+/* ====== ENVIO (Firebase), SEM mostrar nota ao aluno ====== */
+function enviarResultado(ac){
+  if(enviado){return;}enviado=true;
+  var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":(respostas[i]===QUESTOES[i].correta?"C":"E"));}
+  var quando=new Date().toLocaleString("pt-BR");
+  var nota10=QUESTOES.length?Math.round(ac/QUESTOES.length*100)/10:0;
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  try{
+    var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
+    var x=new XMLHttpRequest();
+    x.open("PUT",FIREBASE_DB+"/provas/"+SLUG+"/"+chave+".json",true);
+    x.setRequestHeader("Content-Type","application/json");
+    x.send(JSON.stringify(reg));
+  }catch(e){}
+}
+
+/* ====== confete leve ====== */
+function confete(){try{
+  var c=document.createElement("canvas");c.style.position="fixed";c.style.left=0;c.style.top=0;c.style.pointerEvents="none";c.style.zIndex=9998;
+  c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+  var x=c.getContext("2d"),ps=[],i,cores=["#ef6d3a","#2f9e57","#0e7c86","#8a63d2","#f6bf31"];
+  for(i=0;i<90;i++){ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,r:6+Math.random()*6,vy:2+Math.random()*3,co:cores[i%cores.length],vx:-1.5+Math.random()*3});}
+  var t=0,tot=150;function loop(){x.clearRect(0,0,c.width,c.height);var k;for(k=0;k<ps.length;k++){var p=ps[k];p.y+=p.vy;p.x+=p.vx;x.fillStyle=p.co;x.fillRect(p.x,p.y,p.r,p.r);}t++;if(t<tot){requestAnimationFrame(loop);}else{if(c.parentNode){c.parentNode.removeChild(c);}}}loop();
+}catch(e){}}
+
+/* ====== boot ====== */
+function boot(){embaralharOpcoes();attMudo();telaCapa();}
+document.addEventListener("click",function(){
+  if(_histTocada){return;}
+  if(!document.getElementById("cNome")){return;}
+  _histTocada=true;falar(HISTORIA,true);
+},false);
+boot();
+</script>
