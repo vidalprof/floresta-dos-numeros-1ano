@@ -59,8 +59,8 @@ body{
 .slot{position:absolute;border-radius:6px;border:2px dashed var(--borda);background:rgba(239,227,198,.3);z-index:3}
 .slot.destaque{border-color:var(--am-b);background:var(--luz);box-shadow:0 0 0 3px rgba(224,169,42,.4)}
 .risco{position:absolute;background:var(--tinta);opacity:0;border-radius:2px;z-index:6}
-#paleta{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;min-height:40px}
-.cor{width:42px;height:42px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 8px rgba(60,40,10,.25);cursor:pointer;transition:transform .12s}
+#paleta{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:40px}
+.cor{width:40px;height:40px;border-radius:50%;border:3px solid #fff;box-shadow:0 3px 8px rgba(60,40,10,.25);cursor:pointer;transition:transform .12s}
 .cor:active{transform:scale(.9)}
 .cor.sel{transform:scale(1.16);box-shadow:0 0 0 3px var(--tinta),0 3px 8px rgba(60,40,10,.3)}
 .cor.borracha{background:repeating-conic-gradient(#fff 0 25%,#eadfc6 0 50%) 50%/13px 13px}
@@ -94,7 +94,7 @@ body{
 <script>
 (function(){
 "use strict";
-var CORES=["#e4483f","#f3902a","#ffd23e","#57b04a","#2f9e8f","#3f7cd6","#8e5bd0","#7a4a24","#3a2b1c","#f49ac2"];
+var CORES=["#e4483f","#ff6b5c","#f3902a","#ffb14e","#ffd23e","#fff275","#a8d13a","#3fa94b","#1f7a3a","#2f9e8f","#35c4d4","#4fb0f7","#3f7cd6","#26408b","#8e5bd0","#b57cff","#f49ac2","#ff4fa3","#c68642","#f1c9a5","#7a4a24","#5a3d24","#3a2b1c","#9aa0a6"];
 /* lin×col = nº de peças. Sobe de 12 a 20 (pedido do Marcos). */
 var DES=[
  {img:"qc_dragao",  voz:"o dragão",    lin:3,col:4},  /* 12 */
