@@ -1,0 +1,850 @@
+{
+ "titulo": "A Grande Expedição",
+ "sub": "Matemática · 5º ano · Divisão",
+ "ano": "5º ano",
+ "prefixo": "dv",
+ "mascote": "tato",
+ "mascoteNome": "Tato",
+ "voz": "masculina",
+ "crachas": 6,
+ "fundo": "dv_fundo.png",
+ "arte": {
+  "cenario": "an expedition base camp in the Atlantic forest near Blumenau, colorful tents in a row, a trail winding into green hills, wooden crates of supplies, warm morning light, cheerful children's book illustration",
+  "mascote": "a friendly coati (quati) explorer standing on two legs, wearing a small scout hat, a red neckerchief and a little backpack, holding a trail map, warm children's book illustration"
+ },
+ "convite": "<b>Quem vai comandar a expedição</b> hoje?",
+ "abertura": "Chegamos ao acampamento da expedição! Olha quantas caixas de mantimentos... e várias barracas esperando. A gente precisa repartir TUDO igualzinho entre elas — senão uns ficam com muito e outros passam fome. Como será que a gente faz isso rápido e sem errar? Vem comigo que eu te mostro o segredo!",
+ "fim": "Que expedição incrível! Você aprendeu a repartir igual, a ver quantas vezes uma quantidade cabe na outra e a usar a tabuada para dividir depressa. E sabia que a divisão está em tudo: em repartir a pizza, montar os times do recreio e dividir a mesada? Que outra coisa do seu dia dá pra dividir?",
+ "mesa": "PEDAGOGO (até o 5º ano manda o pedagogo), com roteirista, game designer, especialista em interatividade, web designer, diretor de arte, engenheiro e o PhD de testes que auto-aprende (ver _padrao/RECEITA.md).",
+ "conceitos": {
+  "objetivo1": "Repartir igual: quanto cada um recebe",
+  "objetivo2": "Quantas vezes cabe: formar grupos",
+  "objetivo3": "Estratégias para dividir: tabuada, estimativa e resto"
+ },
+ "curriculo": {
+  "objetivo1": "Resolver e elaborar problemas de divisão cujo divisor tenha no máximo dois algarismos, envolvendo os significados de repartição equitativa e de medida, utilizando estratégias diversas, como cálculo por estimativa, cálculo mental e algoritmos.",
+  "objetivo2": "Resolver e elaborar problemas de divisão cujo divisor tenha no máximo dois algarismos, envolvendo os significados de repartição equitativa e de medida, utilizando estratégias diversas, como cálculo por estimativa, cálculo mental e algoritmos.",
+  "objetivo3": "Compreender as relações existentes entre as operações de multiplicação e divisão, aplicando-as na resolução e elaboração de problemas; e reconhecer, por meio de investigações, que há grupos de números naturais para os quais as divisões por um determinado número resultam em restos iguais, identificando regularidades."
+ },
+ "fases": [
+  {
+   "id": "f01",
+   "mec": "repartir",
+   "selo": "REPARTIR IGUAL",
+   "enunciado": "A corda de mantimentos chegou! Reparta ela em partes iguais e dê uma para cada barraca.",
+   "dica": "Conte as barracas primeiro: a corda tem que virar esse mesmo tanto de partes iguais.",
+   "conceito": "objetivo1",
+   "dados": [
+    {
+     "un": 8,
+     "n": 2,
+     "img": "",
+     "coisa": "pedaços",
+     "grupo": "barraca",
+     "grupos": "barracas",
+     "nome": "a <b>metade</b> para cada",
+     "selo": "2 BARRACAS"
+    },
+    {
+     "un": 12,
+     "n": 3,
+     "nome": "<b>um terço</b> para cada",
+     "selo": "3 BARRACAS"
+    },
+    {
+     "un": 12,
+     "n": 4,
+     "nome": "<b>um quarto</b> para cada",
+     "selo": "4 BARRACAS"
+    }
+   ],
+   "dadosExtra": {
+    "DICAS": [
+     "Conte as barracas e corte a corda nesse mesmo tanto de partes iguais.",
+     "Olhe o placar: ele diz quantas partes iguais você já tem.",
+     "Deixa comigo: eu ajeito o corte e você reparte uma para cada barraca."
+    ]
+   }
+  },
+  {
+   "id": "f02",
+   "mec": "saltos-na-fita",
+   "selo": "QUANTOS SALTOS",
+   "enunciado": "O explorador anda sempre o mesmo tanto de passos por salto. Descubra quantos saltos ele dá até o acampamento.",
+   "dica": "Cada salto tem o mesmo tamanho. Conte quantas vezes esse salto cabe até o fim da trilha.",
+   "conceito": "objetivo2",
+   "dados": [
+    {
+     "p": 2,
+     "ate": 12,
+     "dic": "Um salto tem sempre <b>2</b> passinhos. Conte os risquinhos a partir de onde ele está."
+    },
+    {
+     "p": 5,
+     "ate": 20,
+     "dic": "Um salto tem sempre <b>5</b> passinhos. Conte de um em um até cinco."
+    },
+    {
+     "p": 3,
+     "ate": 15,
+     "dic": "Um salto tem sempre <b>3</b> passinhos. Conte: um, dois, três."
+    }
+   ]
+  },
+  {
+   "id": "f03",
+   "mec": "reta-numerica",
+   "selo": "RETA-NUMERICA",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo1",
+   "dados": [
+    {
+     "selo": "«A RÉGUA DOS PASSOS»",
+     "min": 0,
+     "max": 10,
+     "alvo": 7,
+     "tol": 1,
+     "traco": 1,
+     "num": [
+      0,
+      5,
+      10
+     ],
+     "ap1": [
+      2,
+      8
+     ],
+     "ap2": [
+      1,
+      3,
+      4,
+      6,
+      9
+     ],
+     "bal": "«Onde fica o <b>7</b>?»",
+     "dica": "«Conte os tracinhos a partir do 0: 1, 2, 3...»"
+    },
+    {
+     "selo": "«A TRILHA DE 100»",
+     "min": 0,
+     "max": 100,
+     "alvo": 60,
+     "tol": 5,
+     "traco": 10,
+     "num": [
+      0,
+      50,
+      100
+     ],
+     "ap1": [
+      25,
+      75
+     ],
+     "ap2": [
+      10,
+      20,
+      30,
+      40,
+      70,
+      80,
+      90
+     ],
+     "bal": "«Onde fica o <b>60</b>?»",
+     "dica": "«O 50 &#233; o meio. O 60 fica um pouquinho depois do meio.»"
+    },
+    {
+     "selo": "«SÓ AS PONTAS»",
+     "min": 0,
+     "max": 100,
+     "alvo": 25,
+     "tol": 8,
+     "traco": 0,
+     "num": [
+      0,
+      100
+     ],
+     "ap1": [
+      50
+     ],
+     "ap2": [
+      20,
+      40,
+      60,
+      80
+     ],
+     "bal": "«Onde fica o <b>25</b>?»",
+     "dica": "«Ache o meio (50). O 25 &#233; o meio do meio.»"
+    }
+   ],
+   "dadosExtra": {
+    "ERROS": []
+   }
+  },
+  {
+   "id": "f04",
+   "mec": "escolher",
+   "selo": "ESCOLHA",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo1",
+   "dados": [
+    {
+     "img": "",
+     "p": "«Qual parte da planta fica <b>embaixo da terra</b> e bebe a água?»",
+     "c": {
+      "t": "«A RAIZ»",
+      "voz": "«a raiz»"
+     },
+     "e": [
+      {
+       "t": "«A FLOR»",
+       "voz": "«a flor»"
+      },
+      {
+       "t": "«A FOLHA»",
+       "voz": "«a folha»"
+      },
+      {
+       "t": "«O CAULE»",
+       "voz": "«o caule»"
+      }
+     ],
+     "d": [
+      "«Ela fica escondida, debaixo do chão.»",
+      "«É a parte que segura a planta no lugar e puxa a água da terra.»",
+      "«É a RAIZ. Ela está acesa aí embaixo: toque nela para seguir.»"
+     ]
+    },
+    {
+     "p": "«Qual parte é <b>verde e chata</b> e faz o alimento com a luz do sol?»",
+     "c": "«A FOLHA»",
+     "e": [
+      "«A RAIZ»",
+      "«O CAULE»",
+      "«A FLOR»"
+     ],
+     "d": [
+      "«Ela fica no ar, virada para o sol.»",
+      "«É verde, fina e cheia de linhas: o sol bate nela o dia inteiro.»",
+      "«É a FOLHA. Ela está acesa aí embaixo: toque nela para seguir.»"
+     ]
+    },
+    {
+     "p": "«Qual parte é o <b>caminho</b> que leva a água da raiz até as folhas?»",
+     "c": "«O CAULE»",
+     "e": [
+      "«A FLOR»",
+      "«A SEMENTE»",
+      "«A RAIZ»"
+     ],
+     "d": [
+      "«Pense num cano em pé, no meio da planta.»",
+      "«É a parte comprida que segura as folhas lá em cima.»",
+      "«É o CAULE. Ele está aceso aí embaixo: toque nele para seguir.»"
+     ]
+    }
+   ],
+   "dadosExtra": {
+    "TITULO": "«PARTES DA PLANTA»",
+    "FECHO": "«Voc&#234; j&#225; conhece as partes da planta!»"
+   }
+  },
+  {
+   "id": "f05",
+   "mec": "estimar",
+   "selo": "ESTIMAR",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo2",
+   "dados": [
+    {
+     "n": 8,
+     "max": 20,
+     "ini": 10,
+     "qa": 6,
+     "cls": "",
+     "seed": 17,
+     "ancora": 0,
+     "selo": "«O POTE DE BOT&Otilde;ES»",
+     "coisa": "«bot&otilde;es»",
+     "voz": "«botões»",
+     "quantos": "«quantos»",
+     "atalhos": [
+      5,
+      10,
+      15
+     ]
+    },
+    {
+     "n": 14,
+     "max": 30,
+     "ini": 15,
+     "qa": 10,
+     "cls": "«grao»",
+     "seed": 53,
+     "ancora": 1,
+     "selo": "«O POTE DE MILHO»",
+     "coisa": "«gr&atilde;os de milho»",
+     "voz": "«grãos»",
+     "quantos": "«quantos»",
+     "atalhos": [
+      5,
+      10,
+      20
+     ]
+    },
+    {
+     "n": 22,
+     "max": 40,
+     "ini": 20,
+     "qa": 22,
+     "cls": "«gude»",
+     "seed": 91,
+     "ancora": 1,
+     "selo": "«O POTE DE BOLINHAS»",
+     "coisa": "«bolinhas de gude»",
+     "voz": "«bolinhas»",
+     "quantos": "«quantas»",
+     "atalhos": [
+      10,
+      20,
+      30
+     ]
+    }
+   ],
+   "dadosExtra": {
+    "ESTRAT": [
+     "«Dica de quem estima bem: ache um <b>grupinho de 5</b> e veja quantos grupinhos cabem no pote.»",
+     "«Viu? <b>5, 10, 15...</b> Contar de 5 em 5 com os olhos d&aacute; um palpite bem mais perto.»",
+     ""
+    ],
+    "UN": [
+     "«zero»",
+     "«um»",
+     "«dois»",
+     "«três»",
+     "«quatro»",
+     "«cinco»",
+     "«seis»",
+     "«sete»",
+     "«oito»",
+     "«nove»",
+     "«dez»",
+     "«onze»",
+     "«doze»",
+     "«treze»",
+     "«catorze»",
+     "«quinze»",
+     "«dezesseis»",
+     "«dezessete»",
+     "«dezoito»",
+     "«dezenove»"
+    ],
+    "DZ": [
+     "",
+     "",
+     "«vinte»",
+     "«trinta»",
+     "«quarenta»"
+    ]
+   }
+  },
+  {
+   "id": "aquecimento",
+   "mec": "digitar-numero",
+   "selo": "AQUECIMENTO",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo2",
+   "dados": [
+    {
+     "a": 3,
+     "b": 2,
+     "op": "+",
+     "img": "",
+     "resp": 5,
+     "dic": "«Conte as 3 e continue: <b>4, 5</b>.»"
+    },
+    {
+     "a": 8,
+     "b": 3,
+     "op": "-",
+     "img": "",
+     "resp": 5,
+     "dic": "«Do 8, tire 3: <b>7, 6, 5</b>.»"
+    }
+   ],
+   "dadosExtra": {
+    "NOMEDIG": {
+     "0": "«zero»",
+     "1": "«um»",
+     "2": "«dois»",
+     "3": "«três»",
+     "4": "«quatro»",
+     "5": "«cinco»",
+     "6": "«seis»",
+     "7": "«sete»",
+     "8": "«oito»",
+     "9": "«nove»"
+    },
+    "OPNOME": {
+     "+": "«mais»",
+     "-": "«menos»",
+     "−": "«menos»"
+    },
+    "ENUN": "«Digite quanto d&#225;.»",
+    "FECHO": "«Voc&#234; calculou todas as contas!»"
+   }
+  },
+  {
+   "id": "f07",
+   "mec": "balanca",
+   "selo": "BALANCA",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo2",
+   "dados": [
+    {
+     "a": 3,
+     "b": 2,
+     "ini": 1
+    },
+    {
+     "a": 4,
+     "b": 4,
+     "ini": 5
+    },
+    {
+     "a": 5,
+     "b": 4,
+     "ini": 4
+    }
+   ]
+  },
+  {
+   "id": "f08",
+   "mec": "base-dez",
+   "selo": "BASE-DEZ",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo2",
+   "dados": [
+    {
+     "selo": "«CAIXA DE 10»",
+     "soltos": 13,
+     "pTipo": "«dsuni»",
+     "pImg": "",
+     "tTipo": "«dsdez»",
+     "vale": 1,
+     "valeT": 10,
+     "nomeP": "«soltos»",
+     "nomeT": "«caixa de 10»",
+     "nomeTs": "«caixas de 10»",
+     "fala": "«Cada <b>10 soltos</b> viram <b>1 caixa</b>. Encha a caixa e troque.»"
+    },
+    {
+     "selo": "«CAIXOTE DE 100»",
+     "soltos": 12,
+     "pTipo": "«dsdez»",
+     "tTipo": "«dscem»",
+     "vale": 10,
+     "valeT": 100,
+     "nomeP": "«caixas de 10»",
+     "nomeT": "«caixote de 100»",
+     "nomeTs": "«caixotes de 100»",
+     "fala": "«Agora s&#227;o <b>caixas de 10</b>. Cada <b>10 caixas</b> viram <b>1 caixote</b>.»"
+    }
+   ],
+   "dadosExtra": {
+    "DICAS": [
+     "«Conte quantas pe&#231;as ainda est&#227;o na mesa. D&#225; para juntar mais dez?»",
+     "«Ponha as pe&#231;as que sobraram na caixa e conte os lugares cheios.»",
+     "«Sobrou menos de dez? A&#237; sim n&#227;o d&#225; mais: pode dizer que acabou.»"
+    ]
+   }
+  },
+  {
+   "id": "f09",
+   "mec": "passo-a-passo",
+   "selo": "PASSO-A-PASSO",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo3",
+   "dados": [
+    {
+     "selo": "«A RECEITA DO FEIJ&Atilde;O»",
+     "cena": "«canteiro»",
+     "enun": "«Ponha os passos na <b>ordem</b> e aperte <b>Come&#231;ar</b>. O canteiro faz exatamente o que voc&#234; mandar.»",
+     "hint": "«Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.»",
+     "bom": "«A semente ficou no escurinho, coberta e molhada &#8212; e brotou!»",
+     "torto": "«O feij&#227;o n&#227;o brotou. Olhe a cena: d&#225; para ver o que faltou acontecer antes.»",
+     "passos": [
+      {
+       "k": "cavar",
+       "rot": "«CAVAR»",
+       "sub": "«o buraco»",
+       "ic": "«pa»",
+       "precisa": [],
+       "melhor": [],
+       "bom": "«Voc&#234; <b>cavou</b> o buraco na terra.»",
+       "ruim": "«Voc&#234; <b>cavou</b> o buraco na terra.»"
+      },
+      {
+       "k": "semear",
+       "rot": "«SEMEAR»",
+       "sub": "«p&#244;r a semente»",
+       "ic": "«sem»",
+       "precisa": [
+        "«cavar»"
+       ],
+       "melhor": [],
+       "bom": "«A semente <b>caiu dentro</b> do buraco.»",
+       "ruim": "«N&#227;o tinha buraco: a semente ficou <b>por cima</b> da terra, no vento.»"
+      },
+      {
+       "k": "cobrir",
+       "rot": "«COBRIR»",
+       "sub": "«com terra»",
+       "ic": "«ter»",
+       "precisa": [
+        "«semear»"
+       ],
+       "melhor": [],
+       "bom": "«A terra <b>cobriu</b> a semente. Agora est&#225; no escurinho.»",
+       "ruim": "«Voc&#234; cobriu <b>terra com terra</b>: a semente n&#227;o estava l&#225; dentro.»"
+      },
+      {
+       "k": "regar",
+       "rot": "«REGAR»",
+       "sub": "«com &#225;gua»",
+       "ic": "«agu»",
+       "precisa": [
+        "«cobrir»"
+       ],
+       "melhor": [],
+       "bom": "«A &#225;gua <b>molhou</b> a terra por cima da semente.»",
+       "ruim": "«A &#225;gua caiu na terra dura e virou <b>po&#231;a</b>: n&#227;o tinha nada plantado.»"
+      }
+     ]
+    },
+    {
+     "selo": "«A RECEITA DO SUCO»",
+     "cena": "«banc»",
+     "enun": "«Agora s&#227;o <b>cinco</b> passos. Um deles n&#227;o trava a receita, mas <b>estraga</b> o suco se ficar para depois.»",
+     "hint": "«Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.»",
+     "bom": "«Suco limpo, coado e geladinho. Que del&#237;cia!»",
+     "torto": "«O suco n&#227;o ficou bom. Olhe o copo: ele mostra o que aconteceu.»",
+     "passos": [
+      {
+       "k": "lavar",
+       "rot": "«LAVAR»",
+       "sub": "«a laranja»",
+       "ic": "«lav»",
+       "precisa": [],
+       "melhor": [],
+       "bom": "«A &#225;gua tirou a <b>sujeira</b> da casca.»",
+       "ruim": "«A &#225;gua tirou a <b>sujeira</b> da casca.»"
+      },
+      {
+       "k": "cortar",
+       "rot": "«CORTAR»",
+       "sub": "«ao meio»",
+       "ic": "«cor»",
+       "precisa": [],
+       "melhor": [
+        "«lavar»"
+       ],
+       "bom": "«A laranja virou <b>duas metades</b>.»",
+       "ruim": "«Cortou! Mas a casca estava <b>suja</b>, e a sujeira entrou junto.»"
+      },
+      {
+       "k": "espremer",
+       "rot": "«ESPREMER»",
+       "sub": "«as metades»",
+       "ic": "«esp»",
+       "precisa": [
+        "«cortar»"
+       ],
+       "melhor": [],
+       "bom": "«O suco <b>escorreu</b> das metades para o pote.»",
+       "ruim": "«A laranja <b>inteira</b> n&#227;o solta suco: ela s&#243; rolou na m&#227;o.»"
+      },
+      {
+       "k": "encher",
+       "rot": "«ENCHER»",
+       "sub": "«o copo»",
+       "ic": "«cop»",
+       "precisa": [
+        "«espremer»"
+       ],
+       "melhor": [],
+       "bom": "«O copo <b>encheu</b> de suco.»",
+       "ruim": "«N&#227;o tinha suco no pote: o copo ficou <b>vazio</b>.»"
+      },
+      {
+       "k": "beber",
+       "rot": "«BEBER»",
+       "sub": "«com canudo»",
+       "ic": "«beb»",
+       "precisa": [
+        "«encher»"
+       ],
+       "melhor": [],
+       "bom": "«Glup, glup: o copo <b>esvaziou</b>.»",
+       "ruim": "«O canudo fez <b>shhh</b> num copo vazio.»"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f10",
+   "mec": "tabela",
+   "selo": "TABELA",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo3",
+   "dados": [
+    "«Bia»",
+    "«Caio»",
+    "«Dani»"
+   ],
+   "dadosExtra": {
+    "QUANDO": [
+     "«SEG»",
+     "«QUA»",
+     "«SEX»"
+    ],
+    "DADOS": [
+     [
+      3,
+      5,
+      2
+     ],
+     [
+      4,
+      1,
+      5
+     ],
+     [
+      2,
+      4,
+      6
+     ]
+    ],
+    "PERG": [
+     {
+      "li": 0,
+      "co": 1,
+      "txt": "«Quantos livros a <b>Bia</b> leu na <b>QUA</b>?»",
+      "dic": "«Ache primeiro a linha da <b>Bia</b>. Depois desca pela coluna <b>QUA</b>.»",
+      "fim": "«A Bia leu <b>5</b> na quarta.»"
+     },
+     {
+      "li": 1,
+      "co": 2,
+      "txt": "«Em que dia o <b>Caio</b> leu <b>5</b> livros?»",
+      "dic": "«Ande pela linha do <b>Caio</b> at&#233; achar o <b>5</b>. Depois olhe a etiqueta de cima.»",
+      "fim": "«Foi na <b>SEX</b> que o Caio leu 5.»"
+     },
+     {
+      "li": 0,
+      "co": 2,
+      "txt": "«Quem leu <b>2</b> livros na <b>SEX</b>?»",
+      "dic": "«Desca pela coluna <b>SEX</b> at&#233; achar o <b>2</b>. Depois olhe a etiqueta da esquerda.»",
+      "fim": "«Quem leu 2 na sexta foi a <b>Bia</b>.»"
+     }
+    ]
+   }
+  },
+  {
+   "id": "f11",
+   "mec": "padrao",
+   "selo": "PADRAO",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo3",
+   "dados": [
+    {
+     "selo": "«A FILA DAS FORMAS»",
+     "enun": "«Continue a fila. <b>O que vem depois?</b>»",
+     "seq": [
+      "c",
+      "q",
+      "c",
+      "q",
+      "c",
+      "q",
+      "c"
+     ],
+     "mostra": 4,
+     "paleta": [
+      "c",
+      "q",
+      "t"
+     ],
+     "regra": "«um c&#237;rculo, um quadrado, e come&#231;a de novo»",
+     "grupo": 2,
+     "grupoTxt": "«c&#237;rculo, quadrado»",
+     "d1": "«Leia a fila apontando com o dedo, do come&#231;o: c&#237;rculo, quadrado, c&#237;rculo, quadrado...»"
+    },
+    {
+     "selo": "«CLARA, ESCURA, ESCURA»",
+     "enun": "«Agora o grupo &#233; maior. <b>Continue a fila.</b>»",
+     "seq": [
+      "L",
+      "E",
+      "E",
+      "L",
+      "E",
+      "E",
+      "L",
+      "E",
+      "E"
+     ],
+     "mostra": 6,
+     "paleta": [
+      "L",
+      "E",
+      "R"
+     ],
+     "regra": "«uma clara, duas escuras»",
+     "grupo": 3,
+     "grupoTxt": "«uma clara e duas escuras»",
+     "d1": "«Conte quantas escuras vem depois de cada clara. S&#227;o sempre as mesmas.»"
+    },
+    {
+     "selo": "«AS BATIDAS DO TAMBOR»",
+     "enun": "«Tr&#234;s batidas diferentes se repetem. <b>Continue.</b>»",
+     "seq": [
+      "F",
+      "M",
+      "f",
+      "F",
+      "M",
+      "f",
+      "F",
+      "M",
+      "f"
+     ],
+     "mostra": 6,
+     "paleta": [
+      "F",
+      "M",
+      "f"
+     ],
+     "regra": "«forte, m&#233;dia, fraca, e come&#231;a de novo»",
+     "grupo": 3,
+     "grupoTxt": "«forte, m&#233;dia, fraca»",
+     "d1": "«Bata na mesa junto com a fila: forte, m&#233;dia, fraca. Depois da fraca, o que volta?»"
+    },
+    {
+     "selo": "«DE QUANTO EM QUANTO?»",
+     "enun": "«Aqui o padr&#227;o &#233; um <b>salto</b>. Continue a fila.»",
+     "seq": [
+      "2",
+      "4",
+      "6",
+      "8",
+      "10",
+      "12",
+      "14"
+     ],
+     "mostra": 4,
+     "paleta": [
+      "9",
+      "10",
+      "11",
+      "12",
+      "13",
+      "14"
+     ],
+     "regra": "«de 2 em 2»",
+     "grupo": 0,
+     "salto": 2,
+     "grupoTxt": "«o salto de 2 em 2»",
+     "d1": "«Olhe o salto de um n&#250;mero para o outro: de 2 para 4, de 4 para 6. Quanto anda cada vez?»"
+    }
+   ],
+   "dadosExtra": {
+    "PEC": {
+     "c": {
+      "n": "«C&#205;RCULO»",
+      "cls": "«pdsh pdcirc»",
+      "hz": 523.25
+     },
+     "q": {
+      "n": "«QUADRADO»",
+      "cls": "«pdsh pdquad»",
+      "hz": 392
+     },
+     "t": {
+      "n": "«TRI&#194;NGULO»",
+      "cls": "«pdsh pdtri»",
+      "hz": 659.25
+     },
+     "L": {
+      "n": "«CLARA»",
+      "cls": "«pdsh pdclara»",
+      "hz": 698.46
+     },
+     "E": {
+      "n": "«ESCURA»",
+      "cls": "«pdsh pdescura»",
+      "hz": 329.63
+     },
+     "R": {
+      "n": "«RISCADA»",
+      "cls": "«pdsh pdriscada»",
+      "hz": 466.16
+     },
+     "F": {
+      "n": "«FORTE»",
+      "cls": "«pdsh pdfor»",
+      "hz": 220
+     },
+     "M": {
+      "n": "«M&#201;DIA»",
+      "cls": "«pdsh pdmed»",
+      "hz": 329.63
+     },
+     "f": {
+      "n": "«FRACA»",
+      "cls": "«pdsh pdfra»",
+      "hz": 523.25
+     }
+    }
+   }
+  },
+  {
+   "id": "f12",
+   "mec": "contadores",
+   "selo": "CONTADORES",
+   "enunciado": "«o que a criança tem que fazer aqui»",
+   "dica": "«o 1º degrau do andaime: onde olhar»",
+   "conceito": "objetivo3",
+   "dados": [
+    {
+     "alvo": 5,
+     "ini": 0,
+     "item": "",
+     "pl": "«sementes»",
+     "sing": "«semente»",
+     "verbo": "«Ponha»",
+     "onde": "«na terra»",
+     "label": "«NA TERRA»",
+     "selo": "«O CANTEIRO»"
+    },
+    {
+     "alvo": 8,
+     "ini": 3
+    },
+    {
+     "alvo": 6,
+     "ini": 9
+    }
+   ]
+  }
+ ]
+}
