@@ -136,7 +136,7 @@ var TXT={
   ganhou:"Muito bem! Você montou o seu desenho!",
   fim:"Você pintou e montou tudo! Que artista! Agora pegue o lápis de cor e pinte no papel de verdade."
 };
-function txtPinta(d){ return "Pinte "+d.voz+" do seu jeito. Quando terminar, toque em pronto."; }
+function txtPinta(d){ return "Toque numa cor e depois toque em "+d.voz+" para pintar. Quando terminar, toque em pronto."; }
 
 /* ---------- CAPA ---------- */
 function telaCapa(){
@@ -152,8 +152,8 @@ function telaCapa(){
   c.appendChild(bt); app.appendChild(c);
 }
 
-/* ---------- PINTAR ---------- */
-var cxT, cvT, imgLinha, pmarea, palco;
+/* ---------- PINTAR POR ÁREA (balde) ---------- */
+var cxT, cvT, imgLinha, pmarea, palco, _mask=null, _linhaOk=false;
 function telaPinta(){
   if(rodada>=DES.length){ telaFim(); return; }
   estado="pintar"; var d=DES[rodada]; app.innerHTML="";
@@ -166,15 +166,18 @@ function telaPinta(){
   pmarea=el("div"); pmarea.id="pmarea";
   palco=el("div"); palco.id="palco";
   cvT=el("canvas"); cvT.id="tinta"; cvT.width=W; cvT.height=H; cxT=cvT.getContext("2d"); cxT.fillStyle="#fff"; cxT.fillRect(0,0,W,H);
-  imgLinha=el("img"); imgLinha.id="linha"; imgLinha.alt=""; imgLinha.crossOrigin="anonymous"; imgLinha.src="img/"+d.img+".png";
+  imgLinha=el("img"); imgLinha.id="linha"; imgLinha.alt=""; imgLinha.crossOrigin="anonymous";
+  _mask=null; _linhaOk=false;
+  imgLinha.onload=function(){ _linhaOk=true; capturaMascara(); };
+  imgLinha.src="img/"+d.img+".png";
   palco.appendChild(cvT); palco.appendChild(imgLinha); pmarea.appendChild(palco); app.appendChild(pmarea);
 
   var pal=el("div"); pal.id="paleta"; montaPaleta(pal); app.appendChild(pal);
   var barra=el("div"); barra.id="barra";
   var b=el("button","btn","Pronto!"); b.id="btpronto"; b.disabled=true; b.onclick=function(){ if(estado==="pintar") recortar(); };
   barra.appendChild(b); app.appendChild(barra);
-  app.appendChild(el("div","dica","Passe o dedo para pintar. Escolha as cores em cima."));
-  ligaPintura();
+  app.appendChild(el("div","dica","Escolha uma cor e toque no desenho para pintar. Pode trocar quantas quiser."));
+  ligaBalde();
   falar("pt_pinta_"+d.img, txtPinta(d));
 }
 function montaPaleta(pal){
@@ -184,17 +187,48 @@ function montaPaleta(pal){
   e.onpointerdown=function(){arma();apagando=true;selc(pal,e);tom(300,.05,"sine",.08);}; pal.appendChild(e);
 }
 function selc(pal,x){ [].forEach.call(pal.children,function(c){c.className=c.className.replace(" sel","");}); x.className+=" sel"; }
-var pintando=false, px=0, py=0;
-function posc(e){ var r=cvT.getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width*W,y:(e.clientY-r.top)/r.height*H}; }
-function ligaPintura(){
-  palco.addEventListener("pointerdown",function(e){ if(estado!=="pintar")return; arma(); palco.setPointerCapture(e.pointerId);
-    pintando=true; var p=posc(e); px=p.x;py=p.y; risca(px+.1,py+.1); var b=document.getElementById("btpronto"); if(b)b.disabled=false; });
-  palco.addEventListener("pointermove",function(e){ if(!pintando)return; var p=posc(e); risca(p.x,p.y); });
-  function up(){pintando=false;} palco.addEventListener("pointerup",up); palco.addEventListener("pointercancel",up);
+/* Balde por área (copiado do Ateliê de Cores): a criança escolhe a cor e TOCA
+   numa região; a tinta preenche até o CONTORNO. A barreira é a MÁSCARA do traço
+   original (não "pixel escuro"), então dá para trocar a cor por cima à vontade. */
+function posc(e){ var r=cvT.getBoundingClientRect(); return {x:Math.round((e.clientX-r.left)/r.width*W),y:Math.round((e.clientY-r.top)/r.height*H)}; }
+function ligaBalde(){
+  palco.addEventListener("pointerdown",function(e){ if(estado!=="pintar")return; arma();
+    if(!_linhaOk||!imgLinha.complete)return; if(!_mask)capturaMascara();
+    var p=posc(e); baldePintar(p.x,p.y); e.preventDefault(); });
 }
-function risca(x,y){ cxT.globalCompositeOperation="source-over"; cxT.strokeStyle=apagando?"#fff":cor;
-  cxT.lineWidth=apagando?70:46; cxT.lineCap="round"; cxT.lineJoin="round";
-  cxT.beginPath(); cxT.moveTo(px,py); cxT.lineTo(x,y); cxT.stroke(); px=x; py=y; }
+function hexRgb(h){h=(""+h).replace("#","");if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}
+  return [parseInt(h.substring(0,2),16),parseInt(h.substring(2,4),16),parseInt(h.substring(4,6),16)];}
+/* máscara do contorno: pinta a LINHA (escura E acinzentada) do desenho em 880×880
+   fora da tela e marca 1 onde há traço. Cor pintada (canal vivo) nunca cai aqui. */
+function capturaMascara(){
+  if(!imgLinha||!imgLinha.complete)return;
+  var off=document.createElement("canvas"); off.width=W;off.height=H; var oc=off.getContext("2d");
+  oc.fillStyle="#fff"; oc.fillRect(0,0,W,H);
+  try{ oc.drawImage(imgLinha,0,0,W,H); }catch(e){ _mask=null; return; }
+  var img; try{ img=oc.getImageData(0,0,W,H); }catch(e){ _mask=null; return; }
+  var d=img.data,n=W*H,m=[],i,r,g,b,mx,mn;
+  for(i=0;i<n;i++){ r=d[i*4];g=d[i*4+1];b=d[i*4+2];
+    mx=(r>g?(r>b?r:b):(g>b?g:b)); mn=(r<g?(r<b?r:b):(g<b?g:b));
+    m[i]=(mx<120&&(mx-mn)<45)?1:0; }
+  _mask=m;
+}
+function baldePintar(sx,sy){ if(!cxT)return; if(sx<0||sy<0||sx>=W||sy>=H)return;
+  var nc=apagando?[255,255,255]:hexRgb(cor);
+  var img,d; try{ img=cxT.getImageData(0,0,W,H); d=img.data; }catch(e){ return; }
+  var startI=sy*W+sx,si=startI*4,tr=d[si],tg=d[si+1],tb=d[si+2];
+  function ehLinha(idx){ return _mask?(_mask[idx]===1):false; }
+  if(ehLinha(startI))return;                                   /* tocou no traço */
+  if(tr===nc[0]&&tg===nc[1]&&tb===nc[2])return;                /* já é dessa cor */
+  var stack=[startI],pintou=false;
+  while(stack.length){ var idx=stack.pop(),i=idx*4,r=d[i],g=d[i+1],b=d[i+2];
+    if(ehLinha(idx))continue;                                  /* barreira: contorno */
+    if(Math.abs(r-tr)>60||Math.abs(g-tg)>60||Math.abs(b-tb)>60)continue;
+    d[i]=nc[0];d[i+1]=nc[1];d[i+2]=nc[2];d[i+3]=255;pintou=true;
+    var x=idx%W,y=(idx-x)/W;
+    if(x+1<W)stack.push(idx+1); if(x-1>=0)stack.push(idx-1);
+    if(y+1<H)stack.push(idx+W); if(y-1>=0)stack.push(idx-W); }
+  if(pintou){ cxT.putImageData(img,0,0); tom(560+Math.random()*80,.09,"triangle",.12); var bt=document.getElementById("btpronto"); if(bt)bt.disabled=false; }
+}
 
 /* ---------- RECORTAR + BANDEJA ---------- */
 var pecas=[], slots=[], faltam=0, LIN=3, COL=4, cellW=0, cellH=0, lado=0, ktray=.6, snapImg="";
