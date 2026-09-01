@@ -88,4 +88,14 @@ echo "   • Bancada INTEIRA ('bash _qa/auditar.sh <html>') -> UMA vez, só p/ a
 echo "   • 'os portões do que mexi passaram' != 'a bancada aprovou'. E nunca dizer que passou sem código 0."
 echo "🎨 [ARTE — regra do Marcos, SEMPRE] O Claude NÃO gera arte (nada de Pollinations nem gerar-imagens.yml)."
 echo "   O Claude PASSA OS PROMPTS (em bloco copiável) e o MARCOS gera e sobe. O Claude só RECORTA/trata o que ele subir."
+
+# 📤 [commitado ≠ publicado] avisa conserto que ficou preso no repo sem ir ao ar
+# (lição paga set/2026: a prova de matemática foi corrigida e commitada, mas não
+# publicada — no ar continuou a versão velha). Roda de graça (só git).
+if [ -f _qa/publicado.py ]; then
+  SAIDA_PUB="$(python3 _qa/publicado.py 2>/dev/null)"
+  if printf '%s' "$SAIDA_PUB" | grep -q "PRESO NO REPO"; then
+    echo "$SAIDA_PUB"
+  fi
+fi
 exit 0
