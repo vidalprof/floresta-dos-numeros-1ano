@@ -1307,6 +1307,7 @@ def confere_contra_motor(js_out):
 
 def main():
     escrever = "--escrever" in sys.argv
+    conferir = "--conferir" in sys.argv
     prontas, sem_porta, sem_gaveta, sem_css = [], [], [], []
     gaveta_perdida = []   # TECNICA que é array/objeto mas escapou da detecção (bug do intruso)
     gavetas = {}
@@ -1570,8 +1571,8 @@ def main():
     if sem_gaveta:
         print(u"  %d SEM GAVETA — vao rodar com o conteudo de EXEMPLO delas: %s"
               % (len(sem_gaveta), ", ".join(sem_gaveta)))
-    if not escrever:
-        print(u"  (--escrever para gerar pecas.js e pecas.css)")
+    if not escrever and not conferir:
+        print(u"  (--escrever para gerar pecas.js e pecas.css; --conferir para o portao de drift)")
         return 0
 
     # PORTÃO DO CSS VAZADO (ver a lição em `SELETOR_OK`): prosa que virou
@@ -1583,23 +1584,60 @@ def main():
         print(u"     conserte o comentario na peca; nada foi escrito.")
         return 1
 
-    # o mapa das gavetas: é ele que o autor do conteudo.json consulta para saber
-    # o formato de `dados` de cada mecânica (sem abrir 74 arquivos)
-    io.open(os.path.join(AQUI, "pecas.json"), "w", encoding="utf-8").write(
-        json.dumps({
+    # ---- os 3 arquivos que o integrador GERA, montados em memoria (para poder
+    #      tanto ESCREVER quanto CONFERIR sem escrever) ----
+    alvo_json = json.dumps({
             "_leia": u"O FORMATO DE `dados` DE CADA MECANICA. Ao escrever o "
                      u"conteudo.json, a fase pode trazer um campo `dados` com "
                      u"o conteudo dela; o formato e o mesmo do `exemplo` aqui, "
                      u"que e o proprio bloco de exemplo da peca. Sem `dados`, a "
                      u"fase roda com o exemplo — util para ver a mecanica "
                      u"funcionando, NUNCA para entregar ao Marcos.",
-            "gavetas": gavetas}, ensure_ascii=False, indent=1, sort_keys=True))
+            "gavetas": gavetas}, ensure_ascii=False, indent=1, sort_keys=True)
+    alvo_js = u"/* GERADO por integrar.py — nao editar a mao */\n" + FERRAMENTAS + "".join(js_out)
+    alvo_css = u"/* GERADO por integrar.py — nao editar a mao */\n" + CSS_PONTE + "\n".join(css_out)
 
-    io.open(os.path.join(AQUI, "pecas.js"), "w", encoding="utf-8").write(
-        u"/* GERADO por integrar.py — nao editar a mao */\n" + FERRAMENTAS
-        + "".join(js_out))
-    io.open(os.path.join(AQUI, "pecas.css"), "w", encoding="utf-8").write(
-        u"/* GERADO por integrar.py — nao editar a mao */\n" + CSS_PONTE + "\n".join(css_out))
+    # ⭐⭐ PORTÃO ANTI-DRIFT (Feirinha, set/2026): um conserto que vive SÓ no
+    #    pecas.js/pecas.css (editado a mao) e nunca foi para a .html fonte SOME
+    #    sem aviso no proximo `integrar --escrever`. Foi o caso do trava-toque do
+    #    ELEFANTE: existia no pecas.js, faltava no .html. Aqui o `--conferir`
+    #    regera em memoria e compara com o commitado: se divergir, ALGUEM editou o
+    #    arquivo gerado a mao (ou esqueceu de rodar o integrar). Reprova e diz
+    #    onde, sem escrever nada. Rodar no CI/na banca antes de confiar no motor.
+    if conferir:
+        import difflib
+        difs = []
+        for nome, alvo in ((u"pecas.js", alvo_js), (u"pecas.css", alvo_css),
+                           (u"pecas.json", alvo_json)):
+            cam = os.path.join(AQUI, nome)
+            atual = io.open(cam, encoding="utf-8").read() if os.path.exists(cam) else u""
+            if atual != alvo:
+                difs.append((nome, atual, alvo))
+        if difs:
+            print(u"  ⛔ DRIFT — o arquivo GERADO nao bate com o que o integrar")
+            print(u"     produz a partir das pecas .html. Alguem editou o gerado a")
+            print(u"     mao (fix que some no proximo integrar) OU esqueceu de rodar")
+            print(u"     `integrar.py --escrever`. Arquivo(s): %s"
+                  % ", ".join(n for n, _, _ in difs))
+            for nome, atual, alvo in difs:
+                da = atual.splitlines(); db = alvo.splitlines()
+                trechos = [l for l in difflib.unified_diff(
+                    da, db, fromfile=nome+" (commitado)", tofile=nome+" (integrar)",
+                    lineterm="", n=1)][:24]
+                print(u"     --- %s (%d -> %d linhas) ---" % (nome, len(da), len(db)))
+                for l in trechos:
+                    print(u"     " + l)
+            print(u"     conserto: leve o fix para a peca .html fonte e rode")
+            print(u"     `integrar.py --escrever` (ver task #38 / _padrao/pecas/).")
+            return 1
+        print(u"  ✅ sem drift: pecas.js/css/json batem com as pecas .html fonte.")
+        return 0
+
+    # o mapa das gavetas: é ele que o autor do conteudo.json consulta para saber
+    # o formato de `dados` de cada mecânica (sem abrir 74 arquivos)
+    io.open(os.path.join(AQUI, "pecas.json"), "w", encoding="utf-8").write(alvo_json)
+    io.open(os.path.join(AQUI, "pecas.js"), "w", encoding="utf-8").write(alvo_js)
+    io.open(os.path.join(AQUI, "pecas.css"), "w", encoding="utf-8").write(alvo_css)
     print(u"  escrito: pecas.js (%d KB) e pecas.css (%d KB)"
           % (sum(len(x) for x in js_out) // 1024,
              sum(len(x) for x in css_out) // 1024))
