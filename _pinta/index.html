@@ -290,7 +290,12 @@ function recortar(){
 }
 function setSize(p,r,c,kk){ p.style.width=(EW*kk)+"px"; p.style.height=(EH*kk)+"px";
   p.style.backgroundSize=(lado*kk)+"px "+(lado*kk)+"px";
-  p.style.backgroundPosition="-"+((c*cellW-Mx)*kk)+"px -"+((r*cellH-My)*kk)+"px"; }
+  /* ⚠️ o deslocamento pode ser NEGATIVO (peças da borda, por causa da margem do
+     encaixe Mx/My). Montar "-"+valor viraria "--3px" (CSS inválido) e o navegador
+     cairia em 0 0 -> várias peças mostravam o MESMO canto (pareciam repetidas).
+     Formatar o número com o próprio sinal resolve. */
+  var ox=-(c*cellW-Mx)*kk, oy=-(r*cellH-My)*kk;
+  p.style.backgroundPosition=ox+"px "+oy+"px"; }
 function xy(dst,r,c){ return {l:dst.offsetLeft+c*cellW-Mx, t:dst.offsetTop+r*cellH-My}; }  /* topo-esq da caixa estendida, coords do #pmarea */
 function faiscas(){ var pr=palco.getBoundingClientRect(), ar=pmarea.getBoundingClientRect(), i;
   for(i=0;i<16;i++){ (function(){ var f=el("div","faisca");
