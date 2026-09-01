@@ -125,8 +125,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .dnfruta.dnriscada:after{content:"";position:absolute;left:2px;right:2px;top:50%;
       height:3px;margin-top:-1px;background:#c0392b;
       -webkit-transform:rotate(-18deg);transform:rotate(-18deg);border-radius:2px}
-/* os sinais + − = , grandes */
+/* os sinais + − ÷ × = , grandes */
 .dnsinal{display:inline-block;margin:0 6px;font-size:30px;font-weight:800;color:#221a12;background:#fff8e7;border-radius:10px;padding:2px 11px;box-shadow:0 2px 4px rgba(0,0,0,.22)}
+/* número grande p/ divisão/multiplicação (5º ano: divisor de 2 algarismos, sem frutas) */
+.dnbig{display:inline-block;margin:0 4px;font-size:clamp(30px,9vw,46px);font-weight:800;color:#221a12;background:#fff8e7;border-radius:12px;padding:4px 16px;box-shadow:0 2px 5px rgba(0,0,0,.22)}
 /* as vagas da resposta, logo depois do "=" */
 .dnvagas{display:inline-block;margin:0 0 0 4px}
 /* a vaga: cheia = borda INTEIRA + o digito dentro (forma, nao so cor). E o
@@ -245,7 +247,8 @@ var ENUN="Digite quanto d&#225;.";
 var FECHO="Voc&#234; calculou todas as contas!";
 var CONTAS=[
   {a:3,b:2,op:"+",img:"",resp:5,dic:"Conte as 3 e continue: <b>4, 5</b>."},
-  {a:8,b:3,op:"-",img:"",resp:5,dic:"Do 8, tire 3: <b>7, 6, 5</b>."}
+  {a:8,b:3,op:"-",img:"",resp:5,dic:"Do 8, tire 3: <b>7, 6, 5</b>."},
+  {a:84,b:7,op:"÷",resp:12,dic:"Quantas vezes o <b>7</b> cabe no 84? Pense na tabuada do 7."}
 ];
 var DIGS="0123456789"; /*TECNICA*/
 var rodada=0, escrito="", errosSeg=0, telaAtual=null, barraP=null;
@@ -257,7 +260,8 @@ var resp="", vagas=[], numteclas=[];
 var NOMEDIG={"0":"zero","1":"um","2":"dois","3":"três","4":"quatro",
   "5":"cinco","6":"seis","7":"sete","8":"oito","9":"nove"};
 /* o sinal por extenso, para o alto-falante da conta */
-var OPNOME={"+":"mais","-":"menos","−":"menos"};
+var OPNOME={"+":"mais","-":"menos","−":"menos","÷":"dividido por",":":"dividido por","/":"dividido por","×":"vezes","x":"vezes","*":"vezes"};
+function ehDivMult(op){ return op==="÷"||op===":"||op==="/"||op==="×"||op==="x"||op==="*"; }
 
 /* ⚠️ A FIGURA (a fruta do suporte visual) vem do MOTOR (`imgEl`, que sabe onde
    mora a pasta `img/`). Aqui na bancada ela nao existe, e a conta aparece com
@@ -324,9 +328,19 @@ function grupoFrutas(n,img,riscarDoFim){
    direita: [frutas] [sinal] ... [=] [vagas]. Para grupos grandes o CSS quebra
    em varias linhas (flex-wrap), para nao estourar a tela. */
 function suporteVisual(r){
+  var box=el("div","dncontas","");
+  /* ⭐ DIVISÃO/MULTIPLICAÇÃO (5º ano): números grandes, SEM frutas — 84 frutas
+     seria um amontoado. A conta aparece simbólica: "84 ÷ 7 = [ ]". */
+  if(ehDivMult(r.op)){
+    var sinal=(r.op==="×"||r.op==="x"||r.op==="*")?"×":"÷";
+    box.appendChild(el("span","dnbig",String(r.a)));
+    box.appendChild(el("span","dnsinal",sinal));
+    box.appendChild(el("span","dnbig",String(r.b)));
+    box.appendChild(el("span","dnsinal","="));
+    return box;
+  }
   /* ⭐ DOIS BLOCOS (Marcos, ago/2026): bloco à esquerda, sinal no meio, bloco à
      direita, `=` e resposta — tudo numa linha, sinais alinhados. Vale para + e −. */
-  var box=el("div","dncontas","");
   box.appendChild(grupoFrutas(r.a,r.img,0));
   box.appendChild(el("span","dnsinal",(r.op==="-"?"−":"+")));
   box.appendChild(grupoFrutas(r.b,r.img,0));
