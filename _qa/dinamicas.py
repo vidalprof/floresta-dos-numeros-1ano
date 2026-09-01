@@ -534,7 +534,14 @@ def analisa(js, css, baixo, html=None):
                           u"visivel, casa por casa. Sem o pulo vira conta de cabeca.")
 
     # ---------------------------------------------------- COMPARAR (maior/menor)
-    if re.search(r'&gt;|&lt;|maior que|menor que', html) and re.search(r'compara', css + js, re.I):
+    # ⚠️ FALSO POSITIVO PAGO (Marcos, set/2026, prova de matematica): o gatilho
+    #    era "tem simbolo de comparacao E a palavra 'compara' em qualquer lugar" —
+    #    e um QUIZ custom (com uma pergunta de COMPARAR e um '>' solto) caia aqui,
+    #    levava a armadilha do MOTOR que ele NAO usa, e o `entregar` recusava
+    #    publicar. Esta armadilha e da MECANICA `comparar` do ESQUELETO; so vale
+    #    quando a peca esta de fato na pagina (`mec-comparar`, que a peca carimba
+    #    na classe e o CSS estiliza). App custom nao tem isso -> nao e medido aqui.
+    if re.search(r'mec-comparar', css + js):
         usa.append("comparar")
         if not re.search(r'fileira|coluna|barra|monte|torre', js, re.I):
             ruins.append(u"comparar: o sinal aparece sem as duas quantidades LADO A "
