@@ -124,17 +124,32 @@ function pop(i){tom(300+Math.random()*160,.13,"triangle",.16,i*.035);}
 function clique(){tom(660,.08,"square",.12,0);tom(990,.10,"sine",.10,.03);}
 function fanfarra(){[523,659,784,1046].forEach(function(f,i){tom(f,.5,"triangle",.2,i*.12);});}
 
-/* ---------- VOZ (mp3 gravado; cai p/ voz do navegador) ---------- */
+/* ---------- VOZ (mp3 gravado = Francisca, feminina) ----------
+   ⚠️ NUNCA deixar a voz-robô do navegador (speechSynthesis) atropelar o mp3:
+   (1) toda fala nova CANCELA a voz-robô pendente (senão o mp3 feminino e a
+       voz-robô — quase sempre MASCULINA no PC — tocavam JUNTOS);
+   (2) se o navegador BLOQUEIA o áudio no 1º toque, tenta o mp3 de novo em vez
+       de cair na voz-robô masculina;
+   (3) só usa a voz-robô se o mp3 REALMENTE faltar (404), e aí busca voz feminina. */
 var vozAtual=null;
+function pararVoz(){ try{ if(vozAtual){vozAtual.pause();vozAtual=null;} }catch(e){}
+  try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){} }
 function falar(id,texto,fone){
-  try{ if(vozAtual){vozAtual.pause();vozAtual=null;} }catch(e){}
+  pararVoz();
   if(fone){fone.className="fone tocando";setTimeout(function(){fone.className="fone";},1400);}
-  var a=new Audio("audio/"+id+".mp3"); vozAtual=a;
-  a.onerror=function(){ vozNav(texto); };
-  var pr=a.play(); if(pr&&pr.catch)pr.catch(function(){ vozNav(texto); });
+  var a=new Audio("audio/"+id+".mp3"); vozAtual=a; var caiu=false;
+  a.onerror=function(){ if(!caiu){caiu=true; vozNav(texto);} };   /* só 404 real */
+  var pr=a.play();
+  if(pr&&pr.catch)pr.catch(function(){                            /* bloqueio de autoplay: tenta o mp3 de novo, NUNCA voz-robô */
+    setTimeout(function(){ if(vozAtual===a){ try{ a.play(); }catch(e){} } },80); });
 }
+function vozFem(){ try{ var vs=(window.speechSynthesis&&window.speechSynthesis.getVoices())||[];
+  var pt=vs.filter(function(v){return /pt/i.test(v.lang);});
+  return pt.filter(function(v){return /(female|feminin|mulher|Maria|Francisca|Luciana|Fernanda|Vit[oó]ria|Helena|Camila|Ines|In[eê]s)/i.test(v.name);})[0]||pt[0]||null;
+}catch(e){ return null; } }
 function vozNav(t){ try{ if(!window.speechSynthesis)return; var u=new SpeechSynthesisUtterance(t);
-  u.lang="pt-BR";u.rate=.96;u.pitch=1.05;window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}catch(e){} }
+  u.lang="pt-BR";u.rate=.96;u.pitch=1.15; var v=vozFem(); if(v)u.voice=v;
+  window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}catch(e){} }
 ["pointerdown","touchstart","keydown"].forEach(function(ev){ window.addEventListener(ev,arma,{passive:true}); });
 
 var TXT={
