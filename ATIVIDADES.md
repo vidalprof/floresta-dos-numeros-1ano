@@ -31,7 +31,7 @@
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
 | **O Trem do Alfabeto** | Alfabeto, sílabas e palavras | `_trem` | https://vidalprof.github.io/o-trem-do-alfabeto/ |
-| **Pinta e Monta** | Arte/coordenação: a criança pinta um desenho, ele se recorta sozinho e vira quebra-cabeça para montar (8 desenhos, 4→6→9 peças) | `_pinta` | https://vidalprof.github.io/pinta-e-monta/ |
+| **Pinta e Monta** | Arte/coordenação: a criança pinta um desenho, ele se recorta sozinho, as peças caem numa bandeja e ela monta no quadro (8 desenhos, 12→16→20 peças) | `_pinta` | https://vidalprof.github.io/pinta-e-monta/ |
 | **A Padaria das Letras** | Alfabeto e pedaços das palavras | `_padaria` | https://vidalprof.github.io/a-padaria-das-letras/ |
 | **A Lojinha de Brinquedos do Pipo** | Sistema monetário (moedas e cédulas) | `_lojinha` | https://vidalprof.github.io/a-lojinha-de-brinquedos-do-pipo/ |
 | **A Floresta dos Números** | Números (1º ano) | — | https://vidalprof.github.io/floresta-dos-numeros-1ano/ |
