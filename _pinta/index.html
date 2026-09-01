@@ -45,6 +45,27 @@ body{
   -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 #bandeja.rotulo:before{content:"peças aqui";position:absolute;top:5px;left:0;right:0;text-align:center;
   font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--tinta2);opacity:.65;text-transform:uppercase}
+/* GALERIA de miniaturas — a criança ESCOLHE qual desenho pintar (pedido do Marcos).
+   No celular é uma tira que rola no topo; no PC (>=900px) vira barra vertical à ESQUERDA. */
+#pmwrap{display:flex;flex-direction:column;align-items:center;gap:7px;width:100%;flex:1;min-height:0}
+#galeria{display:flex;flex-direction:row;gap:6px;overflow-x:auto;overflow-y:hidden;width:100%;max-width:540px;
+  padding:2px 2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+.gthumb{flex:0 0 auto;width:52px;height:52px;border-radius:12px;background:#fff no-repeat center;background-size:86%;
+  border:3px solid rgba(255,255,255,.85);box-shadow:0 2px 6px rgba(60,40,10,.22);cursor:pointer;padding:0;transition:transform .1s}
+.gthumb:active{transform:scale(.92)}
+.gthumb.sel{border-color:var(--am-b);box-shadow:0 0 0 3px rgba(224,169,42,.55)}
+#pmarea{flex:1 1 auto}
+@media (min-width:900px){
+  #pmwrap{flex-direction:row;align-items:flex-start;justify-content:center;gap:10px}
+  #galeria{flex-direction:column;width:66px;max-width:66px;max-height:72vh;overflow-y:auto;overflow-x:hidden;padding:2px 4px}
+  .gthumb{width:58px;height:58px}
+}
+/* overlay do professor (senha 1275@) — grade grande com todos os desenhos */
+#galmodal{position:fixed;inset:0;z-index:90;background:rgba(40,28,14,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+#galmodal .gm{background:var(--giz);border-radius:20px;padding:16px;max-width:560px;width:100%;max-height:86vh;overflow:auto;box-shadow:var(--sombra)}
+#galmodal .gmgrade{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;margin-top:10px}
+#galmodal .gthumb{width:100%;height:72px}
 .peca{position:absolute;cursor:grab;z-index:30;background-repeat:no-repeat;
   filter:drop-shadow(0 3px 4px rgba(60,40,10,.34));will-change:left,top,width,height,transform}
 .peca.voando{transition:left .55s cubic-bezier(.22,1,.36,1),top .55s cubic-bezier(.22,1,.36,1),width .22s,height .22s,background-size .22s,transform .55s cubic-bezier(.22,1,.36,1)}
@@ -97,14 +118,26 @@ body{
 var CORES=["#e4483f","#ff6b5c","#f3902a","#ffb14e","#ffd23e","#fff275","#a8d13a","#3fa94b","#1f7a3a","#2f9e8f","#35c4d4","#4fb0f7","#3f7cd6","#26408b","#8e5bd0","#b57cff","#f49ac2","#ff4fa3","#c68642","#f1c9a5","#7a4a24","#5a3d24","#3a2b1c","#9aa0a6"];
 /* lin×col = nº de peças. Sobe de 12 a 20 (pedido do Marcos). */
 var DES=[
- {img:"qc_dragao",  voz:"o dragão",    lin:3,col:4},  /* 12 */
- {img:"qc_castelo", voz:"o castelo",   lin:3,col:4},  /* 12 */
- {img:"qc_balao",   voz:"o balão",     lin:4,col:4},  /* 16 */
- {img:"qc_polvo",   voz:"o polvo",     lin:4,col:4},  /* 16 */
- {img:"qc_coruja",  voz:"a coruja",    lin:4,col:4},  /* 16 */
- {img:"qc_robo",    voz:"o robô",      lin:4,col:5},  /* 20 */
- {img:"qc_pinguim", voz:"o pinguim",   lin:4,col:5},  /* 20 */
- {img:"qc_trem",    voz:"o trenzinho", lin:4,col:5}   /* 20 */
+ {img:"qc_dragao",        voz:"o dragão",     lin:3,col:4},
+ {img:"qc_castelo",       voz:"o castelo",    lin:3,col:4},
+ {img:"qc_balao",         voz:"o balão",      lin:4,col:4},
+ {img:"qc_polvo",         voz:"o polvo",      lin:4,col:4},
+ {img:"qc_coruja",        voz:"a coruja",     lin:4,col:4},
+ {img:"qc_robo",          voz:"o robô",       lin:4,col:5},
+ {img:"qc_pinguim",       voz:"o pinguim",    lin:4,col:5},
+ {img:"qc_trem",          voz:"o trenzinho",  lin:4,col:5},
+ {img:"qc_capivara",      voz:"a capivara",   lin:3,col:4},
+ {img:"qc_bichinho",      voz:"o bichinho",   lin:4,col:4},
+ {img:"qc_fada",          voz:"a fada",       lin:3,col:4},
+ {img:"qc_menina_flor",   voz:"a menina",     lin:4,col:4},
+ {img:"qc_menina_vestido",voz:"a menina",     lin:3,col:4},
+ {img:"qc_menina_oculos", voz:"a menina",     lin:3,col:4},
+ {img:"qc_amigo_alto",    voz:"o amigo alto", lin:3,col:4},
+ {img:"qc_robo_bravo",    voz:"o robô",       lin:3,col:4},
+ {img:"qc_super_a",       voz:"a heroína",    lin:3,col:4},
+ {img:"qc_super_b",       voz:"a heroína",    lin:3,col:4},
+ {img:"qc_super_c",       voz:"a heroína",    lin:3,col:4},
+ {img:"qc_super_trio",    voz:"as heroínas",  lin:4,col:5}
 ];
 var W=880,H=880, rodada=0, cor=CORES[0], apagando=false, estado="capa", feitos=0;
 var app=document.getElementById("app");
@@ -193,7 +226,8 @@ function telaPinta(){
   _mask=null; _linhaOk=false;
   imgLinha.onload=function(){ _linhaOk=true; capturaMascara(); };
   imgLinha.src="img/"+d.img+".png";
-  palco.appendChild(cvT); palco.appendChild(imgLinha); pmarea.appendChild(palco); app.appendChild(pmarea);
+  palco.appendChild(cvT); palco.appendChild(imgLinha); pmarea.appendChild(palco);
+  var wrap=el("div"); wrap.id="pmwrap"; wrap.appendChild(montaGaleria(rodada)); wrap.appendChild(pmarea); app.appendChild(wrap);
 
   var pal=el("div"); pal.id="paleta"; montaPaleta(pal); app.appendChild(pal);
   var barra=el("div"); barra.id="barra";
@@ -210,6 +244,22 @@ function montaPaleta(pal){
   e.onpointerdown=function(){arma();apagando=true;selc(pal,e);tom(300,.05,"sine",.08);}; pal.appendChild(e);
 }
 function selc(pal,x){ [].forEach.call(pal.children,function(c){c.className=c.className.replace(" sel","");}); x.className+=" sel"; }
+/* ---------- GALERIA: escolher qual desenho pintar ---------- */
+function fazThumb(i,cur){ var b=el("button","gthumb"+(i===cur?" sel":""));
+  b.style.backgroundImage="url(\"img/"+DES[i].img+".png\")"; b.setAttribute("aria-label","Pintar "+DES[i].voz);
+  b.onclick=function(){ arma(); trocaDesenho(i); }; return b; }
+function montaGaleria(cur){ var g=el("div"); g.id="galeria"; for(var i=0;i<DES.length;i++) g.appendChild(fazThumb(i,cur)); return g; }
+function trocaDesenho(i){ if(i===rodada && estado==="pintar") return; fecharGalModal(); rodada=i; telaPinta(); }
+/* senha do professor 1275@: overlay com TODOS os desenhos (atalho p/ testar/escolher) */
+function abreGalModal(){ if(document.getElementById("galmodal"))return;
+  var ov=el("div"); ov.id="galmodal"; ov.onclick=function(e){ if(e.target===ov) fecharGalModal(); };
+  var box=el("div","gm"); box.appendChild(el("div","selo","Escolha um desenho"));
+  var grade=el("div","gmgrade"); for(var i=0;i<DES.length;i++) grade.appendChild(fazThumb(i,rodada));
+  box.appendChild(grade); ov.appendChild(box); document.body.appendChild(ov); }
+function fecharGalModal(){ var m=document.getElementById("galmodal"); if(m&&m.parentNode) m.parentNode.removeChild(m); }
+var _mk="";
+window.addEventListener("keydown",function(e){ var k=e.key||""; if(k.length===1){ _mk=(_mk+k).slice(-6);
+  if(_mk.indexOf("1275@")>=0){ _mk=""; abreGalModal(); } } });
 /* Balde por área (copiado do Ateliê de Cores): a criança escolhe a cor e TOCA
    numa região; a tinta preenche até o CONTORNO. A barreira é a MÁSCARA do traço
    original (não "pixel escuro"), então dá para trocar a cor por cima à vontade. */
