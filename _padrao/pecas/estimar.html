@@ -89,7 +89,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* O POTE: o monte que a crianca olha. Os itens ficam espalhados de verdade
    (grade com sacudida), porque monte alinhado se conta com o dedo e ai a
    estimativa deixa de existir. */
-.pote{position:relative;height:150px;max-width:430px;margin:12px auto 0;overflow:hidden;
+/* ⚠️ LICAO PAGA (Feirinha, set/2026): sem `width:100%` o pote colapsava numa
+   BARRA FINA vertical dentro da atividade (pai flex `align-items:center`, itens
+   `position:absolute` = largura 0). Na bancada solta o pai nao e flex, passava batido. */
+.pote{position:relative;width:100%;height:150px;max-width:430px;margin:12px auto 0;overflow:hidden;
       background:#e8dfc9;border:4px solid #b3903c;border-radius:16px 16px 26px 26px}
 .pote.mini{height:92px}
 .pit{position:absolute;display:block;width:26px;height:26px;margin:-13px 0 0 -13px;
@@ -255,12 +258,13 @@ document.addEventListener("pointerdown",function(){ac();},false);
 var CENAS=[
  {n:8,  max:20, ini:10, qa:6,  cls:"",     seed:17, ancora:0,
   selo:"O POTE DE BOT&Otilde;ES",   coisa:"bot&otilde;es",          voz:"botões",
-  atalhos:[5,10,15]},
+  quantos:"quantos", atalhos:[5,10,15]},
  {n:14, max:30, ini:15, qa:10, cls:"grao", seed:53, ancora:1,
   selo:"O POTE DE MILHO",           coisa:"gr&atilde;os de milho",  voz:"grãos",
-  atalhos:[5,10,20]},
+  quantos:"quantos", atalhos:[5,10,20]},
  {n:22, max:40, ini:20, qa:22, cls:"gude", seed:91, ancora:1,
   selo:"O POTE DE BOLINHAS",        coisa:"bolinhas de gude",       voz:"bolinhas",
+  quantos:"quantas",
   atalhos:[10,20,30]}
 ];
 /* a dica de estratégia que fica DEPOIS da conferência: ela só faz sentido
@@ -375,11 +379,14 @@ function telaOlhada(){
   ger++; travada=false; palpite=0;
   document.onkeydown=null;
   var g=ger, cn=cena();
+  /* ⚠️ LICAO PAGA (Feirinha, set/2026): "quantos" era fixo, ignorando o genero
+     da coisa ("quantos FRUTAS"). Cada cena declara `quantos` (quantas/quantos). */
+  var qp=cn.quantos||"quantos";
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/CENAS.length));
   var c=el("div","centro");
   c.appendChild(el("div","selo","OLHADA R&Aacute;PIDA"));
-  c.appendChild(el("div","balao","Olhe r&aacute;pido: quantos <b>"+cn.coisa+
+  c.appendChild(el("div","balao","Olhe r&aacute;pido: "+qp+" <b>"+cn.coisa+
                    "</b> tem no pote? <b>N&atilde;o d&aacute; tempo de contar!</b>"));
   c.appendChild(montaPote(false,false));
   if(cn.ancora) montaAncora(c);
@@ -397,7 +404,7 @@ function telaOlhada(){
   t.appendChild(c); app.appendChild(t);
   setTimeout(function(){ if(g!==ger) return; barra.style.width="0%"; },40);
   setTimeout(function(){ fechaTampa(g); },4200);
-  diz("Olhe rápido. Quantos " + cn.voz + " tem no pote?");
+  diz("Olhe rápido. " + (cn.quantosVoz||qp) + " " + cn.voz + " tem no pote?");
 }
 /* ⚠️ a mesma porta para o botão e para o relógio: quem chegar primeiro fecha, o
    outro encontra a trava. Sem isso o relógio disparava depois de a criança já
@@ -418,12 +425,13 @@ function telaPalpite(){
   limpa();
   ger++; travada=false;
   var g=ger, cn=cena();
+  var qp=cn.quantos||"quantos";
   valor=cn.ini;
   var t=el("div","tela");
   setProg(t, Math.round((ri+0.34)*100/CENAS.length));
   var c=el("div","centro");
   c.appendChild(el("div","selo","O SEU PALPITE"));
-  c.appendChild(el("div","balao","Tampou! Sem contar: quantos <b>"+cn.coisa+
+  c.appendChild(el("div","balao","Tampou! Sem contar: "+qp+" <b>"+cn.coisa+
                    "</b> voc&ecirc; acha que tem a&iacute; dentro?"));
   c.appendChild(montaPote(true,true));
 
@@ -476,7 +484,7 @@ function telaPalpite(){
     else if(k===39||k===38){ mudaValor(valor+1,true); if(e.preventDefault) e.preventDefault(); }
     else if(k===13||k===32){ valeOPalpite(g); if(e.preventDefault) e.preventDefault(); }
   };
-  diz("Sem contar: quantos você acha que tem?");
+  diz("Sem contar: " + (cn.quantosVoz||qp) + " você acha que tem?");
 }
 function mudaValor(v,mexeFaixa){
   var cn=cena();

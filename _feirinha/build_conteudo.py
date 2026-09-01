@@ -384,9 +384,9 @@ add(id=u"f22", mec=u"estimar", selo=u"CHUTE ESPERTO", conceito=u"objetivo5",
     enunciado=u"Sem contar de um em um: quantas frutas você acha que tem neste pote?",
     dica=u"Olhe um punhado e imagine quantos punhados cabem.",
     dados=[{u"n":14, u"max":30, u"ini":15, u"qa":10, u"cls":u"", u"seed":41, u"ancora":1,
-            u"selo":u"O POTE DE FRUTAS", u"coisa":u"frutas", u"voz":u"frutas", u"atalhos":[5,10,20]},
+            u"selo":u"O POTE DE FRUTAS", u"coisa":u"frutas", u"voz":u"frutas", u"quantos":u"quantas", u"atalhos":[5,10,20]},
            {u"n":19, u"max":30, u"ini":15, u"qa":12, u"cls":u"grao", u"seed":58, u"ancora":1,
-            u"selo":u"O SACO DE GRÃOS", u"coisa":u"grãos", u"voz":u"grãos", u"atalhos":[5,10,20]}],
+            u"selo":u"O SACO DE GRÃOS", u"coisa":u"grãos", u"voz":u"grãos", u"quantos":u"quantos", u"atalhos":[5,10,20]}],
     dadosExtra={u"ESTRAT":[u"Escolha um cantinho, conte quantas tem ali.",
                            u"Veja quantas vezes aquele cantinho cabe no pote.",
                            u"Chegou perto? Ótimo! Estimar é chegar perto sem contar tudo."]})
@@ -506,9 +506,9 @@ add(id=u"f32", mec=u"estimar", selo=u"O TOTAL DO DIA", conceito=u"objetivo5",
     enunciado=u"Fechando a feira: sem contar tudo, quantas frutas você acha que sobraram?",
     dica=u"Olhe um punhado e imagine quantos cabem.",
     dados=[{u"n":22, u"max":40, u"ini":20, u"qa":18, u"cls":u"gude", u"seed":73, u"ancora":1,
-            u"selo":u"O CESTO DO FIM DO DIA", u"coisa":u"frutas", u"voz":u"frutas", u"atalhos":[10,20,30]},
+            u"selo":u"O CESTO DO FIM DO DIA", u"coisa":u"frutas", u"voz":u"frutas", u"quantos":u"quantas", u"atalhos":[10,20,30]},
            {u"n":16, u"max":40, u"ini":20, u"qa":14, u"cls":u"", u"seed":29, u"ancora":1,
-            u"selo":u"A ÚLTIMA CAIXA", u"coisa":u"frutas", u"voz":u"frutas", u"atalhos":[10,20,30]}],
+            u"selo":u"A ÚLTIMA CAIXA", u"coisa":u"frutas", u"voz":u"frutas", u"quantos":u"quantas", u"atalhos":[10,20,30]}],
     dadosExtra={u"ESTRAT":[u"Conte um cantinho do cesto.",
                            u"Veja quantas vezes ele cabe no cesto todo.",
                            u"Chegou perto? Estimar é acertar por volta, sem contar tudo!"]})
@@ -570,9 +570,9 @@ _R3 = {
  u"f05": {u"p":3, u"ate":18, u"dic":u"De 3 em 3: 3, 6, 9, 12, 15, 18."},
  u"f31": {u"p":2, u"ate":20, u"dic":u"De 2 em 2 até 20."},
  u"f22": {u"n":11, u"max":30, u"ini":15, u"qa":9, u"cls":u"gude", u"seed":63, u"ancora":1,
-          u"selo":u"O POTE DE BOLINHAS", u"coisa":u"bolinhas", u"voz":u"bolinhas", u"atalhos":[5,10,20]},
+          u"selo":u"O POTE DE BOLINHAS", u"coisa":u"bolinhas", u"voz":u"bolinhas", u"quantos":u"quantas", u"atalhos":[5,10,20]},
  u"f32": {u"n":27, u"max":40, u"ini":20, u"qa":24, u"cls":u"grao", u"seed":88, u"ancora":1,
-          u"selo":u"O SACO DA SOBRA", u"coisa":u"grãos", u"voz":u"grãos", u"atalhos":[10,20,30]},
+          u"selo":u"O SACO DA SOBRA", u"coisa":u"grãos", u"voz":u"grãos", u"quantos":u"quantos", u"atalhos":[10,20,30]},
 }
 # 4ª rodada em algumas fases, para fechar o piso de 40 min
 _R4 = {
@@ -648,10 +648,15 @@ for _f in CONTEUDO[u"fases"]:
 # numero por extenso (as vozes ja existem do escolher). cer e out.
 # ==================================================================
 def _numvoz(x):
-    # completar so aceita string em cer/out; opcao-numero vira PALAVRA (padrao da
-    # casa: opcao de completar e palavra, vozeada). O digito fica no enunciado.
+    # ⚠️ LICAO PAGA (Feirinha, set/2026, Marcos JOGANDO): a 3ª opcao do "quanto
+    # falta" ficava ESCONDIDA atras dos botoes Ouvir/Dica. Causa: a opcao-numero
+    # virava PALAVRA ("três"/"quatro", >4 letras), e a peca `completar` empilha
+    # opcao longa em TARJAS verticais -> tres tarjas + figura estouravam a tela.
+    # Conserto: a opcao vira {t:"3", voz:"três"} — DIGITO na tela (tamanho 1 ->
+    # ladrilhos lado a lado, cabem numa linha) e a PALAVRA no alto-falante (o
+    # VOZOK grava pelo `voz`; o voz_bate aceita digito lido por extenso).
     if isinstance(x, str) and x.isdigit():
-        return _EXT.get(int(x), x)
+        return {u"t": x, u"voz": _EXT.get(int(x), x)}
     return x
 
 # ==================================================================
@@ -706,6 +711,40 @@ for _f in CONTEUDO[u"fases"]:
                 _r[u"cer"] = _numvoz(_r[u"cer"])
             if u"out" in _r:
                 _r[u"out"] = [_numvoz(x) for x in _r[u"out"]]
+
+# ==================================================================
+# ⭐ COMPARAR = QUALITATIVO "QUAL TEM MAIS/MENOS" (Feirinha, set/2026, Marcos
+#    JOGANDO). A peca `comparar` responde QUAL tem mais (a crianca TOCA a banca),
+#    nao "quantos a mais" (numero). O selo dizia "QUANTAS A MAIS?" e a dica "toque
+#    no numero" — promessa que a mecanica nao cumpre. E, com imagem de fruta, a
+#    peca caia no texto de DINHEIRO ("qual vale mais?") — resto de clone da Lojinha.
+#    Conserto (dado): `dinheiro:False` (destrava o texto de QUANTIDADE, ja no
+#    pecas.js) + selo/enun/voz/D1 no que a peca REALMENTE faz. O "quantos a mais"
+#    como NUMERO segue coberto pelo `completar` (f20 — quanto falta p/ igualar).
+# ==================================================================
+_CMP_D1 = [u"Olhe o número em cada banca.",
+           u"O número maior é o que tem mais; o menor, o que tem menos.",
+           u"Toque na banca certa."]
+for _f in CONTEUDO[u"fases"]:
+    if _f.get(u"mec") != u"comparar":
+        continue
+    _menos = False
+    for _r in _f.get(u"dados", []):
+        if not isinstance(_r, dict):
+            continue
+        _r[u"dinheiro"] = False
+        _pm = (_r.get(u"pergunta") == u"menos")
+        if _pm:
+            _menos = True
+        _r[u"selo"] = u"QUAL TEM MENOS?" if _pm else u"QUAL TEM MAIS?"
+        _r[u"enun"] = u"Qual banca tem <b>menos</b>?" if _pm else u"Qual banca tem <b>mais</b>?"
+        _r[u"voz"] = u"Qual banca tem menos?" if _pm else u"Qual banca tem mais?"
+    _f[u"selo"] = u"QUAL TEM MENOS?" if _menos else u"QUAL TEM MAIS?"
+    _f[u"enunciado"] = (u"Compare as duas bancas e toque na que tem "
+                        + (u"<b>menos</b>." if _menos else u"<b>mais</b>."))
+    _f[u"dica"] = u"Olhe o número de cada banca: o maior tem mais."
+    _f.setdefault(u"dadosExtra", {})
+    _f[u"dadosExtra"][u"D1"] = list(_CMP_D1)
 
 # ==================================================================
 # ⭐ DUAS INTERATIVIDADES NOVAS DE TOQUE (Marcos, ago/2026: "outras

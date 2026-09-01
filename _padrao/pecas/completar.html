@@ -379,7 +379,10 @@ var ENUN="Toque no peda&#231;o que <b>falta</b> na frase.";
 var DEPOIS="Leia a frase inteira antes de escolher.";
 var FECHO="Voc&#234; fechou todas as frases!";
 var FRASES=[
-  {img:"", ante:"O peixe vive na ",dep:".",cer:"&#225;gua",out:["areia","nuvem"],
+  /* ⭐ a opcao pode ser STRING ("areia") ou OBJETO {t,voz}: `t` = o que a crianca
+     VE (ex.: o digito "3"), `voz` = o que o alto-falante DIZ ("três"). Declarado
+     no exemplo p/ o montador saber que a peca LE `t`/`voz`. */
+  {img:"", ante:"O peixe vive na ",dep:".",cer:{t:"&#225;gua",voz:"água"},out:["areia","nuvem"],
    dic:"Pense no lugar onde o peixe <b>nada</b>."},
   {ante:"A abelha faz o ",dep:".",cer:"mel",out:["leite","p&#227;o"],
    dic:"&#201; docinho e fica guardado na colmeia."},

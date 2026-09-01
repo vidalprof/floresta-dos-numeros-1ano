@@ -8705,7 +8705,11 @@ var RODS=[
     novos no peca.sh (blocos, sem imagem). */
  {a:6,b:9,modo:"blocos",selo:"QUEM TEM MENOS?",
   enun:"Agora ao contr&aacute;rio: <b>quem tem menos</b>?",
-  voz:"Agora ao contrário. Quem tem menos?", pergunta:"menos", semSinal:true}
+  voz:"Agora ao contrário. Quem tem menos?", pergunta:"menos", semSinal:true,
+  /* ⭐ `dinheiro`: false = comparacao de QUANTIDADE (fruta/blocos) -> texto "qual
+     tem mais"; ausente ou true = DINHEIRO (cedula) -> "qual vale mais". Declarado
+     aqui p/ o montador saber que a peca LE o campo (senao reprova a fase). */
+  dinheiro:false}
 ];
 var NOMEA="TURMA AZUL", NOMEB="TURMA LARANJA";
 var VOZA="turma azul", VOZB="turma laranja";
@@ -8798,20 +8802,32 @@ function telaComp(){
   c.appendChild(cmp);
 
   var temImg=!!(r.imgA||r.imgB);
+  /* ⚠️⚠️ LICAO PAGA (Feirinha, set/2026, Marcos JOGANDO): a peca dizia "Olhe o
+     DINHEIRO: qual vale mais?" numa comparacao de CENOURAS e TOMATES — resto de
+     clone do uso original (Lojinha). A regra: `imgA/imgB` sozinho NAO quer dizer
+     dinheiro; quem afirma dinheiro e o `dinheiro:true` (ou a ausencia do flag,
+     p/ nao mexer na Lojinha ja publicada). Fruta = `dinheiro:false` -> texto de
+     QUANTIDADE ("qual tem mais?"). */
+  var money = temImg && (r.dinheiro!==false);
   msgEl=el("div","msgc","");
-  msgEl.innerHTML = temImg
+  msgEl.innerHTML = money
     ? (pergAtual==="menos" ? "Olhe o dinheiro: <b>qual vale menos</b>?"
                            : "Olhe o dinheiro: <b>qual vale mais</b>?")
-    : ((r.modo==="numeros")
-       ? "Sem contar nada: <b>qual n&uacute;mero &eacute; o maior</b>?"
-       : "As duas come&ccedil;am na mesma borda.");
+    : (temImg
+       ? (pergAtual==="menos" ? "Olhe as duas bancas: <b>qual tem menos</b>?"
+                              : "Olhe as duas bancas: <b>qual tem mais</b>?")
+       : ((r.modo==="numeros")
+          ? "Sem contar nada: <b>qual n&uacute;mero &eacute; o maior</b>?"
+          : "As duas come&ccedil;am na mesma borda."));
   c.appendChild(msgEl);
 
   acaoEl=el("div","acao","");
   c.appendChild(acaoEl);
-  c.appendChild(el("div","hint", temImg
+  c.appendChild(el("div","hint", money
                    ? ((pergAtual==="menos" ? "Toque no dinheiro que vale menos" : "Toque no dinheiro que vale mais")+" &#8212; ou use as teclas <b>1</b>, <b>2</b> e <b>3</b>.")
-                   : "Toque na fileira que tem mais &#8212; ou use as teclas <b>1</b>, <b>2</b> e <b>3</b>."));
+                   : (temImg
+                      ? ((pergAtual==="menos" ? "Toque na banca que tem menos" : "Toque na banca que tem mais")+" &#8212; ou use as teclas <b>1</b>, <b>2</b> e <b>3</b>.")
+                      : "Toque na fileira que tem mais &#8212; ou use as teclas <b>1</b>, <b>2</b> e <b>3</b>.")));
   t.appendChild(c); app.appendChild(t);
 
   montaPasso1(g);
@@ -9128,11 +9144,16 @@ function fechaRodada(g,ms){
     if(g!==ger||!viva()) return;
     ri++;
     if(ri<RODS.length){ telaComp(); return; }
+    var _dinh=false, _z; for(_z=0;_z<RODS.length;_z++){ var _rz=RODS[_z]||{};
+      if((_rz.imgA||_rz.imgB)&&_rz.dinheiro!==false){ _dinh=true; break; } }
     mostraBanner(mostrouSinal
       ? "<b>Voc&ecirc; comparou e deu nome!</b><br>Primeiro a gente <b>v&ecirc;</b> "+
         "quem tem mais; o sinal s&oacute; conta isso por escrito."
-      : "<b>Voc&ecirc; comparou o dinheiro!</b><br>Olhando os dois, d&aacute; para ver "+
-        "qual vale <b>mais</b>, qual vale <b>menos</b> e quando valem <b>igual</b>.", fimComp);
+      : (_dinh
+         ? "<b>Voc&ecirc; comparou o dinheiro!</b><br>Olhando os dois, d&aacute; para ver "+
+           "qual vale <b>mais</b>, qual vale <b>menos</b> e quando valem <b>igual</b>."
+         : "<b>Voc&ecirc; comparou as bancas!</b><br>Olhando as duas, d&aacute; para ver "+
+           "qual tem <b>mais</b>, qual tem <b>menos</b> e quando t&ecirc;m o <b>mesmo tanto</b>."), fimComp);
   },ms);
 }
 
@@ -9313,7 +9334,10 @@ var ENUN="Toque no peda&#231;o que <b>falta</b> na frase.";
 var DEPOIS="Leia a frase inteira antes de escolher.";
 var FECHO="Voc&#234; fechou todas as frases!";
 var FRASES=[
-  {img:"", ante:"O peixe vive na ",dep:".",cer:"&#225;gua",out:["areia","nuvem"],
+  /* ⭐ a opcao pode ser STRING ("areia") ou OBJETO {t,voz} — `t` e o que a
+     crianca VE (ex.: o digito "3"), `voz` e o que o alto-falante DIZ ("três").
+     Declarado no exemplo p/ o montador saber que a peca LE `t`/`voz`. */
+  {img:"", ante:"O peixe vive na ",dep:".",cer:{t:"&#225;gua",voz:"água"},out:["areia","nuvem"],
    dic:"Pense no lugar onde o peixe <b>nada</b>."},
   {ante:"A abelha faz o ",dep:".",cer:"mel",out:["leite","p&#227;o"],
    dic:"&#201; docinho e fica guardado na colmeia."},
@@ -15225,13 +15249,13 @@ MEC["estimar"] = function(f, cen, fim){
 var CENAS=[
  {n:8,  max:20, ini:10, qa:6,  cls:"",     seed:17, ancora:0,
   selo:"O POTE DE BOT&Otilde;ES",   coisa:"bot&otilde;es",          voz:"botões",
-  atalhos:[5,10,15]},
+  quantos:"quantos", atalhos:[5,10,15]},
  {n:14, max:30, ini:15, qa:10, cls:"grao", seed:53, ancora:1,
   selo:"O POTE DE MILHO",           coisa:"gr&atilde;os de milho",  voz:"grãos",
-  atalhos:[5,10,20]},
+  quantos:"quantos", atalhos:[5,10,20]},
  {n:22, max:40, ini:20, qa:22, cls:"gude", seed:91, ancora:1,
   selo:"O POTE DE BOLINHAS",        coisa:"bolinhas de gude",       voz:"bolinhas",
-  atalhos:[10,20,30]}
+  quantos:"quantas", atalhos:[10,20,30]}
 ];
 /* a dica de estratégia que fica DEPOIS da conferência: ela só faz sentido
    quando a criança acabou de ver o próprio palpite ao lado do número real. */
@@ -15345,11 +15369,15 @@ function telaOlhada(){
   ger++; travada=false; palpite=0;
   document.onkeydown=null;
   var g=ger, cn=cena();
+  /* ⚠️ LICAO PAGA (Feirinha, set/2026): a peca dizia "quantos FRUTAS" — o
+     "quantos" estava fixo, ignorando o genero da coisa. Cada cena declara o
+     `quantos` ("quantas" p/ frutas/bolinhas, "quantos" p/ graos/botoes). */
+  var qp=cn.quantos||"quantos";
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/CENAS.length));
   var c=el("div","centro");
   c.appendChild(el("div","selo","OLHADA R&Aacute;PIDA"));
-  c.appendChild(el("div","balao","Olhe r&aacute;pido: quantos <b>"+cn.coisa+
+  c.appendChild(el("div","balao","Olhe r&aacute;pido: "+qp+" <b>"+cn.coisa+
                    "</b> tem no pote? <b>N&atilde;o d&aacute; tempo de contar!</b>"));
   c.appendChild(montaPote(false,false));
   if(cn.ancora) montaAncora(c);
@@ -15367,7 +15395,7 @@ function telaOlhada(){
   t.appendChild(c); app.appendChild(t);
   setTimeout(function(){ if(g!==ger) return; barra.style.width="0%"; },40);
   setTimeout(function(){ fechaTampa(g); },4200);
-  diz("Olhe rápido. Quantos " + cn.voz + " tem no pote?");
+  diz("Olhe rápido. " + (cn.quantosVoz||qp) + " " + cn.voz + " tem no pote?");
 }
 /* ⚠️ a mesma porta para o botão e para o relógio: quem chegar primeiro fecha, o
    outro encontra a trava. Sem isso o relógio disparava depois de a criança já
@@ -15388,12 +15416,13 @@ function telaPalpite(){
   limpa();
   ger++; travada=false;
   var g=ger, cn=cena();
+  var qp=cn.quantos||"quantos";
   valor=cn.ini;
   var t=el("div","tela");
   setProg(t, Math.round((ri+0.34)*100/CENAS.length));
   var c=el("div","centro");
   c.appendChild(el("div","selo","O SEU PALPITE"));
-  c.appendChild(el("div","balao","Tampou! Sem contar: quantos <b>"+cn.coisa+
+  c.appendChild(el("div","balao","Tampou! Sem contar: "+qp+" <b>"+cn.coisa+
                    "</b> voc&ecirc; acha que tem a&iacute; dentro?"));
   c.appendChild(montaPote(true,true));
 
@@ -15446,7 +15475,7 @@ function telaPalpite(){
     else if(k===39||k===38){ mudaValor(valor+1,true); if(e.preventDefault) e.preventDefault(); }
     else if(k===13||k===32){ valeOPalpite(g); if(e.preventDefault) e.preventDefault(); }
   };
-  diz("Sem contar: quantos você acha que tem?");
+  diz("Sem contar: " + (cn.quantosVoz||qp) + " você acha que tem?");
 }
 function mudaValor(v,mexeFaixa){
   var cn=cena();

@@ -311,10 +311,10 @@
    "var": "GAVETAS"
   },
   "comparar": {
-   "exemplo": "[\n /* ⭐ imgA/imgB VAZIOS no exemplo: declaram os campos (para o montador saber que\n    a peca os LE) sem carregar imagem nenhuma na bancada (\"\"=sem figura, cai no\n    modo blocos). Numa atividade de dinheiro, a gaveta preenche com a cedula. */\n {a:5,b:3,modo:\"blocos\",imgA:\"\",imgB:\"\",selo:\"QUEM TEM MAIS?\",\n  enun:\"Olhe as duas fileiras. <b>Quem tem mais</b>?\",\n  voz:\"Olhe as duas fileiras. Quem tem mais?\"},\n {a:4,b:4,modo:\"blocos\",selo:\"SER&Aacute; QUE EMPATA?\",\n  enun:\"E agora? Olhe bem: <b>quem tem mais</b>?\",\n  voz:\"E agora? Olhe bem: quem tem mais?\"},\n {a:7,b:9,modo:\"blocos\",selo:\"POR POUCO\",\n  enun:\"Estas duas est&atilde;o quase iguais. <b>Quem tem mais</b>?\",\n  voz:\"Estas duas estão quase iguais. Quem tem mais?\"},\n {a:12,b:8,modo:\"numeros\",selo:\"S&Oacute; OS N&Uacute;MEROS\",\n  enun:\"Agora s&oacute; os n&uacute;meros. <b>Qual &eacute; o maior</b>?\",\n  voz:\"Agora só os números. Qual é o maior?\"},\n /* ⭐ declara `pergunta` (\"mais\"/\"menos\") e `semSinal` (pula o passo do sinal,\n    p/ o 1º ano) — sem eles o montador acha que a peca nao le esses campos e a\n    fase de dinheiro sairia vazia. Esta rodada tambem exercita os dois caminhos\n    novos no peca.sh (blocos, sem imagem). */\n {a:6,b:9,modo:\"blocos\",selo:\"QUEM TEM MENOS?\",\n  enun:\"Agora ao contr&aacute;rio: <b>quem tem menos</b>?\",\n  voz:\"Agora ao contrário. Quem tem menos?\", pergunta:\"menos\", semSinal:true}\n]",
+   "exemplo": "[\n /* ⭐ imgA/imgB VAZIOS no exemplo: declaram os campos (para o montador saber que\n    a peca os LE) sem carregar imagem nenhuma na bancada (\"\"=sem figura, cai no\n    modo blocos). Numa atividade de dinheiro, a gaveta preenche com a cedula. */\n {a:5,b:3,modo:\"blocos\",imgA:\"\",imgB:\"\",selo:\"QUEM TEM MAIS?\",\n  enun:\"Olhe as duas fileiras. <b>Quem tem mais</b>?\",\n  voz:\"Olhe as duas fileiras. Quem tem mais?\"},\n {a:4,b:4,modo:\"blocos\",selo:\"SER&Aacute; QUE EMPATA?\",\n  enun:\"E agora? Olhe bem: <b>quem tem mais</b>?\",\n  voz:\"E agora? Olhe bem: quem tem mais?\"},\n {a:7,b:9,modo:\"blocos\",selo:\"POR POUCO\",\n  enun:\"Estas duas est&atilde;o quase iguais. <b>Quem tem mais</b>?\",\n  voz:\"Estas duas estão quase iguais. Quem tem mais?\"},\n {a:12,b:8,modo:\"numeros\",selo:\"S&Oacute; OS N&Uacute;MEROS\",\n  enun:\"Agora s&oacute; os n&uacute;meros. <b>Qual &eacute; o maior</b>?\",\n  voz:\"Agora só os números. Qual é o maior?\"},\n /* ⭐ declara `pergunta` (\"mais\"/\"menos\") e `semSinal` (pula o passo do sinal,\n    p/ o 1º ano) — sem eles o montador acha que a peca nao le esses campos e a\n    fase de dinheiro sairia vazia. Esta rodada tambem exercita os dois caminhos\n    novos no peca.sh (blocos, sem imagem). */\n {a:6,b:9,modo:\"blocos\",selo:\"QUEM TEM MENOS?\",\n  enun:\"Agora ao contr&aacute;rio: <b>quem tem menos</b>?\",\n  voz:\"Agora ao contrário. Quem tem menos?\", pergunta:\"menos\", semSinal:true,\n  /* ⭐ `dinheiro`: false = comparacao de QUANTIDADE (fruta/blocos) -> \"qual tem\n     mais\"; ausente/true = DINHEIRO (cedula) -> \"qual vale mais\". Declarado p/ o\n     montador saber que a peca LE o campo (senao reprova a fase). */\n  dinheiro:false}\n]",
    "exemplos": {
     "D1": "[\n \"As duas fileiras come&ccedil;am no <b>mesmo lugar</b>. Olhe onde cada uma <b>termina</b>.\",\n \"Corra o dedo pelas duas ao mesmo tempo. A que ainda tem pe&ccedil;a quando a outra acabou &eacute; a que tem <b>mais</b>.\"\n]",
-    "RODS": "[\n /* ⭐ imgA/imgB VAZIOS no exemplo: declaram os campos (para o montador saber que\n    a peca os LE) sem carregar imagem nenhuma na bancada (\"\"=sem figura, cai no\n    modo blocos). Numa atividade de dinheiro, a gaveta preenche com a cedula. */\n {a:5,b:3,modo:\"blocos\",imgA:\"\",imgB:\"\",selo:\"QUEM TEM MAIS?\",\n  enun:\"Olhe as duas fileiras. <b>Quem tem mais</b>?\",\n  voz:\"Olhe as duas fileiras. Quem tem mais?\"},\n {a:4,b:4,modo:\"blocos\",selo:\"SER&Aacute; QUE EMPATA?\",\n  enun:\"E agora? Olhe bem: <b>quem tem mais</b>?\",\n  voz:\"E agora? Olhe bem: quem tem mais?\"},\n {a:7,b:9,modo:\"blocos\",selo:\"POR POUCO\",\n  enun:\"Estas duas est&atilde;o quase iguais. <b>Quem tem mais</b>?\",\n  voz:\"Estas duas estão quase iguais. Quem tem mais?\"},\n {a:12,b:8,modo:\"numeros\",selo:\"S&Oacute; OS N&Uacute;MEROS\",\n  enun:\"Agora s&oacute; os n&uacute;meros. <b>Qual &eacute; o maior</b>?\",\n  voz:\"Agora só os números. Qual é o maior?\"},\n /* ⭐ declara `pergunta` (\"mais\"/\"menos\") e `semSinal` (pula o passo do sinal,\n    p/ o 1º ano) — sem eles o montador acha que a peca nao le esses campos e a\n    fase de dinheiro sairia vazia. Esta rodada tambem exercita os dois caminhos\n    novos no peca.sh (blocos, sem imagem). */\n {a:6,b:9,modo:\"blocos\",selo:\"QUEM TEM MENOS?\",\n  enun:\"Agora ao contr&aacute;rio: <b>quem tem menos</b>?\",\n  voz:\"Agora ao contrário. Quem tem menos?\", pergunta:\"menos\", semSinal:true}\n]",
+    "RODS": "[\n /* ⭐ imgA/imgB VAZIOS no exemplo: declaram os campos (para o montador saber que\n    a peca os LE) sem carregar imagem nenhuma na bancada (\"\"=sem figura, cai no\n    modo blocos). Numa atividade de dinheiro, a gaveta preenche com a cedula. */\n {a:5,b:3,modo:\"blocos\",imgA:\"\",imgB:\"\",selo:\"QUEM TEM MAIS?\",\n  enun:\"Olhe as duas fileiras. <b>Quem tem mais</b>?\",\n  voz:\"Olhe as duas fileiras. Quem tem mais?\"},\n {a:4,b:4,modo:\"blocos\",selo:\"SER&Aacute; QUE EMPATA?\",\n  enun:\"E agora? Olhe bem: <b>quem tem mais</b>?\",\n  voz:\"E agora? Olhe bem: quem tem mais?\"},\n {a:7,b:9,modo:\"blocos\",selo:\"POR POUCO\",\n  enun:\"Estas duas est&atilde;o quase iguais. <b>Quem tem mais</b>?\",\n  voz:\"Estas duas estão quase iguais. Quem tem mais?\"},\n {a:12,b:8,modo:\"numeros\",selo:\"S&Oacute; OS N&Uacute;MEROS\",\n  enun:\"Agora s&oacute; os n&uacute;meros. <b>Qual &eacute; o maior</b>?\",\n  voz:\"Agora só os números. Qual é o maior?\"},\n /* ⭐ declara `pergunta` (\"mais\"/\"menos\") e `semSinal` (pula o passo do sinal,\n    p/ o 1º ano) — sem eles o montador acha que a peca nao le esses campos e a\n    fase de dinheiro sairia vazia. Esta rodada tambem exercita os dois caminhos\n    novos no peca.sh (blocos, sem imagem). */\n {a:6,b:9,modo:\"blocos\",selo:\"QUEM TEM MENOS?\",\n  enun:\"Agora ao contr&aacute;rio: <b>quem tem menos</b>?\",\n  voz:\"Agora ao contrário. Quem tem menos?\", pergunta:\"menos\", semSinal:true,\n  /* ⭐ `dinheiro`: false = comparacao de QUANTIDADE (fruta/blocos) -> \"qual tem\n     mais\"; ausente/true = DINHEIRO (cedula) -> \"qual vale mais\". Declarado p/ o\n     montador saber que a peca LE o campo (senao reprova a fase). */\n  dinheiro:false}\n]",
     "UNM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\",\n         \"onze\",\"doze\",\"treze\",\"catorze\",\"quinze\",\"dezesseis\",\"dezessete\",\"dezoito\",\n         \"dezenove\",\"vinte\"]"
    },
    "gavetas": [
@@ -327,12 +327,12 @@
    "var": "RODS"
   },
   "completar": {
-   "exemplo": "[\n  {img:\"\", ante:\"O peixe vive na \",dep:\".\",cer:\"&#225;gua\",out:[\"areia\",\"nuvem\"],\n   dic:\"Pense no lugar onde o peixe <b>nada</b>.\"},\n  {ante:\"A abelha faz o \",dep:\".\",cer:\"mel\",out:[\"leite\",\"p&#227;o\"],\n   dic:\"&#201; docinho e fica guardado na colmeia.\"},\n  {ante:\"A chuva cai da \",dep:\".\",cer:\"nuvem\",out:[\"pedra\",\"janela\"],\n   dic:\"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover.\"}\n]",
+   "exemplo": "[\n  /* ⭐ a opcao pode ser STRING (\"areia\") ou OBJETO {t,voz}: `t` = o que a crianca\n     VE (ex.: o digito \"3\"), `voz` = o que o alto-falante DIZ (\"três\"). Declarado\n     no exemplo p/ o montador saber que a peca LE `t`/`voz`. */\n  {img:\"\", ante:\"O peixe vive na \",dep:\".\",cer:{t:\"&#225;gua\",voz:\"água\"},out:[\"areia\",\"nuvem\"],\n   dic:\"Pense no lugar onde o peixe <b>nada</b>.\"},\n  {ante:\"A abelha faz o \",dep:\".\",cer:\"mel\",out:[\"leite\",\"p&#227;o\"],\n   dic:\"&#201; docinho e fica guardado na colmeia.\"},\n  {ante:\"A chuva cai da \",dep:\".\",cer:\"nuvem\",out:[\"pedra\",\"janela\"],\n   dic:\"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover.\"}\n]",
    "exemplos": {
     "DEPOIS": "\"Leia a frase inteira antes de escolher.\"",
     "ENUN": "\"Toque no peda&#231;o que <b>falta</b> na frase.\"",
     "FECHO": "\"Voc&#234; fechou todas as frases!\"",
-    "FRASES": "[\n  {img:\"\", ante:\"O peixe vive na \",dep:\".\",cer:\"&#225;gua\",out:[\"areia\",\"nuvem\"],\n   dic:\"Pense no lugar onde o peixe <b>nada</b>.\"},\n  {ante:\"A abelha faz o \",dep:\".\",cer:\"mel\",out:[\"leite\",\"p&#227;o\"],\n   dic:\"&#201; docinho e fica guardado na colmeia.\"},\n  {ante:\"A chuva cai da \",dep:\".\",cer:\"nuvem\",out:[\"pedra\",\"janela\"],\n   dic:\"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover.\"}\n]"
+    "FRASES": "[\n  /* ⭐ a opcao pode ser STRING (\"areia\") ou OBJETO {t,voz}: `t` = o que a crianca\n     VE (ex.: o digito \"3\"), `voz` = o que o alto-falante DIZ (\"três\"). Declarado\n     no exemplo p/ o montador saber que a peca LE `t`/`voz`. */\n  {img:\"\", ante:\"O peixe vive na \",dep:\".\",cer:{t:\"&#225;gua\",voz:\"água\"},out:[\"areia\",\"nuvem\"],\n   dic:\"Pense no lugar onde o peixe <b>nada</b>.\"},\n  {ante:\"A abelha faz o \",dep:\".\",cer:\"mel\",out:[\"leite\",\"p&#227;o\"],\n   dic:\"&#201; docinho e fica guardado na colmeia.\"},\n  {ante:\"A chuva cai da \",dep:\".\",cer:\"nuvem\",out:[\"pedra\",\"janela\"],\n   dic:\"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover.\"}\n]"
    },
    "gavetas": [
     "FRASES",
@@ -458,6 +458,30 @@
    ],
    "var": "PALAVRAS"
   },
+  "digitar-numero": {
+   "exemplo": "[\n  {a:3,b:2,op:\"+\",img:\"\",resp:5,dic:\"Conte as 3 e continue: <b>4, 5</b>.\"},\n  {a:8,b:3,op:\"-\",img:\"\",resp:5,dic:\"Do 8, tire 3: <b>7, 6, 5</b>.\"}\n]",
+   "exemplos": {
+    "CONTAS": "[\n  {a:3,b:2,op:\"+\",img:\"\",resp:5,dic:\"Conte as 3 e continue: <b>4, 5</b>.\"},\n  {a:8,b:3,op:\"-\",img:\"\",resp:5,dic:\"Do 8, tire 3: <b>7, 6, 5</b>.\"}\n]",
+    "DIGS": "\"0123456789\"",
+    "ENUN": "\"Digite quanto d&#225;.\"",
+    "FECHO": "\"Voc&#234; calculou todas as contas!\"",
+    "NOMEDIG": "{\"0\":\"zero\",\"1\":\"um\",\"2\":\"dois\",\"3\":\"três\",\"4\":\"quatro\",\n  \"5\":\"cinco\",\"6\":\"seis\",\"7\":\"sete\",\"8\":\"oito\",\"9\":\"nove\"}",
+    "OPNOME": "{\"+\":\"mais\",\"-\":\"menos\",\"−\":\"menos\"}"
+   },
+   "gavetas": [
+    "CONTAS",
+    "NOMEDIG",
+    "OPNOME",
+    "ENUN",
+    "FECHO",
+    "DIGS"
+   ],
+   "regra": "primeiro vetor",
+   "tecnicas": [
+    "DIGS"
+   ],
+   "var": "CONTAS"
+  },
   "ditado": {
    "exemplo": "[\n  {id:\"pc_dit1\", txt:\"NUVEM\",\n   dic:\"Diga baixinho, devagar: <b>NU-VEM</b>.\"},\n  {id:\"pc_dit2\", txt:\"JANELA\",\n   dic:\"Diga baixinho: <b>JA-NE-LA</b>. S&#227;o tr&#234;s peda&#231;os.\"},\n  {id:\"pc_dit3\", txt:\"MAR AZUL\",\n   dic:\"S&#227;o <b>duas</b> palavras: primeiro MAR, depois AZUL.\"}\n]",
    "exemplos": {
@@ -541,9 +565,9 @@
    "var": "FOTOS"
   },
   "estimar": {
-   "exemplo": "[\n {n:8,  max:20, ini:10, qa:6,  cls:\"\",     seed:17, ancora:0,\n  selo:\"O POTE DE BOT&Otilde;ES\",   coisa:\"bot&otilde;es\",          voz:\"botões\",\n  atalhos:[5,10,15]},\n {n:14, max:30, ini:15, qa:10, cls:\"grao\", seed:53, ancora:1,\n  selo:\"O POTE DE MILHO\",           coisa:\"gr&atilde;os de milho\",  voz:\"grãos\",\n  atalhos:[5,10,20]},\n {n:22, max:40, ini:20, qa:22, cls:\"gude\", seed:91, ancora:1,\n  selo:\"O POTE DE BOLINHAS\",        coisa:\"bolinhas de gude\",       voz:\"bolinhas\",\n  atalhos:[10,20,30]}\n]",
+   "exemplo": "[\n {n:8,  max:20, ini:10, qa:6,  cls:\"\",     seed:17, ancora:0,\n  selo:\"O POTE DE BOT&Otilde;ES\",   coisa:\"bot&otilde;es\",          voz:\"botões\",\n  quantos:\"quantos\", atalhos:[5,10,15]},\n {n:14, max:30, ini:15, qa:10, cls:\"grao\", seed:53, ancora:1,\n  selo:\"O POTE DE MILHO\",           coisa:\"gr&atilde;os de milho\",  voz:\"grãos\",\n  quantos:\"quantos\", atalhos:[5,10,20]},\n {n:22, max:40, ini:20, qa:22, cls:\"gude\", seed:91, ancora:1,\n  selo:\"O POTE DE BOLINHAS\",        coisa:\"bolinhas de gude\",       voz:\"bolinhas\",\n  quantos:\"quantas\",\n  atalhos:[10,20,30]}\n]",
    "exemplos": {
-    "CENAS": "[\n {n:8,  max:20, ini:10, qa:6,  cls:\"\",     seed:17, ancora:0,\n  selo:\"O POTE DE BOT&Otilde;ES\",   coisa:\"bot&otilde;es\",          voz:\"botões\",\n  atalhos:[5,10,15]},\n {n:14, max:30, ini:15, qa:10, cls:\"grao\", seed:53, ancora:1,\n  selo:\"O POTE DE MILHO\",           coisa:\"gr&atilde;os de milho\",  voz:\"grãos\",\n  atalhos:[5,10,20]},\n {n:22, max:40, ini:20, qa:22, cls:\"gude\", seed:91, ancora:1,\n  selo:\"O POTE DE BOLINHAS\",        coisa:\"bolinhas de gude\",       voz:\"bolinhas\",\n  atalhos:[10,20,30]}\n]",
+    "CENAS": "[\n {n:8,  max:20, ini:10, qa:6,  cls:\"\",     seed:17, ancora:0,\n  selo:\"O POTE DE BOT&Otilde;ES\",   coisa:\"bot&otilde;es\",          voz:\"botões\",\n  quantos:\"quantos\", atalhos:[5,10,15]},\n {n:14, max:30, ini:15, qa:10, cls:\"grao\", seed:53, ancora:1,\n  selo:\"O POTE DE MILHO\",           coisa:\"gr&atilde;os de milho\",  voz:\"grãos\",\n  quantos:\"quantos\", atalhos:[5,10,20]},\n {n:22, max:40, ini:20, qa:22, cls:\"gude\", seed:91, ancora:1,\n  selo:\"O POTE DE BOLINHAS\",        coisa:\"bolinhas de gude\",       voz:\"bolinhas\",\n  quantos:\"quantas\",\n  atalhos:[10,20,30]}\n]",
     "DZ": "[\"\",\"\",\"vinte\",\"trinta\",\"quarenta\"]",
     "ESTRAT": "[\n \"Dica de quem estima bem: ache um <b>grupinho de 5</b> e veja quantos \"+\n \"grupinhos cabem no pote.\",\n \"Viu? <b>5, 10, 15...</b> Contar de 5 em 5 com os olhos d&aacute; um palpite bem \"+\n \"mais perto.\",\n \"\"\n]",
     "UN": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\",\n        \"onze\",\"doze\",\"treze\",\"catorze\",\"quinze\",\"dezesseis\",\"dezessete\",\"dezoito\",\"dezenove\"]"

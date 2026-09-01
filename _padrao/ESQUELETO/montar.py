@@ -33,6 +33,7 @@ Uso:
   python3 _padrao/ESQUELETO/montar.py <pasta> --so-ver # só confere, não escreve
 """
 import collections
+import html as _html
 import io
 import json
 import os
@@ -619,6 +620,24 @@ _FONETICA_VOZ = [
     (re.compile(r"\bmimi\b", re.I), u"mími"),
 ]
 _LACUNA = re.compile(r"_+")
+# ⚠️ LICAO PAGA (Feirinha, set/2026, task #46): 7 falas de conta chegavam ao TTS
+#    com ENTIDADE NOMEADA crua — "9 &minus; 4 =", "&eacute;", "&mdash;". O
+#    `texto_limpo` so decodifica entidade NUMERICA (&#225;) e &amp;/&nbsp;, entao
+#    as nomeadas vazavam; pior, moravam em falas PRESERVADAS da colheita (mecanica
+#    ja removida), que nunca passam pelo texto_limpo. A voz lia "e-minus" e o
+#    Revisor reprovava. Aqui, na varredura final, decodifico a entidade nomeada SO
+#    no `texto` FALADO (o `id`/hash NAO muda -> o mp3 casa igual, sem risco de a
+#    chave divergir do motor). "−" (sinal de menos) vira "menos" porque o Edge as
+#    vezes pula o simbolo; travessao vira pausa.
+_MINUS_TTS = re.compile(u"\\s*\u2212\\s*")   # − (U+2212, sinal de menos)
+def _desentidade_voz(t):
+    if not t or ("&" not in t and u"\u2212" not in t
+                 and u"\u2014" not in t and u"\u2013" not in t):
+        return t
+    t = _html.unescape(t)                       # &eacute;->é, &atilde;->ã, &minus;->−, &mdash;->—
+    t = _MINUS_TTS.sub(u" menos ", t)           # 9 − 4  ->  9 menos 4
+    t = t.replace(u"\u2014", u" ").replace(u"\u2013", u" ")   # — –  -> pausa
+    return re.sub(r"\s+", u" ", t).strip()
 # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026), TRES defeitos de UMA raiz — CAIXA ALTA
 #    e DICA DE SILABA no texto que vai ao TTS:
 #      · "VACA (va-ca)" saia "veaca"  · "JACARÉ" saia "jacarré"
@@ -1710,7 +1729,7 @@ def main():
     #    o `id`/hash continua o do texto da tela, então o mp3 casa igual.
     for _f in falas:
         if _f.get("texto"):
-            _f["texto"] = _fonetica_voz(_f["texto"])
+            _f["texto"] = _fonetica_voz(_desentidade_voz(_f["texto"]))
             # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala rato em ingles"*. Uma
             #    marca `lang:"en"` VELHA (de antes de o detector melhorar) ficava
             #    presa nas falas preservadas da colheita e a voz inglesa voltava.

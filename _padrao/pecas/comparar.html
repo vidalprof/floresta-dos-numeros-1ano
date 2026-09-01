@@ -268,7 +268,11 @@ var RODS=[
     novos no peca.sh (blocos, sem imagem). */
  {a:6,b:9,modo:"blocos",selo:"QUEM TEM MENOS?",
   enun:"Agora ao contr&aacute;rio: <b>quem tem menos</b>?",
-  voz:"Agora ao contrário. Quem tem menos?", pergunta:"menos", semSinal:true}
+  voz:"Agora ao contrário. Quem tem menos?", pergunta:"menos", semSinal:true,
+  /* ⭐ `dinheiro`: false = comparacao de QUANTIDADE (fruta/blocos) -> "qual tem
+     mais"; ausente/true = DINHEIRO (cedula) -> "qual vale mais". Declarado p/ o
+     montador saber que a peca LE o campo (senao reprova a fase). */
+  dinheiro:false}
 ];
 var NOMEA="TURMA AZUL", NOMEB="TURMA LARANJA";
 var VOZA="turma azul", VOZB="turma laranja";
@@ -361,20 +365,31 @@ function telaComp(){
   c.appendChild(cmp);
 
   var temImg=!!(r.imgA||r.imgB);
+  /* ⚠️⚠️ LICAO PAGA (Feirinha, set/2026, Marcos JOGANDO): a peca dizia "Olhe o
+     DINHEIRO: qual vale mais?" numa comparacao de CENOURAS e TOMATES — resto de
+     clone do uso original (Lojinha). `imgA/imgB` sozinho NAO quer dizer dinheiro;
+     quem afirma dinheiro e o `dinheiro:true` (ou a ausencia do flag, p/ nao mexer
+     na Lojinha). Fruta = `dinheiro:false` -> texto de QUANTIDADE ("qual tem mais?"). */
+  var money = temImg && (r.dinheiro!==false);
   msgEl=el("div","msgc","");
-  msgEl.innerHTML = temImg
+  msgEl.innerHTML = money
     ? (pergAtual==="menos" ? "Olhe o dinheiro: <b>qual vale menos</b>?"
                            : "Olhe o dinheiro: <b>qual vale mais</b>?")
-    : ((r.modo==="numeros")
-       ? "Sem contar nada: <b>qual n&uacute;mero &eacute; o maior</b>?"
-       : "As duas come&ccedil;am na mesma borda.");
+    : (temImg
+       ? (pergAtual==="menos" ? "Olhe as duas bancas: <b>qual tem menos</b>?"
+                              : "Olhe as duas bancas: <b>qual tem mais</b>?")
+       : ((r.modo==="numeros")
+          ? "Sem contar nada: <b>qual n&uacute;mero &eacute; o maior</b>?"
+          : "As duas come&ccedil;am na mesma borda."));
   c.appendChild(msgEl);
 
   acaoEl=el("div","acao","");
   c.appendChild(acaoEl);
-  c.appendChild(el("div","hint", temImg
+  c.appendChild(el("div","hint", money
                    ? ((pergAtual==="menos" ? "Toque no dinheiro que vale menos" : "Toque no dinheiro que vale mais")+" &#8212; ou use as teclas <b>1</b>, <b>2</b> e <b>3</b>.")
-                   : "Toque na fileira que tem mais &#8212; ou use as teclas <b>1</b>, <b>2</b> e <b>3</b>."));
+                   : (temImg
+                      ? ((pergAtual==="menos" ? "Toque na banca que tem menos" : "Toque na banca que tem mais")+" &#8212; ou use as teclas <b>1</b>, <b>2</b> e <b>3</b>.")
+                      : "Toque na fileira que tem mais &#8212; ou use as teclas <b>1</b>, <b>2</b> e <b>3</b>.")));
   t.appendChild(c); app.appendChild(t);
 
   montaPasso1(g);
@@ -691,11 +706,16 @@ function fechaRodada(g,ms){
     if(g!==ger||!viva()) return;
     ri++;
     if(ri<RODS.length){ telaComp(); return; }
+    var _dinh=false, _z; for(_z=0;_z<RODS.length;_z++){ var _rz=RODS[_z]||{};
+      if((_rz.imgA||_rz.imgB)&&_rz.dinheiro!==false){ _dinh=true; break; } }
     mostraBanner(mostrouSinal
       ? "<b>Voc&ecirc; comparou e deu nome!</b><br>Primeiro a gente <b>v&ecirc;</b> "+
         "quem tem mais; o sinal s&oacute; conta isso por escrito."
-      : "<b>Voc&ecirc; comparou o dinheiro!</b><br>Olhando os dois, d&aacute; para ver "+
-        "qual vale <b>mais</b>, qual vale <b>menos</b> e quando valem <b>igual</b>.", fimComp);
+      : (_dinh
+         ? "<b>Voc&ecirc; comparou o dinheiro!</b><br>Olhando os dois, d&aacute; para ver "+
+           "qual vale <b>mais</b>, qual vale <b>menos</b> e quando valem <b>igual</b>."
+         : "<b>Voc&ecirc; comparou as bancas!</b><br>Olhando as duas, d&aacute; para ver "+
+           "qual tem <b>mais</b>, qual tem <b>menos</b> e quando t&ecirc;m o <b>mesmo tanto</b>."), fimComp);
   },ms);
 }
 
