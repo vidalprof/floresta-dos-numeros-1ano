@@ -242,14 +242,21 @@ function baldePintar(sx,sy){ if(!cxT)return; if(sx<0||sy<0||sx>=W||sy>=H)return;
   function ehLinha(idx){ return _mask?(_mask[idx]===1):false; }
   if(ehLinha(startI))return;                                   /* tocou no traço */
   if(tr===nc[0]&&tg===nc[1]&&tb===nc[2])return;                /* já é dessa cor */
+  /* ⚠️ marcação de VISITADOS: sem ela, pintar com uma cor PARECIDA com a que já
+     está na região (diferença < 60) fazia os pixels se re-empurrarem para sempre
+     — a pilha crescia até bilhões e estourava ("Invalid array length" = o "algo
+     deu errado"). Com `seen`, cada pixel é processado UMA vez; a pilha nunca explode. */
+  var seen=new Uint8Array(W*H);
   var stack=[startI],pintou=false;
-  while(stack.length){ var idx=stack.pop(),i=idx*4,r=d[i],g=d[i+1],b=d[i+2];
+  while(stack.length){ var idx=stack.pop();
+    if(seen[idx])continue; seen[idx]=1;
+    var i=idx*4,r=d[i],g=d[i+1],b=d[i+2];
     if(ehLinha(idx))continue;                                  /* barreira: contorno */
     if(Math.abs(r-tr)>60||Math.abs(g-tg)>60||Math.abs(b-tb)>60)continue;
     d[i]=nc[0];d[i+1]=nc[1];d[i+2]=nc[2];d[i+3]=255;pintou=true;
     var x=idx%W,y=(idx-x)/W;
-    if(x+1<W)stack.push(idx+1); if(x-1>=0)stack.push(idx-1);
-    if(y+1<H)stack.push(idx+W); if(y-1>=0)stack.push(idx-W); }
+    if(x+1<W&&!seen[idx+1])stack.push(idx+1); if(x-1>=0&&!seen[idx-1])stack.push(idx-1);
+    if(y+1<H&&!seen[idx+W])stack.push(idx+W); if(y-1>=0&&!seen[idx-W])stack.push(idx-W); }
   if(pintou){ cxT.putImageData(img,0,0); tom(560+Math.random()*80,.09,"triangle",.12); var bt=document.getElementById("btpronto"); if(bt)bt.disabled=false; }
 }
 
