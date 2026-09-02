@@ -5386,23 +5386,37 @@ function pecaCaca(){
      `cabe` deixa a palavra passar POR CIMA de outra quando a letra bate: e
      assim que nascem os cruzamentos, que sao a graca do caca-palavras (e a
      armadilha nº 5: as letras do cruzamento ja vem marcadas).            */
+  /* ⭐ A GRADE E ASCII; o ROTULO e a VOZ, nao. O autor escreve a palavra
+     CERTA e acentuada ("ROCA", "FABRICA"): o chip mostra e a voz LE com
+     acento (roca do campo, nao a roca de fiar), mas a grade DOBRA o acento
+     (C-cedilha -> C, A-agudo -> A) na hora de por a letra, porque a grade
+     nao carrega cedilha. Palavra ja em ASCII dobra para ela mesma — nada
+     muda no que ja existe. (Marcos ouviu "roca" por "roca", set/2026.) */
+  function _gl(s){ return String(s)
+    .replace(/[Çç]/g,"C")
+    .replace(/[À-Åà-å]/g,"A")
+    .replace(/[È-Ëè-ë]/g,"E")
+    .replace(/[Ì-Ïì-ï]/g,"I")
+    .replace(/[Ò-Öò-ö]/g,"O")
+    .replace(/[Ù-Üù-ü]/g,"U")
+    .toUpperCase(); }
   function cabe(w,li,co,dl,dc){
-    var z,y,x;
-    for(z=0;z<w.length;z++){
+    var z,y,x,fw=_gl(w);
+    for(z=0;z<fw.length;z++){
       y=li+dl*z; x=co+dc*z;
       if(y<0||y>=N||x<0||x>=N) return false;
-      if(g[y][x]&&g[y][x]!==w.charAt(z)) return false;
+      if(g[y][x]&&g[y][x]!==fw.charAt(z)) return false;
     }
     return true;
   }
   function poe(w,li,co,dl,dc){
-    var z,cs=[];
-    for(z=0;z<w.length;z++){
-      g[li+dl*z][co+dc*z]=w.charAt(z);
+    var z,cs=[],fw=_gl(w);
+    for(z=0;z<fw.length;z++){
+      g[li+dl*z][co+dc*z]=fw.charAt(z);
       cs.push((li+dl*z)+"_"+(co+dc*z));
     }
     posicoes[w]=cs;
-    onde[w]={r:li,c:co,n:w.length,h:(dl===0),dl:dl,dc:dc};
+    onde[w]={r:li,c:co,n:fw.length,h:(dl===0),dl:dl,dc:dc};
   }
   function zera(){
     var a,b2;

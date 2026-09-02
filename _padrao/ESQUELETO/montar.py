@@ -389,6 +389,30 @@ def confere_dados(c, oficina):
                              u"caca-palavras (max 12 letras): %s"
                              % (i + 1, f.get("id"), ", ".join(longas)))
 
+            # ⚠️ LICAO PAGA (set/2026, e o Marcos OUVIU): a grade nao carrega
+            #    cedilha nem acento, entao a palavra vinha escrita ASCII —
+            #    "ROCA". So que o rotulo e a VOZ leem esse mesmo texto: a voz
+            #    disse "roca" (a de fiar) no lugar de "roca" (o campo). Agora a
+            #    peca DOBRA o acento so na grade (Ç->C), entao a palavra tem de
+            #    ser escrita CERTA e acentuada. Este portao pega a forma sem
+            #    acento das que ja mordeu e diz qual usar. Palavra nova que
+            #    perca acento -> uma linha aqui, no mesmo commit.
+            SEM_ACENTO = {
+                u"ROCA": u"ROÇA", u"FABRICA": u"FÁBRICA", u"PRACA": u"PRAÇA",
+                u"ARVORE": u"ÁRVORE", u"AGUA": u"ÁGUA", u"ITAJAI": u"ITAJAÍ",
+                u"AVO": u"AVÓ", u"CAFE": u"CAFÉ", u"SOFA": u"SOFÁ",
+                u"LAPIS": u"LÁPIS", u"ACUCAR": u"AÇÚCAR",
+                u"MACA": u"MAÇÃ", u"CORACAO": u"CORAÇÃO", u"LIMAO": u"LIMÃO",
+                u"PAO": u"PÃO", u"MAE": u"MÃE", u"IRMA": u"IRMÃ",
+            }
+            achou_ascii = [(w, SEM_ACENTO[w.upper()]) for w in f["dados"]
+                           if isinstance(w, str) and w.upper() in SEM_ACENTO]
+            for crua, certa in achou_ascii:
+                ruins.append(u"fase %d (%s): caca-palavras com \"%s\" sem "
+                             u"acento — a VOZ vai ler errado; escreva \"%s\" "
+                             u"(a grade dobra o acento sozinha)."
+                             % (i + 1, f.get("id"), crua, certa))
+
         # ⚠️⚠️ GAVETA QUE SO FUNCIONA COM A CHAVE DA OUTRA (ago/2026). Escrevi
         #    as cinco definicoes de genero em `PALDEF` — bula, edital, conto —
         #    e a fase abriu mostrando as PALAVRAS, como sempre. Nao havia erro:
