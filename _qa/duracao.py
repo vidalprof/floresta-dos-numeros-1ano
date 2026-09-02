@@ -44,9 +44,22 @@ S_POR_ITEM = 9.0     # ler, pensar e tocar (4o/5o ano)
 S_POR_TELA = 12.0    # capa, cracha, banner, elogio
 
 # custo por GESTO na atividade montada (segundos por item resolvido)
+# ⚠️ LICAO PAGA (set/2026, na Grande Expedicao de divisao): a montada precificava
+#    TODO gesto nao-listado como 9 s ("tocar"), o default. So que DIGITAR uma
+#    divisao (calcular na cabeca + escrever no teclado da tela) e o mesmo gesto
+#    que o cabecalho deste portao ja valoriza em 25 s na trilha das LISTAS — e
+#    ESTIMAR, EQUILIBRAR a balanca, ACHAR na reta ou TROCAR na base dez sao
+#    raciocinio, nao um toque. Precificar tudo a 9 s subestimava uma atividade
+#    de matematica inteira (30 min onde a crianca leva 40+). Aqui os gestos que
+#    pensam ganham o preco real — mesma filosofia da trilha das listas. Custo
+#    maior nunca REPROVA sozinho (nao ha teto): so conta melhor o trabalho real.
 CUSTO_MEC = {u"memoria": 20.0, u"ligar": 14.0, u"classificar": 14.0,
              u"arrastar-lugar": 14.0, u"caixa-dinheiro": 12.0,
-             u"achar-na-cena": 20.0, u"caca-palavras": 20.0}
+             u"achar-na-cena": 20.0, u"caca-palavras": 20.0,
+             u"digitar-numero": 25.0, u"base-dez": 18.0,
+             u"reta-numerica": 15.0, u"estimar": 15.0, u"balanca": 15.0,
+             u"repartir": 14.0, u"saltos-na-fita": 12.0, u"padrao": 12.0,
+             u"contadores": 10.0}
 
 
 def _extrai_fases(html):

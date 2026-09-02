@@ -1,0 +1,35 @@
+/* ============================================================
+   TEMA — A Grande Expedição (Divisão · 5º ano)
+   Identidade + CONTRASTE sobre o fundo da floresta (dv_fundo é
+   verde e movimentado). A banca (contraste_fundo) mede o PIXEL
+   real atrás do texto: números e rótulos das peças caíam para
+   1,3–2,8:1 sobre o verde. Aqui cada texto que fica sobre o
+   fundo/peça ganha uma PÍLULA opaca escura + letra clara — passa
+   independentemente do que estiver desenhado atrás.
+   (tema.css entra por último no montar: ganha do motor e das peças.)
+   ============================================================ */
+
+/* fundo mais calmo atrás do jogo (o motor já borra+escurece com
+   fundoSuave; aqui garanto que continue legível em telas claras) */
+#bg.suave{-webkit-filter:blur(7px) brightness(.5);filter:blur(7px) brightness(.5)}
+
+/* --- RETA NUMÉRICA: painel opaco + números claros --- */
+.mec-reta-numerica .reta{background:rgba(22,34,18,.90)!important;border-color:rgba(255,255,255,.42)!important}
+.mec-reta-numerica .rnum{color:#f6f2e8!important;text-shadow:0 1px 2px rgba(0,0,0,.9)}
+.mec-reta-numerica .rtick{background:rgba(255,255,255,.7)!important}
+.mec-reta-numerica .rlinha{background:#f6f2e8!important}
+
+/* --- REPARTIR: número de cada pedaço numa pílula escura --- */
+.mec-repartir .numr{color:#fff!important;background:rgba(18,26,14,.80);
+  border-radius:9px;padding:1px 7px;line-height:18px;
+  box-shadow:0 1px 3px rgba(0,0,0,.4)}
+
+/* --- BASE DEZ: rótulos da mesa/caixa em pílula escura --- */
+.mec-base-dez .cxrot,.mec-base-dez .mrot,.mec-base-dez .ptot{
+  color:#fff!important;background:rgba(18,26,14,.82);
+  border-radius:9px;padding:2px 8px;
+  box-shadow:0 1px 3px rgba(0,0,0,.4);text-shadow:none}
+
+/* --- BOTÕES amarelos (+ pôr / − tirar): letra escura sobre amarelo --- */
+.mec-contadores .btn,.mec-contadores .btn.mais,
+.mec-base-dez .btn{color:#33280a!important}

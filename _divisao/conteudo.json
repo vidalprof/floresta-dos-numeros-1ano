@@ -56,6 +56,24 @@
      "n": 4,
      "nome": "<b>um quarto</b> para cada",
      "selo": "4 BARRACAS"
+    },
+    {
+     "un": 20,
+     "n": 5,
+     "nome": "<b>um quinto</b> para cada",
+     "selo": "5 BARRACAS"
+    },
+    {
+     "un": 18,
+     "n": 6,
+     "nome": "<b>um sexto</b> para cada",
+     "selo": "6 BARRACAS"
+    },
+    {
+     "un": 16,
+     "n": 4,
+     "nome": "<b>um quarto</b> para cada",
+     "selo": "4 BARRACAS"
     }
    ],
    "dadosExtra": {
@@ -67,7 +85,123 @@
    }
   },
   {
-   "id": "f02",
+   "id": "f12",
+   "mec": "contadores",
+   "selo": "UM PARA CADA",
+   "enunciado": "Dê uma provisão de cada vez para cada barraca, até acabar. Veja quanto cada uma recebe.",
+   "dica": "Uma de cada vez, sempre na volta: assim ninguém fica com mais que o outro.",
+   "conceito": "objetivo1",
+   "dados": [
+    {
+     "item": "",
+     "pl": "provisões",
+     "sing": "provisão",
+     "verbo": "Ponha",
+     "onde": "na barraca",
+     "label": "NA BARRACA",
+     "alvo": 6,
+     "ini": 0,
+     "selo": "O ACAMPAMENTO"
+    },
+    {
+     "item": "",
+     "pl": "provisões",
+     "sing": "provisão",
+     "verbo": "Ponha",
+     "onde": "na barraca",
+     "label": "NA BARRACA",
+     "alvo": 8,
+     "ini": 0
+    },
+    {
+     "item": "",
+     "pl": "provisões",
+     "sing": "provisão",
+     "verbo": "Ponha",
+     "onde": "na barraca",
+     "label": "NA BARRACA",
+     "alvo": 5,
+     "ini": 0
+    },
+    {
+     "item": "",
+     "pl": "provisões",
+     "sing": "provisão",
+     "verbo": "Ponha",
+     "onde": "na barraca",
+     "label": "NA BARRACA",
+     "alvo": 9,
+     "ini": 0
+    },
+    {
+     "item": "",
+     "pl": "provisões",
+     "sing": "provisão",
+     "verbo": "Ponha",
+     "onde": "na barraca",
+     "label": "NA BARRACA",
+     "alvo": 7,
+     "ini": 0
+    },
+    {
+     "item": "",
+     "pl": "provisões",
+     "sing": "provisão",
+     "verbo": "Ponha",
+     "onde": "na barraca",
+     "label": "NA BARRACA",
+     "alvo": 10,
+     "ini": 0
+    }
+   ]
+  },
+  {
+   "id": "f_saltos1",
+   "mec": "saltos-na-fita",
+   "selo": "REPARTIR EM SALTOS",
+   "enunciado": "Reparta a trilha em saltos iguais e descubra em quantos pedaços ela fica.",
+   "dica": "Cada salto tem o mesmo tamanho. Conte quantos saltos iguais cabem até o fim.",
+   "conceito": "objetivo1",
+   "dados": [
+    {
+     "p": 2,
+     "ate": 8,
+     "dic": "Um salto tem sempre <b>2</b> passinhos. Conte os risquinhos."
+    },
+    {
+     "p": 3,
+     "ate": 9,
+     "dic": "Um salto tem sempre <b>3</b> passinhos."
+    },
+    {
+     "p": 4,
+     "ate": 12,
+     "dic": "Um salto tem sempre <b>4</b> passinhos."
+    },
+    {
+     "p": 2,
+     "ate": 10,
+     "dic": "Um salto tem sempre <b>2</b> passinhos."
+    },
+    {
+     "p": 3,
+     "ate": 12,
+     "dic": "Um salto tem sempre <b>3</b> passinhos."
+    },
+    {
+     "p": 5,
+     "ate": 15,
+     "dic": "Um salto tem sempre <b>5</b> passinhos."
+    },
+    {
+     "p": 4,
+     "ate": 16,
+     "dic": "Um salto tem sempre <b>4</b> passinhos."
+    }
+   ]
+  },
+  {
+   "id": "f_saltos2",
    "mec": "saltos-na-fita",
    "selo": "QUANTOS SALTOS",
    "enunciado": "O explorador anda sempre o mesmo tanto de passos por salto. Descubra quantos saltos ele dá até o acampamento.",
@@ -88,6 +222,26 @@
      "p": 3,
      "ate": 15,
      "dic": "Um salto tem sempre <b>3</b> passinhos. Conte: um, dois, três."
+    },
+    {
+     "p": 4,
+     "ate": 16,
+     "dic": "Um salto tem sempre <b>4</b> passinhos."
+    },
+    {
+     "p": 6,
+     "ate": 18,
+     "dic": "Um salto tem sempre <b>6</b> passinhos."
+    },
+    {
+     "p": 4,
+     "ate": 20,
+     "dic": "Um salto tem sempre <b>4</b> passinhos."
+    },
+    {
+     "p": 3,
+     "ate": 21,
+     "dic": "Um salto tem sempre <b>3</b> passinhos."
     }
    ]
   },
@@ -175,6 +329,145 @@
      ],
      "bal": "Onde fica o <b>25</b>?",
      "dica": "Ache o meio (50). O 25 é o meio do meio."
+    },
+    {
+     "selo": "A TRILHA DE 100",
+     "min": 0,
+     "max": 100,
+     "alvo": 40,
+     "tol": 5,
+     "traco": 10,
+     "num": [
+      0,
+      50,
+      100
+     ],
+     "ap1": [
+      25,
+      75
+     ],
+     "ap2": [
+      10,
+      20,
+      30,
+      60,
+      70,
+      80,
+      90
+     ],
+     "bal": "Onde fica o <b>40</b>?",
+     "dica": "O 50 é o meio. O 40 fica um pouco antes do meio."
+    },
+    {
+     "selo": "A RÉGUA CURTA",
+     "min": 0,
+     "max": 10,
+     "alvo": 8,
+     "tol": 1,
+     "traco": 1,
+     "num": [
+      0,
+      5,
+      10
+     ],
+     "ap1": [
+      2,
+      8
+     ],
+     "ap2": [
+      1,
+      3,
+      4,
+      6,
+      7,
+      9
+     ],
+     "bal": "Onde fica o <b>8</b>?",
+     "dica": "Conte os tracinhos a partir do 0."
+    },
+    {
+     "selo": "A TRILHA DE 100",
+     "min": 0,
+     "max": 100,
+     "alvo": 30,
+     "tol": 5,
+     "traco": 10,
+     "num": [
+      0,
+      50,
+      100
+     ],
+     "ap1": [
+      25,
+      75
+     ],
+     "ap2": [
+      10,
+      20,
+      40,
+      60,
+      70,
+      80,
+      90
+     ],
+     "bal": "Onde fica o <b>30</b>?",
+     "dica": "O 30 fica entre o 25 e o meio (50)."
+    },
+    {
+     "selo": "O 90 NA TRILHA",
+     "min": 0,
+     "max": 100,
+     "alvo": 90,
+     "tol": 5,
+     "traco": 10,
+     "num": [
+      0,
+      50,
+      100
+     ],
+     "ap1": [
+      25,
+      75
+     ],
+     "ap2": [
+      10,
+      20,
+      30,
+      40,
+      60,
+      70,
+      80
+     ],
+     "bal": "Onde fica o <b>90</b>?",
+     "dica": "O 90 fica quase no fim, um pouco antes do 100."
+    },
+    {
+     "selo": "O 12 NA RÉGUA",
+     "min": 0,
+     "max": 20,
+     "alvo": 12,
+     "tol": 1,
+     "traco": 1,
+     "num": [
+      0,
+      10,
+      20
+     ],
+     "ap1": [
+      5,
+      15
+     ],
+     "ap2": [
+      2,
+      4,
+      6,
+      8,
+      14,
+      16,
+      18
+     ],
+     "bal": "Onde fica o <b>12</b>?",
+     "dica": "O 10 é o meio. O 12 fica logo depois do 10."
     }
    ],
    "dadosExtra": {
@@ -187,7 +480,7 @@
    "selo": "REPARTIR OU MEDIR?",
    "enunciado": "Leia o problema e escolha o que a expedição quer descobrir.",
    "dica": "Se todos ganham IGUAL, é repartir. Se você forma GRUPOS de um tanto, é medir.",
-   "conceito": "objetivo1",
+   "conceito": "objetivo2",
    "dados": [
     {
      "img": "",
@@ -257,11 +550,152 @@
       "Medir: quantas vezes o 6 cabe no 18? 18 dividido por 6.",
       "É QUANTAS EQUIPES. Toque nela para seguir."
      ]
+    },
+    {
+     "img": "",
+     "p": "São <b>24 laranjas</b> para <b>4 barracas</b>, igualzinho. O que queremos saber?",
+     "c": {
+      "t": "QUANTAS LARANJAS EM CADA",
+      "voz": "quantas laranjas em cada"
+     },
+     "e": [
+      {
+       "t": "QUANTAS BARRACAS EXISTEM",
+       "voz": "quantas barracas existem"
+      },
+      {
+       "t": "QUANTAS LARANJAS SOBRAM",
+       "voz": "quantas laranjas sobram"
+      }
+     ],
+     "d": [
+      "Todos recebem a MESMA quantidade — a gente reparte entre as barracas.",
+      "Repartir é dividir o total pelo número de grupos: 24 dividido por 4.",
+      "É QUANTAS EM CADA. Toque nela para seguir."
+     ]
+    },
+    {
+     "img": "",
+     "p": "São <b>30 biscoitos</b> para <b>5 barracas</b>, igualzinho. O que queremos saber?",
+     "c": {
+      "t": "QUANTOS BISCOITOS EM CADA",
+      "voz": "quantos biscoitos em cada"
+     },
+     "e": [
+      {
+       "t": "QUANTAS BARRACAS EXISTEM",
+       "voz": "quantas barracas existem"
+      },
+      {
+       "t": "QUANTOS BISCOITOS SOBRAM",
+       "voz": "quantos biscoitos sobram"
+      }
+     ],
+     "d": [
+      "Todos recebem a MESMA quantidade — a gente reparte entre as barracas.",
+      "Repartir é dividir o total pelo número de grupos: 30 dividido por 5.",
+      "É QUANTOS EM CADA. Toque nela para seguir."
+     ]
     }
    ],
    "dadosExtra": {
     "TITULO": "REPARTIR OU MEDIR?",
     "FECHO": "Você já sabe ler os dois tipos de divisão!"
+   }
+  },
+  {
+   "id": "aquecimento",
+   "mec": "digitar-numero",
+   "selo": "AQUECIMENTO DA DIVISÃO",
+   "enunciado": "Aquecimento! Divisões rápidas para lembrar tudo. Digite quanto dá.",
+   "dica": "Pergunte: quantas vezes o de baixo cabe no de cima?",
+   "conceito": "objetivo2",
+   "dados": [
+    {
+     "a": 12,
+     "b": 3,
+     "op": "÷",
+     "resp": 4,
+     "dic": "Reparta 12 em 3 partes: quanto vai para cada uma?"
+    },
+    {
+     "a": 20,
+     "b": 5,
+     "op": "÷",
+     "resp": 4,
+     "dic": "Quantas vezes o <b>5</b> cabe em 20? Conte de 5 em 5."
+    },
+    {
+     "a": 18,
+     "b": 6,
+     "op": "÷",
+     "resp": 3,
+     "dic": "Quantas vezes o <b>6</b> cabe em 18?"
+    },
+    {
+     "a": 15,
+     "b": 3,
+     "op": "÷",
+     "resp": 5,
+     "dic": "Tabuada do 3: 3×5=15. Então 15÷3=<b>5</b>."
+    },
+    {
+     "a": 16,
+     "b": 4,
+     "op": "÷",
+     "resp": 4,
+     "dic": "Tabuada do 4: 4×4=16. Então 16÷4=<b>4</b>."
+    },
+    {
+     "a": 24,
+     "b": 4,
+     "op": "÷",
+     "resp": 6,
+     "dic": "Tabuada do 4: 4×6=24. Então 24÷4=<b>6</b>."
+    },
+    {
+     "a": 21,
+     "b": 3,
+     "op": "÷",
+     "resp": 7,
+     "dic": "Tabuada do 3: 3×7=21. Então 21÷3=<b>7</b>."
+    },
+    {
+     "a": 27,
+     "b": 3,
+     "op": "÷",
+     "resp": 9,
+     "dic": "Tabuada do 3: 3×9=27. Então 27÷3=<b>9</b>."
+    },
+    {
+     "a": 30,
+     "b": 6,
+     "op": "÷",
+     "resp": 5,
+     "dic": "Tabuada do 6: 6×5=30. Então 30÷6=<b>5</b>."
+    }
+   ],
+   "dadosExtra": {
+    "NOMEDIG": {
+     "0": "zero",
+     "1": "um",
+     "2": "dois",
+     "3": "três",
+     "4": "quatro",
+     "5": "cinco",
+     "6": "seis",
+     "7": "sete",
+     "8": "oito",
+     "9": "nove"
+    },
+    "OPNOME": {
+     "+": "mais",
+     "-": "menos",
+     "−": "menos",
+     "÷": "dividido por"
+    },
+    "ENUN": "Digite o resultado da divisão.",
+    "FECHO": "Aquecido! Agora vêm as estratégias mais espertas."
    }
   },
   {
@@ -325,6 +759,60 @@
       20,
       30
      ]
+    },
+    {
+     "n": 11,
+     "max": 25,
+     "ini": 12,
+     "qa": 8,
+     "cls": "grao",
+     "seed": 29,
+     "ancora": 1,
+     "selo": "O SACO DE AMENDOIM",
+     "coisa": "amendoins",
+     "voz": "amendoins",
+     "quantos": "quantos",
+     "atalhos": [
+      5,
+      10,
+      20
+     ]
+    },
+    {
+     "n": 17,
+     "max": 35,
+     "ini": 18,
+     "qa": 14,
+     "cls": "gude",
+     "seed": 71,
+     "ancora": 1,
+     "selo": "O SACO DE AVELÃ",
+     "coisa": "avelãs",
+     "voz": "avelãs",
+     "quantos": "quantas",
+     "atalhos": [
+      10,
+      20,
+      30
+     ]
+    },
+    {
+     "n": 13,
+     "max": 28,
+     "ini": 14,
+     "qa": 12,
+     "cls": "grao",
+     "seed": 37,
+     "ancora": 1,
+     "selo": "O SACO DE CAFÉ",
+     "coisa": "grãos de café",
+     "voz": "grãos",
+     "quantos": "quantos",
+     "atalhos": [
+      5,
+      10,
+      20
+     ]
     }
    ],
    "dadosExtra": {
@@ -365,7 +853,57 @@
    }
   },
   {
-   "id": "aquecimento",
+   "id": "f07",
+   "mec": "balanca",
+   "selo": "QUANTAS VEZES CABE",
+   "enunciado": "Equilibre a balança: veja quantas vezes um peso cabe no outro lado.",
+   "dica": "Ponha peso até a barra ficar reta. Conte quantos pesos iguais você usou.",
+   "conceito": "objetivo3",
+   "dados": [
+    {
+     "a": 3,
+     "b": 2,
+     "ini": 1
+    },
+    {
+     "a": 4,
+     "b": 4,
+     "ini": 5
+    },
+    {
+     "a": 5,
+     "b": 4,
+     "ini": 4
+    },
+    {
+     "a": 6,
+     "b": 3,
+     "ini": 2
+    },
+    {
+     "a": 8,
+     "b": 2,
+     "ini": 3
+    },
+    {
+     "a": 2,
+     "b": 6,
+     "ini": 5
+    },
+    {
+     "a": 3,
+     "b": 4,
+     "ini": 2
+    },
+    {
+     "a": 6,
+     "b": 2,
+     "ini": 4
+    }
+   ]
+  },
+  {
+   "id": "f_conta",
    "mec": "digitar-numero",
    "selo": "A CONTA DA DIVISÃO",
    "enunciado": "Divida e digite quanto dá. Use a tabuada para ir mais rápido.",
@@ -377,7 +915,7 @@
      "b": 7,
      "op": "÷",
      "resp": 12,
-     "dic": "Quantas vezes o <b>7</b> cabe em 84? Pense na tabuada do 7: 7×10=70, faltam 14, mais 2 setes."
+     "dic": "Quantas vezes o <b>7</b> cabe em 84? 7×10=70, faltam 14, mais 2 setes."
     },
     {
      "a": 72,
@@ -413,6 +951,34 @@
      "op": "÷",
      "resp": 14,
      "dic": "15×10=150, faltam 60, e 60 é 4 quinze. Dá <b>14</b>."
+    },
+    {
+     "a": 128,
+     "b": 8,
+     "op": "÷",
+     "resp": 16,
+     "dic": "8×10=80, faltam 48, e 48 é 6 oitos. Dá <b>16</b>."
+    },
+    {
+     "a": 90,
+     "b": 6,
+     "op": "÷",
+     "resp": 15,
+     "dic": "6×10=60, faltam 30, e 30 é 5 seis. Dá <b>15</b>."
+    },
+    {
+     "a": 224,
+     "b": 16,
+     "op": "÷",
+     "resp": 14,
+     "dic": "Divisor de 2 algarismos! 16×10=160, faltam 64, e 64 é 4 dezesseis. Dá <b>14</b>."
+    },
+    {
+     "a": 195,
+     "b": 13,
+     "op": "÷",
+     "resp": 15,
+     "dic": "13×10=130, faltam 65, e 65 é 5 treze. Dá <b>15</b>."
     }
    ],
    "dadosExtra": {
@@ -437,31 +1003,6 @@
     "ENUN": "Digite o resultado da divisão.",
     "FECHO": "Você dividiu tudo, até com divisor de dois algarismos!"
    }
-  },
-  {
-   "id": "f07",
-   "mec": "balanca",
-   "selo": "A BALANÇA JUSTA",
-   "enunciado": "Deixe os dois lados iguais: é assim que a multiplicação confere a divisão.",
-   "dica": "Ponha peso até a barra ficar reta. Os dois lados têm que valer o mesmo.",
-   "conceito": "objetivo3",
-   "dados": [
-    {
-     "a": 3,
-     "b": 2,
-     "ini": 1
-    },
-    {
-     "a": 4,
-     "b": 4,
-     "ini": 5
-    },
-    {
-     "a": 5,
-     "b": 4,
-     "ini": 4
-    }
-   ]
   },
   {
    "id": "f08",
@@ -495,6 +1036,32 @@
      "nomeT": "caixote de 100",
      "nomeTs": "caixotes de 100",
      "fala": "Agora são <b>caixas de 10</b>. Cada <b>10 caixas</b> viram <b>1 caixote</b>."
+    },
+    {
+     "selo": "OUTRA CAIXA DE 10",
+     "soltos": 16,
+     "pTipo": "dsuni",
+     "pImg": "",
+     "tTipo": "dsdez",
+     "vale": 1,
+     "valeT": 10,
+     "nomeP": "soltas",
+     "nomeT": "caixa de 10",
+     "nomeTs": "caixas de 10",
+     "fala": "Cada <b>10 soltas</b> viram <b>1 caixa</b>. Encha a caixa e troque."
+    },
+    {
+     "selo": "MAIS UMA CAIXA",
+     "soltos": 14,
+     "pTipo": "dsuni",
+     "pImg": "",
+     "tTipo": "dsdez",
+     "vale": 1,
+     "valeT": 10,
+     "nomeP": "soltas",
+     "nomeT": "caixa de 10",
+     "nomeTs": "caixas de 10",
+     "fala": "Cada <b>10 soltas</b> viram <b>1 caixa</b>. Encha a caixa e troque."
     }
    ],
    "dadosExtra": {
@@ -612,6 +1179,32 @@
      "salto": 3,
      "grupoTxt": "o salto de 3 em 3",
      "d1": "Olhe o salto de um número para o outro: 3, 6, 9. Quanto anda cada vez?"
+    },
+    {
+     "selo": "DE 2 EM 2",
+     "enun": "A fila anda de <b>2 em 2</b>. Continue.",
+     "seq": [
+      "2",
+      "4",
+      "6",
+      "8",
+      "10",
+      "12",
+      "14"
+     ],
+     "mostra": 4,
+     "paleta": [
+      "12",
+      "13",
+      "14",
+      "15",
+      "16"
+     ],
+     "regra": "de 2 em 2",
+     "grupo": 0,
+     "salto": 2,
+     "grupoTxt": "o salto de 2 em 2",
+     "d1": "Olhe o salto: 2, 4, 6. Quanto anda cada vez?"
     }
    ],
    "dadosExtra": {
@@ -663,35 +1256,7 @@
      }
     }
    }
-  },
-  {
-   "id": "f12",
-   "mec": "contadores",
-   "selo": "UM PARA CADA",
-   "enunciado": "Dê uma provisão de cada vez para as barracas, até acabar. Veja quanto cada uma recebe.",
-   "dica": "Uma de cada vez, sempre na volta: assim ninguém fica com mais que o outro.",
-   "conceito": "objetivo1",
-   "dados": [
-    {
-     "alvo": 5,
-     "ini": 0,
-     "item": "",
-     "pl": "provisões",
-     "sing": "provisão",
-     "verbo": "Ponha",
-     "onde": "na barraca",
-     "label": "NA BARRACA",
-     "selo": "O ACAMPAMENTO"
-    },
-    {
-     "alvo": 8,
-     "ini": 3
-    },
-    {
-     "alvo": 6,
-     "ini": 9
-    }
-   ]
   }
- ]
+ ],
+ "fundoSuave": true
 }
