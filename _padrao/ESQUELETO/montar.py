@@ -752,6 +752,26 @@ def falas_de(c):
                     pal = _num_extenso(v)
                     if pal:
                         poe("op_" + chave_voz(pal), pal)
+        # ⭐ DIGITAR-NUMERO: o alto-falante da conta diz "84 dividido por sete"
+        #    (contaFalada na peca) — apoio de quem ainda nao le os sinais.
+        #    montar nunca gravava essa voz: TODO alto-falante de conta ficava
+        #    MUDO, e o fala_o_escrito lia "Quanto da?" do balao pai e reprovava.
+        #    Aqui geramos a voz com a MESMA formula da peca: NOMEDIG para o
+        #    algarismo (senao o numero cru) e OPNOME para o sinal.
+        if f.get("mec") == "digitar-numero":
+            _dx = f.get("dadosExtra") or {}
+            _nom = _dx.get("NOMEDIG") or {}
+            _opn = _dx.get("OPNOME") or {}
+            for it in (f.get("dados") or []):
+                if not isinstance(it, dict):
+                    continue
+                _a, _b, _op = it.get("a"), it.get("b"), it.get("op")
+                if _a is None or _b is None or _op is None:
+                    continue
+                _txt = u"%s %s %s" % (_nom.get(str(_a), _a),
+                                      _opn.get(_op, _op),
+                                      _nom.get(str(_b), _b))
+                poe("op_" + chave_voz(texto_limpo(_txt)), _txt)
         # ⚠️ ...e do `dadosExtra` TAMBEM. Faltava, e nao era detalhe: o balao da
         #    mecanica `ordenar` mora em `dadosExtra.ORDTXT.balao`, entao as tres
         #    fases de por o alfabeto em ordem ficavam MUDAS — justo as do

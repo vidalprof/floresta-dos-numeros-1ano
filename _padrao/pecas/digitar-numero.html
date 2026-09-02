@@ -295,6 +295,10 @@ function fazZap(txt,rot){
   var z=el("button","zap","");
   z.type="button";
   z.setAttribute("aria-label","Ouvir "+(rot||txt));
+  /* ⭐ DECLARA a voz (o motor e o portao fala_o_escrito leem data-voz). Sem
+     isto o portao caia no texto do balao pai ("Quanto da?") e reprovava,
+     e o motor nao tinha como saber que este alto-falante diz a CONTA. */
+  z.setAttribute("data-voz",txt);
   z.onclick=function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
