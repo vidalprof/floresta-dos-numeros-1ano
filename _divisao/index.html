@@ -3803,7 +3803,10 @@ function pecaArranjo(){
   setProg(t, Math.round(ri*100/ARR.length));
   var c=el("div","centro");
   var TM=tema();
-  c.appendChild(el("div","selo",TM.selo));
+  /* ⚠️ o SELO e do MOTOR (vem do selo da fase no conteudo.json). Peca que monta
+     a propria .tela NAO desenha selo, senao ficam DUAS plaquinhas empilhadas
+     (portao 3h) — foi assim que "O RETANGULO" + "A PRATELEIRA" apareceram
+     juntos. O selo da rodada vira so tema interno, nunca elemento na tela. */
   c.appendChild(el("div","balao","Arrume os <b>"+r.n+"</b> "+TM.coisaP+
                  " em fileiras de <b>"+r.c+"</b>. Quantas fileiras d&atilde;o?"));
   elBandeja=el("div","bandeja","");
@@ -7823,7 +7826,9 @@ function pecaResto(){
   setProg(t, Math.round(ri*100/RES.length));
   var c=el("div","centro");
   var TM=tema();
-  c.appendChild(el("div","selo",TM.selo));
+  /* ⚠️ o SELO e do MOTOR (selo da fase no conteudo.json). Peca com .tela propria
+     NAO desenha selo, senao ficam DUAS plaquinhas ("O QUE SOBRA" + "OS POTES")
+     empilhadas comendo a tela (portao 3h). */
   c.appendChild(el("div","balao","Reparta os <b>"+r.n+"</b> "+TM.coisaP+" em <b>"+r.g+"</b> "+TM.pratoP+
                  ", um de cada vez. Quanto fica em cada e quanto <b>sobra</b>?"));
   elPratos=el("div","pratos","");

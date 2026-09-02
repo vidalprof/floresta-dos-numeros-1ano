@@ -329,6 +329,8 @@ echo "--- 0i) VOZ SEM MP3 (a fase ficou muda de vez?) -"
 portao "0i voz sem mp3" python3 _qa/vozfalta.py "$ARQ"
 echo "--- 0j) VOZ DA DICA (a dica fala o que esta escrito?) -"
 portao "0j voz da dica" python3 _qa/vozdica.py "$ARQ"
+echo "--- 0j2) ACENTO NA GRADE (a voz le a palavra CERTA?) -"
+portao "0j2 acento na grade" python3 _qa/acento.py "$PASTA"
 # ⭐ 0k — O ALTO-FALANTE DA RESPOSTA (defeito que o Marcos OUVIU, ago/2026: "os
 #    botoes de som nao estao funcionando... somente o som do enunciado"). Os
 #    portoes de voz conferiam enunciado, dica e a EXISTENCIA dos mp3; ninguem

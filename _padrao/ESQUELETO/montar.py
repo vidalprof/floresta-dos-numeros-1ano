@@ -394,24 +394,22 @@ def confere_dados(c, oficina):
             #    "ROCA". So que o rotulo e a VOZ leem esse mesmo texto: a voz
             #    disse "roca" (a de fiar) no lugar de "roca" (o campo). Agora a
             #    peca DOBRA o acento so na grade (Ç->C), entao a palavra tem de
-            #    ser escrita CERTA e acentuada. Este portao pega a forma sem
-            #    acento das que ja mordeu e diz qual usar. Palavra nova que
-            #    perca acento -> uma linha aqui, no mesmo commit.
-            SEM_ACENTO = {
-                u"ROCA": u"ROÇA", u"FABRICA": u"FÁBRICA", u"PRACA": u"PRAÇA",
-                u"ARVORE": u"ÁRVORE", u"AGUA": u"ÁGUA", u"ITAJAI": u"ITAJAÍ",
-                u"AVO": u"AVÓ", u"CAFE": u"CAFÉ", u"SOFA": u"SOFÁ",
-                u"LAPIS": u"LÁPIS", u"ACUCAR": u"AÇÚCAR",
-                u"MACA": u"MAÇÃ", u"CORACAO": u"CORAÇÃO", u"LIMAO": u"LIMÃO",
-                u"PAO": u"PÃO", u"MAE": u"MÃE", u"IRMA": u"IRMÃ",
-            }
-            achou_ascii = [(w, SEM_ACENTO[w.upper()]) for w in f["dados"]
-                           if isinstance(w, str) and w.upper() in SEM_ACENTO]
-            for crua, certa in achou_ascii:
-                ruins.append(u"fase %d (%s): caca-palavras com \"%s\" sem "
-                             u"acento — a VOZ vai ler errado; escreva \"%s\" "
-                             u"(a grade dobra o acento sozinha)."
-                             % (i + 1, f.get("id"), crua, certa))
+            #    ser escrita CERTA e acentuada.
+            #    O conserto NAO e uma lista a mao (ela sempre fica pra tras — foi
+            #    o "erro bobo que se repete sempre"): o `_qa/acento.py` APRENDE o
+            #    vocabulario acentuado do projeto inteiro e cobra a forma certa.
+            #    Aqui so avisa NA HORA de montar; a banca reprova de vez.
+            try:
+                sys.path.insert(0, os.path.join(os.path.dirname(
+                    os.path.abspath(__file__)), "..", "..", "_qa"))
+                import acento as _acento
+                for fid, mecx, crua, certa in _acento.checa_conteudo([f]):
+                    ruins.append(u"fase %d (%s): %s com \"%s\" sem acento — a "
+                                 u"VOZ vai ler errado; escreva \"%s\" (a grade "
+                                 u"dobra o acento sozinha)."
+                                 % (i + 1, f.get("id"), mecx, crua, certa))
+            except Exception:                                  # noqa: BLE001
+                pass
 
         # ⚠️⚠️ GAVETA QUE SO FUNCIONA COM A CHAVE DA OUTRA (ago/2026). Escrevi
         #    as cinco definicoes de genero em `PALDEF` — bula, edital, conto —
