@@ -72,6 +72,7 @@
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **A Grande Expedição** | Matemática (5º ano, divisão — EF05MA07): estratégias de raciocínio para dividir — repartir igual, quantas vezes cabe (medida), estimativa, tabuada, resto e divisor de até 2 algarismos | `_divisao` | https://vidalprof.github.io/a-grande-expedicao-divisao/ |
 | **Expedição Santa Catarina** | Geografia: Florianópolis, Blumenau e o estado (revista + quiz 30q) | `_sc5` (+ `_sc5painel`) | https://vidalprof.github.io/santa-catarina-5ano/ · [painel](https://vidalprof.github.io/santa-catarina-5ano-painel/) |
 | **O Teatro das Palavras** | Português (5º ano) | `_teatro` | https://vidalprof.github.io/o-teatro-das-palavras/ |
 | **A Agência dos Detetives das Palavras** | Pronomes, interpretação (narrativo/injuntivo), mau×mal | `_detetive` | https://vidalprof.github.io/detetives-das-palavras/ |
