@@ -431,6 +431,28 @@ const RECEITA={
    conta.click();
    return 'mandou contar com semente sobrando';
  },
+ /* ARRANJO (array): conferir com o banco ainda cheio (fileiras incompletas).
+    Passar do numero NAO e erro aqui — a peca so reprova quando "Conferir" e
+    tocado antes de o banco esvaziar; ai o andaime diz quantas fileiras faltam.
+    Mecanica nova (set/2026) = receita nova, do mesmo jeito da contadores. */
+ 'arranjo':()=>{
+   var bts=[].slice.call(document.querySelectorAll('button,.btn'))
+     .filter(function(e){ return e.offsetParent!==null; });
+   var conf=null, i;
+   for(i=0;i<bts.length;i++){ if(/conferir/i.test(bts[i].textContent||'')) conf=bts[i]; }
+   if(!conf) return null;
+   conf.click(); return 'conferiu com o banco ainda cheio (fileiras incompletas)';
+ },
+ /* RESTO: conferir antes de dar todas as voltas possiveis (ainda cabe volta).
+    O andaime responde quantas ainda cabem. Mecanica nova (set/2026). */
+ 'resto':()=>{
+   var bts=[].slice.call(document.querySelectorAll('button,.btn'))
+     .filter(function(e){ return e.offsetParent!==null; });
+   var conf=null, i;
+   for(i=0;i<bts.length;i++){ if(/conferir/i.test(bts[i].textContent||'')) conf=bts[i]; }
+   if(!conf) return null;
+   conf.click(); return 'conferiu antes de dar todas as voltas';
+ },
  /* ⭐ MAIS QUATRO (ago/2026). O padrao continua o mesmo: o erro de verdade
     daquela mecanica, nao um clique qualquer. */
  // CALENDARIO: tocar o dia que nao e o pedido

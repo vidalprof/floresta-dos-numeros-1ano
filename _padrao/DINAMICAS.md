@@ -132,6 +132,8 @@ três portas, o `preventDefault` e o mouse fantasma antes de seguir.)
 | **Rota animada no mapa** | `_naveg` "A ROTA DA VIAGEM" (`ROTAP`, o navio andando) | trajeto e ordem no espaço | os pontos são **medidos na imagem**, não estimados (navio ancorando no continente errado estraga a fase) |
 | **Quebra-cabeça** | `_mapa` "O MAPA EM PEDAÇOS" | parte-todo e orientação | peça na **proporção certa** da imagem (0,91 e não 1,0); mira na vaga; som de pegar, de encaixar e de fechar |
 | **Coordenadas / bússola** | `_mapa` "ACHE PELA COORDENADA" e "A ROSA DOS VENTOS" | par ordenado e orientação | as coordenadas têm que **bater com a figura** (medir, não estimar — ele pegou isso); célula ≥ 40px; referência explícita ("o lado da sua direita") |
+| **Arranjo (array)** | `_divisao` "O RETÂNGULO" (peça `arranjo`) | divisão como retângulo (fileiras iguais) = a multiplicação ao contrário | fileira sempre **completa** (C de uma vez), `n` múltiplo de `c`; fecha por **`mostraBanner`** (não tela própria); mostra `f × c = n → n ÷ c = f` no fim; `data-qa` no botão que serve agora. Origem: pesquisa set/2026 (NCETM, SplashLearn) |
+| **Resto concreto** | `_divisao` "O QUE SOBRA" (peça `resto`) | divisão com resto: repartir em voltas e ver o que sobra | a **sobra tem área própria à vista** (é o coração); a volta é sempre inteira (1 p/ cada prato); `n` NÃO múltiplo de `g`; fecha por `mostraBanner`. Origem: pesquisa set/2026 (Brighterly #5 — resto com manipulativo) |
 
 ---
 

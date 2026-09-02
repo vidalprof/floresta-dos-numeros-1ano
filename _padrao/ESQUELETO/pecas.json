@@ -29,6 +29,23 @@
    "tecnicas": [],
    "var": "LUGARES"
   },
+  "arranjo": {
+   "exemplo": "[\n {n:12, c:3, item:\"\", coisa:\"docinho\", coisaP:\"docinhos\", selo:\"A BANDEJA\"},\n {n:20, c:5},\n {n:18, c:6}\n]",
+   "exemplos": {
+    "ARR": "[\n {n:12, c:3, item:\"\", coisa:\"docinho\", coisaP:\"docinhos\", selo:\"A BANDEJA\"},\n {n:20, c:5},\n {n:18, c:6}\n]",
+    "UNM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\", /*TECNICA*/\n         \"onze\",\"doze\",\"treze\",\"catorze\",\"quinze\",\"dezesseis\",\"dezessete\",\"dezoito\",\n         \"dezenove\",\"vinte\"]"
+   },
+   "gavetas": [
+    "ARR",
+    "UNM"
+   ],
+   "regra": "marca na peca",
+   "tecnicas": [
+    "MAXN",
+    "UNM"
+   ],
+   "var": "ARR"
+  },
   "arrastar-lugar": {
    "exemplo": "[\n  {k:\"sol\",     n:\"SOL\",     x:0.8,  y:1.2,  w:16.9, h:25.9},\n  {k:\"telhado\", n:\"TELHADO\", x:21.5, y:15.3, w:58.5, h:29.4},\n  {k:\"janela\",  n:\"JANELA\",  x:30.8, y:51.8, w:17.7, h:25.9},\n  {k:\"porta\",   n:\"PORTA\",   x:53.1, y:55.3, w:18.5, h:38.8}\n]",
    "exemplos": {
@@ -1147,6 +1164,23 @@
    "regra": "primeiro vetor",
    "tecnicas": [],
    "var": "RODADAS"
+  },
+  "resto": {
+   "exemplo": "[\n {n:7,  g:2, item:\"\", coisa:\"docinho\", coisaP:\"docinhos\", prato:\"prato\", pratoP:\"pratos\", selo:\"OS PRATOS\"},\n {n:13, g:4},\n {n:17, g:5}\n]",
+   "exemplos": {
+    "RES": "[\n {n:7,  g:2, item:\"\", coisa:\"docinho\", coisaP:\"docinhos\", prato:\"prato\", pratoP:\"pratos\", selo:\"OS PRATOS\"},\n {n:13, g:4},\n {n:17, g:5}\n]",
+    "UNM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\", /*TECNICA*/\n         \"onze\",\"doze\",\"treze\",\"catorze\",\"quinze\",\"dezesseis\",\"dezessete\",\"dezoito\",\"dezenove\",\"vinte\"]"
+   },
+   "gavetas": [
+    "RES",
+    "UNM"
+   ],
+   "regra": "marca na peca",
+   "tecnicas": [
+    "MAXN",
+    "UNM"
+   ],
+   "var": "RES"
   },
   "reta-numerica": {
    "exemplo": "[\n {selo:\"A RÉGUA DOS PASSOS\", min:0, max:10, alvo:7, tol:1, traco:1, num:[0,5,10],\n  ap1:[2,8], ap2:[1,3,4,6,9],\n  bal:\"Onde fica o <b>7</b>?\",\n  dica:\"Conte os tracinhos a partir do 0: 1, 2, 3...\"},\n {selo:\"A TRILHA DE 100\", min:0, max:100, alvo:60, tol:5, traco:10, num:[0,50,100],\n  ap1:[25,75], ap2:[10,20,30,40,70,80,90],\n  bal:\"Onde fica o <b>60</b>?\",\n  dica:\"O 50 &#233; o meio. O 60 fica um pouquinho depois do meio.\"},\n {selo:\"SÓ AS PONTAS\", min:0, max:100, alvo:25, tol:8, traco:0, num:[0,100],\n  ap1:[50], ap2:[20,40,60,80],\n  bal:\"Onde fica o <b>25</b>?\",\n  dica:\"Ache o meio (50). O 25 &#233; o meio do meio.\"}\n]",

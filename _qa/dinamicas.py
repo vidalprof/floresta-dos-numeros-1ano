@@ -708,6 +708,38 @@ def analisa(js, css, baixo, html=None):
                          u"Na hora de contar, cada item vira a bola com o numero — e assim que a "
                          u"contagem um-a-um fica visivel.")
 
+    # ---------------------------------------------------- ARRANJO (array: fileiras iguais)
+    #  Nasceu da pesquisa de divisao (set/2026): o array e o modelo pivo que mostra
+    #  a divisao como o retangulo da multiplicacao. A crianca MONTA fileiras iguais.
+    if re.search(r'\.bandeja\b', css) and re.search(r'\.fileira\b', css):
+        usa.append("arranjo")
+        # o auditor-jogador so joga pelo data-qa; sem ele a fase trava em 0%
+        if not re.search(r'data-qa', js):
+            ruins.append(u"arranjo: sem data-qa no botao que serve AGORA — o jogador "
+                         u"(e a crianca que so segue a luz) fica sem saber onde tocar.")
+        # tem que FECHAR PELO BANNER (senao e beco: o jogador nunca ve a medalha)
+        if not re.search(r'mostraBanner\s*\(', js):
+            ruins.append(u"arranjo: fecha por tela propria e nao pelo mostraBanner — "
+                         u"a ponte da esteira so avanca pelo banner (o 'beco' do CONTRATO).")
+        # o sentido da peca e ligar arranjo a divisao: tem que aparecer x e ÷ no fim
+        if not (u"÷" in js or "&divide;" in js):
+            ruins.append(u"arranjo: nao mostra a divisao (x ... = ... entao N ÷ C = fileiras). "
+                         u"O retangulo sem a conta vira so 'arrumar bolinha'.")
+
+    # ---------------------------------------------------- RESTO (repartir e ver o que sobra)
+    #  Pesquisa (set/2026, Brighterly #5): resto com material concreto. O que nao
+    #  da pra repartir igual FICA A VISTA na bandeja da sobra.
+    if re.search(r'\.pratos\b', css) and re.search(r'\.sobra\b', css):
+        usa.append("resto")
+        # a SOBRA (o resto) tem que ter area propria visivel — e o coracao da peca
+        if not re.search(r'class\s*=\s*["\']sobra|["\']sobra', js):
+            ruins.append(u"resto: a sobra (o resto) nao tem area propria na tela. O resto "
+                         u"invisivel vira 'conta que deu errado' — ele PRECISA ficar a vista.")
+        if not re.search(r'data-qa', js):
+            ruins.append(u"resto: sem data-qa no botao que serve AGORA — a fase trava.")
+        if not re.search(r'mostraBanner\s*\(', js):
+            ruins.append(u"resto: fecha por tela propria e nao pelo mostraBanner (o 'beco').")
+
     # ---------------------------------------------------- ESCREVER (producao)
     if re.search(r'\.apoios\b', css) and re.search(r'\.campo\b', css):
         usa.append("escrever")
