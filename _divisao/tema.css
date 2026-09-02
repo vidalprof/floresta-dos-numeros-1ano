@@ -1,35 +1,34 @@
 /* ============================================================
    TEMA — A Grande Expedição (Divisão · 5º ano)
-   Identidade + CONTRASTE sobre o fundo da floresta (dv_fundo é
-   verde e movimentado). A banca (contraste_fundo) mede o PIXEL
-   real atrás do texto: números e rótulos das peças caíam para
-   1,3–2,8:1 sobre o verde. Aqui cada texto que fica sobre o
-   fundo/peça ganha uma PÍLULA opaca escura + letra clara — passa
-   independentemente do que estiver desenhado atrás.
+   Identidade + CONTRASTE sobre o fundo verde da floresta.
+   A banca (contraste_fundo) mede o PIXEL real atrás do texto:
+   números e rótulos das peças caíam sobre o verde escurecido.
+   Aqui o texto que fica sobre o fundo vira CLARO (com sombra) e
+   os rótulos de mensagem ganham pílula escura. Os botões: verde
+   principal = letra branca; amarelo/bege = letra escura.
    (tema.css entra por último no montar: ganha do motor e das peças.)
    ============================================================ */
 
-/* fundo mais calmo atrás do jogo (o motor já borra+escurece com
-   fundoSuave; aqui garanto que continue legível em telas claras) */
+/* fundo do jogo calmo (o motor borra+escurece com fundoSuave) */
 #bg.suave{-webkit-filter:blur(7px) brightness(.5);filter:blur(7px) brightness(.5)}
 
-/* --- RETA NUMÉRICA: painel opaco + números claros --- */
+/* --- RETA NUMÉRICA: painel opaco (números claros leem sobre ele) --- */
 .mec-reta-numerica .reta{background:rgba(22,34,18,.90)!important;border-color:rgba(255,255,255,.42)!important}
-.mec-reta-numerica .rnum{color:#f6f2e8!important;text-shadow:0 1px 2px rgba(0,0,0,.9)}
 .mec-reta-numerica .rtick{background:rgba(255,255,255,.7)!important}
 .mec-reta-numerica .rlinha{background:#f6f2e8!important}
 
-/* --- REPARTIR: número de cada pedaço numa pílula escura --- */
-.mec-repartir .numr{color:#fff!important;background:rgba(18,26,14,.80);
-  border-radius:9px;padding:1px 7px;line-height:18px;
-  box-shadow:0 1px 3px rgba(0,0,0,.4)}
+/* --- números/totais das peças sobre o fundo escurecido -> CLAROS --- */
+.numr,.rnum,.ptot{color:#fff!important;
+  text-shadow:0 1px 3px #000,0 0 3px rgba(0,0,0,.85)}
 
-/* --- BASE DEZ: rótulos da mesa/caixa em pílula escura --- */
-.mec-base-dez .cxrot,.mec-base-dez .mrot,.mec-base-dez .ptot{
-  color:#fff!important;background:rgba(18,26,14,.82);
-  border-radius:9px;padding:2px 8px;
-  box-shadow:0 1px 3px rgba(0,0,0,.4);text-shadow:none}
+/* --- base-dez: rótulos e a mensagem da prateleira (span sem classe) --- */
+.mec-base-dez .cxrot,.mec-base-dez .mrot{
+  color:#fff!important;background:rgba(16,24,12,.82);
+  border-radius:9px;padding:2px 9px;text-shadow:none}
+.mec-base-dez .prat{color:#fff!important;text-shadow:0 1px 3px #000,0 0 3px rgba(0,0,0,.85)}
 
-/* --- BOTÕES amarelos (+ pôr / − tirar): letra escura sobre amarelo --- */
-.mec-contadores .btn,.mec-contadores .btn.mais,
-.mec-base-dez .btn{color:#33280a!important}
+/* --- botões: '+pôr'/'−tirar'/'não dá mais' (amarelo/bege) = letra escura, em TODA peça --- */
+.btn.mais,.btn.menos,.btn.off,.btn.fraco{color:#33280a!important}
+/* --- botão principal verde (Contar comigo) = letra branca --- */
+.mec-contadores .btn{color:#fff!important}
+.mec-contadores .btn.mais,.mec-contadores .btn.menos,.mec-contadores .btn.off{color:#33280a!important}
