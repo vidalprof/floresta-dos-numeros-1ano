@@ -18,7 +18,7 @@ html,body{margin:0}
 body{overflow-x:hidden;font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--papel);
   background:#2b1e11;background:radial-gradient(1200px 600px at 50% -10%,rgba(255,220,150,.10),rgba(0,0,0,0)),
   repeating-linear-gradient(90deg,#3a2a1a 0 44px,#3f2d1c 44px 88px);min-height:100vh}
-#wrap{max-width:1080px;margin:0 auto;padding:14px 14px 40px}
+#wrap{max-width:1220px;margin:0 auto;padding:14px 16px 40px}
 header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
 .brand{font-size:22px;font-weight:800;background:linear-gradient(180deg,var(--ouro-c),var(--ouro));
   -webkit-background-clip:text;background-clip:text;color:transparent}
@@ -31,7 +31,7 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 .paineis{display:flex;gap:16px;align-items:flex-start;margin-top:8px}
 .card{background:var(--papel);color:var(--tinta);border-radius:18px;padding:14px 16px;
   box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.6)}
-.esq{flex:1.5;min-width:0}.dir{flex:.9;min-width:0;display:flex;flex-direction:column}
+.esq{flex:1.9;min-width:0}.dir{flex:.85;min-width:0;display:flex;flex-direction:column}
 .rot{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#8a6a2e;margin-bottom:4px}
 .enun{font-size:20px;font-weight:800;text-align:center;margin:2px 0 6px;color:#3a2a12}
 .enun b{color:var(--ouro-b)}
@@ -53,7 +53,7 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 /* GRUPOS */
 .grupos{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding:6px;border-radius:12px}
 .grupos.alvo{background:rgba(47,143,78,.10);outline:2px dashed var(--verde);outline-offset:2px}
-.grupo{flex:1 1 92px;min-width:84px;background:#fff;border:2px solid #e6d3a5;border-radius:12px;padding:6px 4px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.08)}
+.grupo{flex:1 1 108px;min-width:98px;background:#fff;border:2px solid #e6d3a5;border-radius:12px;padding:8px 5px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.08)}
 .grupo.mira{border-color:var(--verde);box-shadow:0 0 0 3px rgba(47,143,78,.35)}
 .grupo .gh{font-size:11px;font-weight:800;color:#8a6a2e}
 .grow{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;align-items:flex-end;min-height:16px;margin-top:3px}
@@ -106,15 +106,16 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
     <div><div class="brand">A Oficina da Divisão</div>
       <div class="sub">Reparta o material dourado · a conta armada inteira ao lado</div></div>
     <div class="barra"><i id="barra"></i></div>
-    <div class="placar">Conta <b id="pnum">1</b>/20</div>
+    <div class="placar">Conta <b id="pnum">1</b>/<span id="ptot">32</span></div>
   </header>
 
   <section id="ini" class="tela-ini">
     <div class="card">
       <h1>Reparta o material dourado</h1>
-      <p>Todo número vira <b>material dourado</b>: <b>centenas</b> (placas),
-      <b>dezenas</b> (barras) e <b>unidades</b> (cubinhos). Você <b>arrasta</b> os
-      blocos e dá <b>um a cada grupo</b>, por vez, começando pelos <b>maiores</b>.
+      <p>Todo número vira <b>material dourado</b>: <b>milhares</b> (cubões),
+      <b>centenas</b> (placas), <b>dezenas</b> (barras) e <b>unidades</b> (cubinhos).
+      Você <b>arrasta</b> os blocos e dá <b>um a cada grupo</b>, por vez, começando
+      pelos <b>maiores</b>.
       O que <b>sobrar</b> você arrasta para a casa de baixo: <b>troca</b> por 10 —
       é o <b>abaixa</b> da conta armada, no seu olho!</p>
       <div class="exemplo" id="exBlocos"></div>
@@ -157,16 +158,34 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 function svgUnidade(px){var s=px||16;return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 18 18"><rect x="1" y="1" width="16" height="16" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/><rect x="3.5" y="3.5" width="4.5" height="4.5" rx="1" fill="#fbe6a4" opacity=".7"/></svg>';}
 function svgDezena(px){var h=px||48;var w=Math.round(h*0.20);var seg='';var gap=h/10;for(var i=0;i<10;i++){seg+='<line x1="1" y1="'+(gap*i+1).toFixed(1)+'" x2="'+(w-1)+'" y2="'+(gap*i+1).toFixed(1)+'" stroke="#a9781a" stroke-width="0.8" opacity=".7"/>';}return '<svg class="blk" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><rect x="0.7" y="0.7" width="'+(w-1.4)+'" height="'+(h-1.4)+'" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/>'+seg+'</svg>';}
 function svgCentena(px){var s=px||46;var g='';var st=s/10;for(var i=1;i<10;i++){g+='<line x1="'+(st*i).toFixed(1)+'" y1="1" x2="'+(st*i).toFixed(1)+'" y2="'+(s-1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".6"/><line x1="1" y1="'+(st*i).toFixed(1)+'" x2="'+(s-1)+'" y2="'+(st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".6"/>';}return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'"><rect x="0.8" y="0.8" width="'+(s-1.6)+'" height="'+(s-1.6)+'" rx="3" fill="#efc451" stroke="#a9781a" stroke-width="1.6"/>'+g+'</svg>';}
-function bloco(kind,px,extra){var s=kind===0?svgCentena(px):kind===1?svgDezena(px):svgUnidade(px);if(extra)s=s.replace('class="blk"','class="blk '+extra+'"');return s;}
+function svgMilhar(px){var s=px||54;var d=Math.round(s*0.17),f=s-d,grid='',st=f/10,i;
+  for(i=1;i<10;i++){grid+='<line x1="'+(st*i).toFixed(1)+'" y1="'+d+'" x2="'+(st*i).toFixed(1)+'" y2="'+(d+f)+'" stroke="#a9781a" stroke-width="0.5" opacity=".5"/>';
+    grid+='<line x1="0" y1="'+(d+st*i).toFixed(1)+'" x2="'+f+'" y2="'+(d+st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.5" opacity=".5"/>';}
+  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'">'+
+    '<polygon points="0,'+d+' '+d+',0 '+s+',0 '+f+','+d+'" fill="#f7db85" stroke="#a9781a" stroke-width="1.2"/>'+
+    '<polygon points="'+f+','+d+' '+s+',0 '+s+','+f+' '+f+','+(d+f)+'" fill="#d9a531" stroke="#a9781a" stroke-width="1.2"/>'+
+    '<rect x="0" y="'+d+'" width="'+f+'" height="'+f+'" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/>'+grid+'</svg>';}
+function bloco(kind,px,extra){var s=kind===0?svgMilhar(px):kind===1?svgCentena(px):kind===2?svgDezena(px):svgUnidade(px);if(extra)s=s.replace('class="blk"','class="blk '+extra+'"');return s;}
 function cluster(kind,n,px,cap,drag){cap=cap||14;var out="",m=Math.min(n,cap);for(var i=0;i<m;i++)out+=bloco(kind,px,drag?"arr pop":"pop");if(n>cap)out+='<span class="maisN">…'+n+'</span>';return out;}
 
 /* ===== as 20 contas ===== */
-var PROBS=[{n:48,d:2},{n:69,d:3},{n:88,d:4},{n:96,d:3},{n:72,d:3},{n:75,d:5},{n:84,d:6},{n:91,d:7},
- {n:156,d:4},{n:168,d:3},{n:245,d:5},{n:224,d:4},{n:375,d:3},{n:528,d:4},{n:648,d:6},{n:432,d:4},
- {n:50,d:4},{n:77,d:5},{n:155,d:4},{n:229,d:3}];
-var NOMES=["centena","dezena","unidade"],NOMESP=["centenas","dezenas","unidades"];
+var PROBS=[
+ /* A) 2 algarismos, SEM troca — fáceis */
+ {n:24,d:2},{n:39,d:3},{n:48,d:4},{n:55,d:5},{n:66,d:6},{n:88,d:4},
+ /* B) 2 algarismos, COM troca (dezena->unidade) */
+ {n:36,d:2},{n:45,d:3},{n:52,d:4},{n:72,d:3},{n:84,d:6},{n:91,d:7},
+ /* C) 3 algarismos */
+ {n:128,d:4},{n:156,d:4},{n:168,d:3},{n:245,d:5},{n:224,d:4},{n:372,d:3},
+ /* D) 3 algarismos, troca dupla / zero no quociente */
+ {n:375,d:3},{n:528,d:4},{n:648,d:6},{n:432,d:4},{n:505,d:5},
+ /* E) 4 algarismos (o MILHAR) */
+ {n:1236,d:3},{n:2480,d:4},{n:3648,d:6},{n:5124,d:4},{n:1608,d:8},
+ /* F) com RESTO (crescente) */
+ {n:50,d:4},{n:155,d:4},{n:229,d:3},{n:1234,d:4}
+];
+var NOMES=["milhar","centena","dezena","unidade"],NOMESP=["milhares","centenas","dezenas","unidades"];
 
-function planeja(n,d){var ds=String(n).split("").map(Number),L=ds.length,offset=3-L,passos=[],resto=0;
+function planeja(n,d){var ds=String(n).split("").map(Number),L=ds.length,offset=4-L,passos=[],resto=0;
   for(var i=0;i<L;i++){var place=offset+i,trazido=resto*10,disp=trazido+ds[i],q=Math.floor(disp/d),r=disp%d;
     passos.push({place:place,digito:ds[i],trazido:trazido,disp:disp,q:q,usado:q*d,resto:r,ultimo:(i===L-1)});resto=r;}
   return {n:n,d:d,ds:ds,L:L,offset:offset,passos:passos,quo:Math.floor(n/d),rem:n%d};}
@@ -189,7 +208,10 @@ function sTroca(){nota(300,.12,.13,"sine",0);nota(620,.16,.12,"sine",.06);}
 function sNao(){nota(280,.13,.1,"sine",0);}
 document.addEventListener("pointerdown",function(){ac();},false);
 
-$("exBlocos").innerHTML='<div><div class="lab">1 centena</div>'+bloco(0,50)+'</div><div><div class="lab">1 dezena</div>'+bloco(1,50)+'</div><div><div class="lab">1 unidade</div>'+bloco(2,22)+'</div>';
+$("exBlocos").innerHTML='<div><div class="lab">1 milhar</div>'+bloco(0,56)+'</div>'+
+  '<div><div class="lab">1 centena</div>'+bloco(1,48)+'</div>'+
+  '<div><div class="lab">1 dezena</div>'+bloco(2,48)+'</div>'+
+  '<div><div class="lab">1 unidade</div>'+bloco(3,22)+'</div>';
 
 /* ===== conta armada ===== */
 function cell(t,c){return '<span class="cell '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>';}
@@ -224,19 +246,20 @@ function atualizaChave(){
 }
 
 /* ===== a mesa (banco + grupos) numa página ===== */
-function usaPx(place){return place===0?24:place===1?34:16;}
-function grpPx(place){return place===0?16:place===1?22:13;}
+/* blocos maiores (área de trabalho grande, fácil de manusear) */
+function usaPx(place){return [40,34,46,22][place];}   /* milhar, centena, dezena, unidade — no BANCO */
+function grpPx(place){return [24,20,30,17][place];}   /* nos GRUPOS */
 
 function renderBanco(){
   var h="";
-  for(var place=0;place<3;place++){
+  for(var place=0;place<4;place++){
     if(!temCasa(place)) continue;                 /* número sem essa casa (ex.: 2 alg) */
     var cls = place<pativa?"done":(place===pativa?"on":"");
     if(fase==="trocar" && place===pativa+1) cls="alvo"; /* destino da troca */
     var qt = place<pativa? "✓" : sup[place];
     h+='<div class="bcol '+cls+'" data-casa="'+place+'"><div class="bch">'+NOMESP[place].toUpperCase()+'</div>'+
        '<div class="bqt">'+qt+'</div>'+
-       '<div class="bblocos">'+(place<pativa?"":cluster(place,sup[place],usaPx(place),12,(place===pativa&&fase==="repartir")))+'</div></div>';
+       '<div class="bblocos">'+(place<pativa?"":cluster(place,sup[place],usaPx(place),18,(place===pativa&&fase==="repartir")))+'</div></div>';
   }
   $("banco").innerHTML=h;
 }
@@ -247,8 +270,7 @@ function renderGrupos(){
   for(var g=0;g<plan.d;g++){
     var mira=(fase==="repartir"&&podeRepartir()&&g===grupoDaVez());
     h+='<div class="grupo'+(mira?" mira":"")+'"><div class="gh">GRUPO '+(g+1)+'</div>';
-    var tot="";
-    for(var place=plan.offset;place<3;place++){
+    for(var place=plan.offset;place<4;place++){
       var n=grp[g][place];
       if(n>0){ h+='<div class="grow">'+cluster(place,n,grpPx(place),10,false)+'</div>'; }
     }
@@ -259,7 +281,7 @@ function renderGrupos(){
   $("grupos").className="grupos"+(fase==="repartir"&&podeRepartir()?" alvo":"");
   $("grupos").innerHTML=h;
 }
-function valorGrupo(g){var v=0;for(var place=plan.offset;place<3;place++){v+=grp[g][place]*Math.pow(10,2-place);}return v;}
+function valorGrupo(g){var v=0;for(var place=plan.offset;place<4;place++){v+=grp[g][place]*Math.pow(10,3-place);}return v;}
 
 function renderMesa(){ renderBanco(); renderGrupos(); atualizaChave(); ligaArrasto(); }
 
@@ -360,10 +382,10 @@ function soltou(tgt,moved){
 /* ===== fluxo ===== */
 function iniciaProblema(){
   plan=planeja(PROBS[idx].n,PROBS[idx].d);
-  sup=[0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;
+  sup=[0,0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;
   for(var i=0;i<plan.L;i++){ sup[plan.offset+i]=plan.ds[i]; }
-  for(var g=0;g<plan.d;g++)grp.push([0,0,0]);
-  $("pnum").textContent=(idx+1);$("barra").style.width=Math.round(idx*100/PROBS.length)+"%";
+  for(var g=0;g<plan.d;g++)grp.push([0,0,0,0]);
+  $("pnum").textContent=(idx+1);$("ptot").textContent=PROBS.length;$("barra").style.width=Math.round(idx*100/PROBS.length)+"%";
   $("enun").innerHTML="Quanto dá <b>"+plan.n+" &divide; "+plan.d+"</b> ?";
   comecaCasa();
 }
