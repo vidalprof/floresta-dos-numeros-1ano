@@ -1399,7 +1399,9 @@ function telaJogo(){
      figura; se a voz da tela nao mudar junto, quem nao le aperta o
      alto-falante e ouve a figura ANTERIOR. Por isso `falaDaTela` esta aqui,
      colado no balao, e nao la no fim da funcao.                            */
-  t.appendChild(el("div","balao","Monte <b>"+fig.nome+"</b>. "+fig.ensina)); falaDaTela("tg_intro_"+fig.id);
+  /* ⭐ Fala/bal&atilde;o do montar: S&Oacute; a DICA DAS PE&Ccedil;AS (nunca o nome da figura —
+     o nome s&oacute; aparece no fim, quando ela fica pronta). Decis&atilde;o do Marcos, set/2026. */
+  t.appendChild(el("div","balao","Monte a figura: "+fig.ensina)); falaDaTela("tg_intro_"+fig.id);
   var cen=el("div","centro");
   tplac=el("div","tplacar","Pe&#231;as no lugar: <b>0</b> de "+fig.vagas.length);
   cen.appendChild(tplac);
@@ -1770,7 +1772,7 @@ function encaixa(p,alvo){
       festa(); sFesta();
       depoisDaFala("tg_pronto_"+fig.id,8000,function(){
         figI++;
-        if(figI<FIGURAS.length) mostraBanner("<b>"+fig.nome+"</b> ficou pronta!",telaJogo);
+        if(figI<FIGURAS.length) mostraBanner("Voc&#234; montou <b>"+fig.nome+"</b>!",telaJogo);
         else mostraBanner("Voc&#234; montou <b>todas</b> as figuras da caixa!",telaFim);
       });
     }
@@ -1779,6 +1781,21 @@ function encaixa(p,alvo){
   /* errou: a ajuda CRESCE e nunca trava */
   terr++; sErro();
   var v=alvo.__v;
+  /* ⭐ FASE DIFICIL (animais): SEM a ajuda que pisca/acende — só a dica de TEXTO.
+     Para nunca travar, encaixa sozinho apenas no 6o engano (bem depois). */
+  if(FIGURAS[figI].dificil){
+    mostraDica( (v.f!==p.__f) ? "Esse lugar &#233; do <b>"+FORMA[v.f].nome+"</b>. Olhe bem o contorno."
+                              : "A forma est&#225; certa &#8212; ela s&#243; precisa <b>girar</b>." );
+    if(terr>=6){
+      if(v.f===p.__f){ p.__ang=v.ang||0; p.__esp=v.esp?1:0; giraPeca(p);
+        setTimeout(function(){ if(!alvo.__cheia) encaixa(p,alvo); },700); }
+      else{ var nn=document.getElementsByClassName("tpeca"),zz;
+        for(zz=0;zz<nn.length;zz++){ if(nn[zz].className.indexOf("posta")>=0) continue;
+          if(nn[zz].__f===v.f){ var qq=nn[zz]; qq.__ang=v.ang||0; qq.__esp=v.esp?1:0; giraPeca(qq);
+            setTimeout(function(){ if(!alvo.__cheia) encaixa(qq,alvo); },700); break; } } }
+    }
+    return;
+  }
   ajudaJd(terr,{
     dica: (v.f!==p.__f) ? "Esse lugar &#233; do <b>"+FORMA[v.f].nome+"</b>. Olhe o contorno."
                         : "A forma est&#225; certa! Ela s&#243; precisa <b>girar</b>.",

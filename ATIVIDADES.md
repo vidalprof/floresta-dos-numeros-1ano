@@ -100,7 +100,7 @@
 |---|---|---|---|
 | **Meu Pixel Art** | Arte digital / pixel | — | https://vidalprof.github.io/meu-pixel-art/ |
 | **Prova — Viagem pelo Brasil** | Geografia do Brasil (avaliação) | — | https://vidalprof.github.io/prova-viagem-brasil/ · [painel](https://vidalprof.github.io/painel-viagem-brasil/) |
-| **O Tangram da Vovó Marta** | Geometria / tangram | — | https://vidalprof.github.io/o-tangram-da-vovo-marta/ |
+| **O Tangram da Vovó Marta** | Geometria / tangram (montar figuras com as 7 peças) — 7 fases novas de ANIMAIS (gato, peixe, cisne, passarinho, tartaruga, cachorro, pato) mais difíceis, sem a ajuda que pisca; fala do montar só com a dica das peças | `_tangram` | https://vidalprof.github.io/o-tangram-da-vovo-marta/ |
 | **Jardim do Broto** | — | `_jardim` | https://vidalprof.github.io/jardim-do-broto/ |
 | **A Terra dos Papagaios** | — | `_naveg` | https://vidalprof.github.io/a-terra-dos-papagaios/ |
 | **O Voo do Nico** | — | `_mapa` | https://vidalprof.github.io/o-voo-do-nico/ |
