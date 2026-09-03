@@ -392,6 +392,14 @@ portao "0o revisor de texto" python3 _qa/revisor.py "$PASTA"
 echo "--- 0o2) RESPOSTA ENTREGUE (a pergunta da a resposta de graca?) -"
 portao "0o2 resposta entregue" python3 _qa/entrega.py "$PASTA"
 
+# ⭐ 0o3) O ENUNCIADO BATE? — nasceu de uma foto do Marcos (set/2026): a fase
+#     "QUE TEMPO SOU EU?" pedia o TEMPO DO VERBO e, na terceira rodada, cobrava
+#     DIMINUTIVO. Cada peca isolada estava certa (a resposta batia, as pistas
+#     descreviam o diminutivo direito, o jogador chegava na medalha) — errado
+#     era o CASAMENTO entre o que o enunciado promete e o que a fase cobra.
+echo "--- 0o3) ENUNCIADO BATE (promete um assunto, cobra outro?) -"
+portao "0o3 enunciado bate" python3 _qa/enunciado_bate.py "$PASTA"
+
 # ⭐ 0p) A SEGUNDA LEITURA (portao de SENTIDO). Os portoes acima medem TEXTO
 #    mecanico (digitacao, concordancia, HTML vazando). NENHUM le o SIGNIFICADO:
 #    a resposta marcada como CERTA esta certa? a DICA leva a ELA? a VOZ diz o

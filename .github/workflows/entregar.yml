@@ -175,6 +175,7 @@ jobs:
               portao "dinamicas (armadilha de mecanica aberta)" python3 _qa/dinamicas.py "$idx"
               if [ -f "$pasta/conteudo.json" ]; then
                 portao "resposta entregue (destaque em cima da palavra certa)" python3 _qa/entrega.py "$pasta"
+                portao "enunciado bate (promete um assunto, cobra outro)" python3 _qa/enunciado_bate.py "$pasta"
               fi
               portao "toque (arrasto sem touch-action some sob o dedo)" python3 _qa/toque.py "$idx"
             fi

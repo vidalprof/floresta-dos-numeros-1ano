@@ -650,6 +650,11 @@ def _fala_natural(t):
 #    Palavra nova que a voz erra e so por AQUI (uma fonte de verdade), sempre em
 #    minusculas foneticas — caixa alta empurra a voz a soletrar.
 _FONETICA_VOZ = [
+    # ⚠️ Marcos ouviu (set/2026), na Expedicao Santa Catarina: *"o esporte e
+    #    falado sandboard, deve se falar sendbord"*. A voz pt-BR le a palavra
+    #    inglesa letra por letra, do jeito portugues. Escrita como soa, sai certa.
+    (re.compile(r"\bsand\s*board\b", re.I), u"sendibórdi"),
+    (re.compile(r"\bstand[\s-]*up\b", re.I), u"stendâpi"),
     (re.compile(r"\bfaces\b", re.I), u"fásses"),
     (re.compile(r"\bface\b",  re.I), u"fásse"),
     # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala jacaré errado"* — no ritmo de
@@ -665,7 +670,21 @@ _FONETICA_VOZ = [
     #    com acento agudo no 1o "e": "élefante" -> "é-le-fan-te", com o "e" aberto e
     #    claro, e o "le" fica interno (nao vira "li"). So no audio; a tela mantem
     #    "elefante".
-    (re.compile(r"\belefante\b", re.I), u"élefante"),
+    # ⚠️⚠️ LICAO PAGA TRES VEZES, e esta e a terceira (Marcos, set/2026, com a
+    #    turma jogando): *"Nessa questão ele fala Ilefante sendo que o certo é
+    #    Elefante"*. Ja tentamos "ele fante" (virou "eli-fante") e "élefante"
+    #    (continuou "ilefante" — o carimbo prova que o mp3 FOI regravado com o
+    #    acento, e mesmo assim saiu errado).
+    #    O que aprendemos: o "e" atono inicial do portugues brasileiro puxa para
+    #    /i/, e o acento AGUDO nao segura. O circunflexo marca /e/ FECHADO, que e
+    #    justamente o som que a professora diz na alfabetizacao.
+    #    ⚠️ E a licao maior: eu nao consigo OUVIR o resultado daqui, entao venho
+    #    adivinhando grafia ha tres rodadas — e cada rodada custa uma aula com a
+    #    crianca ouvindo errado. O conserto de verdade e o portao de PRONUNCIA
+    #    (transcrever o mp3 de volta e comparar), que roda no workflow, onde ha
+    #    internet para o modelo de voz. Enquanto ele nao existe, isto aqui e
+    #    tentativa — e tem que ser dito como tentativa.
+    (re.compile(r"\belefante\b", re.I), u"êlefante"),
     # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"o nome Mimi é dito Mimí"*. A voz
     #    pt-BR do Edge le "mimi" como OXITONA (mi-MÍ, sotaque de "Mimí" espanhol),
     #    quando o nome da gata e PAROXITONA (MÍ-mi). O acento agudo no 1o "i"
@@ -716,12 +735,79 @@ def _sem_caixa_alta(t):
         w = m.group(0)
         return w.lower() if (w.isupper() and any(c.isalpha() for c in w)) else w
     return _PAL_ALFA.sub(_low, t)
+
+# ============================================================
+#  ⭐ SILABA SOLTA — a voz lê pedaço, não palavra (set/2026)
+#
+#  O Marcos mandou as fotos da Oficina das Palavras, com a turma jogando:
+#    · "A primeira sílaba ele lê PARA, e deveria ser PA"   (PATO)
+#    · "Ele não lê a sílaba BE, que é a do meio"           (ABELHA)
+#
+#  A causa: o TTS recebe o pedaço SOZINHO, sem palavra em volta, e resolve a
+#  ambiguidade do jeito dele — "pa" vira a abreviação coloquial de "para";
+#  "be" some ou sai como o nome da letra. Não é defeito de gravação: é o
+#  motor de voz adivinhando, e adivinhando errado.
+#
+#  O conserto é dar a ele um pedaço que só tem UMA leitura possível — a mesma
+#  sílaba, escrita com o acento que fixa o som. E vale SÓ quando a fala é a
+#  sílaba INTEIRA e sozinha: dentro de uma frase, "pa" e "be" são outra coisa,
+#  e trocar ali estragaria o que hoje funciona.
+#
+#  Regra para crescer esta tabela: só entra pedaço que o Marcos OUVIU errado.
+#  Nada de "prevenir" no chute — cada linha aqui é uma criança que ouviu torto.
+# ============================================================
+_SILABA_SOLTA = {
+    u"pa": u"pá",     # PA-to: sozinho, o TTS lia "para"
+    u"be": u"bê",     # a-BE-lha: sozinho, o TTS engolia
+}
+
+
+
+# ============================================================
+#  ⭐ LETRA SOLTA — diz o NOME dela, como a professora diz (set/2026)
+#
+#  Foto do Marcos, na fase "escreva o diminutivo" (PATINHO):
+#    *"Nesta atividade ele só lê as letras A e O, deveria ler todas as letras
+#     que são clicadas"*.
+#
+#  A causa, medida: a peça manda a letra CRUA ("P", "T", "N", "H") para a voz.
+#  As gravações que existem são os NOMES ("Pê", "Tê", "Ene", "Agá"), e uma
+#  letra crua não casa com nenhuma. As VOGAIS escapavam por acaso — "A" acha a
+#  gravação de "Á", "O" acha "Ó" — e por isso só elas falavam. Sem gravação, a
+#  peça cai na voz-robô do navegador, que NÃO existe no PC da escola: silêncio.
+#
+#  E o silêncio aqui não é detalhe. Esta fase é de uma criança de 9 anos
+#  MONTANDO a palavra letra por letra: ouvir o nome do que acabou de tocar é
+#  metade do que a fase ensina.
+#
+#  Vale só quando a fala é a letra SOZINHA. Dentro de frase, "a" e "o" são
+#  artigos e continuam como estão.
+# ============================================================
+_LETRA_SOLTA = {
+    u"a": u"á",   u"b": u"bê",  u"c": u"cê",  u"d": u"dê",   u"e": u"é",
+    u"f": u"éfe", u"g": u"gê",  u"h": u"agá", u"i": u"i",    u"j": u"jota",
+    u"k": u"ká",  u"l": u"éle", u"m": u"ême", u"n": u"ene",  u"o": u"ó",
+    u"p": u"pê",  u"q": u"quê", u"r": u"érre",u"s": u"ésse", u"t": u"tê",
+    u"u": u"u",   u"v": u"vê",  u"w": u"dáblio", u"x": u"xis",
+    u"y": u"ípsilon", u"z": u"zê",
+}
+
+
 def _fonetica_voz(t):
     u"""Reescreve foneticamente as palavras que a voz erra. Vale SO para o texto
     que vai ao TTS — nunca para a tela nem para a chave da voz."""
     t = _HINT_SILABA.sub(u"", t)      # tira o "(va-ca)" que a voz soletrava
     t = _SUFIXO_HIFEN.sub(u"", t)     # "-ão" -> "ão" (o traco somia/arrastava)
     t = _sem_caixa_alta(t)            # VACA/ABELHA/JACARÉ -> minusculas (fim do sotaque)
+    # ⭐ a fala é a sílaba SOZINHA? então é pedaço, e o TTS precisa de ajuda
+    #    (ver o bloco _SILABA_SOLTA). Só o texto inteiro conta: dentro de frase
+    #    "pa" e "be" são outra coisa e ficam como estão.
+    _so = t.strip().lower()
+    if _so in _SILABA_SOLTA:
+        return _SILABA_SOLTA[_so]
+    # ⭐ uma letra sozinha: diz o NOME dela (ver o bloco _LETRA_SOLTA)
+    if len(_so) == 1 and _so in _LETRA_SOLTA:
+        return _LETRA_SOLTA[_so]
     for rx, sub in _FONETICA_VOZ:
         t = rx.sub(sub, t)
     # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): nas fases de COMPLETAR a lacuna e um
