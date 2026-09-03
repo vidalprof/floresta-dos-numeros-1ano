@@ -303,10 +303,30 @@ def analisa(js, css, baixo, html=None):
                         break
                 k += 1
             corpo_ts = js[m.end():k]
-            if "preventDefault" in corpo_ts:
-                ruins.append(u"arrastar: ha preventDefault dentro do touchstart. Isso MATA o "
-                             u"toque no celular — a peca nao pega.")
-                break
+            if "preventDefault" not in corpo_ts:
+                continue
+            # ⚠️ LICAO PAGA (set/2026) — ESTE PORTAO ACUSOU INOCENTE, e portao que
+            #    acusa inocente e pior que portao nenhum: a esteira aprende a
+            #    ignorar ele. O `_pixel` (pixel art) leva `preventDefault` no
+            #    touchstart e esta CERTO. A regra nasceu de PECA ARRASTAVEL, onde
+            #    o toque simples precisa virar clique — e ali o preventDefault
+            #    mata o gesto. Num CANVAS DE DESENHO o mundo e outro: o gesto E o
+            #    arrasto continuo, nao existe "toque simples que vira clique", e
+            #    sem o preventDefault o dedo ROLA A PAGINA em vez de pintar.
+            #    Alem disso o handler ja PINTA no proprio touchstart, entao o
+            #    toque de um tap so tambem funciona.
+            #    A pergunta certa nao e "tem preventDefault?" e sim "o toque
+            #    simples AGE?". Se o proprio touchstart ja faz a acao (chama uma
+            #    funcao de comeco/pintura sobre canvas), esta blindado.
+            alvo = js[max(0, m.start() - 200):m.start()]
+            eh_canvas = re.search(r'(canvas|cv|tela|pinta|ctx)\b[^;]{0,40}addEventListener\s*\(\s*["\']touchstart',
+                                  alvo + js[m.start():m.end()], re.I)
+            age_no_start = re.search(r'\b(comeca|inicia|pinta|aplica|desenha|start)\s*\(', corpo_ts, re.I)
+            if eh_canvas and age_no_start:
+                continue   # canvas de desenho: preventDefault e obrigatorio, nao defeito
+            ruins.append(u"arrastar: ha preventDefault dentro do touchstart. Isso MATA o "
+                         u"toque no celular — a peca nao pega.")
+            break
         if not re.search(r'ultimoToque|ultToque|__toque|toqueAgora', js):
             avisos.append(u"arrastar: nao achei o guarda contra o evento de mouse FANTASMA que o "
                           u"celular dispara depois do toque (ele desmarca a peca). "

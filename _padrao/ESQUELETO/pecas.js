@@ -3831,6 +3831,7 @@ var BATIDAS=[
 
 var ri=0;        /* rodada de agora */
 var bat=0;       /* quantas batidas a criança já deu */
+var travando=0;  /* cadeado: o Pronto fica surdo enquanto a rodada se resolve */
 var err=0;       /* erros DESTA rodada (o andaime cresce com ele) */
 var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
 /* ⚠️ geração do APOIO PELO OUVIDO. O `ger` só troca quando a RODADA troca, e o
@@ -3922,7 +3923,7 @@ function piscaBatida(){
 function pecaBater(){
   var r=BATIDAS[ri];
   if(!r){ fimDaPeca(); return; }
-  err=0; bat=0; ger++;
+  err=0; bat=0; ger++; travando=0;
   limpa();
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/BATIDAS.length));
@@ -4004,6 +4005,7 @@ function bate(r){
 }
 
 function zera(r){
+  travando=0;
   var bx=document.getElementById("bsBx");
   bat=0;
   if(bx){ bx.innerHTML=""; bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui")); }
@@ -4012,7 +4014,15 @@ function zera(r){
 }
 
 function confere(r){
-  if(bat===r.sil.length){ acerta(r); return; }
+  /* ⚠️ CADEADO DE RE-ENTRADA. Sem ele, a crianca que toca "Pronto" DE NOVO
+     durante a comemoracao (e em palavra longa, tipo ELEFANTE, a comemoracao
+     dura segundos) faz a peca contar o acerto duas vezes: duas festas, duas
+     vozes por cima uma da outra e, no fim, a peca chamando o `fim()` da ponte
+     duas vezes. O `_seguir` la em cima ja segura o pulo duplo, mas a bagunca
+     de som e de tela acontece antes dele. Aqui o Pronto fica surdo enquanto a
+     rodada esta se resolvendo; `zera()` e a rodada nova destravam. */
+  if(travando) return;
+  if(bat===r.sil.length){ travando=1; acerta(r); return; }
   /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
      Contar errado no 1º ano é o normal — é justamente o que está em treino. */
   err++; sVolta();
@@ -19428,8 +19438,17 @@ function fazSilaba(item, r){
      mouse DEPOIS do toque, e sem este guarda eles desfaziam o gesto. Defeito já
      pego duas vezes na casa. */
   arrastavel(b, r);
-  b.onclick=function(){
-    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+  /* ⚠️⚠️ LICAO PAGA (set/2026, achada pelo portao `_qa/dinamicas.py`): a ACAO da
+     peca morava DENTRO do `onclick`, e o `onclick` comeca com o guarda contra o
+     mouse FANTASMA (`_ultimoToque`). So que o `touchend` carimbava
+     `_ultimoToque = agora` e, na linha seguinte, chamava `b.onclick()`. O
+     guarda via um toque de 0ms atras e devolvia `return`: o TOQUE DE VERDADE
+     caia no proprio guarda e a peca NAO fazia nada. No celular e no tablet da
+     escola a fase inteira ficava morta — e no PC, com mouse, funcionava
+     perfeito, entao o defeito era invisivel para quem testa no computador.
+     Agora a acao mora sozinha (`b.acao`): o toque chama ela DIRETO, e o guarda
+     fica so no caminho do mouse, que e para quem ele foi feito. */
+  b.acao=function(){
     if(b.className.indexOf("usada")>=0) return;
     var esperada=r.sil[posto];
     if(item.s===esperada && b.className.indexOf("usada")<0){
@@ -19442,6 +19461,11 @@ function fazSilaba(item, r){
       b.className="jsSil";
       ajuda(err, r);
     }
+  };
+  /* o mouse continua entrando pelo onclick, com o guarda do fantasma */
+  b.onclick=function(){
+    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+    b.acao();
   };
   return b;
 }
@@ -19478,7 +19502,7 @@ function arrastavel(b, r){
     if(v){
       var q=v.getBoundingClientRect();
       /* margem generosa: dedo de 6 anos nao acerta o pixel */
-      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ b.onclick(); return; }
+      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ (b.acao||b.onclick).call(b); return; }
     }
     sVolta();
   }
@@ -19502,7 +19526,7 @@ function arrastavel(b, r){
     if(q){ var g=q.getBoundingClientRect();
       if(!(t.clientX>g.left-30&&t.clientX<g.right+30&&t.clientY>g.top-30&&t.clientY<g.bottom+30)){
         arr=false; b.style.webkitTransform=""; b.style.transform="";
-        b.onclick(); return; } }
+        (b.acao||b.onclick).call(b); return; } }
     solta(t.clientX,t.clientY);
   },false);
 }

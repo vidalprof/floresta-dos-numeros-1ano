@@ -290,6 +290,18 @@ print("".join(re.findall(r"<script>(.*?)</script>",h,re.S)))
 PY
 if node --check "$JSTMP" >/dev/null 2>&1; then echo "  JS ok (node --check)"; else echo "  ERRO DE SINTAXE NO JS"; node --check "$JSTMP"; FALHOU=1; fi
 
+# ⭐ 1z) O PORTAO MAIS BURRO DA BANCA — "isso ABRE?" — e o mais importante.
+#    Nasceu do Tangram (03/set/2026): o Marcos clicou e viu SO O FUNDO. Era um
+#    `ReferenceError` no boot (uma `var` que eu apaguei sem querer). O
+#    `node --check` aprovou (sintaxe estava certa), e TODOS os portoes de
+#    navegador ficaram calados — quando o boot morre, eles nao acham as telas
+#    por nome e nao medem NADA, que na tela imprime igual a "aprovou".
+#    Por isso ele roda em SEGUNDO lugar, logo depois da sintaxe: se a atividade
+#    nao abre, medir contraste de texto que nunca foi desenhado e teatro.
+echo
+echo "--- 1z) BOOT (a atividade abre e a capa leva adiante?) -"
+portao "1z boot" node _qa/boot.js "$ARQ"
+
 echo
 echo "--- 0a) PEDAGOGO (a escada didatica sobe de verdade?) -"
 portao "0a pedagogo" python3 _qa/pedagogo.py "$ARQ"
@@ -346,6 +358,16 @@ echo "--- 0o) O REVISOR (testador humano de TEXTO: digitacao, concordancia) -"
 #    no OLHO dele — "o jiboia"/"a tucano" (concordancia), palavra repetida, espaco
 #    duplo, HTML vazando na fala. Roda sobre a PASTA (falas.json + conteudo.json).
 portao "0o revisor de texto" python3 _qa/revisor.py "$PASTA"
+
+# ⭐ 0o2) A RESPOSTA ENTREGUE — nasceu da PRIMEIRA foto do Revisor Final
+#     (set/2026): a pergunta destacava em negrito e laranja exatamente a palavra
+#     que era a resposta ("Guardei o **bolo**..." / "Qual e o SUBSTANTIVO?").
+#     Eram 16 perguntas assim, e a fase que existe para ENSINAR substantivo
+#     virava um jogo de achar a cor. Nenhum dos 65 portoes pegou, porque o
+#     CODIGO estava certo: a resposta declarada batia, a dica crescia, a voz
+#     dizia o escrito, o jogador chegava na medalha. So olhando a TELA aparece.
+echo "--- 0o2) RESPOSTA ENTREGUE (a pergunta da a resposta de graca?) -"
+portao "0o2 resposta entregue" python3 _qa/entrega.py "$PASTA"
 
 # ⭐ 0p) A SEGUNDA LEITURA (portao de SENTIDO). Os portoes acima medem TEXTO
 #    mecanico (digitacao, concordancia, HTML vazando). NENHUM le o SIGNIFICADO:
