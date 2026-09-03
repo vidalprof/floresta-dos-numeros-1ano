@@ -85,7 +85,7 @@ CONTEUDO = {
  u"crachas": 6,
  u"mesa": (u"Pedagogo do 5º ano + especialista em Língua Portuguesa (leitura de "
            u"gêneros textuais e classes de palavras: substantivo, adjetivo e verbo)."),
- u"fundo": u"rv_fundo.png",
+ u"fundo": u"rv_fundo.jpg",
  u"voz": u"feminina",
  u"abertura": (u"Bem-vindo(a) à redação da Revista das Palavras! Sou a Filó, a "
                u"editora-chefe. Cada matéria só fecha quando lemos com atenção e "
