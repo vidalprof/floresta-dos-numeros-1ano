@@ -933,7 +933,7 @@ function ouvirDeNovo(){ if(falaAtual){ falar(falaAtual); } }
 /* conta JUNTO com a criança as estrelas que entram na caixa (Parada 1) */
 function contaEstrela(k){
   var nomes=["uma","duas","tres","quatro","cinco"]; if(k<1||k>nomes.length)return;
-  var cheia=(typeof P1!=="undefined" && P1 && k===P1.m);   // a última da caixa comemora: "Caixa cheia!"
+  var _p1=window.P1, cheia=!!(_p1 && k===_p1.m);   /* window.P1: o `typeof` protege em runtime mas o ESLint nao le fluxo */   // a última da caixa comemora: "Caixa cheia!"
   falar("conta_"+nomes[k-1]+(cheia?"_cheia":""));
 }
 var reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -1512,7 +1512,7 @@ function telaCheia(){
 
 /* ================= TELAS ================= */
 function tema(claro){ document.body.style.background = claro ? "linear-gradient(to bottom,#d7e3f8,#eef2fa 60%,#dfe8f7)" : ""; }
-function limpa(){ if(typeof musTimer!=="undefined"&&musTimer){clearTimeout(musTimer);musTimer=0;} mostraOuvir(false); fagAtual=null; dicasParada=0; app.innerHTML=""; tema(false); stageFull(false); }
+function limpa(){ if(window.musTimer){clearTimeout(window.musTimer);window.musTimer=0;}   /* window.*: o `typeof` protege em runtime, mas o ESLint nao le fluxo e acusava nome nao-declarado */ mostraOuvir(false); fagAtual=null; dicasParada=0; app.innerHTML=""; tema(false); stageFull(false); }
 
 function telaCapa(){
   limpa();
@@ -1743,7 +1743,7 @@ function aqRender(){
         b.className="optbtn erra"; (function(bb){ setTimeout(function(){ bb.className="optbtn"; },480); })(b);
         // o MUNDO mostra: a grade aparece e a criança conta de b em b (feedback específico, sem X)
         var it2=AQ.itens[AQ.i], gr2=document.getElementById("aqgrade");
-        if(gr2 && !gr2.childNodes.length){ gr2.appendChild(gradeStars(it2.a,it2.b,"gradeM")); }
+        if(gr2 && !gr2.childNodes.length){ /* ⚠️ ACHADO PELO ESLINT (set/2026): aqui chamava `gradeStars(...)`, que NAO EXISTE nesta atividade — e resto de clone. Nao havia `typeof` protegendo: a crianca errava a pergunta do aquecimento, o app tentava mostrar a grade de apoio e ESTOURAVA com ReferenceError, no Climas do Mundo (6o ano) que esta no ar. A funcao da casa que faz isso e a `visMiniGrade(fil,col)`, declarada aqui mesmo. */ var _g=visMiniGrade(it2.a,it2.b); _g.className=((_g.className||"")+" gradeM").replace(/^ /,""); gr2.appendChild(_g); }
         var salto=[],s; for(s=1;s<=it2.a;s++)salto.push(s*it2.b);
         var d=document.getElementsByClassName("pdica")[0]; if(d)d.innerHTML="São "+it2.a+" grupos de "+it2.b+". Conte de "+it2.b+" em "+it2.b+": "+salto.join(", ")+".";
         falar("aq_conta");

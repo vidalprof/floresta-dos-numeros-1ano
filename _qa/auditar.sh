@@ -290,6 +290,17 @@ print("".join(re.findall(r"<script>(.*?)</script>",h,re.S)))
 PY
 if node --check "$JSTMP" >/dev/null 2>&1; then echo "  JS ok (node --check)"; else echo "  ERRO DE SINTAXE NO JS"; node --check "$JSTMP"; FALHOU=1; fi
 
+# ⭐ 1y) O ESTATICO (ESLint) — o `ReferenceError` SEM abrir o navegador.
+#    Complementa o boot: o boot ve FUNDO um caminho so (o que ele percorre);
+#    este ve RASO todos os caminhos, inclusive o codigo que so roda na fase 28.
+#    Foi ele que achou, em 1 segundo cada: `sTira` chamado e nunca declarado na
+#    Grande Expedicao, `FECHO` na peca ensinar-mascote do RIGHT NOW, e
+#    `gradeStars` no Climas do Mundo — as tres NO AR, as tres estourando na cara
+#    da crianca, as tres invisiveis para os 65 portoes que ja existiam.
+echo
+echo "--- 1y) ESTATICO (nome usado que nunca foi declarado) -"
+portao "1y estatico" bash _qa/estatico.sh "$ARQ"
+
 # ⭐ 1z) O PORTAO MAIS BURRO DA BANCA — "isso ABRE?" — e o mais importante.
 #    Nasceu do Tangram (03/set/2026): o Marcos clicou e viu SO O FUNDO. Era um
 #    `ReferenceError` no boot (uma `var` que eu apaguei sem querer). O

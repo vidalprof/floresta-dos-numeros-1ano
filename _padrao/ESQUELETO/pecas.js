@@ -981,6 +981,7 @@ function recomecaAnde(){ lugarAtual=0; telaAnde(); }
 
 /* ==== PECA: arranjo ==== */
 MEC["arranjo"] = function(f, cen, fim){
+  function sTira(){ /* ⚠️ ACHADO PELO ESLINT (set/2026): as pecas `arranjo` e `resto` CHAMAVAM sTira() e nunca o declaravam — ele so existia dentro do fechamento de OUTRA peca, que nao alcanca daqui. A crianca tocava "tirar uma fileira" e o app estourava com ReferenceError, na Grande Expedicao (5o ano) que esta NO AR. E o irmao do sPoe, ao contrario: desce em vez de subir. */ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
   cen.className = cen.className + " mec-arranjo";
   /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
      PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
@@ -14256,6 +14257,7 @@ function fimDomino(){
 
 /* ==== PECA: ensinar-mascote ==== */
 MEC["ensinar-mascote"] = function(f, cen, fim){
+  var FECHO="Voc&#234; ensinou tudo ao mascote!"; /* ⚠️ ACHADO PELO ESLINT (set/2026): esta peca MONTAVA a tela de fim com `el("div","balao",FECHO)` e nunca declarava FECHO — cada peca irma declara a SUA e esta ficou sem. A crianca terminava a fase e o app estourava com ReferenceError, no RIGHT NOW (9o ano) que esta no ar. */
   cen.className = cen.className + " mec-ensinar-mascote";
   /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
      PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
@@ -33446,6 +33448,7 @@ function fimDaPeca(){
 
 /* ==== PECA: resto ==== */
 MEC["resto"] = function(f, cen, fim){
+  function sTira(){ /* ⚠️ ACHADO PELO ESLINT (set/2026): as pecas `arranjo` e `resto` CHAMAVAM sTira() e nunca o declaravam — ele so existia dentro do fechamento de OUTRA peca, que nao alcanca daqui. A crianca tocava "tirar uma fileira" e o app estourava com ReferenceError, na Grande Expedicao (5o ano) que esta NO AR. E o irmao do sPoe, ao contrario: desce em vez de subir. */ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
   cen.className = cen.className + " mec-resto";
   /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
      PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse

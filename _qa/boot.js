@@ -57,7 +57,17 @@ const RUIDO = [
   /net::ERR_(INTERNET_DISCONNECTED|NAME_NOT_RESOLVED|CONNECTION|BLOCKED)/i,
   /speechSynthesis|AudioContext|play\(\).*user|NotAllowedError/i, // som exige gesto
   /Failed to load resource.*\.mp3/i,
-  /pollinations|googleapis|firebase/i
+  /pollinations|googleapis|firebase/i,
+  /* ⚠️ `fetch` de arquivo local e SEMPRE bloqueado por CORS em file:// — o
+     navegador so permite fetch por http. Isso e do TESTE, nao da atividade
+     (que na escola roda por https no Pages). Deixar isto reprovando faria o
+     portao acusar inocente em toda atividade que le um .json. */
+  /blocked by CORS policy|Cross origin requests are only supported|ERR_FAILED/i,
+  /Access to fetch at/i,
+  /* som que comeca e e cortado por outro som: acontece o tempo todo num app
+     narrado (a fala nova corta a antiga, de proposito) e o navegador chama
+     isso de erro. Nao e defeito. */
+  /play\(\) request was interrupted|The play\(\) request/i
 ];
 const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
 
@@ -178,8 +188,23 @@ const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
           const alvo = document.getElementById('app') || document.getElementById('root') || document.body;
           return alvo.innerHTML.length + '/' + alvo.querySelectorAll('*').length;
         });
-        if (depois === antes)
-          problemas.push('BECO NA CAPA: cliquei em "' + clicou + '" e a tela nao mudou em nada');
+        if (depois === antes) {
+          /* ⚠️ LICAO PAGA NA HORA (set/2026): a Expedicao Santa Catarina caiu
+             aqui e ESTAVA CERTA. A capa dela e um CADASTRO (nome, turma,
+             personagem) e o "Comecar a explorar!" so libera depois de
+             preencher — a tela nao mudar e a VALIDACAO funcionando, nao um
+             beco. Portao que acusa inocente ensina a ignorar portao. Entao:
+             se a capa pede dados que ninguem preencheu, isto nao e defeito. */
+          const pedeDados = await p.evaluate(() => {
+            const ins = [...document.querySelectorAll('input[type=text], input:not([type]), textarea')]
+              .filter(i => { const r = i.getBoundingClientRect(); return r.width > 20 && r.height > 10; });
+            const vazio = ins.some(i => !String(i.value || '').trim());
+            const escolhas = document.querySelectorAll('.sel, .escolhido, [aria-pressed="true"], input:checked').length;
+            return (ins.length > 0 && vazio) || (ins.length > 0 && escolhas === 0);
+          });
+          if (!pedeDados)
+            problemas.push('BECO NA CAPA: cliquei em "' + clicou + '" e a tela nao mudou em nada');
+        }
       }
     } catch (e) {
       problemas.push('NAO MEDI o clique da capa: ' + e.message);

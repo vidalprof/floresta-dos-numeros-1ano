@@ -86,6 +86,9 @@ jobs:
       #    QUALQUER um reprovar, o job PARA aqui e NADA vai ao ar — o erro conhecido
       #    (inglês na voz, "complite", JS quebrado, armadilha de mecânica) nunca
       #    mais chega na criança sem alguém ver.
+      - name: Ferramentas de QA (ESLint) — gratuitas, ficam em _qa/ferramentas
+        run: npm install --prefix _qa/ferramentas --no-audit --no-fund --silent || echo "::warning::ESLint nao instalou; o portao estatico dira NAO MEDI"
+
       - name: Portão pré-entrega (recusa publicar com erro conhecido)
         env:
           LISTA: ${{ steps.alvos.outputs.lista }}
@@ -101,6 +104,7 @@ jobs:
               if python3 _qa/extrai_js.py "$idx" /tmp/_pre.js; then
                 node --check /tmp/_pre.js || { echo "::error::$pasta: JS invalido (node --check)"; FALHOU=1; }
               fi
+              bash _qa/estatico.sh "$idx" || { echo "::error::$pasta: o ESLint achou nome nao-declarado (ReferenceError na cara da crianca)"; FALHOU=1; }
               python3 _qa/dinamicas.py "$idx" || { echo "::error::$pasta: portao das dinamicas reprovou"; FALHOU=1; }
               if [ -f "$pasta/conteudo.json" ]; then
                 python3 _qa/entrega.py "$pasta" || { echo "::error::$pasta: ha pergunta que ENTREGA a resposta (destaque em cima da palavra certa)"; FALHOU=1; }
