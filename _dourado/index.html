@@ -54,7 +54,8 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 .grupos{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding:6px;border-radius:12px}
 .grupos.alvo{background:rgba(47,143,78,.10);outline:2px dashed var(--verde);outline-offset:2px}
 .grupo{flex:1 1 108px;min-width:98px;background:#fff;border:2px solid #e6d3a5;border-radius:12px;padding:8px 5px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.08)}
-.grupo.mira{border-color:var(--verde);box-shadow:0 0 0 3px rgba(47,143,78,.35)}
+.grupo.mira{border-color:var(--verde);animation:piscagrp 1s ease-in-out infinite}
+@keyframes piscagrp{0%,100%{box-shadow:0 0 0 2px rgba(47,143,78,.30)}50%{box-shadow:0 0 0 5px rgba(47,143,78,.55)}}
 .grupo .gh{font-size:11px;font-weight:800;color:#8a6a2e}
 .grow{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;align-items:flex-end;min-height:16px;margin-top:3px}
 .grupo .gtot{font-size:15px;font-weight:800;color:var(--verde);margin-top:3px}
@@ -73,6 +74,7 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 .cell.q{color:var(--verde)}.cell.prod{color:var(--vermelho)}.cell.dv{color:#2a1f12}
 .cell.vbar{border-left:3px solid #2a1f12}.cell.fade{opacity:.28}.cell.divisor-lbl{color:#6e521f}
 .cell.qbox{height:30px;line-height:26px;font-size:15px;color:#b78f2f;border:2px dashed #d9be7a;border-radius:6px;background:#fffdf4}
+.cell.divb{border-bottom:3px solid #2a1f12}
 .legenda{font-size:12px;text-align:center;color:#8a6a2e;margin-top:6px}
 .legenda .k{margin:0 5px;font-weight:800}.legenda .kq{color:var(--verde)}.legenda .kp{color:var(--vermelho)}
 .fala{background:linear-gradient(180deg,#fff8e6,#fdefc8);border-radius:14px;padding:10px 14px;font-size:15px;font-weight:600;color:#4a3410;margin-top:10px;min-height:22px;border:1px solid #efd89a}
@@ -233,48 +235,36 @@ $("exBlocos").innerHTML='<div><div class="lab">1 milhar</div>'+bloco(0,56)+'</di
   '<div><div class="lab">1 dezena</div>'+bloco(2,48)+'</div>'+
   '<div><div class="lab">1 unidade</div>'+bloco(3,22)+'</div>';
 
-/* ===== conta armada ===== */
+/* ===== conta armada (padrão brasileiro: quociente EMBAIXO do divisor) ===== */
 function cell(t,c){return '<span class="cell '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>';}
-function firstNonZeroQ(){for(var i=0;i<plan.passos.length;i++)if(plan.passos[i].q>0)return i;return plan.passos.length-1;}
-/* mostra os passos ATÉ o índice de passo `ate`; se `parcialQ`>=0, desenha o quociente
-   parcial da casa em curso (índice de passo `passoAtivo`). */
-function renderChave(ate,passoAtivo,parcialQ){
-  var L=plan.L,ds=plan.ds,d=String(plan.d),html="",i,r1="";
-  for(i=0;i<L;i++)r1+=cell(ds[i],"dv");r1+=cell("│","vbar");
-  for(var k=0;k<d.length;k++)r1+=cell(d[k],"dv divisor-lbl");
-  html+='<div class="crow">'+r1+'</div>';
-  var fnz=firstNonZeroQ(),r2="";
-  for(i=0;i<L;i++){var p=plan.passos[i];
-    if(i<=ate)r2+=cell(p.q,"q"+(i<fnz?" fade":""));
-    else if(i===passoAtivo&&parcialQ>=0)r2+=cell(parcialQ,"q"+(i<fnz?" fade":""));
-    else r2+=cell("");}
-  r2+=cell("&nbsp;","");html+='<div class="crow">'+r2+'</div>';
-  for(var s=0;s<=ate&&s<L;s++){if(s<fnz)continue;var ps=plan.passos[s],ru="";
-    for(var c=0;c<L;c++)ru+=(c===s)?cell("-"+ps.usado,"prod"):cell("");
-    html+='<div class="crow">'+ru+'</div>';}
-  return html;
-}
 function passoDeCasa(place){ /* índice do passo (na lista) que corresponde à casa REAL `place` */
   for(var i=0;i<plan.passos.length;i++) if(plan.passos[i].place===place) return i; return -1;
 }
-/* Durante o jogo a conta armada mostra só o ENUNCIADO (dividendo|divisor) e
-   os ESPAÇOS VAZIOS do quociente — o aluno preenche digitando depois de montar
-   o material à esquerda. A conta só se completa quando ele ACERTA. */
-function chaveVazia(){
-  var L=plan.L,ds=plan.ds,d=String(plan.d),i,r1="";
-  for(i=0;i<L;i++)r1+=cell(ds[i],"dv");
+/* Duas linhas alinhadas por coluna:
+   linha 1: DIVIDENDO │ DIVISOR (com traço embaixo do divisor)
+   linha 2: (resto sob a unidade, se houver) │ QUOCIENTE (embaixo do divisor)
+   Durante o jogo o quociente são CAIXAS VAZIAS; o aluno digita depois de montar
+   o material. A conta só se completa quando ele ACERTA — nada resolvido de graça. */
+function chaveRows(quoCells, mostraResto){
+  var L=plan.L, ds=plan.ds, dv=String(plan.d), qLen=String(plan.quo).length;
+  var RW=Math.max(dv.length,qLen), i, r1="", r2="";
+  for(i=0;i<L;i++) r1+=cell(ds[i],"dv");
   r1+=cell("│","vbar");
-  for(var k=0;k<d.length;k++)r1+=cell(d[k],"dv divisor-lbl");
-  var html='<div class="crow">'+r1+'</div>';
-  var fnz=firstNonZeroQ(),r2="";
-  for(i=0;i<L;i++){ r2+=(i<fnz)?cell(""):cell("","qbox"); }
-  r2+=cell("&nbsp;","");
-  html+='<div class="crow">'+r2+'</div>';
-  return html;
+  for(i=0;i<RW;i++) r1+=cell(i<dv.length?dv[i]:"","dv divisor-lbl divb");
+  for(i=0;i<L;i++) r2+=(mostraResto&&plan.rem>0&&i===L-1)?cell(plan.rem,"prod"):cell("");
+  r2+=cell("│","vbar");
+  for(i=0;i<RW;i++) r2+=(i<qLen?quoCells[i]:cell(""));
+  return '<div class="crow">'+r1+'</div><div class="crow">'+r2+'</div>';
 }
-function pintaChave(){
-  $("chave").innerHTML = mostraQuo ? renderChave(plan.L-1,-1,-1) : chaveVazia();
+function chaveVazia(){
+  var q=String(plan.quo).length, b=[], i; for(i=0;i<q;i++) b.push(cell("","qbox"));
+  return chaveRows(b,false);
 }
+function chaveCheia(){
+  var s=String(plan.quo), d=[], i; for(i=0;i<s.length;i++) d.push(cell(s[i],"q"));
+  return chaveRows(d,true);
+}
+function pintaChave(){ $("chave").innerHTML = mostraQuo ? chaveCheia() : chaveVazia(); }
 function atualizaChave(){ pintaChave(); }
 
 /* ===== a mesa (banco + grupos) numa página ===== */
@@ -297,10 +287,15 @@ function renderBanco(){
 }
 function temCasa(place){ /* a casa existe no número? (offset) */ return place>=plan.offset; }
 
+function minCasa(){var m=1e9;for(var g=0;g<plan.d;g++)if(grp[g][pativa]<m)m=grp[g][pativa];return m;}
+function maxCasa(){var m=0;for(var g=0;g<plan.d;g++)if(grp[g][pativa]>m)m=grp[g][pativa];return m;}
+/* o grupo g ainda espera bloco NESTA rodada? (está no mínimo e há bloco no banco) */
+function faltaNoGrupo(g){ return fase==="repartir" && sup[pativa]>0 && grp[g][pativa]===minCasa(); }
 function renderGrupos(){
   var h="";
   for(var g=0;g<plan.d;g++){
-    h+='<div class="grupo"><div class="gh">GRUPO '+(g+1)+'</div>';
+    var mira=faltaNoGrupo(g)?" mira":"";
+    h+='<div class="grupo'+mira+'" data-g="'+g+'"><div class="gh">GRUPO '+(g+1)+'</div>';
     for(var place=plan.offset;place<4;place++){
       var n=grp[g][place];
       if(n>0){ h+='<div class="grow">'+cluster(place,n,grpPx(place),10,false)+'</div>'; }
@@ -309,25 +304,37 @@ function renderGrupos(){
     var valor=valorGrupo(g);
     h+='<div class="gtot">'+(valor>0?valor:"—")+'</div></div>';
   }
-  $("grupos").className="grupos"+(fase==="repartir"&&podeRepartir()?" alvo":"");
+  $("grupos").className="grupos"+(fase==="repartir"?" alvo":"");
   $("grupos").innerHTML=h;
 }
 function valorGrupo(g){var v=0;for(var place=plan.offset;place<4;place++){v+=grp[g][place]*Math.pow(10,3-place);}return v;}
 
 function renderMesa(){ renderBanco(); renderGrupos(); atualizaChave(); ligaArrasto(); }
 
-/* ===== regras de repartir — O ALUNO faz cada rodada (sem auto-resolver) =====
-   Cada arrasto = UMA rodada: um bloco para CADA grupo. Ele repete até sobrar
-   menos que o número de grupos. O sistema NUNCA resolve por ele. */
+/* ===== regras de repartir — TUDO MANUAL, grupo por grupo =====
+   ⭐ Cada arrasto leva UM bloco para UM grupo só (o que a criança escolheu).
+   O sistema NUNCA preenche outro grupo sozinho. Para ser justo, só aceita no
+   grupo que ainda está no MÍNIMO da rodada (os que "piscam"); assim ela dá um
+   para cada, um de cada vez, até não dar mais uma rodada inteira (= a sobra). */
 function podeRepartir(){ return sup[pativa]>=plan.d; }
-function repartirRodada(){
-  if(!podeRepartir()){sNao();errouNessa=true;
-    $("fala").innerHTML="Já não dá uma rodada inteira (menos que <b>"+plan.d+"</b>) — o que ficou é a <b>sobra</b>.";return;}
-  for(var g=0;g<plan.d;g++) grp[g][pativa]++;
-  sup[pativa]-=plan.d; sPoe();
-  if(!podeRepartir())terminaCasa();else{ renderMesa();
-    $("fala").innerHTML="Rodada dada: <b>1</b> "+NOMES[pativa]+" para cada grupo. Continue enquanto der uma rodada inteira.";}
+function repartirUm(g){
+  if(fase!=="repartir") return;
+  if(sup[pativa]<=0) return;
+  var mn=minCasa();
+  /* rodada nova só começa se der para TODOS (senão o resto é a sobra) */
+  if(mn===maxCasa() && sup[pativa]<plan.d){ terminaCasa(); return; }
+  if(grp[g][pativa]!==mn){
+    sNao();
+    $("fala").innerHTML="Esse grupo já recebeu nesta rodada. D&ecirc; para um que ainda <b>falta</b> (os que piscam).";
+    return;
+  }
+  grp[g][pativa]++; sup[pativa]--; sPoe();
+  /* completou uma rodada e já não dá outra? então o que sobrou é a sobra */
+  if(minCasa()===maxCasa() && sup[pativa]<plan.d){ terminaCasa(); return; }
+  renderMesa();
+  $("fala").innerHTML="Um "+NOMES[pativa]+" para o <b>grupo "+(g+1)+"</b>. Continue dando <b>um para cada grupo</b>.";
 }
+function grupoAlvo(el){ while(el){ if(el.getAttribute && el.getAttribute("data-g")!=null) return parseInt(el.getAttribute("data-g"),10); el=el.parentNode; } return -1; }
 
 function terminaCasa(){
   var p=plan.passos[passoDeCasa(pativa)];
@@ -342,19 +349,24 @@ function terminaCasa(){
     pedeResultado(msg);
     return;
   }
-  fase="trocar";
   if(sobraAtual>0){
+    fase="trocar";
     msg+="Sobra"+(sobraAtual===1?"":"m")+" <b>"+sobraAtual+"</b>. Arraste a sobra para <b>"+NOMESP[pativa+1].toUpperCase()+"</b> — troca por 10!";
     $("sobrainfo").innerHTML="Arraste os <b>"+sobraAtual+"</b> que sobraram para a casa das "+NOMESP[pativa+1]+".";
     $("controls").innerHTML="";
+    $("fala").innerHTML=msg;
+    renderMesa();
+    atualizaChaveFecha();
   }else{
-    msg+="Não sobrou nada. Seguimos para as "+NOMESP[pativa+1]+".";
-    $("sobrainfo").innerHTML="";
-    $("controls").innerHTML='<button class="btn" id="prox">Continuar &rarr;</button>';$("prox").onclick=avanca;
+    /* nada a trocar — segue sozinho para a próxima casa (sem botão) */
+    fase="passa";
+    msg+="Divis&atilde;o exata nesta casa. Vamos &agrave;s "+NOMESP[pativa+1]+"&hellip;";
+    $("sobrainfo").innerHTML=""; $("controls").innerHTML="";
+    $("fala").innerHTML=msg;
+    renderMesa();
+    atualizaChaveFecha();
+    setTimeout(avanca, 750);
   }
-  $("fala").innerHTML=msg;
-  renderMesa();
-  atualizaChaveFecha();
 }
 function atualizaChaveFecha(){ pintaChave(); }
 function atualizaChaveFinal(){ pintaChave(); }
@@ -374,8 +386,8 @@ function comecaCasa(){
   /* pula casas que não existem no número (não deveria, offset cobre) */
   var p=plan.passos[passoDeCasa(pativa)];
   var vindo=p.trazido>0?("Vieram <b>"+p.trazido+"</b> trocadas de cima; agora são <b>"+sup[pativa]+"</b> "+NOMESP[pativa]+". "):"";
-  $("instr").innerHTML=vindo+"Arraste um bloco: vai <b>um para cada grupo</b> (uma rodada).";
-  $("fala").innerHTML="Reparta as <b>"+NOMESP[pativa]+"</b> igualzinho: arraste, e cada grupo ganha <b>1</b>. Repita enquanto der.";
+  $("instr").innerHTML=vindo+"Arraste <b>um bloco para cada grupo</b>, um de cada vez (os que <b>piscam</b> ainda faltam).";
+  $("fala").innerHTML="Reparta as <b>"+NOMESP[pativa]+"</b>: arraste <b>um para cada grupo</b>. Repita enquanto der para todos.";
   $("controls").innerHTML="";
   $("sobrainfo").innerHTML="";
   renderMesa();
@@ -405,8 +417,11 @@ function dentro(el,ids){while(el){if(el.id&&ids.indexOf(el.id)>=0)return el.id;e
 function soltou(tgt,moved){
   /* o aluno TEM que arrastar de verdade (não vale só clicar — nada automático) */
   if(!moved){ $("fala").innerHTML="<b>Arraste</b> o bloco com o dedo (ou o mouse) — não vale só clicar."; sNao(); return; }
-  if(fase==="repartir"){ if(dentro(tgt,["grupos"])) repartirRodada();
-    else $("fala").innerHTML="Solte o bloco <b>em cima dos grupos</b> para repartir."; }
+  if(fase==="repartir"){
+    var g=grupoAlvo(tgt);
+    if(g>=0) repartirUm(g);
+    else $("fala").innerHTML="Solte o bloco <b>em cima de um grupo</b> (um de cada vez).";
+  }
   else if(fase==="trocar"){ if(dentro(tgt,["banco"])) trocar();
     else $("fala").innerHTML="Arraste a sobra até a casa <b>de baixo</b> (o banco) para trocar por 10."; }
 }
