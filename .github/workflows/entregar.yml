@@ -97,6 +97,7 @@ jobs:
           IFS=',' read -ra ALVS <<< "$LISTA"
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"
+            destino="${a#*:}"           # usado pela trava de didatica (ja no ar?)
             [ -z "$pasta" ] && continue
             echo "==================== Portao: $pasta ===================="
             idx="$pasta/index.html"; fal="$pasta/falas.json"
@@ -109,11 +110,27 @@ jobs:
               # conserto de MOTOR, e metade das atividades ficou sem receber nenhum.
               # Mas a regra nao foi afrouxada: ela mudou de portao. Se o montador
               # deixou pendencia de didatica, a publicacao PARA aqui.
+              # ⚠️ A TRAVA DE DIDATICA E O CONSERTO URGENTE (set/2026).
+              # A regra "didatica bloqueia a publicacao" nasceu certa, mas na
+              # primeira vez que valeu ela quase segurou o conserto do BOTAO QUE
+              # NAO APARECE — com crianca presa em aula. Deixar o otimo impedir o
+              # urgente e o defeito, nao a virtude.
+              # Distincao que resolve, sem furar a regra: a trava vale para
+              # atividade NOVA (que nunca foi ao ar). Uma que JA ESTA NO AR com a
+              # mesma pendencia de antes nao pode ficar impedida de receber
+              # conserto de funcionamento — a pendencia ja estava la, e segurar o
+              # conserto so piora o que a crianca vive. Nesse caso: AVISA alto e
+              # publica. A pendencia continua registrada e cobrada.
               _did="_status/didatica-$(basename "$pasta" | sed 's/^_//').json"
               if [ -f "$_did" ]; then
-                echo "::error::$pasta: ha PENDENCIA DE DIDATICA (mecanica espacada / pouca variedade / gesto acima de 40%). O codigo esta gerado, mas isto nao vai para a crianca. Veja $_did"
-                python3 -c "import json,sys;d=json.load(open('$_did'));[print('   - '+p) for p in d['pendencias']]" || true
-                FALHOU=1
+                if [ -f "_status/entrega-$destino.json" ]; then
+                  echo "::warning::$pasta: ha PENDENCIA DE DIDATICA (mecanica espacada / pouca variedade / gesto acima de 40%). Como esta atividade JA ESTA NO AR, o conserto de funcionamento passa — mas a pendencia continua cobrada. Veja $_did"
+                  python3 -c "import json;d=json.load(open('$_did'));[print('   - '+p) for p in d['pendencias']]" || true
+                else
+                  echo "::error::$pasta: atividade NOVA com PENDENCIA DE DIDATICA. O codigo esta gerado, mas isto nao estreia assim. Veja $_did"
+                  python3 -c "import json;d=json.load(open('$_did'));[print('   - '+p) for p in d['pendencias']]" || true
+                  FALHOU=1
+                fi
               fi
               node _qa/pcruim.js "$idx" || { echo "::error::$pasta: no PC RUIM a crianca fica PRESA (enfeite que falha impede o botao de proximo)"; FALHOU=1; }
               bash _qa/estatico.sh "$idx" || { echo "::error::$pasta: o ESLint achou nome nao-declarado (ReferenceError na cara da crianca)"; FALHOU=1; }
