@@ -177,9 +177,24 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 
 <script>
 /* ===== blocos SVG ===== */
-function svgUnidade(px){var s=px||16;return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 18 18"><rect x="1" y="1" width="16" height="16" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/><rect x="3.5" y="3.5" width="4.5" height="4.5" rx="1" fill="#fbe6a4" opacity=".7"/></svg>';}
-function svgDezena(px){var h=px||48;var w=Math.round(h*0.20);var seg='';var gap=h/10;for(var i=0;i<10;i++){seg+='<line x1="1" y1="'+(gap*i+1).toFixed(1)+'" x2="'+(w-1)+'" y2="'+(gap*i+1).toFixed(1)+'" stroke="#a9781a" stroke-width="0.8" opacity=".7"/>';}return '<svg class="blk" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><rect x="0.7" y="0.7" width="'+(w-1.4)+'" height="'+(h-1.4)+'" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/>'+seg+'</svg>';}
-function svgCentena(px){var s=px||46;var g='';var st=s/10;for(var i=1;i<10;i++){g+='<line x1="'+(st*i).toFixed(1)+'" y1="1" x2="'+(st*i).toFixed(1)+'" y2="'+(s-1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".6"/><line x1="1" y1="'+(st*i).toFixed(1)+'" x2="'+(s-1)+'" y2="'+(st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".6"/>';}return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'"><rect x="0.8" y="0.8" width="'+(s-1.6)+'" height="'+(s-1.6)+'" rx="3" fill="#efc451" stroke="#a9781a" stroke-width="1.6"/>'+g+'</svg>';}
+/* UNIDADE = um cubinho 3D pequeno e SÓLIDO (sem grade) — o menor de todos */
+function svgUnidade(px){var s=px||16;var d=Math.max(3,Math.round(s*0.26)),f=s-d;
+  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'">'+
+    '<polygon points="0,'+d+' '+d+',0 '+s+',0 '+f+','+d+'" fill="#f7db85" stroke="#a9781a" stroke-width="1"/>'+
+    '<polygon points="'+f+','+d+' '+s+',0 '+s+','+f+' '+f+','+(d+f)+'" fill="#d29f2c" stroke="#a9781a" stroke-width="1"/>'+
+    '<rect x="0" y="'+d+'" width="'+f+'" height="'+f+'" fill="#efc451" stroke="#a9781a" stroke-width="1.2"/>'+
+    '<rect x="'+(f*0.2).toFixed(1)+'" y="'+(d+f*0.2).toFixed(1)+'" width="'+(f*0.28).toFixed(1)+'" height="'+(f*0.28).toFixed(1)+'" fill="#fbe6a4" opacity=".65"/></svg>';}
+/* DEZENA = barra vertical de 10 cubinhos (fininha e comprida) */
+function svgDezena(px){var h=px||44;var w=Math.max(7,Math.round(h*0.17));var seg='',gap=(h-2)/10,i;
+  for(i=0;i<10;i++){seg+='<rect x="1.2" y="'+(1+gap*i).toFixed(1)+'" width="'+(w-2.4)+'" height="'+(gap-0.9).toFixed(1)+'" fill="#efc451" stroke="#a9781a" stroke-width="0.9"/>';}
+  return '<svg class="blk" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><rect x="0.6" y="0.6" width="'+(w-1.2)+'" height="'+(h-1.2)+'" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.5"/>'+seg+'</svg>';}
+/* CENTENA = placa CHAPADA (grade 10×10) com espessura embaixo — NÃO é cubo */
+function svgCentena(px){var s=px||44;var ox=2,oy=2,lado=s-6,st=lado/10,g='',i;
+  for(i=1;i<10;i++){g+='<line x1="'+(ox+st*i).toFixed(1)+'" y1="'+oy+'" x2="'+(ox+st*i).toFixed(1)+'" y2="'+(oy+lado).toFixed(1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".55"/>';
+    g+='<line x1="'+ox+'" y1="'+(oy+st*i).toFixed(1)+'" x2="'+(ox+lado).toFixed(1)+'" y2="'+(oy+st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".55"/>';}
+  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'">'+
+    '<rect x="'+(ox+3)+'" y="'+(oy+3)+'" width="'+lado+'" height="'+lado+'" rx="2" fill="#c99a2e"/>'+
+    '<rect x="'+ox+'" y="'+oy+'" width="'+lado+'" height="'+lado+'" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.5"/>'+g+'</svg>';}
 function svgMilhar(px){var s=px||54;var d=Math.round(s*0.17),f=s-d,grid='',st=f/10,i;
   for(i=1;i<10;i++){grid+='<line x1="'+(st*i).toFixed(1)+'" y1="'+d+'" x2="'+(st*i).toFixed(1)+'" y2="'+(d+f)+'" stroke="#a9781a" stroke-width="0.5" opacity=".5"/>';
     grid+='<line x1="0" y1="'+(d+st*i).toFixed(1)+'" x2="'+f+'" y2="'+(d+st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.5" opacity=".5"/>';}
@@ -206,6 +221,8 @@ var PROBS=[
  {n:50,d:4},{n:155,d:4},{n:229,d:3},{n:1234,d:4}
 ];
 var NOMES=["milhar","centena","dezena","unidade"],NOMESP=["milhares","centenas","dezenas","unidades"];
+/* gênero: milhar é MASCULINO (um/o); centena, dezena, unidade são FEMININOS (uma/a) */
+var ARTUM=["Um","Uma","Uma","Uma"];
 
 function planeja(n,d){var ds=String(n).split("").map(Number),L=ds.length,offset=4-L,passos=[],resto=0;
   for(var i=0;i<L;i++){var place=offset+i,trazido=resto*10,disp=trazido+ds[i],q=Math.floor(disp/d),r=disp%d;
@@ -230,10 +247,10 @@ function sTroca(){nota(300,.12,.13,"sine",0);nota(620,.16,.12,"sine",.06);}
 function sNao(){nota(280,.13,.1,"sine",0);}
 document.addEventListener("pointerdown",function(){ac();},false);
 
-$("exBlocos").innerHTML='<div><div class="lab">1 milhar</div>'+bloco(0,56)+'</div>'+
+$("exBlocos").innerHTML='<div><div class="lab">1 milhar</div>'+bloco(0,60)+'</div>'+
   '<div><div class="lab">1 centena</div>'+bloco(1,48)+'</div>'+
   '<div><div class="lab">1 dezena</div>'+bloco(2,48)+'</div>'+
-  '<div><div class="lab">1 unidade</div>'+bloco(3,22)+'</div>';
+  '<div><div class="lab">1 unidade</div>'+bloco(3,18)+'</div>';
 
 /* ===== conta armada (padrão brasileiro: quociente EMBAIXO do divisor) ===== */
 function cell(t,c){return '<span class="cell '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>';}
@@ -269,8 +286,8 @@ function atualizaChave(){ pintaChave(); }
 
 /* ===== a mesa (banco + grupos) numa página ===== */
 /* blocos maiores (área de trabalho grande, fácil de manusear) */
-function usaPx(place){return [40,34,46,22][place];}   /* milhar, centena, dezena, unidade — no BANCO */
-function grpPx(place){return [24,20,30,17][place];}   /* nos GRUPOS */
+function usaPx(place){return [54,44,44,15][place];}   /* milhar(cubo) > centena(placa)=dezena(barra) > unidade(cubinho) */
+function grpPx(place){return [32,26,28,11][place];}   /* nos GRUPOS */
 
 function renderBanco(){
   var h="";
@@ -332,7 +349,7 @@ function repartirUm(g){
   /* completou uma rodada e já não dá outra? então o que sobrou é a sobra */
   if(minCasa()===maxCasa() && sup[pativa]<plan.d){ terminaCasa(); return; }
   renderMesa();
-  $("fala").innerHTML="Um "+NOMES[pativa]+" para o <b>grupo "+(g+1)+"</b>. Continue dando <b>um para cada grupo</b>.";
+  $("fala").innerHTML=ARTUM[pativa]+" "+NOMES[pativa]+" para o <b>grupo "+(g+1)+"</b>. Continue dando <b>um para cada grupo</b>.";
 }
 function grupoAlvo(el){ while(el){ if(el.getAttribute && el.getAttribute("data-g")!=null) return parseInt(el.getAttribute("data-g"),10); el=el.parentNode; } return -1; }
 
