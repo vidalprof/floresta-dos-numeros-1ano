@@ -30847,6 +30847,336 @@ function recomecaQ(){ mist=0; ganhas=0; telaQuem(); }
   })();
 };
 
+/* ==== PECA: quociente-parcial ==== */
+MEC["quociente-parcial"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-quociente-parcial";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `QP`.
+   Cada rodada: dividir `n` por `d` tirando PEDAÇOS (10, 5, 2, 1 vezes o `d`).
+   ESCADA: começa com quociente redondo (96÷8=12), sobe (centenas, com resto).
+   `n` até ~999; `d` de 2 a 20. Aceita RESTO (n não precisa ser múltiplo). */
+var QP=[
+ {n:96,  d:8},
+ {n:156, d:12},
+ {n:234, d:9}
+];
+var PEDACOS=[10,5,2,1];   /*TECNICA*/  /* os "pedaços" de quociente que a criança tira */
+
+var ri=0;        /* rodada de agora */
+var falta=0;     /* quanto ainda falta dividir */
+var quo=0;       /* quociente acumulado (soma dos pedaços) */
+var passos=[];   /* histórico: [{mult, prod}] */
+var err=0;
+var travado=false;
+var ger=0;
+var elFalta,elQuo,elHist,elTotal,elPecas,btConf;
+
+function rod(){ return QP[ri]||{}; }
+function nAlvo(){ return rod().n||0; }
+function dAlvo(){ return rod().d||1; }
+function quoCerto(){ return Math.floor(nAlvo()/dAlvo()); }
+function restoCerto(){ return nAlvo()%dAlvo(); }
+function maiorPedaco(){   /* o maior PEDACOS[i] cujo d*mult ainda cabe no que falta */
+  var i,d=dAlvo();
+  for(i=0;i<PEDACOS.length;i++){ if(d*PEDACOS[i]<=falta) return PEDACOS[i]; }
+  return 0;
+}
+
+function pecaQP(){
+  if(!QP[ri]){ fimQP(); return; }
+  var r=rod(); falta=r.n; quo=0; passos=[]; err=0; travado=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/QP.length));
+  var c=el("div","centro");
+  /* o selo é do MOTOR; a peça não desenha (portão 3h) */
+  c.appendChild(el("div","balao","Quanto d&aacute; <b>"+r.n+" &divide; "+r.d+"</b>? "+
+                 "Tire <b>peda&ccedil;os</b> at&eacute; o que falta ficar menor que <b>"+r.d+"</b>."));
+
+  var pn=el("div","qp_painel");
+  var cf=el("div","caixa falta"); cf.innerHTML="<i>FALTA DIVIDIR</i><b id='qpFalta'>"+r.n+"</b>";
+  var cq=el("div","caixa"); cq.innerHTML="<i>QUOCIENTE</i><b id='qpQuo'>0</b>";
+  pn.appendChild(cf); pn.appendChild(cq);
+  c.appendChild(pn);
+  elFalta=cf; elQuo=document.createElement("span");
+
+  elHist=el("div","hist","");
+  c.appendChild(elHist);
+
+  elPecas=el("div","pecas","");
+  c.appendChild(elPecas);
+
+  var cc=el("div","cconta");
+  btConf=el("button","btn","Terminei &mdash; conferir");
+  btConf.onclick=function(){ confere(); };
+  cc.appendChild(btConf);
+  c.appendChild(cc);
+
+  elTotal=el("div","total","");
+  c.appendChild(elTotal);
+  c.appendChild(el("div","hint","Conta "+(ri+1)+" de "+QP.length+
+                 ". Cada peda&ccedil;o &eacute; o <b>"+r.d+"</b> tirado v&aacute;rias vezes."));
+  t.appendChild(c);
+  app.appendChild(t);
+  desenha();
+}
+
+function desenha(){
+  var d=dAlvo();
+  /* painel */
+  var bf=document.getElementById("qpFalta"), bq=document.getElementById("qpQuo");
+  if(bf) bf.innerHTML=""+falta;
+  if(bq) bq.innerHTML=""+quo;
+  elFalta.className="caixa falta"+(falta<d?" zero":"");
+  /* histórico */
+  elHist.innerHTML="";
+  if(passos.length===0){
+    elHist.appendChild(el("div","vaziomsg","Nenhum peda&ccedil;o tirado ainda. Comece pelo maior que cabe."));
+  }else{
+    for(var i=0;i<passos.length;i++){
+      var p=passos[i];
+      elHist.appendChild(el("div","linha","<b>"+d+" &times; "+p.mult+" = "+p.prod+
+                            "</b> &nbsp;&rarr;&nbsp; tirei, faltam <b>"+p.resto+"</b>"));
+    }
+  }
+  /* botões dos pedaços */
+  elPecas.innerHTML="";
+  for(var j=0;j<PEDACOS.length;j++){(function(m){
+    var prod=d*m, cabe=(prod<=falta) && !travado;
+    var b=el("button","bp"+(cabe?"":" off"),"&times;"+m+"<small>tira "+prod+"</small>");
+    b.onclick=function(){ tira(m); };
+    elPecas.appendChild(b);
+  })(PEDACOS[j]);}
+  atualizaBotoes();
+}
+
+function atualizaBotoes(){
+  var bs=elPecas.getElementsByTagName("button"),i;
+  for(i=0;i<bs.length;i++) bs[i].removeAttribute("data-qa");
+  btConf.removeAttribute("data-qa");
+  if(travado) return;
+  var mp=maiorPedaco();
+  if(mp===0){ btConf.setAttribute("data-qa","1"); return; }  /* falta < d: conferir */
+  /* data-qa="1" no botão do MAIOR pedaço que ainda cabe (o passo esperto) */
+  for(i=0;i<PEDACOS.length;i++){
+    if(PEDACOS[i]===mp){ if(bs[i]) bs[i].setAttribute("data-qa","1"); break; }
+  }
+}
+
+function tira(m){
+  if(travado) return;
+  var d=dAlvo(), prod=d*m;
+  if(prod>falta){ sErro(); naoCabe(m,prod); return; }
+  falta-=prod; quo+=m;
+  passos.push({mult:m, prod:prod, resto:falta});
+  sPoe();
+  diz(d+" vezes "+m+" é "+prod+". Faltam "+falta);
+  limpaTotal(); desenha();
+}
+
+function naoCabe(m,prod){
+  err++;
+  var d=dAlvo();
+  if(err===1) mostraDica("<b>"+d+" &times; "+m+" = "+prod+"</b>, maior que o que falta (<b>"+
+                         falta+"</b>). Escolha um peda&ccedil;o menor.");
+  else {
+    var mp=maiorPedaco();
+    mostraDica("O maior que cabe agora &eacute; <b>&times;"+mp+"</b> ("+d+" &times; "+mp+" = "+(d*mp)+").");
+    var bs=elPecas.getElementsByTagName("button");
+    for(var i=0;i<PEDACOS.length;i++){ if(PEDACOS[i]===mp&&bs[i]){ bs[i].className="bp aponta"; break; } }
+  }
+}
+
+function limpaTotal(){ elTotal.className="total"; elTotal.innerHTML=""; }
+
+function confere(){
+  if(travado) return;
+  var d=dAlvo(), n=nAlvo(), g=ger;
+  if(falta>=d){ sErro(); aindaCabe(); return; }
+  /* falta < d: terminou. quo é o quociente, falta é o resto. */
+  travado=true;
+  var dv=document.getElementById("dicaP"); if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
+  desenha();
+  elTotal.className="total ok";
+  var txt="Somei os peda&ccedil;os: <b>"+quo+"</b>. ";
+  if(falta>0) txt+="Sobra <b>"+falta+"</b>. Ent&atilde;o <b>"+n+" &divide; "+d+" = "+quo+" e sobra "+falta+"</b>.";
+  else        txt+="Ent&atilde;o <b>"+n+" &divide; "+d+" = "+quo+"</b>, exato!";
+  elTotal.innerHTML=txt;
+  diz(n+" dividido por "+d+" é "+quo+(falta>0?(" e sobra "+falta):""));
+  sCerto();
+  setTimeout(function(){
+    if(g!==ger) return;
+    ri++;
+    if(ri<QP.length) pecaQP();
+    else mostraBanner("<b>Peda&ccedil;o por peda&ccedil;o, a conta apareceu!</b><br>"+
+                      "Somar os peda&ccedil;os &eacute; o mesmo que a conta armada &mdash; s&oacute; que voc&ecirc; VIU cada passo.", fimQP);
+  },1900);
+}
+
+function aindaCabe(){
+  err++;
+  var mp=maiorPedaco(), d=dAlvo();
+  /* o andaime CRESCE a cada tropeço (o errador confere que a ajuda muda). */
+  if(err===1){
+    mostraDica("Ainda n&atilde;o! O que falta (<b>"+falta+"</b>) &eacute; maior que <b>"+d+
+               "</b> &mdash; d&aacute; para tirar mais um peda&ccedil;o.");
+  }else if(err===2){
+    mostraDica("Tente o peda&ccedil;o <b>&times;"+mp+"</b>: "+d+" &times; "+mp+" = <b>"+(d*mp)+
+               "</b>, e ainda falta <b>"+falta+"</b>. S&oacute; confira quando o que falta for menor que <b>"+d+"</b>.");
+    var bs=elPecas.getElementsByTagName("button");
+    for(var i=0;i<PEDACOS.length;i++){ if(PEDACOS[i]===mp&&bs[i]){ bs[i].className="bp aponta"; break; } }
+  }else{
+    mostraDica("Toque no peda&ccedil;o que est&aacute; <b>brilhando</b> (&times;"+mp+"). "+
+               "Ele tira <b>"+(d*mp)+"</b> do que falta.");
+    var bs2=elPecas.getElementsByTagName("button");
+    for(var j=0;j<PEDACOS.length;j++){ if(PEDACOS[j]===mp&&bs2[j]){ bs2[j].className="bp aponta"; break; } }
+  }
+}
+
+function fimQP(){
+  ger++; limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&ecirc; dividiu <b>"+QP.length+"</b> contas por peda&ccedil;os. "+
+                 "Somar os peda&ccedil;os &eacute; a conta armada por dentro."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; pecaQP(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Tirar 10, 5, 2, 1 vez o divisor e somar = o quociente."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+    if(f && f.dados) QP = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PEDACOS !== undefined) PEDACOS = _d.PEDACOS;
+    }
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    pecaQP();
+  })();
+};
+
 /* ==== PECA: raios-x ==== */
 MEC["raios-x"] = function(f, cen, fim){
   cen.className = cen.className + " mec-raios-x";

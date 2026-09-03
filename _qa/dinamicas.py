@@ -740,6 +740,28 @@ def analisa(js, css, baixo, html=None):
         if not re.search(r'mostraBanner\s*\(', js):
             ruins.append(u"resto: fecha por tela propria e nao pelo mostraBanner (o 'beco').")
 
+    # ---------------------------------------------------- QUOCIENTE PARCIAL (a ponte p/ o algoritmo)
+    #  Pesquisa (set/2026, divisao-ensino.md): "partial quotients keep the math
+    #  visible" — a crianca tira PEDACOS (10, 5, 2, 1 x o divisor) e SOMA. E o
+    #  passo do 5o ano ANTES da conta armada cega.
+    if re.search(r'\.pecas\b', css) and re.search(r'\.caixa\.falta\b', css):
+        usa.append("quociente-parcial")
+        # o historico dos pedacos e o coracao: a conta TEM que ficar visivel
+        if not re.search(r'\.hist\b', css):
+            ruins.append(u"quociente parcial: sem o historico dos pedacos na tela. Se a "
+                         u"crianca nao VE cada pedaco tirado, virou algoritmo cego — o "
+                         u"oposto do que a mecanica existe para fazer.")
+        if not re.search(r'data-qa', js):
+            ruins.append(u"quociente parcial: sem data-qa no maior pedaco que cabe — o "
+                         u"jogador (e a crianca que segue a luz) fica sem saber onde tocar.")
+        if not re.search(r'mostraBanner\s*\(', js):
+            ruins.append(u"quociente parcial: fecha por tela propria e nao pelo mostraBanner "
+                         u"(o 'beco' do CONTRATO).")
+        # o sentido: no fim tem que aparecer a divisao (N ÷ d = quociente [e sobra r])
+        if not (u"÷" in js or "&divide;" in js):
+            ruins.append(u"quociente parcial: nao mostra a divisao (N ÷ d = quociente) no "
+                         u"fim. Somar pedaco sem fechar a conta vira 'tirar numero'.")
+
     # ---------------------------------------------------- ESCREVER (producao)
     if re.search(r'\.apoios\b', css) and re.search(r'\.campo\b', css):
         usa.append("escrever")

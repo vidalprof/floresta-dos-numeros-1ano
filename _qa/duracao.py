@@ -59,7 +59,8 @@ CUSTO_MEC = {u"memoria": 20.0, u"ligar": 14.0, u"classificar": 14.0,
              u"digitar-numero": 25.0, u"base-dez": 18.0,
              u"reta-numerica": 15.0, u"estimar": 15.0, u"balanca": 15.0,
              u"repartir": 14.0, u"saltos-na-fita": 12.0, u"padrao": 12.0,
-             u"contadores": 10.0, u"arranjo": 16.0, u"resto": 16.0}
+             u"contadores": 10.0, u"arranjo": 16.0, u"resto": 16.0,
+             u"quociente-parcial": 22.0}
 
 
 def _extrai_fases(html):

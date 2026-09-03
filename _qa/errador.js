@@ -453,6 +453,18 @@ const RECEITA={
    if(!conf) return null;
    conf.click(); return 'conferiu antes de dar todas as voltas';
  },
+ /* QUOCIENTE PARCIAL: "Terminei — conferir" com o que falta ainda >= divisor
+    (ainda cabe um pedaco). O andaime diz que da para tirar mais um pedaco e
+    aponta o maior que cabe. Erro de verdade da mecanica, nao clique qualquer
+    (a generica tocava um pedaco VALIDO e contava como erro). Nova, set/2026. */
+ 'quociente-parcial':()=>{
+   var bts=[].slice.call(document.querySelectorAll('button,.btn'))
+     .filter(function(e){ return e.offsetParent!==null; });
+   var conf=null, i;
+   for(i=0;i<bts.length;i++){ if(/conferir|terminei/i.test(bts[i].textContent||'')) conf=bts[i]; }
+   if(!conf) return null;
+   conf.click(); return 'conferiu com o que falta ainda maior que o divisor';
+ },
  /* ⭐ MAIS QUATRO (ago/2026). O padrao continua o mesmo: o erro de verdade
     daquela mecanica, nao um clique qualquer. */
  // CALENDARIO: tocar o dia que nao e o pedido
