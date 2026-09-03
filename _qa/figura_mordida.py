@@ -49,9 +49,22 @@ Então este portão faz DUAS coisas, e é honesto sobre cada uma:
 Isso não é desistir da medição: é medir o que dá para medir e parar de fingir
 que o resto também está medido.
 
+⚠️⚠️ SEGUNDA LIÇÃO, e por isso este arquivo NÃO entra na banca automática:
+rodei a varredura nas 30 atividades e o ruído foi grande demais para virar
+reprovação. Os "buracos" que ele acusa são, na maioria, o DESENHO: os olhos da
+raposa do Ateliê (6,0% — a figura está perfeita), as lentes dos óculos do Sr.
+Batata, o vão entre o braço e o corpo de todo mascote. Um portão que grita em
+metade das figuras boas não é um portão: é barulho, e barulho ensina a ignorar.
+
+Então ele é FERRAMENTA DE INSPEÇÃO, chamada quando alguém desconfia de uma
+figura — não juiz que reprova entrega. Quem entrou na banca foi o irmão dele, o
+`_qa/corta_figura.py`, que mede GEOMETRIA (a moldura redonda comendo os cantos)
+e por isso não tem como errar.
+
 Uso:  python3 _qa/figura_mordida.py <pasta>        (ex.: _por4)
       python3 _qa/figura_mordida.py <pasta> --tudo  (mostra também as limpas)
-Sai 0 se limpo, 1 se achou figura mordida, 2 se não deu para medir.
+Sai 0 se limpo, 1 se achou suspeita, 2 se não deu para medir. O que importa
+mesmo é o contato-folha que ele monta: é para OLHAR, não para obedecer.
 """
 import glob, os, sys
 from collections import deque
