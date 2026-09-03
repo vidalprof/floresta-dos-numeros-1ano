@@ -72,6 +72,7 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 .cell{display:inline-block;width:26px;height:30px;font-size:22px;font-weight:800;line-height:30px;vertical-align:top;font-family:inherit}
 .cell.q{color:var(--verde)}.cell.prod{color:var(--vermelho)}.cell.dv{color:#2a1f12}
 .cell.vbar{border-left:3px solid #2a1f12}.cell.fade{opacity:.28}.cell.divisor-lbl{color:#6e521f}
+.cell.qbox{height:30px;line-height:26px;font-size:15px;color:#b78f2f;border:2px dashed #d9be7a;border-radius:6px;background:#fffdf4}
 .legenda{font-size:12px;text-align:center;color:#8a6a2e;margin-top:6px}
 .legenda .k{margin:0 5px;font-weight:800}.legenda .kq{color:var(--verde)}.legenda .kp{color:var(--vermelho)}
 .fala{background:linear-gradient(180deg,#fff8e6,#fdefc8);border-radius:14px;padding:10px 14px;font-size:15px;font-weight:600;color:#4a3410;margin-top:10px;min-height:22px;border:1px solid #efd89a}
@@ -210,7 +211,7 @@ function planeja(n,d){var ds=String(n).split("").map(Number),L=ds.length,offset=
   return {n:n,d:d,ds:ds,L:L,offset:offset,passos:passos,quo:Math.floor(n/d),rem:n%d};}
 
 /* ===== estado ===== */
-var idx=0,plan=null,acertos=0,errouNessa=false,alunoNome="";
+var idx=0,plan=null,acertos=0,errouNessa=false,alunoNome="",mostraQuo=false;
 /* mesa: sup[place]=blocos ainda no banco (por casa REAL 0=cent,1=dez,2=uni);
    grp[g][place]=blocos que o grupo g recebeu naquela casa; pativa=casa REAL ativa; fase */
 var sup,grp,pativa,fase,sobraAtual;
@@ -256,13 +257,25 @@ function renderChave(ate,passoAtivo,parcialQ){
 function passoDeCasa(place){ /* índice do passo (na lista) que corresponde à casa REAL `place` */
   for(var i=0;i<plan.passos.length;i++) if(plan.passos[i].place===place) return i; return -1;
 }
-function atualizaChave(){
-  var passoAtivo=passoDeCasa(pativa);
-  var ateAnterior=passoAtivo-1;
-  var parcial=(fase==="repartir")?grp.reduce(function(a,g){return Math.min(a,g[pativa]);}, 1e9):-1;
-  if(parcial===1e9)parcial=0;
-  $("chave").innerHTML=renderChave(ateAnterior, passoAtivo, parcial);
+/* Durante o jogo a conta armada mostra só o ENUNCIADO (dividendo|divisor) e
+   os ESPAÇOS VAZIOS do quociente — o aluno preenche digitando depois de montar
+   o material à esquerda. A conta só se completa quando ele ACERTA. */
+function chaveVazia(){
+  var L=plan.L,ds=plan.ds,d=String(plan.d),i,r1="";
+  for(i=0;i<L;i++)r1+=cell(ds[i],"dv");
+  r1+=cell("│","vbar");
+  for(var k=0;k<d.length;k++)r1+=cell(d[k],"dv divisor-lbl");
+  var html='<div class="crow">'+r1+'</div>';
+  var fnz=firstNonZeroQ(),r2="";
+  for(i=0;i<L;i++){ r2+=(i<fnz)?cell(""):cell("","qbox"); }
+  r2+=cell("&nbsp;","");
+  html+='<div class="crow">'+r2+'</div>';
+  return html;
 }
+function pintaChave(){
+  $("chave").innerHTML = mostraQuo ? renderChave(plan.L-1,-1,-1) : chaveVazia();
+}
+function atualizaChave(){ pintaChave(); }
 
 /* ===== a mesa (banco + grupos) numa página ===== */
 /* blocos maiores (área de trabalho grande, fácil de manusear) */
@@ -343,10 +356,8 @@ function terminaCasa(){
   renderMesa();
   atualizaChaveFecha();
 }
-function atualizaChaveFecha(){ /* fecha a casa atual na chave (mostra -usado) */
-  $("chave").innerHTML=renderChave(passoDeCasa(pativa), -1, -1);
-}
-function atualizaChaveFinal(){ $("chave").innerHTML=renderChave(passoDeCasa(pativa), -1, -1); }
+function atualizaChaveFecha(){ pintaChave(); }
+function atualizaChaveFinal(){ pintaChave(); }
 
 function trocar(){
   sTroca();
@@ -403,7 +414,7 @@ function soltou(tgt,moved){
 /* ===== fluxo ===== */
 function iniciaProblema(){
   plan=planeja(PROBS[idx].n,PROBS[idx].d);
-  sup=[0,0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;errouNessa=false;
+  sup=[0,0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;errouNessa=false;mostraQuo=false;
   for(var i=0;i<plan.L;i++){ sup[plan.offset+i]=plan.ds[i]; }
   for(var g=0;g<plan.d;g++)grp.push([0,0,0,0]);
   $("pnum").textContent=(idx+1);$("ptot").textContent=PROBS.length;$("barra").style.width=Math.round(idx*100/PROBS.length)+"%";
@@ -435,6 +446,7 @@ function confereResultado(){
   var okQ=(q===plan.quo), okR=(!temResto||r===plan.rem);
   if(okQ&&okR){
     if(!errouNessa)acertos++;
+    mostraQuo=true; pintaChave();   /* AGORA a conta armada se completa (o aluno preencheu) */
     sOk();confete(22);
     var extra=temResto?(" e sobra "+plan.rem):"";
     $("fala").innerHTML="<b>"+plan.n+" &divide; "+plan.d+" = "+plan.quo+extra+"</b>. "+
