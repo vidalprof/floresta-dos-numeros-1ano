@@ -132,8 +132,21 @@ jobs:
                   FALHOU=1
                 fi
               fi
-              node _qa/pcruim.js "$idx" || { echo "::error::$pasta: no PC RUIM a crianca fica PRESA (enfeite que falha impede o botao de proximo)"; FALHOU=1; }
-              bash _qa/estatico.sh "$idx" || { echo "::error::$pasta: o ESLint achou nome nao-declarado (ReferenceError na cara da crianca)"; FALHOU=1; }
+              # ⚠️⚠️ LICAO PAGA NA HORA (set/2026), e a casa ja tinha aprendido isso
+              # na banca: existem TRES codigos, nao dois. 0 = mediu e passou ·
+              # 1 = REPROVOU · 2 = NAO CONSEGUI MEDIR. Escrevi `|| FALHOU=1`, que
+              # trata 2 como reprovacao — e o `pcruim` precisa de Chromium, que
+              # existe no meu container mas NAO no runner do GitHub. Resultado: o
+              # portao dizia "nao medi", o workflow lia "reprovou", e a publicacao
+              # do conserto do botao (com crianca presa em aula) travou por 5
+              # minutos ate eu ir olhar. Portao que nao consegue medir avisa; nunca
+              # segura a entrega.
+              node _qa/pcruim.js "$idx"; _rc=$?
+              if [ "$_rc" = "1" ]; then echo "::error::$pasta: no PC RUIM a crianca fica PRESA (enfeite que falha impede o botao de proximo)"; FALHOU=1
+              elif [ "$_rc" != "0" ]; then echo "::warning::$pasta: portao do PC RUIM nao rodou aqui (precisa de Chromium; roda na bancada local)"; fi
+              bash _qa/estatico.sh "$idx"; _rc=$?
+              if [ "$_rc" = "1" ]; then echo "::error::$pasta: o ESLint achou nome nao-declarado (ReferenceError na cara da crianca)"; FALHOU=1
+              elif [ "$_rc" != "0" ]; then echo "::warning::$pasta: portao estatico nao rodou aqui (ESLint nao instalou)"; fi
               python3 _qa/dinamicas.py "$idx" || { echo "::error::$pasta: portao das dinamicas reprovou"; FALHOU=1; }
               if [ -f "$pasta/conteudo.json" ]; then
                 python3 _qa/entrega.py "$pasta" || { echo "::error::$pasta: ha pergunta que ENTREGA a resposta (destaque em cima da palavra certa)"; FALHOU=1; }
