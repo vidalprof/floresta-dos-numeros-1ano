@@ -242,7 +242,11 @@
    baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
    mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
 function nota(f, dur, vol, tipo, atraso){
-  if(typeof arma === "function") arma();
+  /* ⚠️ LICAO PAGA (set/2026, no Museu): `nota` e chamada de dentro da MONTAGEM
+     da fase (sPista -> nota -> arma). Sem guarda aqui, um `arma()` que tropeca
+     num PC com audio bloqueado matava a fase INTEIRA — a crianca abria e via
+     tela vazia, nem chegava a tentar. Som e enfeite: nunca derruba o app. */
+  try{ if(typeof arma === "function") arma(); }catch(_a){}
   var c = window.ac; if(!c || !c.createOscillator) return;
   try{
     var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
@@ -343,7 +347,15 @@ MEC["achar-na-cena"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -646,7 +658,15 @@ MEC["andar-ate"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -1039,7 +1059,15 @@ MEC["arranjo"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -1369,7 +1397,15 @@ MEC["arrastar-lugar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -1874,7 +1910,15 @@ MEC["arrastar-sombra"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -2461,7 +2505,15 @@ MEC["autoexplicacao"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -2902,7 +2954,15 @@ MEC["balanca"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -3231,7 +3291,15 @@ MEC["base-dez"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -3708,7 +3776,15 @@ MEC["bater-silabas"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -4254,7 +4330,15 @@ MEC["bingo"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -4778,7 +4862,15 @@ MEC["bussola"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5235,7 +5327,15 @@ MEC["caca-palavras"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5792,7 +5892,15 @@ MEC["caixa-dinheiro"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -6171,7 +6279,15 @@ MEC["caixas-de-som"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -6701,7 +6817,15 @@ MEC["calendario"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -7413,7 +7537,15 @@ MEC["camadas-mapa"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -7881,7 +8013,15 @@ MEC["circuito"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -8424,7 +8564,15 @@ MEC["classificar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -8952,7 +9100,15 @@ MEC["comparar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -9593,7 +9749,15 @@ MEC["completar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -10006,7 +10170,15 @@ MEC["conserte-o-erro"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -10406,7 +10578,15 @@ MEC["contadores"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -10866,7 +11046,15 @@ MEC["coordenadas"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -11344,7 +11532,15 @@ MEC["criar-desafio"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -11757,7 +11953,15 @@ MEC["cruzadinha"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -12096,7 +12300,15 @@ MEC["decisao"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -12441,7 +12653,15 @@ MEC["digitar-numero"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -12921,7 +13141,15 @@ MEC["digitar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -13308,7 +13536,15 @@ MEC["ditado"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -13692,7 +13928,15 @@ MEC["domino"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -14315,7 +14559,15 @@ MEC["ensinar-mascote"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -14728,7 +14980,15 @@ MEC["escolher"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -15144,7 +15404,15 @@ MEC["escrever-legenda"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -15530,7 +15798,15 @@ MEC["estimar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -16072,7 +16348,15 @@ MEC["experimento-justo"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -16485,7 +16769,15 @@ MEC["filtro"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -16803,7 +17095,15 @@ MEC["forca"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -17248,7 +17548,15 @@ MEC["girar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -17732,7 +18040,15 @@ MEC["grafico"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -18269,7 +18585,15 @@ MEC["intruso"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -18809,7 +19133,15 @@ MEC["investigar-fonte"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -19195,7 +19527,15 @@ MEC["juntar-silabas"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -19698,7 +20038,15 @@ MEC["labirinto"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -20186,7 +20534,15 @@ MEC["letras-escondidas"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -20835,7 +21191,15 @@ MEC["ligar-pontos"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -21484,7 +21848,15 @@ MEC["ligar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -22010,7 +22382,15 @@ MEC["linha-do-tempo"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -22431,7 +22811,15 @@ MEC["mapa-conceitual"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -22961,7 +23349,15 @@ MEC["medir"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -23749,7 +24145,15 @@ MEC["memoria"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -24303,7 +24707,15 @@ MEC["misterio"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -24737,7 +25149,15 @@ MEC["montar-frase"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -25190,7 +25610,15 @@ MEC["morfemas"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -25634,7 +26062,15 @@ MEC["mudanca-permanencia"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -26122,7 +26558,15 @@ MEC["ordenar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -26637,7 +27081,15 @@ MEC["ouvir-achar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -27348,7 +27800,15 @@ MEC["padrao"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -27826,7 +28286,15 @@ MEC["passo-a-passo"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -28566,7 +29034,15 @@ MEC["pintar-canvas"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -28896,7 +29372,15 @@ MEC["pintar-desenho"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -29393,7 +29877,15 @@ MEC["pintar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -29638,7 +30130,15 @@ MEC["prever-observar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -30082,7 +30582,15 @@ MEC["quebra-cabeca"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -30609,7 +31117,15 @@ MEC["quem-sou-eu"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -30932,7 +31448,15 @@ MEC["quociente-parcial"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -31262,7 +31786,15 @@ MEC["raios-x"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -31653,7 +32185,15 @@ MEC["relampago"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -32039,7 +32579,15 @@ MEC["relogio"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -32993,7 +33541,15 @@ MEC["repartir"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -33506,7 +34062,15 @@ MEC["resto"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -33829,7 +34393,15 @@ MEC["reta-numerica"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -34288,7 +34860,15 @@ MEC["rima"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -34607,7 +35187,15 @@ MEC["rotular"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -35567,7 +36155,15 @@ MEC["saltos-na-fita"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -35916,7 +36512,15 @@ MEC["sete-erros"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -36303,7 +36907,15 @@ MEC["simetria"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -36631,7 +37243,15 @@ MEC["simulador"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -37005,7 +37625,15 @@ MEC["som-inicial"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -37315,7 +37943,15 @@ MEC["sombra"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -37608,7 +38244,15 @@ MEC["tabela"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -37921,7 +38565,15 @@ MEC["tangram"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -38409,7 +39061,15 @@ MEC["teia-alimentar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -38994,7 +39654,15 @@ MEC["termometro"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -39327,7 +39995,15 @@ MEC["tracar-caminho"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -39859,7 +40535,15 @@ MEC["tracar-letra"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -40533,7 +41217,15 @@ MEC["trilha"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -41078,7 +41770,15 @@ MEC["vitrine"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,

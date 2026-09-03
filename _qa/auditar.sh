@@ -301,6 +301,18 @@ echo
 echo "--- 1y) ESTATICO (nome usado que nunca foi declarado) -"
 portao "1y estatico" bash _qa/estatico.sh "$ARQ"
 
+# ⭐ 1x) O PC RUIM — "e se o enfeite falhar, a crianca ainda passa de fase?"
+#    Nasceu com a turma do 1o ano jogando (set/2026): *"nas fases de ligar em
+#    alguns pcs esta travando, o botao de proximo nao aparece"* e *"sinto nas
+#    atividades que as vezes esse botao demora muito a aparecer ou nao aparece"*.
+#    Era o motor: o fim de fase rodava festa/som/mascote SEM guarda, e a ACAO do
+#    botao so era atribuida DEPOIS. Um enfeite tropecando (PC sem canvas, audio
+#    bloqueado) matava a funcao e a crianca ficava presa. Nenhum portao pegava
+#    porque todos rodam num Chromium saudavel, onde enfeite nunca falha.
+echo
+echo "--- 1x) PC RUIM (enfeite quebrado nao pode prender a crianca) -"
+portao "1x pc ruim" node _qa/pcruim.js "$ARQ"
+
 # ⭐ 1z) O PORTAO MAIS BURRO DA BANCA — "isso ABRE?" — e o mais importante.
 #    Nasceu do Tangram (03/set/2026): o Marcos clicou e viu SO O FUNDO. Era um
 #    `ReferenceError` no boot (uma `var` que eu apaguei sem querer). O

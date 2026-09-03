@@ -115,6 +115,7 @@ jobs:
                 python3 -c "import json,sys;d=json.load(open('$_did'));[print('   - '+p) for p in d['pendencias']]" || true
                 FALHOU=1
               fi
+              node _qa/pcruim.js "$idx" || { echo "::error::$pasta: no PC RUIM a crianca fica PRESA (enfeite que falha impede o botao de proximo)"; FALHOU=1; }
               bash _qa/estatico.sh "$idx" || { echo "::error::$pasta: o ESLint achou nome nao-declarado (ReferenceError na cara da crianca)"; FALHOU=1; }
               python3 _qa/dinamicas.py "$idx" || { echo "::error::$pasta: portao das dinamicas reprovou"; FALHOU=1; }
               if [ -f "$pasta/conteudo.json" ]; then

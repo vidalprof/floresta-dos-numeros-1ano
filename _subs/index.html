@@ -1586,7 +1586,7 @@ window.onerror=function(msg,url,lin,col,err){
   }catch(e){}
   return false;
 };
-function arma(){ if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}} ligaAnalisador(); }
+function arma(){ /* ⚠️ LICAO PAGA (set/2026): o `ligaAnalisador()` estava FORA de guarda. Num PC onde o audio falha ele estoura, e como `arma()` e chamada de dentro do SOM, que e chamado de dentro da MONTAGEM da fase (sPista -> nota -> arma), a fase inteira morria e a crianca via tela vazia. Som e enfeite: nunca pode derrubar o app. */ try{ if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}} }catch(e){} try{ ligaAnalisador(); }catch(e){} }
 function tom(f,d,tp,v,w){ if(!ac)return; try{var o=ac.createOscillator(),g=ac.createGain();o.type=tp||"sine";o.frequency.value=f;o.connect(g);g.connect(ac.destination);var t=ac.currentTime+(w||0);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||0.2,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.start(t);o.stop(t+d+0.03);}catch(e){} }
 function sTap(){ tom(500,0.07,"triangle",0.12); }
 function sPop(i){ tom(520+((i||0)%6)*70,0.12,"triangle",0.14); }
@@ -2188,18 +2188,44 @@ function mostraBanner(msg,cb){
      nao entende literal de regex e perde a conta das aspas, fazendo os enunciados
      seguintes vazarem como "funcao que nao existe". String o portao limpa certo. */
   if(msg) msg = String(msg).replace(new RegExp("<div[^>]*medal[^>]*>[\\s\\S]*?</div>", "gi"), "");
-  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();
+  /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026, com a turma do 1o ano jogando): *"nas
+     fases de ligar em alguns pcs esta travando, nao passa, o botao de proximo
+     que nao aparece"* e *"sinto nas atividades que as vezes esse botao demora
+     muito a aparecer ou nao aparece"*.
+
+     A linha era esta, TUDO junto e SEM GUARDA:
+        bmsg.innerHTML=msg; banner.className=...; festa(); sCerto();
+        paraDeVigiar(); mascoteFesteja();
+     ...e o `bcta.onclick` (a ACAO do botao) so era atribuido DEPOIS dela.
+     Basta UM enfeite tropecar — o confete sem canvas, o `sCerto()` num PC com
+     audio bloqueado, o mascote sem a pose carregada — e a execucao MORRE ali:
+     o botao fica na tela sem acao, ou nem chega a ganhar acao. Intermitente
+     por maquina, que e exatamente como o defeito se apresentou.
+
+     A REGRA QUE FICA: **enfeite nunca pode impedir a crianca de avancar.**
+     Primeiro o que a crianca PRECISA (a mensagem, o banner visivel e a acao do
+     botao); depois, cada enfeite no seu proprio try/catch, onde a falha de um
+     nao derruba os outros nem o caminho. */
+  try{ bmsg.innerHTML=msg; }catch(e){}
+  banner.className="banner bom show";
+  /* a ACAO vem ANTES dos enfeites: se algum falhar, o botao ja funciona */
+  bcta.onclick=function(){
+    try{ arma(); }catch(e){}
+    banner.className="banner";
+    try{ if(typeof cb==="function") cb(); }catch(e){}
+  };
+  try{ festa(); }catch(e){}
+  try{ sCerto(); }catch(e){}
+  try{ paraDeVigiar(); }catch(e){}
+  try{ mascoteFesteja(); }catch(e){}
   /* ⚠️ LICAO PAGA (Marcos, ago/2026): "as vezes aparece o botao Proximo, eu
      clico e nao faz nada". O onclick fazia `arma();...;cb();` TUDO SEM GUARDA:
      se `cb` fosse indefinido, ou `cb()` estourasse (fase seguinte com problema),
      ou `arma()` tropecasse num PC, o clique MORRIA no meio e a fase nao andava —
      de forma intermitente, so em algumas maquinas/fases. Agora cada passo tem
      guarda e o AVANCO (cb) roda de todo jeito. */
-  bcta.onclick=function(){
-    try{ arma(); }catch(e){}
-    banner.className="banner";
-    try{ if(typeof cb==="function") cb(); }catch(e){}
-  };}
+  /* (a atribuicao do onclick subiu para antes dos enfeites — ver acima) */
+}
 function elogio(){ var n=[ID.pre+"_acerto1",ID.pre+"_acerto2",ID.pre+"_acerto3"]; falar(n[Math.floor(Math.random()*3)]); }
 function consolo(){ falar(Math.random()<0.5?ID.pre+"_erro1":ID.pre+"_erro2"); }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============
@@ -3262,7 +3288,11 @@ setTimeout(inicia, 0);
    baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
    mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
 function nota(f, dur, vol, tipo, atraso){
-  if(typeof arma === "function") arma();
+  /* ⚠️ LICAO PAGA (set/2026, no Museu): `nota` e chamada de dentro da MONTAGEM
+     da fase (sPista -> nota -> arma). Sem guarda aqui, um `arma()` que tropeca
+     num PC com audio bloqueado matava a fase INTEIRA — a crianca abria e via
+     tela vazia, nem chegava a tentar. Som e enfeite: nunca derruba o app. */
+  try{ if(typeof arma === "function") arma(); }catch(_a){}
   var c = window.ac; if(!c || !c.createOscillator) return;
   try{
     var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
@@ -3363,7 +3393,15 @@ MEC["caca-palavras"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -3920,7 +3958,15 @@ MEC["classificar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -4448,7 +4494,15 @@ MEC["completar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -4861,7 +4915,15 @@ MEC["digitar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5248,7 +5310,15 @@ MEC["escolher"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5664,7 +5734,15 @@ MEC["intruso"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -6204,7 +6282,15 @@ MEC["ligar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -6730,7 +6816,15 @@ MEC["quem-sou-eu"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
+         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
+         audio bloqueado), a excecao matava a funcao AQUI — e o
+         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
+         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
+         aula. Foi assim que apareceu nas fases de ligar do Trem.
+         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
+         mais o caminho. */
+      try{ if(typeof festa === "function") festa(); }catch(_f){}
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
