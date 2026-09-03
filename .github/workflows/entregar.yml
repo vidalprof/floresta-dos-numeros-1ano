@@ -94,6 +94,26 @@ jobs:
           LISTA: ${{ steps.alvos.outputs.lista }}
         run: |
           FALHOU=0
+          # ⭐⭐ OS TRES CODIGOS, EM UM LUGAR SO (set/2026 — lição paga duas vezes
+          # no mesmo dia). A casa combinou faz tempo: 0 = mediu e passou ·
+          # 1 = REPROVOU · 2 = NAO CONSEGUI MEDIR. A banca (_qa/auditar.sh) ja
+          # respeitava; aqui cada portao estava escrito como `... || FALHOU=1`,
+          # que trata 2 como reprovacao.
+          # O estrago: o `pcruim` precisa de Chromium (que o runner nao tem) e o
+          # `entrega.py` sai com 2 numa atividade sem pergunta de escolha (o
+          # Atelie de Cores). Os dois disseram "nao medi", o workflow leu
+          # "reprovou", e a publicacao do conserto do BOTAO QUE PRENDE A CRIANCA
+          # ficou travada — duas vezes, ate eu ir olhar.
+          # Agora ha UM lugar que decide, para o erro nao poder voltar por outro
+          # portao: reprovou segura a entrega; nao-medi vira aviso e segue.
+          portao(){   # portao <nome> <comando...>
+            local nome="$1"; shift
+            "$@"; local rc=$?
+            if [ "$rc" = "0" ]; then return 0; fi
+            if [ "$rc" = "1" ]; then echo "::error::$pasta: $nome REPROVOU"; FALHOU=1; return 1; fi
+            echo "::warning::$pasta: $nome nao conseguiu medir aqui (codigo $rc) — nao segura a entrega"
+            return 0
+          }
           IFS=',' read -ra ALVS <<< "$LISTA"
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"
@@ -103,7 +123,7 @@ jobs:
             idx="$pasta/index.html"; fal="$pasta/falas.json"
             if [ -f "$idx" ]; then
               if python3 _qa/extrai_js.py "$idx" /tmp/_pre.js; then
-                node --check /tmp/_pre.js || { echo "::error::$pasta: JS invalido (node --check)"; FALHOU=1; }
+                portao "JS (node --check)" node --check /tmp/_pre.js
               fi
               # ⭐ O OUTRO LADO DO TRATO (set/2026). O montador deixou de BLOQUEAR o
               # build por regra pedagogica — porque travar o build travava junto o
@@ -141,20 +161,16 @@ jobs:
               # do conserto do botao (com crianca presa em aula) travou por 5
               # minutos ate eu ir olhar. Portao que nao consegue medir avisa; nunca
               # segura a entrega.
-              node _qa/pcruim.js "$idx"; _rc=$?
-              if [ "$_rc" = "1" ]; then echo "::error::$pasta: no PC RUIM a crianca fica PRESA (enfeite que falha impede o botao de proximo)"; FALHOU=1
-              elif [ "$_rc" != "0" ]; then echo "::warning::$pasta: portao do PC RUIM nao rodou aqui (precisa de Chromium; roda na bancada local)"; fi
-              bash _qa/estatico.sh "$idx"; _rc=$?
-              if [ "$_rc" = "1" ]; then echo "::error::$pasta: o ESLint achou nome nao-declarado (ReferenceError na cara da crianca)"; FALHOU=1
-              elif [ "$_rc" != "0" ]; then echo "::warning::$pasta: portao estatico nao rodou aqui (ESLint nao instalou)"; fi
-              python3 _qa/dinamicas.py "$idx" || { echo "::error::$pasta: portao das dinamicas reprovou"; FALHOU=1; }
+              portao "PC RUIM (enfeite que falha nao pode prender a crianca)" node _qa/pcruim.js "$idx"
+              portao "estatico (nome usado que nunca foi declarado)" bash _qa/estatico.sh "$idx"
+              portao "dinamicas (armadilha de mecanica aberta)" python3 _qa/dinamicas.py "$idx"
               if [ -f "$pasta/conteudo.json" ]; then
-                python3 _qa/entrega.py "$pasta" || { echo "::error::$pasta: ha pergunta que ENTREGA a resposta (destaque em cima da palavra certa)"; FALHOU=1; }
+                portao "resposta entregue (destaque em cima da palavra certa)" python3 _qa/entrega.py "$pasta"
               fi
-              python3 _qa/toque.py "$idx" || { echo "::error::$pasta: usa ARRASTAR (nao funciona no toque da escola). Troque por mecanica de TOQUE ou marque <!-- TOQUE-CONFERIDO --> apos testar no aparelho real."; FALHOU=1; }
+              portao "toque (arrasto sem touch-action some sob o dedo)" python3 _qa/toque.py "$idx"
             fi
             if [ -f "$fal" ]; then
-              python3 _qa/falas.py "$fal" || { echo "::error::$pasta: portao da narracao reprovou (voz/ingles/complite)"; FALHOU=1; }
+              portao "narracao (voz/ingles/complite)" python3 _qa/falas.py "$fal"
             fi
             # ⭐ a VOZ da resposta diz a PALAVRA que a crianca VE? (o defeito do
             #    'ilefante'/'voz do rato'). Sai 2 = "nao medi" (atividade sem
