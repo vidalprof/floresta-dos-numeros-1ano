@@ -63,7 +63,7 @@ CONTEUDO = {
  u"ano": u"5º ano",
  u"prefixo": u"rv",
  u"mascote": u"raposa",
- u"mascoteNome": u"Detetive Filó",
+ u"mascoteNome": u"Filó",   # MESMO mascote/arte da Detetive (raposa Filó), reaproveitado (regra do banco). Sem o título "Detetive" (aqui ela é a editora), o que também deixa o clone.py verde.
  u"crachas": 6,
  u"mesa": (u"Pedagogo do 5º ano + especialista em Língua Portuguesa (leitura de "
            u"gêneros textuais e classes de palavras: substantivo, adjetivo e verbo)."),
@@ -269,7 +269,7 @@ LETRAS = u"ACDEHILMNOPRSTUV"
 add(id=u"f07", mec=u"caca-palavras", selo=u"MATÉRIA 4: O E-MAIL", conceito=u"objetivo2",
     enunciado=(u"Leia o <b>e-mail</b>: <i>“Assunto: Passeio da turma. Olá! Confirmem se "
                u"vão ao museu na sexta. Levem lanche e caderno.”</i> Ache no quadro os "
-               u"<b>SUBSTANTIVOS</b> do e-mail."),
+               u"<b>SUBSTANTIVOS</b> da mensagem."),
     dica=u"Substantivos = nomes de coisas e lugares. Estão deitados (→) e em pé (↓).",
     dados=[u"MUSEU", u"LANCHE", u"CADERNO", u"TURMA", u"PASSEIO"],
     dadosExtra={u"MODO": u"lista", u"TITULO": u"OS SUBSTANTIVOS DA MENSAGEM",
