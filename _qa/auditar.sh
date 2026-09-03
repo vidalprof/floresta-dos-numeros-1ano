@@ -412,6 +412,22 @@ portao "0o3 enunciado bate" python3 _qa/enunciado_bate.py "$PASTA"
 echo "--- 0o4) MOLDURA CORTA (o container come a figura?) -"
 portao "0o4 moldura corta" python3 _qa/corta_figura.py "$ARQ"
 
+# ⭐ 0o5) O OLHO NAS FIGURAS — e este NAO e um portao que decide: e um que MOSTRA.
+#     Lacuna assumida (set/2026): o defeito "o recorte comeu um pedaco do
+#     desenho" NAO tem medida confiavel. Eu tentei — buraco, fragmento, mordida
+#     no casco, serrilhado — e cada regua que pegava a bola acusava a raposa do
+#     Atelie, que esta perfeita (o "buraco" dela sao os olhos). Portao que grita
+#     no certo ensina a ignorar portao.
+#     Entao a banca nao finge medir: ela MONTA a folha de contato (todas as
+#     figuras numa pagina, sobre xadrez, com nome) e imprime o caminho. Dez
+#     segundos de olho decidem o que nenhuma conta decidiu — foi assim que o
+#     Marcos pegou a bola e o elefante, e assim que confirmei a zebra.
+#     ⚠️ Sai sempre com 0: ele nao reprova, ele CONVOCA. Se eu nao olhar, o
+#     defeito passa — e a responsabilidade e minha, nao do portao.
+echo "--- 0o5) OLHO NAS FIGURAS (contato-folha para inspecionar) -"
+python3 _qa/figura_mordida.py "$PASTA" 2>&1 | grep -E "contato-folha|olhe primeiro|✗ " || true
+echo "   ⚠️ ISTO NAO E APROVACAO: e um convite para OLHAR a folha acima antes de entregar."
+
 # ⭐ 0p) A SEGUNDA LEITURA (portao de SENTIDO). Os portoes acima medem TEXTO
 #    mecanico (digitacao, concordancia, HTML vazando). NENHUM le o SIGNIFICADO:
 #    a resposta marcada como CERTA esta certa? a DICA leva a ELA? a VOZ diz o
