@@ -42,7 +42,19 @@
    Uso:  node _qa/boot.js <arquivo.html>
    Sai 0 se abriu limpo; 1 se reprovou; 2 se nao deu para rodar.
    ============================================================ */
-const {chromium} = require('/opt/node22/lib/node_modules/playwright/index.js');
+/* ⚠️⚠️ LICAO PAGA (set/2026, na 3a tentativa de publicar o mesmo conserto): o
+   `require` do Playwright fica no TOPO, fora de qualquer try. Num lugar sem
+   Playwright — o runner do GitHub, por exemplo — ele estoura na hora e o Node
+   sai com codigo **1**, que a esteira le como REPROVOU. Mas o portao nao
+   reprovou nada: ele nem conseguiu comecar. Isso e codigo **2** (NAO MEDI), e a
+   diferenca decide se a entrega para ou segue. */
+let chromium;
+try { chromium = require('/opt/node22/lib/node_modules/playwright/index.js').chromium; }
+catch (e) {
+  console.log('NAO MEDI: Playwright nao esta instalado aqui (' + e.code + '). ' +
+              'Este portao roda na bancada local, onde ha Chromium.');
+  process.exit(2);
+}
 const path = require('path');
 
 const CROMO = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';

@@ -185,8 +185,12 @@ jobs:
             #    'ilefante'/'voz do rato'). Sai 2 = "nao medi" (atividade sem
             #    campo `voz` a mao) e NAO reprova; so o 1 reprova.
             if [ -f "$pasta/conteudo.json" ]; then
-              python3 _qa/voz_bate.py "$pasta"; rc=$?
-              if [ "$rc" = "1" ]; then echo "::error::$pasta: portao voz_bate reprovou (a voz da resposta fala diferente do texto que a crianca ve)"; FALHOU=1; fi
+              # ⚠️ este tambem sofria do `bash -e`: `cmd; rc=$?` morre ANTES de
+              # atribuir o rc quando o cmd sai != 0. Era o ultimo comando do
+              # passo, entao o passo inteiro herdava o codigo 2 do "nao medi" do
+              # Atelie de Cores (que nao tem resposta com texto) e a publicacao
+              # parava. Agora usa a mesma funcao que os outros.
+              portao "voz bate (a voz da resposta fala o texto que a crianca ve)" python3 _qa/voz_bate.py "$pasta"
             fi
           done
           if [ "$FALHOU" != "0" ]; then
