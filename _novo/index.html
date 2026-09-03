@@ -86,6 +86,21 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 .tela-ini .card,.tela-fim .card{padding:22px}
 .tela-ini h1{font-size:26px;margin:.2em 0;color:#3a2a12}
 .tela-ini p{font-size:16px;color:#5a4426;line-height:1.5}
+.nomebox{margin:6px 0 2px}
+.nomebox label{display:block;font-weight:800;color:#6e521f;font-size:15px;margin-bottom:6px}
+.nomebox input{width:min(320px,90%);height:48px;font-size:18px;font-weight:700;text-align:center;
+  border-radius:12px;border:2px solid var(--ouro-b);color:#3a2a12;background:#fff}
+.relat{text-align:left;background:#fff;border-radius:14px;padding:14px 16px;margin:10px 0;border:1px solid #e6d3a5;color:#3a2a12}
+.relat .li{font-size:15px;margin:6px 0}.relat b{color:var(--ouro-b)}
+.relat .pct{font-size:34px;font-weight:800;color:var(--verde)}
+.relat .parecer{font-weight:800;margin-top:6px}
+.digbox{background:linear-gradient(180deg,#fff8e6,#fdefc8);border:2px solid var(--ouro-b);border-radius:14px;padding:12px 14px;margin-top:10px;text-align:center}
+.digbox .dq{font-size:16px;font-weight:800;color:#4a3410;margin-bottom:8px;line-height:1.5}
+.digbox .dq b{color:var(--ouro-b)}
+.digbox .dlin{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;font-size:18px;font-weight:800;color:#3a2a12}
+.digbox input{width:96px;height:52px;font-size:26px;font-weight:800;text-align:center;border-radius:12px;border:2px solid var(--ouro-b);color:#2f6bd6;background:#fff}
+.digbox input.rlbl{color:var(--vermelho);width:74px}
+.digbox .dica{font-size:13px;font-weight:700;color:var(--vermelho);min-height:18px;margin-top:8px}
 .exemplo{display:flex;gap:14px;justify-content:center;align-items:flex-end;margin:14px 0}
 .exemplo .lab{font-size:12px;font-weight:800;color:#8a6a2e}
 .medalha{width:120px;height:120px;margin:6px auto;border-radius:50%;background:radial-gradient(circle at 38% 32%,var(--ouro-c),var(--ouro) 60%,var(--ouro-b));box-shadow:0 8px 20px rgba(0,0,0,.4),inset 0 3px 8px rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:52px;color:#7a5410}
@@ -119,6 +134,10 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
       O que <b>sobrar</b> você arrasta para a casa de baixo: <b>troca</b> por 10 —
       é o <b>abaixa</b> da conta armada, no seu olho!</p>
       <div class="exemplo" id="exBlocos"></div>
+      <div class="nomebox">
+        <label for="nome">Qual é o seu nome?</label>
+        <input id="nome" type="text" maxlength="28" autocomplete="off" placeholder="digite seu nome">
+      </div>
       <div class="controls"><button class="btn" id="comecar">Começar</button></div>
     </div>
   </section>
@@ -191,7 +210,7 @@ function planeja(n,d){var ds=String(n).split("").map(Number),L=ds.length,offset=
   return {n:n,d:d,ds:ds,L:L,offset:offset,passos:passos,quo:Math.floor(n/d),rem:n%d};}
 
 /* ===== estado ===== */
-var idx=0,plan=null,acertos=0,semAjuda=true;
+var idx=0,plan=null,acertos=0,errouNessa=false,alunoNome="";
 /* mesa: sup[place]=blocos ainda no banco (por casa REAL 0=cent,1=dez,2=uni);
    grp[g][place]=blocos que o grupo g recebeu naquela casa; pativa=casa REAL ativa; fase */
 var sup,grp,pativa,fase,sobraAtual;
@@ -259,7 +278,7 @@ function renderBanco(){
     var qt = place<pativa? "✓" : sup[place];
     h+='<div class="bcol '+cls+'" data-casa="'+place+'"><div class="bch">'+NOMESP[place].toUpperCase()+'</div>'+
        '<div class="bqt">'+qt+'</div>'+
-       '<div class="bblocos">'+(place<pativa?"":cluster(place,sup[place],usaPx(place),18,(place===pativa&&fase==="repartir")))+'</div></div>';
+       '<div class="bblocos">'+(place<pativa?"":cluster(place,sup[place],usaPx(place),18,(place===pativa&&(fase==="repartir"||fase==="trocar"))))+'</div></div>';
   }
   $("banco").innerHTML=h;
 }
@@ -268,8 +287,7 @@ function temCasa(place){ /* a casa existe no número? (offset) */ return place>=
 function renderGrupos(){
   var h="";
   for(var g=0;g<plan.d;g++){
-    var mira=(fase==="repartir"&&podeRepartir()&&g===grupoDaVez());
-    h+='<div class="grupo'+(mira?" mira":"")+'"><div class="gh">GRUPO '+(g+1)+'</div>';
+    h+='<div class="grupo"><div class="gh">GRUPO '+(g+1)+'</div>';
     for(var place=plan.offset;place<4;place++){
       var n=grp[g][place];
       if(n>0){ h+='<div class="grow">'+cluster(place,n,grpPx(place),10,false)+'</div>'; }
@@ -285,17 +303,18 @@ function valorGrupo(g){var v=0;for(var place=plan.offset;place<4;place++){v+=grp
 
 function renderMesa(){ renderBanco(); renderGrupos(); atualizaChave(); ligaArrasto(); }
 
-/* ===== regras de repartir ===== */
-function grupoDaVez(){var mn=1e9,gi=0;for(var g=0;g<plan.d;g++){if(grp[g][pativa]<mn){mn=grp[g][pativa];gi=g;}}return gi;}
-function placedNaCasa(){var t=0;for(var g=0;g<plan.d;g++)t+=grp[g][pativa];return t;}
-function podeRepartir(){if(sup[pativa]<=0)return false;var emCurso=(placedNaCasa()%plan.d)!==0;return emCurso||sup[pativa]>=plan.d;}
-
-function repartirUm(){
-  if(!podeRepartir()){sNao();$("fala").innerHTML="Não dá para completar outra rodada igual — o que ficou é a <b>sobra</b>.";return;}
-  var g=grupoDaVez();grp[g][pativa]++;sup[pativa]--;sPoe();
-  if(!podeRepartir())terminaCasa();else renderMesa();
+/* ===== regras de repartir — O ALUNO faz cada rodada (sem auto-resolver) =====
+   Cada arrasto = UMA rodada: um bloco para CADA grupo. Ele repete até sobrar
+   menos que o número de grupos. O sistema NUNCA resolve por ele. */
+function podeRepartir(){ return sup[pativa]>=plan.d; }
+function repartirRodada(){
+  if(!podeRepartir()){sNao();errouNessa=true;
+    $("fala").innerHTML="Já não dá uma rodada inteira (menos que <b>"+plan.d+"</b>) — o que ficou é a <b>sobra</b>.";return;}
+  for(var g=0;g<plan.d;g++) grp[g][pativa]++;
+  sup[pativa]-=plan.d; sPoe();
+  if(!podeRepartir())terminaCasa();else{ renderMesa();
+    $("fala").innerHTML="Rodada dada: <b>1</b> "+NOMES[pativa]+" para cada grupo. Continue enquanto der uma rodada inteira.";}
 }
-function repartirRapido(){var lp=0;while(podeRepartir()&&lp<600){var g=grupoDaVez();grp[g][pativa]++;sup[pativa]--;lp++;}sPoe();if(!podeRepartir())terminaCasa();else renderMesa();}
 
 function terminaCasa(){
   var p=plan.passos[passoDeCasa(pativa)];
@@ -303,13 +322,11 @@ function terminaCasa(){
   var cada=grp[0][pativa];
   var msg="Cada grupo ficou com <b>"+cada+"</b> "+(cada===1?NOMES[pativa]:NOMESP[pativa])+". ";
   if(p.ultimo){
-    fase="fim"; sobraAtual=sup[pativa];
+    fase="digitar"; sobraAtual=sup[pativa];
     msg+= sobraAtual>0? ("Sobra"+(sobraAtual===1?"":"m")+" <b>"+sobraAtual+"</b> — esse é o <b>resto</b>.") : "Não sobrou nada — divisão exata!";
-    $("fala").innerHTML=msg;
-    $("sobrainfo").innerHTML="";
-    atualizaChaveFinal();
     renderMesa();
-    $("controls").innerHTML='<button class="btn ok" id="ver">Ver o resultado</button>';$("ver").onclick=mostraResultado;
+    atualizaChaveFinal();
+    pedeResultado(msg);
     return;
   }
   fase="trocar";
@@ -323,8 +340,8 @@ function terminaCasa(){
     $("controls").innerHTML='<button class="btn" id="prox">Continuar &rarr;</button>';$("prox").onclick=avanca;
   }
   $("fala").innerHTML=msg;
-  atualizaChaveFecha();
   renderMesa();
+  atualizaChaveFecha();
 }
 function atualizaChaveFecha(){ /* fecha a casa atual na chave (mostra -usado) */
   $("chave").innerHTML=renderChave(passoDeCasa(pativa), -1, -1);
@@ -346,9 +363,9 @@ function comecaCasa(){
   /* pula casas que não existem no número (não deveria, offset cobre) */
   var p=plan.passos[passoDeCasa(pativa)];
   var vindo=p.trazido>0?("Vieram <b>"+p.trazido+"</b> trocadas de cima; agora são <b>"+sup[pativa]+"</b> "+NOMESP[pativa]+". "):"";
-  $("instr").innerHTML=vindo+"Arraste <b>um bloco para cada grupo</b>, por vez.";
-  $("fala").innerHTML="Reparta as <b>"+NOMESP[pativa]+"</b> igualzinho entre os <b>"+plan.d+"</b> grupos.";
-  $("controls").innerHTML='<button class="btn sec" id="rapido">Repartir o resto igual</button>';$("rapido").onclick=repartirRapido;
+  $("instr").innerHTML=vindo+"Arraste um bloco: vai <b>um para cada grupo</b> (uma rodada).";
+  $("fala").innerHTML="Reparta as <b>"+NOMESP[pativa]+"</b> igualzinho: arraste, e cada grupo ganha <b>1</b>. Repita enquanto der.";
+  $("controls").innerHTML="";
   $("sobrainfo").innerHTML="";
   renderMesa();
   if(!podeRepartir()) terminaCasa();   /* casa que já começa sem repartir (1 centena ÷ 4) */
@@ -375,35 +392,84 @@ function arrastavel(elBlk){
 }
 function dentro(el,ids){while(el){if(el.id&&ids.indexOf(el.id)>=0)return el.id;el=el.parentNode;}return null;}
 function soltou(tgt,moved){
-  if(fase==="repartir"){ if(!moved||dentro(tgt,["grupos"])) repartirUm(); }
-  else if(fase==="trocar"){ if(!moved||dentro(tgt,["banco"])) trocar(); }
+  /* o aluno TEM que arrastar de verdade (não vale só clicar — nada automático) */
+  if(!moved){ $("fala").innerHTML="<b>Arraste</b> o bloco com o dedo (ou o mouse) — não vale só clicar."; sNao(); return; }
+  if(fase==="repartir"){ if(dentro(tgt,["grupos"])) repartirRodada();
+    else $("fala").innerHTML="Solte o bloco <b>em cima dos grupos</b> para repartir."; }
+  else if(fase==="trocar"){ if(dentro(tgt,["banco"])) trocar();
+    else $("fala").innerHTML="Arraste a sobra até a casa <b>de baixo</b> (o banco) para trocar por 10."; }
 }
 
 /* ===== fluxo ===== */
 function iniciaProblema(){
   plan=planeja(PROBS[idx].n,PROBS[idx].d);
-  sup=[0,0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;
+  sup=[0,0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;errouNessa=false;
   for(var i=0;i<plan.L;i++){ sup[plan.offset+i]=plan.ds[i]; }
   for(var g=0;g<plan.d;g++)grp.push([0,0,0,0]);
   $("pnum").textContent=(idx+1);$("ptot").textContent=PROBS.length;$("barra").style.width=Math.round(idx*100/PROBS.length)+"%";
   $("enun").innerHTML="Quanto dá <b>"+plan.n+" &divide; "+plan.d+"</b> ?";
   comecaCasa();
 }
-function mostraResultado(){
-  sOk();confete(20);if(semAjuda)acertos++;
-  var extra=plan.rem>0?(" e sobra "+plan.rem):"";
-  $("fala").innerHTML="<b>"+plan.n+" &divide; "+plan.d+" = "+plan.quo+extra+"</b>. "+
-    (plan.rem>0?"O resto é o que não deu para repartir igual.":"Divisão exata!");
-  $("controls").innerHTML='<button class="btn ok" id="p2">'+(idx+1<PROBS.length?"Próxima conta &rarr;":"Terminei!")+'</button>';
-  $("p2").onclick=function(){idx++;if(idx<PROBS.length)iniciaProblema();else finaliza();};
+/* Depois de manusear o material, o aluno DIGITA o resultado numérico. */
+function pedeResultado(msg){
+  fase="digitar";
+  $("instr").innerHTML="Você já repartiu tudo com as mãos. Agora <b>leia nos grupos</b> e escreva o resultado.";
+  var temResto=plan.rem>0;
+  var lin='<div class="dlin"><b>'+plan.n+' &divide; '+plan.d+' =</b> '+
+    '<input id="rq" type="tel" inputmode="numeric" maxlength="5" autocomplete="off" aria-label="quociente">';
+  if(temResto) lin+=' <b>e sobra</b> <input id="rr" class="rlbl" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="resto">';
+  lin+='</div>';
+  $("controls").innerHTML='<div class="digbox"><div class="dq">'+msg+' Quanto cada grupo tem no total?</div>'+
+    lin+'<div class="dica" id="rdica"></div></div>'+
+    '<button class="btn ok" id="rconf">Conferir</button>';
+  $("rconf").onclick=confereResultado;
+  var rq=$("rq");
+  rq.onkeydown=function(e){if(e.keyCode===13){e.preventDefault();(temResto?$("rr"):$("rconf")).focus();if(!temResto)confereResultado();}};
+  if(temResto)$("rr").onkeydown=function(e){if(e.keyCode===13){e.preventDefault();confereResultado();}};
+  try{rq.focus();}catch(e){}
+}
+function confereResultado(){
+  var q=parseInt(($("rq").value||"").replace(/\D/g,""),10);
+  var temResto=plan.rem>0, r=temResto?parseInt(($("rr").value||"").replace(/\D/g,""),10):0;
+  if(isNaN(q)||(temResto&&isNaN(r))){ $("rdica").textContent="Escreva o resultado nos campos."; sNao(); return; }
+  var okQ=(q===plan.quo), okR=(!temResto||r===plan.rem);
+  if(okQ&&okR){
+    if(!errouNessa)acertos++;
+    sOk();confete(22);
+    var extra=temResto?(" e sobra "+plan.rem):"";
+    $("fala").innerHTML="<b>"+plan.n+" &divide; "+plan.d+" = "+plan.quo+extra+"</b>. "+
+      (temResto?"O resto é o que não deu para repartir igual.":"Divisão exata!")+" Isso mesmo!";
+    $("controls").innerHTML='<button class="btn ok" id="p2">'+(idx+1<PROBS.length?"Próxima conta &rarr;":"Ver meu relatório")+'</button>';
+    $("p2").onclick=function(){idx++;if(idx<PROBS.length)iniciaProblema();else finaliza();};
+  }else{
+    errouNessa=true; sNao();
+    var dica="";
+    if(!okQ) dica="Confira de novo: olhe <b>um grupo</b> e conte o que ele tem (milhar, centena, dezena e unidade juntos).";
+    else dica="O <b>quociente</b> está certo! Falta a <b>sobra</b>: conte quantos blocos ficaram no banco sem repartir.";
+    $("rdica").innerHTML=dica;
+  }
 }
 function finaliza(){hide("jogo");show("fim");$("barra").style.width="100%";
-  var m=acertos>=18?("Você repartiu <b>"+acertos+"</b> das 20 sem tropeçar — raciocínio de mestre!"):
-    ("Você chegou ao fim das 20 contas movendo o material dourado com as próprias mãos. O que sobrava, você trocou — igual à conta armada. Muito bom!");
-  $("fimtxt").innerHTML=m+"<br><br>Qual foi a mais difícil? Tente ela de novo só com a conta armada!";}
+  var total=PROBS.length, pct=Math.round(acertos*100/total);
+  var quem=alunoNome?(alunoNome+", você"):"Você";
+  var parecer, cor;
+  if(pct>=90){parecer="Dominou a divisão com material dourado!";}
+  else if(pct>=70){parecer="Está quase lá — divisão bem encaminhada!";}
+  else if(pct>=50){parecer="Está construindo o raciocínio. Vale treinar mais um pouco.";}
+  else{parecer="Precisa retomar com calma — cada conta ensina um pouco.";}
+  $("fimtit").textContent=alunoNome?("Muito bem, "+alunoNome+"!"):"Mestre da divisão!";
+  $("fimtxt").innerHTML=
+    '<div class="relat">'+
+      '<div class="li">'+quem+' fez <b>'+total+'</b> contas repartindo o material dourado com as próprias mãos.</div>'+
+      '<div class="li">Acertou de primeira (sem tropeçar): <b>'+acertos+'</b> de <b>'+total+'</b>.</div>'+
+      '<div class="pct">'+pct+'%</div>'+
+      '<div class="parecer">'+parecer+'</div>'+
+    '</div>'+
+    'Qual foi a mais difícil? Tente ela de novo só com a conta armada!';
+}
 function confete(n){var cs=["#e8b53a","#2f8f4e","#2f6bd6","#c0453a","#f6d876"];for(var i=0;i<n;i++){(function(){var c=document.createElement("div");c.className="confete";c.style.left=(Math.random()*100)+"vw";c.style.background=cs[i%cs.length];c.style.transform="rotate("+(Math.random()*360)+"deg)";document.body.appendChild(c);var top=70+Math.random()*25,t0=null,dur=1100+Math.random()*700;function fr(ts){if(!t0)t0=ts;var k=(ts-t0)/dur;if(k>=1){if(c.parentNode)c.parentNode.removeChild(c);return;}c.style.top=(k*top)+"vh";c.style.opacity=(1-k);requestAnimationFrame(fr);}requestAnimationFrame(fr);})();}}
 
-$("comecar").onclick=function(){hide("ini");show("jogo");idx=0;acertos=0;iniciaProblema();};
+$("comecar").onclick=function(){alunoNome=(($("nome")&&$("nome").value)||"").trim();hide("ini");show("jogo");idx=0;acertos=0;iniciaProblema();};
 $("denovo").onclick=function(){hide("fim");show("jogo");idx=0;acertos=0;iniciaProblema();};
 </script>
 </body></html>

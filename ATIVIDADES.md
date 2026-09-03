@@ -74,7 +74,7 @@
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
 | **A Grande Expedição** | Matemática (5º ano, divisão — EF05MA07): estratégias de raciocínio para dividir — repartir igual, quantas vezes cabe (medida), estimativa, tabuada, resto e divisor de até 2 algarismos | `_divisao` | https://vidalprof.github.io/a-grande-expedicao-divisao/ |
-| **A Oficina da Divisão** | Matemática (4º/5º ano): raciocínio da CONTA ARMADA com MATERIAL DOURADO ao lado — 20 contas passo a passo, repartir os blocos e trocar o que não dá (exceção ao motor, HTML próprio) | `_dourado` | https://vidalprof.github.io/oficina-da-divisao/ |
+| **A Oficina da Divisão** | Matemática (4º/5º ano): raciocínio da CONTA ARMADA com MATERIAL DOURADO que o aluno MOVE (milhar/centena/dezena/unidade) — 32 contas progressivas; ARRASTA (não vale clicar) uma rodada para todos os grupos, troca a sobra (reagrupa/"abaixa") e DIGITA o resultado; nome + relatório final em % (exceção ao motor, HTML próprio) | `_dourado` | https://vidalprof.github.io/oficina-da-divisao/ |
 | **Expedição Santa Catarina** | Geografia: Florianópolis, Blumenau e o estado (revista + quiz 30q) | `_sc5` (+ `_sc5painel`) | https://vidalprof.github.io/santa-catarina-5ano/ · [painel](https://vidalprof.github.io/santa-catarina-5ano-painel/) |
 | **O Teatro das Palavras** | Português (5º ano) | `_teatro` | https://vidalprof.github.io/o-teatro-das-palavras/ |
 | **A Agência dos Detetives das Palavras** | Pronomes, interpretação (narrativo/injuntivo), mau×mal | `_detetive` | https://vidalprof.github.io/detetives-das-palavras/ |
