@@ -5,106 +5,82 @@
 <title>A Oficina da Divisão — Material Dourado</title>
 <!-- ============================================================
    ATIVIDADE ESPECIAL (fora do motor EduVerse, a pedido do Marcos, set/2026):
-   raciocínio lógico da DIVISÃO com CONTA ARMADA + MATERIAL DOURADO que o aluno
-   MOVE (arrasta) para repartir.
-
-   Estratégia (pesquisa material-dourado-divisao / divisao-ensino / Montessori):
-   dividir do MAIOR bloco para o menor; repartir um a cada grupo, por vez; o que
-   NÃO dá para repartir igual, TROCAR por 10 do bloco de baixo (é o "abaixa" da
-   conta armada). A criança ARRASTA os blocos aos grupos e arrasta a sobra para
-   a zona TROCAR. Mouse e toque (Pointer Events). ES5, um arquivo só.
+   raciocínio da DIVISÃO com CONTA ARMADA + MATERIAL DOURADO que o aluno MOVE.
+   A conta INTEIRA numa página só: as três casas (centena/dezena/unidade)
+   à vista ao mesmo tempo; os grupos enchem; a sobra é ARRASTADA para a casa
+   de baixo (a troca = o "abaixa"). Mouse e toque (Pointer Events). ES5, 1 HTML.
    ============================================================ -->
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --madeira:#3a2a1a; --madeira2:#4d3720; --papel:#fbf4e4; --tinta:#2a1f12;
-  --ouro:#e8b53a; --ouro-b:#a9781a; --ouro-c:#f6d876; --verde:#2f8f4e;
-  --azul:#2f6bd6; --vermelho:#c0453a;
-}
+:root{--papel:#fbf4e4;--tinta:#2a1f12;--ouro:#e8b53a;--ouro-b:#a9781a;--ouro-c:#f6d876;
+  --verde:#2f8f4e;--azul:#2f6bd6;--vermelho:#c0453a}
 html,body{margin:0}
 body{overflow-x:hidden;font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--papel);
-  background:#2b1e11;
-  background:
-    radial-gradient(1200px 600px at 50% -10%, rgba(255,220,150,.10), rgba(0,0,0,0)),
-    repeating-linear-gradient(90deg, #3a2a1a 0 44px, #3f2d1c 44px 88px);
-  min-height:100vh}
-#wrap{max-width:1060px;margin:0 auto;padding:14px 14px 40px}
+  background:#2b1e11;background:radial-gradient(1200px 600px at 50% -10%,rgba(255,220,150,.10),rgba(0,0,0,0)),
+  repeating-linear-gradient(90deg,#3a2a1a 0 44px,#3f2d1c 44px 88px);min-height:100vh}
+#wrap{max-width:1080px;margin:0 auto;padding:14px 14px 40px}
 header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-.brand{font-size:22px;font-weight:800;letter-spacing:.3px;
-  background:linear-gradient(180deg,var(--ouro-c),var(--ouro));-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand{font-size:22px;font-weight:800;background:linear-gradient(180deg,var(--ouro-c),var(--ouro));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
 .sub{font-size:13px;opacity:.82}
-.barra{flex:1;min-width:140px;height:12px;border-radius:9px;background:rgba(0,0,0,.35);overflow:hidden;
-  box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
+.barra{flex:1;min-width:140px;height:12px;border-radius:9px;background:rgba(0,0,0,.35);overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
 .barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ouro),var(--ouro-c));transition:width .5s}
 .placar{font-weight:800;font-size:14px;background:rgba(0,0,0,.3);padding:5px 12px;border-radius:20px}
 .placar b{color:var(--ouro-c)}
 
-.paineis{display:flex;gap:16px;align-items:stretch;margin-top:8px}
+.paineis{display:flex;gap:16px;align-items:flex-start;margin-top:8px}
 .card{background:var(--papel);color:var(--tinta);border-radius:18px;padding:14px 16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.6)}
-.esq{flex:1.25;min-width:0}
-.dir{flex:.75;min-width:0;display:flex;flex-direction:column}
-.rot{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#8a6a2e;margin-bottom:6px}
-.enun{font-size:20px;font-weight:800;text-align:center;margin:2px 0 8px;color:#3a2a12}
+  box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.6)}
+.esq{flex:1.5;min-width:0}.dir{flex:.9;min-width:0;display:flex;flex-direction:column}
+.rot{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#8a6a2e;margin-bottom:4px}
+.enun{font-size:20px;font-weight:800;text-align:center;margin:2px 0 6px;color:#3a2a12}
 .enun b{color:var(--ouro-b)}
-
-/* trilha das casas (centena/dezena/unidade) */
-.casas{display:flex;gap:6px;margin-bottom:8px}
-.casachip{flex:1;text-align:center;border-radius:10px;padding:5px 4px;font-weight:800;font-size:12px;
-  background:rgba(160,120,30,.10);color:#8a6a2e;border:1px solid rgba(160,120,30,.25)}
-.casachip.on{background:var(--ouro);color:#3a2a0a;border-color:var(--ouro-b)}
-.casachip.ok{background:#dff3e3;color:#1c6a37;border-color:#8fd3a4}
-.casachip b{display:block;font-size:18px;color:inherit}
-
-/* área de repartir */
-.instr{font-size:15px;font-weight:700;color:#4a3410;margin:2px 0 8px;text-align:center}
+.instr{font-size:14.5px;font-weight:700;color:#4a3410;text-align:center;margin:2px 0 8px}
 .instr b{color:var(--ouro-b)}
-.tabuleiro{background:rgba(160,120,30,.08);border:1px dashed rgba(160,120,30,.45);border-radius:14px;padding:10px}
-.supply-h{font-size:12px;font-weight:800;color:#8a6a2e;letter-spacing:.4px;display:flex;justify-content:space-between}
-.supply{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-end;min-height:40px;margin:6px 0 4px;
-  padding:6px;border-radius:10px;background:rgba(255,255,255,.45)}
-.grupos{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;padding:6px;border-radius:12px}
-.grupos.alvo{background:rgba(47,143,78,.12);outline:2px dashed var(--verde);outline-offset:2px}
-.grupo{flex:1 1 90px;min-width:82px;background:#fff;border:2px solid #e6d3a5;border-radius:12px;
-  padding:6px 4px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.08)}
+
+/* BANCO: as 3 casas lado a lado */
+.banco{display:flex;gap:8px}
+.bcol{flex:1;min-width:0;border-radius:12px;padding:7px 5px;background:rgba(160,120,30,.08);
+  border:1px solid rgba(160,120,30,.28);text-align:center}
+.bcol.on{background:rgba(232,181,58,.20);border-color:var(--ouro-b);box-shadow:0 0 0 2px rgba(232,181,58,.35)}
+.bcol.done{background:#eef7ef;border-color:#bfe3c8}
+.bcol.alvo{background:rgba(47,107,214,.16);border-color:var(--azul);outline:2px dashed var(--azul);outline-offset:1px}
+.bch{font-size:11px;font-weight:800;letter-spacing:.4px;color:#8a6a2e}
+.bqt{font-size:20px;font-weight:800;color:#3a2a12;line-height:1}
+.bblocos{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:flex-end;min-height:30px;margin-top:5px}
+.bcol.done .bqt{color:#1c6a37}
+
+/* GRUPOS */
+.grupos{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding:6px;border-radius:12px}
+.grupos.alvo{background:rgba(47,143,78,.10);outline:2px dashed var(--verde);outline-offset:2px}
+.grupo{flex:1 1 92px;min-width:84px;background:#fff;border:2px solid #e6d3a5;border-radius:12px;padding:6px 4px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.08)}
 .grupo.mira{border-color:var(--verde);box-shadow:0 0 0 3px rgba(47,143,78,.35)}
 .grupo .gh{font-size:11px;font-weight:800;color:#8a6a2e}
-.grupo .gb{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:4px;min-height:22px}
-.grupo .gn{font-size:17px;font-weight:800;color:var(--verde);margin-top:2px}
-.blk{filter:drop-shadow(0 2px 2px rgba(120,80,10,.35))}
-.arr{cursor:grab;touch-action:none}
-.arr:active{cursor:grabbing}
+.grow{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;align-items:flex-end;min-height:16px;margin-top:3px}
+.grupo .gtot{font-size:15px;font-weight:800;color:var(--verde);margin-top:3px}
+.blk{filter:drop-shadow(0 1px 1px rgba(120,80,10,.35))}
+.arr{cursor:grab;touch-action:none}.arr:active{cursor:grabbing}
 .blk.pop{animation:pop .3s ease-out}
 @keyframes pop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.14)}100%{transform:scale(1);opacity:1}}
-.maisN{font-weight:800;color:#8a6a2e;align-self:center;font-size:13px}
-.sobrainfo{margin-top:8px;font-weight:800;font-size:14px;color:#8a6a2e}
+.maisN{font-weight:800;color:#8a6a2e;font-size:12px;align-self:center}
+.sobrainfo{margin-top:8px;font-weight:800;font-size:14px;color:#8a6a2e;text-align:center}
 .sobrainfo b{color:var(--vermelho)}
-/* zona TROCAR */
-.trocar{margin-top:8px;border-radius:12px;padding:10px;text-align:center;font-weight:800;color:#2a4d86;
-  background:rgba(47,107,214,.10);border:2px dashed var(--azul);font-size:14px}
-.trocar.alvo{background:rgba(47,107,214,.22)}
-.trocar small{display:block;font-weight:700;color:#3a5a86;font-size:12px;margin-top:2px}
 
 /* conta armada */
-.chave{font-family:"Cascadia Code",Consolas,"Courier New",monospace;text-align:center;
-  margin:6px auto 2px;background:#fff;border-radius:12px;padding:14px 10px}
+.chave{font-family:"Cascadia Code",Consolas,"Courier New",monospace;text-align:center;background:#fff;border-radius:12px;padding:14px 10px;margin:2px auto}
 .crow{font-size:0;white-space:nowrap;line-height:1.15}
 .cell{display:inline-block;width:26px;height:30px;font-size:22px;font-weight:800;line-height:30px;vertical-align:top;font-family:inherit}
 .cell.q{color:var(--verde)}.cell.prod{color:var(--vermelho)}.cell.dv{color:#2a1f12}
 .cell.vbar{border-left:3px solid #2a1f12}.cell.fade{opacity:.28}.cell.divisor-lbl{color:#6e521f}
 .legenda{font-size:12px;text-align:center;color:#8a6a2e;margin-top:6px}
-.legenda .k{display:inline-block;margin:0 5px;font-weight:800}
-.legenda .kq{color:var(--verde)}.legenda .kp{color:var(--vermelho)}
-.fala{background:linear-gradient(180deg,#fff8e6,#fdefc8);border-radius:14px;padding:10px 14px;
-  font-size:15px;font-weight:600;color:#4a3410;margin-top:10px;min-height:22px;border:1px solid #efd89a}
+.legenda .k{margin:0 5px;font-weight:800}.legenda .kq{color:var(--verde)}.legenda .kp{color:var(--vermelho)}
+.fala{background:linear-gradient(180deg,#fff8e6,#fdefc8);border-radius:14px;padding:10px 14px;font-size:15px;font-weight:600;color:#4a3410;margin-top:10px;min-height:22px;border:1px solid #efd89a}
 .fala b{color:var(--ouro-b)}
 .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
-.btn{border:0;border-radius:14px;padding:12px 18px;font-size:15px;font-weight:800;cursor:pointer;min-height:48px;
-  color:#3a2a0a;background:linear-gradient(180deg,var(--ouro-c),var(--ouro));box-shadow:0 5px 0 var(--ouro-b);transition:transform .1s}
+.btn{border:0;border-radius:14px;padding:12px 18px;font-size:15px;font-weight:800;cursor:pointer;min-height:48px;color:#3a2a0a;background:linear-gradient(180deg,var(--ouro-c),var(--ouro));box-shadow:0 5px 0 var(--ouro-b);transition:transform .1s}
 .btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ouro-b)}
 .btn.sec{background:linear-gradient(180deg,#efe3c6,#e2d0a6);box-shadow:0 5px 0 #b8a26f;color:#4a3410}
 .btn.ok{background:linear-gradient(180deg,#7fdc95,var(--verde));box-shadow:0 5px 0 #1c6a37;color:#fff}
-.btn[disabled]{opacity:.45;box-shadow:none;cursor:default;transform:none}
 
 .tela-ini,.tela-fim{max-width:660px;margin:20px auto;text-align:center}
 .tela-ini .card,.tela-fim .card{padding:22px}
@@ -112,14 +88,11 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 .tela-ini p{font-size:16px;color:#5a4426;line-height:1.5}
 .exemplo{display:flex;gap:14px;justify-content:center;align-items:flex-end;margin:14px 0}
 .exemplo .lab{font-size:12px;font-weight:800;color:#8a6a2e}
-.medalha{width:120px;height:120px;margin:6px auto;border-radius:50%;
-  background:radial-gradient(circle at 38% 32%,var(--ouro-c),var(--ouro) 60%,var(--ouro-b));
-  box-shadow:0 8px 20px rgba(0,0,0,.4), inset 0 3px 8px rgba(255,255,255,.5);
-  display:flex;align-items:center;justify-content:center;font-size:52px;color:#7a5410}
+.medalha{width:120px;height:120px;margin:6px auto;border-radius:50%;background:radial-gradient(circle at 38% 32%,var(--ouro-c),var(--ouro) 60%,var(--ouro-b));box-shadow:0 8px 20px rgba(0,0,0,.4),inset 0 3px 8px rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:52px;color:#7a5410}
 .hide{display:none!important}
 .confete{position:fixed;top:-12px;width:10px;height:14px;border-radius:2px;z-index:60;pointer-events:none}
 #ghost{position:fixed;z-index:80;pointer-events:none;opacity:.92;filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}
-@media (max-width:760px){
+@media (max-width:820px){
   #wrap{padding:12px 10px 40px}
   .paineis{flex-direction:column}.card{max-width:100%}
   .cell{width:21px;font-size:18px}.enun{font-size:18px}
@@ -131,7 +104,7 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 <div id="wrap">
   <header class="top">
     <div><div class="brand">A Oficina da Divisão</div>
-      <div class="sub">Arraste o material dourado e reparta · a conta armada acompanha</div></div>
+      <div class="sub">Reparta o material dourado · a conta armada inteira ao lado</div></div>
     <div class="barra"><i id="barra"></i></div>
     <div class="placar">Conta <b id="pnum">1</b>/20</div>
   </header>
@@ -140,10 +113,10 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
     <div class="card">
       <h1>Reparta o material dourado</h1>
       <p>Todo número vira <b>material dourado</b>: <b>centenas</b> (placas),
-      <b>dezenas</b> (barras) e <b>unidades</b> (cubinhos). Para dividir, você vai
-      <b>arrastar</b> os blocos e dar <b>um a cada grupo</b>, por vez. O que
-      <b>sobrar</b> (menos que o número de grupos), você <b>arrasta para TROCAR</b>
-      por 10 do bloco de baixo. É a <b>conta armada</b> acontecendo no seu olho!</p>
+      <b>dezenas</b> (barras) e <b>unidades</b> (cubinhos). Você <b>arrasta</b> os
+      blocos e dá <b>um a cada grupo</b>, por vez, começando pelos <b>maiores</b>.
+      O que <b>sobrar</b> você arrasta para a casa de baixo: <b>troca</b> por 10 —
+      é o <b>abaixa</b> da conta armada, no seu olho!</p>
       <div class="exemplo" id="exBlocos"></div>
       <div class="controls"><button class="btn" id="comecar">Começar</button></div>
     </div>
@@ -154,9 +127,10 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
       <div class="card esq">
         <div class="rot">Material dourado — arraste para repartir</div>
         <div class="enun" id="enun"></div>
-        <div class="casas" id="casas"></div>
         <div class="instr" id="instr"></div>
-        <div class="tabuleiro" id="tab"></div>
+        <div class="banco" id="banco"></div>
+        <div class="grupos" id="grupos"></div>
+        <div class="sobrainfo" id="sobrainfo"></div>
       </div>
       <div class="card dir">
         <div class="rot">Conta armada</div>
@@ -169,8 +143,7 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
   </section>
 
   <section id="fim" class="tela-fim hide">
-    <div class="card">
-      <div class="medalha">★</div>
+    <div class="card"><div class="medalha">★</div>
       <h1 id="fimtit">Mestre da divisão!</h1>
       <p id="fimtxt"></p>
       <div class="controls"><button class="btn" id="denovo">Jogar de novo</button></div>
@@ -181,41 +154,28 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 
 <script>
 /* ===== blocos SVG ===== */
-function svgUnidade(px){var s=px||18;return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 18 18">'+
-  '<rect x="1" y="1" width="16" height="16" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/>'+
-  '<rect x="3.5" y="3.5" width="4.5" height="4.5" rx="1" fill="#fbe6a4" opacity=".7"/></svg>';}
-function svgDezena(px){var h=px||58;var w=Math.round(h*0.20);var seg='';var n=10;var gap=h/n;
-  for(var i=0;i<n;i++){seg+='<line x1="1" y1="'+(gap*i+1).toFixed(1)+'" x2="'+(w-1)+'" y2="'+(gap*i+1).toFixed(1)+'" stroke="#a9781a" stroke-width="0.8" opacity=".7"/>';}
-  return '<svg class="blk" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+
-  '<rect x="0.7" y="0.7" width="'+(w-1.4)+'" height="'+(h-1.4)+'" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/>'+seg+'</svg>';}
-function svgCentena(px){var s=px||56;var g='';var n=10;var st=s/n;
-  for(var i=1;i<n;i++){g+='<line x1="'+(st*i).toFixed(1)+'" y1="1" x2="'+(st*i).toFixed(1)+'" y2="'+(s-1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".6"/>';
-    g+='<line x1="1" y1="'+(st*i).toFixed(1)+'" x2="'+(s-1)+'" y2="'+(st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".6"/>';}
-  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'">'+
-  '<rect x="0.8" y="0.8" width="'+(s-1.6)+'" height="'+(s-1.6)+'" rx="3" fill="#efc451" stroke="#a9781a" stroke-width="1.6"/>'+g+'</svg>';}
-function bloco(kind,px,extra){var s=kind==="c"?svgCentena(px):kind==="d"?svgDezena(px):svgUnidade(px);
-  if(extra) s=s.replace('class="blk"','class="blk '+extra+'"'); return s;}
+function svgUnidade(px){var s=px||16;return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 18 18"><rect x="1" y="1" width="16" height="16" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/><rect x="3.5" y="3.5" width="4.5" height="4.5" rx="1" fill="#fbe6a4" opacity=".7"/></svg>';}
+function svgDezena(px){var h=px||48;var w=Math.round(h*0.20);var seg='';var gap=h/10;for(var i=0;i<10;i++){seg+='<line x1="1" y1="'+(gap*i+1).toFixed(1)+'" x2="'+(w-1)+'" y2="'+(gap*i+1).toFixed(1)+'" stroke="#a9781a" stroke-width="0.8" opacity=".7"/>';}return '<svg class="blk" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><rect x="0.7" y="0.7" width="'+(w-1.4)+'" height="'+(h-1.4)+'" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/>'+seg+'</svg>';}
+function svgCentena(px){var s=px||46;var g='';var st=s/10;for(var i=1;i<10;i++){g+='<line x1="'+(st*i).toFixed(1)+'" y1="1" x2="'+(st*i).toFixed(1)+'" y2="'+(s-1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".6"/><line x1="1" y1="'+(st*i).toFixed(1)+'" x2="'+(s-1)+'" y2="'+(st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".6"/>';}return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'"><rect x="0.8" y="0.8" width="'+(s-1.6)+'" height="'+(s-1.6)+'" rx="3" fill="#efc451" stroke="#a9781a" stroke-width="1.6"/>'+g+'</svg>';}
+function bloco(kind,px,extra){var s=kind===0?svgCentena(px):kind===1?svgDezena(px):svgUnidade(px);if(extra)s=s.replace('class="blk"','class="blk '+extra+'"');return s;}
+function cluster(kind,n,px,cap,drag){cap=cap||14;var out="",m=Math.min(n,cap);for(var i=0;i<m;i++)out+=bloco(kind,px,drag?"arr pop":"pop");if(n>cap)out+='<span class="maisN">…'+n+'</span>';return out;}
 
 /* ===== as 20 contas ===== */
-var PROBS=[
- {n:48,d:2},{n:69,d:3},{n:88,d:4},{n:96,d:3},
- {n:72,d:3},{n:75,d:5},{n:84,d:6},{n:91,d:7},
- {n:156,d:4},{n:168,d:3},{n:245,d:5},{n:224,d:4},
- {n:375,d:3},{n:528,d:4},{n:648,d:6},{n:432,d:4},
- {n:50,d:4},{n:77,d:5},{n:155,d:4},{n:229,d:3}
-];
-var NOMES=["centena","dezena","unidade"], NOMESP=["centenas","dezenas","unidades"], KIND=["c","d","u"];
+var PROBS=[{n:48,d:2},{n:69,d:3},{n:88,d:4},{n:96,d:3},{n:72,d:3},{n:75,d:5},{n:84,d:6},{n:91,d:7},
+ {n:156,d:4},{n:168,d:3},{n:245,d:5},{n:224,d:4},{n:375,d:3},{n:528,d:4},{n:648,d:6},{n:432,d:4},
+ {n:50,d:4},{n:77,d:5},{n:155,d:4},{n:229,d:3}];
+var NOMES=["centena","dezena","unidade"],NOMESP=["centenas","dezenas","unidades"];
 
-function planeja(n,d){
-  var ds=String(n).split("").map(Number),L=ds.length,offset=3-L,passos=[],resto=0;
+function planeja(n,d){var ds=String(n).split("").map(Number),L=ds.length,offset=3-L,passos=[],resto=0;
   for(var i=0;i<L;i++){var place=offset+i,trazido=resto*10,disp=trazido+ds[i],q=Math.floor(disp/d),r=disp%d;
     passos.push({place:place,digito:ds[i],trazido:trazido,disp:disp,q:q,usado:q*d,resto:r,ultimo:(i===L-1)});resto=r;}
-  return {n:n,d:d,ds:ds,L:L,offset:offset,passos:passos,quo:Math.floor(n/d),rem:n%d};
-}
+  return {n:n,d:d,ds:ds,L:L,offset:offset,passos:passos,quo:Math.floor(n/d),rem:n%d};}
 
 /* ===== estado ===== */
-var idx=0,plan=null,pi=0,acertos=0,semAjuda=true;
-var st=null; /* estado do lugar atual: {supply, groups[], fase} */
+var idx=0,plan=null,acertos=0,semAjuda=true;
+/* mesa: sup[place]=blocos ainda no banco (por casa REAL 0=cent,1=dez,2=uni);
+   grp[g][place]=blocos que o grupo g recebeu naquela casa; pativa=casa REAL ativa; fase */
+var sup,grp,pativa,fase,sobraAtual;
 var $=function(id){return document.getElementById(id);};
 function show(id){$(id).className=$(id).className.replace(/\bhide\b/,"").trim();}
 function hide(id){if($(id).className.indexOf("hide")<0)$(id).className+=" hide";}
@@ -229,219 +189,197 @@ function sTroca(){nota(300,.12,.13,"sine",0);nota(620,.16,.12,"sine",.06);}
 function sNao(){nota(280,.13,.1,"sine",0);}
 document.addEventListener("pointerdown",function(){ac();},false);
 
-/* ===== abertura ===== */
-$("exBlocos").innerHTML='<div><div class="lab">1 centena</div>'+bloco("c",50)+'</div>'+
-  '<div><div class="lab">1 dezena</div>'+bloco("d",50)+'</div>'+
-  '<div><div class="lab">1 unidade</div>'+bloco("u",22)+'</div>';
+$("exBlocos").innerHTML='<div><div class="lab">1 centena</div>'+bloco(0,50)+'</div><div><div class="lab">1 dezena</div>'+bloco(1,50)+'</div><div><div class="lab">1 unidade</div>'+bloco(2,22)+'</div>';
 
 /* ===== conta armada ===== */
 function cell(t,c){return '<span class="cell '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>';}
 function firstNonZeroQ(){for(var i=0;i<plan.passos.length;i++)if(plan.passos[i].q>0)return i;return plan.passos.length-1;}
-function renderChave(ate){
+/* mostra os passos ATÉ o índice de passo `ate`; se `parcialQ`>=0, desenha o quociente
+   parcial da casa em curso (índice de passo `passoAtivo`). */
+function renderChave(ate,passoAtivo,parcialQ){
   var L=plan.L,ds=plan.ds,d=String(plan.d),html="",i,r1="";
-  for(i=0;i<L;i++)r1+=cell(ds[i],"dv");
-  r1+=cell("│","vbar");for(var k=0;k<d.length;k++)r1+=cell(d[k],"dv divisor-lbl");
+  for(i=0;i<L;i++)r1+=cell(ds[i],"dv");r1+=cell("│","vbar");
+  for(var k=0;k<d.length;k++)r1+=cell(d[k],"dv divisor-lbl");
   html+='<div class="crow">'+r1+'</div>';
   var fnz=firstNonZeroQ(),r2="";
-  for(i=0;i<L;i++){var p=plan.passos[i];if(i<=ate)r2+=cell(p.q,"q"+(i<fnz?" fade":""));else r2+=cell("");}
+  for(i=0;i<L;i++){var p=plan.passos[i];
+    if(i<=ate)r2+=cell(p.q,"q"+(i<fnz?" fade":""));
+    else if(i===passoAtivo&&parcialQ>=0)r2+=cell(parcialQ,"q"+(i<fnz?" fade":""));
+    else r2+=cell("");}
   r2+=cell("&nbsp;","");html+='<div class="crow">'+r2+'</div>';
   for(var s=0;s<=ate&&s<L;s++){if(s<fnz)continue;var ps=plan.passos[s],ru="";
     for(var c=0;c<L;c++)ru+=(c===s)?cell("-"+ps.usado,"prod"):cell("");
     html+='<div class="crow">'+ru+'</div>';}
   return html;
 }
+function passoDeCasa(place){ /* índice do passo (na lista) que corresponde à casa REAL `place` */
+  for(var i=0;i<plan.passos.length;i++) if(plan.passos[i].place===place) return i; return -1;
+}
+function atualizaChave(){
+  var passoAtivo=passoDeCasa(pativa);
+  var ateAnterior=passoAtivo-1;
+  var parcial=(fase==="repartir")?grp.reduce(function(a,g){return Math.min(a,g[pativa]);}, 1e9):-1;
+  if(parcial===1e9)parcial=0;
+  $("chave").innerHTML=renderChave(ateAnterior, passoAtivo, parcial);
+}
 
-/* ===== render das casas (trilha) ===== */
-function renderCasas(){
+/* ===== a mesa (banco + grupos) numa página ===== */
+function usaPx(place){return place===0?24:place===1?34:16;}
+function grpPx(place){return place===0?16:place===1?22:13;}
+
+function renderBanco(){
   var h="";
-  for(var i=0;i<plan.L;i++){var p=plan.passos[i],cls=i<pi?"ok":(i===pi?"on":"");
-    h+='<div class="casachip '+cls+'">'+NOMESP[p.place]+'<b>'+(i<pi?"✓":(i===pi?(st?st.supply+st.placed:p.disp):p.digito))+'</b></div>';}
-  $("casas").innerHTML=h;
+  for(var place=0;place<3;place++){
+    if(!temCasa(place)) continue;                 /* número sem essa casa (ex.: 2 alg) */
+    var cls = place<pativa?"done":(place===pativa?"on":"");
+    if(fase==="trocar" && place===pativa+1) cls="alvo"; /* destino da troca */
+    var qt = place<pativa? "✓" : sup[place];
+    h+='<div class="bcol '+cls+'" data-casa="'+place+'"><div class="bch">'+NOMESP[place].toUpperCase()+'</div>'+
+       '<div class="bqt">'+qt+'</div>'+
+       '<div class="bblocos">'+(place<pativa?"":cluster(place,sup[place],usaPx(place),12,(place===pativa&&fase==="repartir")))+'</div></div>';
+  }
+  $("banco").innerHTML=h;
 }
+function temCasa(place){ /* a casa existe no número? (offset) */ return place>=plan.offset; }
 
-/* clusters (com teto visual) */
-function cluster(kind,n,px,cap,drag){cap=cap||16;var out="",m=Math.min(n,cap);
-  for(var i=0;i<m;i++)out+=bloco(kind,px,drag?"arr pop":"pop");
-  if(n>cap)out+='<span class="maisN">…&nbsp;'+n+'</span>';return out;}
-
-/* ===== começa um lugar ===== */
-function startPlace(){
-  var p=plan.passos[pi];
-  st={disp:p.disp,supply:p.disp,placed:0,groups:[],fase:"repartir",sobra:0};
-  for(var g=0;g<plan.d;g++)st.groups.push(0);
-  renderCasas();
-  $("enun").innerHTML="Quanto dá <b>"+plan.n+" &divide; "+plan.d+"</b> ?";
-  var vindo=p.trazido>0?("Vieram <b>"+p.trazido+"</b> trocadas de cima. Agora são <b>"+p.disp+"</b> "+NOMESP[p.place]+". "):"";
-  $("instr").innerHTML=vindo+"Arraste <b>um bloco para cada grupo</b>, por vez.";
-  $("fala").innerHTML="Reparta as <b>"+NOMESP[p.place]+"</b> igualzinho entre os <b>"+plan.d+"</b> grupos.";
-  $("controls").innerHTML='<button class="btn sec" id="rapido">Repartir o resto igual</button>';
-  $("rapido").onclick=repartirRapido;
-  renderTab();
-  /* lugar que já começa sem dar para repartir (ex.: 1 centena ÷ 4 grupos):
-     ninguém recebe, tudo vira sobra e vai para a TROCA. */
-  if(!podeRepartir()){ terminaReparticao(); }
-}
-
-function grupoDaVez(){ /* round-robin: o grupo com menos blocos */
-  var mn=Math.min.apply(null,st.groups);return st.groups.indexOf(mn);
-}
-function podeRepartir(){ /* pode dar mais um? (round em curso, ou dá para começar outro) */
-  if(st.supply<=0)return false;
-  var emCurso=(st.placed%plan.d)!==0;
-  return emCurso || st.supply>=plan.d;
-}
-
-function renderTab(){
-  var p=plan.passos[pi],kind=KIND[p.place];
-  var pxS=p.place===0?30:p.place===1?42:18, pxG=p.place===0?22:p.place===1?30:15;
+function renderGrupos(){
   var h="";
-  /* SUPPLY */
-  h+='<div class="supply-h"><span>PARA REPARTIR</span><span>'+st.supply+' '+NOMESP[p.place]+'</span></div>';
-  h+='<div class="supply" id="supply">'+ (st.supply>0? cluster(kind,st.supply,pxS,16,st.fase==="repartir")
-        : '<span class="maisN">vazio — tudo repartido!</span>')+'</div>';
-  /* GRUPOS */
-  h+='<div class="grupos" id="grupos">';
   for(var g=0;g<plan.d;g++){
-    var mira=(st.fase==="repartir"&&podeRepartir()&&g===grupoDaVez());
-    h+='<div class="grupo'+(mira?" mira":"")+'"><div class="gh">GRUPO '+(g+1)+'</div>'+
-       '<div class="gb">'+cluster(kind,st.groups[g],pxG,12,false)+'</div>'+
-       '<div class="gn">'+st.groups[g]+'</div></div>';
-  }
-  h+='</div>';
-  /* SOBRA / TROCAR */
-  if(st.fase==="trocar"){
-    h+='<div class="sobrainfo">Sobra'+(st.sobra===1?"":"m")+' <b>'+st.sobra+'</b> '+
-       (st.sobra===1?NOMES[p.place]:NOMESP[p.place])+' — menos que <b>'+plan.d+'</b> grupos.</div>';
-    if(!p.ultimo){
-      h+='<div class="trocar" id="trocar">Arraste a sobra aqui para <b>TROCAR</b>'+
-         '<small>cada '+NOMES[p.place]+' vira 10 '+NOMESP[p.place+1]+'</small></div>';
+    var mira=(fase==="repartir"&&podeRepartir()&&g===grupoDaVez());
+    h+='<div class="grupo'+(mira?" mira":"")+'"><div class="gh">GRUPO '+(g+1)+'</div>';
+    var tot="";
+    for(var place=plan.offset;place<3;place++){
+      var n=grp[g][place];
+      if(n>0){ h+='<div class="grow">'+cluster(place,n,grpPx(place),10,false)+'</div>'; }
     }
+    /* total do grupo em número (o quociente que ele está formando) */
+    var valor=valorGrupo(g);
+    h+='<div class="gtot">'+(valor>0?valor:"—")+'</div></div>';
   }
-  $("tab").innerHTML=h;
-  ligaArrasto();
-  if(st.fase==="trocar" && plan.passos[pi].ultimo) fechaUltimo();
+  $("grupos").className="grupos"+(fase==="repartir"&&podeRepartir()?" alvo":"");
+  $("grupos").innerHTML=h;
+}
+function valorGrupo(g){var v=0;for(var place=plan.offset;place<3;place++){v+=grp[g][place]*Math.pow(10,2-place);}return v;}
+
+function renderMesa(){ renderBanco(); renderGrupos(); atualizaChave(); ligaArrasto(); }
+
+/* ===== regras de repartir ===== */
+function grupoDaVez(){var mn=1e9,gi=0;for(var g=0;g<plan.d;g++){if(grp[g][pativa]<mn){mn=grp[g][pativa];gi=g;}}return gi;}
+function placedNaCasa(){var t=0;for(var g=0;g<plan.d;g++)t+=grp[g][pativa];return t;}
+function podeRepartir(){if(sup[pativa]<=0)return false;var emCurso=(placedNaCasa()%plan.d)!==0;return emCurso||sup[pativa]>=plan.d;}
+
+function repartirUm(){
+  if(!podeRepartir()){sNao();$("fala").innerHTML="Não dá para completar outra rodada igual — o que ficou é a <b>sobra</b>.";return;}
+  var g=grupoDaVez();grp[g][pativa]++;sup[pativa]--;sPoe();
+  if(!podeRepartir())terminaCasa();else renderMesa();
+}
+function repartirRapido(){var lp=0;while(podeRepartir()&&lp<600){var g=grupoDaVez();grp[g][pativa]++;sup[pativa]--;lp++;}sPoe();if(!podeRepartir())terminaCasa();else renderMesa();}
+
+function terminaCasa(){
+  var p=plan.passos[passoDeCasa(pativa)];
+  sobraAtual=sup[pativa];
+  var cada=grp[0][pativa];
+  var msg="Cada grupo ficou com <b>"+cada+"</b> "+(cada===1?NOMES[pativa]:NOMESP[pativa])+". ";
+  if(p.ultimo){
+    fase="fim"; sobraAtual=sup[pativa];
+    msg+= sobraAtual>0? ("Sobra"+(sobraAtual===1?"":"m")+" <b>"+sobraAtual+"</b> — esse é o <b>resto</b>.") : "Não sobrou nada — divisão exata!";
+    $("fala").innerHTML=msg;
+    $("sobrainfo").innerHTML="";
+    atualizaChaveFinal();
+    renderMesa();
+    $("controls").innerHTML='<button class="btn ok" id="ver">Ver o resultado</button>';$("ver").onclick=mostraResultado;
+    return;
+  }
+  fase="trocar";
+  if(sobraAtual>0){
+    msg+="Sobra"+(sobraAtual===1?"":"m")+" <b>"+sobraAtual+"</b>. Arraste a sobra para <b>"+NOMESP[pativa+1].toUpperCase()+"</b> — troca por 10!";
+    $("sobrainfo").innerHTML="Arraste os <b>"+sobraAtual+"</b> que sobraram para a casa das "+NOMESP[pativa+1]+".";
+    $("controls").innerHTML="";
+  }else{
+    msg+="Não sobrou nada. Seguimos para as "+NOMESP[pativa+1]+".";
+    $("sobrainfo").innerHTML="";
+    $("controls").innerHTML='<button class="btn" id="prox">Continuar &rarr;</button>';$("prox").onclick=avanca;
+  }
+  $("fala").innerHTML=msg;
+  atualizaChaveFecha();
+  renderMesa();
+}
+function atualizaChaveFecha(){ /* fecha a casa atual na chave (mostra -usado) */
+  $("chave").innerHTML=renderChave(passoDeCasa(pativa), -1, -1);
+}
+function atualizaChaveFinal(){ $("chave").innerHTML=renderChave(passoDeCasa(pativa), -1, -1); }
+
+function trocar(){
+  sTroca();
+  var prox=pativa+1;
+  sup[prox]+=sobraAtual*10; sup[pativa]=0;
+  $("fala").innerHTML="Troquei <b>"+sobraAtual+"</b> "+(sobraAtual===1?NOMES[pativa]:NOMESP[pativa])+
+    " por <b>"+(sobraAtual*10)+"</b> "+NOMESP[prox]+" — o <b>abaixa</b> da conta!";
+  $("sobrainfo").innerHTML="";
+  avanca();
+}
+function avanca(){ pativa++; fase="repartir"; comecaCasa(); }
+
+function comecaCasa(){
+  /* pula casas que não existem no número (não deveria, offset cobre) */
+  var p=plan.passos[passoDeCasa(pativa)];
+  var vindo=p.trazido>0?("Vieram <b>"+p.trazido+"</b> trocadas de cima; agora são <b>"+sup[pativa]+"</b> "+NOMESP[pativa]+". "):"";
+  $("instr").innerHTML=vindo+"Arraste <b>um bloco para cada grupo</b>, por vez.";
+  $("fala").innerHTML="Reparta as <b>"+NOMESP[pativa]+"</b> igualzinho entre os <b>"+plan.d+"</b> grupos.";
+  $("controls").innerHTML='<button class="btn sec" id="rapido">Repartir o resto igual</button>';$("rapido").onclick=repartirRapido;
+  $("sobrainfo").innerHTML="";
+  renderMesa();
+  if(!podeRepartir()) terminaCasa();   /* casa que já começa sem repartir (1 centena ÷ 4) */
 }
 
-/* ===== arrasto (Pointer Events: mouse + toque) ===== */
+/* ===== arrasto ===== */
 function ligaArrasto(){
-  var sup=$("supply"); if(!sup) return;
-  var blocos=sup.getElementsByClassName("blk");
-  for(var i=0;i<blocos.length;i++){ if((blocos[i].getAttribute("class")||"").indexOf("arr")>=0) arrastavel(blocos[i]); }
+  var alvo=(fase==="repartir")?"grupos":(fase==="trocar"?"banco":null);
+  var bl=document.getElementsByClassName("blk");
+  for(var i=0;i<bl.length;i++){ if((bl[i].getAttribute("class")||"").indexOf("arr")>=0) arrastavel(bl[i]); }
 }
 function arrastavel(elBlk){
   elBlk.addEventListener("pointerdown",function(ev){
-    ev.preventDefault();
-    var sx=ev.clientX,sy=ev.clientY,moved=false;
-    var gh=$("ghost"); gh.innerHTML=elBlk.outerHTML; gh.className="";
-    var r=elBlk.getBoundingClientRect(); gh.style.width=r.width+"px";
+    ev.preventDefault();var sx=ev.clientX,sy=ev.clientY,moved=false;
+    var gh=$("ghost");gh.innerHTML=elBlk.outerHTML;gh.className="";var r=elBlk.getBoundingClientRect();gh.style.width=r.width+"px";
     function pos(x,y){gh.style.left=(x-r.width/2)+"px";gh.style.top=(y-r.height/2)+"px";}
-    pos(sx,sy); elBlk.style.visibility="hidden";
+    pos(sx,sy);elBlk.style.visibility="hidden";
     function mv(e){if(Math.abs(e.clientX-sx)>5||Math.abs(e.clientY-sy)>5)moved=true;pos(e.clientX,e.clientY);}
-    function up(e){
-      document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);
-      gh.className="hide"; gh.innerHTML=""; elBlk.style.visibility="";
-      var tgt=document.elementFromPoint(e.clientX,e.clientY);
-      soltou(tgt,moved);
-    }
+    function up(e){document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);
+      gh.className="hide";gh.innerHTML="";elBlk.style.visibility="";
+      soltou(document.elementFromPoint(e.clientX,e.clientY),moved);}
     document.addEventListener("pointermove",mv);document.addEventListener("pointerup",up);
   });
 }
-function dentro(el,sel){while(el){if(el.id===sel)return true;el=el.parentNode;}return false;}
+function dentro(el,ids){while(el){if(el.id&&ids.indexOf(el.id)>=0)return el.id;el=el.parentNode;}return null;}
 function soltou(tgt,moved){
-  if(st.fase==="repartir"){
-    /* soltou nos grupos (ou tap): reparte um */
-    if(!moved || dentro(tgt,"grupos")) repartirUm();
-  }else if(st.fase==="trocar"){
-    if(!moved || dentro(tgt,"trocar")) trocar();
-  }
+  if(fase==="repartir"){ if(!moved||dentro(tgt,["grupos"])) repartirUm(); }
+  else if(fase==="trocar"){ if(!moved||dentro(tgt,["banco"])) trocar(); }
 }
 
-/* dá um bloco ao grupo da vez (round-robin) */
-function repartirUm(){
-  if(!podeRepartir()){ sNao();
-    $("fala").innerHTML="Não dá para completar outra rodada igual: o que ficou é a <b>sobra</b>."; return; }
-  var g=grupoDaVez();
-  st.groups[g]++; st.placed++; st.supply--; sPoe();
-  atualizaChaveParcial();
-  if(!podeRepartir()){ terminaReparticao(); } else { renderTab(); }
-}
-function repartirRapido(){
-  var loops=0;
-  while(podeRepartir()&&loops<400){ var g=grupoDaVez(); st.groups[g]++; st.placed++; st.supply--; loops++; }
-  sPoe(); atualizaChaveParcial();
-  if(!podeRepartir()) terminaReparticao(); else renderTab();
-}
-function atualizaChaveParcial(){
-  /* mostra o quociente parcial deste lugar enquanto reparte */
-  var rounds=Math.floor(st.placed/plan.d);
-  plan.passos[pi]._parcial=rounds;
-  $("chave").innerHTML=renderChave(pi-1)+ (rounds>0? '<div class="crow">'+
-     (function(){var s="";for(var c=0;c<plan.L;c++)s+= (c===pi)?cell(rounds,"q"):cell("");return s;})()+'</div>':'');
-}
-function terminaReparticao(){
-  var p=plan.passos[pi]; st.sobra=st.supply;
-  st.fase="trocar";
-  $("chave").innerHTML=renderChave(pi);
-  var cada=st.groups[0];
-  var msg="Cada grupo ficou com <b>"+cada+"</b> "+(cada===1?NOMES[p.place]:NOMESP[p.place])+
-          " (usei <b>"+p.usado+"</b>). ";
-  if(st.sobra>0){ msg+="Sobra"+(st.sobra===1?"":"m")+" <b>"+st.sobra+"</b>. "; }
-  else msg+="Não sobrou nada. ";
-  if(!p.ultimo && st.sobra>0){ msg+="Arraste a sobra para <b>TROCAR</b> por "+NOMESP[p.place+1]+"."; }
-  else if(!p.ultimo && st.sobra===0){ msg+="Vamos para as "+NOMESP[p.place+1]+"."; }
-  $("fala").innerHTML=msg;
-  renderTab();
-  if(!p.ultimo){
-    if(st.sobra===0){ $("controls").innerHTML='<button class="btn" id="prox">Próximo lugar &rarr;</button>'; $("prox").onclick=proxLugar; }
-    else { $("controls").innerHTML=''; }
-  }
-}
-function trocar(){
-  var p=plan.passos[pi]; sTroca();
-  $("fala").innerHTML="Troquei <b>"+st.sobra+"</b> "+(st.sobra===1?NOMES[p.place]:NOMESP[p.place])+
-     " por <b>"+(st.sobra*10)+"</b> "+NOMESP[p.place+1]+" — é o <b>abaixa</b> da conta armada!";
-  $("controls").innerHTML='<button class="btn" id="prox">Próximo lugar &rarr;</button>';
-  $("prox").onclick=proxLugar;
-  /* anima a troca some a sobra */
-  st.supply=0; st.fase="trocado"; renderTab();
-}
-function proxLugar(){ pi++; startPlace(); }
-
-function fechaUltimo(){
-  /* último lugar: a sobra é o RESTO. já mostrou a chave. botão de resultado */
-  $("controls").innerHTML='<button class="btn ok" id="ver">Ver o resultado</button>';
-  $("ver").onclick=mostraResultado;
-}
-
-/* ===== fluxo problema ===== */
+/* ===== fluxo ===== */
 function iniciaProblema(){
-  plan=planeja(PROBS[idx].n,PROBS[idx].d); pi=0; semAjuda=true;
-  $("pnum").textContent=(idx+1);
-  $("barra").style.width=Math.round(idx*100/PROBS.length)+"%";
-  $("chave").innerHTML=renderChave(-1);
-  startPlace();
+  plan=planeja(PROBS[idx].n,PROBS[idx].d);
+  sup=[0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;
+  for(var i=0;i<plan.L;i++){ sup[plan.offset+i]=plan.ds[i]; }
+  for(var g=0;g<plan.d;g++)grp.push([0,0,0]);
+  $("pnum").textContent=(idx+1);$("barra").style.width=Math.round(idx*100/PROBS.length)+"%";
+  $("enun").innerHTML="Quanto dá <b>"+plan.n+" &divide; "+plan.d+"</b> ?";
+  comecaCasa();
 }
 function mostraResultado(){
-  sOk(); confete(20); if(semAjuda) acertos++;
+  sOk();confete(20);if(semAjuda)acertos++;
   var extra=plan.rem>0?(" e sobra "+plan.rem):"";
   $("fala").innerHTML="<b>"+plan.n+" &divide; "+plan.d+" = "+plan.quo+extra+"</b>. "+
-    (plan.rem>0?"O resto é o que não deu para repartir igual.":"Divisão exata: não sobrou nada!");
+    (plan.rem>0?"O resto é o que não deu para repartir igual.":"Divisão exata!");
   $("controls").innerHTML='<button class="btn ok" id="p2">'+(idx+1<PROBS.length?"Próxima conta &rarr;":"Terminei!")+'</button>';
-  $("p2").onclick=function(){ idx++; if(idx<PROBS.length) iniciaProblema(); else finaliza(); };
+  $("p2").onclick=function(){idx++;if(idx<PROBS.length)iniciaProblema();else finaliza();};
 }
-function finaliza(){
-  hide("jogo"); show("fim"); $("barra").style.width="100%";
-  var m;
-  if(acertos>=18) m="Você repartiu <b>"+acertos+"</b> das 20 contas sem tropeçar. Isso é raciocínio de mestre!";
-  else m="Você chegou ao fim das 20 contas movendo o material dourado com as próprias mãos. O que sobrava, você trocou — igualzinho à conta armada. Muito bom!";
-  $("fimtxt").innerHTML=m+"<br><br>Qual foi a conta mais difícil? Tente ela de novo, agora só com a conta armada!";
-}
-function confete(n){var cs=["#e8b53a","#2f8f4e","#2f6bd6","#c0453a","#f6d876"];
-  for(var i=0;i<n;i++){(function(){var c=document.createElement("div");c.className="confete";
-   c.style.left=(Math.random()*100)+"vw";c.style.background=cs[i%cs.length];c.style.transform="rotate("+(Math.random()*360)+"deg)";
-   document.body.appendChild(c);var top=70+Math.random()*25,t0=null,dur=1100+Math.random()*700;
-   function fr(ts){if(!t0)t0=ts;var k=(ts-t0)/dur;if(k>=1){if(c.parentNode)c.parentNode.removeChild(c);return;}
-    c.style.top=(k*top)+"vh";c.style.opacity=(1-k);requestAnimationFrame(fr);}requestAnimationFrame(fr);})();}}
+function finaliza(){hide("jogo");show("fim");$("barra").style.width="100%";
+  var m=acertos>=18?("Você repartiu <b>"+acertos+"</b> das 20 sem tropeçar — raciocínio de mestre!"):
+    ("Você chegou ao fim das 20 contas movendo o material dourado com as próprias mãos. O que sobrava, você trocou — igual à conta armada. Muito bom!");
+  $("fimtxt").innerHTML=m+"<br><br>Qual foi a mais difícil? Tente ela de novo só com a conta armada!";}
+function confete(n){var cs=["#e8b53a","#2f8f4e","#2f6bd6","#c0453a","#f6d876"];for(var i=0;i<n;i++){(function(){var c=document.createElement("div");c.className="confete";c.style.left=(Math.random()*100)+"vw";c.style.background=cs[i%cs.length];c.style.transform="rotate("+(Math.random()*360)+"deg)";document.body.appendChild(c);var top=70+Math.random()*25,t0=null,dur=1100+Math.random()*700;function fr(ts){if(!t0)t0=ts;var k=(ts-t0)/dur;if(k>=1){if(c.parentNode)c.parentNode.removeChild(c);return;}c.style.top=(k*top)+"vh";c.style.opacity=(1-k);requestAnimationFrame(fr);}requestAnimationFrame(fr);})();}}
 
 $("comecar").onclick=function(){hide("ini");show("jogo");idx=0;acertos=0;iniciaProblema();};
 $("denovo").onclick=function(){hide("fim");show("jogo");idx=0;acertos=0;iniciaProblema();};
