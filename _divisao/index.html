@@ -3222,6 +3222,7 @@ function confete(n){
 
 /* ==== PECA: arranjo ==== */
 MEC["arranjo"] = function(f, cen, fim){
+  function sTira(){ /* ⚠️ ACHADO PELO ESLINT (set/2026): as pecas `arranjo` e `resto` CHAMAVAM sTira() e nunca o declaravam — ele so existia dentro do fechamento de OUTRA peca, que nao alcanca daqui. A crianca tocava "tirar uma fileira" e o app estourava com ReferenceError, na Grande Expedicao (5o ano) que esta NO AR. E o irmao do sPoe, ao contrario: desce em vez de subir. */ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
   cen.className = cen.className + " mec-arranjo";
   /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
      PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
@@ -3476,7 +3477,6 @@ function poe(){
   diz(nomeNum(rows)+(rows===1?" fileira":" fileiras"));
   limpaTotal();
 }
-function sTira(){ /* ACHADO PELO ESLINT (set/2026): esta peca chamava sTira() e nunca o declarava — o app estourava quando a crianca tirava uma fileira. */ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
 function tira(){
   if(travado) return;
   if(rows<=0){ sTap(); return; }
@@ -5321,6 +5321,7 @@ function fimQP(){
 
 /* ==== PECA: resto ==== */
 MEC["resto"] = function(f, cen, fim){
+  function sTira(){ /* ⚠️ ACHADO PELO ESLINT (set/2026): as pecas `arranjo` e `resto` CHAMAVAM sTira() e nunca o declaravam — ele so existia dentro do fechamento de OUTRA peca, que nao alcanca daqui. A crianca tocava "tirar uma fileira" e o app estourava com ReferenceError, na Grande Expedicao (5o ano) que esta NO AR. E o irmao do sPoe, ao contrario: desce em vez de subir. */ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
   cen.className = cen.className + " mec-resto";
   /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
      PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
@@ -5577,7 +5578,6 @@ function poe(){
   diz(nomeNum(voltas)+" em cada "+tema().prato);
   limpaTotal();
 }
-function sTira(){ /* ACHADO PELO ESLINT (set/2026): esta peca chamava sTira() e nunca o declarava — o app estourava quando a crianca tirava uma peca. */ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
 function tira(){
   if(travado) return;
   if(voltas<=0){ sTap(); return; }
