@@ -68,6 +68,38 @@ def texto_limpo(h):
 
 
 # ------------------------------------------------------------------ conferência
+
+# ============================================================
+#  ⭐ AS DUAS PERGUNTAS, QUE NAO SAO A MESMA (set/2026)
+#
+#  MEDIDO: 9 das 18 atividades da casa NAO conseguiam mais ser remontadas.
+#  Todas paravam em "N PROBLEMA(S) — nada foi gerado" — e NENHUMA por erro de
+#  codigo. Era sempre regra PEDAGOGICA: mecanica espacada, pouca variedade,
+#  gesto acima de 40%.
+#
+#  O estrago disso e maior do que parece. Com o montador travado, todo conserto
+#  de MOTOR deixa de chegar nessas atividades: os tres ReferenceError achados em
+#  03/set (sTira, FECHO, gradeStars) tiveram que ser remendados A MAO, um
+#  index.html por vez — que e exatamente onde nascem os "erros bobos" que o
+#  Marcos recebe. O _trem e a _lojinha ficaram com o conserto de TOQUE preso
+#  desde 21/ago pelo mesmo motivo.
+#
+#  A causa e ter juntado duas perguntas diferentes na mesma trava:
+#     "o CODIGO esta correto?"   -> se nao, gerar e impossivel. BLOQUEIA.
+#     "a DIDATICA esta boa?"     -> o codigo sai perfeito de qualquer jeito.
+#                                   Isto e julgamento sobre o CONTEUDO, e o
+#                                   lugar dele e antes de a crianca ver — nao
+#                                   antes de o arquivo existir.
+#
+#  Entao agora: didatica AVISA no build e BLOQUEIA na publicacao. O montador
+#  grava a pendencia em `_status/didatica-<pasta>.json`, e o `entregar.yml` se
+#  recusa a publicar enquanto ela existir. Nada foi afrouxado — a mesma regra,
+#  cobrada no portao certo. O que mudou e que o conserto de motor volta a
+#  alcancar as 18.
+# ============================================================
+DIDATICA = u"[DIDATICA] "
+
+
 def confere(c, mecs):
     u"""O montador é o primeiro portão: erro de conteúdo não vira HTML."""
     p, avisos = [], []
@@ -191,11 +223,11 @@ def confere(c, mecs):
     #    (isenta em atividade criativa — ver flag `criativa` acima)
     if not criativa:
         if len(vistos) < minimo:
-            p.append(u"so %d mecanica(s) diferente(s); o combinado para este ano sao "
+            p.append(DIDATICA + u"so %d mecanica(s) diferente(s); o combinado para este ano sao "
                      u"%d (ver CONTRATO.md)" % (len(vistos), minimo))
         for m, q in sorted(vistos.items()):
             if n and q / float(n) > 0.40:
-                p.append(u"a mecanica '%s' ocupa %d%% das fases (teto: 40%%)"
+                p.append(DIDATICA + u"a mecanica '%s' ocupa %d%% das fases (teto: 40%%)"
                          % (m, round(100.0 * q / n)))
         # ⭐ REGRA VIRADA (Marcos, ago/2026): "as repeticoes das interatividades
         #    tem que ser SEGUIDAS e nao ESPACADAS — as criancas me dizem 'mas
@@ -219,7 +251,7 @@ def confere(c, mecs):
                 posicoes.setdefault(m, []).append(i)
         for m, idxs in sorted(posicoes.items()):
             if len(idxs) >= 2 and (max(idxs) - min(idxs) + 1) != len(idxs):
-                p.append(u"a mecanica '%s' aparece ESPACADA (fases %s) — as "
+                p.append(DIDATICA + u"a mecanica '%s' aparece ESPACADA (fases %s) — as "
                          u"repeticoes tem que vir SEGUIDAS, em bloco, subindo um "
                          u"degrau a cada vez. Espacada, a crianca sente que esta "
                          u"'fazendo de novo'. Junte-as." %
@@ -1710,11 +1742,40 @@ def main():
           % (c.get("titulo", "?"), c.get("ano", "?"), len(c.get("fases", []))))
     for a in avisos:
         print(u"   aviso: %s" % a)
-    if problemas:
-        print(u"   %d PROBLEMA(S) — nada foi gerado:" % len(problemas))
-        for p in problemas:
+    # ⭐ AS DUAS PERGUNTAS (ver o bloco no topo, junto de DIDATICA):
+    #    erro de CODIGO impede gerar; pendencia de DIDATICA nao — ela impede
+    #    PUBLICAR. Separar as duas foi o que destravou 9 atividades que estavam
+    #    sem receber conserto de motor nenhum.
+    de_codigo  = [x for x in problemas if not x.startswith(DIDATICA)]
+    de_didatica = [x[len(DIDATICA):] for x in problemas if x.startswith(DIDATICA)]
+
+    if de_codigo:
+        print(u"   %d ERRO(S) DE CODIGO — nada foi gerado:" % len(de_codigo))
+        for p in de_codigo:
             print(u"    - %s" % p)
         return 1
+
+    # a pendencia didatica vira um carimbo que o `entregar.yml` LE e obedece.
+    # ⚠️ o arquivo e reescrito (ou apagado) a cada build, senao uma pendencia ja
+    #    resolvida continuaria barrando a publicacao para sempre.
+    try:
+        _st = os.path.join("_status", "didatica-%s.json" % os.path.basename(pasta).lstrip("_"))
+        if de_didatica:
+            if not os.path.isdir("_status"):
+                os.makedirs("_status")
+            io.open(_st, "w", encoding="utf-8").write(json.dumps(
+                {"pasta": pasta, "pendencias": de_didatica}, ensure_ascii=False, indent=1))
+        elif os.path.exists(_st):
+            os.remove(_st)
+    except Exception as _e:
+        print(u"   (nao consegui gravar o carimbo da didatica: %s)" % _e)
+
+    if de_didatica:
+        print(u"   ⚠️  %d PENDENCIA(S) DE DIDATICA — o codigo FOI gerado, mas isto"
+              u" BLOQUEIA a publicacao:" % len(de_didatica))
+        for p in de_didatica:
+            print(u"    - %s" % p)
+        print(u"   (o entregar.yml se recusa a publicar enquanto _status/didatica-*.json existir)")
 
     falas = falas_de(c)
     # ⭐ FALAS EXTRA (deterministicas) — CONTRATO, licao paga no Museu (ago/2026):

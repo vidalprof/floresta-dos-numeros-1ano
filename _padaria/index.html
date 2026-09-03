@@ -60,7 +60,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .sub{font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;background:rgba(40,52,20,.82);padding:6px 14px;border-radius:999px}
 /* MASCOTE em camadas (lip-sync) */
 .broto{position:relative;width:150px;height:150px;-webkit-filter:drop-shadow(0 8px 10px rgba(0,0,0,.22));filter:drop-shadow(0 8px 10px rgba(0,0,0,.22));-webkit-animation:bob 2.8s ease-in-out infinite;animation:bob 2.8s ease-in-out infinite}
-.broto.gg{width:190px;height:190px}
+.broto.gg{width:250px;height:250px}
 .broto.pq{width:104px;height:104px}
 /* ⭐ PENSAR e COMEMORAR sao MOVIMENTO da pose parada, nunca desenho novo.
    ⚠️ LICAO PAGA (ago/2026): o montador pedia cinco poses (`_pensa`, `_festa`
@@ -281,6 +281,21 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .banner .cta2{width:auto;min-width:190px;max-width:300px;display:block;margin:0 auto;
   border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:18px;color:#fff;padding:15px 30px;border-radius:18px;background:var(--verde);-webkit-box-shadow:0 4px 0 var(--verde-d);box-shadow:0 4px 0 var(--verde-d);text-transform:uppercase}
 #conf{position:fixed;inset:0;width:100%;height:100%;z-index:15;pointer-events:none}/* ⚠️ o `width/height:100%` NAO e redundante com o `inset:0`: <canvas> e elemento SUBSTITUIDO, e para esses o `width:auto` resolve para o tamanho INTRINSECO (300x150), nao para a caixa do pai. Sem estas duas medidas o canvas do confete ficava em 300x150 e TODA particula nascia fora dele — a festa existia no codigo e nunca aparecia na tela. */
+/* ⭐ GAME-FEEL: TEXTO FLUTUANTE no acerto (pesquisa ago/2026,
+   `_pesquisa/COMO-FAZER-MELHORIAS-2026-08.md`: "Boa!/+1 perto do toque, sem tapar
+   o alvo, ~1-2s e some"). Nasce no ponto do ultimo toque (`_flutua`), sobe e
+   apaga. z-index acima de tudo, `pointer-events:none` (nunca rouba o toque).
+   Desligado por `prefers-reduced-motion` (a criacao dele e pulada no JS). */
+.flut{position:fixed;z-index:60;pointer-events:none;-webkit-transform:translate(-50%,0);
+  transform:translate(-50%,0);color:#ffe07a;font-weight:800;font-size:22px;
+  text-shadow:0 2px 6px rgba(0,0,0,.55),0 0 2px rgba(0,0,0,.6);white-space:nowrap;
+  -webkit-animation:flutua 1.05s ease-out forwards;animation:flutua 1.05s ease-out forwards}
+@-webkit-keyframes flutua{0%{opacity:0;-webkit-transform:translate(-50%,0) scale(.7)}
+  18%{opacity:1;-webkit-transform:translate(-50%,-10px) scale(1.08)}
+  100%{opacity:0;-webkit-transform:translate(-50%,-52px) scale(1)}}
+@keyframes flutua{0%{opacity:0;transform:translate(-50%,0) scale(.7)}
+  18%{opacity:1;transform:translate(-50%,-10px) scale(1.08)}
+  100%{opacity:0;transform:translate(-50%,-52px) scale(1)}}
 .hint{margin-top:10px;font-size:13px;color:#fff;font-weight:600;text-shadow:0 1px 4px rgba(0,0,0,.4);background:rgba(40,52,20,.82);padding:6px 13px;border-radius:999px;max-width:340px;text-align:center;line-height:1.3}
 @media (max-height:620px){ .tela{padding-bottom:calc(104px + env(safe-area-inset-bottom))} }
 .dicain{background:#fff6d8;margin-top:9px;-webkit-animation:pop .3s;animation:pop .3s}
@@ -1021,6 +1036,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-classificar .bandeja{background:none;border:0; border-radius:20px;padding:8px 8px;min-height:150px;margin:10px 0 2px; display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center; -webkit-box-align:center;align-items:center}
 
+.mec-classificar .pc{-ms-touch-action:none;touch-action:none}
+
 .mec-classificar .pc{display:inline-block;vertical-align:middle;background:rgba(255,253,246,.88);color:#221a12;border:0; border-radius:18px;padding:12px 14px;margin:5px 4px;font-size:15px;font-weight:700; min-height:48px;min-width:96px;cursor:pointer; box-shadow:0 5px 0 #c9bda6,0 8px 16px rgba(0,0,0,.26); -webkit-user-select:none;user-select:none; -webkit-transition:-webkit-transform .13s ease;transition:transform .13s ease}
 
 .mec-classificar .pc:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px)}
@@ -1083,7 +1100,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-classificar .gwater img{width:88%;max-width:168px;max-height:100%;-o-object-fit:contain;object-fit:contain}
 
-.mec-classificar .cam .gnome{position:relative;z-index:1;color:#fff;font-weight:800;font-size:18px;line-height:1.25; text-align:center;padding:8px 12px;border-radius:14px;background:rgba(18,22,12,.80); text-shadow:0 1px 4px rgba(0,0,0,.55)}
+.mec-classificar .cam .gnome{position:relative;z-index:1;color:#fff;font-weight:800; font-size:clamp(13px,4.2vw,18px);line-height:1.2;max-width:100%; -webkit-box-sizing:border-box;box-sizing:border-box; word-break:break-word;overflow-wrap:break-word;-webkit-hyphens:auto;hyphens:auto; text-align:center;padding:8px 10px;border-radius:14px;background:rgba(18,22,12,.80); text-shadow:0 1px 4px rgba(0,0,0,.55); margin-top:36px}
 
 .mec-classificar .cam.temrot{-webkit-box-pack:end;-webkit-justify-content:flex-end;justify-content:flex-end; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:vertical;-webkit-box-direction:normal; -webkit-flex-direction:column;flex-direction:column}
 
@@ -1796,6 +1813,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-ordenar .cam.ok{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12;font-size:24px;font-weight:800; -webkit-animation:kf-ordenar-opoe .3s ease;animation:kf-ordenar-opoe .3s ease}
 
 .mec-ordenar .banco{display:block;text-align:center;margin-top:6px}
+
+.mec-ordenar .pc{-ms-touch-action:none;touch-action:none}
 
 .mec-ordenar .pc{display:inline-block;vertical-align:top;color:#221a12;border:0;border-radius:16px; background:#fffdf6; background:-webkit-gradient(linear,left top,left bottom,from(#fffdf6),to(#f2e6cb)); background:linear-gradient(#fffdf6,#f2e6cb); min-width:56px;min-height:56px;margin:5px 4px;padding:5px 6px;font-size:23px;font-weight:800; text-align:center;line-height:1.15;cursor:pointer; -webkit-box-shadow:inset 0 2px 0 rgba(255,255,255,.95),0 4px 0 #c9bda6,0 8px 13px rgba(0,0,0,.24); box-shadow:inset 0 2px 0 rgba(255,255,255,.95),0 4px 0 #c9bda6,0 8px 13px rgba(0,0,0,.24); -webkit-transition:-webkit-transform .16s;transition:transform .16s}
 
@@ -2598,8 +2617,45 @@ function arma(){ if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}} lig
 function tom(f,d,tp,v,w){ if(!ac)return; try{var o=ac.createOscillator(),g=ac.createGain();o.type=tp||"sine";o.frequency.value=f;o.connect(g);g.connect(ac.destination);var t=ac.currentTime+(w||0);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||0.2,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.start(t);o.stop(t+d+0.03);}catch(e){} }
 function sTap(){ tom(500,0.07,"triangle",0.12); }
 function sPop(i){ tom(520+((i||0)%6)*70,0.12,"triangle",0.14); }
-function sCerto(){ tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); }
-function sErro(){ tom(200,0.18,"sawtooth",0.12); tom(150,0.24,"sawtooth",0.12,0.08); }
+/* ============ GAME-FEEL: HÁPTICO + TEXTO FLUTUANTE ============
+   Pesquisa profunda (ago/2026, `_pesquisa/COMO-FAZER-MELHORIAS-2026-08.md`, item
+   "juice"): o impacto vem de feedback MULTIMODAL SINCRONIZADO — som + vibração
+   juntos, e o texto flutuante logo depois. Aqui os três saem do MESMO lugar
+   (dentro de `sCerto`/`sErro`), então nascem juntos. Ganho em TODA atividade de
+   uma vez, porque o integrador joga fora o motorzinho da peça e usa ESTES nomes.
+   ⚠️ REGRAS: `navigator.vibrate` só existe em tablet/celular (no PC é no-op, e é
+   protegido por try); nunca full-strength (cansa) — acerto = pulso curto, erro =
+   pulso duplo leve; e o texto flutuante respeita `prefers-reduced-motion` (quem
+   pediu menos movimento no sistema não recebe o floater). */
+var _reduzMov=false;
+try{ _reduzMov = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }catch(e){}
+var _ptrX=-1, _ptrY=-1;   /* onde a criança tocou por último — o floater nasce aqui */
+function _marcaPonto(x,y){ if(typeof x==="number"){ _ptrX=x; _ptrY=y; } }
+document.addEventListener("pointerdown", function(ev){ _marcaPonto(ev.clientX,ev.clientY); }, true);
+document.addEventListener("touchstart", function(ev){ try{ var t=ev.touches&&ev.touches[0]; if(t) _marcaPonto(t.clientX,t.clientY); }catch(e){} }, true);
+function vibra(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
+var _ELOGIOS=["Boa!","Isso!","Muito bem!","Uhu!","Mandou bem!","+1"];
+function _elogioCurto(){ return _ELOGIOS[Math.floor(Math.random()*_ELOGIOS.length)]; }
+/* o texto flutuante: nasce no ponto do toque (ou no centro, se ainda não houve
+   toque), sobe e apaga sozinho. NUNCA tapa o alvo — sobe para cima do dedo. */
+function _flutua(txt){
+  if(_reduzMov) return;
+  try{
+    var f=document.createElement("div"); f.className="flut";
+    f.textContent = txt || "Boa!";
+    var x=(_ptrX>=0)?_ptrX:(window.innerWidth/2);
+    var y=(_ptrY>=0)?_ptrY:(window.innerHeight*0.42);
+    f.style.left=Math.round(x)+"px";
+    f.style.top=Math.round(Math.max(24,y-34))+"px";   /* acima do toque, nunca em cima do alvo */
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f&&f.parentNode) f.parentNode.removeChild(f); }, 1100);
+  }catch(e){}
+}
+/* acerto: som (3 notas) + pulso háptico curto + "Boa!" subindo — os três juntos */
+function sCerto(){ tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
+/* erro: som grave + pulso háptico DUPLO e leve (não pune) — sem texto (a ajuda
+   escrita/dita é que responde ao erro; um "errou!" flutuante seria castigo). */
+function sErro(){ tom(200,0.18,"sawtooth",0.12); tom(150,0.24,"sawtooth",0.12,0.08); vibra([14,46,14]); }
 function sFesta(){ var n=[523,659,784,1046,1318],i; for(i=0;i<n.length;i++) tom(n[i],0.3,"triangle",0.18,i*0.085); }
 function sAgua(){ tom(900,0.18,"sine",0.08); tom(650,0.2,"sine",0.08,0.05); }
 /* ⭐ O SOM DO GESTO — o que faz o app PARECER profissional.
@@ -2667,6 +2723,23 @@ function narraBalao(force){
   txt=txt.replace(/\s+/g," ").replace(/^ | $/g,"");
   if(!txt) return;
   if(!force && txt===__balaoNarrado) return;   /* mesmo balao: nao repete */
+  /* ⭐⭐ RODADA NOVA DENTRO DA FASE (Marcos, ago/2026: *"esta falando atrasado a
+     resposta da questao anterior em algumas questoes"*). O balao trocou de texto =
+     nova rodada — e a fase NAO chama `limpa()` nas rodadas (so na troca de fase).
+     Entao a voz da rodada ANTERIOR que ficou na `_fila`, ou o enunciado dela ainda
+     tocando no `narr`, sao agora VELHOS: sem soltar, a "resposta da questao
+     anterior" cai em cima da nova. Solto a fila e calo o `narr` (enunciado que
+     saiu). NAO toco no `vz`: o elogio do acerto toca nele e pode terminar sozinho —
+     a narracao da rodada nova entra na fila ATRAS dele (sequencial, sem voz dupla).
+     `__balaoNarrado` vazio = 1o desenho da fase (o `limpa` ja limpou tudo); so
+     limpo em troca REAL de rodada. */
+  /* ⚠️ SÓ paro a voz velha quando NÃO há callback pendente (`!falandoCb`). Se
+     houver, é a fala de FIM de fase (o `depoisDaFala`, que faz nascer o botão
+     PRÓXIMO) ou uma fala bilíngue: pausar o `narr` aqui NÃO dispara o 'ended',
+     o callback fica preso e o botão PRÓXIMO só aparecia lá no teto de 6s — o
+     "próximo atrasado" que o Marcos pegou. Sem callback pendente (narração de
+     rodada, elogio) pode parar à vontade: corta o vazamento sem prender ninguém. */
+  if(__balaoNarrado){ _fila=null; try{ if(narr && !falandoCb){ narr.pause(); narr.currentTime=0; } }catch(_e){} }
   __balaoNarrado=txt;
   if(typeof temVoz==="function"){
     var k=temVoz(txt);
@@ -3165,7 +3238,7 @@ var VOZOK={};
    tentando falar ingles, em todas... inclusive dicas e explicacoes"). O montador
    quebra a fala mista em PEDACOS por idioma e grava cada um na voz certa (pt no
    Antonio, en no GuyNeural). Aqui o motor toca os pedacos EM SEQUENCIA, virando
-   uma frase so. `VOZSEQ["op_<chave da fala inteira>"] = ["op_p1","op_en2",...]`. */
+   uma frase so. `VOZSEQ["op_<chave da fala inteira>"] = ["op_...","op_...",...]`. */
 var VOZSEQ={};
 var vz=document.getElementById("vz"), zapAtual=null;
 /* ⚠️⚠️ LICAO PAGA (ago/2026), segunda parte, e de novo foi o Marcos quem OUVIU:
@@ -3187,7 +3260,13 @@ function _vozTocando(){
      pergunta ainda no ar) NAO via a 1a e as duas partiam juntas — portao voz_dupla
      (duas .play() em <700ms). O carimbo cobre essa janela: por 500ms apos qualquer
      play(), conta como tocando -> a 2a entra na FILA em vez de sobrepor. */
-  try{ if((new Date()).getTime()-_lastPlayT < 500) return true; }catch(e){}
+  /* ⚠️ o carimbo so vale enquanto ALGUEM esta de fato tocando (nao pausado). Depois
+     de um `narr.pause()` na troca de rodada, o carimbo dizia "tocando" por mais 500ms
+     e a narracao nova ficava na `_fila` SEM ninguem para puxa-la (pause nao dispara
+     'ended'), deixando a rodada nova MUDA. O && com `!paused` corta essa janela morta
+     sem reabrir a corrida do Feirinha (logo apos play(), `paused` e false). */
+  try{ if((new Date()).getTime()-_lastPlayT < 500 &&
+         ((narr&&!narr.paused)||(typeof vz!=="undefined"&&vz&&!vz.paused)) ) return true; }catch(e){}
   try{ if(narr && !narr.paused && !narr.ended && narr.currentTime>0) return true; }catch(e){}
   try{ if(vz   && !vz.paused   && !vz.ended   && vz.currentTime>0)   return true; }catch(e){}
   return false;
@@ -4435,6 +4514,7 @@ var BATIDAS=[
 
 var ri=0;        /* rodada de agora */
 var bat=0;       /* quantas batidas a criança já deu */
+var travando=0;  /* cadeado: o Pronto fica surdo enquanto a rodada se resolve */
 var err=0;       /* erros DESTA rodada (o andaime cresce com ele) */
 var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
 /* ⚠️ geração do APOIO PELO OUVIDO. O `ger` só troca quando a RODADA troca, e o
@@ -4526,7 +4606,7 @@ function piscaBatida(){
 function pecaBater(){
   var r=BATIDAS[ri];
   if(!r){ fimDaPeca(); return; }
-  err=0; bat=0; ger++;
+  err=0; bat=0; ger++; travando=0;
   limpa();
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/BATIDAS.length));
@@ -4608,6 +4688,7 @@ function bate(r){
 }
 
 function zera(r){
+  travando=0;
   var bx=document.getElementById("bsBx");
   bat=0;
   if(bx){ bx.innerHTML=""; bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui")); }
@@ -4616,7 +4697,15 @@ function zera(r){
 }
 
 function confere(r){
-  if(bat===r.sil.length){ acerta(r); return; }
+  /* ⚠️ CADEADO DE RE-ENTRADA. Sem ele, a crianca que toca "Pronto" DE NOVO
+     durante a comemoracao (e em palavra longa, tipo ELEFANTE, a comemoracao
+     dura segundos) faz a peca contar o acerto duas vezes: duas festas, duas
+     vozes por cima uma da outra e, no fim, a peca chamando o `fim()` da ponte
+     duas vezes. O `_seguir` la em cima ja segura o pulo duplo, mas a bagunca
+     de som e de tela acontece antes dele. Aqui o Pronto fica surdo enquanto a
+     rodada esta se resolvendo; `zera()` e a rodada nova destravam. */
+  if(travando) return;
+  if(bat===r.sil.length){ travando=1; acerta(r); return; }
   /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
      Contar errado no 1º ano é o normal — é justamente o que está em treino. */
   err++; sVolta();
@@ -5985,7 +6074,10 @@ var ENUN="Toque no peda&#231;o que <b>falta</b> na frase.";
 var DEPOIS="Leia a frase inteira antes de escolher.";
 var FECHO="Voc&#234; fechou todas as frases!";
 var FRASES=[
-  {img:"", ante:"O peixe vive na ",dep:".",cer:"&#225;gua",out:["areia","nuvem"],
+  /* ⭐ a opcao pode ser STRING ("areia") ou OBJETO {t,voz}: `t` = o que a crianca
+     VE (ex.: o digito "3"), `voz` = o que o alto-falante DIZ ("três"). Declarado
+     no exemplo p/ o montador saber que a peca LE `t`/`voz`. */
+  {img:"", ante:"O peixe vive na ",dep:".",cer:{t:"&#225;gua",voz:"água"},out:["areia","nuvem"],
    dic:"Pense no lugar onde o peixe <b>nada</b>."},
   {ante:"A abelha faz o ",dep:".",cer:"mel",out:["leite","p&#227;o"],
    dic:"&#201; docinho e fica guardado na colmeia."},
@@ -5993,6 +6085,7 @@ var FRASES=[
    dic:"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover."}
 ];
 var rodada=0, errosSeg=0, respondida=false, telaAtual=null, barraP=null;
+var _ultOkComp=-1;  /* posicao do pedaco certo na rodada passada (anti-repeticao) */
 var lacuna=null, botoes=[];
 
 /* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui
@@ -6106,6 +6199,15 @@ function telaCompletar(){
   var certo=pedacoDe(f.cer), lista=[certo], i, b, p;
   for(i=0;i<f.out.length;i++) lista.push(pedacoDe(f.out[i]));
   baguncar(lista);
+  /* ⭐ ANTI-REPETICAO (Marcos, ago/2026: "todas as respostas estao sendo a 1").
+     Com so 2 opcoes (mau/mal) o acaso deixa a certa no mesmo lugar metade das
+     rodadas, e a crianca decora a POSICAO. Se caiu onde caiu na rodada passada,
+     troca de lugar: a resposta certa ANDA de rodada em rodada. */
+  if(lista.length>1){
+    var _ok=-1,_kk; for(_kk=0;_kk<lista.length;_kk++){ if(lista[_kk]===certo){_ok=_kk;break;} }
+    if(_ok===_ultOkComp){ var _al=(_ok+1)%lista.length,_tp=lista[_ok]; lista[_ok]=lista[_al]; lista[_al]=_tp; _ok=_al; }
+    _ultOkComp=_ok;
+  }
   /* pedaco curto (letra, silaba) -> ladrilhos lado a lado em vez de tarjas
      empilhadas. Ver a licao no CSS de `.opts.curtas`. */
   var curtas=true, soLetra=true, temfig=false;
@@ -6805,6 +6907,7 @@ var QZ=[
 var qi=0;      /* rodada de agora */
 var err=0;     /* erros DESTA rodada (o andaime cresce com ele) */
 var ger=0;     /* geracao da tela: mata setTimeout de fase que ja saiu */
+var _ultOkEsc=-1;  /* posicao da certa na rodada passada (anti-repeticao) */
 
 /* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui
    na bancada ela não existe, e a opção fica só com a palavra — que é o próprio
@@ -6874,6 +6977,18 @@ function pecaEscolher(){
   var lista=[{op:opcao(f.c),ok:1}], i;
   for(i=0;i<f.e.length;i++) lista.push({op:opcao(f.e[i]),ok:0});
   baguncar(lista);
+  /* ⭐ ANTI-REPETICAO (Marcos, ago/2026: "todas as respostas estao sendo a 1").
+     baguncar() e aleatorio, entao a certa PODE cair no mesmo lugar varias rodadas
+     seguidas — e ai a crianca decora a POSICAO, nao o conteudo. Com so 2 opcoes
+     (mau/mal) isso acontece metade das vezes. Se a certa caiu onde caiu na rodada
+     passada, troca de lugar: a resposta ANDA de rodada em rodada. */
+  if(lista.length>1){
+    var _ok=-1, _kk; for(_kk=0;_kk<lista.length;_kk++){ if(lista[_kk].ok){_ok=_kk;break;} }
+    if(_ok===_ultOkEsc){
+      var _alvo=(_ok+1)%lista.length, _tmp=lista[_ok]; lista[_ok]=lista[_alvo]; lista[_alvo]=_tmp; _ok=_alvo;
+    }
+    _ultOkEsc=_ok;
+  }
   /* com figura a lista vira grade de duas colunas (ver a lição no CSS) */
   var temfig=false;
   for(i=0;i<lista.length;i++) if(lista[i].op.img&&figEl) temfig=true;
@@ -6938,14 +7053,35 @@ function responde(o,certa){
     festeja(o);
     trancaTudo();
     var g=ger;
-    setTimeout(function(){
+    var _avanca=function(){
       if(g!==ger) return;                    /* a fase ja mudou: nao mexe */
       qi++;
       if(qi<QZ.length) pecaEscolher();
       else mostraBanner(FECHO, fimDaPeca);
-    },900);   /* ⚠️ 560ms punha a narracao da PROXIMA rodada dentro da janela de
-                 700ms do som de acerto -> duas vozes (portao voz_dupla, Feirinha
-                 ago/2026). 900ms tira a proxima pergunta do encalco do acerto. */
+    };
+    /* ⭐ CONFIRMA A RESPOSTA (Marcos: "diga na última quantas SÃO"): no acerto o
+       motor confirma em voz a resposta escolhida (ex.: "sete laranjas").
+       ⚠️ LIÇÃO PAGA (Marcos ouviu no celular, ago/2026): a confirmação começava
+       450ms depois do acerto, mas a PRÓXIMA rodada entrava com 1300ms FIXOS. Se a
+       confirmação fosse mais longa que isso, ela CONTINUAVA tocando por cima da
+       pergunta seguinte — "fala a resposta da questão anterior quando está em
+       outra". A `falar` do motor ENFILEIRA a narração da nova tela atrás da
+       confirmação ainda tocando, então a criança via a pergunta 2 e ouvia a
+       resposta 1. Cura: a rodada só vira DEPOIS que a confirmação TERMINA (callback
+       do `falar`), com uma rede de segurança por tempo se a voz não vier (PC mudo
+       / mp3 bloqueada). Sem confirmação, mantém o tempo normal. */
+    var _av=null; try{ _av=o.getAttribute("data-voz"); }catch(e){}
+    var _ak=(_av && typeof temVoz==="function") ? temVoz(_av) : null;
+    if(_ak && typeof falar==="function"){
+      var _gc=ger;
+      setTimeout(function(){
+        if(_gc!==ger) return;
+        falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
+      }, 450);
+      setTimeout(_avanca, 4000);             /* rede: voz bloqueada/lenta nunca prende */
+    }else{
+      setTimeout(_avanca, 1300);
+    }
     return;
   }
   /* ERRO: não pune. Som grave curto + a opção sai do alcance + o andaime CRESCE. */
@@ -7859,8 +7995,17 @@ function fazSilaba(item, r){
      mouse DEPOIS do toque, e sem este guarda eles desfaziam o gesto. Defeito já
      pego duas vezes na casa. */
   arrastavel(b, r);
-  b.onclick=function(){
-    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+  /* ⚠️⚠️ LICAO PAGA (set/2026, achada pelo portao `_qa/dinamicas.py`): a ACAO da
+     peca morava DENTRO do `onclick`, e o `onclick` comeca com o guarda contra o
+     mouse FANTASMA (`_ultimoToque`). So que o `touchend` carimbava
+     `_ultimoToque = agora` e, na linha seguinte, chamava `b.onclick()`. O
+     guarda via um toque de 0ms atras e devolvia `return`: o TOQUE DE VERDADE
+     caia no proprio guarda e a peca NAO fazia nada. No celular e no tablet da
+     escola a fase inteira ficava morta — e no PC, com mouse, funcionava
+     perfeito, entao o defeito era invisivel para quem testa no computador.
+     Agora a acao mora sozinha (`b.acao`): o toque chama ela DIRETO, e o guarda
+     fica so no caminho do mouse, que e para quem ele foi feito. */
+  b.acao=function(){
     if(b.className.indexOf("usada")>=0) return;
     var esperada=r.sil[posto];
     if(item.s===esperada && b.className.indexOf("usada")<0){
@@ -7873,6 +8018,11 @@ function fazSilaba(item, r){
       b.className="jsSil";
       ajuda(err, r);
     }
+  };
+  /* o mouse continua entrando pelo onclick, com o guarda do fantasma */
+  b.onclick=function(){
+    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+    b.acao();
   };
   return b;
 }
@@ -7909,7 +8059,7 @@ function arrastavel(b, r){
     if(v){
       var q=v.getBoundingClientRect();
       /* margem generosa: dedo de 6 anos nao acerta o pixel */
-      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ b.onclick(); return; }
+      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ (b.acao||b.onclick).call(b); return; }
     }
     sVolta();
   }
@@ -7933,7 +8083,7 @@ function arrastavel(b, r){
     if(q){ var g=q.getBoundingClientRect();
       if(!(t.clientX>g.left-30&&t.clientX<g.right+30&&t.clientY>g.top-30&&t.clientY<g.bottom+30)){
         arr=false; b.style.webkitTransform=""; b.style.transform="";
-        b.onclick(); return; } }
+        (b.acao||b.onclick).call(b); return; } }
     solta(t.clientX,t.clientY);
   },false);
 }

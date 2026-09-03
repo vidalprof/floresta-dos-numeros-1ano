@@ -104,6 +104,17 @@ jobs:
               if python3 _qa/extrai_js.py "$idx" /tmp/_pre.js; then
                 node --check /tmp/_pre.js || { echo "::error::$pasta: JS invalido (node --check)"; FALHOU=1; }
               fi
+              # ⭐ O OUTRO LADO DO TRATO (set/2026). O montador deixou de BLOQUEAR o
+              # build por regra pedagogica — porque travar o build travava junto o
+              # conserto de MOTOR, e metade das atividades ficou sem receber nenhum.
+              # Mas a regra nao foi afrouxada: ela mudou de portao. Se o montador
+              # deixou pendencia de didatica, a publicacao PARA aqui.
+              _did="_status/didatica-$(basename "$pasta" | sed 's/^_//').json"
+              if [ -f "$_did" ]; then
+                echo "::error::$pasta: ha PENDENCIA DE DIDATICA (mecanica espacada / pouca variedade / gesto acima de 40%). O codigo esta gerado, mas isto nao vai para a crianca. Veja $_did"
+                python3 -c "import json,sys;d=json.load(open('$_did'));[print('   - '+p) for p in d['pendencias']]" || true
+                FALHOU=1
+              fi
               bash _qa/estatico.sh "$idx" || { echo "::error::$pasta: o ESLint achou nome nao-declarado (ReferenceError na cara da crianca)"; FALHOU=1; }
               python3 _qa/dinamicas.py "$idx" || { echo "::error::$pasta: portao das dinamicas reprovou"; FALHOU=1; }
               if [ -f "$pasta/conteudo.json" ]; then
