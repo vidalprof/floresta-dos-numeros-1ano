@@ -640,6 +640,11 @@ _FONETICA_VOZ = [
     #    reancora a tonica na 1a silaba — mesmo truque do "élefante"/"fásse". So no
     #    audio; a tela e a chave da voz continuam "Mimi".
     (re.compile(r"\bmimi\b", re.I), u"mími"),
+    # ⚠️ LICAO PAGA (Revista das Palavras, set/2026): a voz pt-BR do Edge CORTA
+    #    "e-mail" (sai "iméu"/cortado). "e-mail" é o NOME do gênero e fica na TELA;
+    #    só no AUDIO ele vira "correio eletrônico" (claro e por extenso). Vale para
+    #    "e-mail" e "email". Só no som; a tela e a chave mantêm "e-mail".
+    (re.compile(r"\be-?mail\b", re.I), u"correio eletrônico"),
 ]
 _LACUNA = re.compile(r"_+")
 # ⚠️ LICAO PAGA (Feirinha, set/2026, task #46): 7 falas de conta chegavam ao TTS
