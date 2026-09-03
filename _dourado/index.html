@@ -45,6 +45,8 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 .bcol.on{background:rgba(232,181,58,.20);border-color:var(--ouro-b);box-shadow:0 0 0 2px rgba(232,181,58,.35)}
 .bcol.done{background:#eef7ef;border-color:#bfe3c8}
 .bcol.alvo{background:rgba(47,107,214,.16);border-color:var(--azul);outline:2px dashed var(--azul);outline-offset:1px}
+.bcol.sobra{background:rgba(192,69,58,.14);border-color:var(--vermelho);animation:pulsobra 1s ease-in-out infinite}
+@keyframes pulsobra{0%,100%{box-shadow:0 0 0 2px rgba(192,69,58,.30)}50%{box-shadow:0 0 0 6px rgba(192,69,58,.60)}}
 .bch{font-size:11px;font-weight:800;letter-spacing:.4px;color:#8a6a2e}
 .bqt{font-size:20px;font-weight:800;color:#3a2a12;line-height:1}
 .bblocos{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:flex-end;min-height:30px;margin-top:5px}
@@ -310,6 +312,7 @@ function renderBanco(){
   for(var place=0;place<4;place++){
     if(!temCasa(place)) continue;                 /* número sem essa casa (ex.: 2 alg) */
     var cls = place<pativa?"done":(place===pativa?"on":"");
+    if(fase==="trocar" && place===pativa) cls="on sobra";   /* a sobra que precisa ser trocada (pulsa) */
     if(fase==="trocar" && place===pativa+1) cls="alvo"; /* destino da troca */
     var qt = place<pativa? "✓" : sup[place];
     h+='<div class="bcol '+cls+'" data-casa="'+place+'"><div class="bch">'+NOMESP[place].toUpperCase()+'</div>'+
@@ -377,7 +380,7 @@ function terminaCasa(){
   var msg="Cada grupo ficou com <b>"+cada+"</b> "+(cada===1?NOMES[pativa]:NOMESP[pativa])+". ";
   if(p.ultimo){
     fase="digitar"; sobraAtual=sup[pativa];
-    msg+= sobraAtual>0? ("Sobra"+(sobraAtual===1?"":"m")+" <b>"+sobraAtual+"</b> — esse é o <b>resto</b>.") : "Não sobrou nada — divisão exata!";
+    msg+= sobraAtual>0? ("Sobr"+(sobraAtual===1?"ou":"aram")+" <b>"+sobraAtual+"</b> "+(sobraAtual===1?NOMES[pativa]:NOMESP[pativa])+" — esse é o <b>resto</b>.") : "Não sobrou nada — divisão exata!";
     renderMesa();
     atualizaChaveFinal();
     pedeResultado(msg);
@@ -385,8 +388,9 @@ function terminaCasa(){
   }
   if(sobraAtual>0){
     fase="trocar";
-    msg+="Sobra"+(sobraAtual===1?"":"m")+" <b>"+sobraAtual+"</b>. Arraste a sobra para <b>"+NOMESP[pativa+1].toUpperCase()+"</b> — troca por 10!";
-    $("sobrainfo").innerHTML="Arraste os <b>"+sobraAtual+"</b> que sobraram para a casa das "+NOMESP[pativa+1]+".";
+    var nomeS=(sobraAtual===1?NOMES[pativa]:NOMESP[pativa]);
+    msg+="Sobr"+(sobraAtual===1?"ou":"aram")+" <b>"+sobraAtual+"</b> "+nomeS+" — e isso <b>não dá para repartir</b> entre <b>"+plan.d+"</b> grupos. Arraste a <b>sobra</b> para as <b>"+NOMESP[pativa+1].toUpperCase()+"</b>: cada "+NOMES[pativa]+" vira <b>10</b> "+NOMESP[pativa+1]+"!";
+    $("sobrainfo").innerHTML="Arraste a sobra (<b>"+sobraAtual+"</b> "+nomeS+") para as <b>"+NOMESP[pativa+1]+"</b>.";
     $("controls").innerHTML="";
     $("fala").innerHTML=msg;
     renderMesa();
@@ -501,7 +505,7 @@ function confereResultado(){
     $("fala").innerHTML="<b>"+plan.n+" &divide; "+plan.d+" = "+plan.quo+extra+"</b>. "+
       (temResto?"O resto é o que não deu para repartir igual.":"Divisão exata!")+" Isso mesmo!";
     $("controls").innerHTML='<button class="btn ok" id="p2">'+(idx+1<PROBS.length?"Próxima conta &rarr;":"Ver meu relatório")+'</button>';
-    $("p2").onclick=function(){idx++;if(idx<PROBS.length)iniciaProblema();else finaliza();};
+    $("p2").onclick=function(){idx++;if(idx<PROBS.length){salvaProg();iniciaProblema();}else{limpaProg();finaliza();}};
   }else{
     errouNessa=true; sNao();
     var dica="";
@@ -530,7 +534,26 @@ function finaliza(){hide("jogo");show("fim");$("barra").style.width="100%";
 }
 function confete(n){var cs=["#e8b53a","#2f8f4e","#2f6bd6","#c0453a","#f6d876"];for(var i=0;i<n;i++){(function(){var c=document.createElement("div");c.className="confete";c.style.left=(Math.random()*100)+"vw";c.style.background=cs[i%cs.length];c.style.transform="rotate("+(Math.random()*360)+"deg)";document.body.appendChild(c);var top=70+Math.random()*25,t0=null,dur=1100+Math.random()*700;function fr(ts){if(!t0)t0=ts;var k=(ts-t0)/dur;if(k>=1){if(c.parentNode)c.parentNode.removeChild(c);return;}c.style.top=(k*top)+"vh";c.style.opacity=(1-k);requestAnimationFrame(fr);}requestAnimationFrame(fr);})();}}
 
-$("comecar").onclick=function(){alunoNome=(($("nome")&&$("nome").value)||"").trim();hide("ini");show("jogo");idx=0;acertos=0;iniciaProblema();};
-$("denovo").onclick=function(){hide("fim");show("jogo");idx=0;acertos=0;iniciaProblema();};
+/* ===== continuar de onde parou (dura uma AULA = 55 min) =====
+   Salva no fim de cada conta; se a criança fecha sem querer, volta na MESMA conta.
+   Passada a aula, o convite expira (quem senta ali é de outra turma). localStorage
+   não existe em file:// — por isso tudo em try/catch (testar servindo por http). */
+var SAVEKEY="oficinaDivisao_v1", AULA=55*60*1000;
+function salvaProg(){ try{ localStorage.setItem(SAVEKEY, JSON.stringify({nome:alunoNome,idx:idx,acertos:acertos,t:(new Date()).getTime()})); }catch(e){} }
+function limpaProg(){ try{ localStorage.removeItem(SAVEKEY); }catch(e){} }
+function leProg(){ try{ var s=JSON.parse(localStorage.getItem(SAVEKEY)); if(s&&s.idx>0&&((new Date()).getTime()-s.t)<AULA) return s; }catch(e){} return null; }
+
+$("comecar").onclick=function(){alunoNome=(($("nome")&&$("nome").value)||"").trim();limpaProg();hide("ini");show("jogo");idx=0;acertos=0;iniciaProblema();};
+$("denovo").onclick=function(){limpaProg();hide("fim");show("jogo");idx=0;acertos=0;iniciaProblema();};
+
+/* oferece o "Continuar" na capa se houver progresso recente (< 55 min) */
+(function(){ var s=leProg(); if(!s) return;
+  if($("nome")&&s.nome) $("nome").value=s.nome;
+  var b=document.createElement("button"); b.className="btn"; b.id="continuar";
+  b.innerHTML="Continuar de onde parei (conta "+(s.idx+1)+")";
+  b.onclick=function(){ alunoNome=s.nome||""; hide("ini"); show("jogo"); idx=s.idx; acertos=s.acertos||0; iniciaProblema(); };
+  var cx=$("comecar").parentNode; cx.insertBefore(b,$("comecar"));
+  $("comecar").className="btn sec"; $("comecar").innerHTML="Começar do zero";
+})();
 </script>
 </body></html>
