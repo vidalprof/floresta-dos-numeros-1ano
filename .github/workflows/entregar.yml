@@ -306,6 +306,46 @@ jobs:
       #    guardado, e TODA execucao regravava as 101 vozes do zero (30 s
       #    jogados fora por corrida) sem que nada aparecesse no repo. O passo
       #    dizia "nenhuma voz nova" e parecia que tudo estava certo.
+      # ⭐⭐ O PORTÃO QUE OUVE (set/2026). Dos 7 defeitos que o Marcos relatou
+      # jogando com a turma, os ~70 portões da casa pegavam 2 — e os 5 que
+      # escapavam eram TODOS de voz, porque nenhum portão abria o mp3. Este abre.
+      # Roda AQUI, e o lugar é exato: logo depois de a voz ser gravada e ANTES de
+      # publicar. O modelo de reconhecimento mora num site que o proxy do
+      # container bloqueia; aqui há internet.
+      - name: Ouvir a voz (portão de pronúncia)
+        continue-on-error: true       # ⚠️ na estreia ele AVISA; vira trava depois
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          pip3 install --quiet vosk imageio-ffmpeg cffi 2>&1 | tail -1 || true
+          if ! python3 -c "import types,sys; sys.modules['srt']=types.ModuleType('srt'); import vosk" 2>/dev/null; then
+            echo "::warning::Vosk nao instalou — o portao da pronuncia nao rodou"; exit 0
+          fi
+          mkdir -p _qa/ferramentas/modelos
+          if [ ! -d _qa/ferramentas/modelos/pt ]; then
+            curl -sSL -o /tmp/pt.zip https://alphacephei.com/vosk/models/vosk-model-small-pt-0.3.zip || {
+              echo "::warning::nao baixei o modelo de voz"; exit 0; }
+            python3 - <<'EOP'
+          import zipfile, os, shutil
+          z = zipfile.ZipFile('/tmp/pt.zip'); z.extractall('/tmp/voskpt')
+          raiz = os.path.join('/tmp/voskpt', os.listdir('/tmp/voskpt')[0])
+          shutil.move(raiz, '_qa/ferramentas/modelos/pt')
+          EOP
+          fi
+          IFS=',' read -ra ALVS <<< "$LISTA"
+          for a in "${ALVS[@]}"; do
+            pasta="${a%%:*}"; [ -d "$pasta" ] || continue
+            echo "=========== ouvindo $pasta ==========="
+            # ⚠️ limite de 120 falas por atividade: ouvir 660 levaria a corrida
+            #    inteira. 120 cobre a abertura e o miolo, que e onde os defeitos
+            #    do Marcos estavam. Para ouvir TUDO, rode o ouvir.yml a parte.
+            if python3 _qa/pronuncia.py "$pasta" --limite 120; then :; else
+              rc=$?
+              if [ "$rc" = "1" ]; then echo "::warning::$pasta: ha fala que NAO diz o que esta escrito (veja acima)"
+              else echo "::warning::$pasta: nao consegui ouvir (codigo $rc)"; fi
+            fi
+          done
+
       - name: Guardar as vozes novas no repo
         env:
           LISTA: ${{ steps.alvos.outputs.lista }}
