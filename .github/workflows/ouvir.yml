@@ -1,0 +1,71 @@
+name: Ouvir a voz (portão de pronúncia)
+
+# ⭐ O PORTÃO QUE OUVE, e ele mora AQUI por um motivo simples: o modelo de
+#    reconhecimento de voz vive em alphacephei.com, que o proxy do container do
+#    Claude bloqueia. O runner do GitHub tem internet, e é também onde o mp3
+#    nasce (o `entregar.yml` grava a voz alguns passos antes).
+#
+#    Nasceu da conta que o Marcos me fez enxergar (set/2026): dos 7 defeitos que
+#    ele relatou jogando com a turma, os ~70 portões da casa pegavam 2 — e os 5
+#    que escapavam eram TODOS de voz, porque nenhum portão abria o mp3.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pastas:
+        description: "Pastas a ouvir, separadas por vírgula (ex.: _por4,_trem)"
+        required: true
+        type: string
+      limite:
+        description: "Quantas falas ouvir por atividade (0 = todas; comece com 60)"
+        required: false
+        default: "60"
+        type: string
+
+jobs:
+  ouvir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}" }
+
+      - name: Ferramentas de escuta
+        run: |
+          pip3 install --quiet vosk imageio-ffmpeg cffi 2>&1 | tail -1 || true
+          python3 -c "import types,sys; sys.modules['srt']=types.ModuleType('srt'); import vosk; print('vosk ok')"
+
+      - name: Modelo de voz pt-BR (o que o container não alcança)
+        run: |
+          mkdir -p _qa/ferramentas/modelos
+          curl -sSL -o /tmp/pt.zip https://alphacephei.com/vosk/models/vosk-model-small-pt-0.3.zip
+          python3 - <<'PY'
+          import zipfile, os, shutil
+          z = zipfile.ZipFile('/tmp/pt.zip'); z.extractall('/tmp/voskpt')
+          raiz = os.path.join('/tmp/voskpt', os.listdir('/tmp/voskpt')[0])
+          shutil.move(raiz, '_qa/ferramentas/modelos/pt')
+          print('modelo em _qa/ferramentas/modelos/pt')
+          PY
+
+      - name: Ouvir cada atividade
+        env:
+          PASTAS: ${{ inputs.pastas }}
+          LIMITE: ${{ inputs.limite }}
+        run: |
+          FALHOU=0
+          IFS=',' read -ra PS <<< "$PASTAS"
+          for p in "${PS[@]}"; do
+            p="$(echo "$p" | xargs)"
+            [ -d "$p" ] || { echo "::warning::$p nao existe"; continue; }
+            echo "=================== ouvindo $p ==================="
+            # ⚠️ os TRÊS códigos (a lição do entregar.yml): 1 reprova, 2 é "não medi"
+            if python3 _qa/pronuncia.py "$p" --limite "$LIMITE"; then :; else
+              rc=$?
+              if [ "$rc" = "1" ]; then echo "::error::$p: ha fala que nao diz o que esta escrito"; FALHOU=1
+              else echo "::warning::$p: nao consegui ouvir (codigo $rc)"; fi
+            fi
+          done
+          if [ "$FALHOU" != "0" ]; then
+            echo "::error::O PORTAO DA PRONUNCIA REPROVOU. Conserte no _FONETICA_VOZ do montador e rode de novo."
+            exit 1
+          fi
+          echo "✅ a voz diz o que esta escrito"
