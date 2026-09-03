@@ -108,9 +108,18 @@ jobs:
           # portao: reprovou segura a entrega; nao-medi vira aviso e segue.
           portao(){   # portao <nome> <comando...>
             local nome="$1"; shift
-            "$@"; local rc=$?
+            # ⚠️⚠️ LICAO PAGA (set/2026), e foi a TERCEIRA tentativa de publicar o
+            # mesmo conserto: o shell do GitHub roda com `bash -e`, que ABORTA no
+            # primeiro comando que devolve != 0. Escrito como `"$@"; rc=$?`, o
+            # script morria DENTRO da funcao — ela nunca chegava a olhar o codigo.
+            # O jeito antigo (`... || { ... }`) nao tinha esse problema porque o
+            # `-e` ignora comando a esquerda de `||`; ao trocar por uma funcao, eu
+            # perdi essa protecao sem perceber. `if "$@"` tambem desarma o `-e`,
+            # e ai sim o codigo pode ser lido.
+            local rc=0
+            if "$@"; then rc=0; else rc=$?; fi
             if [ "$rc" = "0" ]; then return 0; fi
-            if [ "$rc" = "1" ]; then echo "::error::$pasta: $nome REPROVOU"; FALHOU=1; return 1; fi
+            if [ "$rc" = "1" ]; then echo "::error::$pasta: $nome REPROVOU"; FALHOU=1; return 0; fi
             echo "::warning::$pasta: $nome nao conseguiu medir aqui (codigo $rc) — nao segura a entrega"
             return 0
           }
