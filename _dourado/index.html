@@ -75,6 +75,7 @@ header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom
 .cell.vbar{border-left:3px solid #2a1f12}.cell.fade{opacity:.28}.cell.divisor-lbl{color:#6e521f}
 .cell.qbox{height:30px;line-height:26px;font-size:15px;color:#b78f2f;border:2px dashed #d9be7a;border-radius:6px;background:#fffdf4}
 .cell.divb{border-bottom:3px solid #2a1f12}
+.cell.ubar{border-bottom:2px solid #2a1f12}
 .legenda{font-size:12px;text-align:center;color:#8a6a2e;margin-top:6px}
 .legenda .k{margin:0 5px;font-weight:800}.legenda .kq{color:var(--verde)}.legenda .kp{color:var(--vermelho)}
 .fala{background:linear-gradient(180deg,#fff8e6,#fdefc8);border-radius:14px;padding:10px 14px;font-size:15px;font-weight:600;color:#4a3410;margin-top:10px;min-height:22px;border:1px solid #efd89a}
@@ -230,7 +231,7 @@ function planeja(n,d){var ds=String(n).split("").map(Number),L=ds.length,offset=
   return {n:n,d:d,ds:ds,L:L,offset:offset,passos:passos,quo:Math.floor(n/d),rem:n%d};}
 
 /* ===== estado ===== */
-var idx=0,plan=null,acertos=0,errouNessa=false,alunoNome="",mostraQuo=false;
+var idx=0,plan=null,acertos=0,errouNessa=false,alunoNome="",mostraQuo=false,ateStep=-1;
 /* mesa: sup[place]=blocos ainda no banco (por casa REAL 0=cent,1=dez,2=uni);
    grp[g][place]=blocos que o grupo g recebeu naquela casa; pativa=casa REAL ativa; fase */
 var sup,grp,pativa,fase,sobraAtual;
@@ -257,31 +258,46 @@ function cell(t,c){return '<span class="cell '+(c||"")+'">'+(t===""?"&nbsp;":t)+
 function passoDeCasa(place){ /* índice do passo (na lista) que corresponde à casa REAL `place` */
   for(var i=0;i<plan.passos.length;i++) if(plan.passos[i].place===place) return i; return -1;
 }
-/* Duas linhas alinhadas por coluna:
-   linha 1: DIVIDENDO │ DIVISOR (com traço embaixo do divisor)
-   linha 2: (resto sob a unidade, se houver) │ QUOCIENTE (embaixo do divisor)
-   Durante o jogo o quociente são CAIXAS VAZIAS; o aluno digita depois de montar
-   o material. A conta só se completa quando ele ACERTA — nada resolvido de graça. */
-function chaveRows(quoCells, mostraResto){
-  var L=plan.L, ds=plan.ds, dv=String(plan.d), qLen=String(plan.quo).length;
-  var RW=Math.max(dv.length,qLen), i, r1="", r2="";
-  for(i=0;i<L;i++) r1+=cell(ds[i],"dv");
-  r1+=cell("│","vbar");
-  for(i=0;i<RW;i++) r1+=cell(i<dv.length?dv[i]:"","dv divisor-lbl divb");
-  for(i=0;i<L;i++) r2+=(mostraResto&&plan.rem>0&&i===L-1)?cell(plan.rem,"prod"):cell("");
-  r2+=cell("│","vbar");
-  for(i=0;i<RW;i++) r2+=(i<qLen?quoCells[i]:cell(""));
-  return '<div class="crow">'+r1+'</div><div class="crow">'+r2+'</div>';
+/* ⭐ A CONTA ARMADA MOSTRA O ALGORITMO SENDO FEITO, alinhado (números embaixo
+   de números): o produto (quanto usei) subtraído sob cada casa, o "abaixa" e o
+   resto — padrão brasileiro, com o QUOCIENTE embaixo do divisor. Vai preenchendo
+   conforme o aluno reparte cada casa (ateStep). O quociente fica em CAIXAS
+   vazias para o aluno DIGITAR; só vira número quando ele ACERTA. */
+var PAD=1;
+function firstNonZeroQ(){for(var i=0;i<plan.passos.length;i++)if(plan.passos[i].q>0)return i;return plan.L-1;}
+/* uma linha da esquerda: coloca `str` terminando na coluna `endCol` do dividendo */
+function esqCells(str,endCol,cls,borda){
+  var tot=PAD+plan.L, arr=[], i;
+  for(i=0;i<tot;i++)arr.push(null);
+  var start=PAD+endCol-(str.length-1);
+  for(i=0;i<str.length;i++){var idx=start+i;if(idx>=0&&idx<tot)arr[idx]=str.charAt(i);}
+  var out="";
+  for(i=0;i<tot;i++){ out+=(arr[i]===null)?cell(""):cell(arr[i],cls+(borda?" ubar":"")); }
+  return out;
 }
-function chaveVazia(){
-  var q=String(plan.quo).length, b=[], i; for(i=0;i<q;i++) b.push(cell("","qbox"));
-  return chaveRows(b,false);
+function esqBranco(){ var o="",i; for(i=0;i<PAD+plan.L;i++)o+=cell(""); return o; }
+function dirDivisor(RW){ var dv=String(plan.d),o="",i; for(i=0;i<RW;i++)o+=cell(i<dv.length?dv[i]:"","dv divisor-lbl divb"); return o; }
+function dirQuo(RW,mostra){ var q=String(plan.quo),o="",i; for(i=0;i<RW;i++){ if(i<q.length)o+=(mostra?cell(q.charAt(i),"q"):cell("","qbox")); else o+=cell(""); } return o; }
+function dirBranco(RW){ var o="",i; for(i=0;i<RW;i++)o+=cell(""); return o; }
+function contaRows(mostraQuoNum, ate){
+  var L=plan.L, ds=plan.ds, qLen=String(plan.quo).length, RW=Math.max(1,qLen), fnz=firstNonZeroQ();
+  var rows=[], s, ps, bring;
+  rows.push({l:esqCells(ds.join(""),L-1,"dv",false), r:dirDivisor(RW)});
+  var quoPosto=false;
+  if(ate>=fnz){
+    for(s=fnz; s<=ate && s<L; s++){
+      ps=plan.passos[s];
+      rows.push({l:esqCells("-"+ps.usado,s,"prod",true), r:(quoPosto?dirBranco(RW):dirQuo(RW,mostraQuoNum))});
+      quoPosto=true;
+      if(s<L-1){ bring=(ps.resto>0?String(ps.resto):"")+String(ds[s+1]); rows.push({l:esqCells(bring,s+1,"dv",false), r:dirBranco(RW)}); }
+      else{ rows.push({l:esqCells(String(ps.resto),L-1,"prod",false), r:dirBranco(RW)}); }
+    }
+  }
+  if(!quoPosto) rows.push({l:esqBranco(), r:dirQuo(RW,mostraQuoNum)});
+  var html="",k; for(k=0;k<rows.length;k++) html+='<div class="crow">'+rows[k].l+cell("│","vbar")+rows[k].r+'</div>';
+  return html;
 }
-function chaveCheia(){
-  var s=String(plan.quo), d=[], i; for(i=0;i<s.length;i++) d.push(cell(s[i],"q"));
-  return chaveRows(d,true);
-}
-function pintaChave(){ $("chave").innerHTML = mostraQuo ? chaveCheia() : chaveVazia(); }
+function pintaChave(){ $("chave").innerHTML = contaRows(mostraQuo, ateStep); }
 function atualizaChave(){ pintaChave(); }
 
 /* ===== a mesa (banco + grupos) numa página ===== */
@@ -355,6 +371,7 @@ function grupoAlvo(el){ while(el){ if(el.getAttribute && el.getAttribute("data-g
 
 function terminaCasa(){
   var p=plan.passos[passoDeCasa(pativa)];
+  ateStep=passoDeCasa(pativa);   /* esta casa entra na conta armada (o produto é escrito) */
   sobraAtual=sup[pativa];
   var cada=grp[0][pativa];
   var msg="Cada grupo ficou com <b>"+cada+"</b> "+(cada===1?NOMES[pativa]:NOMESP[pativa])+". ";
@@ -446,7 +463,7 @@ function soltou(tgt,moved){
 /* ===== fluxo ===== */
 function iniciaProblema(){
   plan=planeja(PROBS[idx].n,PROBS[idx].d);
-  sup=[0,0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;errouNessa=false;mostraQuo=false;
+  sup=[0,0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;errouNessa=false;mostraQuo=false;ateStep=-1;
   for(var i=0;i<plan.L;i++){ sup[plan.offset+i]=plan.ds[i]; }
   for(var g=0;g<plan.d;g++)grp.push([0,0,0,0]);
   $("pnum").textContent=(idx+1);$("ptot").textContent=PROBS.length;$("barra").style.width=Math.round(idx*100/PROBS.length)+"%";
