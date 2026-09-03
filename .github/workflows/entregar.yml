@@ -177,6 +177,9 @@ jobs:
                 portao "resposta entregue (destaque em cima da palavra certa)" python3 _qa/entrega.py "$pasta"
                 portao "enunciado bate (promete um assunto, cobra outro)" python3 _qa/enunciado_bate.py "$pasta"
               fi
+              portao "moldura corta (o container come a figura)" python3 _qa/corta_figura.py "$idx"
+              if [ -f "$pasta/conteudo.json" ]; then
+              fi
               portao "toque (arrasto sem touch-action some sob o dedo)" python3 _qa/toque.py "$idx"
             fi
             if [ -f "$fal" ]; then

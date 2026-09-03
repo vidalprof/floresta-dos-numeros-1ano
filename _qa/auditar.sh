@@ -400,6 +400,18 @@ portao "0o2 resposta entregue" python3 _qa/entrega.py "$PASTA"
 echo "--- 0o3) ENUNCIADO BATE (promete um assunto, cobra outro?) -"
 portao "0o3 enunciado bate" python3 _qa/enunciado_bate.py "$PASTA"
 
+# ⭐ 0o4) A MOLDURA CORTA A FIGURA? — nasceu de uma CORRECAO do Marcos
+#     (set/2026). Ele disse "as imagens bola e elefante aparecem faltando
+#     partes"; eu fui medir os ARQUIVOS e mostrei; e ele me corrigiu: *"nas
+#     imagens que mostrou esta certo mas NA ATIVIDADE aparecem faltando"*.
+#     Eu estava consertando a coisa errada. O culpado era o CSS: figura a 84%
+#     dentro de uma bolinha REDONDA que esconde o que vaza — o circulo come os
+#     cantos, e e ali que ficam a cauda do rato e as orelhas do elefante.
+#     Isto e geometria fechada (o quadrado inscrito no circulo e 70,7%), entao
+#     da para medir sem calibrar nada.
+echo "--- 0o4) MOLDURA CORTA (o container come a figura?) -"
+portao "0o4 moldura corta" python3 _qa/corta_figura.py "$ARQ"
+
 # ⭐ 0p) A SEGUNDA LEITURA (portao de SENTIDO). Os portoes acima medem TEXTO
 #    mecanico (digitacao, concordancia, HTML vazando). NENHUM le o SIGNIFICADO:
 #    a resposta marcada como CERTA esta certa? a DICA leva a ELA? a VOZ diz o

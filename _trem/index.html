@@ -856,7 +856,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-bater-silabas .bsBatida{width:54px;height:54px;margin:4px;border-radius:50%;background:#ffd54a; overflow:hidden; display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center; -webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f; -webkit-animation:kf-bater-silabas-bsPop .28s;animation:kf-bater-silabas-bsPop .28s}
 
-.mec-bater-silabas .bsBatida img{width:84%;height:84%;object-fit:contain}
+/* ⚠️⚠️ LICAO PAGA (Marcos, set/2026, jogando): *"as imagens bola e elefante aparecem faltando partes"* — e, quando eu mostrei os arquivos, ele foi preciso: *"nas imagens que mostrou esta certo mas NA ATIVIDADE aparecem faltando"*. O arquivo estava perfeito; quem cortava era esta regra. GEOMETRIA: o container e um CIRCULO (border-radius:50% + overflow:hidden), mas o `object-fit:contain` encaixa a figura no QUADRADO. O circulo entao come os CANTOS desse quadrado — e e justamente nos cantos que ficam a cauda do rato, as orelhas do elefante, a curva da bola. A maior figura que cabe INTEIRA num circulo e o quadrado inscrito, de lado 1/raiz(2) = 70,7% do diametro. 84% estourava em 13 pontos percentuais, e a crianca via o bicho sem pedaco. */
+.mec-bater-silabas .bsBatida img{width:68%;height:68%;object-fit:contain}
 
 .mec-bater-silabas .bsBatida.eco{background:#f6c23a;-webkit-transform:scale(1.18);transform:scale(1.18)}
 
