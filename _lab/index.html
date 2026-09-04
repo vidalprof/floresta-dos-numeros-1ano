@@ -153,11 +153,64 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
 
   function tela(modo){
     _urlAtual=""; fecharNova(); $("novaAba").style.display="none";
+    if(_vigia){ clearInterval(_vigia); _vigia=null; } _jaTerminou=false;
     if(modo==="voltar"){ quadro.style.display="none"; quadro.src="about:blank"; bloqueio.style.display="none"; espera.style.display="flex"; setEstado("aguardando",""); return; }
     if(modo==="bloquear"){ quadro.style.display="none"; quadro.src="about:blank"; espera.style.display="none"; bloqueio.style.display="flex"; setEstado("pausada",""); return; }
   }
   var _urlAtual="";
-  function abrir(url){ fecharNova(); $("novaAba").style.display="none"; espera.style.display="none"; bloqueio.style.display="none"; quadro.style.display="block"; if(_urlAtual!==url){ _urlAtual=url; quadro.src=url; } setEstado("atividade", host(url)); }
+  function abrir(url){ fecharNova(); $("novaAba").style.display="none"; espera.style.display="none"; bloqueio.style.display="none"; quadro.style.display="block"; if(_urlAtual!==url){ _urlAtual=url; quadro.src=url; } vigiaFim(true); setEstado("atividade", host(url)); }
+
+  /* ⭐⭐ "ESTA MÁQUINA JÁ TERMINOU" — o aviso que enche a lista do professor.
+     Pedido do Marcos (set/2026): *"quando os alunos chegam ao relatório, ou seja
+     já terminaram a atividade... tem como eles irem aparecendo ali com uma
+     vírgula, para eu ir colocando outra atividade?"*
+
+     São DOIS caminhos de propósito, e o primeiro é o que faz valer HOJE:
+
+     1. A ESPIADA. A atividade abre dentro do `#quadro`, e as duas páginas moram
+        no MESMO domínio (vidalprof.github.io) — então esta página pode olhar
+        dentro dela e ver a MEDALHA do fim aparecer. Isso funciona com as 54
+        atividades que já estão no ar, sem republicar nenhuma.
+     2. O AVISO. O motor também manda `postMessage({eduverse:"terminou"})` ao
+        chegar no fim. É mais limpo e não depende de reconhecer tela nenhuma;
+        entra nas atividades conforme forem sendo republicadas.
+
+     ⚠️ POR QUE OS DOIS: só a espiada é frágil (basta o motor mudar o nome da
+     classe da medalha); só o aviso não serve para as 54 de hoje. Juntos, um
+     cobre o buraco do outro.
+
+     ⚠️ E POR QUE ELE NÃO GRUDA: o estado volta para "atividade" assim que o
+     professor manda o site seguinte (o `abrir()` acima chama `setEstado`), então
+     a máquina SAI da lista sozinha — que foi o que ele pediu ("a lista pode
+     limpar sozinha"). O `vigiaFim(true)` rearma a vigia a cada abertura. */
+  var _vigia=null, _jaTerminou=false;
+  function marcaTerminou(){
+    if(_jaTerminou) return; _jaTerminou=true;
+    setEstado("terminou", _rotulo||"");
+  }
+  function vigiaFim(reinicia){
+    if(reinicia){ _jaTerminou=false; }
+    if(_vigia){ clearInterval(_vigia); _vigia=null; }
+    /* olha de 3 em 3 segundos; é barato e a criança não termina de repente */
+    _vigia=setInterval(function(){
+      if(_jaTerminou || quadro.style.display==="none") return;
+      try{
+        var d=quadro.contentDocument;      /* mesma origem: dá para olhar */
+        if(!d) return;
+        /* a medalha do fim: o motor desenha `.medal` na tela final. Só conta se
+           estiver VISÍVEL — a `.medal` também existe escondida em outras telas. */
+        var m=d.querySelector(".medal");
+        if(m && m.offsetParent!==null) marcaTerminou();
+      }catch(e){ /* origem diferente (site de fora): não dá para olhar, tudo bem */ }
+    }, 3000);
+  }
+  /* o caminho 2: a própria atividade avisa */
+  window.addEventListener("message", function(ev){
+    try{
+      var d=ev.data;
+      if(d && d.eduverse==="terminou") marcaTerminou();
+    }catch(e){}
+  }, false);
   /* tela cheia (sai da pagina, sem retorno remoto) - mantido p/ compatibilidade */
   function abrirCheia(url){ try{ window.top.location.href=url; }catch(e){ try{ location.href=url; }catch(e2){} } }
 

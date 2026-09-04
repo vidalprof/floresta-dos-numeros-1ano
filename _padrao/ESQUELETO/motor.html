@@ -1845,7 +1845,15 @@ function crachaEl(funcao){
   return d;
 }
 
-function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
+function telaFim(){
+  /* ⭐ AVISA QUEM ESTIVER HOSPEDANDO que esta criança terminou (set/2026, pedido
+     do Marcos: a máquina que acaba a atividade aparece sozinha na lista do
+     controle do laboratório, para ele mandar a próxima só para essas).
+     No laboratório a atividade roda dentro do `#quadro` da tela do aluno, que
+     ouve isto e reporta "terminou". Fora do laboratório não há pai nenhum
+     escutando e a linha não faz nada — por isso é segura em qualquer lugar. */
+  try{ if(window.parent && window.parent!==window) window.parent.postMessage({eduverse:"terminou"},"*"); }catch(e){}
+  limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
   var m=imgEl("med_"+ID.pre,"medal"); c.appendChild(m); segredoRelatorio(m);
   /* ⚠️ LICAO PAGA: aqui era texto CRAVADO do Jardim ("Jardineiro Mestre!",
      "voce cuidou da planta"), entao TODA atividade montada terminava chamando

@@ -17,6 +17,18 @@
 >   `https://vidalprof.github.io/controle-lab/controle.html?sala=sala1` (professor)
 >   e `.../controle-lab/index.html?sala=sala1` (aluno). Publica por `atualizar.yml`
 >   (`repo_name=controle-lab`, `source_dir=_lab`). Firebase `/labstatus`.
+> - **⭐ Painel de Atividades (a tela dos LINKS)** → pasta `_painel/` → repo
+>   **`painel-de-atividades`** → `https://vidalprof.github.io/painel-de-atividades/`.
+>   É a tela que ele abre na escola: todas as atividades por turma, busca, botão
+>   **COPIAR** o link, e o **controle da sala embutido à direita** (por `iframe`
+>   para o `controle-lab/controle.html`, que não muda nada). Publica por
+>   `atualizar.yml` (`repo_name=painel-de-atividades`, `source_dir=_painel`).
+>   **NÃO se edita o HTML à mão:** `_painel/index.html` é GERADO do `ATIVIDADES.md`
+>   por `python3 _painel/montar_painel.py`. Regra dele (set/2026): *"cada
+>   atividade nova vai para esse painel certo? certifique-se disso, que cada
+>   seção saiba disso"* — então fechar atividade = linha no `ATIVIDADES.md` **+**
+>   rodar o montador, no mesmo commit. **Medido pelo `_qa/catalogo.py`, que roda
+>   dentro do `entregar.yml`: atividade fora do painel não é publicada.**
 > - **Agenda de Aulas** → pasta `_agenda/` → repo **`agenda-aulas`** →
 >   `https://vidalprof.github.io/agenda-aulas/` (ver CLAUDE.md §7).
 > - **Painéis de prova** (senha do professor, leem `/provas/<slug>`): matemática 3º

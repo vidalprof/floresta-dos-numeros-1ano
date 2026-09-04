@@ -368,6 +368,15 @@ kill $_SRV 2>/dev/null || true
 echo "--- 0b4) PESO (o PC da escola aguenta a arte?) -"
 portao "0b4 peso" python3 _qa/peso.py "$PASTA"
 
+# ⭐ 0b6) O PAINEL DE LINKS (pedido do Marcos, set/2026: *"cada atividade nova
+#    vai para esse painel certo? certifique-se disso, que cada secao saiba
+#    disso"*). Ele nao quer o link no chat — quer no painel, organizado por
+#    turma. Uma atividade que nao esta no ATIVIDADES.md nao aparece la, e ele
+#    volta a me pedir o link no chat. Aqui a banca so AVISA cedo; quem SEGURA a
+#    publicacao e o mesmo portao dentro do `entregar.yml`.
+echo "--- 0b6) CATALOGO/PAINEL (a atividade esta no painel de links?) -"
+portao "0b6 catalogo/painel" python3 _qa/catalogo.py "$PASTA"
+
 # ⚠️⚠️ OS PORTOES QUE EXISTIAM E NUNCA ERAM CHAMADOS (set/2026). Contei arquivo
 #    por arquivo depois da cobranca do Marcos — *"já pedi essas correções várias
 #    vezes, e sempre acontece a mesma coisa"* — e o numero era **26 dos 80**: eu

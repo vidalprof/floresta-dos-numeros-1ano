@@ -130,6 +130,16 @@ jobs:
             [ -z "$pasta" ] && continue
             echo "==================== Portao: $pasta ===================="
             idx="$pasta/index.html"; fal="$pasta/falas.json"
+            # ⭐ O PAINEL DE LINKS NAO PODE FICAR PARA TRAS (pedido do Marcos,
+            # set/2026: *"cada atividade nova vai para esse painel certo?
+            # certifique-se disso, que cada secao saiba disso"*). "Cada secao
+            # saiba" nao pode ser promessa minha — eu comeco cada sessao sem
+            # memoria. Entao virou portao: atividade que nao esta no
+            # ATIVIDADES.md (e por consequencia no painel) NAO SOBE. Roda fora do
+            # `if [ -f "$idx" ]` de proposito: vale ate para atividade que nao e
+            # montada pelo motor.
+            portao "catalogo/painel (a atividade tem que estar no painel de links)" \
+              python3 _qa/catalogo.py "$pasta" "$destino"
             if [ -f "$idx" ]; then
               if python3 _qa/extrai_js.py "$idx" /tmp/_pre.js; then
                 portao "JS (node --check)" node --check /tmp/_pre.js

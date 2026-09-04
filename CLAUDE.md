@@ -24,6 +24,20 @@ Leia tudo antes de agir e responda sempre em **português**.
 > 2. **Ao criar/publicar uma atividade nova**, adicione UMA LINHA na tabela do ano
 >    (Ano · Nome · O que trabalha · Link) e commite junto. Sem isso, a próxima
 >    sessão não sabe que ela existe.
+> 3. **⭐ E É DALI QUE NASCE O PAINEL DE LINKS DO MARCOS** (pedido dele, set/2026:
+>    *"cada atividade nova vai para esse painel certo? certifique-se disso, que
+>    cada seção saiba disso"*). A corrente é: `ATIVIDADES.md` →
+>    `python3 _painel/montar_painel.py` → `_painel/index.html` → publicado em
+>    **https://vidalprof.github.io/painel-de-atividades/** (é a tela que ele abre
+>    na escola: busca, chips por turma, botão COPIAR e o controle da sala ao lado).
+>    Então **toda atividade nova, sem exceção, termina com estes dois comandos**:
+>    linha nova no catálogo **e** `python3 _painel/montar_painel.py`, commitados
+>    juntos. Sem o segundo, o painel no ar vira cópia velha.
+>    **Isso não depende da minha memória: virou PORTÃO.** O `_qa/catalogo.py`
+>    reprova (código 1) se a pasta não estiver no catálogo, se o link da linha não
+>    for o site que está subindo, ou se o `_painel/index.html` estiver atrasado —
+>    e ele roda **dentro do `entregar.yml`**, antes de publicar. Atividade fora do
+>    painel **não sobe**. (Na banca ele também aparece, como aviso: `0b6`.)
 >
 > **🕵️ A BANCA DE AUDITORES roda ANTES de entregar:** `bash _qa/auditar.sh <arquivo.html>`.
 > São DOZE portões, cada um nascido de um defeito que chegou perto da criança:

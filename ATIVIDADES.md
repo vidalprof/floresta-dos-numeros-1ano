@@ -13,6 +13,30 @@
 >
 > Link = `https://vidalprof.github.io/<repositório>/`. Pasta = onde mora o código
 > neste repo (`_xxx/`).
+>
+> ## ⭐ ESTE ARQUIVO É O PAINEL DE LINKS — não é só documentação
+>
+> Pedido do Marcos (set/2026): *"cada atividade nova vai para esse painel certo?
+> certifique-se disso, que cada seção saiba disso"*. A corrente:
+>
+> ```
+> ATIVIDADES.md  →  python3 _painel/montar_painel.py  →  _painel/index.html
+>                →  https://vidalprof.github.io/painel-de-atividades/
+> ```
+>
+> É a tela que ele abre na escola (busca, chips por turma, botão COPIAR, e o
+> controle da sala ao lado). **Uma linha aqui = um cartão lá.** Nenhuma atividade
+> nova pode faltar: se faltar, ele volta a pedir o link no chat — que é o atrito
+> que o painel existe para acabar.
+>
+> **Fechar uma atividade = duas coisas, no mesmo commit:**
+> 1. a linha nova na tabela do ano (Nome · O que trabalha · Pasta · Link);
+> 2. `python3 _painel/montar_painel.py` (regera o `_painel/index.html`).
+>
+> **E isso é MEDIDO, não prometido:** `python3 _qa/catalogo.py <pasta> <repo>`
+> reprova se a pasta não estiver aqui, se o link não for o do site que está
+> subindo, ou se o painel estiver atrasado. Ele roda dentro do `entregar.yml`:
+> **atividade fora do painel não é publicada.**
 
 Última atualização: 2026-09-04 (Bancada da Divisão publicada; painel de links criado).
 
