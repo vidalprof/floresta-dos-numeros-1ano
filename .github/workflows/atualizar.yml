@@ -79,6 +79,9 @@ jobs:
             echo "Link: https://$OWNER.github.io/$DEST/"
           } >> "$GITHUB_STEP_SUMMARY"
           echo "SHA_PUB=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          # a impressao digital do que ACABEI de mandar — o carimbo compara com
+          # o que o site devolve, e so ai diz "no ar"
+          echo "SHA1_LOCAL=$(sha1sum "$tmp/index.html" | cut -d' ' -f1)" >> "$GITHUB_ENV"
 
       # ⭐ O CARIMBO DE 200 BYTES (licao paga, set/2026). Para saber se este
       # espelho deu certo eu so tinha o log do Actions, e ler o log custa uma
@@ -106,7 +109,7 @@ jobs:
         run: |
           set -uo pipefail
           python3 - <<'PY'
-          import base64, json, os, time, urllib.error, urllib.request
+          import base64, hashlib, json, os, time, urllib.error, urllib.request
 
           repo   = os.environ["REPO"]
           ramo   = os.environ["BRANCH"]
@@ -114,6 +117,39 @@ jobs:
           arq    = "_status/espelho-%s.json" % dest
           token  = os.environ["GH_TOKEN"]
           base   = "https://api.github.com/repos/%s/contents/%s" % (repo, arq)
+          site   = "https://vidalprof.github.io/%s/" % dest
+
+          # ⭐ "PUBLIQUEI" NAO E "ESTA NO AR". O push para o repositorio de
+          # destino termina em segundos; o build do Pages leva um pouco mais e
+          # ja falhou de forma intermitente nesta casa ("Page build failed").
+          # Entao o carimbo nao acredita no push: ele PERGUNTA AO SITE e compara
+          # a impressao digital do arquivo que subiu com a do que o site
+          # devolve. So com as duas iguais o campo `noar` vira true.
+          local = os.environ.get("SHA1_LOCAL", "")
+          noar, servido, tentativas = None, "", 0
+          if local:
+              for tentativas in range(1, 13):        # ~3 min de paciencia
+                  try:
+                      req = urllib.request.Request(
+                          site + "index.html?v=%d" % time.time(),
+                          headers={"Cache-Control": "no-cache"})
+                      with urllib.request.urlopen(req, timeout=30) as r:
+                          servido = hashlib.sha1(r.read()).hexdigest()
+                  except Exception as e:             # noqa: BLE001
+                      servido = ""
+                      print("   tentativa %d: o site nao respondeu (%s)" % (tentativas, e))
+                  if servido == local:
+                      noar = True
+                      print("   NO AR: o site ja serve o arquivo que subiu "
+                            "(tentativa %d)" % tentativas)
+                      break
+                  time.sleep(15)
+              else:
+                  noar = False
+                  print("::warning::%s: o push deu certo, mas depois de ~3 min o "
+                        "site ainda nao serve o arquivo novo. Pode ser o cache "
+                        "do Pages (tente Ctrl+F5) ou o build ter falhado — rode "
+                        "o deploy-pages.yml." % dest)
 
           corpo = json.dumps({
               "destino": dest,
@@ -121,7 +157,10 @@ jobs:
               "commit": os.environ.get("SHA_PUB") or os.environ.get("GITHUB_SHA", ""),
               "quando": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
               "resultado": os.environ["RESULTADO"],
-              "link": "https://vidalprof.github.io/%s/" % dest,
+              "noar": noar,
+              "sha1": local,
+              "sha1_servido": servido,
+              "link": site,
           }, ensure_ascii=False, indent=2) + "\n"
 
           def chama(url, dados=None, metodo="GET"):
