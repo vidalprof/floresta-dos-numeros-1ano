@@ -54,6 +54,7 @@ label{font-size:16px;font-weight:bold;color:#0a5560;display:block;margin-top:8px
 .tbox.on{background:#0e7c86;color:#fff;border-color:#0a5a62;-webkit-box-shadow:0 4px 0 #0a5a62;box-shadow:0 4px 0 #0a5a62;}
 .tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
 .avs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 6px;max-width:560px;}
+
 .avbox{width:76px;height:76px;margin:5px;border-radius:50%;border:3px solid #7fbfd0;background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);cursor:pointer;overflow:hidden;padding:0;-webkit-box-shadow:0 3px 0 #cfe6ec;box-shadow:0 3px 0 #cfe6ec;}
 .avbox.on{border-color:#0a5a62;-webkit-box-shadow:0 3px 0 #0a5a62;box-shadow:0 3px 0 #0a5a62;-webkit-transform:translateY(-2px);transform:translateY(-2px);}
 .avbox img{width:100%;height:100%;display:block;object-fit:cover;}
@@ -139,6 +140,15 @@ label{font-size:16px;font-weight:bold;color:#0a5560;display:block;margin-top:8px
 .medalha .estrela{position:absolute;width:74px;height:74px;background:#fff6cf;-webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
 .medalha .mav{position:relative;width:118px;height:118px;border-radius:50%;object-fit:cover;}
 #barra{position:fixed;right:8px;bottom:8px;z-index:9999;}
+
+@media (max-width:560px){
+  /* ⭐ NO CELULAR os dois botões fixos do canto de baixo caiam EM CIMA do 6º
+     crachá da escolha de personagem: a criança tocava no próprio rosto e
+     ligava/desligava o som. Medido em 412x820 pelo `_qa/sobreposto.js`.
+     Em cima não há nada para tocar (é a faixa do mascote), então é lá que
+     eles moram na tela estreita. */
+  #barra{top:calc(8px + env(safe-area-inset-top));bottom:auto}
+}
 #barra .cv-bt{-webkit-appearance:none;appearance:none;width:48px;height:48px;border:3px solid #0a5a62;border-radius:50%;background:#fbfeff;color:#0a5a62;font-size:20px;line-height:42px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
 .opt{cursor:pointer;}
 .medal{position:relative;}

@@ -107,6 +107,7 @@ label{font-size:16px;font-weight:bold;color:#2f6f8f;display:block;margin-top:6px
 #btnOuvir,#btnHist{background:#fff2dd;border:3px solid #ff9e2c;color:#a05a00;border-radius:18px;font-size:18px;font-weight:bold;padding:10px 16px;cursor:pointer;font-family:inherit;margin:4px auto 8px;}
 #btnHist{margin-top:6px;-webkit-animation:pulsa 1.6s ease-in-out infinite;animation:pulsa 1.6s ease-in-out infinite;}
 .avs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 6px;max-width:560px;}
+
 .avbox{width:76px;height:76px;margin:5px;border-radius:50%;border:3px solid #9fd0ec;background:#fbfeff;cursor:pointer;overflow:hidden;padding:0;
   -webkit-box-shadow:0 3px 0 #cfe6f4;box-shadow:0 3px 0 #cfe6f4;}
 .avbox.on{border-color:#2e8b41;-webkit-box-shadow:0 3px 0 #2e8b41;box-shadow:0 3px 0 #2e8b41;-webkit-transform:translateY(-2px);transform:translateY(-2px);}
@@ -130,6 +131,15 @@ label{font-size:16px;font-weight:bold;color:#2f6f8f;display:block;margin-top:6px
 .medalha .estrela{position:absolute;width:74px;height:74px;background:#fff6cf;-webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
 .medalha .mav{position:relative;width:118px;height:118px;border-radius:50%;object-fit:cover;}
 #barra{position:fixed;right:8px;bottom:8px;z-index:9999;}
+
+@media (max-width:560px){
+  /* ⭐ NO CELULAR os dois botões fixos do canto de baixo caiam EM CIMA do 6º
+     crachá da escolha de personagem: a criança tocava no próprio rosto e
+     ligava/desligava o som. Medido em 412x820 pelo `_qa/sobreposto.js`.
+     Em cima não há nada para tocar (é a faixa do mascote), então é lá que
+     eles moram na tela estreita. */
+  #barra{top:calc(8px + env(safe-area-inset-top));bottom:auto}
+}
 #barra .cv-bt{-webkit-appearance:none;appearance:none;width:48px;height:48px;border:3px solid #2f6f8f;border-radius:50%;background:#fbfeff;color:#2f6f8f;font-size:20px;line-height:42px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
 </style>
 
