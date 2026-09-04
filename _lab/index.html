@@ -96,9 +96,26 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   if(PC){ salvarPC(PC, manualPC); }
 
   function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
+  /* ⭐ O INTERRUPTOR DO "TROCAR NÚMERO" (pedido do Marcos, set/2026):
+       *"consegue remover a opção onde está escrito trocar computador... para o
+       aluno não trocar e deixar de funcionar... e quando eu quiser vc acrescenta
+       facilmente e rápido?"*
+
+     `false` = o link não aparece; `true` = volta como era. É só esta palavra —
+     TODO o resto continua no lugar (a tela `setpc`, o `abrirSetPc`, o `okpc`),
+     então voltar atrás é trocar uma palavra e publicar.
+
+     ⚠️ E o professor NÃO fica trancado do lado de fora: máquina SEM número
+     continua abrindo o campo sozinha (`if(!PC)` lá embaixo). O que sai é só o
+     link que deixava o aluno trocar um número que já estava certo. */
+  var TROCAR_PC = false;
+
   function pintaRodape(){
-    $("rodape").innerHTML="Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>")
-      +' &middot; <a href="#" id="trocarpc" style="color:#8fb6ff;text-decoration:underline;">trocar n&uacute;mero</a>';
+    var linha = "Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>");
+    if(TROCAR_PC){
+      linha += ' &middot; <a href="#" id="trocarpc" style="color:#8fb6ff;text-decoration:underline;">trocar n&uacute;mero</a>';
+    }
+    $("rodape").innerHTML = linha;
     var tp=$("trocarpc"); if(tp){ tp.onclick=function(e){ if(e&&e.preventDefault)e.preventDefault(); abrirSetPc(); return false; }; }
   }
   function abrirSetPc(){
