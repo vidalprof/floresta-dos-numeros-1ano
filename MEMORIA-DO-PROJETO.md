@@ -13,6 +13,15 @@
 >
 > **🖥️ REPOS-CHAVE (ferramentas do professor — para eu NÃO esquecer, ago/2026).**
 > O catálogo de ATIVIDADES é o `ATIVIDADES.md`. As FERRAMENTAS ficam aqui:
+> **📌 COMO SABER SE UM ESPELHO FOI AO AR — DE GRAÇA (set/2026).** O
+> `atualizar.yml` agora deixa **`_status/espelho-<destino>.json`** neste repo
+> (destino, pasta, commit, hora, resultado, **`noar`**, sha1 local × sha1
+> servido, link). Ele não acredita no push: **pergunta ao site** (com no-cache,
+> até ~3 min) e só grava `noar: true` quando o arquivo servido bate com o que
+> subiu. Então conferir publicação é `git fetch` + `cat` — 200 bytes. **Nunca
+> mais chamar `actions_list` para isso** (uma chamada come dezenas de milhares
+> de caracteres da conversa).
+>
 > - **Controle do Laboratório** → pasta `_lab/` → repo **`controle-lab`** →
 >   `https://vidalprof.github.io/controle-lab/controle.html?sala=sala1` (professor)
 >   e `.../controle-lab/index.html?sala=sala1` (aluno). Publica por `atualizar.yml`

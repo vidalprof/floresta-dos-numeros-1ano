@@ -38,7 +38,8 @@
 > subindo, ou se o painel estiver atrasado. Ele roda dentro do `entregar.yml`:
 > **atividade fora do painel não é publicada.**
 
-Última atualização: 2026-09-04 (Bancada da Divisão publicada; painel de links criado).
+Última atualização: 2026-09-04 (Bancada da Divisão publicada; painel de links criado;
+painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 ---
 
