@@ -405,11 +405,88 @@ function capturaMascara(){
   oc.fillStyle="#fff"; oc.fillRect(0,0,W,H);
   try{ oc.drawImage(imgLinha,0,0,W,H); }catch(e){ _mask=null; return; }
   var img; try{ img=oc.getImageData(0,0,W,H); }catch(e){ _mask=null; return; }
-  var d=img.data,n=W*H,m=[],i,r,g,b,mx,mn;
+  var d=img.data,n=W*H,m=new Uint8Array(n),i,r,g,b,mx,mn;
   for(i=0;i<n;i++){ r=d[i*4];g=d[i*4+1];b=d[i*4+2];
     mx=(r>g?(r>b?r:b):(g>b?g:b)); mn=(r<g?(r<b?r:b):(g<b?g:b));
     m[i]=(mx<120&&(mx-mn)<45)?1:0; }
-  _mask=m;
+  _mask=fechaBuracos(m, raioDoFecho());
+}
+/* ⭐ O RAIO DE CADA DESENHO — medido, não chutado.
+   Fechar o buraco é engordar a barreira e voltar; se engordar DEMAIS, ela come
+   as áreas finas e a criança fica sem poder pintar o laço do vestido. Medi os 20
+   desenhos com raio 1, 2 e 3, contando quantas áreas pintáveis sobram em cada um,
+   e guardei o maior raio que NÃO faz nenhum perder área:
+     · 17 desenhos aguentam 3 (o pinguim ganhou 26 áreas: os pés se soltaram do gelo)
+     · a coruja aguenta 2
+     · o amigo alto e a MENINA DO VESTIDO só aguentam 1 — nos dois, o 3 comia detalhe
+   Desenho novo que entrar sem medida usa 2, que é o meio seguro; para medir o
+   dele, rodar `python3 _pinta/medir_fecho.py`. */
+var FECHO={"qc_amigo_alto":1,"qc_coruja":2,"qc_menina_vestido":1};
+function raioDoFecho(){
+  try{
+    var nome=(DES[rodada]&&DES[rodada].img)||"";
+    return (nome in FECHO) ? FECHO[nome] : 3;
+  }catch(e){ return 2; }
+}
+/* ⭐⭐ FECHAR OS BURACOS DO TRAÇO — a cura do "a tinta vaza" (set/2026).
+
+   Marcos, jogando: *"no desenho o rosto tem um pedaço da linha incompleta, daí
+   a tinta vaza para outra parte"* e, com nome e sobrenome: *"o desenho do
+   pinguim, em um dos pés o risco não fecha, vazando a tinta para a plataforma
+   de gelo"*.
+
+   MEDIDO, e é exatamente isso: enchendo a partir do pé direito do pinguim, a
+   tinta cobria **6,6%** da tela — o MESMO tanto que enchendo a partir do gelo.
+   Pé e gelo eram a mesma região: havia um furo no contorno.
+
+   ⚠️ POR QUE NÃO É O LIMIAR DA LINHA: testei subir o `120` para 170 e 200 (a
+   suspeita óbvia: borda clara do traço que a máscara não via). Não mudou nada —
+   o buraco é do DESENHO, não da leitura dele.
+
+   ⚠️ E POR QUE NÃO É SÓ ENGROSSAR: engrossar a barreira 3px tapa o furo, mas
+   engorda a linha no desenho inteiro e passa a comer as áreas finas — no teste,
+   o ponto do gelo virou "em cima da linha", ou seja, deixou de ser pintável.
+
+   O certo é o FECHAMENTO: engorda `r` e volta `r`. Um vão de até ~2r pixels se
+   fecha e não reabre, mas a barreira volta à espessura original em todo o
+   resto. Medido com r=2: o pé passou de 6,6% (vazando) para 0,5% (a própria
+   região), e o gelo, a barriga e o outro pé ficaram iguais.
+
+   Isto é INVISÍVEL: mexe só na máscara que segura a tinta, nunca no desenho que
+   a criança vê. E vale para qualquer desenho que entre depois. */
+function fechaBuracos(m, r){
+  if(!r) return m;
+  var n=W*H, i, x, y;
+  function passo(src, ganha){       /* ganha=1 -> engorda; ganha=0 -> encolhe */
+    var t=new Uint8Array(n), lin, k;
+    for(y=0;y<H;y++){               /* horizontal */
+      lin=y*W;
+      for(x=0;x<W;x++){
+        k=lin+x; var v=src[k];
+        for(var dx=-r; dx<=r; dx++){
+          var xx=x+dx; if(xx<0||xx>=W) continue;
+          var w=src[lin+xx];
+          v = ganha ? (v|w) : (v&w);
+        }
+        t[k]=v;
+      }
+    }
+    var u=new Uint8Array(n);
+    for(y=0;y<H;y++){               /* vertical */
+      lin=y*W;
+      for(x=0;x<W;x++){
+        k=lin+x; var v2=t[k];
+        for(var dy=-r; dy<=r; dy++){
+          var yy=y+dy; if(yy<0||yy>=H) continue;
+          var w2=t[yy*W+x];
+          v2 = ganha ? (v2|w2) : (v2&w2);
+        }
+        u[k]=v2;
+      }
+    }
+    return u;
+  }
+  return passo(passo(m,1),0);
 }
 function baldePintar(sx,sy){ if(!cxT)return; if(sx<0||sy<0||sx>=W||sy>=H)return;
   var nc=apagando?[255,255,255]:hexRgb(cor);
@@ -538,18 +615,53 @@ function escalaBandeja(n,bw,bh){
     if(rows*ph<=bh) return k; }
   return .28;
 }
+/* ⭐ A CONTA DA BANDEJA — e as DUAS coisas que ela ignorava (set/2026).
+
+   Marcos: *"na atividade de pintar e montar existem parte de imagens que estão
+   vazando"*. Medido a 1024x600 e 1366x768: **8 das 12 peças** passavam da
+   bandeja, até 13px para fora. No celular não acontecia — por isso escapou.
+
+   A conta antiga media a peça pelo CORPO dela (`FW`). Só que o que aparece na
+   tela é maior que o corpo, por dois motivos que se somam:
+
+     1. AS ABAS DO ENCAIXE. A peça de quebra-cabeça tem orelha e furo: a caixa
+        real é `EW`x`EH`, não `FW`x`FH`. A linha antiga ainda EMPURRAVA cada
+        peça meia-aba para a esquerda (`-(EW-FW)*ktray/2`), então a primeira
+        coluna nascia fora da bandeja de propósito.
+     2. O GIRO. Cada peça cai torta, até 12°, para parecer despejada — e um
+        retângulo girado ocupa mais: `w·cos + h·sen` de largura. Num quadrado de
+        95px isso são ~18px a mais, que é exatamente o vazamento medido.
+
+   Agora a conta usa a caixa REAL (abas + giro) para decidir quantas cabem por
+   linha, onde começa e, se não couber, para ENCOLHER a peça até caber. */
 function paraBandeja(bandeja,bw,bh){
-  var pw=FW*ktray+4, ph=FH*ktray+4;
-  var perRow=Math.max(1,Math.floor(bw/pw)); var rows=Math.ceil(pecas.length/perRow);
-  var x0=bandeja.offsetLeft+(bandeja.clientWidth-Math.min(pecas.length,perRow)*pw)/2+2;
-  var y0=bandeja.offsetTop+(bandeja.clientHeight-rows*ph)/2+2;
+  var GIRO=12;                                   /* o mesmo teto do sorteio abaixo */
+  var rad=GIRO*Math.PI/180, cs=Math.abs(Math.cos(rad)), sn=Math.abs(Math.sin(rad));
+  var cw=bandeja.clientWidth-8, ch=bandeja.clientHeight-8;
+  var perRow, rows, pw, ph, ew, eh, bwv, bhv, exX, exY, largT, altT, guarda=0;
+  while(true){
+    pw=FW*ktray+4; ph=FH*ktray+4;                /* o passo da grade (corpo+folga) */
+    ew=EW*ktray;   eh=EH*ktray;                  /* a peça inteira, com as abas */
+    bwv=ew*cs+eh*sn; bhv=ew*sn+eh*cs;            /* e o quanto ela ocupa GIRADA */
+    exX=(bwv-ew)/2; exY=(bhv-eh)/2;              /* o que o giro acrescenta de cada lado */
+    perRow=Math.max(1, Math.floor((cw-bwv)/pw)+1);
+    if(perRow>pecas.length) perRow=pecas.length;
+    rows=Math.ceil(pecas.length/perRow);
+    largT=(perRow-1)*pw+bwv; altT=(rows-1)*ph+bhv;
+    if((largT<=cw && altT<=ch) || ktray<=0.2 || ++guarda>40) break;
+    ktray*=0.94;                                 /* nao coube: encolhe e conta de novo */
+  }
+  var x0=bandeja.offsetLeft+4+(cw-largT)/2+exX;
+  var y0=bandeja.offsetTop +4+(ch-altT)/2+exY;
   var ordem=embaralha(pecas.length);
   pecas.forEach(function(p,i){ var n=ordem[i], row=Math.floor(n/perRow), col=n%perRow;
-    var rot=Math.round(Math.random()*24-12); p.__rot=rot;
+    var rot=Math.round(Math.random()*(GIRO*2)-GIRO); p.__rot=rot;
     setTimeout(function(){ p.classList.add("voando");
       setSize(p,+p.dataset.r,+p.dataset.c,ktray);
       /* posiciona pelo CENTRO da célula (as margens do encaixe são simétricas) */
-      var lx=x0+col*pw-(EW-FW)*ktray/2, ly=y0+row*ph-(EH-FH)*ktray/2;
+      /* `left/top` posicionam a caixa NAO girada; o giro acontece em volta do
+         centro, entao a caixa visivel ja fica dentro do espaco reservado. */
+      var lx=x0+col*pw, ly=y0+row*ph;
       p.style.left=lx+"px"; p.style.top=ly+"px"; p.style.transform="rotate("+rot+"deg)";
       p.__bx=lx; p.__by=ly; pop(i); }, i*28);
   });
