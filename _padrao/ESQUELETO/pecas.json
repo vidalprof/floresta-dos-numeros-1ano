@@ -519,6 +519,28 @@
    ],
    "var": "DITADOS"
   },
+  "divisao-dourado": {
+   "exemplo": "[{n:24,d:2},{n:36,d:3}]",
+   "exemplos": {
+    "ARTUM": "[\"Um\",\"Uma\",\"Uma\",\"Uma\"]",
+    "CONTAS": "[{n:24,d:2},{n:36,d:3}]",
+    "FECHO": "\"Você repartiu com as mãos e leu o resultado nos grupos.\"",
+    "NOMES": "[\"milhar\",\"centena\",\"dezena\",\"unidade\"]",
+    "NOMESP": "[\"milhares\",\"centenas\",\"dezenas\",\"unidades\"]",
+    "TITULO": "\"A CONTA COM MATERIAL DOURADO\""
+   },
+   "gavetas": [
+    "CONTAS",
+    "NOMES",
+    "NOMESP",
+    "ARTUM",
+    "TITULO",
+    "FECHO"
+   ],
+   "regra": "primeiro vetor",
+   "tecnicas": [],
+   "var": "CONTAS"
+  },
   "domino": {
    "exemplo": "[\n  /* ⭐ `esq/dir:\"dinheiro\"` + `imgs` (valor->figura): a meia mostra a moeda/nota\n     e casa com o numero igual. Declaro `imgs` aqui (vazio) para o montador saber\n     que a peca le esse campo; a rodada de dinheiro mora na atividade (a Lojinha). */\n  {selo:\"O DOMIN&Oacute; DOS N&Uacute;MEROS\", esq:\"pts\", dir:\"num\", semente:2, imgs:{},\n   enun:\"Encaixe cada pe&ccedil;a na ponta que <b>combina</b>. Os pontinhos valem o mesmo que o n&uacute;mero.\",\n   cadeia:[2,5,3,6,4,1]},\n  {selo:\"FIGURA COM PALAVRA\", esq:\"fig\", dir:\"pal\", semente:1,\n   enun:\"Agora a figura encaixa com a <b>palavra</b> dela.\",\n   cadeia:[\"sol\",\"lua\",\"ovo\",\"cruz\",\"seta\"]},\n  {selo:\"DOMIN&Oacute; DE VERDADE\", esq:\"pts\", dir:\"pts\", semente:2,\n   enun:\"Este &eacute; o dom&iacute;n&oacute; de verdade: conte os pontinhos dos <b>dois</b> lados.\",\n   cadeia:[1,4,2,5,3,6]}\n]",
    "exemplos": {

@@ -56,7 +56,10 @@ MOTOR = "_padrao/ESQUELETO/pecas.js"     # o motor: o PADRAO que a crianca receb
 
 # gavetas que são TABELA DE VOCABULÁRIO (nomes de números, de operadores).
 # Não são texto que a criança lê como conteúdo — ficam de fora da medição.
-TABELAS = {"UN", "DZ", "UNM", "NOMEDIG", "OPNOME", "PEDACOS", "MAXN"}
+# (NOMES/NOMESP/ARTUM sao a tabela de nomes das casas da base dez, e o artigo
+#  que cada uma pede — "UM milhar", "UMA dezena". Vocabulario, nao conteudo.)
+TABELAS = {"UN", "DZ", "UNM", "NOMEDIG", "OPNOME", "PEDACOS", "MAXN",
+           "NOMES", "NOMESP", "ARTUM"}
 
 # palavras da INTERFACE: aparecem em qualquer atividade e não denunciam assunto
 INTERFACE = set(u"""

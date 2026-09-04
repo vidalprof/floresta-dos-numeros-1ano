@@ -64,7 +64,7 @@
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
-| **A Gincana da Escola** | Matemática (4º ano): DIVISÃO do começo — repartir igual (partição), quantas vezes cabe (medida), organização retangular, resto com sentido, relação inversa com a multiplicação, estimativa e a conta armada. 32 fases em blocos, 13 mecânicas | `_gincana` | (aguardando as 2 imagens do Marcos: `gi_fundo` e `med_gi`) |
+| **A Bancada da Divisão** | Matemática (4º ano): DIVISÃO do começo pela CONTA ARMADA com MATERIAL DOURADO que o aluno ARRASTA (a dinâmica da Oficina da Divisão, agora como peça do motor) — repartir um bloco por grupo, trocar a sobra (o "abaixa") e digitar o resultado. 32 contas progressivas | `_gincana` | (aguardando publicação) |
 | **A Oficina das Palavras** | Aumentativo/diminutivo, sílabas, mau×mal, verbos | `_por4` | https://vidalprof.github.io/a-oficina-das-palavras/ (painel embutido) |
 | **A Viagem no Tempo do Vale** | História (EF04HI01): colonização do Vale do Itajaí — Xokleng, açorianos, alemães (1850), italianos (1875), africanos; mudanças e permanências. Site de pesquisa + quiz | `_vale4` (+ painel) | https://vidalprof.github.io/a-viagem-no-tempo-do-vale/ |
 | **Confeitaria Mágica — Divisão** | Matemática (4º ano): divisão — repartir igual, tabuada, relação com a multiplicação | `_pub_confeitaria` | https://vidalprof.github.io/confeitaria-da-divisao/ |

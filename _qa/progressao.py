@@ -74,7 +74,13 @@ for nome, corpo in corpos.items():
         #    atividade MONTADA esse loop e codigo MORTO: o motor avanca as fases,
         #    o botao e trocado. So o telaCapa estava isento; a entrada da peca
         #    (pecaX, indo de ~100% de volta a 0%) e o mesmo caso.
-        if re.match(r"peca[A-Z]", alvo) and prog[alvo] == 0 and prog[nome] >= 95:
+        # ⚠️ LICAO PAGA (set/2026, peca `divisao-dourado`): este `prog[alvo]`
+        #    supunha que toda funcao `pecaX` estivesse na tabela — e a tabela
+        #    so tem as telas que CHAMAM `setProg`. A entrada da peca nova nao
+        #    chama (quem desenha a barra la e o motor), entao o portao ESTOUROU
+        #    com KeyError em vez de medir. Portao que quebra e portao que nao
+        #    mede: pior que reprovar. Agora pergunta antes de ler.
+        if re.match(r"peca[A-Z]", alvo) and prog.get(alvo) == 0 and prog[nome] >= 95:
             continue
         if alvo in corpos and prog[alvo] is not None and prog[alvo] < prog[nome]:
             ruins.append((nome, prog[nome], alvo, prog[alvo]))

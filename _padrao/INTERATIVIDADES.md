@@ -43,8 +43,7 @@ Gerado em 2026-08-31 a partir das atividades reais (`_*/conteudo.json`) e do mot
 | **linha-do-tempo** | toque | 2 | detetive, por4 |
 | **montar-frase** | toque | 2 | agora, rightnow9 |
 | **ouvir-achar** | toque | 2 | padaria, rightnow9 |
-| **repartir** | toque | 1 | gincana |
-| **saltos-na-fita** | toque | 1 | gincana |
+| **divisao-dourado** | arrastar | 1 | gincana |
 | **arrastar-sombra** | arrastar | 1 | solidos |
 | **autoexplicacao** | toque | 1 | central |
 | **bingo** | toque | 1 | lojinha |
@@ -75,8 +74,8 @@ _Estas 40 peças existem no `pecas.js` mas nunca entraram numa atividade publica
 ## 📊 Resumo
 
 - Banco do motor: **84** interatividades.
-- **Prontas (provadas em atividade): 44.**
-- Faltam lapidar: **40.**
+- **Prontas (provadas em atividade): 43.**
+- Faltam lapidar: **41.**
 
 > Fonte de armadilhas e detalhes por mecânica: `_padrao/DINAMICAS.md`.
 > Catálogo das atividades (com links): `ATIVIDADES.md`.

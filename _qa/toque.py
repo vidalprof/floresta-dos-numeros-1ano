@@ -34,6 +34,13 @@ ARRASTO = {
     u"reta-numerica", u"classificar", u"domino", u"ligar", u"ordenar",
     u"arrastar-lugar", u"arrastar-sombra", u"grafico", u"circuito",
     u"quebra-cabeca", u"tangram", u"mapa-conceitual",
+    # ⭐ MECANICA NOVA = REGRA NOVA NO PORTAO, NO MESMO COMMIT (regra da casa).
+    #    A `divisao-dourado` (a Oficina da Divisao portada, set/2026) e de
+    #    ARRASTO puro — a crianca leva o bloco ate o grupo, e nao vale clicar.
+    #    Sem o nome dela aqui o portao dizia "nenhuma mecanica de arrasto" e
+    #    NAO conferia o `touch-action` — ou seja, passava cego numa atividade
+    #    inteira de arrastar.
+    u"divisao-dourado",
 }
 
 

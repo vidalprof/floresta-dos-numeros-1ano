@@ -134,7 +134,15 @@ def confere(c, mecs):
     #    `"tipo":"criativa"` no conteudo isenta SÓ essas regras — todo o resto
     #    (ids, voz, currículo, campos das peças) continua valendo. (Marcos,
     #    ago/2026: atividade de colorir do Pré.)
-    criativa = str(c.get("tipo", "")).strip().lower() in ("criativa", "livre", "colorir")
+    # ⭐ E JOGO DE MECANICA UNICA (set/2026, ordem do Marcos sobre a divisao com
+    #    material dourado): *"eu quero essa atividade com as dinamicas da oficina
+    #    da divisao... SOMENTE aquela dinamica"*. O `_qa/padrao.py` ja tinha essa
+    #    porta desde o tangram (`TIPO_ATIVIDADE="jogo"`), mas o MONTADOR nao — e
+    #    entao ele bloqueava a publicacao de uma coisa que o dono mandou fazer.
+    #    Portao que obriga a desfazer uma ordem dele e o pior tipo de portao.
+    #    A porta so abre com a declaracao ESCRITA (`"tipo":"jogo"` no conteudo),
+    #    e o montador diz em voz alta que ela foi usada.
+    criativa = str(c.get("tipo", "")).strip().lower() in ("criativa", "livre", "colorir", "jogo")
 
     # ⚠️⚠️ LICAO PAGA (ago/2026) — ID REPETIDO, e o defeito e MUDO.
     #    Ao trocar 6 fases da Padaria eu escrevi os `id` novos de cabeça
@@ -1691,11 +1699,16 @@ def escreve_index(pasta, c, falas):
     #    mecanica de PRODUCAO) e nao cobrarem variedade/aquecimento/cobertura,
     #    do mesmo jeito que o validador do montador ja faz. So aparece quando o
     #    conteudo DECLARA `tipo:"criativa"` — ninguem escapa por acidente.
-    if str(c.get("tipo", "")).strip().lower() in ("criativa", "livre", "colorir"):
+    _tp = str(c.get("tipo", "")).strip().lower()
+    if _tp in ("criativa", "livre", "colorir", "jogo"):
+        # ⚠️ grava o TIPO DE VERDADE, nao "criativa" para todos: o `_qa/padrao.py`
+        #    imprime o motivo da excecao em voz alta, e dizer "criativa" num JOGO
+        #    de divisao seria o portao mentindo sobre por que abriu a porta.
+        _val = "jogo" if _tp == "jogo" else "criativa"
         saida, _qt = re.subn(r'(var MASCOTE_NOME\s*=)',
-                             u'var TIPO_ATIVIDADE="criativa"; \\1', saida, count=1)
+                             u'var TIPO_ATIVIDADE="' + _val + u'"; \\1', saida, count=1)
         if not _qt:
-            saida = saida.replace("<script>", '<script>var TIPO_ATIVIDADE="criativa";', 1)
+            saida = saida.replace("<script>", '<script>var TIPO_ATIVIDADE="' + _val + '";', 1)
     # ⭐ AVALIAÇÃO (Marcos, ago/2026: "avaliação trimestral"): é um instrumento de
     #    NOTA, mais curto que uma aula de 55 min e SEM aquecimento (não há revisão
     #    espaçada numa prova). Marca `TIPO_ATIVIDADE="avaliacao"` para o piso de
