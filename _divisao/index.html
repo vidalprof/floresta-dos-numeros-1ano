@@ -1615,6 +1615,12 @@ function _flutua(txt){
 function __qa(tipo){ if(window.__QAON){ var f=(typeof IFASE==="number"&&typeof FASES!=="undefined"&&FASES[IFASE])?FASES[IFASE]:null;
   (window.__QA=window.__QA||[]).push({t:Date.now(),tipo:tipo,
     fase:(typeof IFASE==="number"?IFASE+1:0), mec:(f&&f.mec)||"?"}); } }
+/* ⚠️ `sTira` — o som de TIRAR uma peça (fileira, volta, contador). Estava
+   definido DENTRO de algumas peças e não de outras: o `arranjo` e o `resto`
+   CHAMAVAM sem definir, e como cada peça vive no seu fechamento, dava
+   `sTira is not defined` na mão da criança — calado, só ao tirar uma peça.
+   Som usado por várias mecânicas mora no motor, como o `nota` e o `confete`. */
+function sTira(){ tom(392,0.07,"triangle",0.12); tom(294,0.09,"triangle",0.11,0.05); }
 function sCerto(){ __qa("acertou"); tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
 /* erro: som grave + pulso háptico DUPLO e leve (não pune) — sem texto (a ajuda
    escrita/dita é que responde ao erro; um "errou!" flutuante seria castigo). */

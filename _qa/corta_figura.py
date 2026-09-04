@@ -46,6 +46,28 @@ import os, re, sys
 LADO_NO_CIRCULO = 70.7      # 100/raiz(2): o quadrado que cabe inteiro no círculo
 
 
+# ⭐ O RETRATO EM MOLDURA REDONDA — a exceção que este portão precisava (set/2026).
+#
+# ⚠️ Ele reprovava o CRACHÁ da criança em três atividades (`.avbox img`,
+#    `.cracha .cav img`), e estava errado. A regra dele nasceu do bicho/objeto
+#    que a criança precisa RECONOBRECER: se o círculo come os cantos do tatu,
+#    ela não sabe o que é. Mas um RETRATO em moldura redonda é o contrário — o
+#    corte circular é o desenho, é assim que crachá e avatar são feitos no mundo
+#    inteiro, e a regra da casa manda o retrato ser "do peito para cima, rosto
+#    legível a 62px". Cortar os cantos de um retrato não tira informação nenhuma.
+#
+# ⚠️ E POR QUE ISTO NÃO É AFROUXAR O PORTÃO: a isenção é pelo NOME do container,
+#    não pela forma. Só passa o que se declara retrato (`av`, `cracha`, `cav`,
+#    `foto`, `retrato`, `perfil`). Qualquer figura de conteúdo dentro de um
+#    círculo continua reprovando exatamente como antes.
+RETRATO = ("av", "cracha", "crachá", "cav", "foto", "retrato", "perfil", "rosto")
+
+
+def eh_retrato(sel):
+    s = sel.lower()
+    return any(k in s for k in RETRATO)
+
+
 def regras(css):
     for m in re.finditer(r"([^{}]+)\{([^{}]*)\}", css):
         yield m.group(1).strip(), m.group(2)
@@ -70,6 +92,8 @@ def confere_css(css, origem):
         pai = alvo.rsplit(" ", 1)[0].split()[-1] if " " in alvo else None
         w = re.search(r"width:(\d+(?:\.\d+)?)%", c)
         if pai in redondos and w:
+            if eh_retrato(sel):
+                continue          # retrato em moldura redonda: o corte E o desenho
             medidas += 1
             larg = float(w.group(1))
             if larg > LADO_NO_CIRCULO + 0.5:
@@ -89,6 +113,8 @@ def confere_css(css, origem):
         # fundo de cena pode usar cover: é para preencher mesmo
         if any(k in s for k in ("fundo", "bg", "capa", "cena", "banner", "hero", "ceu")):
             continue
+        if eh_retrato(s):
+            continue          # crachá/avatar: `cover` é o certo, o rosto preenche
         medidas += 1
         ruins.append(u"[%s] `%s` usa `object-fit:cover`, que CORTA a figura para "
                      u"preencher. Para o bicho/objeto que a crianca precisa "

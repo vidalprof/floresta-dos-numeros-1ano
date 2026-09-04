@@ -885,13 +885,18 @@ def falas_de(c):
         #    o NOME da letra (Érre, Tê...). Acentuadas nao entram: sao preenchidas
         #    sozinhas, nao digitadas (ver LETRAS na peca).
         if f.get("mec") in ("digitar", "forca"):
-            for it in (f.get("dados") or []):
-                if not isinstance(it, dict):
-                    continue
-                w = (it.get("palavra") or it.get("pal") or it.get("resposta") or u"")
-                for ch in set((w or u"").upper()):
-                    if u"A" <= ch <= u"Z":
-                        poe(chave_voz(ch), ch)
+            # ⭐⭐ O ALFABETO INTEIRO, não só as letras da resposta (set/2026).
+            #
+            # ⚠️ A versão anterior colhia as letras da PALAVRA-RESPOSTA — e o
+            #    teclado na tela mostra o ALFABETO. Na Padaria das Letras nove
+            #    teclas ficavam MUDAS (B, C, I, J, Q, R, T, U, V): a criança
+            #    tocava e não ouvia nada. E é justamente na tecla ERRADA que ela
+            #    mais precisa ouvir — é assim que descobre que não era aquela.
+            #    Gravar 26 letras custa uns segundos de workflow e resolve para
+            #    sempre, em qualquer palavra que a atividade venha a ter.
+            for _o in range(65, 91):
+                _ch = chr(_o)
+                poe(chave_voz(_ch), _ch)
         # ⭐ COMPARAR: o painel fala a QUANTIDADE por extenso (ver `data-voz` em
         #    `fazPainel`). Os valores `a`/`b` sao INTEIROS, entao o
         #    `falas_dos_dados` (que so grava STRING) nunca os via, e o painel
