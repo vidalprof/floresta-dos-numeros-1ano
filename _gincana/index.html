@@ -870,7 +870,15 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-arranjo .mostra b{display:block;font-size:26px;font-weight:800;line-height:1.1;color:#ffd54a}
 
-.mec-arranjo .btn.mais{background:#ffd54a;min-width:96px}
+/* ⚠️⚠️ A FAMILIA INTEIRA, DE UMA VEZ (set/2026): o `.btn` da casa vem com
+   letra BRANCA. Toda peca que so trocou o FUNDO para o amarelo #ffd54a
+   ficou com branco sobre amarelo — 1,41:1, quando o minimo de botao e 3:1.
+   O contraste achou no `resto` ("+ volta"); consertei so aquele e ele
+   apontou o `arranjo` ("+ fileira") na rodada seguinte. Conserto de UM caso
+   por rodada e o jeito lento de nao consertar: procurei `.btn` amarelo sem
+   `color` no arquivo inteiro e achei QUATRO (arranjo, balanca, contadores,
+   experimento-justo). Os quatro levam a letra escura agora. */
+.mec-arranjo .btn.mais{background:#ffd54a;color:#33280a;min-width:96px}
 
 .mec-arranjo .btn.menos{background:#e4d9c2;box-shadow:0 4px 0 #b0a68f;min-width:96px}
 
@@ -1262,7 +1270,11 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-estimar .rlabel{font-size:13px;font-weight:700;color:#ffd8a8;margin-top:5px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;display:inline-block;}
 
-.mec-estimar .ancora{max-width:430px;margin:10px auto 0;background:rgba(255,255,255,.12);border-radius:12px; padding:7px 10px;font-size:14px;font-weight:700;color:#f4efe6}
+/* ⚠️ LAPIDACAO (mesma rodada): a ancora do "chute esperto" era letra clara
+   sobre um veu de 12% de branco — ou seja, sobre o FUNDO da atividade, seja
+   ele qual for. Deu 2,48:1 (minimo 4,5). Ela passa a ter chao proprio e
+   escuro: le-se em qualquer atividade que use a peca. */
+.mec-estimar .ancora{max-width:430px;margin:10px auto 0;background:rgba(28,24,14,.82);border-radius:12px; padding:7px 10px;font-size:14px;font-weight:700;color:#fff8ea}
 
 .mec-estimar .apit{display:inline-block;width:20px;height:20px;margin:0 3px;border-radius:50%; background:#ffd54a;border:2px solid #a8801c;vertical-align:middle}
 
@@ -1829,7 +1841,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-resto .mostra b{display:block;font-size:26px;font-weight:800;line-height:1.1;color:#ffd54a}
 
-.mec-resto .btn.mais{background:#ffd54a;min-width:96px}
+/* ⚠️ LAPIDACAO (set/2026, medida pelo `_qa/contraste.js` na Gincana): o botao
+   "+ volta" era o amarelo do tema com a letra BRANCA que o `.btn` traz de
+   fabrica — 1,41:1, quando o minimo para botao e 3:1. Letra branca sobre
+   amarelo nao se le, e este e o botao que a crianca mais aperta na fase do
+   resto. A letra vira escura, como no resto da casa. */
+.mec-resto .btn.mais{background:#ffd54a;color:#33280a;min-width:96px}
 
 .mec-resto .btn.menos{background:#e4d9c2;box-shadow:0 4px 0 #b0a68f;min-width:96px}
 
@@ -1907,7 +1924,19 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-saltos-na-fita .risco{position:absolute;left:50%;bottom:34px;width:5px;height:18px;margin-left:-2px; border-radius:3px;background:#c9bda6}
 
-.mec-saltos-na-fita .numr{position:absolute;left:0;right:0;bottom:4px;font-size:15px;font-weight:800; color:var(--texto,#f4efe6);text-align:center;line-height:20px}
+/* ⚠️ 4a LAPIDACAO (set/2026): os numeros da reta herdavam a cor `--texto` do
+   TEMA e ficavam soltos sobre o fundo da atividade — 3,84:1 medido pelo
+   `_qa/contraste.js`, abaixo do minimo de 4,5. E o pior: a leitura depende do
+   fundo que CADA atividade escolher, entao passar numa nao garante nada na
+   outra. O numero agora traz o proprio chao escuro: le-se sobre qualquer
+   fundo, hoje e na proxima atividade que usar a peca. */
+/* ⚠️ E a 1a tentativa desta lapidacao NAO funcionou, o que vale registrar: eu
+   pus o chao num `:before` com `z-index:-1`. Ele foi parar ATRAS do proprio
+   pai (e o que `z-index:-1` faz num filho de elemento que ja pinta fundo), e o
+   portao mediu exatamente o mesmo pixel de antes — 4,49:1 nas duas rodadas.
+   Numero igual nas duas medidas e o sinal de que a mudanca NAO chegou a tela.
+   O chao tem de ser do PROPRIO elemento. */
+.mec-saltos-na-fita .numr{position:absolute;left:50%;bottom:2px;-webkit-transform:translateX(-50%);transform:translateX(-50%);font-size:15px;font-weight:800;color:#fff8ea;text-align:center;line-height:22px;min-width:26px;padding:0 7px;border-radius:11px;background:#241d0e}
 
 .mec-saltos-na-fita .marca.caiu .risco{background:#6bd23f;height:26px;width:9px;margin-left:-4px}
 
