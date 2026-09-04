@@ -149,6 +149,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
          -webkit-flex-wrap:wrap;flex-wrap:wrap;
          -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
 .qcpc{margin:4px;border-radius:9px;background-repeat:no-repeat;cursor:pointer;
+  /* ⚠️ `touch-action:none` — sem isto o dedo ARRASTA A PÁGINA em vez da peça,
+     e no tablet a criança não consegue montar nada. É a família que o Marcos
+     cobrou como *"as de arrastar não funcionam"*. O portão `_qa/toque.py`
+     mede isto e estava REPROVANDO a entrega do Trem do Alfabeto. */
+  touch-action:none;-ms-touch-action:none;
       border:2px solid rgba(255,255,255,.6);
       -webkit-box-shadow:0 3px 0 rgba(0,0,0,.5);box-shadow:0 3px 0 rgba(0,0,0,.5)}
 .qcpc.sel{border:3px solid #ffd54a;-webkit-transform:translateY(-3px);transform:translateY(-3px)}
