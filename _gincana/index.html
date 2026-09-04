@@ -1225,7 +1225,26 @@ function _flutua(txt){
   }catch(e){}
 }
 /* acerto: som (3 notas) + pulso háptico curto + "Boa!" subindo — os três juntos */
-function sCerto(){ tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
+/* ⭐⭐ RELÓGIO DA ESPERA — a instrumentação que substitui o palpite (set/2026).
+
+   Cobrança do Marcos: *"vc percebe que é sempre remendo"*, *"não se pode
+   inventar, palpite, etc, tem que ser algo profissional"*. Ele estava certo, e
+   eu tinha acabado de provar isso sozinho: tentei DUAS medidas de fora, olhando
+   a tela mudar com o processador freado, e as duas deram igual na versão com
+   defeito e na consertada. Medir o defeito espiando a tela é adivinhação.
+
+   Aqui o motor MARCA os dois instantes que importam, e a suíte só lê:
+     · `acertou`  — a criança fez certo (todo pedaço da casa toca `sCerto()`);
+     · `tela`     — a tela lhe deu algo novo (`limpa()`, entre itens);
+     · `botao`    — o botão de seguir apareceu (`mostraBanner()`).
+   A espera é a diferença. É exata, não estimada.
+
+   ⚠️ CUSTO ZERO PARA A CRIANÇA: só grava quando `window.__QAON` existe, e quem
+   liga isso é a suíte de teste. No app publicado o `if` é falso e acabou. */
+function __qa(tipo){ if(window.__QAON){ var f=(typeof IFASE==="number"&&typeof FASES!=="undefined"&&FASES[IFASE])?FASES[IFASE]:null;
+  (window.__QA=window.__QA||[]).push({t:Date.now(),tipo:tipo,
+    fase:(typeof IFASE==="number"?IFASE+1:0), mec:(f&&f.mec)||"?"}); } }
+function sCerto(){ __qa("acertou"); tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
 /* erro: som grave + pulso háptico DUPLO e leve (não pune) — sem texto (a ajuda
    escrita/dita é que responde ao erro; um "errou!" flutuante seria castigo). */
 function sErro(){ tom(200,0.18,"sawtooth",0.12); tom(150,0.24,"sawtooth",0.12,0.08); vibra([14,46,14]); }
@@ -1622,7 +1641,7 @@ function paraDeVigiar(){ mascotePensa(false); if(_paradaT){clearTimeout(_paradaT
 document.addEventListener("pointerdown", function(){ if(_paradaT) acordaParada(); }, true);
 document.addEventListener("keydown", function(){ if(_paradaT) acordaParada(); }, true);
 function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
-function limpa(){ telaNarrou=false;
+function limpa(){ __qa("tela"); telaNarrou=false;
   /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos com a turma jogando:
      *"tem audio falando da fase anterior, nos botoes de audio"*.
 
@@ -1774,7 +1793,7 @@ function poeVitrine(t, feitas){
      nao dispara na 1a pintura) */
   setTimeout(function(){ if(fill&&fill.parentNode){ fill.style.width=pct+"%"; } },40);
 }
-function mostraBanner(msg,cb){
+function mostraBanner(msg,cb){ __qa("botao");
   /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026, o Marcos jogando): uma fase fechava com
      um "QUADRADO GRANDE desconfigurado" no lugar do aviso fininho. Causa: varias
      pecas (pintar, pintar-canvas, memoria, sete-erros, achar-na-cena,

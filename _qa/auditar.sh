@@ -341,6 +341,30 @@ portao "0b2 dinamicas" python3 _qa/dinamicas.py "$ARQ"
 #    voltava. Aqui estao os dois que medem, para nao depender de eu lembrar.
 echo "--- 0b3) ESPERA (ela acertou; o botao aparece na hora?) -"
 portao "0b3 espera" python3 _qa/espera.py
+
+# ⭐⭐ A PROVA DE SALA — a medida que vale por varios portoes (set/2026).
+#
+# Pedido do Marcos: *"já temos muitos portões, preciso de algo mais eficaz"*.
+# Os outros portoes leem o ARQUIVO. Este JOGA a atividade como a crianca joga,
+# num PC freado 6x, com rede de escola, servida por http (service worker vivo,
+# como no laboratorio) e **com a voz ligada** — as tres coisas que o resto da
+# banca apaga. E nao adivinha olhando a tela: le a marcacao que o proprio motor
+# deixa (`acertou` -> `tela`/`botao`).
+#
+# ⚠️ ELE FOI CALIBRADO CONTRA O DEFEITO DE VERDADE, e e isso que o torna medida
+#    e nao palpite: na Oficina das Palavras da manha (a que travava na fase 13)
+#    ele acusou **3972 ms**; na consertada, **925 ms**. Duas tentativas
+#    anteriores minhas — cronometrar ate o banner, e medir tela congelada —
+#    deram IGUAL nas duas versoes e foram jogadas fora.
+echo "--- 0b5) PROVA DE SALA (PC e rede da escola, voz ligada) -"
+_PORTA=$((8900+RANDOM%80))
+( cd "$PASTA" && node /opt/node22/lib/node_modules/http-server/bin/http-server \
+    -p $_PORTA -s --cors -c-1 >/dev/null 2>&1 ) &
+_SRV=$!
+sleep 2
+portao "0b5 prova de sala" env QA_SALA=1 QA_URL=http://127.0.0.1:$_PORTA/index.html \
+  JSTOP=16 node _qa/jogador.js "$ARQ"
+kill $_SRV 2>/dev/null || true
 echo "--- 0b4) PESO (o PC da escola aguenta a arte?) -"
 portao "0b4 peso" python3 _qa/peso.py "$PASTA"
 

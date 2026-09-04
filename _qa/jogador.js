@@ -31,9 +31,25 @@ catch (e) {
 (async()=>{
  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome',args:['--no-sandbox','--disable-gpu','--autoplay-policy=no-user-gesture-required']});
  const p=await b.newPage({viewport:{width:412,height:820}});
+ /* ⭐ PROVA DE SALA: liga o relogio do motor ANTES de a pagina rodar, e mede na
+    tela do netbook da escola (1024x600), nao no celular. */
+ if(process.env.QA_SALA){
+   await p.setViewportSize({width:1024,height:600});
+   await p.addInitScript(()=>{ window.__QAON=1; });
+ }
  const erros=[];
  p.on('pageerror',e=>{erros.push(e.message);});
- await p.goto((process.argv[2]? 'file://'+require('path').resolve(process.argv[2]) : 'file:///home/user/floresta-dos-numeros-1ano/_doceria/index.html'));
+ /* ⚠️ LICAO PAGA na propria prova de sala (set/2026): rodando em `file://` a
+    medida acusava 2,2 s de espera e eu quase "consertei" o app. Nao era o app:
+    em `file://` **nao existe service worker**, entao a pre-carga da voz nao
+    guarda nada e o mp3 sempre chega tarde — na escola e `http`, e guarda. Um
+    teste que roda num mundo que a crianca nunca ve mede fantasma. Por isso a
+    prova de sala aceita um endereco `http://` (QA_URL) e e assim que ela deve
+    rodar. */
+ const _alvo = process.env.QA_URL ? process.env.QA_URL
+   : (process.argv[2]? 'file://'+require('path').resolve(process.argv[2])
+      : 'file:///home/user/floresta-dos-numeros-1ano/_doceria/index.html');
+ await p.goto(_alvo);
  await p.waitForTimeout(600);
  // pula narracoes: falar() vira no-op
  /* ⭐⭐ PROVA DE SALA (QA_SALA=1) — set/2026, pedido do Marcos: *"já temos
@@ -231,12 +247,7 @@ catch (e) {
         tempo o estado da atividade fica identico enquanto o jogador continua
         clicando. E isso, com o processador freado e a voz LIGADA, e o retrato
         do laboratorio da escola. */
-     const agora = Date.now();
-     if(est!==ultimo){
-       if(_tCongelou && agora-_tCongelou > 400) _esperas.push(agora-_tCongelou);
-       _tCongelou = agora;
      }
-   }
    /* ⭐ resposta DECLARADA certa nao fecha a fase: o ultimo clique foi na opcao
       marcada `data-qa="1"` (return 2) e o estado esta congelado ha LIMCERTO
       iteracoes. Reprova com o motivo exato ANTES do PRESO generico. */
@@ -643,24 +654,38 @@ catch (e) {
  console.log('ERROS JS:', reais.length? reais.slice(0,8).join(' || '):'nenhum');
  if(SALA){
    /* ⭐ O RELATORIO DA PROVA DE SALA — tres numeros, nao setenta e seis portoes */
-   const ord=_esperas.slice().sort((x,y)=>x-y);
-   const med=ord.length?ord[Math.floor(ord.length/2)]:0;
-   const pior=ord.length?ord[ord.length-1]:0;
+   /* le a marcacao que o proprio motor deixou: para cada `acertou`, quanto
+      tempo ate a tela dar algo novo (`tela`) ou o botao aparecer (`botao`) */
+   const linha=await p.evaluate(()=>window.__QA||[]);
+   for(let k=0;k<linha.length;k++){
+     if(linha[k].tipo!=='acertou') continue;
+     for(let j=k+1;j<linha.length;j++){
+       if(linha[j].tipo==='acertou') break;
+       if(linha[j].tipo==='tela'||linha[j].tipo==='botao'){ _esperas.push({ms:linha[j].t-linha[k].t,fase:linha[k].fase,mec:linha[k].mec}); break; }
+     }
+   }
+   const ord=_esperas.slice().sort((x,y)=>x.ms-y.ms);
+   const med=ord.length?ord[Math.floor(ord.length/2)].ms:0;
+   const pior=ord.length?ord[ord.length-1].ms:0;
    console.log('');
    console.log('=== PROVA DE SALA (processador 6x mais lento, rede de escola, voz LIGADA) ===');
-   console.log('  trechos de tela congelada medidos: '+ord.length);
-   console.log('  congelamento TIPICO (mediana): '+med+' ms');
-   console.log('  PIOR congelamento:            '+pior+' ms');
+   console.log('  esperas medidas (acertou -> tela/botao): '+ord.length);
+   console.log('  espera TIPICA (mediana): '+med+' ms');
+   console.log('  PIOR espera:                  '+pior+' ms');
    const TETO=1500;   /* na escola, com tudo freado, ate 1,5 s a crianca aguenta */
    if(pior>TETO){
-     console.log('  ⛔ REPROVA: a crianca clica e a tela fica ate '+pior+' ms SEM RESPONDER');
-     console.log('     (teto da prova, ja com tudo freado: '+TETO+' ms).');
+     console.log('  ⛔ REPROVA: a crianca acerta e espera ate '+pior+' ms sem nada acontecer');
+     console.log('     (teto da prova, ja com tudo freado: '+TETO+' ms). Onde:');
+     const vis={};
+     ord.slice().reverse().filter(e=>e.ms>TETO).forEach(e=>{
+       const k=e.mec+'#'+e.fase; if(vis[k]) return; vis[k]=1;
+       console.log('       fase '+e.fase+'  ('+e.mec+')  '+e.ms+' ms'); });
      process.exitCode=1;
    } else if(!ord.length){
-     console.log('  NAO MEDI: nenhum congelamento colhido — isto nao e "passou".');
+     console.log('  NAO MEDI: o motor nao deixou marcacao — a atividade foi remontada?');
      process.exitCode=2;
    } else {
-     console.log('  prova de sala ok: no PC da escola a tela responde em ate '+pior+' ms');
+     console.log('  prova de sala ok: no PC da escola ela nunca espera mais que '+pior+' ms');
    }
  }
  if(encaixe.length){

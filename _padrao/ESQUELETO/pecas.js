@@ -9263,8 +9263,8 @@ function escolheLado(g,alvo){
     diz(vozPasso1());
     setTimeout(function(){
       if(g!==ger||!viva()) return;
-      if(semSinalAtual) fechaRodada(g,900); else montaPasso2(g);
-    },1600);
+      if(semSinalAtual) fechaRodada(g,600); else montaPasso2(g);
+    },650);   /* era 1600 ms: espera morta DEPOIS de a crianca ja ter acertado */
     return;
   }
   errosP1++;
@@ -9304,9 +9304,9 @@ function esperaERevela1(g){
     diz(vozPasso1());
     setTimeout(function(){
       if(g!==ger||!viva()) return;
-      if(semSinalAtual) fechaRodada(g,1100); else montaPasso2(g);
-    },1700);
-  },1500);
+      if(semSinalAtual) fechaRodada(g,600); else montaPasso2(g);
+    },650);   /* era 1700 ms: espera morta DEPOIS de a crianca ja ter acertado */
+  },650);   /* era 1500 ms: espera morta DEPOIS de a crianca ja ter acertado */
 }
 function revelaTudo(){
   if(!painelA||!painelB) return;
@@ -9394,7 +9394,7 @@ function escolheSinal(g,sn,b,kcerto){
     msgEl.className="msgc ok";
     msgEl.innerHTML="<b>"+vTopo+"</b> &eacute; <b>"+palavraSin()+"</b> <b>"+vBaixo+"</b>.";
     diz(nomeNum(vTopo) + " é " + palavraSin() + " " + nomeNum(vBaixo) + ".");
-    fechaRodada(g,1900);
+    fechaRodada(g,600);
     return;
   }
   errosSin++;
@@ -9441,8 +9441,8 @@ function esperaERevelaSin(g){
     /* revela PRIMEIRO (o sinal ja entrou), explica DEPOIS */
     mostraDica(dicasSin()[2]);
     diz(nomeNum(vTopo) + " é " + palavraSin() + " " + nomeNum(vBaixo) + ".");
-    fechaRodada(g,2100);
-  },1500);
+    fechaRodada(g,600);
+  },650);   /* era 1500 ms: espera morta DEPOIS de a crianca ja ter acertado */
 }
 function poeSinal(s){
   if(!slotEl) return;
@@ -15662,7 +15662,7 @@ function responde(o,certa){
         if(_gc!==ger) return;
         falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
       }, 450);
-      setTimeout(_avanca, 2200) /* rede-de-seguranca: so dispara se a voz nao chegar */;             /* rede: voz bloqueada/lenta nunca prende */
+      setTimeout(_avanca, 900) /* rede-de-seguranca: so dispara se a voz nao chegar */;             /* rede: voz bloqueada/lenta nunca prende */
     }else{
       setTimeout(_avanca,700);
     }
