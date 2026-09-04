@@ -189,7 +189,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   -webkit-box-pack:center;justify-content:center;
   -webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f;
   -webkit-animation:bsPop .28s;animation:bsPop .28s}
-.bsBatida img{width:84%;height:84%;object-fit:contain}
+.bsBatida img{width:70%;height:70%;object-fit:contain}
+  /* ⚠️ 70%, não 84%: o container é REDONDO (`border-radius:50%`) e o maior
+     quadrado que cabe inteiro dentro de um círculo é 70,7% do diâmetro. A
+     84% o círculo comia os quatro cantos da figura. Medido pelo portão
+     `moldura corta`, que reprovava a entrega inteira por causa disso. */
 .bsBatida.eco{background:#f6c23a;-webkit-transform:scale(1.18);transform:scale(1.18)}
 @-webkit-keyframes bsPop{0%{-webkit-transform:scale(.2);opacity:0}100%{-webkit-transform:scale(1);opacity:1}}
 @keyframes bsPop{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
@@ -450,6 +454,7 @@ function piscaBatida(){
 }
 
 function pecaBater(){
+  travando=false;   /* rodada nova: a porta reabre */
   var r=BATIDAS[ri];
   if(!r){ fimDaPeca(); return; }
   err=0; bat=0; ger++;
@@ -541,8 +546,17 @@ function zera(r){
   marcaQA(r);
 }
 
+/* ⚠️ O CADEADO DA COMEMORAÇÃO (o "ELEFANTE trava", cobrado pelo Marcos).
+   A festa do acerto dura segundos — uma sílaba por vez. Nesse tempo o botão
+   Pronto e o Enter continuavam vivos, e a criança impaciente tocava de novo:
+   `confere` reentrava, `acerta` rodava duas vezes e agendava outro avanço de
+   rodada. A peça embaralhava e ficava presa. Quanto mais longa a palavra, maior
+   a janela — por isso só aparecia no ELEFANTE. A porta fecha durante a festa e
+   a próxima rodada a reabre (`travando=false` no `pecaBater`). */
+var travando=false;
 function confere(r){
-  if(bat===r.sil.length){ acerta(r); return; }
+  if(travando) return;
+  if(bat===r.sil.length){ travando=true; acerta(r); return; }
   /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
      Contar errado no 1º ano é o normal — é justamente o que está em treino. */
   err++; sVolta();

@@ -3920,6 +3920,7 @@ function piscaBatida(){
 }
 
 function pecaBater(){
+  travando=false;   /* rodada nova: a porta reabre */
   var r=BATIDAS[ri];
   if(!r){ fimDaPeca(); return; }
   err=0; bat=0; ger++;
@@ -4011,8 +4012,17 @@ function zera(r){
   marcaQA(r);
 }
 
+/* ⚠️ O CADEADO DA COMEMORAÇÃO (o "ELEFANTE trava", cobrado pelo Marcos).
+   A festa do acerto dura segundos — uma sílaba por vez. Nesse tempo o botão
+   Pronto e o Enter continuavam vivos, e a criança impaciente tocava de novo:
+   `confere` reentrava, `acerta` rodava duas vezes e agendava outro avanço de
+   rodada. A peça embaralhava e ficava presa. Quanto mais longa a palavra, maior
+   a janela — por isso só aparecia no ELEFANTE. A porta fecha durante a festa e
+   a próxima rodada a reabre (`travando=false` no `pecaBater`). */
+var travando=false;
 function confere(r){
-  if(bat===r.sil.length){ acerta(r); return; }
+  if(travando) return;
+  if(bat===r.sil.length){ travando=true; acerta(r); return; }
   /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
      Contar errado no 1º ano é o normal — é justamente o que está em treino. */
   err++; sVolta();
@@ -15458,8 +15468,12 @@ MEC["escolher"] = function(f, cen, fim){
    · `voz` = o que o alto-falante diz, quando é diferente da palavra escrita
              (OPCIONAL — sem ele, fala a própria palavra).
    Sem `img` nada muda: nenhuma atividade que já usa esta peça quebra.     */
-var TITULO="PARTES DA PLANTA";
-var FECHO="Voc&#234; j&#225; conhece as partes da planta!";
+var TITULO="ESCOLHA A CERTA";   /* ⚠️ padrao NEUTRO: quem nao preencher
+   a gaveta recebe isto. Ja esteve "PARTES DA PLANTA" e chegou assim a
+   criancas em 11 atividades — inclusive numa de DIVISAO, que fechava a fase
+   dizendo que ela conhecia as partes da planta. O exemplo do quiz da planta
+   continua logo abaixo, no vetor QZ, para ensinar o formato. */
+var FECHO="Voc&#234; acertou todas as escolhas!";
 /* ⭐ SÓ IMAGEM (escolha do Marcos, ago/2026): quando a opção é a FIGURA na
    moldura de vidro, dá para esconder a PALAVRA embaixo e deixar só o desenho +
    o alto-falante (a criança toca e ouve o nome). Opcional; por padrão a palavra
@@ -20090,8 +20104,19 @@ function fazSilaba(item, r){
      mouse DEPOIS do toque, e sem este guarda eles desfaziam o gesto. Defeito já
      pego duas vezes na casa. */
   arrastavel(b, r);
-  b.onclick=function(){
-    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+  /* ⭐⭐ A AÇÃO SEPARADA DO GUARDA (set/2026) — o defeito que fazia o toque não
+     funcionar, e que o Marcos cobrou como *"as de arrastar não funcionam"*.
+
+     O `onclick` precisa do guarda do MOUSE FANTASMA: depois de um toque, o
+     navegador do celular dispara um clique de mouse falso, e sem o guarda a
+     peça agia duas vezes. Só que os handlers de TOQUE marcavam `_ultimoToque` e
+     logo em seguida chamavam `b.onclick()` — caindo no próprio guarda. Ou seja:
+     no celular o dedo não fazia NADA, e no PC funcionava, então nos meus testes
+     passava sempre.
+
+     A cura é separar: `agir()` é a ação, sem guarda nenhum; o `onclick` põe o
+     guarda e chama `agir()`; o toque chama `agir()` DIRETO. */
+  function agir(){
     if(b.className.indexOf("usada")>=0) return;
     var esperada=r.sil[posto];
     if(item.s===esperada && b.className.indexOf("usada")<0){
@@ -20104,6 +20129,14 @@ function fazSilaba(item, r){
       b.className="jsSil";
       ajuda(err, r);
     }
+  }
+  /* ⚠️ pendurada NO ELEMENTO porque o `arrastavel()` é outra função e não
+     enxerga o `agir` daqui — foi o que quase me fez publicar um `agir is not
+     defined` no lugar do defeito. */
+  b._agir=agir;
+  b.onclick=function(){
+    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+    agir();
   };
   return b;
 }
@@ -20140,7 +20173,7 @@ function arrastavel(b, r){
     if(v){
       var q=v.getBoundingClientRect();
       /* margem generosa: dedo de 6 anos nao acerta o pixel */
-      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ b.onclick(); return; }
+      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ if(b._agir) b._agir(); return; }
     }
     sVolta();
   }
@@ -20164,7 +20197,7 @@ function arrastavel(b, r){
     if(q){ var g=q.getBoundingClientRect();
       if(!(t.clientX>g.left-30&&t.clientX<g.right+30&&t.clientY>g.top-30&&t.clientY<g.bottom+30)){
         arr=false; b.style.webkitTransform=""; b.style.transform="";
-        b.onclick(); return; } }
+        if(b._agir) b._agir(); return; } }
     solta(t.clientX,t.clientY);
   },false);
 }

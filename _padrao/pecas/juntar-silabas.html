@@ -466,8 +466,19 @@ function fazSilaba(item, r){
      mouse DEPOIS do toque, e sem este guarda eles desfaziam o gesto. Defeito já
      pego duas vezes na casa. */
   arrastavel(b, r);
-  b.onclick=function(){
-    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+  /* ⭐⭐ A AÇÃO SEPARADA DO GUARDA (set/2026) — o defeito que fazia o toque não
+     funcionar, e que o Marcos cobrou como *"as de arrastar não funcionam"*.
+
+     O `onclick` precisa do guarda do MOUSE FANTASMA: depois de um toque, o
+     navegador do celular dispara um clique de mouse falso, e sem o guarda a
+     peça agia duas vezes. Só que os handlers de TOQUE marcavam `_ultimoToque` e
+     logo em seguida chamavam `b.onclick()` — caindo no próprio guarda. Ou seja:
+     no celular o dedo não fazia NADA, e no PC funcionava, então nos meus testes
+     passava sempre.
+
+     A cura é separar: `agir()` é a ação, sem guarda nenhum; o `onclick` põe o
+     guarda e chama `agir()`; o toque chama `agir()` DIRETO. */
+  function agir(){
     if(b.className.indexOf("usada")>=0) return;
     var esperada=r.sil[posto];
     if(item.s===esperada && b.className.indexOf("usada")<0){
@@ -480,6 +491,14 @@ function fazSilaba(item, r){
       b.className="jsSil";
       ajuda(err, r);
     }
+  }
+  /* ⚠️ pendurada NO ELEMENTO porque o `arrastavel()` é outra função e não
+     enxerga o `agir` daqui — foi o que quase me fez publicar um `agir is not
+     defined` no lugar do defeito. */
+  b._agir=agir;
+  b.onclick=function(){
+    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+    agir();
   };
   return b;
 }
@@ -516,7 +535,7 @@ function arrastavel(b, r){
     if(v){
       var q=v.getBoundingClientRect();
       /* margem generosa: dedo de 6 anos nao acerta o pixel */
-      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ b.onclick(); return; }
+      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ if(b._agir) b._agir(); return; }
     }
     sVolta();
   }
@@ -540,7 +559,7 @@ function arrastavel(b, r){
     if(q){ var g=q.getBoundingClientRect();
       if(!(t.clientX>g.left-30&&t.clientX<g.right+30&&t.clientY>g.top-30&&t.clientY<g.bottom+30)){
         arr=false; b.style.webkitTransform=""; b.style.transform="";
-        b.onclick(); return; } }
+        if(b._agir) b._agir(); return; } }
     solta(t.clientX,t.clientY);
   },false);
 }

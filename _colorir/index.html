@@ -991,6 +991,11 @@ var ID = {"pre": "co", "mascote": "guia", "mascoteNome": "Rai", "titulo": "O Ate
    mascote alheio aparecer no texto desta.                            */
 var TIPO_ATIVIDADE="criativa"; var MASCOTE_NOME="Rai";  /* ID.mascoteNome */
 var IMGS=[];
+/* ⚠️ DECLARADO AQUI, preenchido pelo montador (igual ao `IMGS` e ao `VOZOK`).
+   Sem esta linha o ESLint do portao pre-entrega acusa `AUDIOS is not defined`
+   em TODA atividade e **nada e publicado** — foi o que aconteceu hoje: quatro
+   entregas seguidas falharam em 55s e eu levei horas para ir ver o log. */
+var AUDIOS=[];
 var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}precarregaVoz();}
 /* ⭐⭐ A VOZ CHEGA ANTES DA CRIANÇA — pré-carga em segundo plano.
 

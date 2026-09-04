@@ -1855,6 +1855,11 @@ var ID = {"pre": "lb", "mascote": "pipo", "mascoteNome": "Pipo", "titulo": "A Lo
    mascote alheio aparecer no texto desta.                            */
 var MASCOTE_NOME="Pipo";  /* ID.mascoteNome */
 var IMGS=[];
+/* ⚠️ DECLARADO AQUI, preenchido pelo montador (igual ao `IMGS` e ao `VOZOK`).
+   Sem esta linha o ESLint do portao pre-entrega acusa `AUDIOS is not defined`
+   em TODA atividade e **nada e publicado** — foi o que aconteceu hoje: quatro
+   entregas seguidas falharam em 55s e eu levei horas para ir ver o log. */
+var AUDIOS=[];
 var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}precarregaVoz();}
 /* ⭐⭐ A VOZ CHEGA ANTES DA CRIANÇA — pré-carga em segundo plano.
 
@@ -6532,8 +6537,12 @@ MEC["escolher"] = function(f, cen, fim){
    · `voz` = o que o alto-falante diz, quando é diferente da palavra escrita
              (OPCIONAL — sem ele, fala a própria palavra).
    Sem `img` nada muda: nenhuma atividade que já usa esta peça quebra.     */
-var TITULO="PARTES DA PLANTA";
-var FECHO="Voc&#234; j&#225; conhece as partes da planta!";
+var TITULO="ESCOLHA A CERTA";   /* ⚠️ padrao NEUTRO: quem nao preencher
+   a gaveta recebe isto. Ja esteve "PARTES DA PLANTA" e chegou assim a
+   criancas em 11 atividades — inclusive numa de DIVISAO, que fechava a fase
+   dizendo que ela conhecia as partes da planta. O exemplo do quiz da planta
+   continua logo abaixo, no vetor QZ, para ensinar o formato. */
+var FECHO="Voc&#234; acertou todas as escolhas!";
 /* ⭐ SÓ IMAGEM (escolha do Marcos, ago/2026): quando a opção é a FIGURA na
    moldura de vidro, dá para esconder a PALAVRA embaixo e deixar só o desenho +
    o alto-falante (a criança toca e ouve o nome). Opcional; por padrão a palavra
