@@ -55,6 +55,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **UNO das Cores** | Jogo de UNO completo contra o robô: combinar por COR, por NÚMERO ou por tipo de carta (pula, inverte, +2, coringa) — atenção, classificação por atributo e primeiras estratégias; tutorial em slides, mascote e narração | `_uno1` | https://vidalprof.github.io/jogoUno1-/ |
 | **O Trem do Alfabeto** | Alfabeto, sílabas e palavras | `_trem` | https://vidalprof.github.io/o-trem-do-alfabeto/ |
 | **Pinta e Monta** | Arte/coordenação: a criança pinta por área (balde), o desenho se recorta em quebra-cabeça de verdade (com encaixes), as peças caem numa bandeja e ela monta no quadro (8 desenhos, 12→16→20 peças; fundo de ateliê) | `_pinta` | https://vidalprof.github.io/pinta-e-monta/ |
 | **A Padaria das Letras** | Alfabeto e pedaços das palavras | `_padaria` | https://vidalprof.github.io/a-padaria-das-letras/ |

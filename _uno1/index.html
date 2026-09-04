@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNO das Cores - Jogo para Aprender</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap');
+
+  :root{
+    --azul:#0099DD;
+    --vermelho:#E5202E;
+    --amarelo:#F7B500;
+    --verde:#3EA72D;
+    --fundo:#FFF7E6;
+    --escuro:#2B2440;
+    --branco:#FFFFFF;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+  body{
+    font-family:'Fredoka',sans-serif;
+    background:
+      radial-gradient(circle at 50% 0%, #2E86C9 0, transparent 55%),
+      radial-gradient(circle at 12% 88%, #1C6BB0 0, transparent 45%),
+      radial-gradient(circle at 88% 92%, #1C6BB0 0, transparent 45%),
+      linear-gradient(180deg, #2876B8 0%, #1B5D9E 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    color:#fff;
+    overflow-x:hidden;
+  }
+
+  /* ---------- TOPO ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 22px; gap:12px; flex-wrap:wrap;
+  }
+  .logo{
+    font-family:'Baloo 2',sans-serif; font-weight:800;
+    font-size:clamp(28px,5vw,46px); letter-spacing:1px;
+    display:flex; gap:4px; align-items:center;
+  }
+  .logo .l{ display:inline-block; padding:2px 14px; border-radius:14px; color:#fff;
+    box-shadow:0 4px 0 rgba(0,0,0,.15); transform:rotate(-3deg);}
+  .logo .l:nth-child(1){ background:var(--vermelho); transform:rotate(-4deg);}
+  .logo .l:nth-child(2){ background:var(--azul); transform:rotate(3deg);}
+  .logo .l:nth-child(3){ background:var(--verde); transform:rotate(-2deg);}
+  .logo small{ font-family:'Fredoka'; font-size:16px; color:#EAF4FF; margin-left:10px; font-weight:600;}
+
+  .btn{
+    font-family:'Baloo 2',sans-serif; font-weight:700; border:none; cursor:pointer;
+    border-radius:18px; padding:12px 22px; font-size:clamp(16px,2.4vw,22px);
+    color:#fff; box-shadow:0 5px 0 rgba(0,0,0,.18); transition:transform .08s, box-shadow .08s;
+  }
+  .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,.18);}
+  .btn-tutorial{ background:var(--escuro); }
+  .btn-novo{ background:var(--verde); }
+  .btn-voz{ background:#7A4FC0; }
+  .btn-voz.voz-off{ background:#8A8A8A; }
+  .topo-botoes{ display:flex; gap:10px; flex-wrap:wrap;}
+
+  /* ---------- MESA ---------- */
+  .mesa{ max-width:1000px; margin:0 auto; padding:8px 16px 40px; }
+
+  .jogador-area h2, .computador-area h2{
+    font-family:'Baloo 2'; font-size:clamp(18px,3vw,26px); margin-bottom:8px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .avatar{ font-size:30px;}
+
+  .computador-area{ text-align:center; margin-bottom:10px;}
+  .cartas-cpu{ display:flex; justify-content:center; gap:-20px; min-height:90px; flex-wrap:wrap;}
+  .verso{
+    width:58px; height:86px; border-radius:12px; margin:0 -14px;
+    background:repeating-linear-gradient(45deg,#5B4B8A,#5B4B8A 8px,#43386B 8px,#43386B 16px);
+    border:3px solid #fff; box-shadow:0 4px 8px rgba(0,0,0,.2);
+    display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:22px;
+    font-family:'Baloo 2';
+  }
+
+  /* centro: monte + mensagem */
+  .centro{
+    display:flex; align-items:center; justify-content:center; gap:26px;
+    margin:18px 0; flex-wrap:wrap;
+  }
+  .monte{ text-align:center;}
+  .monte .rotulo{ font-weight:600; margin-bottom:6px; font-size:15px;}
+  /* ===== ESTILO CLÁSSICO DAS CARTAS ===== */
+  /* moldura branca externa + miolo colorido + oval branco inclinado + número central
+     + números pequenos nos cantos. Tudo desenhado em CSS, sem imagens. */
+  .uno{
+    position:relative; background:#fff; border-radius:14px;
+    box-shadow:0 6px 12px rgba(0,0,0,.28); font-family:'Baloo 2'; overflow:hidden;
+  }
+  .uno .miolo{ position:absolute; inset:6%; border-radius:10px; overflow:hidden; }
+  /* oval branco inclinado característico */
+  .uno .oval{
+    position:absolute; left:50%; top:50%;
+    width:118%; height:54%;
+    background:#fff; border-radius:50%;
+    transform:translate(-50%,-50%) rotate(-32deg);
+    box-shadow:0 6px 14px rgba(0,0,0,.22) inset, 0 2px 6px rgba(0,0,0,.18);
+  }
+  /* número grande central com contorno */
+  .uno .central{
+    position:absolute; left:0; top:0; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; line-height:1; z-index:2;
+    -webkit-text-stroke:2px rgba(0,0,0,.18);
+    paint-order:stroke fill;
+  }
+  /* números pequenos nos cantos opostos */
+  .uno .canto{ position:absolute; font-weight:800; color:#fff; z-index:3; line-height:1;
+    text-shadow:0 1px 0 rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; }
+  .uno .canto.tl{ top:5%; left:7%; }
+  .uno .canto.br{ bottom:5%; right:7%; transform:rotate(180deg); }
+  .uno .canto .simb-svg{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.3)); width:var(--cc); height:var(--cc); display:block; }
+  .uno .central .simb-svg{ filter:drop-shadow(0 2px 3px rgba(0,0,0,.18)); width:var(--sc); height:var(--sc); display:block; }
+  .uno .simb-c, .uno .simb-k{ display:flex; align-items:center; justify-content:center; }
+  .uno .canto-mais2{ font-weight:800; }
+
+  .carta-grande{ width:120px; height:178px; --sc:96px; --cc:30px; }
+  .carta-grande .central{ font-size:78px; }
+  .carta-grande .canto{ font-size:26px; }
+  .carta-grande .canto-mais2{ font-size:20px; }
+  .comprar{
+    width:120px; height:178px; border-radius:18px; border:6px dashed var(--escuro);
+    background:#fff; display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center;
+    cursor:pointer; font-family:'Baloo 2'; font-weight:700; font-size:18px; color:var(--escuro);
+    transition:transform .08s;
+  }
+  .comprar:hover{ transform:scale(1.05); background:#FFF3D6;}
+  .comprar .big{ font-size:46px;}
+  .comprar.destaque{ border-color:var(--amarelo); background:#FFF8E0; animation:chama 1s ease-in-out infinite; }
+  @keyframes chama{
+    0%,100%{ box-shadow:0 0 0 0 rgba(247,181,0,.6); transform:scale(1); }
+    50%{ box-shadow:0 0 0 12px rgba(247,181,0,0); transform:scale(1.05); }
+  }
+
+  /* mensagem grande */
+  .mensagem{
+    text-align:center; font-family:'Baloo 2'; font-weight:700; color:#1a1633;
+    font-size:clamp(20px,4vw,32px); min-height:48px; margin:6px 0 14px;
+    padding:10px 18px; border-radius:18px; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,.1);
+    display:inline-block; max-width:90%;
+  }
+  .mensagem-wrap{ text-align:center;}
+
+  /* mão do jogador */
+  .jogador-area{ margin-top:14px;}
+  .minhas-cartas{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:6px;}
+  .carta{
+    width:78px; height:116px; cursor:pointer; --sc:62px; --cc:19px;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .carta .central{ font-size:48px; }
+  .carta .canto{ font-size:17px; }
+  .carta .canto-mais2{ font-size:13px; }
+  .carta.jogavel:hover{ transform:translateY(-16px) scale(1.06); box-shadow:0 14px 20px rgba(0,0,0,.3);}
+  .carta.jogavel{ outline:4px solid #FFE49B; outline-offset:1px; }
+  .carta.bloqueada{ filter:grayscale(.55) brightness(.92); cursor:not-allowed; opacity:.72;}
+
+  .c-azul .miolo{ background:var(--azul);}
+  .c-vermelho .miolo{ background:var(--vermelho);}
+  .c-amarelo .miolo{ background:var(--amarelo);}
+  .c-verde .miolo{ background:var(--verde);}
+  /* cor do número central = cor da carta (fica sobre o oval branco) */
+  .c-azul .central{ color:var(--azul);}
+  .c-vermelho .central{ color:var(--vermelho);}
+  .c-amarelo .central{ color:var(--amarelo);}
+  .c-verde .central{ color:var(--verde);}
+  .c-curinga .central{ color:#fff;}
+  /* cartas pretas (+2 e +4) */
+  .c-preta .miolo{ background:#15131F;}
+  .c-preta .central{ color:#fff;}
+
+  .dica{ text-align:center; font-size:16px; color:#EAF4FF; margin-top:8px; font-weight:600;}
+
+  /* ---------- SELETOR DE COR ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(58,46,92,.55); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .overlay.ativo{ display:flex; }
+  .escolher-cor{
+    background:#fff; border-radius:26px; padding:26px; text-align:center; max-width:420px; width:100%;
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+  }
+  .escolher-cor h3{ font-family:'Baloo 2'; font-size:26px; margin-bottom:16px; color:#2B2440;}
+  .cores-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .cor-opcao{
+    height:90px; border-radius:18px; border:4px solid rgba(0,0,0,.15); cursor:pointer; color:#111;
+    font-family:'Baloo 2'; font-weight:800; font-size:22px; box-shadow:0 5px 0 rgba(0,0,0,.18);
+    transition:transform .08s; text-shadow:0 1px 0 rgba(255,255,255,.45);
+  }
+  .cor-opcao:active{ transform:translateY(4px);}
+  .cor-opcao.c-vermelho{ background:var(--vermelho);}
+  .cor-opcao.c-azul{ background:var(--azul);}
+  .cor-opcao.c-verde{ background:var(--verde);}
+  .cor-opcao.c-amarelo{ background:var(--amarelo);}
+
+  /* ---------- TUTORIAL ---------- */
+  .tutorial{
+    position:fixed; inset:0; background:rgba(58,46,92,.92); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:18px;
+  }
+  .tutorial.ativo{ display:flex; }
+  .slide-box{
+    background:var(--branco); border-radius:30px; max-width:760px; width:100%;
+    padding:30px 28px 24px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.4);
+    position:relative;
+  }
+  .slide-num{ font-weight:700; color:#9a8fc0; font-size:16px; margin-bottom:6px;}
+  .mascote-linha{ display:flex; align-items:center; gap:18px; justify-content:center; flex-wrap:wrap;}
+  .mascote{ flex:0 0 auto; width:120px; animation:flutua 2.6s ease-in-out infinite;}
+  .mascote svg{ width:120px; height:150px; filter:drop-shadow(0 6px 8px rgba(0,0,0,.18));}
+  @keyframes flutua{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-8px) rotate(2deg);} }
+  .balao{
+    position:relative; background:#F1F6FF; border:4px solid #BBD4F0; border-radius:24px;
+    padding:18px 22px; max-width:480px; flex:1 1 320px; text-align:center; color:#1a1a1a;
+  }
+  .balao::before{
+    content:""; position:absolute; left:-22px; top:50%; transform:translateY(-50%);
+    border:14px solid transparent; border-right-color:#BBD4F0;
+  }
+  .balao::after{
+    content:""; position:absolute; left:-15px; top:50%; transform:translateY(-50%);
+    border:11px solid transparent; border-right-color:#F1F6FF;
+  }
+  .slide-emoji{ font-size:54px; line-height:1; margin:0 0 6px; display:block;}
+  .slide-box h2#slideTitulo{ font-family:'Baloo 2'; font-size:clamp(22px,4vw,32px); margin-bottom:12px; color:#1a1633 !important;}
+  .slide-box p#slideTexto{ font-size:clamp(17px,2.6vw,22px); line-height:1.5; color:#23203a !important; max-width:600px; margin:0 auto;}
+  .balao h2, .balao p{ color:#23203a !important;}
+  .slide-cartinha{ display:inline-flex; gap:10px; margin:12px 0; justify-content:center; flex-wrap:wrap;}
+  @media (max-width:560px){
+    .mascote-linha{ flex-direction:column; gap:6px;}
+    .balao::before,.balao::after{ left:50%; top:-22px; transform:translateX(-50%) rotate(90deg);}
+    .mascote{ width:92px;} .mascote svg{ width:92px; height:115px;}
+  }
+  .mini{
+    width:62px; height:92px; --sc:50px; --cc:15px;
+    font-size:38px;
+  }
+  .mini .central{ font-size:38px; }
+  .mini .canto{ font-size:13px; }
+  .mini .canto-mais2{ font-size:10px; }
+  .tut-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:22px; gap:10px;}
+  .bolinhas{ display:flex; gap:8px; justify-content:center; flex:1;}
+  .bolinha{ width:13px; height:13px; border-radius:50%; background:#D8D0EE; transition:background .2s, transform .2s;}
+  .bolinha.on{ background:var(--escuro); transform:scale(1.3);}
+  .btn-nav{ background:var(--azul); }
+  .btn-fechar-tut{ background:var(--vermelho); }
+  .btn-nav:disabled{ opacity:.35; cursor:default; transform:none; box-shadow:0 5px 0 rgba(0,0,0,.18);}
+
+  /* vitória confete simples */
+  .festa{ animation:pulo .6s ease infinite alternate;}
+  @keyframes pulo{ from{transform:scale(1);} to{transform:scale(1.06) rotate(-1deg);} }
+
+  @media (max-width:560px){
+    .carta{ width:64px; height:96px; --sc:52px; --cc:16px;}
+    .carta .central{ font-size:40px;}
+    .carta .canto{ font-size:14px;}
+    .carta-grande,.comprar{ width:100px; height:150px;}
+    .carta-grande{ --sc:80px; --cc:25px;}
+    .carta-grande .central{ font-size:64px;}
+    .carta-grande .canto{ font-size:22px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="l">U</span><span class="l">N</span><span class="l">O</span>
+    <small>das Cores</small>
+  </div>
+  <div class="topo-botoes">
+    <button class="btn btn-voz" id="btnVoz" onclick="alternarVoz()">🔊 Voz</button>
+    <button class="btn btn-tutorial" onclick="abrirTutorial()">📖 Tutorial</button>
+    <button class="btn btn-novo" onclick="novoJogo()">🔄 Novo Jogo</button>
+  </div>
+</header>
+
+<main class="mesa">
+
+  <section class="computador-area">
+    <h2><span class="avatar">🤖</span> Robô <span id="qtdCpu">(7 cartas)</span></h2>
+    <div class="cartas-cpu" id="cartasCpu"></div>
+  </section>
+
+  <div class="mensagem-wrap">
+    <div class="mensagem" id="mensagem">Toque em uma carta para começar!</div>
+  </div>
+
+  <section class="centro">
+    <div class="monte">
+      <div class="rotulo">Carta da mesa</div>
+      <div class="carta-grande" id="cartaMesa"><span class="num">?</span></div>
+    </div>
+    <div class="monte">
+      <div class="rotulo">Comprar</div>
+      <button class="comprar" id="btnComprar" onclick="comprarCarta()">
+        <span class="big">🃏</span>
+        <span>Pegar 1</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="jogador-area">
+    <h2><span class="avatar">🧒</span> Você <span id="qtdEu">(7 cartas)</span></h2>
+    <div class="minhas-cartas" id="minhasCartas"></div>
+    <div class="dica" id="dica">As cartas que brilham são as que você pode jogar! ✨</div>
+  </section>
+
+</main>
+
+<!-- Seletor de cor (curinga) -->
+<div class="overlay" id="overlayCor">
+  <div class="escolher-cor">
+    <h3>Escolha uma cor! 🎨</h3>
+    <div class="cores-grid">
+      <button class="cor-opcao c-vermelho" onclick="escolherCor('vermelho')">Vermelho</button>
+      <button class="cor-opcao c-azul" onclick="escolherCor('azul')">Azul</button>
+      <button class="cor-opcao c-verde" onclick="escolherCor('verde')">Verde</button>
+      <button class="cor-opcao c-amarelo" onclick="escolherCor('amarelo')">Amarelo</button>
+    </div>
+  </div>
+</div>
+
+<!-- TUTORIAL -->
+<div class="tutorial" id="tutorial">
+  <div class="slide-box">
+    <div class="slide-num" id="slideNum">Passo 1 de 6</div>
+    <div class="mascote-linha">
+      <div class="mascote" id="mascote">
+        <svg viewBox="0 0 120 150" aria-hidden="true">
+          <!-- antena -->
+          <line x1="60" y1="12" x2="60" y2="30" stroke="#1B5D9E" stroke-width="5"/>
+          <circle cx="60" cy="10" r="7" fill="#E5202E"/>
+          <!-- cabeça -->
+          <rect x="22" y="28" width="76" height="62" rx="16" fill="#9FB8CC" stroke="#1B5D9E" stroke-width="5"/>
+          <!-- visor -->
+          <rect x="32" y="40" width="56" height="30" rx="10" fill="#16324B"/>
+          <circle cx="48" cy="55" r="7" fill="#56E0FF"/>
+          <circle cx="72" cy="55" r="7" fill="#56E0FF"/>
+          <circle cx="50" cy="52" r="2.4" fill="#fff"/>
+          <circle cx="74" cy="52" r="2.4" fill="#fff"/>
+          <!-- boca -->
+          <rect x="46" y="78" width="28" height="7" rx="3.5" fill="#1B5D9E"/>
+          <!-- orelhas -->
+          <rect x="14" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <rect x="98" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <!-- corpo -->
+          <rect x="32" y="92" width="56" height="44" rx="12" fill="#C8D7E4" stroke="#1B5D9E" stroke-width="5"/>
+          <circle cx="60" cy="114" r="9" fill="#F7B500" stroke="#1B5D9E" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="balao">
+        <span class="slide-emoji" id="slideEmoji">👋</span>
+        <h2 id="slideTitulo"></h2>
+        <div id="slideCartas"></div>
+        <p id="slideTexto"></p>
+      </div>
+    </div>
+    <div class="tut-nav">
+      <button class="btn btn-nav" id="btnAnterior" onclick="mudarSlide(-1)">◀ Voltar</button>
+      <div class="bolinhas" id="bolinhas"></div>
+      <button class="btn btn-nav" id="btnProximo" onclick="mudarSlide(1)">Avançar ▶</button>
+      <button class="btn btn-fechar-tut" id="btnComecar" onclick="fecharTutorial()" style="display:none;">Vamos jogar! 🎉</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ DADOS DO JOGO ============ */
+const CORES = ['vermelho','azul','verde','amarelo'];
+const ICONES = { pula:'🚫', mais2:'➕2️⃣', curinga:'🌈' };
+let baralho = [], mao = [], cpu = [], mesa = null, corAtiva = null;
+let vezDoJogador = true, esperandoCor = false, curingaPendente = null;
+
+function criarBaralho(){
+  const b = [];
+  CORES.forEach(cor=>{
+    // um 0 por cor; dois de cada número 1 a 9
+    b.push({cor, tipo:'num', valor:0});
+    for(let n=1;n<=9;n++){ b.push({cor, tipo:'num', valor:n}); b.push({cor, tipo:'num', valor:n}); }
+    // duas de cada carta de ação por cor
+    for(let k=0;k<2;k++){
+      b.push({cor, tipo:'pula'});
+      b.push({cor, tipo:'inverte'});
+      b.push({cor, tipo:'mais2'});
+    }
+  });
+  // quatro coringas e quatro +4
+  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'curinga'});
+  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'mais4'});
+  return embaralhar(b);
+}
+function embaralhar(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function novoJogo(){
+  baralho = criarBaralho();
+  mao = baralho.splice(0,7);
+  cpu = baralho.splice(0,7);
+  // primeira carta da mesa precisa ser número simples
+  let i = baralho.findIndex(c=>c.tipo==='num');
+  mesa = baralho.splice(i,1)[0];
+  corAtiva = mesa.cor;
+  esperandoCor=false;
+  render();
+  vezDoJogadorComMensagem('');
+}
+
+/* ============ REGRAS ============ */
+function podeJogar(carta){
+  if(carta.tipo==='curinga' || carta.tipo==='mais4') return true;
+  if(carta.cor===corAtiva) return true;
+  if(carta.tipo==='num' && mesa.tipo==='num' && carta.valor===mesa.valor) return true;
+  if(carta.tipo!=='num' && carta.tipo===mesa.tipo) return true;
+  return false;
+}
+
+/* ============ JOGADAS DO JOGADOR ============ */
+function jogarCarta(idx){
+  if(!vezDoJogador || esperandoCor) return;
+  const carta = mao[idx];
+  if(!podeJogar(carta)){
+    setMensagem('Essa não dá! Escolha uma que brilha. 😊');
+    return;
+  }
+  var btnC = document.getElementById('btnComprar');
+  if(btnC) btnC.classList.remove('destaque');
+  mao.splice(idx,1);
+  mesa = carta;
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    esperandoCor = true;
+    curingaPendente = carta.tipo; // lembra se foi curinga simples ou +4
+    render();
+    document.getElementById('overlayCor').classList.add('ativo');
+    return;
+  }
+  corAtiva = carta.cor;
+  aplicarEfeito(carta,'jogador');
+}
+
+function escolherCor(cor){
+  corAtiva = cor;
+  const eraMais4 = (curingaPendente==='mais4');
+  mesa = {cor, tipo: curingaPendente, valorCor:cor};
+  curingaPendente = null;
+  document.getElementById('overlayCor').classList.remove('ativo');
+  esperandoCor = false;
+
+  if(mao.length===0){ render(); return vitoria('jogador'); }
+
+  if(eraMais4){
+    comprarParaCpu(4);
+    setMensagem('Você escolheu '+cor+' e o robô pegou 4 cartas! 🌈➕');
+  }else{
+    setMensagem('Você escolheu '+cor+'! 🎨');
+  }
+  render();
+  setTimeout(passarVezParaCpu, 800);
+}
+
+function aplicarEfeito(carta, quem){
+  render();
+  if(mao.length===0) return vitoria('jogador');
+  if(cpu.length===0) return vitoria('robo');
+
+  if(carta.tipo==='pula'){
+    if(temJogada()) setMensagem('Você pulou o robô! Jogue de novo. 🚫');
+    else setMensagem('Você pulou o robô! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
+    return; // jogador joga de novo
+  }
+  if(carta.tipo==='inverte'){
+    if(temJogada()) setMensagem('Você girou o jogo! Jogue de novo. 🔄');
+    else setMensagem('Você girou o jogo! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
+    return; // com 2 jogadores, inverter = jogar de novo
+  }
+  if(carta.tipo==='mais2'){
+    comprarParaCpu(2);
+    setMensagem('O robô pegou 2 cartas! 😄');
+    setTimeout(passarVezParaCpu, 900);
+    return;
+  }
+  setMensagem('Boa! Agora é a vez do robô. 🤖');
+  setTimeout(passarVezParaCpu, 800);
+}
+
+function comprarCarta(){
+  if(!vezDoJogador || esperandoCor) return;
+  if(baralho.length===0) reabastecer();
+  const c = baralho.pop();
+  mao.push(c);
+  render();
+  if(podeJogar(c)){
+    setMensagem('Você pegou uma carta que dá pra jogar! Toque nela. ✨');
+  }else{
+    setMensagem('Essa não deu pra jogar. Agora é a vez do robô. 🤖');
+    vezDoJogador = false;
+    setTimeout(passarVezParaCpu, 1100);
+  }
+}
+
+/* ============ VEZ DO ROBÔ ============ */
+function passarVezParaCpu(){
+  vezDoJogador = false;
+  var btn = document.getElementById('btnComprar');
+  if(btn) btn.classList.remove('destaque');
+  render();
+  setTimeout(cpuJoga, 600);
+}
+
+function cpuJoga(){
+  // procura uma carta jogável
+  let idx = cpu.findIndex(c=>podeJogar(c));
+  if(idx===-1){
+    if(baralho.length===0) reabastecer();
+    const c = baralho.pop(); cpu.push(c);
+    if(podeJogar(c)){ idx = cpu.length-1; }
+    else{
+      vezDoJogadorComMensagem('O robô pegou uma carta.');
+      return;
+    }
+  }
+  const carta = cpu.splice(idx,1)[0];
+  mesa = carta;
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    corAtiva = corMaisComumCpu();
+    mesa = {cor:corAtiva, tipo:carta.tipo, valorCor:corAtiva};
+    setMensagem('O robô escolheu '+corAtiva+'! 🎨');
+  }else{
+    corAtiva = carta.cor;
+  }
+  render();
+  if(cpu.length===0) return vitoria('robo');
+
+  if(carta.tipo==='pula'){
+    setMensagem('O robô te pulou! Ele joga de novo. 🚫');
+    setTimeout(cpuJoga, 1000); return;
+  }
+  if(carta.tipo==='inverte'){
+    setMensagem('O robô girou o jogo! Ele joga de novo. 🔄');
+    setTimeout(cpuJoga, 1000); return;
+  }
+  if(carta.tipo==='mais2'){
+    for(let k=0;k<2;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
+    vezDoJogadorComMensagem('Você pegou 2 cartas.');
+    return;
+  }
+  if(carta.tipo==='mais4'){
+    for(let k=0;k<4;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
+    vezDoJogadorComMensagem('O robô jogou +4! Você pegou 4 cartas.');
+    return;
+  }
+  vezDoJogadorComMensagem('');
+}
+
+function corMaisComumCpu(){
+  const cont = {vermelho:0,azul:0,verde:0,amarelo:0};
+  cpu.forEach(c=>{ if(c.cor!=='curinga') cont[c.cor]++; });
+  return Object.keys(cont).sort((a,b)=>cont[b]-cont[a])[0];
+}
+function comprarParaCpu(n){ for(let k=0;k<n;k++){ if(baralho.length===0) reabastecer(); cpu.push(baralho.pop()); } }
+function reabastecer(){ baralho = criarBaralho(); }
+
+// devolve true se o jogador tem ao menos uma carta jogável
+function temJogada(){ return mao.some(function(c){ return podeJogar(c); }); }
+
+// passa a vez ao jogador com a mensagem certa (jogar OU comprar)
+function vezDoJogadorComMensagem(prefixo){
+  vezDoJogador = true;
+  render();
+  var ini = prefixo ? (prefixo + ' ') : '';
+  var btn = document.getElementById('btnComprar');
+  if(temJogada()){
+    if(btn) btn.classList.remove('destaque');
+    setMensagem(ini + 'Sua vez! Toque numa carta que brilha. ✨');
+  }else{
+    if(btn) btn.classList.add('destaque');
+    setMensagem(ini + 'Você não tem carta para jogar. Toque em "Pegar 1" para comprar uma carta! 🃏');
+  }
+}
+
+/* ============ FIM ============ */
+function vitoria(quem){
+  vezDoJogador=false;
+  if(quem==='jogador'){
+    setMensagem('🎉 VOCÊ GANHOU! Parabéns! 🎉');
+  }else{
+    setMensagem('🤖 O robô ganhou! Tente de novo, você consegue! 💪');
+  }
+  document.getElementById('mensagem').classList.add('festa');
+  render();
+}
+
+/* ============ DESENHAR NA TELA ============ */
+/* ============ NARRAÇÃO POR VOZ ============ */
+var vozLigada = true;
+var vozPtBR = null;
+
+function carregarVoz(){
+  if(!('speechSynthesis' in window)) return;
+  var vozes = window.speechSynthesis.getVoices();
+  // procura uma voz em português do Brasil
+  for(var i=0;i<vozes.length;i++){
+    if(vozes[i].lang && vozes[i].lang.toLowerCase().indexOf('pt-br')>-1){ vozPtBR = vozes[i]; return; }
+  }
+  for(var j=0;j<vozes.length;j++){
+    if(vozes[j].lang && vozes[j].lang.toLowerCase().indexOf('pt')>-1){ vozPtBR = vozes[j]; return; }
+  }
+}
+if('speechSynthesis' in window){
+  carregarVoz();
+  window.speechSynthesis.onvoiceschanged = carregarVoz;
+}
+
+// remove emojis para a fala não "ler" símbolos estranhos
+function limparTexto(t){
+  return t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu,'').replace(/\s+/g,' ').trim();
+}
+
+function falar(texto){
+  if(!vozLigada || !('speechSynthesis' in window)) return;
+  var limpo = limparTexto(texto);
+  if(!limpo) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(limpo);
+  u.lang = 'pt-BR';
+  if(vozPtBR) u.voice = vozPtBR;
+  u.rate = 0.95; u.pitch = 1.05;
+  window.speechSynthesis.speak(u);
+}
+
+function alternarVoz(){
+  vozLigada = !vozLigada;
+  var b = document.getElementById('btnVoz');
+  if(vozLigada){ b.innerHTML = '🔊 Voz'; b.classList.remove('voz-off'); falar('Narração ligada!'); }
+  else{ b.innerHTML = '🔇 Voz'; b.classList.add('voz-off'); if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+}
+
+function setMensagem(t){
+  const m=document.getElementById('mensagem');
+  m.textContent=t; m.classList.remove('festa');
+  falar(t);
+}
+
+function corClasse(cor){ return 'c-'+cor; }
+const HEX = { vermelho:'#E5202E', azul:'#0099DD', amarelo:'#F7B500', verde:'#3EA72D' };
+
+// símbolos desenhados em SVG (estilo clássico, arte própria)
+// "color" controla a cor do traço quando o símbolo fica sobre o oval branco.
+function svgPular(color){
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="38" fill="none" stroke="${color}" stroke-width="13"/>
+    <line x1="24" y1="24" x2="76" y2="76" stroke="${color}" stroke-width="13" stroke-linecap="round"/>
+  </svg>`;
+}
+function svgMais2(color){
+  // duas cartinhas sobrepostas (visíveis em qualquer fundo)
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <rect x="20" y="22" width="34" height="50" rx="6" fill="#fff" stroke="${color}" stroke-width="6"/>
+    <rect x="40" y="32" width="34" height="50" rx="6" fill="${color}" stroke="#fff" stroke-width="5"/>
+    <text x="57" y="64" font-family="'Baloo 2',sans-serif" font-size="26" font-weight="800" fill="#fff" text-anchor="middle">+2</text>
+  </svg>`;
+}
+function svgCuringa(){
+  // pinwheel de quatro cores
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="40" fill="#fff"/>
+    <path d="M50 50 L50 10 A40 40 0 0 1 90 50 Z" fill="var(--vermelho)"/>
+    <path d="M50 50 L90 50 A40 40 0 0 1 50 90 Z" fill="var(--azul)"/>
+    <path d="M50 50 L50 90 A40 40 0 0 1 10 50 Z" fill="var(--amarelo)"/>
+    <path d="M50 50 L10 50 A40 40 0 0 1 50 10 Z" fill="var(--verde)"/>
+    <circle cx="50" cy="50" r="9" fill="#fff"/>
+  </svg>`;
+}
+function svgInverte(color){
+  // duas setas curvas em sentidos opostos
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="${color}" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 35 A26 26 0 0 1 76 48"/>
+      <path d="M70 65 A26 26 0 0 1 24 52"/>
+    </g>
+    <polygon points="20,30 40,30 28,48" fill="${color}"/>
+    <polygon points="80,70 60,70 72,52" fill="${color}"/>
+  </svg>`;
+}
+function svgMais4(){
+  // quatro cores em bloco + indicação de +4
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="#fff" stroke-width="4">
+      <rect x="30" y="22" width="20" height="30" rx="4" fill="var(--vermelho)"/>
+      <rect x="50" y="22" width="20" height="30" rx="4" fill="var(--azul)"/>
+      <rect x="30" y="50" width="20" height="30" rx="4" fill="var(--amarelo)"/>
+      <rect x="50" y="50" width="20" height="30" rx="4" fill="var(--verde)"/>
+    </g>
+  </svg>`;
+}
+
+// monta o INTERIOR clássico de uma carta: miolo, oval, número central e cantos
+function conteudoCarta(carta, corTraço){
+  const cor = corTraço || '#333';
+  let central, canto;
+  if(carta.tipo==='num'){
+    central = `<span>${carta.valor}</span>`;
+    canto = `${carta.valor}`;
+  }else if(carta.tipo==='mais2'){
+    central = `<span class="simb-c">${svgMais2(cor)}</span>`;
+    canto = `<span class="canto-mais2">+2</span>`;
+  }else if(carta.tipo==='pula'){
+    central = `<span class="simb-c">${svgPular(cor)}</span>`;
+    canto = `<span class="simb-k">${svgPular('#fff')}</span>`;
+  }else if(carta.tipo==='inverte'){
+    central = `<span class="simb-c">${svgInverte(cor)}</span>`;
+    canto = `<span class="simb-k">${svgInverte('#fff')}</span>`;
+  }else if(carta.tipo==='mais4'){
+    central = `<span class="simb-c">${svgMais4()}</span>`;
+    canto = `<span class="canto-mais2">+4</span>`;
+  }else{ // curinga
+    central = `<span class="simb-c">${svgCuringa()}</span>`;
+    canto = `<span class="simb-k">${svgCuringa()}</span>`;
+  }
+  return `
+    <div class="miolo"><div class="oval"></div></div>
+    <div class="canto tl">${canto}</div>
+    <div class="central">${central}</div>
+    <div class="canto br">${canto}</div>`;
+}
+
+function render(){
+  // mesa
+  const cm = document.getElementById('cartaMesa');
+  const ehCuringaPuro = (mesa.tipo==='curinga');
+  const ehPreta = (mesa.tipo==='mais4');
+  if(ehPreta){
+    cm.className = 'uno carta-grande c-preta';
+    cm.innerHTML = conteudoCarta(mesa, '#fff');
+  }else if(ehCuringaPuro && mesa.valorCor){
+    // curinga já transformado numa cor escolhida
+    cm.className = 'uno carta-grande '+corClasse(corAtiva);
+    cm.innerHTML = conteudoCarta({tipo:'curinga'});
+    cm.querySelector('.central').style.color='#fff';
+  }else if(ehCuringaPuro){
+    cm.className = 'uno carta-grande c-curinga';
+    cm.innerHTML = conteudoCarta(mesa);
+    cm.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+    cm.querySelector('.central').style.color='#fff';
+  }else{
+    cm.className = 'uno carta-grande '+corClasse(mesa.cor);
+    cm.innerHTML = conteudoCarta(mesa, HEX[mesa.cor]);
+  }
+
+  // robô
+  const cc = document.getElementById('cartasCpu'); cc.innerHTML='';
+  for(let i=0;i<cpu.length;i++){ const v=document.createElement('div'); v.className='verso'; v.textContent='UNO'; cc.appendChild(v); }
+  document.getElementById('qtdCpu').textContent = `(${cpu.length} carta${cpu.length!==1?'s':''})`;
+
+  // minhas cartas
+  const mc = document.getElementById('minhasCartas'); mc.innerHTML='';
+  mao.forEach((carta,idx)=>{
+    const d=document.createElement('div');
+    const ehCuringa = (carta.tipo==='curinga');
+    const ehPreta = (carta.tipo==='mais4');
+    let cor;
+    if(ehPreta) cor='c-preta';
+    else if(ehCuringa) cor='c-curinga';
+    else cor=corClasse(carta.cor);
+    const jogavel = vezDoJogador && !esperandoCor && podeJogar(carta);
+    d.className='uno carta '+cor+(jogavel?' jogavel':' bloqueada');
+    // cor do símbolo: cartas coloridas usam a própria cor; +4 e curinga usam branco
+    const corSimb = (ehCuringa || ehPreta) ? '#fff' : HEX[carta.cor];
+    d.innerHTML=conteudoCarta(carta, corSimb);
+    if(ehCuringa){
+      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+      d.querySelector('.central').style.color='#fff';
+    }
+    d.onclick=()=>jogarCarta(idx);
+    mc.appendChild(d);
+  });
+  document.getElementById('qtdEu').textContent = `(${mao.length} carta${mao.length!==1?'s':''})`;
+}
+
+/* ============ TUTORIAL ============ */
+const slides = [
+  { emoji:'👋', titulo:'Oi! Eu sou o Robô!',
+    texto:'Bem-vindos ao UNO das Cores! Eu vou jogar com você e te ensinar tudo. Quem ficar sem cartas primeiro vence!' },
+  { emoji:'🎯', titulo:'Nosso objetivo',
+    texto:'Você e eu começamos com 7 cartas cada um. Vá jogando suas cartas na mesa até a sua mão ficar vazia!' },
+  { emoji:'🌈', titulo:'A regra das cores e números', cartas:'cores',
+    texto:'Você só pode jogar uma carta da MESMA COR ou do MESMO NÚMERO da carta que está na mesa. Igualzinho!' },
+  { emoji:'✨', titulo:'As cartas que brilham',
+    texto:'As cartas que você PODE jogar ficam brilhando e crescem quando você passa o dedo. As apagadas, não dá!' },
+  { emoji:'🃏', titulo:'Minhas cartas especiais', cartas:'especiais',
+    texto:'Pular: eu perco a vez. Mais 2: eu pego 2 cartas. Girar: você joga de novo. Cuidado, eu também posso usá-las em você!' },
+  { emoji:'🌈', titulo:'As cartas coringa', cartas:'coringas',
+    texto:'Arco-íris: você escolhe a cor que quiser! Mais 4: você escolhe a cor E eu pego 4 cartas!' },
+  { emoji:'🏆', titulo:'Como ganhar de mim',
+    texto:'Se não puder jogar, toque em "Pegar 1" para comprar uma carta. Ficou sem cartas? VOCÊ GANHOU! 🎉' }
+];
+let slideAtual = 0;
+
+function abrirTutorial(){ slideAtual=0; montarBolinhas(); mostrarSlide(); document.getElementById('tutorial').classList.add('ativo'); }
+function fecharTutorial(){ document.getElementById('tutorial').classList.remove('ativo'); }
+function montarBolinhas(){
+  const b=document.getElementById('bolinhas'); b.innerHTML='';
+  slides.forEach((_,i)=>{ const o=document.createElement('div'); o.className='bolinha'+(i===0?' on':''); b.appendChild(o); });
+}
+function mostrarSlide(){
+  const s=slides[slideAtual];
+  document.getElementById('slideNum').textContent=`Passo ${slideAtual+1} de ${slides.length}`;
+  document.getElementById('slideEmoji').textContent=s.emoji;
+  const elTit=document.getElementById('slideTitulo');
+  const elTxt=document.getElementById('slideTexto');
+  elTit.textContent=s.titulo; elTit.style.color='#1a1633';
+  elTxt.textContent=s.texto; elTxt.style.color='#23203a';
+  falar(s.titulo + '. ' + s.texto);
+
+  // cartinhas de exemplo (usam a mesma estrutura clássica das cartas reais)
+  const cont=document.getElementById('slideCartas'); cont.innerHTML='';
+  function miniCarta(corNome, carta){
+    const d=document.createElement('div');
+    const isCuringa = (carta.tipo==='curinga');
+    const isPreta = (carta.tipo==='mais4');
+    let cls;
+    if(isPreta) cls='c-preta';
+    else if(isCuringa) cls='c-curinga';
+    else cls=corClasse(corNome);
+    d.className='uno mini '+cls;
+    const corSimb = (isCuringa || isPreta) ? '#fff' : HEX[corNome];
+    d.innerHTML=conteudoCarta(carta, corSimb);
+    if(isCuringa){
+      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+      d.querySelector('.central').style.color='#fff';
+    }
+    return d;
+  }
+  if(s.cartas==='cores'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    [['vermelho',5],['azul',5],['verde',3],['amarelo',5]].forEach(([c,n])=>{
+      box.appendChild(miniCarta(c,{tipo:'num',valor:n}));
+    });
+    cont.appendChild(box);
+  }
+  if(s.cartas==='especiais'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    box.appendChild(miniCarta('vermelho',{tipo:'pula'}));
+    box.appendChild(miniCarta('azul',{tipo:'mais2'}));
+    box.appendChild(miniCarta('verde',{tipo:'inverte'}));
+    cont.appendChild(box);
+  }
+  if(s.cartas==='coringas'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    box.appendChild(miniCarta('',{tipo:'curinga'}));
+    box.appendChild(miniCarta('',{tipo:'mais4'}));
+    cont.appendChild(box);
+  }
+
+  // bolinhas + botões
+  document.querySelectorAll('.bolinha').forEach((b,i)=>b.classList.toggle('on',i===slideAtual));
+  document.getElementById('btnAnterior').disabled = slideAtual===0;
+  const ultimo = slideAtual===slides.length-1;
+  document.getElementById('btnProximo').style.display = ultimo?'none':'';
+  document.getElementById('btnComecar').style.display = ultimo?'':'none';
+}
+function mudarSlide(d){
+  slideAtual=Math.max(0,Math.min(slides.length-1,slideAtual+d));
+  mostrarSlide();
+}
+
+/* iniciar */
+novoJogo();
+</script>
+</body>
+</html>
