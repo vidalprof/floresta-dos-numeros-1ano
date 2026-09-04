@@ -128,12 +128,21 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
                dentro ja e o defeito inteiro: a crianca ve meia miniatura.
                Numero chutado nao mede nada; o que mede e FATO GEOMETRICO.
 
-           O FATO, entao, sem calibrar nada: **o conteudo e mais largo que a
-           caixa E a caixa esconde o que sobra** (`overflow-x:hidden|clip`).
-           Ai o pedaco que sobra nao esta rolavel nem visivel: sumiu.
-           Medido: quebrado -> #galeria client=54 scroll=112 hidden; bom ->
-           client=116 scroll=116. Separacao limpa, sem limiar nenhum.
-           `overflow-x:auto` NAO entra: ali a pessoa rola e alcanca. */
+           O FATO, entao, sem calibrar nada: **um FILHO DE VERDADE fica para
+           fora da caixa E a caixa esconde o que sobra** (`overflow-x:hidden`
+           ou `clip`). Ai o pedaco que sobra nao esta rolavel nem visivel:
+           sumiu. `overflow-x:auto` NAO entra: ali a pessoa rola e alcanca.
+
+           ⚠️ 3a tentativa errada, achada varrendo as 40 atividades: eu usei
+           `scrollWidth > clientWidth`, que parecia perfeito no fixture. Ele
+           acusou a barra de progresso (`.pgfill`) e a moldura da figura
+           (`.qfig`) do Agora — e os dois eram INOCENTES, pelo mesmo motivo: o
+           que transborda ali e o BRILHO CORRENDO, um `:before` decorativo
+           posto de proposito para fora e cortado pela moldura. `overflow:
+           hidden` existe exatamente para isso. O `scrollWidth` nao separa
+           enfeite de conteudo; entao a conta passou a olhar os FILHOS DE
+           VERDADE (elementos), pulando pseudo-elemento, `position:absolute`
+           e `pointer-events:none` — que sao a assinatura do enfeite. */
         function pedidaPx(el) {
           let v = null;
           const anda = (regras) => {
@@ -167,12 +176,22 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
           if (cs0.overflowX !== 'hidden' && cs0.overflowX !== 'clip') continue;
           /* texto cortado com reticencias e decisao de design, nao esmagamento */
           if (cs0.textOverflow === 'ellipsis') continue;
-          if (!el.querySelector('*')) continue;   /* caixa so de texto: idem */
-          const sobra = el.scrollWidth - el.clientWidth;
+
+          /* quanto do FILHO DE VERDADE fica para fora (enfeite nao conta) */
+          let sobra = 0, culpado = null;
+          for (const fi of el.children) {
+            const cf = getComputedStyle(fi);
+            if (cf.position === 'absolute' || cf.position === 'fixed') continue;
+            if (cf.pointerEvents === 'none') continue;      /* enfeite */
+            if (cf.display === 'none' || cf.visibility === 'hidden') continue;
+            const rf = fi.getBoundingClientRect();
+            if (rf.width < 8) continue;
+            const fora = Math.max(rf.right - rr.right, rr.left - rf.left, 0);
+            if (fora > sobra) { sobra = fora; culpado = nome(fi); }
+          }
           if (sobra <= 8) continue;               /* 8px = folga de arredondamento */
-          const pedida = pedidaPx(el);
-          esmagados.push({q: nome(el), tem: el.clientWidth,
-                          precisa: el.scrollWidth, pediu: pedida});
+          esmagados.push({q: nome(el), tem: el.clientWidth, culpado: culpado,
+                          fora: Math.round(sobra), pediu: pedidaPx(el)});
         }
 
         for (const el of document.querySelectorAll(sel)) {
@@ -199,10 +218,10 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
       }
       for (const e of (r.esmagados || [])) {
         achados.push({tela: nomeTela, tipo: 'esmagado',
-                      texto: e.q + ' foi ESMAGADO pelo vizinho: o conteudo precisa de ' +
-                             e.precisa + 'px, a caixa tem ' + e.tem +
-                             'px e ESCONDE o resto' +
-                             (e.pediu ? ' (o CSS pedia ' + e.pediu + 'px)' : '')});
+                      texto: e.q + ' (' + e.tem + 'px' +
+                             (e.pediu ? ', o CSS pedia ' + e.pediu + 'px' : '') +
+                             ') foi ESMAGADO: ' + e.culpado + ' fica ' + e.fora +
+                             'px para fora e a caixa ESCONDE esse pedaco'});
       }
     }
     await p.close();
