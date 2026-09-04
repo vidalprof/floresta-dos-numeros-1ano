@@ -1775,9 +1775,18 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-repartir .cam.ok{border-style:solid;border-color:#59c24b;background:rgba(89,194,75,.22);cursor:default}
 
-.mec-repartir .pnome{position:absolute;left:0;right:0;bottom:3px;font-size:10px;font-weight:800;letter-spacing:.5px; color:var(--texto,#f4efe6);line-height:1}
+/* ⚠️⚠️ LAPIDACAO E LICAO DE PORTAO (set/2026): o nome do prato ("EQUIPE 1")
+   herdava `--texto` do TEMA e caia sobre um prato de 14% de branco — ou seja,
+   sobre o FUNDO da atividade. Na Gincana deu marrom escuro sobre foto escura:
+   ilegivel. Mesma doenca do numero da reta, mesmo remedio: chao proprio.
+   E O PORTAO NAO PEGOU — nao por falha dele, mas porque os pratos SO NASCEM
+   depois que a crianca corta a fita, e o `_qa/contraste.js` mede a fase como
+   ela ABRE. Ele mediu 409 textos e disse ok, com razao. Quem viu foi a foto
+   TIRADA NO MEIO DA JOGADA — e e por isso que a foto do meio da jogada tem de
+   ser parte da entrega, nao so a da abertura. */
+.mec-repartir .pnome{position:absolute;left:50%;bottom:2px;-webkit-transform:translateX(-50%);transform:translateX(-50%);font-size:10px;font-weight:800;letter-spacing:.5px;color:#fff8ea;line-height:14px;padding:0 6px;border-radius:7px;background:rgba(28,22,10,.86);white-space:nowrap}
 
-.mec-repartir .cam.ok .pnome{color:#eaf7e2}
+.mec-repartir .cam.ok .pnome{color:#eaf7e2;background:rgba(20,54,14,.88)}
 
 .mec-repartir .r3_posta{position:absolute;left:8px;right:8px;top:9px;height:26px;border:3px solid #1f6b12; border-radius:7px;background:#e2f0c8;color:#22300f;font-size:15px;font-weight:800;line-height:20px}
 
@@ -8895,6 +8904,17 @@ function etapaDois(){
   var bal=telaAtual.getElementsByClassName("balao")[0];
   if(bal) bal.innerHTML="Cada <b>"+_grupo2+"</b> leva <b>uma parte igual</b> &#8212; nem mais, nem menos.";
   elBanco.style.display="block"; elPratos.style.display="block";
+  /* ⚠️ A DICA TEM DE ANDAR COM O PASSO (set/2026, visto na foto do MEIO da
+     jogada na Gincana): depois de cortar, o rodape continuava mandando
+     "toque na fita para cortar" — instrucao velha, contradizendo o que a
+     crianca precisa fazer agora. Nada dava erro; so ficava errado. */
+  /* ⚠️ E a 1a tentativa usou `c`, que NAO existe aqui dentro — e como eu tinha
+     posto um `try/catch` mudo em volta, nao deu erro nenhum: a dica so
+     continuou velha e a foto ficou igualzinha. Erro engolido em silencio e
+     pior que erro na cara. O jeito certo e o do codigo ao lado: `telaAtual`. */
+  var _h=telaAtual.getElementsByClassName("hint")[0];
+  if(_h) _h.innerHTML="Agora leve <b>uma parte</b> para cada <b>"+_grupo2+
+         "</b>. Toque na parte e depois no lugar dela.";
   elBanco.innerHTML=""; elPratos.innerHTML="";
   for(i=0;i<r.n;i++){
     p=fazParte(tam[i]);

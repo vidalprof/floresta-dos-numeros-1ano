@@ -5650,9 +5650,18 @@
 
 .mec-repartir .cam.ok{border-style:solid;border-color:#59c24b;background:rgba(89,194,75,.22);cursor:default}
 
-.mec-repartir .pnome{position:absolute;left:0;right:0;bottom:3px;font-size:10px;font-weight:800;letter-spacing:.5px; color:var(--texto,#f4efe6);line-height:1}
+/* ⚠️⚠️ LAPIDACAO E LICAO DE PORTAO (set/2026): o nome do prato ("EQUIPE 1")
+   herdava `--texto` do TEMA e caia sobre um prato de 14% de branco — ou seja,
+   sobre o FUNDO da atividade. Na Gincana deu marrom escuro sobre foto escura:
+   ilegivel. Mesma doenca do numero da reta, mesmo remedio: chao proprio.
+   E O PORTAO NAO PEGOU — nao por falha dele, mas porque os pratos SO NASCEM
+   depois que a crianca corta a fita, e o `_qa/contraste.js` mede a fase como
+   ela ABRE. Ele mediu 409 textos e disse ok, com razao. Quem viu foi a foto
+   TIRADA NO MEIO DA JOGADA — e e por isso que a foto do meio da jogada tem de
+   ser parte da entrega, nao so a da abertura. */
+.mec-repartir .pnome{position:absolute;left:50%;bottom:2px;-webkit-transform:translateX(-50%);transform:translateX(-50%);font-size:10px;font-weight:800;letter-spacing:.5px;color:#fff8ea;line-height:14px;padding:0 6px;border-radius:7px;background:rgba(28,22,10,.86);white-space:nowrap}
 
-.mec-repartir .cam.ok .pnome{color:#eaf7e2}
+.mec-repartir .cam.ok .pnome{color:#eaf7e2;background:rgba(20,54,14,.88)}
 
 .mec-repartir .r3_posta{position:absolute;left:8px;right:8px;top:9px;height:26px;border:3px solid #1f6b12; border-radius:7px;background:#e2f0c8;color:#22300f;font-size:15px;font-weight:800;line-height:20px}
 

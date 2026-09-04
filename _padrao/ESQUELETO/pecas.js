@@ -33808,6 +33808,17 @@ function etapaDois(){
   var bal=telaAtual.getElementsByClassName("balao")[0];
   if(bal) bal.innerHTML="Cada <b>"+_grupo2+"</b> leva <b>uma parte igual</b> &#8212; nem mais, nem menos.";
   elBanco.style.display="block"; elPratos.style.display="block";
+  /* ⚠️ A DICA TEM DE ANDAR COM O PASSO (set/2026, visto na foto do MEIO da
+     jogada na Gincana): depois de cortar, o rodape continuava mandando
+     "toque na fita para cortar" — instrucao velha, contradizendo o que a
+     crianca precisa fazer agora. Nada dava erro; so ficava errado. */
+  /* ⚠️ E a 1a tentativa usou `c`, que NAO existe aqui dentro — e como eu tinha
+     posto um `try/catch` mudo em volta, nao deu erro nenhum: a dica so
+     continuou velha e a foto ficou igualzinha. Erro engolido em silencio e
+     pior que erro na cara. O jeito certo e o do codigo ao lado: `telaAtual`. */
+  var _h=telaAtual.getElementsByClassName("hint")[0];
+  if(_h) _h.innerHTML="Agora leve <b>uma parte</b> para cada <b>"+_grupo2+
+         "</b>. Toque na parte e depois no lugar dela.";
   elBanco.innerHTML=""; elPratos.innerHTML="";
   for(i=0;i<r.n;i++){
     p=fazParte(tam[i]);
