@@ -14,7 +14,7 @@
 > Link = `https://vidalprof.github.io/<repositório>/`. Pasta = onde mora o código
 > neste repo (`_xxx/`).
 
-Última atualização: 2026-08-31 (slugs conferidos com o Marcos).
+Última atualização: 2026-09-04 (Bancada da Divisão publicada; painel de links criado).
 
 ---
 
@@ -64,7 +64,7 @@
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
-| **A Bancada da Divisão** | Matemática (4º ano): DIVISÃO do começo pela CONTA ARMADA com MATERIAL DOURADO que o aluno ARRASTA (a dinâmica da Oficina da Divisão, agora como peça do motor) — repartir um bloco por grupo, trocar a sobra (o "abaixa") e digitar o resultado. 32 contas progressivas | `_gincana` | (aguardando publicação) |
+| **A Bancada da Divisão** | Matemática (4º ano): DIVISÃO do começo pela CONTA ARMADA com MATERIAL DOURADO que o aluno ARRASTA (a dinâmica da Oficina da Divisão, agora como peça do motor) — repartir um bloco por grupo, trocar a sobra (o "abaixa") e digitar o resultado. 32 contas progressivas | `_gincana` | https://vidalprof.github.io/a-bancada-da-divisao/ |
 | **A Oficina das Palavras** | Aumentativo/diminutivo, sílabas, mau×mal, verbos | `_por4` | https://vidalprof.github.io/a-oficina-das-palavras/ (painel embutido) |
 | **A Viagem no Tempo do Vale** | História (EF04HI01): colonização do Vale do Itajaí — Xokleng, açorianos, alemães (1850), italianos (1875), africanos; mudanças e permanências. Site de pesquisa + quiz | `_vale4` (+ painel) | https://vidalprof.github.io/a-viagem-no-tempo-do-vale/ |
 | **Confeitaria Mágica — Divisão** | Matemática (4º ano): divisão — repartir igual, tabuada, relação com a multiplicação | `_pub_confeitaria` | https://vidalprof.github.io/confeitaria-da-divisao/ |
@@ -114,6 +114,12 @@
 | **Cidade do Dinheiro — Sistema Monetário** | Sistema monetário | — | https://vidalprof.github.io/sistemamonetario2-5ano/ |
 | **Poli e o Tesouro do Mar** | — | — | https://vidalprof.github.io/poli-tesouro-do-mar/ |
 | **A Vila do Miau** | — | — | https://vidalprof.github.io/vila-dos-livros-miau/ |
+
+## Ferramentas do professor
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **Painel de Atividades** | Todos os links por turma, com busca e botão de copiar — gerado deste catálogo | `_painel` | https://vidalprof.github.io/painel-de-atividades/ |
 
 ## Portal / hub
 
