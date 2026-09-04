@@ -75,6 +75,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
      configurar nada nas maquinas. Pode ser trocado por ?db= na URL ou no controle, se quiser. */
   var DB_PADRAO="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
   var DB=par("db")||ck("labdb")||ls("labdb")||DB_PADRAO;  if(par("db")){ ls("labdb",DB); ck("labdb",DB); }
+  /* ⚠️⚠️ LIÇÃO PAGA COM O MARCOS DE PÉ NA FRENTE DA MÁQUINA (set/2026).
+     Ele precisava trocar o número do micro 11, eu publiquei o interruptor novo,
+     e ele respondeu: *"fui na máquina do aluno mas não está aparecendo trocar
+     computador"*. O código estava certo — a MÁQUINA é que estava rodando a
+     página VELHA. O GitHub Pages manda o HTML com cache de 10 minutos, e a
+     página do aluno é a homepage: fica aberta a manhã inteira, então "publicar"
+     não chega nela nunca. F5 comum também não resolve, porque o endereço é o
+     mesmo. Só um endereço DIFERENTE (ou o comando abaixo) força a busca nova.
+
+     Daí as duas coisas que nasceram aqui: a VERSÃO visível no rodapé (para
+     saber, olhando, qual página aquela máquina está rodando) e o comando
+     `recarregar` (o professor aperta um botão no controle e TODAS as telas
+     buscam a versão nova sozinhas). */
+  var VERSAO="2026-09-04d";
   /* MARCA DE RESET: troque este valor p/ forcar TODAS as maquinas a perguntar o numero
      de novo UMA vez (na proxima abertura). Depois que o professor digitar, nao pergunta mais. */
   var RESET_PC="r2026-07-10a";
@@ -87,13 +101,28 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   var urlPC=par("pc");
   var savedPC=ck("labpc")||ls("labpc")||"";
   var manualPC=(ck("labpc_manual")||ls("labpc_manual"))?true:false;
+  /* ⭐⭐ `forcar=1` — O PROFESSOR TROCANDO O NÚMERO À DISTÂNCIA.
+     Lição paga (set/2026): o Marcos precisava pôr "11" numa máquina, e nenhum
+     caminho servia. O link "trocar número" depende de a máquina já estar com a
+     página NOVA (e ela estava com a velha, guardada em cache); e o `?pc=` da
+     URL é ignorado de propósito quando o número foi digitado à mão, senão a
+     homepage (que tem `pc=01` fixo) desfaria o que ele digitou.
+     Este parâmetro é a porta que faltava: quando a URL traz `forcar=1`, ela
+     MANDA — inclusive sobre o número manual. E ele nunca aparece por acidente,
+     porque quem monta essa URL é o botão "Trocar o número desta máquina" do
+     controle, que ainda por cima manda a máquina NAVEGAR até ela — endereço
+     novo, então o navegador é obrigado a buscar a página nova do servidor.
+     Ou seja: funciona mesmo na máquina que ainda está rodando a versão velha,
+     porque a versão velha já sabe obedecer o comando "abrir em tela cheia". */
+  var forcarPC=(par("forcar")==="1");
   var PC;
-  if(manualPC && savedPC){ PC=savedPC; }             /* numero digitado pelo professor vence a URL */
+  if(forcarPC && urlPC){ PC=urlPC; }                 /* o professor mandou trocar: a URL manda */
+  else if(manualPC && savedPC){ PC=savedPC; }        /* numero digitado pelo professor vence a URL */
   else {
     PC=urlPC||savedPC||"";
     if(!urlPC && PC && verPC()!==RESET_PC){ PC=""; } /* reset unico (so p/ nao-manual e sem pc= na URL) */
   }
-  if(PC){ salvarPC(PC, manualPC); }
+  if(PC){ salvarPC(PC, forcarPC ? true : manualPC); }
 
   function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
   /* ⭐⭐ O INTERRUPTOR DO "TROCAR NÚMERO" — AGORA NA MÃO DO PROFESSOR, À DISTÂNCIA.
@@ -136,7 +165,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   }
 
   function pintaRodape(){
-    var linha = "Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>");
+    var linha = "Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>")
+              + ' &middot; <span style="opacity:.55">v'+VERSAO+'</span>';
     if(trocarLiberado()){
       linha += ' &middot; <a href="#" id="trocarpc" style="color:#8fb6ff;text-decoration:underline;">trocar n&uacute;mero</a>';
     }
@@ -262,6 +292,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     else if(cmd.acao==="bloquear"){ tela("bloquear"); }
   }
 
+  /* ⭐⭐ "PEGUEM A VERSÃO NOVA" — o conserto da lição paga lá em cima.
+     A página do aluno é a homepage da máquina: fica aberta a manhã inteira, e o
+     GitHub Pages ainda guarda o HTML por 10 minutos. Resultado: eu publico um
+     conserto e a sala continua rodando o de ontem — foi exatamente o que fez o
+     interruptor "não aparecer" para o Marcos.
+
+     Agora ele aperta UM botão no controle e todas as telas buscam a versão nova
+     sozinhas. Três cuidados, todos por motivo:
+       · a PRIMEIRA leitura só ANOTA a marca (senão a máquina recarregaria toda
+         vez que abrisse, num laço);
+       · nada acontece nos primeiros 15 segundos de vida da página (mesma razão);
+       · o endereço leva `_v=<marca>`, ou seja, muda a cada pedido — é isso que
+         obriga o navegador a buscar do SERVIDOR. Recarregar no mesmo endereço
+         devolve o cache, que é o defeito que estamos consertando. */
+  var _recVisto=null, _nasci=agora();
+  function vePedidoDeRecarga(marca){
+    if(!marca) return;
+    if(_recVisto===null){ _recVisto=marca; return; }
+    if(marca===_recVisto) return;
+    _recVisto=marca;
+    if(agora()-_nasci < 15000) return;
+    try{
+      location.replace(location.pathname+"?sala="+encodeURIComponent(SALA)
+        +"&pc="+encodeURIComponent(PC||"")+"&_v="+encodeURIComponent(marca));
+    }catch(e){ try{ location.reload(); }catch(e2){} }
+  }
+
   function endpoint(){
     if(DB){ return DB.replace(/\/+$/,"")+"/lab/"+SALA+".json"; }          /* Firebase */
     return "https://ntfy.sh/vidalprofLab_"+SALA+"/json?poll=1&since=20s";  /* ntfy (padrao) */
@@ -280,6 +337,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
              (dedup por `id`), e o interruptor precisa ser lido MESMO quando
              nenhum comando novo chegou — é estado, não comando. */
           setTrocarAlvo(d ? d.trocarpc : "");
+          if(d) vePedidoDeRecarga(d.recarregar);
           if(d) aplica(d); }catch(e){} }
         else {
           var linhas=(xhr.responseText||"").split("\n"),i;

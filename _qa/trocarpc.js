@@ -214,6 +214,103 @@ async function abre(b, arquivo, no, extra){
     await ctx.close();
   }
 
+  console.log('=== ALUNO: forcar=1 troca o numero mesmo com numero MANUAL salvo ===');
+  {
+    const ctx=await b.newContext({viewport:{width:700,height:900}});
+    const pg=await ctx.newPage();
+    const erros=[]; pg.on('pageerror',e=>erros.push(String(e)));
+    await pg.addInitScript(stub({id:'a1',acao:'voltar'}));
+    // ⚠️ o addInitScript roda A CADA navegacao: semear sem trava reescrevia o
+    //    numero 7 toda vez e o teste acusava um defeito que nao existe.
+    await pg.addInitScript(`try{ if(!localStorage.getItem('__semeado')){
+        localStorage.setItem('__semeado','1');
+        localStorage.setItem('labpc','7'); localStorage.setItem('labpc_manual','1');
+        localStorage.setItem('labpc_ver','r2026-07-10a');
+        document.cookie='labpc=7;path=/'; document.cookie='labpc_manual=1;path=/';
+        document.cookie='labpc_ver=r2026-07-10a;path=/';
+      } }catch(e){}`);
+    await pg.goto(BASE+'index.html?sala=sala1&pc=11');
+    await pg.waitForTimeout(500);
+    const numero=async()=>{ const t=await pg.evaluate(()=>document.getElementById('rodape').textContent||'');
+      const m=t.match(/PC\s+(\S+)/); return m?m[1]:null; };
+    let r=await numero();
+    ok('SEM forcar, o numero manual (7) vence a URL', r==='7', String(r));
+    await pg.goto(BASE+'index.html?sala=sala1&pc=11&forcar=1');
+    await pg.waitForTimeout(500);
+    r=await numero();
+    ok('COM forcar=1, a maquina vira 11', r==='11', String(r));
+    // e o 11 GRUDA: recarregar sem forcar mantem
+    await pg.goto(BASE+'index.html?sala=sala1&pc=99');
+    await pg.waitForTimeout(400);
+    r=await numero();
+    ok('o 11 grudou (a homepage antiga nao desfaz)', r==='11', String(r));
+    ok('sem erro de JS', erros.length===0, erros.join(' | '));
+    await ctx.close();
+  }
+
+  console.log('=== CONTROLE: botao "Trocar o numero desta maquina" ===');
+  {
+    const {pg,ctx,erros}=await abre(b,'controle.html',{id:'a1',acao:'voltar'});
+    // 1) recusa "todos"
+    await pg.fill('#alvo','todos'); await pg.fill('#novoPc','11');
+    await pg.click('#btTrocaAgora'); await pg.waitForTimeout(300);
+    let msg=await pg.evaluate(()=>document.getElementById('msg').textContent);
+    let n=await pg.evaluate(()=>window.__REQ.filter(q=>q.metodo==='PUT').length);
+    ok('recusa "todos" (nao daria o mesmo numero a todas)', /todos/.test(msg) && n===0, msg+' | PUTs='+n);
+    // 2) exige o numero novo
+    await pg.fill('#alvo','7'); await pg.fill('#novoPc','');
+    await pg.click('#btTrocaAgora'); await pg.waitForTimeout(300);
+    msg=await pg.evaluate(()=>document.getElementById('msg').textContent);
+    ok('exige o numero novo', /n\u00famero novo/.test(msg), msg);
+    // 3) manda a maquina 7 virar 11
+    await pg.fill('#novoPc','11');
+    await pg.click('#btTrocaAgora'); await pg.waitForTimeout(400);
+    const put=await pg.evaluate(()=>window.__REQ.filter(q=>q.metodo==='PUT').pop());
+    const c=put?JSON.parse(put.corpo):{};
+    ok('manda "cheia" so para a 7', c.acao==='cheia' && c.alvo==='7', JSON.stringify(c));
+    ok('a URL leva pc=11 e forcar=1', /[?&]pc=11(&|$)/.test(c.url||'') && /forcar=1/.test(c.url||''), c.url||'(sem url)');
+    ok('a URL leva marca nova (fura o cache)', /_v=\d{10,}/.test(c.url||''), c.url||'');
+    ok('a URL aponta para o index.html do aluno', /index\.html\?/.test(c.url||''), c.url||'');
+    const alvoDepois=await pg.evaluate(()=>document.getElementById('alvo').value);
+    ok('o campo ENVIAR PARA ja vira o numero novo', alvoDepois==='11', alvoDepois);
+    ok('sem erro de JS', erros.length===0, erros.join(' | '));
+    await ctx.close();
+  }
+
+  console.log('=== ALUNO: "atualizar as telas" recarrega UMA vez, sem laco ===');
+  {
+    const ctx=await b.newContext({viewport:{width:700,height:900}});
+    const pg=await ctx.newPage();
+    const erros=[]; pg.on('pageerror',e=>erros.push(String(e)));
+    await pg.addInitScript(`window.__NO={id:'a1',acao:'voltar',recarregar:111};
+      (function(){function F(){this.readyState=0;this.status=0;this.responseText="";}
+       F.prototype.open=function(m,u){this._m=m;this._u=u;};F.prototype.setRequestHeader=function(){};F.prototype.abort=function(){};
+       F.prototype.send=function(){var s=this;setTimeout(function(){s.readyState=4;s.status=200;
+        s.responseText=JSON.stringify(window.__NO);if(s.onreadystatechange)s.onreadystatechange();},10);};
+       window.XMLHttpRequest=F;})();`);
+    await pg.goto(BASE+'index.html?sala=sala1&pc=7');
+    await pg.waitForTimeout(900);
+    let url1=pg.url();
+    ok('a primeira leitura NAO recarrega (so anota)', /pc=7$/.test(url1), url1);
+    // marca nova, mas ainda dentro dos 15s de vida: nao pode recarregar
+    await pg.evaluate(()=>{ window.__NO={id:'a1',acao:'voltar',recarregar:222}; });
+    await pg.waitForTimeout(3200);
+    ok('nao recarrega nos primeiros 15s (trava anti-laco)', pg.url()===url1, pg.url());
+    // passados os 15s de vida, o mesmo pedido tem que recarregar de verdade.
+    // (o script do aluno roda dentro de uma funcao fechada: nao da para
+    //  envelhecer a pagina por fora, entao o teste ESPERA mesmo.)
+    await pg.waitForTimeout(13000);
+    await pg.evaluate(()=>{ window.__NO={id:'a1',acao:'voltar',recarregar:333}; });
+    await pg.waitForTimeout(4000);
+    const url2=pg.url();
+    ok('depois disso, recarrega com endereco NOVO', /_v=333/.test(url2), url2);
+    ok('e o endereco novo preserva sala e pc', /sala=sala1/.test(url2) && /pc=7/.test(url2), url2);
+    await pg.waitForTimeout(3500);
+    ok('e NAO entra em laco (nao recarrega de novo)', pg.url()===url2, pg.url());
+    ok('sem erro de JS', erros.length===0, erros.join(' | '));
+    await ctx.close();
+  }
+
   await b.close();
   console.log(falhas? ('\n>>> '+falhas+' FALHA(S)') : '\n>>> TUDO PASSOU');
   process.exit(falhas?1:0);

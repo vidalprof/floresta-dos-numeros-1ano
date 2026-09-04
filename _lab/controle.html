@@ -56,7 +56,12 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
 <body>
 <div class="wrap">
   <div class="top">
-    <h1>&#127891; Controle do Laboratório<small>Abra um link em todas as telas ao mesmo tempo.</small></h1>
+    <!-- ⚠️ A VERSÃO FICA À VISTA de propósito (lição paga, set/2026): quando o
+         Marcos disse "não apareceu", eu não tinha como saber se ele estava
+         vendo a página nova ou a guardada em cache, e gastei duas rodadas de
+         conversa adivinhando. Agora basta ele ler o número — e a tela do aluno
+         mostra o dela no rodapé, pelo mesmo motivo. -->
+    <h1>&#127891; Controle do Laboratório<small>Abra um link em todas as telas ao mesmo tempo. &middot; <span id="ver" style="opacity:.6"></span></small></h1>
     <button class="gear" id="cfgBtn" title="Configurações">&#9881;</button>
   </div>
 
@@ -112,6 +117,31 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
         bloqueado &mdash; o aluno n&atilde;o pode trocar</div>
       <button class="btn ghost" id="btTroca" style="margin-top:0;">
         &#128275;&nbsp; Liberar para quem est&aacute; em &ldquo;Enviar para&rdquo;</button>
+      <!-- ⚠️ LIÇÃO PAGA com o Marcos de pé na frente da máquina (set/2026): eu
+           publiquei o interruptor, ele foi na tela do aluno e *"não está
+           aparecendo trocar computador"*. O código estava certo; a MÁQUINA é
+           que rodava a página velha — a tela do aluno é a homepage, fica aberta
+           a manhã inteira, e o Pages ainda guarda o HTML por 10 minutos. Este
+           botão é o conserto: manda todas as telas buscarem a versão nova. -->
+      <button class="btn ghost" id="btRecarregar" style="margin-top:8px;">
+        &#128260;&nbsp; Atualizar as telas dos alunos (pegar a vers&atilde;o nova)</button>
+
+      <!-- ⭐ TROCAR O NÚMERO SEM SAIR DAQUI. É o caminho que funciona SEMPRE,
+           inclusive na máquina que ainda roda a página velha: o controle manda
+           ela NAVEGAR até a homepage com o número novo e `forcar=1`. Endereço
+           novo = página nova do servidor; `forcar=1` = o número da URL manda,
+           mesmo sobre um número digitado antes à mão. -->
+      <div style="margin-top:10px;border-top:1px solid #2f416b;padding-top:9px;">
+        <div style="font-size:11.5px;font-weight:700;letter-spacing:.6px;color:#8fa3c8;
+             text-transform:uppercase;margin-bottom:5px;">Trocar o n&uacute;mero de uma m&aacute;quina</div>
+        <div class="linha">
+          <input id="novoPc" type="text" inputmode="numeric" placeholder="n&uacute;mero novo (ex.: 11)">
+          <button class="btn mini" id="btTrocaAgora" style="min-height:44px;">Trocar</button>
+        </div>
+        <div class="subtle">Em <b>ENVIAR PARA</b> ponha o n&uacute;mero <b>atual</b> daquela
+          m&aacute;quina (n&atilde;o vale &ldquo;todos&rdquo;). Ela recarrega sozinha j&aacute; com o
+          n&uacute;mero novo.</div>
+      </div>
     </div>
 
     <div class="msg" id="msg"></div>
@@ -183,6 +213,8 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
      da escola — e o canal de comandos é o caminho quente, o que não pode
      quebrar no meio da aula. Então o controle guarda o nó em `_no` (lido ao
      abrir) e reescreve o conjunto: comando + interruptor, sempre juntos. */
+  var VERSAO = "2026-09-04d";
+  (function(){ var v=$("ver"); if(v) v.textContent="v"+VERSAO; })();
   var _no = null;                       /* o que está no canal agora */
   function trocaAtual(){ return (_no && _no.trocarpc) ? (""+_no.trocarpc) : ""; }
 
@@ -217,27 +249,29 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     try{ x.send(); }catch(e){ pintaTroca(); }
   }
 
-  function gravaTroca(valor){
+  /* grava um campo qualquer no nó, PRESERVANDO tudo o que já está lá */
+  function gravaCampo(campo, valor, okmsg){
     if(!DB()){ $("msg").textContent="Este ajuste precisa do canal Firebase (abra o ⚙)."; return; }
     var corpo={}, k;
-    /* preserva o comando que está no canal (auto-retomar de quem reiniciar) */
     if(_no){ for(k in _no){ if(Object.prototype.hasOwnProperty.call(_no,k)) corpo[k]=_no[k]; } }
-    corpo.trocarpc = valor;
+    corpo[campo]=valor;
     var x=new XMLHttpRequest();
     try{ x.open("PUT", DB()+"/lab/"+SALA()+".json", true); }
     catch(e){ $("msg").textContent="Erro ao conectar."; return; }
     x.setRequestHeader("Content-Type","application/json");
     x.onreadystatechange=function(){
       if(x.readyState!==4) return;
-      if(x.status>=200 && x.status<300){
-        _no=corpo; pintaTroca();
-        $("msg").textContent = valor
-          ? ("Liberado para "+valor+". O link aparece na tela do aluno em uns 3 segundos — lembre de bloquear depois.")
-          : "Bloqueado. O aluno não pode mais trocar o número.";
-      } else { $("msg").textContent="Não consegui gravar (a escola pode estar bloqueando este canal)."; }
+      if(x.status>=200 && x.status<300){ _no=corpo; pintaTroca(); $("msg").textContent=okmsg; }
+      else { $("msg").textContent="Não consegui gravar (a escola pode estar bloqueando este canal)."; }
     };
     x.onerror=function(){ $("msg").textContent="Sem conexão com o canal."; };
     try{ x.send(JSON.stringify(corpo)); }catch(e){ $("msg").textContent="Erro ao enviar."; }
+  }
+
+  function gravaTroca(valor){
+    gravaCampo("trocarpc", valor, valor
+      ? ("Liberado para "+valor+". O link aparece na tela do aluno em uns 3 segundos — lembre de bloquear depois.")
+      : "Bloqueado. O aluno não pode mais trocar o número.");
   }
 
   function enviar(cmd, okmsg){
@@ -327,6 +361,35 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     /* um botão só: se está liberado, tranca; se está trancado, libera para o
        que estiver no campo "Enviar para" (que já é "todos" por padrão). */
     gravaTroca(trocaAtual() ? "" : alvo());
+  }; })();
+
+  (function(){ var b=$("btRecarregar"); if(b) b.onclick=function(){
+    gravaCampo("recarregar", (new Date()).getTime(),
+      "Mandei atualizar. As telas dos alunos buscam a versão nova em uns 3 segundos.");
+  }; })();
+
+  /* ⭐ TROCAR O NÚMERO DE UMA MÁQUINA, DAQUI. Manda ELA navegar até a própria
+     homepage com o número novo e `forcar=1`. Funciona na máquina que está com a
+     página velha, porque "abrir em tela cheia" é um comando que a versão velha
+     já entende — e o endereço novo obriga o navegador a buscar a página nova. */
+  (function(){ var b=$("btTrocaAgora"); if(!b) return; b.onclick=function(){
+    var novo=($("novoPc").value||"").replace(/[^\w-]/g,"");
+    if(!novo){ $("msg").textContent="Escreva o número novo (ex.: 11)."; try{ $("novoPc").focus(); }catch(e){} return; }
+    var quem=alvo();
+    /* ⚠️ trava de segurança: "todos" mandaria as 20 máquinas adotarem o MESMO
+       número, e aí ele perderia o controle de todas de uma vez. */
+    if(quem==="todos"){
+      $("msg").textContent="Em ENVIAR PARA, ponha o número ATUAL só daquela máquina — “todos” daria o mesmo número a todas.";
+      try{ $("alvo").focus(); $("alvo").select(); }catch(e){}
+      return;
+    }
+    var base=(location.href.split("?")[0]).replace(/controle\.html$/,"index.html");
+    var u=base+"?sala="+encodeURIComponent(SALA())+"&pc="+encodeURIComponent(novo)
+          +"&forcar=1&_v="+(new Date()).getTime();
+    enviar({acao:"cheia",url:u,alvo:quem},
+      "Mandei a máquina "+quem+" virar a "+novo+". Ela recarrega sozinha em uns 3 segundos.");
+    $("novoPc").value="";
+    $("alvo").value=novo;   /* daqui pra frente o alvo já é o número novo */
   }; })();
 
   $("salvarDb").onclick=function(){
