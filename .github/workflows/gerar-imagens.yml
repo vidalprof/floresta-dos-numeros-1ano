@@ -169,11 +169,21 @@ jobs:
           if not lote:
               raise SystemExit("::error::lote vazio (o filtro `nomes` bate com alguma coisa?)")
 
-          def desenha(prompt):
-              # o Pollinations e gratis e as vezes solu&ccedil;a: insiste e troca de motor
+          def desenha(prompt, semente=None):
+              # ⭐⭐ A SEMENTE — a peca que faltava para o Pollinations chegar perto
+              #    do Gemini (ordem do Marcos, set/2026: *"preciso que vc faca
+              #    super prompts para o polinations conseguir gerar igual gemeni,
+              #    so assim para substituir"*).
+              #    Sem `seed`, cada chamada sorteia um mundo novo: duas pecas da
+              #    MESMA cartela saiam com luz, escala e tracco diferentes — o
+              #    "desirmanado" que fazia a arte gratis parecer pior. Com a
+              #    semente fixa a familia inteira nasce parente, e uma peca que
+              #    saiu torta pode ser refeita IGUAL, mudando so o que se quer.
               motores=["flux","turbo","flux-realism",""]
               base_url="https://image.pollinations.ai/prompt/%s?width=%s&height=%s&nologo=true"%(
                   urllib.parse.quote(prompt), W, H)
+              if semente not in (None, ""):
+                  base_url += "&seed=%s"%semente
               ultimo=None
               for tent,espera in enumerate([8,20,45,0]):
                   mot=motores[min(tent,len(motores)-1)]
@@ -181,7 +191,12 @@ jobs:
                   try:
                       req=urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
                       dados=urllib.request.urlopen(req, timeout=180).read()
-                      if dados and len(dados)>4000: return dados
+                      # ⚠️ devolve TAMBEM quem desenhou. Antes so a palavra
+                      #    "pollinations" era registrada, e o `turbo` (bem pior
+                      #    que o `flux`) passava por flux sem ninguem notar — o
+                      #    mesmo registro falso que ja me fez diagnosticar errado
+                      #    com o Gemini.
+                      if dados and len(dados)>4000: return dados, (mot or "padrao")
                       ultimo="resposta vazia (%d bytes)"%len(dados or b"")
                   except Exception as e:
                       ultimo=str(e)[:150]
@@ -254,8 +269,16 @@ jobs:
                   falhas.append("%s: sem nome ou sem prompt"%(nome or "?")); continue
               print("== %s"%nome)
               try:
-                  bruto=desenha(prompt)
+                  # a semente vem do proprio lote (`"semente": 12345`). Pecas da
+                  # MESMA cartela usam a MESMA semente -> saem parentes.
+                  bruto, motor = desenha(prompt, it.get("semente"))
                   saida=os.path.join(dest, nome+".png")
+                  # deixa registrado quem desenhou e com que semente: sem isso eu
+                  # nao sei se a peca feia veio do `turbo` (bem pior) ou do prompt.
+                  try:
+                      io.open(os.path.join(dest, nome+".origem.txt"), "w", encoding="utf-8").write(
+                          "pollinations/%s semente=%s\n"%(motor, it.get("semente") or "-"))
+                  except Exception: pass
                   if e_cena(it):
                       Image.open(io.BytesIO(bruto)).convert("RGB").save(saida, optimize=True)
                       print("   cena (sem recorte) -> %s"%saida)
