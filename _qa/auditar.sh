@@ -344,6 +344,27 @@ portao "0b3 espera" python3 _qa/espera.py
 echo "--- 0b4) PESO (o PC da escola aguenta a arte?) -"
 portao "0b4 peso" python3 _qa/peso.py "$PASTA"
 
+# ⚠️⚠️ OS PORTOES QUE EXISTIAM E NUNCA ERAM CHAMADOS (set/2026). Contei arquivo
+#    por arquivo depois da cobranca do Marcos — *"já pedi essas correções várias
+#    vezes, e sempre acontece a mesma coisa"* — e o numero era **26 dos 80**: eu
+#    escrevia o portao, ele funcionava, e nao entrava na banca. Depois o defeito
+#    voltava e eu consertava a mao de novo. Nao faltava portao: faltava esteira.
+#    Ao ligar estes, o `cor_fixa` reprovou na hora, com defeito de verdade: a
+#    `.carta .lab` do motor usava a tinta do FUNDO DA ATIVIDADE dentro de um
+#    cartao de fundo claro proprio — letra clara sobre branco.
+echo "--- 1m) TOQUE (arrastar tambem funciona com o dedo?) -"
+portao "1m toque" python3 _qa/toque.py "$ARQ"
+echo "--- 4c) COR CRAVADA (tinta herdada em fundo proprio) -"
+portao "4c cor cravada" python3 _qa/cor_fixa.py "$ARQ"
+echo "--- 1g2) BECO NA PECA (a peca tem 'jogar de novo' solto?) -"
+portao "1g2 beco na peca" python3 _qa/beco_peca.py "$ARQ"
+echo "--- 1i2) PALAVRA x FIGURA (a figura e da palavra dela?) -"
+portao "1i2 palavra x figura" python3 _qa/palavra_figura.py "$ARQ"
+echo "--- 4d) TEMA CLARO (a peca some no fundo claro?) -"
+portao "4d tema claro" node _qa/tema_claro.js "$ARQ"
+echo "--- 0o6) HALO (sobrou branco no recorte?) -"
+portao "0o6 halo" python3 _qa/halo.py "$PASTA"
+
 echo "--- 0c) PERGUNTA AMBIGUA (pede 'a ponte' e tem duas?) -"
 portao "0c pergunta ambigua" python3 _qa/ambiguo.py "$ARQ"
 

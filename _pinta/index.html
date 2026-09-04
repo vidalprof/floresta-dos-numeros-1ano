@@ -117,7 +117,22 @@ body{
     -webkit-box-shadow:0 4px 14px rgba(90,60,20,.16);
     box-shadow:0 4px 14px rgba(90,60,20,.16);z-index:20}
   .gthumb{width:148px;height:148px}   /* 58 -> 84 -> 104 -> 148 (pedidos dele) */
-  #palco{width:min(calc(100vh - 126px),calc(100vw - 452px),660px)}
+  /* ⭐ A BANDEJA VAI PARA A DIREITA (pedido do Marcos, set/2026: *"precisa
+     diminuir um pouco a área de pintura, pois as peças do quebra-cabeça
+     somem; melhor colocá-las à direita, pq sobra espaço ainda"*).
+     Ela estava EMBAIXO do quadro, dentro de uma coluna: o quadro tomava quase
+     toda a altura e sobrava para ela o `min-height:80px` — as peças ficavam
+     espremidas e sumiam. Aqui `#pmarea` vira LINHA, e a bandeja fica uma
+     coluna alta ao lado do quadro, na faixa que estava vazia.
+     ⚠️ Ela continua NO FLUXO, filha de `#pmarea` (que é `position:relative`):
+     o `paraBandeja` posiciona as peças por `bandeja.offsetLeft/offsetTop`, e
+     se ela virasse `position:fixed` a conta apontaria para outro canto. */
+  #pmarea{-webkit-box-orient:horizontal;flex-direction:row;align-items:center;
+    gap:12px;max-width:none;width:auto}
+  #bandeja{-webkit-box-flex:0;flex:0 0 152px;width:152px;min-height:0;
+    height:min(calc(100vh - 126px),620px)}
+  #bandeja.rotulo:before{content:"peças"}
+  #palco{width:min(calc(100vh - 126px),calc(100vw - 614px),620px)}
   /* ⚠️ DUAS colunas de cor, não uma: são 20 cores, e numa coluna só elas não
      cabem em 600px de altura (o netbook da escola) — a criança teria de ROLAR
      para achar o marrom, que é quase tão ruim quanto o defeito original.
@@ -151,7 +166,8 @@ body{
   #barra{right:158px;width:132px}
   #galeria{width:182px;max-width:182px;left:14px}
   .gthumb{width:174px;height:174px}
-  #palco{width:min(calc(100vh - 126px),calc(100vw - 520px),760px)}
+  #bandeja{-webkit-box-flex:0;flex:0 0 178px;width:178px;height:min(calc(100vh - 126px),720px)}
+  #palco{width:min(calc(100vh - 126px),calc(100vw - 708px),720px)}
 }
 /* overlay do professor (senha 1275@) — grade grande com todos os desenhos */
 #galmodal{position:fixed;inset:0;z-index:90;background:rgba(40,28,14,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);

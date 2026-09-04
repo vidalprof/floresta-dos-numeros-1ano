@@ -36,7 +36,37 @@ catch (e) {
  await p.goto((process.argv[2]? 'file://'+require('path').resolve(process.argv[2]) : 'file:///home/user/floresta-dos-numeros-1ano/_doceria/index.html'));
  await p.waitForTimeout(600);
  // pula narracoes: falar() vira no-op
- await p.evaluate(()=>{ window.falar=function(){}; window.depoisDaFala=function(id,ms,cb){setTimeout(cb,120);}; });
+ /* ⭐⭐ PROVA DE SALA (QA_SALA=1) — set/2026, pedido do Marcos: *"já temos
+    muitos portões, preciso de algo mais eficaz, um método que realmente
+    funcione"*.
+
+    ⚠️ POR QUE OS 76 PORTOES NAO PEGARAM o travamento que ele viu com a turma:
+    o auditor-jogador, para andar rapido, SILENCIA a voz (`falar` vira no-op) e
+    roda aqui, num container com processador de servidor e disco local. Ou seja,
+    ele apagava justamente as duas coisas que causam o defeito — a espera pela
+    voz e a maquina fraca. 60 quadros por segundo, boot em 160 ms, atividade
+    inteira sem um erro. E a crianca, no laboratorio, parada esperando 4
+    segundos depois de acertar.
+
+    No modo PROVA DE SALA ele faz o contrario: NAO silencia a voz, freia o
+    processador 6x e a rede para 400 kbit com 300 ms de atraso — o PC e a
+    internet da escola. Uma medida so, que responde o que interessa: quanto
+    tempo a crianca fica parada depois de acertar, e qual a maior engasgada.
+    Isso vale por varios portoes, e e mais barato do que somar o portao 77. */
+ const SALA = !!process.env.QA_SALA;
+ if(SALA){
+   try{
+     const cdp = await p.context().newCDPSession(p);
+     await cdp.send('Emulation.setCPUThrottlingRate', {rate: 6});
+     await cdp.send('Network.enable');
+     await cdp.send('Network.emulateNetworkConditions',
+       {offline:false, latency:300, downloadThroughput:400*1024/8, uploadThroughput:200*1024/8});
+   }catch(e){ console.log('NAO MEDI: nao consegui frear a maquina ('+e.message+')'); process.exit(2); }
+ }else{
+   await p.evaluate(()=>{ window.falar=function(){}; window.depoisDaFala=function(id,ms,cb){setTimeout(cb,120);}; });
+ }
+ /* o relogio da espera: do clique ate o botao de seguir aparecer */
+ const _esperas=[]; let _tClique=0, _tCongelou=0;
  /* ⭐ COLHEITA DE VOZES (ago/2026). Enquanto ele joga, anota TODO texto que a
     crianca poderia tocar (`.opt/.pc/.lig/.bin`) e todo enunciado (`.balao`).
     Nasceu de uma cobranca do Marcos: *"lembre-se que nas respostas precisa do
@@ -189,6 +219,24 @@ catch (e) {
        +'|'+((bn&&bn.className.indexOf('show')>=0)?'BANNER':'');
    });
    if(est!==ultimo){ visto.push(i+' '+est.replace(/\{[^}]*\}/,'').replace(/<\d+>/,'')); ultimo=est; paradas=0; } else paradas++;
+   if(SALA){
+     /* ⚠️ A PRIMEIRA VERSAO DESTA MEDIDA NAO PEGAVA NADA, e vale registrar:
+        eu cronometrava do clique ate o BANNER aparecer. Mas o banner e o fim da
+        FASE, e as fases ja trocavam rapido — a prova passava na versao com
+        defeito exatamente igual a versao consertada. Medida que nao separa o
+        doente do curado nao e medida.
+
+        O que a crianca sente nao e "o banner demorou": e **eu cliquei e nada
+        aconteceu**. Entao o que se mede e o TEMPO DE TELA CONGELADA: quanto
+        tempo o estado da atividade fica identico enquanto o jogador continua
+        clicando. E isso, com o processador freado e a voz LIGADA, e o retrato
+        do laboratorio da escola. */
+     const agora = Date.now();
+     if(est!==ultimo){
+       if(_tCongelou && agora-_tCongelou > 400) _esperas.push(agora-_tCongelou);
+       _tCongelou = agora;
+     }
+   }
    /* ⭐ resposta DECLARADA certa nao fecha a fase: o ultimo clique foi na opcao
       marcada `data-qa="1"` (return 2) e o estado esta congelado ha LIMCERTO
       iteracoes. Reprova com o motivo exato ANTES do PRESO generico. */
@@ -593,6 +641,28 @@ catch (e) {
  /* o barulho do file:// nao conta: service worker so existe em http(s) */
  const reais=erros.filter(e=>!/ServiceWorker|protocol of the current origin/i.test(e));
  console.log('ERROS JS:', reais.length? reais.slice(0,8).join(' || '):'nenhum');
+ if(SALA){
+   /* ⭐ O RELATORIO DA PROVA DE SALA — tres numeros, nao setenta e seis portoes */
+   const ord=_esperas.slice().sort((x,y)=>x-y);
+   const med=ord.length?ord[Math.floor(ord.length/2)]:0;
+   const pior=ord.length?ord[ord.length-1]:0;
+   console.log('');
+   console.log('=== PROVA DE SALA (processador 6x mais lento, rede de escola, voz LIGADA) ===');
+   console.log('  trechos de tela congelada medidos: '+ord.length);
+   console.log('  congelamento TIPICO (mediana): '+med+' ms');
+   console.log('  PIOR congelamento:            '+pior+' ms');
+   const TETO=1500;   /* na escola, com tudo freado, ate 1,5 s a crianca aguenta */
+   if(pior>TETO){
+     console.log('  ⛔ REPROVA: a crianca clica e a tela fica ate '+pior+' ms SEM RESPONDER');
+     console.log('     (teto da prova, ja com tudo freado: '+TETO+' ms).');
+     process.exitCode=1;
+   } else if(!ord.length){
+     console.log('  NAO MEDI: nenhum congelamento colhido — isto nao e "passou".');
+     process.exitCode=2;
+   } else {
+     console.log('  prova de sala ok: no PC da escola a tela responde em ate '+pior+' ms');
+   }
+ }
  if(encaixe.length){
    console.log('  !! '+encaixe.length+' FIGURA(S) MAIOR(ES) QUE O LUGAR DELAS (so aparece com a fase jogada):');
    for(const e of encaixe.slice(0,6)) console.log('     '+e);

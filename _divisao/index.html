@@ -205,7 +205,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;align-items:center;-webkit-box-shadow:0 6px 14px rgba(30,50,20,.16);box-shadow:0 6px 14px rgba(30,50,20,.16)}
 .carta:active{-webkit-transform:scale(.97);transform:scale(.97)}
 .carta img{width:76px;height:76px;object-fit:contain}
-.carta .lab{font-size:13px;font-weight:700;margin-top:2px;color:var(--texto)}
+.carta .lab{font-size:13px;font-weight:700;margin-top:2px;color:#221a12}  /* ⚠️ tinta PRÓPRIA, não `var(--texto)`: a carta tem fundo claro dela
+     (`rgba(255,253,246,.95)`, e `#eafce0`/`#ffece9` quando acerta/erra),
+     enquanto `--texto` é a tinta do FUNDO DA ATIVIDADE. Numa atividade de
+     fundo escuro isso dava letra clara sobre cartão branco — o rótulo da
+     carta sumia. Achado pelo `_qa/cor_fixa.py`, que existia e nunca era
+     chamado pela banca. */
 .carta .num{position:absolute;top:-8px;right:-8px;width:28px;height:28px;border-radius:50%;background:var(--verde);color:#fff;font-weight:700;font-size:16px;line-height:28px;-webkit-box-shadow:0 2px 5px rgba(0,0,0,.25);box-shadow:0 2px 5px rgba(0,0,0,.25)}
 .carta.ok{border-color:var(--verde);background:#eafce0}
 .carta.no{border-color:var(--coral);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
@@ -4444,7 +4449,7 @@ function responde(o,certa){
         if(_gc!==ger) return;
         falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
       }, 450);
-      setTimeout(_avanca, 2200);             /* rede: voz bloqueada/lenta nunca prende */
+      setTimeout(_avanca, 2200) /* rede-de-seguranca: so dispara se a voz nao chegar */;             /* rede: voz bloqueada/lenta nunca prende */
     }else{
       setTimeout(_avanca,700);
     }

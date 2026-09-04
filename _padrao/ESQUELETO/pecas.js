@@ -5063,7 +5063,7 @@ function acerta(){
     }else{
       sPasso(); novaRodada();
     }
-  },950);
+  },700);
 }
 function atualiza(){
   var feitas=Math.min(rodada,RODADAS.length);
@@ -10732,7 +10732,7 @@ function fechaContagem(){
       /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece
          que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
       else mostraBanner("<b>Voc&ecirc; contou tudo!</b><br>O total &eacute; o &uacute;ltimo n&uacute;mero da contagem.", fimContadores);
-    },1700);
+    },800);
     return;
   }
   elTotal.className="total";
@@ -15212,7 +15212,7 @@ function deuCerto(o){
     li++;
     if(li<LICOES.length) mostraBanner("O Byte aprendeu a regra e ela <b>funcionou</b>!",telaEnsinar);
     else mostraBanner("O Byte aprendeu as duas regras com voc&#234;!",fimDaPeca);
-  },1200);
+  },700);
 }
 
 /* ⭐ O ERRO ENCENADO. Ele nao "recusa" a regra: ele OBEDECE, e o mundo mostra
@@ -15662,7 +15662,7 @@ function responde(o,certa){
         if(_gc!==ger) return;
         falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
       }, 450);
-      setTimeout(_avanca, 2200);             /* rede: voz bloqueada/lenta nunca prende */
+      setTimeout(_avanca, 2200) /* rede-de-seguranca: so dispara se a voz nao chegar */;             /* rede: voz bloqueada/lenta nunca prende */
     }else{
       setTimeout(_avanca,700);
     }
@@ -22022,7 +22022,7 @@ function fecha(){
     var msg="<b>A figura apareceu!</b><br>Voc&#234; ligou tudo na ordem certa.";
     if(fi<FIGURAS.length) mostraBanner(msg,telaPontos);
     else mostraBanner(msg,fimDaPeca);
-  },2100);
+  },800);
 }
 
 /* ---------------------------------------------------------------
