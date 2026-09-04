@@ -181,6 +181,7 @@ jobs:
               #    isso fica FORA do `if` acima (foi ali que eu deixei um `if`
               #    vazio e quebrei o passo inteiro: "syntax error near fi").
               portao "moldura corta (o container come a figura)" python3 _qa/corta_figura.py "$idx"
+              portao "elemento coberto (o dedo nao alcanca)" node _qa/sobreposto.js "$idx"
               portao "toque (arrasto sem touch-action some sob o dedo)" python3 _qa/toque.py "$idx"
             fi
             if [ -f "$fal" ]; then

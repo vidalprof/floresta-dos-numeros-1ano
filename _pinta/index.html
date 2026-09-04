@@ -32,7 +32,13 @@ body{
 .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--acao),#5fd39a);transition:width .5s cubic-bezier(.22,1,.36,1)}
 /* área do jogo: tabuleiro + bandeja no mesmo container (peças moram aqui) */
 #pmarea{position:relative;width:100%;max-width:540px;flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;min-height:0}
-#palco{position:relative;width:min(96vw,60vh,520px);aspect-ratio:1/1;border-radius:var(--r);
+/* ⚠️ O `60vh` era a conta que estourava no CELULAR (o portao sobreposto.js
+   mostrou 7 cores debaixo do palco em 412x820). O palco leva 60% da altura,
+   mas acima dele vem a barra de progresso, o balao do enunciado e a galeria,
+   e abaixo a paleta e o botao Pronto — a soma passa de 100% e a paleta vai
+   parar ATRAS do palco. 46vh deixa o palco grande e ainda cabe todo o resto.
+   No PC (>=900px) a paleta ja foi para a direita e isto nao pesa. */
+#palco{position:relative;width:min(96vw,46vh,520px);aspect-ratio:1/1;border-radius:var(--r);
   background:var(--giz);box-shadow:var(--sombra),inset 0 0 0 3px #fff,inset 0 0 0 5px var(--borda);
   touch-action:none;overflow:hidden;flex:none}
 #tinta,#linha,#ghost{position:absolute;inset:7px;width:calc(100% - 14px);height:calc(100% - 14px);border-radius:12px;display:block}
@@ -55,10 +61,48 @@ body{
 .gthumb:active{transform:scale(.92)}
 .gthumb.sel{border-color:var(--am-b);box-shadow:0 0 0 3px rgba(224,169,42,.55)}
 #pmarea{flex:1 1 auto}
+/* ⚠️⚠️ LICAO PAGA (Marcos, set/2026, com a turma do 1o ano): *"a area de
+   pintura de algumas imagens fica em cima das cores, dificultando para os alunos
+   escolherem as cores, tendo que diminuir o zoom manualmente no navegador"*.
+   Reproduzido e MEDIDO em 1024x600 (o netbook da escola): 25 elementos ficavam
+   com o centro coberto por outro — as miniaturas embaixo das cores.
+
+   A CAUSA era de estrutura: a paleta e IRMA do #pmwrap, não filha. Empilhadas em
+   coluna, o quadro de pintura (que cresce com a altura da tela) empurrava a
+   paleta para fora da area visivel, e ela ia parar ATRAS dele. Numa tela baixa
+   isso e garantido, nao eventual — por isso a crianca tinha de diminuir o zoom.
+
+   O conserto e o que ele pediu, e resolve pela geometria: no PC as tres colunas
+   ficam LADO A LADO — galeria a esquerda, quadro no meio, CORES A DIREITA. Cada
+   uma com largura propria, nenhuma empurrando a outra. A paleta vira coluna e
+   sobe para a linha do quadro com `position:fixed` ancorada a direita, porque
+   ela e irma no HTML e nao da para reorganizar so com flex sem mexer no JS.
+
+   E as miniaturas crescem de 58 para 84px (pedido dele: *"aumentar esses
+   desenhos, pois estao pequenos"*) — 84px e o tamanho em que o desenho de linha
+   fina fica reconhecivel para escolher, medido nas fotos. */
 @media (min-width:900px){
-  #pmwrap{flex-direction:row;align-items:flex-start;justify-content:center;gap:10px}
-  #galeria{flex-direction:column;width:66px;max-width:66px;max-height:72vh;overflow-y:auto;overflow-x:hidden;padding:2px 4px}
-  .gthumb{width:58px;height:58px}
+  #pmwrap{flex-direction:row;align-items:flex-start;justify-content:center;
+    gap:14px;padding-right:118px}          /* espaço reservado para as cores */
+  #galeria{flex-direction:column;width:96px;max-width:96px;max-height:76vh;
+    overflow-y:auto;overflow-x:hidden;padding:2px 4px}
+  .gthumb{width:84px;height:84px}          /* era 58: pequeno demais para escolher */
+  /* ⚠️ DUAS colunas de cor, não uma: são 20 cores, e numa coluna só elas não
+     cabem em 600px de altura (o netbook da escola) — a criança teria de ROLAR
+     para achar o marrom, que é quase tão ruim quanto o defeito original.
+     Em duas colunas cabem todas de uma vez, sem rolagem. */
+  #paleta{position:fixed;right:8px;top:50%;transform:translateY(-50%);
+    width:104px;max-height:92vh;overflow-y:auto;
+    display:flex;flex-wrap:wrap;gap:7px;justify-content:center;
+    background:rgba(255,255,255,.55);border-radius:18px;padding:10px 6px;
+    box-shadow:0 4px 14px rgba(90,60,20,.16);z-index:20}
+}
+/* tela larga de verdade: cabem duas colunas de cor e miniatura maior ainda */
+@media (min-width:1200px){
+  #pmwrap{padding-right:142px}
+  #paleta{width:128px;right:14px}
+  #galeria{width:110px;max-width:110px}
+  .gthumb{width:98px;height:98px}
 }
 /* overlay do professor (senha 1275@) — grade grande com todos os desenhos */
 #galmodal{position:fixed;inset:0;z-index:90;background:rgba(40,28,14,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);

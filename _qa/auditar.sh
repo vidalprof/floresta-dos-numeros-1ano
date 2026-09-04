@@ -412,6 +412,17 @@ portao "0o3 enunciado bate" python3 _qa/enunciado_bate.py "$PASTA"
 echo "--- 0o4) MOLDURA CORTA (o container come a figura?) -"
 portao "0o4 moldura corta" python3 _qa/corta_figura.py "$ARQ"
 
+# ⭐ 1w) ELEMENTO COBERTO — pedido do Marcos com todas as letras (set/2026):
+#     *"a area de pintura fica em cima das cores... tipo de erros que seria
+#     legal o profissional que criamos pegar"*. Da para pegar, e sem calibrar:
+#     e geometria. No centro do botao, quem responde ao toque? Se e outro, o de
+#     baixo esta inalcancavel — por mais bonito que pareca no print.
+#     Os portoes que ja existiam nao viam: o leiaute mede TAMANHO (e os alvos
+#     tinham 40px certos), o encaixe mede se cabe (e cabia), e a foto parece boa
+#     porque a cor APARECE, com a bordinha de fora. So o gesto revela.
+echo "--- 1w) ELEMENTO COBERTO (o dedo alcanca o que ela quer tocar?) -"
+portao "1w elemento coberto" node _qa/sobreposto.js "$ARQ"
+
 # ⭐ 0o5) O OLHO NAS FIGURAS — e este NAO e um portao que decide: e um que MOSTRA.
 #     Lacuna assumida (set/2026): o defeito "o recorte comeu um pedaco do
 #     desenho" NAO tem medida confiavel. Eu tentei — buraco, fragmento, mordida
