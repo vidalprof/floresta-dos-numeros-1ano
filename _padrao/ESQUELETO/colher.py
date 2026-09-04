@@ -38,7 +38,42 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(os.path.dirname(AQUI))
 sys.path.insert(0, AQUI)
 
-from montar import chave_voz, eh_fala, texto_limpo  # noqa: E402
+from montar import (chave_voz, eh_fala, texto_limpo,          # noqa: E402
+                    _fonetica_voz, _desentidade_voz)
+
+
+def texto_comparavel(s):
+    u"""O MESMO texto, na forma em que o `falas.json` o guarda.
+
+    ⚠️ LIÇÃO PAGA (set/2026, Bancada da Divisão) — e das piores, porque era um
+    LAÇO SEM FIM. A banca reprovava a atividade dizendo que duas frases apareciam
+    na tela sem voz:
+
+        + Bem-vindo à oficina! ... a gente REPARTE com as mãos.
+        + Três algarismos: comece pelas CENTENAS e desça.
+
+    Só que a voz das duas ESTAVA gravada (`gi_abertura.mp3`, `gi_f19_intro.mp3`)
+    e a criança ouvia. O que ninguém via é que o montador passa TODA fala por
+    `_fonetica_voz(_desentidade_voz(...))` antes de guardá-la: ele baixa a caixa das palavras em
+    maiúscula (senão a voz SOLETRA "C-E-N-T-E-N-A-S"), tira o travessão (que a
+    voz arrastava), tira o "(va-ca)"... Ou seja, o `falas.json` guarda
+    `centenas` onde a tela escreve `CENTENAS`, e `material dourado placas` onde
+    a tela escreve `material dourado — placas`. **De propósito.** E a colheita
+    comparava as duas formas letra a letra.
+
+    Por isso a cura não é "ignorar a caixa": é passar os dois lados pela MESMA
+    função que gerou o texto guardado. Ignorar só a caixa consertava a frase das
+    centenas e deixava a da abertura acusada — foi o que aconteceu na primeira
+    tentativa, e o portão continuou pedindo uma voz que já existia.
+
+    O estrago não é só o susto: rodar o colher NÃO resolvia. Ele criava uma fala
+    `op_<hash>` para o texto em maiúscula, o montador regerava o `falas.json` do
+    `conteudo.json` e a fala sumia — e na banca seguinte a acusação voltava
+    igual. Portão que acusa inocente e que não dá para calar ensina a ignorar
+    portão, que é o pior que pode acontecer com um portão.
+
+    A cura é comparar na MESMA forma em que a fala foi guardada."""
+    return _fonetica_voz(_desentidade_voz(texto_limpo(s)))
 
 
 def joga_e_anota(pasta, voltas=6, secas=2):
@@ -167,7 +202,7 @@ def main():
     ja = set(f["id"] for f in falas)
     # ⚠️ e tambem pelo TEXTO: a mesma frase escrita no conteudo e vista em jogo
     #    nao pode virar dois mp3 (dinheiro e tempo de gravacao a toa)
-    ja_txt = set(texto_limpo(f["texto"]) for f in falas)
+    ja_txt = set(texto_comparavel(f["texto"]) for f in falas)
 
     print(u"COLHEITA — %s" % pasta)
     # ⚡ CONFERIR E COLHER NAO CUSTAM O MESMO (ago/2026, medido).
@@ -186,7 +221,7 @@ def main():
     descartadas = []
     for txt in sorted(vistos):
         t = texto_limpo(txt)
-        if not eh_fala(t) or t in ja_txt:
+        if not eh_fala(t) or texto_comparavel(t) in ja_txt:
             continue
         if eh_colagem(t):
             descartadas.append(t)
