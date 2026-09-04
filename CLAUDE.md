@@ -364,9 +364,28 @@ Leia tudo antes de agir e responda sempre em **português**.
 > já existe — se existir, aproveite; senão, me passe o prompt para gerar"*. Ou seja,
 > o padrão agora é **REUSO**, não arte nova a cada vez. Regras práticas:
 > 1. **Antes de pedir arte, CONSULTE O BANCO** (`_banco/index.json`; o montador já
->    reporta `no_banco` × `gerar`). Se a figura existe no banco, **aproveite** (não
->    peça para gerar). O que faltar, **passe o prompt em bloco copiável** para o
->    Marcos gerar (o Claude não gera arte — só recorta/trata o que ele sobe).
+>    reporta `no_banco` × `gerar`). Se a figura existe no banco, **aproveite**.
+>
+>    **⭐ MUDOU (set/2026): o Claude PODE GERAR, pelo Pollinations.** Palavras do
+>    Marcos: *"Pode gerar em Pollinations, mas terá que fazer [os prompts] super
+>    prontos para ele gerar igual [ao] Gemini"*. Isto **revoga** a regra anterior
+>    ("o Claude não gera arte — só recorta o que ele sobe"), que existia de quando
+>    ele fazia questão de aprovar cada imagem. A troca dele foi por VELOCIDADE: a
+>    ida e volta da arte era a maior espera de relógio de uma atividade.
+>
+>    **A condição que veio junto, e ela é séria:** o Pollinations é grátis mas é
+>    mais burro que o Gemini — ele não "entende" pedido curto. Prompt de uma linha
+>    volta genérico, desirmanado e fora de estilo. Então **o prompt tem que ir
+>    PRONTO**: objeto, estilo (soft matte clay 3D, children's storybook), luz,
+>    fundo (preto puro quando for recortar), enquadramento, escala, "no text, no
+>    letters, no numbers", e o que NÃO se quer. Ver os prompts que o
+>    `_padrao/cartela.py` já monta — são o modelo do tamanho certo.
+>
+>    **Caminho:** `gerar-imagens.yml` com o input `lote=<arquivo.json>` (o
+>    Pollinations desenha e o `rembg` recorta dentro do runner, R$ 0,00) e sempre
+>    em **CARTELA** (`_qa/cartela.py` reprova peça a peça). O Claude mostra o
+>    resultado ao Marcos, que aprova ou manda refazer — a aprovação continua sendo
+>    dele, o que mudou é que ele não precisa mais gerar com as próprias mãos.
 > 2. **Toda imagem que o Marcos gera, o Claude põe no banco** (rodar o
 >    `_banco/montar.py`, que varre as pastas e cataloga) — assim a próxima atividade
 >    aproveita.

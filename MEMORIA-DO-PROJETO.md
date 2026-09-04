@@ -11,6 +11,19 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **📱 ONDE AS ATIVIDADES TÊM QUE RODAR (decisão do Marcos, set/2026).** Palavras
+> dele: *"a princípio os apps são para os PCs da escola, tablete, Android e
+> iPhone para os profs usarem"*. Ou seja, a régua deixou de ser só o netbook:
+> - **PC da escola** — 1024×600, navegador possivelmente antigo, mouse;
+> - **tablet e Android** — toque, tela média;
+> - **iPhone/iPad — Safari**, que é o mais exigente e o que EU NÃO CONSIGO TESTAR
+>   aqui (o container só tem Chromium). Safari tem armadilhas próprias: política
+>   de áudio mais dura, `100vh` que muda com a barra do navegador, `backdrop-filter`
+>   caro, e toque que não dispara os mesmos eventos. **Construir defensivo e pedir
+>   ao Marcos para conferir no aparelho dele** — nunca afirmar "funciona no iPhone"
+>   sem ele ter aberto.
+> - **quem usa é o PROFESSOR**, com a turma — não é a criança sozinha em casa.
+>
 > **🚫🧰 NADA DE PLATAFORMA PRONTA DE TERCEIRO — o modelo é NOSSO (decisão do
 > Marcos, set/2026).** Palavras dele: *"eu quero um modelo onde vá desenvolver,
 > não sites para fazer atividades prontos da internet"*. Ou seja: **H5P,
