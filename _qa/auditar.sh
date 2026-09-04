@@ -334,6 +334,16 @@ portao "0b padrao da casa" python3 _qa/padrao.py "$ARQ"
 echo "--- 0b2) DINAMICAS (cada mecanica e as armadilhas DELA) -"
 portao "0b2 dinamicas" python3 _qa/dinamicas.py "$ARQ"
 
+# ⚠️ OS DOIS PORTOES QUE NASCERAM DE "JA PEDI VARIAS VEZES" (Marcos, set/2026).
+#    Ele cobrou tres vezes o mesmo defeito — "o botao de proximo nao aparece",
+#    "demora muito a aparecer", "acerta e fica parado esperando o botao" — e as
+#    duas primeiras vezes eu consertei o CODIGO sem criar o PORTAO. Por isso
+#    voltava. Aqui estao os dois que medem, para nao depender de eu lembrar.
+echo "--- 0b3) ESPERA (ela acertou; o botao aparece na hora?) -"
+portao "0b3 espera" python3 _qa/espera.py
+echo "--- 0b4) PESO (o PC da escola aguenta a arte?) -"
+portao "0b4 peso" python3 _qa/peso.py "$PASTA"
+
 echo "--- 0c) PERGUNTA AMBIGUA (pede 'a ponte' e tem duas?) -"
 portao "0c pergunta ambigua" python3 _qa/ambiguo.py "$ARQ"
 

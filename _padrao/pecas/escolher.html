@@ -607,9 +607,9 @@ function responde(o,certa){
         if(_gc!==ger) return;
         falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
       }, 450);
-      setTimeout(_avanca, 4000);             /* rede: voz bloqueada/lenta nunca prende */
+      setTimeout(_avanca, 2200) /* rede-de-seguranca: so dispara se a voz nao chegar */;             /* rede: voz bloqueada/lenta nunca prende */
     }else{
-      setTimeout(_avanca, 1300);
+      setTimeout(_avanca,700);
     }
     return;
   }

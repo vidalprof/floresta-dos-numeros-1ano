@@ -674,7 +674,52 @@ var ID = {pre:"skel", mascote:"mascote", mascoteNome:"", titulo:"Atividade",
    mascote alheio aparecer no texto desta.                            */
 var MASCOTE_NOME="";  /* ID.mascoteNome */
 var IMGS=[];
-var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}
+var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}precarregaVoz();}
+/* ⭐⭐ A VOZ CHEGA ANTES DA CRIANÇA — pré-carga em segundo plano.
+
+   ⚠️ LIÇÃO PAGA (set/2026), e quem pegou foi o Marcos com a turma jogando:
+   *"atividade oficina das palavras travando na fase 13"* e, quando pedi para
+   ele descrever, o retrato exato do defeito: *"o estudante acerta, e fica
+   parado esperando o botão continuar"*.
+
+   Não era o código: era a REDE. O `escolher` — a mecânica mais usada da casa —
+   só mostra o botão quando a voz da resposta termina, e tem uma rede de
+   segurança de 4 SEGUNDOS para o caso de o mp3 não chegar. Na escola ele não
+   chega na hora: cada mp3 é uma ida à rede na PRIMEIRA vez que toca. Então a
+   criança acerta, e espera a rede de olho na tela parada.
+
+   O `sw.js` já é cache-primeiro no áudio — mas cache-primeiro só ajuda da
+   SEGUNDA vez. Numa atividade de 400 falas, a primeira vez acontece 400 vezes.
+
+   Aqui a voz vem antes: enquanto a criança lê a capa e escolhe o crachá, o
+   motor busca as falas caladas, de 4 em 4, e o service worker guarda cada uma.
+   Quando ela chega na fase, o mp3 já é local e o botão aparece na hora.
+
+   ⚠️ REGRAS DESTA PRÉ-CARGA, todas por um motivo:
+     · `fetch`, não `new Audio()`: baixa e guarda sem ocupar canal de som nem
+       disparar autoplay (que o navegador bloqueia antes do 1º gesto);
+     · de 4 em 4, com respiro: 400 pedidos de uma vez afogam a rede da escola e
+       atrasariam justamente a fala da PRIMEIRA fase;
+     · a fala da abertura e as das primeiras fases vêm primeiro (a ordem do
+       `falas.json` já é a ordem do jogo);
+     · `catch` vazio em tudo: pré-carga que falha não pode quebrar a atividade —
+       sem ela o app volta a funcionar como funcionava, só mais devagar. */
+var _pvOk=0;
+function precarregaVoz(){
+  if(_pvOk||typeof AUDIOS==="undefined"||!AUDIOS||!AUDIOS.length||!window.fetch) return;
+  _pvOk=1;
+  var i=0, LOTE=4;
+  function passo(){
+    if(i>=AUDIOS.length) return;
+    var lote=[],n;
+    for(n=0;n<LOTE&&i<AUDIOS.length;n++,i++){
+      try{ lote.push(fetch("audio/"+AUDIOS[i]+".mp3",{cache:"force-cache"})["catch"](function(){})); }catch(e){}
+    }
+    try{ Promise.all(lote).then(function(){ setTimeout(passo,120); })["catch"](function(){ setTimeout(passo,300); }); }
+    catch(e){ setTimeout(passo,300); }
+  }
+  setTimeout(passo,400);   /* deixa a capa desenhar primeiro */
+}
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
 /* ============ SOM (efeitos) ============ */
 /* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE

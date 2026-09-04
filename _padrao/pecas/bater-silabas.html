@@ -421,7 +421,7 @@ function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
    voz falava por cima de si mesma e saía picotada, "bo-lo" atropelado. Com 820
    cada pedaço termina e ainda sobra silêncio — que é o que a criança usa para
    contar. Devagar aqui não é lentidão: é o tempo de a contagem acontecer. */
-var PASSO=820;
+var PASSO=560;
 
 /* a palavra PICADA, do jeito que a voz vai dizer (ver o bloco A VOZ PICADA) */
 function pedacos(r){ return r.voz || r.sil.join("... "); }
@@ -580,7 +580,7 @@ function acerta(r){
         if(meu!==ger) return;
         ri++;
         if(ri>=BATIDAS.length) fimDaPeca(); else pecaBater();
-      },1500);
+      },650);
     }, inteiro?340:0);
   }, inteiro);
 }

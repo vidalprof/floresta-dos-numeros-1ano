@@ -1654,6 +1654,26 @@ def escreve_index(pasta, c, falas):
     dados.append(u"VOZOK = " + json.dumps(
         dict((x["id"][3:], 1) for x in falas if x["id"].startswith("op_")),
         ensure_ascii=False) + u";")
+    # ⭐⭐ A LISTA DE TODA A VOZ, para o motor buscar em SEGUNDO PLANO.
+    #
+    # ⚠️ LIÇÃO PAGA (set/2026), e quem pegou foi o Marcos com a turma jogando:
+    #    *"atividade oficina das palavras travando na fase 13"*, e depois a
+    #    descrição exata: *"o estudante acerta, e fica parado esperando o botão
+    #    continuar"*. Medido: o `escolher` (a mecânica mais usada da casa) só
+    #    avança quando a voz da resposta TERMINA — e tem uma rede de segurança de
+    #    **4 segundos** para o caso de o mp3 não chegar. Na escola ele não chega
+    #    na hora: cada mp3 é uma ida à rede na PRIMEIRA vez que toca. Então a
+    #    criança acerta e espera a rede, tela parada, quatro segundos.
+    #
+    #    O `sw.js` já é cache-primeiro em áudio — mas cache-primeiro só ajuda da
+    #    SEGUNDA vez. A primeira sempre doía, e numa atividade de 400 falas a
+    #    primeira vez acontece 400 vezes.
+    #
+    #    Cura: assim que a capa está na tela (e o dedo da criança ainda está
+    #    longe do primeiro acerto), o motor busca as falas caladas, aos poucos,
+    #    e o service worker guarda. Quando ela chega na fase, o mp3 já é local.
+    dados.append(u"AUDIOS = " + json.dumps(
+        [x["id"] for x in falas], ensure_ascii=False) + u";")
     # ⚠️ BNCC do RELATORIO do professor. Antes o motor trazia PLANTAS hardcoded
     #    (EF02CI05/06, "agua e luz", "partes da planta") — resto de clone do
     #    Jardim que aparecia no parecer de TODA atividade (o Marcos pegou, ago/2026).

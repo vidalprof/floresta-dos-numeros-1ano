@@ -3110,7 +3110,7 @@ function desenha(quantosNovos){
          medalha nascesse sozinha de um setTimeout, ele clicaria em "Jogar de
          novo" na iteração seguinte e a partida recomeçaria para sempre. */
       else mostraBanner("<b>Balan&ccedil;a no meio!</b><br>Os dois lados valem o mesmo.", fimBalanca);
-    },1400);
+    },700);
   }
 }
 
@@ -3891,7 +3891,7 @@ function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
    voz falava por cima de si mesma e saía picotada, "bo-lo" atropelado. Com 820
    cada pedaço termina e ainda sobra silêncio — que é o que a criança usa para
    contar. Devagar aqui não é lentidão: é o tempo de a contagem acontecer. */
-var PASSO=820;
+var PASSO=560;
 
 /* a palavra PICADA, do jeito que a voz vai dizer (ver o bloco A VOZ PICADA) */
 function pedacos(r){ return r.voz || r.sil.join("... "); }
@@ -4050,7 +4050,7 @@ function acerta(r){
         if(meu!==ger) return;
         ri++;
         if(ri>=BATIDAS.length) fimDaPeca(); else pecaBater();
-      },1500);
+      },650);
     }, inteiro?340:0);
   }, inteiro);
 }
@@ -6597,7 +6597,7 @@ function poe(b,q){
         rodada++;
         if(rodada>=PALAVRAS.length) mostraBanner(TEXTOS.fim, fimDaPeca);
         else mostraBanner(msg, pecaCaixas);
-      },1400);
+      },700);
     },380);
   }
 }
@@ -9856,7 +9856,7 @@ function acertou(b){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
     proxima();
-  },1050);
+  },600);
 }
 function errou(b){
   sErro(); errosSeg++;
@@ -15662,9 +15662,9 @@ function responde(o,certa){
         if(_gc!==ger) return;
         falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
       }, 450);
-      setTimeout(_avanca, 4000);             /* rede: voz bloqueada/lenta nunca prende */
+      setTimeout(_avanca, 2200);             /* rede: voz bloqueada/lenta nunca prende */
     }else{
-      setTimeout(_avanca, 1300);
+      setTimeout(_avanca,700);
     }
     return;
   }
@@ -20207,7 +20207,7 @@ function fechaPalavra(r){
     if(meu!==ger) return;
     ri++;
     if(ri>=SILABAS.length) fimDaPeca(); else pecaJuntar();
-  },1400);
+  },700);
 }
 
 /* o ANDAIME que cresce — e que nunca deixa a criança presa */
@@ -24258,7 +24258,7 @@ function respondeComp(g,cp,v,elb){
       if(g!==ger||!viva()) return;
       mostraBanner("<b>Voc&ecirc; mediu e comparou!</b><br>Medir come&ccedil;a no "+
                    "<b>zero</b> &#8212; o resto &eacute; s&oacute; contar.", fimMedir);
-    },1500);
+    },700);
     return;
   }
   errosLer++;
@@ -24282,8 +24282,8 @@ function respondeComp(g,cp,v,elb){
       setTimeout(function(){
         if(g!==ger||!viva()) return;
         mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b>.", fimMedir);
-      },1500);
-    },1100);
+      },700);
+    },700);
   }
 }
 
@@ -36424,7 +36424,7 @@ function fechaFita(quantos,f){
     contaEl.style.display="block";
     contaEl.innerHTML=quantos+" saltos de "+f.p+" &#8594; chegou no <b>"+f.ate+"</b>";
   }
-  setTimeout(proximaFita,1700);
+  setTimeout(proximaFita,800);
 }
 function proximaFita(){
   if(!telaF||!telaF.parentNode) return;
@@ -38421,7 +38421,7 @@ function passoEncontro(){
   }
   sCerto();
   mostraDica(q.fim);
-  setTimeout(proximaPergunta,1900);
+  setTimeout(proximaPergunta,850);
 }
 function proximaPergunta(){
   if(!telaQ||!telaQ.parentNode) return;
