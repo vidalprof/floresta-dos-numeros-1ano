@@ -91,34 +91,67 @@ body{
      Duas correcoes: o app deixa de ter teto no PC (as colunas precisam da tela
      inteira) e a galeria ganha `flex:0 0` — largura que o flex nao pode encolher. */
   #app{max-width:100%}
-  #pmwrap{flex-direction:row;align-items:flex-start;justify-content:center;
-    gap:16px;padding-right:118px;width:100%}
-  #galeria{flex:0 0 116px;flex-direction:column;width:116px;max-width:116px;
-    max-height:78vh;overflow-y:auto;overflow-x:hidden;padding:2px 4px}
-  .gthumb{width:104px;height:104px}        /* 58 -> 84 -> 104 (pedido do Marcos) */
-  /* ⭐ O PALCO CRESCE porque a paleta saiu de baixo dele (Marcos, set/2026:
-     "com isso a área de desenho pode ser maior"). No PC ela mora à direita,
-     então a altura que ela ocupava voltou para o desenho: de 46vh para 72vh.
-     ⚠️ Quem garante que isto não recria o defeito é o `_qa/sobreposto.js`:
-     conferido nos dois tamanhos depois de crescer, zero elementos cobertos. */
-  #palco{width:min(72vh,calc(100vw - 340px),640px)}
+
+  /* ⭐⭐ A CONTA DO ESPAÇO (Marcos, set/2026): *"sempre aproveitar a área de
+     interatividade da melhor forma possível... essas miniaturas podem ser
+     maiores e mais afastadas do quadro branco? tem espaço sobrando?"*
+     Tinha, e MEDIDO em 1024x600 era muito: 0-117 vazio, galeria 117-233,
+     vão 233-303, desenho 303-735, **735-912 VAZIO (177px)**, cores 912-1016.
+     294px de 1024 — 29% da tela — sem uso nenhum.
+
+     A largura sobrando NÃO cabia no desenho: ele é QUADRADO e quem o limitava
+     era a ALTURA (600px), não a largura. Então a largura foi para onde rende:
+       · as miniaturas passam de 104 para 148px (+102% de área) e vão para a
+         PONTA esquerda, longe do quadro branco — 8-164, com ~120px de vão;
+       · as cores ganham bolinha maior e coluna mais larga;
+       · e o "Pronto!" MUDA-SE para a faixa vazia da direita.
+     Esse último é o que faz o desenho crescer: o botão ocupava ~60px de
+     ALTURA embaixo do quadro, e essa altura voltou toda para o desenho. */
+  #pmwrap{flex-direction:column;align-items:center;justify-content:flex-start;
+    gap:6px;width:100%;padding-left:172px;padding-right:266px}
+  #galeria{position:fixed;left:8px;top:50%;
+    -webkit-transform:translateY(-50%);transform:translateY(-50%);
+    flex-direction:column;width:156px;max-width:156px;
+    max-height:94vh;overflow-y:auto;overflow-x:hidden;gap:9px;
+    padding:8px 4px;background:rgba(255,255,255,.5);border-radius:20px;
+    -webkit-box-shadow:0 4px 14px rgba(90,60,20,.16);
+    box-shadow:0 4px 14px rgba(90,60,20,.16);z-index:20}
+  .gthumb{width:148px;height:148px}   /* 58 -> 84 -> 104 -> 148 (pedidos dele) */
+  #palco{width:min(calc(100vh - 126px),calc(100vw - 452px),660px)}
   /* ⚠️ DUAS colunas de cor, não uma: são 20 cores, e numa coluna só elas não
      cabem em 600px de altura (o netbook da escola) — a criança teria de ROLAR
      para achar o marrom, que é quase tão ruim quanto o defeito original.
      Em duas colunas cabem todas de uma vez, sem rolagem. */
-  #paleta{position:fixed;right:8px;top:50%;transform:translateY(-50%);
-    width:104px;max-height:92vh;overflow-y:auto;
-    display:flex;flex-wrap:wrap;gap:7px;justify-content:center;
+  #paleta{position:fixed;right:8px;top:50%;
+    -webkit-transform:translateY(-50%);transform:translateY(-50%);
+    width:116px;max-height:92vh;overflow-y:auto;
+    display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
     background:rgba(255,255,255,.55);border-radius:18px;padding:10px 6px;
+    -webkit-box-shadow:0 4px 14px rgba(90,60,20,.16);
     box-shadow:0 4px 14px rgba(90,60,20,.16);z-index:20}
+  /* o "Pronto!" na faixa que estava vazia — a 30px do quadro e a 30px das
+     cores, para o dedo não confundir com uma cor */
+  #barra{position:fixed;right:134px;top:50%;
+    -webkit-transform:translateY(-50%);transform:translateY(-50%);
+    width:116px;margin:0;z-index:20}
+  #barra .btn{width:100%;padding:16px 8px;font-size:19px}
+  .dica{padding-left:172px;padding-right:266px}
 }
-/* tela larga de verdade: cabem duas colunas de cor e miniatura maior ainda */
+/* ⭐ TELA BAIXA (o netbook de 600px): o topo encolhe para o desenho crescer.
+   Cada pixel tirado do enunciado vira pixel de desenho, e o enunciado
+   continua narrado — quem nao le ouve do mesmo jeito. */
+@media (min-width:900px) and (max-height:700px){
+  #app{gap:4px;padding-top:6px}
+  .balao{font-size:18px;padding:6px 12px}
+}
+/* tela larga de verdade: tudo respira mais */
 @media (min-width:1200px){
-  #pmwrap{padding-right:142px}
-  #paleta{width:128px;right:14px}
-  #galeria{flex:0 0 132px;width:132px;max-width:132px}
-  .gthumb{width:120px;height:120px}
-  #palco{width:min(76vh,calc(100vw - 400px),720px)}
+  #pmwrap,.dica{padding-left:198px;padding-right:302px}
+  #paleta{width:132px;right:14px}
+  #barra{right:158px;width:132px}
+  #galeria{width:182px;max-width:182px;left:14px}
+  .gthumb{width:174px;height:174px}
+  #palco{width:min(calc(100vh - 126px),calc(100vw - 520px),760px)}
 }
 /* overlay do professor (senha 1275@) — grade grande com todos os desenhos */
 #galmodal{position:fixed;inset:0;z-index:90;background:rgba(40,28,14,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);

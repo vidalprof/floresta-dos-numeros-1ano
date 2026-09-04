@@ -4906,7 +4906,21 @@
     -webkit-box-shadow:0 4px 14px rgba(90,60,20,.16);
     box-shadow:0 4px 14px rgba(90,60,20,.16);z-index:11}
   .mec-pintar-canvas .centro{padding-left:20px}
-  .mec-pintar-canvas .pintawrap{max-width:min(420px,54vh)}
+  /* ⭐⭐ E A FAIXA DA DIREITA ESTAVA VAZIA (Marcos, set/2026: *"sempre aproveitar
+     a área de interatividade da melhor forma possível... tem espaço sobrando?"*).
+     Medido em 1024x600: paleta 10-122, cartão 252-772 e **772-1024 sem NADA**
+     (252px, um quarto da tela), com o quadro de pintar em apenas 258px.
+     Então o nome da cor e os botões "Limpar/Pronto!" mudam-se para essa faixa,
+     empilhados. Não é só arrumação: eles ocupavam ~88px de ALTURA embaixo do
+     quadro, e é essa altura que volta para o desenho. */
+  .mec-pintar-canvas .pc_ferr{position:fixed;right:24px;top:calc(50% - 74px);
+    width:180px;margin:0;z-index:12;-webkit-box-pack:center;justify-content:center}
+  .mec-pintar-canvas .acoes{position:fixed;right:24px;top:calc(50% - 30px);
+    width:180px;margin:0;z-index:12;display:-webkit-box;display:flex;
+    -webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
+    -webkit-box-align:stretch;align-items:stretch;gap:10px}
+  .mec-pintar-canvas .acoes .btn{width:100%;margin:0}
+  .mec-pintar-canvas .pintawrap{max-width:min(420px,58vh)}
 }@media (prefers-reduced-motion:reduce){
 
 .mec-pintar-canvas .tela{-webkit-animation:none;animation:none}}
