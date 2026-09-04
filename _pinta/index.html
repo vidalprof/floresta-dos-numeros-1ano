@@ -82,11 +82,26 @@ body{
    desenhos, pois estao pequenos"*) — 84px e o tamanho em que o desenho de linha
    fina fica reconhecivel para escolher, medido nas fotos. */
 @media (min-width:900px){
+  /* ⚠️⚠️ LICAO PAGA NA HORA (set/2026): o `#app` tem `max-width:640px`, herdado
+     de quando tudo era uma coluna so. Ao crescer o palco eu esqueci disso: as
+     tres colunas passaram a disputar 640px, o flex ESMAGOU a galeria para 8
+     PIXELS de largura, e as miniaturas sumiram da tela.
+     E o `sobreposto.js` disse "ok" — corretamente, porque nada estava COBERTO;
+     estava espremido, que e outro defeito. Foi a FOTO que mostrou.
+     Duas correcoes: o app deixa de ter teto no PC (as colunas precisam da tela
+     inteira) e a galeria ganha `flex:0 0` — largura que o flex nao pode encolher. */
+  #app{max-width:100%}
   #pmwrap{flex-direction:row;align-items:flex-start;justify-content:center;
-    gap:14px;padding-right:118px}          /* espaço reservado para as cores */
-  #galeria{flex-direction:column;width:96px;max-width:96px;max-height:76vh;
-    overflow-y:auto;overflow-x:hidden;padding:2px 4px}
-  .gthumb{width:84px;height:84px}          /* era 58: pequeno demais para escolher */
+    gap:16px;padding-right:118px;width:100%}
+  #galeria{flex:0 0 116px;flex-direction:column;width:116px;max-width:116px;
+    max-height:78vh;overflow-y:auto;overflow-x:hidden;padding:2px 4px}
+  .gthumb{width:104px;height:104px}        /* 58 -> 84 -> 104 (pedido do Marcos) */
+  /* ⭐ O PALCO CRESCE porque a paleta saiu de baixo dele (Marcos, set/2026:
+     "com isso a área de desenho pode ser maior"). No PC ela mora à direita,
+     então a altura que ela ocupava voltou para o desenho: de 46vh para 72vh.
+     ⚠️ Quem garante que isto não recria o defeito é o `_qa/sobreposto.js`:
+     conferido nos dois tamanhos depois de crescer, zero elementos cobertos. */
+  #palco{width:min(72vh,calc(100vw - 340px),640px)}
   /* ⚠️ DUAS colunas de cor, não uma: são 20 cores, e numa coluna só elas não
      cabem em 600px de altura (o netbook da escola) — a criança teria de ROLAR
      para achar o marrom, que é quase tão ruim quanto o defeito original.
@@ -101,8 +116,9 @@ body{
 @media (min-width:1200px){
   #pmwrap{padding-right:142px}
   #paleta{width:128px;right:14px}
-  #galeria{width:110px;max-width:110px}
-  .gthumb{width:98px;height:98px}
+  #galeria{flex:0 0 132px;width:132px;max-width:132px}
+  .gthumb{width:120px;height:120px}
+  #palco{width:min(76vh,calc(100vw - 400px),720px)}
 }
 /* overlay do professor (senha 1275@) — grade grande com todos os desenhos */
 #galmodal{position:fixed;inset:0;z-index:90;background:rgba(40,28,14,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);

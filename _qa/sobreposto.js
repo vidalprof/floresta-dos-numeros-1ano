@@ -100,8 +100,81 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
           return cs.display !== 'none' && cs.visibility !== 'hidden' &&
                  parseFloat(cs.opacity) > 0.05 && cs.pointerEvents !== 'none';
         };
-        const out = [];
+        const out = [], esmagados = [];
         let vistos = 0;
+        const nome = e => (e.id ? '#' + e.id :
+          '.' + String(e.className || e.tagName).split(' ')[0]).slice(0, 26);
+
+        /* ⚠️⚠️ LICAO PAGA NA HORA (set/2026): eu cresci o palco da Pinta e Monta,
+           o flex ESMAGOU a coluna das miniaturas para 8 PIXELS de largura, e este
+           portao disse "ok" — corretamente, porque nada estava COBERTO. Estava
+           espremido, que e outro defeito com o mesmo efeito: a crianca nao ve.
+           Foi a FOTO que mostrou, nao a conta. Entao a conta aprendeu.
+
+           ⚠️ DUAS tentativas erradas antes desta, e elas valem mais que o
+           conserto, porque sao o jeito de errar que se repete:
+
+           1a) comparei `getComputedStyle(el).width` com o
+               `getBoundingClientRect()`. Medido aqui: os dois dao o MESMO
+               numero, porque o `computed style` de largura devolve o valor
+               USADO (ja esmagado), nao o que o CSS pediu. Era 1 dividido por 1;
+               o portao nunca acusaria nada. Quem sabe o que foi PEDIDO e a
+               REGRA de CSS — dai o `pedidaPx` abaixo, que abre as folhas de
+               estilo, respeita as media queries e le a declaracao em px.
+           2a) com a largura pedida na mao, botei um LIMIAR chutado: "menos de
+               40% do pedido = esmagado". Refiz a quebra de proposito na Pinta e
+               Monta e a galeria caiu de 116px para 54px — 47%, ACIMA do limiar,
+               e o portao passou de novo. So que 54px com miniatura de 104px
+               dentro ja e o defeito inteiro: a crianca ve meia miniatura.
+               Numero chutado nao mede nada; o que mede e FATO GEOMETRICO.
+
+           O FATO, entao, sem calibrar nada: **o conteudo e mais largo que a
+           caixa E a caixa esconde o que sobra** (`overflow-x:hidden|clip`).
+           Ai o pedaco que sobra nao esta rolavel nem visivel: sumiu.
+           Medido: quebrado -> #galeria client=54 scroll=112 hidden; bom ->
+           client=116 scroll=116. Separacao limpa, sem limiar nenhum.
+           `overflow-x:auto` NAO entra: ali a pessoa rola e alcanca. */
+        function pedidaPx(el) {
+          let v = null;
+          const anda = (regras) => {
+            for (const r of regras) {
+              if (r.media) {
+                try { if (matchMedia(r.conditionText).matches) anda(r.cssRules); } catch (e) {}
+                continue;
+              }
+              if (!r.selectorText || !r.style || !r.style.width) continue;
+              let casa = false;
+              try { casa = el.matches(r.selectorText); } catch (e) {}
+              if (!casa) continue;
+              const m = /^(\d+(?:\.\d+)?)px$/.exec(r.style.width.trim());
+              if (m) v = parseFloat(m[1]);   /* a ultima que casa vence, como no cascata */
+            }
+          };
+          for (const s of document.styleSheets) { try { anda(s.cssRules); } catch (e) {} }
+          const inline = /^(\d+(?:\.\d+)?)px$/.exec((el.style && el.style.width || '').trim());
+          if (inline) v = parseFloat(inline[1]);
+          return v;
+        }
+
+        /* o esmagado se procura em TUDO, nao so no tocavel: quem sumiu na
+           Pinta e Monta foi a COLUNA da galeria, que nao e botao nenhum. */
+        for (const el of document.querySelectorAll('div,section,aside,nav,ul,main,form')) {
+          const rr = el.getBoundingClientRect();
+          if (rr.height < 8 || el.clientWidth < 10) continue;   /* escondido/fechado */
+          const cs0 = getComputedStyle(el);
+          if (cs0.display === 'none' || cs0.visibility === 'hidden') continue;
+          /* so `hidden`/`clip` CORTAM. Em `auto`/`scroll` a pessoa rola e alcanca. */
+          if (cs0.overflowX !== 'hidden' && cs0.overflowX !== 'clip') continue;
+          /* texto cortado com reticencias e decisao de design, nao esmagamento */
+          if (cs0.textOverflow === 'ellipsis') continue;
+          if (!el.querySelector('*')) continue;   /* caixa so de texto: idem */
+          const sobra = el.scrollWidth - el.clientWidth;
+          if (sobra <= 8) continue;               /* 8px = folga de arredondamento */
+          const pedida = pedidaPx(el);
+          esmagados.push({q: nome(el), tem: el.clientWidth,
+                          precisa: el.scrollWidth, pediu: pedida});
+        }
+
         for (const el of document.querySelectorAll(sel)) {
           if (!vis(el)) continue;
           const rc = el.getBoundingClientRect();
@@ -113,17 +186,23 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
           if (!emCima) continue;
           /* ⚠️ armadilha 2: filho e pai não se cobrem */
           if (emCima === el || el.contains(emCima) || emCima.contains(el)) continue;
-          const nome = e => (e.id ? '#' + e.id :
-            '.' + String(e.className || e.tagName).split(' ')[0]).slice(0, 26);
           out.push({q: nome(el), por: nome(emCima),
                     tam: Math.round(rc.width) + 'x' + Math.round(rc.height)});
         }
-        return {cobertos: out, vistos: vistos};
+        return {cobertos: out, vistos: vistos, esmagados: esmagados};
       }, TOCAVEL);
 
       medidas += r.vistos;
       for (const c of r.cobertos) {
-        achados.push({tela: nomeTela, fase: f === null ? '-' : (f + 1), ...c});
+        achados.push({tela: nomeTela, tipo: 'coberto',
+                      texto: c.q + ' (' + c.tam + ') esta DEBAIXO de ' + c.por});
+      }
+      for (const e of (r.esmagados || [])) {
+        achados.push({tela: nomeTela, tipo: 'esmagado',
+                      texto: e.q + ' foi ESMAGADO pelo vizinho: o conteudo precisa de ' +
+                             e.precisa + 'px, a caixa tem ' + e.tem +
+                             'px e ESCONDE o resto' +
+                             (e.pediu ? ' (o CSS pedia ' + e.pediu + 'px)' : '')});
       }
     }
     await p.close();
@@ -139,21 +218,30 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
     /* agrupa: 20 cores debaixo do mesmo quadro é UM defeito, não 20 */
     const grupos = {};
     for (const a of achados) {
-      const k = a.tela + '|' + a.q + '|' + a.por;
+      const k = a.tela + '|' + a.texto;
       grupos[k] = grupos[k] || {...a, n: 0};
       grupos[k].n++;
     }
     const lista = Object.values(grupos).sort((a, b) => b.n - a.n);
-    console.log(arquivo + ' -> ' + lista.length + ' caso(s) de elemento COBERTO ' +
-                '(de ' + medidas + ' alvos conferidos):');
+    const nCob = lista.filter(g => g.tipo === 'coberto').length;
+    const nEsm = lista.filter(g => g.tipo === 'esmagado').length;
+    console.log(arquivo + ' -> ' + (nCob ? nCob + ' COBERTO(s)' : '') +
+                (nCob && nEsm ? ' e ' : '') + (nEsm ? nEsm + ' ESMAGADO(s)' : '') +
+                ' (de ' + medidas + ' alvos conferidos):');
     for (const g of lista.slice(0, 10)) {
-      console.log('    ✗ [' + g.tela + '] ' + g.q + ' (' + g.tam + ')' +
-                  (g.n > 1 ? ' ×' + g.n : '') + ' esta DEBAIXO de ' + g.por);
+      console.log('    ✗ [' + g.tela + '] ' + g.texto + (g.n > 1 ? ' ×' + g.n : ''));
     }
     if (lista.length > 10) console.log('    ... e mais ' + (lista.length - 10));
-    console.log('   A crianca ve o elemento mas o dedo nao alcanca: quem responde ao');
-    console.log('   toque no centro dele e outro. Costuma ser altura fixa que estoura');
-    console.log('   em tela baixa, ou dois blocos irmaos empilhados sem espaco.');
+    if (nCob) {
+      console.log('   COBERTO: a crianca ve o elemento mas o dedo nao alcanca — quem');
+      console.log('   responde ao toque no centro dele e outro. Costuma ser altura fixa');
+      console.log('   que estoura em tela baixa, ou dois irmaos empilhados sem espaco.');
+    }
+    if (nEsm) {
+      console.log('   ESMAGADO: o vizinho tomou a largura e a caixa cortou o que sobrou.');
+      console.log('   Cura: `flex:0 0 <largura>` na coluna que nao pode encolher, e');
+      console.log('   conferir se algum pai ainda tem `max-width` de quando era 1 coluna.');
+    }
     process.exit(1);
   }
 
