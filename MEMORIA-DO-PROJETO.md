@@ -11,6 +11,26 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 >
+> **🚫🧰 NADA DE PLATAFORMA PRONTA DE TERCEIRO — o modelo é NOSSO (decisão do
+> Marcos, set/2026).** Palavras dele: *"eu quero um modelo onde vá desenvolver,
+> não sites para fazer atividades prontos da internet"*. Ou seja: **H5P,
+> Wordwall, Genially, Kahoot, Articulate e afins estão FORA**, e não se propõe
+> de novo. (A pesquisa `_pesquisa/web/substituir-motor-autoria-atividades.md`
+> trouxe o H5P como matéria-prima — ela NÃO é regra, e esta decisão a encerra.)
+>
+> **Por que a decisão é boa, e não só preferência:** o que a casa entrega não
+> cabe em ferramenta de terceiro — voz de verdade (Edge TTS em mp3, não a voz do
+> navegador), mascote com lip-sync, relatório do professor escondido atrás da
+> medalha, retomar por 55 minutos, o parecer em palavras sem nota. Fora isso,
+> toda atividade nossa é **1 HTML autossuficiente**: abre em PC velho de escola,
+> sem plugin, sem conta, sem servidor, sem mensalidade, e não quebra no dia em
+> que a empresa mudar o formato ou começar a cobrar. Plataforma pronta troca
+> tudo isso por um editor bonitinho.
+>
+> **O que continua valendo:** biblioteca própria, escrita aqui, que as atividades
+> INCLUEM (ver a conversa do modelo novo, set/2026 — "parar de gerar e passar a
+> ligar").
+>
 > **🖥️ REPOS-CHAVE (ferramentas do professor — para eu NÃO esquecer, ago/2026).**
 > O catálogo de ATIVIDADES é o `ATIVIDADES.md`. As FERRAMENTAS ficam aqui:
 > **📌 COMO SABER SE UM ESPELHO FOI AO AR — DE GRAÇA (set/2026).** O
