@@ -83,6 +83,7 @@ def main():
     #    gestos — isencao declarada no conteudo (igual ao montador/padrao).
     _camtipo = os.path.join(alvo, "conteudo.json") if os.path.isdir(alvo) \
         else os.path.join(os.path.dirname(os.path.abspath(alvo)), "conteudo.json")
+    e_jogo = False
     try:
         if os.path.exists(_camtipo):
             _t = json.load(io.open(_camtipo, encoding="utf-8")).get("tipo", "")
@@ -90,6 +91,18 @@ def main():
                 print(u"%s -> atividade CRIATIVA (colorir): producao, sem cobertura "
                       u"por multiplos gestos. Nada a conferir." % alvo)
                 return 0
+            # ⭐ JOGO DE MECANICA UNICA (set/2026, Bancada da Divisao). A regra
+            #    "todo objetivo por 2 gestos" nasceu de uma ATIVIDADE (o alfabeto
+            #    magro contra as silabas fartas) e esta certa la. Num JOGO
+            #    declarado — uma so mecanica do comeco ao fim, como a Oficina da
+            #    Divisao — ela e impossivel por construcao: o portao reprovaria
+            #    para sempre, e portao que nunca da para passar ensina a ignorar
+            #    portao. Entao, e SO nesse caso, o item do gesto vira AVISO.
+            #    ⚠️ Os outros tres continuam valendo com todo o peso — e foi um
+            #    deles que pegou o defeito de verdade aqui: o objetivo do
+            #    "repartir com as maos" tinha 6 fases contra 17 do algoritmo.
+            if str(_t).strip().lower() == "jogo":
+                e_jogo = True
     except Exception:
         pass
 
@@ -120,6 +133,7 @@ def main():
         d["ids"].append(f.get("id") or "?")
 
     problemas = []
+    avisos = []
     maior = max([por[k]["n"] for k in por] or [0])
 
     for k in sorted(cur):
@@ -146,9 +160,10 @@ def main():
                              u"mencao, nao ensino — o minimo da casa e %d."
                              % (k, nome, d["n"], MIN_FASES))
         if len(d["mecs"]) < MIN_GESTOS:
-            problemas.append(u"o objetivo '%s' (%s) e treinado por UM GESTO so (%s). "
-                             u"Quem nao entende por esse caminho nao tem outro."
-                             % (k, nome, ", ".join(sorted(d["mecs"]))))
+            texto = (u"o objetivo '%s' (%s) e treinado por UM GESTO so (%s). "
+                     u"Quem nao entende por esse caminho nao tem outro."
+                     % (k, nome, ", ".join(sorted(d["mecs"]))))
+            (avisos if e_jogo else problemas).append(texto)
         if maior and d["n"] * 2 < maior and k != "livre":
             problemas.append(u"o objetivo '%s' (%s) ficou com %d fase(s) contra %d do "
                              u"mais servido — menos da metade. Foi essa a desproporcao "
@@ -167,6 +182,11 @@ def main():
         print(u"   %-11s %2d fase(s) | %d gesto(s): %s"
               % (k, d["n"] if d else 0, len(d["mecs"]) if d else 0,
                  ", ".join(sorted(d["mecs"])) if d else u"NENHUM"))
+    if avisos:
+        print(u"   ⚠️ EXCECAO DECLARADA: `tipo=\"jogo\"` — mecanica unica autorizada.")
+        print(u"      O item do GESTO vira aviso aqui (os outros tres seguem valendo):")
+        for a in avisos:
+            print(u"    · %s" % a)
     if problemas:
         print(u"   %d PROBLEMA(S) DE COBERTURA:" % len(problemas))
         for p in problemas:

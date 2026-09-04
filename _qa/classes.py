@@ -73,6 +73,14 @@ def main():
         #    uma chamada de funcao (getAttribute, indexOf, split...) nao e
         #    classe: e argumento. Some com esses antes de recolher.
         trecho = re.sub(r'\.\s*\w+\s*\([^)]*\)', ' ', trecho)
+        # ⚠️ SEGUNDO FALSO ALARME DA MESMA FAMILIA (set/2026, Bancada da Divisao):
+        #    `elGrupos.className = "grupos" + (fase==="repartir" ? " alvo" : "")`
+        #    fazia o portao ler `"repartir"` como nome de classe e acusar
+        #    `SEM CSS: .repartir` — mas "repartir" e o valor de uma VARIAVEL DE
+        #    ESTADO, comparada ali para decidir a classe. O que esta do lado
+        #    direito de uma COMPARACAO nunca e classe: e o valor comparado.
+        #    Some com eles antes de recolher (o mesmo remedio do `getAttribute`).
+        trecho = re.sub(r'[=!]==?\s*"[^"]*"', ' ', trecho)
         for lit in re.findall(r'"([^"]*)"', trecho):
             for c in lit.split():
                 usadas.setdefault(c, 0)
