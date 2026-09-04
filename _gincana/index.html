@@ -962,15 +962,15 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-divisao-dourado .clin{white-space:nowrap;text-align:center;line-height:1}
 
-.mec-divisao-dourado .dd_cel{display:inline-block;width:24px;height:28px;line-height:28px; font-size:19px;font-weight:800;color:#fff8ea;text-align:center;font-variant-numeric:tabular-nums}
+.mec-divisao-dourado .dcel{display:inline-block;width:24px;height:28px;line-height:28px; font-size:19px;font-weight:800;color:#fff8ea;text-align:center;font-variant-numeric:tabular-nums}
 
-.mec-divisao-dourado .dd_cel.dv{color:#ffe27a}
+.mec-divisao-dourado .dcel.dv{color:#ffe27a}
 
-.mec-divisao-dourado .dd_cel.q{color:#a8e88f}
+.mec-divisao-dourado .dcel.q{color:#a8e88f}
 
-.mec-divisao-dourado .dd_cel.qbox{border-bottom:2px dashed rgba(255,255,255,.5)}
+.mec-divisao-dourado .dcel.qbox{border-bottom:2px dashed rgba(255,255,255,.5)}
 
-.mec-divisao-dourado .dd_cel.us{color:#ffcf8a;font-size:16px}
+.mec-divisao-dourado .dcel.us{color:#ffcf8a;font-size:16px}
 
 .mec-divisao-dourado .cbarra{display:inline-block;width:3px;height:28px;background:#ffe9b0;vertical-align:middle;margin:0 2px}
 
@@ -992,6 +992,20 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-divisao-dourado .ddica{margin-top:6px;font-size:13.5px;font-weight:700;color:#7a4a12;line-height:1.3}
 
+.mec-divisao-dourado .numtecs{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;justify-content:center;max-width:330px;margin:8px auto 2px}
+
+.mec-divisao-dourado .numtec{-webkit-box-flex:0;flex:0 0 auto;width:56px;height:56px;line-height:56px;margin:4px;padding:0; background:#fffdf6;color:#221a12;border:0;border-radius:14px;font-size:25px;font-weight:800; text-align:center;cursor:pointer;-webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6}
+
+.mec-divisao-dourado .numtec:active{-webkit-transform:translateY(3px);transform:translateY(3px); -webkit-box-shadow:0 1px 0 #c9bda6;box-shadow:0 1px 0 #c9bda6}
+
+.mec-divisao-dourado .numtec.numdel{background:#f6e0ae;font-size:21px}
+
+.mec-divisao-dourado .dnvagas{display:inline-block;margin:0 0 0 4px}
+
+.mec-divisao-dourado .vaga{display:inline-block;width:44px;height:52px;line-height:46px;margin:0 4px; border:3px dashed #a9781a;border-radius:11px;background:rgba(255,255,255,.6); color:#2a1f12;font-size:26px;font-weight:800;text-align:center;vertical-align:middle}
+
+.mec-divisao-dourado .vaga.cheia{border-style:solid;background:#fff}
+
 .mec-divisao-dourado .dctrl{text-align:center;margin-top:8px}
 
 .mec-divisao-dourado .dctrl .btn{margin-top:6px}
@@ -1002,7 +1016,9 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-divisao-dourado .blk{vertical-align:bottom}
 
-.mec-divisao-dourado .blk.arr{cursor:grab;-ms-touch-action:none;touch-action:none}@media (max-width:820px){
+.mec-divisao-dourado .blk.arr{cursor:grab;-ms-touch-action:none;touch-action:none}
+
+.mec-divisao-dourado .blk.namao{-webkit-filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 5px #ffe27a);filter:drop-shadow(0 0 0 #fff) drop-shadow(0 0 5px #ffe27a);-webkit-transform:translateY(-3px);transform:translateY(-3px)}@media (max-width:820px){
 
 .mec-divisao-dourado .dchave{-webkit-box-flex:1;flex:1 1 100%;order:2}
 
@@ -1030,7 +1046,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-divisao-dourado .dchave{flex:0 0 176px;padding:6px 8px}
 
-.mec-divisao-dourado .dd_cel{width:21px;height:25px;line-height:25px;font-size:17px}
+.mec-divisao-dourado .dcel{width:21px;height:25px;line-height:25px;font-size:17px}
 
 .mec-divisao-dourado .digbox{padding:6px 10px;margin-top:5px}
 
@@ -1042,7 +1058,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-divisao-dourado .dcampo.pequeno{width:66px}
 
-.mec-divisao-dourado .dctrl{margin-top:5px}}@media (prefers-reduced-motion:reduce){
+.mec-divisao-dourado .dctrl{margin-top:5px}
+
+.mec-divisao-dourado .numtecs{max-width:300px;margin:5px auto 2px}
+
+.mec-divisao-dourado .numtec{width:50px;height:50px;line-height:50px;margin:3px;font-size:22px}
+
+.mec-divisao-dourado .vaga{width:38px;height:44px;line-height:38px;margin:0 3px;font-size:23px}}@media (prefers-reduced-motion:reduce){
 
 .mec-divisao-dourado .bcol.sobra, .mec-divisao-dourado .grupo.mira{-webkit-animation:none;animation:none}}
 
@@ -3064,7 +3086,7 @@ function passoDeCasa(place){ return place-plan.offset; }
 
 /* ---------- a conta armada (a chave), que se preenche passo a passo ---------- */
 var ateStep=-1, mostraQuo=false;
-function cel(t,c){ return '<span class="cel '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>'; }
+function cel(t,c){ return '<span class="dcel '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>'; }
 function pintaChave(){
   var L=plan.L, o="", i, p;
   /* linha 1: o dividendo e, à direita, o divisor */
@@ -3107,17 +3129,36 @@ function renderBanco(){
     if(fase==="trocar" && place===pativa) cls="dd_on sobra";
     if(fase==="trocar" && place===pativa+1) cls="alvo";
     var qt = place<pativa? "✓" : sup[place];
-    h+='<div class="bcol '+cls+'" data-casa="'+place+'"><div class="bch">'+NOMESP[place].toUpperCase()+'</div>'+
+    /* na hora da TROCA, a casa de baixo e o alvo: ela fica clicavel e se
+       anuncia ao auditor com `data-qa` (nao "1", que quer dizer "resposta
+       certa que fecha a fase" — aqui e so "o lugar de tocar agora"). */
+    var _qa = (fase==="trocar" && place===pativa+1) ? ' data-qa="troca"' : '';
+    h+='<div class="bcol '+cls+'" data-casa="'+place+'"'+_qa+'><div class="bch">'+NOMESP[place].toUpperCase()+'</div>'+
        '<div class="bqt">'+qt+'</div><div class="bblocos">'+
        (place<pativa?"":cluster(place,sup[place],usaPx(place),18,(place===pativa&&(fase==="repartir"||fase==="trocar"))))+
        '</div></div>';
   }
   elBanco.innerHTML=h;
+  /* ⚠️ a troca tambem nao pode exigir escolher o bloco antes: era a mesma
+     trava do grupo, e prendeu o auditor na fase 2 (a primeira COM troca).
+     Tocar na casa de baixo JA e a decisao — e e a decisao que ensina: "isto
+     nao da para repartir, entao vira dez da casa seguinte". */
+  var cols=elBanco.children, ci2;
+  for(ci2=0;ci2<cols.length;ci2++)(function(col){
+    col.onclick=function(){
+      if(fase!=="trocar") return;
+      if(parseInt(col.getAttribute("data-casa"),10)===pativa+1){ _marcado=null; pintaMarca(); trocar(); }
+      else elFala.innerHTML="Toque na casa <b>de baixo</b> (a que est&aacute; piscando) para trocar por 10.";
+    };
+  })(cols[ci2]);
 }
 function renderGrupos(){
   var h="",g,place;
   for(g=0;g<plan.d;g++){
-    h+='<div class="grupo'+(faltaNoGrupo(g)?" mira":"")+'" data-g="'+g+'"><div class="gh">GRUPO '+(g+1)+'</div>';
+    /* `data-qa="1"` no grupo que deve receber AGORA: e por ele que o
+       auditor-jogador sabe onde tocar (e a crianca ve o mesmo, piscando). */
+    h+='<div class="grupo'+(faltaNoGrupo(g)?" mira":"")+'" data-g="'+g+'"'+
+       (faltaNoGrupo(g)?' data-qa="1"':'')+'><div class="gh">GRUPO '+(g+1)+'</div>';
     for(place=plan.offset;place<4;place++){
       if(grp[g][place]>0) h+='<div class="dd_grow">'+cluster(place,grp[g][place],grpPx(place),10,false)+'</div>';
     }
@@ -3126,6 +3167,11 @@ function renderGrupos(){
   }
   elGrupos.className="grupos"+(fase==="repartir"?" alvo":"");
   elGrupos.innerHTML=h;
+  /* a porta do TOQUE nos grupos */
+  var gs=elGrupos.children,i;
+  for(i=0;i<gs.length;i++)(function(el){
+    el.onclick=function(){ var k=parseInt(el.getAttribute("data-g"),10); tocouGrupo(k); };
+  })(gs[i]);
 }
 function renderMesa(){ renderBanco(); renderGrupos(); pintaChave(); ligaArrasto(); }
 
@@ -3212,18 +3258,56 @@ function arrastavel(elBlk){
     function up(e){
       document.removeEventListener("pointermove",mv); document.removeEventListener("pointerup",up);
       elGhost.className="ghost hide"; elGhost.innerHTML=""; elBlk.style.visibility="";
-      soltou(document.elementFromPoint(e.clientX,e.clientY),moveu);
+      if(!moveu) marca(elBlk);
+      else soltou(document.elementFromPoint(e.clientX,e.clientY),moveu);
     }
     document.addEventListener("pointermove",mv); document.addEventListener("pointerup",up);
   });
 }
 function grupoAlvo(el){ while(el){ if(el.getAttribute && el.getAttribute("data-g")!=null) return parseInt(el.getAttribute("data-g"),10); el=el.parentNode; } return -1; }
 function dentroDoBanco(el){ while(el){ if(el===elBanco) return true; el=el.parentNode; } return false; }
+/* ⭐⭐ AS DUAS PORTAS (regra da casa, e ela venceu aqui — set/2026).
+   A Oficina original dizia "nao vale so clicar" e eu portei isso ao pe da letra:
+   o toque era RECUSADO. Resultado medido: o auditor-jogador ficou PRESO na fase
+   1 e nao chegou na medalha — ou seja, uma crianca sem arrasto bom (PC velho da
+   escola, dedo pequeno, dificuldade motora) ficaria presa igual.
+   Relendo a ordem do Marcos, o que ele proibiu foi o AUTOMATICO: *"o sistema
+   NUNCA preenche outro grupo sozinho"*. Tocar no bloco e depois no grupo NAO e
+   automatico — sao dois gestos, um por bloco, escolhidos pela crianca, com a
+   mesma regra do minimo da rodada. Entao a peca aceita as duas portas:
+   ARRASTAR (o gesto rico) e TOCAR-TOCAR (a porta que ninguem fica de fora).
+   O que continua proibido e o que sempre foi: nada anda sozinho. */
+var _marcado=null;
+function marca(elBlk){
+  if(_marcado===elBlk){ _marcado=null; pintaMarca(); return; }
+  _marcado=elBlk; pintaMarca(); sPoeBloco();
+  elFala.innerHTML = (fase==="trocar")
+    ? "Agora toque na casa <b>de baixo</b> para trocar por 10."
+    : "Bloco na m&atilde;o. Agora toque num <b>grupo que pisca</b>.";
+}
+function pintaMarca(){
+  var bl=elMesa.getElementsByClassName("blk"),i;
+  for(i=0;i<bl.length;i++) bl[i].setAttribute("class",
+    (bl[i].getAttribute("class")||"").replace(/\s*namao/,"") + (bl[i]===_marcado?" namao":""));
+}
+function tocouGrupo(g){
+  /* ⚠️⚠️ A LICAO QUE FECHOU ESTA PECA (set/2026): eu exigia escolher o BLOCO
+     antes de tocar no grupo — duas escolhas. Mas escolher o bloco NAO E uma
+     escolha: todos os blocos da casa ativa sao iguais. A unica decisao que a
+     crianca toma e PARA QUEM vai, e essa continua sendo dela, com a mesma
+     regra do minimo da rodada. Exigir a primeira escolha so travava quem nao
+     arrasta bem — e travou o auditor por tres rodadas seguidas, sempre nos
+     mesmos 74 passos sem sair do lugar.
+     A ordem do Marcos era *"o sistema NUNCA preenche outro grupo sozinho"*, e
+     ela continua valendo inteira: um toque = um bloco = um grupo, escolhido
+     por ela. Nada anda sozinho. */
+  _marcado=null; pintaMarca(); repartirUm(g);
+}
+function tocouBanco(){ if(fase==="trocar" && _marcado){ _marcado=null; trocar(); } }
+
 function soltou(tgt,moveu){
-  /* ⭐ ARRASTAR DE VERDADE (regra da Oficina, aprovada pelo Marcos): não vale só
-     clicar. O gesto de LEVAR o bloco é o que ensina; um clique que resolve
-     sozinho devolve a divisão ao terreno abstrato de onde a peça quer tirá-la. */
-  if(!moveu){ elFala.innerHTML="<b>Arraste</b> o bloco com o dedo (ou o mouse) — n&atilde;o vale s&oacute; clicar."; sErro(); return; }
+  /* sem mover = TOQUE: marca o bloco (ou entrega, se ja havia um marcado) */
+  if(!moveu){ return; }
   if(fase==="repartir"){
     var g=grupoAlvo(tgt);
     if(g>=0) repartirUm(g);
@@ -3234,66 +3318,144 @@ function soltou(tgt,moveu){
   }
 }
 
-/* ---------- ler nos grupos e digitar (o símbolo vem por último) ---------- */
+/* ---------- ler nos grupos e digitar (o símbolo vem por último) ----------
+   ⭐⭐ DUAS MUDANÇAS QUE O AUDITOR-JOGADOR OBRIGOU, e as duas melhoraram a peça:
+
+   1. TECLADO NA TELA, além do teclado de verdade. A versão portada tinha só um
+      `<input>`: no tablet da escola (sem teclado físico) a criança ficava sem
+      caminho, e o auditor — que só toca — ficava preso na fase 1 sem chegar na
+      medalha. É a regra das DUAS PORTAS da casa, e ela vale aqui como em toda
+      fase de digitar. As teclas têm 58px (o piso é 48).
+   2. UMA PERGUNTA POR VEZ. Antes eu pedia o resultado E a sobra no mesmo passo,
+      com dois campos. Agora vem o resultado; só depois de acertar é que a peça
+      pergunta a sobra. Menos carga de uma vez (Sweller), e o `data-qa` — que é
+      por onde o auditor sabe o que se espera AGORA — passa a ter uma resposta
+      só, que é o que ele consegue ler. */
+var _pediu = "quo";   /* "quo" -> o resultado; "res" -> a sobra */
+var _escrito = "";
+var _vagas = [];
+
+function caixaDigita(msg, alvo, rotulo){
+  _escrito = "";
+  elCtrl.innerHTML =
+    '<div class="digbox">'+
+      '<div class="dq">'+msg+'</div>'+
+      '<div class="dlin"><b>'+rotulo+'</b> <span class="dnvagas" id="dvis"></span></div>'+
+      '<div class="ddica" id="ddica"></div>'+
+      '<div class="numtecs" data-qa="'+alvo+'"></div>'+
+    '</div>';
+  var tec = elMesa.querySelector(".numtecs"), i, d;
+  for(i=0;i<=9;i++){
+    d = el("button","numtec",String(i));
+    d.type="button"; d.dig=String(i);
+    d.onclick = (function(dig){ return function(){ poeDigito(dig); }; })(String(i));
+    tec.appendChild(d);
+  }
+  d = el("button","numtec numdel","&#9003;");
+  d.type="button"; d.setAttribute("aria-label","Apagar");
+  d.onclick = function(){ _escrito=_escrito.slice(0,-1); pintaVisor(); sTrocaBloco(); };
+  tec.appendChild(d);
+  /* ⚠️⚠️ AS VAGAS SAO O PADRAO DA CASA, E NAO SO POR ESTETICA (set/2026):
+     o auditor-jogador conta `.dnvagas .vaga.cheia` para saber em que digito
+     esta. A minha primeira versao usava um visor de texto solto: o auditor
+     achava sempre "zero digitos escritos" e clicava o PRIMEIRO numero para
+     sempre, sem nunca fechar a fase — 74 passos e preso. Copiar a estrutura
+     que a casa ja usa (a `digitar-numero`) resolve, e de quebra a crianca
+     ve quantos algarismos a resposta tem, que e o andaime de sempre. */
+  var vis = elMesa.querySelector("#dvis"), k;
+  _vagas = [];
+  for(k=0;k<String(alvo).length;k++){ var vg=el("div","vaga",""); vis.appendChild(vg); _vagas.push(vg); }
+  pintaVisor();
+}
+function poeDigito(dig){
+  if(_escrito.length >= _vagas.length) return;
+  _escrito += dig; pintaVisor(); sPoeBloco();
+  diz(dig);
+  /* ⚠️⚠️ NADA DE BOTAO "CONFERIR" — e a lição mais cara desta peça.
+     Eu tinha posto um, com `data-qa="1"` para o auditor achar. Só que
+     `data-qa="1"` quer dizer "ESTA e a resposta certa": o auditor clicava nele
+     de saída, a fase não fechava (o visor estava vazio), e ele reprovava com
+     "resposta declarada certa não fechou a fase" — três rodadas seguidas,
+     sempre nos mesmos 74 passos. A peça da casa (`digitar-numero`) não tem
+     botão nenhum: quando a última vaga enche, ela CONFERE SOZINHA. É melhor
+     para a criança (um toque a menos) e é o que o auditor entende. */
+  if(_escrito.length === _vagas.length) setTimeout(confereResultado, 260);
+}
+function pintaVisor(){
+  var i;
+  for(i=0;i<_vagas.length;i++){
+    if(i < _escrito.length){ _vagas[i].className="vaga cheia"; _vagas[i].innerHTML=_escrito.charAt(i); }
+    else { _vagas[i].className="vaga"; _vagas[i].innerHTML=""; }
+  }
+}
+/* PORTA 2: o teclado de verdade. No PC da escola tem teclado e a criança digita. */
+function ligaTecladoReal(){
+  document.onkeydown = function(e){
+    if(fase !== "digitar" || !elMesa || !elMesa.parentNode){ return; }
+    var k = e.key;
+    if(k >= "0" && k <= "9"){ e.preventDefault(); poeDigito(k); }
+    else if(k === "Backspace"){ e.preventDefault(); _escrito=_escrito.slice(0,-1); pintaVisor(); }
+    else if(k === "Enter"){ e.preventDefault(); confereResultado(); }
+  };
+}
 function pedeResultado(msg){
-  fase="digitar";
-  /* ⚠️ O BANCO SAI DE CENA NA HORA DE DIGITAR (set/2026, visto na foto): a
-     caixa de digitar nasce embaixo de tudo e empurrava o botao "Conferir"
-     para DENTRO da faixa da barra fixa do motor — a crianca fazia a conta
-     inteira e nao conseguia entregar. Escondendo o banco (que a essa altura
-     esta vazio, so com os ✓) liberam-se ~100px, e de quebra a crianca olha
-     para onde deve: os GRUPOS, que sao a resposta. */
+  fase="digitar"; _pediu="quo";
   if(elBanco) elBanco.style.display="none";
-  /* a fala do passo tambem sai: nesta hora ela ficava com a frase VELHA
+  /* a fala do passo também sai: nesta hora ela ficava com a frase VELHA
      ("uma unidade para o grupo 1"), contradizendo a caixa que acabou de
-     abrir — e ainda custava altura. A caixa ja diz o que fazer. */
+     abrir — e ainda custava altura. A caixa já diz o que fazer. */
   if(elFala){ elFala.innerHTML=""; elFala.style.display="none"; }
   elInstr.innerHTML="Voc&ecirc; j&aacute; repartiu tudo com as m&atilde;os. Agora <b>leia num grupo</b> e escreva o resultado.";
-  var temResto=plan.rem>0;
-  var lin='<div class="dlin"><b>'+plan.n+' &divide; '+plan.d+' =</b> '+
-    '<input class="dcampo" id="dq" type="tel" inputmode="numeric" maxlength="5" autocomplete="off" aria-label="resultado">';
-  if(temResto) lin+=' <b>e sobra</b> <input class="dcampo pequeno" id="dr" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="resto">';
-  lin+='</div>';
-  elCtrl.innerHTML='<div class="digbox"><div class="dq">'+msg+' Quanto cada grupo tem no total?</div>'+lin+
-    '<div class="ddica" id="ddica"></div></div>'+
-    '<button class="btn" id="dconf">Conferir</button>';
-  var bt=elMesa.querySelector("#dconf"); if(bt) bt.onclick=confereResultado;
-  var q=elMesa.querySelector("#dq");
-  /* ⭐ AS DUAS PORTAS: teclado da tela E teclado de verdade (regra da casa) */
-  if(q){ q.onkeydown=function(e){ if(e.keyCode===13){ e.preventDefault();
-           if(temResto){ var rr=elMesa.querySelector("#dr"); if(rr) rr.focus(); }
-           else confereResultado(); } };
-         try{ q.focus(); }catch(e){} }
-  if(temResto){ var r=elMesa.querySelector("#dr");
-    if(r) r.onkeydown=function(e){ if(e.keyCode===13){ e.preventDefault(); confereResultado(); } }; }
+  caixaDigita(msg+" Quanto cada grupo tem no total?", String(plan.quo), plan.n+" &divide; "+plan.d+" =");
+  ligaTecladoReal();
 }
 function confereResultado(){
-  var qi=elMesa.querySelector("#dq"), ri=elMesa.querySelector("#dr");
-  var q=parseInt(((qi&&qi.value)||"").replace(/\D/g,""),10);
-  var temResto=plan.rem>0, r=temResto?parseInt(((ri&&ri.value)||"").replace(/\D/g,""),10):0;
-  var dica=elMesa.querySelector("#ddica");
-  if(isNaN(q)||(temResto&&isNaN(r))){ if(dica) dica.innerHTML="Escreva o resultado no campo."; sErro(); return; }
-  if(q===plan.quo && (!temResto || r===plan.rem)){
-    mostraQuo=true; pintaChave();
-    try{ sCerto(); }catch(e){}
-    var extra=temResto?(" e sobra "+plan.rem):"";
-    elFala.innerHTML="<b>"+plan.n+" &divide; "+plan.d+" = "+plan.quo+extra+"</b>. "+
-      (temResto?"O resto &eacute; o que n&atilde;o deu para repartir igual.":"Divis&atilde;o exata!");
-    elCtrl.innerHTML="";
-    ci++;
-    if(ci<CONTAS.length){ setTimeout(iniciaConta,1100); }
-    else mostraBanner("<b>Conta armada dominada!</b><br>"+FECHO, fimDourado);
+  var dica = elMesa.querySelector("#ddica");
+  if(_escrito === ""){ if(dica) dica.innerHTML="Toque nos n&uacute;meros para escrever."; sErro(); return; }
+  var v = parseInt(_escrito,10);
+  if(_pediu === "quo"){
+    if(v === plan.quo){
+      mostraQuo=true; pintaChave();
+      if(plan.rem > 0){
+        /* uma pergunta por vez: agora a sobra */
+        _pediu="res"; tentou=0;
+        try{ sPoeBloco(); }catch(e){}
+        caixaDigita("Isso! Cada grupo ficou com <b>"+plan.quo+"</b>. E quantos <b>sobraram</b> sem dar para repartir?",
+                    String(plan.rem), "sobra");
+        return;
+      }
+      return fechaConta();
+    }
   }else{
-    errou=true; tentou++;
-    sErro();
-    /* ANDAIME QUE CRESCE: a cada tropeço a ajuda fica mais concreta */
-    var d1="Confira de novo: olhe <b>um grupo</b> e conte o que ele tem (centena, dezena e unidade juntas).";
-    var d2="Some as pe&ccedil;as de UM grupo: cada placa vale <b>100</b>, cada barra vale <b>10</b>, cada cubinho vale <b>1</b>.";
-    var d3="Olhe o n&uacute;mero grande embaixo do <b>grupo 1</b>: &eacute; ele que voc&ecirc; procura.";
-    if(dica) dica.innerHTML = (tentou>=3?d3:(tentou===2?d2:d1));
-    if(!temResto || q!==plan.quo){ /* nada mais a dizer */ }
-    else if(dica) dica.innerHTML="O resultado est&aacute; certo! Falta a <b>sobra</b>: conte os blocos que ficaram sem repartir.";
+    if(v === plan.rem) return fechaConta();
   }
+  /* ANDAIME QUE CRESCE: a cada tropeço a ajuda fica mais concreta */
+  errou=true; tentou++;
+  sErro();
+  var d1,d2,d3;
+  if(_pediu === "quo"){
+    d1="Confira de novo: olhe <b>um grupo</b> e conte o que ele tem.";
+    d2="Some as pe&ccedil;as de UM grupo: cada placa vale <b>100</b>, cada barra vale <b>10</b>, cada cubinho vale <b>1</b>.";
+    d3="Olhe o n&uacute;mero grande embaixo do <b>grupo 1</b>: &eacute; ele que voc&ecirc; procura.";
+  }else{
+    d1="A sobra &eacute; o que ficou <b>sem dar para repartir</b> entre todos os grupos.";
+    d2="Conte os blocos que sobraram na &uacute;ltima casa, os que n&atilde;o couberam numa rodada inteira.";
+    d3="Eram <b>"+plan.rem+"</b>. Escreva esse n&uacute;mero.";
+  }
+  if(dica) dica.innerHTML = (tentou>=3?d3:(tentou===2?d2:d1));
+  _escrito=""; pintaVisor();
+}
+function fechaConta(){
+  document.onkeydown = null;
+  try{ sCerto(); }catch(e){}
+  var extra = plan.rem>0 ? (" e sobra "+plan.rem) : "";
+  if(elFala){ elFala.style.display=""; }
+  elFala.innerHTML="<b>"+plan.n+" &divide; "+plan.d+" = "+plan.quo+extra+"</b>. "+
+    (plan.rem>0?"O resto &eacute; o que n&atilde;o deu para repartir igual.":"Divis&atilde;o exata!");
+  elCtrl.innerHTML="";
+  ci++;
+  if(ci<CONTAS.length){ setTimeout(iniciaConta,1100); }
+  else mostraBanner("<b>Conta armada dominada!</b><br>"+FECHO, fimDourado);
 }
 
 /* ---------- montagem da fase ---------- */
