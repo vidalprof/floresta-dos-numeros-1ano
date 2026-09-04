@@ -1,468 +1,881 @@
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Aventura das Direções</title>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNO das Cores - Jogo para Aprender</title>
 <style>
-/* ===== Aventura das Direções — prova de lateralidade 3º ano (compat PC antigo) ===== */
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{margin:0;padding:0;}
-body{
-  font-family:"Segoe UI",Verdana,Geneva,sans-serif;
-  color:#243b53;
-  background:#cfeafc;
-  background:-webkit-linear-gradient(top,#bfe6ff 0%,#dff3e6 60%,#fdf0d0 100%);
-  background:linear-gradient(to bottom,#bfe6ff 0%,#dff3e6 60%,#fdf0d0 100%);
-  min-height:100vh;-webkit-text-size-adjust:100%;
-}
-#app{max-width:620px;margin:0 auto;padding:14px 14px 90px;}
-.card{
-  background:#ffffff;border:3px solid #ffd98a;border-radius:22px;
-  padding:18px 16px;margin:10px 0;text-align:center;
-  -webkit-box-shadow:0 8px 22px rgba(60,90,130,.18);box-shadow:0 8px 22px rgba(60,90,130,.18);
-  -webkit-animation:aparece .35s ease-out;animation:aparece .35s ease-out;
-}
-@-webkit-keyframes aparece{from{opacity:0;-webkit-transform:translateY(12px);}to{opacity:1;-webkit-transform:none;}}
-@keyframes aparece{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
-h1{font-size:30px;margin:6px 0 2px;color:#e07a1f;text-shadow:0 2px 0 #ffe0b0;}
-h2{font-size:20px;margin:4px 0;color:#2b6cb0;}
-p{font-size:18px;line-height:1.4;margin:8px 4px;}
-.grande{font-size:22px;font-weight:bold;color:#2b6cb0;}
-img{max-width:100%;}
-/* trilha de progresso (pegadas) */
-#trilha{display:block;text-align:center;margin:4px 0 6px;font-size:16px;color:#7a8aa0;font-weight:bold;}
-#barra{height:14px;background:#e6eef7;border-radius:10px;overflow:hidden;margin:6px 20px 2px;}
-#barra i{display:block;height:100%;width:0;background:#4caf50;background:-webkit-linear-gradient(left,#7ed957,#3fa34d);background:linear-gradient(to right,#7ed957,#3fa34d);-webkit-transition:width .4s;transition:width .4s;}
-/* cena da pista */
-.cena{position:relative;width:100%;max-width:480px;height:300px;margin:8px auto;}
-.cena .masc{position:absolute;top:50%;height:262px;-webkit-transform:translateY(-50%);transform:translateY(-50%);}
-.cena .masc.ml{left:0;}
-.cena .masc.mr{right:0;}
-.cena .obj{position:absolute;top:50%;height:146px;-webkit-transform:translateY(-50%);transform:translateY(-50%);
-  -webkit-filter:drop-shadow(0 0 10px #ffe08a);filter:drop-shadow(0 0 10px #ffe08a);
-  -webkit-animation:flutua 2s ease-in-out infinite;animation:flutua 2s ease-in-out infinite;}
-.cena .obj.ld{left:1%;}
-.cena .obj.rd{right:1%;}
-@-webkit-keyframes flutua{0%,100%{-webkit-transform:translateY(-50%);}50%{-webkit-transform:translateY(-62%);}}
-@keyframes flutua{0%,100%{transform:translateY(-50%);}50%{transform:translateY(-62%);}}
-/* par de objetos lado a lado */
-.par{display:block;width:100%;max-width:460px;margin:10px auto;}
-.par .cel{display:inline-block;width:46%;vertical-align:middle;text-align:center;}
-.par .cel img{height:150px;}
-.par .cel span{display:block;font-size:15px;color:#8aa0b8;margin-top:2px;}
-/* cima/baixo */
-.vert{width:200px;margin:6px auto;}
-.vert div{padding:8px;}
-.vert img{height:120px;}
-/* seta = placa de madeira (imagem) */
-.setaimg{font-size:120px;line-height:1;display:inline-block;color:#e07a1f;text-shadow:0 3px 0 #ffcf8a;}
-.cena .placaseta{position:absolute;left:50%;top:50%;height:216px;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-filter:drop-shadow(0 6px 8px rgba(90,50,10,.28));filter:drop-shadow(0 6px 8px rgba(90,50,10,.28));}
-.cena .placaseta.flip{-webkit-transform:translate(-50%,-50%) scaleX(-1);transform:translate(-50%,-50%) scaleX(-1);}
-/* botoes */
-.btn{
-  display:inline-block;font-family:inherit;font-size:22px;font-weight:bold;
-  border:none;border-radius:16px;padding:16px 10px;margin:8px 6px;cursor:pointer;
-  color:#fff;background:#2b8ae0;min-width:150px;
-  -webkit-box-shadow:0 5px 0 #1f6fb8;box-shadow:0 5px 0 #1f6fb8;
-}
-.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 2px 0 #1f6fb8;box-shadow:0 2px 0 #1f6fb8;}
-.btn.verde{background:#3fa34d;-webkit-box-shadow:0 5px 0 #2e7d3a;box-shadow:0 5px 0 #2e7d3a;}
-.btn.laranja{background:#f08a1f;-webkit-box-shadow:0 5px 0 #c86f10;box-shadow:0 5px 0 #c86f10;}
-.btn.roxo{background:#8a63d2;-webkit-box-shadow:0 5px 0 #6d49b0;box-shadow:0 5px 0 #6d49b0;}
-.btn.grandao{font-size:24px;padding:18px 26px;}
-.opcoes{margin-top:6px;}
-/* campos */
-input,select{font-family:inherit;font-size:20px;padding:12px 10px;border:3px solid #b9d4ec;border-radius:14px;width:82%;max-width:320px;margin:6px auto;display:block;text-align:center;color:#243b53;background:#f7fbff;}
-label{font-size:17px;font-weight:bold;color:#2b6cb0;display:block;margin-top:8px;}
-.masc-capa{height:210px;margin:2px auto 0;-webkit-animation:balanca 2.4s ease-in-out infinite;animation:balanca 2.4s ease-in-out infinite;}
-@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg);}50%{-webkit-transform:rotate(3deg);}}
-@keyframes balanca{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
-/* controles de voz */
-#ctrlVoz{position:fixed;right:8px;bottom:8px;z-index:9999;}
-#ctrlVoz .cv-bt{-webkit-appearance:none;appearance:none;width:46px;height:46px;border:3px solid #1668bf;border-radius:50%;background:#fff;color:#1668bf;font-size:20px;line-height:40px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
-#btnOuvir,#btnHist{background:#fff6e6;border:3px solid #e07a1f;color:#b8600f;border-radius:16px;font-size:18px;font-weight:bold;padding:8px 16px;cursor:pointer;font-family:inherit;margin-top:4px;}
-#btnHist{margin:6px auto 4px;-webkit-animation:pulsa 1.6s ease-in-out infinite;animation:pulsa 1.6s ease-in-out infinite;}
-@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.06);}}
-@keyframes pulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
-#statusenvio{font-weight:bold;margin-top:6px;font-size:15px;}
-.mini{font-size:14px;color:#8aa0b8;}
-/* enunciado escrito (le + ouve + ve = codificacao dupla) */
-.pergunta{font-size:21px;font-weight:bold;color:#2b5f9e;margin:2px 6px 10px;line-height:1.3;}
-/* plaquinha do referencial (em relacao a quem?) */
-.refbadge{display:inline-block;font-size:15px;font-weight:bold;border-radius:14px;padding:8px 14px;margin:2px auto 10px;line-height:1.35;max-width:96%;}
-.refbadge.voce{background:#e6f0ff;color:#1f5fb0;border:2px solid #b9d4ec;}
-.refbadge.costas{background:#e7f6ea;color:#1c7a34;border:2px solid #b6e0c0;}
-.refbadge.frente{background:#fff0e0;color:#b5600a;border:2px solid #f2c98a;}
-.refbadge.cima{background:#f0ecff;color:#5a49b0;border:2px solid #d3caf0;}
-/* seletor de turma em CAIXAS (permanente) */
-.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
-.tbox{margin:6px;min-width:76px;padding:13px 10px;border:3px solid #b9d4ec;border-radius:16px;background:#f7fbff;color:#2b6cb0;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #cfe0f0;box-shadow:0 4px 0 #cfe0f0;}
-.tbox.on{background:#2b8ae0;color:#fff;border-color:#1f6fb8;-webkit-box-shadow:0 4px 0 #1f6fb8;box-shadow:0 4px 0 #1f6fb8;}
-.tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap');
 
-/* ============================================================
-   TEMA PIRATA — "Ilha do Tesouro" (TESTE).
-   Para VOLTAR AO NORMAL: apague este bloco inteiro (ate a tag que fecha o style).
-   ============================================================ */
-body{background:#0f2c47;background:-webkit-linear-gradient(top,#164066,#0a1f36);background:linear-gradient(to bottom,#164066,#0a1f36);}
-.card{background:#f1e2bf;border:4px solid #7a4a17;-webkit-box-shadow:0 12px 30px rgba(0,0,0,.5);box-shadow:0 12px 30px rgba(0,0,0,.5);}
-.card:before{content:"";position:absolute;left:8px;right:8px;top:8px;bottom:8px;border:2px dashed #b8862f;border-radius:14px;pointer-events:none;}
-.card{position:relative;}
-h1{color:#7a4a17;text-shadow:1px 1px 0 #e8cf9a;}
-h2{color:#8a5a1a;}
-.grande{color:#7a4a17;}
-p{color:#4a2f12;}
-label{color:#8a5a1a;}
-.mini{color:#9a7a4a;}
-#trilha{color:#e8cf9a;}
-#barra{background:#c7ad78;}
-#barra i{background:#e8b923;background:-webkit-linear-gradient(left,#f0cf5a,#c9931a);background:linear-gradient(to right,#f0cf5a,#c9931a);}
-.pergunta{color:#7a4a17;}
-input{border-color:#b8862f;background:#fff8e8;color:#4a2f12;}
-.btn.grandao{background:#b0311f;background:-webkit-linear-gradient(top,#c0392b,#8f2418);background:linear-gradient(#c0392b,#8f2418);-webkit-box-shadow:0 6px 0 #6a1a10;box-shadow:0 6px 0 #6a1a10;}
-#btnOuvir{background:#fff2d6;border-color:#b0311f;color:#8f2418;}
-#ctrlVoz .cv-bt{border-color:#7a4a17;color:#7a4a17;}
-.setaimg{color:#b0311f;text-shadow:0 3px 0 #e8b46a;}
-.par .cel span{color:#9a7a4a;}
-/* turma = moedas de ouro */
-.tbox{border:3px solid #7a4a17;background:#e8cf9a;color:#5a3512;-webkit-box-shadow:0 4px 0 #b8862f;box-shadow:0 4px 0 #b8862f;border-radius:50px;}
-.tbox.on{background:#e8b923;color:#3a2408;border-color:#5a3512;-webkit-box-shadow:0 4px 0 #5a3512;box-shadow:0 4px 0 #5a3512;}
+  :root{
+    --azul:#0099DD;
+    --vermelho:#E5202E;
+    --amarelo:#F7B500;
+    --verde:#3EA72D;
+    --fundo:#FFF7E6;
+    --escuro:#2B2440;
+    --branco:#FFFFFF;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+  body{
+    font-family:'Fredoka',sans-serif;
+    background:
+      radial-gradient(circle at 50% 0%, #2E86C9 0, transparent 55%),
+      radial-gradient(circle at 12% 88%, #1C6BB0 0, transparent 45%),
+      radial-gradient(circle at 88% 92%, #1C6BB0 0, transparent 45%),
+      linear-gradient(180deg, #2876B8 0%, #1B5D9E 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    color:#fff;
+    overflow-x:hidden;
+  }
+
+  /* ---------- TOPO ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 22px; gap:12px; flex-wrap:wrap;
+  }
+  .logo{
+    font-family:'Baloo 2',sans-serif; font-weight:800;
+    font-size:clamp(28px,5vw,46px); letter-spacing:1px;
+    display:flex; gap:4px; align-items:center;
+  }
+  .logo .l{ display:inline-block; padding:2px 14px; border-radius:14px; color:#fff;
+    box-shadow:0 4px 0 rgba(0,0,0,.15); transform:rotate(-3deg);}
+  .logo .l:nth-child(1){ background:var(--vermelho); transform:rotate(-4deg);}
+  .logo .l:nth-child(2){ background:var(--azul); transform:rotate(3deg);}
+  .logo .l:nth-child(3){ background:var(--verde); transform:rotate(-2deg);}
+  .logo small{ font-family:'Fredoka'; font-size:16px; color:#EAF4FF; margin-left:10px; font-weight:600;}
+
+  .btn{
+    font-family:'Baloo 2',sans-serif; font-weight:700; border:none; cursor:pointer;
+    border-radius:18px; padding:12px 22px; font-size:clamp(16px,2.4vw,22px);
+    color:#fff; box-shadow:0 5px 0 rgba(0,0,0,.18); transition:transform .08s, box-shadow .08s;
+  }
+  .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,.18);}
+  .btn-tutorial{ background:var(--escuro); }
+  .btn-novo{ background:var(--verde); }
+  .btn-voz{ background:#7A4FC0; }
+  .btn-voz.voz-off{ background:#8A8A8A; }
+  .topo-botoes{ display:flex; gap:10px; flex-wrap:wrap;}
+
+  /* ---------- MESA ---------- */
+  .mesa{ max-width:1000px; margin:0 auto; padding:8px 16px 40px; }
+
+  .jogador-area h2, .computador-area h2{
+    font-family:'Baloo 2'; font-size:clamp(18px,3vw,26px); margin-bottom:8px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .avatar{ font-size:30px;}
+
+  .computador-area{ text-align:center; margin-bottom:10px;}
+  .cartas-cpu{ display:flex; justify-content:center; gap:-20px; min-height:90px; flex-wrap:wrap;}
+  .verso{
+    width:58px; height:86px; border-radius:12px; margin:0 -14px;
+    background:repeating-linear-gradient(45deg,#5B4B8A,#5B4B8A 8px,#43386B 8px,#43386B 16px);
+    border:3px solid #fff; box-shadow:0 4px 8px rgba(0,0,0,.2);
+    display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:22px;
+    font-family:'Baloo 2';
+  }
+
+  /* centro: monte + mensagem */
+  .centro{
+    display:flex; align-items:center; justify-content:center; gap:26px;
+    margin:18px 0; flex-wrap:wrap;
+  }
+  .monte{ text-align:center;}
+  .monte .rotulo{ font-weight:600; margin-bottom:6px; font-size:15px;}
+  /* ===== ESTILO CLÁSSICO DAS CARTAS ===== */
+  /* moldura branca externa + miolo colorido + oval branco inclinado + número central
+     + números pequenos nos cantos. Tudo desenhado em CSS, sem imagens. */
+  .uno{
+    position:relative; background:#fff; border-radius:14px;
+    box-shadow:0 6px 12px rgba(0,0,0,.28); font-family:'Baloo 2'; overflow:hidden;
+  }
+  .uno .miolo{ position:absolute; inset:6%; border-radius:10px; overflow:hidden; }
+  /* oval branco inclinado característico */
+  .uno .oval{
+    position:absolute; left:50%; top:50%;
+    width:118%; height:54%;
+    background:#fff; border-radius:50%;
+    transform:translate(-50%,-50%) rotate(-32deg);
+    box-shadow:0 6px 14px rgba(0,0,0,.22) inset, 0 2px 6px rgba(0,0,0,.18);
+  }
+  /* número grande central com contorno */
+  .uno .central{
+    position:absolute; left:0; top:0; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; line-height:1; z-index:2;
+    -webkit-text-stroke:2px rgba(0,0,0,.18);
+    paint-order:stroke fill;
+  }
+  /* números pequenos nos cantos opostos */
+  .uno .canto{ position:absolute; font-weight:800; color:#fff; z-index:3; line-height:1;
+    text-shadow:0 1px 0 rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; }
+  .uno .canto.tl{ top:5%; left:7%; }
+  .uno .canto.br{ bottom:5%; right:7%; transform:rotate(180deg); }
+  .uno .canto .simb-svg{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.3)); width:var(--cc); height:var(--cc); display:block; }
+  .uno .central .simb-svg{ filter:drop-shadow(0 2px 3px rgba(0,0,0,.18)); width:var(--sc); height:var(--sc); display:block; }
+  .uno .simb-c, .uno .simb-k{ display:flex; align-items:center; justify-content:center; }
+  .uno .canto-mais2{ font-weight:800; }
+
+  .carta-grande{ width:120px; height:178px; --sc:96px; --cc:30px; }
+  .carta-grande .central{ font-size:78px; }
+  .carta-grande .canto{ font-size:26px; }
+  .carta-grande .canto-mais2{ font-size:20px; }
+  .comprar{
+    width:120px; height:178px; border-radius:18px; border:6px dashed var(--escuro);
+    background:#fff; display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center;
+    cursor:pointer; font-family:'Baloo 2'; font-weight:700; font-size:18px; color:var(--escuro);
+    transition:transform .08s;
+  }
+  .comprar:hover{ transform:scale(1.05); background:#FFF3D6;}
+  .comprar .big{ font-size:46px;}
+  .comprar.destaque{ border-color:var(--amarelo); background:#FFF8E0; animation:chama 1s ease-in-out infinite; }
+  @keyframes chama{
+    0%,100%{ box-shadow:0 0 0 0 rgba(247,181,0,.6); transform:scale(1); }
+    50%{ box-shadow:0 0 0 12px rgba(247,181,0,0); transform:scale(1.05); }
+  }
+
+  /* mensagem grande */
+  .mensagem{
+    text-align:center; font-family:'Baloo 2'; font-weight:700; color:#1a1633;
+    font-size:clamp(20px,4vw,32px); min-height:48px; margin:6px 0 14px;
+    padding:10px 18px; border-radius:18px; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,.1);
+    display:inline-block; max-width:90%;
+  }
+  .mensagem-wrap{ text-align:center;}
+
+  /* mão do jogador */
+  .jogador-area{ margin-top:14px;}
+  .minhas-cartas{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:6px;}
+  .carta{
+    width:78px; height:116px; cursor:pointer; --sc:62px; --cc:19px;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .carta .central{ font-size:48px; }
+  .carta .canto{ font-size:17px; }
+  .carta .canto-mais2{ font-size:13px; }
+  .carta.jogavel:hover{ transform:translateY(-16px) scale(1.06); box-shadow:0 14px 20px rgba(0,0,0,.3);}
+  .carta.jogavel{ outline:4px solid #FFE49B; outline-offset:1px; }
+  .carta.bloqueada{ filter:grayscale(.55) brightness(.92); cursor:not-allowed; opacity:.72;}
+
+  .c-azul .miolo{ background:var(--azul);}
+  .c-vermelho .miolo{ background:var(--vermelho);}
+  .c-amarelo .miolo{ background:var(--amarelo);}
+  .c-verde .miolo{ background:var(--verde);}
+  /* cor do número central = cor da carta (fica sobre o oval branco) */
+  .c-azul .central{ color:var(--azul);}
+  .c-vermelho .central{ color:var(--vermelho);}
+  .c-amarelo .central{ color:var(--amarelo);}
+  .c-verde .central{ color:var(--verde);}
+  .c-curinga .central{ color:#fff;}
+  /* cartas pretas (+2 e +4) */
+  .c-preta .miolo{ background:#15131F;}
+  .c-preta .central{ color:#fff;}
+
+  .dica{ text-align:center; font-size:16px; color:#EAF4FF; margin-top:8px; font-weight:600;}
+
+  /* ---------- SELETOR DE COR ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(58,46,92,.55); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .overlay.ativo{ display:flex; }
+  .escolher-cor{
+    background:#fff; border-radius:26px; padding:26px; text-align:center; max-width:420px; width:100%;
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+  }
+  .escolher-cor h3{ font-family:'Baloo 2'; font-size:26px; margin-bottom:16px; color:#2B2440;}
+  .cores-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .cor-opcao{
+    height:90px; border-radius:18px; border:4px solid rgba(0,0,0,.15); cursor:pointer; color:#111;
+    font-family:'Baloo 2'; font-weight:800; font-size:22px; box-shadow:0 5px 0 rgba(0,0,0,.18);
+    transition:transform .08s; text-shadow:0 1px 0 rgba(255,255,255,.45);
+  }
+  .cor-opcao:active{ transform:translateY(4px);}
+  .cor-opcao.c-vermelho{ background:var(--vermelho);}
+  .cor-opcao.c-azul{ background:var(--azul);}
+  .cor-opcao.c-verde{ background:var(--verde);}
+  .cor-opcao.c-amarelo{ background:var(--amarelo);}
+
+  /* ---------- TUTORIAL ---------- */
+  .tutorial{
+    position:fixed; inset:0; background:rgba(58,46,92,.92); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:18px;
+  }
+  .tutorial.ativo{ display:flex; }
+  .slide-box{
+    background:var(--branco); border-radius:30px; max-width:760px; width:100%;
+    padding:30px 28px 24px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.4);
+    position:relative;
+  }
+  .slide-num{ font-weight:700; color:#9a8fc0; font-size:16px; margin-bottom:6px;}
+  .mascote-linha{ display:flex; align-items:center; gap:18px; justify-content:center; flex-wrap:wrap;}
+  .mascote{ flex:0 0 auto; width:120px; animation:flutua 2.6s ease-in-out infinite;}
+  .mascote svg{ width:120px; height:150px; filter:drop-shadow(0 6px 8px rgba(0,0,0,.18));}
+  @keyframes flutua{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-8px) rotate(2deg);} }
+  .balao{
+    position:relative; background:#F1F6FF; border:4px solid #BBD4F0; border-radius:24px;
+    padding:18px 22px; max-width:480px; flex:1 1 320px; text-align:center; color:#1a1a1a;
+  }
+  .balao::before{
+    content:""; position:absolute; left:-22px; top:50%; transform:translateY(-50%);
+    border:14px solid transparent; border-right-color:#BBD4F0;
+  }
+  .balao::after{
+    content:""; position:absolute; left:-15px; top:50%; transform:translateY(-50%);
+    border:11px solid transparent; border-right-color:#F1F6FF;
+  }
+  .slide-emoji{ font-size:54px; line-height:1; margin:0 0 6px; display:block;}
+  .slide-box h2#slideTitulo{ font-family:'Baloo 2'; font-size:clamp(22px,4vw,32px); margin-bottom:12px; color:#1a1633 !important;}
+  .slide-box p#slideTexto{ font-size:clamp(17px,2.6vw,22px); line-height:1.5; color:#23203a !important; max-width:600px; margin:0 auto;}
+  .balao h2, .balao p{ color:#23203a !important;}
+  .slide-cartinha{ display:inline-flex; gap:10px; margin:12px 0; justify-content:center; flex-wrap:wrap;}
+  @media (max-width:560px){
+    .mascote-linha{ flex-direction:column; gap:6px;}
+    .balao::before,.balao::after{ left:50%; top:-22px; transform:translateX(-50%) rotate(90deg);}
+    .mascote{ width:92px;} .mascote svg{ width:92px; height:115px;}
+  }
+  .mini{
+    width:62px; height:92px; --sc:50px; --cc:15px;
+    font-size:38px;
+  }
+  .mini .central{ font-size:38px; }
+  .mini .canto{ font-size:13px; }
+  .mini .canto-mais2{ font-size:10px; }
+  .tut-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:22px; gap:10px;}
+  .bolinhas{ display:flex; gap:8px; justify-content:center; flex:1;}
+  .bolinha{ width:13px; height:13px; border-radius:50%; background:#D8D0EE; transition:background .2s, transform .2s;}
+  .bolinha.on{ background:var(--escuro); transform:scale(1.3);}
+  .btn-nav{ background:var(--azul); }
+  .btn-fechar-tut{ background:var(--vermelho); }
+  .btn-nav:disabled{ opacity:.35; cursor:default; transform:none; box-shadow:0 5px 0 rgba(0,0,0,.18);}
+
+  /* vitória confete simples */
+  .festa{ animation:pulo .6s ease infinite alternate;}
+  @keyframes pulo{ from{transform:scale(1);} to{transform:scale(1.06) rotate(-1deg);} }
+
+  @media (max-width:560px){
+    .carta{ width:64px; height:96px; --sc:52px; --cc:16px;}
+    .carta .central{ font-size:40px;}
+    .carta .canto{ font-size:14px;}
+    .carta-grande,.comprar{ width:100px; height:150px;}
+    .carta-grande{ --sc:80px; --cc:25px;}
+    .carta-grande .central{ font-size:64px;}
+    .carta-grande .canto{ font-size:22px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important;}
+  }
 </style>
+</head>
+<body>
 
-<div id="app"></div>
+<header>
+  <div class="logo">
+    <span class="l">U</span><span class="l">N</span><span class="l">O</span>
+    <small>das Cores</small>
+  </div>
+  <div class="topo-botoes">
+    <button class="btn btn-voz" id="btnVoz" onclick="alternarVoz()">🔊 Voz</button>
+    <button class="btn btn-tutorial" onclick="abrirTutorial()">📖 Tutorial</button>
+    <button class="btn btn-novo" onclick="novoJogo()">🔄 Novo Jogo</button>
+  </div>
+</header>
 
-<div id="ctrlVoz">
-  <button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>
-  <button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">&#8635;</button>
+<main class="mesa">
+
+  <section class="computador-area">
+    <h2><span class="avatar">🤖</span> Robô <span id="qtdCpu">(7 cartas)</span></h2>
+    <div class="cartas-cpu" id="cartasCpu"></div>
+  </section>
+
+  <div class="mensagem-wrap">
+    <div class="mensagem" id="mensagem">Toque em uma carta para começar!</div>
+  </div>
+
+  <section class="centro">
+    <div class="monte">
+      <div class="rotulo">Carta da mesa</div>
+      <div class="carta-grande" id="cartaMesa"><span class="num">?</span></div>
+    </div>
+    <div class="monte">
+      <div class="rotulo">Comprar</div>
+      <button class="comprar" id="btnComprar" onclick="comprarCarta()">
+        <span class="big">🃏</span>
+        <span>Pegar 1</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="jogador-area">
+    <h2><span class="avatar">🧒</span> Você <span id="qtdEu">(7 cartas)</span></h2>
+    <div class="minhas-cartas" id="minhasCartas"></div>
+    <div class="dica" id="dica">As cartas que brilham são as que você pode jogar! ✨</div>
+  </section>
+
+</main>
+
+<!-- Seletor de cor (curinga) -->
+<div class="overlay" id="overlayCor">
+  <div class="escolher-cor">
+    <h3>Escolha uma cor! 🎨</h3>
+    <div class="cores-grid">
+      <button class="cor-opcao c-vermelho" onclick="escolherCor('vermelho')">Vermelho</button>
+      <button class="cor-opcao c-azul" onclick="escolherCor('azul')">Azul</button>
+      <button class="cor-opcao c-verde" onclick="escolherCor('verde')">Verde</button>
+      <button class="cor-opcao c-amarelo" onclick="escolherCor('amarelo')">Amarelo</button>
+    </div>
+  </div>
+</div>
+
+<!-- TUTORIAL -->
+<div class="tutorial" id="tutorial">
+  <div class="slide-box">
+    <div class="slide-num" id="slideNum">Passo 1 de 6</div>
+    <div class="mascote-linha">
+      <div class="mascote" id="mascote">
+        <svg viewBox="0 0 120 150" aria-hidden="true">
+          <!-- antena -->
+          <line x1="60" y1="12" x2="60" y2="30" stroke="#1B5D9E" stroke-width="5"/>
+          <circle cx="60" cy="10" r="7" fill="#E5202E"/>
+          <!-- cabeça -->
+          <rect x="22" y="28" width="76" height="62" rx="16" fill="#9FB8CC" stroke="#1B5D9E" stroke-width="5"/>
+          <!-- visor -->
+          <rect x="32" y="40" width="56" height="30" rx="10" fill="#16324B"/>
+          <circle cx="48" cy="55" r="7" fill="#56E0FF"/>
+          <circle cx="72" cy="55" r="7" fill="#56E0FF"/>
+          <circle cx="50" cy="52" r="2.4" fill="#fff"/>
+          <circle cx="74" cy="52" r="2.4" fill="#fff"/>
+          <!-- boca -->
+          <rect x="46" y="78" width="28" height="7" rx="3.5" fill="#1B5D9E"/>
+          <!-- orelhas -->
+          <rect x="14" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <rect x="98" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <!-- corpo -->
+          <rect x="32" y="92" width="56" height="44" rx="12" fill="#C8D7E4" stroke="#1B5D9E" stroke-width="5"/>
+          <circle cx="60" cy="114" r="9" fill="#F7B500" stroke="#1B5D9E" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="balao">
+        <span class="slide-emoji" id="slideEmoji">👋</span>
+        <h2 id="slideTitulo"></h2>
+        <div id="slideCartas"></div>
+        <p id="slideTexto"></p>
+      </div>
+    </div>
+    <div class="tut-nav">
+      <button class="btn btn-nav" id="btnAnterior" onclick="mudarSlide(-1)">◀ Voltar</button>
+      <div class="bolinhas" id="bolinhas"></div>
+      <button class="btn btn-nav" id="btnProximo" onclick="mudarSlide(1)">Avançar ▶</button>
+      <button class="btn btn-fechar-tut" id="btnComecar" onclick="fecharTutorial()" style="display:none;">Vamos jogar! 🎉</button>
+    </div>
+  </div>
 </div>
 
 <script>
-/* ====== CONFIG ====== */
-var TURMAS=["2º A","2º B","2º C","2º D"];
-/* Historia contada na capa (narrada). Muda o texto = regerar o audio. */
-var HISTORIA="Olá, explorador! Eu achei um mapa do tesouro bem antigo. No caminho tem vários sinais: a Estrela-Guia lá no céu, uma árvore, uma placa de madeira e muito mais. Cada sinal mostra uma direção. Se a gente ler as direções certas, esquerda, direita, em cima e embaixo, vamos achar o baú do tesouro no final! Agora escreva o seu nome, escolha a sua turma e toque em começar a aventura.";
-var _histTocada=false; /* a historia da capa toca 1x, no 1o gesto (o navegador exige um toque) */
-/* Firebase (canal Google que passa no firewall) — testar ja */
-var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
-/* Apps Script (planilha real): cole aqui o link /exec do SEU Web App. Vazio = nao envia p/ planilha. */
-var URL_PLANILHA="";
+/* ============ DADOS DO JOGO ============ */
+const CORES = ['vermelho','azul','verde','amarelo'];
+const ICONES = { pula:'🚫', mais2:'➕2️⃣', curinga:'🌈' };
+let baralho = [], mao = [], cpu = [], mesa = null, corAtiva = null;
+let vezDoJogador = true, esperandoCor = false, curingaPendente = null;
 
-/* ====== As 10 pistas (resposta 100% controlada aqui) ======
-   tipos: vert (cima/baixo), masc (mascote+objeto num lado), par (2 objetos), seta.
-   Em 'masc': vista=costas|frente, obj, lado=dir|esq (lado da IMAGEM). A 'correta' ja
-   considera o espelho quando a vista e' frente. */
-var QUESTOES=[
- {tipo:"vert", ref:"cima", cima:"estrela", baixo:"flor",
-  pergunta:"A Estrela-Guia está em cima ou embaixo?",
-  fala:"Pista um! O explorador abre o mapa. À noite, a Estrela-Guia brilha lá no alto. Ela está em cima ou embaixo?",
-  opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:0},
-
- {tipo:"masc", ref:"costas", vista:"costas", obj:"estrela", lado:"dir",
-  pergunta:"A Estrela-Guia está à direita ou à esquerda dele?",
-  fala:"Pista dois! O explorador está de costas, igual a você, seguindo a Estrela-Guia. Ela está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
-
- {tipo:"par", ref:"voce", esq:"arvore", dir:"sol", alvo:"esq", nomeAlvo:"a árvore",
-  pergunta:"A árvore está à sua esquerda ou à sua direita?",
-  fala:"Pista três! De dia, o caminho tem uma árvore grande e o sol. Olhando para a tela, a árvore está à sua esquerda ou à sua direita?",
-  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
-
- {tipo:"masc", ref:"costas", vista:"costas", obj:"cogumelo", lado:"esq",
-  pergunta:"O cogumelo está à direita ou à esquerda dele?",
-  fala:"Pista quatro! No caminho aparece um cogumelo. O explorador está de costas. O cogumelo está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
-
- {tipo:"seta", ref:"voce", aponta:"dir",
-  pergunta:"Para que lado a seta está apontando?",
-  fala:"Pista cinco! Uma placa de madeira no caminho! Olhando para a tela, para que lado a seta está apontando?",
-  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
-
- {tipo:"masc", ref:"costas", vista:"costas", obj:"flor", lado:"dir",
-  pergunta:"A flor está à direita ou à esquerda dele?",
-  fala:"Pista seis! O explorador de costas acha um canteiro de flores. A flor está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
-
- {tipo:"masc", ref:"frente", vista:"frente", obj:"estrela", lado:"esq",
-  pergunta:"O explorador está de FRENTE. A Estrela-Guia está à direita ou à esquerda dele?",
-  fala:"Pista sete, atenção! Agora a Estrela-Guia voltou e o explorador está te olhando de frente. Ela está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
-
- {tipo:"par", ref:"voce", esq:"sol", dir:"flor", alvo:"esq", nomeAlvo:"o sol",
-  pergunta:"O sol está à sua esquerda ou à sua direita?",
-  fala:"Pista oito! O sol está bem alto no céu. Olhando para a tela, o sol está à sua esquerda ou à sua direita?",
-  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
-
- {tipo:"masc", ref:"frente", vista:"frente", obj:"arvore", lado:"dir",
-  pergunta:"O explorador está de FRENTE. A árvore está à direita ou à esquerda dele?",
-  fala:"Pista nove, a mais esperta! O explorador está de frente, te olhando, ao lado da árvore que marca o tesouro. A árvore está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
-
- {tipo:"par", ref:"voce", esq:"pedra", dir:"pinheiro", alvo:"dir", nomeAlvo:"o pinheiro",
-  pergunta:"O pinheiro está à sua esquerda ou à sua direita?",
-  fala:"Pista dez! O explorador segue em frente e vê dois sinais: uma pedra de um lado e um pinheiro alto do outro. Olhando para a tela, o pinheiro está à sua esquerda ou à sua direita?",
-  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
-
- {tipo:"vert", ref:"cima", cima:"passaro", baixo:"coelho",
-  pergunta:"O coelho está em cima ou embaixo?",
-  fala:"Pista onze! No caminho, um passarinho voa lá em cima e um coelho pula mais embaixo. O coelho está em cima ou embaixo?",
-  opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:1},
-
- {tipo:"masc", ref:"costas", vista:"costas", obj:"cabana", lado:"dir",
-  pergunta:"A cabana está à direita ou à esquerda dele?",
-  fala:"Pista doze! O explorador está de costas, igual a você, e encontra uma cabana no caminho. A cabana está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
-
- {tipo:"seta", ref:"voce", aponta:"esq",
-  pergunta:"Para que lado a seta está apontando?",
-  fala:"Pista treze! Mais uma placa de madeira apareceu na trilha! Olhando para a tela, para que lado a seta está apontando?",
-  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
-
- {tipo:"masc", ref:"costas", vista:"costas", obj:"pedra", lado:"esq",
-  pergunta:"A pedra está à direita ou à esquerda dele?",
-  fala:"Pista quatorze! Ainda de costas, o explorador passa por uma pedra grande na beira do caminho. A pedra está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
-
- {tipo:"par", ref:"voce", esq:"coelho", dir:"cabana", alvo:"esq", nomeAlvo:"o coelho",
-  pergunta:"O coelho está à sua esquerda ou à sua direita?",
-  fala:"Pista quinze! No caminho aparecem um coelho e uma cabana, um de cada lado. Olhando para a tela, o coelho está à sua esquerda ou à sua direita?",
-  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
-
- {tipo:"masc", ref:"costas", vista:"costas", obj:"passaro", lado:"dir",
-  pergunta:"O passarinho está à direita ou à esquerda dele?",
-  fala:"Pista dezesseis! O explorador, de costas, vê um passarinho pousar ao lado dele. O passarinho está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
-
- {tipo:"seta", ref:"voce", aponta:"dir",
-  pergunta:"Para que lado a seta está apontando?",
-  fala:"Pista dezessete! Quase lá! Outra placa aponta o caminho do tesouro. Olhando para a tela, para que lado a seta está apontando?",
-  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
-
- {tipo:"masc", ref:"frente", vista:"frente", obj:"pinheiro", lado:"dir",
-  pergunta:"O explorador está de FRENTE. O pinheiro está à direita ou à esquerda dele?",
-  fala:"Pista dezoito, atenção! Agora o explorador virou e está te olhando de frente, ao lado de um pinheiro. O pinheiro está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
-
- {tipo:"masc", ref:"frente", vista:"frente", obj:"passaro", lado:"esq",
-  pergunta:"O explorador está de FRENTE. O passarinho está à direita ou à esquerda dele?",
-  fala:"Pista dezenove, a mais espertinha! O explorador continua de frente, te olhando, e um passarinho está pousado ao lado dele. O passarinho está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
-
- {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"dir",
-  pergunta:"O baú do tesouro está à direita ou à esquerda do explorador?",
-  fala:"Pista vinte, a última! Chegamos ao fim do mapa e o baú do tesouro apareceu! O explorador está de costas, igual a você. O baú está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0}
-];
-
-/* ====== estado ====== */
-var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false;
-var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
-function $(id){return document.getElementById(id);}
-
-/* ====== VOZ (arquivos audio/<chave>.mp3, voz Antonio, zero navegador) ====== */
-var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("avdir_mudo")==="1");}catch(e){}
-var _falaAudio=null, _ultimaFala="";
-function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
-function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
-/* som NEUTRO de toque (Web Audio, sem arquivo). Igual p/ qualquer resposta: NAO revela certo/errado. */
-var _actx=null;
-function somToque(){
-  if(VOZ_MUDA){return;}
-  try{
-    if(!_actx){ var AC=window.AudioContext||window.webkitAudioContext; if(!AC){return;} _actx=new AC(); }
-    if(_actx.state==="suspended"&&_actx.resume){ _actx.resume(); }
-    var t=_actx.currentTime, o=_actx.createOscillator(), g=_actx.createGain();
-    o.type="triangle"; o.frequency.setValueAtTime(520,t); o.frequency.exponentialRampToValueAtTime(760,t+0.10);
-    g.gain.setValueAtTime(0.0001,t);
-    g.gain.exponentialRampToValueAtTime(0.16,t+0.012);
-    g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
-    o.connect(g); g.connect(_actx.destination);
-    o.start(t); o.stop(t+0.18);
-  }catch(e){}
+function criarBaralho(){
+  const b = [];
+  CORES.forEach(cor=>{
+    // um 0 por cor; dois de cada número 1 a 9
+    b.push({cor, tipo:'num', valor:0});
+    for(let n=1;n<=9;n++){ b.push({cor, tipo:'num', valor:n}); b.push({cor, tipo:'num', valor:n}); }
+    // duas de cada carta de ação por cor
+    for(let k=0;k<2;k++){
+      b.push({cor, tipo:'pula'});
+      b.push({cor, tipo:'inverte'});
+      b.push({cor, tipo:'mais2'});
+    }
+  });
+  // quatro coringas e quatro +4
+  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'curinga'});
+  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'mais4'});
+  return embaralhar(b);
 }
-function falar(texto,_forcar){
-  _ultimaFala=texto;
-  if(VOZ_MUDA&&!_forcar){return;}
-  pararFala();
-  try{ var a=new Audio("audio/"+_chaveVoz(texto)+".mp3"); _falaAudio=a; a.play(); }catch(e){}
-}
-function repetirUltima(){ if(_ultimaFala){ pararFala(); falar(_ultimaFala,true); } }
-function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("avdir_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
-function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
+function embaralhar(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
-/* ====== TELAS ====== */
-function telaCapa(){
-  var h='';
-  h+='<div class="card">';
-  h+='<img class="masc-capa" src="img/masc_acena.png" alt="explorador">';
-  h+='<h1>Aventura das Direções</h1>';
-  h+='<p class="grande">O explorador achou um mapa do tesouro! Ajude ele a ler cada sinal do caminho até chegar no baú!</p>';
-  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir a história</button>';
-  h+='<label>Qual é o seu nome?</label>';
-  h+='<input id="cNome" maxlength="24" placeholder="Escreva seu nome">';
-  h+='<label>Qual é a sua turma?</label>';
-  h+='<div class="turmas">';
-  var i;for(i=0;i<TURMAS.length;i++){ h+='<button type="button" class="tbox" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>'; }
-  h+='</div>';
-  h+='<div><button class="btn verde grandao" onclick="comecar()">Começar a aventura!</button></div>';
-  h+='<p class="mini">Toque no botão azul de som a qualquer momento para ouvir de novo.</p>';
-  h+='</div>';
-  $("app").innerHTML=h;
-  /* NAO faz autoplay (o navegador bloqueia e sobra audio "orfao" que vaza p/ a proxima tela).
-     A historia toca SO no botao "Ouvir a historia". Guarda p/ o botao repetir tambem. */
-  _ultimaFala=HISTORIA;
-}
-function ouvirHistoria(){ _histTocada=true; falar(HISTORIA,true); }
-var turmaSel="";
-function selTurma(el,t){
-  turmaSel=t;
-  var bs=document.getElementsByClassName("tbox"),i;
-  for(i=0;i<bs.length;i++){ bs[i].className="tbox"; }
-  el.className="tbox on";
-}
-function comecar(){
-  _histTocada=true;   /* nao deixa a historia auto-tocar por causa deste clique */
-  var n=$("cNome").value.replace(/^\s+|\s+$/g,"");
-  var t=turmaSel;
-  if(n.length<2){ falar("Escreva o seu nome para começar!",true); $("cNome").focus(); return; }
-  if(!t){ falar("Escolha a sua turma para começar!",true); return; }
-  pararFala();                 /* corta a narracao da historia ao sair da capa */
-  nomeAluno=n; turmaAluno=t; atual=0;
-  telaPista();
+function novoJogo(){
+  baralho = criarBaralho();
+  mao = baralho.splice(0,7);
+  cpu = baralho.splice(0,7);
+  // primeira carta da mesa precisa ser número simples
+  let i = baralho.findIndex(c=>c.tipo==='num');
+  mesa = baralho.splice(i,1)[0];
+  corAtiva = mesa.cor;
+  esperandoCor=false;
+  render();
+  vezDoJogadorComMensagem('');
 }
 
-function cenaHTML(q){
-  var lado, h='<div class="cena">';
-  if(q.tipo==="masc"){
-    lado=(q.lado==="dir")?"rd":"ld";
-    var mside=(q.lado==="dir")?"ml":"mr";
-    h+='<img class="masc '+mside+'" src="img/masc_'+(q.vista==="frente"?"frente":"costas")+'_'+(q.lado==="dir"?"dir":"esq")+'.png" alt="explorador apontando">';
-    h+='<img class="obj '+lado+'" src="img/'+q.obj+'.png" alt="objeto">';
+/* ============ REGRAS ============ */
+function podeJogar(carta){
+  if(carta.tipo==='curinga' || carta.tipo==='mais4') return true;
+  if(carta.cor===corAtiva) return true;
+  if(carta.tipo==='num' && mesa.tipo==='num' && carta.valor===mesa.valor) return true;
+  if(carta.tipo!=='num' && carta.tipo===mesa.tipo) return true;
+  return false;
+}
+
+/* ============ JOGADAS DO JOGADOR ============ */
+function jogarCarta(idx){
+  if(!vezDoJogador || esperandoCor) return;
+  const carta = mao[idx];
+  if(!podeJogar(carta)){
+    setMensagem('Essa não dá! Escolha uma que brilha. 😊');
+    return;
   }
-  h+='</div>';
-  return h;
+  var btnC = document.getElementById('btnComprar');
+  if(btnC) btnC.classList.remove('destaque');
+  mao.splice(idx,1);
+  mesa = carta;
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    esperandoCor = true;
+    curingaPendente = carta.tipo; // lembra se foi curinga simples ou +4
+    render();
+    document.getElementById('overlayCor').classList.add('ativo');
+    return;
+  }
+  corAtiva = carta.cor;
+  aplicarEfeito(carta,'jogador');
 }
-function refHTML(q){
-  var m={
-    voce:'&#128064; Pense no SEU corpo &mdash; a sua direita e a sua esquerda',
-    costas:'&#128281; O explorador est&aacute; DE COSTAS (igual a voc&ecirc;) &mdash; o lado dele &eacute; o seu lado',
-    frente:'&#9888;&#65039; Aten&ccedil;&atilde;o! O explorador est&aacute; DE FRENTE, te olhando'
-  };
-  var t=m[q.ref]; if(!t){return '';}
-  return '<div class="refbadge '+q.ref+'">'+t+'</div>';
-}
-function telaPista(){
-  var q=QUESTOES[atual], h='';
-  h+='<div id="trilha">Pista '+(atual+1)+' de '+QUESTOES.length+' &#128075;</div>';
-  h+='<div id="barra"><i style="width:'+Math.round(atual/QUESTOES.length*100)+'%"></i></div>';
-  h+='<div class="card">';
-  if(q.pergunta){ h+='<h2 class="pergunta">'+q.pergunta+'</h2>'; }
-  h+=refHTML(q);
-  if(q.tipo==="vert"){
-    h+='<div class="vert"><div><img src="img/'+q.cima+'.png" alt="em cima"></div>';
-    h+='<div style="border-top:3px dashed #cdd9e6"></div>';
-    h+='<div><img src="img/'+q.baixo+'.png" alt="embaixo"></div></div>';
-  }else if(q.tipo==="par"){
-    h+='<div class="par"><span class="cel"><img src="img/'+q.esq+'.png" alt="esquerda"><span>&#9668; lado de cá</span></span>';
-    h+='<span class="cel"><img src="img/'+q.dir+'.png" alt="direita"><span>lado de lá &#9658;</span></span></div>';
-  }else if(q.tipo==="seta"){
-    h+='<div class="cena"><img class="placaseta'+(q.aponta==="dir"?"":" flip")+'" src="img/placa_seta.png" alt="placa de madeira com uma seta"></div>';
+
+function escolherCor(cor){
+  corAtiva = cor;
+  const eraMais4 = (curingaPendente==='mais4');
+  mesa = {cor, tipo: curingaPendente, valorCor:cor};
+  curingaPendente = null;
+  document.getElementById('overlayCor').classList.remove('ativo');
+  esperandoCor = false;
+
+  if(mao.length===0){ render(); return vitoria('jogador'); }
+
+  if(eraMais4){
+    comprarParaCpu(4);
+    setMensagem('Você escolheu '+cor+' e o robô pegou 4 cartas! 🌈➕');
   }else{
-    h+=cenaHTML(q);
+    setMensagem('Você escolheu '+cor+'! 🎨');
   }
-  h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pista</button>';
-  h+='<div class="opcoes">';
-  var i;for(i=0;i<q.opcoes.length;i++){ h+='<button class="btn '+q.opcoes[i].cor+'" onclick="responder('+i+')">'+q.opcoes[i].t+'</button>'; }
-  h+='</div></div>';
-  $("app").innerHTML=h;
-  falar(q.fala);
+  render();
+  setTimeout(passarVezParaCpu, 800);
 }
-function responder(idx){
-  somToque();
-  respostas[atual]=idx;
-  pararFala();
-  atual++;
-  if(atual>=QUESTOES.length){ telaFinal(); }
-  else {
-    /* transicao NEUTRA (nao revela certo/errado) */
-    var frases=["Vamos para a próxima pista!","Seguindo a aventura!","Muito bem, vamos lá!","Continue, explorador!"];
-    falar(frases[atual%frases.length]);
-    setTimeout(telaPista,60);
+
+function aplicarEfeito(carta, quem){
+  render();
+  if(mao.length===0) return vitoria('jogador');
+  if(cpu.length===0) return vitoria('robo');
+
+  if(carta.tipo==='pula'){
+    if(temJogada()) setMensagem('Você pulou o robô! Jogue de novo. 🚫');
+    else setMensagem('Você pulou o robô! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
+    return; // jogador joga de novo
+  }
+  if(carta.tipo==='inverte'){
+    if(temJogada()) setMensagem('Você girou o jogo! Jogue de novo. 🔄');
+    else setMensagem('Você girou o jogo! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
+    return; // com 2 jogadores, inverter = jogar de novo
+  }
+  if(carta.tipo==='mais2'){
+    comprarParaCpu(2);
+    setMensagem('O robô pegou 2 cartas! 😄');
+    setTimeout(passarVezParaCpu, 900);
+    return;
+  }
+  setMensagem('Boa! Agora é a vez do robô. 🤖');
+  setTimeout(passarVezParaCpu, 800);
+}
+
+function comprarCarta(){
+  if(!vezDoJogador || esperandoCor) return;
+  if(baralho.length===0) reabastecer();
+  const c = baralho.pop();
+  mao.push(c);
+  render();
+  if(podeJogar(c)){
+    setMensagem('Você pegou uma carta que dá pra jogar! Toque nela. ✨');
+  }else{
+    setMensagem('Essa não deu pra jogar. Agora é a vez do robô. 🤖');
+    vezDoJogador = false;
+    setTimeout(passarVezParaCpu, 1100);
   }
 }
-function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
 
-function telaFinal(){
-  var ac=calcularAcertos();
-  confete();
-  var h='';
-  h+='<div class="card">';
-  h+='<img class="masc-capa" src="img/masc_festa.png" alt="explorador comemorando">';
-  h+='<h1>&#127881; Parabéns! &#127881;</h1>';
-  h+='<h2>'+nomeAluno+', você concluiu a Aventura das Direções!</h2>';
-  h+='<img src="img/bau.png" alt="tesouro" style="height:150px;margin:6px auto">';
-  h+='<p class="grande">Você achou o tesouro! Muito bem, explorador!</p>';
-  h+='<p id="statusenvio"></p>';
-  h+='</div>';
-  $("app").innerHTML=h;
-  falar("Parabéns! Você concluiu a Aventura das Direções e achou o tesouro! Você foi um explorador incrível!");
-  enviarResultado(ac);
+/* ============ VEZ DO ROBÔ ============ */
+function passarVezParaCpu(){
+  vezDoJogador = false;
+  var btn = document.getElementById('btnComprar');
+  if(btn) btn.classList.remove('destaque');
+  render();
+  setTimeout(cpuJoga, 600);
 }
 
-/* ====== ENVIO (Firebase + Apps Script), SEM mostrar nota ao aluno ====== */
-function enviarResultado(ac){
-  if(enviado){return;} enviado=true;
-  var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":String(respostas[i]));}
-  var quando=new Date().toLocaleString("pt-BR");
-  /* nota SEMPRE em escala 0..10 (independe do nº de questões): acertos/total*10 */
-  var nota10=QUESTOES.length?Math.round(ac/QUESTOES.length*100)/10:0;
-  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
-  var ok=false;
-  /* 1) Firebase (funciona ja) */
-  try{
-    var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
-    var x=new XMLHttpRequest();
-    x.open("PUT",FIREBASE_DB+"/provas/lateralidade-3ano/"+chave+".json",true);
-    x.setRequestHeader("Content-Type","application/json");
-    x.onreadystatechange=function(){ if(x.readyState===4){ marcarEnvio(x.status>=200&&x.status<300); } };
-    x.send(JSON.stringify(reg)); ok=true;
-  }catch(e){}
-  /* 2) Apps Script (planilha real), se configurado */
-  if(URL_PLANILHA){
-    try{
-      var dados="nome="+encodeURIComponent(nomeAluno)+"&turma="+encodeURIComponent(turmaAluno)+
-        "&nota="+encodeURIComponent(nota10)+"&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+
-        "&respostas="+encodeURIComponent(letras)+"&data="+encodeURIComponent(quando);
-      var y=new XMLHttpRequest(); y.open("POST",URL_PLANILHA,true);
-      y.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); y.send(dados);
-    }catch(e){}
+function cpuJoga(){
+  // procura uma carta jogável
+  let idx = cpu.findIndex(c=>podeJogar(c));
+  if(idx===-1){
+    if(baralho.length===0) reabastecer();
+    const c = baralho.pop(); cpu.push(c);
+    if(podeJogar(c)){ idx = cpu.length-1; }
+    else{
+      vezDoJogadorComMensagem('O robô pegou uma carta.');
+      return;
+    }
   }
-  if(!ok){ marcarEnvio(false); }
-}
-function marcarEnvio(ok){
-  /* registro SILENCIOSO: o aluno nao ve nada sobre a professora nem sobre envio.
-     (a nota/resultado vai por baixo dos panos p/ Firebase/planilha) */
-  var s=$("statusenvio"); if(s){ s.innerHTML=""; }
+  const carta = cpu.splice(idx,1)[0];
+  mesa = carta;
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    corAtiva = corMaisComumCpu();
+    mesa = {cor:corAtiva, tipo:carta.tipo, valorCor:corAtiva};
+    setMensagem('O robô escolheu '+corAtiva+'! 🎨');
+  }else{
+    corAtiva = carta.cor;
+  }
+  render();
+  if(cpu.length===0) return vitoria('robo');
+
+  if(carta.tipo==='pula'){
+    setMensagem('O robô te pulou! Ele joga de novo. 🚫');
+    setTimeout(cpuJoga, 1000); return;
+  }
+  if(carta.tipo==='inverte'){
+    setMensagem('O robô girou o jogo! Ele joga de novo. 🔄');
+    setTimeout(cpuJoga, 1000); return;
+  }
+  if(carta.tipo==='mais2'){
+    for(let k=0;k<2;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
+    vezDoJogadorComMensagem('Você pegou 2 cartas.');
+    return;
+  }
+  if(carta.tipo==='mais4'){
+    for(let k=0;k<4;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
+    vezDoJogadorComMensagem('O robô jogou +4! Você pegou 4 cartas.');
+    return;
+  }
+  vezDoJogadorComMensagem('');
 }
 
-/* ====== confete leve (canvas, compat) ====== */
-function confete(){
-  try{
-    var c=document.createElement("canvas");c.style.position="fixed";c.style.left=0;c.style.top=0;c.style.pointerEvents="none";c.style.zIndex=9998;
-    c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
-    var x=c.getContext("2d"),ps=[],i,cores=["#f08a1f","#3fa34d","#2b8ae0","#8a63d2","#ffd23f"];
-    for(i=0;i<80;i++){ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,r:6+Math.random()*6,vy:2+Math.random()*3,co:cores[i%cores.length],vx:-1.5+Math.random()*3});}
-    var t=0,tot=140;
-    function loop(){x.clearRect(0,0,c.width,c.height);var k;for(k=0;k<ps.length;k++){var p=ps[k];p.y+=p.vy;p.x+=p.vx;x.fillStyle=p.co;x.fillRect(p.x,p.y,p.r,p.r);}t++;if(t<tot){requestAnimationFrame(loop);}else{if(c.parentNode){c.parentNode.removeChild(c);}}}
-    loop();
-  }catch(e){}
+function corMaisComumCpu(){
+  const cont = {vermelho:0,azul:0,verde:0,amarelo:0};
+  cpu.forEach(c=>{ if(c.cor!=='curinga') cont[c.cor]++; });
+  return Object.keys(cont).sort((a,b)=>cont[b]-cont[a])[0];
+}
+function comprarParaCpu(n){ for(let k=0;k<n;k++){ if(baralho.length===0) reabastecer(); cpu.push(baralho.pop()); } }
+function reabastecer(){ baralho = criarBaralho(); }
+
+// devolve true se o jogador tem ao menos uma carta jogável
+function temJogada(){ return mao.some(function(c){ return podeJogar(c); }); }
+
+// passa a vez ao jogador com a mensagem certa (jogar OU comprar)
+function vezDoJogadorComMensagem(prefixo){
+  vezDoJogador = true;
+  render();
+  var ini = prefixo ? (prefixo + ' ') : '';
+  var btn = document.getElementById('btnComprar');
+  if(temJogada()){
+    if(btn) btn.classList.remove('destaque');
+    setMensagem(ini + 'Sua vez! Toque numa carta que brilha. ✨');
+  }else{
+    if(btn) btn.classList.add('destaque');
+    setMensagem(ini + 'Você não tem carta para jogar. Toque em "Pegar 1" para comprar uma carta! 🃏');
+  }
 }
 
-/* ====== boot ====== */
-function boot(){ attMudo(); telaCapa(); }
-document.addEventListener("click",function(){
-  /* 1o gesto na CAPA: toca a historia automaticamente (o navegador so libera som apos um toque).
-     So dispara enquanto estamos na capa (existe o campo de nome) e uma unica vez. */
-  if(_histTocada){return;}
-  if(!document.getElementById("cNome")){return;}
-  _histTocada=true; falar(HISTORIA,true);
-},false);
-boot();
+/* ============ FIM ============ */
+function vitoria(quem){
+  vezDoJogador=false;
+  if(quem==='jogador'){
+    setMensagem('🎉 VOCÊ GANHOU! Parabéns! 🎉');
+  }else{
+    setMensagem('🤖 O robô ganhou! Tente de novo, você consegue! 💪');
+  }
+  document.getElementById('mensagem').classList.add('festa');
+  render();
+}
+
+/* ============ DESENHAR NA TELA ============ */
+/* ============ NARRAÇÃO POR VOZ ============ */
+var vozLigada = true;
+var vozPtBR = null;
+
+function carregarVoz(){
+  if(!('speechSynthesis' in window)) return;
+  var vozes = window.speechSynthesis.getVoices();
+  // procura uma voz em português do Brasil
+  for(var i=0;i<vozes.length;i++){
+    if(vozes[i].lang && vozes[i].lang.toLowerCase().indexOf('pt-br')>-1){ vozPtBR = vozes[i]; return; }
+  }
+  for(var j=0;j<vozes.length;j++){
+    if(vozes[j].lang && vozes[j].lang.toLowerCase().indexOf('pt')>-1){ vozPtBR = vozes[j]; return; }
+  }
+}
+if('speechSynthesis' in window){
+  carregarVoz();
+  window.speechSynthesis.onvoiceschanged = carregarVoz;
+}
+
+// remove emojis para a fala não "ler" símbolos estranhos
+function limparTexto(t){
+  return t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu,'').replace(/\s+/g,' ').trim();
+}
+
+function falar(texto){
+  if(!vozLigada || !('speechSynthesis' in window)) return;
+  var limpo = limparTexto(texto);
+  if(!limpo) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(limpo);
+  u.lang = 'pt-BR';
+  if(vozPtBR) u.voice = vozPtBR;
+  u.rate = 0.95; u.pitch = 1.05;
+  window.speechSynthesis.speak(u);
+}
+
+function alternarVoz(){
+  vozLigada = !vozLigada;
+  var b = document.getElementById('btnVoz');
+  if(vozLigada){ b.innerHTML = '🔊 Voz'; b.classList.remove('voz-off'); falar('Narração ligada!'); }
+  else{ b.innerHTML = '🔇 Voz'; b.classList.add('voz-off'); if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+}
+
+function setMensagem(t){
+  const m=document.getElementById('mensagem');
+  m.textContent=t; m.classList.remove('festa');
+  falar(t);
+}
+
+function corClasse(cor){ return 'c-'+cor; }
+const HEX = { vermelho:'#E5202E', azul:'#0099DD', amarelo:'#F7B500', verde:'#3EA72D' };
+
+// símbolos desenhados em SVG (estilo clássico, arte própria)
+// "color" controla a cor do traço quando o símbolo fica sobre o oval branco.
+function svgPular(color){
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="38" fill="none" stroke="${color}" stroke-width="13"/>
+    <line x1="24" y1="24" x2="76" y2="76" stroke="${color}" stroke-width="13" stroke-linecap="round"/>
+  </svg>`;
+}
+function svgMais2(color){
+  // duas cartinhas sobrepostas (visíveis em qualquer fundo)
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <rect x="20" y="22" width="34" height="50" rx="6" fill="#fff" stroke="${color}" stroke-width="6"/>
+    <rect x="40" y="32" width="34" height="50" rx="6" fill="${color}" stroke="#fff" stroke-width="5"/>
+    <text x="57" y="64" font-family="'Baloo 2',sans-serif" font-size="26" font-weight="800" fill="#fff" text-anchor="middle">+2</text>
+  </svg>`;
+}
+function svgCuringa(){
+  // pinwheel de quatro cores
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="40" fill="#fff"/>
+    <path d="M50 50 L50 10 A40 40 0 0 1 90 50 Z" fill="var(--vermelho)"/>
+    <path d="M50 50 L90 50 A40 40 0 0 1 50 90 Z" fill="var(--azul)"/>
+    <path d="M50 50 L50 90 A40 40 0 0 1 10 50 Z" fill="var(--amarelo)"/>
+    <path d="M50 50 L10 50 A40 40 0 0 1 50 10 Z" fill="var(--verde)"/>
+    <circle cx="50" cy="50" r="9" fill="#fff"/>
+  </svg>`;
+}
+function svgInverte(color){
+  // duas setas curvas em sentidos opostos
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="${color}" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 35 A26 26 0 0 1 76 48"/>
+      <path d="M70 65 A26 26 0 0 1 24 52"/>
+    </g>
+    <polygon points="20,30 40,30 28,48" fill="${color}"/>
+    <polygon points="80,70 60,70 72,52" fill="${color}"/>
+  </svg>`;
+}
+function svgMais4(){
+  // quatro cores em bloco + indicação de +4
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="#fff" stroke-width="4">
+      <rect x="30" y="22" width="20" height="30" rx="4" fill="var(--vermelho)"/>
+      <rect x="50" y="22" width="20" height="30" rx="4" fill="var(--azul)"/>
+      <rect x="30" y="50" width="20" height="30" rx="4" fill="var(--amarelo)"/>
+      <rect x="50" y="50" width="20" height="30" rx="4" fill="var(--verde)"/>
+    </g>
+  </svg>`;
+}
+
+// monta o INTERIOR clássico de uma carta: miolo, oval, número central e cantos
+function conteudoCarta(carta, corTraço){
+  const cor = corTraço || '#333';
+  let central, canto;
+  if(carta.tipo==='num'){
+    central = `<span>${carta.valor}</span>`;
+    canto = `${carta.valor}`;
+  }else if(carta.tipo==='mais2'){
+    central = `<span class="simb-c">${svgMais2(cor)}</span>`;
+    canto = `<span class="canto-mais2">+2</span>`;
+  }else if(carta.tipo==='pula'){
+    central = `<span class="simb-c">${svgPular(cor)}</span>`;
+    canto = `<span class="simb-k">${svgPular('#fff')}</span>`;
+  }else if(carta.tipo==='inverte'){
+    central = `<span class="simb-c">${svgInverte(cor)}</span>`;
+    canto = `<span class="simb-k">${svgInverte('#fff')}</span>`;
+  }else if(carta.tipo==='mais4'){
+    central = `<span class="simb-c">${svgMais4()}</span>`;
+    canto = `<span class="canto-mais2">+4</span>`;
+  }else{ // curinga
+    central = `<span class="simb-c">${svgCuringa()}</span>`;
+    canto = `<span class="simb-k">${svgCuringa()}</span>`;
+  }
+  return `
+    <div class="miolo"><div class="oval"></div></div>
+    <div class="canto tl">${canto}</div>
+    <div class="central">${central}</div>
+    <div class="canto br">${canto}</div>`;
+}
+
+function render(){
+  // mesa
+  const cm = document.getElementById('cartaMesa');
+  const ehCuringaPuro = (mesa.tipo==='curinga');
+  const ehPreta = (mesa.tipo==='mais4');
+  if(ehPreta){
+    cm.className = 'uno carta-grande c-preta';
+    cm.innerHTML = conteudoCarta(mesa, '#fff');
+  }else if(ehCuringaPuro && mesa.valorCor){
+    // curinga já transformado numa cor escolhida
+    cm.className = 'uno carta-grande '+corClasse(corAtiva);
+    cm.innerHTML = conteudoCarta({tipo:'curinga'});
+    cm.querySelector('.central').style.color='#fff';
+  }else if(ehCuringaPuro){
+    cm.className = 'uno carta-grande c-curinga';
+    cm.innerHTML = conteudoCarta(mesa);
+    cm.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+    cm.querySelector('.central').style.color='#fff';
+  }else{
+    cm.className = 'uno carta-grande '+corClasse(mesa.cor);
+    cm.innerHTML = conteudoCarta(mesa, HEX[mesa.cor]);
+  }
+
+  // robô
+  const cc = document.getElementById('cartasCpu'); cc.innerHTML='';
+  for(let i=0;i<cpu.length;i++){ const v=document.createElement('div'); v.className='verso'; v.textContent='UNO'; cc.appendChild(v); }
+  document.getElementById('qtdCpu').textContent = `(${cpu.length} carta${cpu.length!==1?'s':''})`;
+
+  // minhas cartas
+  const mc = document.getElementById('minhasCartas'); mc.innerHTML='';
+  mao.forEach((carta,idx)=>{
+    const d=document.createElement('div');
+    const ehCuringa = (carta.tipo==='curinga');
+    const ehPreta = (carta.tipo==='mais4');
+    let cor;
+    if(ehPreta) cor='c-preta';
+    else if(ehCuringa) cor='c-curinga';
+    else cor=corClasse(carta.cor);
+    const jogavel = vezDoJogador && !esperandoCor && podeJogar(carta);
+    d.className='uno carta '+cor+(jogavel?' jogavel':' bloqueada');
+    // cor do símbolo: cartas coloridas usam a própria cor; +4 e curinga usam branco
+    const corSimb = (ehCuringa || ehPreta) ? '#fff' : HEX[carta.cor];
+    d.innerHTML=conteudoCarta(carta, corSimb);
+    if(ehCuringa){
+      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+      d.querySelector('.central').style.color='#fff';
+    }
+    d.onclick=()=>jogarCarta(idx);
+    mc.appendChild(d);
+  });
+  document.getElementById('qtdEu').textContent = `(${mao.length} carta${mao.length!==1?'s':''})`;
+}
+
+/* ============ TUTORIAL ============ */
+const slides = [
+  { emoji:'👋', titulo:'Oi! Eu sou o Robô!',
+    texto:'Bem-vindos ao UNO das Cores! Eu vou jogar com você e te ensinar tudo. Quem ficar sem cartas primeiro vence!' },
+  { emoji:'🎯', titulo:'Nosso objetivo',
+    texto:'Você e eu começamos com 7 cartas cada um. Vá jogando suas cartas na mesa até a sua mão ficar vazia!' },
+  { emoji:'🌈', titulo:'A regra das cores e números', cartas:'cores',
+    texto:'Você só pode jogar uma carta da MESMA COR ou do MESMO NÚMERO da carta que está na mesa. Igualzinho!' },
+  { emoji:'✨', titulo:'As cartas que brilham',
+    texto:'As cartas que você PODE jogar ficam brilhando e crescem quando você passa o dedo. As apagadas, não dá!' },
+  { emoji:'🃏', titulo:'Minhas cartas especiais', cartas:'especiais',
+    texto:'Pular: eu perco a vez. Mais 2: eu pego 2 cartas. Girar: você joga de novo. Cuidado, eu também posso usá-las em você!' },
+  { emoji:'🌈', titulo:'As cartas coringa', cartas:'coringas',
+    texto:'Arco-íris: você escolhe a cor que quiser! Mais 4: você escolhe a cor E eu pego 4 cartas!' },
+  { emoji:'🏆', titulo:'Como ganhar de mim',
+    texto:'Se não puder jogar, toque em "Pegar 1" para comprar uma carta. Ficou sem cartas? VOCÊ GANHOU! 🎉' }
+];
+let slideAtual = 0;
+
+function abrirTutorial(){ slideAtual=0; montarBolinhas(); mostrarSlide(); document.getElementById('tutorial').classList.add('ativo'); }
+function fecharTutorial(){ document.getElementById('tutorial').classList.remove('ativo'); }
+function montarBolinhas(){
+  const b=document.getElementById('bolinhas'); b.innerHTML='';
+  slides.forEach((_,i)=>{ const o=document.createElement('div'); o.className='bolinha'+(i===0?' on':''); b.appendChild(o); });
+}
+function mostrarSlide(){
+  const s=slides[slideAtual];
+  document.getElementById('slideNum').textContent=`Passo ${slideAtual+1} de ${slides.length}`;
+  document.getElementById('slideEmoji').textContent=s.emoji;
+  const elTit=document.getElementById('slideTitulo');
+  const elTxt=document.getElementById('slideTexto');
+  elTit.textContent=s.titulo; elTit.style.color='#1a1633';
+  elTxt.textContent=s.texto; elTxt.style.color='#23203a';
+  falar(s.titulo + '. ' + s.texto);
+
+  // cartinhas de exemplo (usam a mesma estrutura clássica das cartas reais)
+  const cont=document.getElementById('slideCartas'); cont.innerHTML='';
+  function miniCarta(corNome, carta){
+    const d=document.createElement('div');
+    const isCuringa = (carta.tipo==='curinga');
+    const isPreta = (carta.tipo==='mais4');
+    let cls;
+    if(isPreta) cls='c-preta';
+    else if(isCuringa) cls='c-curinga';
+    else cls=corClasse(corNome);
+    d.className='uno mini '+cls;
+    const corSimb = (isCuringa || isPreta) ? '#fff' : HEX[corNome];
+    d.innerHTML=conteudoCarta(carta, corSimb);
+    if(isCuringa){
+      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+      d.querySelector('.central').style.color='#fff';
+    }
+    return d;
+  }
+  if(s.cartas==='cores'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    [['vermelho',5],['azul',5],['verde',3],['amarelo',5]].forEach(([c,n])=>{
+      box.appendChild(miniCarta(c,{tipo:'num',valor:n}));
+    });
+    cont.appendChild(box);
+  }
+  if(s.cartas==='especiais'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    box.appendChild(miniCarta('vermelho',{tipo:'pula'}));
+    box.appendChild(miniCarta('azul',{tipo:'mais2'}));
+    box.appendChild(miniCarta('verde',{tipo:'inverte'}));
+    cont.appendChild(box);
+  }
+  if(s.cartas==='coringas'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    box.appendChild(miniCarta('',{tipo:'curinga'}));
+    box.appendChild(miniCarta('',{tipo:'mais4'}));
+    cont.appendChild(box);
+  }
+
+  // bolinhas + botões
+  document.querySelectorAll('.bolinha').forEach((b,i)=>b.classList.toggle('on',i===slideAtual));
+  document.getElementById('btnAnterior').disabled = slideAtual===0;
+  const ultimo = slideAtual===slides.length-1;
+  document.getElementById('btnProximo').style.display = ultimo?'none':'';
+  document.getElementById('btnComecar').style.display = ultimo?'':'none';
+}
+function mudarSlide(d){
+  slideAtual=Math.max(0,Math.min(slides.length-1,slideAtual+d));
+  mostrarSlide();
+}
+
+/* iniciar */
+novoJogo();
 </script>
+</body>
+</html>
