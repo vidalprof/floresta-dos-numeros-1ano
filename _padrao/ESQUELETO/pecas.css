@@ -4869,7 +4869,45 @@
 
 .mec-pintar-canvas .pintawrap{max-width:300px}
 
-.mec-pintar-canvas .tcor{width:42px;height:42px;margin:3px}}@media (prefers-reduced-motion:reduce){
+.mec-pintar-canvas .tcor{width:42px;height:42px;margin:3px}}
+/* ⭐ O NETBOOK DA ESCOLA TEM 600px DE ALTURA — e o bloco acima só valia abaixo
+   de 520px, então passava raspando por FORA justo na máquina em que as crianças
+   jogam. Medido em 1024x600: o conteúdo somava 710px numa janela de 600, a tela
+   rolava, e o "Pronto!" nascia DEBAIXO da barra fixa de baixo (o dedo tocava o
+   "Ouvir" no lugar). A criança terminava de pintar e não conseguia entregar.
+   Quem achou foi o `_qa/sobreposto.js`, medindo quem responde ao toque no
+   centro do botão. Aqui a tela baixa encolhe de verdade, não um tiquinho. */
+@media (max-height:660px){
+  .mec-pintar-canvas .centro{padding:10px 10px 12px}
+  .mec-pintar-canvas .selo{font-size:12px;padding:4px 12px;margin-bottom:6px}
+  .mec-pintar-canvas .prog{margin-bottom:7px}
+  .mec-pintar-canvas .balao{font-size:16px;padding:7px 12px;margin-bottom:6px}
+  .mec-pintar-canvas .dica{font-size:14px;padding:6px 11px;margin-bottom:7px}
+  .mec-pintar-canvas .pintawrap{max-width:min(360px,42vh)}
+  .mec-pintar-canvas .paleta{margin:6px auto 3px}
+  .mec-pintar-canvas .tcor{width:40px;height:40px;margin:3px;border-width:2px}
+  .mec-pintar-canvas .pc_ferr{margin:4px 0}
+  .mec-pintar-canvas .zap{width:46px;height:46px}
+}
+/* ⭐ E ENCOLHER NÃO BASTOU — medido: mesmo com tudo menor o conteúdo somava
+   561px, mais 40 de respiro em cima e 104 embaixo (que a barra fixa exige) =
+   705 numa janela de 600. Cura de verdade, a mesma que curou a Pinta e Monta:
+   NA TELA LARGA E BAIXA (o netbook: 1024 de largura, 600 de altura) a PALETA
+   SAI DE BAIXO DO DESENHO e vira uma coluna fixa à esquerda. Os 88px que ela
+   ocupava voltam para a altura, e o "Pronto!" sobe para longe da barra.
+   Só nessa forma de tela: no celular (estreito) a paleta continua embaixo,
+   que é onde o polegar alcança. */
+@media (min-width:820px) and (max-height:660px){
+  .mec-pintar-canvas .tela{padding-top:calc(12px + env(safe-area-inset-top))}
+  .mec-pintar-canvas .paleta{position:fixed;left:10px;top:50%;
+    -webkit-transform:translateY(-50%);transform:translateY(-50%);
+    width:112px;max-width:112px;max-height:92vh;overflow-y:auto;margin:0;
+    background:rgba(255,255,255,.55);border-radius:18px;padding:8px 4px;
+    -webkit-box-shadow:0 4px 14px rgba(90,60,20,.16);
+    box-shadow:0 4px 14px rgba(90,60,20,.16);z-index:11}
+  .mec-pintar-canvas .centro{padding-left:20px}
+  .mec-pintar-canvas .pintawrap{max-width:min(420px,54vh)}
+}@media (prefers-reduced-motion:reduce){
 
 .mec-pintar-canvas .tela{-webkit-animation:none;animation:none}}
 /* ==== PECA: pintar-desenho ==== */

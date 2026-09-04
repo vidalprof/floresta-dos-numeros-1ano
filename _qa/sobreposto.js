@@ -205,6 +205,13 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
           if (!emCima) continue;
           /* ⚠️ armadilha 2: filho e pai não se cobrem */
           if (emCima === el || el.contains(emCima) || emCima.contains(el)) continue;
+          /* ⚠️ armadilha 3: TELA DE CAPA nao e obstrucao. Achada varrendo as 74
+             atividades: no Aventura e no Voxel o portao acusou os botoes de
+             baixo de `#telaIntro` e `#start` — mas aquilo e a capa cobrindo a
+             tela inteira de proposito, esperando o primeiro toque. Quem cobre
+             mais de 90% da janela e uma CAPA, nao um vizinho mal posto. */
+          const rp = emCima.getBoundingClientRect();
+          if (rp.width * rp.height > innerWidth * innerHeight * 0.9) continue;
           out.push({q: nome(el), por: nome(emCima),
                     tam: Math.round(rc.width) + 'x' + Math.round(rc.height)});
         }

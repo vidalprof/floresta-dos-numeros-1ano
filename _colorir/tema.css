@@ -39,3 +39,14 @@
   .mec-pintar-canvas .pintawrap{max-width:min(320px,40vh)}
   .mec-pintar-canvas .tcor{width:40px;height:40px;margin:2px}
 }
+/* ⭐ NO NETBOOK DA ESCOLA (largo e baixo) a paleta virou coluna fixa à esquerda
+   — ver o `pecas.css` da peça pintar-canvas — e os ~90px que ela ocupava embaixo
+   voltaram para a altura. Então o desenho cresce de volta aqui. Medido em
+   1024x600: com 47vh a fase mais alta punha o "Pronto!" em 508-558 e a barra
+   fixa começa em 546 — ENCOSTAVA. O portão não acusou porque o `.mini` não
+   cai exatamente no centro do botão, e é justo por isso que a foto e a medida
+   da FASE MAIS ALTA valem tanto quanto o portão. Com 43vh a fase mais alta
+   termina em 532 e sobra folga de verdade. */
+@media (min-width:820px) and (max-height:660px){
+  .mec-pintar-canvas .pintawrap{max-width:min(380px,43vh)}
+}
