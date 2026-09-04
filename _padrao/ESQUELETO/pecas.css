@@ -5573,7 +5573,14 @@
 /* ==== PECA: repartir ==== */
 @-webkit-keyframes kf-repartir-treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}@keyframes kf-repartir-treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
-.mec-repartir .fita{max-width:340px;height:92px;margin:13px auto 0;font-size:0;cursor:pointer; padding:3px;border-radius:12px;background:rgba(255,255,255,.12)}
+/* ⚠️⚠️ LAPIDACAO DA PECA (set/2026, primeira vez que ela entrou numa atividade
+   de verdade — a Gincana da Divisao do 4o ano). A fita nascia com 12 PIXELS de
+   largura: um pauzinho vertical no meio da tela, no lugar da barra que a
+   crianca corta. Causa: `.centro` e um flex em coluna com `align-items:center`,
+   e filho de bloco dentro disso encolhe ate o conteudo — `max-width` sozinho
+   nao da largura nenhuma. Faltava o `width:100%`. Medido: 12px -> 340px.
+   Foi a FOTO que mostrou; nenhum portao acusa uma barra fina. */
+.mec-repartir .fita{width:100%;max-width:340px;height:70px;margin:13px auto 0;font-size:0;cursor:pointer; padding:3px;border-radius:12px;background:rgba(255,255,255,.12)}
 
 .mec-repartir .tira{position:relative;display:inline-block;vertical-align:top;height:100%; border:3px solid #6b4a2f;border-radius:9px;background:#e7c58c;overflow:hidden}
 
@@ -5583,9 +5590,17 @@
 
 .mec-repartir .umped{display:inline-block;height:100%;border-right:1px dashed rgba(51,40,10,.5)}
 
-.mec-repartir .umped.fruta{border-right:0;background-repeat:no-repeat;background-position:center; -webkit-background-size:80% 80%;background-size:80% 80%}
+/* ⚠️ 2a LAPIDACAO, na mesma foto: `background-size:80% 80%` ESTICA a figura
+   para as duas medidas da celula. Numa celula de 27x80 (doze bolas numa fita
+   de 340px) a bola redonda virava uma elipse alta. `contain` respeita a
+   proporcao: a figura entra inteira e continua sendo o que e. */
+.mec-repartir .umped.fruta{border-right:0;background-repeat:no-repeat;background-position:center; -webkit-background-size:contain;background-size:contain}
 
-.mec-repartir .tira .tnum{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:19px;font-weight:800; color:#33280a;line-height:26px;text-align:center}
+/* ⚠️ 3a lapidacao: com figuras dentro da fita, o numero ficava POR CIMA das
+   bolas e ninguem lia nem o numero nem a bola. Vira uma plaquinha com fundo
+   proprio — le-se sobre qualquer figura. */
+.mec-repartir .tira .tnum{position:absolute;left:0;right:0;top:50%;margin-top:-14px;font-size:18px;font-weight:800;color:#fff8ea;line-height:28px;text-align:center;pointer-events:none}
+.mec-repartir .tira .tnum:before{content:"";position:absolute;left:50%;top:0;width:38px;height:28px;margin-left:-19px;border-radius:14px;background:rgba(40,30,12,.82);z-index:-1}
 
 .mec-repartir .mstat{max-width:430px;margin:9px auto 0;font-size:16px;font-weight:700;line-height:1.3;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:5px 12px;display:inline-block;}
 

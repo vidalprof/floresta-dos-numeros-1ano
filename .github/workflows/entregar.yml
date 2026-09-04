@@ -176,6 +176,7 @@ jobs:
               if [ -f "$pasta/conteudo.json" ]; then
                 portao "resposta entregue (destaque em cima da palavra certa)" python3 _qa/entrega.py "$pasta"
                 portao "enunciado bate (promete um assunto, cobra outro)" python3 _qa/enunciado_bate.py "$pasta"
+                portao "texto de exemplo (o assunto de outra atividade chegando a crianca)" python3 _qa/exemplo.py "$pasta"
               fi
               # ⚠️ a moldura se mede no HTML montado, nao no conteudo.json — por
               #    isso fica FORA do `if` acima (foi ali que eu deixei um `if`

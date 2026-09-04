@@ -157,6 +157,13 @@ def prompts_de(c, arte):
     bloco = c.get(u"arte") or {}
     desc_masc = _limpa(bloco.get(u"mascote") or u"")
     cen = cenario_de(c)
+    # ⭐ SIMBOLO DA MEDALHA (set/2026, montando a Gincana): sem isto o prompt da
+    #    medalha herdava a CENA INTEIRA — "uma medalha com o simbolo de uma quadra
+    #    de escola com bandeirinhas, cones, arcos, arquibancada e as montanhas do
+    #    vale gravado no meio". Pedido impossivel: medalha tem um simbolo, nao uma
+    #    paisagem. Agora `arte.simbolo` diz, em poucas palavras, o QUE gravar; sem
+    #    ele nada muda e continua caindo na cena, como antes.
+    sim = _limpa((c.get(u"arte") or {}).get(u"simbolo") or u"") or cen
     assuntos = assunto_das_figuras(c)
 
     if _e_exemplo(desc_masc):
@@ -213,7 +220,7 @@ def prompts_de(c, arte):
             out.append((nome, (
                 u"A golden award medal hanging from a wide blue ribbon, with a "
                 u"simple symbol of %s embossed in the middle of the medal. %s %s"
-                % (cen, ACABAMENTO, RECORTE)), u"medalha"))
+                % (sim, ACABAMENTO, RECORTE)), u"medalha"))
             continue
 
         # ---- figura de conteudo: o assunto vem do proprio conteudo.json ----

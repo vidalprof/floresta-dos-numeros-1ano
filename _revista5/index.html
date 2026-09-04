@@ -5442,8 +5442,18 @@ MEC["escolher"] = function(f, cen, fim){
    · `voz` = o que o alto-falante diz, quando é diferente da palavra escrita
              (OPCIONAL — sem ele, fala a própria palavra).
    Sem `img` nada muda: nenhuma atividade que já usa esta peça quebra.     */
-var TITULO="PARTES DA PLANTA";
-var FECHO="Voc&#234; j&#225; conhece as partes da planta!";
+/* ⚠️⚠️ LICAO PAGA (set/2026, montando a Gincana da Divisao do 4o ano):
+   estes dois PADROES eram o assunto do EXEMPLO desta peca — o quiz da
+   planta. O `TITULO` o montador sobrescreve com o `selo` da fase, entao
+   ninguem via; mas o `FECHO` NAO e sobrescrito, e ele fecha a fase. Uma
+   crianca do 4o ano repartia bolas entre equipes, acertava tudo, e o jogo
+   respondia: "Voce ja conhece as partes da planta!".
+   Medido em ONZE atividades, incluindo as que ja estao no ar.
+   O padrao agora e NEUTRO: serve a qualquer assunto. Quem quiser um fecho
+   proprio poe `FECHO` no `dadosExtra` da fase — e quem esquecer nao
+   entrega o assunto de outra atividade. Vigia: `_qa/exemplo.py`. */
+var TITULO="ESCOLHA A CERTA";
+var FECHO="Voc&#234; acertou todas as escolhas!";
 /* ⭐ SÓ IMAGEM (escolha do Marcos, ago/2026): quando a opção é a FIGURA na
    moldura de vidro, dá para esconder a PALAVRA embaixo e deixar só o desenho +
    o alto-falante (a criança toca e ouve o nome). Opcional; por padrão a palavra

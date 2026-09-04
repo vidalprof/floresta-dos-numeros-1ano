@@ -420,6 +420,19 @@ portao "0o4 moldura corta" python3 _qa/corta_figura.py "$ARQ"
 #     Os portoes que ja existiam nao viam: o leiaute mede TAMANHO (e os alvos
 #     tinham 40px certos), o encaixe mede se cabe (e cabia), e a foto parece boa
 #     porque a cor APARECE, com a bordinha de fora. So o gesto revela.
+# ⭐ 0e) TEXTO DE EXEMPLO CHEGANDO A CRIANCA — achado montando a Gincana
+#     (set/2026). O motor traz um PADRAO para cada gaveta de texto, e o padrao
+#     era o assunto do EXEMPLO da peca. A fase de "escolher" fechava assim:
+#         "Voce ja conhece as partes da planta!"
+#     numa atividade de DIVISAO do 4o ano. Estava tambem na Expedicao do 5o,
+#     no ar. O montador AVISAVA; ninguem media. Agora mede.
+#     ⚠️ Nao e um grep: a maioria do texto de exemplo e a voz GENERICA da
+#     mecanica e esta certa em qualquer atividade ("Digite quanto da."). Ele
+#     so reprova quando o padrao cita o ASSUNTO do exemplo e esse assunto NAO
+#     existe nesta atividade.
+echo "--- 0e) TEXTO DE EXEMPLO (a crianca le o assunto de outra atividade?) -"
+portao "0e texto de exemplo" python3 _qa/exemplo.py "$(dirname "$ARQ")"
+
 echo "--- 1w) ELEMENTO COBERTO (o dedo alcanca o que ela quer tocar?) -"
 portao "1w elemento coberto" node _qa/sobreposto.js "$ARQ"
 

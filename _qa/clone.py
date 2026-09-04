@@ -401,7 +401,21 @@ else:
     #    LE. Sem tirar os comentarios, a propria licao escrita aqui ("foi assim
     #    que 'com o Nico' ficou na tela de outra atividade") reprovava as quatro
     #    atividades de uma vez. Portao que reprova a si mesmo nao serve.
-    corpo4 = re.sub(r"/\*.*?\*/", " ", html, flags=re.S)
+    # ⚠️⚠️ SEGUNDA LICAO DA MESMA FAMILIA (set/2026, montando a Gincana): PADRAO
+    #    QUE A FASE SOBRESCREVE TAMBEM NAO CHEGA NA CRIANCA. A peca
+    #    `conserte-o-erro` traz, como EXEMPLO, o caderno do Teo — e este item
+    #    reprovava as CINCO atividades que usam essa peca, quatro delas ja
+    #    aprovadas pelo Marcos e no ar. Fui olhar a tela da fase: ela diz "O Tato
+    #    escreveu quantas bolas...", porque a fase preenche o vetor e o exemplo
+    #    nunca aparece. Cinco reprovacoes, zero defeitos.
+    #    Onde mora o que a crianca LE de verdade numa atividade do ESQUELETO? No
+    #    `conteudo.json`, que e o que o autor escreveu. E dele que se mede.
+    _cont = os.path.join(pasta, "conteudo.json")
+    if os.path.exists(_cont):
+        corpo4 = open(_cont, encoding="utf-8", errors="replace").read()
+    else:
+        corpo4 = html                     # atividade feita a mao: so ha o HTML
+    corpo4 = re.sub(r"/\*.*?\*/", " ", corpo4, flags=re.S)
     corpo4 = re.sub(r"(?m)^\s*//.*$", " ", corpo4)
     corpo4 = _texto(re.sub(r"var\s+MASCOTE_NOME\s*=\s*\"[^\"]+\"", "", corpo4))
     alheios4, gemeos = [], []
@@ -418,9 +432,17 @@ else:
         if len(nome_o) >= 3 and re.search(r"\b" + re.escape(nome_o) + r"\b", corpo4):
             alheios4.append((nome_o, outra))
     if gemeos:
-        problemas.append("o mascote daqui se chama %r, o MESMO nome do mascote de %s "
-                         "— clonei o motor e esqueci de trocar o nome"
-                         % (meu_masc, ", ".join(gemeos)))
+        # ⚠️ ISTO DEIXOU DE SER DEFEITO (regra do Marcos, ago/2026, registrada no
+        #    CLAUDE.md): *"mascote e imagens do banco podem ser reaproveitados em
+        #    outras atividades; mascote novo só quando eu pedir"*. Reusar o Tato
+        #    da divisão do 5º ano na divisão do 4º é DE PROPÓSITO — a criança
+        #    reencontra o personagem no ano seguinte. Enquanto isto reprovava, o
+        #    portão dizia não a uma ordem direta dele, e ainda por cima acusava
+        #    o Pixel do 9º ano, que ele já aprovou nas duas atividades.
+        #    Fica como AVISO: quem lê decide se foi reuso ou esquecimento.
+        print("   aviso: o mascote %r tambem e o de %s. Se foi REUSO (o padrao "
+              "da casa), esta certo; se foi clone esquecido, troque o nome."
+              % (meu_masc, ", ".join(gemeos)))
     if alheios4:
         problemas.append("o nome do mascote de OUTRA atividade aparece no texto: %s"
                          % ", ".join("%r (e da %s)" % (n, d) for n, d in alheios4[:3]))
