@@ -96,23 +96,48 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   if(PC){ salvarPC(PC, manualPC); }
 
   function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
-  /* ⭐ O INTERRUPTOR DO "TROCAR NÚMERO" (pedido do Marcos, set/2026):
-       *"consegue remover a opção onde está escrito trocar computador... para o
-       aluno não trocar e deixar de funcionar... e quando eu quiser vc acrescenta
-       facilmente e rápido?"*
+  /* ⭐⭐ O INTERRUPTOR DO "TROCAR NÚMERO" — AGORA NA MÃO DO PROFESSOR, À DISTÂNCIA.
+     Pedido do Marcos (set/2026): *"consegue remover a opção onde está escrito
+     trocar computador... para o aluno não trocar e deixar de funcionar"*; e
+     depois, quando precisou de verdade: *"volte a opção de trocar computador no
+     pc dos alunos, pois tenho que trocar o de um, deixe essa opção no painel,
+     daí eu habilito quando quero e desabilito quando quero"*.
 
-     `false` = o link não aparece; `true` = volta como era. É só esta palavra —
-     TODO o resto continua no lugar (a tela `setpc`, o `abrirSetPc`, o `okpc`),
-     então voltar atrás é trocar uma palavra e publicar.
+     Antes isto era uma PALAVRA no código (`var TROCAR_PC = false`): para ligar,
+     eu tinha que editar, commitar, publicar e ele esperar o cache — inútil para
+     quem está de pé na frente da máquina agora. Virou ESTADO no canal:
+     o campo `trocarpc` do nó `/lab/<sala>` do Firebase, que o professor liga e
+     desliga por um botão no controle e que esta tela lê no mesmo poll de sempre
+     (a cada 2,5s). Zero pedido novo à rede.
 
-     ⚠️ E o professor NÃO fica trancado do lado de fora: máquina SEM número
-     continua abrindo o campo sozinha (`if(!PC)` lá embaixo). O que sai é só o
-     link que deixava o aluno trocar um número que já estava certo. */
-  var TROCAR_PC = false;
+     E não é um liga-desliga cego: o valor é a MESMA lista de "Enviar para" do
+     controle — `"todos"` ou `"7,12"`. Assim ele libera só a máquina que precisa
+     consertar, e as outras 20 continuam trancadas. Vazio/ausente = trancado,
+     que é o padrão e o comportamento de hoje (nó antigo, sem o campo, = travado).
+
+     ⚠️ O professor NUNCA fica trancado do lado de fora: máquina SEM número
+     continua abrindo o campo sozinha (`if(!PC)` lá embaixo), independente disto. */
+  var TROCAR_ALVO = "";               /* "" = ninguém · "todos" · "7,12" */
+  function trocarLiberado(){
+    if(!TROCAR_ALVO) return false;
+    if(TROCAR_ALVO==="todos") return true;
+    if(!PC) return false;
+    var arr=(""+TROCAR_ALVO).split(","), i;
+    for(i=0;i<arr.length;i++){ if(norm(arr[i])===norm(PC)) return true; }
+    return false;
+  }
+  function setTrocarAlvo(v){
+    v = (v===true) ? "todos" : (v ? (""+v) : "");
+    /* ⚠️ só repinta quando MUDA de verdade: o poll passa aqui a cada 2,5s e
+       reescrever o rodapé toda vez mataria um clique no meio do caminho. */
+    if(v===TROCAR_ALVO) return;
+    TROCAR_ALVO = v;
+    pintaRodape();
+  }
 
   function pintaRodape(){
     var linha = "Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>");
-    if(TROCAR_PC){
+    if(trocarLiberado()){
       linha += ' &middot; <a href="#" id="trocarpc" style="color:#8fb6ff;text-decoration:underline;">trocar n&uacute;mero</a>';
     }
     $("rodape").innerHTML = linha;
@@ -249,7 +274,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
       if(xhr.readyState!==4) return;
       if(xhr.status>=200 && xhr.status<300){
         conectado(true);
-        if(DB){ try{ var d=JSON.parse(xhr.responseText||"null"); if(d) aplica(d); }catch(e){} }
+        if(DB){ try{ var d=JSON.parse(xhr.responseText||"null");
+          /* ⚠️ o interruptor vem ANTES do `aplica`, e de propósito: o `aplica`
+             sai fora na primeira linha quando o comando é o mesmo de antes
+             (dedup por `id`), e o interruptor precisa ser lido MESMO quando
+             nenhum comando novo chegou — é estado, não comando. */
+          setTrocarAlvo(d ? d.trocarpc : "");
+          if(d) aplica(d); }catch(e){} }
         else {
           var linhas=(xhr.responseText||"").split("\n"),i;
           for(i=0;i<linhas.length;i++){ var ln=linhas[i].replace(/^\s+|\s+$/g,""); if(!ln) continue;

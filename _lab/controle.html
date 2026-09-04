@@ -95,6 +95,25 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
       <button class="btn amarelo sec" id="voltar">&#8634;&nbsp; Trazer de volta</button>
       <button class="btn vermelho sec" id="bloquear">&#9995;&nbsp; Pausar</button>
     </div>
+
+    <!-- ⭐ O INTERRUPTOR DO "TROCAR NÚMERO" (pedido do Marcos, set/2026:
+         *"volte a opção de trocar computador no pc dos alunos, pois tenho que
+         trocar o de um, deixe essa opção no painel, daí eu habilito quando
+         quero e desabilito quando quero"*).
+         Ele libera para as máquinas que estiverem no campo "ENVIAR PARA" — se
+         estiver "7", só a 7 ganha o link; se estiver "todos", a sala inteira.
+         Reusa o campo que já existe de propósito: nada de um segundo lugar para
+         digitar número de máquina, que é onde nascem os enganos. -->
+    <div id="cxTroca" style="margin-top:11px;padding:9px 11px;border-radius:11px;
+         background:rgba(120,140,190,.10);border:1px solid #2f416b;">
+      <div style="font-size:11.5px;font-weight:700;letter-spacing:.6px;color:#8fa3c8;
+           text-transform:uppercase;margin-bottom:4px;">Trocar n&uacute;mero na tela do aluno</div>
+      <div id="estTroca" style="font-size:14px;color:#7d90b6;margin-bottom:8px;line-height:1.4;">
+        bloqueado &mdash; o aluno n&atilde;o pode trocar</div>
+      <button class="btn ghost" id="btTroca" style="margin-top:0;">
+        &#128275;&nbsp; Liberar para quem est&aacute; em &ldquo;Enviar para&rdquo;</button>
+    </div>
+
     <div class="msg" id="msg"></div>
   </div>
 
@@ -146,11 +165,85 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
   function pinta(){
     $("urllab").textContent = DB()? urlLab() : "(cole a URL do Firebase primeiro)";
     var _a=$("avisoDb"); if(_a){ _a.style.display = DB()? "none":"block"; }
+    /* trocar de sala (ou de canal) muda o interruptor: relê o nó daquela sala,
+       senão o botão mostraria o estado da sala anterior. */
+    lerCanal();
   }
   pinta();
 
+  /* ⭐⭐ O INTERRUPTOR DO "TROCAR NÚMERO", à distância.
+     O nó `/lab/<sala>` do Firebase guarda o último comando; agora guarda também
+     o campo `trocarpc` — "" (trancado), "todos", ou "7,12". A tela do aluno lê
+     esse campo no poll que ela já fazia e mostra (ou esconde) o link "trocar
+     número" em ~2,5s, sem recarregar nada.
+
+     ⚠️ POR QUE TUDO CONTINUA EM `PUT` (e não `PATCH`, que seria o natural): o
+     `PUT` troca o nó INTEIRO, então um comando novo apagaria o interruptor. A
+     saída óbvia seria `PATCH`, mas verbo diferente é risco novo na rede filtrada
+     da escola — e o canal de comandos é o caminho quente, o que não pode
+     quebrar no meio da aula. Então o controle guarda o nó em `_no` (lido ao
+     abrir) e reescreve o conjunto: comando + interruptor, sempre juntos. */
+  var _no = null;                       /* o que está no canal agora */
+  function trocaAtual(){ return (_no && _no.trocarpc) ? (""+_no.trocarpc) : ""; }
+
+  function pintaTroca(){
+    var e=$("estTroca"), b=$("btTroca"); if(!e||!b) return;
+    var v=trocaAtual();
+    if(v){
+      e.textContent = "LIBERADO para " + v + " — o aluno vê o link “trocar número”";
+      e.style.color = "#ffd487";
+      b.innerHTML = "&#128274;&nbsp; Bloquear de novo";
+    }else{
+      e.textContent = "bloqueado — o aluno não pode trocar";
+      e.style.color = "#7d90b6";
+      b.innerHTML = "&#128275;&nbsp; Liberar para quem está em “Enviar para”";
+    }
+  }
+
+  function lerCanal(){
+    if(!DB()){ pintaTroca(); return; }
+    var x=new XMLHttpRequest();
+    try{ x.open("GET", DB()+"/lab/"+SALA()+".json", true); }catch(e){ pintaTroca(); return; }
+    x.timeout=9000;
+    x.onreadystatechange=function(){
+      if(x.readyState!==4) return;
+      if(x.status>=200 && x.status<300){
+        try{ _no=JSON.parse(x.responseText||"null"); }catch(e){ _no=null; }
+      }
+      pintaTroca();
+    };
+    x.ontimeout=function(){ pintaTroca(); };
+    x.onerror=function(){ pintaTroca(); };
+    try{ x.send(); }catch(e){ pintaTroca(); }
+  }
+
+  function gravaTroca(valor){
+    if(!DB()){ $("msg").textContent="Este ajuste precisa do canal Firebase (abra o ⚙)."; return; }
+    var corpo={}, k;
+    /* preserva o comando que está no canal (auto-retomar de quem reiniciar) */
+    if(_no){ for(k in _no){ if(Object.prototype.hasOwnProperty.call(_no,k)) corpo[k]=_no[k]; } }
+    corpo.trocarpc = valor;
+    var x=new XMLHttpRequest();
+    try{ x.open("PUT", DB()+"/lab/"+SALA()+".json", true); }
+    catch(e){ $("msg").textContent="Erro ao conectar."; return; }
+    x.setRequestHeader("Content-Type","application/json");
+    x.onreadystatechange=function(){
+      if(x.readyState!==4) return;
+      if(x.status>=200 && x.status<300){
+        _no=corpo; pintaTroca();
+        $("msg").textContent = valor
+          ? ("Liberado para "+valor+". O link aparece na tela do aluno em uns 3 segundos — lembre de bloquear depois.")
+          : "Bloqueado. O aluno não pode mais trocar o número.";
+      } else { $("msg").textContent="Não consegui gravar (a escola pode estar bloqueando este canal)."; }
+    };
+    x.onerror=function(){ $("msg").textContent="Sem conexão com o canal."; };
+    try{ x.send(JSON.stringify(corpo)); }catch(e){ $("msg").textContent="Erro ao enviar."; }
+  }
+
   function enviar(cmd, okmsg){
     cmd.id=rid(); cmd.ts=(new Date()).getTime();
+    /* o PUT troca o nó inteiro: o interruptor viaja junto para não ser apagado */
+    var _tp=trocaAtual(); if(_tp) cmd.trocarpc=_tp;
     var body=JSON.stringify(cmd), method, url;
     if(DB()){ method="PUT"; url=DB()+"/lab/"+SALA()+".json"; }          /* Firebase (se configurado) */
     else { method="POST"; url="https://ntfy.sh/vidalprofLab_"+SALA(); } /* ntfy (padrao, sem config) */
@@ -159,7 +252,7 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     xhr.setRequestHeader("Content-Type","application/json");
     xhr.onreadystatechange=function(){
       if(xhr.readyState!==4) return;
-      if(xhr.status>=200 && xhr.status<300){ $("msg").textContent=okmsg; }
+      if(xhr.status>=200 && xhr.status<300){ $("msg").textContent=okmsg; _no=cmd; }
       else{ $("msg").textContent="Não consegui enviar (a escola pode estar bloqueando este canal)."; }
     };
     xhr.onerror=function(){ $("msg").textContent="Sem conexão com o canal (bloqueio?). Se for na escola, tente o Firebase."; };
@@ -229,6 +322,12 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
   }; })();
   /* de 5 em 5 segundos: leve, e a criança não termina de repente */
   terminados(); setInterval(terminados, 5000);
+
+  (function(){ var b=$("btTroca"); if(b) b.onclick=function(){
+    /* um botão só: se está liberado, tranca; se está trancado, libera para o
+       que estiver no campo "Enviar para" (que já é "todos" por padrão). */
+    gravaTroca(trocaAtual() ? "" : alvo());
+  }; })();
 
   $("salvarDb").onclick=function(){
     var u=($("db").value||"").replace(/^\s+|\s+$/g,"").replace(/\/+$/,"");

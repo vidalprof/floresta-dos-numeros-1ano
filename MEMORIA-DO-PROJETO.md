@@ -22,6 +22,21 @@
 > mais chamar `actions_list` para isso** (uma chamada come dezenas de milhares
 > de caracteres da conversa).
 >
+> **🔀 O CANAL DA SALA — `/lab/<sala>` (Firebase RTDB) guarda DUAS coisas, não uma.**
+> Além do último comando (`{id, ts, alvo, acao, url}`), guarda o campo
+> **`trocarpc`** — o interruptor do link "trocar número" na tela do aluno:
+> `""`/ausente = trancado (padrão), `"todos"`, ou uma lista tipo `"7,12"`. O
+> professor liga/desliga por um botão no `controle.html` (usa o campo "Enviar
+> para", então libera só a máquina que ele precisa consertar) e a tela do aluno
+> lê no poll de 2,5s que ela já fazia — aparece/some em ~3s, sem recarregar.
+> ⚠️ **O `controle.html` escreve o nó com `PUT`, que troca o nó INTEIRO.** Por
+> isso ele lê o nó ao abrir (`lerCanal`, guarda em `_no`) e reescreve
+> comando + interruptor SEMPRE JUNTOS. Quem mexer aqui: rodar
+> `python3 -m http.server 8099 && node _qa/trocarpc.js` — são 23 medições com o
+> Firebase simulado, incluindo "o comando não apaga o interruptor" e "liga/desliga
+> ao vivo em 3,2s". `PATCH` seria o natural, mas verbo novo é risco na rede
+> filtrada da escola, e este é o caminho quente que não pode quebrar em aula.
+>
 > - **Controle do Laboratório** → pasta `_lab/` → repo **`controle-lab`** →
 >   `https://vidalprof.github.io/controle-lab/controle.html?sala=sala1` (professor)
 >   e `.../controle-lab/index.html?sala=sala1` (aluno). Publica por `atualizar.yml`
