@@ -115,8 +115,22 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
            text-transform:uppercase;margin-bottom:4px;">Trocar n&uacute;mero na tela do aluno</div>
       <div id="estTroca" style="font-size:14px;color:#7d90b6;margin-bottom:8px;line-height:1.4;">
         bloqueado &mdash; o aluno n&atilde;o pode trocar</div>
-      <button class="btn ghost" id="btTroca" style="margin-top:0;">
-        &#128275;&nbsp; Liberar para quem est&aacute; em &ldquo;Enviar para&rdquo;</button>
+      <!-- ⚠️⚠️ DOIS BOTÕES, NÃO UM QUE ALTERNA — lição paga na primeira aula
+           (set/2026). Era um botão só, que decidia pelo estado que ele TINHA
+           LIDO ao abrir a página. Quando essa leitura falhava (ou o estado
+           mudava noutro lugar), o botão dizia "Liberar" achando que estava
+           trancado — e o toque do Marcos, querendo BLOQUEAR, liberava para
+           "todos". Foi o que aconteceu: *"todas as telas estão com o trocar
+           número habilitado, mesmo eu bloqueando no painel"*.
+           Com dois botões separados isso é impossível: "Bloquear" grava vazio
+           SEMPRE, não importa o que a tela ache que sabe. Botão que decide pelo
+           que ele acha que sabe é botão que um dia faz o contrário. -->
+      <div class="row" style="margin-top:0;">
+        <button class="btn ghost" id="btLiberar" style="margin-top:0;">
+          &#128275;&nbsp; Liberar</button>
+        <button class="btn ghost" id="btBloquear2" style="margin-top:0;">
+          &#128274;&nbsp; Bloquear</button>
+      </div>
       <!-- ⚠️ LIÇÃO PAGA com o Marcos de pé na frente da máquina (set/2026): eu
            publiquei o interruptor, ele foi na tela do aluno e *"não está
            aparecendo trocar computador"*. O código estava certo; a MÁQUINA é
@@ -213,27 +227,30 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
      da escola — e o canal de comandos é o caminho quente, o que não pode
      quebrar no meio da aula. Então o controle guarda o nó em `_no` (lido ao
      abrir) e reescreve o conjunto: comando + interruptor, sempre juntos. */
-  var VERSAO = "2026-09-04d";
+  var VERSAO = "2026-09-04e";
   (function(){ var v=$("ver"); if(v) v.textContent="v"+VERSAO; })();
   var _no = null;                       /* o que está no canal agora */
   function trocaAtual(){ return (_no && _no.trocarpc) ? (""+_no.trocarpc) : ""; }
 
   function pintaTroca(){
-    var e=$("estTroca"), b=$("btTroca"); if(!e||!b) return;
+    var e=$("estTroca"); if(!e) return;
     var v=trocaAtual();
     if(v){
       e.textContent = "LIBERADO para " + v + " — o aluno vê o link “trocar número”";
       e.style.color = "#ffd487";
-      b.innerHTML = "&#128274;&nbsp; Bloquear de novo";
     }else{
       e.textContent = "bloqueado — o aluno não pode trocar";
       e.style.color = "#7d90b6";
-      b.innerHTML = "&#128275;&nbsp; Liberar para quem está em “Enviar para”";
     }
   }
 
+  /* ⚠️ depois de eu gravar, a leitura fica quieta uns segundos: senão o poll
+     pode voltar com o valor de um instante ANTES e a tela pisca o estado velho,
+     que é justamente o tipo de mentira que causou o defeito de cima. */
+  var _ignorarAte = 0;
   function lerCanal(){
     if(!DB()){ pintaTroca(); return; }
+    if((new Date()).getTime() < _ignorarAte){ return; }
     var x=new XMLHttpRequest();
     try{ x.open("GET", DB()+"/lab/"+SALA()+".json", true); }catch(e){ pintaTroca(); return; }
     x.timeout=9000;
@@ -261,7 +278,10 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     x.setRequestHeader("Content-Type","application/json");
     x.onreadystatechange=function(){
       if(x.readyState!==4) return;
-      if(x.status>=200 && x.status<300){ _no=corpo; pintaTroca(); $("msg").textContent=okmsg; }
+      if(x.status>=200 && x.status<300){
+        _no=corpo; _ignorarAte=(new Date()).getTime()+2500; pintaTroca();
+        $("msg").textContent=okmsg;
+      }
       else { $("msg").textContent="Não consegui gravar (a escola pode estar bloqueando este canal)."; }
     };
     x.onerror=function(){ $("msg").textContent="Sem conexão com o canal."; };
@@ -354,14 +374,18 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     try{ $("alvo").focus(); }catch(e){}
     var m=$("msg"); if(m) m.textContent="Campo preenchido com "+_term.length+" m\u00e1quina(s).";
   }; })();
-  /* de 5 em 5 segundos: leve, e a criança não termina de repente */
-  terminados(); setInterval(terminados, 5000);
+  /* de 5 em 5 segundos: leve, e a criança não termina de repente.
+     ⚠️ O `lerCanal` entrou aqui junto por causa da lição paga: antes o estado do
+     "trocar número" era lido UMA vez, ao abrir a página. Se a leitura falhasse,
+     ou se o estado mudasse noutro lugar (o controle sozinho x o embutido no
+     painel), a tela mostrava uma coisa e o canal tinha outra — e o professor
+     agia em cima da mentira. Agora a tela acompanha o canal. */
+  function ciclo(){ terminados(); lerCanal(); }
+  ciclo(); setInterval(ciclo, 5000);
 
-  (function(){ var b=$("btTroca"); if(b) b.onclick=function(){
-    /* um botão só: se está liberado, tranca; se está trancado, libera para o
-       que estiver no campo "Enviar para" (que já é "todos" por padrão). */
-    gravaTroca(trocaAtual() ? "" : alvo());
-  }; })();
+  /* cada botão faz UMA coisa, sempre a mesma — nunca decide pelo que acha que sabe */
+  (function(){ var b=$("btLiberar"); if(b) b.onclick=function(){ gravaTroca(alvo()); }; })();
+  (function(){ var b=$("btBloquear2"); if(b) b.onclick=function(){ gravaTroca(""); }; })();
 
   (function(){ var b=$("btRecarregar"); if(b) b.onclick=function(){
     gravaCampo("recarregar", (new Date()).getTime(),

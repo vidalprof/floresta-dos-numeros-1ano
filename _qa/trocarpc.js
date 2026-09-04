@@ -89,13 +89,16 @@ async function abre(b, arquivo, no, extra){
     const r=await pg.evaluate(()=>({
       caixa:!!document.getElementById('cxTroca') && document.getElementById('cxTroca').offsetParent!==null,
       texto:document.getElementById('estTroca').textContent.trim(),
-      botao:document.getElementById('btTroca').textContent.trim(),
-      altBotao:Math.round(document.getElementById('btTroca').getBoundingClientRect().height)
+      botao:document.getElementById('btLiberar').textContent.trim(),
+      botao2:document.getElementById('btBloquear2').textContent.trim(),
+      altBotao:Math.min(
+        Math.round(document.getElementById('btLiberar').getBoundingClientRect().height),
+        Math.round(document.getElementById('btBloquear2').getBoundingClientRect().height))
     }));
     ok('sem erro de JS', erros.length===0, erros.join(' | '));
     ok('a caixa aparece', r.caixa);
     ok('diz bloqueado', /bloqueado/.test(r.texto), r.texto);
-    ok('botao diz Liberar', /Liberar/.test(r.botao), r.botao);
+    ok('tem os DOIS botoes separados', /Liberar/.test(r.botao) && /Bloquear/.test(r.botao2), r.botao+' | '+r.botao2);
     ok('alvo do dedo >= 40px', r.altBotao>=40, r.altBotao+'px');
     await ctx.close();
   }
@@ -105,13 +108,13 @@ async function abre(b, arquivo, no, extra){
     const {pg,ctx,erros}=await abre(b,'controle.html',{id:'a1',acao:'voltar',alvo:'todos',trocarpc:'7'});
     const r=await pg.evaluate(()=>({
       texto:document.getElementById('estTroca').textContent.trim(),
-      botao:document.getElementById('btTroca').textContent.trim()
+      botao:document.getElementById('btBloquear2').textContent.trim()
     }));
     ok('sem erro de JS', erros.length===0, erros.join(' | '));
     ok('diz LIBERADO para 7', /LIBERADO para 7/.test(r.texto), r.texto);
-    ok('botao diz Bloquear', /Bloquear/.test(r.botao), r.botao);
-    // clicar tranca de novo, preservando o comando
-    await pg.click('#btTroca'); await pg.waitForTimeout(400);
+    ok('o botao Bloquear esta la', /Bloquear/.test(r.botao), r.botao);
+    // bloquear tranca, preservando o comando do canal
+    await pg.click('#btBloquear2'); await pg.waitForTimeout(400);
     const put=await pg.evaluate(()=>window.__REQ.filter(q=>q.metodo==='PUT').pop());
     const corpo=put?JSON.parse(put.corpo):{};
     ok('o clique gravou PUT', !!put, put?put.url:'nenhum');
@@ -126,7 +129,7 @@ async function abre(b, arquivo, no, extra){
   {
     const {pg,ctx}=await abre(b,'controle.html',{id:'a1',acao:'voltar',alvo:'todos'});
     await pg.fill('#alvo','7');
-    await pg.click('#btTroca'); await pg.waitForTimeout(400);
+    await pg.click('#btLiberar'); await pg.waitForTimeout(400);
     const put=await pg.evaluate(()=>window.__REQ.filter(q=>q.metodo==='PUT').pop());
     const corpo=put?JSON.parse(put.corpo):{};
     ok('liberou so para a 7', corpo.trocarpc==='7', JSON.stringify(corpo));
@@ -308,6 +311,83 @@ async function abre(b, arquivo, no, extra){
     await pg.waitForTimeout(3500);
     ok('e NAO entra em laco (nao recarrega de novo)', pg.url()===url2, pg.url());
     ok('sem erro de JS', erros.length===0, erros.join(' | '));
+    await ctx.close();
+  }
+
+  console.log('=== CONTROLE: BLOQUEAR nunca libera, nem com o estado desconhecido ===');
+  {
+    // o pior caso REAL: a leitura do canal falhou, entao a tela nao sabe o estado.
+    // Com um botao que alternava, o toque de "bloquear" LIBERAVA para todos —
+    // foi o defeito que o Marcos pegou com a turma na sala.
+    const ctx=await b.newContext({viewport:{width:700,height:900}});
+    const pg=await ctx.newPage();
+    const erros=[]; pg.on('pageerror',e=>erros.push(String(e)));
+    await pg.addInitScript(`
+      window.__REQ=[];
+      (function(){
+        function F(){ this.readyState=0; this.status=0; this.responseText=""; }
+        F.prototype.open=function(m,u){ this._m=m; this._u=u; };
+        F.prototype.setRequestHeader=function(){}; F.prototype.abort=function(){};
+        F.prototype.send=function(body){
+          var s=this; window.__REQ.push({metodo:s._m,url:s._u,corpo:body||null});
+          setTimeout(function(){
+            /* TODA leitura do canal FALHA: a tela nunca descobre o estado */
+            if(s._m==="GET" && /\\/lab\\//.test(s._u)){ s.readyState=4; s.status=500; s.responseText=""; }
+            else { s.readyState=4; s.status=200; s.responseText="null"; }
+            if(s.onreadystatechange) s.onreadystatechange();
+          },10);
+        };
+        window.XMLHttpRequest=F;
+      })();`);
+    await pg.goto(BASE+'controle.html');
+    await pg.waitForTimeout(900);
+    await pg.fill('#alvo','todos');
+    await pg.click('#btBloquear2'); await pg.waitForTimeout(400);
+    const put=await pg.evaluate(()=>window.__REQ.filter(q=>q.metodo==='PUT').pop());
+    const c=put?JSON.parse(put.corpo):null;
+    ok('BLOQUEAR gravou mesmo sem saber o estado', !!c, put?'ok':'nenhum PUT');
+    ok('e gravou VAZIO (nunca "todos")', c && c.trocarpc==='', JSON.stringify(c));
+    // e liberar continua liberando
+    await pg.fill('#alvo','7');
+    await pg.click('#btLiberar'); await pg.waitForTimeout(400);
+    const put2=await pg.evaluate(()=>window.__REQ.filter(q=>q.metodo==='PUT').pop());
+    const c2=put2?JSON.parse(put2.corpo):null;
+    ok('LIBERAR grava o alvo do campo', c2 && c2.trocarpc==='7', JSON.stringify(c2));
+    // dois toques seguidos em BLOQUEAR continuam bloqueando (nao alternam)
+    await pg.click('#btBloquear2'); await pg.waitForTimeout(300);
+    await pg.click('#btBloquear2'); await pg.waitForTimeout(300);
+    const put3=await pg.evaluate(()=>window.__REQ.filter(q=>q.metodo==='PUT').pop());
+    const c3=put3?JSON.parse(put3.corpo):null;
+    ok('dois toques em BLOQUEAR = continua bloqueado', c3 && c3.trocarpc==='', JSON.stringify(c3));
+    ok('sem erro de JS', erros.length===0, erros.join(' | '));
+    await ctx.close();
+  }
+
+  console.log('=== CONTROLE: a tela ACOMPANHA o canal (nao le so ao abrir) ===');
+  {
+    const ctx=await b.newContext({viewport:{width:700,height:900}});
+    const pg=await ctx.newPage();
+    await pg.addInitScript(`
+      window.__NO={id:'a1',acao:'voltar'};
+      (function(){
+        function F(){ this.readyState=0; this.status=0; this.responseText=""; }
+        F.prototype.open=function(m,u){ this._m=m; this._u=u; };
+        F.prototype.setRequestHeader=function(){}; F.prototype.abort=function(){};
+        F.prototype.send=function(){ var s=this; setTimeout(function(){
+          s.readyState=4; s.status=200;
+          s.responseText = /labstatus/.test(s._u) ? "null" : JSON.stringify(window.__NO);
+          if(s.onreadystatechange) s.onreadystatechange(); },10); };
+        window.XMLHttpRequest=F;
+      })();`);
+    await pg.goto(BASE+'controle.html');
+    await pg.waitForTimeout(900);
+    let t=await pg.evaluate(()=>document.getElementById('estTroca').textContent);
+    ok('abre dizendo bloqueado', /bloqueado/.test(t), t);
+    /* alguem liberou noutro lugar (o controle sozinho, por exemplo) */
+    await pg.evaluate(()=>{ window.__NO={id:'a1',acao:'voltar',trocarpc:'todos'}; });
+    await pg.waitForTimeout(6500);
+    t=await pg.evaluate(()=>document.getElementById('estTroca').textContent);
+    ok('em ate 6,5s a tela percebe sozinha', /LIBERADO para todos/.test(t), t);
     await ctx.close();
   }
 
