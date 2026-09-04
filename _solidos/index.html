@@ -1778,7 +1778,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-quebra-cabeca .qcbanco{max-width:226px;margin:12px auto 0; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
 
-.mec-quebra-cabeca .qcpc{margin:4px;border-radius:9px;background-repeat:no-repeat;cursor:pointer; border:2px solid rgba(255,255,255,.6); -ms-touch-action:none;touch-action:none; -webkit-box-shadow:0 3px 0 rgba(0,0,0,.5);box-shadow:0 3px 0 rgba(0,0,0,.5)}
+.mec-quebra-cabeca .qcpc{margin:4px;border-radius:9px;background-repeat:no-repeat;cursor:pointer; border:2px solid rgba(255,255,255,.6); -webkit-box-shadow:0 3px 0 rgba(0,0,0,.5);box-shadow:0 3px 0 rgba(0,0,0,.5)}
 
 .mec-quebra-cabeca .qcpc.sel{border:3px solid #ffd54a;-webkit-transform:translateY(-3px);transform:translateY(-3px)}
 
@@ -1963,37 +1963,6 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-vitrine .vfig img{max-height:80px}
 
 .mec-vitrine .vinfo{font-size:11.5px}}
-/* ⭐ NO NETBOOK DA ESCOLA (1024 de largura, 600 de altura) a vitrine em 3
-   colunas empilhava 8 cartões em 3 fileiras = 514px de altura, e o botão
-   "Ver mais bichos" caía em 555-613 — DEBAIXO da barra fixa (546-590). A
-   criança via o botão e o dedo acertava outro. Achado pelo `_qa/sobreposto.js`.
-   A cura usa a largura que estava sobrando: QUATRO colunas, duas fileiras.
-   Só nesta forma de tela; no celular a vitrine continua como está. */
-@media (min-width:820px) and (max-height:660px){
-  .mec-vitrine .vitgrid{max-width:880px;gap:9px}
-  .mec-vitrine .vitcard{width:23%;max-width:210px;padding:6px 6px 8px}
-  .mec-vitrine .vfig{height:74px}
-  .mec-vitrine .vfig img{max-height:70px}
-  .mec-vitrine .vitcard .vnome{margin-top:5px;font-size:13px}
-  .mec-vitrine .vgrp{font-size:10px}
-  .mec-vitrine .vitcard .vinfo{margin-top:4px;font-size:11px;line-height:1.2}
-  .mec-vitrine .vitcab{margin-bottom:6px;padding:4px 14px;font-size:12.5px}
-}
-/* ⭐ E NO CELULAR o mesmo defeito, em outro lugar: 6 cartões em 2 colunas dão
-   3 fileiras de 210px, a última terminava em 857 e o alto-falante dos dois
-   últimos bichos (`.vzap`) caía em cima da barra fixa (766-810). A criança
-   tocava no alto-falante da ONÇA e ouvia a "Dica". Medido em 412x820. */
-@media (max-width:520px){
-  .mec-vitrine .tela{padding-top:calc(22px + env(safe-area-inset-top))}
-  .mec-vitrine .vitcab{margin-bottom:6px}
-  .mec-vitrine .vitcard{padding:6px 6px 8px}
-  .mec-vitrine .vfig{height:72px}
-  .mec-vitrine .vfig img{max-height:68px}
-  .mec-vitrine .vitcard .vnome{margin-top:4px;font-size:13.5px}
-  .mec-vitrine .vgrp{font-size:10px}
-  .mec-vitrine .vitcard .vinfo{margin-top:3px;font-size:11px;line-height:1.18}
-  .mec-vitrine .vitgrid{gap:9px}
-}
 /* ==== TEMA DA ATIVIDADE (_solidos/tema.css) ==== */
 /* ===== A Cidade dos Sólidos — tema =====
    Injetado por ÚLTIMO → vence a cascata do motor/peça.
@@ -2134,7 +2103,52 @@ var ID = {"pre": "sg", "mascote": "bloco", "mascoteNome": "Bloco", "titulo": "A 
    mascote alheio aparecer no texto desta.                            */
 var MASCOTE_NOME="Bloco";  /* ID.mascoteNome */
 var IMGS=[];
-var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}
+var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}precarregaVoz();}
+/* ⭐⭐ A VOZ CHEGA ANTES DA CRIANÇA — pré-carga em segundo plano.
+
+   ⚠️ LIÇÃO PAGA (set/2026), e quem pegou foi o Marcos com a turma jogando:
+   *"atividade oficina das palavras travando na fase 13"* e, quando pedi para
+   ele descrever, o retrato exato do defeito: *"o estudante acerta, e fica
+   parado esperando o botão continuar"*.
+
+   Não era o código: era a REDE. O `escolher` — a mecânica mais usada da casa —
+   só mostra o botão quando a voz da resposta termina, e tem uma rede de
+   segurança de 4 SEGUNDOS para o caso de o mp3 não chegar. Na escola ele não
+   chega na hora: cada mp3 é uma ida à rede na PRIMEIRA vez que toca. Então a
+   criança acerta, e espera a rede de olho na tela parada.
+
+   O `sw.js` já é cache-primeiro no áudio — mas cache-primeiro só ajuda da
+   SEGUNDA vez. Numa atividade de 400 falas, a primeira vez acontece 400 vezes.
+
+   Aqui a voz vem antes: enquanto a criança lê a capa e escolhe o crachá, o
+   motor busca as falas caladas, de 4 em 4, e o service worker guarda cada uma.
+   Quando ela chega na fase, o mp3 já é local e o botão aparece na hora.
+
+   ⚠️ REGRAS DESTA PRÉ-CARGA, todas por um motivo:
+     · `fetch`, não `new Audio()`: baixa e guarda sem ocupar canal de som nem
+       disparar autoplay (que o navegador bloqueia antes do 1º gesto);
+     · de 4 em 4, com respiro: 400 pedidos de uma vez afogam a rede da escola e
+       atrasariam justamente a fala da PRIMEIRA fase;
+     · a fala da abertura e as das primeiras fases vêm primeiro (a ordem do
+       `falas.json` já é a ordem do jogo);
+     · `catch` vazio em tudo: pré-carga que falha não pode quebrar a atividade —
+       sem ela o app volta a funcionar como funcionava, só mais devagar. */
+var _pvOk=0;
+function precarregaVoz(){
+  if(_pvOk||typeof AUDIOS==="undefined"||!AUDIOS||!AUDIOS.length||!window.fetch) return;
+  _pvOk=1;
+  var i=0, LOTE=4;
+  function passo(){
+    if(i>=AUDIOS.length) return;
+    var lote=[],n;
+    for(n=0;n<LOTE&&i<AUDIOS.length;n++,i++){
+      try{ lote.push(fetch("audio/"+AUDIOS[i]+".mp3",{cache:"force-cache"})["catch"](function(){})); }catch(e){}
+    }
+    try{ Promise.all(lote).then(function(){ setTimeout(passo,120); })["catch"](function(){ setTimeout(passo,300); }); }
+    catch(e){ setTimeout(passo,300); }
+  }
+  setTimeout(passo,400);   /* deixa a capa desenhar primeiro */
+}
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
 /* ============ SOM (efeitos) ============ */
 /* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE
@@ -3872,11 +3886,7 @@ setTimeout(inicia, 0);
    baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
    mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
 function nota(f, dur, vol, tipo, atraso){
-  /* ⚠️ LICAO PAGA (set/2026, no Museu): `nota` e chamada de dentro da MONTAGEM
-     da fase (sPista -> nota -> arma). Sem guarda aqui, um `arma()` que tropeca
-     num PC com audio bloqueado matava a fase INTEIRA — a crianca abria e via
-     tela vazia, nem chegava a tentar. Som e enfeite: nunca derruba o app. */
-  try{ if(typeof arma === "function") arma(); }catch(_a){}
+  if(typeof arma === "function") arma();
   var c = window.ac; if(!c || !c.createOscillator) return;
   try{
     var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
@@ -3977,15 +3987,7 @@ MEC["arrastar-sombra"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -4572,15 +4574,7 @@ MEC["caca-palavras"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5137,15 +5131,7 @@ MEC["classificar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5673,15 +5659,7 @@ MEC["completar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5955,7 +5933,7 @@ function acertou(b){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
     proxima();
-  },1050);
+  },600);
 }
 function errou(b){
   sErro(); errosSeg++;
@@ -6094,15 +6072,7 @@ MEC["digitar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -6489,15 +6459,7 @@ MEC["escolher"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -6577,18 +6539,8 @@ MEC["escolher"] = function(f, cen, fim){
    · `voz` = o que o alto-falante diz, quando é diferente da palavra escrita
              (OPCIONAL — sem ele, fala a própria palavra).
    Sem `img` nada muda: nenhuma atividade que já usa esta peça quebra.     */
-/* ⚠️⚠️ LICAO PAGA (set/2026, montando a Gincana da Divisao do 4o ano):
-   estes dois PADROES eram o assunto do EXEMPLO desta peca — o quiz da
-   planta. O `TITULO` o montador sobrescreve com o `selo` da fase, entao
-   ninguem via; mas o `FECHO` NAO e sobrescrito, e ele fecha a fase. Uma
-   crianca do 4o ano repartia bolas entre equipes, acertava tudo, e o jogo
-   respondia: "Voce ja conhece as partes da planta!".
-   Medido em ONZE atividades, incluindo as que ja estao no ar.
-   O padrao agora e NEUTRO: serve a qualquer assunto. Quem quiser um fecho
-   proprio poe `FECHO` no `dadosExtra` da fase — e quem esquecer nao
-   entrega o assunto de outra atividade. Vigia: `_qa/exemplo.py`. */
-var TITULO="ESCOLHA A CERTA";
-var FECHO="Voc&#234; acertou todas as escolhas!";
+var TITULO="PARTES DA PLANTA";
+var FECHO="Voc&#234; j&#225; conhece as partes da planta!";
 /* ⭐ SÓ IMAGEM (escolha do Marcos, ago/2026): quando a opção é a FIGURA na
    moldura de vidro, dá para esconder a PALAVRA embaixo e deixar só o desenho +
    o alto-falante (a criança toca e ouve o nome). Opcional; por padrão a palavra
@@ -6791,9 +6743,9 @@ function responde(o,certa){
         if(_gc!==ger) return;
         falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
       }, 450);
-      setTimeout(_avanca, 4000);             /* rede: voz bloqueada/lenta nunca prende */
+      setTimeout(_avanca, 2200);             /* rede: voz bloqueada/lenta nunca prende */
     }else{
-      setTimeout(_avanca, 1300);
+      setTimeout(_avanca,700);
     }
     return;
   }
@@ -6923,15 +6875,7 @@ MEC["forca"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -7376,15 +7320,7 @@ MEC["intruso"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -7924,15 +7860,7 @@ MEC["ligar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -8458,15 +8386,7 @@ MEC["memoria"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -9020,15 +8940,7 @@ MEC["quebra-cabeca"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -9555,15 +9467,7 @@ MEC["quem-sou-eu"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -9886,15 +9790,7 @@ MEC["vitrine"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -10055,6 +9951,7 @@ ABERTURA = {texto:"A cidade de brinquedo precisa ser construída! Mas cuidado: s
 FASES = [{"id": "f01", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo1", "enunciado": "Olhe cada <b>sólido</b> colorido. Toque para ouvir o nome dele.", "dica": "Toque num sólido: eu falo o nome e para que serve.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "É cubo. Parece dado.", "voz": "Este é o cubo. Ele parece dado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "É esfera. Parece bola.", "voz": "Esta é a esfera. Ela parece bola."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "É cilindro. Parece lata.", "voz": "Este é o cilindro. Ele parece lata."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "É cone. Parece sorvete.", "voz": "Este é o cone. Ele parece sorvete."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "É pirâmide. Parece pirâmide.", "voz": "Esta é a pirâmide. Ela parece pirâmide."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "É bloco retangular. Parece caixa de sapato.", "voz": "Este é o bloco retangular. Ele parece caixa de sapato."}], "vozIntro": "sg_f01_intro", "dicaVoz": "sg_f01_dica"}, {"id": "f02", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo1", "enunciado": "Ache o objeto que tem a forma do <b>sólido</b>.", "dica": "Pense no formato: é redondo de rolar ou tem cantos?", "dados": [{"p": "Qual objeto tem a forma de uma <b>esfera</b>?", "c": {"t": "BOLA", "img": "sg_bola", "voz": "bola"}, "e": [{"t": "DADO", "img": "sg_dado", "voz": "dado"}, {"t": "LATA", "img": "sg_lata", "voz": "lata"}, {"t": "CAIXA DE PRESENTE", "img": "sg_presente", "voz": "caixa de presente"}], "d": ["A esfera é toda redondinha, sem nenhum canto.", "É a que rola para todo lado, igual a uma bolinha.", "É a BOLA. Ela está acesa aí: toque nela para seguir."]}, {"p": "Qual objeto tem a forma de um <b>cubo</b>?", "c": {"t": "DADO", "img": "sg_dado", "voz": "dado"}, "e": [{"t": "BOLA", "img": "sg_bola", "voz": "bola"}, {"t": "SORVETE", "img": "sg_sorvete", "voz": "sorvete"}, {"t": "LATA", "img": "sg_lata", "voz": "lata"}], "d": ["O cubo tem 6 lados iguais, todos quadrados.", "Pense num dado de jogar: quadradinho de todos os lados.", "É o DADO. Ele está aceso aí: toque nele para seguir."]}, {"p": "Qual objeto tem a forma de um <b>cilindro</b>?", "c": {"t": "LATA", "img": "sg_lata", "voz": "lata"}, "e": [{"t": "DADO", "img": "sg_dado", "voz": "dado"}, {"t": "SORVETE", "img": "sg_sorvete", "voz": "sorvete"}, {"t": "CAIXA DE SAPATO", "img": "sg_sapato", "voz": "caixa de sapato"}], "d": ["O cilindro é reto e redondo, igual a um cano.", "Pense numa lata de comida: redonda em cima e embaixo.", "É a LATA. Ela está acesa aí: toque nela para seguir."]}], "dadosExtra": {"TITULO": "QUE FORMA É ESSA?", "FECHO": "Você já reconhece os sólidos pelos objetos!", "SOIMG": true}, "vozIntro": "sg_f02_intro", "dicaVoz": "sg_f02_dica"}, {"id": "f03", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo1", "enunciado": "Ligue cada <b>objeto</b> ao nome do sólido que tem a forma dele.", "dica": "Toque no objeto para ouvir. Pense na forma dele.", "dados": [{"k": "p0", "img": "sg_bola", "voz": "BOLA", "s": "ESFERA"}, {"k": "p1", "img": "sg_dado", "voz": "DADO", "s": "CUBO"}, {"k": "p2", "img": "sg_lata", "voz": "LATA", "s": "CILINDRO"}, {"k": "p3", "img": "sg_sorvete", "voz": "sorvete", "s": "CONE"}], "dadosExtra": {"DICAS": ["Pense no formato de cada objeto.", "A bola é esfera, o dado é cubo, a lata é cilindro, a casquinha é cone. Siga a linha tracejada.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada sólido ao seu objeto.", "FECHO": "Você ligou todos os sólidos aos objetos!"}, "vozIntro": "sg_f03_intro", "dicaVoz": "sg_f03_dica"}, {"id": "f04", "mec": "memoria", "selo": "MEMÓRIA", "conceito": "objetivo1", "enunciado": "Ache a <b>palavra</b> e o <b>desenho que combina</b>.", "dica": "Vire duas cartas: uma tem o nome, a outra o desenho. Combinaram? É par!", "dados": [{"k": "cubo", "pal": "CUBO", "voz": "cubo", "imgsen": "sg_cubo_v", "vozsen": "cubo"}, {"k": "esf", "pal": "ESFERA", "voz": "esfera", "imgsen": "sg_esfera_v", "vozsen": "esfera"}, {"k": "cil", "pal": "CILINDRO", "voz": "cilindro", "imgsen": "sg_cilindro_v", "vozsen": "cilindro"}, {"k": "cone", "pal": "CONE", "voz": "cone", "imgsen": "sg_cone_v", "vozsen": "cone"}], "vozIntro": "sg_f04_intro", "dicaVoz": "sg_f04_dica"}, {"id": "f05", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo1", "enunciado": "Ouça as pistas e descubra <b>qual sólido</b> sou eu.", "dica": "Cada pista conta uma parte. Junte todas antes de responder.", "dados": [{"resp": "ESFERA", "pistas": ["Eu sou todo <b>redondo</b>, não tenho nenhum canto.", "Eu <b>rolo</b> para qualquer lado que você me empurrar.", "Você me chuta no jogo de futebol: sou a <b>bola</b>."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}, {"resp": "CUBO", "pistas": ["Eu tenho <b>6 lados iguais</b>, todos quadrados.", "Eu <b>fico firme</b> e dá para me empilhar.", "Você me joga para ver o número: sou o <b>dado</b>."], "outros": ["ESFERA", "CONE", "CILINDRO"]}, {"resp": "CONE", "pistas": ["Eu tenho uma <b>ponta</b> em cima e sou redondo embaixo.", "De cabeça para baixo, eu seguro o <b>sorvete</b>.", "Na festa, eu viro o <b>chapéu</b> pontudo."], "outros": ["CUBO", "ESFERA", "BLOCO"]}], "vozIntro": "sg_f05_intro", "dicaVoz": "sg_f05_dica"}, {"id": "f06", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo1", "enunciado": "Olhe o <b>sólido</b> e escolha o nome certo.", "dica": "Conte os cantos e veja se é redondo de rolar.", "dados": [{"img": "sg_cilindro_v", "p": "Qual é o nome deste sólido?", "c": "CILINDRO", "e": ["CUBO", "CONE", "ESFERA"], "d": ["Ele é reto e redondo, como um cano ou uma lata.", "Tem um círculo em cima e um embaixo.", "É o CILINDRO. Toque nele para seguir."]}, {"img": "sg_piramide_v", "p": "Qual é o nome deste sólido?", "c": "PIRÂMIDE", "e": ["CUBO", "CILINDRO", "ESFERA"], "d": ["Ela tem uma ponta em cima e lados de triângulo.", "Parece o telhado de uma casa ou um monumento antigo.", "É a PIRÂMIDE. Toque nela para seguir."]}, {"img": "sg_bloco_v", "p": "Qual é o nome deste sólido?", "c": "BLOCO RETANGULAR", "e": ["CUBO", "CONE", "ESFERA"], "d": ["Ele tem 6 lados, mas são retângulos (mais compridos).", "Parece uma caixa de sapato ou um tijolo.", "É o BLOCO RETANGULAR. Toque nele para seguir."]}], "dadosExtra": {"TITULO": "O NOME DO SÓLIDO", "FECHO": "Você já sabe o nome dos sólidos!"}, "vozIntro": "sg_f06_intro", "dicaVoz": "sg_f06_dica"}, {"id": "f06b", "mec": "digitar", "selo": "ESCREVA O NOME", "conceito": "objetivo1", "enunciado": "Agora <b>escreva</b> o nome do sólido, letra por letra.", "dica": "Diga o nome devagar e ache cada letra no teclado.", "dados": [{"palavra": "CUBO", "img": "sg_cubo_v", "pista": "Ele tem 6 lados quadrados, igual a um dado. Escreva o nome dele.", "dic": "Diga devagar: <b>CU-BO</b>."}, {"palavra": "CONE", "img": "sg_cone_v", "pista": "Tem uma ponta em cima, igual à casquinha de sorvete. Escreva o nome.", "dic": "Diga devagar: <b>CO-NE</b>."}], "dadosExtra": {"ENUN": "Escreva o nome do sólido, letra por letra.", "FECHO": "Você escreveu os nomes!"}, "vozIntro": "sg_f06b_intro", "dicaVoz": "sg_f06b_dica"}, {"id": "f07", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo2", "enunciado": "Ligue cada <b>sólido</b> ao que ele faz na rampa.", "dica": "Redondo escorrega rolando; lado reto fica parado, firme.", "dados": [{"k": "p0", "img": "sg_esfera_v", "voz": "esfera", "s": "Rola pela rampa", "g": "rola"}, {"k": "p1", "img": "sg_cubo_v", "voz": "cubo", "s": "Fica firme, parado", "g": "firme"}, {"k": "p2", "img": "sg_cilindro_v", "voz": "cilindro", "s": "Rola deitado", "g": "rola"}, {"k": "p3", "img": "sg_piramide_v", "voz": "pirâmide", "s": "Fica firme, parada", "g": "firme"}], "dadosExtra": {"DICAS": ["Pergunte de cada um: se eu soltar na rampa, ele rola ou fica parado?", "Esfera e cilindro têm parte redonda: rolam. Cubo e pirâmide têm lados retos: ficam firmes. Siga a linha tracejada.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada sólido ao que ele faz.", "FECHO": "Você ligou cada sólido ao seu jeito de se mexer!"}, "vozIntro": "sg_f07_intro", "dicaVoz": "sg_f07_dica"}, {"id": "f08", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo2", "enunciado": "Cada sólido numa gaveta: <b>ROLA</b> ou <b>FICA FIRME</b>?", "dica": "Redondo de rolar vai numa gaveta; com lados retos vai na outra.", "dados": [{"k": "rola", "n": "ROLA<br>(redondo)", "img": "", "voz": "rola", "rot": false}, {"k": "firme", "n": "FICA FIRME<br>(lados retos)", "img": "", "voz": "fica firme", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "ESFERA", "alvo": "rola", "img": "sg_esfera_v"}, {"t": "CILINDRO", "alvo": "rola", "img": "sg_cilindro_v"}, {"t": "CONE", "alvo": "rola", "img": "sg_cone_v"}, {"t": "CUBO", "alvo": "firme", "img": "sg_cubo_v"}, {"t": "PIRÂMIDE", "alvo": "firme", "img": "sg_piramide_v"}, {"t": "BLOCO", "alvo": "firme", "img": "sg_bloco_v"}], "DICAS": ["Pergunte: se eu empurrar, ele rola ou fica parado?", "Esfera, cilindro e cone têm parte redonda: rolam. Cubo, pirâmide e bloco têm lados retos: ficam firmes.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque no <b>sólido</b>. Depois toque na gaveta certa: <b>ROLA</b> ou <b>FICA FIRME</b>?"}, "vozIntro": "sg_f08_intro", "dicaVoz": "sg_f08_dica"}, {"id": "f09", "mec": "completar", "selo": "COMPLETE A FRASE", "conceito": "objetivo2", "enunciado": "Termine a frase sobre o <b>sólido</b>: toque no pedaço que falta.", "dica": "Pense: redondo rola; lado reto fica firme.", "dados": [{"img": "sg_esfera_v", "ante": "A esfera é toda redonda, por isso ela ", "dep": ".", "cer": "rola", "out": ["fica firme", "empilha"], "dic": "O que a bola faz quando você empurra?"}, {"img": "sg_cubo_v", "ante": "O cubo tem lados retos e planos, por isso ele ", "dep": ".", "cer": "fica firme", "out": ["rola", "escorrega"], "dic": "O dado sai rolando ou fica parado no lugar?"}, {"img": "sg_cilindro_v", "ante": "A lata é um cilindro: em pé ela empilha, mas deitada ela ", "dep": ".", "cer": "rola", "out": ["fica firme", "voa"], "dic": "Deite a lata e dê um empurrão: o que acontece?"}], "dadosExtra": {"ENUN": "Toque no pedaço que <b>falta</b> na frase.", "DEPOIS": "Leia a frase inteira antes de escolher.", "FECHO": "Você completou as frases dos sólidos!"}, "vozIntro": "sg_f09_intro", "dicaVoz": "sg_f09_dica"}, {"id": "f10", "mec": "arrastar-sombra", "selo": "CADA UM, SUA SOMBRA", "conceito": "objetivo2", "enunciado": "Leve cada <b>sólido</b> até a sombra com o mesmo contorno.", "dica": "Compare o contorno: a sombra tem o mesmo formato do sólido.", "dados": [{"selo": "CADA UM, SUA SOMBRA", "semSom": true, "pool": ["circ", "quad", "tri", "cil"], "n": 3, "quais": ["circ", "quad", "tri"]}, {"selo": "OLHE BEM O CONTORNO", "semSom": true, "pool": ["quad", "circ", "tri", "ret", "cil", "con"], "n": 4, "quais": ["quad", "circ", "tri", "ret"]}], "dadosExtra": {"FORMAS": {"quad": {"n": "CUBO", "voz": "CUBO", "img": "sg_cubo_v"}, "circ": {"n": "ESFERA", "voz": "ESFERA", "img": "sg_esfera_v"}, "tri": {"n": "PIRÂMIDE", "voz": "PIRÂMIDE", "img": "sg_piramide_v"}, "ret": {"n": "BLOCO", "voz": "BLOCO", "img": "sg_bloco_v"}, "cil": {"n": "CILINDRO", "voz": "CILINDRO", "img": "sg_cilindro_v"}, "con": {"n": "CONE", "voz": "CONE", "img": "sg_cone_v"}}, "DICAS": ["Compare o <b>contorno</b>: a sombra tem o mesmo formato.", "A sombra certa está <b>piscando</b>. Leve o sólido até ela.", "Deixa comigo: eu levo esta e você continua."]}, "vozIntro": "sg_f10_intro", "dicaVoz": "sg_f10_dica"}, {"id": "f11", "mec": "intruso", "selo": "QUAL NÃO É?", "conceito": "objetivo2", "enunciado": "Três fazem a mesma coisa. <b>Qual é o diferente?</b>", "dica": "Descubra o que três têm em comum e ache o diferente.", "dados": [{"selo": "OS QUE ROLAM", "tipo": "texto", "enun": "Três destes rolam. <b>Qual NÃO rola?</b>", "itens": [{"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v"}, {"k": "cilindro", "n": "CILINDRO", "img": "sg_cilindro_v"}, {"k": "cone", "n": "CONE", "img": "sg_cone_v"}, {"k": "cubo", "n": "CUBO", "img": "sg_cubo_v"}], "fora": "cubo", "nomeFora": "CUBO", "d1": "Imagine empurrar cada um. Qual NÃO sai rolando?", "d2": "Esfera, cilindro e cone têm parte redonda e rolam. Um tem só lados retos.", "d3": "O que não pertence é o CUBO: ele fica firme, os outros rolam.", "razoes": [{"t": "Os outros três rolam; o cubo fica firme.", "ok": 1}, {"t": "Porque o cubo é o maior.", "ok": 0}, {"t": "Porque o cubo é azul.", "ok": 0}, {"t": "Porque o cubo é de brincar.", "ok": 0}], "enunPorque": "O <b>cubo</b> n&#227;o rola como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ele de fora?", "p1": "O que você tocou até pode ser verdade. Mas olhe o que os OUTROS três fazem.", "p2": "Cor e tamanho não decidem. O que decide é <b>rolar ou não</b>.", "p3": "Esfera, cilindro e cone rolam. O cubo <b>não rola</b>: fica firme — por isso ele é o diferente.", "regra": "esfera, cilindro e cone rolam; o cubo fica firme"}, {"selo": "OS QUE FICAM FIRMES", "tipo": "texto", "enun": "Três ficam firmes. <b>Qual NÃO fica firme?</b>", "itens": [{"k": "cubo", "n": "CUBO", "img": "sg_cubo_v"}, {"k": "bloco", "n": "BLOCO", "img": "sg_bloco_v"}, {"k": "piramide", "n": "PIRÂMIDE", "img": "sg_piramide_v"}, {"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v"}], "fora": "esfera", "nomeFora": "ESFERA", "d1": "Qual deles NÃO dá para deixar parado sem rolar?", "d2": "Cubo, bloco e pirâmide têm lados retos e ficam firmes. Um é todo redondo.", "d3": "A que não pertence é a ESFERA: ela rola, os outros ficam firmes.", "razoes": [{"t": "Os outros três ficam firmes; a esfera rola.", "ok": 1}, {"t": "Porque a esfera é a menor.", "ok": 0}, {"t": "Porque a esfera é laranja.", "ok": 0}, {"t": "Porque a esfera é de futebol.", "ok": 0}], "enunPorque": "A <b>esfera</b> n&#227;o fica firme como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ela de fora?", "p1": "Pode ser verdade, mas olhe o que os outros três têm em comum.", "p2": "O que junta os três é <b>ficar firme</b>, não a cor nem o tamanho.", "p3": "Cubo, bloco e pirâmide ficam firmes. A esfera <b>não fica firme</b>: ela rola — por isso ela é a diferente.", "regra": "cubo, bloco e pirâmide ficam firmes; a esfera rola"}], "vozIntro": "sg_f11_intro", "dicaVoz": "sg_f11_dica"}, {"id": "f12", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo2", "enunciado": "Toque em cada <b>sólido</b> e ouça: ele <b>rola</b> ou <b>fica firme</b>?", "dica": "Redondo rola; lados retos ficam firmes.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "O cubo fica firme, porque tem lados retos."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "A esfera rola, porque é redonda."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "O cilindro rola, porque é redondo."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "O cone rola, porque é redondo."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "A pirâmide fica firme, porque tem lados retos."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "O bloco retangular fica firme, porque tem lados retos."}], "vozIntro": "sg_f12_intro", "dicaVoz": "sg_f12_dica"}, {"id": "f13", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo3", "enunciado": "Ligue cada <b>sólido</b> à forma da face dele.", "dica": "Olhe o lado do sólido: que figura plana aparece ali?", "dados": [{"k": "p0", "img": "sg_cubo_v", "voz": "cubo", "s": "Faces QUADRADAS"}, {"k": "p1", "img": "sg_bloco_v", "voz": "bloco", "s": "Faces RETÂNGULOS"}, {"k": "p2", "img": "sg_piramide_v", "voz": "pirâmide", "s": "Faces de TRIÂNGULO"}, {"k": "p3", "img": "sg_cilindro_v", "voz": "cilindro", "s": "Base em CÍRCULO"}], "dadosExtra": {"DICAS": ["Olhe UM lado do sólido de cada vez.", "O cubo tem lados quadrados; o bloco, retângulos; a pirâmide, triângulos; o cilindro tem círculo embaixo.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada face ao sólido dela.", "FECHO": "Você achou as faces dos sólidos!"}, "vozIntro": "sg_f13_intro", "dicaVoz": "sg_f13_dica"}, {"id": "f14", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo3", "enunciado": "Cada objeto na gaveta do <b>sólido</b> dele.", "dica": "Pense na forma do objeto: é redondo de rolar ou tem cantos?", "dados": [{"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v", "voz": "esfera", "rot": true}, {"k": "cubo", "n": "CUBO", "img": "sg_cubo_v", "voz": "cubo", "rot": true}], "dadosExtra": {"FICHAS": [{"t": "BOLA", "alvo": "esfera", "img": "sg_bola"}, {"t": "LARANJA", "alvo": "esfera", "img": "sg_laranja"}, {"t": "DADO", "alvo": "cubo", "img": "sg_dado"}, {"t": "CAIXA DE PRESENTE", "alvo": "cubo", "img": "sg_presente"}], "DICAS": ["A bola e a laranja são redondas; o dado e a caixa têm cantos.", "Objeto redondo é esfera; objeto quadradinho é cubo.", "Olhe a gaveta com a borda amarela: é ali que este objeto mora."], "ENUN": "Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."}, "vozIntro": "sg_f14_intro", "dicaVoz": "sg_f14_dica"}, {"id": "f15", "mec": "quebra-cabeca", "selo": "QUEBRA-CABEÇA", "conceito": "objetivo3", "enunciado": "Monte a <b>casinha</b> feita de sólidos.", "dica": "Comece pelos cantos e olhe as cores que combinam.", "dados": {"img": "sg_puzzle1", "cols": 3, "lins": 2, "w": 360, "h": 360, "fundo": false}, "vozIntro": "sg_f15_intro", "dicaVoz": "sg_f15_dica"}, {"id": "aquecimento", "mec": "escolher", "selo": "AQUECIMENTO", "conceito": "objetivo3", "enunciado": "<b>Aquecimento!</b> Que sólido tem a forma deste objeto?", "dica": "Compare o objeto com os sólidos que você já conhece.", "dados": [{"img": "sg_lata", "p": "A <b>lata</b> tem a forma de qual sólido?", "c": "CILINDRO", "e": ["CUBO", "ESFERA", "PIRÂMIDE"], "d": ["Ela é reta e redonda, com círculo em cima e embaixo.", "Pense num cano ou num copo.", "É o CILINDRO. Toque para seguir."]}, {"img": "sg_sorvete", "p": "A <b>casquinha de sorvete</b> tem a forma de qual sólido?", "c": "CONE", "e": ["CILINDRO", "CUBO", "ESFERA"], "d": ["Ela tem uma ponta embaixo e é redonda em cima.", "É a mesma forma do chapéu de festa.", "É o CONE. Toque para seguir."]}, {"img": "sg_sapato", "p": "A <b>caixa de sapato</b> tem a forma de qual sólido?", "c": "BLOCO RETANGULAR", "e": ["CUBO", "CILINDRO", "CONE"], "d": ["Ela tem 6 lados, mas são retângulos compridos.", "Parece um tijolo ou um livro fechado.", "É o BLOCO RETANGULAR. Toque para seguir."]}], "dadosExtra": {"TITULO": "O SÓLIDO ESCONDIDO", "FECHO": "Você acha sólidos em tudo agora!"}, "vozIntro": "sg_aquecimento_intro", "dicaVoz": "sg_aquecimento_dica"}, {"id": "f17", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo3", "enunciado": "Ouça as pistas e descubra o <b>sólido</b>.", "dica": "Junte todas as pistas antes de escolher.", "dados": [{"resp": "CILINDRO", "pistas": ["Eu sou reto e tenho um <b>círculo</b> em cima e embaixo.", "Deitado eu <b>rolo</b>; em pé eu fico firme.", "Na cozinha eu sou a <b>lata</b> de comida."], "outros": ["CUBO", "ESFERA", "PIRÂMIDE"]}, {"resp": "BLOCO RETANGULAR", "pistas": ["Eu tenho 6 lados, mas eles são <b>retângulos</b>.", "Eu <b>fico firme</b> e dá para me empilhar.", "Eu sou a <b>caixa de sapato</b> e também o tijolo."], "outros": ["CUBO", "CONE", "ESFERA"]}, {"resp": "PIRÂMIDE", "pistas": ["Eu tenho lados de <b>triângulo</b> e uma <b>ponta</b> em cima.", "Eu <b>fico firme</b>, apoiada na minha base.", "No Egito antigo, eu sou gigante no deserto."], "outros": ["CILINDRO", "ESFERA", "CUBO"]}], "vozIntro": "sg_f17_intro", "dicaVoz": "sg_f17_dica"}, {"id": "f17b", "mec": "forca", "selo": "FORCA", "conceito": "objetivo1", "enunciado": "Descubra o <b>sólido</b> pela pista e monte o nome, letra por letra.", "dica": "Leia a pista e pense na forma antes de escolher as letras.", "dados": [{"p": "CILINDRO", "ac": "CILINDRO", "fig": "sg_cilindro_v", "d": "Rola deitado e fica firme em pé, igual a uma lata."}, {"p": "PIRAMIDE", "ac": "PIRÂMIDE", "fig": "sg_piramide_v", "d": "Tem base quadrada e sobe até uma ponta, como no Egito."}, {"p": "ESFERA", "ac": "ESFERA", "fig": "sg_esfera_v", "d": "É toda redonda, sem nenhum canto, e rola para todo lado."}], "vozIntro": "sg_f17b_intro", "dicaVoz": "sg_f17b_dica"}, {"id": "f20", "mec": "caca-palavras", "selo": "CAÇA-PALAVRAS", "conceito": "objetivo1", "enunciado": "Ache os <b>nomes dos sólidos</b> escondidos no quadro.", "dica": "Os nomes estão deitados (→) e em pé (↓). Ache um de cada vez.", "dados": ["CUBO", "ESFERA", "CONE", "BLOCO"], "dadosExtra": {"MODO": "lista", "TITULO": "CAÇA-PALAVRAS DOS SÓLIDOS", "LETRAS": "ABCDEFGHIJLMNOPRSTUVZ", "DIFICIL": "", "CORP": ["p1", "p2", "p3", "p4"]}, "vozIntro": "sg_f20_intro", "dicaVoz": "sg_f20_dica"}, {"id": "f22", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo2", "enunciado": "Ouça as pistas de como eu me mexo e descubra <b>qual sólido</b> sou.", "dica": "Cada pista conta se eu rolo ou fico firme. Junte todas antes de responder.", "dados": [{"resp": "ESFERA", "pistas": ["Eu não tenho nenhum lado reto: sou todo <b>redondo</b>.", "Se você me solta na rampa, eu <b>rolo</b> para qualquer lado.", "Nunca fico parado num lugar: sou a <b>bola</b>."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}, {"resp": "CUBO", "pistas": ["Eu tenho <b>lados retos e planos</b>, sem nada redondo.", "Na rampa eu <b>fico firme</b> e não saio rolando.", "Dá para me <b>empilhar</b> sem cair: sou o dado."], "outros": ["ESFERA", "CONE", "CILINDRO"]}, {"resp": "CILINDRO", "pistas": ["Eu tenho dois <b>círculos</b>, um em cada ponta.", "Deitado eu <b>rolo</b>; em pé eu <b>fico firme</b>.", "Pareço uma <b>lata</b> de comida."], "outros": ["CUBO", "ESFERA", "PIRÂMIDE"]}], "vozIntro": "sg_f22_intro", "dicaVoz": "sg_f22_dica"}, {"id": "f23", "mec": "intruso", "selo": "QUAL NÃO É?", "conceito": "objetivo3", "enunciado": "Três fazem a mesma coisa. <b>Qual é o diferente?</b>", "dica": "Pense na forma de cada objeto: rola ou fica firme?", "dados": [{"selo": "OS QUE ROLAM", "tipo": "texto", "enun": "Três destes rolam. <b>Qual NÃO rola?</b>", "itens": [{"k": "bola", "n": "BOLA", "img": "sg_bola"}, {"k": "laranja", "n": "LARANJA", "img": "sg_laranja"}, {"k": "lata", "n": "LATA", "img": "sg_lata"}, {"k": "dado", "n": "DADO", "img": "sg_dado"}], "fora": "dado", "nomeFora": "DADO", "d1": "Qual deles NÃO rola de todo jeito?", "d2": "Bola e laranja são esferas; a lata é cilindro (rola deitada). O dado tem só cantos.", "d3": "O que não pertence é o DADO: é cubo e fica firme.", "razoes": [{"t": "Os outros três rolam; o dado fica firme.", "ok": 1}, {"t": "Porque o dado tem números.", "ok": 0}, {"t": "Porque o dado é pequeno.", "ok": 0}, {"t": "Porque o dado é de jogar.", "ok": 0}], "enunPorque": "O <b>dado</b> n&#227;o rola como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ele de fora?", "p1": "O número no dado não decide a forma. Olhe o que os outros fazem.", "p2": "O que junta os três é a forma <b>redonda de rolar</b>.", "p3": "Bola, laranja e lata rolam. O dado <b>não rola</b>: fica firme — por isso ele é o diferente.", "regra": "bola, laranja e lata rolam; o dado fica firme"}], "vozIntro": "sg_f23_intro", "dicaVoz": "sg_f23_dica"}, {"id": "f24", "mec": "quebra-cabeca", "selo": "QUEBRA-CABEÇA", "conceito": "objetivo3", "enunciado": "Monte a <b>torre</b> de sólidos empilhados.", "dica": "Comece de baixo: o que fica firme vai embaixo.", "dados": {"img": "sg_puzzle2", "cols": 3, "lins": 2, "w": 360, "h": 360, "fundo": false}, "vozIntro": "sg_f24_intro", "dicaVoz": "sg_f24_dica"}, {"id": "f25", "mec": "memoria", "selo": "MEMÓRIA", "conceito": "objetivo3", "enunciado": "Ache a <b>palavra</b> e o <b>desenho que combina</b>.", "dica": "Vire duas cartas: uma tem o nome, a outra o desenho. Combinaram? É par!", "dados": [{"k": "pir", "pal": "PIRÂMIDE", "voz": "pirâmide", "imgsen": "sg_piramide_v", "vozsen": "pirâmide"}, {"k": "bloco", "pal": "BLOCO", "voz": "bloco", "imgsen": "sg_bloco_v", "vozsen": "bloco"}, {"k": "cone", "pal": "CONE", "voz": "cone", "imgsen": "sg_cone_v", "vozsen": "cone"}, {"k": "cil", "pal": "CILINDRO", "voz": "cilindro", "imgsen": "sg_cilindro_v", "vozsen": "cilindro"}], "vozIntro": "sg_f25_intro", "dicaVoz": "sg_f25_dica"}, {"id": "f26", "mec": "arrastar-sombra", "selo": "CADA UM, SUA SOMBRA", "conceito": "objetivo2", "enunciado": "Leve cada <b>objeto</b> até a sombra da forma dele.", "dica": "Compare o contorno da sombra com o objeto.", "dados": [{"selo": "CADA UM, SUA SOMBRA", "semSom": true, "pool": ["bola", "lata", "dado", "sorvete"], "n": 3, "quais": ["bola", "lata", "dado"]}, {"selo": "OLHE BEM O CONTORNO", "semSom": true, "pool": ["bola", "lata", "dado", "sorvete"], "n": 4, "quais": ["bola", "lata", "dado", "sorvete"]}], "dadosExtra": {"FORMAS": {"bola": {"n": "BOLA", "voz": "BOLA", "img": "sg_bola"}, "lata": {"n": "LATA", "voz": "LATA", "img": "sg_lata"}, "dado": {"n": "DADO", "voz": "DADO", "img": "sg_dado"}, "sorvete": {"n": "SORVETE", "voz": "SORVETE", "img": "sg_sorvete"}}, "DICAS": ["Compare o <b>contorno</b>: a sombra tem o mesmo formato.", "A sombra certa está <b>piscando</b>. Leve até ela.", "Deixa comigo: eu levo esta e você continua."]}, "vozIntro": "sg_f26_intro", "dicaVoz": "sg_f26_dica"}, {"id": "f27", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo2", "enunciado": "Ajude o Bloco a <b>construir</b>: escolha a forma certa.", "dica": "Pense se a peça precisa ficar firme ou rolar.", "dados": [{"img": "", "p": "Para a <b>base de uma torre</b> bem firme, qual sólido usar?", "c": "BLOCO RETANGULAR", "e": ["ESFERA", "CONE", "CILINDRO deitado"], "d": ["A base não pode rolar nem escorregar.", "Precisa de lados retos e planos embaixo.", "É o BLOCO RETANGULAR. Toque para seguir."]}, {"img": "", "p": "Para o <b>telhado pontudo</b> da casa, qual sólido combina?", "c": "PIRÂMIDE", "e": ["CILINDRO", "ESFERA", "CUBO"], "d": ["O telhado tem uma ponta em cima.", "Lados de triângulo que sobem até o topo.", "É a PIRÂMIDE. Toque para seguir."]}, {"img": "", "p": "Para um <b>rolo que desce a ladeira</b>, qual sólido escolher?", "c": "CILINDRO", "e": ["CUBO", "PIRÂMIDE", "BLOCO"], "d": ["Precisa rolar reto, sem sair do caminho.", "A esfera rolaria torto; escolha o que rola em linha.", "É o CILINDRO. Toque para seguir."]}], "dadosExtra": {"TITULO": "MÃO NA MASSA", "FECHO": "Você escolheu as formas certas para construir!"}, "vozIntro": "sg_f27_intro", "dicaVoz": "sg_f27_dica"}, {"id": "f28", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo2", "enunciado": "Dá para <b>empilhar</b> firme ou <b>escorrega</b>?", "dica": "Lados retos empilham; parte redonda escorrega.", "dados": [{"k": "empilha", "n": "EMPILHA FIRME", "img": "", "voz": "empilha firme", "rot": false}, {"k": "escorrega", "n": "ESCORREGA / ROLA", "img": "", "voz": "escorrega", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "CUBO", "alvo": "empilha", "img": "sg_cubo_v"}, {"t": "BLOCO", "alvo": "empilha", "img": "sg_bloco_v"}, {"t": "ESFERA", "alvo": "escorrega", "img": "sg_esfera_v"}, {"t": "CONE", "alvo": "escorrega", "img": "sg_cone_v"}], "DICAS": ["Imagine empilhar dois iguais: fica em pé ou cai?", "Cubo e bloco têm topo plano: empilham. Esfera e cone têm parte redonda: escorregam.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque no <b>sólido</b>. Depois toque na gaveta: <b>EMPILHA FIRME</b> ou <b>ESCORREGA</b>?"}, "vozIntro": "sg_f28_intro", "dicaVoz": "sg_f28_dica"}, {"id": "f29", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo1", "enunciado": "Última rodada de pistas: qual <b>sólido</b> sou eu?", "dica": "Junte as três pistas antes de responder.", "dados": [{"resp": "CUBO", "pistas": ["Tenho <b>6 faces</b>, todas quadradas e iguais.", "Fico <b>firme</b> e sou fácil de empilhar.", "Você me joga no jogo de tabuleiro: sou o <b>dado</b>."], "outros": ["ESFERA", "CILINDRO", "CONE"]}, {"resp": "ESFERA", "pistas": ["Não tenho <b>nenhum canto</b> nem lado reto.", "Eu <b>rolo</b> para qualquer lado.", "Sou a <b>bola</b> e também a laranja."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}], "vozIntro": "sg_f29_intro", "dicaVoz": "sg_f29_dica"}, {"id": "f31", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo3", "enunciado": "Ligue o <b>objeto</b> ao sólido dele.", "dica": "Pense na forma de cada objeto.", "dados": [{"k": "p0", "img": "sg_telhado", "voz": "telhado", "s": "PIRÂMIDE"}, {"k": "p1", "img": "sg_presente", "voz": "presente", "s": "CUBO"}, {"k": "p2", "img": "sg_copo", "voz": "copo", "s": "CILINDRO"}, {"k": "p3", "img": "sg_tijolo", "voz": "tijolo", "s": "BLOCO RETANGULAR"}], "dadosExtra": {"DICAS": ["Pense na forma de cada objeto.", "Telhado é pirâmide; presente é cubo; copo é cilindro; tijolo é bloco. Siga a linha.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue o objeto ao sólido.", "FECHO": "Você ligou todos!"}, "vozIntro": "sg_f31_intro", "dicaVoz": "sg_f31_dica"}, {"id": "f32", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo3", "enunciado": "Toque em cada sólido e descubra a <b>figura plana</b> da face dele.", "dica": "Olhe um lado do sólido: que figura aparece?", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "QUADRADO", "info": "A face é um quadrado.", "voz": "O cubo tem face de quadrado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "SEM FACE PLANA", "info": "É toda redonda, não tem face plana.", "voz": "A esfera é toda redonda, não tem face plana."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "CÍRCULO", "info": "A face é um círculo.", "voz": "O cilindro tem face de círculo."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "CÍRCULO", "info": "A face é um círculo.", "voz": "O cone tem face de círculo."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "TRIÂNGULO", "info": "A face é um triângulo.", "voz": "A pirâmide tem face de triângulo."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "RETÂNGULO", "info": "A face é um retângulo.", "voz": "O bloco retangular tem face de retângulo."}], "vozIntro": "sg_f32_intro", "dicaVoz": "sg_f32_dica"}, {"id": "f34", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo3", "enunciado": "Cada objeto na gaveta do <b>sólido</b> dele.", "dica": "Redondo de rolar ou com cantos retos?", "dados": [{"k": "cilindro", "n": "CILINDRO", "img": "sg_cilindro_v", "voz": "cilindro", "rot": true}, {"k": "cone", "n": "CONE", "img": "sg_cone_v", "voz": "cone", "rot": true}], "dadosExtra": {"FICHAS": [{"t": "LATA", "alvo": "cilindro", "img": "sg_lata"}, {"t": "COPO", "alvo": "cilindro", "img": "sg_copo"}, {"t": "SORVETE", "alvo": "cone", "img": "sg_sorvete"}, {"t": "CHAPÉU", "alvo": "cone", "img": "sg_chapeu"}], "DICAS": ["Lata e copo são retos e redondos (cilindro); casquinha e chapéu têm ponta (cone).", "Cilindro é reto com círculo em cima e embaixo; cone tem uma ponta.", "Olhe a gaveta com a borda amarela: é ali que este objeto mora."], "ENUN": "Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."}, "vozIntro": "sg_f34_intro", "dicaVoz": "sg_f34_dica"}, {"id": "f30", "mec": "vitrine", "selo": "A GRANDE VITRINE", "conceito": "objetivo1", "enunciado": "A cidade ficou pronta! Toque nos <b>6 sólidos</b> e ouça o que você aprendeu.", "dica": "Toque em cada um e ouça o resumo.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "cubo — fica firme; parece dado.", "voz": "O cubo: fica firme e parece dado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "esfera — rola; parece bola.", "voz": "A esfera: rola e parece bola."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "cilindro — rola; parece lata.", "voz": "O cilindro: rola e parece lata."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "cone — rola; parece sorvete.", "voz": "O cone: rola e parece sorvete."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "pirâmide — fica firme; parece pirâmide.", "voz": "A pirâmide: fica firme e parece pirâmide."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "bloco retangular — fica firme; parece caixa de sapato.", "voz": "O bloco retangular: fica firme e parece caixa de sapato."}], "vozIntro": "sg_f30_intro", "dicaVoz": "sg_f30_dica"}];
 AMBI = "poeira";
 VOZOK = {"ykfff2": 1, "135xshn": 1, "1klh3e9": 1, "1xve2zf": 1, "ghenda": 1, "1v877fy": 1, "uwlnp5": 1, "deeghc": 1, "jbhbhi": 1, "ykfaoa": 1, "le0a07": 1, "r8u4t9": 1, "10z97qp": 1, "1knxek2": 1, "ge0owi": 1, "15rxj6x": 1, "1xq7onp": 1, "uhykwb": 1, "bmr1q0": 1, "ykeiw3": 1, "ykfqe5": 1, "yklwmf": 1, "1b1y8ka": 1, "1vkm58o": 1, "1bl7lyn": 1, "nuemzy": 1, "2ej3my": 1, "19c6brh": 1, "11c4vmd": 1, "1xf82o3": 1, "1n0r8y4": 1, "y5s3n9": 1, "9xw0m4": 1, "12ns217": 1, "zdkfgk": 1, "g67i2a": 1, "1dqhj6h": 1, "54cpgr": 1, "185sxrs": 1, "13gz56g": 1, "g4eads": 1, "1m6wvvk": 1, "37b2bh": 1, "hn8x7z": 1, "1as1u7u": 1, "1quntr6": 1, "47g79w": 1, "f8zo8f": 1, "1oovger": 1, "18shwiz": 1, "114ej6w": 1, "p4x514": 1, "n7g9ql": 1, "1058nfl": 1, "l7i3lu": 1, "1eli4dk": 1, "1nbmo5u": 1, "b8zxn7": 1, "658ndt": 1, "15s5p88": 1, "j6stmi": 1, "1fy6jg4": 1, "h6odfm": 1, "1wb5ndw": 1, "i4vboj": 1, "1j0wuas": 1, "ndrahe": 1, "bz5zwr": 1, "n9j1xq": 1, "17kov54": 1, "17lyxoe": 1, "15viome": 1, "ykquk3": 1, "zslyb2": 1, "4a7n3s": 1, "ptn2ml": 1, "zslyao": 1, "lupvpd": 1, "15dehjg": 1, "vvjzbm": 1, "1k3r2yx": 1, "10abecv": 1, "1fc1fuk": 1, "vzmbhn": 1, "qq6b46": 1, "1ililmi": 1, "1t5zox6": 1, "wdgbd1": 1, "1ye03lj": 1, "t3n9mt": 1, "76i71w": 1, "17kpr5y": 1, "1o5enwg": 1, "hmco3h": 1, "oabudl": 1, "377kp7": 1, "1wcnyiy": 1, "siqqjl": 1, "m88xhh": 1, "vzes27": 1, "v2v1e1": 1, "ykf5qe": 1, "ykq7lc": 1, "377j3o": 1, "3774l9": 1, "1lk1u3m": 1, "377h3k": 1, "3774qt": 1, "16ju9vs": 1, "p7it7w": 1, "mxia6j": 1, "57xsnh": 1, "hxb35l": 1, "q53obo": 1, "fcndrn": 1, "tty4gf": 1, "1ojvuxk": 1, "rzsjmf": 1, "68fbg": 1, "b5h64a": 1, "10k5cyw": 1, "1junoq1": 1, "19jze3m": 1, "149fsuh": 1, "mw5h21": 1, "15bf37c": 1, "jfo4l0": 1, "zyv1eu": 1, "btmo3c": 1, "1tuhg6n": 1, "w6tvre": 1, "145ggcx": 1, "lrnsq0": 1, "1id8myx": 1, "12qu17f": 1, "1khjh0e": 1, "x39r1": 1, "1wqqzfs": 1, "gkbfi8": 1, "1afzzgn": 1, "twc9of": 1, "e1y4t9": 1, "yn3eva": 1, "sizla8": 1, "y1xz0x": 1, "1bdko9g": 1, "1hhq2ze": 1, "28d7rx": 1, "bd34j0": 1, "vwhll2": 1, "1q9dntz": 1, "1nguhz9": 1, "r4rgbx": 1, "1ega9px": 1, "cg6ibp": 1, "steoe6": 1, "1bcz86f": 1, "1y1q0f4": 1, "177e9km": 1, "2gtmf7": 1, "hxztd9": 1, "1752nua": 1, "1pkyao4": 1, "1ubtym": 1, "dy0qyh": 1, "3gt0uk": 1, "f7uw8e": 1, "t6colb": 1, "1u5mi9u": 1, "19yxo2j": 1, "1svbj6a": 1, "yhjue6": 1, "nmursq": 1, "11pgpz2": 1, "1dp69m6": 1, "rsiq2f": 1, "1vttwm0": 1, "yljltg": 1, "94fcxn": 1, "t8rwgj": 1, "b36u9f": 1, "15n1jx5": 1, "yy0oet": 1, "yg68og": 1, "e5v1rr": 1, "7aaje3": 1, "15a06lb": 1, "12uzrky": 1, "16fhryg": 1, "9xdkl7": 1, "1ewujhp": 1, "1k2xmv5": 1, "ibs77g": 1, "p738a5": 1, "cdw67g": 1, "pf4mng": 1, "jijijw": 1, "dh1u96": 1, "173vtrb": 1, "15vskru": 1, "1g98png": 1, "pu97h7": 1, "tw122f": 1, "cmva0n": 1, "19nps3d": 1, "nx6r7m": 1, "zm989e": 1, "1k9azan": 1, "20ek7f": 1, "1wxegwj": 1, "1gzp7dw": 1, "d2vaqi": 1, "1cy9750": 1, "1swk5p6": 1, "nym1yt": 1, "q9ul08": 1, "1x3ymx6": 1, "19qrqqu": 1, "bhia4s": 1, "1i6gzqg": 1, "1v58fff": 1, "dwt5o8": 1, "wsa6t9": 1, "1ixnv6y": 1, "1xl4u6q": 1, "1l8uhsg": 1, "1p6ctcd": 1, "bptmnx": 1, "vd84ek": 1, "lesa17": 1, "bk7ptp": 1, "1hwtqwy": 1, "1o3jhuu": 1, "5imuej": 1, "ykfaqe": 1, "8ct9hy": 1, "6o8q6f": 1, "1cvcunc": 1, "1ffvby1": 1, "1nvysox": 1, "m2zif3": 1, "uebbyy": 1, "hpxib2": 1, "fv625h": 1, "vu106b": 1, "xpsqnd": 1, "rg3k4a": 1, "cltq84": 1, "16gt7ck": 1, "r5i3xc": 1, "xeycba": 1, "1wcxctb": 1, "p3h0nz": 1, "1qabu4f": 1, "ljitfd": 1, "1923jx4": 1, "ajkb04": 1, "17mcclh": 1, "kb5x3q": 1, "g3xinp": 1, "1izeskt": 1, "1ujzzfw": 1, "adtf80": 1, "14gmvkx": 1, "70yptf": 1, "1jyts36": 1, "137rt4g": 1, "1v8u0y8": 1, "1ih8zjc": 1, "1uzgvic": 1, "k4o16y": 1, "u45fpu": 1, "yqzdtt": 1, "rortei": 1, "vuuerh": 1, "93uyb1": 1, "1llkc0w": 1, "18um191": 1, "1vrqwxc": 1, "q8km67": 1, "o0zpvd": 1, "1lovj3v": 1, "1olb1sx": 1, "emo8p2": 1, "11wjyrh": 1, "1eul1it": 1, "1dhahmt": 1, "vln04w": 1, "4j3feu": 1, "1ejvkm1": 1, "u2frnf": 1, "1ftcsub": 1, "f3z2ot": 1, "cv18ts": 1, "1rhtz0j": 1, "8n9o10": 1, "pw03ei": 1, "1wysoa0": 1, "ofcd4y": 1, "j4ocfj": 1, "1ua2jdx": 1, "16vtni0": 1, "g8xsnl": 1, "9u2bbp": 1, "10dx3fk": 1, "1c9skd6": 1, "1w6bmpo": 1, "1jrbpwi": 1, "1jqs8jn": 1, "jo957z": 1, "1kuh751": 1, "1aqfdon": 1, "1xr7up8": 1, "neriy4": 1, "n1f29v": 1, "eirl8c": 1, "rxlyzr": 1, "3y0t6y": 1, "1dplq4y": 1, "wz9s3h": 1, "1h6izit": 1, "1dj8nky": 1, "13061wq": 1, "14vyfq9": 1, "1rtikuo": 1, "159f9k4": 1, "xtyayf": 1, "1j6nhc0": 1, "dz6yhj": 1, "1g7jz5m": 1, "1p8mjva": 1, "16mlwrf": 1, "i6ufji": 1, "1wh0ql4": 1, "1v4203i": 1, "1xo9hsg": 1, "19l8d8l": 1, "r7iurr": 1, "1m6x2bn": 1, "1wbfmpt": 1, "6igq8e": 1, "1bkss28": 1, "10lu8zj": 1};
+AUDIOS = ["sg_abertura", "sg_f01_intro", "sg_f01_dica", "op_ykfff2", "op_135xshn", "op_1klh3e9", "op_1xve2zf", "op_ghenda", "op_1v877fy", "op_uwlnp5", "op_deeghc", "op_jbhbhi", "op_ykfaoa", "op_le0a07", "op_r8u4t9", "op_10z97qp", "op_1knxek2", "op_ge0owi", "op_15rxj6x", "op_1xq7onp", "op_uhykwb", "sg_f02_intro", "sg_f02_dica", "op_bmr1q0", "op_ykeiw3", "op_ykfqe5", "op_yklwmf", "op_1b1y8ka", "op_1vkm58o", "op_1bl7lyn", "op_nuemzy", "op_2ej3my", "op_19c6brh", "op_11c4vmd", "op_1xf82o3", "op_1n0r8y4", "op_y5s3n9", "op_9xw0m4", "op_12ns217", "op_zdkfgk", "op_g67i2a", "op_1dqhj6h", "op_54cpgr", "sg_f03_intro", "sg_f03_dica", "op_185sxrs", "op_13gz56g", "op_g4eads", "op_1m6wvvk", "op_37b2bh", "sg_f04_intro", "sg_f04_dica", "sg_f05_intro", "sg_f05_dica", "op_hn8x7z", "op_1as1u7u", "op_1quntr6", "op_47g79w", "op_f8zo8f", "op_1oovger", "op_18shwiz", "op_114ej6w", "op_p4x514", "op_n7g9ql", "sg_f06_intro", "sg_f06_dica", "op_1058nfl", "op_l7i3lu", "op_1eli4dk", "op_1nbmo5u", "op_b8zxn7", "op_658ndt", "op_15s5p88", "op_j6stmi", "op_1fy6jg4", "op_h6odfm", "op_1wb5ndw", "op_i4vboj", "sg_f06b_intro", "sg_f06b_dica", "op_1j0wuas", "op_ndrahe", "op_bz5zwr", "op_n9j1xq", "3t3o", "3t3c", "3t3b", "3t3u", "3t3e", "3t3n", "op_17kov54", "op_17lyxoe", "sg_f07_intro", "sg_f07_dica", "op_15viome", "op_ykquk3", "op_zslyb2", "op_4a7n3s", "op_ptn2ml", "op_zslyao", "op_lupvpd", "op_15dehjg", "op_vvjzbm", "op_1k3r2yx", "sg_f08_intro", "sg_f08_dica", "op_10abecv", "op_1fc1fuk", "op_vzmbhn", "op_qq6b46", "op_1ililmi", "op_1t5zox6", "op_wdgbd1", "sg_f09_intro", "sg_f09_dica", "op_1ye03lj", "op_t3n9mt", "op_76i71w", "op_17kpr5y", "op_1o5enwg", "op_hmco3h", "op_oabudl", "op_377kp7", "op_1wcnyiy", "op_siqqjl", "op_m88xhh", "op_vzes27", "sg_f10_intro", "sg_f10_dica", "op_v2v1e1", "op_ykf5qe", "op_ykq7lc", "op_377j3o", "op_3774l9", "op_1lk1u3m", "op_377h3k", "op_3774qt", "op_16ju9vs", "op_p7it7w", "op_mxia6j", "sg_f11_intro", "sg_f11_dica", "op_57xsnh", "op_hxb35l", "op_q53obo", "op_fcndrn", "op_tty4gf", "op_1ojvuxk", "op_rzsjmf", "op_68fbg", "op_b5h64a", "op_10k5cyw", "op_1junoq1", "op_19jze3m", "op_149fsuh", "op_mw5h21", "op_15bf37c", "op_jfo4l0", "op_zyv1eu", "op_btmo3c", "op_1tuhg6n", "op_w6tvre", "op_145ggcx", "op_lrnsq0", "op_1id8myx", "op_12qu17f", "op_1khjh0e", "op_x39r1", "op_1wqqzfs", "op_gkbfi8", "sg_f12_intro", "sg_f12_dica", "op_1afzzgn", "op_twc9of", "op_e1y4t9", "op_yn3eva", "op_sizla8", "op_y1xz0x", "op_1bdko9g", "op_1hhq2ze", "sg_f13_intro", "sg_f13_dica", "op_28d7rx", "op_bd34j0", "op_vwhll2", "op_1q9dntz", "op_1nguhz9", "op_r4rgbx", "op_1ega9px", "op_cg6ibp", "sg_f14_intro", "sg_f14_dica", "op_steoe6", "op_1bcz86f", "op_1y1q0f4", "op_177e9km", "op_2gtmf7", "sg_f15_intro", "sg_f15_dica", "sg_aquecimento_intro", "sg_aquecimento_dica", "op_hxztd9", "op_1752nua", "op_1pkyao4", "op_1ubtym", "op_dy0qyh", "op_3gt0uk", "op_f7uw8e", "op_t6colb", "op_1u5mi9u", "op_19yxo2j", "op_1svbj6a", "op_yhjue6", "op_nmursq", "op_11pgpz2", "sg_f17_intro", "sg_f17_dica", "op_1dp69m6", "op_rsiq2f", "op_1vttwm0", "op_yljltg", "op_94fcxn", "op_t8rwgj", "op_b36u9f", "op_15n1jx5", "sg_f17b_intro", "sg_f17b_dica", "op_yy0oet", "op_yg68og", "op_e5v1rr", "op_7aaje3", "sg_f20_intro", "sg_f20_dica", "op_15a06lb", "sg_f22_intro", "sg_f22_dica", "op_12uzrky", "op_16fhryg", "op_9xdkl7", "op_1ewujhp", "op_1k2xmv5", "op_ibs77g", "op_p738a5", "op_cdw67g", "sg_f23_intro", "sg_f23_dica", "op_pf4mng", "op_jijijw", "op_dh1u96", "op_173vtrb", "op_15vskru", "op_1g98png", "op_pu97h7", "op_tw122f", "op_cmva0n", "op_19nps3d", "op_nx6r7m", "op_zm989e", "sg_f24_intro", "sg_f24_dica", "sg_f25_intro", "sg_f25_dica", "sg_f26_intro", "sg_f26_dica", "op_1k9azan", "sg_f27_intro", "sg_f27_dica", "op_20ek7f", "op_1wxegwj", "op_1gzp7dw", "op_d2vaqi", "op_1cy9750", "op_1swk5p6", "op_nym1yt", "op_q9ul08", "op_1x3ymx6", "op_19qrqqu", "op_bhia4s", "op_1i6gzqg", "op_1v58fff", "sg_f28_intro", "sg_f28_dica", "op_dwt5o8", "op_wsa6t9", "op_1ixnv6y", "op_1xl4u6q", "op_1l8uhsg", "sg_f29_intro", "sg_f29_dica", "op_1p6ctcd", "op_bptmnx", "op_vd84ek", "op_lesa17", "op_bk7ptp", "op_1hwtqwy", "sg_f31_intro", "sg_f31_dica", "op_1o3jhuu", "op_5imuej", "op_ykfaqe", "op_8ct9hy", "op_6o8q6f", "op_1cvcunc", "op_1ffvby1", "op_1nvysox", "sg_f32_intro", "sg_f32_dica", "op_m2zif3", "op_uebbyy", "op_hpxib2", "op_fv625h", "op_vu106b", "op_xpsqnd", "op_rg3k4a", "op_cltq84", "op_16gt7ck", "op_r5i3xc", "op_xeycba", "sg_f34_intro", "sg_f34_dica", "op_1wcxctb", "op_p3h0nz", "op_1qabu4f", "sg_f30_intro", "sg_f30_dica", "op_ljitfd", "op_1923jx4", "op_ajkb04", "op_17mcclh", "op_kb5x3q", "op_g3xinp", "op_1izeskt", "op_1ujzzfw", "op_adtf80", "op_14gmvkx", "op_70yptf", "op_1jyts36", "op_137rt4g", "op_1v8u0y8", "op_1ih8zjc", "op_1uzgvic", "op_k4o16y", "op_u45fpu", "op_yqzdtt", "sg_fim", "sg_f35_intro", "sg_f35_dica", "op_rortei", "op_vuuerh", "op_93uyb1", "op_1llkc0w", "sg_f18_intro", "sg_f18_dica", "op_18um191", "op_1vrqwxc", "op_q8km67", "op_o0zpvd", "op_1lovj3v", "op_1olb1sx", "op_emo8p2", "op_11wjyrh", "op_1eul1it", "op_1dhahmt", "op_vln04w", "op_4j3feu", "sg_f21_intro", "op_1ejvkm1", "op_u2frnf", "sg_f33_intro", "sg_f33_dica", "op_1ftcsub", "op_f3z2ot", "op_cv18ts", "op_1rhtz0j", "op_8n9o10", "op_pw03ei", "op_1wysoa0", "op_ofcd4y", "op_j4ocfj", "op_1ua2jdx", "op_16vtni0", "op_g8xsnl", "op_9u2bbp", "op_10dx3fk", "op_1c9skd6", "op_1w6bmpo", "op_1jrbpwi", "op_1jqs8jn", "op_jo957z", "op_1kuh751", "op_1aqfdon", "op_1xr7up8", "op_neriy4", "op_n1f29v", "op_eirl8c", "op_rxlyzr", "op_3y0t6y", "op_1dplq4y", "op_wz9s3h", "op_1h6izit", "op_1dj8nky", "op_13061wq", "op_14vyfq9", "op_1rtikuo", "op_159f9k4", "op_xtyayf", "op_1j6nhc0", "sg_f19_intro", "sg_f19_dica", "op_dz6yhj", "op_1g7jz5m", "op_1p8mjva", "op_16mlwrf", "op_i6ufji", "op_1wh0ql4", "op_1v4203i", "op_1xo9hsg", "op_19l8d8l", "op_r7iurr", "op_1m6x2bn", "op_1wbfmpt", "op_6igq8e", "op_1bkss28", "op_10lu8zj"];
 RELBNCC = "EF02MA14";
 </script>
 </body></html>

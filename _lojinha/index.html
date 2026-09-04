@@ -1736,59 +1736,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-pintar-canvas .pintawrap{max-width:300px}
 
-.mec-pintar-canvas .tcor{width:42px;height:42px;margin:3px}}
-/* ⭐ O NETBOOK DA ESCOLA TEM 600px DE ALTURA — e o bloco acima só valia abaixo
-   de 520px, então passava raspando por FORA justo na máquina em que as crianças
-   jogam. Medido em 1024x600: o conteúdo somava 710px numa janela de 600, a tela
-   rolava, e o "Pronto!" nascia DEBAIXO da barra fixa de baixo (o dedo tocava o
-   "Ouvir" no lugar). A criança terminava de pintar e não conseguia entregar.
-   Quem achou foi o `_qa/sobreposto.js`, medindo quem responde ao toque no
-   centro do botão. Aqui a tela baixa encolhe de verdade, não um tiquinho. */
-@media (max-height:660px){
-  .mec-pintar-canvas .centro{padding:10px 10px 12px}
-  .mec-pintar-canvas .selo{font-size:12px;padding:4px 12px;margin-bottom:6px}
-  .mec-pintar-canvas .prog{margin-bottom:7px}
-  .mec-pintar-canvas .balao{font-size:16px;padding:7px 12px;margin-bottom:6px}
-  .mec-pintar-canvas .dica{font-size:14px;padding:6px 11px;margin-bottom:7px}
-  .mec-pintar-canvas .pintawrap{max-width:min(360px,42vh)}
-  .mec-pintar-canvas .paleta{margin:6px auto 3px}
-  .mec-pintar-canvas .tcor{width:40px;height:40px;margin:3px;border-width:2px}
-  .mec-pintar-canvas .pc_ferr{margin:4px 0}
-  .mec-pintar-canvas .zap{width:46px;height:46px}
-}
-/* ⭐ E ENCOLHER NÃO BASTOU — medido: mesmo com tudo menor o conteúdo somava
-   561px, mais 40 de respiro em cima e 104 embaixo (que a barra fixa exige) =
-   705 numa janela de 600. Cura de verdade, a mesma que curou a Pinta e Monta:
-   NA TELA LARGA E BAIXA (o netbook: 1024 de largura, 600 de altura) a PALETA
-   SAI DE BAIXO DO DESENHO e vira uma coluna fixa à esquerda. Os 88px que ela
-   ocupava voltam para a altura, e o "Pronto!" sobe para longe da barra.
-   Só nessa forma de tela: no celular (estreito) a paleta continua embaixo,
-   que é onde o polegar alcança. */
-@media (min-width:820px) and (max-height:660px){
-  .mec-pintar-canvas .tela{padding-top:calc(12px + env(safe-area-inset-top))}
-  .mec-pintar-canvas .paleta{position:fixed;left:10px;top:50%;
-    -webkit-transform:translateY(-50%);transform:translateY(-50%);
-    width:112px;max-width:112px;max-height:92vh;overflow-y:auto;margin:0;
-    background:rgba(255,255,255,.55);border-radius:18px;padding:8px 4px;
-    -webkit-box-shadow:0 4px 14px rgba(90,60,20,.16);
-    box-shadow:0 4px 14px rgba(90,60,20,.16);z-index:11}
-  .mec-pintar-canvas .centro{padding-left:20px}
-  /* ⭐⭐ E A FAIXA DA DIREITA ESTAVA VAZIA (Marcos, set/2026: *"sempre aproveitar
-     a área de interatividade da melhor forma possível... tem espaço sobrando?"*).
-     Medido em 1024x600: paleta 10-122, cartão 252-772 e **772-1024 sem NADA**
-     (252px, um quarto da tela), com o quadro de pintar em apenas 258px.
-     Então o nome da cor e os botões "Limpar/Pronto!" mudam-se para essa faixa,
-     empilhados. Não é só arrumação: eles ocupavam ~88px de ALTURA embaixo do
-     quadro, e é essa altura que volta para o desenho. */
-  .mec-pintar-canvas .pc_ferr{position:fixed;right:24px;top:calc(50% - 74px);
-    width:180px;margin:0;z-index:12;-webkit-box-pack:center;justify-content:center}
-  .mec-pintar-canvas .acoes{position:fixed;right:24px;top:calc(50% - 30px);
-    width:180px;margin:0;z-index:12;display:-webkit-box;display:flex;
-    -webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
-    -webkit-box-align:stretch;align-items:stretch;gap:10px}
-  .mec-pintar-canvas .acoes .btn{width:100%;margin:0}
-  .mec-pintar-canvas .pintawrap{max-width:min(420px,58vh)}
-}@media (prefers-reduced-motion:reduce){
+.mec-pintar-canvas .tcor{width:42px;height:42px;margin:3px}}@media (prefers-reduced-motion:reduce){
 
 .mec-pintar-canvas .tela{-webkit-animation:none;animation:none}}
 /* ==== PECA: quebra-cabeca ==== */
@@ -1816,7 +1764,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-quebra-cabeca .qcbanco{max-width:226px;margin:12px auto 0; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
 
-.mec-quebra-cabeca .qcpc{margin:4px;border-radius:9px;background-repeat:no-repeat;cursor:pointer; border:2px solid rgba(255,255,255,.6); -ms-touch-action:none;touch-action:none; -webkit-box-shadow:0 3px 0 rgba(0,0,0,.5);box-shadow:0 3px 0 rgba(0,0,0,.5)}
+.mec-quebra-cabeca .qcpc{margin:4px;border-radius:9px;background-repeat:no-repeat;cursor:pointer; border:2px solid rgba(255,255,255,.6); -webkit-box-shadow:0 3px 0 rgba(0,0,0,.5);box-shadow:0 3px 0 rgba(0,0,0,.5)}
 
 .mec-quebra-cabeca .qcpc.sel{border:3px solid #ffd54a;-webkit-transform:translateY(-3px);transform:translateY(-3px)}
 
@@ -1902,7 +1850,52 @@ var ID = {"pre": "lb", "mascote": "pipo", "mascoteNome": "Pipo", "titulo": "A Lo
    mascote alheio aparecer no texto desta.                            */
 var MASCOTE_NOME="Pipo";  /* ID.mascoteNome */
 var IMGS=[];
-var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}
+var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}precarregaVoz();}
+/* ⭐⭐ A VOZ CHEGA ANTES DA CRIANÇA — pré-carga em segundo plano.
+
+   ⚠️ LIÇÃO PAGA (set/2026), e quem pegou foi o Marcos com a turma jogando:
+   *"atividade oficina das palavras travando na fase 13"* e, quando pedi para
+   ele descrever, o retrato exato do defeito: *"o estudante acerta, e fica
+   parado esperando o botão continuar"*.
+
+   Não era o código: era a REDE. O `escolher` — a mecânica mais usada da casa —
+   só mostra o botão quando a voz da resposta termina, e tem uma rede de
+   segurança de 4 SEGUNDOS para o caso de o mp3 não chegar. Na escola ele não
+   chega na hora: cada mp3 é uma ida à rede na PRIMEIRA vez que toca. Então a
+   criança acerta, e espera a rede de olho na tela parada.
+
+   O `sw.js` já é cache-primeiro no áudio — mas cache-primeiro só ajuda da
+   SEGUNDA vez. Numa atividade de 400 falas, a primeira vez acontece 400 vezes.
+
+   Aqui a voz vem antes: enquanto a criança lê a capa e escolhe o crachá, o
+   motor busca as falas caladas, de 4 em 4, e o service worker guarda cada uma.
+   Quando ela chega na fase, o mp3 já é local e o botão aparece na hora.
+
+   ⚠️ REGRAS DESTA PRÉ-CARGA, todas por um motivo:
+     · `fetch`, não `new Audio()`: baixa e guarda sem ocupar canal de som nem
+       disparar autoplay (que o navegador bloqueia antes do 1º gesto);
+     · de 4 em 4, com respiro: 400 pedidos de uma vez afogam a rede da escola e
+       atrasariam justamente a fala da PRIMEIRA fase;
+     · a fala da abertura e as das primeiras fases vêm primeiro (a ordem do
+       `falas.json` já é a ordem do jogo);
+     · `catch` vazio em tudo: pré-carga que falha não pode quebrar a atividade —
+       sem ela o app volta a funcionar como funcionava, só mais devagar. */
+var _pvOk=0;
+function precarregaVoz(){
+  if(_pvOk||typeof AUDIOS==="undefined"||!AUDIOS||!AUDIOS.length||!window.fetch) return;
+  _pvOk=1;
+  var i=0, LOTE=4;
+  function passo(){
+    if(i>=AUDIOS.length) return;
+    var lote=[],n;
+    for(n=0;n<LOTE&&i<AUDIOS.length;n++,i++){
+      try{ lote.push(fetch("audio/"+AUDIOS[i]+".mp3",{cache:"force-cache"})["catch"](function(){})); }catch(e){}
+    }
+    try{ Promise.all(lote).then(function(){ setTimeout(passo,120); })["catch"](function(){ setTimeout(passo,300); }); }
+    catch(e){ setTimeout(passo,300); }
+  }
+  setTimeout(passo,400);   /* deixa a capa desenhar primeiro */
+}
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
 /* ============ SOM (efeitos) ============ */
 /* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE
@@ -3640,11 +3633,7 @@ setTimeout(inicia, 0);
    baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
    mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
 function nota(f, dur, vol, tipo, atraso){
-  /* ⚠️ LICAO PAGA (set/2026, no Museu): `nota` e chamada de dentro da MONTAGEM
-     da fase (sPista -> nota -> arma). Sem guarda aqui, um `arma()` que tropeca
-     num PC com audio bloqueado matava a fase INTEIRA — a crianca abria e via
-     tela vazia, nem chegava a tentar. Som e enfeite: nunca derruba o app. */
-  try{ if(typeof arma === "function") arma(); }catch(_a){}
+  if(typeof arma === "function") arma();
   var c = window.ac; if(!c || !c.createOscillator) return;
   try{
     var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
@@ -3745,15 +3734,7 @@ MEC["bingo"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -4277,15 +4258,7 @@ MEC["caixa-dinheiro"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -4664,15 +4637,7 @@ MEC["classificar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5200,15 +5165,7 @@ MEC["comparar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -5849,15 +5806,7 @@ MEC["domino"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -6479,15 +6428,7 @@ MEC["escolher"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -6567,18 +6508,8 @@ MEC["escolher"] = function(f, cen, fim){
    · `voz` = o que o alto-falante diz, quando é diferente da palavra escrita
              (OPCIONAL — sem ele, fala a própria palavra).
    Sem `img` nada muda: nenhuma atividade que já usa esta peça quebra.     */
-/* ⚠️⚠️ LICAO PAGA (set/2026, montando a Gincana da Divisao do 4o ano):
-   estes dois PADROES eram o assunto do EXEMPLO desta peca — o quiz da
-   planta. O `TITULO` o montador sobrescreve com o `selo` da fase, entao
-   ninguem via; mas o `FECHO` NAO e sobrescrito, e ele fecha a fase. Uma
-   crianca do 4o ano repartia bolas entre equipes, acertava tudo, e o jogo
-   respondia: "Voce ja conhece as partes da planta!".
-   Medido em ONZE atividades, incluindo as que ja estao no ar.
-   O padrao agora e NEUTRO: serve a qualquer assunto. Quem quiser um fecho
-   proprio poe `FECHO` no `dadosExtra` da fase — e quem esquecer nao
-   entrega o assunto de outra atividade. Vigia: `_qa/exemplo.py`. */
-var TITULO="ESCOLHA A CERTA";
-var FECHO="Voc&#234; acertou todas as escolhas!";
+var TITULO="PARTES DA PLANTA";
+var FECHO="Voc&#234; j&#225; conhece as partes da planta!";
 /* ⭐ SÓ IMAGEM (escolha do Marcos, ago/2026): quando a opção é a FIGURA na
    moldura de vidro, dá para esconder a PALAVRA embaixo e deixar só o desenho +
    o alto-falante (a criança toca e ouve o nome). Opcional; por padrão a palavra
@@ -6781,9 +6712,9 @@ function responde(o,certa){
         if(_gc!==ger) return;
         falar("op_"+_ak, function(){ setTimeout(_avanca, 350); });
       }, 450);
-      setTimeout(_avanca, 4000);             /* rede: voz bloqueada/lenta nunca prende */
+      setTimeout(_avanca, 2200);             /* rede: voz bloqueada/lenta nunca prende */
     }else{
-      setTimeout(_avanca, 1300);
+      setTimeout(_avanca,700);
     }
     return;
   }
@@ -6913,15 +6844,7 @@ MEC["ligar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -7447,15 +7370,7 @@ MEC["memoria"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -8009,15 +7924,7 @@ MEC["ordenar"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -8532,15 +8439,7 @@ MEC["pintar-canvas"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -8870,15 +8769,7 @@ MEC["quebra-cabeca"] = function(f, cen, fim){
        botao. A peca continua so avisando que acabou; quem manda no caminho
        segue sendo o motor — mas com a comemoracao no meio. */
     function mostraBanner(msg, cb){
-      /* ⚠️⚠️ LICAO PAGA (Marcos, set/2026): a festa rodava ANTES de chamar o
-         banner, e SEM guarda. Se o confete tropecasse num PC (canvas ausente,
-         audio bloqueado), a excecao matava a funcao AQUI — e o
-         `window.mostraBanner` logo abaixo NUNCA era chamado. A crianca ficava
-         com a fase toda resolvida e SEM o botao de proximo, presa no meio da
-         aula. Foi assim que apareceu nas fases de ligar do Trem.
-         Enfeite nunca pode impedir a crianca de avancar: agora ele nao derruba
-         mais o caminho. */
-      try{ if(typeof festa === "function") festa(); }catch(_f){}
+      if(typeof festa === "function") festa();
       /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
          com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
          outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
@@ -9357,6 +9248,7 @@ ABERTURA = {texto:"A lojinha do Pipo está cheia de brinquedos! Mas para levar u
 FASES = [{"id": "f01", "mec": "escolher", "selo": "ESCOLHA", "enunciado": "Olhe o dinheiro. <b>Quanto ele vale?</b>", "dica": "Procure o número escrito no dinheiro.", "conceito": "objetivo1", "dados": [{"img": "lb_moeda1", "p": "Olhe o dinheiro. <b>Quanto ele vale?</b>", "c": "1 REAL", "e": ["2 REAIS", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>1 REAL</b>. Toque para seguir."]}, {"img": "lb_nota2", "p": "Olhe o dinheiro. <b>Quanto ele vale?</b>", "c": "2 REAIS", "e": ["1 REAL", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>2 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota5", "p": "Olhe o dinheiro. <b>Quanto ele vale?</b>", "c": "5 REAIS", "e": ["2 REAIS", "10 REAIS", "20 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>5 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota10", "p": "Olhe o dinheiro. <b>Quanto ele vale?</b>", "c": "10 REAIS", "e": ["5 REAIS", "20 REAIS", "50 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>10 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota20", "p": "Olhe o dinheiro. <b>Quanto ele vale?</b>", "c": "20 REAIS", "e": ["10 REAIS", "5 REAIS", "50 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>20 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota50", "p": "Olhe o dinheiro. <b>Quanto ele vale?</b>", "c": "50 REAIS", "e": ["10 REAIS", "20 REAIS", "100 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>50 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota100", "p": "Olhe o dinheiro. <b>Quanto ele vale?</b>", "c": "100 REAIS", "e": ["20 REAIS", "50 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>100 REAIS</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTO VALE", "FECHO": "Muito bem! Você acertou tudo."}, "vozIntro": "lb_f01_intro", "dicaVoz": "lb_f01_dica"}, {"id": "f02", "mec": "ligar", "selo": "LIGUE", "enunciado": "Ligue cada dinheiro ao <b>seu valor</b>.", "dica": "Siga a linha até o par certo.", "conceito": "objetivo1", "dados": [{"k": "p0", "s": "vale 1 real", "img": "lb_moeda1", "voz": "moeda de 1 real"}, {"k": "p1", "s": "vale 2 reais", "img": "lb_nota2", "voz": "nota de 2 reais"}, {"k": "p2", "s": "vale 5 reais", "img": "lb_nota5", "voz": "nota de 5 reais"}, {"k": "p3", "s": "vale 10 reais", "img": "lb_nota10", "voz": "nota de 10 reais"}, {"k": "p4", "s": "vale 20 reais", "img": "lb_nota20", "voz": "nota de 20 reais"}], "dadosExtra": {"DICAS": ["Olhe o número escrito no dinheiro.", "O número é o valor: a moeda com 1 vale 1 real; a nota com 5 vale 5 reais. Siga a linha.", "A resposta certa está acesa no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada dinheiro ao <b>seu valor</b>.", "FECHO": "Você ligou todos!"}, "vozIntro": "lb_f02_intro", "dicaVoz": "lb_f02_dica"}, {"id": "f03", "mec": "classificar", "selo": "SEPARE", "enunciado": "É <b>moeda</b> ou <b>nota</b>? Guarde na gaveta.", "dica": "Moeda é de metal e redonda; nota é de papel.", "conceito": "objetivo1", "dados": [{"k": "moeda", "n": "MOEDA<br>(de metal)", "img": "lb_moeda1", "voz": "moeda"}, {"k": "nota", "n": "NOTA<br>(de papel)", "img": "lb_nota5", "voz": "nota"}], "dadosExtra": {"FICHAS": [{"img": "lb_moeda1", "alvo": "moeda", "t": "1 REAL"}, {"img": "lb_nota2", "alvo": "nota", "t": "2 REAIS"}, {"img": "lb_nota5", "alvo": "nota", "t": "5 REAIS"}, {"img": "lb_nota10", "alvo": "nota", "t": "10 REAIS"}, {"img": "lb_nota20", "alvo": "nota", "t": "20 REAIS"}, {"img": "lb_moeda1", "alvo": "moeda", "t": "1 REAL"}, {"img": "lb_nota5", "alvo": "nota", "t": "5 REAIS"}, {"img": "lb_nota10", "alvo": "nota", "t": "10 REAIS"}, {"img": "lb_c05", "alvo": "moeda", "t": "5 CENTAVOS"}, {"img": "lb_c10", "alvo": "moeda", "t": "10 CENTAVOS"}, {"img": "lb_c25", "alvo": "moeda", "t": "25 CENTAVOS"}, {"img": "lb_c50", "alvo": "moeda", "t": "50 CENTAVOS"}, {"img": "lb_nota50", "alvo": "nota", "t": "50 REAIS"}, {"img": "lb_nota100", "alvo": "nota", "t": "100 REAIS"}], "DICAS": ["A moeda é redonda e de metal. A nota é de papel.", "Só a de 1 real é moeda; as outras (2, 5, 10, 20) são notas de papel.", "A gaveta certa está com a borda amarela. Toque nela."], "ENUN": "É <b>moeda</b> ou <b>nota</b>? Guarde na gaveta."}, "vozIntro": "lb_f03_intro", "dicaVoz": "lb_f03_dica"}, {"id": "f04", "mec": "caixa-dinheiro", "selo": "CAIXA-DINHEIRO", "enunciado": "Você é o caixa! Monte o valor na <b>bandeja</b>.", "dica": "Olhe a régua verde: ela diz quanto falta.", "conceito": "objetivo1", "dados": [{"v": 1, "t": "moeda", "img": "lb_moeda1"}, {"v": 2, "t": "nota", "img": "lb_nota2"}, {"v": 5, "t": "nota", "img": "lb_nota5"}, {"v": 10, "t": "nota", "img": "lb_nota10"}, {"v": 20, "t": "nota", "img": "lb_nota20"}], "dadosExtra": {"RODADAS": [{"base": 0, "alvo": 3, "selo": "COMPRA", "img": "lb_piao", "nome": "PIÃO", "fala": "Compre o PIÃO! Ele custa <b>3 reais</b>. Monte o dinheiro na bandeja."}, {"base": 0, "alvo": 5, "selo": "COMPRA", "img": "lb_bola", "nome": "BOLA", "fala": "Compre a BOLA! Ela custa <b>5 reais</b>. Monte o dinheiro na bandeja."}, {"base": 0, "alvo": 8, "selo": "COMPRA", "img": "lb_carrinho", "nome": "CARRINHO", "fala": "Compre o CARRINHO! Ele custa <b>8 reais</b>. Monte o dinheiro na bandeja."}], "DINHEIRO": [{"v": 1, "t": "moeda", "img": "lb_moeda1"}, {"v": 2, "t": "nota", "img": "lb_nota2"}, {"v": 5, "t": "nota", "img": "lb_nota5"}, {"v": 10, "t": "nota", "img": "lb_nota10"}, {"v": 20, "t": "nota", "img": "lb_nota20"}], "DICAS": ["Olhe a régua verde: ela mostra quanto ainda falta.", "Escolha um dinheiro que <b>caiba</b> no que falta. As que cabem estão piscando.", "Deixa comigo: eu ponho esta peça e você continua."], "CAIXAIMG": "lb_registradora"}, "vozIntro": "lb_f04_intro", "dicaVoz": "lb_f04_dica"}, {"id": "f05", "mec": "comparar", "selo": "COMPARAR", "enunciado": "Olhe os dois. <b>Qual vale mais?</b>", "dica": "Quanto maior o número, mais vale.", "conceito": "objetivo2", "dados": [{"a": 1, "b": 5, "modo": "blocos", "imgA": "lb_moeda1", "imgB": "lb_nota5", "semSinal": true, "pergunta": "mais", "selo": "QUAL VALE MAIS?", "enun": "Olhe os dois. <b>Qual vale mais?</b>", "voz": "Olhe os dois. Qual vale mais?"}, {"a": 2, "b": 10, "modo": "blocos", "imgA": "lb_nota2", "imgB": "lb_nota10", "semSinal": true, "pergunta": "mais", "selo": "QUAL VALE MAIS?", "enun": "Olhe os dois. <b>Qual vale mais?</b>", "voz": "Olhe os dois. Qual vale mais?"}, {"a": 5, "b": 20, "modo": "blocos", "imgA": "lb_nota5", "imgB": "lb_nota20", "semSinal": true, "pergunta": "mais", "selo": "QUAL VALE MAIS?", "enun": "Olhe os dois. <b>Qual vale mais?</b>", "voz": "Olhe os dois. Qual vale mais?"}], "dadosExtra": {"D1": ["Olhe o número em cada dinheiro. Quanto maior o número, mais ele vale.", "Compare os dois números. O dinheiro certo está aceso.", "Toque no dinheiro que está aceso."]}, "vozIntro": "lb_f05_intro", "dicaVoz": "lb_f05_dica"}, {"id": "f07", "mec": "escolher", "selo": "ESCOLHA", "enunciado": "Ache o <b>número</b> no dinheiro. Quanto vale?", "dica": "Procure o número escrito no dinheiro.", "conceito": "objetivo2", "dados": [{"img": "lb_nota2", "p": "Ache o <b>número</b> no dinheiro. Quanto vale?", "c": "2 REAIS", "e": ["1 REAL", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>2 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota5", "p": "Ache o <b>número</b> no dinheiro. Quanto vale?", "c": "5 REAIS", "e": ["1 REAL", "2 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>5 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota10", "p": "Ache o <b>número</b> no dinheiro. Quanto vale?", "c": "10 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>10 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota20", "p": "Ache o <b>número</b> no dinheiro. Quanto vale?", "c": "20 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>20 REAIS</b>. Toque para seguir."]}, {"img": "lb_moeda1", "p": "Ache o <b>número</b> no dinheiro. Quanto vale?", "c": "1 REAL", "e": ["2 REAIS", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>1 REAL</b>. Toque para seguir."]}, {"img": "lb_nota2", "p": "Ache o <b>número</b> no dinheiro. Quanto vale?", "c": "2 REAIS", "e": ["1 REAL", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>2 REAIS</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTO VALE", "FECHO": "Muito bem! Você acertou tudo."}, "vozIntro": "lb_f07_intro", "dicaVoz": "lb_f07_dica"}, {"id": "f08", "mec": "bingo", "selo": "BINGO DO DINHEIRO", "enunciado": "O Pipo mostra um dinheiro. Ache o número dele na sua cartela.", "dica": "Olhe o número escrito no dinheiro e procure esse número na cartela.", "conceito": "objetivo2", "dados": [{"selo": "BINGO DO DINHEIRO", "tipo": "dinheiro", "enun": "O Pipo mostra um dinheiro. Ache o <b>número</b> dele na cartela.", "voz": "O Pipo mostra um dinheiro. Ache o número dele na sua cartela.", "cartela": [2, 5, 10, 20, 50, 100], "fora": [1], "imgs": {"1": "lb_moeda1", "2": "lb_nota2", "5": "lb_nota5", "10": "lb_nota10", "20": "lb_nota20", "50": "lb_nota50", "100": "lb_nota100"}}, {"selo": "MAIS UMA CARTELA", "tipo": "dinheiro", "enun": "O Pipo mostra um dinheiro. Ache o <b>número</b> dele na cartela.", "voz": "O Pipo mostra um dinheiro. Ache o número dele na sua cartela.", "cartela": [1, 5, 10, 20, 50, 100], "fora": [2], "imgs": {"1": "lb_moeda1", "2": "lb_nota2", "5": "lb_nota5", "10": "lb_nota10", "20": "lb_nota20", "50": "lb_nota50", "100": "lb_nota100"}}], "vozIntro": "lb_f08_intro", "dicaVoz": "lb_f08_dica"}, {"id": "f09", "mec": "classificar", "selo": "SEPARE", "enunciado": "Moeda é de metal; nota, de papel. <b>Separe</b>.", "dica": "Moeda é de metal e redonda; nota é de papel.", "conceito": "objetivo3", "dados": [{"k": "moeda", "n": "MOEDA<br>(de metal)", "img": "lb_moeda1", "voz": "moeda"}, {"k": "nota", "n": "NOTA<br>(de papel)", "img": "lb_nota5", "voz": "nota"}], "dadosExtra": {"FICHAS": [{"img": "lb_moeda1", "alvo": "moeda", "t": "1 REAL"}, {"img": "lb_nota2", "alvo": "nota", "t": "2 REAIS"}, {"img": "lb_nota5", "alvo": "nota", "t": "5 REAIS"}, {"img": "lb_nota10", "alvo": "nota", "t": "10 REAIS"}, {"img": "lb_nota20", "alvo": "nota", "t": "20 REAIS"}, {"img": "lb_moeda1", "alvo": "moeda", "t": "1 REAL"}, {"img": "lb_nota5", "alvo": "nota", "t": "5 REAIS"}, {"img": "lb_nota10", "alvo": "nota", "t": "10 REAIS"}, {"img": "lb_c05", "alvo": "moeda", "t": "5 CENTAVOS"}, {"img": "lb_c10", "alvo": "moeda", "t": "10 CENTAVOS"}, {"img": "lb_c25", "alvo": "moeda", "t": "25 CENTAVOS"}, {"img": "lb_c50", "alvo": "moeda", "t": "50 CENTAVOS"}, {"img": "lb_nota50", "alvo": "nota", "t": "50 REAIS"}, {"img": "lb_nota100", "alvo": "nota", "t": "100 REAIS"}], "DICAS": ["A moeda é redonda e de metal. A nota é de papel.", "Só a de 1 real é moeda; as outras (2, 5, 10, 20) são notas de papel.", "A gaveta certa está com a borda amarela. Toque nela."], "ENUN": "Moeda é de metal; nota, de papel. <b>Separe</b>."}, "vozIntro": "lb_f09_intro", "dicaVoz": "lb_f09_dica"}, {"id": "f10", "mec": "caixa-dinheiro", "selo": "CAIXA-DINHEIRO", "enunciado": "Você é o caixa! Monte o valor na <b>bandeja</b>.", "dica": "Olhe a régua verde: ela diz quanto falta.", "conceito": "objetivo3", "dados": [{"v": 1, "t": "moeda", "img": "lb_moeda1"}, {"v": 2, "t": "nota", "img": "lb_nota2"}, {"v": 5, "t": "nota", "img": "lb_nota5"}, {"v": 10, "t": "nota", "img": "lb_nota10"}, {"v": 20, "t": "nota", "img": "lb_nota20"}], "dadosExtra": {"RODADAS": [{"base": 0, "alvo": 12, "selo": "COMPRA", "img": "lb_boneca", "nome": "BONECA", "fala": "Compre a BONECA! Ela custa <b>12 reais</b>. Monte o dinheiro na bandeja."}, {"base": 0, "alvo": 10, "selo": "COMPRA", "img": "lb_urso", "nome": "URSO", "fala": "Compre o URSO! Ele custa <b>10 reais</b>. Monte o dinheiro na bandeja."}, {"base": 0, "alvo": 15, "selo": "COMPRA", "img": "lb_foguete", "nome": "FOGUETE", "fala": "Compre o FOGUETE! Ele custa <b>15 reais</b>. Monte o dinheiro na bandeja."}], "DINHEIRO": [{"v": 1, "t": "moeda", "img": "lb_moeda1"}, {"v": 2, "t": "nota", "img": "lb_nota2"}, {"v": 5, "t": "nota", "img": "lb_nota5"}, {"v": 10, "t": "nota", "img": "lb_nota10"}, {"v": 20, "t": "nota", "img": "lb_nota20"}], "DICAS": ["Olhe a régua verde: ela mostra quanto ainda falta.", "Escolha um dinheiro que <b>caiba</b> no que falta. As que cabem estão piscando.", "Deixa comigo: eu ponho esta peça e você continua."], "CAIXAIMG": "lb_registradora"}, "vozIntro": "lb_f10_intro", "dicaVoz": "lb_f10_dica"}, {"id": "f11", "mec": "domino", "selo": "DOMINÓ DO DINHEIRO", "enunciado": "Encaixe cada dinheiro na ponta do número igual.", "dica": "Olhe o número do dinheiro e ache a ponta com esse mesmo número.", "conceito": "objetivo3", "dados": [{"selo": "DOMINÓ DO DINHEIRO", "esq": "dinheiro", "dir": "num", "semente": 1, "enun": "Encaixe cada <b>dinheiro</b> na ponta do <b>número igual</b>.", "voz": "Encaixe cada dinheiro na ponta do número igual.", "cadeia": [1, 2, 5, 10], "imgs": {"1": "lb_moeda1", "2": "lb_nota2", "5": "lb_nota5", "10": "lb_nota10", "20": "lb_nota20", "50": "lb_nota50", "100": "lb_nota100"}}, {"selo": "MAIS UMA CORRENTE", "esq": "dinheiro", "dir": "num", "semente": 2, "enun": "Encaixe cada <b>dinheiro</b> na ponta do <b>número igual</b>.", "voz": "Encaixe cada dinheiro na ponta do número igual.", "cadeia": [2, 5, 10, 20], "imgs": {"1": "lb_moeda1", "2": "lb_nota2", "5": "lb_nota5", "10": "lb_nota10", "20": "lb_nota20", "50": "lb_nota50", "100": "lb_nota100"}}], "vozIntro": "lb_f11_intro", "dicaVoz": "lb_f11_dica"}, {"id": "f13", "mec": "escolher", "selo": "ESCOLHA", "enunciado": "Qual é o <b>valor</b> deste dinheiro?", "dica": "Procure o número escrito no dinheiro.", "conceito": "objetivo4", "dados": [{"img": "lb_nota5", "p": "Qual é o <b>valor</b> deste dinheiro?", "c": "5 REAIS", "e": ["1 REAL", "2 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>5 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota10", "p": "Qual é o <b>valor</b> deste dinheiro?", "c": "10 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>10 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota20", "p": "Qual é o <b>valor</b> deste dinheiro?", "c": "20 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>20 REAIS</b>. Toque para seguir."]}, {"img": "lb_moeda1", "p": "Qual é o <b>valor</b> deste dinheiro?", "c": "1 REAL", "e": ["2 REAIS", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>1 REAL</b>. Toque para seguir."]}, {"img": "lb_nota2", "p": "Qual é o <b>valor</b> deste dinheiro?", "c": "2 REAIS", "e": ["1 REAL", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>2 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota5", "p": "Qual é o <b>valor</b> deste dinheiro?", "c": "5 REAIS", "e": ["1 REAL", "2 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>5 REAIS</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTO VALE", "FECHO": "Muito bem! Você acertou tudo."}, "vozIntro": "lb_f13_intro", "dicaVoz": "lb_f13_dica"}, {"id": "f14", "mec": "bingo", "selo": "BINGO DO DINHEIRO", "enunciado": "O Pipo mostra um dinheiro. Ache o número dele na sua cartela.", "dica": "Olhe o número escrito no dinheiro e procure esse número na cartela.", "conceito": "objetivo4", "dados": [{"selo": "BINGO DO DINHEIRO", "tipo": "dinheiro", "enun": "O Pipo mostra um dinheiro. Ache o <b>número</b> dele na cartela.", "voz": "O Pipo mostra um dinheiro. Ache o número dele na sua cartela.", "cartela": [1, 2, 5, 10, 20, 50], "fora": [100], "imgs": {"1": "lb_moeda1", "2": "lb_nota2", "5": "lb_nota5", "10": "lb_nota10", "20": "lb_nota20", "50": "lb_nota50", "100": "lb_nota100"}}, {"selo": "MAIS UMA CARTELA", "tipo": "dinheiro", "enun": "O Pipo mostra um dinheiro. Ache o <b>número</b> dele na cartela.", "voz": "O Pipo mostra um dinheiro. Ache o número dele na sua cartela.", "cartela": [2, 5, 10, 20, 50, 100], "fora": [1], "imgs": {"1": "lb_moeda1", "2": "lb_nota2", "5": "lb_nota5", "10": "lb_nota10", "20": "lb_nota20", "50": "lb_nota50", "100": "lb_nota100"}}], "vozIntro": "lb_f14_intro", "dicaVoz": "lb_f14_dica"}, {"id": "f15", "mec": "classificar", "selo": "SEPARE", "enunciado": "Olhe bem: é <b>moeda</b> ou <b>nota</b>?", "dica": "Moeda é de metal e redonda; nota é de papel.", "conceito": "objetivo4", "dados": [{"k": "moeda", "n": "MOEDA<br>(de metal)", "img": "lb_moeda1", "voz": "moeda"}, {"k": "nota", "n": "NOTA<br>(de papel)", "img": "lb_nota5", "voz": "nota"}], "dadosExtra": {"FICHAS": [{"img": "lb_moeda1", "alvo": "moeda", "t": "1 REAL"}, {"img": "lb_nota2", "alvo": "nota", "t": "2 REAIS"}, {"img": "lb_nota5", "alvo": "nota", "t": "5 REAIS"}, {"img": "lb_nota10", "alvo": "nota", "t": "10 REAIS"}, {"img": "lb_nota20", "alvo": "nota", "t": "20 REAIS"}, {"img": "lb_moeda1", "alvo": "moeda", "t": "1 REAL"}, {"img": "lb_nota5", "alvo": "nota", "t": "5 REAIS"}, {"img": "lb_nota10", "alvo": "nota", "t": "10 REAIS"}, {"img": "lb_c05", "alvo": "moeda", "t": "5 CENTAVOS"}, {"img": "lb_c10", "alvo": "moeda", "t": "10 CENTAVOS"}, {"img": "lb_c25", "alvo": "moeda", "t": "25 CENTAVOS"}, {"img": "lb_c50", "alvo": "moeda", "t": "50 CENTAVOS"}, {"img": "lb_nota50", "alvo": "nota", "t": "50 REAIS"}, {"img": "lb_nota100", "alvo": "nota", "t": "100 REAIS"}], "DICAS": ["A moeda é redonda e de metal. A nota é de papel.", "Só a de 1 real é moeda; as outras (2, 5, 10, 20) são notas de papel.", "A gaveta certa está com a borda amarela. Toque nela."], "ENUN": "Olhe bem: é <b>moeda</b> ou <b>nota</b>?"}, "vozIntro": "lb_f15_intro", "dicaVoz": "lb_f15_dica"}, {"id": "f16", "mec": "caixa-dinheiro", "selo": "CAIXA-DINHEIRO", "enunciado": "Você é o caixa! Monte o valor na <b>bandeja</b>.", "dica": "Olhe a régua verde: ela diz quanto falta.", "conceito": "objetivo4", "dados": [{"v": 1, "t": "moeda", "img": "lb_moeda1"}, {"v": 2, "t": "nota", "img": "lb_nota2"}, {"v": 5, "t": "nota", "img": "lb_nota5"}, {"v": 10, "t": "nota", "img": "lb_nota10"}, {"v": 20, "t": "nota", "img": "lb_nota20"}], "dadosExtra": {"RODADAS": [{"base": 0, "alvo": 5, "selo": "COMPRA", "img": "lb_bola", "nome": "BOLA", "fala": "Compre a BOLA! Ela custa <b>5 reais</b>. Monte o dinheiro na bandeja."}, {"base": 0, "alvo": 8, "selo": "COMPRA", "img": "lb_carrinho", "nome": "CARRINHO", "fala": "Compre o CARRINHO! Ele custa <b>8 reais</b>. Monte o dinheiro na bandeja."}, {"base": 0, "alvo": 3, "selo": "COMPRA", "img": "lb_piao", "nome": "PIÃO", "fala": "Compre o PIÃO! Ele custa <b>3 reais</b>. Monte o dinheiro na bandeja."}], "DINHEIRO": [{"v": 1, "t": "moeda", "img": "lb_moeda1"}, {"v": 2, "t": "nota", "img": "lb_nota2"}, {"v": 5, "t": "nota", "img": "lb_nota5"}, {"v": 10, "t": "nota", "img": "lb_nota10"}, {"v": 20, "t": "nota", "img": "lb_nota20"}], "DICAS": ["Olhe a régua verde: ela mostra quanto ainda falta.", "Escolha um dinheiro que <b>caiba</b> no que falta. As que cabem estão piscando.", "Deixa comigo: eu ponho esta peça e você continua."], "CAIXAIMG": "lb_registradora"}, "vozIntro": "lb_f16_intro", "dicaVoz": "lb_f16_dica"}, {"id": "f17", "mec": "comparar", "selo": "COMPARAR", "enunciado": "Qual tem o <b>maior valor</b>?", "dica": "Quanto maior o número, mais vale.", "conceito": "objetivo5", "dados": [{"a": 2, "b": 10, "modo": "blocos", "imgA": "lb_nota2", "imgB": "lb_nota10", "semSinal": true, "pergunta": "menos", "selo": "QUAL VALE MENOS?", "enun": "Olhe os dois. <b>Qual vale menos?</b>", "voz": "Olhe os dois. Qual vale menos?"}, {"a": 5, "b": 20, "modo": "blocos", "imgA": "lb_nota5", "imgB": "lb_nota20", "semSinal": true, "pergunta": "menos", "selo": "QUAL VALE MENOS?", "enun": "Olhe os dois. <b>Qual vale menos?</b>", "voz": "Olhe os dois. Qual vale menos?"}, {"a": 10, "b": 10, "modo": "blocos", "imgA": "lb_nota10", "imgB": "lb_nota10", "semSinal": true, "pergunta": "mais", "selo": "SERÁ QUE É IGUAL?", "enun": "Olhe bem os dois. <b>Qual vale mais?</b>", "voz": "Olhe bem os dois. Qual vale mais?"}], "dadosExtra": {"D1": ["Olhe o número em cada dinheiro. Quanto maior o número, mais ele vale.", "Compare os dois números. O dinheiro certo está aceso.", "Toque no dinheiro que está aceso."]}, "vozIntro": "lb_f17_intro", "dicaVoz": "lb_f17_dica"}, {"id": "aquecimento", "mec": "memoria", "selo": "AQUECIMENTO", "enunciado": "Ache as <b>figuras iguais</b>.", "dica": "Vire duas cartas e guarde na memória onde cada uma está.", "conceito": "objetivo5", "dados": [{"k": "m1", "img": "lb_moeda1", "imgsen": "lb_moeda1", "voz": "1 real", "vozsen": "1 real"}, {"k": "m5", "img": "lb_nota5", "imgsen": "lb_nota5", "voz": "5 reais", "vozsen": "5 reais"}, {"k": "m10", "img": "lb_nota10", "imgsen": "lb_nota10", "voz": "10 reais", "vozsen": "10 reais"}, {"k": "m20", "img": "lb_nota20", "imgsen": "lb_nota20", "voz": "20 reais", "vozsen": "20 reais"}], "vozIntro": "lb_aquecimento_intro", "dicaVoz": "lb_aquecimento_dica"}, {"id": "f19", "mec": "escolher", "selo": "ESCOLHA", "enunciado": "Agora um maior. <b>Quanto ele vale?</b>", "dica": "Procure o número escrito no dinheiro.", "conceito": "objetivo5", "dados": [{"img": "lb_nota10", "p": "Agora um maior. <b>Quanto ele vale?</b>", "c": "10 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>10 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota20", "p": "Agora um maior. <b>Quanto ele vale?</b>", "c": "20 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>20 REAIS</b>. Toque para seguir."]}, {"img": "lb_moeda1", "p": "Agora um maior. <b>Quanto ele vale?</b>", "c": "1 REAL", "e": ["2 REAIS", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>1 REAL</b>. Toque para seguir."]}, {"img": "lb_nota2", "p": "Agora um maior. <b>Quanto ele vale?</b>", "c": "2 REAIS", "e": ["1 REAL", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>2 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota5", "p": "Agora um maior. <b>Quanto ele vale?</b>", "c": "5 REAIS", "e": ["1 REAL", "2 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>5 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota10", "p": "Agora um maior. <b>Quanto ele vale?</b>", "c": "10 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>10 REAIS</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTO VALE", "FECHO": "Muito bem! Você acertou tudo."}, "vozIntro": "lb_f19_intro", "dicaVoz": "lb_f19_dica"}, {"id": "f20", "mec": "ligar", "selo": "LIGUE", "enunciado": "Agora as notas maiores: <b>ligue</b> ao valor.", "dica": "Siga a linha até o par certo.", "conceito": "objetivo5", "dados": [{"k": "p0", "s": "vale 1 real", "img": "lb_moeda1", "voz": "moeda de 1 real"}, {"k": "p1", "s": "vale 2 reais", "img": "lb_nota2", "voz": "nota de 2 reais"}, {"k": "p2", "s": "vale 5 reais", "img": "lb_nota5", "voz": "nota de 5 reais"}, {"k": "p3", "s": "vale 10 reais", "img": "lb_nota10", "voz": "nota de 10 reais"}, {"k": "p4", "s": "vale 20 reais", "img": "lb_nota20", "voz": "nota de 20 reais"}], "dadosExtra": {"DICAS": ["Veja o preço do brinquedo e ache o dinheiro do mesmo número.", "O pião custa 2: paga com a nota de 2. Siga a linha tracejada.", "A resposta certa está acesa. Toque nela."], "FEITOS": [], "ENUN": "Agora as notas maiores: <b>ligue</b> ao valor.", "FECHO": "Tudo pago certinho!"}, "vozIntro": "lb_f20_intro", "dicaVoz": "lb_f20_dica"}, {"id": "f21", "mec": "quebra-cabeca", "selo": "MONTE O PIPO", "enunciado": "Monte o Pipo! Ponha cada pedaço no lugar certo.", "dica": "Olhe as bordas e as cores de cada pedaço para achar o lugar.", "conceito": "objetivo6", "dados": {"img": "lb_pipo_puzzle", "cols": 3, "lins": 2, "w": 336, "h": 384, "fundo": true}, "vozIntro": "lb_f21_intro", "dicaVoz": "lb_f21_dica"}, {"id": "f22", "mec": "ordenar", "selo": "EM ORDEM", "enunciado": "Ponha o dinheiro do que vale menos ao que vale mais.", "dica": "Procure sempre o dinheiro que vale menos entre os que sobraram.", "conceito": "objetivo6", "dados": [{"v": 5, "img": "lb_nota5", "nome": "5 REAIS"}, {"v": 10, "img": "lb_nota10", "nome": "10 REAIS"}, {"v": 20, "img": "lb_nota20", "nome": "20 REAIS"}, {"v": 50, "img": "lb_nota50", "nome": "50 REAIS"}], "dadosExtra": {"ORDTXT": {"selo": "EM ORDEM", "balao": "Ponha o dinheiro <b>do que vale menos ao que vale mais</b>.", "hint": "Toque no dinheiro ou arraste até a fila.", "d": ["Olhe o número em cada dinheiro e procure o <b>menor</b>.", "O menor que sobrou está <b>piscando</b>. Toque nele.", "Era este! Vamos juntos: eu ponho e você segue."], "fim": "Fila pronta! Do que vale menos ao que vale mais."}}, "vozIntro": "lb_f22_intro", "dicaVoz": "lb_f22_dica"}, {"id": "f23", "mec": "domino", "selo": "DOMINÓ DO DINHEIRO", "enunciado": "Encaixe cada dinheiro na ponta do número igual.", "dica": "Olhe o número do dinheiro e ache a ponta com esse mesmo número.", "conceito": "objetivo6", "dados": [{"selo": "DOMINÓ DO DINHEIRO", "esq": "dinheiro", "dir": "num", "semente": 1, "enun": "Encaixe cada <b>dinheiro</b> na ponta do <b>número igual</b>.", "voz": "Encaixe cada dinheiro na ponta do número igual.", "cadeia": [5, 10, 20, 50], "imgs": {"1": "lb_moeda1", "2": "lb_nota2", "5": "lb_nota5", "10": "lb_nota10", "20": "lb_nota20", "50": "lb_nota50", "100": "lb_nota100"}}, {"selo": "MAIS UMA CORRENTE", "esq": "dinheiro", "dir": "num", "semente": 1, "enun": "Encaixe cada <b>dinheiro</b> na ponta do <b>número igual</b>.", "voz": "Encaixe cada dinheiro na ponta do número igual.", "cadeia": [1, 5, 10, 20], "imgs": {"1": "lb_moeda1", "2": "lb_nota2", "5": "lb_nota5", "10": "lb_nota10", "20": "lb_nota20", "50": "lb_nota50", "100": "lb_nota100"}}], "vozIntro": "lb_f23_intro", "dicaVoz": "lb_f23_dica"}, {"id": "f25", "mec": "ordenar", "selo": "EM ORDEM", "enunciado": "Ponha o dinheiro do que vale menos ao que vale mais.", "dica": "Procure sempre o dinheiro que vale menos entre os que sobraram.", "conceito": "objetivo7", "dados": [{"v": 1, "img": "lb_moeda1", "nome": "1 REAL"}, {"v": 2, "img": "lb_nota2", "nome": "2 REAIS"}, {"v": 5, "img": "lb_nota5", "nome": "5 REAIS"}], "dadosExtra": {"ORDTXT": {"selo": "EM ORDEM", "balao": "Ponha o dinheiro <b>do que vale menos ao que vale mais</b>.", "hint": "Toque no dinheiro ou arraste até a fila.", "d": ["Olhe o número em cada dinheiro e procure o <b>menor</b>.", "O menor que sobrou está <b>piscando</b>. Toque nele.", "Era este! Vamos juntos: eu ponho e você segue."], "fim": "Fila pronta! Do que vale menos ao que vale mais."}}, "vozIntro": "lb_f25_intro", "dicaVoz": "lb_f25_dica"}, {"id": "f26", "mec": "ligar", "selo": "LIGUE", "enunciado": "Você já sabe! <b>Ligue</b> o dinheiro ao valor.", "dica": "Siga a linha até o par certo.", "conceito": "objetivo7", "dados": [{"k": "p0", "s": "vale 1 real", "img": "lb_moeda1", "voz": "moeda de 1 real"}, {"k": "p1", "s": "vale 2 reais", "img": "lb_nota2", "voz": "nota de 2 reais"}, {"k": "p2", "s": "vale 5 reais", "img": "lb_nota5", "voz": "nota de 5 reais"}, {"k": "p3", "s": "vale 10 reais", "img": "lb_nota10", "voz": "nota de 10 reais"}, {"k": "p4", "s": "vale 20 reais", "img": "lb_nota20", "voz": "nota de 20 reais"}], "dadosExtra": {"DICAS": ["Veja o preço do brinquedo e ache o dinheiro do mesmo número.", "O pião custa 2: paga com a nota de 2. Siga a linha tracejada.", "A resposta certa está acesa. Toque nela."], "FEITOS": [], "ENUN": "Você já sabe! <b>Ligue</b> o dinheiro ao valor.", "FECHO": "Tudo pago certinho!"}, "vozIntro": "lb_f26_intro", "dicaVoz": "lb_f26_dica"}, {"id": "f27", "mec": "ordenar", "selo": "EM ORDEM", "enunciado": "Ponha o dinheiro do que vale menos ao que vale mais.", "dica": "Procure sempre o dinheiro que vale menos entre os que sobraram.", "conceito": "objetivo7", "dados": [{"v": 2, "img": "lb_nota2", "nome": "2 REAIS"}, {"v": 5, "img": "lb_nota5", "nome": "5 REAIS"}, {"v": 10, "img": "lb_nota10", "nome": "10 REAIS"}, {"v": 20, "img": "lb_nota20", "nome": "20 REAIS"}], "dadosExtra": {"ORDTXT": {"selo": "EM ORDEM", "balao": "Ponha o dinheiro <b>do que vale menos ao que vale mais</b>.", "hint": "Toque no dinheiro ou arraste até a fila.", "d": ["Olhe o número em cada dinheiro e procure o <b>menor</b>.", "O menor que sobrou está <b>piscando</b>. Toque nele.", "Era este! Vamos juntos: eu ponho e você segue."], "fim": "Fila pronta! Do que vale menos ao que vale mais."}}, "vozIntro": "lb_f27_intro", "dicaVoz": "lb_f27_dica"}, {"id": "f28", "mec": "quebra-cabeca", "selo": "MONTE O PIPO", "enunciado": "Monte o Pipo! Ponha cada pedaço no lugar certo.", "dica": "Olhe as bordas e as cores de cada pedaço para achar o lugar.", "conceito": "objetivo7", "dados": {"img": "lb_pipo_puzzle", "cols": 3, "lins": 2, "w": 336, "h": 384, "fundo": true}, "vozIntro": "lb_f28_intro", "dicaVoz": "lb_f28_dica"}, {"id": "f29", "mec": "comparar", "selo": "COMPARAR", "enunciado": "Você já compara! <b>Qual vale mais?</b>", "dica": "Quanto maior o número, mais vale.", "conceito": "objetivo8", "dados": [{"a": 5, "b": 50, "modo": "blocos", "imgA": "lb_nota5", "imgB": "lb_nota50", "semSinal": true, "pergunta": "mais", "selo": "QUAL VALE MAIS?", "enun": "Olhe os dois. <b>Qual vale mais?</b>", "voz": "Olhe os dois. Qual vale mais?"}, {"a": 20, "b": 10, "modo": "blocos", "imgA": "lb_nota20", "imgB": "lb_nota10", "semSinal": true, "pergunta": "menos", "selo": "QUAL VALE MENOS?", "enun": "Olhe os dois. <b>Qual vale menos?</b>", "voz": "Olhe os dois. Qual vale menos?"}, {"a": 100, "b": 100, "modo": "blocos", "imgA": "lb_nota100", "imgB": "lb_nota100", "semSinal": true, "pergunta": "mais", "selo": "SERÁ QUE É IGUAL?", "enun": "Olhe bem os dois. <b>Qual vale mais?</b>", "voz": "Olhe bem os dois. Qual vale mais?"}], "dadosExtra": {"D1": ["Olhe o número em cada dinheiro. Quanto maior o número, mais ele vale.", "Compare os dois números. O dinheiro certo está aceso.", "Toque no dinheiro que está aceso."]}, "vozIntro": "lb_f29_intro", "dicaVoz": "lb_f29_dica"}, {"id": "f31", "mec": "escolher", "selo": "ESCOLHA", "enunciado": "Olhe e diga: <b>quanto vale?</b>", "dica": "Procure o número escrito no dinheiro.", "conceito": "objetivo8", "dados": [{"img": "lb_moeda1", "p": "Olhe e diga: <b>quanto vale?</b>", "c": "1 REAL", "e": ["2 REAIS", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>1 REAL</b>. Toque para seguir."]}, {"img": "lb_nota2", "p": "Olhe e diga: <b>quanto vale?</b>", "c": "2 REAIS", "e": ["1 REAL", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>2 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota5", "p": "Olhe e diga: <b>quanto vale?</b>", "c": "5 REAIS", "e": ["1 REAL", "2 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>5 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota10", "p": "Olhe e diga: <b>quanto vale?</b>", "c": "10 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>10 REAIS</b>. Toque para seguir."]}, {"img": "lb_nota20", "p": "Olhe e diga: <b>quanto vale?</b>", "c": "20 REAIS", "e": ["1 REAL", "2 REAIS", "5 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>20 REAIS</b>. Toque para seguir."]}, {"img": "lb_moeda1", "p": "Olhe e diga: <b>quanto vale?</b>", "c": "1 REAL", "e": ["2 REAIS", "5 REAIS", "10 REAIS"], "d": ["Procure o <b>número</b> escrito no dinheiro.", "O número diz quantos reais vale. Vamos ler juntos.", "É <b>1 REAL</b>. Toque para seguir."]}], "dadosExtra": {"TITULO": "QUANTO VALE", "FECHO": "Muito bem! Você acertou tudo."}, "vozIntro": "lb_f31_intro", "dicaVoz": "lb_f31_dica"}, {"id": "f32", "mec": "ligar", "selo": "LIGUE", "enunciado": "Una cada dinheiro ao <b>valor certo</b>.", "dica": "Siga a linha até o par certo.", "conceito": "objetivo8", "dados": [{"k": "p0", "s": "vale 1 real", "img": "lb_moeda1", "voz": "moeda de 1 real"}, {"k": "p1", "s": "vale 2 reais", "img": "lb_nota2", "voz": "nota de 2 reais"}, {"k": "p2", "s": "vale 5 reais", "img": "lb_nota5", "voz": "nota de 5 reais"}, {"k": "p3", "s": "vale 10 reais", "img": "lb_nota10", "voz": "nota de 10 reais"}, {"k": "p4", "s": "vale 20 reais", "img": "lb_nota20", "voz": "nota de 20 reais"}], "dadosExtra": {"DICAS": ["Veja o preço do brinquedo e ache o dinheiro do mesmo número.", "O pião custa 2: paga com a nota de 2. Siga a linha tracejada.", "A resposta certa está acesa. Toque nela."], "FEITOS": [], "ENUN": "Una cada dinheiro ao <b>valor certo</b>.", "FECHO": "Tudo pago certinho!"}, "vozIntro": "lb_f32_intro", "dicaVoz": "lb_f32_dica"}, {"id": "f33", "mec": "classificar", "selo": "SEPARE", "enunciado": "É <b>moeda</b> ou <b>nota</b>? Guarde certo.", "dica": "Moeda é de metal e redonda; nota é de papel.", "conceito": "objetivo9", "dados": [{"k": "moeda", "n": "MOEDA<br>(de metal)", "img": "lb_moeda1", "voz": "moeda"}, {"k": "nota", "n": "NOTA<br>(de papel)", "img": "lb_nota5", "voz": "nota"}], "dadosExtra": {"FICHAS": [{"img": "lb_moeda1", "alvo": "moeda", "t": "1 REAL"}, {"img": "lb_nota2", "alvo": "nota", "t": "2 REAIS"}, {"img": "lb_nota5", "alvo": "nota", "t": "5 REAIS"}, {"img": "lb_nota10", "alvo": "nota", "t": "10 REAIS"}, {"img": "lb_nota20", "alvo": "nota", "t": "20 REAIS"}, {"img": "lb_moeda1", "alvo": "moeda", "t": "1 REAL"}, {"img": "lb_nota5", "alvo": "nota", "t": "5 REAIS"}, {"img": "lb_nota10", "alvo": "nota", "t": "10 REAIS"}, {"img": "lb_c05", "alvo": "moeda", "t": "5 CENTAVOS"}, {"img": "lb_c10", "alvo": "moeda", "t": "10 CENTAVOS"}, {"img": "lb_c25", "alvo": "moeda", "t": "25 CENTAVOS"}, {"img": "lb_c50", "alvo": "moeda", "t": "50 CENTAVOS"}, {"img": "lb_nota50", "alvo": "nota", "t": "50 REAIS"}, {"img": "lb_nota100", "alvo": "nota", "t": "100 REAIS"}], "DICAS": ["Olhe o número: pequeno é pouco, grande é muito.", "1 e 5 são pouco; 10 e 20 são muito.", "A gaveta certa está acesa. Toque nela."], "ENUN": "É <b>moeda</b> ou <b>nota</b>? Guarde certo."}, "vozIntro": "lb_f33_intro", "dicaVoz": "lb_f33_dica"}, {"id": "f34", "mec": "caixa-dinheiro", "selo": "CAIXA-DINHEIRO", "enunciado": "Você é o caixa! Monte o valor na <b>bandeja</b>.", "dica": "Olhe a régua verde: ela diz quanto falta.", "conceito": "objetivo9", "dados": [{"v": 1, "t": "moeda", "img": "lb_moeda1"}, {"v": 2, "t": "nota", "img": "lb_nota2"}, {"v": 5, "t": "nota", "img": "lb_nota5"}, {"v": 10, "t": "nota", "img": "lb_nota10"}, {"v": 20, "t": "nota", "img": "lb_nota20"}], "dadosExtra": {"RODADAS": [{"base": 0, "alvo": 15, "selo": "COMPRA", "img": "lb_foguete", "nome": "FOGUETE", "fala": "Compre o FOGUETE! Ele custa <b>15 reais</b>. Monte o dinheiro na bandeja."}, {"base": 0, "alvo": 12, "selo": "COMPRA", "img": "lb_boneca", "nome": "BONECA", "fala": "Compre a BONECA! Ela custa <b>12 reais</b>. Monte o dinheiro na bandeja."}, {"base": 0, "alvo": 10, "selo": "COMPRA", "img": "lb_urso", "nome": "URSO", "fala": "Compre o URSO! Ele custa <b>10 reais</b>. Monte o dinheiro na bandeja."}], "DINHEIRO": [{"v": 1, "t": "moeda", "img": "lb_moeda1"}, {"v": 2, "t": "nota", "img": "lb_nota2"}, {"v": 5, "t": "nota", "img": "lb_nota5"}, {"v": 10, "t": "nota", "img": "lb_nota10"}, {"v": 20, "t": "nota", "img": "lb_nota20"}], "DICAS": ["Olhe a régua verde: ela mostra quanto ainda falta.", "Escolha um dinheiro que <b>caiba</b> no que falta. As que cabem estão piscando.", "Deixa comigo: eu ponho esta peça e você continua."], "CAIXAIMG": "lb_registradora"}, "vozIntro": "lb_f34_intro", "dicaVoz": "lb_f34_dica"}, {"id": "f35", "mec": "comparar", "selo": "COMPARAR", "enunciado": "Toque no que <b>vale mais</b>.", "dica": "Quanto maior o número, mais vale.", "conceito": "objetivo9", "dados": [{"a": 10, "b": 100, "modo": "blocos", "imgA": "lb_nota10", "imgB": "lb_nota100", "semSinal": true, "pergunta": "mais", "selo": "QUAL VALE MAIS?", "enun": "Olhe os dois. <b>Qual vale mais?</b>", "voz": "Olhe os dois. Qual vale mais?"}, {"a": 50, "b": 20, "modo": "blocos", "imgA": "lb_nota50", "imgB": "lb_nota20", "semSinal": true, "pergunta": "menos", "selo": "QUAL VALE MENOS?", "enun": "Olhe os dois. <b>Qual vale menos?</b>", "voz": "Olhe os dois. Qual vale menos?"}, {"a": 20, "b": 20, "modo": "blocos", "imgA": "lb_nota20", "imgB": "lb_nota20", "semSinal": true, "pergunta": "mais", "selo": "SERÁ QUE É IGUAL?", "enun": "Olhe bem os dois. <b>Qual vale mais?</b>", "voz": "Olhe bem os dois. Qual vale mais?"}], "dadosExtra": {"D1": ["Olhe o número em cada dinheiro. Quanto maior o número, mais ele vale.", "Compare os dois números. O dinheiro certo está aceso.", "Toque no dinheiro que está aceso."]}, "vozIntro": "lb_f35_intro", "dicaVoz": "lb_f35_dica"}, {"id": "f_pintar", "mec": "pintar-canvas", "selo": "HORA DE PINTAR", "enunciado": "Pinte o brinquedo do jeito que você quiser.", "conceito": "objetivo1", "dica": "Toque numa cor e depois toque no desenho. Pode trocar quantas vezes quiser.", "dados": [{"selo": "HORA DE PINTAR", "nome": "o brinquedo", "voz": "o brinquedo", "img": "lb_brinquedo"}], "dadosExtra": {"TINTAS": [{"c": "#e53935", "n": "vermelho"}, {"c": "#fb8c00", "n": "laranja"}, {"c": "#fdd835", "n": "amarelo"}, {"c": "#43a047", "n": "verde"}, {"c": "#1e88e5", "n": "azul"}, {"c": "#8e24aa", "n": "roxo"}, {"c": "#ec407a", "n": "rosa"}, {"c": "#8d6e63", "n": "marrom"}, {"c": "#333333", "n": "preto"}, {"c": "#ffffff", "n": "branco"}]}, "vozIntro": "lb_f_pintar_intro", "dicaVoz": "lb_f_pintar_dica"}];
 AMBI = "poeira";
 VOZOK = {"1i9iy41": 1, "ylflve": 1, "qiet8r": 1, "jk0oge": 1, "ws4ptm": 1, "1yg74h1": 1, "7dktol": 1, "1d3et8g": 1, "1a7rinl": 1, "raxb4r": 1, "1qfanec": 1, "avb326": 1, "u8vf9c": 1, "1uhhrhd": 1, "l4c0bu": 1, "x54o78": 1, "10pv18w": 1, "dfttc5": 1, "1jdkzb": 1, "p640v6": 1, "5ao9gp": 1, "1ymctwz": 1, "43uy2u": 1, "1rnyp4m": 1, "1w6kv9l": 1, "1vs28iq": 1, "3r1p5h": 1, "1qauttv": 1, "1xaycfq": 1, "25cgh9": 1, "nhohmh": 1, "t5r4v8": 1, "creen9": 1, "1nvysox": 1, "1igdrvc": 1, "4f9vrf": 1, "1a6wm03": 1, "yknruf": 1, "qt1pbx": 1, "11zbgmh": 1, "9k5pzj": 1, "17xk8h9": 1, "us64km": 1, "cjj0s8": 1, "6id67z": 1, "129eg1i": 1, "1wi4fyf": 1, "ykp93k": 1, "1jqye6v": 1, "ykeiw3": 1, "89d916": 1, "65mml7": 1, "19gv70n": 1, "18rcgvd": 1, "17nhhfp": 1, "l2pewm": 1, "ykmo33": 1, "106ccp5": 1, "1c3b4g": 1, "3holj": 1, "483ab5": 1, "ykg2ac": 1, "3775c8": 1, "4li8x7": 1, "zo2oum": 1, "171ohz1": 1, "1uwla1f": 1, "1ilzycc": 1, "1116owp": 1, "1bj2ylu": 1, "1476r2z": 1, "1siufym": 1, "1dxzvb4": 1, "1vuu4zx": 1, "1odgt76": 1, "ykt8ge": 1, "g9yp2b": 1, "1fl1ufo": 1, "gy5bwu": 1, "uqpl1w": 1, "qp3mpj": 1, "ixwe70": 1, "d7cyk4": 1, "5xxpve": 1, "10cjmcf": 1, "4f2ebr": 1, "1leg8ch": 1, "185ynzc": 1, "m11d05": 1, "15ggk90": 1, "pxvgs": 1, "h7tcxz": 1, "1hpvvst": 1, "maxjmi": 1, "1na114a": 1, "1pc2u1x": 1, "1kbbmry": 1, "1pzjydb": 1, "18gdzq9": 1, "12hesqv": 1, "prudty": 1, "1q9ce32": 1, "1b1khzt": 1, "88pqwn": 1, "kvk2e8": 1, "11ylgwz": 1, "1675xbz": 1, "kxgf27": 1, "v8kh6p": 1, "cj54jw": 1, "1hmuuva": 1, "1apoiu5": 1, "1mfu9s7": 1, "steoe6": 1, "eeq97q": 1, "4lf8yj": 1, "yke0n5": 1, "ykquvh": 1, "ykquqi": 1, "3o8hzn": 1, "4hggjz": 1, "1vwola2": 1, "132hlvx": 1, "1c7nbp8": 1, "l1fi9q": 1, "k4o16y": 1, "u45fpu": 1, "10lu8zj": 1};
+AUDIOS = ["lb_abertura", "lb_f01_intro", "lb_f01_dica", "op_1i9iy41", "op_ylflve", "op_qiet8r", "op_jk0oge", "op_ws4ptm", "op_1yg74h1", "op_7dktol", "op_1d3et8g", "op_1a7rinl", "op_raxb4r", "op_1qfanec", "op_avb326", "op_u8vf9c", "op_1uhhrhd", "op_l4c0bu", "op_x54o78", "op_10pv18w", "op_dfttc5", "op_1jdkzb", "lb_f02_intro", "lb_f02_dica", "op_p640v6", "op_5ao9gp", "op_1ymctwz", "op_43uy2u", "op_1rnyp4m", "op_1w6kv9l", "op_1vs28iq", "op_3r1p5h", "op_1qauttv", "op_1xaycfq", "op_25cgh9", "op_nhohmh", "op_t5r4v8", "op_creen9", "op_1nvysox", "lb_f03_intro", "lb_f03_dica", "op_1igdrvc", "op_4f9vrf", "op_1a6wm03", "op_yknruf", "op_qt1pbx", "op_11zbgmh", "op_9k5pzj", "op_17xk8h9", "op_us64km", "op_cjj0s8", "op_6id67z", "op_129eg1i", "lb_f04_intro", "lb_f04_dica", "op_1wi4fyf", "op_ykp93k", "op_1jqye6v", "op_ykeiw3", "op_89d916", "op_65mml7", "op_19gv70n", "op_18rcgvd", "op_17nhhfp", "op_l2pewm", "lb_f05_intro", "lb_f05_dica", "op_ykmo33", "op_106ccp5", "op_1c3b4g", "op_3holj", "op_483ab5", "op_ykg2ac", "op_3775c8", "op_4li8x7", "op_zo2oum", "op_171ohz1", "op_1uwla1f", "lb_f07_intro", "lb_f07_dica", "op_1ilzycc", "lb_f08_intro", "lb_f08_dica", "op_1116owp", "op_1bj2ylu", "op_1476r2z", "op_1siufym", "lb_f09_intro", "lb_f09_dica", "op_1dxzvb4", "lb_f10_intro", "lb_f10_dica", "op_1vuu4zx", "op_1odgt76", "op_ykt8ge", "op_g9yp2b", "op_1fl1ufo", "op_gy5bwu", "lb_f11_intro", "lb_f11_dica", "op_uqpl1w", "op_qp3mpj", "op_ixwe70", "op_d7cyk4", "lb_f13_intro", "lb_f13_dica", "op_5xxpve", "lb_f14_intro", "lb_f14_dica", "lb_f15_intro", "lb_f15_dica", "op_10cjmcf", "lb_f16_intro", "lb_f16_dica", "lb_f17_intro", "lb_f17_dica", "op_4f2ebr", "op_1leg8ch", "op_185ynzc", "op_m11d05", "op_15ggk90", "lb_aquecimento_intro", "lb_aquecimento_dica", "lb_f19_intro", "lb_f19_dica", "op_pxvgs", "lb_f20_intro", "lb_f20_dica", "op_h7tcxz", "op_1hpvvst", "op_maxjmi", "op_1na114a", "op_1pc2u1x", "lb_f21_intro", "lb_f21_dica", "lb_f22_intro", "lb_f22_dica", "op_1kbbmry", "op_1pzjydb", "op_18gdzq9", "op_12hesqv", "op_prudty", "op_1q9ce32", "op_1b1khzt", "lb_f23_intro", "lb_f23_dica", "lb_f25_intro", "lb_f25_dica", "lb_f26_intro", "lb_f26_dica", "op_88pqwn", "lb_f27_intro", "lb_f27_dica", "lb_f28_intro", "lb_f28_dica", "lb_f29_intro", "lb_f29_dica", "lb_f31_intro", "lb_f31_dica", "op_kvk2e8", "lb_f32_intro", "lb_f32_dica", "op_11ylgwz", "lb_f33_intro", "lb_f33_dica", "op_1675xbz", "op_kxgf27", "op_v8kh6p", "op_cj54jw", "lb_f34_intro", "lb_f34_dica", "lb_f35_intro", "lb_f35_dica", "lb_f_pintar_intro", "lb_f_pintar_dica", "op_1hmuuva", "op_1apoiu5", "op_1mfu9s7", "op_steoe6", "op_eeq97q", "op_4lf8yj", "op_yke0n5", "op_ykquvh", "op_ykquqi", "op_3o8hzn", "op_4hggjz", "op_1vwola2", "op_132hlvx", "op_1c7nbp8", "op_l1fi9q", "op_k4o16y", "op_u45fpu", "lb_fim", "op_10lu8zj"];
 RELBNCC = "EF01MA19";
 </script>
 </body></html>
