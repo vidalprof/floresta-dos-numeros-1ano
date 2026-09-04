@@ -5642,3 +5642,63 @@ CONTRATO das mecânicas (li o `_qa/jogador.js` — ele espera marcação exata):
   (`globe Earth`, `magnetic compass`, `world map political`, `floor plan`).
 - **Mascote estático** (sem lip-sync): publicar só a pose parada (`_feliz`); fala/pisca
   juntas disparam o portão de tremor. Reuso de coruja do banco serve de placeholder.
+
+## 👆 O PORTÃO DO DEDO — `_qa/sobreposto.js` (set/2026, pedido do Marcos)
+
+Nasceu de uma frase dele sobre a Pinta e Monta do 1º ano: *"a área de pintura de
+algumas imagens fica em cima das cores, dificultando para os alunos escolherem as
+cores, tendo que diminuir o zoom manualmente no navegador"* — e o pedido que
+importa: ***"tipo de erros que seria legal o profissional que criamos pegar"***.
+
+**A pergunta que ele faz é uma só, e é geometria pura:** no centro deste botão,
+quem responde ao toque? Se responde OUTRO elemento, o de baixo está inalcançável
+por mais bonito que fique no print. Nenhum portão antigo pegava isto: o
+`leiaute.js` mede TAMANHO (e os alvos tinham 40px certinhos), o `encaixe.js` mede
+se o conteúdo cabe (e cabia), e a foto parada parece boa. O defeito só existe no
+GESTO — só o `elementFromPoint` o enxerga. Roda em dois tamanhos: **o netbook da
+escola (1024x600)** e o celular (412x820).
+
+**O que ele achou na estreia, varrendo as 74 atividades — cinco defeitos reais
+que estavam no ar, todos invisíveis no print:**
+| Onde | O que a criança via | O que o dedo tocava |
+|---|---|---|
+| Ateliê de Cores (netbook) | "Pronto!" no fim da pintura | "Ouvir de novo" |
+| Museu dos Bichos (netbook) | "Ver mais bichos" | a barra de baixo |
+| Museu dos Bichos (celular) | alto-falante da ONÇA | "Dica" |
+| 3 provas (Léo/EF, Mat 2º, Vale 4º) — celular | o 6º crachá de personagem | liga/desliga o som |
+
+**⚠️ AS QUATRO ARMADILHAS que ele já pagou, e por isso estão escritas no código:**
+1. **Fora da janela não é coberto** — é rolagem. Sem esse cuidado ele acusava 28
+   inocentes de uma vez (listas que rolam de propósito).
+2. **Filho e pai não se cobrem** — botão com `<img>` dentro devolve a `<img>`.
+3. **Tela de capa não é obstrução** — quem cobre mais de 90% da janela é a CAPA
+   esperando o primeiro toque (`#telaIntro`, `#start`), não vizinho mal posto.
+4. **Enfeite não é conteúdo** — a 1ª versão do "esmagado" usava
+   `scrollWidth > clientWidth` e acusou a barra de progresso e a moldura da
+   figura do Agora: o que transborda ali é o BRILHO CORRENDO, um `:before` posto
+   de propósito para fora e cortado. Agora ele olha os FILHOS DE VERDADE,
+   pulando pseudo-elemento, `position:absolute` e `pointer-events:none`.
+
+### 🪤 E A LIÇÃO MAIOR: ele aprendeu "ESMAGADO" porque a CONTA disse "ok" e a FOTO disse não
+
+Ao crescer o palco da Pinta e Monta (o Marcos tinha pedido: *"com isso a área de
+desenho pode ser maior"*), o flex **esmagou a coluna das miniaturas para 8
+pixels** e o portão passou — corretamente, porque nada estava COBERTO. Estava
+espremido, que é outro defeito com o mesmo efeito: a criança não vê.
+
+**Ensiná-lo custou TRÊS tentativas erradas, e elas valem mais que o conserto:**
+1. Comparei `getComputedStyle(el).width` com o retângulo renderizado. **Medido:
+   dão o mesmo número** — o computed style de largura devolve o valor USADO, já
+   esmagado, não o que o CSS pediu. Era 1 dividido por 1.
+2. Li a largura pedida nas REGRAS de CSS (respeitando media queries) e botei um
+   **limiar chutado de 40%**. Refiz a quebra de propósito: a galeria caiu de
+   116px para 54px — **47%, acima do limiar**, e passou de novo. Só que 54px com
+   miniatura de 104px dentro já é o defeito inteiro.
+3. `scrollWidth > clientWidth` — acusou os enfeites (item 4 acima).
+
+**O que mede de verdade é FATO GEOMÉTRICO, sem calibrar nada:** um filho de
+verdade fica para fora da caixa E a caixa esconde o que sobra
+(`overflow-x:hidden|clip`). `auto` não entra: ali a pessoa rola e alcança.
+
+**A regra que fica:** *número chutado não mede nada; e portão que diz "ok" não
+dispensa a foto.* Duas vezes no mesmo dia o portão aprovou e a imagem reprovou.
