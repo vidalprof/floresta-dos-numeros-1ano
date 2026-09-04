@@ -58,6 +58,7 @@ Uso:  python3 _qa/pronuncia.py <pasta> [--modelo CAMINHO] [--limite N]
 Sai 0 se a voz diz o que devia, 1 se algo saiu torto, 2 se não deu para ouvir.
 """
 import json, os, re, subprocess, sys, unicodedata, wave
+from concurrent.futures import ThreadPoolExecutor
 
 # ---------------------------------------------------------------- limiares
 #  A distância é o "quanto teria de mudar" para uma frase virar a outra, de 0
@@ -176,26 +177,58 @@ def confere(pasta, cam_modelo=None, limite=0):
         return 2
 
     modelo = Model(cam_modelo)
+
+    # ⚡ LICAO DE VELOCIDADE que a casa JA tinha pago com a voz (o entregar.yml
+    #    chamava o `edge-tts` uma vez por fala: 199 falas = 7 min so de partida
+    #    de processo). Eu estava repetindo o mesmo erro aqui, um `ffmpeg` por
+    #    mp3. Agora a conversao sai em 8 threads: o ffmpeg e processo externo,
+    #    entao o GIL do Python nao atrapalha — o tempo cai quase por 8.
+    #    A transcricao continua em fila: o Vosk guarda estado por reconhecedor e
+    #    dividi-lo daria resultado embaralhado. E ela e a parte rapida.
     falas = json.load(open(fal, encoding="utf-8"))
     if isinstance(falas, dict):
         falas = [{"id": k, "texto": v} for k, v in falas.items()]
 
-    tortas, medidas = [], 0
-    tmp = os.path.join(pasta, "_pron.wav")
+    # o que ha para ouvir (ja filtrado, para o paralelo nao converter a toa)
+    fila = []
     for f in falas:
-        if limite and medidas >= limite:
-            break
         fid, txt = f.get("id"), f.get("texto", "")
         mp3 = os.path.join(aud, "%s.mp3" % fid)
         esperado = limpa(txt)
         if not fid or not os.path.exists(mp3) or len(esperado) < MINIMO_PARA_MEDIR:
             continue
+        fila.append((fid, mp3, esperado))
+        if limite and len(fila) >= limite:
+            break
+
+    tmpdir = os.path.join(pasta, "_pron_tmp")
+    os.makedirs(tmpdir, exist_ok=True)
+
+    def converte(item):
+        fid, mp3, esperado = item
+        wav = os.path.join(tmpdir, "%s.wav" % fid)
         try:
-            para_wav(ff, mp3, tmp)
-            ouvido = transcreve(modelo, tmp)
+            para_wav(ff, mp3, wav)
+            return (fid, wav, esperado)
+        except Exception:
+            return (fid, None, esperado)
+
+    with ThreadPoolExecutor(max_workers=8) as ex:
+        prontos = list(ex.map(converte, fila))
+
+    tortas, medidas = [], 0
+    for fid, wav, esperado in prontos:
+        if not wav:
+            print(u"   (nao consegui converter %s)" % fid)
+            continue
+        try:
+            ouvido = transcreve(modelo, wav)
         except Exception as e:
             print(u"   (nao consegui ouvir %s: %s)" % (fid, e))
             continue
+        finally:
+            try: os.remove(wav)
+            except Exception: pass
         medidas += 1
         if not ouvido:
             # ⚠️ silêncio conta a partir de DUAS letras, e é de propósito: o caso
@@ -217,8 +250,10 @@ def confere(pasta, cam_modelo=None, limite=0):
                 tortas.append((fid, esperado, ouvido, d))
         elif d > DISTANCIA_LONGA:
             tortas.append((fid, esperado, ouvido, d))
-    if os.path.exists(tmp):
-        os.remove(tmp)
+    try:
+        os.rmdir(tmpdir)
+    except Exception:
+        pass
 
     if not medidas:
         print(u"NAO MEDI: nenhum mp3 pronto para ouvir em %s" % pasta)

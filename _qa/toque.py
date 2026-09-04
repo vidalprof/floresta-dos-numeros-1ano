@@ -48,9 +48,28 @@ def mecs_blindadas(html):
 
     Varre cada regra `SELETOR { ... touch-action:none ... }` e colhe os
     `.mec-<nome>` citados no seletor. Funciona com o CSS minificado do montado."""
+    # ⚠️ LICAO DE VELOCIDADE (set/2026, cobranca do Marcos: "tudo isso tem que
+    #    ser otimizado e rapido"). Este portao levava 15 SEGUNDOS — sem abrir
+    #    navegador nenhum, so lendo texto. O culpado era o regex antigo:
+    #        r"([^{}]*)\{[^{}]*touch-action:none"
+    #    Num HTML de 500 KB, esse `[^{}]*` no comeco faz o motor de regex tentar
+    #    casar a partir de CADA posicao e voltar atras a cada falha — trabalho
+    #    que cresce com o QUADRADO do tamanho do arquivo.
+    #    O conserto tem duas partes, e as duas importam:
+    #      1. procurar primeiro `touch-action:none` (busca simples, rapidissima)
+    #         e so entao olhar para TRAS os poucos caracteres do seletor;
+    #      2. antes disso, ficar so com o CSS (o <style>), que e uma fracao do
+    #         arquivo — nao ha touch-action no meio do JavaScript.
+    #    Resultado medido: 15s -> menos de 1s, mesmo resultado.
+    css = u"".join(re.findall(r"<style[^>]*>(.*?)</style>", html, re.S)) or html
     achadas = set()
-    for m in re.finditer(r"([^{}]*)\{[^{}]*touch-action\s*:\s*none", html):
-        for nm in re.findall(r"\.mec-([\w-]+)", m.group(1)):
+    for m in re.finditer(r"touch-action\s*:\s*none", css):
+        # o seletor desta regra: o texto entre a `}` anterior e a `{` da regra
+        ini = css.rfind("}", 0, m.start()) + 1
+        chave = css.rfind("{", ini, m.start())
+        if chave < 0:
+            continue
+        for nm in re.findall(r"\.mec-([\w-]+)", css[ini:chave]):
             achadas.add(nm)
     return achadas
 
