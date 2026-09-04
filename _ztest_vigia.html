@@ -1,0 +1,44 @@
+<!doctype html><meta charset="utf-8"><title>t</title>
+<iframe id="quadro" src="/_solidos/index.html" style="width:1000px;height:700px"></iframe>
+<pre id="out">rodando</pre>
+<script>
+var L=[];
+function log(s){ L.push(s); document.getElementById("out").textContent=L.join("\n"); }
+function q(){ return document.getElementById("quadro"); }
+function d(){ try{ return q().contentDocument; }catch(e){ return null; } }
+// replica EXATA do vigia embarcado
+function espia(){ var doc=d(); if(!doc) return "sem-dom";
+  var m=doc.querySelector(".medal");
+  return m ? ("achou tag="+m.tagName+" offsetParent="+(m.offsetParent===null?"NULL":"ok")+" vis="+(!!(m.offsetWidth||m.offsetHeight||m.getClientRects().length))) : "nada";
+}
+window.onload=function(){
+ setTimeout(function(){
+  var doc=d();
+  log("acesso-dom="+(doc?"SIM":"NAO"));
+  log("titulo="+(doc?doc.title:"-"));
+  log("todas .medal no doc: "+(doc?doc.querySelectorAll(".medal").length:"-"));
+  log("ANTES-FIM: "+espia());
+  // conta div.medal no HTML fonte carregado
+  try{ var w=q().contentWindow; log("tem _ffim? "+(typeof w._ffim)); }catch(e){ log("err "+e); }
+  setTimeout(function(){
+    try{ q().contentWindow._ffim(); }catch(e){ log("erro _ffim: "+e); }
+    setTimeout(function(){
+      log("DEPOIS-FIM: "+espia());
+      var doc2=d();
+      var m=doc2.querySelector(".medal");
+      if(m){ log("src="+(m.getAttribute("src")||"-")); }
+      log("painel-existe="+doc2.querySelectorAll(".painel").length);
+      // agora simula abrir o painel
+      try{ q().contentWindow.telaPainel(); }catch(e){ log("erro painel: "+e); }
+      setTimeout(function(){
+        var doc3=d();
+        var p=doc3.querySelector(".painel");
+        log("PAINEL: existe="+(p?"sim":"nao")+(p?(" offsetParent="+(p.offsetParent===null?"NULL":"ok")+" vis="+(!!(p.offsetWidth||p.offsetHeight||p.getClientRects().length))):""));
+        log("medal-apos-painel: "+espia());
+        log("FIM-TESTE");
+      },600);
+    },1200);
+  },1200);
+ },2500);
+};
+</script>

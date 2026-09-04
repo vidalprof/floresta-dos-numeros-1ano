@@ -19,6 +19,9 @@ on:
 jobs:
   atualizar:
     runs-on: ubuntu-latest
+    # ⬇️ para o carimbo do fim (grava _status/espelho-<destino>.json neste repo)
+    permissions:
+      contents: write
     steps:
       # ⚠️ SO A ULTIMA VERSAO. O historico deste repositorio ja passa de 1 GB
       # (toda imagem e todo audio de toda atividade estao nele), e o checkout
@@ -75,3 +78,86 @@ jobs:
             echo ""
             echo "Link: https://$OWNER.github.io/$DEST/"
           } >> "$GITHUB_STEP_SUMMARY"
+          echo "SHA_PUB=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      # ⭐ O CARIMBO DE 200 BYTES (licao paga, set/2026). Para saber se este
+      # espelho deu certo eu so tinha o log do Actions, e ler o log custa uma
+      # chamada `actions_list` de dezenas de milhares de caracteres — o proprio
+      # CLAUDE.md manda evitar, porque come a conversa com o Marcos. O
+      # `entregar.yml` ja resolvia isso deixando um arquivinho em `_status/`;
+      # aqui faltava. Agora tambem sobra: um `git fetch` + `cat` responde de
+      # graca se o espelho foi ao ar, e de qual commit.
+      #
+      # Grava pela API de conteudo (nao pela arvore de trabalho) de proposito: o
+      # checkout aqui e ESPARSO (so a pasta publicada), entao nao ha `_status/`
+      # em disco para commitar — e duas publicacoes ao mesmo tempo brigariam por
+      # push. A API resolve as duas coisas: escreve um arquivo so, com o `sha`
+      # de quem ja estava la, e o 409 (alguem gravou no meio) so precisa de nova
+      # leitura e nova tentativa.
+      - name: Carimbo do espelho (_status/espelho-<destino>.json)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          DEST: ${{ inputs.repo_name }}
+          SRC: ${{ inputs.source_dir }}
+          RESULTADO: ${{ job.status }}
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import base64, json, os, time, urllib.error, urllib.request
+
+          repo   = os.environ["REPO"]
+          ramo   = os.environ["BRANCH"]
+          dest   = os.environ["DEST"]
+          arq    = "_status/espelho-%s.json" % dest
+          token  = os.environ["GH_TOKEN"]
+          base   = "https://api.github.com/repos/%s/contents/%s" % (repo, arq)
+
+          corpo = json.dumps({
+              "destino": dest,
+              "pasta": os.environ["SRC"],
+              "commit": os.environ.get("SHA_PUB") or os.environ.get("GITHUB_SHA", ""),
+              "quando": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+              "resultado": os.environ["RESULTADO"],
+              "link": "https://vidalprof.github.io/%s/" % dest,
+          }, ensure_ascii=False, indent=2) + "\n"
+
+          def chama(url, dados=None, metodo="GET"):
+              req = urllib.request.Request(url, method=metodo,
+                  data=json.dumps(dados).encode() if dados else None)
+              req.add_header("Authorization", "Bearer " + token)
+              req.add_header("Accept", "application/vnd.github+json")
+              if dados:
+                  req.add_header("Content-Type", "application/json")
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return r.status, json.loads(r.read().decode() or "{}")
+
+          for tentativa in range(1, 6):
+              sha = ""
+              try:
+                  _, atual = chama(base + "?ref=" + ramo)
+                  sha = atual.get("sha", "")
+              except urllib.error.HTTPError as e:
+                  if e.code != 404:
+                      print("::warning::leitura do carimbo devolveu %s" % e.code)
+              envio = {"message": "espelho: %s (%s)" % (dest, os.environ["RESULTADO"]),
+                       "content": base64.b64encode(corpo.encode()).decode(),
+                       "branch": ramo}
+              if sha:
+                  envio["sha"] = sha
+              try:
+                  st, _ = chama(base, envio, "PUT")
+                  print("carimbo gravado em %s (tentativa %d, HTTP %d)" % (arq, tentativa, st))
+                  raise SystemExit(0)
+              except urllib.error.HTTPError as e:
+                  # 409/422 = alguem gravou no meio (duas publicacoes ao mesmo
+                  # tempo). Le de novo o `sha` e tenta outra vez.
+                  print("::warning::carimbo devolveu HTTP %s (tentativa %d)" % (e.code, tentativa))
+                  time.sleep(4)
+
+          # O carimbo e conveniencia: se ele falhar, o ESPELHO ja foi feito.
+          # Nao pode derrubar a publicacao.
+          print("::warning::nao consegui gravar o carimbo — o site foi atualizado mesmo assim")
+          PY
