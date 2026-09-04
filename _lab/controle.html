@@ -71,13 +71,20 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
          eu ir colocando outra atividade?"*. Ele escolheu a LISTA AO LADO em vez
          de encher o campo sozinho — assim nada muda embaixo da mão dele
          enquanto digita. Um toque joga os números no campo. -->
-    <div id="cxTerm" style="display:none;margin-top:9px;padding:9px 11px;border-radius:11px;
+    <!-- ⚠️ A CAIXA FICA SEMPRE À VISTA (set/2026). Ela nascia com
+         `display:none` e só aparecia quando alguém terminava — e o Marcos, sem
+         nenhuma criança tendo terminado ainda, perguntou: *"e onde aparece a
+         lista de terminados?"*. Estava certo em não achar: não dá para confiar
+         num lugar que ainda não existe. Agora o lugar existe sempre, vazio diz
+         "ninguém ainda" em tom apagado, e só o BOTÃO some quando não há
+         ninguém para usar. -->
+    <div id="cxTerm" style="margin-top:9px;padding:9px 11px;border-radius:11px;
          background:rgba(60,155,90,.12);border:1px solid rgba(60,155,90,.45);">
       <div style="font-size:12.5px;font-weight:700;letter-spacing:.4px;color:#7fe0a0;
            text-transform:uppercase;margin-bottom:5px;">J&aacute; terminaram</div>
       <div id="listaTerm" style="font-size:19px;font-weight:800;color:#eaf6ee;
            font-variant-numeric:tabular-nums;letter-spacing:.5px;">&mdash;</div>
-      <button class="btn ghost" id="usarTerm" style="margin-top:8px;">
+      <button class="btn ghost hide" id="usarTerm" style="margin-top:8px;">
         &#8595;&nbsp; Usar estes no campo acima</button>
     </div>
 
@@ -200,8 +207,17 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
         if(!isNaN(na)&&!isNaN(nb)) return na-nb; return a<b?-1:1; });
       _term=fora;
       var cx=$("cxTerm"); if(!cx) return;
-      if(fora.length){ cx.style.display="block"; $("listaTerm").textContent=fora.join(", "); }
-      else { cx.style.display="none"; $("listaTerm").textContent="\u2014"; }
+      var el=$("listaTerm"), bt=$("usarTerm");
+      if(fora.length){
+        el.textContent=fora.join(", ");
+        el.style.color="#eaf6ee"; el.style.fontSize="19px";
+        if(bt) bt.className="btn ghost";
+      }else{
+        /* a caixa continua no lugar; s\u00f3 o recado muda de tom */
+        el.textContent="ningu\u00e9m ainda";
+        el.style.color="#7d90b6"; el.style.fontSize="14px";
+        if(bt) bt.className="btn ghost hide";
+      }
     };
     try{ x.send(); }catch(e){}
   }

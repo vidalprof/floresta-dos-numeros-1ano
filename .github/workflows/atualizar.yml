@@ -79,9 +79,20 @@ jobs:
             echo "Link: https://$OWNER.github.io/$DEST/"
           } >> "$GITHUB_STEP_SUMMARY"
           echo "SHA_PUB=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-          # a impressao digital do que ACABEI de mandar — o carimbo compara com
-          # o que o site devolve, e so ai diz "no ar"
-          echo "SHA1_LOCAL=$(sha1sum "$tmp/index.html" | cut -d' ' -f1)" >> "$GITHUB_ENV"
+          # A impressao digital do que ACABEI de mandar — o carimbo compara com o
+          # que o site devolve, e so ai diz "no ar".
+          # ⚠️ LICAO PAGA NA PRIMEIRA HORA DE USO (set/2026): isto conferia SO o
+          # `index.html`. Publiquei o controle do laboratorio, onde a tela do
+          # professor e o `controle.html` e o `index.html` nao tinha mudado —
+          # o carimbo disse "no ar: true" comparando um arquivo que era igual
+          # antes e depois. Verdadeiro e inutil: nao provava a publicacao.
+          # Agora leva TODOS os .html da raiz da pasta publicada, um por um.
+          for f in "$tmp"/*.html; do
+            [ -f "$f" ] || continue
+            nome="$(basename "$f")"
+            chave="$(printf '%s' "$nome" | tr -c 'A-Za-z0-9' '_')"
+            echo "PAG_${chave}=${nome}|$(sha1sum "$f" | cut -d' ' -f1)" >> "$GITHUB_ENV"
+          done
 
       # ⭐ O CARIMBO DE 200 BYTES (licao paga, set/2026). Para saber se este
       # espelho deu certo eu so tinha o log do Actions, e ler o log custa uma
@@ -125,31 +136,45 @@ jobs:
           # Entao o carimbo nao acredita no push: ele PERGUNTA AO SITE e compara
           # a impressao digital do arquivo que subiu com a do que o site
           # devolve. So com as duas iguais o campo `noar` vira true.
-          local = os.environ.get("SHA1_LOCAL", "")
-          noar, servido, tentativas = None, "", 0
-          if local:
-              for tentativas in range(1, 13):        # ~3 min de paciencia
-                  try:
-                      req = urllib.request.Request(
-                          site + "index.html?v=%d" % time.time(),
-                          headers={"Cache-Control": "no-cache"})
-                      with urllib.request.urlopen(req, timeout=30) as r:
-                          servido = hashlib.sha1(r.read()).hexdigest()
-                  except Exception as e:             # noqa: BLE001
-                      servido = ""
-                      print("   tentativa %d: o site nao respondeu (%s)" % (tentativas, e))
-                  if servido == local:
+          # cada .html da raiz publicada: {"controle.html": "<sha1 local>", ...}
+          paginas = {}
+          for chave, valor in os.environ.items():
+              if chave.startswith("PAG_") and "|" in valor:
+                  nome, sha1 = valor.split("|", 1)
+                  paginas[nome] = sha1
+
+          def servido_de(nome):
+              req = urllib.request.Request(
+                  "%s%s?v=%d" % (site, nome, time.time()),
+                  headers={"Cache-Control": "no-cache"})
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  return hashlib.sha1(r.read()).hexdigest()
+
+          noar, detalhe = None, {}
+          if paginas:
+              faltam = dict(paginas)
+              for tentativa in range(1, 13):         # ~3 min de paciencia
+                  for nome in list(faltam):
+                      try:
+                          atual = servido_de(nome)
+                      except Exception as e:         # noqa: BLE001
+                          atual = ""
+                          print("   %s, tentativa %d: sem resposta (%s)"
+                                % (nome, tentativa, e))
+                      detalhe[nome] = atual
+                      if atual == faltam[nome]:
+                          print("   NO AR: %s (tentativa %d)" % (nome, tentativa))
+                          del faltam[nome]
+                  if not faltam:
                       noar = True
-                      print("   NO AR: o site ja serve o arquivo que subiu "
-                            "(tentativa %d)" % tentativas)
                       break
                   time.sleep(15)
               else:
                   noar = False
                   print("::warning::%s: o push deu certo, mas depois de ~3 min o "
-                        "site ainda nao serve o arquivo novo. Pode ser o cache "
-                        "do Pages (tente Ctrl+F5) ou o build ter falhado — rode "
-                        "o deploy-pages.yml." % dest)
+                        "site ainda nao serve a versao nova de: %s. Pode ser o "
+                        "cache do Pages (Ctrl+F5) ou o build ter falhado — rode "
+                        "o deploy-pages.yml." % (dest, ", ".join(sorted(faltam))))
 
           corpo = json.dumps({
               "destino": dest,
@@ -158,8 +183,8 @@ jobs:
               "quando": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
               "resultado": os.environ["RESULTADO"],
               "noar": noar,
-              "sha1": local,
-              "sha1_servido": servido,
+              "paginas": paginas,
+              "servido": detalhe,
               "link": site,
           }, ensure_ascii=False, indent=2) + "\n"
 
