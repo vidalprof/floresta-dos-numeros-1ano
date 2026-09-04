@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — resto (repartir e ver o que sobra)</title>
+<!-- ============================================================
+     PEÇA: RESTO — REPARTIR EM VOLTAS E VER O QUE SOBRA
+
+     POR QUE ELA EXISTE (pesquisa set/2026, _pesquisa/web/divisao-*.md):
+     "teach remainders using manipulatives" (Brighterly #5) — a criança REPARTE
+     um de cada vez, em VOLTAS, e o que não dá pra repartir igual FICA À VISTA na
+     bandeja da sobra = o RESTO. O quociente é quantas voltas inteiras deram; o
+     resto é o que sobrou. Concreto antes de simbólico.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (herdadas da `contadores`, já FECHADA):
+       · FECHA PELO BANNER (`mostraBanner(...,fimResto)`), nunca por tela própria.
+       · data-qa="1" no botão que serve AGORA (+ volta / − volta / Conferir).
+       · andaime CRESCE; nunca "errou"; erro responde com PERGUNTA.
+       · a VOLTA é sempre COMPLETA (um para CADA prato) — a igualdade é do gesto.
+     ES5 puro, um arquivo só (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+.pratos{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+        -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+        margin:13px auto 0;max-width:460px}
+.prato{background:-webkit-linear-gradient(#f4ecda,#e0cfa8);background:linear-gradient(#f4ecda,#e0cfa8);
+       border:3px solid #c2a468;border-radius:16px;margin:5px;padding:6px 6px 4px;min-width:70px;
+       -webkit-box-shadow:inset 0 2px 5px rgba(255,255,255,.6),0 4px 10px rgba(0,0,0,.2);
+       box-shadow:inset 0 2px 5px rgba(255,255,255,.6),0 4px 10px rgba(0,0,0,.2)}
+.prato .grid{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;min-height:30px}
+.prato .prot{font-size:11px;font-weight:800;color:#4a3610;margin-top:3px}
+.doce{width:24px;height:24px;margin:2px;border-radius:50%;background:#e8c46a;border:2px solid #b3903c}
+.doce.temfoto{width:26px;height:26px;background:transparent !important;border:0 !important;
+      background-repeat:no-repeat;background-position:center;-webkit-background-size:contain;background-size:contain}
+.doce.nova{-webkit-animation:pula .3s ease-out;animation:pula .3s ease-out}
+@-webkit-keyframes pula{0%{-webkit-transform:scale(.2);opacity:.2}70%{-webkit-transform:scale(1.15)}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes pula{0%{transform:scale(.2);opacity:.2}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+/* a bandeja do BANCO (o que ainda não foi repartido) */
+.banco{margin-top:10px;background:rgba(22,24,30,.82);border-radius:14px;padding:8px 10px;
+       display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+       -webkit-box-align:center;-webkit-align-items:center;align-items:center;min-height:34px}
+.banco .rot{width:100%;font-size:11px;font-weight:800;letter-spacing:.5px;color:#ffd54a;margin-bottom:4px}
+.bdoce{width:20px;height:20px;margin:2px;border-radius:50%;background:#e8c46a;border:2px solid #b3903c}
+.bdoce.temfoto{width:24px;height:24px;background:transparent !important;border:0 !important;
+      background-repeat:no-repeat;background-position:center;-webkit-background-size:contain;background-size:contain}
+/* a SOBRA (o resto) — destacada, é o coração da peça */
+.sobra{margin-top:10px;background:#ffe6c9;border:3px dashed #d98b3a;border-radius:14px;padding:8px 10px;
+       min-height:30px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+       -webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.sobra .rot{width:100%;font-size:12px;font-weight:800;color:#8a4b12;margin-bottom:4px}
+.sobra.nada{background:rgba(22,24,30,.85);border-color:#5a6a55}
+.sobra.nada .rot{color:#e6efe0}
+.sdoce{width:22px;height:22px;margin:2px;border-radius:50%;background:#f0a94a;border:2px solid #b3702c}
+.linc{margin-top:12px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+      -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+      -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.mostra{min-width:96px;margin:0 10px;border-radius:14px;padding:5px 8px;background:rgba(22,24,30,.82);color:#f4efe6}
+.mostra i{display:block;font-size:11px;font-weight:800;letter-spacing:.5px;font-style:normal}
+.mostra b{display:block;font-size:26px;font-weight:800;line-height:1.1;color:#ffd54a}
+.btn.mais{background:#ffd54a;min-width:96px}
+.btn.menos{background:#e4d9c2;box-shadow:0 4px 0 #b0a68f;min-width:96px}
+.btn.off{background:#b8ad95;color:#2a2415;box-shadow:0 4px 0 #8e8571}
+.btn.aponta{-webkit-box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f;box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f}
+.cconta{margin-top:10px}
+.total{margin-top:9px;font-size:17px;font-weight:800;color:var(--texto,#f4efe6);min-height:24px;
+       background:rgba(22,24,30,.82);border-radius:12px;padding:5px 12px;display:inline-block}
+.total b{color:#ffd54a}
+.total.ok{background:#d6f5c8;color:#1a3d10}
+.total.ok b{color:#1a3d10}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+@media (max-width:380px){
+  .btn.mais,.btn.menos{min-width:78px;padding:13px 14px}
+  .mostra{min-width:78px;margin:0 6px}.prato{min-width:60px}
+}
+/* janela BAIXA (monitor da escola 1024x420): compacta TUDO para caber sem
+   rolagem — pratos menores, banco enxuto, margens mínimas. O botão Conferir
+   nunca pode ficar atrás da barra do motor. */
+@media (max-height:560px){
+  .prog{margin:3px 0 6px}.selo{margin-bottom:5px;padding:4px 12px}
+  .balao{font-size:14px;padding:8px 12px;line-height:1.25}
+  .balao + *{margin-top:8px}
+  .pratos{margin-top:8px}
+  .prato{min-width:56px;padding:4px 4px 2px;margin:3px}
+  .prato .grid{min-height:22px}
+  .doce{width:17px;height:17px;margin:1px}
+  .sobra,.banco{margin-top:6px;padding:5px 8px;min-height:24px}
+  .sobra .rot,.banco .rot{margin-bottom:2px}
+  .bdoce{width:15px;height:15px}.sdoce{width:17px;height:17px}
+  .linc{margin-top:8px}.mostra{padding:3px 8px}.mostra b{font-size:20px}
+  .cconta{margin-top:6px}.btn{padding:10px 20px;min-height:44px}
+  .total{margin-top:6px;font-size:14px;padding:4px 10px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",.05); }
+function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+function diz(txt){
+  try{
+    if(typeof temVoz==="function" && typeof falar==="function"){
+      var k=temVoz(txt); if(k){ falar("op_"+k); return; }
+    }
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt); u.lang="pt-BR"; u.rate=1; u.pitch=1.05;
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `RES`.
+   Cada rodada: `n` docinhos repartidos em `g` pratos, uma volta por vez.
+   Quociente = voltas inteiras; resto = o que sobra (n NÃO precisa ser
+   múltiplo de g — é justamente onde o resto aparece).
+   Campos de tema (opcionais): `item` (arte), `coisa`/`coisaP`, `prato`/`pratoP`, `selo`.
+   ESCADA: começa com resto pequeno, sobe (mais pratos / resto maior). */
+var RES=[
+ {n:7,  g:2, item:"", coisa:"docinho", coisaP:"docinhos", prato:"prato", pratoP:"pratos", selo:"OS PRATOS"},
+ {n:13, g:4},
+ {n:17, g:5}
+];
+var MAXN=30;      /*TECNICA*/
+var UNM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez", /*TECNICA*/
+         "onze","doze","treze","catorze","quinze","dezesseis","dezessete","dezoito","dezenove","vinte"];
+
+var ri=0;
+var voltas=0;     /* voltas inteiras dadas (= quanto cada prato recebeu) */
+var err=0;
+var travado=false;
+var ger=0;
+var elPratos,elBanco,elSobra,elMostra,elTotal,btMais,btMenos,btConf;
+
+function rod(){ return RES[ri]||{}; }
+function nAlvo(){ return rod().n||0; }
+function gAlvo(){ return rod().g||1; }
+function qtdCerta(){ return Math.floor(nAlvo()/gAlvo()); }
+function restoCerto(){ return nAlvo()%gAlvo(); }
+function repartidos(){ return voltas*gAlvo(); }
+function noBanco(){ return Math.max(0, nAlvo()-repartidos()); }
+function nomeNum(n){ return (n>=0&&n<UNM.length)?UNM[n]:(""+n); }
+
+function tema(){
+  var r=rod();
+  return { item:r.item||null, coisa:r.coisa||"docinho", coisaP:r.coisaP||"docinhos",
+           prato:r.prato||"prato", pratoP:r.pratoP||"pratos", selo:r.selo||"OS PRATOS" };
+}
+function fazDoce(cls){
+  var t=tema(), s=el("div",cls,"");
+  if(t.item){ s.className+=" temfoto"; s.style.backgroundImage="url(\"img/"+t.item+".png\")"; }
+  return s;
+}
+
+function pecaResto(){
+  if(!RES[ri]){ fimResto(); return; }
+  var r=rod(); voltas=0; err=0; travado=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/RES.length));
+  var c=el("div","centro");
+  var TM=tema();
+  /* ⚠️ o SELO e do MOTOR (selo da fase no conteudo.json). Peca com .tela propria
+     NAO desenha selo, senao ficam DUAS plaquinhas ("O QUE SOBRA" + "OS POTES")
+     empilhadas comendo a tela (portao 3h). */
+  c.appendChild(el("div","balao","Reparta os <b>"+r.n+"</b> "+TM.coisaP+" em <b>"+r.g+"</b> "+TM.pratoP+
+                 ", um de cada vez. Quanto fica em cada e quanto <b>sobra</b>?"));
+  elPratos=el("div","pratos","");
+  c.appendChild(elPratos);
+  elSobra=el("div","sobra","");
+  c.appendChild(elSobra);
+  elBanco=el("div","banco","");
+  c.appendChild(elBanco);
+
+  var lin=el("div","linc");
+  btMenos=el("button","btn menos","&minus; volta");
+  elMostra=el("div","mostra","<i>EM CADA PRATO</i><b>0</b>");
+  btMais=el("button","btn mais","+ volta");
+  btMenos.onclick=function(){ tira(); };
+  btMais.onclick=function(){ poe(); };
+  lin.appendChild(btMenos); lin.appendChild(elMostra); lin.appendChild(btMais);
+  c.appendChild(lin);
+
+  var cc=el("div","cconta");
+  btConf=el("button","btn","Conferir a divis&atilde;o");
+  btConf.onclick=function(){ confere(); };
+  cc.appendChild(btConf);
+  c.appendChild(cc);
+
+  elTotal=el("div","total","");
+  c.appendChild(elTotal);
+  c.appendChild(el("div","hint","Rodada "+(ri+1)+" de "+RES.length+
+                 ". Cada VOLTA d&aacute; <b>1</b> para cada "+TM.prato+"."));
+  t.appendChild(c);
+  app.appendChild(t);
+  desenha(false);
+}
+
+function desenha(animar){
+  var i,j,g=gAlvo(),TM=tema();
+  elPratos.innerHTML="";
+  for(i=0;i<g;i++){
+    var pr=el("div","prato",""), grid=el("div","grid","");
+    for(j=0;j<voltas;j++) grid.appendChild(fazDoce("doce"+(animar&&j===voltas-1?" nova":"")));
+    pr.appendChild(grid);
+    pr.appendChild(el("div","prot", TM.prato+" "+(i+1)));
+    elPratos.appendChild(pr);
+  }
+  /* a SOBRA à vista */
+  var sob=noBanco()<g ? noBanco() : 0;   /* sobra "final" só quando não dá mais volta */
+  var mostraSobra = (noBanco()<g);
+  elSobra.className="sobra"+((mostraSobra&&sob>0)?"":" nada");
+  elSobra.innerHTML="";
+  elSobra.appendChild(el("div","rot", mostraSobra ? ("SOBRA (RESTO): "+sob)
+                                                  : "SOBRA — aparece quando n&atilde;o der mais volta"));
+  for(i=0;i<(mostraSobra?sob:0);i++) elSobra.appendChild(fazDoce("sdoce"));
+  /* o banco do que ainda pode ser repartido */
+  var b=noBanco();
+  elBanco.innerHTML="";
+  elBanco.appendChild(el("div","rot", "AINDA NO BANCO: "+b));
+  for(i=0;i<b;i++) elBanco.appendChild(fazDoce("bdoce"));
+  elMostra.innerHTML="<i>EM CADA PRATO</i><b>"+voltas+"</b>";
+  atualizaBotoes();
+}
+
+function atualizaBotoes(){
+  btMais.removeAttribute("data-qa"); btMenos.removeAttribute("data-qa"); btConf.removeAttribute("data-qa");
+  btMenos.className=(voltas<=0)?"btn menos off":"btn menos";
+  var podeMais=(noBanco()>=gAlvo());
+  btMais.className=podeMais?"btn mais":"btn mais off";
+  btConf.className="btn";
+  if(travado) return;
+  if(noBanco()<gAlvo()) btConf.setAttribute("data-qa","1");  /* não dá mais volta: confira */
+  else btMais.setAttribute("data-qa","1");
+}
+
+function poe(){
+  if(travado) return;
+  if(noBanco()<gAlvo()){ sTap();
+    mostraDica("N&atilde;o d&aacute; mais uma volta inteira: sobra"+(noBanco()>1?"m":"")+" s&oacute; <b>"+
+               noBanco()+"</b> para <b>"+gAlvo()+"</b> "+tema().pratoP+". Isso &eacute; o <b>resto</b> — toque em Conferir.");
+    return; }
+  voltas++; sPoe(); desenha(true);
+  diz(nomeNum(voltas)+" em cada "+tema().prato);
+  limpaTotal();
+}
+function tira(){
+  if(travado) return;
+  if(voltas<=0){ sTap(); return; }
+  voltas--; sTira(); desenha(false);
+  limpaTotal();
+}
+function limpaTotal(){ elTotal.className="total"; elTotal.innerHTML=""; }
+
+function confere(){
+  if(travado) return;
+  var n=nAlvo(), g=gAlvo(), g0=ger;
+  if(voltas===qtdCerta() && noBanco()===restoCerto()){
+    travado=true; atualizaBotoes();
+    var dv=document.getElementById("dicaP"); if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
+    var q=voltas, rst=noBanco();
+    elTotal.className="total ok";
+    elTotal.innerHTML="<b>"+n+" &divide; "+g+" = "+q+"</b>"+(rst>0?(" e sobra <b>"+rst+"</b>"):" (sem sobrar nada)")+"!";
+    diz(n+" dividido por "+g+" é igual a "+nomeNum(q)+(rst>0?(", e sobra "+nomeNum(rst)):""));
+    sCerto();
+    setTimeout(function(){
+      if(g0!==ger) return;
+      ri++;
+      if(ri<RES.length) pecaResto();
+      else mostraBanner("<b>Repartido!</b><br>O que n&atilde;o d&aacute; pra repartir igual &eacute; o <b>resto</b> — "+
+                        "at&eacute; na padaria sobra p&atilde;ozinho.", fimResto);
+    },1700);
+    return;
+  }
+  naoBateu();
+}
+
+function naoBateu(){
+  sErro(); err++;
+  if(noBanco()>=gAlvo()){
+    if(err===1) mostraDica("Ainda d&aacute; para dar mais volta: h&aacute; <b>"+noBanco()+"</b> no banco e s&atilde;o <b>"+gAlvo()+"</b> "+tema().pratoP+".");
+    else { mostraDica("D&ecirc; voltas at&eacute; sobrar MENOS que <b>"+gAlvo()+"</b>. Toque em <b>+ volta</b>."); btMais.className="btn mais aponta"; }
+  }else{
+    mostraDica("Confira: cada "+tema().prato+" tem <b>"+voltas+"</b> e sobra"+(noBanco()>1?"m":"")+" <b>"+noBanco()+"</b>. Toque em Conferir.");
+  }
+}
+
+function fimResto(){
+  ger++; limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&ecirc; repartiu <b>"+RES.length+"</b> vezes e viu o <b>resto</b> aparecer."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; pecaResto(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Quociente = voltas inteiras. Resto = o que sobra sem dar pra repartir."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaResto();
+</script>
+</body></html>

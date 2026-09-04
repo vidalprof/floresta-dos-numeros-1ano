@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — quociente parcial (a ponte para o algoritmo)</title>
+<!-- ============================================================
+     PEÇA: QUOCIENTE PARCIAL — dividir em PEDAÇOS que a gente conhece
+
+     POR QUE ELA EXISTE (pesquisa set/2026, _pesquisa/web/divisao-ensino.md):
+     "Partial quotients are the strategy most worth teaching BEFORE long
+     division because they keep the math visible." O aluno do 5º ano ainda
+     não deve decorar o algoritmo cego (divide-multiplica-subtrai-abaixa); ele
+     tira do dividendo PEDAÇOS que domina — 10 vezes o divisor, 5 vezes, 2, 1 —
+     vê o que FALTA encolher e SOMA os pedaços para achar o quociente. Cada
+     passo é multiplicação que ele já sabe, não regra decorada. É a ponte para
+     a conta armada, com números grandes (centenas), rápido e visível.
+
+     CONTRATO (herdado de arranjo/contadores, já FECHADAS):
+       · FECHA pelo banner (mostraBanner(...,fimQP)), nunca por tela própria.
+       · data-qa="1" no botão que serve AGORA (o maior pedaço que ainda cabe;
+         ou "Conferir" quando o que falta já é menor que o divisor).
+       · andaime CRESCE a cada tropeço; nunca "errou".
+       · NÃO desenha selo (o selo é do motor — senão plaquinha dupla, portão 3h).
+     ES5 puro, um arquivo só (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* o PAINEL da conta: o que falta dividir (grande) e o quociente que cresce */
+.painel{margin:13px auto 0;max-width:440px;display:-webkit-box;display:-webkit-flex;display:flex;
+        -webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between}
+.caixa{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 5px;border-radius:16px;padding:9px 6px;
+       background:rgba(22,24,30,.82)}
+.caixa i{display:block;font-size:11px;font-weight:800;letter-spacing:.5px;font-style:normal;color:#ffd54a}
+.caixa b{display:block;font-size:30px;font-weight:800;line-height:1.1;color:#fff}
+.caixa.falta.zero{background:#d6f5c8}
+.caixa.falta.zero b,.caixa.falta.zero i{color:#1a3d10}
+.caixa.rest{background:rgba(70,52,20,.85)}
+/* o HISTÓRICO dos pedaços tirados (a conta fica visível) */
+/* o HISTÓRICO tem FUNDO PRÓPRIO (escuro), então carrega a PRÓPRIA tinta —
+   não herda var(--texto), que é a tinta do fundo da ATIVIDADE (portão 4b). */
+.hist{margin:12px auto 0;max-width:440px;background:rgba(22,24,30,.82);border-radius:14px;
+      padding:6px 10px;min-height:24px;text-align:left;font-size:15px}
+.hist .linha{padding:3px 2px;border-bottom:1px dashed rgba(255,255,255,.18);color:#f4efe6}
+.hist .linha:last-child{border-bottom:0}
+.hist .linha b{color:#ffd54a}
+.hist .vaziomsg{color:#e9dcc2;font-weight:700;padding:5px 2px}
+/* botões dos pedaços */
+.pecas{margin-top:13px;display:-webkit-box;display:-webkit-flex;display:flex;
+       -webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.bp{background:#ffd54a;color:#33280a;border:0;border-radius:14px;margin:4px;padding:11px 14px;
+    font-size:16px;font-weight:800;min-height:48px;min-width:96px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.bp small{display:block;font-size:11px;font-weight:700;opacity:.8}
+.bp.off{background:#b8ad95;color:#2a2415;box-shadow:0 4px 0 #8e8571}
+.bp.aponta{-webkit-box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f;box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f}
+.cconta{margin-top:12px}
+.total{margin-top:10px;font-size:17px;font-weight:800;color:var(--texto,#f4efe6);min-height:24px;
+       background:rgba(22,24,30,.82);border-radius:12px;padding:6px 12px;display:inline-block}
+.total b{color:#ffd54a}
+.total.ok{background:#d6f5c8;color:#1a3d10}
+.total.ok b{color:#1a3d10}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+@media (max-width:380px){ .bp{min-width:72px;padding:11px 8px} .caixa b{font-size:24px} }
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}.selo{margin-bottom:6px}
+  .painel{margin-top:8px}.caixa b{font-size:24px}
+  .pecas{margin-top:8px}.bp{padding:9px 10px;min-height:44px}
+  .balao{font-size:15px;padding:9px 14px}.hint{margin-top:6px}.hist{margin-top:8px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",.05); }
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+function diz(txt){
+  try{
+    if(typeof temVoz==="function" && typeof falar==="function"){
+      var k=temVoz(txt); if(k){ falar("op_"+k); return; }
+    }
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt); u.lang="pt-BR"; u.rate=1; u.pitch=1.05;
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `QP`.
+   Cada rodada: dividir `n` por `d` tirando PEDAÇOS (10, 5, 2, 1 vezes o `d`).
+   ESCADA: começa com quociente redondo (96÷8=12), sobe (centenas, com resto).
+   `n` até ~999; `d` de 2 a 20. Aceita RESTO (n não precisa ser múltiplo). */
+var QP=[
+ {n:96,  d:8},
+ {n:156, d:12},
+ {n:234, d:9}
+];
+var PEDACOS=[10,5,2,1];   /*TECNICA*/  /* os "pedaços" de quociente que a criança tira */
+
+var ri=0;        /* rodada de agora */
+var falta=0;     /* quanto ainda falta dividir */
+var quo=0;       /* quociente acumulado (soma dos pedaços) */
+var passos=[];   /* histórico: [{mult, prod}] */
+var err=0;
+var travado=false;
+var ger=0;
+var elFalta,elQuo,elHist,elTotal,elPecas,btConf;
+
+function rod(){ return QP[ri]||{}; }
+function nAlvo(){ return rod().n||0; }
+function dAlvo(){ return rod().d||1; }
+function quoCerto(){ return Math.floor(nAlvo()/dAlvo()); }
+function restoCerto(){ return nAlvo()%dAlvo(); }
+function maiorPedaco(){   /* o maior PEDACOS[i] cujo d*mult ainda cabe no que falta */
+  var i,d=dAlvo();
+  for(i=0;i<PEDACOS.length;i++){ if(d*PEDACOS[i]<=falta) return PEDACOS[i]; }
+  return 0;
+}
+
+function pecaQP(){
+  if(!QP[ri]){ fimQP(); return; }
+  var r=rod(); falta=r.n; quo=0; passos=[]; err=0; travado=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/QP.length));
+  var c=el("div","centro");
+  /* o selo é do MOTOR; a peça não desenha (portão 3h) */
+  c.appendChild(el("div","balao","Quanto d&aacute; <b>"+r.n+" &divide; "+r.d+"</b>? "+
+                 "Tire <b>peda&ccedil;os</b> at&eacute; o que falta ficar menor que <b>"+r.d+"</b>."));
+
+  var pn=el("div","painel");
+  var cf=el("div","caixa falta"); cf.innerHTML="<i>FALTA DIVIDIR</i><b id='qpFalta'>"+r.n+"</b>";
+  var cq=el("div","caixa"); cq.innerHTML="<i>QUOCIENTE</i><b id='qpQuo'>0</b>";
+  pn.appendChild(cf); pn.appendChild(cq);
+  c.appendChild(pn);
+  elFalta=cf; elQuo=document.createElement("span");
+
+  elHist=el("div","hist","");
+  c.appendChild(elHist);
+
+  elPecas=el("div","pecas","");
+  c.appendChild(elPecas);
+
+  var cc=el("div","cconta");
+  btConf=el("button","btn","Terminei &mdash; conferir");
+  btConf.onclick=function(){ confere(); };
+  cc.appendChild(btConf);
+  c.appendChild(cc);
+
+  elTotal=el("div","total","");
+  c.appendChild(elTotal);
+  c.appendChild(el("div","hint","Conta "+(ri+1)+" de "+QP.length+
+                 ". Cada peda&ccedil;o &eacute; o <b>"+r.d+"</b> tirado v&aacute;rias vezes."));
+  t.appendChild(c);
+  app.appendChild(t);
+  desenha();
+}
+
+function desenha(){
+  var d=dAlvo();
+  /* painel */
+  var bf=document.getElementById("qpFalta"), bq=document.getElementById("qpQuo");
+  if(bf) bf.innerHTML=""+falta;
+  if(bq) bq.innerHTML=""+quo;
+  elFalta.className="caixa falta"+(falta<d?" zero":"");
+  /* histórico */
+  elHist.innerHTML="";
+  if(passos.length===0){
+    elHist.appendChild(el("div","vaziomsg","Nenhum peda&ccedil;o tirado ainda. Comece pelo maior que cabe."));
+  }else{
+    for(var i=0;i<passos.length;i++){
+      var p=passos[i];
+      elHist.appendChild(el("div","linha","<b>"+d+" &times; "+p.mult+" = "+p.prod+
+                            "</b> &nbsp;&rarr;&nbsp; tirei, faltam <b>"+p.resto+"</b>"));
+    }
+  }
+  /* botões dos pedaços */
+  elPecas.innerHTML="";
+  for(var j=0;j<PEDACOS.length;j++){(function(m){
+    var prod=d*m, cabe=(prod<=falta) && !travado;
+    var b=el("button","bp"+(cabe?"":" off"),"&times;"+m+"<small>tira "+prod+"</small>");
+    b.onclick=function(){ tira(m); };
+    elPecas.appendChild(b);
+  })(PEDACOS[j]);}
+  atualizaBotoes();
+}
+
+function atualizaBotoes(){
+  var bs=elPecas.getElementsByTagName("button"),i;
+  for(i=0;i<bs.length;i++) bs[i].removeAttribute("data-qa");
+  btConf.removeAttribute("data-qa");
+  if(travado) return;
+  var mp=maiorPedaco();
+  if(mp===0){ btConf.setAttribute("data-qa","1"); return; }  /* falta < d: conferir */
+  /* data-qa="1" no botão do MAIOR pedaço que ainda cabe (o passo esperto) */
+  for(i=0;i<PEDACOS.length;i++){
+    if(PEDACOS[i]===mp){ if(bs[i]) bs[i].setAttribute("data-qa","1"); break; }
+  }
+}
+
+function tira(m){
+  if(travado) return;
+  var d=dAlvo(), prod=d*m;
+  if(prod>falta){ sErro(); naoCabe(m,prod); return; }
+  falta-=prod; quo+=m;
+  passos.push({mult:m, prod:prod, resto:falta});
+  sPoe();
+  diz(d+" vezes "+m+" é "+prod+". Faltam "+falta);
+  limpaTotal(); desenha();
+}
+
+function naoCabe(m,prod){
+  err++;
+  var d=dAlvo();
+  if(err===1) mostraDica("<b>"+d+" &times; "+m+" = "+prod+"</b>, maior que o que falta (<b>"+
+                         falta+"</b>). Escolha um peda&ccedil;o menor.");
+  else {
+    var mp=maiorPedaco();
+    mostraDica("O maior que cabe agora &eacute; <b>&times;"+mp+"</b> ("+d+" &times; "+mp+" = "+(d*mp)+").");
+    var bs=elPecas.getElementsByTagName("button");
+    for(var i=0;i<PEDACOS.length;i++){ if(PEDACOS[i]===mp&&bs[i]){ bs[i].className="bp aponta"; break; } }
+  }
+}
+
+function limpaTotal(){ elTotal.className="total"; elTotal.innerHTML=""; }
+
+function confere(){
+  if(travado) return;
+  var d=dAlvo(), n=nAlvo(), g=ger;
+  if(falta>=d){ sErro(); aindaCabe(); return; }
+  /* falta < d: terminou. quo é o quociente, falta é o resto. */
+  travado=true;
+  var dv=document.getElementById("dicaP"); if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
+  desenha();
+  elTotal.className="total ok";
+  var txt="Somei os peda&ccedil;os: <b>"+quo+"</b>. ";
+  if(falta>0) txt+="Sobra <b>"+falta+"</b>. Ent&atilde;o <b>"+n+" &divide; "+d+" = "+quo+" e sobra "+falta+"</b>.";
+  else        txt+="Ent&atilde;o <b>"+n+" &divide; "+d+" = "+quo+"</b>, exato!";
+  elTotal.innerHTML=txt;
+  diz(n+" dividido por "+d+" é "+quo+(falta>0?(" e sobra "+falta):""));
+  sCerto();
+  setTimeout(function(){
+    if(g!==ger) return;
+    ri++;
+    if(ri<QP.length) pecaQP();
+    else mostraBanner("<b>Peda&ccedil;o por peda&ccedil;o, a conta apareceu!</b><br>"+
+                      "Somar os peda&ccedil;os &eacute; o mesmo que a conta armada &mdash; s&oacute; que voc&ecirc; VIU cada passo.", fimQP);
+  },1900);
+}
+
+function aindaCabe(){
+  err++;
+  var mp=maiorPedaco(), d=dAlvo();
+  /* o andaime CRESCE a cada tropeço (o errador confere que a ajuda muda). */
+  if(err===1){
+    mostraDica("Ainda n&atilde;o! O que falta (<b>"+falta+"</b>) &eacute; maior que <b>"+d+
+               "</b> &mdash; d&aacute; para tirar mais um peda&ccedil;o.");
+  }else if(err===2){
+    mostraDica("Tente o peda&ccedil;o <b>&times;"+mp+"</b>: "+d+" &times; "+mp+" = <b>"+(d*mp)+
+               "</b>, e ainda falta <b>"+falta+"</b>. S&oacute; confira quando o que falta for menor que <b>"+d+"</b>.");
+    var bs=elPecas.getElementsByTagName("button");
+    for(var i=0;i<PEDACOS.length;i++){ if(PEDACOS[i]===mp&&bs[i]){ bs[i].className="bp aponta"; break; } }
+  }else{
+    mostraDica("Toque no peda&ccedil;o que est&aacute; <b>brilhando</b> (&times;"+mp+"). "+
+               "Ele tira <b>"+(d*mp)+"</b> do que falta.");
+    var bs2=elPecas.getElementsByTagName("button");
+    for(var j=0;j<PEDACOS.length;j++){ if(PEDACOS[j]===mp&&bs2[j]){ bs2[j].className="bp aponta"; break; } }
+  }
+}
+
+function fimQP(){
+  ger++; limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&ecirc; dividiu <b>"+QP.length+"</b> contas por peda&ccedil;os. "+
+                 "Somar os peda&ccedil;os &eacute; a conta armada por dentro."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; pecaQP(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Tirar 10, 5, 2, 1 vez o divisor e somar = o quociente."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaQP();
+</script>
+</body></html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — arranjo (array: fileiras iguais)</title>
+<!-- ============================================================
+     PEÇA: ARRANJO — O RETÂNGULO DA DIVISÃO (array / arranjo retangular)
+
+     POR QUE ELA EXISTE (pesquisa set/2026, _pesquisa/web/divisao-*.md):
+     o modelo de ARRAY é, em toda a literatura (NCETM, makemathmoments,
+     SplashLearn), o passo pivô entre repartir/medir e o algoritmo — e é o que
+     mostra, no olho, que a divisão é a MULTIPLICAÇÃO ao contrário. A criança
+     tem N docinhos num banco e MONTA fileiras iguais de C: quando o banco zera,
+     o retângulo está pronto e ela LÊ `fileiras × C = N`, logo `N ÷ C = fileiras`.
+     Não há resposta para chutar; há um retângulo para construir.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (herdadas da `contadores`, já FECHADA):
+       · FECHA PELO BANNER (`mostraBanner(...,fimArranjo)`), nunca por tela
+         própria — senão o auditor-jogador fica preso (a "beco" do CONTRATO).
+       · data-qa="1" no botão que serve AGORA (+ fileira / − fileira / Conferir).
+       · andaime CRESCE a cada tropeço: pergunta → aponta o botão → revela.
+       · nunca "errou"; erro responde com PERGUNTA.
+       · fileira só entra COMPLETA (C de uma vez) — a igualdade é do desenho,
+         não "no olho".
+     ES5 puro, um arquivo só (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* A BANDEJA onde o retângulo cresce (madeira clara, premium — rima com as frutas) */
+.bandeja{background:-webkit-linear-gradient(#f0e2c4,#dcc196);background:linear-gradient(#f0e2c4,#dcc196);
+         border:3px solid #c2a468;border-radius:18px;
+         -webkit-box-shadow:inset 0 2px 6px rgba(255,255,255,.6),inset 0 -7px 14px rgba(150,110,50,.22),0 6px 14px rgba(0,0,0,.22);
+         box-shadow:inset 0 2px 6px rgba(255,255,255,.6),inset 0 -7px 14px rgba(150,110,50,.22),0 6px 14px rgba(0,0,0,.22);
+         min-height:70px;padding:10px 8px;margin:13px auto 0;max-width:440px}
+.fileira{display:-webkit-box;display:-webkit-flex;display:flex;
+         -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+         -webkit-flex-wrap:nowrap;flex-wrap:nowrap}
+.fileira + .fileira{margin-top:6px}
+.doce{width:34px;height:34px;margin:3px;border-radius:50%;background:#e8c46a;
+      border:3px solid #b3903c;color:#3a2c07;font-size:14px;font-weight:800;line-height:28px;
+      text-align:center}
+.doce.temfoto{width:40px;height:40px;background:transparent !important;border:0 !important;
+      background-repeat:no-repeat;background-position:center;
+      -webkit-background-size:contain;background-size:contain;line-height:0}
+.doce.nova{-webkit-animation:pula .3s ease-out;animation:pula .3s ease-out}
+@-webkit-keyframes pula{0%{-webkit-transform:scale(.2);opacity:.2}70%{-webkit-transform:scale(1.15)}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes pula{0%{transform:scale(.2);opacity:.2}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+.vaziomsg{color:#3f2c0e;font-weight:700;font-size:14px;padding:14px 4px}
+/* o BANCO de docinhos que ainda faltam colocar */
+.banco{margin-top:10px;background:rgba(22,24,30,.82);border-radius:14px;padding:8px 10px;
+       display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+       -webkit-box-align:center;-webkit-align-items:center;align-items:center;min-height:34px}
+.banco .rot{width:100%;font-size:11px;font-weight:800;letter-spacing:.5px;color:#ffd54a;margin-bottom:4px}
+.bdoce{width:20px;height:20px;margin:2px;border-radius:50%;background:#e8c46a;border:2px solid #b3903c}
+.bdoce.temfoto{width:24px;height:24px;background:transparent !important;border:0 !important;
+      background-repeat:no-repeat;background-position:center;-webkit-background-size:contain;background-size:contain}
+.banco.zero{background:#d6f5c8}
+.banco.zero .rot{color:#1a3d10}
+.linc{margin-top:12px;display:-webkit-box;display:-webkit-flex;display:flex;
+      -webkit-flex-wrap:wrap;flex-wrap:wrap;
+      -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+      -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.mostra{min-width:96px;margin:0 10px;border-radius:14px;padding:5px 8px;
+        background:rgba(22,24,30,.82);color:#f4efe6}
+.mostra i{display:block;font-size:11px;font-weight:800;letter-spacing:.5px;font-style:normal}
+.mostra b{display:block;font-size:26px;font-weight:800;line-height:1.1;color:#ffd54a}
+.btn.mais{background:#ffd54a;min-width:96px}
+.btn.menos{background:#e4d9c2;box-shadow:0 4px 0 #b0a68f;min-width:96px}
+.btn.off{background:#b8ad95;color:#2a2415;box-shadow:0 4px 0 #8e8571}
+.btn.aponta{-webkit-box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f;box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f}
+.cconta{margin-top:10px}
+.total{margin-top:9px;font-size:17px;font-weight:800;color:var(--texto,#f4efe6);min-height:24px;
+       background:rgba(22,24,30,.82);border-radius:12px;padding:5px 12px;display:inline-block}
+.total b{color:#ffd54a}
+.total.ok{background:#d6f5c8;color:#1a3d10}
+.total.ok b{color:#1a3d10}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+@media (max-width:380px){
+  .btn.mais,.btn.menos{min-width:78px;padding:13px 14px}
+  .mostra{min-width:78px;margin:0 6px}
+  .doce{width:28px;height:28px;line-height:22px}
+}
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}.selo{margin-bottom:6px}
+  .bandeja{min-height:56px;margin-top:8px;padding:6px 5px}
+  .doce{width:26px;height:26px;font-size:13px;line-height:20px}
+  .linc{margin-top:8px}.mostra b{font-size:22px}
+  .balao{font-size:15px;padding:9px 14px}.hint{margin-top:6px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",.05); }
+function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+/* voz: usa a gravada da casa quando existe; senão best-effort do navegador */
+function diz(txt){
+  try{
+    if(typeof temVoz==="function" && typeof falar==="function"){
+      var k=temVoz(txt); if(k){ falar("op_"+k); return; }
+    }
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt); u.lang="pt-BR"; u.rate=1; u.pitch=1.05;
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `ARR`.
+   Cada rodada: `n` docinhos arrumados em fileiras de `c` (n múltiplo de c).
+   A criança monta fileira a fileira; quando o banco zera, lê n ÷ c = fileiras.
+   Campos de tema (opcionais): `item` (arte de IA da coisa), `coisa`/`coisaP`
+   (singular/plural), `selo`. Sem eles, docinhos amarelos.
+   ESCADA: começa fácil (12÷3), sobe (dividendo maior / fileira maior). */
+var ARR=[
+ {n:12, c:3, item:"", coisa:"docinho", coisaP:"docinhos", selo:"A BANDEJA"},
+ {n:20, c:5},
+ {n:18, c:6}
+];
+var MAXN=30;         /*TECNICA*/  /* teto: acima disto o retângulo não caberia */
+var UNM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez", /*TECNICA*/
+         "onze","doze","treze","catorze","quinze","dezesseis","dezessete","dezoito",
+         "dezenove","vinte"];
+
+var ri=0;        /* rodada de agora */
+var rows=0;      /* fileiras montadas */
+var err=0;       /* tropeços: fazem o andaime crescer */
+var travado=false;
+var ger=0;
+var elBandeja,elBanco,elMostra,elTotal,btMais,btMenos,btConf;
+
+function rod(){ return ARR[ri]||{}; }
+function nAlvo(){ return rod().n||0; }
+function cAlvo(){ return rod().c||1; }
+function fileirasCertas(){ return Math.round(nAlvo()/cAlvo()); }
+function postos(){ return rows*cAlvo(); }         /* quantos docinhos já na bandeja */
+function noBanco(){ return Math.max(0, nAlvo()-postos()); }
+
+function nomeNum(n){ return (n>=0&&n<UNM.length)?UNM[n]:(""+n); }
+
+function tema(){
+  var r=rod();
+  return { item:r.item||null, coisa:r.coisa||"docinho", coisaP:r.coisaP||"docinhos",
+           selo:r.selo||"A BANDEJA" };
+}
+function fazDoce(cls){
+  var t=tema(), s=el("div",cls,"");
+  if(t.item){ s.className+=" temfoto"; s.style.backgroundImage="url(\"img/"+t.item+".png\")"; }
+  return s;
+}
+
+function pecaArranjo(){
+  if(!ARR[ri]){ fimArranjo(); return; }
+  var r=rod(); rows=0; err=0; travado=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/ARR.length));
+  var c=el("div","centro");
+  var TM=tema();
+  /* ⚠️ o SELO e do MOTOR (vem do selo da fase no conteudo.json). Peca que monta
+     a propria .tela NAO desenha selo, senao ficam DUAS plaquinhas empilhadas
+     (portao 3h) — foi assim que "O RETANGULO" + "A PRATELEIRA" apareceram
+     juntos. O selo da rodada vira so tema interno, nunca elemento na tela. */
+  c.appendChild(el("div","balao","Arrume os <b>"+r.n+"</b> "+TM.coisaP+
+                 " em fileiras de <b>"+r.c+"</b>. Quantas fileiras d&atilde;o?"));
+  elBandeja=el("div","bandeja","");
+  c.appendChild(elBandeja);
+  elBanco=el("div","banco","");
+  c.appendChild(elBanco);
+
+  var lin=el("div","linc");
+  btMenos=el("button","btn menos","&minus; fileira");
+  elMostra=el("div","mostra","<i>FILEIRAS</i><b>0</b>");
+  btMais=el("button","btn mais","+ fileira");
+  btMenos.onclick=function(){ tira(); };
+  btMais.onclick=function(){ poe(); };
+  lin.appendChild(btMenos); lin.appendChild(elMostra); lin.appendChild(btMais);
+  c.appendChild(lin);
+
+  var cc=el("div","cconta");
+  btConf=el("button","btn","Conferir a divis&atilde;o");
+  btConf.onclick=function(){ confere(); };
+  cc.appendChild(btConf);
+  c.appendChild(cc);
+
+  elTotal=el("div","total","");
+  c.appendChild(elTotal);
+  c.appendChild(el("div","hint","Bandeja "+(ri+1)+" de "+ARR.length+
+                 ". Cada fileira leva <b>"+r.c+"</b> "+TM.coisaP+" iguais."));
+  t.appendChild(c);
+  app.appendChild(t);
+  desenha(false);
+}
+
+function desenha(animarUltima){
+  var i,j,fr,cc=cAlvo();
+  elBandeja.innerHTML="";
+  if(rows===0){
+    elBandeja.appendChild(el("div","vaziomsg","Toque em <b>+ fileira</b> para come&ccedil;ar o ret&acirc;ngulo."));
+  }
+  for(i=0;i<rows;i++){
+    fr=el("div","fileira","");
+    for(j=0;j<cc;j++){
+      fr.appendChild(fazDoce("doce"+(animarUltima&&i===rows-1?" nova":"")));
+    }
+    elBandeja.appendChild(fr);
+  }
+  /* o banco do que falta */
+  var b=noBanco();
+  elBanco.className="banco"+(b===0?" zero":"");
+  elBanco.innerHTML="";
+  elBanco.appendChild(el("div","rot", b===0? "BANCO VAZIO — TODOS ARRUMADOS"
+                                           : ("AINDA NO BANCO: "+b)));
+  for(i=0;i<b;i++) elBanco.appendChild(fazDoce("bdoce"));
+  elMostra.innerHTML="<i>FILEIRAS</i><b>"+rows+"</b>";
+  atualizaBotoes();
+}
+
+function atualizaBotoes(){
+  btMais.removeAttribute("data-qa"); btMenos.removeAttribute("data-qa"); btConf.removeAttribute("data-qa");
+  btMenos.className=(rows<=0)?"btn menos off":"btn menos";
+  var podeMais=(noBanco()>=cAlvo());
+  btMais.className=podeMais?"btn mais":"btn mais off";
+  btConf.className="btn";
+  if(travado) return;
+  /* data-qa="1" = "este serve AGORA": só o auditor-jogador usa. */
+  if(noBanco()===0) btConf.setAttribute("data-qa","1");
+  else if(rows<fileirasCertas()) btMais.setAttribute("data-qa","1");
+  else btMenos.setAttribute("data-qa","1");
+}
+
+function poe(){
+  if(travado) return;
+  if(noBanco()<cAlvo()){ sTap();
+    if(noBanco()>0) dicaSobra();
+    return; }
+  rows++; sPoe(); desenha(true);
+  diz(nomeNum(rows)+(rows===1?" fileira":" fileiras"));
+  limpaTotal();
+}
+function tira(){
+  if(travado) return;
+  if(rows<=0){ sTap(); return; }
+  rows--; sTira(); desenha(false);
+  limpaTotal();
+}
+function dicaSobra(){
+  var b=noBanco();
+  mostraDica("Sobra"+(b>1?"m":"")+" s&oacute; <b>"+b+"</b> no banco — menos que uma fileira de <b>"+
+             cAlvo()+"</b>. Numa divis&atilde;o EXATA todos entram; confira as fileiras.");
+}
+function limpaTotal(){ elTotal.className="total"; elTotal.innerHTML=""; }
+
+function confere(){
+  if(travado) return;
+  var n=nAlvo(), cc=cAlvo(), g=ger;
+  if(noBanco()===0 && rows===fileirasCertas()){
+    travado=true; atualizaBotoes();
+    var dv=document.getElementById("dicaP"); if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
+    elTotal.className="total ok";
+    elTotal.innerHTML="<b>"+rows+"</b> fileiras de <b>"+cc+"</b>: "+rows+" &times; "+cc+" = "+n+
+                      ". Ent&atilde;o <b>"+n+" &divide; "+cc+" = "+rows+"</b>!";
+    diz(n+" dividido por "+cc+" é igual a "+nomeNum(rows));
+    sCerto();
+    setTimeout(function(){
+      if(g!==ger) return;
+      ri++;
+      if(ri<ARR.length) pecaArranjo();
+      else mostraBanner("<b>Ret&acirc;ngulos prontos!</b><br>Fileiras iguais mostram a divis&atilde;o: "+
+                        "o total &eacute; fileiras &times; quanto cabe em cada.", fimArranjo);
+    },1700);
+    return;
+  }
+  naoBateu();
+}
+
+/* ANDAIME QUE CRESCE — nunca "errou". */
+function naoBateu(){
+  sErro(); err++;
+  var b=noBanco();
+  if(b>0){
+    if(err===1) mostraDica("Ainda tem <b>"+b+"</b> no banco. Toque em <b>+ fileira</b> at&eacute; o banco esvaziar.");
+    else { mostraDica("Faltam fileiras: monte mais <b>"+Math.ceil(b/cAlvo())+"</b> de <b>"+cAlvo()+"</b>."); btMais.className="btn mais aponta"; }
+  }else{
+    /* banco vazio mas rows != certas (não deveria ocorrer, guarda de segurança) */
+    mostraDica("Conte as fileiras que voc&ecirc; montou: cada uma tem <b>"+cAlvo()+"</b>.");
+  }
+}
+
+function fimArranjo(){
+  ger++; limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&ecirc; montou <b>"+ARR.length+"</b> ret&acirc;ngulos. "+
+                 "Fileira igual &eacute; a divis&atilde;o em imagem."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; pecaArranjo(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Quantas fileiras d&atilde;o = o total dividido pelo tamanho da fileira."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaArranjo();
+</script>
+</body></html>
