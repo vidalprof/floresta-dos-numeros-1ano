@@ -107,8 +107,14 @@ body{
        · e o "Pronto!" MUDA-SE para a faixa vazia da direita.
      Esse último é o que faz o desenho crescer: o botão ocupava ~60px de
      ALTURA embaixo do quadro, e essa altura voltou toda para o desenho. */
+  /* ⚠️ O RECUO MORA NO `#app`, não no `#pmwrap` (set/2026, medido na captura).
+     Só o `#pmwrap` e a `.dica` recuavam, e o ENUNCIADO não: ele nascia em
+     x=137 enquanto a galeria fixa vai até x=164 — a criança lia "egue as peças"
+     em vez de "Pegue as peças". Pondo o recuo no pai, tudo o que está dentro
+     dele respeita as colunas de uma vez, e não fica faltando um. */
+  #app{padding-left:172px;padding-right:266px}
   #pmwrap{flex-direction:column;align-items:center;justify-content:flex-start;
-    gap:6px;width:100%;padding-left:172px;padding-right:266px}
+    gap:6px;width:100%}
   #galeria{position:fixed;left:8px;top:50%;
     -webkit-transform:translateY(-50%);transform:translateY(-50%);
     flex-direction:column;width:156px;max-width:156px;
@@ -131,6 +137,13 @@ body{
     gap:12px;max-width:none;width:auto}
   #bandeja{-webkit-box-flex:0;flex:0 0 152px;width:152px;min-height:0;
     height:min(calc(100vh - 126px),620px)}
+  /* ⭐ MONTANDO: a paleta e o "Pronto!" não existem mais nesta etapa (medido:
+     os dois com `offsetParent` nulo). A faixa que eles ocupavam volta para a
+     bandeja, e as peças do quebra-cabeça crescem — que é o que o Marcos pediu:
+     *"as peças do quebra cabeça somem, melhor colocá-las à direita, pq sobra
+     espaço ainda"*. */
+  #app.montando{padding-right:20px}
+  #app.montando #bandeja{-webkit-box-flex:0;flex:0 0 296px;width:296px}
   #bandeja.rotulo:before{content:"peças"}
   #palco{width:min(calc(100vh - 126px),calc(100vw - 614px),620px)}
   /* ⚠️ DUAS colunas de cor, não uma: são 20 cores, e numa coluna só elas não
@@ -150,7 +163,6 @@ body{
     -webkit-transform:translateY(-50%);transform:translateY(-50%);
     width:116px;margin:0;z-index:20}
   #barra .btn{width:100%;padding:16px 8px;font-size:19px}
-  .dica{padding-left:172px;padding-right:266px}
 }
 /* ⭐ TELA BAIXA (o netbook de 600px): o topo encolhe para o desenho crescer.
    Cada pixel tirado do enunciado vira pixel de desenho, e o enunciado
@@ -161,12 +173,13 @@ body{
 }
 /* tela larga de verdade: tudo respira mais */
 @media (min-width:1200px){
-  #pmwrap,.dica{padding-left:198px;padding-right:302px}
+  #app{padding-left:198px;padding-right:302px}
   #paleta{width:132px;right:14px}
   #barra{right:158px;width:132px}
   #galeria{width:182px;max-width:182px;left:14px}
   .gthumb{width:174px;height:174px}
   #bandeja{-webkit-box-flex:0;flex:0 0 178px;width:178px;height:min(calc(100vh - 126px),720px)}
+  #app.montando #bandeja{-webkit-box-flex:0;flex:0 0 340px;width:340px}
   #palco{width:min(calc(100vh - 126px),calc(100vw - 708px),720px)}
 }
 /* overlay do professor (senha 1275@) — grade grande com todos os desenhos */
@@ -320,6 +333,10 @@ function telaCapa(){
 /* ---------- PINTAR POR ÁREA (balde) ---------- */
 var cxT, cvT, imgLinha, pmarea, palco, _mask=null, _linhaOk=false;
 function telaPinta(){
+  /* volta a etapa de PINTAR: a paleta e o "Pronto!" reaparecem, entao a faixa
+     da direita e deles de novo — tirar a classe, senao a segunda rodada nasce
+     com a paleta por cima da bandeja. */
+  try{ document.getElementById("app").classList.remove("montando"); }catch(_e){}
   if(rodada>=DES.length){ telaFim(); return; }
   estado="pintar"; var d=DES[rodada]; app.innerHTML="";
   var pr=el("div","prog"); var pi=el("i"); pi.style.width=Math.round(rodada*100/DES.length)+"%"; pr.appendChild(pi); app.appendChild(pr);
@@ -489,6 +506,10 @@ function faiscas(){ var pr=palco.getBoundingClientRect(), ar=pmarea.getBoundingC
 function construir(){
   imgLinha.style.opacity="0"; cvT.style.opacity="0";
   var ghost=el("img"); ghost.id="ghost"; ghost.src="img/"+DES[rodada].img+".png"; palco.appendChild(ghost);
+  /* ⚠️ a classe entra ANTES de a bandeja ser medida: o `paraBandeja` posiciona
+     as peças a partir do `clientWidth` dela, e mudar a largura depois deixaria
+     as peças no lugar da bandeja antiga. */
+  try{ document.getElementById("app").classList.add("montando"); }catch(_e){}
   var bandeja=el("div"); bandeja.id="bandeja"; bandeja.className="rotulo"; pmarea.appendChild(bandeja);
   var r,c; slots=[];
   for(r=0;r<LIN;r++)for(c=0;c<COL;c++){ var s=el("div","slot");
