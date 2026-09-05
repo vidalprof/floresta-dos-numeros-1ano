@@ -116,6 +116,18 @@ ensinaram — e que vale para toda peça:
 - **Peça nova = solucionador novo no `jogador.js`, por ATRIBUTO** (`data-qa`), nunca
   por classe (o integrador renomeia). O material dourado ganhou o dele.
 
+**O que o lote NÃO conseguiu medir (fica registrado, não escondido):**
+- **11 peças sem receita no `errador.js`** (o portão do andaime disse "SEM RECEITA"
+  e não mediu): `caca-palavras`, `camadas-mapa`, `criar-desafio`, `decisao`,
+  `estimar`, `passo-a-passo`, `pintar-canvas`, `pintar-desenho`, `repartir`,
+  `teia-alimentar`, `vitrine`. Quatro são produção livre (não há erro a cometer);
+  as outras precisam de receita própria para o andaime ser medido.
+- **5 peças em que o errador viu só 1 ajuda em 3 erros** (`andar-ate`, `memoria`,
+  `misterio`, `quem-sou-eu`, `reta-numerica`): pode ser andaime parado ou ajuda
+  que mora fora do `#dicaP` (fala do mascote, pista nova). Olhar jogando.
+- Toque medido (`5d`): 30 peças com alvo de dedo blindado, 56 só de clique
+  (não se aplica), 0 sem blindagem depois dos consertos.
+
 **O que NÃO é defeito (medido, para ninguém "consertar" à toa):**
 - **Carga:** `DOMContentLoaded` 55–128 ms, primeira fase montada em 3–8 ms
   (Chromium headless, `file://`). O montador já embute **só as peças usadas**
