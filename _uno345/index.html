@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNO dos Números — 3º, 4º e 5º ano</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap');
+
+  :root{
+    --azul:#0099DD;
+    --vermelho:#E5202E;
+    --amarelo:#F7B500;
+    --verde:#3EA72D;
+    --fundo:#FFF7E6;
+    --escuro:#2B2440;
+    --branco:#FFFFFF;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+
+  body{
+    font-family:'Fredoka',sans-serif;
+    background:
+      radial-gradient(circle at 50% 0%, #2E86C9 0, transparent 55%),
+      radial-gradient(circle at 12% 88%, #1C6BB0 0, transparent 45%),
+      radial-gradient(circle at 88% 92%, #1C6BB0 0, transparent 45%),
+      linear-gradient(180deg, #2876B8 0%, #1B5D9E 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    color:#fff;
+    overflow-x:hidden;
+  }
+
+  /* ---------- TOPO ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 22px; gap:12px; flex-wrap:wrap;
+  }
+  .logo{
+    font-family:'Baloo 2',sans-serif; font-weight:800;
+    font-size:clamp(28px,5vw,46px); letter-spacing:1px;
+    display:flex; gap:4px; align-items:center;
+  }
+  .logo .l{ display:inline-block; padding:2px 14px; border-radius:14px; color:#fff;
+    box-shadow:0 4px 0 rgba(0,0,0,.15); transform:rotate(-3deg);}
+  .logo .l:nth-child(1){ background:var(--vermelho); transform:rotate(-4deg);}
+  .logo .l:nth-child(2){ background:var(--azul); transform:rotate(3deg);}
+  .logo .l:nth-child(3){ background:var(--verde); transform:rotate(-2deg);}
+  .logo small{ font-family:'Fredoka'; font-size:16px; color:#EAF4FF; margin-left:10px; font-weight:600;}
+
+  .btn{
+    font-family:'Baloo 2',sans-serif; font-weight:700; border:none; cursor:pointer;
+    border-radius:18px; padding:12px 22px; font-size:clamp(16px,2.4vw,22px);
+    color:#fff; box-shadow:0 5px 0 rgba(0,0,0,.18); transition:transform .08s, box-shadow .08s;
+  }
+  .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,.18);}
+  .btn-tutorial{ background:var(--escuro); }
+  .btn-novo{ background:var(--verde); }
+  .btn-voz{ background:#7A4FC0; }
+  .btn-voz.voz-off{ background:#8A8A8A; }
+  .topo-botoes{ display:flex; gap:10px; flex-wrap:wrap;}
+
+  /* ---------- MESA ---------- */
+  .mesa{ max-width:1000px; margin:0 auto; padding:8px 16px 40px; }
+
+  .jogador-area h2, .computador-area h2{
+    font-family:'Baloo 2'; font-size:clamp(18px,3vw,26px); margin-bottom:8px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .avatar{ font-size:30px;}
+
+  .computador-area{ text-align:center; margin-bottom:10px;}
+  .cartas-cpu{ display:flex; justify-content:center; min-height:90px; flex-wrap:wrap;}
+  /* ⚠️ O VERSO NÃO ESCREVE NADA, e isso é conserto medido (set/2026): as cartas
+     do robô são um LEQUE sobreposto (`margin:0 -14px`), então um "UNO" em cada
+     uma aparecia cortado e o topo da tela lia **"UNUNUNUNUNUNO"**. Verso de
+     carta de verdade não tem texto legível de lado nenhum: tem o oval branco
+     inclinado, que é a marca da carta. Ele identifica a carta e não vira sopa
+     de letra quando sobrepõe. */
+  .verso{
+    width:58px; height:86px; border-radius:12px; margin:0 -14px;
+    background:repeating-linear-gradient(45deg,#5B4B8A,#5B4B8A 8px,#43386B 8px,#43386B 16px);
+    border:3px solid #fff; box-shadow:0 4px 8px rgba(0,0,0,.2);
+    position:relative; overflow:hidden;
+  }
+  .verso::after{
+    content:''; position:absolute; left:50%; top:50%;
+    width:112%; height:46%; background:rgba(255,255,255,.92); border-radius:50%;
+    -webkit-transform:translate(-50%,-50%) rotate(-32deg);
+    transform:translate(-50%,-50%) rotate(-32deg);
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+
+  /* centro: monte + mensagem */
+  .centro{
+    display:flex; align-items:center; justify-content:center; gap:26px;
+    margin:18px 0; flex-wrap:wrap;
+  }
+  .monte{ text-align:center;}
+  .monte .rotulo{ font-weight:600; margin-bottom:6px; font-size:15px;}
+  /* ===== ESTILO CLÁSSICO DAS CARTAS ===== */
+  /* moldura branca externa + miolo colorido + oval branco inclinado + número central
+     + números pequenos nos cantos. Tudo desenhado em CSS, sem imagens. */
+  .uno{
+    position:relative; background:#fff; border-radius:14px;
+    box-shadow:0 6px 12px rgba(0,0,0,.28); font-family:'Baloo 2'; overflow:hidden;
+  }
+  .uno .miolo{ position:absolute; inset:6%; border-radius:10px; overflow:hidden; }
+  /* oval branco inclinado característico */
+  .uno .oval{
+    position:absolute; left:50%; top:50%;
+    width:118%; height:54%;
+    background:#fff; border-radius:50%;
+    transform:translate(-50%,-50%) rotate(-32deg);
+    box-shadow:0 6px 14px rgba(0,0,0,.22) inset, 0 2px 6px rgba(0,0,0,.18);
+  }
+  /* número grande central com contorno */
+  .uno .central{
+    position:absolute; left:0; top:0; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; line-height:1; z-index:2;
+    -webkit-text-stroke:2px rgba(0,0,0,.18);
+    paint-order:stroke fill;
+  }
+  /* números pequenos nos cantos opostos */
+  .uno .canto{ position:absolute; font-weight:800; color:#fff; z-index:3; line-height:1;
+    text-shadow:0 1px 0 rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; }
+  .uno .canto.tl{ top:5%; left:7%; }
+  .uno .canto.br{ bottom:5%; right:7%; transform:rotate(180deg); }
+  .uno .canto .simb-svg{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.3)); width:var(--cc); height:var(--cc); display:block; }
+  .uno .central .simb-svg{ filter:drop-shadow(0 2px 3px rgba(0,0,0,.18)); width:var(--sc); height:var(--sc); display:block; }
+  .uno .simb-c, .uno .simb-k{ display:flex; align-items:center; justify-content:center; }
+  .uno .canto-mais2{ font-weight:800; }
+
+  .carta-grande{ width:120px; height:178px; --sc:96px; --cc:30px; }
+  .carta-grande .central{ font-size:78px; }
+  .carta-grande .canto{ font-size:26px; }
+  .carta-grande .canto-mais2{ font-size:20px; }
+  .comprar{
+    width:120px; height:178px; border-radius:18px; border:6px dashed var(--escuro);
+    background:#fff; display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center;
+    cursor:pointer; font-family:'Baloo 2'; font-weight:700; font-size:18px; color:var(--escuro);
+    transition:transform .08s;
+  }
+  .comprar:hover{ transform:scale(1.05); background:#FFF3D6;}
+  .comprar .big{ font-size:46px;}
+  .comprar.destaque{ border-color:var(--amarelo); background:#FFF8E0; animation:chama 1s ease-in-out infinite; }
+  @keyframes chama{
+    0%,100%{ box-shadow:0 0 0 0 rgba(247,181,0,.6); transform:scale(1); }
+    50%{ box-shadow:0 0 0 12px rgba(247,181,0,0); transform:scale(1.05); }
+  }
+
+  /* mensagem grande */
+  .mensagem{
+    text-align:center; font-family:'Baloo 2'; font-weight:700; color:#1a1633;
+    font-size:clamp(20px,4vw,32px); min-height:48px; margin:6px 0 14px;
+    padding:10px 18px; border-radius:18px; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,.1);
+    display:inline-block; max-width:90%;
+  }
+  .mensagem-wrap{ text-align:center;}
+
+  /* ⭐ A TARJA DA REGRA DA RODADA (o que faz disto uma ATIVIDADE, não só um jogo)
+     Ela precisa ser IMPOSSÍVEL de não ver: quando a regra entra, a criança tem
+     que entender NA HORA por que metade das cartas apagou. Tarja apagadinha =
+     criança achando que o jogo travou. Por isso: fundo quente, pulso de entrada
+     e narração junto (princípio da modalidade — figura + voz, nunca só texto).
+     ⚠️ `width:fit-content` + margens automáticas: encolhe até o texto em vez de
+     virar faixa esticada de ponta a ponta (a lição da Bancada da Divisão). */
+  .regra-tarja{
+    display:none; margin:2px auto 8px; padding:9px 20px; border-radius:16px;
+    background:linear-gradient(180deg,#FFE9A8,#FFC93C);
+    color:#3A2600; font-weight:800; font-size:clamp(16px,2.7vw,23px);
+    box-shadow:0 5px 0 #C98E00, 0 8px 16px rgba(0,0,0,.22);
+    border:3px solid #fff; line-height:1.25;
+    width:-webkit-fit-content; width:fit-content; max-width:94%;
+  }
+  .regra-tarja.on{ display:block; -webkit-animation:regraEntra .45s ease-out; animation:regraEntra .45s ease-out;}
+  .regra-tarja .rotulo-regra{ display:block; font-size:.62em; letter-spacing:1px; color:#7A5200;}
+  @-webkit-keyframes regraEntra{ 0%{transform:scale(.8);opacity:0} 60%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+  @keyframes regraEntra{ 0%{transform:scale(.8);opacity:0} 60%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+  @media (prefers-reduced-motion:reduce){ .regra-tarja.on{ -webkit-animation:none; animation:none; } }
+
+  /* mão do jogador */
+  .jogador-area{ margin-top:14px;}
+  .minhas-cartas{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:6px;}
+  .carta{
+    width:78px; height:116px; cursor:pointer; --sc:62px; --cc:19px;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .carta .central{ font-size:48px; }
+  .carta .canto{ font-size:17px; }
+  .carta .canto-mais2{ font-size:13px; }
+  .carta.jogavel:hover{ transform:translateY(-16px) scale(1.06); box-shadow:0 14px 20px rgba(0,0,0,.3);}
+  .carta.jogavel{ outline:4px solid #FFE49B; outline-offset:1px; }
+  .carta.bloqueada{ filter:grayscale(.55) brightness(.92); cursor:not-allowed; opacity:.72;}
+
+  .c-azul .miolo{ background:var(--azul);}
+  .c-vermelho .miolo{ background:var(--vermelho);}
+  .c-amarelo .miolo{ background:var(--amarelo);}
+  .c-verde .miolo{ background:var(--verde);}
+  /* cor do número central = cor da carta (fica sobre o oval branco) */
+  .c-azul .central{ color:var(--azul);}
+  .c-vermelho .central{ color:var(--vermelho);}
+  .c-amarelo .central{ color:var(--amarelo);}
+  .c-verde .central{ color:var(--verde);}
+  .c-curinga .central{ color:#fff;}
+  /* cartas pretas (+2 e +4) */
+  .c-preta .miolo{ background:#15131F;}
+  .c-preta .central{ color:#fff;}
+
+  .dica{ text-align:center; font-size:16px; color:#EAF4FF; margin-top:8px; font-weight:600;}
+
+  /* ============================================================
+     ⭐⭐ MODO COMPACTO — O PC DA ESCOLA TEM 1024 x 600
+     ------------------------------------------------------------
+     ⚠️⚠️ DEFEITO MEDIDO (set/2026), e do pior tipo: em 1024x600 — que é
+     exatamente a tela dos computadores do laboratório — a MÃO DA CRIANÇA
+     ficava INTEIRAMENTE fora da tela. Ela via a mesa, a mensagem "toque numa
+     carta que brilha"... e nenhuma carta. Parecia que o jogo tinha travado.
+     É o mesmo defeito que o `_qa/leiaute.js` existe para pegar ("resposta
+     fora da área visível — o pior: parece que acabou"), e ele veio herdado
+     do jogo do 1º ano.
+
+     A regra da casa ao encolher: **encolhe a MOLDURA, nunca o ALVO**. Some
+     das margens, do cabeçalho, do verso do robô e do tamanho da LETRA — e o
+     mínimo que se pode tirar da carta da mão, que é onde o dedo mira. Medido
+     depois: nenhum alvo abaixo de 40px em nenhum dos 6 tamanhos.
+
+     O gatilho é ALTURA **ou** LARGURA, e os dois números foram medidos, não
+     chutados: 820px de altura porque o notebook de 1366x768 reprovava com as 7
+     cartas fora da tela; 560px de largura porque no celular a mão quebra em
+     duas fileiras e a página passava de 1000px numa tela de 844.
+     ============================================================ */
+  @media (max-height:820px), (max-width:560px){
+    header{ padding:6px 12px; }
+    /* ⚠️ o botão encolhe a LETRA, nunca abaixo de 40px de altura: é alvo de
+       dedo. A 1ª versão do modo compacto deixou os três em 32px — medido e
+       reprovado pelo próprio testador. */
+    .btn{ min-height:40px; }
+    .logo .l{ width:38px; height:38px; font-size:26px; }
+    .logo small{ font-size:13px; }
+    .btn{ padding:7px 12px; font-size:15px; }
+    .mesa{ padding:2px 12px 10px; }
+    .jogador-area h2, .computador-area h2{ font-size:17px; margin-bottom:2px; }
+    .avatar{ font-size:21px; }
+    .computador-area{ margin-bottom:2px; }
+    .cartas-cpu{ min-height:0; }
+    .verso{ width:42px; height:62px; margin:0 -11px; border-width:2px; border-radius:9px; }
+    .centro{ margin:6px 0; gap:18px; }
+    .monte .rotulo{ font-size:12px; margin-bottom:2px; }
+    .carta-grande{ width:88px; height:130px; --sc:70px; --cc:22px; }
+    .carta-grande .central{ font-size:56px; }
+    .carta-grande .canto{ font-size:19px; }
+    .carta-grande .canto-mais2{ font-size:15px; }
+    .comprar{ width:88px; height:130px; border-width:4px; font-size:15px; }
+    .comprar .big{ font-size:32px; }
+    .mensagem{ font-size:19px; min-height:0; margin:2px 0 4px; padding:6px 14px; }
+    .regra-tarja{ font-size:17px; padding:5px 14px; margin:0 auto 4px; }
+    .jogador-area{ margin-top:2px; }
+    .minhas-cartas{ gap:7px; padding:2px; }
+    .dica{ font-size:13px; margin-top:3px; }
+  }
+  /* tela MUITO baixa (netbook antigo) ou celular estreito (a mão quebra em duas
+     fileiras): aí sim a carta cede um pouco, mas continua MUITO acima do piso de
+     40px de alvo — 58px de largura é meio dedo e meio. */
+  @media (max-height:640px), (max-width:430px){
+    .carta{ width:60px; height:89px; --sc:47px; --cc:15px; }
+    .carta .central{ font-size:36px; }
+    .carta .canto{ font-size:13px; }
+    .minhas-cartas{ gap:5px; }
+    .dica{ display:none; }
+  }
+
+  /* ---------- SELETOR DE COR ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(58,46,92,.55); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .overlay.ativo{ display:flex; }
+  .escolher-cor{
+    background:#fff; border-radius:26px; padding:26px; text-align:center; max-width:420px; width:100%;
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+  }
+  .escolher-cor h3{ font-family:'Baloo 2'; font-size:26px; margin-bottom:16px; color:#2B2440;}
+  .cores-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .cor-opcao{
+    height:90px; border-radius:18px; border:4px solid rgba(0,0,0,.15); cursor:pointer; color:#111;
+    font-family:'Baloo 2'; font-weight:800; font-size:22px; box-shadow:0 5px 0 rgba(0,0,0,.18);
+    transition:transform .08s; text-shadow:0 1px 0 rgba(255,255,255,.45);
+  }
+  .cor-opcao:active{ transform:translateY(4px);}
+  .cor-opcao.c-vermelho{ background:var(--vermelho);}
+  .cor-opcao.c-azul{ background:var(--azul);}
+  .cor-opcao.c-verde{ background:var(--verde);}
+  .cor-opcao.c-amarelo{ background:var(--amarelo);}
+
+  /* ---------- TUTORIAL ---------- */
+  .tutorial{
+    position:fixed; inset:0; background:rgba(58,46,92,.92); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:18px;
+  }
+  .tutorial.ativo{ display:flex; }
+  .slide-box{
+    background:var(--branco); border-radius:30px; max-width:760px; width:100%;
+    padding:30px 28px 24px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.4);
+    position:relative;
+  }
+  .slide-num{ font-weight:700; color:#9a8fc0; font-size:16px; margin-bottom:6px;}
+  .mascote-linha{ display:flex; align-items:center; gap:18px; justify-content:center; flex-wrap:wrap;}
+  .mascote{ flex:0 0 auto; width:120px; animation:flutua 2.6s ease-in-out infinite;}
+  .mascote svg{ width:120px; height:150px; filter:drop-shadow(0 6px 8px rgba(0,0,0,.18));}
+  @keyframes flutua{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-8px) rotate(2deg);} }
+  .balao{
+    position:relative; background:#F1F6FF; border:4px solid #BBD4F0; border-radius:24px;
+    padding:18px 22px; max-width:480px; flex:1 1 320px; text-align:center; color:#1a1a1a;
+  }
+  .balao::before{
+    content:""; position:absolute; left:-22px; top:50%; transform:translateY(-50%);
+    border:14px solid transparent; border-right-color:#BBD4F0;
+  }
+  .balao::after{
+    content:""; position:absolute; left:-15px; top:50%; transform:translateY(-50%);
+    border:11px solid transparent; border-right-color:#F1F6FF;
+  }
+  .slide-emoji{ font-size:54px; line-height:1; margin:0 0 6px; display:block;}
+  .slide-box h2#slideTitulo{ font-family:'Baloo 2'; font-size:clamp(22px,4vw,32px); margin-bottom:12px; color:#1a1633 !important;}
+  .slide-box p#slideTexto{ font-size:clamp(17px,2.6vw,22px); line-height:1.5; color:#23203a !important; max-width:600px; margin:0 auto;}
+  .balao h2, .balao p{ color:#23203a !important;}
+  .slide-cartinha{ display:inline-flex; gap:10px; margin:12px 0; justify-content:center; flex-wrap:wrap;}
+  @media (max-width:560px){
+    .mascote-linha{ flex-direction:column; gap:6px;}
+    .balao::before,.balao::after{ left:50%; top:-22px; transform:translateX(-50%) rotate(90deg);}
+    .mascote{ width:92px;} .mascote svg{ width:92px; height:115px;}
+  }
+  .mini{
+    width:62px; height:92px; --sc:50px; --cc:15px;
+    font-size:38px;
+  }
+  .mini .central{ font-size:38px; }
+  .mini .canto{ font-size:13px; }
+  .mini .canto-mais2{ font-size:10px; }
+  .tut-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:22px; gap:10px;}
+  .bolinhas{ display:flex; gap:8px; justify-content:center; flex:1;}
+  .bolinha{ width:13px; height:13px; border-radius:50%; background:#D8D0EE; transition:background .2s, transform .2s;}
+  .bolinha.on{ background:var(--escuro); transform:scale(1.3);}
+  .btn-nav{ background:var(--azul); }
+  .btn-fechar-tut{ background:var(--vermelho); }
+  .btn-nav:disabled{ opacity:.35; cursor:default; transform:none; box-shadow:0 5px 0 rgba(0,0,0,.18);}
+
+  /* vitória confete simples */
+  .festa{ animation:pulo .6s ease infinite alternate;}
+  @keyframes pulo{ from{transform:scale(1);} to{transform:scale(1.06) rotate(-1deg);} }
+
+  @media (max-width:560px){
+    .carta{ width:64px; height:96px; --sc:52px; --cc:16px;}
+    .carta .central{ font-size:40px;}
+    .carta .canto{ font-size:14px;}
+    .carta-grande,.comprar{ width:100px; height:150px;}
+    .carta-grande{ --sc:80px; --cc:25px;}
+    .carta-grande .central{ font-size:64px;}
+    .carta-grande .canto{ font-size:22px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="l">U</span><span class="l">N</span><span class="l">O</span>
+    <small id="subTitulo">dos Números</small>
+  </div>
+  <div class="topo-botoes">
+    <button class="btn btn-voz" id="btnVoz" onclick="alternarVoz()">🔊 Voz</button>
+    <button class="btn btn-tutorial" onclick="abrirTutorial()">📖 Tutorial</button>
+    <button class="btn btn-novo" onclick="novoJogo()">🔄 Novo Jogo</button>
+  </div>
+</header>
+
+<main class="mesa">
+
+  <section class="computador-area">
+    <h2><span class="avatar">🤖</span> Robô <span id="qtdCpu">(7 cartas)</span></h2>
+    <div class="cartas-cpu" id="cartasCpu"></div>
+  </section>
+
+  <div class="mensagem-wrap">
+    <div class="regra-tarja" id="regraTarja" role="status" aria-live="polite">
+      <span class="rotulo-regra">REGRA DESTA RODADA</span>
+      <span id="regraTexto"></span>
+    </div>
+    <div class="mensagem" id="mensagem">Toque em uma carta para começar!</div>
+  </div>
+
+  <section class="centro">
+    <div class="monte">
+      <div class="rotulo">Carta da mesa</div>
+      <div class="carta-grande" id="cartaMesa"><span class="num">?</span></div>
+    </div>
+    <div class="monte">
+      <div class="rotulo">Comprar</div>
+      <button class="comprar" id="btnComprar" onclick="comprarCarta()">
+        <span class="big">🃏</span>
+        <span>Pegar 1</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="jogador-area">
+    <h2><span class="avatar">🧒</span> Você <span id="qtdEu">(7 cartas)</span></h2>
+    <div class="minhas-cartas" id="minhasCartas"></div>
+    <div class="dica" id="dica">As cartas que brilham são as que você pode jogar! ✨</div>
+  </section>
+
+</main>
+
+<!-- Seletor de cor (curinga) -->
+<div class="overlay" id="overlayCor">
+  <div class="escolher-cor">
+    <h3>Escolha uma cor! 🎨</h3>
+    <div class="cores-grid">
+      <button class="cor-opcao c-vermelho" onclick="escolherCor('vermelho')">Vermelho</button>
+      <button class="cor-opcao c-azul" onclick="escolherCor('azul')">Azul</button>
+      <button class="cor-opcao c-verde" onclick="escolherCor('verde')">Verde</button>
+      <button class="cor-opcao c-amarelo" onclick="escolherCor('amarelo')">Amarelo</button>
+    </div>
+  </div>
+</div>
+
+<!-- TUTORIAL -->
+<div class="tutorial" id="tutorial">
+  <div class="slide-box">
+    <div class="slide-num" id="slideNum">Passo 1 de 6</div>
+    <div class="mascote-linha">
+      <div class="mascote" id="mascote">
+        <svg viewBox="0 0 120 150" aria-hidden="true">
+          <!-- antena -->
+          <line x1="60" y1="12" x2="60" y2="30" stroke="#1B5D9E" stroke-width="5"/>
+          <circle cx="60" cy="10" r="7" fill="#E5202E"/>
+          <!-- cabeça -->
+          <rect x="22" y="28" width="76" height="62" rx="16" fill="#9FB8CC" stroke="#1B5D9E" stroke-width="5"/>
+          <!-- visor -->
+          <rect x="32" y="40" width="56" height="30" rx="10" fill="#16324B"/>
+          <circle cx="48" cy="55" r="7" fill="#56E0FF"/>
+          <circle cx="72" cy="55" r="7" fill="#56E0FF"/>
+          <circle cx="50" cy="52" r="2.4" fill="#fff"/>
+          <circle cx="74" cy="52" r="2.4" fill="#fff"/>
+          <!-- boca -->
+          <rect x="46" y="78" width="28" height="7" rx="3.5" fill="#1B5D9E"/>
+          <!-- orelhas -->
+          <rect x="14" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <rect x="98" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <!-- corpo -->
+          <rect x="32" y="92" width="56" height="44" rx="12" fill="#C8D7E4" stroke="#1B5D9E" stroke-width="5"/>
+          <circle cx="60" cy="114" r="9" fill="#F7B500" stroke="#1B5D9E" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="balao">
+        <span class="slide-emoji" id="slideEmoji">👋</span>
+        <h2 id="slideTitulo"></h2>
+        <div id="slideCartas"></div>
+        <p id="slideTexto"></p>
+      </div>
+    </div>
+    <div class="tut-nav">
+      <button class="btn btn-nav" id="btnAnterior" onclick="mudarSlide(-1)">◀ Voltar</button>
+      <div class="bolinhas" id="bolinhas"></div>
+      <button class="btn btn-nav" id="btnProximo" onclick="mudarSlide(1)">Avançar ▶</button>
+      <button class="btn btn-fechar-tut" id="btnComecar" onclick="fecharTutorial()" style="display:none;">Vamos jogar! 🎉</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ DADOS DO JOGO ============ */
+const CORES = ['vermelho','azul','verde','amarelo'];
+const ICONES = { pula:'🚫', mais2:'➕2️⃣', curinga:'🌈' };
+let baralho = [], mao = [], cpu = [], mesa = null, corAtiva = null;
+let vezDoJogador = true, esperandoCor = false, curingaPendente = null;
+
+function criarBaralho(){
+  const b = [];
+  CORES.forEach(cor=>{
+    // um 0 por cor; dois de cada número 1 a 9
+    b.push({cor, tipo:'num', valor:0});
+    for(let n=1;n<=9;n++){ b.push({cor, tipo:'num', valor:n}); b.push({cor, tipo:'num', valor:n}); }
+    // duas de cada carta de ação por cor
+    for(let k=0;k<2;k++){
+      b.push({cor, tipo:'pula'});
+      b.push({cor, tipo:'inverte'});
+      b.push({cor, tipo:'mais2'});
+    }
+  });
+  // quatro coringas e quatro +4
+  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'curinga'});
+  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'mais4'});
+  return embaralhar(b);
+}
+function embaralhar(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function novoJogo(){
+  baralho = criarBaralho();
+  mao = baralho.splice(0,7);
+  cpu = baralho.splice(0,7);
+  // primeira carta da mesa precisa ser número simples
+  let i = baralho.findIndex(c=>c.tipo==='num');
+  mesa = baralho.splice(i,1)[0];
+  corAtiva = mesa.cor;
+  esperandoCor=false;
+  /* partida nova zera o que é DA PARTIDA — mas NÃO `_derrotasSeguidas`, que é
+     da CRIANÇA e atravessa as partidas (é dele que sai o alívio do robô). */
+  _jogadas = 0; regraAtiva = null; _corQueFaltou = {};
+  pintaRegra();
+  var msg = document.getElementById('mensagem');
+  if(msg) msg.classList.remove('festa');
+  render();
+  vezDoJogadorComMensagem('');
+}
+
+/* ============ REGRAS ============ */
+/* ============================================================
+   ⭐ A REGRA DA RODADA — o que transforma o jogo em ATIVIDADE
+   ------------------------------------------------------------
+   O gesto natural do UNO é COMBINAR POR ATRIBUTO (cor, número, tipo). Em vez de
+   enfiar matemática por fora, a regra monta em cima desse mesmo gesto: de vez em
+   quando a mesa pede uma condição a MAIS sobre o NÚMERO da carta.
+
+   A escada por ano (é o que faz "mais difícil" ter significado):
+     3º ano — par/ímpar, maior/menor que a da mesa, soma 10 com a da mesa
+     4º ano — múltiplo de 2/3/5, dobro e metade da carta da mesa
+     5º ano — as do 4º + "a soma dos dois números é múltiplo de 3"
+
+   ⚠️ A ARMADILHA QUE TRAVA A PARTIDA, e ela é real: se a regra extra valesse
+   sempre, a criança poderia ficar sem NENHUMA carta jogável e o jogo empacaria.
+   Por isso a regra só entra quando ela tem pelo menos DUAS cartas que a
+   atendem, vale por UMA rodada, e a carta de ação/coringa nunca é bloqueada —
+   sempre sobra saída. */
+var REGRAS = {
+  3: [
+    {t:"só vale carta PAR",              ok:function(v,m){ return v%2===0; }},
+    {t:"só vale carta ÍMPAR",            ok:function(v,m){ return v%2===1; }},
+    {t:"só vale carta MAIOR que a da mesa", ok:function(v,m){ return v>m; }},
+    {t:"a sua carta + a da mesa = 10",   ok:function(v,m){ return v+m===10; }}
+  ],
+  4: [
+    {t:"só vale MÚLTIPLO DE 3",          ok:function(v,m){ return v%3===0; }},
+    {t:"só vale MÚLTIPLO DE 5",          ok:function(v,m){ return v%5===0; }},
+    {t:"só vale o DOBRO da carta da mesa", ok:function(v,m){ return v===m*2; }},
+    {t:"só vale a METADE da carta da mesa",ok:function(v,m){ return m%2===0 && v===m/2; }}
+  ],
+  5: [
+    {t:"só vale MÚLTIPLO DE 3",          ok:function(v,m){ return v%3===0; }},
+    {t:"a soma das duas é MÚLTIPLO DE 3",ok:function(v,m){ return (v+m)%3===0; }},
+    {t:"só vale o DOBRO da carta da mesa", ok:function(v,m){ return v===m*2; }},
+    {t:"a sua carta + a da mesa = 10",   ok:function(v,m){ return v+m===10; }}
+  ]
+};
+var regraAtiva = null;
+
+function sorteiaRegra(){
+  /* uma rodada em cada três, e só a partir da 4ª jogada (a criança precisa
+     entender o jogo antes de ganhar uma condição a mais) */
+  regraAtiva = null;
+  if(_jogadas < 3 || Math.random() > 0.55) return;
+  var m = (mesa && mesa.tipo==='num') ? mesa.valor : -1;
+  if(m < 0) return;
+
+  /* ⚠️⚠️ MEDIDO, não achado (set/2026): a 1ª versão sorteava UMA regra e
+     desistia se ela não coubesse. Parece igual e não é — as regras difíceis
+     ("o DOBRO da carta da mesa") quase nunca cabem, então a regra que dava
+     as caras era sempre a fácil, e no 4º ano ela apareceu em só 18 de 40
+     partidas (o testador contou). Regra que quase não aparece = a atividade
+     não existe; sobra um UNO comum.
+     Agora ele EMBARALHA as regras do ano e pega a primeira que couber. A
+     escada de dificuldade continua a mesma (as regras são as do ano), o que
+     muda é que ela realmente acontece. */
+  var lista = (REGRAS[NIVEL] || REGRAS[4]).slice();
+  for(var i=lista.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1)); var t=lista[i]; lista[i]=lista[j]; lista[j]=t;
+  }
+  function quantasAtendem(cand){
+    var q = 0;
+    for(var c=0;c<mao.length;c++){
+      /* ⚠️ `podeJogar` JUNTO: não adianta a carta obedecer à regra se ela não
+         servia na mesa de qualquer jeito. Contar sem isso já mediu errado uma
+         vez — a conta dizia "tem duas" e na tela não brilhava nenhuma. */
+      if(mao[c].tipo==='num' && podeJogar(mao[c]) && cand.ok(mao[c].valor, m)) q++;
+    }
+    return q;
+  }
+  /* DOIS PASSES, e o motivo é pedagógico:
+     1º passe — procura uma regra que deixe DUAS ou mais saídas: a criança
+       ESCOLHE, que é o que dá autonomia (Deci & Ryan) e evita o "adivinhe a
+       única certa".
+     2º passe — se nenhuma deixar duas, aceita a que deixa UMA. Continua sem
+       travar (sempre há saída, e as cartas especiais nunca são bloqueadas) e
+       vira um probleminha de resposta única — "qual é o dobro de 4?".
+     Sem o 2º passe as regras difíceis (dobro, metade, múltiplo de 5) quase
+     nunca cabiam: medido, no 4º ano a regra aparecia em 28 de 120 partidas,
+     ou seja, a criança jogava três partidas inteiras sem ver a atividade. */
+  var k, q;
+  for(k=0;k<lista.length;k++){ if(quantasAtendem(lista[k]) >= 2){ regraAtiva = lista[k]; return; } }
+  for(k=0;k<lista.length;k++){ if(quantasAtendem(lista[k]) >= 1){ regraAtiva = lista[k]; return; } }
+}
+
+function regraDeixa(carta){
+  if(!regraAtiva) return true;
+  if(carta.tipo!=='num') return true;      // ação e coringa nunca travam a saída
+  var m = (mesa && mesa.tipo==='num') ? mesa.valor : -1;
+  if(m < 0) return true;
+  return regraAtiva.ok(carta.valor, m);
+}
+
+var _jogadas = 0;
+
+function podeJogar(carta){
+  if(carta.tipo==='curinga' || carta.tipo==='mais4') return true;
+  if(carta.cor===corAtiva) return true;
+  if(carta.tipo==='num' && mesa.tipo==='num' && carta.valor===mesa.valor) return true;
+  if(carta.tipo!=='num' && carta.tipo===mesa.tipo) return true;
+  return false;
+}
+
+/* o que a MÃO da criança pode jogar = regra do UNO E regra da rodada */
+function podeJogarComRegra(carta){ return podeJogar(carta) && regraDeixa(carta); }
+
+/* ⚠️ POR QUE A REGRA VALE SÓ PARA A CRIANÇA, e isso é DE PROPÓSITO:
+   se ela valesse também para o robô, a criança não teria como perceber que a
+   regra existe — as duas mãos ficariam igualmente limitadas e a tela pareceria
+   só "com menos carta brilhando". Valendo só do lado dela, a regra vira um
+   DESAFIO visível, com o robô jogando normal do outro lado. E o robô já ficou
+   mais forte pelo cérebro dele (notaDaCarta), não por muleta de regra. */
+
+function pintaRegra(){
+  var t = document.getElementById('regraTarja');
+  var x = document.getElementById('regraTexto');
+  if(!t || !x) return;
+  if(regraAtiva){
+    x.textContent = regraAtiva.t + '!';
+    t.classList.add('on');
+  }else{
+    t.classList.remove('on');
+    x.textContent = '';
+  }
+}
+
+/* ============ JOGADAS DO JOGADOR ============ */
+function jogarCarta(idx){
+  if(!vezDoJogador || esperandoCor) return;
+  const carta = mao[idx];
+  if(!podeJogar(carta)){
+    setMensagem('Essa não dá! Escolha uma que brilha. 😊');
+    return;
+  }
+  /* ⚠️ FEEDBACK ESPECÍFICO (Hattie), não um "errou" genérico: se a carta serve
+     no UNO mas a REGRA da rodada barrou, dizer QUAL regra é o que ensina. Um
+     "essa não dá" aqui faria a criança achar que o jogo bugou. */
+  if(!regraDeixa(carta)){
+    setMensagem('Essa serve na cor, mas hoje ' + regraAtiva.t + '. Olhe as que brilham! 🔎');
+    return;
+  }
+  var btnC = document.getElementById('btnComprar');
+  if(btnC) btnC.classList.remove('destaque');
+  _jogadas++;
+  /* ⚠️ O "CONTA CARTAS" TEM QUE ESQUECER, senão vira ruído. Medido (set/2026):
+     `_corQueFaltou` só era MARCADO (quando ela compra) e nunca apagado — depois
+     de algumas compras as quatro cores estavam marcadas, o bônus de +25 valia
+     para toda carta e deixava de significar coisa alguma. Se ela acabou de
+     jogar verde, ela TEM verde: apaga a marca. */
+  if(carta.cor && carta.cor!=='curinga') _corQueFaltou[carta.cor] = false;
+  regraAtiva = null;          /* a regra vale por UMA rodada — cumprida, sai */
+  pintaRegra(false);
+  mao.splice(idx,1);
+  mesa = carta;
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    esperandoCor = true;
+    curingaPendente = carta.tipo; // lembra se foi curinga simples ou +4
+    render();
+    document.getElementById('overlayCor').classList.add('ativo');
+    return;
+  }
+  corAtiva = carta.cor;
+  aplicarEfeito(carta,'jogador');
+}
+
+function escolherCor(cor){
+  corAtiva = cor;
+  const eraMais4 = (curingaPendente==='mais4');
+  mesa = {cor, tipo: curingaPendente, valorCor:cor};
+  curingaPendente = null;
+  document.getElementById('overlayCor').classList.remove('ativo');
+  esperandoCor = false;
+
+  if(mao.length===0){ render(); return vitoria('jogador'); }
+
+  if(eraMais4){
+    comprarParaCpu(4);
+    setMensagem('Você escolheu '+cor+' e o robô pegou 4 cartas! 🌈➕');
+  }else{
+    setMensagem('Você escolheu '+cor+'! 🎨');
+  }
+  render();
+  setTimeout(passarVezParaCpu, 800);
+}
+
+function aplicarEfeito(carta, quem){
+  render();
+  if(mao.length===0) return vitoria('jogador');
+  if(cpu.length===0) return vitoria('robo');
+
+  if(carta.tipo==='pula'){
+    if(temJogada()) setMensagem('Você pulou o robô! Jogue de novo. 🚫');
+    else setMensagem('Você pulou o robô! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
+    return; // jogador joga de novo
+  }
+  if(carta.tipo==='inverte'){
+    if(temJogada()) setMensagem('Você girou o jogo! Jogue de novo. 🔄');
+    else setMensagem('Você girou o jogo! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
+    return; // com 2 jogadores, inverter = jogar de novo
+  }
+  if(carta.tipo==='mais2'){
+    comprarParaCpu(2);
+    setMensagem('O robô pegou 2 cartas! 😄');
+    setTimeout(passarVezParaCpu, 900);
+    return;
+  }
+  setMensagem('Boa! Agora é a vez do robô. 🤖');
+  setTimeout(passarVezParaCpu, 800);
+}
+
+function comprarCarta(){
+  if(!vezDoJogador || esperandoCor) return;
+  if(baralho.length===0) reabastecer();
+  /* ⭐ o nível 5 CONTA CARTAS: se a criança comprou, é porque não tinha a cor
+     da mesa. O robô guarda isso e passa a insistir nessa cor. É exatamente o que
+     um bom jogador humano faz — e é a estratégia que a atividade quer ensinar. */
+  if(corAtiva) _corQueFaltou[corAtiva] = true;
+  const c = baralho.pop();
+  mao.push(c);
+  render();
+  if(podeJogarComRegra(c)){
+    setMensagem('Você pegou uma carta que dá pra jogar! Toque nela. ✨');
+  }else{
+    setMensagem('Essa não deu pra jogar. Agora é a vez do robô. 🤖');
+    vezDoJogador = false;
+    setTimeout(passarVezParaCpu, 1100);
+  }
+}
+
+/* ============ VEZ DO ROBÔ ============ */
+function passarVezParaCpu(){
+  vezDoJogador = false;
+  var btn = document.getElementById('btnComprar');
+  if(btn) btn.classList.remove('destaque');
+  render();
+  setTimeout(cpuJoga, 600);
+}
+
+/* ============================================================
+   ⭐⭐ O ROBÔ QUE PENSA — o coração do "mais difícil"
+   ------------------------------------------------------------
+   Pedido do Marcos (set/2026): *"lembra do jogo do uno que criamos? preciso de
+   uma versão mais difícil para os 3/4/5 anos"*.
+
+   Fui medir POR QUE o jogo do 1º ano é fácil, e não era o baralho: era o
+   adversário. A linha original dizia, literalmente:
+
+       let idx = cpu.findIndex(c => podeJogar(c));   // joga a PRIMEIRA que serve
+
+   Ele não escolhia. Pegava a primeira carta jogável NA ORDEM EM QUE ELA CAIU
+   na mão. Não guardava coringa, não trocava para a cor que tinha mais, não
+   atacava quando a criança estava com uma carta só. Dá para ganhar dele por
+   acaso — e criança de 9 anos percebe isso na terceira partida.
+
+   Agora ele PONTUA cada carta jogável e joga a de maior nota. Pontuação em vez
+   de uma escada de ifs porque assim dá para afinar um peso sem reescrever a
+   lógica — e para o robô "explicar" o motivo, que é o que ensina estratégia.
+   ============================================================ */
+/* ⭐ O ANO VEM DO LINK (?ano=3 / 4 / 5). É assim que o Marcos trabalha: ele
+   cola UM link por turma no controle do laboratório. Um seletor na tela deixaria
+   a criança do 3º escolher o do 5º; o link não deixa. O padrão é 4º ano. */
+var NIVEL = (function(){
+  try{
+    var m = (location.search||'').match(/[?&]ano=([345])/);
+    return m ? parseInt(m[1],10) : 4;
+  }catch(e){ return 4; }
+})();
+var _derrotasSeguidas = 0;  // anti-frustração (ver abaixo)
+
+function forcaDoRobo(){
+  /* ⚠️ ANTI-FRUSTRAÇÃO, e é obrigatório: criança que perde sempre desiste, e aí
+     a atividade não ensina nada. A cada DUAS derrotas seguidas o robô afrouxa um
+     degrau; quando ela ganha, ele volta ao normal. Isso é INVISÍVEL para ela —
+     nada na tela diz "vou pegar leve", porque saber disso estraga a vitória. */
+  var f = NIVEL;                       // 3 = pensa mas erra às vezes · 4 = bom · 5 = conta cartas
+  if(_derrotasSeguidas >= 2) f -= 1;
+  if(_derrotasSeguidas >= 4) f -= 1;
+  return Math.max(2, f);
+}
+
+function corQueMaisTenho(mao_){
+  var c={}, melhor=null;
+  for(var i=0;i<mao_.length;i++){ var k=mao_[i].cor; if(k==='curinga') continue;
+    c[k]=(c[k]||0)+1; if(!melhor||c[k]>c[melhor]) melhor=k; }
+  return melhor || CORES[Math.floor(Math.random()*CORES.length)];
+}
+
+function notaDaCarta(carta, forca){
+  /* quanto MAIOR a nota, mais o robô quer jogar essa carta agora */
+  var n = 0;
+  var jogadorQuaseGanhando = (mao.length <= 2);
+
+  // 1. guardar coringa para quando faltar a cor (o erro nº1 de quem joga mal)
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    n -= 40;                                  // segura o coringa...
+    if(jogadorQuaseGanhando) n += 70;         // ...mas solta o +4 na hora certa
+    var temDaCor = cpu.some(function(c){ return c.cor===corAtiva; });
+    if(!temDaCor) n += 55;                    // ou quando não tem a cor mesmo
+  }
+
+  /* 2. ⭐⭐ O TURNO EXTRA — a jogada mais forte do jogo, e a que eu tinha
+        deixado de fora. Com DOIS jogadores, "pular" e "girar" devolvem a vez
+        para quem jogou: é uma carta a menos na mão DE GRAÇA. Foi isto que o
+        teste de 250 partidas denunciou — o robô "esperto" ganhava 56% contra
+        os 54% do robô burro, quase nada, porque só usava essas cartas quando a
+        criança estava quase ganhando. Estratégia de UNO de verdade é encadear
+        pula/gira; é inclusive o que a atividade quer ENSINAR. */
+  if(carta.tipo==='pula' || carta.tipo==='inverte') n += 38;
+
+  // 3. atacar quando a criança está perto de ganhar
+  if(carta.tipo==='mais2' && jogadorQuaseGanhando) n += 60;
+  if((carta.tipo==='pula'||carta.tipo==='inverte') && jogadorQuaseGanhando) n += 20;
+  if(carta.tipo==='mais2') n += 22;      // dar 2 cartas a ela é sempre bom
+
+  /* 4. entre dois números que servem, sai o de valor mais alto — aqui isso não
+        vale ponto (não há contagem de pontos), então pesa POUCO: é só desempate,
+        para o robô não parecer que escolhe ao acaso. */
+  if(carta.tipo==='num') n += carta.valor * 0.4;
+
+  // 5. ficar na cor que ele tem mais (assim continua tendo jogada)
+  if(carta.cor === corQueMaisTenho(cpu)) n += 12;
+
+  // 6. o nível 5 CONTA CARTAS: se a criança já não teve uma cor, insistir nela
+  if(forca >= 5 && carta.cor && _corQueFaltou[carta.cor]) n += 25;
+
+  /* 7. o degrau do 3º ano: ele pensa, mas erra de propósito às vezes. Não é
+        aleatório puro — é ruído em cima da nota, que faz ele escolher a
+        segunda melhor de vez em quando, como um jogador humano distraído. */
+  if(forca <= 3) n += (Math.random()*30 - 15);
+  return n;
+}
+
+/* o nível 5 lembra de que cor a criança não tinha (quando ela compra) */
+var _corQueFaltou = {};
+
+function cpuJoga(){
+  var forca = forcaDoRobo();
+  // procura a MELHOR carta jogável (antes: a primeira que servisse)
+  let idx = -1, melhorNota = -1e9;
+  for(var i=0;i<cpu.length;i++){
+    if(!podeJogar(cpu[i])) continue;
+    var nota = notaDaCarta(cpu[i], forca);
+    if(nota > melhorNota){ melhorNota = nota; idx = i; }
+  }
+  if(idx===-1){
+    if(baralho.length===0) reabastecer();
+    const c = baralho.pop(); cpu.push(c);
+    if(podeJogar(c)){ idx = cpu.length-1; }
+    else{
+      vezDoJogadorComMensagem('O robô pegou uma carta.');
+      return;
+    }
+  }
+  const carta = cpu.splice(idx,1)[0];
+  mesa = carta;
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    corAtiva = corQueMaisTenho(cpu);
+    mesa = {cor:corAtiva, tipo:carta.tipo, valorCor:corAtiva};
+    setMensagem('O robô escolheu '+corAtiva+'! 🎨');
+  }else{
+    corAtiva = carta.cor;
+  }
+  render();
+  if(cpu.length===0) return vitoria('robo');
+
+  if(carta.tipo==='pula'){
+    setMensagem('O robô te pulou! Ele joga de novo. 🚫');
+    setTimeout(cpuJoga, 1000); return;
+  }
+  if(carta.tipo==='inverte'){
+    setMensagem('O robô girou o jogo! Ele joga de novo. 🔄');
+    setTimeout(cpuJoga, 1000); return;
+  }
+  if(carta.tipo==='mais2'){
+    for(let k=0;k<2;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
+    vezDoJogadorComMensagem('Você pegou 2 cartas.');
+    return;
+  }
+  if(carta.tipo==='mais4'){
+    for(let k=0;k<4;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
+    vezDoJogadorComMensagem('O robô jogou +4! Você pegou 4 cartas.');
+    return;
+  }
+  vezDoJogadorComMensagem('');
+}
+
+/* (a antiga `corMaisComumCpu` saiu: virou `corQueMaisTenho`, que o robô novo usa
+   tanto para escolher a cor do coringa quanto para pontuar a carta) */
+function comprarParaCpu(n){ for(let k=0;k<n;k++){ if(baralho.length===0) reabastecer(); cpu.push(baralho.pop()); } }
+function reabastecer(){ baralho = criarBaralho(); }
+
+// devolve true se o jogador tem ao menos uma carta jogável (regra da rodada inclusa)
+function temJogada(){ return mao.some(function(c){ return podeJogarComRegra(c); }); }
+
+// passa a vez ao jogador com a mensagem certa (jogar OU comprar)
+function vezDoJogadorComMensagem(prefixo){
+  vezDoJogador = true;
+  /* ⚠️ A ORDEM AQUI IMPORTA e não é decorativa: sortear a regra ANTES do
+     `render()` e ANTES do `temJogada()`. Se a regra entrasse depois, a mão já
+     estaria pintada com as cartas antigas brilhando e a criança tocaria numa
+     que a regra acabou de bloquear — o pior tipo de erro, o que a máquina
+     causou. E `temJogada()` mediria a mão sem a regra, mandando a mensagem
+     errada. */
+  sorteiaRegra();
+  pintaRegra();
+  render();
+  var ini = prefixo ? (prefixo + ' ') : '';
+  /* ⚠️ A REGRA ENTRA NA MESMA FALA DA MENSAGEM, não numa fala à parte. Motivo
+     medido: `setMensagem` chama `falar`, que começa com `speechSynthesis.cancel()`
+     — duas falas seguidas viram UMA, com a primeira cortada no meio. A criança
+     ouviria "Atenção! Regra desta ro—" e perderia justamente a regra. */
+  if(regraAtiva) ini += 'Atenção, regra desta rodada: ' + regraAtiva.t + '! ';
+  var btn = document.getElementById('btnComprar');
+  if(temJogada()){
+    if(btn) btn.classList.remove('destaque');
+    setMensagem(ini + 'Sua vez! Toque numa carta que brilha. ✨');
+  }else{
+    if(btn) btn.classList.add('destaque');
+    setMensagem(ini + 'Você não tem carta para jogar. Toque em "Pegar 1" para comprar uma carta! 🃏');
+  }
+}
+
+/* ============ FIM ============ */
+function vitoria(quem){
+  vezDoJogador=false;
+  regraAtiva = null; pintaRegra();
+  if(quem==='jogador'){
+    _derrotasSeguidas = 0;          /* ganhou: o robô volta à força cheia */
+    setMensagem('🎉 VOCÊ GANHOU! Parabéns! 🎉');
+  }else{
+    _derrotasSeguidas++;            /* ⚠️ o anti-frustração vive DESTA linha */
+    setMensagem('🤖 O robô ganhou! Tente de novo, você consegue! 💪');
+  }
+  document.getElementById('mensagem').classList.add('festa');
+  render();
+}
+
+/* ============ DESENHAR NA TELA ============ */
+/* ============ NARRAÇÃO POR VOZ ============ */
+var vozLigada = true;
+var vozPtBR = null;
+
+function carregarVoz(){
+  if(!('speechSynthesis' in window)) return;
+  var vozes = window.speechSynthesis.getVoices();
+  // procura uma voz em português do Brasil
+  for(var i=0;i<vozes.length;i++){
+    if(vozes[i].lang && vozes[i].lang.toLowerCase().indexOf('pt-br')>-1){ vozPtBR = vozes[i]; return; }
+  }
+  for(var j=0;j<vozes.length;j++){
+    if(vozes[j].lang && vozes[j].lang.toLowerCase().indexOf('pt')>-1){ vozPtBR = vozes[j]; return; }
+  }
+}
+if('speechSynthesis' in window){
+  carregarVoz();
+  window.speechSynthesis.onvoiceschanged = carregarVoz;
+}
+
+// remove emojis para a fala não "ler" símbolos estranhos
+function limparTexto(t){
+  return t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu,'').replace(/\s+/g,' ').trim();
+}
+
+function falar(texto){
+  if(!vozLigada || !('speechSynthesis' in window)) return;
+  var limpo = limparTexto(texto);
+  if(!limpo) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(limpo);
+  u.lang = 'pt-BR';
+  if(vozPtBR) u.voice = vozPtBR;
+  u.rate = 0.95; u.pitch = 1.05;
+  window.speechSynthesis.speak(u);
+}
+
+function alternarVoz(){
+  vozLigada = !vozLigada;
+  var b = document.getElementById('btnVoz');
+  if(vozLigada){ b.innerHTML = '🔊 Voz'; b.classList.remove('voz-off'); falar('Narração ligada!'); }
+  else{ b.innerHTML = '🔇 Voz'; b.classList.add('voz-off'); if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+}
+
+function setMensagem(t){
+  const m=document.getElementById('mensagem');
+  m.textContent=t; m.classList.remove('festa');
+  falar(t);
+}
+
+function corClasse(cor){ return 'c-'+cor; }
+const HEX = { vermelho:'#E5202E', azul:'#0099DD', amarelo:'#F7B500', verde:'#3EA72D' };
+
+// símbolos desenhados em SVG (estilo clássico, arte própria)
+// "color" controla a cor do traço quando o símbolo fica sobre o oval branco.
+function svgPular(color){
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="38" fill="none" stroke="${color}" stroke-width="13"/>
+    <line x1="24" y1="24" x2="76" y2="76" stroke="${color}" stroke-width="13" stroke-linecap="round"/>
+  </svg>`;
+}
+function svgMais2(color){
+  // duas cartinhas sobrepostas (visíveis em qualquer fundo)
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <rect x="20" y="22" width="34" height="50" rx="6" fill="#fff" stroke="${color}" stroke-width="6"/>
+    <rect x="40" y="32" width="34" height="50" rx="6" fill="${color}" stroke="#fff" stroke-width="5"/>
+    <text x="57" y="64" font-family="'Baloo 2',sans-serif" font-size="26" font-weight="800" fill="#fff" text-anchor="middle">+2</text>
+  </svg>`;
+}
+function svgCuringa(){
+  // pinwheel de quatro cores
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="40" fill="#fff"/>
+    <path d="M50 50 L50 10 A40 40 0 0 1 90 50 Z" fill="var(--vermelho)"/>
+    <path d="M50 50 L90 50 A40 40 0 0 1 50 90 Z" fill="var(--azul)"/>
+    <path d="M50 50 L50 90 A40 40 0 0 1 10 50 Z" fill="var(--amarelo)"/>
+    <path d="M50 50 L10 50 A40 40 0 0 1 50 10 Z" fill="var(--verde)"/>
+    <circle cx="50" cy="50" r="9" fill="#fff"/>
+  </svg>`;
+}
+function svgInverte(color){
+  // duas setas curvas em sentidos opostos
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="${color}" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 35 A26 26 0 0 1 76 48"/>
+      <path d="M70 65 A26 26 0 0 1 24 52"/>
+    </g>
+    <polygon points="20,30 40,30 28,48" fill="${color}"/>
+    <polygon points="80,70 60,70 72,52" fill="${color}"/>
+  </svg>`;
+}
+function svgMais4(){
+  // quatro cores em bloco + indicação de +4
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="#fff" stroke-width="4">
+      <rect x="30" y="22" width="20" height="30" rx="4" fill="var(--vermelho)"/>
+      <rect x="50" y="22" width="20" height="30" rx="4" fill="var(--azul)"/>
+      <rect x="30" y="50" width="20" height="30" rx="4" fill="var(--amarelo)"/>
+      <rect x="50" y="50" width="20" height="30" rx="4" fill="var(--verde)"/>
+    </g>
+  </svg>`;
+}
+
+// monta o INTERIOR clássico de uma carta: miolo, oval, número central e cantos
+function conteudoCarta(carta, corTraço){
+  const cor = corTraço || '#333';
+  let central, canto;
+  if(carta.tipo==='num'){
+    central = `<span>${carta.valor}</span>`;
+    canto = `${carta.valor}`;
+  }else if(carta.tipo==='mais2'){
+    central = `<span class="simb-c">${svgMais2(cor)}</span>`;
+    canto = `<span class="canto-mais2">+2</span>`;
+  }else if(carta.tipo==='pula'){
+    central = `<span class="simb-c">${svgPular(cor)}</span>`;
+    canto = `<span class="simb-k">${svgPular('#fff')}</span>`;
+  }else if(carta.tipo==='inverte'){
+    central = `<span class="simb-c">${svgInverte(cor)}</span>`;
+    canto = `<span class="simb-k">${svgInverte('#fff')}</span>`;
+  }else if(carta.tipo==='mais4'){
+    central = `<span class="simb-c">${svgMais4()}</span>`;
+    canto = `<span class="canto-mais2">+4</span>`;
+  }else{ // curinga
+    central = `<span class="simb-c">${svgCuringa()}</span>`;
+    canto = `<span class="simb-k">${svgCuringa()}</span>`;
+  }
+  return `
+    <div class="miolo"><div class="oval"></div></div>
+    <div class="canto tl">${canto}</div>
+    <div class="central">${central}</div>
+    <div class="canto br">${canto}</div>`;
+}
+
+function render(){
+  // mesa
+  const cm = document.getElementById('cartaMesa');
+  const ehCuringaPuro = (mesa.tipo==='curinga');
+  const ehPreta = (mesa.tipo==='mais4');
+  if(ehPreta){
+    cm.className = 'uno carta-grande c-preta';
+    cm.innerHTML = conteudoCarta(mesa, '#fff');
+  }else if(ehCuringaPuro && mesa.valorCor){
+    // curinga já transformado numa cor escolhida
+    cm.className = 'uno carta-grande '+corClasse(corAtiva);
+    cm.innerHTML = conteudoCarta({tipo:'curinga'});
+    cm.querySelector('.central').style.color='#fff';
+  }else if(ehCuringaPuro){
+    cm.className = 'uno carta-grande c-curinga';
+    cm.innerHTML = conteudoCarta(mesa);
+    cm.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+    cm.querySelector('.central').style.color='#fff';
+  }else{
+    cm.className = 'uno carta-grande '+corClasse(mesa.cor);
+    cm.innerHTML = conteudoCarta(mesa, HEX[mesa.cor]);
+  }
+
+  // robô
+  const cc = document.getElementById('cartasCpu'); cc.innerHTML='';
+  for(let i=0;i<cpu.length;i++){ const v=document.createElement('div'); v.className='verso'; cc.appendChild(v); }
+  document.getElementById('qtdCpu').textContent = `(${cpu.length} carta${cpu.length!==1?'s':''})`;
+
+  // minhas cartas
+  const mc = document.getElementById('minhasCartas'); mc.innerHTML='';
+  mao.forEach((carta,idx)=>{
+    const d=document.createElement('div');
+    const ehCuringa = (carta.tipo==='curinga');
+    const ehPreta = (carta.tipo==='mais4');
+    let cor;
+    if(ehPreta) cor='c-preta';
+    else if(ehCuringa) cor='c-curinga';
+    else cor=corClasse(carta.cor);
+    const jogavel = vezDoJogador && !esperandoCor && podeJogarComRegra(carta);
+    d.className='uno carta '+cor+(jogavel?' jogavel':' bloqueada');
+    // cor do símbolo: cartas coloridas usam a própria cor; +4 e curinga usam branco
+    const corSimb = (ehCuringa || ehPreta) ? '#fff' : HEX[carta.cor];
+    d.innerHTML=conteudoCarta(carta, corSimb);
+    if(ehCuringa){
+      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+      d.querySelector('.central').style.color='#fff';
+    }
+    d.onclick=()=>jogarCarta(idx);
+    mc.appendChild(d);
+  });
+  document.getElementById('qtdEu').textContent = `(${mao.length} carta${mao.length!==1?'s':''})`;
+}
+
+/* ============ TUTORIAL ============ */
+const slides = [
+  { emoji:'🤖', titulo:'Oi! Eu sou o Robô Esperto!',
+    texto:'Bem-vindo ao UNO dos Números! Eu não jogo qualquer carta: eu penso antes. Guardo os coringas, ataco quando você está quase ganhando. Vai precisar de estratégia para me vencer!' },
+  { emoji:'🎯', titulo:'Nosso objetivo',
+    texto:'Você e eu começamos com 7 cartas cada um. Vá jogando suas cartas na mesa até a sua mão ficar vazia!' },
+  { emoji:'🌈', titulo:'A regra das cores e números', cartas:'cores',
+    texto:'Você só pode jogar uma carta da MESMA COR ou do MESMO NÚMERO da carta que está na mesa. Igualzinho!' },
+  { emoji:'✨', titulo:'As cartas que brilham',
+    texto:'As cartas que você PODE jogar ficam brilhando e crescem quando você passa o dedo. As apagadas, não dá!' },
+  { emoji:'🃏', titulo:'Minhas cartas especiais', cartas:'especiais',
+    texto:'Pular: eu perco a vez. Mais 2: eu pego 2 cartas. Girar: você joga de novo. Cuidado, eu também posso usá-las em você!' },
+  { emoji:'🌈', titulo:'As cartas coringa', cartas:'coringas',
+    texto:'Arco-íris: você escolhe a cor que quiser! Mais 4: você escolhe a cor E eu pego 4 cartas!' },
+  { emoji:'⭐', titulo:'A REGRA DA RODADA',
+    texto:'De vez em quando aparece uma tarja amarela em cima da mesa com uma regra a mais, só para você. Enquanto ela estiver ali, o número da sua carta também precisa obedecer a ela. Vale por uma rodada só — e as cartas especiais nunca ficam bloqueadas.' },
+  { emoji:'🧠', titulo:'A regra muda conforme o seu ano', regra:true,
+    texto:'' },
+  { emoji:'🏆', titulo:'Como ganhar de mim',
+    texto:'Se não puder jogar, toque em "Pegar 1" para comprar uma carta. Ficou sem cartas? VOCÊ GANHOU! 🎉' }
+];
+let slideAtual = 0;
+
+function abrirTutorial(){ slideAtual=0; montarBolinhas(); mostrarSlide(); document.getElementById('tutorial').classList.add('ativo'); }
+function fecharTutorial(){ document.getElementById('tutorial').classList.remove('ativo'); }
+function montarBolinhas(){
+  const b=document.getElementById('bolinhas'); b.innerHTML='';
+  slides.forEach((_,i)=>{ const o=document.createElement('div'); o.className='bolinha'+(i===0?' on':''); b.appendChild(o); });
+}
+function mostrarSlide(){
+  const s=slides[slideAtual];
+  document.getElementById('slideNum').textContent=`Passo ${slideAtual+1} de ${slides.length}`;
+  document.getElementById('slideEmoji').textContent=s.emoji;
+  const elTit=document.getElementById('slideTitulo');
+  const elTxt=document.getElementById('slideTexto');
+  elTit.textContent=s.titulo; elTit.style.color='#1a1633';
+  elTxt.textContent=s.texto; elTxt.style.color='#23203a';
+  falar(s.titulo + '. ' + s.texto);
+
+  // cartinhas de exemplo (usam a mesma estrutura clássica das cartas reais)
+  const cont=document.getElementById('slideCartas'); cont.innerHTML='';
+  function miniCarta(corNome, carta){
+    const d=document.createElement('div');
+    const isCuringa = (carta.tipo==='curinga');
+    const isPreta = (carta.tipo==='mais4');
+    let cls;
+    if(isPreta) cls='c-preta';
+    else if(isCuringa) cls='c-curinga';
+    else cls=corClasse(corNome);
+    d.className='uno mini '+cls;
+    const corSimb = (isCuringa || isPreta) ? '#fff' : HEX[corNome];
+    d.innerHTML=conteudoCarta(carta, corSimb);
+    if(isCuringa){
+      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+      d.querySelector('.central').style.color='#fff';
+    }
+    return d;
+  }
+  if(s.cartas==='cores'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    [['vermelho',5],['azul',5],['verde',3],['amarelo',5]].forEach(([c,n])=>{
+      box.appendChild(miniCarta(c,{tipo:'num',valor:n}));
+    });
+    cont.appendChild(box);
+  }
+  if(s.cartas==='especiais'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    box.appendChild(miniCarta('vermelho',{tipo:'pula'}));
+    box.appendChild(miniCarta('azul',{tipo:'mais2'}));
+    box.appendChild(miniCarta('verde',{tipo:'inverte'}));
+    cont.appendChild(box);
+  }
+  if(s.cartas==='coringas'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    box.appendChild(miniCarta('',{tipo:'curinga'}));
+    box.appendChild(miniCarta('',{tipo:'mais4'}));
+    cont.appendChild(box);
+  }
+
+  // bolinhas + botões
+  document.querySelectorAll('.bolinha').forEach((b,i)=>b.classList.toggle('on',i===slideAtual));
+  document.getElementById('btnAnterior').disabled = slideAtual===0;
+  const ultimo = slideAtual===slides.length-1;
+  document.getElementById('btnProximo').style.display = ultimo?'none':'';
+  document.getElementById('btnComecar').style.display = ultimo?'':'none';
+}
+function mudarSlide(d){
+  slideAtual=Math.max(0,Math.min(slides.length-1,slideAtual+d));
+  mostrarSlide();
+}
+
+/* ============================================================
+   AJUSTE PELO ANO — o link diz a turma, a tela se ajusta sozinha
+   ------------------------------------------------------------
+   ⚠️ NÃO tem seletor de ano na tela, e isso é decisão, não esquecimento: a
+   criança do 3º escolheria o do 5º "pra ver se é mais legal", levaria uma
+   surra do robô e desistiria. O ano vem do LINK, que quem cola é o professor.
+   ============================================================ */
+(function ajustarAoAno(){
+  var s = document.getElementById('subTitulo');
+  if(s) s.textContent = 'dos Números · ' + NIVEL + 'º ano';
+  // o slide da regra explica a escada DAQUELE ano, com exemplo de verdade
+  var exemplos = {
+    3: 'No 3º ano as regras são de par e ímpar, de maior e menor, e de somar 10. '
+     + 'Exemplo: se a tarja disser "só vale carta PAR", você joga o 2, o 4, o 6 ou o 8.',
+    4: 'No 4º ano as regras são de múltiplos, dobro e metade. '
+     + 'Exemplo: se a mesa tem um 4 e a tarja pede "o DOBRO da carta da mesa", você procura um 8.',
+    5: 'No 5º ano entram os múltiplos de 3 e a soma das duas cartas. '
+     + 'Exemplo: se a mesa tem um 4 e a tarja pede "a soma das duas é múltiplo de 3", '
+     + 'serve o 2, porque 4 mais 2 dá 6, e 6 é múltiplo de 3.'
+  };
+  for(var i=0;i<slides.length;i++){
+    if(slides[i].regra){ slides[i].texto = exemplos[NIVEL] || exemplos[4]; }
+  }
+})();
+
+/* iniciar */
+novoJogo();
+</script>
+</body>
+</html>
