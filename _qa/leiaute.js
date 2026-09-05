@@ -128,7 +128,17 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
         const tela=document.querySelector(".tela");
         /* se a tela ROLA, o que esta embaixo continua alcancavel — nao e defeito.
            O defeito da foto do Marcos era outro: nao rolava e a resposta sumia.  */
-        const rola=tela? (tela.scrollHeight>tela.clientHeight+4) : false;
+        /* ⚠️ (set/2026, lote das 88 pecas) na BANCADA da peca nao ha barra fixa
+           (#barra) e quem rola e a PAGINA (body) — a linha-do-tempo era acusada
+           de "3 respostas presas atras da barra" numa tela sem barra, so porque
+           a pagina precisava rolar 60px. Pagina que rola, sem barra por cima,
+           deixa tudo alcancavel. Com barra fixa a regra continua estrita: rolar
+           a pagina nao tira a resposta de baixo da barra. */
+        const semBarra=!(barra&&barra.getBoundingClientRect().height);
+        const se=document.scrollingElement||document.documentElement;
+        const paginaRola=semBarra && se && se.scrollHeight>innerHeight+4 &&
+                         !/hidden/.test(getComputedStyle(document.body).overflowY+getComputedStyle(document.documentElement).overflowY);
+        const rola=(tela? (tela.scrollHeight>tela.clientHeight+4) : false) || paginaRola;
         /* ⚠️ MEDICAO INCOMPLETA DO PROPRIO PORTAO (ago/2026): ele so perguntava
            se a TELA INTEIRA rola. Mas uma lista de respostas pode rolar POR
            DENTRO (`.opts{max-height;overflow-y:auto}`) — e ai o que esta embaixo

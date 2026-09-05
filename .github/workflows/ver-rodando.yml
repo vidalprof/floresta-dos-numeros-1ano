@@ -1,0 +1,174 @@
+name: Ver rodando (joga nas atividades de referencia da internet e fotografa)
+
+# 👀 VER A DINAMICA FUNCIONANDO — de verdade, num Chromium, nao em texto.
+#
+# Pedido do Marcos (set/2026): *"pesquise e veja essas atividades rodando em
+# atividades na internet funcionando para deixar elas lapidadas da melhor forma
+# possivel"*. O `pesquisar.yml` le TEXTO; este ABRE a atividade de referencia
+# (H5P, PhET, Math Learning Center, Toy Theater, Wordwall, LearningApps, sites
+# brasileiros), CLICA e ARRASTA nela, tira fotos (PC 1024x600 e celular 412x820)
+# e mede o que ela faz por baixo: eventos que os alvos escutam, touch-action,
+# tamanho de alvo, fonte minima, som (media/WebAudio), quantas mutacoes de DOM o
+# feedback dispara no 1o segundo. Tudo vai para `_pesquisa/rodando/<lote>/`
+# (RODANDO.md + .jpg + .json) e e commitado — dai eu leio e comparo com as nossas.
+#
+# ⚠️ Materia-prima, nao regra. Quem decide o que vira regra da casa sou eu;
+#    quem aprova e o Marcos.
+
+on:
+  workflow_dispatch:
+    inputs:
+      lote:
+        description: "Nome da pasta de saida em _pesquisa/rodando/ (vazio = referencias-<data>)"
+        required: false
+        default: ""
+        type: string
+      alvos:
+        description: "Linhas nome=url (vazio = a lista padrao de referencias)"
+        required: false
+        default: ""
+        type: string
+      buscas:
+        description: "Linhas nome=busca (DuckDuckGo; abre os 2 primeiros resultados de cada)"
+        required: false
+        default: ""
+        type: string
+      max:
+        description: "Maximo de alvos (padrao 45)"
+        required: false
+        default: "45"
+        type: string
+
+jobs:
+  ver:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar Playwright + Chromium
+        run: |
+          npm init -y >/dev/null 2>&1 || true
+          npm install --no-audit --no-fund playwright@1.47.2
+          npx playwright install --with-deps chromium
+
+      - name: Montar a lista de alvos (padrao + buscas)
+        id: alvos
+        env:
+          ALVOS: ${{ inputs.alvos }}
+          BUSCAS: ${{ inputs.buscas }}
+          MAX: ${{ inputs.max }}
+          LOTE: ${{ inputs.lote }}
+        run: |
+          LOTE_NOME="${LOTE:-referencias-$(date -u +%Y-%m-%d)}"
+          LOTE_NOME="$(echo "$LOTE_NOME" | tr -c 'a-zA-Z0-9-\n' '-' | tr 'A-Z' 'a-z')"
+          echo "lote=$LOTE_NOME" >> "$GITHUB_OUTPUT"
+          node - <<'JS'
+          const fs = require('fs');
+          const MAX = Math.max(1, Math.min(80, parseInt(process.env.MAX || '45', 10) || 45));
+          /* a lista padrao: as casas que fazem o nosso leque ha anos, uma pagina por mecanica */
+          const PADRAO = `
+          h5p-arrastar-soltar=https://h5p.org/drag-and-drop
+          h5p-memoria=https://h5p.org/memory-game
+          h5p-caca-palavras=https://h5p.org/find-the-words
+          h5p-cruzadinha=https://h5p.org/crossword
+          h5p-arrastar-palavras=https://h5p.org/drag-the-words
+          h5p-lacunas=https://h5p.org/fill-in-the-blanks
+          h5p-sequencia-imagens=https://h5p.org/image-sequencing
+          h5p-ordenar-paragrafos=https://h5p.org/sort-the-paragraphs
+          h5p-pares-imagem=https://h5p.org/image-pairing
+          h5p-marcar-palavras=https://h5p.org/mark-the-words
+          h5p-pontos-na-imagem=https://h5p.org/image-hotspots
+          h5p-achar-na-imagem=https://h5p.org/find-the-hotspot
+          h5p-ditado=https://h5p.org/dictation
+          h5p-quiz=https://h5p.org/single-choice-set
+          h5p-verdadeiro-falso=https://h5p.org/true-false
+          h5p-linha-do-tempo=https://h5p.org/timeline
+          h5p-flashcards=https://h5p.org/flashcards
+          phet-balanca=https://phet.colorado.edu/sims/html/balancing-act/latest/balancing-act_all.html
+          phet-fazer-dez=https://phet.colorado.edu/sims/html/make-a-ten/latest/make-a-ten_all.html
+          phet-reta-numerica=https://phet.colorado.edu/sims/html/number-line-integers/latest/number-line-integers_all.html
+          phet-fracoes=https://phet.colorado.edu/sims/html/fraction-matcher/latest/fraction-matcher_all.html
+          phet-arranjo=https://phet.colorado.edu/sims/html/area-model-multiplication/latest/area-model-multiplication_all.html
+          mlc-reta-numerica=https://apps.mathlearningcenter.org/number-line/
+          mlc-base-dez=https://apps.mathlearningcenter.org/number-pieces/
+          mlc-relogio=https://apps.mathlearningcenter.org/math-clock/
+          mlc-pecas-padrao=https://apps.mathlearningcenter.org/pattern-shapes/
+          mlc-geoboard=https://apps.mathlearningcenter.org/geoboard/
+          toytheater-relogio=https://toytheater.com/clock/
+          toytheater-tangram=https://toytheater.com/tangram/
+          toytheater-base-dez=https://toytheater.com/base-ten-blocks/
+          learningapps-inicio=https://learningapps.org/
+          wordwall-inicio=https://wordwall.net/pt
+          escolagames-jogos=https://www.escolagames.com.br/jogos/
+          pbskids-jogos=https://pbskids.org/games/
+          jclic-demo=https://clic.xtec.cat/repo/index.html?prj=demo
+          `;
+          const linhas = (process.env.ALVOS && process.env.ALVOS.trim()) ? process.env.ALVOS : PADRAO;
+          const alvos = [];
+          for (const l of linhas.split(/\n|,(?=\s*[a-z0-9\-]+=)/)) {
+            const m = l.trim().match(/^([a-zA-Z0-9\-]+)=(https?:\/\/\S+)$/);
+            if (m) alvos.push({nome: m[1], url: m[2]});
+          }
+          /* buscas: DuckDuckGo HTML, sem chave; abre os 2 primeiros de cada */
+          async function procura(q) {
+            try {
+              const r = await fetch('https://html.duckduckgo.com/html/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'Mozilla/5.0 (compatible; pesquisa-escola/1.0)'}, body: 'q=' + encodeURIComponent(q)});
+              const t = await r.text(); const out = [];
+              for (const m of t.matchAll(/class="result__a"[^>]*href="([^"]+)"/g)) {
+                let h = m[1]; const u = h.match(/uddg=([^&]+)/); if (u) h = decodeURIComponent(u[1]);
+                if (h.startsWith('http') && !out.includes(h)) out.push(h);
+                if (out.length >= 2) break;
+              }
+              return out;
+            } catch (e) { console.log('busca falhou: ' + q + ' ' + e.message); return []; }
+          }
+          (async () => {
+            const bs = (process.env.BUSCAS || '').split('\n').map(s => s.trim()).filter(Boolean);
+            for (const b of bs) {
+              const m = b.match(/^([a-zA-Z0-9\-]+)=(.+)$/); if (!m) continue;
+              const urls = await procura(m[2]);
+              urls.forEach((u, i) => alvos.push({nome: m[1] + (i ? '-' + (i + 1) : ''), url: u}));
+              console.log('busca "' + m[2] + '" -> ' + urls.join(' | '));
+            }
+            const fim = alvos.slice(0, MAX);
+            fs.writeFileSync('/tmp/alvos.json', JSON.stringify(fim));
+            console.log(fim.length + ' alvo(s):'); fim.forEach(a => console.log('  ' + a.nome + '  ' + a.url));
+          })();
+          JS
+
+      - name: Jogar e fotografar
+        env:
+          LOTE: ${{ steps.alvos.outputs.lote }}
+        run: |
+          export ALVOS_JSON="$(cat /tmp/alvos.json)"
+          export DEST="_pesquisa/rodando/$LOTE"
+          export NODE_PATH="$(pwd)/node_modules"
+          node _padrao/ver_rodando.js 2>&1 | tee /tmp/ver_rodando.log
+          echo "## 👀 Ver rodando — $LOTE" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"; grep -E "^==|frames=|erro" /tmp/ver_rodando.log | head -120 >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Guardar no repo
+        env:
+          LOTE: ${{ steps.alvos.outputs.lote }}
+        run: |
+          rm -rf node_modules package.json package-lock.json
+          git config user.name "Pesquisador"
+          git config user.email "pesquisador@users.noreply.github.com"
+          git add -A "_pesquisa/rodando/$LOTE" || true
+          if git diff --cached --quiet; then echo "nada novo";
+          else
+            git commit -m "ver rodando: $LOTE ($(ls _pesquisa/rodando/$LOTE/*.jpg 2>/dev/null | wc -l) fotos)"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
