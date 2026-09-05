@@ -848,8 +848,29 @@ function notaDaCarta(carta, forca){
 
   /* 7. o degrau do 3º ano: ele pensa, mas erra de propósito às vezes. Não é
         aleatório puro — é ruído em cima da nota, que faz ele escolher a
-        segunda melhor de vez em quando, como um jogador humano distraído. */
-  if(forca <= 3) n += (Math.random()*30 - 15);
+        segunda melhor de vez em quando, como um jogador humano distraído.
+        ⚠️ O TAMANHO DO RUÍDO FOI MEDIDO, não escolhido no olho: com ±15 ele
+        era pequeno demais perto do bônus de +38 do "pular", e o nível 3 vencia
+        TANTO quanto o 5 (64% x 63% em 250 partidas cada). Com ±42 o nível 3
+        caiu para 58%.
+
+        ⚠️⚠️ E AQUI VAI O QUE A MEDIÇÃO REALMENTE DISSE, não o que eu esperava
+        que ela dissesse. 250 partidas por nível, contra o mesmo jogador
+        automático burro, com a regra da rodada desligada:
+            robô ANTIGO (1º ano) . 52%
+            nível 3 .............. 58%
+            nível 4 .............. 56%
+            nível 5 .............. 64%
+        Ou seja: **o 3 e o 4 são indistinguíveis** — 2 pontos, com margem de
+        erro de ~4,4 pontos na diferença. Só o nível 5 (o que conta cartas) se
+        destaca de verdade. NÃO fingir que existe uma escada de FORÇA entre o
+        3º e o 4º ano: a escada entre esses dois anos é a das REGRAS (par/ímpar
+        contra múltiplos e dobro), que é onde ela tem que estar, porque é a
+        parte que ensina. Se um dia isto for mexido, mexer com número na mão.
+
+        Este ruído é também o degrau que o anti-frustração usa: qualquer nível
+        cai para força 2 ou 3 depois de duas derrotas seguidas e o herda. */
+  if(forca <= 3) n += (Math.random()*84 - 42);
   return n;
 }
 

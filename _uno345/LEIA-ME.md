@@ -105,7 +105,29 @@ antigo, com o mesmo jogador automático burro (joga a primeira carta que brilha)
 maçã com maçã. ⚠️ Nesse benchmark é obrigatório **zerar `_derrotasSeguidas` a cada
 partida**: o alívio anti-frustração deixa o robô em força mínima depois de duas
 vitórias seguidas dele, e numa corrida de 250 partidas isso apaga a diferença
-entre os níveis.
+entre os níveis (a 1ª medição chegou a dizer que o nível 5 era o mais fraco).
+
+### O que a medição disse — inclusive o que eu não queria ouvir
+
+250 partidas por nível, regra desligada:
+
+| | robô venceu |
+|---|---|
+| robô **antigo** (1º ano) | **52%** |
+| nível 3 | 58% |
+| nível 4 | 56% |
+| nível 5 | **64%** |
+
+O robô ficou mais forte que o antigo, e o nível 5 (o que conta cartas) se destaca.
+Mas **o 3 e o 4 são indistinguíveis** — 2 pontos, com margem de erro de ~4,4
+pontos na diferença. Fica registrado com todas as letras para ninguém (nem eu,
+noutra sessão) contar uma história melhor do que a verdade: **entre o 3º e o 4º
+ano a escada é a das REGRAS**, não a da força do robô — e é onde ela tem que
+estar, porque é a parte que ensina.
+
+Frequência da regra, no mesmo teste: **3,1 por partida no 3º ano · 2,1 no 4º ·
+2,3 no 5º**. (As regras do 4º e do 5º são mais exigentes, então cabem menos vezes
+— por isso o sorteio faz dois passes.)
 
 ---
 

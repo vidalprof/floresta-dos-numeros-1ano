@@ -5771,3 +5771,58 @@ verdade fica para fora da caixa E a caixa esconde o que sobra
 
 **A regra que fica:** *número chutado não mede nada; e portão que diz "ok" não
 dispensa a foto.* Duas vezes no mesmo dia o portão aprovou e a imagem reprovou.
+
+## 🃏🤖 UNO DOS NÚMEROS 3/4/5 — e as três lições que ele pagou (set/2026)
+
+Pedido do Marcos: *"Lembra do jogo do uno? Que criamos? Preciso de uma versão
+mais difícil para os 3/4/5 anos"*. **Ele estava certo e eu estava errado**: eu
+disse que o jogo não existia, porque meu `grep` casava "ALUNO" (contém "UNO") e
+eu só procurei neste repositório. O jogo estava no ar em `jogoUno1-` havia
+tempo — **e não tinha linha no `ATIVIDADES.md`**, que é a minha memória. Por
+isso ele agora tem (`_uno1`), e o novo também (`_uno345`, três linhas: 3º, 4º e
+5º ano). Regra confirmada na prática: **atividade fora do catálogo é atividade
+que eu vou negar que existe.**
+
+**Novo:** `_uno345/` → <https://vidalprof.github.io/uno-dos-numeros-345/?ano=4>
+(`?ano=3` / `?ano=4` / `?ano=5`; sem nada = 4º). O antigo continua intacto.
+O detalhe completo está no `_uno345/LEIA-ME.md`.
+
+### Lição 1 — "mais difícil" se MEDE, não se acha
+Fui procurar por que o jogo do 1º ano é fácil e não era o baralho: era o
+adversário. `cpu.findIndex(c => podeJogar(c))` — ele jogava a primeira carta
+jogável na ordem em que ela caiu na mão. Escrevi um **jogador automático** que
+joga partidas inteiras sozinho, e comparei o robô novo com o antigo, com o mesmo
+jogador burro dos dois lados: **250 partidas cada**.
+
+⚠️ **A armadilha do benchmark:** o alívio anti-frustração (`_derrotasSeguidas`)
+derruba o robô para força mínima depois de duas vitórias dele — numa corrida de
+250 partidas ele passa quase o tempo todo lá, e a diferença entre os níveis
+some. Para medir força tem que **zerar `_derrotasSeguidas` a cada partida**.
+Sem isso a 1ª medição disse que o nível 5 era o mais FRACO, o contrário da
+verdade.
+
+### Lição 2 — a jogada mais forte era a que eu não tinha visto
+Com dois jogadores, **"pular" e "girar" devolvem a vez para quem jogou**: é uma
+carta a menos de graça. Meu robô "esperto" só usava essas cartas quando a
+criança estava quase ganhando — e por isso ganhava 56% contra os 54% do robô
+burro, ou seja, quase nada. Dando peso ao **turno extra** ele subiu de verdade.
+Serve de regra: ao fazer IA de jogo, procurar primeiro a jogada que **repete o
+turno**, não a que "parece agressiva".
+
+### Lição 3 — a mão da criança estava fora da tela do laboratório
+Em **1024 × 600**, que é a tela dos PCs da escola, a mão da criança ficava
+**inteiramente abaixo da dobra**: ela lia "toque numa carta que brilha" e não
+via carta nenhuma. Herdado do jogo do 1º ano, então **provavelmente valia para
+ele também**. Curado com modo compacto (`max-height:820px, max-width:560px`),
+e a regra ao encolher é **encolher a MOLDURA, nunca o ALVO** — a 1ª tentativa
+deixou os botões do topo em 32px e o próprio testador reprovou.
+⚠️ Medir com a mão CHEIA (14 cartas), não com as 7 do início.
+
+### O que virou padrão para jogo (não-motor)
+Jogo de tabuleiro/cartas não passa pela banca do motor (não tem `telas` nem
+`falas.json`). O que passa a valer no lugar:
+1. **jogador automático** que joga partidas inteiras e cobra: 0 erro de JS,
+   0 partida travada, 0 carta brilhando contra a regra, a regra realmente
+   aparece;
+2. **medição de força** contra a versão anterior, com o mesmo jogador burro;
+3. **leiaute/contraste em 6 tamanhos**, com a mão no pior caso.
