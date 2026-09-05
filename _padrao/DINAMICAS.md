@@ -94,6 +94,28 @@ servem de referência de COMPORTAMENTO — não de código para copiar (o nosso 
    corpo de cada tratador, **zero** — o `preventDefault` de todas mora no
    `touchmove`, como manda a regra.
 
+**A bancada da peça nas 88 (`bash _qa/peca.sh`, 9 portões + toque medido): 84
+PRONTAS de primeira; 4 consertadas na fonte e re-testadas → 88/88.** Resultado em
+`_padrao/_bancada.json` (coluna "bancada" do `INTERATIVIDADES.md`). O que as 4
+ensinaram — e que vale para toda peça:
+- **A regra de CSS na fonte mira o nome da FONTE.** A medida na cobaia devolveu
+  `div.g_fig` (girar) — `g_` é o prefixo que o integrador põe em `.fig` para não
+  colidir com o motor. Regra escrita como `.g_fig` passa na montada e falha na
+  bancada; escreva `.fig` e o integrador renomeia CSS e JS juntos.
+- **Toda tela chama `limpa()` antes de nascer** (divisao-dourado não chamava): a
+  bancada abre com ela e o jogador a chama de novo → duas mesas empilhadas, e o
+  jogador tocava a mesa morta. Sem `limpa()` a bancada nem conta a função como
+  tela — leiaute e contraste só mediam a tela de FIM.
+- **Pulso de alvo é de LUZ, não de tamanho.** `transform:scale()` muda a caixa 60×/s;
+  quem espera o alvo "parar" (auditor, clique assistido) espera para sempre.
+  `box-shadow`/`filter` pulsam sem mexer na caixa.
+- **Relógio que avança sozinho (`setTimeout(avanca)`) se guarda e se cancela** ao
+  recomeçar a rodada — senão dispara em cima da rodada nova e estoura (o `trazido`).
+  O motor mata os relógios da fase; a peça se protege sozinha também.
+- **A tela de fim tem `div.medal`**: é por ela que o jogador sabe que terminou.
+- **Peça nova = solucionador novo no `jogador.js`, por ATRIBUTO** (`data-qa`), nunca
+  por classe (o integrador renomeia). O material dourado ganhou o dele.
+
 **O que NÃO é defeito (medido, para ninguém "consertar" à toa):**
 - **Carga:** `DOMContentLoaded` 55–128 ms, primeira fase montada em 3–8 ms
   (Chromium headless, `file://`). O montador já embute **só as peças usadas**

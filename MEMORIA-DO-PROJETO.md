@@ -5964,6 +5964,26 @@ fica o que EU preciso lembrar.
 - `simulador` na cobaia sem tema de água (o `dinamicas.py` reprovava o fixture,
   não a peça) → enunciado do fixture declara a água.
 
+**Lote da bancada da peça nas 88 (`_qa/peca.sh`, ~58 min de CPU em 2 faixas):
+84 PRONTAS de primeira; girar, linha-do-tempo, mudanca-permanencia e
+divisao-dourado consertadas na fonte → 88/88.** A divisao-dourado sozinha tinha
+5 defeitos latentes que só a bancada avulsa mostrou (tela sem `limpa()`, pulso
+`scale` que deixa o alvo instável, relógio `avanca` que estourava ao recomeçar,
+tela de fim sem `.medal`, contraste 4,16:1 no tema claro) — na atividade montada
+o motor mascarava três deles. Detalhe e regras no `DINAMICAS.md`.
+
+**Ferramenta nova: `ver-rodando.yml` + `_padrao/ver_rodando.js`** (pedido do
+Marcos: *"veja essas atividades rodando na internet"*): abre a referência num
+Chromium do GitHub, clica/arrasta, fotografa (PC e celular) e mede eventos,
+`touch-action`, alvo mínimo, fonte, som e mutações do feedback. **Gatilho por
+push em `_pesquisa/rodando/PEDIDO.json`** (workflow novo fora da `main` não
+aceita `workflow_dispatch` — 404). Saída: `_pesquisa/rodando/<lote>/RODANDO.md`
++ fotos. Lições do lote 1: `h5p.org/<tipo>` redireciona para a home (17 fotos
+iguais — ler as fotos antes de acreditar na tabela); PhET precisa de
+`?screens=1`; índices (Escola Games, Wordwall) não servem — tem que ser página
+de JOGO; e um regex de `href` deixou as 10 buscas vazias em silêncio (busca que
+não acha tem que gritar — consertado).
+
 **O que a medida mostrou que NÃO é defeito (não "consertar"):** carga 55–128 ms;
 o montador embute só as peças usadas; `preventDefault` no `touchstart` = 0 (12
 suspeitas eram do `touchmove`); toque simples (WCAG 2.5.7) existe nas 5 peças
