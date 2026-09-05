@@ -843,7 +843,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   -webkit-animation:none;animation:none;height:auto;overflow:visible}
 .pecabox > .tela > .centro{width:100%}
 /* ==== PECA: divisao-dourado ==== */
-@-webkit-keyframes kf-divisao-dourado-pula{0%{-webkit-transform:scale(.2);opacity:.2}70%{-webkit-transform:scale(1.15)}100%{-webkit-transform:scale(1);opacity:1}}@keyframes kf-divisao-dourado-pula{0%{transform:scale(.2);opacity:.2}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}@-webkit-keyframes kf-divisao-dourado-kf-dourado-pulsa{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.035)}}@keyframes kf-divisao-dourado-kf-dourado-pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@-webkit-keyframes kf-divisao-dourado-pula{0%{-webkit-transform:scale(.2);opacity:.2}70%{-webkit-transform:scale(1.15)}100%{-webkit-transform:scale(1);opacity:1}}@keyframes kf-divisao-dourado-pula{0%{transform:scale(.2);opacity:.2}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}@-webkit-keyframes kf-divisao-dourado-kf-dourado-pulsa{0%,100%{box-shadow:0 0 0 0 rgba(127,212,143,.0);-webkit-filter:brightness(1)}50%{box-shadow:0 0 0 5px rgba(127,212,143,.55);-webkit-filter:brightness(1.12)}}@keyframes kf-divisao-dourado-kf-dourado-pulsa{0%,100%{box-shadow:0 0 0 0 rgba(127,212,143,.0);filter:brightness(1)}50%{box-shadow:0 0 0 5px rgba(127,212,143,.55);filter:brightness(1.12)}}
 
 .mec-divisao-dourado .selo{display:block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px; letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px; width:-webkit-fit-content;width:fit-content}
 
@@ -959,7 +959,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-divisao-dourado .grupo{-webkit-box-flex:1;flex:1 1 104px;min-width:96px;max-width:170px;min-height:96px; background:rgba(28,44,26,.62);border:2px dashed rgba(255,255,255,.34);border-radius:14px;padding:5px 4px;text-align:center}
 
-.mec-divisao-dourado .grupo.mira{border-style:solid;border-color:#7fd48f;background:rgba(40,84,44,.7); -webkit-animation:kf-divisao-dourado-kf-dourado-pulsa 1.1s ease-in-out infinite;animation:kf-divisao-dourado-kf-dourado-pulsa 1.1s ease-in-out infinite}
+.mec-divisao-dourado .grupo.mira{border-style:solid;border-color:#7fd48f;background:rgba(40,84,44,.85); -webkit-animation:kf-divisao-dourado-kf-dourado-pulsa 1.1s ease-in-out infinite;animation:kf-divisao-dourado-kf-dourado-pulsa 1.1s ease-in-out infinite}
 
 .mec-divisao-dourado .gh{font-size:10.5px;font-weight:800;letter-spacing:.5px}
 
@@ -1088,6 +1088,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-divisao-dourado .vaga{width:38px;height:44px;line-height:38px;margin:0 3px;font-size:23px}}@media (prefers-reduced-motion:reduce){
 
 .mec-divisao-dourado .bcol.sobra, .mec-divisao-dourado .grupo.mira{-webkit-animation:none;animation:none}}
+
+.mec-divisao-dourado .dbox{position:relative}
+
+.mec-divisao-dourado .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; box-shadow:0 6px 0 #b8871c,0 10px 22px rgba(0,0,0,.35);font-size:58px;line-height:104px;color:#8a5a00;text-align:center}
+
+.mec-divisao-dourado .medal:before{content:"\2605"}
 
 </style></head>
 <body>
@@ -3286,6 +3292,13 @@ function passoDeCasa(place){ return place-plan.offset; }
 
 /* ---------- a conta armada (a chave), que se preenche passo a passo ---------- */
 var ateStep=-1, mostraQuo=false;
+/* ⚠️ (set/2026, lote das 88) o relogio do "passa" (750 ms ate avancar de casa) e
+   guardado aqui para ser CANCELADO quando a conta recomeca. Sem isto, "Jogar de
+   novo" no meio desses 750 ms deixava o relogio velho disparar em cima da conta
+   nova: `pativa++` alem do plano -> `plan.passos[...]` indefinido -> a peca
+   estourava ("reading 'trazido'") e a crianca ficava presa. Na atividade montada
+   o motor mata os relogios da fase; a peca tem que se proteger sozinha tambem. */
+var _tAvanca=null;
 function cel(t,c){ return '<span class="dcel '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>'; }
 function pintaChave(){
   var L=plan.L, o="", i, p;
@@ -3419,7 +3432,8 @@ function terminaCasa(){
     fase="passa";
     elFala.innerHTML=msg+"Divis&atilde;o exata nesta casa. Vamos &agrave;s "+NOMESP[pativa+1]+"&hellip;";
     elCtrl.innerHTML=""; renderMesa();
-    setTimeout(avanca,750);
+    if(_tAvanca) clearTimeout(_tAvanca);
+    _tAvanca=setTimeout(function(){ _tAvanca=null; if(fase==="passa") avanca(); },750);
   }
 }
 function trocar(){
@@ -3433,6 +3447,9 @@ function trocar(){
 function avanca(){ pativa++; fase="repartir"; comecaCasa(); }
 function comecaCasa(){
   var p=plan.passos[passoDeCasa(pativa)];
+  /* guarda: sem passo para esta casa (relogio velho, conta ja trocada) nao ha o
+     que comecar — e melhor nao fazer nada do que estourar e prender a crianca */
+  if(!p){ return; }
   var vindo=p.trazido>0?("Vieram <b>"+p.trazido+"</b> trocadas de cima; agora s&atilde;o <b>"+sup[pativa]+"</b> "+NOMESP[pativa]+". "):"";
   elInstr.innerHTML=vindo+"Arraste <b>um bloco para cada grupo</b>, um de cada vez (os que <b>piscam</b> ainda faltam).";
   elFala.innerHTML="Reparta as <b>"+NOMESP[pativa]+"</b>: arraste <b>um para cada grupo</b>. Repita enquanto der para todos.";
@@ -3664,6 +3681,7 @@ function iniciaConta(){
   if(elBanco) elBanco.style.display="";   /* volta para a conta seguinte */
   if(elFala) elFala.style.display="";
   plan=planeja(c0.n,c0.d);
+  if(_tAvanca){ clearTimeout(_tAvanca); _tAvanca=null; }   /* relogio da conta anterior morre aqui */
   sup=[0,0,0,0]; grp=[]; pativa=plan.offset; fase="repartir"; sobraAtual=0;
   errou=false; tentou=0; mostraQuo=false; ateStep=-1;
   var i,g;
@@ -3675,6 +3693,15 @@ function iniciaConta(){
   diz("Quanto dá "+plan.n+" dividido por "+plan.d+"?");
 }
 function pecaDourado(){
+  /* ⚠️⚠️ (set/2026, lote das 88) esta tela nao chamava `limpa()`: a bancada ja
+     abre com `pecaDourado()` e o auditor-jogador a chama DE NOVO ao entrar —
+     nasciam DUAS mesas empilhadas, e os grupos da mesa velha (com `data-qa="1"`
+     e fechamentos mortos) eram o que o jogador tocava: "esse grupo ja recebeu"
+     71 vezes, 420 s, TEMPO ESGOTADO. Na atividade montada o motor limpa antes,
+     por isso la nunca apareceu. Tela que nao se limpa antes de nascer e um
+     defeito latente em toda peca; e sem o `limpa()` a bancada nem a contava como
+     tela — o leiaute e o contraste desta peca so mediam a tela de FIM. */
+  limpa();
   var t=el("div","tela"), c=el("div","centro");
   /* ⚠️ O SELO E DO MOTOR, NAO DA PECA (set/2026, visto na foto): dentro da
      atividade o motor ja desenha o selo da fase, e a peca desenhava OUTRO
@@ -3682,7 +3709,7 @@ function pecaDourado(){
      37px de altura roubados de uma tela que ja nao cabia. Na bancada avulsa
      (sem motor) ele continua aparecendo, que e onde ele serve. */
   if(!document.querySelector(".mec-divisao-dourado")) c.appendChild(el("div","selo",TITULO));
-  var b=el("div","pecabox","");
+  var b=el("div","dbox","");
   b.innerHTML =
     '<div class="denun"></div>'+
     '<div class="dmesa">'+
@@ -3727,6 +3754,10 @@ function fimDaPeca(){
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");
   c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  /* ⚠️ (set/2026) a MEDALHA e o sinal que o auditor-jogador usa para saber que
+     chegou ao fim (`div.medal`, como em toda peca). Sem ela, ele via "Jogar de
+     novo", recomecava, e a bancada nunca dava a peca por terminada. */
+  c.appendChild(el("div","medal",""));
   c.appendChild(el("div","balao","Voc&ecirc; fechou <b>"+CONTAS.length+"</b> conta(s) repartindo com as m&atilde;os."));
   var b=el("button","btn","Jogar de novo");
   b.onclick=function(){ ci=0; pecaDourado(); };

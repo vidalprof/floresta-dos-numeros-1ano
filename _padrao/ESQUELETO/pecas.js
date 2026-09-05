@@ -13882,6 +13882,13 @@ function passoDeCasa(place){ return place-plan.offset; }
 
 /* ---------- a conta armada (a chave), que se preenche passo a passo ---------- */
 var ateStep=-1, mostraQuo=false;
+/* ⚠️ (set/2026, lote das 88) o relogio do "passa" (750 ms ate avancar de casa) e
+   guardado aqui para ser CANCELADO quando a conta recomeca. Sem isto, "Jogar de
+   novo" no meio desses 750 ms deixava o relogio velho disparar em cima da conta
+   nova: `pativa++` alem do plano -> `plan.passos[...]` indefinido -> a peca
+   estourava ("reading 'trazido'") e a crianca ficava presa. Na atividade montada
+   o motor mata os relogios da fase; a peca tem que se proteger sozinha tambem. */
+var _tAvanca=null;
 function cel(t,c){ return '<span class="dcel '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>'; }
 function pintaChave(){
   var L=plan.L, o="", i, p;
@@ -14015,7 +14022,8 @@ function terminaCasa(){
     fase="passa";
     elFala.innerHTML=msg+"Divis&atilde;o exata nesta casa. Vamos &agrave;s "+NOMESP[pativa+1]+"&hellip;";
     elCtrl.innerHTML=""; renderMesa();
-    setTimeout(avanca,750);
+    if(_tAvanca) clearTimeout(_tAvanca);
+    _tAvanca=setTimeout(function(){ _tAvanca=null; if(fase==="passa") avanca(); },750);
   }
 }
 function trocar(){
@@ -14029,6 +14037,9 @@ function trocar(){
 function avanca(){ pativa++; fase="repartir"; comecaCasa(); }
 function comecaCasa(){
   var p=plan.passos[passoDeCasa(pativa)];
+  /* guarda: sem passo para esta casa (relogio velho, conta ja trocada) nao ha o
+     que comecar — e melhor nao fazer nada do que estourar e prender a crianca */
+  if(!p){ return; }
   var vindo=p.trazido>0?("Vieram <b>"+p.trazido+"</b> trocadas de cima; agora s&atilde;o <b>"+sup[pativa]+"</b> "+NOMESP[pativa]+". "):"";
   elInstr.innerHTML=vindo+"Arraste <b>um bloco para cada grupo</b>, um de cada vez (os que <b>piscam</b> ainda faltam).";
   elFala.innerHTML="Reparta as <b>"+NOMESP[pativa]+"</b>: arraste <b>um para cada grupo</b>. Repita enquanto der para todos.";
@@ -14260,6 +14271,7 @@ function iniciaConta(){
   if(elBanco) elBanco.style.display="";   /* volta para a conta seguinte */
   if(elFala) elFala.style.display="";
   plan=planeja(c0.n,c0.d);
+  if(_tAvanca){ clearTimeout(_tAvanca); _tAvanca=null; }   /* relogio da conta anterior morre aqui */
   sup=[0,0,0,0]; grp=[]; pativa=plan.offset; fase="repartir"; sobraAtual=0;
   errou=false; tentou=0; mostraQuo=false; ateStep=-1;
   var i,g;
@@ -14271,6 +14283,15 @@ function iniciaConta(){
   diz("Quanto dá "+plan.n+" dividido por "+plan.d+"?");
 }
 function pecaDourado(){
+  /* ⚠️⚠️ (set/2026, lote das 88) esta tela nao chamava `limpa()`: a bancada ja
+     abre com `pecaDourado()` e o auditor-jogador a chama DE NOVO ao entrar —
+     nasciam DUAS mesas empilhadas, e os grupos da mesa velha (com `data-qa="1"`
+     e fechamentos mortos) eram o que o jogador tocava: "esse grupo ja recebeu"
+     71 vezes, 420 s, TEMPO ESGOTADO. Na atividade montada o motor limpa antes,
+     por isso la nunca apareceu. Tela que nao se limpa antes de nascer e um
+     defeito latente em toda peca; e sem o `limpa()` a bancada nem a contava como
+     tela — o leiaute e o contraste desta peca so mediam a tela de FIM. */
+  limpa();
   var t=el("div","tela"), c=el("div","centro");
   /* ⚠️ O SELO E DO MOTOR, NAO DA PECA (set/2026, visto na foto): dentro da
      atividade o motor ja desenha o selo da fase, e a peca desenhava OUTRO
@@ -14278,7 +14299,7 @@ function pecaDourado(){
      37px de altura roubados de uma tela que ja nao cabia. Na bancada avulsa
      (sem motor) ele continua aparecendo, que e onde ele serve. */
   if(!document.querySelector(".mec-divisao-dourado")) c.appendChild(el("div","selo",TITULO));
-  var b=el("div","pecabox","");
+  var b=el("div","dbox","");
   b.innerHTML =
     '<div class="denun"></div>'+
     '<div class="dmesa">'+
@@ -14323,6 +14344,10 @@ function fimDaPeca(){
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");
   c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  /* ⚠️ (set/2026) a MEDALHA e o sinal que o auditor-jogador usa para saber que
+     chegou ao fim (`div.medal`, como em toda peca). Sem ela, ele via "Jogar de
+     novo", recomecava, e a bancada nunca dava a peca por terminada. */
+  c.appendChild(el("div","medal",""));
   c.appendChild(el("div","balao","Voc&ecirc; fechou <b>"+CONTAS.length+"</b> conta(s) repartindo com as m&atilde;os."));
   var b=el("button","btn","Jogar de novo");
   b.onclick=function(){ ci=0; pecaDourado(); };

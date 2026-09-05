@@ -294,6 +294,33 @@ catch (e) {
      if(px&&px.offsetParent!==null){ px.click(); return 1; }
      const bn=document.getElementById('banner');
      if(bn&&bn.className.indexOf('show')>=0){ document.getElementById('bcta').click(); return 1; }
+     /* ⭐ MATERIAL DOURADO (divisao-dourado) — set/2026, lote das 88 pecas. A peca
+        publica `data-qa="1"` no GRUPO que pode receber agora (e so nele: tem
+        `data-g`), `data-qa="troca"` na casa de baixo quando ha sobra, e
+        `data-qa="<numero>"` no teclado de digitar o resultado. O jogador faz o
+        caminho do TOQUE, como a crianca sem arrasto: toca o grupo, toca a troca,
+        digita algarismo por algarismo e confirma. Sem isto ele pegava o PRIMEIRO
+        `[data-qa="1"]` da pagina e, na bancada da peca, ficou 420 s sem fechar
+        uma conta que a crianca fecha em 27 toques. Detecao por ATRIBUTO e
+        estrutura, nunca por nome de classe (o integrador renomeia classes). */
+     const _grp=[...document.querySelectorAll('[data-qa="1"][data-g]')].find(e=>e.offsetParent!==null);
+     if(_grp){ _grp.click(); return 1; }
+     const _tro=[...document.querySelectorAll('[data-qa="troca"]')].find(e=>e.offsetParent!==null);
+     if(_tro){ _tro.click(); return 1; }
+     const _tecl=[...document.querySelectorAll('[data-qa]')].find(e=>e.offsetParent!==null
+       && /^\d+$/.test(e.getAttribute('data-qa')||'')
+       && [...e.querySelectorAll('*')].filter(k=>k.children.length===0&&/^\d$/.test(k.textContent.trim())).length>=8);
+     if(_tecl){
+       const alvo=_tecl.getAttribute('data-qa'), feito=_tecl.getAttribute('data-qa-digitado')||'';
+       if(feito.length<alvo.length){
+         const d=alvo[feito.length];
+         const t=[..._tecl.querySelectorAll('*')].find(k=>k.offsetParent!==null&&k.children.length===0&&k.textContent.trim()===d);
+         if(t){ t.click(); _tecl.setAttribute('data-qa-digitado',feito+d); return 1; }
+       }
+       /* o botao que fecha a digitacao na peca se chama "Continuar" (medido) */
+       const ok=[...document.querySelectorAll('button')].find(e=>e.offsetParent!==null&&/confirm|pronto|verific|conferir|continuar|avan|^ok$/i.test(e.textContent.trim()));
+       if(ok){ _tecl.removeAttribute('data-qa-digitado'); ok.click(); return 1; }
+     }
      /* caca-palavras: clicando ao acaso o jogador NUNCA acha (1a e ultima letra
         numa grade de 49 casas). A tela publica em data-qa onde cada palavra
         ficou, so para o auditor — assim ele confere de verdade que a fase

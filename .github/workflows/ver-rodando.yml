@@ -146,8 +146,12 @@ jobs:
             try {
               const r = await fetch('https://html.duckduckgo.com/html/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'Mozilla/5.0 (compatible; pesquisa-escola/1.0)'}, body: 'q=' + encodeURIComponent(q)});
               const t = await r.text(); const out = [];
-              for (const m of t.matchAll(/class="result__a"[^>]*href="([^"]+)"/g)) {
-                let h = m[1]; const u = h.match(/uddg=([^&]+)/); if (u) h = decodeURIComponent(u[1]);
+              /* ⚠️ (set/2026) a 1a versao exigia `class=` ANTES de `href=` na mesma tag e nao
+                 achou nada: as 10 buscas do 1o lote voltaram vazias em silencio. Agora pega a
+                 tag inteira do resultado e tira o href dela, em qualquer ordem. */
+              for (const tag of t.matchAll(/<a\b[^>]*class="[^"]*result__a[^"]*"[^>]*>/g)) {
+                const hm = tag[0].match(/href="([^"]+)"/); if (!hm) continue;
+                let h = hm[1]; const u = h.match(/uddg=([^&]+)/); if (u) h = decodeURIComponent(u[1]);
                 if (h.startsWith('http') && !out.includes(h)) out.push(h);
                 if (out.length >= 2) break;
               }
