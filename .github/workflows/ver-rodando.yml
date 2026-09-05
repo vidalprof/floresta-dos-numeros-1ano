@@ -16,6 +16,14 @@ name: Ver rodando (joga nas atividades de referencia da internet e fotografa)
 #    quem aprova e o Marcos.
 
 on:
+  # ⚠️ Workflow NOVO numa branch que nao e a `main` nao aceita `workflow_dispatch`
+  #    pela API (404 ate existir na main). O gatilho por PUSH funciona em qualquer
+  #    branch: eu escrevo o pedido em `_pesquisa/rodando/PEDIDO.json` (lote, alvos,
+  #    buscas, max), commito, e ele roda. Os inputs abaixo continuam valendo quando
+  #    o dispatch existir.
+  push:
+    paths:
+      - "_pesquisa/rodando/PEDIDO.json"
   workflow_dispatch:
     inputs:
       lote:
@@ -70,6 +78,19 @@ jobs:
           MAX: ${{ inputs.max }}
           LOTE: ${{ inputs.lote }}
         run: |
+          # sem inputs (gatilho por push): le o pedido em _pesquisa/rodando/PEDIDO.json
+          if [ -z "$ALVOS$BUSCAS$LOTE" ] && [ -f _pesquisa/rodando/PEDIDO.json ]; then
+            eval "$(python3 - <<'PY'
+          import json, shlex
+          p = json.load(open('_pesquisa/rodando/PEDIDO.json', encoding='utf-8'))
+          for k in ('lote', 'alvos', 'buscas', 'max'):
+              v = p.get(k, '')
+              if isinstance(v, list): v = '\n'.join(v)
+              print('export %s=%s' % (k.upper(), shlex.quote(str(v))))
+          PY
+          )"
+            echo "pedido lido de _pesquisa/rodando/PEDIDO.json (lote=$LOTE)"
+          fi
           LOTE_NOME="${LOTE:-referencias-$(date -u +%Y-%m-%d)}"
           LOTE_NOME="$(echo "$LOTE_NOME" | tr -c 'a-zA-Z0-9-\n' '-' | tr 'A-Z' 'a-z')"
           echo "lote=$LOTE_NOME" >> "$GITHUB_OUTPUT"
