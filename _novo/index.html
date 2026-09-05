@@ -295,6 +295,91 @@
   .cor-opcao.c-verde{ background:var(--verde);}
   .cor-opcao.c-amarelo{ background:var(--amarelo);}
 
+  /* ============================================================
+     ⭐ A CAPA — pedido do Marcos (set/2026): *"o uno novo é para ser para
+     3/4 e 5 anos, precisa estar isso na capa"*.
+
+     Antes disto o jogo NÃO TINHA capa: abria direto na mesa, com o ano só num
+     `small` de 13px ao lado do logotipo. Quem abria o link não tinha como
+     saber de que turma era aquilo — nem o professor, que cola um link por
+     turma e precisa conferir se pegou o certo.
+
+     Três coisas que a capa resolve de uma vez:
+       1. **diz de quem é** — os três anos aparecem e o ATIVO acende;
+       2. **é o primeiro gesto** — nenhum navegador deixa a voz começar antes
+          de um clique. Sem capa, a primeira narração do jogo simplesmente não
+          saía. Agora o botão JOGAR é o "start" que destrava o som;
+       3. **diz o que a criança vai fazer** antes de ela cair no meio da mesa.
+     ============================================================ */
+  .capa{
+    position:fixed; inset:0; z-index:120; display:flex; overflow-y:auto;
+    align-items:center; justify-content:center; padding:18px;
+    background:
+      radial-gradient(circle at 50% 0%, #2E86C9 0, transparent 55%),
+      linear-gradient(180deg, #2876B8 0%, #16508B 100%);
+  }
+  .capa.foi{ display:none; }
+  .capa-caixa{ text-align:center; max-width:640px; width:100%; }
+  .capa .logo{ justify-content:center; font-size:clamp(40px,9vw,72px); }
+  .capa-sub{
+    font-family:'Baloo 2',sans-serif; font-weight:800; color:#FFE9A8;
+    font-size:clamp(22px,4.4vw,34px); margin-top:6px; letter-spacing:.5px;
+  }
+  /* ⭐ OS TRÊS ANOS — o que o Marcos pediu que estivesse na capa.
+     São PLAQUINHAS, não botões: a criança do 3º não pode escolher o 5º "pra
+     ver se é mais legal" (levaria uma surra do robô e desistiria). Quem manda
+     no ano é o link, que quem cola é o professor. */
+  .anos{ display:flex; gap:10px; justify-content:center; margin:16px 0 4px; flex-wrap:wrap; }
+  .ano-chip{
+    font-family:'Baloo 2',sans-serif; font-weight:800; border-radius:16px;
+    padding:8px 18px; font-size:clamp(17px,3vw,24px);
+    background:rgba(255,255,255,.16); color:#CFE3F7;
+    border:3px solid rgba(255,255,255,.22);
+  }
+  .ano-chip.on{
+    background:var(--amarelo); color:#3A2600; border-color:#fff;
+    box-shadow:0 5px 0 #C98E00, 0 8px 18px rgba(0,0,0,.28);
+    -webkit-transform:scale(1.1); transform:scale(1.1);
+  }
+  .capa-eu{ font-size:clamp(14px,2.4vw,18px); color:#EAF4FF; margin-top:10px; font-weight:600; }
+  .capa-linha{ display:flex; align-items:center; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:14px; }
+  .capa-mascote svg{ width:clamp(96px,18vw,150px); height:auto;
+    filter:drop-shadow(0 8px 10px rgba(0,0,0,.3));
+    -webkit-animation:flutua 2.6s ease-in-out infinite; animation:flutua 2.6s ease-in-out infinite; }
+  /* leque de cartas atrás do logotipo: é o que faz a capa parecer um JOGO e não
+     um formulário. Usa as MESMAS cartas do jogo (`conteudoCarta`), clonadas em
+     tempo de carga — nada de desenho novo para divergir do baralho real. */
+  /* ⚠️ a altura tem que caber a carta MAIS a inclinação: as duas das pontas
+     giram 13-14°, e uma carta de 101px girada passa dos 110. Com a altura
+     medida só pela carta em pé, o leque descia por cima do logotipo — o "U N O"
+     ficava atrás das cartas. */
+  .capa-leque{ display:flex; justify-content:center; align-items:flex-start;
+    height:clamp(84px,15.5vw,124px); margin-bottom:6px; }
+  .capa-leque .uno{ width:clamp(46px,8.5vw,68px); height:clamp(68px,12.6vw,101px);
+    --sc:36px; --cc:11px; margin:0 -8px; box-shadow:0 8px 16px rgba(0,0,0,.32); }
+  .capa-leque .uno .central{ font-size:28px; }
+  .capa-leque .uno .canto{ font-size:11px; }
+  .capa-leque .uno:nth-child(1){ -webkit-transform:rotate(-13deg) translateY(7px); transform:rotate(-13deg) translateY(7px); }
+  .capa-leque .uno:nth-child(2){ -webkit-transform:rotate(-4deg); transform:rotate(-4deg); z-index:2; }
+  .capa-leque .uno:nth-child(3){ -webkit-transform:rotate(5deg) translateY(4px); transform:rotate(5deg) translateY(4px); }
+  .capa-leque .uno:nth-child(4){ -webkit-transform:rotate(14deg) translateY(11px); transform:rotate(14deg) translateY(11px); }
+  @media (prefers-reduced-motion:reduce){ .capa-mascote svg{ -webkit-animation:none; animation:none; } }
+  .capa-fala{
+    background:#fff; color:#1a1633; border-radius:22px; padding:14px 20px;
+    max-width:420px; font-size:clamp(15px,2.6vw,19px); font-weight:600;
+    box-shadow:0 8px 20px rgba(0,0,0,.22); text-align:left;
+  }
+  .capa-botoes{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:20px; }
+  .btn-jogar{ background:var(--verde); font-size:clamp(20px,3.6vw,28px); padding:14px 40px; }
+  .btn-ouvir{ background:#7A4FC0; }
+  @media (max-height:640px){
+    .capa .logo{ font-size:clamp(30px,7vw,46px); }
+    .capa-mascote svg{ width:76px; }
+    .capa-fala{ padding:9px 14px; }
+    .capa-botoes{ margin-top:12px; }
+    .anos{ margin:9px 0 2px; }
+  }
+
   /* ---------- TUTORIAL ---------- */
   .tutorial{
     position:fixed; inset:0; background:rgba(58,46,92,.92); z-index:100;
@@ -367,6 +452,36 @@
 </style>
 </head>
 <body>
+
+<!-- ⭐ CAPA — "precisa estar isso na capa" (Marcos, set/2026). Ver o bloco de
+     CSS `.capa` para o porquê de cada pedaço. -->
+<div class="capa" id="capa">
+  <div class="capa-caixa">
+    <div class="capa-leque" id="capaLeque"></div>
+    <div class="logo">
+      <span class="l">U</span><span class="l">N</span><span class="l">O</span>
+    </div>
+    <div class="capa-sub">dos Números</div>
+
+    <div class="anos" id="anosChips">
+      <span class="ano-chip" data-ano="3">3º ano</span>
+      <span class="ano-chip" data-ano="4">4º ano</span>
+      <span class="ano-chip" data-ano="5">5º ano</span>
+    </div>
+    <div class="capa-eu" id="capaEu"></div>
+
+    <div class="capa-linha">
+      <div class="capa-mascote" id="capaMascote"></div>
+      <div class="capa-fala" id="capaFala"></div>
+    </div>
+
+    <div class="capa-botoes">
+      <button class="btn btn-jogar" id="btnJogar">▶ JOGAR</button>
+      <button class="btn btn-tutorial" id="btnComoJoga">📖 Como se joga</button>
+      <button class="btn btn-ouvir" id="btnOuvirCapa">🔊 Ouvir</button>
+    </div>
+  </div>
+</div>
 
 <header>
   <div class="logo">
@@ -453,6 +568,10 @@
           <!-- orelhas -->
           <rect x="14" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
           <rect x="98" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <!-- pescoço: sem ele a cabeça (76 de largura) e o corpo (56) ficam
+               dois blocos soltos, e na capa, que mostra o mascote grande, ele
+               parecia uma cabeça flutuando em cima de uma caixa -->
+          <rect x="48" y="84" width="24" height="12" fill="#C8D7E4" stroke="#1B5D9E" stroke-width="5"/>
           <!-- corpo -->
           <rect x="32" y="92" width="56" height="44" rx="12" fill="#C8D7E4" stroke="#1B5D9E" stroke-width="5"/>
           <circle cx="60" cy="114" r="9" fill="#F7B500" stroke="#1B5D9E" stroke-width="3"/>
@@ -1264,21 +1383,92 @@ function mudarSlide(d){
    criança do 3º escolheria o do 5º "pra ver se é mais legal", levaria uma
    surra do robô e desistiria. O ano vem do LINK, que quem cola é o professor.
    ============================================================ */
+/* o que a REGRA DA RODADA cobra em cada ano — texto único, usado na capa, no
+   tutorial e na fala. Um lugar só para não divergirem (já aconteceu de a tela
+   dizer uma coisa e a voz outra em outras atividades). */
+var OANO = {
+  3: {curto: 'par e ímpar, maior e menor, e somar 10',
+      longo: 'No 3º ano as regras são de par e ímpar, de maior e menor, e de somar 10. '
+           + 'Exemplo: se a tarja disser "só vale carta PAR", você joga o 2, o 4, o 6 ou o 8.'},
+  4: {curto: 'múltiplos de 3 e de 5, dobro e metade',
+      longo: 'No 4º ano as regras são de múltiplos, dobro e metade. '
+           + 'Exemplo: se a mesa tem um 4 e a tarja pede "o DOBRO da carta da mesa", você procura um 8.'},
+  5: {curto: 'múltiplos de 3, dobro, e a soma das duas cartas',
+      longo: 'No 5º ano entram os múltiplos de 3 e a soma das duas cartas. '
+           + 'Exemplo: se a mesa tem um 4 e a tarja pede "a soma das duas é múltiplo de 3", '
+           + 'serve o 2, porque 4 mais 2 dá 6, e 6 é múltiplo de 3.'}
+};
+
+function textoDaCapa(){
+  return 'Eu sou o Robô Esperto, e eu penso antes de jogar. Combine a carta pela COR '
+       + 'ou pelo NÚMERO — e fique de olho na tarja amarela: às vezes a rodada pede '
+       + 'uma regra a mais, de ' + OANO[NIVEL].curto + '. Quem ficar sem cartas primeiro vence!';
+}
+
+function fecharCapa(depois){
+  var c = document.getElementById('capa');
+  if(c) c.classList.add('foi');
+  if(depois) depois();
+}
+
+(function montarCapa(){
+  /* o mascote é CLONADO do tutorial em vez de copiado no HTML: um desenho só,
+     um lugar só para mexer. Dois SVGs iguais é como eles começam a divergir. */
+  var svg = document.querySelector('#mascote svg');
+  var alvo = document.getElementById('capaMascote');
+  if(svg && alvo) alvo.innerHTML = svg.outerHTML;
+
+  /* o leque de cartas da capa é montado com o MESMO `conteudoCarta` do jogo —
+     se um dia o desenho da carta mudar, a capa muda junto sozinha */
+  var leque = document.getElementById('capaLeque');
+  if(leque){
+    var mostra = [
+      {cor:'vermelho', tipo:'num', valor:5},
+      {cor:'azul',     tipo:'num', valor:3},
+      {cor:'',         tipo:'curinga'},
+      {cor:'verde',    tipo:'num', valor:8}
+    ];
+    for(var k=0;k<mostra.length;k++){
+      var c = mostra[k], d = document.createElement('div');
+      var ehCur = (c.tipo==='curinga');
+      d.className = 'uno ' + (ehCur ? 'c-curinga' : corClasse(c.cor));
+      d.innerHTML = conteudoCarta(c, ehCur ? '#fff' : HEX[c.cor]);
+      if(ehCur){
+        d.querySelector('.miolo').style.background =
+          'conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+        d.querySelector('.central').style.color = '#fff';
+      }
+      leque.appendChild(d);
+    }
+  }
+
+  var chips = document.querySelectorAll('#anosChips .ano-chip'), i;
+  for(i=0;i<chips.length;i++){
+    if(parseInt(chips[i].getAttribute('data-ano'),10) === NIVEL) chips[i].className = 'ano-chip on';
+  }
+  var eu = document.getElementById('capaEu');
+  if(eu) eu.textContent = 'Esta partida está no ' + NIVEL + 'º ano.';
+  var fala = document.getElementById('capaFala');
+  if(fala) fala.textContent = textoDaCapa();
+
+  /* ⚠️ O BOTÃO JOGAR É O "START" DA VOZ. Nenhum navegador deixa a fala começar
+     antes de um gesto — sem capa, a primeira narração do jogo simplesmente não
+     saía. Aqui o clique já aconteceu, então `novoJogo()` fala normalmente. */
+  var b = document.getElementById('btnJogar');
+  if(b) b.onclick = function(){ fecharCapa(novoJogo); };
+  b = document.getElementById('btnComoJoga');
+  if(b) b.onclick = function(){ fecharCapa(function(){ novoJogo(); abrirTutorial(); }); };
+  b = document.getElementById('btnOuvirCapa');
+  if(b) b.onclick = function(){ falar('UNO dos Números, ' + NIVEL + 'º ano. ' + textoDaCapa()); };
+})();
+
 (function ajustarAoAno(){
   var s = document.getElementById('subTitulo');
   if(s) s.textContent = 'dos Números · ' + NIVEL + 'º ano';
-  // o slide da regra explica a escada DAQUELE ano, com exemplo de verdade
-  var exemplos = {
-    3: 'No 3º ano as regras são de par e ímpar, de maior e menor, e de somar 10. '
-     + 'Exemplo: se a tarja disser "só vale carta PAR", você joga o 2, o 4, o 6 ou o 8.',
-    4: 'No 4º ano as regras são de múltiplos, dobro e metade. '
-     + 'Exemplo: se a mesa tem um 4 e a tarja pede "o DOBRO da carta da mesa", você procura um 8.',
-    5: 'No 5º ano entram os múltiplos de 3 e a soma das duas cartas. '
-     + 'Exemplo: se a mesa tem um 4 e a tarja pede "a soma das duas é múltiplo de 3", '
-     + 'serve o 2, porque 4 mais 2 dá 6, e 6 é múltiplo de 3.'
-  };
+  /* o slide da regra explica a escada DAQUELE ano, com exemplo de verdade —
+     e vem do MESMO `OANO` que a capa usa, para a tela e a voz nunca divergirem */
   for(var i=0;i<slides.length;i++){
-    if(slides[i].regra){ slides[i].texto = exemplos[NIVEL] || exemplos[4]; }
+    if(slides[i].regra){ slides[i].texto = (OANO[NIVEL] || OANO[4]).longo; }
   }
 })();
 

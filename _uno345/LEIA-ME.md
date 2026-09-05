@@ -58,6 +58,29 @@ seletor na tela de propósito: a criança do 3º escolheria o do 5º "pra ver se
 mais legal", levaria uma surra do robô e desistiria. Quem cola o link é o
 professor, um por turma, no controle do laboratório.
 
+### 3. A capa
+
+Pedido do Marcos (set/2026): *"o uno novo é para ser para 3/4 e 5 anos, precisa
+estar isso na capa"*. Antes disto o jogo **não tinha capa** — abria direto na
+mesa, com o ano só num `small` de 13px ao lado do logotipo, e quem abria o link
+não tinha como saber de que turma era aquilo.
+
+A capa mostra os **três anos lado a lado, com o ativo aceso**, mais a linha
+"Esta partida está no Nº ano". Isso não é enfeite: é como o professor confere,
+em um olhar, se colou o link certo para a turma que está na sala.
+
+Os três anos são **plaquinhas, não botões** — pelo mesmo motivo de não haver
+seletor.
+
+⭐ E a capa resolve uma coisa que estava quebrada e eu não tinha visto: **nenhum
+navegador deixa a voz começar antes de um gesto**. Sem capa, a primeira narração
+do jogo simplesmente não saía. Agora o botão **JOGAR é o "start"** que destrava
+o som — e há um **🔊 Ouvir** para quem quiser a capa lida em voz alta.
+
+O leque de cartas da capa é montado com o **mesmo `conteudoCarta`** do jogo: se
+o desenho da carta mudar, a capa muda junto, sozinha. O mascote é **clonado** do
+tutorial pelo mesmo motivo — um desenho só, um lugar só para mexer.
+
 ---
 
 ## As armadilhas que já estão fechadas (não reabrir)
