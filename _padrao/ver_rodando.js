@@ -138,6 +138,24 @@ async function candidato(page, quero) {
       }
     } catch (e) {}
   }
+  /* ⚠️ (set/2026, lote 2) o PhET e um CANVAS so: nenhum elemento do DOM escuta o dedo,
+     e o medidor dizia "0 alvos" numa simulacao cheia de coisas para arrastar. Sem alvo
+     no DOM, o gesto vai para o maior canvas visivel: clique no centro e arrasto a
+     partir de um ponto a esquerda do centro (onde as simulacoes costumam por as pecas). */
+  for (const f of page.frames()) {
+    try {
+      const cv = await f.$$('canvas');
+      let melhor = null, area = 0;
+      for (const c of cv) { const b = await c.boundingBox(); if (b && b.width * b.height > area && b.width > 200) { area = b.width * b.height; melhor = {el: c, b}; } }
+      if (melhor) {
+        const b = melhor.b;
+        const box = quero === 'arrasto'
+          ? {x: b.x + b.width * 0.30 - 20, y: b.y + b.height * 0.55 - 20, width: 40, height: 40}
+          : {x: b.x + b.width * 0.5 - 20, y: b.y + b.height * 0.5 - 20, width: 40, height: 40};
+        return {frame: f, handle: melhor.el, box, canvas: true};
+      }
+    } catch (e) {}
+  }
   return null;
 }
 

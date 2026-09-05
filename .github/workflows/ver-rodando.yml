@@ -142,21 +142,37 @@ jobs:
             if (m) alvos.push({nome: m[1], url: m[2]});
           }
           /* buscas: DuckDuckGo HTML, sem chave; abre os 2 primeiros de cada */
+          /* ⚠️⚠️ (set/2026) DOIS lotes seguidos com TODAS as buscas vazias, em silencio.
+             Busca que nao acha tem que DIZER por que. Agora: tenta tres portas do
+             DuckDuckGo (POST html, GET html, lite), guarda o status e um pedaco da
+             resposta de cada tentativa em BUSCAS.md (commitado junto), e o resumo
+             do job grita quantas buscas voltaram vazias. */
+          const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
+          const DIAG = [];
+          function extrai(t) {
+            const out = [];
+            const pega = h => { const u = h.match(/uddg=([^&]+)/); if (u) h = decodeURIComponent(u[1]);
+              if (/^https?:\/\//.test(h) && !/duckduckgo\.com/.test(h) && !out.includes(h)) out.push(h); };
+            for (const tag of t.matchAll(/<a\b[^>]*class="[^"]*result__a[^"]*"[^>]*>/g)) { const hm = tag[0].match(/href="([^"]+)"/); if (hm) pega(hm[1]); }
+            if (!out.length) for (const m of t.matchAll(/<a\b[^>]*rel="nofollow"[^>]*href="([^"]+)"/g)) pega(m[1]);
+            if (!out.length) for (const m of t.matchAll(/href="(\/\/duckduckgo\.com\/l\/\?uddg=[^"]+)"/g)) pega(m[1]);
+            return out.slice(0, 2);
+          }
           async function procura(q) {
-            try {
-              const r = await fetch('https://html.duckduckgo.com/html/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': 'Mozilla/5.0 (compatible; pesquisa-escola/1.0)'}, body: 'q=' + encodeURIComponent(q)});
-              const t = await r.text(); const out = [];
-              /* ⚠️ (set/2026) a 1a versao exigia `class=` ANTES de `href=` na mesma tag e nao
-                 achou nada: as 10 buscas do 1o lote voltaram vazias em silencio. Agora pega a
-                 tag inteira do resultado e tira o href dela, em qualquer ordem. */
-              for (const tag of t.matchAll(/<a\b[^>]*class="[^"]*result__a[^"]*"[^>]*>/g)) {
-                const hm = tag[0].match(/href="([^"]+)"/); if (!hm) continue;
-                let h = hm[1]; const u = h.match(/uddg=([^&]+)/); if (u) h = decodeURIComponent(u[1]);
-                if (h.startsWith('http') && !out.includes(h)) out.push(h);
-                if (out.length >= 2) break;
-              }
-              return out;
-            } catch (e) { console.log('busca falhou: ' + q + ' ' + e.message); return []; }
+            const portas = [
+              ['POST html', () => fetch('https://html.duckduckgo.com/html/', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': UA, 'Accept': 'text/html'}, body: 'q=' + encodeURIComponent(q) + '&kl=br-pt'})],
+              ['GET html',  () => fetch('https://html.duckduckgo.com/html/?q=' + encodeURIComponent(q), {headers: {'User-Agent': UA, 'Accept': 'text/html'}})],
+              ['GET lite',  () => fetch('https://lite.duckduckgo.com/lite/?q=' + encodeURIComponent(q), {headers: {'User-Agent': UA, 'Accept': 'text/html'}})],
+            ];
+            for (const [nome, vai] of portas) {
+              try {
+                const r = await vai(); const t = await r.text(); const out = extrai(t);
+                DIAG.push({q, porta: nome, status: r.status, tam: t.length, achou: out.length, trecho: out.length ? '' : t.replace(/\s+/g, ' ').slice(0, 240)});
+                if (out.length) return out;
+              } catch (e) { DIAG.push({q, porta: nome, status: 'erro', tam: 0, achou: 0, trecho: String(e.message).slice(0, 160)}); }
+              await new Promise(r => setTimeout(r, 1500));
+            }
+            return [];
           }
           (async () => {
             const bs = (process.env.BUSCAS || '').split('\n').map(s => s.trim()).filter(Boolean);
@@ -168,6 +184,9 @@ jobs:
             }
             const fim = alvos.slice(0, MAX);
             fs.writeFileSync('/tmp/alvos.json', JSON.stringify(fim));
+            fs.writeFileSync('/tmp/buscas_diag.json', JSON.stringify({buscas: bs.length, achadas: DIAG.filter(d => d.achou).length, diag: DIAG}, null, 1));
+            const vazias = bs.filter(b => !DIAG.some(d => d.q === b.replace(/^[^=]+=/, '') && d.achou)).length;
+            if (bs.length && vazias) console.log('::warning::' + vazias + ' de ' + bs.length + ' busca(s) voltaram VAZIAS — ver BUSCAS.md no lote');
             console.log(fim.length + ' alvo(s):'); fim.forEach(a => console.log('  ' + a.nome + '  ' + a.url));
           })();
           JS
@@ -180,6 +199,15 @@ jobs:
           export DEST="_pesquisa/rodando/$LOTE"
           export NODE_PATH="$(pwd)/node_modules"
           node _padrao/ver_rodando.js 2>&1 | tee /tmp/ver_rodando.log
+          # o diagnostico das buscas vai junto com o lote (busca vazia tem que ter motivo escrito)
+          if [ -f /tmp/buscas_diag.json ]; then node - <<'JS'
+          const fs = require('fs'); const d = JSON.parse(fs.readFileSync('/tmp/buscas_diag.json', 'utf8'));
+          const L = ['# 🔎 BUSCAS deste lote — ' + d.buscas + ' pedida(s), ' + d.achadas + ' tentativa(s) com resultado', '',
+                     '| busca | porta | status | tamanho | achou | trecho da resposta (quando vazia) |', '|---|---|--:|--:|--:|---|'];
+          for (const x of d.diag) L.push('| ' + x.q + ' | ' + x.porta + ' | ' + x.status + ' | ' + x.tam + ' | ' + x.achou + ' | ' + (x.trecho || '').replace(/\|/g, '/') + ' |');
+          fs.writeFileSync(process.env.DEST + '/BUSCAS.md', L.join('\n') + '\n');
+          JS
+          fi
           echo "## 👀 Ver rodando — $LOTE" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"; grep -E "^==|frames=|erro" /tmp/ver_rodando.log | head -120 >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
 
