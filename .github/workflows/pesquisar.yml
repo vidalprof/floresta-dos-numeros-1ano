@@ -93,7 +93,10 @@ jobs:
           echo "tema da semana $SEM: $A"
 
       - name: Instalar leitor de paginas
-        run: pip3 install --quiet requests beautifulsoup4 lxml
+        # ⚠️ (set/2026) pypdf: a campanha "aprenda tudo sobre os jogos" mostrou que as
+        #    fontes boas (Hirsh-Pasek, Plass, Shute, PhET) sao PDF — e o leitor
+        #    devolvia "HTTP 200" e jogava fora. Agora PDF vira texto (ate 30 paginas).
+        run: pip3 install --quiet requests beautifulsoup4 lxml pypdf
 
       - name: Buscar e ler
         env:
@@ -133,10 +136,36 @@ jobs:
               except Exception as e:
                   print("busca falhou: %s" % e); return []
 
+          def le_pdf(r, url):
+              """PDF -> texto (ate 30 paginas). Sem isto o leitor dizia 'HTTP 200' e descartava."""
+              try:
+                  import io as _io
+                  from pypdf import PdfReader
+                  rd = PdfReader(_io.BytesIO(r.content))
+                  paginas = []
+                  for pg in rd.pages[:30]:
+                      try:
+                          paginas.append(pg.extract_text() or "")
+                      except Exception:
+                          pass
+                  txt = "\n".join(paginas)
+                  linhas = [l.strip() for l in txt.split("\n")]
+                  linhas = [l for l in linhas if len(l) > 40]
+                  corpo = "\n\n".join(linhas[:400])
+                  if len(corpo) < 400:
+                      return None, None, "PDF sem texto legivel"
+                  titulo = (rd.metadata.title if rd.metadata and rd.metadata.title else url.rsplit("/", 1)[-1]) or url
+                  return (u"%s (PDF, %d pag.)" % (titulo, len(rd.pages)))[:120], corpo, None
+              except Exception as e:
+                  return None, None, "PDF: %s" % str(e)[:60]
+
           def le(url):
               try:
-                  r = requests.get(url, headers=UA, timeout=30)
-                  if r.status_code != 200 or "html" not in r.headers.get("content-type", ""):
+                  r = requests.get(url, headers=UA, timeout=45)
+                  ct = r.headers.get("content-type", "")
+                  if r.status_code == 200 and ("pdf" in ct or url.lower().endswith(".pdf")):
+                      return le_pdf(r, url)
+                  if r.status_code != 200 or "html" not in ct:
                       return None, None, "HTTP %s" % r.status_code
                   s = BeautifulSoup(r.text, "lxml")
                   for tag in s(["script", "style", "nav", "footer", "header", "aside", "form", "noscript"]):
