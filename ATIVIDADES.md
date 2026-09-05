@@ -78,6 +78,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **UNO dos Números** (3º ano) | Matemática + estratégia: UNO contra um robô que PENSA (guarda coringa, encadeia pula/gira, ataca quando você está quase ganhando, conta cartas). De vez em quando a mesa impõe uma REGRA DA RODADA sobre o número da carta — par/ímpar, maior que a da mesa, soma 10. Tutorial em slides, narração e alívio invisível para quem perde seguido | `_uno345` | https://vidalprof.github.io/uno-dos-numeros-345/?ano=3 |
 | **Prova de Matemática — Coruja Cora** | Adição/subtração: conceitos, significados e algoritmos (com reagrupamento) | `_mat2` (+ `_mat2painel`) | https://vidalprof.github.io/matematica-2ano/ · [painel](https://vidalprof.github.io/matematica-2ano-painel/) |
 | **O Museu Vivo dos Bichos** | Ciências: vertebrados e invertebrados | `_museu` | https://vidalprof.github.io/o-museu-vivo-dos-bichos/ |
 | **Prova de Ciências** | Ciências (avaliação, 3º ano) | — | https://vidalprof.github.io/prova-ciencias-3ano/ · [painel](https://vidalprof.github.io/painel-ciencias-3ano/) |
@@ -90,6 +91,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **UNO dos Números** (4º ano) | Matemática + estratégia: UNO contra um robô que PENSA (guarda coringa, encadeia pula/gira, ataca quando você está quase ganhando, conta cartas). De vez em quando a mesa impõe uma REGRA DA RODADA sobre o número da carta — múltiplos de 3 e de 5, dobro e metade da carta da mesa. Tutorial em slides, narração e alívio invisível para quem perde seguido | `_uno345` | https://vidalprof.github.io/uno-dos-numeros-345/?ano=4 |
 | **A Bancada da Divisão** | Matemática (4º ano): DIVISÃO do começo pela CONTA ARMADA com MATERIAL DOURADO que o aluno ARRASTA (a dinâmica da Oficina da Divisão, agora como peça do motor) — repartir um bloco por grupo, trocar a sobra (o "abaixa") e digitar o resultado. 32 contas progressivas | `_gincana` | https://vidalprof.github.io/a-bancada-da-divisao/ |
 | **A Oficina das Palavras** | Aumentativo/diminutivo, sílabas, mau×mal, verbos | `_por4` | https://vidalprof.github.io/a-oficina-das-palavras/ (painel embutido) |
 | **A Viagem no Tempo do Vale** | História (EF04HI01): colonização do Vale do Itajaí — Xokleng, açorianos, alemães (1850), italianos (1875), africanos; mudanças e permanências. Site de pesquisa + quiz | `_vale4` (+ painel) | https://vidalprof.github.io/a-viagem-no-tempo-do-vale/ |
@@ -100,6 +102,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **UNO dos Números** (5º ano) | Matemática + estratégia: UNO contra um robô que PENSA (guarda coringa, encadeia pula/gira, ataca quando você está quase ganhando, conta cartas). De vez em quando a mesa impõe uma REGRA DA RODADA sobre o número da carta — múltiplos de 3, a SOMA das duas cartas múltiplo de 3, dobro, soma 10. Tutorial em slides, narração e alívio invisível para quem perde seguido | `_uno345` | https://vidalprof.github.io/uno-dos-numeros-345/?ano=5 |
 | **A Grande Expedição** | Matemática (5º ano, divisão — EF05MA07): estratégias de raciocínio para dividir — repartir igual, quantas vezes cabe (medida), estimativa, tabuada, resto e divisor de até 2 algarismos | `_divisao` | https://vidalprof.github.io/a-grande-expedicao-divisao/ |
 | **A Oficina da Divisão** | Matemática (4º/5º ano): raciocínio da CONTA ARMADA com MATERIAL DOURADO que o aluno MOVE (milhar/centena/dezena/unidade) — 32 contas progressivas; ARRASTA (não vale clicar) uma rodada para todos os grupos, troca a sobra (reagrupa/"abaixa") e DIGITA o resultado; nome + relatório final em % (exceção ao motor, HTML próprio) | `_dourado` | https://vidalprof.github.io/oficina-da-divisao/ |
 | **A Revista das Palavras** | Português (5º ano): ler e interpretar DIFERENTES GÊNEROS (bilhete, convite, lista, aviso, e-mail, carta, poema, tirinha, anúncio, receita, notícia, regras, dobradura, fábula, verbete, quadrinha, trava-língua, propaganda, diário) + RETIRAR do texto substantivos, adjetivos e verbos — 34 fases, 9 mecânicas | `_revista5` | https://vidalprof.github.io/a-revista-das-palavras/ |
