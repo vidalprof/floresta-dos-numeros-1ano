@@ -446,7 +446,10 @@ function redesenha(){
   }
 }
 /* a tela do PC vira ao contrario e as linhas ficariam tortas: redesenha */
-window.onresize=function(){ redesenha(); };
+/* ⚠️ `window.onresize=` APAGAVA o ouvinte de qualquer outra peca (o ligar fazia o
+   mesmo) e continuava vivo depois da fase acabar. Ouvinte proprio, e so enquanto a
+   camada estiver no documento. */
+window.addEventListener("resize",function(){ if(camadaL&&document.body.contains(camadaL)) redesenha(); },false);
 
 /* ============ TELA 2: TIRAR UM BICHO, A TEIA REAGE ============ */
 var NIV={};        /* nivel de agora de cada especie (0 a 3) */

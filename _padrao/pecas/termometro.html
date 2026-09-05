@@ -379,11 +379,19 @@ function fechaEscala(){
     if(meu+1!==gerT) return;
     esc++;
     if(esc<ESCALAS.length){ telaTermo(); return; }
-    mostraBanner("Voc&#234; achou o grau certo nas tr&#234;s escalas!",telaFimTermo);
+    mostraBanner("Voc&#234; achou o grau certo nas tr&#234;s escalas!",fimDaPeca);
   },800);
 }
 
-function telaFimTermo(){
+
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa(); gerT++;
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");

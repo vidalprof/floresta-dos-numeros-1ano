@@ -68,17 +68,36 @@ print(*im.getpixel((min(W-1,int(W*${px})), min(H-1,int(H*${py})))))
 (async () => {
   const arq = process.argv[2], fase = process.argv[3];
   const rodadas = parseInt(process.argv[4] || '1', 10);
-  if (!arq || !fase) { console.log(fs.readFileSync(__filename, 'utf8').split('*/')[0]); process.exit(2); }
+  if (!arq) { console.log(fs.readFileSync(__filename, 'utf8').split('*/')[0]); process.exit(2); }
   const pasta = path.dirname(path.resolve(arq));
   const b = await chromium.launch({executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
                                    args: ['--no-sandbox', '--disable-gpu']});
-  let ruins = 0;
-  for (let k = 0; k < rodadas; k++) {
+  /* ⭐ SEM nome de fase = atividade MONTADA (set/2026). Na banca este portao era
+     chamado so com o arquivo e respondia a tela de USO em toda atividade — cego
+     em 100% delas, listado como "NAO MEDI" todo dia. Numa montada as fases nao
+     tem nome: acha-se sozinho as de `achar-na-cena` e abre-se por `montaFase(i)`.
+     Atividade sem essa mecanica: NAO SE APLICA (codigo 2, e diz isso). */
+  let alvos = [];
+  if (fase) alvos = [{rot: fase, arg: fase, abre: f => { window[f](); }}];
+  else {
+    const p0 = await b.newPage({viewport: {width: 412, height: 820}});
+    await p0.goto('file://' + path.resolve(arq)); await p0.waitForTimeout(500);
+    const idx = await p0.evaluate(() => (typeof FASES !== 'undefined' && FASES)
+      ? FASES.map((f, i) => (f && f.mec === 'achar-na-cena') ? i : -1).filter(i => i >= 0) : []);
+    await p0.close();
+    if (!idx.length) {
+      console.log('zonas: NAO SE APLICA — a atividade nao tem fase "achar na cena". Nada a conferir.');
+      await b.close(); process.exit(2);
+    }
+    alvos = idx.map(i => ({rot: 'fase' + (i + 1), arg: i, abre: i => { montaFase(i); }}));
+  }
+  let ruins = 0, medidos = 0;
+  for (const alvo of alvos) for (let k = 0; k < rodadas; k++) {
     const p = await b.newPage({viewport: {width: 412, height: 820}});
     await p.goto('file://' + path.resolve(arq));
     await p.waitForTimeout(600);
     await p.evaluate(() => { window.falar = function(){}; window.depoisDaFala = function(i,m,cb){setTimeout(cb,50);}; });
-    await p.evaluate(f => { window[f](); }, fase);
+    await p.evaluate(alvo.abre, alvo.arg);
     await p.waitForTimeout(400);
     /* avanca ate a rodada k respondendo certo (o alvo publica data-qa="1") */
     for (let z = 0; z < k; z++) {
@@ -99,11 +118,12 @@ print(*im.getpixel((min(W-1,int(W*${px})), min(H-1,int(H*${py})))))
       return {img: im.getAttribute('src'), q: (bal ? bal.textContent : '').replace(/\s+/g, ' ').trim(), alvos: out};
     });
     await p.close();
-    if (!r) { console.log('  (a fase ' + fase + ' nao tem .janela com figura)'); break; }
-    console.log('\n' + r.q.slice(0, 88));
+    if (!r) { console.log('  (a ' + alvo.rot + ' nao tem .janela com figura)'); break; }
+    console.log('\n[' + alvo.rot + '] ' + r.q.slice(0, 88));
     for (const [px, py] of r.alvos) {
       const [cr, cg, cb2] = await corDoArquivo(path.join(pasta, r.img), px, py);
       const nome = nomeCor(cr, cg, cb2);
+      medidos++;
       if (/ESCURO/.test(nome)) ruins++;
       console.log('   (%s,%s)  rgb=%s  -> %s',
                   (px * 100).toFixed(1).padStart(5), (py * 100).toFixed(1).padStart(5),
@@ -112,5 +132,7 @@ print(*im.getpixel((min(W-1,int(W*${px})), min(H-1,int(H*${py})))))
   }
   await b.close();
   console.log('\n' + (ruins ? '  ' + ruins + ' alvo(s) em pixel escuro — confira se e sombra ou se caiu fora'
-                            : '  todos os alvos caem em cor identificavel'));
+                            : '  ' + medidos + ' alvo(s) medido(s): todos caem em cor identificavel'));
+  /* pixel escuro e AVISO para o olho (pode ser sombra legitima): nao reprova sozinho */
+  process.exit(medidos ? 0 : 2);
 })();

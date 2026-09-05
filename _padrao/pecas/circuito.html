@@ -82,7 +82,15 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .tela{max-height:calc(100vh - 46px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 /* a placa onde o circuito mora. Tudo desenhado em CSS: nenhuma figura de fora
    e nenhum laco de animacao — o PC da escola aguenta. */
-.placa{position:relative;height:238px;max-width:430px;margin:13px auto 0;
+/* ⚠️⚠️ DEFEITO MEDIDO (set/2026, cobaia do motor): dentro da atividade a placa
+   media **6 PIXELS DE LARGURA** — so as bordas. Na bancada ela e um bloco comum e
+   estica ate o pai; dentro do motor o pai e uma coluna flex centrada, e bloco sem
+   `width` encolhe ate o conteudo, que aqui e zero (tudo e `position:absolute`).
+   As seis pontas de fio, posicionadas em `%` dessa largura, cairam TODAS no mesmo
+   pixel — a banca leu "botao sobre botao", mas o que a crianca via era um palito
+   verde sem circuito nenhum. `width:100%` e o que a bancada dava de graca. */
+.placa{position:relative;width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;
+       height:238px;max-width:430px;margin:13px auto 0;
        background:#2f3a2b;border:3px solid #5b6b52;border-radius:16px}
 /* o fio que JÁ está lá */
 .fio{position:absolute;background:#9aa0aa;border-radius:4px}
@@ -101,7 +109,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    conhece. O .pto só troca o formato: bolinha grande, no lugar certo.     */
 .lig{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:14px;
      font-weight:700;cursor:pointer;-webkit-user-select:none;user-select:none}
+/* ⚠️ GESTO NO CELULAR (portao _qa/toque.py, set/2026): sem `touch-action:none`
+   o iPad le o arrasto da ponta como ROLAGEM e o fio some sob o dedo. */
 .pto{position:absolute;width:46px;height:46px;margin:-23px 0 0 -23px;padding:0;border-radius:50%;
+     -ms-touch-action:none;touch-action:none;
      background:#cfd6e2;box-shadow:0 0 0 4px #6b7686;z-index:4}
 .lig.sel{background:#ffd54a;box-shadow:0 0 0 6px #c9a52f}
 .lig.feita{background:#e8b84b;box-shadow:0 0 0 4px #8a6a20;cursor:default}

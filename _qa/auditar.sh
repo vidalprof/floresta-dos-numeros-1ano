@@ -122,11 +122,20 @@ FALHOU=0
 #  passa despercebido.
 # ============================================================
 CEGOS=""
+# ⏱ RELÓGIO POR PORTÃO (set/2026, pedido do Marcos: "otimize tudo para ser mais
+#    rápido"). Não dá para acelerar o que não se mede: a banca dizia "levou 14
+#    minutos" e ninguém sabia ONDE. Cada portão agora imprime quanto levou
+#    (`⏱ 3s`), e o rodapé soma. Os que rodam em paralelo (`larga`/`colhe` e os
+#    quatro da frente) guardam o instante de partida e de chegada em arquivo,
+#    porque o relógio deles não é o relógio de quem os lê.
+_T_INI=$SECONDS
+_tempo(){ printf '   ⏱ %ss\n' "$1"; }
 portao(){
   local nome="$1"; shift
-  local saida
+  local saida _t0=$SECONDS
   saida="$("$@" 2>&1)"; local st=$?
   printf '%s\n' "$saida"
+  _tempo $((SECONDS-_t0))
   # ⚠️ LICAO PAGA (ago/2026, no Jardim do Broto): a casa tem TRES codigos —
   #    0 = mediu e passou · 1 = REPROVOU · 2 = nao consegui medir. A banca lia
   #    "qualquer coisa != 0" como reprovacao, entao o `vozresposta`, que sai com
@@ -136,8 +145,8 @@ portao(){
   #    Agora: 1 (ou um estouro, >2) reprova; 2 vai para a lista dos CEGOS, que
   #    aparece no fim para ninguem confundir "nao medi" com "passou".
   if [ "$st" = "2" ]; then
-    CEGOS="$CEGOS
-   · $nome (o portao disse NAO MEDI)"
+    if _nao_se_aplica "$saida"; then NSA="$NSA $nome ·"; else CEGOS="$CEGOS
+   · $nome (o portao disse NAO MEDI)"; fi
   elif [ "$st" != "0" ]; then FALHOU=1; fi
   # ⚠️ LICAO PAGA (ago/2026), e a ironia de sempre: ESTE portao, que existe para
   #    pegar portao cego, passou a acusar INOCENTE. "10 dica(s) conferida(s)"
@@ -146,8 +155,8 @@ portao(){
   #    inocente ensina a ignorar portao, e a lista dos cegos e justamente a que
   #    nao pode virar ruido. Agora o zero tem que ser o numero INTEIRO zero.
   if printf '%s' "$saida" | grep -qE '(^|[^0-9])0 (fase|dica|alvo|texto|palavra|imagem)\(s\)|\-> *0 ([a-z]|$)|[Nn]ada a conferir'; then
-    CEGOS="$CEGOS
-   · $nome"
+    if _nao_se_aplica "$saida"; then NSA="$NSA $nome ·"; else CEGOS="$CEGOS
+   · $nome"; fi
   fi
 }
 
@@ -167,7 +176,22 @@ portao(){
 #    segura o numero de navegadores ao mesmo tempo (QA_MAX_PAR, default 3): eles
 #    entram em fila, a banca fica um pouco mais lenta, mas TERMINA sempre. Menos
 #    briga por CPU tambem deixa cada portao mais rapido. (reliability > pressa.)
-QA_MAX_PAR="${QA_MAX_PAR:-2}"
+# ⚡ O SEMAFORO SE MEDE PELA MAQUINA (set/2026). O "2" era o valor de um container
+#    apertado onde 12 navegadores estouravam a memoria. Nesta maquina (4 CPUs,
+#    16 GB) ele deixava dois processadores parados: 12 portoes de navegador em 2
+#    faixas. Regra: CPUs menos uma (uma fica para o script e o sistema), entre 2
+#    e 4. Quem tiver uma maquina apertada continua podendo cravar QA_MAX_PAR=2.
+_NCPU=$(nproc 2>/dev/null || echo 2)
+_PAR_AUTO=$((_NCPU-1)); [ $_PAR_AUTO -lt 2 ] && _PAR_AUTO=2; [ $_PAR_AUTO -gt 4 ] && _PAR_AUTO=4
+QA_MAX_PAR="${QA_MAX_PAR:-$_PAR_AUTO}"
+# ⭐ NAO SE APLICA != CEGO (set/2026). A lista dos "cegos" trazia, em TODA banca,
+#    portoes que so nao tinham o que medir NESTA atividade (sem jogo da memoria,
+#    sem 'ache na cena', sem pasta img/) — 14 nomes por banca, e o unico portao
+#    realmente cego (o halo, olhando a pasta errada) sumia no meio deles. Portao
+#    que diz "nada a conferir" vai para uma lista SEPARADA e calma; a lista dos
+#    cegos fica so com quem devia ter medido e nao mediu.
+NSA=""
+_nao_se_aplica(){ printf '%s' "$1" | grep -qiE 'nada a conferir|n[aã]o se aplica|sem pasta|sem <style>|nenhum(a)? (\.png|mec[aâ]nica|fase|imagem|figura|carta|par|lista|balao|bal[aã]o)|s[oó] vale para'; }
 _LARGA_PIDS=""
 _espera_vaga(){
   while :; do
@@ -182,9 +206,12 @@ larga(){  # larga <arquivo_base> <cmd...>
   local f="$1"; shift
   _espera_vaga
   printf '%q ' "$@" > "$f.cmd"          # comando re-executavel (ver colhe)
-  ( "$@" > "$f" 2>&1; echo $? > "$f.st" ) &
+  date +%s > "$f.t0"                    # ⏱ partida (ver colhe)
+  ( "$@" > "$f" 2>&1; echo $? > "$f.st"; date +%s > "$f.t1" ) &
   _LARGA_PIDS="$_LARGA_PIDS $!"
 }
+# ⏱ quanto um portão de `larga` levou de verdade (do disparo ao fim), em segundos
+_tempo_larga(){ local f="$1" a b; a=$(cat "$f.t0" 2>/dev/null); b=$(cat "$f.t1" 2>/dev/null); [ -n "$a" ] && [ -n "$b" ] && _tempo $((b-a)); }
 colhe(){  # colhe <nome> <arquivo_base>   (mesma regra do `portao`)
   local nome="$1" f="$2" saida st
   # ⚠️⚠️ LICAO PAGA (Museu, ago/2026), a mesma familia do "jogador lento":
@@ -212,8 +239,10 @@ colhe(){  # colhe <nome> <arquivo_base>   (mesma regra do `portao`)
     saida="$(cat "$f" 2>/dev/null)"
   fi
   printf '%s\n' "$saida"
-  if [ "$st" = "2" ]; then CEGOS="$CEGOS
-   · $nome (o portao disse NAO MEDI)"
+  _tempo_larga "$f"
+  if [ "$st" = "2" ]; then
+    if _nao_se_aplica "$saida"; then NSA="$NSA $nome ·"; else CEGOS="$CEGOS
+   · $nome (o portao disse NAO MEDI)"; fi
   elif [ "$st" != "0" ]; then
     if [ -z "$(printf '%s' "$saida" | tr -d '[:space:]')" ]; then
       CEGOS="$CEGOS
@@ -221,8 +250,8 @@ colhe(){  # colhe <nome> <arquivo_base>   (mesma regra do `portao`)
     else FALHOU=1; fi
   fi
   if printf '%s' "$saida" | grep -qE '(^|[^0-9])0 (fase|dica|alvo|texto|palavra|imagem)\(s\)|\-> *0 ([a-z]|$)|[Nn]ada a conferir'; then
-    CEGOS="$CEGOS
-   · $nome"
+    if _nao_se_aplica "$saida"; then NSA="$NSA $nome ·"; else CEGOS="$CEGOS
+   · $nome"; fi
   fi
 }
 
@@ -246,9 +275,9 @@ if [ "$REPARO" = "1" ]; then
   echo "==================================================="
 fi
 if [ "$REPARO" != "1" ]; then
-_espera_vaga; node _qa/contraste.js "$ARQ" $TELAS > "$TMPQ/contraste.txt" 2>&1 & PID_CON=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_CON"
-_espera_vaga; node _qa/leiaute.js   "$ARQ" $TELAS > "$TMPQ/leiaute.txt"   2>&1 & PID_LEI=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_LEI"
-_espera_vaga; node _qa/imagens.js   "$ARQ" $TELAS > "$TMPQ/imagens.txt"   2>&1 & PID_IMG=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_IMG"
+_espera_vaga; date +%s > "$TMPQ/contraste.t0"; ( node _qa/contraste.js "$ARQ" $TELAS > "$TMPQ/contraste.txt" 2>&1; echo $? > "$TMPQ/contraste.st"; date +%s > "$TMPQ/contraste.t1" ) & PID_CON=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_CON"
+_espera_vaga; date +%s > "$TMPQ/leiaute.t0"; ( node _qa/leiaute.js "$ARQ" $TELAS > "$TMPQ/leiaute.txt" 2>&1; echo $? > "$TMPQ/leiaute.st"; date +%s > "$TMPQ/leiaute.t1" ) & PID_LEI=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_LEI"
+_espera_vaga; date +%s > "$TMPQ/imagens.t0"; ( node _qa/imagens.js "$ARQ" $TELAS > "$TMPQ/imagens.txt" 2>&1; echo $? > "$TMPQ/imagens.st"; date +%s > "$TMPQ/imagens.t1" ) & PID_IMG=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_IMG"
 fi
 # ⚠️ O JOGADOR TAMBEM SAI NA FRENTE (ago/2026). Ele rodava sozinho, no FIM, e
 #    virou o dono do relogio: quando passou a jogar a atividade INTEIRA (antes
@@ -265,7 +294,7 @@ fi
 #    ja da o codigo 0 confiavel). O `joga_par.sh` fica como FERRAMENTA avulsa para
 #    validar rapido em runner folgado (`bash _qa/joga_par.sh <index.html>`).
 if [ "$REPARO" != "1" ]; then
-_espera_vaga; node _qa/jogador.js "$ARQ" > "$TMPQ/jogador.txt" 2>&1 & PID_JOG=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_JOG"
+_espera_vaga; date +%s > "$TMPQ/jogador.t0"; ( bash _qa/joga_banca.sh "$ARQ" > "$TMPQ/jogador.txt" 2>&1; echo $? > "$TMPQ/jogador.st"; date +%s > "$TMPQ/jogador.t1" ) & PID_JOG=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_JOG"
 fi
 # ⚡ e os OUTROS portoes de navegador tambem largam agora, na sombra do jogador
 #    (que e o mais lento). Colhidos mais abaixo, cada um no seu lugar, com a mesma
@@ -357,14 +386,21 @@ portao "0b3 espera" python3 _qa/espera.py
 #    anteriores minhas — cronometrar ate o banner, e medir tela congelada —
 #    deram IGUAL nas duas versoes e foram jogadas fora.
 echo "--- 0b5) PROVA DE SALA (PC e rede da escola, voz ligada) -"
+# ⚡ MEDIDO (set/2026): 101s rodando SOZINHA no fio principal, com todo o resto
+#    parado esperando. E um jogador como os outros: vai para a faixa paralela e
+#    e colhida la embaixo, antes do jogador. O servidor fica de pe ate a colheita.
 _PORTA=$((8900+RANDOM%80))
 ( cd "$PASTA" && node /opt/node22/lib/node_modules/http-server/bin/http-server \
     -p $_PORTA -s --cors -c-1 >/dev/null 2>&1 ) &
 _SRV=$!
 sleep 2
-portao "0b5 prova de sala" env QA_SALA=1 QA_URL=http://127.0.0.1:$_PORTA/index.html \
+if [ "$REPARO" != "1" ]; then
+larga "$TMPQ/g_sala.txt" env QA_SALA=1 QA_URL=http://127.0.0.1:$_PORTA/index.html \
   JSTOP=16 node _qa/jogador.js "$ARQ"
+echo "   (rodando em paralelo — resultado antes do jogador, la embaixo)"
+else
 kill $_SRV 2>/dev/null || true
+fi
 echo "--- 0b4) PESO (o PC da escola aguenta a arte?) -"
 portao "0b4 peso" python3 _qa/peso.py "$PASTA"
 
@@ -671,8 +707,8 @@ if [ "$REPARO" != "1" ]; then colhe "3h selo unico" "$TMPQ/g_selo.txt"; fi
 echo
 if [ "$REPARO" != "1" ]; then
 echo "--- 4) ACESSIBILIDADE (a crianca ENXERGA o texto?) -"
-wait $PID_CON || FALHOU=1
-cat "$TMPQ/contraste.txt"
+wait $PID_CON; [ "$(cat "$TMPQ/contraste.st" 2>/dev/null)" = "0" ] || FALHOU=1
+cat "$TMPQ/contraste.txt"; _tempo_larga "$TMPQ/contraste"
 fi
 
 echo
@@ -683,8 +719,8 @@ fi
 
 if [ "$REPARO" != "1" ]; then
 echo "--- 1e) IMAGEM QUEBRADA (a figura aparece mesmo?) --"
-wait $PID_IMG || FALHOU=1
-cat "$TMPQ/imagens.txt"
+wait $PID_IMG; [ "$(cat "$TMPQ/imagens.st" 2>/dev/null)" = "0" ] || FALHOU=1
+cat "$TMPQ/imagens.txt"; _tempo_larga "$TMPQ/imagens"
 fi
 
 echo
@@ -700,8 +736,8 @@ else echo "  (sem falas.json na pasta e sem _lote_falas.json)"; fi
 echo
 if [ "$REPARO" != "1" ]; then
 echo "--- 5) LEIAUTE (cabe na tela? da para tocar?) ------"
-wait $PID_LEI || FALHOU=1
-cat "$TMPQ/leiaute.txt"
+wait $PID_LEI; [ "$(cat "$TMPQ/leiaute.st" 2>/dev/null)" = "0" ] || FALHOU=1
+cat "$TMPQ/leiaute.txt"; _tempo_larga "$TMPQ/leiaute"
 fi
 
 echo
@@ -716,6 +752,13 @@ colhe "5b diretor de arte" "$TMPQ/g_visual.txt"
 fi
 
 echo
+if [ "$REPARO" != "1" ]; then
+echo "--- 0b5) PROVA DE SALA (resultado) -----------------"
+colhe "0b5 prova de sala" "$TMPQ/g_sala.txt"
+kill $_SRV 2>/dev/null || true
+fi
+
+echo
 echo "--- 6) JOGADOR (joga sozinho ate a medalha) --------"
 # ⚡ PARALELO por segmento (joga_par): agora que os outros navegadores ja
 #    fecharam, os 3 trechos correm SOZINHOS — rapido (~110s no lugar de ~5min) E
@@ -723,8 +766,8 @@ echo "--- 6) JOGADOR (joga sozinho ate a medalha) --------"
 #    fase boa). Atividade escrita a mao (sem conteudo.json com fases) cai no
 #    jogador serial (joga_par sai 2 = "nao da para segmentar").
 if [ "$REPARO" != "1" ]; then
-wait $PID_JOG || FALHOU=1
-tail -6 "$TMPQ/jogador.txt"
+wait $PID_JOG; [ "$(cat "$TMPQ/jogador.st" 2>/dev/null)" = "0" ] || FALHOU=1
+tail -6 "$TMPQ/jogador.txt"; _tempo_larga "$TMPQ/jogador"
 fi
 
 echo
@@ -735,6 +778,9 @@ echo
 #    A licao: portao no lugar errado nao e portao a mais, e portao que mente.
 
 echo
+if [ -n "$NSA" ]; then
+  echo "--- nao se aplica a esta atividade (nao e cegueira): $NSA"
+fi
 if [ -n "$CEGOS" ]; then
   echo "--- ⚠️ PORTOES QUE RODARAM CEGOS (mediram ZERO) ------"
   echo "  aprovacao vazia da confianca falsa. Conferir se a atividade realmente"
@@ -742,6 +788,7 @@ if [ -n "$CEGOS" ]; then
 fi
 
 echo "==================================================="
+echo " ⏱ banca inteira: $((SECONDS-_T_INI))s"
 if [ "$REPARO" = "1" ]; then
   if [ "$FALHOU" = "0" ]; then
     echo " REPARO: os portoes de TEXTO passaram. ISTO NAO E APROVACAO —"

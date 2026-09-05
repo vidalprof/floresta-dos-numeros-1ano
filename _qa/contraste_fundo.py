@@ -3,7 +3,7 @@
 # retangulo de texto, a cor MEDIANA do fundo naquele pedaco (em JSON).
 # Mediana (e nao media) porque o fundo e foto: a media inventa uma cor que
 # nao existe na tela; a mediana devolve a cor que a crianca realmente ve.
-import sys, json
+import sys, json, warnings
 from PIL import Image
 
 png, dados = sys.argv[1], sys.argv[2]
@@ -20,7 +20,16 @@ for it in itens:
     x0 = max(0, min(W - 1, x0)); x1 = max(x0 + 1, min(W, x1))
     y0 = max(0, min(H - 1, y0)); y1 = max(y0 + 1, min(H, y1))
     corte = im.crop((x0, y0, x1, y1))
-    px = list(corte.getdata())  # noqa
+    # ⚠️ RUIDO MEDIDO (set/2026): o Pillow novo avisa que `getdata` vai sumir em
+    #    2027, e este laco roda uma vez por TEXTO — a banca da Bancada da Divisao
+    #    saiu com 79 linhas de DeprecationWarning entre os resultados, e o que
+    #    importa (um contraste reprovado) fica enterrado no meio. Aviso repetido
+    #    ensina a nao ler a saida. Silencia-se SO este aviso, SO nesta chamada;
+    #    o comportamento e identico. Quando o `getdata` sumir de verdade, aqui e
+    #    o lugar de trocar por `get_flattened_data`.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        px = list(corte.getdata())  # noqa
     if not px:
         saida.append(None); continue
     r = sorted(p[0] for p in px); g = sorted(p[1] for p in px); b = sorted(p[2] for p in px)

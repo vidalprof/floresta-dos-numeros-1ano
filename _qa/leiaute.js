@@ -100,9 +100,18 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
   for(const vp of TAMANHOS){
     const p=await b.newPage({viewport:{width:vp.w,height:vp.h}});
     p.on('pageerror',()=>{});
+    /* ⚡ MEDIDO (set/2026, banca da Bancada da Divisao): este portao levava 239s
+       porque RECARREGAVA a pagina inteira (700 KB + figuras) para CADA uma das
+       6 x 40 telas — 240 recargas. A fase nao precisa de recarga: o motor a
+       desenha por `montaFase(i)` em cima da pagina viva, e o proprio `limpa()`
+       zera a tela anterior (e, desde set/2026, mata os relogios dela). So as
+       telas COM NOME (capa, quem joga, fim) recarregam: elas leem o estado
+       salvo (a retomada de 55 min) e sem recarga apareceriam diferentes do que
+       a crianca ve ao abrir. */
+    let carregada=false;
     for(const alvo of alvos){
       const t = (alvo.nome!==undefined) ? alvo.nome : ("fase"+(alvo.fase+1));
-      await p.goto(url); await p.waitForTimeout(280);
+      if(!carregada || alvo.nome!==undefined){ await p.goto(url); await p.waitForTimeout(280); carregada=true; }
       const ok=await p.evaluate(a=>{
         window.falar=function(){}; window.depoisDaFala=function(i,m,cb){setTimeout(cb,60);};
         if(a.fase!==undefined){ try{ montaFase(a.fase,function(){}); return true; }

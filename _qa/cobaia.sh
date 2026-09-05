@@ -65,7 +65,9 @@ tail -3 /tmp/cob_leiaute.txt
 echo "  leiaute exit=$LEI"
 
 echo "===== COBAIA: jogador-par (joga TODAS as mecanicas) ====="
-node _qa/jogador-par.js "$ARQ" 6 >/tmp/cob_jogador.txt 2>/dev/null
+# ⚠️ nada de `2>/dev/null` em portao (regra da casa): o erro do proprio jogador
+#    tem que aparecer no arquivo, senao "caiu" vira "passou calado".
+node _qa/jogador-par.js "$ARQ" 6 >/tmp/cob_jogador.txt 2>&1
 JOG=$?
 tail -8 /tmp/cob_jogador.txt
 echo "  jogador exit=$JOG"

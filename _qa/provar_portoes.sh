@@ -405,8 +405,17 @@ open(sys.argv[1],"wb").write(mesmo)   # _uma  : avatar
 open(sys.argv[2],"wb").write(mesmo)   # _outraA: MESMOS bytes = copiado
 open(sys.argv[3],"wb").write(outro)   # _soa  : arte propria
 PY
-pega "arte     · avatar copiado de outra"  PEGA  bash -c 'cd "$1" && python3 "$2/_qa/arte_propria.py" _uma'  _ "$T" "$RAIZ"
-pega "arte     · arte propria"             DEIXA bash -c 'cd "$1" && python3 "$2/_qa/arte_propria.py" _soa'  _ "$T" "$RAIZ"
+# ⚠️⚠️ A REGRA VIROU (Marcos, ago/2026: *"mascote e imagens do banco podem ser
+#    reaproveitados em outras atividades"*), e o portao `arte_propria.py` virou
+#    INFORMATIVO: lista o reuso e sai 0. Esta prova continuou exigindo PEGA por
+#    semanas — e o meta-portao ficou VERMELHO PERMANENTE, que e o jeito mais
+#    rapido de ninguem mais olhar para ele (set/2026, achado na auditoria do
+#    motor). Prova de regra revogada nao e prova: e ruido. Agora ela cobra o que
+#    o portao promete HOJE: nao reprovar reuso, e nao reprovar arte propria.
+#    Quem pega resto de clone DE VERDADE (asset com prefixo de outra atividade)
+#    e o `clone.py` item 8 — e ele tem a prova dele mais abaixo.
+pega "arte     · avatar reaproveitado (permitido)" DEIXA bash -c 'cd "$1" && python3 "$2/_qa/arte_propria.py" _uma'  _ "$T" "$RAIZ"
+pega "arte     · arte propria"                     DEIXA bash -c 'cd "$1" && python3 "$2/_qa/arte_propria.py" _soa'  _ "$T" "$RAIZ"
 
 # ---------- 17) AMBIGUO: "a ponte" quando ha DUAS pontes ----------
 # Palavras do Marcos: *"fica confuso porque tem DUAS pontes"* — e o recado que
@@ -475,7 +484,22 @@ io.open(sys.argv[1], "w", encoding="utf-8").write(
     '</script></body></html>\n')
 PYX
 pega "padrao   · um gesto so (10 de 10)"  PEGA  python3 _qa/padrao.py "$T/pd_ruim.html"
-pega "padrao   · leque da _prova30"       DEIXA python3 _qa/padrao.py _prova30/index.html
+# ⚠️ LICAO PAGA (set/2026): esta prova apontava para `_prova30`, uma pasta que
+#    FOI APAGADA — e o meta-portao passou a reprovar com um Traceback de
+#    "arquivo nao encontrado", todo dia, ate ninguem mais ler a saida dele.
+#    Prova que depende de UMA pasta fixa envelhece junto com a pasta. Agora ela
+#    procura a primeira atividade montada que existir (todas estao no ar,
+#    aprovadas pelo Marcos) e, se nenhuma existir, diz que PULOU em vez de
+#    acusar — porque ai o que falta e a atividade, nao o portao.
+_real=""
+for _p in _gincana _trem _museu _feirinha _padaria; do
+  [ -f "$_p/index.html" ] && { _real="$_p"; break; }
+done
+if [ -n "$_real" ]; then
+  pega "padrao   · leque de uma atividade no ar ($_real)" DEIXA python3 _qa/padrao.py "$_real/index.html"
+else
+  echo "   PULOU   padrao   · nenhuma atividade montada existe aqui para servir de caso certo"
+fi
 
 # ---------- 20) EXPLICA: a fase exige um atributo e nao diz qual ----------
 # Palavras do Marcos, no "Monte o seu prato": *"mesmo colocando os cinco

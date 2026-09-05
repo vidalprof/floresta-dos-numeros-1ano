@@ -137,8 +137,12 @@ const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
   let fases=0;
   const temMotor=await p.evaluate(()=>
     typeof montaFase==="function" && typeof FASES!=="undefined" ? FASES.length : 0);
+  /* ⚡ MEDIDO (set/2026): recarregar a pagina inteira a cada fase custava
+     ~1s x fases x portoes. O motor desenha a fase por `montaFase(i)` em cima da
+     pagina viva e `limpa()` zera a anterior — so a PRIMEIRA precisa da recarga
+     (para sair da tela com nome em que a volta anterior parou). */
   for(let i=0;i<temMotor;i++){
-    await p.goto(url); await p.waitForTimeout(260);
+    if(i===0){ await p.goto(url); await p.waitForTimeout(260); }
     const ok=await p.evaluate(i=>{
       window.falar=function(){}; window.falaDaTela=function(){};
       window.depoisDaFala=function(id,ms,cb){setTimeout(cb,20);};

@@ -105,7 +105,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    uma tela que funciona (foi exatamente o que aconteceu na 1a rodada desta
    peca). Toda mecanica nova tem de vestir uma classe que ele ja conhece.  */
 .ficha{-webkit-user-select:none;-moz-user-select:none;user-select:none}
+/* ⚠️ GESTO NO CELULAR (portao _qa/toque.py, set/2026): a ficha e ARRASTADA ate o
+   no; sem `touch-action:none` o iPad rola a pagina e a ficha fica para tras. */
 .noco{position:absolute;width:34%;min-height:46px;padding:8px 4px;border-radius:14px;
+      -ms-touch-action:none;touch-action:none;
       background:#fffdf6;color:#221a12;font-size:15px;font-weight:800;line-height:1.2;
       text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6;z-index:3}
 /* ESCOLHIDO: anel + triangulo de "sai daqui" — forma E cor, nunca so a cor */

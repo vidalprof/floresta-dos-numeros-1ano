@@ -374,7 +374,7 @@ function montaAncora(c){
    curiosidade (ela percebe que não sabe) antes de qualquer conta.
    --------------------------------------------------------------- */
 function telaOlhada(){
-  if(ri>=CENAS.length){ fimEstimar(); return; }
+  if(ri>=CENAS.length){ fimDaPeca(); return; }
   limpa();
   ger++; travada=false; palpite=0;
   document.onkeydown=null;
@@ -622,13 +622,20 @@ function segue(g){
   /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece que
      acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
   mostraBanner("<b>Voc&ecirc; estimou e conferiu!</b><br>Chutar com jeito &eacute; "+
-               "saber o tamanho da resposta antes de contar.", fimEstimar);
+               "saber o tamanho da resposta antes de contar.", fimDaPeca);
 }
 
 /* ---------------------------------------------------------------
    TELA 4 — A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimEstimar(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   document.onkeydown=null;

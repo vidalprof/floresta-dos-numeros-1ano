@@ -27,6 +27,14 @@ NAO_E_ATIVIDADE = (
     "_audio",        # saída padrão do workflow de voz
     "_padrao", "_qa", "_templates", "_kit", "_lib_jogo",  # ferramenta
     "_curriculo", "_plano", "_status", "_demos",          # documento
+    # ⚠️ LICAO PAGA (set/2026): a COBAIA e uma atividade de mentira gerada pelo
+    #    `_qa/cobaia.py` com o texto de EXEMPLO de todas as 84 mecanicas. Como
+    #    vizinha, ela fazia o `clone.py` acusar toda atividade de repetir frase
+    #    "da _cobaia" — o exemplo da peca e igual em todo lugar, por definicao.
+    #    E a `_colecao` e so uma pasta de imagens (`img/`, sem index): o prefixo
+    #    dela ("cor_") casava com o nome do portao `_qa/cor_fixa.py` citado num
+    #    comentario, e o clone reprovava a _gincana e a _trem, ambas no ar.
+    "_cobaia", "_colecao",
 )
 
 

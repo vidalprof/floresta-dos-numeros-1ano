@@ -79,7 +79,12 @@ def main():
     alvo = sys.argv[1]
     lim = float(sys.argv[2]) if len(sys.argv) > 2 else 1.5
     if os.path.isdir(alvo):
-        arqs = sorted(glob.glob(os.path.join(alvo, "*.png")))
+        # ⚠️ CEGO EM TODA ATIVIDADE (set/2026): as figuras moram em `<pasta>/img/`,
+        #    e este portao so olhava a RAIZ da pasta — "nenhum .png, NAO MEDI" em
+        #    100% das atividades, todos os dias, sem ninguem estranhar. Agora
+        #    olha a raiz E a `img/`.
+        arqs = sorted(glob.glob(os.path.join(alvo, "*.png")) +
+                      glob.glob(os.path.join(alvo, "img", "*.png")))
     elif os.path.isfile(alvo):
         arqs = [alvo]
     else:

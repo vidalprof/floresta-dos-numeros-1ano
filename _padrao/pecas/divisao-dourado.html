@@ -165,7 +165,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .bcol.sobra{-webkit-animation:kf-dourado-pulsa 1s ease-in-out infinite;animation:kf-dourado-pulsa 1s ease-in-out infinite}
 .bcol.alvo{border-style:dashed;border-color:#7fd48f;background:rgba(40,80,44,.55)}
 .bch{font-size:10.5px;font-weight:800;letter-spacing:.5px;color:#ffe9b0}
-.bqt{font-size:21px;font-weight:800;color:#fff8ea;line-height:1.1}
+/* ⚠️ A TINTA DIZ ONDE MORA (portao _qa/cor_fixa.py, set/2026): estes textos
+   ficam SEMPRE dentro de uma superficie que a propria peca pinta (`.bcol`,
+   `.grupo`, `.dchave`), entao a cor e da peca, nao do tema — e o seletor tem que
+   nomear a superficie para o portao (e quem ler) saberem que ha fundo. Tamanho e
+   peso continuam na regra curta, senao a versao para tela baixa (mais abaixo,
+   com um seletor so) perderia a briga de especificidade. */
+.bqt{font-size:21px;font-weight:800;line-height:1.1}
+.bcol .bqt{color:#fff8ea}
 .bblocos{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
   gap:3px;-webkit-box-pack:center;justify-content:center;-webkit-box-align:end;align-items:flex-end;min-height:34px;margin-top:3px}
 /* --- os grupos, que recebem os blocos --- */
@@ -175,10 +182,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   background:rgba(28,44,26,.62);border:2px dashed rgba(255,255,255,.34);border-radius:14px;padding:5px 4px;text-align:center}
 .grupo.mira{border-style:solid;border-color:#7fd48f;background:rgba(40,84,44,.7);
   -webkit-animation:kf-dourado-pulsa 1.1s ease-in-out infinite;animation:kf-dourado-pulsa 1.1s ease-in-out infinite}
-.gh{font-size:10.5px;font-weight:800;letter-spacing:.5px;color:#eaffe4}
+.gh{font-size:10.5px;font-weight:800;letter-spacing:.5px}
+.grupo .gh{color:#eaffe4}
 .grow{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:2px;
   -webkit-box-pack:center;justify-content:center;-webkit-box-align:end;align-items:flex-end;margin-top:2px}
-.gtot{margin-top:4px;font-size:19px;font-weight:800;color:#fff8ea}
+.gtot{margin-top:4px;font-size:19px;font-weight:800}
+.grupo .gtot{color:#fff8ea}
 .maisN{font-size:11px;font-weight:800;color:#ffe9b0;align-self:center}
 /* --- a conta armada, que se preenche passo a passo --- */
 .dchave{-webkit-box-flex:0;flex:0 0 210px;background:rgba(32,24,12,.82);
@@ -187,7 +196,8 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .chave{display:block;text-align:center}
 .clin{white-space:nowrap;text-align:center;line-height:1}
 .dcel{display:inline-block;width:24px;height:28px;line-height:28px;
-  font-size:19px;font-weight:800;color:#fff8ea;text-align:center;font-variant-numeric:tabular-nums}
+  font-size:19px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+.dchave .dcel{color:#fff8ea}
 .dcel.dv{color:#ffe27a}
 .dcel.q{color:#a8e88f}
 .dcel.qbox{border-bottom:2px dashed rgba(255,255,255,.5)}
@@ -780,7 +790,7 @@ function fechaConta(){
   elCtrl.innerHTML="";
   ci++;
   if(ci<CONTAS.length){ setTimeout(iniciaConta,1100); }
-  else mostraBanner("<b>Conta armada dominada!</b><br>"+FECHO, fimDourado);
+  else mostraBanner("<b>Conta armada dominada!</b><br>"+FECHO, fimDaPeca);
 }
 
 /* ---------- montagem da fase ---------- */
@@ -840,7 +850,14 @@ function pecaDourado(){
   iniciaConta();
 }
 
-function fimDourado(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");

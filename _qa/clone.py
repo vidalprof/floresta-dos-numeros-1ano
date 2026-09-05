@@ -250,9 +250,21 @@ if meu:
         if pf and pf != meu:
             alheios.setdefault(pf, outra)
     achados = []
+    # ⚠️ LICAO PAGA (set/2026): o nome de um PORTAO citado num comentario da peca
+    #    ("achado pelo `_qa/cor_fixa.py`") casava com o prefixo `cor_` de uma
+    #    pasta de imagens, e este item reprovou a _gincana e a _trem — as duas no
+    #    ar, aprovadas. Referencia a ferramenta da casa nao e marca de atividade.
+    _portoes = set()
+    try:
+        for _f in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)))):
+            _portoes.add(os.path.splitext(_f)[0])
+    except Exception:
+        pass
     for pf, dona in sorted(alheios.items()):
         # so conta se aparecer como NOME de arquivo/identificador, nao dentro de palavra
         for m in re.finditer(r"[\"'/(]\s*(%s\w+)" % re.escape(pf), html):
+            if m.group(1) in _portoes or html[max(0, m.start() - 3):m.start()] == "_qa":
+                continue
             achados.append((m.group(1), dona))
             break
     if achados:

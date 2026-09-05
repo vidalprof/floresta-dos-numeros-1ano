@@ -214,8 +214,6 @@ function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.rando
    desta bancada o mascote tem outro nome e a atividade outro assunto — entao a
    frase vira gaveta, com um padrao que serve a qualquer atividade. Mesma
    licao do "achou as 5 palavras da horta". */
-var FECHO="Voc&#234; ensinou o rob&#244; passo a passo. Quando a regra estava "
-          "torta, ele <b>fez assim mesmo</b> &#8212; e o resultado contou a verdade.";
 var AC=null;
 function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
   if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
@@ -248,6 +246,15 @@ function falaDaTela(id){
 </script>
 <script>
 /* ====== A PEÇA COMEÇA AQUI ====== */
+/* ⚠️⚠️ DEFEITO MEDIDO (set/2026, ESLint na cobaia: `'FECHO' is not defined`).
+   Esta frase morava no PRIMEIRO <script> da peca — o "motorzinho" de bancada
+   (el, limpa, nota, ac...), que o integrador DESCARTA ao montar a atividade,
+   porque o motor de verdade fornece tudo aquilo. A frase ia junto para o lixo,
+   e a tela final chamava `FECHO` que nao existia: a peca estourava na mao da
+   crianca depois de ela acertar tudo. (Ainda por cima estava em DUAS linhas de
+   string sem o `+`, que e erro de sintaxe.) Conteudo da peca mora no SEGUNDO
+   script, com o resto do conteudo. */
+var FECHO="Voc&#234; ensinou o rob&#244; passo a passo. Quando a regra estava torta, ele <b>fez assim mesmo</b> &#8212; e o resultado contou a verdade.";
 
 /* O CONTEÚDO É SÓ EXEMPLO (cuidar de uma planta, 8 anos). Ao copiar a peça
    para uma atividade, troque APENAS este bloco. Cada rodada precisa de:

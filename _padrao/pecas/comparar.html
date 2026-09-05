@@ -715,14 +715,21 @@ function fechaRodada(g,ms){
          ? "<b>Voc&ecirc; comparou o dinheiro!</b><br>Olhando os dois, d&aacute; para ver "+
            "qual vale <b>mais</b>, qual vale <b>menos</b> e quando valem <b>igual</b>."
          : "<b>Voc&ecirc; comparou as bancas!</b><br>Olhando as duas, d&aacute; para ver "+
-           "qual tem <b>mais</b>, qual tem <b>menos</b> e quando t&ecirc;m o <b>mesmo tanto</b>."), fimComp);
+           "qual tem <b>mais</b>, qual tem <b>menos</b> e quando t&ecirc;m o <b>mesmo tanto</b>."), fimDaPeca);
   },ms);
 }
 
 /* ---------------------------------------------------------------
    A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimComp(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   document.onkeydown=null;

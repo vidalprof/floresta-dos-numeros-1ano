@@ -116,6 +116,15 @@ def main():
                 s = s.strip()
                 if s:
                     pinta.add(s.split(":")[0].strip())
+                    # ⚠️ LICAO PAGA (set/2026): quem pinta e o ULTIMO elemento do
+                    #    seletor. `.centro .pecabox{background:...}` pinta a
+                    #    `.pecabox` — mas so a frase inteira entrava aqui, e o
+                    #    `protegido()` compara pedaco a pedaco: `.pecabox` nao
+                    #    estava, e todo texto que mora dentro dela era acusado de
+                    #    nao ter fundo. Falso em toda atividade montada.
+                    ult = s.split()[-1].split(":")[0].strip()
+                    if ult:
+                        pinta.add(ult)
 
     def protegido(sel):
         u"""algum ancestral do seletor pinta fundo dentro da propria peca?"""

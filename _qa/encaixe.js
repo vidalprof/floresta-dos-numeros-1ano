@@ -58,15 +58,20 @@ const path=require('path');
  const alvos=telas.map(t=>({nome:t}));
  for(let i=0;i<nfases;i++) alvos.push({fase:i});
  let medidas=0, puladas=0;
+ /* ⚡ MEDIDO (set/2026): abria um NAVEGADOR NOVO (newPage + goto de 700 KB) para
+    cada uma das 40 telas — 56s. Uma pagina so; a fase e desenhada em cima dela
+    por `montaFase(i)` (o `limpa()` do motor zera a anterior). Recarrega so nas
+    telas COM NOME, que leem o estado salvo e mudariam sem recarga. */
+ const p=await b.newPage({viewport:{width:412,height:820}});
+ p.on('pageerror',()=>{});
+ let carregada=false;
  for(const alvo of alvos){
    const t = (alvo.nome!==undefined) ? alvo.nome : ("fase"+(alvo.fase+1));
-   const p=await b.newPage({viewport:{width:412,height:820}});
-   p.on('pageerror',()=>{});
-   await p.goto(url); await p.waitForTimeout(300);
+   if(!carregada || alvo.nome!==undefined){ await p.goto(url); await p.waitForTimeout(300); carregada=true; }
    const ok=await p.evaluate(a=>{window.falar=function(){};window.depoisDaFala=function(i,m,c){setTimeout(c,50);};
      if(a.fase!==undefined){ try{ montaFase(a.fase,function(){}); return true; }catch(e){ return false; } }
      if(typeof window[a.nome]!=="function")return false; window[a.nome](); return true;},alvo);
-   if(!ok){puladas++; await p.close();continue;}
+   if(!ok){puladas++; continue;}
    medidas++;
    await p.waitForTimeout(900);
    const r=await p.evaluate((tela)=>{
@@ -127,8 +132,9 @@ const path=require('path');
      });
      return out;
    },t);
-   ruins.push(...r); await p.close();
+   ruins.push(...r);
  }
+ await p.close();
  await b.close();
  /* o numero honesto de cobertura, pela mesma regra dos outros: o que foi
     MEDIDO, nunca o que foi tentado. */

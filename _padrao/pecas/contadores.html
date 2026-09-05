@@ -317,7 +317,7 @@ function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.0
 function sConta(){ nota(659.25,.05,.10,"triangle",0); }
 
 function pecaContadores(){
-  if(!CNT[ri]){ fimContadores(); return; }
+  if(!CNT[ri]){ fimDaPeca(); return; }
   var r=CNT[ri];
   qtd=r.ini; err=0; molde=false; contando=false; ger++;
   limpa();
@@ -481,7 +481,7 @@ function fechaContagem(){
       if(ri<CNT.length) pecaContadores();
       /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece
          que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
-      else mostraBanner("<b>Voc&ecirc; contou tudo!</b><br>O total &eacute; o &uacute;ltimo n&uacute;mero da contagem.", fimContadores);
+      else mostraBanner("<b>Voc&ecirc; contou tudo!</b><br>O total &eacute; o &uacute;ltimo n&uacute;mero da contagem.", fimDaPeca);
     },800);
     return;
   }
@@ -519,7 +519,14 @@ function naoBateu(){
   }
 }
 
-function fimContadores(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++;
   limpa();
   var t=el("div","tela");

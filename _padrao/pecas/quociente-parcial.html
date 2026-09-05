@@ -16,7 +16,7 @@
      a conta armada, com números grandes (centenas), rápido e visível.
 
      CONTRATO (herdado de arranjo/contadores, já FECHADAS):
-       · FECHA pelo banner (mostraBanner(...,fimQP)), nunca por tela própria.
+       · FECHA pelo banner (mostraBanner(...,fimDaPeca)), nunca por tela própria.
        · data-qa="1" no botão que serve AGORA (o maior pedaço que ainda cabe;
          ou "Conferir" quando o que falta já é menor que o divisor).
        · andaime CRESCE a cada tropeço; nunca "errou".
@@ -174,7 +174,7 @@ function maiorPedaco(){   /* o maior PEDACOS[i] cujo d*mult ainda cabe no que fa
 }
 
 function pecaQP(){
-  if(!QP[ri]){ fimQP(); return; }
+  if(!QP[ri]){ fimDaPeca(); return; }
   var r=rod(); falta=r.n; quo=0; passos=[]; err=0; travado=false; ger++;
   limpa();
   var t=el("div","tela");
@@ -300,7 +300,7 @@ function confere(){
     ri++;
     if(ri<QP.length) pecaQP();
     else mostraBanner("<b>Peda&ccedil;o por peda&ccedil;o, a conta apareceu!</b><br>"+
-                      "Somar os peda&ccedil;os &eacute; o mesmo que a conta armada &mdash; s&oacute; que voc&ecirc; VIU cada passo.", fimQP);
+                      "Somar os peda&ccedil;os &eacute; o mesmo que a conta armada &mdash; s&oacute; que voc&ecirc; VIU cada passo.", fimDaPeca);
   },1900);
 }
 
@@ -324,7 +324,14 @@ function aindaCabe(){
   }
 }
 
-function fimQP(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++; limpa();
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");

@@ -795,7 +795,7 @@ function completou(revelado){
     rodada++;
     if(rodada<LETRAS.length){ pecaLetra(); return; }
     mostraBanner("<b>Voc&#234; tra&#231;ou as tr&#234;s letras!</b><br>Come&#231;ar no lugar "+
-                 "certo e seguir a setinha &#233; o segredo da letra bonita.", fimLetra);
+                 "certo e seguir a setinha &#233; o segredo da letra bonita.", fimDaPeca);
   }, revelado?2600:1800);
 }
 
@@ -865,7 +865,14 @@ function agendaAjuda(){
 /* ---------------------------------------------------------------
    8) A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimLetra(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travado=true;
   if(relogio){ clearTimeout(relogio); relogio=null; }

@@ -1135,14 +1135,21 @@ function segue(espera){
     rodada++;
     if(rodada<RODADAS.length){ pecaOuvir(); return; }
     mostraBanner("<b>Voc&#234; achou as tr&#234;s pelo som!</b><br>Ouvir com cuidado &#233; o "+
-                 "come&#231;o de ler.", fimOuvir);
+                 "come&#231;o de ler.", fimDaPeca);
   }, espera||600);
 }
 
 /* ---------------------------------------------------------------
    8) A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimOuvir(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=true;
   var t=el("div","tela");

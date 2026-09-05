@@ -224,7 +224,7 @@ function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",
 function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
 
 function pecaBalanca(){
-  if(!RODS[ri]){ fimBalanca(); return; }
+  if(!RODS[ri]){ fimDaPeca(); return; }
   add=0; err=0; travado=false; ger++;
   limpa();
   var t=el("div","tela");
@@ -338,7 +338,7 @@ function desenha(quantosNovos){
          que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. Se a
          medalha nascesse sozinha de um setTimeout, ele clicaria em "Jogar de
          novo" na iteração seguinte e a partida recomeçaria para sempre. */
-      else mostraBanner("<b>Balan&ccedil;a no meio!</b><br>Os dois lados valem o mesmo.", fimBalanca);
+      else mostraBanner("<b>Balan&ccedil;a no meio!</b><br>Os dois lados valem o mesmo.", fimDaPeca);
     },700);
   }
 }
@@ -376,7 +376,14 @@ function ajuda(){
   }
 }
 
-function fimBalanca(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++;
   limpa();
   var t=el("div","tela");

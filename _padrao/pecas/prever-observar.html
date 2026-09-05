@@ -488,8 +488,9 @@ function telaComparar(){
   var t=el("div","tela");
   setProg(t,100);
   var c=el("div","centro");
-  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
-  c.appendChild(el("div","medal",""));
+  /* ⚠️ a comparacao e PEDAGOGIA (o coracao do POE) e fica na tela para a
+     crianca; o que era de BANCADA — o selo de peca fechada, a medalha e o
+     "Jogar de novo" — saiu daqui e mora em `fimDaPeca` (ver abaixo). */
   c.appendChild(el("div","balao","<b>O que eu pensava</b> e <b>o que eu vi</b>:"));
   var box=el("div","cmp"), i, p, li, mudou=0;
   for(i=0;i<CASOS.length;i++){
@@ -506,13 +507,34 @@ function telaComparar(){
   c.appendChild(el("div","balao", mudou
     ? "Voc&#234; mudou de ideia depois de olhar. <b>&#201; assim que cientista trabalha.</b>"
     : "Seus palpites bateram com o que aconteceu. <b>Agora voc&#234; sabe por qu&#234;.</b>"));
-  var b=el("button","btn","Jogar de novo");
+  /* ⚠️⚠️ DEFEITO MEDIDO (set/2026, portao _qa/beco.py): esta tela terminava num
+     "Jogar de novo" de BANCADA e no selo de peca fechada — dentro da atividade a
+     crianca comparava os palpites e ficava ali, sem caminho para a fase seguinte.
+     O integrador religa a continuacao do motor SO em quem termina por
+     `fimDaPeca()` (ele reaponta esse nome antes de a peca comecar). Agora a
+     comparacao fecha com o aviso de fim e segue por ele; a bancada continua com
+     a tela dela dentro de `fimDaPeca`. */
+  var b=el("button","btn","Continuar");
   b.style.marginTop="13px";
+  b.onclick=function(){ fimDaPeca(); };
+  c.appendChild(b);
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+/* a tela de BANCADA — so aparece quando a peca roda sozinha; na atividade o
+   integrador troca esta funcao pela continuacao do motor */
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var b=el("button","btn","Jogar de novo");
   b.onclick=function(){ caso=0; PENSEI=[]; pecaPrever(); };
   c.appendChild(b);
   c.appendChild(el("div","hint","Esta &#233; a pe&#231;a PREVER-OBSERVAR: palpite, olhada e compara&#231;&#227;o."));
-  t.appendChild(c);
-  app.appendChild(t);
+  t.appendChild(c); app.appendChild(t);
 }
 
 pecaPrever();

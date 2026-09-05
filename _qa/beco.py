@@ -40,6 +40,10 @@ import sys
 # tela de teste vazou para dentro da atividade.
 FALAS_DE_BANCADA = [
     u"PE&#199;A FECHADA", u"PEÇA FECHADA", u"PECA FECHADA",
+    # ⚠️ (set/2026) a `calendario` escreve o C-cedilha como entidade NOMEADA — e
+    #    este portao, que so conhecia a numerica, nao a via. Mesma frase, outra
+    #    grafia, portao cego. Toda grafia que uma peca usar entra aqui.
+    u"PE&Ccedil;A FECHADA", u"PE&ccedil;a fechada",
     u"Esta &#233; a pe&#231;a", u"Esta é a peça", u"Esta e a peca",
 ]
 
@@ -109,6 +113,12 @@ def main():
                         break
                 k += 1
             corpo_vivo = corpo[:i] + corpo[k + 1:]
+        # ⚠️ (set/2026) Tentei aqui uma heuristica "a funcao so e passada como
+        #    callback, entao e codigo morto" — e ela perdoou a `contadores`, que
+        #    CHAMA a tela de bancada direto quando as rodadas acabam. Heuristica
+        #    que perdoa culpado e pior que portao rigido. A regra volta a ser uma
+        #    so e clara: fala de bancada so pode morar no `fimDaPeca` de peca
+        #    religada. Toda peca passou a fechar por esse nome (set/2026).
         for fala in FALAS_DE_BANCADA:
             if fala in corpo_vivo:
                 vazados.append((nome, fala))

@@ -567,16 +567,23 @@ function apagaDica(){
 function proxima(){
   ri++;
   /* fecha PELO banner (ver CONTRATO "peça que fecha na mão é um beco"): a ponte
-     da esteira só avança de fase pelo mostraBanner; chamar fimBingo() direto
+     da esteira só avança de fase pelo mostraBanner; chamar fimDaPeca() direto
      prendia a criança na tela de fim dentro da atividade montada. */
-  if(ri>=RODADAS.length){ mostraBanner("<b>Bingo!</b> Voc&#234; fechou a cartela.", fimBingo); return; }
+  if(ri>=RODADAS.length){ mostraBanner("<b>Bingo!</b> Voc&#234; fechou a cartela.", fimDaPeca); return; }
   telaBingo();
 }
 
 /* ---------------------------------------------------------------
    TELA 2 — A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimBingo(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   ePedra=null; eRot=null; eZona=null; eTrad=null; celulas=[];

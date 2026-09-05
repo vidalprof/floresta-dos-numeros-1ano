@@ -88,7 +88,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .bandeja{background:rgba(255,255,255,.10);border:2px dashed rgba(255,255,255,.30);
          border-radius:16px;padding:6px 4px 2px;min-height:70px;margin:13px auto 0;max-width:430px}
 /* A FORMA SOLTA (.pc): alvo de 58px, bem acima do piso de 44 */
+/* ⚠️ GESTO NO CELULAR (portao _qa/toque.py, set/2026): a peca do tangram e
+   ARRASTADA; sem `touch-action:none` o iPad rola a pagina e a peca nao anda. */
 .pc{display:inline-block;vertical-align:middle;position:relative;width:58px;height:58px;
+    -ms-touch-action:none;touch-action:none;
     margin:4px 3px;padding:0;border:0;border-radius:12px;background:rgba(255,255,255,.10);
     cursor:pointer;-webkit-user-select:none;user-select:none}
 /* escolhida: nao e SO a cor — ganha anel grosso e sobe um degrau */

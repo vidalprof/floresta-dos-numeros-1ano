@@ -136,11 +136,10 @@
    o lugar onde a peca entra. */
 .centro .pecabox .cam{background:rgba(38,28,20,.62);color:#fdf7ec}
 /* ⚠️ O BOTAO CLARO DA PECA (o "Recomecar" do pintar) — 1,24:1 medido, creme
-   sobre creme. `.btn` e vocabulario COMUM: a regra da peca nao e prefixada e
-   quem manda na cor e o tema da atividade, que pinta a letra de creme para a
-   madeira escura. So que `.bclaro` troca o fundo para bege e a letra creme
-   some. Quem muda o FUNDO tem que mudar a LETRA junto. */
-.centro .pecabox .bclaro{color:#3a2a12;text-shadow:0 1px 0 rgba(255,245,220,.55)}
+   sobre creme — tinha a cor da letra AQUI, numa regra solta que valia para toda
+   atividade (tivesse ela o botao ou nao) e reprovava no portao de cor em todas.
+   Quem muda o FUNDO muda a LETRA junto, NO MESMO LUGAR: a cor foi para a regra
+   `.bclaro` da propria peca `pintar-desenho` (set/2026). */
 
 /* ⭐ O MEDALHAO: no Broto a figura da rodada e GRANDE, redonda e centrada — a
    arte e a estrela da tela, nao um selinho no canto do cartao. */
@@ -1434,7 +1433,7 @@
 
 .mec-circuito .tela{max-height:calc(100vh - 46px);overflow-y:auto;-webkit-overflow-scrolling:touch}
 
-.mec-circuito .placa{position:relative;height:238px;max-width:430px;margin:13px auto 0; background:#2f3a2b;border:3px solid #5b6b52;border-radius:16px}
+.mec-circuito .placa{position:relative;width:100%;-webkit-box-sizing:border-box;box-sizing:border-box; height:238px;max-width:430px;margin:13px auto 0; background:#2f3a2b;border:3px solid #5b6b52;border-radius:16px}
 
 .mec-circuito .fio{position:absolute;background:#9aa0aa;border-radius:4px}
 
@@ -1450,7 +1449,7 @@
 
 .mec-circuito .lig{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:14px; font-weight:700;cursor:pointer;-webkit-user-select:none;user-select:none}
 
-.mec-circuito .pto{position:absolute;width:46px;height:46px;margin:-23px 0 0 -23px;padding:0;border-radius:50%; background:#cfd6e2;box-shadow:0 0 0 4px #6b7686;z-index:4}
+.mec-circuito .pto{position:absolute;width:46px;height:46px;margin:-23px 0 0 -23px;padding:0;border-radius:50%; -ms-touch-action:none;touch-action:none; background:#cfd6e2;box-shadow:0 0 0 4px #6b7686;z-index:4}
 
 .mec-circuito .lig.sel{background:#ffd54a;box-shadow:0 0 0 6px #c9a52f}
 
@@ -2398,7 +2397,9 @@
 
 .mec-divisao-dourado .bch{font-size:10.5px;font-weight:800;letter-spacing:.5px;color:#ffe9b0}
 
-.mec-divisao-dourado .bqt{font-size:21px;font-weight:800;color:#fff8ea;line-height:1.1}
+.mec-divisao-dourado .bqt{font-size:21px;font-weight:800;line-height:1.1}
+
+.mec-divisao-dourado .bcol .bqt{color:#fff8ea}
 
 .mec-divisao-dourado .bblocos{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap; gap:3px;-webkit-box-pack:center;justify-content:center;-webkit-box-align:end;align-items:flex-end;min-height:34px;margin-top:3px}
 
@@ -2408,11 +2409,15 @@
 
 .mec-divisao-dourado .grupo.mira{border-style:solid;border-color:#7fd48f;background:rgba(40,84,44,.7); -webkit-animation:kf-divisao-dourado-kf-dourado-pulsa 1.1s ease-in-out infinite;animation:kf-divisao-dourado-kf-dourado-pulsa 1.1s ease-in-out infinite}
 
-.mec-divisao-dourado .gh{font-size:10.5px;font-weight:800;letter-spacing:.5px;color:#eaffe4}
+.mec-divisao-dourado .gh{font-size:10.5px;font-weight:800;letter-spacing:.5px}
+
+.mec-divisao-dourado .grupo .gh{color:#eaffe4}
 
 .mec-divisao-dourado .dd_grow{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:2px; -webkit-box-pack:center;justify-content:center;-webkit-box-align:end;align-items:flex-end;margin-top:2px}
 
-.mec-divisao-dourado .gtot{margin-top:4px;font-size:19px;font-weight:800;color:#fff8ea}
+.mec-divisao-dourado .gtot{margin-top:4px;font-size:19px;font-weight:800}
+
+.mec-divisao-dourado .grupo .gtot{color:#fff8ea}
 
 .mec-divisao-dourado .maisN{font-size:11px;font-weight:800;color:#ffe9b0;align-self:center}
 
@@ -2424,7 +2429,9 @@
 
 .mec-divisao-dourado .clin{white-space:nowrap;text-align:center;line-height:1}
 
-.mec-divisao-dourado .dcel{display:inline-block;width:24px;height:28px;line-height:28px; font-size:19px;font-weight:800;color:#fff8ea;text-align:center;font-variant-numeric:tabular-nums}
+.mec-divisao-dourado .dcel{display:inline-block;width:24px;height:28px;line-height:28px; font-size:19px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+
+.mec-divisao-dourado .dchave .dcel{color:#fff8ea}
 
 .mec-divisao-dourado .dcel.dv{color:#ffe27a}
 
@@ -3336,7 +3343,7 @@
 
 .mec-grafico .geixon{position:absolute;left:0;font-size:11px;font-weight:700;color:var(--texto,#e2dacd);line-height:1; -webkit-transform:translateY(-4px);transform:translateY(-4px)}
 
-.mec-grafico .gcol{display:inline-block;vertical-align:bottom;position:relative;width:64px;margin:0 6px; cursor:pointer}
+.mec-grafico .gcol{display:inline-block;vertical-align:bottom;position:relative;width:64px;margin:0 6px; -ms-touch-action:none;touch-action:none; cursor:pointer}
 
 .mec-grafico .gbarra{position:absolute;left:8px;right:8px;bottom:0;background:#ffd54a;border:3px solid #fff3c9; border-radius:8px 8px 0 0;color:#33280a;font-size:15px;font-weight:800;line-height:1; padding-top:3px;-webkit-transition:height .18s;transition:height .18s}
 
@@ -3980,7 +3987,7 @@
 
 .mec-mapa-conceitual .ficha{-webkit-user-select:none;-moz-user-select:none;user-select:none}
 
-.mec-mapa-conceitual .noco{position:absolute;width:34%;min-height:46px;padding:8px 4px;border-radius:14px; background:#fffdf6;color:#221a12;font-size:15px;font-weight:800;line-height:1.2; text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6;z-index:3}
+.mec-mapa-conceitual .noco{position:absolute;width:34%;min-height:46px;padding:8px 4px;border-radius:14px; -ms-touch-action:none;touch-action:none; background:#fffdf6;color:#221a12;font-size:15px;font-weight:800;line-height:1.2; text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6;z-index:3}
 
 .mec-mapa-conceitual .noco.sel{background:#ffeeb0;box-shadow:0 0 0 4px #ffd54a}
 
@@ -4946,7 +4953,7 @@
 
 .mec-passo-a-passo .pc.sel{background:#ffd54a;-webkit-box-shadow:0 4px 0 #b08d1c,0 0 0 3px #fff3c9; box-shadow:0 4px 0 #b08d1c,0 0 0 3px #fff3c9}
 
-.mec-passo-a-passo .pc.usada{width:auto;max-width:none;margin:0;padding:0;min-height:0;background:none; -webkit-box-shadow:none;box-shadow:none;cursor:pointer}
+.mec-passo-a-passo .pc.usada{width:auto;max-width:none;margin:0;padding:0;min-height:0;background:none; -webkit-box-shadow:none;box-shadow:none;cursor:default;pointer-events:none}
 
 .mec-passo-a-passo .pc.pap_pisca{-webkit-animation:kf-passo-a-passo-halo .6s infinite;animation:kf-passo-a-passo-halo .6s infinite}
 
@@ -5160,7 +5167,7 @@
 
 .mec-pintar-desenho .bmenor{padding:11px 16px;font-size:15px;margin:0 5px}
 
-.mec-pintar-desenho .bclaro{background:#e6dcc8;box-shadow:0 4px 0 #9c907a}
+.mec-pintar-desenho .bclaro{background:#e6dcc8;box-shadow:0 4px 0 #9c907a;color:#3a2a12;text-shadow:0 1px 0 rgba(255,245,220,.55)}
 
 .mec-pintar-desenho .galeria{margin-top:10px;line-height:0}
 
@@ -6610,7 +6617,7 @@
 
 .mec-tangram .bandeja{background:rgba(255,255,255,.10);border:2px dashed rgba(255,255,255,.30); border-radius:16px;padding:6px 4px 2px;min-height:70px;margin:13px auto 0;max-width:430px}
 
-.mec-tangram .pc{display:inline-block;vertical-align:middle;position:relative;width:58px;height:58px; margin:4px 3px;padding:0;border:0;border-radius:12px;background:rgba(255,255,255,.10); cursor:pointer;-webkit-user-select:none;user-select:none}
+.mec-tangram .pc{display:inline-block;vertical-align:middle;position:relative;width:58px;height:58px; -ms-touch-action:none;touch-action:none; margin:4px 3px;padding:0;border:0;border-radius:12px;background:rgba(255,255,255,.10); cursor:pointer;-webkit-user-select:none;user-select:none}
 
 .mec-tangram .pc.sel{background:rgba(255,213,74,.30);box-shadow:0 0 0 4px #ffd54a; -webkit-transform:translateY(-3px);transform:translateY(-3px)}
 

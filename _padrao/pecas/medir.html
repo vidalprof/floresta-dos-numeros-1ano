@@ -761,7 +761,7 @@ function proximoObjeto(){
   ri++; oi=0;
   if(ri<ROD.length){ telaMedir(); return; }
   mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b> &#8212; "+
-               "o resto &eacute; s&oacute; contar.", fimMedir);
+               "o resto &eacute; s&oacute; contar.", fimDaPeca);
 }
 
 /* ---------------------------------------------------------------
@@ -851,7 +851,7 @@ function respondeComp(g,cp,v,elb){
     setTimeout(function(){
       if(g!==ger||!viva()) return;
       mostraBanner("<b>Voc&ecirc; mediu e comparou!</b><br>Medir come&ccedil;a no "+
-                   "<b>zero</b> &#8212; o resto &eacute; s&oacute; contar.", fimMedir);
+                   "<b>zero</b> &#8212; o resto &eacute; s&oacute; contar.", fimDaPeca);
     },700);
     return;
   }
@@ -875,7 +875,7 @@ function respondeComp(g,cp,v,elb){
       travada=true;
       setTimeout(function(){
         if(g!==ger||!viva()) return;
-        mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b>.", fimMedir);
+        mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b>.", fimDaPeca);
       },700);
     },700);
   }
@@ -884,7 +884,14 @@ function respondeComp(g,cp,v,elb){
 /* ---------------------------------------------------------------
    TELA 3 — A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimMedir(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   document.onkeydown=null;

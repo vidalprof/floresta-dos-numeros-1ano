@@ -1147,7 +1147,7 @@ function fazDoce(cls){
 }
 
 function pecaArranjo(){
-  if(!ARR[ri]){ fimArranjo(); return; }
+  if(!ARR[ri]){ fimDaPeca(); return; }
   var r=rod(); rows=0; err=0; travado=false; ger++;
   limpa();
   var t=el("div","tela");
@@ -1264,7 +1264,7 @@ function confere(){
       ri++;
       if(ri<ARR.length) pecaArranjo();
       else mostraBanner("<b>Ret&acirc;ngulos prontos!</b><br>Fileiras iguais mostram a divis&atilde;o: "+
-                        "o total &eacute; fileiras &times; quanto cabe em cada.", fimArranjo);
+                        "o total &eacute; fileiras &times; quanto cabe em cada.", fimDaPeca);
     },1700);
     return;
   }
@@ -1284,7 +1284,14 @@ function naoBateu(){
   }
 }
 
-function fimArranjo(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++; limpa();
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");
@@ -2995,7 +3002,7 @@ function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",
 function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
 
 function pecaBalanca(){
-  if(!RODS[ri]){ fimBalanca(); return; }
+  if(!RODS[ri]){ fimDaPeca(); return; }
   add=0; err=0; travado=false; ger++;
   limpa();
   var t=el("div","tela");
@@ -3109,7 +3116,7 @@ function desenha(quantosNovos){
          que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. Se a
          medalha nascesse sozinha de um setTimeout, ele clicaria em "Jogar de
          novo" na iteração seguinte e a partida recomeçaria para sempre. */
-      else mostraBanner("<b>Balan&ccedil;a no meio!</b><br>Os dois lados valem o mesmo.", fimBalanca);
+      else mostraBanner("<b>Balan&ccedil;a no meio!</b><br>Os dois lados valem o mesmo.", fimDaPeca);
     },700);
   }
 }
@@ -3147,7 +3154,14 @@ function ajuda(){
   }
 }
 
-function fimBalanca(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++;
   limpa();
   var t=el("div","tela");
@@ -4668,9 +4682,9 @@ function apagaDica(){
 function proxima(){
   ri++;
   /* fecha PELO banner (ver CONTRATO "peça que fecha na mão é um beco"): a ponte
-     da esteira só avança de fase pelo mostraBanner; chamar fimBingo() direto
+     da esteira só avança de fase pelo mostraBanner; chamar fimDaPeca() direto
      prendia a criança na tela de fim dentro da atividade montada. */
-  if(ri>=RODADAS.length){ mostraBanner("<b>Bingo!</b> Voc&#234; fechou a cartela.", fimBingo); return; }
+  if(ri>=RODADAS.length){ mostraBanner("<b>Bingo!</b> Voc&#234; fechou a cartela.", fimDaPeca); return; }
     if(f && f.dados) RODADAS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.NUMPAL !== undefined) NUMPAL = _d.NUMPAL;
@@ -4682,7 +4696,14 @@ function proxima(){
 /* ---------------------------------------------------------------
    TELA 2 — A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimBingo(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   ePedra=null; eRot=null; eZona=null; eTrad=null; celulas=[];
@@ -7307,13 +7328,20 @@ function proxFase(){
   fi++;
   if(fi<FASES.length){ telaCal(); return; }
   mostraBanner("<b>Voc&ecirc; leu o m&ecirc;s inteiro!</b><br>Contar os <b>pulos</b> "+
-               "&eacute; o jeito de saber quantos dias faltam.", fimCal);
+               "&eacute; o jeito de saber quantos dias faltam.", fimDaPeca);
 }
 
 /* ---------------------------------------------------------------
    A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimCal(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   document.onkeydown=null;
@@ -9491,14 +9519,21 @@ function fechaRodada(g,ms){
          ? "<b>Voc&ecirc; comparou o dinheiro!</b><br>Olhando os dois, d&aacute; para ver "+
            "qual vale <b>mais</b>, qual vale <b>menos</b> e quando valem <b>igual</b>."
          : "<b>Voc&ecirc; comparou as bancas!</b><br>Olhando as duas, d&aacute; para ver "+
-           "qual tem <b>mais</b>, qual tem <b>menos</b> e quando t&ecirc;m o <b>mesmo tanto</b>."), fimComp);
+           "qual tem <b>mais</b>, qual tem <b>menos</b> e quando t&ecirc;m o <b>mesmo tanto</b>."), fimDaPeca);
   },ms);
 }
 
 /* ---------------------------------------------------------------
    A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimComp(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   document.onkeydown=null;
@@ -10577,7 +10612,7 @@ function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.0
 function sConta(){ nota(659.25,.05,.10,"triangle",0); }
 
 function pecaContadores(){
-  if(!CNT[ri]){ fimContadores(); return; }
+  if(!CNT[ri]){ fimDaPeca(); return; }
   var r=CNT[ri];
   qtd=r.ini; err=0; molde=false; contando=false; ger++;
   limpa();
@@ -10741,7 +10776,7 @@ function fechaContagem(){
       if(ri<CNT.length) pecaContadores();
       /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece
          que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
-      else mostraBanner("<b>Voc&ecirc; contou tudo!</b><br>O total &eacute; o &uacute;ltimo n&uacute;mero da contagem.", fimContadores);
+      else mostraBanner("<b>Voc&ecirc; contou tudo!</b><br>O total &eacute; o &uacute;ltimo n&uacute;mero da contagem.", fimDaPeca);
     },800);
     return;
   }
@@ -10779,7 +10814,14 @@ function naoBateu(){
   }
 }
 
-function fimContadores(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++;
   limpa();
   var t=el("div","tela");
@@ -14209,7 +14251,7 @@ function fechaConta(){
   elCtrl.innerHTML="";
   ci++;
   if(ci<CONTAS.length){ setTimeout(iniciaConta,1100); }
-  else mostraBanner("<b>Conta armada dominada!</b><br>"+FECHO, fimDourado);
+  else mostraBanner("<b>Conta armada dominada!</b><br>"+FECHO, fimDaPeca);
 }
 
 /* ---------- montagem da fase ---------- */
@@ -14269,7 +14311,14 @@ function pecaDourado(){
   iniciaConta();
 }
 
-function fimDourado(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");
@@ -14860,9 +14909,9 @@ function apagaDica(){
 function proxima(){
   ri++;
   /* fecha PELO banner (ver CONTRATO "peça que fecha na mão é um beco"): a ponte
-     da esteira só avança de fase pelo mostraBanner; chamar fimDomino() direto
+     da esteira só avança de fase pelo mostraBanner; chamar fimDaPeca() direto
      prendia a criança na tela de fim dentro da atividade montada. */
-  if(ri>=RODADAS.length){ mostraBanner("<b>Voc&#234; ligou todas as pe&#231;as!</b>", fimDomino); return; }
+  if(ri>=RODADAS.length){ mostraBanner("<b>Voc&#234; ligou todas as pe&#231;as!</b>", fimDaPeca); return; }
     if(f && f.dados) RODADAS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.PALAVRA !== undefined) PALAVRA = _d.PALAVRA;
@@ -14877,7 +14926,14 @@ function proxima(){
 /* ---------------------------------------------------------------
    TELA 2 — A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimDomino(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa(); soltaSombra();
   ger++; travada=false;
   eMesa=null; eBanco=null; eZona=null; camE=null; camD=null;
@@ -15039,6 +15095,15 @@ MEC["ensinar-mascote"] = function(f, cen, fim){
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
+/* ⚠️⚠️ DEFEITO MEDIDO (set/2026, ESLint na cobaia: `'FECHO' is not defined`).
+   Esta frase morava no PRIMEIRO <script> da peca — o "motorzinho" de bancada
+   (el, limpa, nota, ac...), que o integrador DESCARTA ao montar a atividade,
+   porque o motor de verdade fornece tudo aquilo. A frase ia junto para o lixo,
+   e a tela final chamava `FECHO` que nao existia: a peca estourava na mao da
+   crianca depois de ela acertar tudo. (Ainda por cima estava em DUAS linhas de
+   string sem o `+`, que e erro de sintaxe.) Conteudo da peca mora no SEGUNDO
+   script, com o resto do conteudo. */
+var FECHO="Voc&#234; ensinou o rob&#244; passo a passo. Quando a regra estava torta, ele <b>fez assim mesmo</b> &#8212; e o resultado contou a verdade.";
 
 /* O CONTEÚDO É SÓ EXEMPLO (cuidar de uma planta, 8 anos). Ao copiar a peça
    para uma atividade, troque APENAS este bloco. Cada rodada precisa de:
@@ -15324,6 +15389,9 @@ function fimDaPeca(){
   dizTela("balaoP");
 }
     if(f && f.dados) LICOES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.FECHO !== undefined) FECHO = _d.FECHO;
+    }
     try{ fimDaPeca = _seguir; }catch(_e){}
     telaEnsinar();
   })();
@@ -16386,7 +16454,7 @@ function montaAncora(c){
    curiosidade (ela percebe que não sabe) antes de qualquer conta.
    --------------------------------------------------------------- */
 function telaOlhada(){
-  if(ri>=CENAS.length){ fimEstimar(); return; }
+  if(ri>=CENAS.length){ fimDaPeca(); return; }
   limpa();
   ger++; travada=false; palpite=0;
   document.onkeydown=null;
@@ -16634,13 +16702,20 @@ function segue(g){
   /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece que
      acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
   mostraBanner("<b>Voc&ecirc; estimou e conferiu!</b><br>Chutar com jeito &eacute; "+
-               "saber o tamanho da resposta antes de contar.", fimEstimar);
+               "saber o tamanho da resposta antes de contar.", fimDaPeca);
 }
 
 /* ---------------------------------------------------------------
    TELA 4 — A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimEstimar(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   document.onkeydown=null;
@@ -16865,7 +16940,7 @@ function difs(){ var l=[],i,k; for(i=0;i<VARS.length;i++){ k=VARS[i].k; if(vasoB
 function sMuda(){ nota(440,.05,.12,"triangle",0); nota(587.33,.07,.10,"triangle",.045); }
 
 function pecaExperimento(){
-  if(!EXP[ri]){ fimExp(); return; }
+  if(!EXP[ri]){ fimDaPeca(); return; }
   var r=EXP[ri], i;
   vasoB=copiaIni(r.ini); err=0; ger++; chips={};
   limpa();
@@ -17054,7 +17129,7 @@ function expResultado(){
     if(ri<EXP.length) pecaExperimento();
     /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece
        que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
-    else mostraBanner("<b>Cientista de verdade!</b><br>Uma coisa de cada vez.", fimExp);
+    else mostraBanner("<b>Cientista de verdade!</b><br>Uma coisa de cada vez.", fimDaPeca);
   };
   cx.appendChild(b);
   c.appendChild(cx);
@@ -17064,7 +17139,14 @@ function expResultado(){
   app.appendChild(t);
 }
 
-function fimExp(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++;
   limpa();
   var t=el("div","tela");
@@ -22588,7 +22670,10 @@ function redesenha(){
   }
 }
 /* a tela do PC vira ao contrario e as linhas ficariam tortas: redesenha */
-window.onresize=function(){ redesenha(); };
+/* ⚠️ `window.onresize=` APAGAVA o ouvinte de qualquer outra peca (a teia fazia o
+   mesmo) e continuava vivo depois da fase acabar, redesenhando num DOM que ja
+   saiu da tela. Ouvinte proprio, e so enquanto a camada estiver no documento. */
+window.addEventListener("resize",function(){ if(camadaL&&document.body.contains(camadaL)) redesenha(); },false);
 
 function fimDaPeca(){
   ger++;
@@ -24200,7 +24285,7 @@ function proximoObjeto(){
   ri++; oi=0;
   if(ri<ROD.length){ telaMedir(); return; }
   mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b> &#8212; "+
-               "o resto &eacute; s&oacute; contar.", fimMedir);
+               "o resto &eacute; s&oacute; contar.", fimDaPeca);
 }
 
 /* ---------------------------------------------------------------
@@ -24290,7 +24375,7 @@ function respondeComp(g,cp,v,elb){
     setTimeout(function(){
       if(g!==ger||!viva()) return;
       mostraBanner("<b>Voc&ecirc; mediu e comparou!</b><br>Medir come&ccedil;a no "+
-                   "<b>zero</b> &#8212; o resto &eacute; s&oacute; contar.", fimMedir);
+                   "<b>zero</b> &#8212; o resto &eacute; s&oacute; contar.", fimDaPeca);
     },700);
     return;
   }
@@ -24314,7 +24399,7 @@ function respondeComp(g,cp,v,elb){
       travada=true;
       setTimeout(function(){
         if(g!==ger||!viva()) return;
-        mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b>.", fimMedir);
+        mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b>.", fimDaPeca);
       },700);
     },700);
   }
@@ -24323,7 +24408,14 @@ function respondeComp(g,cp,v,elb){
 /* ---------------------------------------------------------------
    TELA 3 — A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimMedir(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   document.onkeydown=null;
@@ -27912,14 +28004,21 @@ function segue(espera){
     rodada++;
     if(rodada<RODADAS.length){ pecaOuvir(); return; }
     mostraBanner("<b>Voc&#234; achou as tr&#234;s pelo som!</b><br>Ouvir com cuidado &#233; o "+
-                 "come&#231;o de ler.", fimOuvir);
+                 "come&#231;o de ler.", fimDaPeca);
   }, espera||600);
 }
 
 /* ---------------------------------------------------------------
    8) A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimOuvir(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=true;
   var t=el("div","tela");
@@ -29034,7 +29133,7 @@ function terminou(tudoOk,g){
       rodada++;
       if(rodada<RECEITAS.length){ pecaReceita(); return; }
       mostraBanner("<b>Voc&#234; escreveu duas receitas que funcionam!</b><br>Quando a ordem "+
-                   "muda, o resultado muda &#8212; e d&#225; para consertar.", fimReceita);
+                   "muda, o resultado muda &#8212; e d&#225; para consertar.", fimDaPeca);
     },2400);
     return;
   }
@@ -29137,7 +29236,14 @@ function revela(){
 /* ---------------------------------------------------------------
    8) A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimReceita(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=true;
   var t=el("div","tela");
@@ -30657,8 +30763,9 @@ function telaComparar(){
   var t=el("div","tela");
   setProg(t,100);
   var c=el("div","centro");
-  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
-  c.appendChild(el("div","medal",""));
+  /* ⚠️ a comparacao e PEDAGOGIA (o coracao do POE) e fica na tela para a
+     crianca; o que era de BANCADA — o selo de peca fechada, a medalha e o
+     "Jogar de novo" — saiu daqui e mora em `fimDaPeca` (ver abaixo). */
   c.appendChild(el("div","balao","<b>O que eu pensava</b> e <b>o que eu vi</b>:"));
   var box=el("div","cmp"), i, p, li, mudou=0;
   for(i=0;i<CASOS.length;i++){
@@ -30675,13 +30782,34 @@ function telaComparar(){
   c.appendChild(el("div","balao", mudou
     ? "Voc&#234; mudou de ideia depois de olhar. <b>&#201; assim que cientista trabalha.</b>"
     : "Seus palpites bateram com o que aconteceu. <b>Agora voc&#234; sabe por qu&#234;.</b>"));
-  var b=el("button","btn","Jogar de novo");
+  /* ⚠️⚠️ DEFEITO MEDIDO (set/2026, portao _qa/beco.py): esta tela terminava num
+     "Jogar de novo" de BANCADA e no selo de peca fechada — dentro da atividade a
+     crianca comparava os palpites e ficava ali, sem caminho para a fase seguinte.
+     O integrador religa a continuacao do motor SO em quem termina por
+     `fimDaPeca()` (ele reaponta esse nome antes de a peca comecar). Agora a
+     comparacao fecha com o aviso de fim e segue por ele; a bancada continua com
+     a tela dela dentro de `fimDaPeca`. */
+  var b=el("button","btn","Continuar");
   b.style.marginTop="13px";
+  b.onclick=function(){ fimDaPeca(); };
+  c.appendChild(b);
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+/* a tela de BANCADA — so aparece quando a peca roda sozinha; na atividade o
+   integrador troca esta funcao pela continuacao do motor */
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var b=el("button","btn","Jogar de novo");
   b.onclick=function(){ caso=0; PENSEI=[]; pecaPrever(); };
   c.appendChild(b);
   c.appendChild(el("div","hint","Esta &#233; a pe&#231;a PREVER-OBSERVAR: palpite, olhada e compara&#231;&#227;o."));
-  t.appendChild(c);
-  app.appendChild(t);
+  t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) CASOS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
@@ -31698,7 +31826,7 @@ function maiorPedaco(){   /* o maior PEDACOS[i] cujo d*mult ainda cabe no que fa
 }
 
 function pecaQP(){
-  if(!QP[ri]){ fimQP(); return; }
+  if(!QP[ri]){ fimDaPeca(); return; }
   var r=rod(); falta=r.n; quo=0; passos=[]; err=0; travado=false; ger++;
   limpa();
   var t=el("div","tela");
@@ -31824,7 +31952,7 @@ function confere(){
     ri++;
     if(ri<QP.length) pecaQP();
     else mostraBanner("<b>Peda&ccedil;o por peda&ccedil;o, a conta apareceu!</b><br>"+
-                      "Somar os peda&ccedil;os &eacute; o mesmo que a conta armada &mdash; s&oacute; que voc&ecirc; VIU cada passo.", fimQP);
+                      "Somar os peda&ccedil;os &eacute; o mesmo que a conta armada &mdash; s&oacute; que voc&ecirc; VIU cada passo.", fimDaPeca);
   },1900);
 }
 
@@ -31848,7 +31976,14 @@ function aindaCabe(){
   }
 }
 
-function fimQP(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++; limpa();
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");
@@ -33543,9 +33678,9 @@ function revelaLer(g){
 function proximo(){
   pos++;
   /* fecha PELO banner (ver CONTRATO "peça que fecha na mão é um beco"): a ponte
-     da esteira só avança de fase pelo mostraBanner; chamar fimRelogio() direto
+     da esteira só avança de fase pelo mostraBanner; chamar fimDaPeca() direto
      prendia a criança na tela de fim dentro da atividade montada. */
-  if(pos>=PLANO.length){ mostraBanner("<b>Voc&#234; leu todas as horas!</b>", fimRelogio); return; }
+  if(pos>=PLANO.length){ mostraBanner("<b>Voc&#234; leu todas as horas!</b>", fimDaPeca); return; }
   if(PLANO[pos]==="e") telaEscrever();
   else if(PLANO[pos]==="f") telaFormar();
   else telaLer();
@@ -33555,7 +33690,14 @@ function proximo(){
    TELA 3 — A MEDALHA. Parecer em palavras, nunca nota, e nunca a
    palavra que reprova.
    --------------------------------------------------------------- */
-function fimRelogio(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   eRelo=null; eHora=null; eMin=null; eDig=null; eTexto=null; eZona=null; eOk=null;
@@ -34282,7 +34424,7 @@ function fazDoce(cls){
 }
 
 function pecaResto(){
-  if(!RES[ri]){ fimResto(); return; }
+  if(!RES[ri]){ fimDaPeca(); return; }
   var r=rod(); voltas=0; err=0; travado=false; ger++;
   limpa();
   var t=el("div","tela");
@@ -34397,7 +34539,7 @@ function confere(){
       ri++;
       if(ri<RES.length) pecaResto();
       else mostraBanner("<b>Repartido!</b><br>O que n&atilde;o d&aacute; pra repartir igual &eacute; o <b>resto</b> — "+
-                        "at&eacute; na padaria sobra p&atilde;ozinho.", fimResto);
+                        "at&eacute; na padaria sobra p&atilde;ozinho.", fimDaPeca);
     },1700);
     return;
   }
@@ -34414,7 +34556,14 @@ function naoBateu(){
   }
 }
 
-function fimResto(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++; limpa();
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");
@@ -39403,7 +39552,10 @@ function redesenha(){
   }
 }
 /* a tela do PC vira ao contrario e as linhas ficariam tortas: redesenha */
-window.onresize=function(){ redesenha(); };
+/* ⚠️ `window.onresize=` APAGAVA o ouvinte de qualquer outra peca (o ligar fazia o
+   mesmo) e continuava vivo depois da fase acabar. Ouvinte proprio, e so enquanto a
+   camada estiver no documento. */
+window.addEventListener("resize",function(){ if(camadaL&&document.body.contains(camadaL)) redesenha(); },false);
 
 /* ============ TELA 2: TIRAR UM BICHO, A TEIA REAGE ============ */
 var NIV={};        /* nivel de agora de cada especie (0 a 3) */
@@ -39912,11 +40064,19 @@ function fechaEscala(){
     if(meu+1!==gerT) return;
     esc++;
     if(esc<ESCALAS.length){ telaTermo(); return; }
-    mostraBanner("Voc&#234; achou o grau certo nas tr&#234;s escalas!",telaFimTermo);
+    mostraBanner("Voc&#234; achou o grau certo nas tr&#234;s escalas!",fimDaPeca);
   },800);
 }
 
-function telaFimTermo(){
+
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa(); gerT++;
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");
@@ -41043,7 +41203,7 @@ function completou(revelado){
     rodada++;
     if(rodada<LETRAS.length){ pecaLetra(); return; }
     mostraBanner("<b>Voc&#234; tra&#231;ou as tr&#234;s letras!</b><br>Come&#231;ar no lugar "+
-                 "certo e seguir a setinha &#233; o segredo da letra bonita.", fimLetra);
+                 "certo e seguir a setinha &#233; o segredo da letra bonita.", fimDaPeca);
   }, revelado?2600:1800);
 }
 
@@ -41113,7 +41273,14 @@ function agendaAjuda(){
 /* ---------------------------------------------------------------
    8) A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimLetra(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travado=true;
   if(relogio){ clearTimeout(relogio); relogio=null; }
@@ -41504,7 +41671,7 @@ function anda(g){
 function parou(g){
   if(g!==ger) return;
   if(casa>=NCASAS){
-    mostraBanner("<b>Voc&ecirc; chegou!</b> A trilha inteira, casa por casa.", fimTrilha);
+    mostraBanner("<b>Voc&ecirc; chegou!</b> A trilha inteira, casa por casa.", fimDaPeca);
     return;
   }
   desafioAtual=casa;
@@ -41640,7 +41807,7 @@ function botaoSegue(g){
   eZona.appendChild(b);
 }
 function voltaAoTabuleiro(){
-  if(casa>=NCASAS){ fimTrilha(); return; }
+  if(casa>=NCASAS){ fimDaPeca(); return; }
     if(f && f.dados) CASAS = f.dados;
     try{ fimDaPeca = _seguir; }catch(_e){}
     telaTrilha();
@@ -41649,7 +41816,14 @@ function voltaAoTabuleiro(){
 /* ---------------------------------------------------------------
    TELA 3 — A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimTrilha(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   eBoard=null; eDado=null; eRot=null; eZona=null; opcoes=[];

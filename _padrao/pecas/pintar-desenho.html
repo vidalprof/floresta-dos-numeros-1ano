@@ -186,7 +186,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 @keyframes chamaC{0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.30)}50%{box-shadow:0 0 0 6px rgba(255,213,74,.9)}}
 .acoes{margin-top:8px}
 .bmenor{padding:11px 16px;font-size:15px;margin:0 5px}
-.bclaro{background:#e6dcc8;box-shadow:0 4px 0 #9c907a}
+/* ⚠️ QUEM MUDA O FUNDO MUDA A LETRA JUNTO (set/2026): este botao troca o fundo
+   para bege, e a letra creme do tema sumia nele (1,24:1 medido). A cor escura
+   morava numa regra solta no cabecalho do integrador (`.centro .pecabox .bclaro`)
+   — valendo para TODA atividade, tivesse ela este botao ou nao, e reprovando no
+   portao de cor em todas. Agora a letra mora aqui, ao lado do fundo dela. */
+.bclaro{background:#e6dcc8;box-shadow:0 4px 0 #9c907a;color:#3a2a12;text-shadow:0 1px 0 rgba(255,245,220,.55)}
 /* ---- A GALERIA DO FIM: o que a crianca pintou volta para ela ---- */
 .galeria{margin-top:10px;line-height:0}
 .mini{display:inline-block;position:relative;width:104px;height:104px;margin:5px;

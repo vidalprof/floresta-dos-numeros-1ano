@@ -13,7 +13,7 @@
      resto é o que sobrou. Concreto antes de simbólico.
 
      AS ARMADILHAS QUE ESTA PEÇA FECHA (herdadas da `contadores`, já FECHADA):
-       · FECHA PELO BANNER (`mostraBanner(...,fimResto)`), nunca por tela própria.
+       · FECHA PELO BANNER (`mostraBanner(...,fimDaPeca)`), nunca por tela própria.
        · data-qa="1" no botão que serve AGORA (+ volta / − volta / Conferir).
        · andaime CRESCE; nunca "errou"; erro responde com PERGUNTA.
        · a VOLTA é sempre COMPLETA (um para CADA prato) — a igualdade é do gesto.
@@ -215,7 +215,7 @@ function fazDoce(cls){
 }
 
 function pecaResto(){
-  if(!RES[ri]){ fimResto(); return; }
+  if(!RES[ri]){ fimDaPeca(); return; }
   var r=rod(); voltas=0; err=0; travado=false; ger++;
   limpa();
   var t=el("div","tela");
@@ -330,7 +330,7 @@ function confere(){
       ri++;
       if(ri<RES.length) pecaResto();
       else mostraBanner("<b>Repartido!</b><br>O que n&atilde;o d&aacute; pra repartir igual &eacute; o <b>resto</b> — "+
-                        "at&eacute; na padaria sobra p&atilde;ozinho.", fimResto);
+                        "at&eacute; na padaria sobra p&atilde;ozinho.", fimDaPeca);
     },1700);
     return;
   }
@@ -347,7 +347,14 @@ function naoBateu(){
   }
 }
 
-function fimResto(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   ger++; limpa();
   var t=el("div","tela"); setProg(t,100);
   var c=el("div","centro");

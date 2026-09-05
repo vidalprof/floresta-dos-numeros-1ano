@@ -96,7 +96,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .geixo{position:absolute;left:0;right:0;border-top:1px dashed rgba(255,255,255,.25)}
 .geixon{position:absolute;left:0;font-size:11px;font-weight:700;color:var(--texto,#e2dacd);line-height:1;
        -webkit-transform:translateY(-4px);transform:translateY(-4px)}
+/* ⚠️ GESTO NO CELULAR (portao _qa/toque.py, set/2026): a coluna cresce ARRASTANDO;
+   sem `touch-action:none` o iPad rola a pagina em vez de erguer a barra. */
 .gcol{display:inline-block;vertical-align:bottom;position:relative;width:64px;margin:0 6px;
+      -ms-touch-action:none;touch-action:none;
      cursor:pointer}
 .gbarra{position:absolute;left:8px;right:8px;bottom:0;background:#ffd54a;border:3px solid #fff3c9;
        border-radius:8px 8px 0 0;color:#33280a;font-size:15px;font-weight:800;line-height:1;

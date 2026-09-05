@@ -735,11 +735,10 @@ CSS_PONTE = u'''
    o lugar onde a peca entra. */
 .centro .pecabox .cam{background:rgba(38,28,20,.62);color:#fdf7ec}
 /* ⚠️ O BOTAO CLARO DA PECA (o "Recomecar" do pintar) — 1,24:1 medido, creme
-   sobre creme. `.btn` e vocabulario COMUM: a regra da peca nao e prefixada e
-   quem manda na cor e o tema da atividade, que pinta a letra de creme para a
-   madeira escura. So que `.bclaro` troca o fundo para bege e a letra creme
-   some. Quem muda o FUNDO tem que mudar a LETRA junto. */
-.centro .pecabox .bclaro{color:#3a2a12;text-shadow:0 1px 0 rgba(255,245,220,.55)}
+   sobre creme — tinha a cor da letra AQUI, numa regra solta que valia para toda
+   atividade (tivesse ela o botao ou nao) e reprovava no portao de cor em todas.
+   Quem muda o FUNDO muda a LETRA junto, NO MESMO LUGAR: a cor foi para a regra
+   `.bclaro` da propria peca `pintar-desenho` (set/2026). */
 
 /* ⭐ O MEDALHAO: no Broto a figura da rodada e GRANDE, redonda e centrada — a
    arte e a estrela da tela, nao um selinho no canto do cartao. */

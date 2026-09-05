@@ -1147,9 +1147,9 @@ function revelaLer(g){
 function proximo(){
   pos++;
   /* fecha PELO banner (ver CONTRATO "peça que fecha na mão é um beco"): a ponte
-     da esteira só avança de fase pelo mostraBanner; chamar fimRelogio() direto
+     da esteira só avança de fase pelo mostraBanner; chamar fimDaPeca() direto
      prendia a criança na tela de fim dentro da atividade montada. */
-  if(pos>=PLANO.length){ mostraBanner("<b>Voc&#234; leu todas as horas!</b>", fimRelogio); return; }
+  if(pos>=PLANO.length){ mostraBanner("<b>Voc&#234; leu todas as horas!</b>", fimDaPeca); return; }
   if(PLANO[pos]==="e") telaEscrever();
   else if(PLANO[pos]==="f") telaFormar();
   else telaLer();
@@ -1159,7 +1159,14 @@ function proximo(){
    TELA 3 — A MEDALHA. Parecer em palavras, nunca nota, e nunca a
    palavra que reprova.
    --------------------------------------------------------------- */
-function fimRelogio(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=false;
   eRelo=null; eHora=null; eMin=null; eDig=null; eTexto=null; eZona=null; eOk=null;

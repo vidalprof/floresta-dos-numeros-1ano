@@ -51,8 +51,9 @@ const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
     await b.close(); process.exit(2);
   }
   let ruins=[], medidas=0;
+  /* ⚡ MEDIDO (set/2026): recarregava a pagina a cada fase (27s); o motor desenha
+     a fase por `montaFase(i)` em cima da pagina ja aberta. */
   for(let i=0;i<nfases;i++){
-    await p.goto(url); await p.waitForTimeout(240);
     const ok=await p.evaluate(idx=>{
       window.falar=function(){}; window.depoisDaFala=function(a,m,cb){setTimeout(cb,30);};
       try{ montaFase(idx,function(){}); return true; }catch(e){ return false; }

@@ -207,8 +207,13 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
     cursor:pointer;-webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6}
 .pc.sel{background:#ffd54a;-webkit-box-shadow:0 4px 0 #b08d1c,0 0 0 3px #fff3c9;
         box-shadow:0 4px 0 #b08d1c,0 0 0 3px #fff3c9}
+/* ⚠️ DEFEITO MEDIDO (set/2026, cobaia em 1024x420): o cartao ja colocado na vaga
+   encolhe ate o icone (30px) e continuava sendo um ALVO — `cursor:pointer` e a
+   classe `.pc`, que a banca conta como coisa de tocar. Quem recebe o toque e a
+   VAGA (`.cam`, 62px), nao o cartao dentro dela. Entao o cartao deixa de ser alvo:
+   sem ponteiro e transparente ao dedo — o toque passa direto para a vaga. */
 .pc.usada{width:auto;max-width:none;margin:0;padding:0;min-height:0;background:none;
-          -webkit-box-shadow:none;box-shadow:none;cursor:pointer}
+          -webkit-box-shadow:none;box-shadow:none;cursor:default;pointer-events:none}
 .pc.pisca{-webkit-animation:halo .6s infinite;animation:halo .6s infinite}
 .prot{display:block;font-size:12px;font-weight:800;letter-spacing:.3px;line-height:14px}
 /* ⚠️ O SELETOR TEM QUE DIZER ONDE ELE MORA (ago/2026). Esta letra cai numa
@@ -810,7 +815,7 @@ function terminou(tudoOk,g){
       rodada++;
       if(rodada<RECEITAS.length){ pecaReceita(); return; }
       mostraBanner("<b>Voc&#234; escreveu duas receitas que funcionam!</b><br>Quando a ordem "+
-                   "muda, o resultado muda &#8212; e d&#225; para consertar.", fimReceita);
+                   "muda, o resultado muda &#8212; e d&#225; para consertar.", fimDaPeca);
     },2400);
     return;
   }
@@ -913,7 +918,14 @@ function revela(){
 /* ---------------------------------------------------------------
    8) A MEDALHA. Parecer em palavras, nunca nota.
    --------------------------------------------------------------- */
-function fimReceita(){
+/* ⚠️⚠️ TODA PECA FECHA POR `fimDaPeca` (set/2026). Esta peca terminava numa
+   funcao com nome proprio — e o integrador so consegue religar a continuacao do
+   motor em quem termina por `fimDaPeca` (ele reaponta esse nome antes de a peca
+   comecar). Havia dois caminhos ate a tela de BANCADA ("peca fechada", "Jogar de
+   novo"): o callback do banner, que o integrador troca, e a guarda "acabaram as
+   rodadas", que ele NAO via — a crianca podia cair no beco. Um nome so fecha os
+   dois. Na bancada nada muda: `fimDaPeca` e a tela de sempre. */
+function fimDaPeca(){
   limpa();
   ger++; travada=true;
   var t=el("div","tela");

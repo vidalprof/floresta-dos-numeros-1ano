@@ -85,9 +85,16 @@ function parseCor(s){
   for(let i=0;i<nfases;i++) alvos.push({fase:i});
   let puladas=0, abertas=0;
 
+  /* ⚡ MEDIDO (set/2026): 73s, quase todo em RECARGA da pagina a cada tela. A fase
+     e desenhada por `montaFase(i)` em cima da pagina viva (o `limpa()` do motor
+     zera a anterior); so as telas COM NOME recarregam, porque leem o estado salvo.
+     ⚠️ A folha "texto transparente" do passo 2 e REMOVIDA depois do print — sem
+     isso ela ficaria na pagina e a tela seguinte seria medida com o texto
+     invisivel (foi por isso que a recarga existia). */
+  let carregada=false;
   for(const alvo of alvos){
     const tela = (alvo.nome!==undefined) ? alvo.nome : ("fase"+alvo.fase);
-    await p.goto(url);
+    if(!carregada || alvo.nome!==undefined){ await p.goto(url); carregada=true; }
     await p.waitForTimeout(500);
     await p.evaluate(()=>{ window.falar=function(){}; window.falaDaTela=function(){};
                            window.depoisDaFala=function(i,m,cb){setTimeout(cb,80);}; });
@@ -174,10 +181,12 @@ function parseCor(s){
     });
 
     /* 2) print SO DO FUNDO (texto transparente) */
-    await p.addStyleTag({content:"*{color:transparent!important;text-shadow:none!important;-webkit-text-fill-color:transparent!important}"});
+    const _folhaTransp=await p.addStyleTag({content:"*{color:transparent!important;text-shadow:none!important;-webkit-text-fill-color:transparent!important}"});
     await p.waitForTimeout(160);
     const fundo=path.join(tmp,tela+"-fundo.png");
     await p.screenshot({path:fundo});
+    /* devolve o texto: a proxima tela e medida nesta MESMA pagina */
+    try{ await _folhaTransp.evaluate(e=>e.remove()); }catch(e){}
 
     /* ⚠️ LICAO PAGA (ago/2026, Maquina do Tempo): entre a MEDIDA e o PRINT a tela
        continua se mexendo — no boletim do fim as barras crescem e as estrelas
