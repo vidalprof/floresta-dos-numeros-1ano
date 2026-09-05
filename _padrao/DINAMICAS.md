@@ -63,6 +63,57 @@ soltar, memória, caça-palavras, cruzadinha), JClic (`clic.xtec.cat`, aberto de
 servem de referência de COMPORTAMENTO — não de código para copiar (o nosso motor
 é outro, e a arte é nossa).
 
+## 📏 O QUE A MEDIÇÃO DAS 88 PEÇAS ENSINOU (set/2026 — pedido do Marcos: *"teste todas as interatividades da fábrica, corrija todas"*)
+
+> Método: **censo no código** (o que cada peça faz) + **medida no navegador**
+> (o que a criança recebe), na cobaia com **88 de 88 peças** — antes eram 84;
+> `pintar`, `pintar-canvas`, `pintar-desenho` e `criar-desafio` ficavam fora por
+> uma suposição ("o jogador não fecha produção livre") que a medida desmentiu.
+
+**O que estava errado e foi consertado na FONTE (`_padrao/pecas/*.html` + motor):**
+1. **19 mecânicas rolavam sob o dedo.** O elemento que escuta `touchstart`
+   /`mousedown` não tinha `touch-action` — no iPad/Android o arrasto vira rolagem
+   (o "não funciona" da Feirinha, ago/2026, em 19 lugares novos). O `toque.py`
+   conferia por LISTA de 13 nomes; **nenhuma das 19 estava nela.** Regra que
+   fica: **portão de lista é memória — quem manda é a medida.** Nasceu o
+   `_qa/toque.js`, que pergunta ao Chromium o `touch-action` computado de todo
+   elemento que escuta o dedo (banca `1t`, bancada da peça `5d`, prova 27 do
+   meta-portão). `none` para o que se ARRASTA; `manipulation` para o que só se
+   TOCA (tira o zoom do toque duplo sem travar a rolagem).
+2. **As escutas da fase não morriam.** 14 peças pendem `document.addEventListener
+   ("touchmove"/"touchend")` e nenhuma remove; 42 atribuem `document.onmousemove=`.
+   Medido no Museu (36 fases): **34 escutas de gesto vivas no fim** + `onmousemove`
+   /`onmouseup` de fase morta ainda atribuídos. O motor agora anota o que a fase
+   pendura em `document`/`window` e o `limpa()` solta (mesmo remédio dos relógios
+   `_stRaw`): **27 pendidas, 27 soltas, 0 vivas.** Sem mexer em peça nenhuma.
+3. **Toque simples (WCAG 2.5.7 — todo arrasto precisa de alternativa de ponteiro
+   simples):** medido nas 32 peças de gesto — as 5 que pareciam sem alternativa
+   (girar, medir, relógio, traçar-caminho, passo-a-passo) **têm** (setas, botões
+   de empurrar, modo `escrever`, toque na célula). Nenhum defeito real.
+4. **`preventDefault` no `touchstart`:** 12 suspeitas pelo censo cru; conferindo o
+   corpo de cada tratador, **zero** — o `preventDefault` de todas mora no
+   `touchmove`, como manda a regra.
+
+**O que NÃO é defeito (medido, para ninguém "consertar" à toa):**
+- **Carga:** `DOMContentLoaded` 55–128 ms, primeira fase montada em 3–8 ms
+  (Chromium headless, `file://`). O montador já embute **só as peças usadas**
+  (Museu 520 KB com 9 peças; Bancada 300 KB com 1). Não há gargalo de carga.
+- **32 das 34 peças de arrasto usam o caminho duplo mouse+toque** (não Pointer
+  Events). Funciona, tem a guarda do fantasma e passou nas medidas — **não
+  reescrever** por princípio; Pointer Events + `setPointerCapture` é o padrão
+  para peça NOVA (ver seção acima), e `divisao-dourado` é o exemplo na casa.
+- **22 peças movem com `style.left/top`, 9 com `transform`:** em PC fraco o
+  `transform` é mais leve (compositor, sem layout). Peça nova: `transform`.
+  Peça velha: só se a medida mostrar engasgo — nenhuma mostrou.
+
+**Fontes lidas (pelo `pesquisar.yml`, `_pesquisa/web/interatividades-*.md`):**
+MDN Pointer Events; W3C WCAG 2.5.7 *Dragging Movements*; NN/g *UX Design for
+Children 3–12* (alvos grandes, gesto simples, feedback imediato visual+sonoro,
+instrução visual/auditiva antes do texto para 3–7 anos); *Game feel / juice*
+(feedback exagerado e imediato é o polimento mais barato); LM-GM-SDT (mecânica
+de jogo × mecânica de aprendizagem × autonomia/competência/vínculo); canvas/
+`requestAnimationFrame` (objetos reutilizados, DOM fora do laço de animação).
+
 ## 👀 PASSO ZERO: VER A DINÂMICA FUNCIONANDO — `python3 _padrao/ver_fonte.py <mecanica>`
 
 > Pergunta do Marcos (ago/2026), e ela apontou o buraco exato: *"foi feita a

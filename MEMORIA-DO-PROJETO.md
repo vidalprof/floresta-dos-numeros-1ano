@@ -5929,3 +5929,43 @@ reprova).
   log da banca, não a memória do que ele "costuma" dizer.**
 - Defeito de ARTE que ficou de fora (sem cota no Gemini): `_trem/img/tr_coru_fala`
   é cópia byte a byte da pose parada — a coruja não mexe a boca. Avisado ao Marcos.
+
+## 🧩📏 A MEDIÇÃO DAS 88 INTERATIVIDADES DA FÁBRICA (set/2026)
+
+Pedido do Marcos: *"teste todas as interatividades da fábrica que usamos nas
+atividades, corrija todas, deixe perfeitas… pesquise amplamente… melhore o motor
+se for necessário… mais ágil, mais rápido, menos erros"*. Feito pessoalmente, no
+método de sempre: **censo no código → medida no navegador → conserto na FONTE →
+medir de novo → portão que pega sozinho da próxima vez.** O detalhe técnico está
+no `_padrao/DINAMICAS.md` (seção "O que a medição das 88 peças ensinou"); aqui
+fica o que EU preciso lembrar.
+
+**Ferramentas que passaram a existir (usar, não reinventar):**
+- `bash _qa/peca.sh <peça>` já existia (9 portões por peça). O lote nas 88 roda em
+  ~1 min/peça/faixa; com 2 faixas, ~50 min. Resultado importado para
+  `_padrao/_bancada.json` por `python3 _padrao/interatividades.py --bancada <RESUMO>`.
+- **`_padrao/interatividades.py` GERA o `INTERATIVIDADES.md`** (antes era à mão e
+  dizia 84 peças; são 88). Peça nova, atividade nova, lote novo → rodar.
+- **`_qa/toque.js`** mede `touch-action` no navegador (banca `1t`, bancada `5d`,
+  prova 27 do meta-portão). O `toque.py` (lista) continua para o runner sem
+  Chromium e recebeu os 16 nomes que a medida achou.
+- Cobaia = **88 de 88** (`_qa/cobaia.py`, `PULAR` vazio — medido: o jogador fecha
+  as 4 de produção livre pelo "Pronto").
+- Pesquisa pelo `pesquisar.yml`: 5 arquivos `_pesquisa/web/interatividades-*.md`
+  (arrasto/toque, feedback, usabilidade infantil NN/g, LM-GM-SDT, desempenho).
+
+**O que a medida achou e foi consertado na fonte:**
+- 19 peças cujo alvo escuta o dedo **sem `touch-action`** (rolava sob o dedo no
+  iPad) — 16 `none` (arrasto) + 3 `manipulation` (toque). Nenhuma estava na
+  lista do `toque.py`. **Lição: portão de lista é memória; quem manda é a medida.**
+- **Escutas de fase vazando**: 14 peças pendem `document.addEventListener` sem
+  remover, 42 atribuem `document.onmousemove=`. Museu (36 fases): 34 escutas
+  vivas no fim → motor anota e o `limpa()` solta → **0 vivas**. Sem tocar em peça.
+- `simulador` na cobaia sem tema de água (o `dinamicas.py` reprovava o fixture,
+  não a peça) → enunciado do fixture declara a água.
+
+**O que a medida mostrou que NÃO é defeito (não "consertar"):** carga 55–128 ms;
+o montador embute só as peças usadas; `preventDefault` no `touchstart` = 0 (12
+suspeitas eram do `touchmove`); toque simples (WCAG 2.5.7) existe nas 5 peças
+que pareciam sem; caminho duplo mouse+toque em 32 peças **funciona** — Pointer
+Events só para peça NOVA.

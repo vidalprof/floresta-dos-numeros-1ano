@@ -770,6 +770,25 @@ pega "vozrobo  · a ponte religou a voz da peca" DEIXA python3 _qa/vozrobo.py "$
 robo_ativ ''
 pega "vozrobo  · peca falando pela voz do navegador" PEGA python3 _qa/vozrobo.py "$T/robo.html"
 
+# ---------- 27) TOQUE MEDIDO: o alvo que escuta o dedo sem touch-action ----------
+# (set/2026) O toque.py confere por LISTA; o toque.js pergunta ao navegador. A
+# prova: uma tela com um alvo que escuta `touchstart` — sem `touch-action` ele
+# rola sob o dedo (PEGA); com `touch-action:none` passa (DEIXA).
+toque_pag(){ cat > "$T/toque.html" <<H
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>#app{position:relative;height:200px}.pc{width:60px;height:60px;background:#c33;position:absolute;left:10px;top:10px} ${1}</style>
+</head><body><div id="app"></div><script>
+function limpa(){ document.getElementById("app").innerHTML=""; }
+function telaA(){ limpa(); var d=document.createElement("div"); d.className="pc";
+  d.addEventListener("touchstart",function(){},false); document.getElementById("app").appendChild(d); }
+</script></body></html>
+H
+}
+toque_pag ''
+pega "toque.js · alvo que escuta o dedo SEM touch-action" PEGA  node _qa/toque.js "$T/toque.html" telaA
+toque_pag '.pc{touch-action:none}'
+pega "toque.js · alvo blindado (touch-action:none)"      DEIXA node _qa/toque.js "$T/toque.html" telaA
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."

@@ -6,76 +6,116 @@
 > atividades boas, copiar a interatividade pronta"*). As armadilhas de cada uma e a
 > versão mais corrigida ficam no `_padrao/DINAMICAS.md`; aqui é o ÍNDICE rápido.
 >
-> **Ao usar/lapidar uma mecânica nova, mova-a da tabela de baixo para a de cima** e
-> aponte a atividade de referência, no mesmo commit.
+> **Este arquivo é GERADO** por `python3 _padrao/interatividades.py` — não editar à
+> mão (envelhece). Peça nova, atividade nova ou lote novo da bancada → rodar de novo.
 
+Gerado em 2026-09-05 a partir das peças (`_padrao/pecas/`), das atividades reais (`_*/conteudo.json`)
 
-Gerado em 2026-08-31 a partir das atividades reais (`_*/conteudo.json`) e do motor (`pecas.js`).
+## ✅ PRONTAS — provadas em atividade (clone da atividade indicada)
 
-
-## ✅ PRONTAS — já funcionam (clone da atividade indicada)
-
-| Interatividade | Gesto | Em quantas | Clonar de (atividades que já usam) |
-|---|---|---:|---|
-| **classificar** | arrastar | 13 | agora, blu, central, detetive, feirinha, lojinha, museu, padaria … |
-| **escolher** | toque | 13 | agora, blu, central, detetive, feirinha, lojinha, padaria, por4 … |
-| **ligar** | arrastar | 12 | agora, blu, central, detetive, lojinha, museu, por4, rightnow9 … |
-| **caca-palavras** | toque | 11 | agora, blu, central, detetive, museu, por4, rightnow9, solidos … |
-| **completar** | toque | 11 | agora, blu, central, detetive, feirinha, padaria, por4, rightnow9 … |
-| **digitar** | toque | 11 | agora, blu, central, detetive, museu, padaria, por4, rightnow9 … |
-| **intruso** | toque | 11 | agora, blu, central, detetive, feirinha, museu, padaria, por4 … |
-| **memoria** | toque | 11 | agora, blu, central, feirinha, lojinha, museu, padaria, por4 … |
-| **quem-sou-eu** | toque | 10 | agora, blu, central, detetive, museu, por4, rightnow9, solidos … |
-| **ordenar** | arrastar | 7 | agora, central, feirinha, lojinha, padaria, teatro, trem |
-| **forca** | toque | 5 | agora, central, detetive, rightnow9, solidos |
-| **conserte-o-erro** | toque | 4 | agora, central, detetive, rightnow9 |
-| **relampago** | toque | 4 | agora, central, feirinha, rightnow9 |
-| **bater-silabas** | toque | 3 | padaria, por4, trem |
-| **juntar-silabas** | toque | 3 | padaria, por4, trem |
-| **pintar-canvas** | arrastar | 3 | colorir, lojinha, trem |
-| **quebra-cabeca** | arrastar | 3 | lojinha, solidos, trem |
-| **raios-x** | toque | 3 | agora, central, museu |
-| **vitrine** | toque | 3 | museu, solidos, trem |
-| **caixa-dinheiro** | toque | 2 | feirinha, lojinha |
-| **comparar** | toque | 2 | feirinha, lojinha |
-| **cruzadinha** | toque | 2 | agora, rightnow9 |
-| **escrever-legenda** | toque | 2 | central, rightnow9 |
-| **linha-do-tempo** | toque | 2 | detetive, por4 |
-| **montar-frase** | toque | 2 | agora, rightnow9 |
-| **ouvir-achar** | toque | 2 | padaria, rightnow9 |
-| **divisao-dourado** | arrastar | 1 | gincana |
-| **arrastar-sombra** | arrastar | 1 | solidos |
-| **autoexplicacao** | toque | 1 | central |
-| **bingo** | toque | 1 | lojinha |
-| **caixas-de-som** | toque | 1 | padaria |
-| **digitar-numero** | toque | 1 | feirinha |
-| **domino** | arrastar | 1 | lojinha |
-| **ensinar-mascote** | toque | 1 | agora |
-| **estimar** | toque | 1 | feirinha |
-| **investigar-fonte** | toque | 1 | central |
-| **letras-escondidas** | toque | 1 | trem |
-| **ligar-pontos** | arrastar | 1 | padaria |
-| **morfemas** | toque | 1 | agora |
-| **pintar** | arrastar | 1 | teatro |
-| **pintar-desenho** | arrastar | 1 | padaria |
-| **reta-numerica** | arrastar | 1 | feirinha |
-| **tracar-letra** | arrastar | 1 | padaria |
+| Interatividade | Gesto | Em quantas | Clonar de (atividades que já usam) | bancada |
+|---|---|---:|---|:-:|
+| **escolher** | toque | 14 | blu, central, detetive, divisao, feirinha, lojinha, padaria, por4 … | — |
+| **classificar** | arrastar | 13 | blu, central, detetive, feirinha, lojinha, museu, padaria, por4 … | — |
+| **ligar** | arrastar | 12 | blu, central, detetive, lojinha, museu, por4, revista5, rightnow9 … | — |
+| **caca-palavras** | toque | 11 | blu, central, detetive, museu, por4, revista5, rightnow9, solidos … | — |
+| **completar** | toque + teclado | 11 | blu, central, detetive, feirinha, padaria, por4, revista5, rightnow9 … | — |
+| **digitar** | toque + teclado | 11 | blu, central, detetive, museu, padaria, por4, revista5, rightnow9 … | — |
+| **intruso** | toque | 11 | blu, central, detetive, feirinha, museu, padaria, por4, revista5 … | — |
+| **memoria** | toque | 10 | blu, central, feirinha, lojinha, museu, padaria, por4, rightnow9 … | — |
+| **quem-sou-eu** | toque | 10 | blu, central, detetive, museu, por4, revista5, rightnow9, solidos … | — |
+| **ordenar** | arrastar | 6 | central, feirinha, lojinha, padaria, teatro, trem | — |
+| **forca** | toque + teclado | 4 | central, detetive, rightnow9, solidos | — |
+| **bater-silabas** | toque + teclado | 3 | padaria, por4, trem | — |
+| **conserte-o-erro** | toque | 3 | central, detetive, rightnow9 | — |
+| **juntar-silabas** | arrastar | 3 | padaria, por4, trem | — |
+| **linha-do-tempo** | arrastar | 3 | detetive, por4, revista5 | — |
+| **pintar-canvas** | toque | 3 | colorir, lojinha, trem | — |
+| **quebra-cabeca** | arrastar | 3 | lojinha, solidos, trem | — |
+| **relampago** | toque | 3 | central, feirinha, rightnow9 | — |
+| **vitrine** | toque | 3 | museu, solidos, trem | — |
+| **caixa-dinheiro** | toque | 2 | feirinha, lojinha | — |
+| **comparar** | toque + teclado | 2 | feirinha, lojinha | — |
+| **digitar-numero** | toque + teclado | 2 | divisao, feirinha | — |
+| **escrever-legenda** | toque | 2 | central, rightnow9 | — |
+| **estimar** | toque + teclado | 2 | divisao, feirinha | — |
+| **ouvir-achar** | toque | 2 | padaria, rightnow9 | — |
+| **raios-x** | arrastar | 2 | central, museu | — |
+| **arranjo** | toque | 1 | divisao | — |
+| **arrastar-sombra** | arrastar | 1 | solidos | — |
+| **autoexplicacao** | toque | 1 | central | — |
+| **bingo** | toque + teclado | 1 | lojinha | — |
+| **caixas-de-som** | arrastar | 1 | padaria | — |
+| **cruzadinha** | toque + teclado | 1 | rightnow9 | — |
+| **divisao-dourado** | arrastar | 1 | gincana | — |
+| **domino** | arrastar | 1 | lojinha | — |
+| **investigar-fonte** | toque | 1 | central | — |
+| **letras-escondidas** | arrastar | 1 | trem | — |
+| **ligar-pontos** | arrastar | 1 | padaria | — |
+| **montar-frase** | arrastar | 1 | rightnow9 | — |
+| **pintar** | toque | 1 | teatro | — |
+| **pintar-desenho** | toque | 1 | padaria | — |
+| **quociente-parcial** | toque | 1 | divisao | — |
+| **resto** | toque | 1 | divisao | — |
+| **reta-numerica** | arrastar | 1 | feirinha | — |
+| **tracar-letra** | arrastar | 1 | padaria | — |
 
 ## 🛠️ FALTAM LAPIDAR — existem no motor, ainda NÃO usadas numa atividade
 
-_Estas 40 peças existem no `pecas.js` mas nunca entraram numa atividade publicada — ou seja, ainda não estão "provadas em jogo". Ao precisar de uma, lapidar (montar, passar na banca, aprovar com o Marcos) e mover para cima._
+_Estas 44 peças existem em `_padrao/pecas/` e no `pecas.js` mas nunca entraram numa atividade publicada. Passaram na cobaia (todas as 88 rodam dentro do motor) e na bancada da peça (coluna), mas "provada em jogo" só quando o Marcos aprovar numa atividade. Ao usar uma, ela sobe para a tabela de cima sozinha (rodar o gerador)._
 
-
-**Toque:** `achar-na-cena`, `andar-ate`, `base-dez`, `bussola`, `calendario`, `camadas-mapa`, `contadores`, `criar-desafio`, `decisao`, `ditado`, `experimento-justo`, `filtro`, `labirinto`, `misterio`, `mudanca-permanencia`, `padrao`, `passo-a-passo`, `prever-observar`, `relogio`, `rima`, `rotular`, `sete-erros`, `simulador`, `som-inicial`, `sombra`, `tabela`, `teia-alimentar`
-
-**Arrastar:** `arrastar-lugar`, `balanca`, `circuito`, `coordenadas`, `girar`, `grafico`, `mapa-conceitual`, `medir`, `simetria`, `tangram`, `termometro`, `tracar-caminho`, `trilha`
-
+| Interatividade | Gesto | bancada |
+|---|---|:-:|
+| `achar-na-cena` | toque | — |
+| `andar-ate` | toque | — |
+| `arrastar-lugar` | arrastar | — |
+| `balanca` | toque | — |
+| `base-dez` | arrastar | — |
+| `bussola` | toque | — |
+| `calendario` | toque + teclado | — |
+| `camadas-mapa` | toque | — |
+| `circuito` | arrastar | — |
+| `contadores` | toque | — |
+| `coordenadas` | toque | — |
+| `criar-desafio` | toque | — |
+| `decisao` | toque | — |
+| `ditado` | toque + teclado | — |
+| `ensinar-mascote` | toque | — |
+| `experimento-justo` | toque | — |
+| `filtro` | toque | — |
+| `girar` | arrastar | — |
+| `grafico` | arrastar | — |
+| `labirinto` | toque + teclado | — |
+| `mapa-conceitual` | arrastar | — |
+| `medir` | arrastar | — |
+| `misterio` | toque | — |
+| `morfemas` | arrastar | — |
+| `mudanca-permanencia` | arrastar | — |
+| `padrao` | toque | — |
+| `passo-a-passo` | arrastar | — |
+| `prever-observar` | toque | — |
+| `relogio` | arrastar | — |
+| `repartir` | arrastar | — |
+| `rima` | toque | — |
+| `rotular` | arrastar | — |
+| `saltos-na-fita` | toque | — |
+| `sete-erros` | toque | — |
+| `simetria` | toque | — |
+| `simulador` | toque | — |
+| `som-inicial` | toque | — |
+| `sombra` | toque | — |
+| `tabela` | toque | — |
+| `tangram` | arrastar | — |
+| `teia-alimentar` | arrastar | — |
+| `termometro` | toque | — |
+| `tracar-caminho` | arrastar | — |
+| `trilha` | toque | — |
 
 ## 📊 Resumo
 
-- Banco do motor: **84** interatividades.
-- **Prontas (provadas em atividade): 43.**
-- Faltam lapidar: **41.**
+- Banco do motor: **88** interatividades (a cobaia `_cobaia` roda as 88).
+- **Prontas (provadas em atividade): 44.**
+- Faltam lapidar: **44.**
 
 > Fonte de armadilhas e detalhes por mecânica: `_padrao/DINAMICAS.md`.
 > Catálogo das atividades (com links): `ATIVIDADES.md`.

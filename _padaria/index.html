@@ -1042,6 +1042,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-caixas-de-som .hint{margin-top:5px;font-size:13px}
 
 .mec-caixas-de-som .medal{width:70px;height:70px;font-size:30px;line-height:60px}}
+
+.mec-caixas-de-som .fichaq{-ms-touch-action:none;touch-action:none}
 /* ==== PECA: classificar ==== */
 @-webkit-keyframes kf-classificar-clcaiu{from{opacity:.35;-webkit-transform:translateY(-16px) scale(1.08)}}@keyframes kf-classificar-clcaiu{from{opacity:.35;transform:translateY(-16px) scale(1.08)}}@-webkit-keyframes kf-classificar-clchega{from{opacity:0;-webkit-transform:translateY(12px) scale(.93)}}@keyframes kf-classificar-clchega{from{opacity:0;transform:translateY(12px) scale(.93)}}@-webkit-keyframes kf-classificar-clbate{40%{-webkit-transform:scale(1.035)}}@keyframes kf-classificar-clbate{40%{transform:scale(1.035)}}
 
@@ -1578,6 +1580,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-juntar-silabas .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
 
 .mec-juntar-silabas .medal:before{content:"\2605"}
+
+.mec-juntar-silabas .jsSil{-ms-touch-action:manipulation;touch-action:manipulation}
 /* ==== PECA: ligar-pontos ==== */
 @-webkit-keyframes kf-ligar-pontos-acende{0%{opacity:0}45%{opacity:1}62%{opacity:.55}100%{opacity:1}}@keyframes kf-ligar-pontos-acende{0%{opacity:0}45%{opacity:1}62%{opacity:.55}100%{opacity:1}}@-webkit-keyframes kf-ligar-pontos-lpEco{0%{-webkit-transform:scale(.72);opacity:.9}
                          70%{-webkit-transform:scale(1.3);opacity:0}
@@ -1702,6 +1706,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-ligar-pontos .hint{display:none}}
 
 .mec-ligar-pontos .folha .pt, .mec-ligar-pontos .folha .pt.prox, .mec-ligar-pontos .folha .pt.vez, .mec-ligar-pontos .folha .pnum{color:#241d12}
+
+.mec-ligar-pontos .folha{-ms-touch-action:none;touch-action:none}
 /* ==== PECA: memoria ==== */
 @-webkit-keyframes kf-memoria-brilha{0%{left:-60%}55%{left:120%}100%{left:120%}}@keyframes kf-memoria-brilha{0%{left:-60%}55%{left:120%}100%{left:120%}}@-webkit-keyframes kf-memoria-pulsa{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.07)}100%{-webkit-transform:scale(1)}}@keyframes kf-memoria-pulsa{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}@-webkit-keyframes kf-memoria-mcai{0%{-webkit-transform:translateY(0) rotate(0);opacity:1}100%{-webkit-transform:translateY(104vh) rotate(720deg);opacity:.4}}@keyframes kf-memoria-mcai{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(104vh) rotate(720deg);opacity:.4}}
 
@@ -2335,6 +2341,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-tracar-letra .folha .pt, .mec-tracar-letra .folha .pt.prox, .mec-tracar-letra .folha .pt.vez, .mec-tracar-letra .folha .pnum{color:#241d12}
 
+.mec-tracar-letra .folha{-ms-touch-action:none;touch-action:none}
+
 /* ==== TEMA DA ATIVIDADE (_padaria/tema.css) ==== */
 /* ============================================================
    TEMA — A PADARIA DAS LETRAS
@@ -2611,6 +2619,32 @@ window.setInterval=function(){ var id=_siRaw.apply(window,arguments);
   if(_faseViva){ _timersFase.push(id); } return id; };
 function _mataTimersDaFase(){ var i,t=_timersFase; _timersFase=[];
   for(i=0;i<t.length;i++){ try{ clearTimeout(t[i]); clearInterval(t[i]); }catch(e){} } }
+/* ⭐ AS ESCUTAS DA FASE TAMBEM MORREM COM ELA (set/2026, censo das 88 pecas).
+   14 pecas de arrasto pendem `document.addEventListener("touchmove"/"touchend",
+   ...)` e NENHUMA remove: numa atividade de 30 fases, a 10a `classificar`
+   deixa 20 escutas velhas no documento, cada uma com o fechamento da fase
+   morta, rodando a cada dedo que passa. Nao da erro — so peso e o risco de um
+   fechamento antigo achar que "ha ficha na mao". Mesmo remedio dos relogios:
+   o que a fase pendurar em `document`/`window` e anotado e o `limpa()` solta.
+   Fora de fase (o motor pendura as suas no carregamento) nada e anotado. */
+var _escutasFase=[];
+(function(){
+  function enrola(alvo){
+    var add=alvo.addEventListener;
+    alvo.addEventListener=function(tipo,fn,op){
+      add.call(alvo,tipo,fn,op);
+      if(_faseViva && fn){ _escutasFase.push([alvo,tipo,fn,op]); }
+    };
+  }
+  enrola(document); enrola(window);
+})();
+function _soltaEscutasDaFase(){ var i,e=_escutasFase; _escutasFase=[];
+  for(i=0;i<e.length;i++){ try{ e[i][0].removeEventListener(e[i][1],e[i][2],e[i][3]); }catch(_x){} }
+  /* os `document.onmousemove=`/`ontouchmove=` que as pecas ATRIBUEM (42 delas)
+     ficam vivos ate outra peca sobrescrever; a tela nova nasce sem eles. */
+  document.onmousemove=null; document.onmouseup=null; document.onmousedown=null;
+  document.ontouchmove=null; document.ontouchend=null; document.ontouchstart=null;
+  document.onpointermove=null; document.onpointerup=null; }
 /* ============ IMAGENS ============ */
 /* ⚠️ O NOME DO MASCOTE, DECLARADO. Nao e enfeite: o `_qa/clone.py`
    le esta linha de TODAS as atividades e reprova se o nome de um
@@ -3193,7 +3227,7 @@ function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNod
 function limpa(){ __qa("tela"); telaNarrou=false;
   /* ⭐ a troca de tela MATA os relogios da fase que saiu (ver _stRaw, no topo):
      nenhum banner, dica, som ou voz da fase anterior dispara na nova. */
-  _mataTimersDaFase(); _faseViva=false;
+  _mataTimersDaFase(); _soltaEscutasDaFase(); _faseViva=false;
   /* ⚠️ o vigia do "esta parada?" (8s) tambem e da fase que saiu: sem isto ele
      disparava na CAPA ou no BOLETIM e pregava a dica da fase anterior la. A
      `montaFase` re-arma o dela logo depois. */

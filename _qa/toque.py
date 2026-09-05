@@ -41,6 +41,13 @@ ARRASTO = {
     #    NAO conferia o `touch-action` — ou seja, passava cego numa atividade
     #    inteira de arrastar.
     u"divisao-dourado",
+    # ⭐ (set/2026) as 16 que o `_qa/toque.js` MEDIU no navegador sem blindagem
+    #    — nenhuma estava nesta lista. Lista e memoria; quem manda e a medida
+    #    (toque.js, na banca local). Esta lista continua valendo no runner do
+    #    GitHub, onde nao ha Chromium — por isso ela recebe o que a medida achou.
+    u"base-dez", u"caixas-de-som", u"girar", u"ligar-pontos", u"linha-do-tempo",
+    u"medir", u"montar-frase", u"morfemas", u"passo-a-passo", u"raios-x",
+    u"relogio", u"rotular", u"teia-alimentar", u"tracar-caminho", u"tracar-letra",
 }
 
 
