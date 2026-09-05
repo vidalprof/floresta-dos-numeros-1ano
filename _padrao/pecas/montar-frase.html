@@ -178,6 +178,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
        box-shadow:0 6px 0 #c9a52f}
 /* tela baixa: encolhe a LETRA e a folga, nunca o alvo do dedo */
 @media (max-height:470px){.legenda{margin-bottom:4px}.pc{margin:3px 3px}.cam{margin:3px 3px}}
+
+/* ⭐ (set/2026) MEDIDO na cobaia (_qa/toque.js): este alvo escuta o dedo e nao tinha
+   touch-action — o dedo ARRASTA aqui: sem isto o iOS/Android le o gesto como rolagem e a peca some sob o dedo. */
+.pc{-ms-touch-action:none;touch-action:none}
 </style></head>
 <body>
 <div id="app"></div>

@@ -104,6 +104,11 @@ wait $PC || FALHOU=1; cat "$TMPQ/c.txt"
 #    por que ele nasce com uma lista de divida em vez de derrubar 44 de 79.
 echo "--- 5c) E NUMA ATIVIDADE DE TEMA CLARO? ------------"
 node _qa/tema_claro.js "$ARQ" $TELAS || FALHOU=1
+echo; echo "--- 5d) O DEDO ARRASTA OU A TELA ROLA? (touch-action medido) ---"
+# ⭐ (set/2026) mede no navegador o touch-action de todo elemento que escuta o
+#    dedo; 2 = nao se aplica (peca so de clique). Achou 19 pecas sem blindagem.
+node _qa/toque.js "$ARQ" $TELAS; _TQ=$?
+if [ "$_TQ" = "1" ]; then FALHOU=1; fi
 echo; echo "--- 6) TODA FIGURA APARECE? ------------------------"
 wait $PI || FALHOU=1; cat "$TMPQ/i.txt"
 echo; echo "--- 7) CABE NA TELA? DA PARA TOCAR? ----------------"

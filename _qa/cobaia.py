@@ -30,7 +30,13 @@ DEST = os.path.join(RAIZ, "_cobaia")
 # parte, ou sem "vitória" que o jogador saiba fechar sozinho):
 #   pintar/pintar-canvas/pintar-desenho/criar-desafio = PRODUÇÃO livre (a criança
 #     CRIA; não há resposta certa — o jogador não tem o que fechar).
-PULAR = {u"pintar", u"pintar-canvas", u"pintar-desenho", u"criar-desafio"}
+#   ⭐ (set/2026) MEDIDO: as quatro de producao livre ENTRAM na cobaia. A lista
+#   antiga dizia que "o jogador nao tem o que fechar" — suposicao. Medido com as
+#   88 na cobaia: `joga_banca.sh` fechou os 3 trechos (0..30, 30..60, 60..87)
+#   em 224 s, sem PRESO e sem erro de JS — o jogador fecha essas pecas pelo
+#   botao "Pronto", como a crianca. Cobaia com 84 deixava 4 pecas sem teste de
+#   motor; agora sao 88 de 88.
+PULAR = set()
 
 
 def mecanicas():
@@ -43,12 +49,20 @@ def build():
     mecs = mecanicas()
     fases = []
     for i, m in enumerate(mecs):
+        enun = u"Fixture de motor: a mecânica <b>%s</b> no exemplo dela." % m
+        # ⚠️ o `simulador` do motor E a cena da agua (chuva/rio/ponte) — o
+        #    `_qa/dinamicas.py` reprova, com razao, simulador fora de tema de
+        #    agua (resto de clone). Na cobaia o enunciado declara o tema dele,
+        #    para o portao medir a peca e nao o fixture.
+        if m == u"simulador":
+            enun = (u"Fixture de motor: a mecânica <b>simulador</b> no exemplo "
+                    u"dela — a <b>água</b> do rio sobe com a chuva.")
         fases.append({
             u"id": u"cb%02d" % i,
             u"mec": m,
             u"selo": m.upper().replace(u"-", u" "),
             u"conceito": u"objetivo1",
-            u"enunciado": u"Fixture de motor: a mecânica <b>%s</b> no exemplo dela." % m,
+            u"enunciado": enun,
             u"dica": u"Cobaia do motor — testa a peça %s dentro do motor." % m,
         })
     conteudo = {

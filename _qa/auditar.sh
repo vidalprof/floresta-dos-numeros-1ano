@@ -305,6 +305,11 @@ larga "$TMPQ/g_vozresp.txt"    node _qa/vozresposta.js   "$ARQ"
 larga "$TMPQ/g_falaescr.txt"   node _qa/fala_o_escrito.js "$PASTA"
 larga "$TMPQ/g_vaza.txt"       node _qa/vaza.js          "$ARQ" $TELAS
 larga "$TMPQ/g_vozdupla.txt"   node _qa/voz_dupla.js     "$PASTA"
+# ⭐ (set/2026) toque MEDIDO no navegador: o toque.py confere por LISTA de
+#    mecanicas; este pergunta ao Chromium o touch-action de todo elemento que
+#    escuta o dedo. Foi ele que achou 19 mecanicas fora da lista (base-dez,
+#    relogio, medir, tracar-letra...) rolando sob o dedo.
+larga "$TMPQ/g_toquejs.txt"    node _qa/toque.js         "$ARQ" $TELAS
 larga "$TMPQ/g_selo.txt"       node _qa/selo.js          "$ARQ"
 larga "$TMPQ/g_encaixe.txt"    node _qa/encaixe.js       "$ARQ" $TELAS
 larga "$TMPQ/g_visual.txt"     node _qa/visual.js        "$ARQ" $TELAS
@@ -497,6 +502,7 @@ portao "0j2 acento na grade" python3 _qa/acento.py "$PASTA"
 #    conferia se o botao da RESPOSTA toca. Ver o cabecalho do arquivo.
 if [ "$REPARO" != "1" ]; then
 colhe "0k alto-falante da resposta" "$TMPQ/g_vozresp.txt"
+colhe "1t toque medido (rola sob o dedo?)" "$TMPQ/g_toquejs.txt"
 fi
 echo "--- 0k) A FASE DIZ O QUE ELA QUER? (regra escondida no enunciado) -"
 portao "0k explica a regra" python3 _qa/explica.py "$ARQ"

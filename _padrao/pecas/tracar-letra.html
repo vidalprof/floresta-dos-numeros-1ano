@@ -298,6 +298,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    dos 4,5 que a casa exige. Na bancada nao aparecia: la o fundo e escuro.
    Cor escrita com o peso do CONTEINER, para ganhar de qualquer variante. */
 .folha .pt,.folha .pt.prox,.folha .pt.vez,.folha .pnum{color:#241d12}
+
+/* ⭐ (set/2026) MEDIDO na cobaia (_qa/toque.js): este alvo escuta o dedo e nao tinha
+   touch-action — o dedo ARRASTA aqui: sem isto o iOS/Android le o gesto como rolagem e a peca some sob o dedo. */
+.folha{-ms-touch-action:none;touch-action:none}
 </style></head>
 <body>
 <div id="app"></div>

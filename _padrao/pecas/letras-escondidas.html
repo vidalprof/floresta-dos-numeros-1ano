@@ -252,6 +252,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
   background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
   box-shadow:0 6px 0 #c9a52f}
+
+/* ⭐ (set/2026) MEDIDO na cobaia (_qa/toque.js): este alvo escuta o dedo e nao tinha
+   touch-action — alvo de TOQUE: tira o zoom do toque duplo e o atraso, sem travar a rolagem da pagina. */
+.leLetra{-ms-touch-action:manipulation;touch-action:manipulation}
 </style></head>
 <body>
 <div id="app"></div>
