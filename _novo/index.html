@@ -1,559 +1,1268 @@
 <!DOCTYPE html>
-<html lang="pt-BR"><head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>A Oficina da Divisão — Material Dourado</title>
-<!-- ============================================================
-   ATIVIDADE ESPECIAL (fora do motor EduVerse, a pedido do Marcos, set/2026):
-   raciocínio da DIVISÃO com CONTA ARMADA + MATERIAL DOURADO que o aluno MOVE.
-   A conta INTEIRA numa página só: as três casas (centena/dezena/unidade)
-   à vista ao mesmo tempo; os grupos enchem; a sobra é ARRASTADA para a casa
-   de baixo (a troca = o "abaixa"). Mouse e toque (Pointer Events). ES5, 1 HTML.
-   ============================================================ -->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNO dos Números — 3º, 4º e 5º ano</title>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--papel:#fbf4e4;--tinta:#2a1f12;--ouro:#e8b53a;--ouro-b:#a9781a;--ouro-c:#f6d876;
-  --verde:#2f8f4e;--azul:#2f6bd6;--vermelho:#c0453a}
-html,body{margin:0}
-body{overflow-x:hidden;font-family:"Segoe UI",system-ui,Arial,sans-serif;color:var(--papel);
-  background:#2b1e11;background:radial-gradient(1200px 600px at 50% -10%,rgba(255,220,150,.10),rgba(0,0,0,0)),
-  repeating-linear-gradient(90deg,#3a2a1a 0 44px,#3f2d1c 44px 88px);min-height:100vh}
-#wrap{max-width:1220px;margin:0 auto;padding:14px 16px 40px}
-header.top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
-.brand{font-size:22px;font-weight:800;background:linear-gradient(180deg,var(--ouro-c),var(--ouro));
-  -webkit-background-clip:text;background-clip:text;color:transparent}
-.sub{font-size:13px;opacity:.82}
-.barra{flex:1;min-width:140px;height:12px;border-radius:9px;background:rgba(0,0,0,.35);overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.5)}
-.barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ouro),var(--ouro-c));transition:width .5s}
-.placar{font-weight:800;font-size:14px;background:rgba(0,0,0,.3);padding:5px 12px;border-radius:20px}
-.placar b{color:var(--ouro-c)}
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap');
 
-.paineis{display:flex;gap:16px;align-items:flex-start;margin-top:8px}
-.card{background:var(--papel);color:var(--tinta);border-radius:18px;padding:14px 16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.6)}
-.esq{flex:1.9;min-width:0}.dir{flex:.85;min-width:0;display:flex;flex-direction:column}
-.rot{font-size:12px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#8a6a2e;margin-bottom:4px}
-.enun{font-size:20px;font-weight:800;text-align:center;margin:2px 0 6px;color:#3a2a12}
-.enun b{color:var(--ouro-b)}
-.instr{font-size:14.5px;font-weight:700;color:#4a3410;text-align:center;margin:2px 0 8px}
-.instr b{color:var(--ouro-b)}
+  :root{
+    --azul:#0099DD;
+    --vermelho:#E5202E;
+    --amarelo:#F7B500;
+    --verde:#3EA72D;
+    --fundo:#FFF7E6;
+    --escuro:#2B2440;
+    --branco:#FFFFFF;
+  }
 
-/* BANCO: as 3 casas lado a lado */
-.banco{display:flex;gap:8px}
-.bcol{flex:1;min-width:0;border-radius:12px;padding:7px 5px;background:rgba(160,120,30,.08);
-  border:1px solid rgba(160,120,30,.28);text-align:center}
-.bcol.on{background:rgba(232,181,58,.20);border-color:var(--ouro-b);box-shadow:0 0 0 2px rgba(232,181,58,.35)}
-.bcol.done{background:#eef7ef;border-color:#bfe3c8}
-.bcol.alvo{background:rgba(47,107,214,.16);border-color:var(--azul);outline:2px dashed var(--azul);outline-offset:1px}
-.bcol.sobra{background:rgba(192,69,58,.14);border-color:var(--vermelho);animation:pulsobra 1s ease-in-out infinite}
-@keyframes pulsobra{0%,100%{box-shadow:0 0 0 2px rgba(192,69,58,.30)}50%{box-shadow:0 0 0 6px rgba(192,69,58,.60)}}
-.bch{font-size:11px;font-weight:800;letter-spacing:.4px;color:#8a6a2e}
-.bqt{font-size:20px;font-weight:800;color:#3a2a12;line-height:1}
-.bblocos{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;align-items:flex-end;min-height:30px;margin-top:5px}
-.bcol.done .bqt{color:#1c6a37}
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
 
-/* GRUPOS */
-.grupos{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding:6px;border-radius:12px}
-.grupos.alvo{background:rgba(47,143,78,.10);outline:2px dashed var(--verde);outline-offset:2px}
-.grupo{flex:1 1 108px;min-width:98px;background:#fff;border:2px solid #e6d3a5;border-radius:12px;padding:8px 5px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.08)}
-.grupo.mira{border-color:var(--verde);animation:piscagrp 1s ease-in-out infinite}
-@keyframes piscagrp{0%,100%{box-shadow:0 0 0 2px rgba(47,143,78,.30)}50%{box-shadow:0 0 0 5px rgba(47,143,78,.55)}}
-.grupo .gh{font-size:11px;font-weight:800;color:#8a6a2e}
-.grow{display:flex;flex-wrap:wrap;gap:2px;justify-content:center;align-items:flex-end;min-height:16px;margin-top:3px}
-.grupo .gtot{font-size:15px;font-weight:800;color:var(--verde);margin-top:3px}
-.blk{filter:drop-shadow(0 1px 1px rgba(120,80,10,.35))}
-.arr{cursor:grab;touch-action:none}.arr:active{cursor:grabbing}
-.blk.pop{animation:pop .3s ease-out}
-@keyframes pop{0%{transform:scale(.2);opacity:0}70%{transform:scale(1.14)}100%{transform:scale(1);opacity:1}}
-.maisN{font-weight:800;color:#8a6a2e;font-size:12px;align-self:center}
-.sobrainfo{margin-top:8px;font-weight:800;font-size:14px;color:#8a6a2e;text-align:center}
-.sobrainfo b{color:var(--vermelho)}
+  body{
+    font-family:'Fredoka',sans-serif;
+    background:
+      radial-gradient(circle at 50% 0%, #2E86C9 0, transparent 55%),
+      radial-gradient(circle at 12% 88%, #1C6BB0 0, transparent 45%),
+      radial-gradient(circle at 88% 92%, #1C6BB0 0, transparent 45%),
+      linear-gradient(180deg, #2876B8 0%, #1B5D9E 100%);
+    background-attachment:fixed;
+    min-height:100vh;
+    color:#fff;
+    overflow-x:hidden;
+  }
 
-/* conta armada */
-.chave{font-family:"Cascadia Code",Consolas,"Courier New",monospace;text-align:center;background:#fff;border-radius:12px;padding:14px 10px;margin:2px auto}
-.crow{font-size:0;white-space:nowrap;line-height:1.15}
-.cell{display:inline-block;width:26px;height:30px;font-size:22px;font-weight:800;line-height:30px;vertical-align:top;font-family:inherit}
-.cell.q{color:var(--verde)}.cell.prod{color:var(--vermelho)}.cell.dv{color:#2a1f12}
-.cell.vbar{border-left:3px solid #2a1f12}.cell.fade{opacity:.28}.cell.divisor-lbl{color:#6e521f}
-.cell.qbox{height:30px;line-height:26px;font-size:15px;color:#b78f2f;border:2px dashed #d9be7a;border-radius:6px;background:#fffdf4}
-.cell.divb{border-bottom:3px solid #2a1f12}
-.cell.ubar{border-bottom:2px solid #2a1f12}
-.legenda{font-size:12px;text-align:center;color:#8a6a2e;margin-top:6px}
-.legenda .k{margin:0 5px;font-weight:800}.legenda .kq{color:var(--verde)}.legenda .kp{color:var(--vermelho)}
-.fala{background:linear-gradient(180deg,#fff8e6,#fdefc8);border-radius:14px;padding:10px 14px;font-size:15px;font-weight:600;color:#4a3410;margin-top:10px;min-height:22px;border:1px solid #efd89a}
-.fala b{color:var(--ouro-b)}
-.controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
-.btn{border:0;border-radius:14px;padding:12px 18px;font-size:15px;font-weight:800;cursor:pointer;min-height:48px;color:#3a2a0a;background:linear-gradient(180deg,var(--ouro-c),var(--ouro));box-shadow:0 5px 0 var(--ouro-b);transition:transform .1s}
-.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ouro-b)}
-.btn.sec{background:linear-gradient(180deg,#efe3c6,#e2d0a6);box-shadow:0 5px 0 #b8a26f;color:#4a3410}
-.btn.ok{background:linear-gradient(180deg,#7fdc95,var(--verde));box-shadow:0 5px 0 #1c6a37;color:#fff}
+  /* ---------- TOPO ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 22px; gap:12px; flex-wrap:wrap;
+  }
+  .logo{
+    font-family:'Baloo 2',sans-serif; font-weight:800;
+    font-size:clamp(28px,5vw,46px); letter-spacing:1px;
+    display:flex; gap:4px; align-items:center;
+  }
+  .logo .l{ display:inline-block; padding:2px 14px; border-radius:14px; color:#fff;
+    box-shadow:0 4px 0 rgba(0,0,0,.15); transform:rotate(-3deg);}
+  .logo .l:nth-child(1){ background:var(--vermelho); transform:rotate(-4deg);}
+  .logo .l:nth-child(2){ background:var(--azul); transform:rotate(3deg);}
+  .logo .l:nth-child(3){ background:var(--verde); transform:rotate(-2deg);}
+  .logo small{ font-family:'Fredoka'; font-size:16px; color:#EAF4FF; margin-left:10px; font-weight:600;}
 
-.tela-ini,.tela-fim{max-width:660px;margin:20px auto;text-align:center}
-.tela-ini .card,.tela-fim .card{padding:22px}
-.tela-ini h1{font-size:26px;margin:.2em 0;color:#3a2a12}
-.tela-ini p{font-size:16px;color:#5a4426;line-height:1.5}
-.nomebox{margin:6px 0 2px}
-.nomebox label{display:block;font-weight:800;color:#6e521f;font-size:15px;margin-bottom:6px}
-.nomebox input{width:min(320px,90%);height:48px;font-size:18px;font-weight:700;text-align:center;
-  border-radius:12px;border:2px solid var(--ouro-b);color:#3a2a12;background:#fff}
-.relat{text-align:left;background:#fff;border-radius:14px;padding:14px 16px;margin:10px 0;border:1px solid #e6d3a5;color:#3a2a12}
-.relat .li{font-size:15px;margin:6px 0}.relat b{color:var(--ouro-b)}
-.relat .pct{font-size:34px;font-weight:800;color:var(--verde)}
-.relat .parecer{font-weight:800;margin-top:6px}
-.digbox{background:linear-gradient(180deg,#fff8e6,#fdefc8);border:2px solid var(--ouro-b);border-radius:14px;padding:12px 14px;margin-top:10px;text-align:center}
-.digbox .dq{font-size:16px;font-weight:800;color:#4a3410;margin-bottom:8px;line-height:1.5}
-.digbox .dq b{color:var(--ouro-b)}
-.digbox .dlin{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;align-items:center;font-size:18px;font-weight:800;color:#3a2a12}
-.digbox input{width:96px;height:52px;font-size:26px;font-weight:800;text-align:center;border-radius:12px;border:2px solid var(--ouro-b);color:#2f6bd6;background:#fff}
-.digbox input.rlbl{color:var(--vermelho);width:74px}
-.digbox .dica{font-size:13px;font-weight:700;color:var(--vermelho);min-height:18px;margin-top:8px}
-.exemplo{display:flex;gap:14px;justify-content:center;align-items:flex-end;margin:14px 0}
-.exemplo .lab{font-size:12px;font-weight:800;color:#8a6a2e}
-.medalha{width:120px;height:120px;margin:6px auto;border-radius:50%;background:radial-gradient(circle at 38% 32%,var(--ouro-c),var(--ouro) 60%,var(--ouro-b));box-shadow:0 8px 20px rgba(0,0,0,.4),inset 0 3px 8px rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-size:52px;color:#7a5410}
-.hide{display:none!important}
-.confete{position:fixed;top:-12px;width:10px;height:14px;border-radius:2px;z-index:60;pointer-events:none}
-#ghost{position:fixed;z-index:80;pointer-events:none;opacity:.92;filter:drop-shadow(0 6px 6px rgba(0,0,0,.35))}
-@media (max-width:820px){
-  #wrap{padding:12px 10px 40px}
-  .paineis{flex-direction:column}.card{max-width:100%}
-  .cell{width:21px;font-size:18px}.enun{font-size:18px}
-  .top .barra{order:3;flex-basis:100%}
-  .grupo{flex:1 1 44%;min-width:0}
-}
-</style></head>
+  .btn{
+    font-family:'Baloo 2',sans-serif; font-weight:700; border:none; cursor:pointer;
+    border-radius:18px; padding:12px 22px; font-size:clamp(16px,2.4vw,22px);
+    color:#fff; box-shadow:0 5px 0 rgba(0,0,0,.18); transition:transform .08s, box-shadow .08s;
+  }
+  .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,.18);}
+  .btn-tutorial{ background:var(--escuro); }
+  .btn-novo{ background:var(--verde); }
+  .btn-voz{ background:#7A4FC0; }
+  .btn-voz.voz-off{ background:#8A8A8A; }
+  .topo-botoes{ display:flex; gap:10px; flex-wrap:wrap;}
+
+  /* ---------- MESA ---------- */
+  .mesa{ max-width:1000px; margin:0 auto; padding:8px 16px 40px; }
+
+  .jogador-area h2, .computador-area h2{
+    font-family:'Baloo 2'; font-size:clamp(18px,3vw,26px); margin-bottom:8px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .avatar{ font-size:30px;}
+
+  .computador-area{ text-align:center; margin-bottom:10px;}
+  .cartas-cpu{ display:flex; justify-content:center; min-height:90px; flex-wrap:wrap;}
+  /* ⚠️ O VERSO NÃO ESCREVE NADA, e isso é conserto medido (set/2026): as cartas
+     do robô são um LEQUE sobreposto (`margin:0 -14px`), então um "UNO" em cada
+     uma aparecia cortado e o topo da tela lia **"UNUNUNUNUNUNO"**. Verso de
+     carta de verdade não tem texto legível de lado nenhum: tem o oval branco
+     inclinado, que é a marca da carta. Ele identifica a carta e não vira sopa
+     de letra quando sobrepõe. */
+  .verso{
+    width:58px; height:86px; border-radius:12px; margin:0 -14px;
+    background:repeating-linear-gradient(45deg,#5B4B8A,#5B4B8A 8px,#43386B 8px,#43386B 16px);
+    border:3px solid #fff; box-shadow:0 4px 8px rgba(0,0,0,.2);
+    position:relative; overflow:hidden;
+  }
+  .verso::after{
+    content:''; position:absolute; left:50%; top:50%;
+    width:112%; height:46%; background:rgba(255,255,255,.92); border-radius:50%;
+    -webkit-transform:translate(-50%,-50%) rotate(-32deg);
+    transform:translate(-50%,-50%) rotate(-32deg);
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+
+  /* centro: monte + mensagem */
+  .centro{
+    display:flex; align-items:center; justify-content:center; gap:26px;
+    margin:18px 0; flex-wrap:wrap;
+  }
+  .monte{ text-align:center;}
+  .monte .rotulo{ font-weight:600; margin-bottom:6px; font-size:15px;}
+  /* ===== ESTILO CLÁSSICO DAS CARTAS ===== */
+  /* moldura branca externa + miolo colorido + oval branco inclinado + número central
+     + números pequenos nos cantos. Tudo desenhado em CSS, sem imagens. */
+  .uno{
+    position:relative; background:#fff; border-radius:14px;
+    box-shadow:0 6px 12px rgba(0,0,0,.28); font-family:'Baloo 2'; overflow:hidden;
+  }
+  .uno .miolo{ position:absolute; inset:6%; border-radius:10px; overflow:hidden; }
+  /* oval branco inclinado característico */
+  .uno .oval{
+    position:absolute; left:50%; top:50%;
+    width:118%; height:54%;
+    background:#fff; border-radius:50%;
+    transform:translate(-50%,-50%) rotate(-32deg);
+    box-shadow:0 6px 14px rgba(0,0,0,.22) inset, 0 2px 6px rgba(0,0,0,.18);
+  }
+  /* número grande central com contorno */
+  .uno .central{
+    position:absolute; left:0; top:0; width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:800; line-height:1; z-index:2;
+    -webkit-text-stroke:2px rgba(0,0,0,.18);
+    paint-order:stroke fill;
+  }
+  /* números pequenos nos cantos opostos */
+  .uno .canto{ position:absolute; font-weight:800; color:#fff; z-index:3; line-height:1;
+    text-shadow:0 1px 0 rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; }
+  .uno .canto.tl{ top:5%; left:7%; }
+  .uno .canto.br{ bottom:5%; right:7%; transform:rotate(180deg); }
+  .uno .canto .simb-svg{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.3)); width:var(--cc); height:var(--cc); display:block; }
+  .uno .central .simb-svg{ filter:drop-shadow(0 2px 3px rgba(0,0,0,.18)); width:var(--sc); height:var(--sc); display:block; }
+  .uno .simb-c, .uno .simb-k{ display:flex; align-items:center; justify-content:center; }
+  .uno .canto-mais2{ font-weight:800; }
+
+  .carta-grande{ width:120px; height:178px; --sc:96px; --cc:30px; }
+  .carta-grande .central{ font-size:78px; }
+  .carta-grande .canto{ font-size:26px; }
+  .carta-grande .canto-mais2{ font-size:20px; }
+  .comprar{
+    width:120px; height:178px; border-radius:18px; border:6px dashed var(--escuro);
+    background:#fff; display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center;
+    cursor:pointer; font-family:'Baloo 2'; font-weight:700; font-size:18px; color:var(--escuro);
+    transition:transform .08s;
+  }
+  .comprar:hover{ transform:scale(1.05); background:#FFF3D6;}
+  .comprar .big{ font-size:46px;}
+  .comprar.destaque{ border-color:var(--amarelo); background:#FFF8E0; animation:chama 1s ease-in-out infinite; }
+  @keyframes chama{
+    0%,100%{ box-shadow:0 0 0 0 rgba(247,181,0,.6); transform:scale(1); }
+    50%{ box-shadow:0 0 0 12px rgba(247,181,0,0); transform:scale(1.05); }
+  }
+
+  /* mensagem grande */
+  .mensagem{
+    text-align:center; font-family:'Baloo 2'; font-weight:700; color:#1a1633;
+    font-size:clamp(20px,4vw,32px); min-height:48px; margin:6px 0 14px;
+    padding:10px 18px; border-radius:18px; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,.1);
+    display:inline-block; max-width:90%;
+  }
+  .mensagem-wrap{ text-align:center;}
+
+  /* ⭐ A TARJA DA REGRA DA RODADA (o que faz disto uma ATIVIDADE, não só um jogo)
+     Ela precisa ser IMPOSSÍVEL de não ver: quando a regra entra, a criança tem
+     que entender NA HORA por que metade das cartas apagou. Tarja apagadinha =
+     criança achando que o jogo travou. Por isso: fundo quente, pulso de entrada
+     e narração junto (princípio da modalidade — figura + voz, nunca só texto).
+     ⚠️ `width:fit-content` + margens automáticas: encolhe até o texto em vez de
+     virar faixa esticada de ponta a ponta (a lição da Bancada da Divisão). */
+  .regra-tarja{
+    display:none; margin:2px auto 8px; padding:9px 20px; border-radius:16px;
+    background:linear-gradient(180deg,#FFE9A8,#FFC93C);
+    color:#3A2600; font-weight:800; font-size:clamp(16px,2.7vw,23px);
+    box-shadow:0 5px 0 #C98E00, 0 8px 16px rgba(0,0,0,.22);
+    border:3px solid #fff; line-height:1.25;
+    width:-webkit-fit-content; width:fit-content; max-width:94%;
+  }
+  .regra-tarja.on{ display:block; -webkit-animation:regraEntra .45s ease-out; animation:regraEntra .45s ease-out;}
+  .regra-tarja .rotulo-regra{ display:block; font-size:.62em; letter-spacing:1px; color:#7A5200;}
+  @-webkit-keyframes regraEntra{ 0%{transform:scale(.8);opacity:0} 60%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+  @keyframes regraEntra{ 0%{transform:scale(.8);opacity:0} 60%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+  @media (prefers-reduced-motion:reduce){ .regra-tarja.on{ -webkit-animation:none; animation:none; } }
+
+  /* mão do jogador */
+  .jogador-area{ margin-top:14px;}
+  .minhas-cartas{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:6px;}
+  .carta{
+    width:78px; height:116px; cursor:pointer; --sc:62px; --cc:19px;
+    transition:transform .12s, box-shadow .12s;
+  }
+  .carta .central{ font-size:48px; }
+  .carta .canto{ font-size:17px; }
+  .carta .canto-mais2{ font-size:13px; }
+  .carta.jogavel:hover{ transform:translateY(-16px) scale(1.06); box-shadow:0 14px 20px rgba(0,0,0,.3);}
+  .carta.jogavel{ outline:4px solid #FFE49B; outline-offset:1px; }
+  .carta.bloqueada{ filter:grayscale(.55) brightness(.92); cursor:not-allowed; opacity:.72;}
+
+  .c-azul .miolo{ background:var(--azul);}
+  .c-vermelho .miolo{ background:var(--vermelho);}
+  .c-amarelo .miolo{ background:var(--amarelo);}
+  .c-verde .miolo{ background:var(--verde);}
+  /* cor do número central = cor da carta (fica sobre o oval branco) */
+  .c-azul .central{ color:var(--azul);}
+  .c-vermelho .central{ color:var(--vermelho);}
+  .c-amarelo .central{ color:var(--amarelo);}
+  .c-verde .central{ color:var(--verde);}
+  .c-curinga .central{ color:#fff;}
+  /* cartas pretas (+2 e +4) */
+  .c-preta .miolo{ background:#15131F;}
+  .c-preta .central{ color:#fff;}
+
+  .dica{ text-align:center; font-size:16px; color:#EAF4FF; margin-top:8px; font-weight:600;}
+
+  /* ============================================================
+     ⭐⭐ MODO COMPACTO — O PC DA ESCOLA TEM 1024 x 600
+     ------------------------------------------------------------
+     ⚠️⚠️ DEFEITO MEDIDO (set/2026), e do pior tipo: em 1024x600 — que é
+     exatamente a tela dos computadores do laboratório — a MÃO DA CRIANÇA
+     ficava INTEIRAMENTE fora da tela. Ela via a mesa, a mensagem "toque numa
+     carta que brilha"... e nenhuma carta. Parecia que o jogo tinha travado.
+     É o mesmo defeito que o `_qa/leiaute.js` existe para pegar ("resposta
+     fora da área visível — o pior: parece que acabou"), e ele veio herdado
+     do jogo do 1º ano.
+
+     A regra da casa ao encolher: **encolhe a MOLDURA, nunca o ALVO**. Some
+     das margens, do cabeçalho, do verso do robô e do tamanho da LETRA — e o
+     mínimo que se pode tirar da carta da mão, que é onde o dedo mira. Medido
+     depois: nenhum alvo abaixo de 40px em nenhum dos 6 tamanhos.
+
+     O gatilho é ALTURA **ou** LARGURA, e os dois números foram medidos, não
+     chutados: 820px de altura porque o notebook de 1366x768 reprovava com as 7
+     cartas fora da tela; 560px de largura porque no celular a mão quebra em
+     duas fileiras e a página passava de 1000px numa tela de 844.
+     ============================================================ */
+  @media (max-height:820px), (max-width:560px){
+    header{ padding:6px 12px; }
+    /* ⚠️ o botão encolhe a LETRA, nunca abaixo de 40px de altura: é alvo de
+       dedo. A 1ª versão do modo compacto deixou os três em 32px — medido e
+       reprovado pelo próprio testador. */
+    .btn{ min-height:40px; }
+    .logo .l{ width:38px; height:38px; font-size:26px; }
+    .logo small{ font-size:13px; }
+    .btn{ padding:7px 12px; font-size:15px; }
+    .mesa{ padding:2px 12px 10px; }
+    .jogador-area h2, .computador-area h2{ font-size:17px; margin-bottom:2px; }
+    .avatar{ font-size:21px; }
+    .computador-area{ margin-bottom:2px; }
+    .cartas-cpu{ min-height:0; }
+    .verso{ width:42px; height:62px; margin:0 -11px; border-width:2px; border-radius:9px; }
+    .centro{ margin:6px 0; gap:18px; }
+    .monte .rotulo{ font-size:12px; margin-bottom:2px; }
+    .carta-grande{ width:88px; height:130px; --sc:70px; --cc:22px; }
+    .carta-grande .central{ font-size:56px; }
+    .carta-grande .canto{ font-size:19px; }
+    .carta-grande .canto-mais2{ font-size:15px; }
+    .comprar{ width:88px; height:130px; border-width:4px; font-size:15px; }
+    .comprar .big{ font-size:32px; }
+    .mensagem{ font-size:19px; min-height:0; margin:2px 0 4px; padding:6px 14px; }
+    .regra-tarja{ font-size:17px; padding:5px 14px; margin:0 auto 4px; }
+    .jogador-area{ margin-top:2px; }
+    .minhas-cartas{ gap:7px; padding:2px; }
+    .dica{ font-size:13px; margin-top:3px; }
+  }
+  /* tela MUITO baixa (netbook antigo) ou celular estreito (a mão quebra em duas
+     fileiras): aí sim a carta cede um pouco, mas continua MUITO acima do piso de
+     40px de alvo — 58px de largura é meio dedo e meio. */
+  @media (max-height:640px), (max-width:430px){
+    .carta{ width:60px; height:89px; --sc:47px; --cc:15px; }
+    .carta .central{ font-size:36px; }
+    .carta .canto{ font-size:13px; }
+    .minhas-cartas{ gap:5px; }
+    .dica{ display:none; }
+  }
+
+  /* ---------- SELETOR DE COR ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(58,46,92,.55); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
+  }
+  .overlay.ativo{ display:flex; }
+  .escolher-cor{
+    background:#fff; border-radius:26px; padding:26px; text-align:center; max-width:420px; width:100%;
+    box-shadow:0 20px 40px rgba(0,0,0,.3);
+  }
+  .escolher-cor h3{ font-family:'Baloo 2'; font-size:26px; margin-bottom:16px; color:#2B2440;}
+  .cores-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .cor-opcao{
+    height:90px; border-radius:18px; border:4px solid rgba(0,0,0,.15); cursor:pointer; color:#111;
+    font-family:'Baloo 2'; font-weight:800; font-size:22px; box-shadow:0 5px 0 rgba(0,0,0,.18);
+    transition:transform .08s; text-shadow:0 1px 0 rgba(255,255,255,.45);
+  }
+  .cor-opcao:active{ transform:translateY(4px);}
+  .cor-opcao.c-vermelho{ background:var(--vermelho);}
+  .cor-opcao.c-azul{ background:var(--azul);}
+  .cor-opcao.c-verde{ background:var(--verde);}
+  .cor-opcao.c-amarelo{ background:var(--amarelo);}
+
+  /* ---------- TUTORIAL ---------- */
+  .tutorial{
+    position:fixed; inset:0; background:rgba(58,46,92,.92); z-index:100;
+    display:none; align-items:center; justify-content:center; padding:18px;
+  }
+  .tutorial.ativo{ display:flex; }
+  .slide-box{
+    background:var(--branco); border-radius:30px; max-width:760px; width:100%;
+    padding:30px 28px 24px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.4);
+    position:relative;
+  }
+  .slide-num{ font-weight:700; color:#9a8fc0; font-size:16px; margin-bottom:6px;}
+  .mascote-linha{ display:flex; align-items:center; gap:18px; justify-content:center; flex-wrap:wrap;}
+  .mascote{ flex:0 0 auto; width:120px; animation:flutua 2.6s ease-in-out infinite;}
+  .mascote svg{ width:120px; height:150px; filter:drop-shadow(0 6px 8px rgba(0,0,0,.18));}
+  @keyframes flutua{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-8px) rotate(2deg);} }
+  .balao{
+    position:relative; background:#F1F6FF; border:4px solid #BBD4F0; border-radius:24px;
+    padding:18px 22px; max-width:480px; flex:1 1 320px; text-align:center; color:#1a1a1a;
+  }
+  .balao::before{
+    content:""; position:absolute; left:-22px; top:50%; transform:translateY(-50%);
+    border:14px solid transparent; border-right-color:#BBD4F0;
+  }
+  .balao::after{
+    content:""; position:absolute; left:-15px; top:50%; transform:translateY(-50%);
+    border:11px solid transparent; border-right-color:#F1F6FF;
+  }
+  .slide-emoji{ font-size:54px; line-height:1; margin:0 0 6px; display:block;}
+  .slide-box h2#slideTitulo{ font-family:'Baloo 2'; font-size:clamp(22px,4vw,32px); margin-bottom:12px; color:#1a1633 !important;}
+  .slide-box p#slideTexto{ font-size:clamp(17px,2.6vw,22px); line-height:1.5; color:#23203a !important; max-width:600px; margin:0 auto;}
+  .balao h2, .balao p{ color:#23203a !important;}
+  .slide-cartinha{ display:inline-flex; gap:10px; margin:12px 0; justify-content:center; flex-wrap:wrap;}
+  @media (max-width:560px){
+    .mascote-linha{ flex-direction:column; gap:6px;}
+    .balao::before,.balao::after{ left:50%; top:-22px; transform:translateX(-50%) rotate(90deg);}
+    .mascote{ width:92px;} .mascote svg{ width:92px; height:115px;}
+  }
+  .mini{
+    width:62px; height:92px; --sc:50px; --cc:15px;
+    font-size:38px;
+  }
+  .mini .central{ font-size:38px; }
+  .mini .canto{ font-size:13px; }
+  .mini .canto-mais2{ font-size:10px; }
+  .tut-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:22px; gap:10px;}
+  .bolinhas{ display:flex; gap:8px; justify-content:center; flex:1;}
+  .bolinha{ width:13px; height:13px; border-radius:50%; background:#D8D0EE; transition:background .2s, transform .2s;}
+  .bolinha.on{ background:var(--escuro); transform:scale(1.3);}
+  .btn-nav{ background:var(--azul); }
+  .btn-fechar-tut{ background:var(--vermelho); }
+  .btn-nav:disabled{ opacity:.35; cursor:default; transform:none; box-shadow:0 5px 0 rgba(0,0,0,.18);}
+
+  /* vitória confete simples */
+  .festa{ animation:pulo .6s ease infinite alternate;}
+  @keyframes pulo{ from{transform:scale(1);} to{transform:scale(1.06) rotate(-1deg);} }
+
+  @media (max-width:560px){
+    .carta{ width:64px; height:96px; --sc:52px; --cc:16px;}
+    .carta .central{ font-size:40px;}
+    .carta .canto{ font-size:14px;}
+    .carta-grande,.comprar{ width:100px; height:150px;}
+    .carta-grande{ --sc:80px; --cc:25px;}
+    .carta-grande .central{ font-size:64px;}
+    .carta-grande .canto{ font-size:22px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
 <body>
-<div id="wrap">
-  <header class="top">
-    <div><div class="brand">A Oficina da Divisão</div>
-      <div class="sub">Reparta o material dourado · a conta armada inteira ao lado</div></div>
-    <div class="barra"><i id="barra"></i></div>
-    <div class="placar">Conta <b id="pnum">1</b>/<span id="ptot">32</span></div>
-  </header>
 
-  <section id="ini" class="tela-ini">
-    <div class="card">
-      <h1>Reparta o material dourado</h1>
-      <p>Todo número vira <b>material dourado</b>: <b>milhares</b> (cubões),
-      <b>centenas</b> (placas), <b>dezenas</b> (barras) e <b>unidades</b> (cubinhos).
-      Você <b>arrasta</b> os blocos e dá <b>um a cada grupo</b>, por vez, começando
-      pelos <b>maiores</b>.
-      O que <b>sobrar</b> você arrasta para a casa de baixo: <b>troca</b> por 10 —
-      é o <b>abaixa</b> da conta armada, no seu olho!</p>
-      <div class="exemplo" id="exBlocos"></div>
-      <div class="nomebox">
-        <label for="nome">Qual é o seu nome?</label>
-        <input id="nome" type="text" maxlength="28" autocomplete="off" placeholder="digite seu nome">
-      </div>
-      <div class="controls"><button class="btn" id="comecar">Começar</button></div>
+<header>
+  <div class="logo">
+    <span class="l">U</span><span class="l">N</span><span class="l">O</span>
+    <small id="subTitulo">dos Números</small>
+  </div>
+  <div class="topo-botoes">
+    <button class="btn btn-voz" id="btnVoz" onclick="alternarVoz()">🔊 Voz</button>
+    <button class="btn btn-tutorial" onclick="abrirTutorial()">📖 Tutorial</button>
+    <button class="btn btn-novo" onclick="novoJogo()">🔄 Novo Jogo</button>
+  </div>
+</header>
+
+<main class="mesa">
+
+  <section class="computador-area">
+    <h2><span class="avatar">🤖</span> Robô <span id="qtdCpu">(7 cartas)</span></h2>
+    <div class="cartas-cpu" id="cartasCpu"></div>
+  </section>
+
+  <div class="mensagem-wrap">
+    <div class="regra-tarja" id="regraTarja" role="status" aria-live="polite">
+      <span class="rotulo-regra">REGRA DESTA RODADA</span>
+      <span id="regraTexto"></span>
+    </div>
+    <div class="mensagem" id="mensagem">Toque em uma carta para começar!</div>
+  </div>
+
+  <section class="centro">
+    <div class="monte">
+      <div class="rotulo">Carta da mesa</div>
+      <div class="carta-grande" id="cartaMesa"><span class="num">?</span></div>
+    </div>
+    <div class="monte">
+      <div class="rotulo">Comprar</div>
+      <button class="comprar" id="btnComprar" onclick="comprarCarta()">
+        <span class="big">🃏</span>
+        <span>Pegar 1</span>
+      </button>
     </div>
   </section>
 
-  <section id="jogo" class="hide">
-    <div class="paineis">
-      <div class="card esq">
-        <div class="rot">Material dourado — arraste para repartir</div>
-        <div class="enun" id="enun"></div>
-        <div class="instr" id="instr"></div>
-        <div class="banco" id="banco"></div>
-        <div class="grupos" id="grupos"></div>
-        <div class="sobrainfo" id="sobrainfo"></div>
-      </div>
-      <div class="card dir">
-        <div class="rot">Conta armada</div>
-        <div class="chave" id="chave"></div>
-        <div class="legenda"><span class="k kq">quociente</span><span class="k kp">quanto usei</span></div>
-        <div class="fala" id="fala"></div>
-        <div class="controls" id="controls"></div>
-      </div>
-    </div>
+  <section class="jogador-area">
+    <h2><span class="avatar">🧒</span> Você <span id="qtdEu">(7 cartas)</span></h2>
+    <div class="minhas-cartas" id="minhasCartas"></div>
+    <div class="dica" id="dica">As cartas que brilham são as que você pode jogar! ✨</div>
   </section>
 
-  <section id="fim" class="tela-fim hide">
-    <div class="card"><div class="medalha">★</div>
-      <h1 id="fimtit">Mestre da divisão!</h1>
-      <p id="fimtxt"></p>
-      <div class="controls"><button class="btn" id="denovo">Jogar de novo</button></div>
+</main>
+
+<!-- Seletor de cor (curinga) -->
+<div class="overlay" id="overlayCor">
+  <div class="escolher-cor">
+    <h3>Escolha uma cor! 🎨</h3>
+    <div class="cores-grid">
+      <button class="cor-opcao c-vermelho" onclick="escolherCor('vermelho')">Vermelho</button>
+      <button class="cor-opcao c-azul" onclick="escolherCor('azul')">Azul</button>
+      <button class="cor-opcao c-verde" onclick="escolherCor('verde')">Verde</button>
+      <button class="cor-opcao c-amarelo" onclick="escolherCor('amarelo')">Amarelo</button>
     </div>
-  </section>
+  </div>
 </div>
-<div id="ghost" class="hide"></div>
+
+<!-- TUTORIAL -->
+<div class="tutorial" id="tutorial">
+  <div class="slide-box">
+    <div class="slide-num" id="slideNum">Passo 1 de 6</div>
+    <div class="mascote-linha">
+      <div class="mascote" id="mascote">
+        <svg viewBox="0 0 120 150" aria-hidden="true">
+          <!-- antena -->
+          <line x1="60" y1="12" x2="60" y2="30" stroke="#1B5D9E" stroke-width="5"/>
+          <circle cx="60" cy="10" r="7" fill="#E5202E"/>
+          <!-- cabeça -->
+          <rect x="22" y="28" width="76" height="62" rx="16" fill="#9FB8CC" stroke="#1B5D9E" stroke-width="5"/>
+          <!-- visor -->
+          <rect x="32" y="40" width="56" height="30" rx="10" fill="#16324B"/>
+          <circle cx="48" cy="55" r="7" fill="#56E0FF"/>
+          <circle cx="72" cy="55" r="7" fill="#56E0FF"/>
+          <circle cx="50" cy="52" r="2.4" fill="#fff"/>
+          <circle cx="74" cy="52" r="2.4" fill="#fff"/>
+          <!-- boca -->
+          <rect x="46" y="78" width="28" height="7" rx="3.5" fill="#1B5D9E"/>
+          <!-- orelhas -->
+          <rect x="14" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <rect x="98" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
+          <!-- corpo -->
+          <rect x="32" y="92" width="56" height="44" rx="12" fill="#C8D7E4" stroke="#1B5D9E" stroke-width="5"/>
+          <circle cx="60" cy="114" r="9" fill="#F7B500" stroke="#1B5D9E" stroke-width="3"/>
+        </svg>
+      </div>
+      <div class="balao">
+        <span class="slide-emoji" id="slideEmoji">👋</span>
+        <h2 id="slideTitulo"></h2>
+        <div id="slideCartas"></div>
+        <p id="slideTexto"></p>
+      </div>
+    </div>
+    <div class="tut-nav">
+      <button class="btn btn-nav" id="btnAnterior" onclick="mudarSlide(-1)">◀ Voltar</button>
+      <div class="bolinhas" id="bolinhas"></div>
+      <button class="btn btn-nav" id="btnProximo" onclick="mudarSlide(1)">Avançar ▶</button>
+      <button class="btn btn-fechar-tut" id="btnComecar" onclick="fecharTutorial()" style="display:none;">Vamos jogar! 🎉</button>
+    </div>
+  </div>
+</div>
 
 <script>
-/* ===== blocos SVG ===== */
-/* UNIDADE = um cubinho 3D pequeno e SÓLIDO (sem grade) — o menor de todos */
-function svgUnidade(px){var s=px||16;var d=Math.max(3,Math.round(s*0.26)),f=s-d;
-  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'">'+
-    '<polygon points="0,'+d+' '+d+',0 '+s+',0 '+f+','+d+'" fill="#f7db85" stroke="#a9781a" stroke-width="1"/>'+
-    '<polygon points="'+f+','+d+' '+s+',0 '+s+','+f+' '+f+','+(d+f)+'" fill="#d29f2c" stroke="#a9781a" stroke-width="1"/>'+
-    '<rect x="0" y="'+d+'" width="'+f+'" height="'+f+'" fill="#efc451" stroke="#a9781a" stroke-width="1.2"/>'+
-    '<rect x="'+(f*0.2).toFixed(1)+'" y="'+(d+f*0.2).toFixed(1)+'" width="'+(f*0.28).toFixed(1)+'" height="'+(f*0.28).toFixed(1)+'" fill="#fbe6a4" opacity=".65"/></svg>';}
-/* DEZENA = barra vertical de 10 cubinhos (fininha e comprida) */
-function svgDezena(px){var h=px||44;var w=Math.max(7,Math.round(h*0.17));var seg='',gap=(h-2)/10,i;
-  for(i=0;i<10;i++){seg+='<rect x="1.2" y="'+(1+gap*i).toFixed(1)+'" width="'+(w-2.4)+'" height="'+(gap-0.9).toFixed(1)+'" fill="#efc451" stroke="#a9781a" stroke-width="0.9"/>';}
-  return '<svg class="blk" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'"><rect x="0.6" y="0.6" width="'+(w-1.2)+'" height="'+(h-1.2)+'" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.5"/>'+seg+'</svg>';}
-/* CENTENA = placa CHAPADA (grade 10×10) com espessura embaixo — NÃO é cubo */
-function svgCentena(px){var s=px||44;var ox=2,oy=2,lado=s-6,st=lado/10,g='',i;
-  for(i=1;i<10;i++){g+='<line x1="'+(ox+st*i).toFixed(1)+'" y1="'+oy+'" x2="'+(ox+st*i).toFixed(1)+'" y2="'+(oy+lado).toFixed(1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".55"/>';
-    g+='<line x1="'+ox+'" y1="'+(oy+st*i).toFixed(1)+'" x2="'+(ox+lado).toFixed(1)+'" y2="'+(oy+st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.7" opacity=".55"/>';}
-  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'">'+
-    '<rect x="'+(ox+3)+'" y="'+(oy+3)+'" width="'+lado+'" height="'+lado+'" rx="2" fill="#c99a2e"/>'+
-    '<rect x="'+ox+'" y="'+oy+'" width="'+lado+'" height="'+lado+'" rx="2" fill="#efc451" stroke="#a9781a" stroke-width="1.5"/>'+g+'</svg>';}
-function svgMilhar(px){var s=px||54;var d=Math.round(s*0.17),f=s-d,grid='',st=f/10,i;
-  for(i=1;i<10;i++){grid+='<line x1="'+(st*i).toFixed(1)+'" y1="'+d+'" x2="'+(st*i).toFixed(1)+'" y2="'+(d+f)+'" stroke="#a9781a" stroke-width="0.5" opacity=".5"/>';
-    grid+='<line x1="0" y1="'+(d+st*i).toFixed(1)+'" x2="'+f+'" y2="'+(d+st*i).toFixed(1)+'" stroke="#a9781a" stroke-width="0.5" opacity=".5"/>';}
-  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'">'+
-    '<polygon points="0,'+d+' '+d+',0 '+s+',0 '+f+','+d+'" fill="#f7db85" stroke="#a9781a" stroke-width="1.2"/>'+
-    '<polygon points="'+f+','+d+' '+s+',0 '+s+','+f+' '+f+','+(d+f)+'" fill="#d9a531" stroke="#a9781a" stroke-width="1.2"/>'+
-    '<rect x="0" y="'+d+'" width="'+f+'" height="'+f+'" fill="#efc451" stroke="#a9781a" stroke-width="1.4"/>'+grid+'</svg>';}
-function bloco(kind,px,extra){var s=kind===0?svgMilhar(px):kind===1?svgCentena(px):kind===2?svgDezena(px):svgUnidade(px);if(extra)s=s.replace('class="blk"','class="blk '+extra+'"');return s;}
-function cluster(kind,n,px,cap,drag){cap=cap||14;var out="",m=Math.min(n,cap);for(var i=0;i<m;i++)out+=bloco(kind,px,drag?"arr pop":"pop");if(n>cap)out+='<span class="maisN">…'+n+'</span>';return out;}
+/* ============ DADOS DO JOGO ============ */
+const CORES = ['vermelho','azul','verde','amarelo'];
+const ICONES = { pula:'🚫', mais2:'➕2️⃣', curinga:'🌈' };
+let baralho = [], mao = [], cpu = [], mesa = null, corAtiva = null;
+let vezDoJogador = true, esperandoCor = false, curingaPendente = null;
 
-/* ===== as 20 contas ===== */
-var PROBS=[
- /* A) 2 algarismos, SEM troca — fáceis */
- {n:24,d:2},{n:39,d:3},{n:48,d:4},{n:55,d:5},{n:66,d:6},{n:88,d:4},
- /* B) 2 algarismos, COM troca (dezena->unidade) */
- {n:36,d:2},{n:45,d:3},{n:52,d:4},{n:72,d:3},{n:84,d:6},{n:91,d:7},
- /* C) 3 algarismos */
- {n:128,d:4},{n:156,d:4},{n:168,d:3},{n:245,d:5},{n:224,d:4},{n:372,d:3},
- /* D) 3 algarismos, troca dupla / zero no quociente */
- {n:375,d:3},{n:528,d:4},{n:648,d:6},{n:432,d:4},{n:505,d:5},
- /* E) 4 algarismos (o MILHAR) */
- {n:1236,d:3},{n:2480,d:4},{n:3648,d:6},{n:5124,d:4},{n:1608,d:8},
- /* F) com RESTO (crescente) */
- {n:50,d:4},{n:155,d:4},{n:229,d:3},{n:1234,d:4}
-];
-var NOMES=["milhar","centena","dezena","unidade"],NOMESP=["milhares","centenas","dezenas","unidades"];
-/* gênero: milhar é MASCULINO (um/o); centena, dezena, unidade são FEMININOS (uma/a) */
-var ARTUM=["Um","Uma","Uma","Uma"];
-
-function planeja(n,d){var ds=String(n).split("").map(Number),L=ds.length,offset=4-L,passos=[],resto=0;
-  for(var i=0;i<L;i++){var place=offset+i,trazido=resto*10,disp=trazido+ds[i],q=Math.floor(disp/d),r=disp%d;
-    passos.push({place:place,digito:ds[i],trazido:trazido,disp:disp,q:q,usado:q*d,resto:r,ultimo:(i===L-1)});resto=r;}
-  return {n:n,d:d,ds:ds,L:L,offset:offset,passos:passos,quo:Math.floor(n/d),rem:n%d};}
-
-/* ===== estado ===== */
-var idx=0,plan=null,acertos=0,errouNessa=false,alunoNome="",mostraQuo=false,ateStep=-1;
-/* mesa: sup[place]=blocos ainda no banco (por casa REAL 0=cent,1=dez,2=uni);
-   grp[g][place]=blocos que o grupo g recebeu naquela casa; pativa=casa REAL ativa; fase */
-var sup,grp,pativa,fase,sobraAtual;
-var $=function(id){return document.getElementById(id);};
-function show(id){$(id).className=$(id).className.replace(/\bhide\b/,"").trim();}
-function hide(id){if($(id).className.indexOf("hide")<0)$(id).className+=" hide";}
-
-/* som */
-var AC=null;function ac(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
-function nota(f,dur,vol,tipo,at){var c=ac();if(!c)return;var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(at||0);o.type=tipo||"triangle";o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.16,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
-function sOk(){nota(523,.3,.16,"triangle",0);nota(659,.3,.15,"triangle",.05);nota(784,.34,.14,"triangle",.1);}
-function sPoe(){nota(440,.06,.13,"triangle",0);nota(660,.08,.11,"triangle",.04);}
-function sTroca(){nota(300,.12,.13,"sine",0);nota(620,.16,.12,"sine",.06);}
-function sNao(){nota(280,.13,.1,"sine",0);}
-document.addEventListener("pointerdown",function(){ac();},false);
-
-$("exBlocos").innerHTML='<div><div class="lab">1 milhar</div>'+bloco(0,60)+'</div>'+
-  '<div><div class="lab">1 centena</div>'+bloco(1,48)+'</div>'+
-  '<div><div class="lab">1 dezena</div>'+bloco(2,48)+'</div>'+
-  '<div><div class="lab">1 unidade</div>'+bloco(3,18)+'</div>';
-
-/* ===== conta armada (padrão brasileiro: quociente EMBAIXO do divisor) ===== */
-function cell(t,c){return '<span class="cell '+(c||"")+'">'+(t===""?"&nbsp;":t)+'</span>';}
-function passoDeCasa(place){ /* índice do passo (na lista) que corresponde à casa REAL `place` */
-  for(var i=0;i<plan.passos.length;i++) if(plan.passos[i].place===place) return i; return -1;
-}
-/* ⭐ A CONTA ARMADA MOSTRA O ALGORITMO SENDO FEITO, alinhado (números embaixo
-   de números): o produto (quanto usei) subtraído sob cada casa, o "abaixa" e o
-   resto — padrão brasileiro, com o QUOCIENTE embaixo do divisor. Vai preenchendo
-   conforme o aluno reparte cada casa (ateStep). O quociente fica em CAIXAS
-   vazias para o aluno DIGITAR; só vira número quando ele ACERTA. */
-var PAD=1;
-function firstNonZeroQ(){for(var i=0;i<plan.passos.length;i++)if(plan.passos[i].q>0)return i;return plan.L-1;}
-/* uma linha da esquerda: coloca `str` terminando na coluna `endCol` do dividendo */
-function esqCells(str,endCol,cls,borda){
-  var tot=PAD+plan.L, arr=[], i;
-  for(i=0;i<tot;i++)arr.push(null);
-  var start=PAD+endCol-(str.length-1);
-  for(i=0;i<str.length;i++){var idx=start+i;if(idx>=0&&idx<tot)arr[idx]=str.charAt(i);}
-  var out="";
-  for(i=0;i<tot;i++){ out+=(arr[i]===null)?cell(""):cell(arr[i],cls+(borda?" ubar":"")); }
-  return out;
-}
-function esqBranco(){ var o="",i; for(i=0;i<PAD+plan.L;i++)o+=cell(""); return o; }
-function dirDivisor(RW){ var dv=String(plan.d),o="",i; for(i=0;i<RW;i++)o+=cell(i<dv.length?dv[i]:"","dv divisor-lbl divb"); return o; }
-function dirQuo(RW,mostra){ var q=String(plan.quo),o="",i; for(i=0;i<RW;i++){ if(i<q.length)o+=(mostra?cell(q.charAt(i),"q"):cell("","qbox")); else o+=cell(""); } return o; }
-function dirBranco(RW){ var o="",i; for(i=0;i<RW;i++)o+=cell(""); return o; }
-function contaRows(mostraQuoNum, ate){
-  var L=plan.L, ds=plan.ds, qLen=String(plan.quo).length, RW=Math.max(1,qLen), fnz=firstNonZeroQ();
-  var rows=[], s, ps, bring;
-  rows.push({l:esqCells(ds.join(""),L-1,"dv",false), r:dirDivisor(RW)});
-  var quoPosto=false;
-  if(ate>=fnz){
-    for(s=fnz; s<=ate && s<L; s++){
-      ps=plan.passos[s];
-      rows.push({l:esqCells("-"+ps.usado,s,"prod",true), r:(quoPosto?dirBranco(RW):dirQuo(RW,mostraQuoNum))});
-      quoPosto=true;
-      if(s<L-1){ bring=(ps.resto>0?String(ps.resto):"")+String(ds[s+1]); rows.push({l:esqCells(bring,s+1,"dv",false), r:dirBranco(RW)}); }
-      else{ rows.push({l:esqCells(String(ps.resto),L-1,"prod",false), r:dirBranco(RW)}); }
+function criarBaralho(){
+  const b = [];
+  CORES.forEach(cor=>{
+    // um 0 por cor; dois de cada número 1 a 9
+    b.push({cor, tipo:'num', valor:0});
+    for(let n=1;n<=9;n++){ b.push({cor, tipo:'num', valor:n}); b.push({cor, tipo:'num', valor:n}); }
+    // duas de cada carta de ação por cor
+    for(let k=0;k<2;k++){
+      b.push({cor, tipo:'pula'});
+      b.push({cor, tipo:'inverte'});
+      b.push({cor, tipo:'mais2'});
     }
-  }
-  if(!quoPosto) rows.push({l:esqBranco(), r:dirQuo(RW,mostraQuoNum)});
-  var html="",k; for(k=0;k<rows.length;k++) html+='<div class="crow">'+rows[k].l+cell("│","vbar")+rows[k].r+'</div>';
-  return html;
-}
-function pintaChave(){ $("chave").innerHTML = contaRows(mostraQuo, ateStep); }
-function atualizaChave(){ pintaChave(); }
-
-/* ===== a mesa (banco + grupos) numa página ===== */
-/* blocos maiores (área de trabalho grande, fácil de manusear) */
-function usaPx(place){return [54,44,44,15][place];}   /* milhar(cubo) > centena(placa)=dezena(barra) > unidade(cubinho) */
-function grpPx(place){return [32,26,28,11][place];}   /* nos GRUPOS */
-
-function renderBanco(){
-  var h="";
-  for(var place=0;place<4;place++){
-    if(!temCasa(place)) continue;                 /* número sem essa casa (ex.: 2 alg) */
-    var cls = place<pativa?"done":(place===pativa?"on":"");
-    if(fase==="trocar" && place===pativa) cls="on sobra";   /* a sobra que precisa ser trocada (pulsa) */
-    if(fase==="trocar" && place===pativa+1) cls="alvo"; /* destino da troca */
-    var qt = place<pativa? "✓" : sup[place];
-    h+='<div class="bcol '+cls+'" data-casa="'+place+'"><div class="bch">'+NOMESP[place].toUpperCase()+'</div>'+
-       '<div class="bqt">'+qt+'</div>'+
-       '<div class="bblocos">'+(place<pativa?"":cluster(place,sup[place],usaPx(place),18,(place===pativa&&(fase==="repartir"||fase==="trocar"))))+'</div></div>';
-  }
-  $("banco").innerHTML=h;
-}
-function temCasa(place){ /* a casa existe no número? (offset) */ return place>=plan.offset; }
-
-function minCasa(){var m=1e9;for(var g=0;g<plan.d;g++)if(grp[g][pativa]<m)m=grp[g][pativa];return m;}
-function maxCasa(){var m=0;for(var g=0;g<plan.d;g++)if(grp[g][pativa]>m)m=grp[g][pativa];return m;}
-/* o grupo g ainda espera bloco NESTA rodada? (está no mínimo e há bloco no banco) */
-function faltaNoGrupo(g){ return fase==="repartir" && sup[pativa]>0 && grp[g][pativa]===minCasa(); }
-function renderGrupos(){
-  var h="";
-  for(var g=0;g<plan.d;g++){
-    var mira=faltaNoGrupo(g)?" mira":"";
-    h+='<div class="grupo'+mira+'" data-g="'+g+'"><div class="gh">GRUPO '+(g+1)+'</div>';
-    for(var place=plan.offset;place<4;place++){
-      var n=grp[g][place];
-      if(n>0){ h+='<div class="grow">'+cluster(place,n,grpPx(place),10,false)+'</div>'; }
-    }
-    /* total do grupo em número (o quociente que ele está formando) */
-    var valor=valorGrupo(g);
-    h+='<div class="gtot">'+(valor>0?valor:"—")+'</div></div>';
-  }
-  $("grupos").className="grupos"+(fase==="repartir"?" alvo":"");
-  $("grupos").innerHTML=h;
-}
-function valorGrupo(g){var v=0;for(var place=plan.offset;place<4;place++){v+=grp[g][place]*Math.pow(10,3-place);}return v;}
-
-function renderMesa(){ renderBanco(); renderGrupos(); atualizaChave(); ligaArrasto(); }
-
-/* ===== regras de repartir — TUDO MANUAL, grupo por grupo =====
-   ⭐ Cada arrasto leva UM bloco para UM grupo só (o que a criança escolheu).
-   O sistema NUNCA preenche outro grupo sozinho. Para ser justo, só aceita no
-   grupo que ainda está no MÍNIMO da rodada (os que "piscam"); assim ela dá um
-   para cada, um de cada vez, até não dar mais uma rodada inteira (= a sobra). */
-function podeRepartir(){ return sup[pativa]>=plan.d; }
-function repartirUm(g){
-  if(fase!=="repartir") return;
-  if(sup[pativa]<=0) return;
-  var mn=minCasa();
-  /* rodada nova só começa se der para TODOS (senão o resto é a sobra) */
-  if(mn===maxCasa() && sup[pativa]<plan.d){ terminaCasa(); return; }
-  if(grp[g][pativa]!==mn){
-    sNao();
-    $("fala").innerHTML="Esse grupo já recebeu nesta rodada. D&ecirc; para um que ainda <b>falta</b> (os que piscam).";
-    return;
-  }
-  grp[g][pativa]++; sup[pativa]--; sPoe();
-  /* completou uma rodada e já não dá outra? então o que sobrou é a sobra */
-  if(minCasa()===maxCasa() && sup[pativa]<plan.d){ terminaCasa(); return; }
-  renderMesa();
-  $("fala").innerHTML=ARTUM[pativa]+" "+NOMES[pativa]+" para o <b>grupo "+(g+1)+"</b>. Continue dando <b>um para cada grupo</b>.";
-}
-function grupoAlvo(el){ while(el){ if(el.getAttribute && el.getAttribute("data-g")!=null) return parseInt(el.getAttribute("data-g"),10); el=el.parentNode; } return -1; }
-
-function terminaCasa(){
-  var p=plan.passos[passoDeCasa(pativa)];
-  ateStep=passoDeCasa(pativa);   /* esta casa entra na conta armada (o produto é escrito) */
-  sobraAtual=sup[pativa];
-  var cada=grp[0][pativa];
-  var msg="Cada grupo ficou com <b>"+cada+"</b> "+(cada===1?NOMES[pativa]:NOMESP[pativa])+". ";
-  if(p.ultimo){
-    fase="digitar"; sobraAtual=sup[pativa];
-    msg+= sobraAtual>0? ("Sobr"+(sobraAtual===1?"ou":"aram")+" <b>"+sobraAtual+"</b> "+(sobraAtual===1?NOMES[pativa]:NOMESP[pativa])+" — esse é o <b>resto</b>.") : "Não sobrou nada — divisão exata!";
-    renderMesa();
-    atualizaChaveFinal();
-    pedeResultado(msg);
-    return;
-  }
-  if(sobraAtual>0){
-    fase="trocar";
-    var nomeS=(sobraAtual===1?NOMES[pativa]:NOMESP[pativa]);
-    msg+="Sobr"+(sobraAtual===1?"ou":"aram")+" <b>"+sobraAtual+"</b> "+nomeS+" — e isso <b>não dá para repartir</b> entre <b>"+plan.d+"</b> grupos. Arraste a <b>sobra</b> para as <b>"+NOMESP[pativa+1].toUpperCase()+"</b>: cada "+NOMES[pativa]+" vira <b>10</b> "+NOMESP[pativa+1]+"!";
-    $("sobrainfo").innerHTML="Arraste a sobra (<b>"+sobraAtual+"</b> "+nomeS+") para as <b>"+NOMESP[pativa+1]+"</b>.";
-    $("controls").innerHTML="";
-    $("fala").innerHTML=msg;
-    renderMesa();
-    atualizaChaveFecha();
-  }else{
-    /* nada a trocar — segue sozinho para a próxima casa (sem botão) */
-    fase="passa";
-    msg+="Divis&atilde;o exata nesta casa. Vamos &agrave;s "+NOMESP[pativa+1]+"&hellip;";
-    $("sobrainfo").innerHTML=""; $("controls").innerHTML="";
-    $("fala").innerHTML=msg;
-    renderMesa();
-    atualizaChaveFecha();
-    setTimeout(avanca, 750);
-  }
-}
-function atualizaChaveFecha(){ pintaChave(); }
-function atualizaChaveFinal(){ pintaChave(); }
-
-function trocar(){
-  sTroca();
-  var prox=pativa+1;
-  sup[prox]+=sobraAtual*10; sup[pativa]=0;
-  $("fala").innerHTML="Troquei <b>"+sobraAtual+"</b> "+(sobraAtual===1?NOMES[pativa]:NOMESP[pativa])+
-    " por <b>"+(sobraAtual*10)+"</b> "+NOMESP[prox]+" — o <b>abaixa</b> da conta!";
-  $("sobrainfo").innerHTML="";
-  avanca();
-}
-function avanca(){ pativa++; fase="repartir"; comecaCasa(); }
-
-function comecaCasa(){
-  /* pula casas que não existem no número (não deveria, offset cobre) */
-  var p=plan.passos[passoDeCasa(pativa)];
-  var vindo=p.trazido>0?("Vieram <b>"+p.trazido+"</b> trocadas de cima; agora são <b>"+sup[pativa]+"</b> "+NOMESP[pativa]+". "):"";
-  $("instr").innerHTML=vindo+"Arraste <b>um bloco para cada grupo</b>, um de cada vez (os que <b>piscam</b> ainda faltam).";
-  $("fala").innerHTML="Reparta as <b>"+NOMESP[pativa]+"</b>: arraste <b>um para cada grupo</b>. Repita enquanto der para todos.";
-  $("controls").innerHTML="";
-  $("sobrainfo").innerHTML="";
-  renderMesa();
-  if(!podeRepartir()) terminaCasa();   /* casa que já começa sem repartir (1 centena ÷ 4) */
-}
-
-/* ===== arrasto ===== */
-function ligaArrasto(){
-  var alvo=(fase==="repartir")?"grupos":(fase==="trocar"?"banco":null);
-  var bl=document.getElementsByClassName("blk");
-  for(var i=0;i<bl.length;i++){ if((bl[i].getAttribute("class")||"").indexOf("arr")>=0) arrastavel(bl[i]); }
-}
-function arrastavel(elBlk){
-  elBlk.addEventListener("pointerdown",function(ev){
-    ev.preventDefault();var sx=ev.clientX,sy=ev.clientY,moved=false;
-    var gh=$("ghost");gh.innerHTML=elBlk.outerHTML;gh.className="";var r=elBlk.getBoundingClientRect();gh.style.width=r.width+"px";
-    function pos(x,y){gh.style.left=(x-r.width/2)+"px";gh.style.top=(y-r.height/2)+"px";}
-    pos(sx,sy);elBlk.style.visibility="hidden";
-    function mv(e){if(Math.abs(e.clientX-sx)>5||Math.abs(e.clientY-sy)>5)moved=true;pos(e.clientX,e.clientY);}
-    function up(e){document.removeEventListener("pointermove",mv);document.removeEventListener("pointerup",up);
-      gh.className="hide";gh.innerHTML="";elBlk.style.visibility="";
-      soltou(document.elementFromPoint(e.clientX,e.clientY),moved);}
-    document.addEventListener("pointermove",mv);document.addEventListener("pointerup",up);
   });
+  // quatro coringas e quatro +4
+  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'curinga'});
+  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'mais4'});
+  return embaralhar(b);
 }
-function dentro(el,ids){while(el){if(el.id&&ids.indexOf(el.id)>=0)return el.id;el=el.parentNode;}return null;}
-function soltou(tgt,moved){
-  /* o aluno TEM que arrastar de verdade (não vale só clicar — nada automático) */
-  if(!moved){ $("fala").innerHTML="<b>Arraste</b> o bloco com o dedo (ou o mouse) — não vale só clicar."; sNao(); return; }
-  if(fase==="repartir"){
-    var g=grupoAlvo(tgt);
-    if(g>=0) repartirUm(g);
-    else $("fala").innerHTML="Solte o bloco <b>em cima de um grupo</b> (um de cada vez).";
-  }
-  else if(fase==="trocar"){ if(dentro(tgt,["banco"])) trocar();
-    else $("fala").innerHTML="Arraste a sobra até a casa <b>de baixo</b> (o banco) para trocar por 10."; }
+function embaralhar(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function novoJogo(){
+  baralho = criarBaralho();
+  mao = baralho.splice(0,7);
+  cpu = baralho.splice(0,7);
+  // primeira carta da mesa precisa ser número simples
+  let i = baralho.findIndex(c=>c.tipo==='num');
+  mesa = baralho.splice(i,1)[0];
+  corAtiva = mesa.cor;
+  esperandoCor=false;
+  /* partida nova zera o que é DA PARTIDA — mas NÃO `_derrotasSeguidas`, que é
+     da CRIANÇA e atravessa as partidas (é dele que sai o alívio do robô). */
+  _jogadas = 0; regraAtiva = null; _corQueFaltou = {};
+  pintaRegra();
+  var msg = document.getElementById('mensagem');
+  if(msg) msg.classList.remove('festa');
+  render();
+  vezDoJogadorComMensagem('');
 }
 
-/* ===== fluxo ===== */
-function iniciaProblema(){
-  plan=planeja(PROBS[idx].n,PROBS[idx].d);
-  sup=[0,0,0,0];grp=[];pativa=plan.offset;fase="repartir";sobraAtual=0;errouNessa=false;mostraQuo=false;ateStep=-1;
-  for(var i=0;i<plan.L;i++){ sup[plan.offset+i]=plan.ds[i]; }
-  for(var g=0;g<plan.d;g++)grp.push([0,0,0,0]);
-  $("pnum").textContent=(idx+1);$("ptot").textContent=PROBS.length;$("barra").style.width=Math.round(idx*100/PROBS.length)+"%";
-  $("enun").innerHTML="Quanto dá <b>"+plan.n+" &divide; "+plan.d+"</b> ?";
-  comecaCasa();
+/* ============ REGRAS ============ */
+/* ============================================================
+   ⭐ A REGRA DA RODADA — o que transforma o jogo em ATIVIDADE
+   ------------------------------------------------------------
+   O gesto natural do UNO é COMBINAR POR ATRIBUTO (cor, número, tipo). Em vez de
+   enfiar matemática por fora, a regra monta em cima desse mesmo gesto: de vez em
+   quando a mesa pede uma condição a MAIS sobre o NÚMERO da carta.
+
+   A escada por ano (é o que faz "mais difícil" ter significado):
+     3º ano — par/ímpar, maior/menor que a da mesa, soma 10 com a da mesa
+     4º ano — múltiplo de 2/3/5, dobro e metade da carta da mesa
+     5º ano — as do 4º + "a soma dos dois números é múltiplo de 3"
+
+   ⚠️ A ARMADILHA QUE TRAVA A PARTIDA, e ela é real: se a regra extra valesse
+   sempre, a criança poderia ficar sem NENHUMA carta jogável e o jogo empacaria.
+   Por isso a regra só entra quando ela tem pelo menos DUAS cartas que a
+   atendem, vale por UMA rodada, e a carta de ação/coringa nunca é bloqueada —
+   sempre sobra saída. */
+var REGRAS = {
+  3: [
+    {t:"só vale carta PAR",              ok:function(v,m){ return v%2===0; }},
+    {t:"só vale carta ÍMPAR",            ok:function(v,m){ return v%2===1; }},
+    {t:"só vale carta MAIOR que a da mesa", ok:function(v,m){ return v>m; }},
+    {t:"a sua carta + a da mesa = 10",   ok:function(v,m){ return v+m===10; }}
+  ],
+  4: [
+    {t:"só vale MÚLTIPLO DE 3",          ok:function(v,m){ return v%3===0; }},
+    {t:"só vale MÚLTIPLO DE 5",          ok:function(v,m){ return v%5===0; }},
+    {t:"só vale o DOBRO da carta da mesa", ok:function(v,m){ return v===m*2; }},
+    {t:"só vale a METADE da carta da mesa",ok:function(v,m){ return m%2===0 && v===m/2; }}
+  ],
+  5: [
+    {t:"só vale MÚLTIPLO DE 3",          ok:function(v,m){ return v%3===0; }},
+    {t:"a soma das duas é MÚLTIPLO DE 3",ok:function(v,m){ return (v+m)%3===0; }},
+    {t:"só vale o DOBRO da carta da mesa", ok:function(v,m){ return v===m*2; }},
+    {t:"a sua carta + a da mesa = 10",   ok:function(v,m){ return v+m===10; }}
+  ]
+};
+var regraAtiva = null;
+
+function sorteiaRegra(){
+  /* uma rodada em cada três, e só a partir da 4ª jogada (a criança precisa
+     entender o jogo antes de ganhar uma condição a mais) */
+  regraAtiva = null;
+  if(_jogadas < 3 || Math.random() > 0.55) return;
+  var m = (mesa && mesa.tipo==='num') ? mesa.valor : -1;
+  if(m < 0) return;
+
+  /* ⚠️⚠️ MEDIDO, não achado (set/2026): a 1ª versão sorteava UMA regra e
+     desistia se ela não coubesse. Parece igual e não é — as regras difíceis
+     ("o DOBRO da carta da mesa") quase nunca cabem, então a regra que dava
+     as caras era sempre a fácil, e no 4º ano ela apareceu em só 18 de 40
+     partidas (o testador contou). Regra que quase não aparece = a atividade
+     não existe; sobra um UNO comum.
+     Agora ele EMBARALHA as regras do ano e pega a primeira que couber. A
+     escada de dificuldade continua a mesma (as regras são as do ano), o que
+     muda é que ela realmente acontece. */
+  var lista = (REGRAS[NIVEL] || REGRAS[4]).slice();
+  for(var i=lista.length-1;i>0;i--){
+    var j = Math.floor(Math.random()*(i+1)); var t=lista[i]; lista[i]=lista[j]; lista[j]=t;
+  }
+  function quantasAtendem(cand){
+    var q = 0;
+    for(var c=0;c<mao.length;c++){
+      /* ⚠️ `podeJogar` JUNTO: não adianta a carta obedecer à regra se ela não
+         servia na mesa de qualquer jeito. Contar sem isso já mediu errado uma
+         vez — a conta dizia "tem duas" e na tela não brilhava nenhuma. */
+      if(mao[c].tipo==='num' && podeJogar(mao[c]) && cand.ok(mao[c].valor, m)) q++;
+    }
+    return q;
+  }
+  /* DOIS PASSES, e o motivo é pedagógico:
+     1º passe — procura uma regra que deixe DUAS ou mais saídas: a criança
+       ESCOLHE, que é o que dá autonomia (Deci & Ryan) e evita o "adivinhe a
+       única certa".
+     2º passe — se nenhuma deixar duas, aceita a que deixa UMA. Continua sem
+       travar (sempre há saída, e as cartas especiais nunca são bloqueadas) e
+       vira um probleminha de resposta única — "qual é o dobro de 4?".
+     Sem o 2º passe as regras difíceis (dobro, metade, múltiplo de 5) quase
+     nunca cabiam: medido, no 4º ano a regra aparecia em 28 de 120 partidas,
+     ou seja, a criança jogava três partidas inteiras sem ver a atividade. */
+  var k, q;
+  for(k=0;k<lista.length;k++){ if(quantasAtendem(lista[k]) >= 2){ regraAtiva = lista[k]; return; } }
+  for(k=0;k<lista.length;k++){ if(quantasAtendem(lista[k]) >= 1){ regraAtiva = lista[k]; return; } }
 }
-/* Depois de manusear o material, o aluno DIGITA o resultado numérico. */
-function pedeResultado(msg){
-  fase="digitar";
-  $("instr").innerHTML="Você já repartiu tudo com as mãos. Agora <b>leia nos grupos</b> e escreva o resultado.";
-  var temResto=plan.rem>0;
-  var lin='<div class="dlin"><b>'+plan.n+' &divide; '+plan.d+' =</b> '+
-    '<input id="rq" type="tel" inputmode="numeric" maxlength="5" autocomplete="off" aria-label="quociente">';
-  if(temResto) lin+=' <b>e sobra</b> <input id="rr" class="rlbl" type="tel" inputmode="numeric" maxlength="4" autocomplete="off" aria-label="resto">';
-  lin+='</div>';
-  $("controls").innerHTML='<div class="digbox"><div class="dq">'+msg+' Quanto cada grupo tem no total?</div>'+
-    lin+'<div class="dica" id="rdica"></div></div>'+
-    '<button class="btn ok" id="rconf">Conferir</button>';
-  $("rconf").onclick=confereResultado;
-  var rq=$("rq");
-  rq.onkeydown=function(e){if(e.keyCode===13){e.preventDefault();(temResto?$("rr"):$("rconf")).focus();if(!temResto)confereResultado();}};
-  if(temResto)$("rr").onkeydown=function(e){if(e.keyCode===13){e.preventDefault();confereResultado();}};
-  try{rq.focus();}catch(e){}
+
+function regraDeixa(carta){
+  if(!regraAtiva) return true;
+  if(carta.tipo!=='num') return true;      // ação e coringa nunca travam a saída
+  var m = (mesa && mesa.tipo==='num') ? mesa.valor : -1;
+  if(m < 0) return true;
+  return regraAtiva.ok(carta.valor, m);
 }
-function confereResultado(){
-  var q=parseInt(($("rq").value||"").replace(/\D/g,""),10);
-  var temResto=plan.rem>0, r=temResto?parseInt(($("rr").value||"").replace(/\D/g,""),10):0;
-  if(isNaN(q)||(temResto&&isNaN(r))){ $("rdica").textContent="Escreva o resultado nos campos."; sNao(); return; }
-  var okQ=(q===plan.quo), okR=(!temResto||r===plan.rem);
-  if(okQ&&okR){
-    if(!errouNessa)acertos++;
-    mostraQuo=true; pintaChave();   /* AGORA a conta armada se completa (o aluno preencheu) */
-    sOk();confete(22);
-    var extra=temResto?(" e sobra "+plan.rem):"";
-    $("fala").innerHTML="<b>"+plan.n+" &divide; "+plan.d+" = "+plan.quo+extra+"</b>. "+
-      (temResto?"O resto é o que não deu para repartir igual.":"Divisão exata!")+" Isso mesmo!";
-    $("controls").innerHTML='<button class="btn ok" id="p2">'+(idx+1<PROBS.length?"Próxima conta &rarr;":"Ver meu relatório")+'</button>';
-    $("p2").onclick=function(){idx++;if(idx<PROBS.length){salvaProg();iniciaProblema();}else{limpaProg();finaliza();}};
+
+var _jogadas = 0;
+
+function podeJogar(carta){
+  if(carta.tipo==='curinga' || carta.tipo==='mais4') return true;
+  if(carta.cor===corAtiva) return true;
+  if(carta.tipo==='num' && mesa.tipo==='num' && carta.valor===mesa.valor) return true;
+  if(carta.tipo!=='num' && carta.tipo===mesa.tipo) return true;
+  return false;
+}
+
+/* o que a MÃO da criança pode jogar = regra do UNO E regra da rodada */
+function podeJogarComRegra(carta){ return podeJogar(carta) && regraDeixa(carta); }
+
+/* ⚠️ POR QUE A REGRA VALE SÓ PARA A CRIANÇA, e isso é DE PROPÓSITO:
+   se ela valesse também para o robô, a criança não teria como perceber que a
+   regra existe — as duas mãos ficariam igualmente limitadas e a tela pareceria
+   só "com menos carta brilhando". Valendo só do lado dela, a regra vira um
+   DESAFIO visível, com o robô jogando normal do outro lado. E o robô já ficou
+   mais forte pelo cérebro dele (notaDaCarta), não por muleta de regra. */
+
+function pintaRegra(){
+  var t = document.getElementById('regraTarja');
+  var x = document.getElementById('regraTexto');
+  if(!t || !x) return;
+  if(regraAtiva){
+    x.textContent = regraAtiva.t + '!';
+    t.classList.add('on');
   }else{
-    errouNessa=true; sNao();
-    var dica="";
-    if(!okQ) dica="Confira de novo: olhe <b>um grupo</b> e conte o que ele tem (milhar, centena, dezena e unidade juntos).";
-    else dica="O <b>quociente</b> está certo! Falta a <b>sobra</b>: conte quantos blocos ficaram no banco sem repartir.";
-    $("rdica").innerHTML=dica;
+    t.classList.remove('on');
+    x.textContent = '';
   }
 }
-function finaliza(){hide("jogo");show("fim");$("barra").style.width="100%";
-  var total=PROBS.length, pct=Math.round(acertos*100/total);
-  var quem=alunoNome?(alunoNome+", você"):"Você";
-  var parecer, cor;
-  if(pct>=90){parecer="Dominou a divisão com material dourado!";}
-  else if(pct>=70){parecer="Está quase lá — divisão bem encaminhada!";}
-  else if(pct>=50){parecer="Está construindo o raciocínio. Vale treinar mais um pouco.";}
-  else{parecer="Precisa retomar com calma — cada conta ensina um pouco.";}
-  $("fimtit").textContent=alunoNome?("Muito bem, "+alunoNome+"!"):"Mestre da divisão!";
-  $("fimtxt").innerHTML=
-    '<div class="relat">'+
-      '<div class="li">'+quem+' fez <b>'+total+'</b> contas repartindo o material dourado com as próprias mãos.</div>'+
-      '<div class="li">Acertou de primeira (sem tropeçar): <b>'+acertos+'</b> de <b>'+total+'</b>.</div>'+
-      '<div class="pct">'+pct+'%</div>'+
-      '<div class="parecer">'+parecer+'</div>'+
-    '</div>'+
-    'Qual foi a mais difícil? Tente ela de novo só com a conta armada!';
+
+/* ============ JOGADAS DO JOGADOR ============ */
+function jogarCarta(idx){
+  if(!vezDoJogador || esperandoCor) return;
+  const carta = mao[idx];
+  if(!podeJogar(carta)){
+    setMensagem('Essa não dá! Escolha uma que brilha. 😊');
+    return;
+  }
+  /* ⚠️ FEEDBACK ESPECÍFICO (Hattie), não um "errou" genérico: se a carta serve
+     no UNO mas a REGRA da rodada barrou, dizer QUAL regra é o que ensina. Um
+     "essa não dá" aqui faria a criança achar que o jogo bugou. */
+  if(!regraDeixa(carta)){
+    setMensagem('Essa serve na cor, mas hoje ' + regraAtiva.t + '. Olhe as que brilham! 🔎');
+    return;
+  }
+  var btnC = document.getElementById('btnComprar');
+  if(btnC) btnC.classList.remove('destaque');
+  _jogadas++;
+  /* ⚠️ O "CONTA CARTAS" TEM QUE ESQUECER, senão vira ruído. Medido (set/2026):
+     `_corQueFaltou` só era MARCADO (quando ela compra) e nunca apagado — depois
+     de algumas compras as quatro cores estavam marcadas, o bônus de +25 valia
+     para toda carta e deixava de significar coisa alguma. Se ela acabou de
+     jogar verde, ela TEM verde: apaga a marca. */
+  if(carta.cor && carta.cor!=='curinga') _corQueFaltou[carta.cor] = false;
+  regraAtiva = null;          /* a regra vale por UMA rodada — cumprida, sai */
+  pintaRegra(false);
+  mao.splice(idx,1);
+  mesa = carta;
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    esperandoCor = true;
+    curingaPendente = carta.tipo; // lembra se foi curinga simples ou +4
+    render();
+    document.getElementById('overlayCor').classList.add('ativo');
+    return;
+  }
+  corAtiva = carta.cor;
+  aplicarEfeito(carta,'jogador');
 }
-function confete(n){var cs=["#e8b53a","#2f8f4e","#2f6bd6","#c0453a","#f6d876"];for(var i=0;i<n;i++){(function(){var c=document.createElement("div");c.className="confete";c.style.left=(Math.random()*100)+"vw";c.style.background=cs[i%cs.length];c.style.transform="rotate("+(Math.random()*360)+"deg)";document.body.appendChild(c);var top=70+Math.random()*25,t0=null,dur=1100+Math.random()*700;function fr(ts){if(!t0)t0=ts;var k=(ts-t0)/dur;if(k>=1){if(c.parentNode)c.parentNode.removeChild(c);return;}c.style.top=(k*top)+"vh";c.style.opacity=(1-k);requestAnimationFrame(fr);}requestAnimationFrame(fr);})();}}
 
-/* ===== continuar de onde parou (dura uma AULA = 55 min) =====
-   Salva no fim de cada conta; se a criança fecha sem querer, volta na MESMA conta.
-   Passada a aula, o convite expira (quem senta ali é de outra turma). localStorage
-   não existe em file:// — por isso tudo em try/catch (testar servindo por http). */
-var SAVEKEY="oficinaDivisao_v1", AULA=55*60*1000;
-function salvaProg(){ try{ localStorage.setItem(SAVEKEY, JSON.stringify({nome:alunoNome,idx:idx,acertos:acertos,t:(new Date()).getTime()})); }catch(e){} }
-function limpaProg(){ try{ localStorage.removeItem(SAVEKEY); }catch(e){} }
-function leProg(){ try{ var s=JSON.parse(localStorage.getItem(SAVEKEY)); if(s&&s.idx>0&&((new Date()).getTime()-s.t)<AULA) return s; }catch(e){} return null; }
+function escolherCor(cor){
+  corAtiva = cor;
+  const eraMais4 = (curingaPendente==='mais4');
+  mesa = {cor, tipo: curingaPendente, valorCor:cor};
+  curingaPendente = null;
+  document.getElementById('overlayCor').classList.remove('ativo');
+  esperandoCor = false;
 
-$("comecar").onclick=function(){alunoNome=(($("nome")&&$("nome").value)||"").trim();limpaProg();hide("ini");show("jogo");idx=0;acertos=0;iniciaProblema();};
-$("denovo").onclick=function(){limpaProg();hide("fim");show("jogo");idx=0;acertos=0;iniciaProblema();};
+  if(mao.length===0){ render(); return vitoria('jogador'); }
 
-/* oferece o "Continuar" na capa se houver progresso recente (< 55 min) */
-(function(){ var s=leProg(); if(!s) return;
-  if($("nome")&&s.nome) $("nome").value=s.nome;
-  var b=document.createElement("button"); b.className="btn"; b.id="continuar";
-  b.innerHTML="Continuar de onde parei (conta "+(s.idx+1)+")";
-  b.onclick=function(){ alunoNome=s.nome||""; hide("ini"); show("jogo"); idx=s.idx; acertos=s.acertos||0; iniciaProblema(); };
-  var cx=$("comecar").parentNode; cx.insertBefore(b,$("comecar"));
-  $("comecar").className="btn sec"; $("comecar").innerHTML="Começar do zero";
+  if(eraMais4){
+    comprarParaCpu(4);
+    setMensagem('Você escolheu '+cor+' e o robô pegou 4 cartas! 🌈➕');
+  }else{
+    setMensagem('Você escolheu '+cor+'! 🎨');
+  }
+  render();
+  setTimeout(passarVezParaCpu, 800);
+}
+
+function aplicarEfeito(carta, quem){
+  render();
+  if(mao.length===0) return vitoria('jogador');
+  if(cpu.length===0) return vitoria('robo');
+
+  if(carta.tipo==='pula'){
+    if(temJogada()) setMensagem('Você pulou o robô! Jogue de novo. 🚫');
+    else setMensagem('Você pulou o robô! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
+    return; // jogador joga de novo
+  }
+  if(carta.tipo==='inverte'){
+    if(temJogada()) setMensagem('Você girou o jogo! Jogue de novo. 🔄');
+    else setMensagem('Você girou o jogo! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
+    return; // com 2 jogadores, inverter = jogar de novo
+  }
+  if(carta.tipo==='mais2'){
+    comprarParaCpu(2);
+    setMensagem('O robô pegou 2 cartas! 😄');
+    setTimeout(passarVezParaCpu, 900);
+    return;
+  }
+  setMensagem('Boa! Agora é a vez do robô. 🤖');
+  setTimeout(passarVezParaCpu, 800);
+}
+
+function comprarCarta(){
+  if(!vezDoJogador || esperandoCor) return;
+  if(baralho.length===0) reabastecer();
+  /* ⭐ o nível 5 CONTA CARTAS: se a criança comprou, é porque não tinha a cor
+     da mesa. O robô guarda isso e passa a insistir nessa cor. É exatamente o que
+     um bom jogador humano faz — e é a estratégia que a atividade quer ensinar. */
+  if(corAtiva) _corQueFaltou[corAtiva] = true;
+  const c = baralho.pop();
+  mao.push(c);
+  render();
+  if(podeJogarComRegra(c)){
+    setMensagem('Você pegou uma carta que dá pra jogar! Toque nela. ✨');
+  }else{
+    setMensagem('Essa não deu pra jogar. Agora é a vez do robô. 🤖');
+    vezDoJogador = false;
+    setTimeout(passarVezParaCpu, 1100);
+  }
+}
+
+/* ============ VEZ DO ROBÔ ============ */
+function passarVezParaCpu(){
+  vezDoJogador = false;
+  var btn = document.getElementById('btnComprar');
+  if(btn) btn.classList.remove('destaque');
+  render();
+  setTimeout(cpuJoga, 600);
+}
+
+/* ============================================================
+   ⭐⭐ O ROBÔ QUE PENSA — o coração do "mais difícil"
+   ------------------------------------------------------------
+   Pedido do Marcos (set/2026): *"lembra do jogo do uno que criamos? preciso de
+   uma versão mais difícil para os 3/4/5 anos"*.
+
+   Fui medir POR QUE o jogo do 1º ano é fácil, e não era o baralho: era o
+   adversário. A linha original dizia, literalmente:
+
+       let idx = cpu.findIndex(c => podeJogar(c));   // joga a PRIMEIRA que serve
+
+   Ele não escolhia. Pegava a primeira carta jogável NA ORDEM EM QUE ELA CAIU
+   na mão. Não guardava coringa, não trocava para a cor que tinha mais, não
+   atacava quando a criança estava com uma carta só. Dá para ganhar dele por
+   acaso — e criança de 9 anos percebe isso na terceira partida.
+
+   Agora ele PONTUA cada carta jogável e joga a de maior nota. Pontuação em vez
+   de uma escada de ifs porque assim dá para afinar um peso sem reescrever a
+   lógica — e para o robô "explicar" o motivo, que é o que ensina estratégia.
+   ============================================================ */
+/* ⭐ O ANO VEM DO LINK (?ano=3 / 4 / 5). É assim que o Marcos trabalha: ele
+   cola UM link por turma no controle do laboratório. Um seletor na tela deixaria
+   a criança do 3º escolher o do 5º; o link não deixa. O padrão é 4º ano. */
+var NIVEL = (function(){
+  try{
+    var m = (location.search||'').match(/[?&]ano=([345])/);
+    return m ? parseInt(m[1],10) : 4;
+  }catch(e){ return 4; }
 })();
+var _derrotasSeguidas = 0;  // anti-frustração (ver abaixo)
+
+function forcaDoRobo(){
+  /* ⚠️ ANTI-FRUSTRAÇÃO, e é obrigatório: criança que perde sempre desiste, e aí
+     a atividade não ensina nada. A cada DUAS derrotas seguidas o robô afrouxa um
+     degrau; quando ela ganha, ele volta ao normal. Isso é INVISÍVEL para ela —
+     nada na tela diz "vou pegar leve", porque saber disso estraga a vitória. */
+  var f = NIVEL;                       // 3 = pensa mas erra às vezes · 4 = bom · 5 = conta cartas
+  if(_derrotasSeguidas >= 2) f -= 1;
+  if(_derrotasSeguidas >= 4) f -= 1;
+  return Math.max(2, f);
+}
+
+function corQueMaisTenho(mao_){
+  var c={}, melhor=null;
+  for(var i=0;i<mao_.length;i++){ var k=mao_[i].cor; if(k==='curinga') continue;
+    c[k]=(c[k]||0)+1; if(!melhor||c[k]>c[melhor]) melhor=k; }
+  return melhor || CORES[Math.floor(Math.random()*CORES.length)];
+}
+
+function notaDaCarta(carta, forca){
+  /* quanto MAIOR a nota, mais o robô quer jogar essa carta agora */
+  var n = 0;
+  var jogadorQuaseGanhando = (mao.length <= 2);
+
+  // 1. guardar coringa para quando faltar a cor (o erro nº1 de quem joga mal)
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    n -= 40;                                  // segura o coringa...
+    if(jogadorQuaseGanhando) n += 70;         // ...mas solta o +4 na hora certa
+    var temDaCor = cpu.some(function(c){ return c.cor===corAtiva; });
+    if(!temDaCor) n += 55;                    // ou quando não tem a cor mesmo
+  }
+
+  /* 2. ⭐⭐ O TURNO EXTRA — a jogada mais forte do jogo, e a que eu tinha
+        deixado de fora. Com DOIS jogadores, "pular" e "girar" devolvem a vez
+        para quem jogou: é uma carta a menos na mão DE GRAÇA. Foi isto que o
+        teste de 250 partidas denunciou — o robô "esperto" ganhava 56% contra
+        os 54% do robô burro, quase nada, porque só usava essas cartas quando a
+        criança estava quase ganhando. Estratégia de UNO de verdade é encadear
+        pula/gira; é inclusive o que a atividade quer ENSINAR. */
+  if(carta.tipo==='pula' || carta.tipo==='inverte') n += 38;
+
+  // 3. atacar quando a criança está perto de ganhar
+  if(carta.tipo==='mais2' && jogadorQuaseGanhando) n += 60;
+  if((carta.tipo==='pula'||carta.tipo==='inverte') && jogadorQuaseGanhando) n += 20;
+  if(carta.tipo==='mais2') n += 22;      // dar 2 cartas a ela é sempre bom
+
+  /* 4. entre dois números que servem, sai o de valor mais alto — aqui isso não
+        vale ponto (não há contagem de pontos), então pesa POUCO: é só desempate,
+        para o robô não parecer que escolhe ao acaso. */
+  if(carta.tipo==='num') n += carta.valor * 0.4;
+
+  // 5. ficar na cor que ele tem mais (assim continua tendo jogada)
+  if(carta.cor === corQueMaisTenho(cpu)) n += 12;
+
+  // 6. o nível 5 CONTA CARTAS: se a criança já não teve uma cor, insistir nela
+  if(forca >= 5 && carta.cor && _corQueFaltou[carta.cor]) n += 25;
+
+  /* 7. o degrau do 3º ano: ele pensa, mas erra de propósito às vezes. Não é
+        aleatório puro — é ruído em cima da nota, que faz ele escolher a
+        segunda melhor de vez em quando, como um jogador humano distraído. */
+  if(forca <= 3) n += (Math.random()*30 - 15);
+  return n;
+}
+
+/* o nível 5 lembra de que cor a criança não tinha (quando ela compra) */
+var _corQueFaltou = {};
+
+function cpuJoga(){
+  var forca = forcaDoRobo();
+  // procura a MELHOR carta jogável (antes: a primeira que servisse)
+  let idx = -1, melhorNota = -1e9;
+  for(var i=0;i<cpu.length;i++){
+    if(!podeJogar(cpu[i])) continue;
+    var nota = notaDaCarta(cpu[i], forca);
+    if(nota > melhorNota){ melhorNota = nota; idx = i; }
+  }
+  if(idx===-1){
+    if(baralho.length===0) reabastecer();
+    const c = baralho.pop(); cpu.push(c);
+    if(podeJogar(c)){ idx = cpu.length-1; }
+    else{
+      vezDoJogadorComMensagem('O robô pegou uma carta.');
+      return;
+    }
+  }
+  const carta = cpu.splice(idx,1)[0];
+  mesa = carta;
+  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
+    corAtiva = corQueMaisTenho(cpu);
+    mesa = {cor:corAtiva, tipo:carta.tipo, valorCor:corAtiva};
+    setMensagem('O robô escolheu '+corAtiva+'! 🎨');
+  }else{
+    corAtiva = carta.cor;
+  }
+  render();
+  if(cpu.length===0) return vitoria('robo');
+
+  if(carta.tipo==='pula'){
+    setMensagem('O robô te pulou! Ele joga de novo. 🚫');
+    setTimeout(cpuJoga, 1000); return;
+  }
+  if(carta.tipo==='inverte'){
+    setMensagem('O robô girou o jogo! Ele joga de novo. 🔄');
+    setTimeout(cpuJoga, 1000); return;
+  }
+  if(carta.tipo==='mais2'){
+    for(let k=0;k<2;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
+    vezDoJogadorComMensagem('Você pegou 2 cartas.');
+    return;
+  }
+  if(carta.tipo==='mais4'){
+    for(let k=0;k<4;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
+    vezDoJogadorComMensagem('O robô jogou +4! Você pegou 4 cartas.');
+    return;
+  }
+  vezDoJogadorComMensagem('');
+}
+
+/* (a antiga `corMaisComumCpu` saiu: virou `corQueMaisTenho`, que o robô novo usa
+   tanto para escolher a cor do coringa quanto para pontuar a carta) */
+function comprarParaCpu(n){ for(let k=0;k<n;k++){ if(baralho.length===0) reabastecer(); cpu.push(baralho.pop()); } }
+function reabastecer(){ baralho = criarBaralho(); }
+
+// devolve true se o jogador tem ao menos uma carta jogável (regra da rodada inclusa)
+function temJogada(){ return mao.some(function(c){ return podeJogarComRegra(c); }); }
+
+// passa a vez ao jogador com a mensagem certa (jogar OU comprar)
+function vezDoJogadorComMensagem(prefixo){
+  vezDoJogador = true;
+  /* ⚠️ A ORDEM AQUI IMPORTA e não é decorativa: sortear a regra ANTES do
+     `render()` e ANTES do `temJogada()`. Se a regra entrasse depois, a mão já
+     estaria pintada com as cartas antigas brilhando e a criança tocaria numa
+     que a regra acabou de bloquear — o pior tipo de erro, o que a máquina
+     causou. E `temJogada()` mediria a mão sem a regra, mandando a mensagem
+     errada. */
+  sorteiaRegra();
+  pintaRegra();
+  render();
+  var ini = prefixo ? (prefixo + ' ') : '';
+  /* ⚠️ A REGRA ENTRA NA MESMA FALA DA MENSAGEM, não numa fala à parte. Motivo
+     medido: `setMensagem` chama `falar`, que começa com `speechSynthesis.cancel()`
+     — duas falas seguidas viram UMA, com a primeira cortada no meio. A criança
+     ouviria "Atenção! Regra desta ro—" e perderia justamente a regra. */
+  if(regraAtiva) ini += 'Atenção, regra desta rodada: ' + regraAtiva.t + '! ';
+  var btn = document.getElementById('btnComprar');
+  if(temJogada()){
+    if(btn) btn.classList.remove('destaque');
+    setMensagem(ini + 'Sua vez! Toque numa carta que brilha. ✨');
+  }else{
+    if(btn) btn.classList.add('destaque');
+    setMensagem(ini + 'Você não tem carta para jogar. Toque em "Pegar 1" para comprar uma carta! 🃏');
+  }
+}
+
+/* ============ FIM ============ */
+function vitoria(quem){
+  vezDoJogador=false;
+  regraAtiva = null; pintaRegra();
+  if(quem==='jogador'){
+    _derrotasSeguidas = 0;          /* ganhou: o robô volta à força cheia */
+    setMensagem('🎉 VOCÊ GANHOU! Parabéns! 🎉');
+  }else{
+    _derrotasSeguidas++;            /* ⚠️ o anti-frustração vive DESTA linha */
+    setMensagem('🤖 O robô ganhou! Tente de novo, você consegue! 💪');
+  }
+  document.getElementById('mensagem').classList.add('festa');
+  render();
+}
+
+/* ============ DESENHAR NA TELA ============ */
+/* ============ NARRAÇÃO POR VOZ ============ */
+var vozLigada = true;
+var vozPtBR = null;
+
+function carregarVoz(){
+  if(!('speechSynthesis' in window)) return;
+  var vozes = window.speechSynthesis.getVoices();
+  // procura uma voz em português do Brasil
+  for(var i=0;i<vozes.length;i++){
+    if(vozes[i].lang && vozes[i].lang.toLowerCase().indexOf('pt-br')>-1){ vozPtBR = vozes[i]; return; }
+  }
+  for(var j=0;j<vozes.length;j++){
+    if(vozes[j].lang && vozes[j].lang.toLowerCase().indexOf('pt')>-1){ vozPtBR = vozes[j]; return; }
+  }
+}
+if('speechSynthesis' in window){
+  carregarVoz();
+  window.speechSynthesis.onvoiceschanged = carregarVoz;
+}
+
+// remove emojis para a fala não "ler" símbolos estranhos
+function limparTexto(t){
+  return t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu,'').replace(/\s+/g,' ').trim();
+}
+
+function falar(texto){
+  if(!vozLigada || !('speechSynthesis' in window)) return;
+  var limpo = limparTexto(texto);
+  if(!limpo) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(limpo);
+  u.lang = 'pt-BR';
+  if(vozPtBR) u.voice = vozPtBR;
+  u.rate = 0.95; u.pitch = 1.05;
+  window.speechSynthesis.speak(u);
+}
+
+function alternarVoz(){
+  vozLigada = !vozLigada;
+  var b = document.getElementById('btnVoz');
+  if(vozLigada){ b.innerHTML = '🔊 Voz'; b.classList.remove('voz-off'); falar('Narração ligada!'); }
+  else{ b.innerHTML = '🔇 Voz'; b.classList.add('voz-off'); if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+}
+
+function setMensagem(t){
+  const m=document.getElementById('mensagem');
+  m.textContent=t; m.classList.remove('festa');
+  falar(t);
+}
+
+function corClasse(cor){ return 'c-'+cor; }
+const HEX = { vermelho:'#E5202E', azul:'#0099DD', amarelo:'#F7B500', verde:'#3EA72D' };
+
+// símbolos desenhados em SVG (estilo clássico, arte própria)
+// "color" controla a cor do traço quando o símbolo fica sobre o oval branco.
+function svgPular(color){
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="38" fill="none" stroke="${color}" stroke-width="13"/>
+    <line x1="24" y1="24" x2="76" y2="76" stroke="${color}" stroke-width="13" stroke-linecap="round"/>
+  </svg>`;
+}
+function svgMais2(color){
+  // duas cartinhas sobrepostas (visíveis em qualquer fundo)
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <rect x="20" y="22" width="34" height="50" rx="6" fill="#fff" stroke="${color}" stroke-width="6"/>
+    <rect x="40" y="32" width="34" height="50" rx="6" fill="${color}" stroke="#fff" stroke-width="5"/>
+    <text x="57" y="64" font-family="'Baloo 2',sans-serif" font-size="26" font-weight="800" fill="#fff" text-anchor="middle">+2</text>
+  </svg>`;
+}
+function svgCuringa(){
+  // pinwheel de quatro cores
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="40" fill="#fff"/>
+    <path d="M50 50 L50 10 A40 40 0 0 1 90 50 Z" fill="var(--vermelho)"/>
+    <path d="M50 50 L90 50 A40 40 0 0 1 50 90 Z" fill="var(--azul)"/>
+    <path d="M50 50 L50 90 A40 40 0 0 1 10 50 Z" fill="var(--amarelo)"/>
+    <path d="M50 50 L10 50 A40 40 0 0 1 50 10 Z" fill="var(--verde)"/>
+    <circle cx="50" cy="50" r="9" fill="#fff"/>
+  </svg>`;
+}
+function svgInverte(color){
+  // duas setas curvas em sentidos opostos
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="${color}" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M30 35 A26 26 0 0 1 76 48"/>
+      <path d="M70 65 A26 26 0 0 1 24 52"/>
+    </g>
+    <polygon points="20,30 40,30 28,48" fill="${color}"/>
+    <polygon points="80,70 60,70 72,52" fill="${color}"/>
+  </svg>`;
+}
+function svgMais4(){
+  // quatro cores em bloco + indicação de +4
+  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
+    <g stroke="#fff" stroke-width="4">
+      <rect x="30" y="22" width="20" height="30" rx="4" fill="var(--vermelho)"/>
+      <rect x="50" y="22" width="20" height="30" rx="4" fill="var(--azul)"/>
+      <rect x="30" y="50" width="20" height="30" rx="4" fill="var(--amarelo)"/>
+      <rect x="50" y="50" width="20" height="30" rx="4" fill="var(--verde)"/>
+    </g>
+  </svg>`;
+}
+
+// monta o INTERIOR clássico de uma carta: miolo, oval, número central e cantos
+function conteudoCarta(carta, corTraço){
+  const cor = corTraço || '#333';
+  let central, canto;
+  if(carta.tipo==='num'){
+    central = `<span>${carta.valor}</span>`;
+    canto = `${carta.valor}`;
+  }else if(carta.tipo==='mais2'){
+    central = `<span class="simb-c">${svgMais2(cor)}</span>`;
+    canto = `<span class="canto-mais2">+2</span>`;
+  }else if(carta.tipo==='pula'){
+    central = `<span class="simb-c">${svgPular(cor)}</span>`;
+    canto = `<span class="simb-k">${svgPular('#fff')}</span>`;
+  }else if(carta.tipo==='inverte'){
+    central = `<span class="simb-c">${svgInverte(cor)}</span>`;
+    canto = `<span class="simb-k">${svgInverte('#fff')}</span>`;
+  }else if(carta.tipo==='mais4'){
+    central = `<span class="simb-c">${svgMais4()}</span>`;
+    canto = `<span class="canto-mais2">+4</span>`;
+  }else{ // curinga
+    central = `<span class="simb-c">${svgCuringa()}</span>`;
+    canto = `<span class="simb-k">${svgCuringa()}</span>`;
+  }
+  return `
+    <div class="miolo"><div class="oval"></div></div>
+    <div class="canto tl">${canto}</div>
+    <div class="central">${central}</div>
+    <div class="canto br">${canto}</div>`;
+}
+
+function render(){
+  // mesa
+  const cm = document.getElementById('cartaMesa');
+  const ehCuringaPuro = (mesa.tipo==='curinga');
+  const ehPreta = (mesa.tipo==='mais4');
+  if(ehPreta){
+    cm.className = 'uno carta-grande c-preta';
+    cm.innerHTML = conteudoCarta(mesa, '#fff');
+  }else if(ehCuringaPuro && mesa.valorCor){
+    // curinga já transformado numa cor escolhida
+    cm.className = 'uno carta-grande '+corClasse(corAtiva);
+    cm.innerHTML = conteudoCarta({tipo:'curinga'});
+    cm.querySelector('.central').style.color='#fff';
+  }else if(ehCuringaPuro){
+    cm.className = 'uno carta-grande c-curinga';
+    cm.innerHTML = conteudoCarta(mesa);
+    cm.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+    cm.querySelector('.central').style.color='#fff';
+  }else{
+    cm.className = 'uno carta-grande '+corClasse(mesa.cor);
+    cm.innerHTML = conteudoCarta(mesa, HEX[mesa.cor]);
+  }
+
+  // robô
+  const cc = document.getElementById('cartasCpu'); cc.innerHTML='';
+  for(let i=0;i<cpu.length;i++){ const v=document.createElement('div'); v.className='verso'; cc.appendChild(v); }
+  document.getElementById('qtdCpu').textContent = `(${cpu.length} carta${cpu.length!==1?'s':''})`;
+
+  // minhas cartas
+  const mc = document.getElementById('minhasCartas'); mc.innerHTML='';
+  mao.forEach((carta,idx)=>{
+    const d=document.createElement('div');
+    const ehCuringa = (carta.tipo==='curinga');
+    const ehPreta = (carta.tipo==='mais4');
+    let cor;
+    if(ehPreta) cor='c-preta';
+    else if(ehCuringa) cor='c-curinga';
+    else cor=corClasse(carta.cor);
+    const jogavel = vezDoJogador && !esperandoCor && podeJogarComRegra(carta);
+    d.className='uno carta '+cor+(jogavel?' jogavel':' bloqueada');
+    // cor do símbolo: cartas coloridas usam a própria cor; +4 e curinga usam branco
+    const corSimb = (ehCuringa || ehPreta) ? '#fff' : HEX[carta.cor];
+    d.innerHTML=conteudoCarta(carta, corSimb);
+    if(ehCuringa){
+      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+      d.querySelector('.central').style.color='#fff';
+    }
+    d.onclick=()=>jogarCarta(idx);
+    mc.appendChild(d);
+  });
+  document.getElementById('qtdEu').textContent = `(${mao.length} carta${mao.length!==1?'s':''})`;
+}
+
+/* ============ TUTORIAL ============ */
+const slides = [
+  { emoji:'🤖', titulo:'Oi! Eu sou o Robô Esperto!',
+    texto:'Bem-vindo ao UNO dos Números! Eu não jogo qualquer carta: eu penso antes. Guardo os coringas, ataco quando você está quase ganhando. Vai precisar de estratégia para me vencer!' },
+  { emoji:'🎯', titulo:'Nosso objetivo',
+    texto:'Você e eu começamos com 7 cartas cada um. Vá jogando suas cartas na mesa até a sua mão ficar vazia!' },
+  { emoji:'🌈', titulo:'A regra das cores e números', cartas:'cores',
+    texto:'Você só pode jogar uma carta da MESMA COR ou do MESMO NÚMERO da carta que está na mesa. Igualzinho!' },
+  { emoji:'✨', titulo:'As cartas que brilham',
+    texto:'As cartas que você PODE jogar ficam brilhando e crescem quando você passa o dedo. As apagadas, não dá!' },
+  { emoji:'🃏', titulo:'Minhas cartas especiais', cartas:'especiais',
+    texto:'Pular: eu perco a vez. Mais 2: eu pego 2 cartas. Girar: você joga de novo. Cuidado, eu também posso usá-las em você!' },
+  { emoji:'🌈', titulo:'As cartas coringa', cartas:'coringas',
+    texto:'Arco-íris: você escolhe a cor que quiser! Mais 4: você escolhe a cor E eu pego 4 cartas!' },
+  { emoji:'⭐', titulo:'A REGRA DA RODADA',
+    texto:'De vez em quando aparece uma tarja amarela em cima da mesa com uma regra a mais, só para você. Enquanto ela estiver ali, o número da sua carta também precisa obedecer a ela. Vale por uma rodada só — e as cartas especiais nunca ficam bloqueadas.' },
+  { emoji:'🧠', titulo:'A regra muda conforme o seu ano', regra:true,
+    texto:'' },
+  { emoji:'🏆', titulo:'Como ganhar de mim',
+    texto:'Se não puder jogar, toque em "Pegar 1" para comprar uma carta. Ficou sem cartas? VOCÊ GANHOU! 🎉' }
+];
+let slideAtual = 0;
+
+function abrirTutorial(){ slideAtual=0; montarBolinhas(); mostrarSlide(); document.getElementById('tutorial').classList.add('ativo'); }
+function fecharTutorial(){ document.getElementById('tutorial').classList.remove('ativo'); }
+function montarBolinhas(){
+  const b=document.getElementById('bolinhas'); b.innerHTML='';
+  slides.forEach((_,i)=>{ const o=document.createElement('div'); o.className='bolinha'+(i===0?' on':''); b.appendChild(o); });
+}
+function mostrarSlide(){
+  const s=slides[slideAtual];
+  document.getElementById('slideNum').textContent=`Passo ${slideAtual+1} de ${slides.length}`;
+  document.getElementById('slideEmoji').textContent=s.emoji;
+  const elTit=document.getElementById('slideTitulo');
+  const elTxt=document.getElementById('slideTexto');
+  elTit.textContent=s.titulo; elTit.style.color='#1a1633';
+  elTxt.textContent=s.texto; elTxt.style.color='#23203a';
+  falar(s.titulo + '. ' + s.texto);
+
+  // cartinhas de exemplo (usam a mesma estrutura clássica das cartas reais)
+  const cont=document.getElementById('slideCartas'); cont.innerHTML='';
+  function miniCarta(corNome, carta){
+    const d=document.createElement('div');
+    const isCuringa = (carta.tipo==='curinga');
+    const isPreta = (carta.tipo==='mais4');
+    let cls;
+    if(isPreta) cls='c-preta';
+    else if(isCuringa) cls='c-curinga';
+    else cls=corClasse(corNome);
+    d.className='uno mini '+cls;
+    const corSimb = (isCuringa || isPreta) ? '#fff' : HEX[corNome];
+    d.innerHTML=conteudoCarta(carta, corSimb);
+    if(isCuringa){
+      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
+      d.querySelector('.central').style.color='#fff';
+    }
+    return d;
+  }
+  if(s.cartas==='cores'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    [['vermelho',5],['azul',5],['verde',3],['amarelo',5]].forEach(([c,n])=>{
+      box.appendChild(miniCarta(c,{tipo:'num',valor:n}));
+    });
+    cont.appendChild(box);
+  }
+  if(s.cartas==='especiais'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    box.appendChild(miniCarta('vermelho',{tipo:'pula'}));
+    box.appendChild(miniCarta('azul',{tipo:'mais2'}));
+    box.appendChild(miniCarta('verde',{tipo:'inverte'}));
+    cont.appendChild(box);
+  }
+  if(s.cartas==='coringas'){
+    const box=document.createElement('div'); box.className='slide-cartinha';
+    box.appendChild(miniCarta('',{tipo:'curinga'}));
+    box.appendChild(miniCarta('',{tipo:'mais4'}));
+    cont.appendChild(box);
+  }
+
+  // bolinhas + botões
+  document.querySelectorAll('.bolinha').forEach((b,i)=>b.classList.toggle('on',i===slideAtual));
+  document.getElementById('btnAnterior').disabled = slideAtual===0;
+  const ultimo = slideAtual===slides.length-1;
+  document.getElementById('btnProximo').style.display = ultimo?'none':'';
+  document.getElementById('btnComecar').style.display = ultimo?'':'none';
+}
+function mudarSlide(d){
+  slideAtual=Math.max(0,Math.min(slides.length-1,slideAtual+d));
+  mostrarSlide();
+}
+
+/* ============================================================
+   AJUSTE PELO ANO — o link diz a turma, a tela se ajusta sozinha
+   ------------------------------------------------------------
+   ⚠️ NÃO tem seletor de ano na tela, e isso é decisão, não esquecimento: a
+   criança do 3º escolheria o do 5º "pra ver se é mais legal", levaria uma
+   surra do robô e desistiria. O ano vem do LINK, que quem cola é o professor.
+   ============================================================ */
+(function ajustarAoAno(){
+  var s = document.getElementById('subTitulo');
+  if(s) s.textContent = 'dos Números · ' + NIVEL + 'º ano';
+  // o slide da regra explica a escada DAQUELE ano, com exemplo de verdade
+  var exemplos = {
+    3: 'No 3º ano as regras são de par e ímpar, de maior e menor, e de somar 10. '
+     + 'Exemplo: se a tarja disser "só vale carta PAR", você joga o 2, o 4, o 6 ou o 8.',
+    4: 'No 4º ano as regras são de múltiplos, dobro e metade. '
+     + 'Exemplo: se a mesa tem um 4 e a tarja pede "o DOBRO da carta da mesa", você procura um 8.',
+    5: 'No 5º ano entram os múltiplos de 3 e a soma das duas cartas. '
+     + 'Exemplo: se a mesa tem um 4 e a tarja pede "a soma das duas é múltiplo de 3", '
+     + 'serve o 2, porque 4 mais 2 dá 6, e 6 é múltiplo de 3.'
+  };
+  for(var i=0;i<slides.length;i++){
+    if(slides[i].regra){ slides[i].texto = exemplos[NIVEL] || exemplos[4]; }
+  }
+})();
+
+/* iniciar */
+novoJogo();
 </script>
-</body></html>
+</body>
+</html>
