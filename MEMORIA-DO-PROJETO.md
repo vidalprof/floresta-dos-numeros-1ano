@@ -5904,3 +5904,28 @@ NOVO por tela) e selo. Mais: semáforo = CPUs−1 (era 2 cravado), prova de sala
 numa faixa paralela, jogador em trechos com ÁRBITRO serial
 (`_qa/joga_banca.sh`: rápido quando passa, o antigo dá a palavra final quando
 reprova).
+
+### O que ficou MEDIDO no fim (antes → depois, mesma máquina, mesma atividade)
+- **Banca inteira na `_gincana`: 849s REPROVOU → 542s APROVOU** (leiaute
+  239→176s, jogador 215→85s, encaixe 56→41s; a prova de sala saiu do fio
+  principal). A reprova "antes" era falsa (cor_fixa no motor + clone na
+  `_colecao`), não defeito da atividade.
+- **Cobaia do motor: 12m38s → 9m14s**, e o leiaute nela (6 tamanhos × 92 telas,
+  84 fases) **rc=0, sem alvo abaixo de 40px** — depois de consertar circuito
+  (`.placa` com 6px de largura dentro do `.centro`) e passo-a-passo (`.mesa`
+  encolhida a 204px). Os dois eram o MESMO defeito: bloco sem `width` dentro de
+  um flex-column com `align-items:center` encolhe para o conteúdo.
+- **Lista de portões CEGOS na `_gincana`: 8 → 0.** Não porque passaram a medir
+  algo — porque agora dizem "NAO SE APLICA … Nada a conferir." quando a
+  armadilha não existe naquela atividade, e a banca os separa dos cegos de
+  verdade. Regra: **portão que imprime "0 X conferidos" sem dizer POR QUE está
+  mentindo por omissão** — ou ele mede, ou declara que não se aplica.
+- **`provar_portoes.sh` (meta-portão): vermelho → verde (rc=0).**
+- **ESLint: 0 erros nas 17 montadas + cobaia** (o `FECHO is not defined` era
+  string quebrada em `ensinar-mascote`, no script que o integrador descarta).
+- ⚠️ Um "achado" meu era falso: registrei que o `vozresposta.js` dizia "sem motor
+  de fases" na `_gincana`. Não dizia — ele achava 0 respostas tocáveis (32 fases
+  de `divisao-dourado`, peça de manipular). Lição: **ler a saída do portão no
+  log da banca, não a memória do que ele "costuma" dizer.**
+- Defeito de ARTE que ficou de fora (sem cota no Gemini): `_trem/img/tr_coru_fala`
+  é cópia byte a byte da pose parada — a coruja não mexe a boca. Avisado ao Marcos.
