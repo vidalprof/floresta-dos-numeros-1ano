@@ -86,8 +86,10 @@ echo "⏱️ [BANCA — otimizada, NUNCA esquecer] A bancada roda em PARALELO e 
 echo "   • Ajuste pequeno (texto, cor, um dado) -> SÓ os portões do que mexi + 'node --check' + 'python3 _qa/revisor.py <pasta>' (testador humano). Ou 'bash _qa/auditar.sh --reparo <html>' (portões de texto, segundos)."
 echo "   • Bancada INTEIRA ('bash _qa/auditar.sh <html>') -> UMA vez, só p/ atividade/fase nova, mudança de motor, ou quando o Marcos pedir. Roda sozinha (não sobrepor Chromiums)."
 echo "   • 'os portões do que mexi passaram' != 'a bancada aprovou'. E nunca dizer que passou sem código 0."
-echo "🎨 [ARTE — regra do Marcos, SEMPRE] O Claude NÃO gera arte (nada de Pollinations nem gerar-imagens.yml)."
-echo "   O Claude PASSA OS PROMPTS (em bloco copiável) e o MARCOS gera e sobe. O Claude só RECORTA/trata o que ele subir."
+echo "🎨 [ARTE — MUDOU em set/2026] O Claude PODE GERAR, pelo Pollinations (gerar-imagens.yml, input lote=)."
+echo "   Marcos: \"pode gerar em Pollinations, mas terá que fazer os prompts super prontos para gerar igual Gemini\"."
+echo "   Use _padrao/superprompt.py (nunca negação: o Flux desenha o que ela cita) + SEMENTE fixa por cartela."
+echo "   Receita: gerar a peça de referência em 3 sementes, o MARCOS escolhe a família, a semente trava a atividade."
 
 # 📤 [commitado ≠ publicado] avisa conserto que ficou preso no repo sem ir ao ar
 # (lição paga set/2026: a prova de matemática foi corrigida e commitada, mas não

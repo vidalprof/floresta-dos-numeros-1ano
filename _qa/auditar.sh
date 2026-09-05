@@ -374,6 +374,13 @@ portao "0b4 peso" python3 _qa/peso.py "$PASTA"
 #    turma. Uma atividade que nao esta no ATIVIDADES.md nao aparece la, e ele
 #    volta a me pedir o link no chat. Aqui a banca so AVISA cedo; quem SEGURA a
 #    publicacao e o mesmo portao dentro do `entregar.yml`.
+# ⭐ 0b7) O ARQUIVO INVISIVEL. Nasceu quando o git respondeu "working tree clean"
+#    com o arquivo na minha frente: o `.git/info/exclude` escondia `_padrao/` e
+#    quatro pecas-fonte de mecanica existiam SO no disco desta maquina, que e
+#    descartavel. Custa milissegundos e olha o repositorio inteiro.
+echo "--- 0b7) ARQUIVO INVISIVEL (trabalho que existe so no disco) -"
+portao "0b7 invisivel" python3 _qa/invisivel.py
+
 echo "--- 0b6) CATALOGO/PAINEL (a atividade esta no painel de links?) -"
 portao "0b6 catalogo/painel" python3 _qa/catalogo.py "$PASTA"
 
