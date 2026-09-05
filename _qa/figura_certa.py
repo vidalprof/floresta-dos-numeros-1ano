@@ -128,7 +128,7 @@ def main():
     achados = []
     pares(d, achados)
     if not achados:
-        print(u"%s -> nenhuma dupla palavra+figura no conteudo. NAO MEDI." % pasta)
+        print(u"%s -> NAO SE APLICA: nenhuma dupla palavra+figura no conteudo. Nada a conferir." % pasta)
         return 2
 
     prefixo = (d.get("prefixo") or u"") + u"_"

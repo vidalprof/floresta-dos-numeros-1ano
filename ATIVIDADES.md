@@ -122,7 +122,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
-| **RIGHT NOW — Flagra na Cidade** | Inglês 9º: Present Continuous | `_rightnow9` / `_agora` | https://vidalprof.github.io/right-now-flagra-na-cidade/ |
+| **RIGHT NOW — Flagra na Cidade** | Inglês 9º: Present Continuous (a pasta publicada é `_rightnow9`; `_agora` é um rascunho anterior da mesma atividade, guardado) | `_rightnow9` | https://vidalprof.github.io/right-now-flagra-na-cidade/ |
 | **Relative Pronouns — Connecting Ideas** | Inglês 8º: pronomes relativos | — | https://vidalprof.github.io/InglesRelativePronouns8/ |
 
 ## Outras / diversas

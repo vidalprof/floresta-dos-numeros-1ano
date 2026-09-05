@@ -3,7 +3,7 @@
    ao index.html do cache em vez da "pagina sem conexao"); CACHE PRIMEIRO
    em imagem/audio. O HASH no nome do cache troca a cada build. */
 var PREFIXO="rv-";
-var CACHE=PREFIXO+"bbcee6dd70";
+var CACHE=PREFIXO+"fafe6abc5b";
 var ATIVOS=["./","./index.html"];
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ATIVOS).catch(function(){});}));});
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE&&k.indexOf(PREFIXO)===0)return caches.delete(k);}));}));self.clients.claim();});

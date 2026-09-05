@@ -181,7 +181,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .fala.tropeco b{color:#ffd54a}
 
 /* A FITA DA RECEITA: as vagas 1..N, na ordem em que o mundo vai executar. */
-.arruma{margin-top:8px}
+/* ⚠️⚠️ DEFEITO MEDIDO (set/2026, cobaia do motor): dentro da atividade a MESA e
+   a FITA mediam 231px numa tela de 1334 — e 204px na janela baixa, onde os
+   cartoes (18,5% da mesa) viravam 38px, menores que um dedo. Na bancada o pai e
+   um bloco de 520px e estas caixas esticam; no motor o pai e uma coluna flex
+   centrada, e bloco SEM `width` encolhe ate o conteudo — e o conteudo e feito
+   de percentuais DELE (circular). Mesma familia do circuito de 6px. Largura
+   declarada, com o teto da bancada, resolve nos dois lugares. */
+.arruma{margin-top:8px;width:100%;max-width:520px;margin-left:auto;margin-right:auto}
 .fita{white-space:nowrap;font-size:0}
 .cam{display:inline-block;vertical-align:top;margin:0 .8%;padding:3px 1px 2px;min-height:62px;
      border-radius:12px;background:rgba(255,255,255,.10);cursor:pointer;
@@ -201,7 +208,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .vvazio{display:block;font-size:10px;font-weight:700;color:var(--texto,#e0d6c2);line-height:12px;margin-top:14px}
 
 /* A MESA: os passos que ainda nao entraram na fita. */
-.mesa{margin-top:6px;font-size:0}
+.mesa{margin-top:6px;font-size:0;width:100%;max-width:520px;margin-left:auto;margin-right:auto}
 .pc{display:inline-block;vertical-align:top;width:31%;max-width:120px;margin:4px 1%;
     padding:5px 3px 4px;min-height:66px;border-radius:13px;background:#fffdf6;color:#221a12;
     cursor:pointer;-webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6}

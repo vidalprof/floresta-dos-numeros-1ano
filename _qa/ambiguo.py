@@ -97,6 +97,12 @@ def main():
                              u'lugares — entao ha %d na figura e a crianca nao '
                              u'sabe qual' % (limpo, zonas, zonas))
 
+    if not itens:
+        # atividade sem "ache na cena": a pergunta ambigua deste portao nao
+        # existe aqui. "Nao se aplica" — a banca nao conta como portao cego.
+        print(u"%s -> NAO SE APLICA: nenhum alvo de 'ache na cena' (a atividade "
+              u"nao tem essa mecanica). Nada a conferir." % alvo)
+        return 2
     print(u"%s -> %d alvo(s) de 'ache na cena' conferido(s)" % (alvo, len(itens)))
     for p in problemas:
         print(u"  !! " + p)

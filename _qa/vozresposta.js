@@ -108,7 +108,13 @@ const CROMO = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
   await b.close();
   console.log(arquivo + ' -> ' + achados.total + ' resposta(s) tocavel(is) conferida(s)');
   if (!achados.total) {
-    console.log('  NAO MEDI: nenhuma resposta tocavel encontrada — isto nao e "passou".');
+    /* ⚠️ (set/2026) Na Bancada da Divisao — 32 fases de `divisao-dourado`, uma
+       peca de MANIPULAR, sem nenhuma resposta de clicar (.opt/.lig/.pc/.bin) —
+       este portao dizia "NAO MEDI" e a banca o listava como CEGO duas vezes.
+       Nao e cegueira: a armadilha "alto-falante mudo na resposta" so existe
+       onde HA resposta tocavel. Atividade sem resposta tocavel = nao se aplica. */
+    console.log('  NAO SE APLICA: nenhuma resposta tocavel (.opt/.lig/.pc/.bin) em fase ' +
+                'alguma — a atividade e toda de manipular, nao de escolher. Nada a conferir.');
     process.exit(2);
   }
   if (!achados.mudas.length) {

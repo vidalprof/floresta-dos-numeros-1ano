@@ -586,7 +586,10 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    balao ABRE ESPACO para ele (classe `comzap`) e o botao mora dentro desse
    espaco, no meio da altura.                                               */
 .balao.comzap{padding-right:56px}
-.zapb{position:absolute;right:9px;top:50%;margin-top:-19px;width:38px;height:38px;border-radius:50%;
+/* ⚠️ ALVO DE DEDO (set/2026, medido pela cobaia em 1024x420): o alto-falante do
+   enunciado tinha 38px — abaixo do piso de 40px da casa. 40 e o minimo, nao o
+   ideal; o resto do desenho (o `comzap` reserva 56px) nao muda. */
+.zapb{position:absolute;right:9px;top:50%;margin-top:-20px;width:40px;height:40px;border-radius:50%;
   background-color:#ffd43b;border:3px solid #fffdf6;cursor:pointer;padding:0;
   background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%234a3a10' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%234a3a10' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:center center;

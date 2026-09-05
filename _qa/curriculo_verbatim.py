@@ -99,7 +99,7 @@ def main():
     d = json.load(io.open(cam, encoding="utf-8"))
     ach = citacoes(d)
     if not ach:
-        print(u"%s -> nenhuma habilidade citada entre aspas. NAO MEDI." % pasta)
+        print(u"%s -> NAO SE APLICA: nenhuma habilidade citada entre aspas. Nada a conferir." % pasta)
         return 2
 
     palavras = set(achata(io.open(cur, encoding="utf-8").read()).split())

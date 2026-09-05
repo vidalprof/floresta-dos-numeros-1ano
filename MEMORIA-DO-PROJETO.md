@@ -5826,3 +5826,81 @@ Jogo de tabuleiro/cartas não passa pela banca do motor (não tem `telas` nem
    aparece;
 2. **medição de força** contra a versão anterior, com o mesmo jogador burro;
 3. **leiaute/contraste em 6 tamanhos**, com a mão no pior caso.
+
+## 🔧🔬 A AUDITORIA PESSOAL DO MOTOR E DOS PORTÕES (set/2026)
+
+Pedido do Marcos, com a sessão no modelo máximo: *"corrija o motor e os portões e
+otimize tudo para ser mais rápido e sem erros"* — e, quando eu quis delegar a uma
+equipe de agentes: *"quero que você faça tudo pessoalmente"*. Fiz. Está aqui o
+MÉTODO (para repetir) e as LIÇÕES (para não repetir os defeitos).
+
+### O método: medir antes de mexer
+1. **Baseline com número**: cobaia (`bash _qa/cobaia.sh`) e banca cronometrada
+   (`bash _qa/auditar.sh <montada>`; agora imprime `⏱` por portão e o total).
+   Antes: cobaia 12m38s REPROVADA; banca da _gincana **849s**.
+2. **Censo dos portões** (`censo_portoes.py`, no scratchpad da sessão — vale
+   reescrever): cada portão de texto contra 4 alvos (_cobaia, _gincana, _trem,
+   _tangram), anotando código, tempo e "mediu zero". É isso que separa portão
+   cego (sai 2 em TUDO), falso-positivo (reprova atividade no ar) e ruído.
+3. **Censo das peças** por script (timers, globais, keyframes, toque, ES5).
+4. Só depois: consertar na FONTE e provar peça a peça que o defeito sumiu.
+
+### O que estava quebrado e chegava à criança
+- **`circuito` media 6 pixels de largura dentro do motor.** Na bancada a placa é
+  um bloco e estica; no motor o pai é coluna flex centrada e bloco sem `width`
+  encolhe até o conteúdo (zero, tudo absoluto). As 6 pontas caíam no mesmo
+  pixel. A cobaia dizia "botão sobre botão" — a mensagem certa era "a placa
+  sumiu". **Regra**: peça com palco de geometria absoluta declara `width:100%`.
+- **`ensinar-mascote` estourava na tela final** (`FECHO is not defined`): a frase
+  estava em DUAS strings sem `+` (erro de sintaxe) e no PRIMEIRO `<script>` da
+  peça — o "motorzinho" de bancada que o integrador DESCARTA. Conteúdo mora no
+  segundo script. O ESLint da cobaia pegou; ninguém tinha lido.
+- **20 peças fechavam por função própria** (`fimCal`, `fimContadores`,
+  `telaFimTermo`…). O integrador só religa `fimDaPeca`; a guarda "acabaram as
+  rodadas" (`if(!X[ri]){ fimY(); return; }`) levava direto à tela de BANCADA,
+  com "Jogar de novo" e sem fase seguinte. Todas passaram a fechar por
+  `fimDaPeca` — **regra da casa: peça fecha por `fimDaPeca`, e só por ele.**
+- **Relógios da fase anterior**: 277 `setTimeout` soltos nas peças, 70 delas com
+  callback que atravessa a troca de fase (`mostraBanner` em 68). O motor agora
+  anota todo relógio criado com a fase viva e o `limpa()` mata todos. O que
+  precisa sobreviver (pré-carga, o "Boa!" que sobe, o olheiro do balão) usa o
+  relógio cru `_stRaw` — com o motivo escrito ao lado.
+- `zeraRetomada()` nascia com MED incompleto → "Dicas usadas: NaN" no relatório
+  de quem tocava "Começar do início".
+- 4 peças de arrasto sem `touch-action:none` (circuito, grafico,
+  mapa-conceitual, tangram): no iPad o arrasto vira rolagem.
+
+### Portões que mentiam (e o padrão por trás)
+- `halo.py` olhava a RAIZ da pasta; as figuras moram em `img/`. Cego em 100% das
+  atividades, todo dia — e ninguém estranhou porque estava na lista dos "cegos"
+  junto com 13 que só "não se aplicavam". **A lista de cegos tem que ser curta
+  para ser lida**: agora "não se aplica" é lista separada.
+- `zonas.js` exigia nome de fase; a banca passava só o arquivo → tela de USO em
+  toda atividade. Numa montada ele acha as fases `achar-na-cena` sozinho.
+- `cor_fixa.py` reprovava o MOTOR em toda atividade (10 "cravadas"): não sabia
+  que quem pinta é o ÚLTIMO elemento do seletor descendente; e o motor tinha
+  cor de texto solta em regras sem fundo. Os dois lados foram consertados.
+- `clone.py` reprovava _gincana e _trem (no ar, aprovadas) porque o nome do
+  portão `cor_fixa` citado num comentário casava com o prefixo `cor_` da pasta
+  de imagens `_colecao`. E a `_cobaia` era "vizinha": toda frase de exemplo
+  virava "igual à da _cobaia".
+- `provar_portoes.sh` (o meta-portão) estava **vermelho há dias** por duas
+  provas envelhecidas (regra de arte revogada; pasta `_prova30` apagada).
+  Meta-portão vermelho permanente é o mecanismo exato dos "erros bobos
+  repetidos": ninguém mais olha.
+- `beco.py` só conhecia `PE&#199;A`; a `calendario` escreve `PE&Ccedil;A`.
+  Ao ensinar a grafia, ele revelou as 20 peças acima.
+
+### Velocidade: onde estavam os 849 segundos
+leiaute 239s · jogador 215s · prova de sala 101s (no fio principal, tudo
+parado) · vazamento 88s · voz-robo/voz dupla 81s · tema claro 75s · contraste
+73s · diretor de arte 60s · encaixe 56s · imagem quebrada 44s.
+O padrão comum: **recarregar a página inteira (700 KB) para cada tela** — o
+leiaute fazia 240 recargas. O motor desenha a fase por `montaFase(i)` em cima da
+página viva; só telas com nome (capa, quem joga, fim) precisam recarregar,
+porque leem o estado salvo. Aplicado em leiaute, contraste (removendo a folha
+"texto transparente" depois do print), imagens, encaixe (abria um navegador
+NOVO por tela) e selo. Mais: semáforo = CPUs−1 (era 2 cravado), prova de sala
+numa faixa paralela, jogador em trechos com ÁRBITRO serial
+(`_qa/joga_banca.sh`: rápido quando passa, o antigo dá a palavra final quando
+reprova).

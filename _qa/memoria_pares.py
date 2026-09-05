@@ -201,7 +201,7 @@ def confere_montada(pasta, html):
         return 2
     mem = [f for f in fases if isinstance(f, dict) and f.get(u"mec") == u"memoria"]
     if not mem:
-        print(u"%s -> montada sem fase de memoria. NAO MEDI." % pasta)
+        print(u"%s -> NAO SE APLICA: montada sem fase de memoria. Nada a conferir." % pasta)
         return 2
     ruim = 0
     for f in mem:

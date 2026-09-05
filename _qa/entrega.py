@@ -129,7 +129,12 @@ def confere(caminho):
                                       u"conceito. (Pode ser legitimo — confira.)" % (fid, certa))
 
     if not medidas:
-        print(u"NAO MEDI: nenhuma pergunta com resposta declarada (`c`) em %s" % caminho)
+        # atividade sem quiz de alternativas (so pecas de manipular, ligar,
+        # arrastar...): esta armadilha nao existe aqui. E "nao se aplica",
+        # nao cegueira — a banca le esta frase e nao a conta como portao cego.
+        print(u"%s -> NAO SE APLICA: nenhuma pergunta com resposta declarada "
+              u"(`c`), entao nao ha resposta que a pergunta possa entregar. "
+              u"Nada a conferir." % caminho)
         return 2
 
     for a in avisos[:8]:

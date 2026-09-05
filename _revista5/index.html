@@ -185,12 +185,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .grow{position:absolute;left:0;bottom:0;width:100%;height:100%;object-fit:contain;object-position:center bottom;opacity:0;-webkit-transform:scale(.6);transform:scale(.6);-webkit-transform-origin:center bottom;transform-origin:center bottom;-webkit-transition:opacity .5s ease,-webkit-transform .5s cubic-bezier(.2,1.3,.4,1);transition:opacity .5s ease,transform .5s cubic-bezier(.2,1.3,.4,1);-webkit-filter:drop-shadow(0 8px 8px rgba(0,0,0,.18));filter:drop-shadow(0 8px 8px rgba(0,0,0,.18))}
 .grow.on{opacity:1;-webkit-transform:scale(1);transform:scale(1)}
 .ferramentas{display:-webkit-box;display:flex;gap:16px;margin-top:14px}
-.ferr{width:100px;height:100px;border-radius:24px;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:16px;color:#fff;
+.ferr{width:100px;height:100px;border-radius:24px;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:16px;
   -webkit-box-shadow:0 6px 0 rgba(0,0,0,.18),0 12px 18px rgba(0,0,0,.22);box-shadow:0 6px 0 rgba(0,0,0,.18),0 12px 18px rgba(0,0,0,.22);display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;gap:2px}
 .ferr:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
 .ferr img{width:46px;height:46px}
 .ferr.sol{background:-webkit-linear-gradient(top,#ffe07a,#f6b100);background:linear-gradient(#ffe07a,#f6b100);color:#6a4b00}
-.ferr.agua{background:-webkit-linear-gradient(top,#2a8fc4,#17688f);background:linear-gradient(#2a8fc4,#17688f)}
+.ferr.agua{background:-webkit-linear-gradient(top,#2a8fc4,#17688f);background:linear-gradient(#2a8fc4,#17688f);color:#fff}
 /* EXPERIMENTO (3 vasos) */
 .vasos{display:-webkit-box;display:flex;gap:10px;-webkit-box-pack:center;justify-content:center;margin-top:10px;-webkit-flex-wrap:wrap;flex-wrap:wrap}
 .vaso{width:108px;background:rgba(255,253,246,.95);border:2px solid var(--linha);border-bottom-width:5px;border-radius:18px;padding:8px 6px;text-align:center;cursor:pointer;-webkit-box-shadow:0 6px 14px rgba(30,50,20,.16);box-shadow:0 6px 14px rgba(30,50,20,.16)}
@@ -218,10 +218,10 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
 /* precisa */
 .bins{display:-webkit-box;display:flex;gap:14px;margin-top:14px}
-.bin{width:136px;padding:14px;border-radius:20px;text-align:center;font-weight:700;font-size:16px;color:#fff;cursor:pointer;-webkit-box-shadow:0 5px 0 rgba(0,0,0,.16),0 8px 14px rgba(0,0,0,.18);box-shadow:0 5px 0 rgba(0,0,0,.16),0 8px 14px rgba(0,0,0,.18)}
+.bin{width:136px;padding:14px;border-radius:20px;text-align:center;font-weight:700;font-size:16px;cursor:pointer;-webkit-box-shadow:0 5px 0 rgba(0,0,0,.16),0 8px 14px rgba(0,0,0,.18);box-shadow:0 5px 0 rgba(0,0,0,.16),0 8px 14px rgba(0,0,0,.18)}
 .bin:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
-.bin.sim{background:-webkit-linear-gradient(top,#3f9a26,#256113);background:linear-gradient(#3f9a26,#256113)}
-.bin.nao{background:-webkit-linear-gradient(top,#e2503f,#b62d1e);background:linear-gradient(#e2503f,#b62d1e)}
+.bin.sim{background:-webkit-linear-gradient(top,#3f9a26,#256113);background:linear-gradient(#3f9a26,#256113);color:#fff}
+.bin.nao{background:-webkit-linear-gradient(top,#e2503f,#b62d1e);background:linear-gradient(#e2503f,#b62d1e);color:#fff}
 .itemCard{width:150px;min-height:156px;background:rgba(255,253,246,.96);border:2px solid var(--linha);border-bottom-width:6px;border-radius:24px;padding:12px;text-align:center;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;-webkit-box-shadow:0 8px 18px rgba(30,50,20,.2);box-shadow:0 8px 18px rgba(30,50,20,.2);-webkit-transition:border-color .2s;transition:border-color .2s}
 .itemCard img{width:100px;height:100px;object-fit:contain;-webkit-animation:pop .35s;animation:pop .35s}
 .itemCard .lab{font-size:16px;font-weight:700;margin-top:4px}
@@ -446,7 +446,11 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .blin{margin-bottom:9px}
 .btop{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;
   -webkit-box-pack:justify;justify-content:space-between;gap:8px;margin-bottom:3px}
-.bnome{font-size:13px;font-weight:700;color:#4a4232;text-align:left;line-height:1.2}
+.bnome{font-size:13px;font-weight:700;text-align:left;line-height:1.2}
+/* ⚠️ A TINTA DIZ ONDE MORA (portao _qa/cor_fixa.py, set/2026): estes textos vivem
+   dentro do `.boletim`, que pinta o fundo creme — o seletor nomeia a superficie.
+   Tamanhos ficam na regra curta (a versao de tela baixa e curta tambem). */
+.boletim .bnome,.boletim .bplacar,.boletim .bfrase{color:#4a4232}
 .bestrelas{display:-webkit-box;display:-webkit-flex;display:flex;gap:3px;-webkit-flex-shrink:0;flex-shrink:0}
 .estrela{display:block;width:15px;height:15px;background:#ded6c2;
   -webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
@@ -460,10 +464,10 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .bbar i{display:block;height:100%;width:0;border-radius:999px;
   background:-webkit-linear-gradient(left,#8be05a,#2f8f18);background:linear-gradient(90deg,#8be05a,#2f8f18);
   -webkit-transition:width 1.1s cubic-bezier(.2,.9,.3,1);transition:width 1.1s cubic-bezier(.2,.9,.3,1)}
-.bplacar{margin-top:10px;text-align:center;font-size:19px;font-weight:800;color:#4a4232}
+.bplacar{margin-top:10px;text-align:center;font-size:19px;font-weight:800}
 .bplacar b{font-size:27px;color:#2f8f18}
 .btempo{text-align:center;font-size:13px;font-weight:600;color:#6b6252;margin-top:2px}
-.bfrase{text-align:center;font-size:14.5px;font-weight:700;color:#4a4232;margin-top:8px;line-height:1.3}
+.bfrase{text-align:center;font-size:14.5px;font-weight:700;margin-top:8px;line-height:1.3}
 @media (max-height:600px){
   .boletim{padding:9px 11px;margin-top:8px;max-width:330px}
   .bnome{font-size:11.5px}.estrela{width:12px;height:12px}
@@ -582,7 +586,10 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    balao ABRE ESPACO para ele (classe `comzap`) e o botao mora dentro desse
    espaco, no meio da altura.                                               */
 .balao.comzap{padding-right:56px}
-.zapb{position:absolute;right:9px;top:50%;margin-top:-19px;width:38px;height:38px;border-radius:50%;
+/* ⚠️ ALVO DE DEDO (set/2026, medido pela cobaia em 1024x420): o alto-falante do
+   enunciado tinha 38px — abaixo do piso de 40px da casa. 40 e o minimo, nao o
+   ideal; o resto do desenho (o `comzap` reserva 56px) nao muda. */
+.zapb{position:absolute;right:9px;top:50%;margin-top:-20px;width:40px;height:40px;border-radius:50%;
   background-color:#ffd43b;border:3px solid #fffdf6;cursor:pointer;padding:0;
   background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%234a3a10' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%234a3a10' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:center center;
@@ -785,11 +792,10 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    o lugar onde a peca entra. */
 .centro .pecabox .cam{background:rgba(38,28,20,.62);color:#fdf7ec}
 /* ⚠️ O BOTAO CLARO DA PECA (o "Recomecar" do pintar) — 1,24:1 medido, creme
-   sobre creme. `.btn` e vocabulario COMUM: a regra da peca nao e prefixada e
-   quem manda na cor e o tema da atividade, que pinta a letra de creme para a
-   madeira escura. So que `.bclaro` troca o fundo para bege e a letra creme
-   some. Quem muda o FUNDO tem que mudar a LETRA junto. */
-.centro .pecabox .bclaro{color:#3a2a12;text-shadow:0 1px 0 rgba(255,245,220,.55)}
+   sobre creme — tinha a cor da letra AQUI, numa regra solta que valia para toda
+   atividade (tivesse ela o botao ou nao) e reprovava no portao de cor em todas.
+   Quem muda o FUNDO muda a LETRA junto, NO MESMO LUGAR: a cor foi para a regra
+   `.bclaro` da propria peca `pintar-desenho` (set/2026). */
 
 /* ⭐ O MEDALHAO: no Broto a figura da rodada e GRANDE, redonda e centrada — a
    arte e a estrela da tela, nao um selinho no canto do cartao. */
@@ -1593,6 +1599,35 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 var ID = {"pre": "rv", "mascote": "raposa", "mascoteNome": "Filó", "titulo": "A Revista das Palavras", "sub": "Português · 5º ano · Gêneros textuais + substantivo, adjetivo e verbo", "fundo": "rv_fundo.jpg", "fundoSuave": false, "crachas": 6, "convite": "<b>Quem vai jogar</b> hoje?", "narrar": "instrucao"};
 
 "use strict";
+/* ============================================================
+   ⭐⭐ OS RELOGIOS DA FASE MORREM COM A FASE (set/2026)
+   ------------------------------------------------------------
+   Medido nas 91 pecas: 277 `setTimeout` soltos, e em 70 delas o callback chama
+   algo que ATRAVESSA a troca de fase — `mostraBanner` (68 pecas), `mostraDica`
+   (19), `sCerto`, `falar`, `fim`. O padrao e sempre o mesmo: a peca acerta,
+   espera 600-900ms "para a crianca ver", e so entao chama o banner. Se nesse
+   meio a fase trocou (a crianca tocou rapido, o watchdog avancou, o resgate de
+   erro pulou), o relogio da fase VELHA dispara na fase NOVA: banner com o `fim`
+   da fase anterior (avanca duas de uma vez), dica de outra pergunta, voz
+   atrasada. E a familia inteira do "fala a resposta da questao anterior" que o
+   Marcos pegou tres vezes.
+   Nao da para consertar peca a peca (277 lugares, e a proxima peca repete). O
+   conserto mora no unico lugar por onde todo relogio passa: aqui. Enquanto uma
+   fase esta VIVA, todo `setTimeout`/`setInterval` criado e anotado; o `limpa()`
+   — que e a troca de tela — cancela todos de uma vez. O que o motor precisa
+   que sobreviva a troca (pre-carga, o "Boa!" que sobe, o olheiro do balao) usa
+   o relogio CRU (`_stRaw`), de proposito e com o motivo escrito ao lado.
+   ⚠️ Fora de fase (capa, quem joga, boletim) nada e anotado: os relogios do
+   boletim (estrelas acendendo) continuam intactos.
+   ============================================================ */
+var _stRaw=window.setTimeout, _siRaw=window.setInterval;
+var _faseViva=false, _timersFase=[];
+window.setTimeout=function(){ var id=_stRaw.apply(window,arguments);
+  if(_faseViva){ _timersFase.push(id); if(_timersFase.length>600) _timersFase.splice(0,300); } return id; };
+window.setInterval=function(){ var id=_siRaw.apply(window,arguments);
+  if(_faseViva){ _timersFase.push(id); } return id; };
+function _mataTimersDaFase(){ var i,t=_timersFase; _timersFase=[];
+  for(i=0;i<t.length;i++){ try{ clearTimeout(t[i]); clearInterval(t[i]); }catch(e){} } }
 /* ============ IMAGENS ============ */
 /* ⚠️ O NOME DO MASCOTE, DECLARADO. Nao e enfeite: o `_qa/clone.py`
    le esta linha de TODAS as atividades e reprova se o nome de um
@@ -1604,7 +1639,21 @@ var IMGS=[];
    em TODA atividade e **nada e publicado** — foi o que aconteceu hoje: quatro
    entregas seguidas falharam em 55s e eu levei horas para ir ver o log. */
 var AUDIOS=[];
-var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}precarregaVoz();}
+var IMG={};
+/* ⚡ A PRE-CARGA DAS FIGURAS SAI EM LOTES (set/2026). Antes eram TODAS de uma vez
+   no boot — numa atividade com 60 figuras e a rede lenta da escola, 60 pedidos
+   disputando as 6 conexoes do navegador com a voz da abertura e com as figuras
+   da PRIMEIRA fase, que e o que a crianca precisa agora. De 6 em 6, com respiro:
+   o mascote e os crachas vem primeiro (sao os primeiros da lista), o resto chega
+   enquanto ela le a capa. Relogio CRU (`_stRaw`): a pre-carga atravessa telas. */
+function precarrega(){
+  var i=0, LOTE=6;
+  function passo(){ var n;
+    for(n=0;n<LOTE&&i<IMGS.length;n++,i++){ try{ var im=new Image(); im.src="img/"+IMGS[i]+".png"; IMG[IMGS[i]]=im; }catch(e){} }
+    if(i<IMGS.length) _stRaw(passo,90);
+  }
+  passo(); precarregaVoz();
+}
 /* ⭐⭐ A VOZ CHEGA ANTES DA CRIANÇA — pré-carga em segundo plano.
 
    ⚠️ LIÇÃO PAGA (set/2026), e quem pegou foi o Marcos com a turma jogando:
@@ -1645,10 +1694,11 @@ function precarregaVoz(){
     for(n=0;n<LOTE&&i<AUDIOS.length;n++,i++){
       try{ lote.push(fetch("audio/"+AUDIOS[i]+".mp3",{cache:"force-cache"})["catch"](function(){})); }catch(e){}
     }
-    try{ Promise.all(lote).then(function(){ setTimeout(passo,120); })["catch"](function(){ setTimeout(passo,300); }); }
-    catch(e){ setTimeout(passo,300); }
+    /* relogio CRU: a pre-carga atravessa a troca de tela (ver _stRaw) */
+    try{ Promise.all(lote).then(function(){ _stRaw(passo,120); })["catch"](function(){ _stRaw(passo,300); }); }
+    catch(e){ _stRaw(passo,300); }
   }
-  setTimeout(passo,400);   /* deixa a capa desenhar primeiro */
+  _stRaw(passo,400);   /* deixa a capa desenhar primeiro */
 }
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
 /* ============ SOM (efeitos) ============ */
@@ -1720,7 +1770,9 @@ function _flutua(txt){
     f.style.left=Math.round(x)+"px";
     f.style.top=Math.round(Math.max(24,y-34))+"px";   /* acima do toque, nunca em cima do alvo */
     document.body.appendChild(f);
-    setTimeout(function(){ if(f&&f.parentNode) f.parentNode.removeChild(f); }, 1100);
+    /* relogio CRU: o "Boa!" mora no body, fora da tela — se a fase trocar antes
+       de ele apagar, o relogio da fase morre e ele ficaria colado para sempre */
+    _stRaw(function(){ if(f&&f.parentNode) f.parentNode.removeChild(f); }, 1100);
   }catch(e){}
 }
 /* acerto: som (3 notas) + pulso háptico curto + "Boa!" subindo — os três juntos */
@@ -2024,7 +2076,11 @@ setTimeout(scf,300);
 function festa(){var i,co=["#5bbf3a","#ffd43b","#ff8ac2","#5bc8ff","#a56bff"];for(i=0;i<90;i++)cf.push({x:cc.width/2,y:cc.height*0.34,vx:(Math.random()-0.5)*11,vy:-Math.random()*13-3,g:0.32,r:5+Math.random()*4,c:co[i%5],a:1,rot:Math.random()*6,vr:(Math.random()-0.5)*0.4,sq:1});}
 function faisca(x,y,cor,n){var i;n=n||14;for(i=0;i<n;i++){var a=Math.random()*6.283,sp=1.5+Math.random()*4;cf.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-1,g:0.14,r:2+Math.random()*3,c:cor,a:1,rot:0,vr:0,sq:0});}}
 function gotas(x,y){var i;for(i=0;i<10;i++){cf.push({x:x+(Math.random()-0.5)*40,y:y,vx:(Math.random()-0.5)*1.5,vy:2+Math.random()*3,g:0.25,r:2.5+Math.random()*2,c:"#5bc8ff",a:1,rot:0,vr:0,sq:0});}}
-function lcf(){c2.clearRect(0,0,cc.width,cc.height);var i;for(i=cf.length-1;i>=0;i--){var p=cf[i];p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.a-=(p.sq?0.008:0.02);if(p.a<=0||p.y>cc.height+20){cf.splice(i,1);continue;}c2.save();c2.globalAlpha=Math.max(0,p.a);c2.translate(p.x,p.y);if(p.sq){c2.rotate(p.rot);c2.fillStyle=p.c;c2.fillRect(-p.r,-p.r*0.6,p.r*2,p.r*1.2);}else{c2.fillStyle=p.c;c2.beginPath();c2.arc(0,0,p.r,0,6.29);c2.fill();}c2.restore();}requestAnimationFrame(lcf);}lcf();
+/* ⚡ quando nao ha confete, o quadro e limpo UMA vez e o laco so espera: antes ele
+   apagava o canvas inteiro 60x por segundo o tempo todo, com nada para desenhar —
+   trabalho jogado fora no PC velho da escola, que ja disputa CPU com a voz. */
+var _cfLimpo=false;
+function lcf(){if(!cf.length){if(!_cfLimpo){c2.clearRect(0,0,cc.width,cc.height);_cfLimpo=true;}requestAnimationFrame(lcf);return;}_cfLimpo=false;c2.clearRect(0,0,cc.width,cc.height);var i;for(i=cf.length-1;i>=0;i--){var p=cf[i];p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.a-=(p.sq?0.008:0.02);if(p.a<=0||p.y>cc.height+20){cf.splice(i,1);continue;}c2.save();c2.globalAlpha=Math.max(0,p.a);c2.translate(p.x,p.y);if(p.sq){c2.rotate(p.rot);c2.fillStyle=p.c;c2.fillRect(-p.r,-p.r*0.6,p.r*2,p.r*1.2);}else{c2.fillStyle=p.c;c2.beginPath();c2.arc(0,0,p.r,0,6.29);c2.fill();}c2.restore();}requestAnimationFrame(lcf);}lcf();
 function centroTela(elm){var r=elm.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2];}
 /* ============ MEDIÇÃO INVISÍVEL + DOMÍNIO ============ */
 var MED={ini:(new Date()).getTime(),ev:[],dicas:0,toques:0,pre:null,pos:null};
@@ -2075,7 +2131,12 @@ function podeRetomar(){
          ((new Date()).getTime()-_retomaQuando) < AULA_MS;
 }
 function zeraRetomada(){ _retomaFase=-1; _retomaQuando=0; _emJogo=false;
-  MED={ev:[],ini:(new Date()).getTime()}; DOM={}; IFASE=0; salvaEstado(); }
+  /* ⚠️ DEFEITO MEDIDO (set/2026): aqui nascia um MED SEM `dicas`, `toques`, `pre` e
+     `pos`. Quem tocava "Comecar do inicio" seguia com `MED.dicas++` virando NaN e o
+     relatorio do professor mostrava "Dicas usadas: NaN" — e `MED.pre!==null` era
+     verdade para `undefined`, entao o "antes x depois" saia como "-" em vez de
+     "nao medido". O objeto tem que nascer INTEIRO, igual ao do boot. */
+  MED={ini:(new Date()).getTime(),ev:[],dicas:0,toques:0,pre:null,pos:null}; DOM={}; IFASE=0; salvaEstado(); }
 /* ============ PERFIL ============ */
 var perfil={nome:"",fig:ID.pre+"_cr1"};
 carregaEstado();
@@ -2147,6 +2208,17 @@ document.addEventListener("pointerdown", function(){ if(_paradaT) acordaParada()
 document.addEventListener("keydown", function(){ if(_paradaT) acordaParada(); }, true);
 function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
 function limpa(){ __qa("tela"); telaNarrou=false;
+  /* ⭐ a troca de tela MATA os relogios da fase que saiu (ver _stRaw, no topo):
+     nenhum banner, dica, som ou voz da fase anterior dispara na nova. */
+  _mataTimersDaFase(); _faseViva=false;
+  /* ⚠️ o vigia do "esta parada?" (8s) tambem e da fase que saiu: sem isto ele
+     disparava na CAPA ou no BOLETIM e pregava a dica da fase anterior la. A
+     `montaFase` re-arma o dela logo depois. */
+  try{ paraDeVigiar(); }catch(_e){}
+  /* a fala pendente era da tela que saiu; o `narr` vai ser pausado abaixo e o
+     'ended' nunca vem — sem zerar, o callback ficava preso e o `narraBalao` da
+     fase nova achava que havia fala de fim em curso. */
+  falandoCb=null;
   /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos com a turma jogando:
      *"tem audio falando da fase anterior, nos botoes de audio"*.
 
@@ -2597,7 +2669,10 @@ function poeVozes(){
 }
 (function(){
   var pend=0;
-  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta();
+  /* ⚠️ relogio CRU, obrigatorio: se este agendamento fosse anotado na fase e
+     morresse no `limpa()`, `pend` ficaria preso != 0 e o olheiro NUNCA mais
+     rodaria — nenhuma rodada seguinte ganharia alto-falante nem narracao. */
+  function agenda(){ if(pend) return; pend=_stRaw(function(){ pend=0; poeVozes(); poeVozPergunta();
     /* ⭐ narra a RODADA nova: so dispara quando o TEXTO do balao mudou (guarda
        dentro de narraBalao), entao tocar numa opcao nao re-narra o enunciado. */
     try{ narraBalao(false); }catch(_e){} },60); }
@@ -2765,7 +2840,15 @@ function crachaEl(funcao){
   return d;
 }
 
-function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
+function telaFim(){
+  /* ⭐ AVISA QUEM ESTIVER HOSPEDANDO que esta criança terminou (set/2026, pedido
+     do Marcos: a máquina que acaba a atividade aparece sozinha na lista do
+     controle do laboratório, para ele mandar a próxima só para essas).
+     No laboratório a atividade roda dentro do `#quadro` da tela do aluno, que
+     ouve isto e reporta "terminou". Fora do laboratório não há pai nenhum
+     escutando e a linha não faz nada — por isso é segura em qualquer lugar. */
+  try{ if(window.parent && window.parent!==window) window.parent.postMessage({eduverse:"terminou"},"*"); }catch(e){}
+  limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
   var m=imgEl("med_"+ID.pre,"medal"); c.appendChild(m); segredoRelatorio(m);
   /* ⚠️ LICAO PAGA: aqui era texto CRAVADO do Jardim ("Jardineiro Mestre!",
      "voce cuidou da planta"), entao TODA atividade montada terminava chamando
@@ -3028,6 +3111,7 @@ function montaFase(i, aoFim){
   _emJogo = true; salvaEstado();
   var f = FASES[i];
   limpa();
+  _faseViva = true;   /* daqui ate o proximo limpa(), todo relogio e DESTA fase */
   /* o relogio do "esta parada?" zera a cada fase (ver `acordaParada`) */
   acordaParada();
   var t = el("div","tela");
@@ -6793,7 +6877,10 @@ function redesenha(){
   }
 }
 /* a tela do PC vira ao contrario e as linhas ficariam tortas: redesenha */
-window.onresize=function(){ redesenha(); };
+/* ⚠️ `window.onresize=` APAGAVA o ouvinte de qualquer outra peca (a teia fazia o
+   mesmo) e continuava vivo depois da fase acabar, redesenhando num DOM que ja
+   saiu da tela. Ouvinte proprio, e so enquanto a camada estiver no documento. */
+window.addEventListener("resize",function(){ if(camadaL&&document.body.contains(camadaL)) redesenha(); },false);
 
 function fimDaPeca(){
   ger++;

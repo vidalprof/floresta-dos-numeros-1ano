@@ -114,7 +114,9 @@ def confere():
         (problemas if alvo else avisos).append(
             u"%s: `%s` nao esta no git." % (u"FORA DO GIT" if alvo else u"solto", x))
 
-    print(u"invisivel -> %d arquivo(s) fora do git, %d escondido(s) por regra local"
+    # ⚠️ a frase nao pode comecar com "-> 0 ..." — e a assinatura que a banca le como
+    #    "mediu zero" (portao cego). Aqui zero e o resultado BOM, entao ele vai depois.
+    print(u"invisivel -> conferido; fora do git: %d arquivo(s); escondido(s) por regra local: %d"
           % (len(soltos), len(escondidos)))
 
     if avisos:

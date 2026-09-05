@@ -101,7 +101,7 @@ def confere(arq):
     if ruins or quebrados:
         return 1
     if not pares and not campos:
-        print(u"   NAO MEDI: nao achei lista com `pal:`/`fig:` nem quebra por letra.")
+        print(u"   NAO SE APLICA: sem lista `pal:`/`fig:` nem quebra por letra — nao ha palavra x figura nesta atividade. Nada a conferir.")
         return 2
     print(u"   ok: toda figura e da sua palavra e nada quebrado tem entidade")
     return 0
