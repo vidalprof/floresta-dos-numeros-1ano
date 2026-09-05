@@ -378,6 +378,24 @@ portao "0b4 peso" python3 _qa/peso.py "$PASTA"
 #    com o arquivo na minha frente: o `.git/info/exclude` escondia `_padrao/` e
 #    quatro pecas-fonte de mecanica existiam SO no disco desta maquina, que e
 #    descartavel. Custa milissegundos e olha o repositorio inteiro.
+# ⭐⭐ OS ORFAOS QUE VOLTARAM (set/2026). O Marcos disse qual e a dor numero 1
+#    dele: *"o que mais incomoda sao os erros bobos repetidos"*. Fui medir e a
+#    causa apareceu: a casa tinha 89 portoes e a banca chamava 65 — **20 redes de
+#    seguranca escritas e nenhuma pendurada**. Nao era falta de saber pegar o
+#    defeito; era a rede estar no chao.
+#    Rodei os 20 de verdade, um a um, em atividade real. Estes tres passaram no
+#    teste de "vale a pena e custa pouco". Os outros ficaram de fora COM MOTIVO
+#    escrito (ver o bloco no fim deste arquivo) — pendurar todos as cegas so faria
+#    a banca gritar, e portao que grita demais acaba desligado.
+echo "--- 0b8) BASH DOS WORKFLOWS (passo que nao compila = entrega que morre no CI) -"
+portao "0b8 workflow_bash" python3 _qa/workflow_bash.py
+
+echo "--- 0b9) ACOPLAMENTO (gaveta de conteudo que esconde funcao) -"
+portao "0b9 acoplamento" python3 _qa/acoplamento.py "$PASTA"
+
+echo "--- 0c1) ZONAS do 'ache na cena' (a area de toque bate com o desenho?) -"
+portao "0c1 zonas" node _qa/zonas.js "$ARQ"
+
 echo "--- 0b7) ARQUIVO INVISIVEL (trabalho que existe so no disco) -"
 portao "0b7 invisivel" python3 _qa/invisivel.py
 
@@ -740,3 +758,51 @@ fi
 echo "==================================================="
 rm -rf "$TMPQ"
 exit $FALHOU
+
+# ============================================================
+#  ⭐ OS PORTOES QUE FICAM FORA DA BANCA — E POR QUE (set/2026)
+#
+#  Levantamento feito rodando CADA UM em atividade real. Isto esta escrito aqui
+#  para a proxima sessao nao "descobrir" os orfaos de novo e refazer o trabalho —
+#  ou, pior, pendura-los as cegas.
+#
+#  NAO SAO PORTOES (sao biblioteca ou sub-rotina):
+#   · pastas.py         — a LISTA das pastas que nao sao atividade da crianca.
+#                         Usada pelo clone.py e pelo arte_propria.py para nao
+#                         acusar inocente. Roda vazia de proposito.
+#   · contraste_fundo.py— sub-rotina do contraste.js (mede o pixel do fundo).
+#                         Sozinha ela estoura por falta de argumento, e esta certo.
+#
+#  JA SAO CHAMADOS EM OUTRO LUGAR:
+#   · publicado.py      — roda no hook de inicio de sessao (o aviso "conserto
+#                         preso no repo"). Nao precisa estar aqui tambem.
+#   · publicar.py       — ajuda de PUBLICACAO ("ja foi publicada? quando?"),
+#                         nao de auditoria.
+#   · pronuncia.py, voz_bate.py, cartela.py — chamados pelos workflows.
+#
+#  FERRAMENTA MANUAL (pesada demais para o caminho quente):
+#   · dossie.js         — o revisor final: fotografa TODAS as fases em 2 telas.
+#                         Estourou 60s numa atividade de 32 fases. Roda a mao.
+#   · cobaia.py/.sh     — gera a atividade-fixture com todas as mecanicas. So
+#                         faz sentido em mudanca de MOTOR, nao a cada atividade.
+#   · indice.py         — inventario das atividades (relatorio, nao portao).
+#   · trocarpc.js       — testa o controle do laboratorio, que nao e atividade.
+#   · curriculo.py      — o pedagogo; o CLAUDE.md ja o declara fora da banca
+#                         automatica, porque julgamento curricular nao e binario.
+#   · tangram.py        — regras de UMA atividade so (_tangram).
+#   · rapido.sh, provar_portoes.sh — meta-ferramentas (rodam a banca/os portoes).
+#
+#  PRECISAM DE CONSERTO ANTES DE ENTRAR (ficam na fila, nao esquecidos):
+#   · errador.js        — erra de proposito para ver se o andaime responde. Vale
+#                         muito, mas so tem "receita" para algumas mecanicas: na
+#                         divisao-dourado caiu na generica e saiu com codigo 2
+#                         (NAO MEDI) depois de 46s. Precisa de receita por
+#                         mecanica antes de virar portao de banca.
+#   · mesmice.py        — diz "sem fases (montou?)" tanto com a pasta quanto com
+#                         o html: esta lendo a atividade do jeito errado desde
+#                         alguma mudanca do montador. Roda CEGO hoje.
+#   · jogador-par.js    — FUNCIONA (32 fases em 4 trechos paralelos, 70s) e e
+#                         mais rapido que o jogador serial. Trocar um pelo outro
+#                         merece uma medicao lado a lado antes, para nao trocar
+#                         cobertura por velocidade sem saber o preco.
+# ============================================================

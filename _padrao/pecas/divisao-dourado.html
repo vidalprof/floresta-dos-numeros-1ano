@@ -76,7 +76,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 @keyframes pula{0%{transform:scale(.2);opacity:.2}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
 .vaziomsg{color:#3f2c0e;font-weight:700;font-size:14px;padding:14px 4px}
 /* o BANCO de docinhos que ainda faltam colocar */
-.banco{margin-top:10px;background:rgba(22,24,30,.82);border-radius:14px;padding:8px 10px;
+.banco{margin:8px auto 0;background:rgba(22,24,30,.82);border-radius:14px;padding:8px 10px;width:-webkit-fit-content;width:fit-content;max-width:100%;
        display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
        -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
        -webkit-box-align:center;-webkit-align-items:center;align-items:center;min-height:34px}
@@ -127,14 +127,32 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    baixo, ouro nos blocos. Aqui a peca vive DENTRO da tela do motor, entao tudo
    e relativo ao `.pecabox` — nada de `position:fixed` a nao ser o fantasma do
    arrasto, que precisa seguir o dedo por cima de tudo. */
-.denun{font-size:19px;font-weight:800;text-align:center;margin:2px 0 8px;
+/* ⭐⭐ AS TARJAS QUE ATRAVESSAVAM A TELA (pedido do Marcos, set/2026:
+   *"precisa remover aqueles retângulos, ficaram todos esticados até a tela
+   para digitar o resultado... pode até aumentar a área de interatividade"*).
+
+   MEDIDO em 1024x600 antes do conserto: `.denun` 992x29, `.dinstr` 808x24,
+   `.dfala` 992x28 e `.banco` 808x101 — quatro faixas escuras de ponta a ponta
+   sobre o fundo ilustrado, espremendo as peças de material dourado e os grupos.
+
+   ⚠️ E NÃO DÁ PARA SÓ APAGAR O FUNDO ESCURO: ele existe por CONTRASTE. Esse
+   texto fica sobre a FOTO do fundo, e o `_qa/contraste.js` mede o pixel real —
+   tirar a tarja reprovaria o portão e, pior, deixaria a criança sem ler.
+
+   A saída é o painel ENCOLHER até o texto em vez de atravessar a tela:
+   `width:fit-content` + margem automática. O contraste continua exatamente o
+   mesmo (o fundo escuro segue atrás de cada letra), a tela respira, e a área de
+   interação ganha a largura de volta.
+   Progressivo de propósito: navegador velho que não conhece `fit-content`
+   simplesmente mantém o comportamento de hoje — nada quebra. */
+.denun{font-size:19px;font-weight:800;text-align:center;margin:2px auto 7px;width:-webkit-fit-content;width:fit-content;max-width:100%;
   color:#fff8ea;background:rgba(32,24,12,.82);border-radius:14px;padding:7px 12px}
 .denun .dcont{display:inline-block;font-size:12px;font-weight:700;
   opacity:.85;margin-left:8px;vertical-align:middle}
 .dmesa{display:-webkit-box;display:flex;gap:12px;align-items:flex-start;
   -webkit-box-pack:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap}
 .dcoluna{-webkit-box-flex:1;flex:1 1 420px;min-width:0}
-.dinstr{font-size:14px;font-weight:700;color:#fff8ea;
+.dinstr{font-size:14px;font-weight:700;color:#fff8ea;text-align:center;margin-left:auto;margin-right:auto;width:-webkit-fit-content;width:fit-content;max-width:100%;
   background:rgba(32,24,12,.72);border-radius:12px;padding:6px 10px;margin-bottom:7px;line-height:1.25}
 /* --- o banco: uma coluna por casa (milhar/centena/dezena/unidade) --- */
 .banco{display:-webkit-box;display:flex;gap:8px;-webkit-box-pack:center;
@@ -178,7 +196,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .cbarra.vazia{background:rgba(255,233,176,.45)}
 .clin.sub{border-top:1px solid rgba(255,255,255,.25)}
 /* --- a fala do passo e o campo de digitar --- */
-.dfala{margin-top:8px;font-size:14.5px;font-weight:700;line-height:1.3;
+.dfala{margin:7px auto 0;font-size:14.5px;font-weight:700;line-height:1.3;text-align:center;width:-webkit-fit-content;width:fit-content;max-width:100%;
   color:#fff8ea;background:rgba(32,24,12,.8);border-radius:12px;padding:7px 11px;min-height:20px}
 .digbox{margin-top:8px;background:rgba(255,253,247,.94);border-radius:14px;padding:9px 12px;color:#2a1f12}
 .dq{font-size:14.5px;font-weight:700;line-height:1.3;margin-bottom:6px}
@@ -225,7 +243,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    Aqui tudo encolhe e a dica da peca sai (a instrucao logo acima diz a mesma
    coisa, e ela e a que a crianca precisa AGORA). */
 @media (max-height:680px){
-  .denun{font-size:17px;padding:4px 10px;margin:0 0 5px}
+  /* ⚠️ `margin:0 0 5px` aqui MATAVA o `margin:auto` lateral que centra a
+     tarja encolhida — a pergunta ia parar encostada na esquerda. O `auto`
+     tem que ser repetido em TODA regra que redeclare a margem. */
+  .denun{font-size:17px;padding:4px 10px;margin:0 auto 5px}
   .dinstr{font-size:13px;padding:4px 9px;margin-bottom:5px}
   .dfala{font-size:13.5px;padding:5px 10px;margin-top:5px}
   .banco{gap:6px;margin-bottom:6px}
