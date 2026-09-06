@@ -26085,6 +26085,10 @@ function fechaPar(a,b){
   b.el.removeAttribute("data-qa");
   sPar();
   confete(20);        /* ⭐ estouro pequeno a cada par (a festa grande fica no fim) */
+  /* o par acendeu, ganhou o certo e o confete: a tela RESPONDEU — marca para a
+     prova de sala (senao o pulsar do ultimo par contava como 1,7 s de espera
+     vazia ate o banner, set/2026). */
+  if(typeof __qa==="function") __qa("tela");
   feitos++;
   atualiza();
   if(feitos===PARES.length) setTimeout(fim,800);

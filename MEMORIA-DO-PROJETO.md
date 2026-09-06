@@ -6341,5 +6341,20 @@ por isso você fez as pesquisas"*. Varri os quatro documentos de pesquisa
   23/23 com código 0. Falsos alarmes que o portão aprendeu a não dar: cenário em
   `cover` (é de propósito), trilho que rola de lado (o que está fora é alcançável).
 
+**Medido na estreia da esteira (Padaria, 2026-09-06 21:36Z):** `produzir.sh _padaria
+--entregar a-padaria-das-letras` levou **816 s do montar ao "NO AR"** (banca inteira
+incluída), sem nenhum toque no MCP; o `entregar.yml` acordou pela marca no commit e
+o sha do carimbo bateu com o local.
+
+**Lição paga na mesma estreia — portão que imprime REPROVA e não segura:** a prova
+de sala (0b5) escrevia "⛔ REPROVA: a criança acerta e espera até 2379 ms" e
+`process.exitCode=1`, mas o `process.exit(...)` final do `jogador.js` pisava no
+código e a banca dizia APROVOU embaixo do REPROVA. Duas curas: (1) o veredito da
+prova entra no voto do jogador; (2) quando ela reprova na faixa paralela, o
+`auditar.sh` a repete SOZINHA antes de julgar (a briga por CPU de 8 navegadores +
+processador freado 6× produzia outliers). E a medida ficou honesta: o replay picado
+do `bater-silabas` (cada sílaba acesa com voz — o ensino) e a mensagem do
+`tracar-letra` agora marcam `__qa("tela")`, porque ali a tela ESTÁ respondendo.
+
 **Lição:** pesquisa vira código quando tem PORTÃO junto — as 12 regras de §3 só
 saíram do papel quando cada uma ganhou uma medida em `_qa/`.
