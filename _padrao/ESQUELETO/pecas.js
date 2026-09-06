@@ -15779,7 +15779,7 @@ function escolhe(L,b){
       di++;
       if(di>=ESCADA.length) mostraBanner("Voc&#234; subiu a escada inteira: <b>"+ESCADA[0].de+"</b> virou <b>"+ESCADA[ESCADA.length-1].para+"</b>!", fimDaPeca);
       else pecaEscada();
-    },1300);
+    },850);   /* teto da casa: 900 ms de tela parada depois do acerto (portao 0b3) */
     return;
   }
   sErro(); erros++;
@@ -21590,7 +21590,7 @@ function acertouPasso(co){
       ti++; pi=0;
       if(ti>=TAREFAS.length){ if(progI) progI.style.width="100%"; fim(); }
       else mostraTarefa();
-    },1000);
+    },800);   /* teto da casa: 900 ms depois do acerto (portao 0b3) */
   } else mostraTarefa();
 }
 /* O ANDAIME (a voz e o 2o degrau — ler e o conteudo, entao ela nao vem de graca):
