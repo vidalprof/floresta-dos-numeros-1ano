@@ -6075,6 +6075,19 @@ GraphoGame Brasil (o app do MEC) são exatamente *"a pronúncia de algumas letra
   que o montador grava** — nada de ponto final ou composição na hora; e todo
   `.zap` declara `data-voz`. (4) o intruso dizia "O que A BOLO faz de diferente"
   (artigo cravado) → sem artigo. Portão `0n` fechou 133/133.
+- **RODADA 4 (ouvido validado; olho meio caminho):** Trem 406 ✅ / 52 conferir /
+  **0 ❌**; Padaria 424 ✅ / 67 conferir / **0 ❌** — nas duas atividades nenhuma
+  voz diz outra coisa. O olho julgou 6 figuras do Trem antes do 429: **bola com
+  fundo não transparente** e **elefante cortado** (achados reais para o Marcos
+  olhar; a abelha "❌" era o formato "VEREDITO:" que o parser não lia). O
+  `gemini-flash-latest` grátis aguenta ~5 pedidos/min: a fila agora começa no
+  `gemini-2.5-flash-lite`, troca de modelo quando a cota acaba, e o
+  `TESTAR.json` escolhe ouvido/olho (`"ouvido": false`) para não gastar 30 min
+  de transcrição quando só o olho mudou. Rodada 5 = só olho.
+- **BANCA INTEIRA DA PADARIA: APROVOU (código 0, 555 s) na versão publicada às
+  12:19Z** — depois de colher as frases de jogo, gerar as dicas da memória para
+  todos os pares e consertar os 4 alto-falantes mudos. Falta só o portão do
+  professor.
 - **Limites honestos:** o reconhecedor erra em fala muito curta (nome de letra)
   — por isso "conferir", não "reprovado"; o olho depende de cota do Gemini
   (a de imagem estava esgotada em 2026-08-12; a de visão é outra, medir); e o

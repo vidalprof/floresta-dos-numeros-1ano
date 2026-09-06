@@ -246,9 +246,16 @@ duas casas confundíveis na mesma rodada → aviso com o par.
 
 **Medição:** `python3 _qa/dinamicas.py` código 0 nas três peças; integrador
 regenerou `pecas.js`/`pecas.css` (88 peças, 292 animações preservadas); bancada
-`_qa/peca.sh` das três — resultado anotado no `MEMORIA-DO-PROJETO.md` e no
-commit. A **Padaria** usa `caixas-de-som` (fases 18 e 24): a próxima montagem
-dela já leva a leitura da palavra.
+`_qa/peca.sh` PRONTA nas três (e nas 7 peças retocadas depois: bater-sílabas,
+ligar-pontos, ouvir-achar, intruso, traçar-letra, pintar-desenho). A **Padaria**
+foi remontada com as caixas de som que leem a palavra, MEL·SAL·OVO·PÃO e
+MALA·MASSA·BOLO·PATO·LEITE·QUEIJO (40 min medidos), publicada em
+2026-09-06 12:19Z (sha conferido no ar) e **a banca inteira APROVOU (código 0)**
+— depois de o próprio processo pagar quatro lições, registradas no
+`MEMORIA-DO-PROJETO.md` (frases de jogo colhidas, dicas da memória para todos os
+pares, alto-falantes mudos por chave de texto, artigo cravado no intruso). O
+testador humano (rodadas 3 e 4) não achou **nenhuma voz** dizendo outra coisa
+no Trem nem na Padaria.
 
 ---
 
