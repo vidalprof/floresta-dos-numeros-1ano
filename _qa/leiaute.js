@@ -72,6 +72,18 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
   const arquivo=process.argv[2];
   const telas=process.argv.slice(3);
   if(!arquivo||!telas.length){ console.log("uso: node _qa/leiaute.js <arquivo.html> <tela...>"); process.exit(2); }
+  /* ⭐ PISO DO ALVO POR IDADE (set/2026, `_pesquisa/REGRAS-APRENDIZAGEM.md`,
+     divergencia 6): a casa media 40 px para todo mundo; a pesquisa pede >= 44 px
+     para quem ainda nao le (dedo menor, mira pior). Decisao registrada: 44 px
+     ate o 2o ano, 40 px como piso absoluto nas demais. O ano sai do
+     `conteudo.json` ao lado do html; sem ele (peca avulsa, app a mao) fica 40. */
+  let PISO=40, anoTxt="";
+  try{
+    const cj=require('fs').readFileSync(path.join(path.dirname(path.resolve(arquivo)),'conteudo.json'),'utf8');
+    anoTxt=String((JSON.parse(cj).ano)||"").toLowerCase();
+    if(/pr[eé]|\b[12]\b|1º|2º|1o|2o/.test(anoTxt)) PISO=44;
+  }catch(e){}
+  if(PISO===44) console.log("piso do alvo: 44px (ate o 2o ano — ano: "+anoTxt+")");
   const b=await chromium.launch({executablePath:CROMO,args:['--no-sandbox','--disable-gpu']});
   const url='file://'+path.resolve(arquivo);
   let falhas=[], avisos=[];
@@ -121,7 +133,7 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
       if(!ok){ puladas++; continue; }
       medidas++;
       await p.waitForTimeout(650);
-      const r=await p.evaluate(({sel,clic})=>{
+      const r=await p.evaluate(({sel,clic,piso})=>{
         const out=[];
         const barra=document.getElementById("barra");
         const topoBarra=barra&&barra.getBoundingClientRect().height? barra.getBoundingClientRect().top : innerHeight;
@@ -175,11 +187,11 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
              a celula nao pode ter 40px sempre. Piso menor, so para a grade.       */
           const naGrade=e.parentNode&&String(e.parentNode.className).indexOf("grade")>=0;
           if(naGrade){ if(b.height<30||b.width<30) grade++; }
-          else if(b.height<40||b.width<40) pequenos++;
+          else if(b.height<piso||b.width<piso) pequenos++;
         }
         if(forams) out.push(forams+" resposta(s) FORA da tela SEM ROLAGEM (a crianca nao ve o que tocar)");
         if(atras) out.push(atras+" resposta(s) presa(s) atras da barra, sem rolagem");
-        if(pequenos) out.push(pequenos+" alvo(s) menor(es) que 40px");
+        if(pequenos) out.push(pequenos+" alvo(s) menor(es) que "+piso+"px"+(piso>40?" (ate o 2o ano a pesquisa pede 44)":""));
         if(grade) out.push(grade+" celula(s) de grade menor(es) que 30px");
 
         /* 5. BOTAO SOBRE BOTAO. Nao adianta comparar retangulos: botao dentro de
@@ -491,7 +503,7 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
         }
         if(soCor.length) out.push("AVISO regra14: "+soCor.length+" grupo(s) de resposta que so se distinguem pela COR: "+soCor.slice(0,3).join(" ; "));
         return out;
-      },{sel:RESPOSTA,clic:CLICAVEL});
+      },{sel:RESPOSTA,clic:CLICAVEL,piso:PISO});
       for(const m of r){ if(/^AVISO /.test(m)) avisos.push(vp.n+" | "+t+" | "+m); else falhas.push(vp.n+" | "+t+" | "+m); }
     }
     await p.close();

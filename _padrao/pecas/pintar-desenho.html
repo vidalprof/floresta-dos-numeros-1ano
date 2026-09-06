@@ -617,6 +617,7 @@ function pronto(){
   var copia={}, k;
   for(k in cores) if(cores.hasOwnProperty(k)) copia[k]=cores[k];
   GALERIA.push({d:di, cores:copia});
+  guardaDesenho(DESENHOS[di], copia);
   var quantas=quantasCores();
   sCerto();
   var g=ger;
@@ -629,6 +630,25 @@ function pronto(){
     if(di<DESENHOS.length) mostraBanner(msg,telaPintar);
     else mostraBanner(msg,fimDaPeca);
   },420);
+}
+
+/* ⭐ O ARTEFATO PARA A TELA FINAL DA ATIVIDADE (set/2026, regra 11 da pesquisa).
+   A galeria desta peca ja mostrava a obra no fim DA PECA; dentro da atividade
+   montada a tela final e a do motor, e ela precisa receber a foto. O desenho
+   e SVG puro (regioes + tracos), entao a foto e o mesmo SVG serializado, com
+   as cores que ELA escolheu — sem canvas, sem origem, nunca estoura. */
+function guardaDesenho(des,pintado){
+  try{
+    if(typeof guardaArtefato!=="function"||!des) return;
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">', i, r;
+    for(i=0;i<des.regs.length;i++){
+      r=des.regs[i];
+      s+='<path d="'+r.d+'" fill="'+((pintado&&pintado[r.k])?pintado[r.k]:PAPEL)+
+         '" stroke="#2b2118" stroke-width="1.2" stroke-linejoin="round"/>';
+    }
+    s+=(des.tracos||"")+'</svg>';
+    guardaArtefato(des.nome||"", "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s));
+  }catch(e){}
 }
 
 /* ---------------------------------------------------------------

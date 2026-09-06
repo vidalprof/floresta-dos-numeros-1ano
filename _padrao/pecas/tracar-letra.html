@@ -509,6 +509,21 @@ function fantasmaSVG(letra){
   return '<svg viewBox="0 0 100 100" preserveAspectRatio="none">'+todo+'</svg>';
 }
 
+/* ⭐ O ARTEFATO (set/2026, regra 11 da pesquisa): a letra que ela acabou de
+   tracar vai para a galeria da tela final da atividade (`guardaArtefato`, no
+   motor). E o mesmo caminho do fantasma, pintado com a cor do traco feito —
+   SVG puro, sem canvas, nunca estoura. Na peca avulsa nao ha motor: nada. */
+function guardaLetra(){
+  try{
+    if(typeof guardaArtefato!=="function"||!LT) return;
+    var s=fantasmaSVG(LT)
+      .replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ')
+      .replace(' preserveAspectRatio="none"','')
+      .replace(/<path /g,'<path fill="none" stroke="#e8542a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" ');
+    guardaArtefato("Letra "+LT.letra, "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s));
+  }catch(e){}
+}
+
 /* ---------------------------------------------------------------
    3) A TELA
    --------------------------------------------------------------- */
@@ -802,6 +817,7 @@ function completou(revelado){
   if(elAviso){ elAviso.innerHTML=LT.msg; elAviso.className="aviso ver"; }
   feitasTudo++;
   sPronto(); sCerto();
+  guardaLetra();
   fala("Ficou pronto! "+(LT.som?LT.som:LT.letra+" de "+LT.palavra)+".");
   var g=ger;
   /* revelado = a peca desenhou por ela: da MAIS tempo, porque a explicacao do

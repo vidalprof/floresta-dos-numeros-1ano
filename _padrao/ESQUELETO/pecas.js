@@ -2986,6 +2986,12 @@ var RODS=[
  {a:5,b:4,ini:4}
 ];
 
+/* ⭐ EXPLORACAO LIVRE ANTES DA PERGUNTA (set/2026, regra 5 da pesquisa — MLC e
+   PhET). Com LIVRE=1 a primeira balanca e para MEXER: por e tirar peso, ver a
+   viga descer e subir, sem andaime e sem rodada fechando. O botao diz COMECAR;
+   ai a rodada 1 abre valendo. A atividade desliga por `dadosExtra:{LIVRE:0}`. */
+var LIVRE=1; /*TECNICA*/
+var jaLivre=false, livre=false, btCom=null;
 var ri=0;        /* rodada de agora */
 var add=0;       /* quantos cubos a criança já pôs no prato da direita */
 var err=0;       /* passos para LONGE da igualdade: é o que faz o andaime crescer */
@@ -3004,15 +3010,17 @@ function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.0
 function pecaBalanca(){
   if(!RODS[ri]){ fimDaPeca(); return; }
   add=0; err=0; travado=false; ger++;
+  livre=!!(LIVRE&&!jaLivre); btCom=null;
   limpa();
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/RODS.length));
   var c=el("div","centro");
-  c.appendChild(el("div","selo","A BALAN&Ccedil;A DA IGUALDADE"));
+  c.appendChild(el("div","selo",livre?"EXPERIMENTE":"A BALAN&Ccedil;A DA IGUALDADE"));
   /* ⚠️ enunciado CURTO (carga cognitiva): uma ideia só. O que o "=" quer dizer
      de verdade quem mostra é a balança, não o texto. */
-  c.appendChild(el("div","balao",
-    "Ponha peso &agrave; direita at&eacute; a viga parar <b>no meio</b>."));
+  c.appendChild(el("div","balao", livre
+    ? "Experimente: ponha e tire peso e veja a balan&ccedil;a se mexer. Quando quiser, toque em <b>Come&ccedil;ar</b>."
+    : "Ponha peso &agrave; direita at&eacute; a viga parar <b>no meio</b>."));
   c.appendChild(montaBalanca());
   elFrase=el("div","frase","");
   c.appendChild(elFrase);
@@ -3025,8 +3033,16 @@ function pecaBalanca(){
   btMais.onclick=function(){ passo(1); };
   lin.appendChild(btMenos); lin.appendChild(btMais);
   c.appendChild(lin);
-  c.appendChild(el("div","hint","Balan&ccedil;a "+(ri+1)+" de "+RODS.length+
-                   ". O prato que desce &eacute; o mais pesado."));
+  if(livre){
+    var lc=el("div","cbt");
+    btCom=el("button","btn","Come&ccedil;ar");
+    btCom.setAttribute("data-qa","1");
+    btCom.onclick=function(){ sTap(); jaLivre=true; livre=false; pecaBalanca(); };
+    lc.appendChild(btCom); c.appendChild(lc);
+  }
+  c.appendChild(el("div","hint",livre
+    ? "O prato que desce &eacute; o mais pesado. Aqui nada vale ponto: &eacute; s&oacute; para conhecer a balan&ccedil;a."
+    : "Balan&ccedil;a "+(ri+1)+" de "+RODS.length+". O prato que desce &eacute; o mais pesado."));
   t.appendChild(c);
   app.appendChild(t);
   desenha(0);
@@ -3099,11 +3115,15 @@ function desenha(quantosNovos){
   /* data-qa="1" = "este botão serve AGORA". Só o auditor-jogador usa. */
   btMais.removeAttribute("data-qa");
   btMenos.removeAttribute("data-qa");
-  if(dif<0) btMais.setAttribute("data-qa","1");
-  else if(dif>0) btMenos.setAttribute("data-qa","1");
+  if(!livre){
+    if(dif<0) btMais.setAttribute("data-qa","1");
+    else if(dif>0) btMenos.setAttribute("data-qa","1");
+  }
   btMenos.className = (add<=0) ? "btn menos off" : "btn menos";
   btMais.className="btn mais";
 
+  /* na exploracao livre a igualdade e so uma alegria pequena: nada fecha */
+  if(livre){ if(dif===0 && quantosNovos>0) sCerto(); return; }
   if(dif===0 && !travado){
     travado=true;
     sCerto();
@@ -3131,7 +3151,7 @@ function passo(d){
   desenha(d>0?1:0);
   /* ⚠️ DESEQUILÍBRIO NÃO É ERRO: ninguém é corrigido por estar torto. O andaime
      só entra quando o passo AFASTOU da igualdade — e mesmo aí, perguntando. */
-  if(depois>antes){ err++; ajuda(); }
+  if(depois>antes && !livre){ err++; ajuda(); }
 }
 
 /* O ANDAIME QUE CRESCE: pergunta -> apoio concreto (os dois números) ->
@@ -3180,6 +3200,9 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) RODS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.LIVRE !== undefined) LIVRE = _d.LIVRE;
+    }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaBalanca();
   })();
@@ -3328,6 +3351,13 @@ var DICAS=[
   "Sobrou menos de dez? A&#237; sim n&#227;o d&#225; mais: pode dizer que acabou."
 ];
 
+/* ⭐ EXPLORACAO LIVRE ANTES DA PERGUNTA (set/2026, regra 5 da pesquisa — MLC e
+   PhET: "manipulavel tem manipulacao livre antes da pergunta"). Com LIVRE=1 a
+   primeira tela e a mesma caixa, sem juizo nenhum: ela arrasta, enche, troca e
+   ve o que acontece; o botao diz COMECAR. Quando toca, a rodada 1 abre normal.
+   A atividade desliga por `dadosExtra:{LIVRE:0}`. */
+var LIVRE=1; /*TECNICA*/
+var jaLivre=false, livre=false;
 var idxR=0, ger=0, telaAtual=null, barraP=null;
 var elPrat=null, elCaixa=null, elMesa=null, elBts=null, btTroca=null, btPronto=null;
 var pecas=[], vagas=[], naCaixa=[], trocados=[], marcada=null, travado=false, errosR=0;
@@ -3361,13 +3391,16 @@ function porAgrupar(){ return naMesa()+naCaixa.length; }
 function pecaBaseDez(){
   ger++; limpa(); soltaSombra();
   var r=rodada(), i;
+  livre=!!(LIVRE&&!jaLivre);
   pecas=[]; vagas=[]; naCaixa=[]; trocados=[]; marcada=null; travado=false; errosR=0;
   var t=el("div","tela"); telaAtual=t;
   setProg(t,Math.round(idxR*100/RODADAS.length));
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
-  c.appendChild(el("div","selo",r.selo));
-  c.appendChild(el("div","balao",r.fala));
+  c.appendChild(el("div","selo",livre?"EXPERIMENTE":r.selo));
+  c.appendChild(el("div","balao",livre
+    ? "Experimente &#224; vontade: arraste as pe&#231;as para a caixa, encha e troque. Quando quiser, toque em <b>Come&#231;ar</b>."
+    : r.fala));
 
   elPrat=el("div","prat","");
   c.appendChild(elPrat);
@@ -3386,8 +3419,8 @@ function pecaBaseDez(){
   btTroca=el("button","btn","Trocar 10 por 1");
   btTroca.onclick=troca;
   btTroca.style.display="none";
-  btPronto=el("button","btn fraco","N&#227;o d&#225; mais 10");
-  btPronto.onclick=pronto;
+  btPronto=el("button",livre?"btn":"btn fraco",livre?"Come&#231;ar":"N&#227;o d&#225; mais 10");
+  btPronto.onclick=livre?comecarValendo:pronto;
   elBts.appendChild(btTroca); elBts.appendChild(btPronto);
   c.appendChild(elBts);
 
@@ -3567,6 +3600,9 @@ function troca(){
   },520);
 }
 
+/* a saida da exploracao livre: a partir daqui vale (mesma caixa, agora com juizo) */
+function comecarValendo(){ if(travado) return; sTap(); jaLivre=true; livre=false; apagaDica(); pecaBaseDez(); }
+
 /* ---------- o juízo da criança: "não dá mais 10" ---------- */
 function pronto(){
   if(travado) return;
@@ -3618,7 +3654,7 @@ function atualiza(nova){
   } else {
     btTroca.style.display="none"; btTroca.removeAttribute("data-qa");
   }
-  if(porAgrupar()<10) btPronto.setAttribute("data-qa","1");
+  if(livre||porAgrupar()<10) btPronto.setAttribute("data-qa","1");
   else btPronto.removeAttribute("data-qa");
   if(barraP){
     var feito=(r.soltos-porAgrupar())/r.soltos;
@@ -3656,6 +3692,7 @@ function fimDaPeca(){
     if(f && f.dados) RODADAS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.LIVRE !== undefined) LIVRE = _d.LIVRE;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaBaseDez();
@@ -8861,7 +8898,7 @@ function fazGaveta(g){
        · `rot:false` + img -> marca d'agua fraca (legado dinheiro), inalterado;
        · sem img -> só o nome. */
   if(g.img && g.rot){
-    d.appendChild(figura(g.img,"gfig"));            /* figura nitida, 66px */
+    d.appendChild(figura(g.img,"c3_gfig"));            /* figura nitida, 66px */
   }else if(g.img){
     var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w);
   }
@@ -22910,7 +22947,7 @@ function fimDaPeca(){
   c.appendChild(el("div","medal",""));
   c.appendChild(el("div","balao","Voc&#234; achou <b>"+(FEITAS.length||FIGURAS.length)+
                    "</b> figura(s) seguindo os n&#250;meros na ordem."));
-  var gal=el("div","galeria");
+  var gal=el("div","lp_galeria");
   for(i=0;i<FIGURAS.length;i++) gal.appendChild(montaFolha(FIGURAS[i],FIGURAS[i].pts.length,"lp_mini",0));
   c.appendChild(gal);
   var b=el("button","btn","Jogar de novo");
@@ -30727,7 +30764,19 @@ function limpar(){ sTap(); if(_ctx){ _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0
   if(_img&&_img.complete){ _ctx.drawImage(_img,0,0,CW,CH); } else if(!(_img)){ desenhaReserva(_ctx); }
   capturaMascara(); }
   fala("Limpei o desenho! Pode pintar de novo."); }
-function pronto(){ sTap(); di++; pintarCanvas(); }
+/* ⭐ O ARTEFATO (set/2026, regra 11 da pesquisa): antes de virar a folha, a
+   pintura vai para a galeria da tela final (`guardaArtefato`, no motor). Na peca
+   avulsa nao ha motor e nada acontece. Canvas manchado por origem (figura vinda
+   de outro dominio, ou `file://` na bancada) estoura no `toDataURL` — por isso
+   o try: a foto falha em silencio e a fase segue normal. */
+function guardaPintura(){
+  try{
+    if(typeof guardaArtefato!=="function"||!_ctx||!_ctx.canvas) return;
+    var d0=PINTAR[di]||{};
+    guardaArtefato(d0.nome||"", _ctx.canvas.toDataURL("image/png"));
+  }catch(e){}
+}
+function pronto(){ sTap(); guardaPintura(); di++; pintarCanvas(); }
     if(f && f.dados) PINTAR = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.TINTAS !== undefined) TINTAS = _d.TINTAS;
@@ -31185,6 +31234,7 @@ function pronto(){
   var copia={}, k;
   for(k in cores) if(cores.hasOwnProperty(k)) copia[k]=cores[k];
   GALERIA.push({d:di, cores:copia});
+  guardaDesenho(DESENHOS[di], copia);
   var quantas=quantasCores();
   sCerto();
   var g=ger;
@@ -31197,6 +31247,25 @@ function pronto(){
     if(di<DESENHOS.length) mostraBanner(msg,telaPintar);
     else mostraBanner(msg,fimDaPeca);
   },420);
+}
+
+/* ⭐ O ARTEFATO PARA A TELA FINAL DA ATIVIDADE (set/2026, regra 11 da pesquisa).
+   A galeria desta peca ja mostrava a obra no fim DA PECA; dentro da atividade
+   montada a tela final e a do motor, e ela precisa receber a foto. O desenho
+   e SVG puro (regioes + tracos), entao a foto e o mesmo SVG serializado, com
+   as cores que ELA escolheu — sem canvas, sem origem, nunca estoura. */
+function guardaDesenho(des,pintado){
+  try{
+    if(typeof guardaArtefato!=="function"||!des) return;
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">', i, r;
+    for(i=0;i<des.regs.length;i++){
+      r=des.regs[i];
+      s+='<path d="'+r.d+'" fill="'+((pintado&&pintado[r.k])?pintado[r.k]:PAPEL)+
+         '" stroke="#2b2118" stroke-width="1.2" stroke-linejoin="round"/>';
+    }
+    s+=(des.tracos||"")+'</svg>';
+    guardaArtefato(des.nome||"", "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s));
+  }catch(e){}
 }
 
 /* ---------------------------------------------------------------
@@ -31215,7 +31284,7 @@ function fimDaPeca(){
   c.appendChild(el("div","selo","A SUA EXPOSI&#199;&#195;O"));
   c.appendChild(el("div","medal",""));
   c.appendChild(el("div","balao","Estes desenhos s&#227;o <b>seus</b>. Ningu&#233;m pintou igual."));
-  var gal=el("div","galeria");
+  var gal=el("div","pd_galeria");
   for(i=0;i<GALERIA.length;i++){
     g2=GALERIA[i];
     if(!DESENHOS[g2.d]) continue;
@@ -34118,6 +34187,13 @@ var NOMEH=["doze","uma","duas","tr&ecirc;s","quatro","cinco","seis","sete","oito
 var NOMEM=["","cinco","dez","quinze","vinte","vinte e cinco","trinta","trinta e cinco", /*TECNICA*/
            "quarenta","quarenta e cinco","cinquenta","cinquenta e cinco"];
 
+/* ⭐ EXPLORACAO LIVRE ANTES DA PERGUNTA (set/2026, regra 5 da pesquisa — MLC e
+   PhET). Com LIVRE=1 a primeira tela e o relogio para MEXER: ela arrasta os
+   ponteiros e a hora aparece embaixo, em numero e em palavras, sem alvo e sem
+   andaime. O botao diz COMECAR; ai o roteiro abre valendo. A atividade desliga
+   por `dadosExtra:{LIVRE:0}`. */
+var LIVRE=1; /*TECNICA*/
+var jaLivre=false, livre=false;
 var pos=0;            /* onde estamos no roteiro */
 var fi=0, li=0, ei=0; /* rodada de FORMAR / de LER / de ESCREVER (vêm de `pos`) */
 var telaTipo="f";     /* que tela está no ar: manda no `data-qa` e na leitura */
@@ -34355,6 +34431,7 @@ function marcaQA(){
   if(!teclas.length) return;
   for(i=0;i<teclas.length;i++) teclas[i].removeAttribute("data-qa");
   if(eOk) eOk.removeAttribute("data-qa");
+  if(livre){ if(eOk) eOk.setAttribute("data-qa","1"); return; }   /* exploracao: o que serve e Comecar */
   alvo=tot(cenaF().h,cenaF().m);
   d=((alvo-tot(hh,mm))+720)%720;
   if(d===0){ if(eOk) eOk.setAttribute("data-qa","1"); return; }
@@ -34378,9 +34455,10 @@ function telaFormar(){
   var t=el("div","tela");
   setProg(t,Math.round(pos*100/PLANO.length));
   var c=el("div","centro");
-  c.appendChild(el("div","selo",c0.selo));
-  c.appendChild(el("div","balao","Mova os ponteiros e deixe o rel&oacute;gio em <b>"+
-                   c0.apelido+"</b>."));
+  c.appendChild(el("div","selo",livre?"EXPERIMENTE":c0.selo));
+  c.appendChild(el("div","balao",livre
+    ? "Experimente: mova os ponteiros e veja a hora mudar embaixo. Quando quiser, toque em <b>Come&ccedil;ar</b>."
+    : "Mova os ponteiros e deixe o rel&oacute;gio em <b>"+c0.apelido+"</b>."));
   c.appendChild(montaRelogio(c0.ih,c0.im,true));
 
   eDig=el("div","rdig","");
@@ -34395,12 +34473,13 @@ function telaFormar(){
   c.appendChild(bts);
 
   eZona=el("div","rzona","");
-  eOk=el("button","btn","Est&aacute; pronto!");
-  eOk.onclick=function(){ confereFormar(g); };
+  eOk=el("button","btn",livre?"Come&ccedil;ar":"Est&aacute; pronto!");
+  eOk.onclick=function(){ if(livre){ comecarValendo(); return; } confereFormar(g); };
   eZona.appendChild(eOk);
   c.appendChild(eZona);
-  c.appendChild(el("div","hint","Arraste um ponteiro, use os bot&otilde;es "+
-                   "ou as setas do teclado. Depois aperte Enter."));
+  c.appendChild(el("div","hint",livre
+    ? "Aqui nada vale ponto: gire os ponteiros e veja o pequeno andar junto."
+    : "Arraste um ponteiro, use os bot&otilde;es ou as setas do teclado. Depois aperte Enter."));
   t.appendChild(c); app.appendChild(t);
   mostraLeitura(); marcaQA();
   /* AS DUAS PORTAS: no PC da escola tem teclado e a criança vai usar. */
@@ -34429,8 +34508,11 @@ function fazTecla(k,rot){
   teclas.push(b);
   return b;
 }
+/* a saida da exploracao livre: a partir daqui o roteiro vale */
+function comecarValendo(){ if(travada) return; sTap(); jaLivre=true; livre=false; comecaPeca(); }
 function confereFormar(g){
   if(g!==ger||travada) return;
+  if(livre){ comecarValendo(); return; }   /* Enter na exploracao = Comecar */
   var c0=cenaF();
   if(tot(hh,mm)===tot(c0.h,c0.m)){ acertaFormar(g); return; }
   erraFormar(g);
@@ -34874,6 +34956,7 @@ function fimDaPeca(){
    não por `telaFormar()` na unha: com `MODO="escrever"` o primeiro passo é
    outro, e começar sempre pela mesma tela seria o modo novo nunca acontecer. */
 function comecaPeca(){
+  if(LIVRE&&!jaLivre){ livre=true; telaFormar(); return; }   /* a exploracao livre, primeiro */
   if(PLANO[0]==="e"){ telaEscrever(); return; }
   if(PLANO[0]==="l"){ telaLer(); return; }
   telaFormar();
@@ -34886,6 +34969,7 @@ function comecaPeca(){
       if(_d.NOMEH !== undefined) NOMEH = _d.NOMEH;
       if(_d.NOMEM !== undefined) NOMEM = _d.NOMEM;
       if(_d.MODO !== undefined) MODO = _d.MODO;
+      if(_d.LIVRE !== undefined) LIVRE = _d.LIVRE;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     comecaPeca();
@@ -35880,6 +35964,13 @@ var RETAS=[
   dica:"Ache o meio (50). O 25 &#233; o meio do meio."}
 ];
 
+/* ⭐ EXPLORACAO LIVRE ANTES DA PERGUNTA (set/2026, regra 5 da pesquisa — MLC e
+   PhET). Com LIVRE=1 a primeira reta e para PASSEAR: ela toca, arrasta, e o
+   numero do lugar aparece embaixo — sem alvo, sem distancia, sem rodada. Todos
+   os tracos ficam visiveis. O botao diz COMECAR; ai a rodada 1 abre valendo. A
+   atividade desliga por `dadosExtra:{LIVRE:0}`. */
+var LIVRE=1; /*TECNICA*/
+var jaLivre=false, livre=false;
 var rodR=0;            /* rodada da vez */
 var semMira=0;         /* quantas vezes ela cravou sem ter escolhido o lugar */
 var apoio=0;           /* quantos degraus de andaime a reta esta mostrando */
@@ -35901,29 +35992,38 @@ function sPerto(){ nota(659.25,.10,.15,"triangle",0); nota(880,.13,.14,"triangle
 function pecaReta(){
   limpa(); apagaDica(); ger++;
   fase="mirar"; pos=null; elMira=null; pegouReta=false; movimentou=false; semMira=0;
+  livre=!!(LIVRE&&!jaLivre);
   var R=RETAS[rodR], i;
   var t=el("div","tela"); telaA=t;
   setProg(t,Math.round(rodR*100/RETAS.length));
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
-  c.appendChild(el("div","selo",R.selo));
-  c.appendChild(el("div","balao",R.bal));
+  c.appendChild(el("div","selo",livre?"EXPERIMENTE":R.selo));
+  c.appendChild(el("div","balao",livre
+    ? "Experimente: toque na reta e arraste. O n&#250;mero do lugar aparece embaixo. Quando quiser, toque em <b>Come&#231;ar</b>."
+    : R.bal));
 
   elReta=el("div","reta rn_zona");
-  elReta.setAttribute("data-alvo",R.alvo);   /* so o auditor le isto (ver cliqueReta) */
+  /* so o auditor le isto (ver cliqueReta); na exploracao o "alvo" e o meio da reta */
+  elReta.setAttribute("data-alvo", livre ? Math.round(R.min+(R.max-R.min)/2) : R.alvo);
   elInt=el("div","rint");
   elInt.appendChild(el("div","rlinha",""));
   elReta.appendChild(elInt);
+  /* na exploracao livre a reta mostra TODOS os tracos: e para conhecer a regua */
+  var ap0=apoio; if(livre) apoio=2;
   desenhaTracos();
+  apoio=ap0;
   ligaReta();
   c.appendChild(elReta);
 
   elRes=el("div","res","");
   c.appendChild(elRes);
-  elBtn=el("button","btn","CRAVAR AQUI");
-  elBtn.onclick=cravar;
+  elBtn=el("button","btn",livre?"Come&#231;ar":"CRAVAR AQUI");
+  elBtn.onclick=livre?comecarValendo:cravar;
   c.appendChild(elBtn);
-  c.appendChild(el("div","hint","Toque na reta (ou arraste). D&#225; para usar as setas do teclado e o Enter."));
+  c.appendChild(el("div","hint",livre
+    ? "Aqui nada vale ponto: passeie pela reta e veja onde cada n&#250;mero mora."
+    : "Toque na reta (ou arraste). D&#225; para usar as setas do teclado e o Enter."));
   t.appendChild(c); app.appendChild(t);
 
   /* A SEGUNDA PORTA: o teclado de verdade. No PC da escola tem teclado e a
@@ -36034,9 +36134,16 @@ function poeMira(v,comSom){
   if(!elMira){ elMira=el("div","rmira",""); elInt.appendChild(elMira); }
   elMira.style.left=pct(v)+"%";
   if(comSom) sTap();
+  if(livre){
+    /* exploracao: o numero do lugar aparece na hora — e o retorno imediato que ensina */
+    if(elRes) elRes.innerHTML="Voc&#234; est&#225; no <b>"+Math.round(pos)+"</b>.";
+    marcaVez(); return;
+  }
   if(elBtn) elBtn.innerHTML="CRAVAR NO "+Math.round(pos);
   marcaVez();
 }
+/* a saida da exploracao livre: a partir daqui vale (a mesma reta, agora com alvo) */
+function comecarValendo(){ sTap(); jaLivre=true; livre=false; apagaDica(); pecaReta(); }
 
 /* A SEGUNDA PORTA: setas do teclado andam de 1 em 1, Enter/espaco crava. */
 function teclou(ev){
@@ -36056,6 +36163,7 @@ function teclou(ev){
 
 /* ---------- cravar: um tiro por rodada, e a medida e a DISTANCIA ---------- */
 function cravar(){
+  if(livre){ comecarValendo(); return; }   /* Enter na exploracao = Comecar */
   if(fase!=="mirar"){ sTap(); return; }
   if(pos===null){
     /* ⚠️ CRAVAR SEM MIRAR (defeito medido ago/2026): antes esta frase se
@@ -36138,6 +36246,7 @@ function proxima(){
     if(f && f.dados) RETAS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.ERROS !== undefined) ERROS = _d.ERROS;
+      if(_d.LIVRE !== undefined) LIVRE = _d.LIVRE;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaReta();
@@ -36151,6 +36260,10 @@ function apagaDica(){
 /* data-qa: UM alvo de cada vez, e so para o auditor-jogador (_qa/jogador.js).
    Antes de mirar, a vez e da RETA; depois de mirar, e do BOTAO.          */
 function marcaVez(){
+  /* exploracao: a reta NAO publica data-qa nenhum (o auditor pegava o primeiro
+     `[data-qa]` da tela — a reta — e ficava passeando para sempre: PRESO na
+     bancada, set/2026). So o botao Comecar e alvo declarado. */
+  if(livre){ if(elReta) elReta.removeAttribute("data-qa"); if(elBtn) elBtn.setAttribute("data-qa","1"); return; }
   if(elReta) elReta.setAttribute("data-qa",(fase==="mirar"&&pos===null)?"1":"0");
   if(elBtn) elBtn.setAttribute("data-qa",(fase==="mirar"&&pos===null)?"0":"1");
 }
@@ -36180,6 +36293,7 @@ function recomeca(){
     if(f && f.dados) RETAS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.ERROS !== undefined) ERROS = _d.ERROS;
+      if(_d.LIVRE !== undefined) LIVRE = _d.LIVRE;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaReta();
@@ -36187,6 +36301,7 @@ function recomeca(){
     if(f && f.dados) RETAS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.ERROS !== undefined) ERROS = _d.ERROS;
+      if(_d.LIVRE !== undefined) LIVRE = _d.LIVRE;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaReta();
@@ -42132,6 +42247,21 @@ function fantasmaSVG(letra){
   return '<svg viewBox="0 0 100 100" preserveAspectRatio="none">'+todo+'</svg>';
 }
 
+/* ⭐ O ARTEFATO (set/2026, regra 11 da pesquisa): a letra que ela acabou de
+   tracar vai para a galeria da tela final da atividade (`guardaArtefato`, no
+   motor). E o mesmo caminho do fantasma, pintado com a cor do traco feito —
+   SVG puro, sem canvas, nunca estoura. Na peca avulsa nao ha motor: nada. */
+function guardaLetra(){
+  try{
+    if(typeof guardaArtefato!=="function"||!LT) return;
+    var s=fantasmaSVG(LT)
+      .replace('<svg ','<svg xmlns="http://www.w3.org/2000/svg" ')
+      .replace(' preserveAspectRatio="none"','')
+      .replace(/<path /g,'<path fill="none" stroke="#e8542a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" ');
+    guardaArtefato("Letra "+LT.letra, "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s));
+  }catch(e){}
+}
+
 /* ---------------------------------------------------------------
    3) A TELA
    --------------------------------------------------------------- */
@@ -42425,6 +42555,7 @@ function completou(revelado){
   if(elAviso){ elAviso.innerHTML=LT.msg; elAviso.className="aviso ver"; }
   feitasTudo++;
   sPronto(); sCerto();
+  guardaLetra();
   fala("Ficou pronto! "+(LT.som?LT.som:LT.letra+" de "+LT.palavra)+".");
   var g=ger;
   /* revelado = a peca desenhou por ela: da MAIS tempo, porque a explicacao do

@@ -351,7 +351,19 @@ function limpar(){ sTap(); if(_ctx){ _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0
   if(_img&&_img.complete){ _ctx.drawImage(_img,0,0,CW,CH); } else if(!(_img)){ desenhaReserva(_ctx); }
   capturaMascara(); }
   fala("Limpei o desenho! Pode pintar de novo."); }
-function pronto(){ sTap(); di++; pintarCanvas(); }
+/* ⭐ O ARTEFATO (set/2026, regra 11 da pesquisa): antes de virar a folha, a
+   pintura vai para a galeria da tela final (`guardaArtefato`, no motor). Na peca
+   avulsa nao ha motor e nada acontece. Canvas manchado por origem (figura vinda
+   de outro dominio, ou `file://` na bancada) estoura no `toDataURL` — por isso
+   o try: a foto falha em silencio e a fase segue normal. */
+function guardaPintura(){
+  try{
+    if(typeof guardaArtefato!=="function"||!_ctx||!_ctx.canvas) return;
+    var d0=PINTAR[di]||{};
+    guardaArtefato(d0.nome||"", _ctx.canvas.toDataURL("image/png"));
+  }catch(e){}
+}
+function pronto(){ sTap(); guardaPintura(); di++; pintarCanvas(); }
 
 pintarCanvas();
 </script>

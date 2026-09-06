@@ -18,7 +18,13 @@ body{font-family:"Nunito","Trebuchet MS","Segoe UI",system-ui,sans-serif;color:v
 header{display:flex;align-items:center;gap:12px;padding:11px 18px;
  background:linear-gradient(100deg,#4a86ff,#6f9dff 60%,#8ab0ff);color:#fff;box-shadow:0 4px 16px rgba(40,70,160,.28);z-index:5;}
 header .logo{width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.5);}
-header h1{font-size:21px;margin:0;font-weight:900;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.12);}
+/* ⚠️ medido pelo _qa/leiaute_mao.js (set/2026): no celular de 320-412px o cabecalho
+   estourava 5-18px de lado e o botao Salvar saia da tela (o body e overflow:hidden,
+   entao a crianca nem via). O titulo agora ENCOLHE (min-width:0 + reticencias) e os
+   botoes ficam. */
+header > div{min-width:0;}
+header h1{font-size:21px;margin:0;font-weight:900;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.12);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hbtn{flex:none;}
 header .sub{font-size:12px;opacity:.95;margin-top:1px;font-weight:600;}
 .spacer{flex:1;}
 .hbtn{background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.6);color:#fff;font-weight:800;border-radius:14px;
@@ -45,12 +51,13 @@ main{flex:1;display:flex;min-height:0;}
 .quadro{background:#ffffff;image-rendering:pixelated;
   border-radius:16px;box-shadow:0 12px 30px rgba(30,50,100,.18),0 0 0 3px #fff,0 0 0 7px var(--linha2);touch-action:none;display:block;margin:auto;}
 /* ---------- PALETA ---------- */
-.paleta{display:flex;flex-direction:column;gap:12px;padding:14px 12px;width:150px;
+/* paleta: 3 colunas em 170px = bolinha de 42px (alvo de dedo; era 4 colunas de 26px) */
+.paleta{display:flex;flex-direction:column;gap:12px;padding:14px 12px;width:170px;
  background:linear-gradient(180deg,#ffffff,#f6f9ff);border-left:1px solid var(--linha);box-shadow:var(--sombra);z-index:2;}
 .corAtual{display:flex;align-items:center;gap:10px;background:#f1f5fd;border-radius:14px;padding:8px 10px;box-shadow:inset 0 0 0 2px var(--linha);}
 .corAtual .amostra{width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--linha2),0 3px 6px rgba(0,0,0,.12);flex:none;}
 .corAtual .nome{font-size:13px;font-weight:900;color:#3a4763;line-height:1.15;}
-.grade-cores{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+.grade-cores{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
 .cor{width:100%;padding-top:100%;border-radius:50%;cursor:pointer;position:relative;
  box-shadow:0 0 0 3px #fff,0 0 0 4px var(--linha2),0 3px 5px rgba(0,0,0,.12);transition:transform .1s;}
 .cor.on{box-shadow:0 0 0 3px #fff,0 0 0 6px var(--verde),0 4px 8px rgba(0,0,0,.2);transform:scale(1.08);}
@@ -59,7 +66,8 @@ main{flex:1;display:flex;min-height:0;}
 footer{display:flex;align-items:center;gap:8px;padding:9px 14px;background:linear-gradient(180deg,#ffffff,#f4f8ff);
  border-top:1px solid var(--linha);flex-wrap:wrap;box-shadow:0 -4px 14px rgba(40,60,110,.06);z-index:2;}
 footer .rot{font-size:13px;font-weight:900;color:#5a6b8c;}
-.pill{border:0;background:#eef3fc;color:#5a6b8c;border-radius:13px;padding:8px 14px;font-weight:800;font-size:14px;cursor:pointer;
+/* alvo de dedo: minimo 40px de altura (era 32 — medido pelo leiaute_mao.js) */
+.pill{border:0;background:#eef3fc;color:#5a6b8c;border-radius:13px;padding:8px 14px;min-height:40px;font-weight:800;font-size:14px;cursor:pointer;
  box-shadow:inset 0 0 0 2px var(--linha);transition:transform .08s,background .15s;display:flex;align-items:center;gap:5px;}
 .pill:hover{background:#e6eefb;} .pill:active{transform:translateY(2px);}
 .pill.on{background:#e7f0ff;color:var(--azulE);box-shadow:inset 0 0 0 3px var(--azul);}
@@ -68,8 +76,10 @@ footer .rot{font-size:13px;font-weight:900;color:#5a6b8c;}
 .aviso{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(10px);background:#26314a;color:#fff;padding:11px 18px;border-radius:16px;
  font-weight:800;font-size:14px;box-shadow:0 8px 20px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50;}
 .aviso.ver{opacity:1;transform:translateX(-50%) translateY(0);}
-@media(max-width:640px){ .paleta{width:120px;} .tool{width:58px;height:58px;} .tool svg{width:26px;height:26px;} header h1{font-size:18px;} header .sub{display:none;} }
-@media(max-width:440px){ .grade-cores{grid-template-columns:repeat(3,1fr);} .paleta{width:104px;} }
+@media(max-width:640px){ .paleta{width:120px;} .grade-cores{grid-template-columns:repeat(2,1fr);} .tool{width:58px;height:58px;} .tool svg{width:26px;height:26px;} header h1{font-size:18px;} header .sub{display:none;} }
+/* ⚠️ no celular estreito as bolinhas de cor cairam a ~20px (3 colunas em 104px):
+   dedo de crianca nao acerta. Duas colunas de 42px, paleta um pouco mais larga. */
+@media(max-width:440px){ .grade-cores{grid-template-columns:repeat(2,1fr);} .paleta{width:118px;} header{gap:8px;padding:9px 10px;} .hbtn{padding:9px 10px;font-size:13px;} }
 </style></head>
 <body>
 <header>

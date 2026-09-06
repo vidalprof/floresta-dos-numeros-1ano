@@ -43,14 +43,14 @@ PY
   for item in "1a sintaxe|node --check $TMP/app.js" "1b funcao que nao existe|python3 _qa/funcoes.py $ARQ" \
               "0b2 dinamicas|python3 _qa/dinamicas.py $ARQ" "4 classes sem estilo|python3 _qa/classes.py $ARQ" \
               "3b beco na peca|python3 _qa/beco_peca.py $ARQ" "4b cor cravada|python3 _qa/cor_fixa.py $ARQ" \
-              "0b3 espera|python3 _qa/espera.py $ARQ"; do
+              "0b3 espera|python3 _qa/espera.py $ARQ" "0p game-feel|python3 _qa/gamefeel.py $ARQ"; do
     nome="${item%%|*}"; cmd="${item#*|}"
     out="$(eval "$cmd" 2>&1)"; st=$?
     if [ "$st" != "0" ] && [ "$st" != "2" ]; then FALHOU="$FALHOU
    · $nome (codigo $st)"; echo "--- $nome ---"; echo "$out" | tail -8; fi
   done
   echo "==================================================="
-  echo " PRE-VOO DA PECA $ARQ — 7 portoes de texto em $((SECONDS-T0))s"
+  echo " PRE-VOO DA PECA $ARQ — 8 portoes de texto em $((SECONDS-T0))s"
   rm -rf "$TMP"
   if [ -n "$FALHOU" ]; then echo "   REPROVARAM:$FALHOU"; exit 1; fi
   echo " -> nenhum erro barato. Agora sim: bash _qa/peca.sh $ARQ"; exit 0 ;;
@@ -90,6 +90,8 @@ PORTOES=(
   "3f pares da memoria|python3 _qa/memoria_pares.py $PASTA"
   "3g duracao|python3 _qa/duracao.py $PASTA"
   "4c cor cravada|python3 _qa/cor_fixa.py $ARQ"
+  "0p game-feel|python3 _qa/gamefeel.py $ARQ"
+  "0q curiosidade|python3 _qa/curiosidade.py $ARQ"
   "falas (narracao)|python3 _qa/falas.py $PASTA/falas.json"
 )
 

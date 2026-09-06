@@ -450,6 +450,13 @@ var NOMEH=["doze","uma","duas","tr&ecirc;s","quatro","cinco","seis","sete","oito
 var NOMEM=["","cinco","dez","quinze","vinte","vinte e cinco","trinta","trinta e cinco", /*TECNICA*/
            "quarenta","quarenta e cinco","cinquenta","cinquenta e cinco"];
 
+/* ⭐ EXPLORACAO LIVRE ANTES DA PERGUNTA (set/2026, regra 5 da pesquisa — MLC e
+   PhET). Com LIVRE=1 a primeira tela e o relogio para MEXER: ela arrasta os
+   ponteiros e a hora aparece embaixo, em numero e em palavras, sem alvo e sem
+   andaime. O botao diz COMECAR; ai o roteiro abre valendo. A atividade desliga
+   por `dadosExtra:{LIVRE:0}`. */
+var LIVRE=1; /*TECNICA*/
+var jaLivre=false, livre=false;
 var pos=0;            /* onde estamos no roteiro */
 var fi=0, li=0, ei=0; /* rodada de FORMAR / de LER / de ESCREVER (vêm de `pos`) */
 var telaTipo="f";     /* que tela está no ar: manda no `data-qa` e na leitura */
@@ -687,6 +694,7 @@ function marcaQA(){
   if(!teclas.length) return;
   for(i=0;i<teclas.length;i++) teclas[i].removeAttribute("data-qa");
   if(eOk) eOk.removeAttribute("data-qa");
+  if(livre){ if(eOk) eOk.setAttribute("data-qa","1"); return; }   /* exploracao: o que serve e Comecar */
   alvo=tot(cenaF().h,cenaF().m);
   d=((alvo-tot(hh,mm))+720)%720;
   if(d===0){ if(eOk) eOk.setAttribute("data-qa","1"); return; }
@@ -710,9 +718,10 @@ function telaFormar(){
   var t=el("div","tela");
   setProg(t,Math.round(pos*100/PLANO.length));
   var c=el("div","centro");
-  c.appendChild(el("div","selo",c0.selo));
-  c.appendChild(el("div","balao","Mova os ponteiros e deixe o rel&oacute;gio em <b>"+
-                   c0.apelido+"</b>."));
+  c.appendChild(el("div","selo",livre?"EXPERIMENTE":c0.selo));
+  c.appendChild(el("div","balao",livre
+    ? "Experimente: mova os ponteiros e veja a hora mudar embaixo. Quando quiser, toque em <b>Come&ccedil;ar</b>."
+    : "Mova os ponteiros e deixe o rel&oacute;gio em <b>"+c0.apelido+"</b>."));
   c.appendChild(montaRelogio(c0.ih,c0.im,true));
 
   eDig=el("div","rdig","");
@@ -727,12 +736,13 @@ function telaFormar(){
   c.appendChild(bts);
 
   eZona=el("div","rzona","");
-  eOk=el("button","btn","Est&aacute; pronto!");
-  eOk.onclick=function(){ confereFormar(g); };
+  eOk=el("button","btn",livre?"Come&ccedil;ar":"Est&aacute; pronto!");
+  eOk.onclick=function(){ if(livre){ comecarValendo(); return; } confereFormar(g); };
   eZona.appendChild(eOk);
   c.appendChild(eZona);
-  c.appendChild(el("div","hint","Arraste um ponteiro, use os bot&otilde;es "+
-                   "ou as setas do teclado. Depois aperte Enter."));
+  c.appendChild(el("div","hint",livre
+    ? "Aqui nada vale ponto: gire os ponteiros e veja o pequeno andar junto."
+    : "Arraste um ponteiro, use os bot&otilde;es ou as setas do teclado. Depois aperte Enter."));
   t.appendChild(c); app.appendChild(t);
   mostraLeitura(); marcaQA();
   /* AS DUAS PORTAS: no PC da escola tem teclado e a criança vai usar. */
@@ -761,8 +771,11 @@ function fazTecla(k,rot){
   teclas.push(b);
   return b;
 }
+/* a saida da exploracao livre: a partir daqui o roteiro vale */
+function comecarValendo(){ if(travada) return; sTap(); jaLivre=true; livre=false; comecaPeca(); }
 function confereFormar(g){
   if(g!==ger||travada) return;
+  if(livre){ comecarValendo(); return; }   /* Enter na exploracao = Comecar */
   var c0=cenaF();
   if(tot(hh,mm)===tot(c0.h,c0.m)){ acertaFormar(g); return; }
   erraFormar(g);
@@ -1206,6 +1219,7 @@ function fimDaPeca(){
    não por `telaFormar()` na unha: com `MODO="escrever"` o primeiro passo é
    outro, e começar sempre pela mesma tela seria o modo novo nunca acontecer. */
 function comecaPeca(){
+  if(LIVRE&&!jaLivre){ livre=true; telaFormar(); return; }   /* a exploracao livre, primeiro */
   if(PLANO[0]==="e"){ telaEscrever(); return; }
   if(PLANO[0]==="l"){ telaLer(); return; }
   telaFormar();

@@ -209,6 +209,12 @@ var RODS=[
  {a:5,b:4,ini:4}
 ];
 
+/* ⭐ EXPLORACAO LIVRE ANTES DA PERGUNTA (set/2026, regra 5 da pesquisa — MLC e
+   PhET). Com LIVRE=1 a primeira balanca e para MEXER: por e tirar peso, ver a
+   viga descer e subir, sem andaime e sem rodada fechando. O botao diz COMECAR;
+   ai a rodada 1 abre valendo. A atividade desliga por `dadosExtra:{LIVRE:0}`. */
+var LIVRE=1; /*TECNICA*/
+var jaLivre=false, livre=false, btCom=null;
 var ri=0;        /* rodada de agora */
 var add=0;       /* quantos cubos a criança já pôs no prato da direita */
 var err=0;       /* passos para LONGE da igualdade: é o que faz o andaime crescer */
@@ -227,15 +233,17 @@ function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.0
 function pecaBalanca(){
   if(!RODS[ri]){ fimDaPeca(); return; }
   add=0; err=0; travado=false; ger++;
+  livre=!!(LIVRE&&!jaLivre); btCom=null;
   limpa();
   var t=el("div","tela");
   setProg(t, Math.round(ri*100/RODS.length));
   var c=el("div","centro");
-  c.appendChild(el("div","selo","A BALAN&Ccedil;A DA IGUALDADE"));
+  c.appendChild(el("div","selo",livre?"EXPERIMENTE":"A BALAN&Ccedil;A DA IGUALDADE"));
   /* ⚠️ enunciado CURTO (carga cognitiva): uma ideia só. O que o "=" quer dizer
      de verdade quem mostra é a balança, não o texto. */
-  c.appendChild(el("div","balao",
-    "Ponha peso &agrave; direita at&eacute; a viga parar <b>no meio</b>."));
+  c.appendChild(el("div","balao", livre
+    ? "Experimente: ponha e tire peso e veja a balan&ccedil;a se mexer. Quando quiser, toque em <b>Come&ccedil;ar</b>."
+    : "Ponha peso &agrave; direita at&eacute; a viga parar <b>no meio</b>."));
   c.appendChild(montaBalanca());
   elFrase=el("div","frase","");
   c.appendChild(elFrase);
@@ -248,8 +256,16 @@ function pecaBalanca(){
   btMais.onclick=function(){ passo(1); };
   lin.appendChild(btMenos); lin.appendChild(btMais);
   c.appendChild(lin);
-  c.appendChild(el("div","hint","Balan&ccedil;a "+(ri+1)+" de "+RODS.length+
-                   ". O prato que desce &eacute; o mais pesado."));
+  if(livre){
+    var lc=el("div","cbt");
+    btCom=el("button","btn","Come&ccedil;ar");
+    btCom.setAttribute("data-qa","1");
+    btCom.onclick=function(){ sTap(); jaLivre=true; livre=false; pecaBalanca(); };
+    lc.appendChild(btCom); c.appendChild(lc);
+  }
+  c.appendChild(el("div","hint",livre
+    ? "O prato que desce &eacute; o mais pesado. Aqui nada vale ponto: &eacute; s&oacute; para conhecer a balan&ccedil;a."
+    : "Balan&ccedil;a "+(ri+1)+" de "+RODS.length+". O prato que desce &eacute; o mais pesado."));
   t.appendChild(c);
   app.appendChild(t);
   desenha(0);
@@ -322,11 +338,15 @@ function desenha(quantosNovos){
   /* data-qa="1" = "este botão serve AGORA". Só o auditor-jogador usa. */
   btMais.removeAttribute("data-qa");
   btMenos.removeAttribute("data-qa");
-  if(dif<0) btMais.setAttribute("data-qa","1");
-  else if(dif>0) btMenos.setAttribute("data-qa","1");
+  if(!livre){
+    if(dif<0) btMais.setAttribute("data-qa","1");
+    else if(dif>0) btMenos.setAttribute("data-qa","1");
+  }
   btMenos.className = (add<=0) ? "btn menos off" : "btn menos";
   btMais.className="btn mais";
 
+  /* na exploracao livre a igualdade e so uma alegria pequena: nada fecha */
+  if(livre){ if(dif===0 && quantosNovos>0) sCerto(); return; }
   if(dif===0 && !travado){
     travado=true;
     sCerto();
@@ -354,7 +374,7 @@ function passo(d){
   desenha(d>0?1:0);
   /* ⚠️ DESEQUILÍBRIO NÃO É ERRO: ninguém é corrigido por estar torto. O andaime
      só entra quando o passo AFASTOU da igualdade — e mesmo aí, perguntando. */
-  if(depois>antes){ err++; ajuda(); }
+  if(depois>antes && !livre){ err++; ajuda(); }
 }
 
 /* O ANDAIME QUE CRESCE: pergunta -> apoio concreto (os dois números) ->

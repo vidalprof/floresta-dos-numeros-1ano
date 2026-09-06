@@ -19,6 +19,16 @@
 4. **TREINAR SO O QUE FALTOU.** Botao que aparece **apenas** para quem tem objetivo abaixo de 75%.
    Monta um percurso curto so com as fases dos objetivos fracos e volta para a medalha. Quem
    dominou tudo nao ve o botao e nao repete o que ja sabe — e isso que evita o enjoo.
+5. **O QUE ELA FEZ, A VISTA (set/2026 — regra 11 da pesquisa, `JOGOS-EDUCACIONAIS-REFERENCIAS.md`
+   §3, reconhecimento ENDOGENO).** Embaixo da medalha aparece a **galeria** do que a crianca
+   produziu na atividade: a pintura, o desenho colorido, a letra tracada. Ja esta no motor
+   (`ARTEFATOS` + `guardaArtefato(rotulo, dataURL)` + `.galeria` na `telaFim`) — a peca de
+   producao so precisa CHAMAR `guardaArtefato` ao fechar (pintar-canvas, pintar-desenho e
+   tracar-letra ja chamam; o `_qa/dinamicas.py` reprova peca de producao que nao chama).
+   Atividade sem peca de producao nao mostra galeria nenhuma — nada de placeholder.
+   ⚠️ canvas com figura de OUTRA origem (ou `file://` na bancada) e "manchado": o
+   `toDataURL` estoura e a foto e pulada em silencio — por isso na banca a galeria so aparece
+   com pintar-desenho/tracar-letra (SVG), e no ar aparece com as tres.
 
 ## Como colar (so 3 coisas mudam por atividade)
 

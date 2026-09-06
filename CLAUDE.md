@@ -61,6 +61,14 @@ Leia tudo antes de agir e responda sempre em **português**.
 > dinâmicas, padrão, duração, progressão, beco, catálogo…). Só com 0 ali é que se
 > gastam os 10 minutos da banca inteira. Pré-voo 0 **não** é "a banca aprovou": é
 > "não há erro barato". Voz sem mp3 ali é informação (o `entregar.yml` grava).
+> **⚡⚡ A ESTEIRA DE UMA CORRIDA SÓ (set/2026, Marcos: "mais rápido, moderno, ágil"):**
+> `bash _padrao/ESQUELETO/produzir.sh <pasta> --entregar <repo>` faz TUDO em sequência
+> e só avança se a etapa anterior passou: montar → pré-voo → banca inteira → portão do
+> catálogo com o destino → commit com a marca **`[entregar _pasta:repo]`** no assunto →
+> push → o `entregar.yml` **acorda sozinho pela marca** (gatilho `push`), grava a voz,
+> publica e deixa `_status/entrega-<repo>.json` → o script espera o carimbo e confere o
+> sha. `--reparo` pula só a banca inteira (ajuste pequeno, regra da casa); `--msg-arquivo`
+> leva a mensagem com os trailers. Sem a marca, push nenhum dispara nada.
 > A banca não substitui o Marcos: depois dela ainda vem o portão do professor.
 
 > **Toda atividade EducaVerso passa pelo `EDUCAVERSO-QA.md`** (3 portões: Verificar

@@ -235,6 +235,13 @@ var DICAS=[
   "Sobrou menos de dez? A&#237; sim n&#227;o d&#225; mais: pode dizer que acabou."
 ];
 
+/* ⭐ EXPLORACAO LIVRE ANTES DA PERGUNTA (set/2026, regra 5 da pesquisa — MLC e
+   PhET: "manipulavel tem manipulacao livre antes da pergunta"). Com LIVRE=1 a
+   primeira tela e a mesma caixa, sem juizo nenhum: ela arrasta, enche, troca e
+   ve o que acontece; o botao diz COMECAR. Quando toca, a rodada 1 abre normal.
+   A atividade desliga por `dadosExtra:{LIVRE:0}`. */
+var LIVRE=1; /*TECNICA*/
+var jaLivre=false, livre=false;
 var idxR=0, ger=0, telaAtual=null, barraP=null;
 var elPrat=null, elCaixa=null, elMesa=null, elBts=null, btTroca=null, btPronto=null;
 var pecas=[], vagas=[], naCaixa=[], trocados=[], marcada=null, travado=false, errosR=0;
@@ -268,13 +275,16 @@ function porAgrupar(){ return naMesa()+naCaixa.length; }
 function pecaBaseDez(){
   ger++; limpa(); soltaSombra();
   var r=rodada(), i;
+  livre=!!(LIVRE&&!jaLivre);
   pecas=[]; vagas=[]; naCaixa=[]; trocados=[]; marcada=null; travado=false; errosR=0;
   var t=el("div","tela"); telaAtual=t;
   setProg(t,Math.round(idxR*100/RODADAS.length));
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
-  c.appendChild(el("div","selo",r.selo));
-  c.appendChild(el("div","balao",r.fala));
+  c.appendChild(el("div","selo",livre?"EXPERIMENTE":r.selo));
+  c.appendChild(el("div","balao",livre
+    ? "Experimente &#224; vontade: arraste as pe&#231;as para a caixa, encha e troque. Quando quiser, toque em <b>Come&#231;ar</b>."
+    : r.fala));
 
   elPrat=el("div","prat","");
   c.appendChild(elPrat);
@@ -293,8 +303,8 @@ function pecaBaseDez(){
   btTroca=el("button","btn","Trocar 10 por 1");
   btTroca.onclick=troca;
   btTroca.style.display="none";
-  btPronto=el("button","btn fraco","N&#227;o d&#225; mais 10");
-  btPronto.onclick=pronto;
+  btPronto=el("button",livre?"btn":"btn fraco",livre?"Come&#231;ar":"N&#227;o d&#225; mais 10");
+  btPronto.onclick=livre?comecarValendo:pronto;
   elBts.appendChild(btTroca); elBts.appendChild(btPronto);
   c.appendChild(elBts);
 
@@ -474,6 +484,9 @@ function troca(){
   },520);
 }
 
+/* a saida da exploracao livre: a partir daqui vale (mesma caixa, agora com juizo) */
+function comecarValendo(){ if(travado) return; sTap(); jaLivre=true; livre=false; apagaDica(); pecaBaseDez(); }
+
 /* ---------- o juízo da criança: "não dá mais 10" ---------- */
 function pronto(){
   if(travado) return;
@@ -525,7 +538,7 @@ function atualiza(nova){
   } else {
     btTroca.style.display="none"; btTroca.removeAttribute("data-qa");
   }
-  if(porAgrupar()<10) btPronto.setAttribute("data-qa","1");
+  if(livre||porAgrupar()<10) btPronto.setAttribute("data-qa","1");
   else btPronto.removeAttribute("data-qa");
   if(barraP){
     var feito=(r.soltos-porAgrupar())/r.soltos;

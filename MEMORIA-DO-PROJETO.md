@@ -6292,3 +6292,47 @@ em bater-sílabas foi contenção de CPU, não a peça).
   para o site que está sendo publicado") e **nada subiu**. Regra que fica: antes de
   disparar o entregar, ler `_status/entrega-<repo>.json` (campo `pasta`) ou a linha
   do `ATIVIDADES.md` — nunca deduzir a pasta pelo nome do repositório.
+
+## 🏁 "RÁPIDO, MODERNO, ÁGIL" — a noite de 2026-09-06 (o que da pesquisa ainda não era código)
+
+Ordem do Marcos: *"Faça tudo que pedi para deixar tudo mais rápido, moderno, ágil,
+por isso você fez as pesquisas"*. Varri os quatro documentos de pesquisa
+(`JOGOS-EDUCACIONAIS-REFERENCIAS.md` §3, `COMO-FAZER-MELHORIAS-2026-08.md`,
+`REGRAS-NEUROCIENCIA.md` "o que dá para medir sozinho", `REGRAS-APRENDIZAGEM.md`
+"seis divergências") e fiz virar código o que ainda estava só escrito:
+
+- **ESTEIRA DE UMA CORRIDA SÓ (ágil).** `produzir.sh <pasta> --entregar <repo>`:
+  montar → `previo.sh` → banca inteira → `catalogo.py` com o destino → commit com a
+  marca `[entregar _pasta:repo]` → push → o **`entregar.yml` acorda pela marca**
+  (gatilho `push` novo; sem a marca, push nenhum dispara) → o script espera o
+  carimbo `_status/entrega-<repo>.json` e confere o sha. `--reparo` pula só a banca
+  inteira (ajuste pequeno). Fim do "acionar no MCP e ficar perguntando se terminou".
+- **Portões da fila da neurociência:** `_qa/gamefeel.py` (0p: acerto/erro por Web
+  Audio, envelope anti-clique, erro ≤ 0,25 s e não mais alto que o acerto,
+  `prefers-reduced-motion` obrigatório; avisos: keyframes de leiaute, erro sem
+  gêmeo visual, áudio sem `resume()`, acerto sempre idêntico) e `_qa/curiosidade.py`
+  (0q: gesto nas duas primeiras telas, nenhuma DEFINIÇÃO antes do problema, aviso
+  se a última fase que conta é figural). Nos dois: `previo.sh` + `auditar.sh`.
+  Medidos em 8 atividades: 0 reprovações (os avisos R5/R14 eram verdade — ver motor).
+- **Motor:** `sCerto()` varia a tonalidade entre 4 (item 14: habituação); regra
+  geral `#app *{animation-iteration-count:1}` sob `prefers-reduced-motion` (nada em
+  laço; nenhuma peça escuta `animationend`, medido); **`guardaArtefato` + galeria na
+  `telaFim`** (regra 11: a criança vê o que FEZ) — pintar-canvas, pintar-desenho e
+  tracar-letra chamam; `dinamicas.py` reprova peça de produção sem a chamada.
+- **Manipuláveis com EXPLORAÇÃO LIVRE (regra 5, MLC/PhET):** base-dez, balanca,
+  reta-numerica e relogio abrem numa tela para mexer sem juízo + botão **Começar**
+  (`var LIVRE=1; /*TECNICA*/`; `dadosExtra:{LIVRE:0}` desliga). `dinamicas.py` avisa
+  manipulável sem `LIVRE`.
+- **Alvo 44 px até o 2º ano** (divergência 6): `leiaute.js` lê o ano do
+  `conteudo.json`; o Trem (1º ano) passou com o piso novo (0 alvos pequenos).
+- **Som contínuo antes de parada** (fonológica §1): `dinamicas.py` avisa quando a
+  1ª palavra de bater/juntar-sílabas/caixas-de-som abre com B/P/T/D/C/G. Pegou na
+  hora: Padaria (PÃO, BOLO) e Trem (BOLA, PATO) — reordenei (MEL, MASSA, SAPO, VACA).
+- **#49 — `_qa/leiaute_mao.js`:** o leiaute dos apps À MÃO (que nunca tinham sido
+  medidos): 6 tamanhos, figura esticada/cortada, fundo esticado, estouro lateral,
+  alvo < 40 px, texto cortado; anda pelas telas só por botões de "começar/próximo".
+  Primeira medição: o Pixel Art estourava 5–18 px de lado no celular e tinha 7
+  botões de 32 px.
+
+**Lição:** pesquisa vira código quando tem PORTÃO junto — as 12 regras de §3 só
+saíram do papel quando cada uma ganhou uma medida em `_qa/`.

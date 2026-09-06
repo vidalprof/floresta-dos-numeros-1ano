@@ -1215,6 +1215,35 @@ def analisa(js, css, baixo, html=None):
                       u"mesmo instante. Se for o caso, segure a dica alguns segundos "
                       u"(`seguraDica`, como na linha-do-tempo e na ordenar).")
 
+    # ------------------------------------------------ REGRAS DA PESQUISA (set/2026)
+    # ⭐ REGRA 11 — O ARTEFATO DA CRIANCA NA TELA FINAL (`_pesquisa/JOGOS-
+    #    EDUCACIONAIS-REFERENCIAS.md` §3): toda peca de PRODUCAO guarda a obra
+    #    com `guardaArtefato(...)` para a galeria da telaFim do motor. Sem isso a
+    #    crianca pinta a aula inteira e o fim so mostra medalha e barras.
+    #    Gatilhos honestos (o que a peca FAZ, nao prosa): o canvas `pintatela`
+    #    (pintar-canvas), a `GALERIA.push` das regioes (pintar-desenho) e o
+    #    `fantasmaSVG` (tracar-letra).
+    _prod = []
+    if re.search(r'["\']pintatela["\']', js): _prod.append("pintar-canvas")
+    if re.search(r'GALERIA\.push', js) and re.search(r'\.zona\b', css): _prod.append("pintar-desenho")
+    if re.search(r'fantasmaSVG\s*\(', js): _prod.append("tracar-letra")
+    if _prod and not re.search(r'guardaArtefato\s*\(', js):
+        ruins.append(u"%s: peca de PRODUCAO sem `guardaArtefato(rotulo, dataURL)` — a obra da "
+                     u"crianca nao chega a galeria da tela final (regra 11 da pesquisa: fim com "
+                     u"o artefato dela a vista, reconhecimento endogeno)." % u"/".join(_prod))
+    # ⭐ REGRA 5 — MANIPULACAO LIVRE ANTES DA PERGUNTA (MLC, PhET): todo
+    #    manipulavel (caixa de 10, balanca, reta, relogio) abre com uma tela
+    #    para MEXER sem juizo e um botao Comecar. A gaveta tecnica `LIVRE` e o
+    #    interruptor (`dadosExtra:{LIVRE:0}` desliga). Manipulavel sem ela = aviso.
+    _manip = []
+    if re.search(r'\.viga\b', css) and re.search(r'\.prato\b', css): _manip.append("balanca")
+    if re.search(r'\.cxvaga\b', css) and re.search(r'Trocar 10 por 1', js): _manip.append("base-dez")
+    if re.search(r'\.rtick\b', css) and re.search(r'\.rmira\b', css): _manip.append("reta-numerica")
+    if re.search(r'\.relo\b', css) and re.search(r'mexeMin\s*\(', js): _manip.append("relogio")
+    if _manip and not re.search(r'\bLIVRE\b', js):
+        avisos.append(u"%s: manipulavel sem EXPLORACAO LIVRE (`var LIVRE`) antes da pergunta — a "
+                      u"pesquisa (MLC/PhET) pede uma tela para mexer sem juizo, com botao Comecar "
+                      u"(regra 5)." % u"/".join(_manip))
     return usa, ruins, avisos
 
 
@@ -1295,6 +1324,39 @@ def main():
                       u"mecanica desta fase ou tematize o simulador no motor." % fid)
             return 1
 
+    # ⭐ FONOLOGICA: SOM CONTINUO ANTES DE PARADA (set/2026). Da pesquisa
+    #    (`_pesquisa/COMO-FAZER-MELHORIAS-2026-08.md` §1, Reading Rockets): sons
+    #    que se ESTICAM (m, s, f, v, n, l, r, z, j) sao mais faceis de segmentar
+    #    e juntar que os de PARADA (b, p, t, d, c/k, g/q) — "mmm-ala" da para
+    #    ouvir separado; "b-ola" nao, o B nao se estica. A PRIMEIRA rodada de cada
+    #    mecanica fonologica tem que abrir por som continuo ou vogal; depois pode
+    #    subir. E AVISO (a ordem e decisao de conteudo), mas aparece em toda banca.
+    _avisos_fono = []
+    if m and _fases:
+        _CONT = set(u"mnsfvlrzjaeiouáéíóúãõâêôMNSFVLRZJAEIOUÁÉÍÓÚÃÕÂÊÔ")
+        _vistos = set()
+        for f in _fases:
+            _mec = f.get("mec") or ""
+            if _mec not in ("bater-silabas", "juntar-silabas", "caixas-de-som") or _mec in _vistos:
+                continue
+            _vistos.add(_mec)
+            _dd = f.get("dados") or []
+            if not isinstance(_dd, list) or not _dd or not isinstance(_dd[0], dict):
+                continue
+            _pal = (_dd[0].get("pal") or _dd[0].get("palavra") or u"").strip()
+            if not _pal:
+                continue
+            _ini = _pal[0]
+            _dig = _pal[:2].upper()
+            if _ini in _CONT or _dig in (u"CH", u"NH", u"LH"):
+                continue
+            _avisos_fono.append(
+                u"[%s] fase %s: a PRIMEIRA palavra e \"%s\" — abre com som de PARADA (%s). A "
+                u"pesquisa manda comecar a mecanica por som CONTINUO (M, S, F, V, N, L, R, Z, J) "
+                u"ou vogal, que da para esticar e ouvir separado; a parada vem nas rodadas "
+                u"seguintes. Troque a ordem das palavras ou a fase de abertura."
+                % (_mec, f.get("id") or "?", _pal, _ini.upper()))
+
     # ⭐ atividade MONTADA: cada mecanica se mede no bloco DELA
     # ⚠️ a marca de peca e um COMENTARIO, e o `js_de` tira comentarios (de
     #    proposito: e assim que o portao para de acusar o que esta escrito em
@@ -1327,6 +1389,7 @@ def main():
             avisos.extend(u"[%s] %s" % (nome, x) for x in a2)
     else:
         usa, ruins, avisos = analisa(js, css, baixo, html)
+    avisos.extend(_avisos_fono)
 
     # ⭐ PORTAO DA LETRA MUDA (Marcos ouviu no "ratão", ago/2026: a digitacao so
     #    falava A e O; R e T calados). A peca `digitar`/`forca` diz CADA letra ao

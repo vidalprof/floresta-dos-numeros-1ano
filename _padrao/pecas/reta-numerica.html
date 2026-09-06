@@ -221,6 +221,13 @@ var RETAS=[
   dica:"Ache o meio (50). O 25 &#233; o meio do meio."}
 ];
 
+/* ⭐ EXPLORACAO LIVRE ANTES DA PERGUNTA (set/2026, regra 5 da pesquisa — MLC e
+   PhET). Com LIVRE=1 a primeira reta e para PASSEAR: ela toca, arrasta, e o
+   numero do lugar aparece embaixo — sem alvo, sem distancia, sem rodada. Todos
+   os tracos ficam visiveis. O botao diz COMECAR; ai a rodada 1 abre valendo. A
+   atividade desliga por `dadosExtra:{LIVRE:0}`. */
+var LIVRE=1; /*TECNICA*/
+var jaLivre=false, livre=false;
 var rodR=0;            /* rodada da vez */
 var semMira=0;         /* quantas vezes ela cravou sem ter escolhido o lugar */
 var apoio=0;           /* quantos degraus de andaime a reta esta mostrando */
@@ -242,29 +249,38 @@ function sPerto(){ nota(659.25,.10,.15,"triangle",0); nota(880,.13,.14,"triangle
 function pecaReta(){
   limpa(); apagaDica(); ger++;
   fase="mirar"; pos=null; elMira=null; pegouReta=false; movimentou=false; semMira=0;
+  livre=!!(LIVRE&&!jaLivre);
   var R=RETAS[rodR], i;
   var t=el("div","tela"); telaA=t;
   setProg(t,Math.round(rodR*100/RETAS.length));
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
-  c.appendChild(el("div","selo",R.selo));
-  c.appendChild(el("div","balao",R.bal));
+  c.appendChild(el("div","selo",livre?"EXPERIMENTE":R.selo));
+  c.appendChild(el("div","balao",livre
+    ? "Experimente: toque na reta e arraste. O n&#250;mero do lugar aparece embaixo. Quando quiser, toque em <b>Come&#231;ar</b>."
+    : R.bal));
 
   elReta=el("div","reta zona");
-  elReta.setAttribute("data-alvo",R.alvo);   /* so o auditor le isto (ver cliqueReta) */
+  /* so o auditor le isto (ver cliqueReta); na exploracao o "alvo" e o meio da reta */
+  elReta.setAttribute("data-alvo", livre ? Math.round(R.min+(R.max-R.min)/2) : R.alvo);
   elInt=el("div","rint");
   elInt.appendChild(el("div","rlinha",""));
   elReta.appendChild(elInt);
+  /* na exploracao livre a reta mostra TODOS os tracos: e para conhecer a regua */
+  var ap0=apoio; if(livre) apoio=2;
   desenhaTracos();
+  apoio=ap0;
   ligaReta();
   c.appendChild(elReta);
 
   elRes=el("div","res","");
   c.appendChild(elRes);
-  elBtn=el("button","btn","CRAVAR AQUI");
-  elBtn.onclick=cravar;
+  elBtn=el("button","btn",livre?"Come&#231;ar":"CRAVAR AQUI");
+  elBtn.onclick=livre?comecarValendo:cravar;
   c.appendChild(elBtn);
-  c.appendChild(el("div","hint","Toque na reta (ou arraste). D&#225; para usar as setas do teclado e o Enter."));
+  c.appendChild(el("div","hint",livre
+    ? "Aqui nada vale ponto: passeie pela reta e veja onde cada n&#250;mero mora."
+    : "Toque na reta (ou arraste). D&#225; para usar as setas do teclado e o Enter."));
   t.appendChild(c); app.appendChild(t);
 
   /* A SEGUNDA PORTA: o teclado de verdade. No PC da escola tem teclado e a
@@ -375,9 +391,16 @@ function poeMira(v,comSom){
   if(!elMira){ elMira=el("div","rmira",""); elInt.appendChild(elMira); }
   elMira.style.left=pct(v)+"%";
   if(comSom) sTap();
+  if(livre){
+    /* exploracao: o numero do lugar aparece na hora — e o retorno imediato que ensina */
+    if(elRes) elRes.innerHTML="Voc&#234; est&#225; no <b>"+Math.round(pos)+"</b>.";
+    marcaVez(); return;
+  }
   if(elBtn) elBtn.innerHTML="CRAVAR NO "+Math.round(pos);
   marcaVez();
 }
+/* a saida da exploracao livre: a partir daqui vale (a mesma reta, agora com alvo) */
+function comecarValendo(){ sTap(); jaLivre=true; livre=false; apagaDica(); pecaReta(); }
 
 /* A SEGUNDA PORTA: setas do teclado andam de 1 em 1, Enter/espaco crava. */
 function teclou(ev){
@@ -397,6 +420,7 @@ function teclou(ev){
 
 /* ---------- cravar: um tiro por rodada, e a medida e a DISTANCIA ---------- */
 function cravar(){
+  if(livre){ comecarValendo(); return; }   /* Enter na exploracao = Comecar */
   if(fase!=="mirar"){ sTap(); return; }
   if(pos===null){
     /* ⚠️ CRAVAR SEM MIRAR (defeito medido ago/2026): antes esta frase se
@@ -487,6 +511,10 @@ function apagaDica(){
 /* data-qa: UM alvo de cada vez, e so para o auditor-jogador (_qa/jogador.js).
    Antes de mirar, a vez e da RETA; depois de mirar, e do BOTAO.          */
 function marcaVez(){
+  /* exploracao: a reta NAO publica data-qa nenhum (o auditor pegava o primeiro
+     `[data-qa]` da tela — a reta — e ficava passeando para sempre: PRESO na
+     bancada, set/2026). So o botao Comecar e alvo declarado. */
+  if(livre){ if(elReta) elReta.removeAttribute("data-qa"); if(elBtn) elBtn.setAttribute("data-qa","1"); return; }
   if(elReta) elReta.setAttribute("data-qa",(fase==="mirar"&&pos===null)?"1":"0");
   if(elBtn) elBtn.setAttribute("data-qa",(fase==="mirar"&&pos===null)?"0":"1");
 }

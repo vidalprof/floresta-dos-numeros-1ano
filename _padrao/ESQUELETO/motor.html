@@ -58,6 +58,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   max-width:94%;box-sizing:border-box;word-wrap:break-word;overflow-wrap:break-word;line-height:1.12;
   text-shadow:0 2px 0 #1e5410,0 4px 10px rgba(0,0,0,.45)}
 .sub{font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;background:rgba(40,52,20,.82);padding:6px 14px;border-radius:999px}
+/* a galeria do que a crianca FEZ (telaFim / guardaArtefato): cartoes brancos,
+   figura inteira (contain), rotulo curto; cabe 3 por linha no celular */
+.galeria{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:10px;margin:6px 0 10px;max-width:420px;width:100%}
+.gfig{margin:0;width:104px;background:#fffdf6;color:#3a2a14;border-radius:14px;padding:6px;box-shadow:0 4px 10px rgba(0,0,0,.22)}
+.gfig img{display:block;width:100%;height:88px;object-fit:contain;border-radius:10px;background:#fff}
+.gcap{font-size:12px;font-weight:800;text-align:center;margin-top:4px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* MASCOTE em camadas (lip-sync) */
 .broto{position:relative;width:150px;height:150px;-webkit-filter:drop-shadow(0 8px 10px rgba(0,0,0,.22));filter:drop-shadow(0 8px 10px rgba(0,0,0,.22));-webkit-animation:bob 2.8s ease-in-out infinite;animation:bob 2.8s ease-in-out infinite}
 .broto.gg{width:250px;height:250px}
@@ -645,6 +651,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .jsFig img,.bsFig img,.oaFig img,.figrod img{
   -webkit-animation:figflutua 3.6s ease-in-out infinite;animation:figflutua 3.6s ease-in-out infinite}
 @media (prefers-reduced-motion: reduce){
+  /* ⭐ REGRA GERAL (set/2026, `_pesquisa/REGRAS-NEUROCIENCIA.md` item 6, portao
+     `_qa/gamefeel.py` R6): cada peca traz os seus @keyframes e nenhuma delas
+     sabe da preferencia do sistema. Aqui NADA FICA EM LACO: toda animacao roda
+     uma vez e para (brilho correndo, pulso, pisca). As de entrada (uma vez so)
+     continuam iguais — sao curtas e nao cansam. Nenhuma peca escuta
+     `animationend` (medido), entao parar o laco nao quebra logica nenhuma. */
+  #app *,#app *:before,#app *:after{-webkit-animation-iteration-count:1 !important;animation-iteration-count:1 !important}
   .tela{-webkit-animation:fade .3s;animation:fade .3s}
   .pecabox img,.jsFig img,.bsFig img,.oaFig img,.figrod img{
     -webkit-animation:none !important;animation:none !important}
@@ -817,6 +830,19 @@ function precarregaVoz(){
   _stRaw(passo,400);   /* deixa a capa desenhar primeiro */
 }
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
+/* ⭐ O ARTEFATO DA CRIANCA (set/2026, `_pesquisa/JOGOS-EDUCACIONAIS-REFERENCIAS.md`
+   §3 regra 11 — reconhecimento ENDOGENO): a tela final mostra o que ELA FEZ,
+   nao so a medalha. As pecas de producao (pintar-canvas, pintar-desenho,
+   tracar-letra) guardam aqui uma foto do que a crianca produziu; a telaFim
+   pendura tudo numa galeria embaixo da medalha. Nenhum ranking, nenhuma moeda:
+   a recompensa e a propria obra. Guarda no maximo 6 (as ultimas) e NUNCA
+   estoura: figura que falhar (canvas manchado por origem, por exemplo) e
+   simplesmente pulada. */
+var ARTEFATOS=[];
+function guardaArtefato(rotulo,src){
+  if(!src||typeof src!=="string"||src.indexOf("data:")!==0) return;
+  try{ ARTEFATOS.push({r:rotulo||"",s:src}); while(ARTEFATOS.length>6) ARTEFATOS.shift(); }catch(e){}
+}
 /* ============ SOM (efeitos) ============ */
 /* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE
    travam"). `new AudioContext()` roda no CARREGAMENTO e ESTOURA em alguns PCs —
@@ -917,7 +943,14 @@ function __qa(tipo){ if(window.__QAON){ var f=(typeof IFASE==="number"&&typeof F
    `sTira is not defined` na mão da criança — calado, só ao tirar uma peça.
    Som usado por várias mecânicas mora no motor, como o `nota` e o `confete`. */
 function sTira(){ tom(392,0.07,"triangle",0.12); tom(294,0.09,"triangle",0.11,0.05); }
-function sCerto(){ __qa("acertou"); tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
+/* ⭐ O ACERTO NAO E SEMPRE IGUAL (set/2026, `_pesquisa/REGRAS-NEUROCIENCIA.md`,
+   item 14 — e o portao `_qa/gamefeel.py` R14 cobra): som de recompensa 100%
+   identico vira ruido de fundo em dez minutos (habituacao). A frase e a mesma
+   (3 notas subindo), mas a TONALIDADE muda entre quatro — um semitom acima,
+   dois acima, um abaixo. A crianca nao percebe a regra; percebe que "cada
+   acerto soa vivo". Sem aleatorio na duracao: o compasso da tela nao muda. */
+var _kCerto=[1,1.0595,1.1225,0.9439];
+function sCerto(){ __qa("acertou"); var k=_kCerto[Math.floor(Math.random()*_kCerto.length)]; tom(659*k,0.12,"sine",0.2); tom(880*k,0.14,"sine",0.2,0.09); tom(1318*k,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
 /* erro: som grave + pulso háptico DUPLO e leve (não pune) — sem texto (a ajuda
    escrita/dita é que responde ao erro; um "errou!" flutuante seria castigo). */
 function sErro(){ tom(200,0.18,"sawtooth",0.12); tom(150,0.24,"sawtooth",0.12,0.08); vibra([14,46,14]); }
@@ -1973,6 +2006,18 @@ function telaFim(){
   c.appendChild(el("h1","",FIM.titulo));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", ":"")+FIM.texto));
   c.appendChild(crachaEl(FIM.cracha));
+  /* a galeria do que ela fez (ver `guardaArtefato`) — so aparece quando ha obra */
+  if(ARTEFATOS.length){
+    var ga=el("div","galeria"), gi, gf, gim;
+    for(gi=0;gi<ARTEFATOS.length;gi++){
+      gf=el("figure","gfig");
+      gim=document.createElement("img"); gim.src=ARTEFATOS[gi].s; gim.alt=""; gim.draggable=false;
+      gf.appendChild(gim);
+      if(ARTEFATOS[gi].r) gf.appendChild(el("figcaption","gcap",ARTEFATOS[gi].r));
+      ga.appendChild(gf);
+    }
+    c.appendChild(ga);
+  }
   resumoAnimado(c);
   if(fracos().length){
     var bt=el("button","btntreino","Treinar o que faltou<small>s&#243; as partes que voc&#234; quer melhorar</small>");

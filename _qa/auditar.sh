@@ -374,6 +374,17 @@ portao "0b padrao da casa" python3 _qa/padrao.py "$ARQ"
 echo "--- 0b2) DINAMICAS (cada mecanica e as armadilhas DELA) -"
 portao "0b2 dinamicas" python3 _qa/dinamicas.py "$ARQ"
 
+# ⭐ OS DOIS PORTOES DA FILA DA NEUROCIENCIA (set/2026, `_pesquisa/REGRAS-
+#    NEUROCIENCIA.md`, tabela "o que da para medir sozinho"): o som e o
+#    movimento ajudam ou cansam (oscilador com envelope, erro gentil, nada em
+#    laco sob reduced-motion, acerto que varia) e a lacuna abre antes do conceito
+#    (gesto nas 2 primeiras telas, nenhuma definicao antes do problema, fecho no
+#    simbolico). Pesquisa que nao vira portao nao muda atividade nenhuma.
+echo "--- 0p) GAME-FEEL (som e movimento: ajudam ou cansam?) -"
+portao "0p game-feel" python3 _qa/gamefeel.py "$ARQ"
+echo "--- 0q) CURIOSIDADE (o problema vem antes do conceito?) -"
+portao "0q curiosidade" python3 _qa/curiosidade.py "$ARQ"
+
 # ⚠️ OS DOIS PORTOES QUE NASCERAM DE "JA PEDI VARIAS VEZES" (Marcos, set/2026).
 #    Ele cobrou tres vezes o mesmo defeito — "o botao de proximo nao aparece",
 #    "demora muito a aparecer", "acerta e fica parado esperando o botao" — e as

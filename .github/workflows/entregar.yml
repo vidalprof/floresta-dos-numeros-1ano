@@ -31,7 +31,18 @@ name: Entregar atividade (voz que falta + publicar + conferir)
 #    defeito. Entao o Actions e o unico caminho para voz; o que da para fazer e
 #    entrar na fila UMA vez e correr rapido la dentro. Foi o que se fez.
 
+# ⭐⭐ A ESTEIRA DE UMA CORRIDA SO (set/2026 — Marcos: "faca tudo que pedi para
+#    deixar tudo mais rapido, moderno, agil"). Alem do botao (workflow_dispatch),
+#    este workflow DISPARA SOZINHO quando um commit chega com a marca
+#        [entregar _pasta:repo,_outra:repo2]
+#    na mensagem. E assim que `_padrao/ESQUELETO/produzir.sh <pasta> --entregar
+#    <repo>` fecha o circuito do chat: montar -> pre-voo -> banca -> commit ->
+#    push -> (aqui) voz + publicar + conferir -> carimbo em _status/. Sem a marca,
+#    um push comum NAO roda nada (o `if` do job barra) — inclusive os commits que
+#    este proprio workflow faz ("audio: vozes que faltavam", "entrega: recado").
 on:
+  push:
+    branches: ['**']
   workflow_dispatch:
     inputs:
       alvos:
@@ -57,6 +68,8 @@ on:
 
 jobs:
   entregar:
+    # so roda por push quando a mensagem do commit traz a marca [entregar ...]
+    if: ${{ github.event_name != 'push' || contains(github.event.head_commit.message, '[entregar ') }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -72,8 +85,15 @@ jobs:
           ALVOS: ${{ inputs.alvos }}
           PASTA: ${{ inputs.pasta }}
           REPO: ${{ inputs.repo_name }}
+          EVENTO: ${{ github.event_name }}
+          MSG: ${{ github.event.head_commit.message }}
         run: |
           lista="$ALVOS"
+          if [ "$EVENTO" = "push" ]; then
+            # a marca [entregar _pasta:repo,...] vem da mensagem do commit (produzir.sh --entregar)
+            lista="$(printf '%s' "$MSG" | grep -o '\[entregar [^]]*\]' | head -1 | sed 's/^\[entregar //; s/\]$//' | tr -d ' ')"
+            echo "disparado por push; marca lida: '$lista'"
+          fi
           if [ -z "$lista" ] && [ -n "$PASTA" ]; then lista="$PASTA:$REPO"; fi
           if [ -z "$lista" ]; then echo "::error::informe 'alvos' (pasta:repo,...) ou 'pasta'+'repo_name'"; exit 1; fi
           echo "lista=$lista" >> "$GITHUB_OUTPUT"
