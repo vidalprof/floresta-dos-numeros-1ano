@@ -62,16 +62,30 @@ def main():
     if not pngs:
         print(u"%s -> NAO SE APLICA: nenhuma figura de conteudo em img/. Nada a conferir." % pasta); return 2
     t0 = time.time(); ok, ruins, avisos, falhas = 0, [], [], []
+    # ⚠️ (1a rodada, set/2026) `gemini-2.0-flash` respondeu 404 em TODAS as figuras: o
+    #    nome do modelo aposentou. Nome de modelo e coisa que muda por baixo de nos —
+    #    entao ha uma FILA de nomes, e o 404 pula para o proximo em vez de parar.
+    fila = [modelo] + [m for m in ("gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash", "gemini-1.5-flash") if m != modelo]
     for n, f in enumerate(pngs):
         rot = rotulo(f[:-4])
-        try:
-            resp = pergunta(key, modelo, os.path.join(pasta, "img", f), rot)
-        except Exception as e:
-            msg = str(e)
-            if "429" in msg or "quota" in msg.lower() or "RESOURCE_EXHAUSTED" in msg:
-                falhas.append((f, u"COTA do Gemini esgotada (429) — parei aqui"))
-                break
-            falhas.append((f, msg[:100])); continue
+        resp = None
+        while fila and resp is None:
+            try:
+                resp = pergunta(key, fila[0], os.path.join(pasta, "img", f), rot)
+            except Exception as e:
+                msg = str(e)
+                if "429" in msg or "quota" in msg.lower() or "RESOURCE_EXHAUSTED" in msg:
+                    falhas.append((f, u"COTA do Gemini esgotada (429) em %s — parei aqui" % fila[0]))
+                    fila = []
+                    break
+                if "404" in msg and len(fila) > 1:
+                    print(u"   modelo %s -> 404; tentando %s" % (fila[0], fila[1])); fila.pop(0); continue
+                falhas.append((f, u"%s: %s" % (fila[0], msg[:90]))); break
+        if not fila:
+            break
+        if resp is None:
+            continue
+        modelo = fila[0]
         m = re.search(r"VEREDITO\s*=\s*(SIM|NAO|N[ÃA]O)", resp, re.I)
         vejo = re.search(r"VEJO\s*=\s*([^|]+)", resp); prob = re.search(r"PROBLEMAS\s*=\s*(.+)$", resp)
         vejo = vejo.group(1).strip() if vejo else resp[:60]; prob = prob.group(1).strip() if prob else u"?"

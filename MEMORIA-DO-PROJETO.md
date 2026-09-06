@@ -6038,6 +6038,20 @@ GraphoGame Brasil (o app do MEC) são exatamente *"a pronúncia de algumas letra
   `_status/testador-ouvido-<pasta>.md` e `_status/testador-olho-<pasta>.md`
   (+ .json), commitados pelo runner (push em 6 tentativas). 1ª rodada pedida:
   **Trem + Padaria** (458 + 466 falas, 27 + 25 figuras).
+- **1ª RODADA REAL (2026-09-06, run 2 — a 1ª morreu por `requests` ausente):**
+  OUVIDO do Trem: 458 falas em 918 s → **404 batem, 0 mudas, 3 "outra coisa"**
+  que eram nome de letra + palavra curta ("K de kiwi" ouvido como "Kadkiuri";
+  "Y de yoyo" como "e epsilon de olho" — ípsilon É o nome do Y) → regra nova:
+  nome de letra vai para CONFERIR, não para reprovado. OUVIDO da Padaria: 467
+  falas em 950 s → **393 batem, 8 "cortadas"** — e essas oito eram **DEFEITO
+  REAL**: caminhos SVG do `pintar-desenho` (`regs[].d`, "M0 0 H100 V100 H0 Z")
+  gravados como voz e lidos por até 21 s. O `eh_fala` já os barrava, mas eles
+  **voltavam pela preservação das "falas colhidas em jogo"** do `montar.py`;
+  agora a preservação passa pelo mesmo filtro, e o `_qa/falas.py` reprova
+  caminho SVG na fila. **OLHO: 0 julgadas** — `gemini-2.0-flash` devolveu 404
+  em tudo (nome aposentado) → fila de modelos (`gemini-2.5-flash`,
+  `gemini-flash-latest`, …), validada na rodada 3. Órfãos: 213 mp3 no Trem e
+  137 na Padaria que nenhuma fala usa (peso morto; não é defeito).
 - **Limites honestos:** o reconhecedor erra em fala muito curta (nome de letra)
   — por isso "conferir", não "reprovado"; o olho depende de cota do Gemini
   (a de imagem estava esgotada em 2026-08-12; a de visão é outra, medir); e o

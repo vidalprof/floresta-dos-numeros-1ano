@@ -108,7 +108,13 @@ def main():
         if dur < 0.25 or not ouv:
             mudos.append((fid, texto[:60], u"mp3 %.2fs, nada ouvido" % dur)); continue
         sim = parecido(esperado, ouv)
-        curto = len(esperado) < 8
+        # ⚠️ (1a rodada, set/2026) "K de kiwi", "T de trem", "Y de yoyo" sairam como
+        #    "diz OUTRA coisa" (ouvi "Kadkiuri", "TeideTrain", "e epsilon de olho"): e o
+        #    reconhecedor tropecando em NOME DE LETRA + palavra curta, nao a voz
+        #    errada (ipsilon E o nome do Y). Frase de ate 4 palavras com " de " no
+        #    meio e nome de letra: vai para CONFERIR, com ouvido humano.
+        nome_letra = bool(re.match(r"^(letra )?\S{1,8}\.? ?(\S{1,8} )?de \S{1,12}$", esperado)) and len(esperado.split()) <= 5
+        curto = len(esperado) < 8 or nome_letra
         # fala cortada: o texto e longo e a voz parou muito antes (menos de 60% do tamanho)
         cortada = len(esperado) >= 30 and len(ouv) < 0.6 * len(esperado)
         if curto:

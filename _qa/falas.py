@@ -88,6 +88,17 @@ def checa(itens):
                             u"isto nao e fala: e chave de imagem. Tire da fila de "
                             u"gravacao (CHAVES_MUDAS no montar.py)",
                             texto))
+        # ⚠️ ACHADO DO TESTADOR HUMANO (ouvido, set/2026): CAMINHO SVG NA FILA DE
+        #    GRAVACAO. A Padaria tinha oito "falas" que eram o desenho da letra do
+        #    tracar-letra ("M0 0 H100 V100 H0 Z") — a voz lia "eme zero zero aga
+        #    cem" por ate 21 segundos. So letras de comando SVG + numeros = nao e fala.
+        _tt = texto.strip()
+        if re.search(r"\d", _tt) and re.match(r"^[MmLlHhVvCcSsQqTtAaZz][0-9MmLlHhVvCcSsQqTtAaZz\s.,+-]*$", _tt):
+            achados.append((it.get("id", "?"), _tt[:30],
+                            u"a voz vai LER um caminho SVG, letra e numero por numero",
+                            u"isto nao e fala: e o desenho da letra. Tire da fila de "
+                            u"gravacao (eh_fala no montar.py ja barra)",
+                            texto))
         # ⚠️ LICAO PAGA (Marcos ouviu, ago/2026): *"fala rato em ingles"*. Uma fala
         #    de PORTUGUES marcada `lang:"en"` (detector antigo confundia o pedaco de
         #    silaba "to" com o ingles "to") sai com VOZ AMERICANA. Se o texto tem

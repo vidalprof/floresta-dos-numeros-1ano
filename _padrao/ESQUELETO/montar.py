@@ -1180,6 +1180,14 @@ def eh_fala(txt):
     #    a mesma regra. Palavra de gente nunca tem "_": e sempre referencia.
     if re.match(r"^[a-z]{2,4}_[a-z0-9_]+$", t):
         return False
+    # ⚠️ ACHADO DO TESTADOR HUMANO (ouvido, set/2026, 1a rodada na Padaria): OITO
+    #    "falas" eram CAMINHO SVG do tracar-letra ("M0 0 H100 V100 H0 Z",
+    #    "M34 78 C34 70 42 66 ..."), gravadas e lidas pela voz por ate 21 s
+    #    ("eme zero zero agá cem..."). Passavam aqui porque tem letras e espaco.
+    #    Caminho SVG e so letras de comando (M L H V C S Q T A Z), numeros, ponto,
+    #    virgula e sinal — frase de gente tem vogal minuscula.
+    if re.search(r"\d", t) and re.match(r"^[MmLlHhVvCcSsQqTtAaZz][0-9MmLlHhVvCcSsQqTtAaZz\s.,+-]*$", t):
+        return False
     letras = sum(1 for ch in t if ch.isalpha())
     if letras < 2:
         return False
@@ -1949,6 +1957,13 @@ def main():
                     continue
                 if _norm_voz(f.get("texto", "")) in atuais_norm:
                     continue                    # versao stale (mudou artigo/caixa)
+                # ⚠️ ACHADO DO TESTADOR HUMANO (set/2026): os 8 caminhos SVG da
+                #    Padaria ("M0 0 H100 V100 H0 Z") ja tinham sido barrados no
+                #    `eh_fala`, e VOLTAVAM por AQUI — preservados como "colhidos".
+                #    O que o filtro de hoje rejeita nao e colheita: e lixo de
+                #    montagem antiga, e sai.
+                if not eh_fala(texto_limpo(f.get("texto", ""))):
+                    continue
                 guardadas.append(f)
         except Exception:
             pass
