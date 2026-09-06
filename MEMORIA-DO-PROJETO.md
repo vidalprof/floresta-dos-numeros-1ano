@@ -6074,6 +6074,19 @@ escalonar B/D/P/M na fase 6 da Padaria. **Lição de método:** a reclamação d
 usuário real (loja do GraphoGame) valeu mais que dez artigos — cada uma era um
 defeito que a casa já tinha pago ou um portão que faltava.
 
+**Padaria republicada (2026-09-06 10:30Z)** com as caixas de som que leem a
+palavra de volta, MEL·SAL·OVO·PÃO e MALA·MASSA·BOLO·PATO·LEITE·QUEIJO (40 min
+medidos), as 12 vozes novas gravadas pelo `entregar.yml` e sha conferido no ar
+(`_status/entrega-a-padaria-das-letras.json`, noar 1). Pergunta do Marcos no
+meio: *"isso não estragará nossas atividades?"* — resposta registrada: mudança
+de peça só chega à atividade quando ela é REMONTADA; os outros 15 sites não
+foram tocados; a versão anterior fica no git. **Consertos de portão que a
+Padaria pagou hoje:** `duracao.py` reprovava por 39,6 min imprimindo "40"; o
+`revisor.py` acusava "o E e", "o O" (nome de letra) e "igual a bo-lo"; a banca
+dizia "REPROVOU" sem nomear o portão — agora lista (`reprova()` em
+`auditar.sh`); e o par de portões 4b (peça) × 4c (atividade) brigava na cor de
+`.pronta .pt` do ligar-pontos — a cor era morta (o `.pnum` pinta), saiu.
+
 **Entrega dos 16 sites (2026-09-06 00:16Z):** o `entregar.yml` (run 330) publicou
 e conferiu os 16 (sha no ar = esperado em todos, 3ª tentativa cada), e o carimbo
 `_status/entrega-*.json` chegou no commit `84560d0e`. O aviso do hook de
