@@ -6088,6 +6088,25 @@ GraphoGame Brasil (o app do MEC) são exatamente *"a pronúncia de algumas letra
   12:19Z** — depois de colher as frases de jogo, gerar as dicas da memória para
   todos os pares e consertar os 4 alto-falantes mudos. Falta só o portão do
   professor.
+- **RODADAS 5–8: O OLHO GANHOU UM JUIZ LOCAL, E ELE ACHOU UM DEFEITO REAL.**
+  Rodada 5: Gemini grátis 404/429 e a fila presa num nome aposentado → 0 julgadas.
+  Rodada 6: o Pollinations de texto/visão passou a cobrar (**HTTP 402, medido em
+  2026-09-06**) e, quando não dá 402, pendura até o timeout → fora da fila (só
+  com `POLLINATIONS_OK=1`). Rodada 7: **juiz LOCAL** no runner — CLIP multilíngue
+  (`sentence-transformers`: `clip-ViT-B-32` + `clip-ViT-B-32-multilingual-v1`,
+  torch CPU, sem cota, sem chave): "esta figura combina mais com o SEU nome do
+  que com os nomes das outras figuras da atividade?" Rodou (20/27, 12/25) mas com
+  nome sem acento ("maca", "l A") e sem margem acusava ruído. Rodada 8: nomes
+  vêm do `conteudo.json` (MAÇÃ; "a letra A" = pão em forma de letra), acusa só
+  fora do top-3 com margem ≥ 0,02, irmãs de nome não contam → Trem 26/27,
+  Padaria 20/25 (as 5 da Padaria são bolacha↔biscoito, bolinho↔bolo, massa↔pão e
+  duas letras de pão: irmãs de verdade). **E a única do Trem era DEFEITO REAL:
+  `tr_hipopotamo.png` é uma cópia byte a byte de `tr_kiwi.png` — a criança via um
+  KIWI na letra H.** Exatamente a família "o OVO apontando para o mamão" que o
+  Marcos reportou, e que nenhum portão de código tinha como ver. Pedido de
+  imagem em `_trem/_lote_hipopotamo.json` (Pollinations + rembg, grátis).
+  A nuvem (Gemini) ainda serve para o que o CLIP não vê — texto desenhado, corte,
+  fundo (rodada 8 pegou "abelha cortada") — quando há cota.
 - **Limites honestos:** o reconhecedor erra em fala muito curta (nome de letra)
   — por isso "conferir", não "reprovado"; o olho depende de cota do Gemini
   (a de imagem estava esgotada em 2026-08-12; a de visão é outra, medir); e o
