@@ -439,6 +439,9 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           /* o painel que PULSA enquanto a voz fala (`.falando`/`.tocando`) e o gemeo
              visual do som — funcao, nao enfeite */
           if(/falando|tocando/.test(String(e.getAttribute("class")||""))) continue;
+          /* o que PULSA para dizer "e aqui" — a zona de soltar que esta na vez (.mira),
+             o premio do labirinto (.prem), a casa acesa — e o andaime apontando, funcao */
+          if(/\b(mira|prem|alvo|acesa|pisca|meta|agora)\b/.test(String(e.getAttribute("class")||""))) continue;
           anima.add(nomeDe(e));
         }
         if(anima.size) out.push("AVISO regra12: "+anima.size+" coisa(s) animando SEM funcao (nao e alvo nem mascote): "+[...anima].slice(0,5).join(" "));
