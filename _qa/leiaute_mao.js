@@ -73,14 +73,35 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
         const cs=getComputedStyle(im), fit=cs.objectFit||"fill";
         const an=im.naturalWidth/im.naturalHeight, ar=r.width/r.height, dif=Math.abs(ar-an)/an;
         const src=String(im.getAttribute("src")||"").split("/").slice(-1)[0].slice(0,40);
+        /* FUNDO: figura que cobre >= 60% da tela e cenario de fundo — `cover` ali e de
+           proposito (a cena estica ate as bordas). Vira aviso, nao reprovacao. */
+        const par=im.parentElement, rp=par?par.getBoundingClientRect():r;
+        const fundo=(r.width*r.height)>=0.6*W*H ||
+                    (par && par.children.length>1 && rp.width>0 && (r.width*r.height)>=0.85*rp.width*rp.height);   /* cenario de um palco: a figura forra a caixa e tem coisas por cima */
+        /* `object-position` declarado = corte DE PROPOSITO (retrato ancorado no topo,
+           por exemplo): aviso. */
+        const posDecl=(im.style.objectPosition||"")!=="" || (cs.objectPosition&&cs.objectPosition!=="50% 50%");
         if((fit==="fill"||fit==="none")&&dif>0.12&&r.width>24&&r.height>24) out.push("figura ESTICADA "+Math.round(dif*100)+"% ("+src+" em "+nome(im)+", object-fit:"+fit+")");
-        if(fit==="cover"&&dif>0.10&&r.width>24&&r.height>24) out.push("figura CORTADA por object-fit:cover, "+Math.round(dif*100)+"% de diferenca ("+src+" em "+nome(im)+")");
-        if(r.left<-2||r.right>W+2) out.push("figura saindo pela lateral da tela ("+src+")");
+        if(fit==="cover"&&dif>0.10&&r.width>24&&r.height>24){
+          const msg="figura CORTADA por object-fit:cover, "+Math.round(dif*100)+"% de diferenca ("+src+" em "+nome(im)+")";
+          if(fundo) av.push("fundo em cover ("+src+", "+Math.round(dif*100)+"% de diferenca): confira se a cena importante nao some");
+          else if(posDecl) av.push(msg+" — corte declarado por object-position");
+          else out.push(msg);
+        }
+        /* dentro de um trilho que ROLA de lado (catalogo de adereços, galeria), o que
+           esta fora do trilho e alcancavel: nao e corte. */
+        let rolaX=false;
+        for(let a=im.parentElement;a&&a!==document.body;a=a.parentElement){ const ca=getComputedStyle(a); if(/(auto|scroll)/.test(ca.overflowX)&&a.scrollWidth>a.clientWidth+4){ rolaX=true; break; } }
+        if(!rolaX && (r.left<-2||r.right>W+2)) out.push("figura saindo pela lateral da tela ("+src+")");
         for(let a=im.parentElement;a&&a!==document.body;a=a.parentElement){
-          const ov=getComputedStyle(a).overflow+getComputedStyle(a).overflowX+getComputedStyle(a).overflowY;
-          if(/hidden|clip/.test(ov)){ const ra=a.getBoundingClientRect();
-            const fora=Math.max(0,ra.left-r.left)+Math.max(0,r.right-ra.right)+Math.max(0,ra.top-r.top)+Math.max(0,r.bottom-ra.bottom);
-            if(fora>0.06*(r.width+r.height)&&r.width>24) out.push("figura CORTADA pela caixa "+nome(a)+" ("+src+", "+Math.round(fora)+"px fora)"); break; }
+          const ca=getComputedStyle(a), ra=a.getBoundingClientRect();
+          const cortaX=/hidden|clip/.test(ca.overflowX)&&!(/(auto|scroll)/.test(ca.overflowX));
+          const cortaY=/hidden|clip/.test(ca.overflowY)&&!(/(auto|scroll)/.test(ca.overflowY));
+          const foraX=cortaX&&!rolaX ? Math.max(0,ra.left-r.left)+Math.max(0,r.right-ra.right) : 0;
+          const foraY=cortaY ? Math.max(0,ra.top-r.top)+Math.max(0,r.bottom-ra.bottom) : 0;
+          const fora=foraX+foraY;
+          if((cortaX||cortaY)&&fora>0.06*(r.width+r.height)&&r.width>24){ out.push("figura CORTADA pela caixa "+nome(a)+" ("+src+", "+Math.round(fora)+"px fora)"); break; }
+          if(cortaX||cortaY) break;
         }
       }
       /* 4 — fundos esticados */
