@@ -1,57 +1,31 @@
 # 👁 TESTADOR HUMANO — OLHO (imagens) — `_trem`
 
-> 27 figura(s) de conteúdo julgadas por gemini-2.0-flash em 865 s: a imagem mostra o que o NOME promete? Camadas do mascote, fundo, medalha, crachás e desenhos para colorir ficam de fora.
+> 27 figura(s) de conteúdo em 92 s — nuvem: gemini-flash-latest; juiz local: CLIP multilíngue. A imagem mostra o que o NOME promete? Camadas do mascote, fundo, medalha, crachás e desenhos para colorir ficam de fora.
 
 | resultado | quantas |
 |---|--:|
 | ✅ mostra o que o nome diz, sem problema | 0 |
-| ❌ NÃO é o que o nome diz | 0 |
+| ❌ NÃO é o que o nome diz | 1 |
 | 🟡 é, mas com problema (texto na figura, corte, fundo…) | 0 |
-| ⚠️ não consegui julgar | 27 |
+| ⚠️ não consegui julgar | 1 |
+
+## ❌ Figuras que não são o que o nome diz
+
+| arquivo | nome promete | o modelo vê | problemas |
+|---|---|---|---|
+| `tr_abelha.png` | abelha | abelha fofa feita de massinha | figura cortada |
 
 ## ⚠️ Não julgadas pela nuvem
 
-- `tr_abelha.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_bola.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_casa.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_dado.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_elefante.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_flor.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_gato.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_hipopotamo.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_igreja.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_jacare.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_kiwi.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_leao.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_maca.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_medalha.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_navio.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_ovo.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_pato.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_queijo.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_rato.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_sapo.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_trem.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_uva.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_vaca.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_waffle.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_xicara.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_yoyo.png` — pollinations: HTTP Error 402: Payment Required
-- `tr_zebra.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_bola.png` — nenhum juiz respondeu — parei aqui
 
 ## 🧭 Juiz LOCAL (CLIP multilíngue, sem cota): a figura combina mais com o SEU nome?
 
-> 27 figura(s): **20 combinam com o próprio nome** (1º ou 2º lugar entre os 27 nomes da atividade), **7 NÃO** — nessas, o nome que mais combina é outro. Ele não vê texto desenhado, corte nem fundo: isso é do Gemini, quando há cota.
+> 27 figura(s): **26 combinam com o próprio nome** (entre os 3 primeiros dos 27 nomes da atividade, ou a menos de 0,02 do vencedor), **1 NÃO** — nessas, o nome que mais combina é outro, com folga. Ele não vê texto desenhado, corte nem fundo: isso é do Gemini, quando há cota.
 
 | arquivo | nome promete | parece mais com | score do próprio | score do outro |
 |---|---|---|--:|--:|
-| `tr_dado.png` | dado | **queijo** | 0.248 | 0.270 |
-| `tr_hipopotamo.png` | hipopotamo | **kiwi** | 0.202 | 0.268 |
-| `tr_jacare.png` | jacare | **hipopotamo** | 0.227 | 0.240 |
-| `tr_maca.png` | maca | **uva** | 0.247 | 0.273 |
-| `tr_sapo.png` | sapo | **bola** | 0.232 | 0.249 |
-| `tr_xicara.png` | xicara | **waffle** | 0.231 | 0.252 |
-| `tr_yoyo.png` | yoyo | **medalha** | 0.238 | 0.259 |
+| `tr_hipopotamo.png` | hipopótamo | **kiwi** | 0.196 | 0.268 |
 
 <details><summary>todas as figuras (juiz local)</summary>
 
@@ -64,12 +38,12 @@
 | `tr_elefante.png` | elefante | elefante | 0.279 |
 | `tr_flor.png` | flor | flor | 0.280 |
 | `tr_gato.png` | gato | gato | 0.269 |
-| `tr_hipopotamo.png` | hipopotamo | kiwi | 0.202 |
+| `tr_hipopotamo.png` | hipopótamo | kiwi | 0.196 |
 | `tr_igreja.png` | igreja | igreja | 0.295 |
-| `tr_jacare.png` | jacare | hipopotamo | 0.227 |
+| `tr_jacare.png` | jacaré | hipopótamo | 0.228 |
 | `tr_kiwi.png` | kiwi | kiwi | 0.268 |
-| `tr_leao.png` | leao | rato | 0.234 |
-| `tr_maca.png` | maca | uva | 0.247 |
+| `tr_leao.png` | leão | leão | 0.283 |
+| `tr_maca.png` | maçã | maçã | 0.318 |
 | `tr_medalha.png` | medalha | medalha | 0.293 |
 | `tr_navio.png` | navio | navio | 0.280 |
 | `tr_ovo.png` | ovo | ovo | 0.312 |
@@ -81,8 +55,8 @@
 | `tr_uva.png` | uva | uva | 0.332 |
 | `tr_vaca.png` | vaca | vaca | 0.294 |
 | `tr_waffle.png` | waffle | waffle | 0.297 |
-| `tr_xicara.png` | xicara | waffle | 0.231 |
-| `tr_yoyo.png` | yoyo | medalha | 0.238 |
+| `tr_xicara.png` | xícara | xícara | 0.275 |
+| `tr_yoyo.png` | yoyo | medalha | 0.239 |
 | `tr_zebra.png` | zebra | zebra | 0.294 |
 
 </details>
