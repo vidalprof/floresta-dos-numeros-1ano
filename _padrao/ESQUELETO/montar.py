@@ -930,6 +930,22 @@ def falas_de(c):
                                       _opn.get(_op, _op),
                                       _nom.get(str(_b), _b))
                 poe("op_" + chave_voz(texto_limpo(_txt)), _txt)
+        # ⭐ MEMORIA: as dicas do andaime citam a PALAVRA sorteada ("Ouça: MALA.
+        #    Ache o desenho que combina." / "Abri uma para você: MALA. Ache o par
+        #    dela."). O colhedor so pega a palavra que o sorteio abriu naquela
+        #    partida — a banca da Padaria reprovou por UMA que ficou de fora
+        #    (set/2026). Aqui saem as frases para TODOS os pares, no mesmo molde
+        #    da peca (`ajuda()` em memoria.html: rot = pal || voz).
+        if f.get("mec") == "memoria":
+            for it in (f.get("dados") or []):
+                if not isinstance(it, dict):
+                    continue
+                _rot = it.get("pal") or it.get("voz") or u""
+                if not _rot or not (it.get("pal") or it.get("sen")):
+                    continue
+                for _t in (u"Ouça: %s. Ache o desenho que combina." % _rot,
+                           u"Abri uma para você: %s. Ache o par dela." % _rot):
+                    poe("op_" + chave_voz(texto_limpo(_t)), _t)
         # ⚠️ ...e do `dadosExtra` TAMBEM. Faltava, e nao era detalhe: o balao da
         #    mecanica `ordenar` mora em `dadosExtra.ORDTXT.balao`, entao as tres
         #    fases de por o alfabeto em ordem ficavam MUDAS — justo as do
