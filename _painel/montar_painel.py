@@ -91,7 +91,12 @@ def le_catalogo():
         if not nome or nome in ("Atividade", "—") or set(nome) <= set("-: "):
             continue
         trabalha = re.sub(r"\*\*", "", cels[1]).strip()
-        pasta = re.sub(r"`", "", cels[2]).strip()
+        # ⚠️ a celula pode trazer a pasta do painel do professor junto —
+        #    "`_edf2` (+ `_edf2painel`)" ou "`_vale4` (+ painel)". A PASTA e o
+        #    primeiro nome entre crases; sem isso o portao do catalogo dizia que
+        #    `_edf2` "nao esta no ATIVIDADES.md" e segurava a entrega (set/2026).
+        _m = re.search(r"`(_[\w-]+)`", cels[2])
+        pasta = _m.group(1) if _m else re.sub(r"`", "", cels[2]).strip()
         link, painel = links_da_celula(cels[3])
         itens.append({
             "turma": turma, "chip": curto(turma), "pos": posicao(turma),
