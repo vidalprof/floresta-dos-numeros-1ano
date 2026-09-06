@@ -60,7 +60,9 @@ jobs:
       - name: Instalar o ouvido (faster-whisper) e os comparadores
         run: |
           python -m pip install --quiet --upgrade pip
-          python -m pip install --quiet "faster-whisper==1.0.3" rapidfuzz num2words
+          # ⚠️ (1a rodada, set/2026) o faster-whisper importa `requests` e nao o declara:
+          #    o runner morreu em "No module named 'requests'". Instalado explicitamente.
+          python -m pip install --quiet "faster-whisper==1.0.3" requests rapidfuzz num2words
           sudo apt-get install -y -qq ffmpeg >/dev/null 2>&1 || true
           python - <<'PY'
           from faster_whisper import WhisperModel
