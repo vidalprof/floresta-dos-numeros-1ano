@@ -222,6 +222,14 @@ jobs:
           if git diff --cached --quiet; then echo "nada novo";
           else
             git commit -m "ver rodando: $LOTE ($(ls _pesquisa/rodando/$LOTE/*.jpg 2>/dev/null | wc -l) fotos)"
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            # ⚠️ (set/2026) o lote 3 PERDEU 40 fotos aqui: com 20 pesquisas commitando ao
+            #    mesmo tempo, o push chegou um instante depois de outro ("cannot lock ref")
+            #    e o job morreu. Trabalho de 4 minutos jogado fora por um segundo de
+            #    corrida. Agora tenta ate 6 vezes, rebaseando entre as tentativas.
+            for t in 1 2 3 4 5 6; do
+              git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+              if git push origin "HEAD:${GITHUB_REF_NAME}"; then echo "push ok (tentativa $t)"; break; fi
+              echo "push rejeitado (tentativa $t) — espero e tento de novo"; sleep $((t*7))
+              [ "$t" = "6" ] && { echo "::error::nao consegui publicar o lote depois de 6 tentativas"; exit 1; }
+            done
           fi

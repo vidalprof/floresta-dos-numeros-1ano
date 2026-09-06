@@ -242,6 +242,12 @@ jobs:
           if git diff --cached --quiet; then echo "nada novo";
           else
             git commit -m "pesquisa: ${{ steps.tema.outputs.assunto }}"
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            # (set/2026) 20 pesquisas ao mesmo tempo = pushes em corrida ("cannot lock
+            # ref"); duas se perderam em silencio. Ate 6 tentativas, rebaseando.
+            for t in 1 2 3 4 5 6; do
+              git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+              if git push origin "HEAD:${GITHUB_REF_NAME}"; then echo "push ok (tentativa $t)"; break; fi
+              echo "push rejeitado (tentativa $t)"; sleep $((t*7))
+              [ "$t" = "6" ] && { echo "::error::nao consegui guardar a pesquisa"; exit 1; }
+            done
           fi
