@@ -163,6 +163,14 @@ def main():
         if not m:
             continue
         temFundo = re.search(r"(?<![-\w])background(-color)?\s*:", corpo)
+        # ⭐ (set/2026, Bancada da Divisao) letra branca com SOMBRA ESCURA por baixo
+        #    (`text-shadow: 0 1px 3px #000`) tem contraste PROPRIO em qualquer fundo —
+        #    e a tecnica certa para texto sobre a foto do cenario, quando a tarja
+        #    escura atravessando a tela foi justamente o que o Marcos mandou tirar.
+        #    Quem mede o contraste real e o `contraste.js` (pixel); aqui basta saber
+        #    que a regra nao esta apostando num fundo que nao pintou.
+        if not temFundo and re.search(r"text-shadow\s*:\s*[^;]*(#0|#1|#2|#3|rgba\(0,\s*0,\s*0|black)", corpo):
+            temFundo = True
         vv = luz(m.group(1))
         if vv is None:
             continue

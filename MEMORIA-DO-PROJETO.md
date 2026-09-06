@@ -6222,3 +6222,58 @@ ou ChatGPT."* O que ficou feito — e o que depende dele:
   OpenAI, Cloudflare) nem resposta JSON/Markdown crua (lista de modelos do
   Pollinations voltou 200 "sem texto"). Para essas, ou eu uso o que sei e marco
   "conferir", ou peço ao Marcos para colar o texto.
+
+## 🚀 "PODE FAZER TUDO" — a tarde de 2026-09-06 (regras da pesquisa nas peças, peças novas, pré-voo)
+
+Ordem do Marcos: *"Pode fazer tudo. Quero as atividades melhores, mais rápidas e
+com muito menos erros; quero você muito eficaz em fazer essas atividades e
+trabalhar com essas dinâmicas sem erros."* Isso liberou a fila que esperava
+aprovação (as 12 regras da pesquisa das casas, as peças novas da alfabetização,
+a fase 6 da Padaria, os blocos do Trem). O que ficou feito e MEDIDO:
+
+**Mais rápido — o PRÉ-VOO (`_qa/previo.sh <pasta>`).** 30 portões de texto em
+~2 segundos, em paralelo, logo depois do montar (o `montar.py` lembra na última
+linha). A banca de 10 minutos só roda com pré-voo 0. "Voz sem mp3" ali é
+informação (o `entregar.yml` grava), não reprovação. Registrado no `CLAUDE.md`.
+
+**Menos erros — as regras da pesquisa viraram medida e conserto:**
+- `leiaute.js` regras **11–14** (AVISO, ainda não reprovam): alvo responde ao
+  pressionar (`:active`), nada anima sem função, figura grande responde ao toque,
+  nada só pela cor. Cobaia (88 mecânicas × 6 tamanhos): **1 092 → 132 → 42
+  avisos** depois de 143 regras `:active` em 43 peças + 5 classes do motor
+  (brilho leve, sem mexer no tamanho) e das figuras que falam ao toque
+  (bater-sílabas, juntar-sílabas). Restam 42, todos listados por fase/classe.
+- `caca-palavras`: `PALFIG` (figura ao achar) + `MODO="figuras"`; `cruzadinha`:
+  pista com alto-falante e palavra inteira ao fechar; `relampago`: pergunta de
+  reflexão; `simulador`: gaveta `SIM` tematizável (controle, alvo, leituras,
+  figuras de IA da cena) — o portão passou a aceitar `mec=simulador` fora de água
+  quando a fase traz `SIM`.
+- Alfabetização, 2ª rodada: `rima` (não falava nada!) fala ao tocar a carta;
+  `montar-frase` lê a frase inteira (campo `f`, gravado pelo `montar.py`);
+  decisão da regra 8 registrada (peças de ESCREVER dizem o NOME da letra).
+- `dinamicas.py` ganhou blocos: cruzadinha, relampago, montar-frase, ler-e-fazer,
+  marcar-varias, escada-de-palavras, carta-som da memória, PALFIG/figuras.
+
+**Peças novas (todas com linha no `DINAMICAS.md` e regra no portão):**
+`ler-e-fazer` (instrução ESCRITA, voz é o 2º degrau — TYMTR), `marcar-varias`
+(2–3 certas, erro na hora, fecha sozinha — EdiLIM), `escada-de-palavras`
+(MALA→MOLA→BOLA, duas portas, voz na troca — NCIL) e a **carta-som** na
+`memoria` (`som:true`). `INTERATIVIDADES.md` regenerado: 91 peças.
+
+**Conteúdo:** Padaria f05 sem confundíveis na estreia (B, M, P sozinhos; p/b só
+na 4ª rodada) + frase aliterada ao abrir cada letra traçada ("Pipoca, pão e
+pudim: tudo com P!"). Trem reorganizado em **blocos** por mecânica (aquecimento a
+38%); o `montar.py` passou a tratar pintar/vitrine/criar como **respiro** fora da
+regra do bloco. `_pixel` sem `preventDefault` no touchstart. `_divisao` remontada
+com o painel que encolhe (o conserto das tarjas já estava na peça, faltava
+remontar); `cor_fixa.py` aceita `text-shadow` escura como contraste próprio.
+
+**Lições do dia:** (1) `FIG`/`FIGS`/`IMG` são nomes RESERVADOS do integrador
+(`NAO_E_CONTEUDO`) — gaveta com esse nome não recebe `dadosExtra`; usei `PALFIG`.
+(2) Gaveta opcional recebe `/*TECNICA*/` na linha da `var`, senão o montar avisa
+"deixou com o exemplo" em toda atividade. (3) A marca "troque APENAS `X`" decide
+a gaveta principal — sem ela o simulador tinha `gotas` (um array de estado!)
+como gaveta. (4) O portão **0b7 invisível** reprova a banca quando há trabalho
+não commitado: commitar antes de rodar a banca inteira. (5) Rodar `integrar.py`
+e `interatividades.py` durante uma banca deixa a "prova de sala" lenta (2,5 s
+em bater-sílabas foi contenção de CPU, não a peça).
