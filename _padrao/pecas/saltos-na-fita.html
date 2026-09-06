@@ -133,6 +133,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
        box-shadow:0 6px 0 #c9a52f}
 /* tela baixa: encolhe a LETRA e a altura da fita, nunca a largura do alvo */
 @media (max-height:470px){.fita{height:112px}.marca{height:96px}.numr{font-size:14px}}
+
+/* ⭐ RESPOSTA AO PRESSIONAR (pesquisa set/2026, regra 1 — PBS KIDS "squish", NN/g):
+   todo alvo mostra que o toque PEGOU. Brilho leve, sem mexer no tamanho — assim
+   nao desloca zona de soltar nem peca arrastada. Medido pelo leiaute.js (regra 11). */
+.marca:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 </style></head>
 <body>
 <div id="app"></div>

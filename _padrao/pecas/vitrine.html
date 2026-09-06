@@ -339,6 +339,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .vzap:after{content:"";position:absolute;left:11px;top:5px;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid #33280a}
 @media (min-width:620px){ .vitcard{width:30%} .vfig{height:120px} }
 @media (max-height:640px){ .vfig{height:84px} .vfig img{max-height:80px} .vinfo{font-size:11.5px} }
+
+/* ⭐ RESPOSTA AO PRESSIONAR (pesquisa set/2026, regra 1 — PBS KIDS "squish", NN/g):
+   todo alvo mostra que o toque PEGOU. Brilho leve, sem mexer no tamanho — assim
+   nao desloca zona de soltar nem peca arrastada. Medido pelo leiaute.js (regra 11). */
+.vzap:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 </style></head>
 <body>
 <div id="app"></div>

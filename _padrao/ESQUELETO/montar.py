@@ -250,9 +250,14 @@ def confere(c, mecs):
         def _e_aquecimento(f):
             alvo = (f.get("id", "") + f.get("mec", "")).lower()
             return "quec" in alvo or "quec" in texto_limpo(f.get("selo", "")).lower()
+        # ⭐ (set/2026, pesquisa das casas — Toca Boca, regra 10) a PRODUCAO LIVRE
+        #    (pintar, criar) e a VITRINE (o marco da historia) sao RESPIRO, nao
+        #    exercicio: a crianca nao diz "ja fiz" de uma pausa para pintar. Elas
+        #    ficam fora da conta do bloco — e por isso podem pontuar a viagem.
+        _RESPIRO = ("pintar", "pintar-canvas", "pintar-desenho", "criar-desafio", "vitrine")
         posicoes = {}
         for i, f in enumerate(fases):
-            if _e_aquecimento(f):
+            if _e_aquecimento(f) or (f.get("mec") in _RESPIRO):
                 continue
             m = f.get("mec")
             if m:
@@ -945,6 +950,17 @@ def falas_de(c):
                 poe("op_" + chave_voz(texto_limpo(it["voz"])), it["voz"])
                 if it.get("som"):
                     _t = u"%s. %s." % (it["voz"], it["som"])
+                    poe("op_" + chave_voz(texto_limpo(_t)), _t)
+        # ⭐ MONTAR-FRASE: quando a frase fecha, a peca LE a frase inteira (separou ->
+        #    junta, regra 5 da alfabetizacao). A frase falada e `f` da rodada ou as
+        #    palavras juntas + ponto — e nenhuma das duas e campo que o `falas_dos_dados`
+        #    veja como esta. Sem gravar aqui, `temVoz()` nao acha e a peca fica muda.
+        if f.get("mec") == "montar-frase":
+            for it in (f.get("dados") or []):
+                if not isinstance(it, dict):
+                    continue
+                _t = it.get("f") or (u" ".join(it.get("w") or []) + u".")
+                if _t.strip(u". "):
                     poe("op_" + chave_voz(texto_limpo(_t)), _t)
         # ⭐ PINTAR: o pedido e montado no ato — "Pinte <voz> do jeito que você quiser."
         #    (canvas usa `voz`, desenho usa `nome`). O molde `(d0.voz||"o desenho")`
@@ -2065,6 +2081,8 @@ def main():
     io.open(os.path.join(pasta, "arte.json"), "w", encoding="utf-8").write(
         json.dumps(arte, ensure_ascii=False, indent=1))
     print(u"   escrito: %s/index.html, falas.json e arte.json" % pasta)
+    # ⚡ PRE-VOO (set/2026): 30 portoes de texto em ~2 s ANTES dos 10 min da banca.
+    print(u"   agora: bash _qa/previo.sh %s   (e so com 0 ali: bash _qa/auditar.sh %s/index.html)" % (pasta, pasta))
     # ⭐ NARRACAO CONFERIDA NA HORA (ago/2026): antes, palavra que a voz erra
     #    ("complita") ou chave de imagem virando "pe-de pao" so apareciam na
     #    banca de 20 min. Agora o montador chama o MESMO `_qa/falas.py` (funcao

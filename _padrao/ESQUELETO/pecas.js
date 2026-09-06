@@ -1160,7 +1160,7 @@ function pecaArranjo(){
      juntos. O selo da rodada vira so tema interno, nunca elemento na tela. */
   c.appendChild(el("div","balao","Arrume os <b>"+r.n+"</b> "+TM.coisaP+
                  " em fileiras de <b>"+r.c+"</b>. Quantas fileiras d&atilde;o?"));
-  elBandeja=el("div","bandeja","");
+  elBandeja=el("div","a_bandeja","");
   c.appendChild(elBandeja);
   elBanco=el("div","banco","");
   c.appendChild(elBanco);
@@ -3950,6 +3950,11 @@ function pecaBater(){
   fg.id="bsFg";
   if(figEl){ fg.appendChild(figEl(r.fig)); }
   else { fg.appendChild(el("div","semfig", r.pal)); }
+  /* ⭐ A FIGURA RESPONDE AO TOQUE (pesquisa set/2026, regra 13 — NN/g: a crianca
+     toca em tudo e espera resposta). Tocar a figura DIZ a palavra inteira: e
+     o "ouvir antes de bater, sem custo" da alfabetizacao (regra 6). */
+  fg.style.cursor="pointer";
+  fg.onclick=function(){ sTap(); fala(r.pal); };
   topo.appendChild(fg);
 
   /* ⭐ O ALTO-FALANTE DA PALAVRA (apoio sonoro pedido pelo Marcos, ago/2026).
@@ -5346,6 +5351,16 @@ var LETRAS="ABCDEFGHIJLMNOPRSTUVZ"; /*TECNICA*/
    sentido) e o titulo virou gaveta. Frase que nao cita o tema nunca mente. */
 var TITULO="CA&#199;A-PALAVRAS";
 var MODO="cp_lista"; /*TECNICA*/
+/* ⭐ FIGURA POR PALAVRA (pesquisa set/2026 — JClic "caça-palavras que ENSINA ao
+   achar" e EdiLIM "sopa de letras: mostrar imágenes"). Dois usos:
+   · com MODO="cp_lista" ou "definicoes": ao ACHAR a palavra o chip ganha a figura
+     dela e a voz diz a palavra — a criança liga a forma escrita ao sentido na
+     hora em que acertou, que é quando mais fixa;
+   · com MODO="figuras": a lista mostra SÓ a figura (com alto-falante que diz a
+     palavra) e a palavra escrita aparece quando ela acha — a criança tem que
+     PENSAR a palavra e procurá-la pelos sons, não copiar letra a letra.
+   Palavra sem figura volta a aparecer escrita, como antes. */
+var PALFIG={};
 /* ⭐ NIVEL DIFICIL (pedido do Marcos, RIGHT NOW 9o ano, ago/2026: "o caca
    palavras e pra ser mais dificil, palavras na diagonal etc"). Ligado por
    conteudo (`"DIFICIL":true` no dadosExtra). Com ele, as palavras entram nas
@@ -5378,12 +5393,15 @@ function voz(txt){
 }
 /* a pista daquela palavra (vazia = a palavra volta a aparecer escrita) */
 function pistaDe(w){ return (PALDEF&&PALDEF[w])?PALDEF[w]:""; }
+/* a figura daquela palavra (vazia = sem figura) */
+function figDe(w){ return (PALFIG&&PALFIG[w])?PALFIG[w]:""; }
 /* ⭐ O ALTO-FALANTE DA PISTA — o apoio de quem ainda lê devagar. Ele só FALA:
    o evento para nele para que tocar no botão não conte como toque na lista. */
-function fazZap(txt){
+function fazZap(txt,rotulo){
   var z=el("button","zap","");
   z.type="button";
-  z.setAttribute("aria-label","Ouvir a pista");
+  z.setAttribute("aria-label",rotulo||"Ouvir a pista");
+  z.setAttribute("data-voz",String(txt).replace(/<[^>]+>/g,""));
   z.onclick=function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
@@ -5542,14 +5560,17 @@ function pecaCaca(){
     if(!g[i][j]) g[i][j]=LETRAS.charAt(Math.floor(Math.random()*LETRAS.length));
 
   /* --- 3) a tela --------------------------------------------------------- */
-  var porDef=(MODO==="definicoes");
+  var porFig=(MODO==="figuras");
+  var porDef=(MODO==="definicoes")||porFig;
   var c=el("div","centro");
   c.appendChild(el("div","selo",TITULO));
   /* ⚠️ o balao principal e o enunciado (narrado pelo motor); a instrucao com o
      numero de palavras vira hint (nao precisa de voz, e o numero varia). */
-  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:(porDef
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:(porFig
+     ? "Olhe cada <b>figura</b>, pense na palavra e ache ela na grade."
+     : (porDef
      ? "Leia cada <b>pista</b>, pense na palavra e ache ela na grade."
-     : "Ache as palavras na grade.");
+     : "Ache as palavras na grade."));
   var bal=el("div","balao", _enun);
   c.appendChild(bal);
   c.appendChild(el("div","hint", porDef
@@ -5559,8 +5580,19 @@ function pecaCaca(){
   /* ⭐ A LISTA — de palavras (padrão) ou de PISTAS (modo definições). */
   var lista=el("div","cp_lista"+(porDef?" ldef":"")), chips={};
   for(i=0;i<PAL.length;i++){(function(w){
-    var ch, lin, nm, pista=porDef?pistaDe(w):"";
-    if(pista){
+    var ch, lin, nm, pista=porDef?pistaDe(w):"", fg=figDe(w);
+    if(porFig&&fg){
+      /* ⭐ modo FIGURAS: a figura no lugar da palavra; o alto-falante diz a
+         palavra (quem ainda não lê ouve e procura pelos sons) */
+      ch=el("div","pchip pdef pfigc "+cor[w]);
+      lin=el("div","plin","");
+      lin.appendChild(el("i","pbola",""));
+      var im=el("img","pfig"); im.src=fg; im.alt=""; lin.appendChild(im);
+      lin.appendChild(fazZap(w,"Ouvir a palavra"));
+      ch.appendChild(lin);
+      nm=el("div","pnome",w);
+      ch.appendChild(nm);
+    } else if(pista){
       ch=el("div","pchip pdef "+cor[w]);
       lin=el("div","plin","");
       lin.appendChild(el("i","pbola",""));
@@ -5604,9 +5636,11 @@ function pecaCaca(){
     grade.appendChild(q);
   })(i,j);}
   c.appendChild(grade);
-  c.appendChild(el("div","hint", porDef
+  c.appendChild(el("div","hint", porFig
+    ? "Toque no alto-falante para OUVIR a palavra da figura. Depois toque em cada letra dela na grade."
+    : (porDef
     ? "Toque no alto-falante para OUVIR a pista. Depois toque em cada letra da palavra na grade."
-    : "Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
+    : "Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar.")));
   t.appendChild(c);
   app.appendChild(t);
 
@@ -5637,7 +5671,13 @@ function pecaCaca(){
     faixa(w);
     /* ⭐ no modo definições o chip GUARDA a classe `pdef` — é ela que revela a
        palavra por baixo da pista. Perder a classe aqui apagaria a recompensa. */
-    chips[w].className=(chips[w].className.indexOf("pdef")>=0?"pchip pdef ":"pchip ")+cor[w]+" feito";
+    chips[w].className=(chips[w].className.indexOf("pdef")>=0?"pchip pdef "+(chips[w].className.indexOf("pfigc")>=0?"pfigc ":""):"pchip ")+cor[w]+" feito";
+    /* ⭐ ENSINA AO ACHAR: a figura da palavra aparece no chip (quando há) e a
+       voz diz a palavra — forma escrita + sentido + som, no momento do acerto. */
+    if(!porFig&&figDe(w)&&!chips[w].getElementsByTagName("img").length){
+      var fim=el("img","pfig pfim"); fim.src=figDe(w); fim.alt="";
+      chips[w].appendChild(fim);
+    }
     voz(w);
   }
   function confere(){
@@ -5686,6 +5726,11 @@ function pecaCaca(){
      inteira. No modo lista continua exatamente como sempre foi: dois degraus. */
   function degrau1(w){
     var pista=porDef?pistaDe(w):"";
+    if(porFig&&!pista&&figDe(w)){
+      mostraDica("Ou&#231;a de novo a palavra da figura e procure as letras dela na grade.");
+      voz(w);
+      return false;
+    }
     if(pista){
       mostraDica("A pista que falta: <b>"+pista+"</b>");
       voz(pista);
@@ -5742,6 +5787,7 @@ function fimDaPeca(){
     if(f && f.dados) PAL = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.CORP !== undefined) CORP = _d.CORP;
+      if(_d.PALFIG !== undefined) PALFIG = _d.PALFIG;
       if(_d.PALDEF !== undefined) PALDEF = _d.PALDEF;
       if(_d.LETRAS !== undefined) LETRAS = _d.LETRAS;
       if(_d.TITULO !== undefined) TITULO = _d.TITULO;
@@ -8638,7 +8684,7 @@ function pecaClassificar(){
   var i;
   for(i=0;i<FICHAS.length;i++) fila.push(FICHAS[i]);
   baguncar(fila);
-  var band=el("div","bandeja"); band.id="esteira";
+  var band=el("div","c3_bandeja"); band.id="esteira";
   c.appendChild(band);
 
   var gs=el("div","gavs");
@@ -11987,8 +12033,24 @@ function pecaCruzadinha(){
       if(q.className.indexOf("pronta")<0)
         q.className = z<pos ? "c8_cel c8_cheio" : (z===pos ? "c8_cel ativa" : "c8_cel");
     }
-    pista.innerHTML="<b>"+w.n+".</b> "+w.d;
+    poePista("<b>"+w.n+".</b> "+w.d, w.d);
     marcaQA();
+  }
+  /* ⭐ a pista com ALTO-FALANTE: `txt` e o que aparece; `vozTxt` e o que a voz
+     diz (a pista limpa, sem o numero). O botao declara `data-voz` para o motor
+     achar a gravacao no VOZOK (o texto `d` vem do conteudo, entao o montador ja
+     mandou gravar). */
+  function poePista(txt,vozTxt){
+    pista.innerHTML="";
+    var sp=el("span","ptxt",txt); pista.appendChild(sp);
+    if(!vozTxt) return;
+    var limpo=String(vozTxt).replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){return String.fromCharCode(Number(n));});
+    var z=el("button","zap",""); z.type="button";
+    z.setAttribute("aria-label","Ouvir a pista"); z.setAttribute("data-voz",limpo);
+    z.appendChild(el("i","fone",""));
+    z.onclick=function(ev){ var e=ev||window.event; if(e&&e.stopPropagation) e.stopPropagation();
+      if(typeof diz==="function") diz(limpo); z.className="zap tocando"; setTimeout(function(){ z.className="zap"; },900); return false; };
+    pista.appendChild(z);
   }
   /* data-qa="1" na tecla que serve AGORA — so para o auditor-jogador */
   function marcaQA(){
@@ -12017,7 +12079,9 @@ function pecaCruzadinha(){
     }
     sCerto();
     faixa(w.ac||w.p);
-    pista.innerHTML="<b>"+(w.ac||w.p)+"</b> &#8212; era essa mesmo!";
+    poePista("<b>"+(w.ac||w.p)+"</b> &#8212; era essa mesmo!", "");
+    /* ⭐ a palavra inteira, dita de uma vez (regra 5 da alfabetizacao: separou -> junta) */
+    if(typeof diz==="function") diz(String(w.ac||w.p).replace(/&#(\d+);/g,function(m,n){return String.fromCharCode(Number(n));}));
     marcaQA();
     var meu=ger;
     setTimeout(function(){
@@ -12699,7 +12763,7 @@ function telaConta(){
   /* O SUPORTE VISUAL + as vagas da resposta, logo depois do "=" */
   var box=suporteVisual(r);
   var cx=el("span","dnvagas","");
-  for(i=0;i<resp.length;i++){ var v=el("div","vaga",""); cx.appendChild(v); vagas.push(v); }
+  for(i=0;i<resp.length;i++){ var v=el("div","dn_vaga",""); cx.appendChild(v); vagas.push(v); }
   box.appendChild(cx);
   c.appendChild(box);
   /* O TECLADO NUMERICO na tela: 0-9 grandes + APAGAR. `data-qa` na caixa e so
@@ -12755,7 +12819,7 @@ function poeDigito(d){
   if(!telaAtual||!telaAtual.parentNode) return;
   if(escrito.length>=resp.length) return;
   var v=vagas[escrito.length];
-  v.className="vaga cheia";
+  v.className="dn_vaga cheia";
   v.innerHTML=d;
   /* ⭐ o digito entra COMEMORANDO: cresce e pousa de volta (duas transicoes,
      sem `@keyframes` — ver a licao no destreme/CSS). */
@@ -12769,7 +12833,7 @@ function apagaUm(){
   if(!escrito.length) return;
   escrito=escrito.slice(0,-1);
   var v=vagas[escrito.length];
-  v.className="vaga"; v.innerHTML="";
+  v.className="dn_vaga"; v.innerHTML="";
 }
 function pousaVaga(v){
   setTimeout(function(){
@@ -12795,12 +12859,12 @@ function erraConta(){
      molde `digitar`: os keyframes da peca se perdem quando o integrador prefixa
      o CSS, e o erro deixava de responder DENTRO da atividade). */
   var i;
-  for(i=0;i<vagas.length;i++){ if(vagas[i].className.indexOf("cheia")>=0){ vagas[i].className="vaga cheia treme"; destreme(vagas[i]); } }
+  for(i=0;i<vagas.length;i++){ if(vagas[i].className.indexOf("cheia")>=0){ vagas[i].className="dn_vaga cheia treme"; destreme(vagas[i]); } }
   /* LIMPA as vagas para ela tentar de novo, e sobe o ANDAIME. */
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
     var j;
-    for(j=0;j<vagas.length;j++){ vagas[j].className="vaga"; vagas[j].innerHTML=""; }
+    for(j=0;j<vagas.length;j++){ vagas[j].className="dn_vaga"; vagas[j].innerHTML=""; }
     escrito="";
     ajuda(errosSeg);
   },300);
@@ -12812,11 +12876,11 @@ function erraConta(){
 function destreme(b){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    if(b.className.indexOf("cheia")>=0) b.className="vaga cheia treme2";
+    if(b.className.indexOf("cheia")>=0) b.className="dn_vaga cheia treme2";
   },110);
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    if(b.className.indexOf("cheia")>=0) b.className="vaga cheia";
+    if(b.className.indexOf("cheia")>=0) b.className="dn_vaga cheia";
   },240);
 }
 /* o andaime CRESCE: dica -> as frutas PISCAM/contam -> revelar e seguir.
@@ -12850,7 +12914,7 @@ function revela(){
   var i;
   escrito="";
   for(i=0;i<resp.length;i++){
-    vagas[i].className="vaga cheia";
+    vagas[i].className="dn_vaga cheia";
     vagas[i].innerHTML=resp.charAt(i);
     pousaVaga(vagas[i]);
     escrito=escrito+resp.charAt(i);
@@ -13119,7 +13183,7 @@ function telaDigitar(){
   ln.appendChild(fazZap(vozDaPalavra(r),r.palavra));
   c.appendChild(ln);
   var cx=el("div","vagas");
-  for(i=0;i<palavra.length;i++){ v=el("div","vaga",""); cx.appendChild(v); vagas.push(v); }
+  for(i=0;i<palavra.length;i++){ v=el("div","d2_vaga",""); cx.appendChild(v); vagas.push(v); }
   c.appendChild(cx);
   /* o teclado da tela: as letras DESTA palavra, embaralhadas. `data-qa` na
      caixa e so para o auditor-jogador; a crianca nao ve nada. */
@@ -13177,7 +13241,7 @@ function usaLetra(k,bot){
   if(k===palavra.charAt(pos)) poeLetra(k,bot||achaTecla(k)); else erraLetra(bot);
 }
 function poeLetra(k,bot){
-  vagas[pos].className="vaga cheia";
+  vagas[pos].className="d2_vaga cheia";
   vagas[pos].innerHTML=k;
   /* ⭐ a letra entra COMEMORANDO: cresce e pousa de volta (duas transições,
      sem `@keyframes` — ver a lição no CSS). */
@@ -13479,7 +13543,7 @@ function telaDitado(){
   var cx=el("div","vagas");
   for(i=0;i<it.txt.length;i++){
     if(it.txt.charAt(i)===" "){ cx.appendChild(el("div","espaco","")); continue; }
-    v=el("div","vaga",""); cx.appendChild(v); vagas.push(v);
+    v=el("div","d3_vaga",""); cx.appendChild(v); vagas.push(v);
   }
   c.appendChild(cx);
 
@@ -13569,7 +13633,7 @@ function usaLetra(k,bot){
   if(k===letras.charAt(pos)) poeLetra(k,bot||achaTecla(k)); else erraLetra(bot);
 }
 function poeLetra(k,bot){
-  vagas[pos].className="vaga cheia";
+  vagas[pos].className="d3_vaga cheia";
   vagas[pos].innerHTML=k;
   if(bot) bot.className="tecl usada";
   pos++; errosSeg=0;
@@ -13646,7 +13710,7 @@ function marcaVaga(){
   var i;
   for(i=0;i<vagas.length;i++)
     if(vagas[i].className.indexOf("cheia")<0)
-      vagas[i].className=(i===pos)?"vaga dae":"vaga";
+      vagas[i].className=(i===pos)?"d3_vaga dae":"d3_vaga";
 }
 function atualizaConta(){
   if(!contaEl) return;
@@ -14201,7 +14265,7 @@ function caixaDigita(msg, alvo, rotulo){
      ve quantos algarismos a resposta tem, que e o andaime de sempre. */
   var vis = elMesa.querySelector("#dvis"), k;
   _vagas = [];
-  for(k=0;k<String(alvo).length;k++){ var vg=el("div","vaga",""); vis.appendChild(vg); _vagas.push(vg); }
+  for(k=0;k<String(alvo).length;k++){ var vg=el("div","dd_vaga",""); vis.appendChild(vg); _vagas.push(vg); }
   pintaVisor();
 }
 function poeDigito(dig){
@@ -14221,8 +14285,8 @@ function poeDigito(dig){
 function pintaVisor(){
   var i;
   for(i=0;i<_vagas.length;i++){
-    if(i < _escrito.length){ _vagas[i].className="vaga cheia"; _vagas[i].innerHTML=_escrito.charAt(i); }
-    else { _vagas[i].className="vaga"; _vagas[i].innerHTML=""; }
+    if(i < _escrito.length){ _vagas[i].className="dd_vaga cheia"; _vagas[i].innerHTML=_escrito.charAt(i); }
+    else { _vagas[i].className="dd_vaga"; _vagas[i].innerHTML=""; }
   }
 }
 /* PORTA 2: o teclado de verdade. No PC da escola tem teclado e a criança digita. */
@@ -17406,7 +17470,7 @@ function telaFiltro(){
   c.appendChild(el("div","balao",it.reg+"<br>Toque nas que <b>passam</b>."));
 
   /* a bandeja: todas as fichas comecam aqui, embaralhadas */
-  var bd=el("div","bandeja"), lista=baguncar(it.fichas.slice(0)), b;
+  var bd=el("div","f_bandeja"), lista=baguncar(it.fichas.slice(0)), b;
   for(i=0;i<lista.length;i++){
     b=el("div","pc",lista[i].t);
     /* `data-qa="1"` = "esta serve agora" — SO para o auditor-jogador */
@@ -25644,7 +25708,7 @@ var CLA={
   adv:{r:"quando",  d:"<b>quando</b> aconteceu"}
 };
 var FRASES=[
- {img:"", w:["O","gato","preto","dormiu"],      c:["art","sub","adj","ver"], apoio:true},
+ {img:"", w:["O","gato","preto","dormiu"],      c:["art","sub","adj","ver"], apoio:true, f:"O gato preto dormiu."},
  {w:["A","flor","amarela","cresceu"],   c:["art","sub","adj","ver"], apoio:false},
  {w:["A","turma","jogou","hoje"],       c:["art","sub","ver","adv"], apoio:false}
 ];
@@ -25918,6 +25982,11 @@ function fechaRodada(){
     if(!telaAtual||!telaAtual.parentNode) return;
     var i,txt="";
     for(i=0;i<frase.w.length;i++) txt+=(i?" ":"")+frase.w[i];
+    /* ⭐ SEPAROU -> JUNTA (alfabetizacao, regra 5): a frase montada e LIDA inteira,
+       de uma vez. O campo `f` da rodada e a frase falada (com pontuacao); sem
+       ele, as palavras juntas. So toca a voz GRAVADA da casa (nunca voz-robo). */
+    var falada=frase.f||(txt+".");
+    if(typeof temVoz==="function"&&typeof diz==="function"&&temVoz(falada)) diz(falada);
     rodada++;
     mostraBanner("Frase montada: <b>"+txt+".</b>",
                  (rodada<FRASES.length)?telaFrase:telaFimFrase);
@@ -26158,7 +26227,7 @@ function pecaMorfemas(){
   elPal=el("div","palavraf","");
   c.appendChild(elPal);
 
-  var band=el("div","bandeja");
+  var band=el("div","m4_bandeja");
   var ordem=[];
   for(i=0;i<R.pecas.length;i++) ordem.push(R.pecas[i]);
   baguncar(ordem);
@@ -26672,7 +26741,7 @@ function mudancaFichas(){
   c.appendChild(el("div","regua","1975 &#8212; hoje"));
   c.appendChild(el("div","legenda","Toque numa ficha para acender a coisa na cena."));
 
-  var band=el("div","bandeja"), ordem=[], i;
+  var band=el("div","mp_bandeja"), ordem=[], i;
   for(i=0;i<BASE.length;i++) ordem.push({k:BASE[i].k, n:(i+1)+" &#183; "+BASE[i].n});
   baguncar(ordem);
   for(i=0;i<ordem.length;i++) band.appendChild(fazFicha(ordem[i]));
@@ -32812,6 +32881,20 @@ function telaFimRelampago(){
     for(i=0;i<faltou.length;i++) li.appendChild(el("div","item","&#183; "+faltou[i]));
   }
   c.appendChild(li);
+  /* ⭐ A PERGUNTA DE REFLEXAO (pesquisa set/2026, regra 9 — Topmarks: peca de
+     velocidade fecha com UMA pergunta que devolve a crianca ao PENSAR, senao
+     o relampago ensina so a ser rapido). Sem resposta certa, sem botao: e o
+     mascote perguntando; a criança responde para si (ou para o professor). */
+  var refl=el("div","reflexao",
+    faltou.length
+      ? "Pense: qual resposta voc&#234; ainda precisa <b>ver de novo</b>? Por que ela &#233; assim?"
+      : "Pense: qual resposta voc&#234; sabia <b>de cor</b>? Como voc&#234; aprendeu ela?");
+  c.appendChild(refl);
+  setTimeout(function(){
+    if(!t.parentNode||typeof diz!=="function") return;   /* na bancada nao ha voz da casa */
+    if(faltou.length) diz("Pense: qual resposta você ainda precisa ver de novo? Por que ela é assim?");
+    else diz("Pense: qual resposta você sabia de cor? Como você aprendeu ela?");
+  },1400);
   /* ⚠️⚠️ LICAO PAGA (ago/2026) — O BECO. Esta peca fechava com um botao
      "Jogar de novo" que chamava `telaComecarRelampago` DIRETO. Na bancada isso
      e certo; DENTRO da atividade e um beco: a crianca termina o aquecimento da
@@ -35318,6 +35401,7 @@ function fazCarta(dado){
   /* os dois lados do par publicam a MESMA chave: e assim que o auditor-jogador
      fecha a fase, e a crianca nao ve diferenca nenhuma. */
   l.setAttribute("data-qa",dado.k);
+  l._t=(dado.t===undefined||dado.t===null)?"":String(dado.t);
   l.onclick=function(){ if(souDedo()) return; toca(l); };   /* mouse de verdade */
   l.addEventListener("touchend",function(ev){
     ultimoToque=agora();
@@ -35342,7 +35426,10 @@ function rimam(a,b){
   return ka!==null && ka===kb;
 }
 
-function marca(l){ desmarca(); l.className="rmc ptxt sel"; marcada=l; }
+/* ⭐ OUVIR ANTES DE ESCOLHER, SEM CUSTO (alfabetizacao, regra 6 — TYMTR/GraphoGame):
+   tocar a carta DIZ a palavra. A rima e do ouvido; sem isto quem ainda soletra
+   escolhe pelo desenho das letras. */
+function marca(l){ desmarca(); l.className="rmc ptxt sel"; marcada=l; if(l._t) fala(l._t); }
 function desmarca(){
   var a=app.getElementsByClassName("rmc"), i;
   for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=classeCarta(a[i]);
@@ -36091,7 +36178,7 @@ function comecaPalavra(){
   if(falaEl) falaEl.innerHTML="Que parte da figura est&#225; <b>acesa</b>? Escreva o nome dela.";
   if(vagasBox){
     vagasBox.innerHTML="";
-    for(i=0;i<palavra.length;i++){ var vg=el("div","vaga",""); vagasBox.appendChild(vg); vagasL.push(vg); }
+    for(i=0;i<palavra.length;i++){ var vg=el("div","r6_vaga",""); vagasBox.appendChild(vg); vagasL.push(vg); }
   }
   if(letrasEl){
     letrasEl.innerHTML="";
@@ -36149,7 +36236,7 @@ function usaLetra(k,bot){
 }
 function poeLetra(k,bot){
   if(!vagasL[posL]) return;
-  vagasL[posL].className="vaga cheia";
+  vagasL[posL].className="r6_vaga cheia";
   vagasL[posL].innerHTML=k;
   pousaVaga(vagasL[posL]);
   if(bot) bot.className="tecl usada";
@@ -36163,7 +36250,7 @@ function pousaVaga(v){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(temClasse(v,"cheia")&&!temClasse(v,"pousa")) v.className="vaga cheia pousa";
+    if(temClasse(v,"cheia")&&!temClasse(v,"pousa")) v.className="r6_vaga cheia pousa";
   },170);
 }
 function erraLetra(bot){
@@ -37590,18 +37677,59 @@ MEC["simulador"] = function(f, cen, fim){
    reage (o sol e a sombra, a comida e o crescimento, o volume e o som).
    O esqueleto — reagir a cada passo, ler em texto o que mudou, perguntar
    algo que só o experimento responde — continua igual. */
-var MAXC=8;          /* a chuva vai de 0 a 8 */
-var NIVEL_PONTE=5;   /* a agua encosta na ponte neste passo (medido) */
-var BASE=10, PASSO=5;     /* altura da agua, em % da cena: BASE + PASSO*chuva */
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `SIM` (a gaveta
+   abaixo). O que vier vazio em SIM cai no padrão do rio e da chuva.
+   ⭐ O SIMULADOR TEMATIZAVEL (pesquisa set/2026, regra 6 — PhET: o GESTO expoe
+   o conceito em qualquer tema). Antes o rio-e-a-chuva estava cravado no codigo;
+   agora e a gaveta `SIM`, e o conteudo escolhe o que a barra controla, o que
+   reage, a referencia que se alcanca e as FIGURAS de IA da cena (regra da casa:
+   interacao dinamica usa arte de IA, o CSS so anima o que se mexe). Vazio =
+   o rio e a chuva de sempre, desenhado com divs para a peca rodar sozinha.
+     titulo    o selo da fase
+     controle  o que a crianca mexe, com maiuscula ("Chuva", "Sol", "Comida")
+     max       ate onde vai o controle (0..max)
+     alvo      o passo em que a coisa que sobe ENCOSTA na referencia (medido)
+     base/passo  altura da coisa que sobe, em % da cena: base + passo*n
+     opcoes    as respostas (a certa = alvo; TRES distratores, um vizinho)
+     abaixo/encostou/acima  a LEITURA em texto para cada estado
+     fecho     o que o mascote diz no fim (o conceito, por ultimo)
+     cena      {fundo, sobe, marco, flutua} = caminhos das figuras de IA
+               (fundo = a paisagem; sobe = a camada que cresce, com a
+               superficie no TOPO da imagem; marco = a referencia; flutua =
+               o que acompanha a subida). Sem figura, cada uma vira o div. */
+var SIM={};
+var SIM_PADRAO={ /*TECNICA*/
+  titulo:"O RIO E A CHUVA", controle:"Chuva", max:8, alvo:5, base:10, passo:5,
+  opcoes:[3,4,5,7],
+  abaixo:"a &#225;gua ainda est&#225; ABAIXO da ponte.",
+  encostou:"a &#225;gua ENCOSTOU na ponte!",
+  acima:"a &#225;gua passou ACIMA da ponte.",
+  fecho:"Voc&#234; descobriu <b>mexendo</b>: quanto mais chuva, mais alto o rio.",
+  cena:{}
+};
+var S=null;          /* SIM_PADRAO coberto pelo que o conteudo mandou em SIM */
+var MAXC=8, NIVEL_PONTE=5, BASE=10, PASSO=5;   /* preenchidos por montaS() */
+function montaS(){
+  var k, o={};
+  for(k in SIM_PADRAO) if(SIM_PADRAO.hasOwnProperty(k)) o[k]=SIM_PADRAO[k];
+  if(SIM&&typeof SIM==="object") for(k in SIM) if(SIM.hasOwnProperty(k)&&SIM[k]!==""&&SIM[k]!==null) o[k]=SIM[k];
+  if(!o.cena||typeof o.cena!=="object") o.cena={};
+  MAXC=parseInt(o.max,10)||8; NIVEL_PONTE=parseInt(o.alvo,10)||5;
+  BASE=parseFloat(o.base)||10; PASSO=parseFloat(o.passo)||5;
+  if(!o.opcoes||!o.opcoes.length) o.opcoes=[NIVEL_PONTE-2,NIVEL_PONTE-1,NIVEL_PONTE,NIVEL_PONTE+2];
+  S=o; return o;
+}
 
 var telaAtual=null, barraP=null, ger=0;
 var chuva=0, mexeu=0, respondido=false, erros=0;
 var aguaEl=null, barcoEl=null, cenaEl=null, ponteEl=null, leituraEl=null, rngEl=null;
 var gotas=[], riscos=[];
 
+/* ⚠️ as dicas sao NEUTRAS de proposito: nao citam chuva, agua nem ponte, para
+   valerem em qualquer tema sem a voz dizer uma coisa e a tela outra. */
 var DICAS=[
-  "Mexa a chuva <b>devagar</b>, de um em um, e olhe a &#225;gua chegando perto da ponte.",
-  "Quando a &#225;gua encosta, o aviso l&#225; embaixo muda e a ponte fica <b>molhada</b>. Em que n&#250;mero isso acontece?",
+  "Mexa o controle <b>devagar</b>, de um em um, e olhe a figura mudando.",
+  "Quando chega no ponto certo, o aviso l&#225; embaixo muda e a figura <b>acende</b>. Em que n&#250;mero isso acontece?",
   "&#201; esta! Toque nela que eu sigo com voc&#234;."
 ];
 
@@ -37612,18 +37740,22 @@ function temClasse(e,c){
 }
 
 function pecaSimulador(){
-  ger++; limpa();
+  ger++; limpa(); montaS();
   chuva=0; mexeu=0; respondido=false; erros=0; gotas=[]; riscos=[];
   var t=el("div","tela"); telaAtual=t; setProg(t,0);
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
-  c.appendChild(el("div","selo","O RIO E A CHUVA"));
-  c.appendChild(el("div","balao","Mexa a chuva. Em que n&#250;mero a &#225;gua <b>encosta na ponte</b>?"));
+  c.appendChild(el("div","selo",S.titulo));
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:"Mexa a chuva. Em que n&#250;mero a &#225;gua <b>encosta na ponte</b>?";
+  c.appendChild(el("div","balao",_enun));
 
   /* ---- o mundo ---- */
-  cenaEl=el("div","cena");
+  var comFoto=!!S.cena.fundo;
+  cenaEl=el("div","cena"+(comFoto?" foto":""));
+  if(comFoto) cenaEl.style.backgroundImage="url('"+S.cena.fundo+"')";
   var i,g,r;
-  for(i=0;i<MAXC;i++){
+  /* as gotas so existem no tema da chuva (sem figura de fundo) */
+  if(!comFoto) for(i=0;i<MAXC;i++){
     g=el("div","gota","");
     g.style.left=(6+i*11)+"%";
     g.style.webkitAnimationDelay=(i*0.11)+"s";
@@ -37631,8 +37763,7 @@ function pecaSimulador(){
     g.style.display="none";
     cenaEl.appendChild(g); gotas.push(g);
   }
-  cenaEl.appendChild(el("div","morro",""));
-  cenaEl.appendChild(el("div","morro2",""));
+  if(!comFoto){ cenaEl.appendChild(el("div","morro","")); cenaEl.appendChild(el("div","morro2","")); }
   var rg=el("div","regua","");
   for(i=0;i<=MAXC;i++){
     r=el("div","risco","");
@@ -37643,12 +37774,24 @@ function pecaSimulador(){
   /* ⭐ a ponte e os pilares nascem NA ALTURA DA AGUA DO NIVEL 5 — a conta e a
      mesma que sobe a agua, entao os dois nunca se desencontram. */
   var altP=BASE+PASSO*NIVEL_PONTE;
-  var pE=el("div","pilar pilarE",""), pD=el("div","pilar pilarD","");
-  pE.style.height=altP+"%"; pD.style.height=altP+"%";
-  cenaEl.appendChild(pE); cenaEl.appendChild(pD);
-  ponteEl=el("div","ponte",""); ponteEl.style.bottom=altP+"%"; cenaEl.appendChild(ponteEl);
-  aguaEl=el("div","s2_agua",""); cenaEl.appendChild(aguaEl);
-  barcoEl=el("div","barco",""); barcoEl.appendChild(el("div","vela","")); cenaEl.appendChild(barcoEl);
+  if(S.cena.marco){
+    /* a referencia e uma FIGURA de IA, pousada exatamente na altura do alvo */
+    ponteEl=el("img","marcoimg"); ponteEl.src=S.cena.marco; ponteEl.alt="";
+    ponteEl.style.bottom=altP+"%"; cenaEl.appendChild(ponteEl);
+  } else {
+    var pE=el("div","pilar pilarE",""), pD=el("div","pilar pilarD","");
+    pE.style.height=altP+"%"; pD.style.height=altP+"%";
+    cenaEl.appendChild(pE); cenaEl.appendChild(pD);
+    ponteEl=el("div","ponte",""); ponteEl.style.bottom=altP+"%"; cenaEl.appendChild(ponteEl);
+  }
+  aguaEl=el("div","s2_agua"+(S.cena.sobe?" img":""),"");
+  if(S.cena.sobe) aguaEl.style.backgroundImage="url('"+S.cena.sobe+"')";
+  cenaEl.appendChild(aguaEl);
+  if(S.cena.flutua){
+    barcoEl=el("img","flutuaimg"); barcoEl.src=S.cena.flutua; barcoEl.alt=""; cenaEl.appendChild(barcoEl);
+  } else {
+    barcoEl=el("div","barco",""); barcoEl.appendChild(el("div","vela","")); cenaEl.appendChild(barcoEl);
+  }
   c.appendChild(cenaEl);
 
   /* ---- o controle: as DUAS portas (deslizar e os botoes grandes) ---- */
@@ -37662,7 +37805,7 @@ function pecaSimulador(){
      (_qa/jogador.js), que nao sabe arrastar um controle: ele percorre as
      posicoes uma a uma e para nesta. */
   rngEl.setAttribute("data-qa",""+NIVEL_PONTE);
-  rngEl.setAttribute("aria-label","quanta chuva");
+  rngEl.setAttribute("aria-label",String(S.controle).toLowerCase());
   rngEl.oninput=function(){ poeChuva(parseInt(rngEl.value,10)); };
   rngEl.onchange=function(){ poeChuva(parseInt(rngEl.value,10)); };
   var mais=el("button","btn zbt","+");
@@ -37680,7 +37823,7 @@ function pecaSimulador(){
      o degrau "revelar" nunca acontecia e ela ainda ficava olhando uma tela
      de uma opcao so. O 4 entra de proposito: e o vizinho ("quase encostou"),
      que obriga a olhar a figura em vez de chutar longe. */
-  var lista=baguncar([3,4,5,7]);
+  var lista=baguncar(S.opcoes.slice(0));
   for(i=0;i<lista.length;i++) box.appendChild(fazResposta(lista[i]));
   c.appendChild(box);
   c.appendChild(el("div","hint","Arraste a bolinha, ou use os bot&#245;es &#8722; e +."));
@@ -37721,19 +37864,20 @@ function poeChuva(n){
   /* a chuva: quantas gotas caem e quanto o ceu escurece */
   var i;
   for(i=0;i<gotas.length;i++) gotas[i].style.display=(i<chuva)?"block":"none";
-  var esc=Math.round(127-chuva*7);
-  cenaEl.style.background="rgb("+esc+","+(esc+55)+","+(esc+87)+")";
+  if(!S.cena.fundo){
+    var esc=Math.round(127-chuva*7);
+    cenaEl.style.background="rgb("+esc+","+(esc+55)+","+(esc+87)+")";
+  }
   for(i=0;i<riscos.length;i++) riscos[i].className=(i===chuva)?"risco s2_on":"risco";
-  /* a ponte molhada + a leitura em TEXTO (o gemeo visual do que mudou) */
+  /* a referencia acende + a leitura em TEXTO (o gemeo visual do que mudou) */
   var enc=(chuva>=NIVEL_PONTE);
-  ponteEl.className=enc?"ponte molhada":"ponte";
+  if(S.cena.marco) ponteEl.className=enc?"marcoimg molhada":"marcoimg";
+  else ponteEl.className=enc?"ponte molhada":"ponte";
   leituraEl.className=enc?"leitura encostou":"leitura";
-  if(chuva<NIVEL_PONTE)
-    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua ainda est&#225; ABAIXO da ponte.";
-  else if(chuva===NIVEL_PONTE)
-    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua ENCOSTOU na ponte!";
-  else
-    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua passou ACIMA da ponte.";
+  var rot=S.controle+" <b>"+chuva+"</b> &#183; ";
+  if(chuva<NIVEL_PONTE)       leituraEl.innerHTML=rot+S.abaixo;
+  else if(chuva===NIVEL_PONTE) leituraEl.innerHTML=rot+S.encostou;
+  else                         leituraEl.innerHTML=rot+S.acima;
   if(chuva!==antes) nota(220+chuva*42,.09,.09,"sine",0);
   if(chuva===NIVEL_PONTE&&antes!==NIVEL_PONTE) nota(660,.12,.10,"triangle",.06);
   if(barraP&&!respondido) barraP.style.width=Math.min(60,mexeu*10)+"%";
@@ -37746,7 +37890,7 @@ function responde(o){
      como erro — vira um convite. Nada de punir quem ainda nem brincou. */
   if(mexeu<3){
     sTap();
-    mostraDica("Primeiro <b>mexa a chuva</b> e olhe o rio subir. A resposta est&#225; na figura.");
+    mostraDica("Primeiro <b>mexa o controle</b> e olhe a figura mudar. A resposta est&#225; na figura.");
     return;
   }
   if(o._n===NIVEL_PONTE){
@@ -37758,7 +37902,7 @@ function responde(o){
     var g=ger;
     setTimeout(function(){
       if(g!==ger||!viva()) return;
-      mostraBanner("Isso! Com chuva <b>"+NIVEL_PONTE+"</b> a &#225;gua encosta na ponte.",fimDaPeca);
+      mostraBanner("Isso! No <b>"+NIVEL_PONTE+"</b>: "+S.encostou,fimDaPeca);
     },460);
     return;
   }
@@ -37816,15 +37960,16 @@ function fimDaPeca(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","PE&#199;A FECHADA"));
   c.appendChild(el("div","medal",""));
-  c.appendChild(el("div","balao","Voc&#234; descobriu <b>mexendo</b>: quanto mais chuva, mais alto o rio."));
+  c.appendChild(el("div","balao",S.fecho));
   var b=el("button","btn","Jogar de novo");
   b.onclick=pecaSimulador;
   c.appendChild(b);
   c.appendChild(el("div","hint","Esta &#233; a pe&#231;a SIMULADOR: o mundo reage a cada passo do controle."));
   t.appendChild(c); app.appendChild(t);
 }
-    if(f && f.dados) gotas = f.dados;
+    if(f && f.dados) SIM = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.SIM_PADRAO !== undefined) SIM_PADRAO = _d.SIM_PADRAO;
       if(_d.DICAS !== undefined) DICAS = _d.DICAS;
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
@@ -38969,7 +39114,7 @@ function pecaTangram(){
   c.appendChild(el("div","selo","A OFICINA DO FOGUETE"));
   c.appendChild(el("div","balao",ENUN));
 
-  var band=el("div","bandeja");
+  var band=el("div","t2_bandeja");
   var ordem=[];
   for(i=0;i<PECAS.length;i++) ordem.push(PECAS[i]);
   baguncar(ordem);

@@ -319,6 +319,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* ⭐ (set/2026) MEDIDO na cobaia (_qa/toque.js): este alvo escuta o dedo e nao tinha
    touch-action — o dedo ARRASTA aqui: sem isto o iOS/Android le o gesto como rolagem e a peca some sob o dedo. */
 .folha{-ms-touch-action:none;touch-action:none}
+
+/* ⭐ RESPOSTA AO PRESSIONAR (pesquisa set/2026, regra 1 — PBS KIDS "squish", NN/g):
+   todo alvo mostra que o toque PEGOU. Brilho leve, sem mexer no tamanho — assim
+   nao desloca zona de soltar nem peca arrastada. Medido pelo leiaute.js (regra 11). */
+.fora:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+.pt:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 </style></head>
 <body>
 <div id="app"></div>

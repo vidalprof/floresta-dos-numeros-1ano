@@ -145,7 +145,23 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .tecl{height:42px;line-height:42px;font-size:17px}
   .hint{font-size:12px;margin-top:6px}
 }
+/* ⭐ PISTA FALADA (pesquisa set/2026, regra 8 — JClic, 1º ano): a pista tem
+   alto-falante. No 1º/2º ano a cruzadinha e a criança que ainda soletra: sem a
+   voz, ela não lê a pista e a fase vira adivinhação de letras. O glifo é o
+   mesmo alto-falante da casa (SVG embutido). */
+.pista .zap{display:-webkit-inline-box;display:inline-flex;vertical-align:middle;
+     -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+     width:44px;height:44px;margin-left:10px;border:0;border-radius:50%;padding:0;cursor:pointer;
+     background-color:rgba(255,210,63,.95);
+     -webkit-box-shadow:0 2px 0 rgba(150,110,10,.45);box-shadow:0 2px 0 rgba(150,110,10,.45)}
+.pista .zap:active{-webkit-transform:translateY(2px);transform:translateY(2px);background-color:rgba(255,190,40,.98)}
+.pista .zap.tocando{background-color:#8fe07a;-webkit-box-shadow:0 0 0 4px rgba(143,224,122,.45);box-shadow:0 0 0 4px rgba(143,224,122,.45)}
+.pista .zap .fone{display:inline-block;width:26px;height:26px;margin:0;
+     background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+     -webkit-background-size:26px 26px;background-size:26px 26px}
+.pista .ptxt{display:inline-block;vertical-align:middle;max-width:calc(100% - 60px)}
 .pista{margin:8px auto 0;max-width:430px;background:rgba(255,253,246,.96);color:#221a12;border-radius:14px;padding:9px 14px;font-size:16px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.22)}
+
 </style></head>
 <body>
 <div id="app"></div>
@@ -305,8 +321,24 @@ function pecaCruzadinha(){
       if(q.className.indexOf("pronta")<0)
         q.className = z<pos ? "cel cheio" : (z===pos ? "cel ativa" : "cel");
     }
-    pista.innerHTML="<b>"+w.n+".</b> "+w.d;
+    poePista("<b>"+w.n+".</b> "+w.d, w.d);
     marcaQA();
+  }
+  /* ⭐ a pista com ALTO-FALANTE: `txt` e o que aparece; `vozTxt` e o que a voz
+     diz (a pista limpa, sem o numero). O botao declara `data-voz` para o motor
+     achar a gravacao no VOZOK (o texto `d` vem do conteudo, entao o montador ja
+     mandou gravar). */
+  function poePista(txt,vozTxt){
+    pista.innerHTML="";
+    var sp=el("span","ptxt",txt); pista.appendChild(sp);
+    if(!vozTxt) return;
+    var limpo=String(vozTxt).replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){return String.fromCharCode(Number(n));});
+    var z=el("button","zap",""); z.type="button";
+    z.setAttribute("aria-label","Ouvir a pista"); z.setAttribute("data-voz",limpo);
+    z.appendChild(el("i","fone",""));
+    z.onclick=function(ev){ var e=ev||window.event; if(e&&e.stopPropagation) e.stopPropagation();
+      if(typeof diz==="function") diz(limpo); z.className="zap tocando"; setTimeout(function(){ z.className="zap"; },900); return false; };
+    pista.appendChild(z);
   }
   /* data-qa="1" na tecla que serve AGORA — so para o auditor-jogador */
   function marcaQA(){
@@ -335,7 +367,9 @@ function pecaCruzadinha(){
     }
     sCerto();
     faixa(w.ac||w.p);
-    pista.innerHTML="<b>"+(w.ac||w.p)+"</b> &#8212; era essa mesmo!";
+    poePista("<b>"+(w.ac||w.p)+"</b> &#8212; era essa mesmo!", "");
+    /* ⭐ a palavra inteira, dita de uma vez (regra 5 da alfabetizacao: separou -> junta) */
+    if(typeof diz==="function") diz(String(w.ac||w.p).replace(/&#(\d+);/g,function(m,n){return String.fromCharCode(Number(n));}));
     marcaQA();
     var meu=ger;
     setTimeout(function(){

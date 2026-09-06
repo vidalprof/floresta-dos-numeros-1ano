@@ -182,6 +182,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* ⭐ (set/2026) MEDIDO na cobaia (_qa/toque.js): este alvo escuta o dedo e nao tinha
    touch-action — o dedo ARRASTA aqui: sem isto o iOS/Android le o gesto como rolagem e a peca some sob o dedo. */
 .pc{-ms-touch-action:none;touch-action:none}
+
 </style></head>
 <body>
 <div id="app"></div>
@@ -251,7 +252,7 @@ var CLA={
   adv:{r:"quando",  d:"<b>quando</b> aconteceu"}
 };
 var FRASES=[
- {img:"", w:["O","gato","preto","dormiu"],      c:["art","sub","adj","ver"], apoio:true},
+ {img:"", w:["O","gato","preto","dormiu"],      c:["art","sub","adj","ver"], apoio:true, f:"O gato preto dormiu."},
  {w:["A","flor","amarela","cresceu"],   c:["art","sub","adj","ver"], apoio:false},
  {w:["A","turma","jogou","hoje"],       c:["art","sub","ver","adv"], apoio:false}
 ];
@@ -525,6 +526,11 @@ function fechaRodada(){
     if(!telaAtual||!telaAtual.parentNode) return;
     var i,txt="";
     for(i=0;i<frase.w.length;i++) txt+=(i?" ":"")+frase.w[i];
+    /* ⭐ SEPAROU -> JUNTA (alfabetizacao, regra 5): a frase montada e LIDA inteira,
+       de uma vez. O campo `f` da rodada e a frase falada (com pontuacao); sem
+       ele, as palavras juntas. So toca a voz GRAVADA da casa (nunca voz-robo). */
+    var falada=frase.f||(txt+".");
+    if(typeof temVoz==="function"&&typeof diz==="function"&&temVoz(falada)) diz(falada);
     rodada++;
     mostraBanner("Frase montada: <b>"+txt+".</b>",
                  (rodada<FRASES.length)?telaFrase:telaFimFrase);

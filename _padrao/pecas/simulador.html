@@ -113,6 +113,18 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
       -webkit-animation:cai 1s linear infinite;animation:cai 1s linear infinite}
 @-webkit-keyframes cai{0%{-webkit-transform:translateY(0)}100%{-webkit-transform:translateY(120px)}}
 @keyframes cai{0%{transform:translateY(0)}100%{transform:translateY(120px)}}
+/* ⭐ a cena com ARTE DE IA (gaveta SIM.cena): o fundo e a paisagem; a camada que
+   sobe traz a superficie no TOPO da imagem (por isso `top center` + 100% de
+   largura: crescendo, ela revela o que esta por baixo); a referencia e o que
+   flutua sao <img> pousados pela mesma conta da agua. */
+.cena.foto{background-size:cover;background-position:center;height:150px}
+.agua.img{background-repeat:no-repeat;background-size:100% auto;background-position:top center;
+          background-color:transparent;border-top:0}
+.marcoimg{position:absolute;left:46%;height:34%;width:auto;-webkit-transform:translateY(0);
+          -webkit-transition:filter .25s;transition:filter .25s}
+.marcoimg.molhada{-webkit-filter:drop-shadow(0 0 6px #fff) brightness(1.08);filter:drop-shadow(0 0 6px #fff) brightness(1.08)}
+.flutuaimg{position:absolute;left:10%;height:22%;width:auto;bottom:12%;
+           -webkit-transition:bottom .28s;transition:bottom .28s}
 /* a regua: 8 riscos na borda. Nada de texto aqui dentro (fundo que muda de
    cor + letra = contraste imprevisivel); o numero mora na leitura, embaixo. */
 .regua{position:absolute;left:0;top:6px;bottom:6px;width:14px;background:rgba(0,0,0,.22)}
@@ -159,6 +171,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .opt{margin:6px 5px}
   .hint{display:none}
 }
+
 </style></head>
 <body>
 <div id="app"></div>
@@ -213,18 +226,59 @@ document.addEventListener("pointerdown",function(){ac();},false);
    reage (o sol e a sombra, a comida e o crescimento, o volume e o som).
    O esqueleto — reagir a cada passo, ler em texto o que mudou, perguntar
    algo que só o experimento responde — continua igual. */
-var MAXC=8;          /* a chuva vai de 0 a 8 */
-var NIVEL_PONTE=5;   /* a agua encosta na ponte neste passo (medido) */
-var BASE=10, PASSO=5;     /* altura da agua, em % da cena: BASE + PASSO*chuva */
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `SIM` (a gaveta
+   abaixo). O que vier vazio em SIM cai no padrão do rio e da chuva.
+   ⭐ O SIMULADOR TEMATIZAVEL (pesquisa set/2026, regra 6 — PhET: o GESTO expoe
+   o conceito em qualquer tema). Antes o rio-e-a-chuva estava cravado no codigo;
+   agora e a gaveta `SIM`, e o conteudo escolhe o que a barra controla, o que
+   reage, a referencia que se alcanca e as FIGURAS de IA da cena (regra da casa:
+   interacao dinamica usa arte de IA, o CSS so anima o que se mexe). Vazio =
+   o rio e a chuva de sempre, desenhado com divs para a peca rodar sozinha.
+     titulo    o selo da fase
+     controle  o que a crianca mexe, com maiuscula ("Chuva", "Sol", "Comida")
+     max       ate onde vai o controle (0..max)
+     alvo      o passo em que a coisa que sobe ENCOSTA na referencia (medido)
+     base/passo  altura da coisa que sobe, em % da cena: base + passo*n
+     opcoes    as respostas (a certa = alvo; TRES distratores, um vizinho)
+     abaixo/encostou/acima  a LEITURA em texto para cada estado
+     fecho     o que o mascote diz no fim (o conceito, por ultimo)
+     cena      {fundo, sobe, marco, flutua} = caminhos das figuras de IA
+               (fundo = a paisagem; sobe = a camada que cresce, com a
+               superficie no TOPO da imagem; marco = a referencia; flutua =
+               o que acompanha a subida). Sem figura, cada uma vira o div. */
+var SIM={};
+var SIM_PADRAO={ /*TECNICA*/
+  titulo:"O RIO E A CHUVA", controle:"Chuva", max:8, alvo:5, base:10, passo:5,
+  opcoes:[3,4,5,7],
+  abaixo:"a &#225;gua ainda est&#225; ABAIXO da ponte.",
+  encostou:"a &#225;gua ENCOSTOU na ponte!",
+  acima:"a &#225;gua passou ACIMA da ponte.",
+  fecho:"Voc&#234; descobriu <b>mexendo</b>: quanto mais chuva, mais alto o rio.",
+  cena:{}
+};
+var S=null;          /* SIM_PADRAO coberto pelo que o conteudo mandou em SIM */
+var MAXC=8, NIVEL_PONTE=5, BASE=10, PASSO=5;   /* preenchidos por montaS() */
+function montaS(){
+  var k, o={};
+  for(k in SIM_PADRAO) if(SIM_PADRAO.hasOwnProperty(k)) o[k]=SIM_PADRAO[k];
+  if(SIM&&typeof SIM==="object") for(k in SIM) if(SIM.hasOwnProperty(k)&&SIM[k]!==""&&SIM[k]!==null) o[k]=SIM[k];
+  if(!o.cena||typeof o.cena!=="object") o.cena={};
+  MAXC=parseInt(o.max,10)||8; NIVEL_PONTE=parseInt(o.alvo,10)||5;
+  BASE=parseFloat(o.base)||10; PASSO=parseFloat(o.passo)||5;
+  if(!o.opcoes||!o.opcoes.length) o.opcoes=[NIVEL_PONTE-2,NIVEL_PONTE-1,NIVEL_PONTE,NIVEL_PONTE+2];
+  S=o; return o;
+}
 
 var telaAtual=null, barraP=null, ger=0;
 var chuva=0, mexeu=0, respondido=false, erros=0;
 var aguaEl=null, barcoEl=null, cenaEl=null, ponteEl=null, leituraEl=null, rngEl=null;
 var gotas=[], riscos=[];
 
+/* ⚠️ as dicas sao NEUTRAS de proposito: nao citam chuva, agua nem ponte, para
+   valerem em qualquer tema sem a voz dizer uma coisa e a tela outra. */
 var DICAS=[
-  "Mexa a chuva <b>devagar</b>, de um em um, e olhe a &#225;gua chegando perto da ponte.",
-  "Quando a &#225;gua encosta, o aviso l&#225; embaixo muda e a ponte fica <b>molhada</b>. Em que n&#250;mero isso acontece?",
+  "Mexa o controle <b>devagar</b>, de um em um, e olhe a figura mudando.",
+  "Quando chega no ponto certo, o aviso l&#225; embaixo muda e a figura <b>acende</b>. Em que n&#250;mero isso acontece?",
   "&#201; esta! Toque nela que eu sigo com voc&#234;."
 ];
 
@@ -235,18 +289,22 @@ function temClasse(e,c){
 }
 
 function pecaSimulador(){
-  ger++; limpa();
+  ger++; limpa(); montaS();
   chuva=0; mexeu=0; respondido=false; erros=0; gotas=[]; riscos=[];
   var t=el("div","tela"); telaAtual=t; setProg(t,0);
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
-  c.appendChild(el("div","selo","O RIO E A CHUVA"));
-  c.appendChild(el("div","balao","Mexa a chuva. Em que n&#250;mero a &#225;gua <b>encosta na ponte</b>?"));
+  c.appendChild(el("div","selo",S.titulo));
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:"Mexa a chuva. Em que n&#250;mero a &#225;gua <b>encosta na ponte</b>?";
+  c.appendChild(el("div","balao",_enun));
 
   /* ---- o mundo ---- */
-  cenaEl=el("div","cena");
+  var comFoto=!!S.cena.fundo;
+  cenaEl=el("div","cena"+(comFoto?" foto":""));
+  if(comFoto) cenaEl.style.backgroundImage="url('"+S.cena.fundo+"')";
   var i,g,r;
-  for(i=0;i<MAXC;i++){
+  /* as gotas so existem no tema da chuva (sem figura de fundo) */
+  if(!comFoto) for(i=0;i<MAXC;i++){
     g=el("div","gota","");
     g.style.left=(6+i*11)+"%";
     g.style.webkitAnimationDelay=(i*0.11)+"s";
@@ -254,8 +312,7 @@ function pecaSimulador(){
     g.style.display="none";
     cenaEl.appendChild(g); gotas.push(g);
   }
-  cenaEl.appendChild(el("div","morro",""));
-  cenaEl.appendChild(el("div","morro2",""));
+  if(!comFoto){ cenaEl.appendChild(el("div","morro","")); cenaEl.appendChild(el("div","morro2","")); }
   var rg=el("div","regua","");
   for(i=0;i<=MAXC;i++){
     r=el("div","risco","");
@@ -266,12 +323,24 @@ function pecaSimulador(){
   /* ⭐ a ponte e os pilares nascem NA ALTURA DA AGUA DO NIVEL 5 — a conta e a
      mesma que sobe a agua, entao os dois nunca se desencontram. */
   var altP=BASE+PASSO*NIVEL_PONTE;
-  var pE=el("div","pilar pilarE",""), pD=el("div","pilar pilarD","");
-  pE.style.height=altP+"%"; pD.style.height=altP+"%";
-  cenaEl.appendChild(pE); cenaEl.appendChild(pD);
-  ponteEl=el("div","ponte",""); ponteEl.style.bottom=altP+"%"; cenaEl.appendChild(ponteEl);
-  aguaEl=el("div","agua",""); cenaEl.appendChild(aguaEl);
-  barcoEl=el("div","barco",""); barcoEl.appendChild(el("div","vela","")); cenaEl.appendChild(barcoEl);
+  if(S.cena.marco){
+    /* a referencia e uma FIGURA de IA, pousada exatamente na altura do alvo */
+    ponteEl=el("img","marcoimg"); ponteEl.src=S.cena.marco; ponteEl.alt="";
+    ponteEl.style.bottom=altP+"%"; cenaEl.appendChild(ponteEl);
+  } else {
+    var pE=el("div","pilar pilarE",""), pD=el("div","pilar pilarD","");
+    pE.style.height=altP+"%"; pD.style.height=altP+"%";
+    cenaEl.appendChild(pE); cenaEl.appendChild(pD);
+    ponteEl=el("div","ponte",""); ponteEl.style.bottom=altP+"%"; cenaEl.appendChild(ponteEl);
+  }
+  aguaEl=el("div","agua"+(S.cena.sobe?" img":""),"");
+  if(S.cena.sobe) aguaEl.style.backgroundImage="url('"+S.cena.sobe+"')";
+  cenaEl.appendChild(aguaEl);
+  if(S.cena.flutua){
+    barcoEl=el("img","flutuaimg"); barcoEl.src=S.cena.flutua; barcoEl.alt=""; cenaEl.appendChild(barcoEl);
+  } else {
+    barcoEl=el("div","barco",""); barcoEl.appendChild(el("div","vela","")); cenaEl.appendChild(barcoEl);
+  }
   c.appendChild(cenaEl);
 
   /* ---- o controle: as DUAS portas (deslizar e os botoes grandes) ---- */
@@ -285,7 +354,7 @@ function pecaSimulador(){
      (_qa/jogador.js), que nao sabe arrastar um controle: ele percorre as
      posicoes uma a uma e para nesta. */
   rngEl.setAttribute("data-qa",""+NIVEL_PONTE);
-  rngEl.setAttribute("aria-label","quanta chuva");
+  rngEl.setAttribute("aria-label",String(S.controle).toLowerCase());
   rngEl.oninput=function(){ poeChuva(parseInt(rngEl.value,10)); };
   rngEl.onchange=function(){ poeChuva(parseInt(rngEl.value,10)); };
   var mais=el("button","btn zbt","+");
@@ -303,7 +372,7 @@ function pecaSimulador(){
      o degrau "revelar" nunca acontecia e ela ainda ficava olhando uma tela
      de uma opcao so. O 4 entra de proposito: e o vizinho ("quase encostou"),
      que obriga a olhar a figura em vez de chutar longe. */
-  var lista=baguncar([3,4,5,7]);
+  var lista=baguncar(S.opcoes.slice(0));
   for(i=0;i<lista.length;i++) box.appendChild(fazResposta(lista[i]));
   c.appendChild(box);
   c.appendChild(el("div","hint","Arraste a bolinha, ou use os bot&#245;es &#8722; e +."));
@@ -344,19 +413,20 @@ function poeChuva(n){
   /* a chuva: quantas gotas caem e quanto o ceu escurece */
   var i;
   for(i=0;i<gotas.length;i++) gotas[i].style.display=(i<chuva)?"block":"none";
-  var esc=Math.round(127-chuva*7);
-  cenaEl.style.background="rgb("+esc+","+(esc+55)+","+(esc+87)+")";
+  if(!S.cena.fundo){
+    var esc=Math.round(127-chuva*7);
+    cenaEl.style.background="rgb("+esc+","+(esc+55)+","+(esc+87)+")";
+  }
   for(i=0;i<riscos.length;i++) riscos[i].className=(i===chuva)?"risco on":"risco";
-  /* a ponte molhada + a leitura em TEXTO (o gemeo visual do que mudou) */
+  /* a referencia acende + a leitura em TEXTO (o gemeo visual do que mudou) */
   var enc=(chuva>=NIVEL_PONTE);
-  ponteEl.className=enc?"ponte molhada":"ponte";
+  if(S.cena.marco) ponteEl.className=enc?"marcoimg molhada":"marcoimg";
+  else ponteEl.className=enc?"ponte molhada":"ponte";
   leituraEl.className=enc?"leitura encostou":"leitura";
-  if(chuva<NIVEL_PONTE)
-    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua ainda est&#225; ABAIXO da ponte.";
-  else if(chuva===NIVEL_PONTE)
-    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua ENCOSTOU na ponte!";
-  else
-    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua passou ACIMA da ponte.";
+  var rot=S.controle+" <b>"+chuva+"</b> &#183; ";
+  if(chuva<NIVEL_PONTE)       leituraEl.innerHTML=rot+S.abaixo;
+  else if(chuva===NIVEL_PONTE) leituraEl.innerHTML=rot+S.encostou;
+  else                         leituraEl.innerHTML=rot+S.acima;
   if(chuva!==antes) nota(220+chuva*42,.09,.09,"sine",0);
   if(chuva===NIVEL_PONTE&&antes!==NIVEL_PONTE) nota(660,.12,.10,"triangle",.06);
   if(barraP&&!respondido) barraP.style.width=Math.min(60,mexeu*10)+"%";
@@ -369,7 +439,7 @@ function responde(o){
      como erro — vira um convite. Nada de punir quem ainda nem brincou. */
   if(mexeu<3){
     sTap();
-    mostraDica("Primeiro <b>mexa a chuva</b> e olhe o rio subir. A resposta est&#225; na figura.");
+    mostraDica("Primeiro <b>mexa o controle</b> e olhe a figura mudar. A resposta est&#225; na figura.");
     return;
   }
   if(o._n===NIVEL_PONTE){
@@ -381,7 +451,7 @@ function responde(o){
     var g=ger;
     setTimeout(function(){
       if(g!==ger||!viva()) return;
-      mostraBanner("Isso! Com chuva <b>"+NIVEL_PONTE+"</b> a &#225;gua encosta na ponte.",fimDaPeca);
+      mostraBanner("Isso! No <b>"+NIVEL_PONTE+"</b>: "+S.encostou,fimDaPeca);
     },460);
     return;
   }
@@ -439,7 +509,7 @@ function fimDaPeca(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","PE&#199;A FECHADA"));
   c.appendChild(el("div","medal",""));
-  c.appendChild(el("div","balao","Voc&#234; descobriu <b>mexendo</b>: quanto mais chuva, mais alto o rio."));
+  c.appendChild(el("div","balao",S.fecho));
   var b=el("button","btn","Jogar de novo");
   b.onclick=pecaSimulador;
   c.appendChild(b);

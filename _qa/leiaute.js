@@ -74,7 +74,7 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
   if(!arquivo||!telas.length){ console.log("uso: node _qa/leiaute.js <arquivo.html> <tela...>"); process.exit(2); }
   const b=await chromium.launch({executablePath:CROMO,args:['--no-sandbox','--disable-gpu']});
   const url='file://'+path.resolve(arquivo);
-  let falhas=[];
+  let falhas=[], avisos=[];
 
   /* ⚠️⚠️ LICAO PAGA (ago/2026), e da familia do jogador cego: este portao —
      o que mede se CABE NA TELA e se DA PARA TOCAR — nunca tinha medido uma
@@ -377,9 +377,119 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           }
         }
         if(cortadas.length) out.push(cortadas.length+" FIGURA(S) CORTADA(S) NA CAIXA: "+cortadas.join(" ; "));
+
+        /* ============================================================
+           REGRAS 11-14 — vieram da PESQUISA DAS CASAS DE REFERENCIA (set/2026,
+           `_pesquisa/JOGOS-EDUCACIONAIS-REFERENCIAS.md` §3, aprovadas pelo
+           Marcos: "pode fazer tudo"). Nascem como AVISO (o prefixo "AVISO"
+           nao derruba a banca): primeiro se mede a casa inteira, depois a
+           regra que nao acusa inocente vira reprovacao. Portao novo que ja
+           nasce reprovando acusa inocente na primeira rodada — e portao que
+           acusa inocente ensina a ignorar portao.                          */
+        const tudo=[...document.querySelectorAll("#app *")].filter(e=>e.offsetParent!==null);
+        const eAlvo=e=>{ try{ return e.matches(clic)||!!e.closest(clic); }catch(x){ return false; } };
+        /* o nome da classe, tambem para SVG (la `className` e um objeto, nao texto) */
+        const nomeDe=e=>"."+String((e.getAttribute&&e.getAttribute("class"))||e.tagName||"?").split(" ")[0];
+
+        /* 11. ALVO RESPONDE AO PRESSIONAR (PBS KIDS "squish"; NN/g: a crianca
+           precisa ver que o toque "pegou" em <=150 ms). Mede: o alvo (ou um
+           pai proximo) casa com alguma regra CSS `:active`. Sem isso, no PC
+           da escola sem som a crianca toca duas vezes, achando que nao foi. */
+        const selsAct=[];
+        for(const ss of [...document.styleSheets]){
+          let rules; try{ rules=ss.cssRules; }catch(e){ continue; }
+          for(const rr of [...rules]){
+            if(!rr.selectorText||!/:active/.test(rr.selectorText)) continue;
+            for(const s of rr.selectorText.split(",")){
+              if(/:active/.test(s)){ const q=s.replace(/:active/g,"").trim(); if(q) selsAct.push(q); }
+            }
+          }
+        }
+        function temPressao(e){
+          for(let a=e,n=0;a&&n<5&&a.id!=="app";a=a.parentElement,n++){
+            if(a.tagName==="INPUT"||a.tagName==="SELECT"||a.tagName==="TEXTAREA") return true;
+            for(const s of selsAct){ try{ if(a.matches(s)) return true; }catch(err){} }
+          }
+          return false;
+        }
+        const semPressao=new Set();
+        for(const e of tudo){
+          if(e.closest("#barra")||e.closest("#banner")) continue;
+          const cs=getComputedStyle(e);
+          if(!(eAlvo(e)||cs.cursor==="pointer")) continue;
+          if(e.parentElement&&eAlvo(e.parentElement)&&!e.matches(clic)) continue;   // filho de alvo: quem responde e o pai
+          const r=e.getBoundingClientRect(); if(r.width<20||r.height<20) continue;
+          if(!temPressao(e)) semPressao.add(nomeDe(e));
+        }
+        if(semPressao.size) out.push("AVISO regra11: "+semPressao.size+" tipo(s) de alvo SEM resposta ao pressionar (:active): "+[...semPressao].slice(0,5).join(" "));
+
+        /* 12. NADA ANIMA SEM FUNCAO (pilar "engajado", Hirsh-Pasek 2015: o que
+           pisca e nao e alvo rouba atencao do que ensina). Mede: animacao
+           INFINITA em coisa que nao e alvo, mascote, barra, progresso nem
+           alto-falante. Animacao de entrada (uma vez) e ok.               */
+        const anima=new Set();
+        for(const e of tudo){
+          const cs=getComputedStyle(e);
+          if(!cs.animationName||cs.animationName==="none") continue;
+          if(!/infinite/.test(cs.animationIterationCount)) continue;
+          /* a barra de progresso (pgfill/pgcomet) e o mascote sao FUNCAO: mostram onde a
+             crianca esta e quem fala com ela. O resto que pisca sem parar e enfeite. */
+          if(e.closest("#mascote,.mascote,.masc,#masc,#barra,#banner,.prog,.pgbar,.pgfill,.pgcomet,#prog,.zap,.selo,.dica")) continue;
+          if(eAlvo(e)||cs.cursor==="pointer") continue;
+          /* o painel que PULSA enquanto a voz fala (`.falando`/`.tocando`) e o gemeo
+             visual do som — funcao, nao enfeite */
+          if(/falando|tocando/.test(String(e.getAttribute("class")||""))) continue;
+          anima.add(nomeDe(e));
+        }
+        if(anima.size) out.push("AVISO regra12: "+anima.size+" coisa(s) animando SEM funcao (nao e alvo nem mascote): "+[...anima].slice(0,5).join(" "));
+
+        /* 13. FIGURA GRANDE RESPONDE AO TOQUE (NN/g: criancas tocam em TUDO e
+           esperam resposta; a figura de >=80px que fica muda ensina que tocar
+           nao adianta). Cena larga (>60% da tela) fica de fora: e fundo.    */
+        const surdas=new Set();
+        for(const im of [...document.querySelectorAll("#app img,#app svg,#app canvas")]){
+          if(im.offsetParent===null) continue;
+          const r=im.getBoundingClientRect();
+          if(r.width<80||r.height<80||r.width>innerWidth*0.6) continue;
+          if(im.closest("#mascote,.mascote,.masc,#masc,#banner")) continue;
+          let ok=false;
+          for(let a=im,n=0;a&&n<4&&a.id!=="app";a=a.parentElement,n++){
+            if(a.onclick||a.getAttribute("onclick")||a.getAttribute("data-alvo")||a.getAttribute("draggable")==="true"
+               ||eAlvo(a)||getComputedStyle(a).cursor==="pointer"||a.tagName==="CANVAS"||a.onpointerdown||a.ontouchstart||a.onmousedown){ ok=true; break; }
+          }
+          if(!ok) surdas.add(nomeDe(im));
+        }
+        if(surdas.size) out.push("AVISO regra13: "+surdas.size+" figura(s) grande(s) que NAO respondem ao toque: "+[...surdas].slice(0,5).join(" "));
+
+        /* 14. NENHUMA RESPOSTA SO PELA COR (UDL / daltonismo). Irmaos de
+           resposta sem figura e com o MESMO texto (ou nenhum) so se distinguem
+           pela cor de fundo. Paleta de pintar fica de fora: ali escolher a cor
+           E o conteudo.                                                     */
+        const grupos=new Map();
+        for(const o of [...document.querySelectorAll("#app .opt,#app .pc,#app .bin,#app .lig")]){
+          if(o.offsetParent===null) continue;
+          if(/cor|tinta|palet|swatch/i.test(String(o.className)+" "+String(o.parentElement&&o.parentElement.className))) continue;
+          const k=o.parentElement; if(!grupos.has(k)) grupos.set(k,[]); grupos.get(k).push(o);
+        }
+        const soCor=[];
+        for(const [pai,lista] of grupos){
+          if(lista.length<2) continue;
+          const vistos={}, cores={};
+          for(const o of lista){
+            if(o.querySelector("img,svg,canvas")) continue;
+            const t=(o.textContent||"").replace(/\s+/g," ").trim().toLowerCase();
+            vistos[t]=(vistos[t]||0)+1;
+            (cores[t]=cores[t]||new Set()).add(getComputedStyle(o).backgroundColor+"|"+getComputedStyle(o).borderColor);
+          }
+          /* ⚠️ pecas IGUAIS (mesma cor, sem texto) sao MANIPULAVEIS — os blocos da
+             base-dez, as fichas de contar — nao respostas a distinguir. So e "so
+             pela cor" quando irmaos iguais no texto DIFEREM na cor. */
+          for(const t in vistos){ if(vistos[t]>=2&&cores[t].size>=2){ soCor.push(nomeDe(lista[0])+(t?" texto repetido \""+t.slice(0,14)+"\"":" sem texto nem figura, so a cor muda")); break; } }
+        }
+        if(soCor.length) out.push("AVISO regra14: "+soCor.length+" grupo(s) de resposta que so se distinguem pela COR: "+soCor.slice(0,3).join(" ; "));
         return out;
       },{sel:RESPOSTA,clic:CLICAVEL});
-      for(const m of r) falhas.push(vp.n+" | "+t+" | "+m);
+      for(const m of r){ if(/^AVISO /.test(m)) avisos.push(vp.n+" | "+t+" | "+m); else falhas.push(vp.n+" | "+t+" | "+m); }
     }
     await p.close();
   }
@@ -397,6 +507,27 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
   if(!medidas){
     console.log("   NAO MEDI NENHUMA TELA — isto nao e \"passou\".");
     await b.close(); process.exit(2);
+  }
+  /* os AVISOS (regras 11-14, da pesquisa) saem resumidos: uma linha por regra e
+     por tela, nao por tamanho — e nao mudam o codigo de saida. */
+  if(avisos.length){
+    const porRegra={};
+    for(const a of avisos){
+      const m=a.match(/\| ([^|]+) \| AVISO (regra\d+): (.*)$/); if(!m) continue;
+      const k=m[2]; (porRegra[k]=porRegra[k]||new Set()).add(m[1].trim()+": "+m[3]);
+    }
+    const ks=Object.keys(porRegra).sort();
+    console.log("  "+avisos.length+" AVISO(S) das regras da pesquisa (nao reprovam ainda; ver JOGOS-EDUCACIONAIS-REFERENCIAS §3):");
+    for(const k of ks){
+      const l=[...porRegra[k]];
+      /* quais TIPOS (classes) aparecem, somando as telas — e o que diz onde consertar */
+      const tipos={};
+      for(const x of l){ const m=x.match(/:\s*(.*)$/); if(!m) continue;
+        for(const c of (m[1].split(": ").pop()||"").split(/[ ;]+/)){ if(/^\./.test(c)) tipos[c]=(tipos[c]||0)+1; } }
+      const top=Object.keys(tipos).sort((x,y)=>tipos[y]-tipos[x]).slice(0,12).map(c=>c+"x"+tipos[c]);
+      const telasK=[...new Set(l.map(x=>x.split(":")[0]))];
+      console.log("   "+k+" em "+l.length+" tela(s) ["+telasK.slice(0,8).join(" ")+(telasK.length>8?" ...":"")+"]; tipos: "+top.join(" ")+"  | ex.: "+l[0]);
+    }
   }
   if(!falhas.length){ console.log("  leiaute ok: nada fora da tela, nada atras da barra, alvos grandes"); process.exit(0); }
   console.log("  "+falhas.length+" PROBLEMA(S):");

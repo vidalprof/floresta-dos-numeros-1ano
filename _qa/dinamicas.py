@@ -159,6 +159,54 @@ def analisa(js, css, baixo, html=None):
                                      u"de pensar — o modo perde a razao de existir."
                                      % mm.group(1))
 
+        # 5) ⭐ FIGURA POR PALAVRA / MODO FIGURAS (set/2026, pesquisa: JClic "ensina
+        #    ao achar", EdiLIM "sopa de letras com imagens"). Modo novo nasce com
+        #    o portao que o mede.
+        if re.search(r'MODO\s*=\s*"figuras"', js):
+            if re.search(r'PALFIG\s*=\s*\{\s*\}', js) or not re.search(r'PALFIG\s*=\s*\{', js):
+                ruins.append(u"caca-palavras (figuras): MODO=\"figuras\" sem nenhuma figura em PALFIG "
+                             u"— a lista sairia VAZIA e a crianca nao teria o que procurar.")
+        if re.search(r'PALFIG\s*=\s*\{[^}]*"', js) and not re.search(r'\.pfig\{', css):
+            ruins.append(u"caca-palavras: ha figura por palavra (PALFIG) mas o CSS nao dimensiona "
+                         u".pfig — a imagem entra no tamanho natural e estoura o chip.")
+
+    # ---------------------------------------------------- CRUZADINHA
+    # Gatilho honesto: so a cruzadinha tem casas com passo `pLin`/`pCol` e a
+    # grade `cruz`. (O caca-palavras publica `dl`/`dc`; a forca tem `.vaga`.)
+    if re.search(r'pLin', js) and re.search(r'grade cruz|\.cruz\b', js + " " + css):
+        usa.append("cruzadinha")
+        # as DUAS portas (regra 3b da casa)
+        if "document.onkeydown" not in js:
+            ruins.append(u"cruzadinha: so tem o teclado da tela. No PC da escola a crianca vai "
+                         u"DIGITAR — as duas portas (document.onkeydown).")
+        # ⭐ PISTA FALADA (set/2026, pesquisa regra 8 — JClic 1o ano): a pista tem
+        #    alto-falante, senao quem soletra nao le a pista e a fase vira chute.
+        if not re.search(r'"zap"', js):
+            avisos.append(u"cruzadinha: a pista e so TEXTO, sem alto-falante (regra 8 da pesquisa). "
+                          u"No 1o/2o ano quem ainda soletra nao le a pista.")
+        # palavra com acento nao cabe no teclado da peca
+        for mm in re.finditer(r'\bp\s*:\s*"([^"]+)"', js):
+            if re.search(u"[ÁÉÍÓÚÂÊÔÃÕÇáéíóúâêôãõç]", mm.group(1)):
+                ruins.append(u"cruzadinha: a resposta '%s' tem ACENTO/cedilha — o teclado nao tem a "
+                             u"tecla; escreva sem acento em `p` e a forma certa em `ac`." % mm.group(1))
+                break
+
+    # ---------------------------------------------------- RELAMPAGO
+    # Gatilho: a rodada contra o relogio (`RAIO` + barra `relcheio`).
+    if re.search(r'\bRAIO\b', js) and re.search(r'relcheio', js + " " + css):
+        usa.append("relampago")
+        # ⭐ FECHA COM REFLEXAO (set/2026, pesquisa regra 9 — Topmarks): peca de
+        #    velocidade termina com UMA pergunta que devolve a crianca ao pensar.
+        if not re.search(r'reflexao', js):
+            avisos.append(u"relampago: a tela de fim nao tem a pergunta de REFLEXAO (regra 9 da "
+                          u"pesquisa) — so velocidade ensina a ser rapido, nao a saber.")
+        if re.search(u"errou|erraste|voc[eê] errou", baixo):
+            ruins.append(u"relampago: a palavra 'errou' aparece — a casa nunca diz errou; a certa "
+                         u"acende e o que faltou volta como 'treinar de novo'.")
+        if "fimDaPeca" not in js:
+            ruins.append(u"relampago: o fim nao chama fimDaPeca() — dentro da atividade vira BECO "
+                         u"(a crianca refaz o mesmo aquecimento para sempre).")
+
     # ---------------------------------------------------- MEMORIA
     if re.search(r'\.mcarta|\.mcard', css):
         usa.append("memoria")
@@ -199,6 +247,29 @@ def analisa(js, css, baixo, html=None):
         if not re.search(r'function\s+revela\b', js):
             avisos.append(u"rima: nao achei o 3o degrau do andaime (revela). Sem ele, quem erra "
                           u"tres vezes fica sem o par aceso e pode travar.")
+
+        # ⭐ (set/2026, alfabetizacao regra 6) TOCAR A CARTA DIZ A PALAVRA: o
+        #    alto-falante e um segundo gesto; a carta escolhida tem que falar sozinha,
+        #    senao quem ainda soletra escolhe pelo desenho das letras.
+        if not re.search(r'function marca\([^)]*\)\s*\{[^}]*fala\(', js):
+            avisos.append(u"rima: tocar a carta nao DIZ a palavra (fala() dentro de marca). A rima e "
+                          u"do ouvido — ouvir antes de escolher, sem custo.")
+
+    # ---------------------------------------------------- MONTAR-FRASE
+    # Gatilho honesto: as vagas com FORMA (`formaDe`) + a gaveta `FRASES` com `w`/`c`.
+    if re.search(r'\bformaDe\s*\(', js) and re.search(r'\bFRASES\b', js):
+        usa.append("montar-frase")
+        if "document.onkeydown" not in js:
+            avisos.append(u"montar-frase: so o toque/arrasto; no PC da escola a crianca tambem usa o "
+                          u"teclado (duas portas).")
+        # ⭐ (set/2026, alfabetizacao regra 5) SEPAROU -> JUNTA: a frase montada e LIDA inteira
+        _fr = js.find("function fechaRodada")
+        _corpo = js[_fr:_fr + 1400] if _fr >= 0 else ""
+        if "temVoz(" not in _corpo and "diz(" not in _corpo:
+            avisos.append(u"montar-frase: quando a frase fecha ela nao e LIDA inteira (diz(frase.f) em "
+                          u"fechaRodada). Separou -> junta: a crianca tem que ouvir a frase que montou.")
+        if re.search(r'preventDefault\(\)[^\n]{0,80}touchstart|touchstart[^\n]{0,120}preventDefault', js):
+            ruins.append(u"montar-frase: preventDefault no touchstart mata o toque no celular.")
 
     # ---------------------------------------------------- SOM INICIAL (a casa do som)
     # Mecanica nova (ago/2026, da pesquisa fonologica): agrupar por SOM DO COMECO,
@@ -1130,6 +1201,13 @@ def main():
         _simul_fora = []
         for f in _fases:
             if (f.get("mec") or "") != "simulador":
+                continue
+            # ⭐ (set/2026) o simulador VIROU tematizavel: com a gaveta `SIM` no
+            #    dadosExtra (controle, alvo, leituras abaixo/encostou/acima e as
+            #    figuras da cena) a fase pode ser de sol, comida, som... Sem a
+            #    gaveta, continua sendo a chuva — e ai fora de agua e resto de clone.
+            _sim = (f.get("dadosExtra") or {}).get("SIM") or {}
+            if isinstance(_sim, dict) and _sim.get("encostou") and _sim.get("abaixo"):
                 continue
             texto = u"%s %s" % (f.get("selo") or "", f.get("enunciado") or "")
             if not _agua.search(texto):

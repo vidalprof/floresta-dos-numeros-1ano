@@ -116,8 +116,15 @@ Fila de refazer, na ordem em que chega à criança:
    precisam de EDIÇÃO da base: só com OpenAI ou Gemini pago. 2 a 3 chamadas por
    mascote (~US$0,10 cada mascote em `medium`).
 2. **`estrela_grande` do Clima** (é um sol) e **`pd_l_I` da Padaria** (é o H) —
-   objeto neutro, sai pelo Pollinations em `_novo/_lote_banco_refazer.json`
-   (acionado hoje) para o Marcos aprovar antes de entrar na atividade.
+   tentei pelo Pollinations em `_novo/_lote_banco_refazer.json` (2026-09-06,
+   `flux`, semente fixa, prompt de 80 palavras). **Resultado medido: REPROVADO
+   pelo meu olho antes de chegar ao Marcos** — o "pão em forma de I" virou um
+   bagel redondo (o Flux schnell não desenha letra como forma) e a "estrela
+   sorridente" saiu como um disco cinza com oito pontas desbotadas (o `rembg`
+   não separou o fundo). É exatamente a queixa do Marcos, agora com prova: **o
+   grátis não dá o nível**. As duas ficam na fila do gerador pago (OpenAI
+   `medium`, fundo transparente nativo). Os PNGs ficaram em `_novo/` como
+   evidência; não entram em atividade.
 3. **Figuras que o testador humano (olho) marcou**: Trem `bola` (fundo não
    transparente), `elefante` e `abelha` (cortados) — refazer em `medium` com fundo
    transparente nativo, que resolve as duas famílias de defeito de uma vez.

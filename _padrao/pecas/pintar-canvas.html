@@ -113,6 +113,11 @@ body{font-family:"Segoe UI",system-ui,Arial,sans-serif;background:#fbe9c8;color:
   .tcor{width:42px;height:42px;margin:3px}
 }
 @media(prefers-reduced-motion:reduce){ .tela{-webkit-animation:none;animation:none} }
+
+/* ⭐ RESPOSTA AO PRESSIONAR (pesquisa set/2026, regra 1 — PBS KIDS "squish", NN/g):
+   todo alvo mostra que o toque PEGOU. Brilho leve, sem mexer no tamanho — assim
+   nao desloca zona de soltar nem peca arrastada. Medido pelo leiaute.js (regra 11). */
+.tcor:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 </style></head>
 <body>
 <div id="app"></div>

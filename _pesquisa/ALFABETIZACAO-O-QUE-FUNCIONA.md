@@ -237,6 +237,29 @@ A gaveta `CASAS` aceita `img` (arte do banco pelo `imgEl` do motor; na bancada n
 há figura e a casa fica como era). E o `_qa/dinamicas.py` ganhou a armadilha 4:
 duas casas confundíveis na mesma rodada → aviso com o par.
 
+### 4.4b Segunda rodada (2026-09-06, tarde — "pode fazer tudo")
+Passei as 11 peças restantes pelas 14 regras com um levantamento medido (voz,
+alto-falante, andaime, teclado, "errou"). O que estava fora e foi consertado na
+fonte:
+- **`rima`** — a peça **não falava nada** (0 chamadas de voz): tocar a carta agora
+  **diz a palavra** (regra 6, ouvir antes de escolher); o alto-falante do motor
+  (`.ptxt`) continua como segundo gesto. Portão: aviso em `dinamicas.py`.
+- **`montar-frase`** — idem, 0 chamadas de voz: quando a frase fecha, ela é **lida
+  inteira** (campo `f` da rodada; o `montar.py` grava a frase). Regra 5
+  (separou → junta). Portão novo "montar-frase" em `dinamicas.py`.
+- **`bater-silabas`** — a figura da palavra (150 px) não respondia ao toque
+  (regra 13 da pesquisa das casas): tocar a figura diz a palavra inteira.
+- Conferido e **já certo**: `bater-silabas` diz a palavra inteira no fim (regra 5);
+  `juntar-silabas`, `letras-escondidas`, `completar`, `forca`, `ouvir-achar`,
+  `tracar-letra` têm alto-falante/`data-voz` e andaime; nenhuma mostra "errou" à
+  criança (todas as ocorrências são comentário ou nome de função).
+- **Decisão registrada (regra 8):** nas peças de ESCREVER (`letras-escondidas`,
+  `completar`, `forca`) a voz diz o **nome** da letra ("ême") ao tocar a tecla —
+  é o gesto de soletrar, e o nome é o certo ali. O **som** fica com `som-inicial`
+  e `caixas-de-som`. Não é defeito; é a divisão da regra 8.
+- `caca-palavras` e `cruzadinha` entraram pela pesquisa das casas (figura ao achar,
+  pista falada, palavra inteira ao fechar) — ver `JOGOS-EDUCACIONAIS-REFERENCIAS §3`.
+
 ### 4.4 Portões novos/estendidos (`_qa/dinamicas.py`)
 - **"caixas de som"** — regra nova (não existia): letra nascendo com a caixa
   reprova; sem `revela` avisa; sem `.csLer` avisa.

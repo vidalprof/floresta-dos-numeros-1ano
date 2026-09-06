@@ -135,6 +135,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .ptxt{-webkit-box-flex:1;-webkit-flex:1 1 auto;flex:1 1 auto}
 /* a palavra só se revela quando ela acha (display:none, nunca visibility) */
 .pnome{display:none}
+/* ⭐ a figura da palavra: no chip da lista (ao achar) e na linha do modo figuras */
+.pfig{width:44px;height:44px;object-fit:contain;vertical-align:middle;margin:0 8px 0 2px;display:inline-block}
+.pchip.pfigc .plin{-webkit-box-align:center;align-items:center}
+.pchip.pfigc .pfig{width:64px;height:64px}
+.pchip .pfim{width:34px;height:34px;margin:0 0 0 6px}
+.pchip.pfigc.feito .pnome{display:block;text-align:center;font-weight:800;font-size:17px;margin-top:4px;letter-spacing:1px}
 .pchip.pdef.feito{text-decoration:none}
 .pchip.pdef.feito .ptxt{text-decoration:line-through}
 .pchip.pdef.feito .pnome{display:block;margin-top:5px;font-size:17px;font-weight:800;
@@ -220,6 +226,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .pchip.pdef{font-size:12px;margin:4px 2px;padding:5px 9px}
   .zap{width:44px;height:44px;min-width:44px;margin-left:6px}
 }
+
+/* ⭐ RESPOSTA AO PRESSIONAR (pesquisa set/2026, regra 1 — PBS KIDS "squish", NN/g):
+   todo alvo mostra que o toque PEGOU. Brilho leve, sem mexer no tamanho — assim
+   nao desloca zona de soltar nem peca arrastada. Medido pelo leiaute.js (regra 11). */
+.cel:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 </style></head>
 <body>
 <div id="app"></div>
@@ -314,6 +325,16 @@ var LETRAS="ABCDEFGHIJLMNOPRSTUVZ"; /*TECNICA*/
    sentido) e o titulo virou gaveta. Frase que nao cita o tema nunca mente. */
 var TITULO="CA&#199;A-PALAVRAS";
 var MODO="lista"; /*TECNICA*/
+/* ⭐ FIGURA POR PALAVRA (pesquisa set/2026 — JClic "caça-palavras que ENSINA ao
+   achar" e EdiLIM "sopa de letras: mostrar imágenes"). Dois usos:
+   · com MODO="lista" ou "definicoes": ao ACHAR a palavra o chip ganha a figura
+     dela e a voz diz a palavra — a criança liga a forma escrita ao sentido na
+     hora em que acertou, que é quando mais fixa;
+   · com MODO="figuras": a lista mostra SÓ a figura (com alto-falante que diz a
+     palavra) e a palavra escrita aparece quando ela acha — a criança tem que
+     PENSAR a palavra e procurá-la pelos sons, não copiar letra a letra.
+   Palavra sem figura volta a aparecer escrita, como antes. */
+var PALFIG={}; /*TECNICA*/
 /* ⭐ NIVEL DIFICIL (pedido do Marcos, RIGHT NOW 9o ano, ago/2026: "o caca
    palavras e pra ser mais dificil, palavras na diagonal etc"). Ligado por
    conteudo (`"DIFICIL":true` no dadosExtra). Com ele, as palavras entram nas
@@ -346,12 +367,15 @@ function voz(txt){
 }
 /* a pista daquela palavra (vazia = a palavra volta a aparecer escrita) */
 function pistaDe(w){ return (PALDEF&&PALDEF[w])?PALDEF[w]:""; }
+/* a figura daquela palavra (vazia = sem figura) */
+function figDe(w){ return (PALFIG&&PALFIG[w])?PALFIG[w]:""; }
 /* ⭐ O ALTO-FALANTE DA PISTA — o apoio de quem ainda lê devagar. Ele só FALA:
    o evento para nele para que tocar no botão não conte como toque na lista. */
-function fazZap(txt){
+function fazZap(txt,rotulo){
   var z=el("button","zap","");
   z.type="button";
-  z.setAttribute("aria-label","Ouvir a pista");
+  z.setAttribute("aria-label",rotulo||"Ouvir a pista");
+  z.setAttribute("data-voz",String(txt).replace(/<[^>]+>/g,""));
   z.onclick=function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
@@ -510,14 +534,17 @@ function pecaCaca(){
     if(!g[i][j]) g[i][j]=LETRAS.charAt(Math.floor(Math.random()*LETRAS.length));
 
   /* --- 3) a tela --------------------------------------------------------- */
-  var porDef=(MODO==="definicoes");
+  var porFig=(MODO==="figuras");
+  var porDef=(MODO==="definicoes")||porFig;
   var c=el("div","centro");
   c.appendChild(el("div","selo",TITULO));
   /* ⚠️ o balao principal e o enunciado (narrado pelo motor); a instrucao com o
      numero de palavras vira hint (nao precisa de voz, e o numero varia). */
-  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:(porDef
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:(porFig
+     ? "Olhe cada <b>figura</b>, pense na palavra e ache ela na grade."
+     : (porDef
      ? "Leia cada <b>pista</b>, pense na palavra e ache ela na grade."
-     : "Ache as palavras na grade.");
+     : "Ache as palavras na grade."));
   var bal=el("div","balao", _enun);
   c.appendChild(bal);
   c.appendChild(el("div","hint", porDef
@@ -527,8 +554,19 @@ function pecaCaca(){
   /* ⭐ A LISTA — de palavras (padrão) ou de PISTAS (modo definições). */
   var lista=el("div","lista"+(porDef?" ldef":"")), chips={};
   for(i=0;i<PAL.length;i++){(function(w){
-    var ch, lin, nm, pista=porDef?pistaDe(w):"";
-    if(pista){
+    var ch, lin, nm, pista=porDef?pistaDe(w):"", fg=figDe(w);
+    if(porFig&&fg){
+      /* ⭐ modo FIGURAS: a figura no lugar da palavra; o alto-falante diz a
+         palavra (quem ainda não lê ouve e procura pelos sons) */
+      ch=el("div","pchip pdef pfigc "+cor[w]);
+      lin=el("div","plin","");
+      lin.appendChild(el("i","pbola",""));
+      var im=el("img","pfig"); im.src=fg; im.alt=""; lin.appendChild(im);
+      lin.appendChild(fazZap(w,"Ouvir a palavra"));
+      ch.appendChild(lin);
+      nm=el("div","pnome",w);
+      ch.appendChild(nm);
+    } else if(pista){
       ch=el("div","pchip pdef "+cor[w]);
       lin=el("div","plin","");
       lin.appendChild(el("i","pbola",""));
@@ -572,9 +610,11 @@ function pecaCaca(){
     grade.appendChild(q);
   })(i,j);}
   c.appendChild(grade);
-  c.appendChild(el("div","hint", porDef
+  c.appendChild(el("div","hint", porFig
+    ? "Toque no alto-falante para OUVIR a palavra da figura. Depois toque em cada letra dela na grade."
+    : (porDef
     ? "Toque no alto-falante para OUVIR a pista. Depois toque em cada letra da palavra na grade."
-    : "Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
+    : "Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar.")));
   t.appendChild(c);
   app.appendChild(t);
 
@@ -605,7 +645,13 @@ function pecaCaca(){
     faixa(w);
     /* ⭐ no modo definições o chip GUARDA a classe `pdef` — é ela que revela a
        palavra por baixo da pista. Perder a classe aqui apagaria a recompensa. */
-    chips[w].className=(chips[w].className.indexOf("pdef")>=0?"pchip pdef ":"pchip ")+cor[w]+" feito";
+    chips[w].className=(chips[w].className.indexOf("pdef")>=0?"pchip pdef "+(chips[w].className.indexOf("pfigc")>=0?"pfigc ":""):"pchip ")+cor[w]+" feito";
+    /* ⭐ ENSINA AO ACHAR: a figura da palavra aparece no chip (quando há) e a
+       voz diz a palavra — forma escrita + sentido + som, no momento do acerto. */
+    if(!porFig&&figDe(w)&&!chips[w].getElementsByTagName("img").length){
+      var fim=el("img","pfig pfim"); fim.src=figDe(w); fim.alt="";
+      chips[w].appendChild(fim);
+    }
     voz(w);
   }
   function confere(){
@@ -654,6 +700,11 @@ function pecaCaca(){
      inteira. No modo lista continua exatamente como sempre foi: dois degraus. */
   function degrau1(w){
     var pista=porDef?pistaDe(w):"";
+    if(porFig&&!pista&&figDe(w)){
+      mostraDica("Ou&#231;a de novo a palavra da figura e procure as letras dela na grade.");
+      voz(w);
+      return false;
+    }
     if(pista){
       mostraDica("A pista que falta: <b>"+pista+"</b>");
       voz(pista);

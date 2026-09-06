@@ -119,6 +119,15 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .tit{margin:8px 0 2px;font-size:13px}
   .hint{font-size:12px}
 }
+
+/* ⭐ RESPOSTA AO PRESSIONAR (pesquisa set/2026, regra 1 — PBS KIDS "squish", NN/g):
+   todo alvo mostra que o toque PEGOU. Brilho leve, sem mexer no tamanho — assim
+   nao desloca zona de soltar nem peca arrastada. Medido pelo leiaute.js (regra 11). */
+.passar:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+/* ⭐ a pergunta de reflexao do fim (regra 9 da pesquisa) */
+.reflexao{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin:12px auto 0;
+          max-width:430px;font-size:15px;font-weight:600;line-height:1.35}
+.reflexao b{color:#1f6b12}
 </style></head>
 <body>
 <div id="app"></div>
@@ -386,6 +395,20 @@ function telaFimRelampago(){
     for(i=0;i<faltou.length;i++) li.appendChild(el("div","item","&#183; "+faltou[i]));
   }
   c.appendChild(li);
+  /* ⭐ A PERGUNTA DE REFLEXAO (pesquisa set/2026, regra 9 — Topmarks: peca de
+     velocidade fecha com UMA pergunta que devolve a crianca ao PENSAR, senao
+     o relampago ensina so a ser rapido). Sem resposta certa, sem botao: e o
+     mascote perguntando; a criança responde para si (ou para o professor). */
+  var refl=el("div","reflexao",
+    faltou.length
+      ? "Pense: qual resposta voc&#234; ainda precisa <b>ver de novo</b>? Por que ela &#233; assim?"
+      : "Pense: qual resposta voc&#234; sabia <b>de cor</b>? Como voc&#234; aprendeu ela?");
+  c.appendChild(refl);
+  setTimeout(function(){
+    if(!t.parentNode||typeof diz!=="function") return;   /* na bancada nao ha voz da casa */
+    if(faltou.length) diz("Pense: qual resposta você ainda precisa ver de novo? Por que ela é assim?");
+    else diz("Pense: qual resposta você sabia de cor? Como você aprendeu ela?");
+  },1400);
   /* ⚠️⚠️ LICAO PAGA (ago/2026) — O BECO. Esta peca fechava com um botao
      "Jogar de novo" que chamava `telaComecarRelampago` DIRETO. Na bancada isso
      e certo; DENTRO da atividade e um beco: a crianca termina o aquecimento da

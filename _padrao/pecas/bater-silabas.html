@@ -262,6 +262,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
   font-size:44px;line-height:92px;text-align:center;font-weight:800}
 .medal:before{content:"\2605"}
+
 </style></head>
 <body>
 <div id="app"></div>
@@ -472,6 +473,11 @@ function pecaBater(){
   fg.id="bsFg";
   if(figEl){ fg.appendChild(figEl(r.fig)); }
   else { fg.appendChild(el("div","semfig", r.pal)); }
+  /* ⭐ A FIGURA RESPONDE AO TOQUE (pesquisa set/2026, regra 13 — NN/g: a crianca
+     toca em tudo e espera resposta). Tocar a figura DIZ a palavra inteira: e
+     o "ouvir antes de bater, sem custo" da alfabetizacao (regra 6). */
+  fg.style.cursor="pointer";
+  fg.onclick=function(){ sTap(); fala(r.pal); };
   topo.appendChild(fg);
 
   /* ⭐ O ALTO-FALANTE DA PALAVRA (apoio sonoro pedido pelo Marcos, ago/2026).

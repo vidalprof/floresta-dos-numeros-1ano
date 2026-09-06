@@ -55,6 +55,12 @@ Leia tudo antes de agir e responda sempre em **português**.
 > **⚠️ Portão que imprime NADA não é "passou": é "rodou CEGO"** — rodar na mão, sem
 > `2>/dev/null`, e ler o erro (já aconteceu: uma `telaBase()` estourava sem config e
 > derrubava o contraste e o leiaute na primeira tela).
+> **⚡ PRÉ-VOO ANTES DA BANCA (set/2026, pedido do Marcos: "mais rápidas e com muito
+> menos erros"):** montou → `bash _qa/previo.sh <pasta>` → **30 portões de texto em
+> ~2 segundos** (sintaxe, função que não existe, clone, duplicata, falas, revisor,
+> dinâmicas, padrão, duração, progressão, beco, catálogo…). Só com 0 ali é que se
+> gastam os 10 minutos da banca inteira. Pré-voo 0 **não** é "a banca aprovou": é
+> "não há erro barato". Voz sem mp3 ali é informação (o `entregar.yml` grava).
 > A banca não substitui o Marcos: depois dela ainda vem o portão do professor.
 
 > **Toda atividade EducaVerso passa pelo `EDUCAVERSO-QA.md`** (3 portões: Verificar

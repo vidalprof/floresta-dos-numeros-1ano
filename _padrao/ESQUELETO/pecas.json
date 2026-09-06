@@ -178,11 +178,13 @@
     "MODO": "\"lista\"",
     "PAL": "[\"MILHO\",\"ALFACE\",\"TOMATE\",\"CENOURA\",\"FEIJAO\"]",
     "PALDEF": "{\n  \"MILHO\":\"Amarelinho, em fileiras na espiga &#8212; vira pipoca na panela.\",\n  \"ALFACE\":\"A folha verdinha que a gente lava para a salada.\",\n  \"TOMATE\":\"Vermelho e redondo, vai no molho do macarr&#227;o.\",\n  \"CENOURA\":\"Comprida e laranja, cresce debaixo da terra.\",\n  \"FEIJAO\":\"Preto ou marrom, mora numa vagem e vai com arroz.\"\n}",
+    "PALFIG": "{}",
     "TITULO": "\"CA&#199;A-PALAVRAS\""
    },
    "gavetas": [
     "PAL",
     "CORP",
+    "PALFIG",
     "PALDEF",
     "LETRAS",
     "TITULO",
@@ -910,11 +912,11 @@
    "var": "PISTAS"
   },
   "montar-frase": {
-   "exemplo": "[\n {img:\"\", w:[\"O\",\"gato\",\"preto\",\"dormiu\"],      c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:true},\n {w:[\"A\",\"flor\",\"amarela\",\"cresceu\"],   c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:false},\n {w:[\"A\",\"turma\",\"jogou\",\"hoje\"],       c:[\"art\",\"sub\",\"ver\",\"adv\"], apoio:false}\n]",
+   "exemplo": "[\n {img:\"\", w:[\"O\",\"gato\",\"preto\",\"dormiu\"],      c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:true, f:\"O gato preto dormiu.\"},\n {w:[\"A\",\"flor\",\"amarela\",\"cresceu\"],   c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:false},\n {w:[\"A\",\"turma\",\"jogou\",\"hoje\"],       c:[\"art\",\"sub\",\"ver\",\"adv\"], apoio:false}\n]",
    "exemplos": {
     "CLA": "{\n  art:{r:\"o / a\",   d:\"a palavrinha <b>o</b> ou <b>a</b>, que vem antes do nome\"},\n  sub:{r:\"nome\",    d:\"o <b>nome</b> da coisa ou do bicho\"},\n  adj:{r:\"como &#233;\", d:\"<b>como</b> a coisa &#233;\"},\n  ver:{r:\"a&#231;&#227;o\", d:\"a <b>a&#231;&#227;o</b>: o que aconteceu\"},\n  adv:{r:\"quando\",  d:\"<b>quando</b> aconteceu\"}\n}",
     "FORMAS": "[\"art\",\"sub\",\"adj\",\"ver\",\"adv\"]",
-    "FRASES": "[\n {img:\"\", w:[\"O\",\"gato\",\"preto\",\"dormiu\"],      c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:true},\n {w:[\"A\",\"flor\",\"amarela\",\"cresceu\"],   c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:false},\n {w:[\"A\",\"turma\",\"jogou\",\"hoje\"],       c:[\"art\",\"sub\",\"ver\",\"adv\"], apoio:false}\n]"
+    "FRASES": "[\n {img:\"\", w:[\"O\",\"gato\",\"preto\",\"dormiu\"],      c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:true, f:\"O gato preto dormiu.\"},\n {w:[\"A\",\"flor\",\"amarela\",\"cresceu\"],   c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:false},\n {w:[\"A\",\"turma\",\"jogou\",\"hoje\"],       c:[\"art\",\"sub\",\"ver\",\"adv\"], apoio:false}\n]"
    },
    "gavetas": [
     "CLA",
@@ -1326,16 +1328,22 @@
    "var": "RODADAS"
   },
   "simulador": {
-   "exemplo": "[]",
+   "exemplo": "{}",
    "exemplos": {
-    "DICAS": "[\n  \"Mexa a chuva <b>devagar</b>, de um em um, e olhe a &#225;gua chegando perto da ponte.\",\n  \"Quando a &#225;gua encosta, o aviso l&#225; embaixo muda e a ponte fica <b>molhada</b>. Em que n&#250;mero isso acontece?\",\n  \"&#201; esta! Toque nela que eu sigo com voc&#234;.\"\n]"
+    "DICAS": "[\n  \"Mexa o controle <b>devagar</b>, de um em um, e olhe a figura mudando.\",\n  \"Quando chega no ponto certo, o aviso l&#225; embaixo muda e a figura <b>acende</b>. Em que n&#250;mero isso acontece?\",\n  \"&#201; esta! Toque nela que eu sigo com voc&#234;.\"\n]",
+    "SIM": "{}",
+    "SIM_PADRAO": "{ /*TECNICA*/\n  titulo:\"O RIO E A CHUVA\", controle:\"Chuva\", max:8, alvo:5, base:10, passo:5,\n  opcoes:[3,4,5,7],\n  abaixo:\"a &#225;gua ainda est&#225; ABAIXO da ponte.\",\n  encostou:\"a &#225;gua ENCOSTOU na ponte!\",\n  acima:\"a &#225;gua passou ACIMA da ponte.\",\n  fecho:\"Voc&#234; descobriu <b>mexendo</b>: quanto mais chuva, mais alto o rio.\",\n  cena:{}\n}"
    },
    "gavetas": [
+    "SIM",
+    "SIM_PADRAO",
     "DICAS"
    ],
-   "regra": "primeiro vetor",
-   "tecnicas": [],
-   "var": "gotas"
+   "regra": "marca na peca",
+   "tecnicas": [
+    "SIM_PADRAO"
+   ],
+   "var": "SIM"
   },
   "som-inicial": {
    "exemplo": "[\n  {k:\"m\", n:\"M\", voz:\"o som M, de MÃO\", img:\"\"},\n  {k:\"s\", n:\"S\", voz:\"o som S, de SOL\", img:\"\"}\n]",
