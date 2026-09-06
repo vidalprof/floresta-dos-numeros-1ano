@@ -158,9 +158,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
        background:radial-gradient(circle at 50% 52%,rgba(255,214,110,.9) 0%,rgba(255,214,110,0) 64%);
        -webkit-transition:opacity .7s;transition:opacity .7s}
 .pronta .lpluz{opacity:1}
-/* (set/2026, portao 4c) o numero recua sobre o PAPEL do quadro (fundo da propria
-   peca): tinta escura fixa, nao o token do fundo da atividade */
-.pronta .pt{color:#241d12;opacity:.34;pointer-events:none}
+/* (set/2026, portoes 4b/4c) sem `color` aqui: quem pinta o numero e o `.pnum`, que
+   tem tinta E fundo proprios. A cor neste seletor era herdada por ninguem e
+   brigava com os dois portoes (cravada sem fundo / token em superficie propria). */
+.pronta .pt{opacity:.34;pointer-events:none}
 /* na revelacao o halo do traco recua para a figura brilhar sozinha — mas o
    fio CONTINUA la: e o desenho que a crianca fez, nao um andaime a esconder */
 .pronta .fioh{opacity:.35}
