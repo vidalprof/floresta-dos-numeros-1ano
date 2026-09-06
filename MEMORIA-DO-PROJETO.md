@@ -6052,6 +6052,29 @@ GraphoGame Brasil (o app do MEC) são exatamente *"a pronúncia de algumas letra
   em tudo (nome aposentado) → fila de modelos (`gemini-2.5-flash`,
   `gemini-flash-latest`, …), validada na rodada 3. Órfãos: 213 mp3 no Trem e
   137 na Padaria que nenhuma fala usa (peso morto; não é defeito).
+- **RODADA 3 (11:08–11:42Z):** ouvido Trem 406 ✅ / 0 ❌ / 0 mudas; Padaria 404 ✅ /
+  66 conferir / 0 ❌ (os 8 caminhos SVG sumiram). Dois defeitos DO TESTADOR:
+  (a) o Trem saiu com "0 a conferir" — 52 falas curtas sumiram por
+  `(conferir if sim<70 else None) and conferir.append(...)`: lista vazia é falsa
+  e o `and` nunca chegava ao append; (b) o olho veio cortado ("VEREDIT") porque o
+  Gemini 2.5 gasta os 120 tokens PENSANDO (`thinkingBudget:0` + 400 tokens), e
+  bateu em **429 por minuto** na 30ª figura (agora espera 45 s e segue; 4,5 s
+  entre pedidos). `gemini-2.5-flash` também deu 404: a fila começa em
+  `gemini-flash-latest`. Rodada 4 pedida.
+- **O QUE A BANCA INTEIRA DA PADARIA PEGOU DEPOIS (não era do testador, era da
+  casa):** (1) 7 fases em que a PEÇA escreve o próprio balão (juntar-sílabas,
+  memória) e a voz era só a do enunciado do motor → cura pelo fluxo padrão
+  `colher.py` (as frases de jogo entram no `falas.json`); (2) a dica da memória
+  cita a palavra SORTEADA ("Abri uma para você: MALA") e o colhedor só pegava a da
+  partida → `montar.py` gera para TODOS os pares; (3) **4 alto-falantes MUDOS de
+  verdade**: `tracar-letra` falava `LT.voz+"."` ("pê.") e a gravação era "pê" —
+  chave diferente, mp3 nenhum, silêncio em 3 fases; e `pintar-desenho`, com uma
+  cor na mão, falava "vermelho. Pinte a placa…" (frase composta, sem mp3) e sem
+  `data-voz` o portão cobrava a gravação de "Escolha uma cor". Regra que fica:
+  **o texto que a peça passa ao `diz()` tem que ser, letra por letra, um texto
+  que o montador grava** — nada de ponto final ou composição na hora; e todo
+  `.zap` declara `data-voz`. (4) o intruso dizia "O que A BOLO faz de diferente"
+  (artigo cravado) → sem artigo. Portão `0n` fechou 133/133.
 - **Limites honestos:** o reconhecedor erra em fala muito curta (nome de letra)
   — por isso "conferir", não "reprovado"; o olho depende de cota do Gemini
   (a de imagem estava esgotada em 2026-08-12; a de visão é outra, medir); e o
