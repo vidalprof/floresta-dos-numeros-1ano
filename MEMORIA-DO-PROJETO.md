@@ -6277,3 +6277,11 @@ como gaveta. (4) O portão **0b7 invisível** reprova a banca quando há trabalh
 não commitado: commitar antes de rodar a banca inteira. (5) Rodar `integrar.py`
 e `interatividades.py` durante uma banca deixa a "prova de sala" lenta (2,5 s
 em bater-sílabas foi contenção de CPU, não a peça).
+- **(6) Lição paga na mesma tarde:** inseri o toque na figura do `juntar-silabas`
+  ENTRE o `if{}` e o `else{}` — sintaxe quebrada, a bancada pegou na seção 1 e eu
+  não vi porque só "grepava" `!!`. Cura em duas partes: (a) `node --check` em
+  TODA peça editada, sempre; (b) **`bash _qa/previo.sh _padrao/pecas/x.html`**
+  (modo PEÇA, 7 portões de texto em segundos: sintaxe, funções, dinâmicas,
+  classes, beco, cor, espera) antes da bancada de Chromium. Nenhum build
+  publicado levou o defeito (Padaria e Trem foram montados antes da edição;
+  conferido com `node --check` no índice publicado).

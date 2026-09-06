@@ -26,6 +26,36 @@ ALVO="${1:-}"
 if [ -d "$ALVO" ]; then PASTA="${ALVO%/}"; ARQ="$PASTA/index.html"; else ARQ="$ALVO"; PASTA="$(dirname "$ARQ")"; fi
 [ -f "$ARQ" ] || { echo "nao achei $ARQ"; exit 2; }
 
+# ⭐ MODO PECA (set/2026): `bash _qa/previo.sh _padrao/pecas/x.html` roda em segundos os
+#    portoes de texto que valem para UMA peca — sintaxe, funcao que nao existe,
+#    dinamicas, classes, beco, cor cravada, espera. Nasceu no dia em que um
+#    `if/else` partido pelo meio por uma edicao passou por mim porque eu so
+#    "grepava" a bancada em vez de ler a secao 1. A bancada inteira (`peca.sh`,
+#    Chromium) continua obrigatoria antes de guardar a peca no catalogo.
+case "$ARQ" in _padrao/pecas/*.html)
+  TMP="$(mktemp -d /tmp/previo.XXXXXX)"; T0=$SECONDS
+  python3 - "$ARQ" "$TMP/app.js" <<'PY'
+import re,sys
+h=open(sys.argv[1],encoding="utf-8").read()
+open(sys.argv[2],"w",encoding="utf-8").write("\n".join(re.findall(r"<script>(.*?)</script>",h,re.S)))
+PY
+  FALHOU=""
+  for item in "1a sintaxe|node --check $TMP/app.js" "1b funcao que nao existe|python3 _qa/funcoes.py $ARQ" \
+              "0b2 dinamicas|python3 _qa/dinamicas.py $ARQ" "4 classes sem estilo|python3 _qa/classes.py $ARQ" \
+              "3b beco na peca|python3 _qa/beco_peca.py $ARQ" "4b cor cravada|python3 _qa/cor_fixa.py $ARQ" \
+              "0b3 espera|python3 _qa/espera.py $ARQ"; do
+    nome="${item%%|*}"; cmd="${item#*|}"
+    out="$(eval "$cmd" 2>&1)"; st=$?
+    if [ "$st" != "0" ] && [ "$st" != "2" ]; then FALHOU="$FALHOU
+   · $nome (codigo $st)"; echo "--- $nome ---"; echo "$out" | tail -8; fi
+  done
+  echo "==================================================="
+  echo " PRE-VOO DA PECA $ARQ — 7 portoes de texto em $((SECONDS-T0))s"
+  rm -rf "$TMP"
+  if [ -n "$FALHOU" ]; then echo "   REPROVARAM:$FALHOU"; exit 1; fi
+  echo " -> nenhum erro barato. Agora sim: bash _qa/peca.sh $ARQ"; exit 0 ;;
+esac
+
 TMP="$(mktemp -d /tmp/previo.XXXXXX)"
 T0=$SECONDS
 
