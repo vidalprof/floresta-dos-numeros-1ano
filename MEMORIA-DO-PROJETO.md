@@ -6357,6 +6357,14 @@ prova entra no voto do jogador; (2) quando ela reprova na faixa paralela, o
 processador freado 6× produzia outliers). E a medida ficou honesta: o replay picado
 do `bater-silabas` (cada sílaba acesa com voz — o ensino) e a mensagem do
 `tracar-letra` agora marcam `__qa("tela")`, porque ali a tela ESTÁ respondendo.
+**E a segunda lição, medida com a linha do tempo nova do `jogador.js`:** na memória
+o `acertou` não nasce na peça — nasce no OLHEIRO do motor (MutationObserver que vê
+a classe `par`/`feito`/`ok` e toca o `sCerto`), ~70 ms DEPOIS do código da peça.
+Marca de `tela` escrita antes dele não conta, e a prova media "acertou → próximo
+par" = o tempo de a criança PROCURAR (10–20 s), não o app parado. A marca certa é
+a atrasada (`setTimeout(__qa("tela"), 250)`), enquanto o par pulsa. Regra para
+peça nova: se o acerto dela vem por classe (olheiro), a marca de resposta vai
+atrasada. Padaria remedida sozinha: mediana 194 ms, pior 1067 ms — passa.
 
 **Lição:** pesquisa vira código quando tem PORTÃO junto — as 12 regras de §3 só
 saíram do papel quando cada uma ganhou uma medida em `_qa/`.
