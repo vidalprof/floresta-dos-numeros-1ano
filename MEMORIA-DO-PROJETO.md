@@ -6366,5 +6366,16 @@ a atrasada (`setTimeout(__qa("tela"), 250)`), enquanto o par pulsa. Regra para
 peça nova: se o acerto dela vem por classe (olheiro), a marca de resposta vai
 atrasada. Padaria remedida sozinha: mediana 194 ms, pior 1067 ms — passa.
 
+**Publicado nesta noite (2026-09-06, carimbos batendo com o local):** Padaria
+(3 rodadas da esteira; a última com prova de sala honesta, 804 s), Trem (banca com
+as duas exceções conhecidas do mascote; prova de sala 852 ms), e 11 apps à mão pelo
+lote `[entregar …]`: Pixel Art, Máquina do Tempo do Vale, Jardim do Broto, Voo do
+Nico, Terra dos Papagaios, Tangram, Ed. Física 2º, Matemática 2º, Viagem no Tempo
+do Vale, Batata e o Painel de Atividades; os 4 painéis do professor por
+`atualizar.yml`. O primeiro lote foi SEGURADO pelo portão pré-entrega (certo): a
+História tinha 4 figuras em `cover` e o Batata a figura a 100 % no círculo — nunca
+tinham passado pelo `entregar.yml`; e o parser do catálogo não lia a célula
+`_edf2 (+ _edf2painel)` (consertado no `montar_painel.py`).
+
 **Lição:** pesquisa vira código quando tem PORTÃO junto — as 12 regras de §3 só
 saíram do papel quando cada uma ganhou uma medida em `_qa/`.
