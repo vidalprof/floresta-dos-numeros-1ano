@@ -205,7 +205,9 @@ const path = require('path');
          existe na lista de gravacao, o botao TOCA o enunciado desta fase — que
          e exatamente o que esta escrito. */
       if (grav === undefined) {
-        semVoz.push(nome + ' [' + z.tipo + ']: toca ' + z.arq + ', que nao esta na lista de gravacao');
+        /* ⚠️ (set/2026) o TEXTO vai junto: sem ele eu nao tinha como saber que voz
+           faltava (fiquei calculando chaves no escuro na Expedicao da Divisao). */
+        semVoz.push(nome + ' [' + z.tipo + ']: toca ' + z.arq + ', que nao esta na lista de gravacao — o botao diz "' + String(z.txt).slice(0, 48) + '"');
       } else if (z.tipo === 'resposta' && norm(grav) !== norm(z.txt)
                  && !letraLidaPeloNome(z.txt, grav)) {
         semVoz.push(nome + ': escrito "' + z.txt.slice(0, 28) +

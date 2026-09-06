@@ -923,8 +923,18 @@ def falas_de(c):
         #    algarismo (senao o numero cru) e OPNOME para o sinal.
         if f.get("mec") == "digitar-numero":
             _dx = f.get("dadosExtra") or {}
-            _nom = _dx.get("NOMEDIG") or {}
-            _opn = _dx.get("OPNOME") or {}
+            # ⚠️ LICAO PAGA (set/2026, Expedicao da Divisao): sem `dadosExtra` eu usava
+            #    mapas VAZIOS e gravava "45 ÷ 5", enquanto a peca (com os mapas
+            #    PADRAO dela) dizia "45 dividido por cinco" — tres alto-falantes mudos.
+            #    O padrao e o da peca (`digitar-numero.html`: NOMEDIG 0-9, OPNOME);
+            #    o `dadosExtra` SUBSTITUI o mapa inteiro, como o integrador faz.
+            _NOM_PADRAO = {"0": u"zero", "1": u"um", "2": u"dois", "3": u"três", "4": u"quatro",
+                           "5": u"cinco", "6": u"seis", "7": u"sete", "8": u"oito", "9": u"nove"}
+            _OPN_PADRAO = {"+": u"mais", "-": u"menos", u"−": u"menos", u"÷": u"dividido por",
+                           ":": u"dividido por", "/": u"dividido por", u"×": u"vezes",
+                           "x": u"vezes", "*": u"vezes"}
+            _nom = _dx.get("NOMEDIG") if isinstance(_dx.get("NOMEDIG"), dict) else _NOM_PADRAO
+            _opn = _dx.get("OPNOME") if isinstance(_dx.get("OPNOME"), dict) else _OPN_PADRAO
             for it in (f.get("dados") or []):
                 if not isinstance(it, dict):
                     continue
