@@ -48,7 +48,7 @@ def pergunta(key, modelo, png, rot):
                      {"type": "image_url", "image_url": {"url": "data:image/png;base64," + b64}}]}]}
         req = urllib.request.Request("https://text.pollinations.ai/openai", data=json.dumps(corpo).encode("utf-8"),
                                      headers={"Content-Type": "application/json", "User-Agent": "testador-humano/1.0"})
-        with urllib.request.urlopen(req, timeout=90) as r:
+        with urllib.request.urlopen(req, timeout=40) as r:
             d = json.loads(r.read().decode("utf-8"))
         try:
             txt = d["choices"][0]["message"]["content"]
@@ -72,6 +72,58 @@ def pergunta(key, modelo, png, rot):
     txt = u" ".join(p.get("text", "") for p in partes).strip()
     return txt.replace("*", "").replace("\n", " ")
 
+def nomes_do_conteudo(pasta, pngs):
+    u"""⭐ (rodada 7) o nome de verdade de cada figura vem do CONTEUDO, nao do arquivo:
+    `tr_maca.png` e "MAÇÃ" (o arquivo perde o acento), `pd_l_A.png` e o pao em forma
+    da letra A. O juiz local com o nome do arquivo acusou "maca ~ uva" e "l A ~
+    biscoito" — errado dos dois lados. Procura, em conteudo.json, o item que aponta
+    para a figura (`img`/`fig`/`alvo`/`k`) e pega a palavra dele."""
+    nomes = {}
+    cam = os.path.join(pasta, "conteudo.json")
+    try:
+        c = json.load(io.open(cam, encoding="utf-8"))
+    except Exception:
+        c = None
+    def anda(x):
+        if isinstance(x, dict):
+            ref = None
+            for k in ("img", "fig", "foto", "imagem", "alvo", "k", "src"):
+                v = x.get(k)
+                if isinstance(v, str) and v in stems:
+                    ref = v; break
+            if ref and ref not in nomes:
+                # o Trem escreve {img:"tr_abelha", nome:"A", info:"A de abelha."}: o nome
+                # da FIGURA e "abelha", nao "A". Aceita so valor com 3+ letras e, em
+                # "X de PALAVRA" / "Letra X. X de PALAVRA.", fica com a PALAVRA.
+                for k in ("pal", "escrito", "palavra", "t", "n", "nome", "rotulo", "info", "voz"):
+                    v = x.get(k)
+                    if not isinstance(v, str) or not (0 < len(v) < 60) or v.startswith(ref[:3] + "_"):
+                        continue
+                    v = re.sub(r"<[^>]+>", "", v).strip().rstrip(".")
+                    mm = re.search(r"(?:^|\.\s*)\S{1,2}\s+de\s+([^.]+)$", v, re.I)
+                    if mm:
+                        v = mm.group(1).strip()
+                    if sum(1 for ch in v if ch.isalpha()) >= 3:
+                        nomes[ref] = v; break
+            for v in x.values():
+                anda(v)
+        elif isinstance(x, list):
+            for v in x:
+                anda(v)
+    stems = set(f[:-4] for f in pngs)
+    if c is not None:
+        anda(c)
+    out = {}
+    for f in pngs:
+        s = f[:-4]
+        m = re.match(r"^[a-z0-9]{1,4}_l_([A-Za-z])$", s)
+        if m:
+            out[f] = u"a letra %s" % m.group(1).upper()
+        else:
+            out[f] = nomes.get(s) or rotulo(s)
+    return out
+
+
 def olho_local(pasta, pngs):
     u"""⭐ O JUIZ QUE NAO DEPENDE DE NINGUEM (rodada 6, set/2026): os Gemini gratis
     acabaram a cota do dia em cinco rodadas e o Pollinations passou a cobrar (402).
@@ -89,7 +141,8 @@ def olho_local(pasta, pngs):
     except Exception as e:
         print(u"   olho local indisponivel (%s) — instale sentence-transformers + torch cpu." % str(e)[:80])
         return None
-    rot = [rotulo(f[:-4]) for f in pngs]
+    nomes = nomes_do_conteudo(pasta, pngs)
+    rot = [nomes[f].lower() for f in pngs]
     frases = [u"um desenho de %s" % r for r in rot]
     img_model = SentenceTransformer("clip-ViT-B-32")
     txt_model = SentenceTransformer("sentence-transformers/clip-ViT-B-32-multilingual-v1")
@@ -106,9 +159,14 @@ def olho_local(pasta, pngs):
         sims = util.cos_sim(emb_i, emb_t)[0].tolist()
         ordem = sorted(range(len(sims)), key=lambda k: -sims[k])
         top1 = ordem[0]; pos = ordem.index(i)
-        # ok = o proprio nome e o 1o ou o 2o mais parecido (nomes parecidos — bolo/bolinho,
-        # biscoito/bolacha — disputam entre si e isso nao e defeito).
-        saida.append((f, rot[i], rot[top1], round(sims[i], 3), round(sims[top1], 3), pos <= 1))
+        # ⚠️ (rodada 7) acusar so quando e CLARO: o proprio nome fora dos 3 primeiros E
+        #    o vencedor a pelo menos 0,02 de distancia (pao 0,242 x queijo 0,246 nao e
+        #    figura errada, e ruido). Irmas de nome (bolo/bolinho, biscoito/bolacha,
+        #    "a letra A"/"a letra B") disputam entre si por natureza: nao contam.
+        irmas = rot[top1][:4] == rot[i][:4] or (rot[top1].startswith("a letra") and rot[i].startswith("a letra"))
+        margem = sims[top1] - sims[i]
+        ok = (pos <= 2) or irmas or (margem < 0.02)
+        saida.append((f, rot[i], rot[top1], round(sims[i], 3), round(sims[top1], 3), ok))
     return saida
 
 
@@ -141,7 +199,11 @@ def main():
     #    Agora: 404 tira o nome da fila de vez; 429 marca o modelo como esgotado e
     #    passa ao proximo; e o Pollinations fecha a fila SEM cota — o olho sempre julga.
     gem = [m for m in (modelo, "gemini-2.5-flash-lite", "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash") if m and m != "pollinations"]
-    fila = (list(dict.fromkeys(gem)) if key else []) + ["pollinations"]
+    # ⚠️ (rodada 7) o Pollinations passou a cobrar (402, medido em 2026-09-06) e, quando
+    #    nao responde 402, fica pendurado ate o timeout — 52 figuras x 90 s travaram a
+    #    rodada. So entra na fila se alguem disser POLLINATIONS_OK=1 (quando voltar a
+    #    ser gratis). O juiz que SEMPRE roda e o local (CLIP), logo abaixo.
+    fila = (list(dict.fromkeys(gem)) if key else []) + (["pollinations"] if os.environ.get("POLLINATIONS_OK") else [])
     for n, f in enumerate(pngs):
         rot = rotulo(f[:-4])
         resp = None; paciencia = 1
@@ -185,8 +247,10 @@ def main():
     loc_ok = [x for x in (loc or []) if x[5] is True]
     dt = time.time() - t0
     L = [u"# 👁 TESTADOR HUMANO — OLHO (imagens) — `%s`" % pasta, u"",
-         u"> %d figura(s) de conteúdo julgadas por %s em %.0f s: a imagem mostra o que o NOME promete? "
-         u"Camadas do mascote, fundo, medalha, crachás e desenhos para colorir ficam de fora." % (len(pngs), modelo, dt), u"",
+         u"> %d figura(s) de conteúdo em %.0f s — nuvem: %s; juiz local: %s. A imagem mostra o que o NOME promete? "
+         u"Camadas do mascote, fundo, medalha, crachás e desenhos para colorir ficam de fora."
+         % (len(pngs), dt, (modelo if (ok + len(ruins) + len(avisos)) else u"sem cota hoje (nada julgado)"),
+            u"CLIP multilíngue" if loc is not None else u"indisponível"), u"",
          u"| resultado | quantas |", u"|---|--:|", u"| ✅ mostra o que o nome diz, sem problema | %d |" % ok,
          u"| ❌ NÃO é o que o nome diz | %d |" % len(ruins), u"| 🟡 é, mas com problema (texto na figura, corte, fundo…) | %d |" % len(avisos),
          u"| ⚠️ não consegui julgar | %d |" % len(falhas), u""]
@@ -200,7 +264,7 @@ def main():
         L += [u"## ⚠️ Não julgadas pela nuvem", u""] + [u"- `%s` — %s" % x for x in falhas] + [u""]
     if loc is not None:
         L += [u"## 🧭 Juiz LOCAL (CLIP multilíngue, sem cota): a figura combina mais com o SEU nome?", u"",
-              u"> %d figura(s): **%d combinam com o próprio nome** (1º ou 2º lugar entre os %d nomes da atividade), **%d NÃO** — nessas, o nome que mais combina é outro. "
+              u"> %d figura(s): **%d combinam com o próprio nome** (entre os 3 primeiros dos %d nomes da atividade, ou a menos de 0,02 do vencedor), **%d NÃO** — nessas, o nome que mais combina é outro, com folga. "
               u"Ele não vê texto desenhado, corte nem fundo: isso é do Gemini, quando há cota." % (len(loc), len(loc_ok), len(loc), len(loc_ruins)), u""]
         if loc_ruins:
             L += [u"| arquivo | nome promete | parece mais com | score do próprio | score do outro |", u"|---|---|---|--:|--:|"]
