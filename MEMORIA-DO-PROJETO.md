@@ -6116,7 +6116,11 @@ GraphoGame Brasil (o app do MEC) são exatamente *"a pronúncia de algumas letra
   mp3), **as frases que a peça só fala** (`fala("Limpei o desenho!…")`, que o
   colhedor nunca vê porque não aparecem na tela) e **o pedido "Pinte X do jeito
   que você quiser"** montado no ato. `pintar-canvas` ganhou `data-voz`. 0n
-  161/161. Padaria republicada junto (14:11Z, 133/133).
+  161/161. Padaria republicada junto (14:11Z, 133/133). **Banca inteira do Trem
+  (576 s): um único portão reprova — `3d mascote`, `tr_coru_fala` é cópia byte a
+  byte da pose parada (a coruja fala de boca fechada).** Pré-existente e conhecido:
+  a cura é EDITAR a pose parada (Gemini + `base=`), e o Gemini está sem cota;
+  sem crédito, resta abrir a boca na própria arte, só no rosto. Decisão do Marcos.
 - **Limites honestos:** o reconhecedor erra em fala muito curta (nome de letra)
   — por isso "conferir", não "reprovado"; o olho depende de cota do Gemini
   (a de imagem estava esgotada em 2026-08-12; a de visão é outra, medir); e o
