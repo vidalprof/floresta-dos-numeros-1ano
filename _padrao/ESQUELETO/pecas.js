@@ -5360,7 +5360,7 @@ var MODO="cp_lista"; /*TECNICA*/
      palavra) e a palavra escrita aparece quando ela acha — a criança tem que
      PENSAR a palavra e procurá-la pelos sons, não copiar letra a letra.
    Palavra sem figura volta a aparecer escrita, como antes. */
-var PALFIG={};
+var PALFIG={}; /*TECNICA*/
 /* ⭐ NIVEL DIFICIL (pedido do Marcos, RIGHT NOW 9o ano, ago/2026: "o caca
    palavras e pra ser mais dificil, palavras na diagonal etc"). Ligado por
    conteudo (`"DIFICIL":true` no dadosExtra). Com ele, as palavras entram nas
@@ -15516,6 +15516,308 @@ function fimDaPeca(){
   })();
 };
 
+/* ==== PECA: escada-de-palavras ==== */
+MEC["escada-de-palavras"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-escada-de-palavras";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `ESCADA`: cada
+   degrau leva a palavra `de` até `para`, mudando UMA letra (mesmo tamanho).
+   `voz` = como a voz diz a palavra nova; `fig` = arte de IA dela (opcional);
+   `pista` = uma frase curta sobre a palavra nova (sem dizer a palavra).
+   Palavras SEM acento e sem Ç (as pecas de letra nao tem tecla de acento). */
+var ESCADA=[
+ {de:"MALA", para:"MOLA", voz:"mola", fig:"", pista:"Ela &#233; de metal e <b>pula</b>."},
+ {de:"MOLA", para:"BOLA", voz:"bola", fig:"", pista:"A gente <b>chuta</b> e ela rola."},
+ {de:"BOLA", para:"BOLO", voz:"bolo", fig:"", pista:"Tem vela de <b>anivers&#225;rio</b>."}
+];
+var LETRAS="ABCDEFGHIJLMNOPRSTUVZ"; /*TECNICA*/
+var TITULO="ESCADA DE PALAVRAS";
+
+var di=0, passo=1, erros=0, ger=0, telaAtual=null, barraP=null;
+var tiles=[], escEl=null, degrausEl=null, posMuda=-1;
+var figEl = window.imgEl || null;
+
+function semTag(t){ return String(t||"").replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){return String.fromCharCode(Number(n));}).replace(/\s+/g," ").replace(/^ | $/g,""); }
+/* a voz e do MOTOR (gravada); sozinha, a peca fica muda de proposito (nunca voz-robo) */
+function fala(t){ var s=semTag(t); if(s&&typeof diz==="function") diz(s); }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function ondeMuda(a,b){ var i; for(i=0;i<a.length;i++) if(a.charAt(i)!==b.charAt(i)) return i; return -1; }
+
+function pecaEscada(){
+  ger++; limpa(); document.onkeydown=null;
+  var d=ESCADA[di];
+  if(!d){ fimDaPeca(); return; }
+  passo=1; erros=0; tiles=[]; posMuda=ondeMuda(d.de,d.para);
+  var t=el("div","tela"); telaAtual=t; setProg(t, Math.round(di*100/ESCADA.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",TITULO));
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:
+    "Troque <b>uma letra</b> e a palavra vira outra. Que letra muda?";
+  c.appendChild(el("div","balao",_enun));
+
+  /* a palavra ATUAL, letra a letra (passo 1: toque na que muda) */
+  var pal=el("div","palavra"), i;
+  for(i=0;i<d.de.length;i++){(function(k){
+    var q=el("div","lt",d.de.charAt(k));
+    q.setAttribute("data-qa", k===posMuda ? "1" : "0");
+    q.onclick=function(){ tocaLetra(k,q); };
+    pal.appendChild(q); tiles.push(q);
+  })(i);}
+  c.appendChild(pal);
+
+  /* o ALVO: a palavra nova, sem estar escrita — figura, alto-falante e pista */
+  var al=el("div","alvo","");
+  if(d.fig&&figEl){ var f=el("div","afig",""); f.appendChild(figEl(d.fig)); al.appendChild(f); }
+  var lin=el("div","alin","");
+  lin.appendChild(el("span","apista","A palavra nova: "+(d.pista||"")));
+  var z=el("button","zap",""); z.type="button"; z.setAttribute("aria-label","Ouvir a palavra nova");
+  z.setAttribute("data-voz",d.voz||d.para); z.appendChild(el("i","fone",""));
+  z.onclick=function(ev){ var e=ev||window.event; if(e&&e.stopPropagation) e.stopPropagation();
+    sTap(); fala(d.voz||d.para); z.className="zap tocando"; setTimeout(function(){ z.className="zap"; },900); return false; };
+  lin.appendChild(z);
+  al.appendChild(lin);
+  c.appendChild(al);
+
+  escEl=el("div","escolhas",""); c.appendChild(escEl);
+  degrausEl=el("div","degraus",""); c.appendChild(degrausEl);
+  pintaEscada(d.de);
+  c.appendChild(el("div","hint","Ou&#231;a a palavra nova. Toque na letra que muda; depois escolha a letra nova (ou digite no teclado)."));
+  t.appendChild(c); app.appendChild(t);
+  /* a palavra nova e dita ao abrir o degrau: ouvir antes de mexer, sem custo */
+  var meu=ger; setTimeout(function(){ if(meu===ger&&viva()) fala(d.voz||d.para); },500);
+}
+function pintaEscada(atual){
+  var i; degrausEl.innerHTML="";
+  for(i=0;i<di;i++) degrausEl.appendChild(el("div","degrau",ESCADA[i].de));
+  degrausEl.appendChild(el("div","degrau agora",atual));
+}
+
+/* ---- passo 1: qual letra muda? ---- */
+function tocaLetra(k,q){
+  if(passo!==1) { sTap(); return; }
+  var d=ESCADA[di];
+  if(k===posMuda){
+    sTap(); q.className="lt sel";
+    var i; for(i=0;i<tiles.length;i++) tiles[i].removeAttribute("data-qa");
+    apagaDica();
+    passo=2; erros=0;
+    montaEscolhas();
+    return;
+  }
+  sErro(); erros++;
+  q.className="lt treme"; setTimeout(function(){ if(q.className.indexOf("sel")<0) q.className="lt"; },340);
+  ajuda1(erros);
+}
+function ajuda1(n){
+  var d=ESCADA[di];
+  if(n===1){ mostraDica("Diga devagar: <b>"+d.de+"</b>... e a nova. Escute qual peda&#231;o ficou diferente."); fala(d.de); setTimeout(function(){ fala(d.voz||d.para); },900); }
+  else if(n===2){ mostraDica("A letra que muda est&#225; <b>piscando</b>. Toque nela."); tiles[posMuda].className="lt edp_pisca"; }
+  else { mostraDica("&#201; esta. Eu marquei para voc&#234;: agora escolha a letra nova."); tocaLetra(posMuda,tiles[posMuda]); }
+}
+
+/* ---- passo 2: a letra nova, entre tres ---- */
+function montaEscolhas(){
+  var d=ESCADA[di], certa=d.para.charAt(posMuda), ops=[certa], i, L;
+  var pool=LETRAS.split(""); baguncar(pool);
+  for(i=0;i<pool.length&&ops.length<3;i++){ L=pool[i]; if(L!==certa&&L!==d.de.charAt(posMuda)&&ops.indexOf(L)<0) ops.push(L); }
+  baguncar(ops);
+  escEl.innerHTML="";
+  for(i=0;i<ops.length;i++){(function(L){
+    var b=el("button","tecl",L); b.type="button";
+    b.setAttribute("data-qa", L===certa ? "1" : "0");
+    b.onclick=function(){ escolhe(L,b); };
+    escEl.appendChild(b);
+  })(ops[i]);}
+  /* ⭐ A SEGUNDA PORTA: o teclado de verdade (guarda: so enquanto esta tela vive) */
+  var t=telaAtual;
+  document.onkeydown=function(ev){
+    if(!t.parentNode){ document.onkeydown=null; return; }
+    if(passo!==2) return;
+    var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+    if(!/^[A-Z]$/.test(L)) return;
+    var bs=escEl.getElementsByClassName("tecl"), i, alvo=null;
+    for(i=0;i<bs.length;i++) if(bs[i].innerHTML===L) alvo=bs[i];
+    if(alvo) escolhe(L,alvo); else { sErro(); mostraDica("Essa letra n&#227;o est&#225; entre as tr&#234;s. Olhe as op&#231;&#245;es."); }
+  };
+}
+function escolhe(L,b){
+  if(passo!==2) return;
+  var d=ESCADA[di], certa=d.para.charAt(posMuda);
+  if(b.className.indexOf("no")>=0){ sTap(); return; }
+  if(L===certa){
+    passo=3; sCerto();
+    b.className="tecl rev";
+    tiles[posMuda].innerHTML=L; tiles[posMuda].className="lt nova";
+    apagaDica();
+    pintaEscada(d.para);
+    if(barraP) barraP.style.width=Math.round((di+1)*100/ESCADA.length)+"%";
+    /* a palavra NOVA e dita inteira: mudou uma letra, mudou a palavra */
+    fala(d.voz||d.para);
+    var meu=ger;
+    setTimeout(function(){
+      if(meu!==ger||!viva()) return;
+      di++;
+      if(di>=ESCADA.length) mostraBanner("Voc&#234; subiu a escada inteira: <b>"+ESCADA[0].de+"</b> virou <b>"+ESCADA[ESCADA.length-1].para+"</b>!", fimDaPeca);
+      else pecaEscada();
+    },1300);
+    return;
+  }
+  sErro(); erros++;
+  b.className="tecl no"; b.onclick=null;
+  ajuda2(erros, certa);
+}
+function ajuda2(n, certa){
+  var d=ESCADA[di];
+  if(n===1){ mostraDica("Ou&#231;a de novo a palavra nova e pense no <b>som</b> que entra no lugar."); fala(d.voz||d.para); }
+  else{
+    var bs=escEl.getElementsByClassName("tecl"), i;
+    for(i=0;i<bs.length;i++) if(bs[i].getAttribute("data-qa")==="1") bs[i].className="tecl edp_pisca";
+    mostraDica("A letra certa est&#225; <b>piscando</b>. Toque nela.");
+    if(n>=3){ for(i=0;i<bs.length;i++) if(bs[i].getAttribute("data-qa")==="1") escolhe(certa,bs[i]); }
+  }
+}
+function apagaDica(){ var x=document.getElementById("dicaP"); if(x&&x.parentNode) x.parentNode.removeChild(x); }
+
+function fimDaPeca(){
+  ger++; limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal","&#9733;"));
+  c.appendChild(el("div","balao","Esta &#233; a pe&#231;a <b>ESCADA DE PALAVRAS</b>: muda uma letra, muda a palavra."));
+  var b=el("button","btn","Jogar de novo"); b.onclick=function(){ di=0; pecaEscada(); }; c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+    if(f && f.dados) ESCADA = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.LETRAS !== undefined) LETRAS = _d.LETRAS;
+      if(_d.TITULO !== undefined) TITULO = _d.TITULO;
+    }
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    pecaEscada();
+  })();
+};
+
 /* ==== PECA: escolher ==== */
 MEC["escolher"] = function(f, cen, fim){
   cen.className = cen.className + " mec-escolher";
@@ -20242,6 +20544,8 @@ function pecaJuntar(){
   /* a FIGURA diz qual palavra é — a criança de 6 anos não lê */
   var fg=el("div","js_jsFig");
   if(figEl && figDe(r)){ fg.appendChild(figEl(figDe(r))); }
+  /* ⭐ a figura RESPONDE ao toque e diz a palavra inteira (regras 6 e 13) */
+  fg.onclick=function(){ sTap(); voz(r.pal); };
   else { fg.appendChild(el("div","semfig", r.pal)); }
   c.appendChild(fg);
   c.appendChild(ouvidos(r));
@@ -20997,6 +21301,337 @@ function fimDaPeca(){
     }
     try{ fimDaPeca = _seguir; }catch(_e){}
     telaLabirinto();
+  })();
+};
+
+/* ==== PECA: ler-e-fazer ==== */
+MEC["ler-e-fazer"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-ler-e-fazer";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ⚠️ O ASSUNTO DO EXEMPLO NAO PODE MORAR NO BALAO (licao ago/2026): a
+   crianca de outra atividade lia a historia de outra aula. O texto vira
+   GAVETA, com um padrao neutro que serve a qualquer conteudo — e assim o
+   aviso de "gaveta com conteudo de exemplo" passa a cobrir este caso. */
+var ENUN="Leia o pedido e fa&#231;a o que ele diz.";
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `TAREFAS` (e as
+   COISAS da cena). Cada tarefa: `txt` = o pedido ESCRITO (curto, caixa alta nas
+   palavras-chave, uma linha); `alvos` = as coisas a tocar, NA ORDEM. Comece com
+   um passo; suba para dois ("... e depois ..."). `ouvir:true` mostra o
+   alto-falante desde o começo (para quem ainda está no comecinho da leitura). */
+var TAREFAS=[
+ {txt:"Toque na <b>BORBOLETA</b>.", alvos:["borb"]},
+ {txt:"Toque no <b>CARACOL</b>.", alvos:["cara"]},
+ {txt:"Toque no <b>PASSARINHO</b> e depois na <b>JOANINHA</b>.", alvos:["pass","joan"]}
+];
+/* A GRADE: 6 colunas x 5 linhas. Cada coisa e um mapa de BITS sobre ela; o
+   desenho e posicionado pelo BBOX do proprio mapa (zona = figura, por construcao). */
+var GC=6, GL=5;
+var COISAS=[ /*TECNICA*/
+ {k:"borb", n:"A BORBOLETA",
+  m:["110000","110000","000000","000000","000000"],
+  arte:'<i class="bo1"></i><i class="bo2"></i><i class="bo3"></i>'},
+ {k:"pass", n:"O PASSARINHO",
+  m:["000011","000011","000000","000000","000000"],
+  arte:'<i class="pa1"></i><i class="pa2"></i><i class="pa3"></i><i class="pa4"></i>'},
+ {k:"cara", n:"O CARACOL",
+  m:["000000","000000","000000","110000","110000"],
+  arte:'<i class="ca3"></i><i class="ca2"></i><i class="ca1"></i>'},
+ {k:"joan", n:"A JOANINHA",
+  m:["000000","000000","000000","000011","000011"],
+  arte:'<i class="jo1"></i><i class="jo2"></i><i class="jo3"></i><i class="jo4"></i>'}
+];
+
+var ti=0, pi=0, erros=0, progI=null, tarefaEl=null, passosEl=null, telaAtual=null, ger=0;
+/* a figura de IA vem do MOTOR (`imgEl`); na bancada nao existe e a coisa fica no
+   desenho de divs. Declarado aqui para viajar com a peca (o integrador confere). */
+var figEl = window.imgEl || null;
+var zapEl=null;
+
+function naZona(coisa,l,c){ return !!(coisa.m[l] && coisa.m[l].charAt(c)==="1"); }
+function coisaEm(l,c){ var i; for(i=0;i<COISAS.length;i++){ if(naZona(COISAS[i],l,c)) return COISAS[i]; } return null; }
+function coisaPorK(k){ var i; for(i=0;i<COISAS.length;i++){ if(COISAS[i].k===k) return COISAS[i]; } return null; }
+function bbox(m){ var l,c,l0=99,c0=99,l1=-1,c1=-1;
+  for(l=0;l<m.length;l++){ for(c=0;c<m[l].length;c++){ if(m[l].charAt(c)==="1"){
+    if(l<l0)l0=l; if(l>l1)l1=l; if(c<c0)c0=c; if(c>c1)c1=c; } } }
+  return {l0:l0,c0:c0,l1:l1,c1:c1}; }
+function semTag(t){ return String(t||"").replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){return String.fromCharCode(Number(n));}).replace(/\s+/g," ").replace(/^ | $/g,""); }
+/* a voz e do MOTOR (gravada); sozinha, a peca fica muda — e e leitura, entao esta certo */
+function le(txt){ var t=semTag(txt); if(t&&typeof diz==="function") diz(t); }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+
+function pecaLerFazer(){
+  ger++; limpa();
+  ti=0; pi=0; erros=0;
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","LEIA E FA&#199;A"));
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:ENUN;
+  c.appendChild(el("div","balao",_enun));
+
+  /* o PEDIDO escrito — fora do balao, para o motor NAO narrar */
+  tarefaEl=el("div","tarefa","");
+  c.appendChild(tarefaEl);
+  passosEl=el("div","passos","");
+  c.appendChild(passosEl);
+
+  var cena=el("div","cena");
+  cena.appendChild(el("div","grama")); cena.appendChild(el("div","lef_sol")); cena.appendChild(el("div","nuvem"));
+  cena.appendChild(el("div","arvt")); cena.appendChild(el("div","arvc"));
+  cena.appendChild(el("div","flor1")); cena.appendChild(el("div","flor2"));
+  var i,l,cc,co,b,d;
+  for(i=0;i<COISAS.length;i++){
+    co=COISAS[i]; b=bbox(co.m);
+    if(co.img&&figEl){ d=el("div","coisa",""); d.appendChild(figEl(co.img)); }
+    else d=el("div","coisa",co.arte||"");
+    d.style.left=(b.c0*100/GC)+"%"; d.style.top=(b.l0*100/GL)+"%";
+    d.style.width=((b.c1-b.c0+1)*100/GC)+"%"; d.style.height=((b.l1-b.l0+1)*100/GL)+"%";
+    co.el=d; co.cels=[];
+    cena.appendChild(d);
+  }
+  var g=el("div","gradecena");
+  for(l=0;l<GL;l++){ for(cc=0;cc<GC;cc++){
+    var z=el("div","lef_zona");
+    z.style.left=(cc*100/GC)+"%"; z.style.top=(l*100/GL)+"%";
+    z.style.width=(100/GC)+"%"; z.style.height=(100/GL)+"%";
+    co=coisaEm(l,cc); if(co) co.cels.push(z);
+    z.onclick=(function(ll,ccc,cel){ return function(){ tocar(ll,ccc,cel); }; })(l,cc,z);
+    g.appendChild(z);
+  } }
+  cena.appendChild(g);
+  c.appendChild(cena);
+  c.appendChild(el("div","hint","Leia o pedido. Depois toque na cena. Errou? A ajuda vem: primeiro o alto-falante, depois eu leio para voc&#234;."));
+  t.appendChild(c); app.appendChild(t);
+  mostraTarefa();
+}
+
+/* a tarefa da vez: texto escrito, lista de passos, data-qa so no passo da vez */
+function mostraTarefa(){
+  var tf=TAREFAS[ti], i, k, co, ch;
+  erros=0; zapEl=null;
+  tarefaEl.innerHTML="";
+  tarefaEl.appendChild(el("span","ttxt",tf.txt));
+  if(tf.ouvir) poeZapTarefa();
+  passosEl.innerHTML="";
+  if(tf.alvos.length>1){
+    for(i=0;i<tf.alvos.length;i++){
+      co=coisaPorK(tf.alvos[i]);
+      ch=el("div","passo"+(i<pi?" feito":(i===pi?" agora":"")),(i+1)+"&#186; "+(co?co.n:tf.alvos[i]));
+      passosEl.appendChild(ch);
+    }
+  }
+  marcaQA();
+  if(progI) progI.style.width=Math.round(ti*100/TAREFAS.length)+"%";
+}
+function marcaQA(){
+  var tf=TAREFAS[ti], alvo=tf?coisaPorK(tf.alvos[pi]):null, i, j;
+  for(i=0;i<COISAS.length;i++){
+    for(j=0;j<COISAS[i].cels.length;j++){
+      if(alvo&&COISAS[i]===alvo) COISAS[i].cels[j].setAttribute("data-qa","1");
+      else COISAS[i].cels[j].removeAttribute("data-qa");
+    }
+  }
+}
+/* o alto-falante do pedido: 2o gesto, aparece no 1o erro (ou com `ouvir:true`) */
+function poeZapTarefa(){
+  if(zapEl) return;
+  var tf=TAREFAS[ti], z=el("button","zap",""); z.type="button";
+  z.setAttribute("aria-label","Ouvir o pedido"); z.setAttribute("data-voz",semTag(tf.txt));
+  z.appendChild(el("i","fone",""));
+  z.onclick=function(ev){ var e=ev||window.event; if(e&&e.stopPropagation) e.stopPropagation();
+    sTap(); le(tf.txt); z.className="zap tocando"; setTimeout(function(){ z.className="zap"; },900); return false; };
+  tarefaEl.appendChild(z); zapEl=z;
+}
+
+function tocar(l,c,cel){
+  var tf=TAREFAS[ti]; if(!tf) return;
+  var co=coisaEm(l,c), alvo=coisaPorK(tf.alvos[pi]);
+  if(co&&co===alvo){ acertouPasso(co); return; }
+  sErro(); erros++;
+  cel.className="lef_zona treme";
+  setTimeout((function(z){ return function(){ if(z.className.indexOf("lef_pisca")<0) z.className="lef_zona"; }; })(cel),400);
+  /* tocou um alvo de DEPOIS: a ordem e o conteudo — a ajuda diz isso */
+  if(co&&tf.alvos.indexOf(co.k)>pi){ mostraDica("Esse vem <b>depois</b>. Leia de novo: qual &#233; o <b>primeiro</b>?"); return; }
+  ajuda(erros);
+}
+function acertouPasso(co){
+  var tf=TAREFAS[ti];
+  sCerto();
+  var v=el("div","vok","&#10003;"); co.el.appendChild(v);
+  setTimeout((function(x){ return function(){ if(x.parentNode) x.parentNode.removeChild(x); }; })(v),1100);
+  pi++;
+  apagaDica();
+  if(pi>=tf.alvos.length){
+    /* tarefa feita: a peca LE o pedido feito uma vez (fecha o ciclo ler -> fazer -> ouvir) */
+    le(tf.txt);
+    var meu=ger;
+    setTimeout(function(){
+      if(meu!==ger||!viva()) return;
+      ti++; pi=0;
+      if(ti>=TAREFAS.length){ if(progI) progI.style.width="100%"; fim(); }
+      else mostraTarefa();
+    },1000);
+  } else mostraTarefa();
+}
+/* O ANDAIME (a voz e o 2o degrau — ler e o conteudo, entao ela nao vem de graca):
+   1) alto-falante aparece  2) a peca le o pedido  3) a zona pisca  4) executa e segue */
+function ajuda(n){
+  var tf=TAREFAS[ti], alvo=coisaPorK(tf.alvos[pi]);
+  if(!alvo) return;
+  if(n===1){ poeZapTarefa(); mostraDica("Leia de novo, <b>devagar</b>. Se quiser ouvir, toque no alto-falante."); }
+  else if(n===2){ le(tf.txt); mostraDica("Ou&#231;a o pedido e olhe a cena."); }
+  else if(n===3){ pisca(alvo); mostraDica("Est&#225; piscando o lugar certo. Toque ali."); }
+  else { mostraDica("Vou fazer este para voc&#234;: <b>"+alvo.n+"</b>. O pr&#243;ximo &#233; seu."); acertouPasso(alvo); }
+}
+function pisca(co){
+  var i; for(i=0;i<co.cels.length;i++) co.cels[i].className="lef_zona lef_pisca";
+  setTimeout((function(cs){ return function(){ var k; for(k=0;k<cs.length;k++) cs[k].className="lef_zona"; }; })(co.cels),1900);
+}
+function apagaDica(){ var d=document.getElementById("dicaP"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
+
+function fim(){
+  var meu=ger;
+  setTimeout(function(){ if(meu!==ger) return;
+    mostraBanner('<b>Voc&#234; leu e fez!</b><br>Todos os pedidos cumpridos.', fimDaPeca); },500);
+}
+/* o fim NA BANCADA (dentro da atividade o integrador troca por "seguir") */
+function fimDaPeca(){
+  ger++; limpa();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal","&#9733;"));
+  c.appendChild(el("div","balao","Esta &#233; a pe&#231;a <b>LER E FAZER</b>: o pedido vem escrito e a voz s&#243; ajuda depois."));
+  var b=el("button","btn","Jogar de novo"); b.onclick=pecaLerFazer; c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+    if(f && f.dados) TAREFAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.COISAS !== undefined) COISAS = _d.COISAS;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+    }
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    pecaLerFazer();
   })();
 };
 
@@ -23778,6 +24413,348 @@ function fimMapa(){
   })();
 };
 
+/* ==== PECA: marcar-varias ==== */
+MEC["marcar-varias"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-marcar-varias";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      /* ⚠️⚠️ LICAO PAGA (Teatro, ago/2026), o Marcos jogando: uma fase fechava
+         com um "QUADRADO GRANDE desconfigurado" em vez do aviso fininho das
+         outras. Causa: 7 pecas (pintar, pintar-canvas, memoria, sete-erros,
+         achar-na-cena, camadas-mapa, tracar-caminho) mandam no aviso de fim
+         `<div class="medal">★</div>`. No motor a `.medal` e a MEDALHA DE 190px
+         do FIM da atividade (imagem do mascote), entao o motor inflava aquilo
+         num quadradao verde vazio com uma estrelinha. O aviso de FASE nao leva
+         medalha — o motor ja comemora com confete. Tiro a medalha do aviso de
+         fase aqui (conserto central: pega as 7 de uma vez). */
+      if(msg) msg = msg.replace(/<div[^>]*class=["']?[^"'>]*medal[^"'>]*["']?[^>]*>[\s\S]*?<\/div>/gi, "");
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem ouviu: *"onde tenho que
+       ouvir a palavra nao funciona; o enunciado funciona, os sons das opcoes
+       funcionam"*. So o botao OUVIR A PALAVRA era mudo.
+       A causa: a peca sozinha nao tem gravacao nenhuma, entao ela fala pela
+       VOZ ROBO do navegador (`speechSynthesis`). No PC da escola essa voz
+       simplesmente nao existe (nao ha voz pt-BR instalada) — e falha CALADA,
+       sem erro nenhum. O enunciado e as opcoes funcionavam porque passam pelo
+       motor, que toca MP3 gravado.
+       Aqui a ponte reaponta o `diz` da peca para a voz da casa. A conta da
+       chave ignora maiusculas (`chaveVoz` faz `toLowerCase`), entao a palavra
+       "pao" acha a gravacao feita para "PAO" — a mesma que o alto-falante da
+       opcao ja usa. So cai na voz do navegador se nao houver gravacao. */
+    var diz = function(txt){
+      try{
+        /* ⚠️⚠️ LICAO PAGA (ago/2026), e foi o Marcos quem OUVIU: *"o da padaria
+           agora e falado duas vezes juntos, soa estranho"*.
+           Varias pecas ganharam, no mesmo dia, a boa ideia de NARRAR SOZINHAS ao
+           abrir — porque na bancada, sem motor, a fase ficava muda. So que dentro
+           da atividade quem narra o balao e o MOTOR, sempre narrou. As duas vozes
+           partiam juntas e se atropelavam.
+           A peca nao tem como saber se esta na bancada ou na atividade; quem sabe
+           e a ponte. Entao e AQUI que se decide: se o texto pedido e o mesmo que o
+           motor ja esta dizendo (ou acabou de dizer, na meia janela de abertura da
+           fase), a peca cala — o motor ja cumpriu o pedido dela. Qualquer outra
+           fala (a palavra, a silaba, a dica) passa normalmente. */
+        var _limpa = function(s){ return String(s||"").replace(/<[^>]*>/g," ")
+          .replace(/&[a-z]+;|&#\d+;/gi," ").replace(/\s+/g," ").trim().toLowerCase(); };
+        var _agora = _limpa(txt);
+        if(_agora && window.__dizMotor && window.__dizMotor === _agora) return;
+        try{
+          var _b = document.getElementsByClassName("balao")[0];
+          if(_b && _limpa(_b.textContent) === _agora){
+            window.__dizMotor = _agora;
+            setTimeout(function(){ window.__dizMotor = null; }, 1200);
+            return;
+          }
+        }catch(_e){}
+        var k = (typeof temVoz === "function") ? temVoz(txt) : null;
+        if(k && typeof tocaVoz === "function"){ tocaVoz(k); return; }
+        if(!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+        var u = new SpeechSynthesisUtterance(txt);
+        u.lang = "pt-BR"; u.rate = .9; u.pitch = 1.05;
+        window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+      }catch(e){}
+    };
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (partes da planta, 8 anos). Ao copiar a peça para
+   uma atividade, troque APENAS este bloco de dados: pergunta, a certa, as
+   erradas e as TRÊS dicas (dica -> apoio concreto -> revela).                */
+/* ⚠️ TRÊS DISTRATORES, não dois. Com só 3 opções na tela a criança elimina as
+   duas erradas e o 3º degrau do andaime (o de REVELAR) nunca acontece — o
+   apoio concreto ficava sendo o último. Quatro opções é o mínimo para o
+   andaime dica -> apoio -> revela existir de verdade.                      */
+/* ⭐ CADA OPÇÃO PODE SER PALAVRA **OU** PALAVRA COM FIGURA (ago/2026):
+     "A RAIZ"                                    <- como sempre foi
+     {t:"A RAIZ", img:"pl_raiz", voz:"a raiz"}   <- com apoio visual
+   · `t`   = a palavra que a criança lê (obrigatória);
+   · `img` = o nome da arte de IA, sem a pasta e sem o `.png` (OPCIONAL);
+   · `voz` = o que o alto-falante diz, quando é diferente da palavra escrita
+             (OPCIONAL — sem ele, fala a própria palavra).
+   Sem `img` nada muda: nenhuma atividade que já usa esta peça quebra.     */
+var TITULO="MARQUE TODAS AS CERTAS";   /* ⚠️ padrao NEUTRO: quem nao preencher
+   a gaveta recebe isto. Ja esteve "PARTES DA PLANTA" e chegou assim a
+   criancas em 11 atividades — inclusive numa de DIVISAO, que fechava a fase
+   dizendo que ela conhecia as partes da planta. O exemplo do quiz da planta
+   continua logo abaixo, no vetor QZ, para ensinar o formato. */
+var FECHO="Voc&#234; marcou todas as certas!";
+/* ⭐ SÓ IMAGEM (escolha do Marcos, ago/2026): quando a opção é a FIGURA na
+   moldura de vidro, dá para esconder a PALAVRA embaixo e deixar só o desenho +
+   o alto-falante (a criança toca e ouve o nome). Opcional; por padrão a palavra
+   fica. Ligar por `dadosExtra:{SOIMG:true}`. O alto-falante NUNCA sai (regra da
+   casa: toda resposta tocável fala). */
+var SOIMG=false; /*TECNICA*/
+var QZ=[
+ /* `cs` = as CERTAS (2 a 3); `e` = as erradas; 4 a 6 opcoes no total. Cada
+    opcao e palavra ("A RAIZ") ou {t, img, voz}. `d` = as TRES dicas do andaime. */
+ {p:"Marque <b>todas</b> as partes da planta que ficam <b>em cima</b> da terra.",
+  cs:[{t:"A FOLHA",voz:"a folha"},{t:"A FLOR",voz:"a flor"},{t:"O CAULE",voz:"o caule"}],
+  e:[{t:"A RAIZ",voz:"a raiz"},{t:"A SEMENTE",voz:"a semente"}],
+  d:["Pense no que voc&#234; V&#202; quando olha uma planta no jardim.",
+     "As que faltam est&#227;o <b>piscando</b>. Toque nelas.",
+     "Eram estas. Est&#227;o acesas: toque para seguir."]},
+ {p:"Marque <b>todas</b> as coisas de que a planta precisa para crescer.",
+  cs:["&#193;GUA","LUZ DO SOL"],
+  e:["PEDRA","VIDRO","FUMA&#199;A"],
+  d:["O que a gente d&#225; para a planta todo dia? E o que vem do c&#233;u de manh&#227;?",
+     "As que faltam est&#227;o <b>piscando</b>.",
+     "Eram estas. Toque nelas para seguir."]}
+];
+
+var qi=0, err=0, ger=0;
+var marcadas=0, total=0, faltamEl=null;
+var figEl = window.imgEl || null;
+
+/* ⚠️⚠️ A VOZ É GRAVADA, SEMPRE. Dentro da atividade montada a ponte do
+   integrador REAPONTA este `diz` para o mp3 da casa (Edge TTS) — ele é
+   declaração de função, então o `var diz = function(...)` da ponte, que roda
+   antes do corpo da peça, toma o lugar dele. Sozinha, na bancada, a peça fica
+   calada de propósito: voz-robô do navegador nunca vai para a criança (foi por
+   ela que o botão mais importante da `ouvir-achar` ficou mudo no PC da escola,
+   e é o que o portão `_qa/vozrobo.py` mede). */
+function diz(txt){
+  if(!txt) return;
+  if(typeof window.temVoz!=="function"||typeof window.tocaVoz!=="function") return;
+  var k=window.temVoz(txt);
+  if(k) window.tocaVoz(k);
+}
+function sPing(){ nota(880,.09,.12,"triangle",0); }
+
+/* uma opção pode ser PALAVRA ou {t,img,voz} — aqui as duas viram a mesma
+   coisa, para o resto da peça não precisar saber a diferença. */
+function opcao(x){
+  if(x&&typeof x==="object")
+    return {t:x.t||"", img:x.img||null, voz:x.voz||x.t||""};
+  return {t:String(x), img:null, voz:String(x)};
+}
+
+/* ⭐ O ALTO-FALANTE DA RESPOSTA.
+   ⚠️ ele NÃO escolhe: só fala. Sem parar o evento aqui, tocar no alto-falante
+   valia como resposta — e a criança que só queria conferir a palavra levava um
+   erro. Defeito já pago em atividade de verdade. */
+function fazZap(txt,rot){
+  var z=el("button","zap","");
+  z.type="button";
+  z.setAttribute("aria-label","Ouvir "+(rot||txt));
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    if(e.preventDefault) e.preventDefault();
+    sPing(); diz(txt);
+    z.className="zap tocando";
+    setTimeout(function(){ z.className="zap"; },900);
+    return false;
+  };
+  return z;
+}
+
+
+function pecaMarcar(){
+  var f=QZ[qi];
+  if(!f){ fimDaPeca(); return; }
+  err=0; ger++; marcadas=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(qi*100/QZ.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",TITULO));
+  if(f.img&&figEl){ var qf=el("div","qfig",""); qf.appendChild(figEl(f.img)); c.appendChild(qf); }
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:f.p;
+  c.appendChild(el("div","balao",f.p));
+  var lista=[], i;
+  total=f.cs.length;
+  for(i=0;i<f.cs.length;i++) lista.push({op:opcao(f.cs[i]),ok:1});
+  for(i=0;i<f.e.length;i++) lista.push({op:opcao(f.e[i]),ok:0});
+  baguncar(lista);                          /* SEMPRE embaralhar */
+  var temfig=false;
+  for(i=0;i<lista.length;i++) if(lista[i].op.img&&figEl) temfig=true;
+  var box=el("div","opts"+(temfig?" comfigs":"")+(SOIMG&&temfig?" soimg":""));
+  for(i=0;i<lista.length;i++) box.appendChild(fazOpcao(lista[i]));
+  c.appendChild(box);
+  faltamEl=el("div","faltam",""); c.appendChild(faltamEl);
+  c.appendChild(el("div","hint","Pergunta "+(qi+1)+" de "+QZ.length+". Toque em <b>todas</b> as certas, uma de cada vez."));
+  t.appendChild(c);
+  app.appendChild(t);
+  placar();
+}
+function placar(){
+  var n=total-marcadas;
+  faltamEl.innerHTML = n>0 ? ("Faltam <b>"+n+"</b>"+(n===1?" certa":" certas")) : "Todas marcadas!";
+}
+function fazOpcao(it){
+  var p=it.op, comfig=!!(p.img&&figEl);
+  var o=el("div","opt"+(comfig?" comfig":""),"");
+  o.setAttribute("data-voz",p.voz);
+  if(comfig){ var g=el("div","opfig",""); g.appendChild(figEl(p.img)); o.appendChild(g); }
+  var ln=el("div","oplin","");
+  ln.appendChild(el("span","optxt",p.t));
+  ln.appendChild(fazZap(p.voz,p.t));
+  o.appendChild(ln);
+  /* data-qa="1" em TODA certa ainda nao marcada: e assim que o auditor-jogador
+     fecha a fase (ele toca uma a uma). A crianca nao ve diferenca nenhuma. */
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ responde(o,it.ok); };
+  return o;
+}
+function veste(o,estado){
+  var fig=(o.className.indexOf("comfig")>=0)?" comfig":"";
+  o.className="opt"+fig+(estado?" "+estado:"");
+}
+function responde(o,certa){
+  var f=QZ[qi];
+  if(o.className.indexOf(" no")>=0||o.className.indexOf(" sel")>=0){ sTap(); return; }
+  sTap();
+  if(certa){
+    veste(o,"sel");
+    o.appendChild(el("span","marca","&#10003;"));
+    o.removeAttribute("data-qa");
+    o.onclick=null;
+    marcadas++;
+    placar();
+    /* confirma em voz o que ela marcou (a resposta e o alto-falante da opcao) */
+    var _av=o.getAttribute("data-voz"); if(_av) diz(_av);
+    if(marcadas>=total){
+      sCerto();
+      var g=ger;
+      setTimeout(function(){
+        if(g!==ger) return;
+        qi++;
+        if(qi<QZ.length) pecaMarcar(); else mostraBanner(FECHO, fimDaPeca);
+      },900);
+    }
+    return;
+  }
+  /* ERRO NA HORA, SEM PUNIR: som grave, a opcao treme e sai do alcance, o andaime cresce */
+  sErro();
+  veste(o,"no");
+  o.onclick=null;
+  err++;
+  if(err===1) mostraDica(f.d[0]);
+  else if(err===2){ mostraDica(f.d[1]); piscaFaltantes(); }
+  else { mostraDica(f.d[2]); revela(); }
+}
+function piscaFaltantes(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) if(a[i].getAttribute("data-qa")==="1") a[i].className=a[i].className+" mv_pisca";
+  var g=ger;
+  setTimeout(function(){ if(g!==ger) return; var b=app.getElementsByClassName("opt"), k;
+    for(k=0;k<b.length;k++) b[k].className=b[k].className.replace(" mv_pisca",""); },2200);
+}
+/* 3o erro: as que faltam ACENDEM e ficam clicaveis — a crianca so toca; nunca trava */
+function revela(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) if(a[i].getAttribute("data-qa")==="1"){
+    veste(a[i],"rev");
+    if(a[i].getElementsByClassName("marca").length===0) a[i].appendChild(el("span","marca","&#233; esta"));
+  }
+}
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; respondeu as "+QZ.length+" perguntas."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ qi=0; pecaMarcar(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a MARCAR V&#193;RIAS: mais de uma certa, erro que ajuda."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+    if(f && f.dados) QZ = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.TITULO !== undefined) TITULO = _d.TITULO;
+      if(_d.FECHO !== undefined) FECHO = _d.FECHO;
+      if(_d.SOIMG !== undefined) SOIMG = _d.SOIMG;
+    }
+    try{ fimDaPeca = _seguir; }catch(_e){}
+    pecaMarcar();
+  })();
+};
+
 /* ==== PECA: medir ==== */
 MEC["medir"] = function(f, cen, fim){
   cen.className = cen.className + " mec-medir";
@@ -24866,11 +25843,13 @@ function pecaMemoria(){
      toda vez que ele muda, e trocar o texto para avisar da espiada faria a voz
      falar duas coisas seguidas. O aviso da espiada vai no `.hint`.          */
   /* balão conforme o modo: par de imagens (1º ano) x palavra×significado */
-  var soImg=true, _pi;
-  for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; break; } }
-  c.appendChild(el("div","balao", soImg
+  var soImg=true, temSom=false, _pi;
+  for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; } if(PARES[_pi].som) temSom=true; }
+  c.appendChild(el("div","balao", temSom
+    ? "Ache a <b>figura</b> e o <b>som</b> que combinam."
+    : (soImg
     ? "Ache as <b>figuras iguais</b>."
-    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>."));
+    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>.")));
 
   /* monta as 8 cartas: metade palavra, metade significado.
      Cada uma leva a SUA figura — as duas do par sao desenhos diferentes. */
@@ -24879,8 +25858,17 @@ function pecaMemoria(){
   for(i=0;i<PARES.length;i++){
     cartas.push({k:PARES[i].k,tipo:"pal",txt:PARES[i].pal,
                  fig:PARES[i].fig,img:PARES[i].img,voz:PARES[i].voz||PARES[i].pal});
-    cartas.push({k:PARES[i].k,tipo:"sen",txt:PARES[i].sen,
-                 fig:PARES[i].figsen,img:PARES[i].imgsen,voz:PARES[i].vozsen||PARES[i].sen});
+    /* ⭐ MEMORIA DE SONS (set/2026, EdiLIM "memoria de sonidos"; ALFABETIZACAO §6
+       item 4): com `som:true` a segunda carta do par NAO tem texto nem figura — e
+       um alto-falante grande; virar toca a voz (`vozsen` ou a propria palavra) e a
+       crianca casa o que OUVE com o que VE. Sem `som`, tudo como sempre foi. */
+    if(PARES[i].som){
+      cartas.push({k:PARES[i].k,tipo:"som",txt:"",fig:"",img:"",
+                   voz:PARES[i].vozsen||PARES[i].voz||PARES[i].pal});
+    } else {
+      cartas.push({k:PARES[i].k,tipo:"sen",txt:PARES[i].sen,
+                   fig:PARES[i].figsen,img:PARES[i].imgsen,voz:PARES[i].vozsen||PARES[i].sen});
+    }
   }
   baguncar(cartas);
 
@@ -24939,7 +25927,7 @@ function fazCarta(o){
      ⭐ tpal = carta com FOTO+palavra; tsen = carta-LEGENDA (so a frase). O tipo
      vira classe para a legenda ganhar cara de legenda de jornal (ver CSS) em
      vez de parecer "imagem faltando" (o Marcos pegou, ago/2026). */
-  var d=el("div","mcarta m2_vira "+(o.tipo==="pal"?"tpal":"tsen"));
+  var d=el("div","mcarta m2_vira "+(o.tipo==="pal"?"tpal":(o.tipo==="som"?"tsom":"tsen")));
   d.setAttribute("data-qa",o.k);          /* para o auditor conferir os pares */
   /* ⭐ QUEM SABE O QUE A VOZ DEVE DIZER E A PECA (mesma licao do `ouvir-achar`):
      o motor montaria a chave a partir do texto visivel, e aqui dentro ha a
@@ -24956,7 +25944,14 @@ function fazCarta(o){
      carta so-palavra fica LIMPA, sem caixa de figura vazia (era "imagem
      faltando"). As memorias palavra×significado seguem iguais (tem os dois). */
   var temFig=(o.img && typeof imgEl==="function")||(o.fig && ARTE[o.fig]);
-  if(temFig) cnt.appendChild(figuraDe(o));
+  if(o.tipo==="som"){
+    /* a carta-SOM: um alto-falante grande no lugar de texto e figura — a
+       resposta dela e o que a crianca OUVE ao virar */
+    var sg=el("div","msomg",""); sg.appendChild(el("i","fone msomf",""));
+    sg.appendChild(el("div","msomt","OU&#199;A"));
+    cnt.appendChild(sg);
+  }
+  else if(temFig) cnt.appendChild(figuraDe(o));
   if(o.txt){
     var et=(o.tipo==="pal")?"PALAVRA":"QUER DIZER";
     var tx=el("div",(o.tipo==="pal")?"mtxt":"mtxt msent",
@@ -24975,7 +25970,7 @@ function fazCarta(o){
      ("MALA"). O alto-falante pedia a gravacao de "PALAVRAMALA", que nunca
      existiu. A peca sabe o que quer dizer: ela tem que DECLARAR. */
   z.setAttribute("data-voz", o.voz);
-  z.setAttribute("aria-label","Ouvir "+o.txt);
+  z.setAttribute("aria-label","Ouvir "+(o.txt||o.voz||""));
   z.onclick=(function(carta){ return function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;

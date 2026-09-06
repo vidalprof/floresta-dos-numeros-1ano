@@ -184,7 +184,10 @@ function solta(){ if(!pintando)return; pintando=false; if(mudou)salva(); else un
 cv.addEventListener("mousedown",function(e){ comeca(e.clientX,e.clientY); e.preventDefault(); });
 window.addEventListener("mousemove",function(e){ move(e.clientX,e.clientY); });
 window.addEventListener("mouseup",solta);
-cv.addEventListener("touchstart",function(e){ var t=e.touches[0]; comeca(t.clientX,t.clientY); if(e.cancelable)e.preventDefault(); },{passive:false});
+/* ⚠️ NUNCA preventDefault no touchstart (regra da casa, pego DUAS vezes pelo Marcos):
+   ele mata o toque no celular. Quem impede a tela de rolar enquanto pinta e o
+   `touch-action:none` do canvas (CSS) + o preventDefault do touchMOVE, logo abaixo. */
+cv.addEventListener("touchstart",function(e){ var t=e.touches[0]; comeca(t.clientX,t.clientY); },{passive:true});
 cv.addEventListener("touchmove",function(e){ var t=e.touches[0]; move(t.clientX,t.clientY); if(e.cancelable)e.preventDefault(); },{passive:false});
 window.addEventListener("touchend",solta);
 

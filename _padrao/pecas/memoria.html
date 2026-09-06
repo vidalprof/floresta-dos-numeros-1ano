@@ -278,6 +278,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    todo alvo mostra que o toque PEGOU. Brilho leve, sem mexer no tamanho — assim
    nao desloca zona de soltar nem peca arrastada. Medido pelo leiaute.js (regra 11). */
 .mcarta:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+/* ⭐ MEMORIA DE SONS: a carta-som e um alto-falante grande (forma, nao so cor) */
+.mcarta.tsom .msomg{text-align:center;padding-top:8px}
+.mcarta.tsom .msomf{display:block;width:54px;height:54px;margin:0 auto;
+     background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M15.6 5a7.4 7.4 0 0 1 0 10'/%3E%3C/svg%3E") center center no-repeat;
+     -webkit-background-size:54px 54px;background-size:54px 54px}
+.mcarta.tsom .msomt{font-size:13px;font-weight:800;letter-spacing:1px;color:#5a4408;margin-top:4px}
 </style></head>
 <body>
 <div id="app"></div>
@@ -513,11 +519,13 @@ function pecaMemoria(){
      toda vez que ele muda, e trocar o texto para avisar da espiada faria a voz
      falar duas coisas seguidas. O aviso da espiada vai no `.hint`.          */
   /* balão conforme o modo: par de imagens (1º ano) x palavra×significado */
-  var soImg=true, _pi;
-  for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; break; } }
-  c.appendChild(el("div","balao", soImg
+  var soImg=true, temSom=false, _pi;
+  for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; } if(PARES[_pi].som) temSom=true; }
+  c.appendChild(el("div","balao", temSom
+    ? "Ache a <b>figura</b> e o <b>som</b> que combinam."
+    : (soImg
     ? "Ache as <b>figuras iguais</b>."
-    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>."));
+    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>.")));
 
   /* monta as 8 cartas: metade palavra, metade significado.
      Cada uma leva a SUA figura — as duas do par sao desenhos diferentes. */
@@ -526,8 +534,17 @@ function pecaMemoria(){
   for(i=0;i<PARES.length;i++){
     cartas.push({k:PARES[i].k,tipo:"pal",txt:PARES[i].pal,
                  fig:PARES[i].fig,img:PARES[i].img,voz:PARES[i].voz||PARES[i].pal});
-    cartas.push({k:PARES[i].k,tipo:"sen",txt:PARES[i].sen,
-                 fig:PARES[i].figsen,img:PARES[i].imgsen,voz:PARES[i].vozsen||PARES[i].sen});
+    /* ⭐ MEMORIA DE SONS (set/2026, EdiLIM "memoria de sonidos"; ALFABETIZACAO §6
+       item 4): com `som:true` a segunda carta do par NAO tem texto nem figura — e
+       um alto-falante grande; virar toca a voz (`vozsen` ou a propria palavra) e a
+       crianca casa o que OUVE com o que VE. Sem `som`, tudo como sempre foi. */
+    if(PARES[i].som){
+      cartas.push({k:PARES[i].k,tipo:"som",txt:"",fig:"",img:"",
+                   voz:PARES[i].vozsen||PARES[i].voz||PARES[i].pal});
+    } else {
+      cartas.push({k:PARES[i].k,tipo:"sen",txt:PARES[i].sen,
+                   fig:PARES[i].figsen,img:PARES[i].imgsen,voz:PARES[i].vozsen||PARES[i].sen});
+    }
   }
   baguncar(cartas);
 
@@ -586,7 +603,7 @@ function fazCarta(o){
      ⭐ tpal = carta com FOTO+palavra; tsen = carta-LEGENDA (so a frase). O tipo
      vira classe para a legenda ganhar cara de legenda de jornal (ver CSS) em
      vez de parecer "imagem faltando" (o Marcos pegou, ago/2026). */
-  var d=el("div","mcarta vira "+(o.tipo==="pal"?"tpal":"tsen"));
+  var d=el("div","mcarta vira "+(o.tipo==="pal"?"tpal":(o.tipo==="som"?"tsom":"tsen")));
   d.setAttribute("data-qa",o.k);          /* para o auditor conferir os pares */
   /* ⭐ QUEM SABE O QUE A VOZ DEVE DIZER E A PECA (mesma licao do `ouvir-achar`):
      o motor montaria a chave a partir do texto visivel, e aqui dentro ha a
@@ -603,7 +620,14 @@ function fazCarta(o){
      carta so-palavra fica LIMPA, sem caixa de figura vazia (era "imagem
      faltando"). As memorias palavra×significado seguem iguais (tem os dois). */
   var temFig=(o.img && typeof imgEl==="function")||(o.fig && ARTE[o.fig]);
-  if(temFig) cnt.appendChild(figuraDe(o));
+  if(o.tipo==="som"){
+    /* a carta-SOM: um alto-falante grande no lugar de texto e figura — a
+       resposta dela e o que a crianca OUVE ao virar */
+    var sg=el("div","msomg",""); sg.appendChild(el("i","fone msomf",""));
+    sg.appendChild(el("div","msomt","OU&#199;A"));
+    cnt.appendChild(sg);
+  }
+  else if(temFig) cnt.appendChild(figuraDe(o));
   if(o.txt){
     var et=(o.tipo==="pal")?"PALAVRA":"QUER DIZER";
     var tx=el("div",(o.tipo==="pal")?"mtxt":"mtxt msent",
@@ -622,7 +646,7 @@ function fazCarta(o){
      ("MALA"). O alto-falante pedia a gravacao de "PALAVRAMALA", que nunca
      existiu. A peca sabe o que quer dizer: ela tem que DECLARAR. */
   z.setAttribute("data-voz", o.voz);
-  z.setAttribute("aria-label","Ouvir "+o.txt);
+  z.setAttribute("aria-label","Ouvir "+(o.txt||o.voz||""));
   z.onclick=(function(carta){ return function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;

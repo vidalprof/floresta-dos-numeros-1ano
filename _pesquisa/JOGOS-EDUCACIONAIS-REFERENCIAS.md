@@ -373,11 +373,11 @@ pressionar e o MLC tem feedback visual mais denso que o nosso ao soltar.
 | 3 | Figura grande e mascote **respondem ao toque** (NN/g: crianças tocam em tudo) | `leiaute.js` **regra 13** (aviso): `img/svg` ≥ 80 px sem quem responda ao toque | ✅ medido na cobaia (5 telas) — consertos peça a peça na fila |
 | 4 | Nenhuma resposta depende **só de cor** (UDL/daltonismo) | `leiaute.js` **regra 14** (aviso): irmãos de resposta sem figura e com o mesmo texto (ou nenhum) | ✅ medido na cobaia (3 telas) — paleta de pintar fica de fora |
 | 5 | Manipulável tem **manipulação livre antes da pergunta** (MLC, PhET) | fase com `dados.livre` ou 1ª rodada sem acerto/erro | `base-dez`, `balanca`, `reta-numerica`, `relogio` |
-| 6 | Simulador **tematizável** (PhET: o gesto expõe o conceito, em qualquer tema) | `simulador` aceita cena/variável do `conteudo.json` | `simulador.html` (hoje só água) |
+| 6 | Simulador **tematizável** (PhET: o gesto expõe o conceito, em qualquer tema) | gaveta `SIM` (controle, alvo, leituras, figuras de IA da cena) | ✅ **feito 2026-09-06** em `simulador.html`; o portão aceita `mec=simulador` fora de água quando a fase traz `SIM` |
 | 7 | Caça-palavras que **ensina ao achar** (JClic) | figura+voz ao completar a palavra | ✅ **feito 2026-09-06**: `FIG` (figura por palavra, aparece ao achar) + `MODO="figuras"` (EdiLIM) em `caca-palavras.html`; portão em `dinamicas.py` |
 | 8 | Cruzadinha com **pista falada** (JClic, 1º ano) | alto-falante na pista (`data-voz`) + palavra inteira ao fechar | ✅ **feito 2026-09-06** em `cruzadinha.html`; portão em `dinamicas.py` |
 | 9 | Peça de velocidade fecha com **1 pergunta de reflexão** (Topmarks) | `.reflexao` + voz na tela de fim | ✅ **feito 2026-09-06** em `relampago.html`; portão em `dinamicas.py` |
-| 10 | Produção livre **sem cronômetro e sem certo/errado** (Toca Boca) | já é; registrar | `pintar*`, `criar-desafio` |
+| 10 | Produção livre **sem cronômetro e sem certo/errado** (Toca Boca) | já é; registrar | ✅ registrado — e o `montar.py` passou a tratar pintar/criar/vitrine como **respiro** fora da regra do bloco |
 | 11 | Fim de atividade com **artefato da criança à vista** (reconhecimento endógeno) | tela final mostra o que ela fez | `FIM-DE-ATIVIDADE.md` |
 | 12 | **Sem ranking, sem moeda** (gamificação exógena) | já é; registrar | `EDUVERSE-FILOSOFIA.md` |
 

@@ -9,7 +9,7 @@
 > **Este arquivo é GERADO** por `python3 _padrao/interatividades.py` — não editar à
 > mão (envelhece). Peça nova, atividade nova ou lote novo da bancada → rodar de novo.
 
-Gerado em 2026-09-05 a partir das peças (`_padrao/pecas/`), das atividades reais (`_*/conteudo.json`)
+Gerado em 2026-09-06 a partir das peças (`_padrao/pecas/`), das atividades reais (`_*/conteudo.json`)
 e da bancada da peça (`bash _qa/peca.sh`, lote de 2026-09-05: coluna **bancada**).
 
 ## ✅ PRONTAS — provadas em atividade (clone da atividade indicada)
@@ -63,7 +63,7 @@ e da bancada da peça (`bash _qa/peca.sh`, lote de 2026-09-05: coluna **bancada*
 
 ## 🛠️ FALTAM LAPIDAR — existem no motor, ainda NÃO usadas numa atividade
 
-_Estas 44 peças existem em `_padrao/pecas/` e no `pecas.js` mas nunca entraram numa atividade publicada. Passaram na cobaia (todas as 88 rodam dentro do motor) e na bancada da peça (coluna), mas "provada em jogo" só quando o Marcos aprovar numa atividade. Ao usar uma, ela sobe para a tabela de cima sozinha (rodar o gerador)._
+_Estas 47 peças existem em `_padrao/pecas/` e no `pecas.js` mas nunca entraram numa atividade publicada. Passaram na cobaia (todas as 88 rodam dentro do motor) e na bancada da peça (coluna), mas "provada em jogo" só quando o Marcos aprovar numa atividade. Ao usar uma, ela sobe para a tabela de cima sozinha (rodar o gerador)._
 
 | Interatividade | Gesto | bancada |
 |---|---|:-:|
@@ -82,12 +82,15 @@ _Estas 44 peças existem em `_padrao/pecas/` e no `pecas.js` mas nunca entraram 
 | `decisao` | toque | ✅ |
 | `ditado` | toque + teclado | ✅ |
 | `ensinar-mascote` | toque | ✅ |
+| `escada-de-palavras` | toque + teclado | — |
 | `experimento-justo` | toque | ✅ |
 | `filtro` | toque | ✅ |
 | `girar` | arrastar | ✅ |
 | `grafico` | arrastar | ✅ |
 | `labirinto` | toque + teclado | ✅ |
+| `ler-e-fazer` | toque | — |
 | `mapa-conceitual` | arrastar | ✅ |
+| `marcar-varias` | toque | — |
 | `medir` | arrastar | ✅ |
 | `misterio` | toque | ✅ |
 | `morfemas` | arrastar | ✅ |
@@ -114,10 +117,10 @@ _Estas 44 peças existem em `_padrao/pecas/` e no `pecas.js` mas nunca entraram 
 
 ## 📊 Resumo
 
-- Banco do motor: **88** interatividades (a cobaia `_cobaia` roda as 88).
+- Banco do motor: **91** interatividades (a cobaia `_cobaia` roda as 91).
 - **Prontas (provadas em atividade): 44.**
-- Faltam lapidar: **44.**
-- Bancada da peça (`_qa/peca.sh`, 9 portões + toque medido): **88 de 88 PRONTAS**.
+- Faltam lapidar: **47.**
+- Bancada da peça (`_qa/peca.sh`, 9 portões + toque medido): **88 de 91 PRONTAS** — ver coluna.
 
 > Fonte de armadilhas e detalhes por mecânica: `_padrao/DINAMICAS.md`.
 > Catálogo das atividades (com links): `ATIVIDADES.md`.

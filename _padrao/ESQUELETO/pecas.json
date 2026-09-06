@@ -196,7 +196,8 @@
     "CORP",
     "DIFICIL",
     "LETRAS",
-    "MODO"
+    "MODO",
+    "PALFIG"
    ],
    "var": "PAL"
   },
@@ -577,6 +578,24 @@
    "tecnicas": [],
    "var": "LICOES"
   },
+  "escada-de-palavras": {
+   "exemplo": "[\n {de:\"MALA\", para:\"MOLA\", voz:\"mola\", fig:\"\", pista:\"Ela &#233; de metal e <b>pula</b>.\"},\n {de:\"MOLA\", para:\"BOLA\", voz:\"bola\", fig:\"\", pista:\"A gente <b>chuta</b> e ela rola.\"},\n {de:\"BOLA\", para:\"BOLO\", voz:\"bolo\", fig:\"\", pista:\"Tem vela de <b>anivers&#225;rio</b>.\"}\n]",
+   "exemplos": {
+    "ESCADA": "[\n {de:\"MALA\", para:\"MOLA\", voz:\"mola\", fig:\"\", pista:\"Ela &#233; de metal e <b>pula</b>.\"},\n {de:\"MOLA\", para:\"BOLA\", voz:\"bola\", fig:\"\", pista:\"A gente <b>chuta</b> e ela rola.\"},\n {de:\"BOLA\", para:\"BOLO\", voz:\"bolo\", fig:\"\", pista:\"Tem vela de <b>anivers&#225;rio</b>.\"}\n]",
+    "LETRAS": "\"ABCDEFGHIJLMNOPRSTUVZ\"",
+    "TITULO": "\"ESCADA DE PALAVRAS\""
+   },
+   "gavetas": [
+    "ESCADA",
+    "LETRAS",
+    "TITULO"
+   ],
+   "regra": "marca na peca",
+   "tecnicas": [
+    "LETRAS"
+   ],
+   "var": "ESCADA"
+  },
   "escolher": {
    "exemplo": "[\n /* 1o item no FORMATO OBJETO {t,voz} de proposito: e o exemplo que ensina ao\n    montador (pecas.json) que a opcao pode ser objeto, alem de string. Sem `img`\n    aqui para a peca avulsa nao acusar \"imagem quebrada\" (nao ha pasta img/). */\n {img:\"\", p:\"Qual parte da planta fica <b>embaixo da terra</b> e bebe a água?\",\n  c:{t:\"A RAIZ\",voz:\"a raiz\"},\n  e:[{t:\"A FLOR\",voz:\"a flor\"},{t:\"A FOLHA\",voz:\"a folha\"},{t:\"O CAULE\",voz:\"o caule\"}],\n  d:[\"Ela fica escondida, debaixo do chão.\",\n     \"É a parte que segura a planta no lugar e puxa a água da terra.\",\n     \"É a RAIZ. Ela está acesa aí embaixo: toque nela para seguir.\"]},\n {p:\"Qual parte é <b>verde e chata</b> e faz o alimento com a luz do sol?\",\n  c:\"A FOLHA\", e:[\"A RAIZ\",\"O CAULE\",\"A FLOR\"],\n  d:[\"Ela fica no ar, virada para o sol.\",\n     \"É verde, fina e cheia de linhas: o sol bate nela o dia inteiro.\",\n     \"É a FOLHA. Ela está acesa aí embaixo: toque nela para seguir.\"]},\n {p:\"Qual parte é o <b>caminho</b> que leva a água da raiz até as folhas?\",\n  c:\"O CAULE\", e:[\"A FLOR\",\"A SEMENTE\",\"A RAIZ\"],\n  d:[\"Pense num cano em pé, no meio da planta.\",\n     \"É a parte comprida que segura as folhas lá em cima.\",\n     \"É o CAULE. Ele está aceso aí embaixo: toque nele para seguir.\"]}\n]",
    "exemplos": {
@@ -772,6 +791,24 @@
    ],
    "var": "TRECHOS"
   },
+  "ler-e-fazer": {
+   "exemplo": "[\n {txt:\"Toque na <b>BORBOLETA</b>.\", alvos:[\"borb\"]},\n {txt:\"Toque no <b>CARACOL</b>.\", alvos:[\"cara\"]},\n {txt:\"Toque no <b>PASSARINHO</b> e depois na <b>JOANINHA</b>.\", alvos:[\"pass\",\"joan\"]}\n]",
+   "exemplos": {
+    "COISAS": "[ /*TECNICA*/\n {k:\"borb\", n:\"A BORBOLETA\",\n  m:[\"110000\",\"110000\",\"000000\",\"000000\",\"000000\"],\n  arte:'<i class=\"bo1\"></i><i class=\"bo2\"></i><i class=\"bo3\"></i>'},\n {k:\"pass\", n:\"O PASSARINHO\",\n  m:[\"000011\",\"000011\",\"000000\",\"000000\",\"000000\"],\n  arte:'<i class=\"pa1\"></i><i class=\"pa2\"></i><i class=\"pa3\"></i><i class=\"pa4\"></i>'},\n {k:\"cara\", n:\"O CARACOL\",\n  m:[\"000000\",\"000000\",\"000000\",\"110000\",\"110000\"],\n  arte:'<i class=\"ca3\"></i><i class=\"ca2\"></i><i class=\"ca1\"></i>'},\n {k:\"joan\", n:\"A JOANINHA\",\n  m:[\"000000\",\"000000\",\"000000\",\"000011\",\"000011\"],\n  arte:'<i class=\"jo1\"></i><i class=\"jo2\"></i><i class=\"jo3\"></i><i class=\"jo4\"></i>'}\n]",
+    "ENUN": "\"Leia o pedido e fa&#231;a o que ele diz.\"",
+    "TAREFAS": "[\n {txt:\"Toque na <b>BORBOLETA</b>.\", alvos:[\"borb\"]},\n {txt:\"Toque no <b>CARACOL</b>.\", alvos:[\"cara\"]},\n {txt:\"Toque no <b>PASSARINHO</b> e depois na <b>JOANINHA</b>.\", alvos:[\"pass\",\"joan\"]}\n]"
+   },
+   "gavetas": [
+    "TAREFAS",
+    "COISAS",
+    "ENUN"
+   ],
+   "regra": "marca na peca",
+   "tecnicas": [
+    "COISAS"
+   ],
+   "var": "TAREFAS"
+  },
   "letras-escondidas": {
    "exemplo": "[\n {pal:\"CAMPO\", esc:\"CA_PO\", extra:[\"N\",\"L\"], img:\"le_campo\", voz:\"campo\",\n  d:[\"Diga a palavra devagar e escute o nariz: <b>cam-po</b>. Que letra falta antes do P?\",\n     \"Deixei só duas na bandeja. Escute de novo: <b>cam-po</b>. Qual delas está aí?\",\n     \"É o <b>M</b>: antes de P e de B vem M. Ele está aceso — toque nele para seguir.\"]},\n {pal:\"BOMBA\", esc:\"BO_BA\", extra:[\"N\",\"T\"], img:\"le_bomba\", voz:\"bomba\",\n  d:[\"Ouça a palavra de novo e repare no que vem antes do <b>B</b>.\",\n     \"Ficaram duas. Antes de B a letra é a mesma que você usou antes do P.\",\n     \"É o <b>M</b>, porque vem antes do B. Ele está aceso — toque nele para seguir.\"]},\n {pal:\"TAMBÉM\", esc:\"TA_BÉM\", extra:[\"N\",\"R\"], img:\"le_tambem\", voz:\"também\",\n  d:[\"Esta palavra tem M no fim. E antes do <b>B</b>, o que será que vai?\",\n     \"Ficaram duas. Olhe a letra que vem DEPOIS do buraco: é ela que manda.\",\n     \"É o <b>M</b>: quem manda é o B que vem depois. Ele está aceso — toque nele.\"]},\n {pal:\"PONTE\", esc:\"PO_TE\", extra:[\"M\",\"C\"], img:\"le_ponte\", voz:\"ponte\",\n  d:[\"Cuidado: aqui depois do buraco vem <b>T</b>, e não P nem B. Qual letra vai?\",\n     \"Ficaram duas. A regra do M vale só antes de P e de B — antes de T é a outra.\",\n     \"É o <b>N</b>: antes de T, e de quase todas as outras, vai N. Ele está aceso.\"]},\n {pal:\"BOMBOM\", esc:\"BO_BO_\", extra:[\"N\",\"P\"], img:\"le_bombom\", voz:\"bombom\",\n  d:[\"Esta tem DOIS buracos. Comece pelo primeiro: o que vem antes do B?\",\n     \"Ficaram duas. Repare que os dois buracos vêm antes da mesma letra.\",\n     \"É o <b>M</b> nos dois lugares: antes de B vai M. Ele está aceso — toque nele.\"]}\n]",
    "exemplos": {
@@ -862,6 +899,24 @@
     "SVGNS"
    ],
    "var": "NOS"
+  },
+  "marcar-varias": {
+   "exemplo": "[\n /* `cs` = as CERTAS (2 a 3); `e` = as erradas; 4 a 6 opcoes no total. Cada\n    opcao e palavra (\"A RAIZ\") ou {t, img, voz}. `d` = as TRES dicas do andaime. */\n {p:\"Marque <b>todas</b> as partes da planta que ficam <b>em cima</b> da terra.\",\n  cs:[{t:\"A FOLHA\",voz:\"a folha\"},{t:\"A FLOR\",voz:\"a flor\"},{t:\"O CAULE\",voz:\"o caule\"}],\n  e:[{t:\"A RAIZ\",voz:\"a raiz\"},{t:\"A SEMENTE\",voz:\"a semente\"}],\n  d:[\"Pense no que voc&#234; V&#202; quando olha uma planta no jardim.\",\n     \"As que faltam est&#227;o <b>piscando</b>. Toque nelas.\",\n     \"Eram estas. Est&#227;o acesas: toque para seguir.\"]},\n {p:\"Marque <b>todas</b> as coisas de que a planta precisa para crescer.\",\n  cs:[\"&#193;GUA\",\"LUZ DO SOL\"],\n  e:[\"PEDRA\",\"VIDRO\",\"FUMA&#199;A\"],\n  d:[\"O que a gente d&#225; para a planta todo dia? E o que vem do c&#233;u de manh&#227;?\",\n     \"As que faltam est&#227;o <b>piscando</b>.\",\n     \"Eram estas. Toque nelas para seguir.\"]}\n]",
+   "exemplos": {
+    "FECHO": "\"Voc&#234; marcou todas as certas!\"",
+    "QZ": "[\n /* `cs` = as CERTAS (2 a 3); `e` = as erradas; 4 a 6 opcoes no total. Cada\n    opcao e palavra (\"A RAIZ\") ou {t, img, voz}. `d` = as TRES dicas do andaime. */\n {p:\"Marque <b>todas</b> as partes da planta que ficam <b>em cima</b> da terra.\",\n  cs:[{t:\"A FOLHA\",voz:\"a folha\"},{t:\"A FLOR\",voz:\"a flor\"},{t:\"O CAULE\",voz:\"o caule\"}],\n  e:[{t:\"A RAIZ\",voz:\"a raiz\"},{t:\"A SEMENTE\",voz:\"a semente\"}],\n  d:[\"Pense no que voc&#234; V&#202; quando olha uma planta no jardim.\",\n     \"As que faltam est&#227;o <b>piscando</b>. Toque nelas.\",\n     \"Eram estas. Est&#227;o acesas: toque para seguir.\"]},\n {p:\"Marque <b>todas</b> as coisas de que a planta precisa para crescer.\",\n  cs:[\"&#193;GUA\",\"LUZ DO SOL\"],\n  e:[\"PEDRA\",\"VIDRO\",\"FUMA&#199;A\"],\n  d:[\"O que a gente d&#225; para a planta todo dia? E o que vem do c&#233;u de manh&#227;?\",\n     \"As que faltam est&#227;o <b>piscando</b>.\",\n     \"Eram estas. Toque nelas para seguir.\"]}\n]",
+    "TITULO": "\"MARQUE TODAS AS CERTAS\""
+   },
+   "gavetas": [
+    "QZ",
+    "TITULO",
+    "FECHO"
+   ],
+   "regra": "marca na peca",
+   "tecnicas": [
+    "SOIMG"
+   ],
+   "var": "QZ"
   },
   "medir": {
    "exemplo": "[\n {selo:\"A FITA AZUL\",\n  enun:\"Encoste o <b>zero</b> da r&eacute;gua na ponta da fita azul.\",\n  voz:\"Encoste o zero da régua na ponta da fita azul.\",\n  objs:[{n:\"FITA AZUL\",art:\"a\",nome:\"fita azul\",voz:\"fita azul\",cm:6,cls:\"oazul\",ini:1,ops:[4,5,6,7]}]},\n {selo:\"O PALITO\",\n  enun:\"Agora o palito. Encoste o <b>zero</b> na ponta dele.\",\n  voz:\"Agora o palito. Encoste o zero na ponta dele.\",\n  objs:[{n:\"PALITO\",art:\"o\",nome:\"palito\",voz:\"palito\",cm:4.5,cls:\"opalito\",ini:1.6,ops:[4,4.5,5,5.5]}]},\n {selo:\"DUAS FITAS\",\n  enun:\"Me&ccedil;a as duas fitas, uma de cada vez.\",\n  voz:\"Meça as duas fitas, uma de cada vez.\",\n  objs:[{n:\"VERMELHA\",art:\"a\",nome:\"fita vermelha\",voz:\"fita vermelha\",cm:5,cls:\"overm\",ini:1,ops:[3,4,5,6]},\n        {n:\"VERDE\",art:\"a\",nome:\"fita verde\",voz:\"fita verde\",cm:8,cls:\"overde\",ini:1.6,ops:[6,7,8,9]}],\n  comp:{p:\"Quantos cent&iacute;metros a <b>fita verde</b> tem a mais que a <b>fita vermelha</b>?\",\n        voz:\"Quantos centímetros a fita verde tem a mais que a fita vermelha?\",\n        ops:[1,2,3,4],cert:3}}\n]",

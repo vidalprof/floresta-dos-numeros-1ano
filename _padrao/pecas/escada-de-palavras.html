@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — escada de palavras</title>
+<!-- ============================================================
+     PEÇA: ESCADA DE PALAVRAS — MALA → MOLA → BOLA → BOLO: a cada degrau UMA letra
+     muda e nasce outra palavra. Nasceu da pesquisa (NCIL "word ladder";
+     ALFABETIZACAO-O-QUE-FUNCIONA §6 item 3; aprovado pelo Marcos em set/2026).
+
+     Por que ensina: a criança descobre que a palavra é feita de PEÇAS trocáveis —
+     mudou um som, mudou a palavra (mapeamento ortográfico, Ehri). É o degrau
+     entre as `letras-escondidas` (achar a letra que falta) e o `ditado`
+     (escrever inteira): aqui ela mexe numa letra só, com a palavra inteira à vista.
+
+     O gesto, em dois toques por degrau:
+       1) ouve/vê a palavra NOVA (figura + alto-falante + pista) e toca, na
+          palavra atual, a LETRA que precisa mudar;
+       2) escolhe a letra nova entre três — a palavra muda na hora e a voz a diz.
+     As DUAS portas: tocar na tela E o teclado de verdade (a letra digitada vale
+     como escolha no passo 2).
+     Andaime: dica ("diga devagar as duas") → a letra que muda pisca → revela.
+     Nunca trava; nada essencial só na cor (a letra trocada ganha ✓ e a escada
+     escreve as palavras subidas); `data-qa` na letra certa de cada passo.
+     Regras da casa: ES5 puro, 1 arquivo, alvo >= 44px, funciona no mudo.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+/* a palavra atual: uma peca por letra, grande, mesa propria (letra nunca sobre cenario) */
+.palavra{margin:13px auto 0;text-align:center}
+.lt{display:inline-block;width:56px;height:66px;line-height:62px;margin:3px;border-radius:14px;
+    background:#fffdf6;color:#221a12;font-size:34px;font-weight:800;cursor:pointer;
+    border:3px solid #c9bda6;border-bottom-width:6px;vertical-align:middle;text-align:center}
+.lt:active{-webkit-transform:translateY(3px);transform:translateY(3px);border-bottom-width:3px}
+.lt.sel{border-color:#ffd54a;background:#fff3c9}
+.lt.nova{background:#d6f5c8;border-color:#7cb464}
+.lt.pisca{-webkit-animation:ltpisca .7s ease-in-out 3;animation:ltpisca .7s ease-in-out 3}
+@-webkit-keyframes ltpisca{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 6px #ffd54a}}
+@keyframes ltpisca{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 6px #ffd54a}}
+.lt.treme{-webkit-animation:lttreme .32s linear 1;animation:lttreme .32s linear 1}
+@-webkit-keyframes lttreme{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}100%{-webkit-transform:translateX(0)}}
+@keyframes lttreme{0%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}100%{transform:translateX(0)}}
+/* o ALVO: a palavra nova (figura + alto-falante + pista), sem a palavra escrita */
+.alvo{margin:12px auto 0;max-width:430px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:16px;
+      padding:10px 14px;font-size:16px;font-weight:700;line-height:1.35}
+.alvo .afig{width:96px;height:96px;margin:0 auto 6px;border-radius:14px;background:rgba(255,253,246,.9);overflow:hidden}
+.alvo .afig img{width:100%;height:100%;object-fit:contain}
+.alvo b{color:#ffd54a}
+.zap{display:-webkit-inline-box;display:inline-flex;vertical-align:middle;
+     -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+     width:46px;height:46px;margin-left:10px;border:0;border-radius:50%;padding:0;cursor:pointer;
+     background-color:rgba(255,210,63,.95);
+     -webkit-box-shadow:0 2px 0 rgba(150,110,10,.45);box-shadow:0 2px 0 rgba(150,110,10,.45)}
+.zap:active{-webkit-transform:translateY(2px);transform:translateY(2px);background-color:rgba(255,190,40,.98)}
+.zap.tocando{background-color:#8fe07a}
+.fone{display:inline-block;width:26px;height:26px;margin:0;
+     background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+     -webkit-background-size:26px 26px;background-size:26px 26px}
+/* as tres letras para escolher (passo 2) */
+.escolhas{margin-top:12px;text-align:center;min-height:70px}
+.tecl{display:inline-block;width:60px;height:60px;line-height:56px;margin:4px;border-radius:14px;
+      background:#3c6ee0;color:#fff;font-size:30px;font-weight:800;cursor:pointer;border:0;
+      border-bottom:5px solid #24468f;text-align:center;font-family:inherit}
+.tecl:active{-webkit-transform:translateY(3px);transform:translateY(3px);border-bottom-width:2px}
+.tecl.no{background:#8b8578;border-bottom-color:#5c584f;cursor:default}
+.tecl.rev{background:#59c24b;border-bottom-color:#2f7a25}
+.tecl.pisca{-webkit-animation:ltpisca .7s ease-in-out 3;animation:ltpisca .7s ease-in-out 3}
+/* a escada: as palavras ja subidas, de baixo para cima */
+.degraus{margin-top:12px;text-align:center}
+.degrau{display:inline-block;background:#d6f5c8;color:#123d08;border-radius:12px;padding:6px 12px;margin:3px;
+        font-size:15px;font-weight:800;letter-spacing:1px}
+.degrau.agora{background:#fff3c9;color:#3a2c07}
+
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `ESCADA`: cada
+   degrau leva a palavra `de` até `para`, mudando UMA letra (mesmo tamanho).
+   `voz` = como a voz diz a palavra nova; `fig` = arte de IA dela (opcional);
+   `pista` = uma frase curta sobre a palavra nova (sem dizer a palavra).
+   Palavras SEM acento e sem Ç (as pecas de letra nao tem tecla de acento). */
+var ESCADA=[
+ {de:"MALA", para:"MOLA", voz:"mola", fig:"", pista:"Ela &#233; de metal e <b>pula</b>."},
+ {de:"MOLA", para:"BOLA", voz:"bola", fig:"", pista:"A gente <b>chuta</b> e ela rola."},
+ {de:"BOLA", para:"BOLO", voz:"bolo", fig:"", pista:"Tem vela de <b>anivers&#225;rio</b>."}
+];
+var LETRAS="ABCDEFGHIJLMNOPRSTUVZ"; /*TECNICA*/
+var TITULO="ESCADA DE PALAVRAS";
+
+var di=0, passo=1, erros=0, ger=0, telaAtual=null, barraP=null;
+var tiles=[], escEl=null, degrausEl=null, posMuda=-1;
+var figEl = window.imgEl || null;
+
+function semTag(t){ return String(t||"").replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){return String.fromCharCode(Number(n));}).replace(/\s+/g," ").replace(/^ | $/g,""); }
+/* a voz e do MOTOR (gravada); sozinha, a peca fica muda de proposito (nunca voz-robo) */
+function fala(t){ var s=semTag(t); if(s&&typeof diz==="function") diz(s); }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function ondeMuda(a,b){ var i; for(i=0;i<a.length;i++) if(a.charAt(i)!==b.charAt(i)) return i; return -1; }
+
+function pecaEscada(){
+  ger++; limpa(); document.onkeydown=null;
+  var d=ESCADA[di];
+  if(!d){ fimDaPeca(); return; }
+  passo=1; erros=0; tiles=[]; posMuda=ondeMuda(d.de,d.para);
+  var t=el("div","tela"); telaAtual=t; setProg(t, Math.round(di*100/ESCADA.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",TITULO));
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:
+    "Troque <b>uma letra</b> e a palavra vira outra. Que letra muda?";
+  c.appendChild(el("div","balao",_enun));
+
+  /* a palavra ATUAL, letra a letra (passo 1: toque na que muda) */
+  var pal=el("div","palavra"), i;
+  for(i=0;i<d.de.length;i++){(function(k){
+    var q=el("div","lt",d.de.charAt(k));
+    q.setAttribute("data-qa", k===posMuda ? "1" : "0");
+    q.onclick=function(){ tocaLetra(k,q); };
+    pal.appendChild(q); tiles.push(q);
+  })(i);}
+  c.appendChild(pal);
+
+  /* o ALVO: a palavra nova, sem estar escrita — figura, alto-falante e pista */
+  var al=el("div","alvo","");
+  if(d.fig&&figEl){ var f=el("div","afig",""); f.appendChild(figEl(d.fig)); al.appendChild(f); }
+  var lin=el("div","alin","");
+  lin.appendChild(el("span","apista","A palavra nova: "+(d.pista||"")));
+  var z=el("button","zap",""); z.type="button"; z.setAttribute("aria-label","Ouvir a palavra nova");
+  z.setAttribute("data-voz",d.voz||d.para); z.appendChild(el("i","fone",""));
+  z.onclick=function(ev){ var e=ev||window.event; if(e&&e.stopPropagation) e.stopPropagation();
+    sTap(); fala(d.voz||d.para); z.className="zap tocando"; setTimeout(function(){ z.className="zap"; },900); return false; };
+  lin.appendChild(z);
+  al.appendChild(lin);
+  c.appendChild(al);
+
+  escEl=el("div","escolhas",""); c.appendChild(escEl);
+  degrausEl=el("div","degraus",""); c.appendChild(degrausEl);
+  pintaEscada(d.de);
+  c.appendChild(el("div","hint","Ou&#231;a a palavra nova. Toque na letra que muda; depois escolha a letra nova (ou digite no teclado)."));
+  t.appendChild(c); app.appendChild(t);
+  /* a palavra nova e dita ao abrir o degrau: ouvir antes de mexer, sem custo */
+  var meu=ger; setTimeout(function(){ if(meu===ger&&viva()) fala(d.voz||d.para); },500);
+}
+function pintaEscada(atual){
+  var i; degrausEl.innerHTML="";
+  for(i=0;i<di;i++) degrausEl.appendChild(el("div","degrau",ESCADA[i].de));
+  degrausEl.appendChild(el("div","degrau agora",atual));
+}
+
+/* ---- passo 1: qual letra muda? ---- */
+function tocaLetra(k,q){
+  if(passo!==1) { sTap(); return; }
+  var d=ESCADA[di];
+  if(k===posMuda){
+    sTap(); q.className="lt sel";
+    var i; for(i=0;i<tiles.length;i++) tiles[i].removeAttribute("data-qa");
+    apagaDica();
+    passo=2; erros=0;
+    montaEscolhas();
+    return;
+  }
+  sErro(); erros++;
+  q.className="lt treme"; setTimeout(function(){ if(q.className.indexOf("sel")<0) q.className="lt"; },340);
+  ajuda1(erros);
+}
+function ajuda1(n){
+  var d=ESCADA[di];
+  if(n===1){ mostraDica("Diga devagar: <b>"+d.de+"</b>... e a nova. Escute qual peda&#231;o ficou diferente."); fala(d.de); setTimeout(function(){ fala(d.voz||d.para); },900); }
+  else if(n===2){ mostraDica("A letra que muda est&#225; <b>piscando</b>. Toque nela."); tiles[posMuda].className="lt pisca"; }
+  else { mostraDica("&#201; esta. Eu marquei para voc&#234;: agora escolha a letra nova."); tocaLetra(posMuda,tiles[posMuda]); }
+}
+
+/* ---- passo 2: a letra nova, entre tres ---- */
+function montaEscolhas(){
+  var d=ESCADA[di], certa=d.para.charAt(posMuda), ops=[certa], i, L;
+  var pool=LETRAS.split(""); baguncar(pool);
+  for(i=0;i<pool.length&&ops.length<3;i++){ L=pool[i]; if(L!==certa&&L!==d.de.charAt(posMuda)&&ops.indexOf(L)<0) ops.push(L); }
+  baguncar(ops);
+  escEl.innerHTML="";
+  for(i=0;i<ops.length;i++){(function(L){
+    var b=el("button","tecl",L); b.type="button";
+    b.setAttribute("data-qa", L===certa ? "1" : "0");
+    b.onclick=function(){ escolhe(L,b); };
+    escEl.appendChild(b);
+  })(ops[i]);}
+  /* ⭐ A SEGUNDA PORTA: o teclado de verdade (guarda: so enquanto esta tela vive) */
+  var t=telaAtual;
+  document.onkeydown=function(ev){
+    if(!t.parentNode){ document.onkeydown=null; return; }
+    if(passo!==2) return;
+    var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+    if(!/^[A-Z]$/.test(L)) return;
+    var bs=escEl.getElementsByClassName("tecl"), i, alvo=null;
+    for(i=0;i<bs.length;i++) if(bs[i].innerHTML===L) alvo=bs[i];
+    if(alvo) escolhe(L,alvo); else { sErro(); mostraDica("Essa letra n&#227;o est&#225; entre as tr&#234;s. Olhe as op&#231;&#245;es."); }
+  };
+}
+function escolhe(L,b){
+  if(passo!==2) return;
+  var d=ESCADA[di], certa=d.para.charAt(posMuda);
+  if(b.className.indexOf("no")>=0){ sTap(); return; }
+  if(L===certa){
+    passo=3; sCerto();
+    b.className="tecl rev";
+    tiles[posMuda].innerHTML=L; tiles[posMuda].className="lt nova";
+    apagaDica();
+    pintaEscada(d.para);
+    if(barraP) barraP.style.width=Math.round((di+1)*100/ESCADA.length)+"%";
+    /* a palavra NOVA e dita inteira: mudou uma letra, mudou a palavra */
+    fala(d.voz||d.para);
+    var meu=ger;
+    setTimeout(function(){
+      if(meu!==ger||!viva()) return;
+      di++;
+      if(di>=ESCADA.length) mostraBanner("Voc&#234; subiu a escada inteira: <b>"+ESCADA[0].de+"</b> virou <b>"+ESCADA[ESCADA.length-1].para+"</b>!", fimDaPeca);
+      else pecaEscada();
+    },1300);
+    return;
+  }
+  sErro(); erros++;
+  b.className="tecl no"; b.onclick=null;
+  ajuda2(erros, certa);
+}
+function ajuda2(n, certa){
+  var d=ESCADA[di];
+  if(n===1){ mostraDica("Ou&#231;a de novo a palavra nova e pense no <b>som</b> que entra no lugar."); fala(d.voz||d.para); }
+  else{
+    var bs=escEl.getElementsByClassName("tecl"), i;
+    for(i=0;i<bs.length;i++) if(bs[i].getAttribute("data-qa")==="1") bs[i].className="tecl pisca";
+    mostraDica("A letra certa est&#225; <b>piscando</b>. Toque nela.");
+    if(n>=3){ for(i=0;i<bs.length;i++) if(bs[i].getAttribute("data-qa")==="1") escolhe(certa,bs[i]); }
+  }
+}
+function apagaDica(){ var x=document.getElementById("dicaP"); if(x&&x.parentNode) x.parentNode.removeChild(x); }
+
+function fimDaPeca(){
+  ger++; limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal","&#9733;"));
+  c.appendChild(el("div","balao","Esta &#233; a pe&#231;a <b>ESCADA DE PALAVRAS</b>: muda uma letra, muda a palavra."));
+  var b=el("button","btn","Jogar de novo"); b.onclick=function(){ di=0; pecaEscada(); }; c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+pecaEscada();
+</script>
+</body></html>

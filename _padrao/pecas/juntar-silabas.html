@@ -178,6 +178,8 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
   -webkit-box-pack:center;justify-content:center;overflow:hidden}
 .jsFig img{width:100%;height:100%;object-fit:contain}
+.jsFig{cursor:pointer}
+.jsFig:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 /* ⚠️ LICAO PAGA (ago/2026): a palavra de reserva (quando a fase nao traz
    figura) era #6b5c46 sobre o fundo claro da caixa — 2,22:1, quando o
    minimo e 4,5. E o pior: e JUSTAMENTE o caso em que a palavra e a unica
@@ -405,6 +407,8 @@ function pecaJuntar(){
   /* a FIGURA diz qual palavra é — a criança de 6 anos não lê */
   var fg=el("div","jsFig");
   if(figEl && figDe(r)){ fg.appendChild(figEl(figDe(r))); }
+  /* ⭐ a figura RESPONDE ao toque e diz a palavra inteira (regras 6 e 13) */
+  fg.onclick=function(){ sTap(); voz(r.pal); };
   else { fg.appendChild(el("div","semfig", r.pal)); }
   c.appendChild(fg);
   c.appendChild(ouvidos(r));

@@ -170,6 +170,71 @@ def analisa(js, css, baixo, html=None):
             ruins.append(u"caca-palavras: ha figura por palavra (PALFIG) mas o CSS nao dimensiona "
                          u".pfig — a imagem entra no tamanho natural e estoura o chip.")
 
+    # ---------------------------------------------------- ESCADA DE PALAVRAS (set/2026)
+    # NCIL "word ladder": MALA -> MOLA -> BOLA. Gatilho honesto: a gaveta `ESCADA`
+    # com `de`/`para` + a conta `ondeMuda`.
+    if re.search(r'\bESCADA\s*=', js) and re.search(r'\bondeMuda\s*\(', js):
+        usa.append("escada-de-palavras")
+        # 1) cada degrau muda UMA letra e mantem o tamanho — senao nao e escada
+        for mm in re.finditer(r'de\s*:\s*"([A-Z]+)"\s*,\s*para\s*:\s*"([A-Z]+)"', js):
+            a_, b_ = mm.group(1), mm.group(2)
+            if len(a_) != len(b_) or sum(1 for x, y in zip(a_, b_) if x != y) != 1:
+                ruins.append(u"escada-de-palavras: o degrau %s -> %s nao muda EXATAMENTE uma letra "
+                             u"(mesmo tamanho). A escada existe para isso." % (a_, b_))
+                break
+        for mm in re.finditer(r'(?:de|para)\s*:\s*"([^"]+)"', js):
+            if re.search(u"[ÁÉÍÓÚÂÊÔÃÕÇ]", mm.group(1)):
+                ruins.append(u"escada-de-palavras: a palavra '%s' tem acento/cedilha — as pecas de letra "
+                             u"nao tem tecla de acento." % mm.group(1)); break
+        # 2) as duas portas: o teclado de verdade vale no passo da letra nova
+        if "document.onkeydown" not in js:
+            ruins.append(u"escada-de-palavras: so o toque; no PC da escola a crianca DIGITA a letra "
+                         u"nova (duas portas, document.onkeydown).")
+        # 3) mudou a letra, a VOZ diz a palavra nova (mudou um som, mudou a palavra)
+        _fe = js.find("function escolhe"); _corpo = js[_fe:_fe + 1200] if _fe >= 0 else ""
+        if "fala(" not in _corpo and "diz(" not in _corpo:
+            avisos.append(u"escada-de-palavras: quando a letra troca a palavra nova nao e DITA — e "
+                          u"justamente o momento que ensina (mudou um som, mudou a palavra).")
+
+    # ---------------------------------------------------- MARCAR VARIAS (set/2026)
+    # Clone do escolher com MAIS DE UMA certa (EdiLIM "respuesta multiple").
+    # Gatilho honesto: as certas em lista `cs:` + o placar `.faltam`.
+    if re.search(r'\bcs\s*:\s*\[', js) and re.search(r'"faltam"', js):
+        usa.append("marcar-varias")
+        # 1) marcar varias com UMA certa so e um escolher disfarcado
+        for mm in re.finditer(r'cs\s*:\s*\[([^\]]*)\]', js):
+            if mm.group(1).count(",") == 0 and mm.group(1).strip():
+                avisos.append(u"marcar-varias: ha rodada com UMA certa so em `cs` — isso e um "
+                              u"escolher; a peca existe para 2 ou 3 certas.")
+                break
+        # 2) o erro responde NA HORA (Hattie), nunca so no fim
+        if not re.search(r'function responde[^{]*\{[\s\S]{0,900}sErro\(', js):
+            ruins.append(u"marcar-varias: tocar uma errada nao responde na hora (sErro em responde). "
+                         u"Feedback so no fim deixa a crianca sem saber o que olhar.")
+        # 3) toda certa ainda nao marcada publica data-qa=1 (o jogador toca uma a uma)
+        if not re.search(r'setAttribute\("data-qa","1"\)', js) or not re.search(r'removeAttribute\("data-qa"\)', js):
+            avisos.append(u"marcar-varias: o data-qa precisa entrar em toda certa e SAIR da que foi marcada, "
+                          u"senao o jogador bate para sempre na mesma opcao.")
+
+    # ---------------------------------------------------- LER E FAZER (set/2026)
+    # Clone do achar-na-cena com o gesto invertido: LER e o conteudo. Gatilho
+    # honesto: a gaveta `TAREFAS` + a caixa `.tarefa` (nenhuma outra peca as tem).
+    if re.search(r'\bTAREFAS\b', js) and re.search(r'"tarefa"', js):
+        usa.append("ler-e-fazer")
+        # 1) o pedido NAO pode morar no balao: o motor narra o balao sozinho, e ai a
+        #    voz le pela crianca — a fase deixa de ser leitura e vira ouvir-achar.
+        if re.search(r'el\("div","balao"[^)]*TAREFAS|el\("div","balao"[^)]*\btf\.txt', js):
+            ruins.append(u"ler-e-fazer: o PEDIDO esta no balao — o motor narra o balao e le pela "
+                         u"crianca. O pedido mora em .tarefa (mudo); o balao e so o enunciado geral.")
+        # 2) a voz e o 2o degrau: o alto-falante nasce no 1o erro (ou `ouvir:true`),
+        #    nunca de graca para todo mundo
+        if not re.search(r'function ajuda\([^)]*\)\s*\{[^}]*poeZapTarefa', js):
+            avisos.append(u"ler-e-fazer: o alto-falante do pedido nao entra pelo andaime (poeZapTarefa em "
+                          u"ajuda). Voz de graca desde o comeco tira a leitura da fase.")
+        # 3) o passo da vez marcado para o jogador (pedido de dois passos EM ORDEM)
+        if not re.search(r'setAttribute\("data-qa","1"\)', js):
+            avisos.append(u"ler-e-fazer: nenhuma zona publica data-qa=1 — o auditor-jogador nao fecha a fase.")
+
     # ---------------------------------------------------- CRUZADINHA
     # Gatilho honesto: so a cruzadinha tem casas com passo `pLin`/`pCol` e a
     # grade `cruz`. (O caca-palavras publica `dl`/`dc`; a forca tem `.vaga`.)
@@ -213,6 +278,13 @@ def analisa(js, css, baixo, html=None):
         if "rotateY" not in css and "rotatey" not in css.lower():
             avisos.append(u"memoria: nao achei a virada 3D (rotateY). Carta que troca de face "
                           u"sem girar perde metade da graca.")
+        # ⭐ MEMORIA DE SONS (set/2026): par com `som:true` precisa de voz (vozsen,
+        #    voz ou pal) — carta-som sem voz e uma carta MUDA, e a fase nao tem saida
+        for mm in re.finditer(r'\{[^{}]*\bsom\s*:\s*true[^{}]*\}', js):
+            if not re.search(r'\b(vozsen|voz|pal)\s*:', mm.group(0)):
+                ruins.append(u"memoria (sons): par com som:true sem vozsen/voz/pal — a carta-som "
+                             u"ficaria MUDA e a crianca nao teria como casar o par.")
+                break
         verso = re.search(r'VERSO\s*=\s*([^;]{0,200})', js)
         if verso and "img" not in verso.group(1) and "imgEl" not in verso.group(1):
             ruins.append(u"memoria: o VERSO da carta nao usa imagem — retangulo liso nao e "

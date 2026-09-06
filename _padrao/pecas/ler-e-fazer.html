@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ler e fazer</title>
+<!-- ============================================================
+     PEÇA: LER E FAZER — a instrução vem ESCRITA; a criança lê e EXECUTA na cena.
+     Clone de `achar-na-cena` (a mesma grade de bits = zona é a figura), com um
+     gesto pedagógico invertido: aqui LER é o conteúdo.
+
+     De onde vem (ALFABETIZACAO-O-QUE-FUNCIONA §6 item 1 — Teach Your Monster to
+     Read, "read and do"; aprovado pelo Marcos em set/2026, "pode fazer tudo"):
+     na TYMTR a criança lê "toque no sapo" e toca no sapo. Sem voz automática —
+     se a voz lê por ela, a fase deixa de ser leitura e vira o `ouvir-achar`.
+
+     O que esta peça faz de diferente:
+       · o pedido mora numa caixa própria (`.tarefa`), NÃO no `.balao` — o motor
+         narra o balão sozinho, e o balão aqui é só o enunciado geral ("leia e
+         faça"); o pedido escrito fica MUDO de propósito;
+       · a VOZ é o 2º degrau do andaime: no 1º erro aparece o alto-falante do
+         pedido (a criança escolhe ouvir); no 2º a peça lê o pedido; no 3º a
+         zona pisca; no 4º ela executa e segue. Nunca trava;
+       · pedidos de DOIS passos em ORDEM ("toque no pão e depois no leite") —
+         compreensão de frase, não só de palavra; o passo da vez tem `data-qa`;
+       · nada essencial só na cor: cada passo feito ganha ✓ e a lista de passos
+         riscada; funciona no mudo (é leitura).
+     Regras da casa: ES5 puro, 1 arquivo, alvo >= 44px, `data-qa`, nunca trava.
+     Numa atividade a cena é ARTE DE IA (`img` no fundo) e as coisas têm `img`.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- A CENA (fundo desenhado) ---------- */
+/* ⚠️ margem PROPRIA (13px em cima): a regra `.balao + *` do motorzinho tem a
+   mesma forca que `.cena` e perde por vir ANTES no arquivo — a cena nascia
+   colada no enunciado (defeito que o Marcos ja cobrou duas vezes). */
+.cena{position:relative;width:100%;max-width:330px;margin:13px auto 0;padding-bottom:83.33%;
+      border-radius:16px;overflow:hidden;border:3px solid #6b4b2a;background:#8fd3f4}
+.grama{position:absolute;left:0;right:0;bottom:0;height:42%;background:#5fa83e;
+       border-top:4px solid #4a8c30}
+.sol{position:absolute;left:36%;top:3%;width:15%;padding-bottom:15%;border-radius:50%;
+     background:#ffd54a;box-shadow:0 0 0 5px rgba(255,213,74,.35)}
+.nuvem{position:absolute;left:8%;top:44%;width:22%;height:9%;border-radius:20px;
+       background:rgba(255,255,255,.85)}
+.arvt{position:absolute;left:45%;top:40%;width:6%;height:26%;background:#7a5327;border-radius:3px}
+.arvc{position:absolute;left:34%;top:20%;width:28%;padding-bottom:26%;border-radius:50%;
+      background:#3f8f2e;border:3px solid #2f6f22}
+.flor1{position:absolute;left:52%;top:78%;width:7%;padding-bottom:7%;border-radius:50%;background:#e86ea8}
+.flor2{position:absolute;left:60%;top:84%;width:6%;padding-bottom:6%;border-radius:50%;background:#f0e05a}
+
+/* ---------- AS COISAS (o desenho nasce da grade de bits) ---------- */
+.coisa{position:absolute}
+.bo1{position:absolute;left:4%;top:16%;width:42%;height:56%;background:#f2913b;
+     border:3px solid #b3611c;border-radius:60% 20% 60% 40%}
+.bo2{position:absolute;right:4%;top:16%;width:42%;height:56%;background:#f5b357;
+     border:3px solid #b3611c;border-radius:20% 60% 40% 60%}
+.bo3{position:absolute;left:44%;top:12%;width:12%;height:64%;background:#3a2a18;border-radius:6px}
+.pa1{position:absolute;left:14%;top:26%;width:58%;height:48%;background:#3c6ee0;
+     border:3px solid #24468f;border-radius:50%}
+.pa2{position:absolute;left:30%;top:42%;width:30%;height:22%;background:#24468f;border-radius:50%}
+.pa3{position:absolute;left:68%;top:40%;width:16%;height:12%;background:#ffd54a;border-radius:2px}
+.pa4{position:absolute;left:24%;top:34%;width:9%;height:9%;background:#10131a;border-radius:50%}
+.ca1{position:absolute;left:28%;top:16%;width:48%;height:48%;background:#d99a3f;
+     border:5px solid #a4702a;border-radius:50%}
+.ca2{position:absolute;left:8%;top:52%;width:70%;height:22%;background:#e6e79a;
+     border:3px solid #a9aa5c;border-radius:20px}
+.ca3{position:absolute;left:10%;top:40%;width:4%;height:16%;background:#a9aa5c}
+.jo1{position:absolute;left:18%;top:24%;width:60%;height:50%;background:#d63b2a;
+     border:3px solid #8e2318;border-radius:50%}
+.jo2{position:absolute;left:8%;top:34%;width:22%;height:30%;background:#2a2018;border-radius:50%}
+.jo3{position:absolute;left:40%;top:34%;width:12%;height:12%;background:#2a2018;border-radius:50%}
+.jo4{position:absolute;left:58%;top:50%;width:12%;height:12%;background:#2a2018;border-radius:50%}
+
+/* ---------- A GRADE DE BITS (a camada que recebe o toque) ---------- */
+.gradecena{position:absolute;left:0;top:0;right:0;bottom:0}
+.zona{position:absolute;background:transparent;cursor:pointer}
+.zona:active{background:rgba(255,255,255,.3)}
+.zona.pisca{background:rgba(255,255,255,.55);
+  -webkit-animation:bate .6s linear 3;animation:bate .6s linear 3}
+@-webkit-keyframes bate{0%{opacity:.15}50%{opacity:.9}100%{opacity:.15}}
+@keyframes bate{0%{opacity:.15}50%{opacity:.9}100%{opacity:.15}}
+.treme{-webkit-animation:sacode .32s linear 1;animation:sacode .32s linear 1}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}
+  75%{-webkit-transform:translateX(5px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}100%{transform:translateX(0)}}
+
+/* achou = V VERDE (forma + cor + o texto "faltam N", nunca so a cor) */
+.vok{position:absolute;left:50%;top:50%;margin-left:-23px;margin-top:-23px;width:46px;height:46px;
+     border-radius:50%;background:#1f6b12;border:3px solid #fffdf6;color:#fff;font-size:24px;
+     font-weight:800;line-height:40px;text-align:center;
+     -webkit-animation:cresce .35s ease-out 1;animation:cresce .35s ease-out 1}
+@-webkit-keyframes cresce{0%{-webkit-transform:scale(.2)}100%{-webkit-transform:scale(1)}}
+@keyframes cresce{0%{transform:scale(.2)}100%{transform:scale(1)}}
+
+/* ---------- placar e lista do que falta ---------- */
+.cont{margin-top:12px;font-size:17px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:6px 12px;display:inline-block;}
+.cont b{color:#ffd54a}
+.chips{margin-top:8px}
+.chip{display:inline-block;background:#fffdf6;color:#221a12;border-radius:14px;padding:8px 12px;
+      margin:4px 3px;font-size:14px;font-weight:700;min-height:40px;line-height:24px}
+.chip.feito{background:#d6f5c8;color:#123d08;text-decoration:line-through}
+/* tela baixa (projetor/janela): a cena encolhe um pouco, mas a CÉLULA continua
+   maior que 44px — o dedo da criança não muda de tamanho junto com a janela. */
+@media (max-height:470px){.cena{max-width:288px}}
+
+/* ---------- O PEDIDO ESCRITO (é para LER: mesa clara, letra grande, caixa alta) ---------- */
+.tarefa{position:relative;background:#fffdf6;color:#221a12;border-radius:16px;padding:12px 16px;
+        margin:13px auto 0;max-width:430px;font-size:21px;font-weight:800;line-height:1.35;
+        letter-spacing:.5px;border:3px solid #c9bda6;text-align:center}
+.tarefa b{color:#1f6b12}
+.tarefa .zap{display:-webkit-inline-box;display:inline-flex;vertical-align:middle;
+     -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+     width:44px;height:44px;margin-left:10px;border:0;border-radius:50%;padding:0;cursor:pointer;
+     background-color:rgba(255,210,63,.95);
+     -webkit-box-shadow:0 2px 0 rgba(150,110,10,.45);box-shadow:0 2px 0 rgba(150,110,10,.45)}
+.tarefa .zap:active{-webkit-transform:translateY(2px);transform:translateY(2px);background-color:rgba(255,190,40,.98)}
+.tarefa .zap.tocando{background-color:#8fe07a}
+.tarefa .zap .fone{display:inline-block;width:26px;height:26px;margin:0;
+     background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+     -webkit-background-size:26px 26px;background-size:26px 26px}
+.passos{margin-top:8px}
+.passo{display:inline-block;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:6px 12px;
+       margin:3px;font-size:14px;font-weight:700;min-height:36px;line-height:24px}
+.passo.agora{background:#ffd54a;color:#33280a}
+.passo.feito{background:#d6f5c8;color:#123d08;text-decoration:line-through}
+
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ⚠️ O ASSUNTO DO EXEMPLO NAO PODE MORAR NO BALAO (licao ago/2026): a
+   crianca de outra atividade lia a historia de outra aula. O texto vira
+   GAVETA, com um padrao neutro que serve a qualquer conteudo — e assim o
+   aviso de "gaveta com conteudo de exemplo" passa a cobrir este caso. */
+var ENUN="Leia o pedido e fa&#231;a o que ele diz.";
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* O CONTEÚDO É SÓ EXEMPLO. Para reusar a peça, troque APENAS `TAREFAS` (e as
+   COISAS da cena). Cada tarefa: `txt` = o pedido ESCRITO (curto, caixa alta nas
+   palavras-chave, uma linha); `alvos` = as coisas a tocar, NA ORDEM. Comece com
+   um passo; suba para dois ("... e depois ..."). `ouvir:true` mostra o
+   alto-falante desde o começo (para quem ainda está no comecinho da leitura). */
+var TAREFAS=[
+ {txt:"Toque na <b>BORBOLETA</b>.", alvos:["borb"]},
+ {txt:"Toque no <b>CARACOL</b>.", alvos:["cara"]},
+ {txt:"Toque no <b>PASSARINHO</b> e depois na <b>JOANINHA</b>.", alvos:["pass","joan"]}
+];
+/* A GRADE: 6 colunas x 5 linhas. Cada coisa e um mapa de BITS sobre ela; o
+   desenho e posicionado pelo BBOX do proprio mapa (zona = figura, por construcao). */
+var GC=6, GL=5;
+var COISAS=[ /*TECNICA*/
+ {k:"borb", n:"A BORBOLETA",
+  m:["110000","110000","000000","000000","000000"],
+  arte:'<i class="bo1"></i><i class="bo2"></i><i class="bo3"></i>'},
+ {k:"pass", n:"O PASSARINHO",
+  m:["000011","000011","000000","000000","000000"],
+  arte:'<i class="pa1"></i><i class="pa2"></i><i class="pa3"></i><i class="pa4"></i>'},
+ {k:"cara", n:"O CARACOL",
+  m:["000000","000000","000000","110000","110000"],
+  arte:'<i class="ca3"></i><i class="ca2"></i><i class="ca1"></i>'},
+ {k:"joan", n:"A JOANINHA",
+  m:["000000","000000","000000","000011","000011"],
+  arte:'<i class="jo1"></i><i class="jo2"></i><i class="jo3"></i><i class="jo4"></i>'}
+];
+
+var ti=0, pi=0, erros=0, progI=null, tarefaEl=null, passosEl=null, telaAtual=null, ger=0;
+/* a figura de IA vem do MOTOR (`imgEl`); na bancada nao existe e a coisa fica no
+   desenho de divs. Declarado aqui para viajar com a peca (o integrador confere). */
+var figEl = window.imgEl || null;
+var zapEl=null;
+
+function naZona(coisa,l,c){ return !!(coisa.m[l] && coisa.m[l].charAt(c)==="1"); }
+function coisaEm(l,c){ var i; for(i=0;i<COISAS.length;i++){ if(naZona(COISAS[i],l,c)) return COISAS[i]; } return null; }
+function coisaPorK(k){ var i; for(i=0;i<COISAS.length;i++){ if(COISAS[i].k===k) return COISAS[i]; } return null; }
+function bbox(m){ var l,c,l0=99,c0=99,l1=-1,c1=-1;
+  for(l=0;l<m.length;l++){ for(c=0;c<m[l].length;c++){ if(m[l].charAt(c)==="1"){
+    if(l<l0)l0=l; if(l>l1)l1=l; if(c<c0)c0=c; if(c>c1)c1=c; } } }
+  return {l0:l0,c0:c0,l1:l1,c1:c1}; }
+function semTag(t){ return String(t||"").replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){return String.fromCharCode(Number(n));}).replace(/\s+/g," ").replace(/^ | $/g,""); }
+/* a voz e do MOTOR (gravada); sozinha, a peca fica muda — e e leitura, entao esta certo */
+function le(txt){ var t=semTag(txt); if(t&&typeof diz==="function") diz(t); }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+
+function pecaLerFazer(){
+  ger++; limpa();
+  ti=0; pi=0; erros=0;
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","LEIA E FA&#199;A"));
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:ENUN;
+  c.appendChild(el("div","balao",_enun));
+
+  /* o PEDIDO escrito — fora do balao, para o motor NAO narrar */
+  tarefaEl=el("div","tarefa","");
+  c.appendChild(tarefaEl);
+  passosEl=el("div","passos","");
+  c.appendChild(passosEl);
+
+  var cena=el("div","cena");
+  cena.appendChild(el("div","grama")); cena.appendChild(el("div","sol")); cena.appendChild(el("div","nuvem"));
+  cena.appendChild(el("div","arvt")); cena.appendChild(el("div","arvc"));
+  cena.appendChild(el("div","flor1")); cena.appendChild(el("div","flor2"));
+  var i,l,cc,co,b,d;
+  for(i=0;i<COISAS.length;i++){
+    co=COISAS[i]; b=bbox(co.m);
+    if(co.img&&figEl){ d=el("div","coisa",""); d.appendChild(figEl(co.img)); }
+    else d=el("div","coisa",co.arte||"");
+    d.style.left=(b.c0*100/GC)+"%"; d.style.top=(b.l0*100/GL)+"%";
+    d.style.width=((b.c1-b.c0+1)*100/GC)+"%"; d.style.height=((b.l1-b.l0+1)*100/GL)+"%";
+    co.el=d; co.cels=[];
+    cena.appendChild(d);
+  }
+  var g=el("div","gradecena");
+  for(l=0;l<GL;l++){ for(cc=0;cc<GC;cc++){
+    var z=el("div","zona");
+    z.style.left=(cc*100/GC)+"%"; z.style.top=(l*100/GL)+"%";
+    z.style.width=(100/GC)+"%"; z.style.height=(100/GL)+"%";
+    co=coisaEm(l,cc); if(co) co.cels.push(z);
+    z.onclick=(function(ll,ccc,cel){ return function(){ tocar(ll,ccc,cel); }; })(l,cc,z);
+    g.appendChild(z);
+  } }
+  cena.appendChild(g);
+  c.appendChild(cena);
+  c.appendChild(el("div","hint","Leia o pedido. Depois toque na cena. Errou? A ajuda vem: primeiro o alto-falante, depois eu leio para voc&#234;."));
+  t.appendChild(c); app.appendChild(t);
+  mostraTarefa();
+}
+
+/* a tarefa da vez: texto escrito, lista de passos, data-qa so no passo da vez */
+function mostraTarefa(){
+  var tf=TAREFAS[ti], i, k, co, ch;
+  erros=0; zapEl=null;
+  tarefaEl.innerHTML="";
+  tarefaEl.appendChild(el("span","ttxt",tf.txt));
+  if(tf.ouvir) poeZapTarefa();
+  passosEl.innerHTML="";
+  if(tf.alvos.length>1){
+    for(i=0;i<tf.alvos.length;i++){
+      co=coisaPorK(tf.alvos[i]);
+      ch=el("div","passo"+(i<pi?" feito":(i===pi?" agora":"")),(i+1)+"&#186; "+(co?co.n:tf.alvos[i]));
+      passosEl.appendChild(ch);
+    }
+  }
+  marcaQA();
+  if(progI) progI.style.width=Math.round(ti*100/TAREFAS.length)+"%";
+}
+function marcaQA(){
+  var tf=TAREFAS[ti], alvo=tf?coisaPorK(tf.alvos[pi]):null, i, j;
+  for(i=0;i<COISAS.length;i++){
+    for(j=0;j<COISAS[i].cels.length;j++){
+      if(alvo&&COISAS[i]===alvo) COISAS[i].cels[j].setAttribute("data-qa","1");
+      else COISAS[i].cels[j].removeAttribute("data-qa");
+    }
+  }
+}
+/* o alto-falante do pedido: 2o gesto, aparece no 1o erro (ou com `ouvir:true`) */
+function poeZapTarefa(){
+  if(zapEl) return;
+  var tf=TAREFAS[ti], z=el("button","zap",""); z.type="button";
+  z.setAttribute("aria-label","Ouvir o pedido"); z.setAttribute("data-voz",semTag(tf.txt));
+  z.appendChild(el("i","fone",""));
+  z.onclick=function(ev){ var e=ev||window.event; if(e&&e.stopPropagation) e.stopPropagation();
+    sTap(); le(tf.txt); z.className="zap tocando"; setTimeout(function(){ z.className="zap"; },900); return false; };
+  tarefaEl.appendChild(z); zapEl=z;
+}
+
+function tocar(l,c,cel){
+  var tf=TAREFAS[ti]; if(!tf) return;
+  var co=coisaEm(l,c), alvo=coisaPorK(tf.alvos[pi]);
+  if(co&&co===alvo){ acertouPasso(co); return; }
+  sErro(); erros++;
+  cel.className="zona treme";
+  setTimeout((function(z){ return function(){ if(z.className.indexOf("pisca")<0) z.className="zona"; }; })(cel),400);
+  /* tocou um alvo de DEPOIS: a ordem e o conteudo — a ajuda diz isso */
+  if(co&&tf.alvos.indexOf(co.k)>pi){ mostraDica("Esse vem <b>depois</b>. Leia de novo: qual &#233; o <b>primeiro</b>?"); return; }
+  ajuda(erros);
+}
+function acertouPasso(co){
+  var tf=TAREFAS[ti];
+  sCerto();
+  var v=el("div","vok","&#10003;"); co.el.appendChild(v);
+  setTimeout((function(x){ return function(){ if(x.parentNode) x.parentNode.removeChild(x); }; })(v),1100);
+  pi++;
+  apagaDica();
+  if(pi>=tf.alvos.length){
+    /* tarefa feita: a peca LE o pedido feito uma vez (fecha o ciclo ler -> fazer -> ouvir) */
+    le(tf.txt);
+    var meu=ger;
+    setTimeout(function(){
+      if(meu!==ger||!viva()) return;
+      ti++; pi=0;
+      if(ti>=TAREFAS.length){ if(progI) progI.style.width="100%"; fim(); }
+      else mostraTarefa();
+    },1000);
+  } else mostraTarefa();
+}
+/* O ANDAIME (a voz e o 2o degrau — ler e o conteudo, entao ela nao vem de graca):
+   1) alto-falante aparece  2) a peca le o pedido  3) a zona pisca  4) executa e segue */
+function ajuda(n){
+  var tf=TAREFAS[ti], alvo=coisaPorK(tf.alvos[pi]);
+  if(!alvo) return;
+  if(n===1){ poeZapTarefa(); mostraDica("Leia de novo, <b>devagar</b>. Se quiser ouvir, toque no alto-falante."); }
+  else if(n===2){ le(tf.txt); mostraDica("Ou&#231;a o pedido e olhe a cena."); }
+  else if(n===3){ pisca(alvo); mostraDica("Est&#225; piscando o lugar certo. Toque ali."); }
+  else { mostraDica("Vou fazer este para voc&#234;: <b>"+alvo.n+"</b>. O pr&#243;ximo &#233; seu."); acertouPasso(alvo); }
+}
+function pisca(co){
+  var i; for(i=0;i<co.cels.length;i++) co.cels[i].className="zona pisca";
+  setTimeout((function(cs){ return function(){ var k; for(k=0;k<cs.length;k++) cs[k].className="zona"; }; })(co.cels),1900);
+}
+function apagaDica(){ var d=document.getElementById("dicaP"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
+
+function fim(){
+  var meu=ger;
+  setTimeout(function(){ if(meu!==ger) return;
+    mostraBanner('<b>Voc&#234; leu e fez!</b><br>Todos os pedidos cumpridos.', fimDaPeca); },500);
+}
+/* o fim NA BANCADA (dentro da atividade o integrador troca por "seguir") */
+function fimDaPeca(){
+  ger++; limpa();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal","&#9733;"));
+  c.appendChild(el("div","balao","Esta &#233; a pe&#231;a <b>LER E FAZER</b>: o pedido vem escrito e a voz s&#243; ajuda depois."));
+  var b=el("button","btn","Jogar de novo"); b.onclick=pecaLerFazer; c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+pecaLerFazer();
+</script>
+</body></html>

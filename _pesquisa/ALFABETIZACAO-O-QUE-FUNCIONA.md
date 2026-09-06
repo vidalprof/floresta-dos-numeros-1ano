@@ -305,13 +305,13 @@ no Trem nem na Padaria.
 
 | # | proposta | de onde vem | custo |
 |---|---|---|---|
-| 1 | **`ler-e-fazer`** — a instrução vem ESCRITA (sem voz automática: ler é o conteúdo) e a criança executa na cena ("toque no pão"; depois duas ações em ordem). Voz só como 2º degrau do andaime | TYMTR "read and do" | peça nova pequena (clone do `achar-na-cena` + gate: NÃO narrar o enunciado ao abrir) |
-| 2 | **caça-palavras com pistas em FIGURA** (`pistas:"figuras"`) | EdiLIM "sopa de letras: mostrar imágenes" | modo novo na `caca-palavras` |
-| 3 | **escada de palavras** (MALA → MOLA → BOLA, uma letra por degrau) | NCIL word ladder | `letras-escondidas` em série, ou peça pequena |
-| 4 | **memória de SONS** e **`marcar-varias`** | EdiLIM (já em `EDILIM-DINAMICAS.md`) | continuam na fila |
-| 5 | **frase aliterada do mascote** ao abrir cada bloco de letra ("a Miga mordeu a maçã…") | NCIL "Polly Pig" | conteúdo (`conteudo.json`), sem código |
+| 1 | **`ler-e-fazer`** — a instrução vem ESCRITA (sem voz automática: ler é o conteúdo) e a criança executa na cena ("toque no pão"; depois duas ações em ordem). Voz só como 2º degrau do andaime | TYMTR "read and do" | ✅ **feita 2026-09-06** (`_padrao/pecas/ler-e-fazer.html`, portão em `dinamicas.py`, linha no DINAMICAS) |
+| 2 | **caça-palavras com pistas em FIGURA** (`PALFIG` + `MODO="figuras"`) | EdiLIM "sopa de letras: mostrar imágenes" | ✅ **feito 2026-09-06** na `caca-palavras` (e a figura aparece ao achar, no modo lista) |
+| 3 | **escada de palavras** (MALA → MOLA → BOLA, uma letra por degrau) | NCIL word ladder | ✅ **feita 2026-09-06** (`_padrao/pecas/escada-de-palavras.html`: dois toques por degrau, duas portas, voz na troca) |
+| 4 | **memória de SONS** e **`marcar-varias`** | EdiLIM (já em `EDILIM-DINAMICAS.md`) | ✅ **feitas 2026-09-06**: `memoria` ganhou a carta-som (`som:true` no par) e nasceu `_padrao/pecas/marcar-varias.html` |
+| 5 | **frase aliterada do mascote** ao abrir cada bloco de letra ("a Miga mordeu a maçã…") | NCIL "Polly Pig" | ✅ **feito na Padaria 2026-09-06** (9 letras traçadas abrem com a frase: "Pipoca, pão e pudim: tudo com P!") |
 | 6 | **a sílaba viaja** (BO-LA → sa-BO-r em rodadas seguidas do `juntar-silabas`) | prática brasileira | conteúdo |
-| 7 | **Padaria fase 6** (B/D/P/M na primeira nomeação de letras) — escalonar: B e M primeiro, D e P depois | NCIL confundíveis; o portão agora avisa | conteúdo da Padaria |
+| 7 | **Padaria fase 6** (B/D/P/M na primeira nomeação de letras) — escalonar: B e M primeiro, D e P depois | NCIL confundíveis; o portão agora avisa | ✅ **feito 2026-09-06**: B, M e P nomeadas sozinhas entre letras que não se confundem; o par p/b só na 4ª rodada |
 | 8 | **gravar a leitura da criança** (Elefante Letrado grava e avalia o áudio do aluno) | Elefante Letrado | microfone + reconhecimento no navegador: futuro; anotar, não fazer |
 
 ---
