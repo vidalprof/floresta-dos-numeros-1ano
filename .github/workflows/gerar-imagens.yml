@@ -1,10 +1,23 @@
-name: Gerar imagem (Pollinations gratis / Gemini) e salvar
+name: Gerar imagem (Pollinations gratis / Gemini / OpenAI) e salvar
 
 # Gera/edita imagem e salva em _novo/<nome>.png (commit na branch que rodou).
 # - modelo=pollinations (GRATIS): texto -> imagem (URL image.pollinations.ai).
 # - modelo=gemini: usa GEMINI_API_KEY (secret). Pode EDITAR uma imagem base
 #   (input `base` = caminho no repo, ex.: _novo/nino_base.png) -> mantem o
 #   personagem e muda so o que o prompt pedir (ex.: boca aberta / pernas juntas).
+# - modelo=openai (ou openai-mini): usa OPENAI_API_KEY (secret) — o gerador do
+#   ChatGPT (gpt-image-1). E o "nivel do Gemini/ChatGPT" que o Marcos pediu
+#   (set/2026: *"essas imagens do Pollinations ficam ruins... procure por algum
+#   gerador de imagens no nivel do Gemini ou ChatGPT"*). Duas vantagens para a
+#   casa: (1) FUNDO TRANSPARENTE NATIVO — a peca ja nasce recortada, sem halo
+#   e sem o `rembg` comer sombra; (2) EDITA imagem base (`/v1/images/edits`),
+#   entao as tres camadas do mascote (parada/fala/pisca) saem da MESMA pose.
+#   Custo (tabela set/2026, 1024x1024): qualidade low ~US$0,011 · medium
+#   ~US$0,042 · high ~US$0,167 por imagem; `openai-mini` (gpt-image-1-mini)
+#   e ~4x mais barato. Comparacao completa: `_padrao/GERADORES-DE-IMAGEM.md`.
+#   ⚠️ A CHAVE NUNCA PASSA PELO CHAT: o Marcos cria em platform.openai.com e
+#   cola so em Settings -> Secrets -> Actions -> OPENAI_API_KEY. Sem o secret,
+#   este caminho avisa e CAI PARA O POLLINATIONS (nao para a producao).
 #
 # Roda no GitHub Actions (internet liberada).
 #
@@ -59,9 +72,19 @@ on:
         default: ""
         type: string
       modelo:
-        description: "pollinations (GRATIS - PADRAO) | gemini (pago, so recorte limpo)"
+        description: "pollinations (GRATIS - PADRAO) | gemini (pago) | openai (gpt-image-1, fundo transparente nativo, edita base) | openai-mini (4x mais barato). No lote vale para todas as pecas sem `modelo` proprio."
         required: false
         default: "pollinations"
+        type: string
+      qualidade:
+        description: "(openai) low (~US$0,011) | medium (~US$0,042, PADRAO) | high (~US$0,167) por imagem 1024x1024"
+        required: false
+        default: "medium"
+        type: string
+      fundo:
+        description: "(openai) auto (peca=transparente, cena/fundo=opaco) | transparente | opaco"
+        required: false
+        default: "auto"
         type: string
       w:
         description: "largura (pollinations)"
@@ -148,16 +171,79 @@ jobs:
           NOMES: ${{ inputs.nomes }}
           W: ${{ inputs.w }}
           H: ${{ inputs.h }}
+          MODELO: ${{ inputs.modelo }}
+          QUALIDADE: ${{ inputs.qualidade }}
+          FUNDO: ${{ inputs.fundo }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           python3 - <<'PY'
-          import io, json, os, re, time, urllib.parse, urllib.request
+          import io, json, os, re, time, urllib.parse, urllib.request, urllib.error, base64, uuid
           from PIL import Image
 
           arq  = os.environ.get("LOTE","").strip()
           dest = re.sub(r"[^A-Za-z0-9_/-]","", os.environ.get("DEST","_novo").strip() or "_novo")
           filtro = [n.strip() for n in os.environ.get("NOMES","").split(",") if n.strip()]
           W = os.environ.get("W","1024"); H = os.environ.get("H","1024")
+          # ⚠️ 800 das 1912 figuras do banco nasceram com menos de 300 px e ficam
+          #    borradas no projetor (auditoria set/2026). Piso: 512 no lado maior.
+          try:
+              if int(W) < 512 or int(H) < 512: W, H = "1024", "1024"; print("tamanho abaixo de 512: subi para 1024x1024")
+          except ValueError: W, H = "1024", "1024"
+          MODELO_GLOBAL = (os.environ.get("MODELO","pollinations").strip() or "pollinations").lower()
+          QUALIDADE = (os.environ.get("QUALIDADE","medium").strip() or "medium").lower()
+          FUNDO = (os.environ.get("FUNDO","auto").strip() or "auto").lower()
+          OPENAI_KEY = os.environ.get("OPENAI_API_KEY","").strip()
           os.makedirs(dest, exist_ok=True)
+
+          # 💰 custo estimado por imagem (US$, tabela set/2026 — conferir em
+          #    _padrao/GERADORES-DE-IMAGEM.md). Sai no resumo para o Marcos ver
+          #    quanto a corrida custou, imagem por imagem.
+          PRECO = {"gpt-image-1":      {"low":0.011,"medium":0.042,"high":0.167},
+                   "gpt-image-1-mini": {"low":0.005,"medium":0.011,"high":0.036}}
+          custo = {"usd": 0.0, "chamadas": 0}
+
+          def tamanho_openai():
+              try: w, h = int(W), int(H)
+              except ValueError: return "1024x1024"
+              if w > h*1.2: return "1536x1024"
+              if h > w*1.2: return "1024x1536"
+              return "1024x1024"
+
+          def desenha_openai(prompt, transparente, modelo_nome="openai"):
+              u"""gpt-image-1 (ou -mini). Devolve (png_bytes, rotulo). Fundo
+              transparente NATIVO quando pedido — a peca nao passa pelo rembg."""
+              if not OPENAI_KEY:
+                  raise RuntimeError("OPENAI_API_KEY vazio (o Marcos adiciona em Settings -> Secrets -> Actions)")
+              mod = "gpt-image-1-mini" if "mini" in modelo_nome else "gpt-image-1"
+              q = QUALIDADE if QUALIDADE in ("low","medium","high") else "medium"
+              body = {"model": mod, "prompt": prompt, "n": 1, "size": tamanho_openai(),
+                      "quality": q, "output_format": "png",
+                      "background": "transparent" if transparente else "opaque"}
+              req = urllib.request.Request("https://api.openai.com/v1/images/generations",
+                                           data=json.dumps(body).encode("utf-8"),
+                                           headers={"Content-Type":"application/json",
+                                                    "Authorization":"Bearer "+OPENAI_KEY})
+              ultimo = None
+              for tent, espera in enumerate([5, 20, 45, 0]):
+                  try:
+                      raw = urllib.request.urlopen(req, timeout=300).read()
+                      d = json.loads(raw)
+                      b64 = ((d.get("data") or [{}])[0]).get("b64_json")
+                      if not b64: raise RuntimeError("resposta sem imagem: %s" % json.dumps(d)[:200])
+                      custo["usd"] += PRECO[mod][q] * (1.5 if body["size"] != "1024x1024" else 1.0)
+                      custo["chamadas"] += 1
+                      return base64.b64decode(b64), "%s q=%s %s" % (mod, q, body["size"])
+                  except urllib.error.HTTPError as e:
+                      corpo = e.read().decode("utf-8","ignore")[:220]
+                      ultimo = "HTTP %s %s" % (e.code, corpo)
+                      print("  openai [%s] tentativa %d: %s" % (mod, tent+1, ultimo))
+                      # 401 chave errada / 403 sem acesso / 400 prompt recusado: repetir nao ajuda
+                      if e.code not in (429, 500, 502, 503, 504): break
+                  except Exception as e:
+                      ultimo = str(e)[:200]
+                      print("  openai [%s] tentativa %d: %s" % (mod, tent+1, ultimo))
+                  if espera: time.sleep(espera)
+              raise RuntimeError("OpenAI nao devolveu imagem: %s" % ultimo)
 
           if not os.path.exists(arq):
               raise SystemExit("::error::nao achei o arquivo do lote: %s"%arq)
@@ -169,7 +255,7 @@ jobs:
           if not lote:
               raise SystemExit("::error::lote vazio (o filtro `nomes` bate com alguma coisa?)")
 
-          def desenha(prompt, semente=None):
+          def desenha(prompt, semente=None, motor_pref=None):
               # ⭐⭐ A SEMENTE — a peca que faltava para o Pollinations chegar perto
               #    do Gemini (ordem do Marcos, set/2026: *"preciso que vc faca
               #    super prompts para o polinations conseguir gerar igual gemeni,
@@ -179,13 +265,17 @@ jobs:
               #    "desirmanado" que fazia a arte gratis parecer pior. Com a
               #    semente fixa a familia inteira nasce parente, e uma peca que
               #    saiu torta pode ser refeita IGUAL, mudando so o que se quer.
-              motores=["flux","turbo","flux-realism",""]
+              # ⚠️ O `flux` ganha DUAS tentativas antes de cair para o `turbo`
+              #    (auditoria set/2026: o turbo e visivelmente pior e entrava
+              #    na 2a tentativa, calado). Quando cai, sai um ::warning:: —
+              #    peca de turbo e candidata a refazer, nao e "pronta".
+              motores=[motor_pref or "flux", motor_pref or "flux", "flux", "turbo", ""]
               base_url="https://image.pollinations.ai/prompt/%s?width=%s&height=%s&nologo=true"%(
                   urllib.parse.quote(prompt), W, H)
               if semente not in (None, ""):
                   base_url += "&seed=%s"%semente
               ultimo=None
-              for tent,espera in enumerate([8,20,45,0]):
+              for tent,espera in enumerate([8,20,30,45,0]):
                   mot=motores[min(tent,len(motores)-1)]
                   url=base_url+("&model="+mot if mot else "")
                   try:
@@ -196,7 +286,10 @@ jobs:
                       #    que o `flux`) passava por flux sem ninguem notar — o
                       #    mesmo registro falso que ja me fez diagnosticar errado
                       #    com o Gemini.
-                      if dados and len(dados)>4000: return dados, (mot or "padrao")
+                      if dados and len(dados)>4000:
+                          if mot not in ("flux", motor_pref):
+                              print("::warning::motor de segunda (%s) — refazer esta peca quando o flux voltar"%(mot or "padrao"))
+                          return dados, (mot or "padrao")
                       ultimo="resposta vazia (%d bytes)"%len(dados or b"")
                   except Exception as e:
                       ultimo=str(e)[:150]
@@ -261,7 +354,7 @@ jobs:
               img.putalpha(Image.fromarray(a))
               return img, len(cacos)
 
-          feitos, falhas = [], []
+          feitos, falhas, motores_usados = [], [], {}
           for it in lote:
               nome=re.sub(r"[^A-Za-z0-9_-]","_", (it.get("nome") or "").strip())
               prompt=(it.get("prompt") or "").strip()
@@ -269,21 +362,51 @@ jobs:
                   falhas.append("%s: sem nome ou sem prompt"%(nome or "?")); continue
               print("== %s"%nome)
               try:
-                  # a semente vem do proprio lote (`"semente": 12345`). Pecas da
-                  # MESMA cartela usam a MESMA semente -> saem parentes.
-                  bruto, motor = desenha(prompt, it.get("semente"))
+                  # quem desenha ESTA peca: o campo `modelo` do item manda; sem
+                  # ele, vale o input `modelo` da corrida (padrao pollinations).
+                  quer=(it.get("modelo") or MODELO_GLOBAL).lower()
+                  cena=e_cena(it)
+                  if FUNDO=="transparente": transparente=True
+                  elif FUNDO=="opaco": transparente=False
+                  else: transparente=not cena
+                  bruto=None; motor=None; ja_transparente=False
+                  if quer.startswith("openai"):
+                      try:
+                          bruto, motor = desenha_openai(prompt, transparente, quer)
+                          motor = "openai/"+motor; ja_transparente = transparente
+                      except Exception as e:
+                          # ⚡ NUNCA PARAR A PRODUCAO: sem chave/cota, a peca sai pelo
+                          #    Pollinations e fica REGISTRADO que nao foi o OpenAI.
+                          motivo=re.sub(r"\s+"," ",str(e))[:200]
+                          print("::warning::%s: OpenAI falhou (%s). Caindo para o Pollinations."%(nome, motivo))
+                          bruto, motor = desenha(prompt, it.get("semente"), it.get("motor"))
+                          motor = "pollinations/%s (openai falhou: %s)"%(motor, motivo[:80])
+                  else:
+                      # a semente vem do proprio lote (`"semente": 12345`). Pecas da
+                      # MESMA cartela usam a MESMA semente -> saem parentes.
+                      bruto, motor = desenha(prompt, it.get("semente"), it.get("motor"))
+                      motor = "pollinations/"+motor
+                  motores_usados[motor.split(" ")[0]] = motores_usados.get(motor.split(" ")[0],0)+1
                   saida=os.path.join(dest, nome+".png")
                   # deixa registrado quem desenhou e com que semente: sem isso eu
                   # nao sei se a peca feia veio do `turbo` (bem pior) ou do prompt.
                   try:
                       io.open(os.path.join(dest, nome+".origem.txt"), "w", encoding="utf-8").write(
-                          "pollinations/%s semente=%s\n"%(motor, it.get("semente") or "-"))
+                          "%s semente=%s\n"%(motor, it.get("semente") or "-"))
                   except Exception: pass
-                  if e_cena(it):
+                  if cena or (not transparente):
                       Image.open(io.BytesIO(bruto)).convert("RGB").save(saida, optimize=True)
                       print("   cena (sem recorte) -> %s"%saida)
                   else:
-                      img=Image.open(io.BytesIO(remove(bruto, session=sessao))).convert("RGBA")
+                      if ja_transparente:
+                          # o OpenAI ja entregou o fundo transparente: nada de rembg
+                          # (que comeria a sombra e deixaria halo). So apara.
+                          img=Image.open(io.BytesIO(bruto)).convert("RGBA")
+                          if img.getextrema()[3][0] >= 250:
+                              print("   aviso: o OpenAI devolveu fundo OPACO apesar do pedido; passando pelo rembg")
+                              img=Image.open(io.BytesIO(remove(bruto, session=sessao))).convert("RGBA")
+                      else:
+                          img=Image.open(io.BytesIO(remove(bruto, session=sessao))).convert("RGBA")
                       img, cacos = so_a_figura(img)
                       if cacos: print("   %d caco(s) do recorte apagado(s)"%cacos)
                       bb=img.getbbox()
@@ -301,14 +424,22 @@ jobs:
 
           print("\n%d feita(s), %d falha(s)"%(len(feitos), len(falhas)))
           for f in falhas: print("::warning::%s"%f)
+          quem=", ".join("%s x%d"%(k,v) for k,v in sorted(motores_usados.items())) or "-"
+          linha_custo = (u"**custo estimado: US$ %.3f** (%d chamada(s) OpenAI, tabela set/2026)"%(custo["usd"], custo["chamadas"])
+                         if custo["chamadas"] else u"**custo: R$ 0,00** (nenhuma chamada paga)")
+          print("motores: %s | %s"%(quem, linha_custo))
           resumo=os.environ.get("GITHUB_STEP_SUMMARY")
           if resumo:
               with io.open(resumo,"a",encoding="utf-8") as s:
-                  s.write(u"### Lote GRATIS (Pollinations + rembg)\n\n")
+                  s.write(u"### Lote de imagens\n\n")
                   s.write(u"- feitas: %d -> `%s`\n"%(len(feitos), dest))
+                  s.write(u"- quem desenhou: %s\n"%quem)
                   s.write(u"- falhas: %d\n"%len(falhas))
                   for f in falhas: s.write(u"  - %s\n"%f)
-                  s.write(u"\n**custo: R$ 0,00** (nenhuma chamada paga)\n")
+                  s.write(u"\n%s\n"%linha_custo)
+          # para a mensagem do commit dizer quem desenhou DE VERDADE
+          try: io.open("/tmp/_motores_do_lote.txt","w",encoding="utf-8").write(quem)
+          except Exception: pass
           # ⚡ O RECADO BARATO DE VOLTA (o mesmo do entregar.yml). Sem ele, saber
           #    o que aconteceu custa uma consulta de 55 mil caracteres a API —
           #    e a regra da casa proibe justamente isso. 200 bytes commitados
@@ -317,6 +448,7 @@ jobs:
           io.open("_status/imagens-%s.json" % re.sub(r"[^A-Za-z0-9]+","_",arq),
                   "w", encoding="utf-8").write(
               json.dumps({"lote": arq, "dest": dest, "feitas": len(feitos),
+                          "motores": motores_usados, "custo_usd": round(custo["usd"],3),
                           "falhas": falhas[:12]}, ensure_ascii=False))
           if not feitos:
               raise SystemExit("::error::nenhuma imagem saiu")
@@ -331,12 +463,17 @@ jobs:
           MODELO: ${{ inputs.modelo }}
           W: ${{ inputs.w }}
           H: ${{ inputs.h }}
+          QUALIDADE: ${{ inputs.qualidade }}
+          FUNDO: ${{ inputs.fundo }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           python3 - <<'PY'
-          import os, time, re, json, base64, urllib.request, urllib.parse, urllib.error
+          import os, time, re, json, base64, uuid, urllib.request, urllib.parse, urllib.error
           modelo=(os.environ.get("MODELO","pollinations").strip() or "pollinations").lower()
           if modelo in ("free","gratis","grátis","poli"): modelo="pollinations"
+          if modelo in ("gpt","chatgpt","gpt-image-1","gpt-image"): modelo="openai"
+          if modelo in ("gpt-image-1-mini","openai_mini","mini"): modelo="openai-mini"
           prompt=os.environ["PROMPT"]
           nome=re.sub(r'[^A-Za-z0-9_-]','_', os.environ.get("NOME","imagem").strip() or "imagem")
           base=os.environ.get("BASE","").strip()
@@ -409,7 +546,11 @@ jobs:
               # de graca. Sem isto o registro dizia so "nao retornou imagem" e
               # eu nao sabia se era chave, cota, HTTP ou recusa do modelo.
               porques=[]
-              for modelo_img in ["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]:
+              # ⚠️ os dois primeiros nomes sao a familia 3.1 (Nano Banana 2 Lite, US$0,034
+              #    a imagem, e Nano Banana 2, US$0,067 — precos da pagina oficial em
+              #    2026-09-06). Os IDs exatos da API eu NAO consegui conferir daqui:
+              #    se devolverem 404 a fila passa adiante sem repetir (404 nao e temporario).
+              for modelo_img in ["gemini-3.1-flash-lite-image","gemini-3.1-flash-image","gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]:
                   url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(modelo_img,key)
                   raw=None
                   for tentativa,espera in enumerate([5,15,40,0]):
@@ -442,7 +583,75 @@ jobs:
                   porques.append("%s sem imagem: %s"%(modelo_img, json.dumps(d)[:160]))
               raise RuntimeError("Gemini nao retornou imagem | " + " || ".join(porques[:3]))
 
-          if modelo=="gemini":
+          def openai_img():
+              u"""gpt-image-1 / gpt-image-1-mini: gera do zero (`/images/generations`)
+              ou EDITA a `base` (`/images/edits`, multipart) — e o caminho das tres
+              camadas do mascote quando o Gemini esta sem cota."""
+              key=os.environ.get("OPENAI_API_KEY","").strip()
+              if not key: raise RuntimeError("OPENAI_API_KEY vazio (o Marcos adiciona em Settings -> Secrets -> Actions; nunca pelo chat)")
+              mod = "gpt-image-1-mini" if modelo=="openai-mini" else "gpt-image-1"
+              q = (os.environ.get("QUALIDADE","medium").strip() or "medium").lower()
+              if q not in ("low","medium","high"): q="medium"
+              fundo=(os.environ.get("FUNDO","auto").strip() or "auto").lower()
+              if fundo=="auto":
+                  # peca = transparente; cena/fundo (pelo nome) = opaco
+                  fundo = "opaque" if re.search(r"fundo|cena|cenario|_capa|^capa", nome) else "transparent"
+              else:
+                  fundo = "transparent" if fundo.startswith("transp") else "opaque"
+              try: w,h=int(os.environ.get("W","768")),int(os.environ.get("H","1024"))
+              except ValueError: w,h=1024,1024
+              size = "1536x1024" if w>h*1.2 else ("1024x1536" if h>w*1.2 else "1024x1024")
+              PRECO={"gpt-image-1":{"low":0.011,"medium":0.042,"high":0.167},
+                     "gpt-image-1-mini":{"low":0.005,"medium":0.011,"high":0.036}}
+              if base:
+                  if not os.path.exists(base):
+                      raise SystemExit("::error::EDICAO pedida mas a base nao existe: %s"%base)
+                  print("editando imagem base (openai):", base)
+                  limite="----fabrica"+uuid.uuid4().hex
+                  campos=[("model",mod),("prompt",prompt),("n","1"),("size",size),("quality",q),("background",fundo),("output_format","png")]
+                  corpo=b""
+                  for k,v in campos:
+                      corpo+=("--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n"%(limite,k,v)).encode("utf-8")
+                  corpo+=("--%s\r\nContent-Disposition: form-data; name=\"image\"; filename=\"base.png\"\r\nContent-Type: image/png\r\n\r\n"%limite).encode("utf-8")
+                  corpo+=open(base,"rb").read()+("\r\n--%s--\r\n"%limite).encode("utf-8")
+                  req=urllib.request.Request("https://api.openai.com/v1/images/edits", data=corpo,
+                       headers={"Content-Type":"multipart/form-data; boundary="+limite,"Authorization":"Bearer "+key})
+              else:
+                  body={"model":mod,"prompt":prompt,"n":1,"size":size,"quality":q,"background":fundo,"output_format":"png"}
+                  req=urllib.request.Request("https://api.openai.com/v1/images/generations",
+                       data=json.dumps(body).encode("utf-8"),
+                       headers={"Content-Type":"application/json","Authorization":"Bearer "+key})
+              ultimo=None
+              for tent,espera in enumerate([5,20,45,0]):
+                  try:
+                      d=json.loads(urllib.request.urlopen(req, timeout=300).read())
+                      b64=((d.get("data") or [{}])[0]).get("b64_json")
+                      if not b64: raise RuntimeError("resposta sem imagem: %s"%json.dumps(d)[:200])
+                      usd=PRECO[mod][q]*(1.5 if size!="1024x1024" else 1.0)
+                      print("imagem gerada com %s (q=%s, %s, fundo %s) ~US$ %.3f"%(mod,q,size,fundo,usd))
+                      return base64.b64decode(b64), "openai/%s q=%s %s fundo=%s ~US$%.3f"%(mod,q,size,fundo,usd)
+                  except urllib.error.HTTPError as e:
+                      corpo=e.read().decode("utf-8","ignore")[:220]
+                      ultimo="HTTP %s %s"%(e.code,corpo)
+                      print("openai [%s] tentativa %d: %s"%(mod,tent+1,ultimo))
+                      if e.code not in (429,500,502,503,504): break
+                  except Exception as e:
+                      ultimo=str(e)[:200]; print("openai [%s] tentativa %d: %s"%(mod,tent+1,ultimo))
+                  if espera: time.sleep(espera)
+              raise RuntimeError("OpenAI nao retornou imagem: %s"%ultimo)
+
+          if modelo in ("openai","openai-mini"):
+              try:
+                  b, quem = openai_img()
+                  salvar(b, quem)
+              except SystemExit: raise
+              except Exception as e:
+                  if base and os.path.exists(base):
+                      raise SystemExit("::error::OpenAI falhou e esta era uma EDICAO de imagem base (o Pollinations nao edita): %s"%e)
+                  motivo=re.sub(r"\s+"," ",str(e))[:300]
+                  print("::warning::OpenAI falhou (%s). Caindo para o Pollinations (gratis)."%motivo)
+                  salvar(pollinations(), "pollinations (o openai falhou: %s)"%motivo)
+          elif modelo=="gemini":
               try:
                   salvar(gemini())
               except Exception as e:
@@ -471,7 +680,8 @@ jobs:
           if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
           NOME="${{ inputs.nome }}"
           if [ -n "${{ inputs.lote }}" ]; then
-            MSG="imagem: gera $NOME (lote GRATIS: pollinations + recorte)"
+            QUEM="$(cat /tmp/_motores_do_lote.txt 2>/dev/null || echo "nao registrado")"
+            MSG="imagem: gera $NOME (lote ${{ inputs.lote }} — desenhado por: $QUEM)"
           else
             QUEM="$(cat "_novo/$NOME.origem.txt" 2>/dev/null || echo "${{ inputs.modelo }} (nao registrado)")"
             MSG="imagem: gera $NOME [desenhado por: $QUEM]"

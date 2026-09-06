@@ -80,6 +80,25 @@ def alfa(cam):
         return False
 
 
+def origem_da_arte(cam):
+    u"""quem desenhou e com que semente — lido do `<nome>.origem.txt` que o
+    `gerar-imagens.yml` deixa ao lado do PNG (ex.: "pollinations/flux semente=4171",
+    "openai/gpt-image-1 q=medium ..."). Sem o arquivo, a arte e anterior ao
+    registro (ago/2026) e fica "desconhecido". E o que permite, quando ha duas
+    versoes da mesma figura, ficar com a do motor melhor (auditoria set/2026)."""
+    txt = os.path.splitext(cam)[0] + ".origem.txt"
+    if not os.path.isfile(txt):
+        return "desconhecido", None
+    try:
+        linha = io.open(txt, encoding="utf-8").read().strip().splitlines()[0]
+    except Exception:
+        return "desconhecido", None
+    m = re.search(r"semente=(\S+)", linha)
+    semente = m.group(1) if m and m.group(1) not in ("-", "None") else None
+    motor = re.sub(r"\s*semente=\S+", "", linha).strip() or "desconhecido"
+    return motor[:80], semente
+
+
 def main():
     so_ver = "--so-ver" in sys.argv
     banco = {}
@@ -113,6 +132,7 @@ def main():
                 n = "%s-%d" % (base, k)
                 k += 1
             vistos[sha] = n
+            motor, semente = origem_da_arte(cam)
             banco[n] = {
                 "arquivo": n + ext,
                 "sha": sha,
@@ -120,6 +140,8 @@ def main():
                 "tambem_em": [],
                 "transparente": alfa(cam),
                 "bytes": os.path.getsize(cam),
+                "motor": motor,
+                "semente": semente,
             }
             if not so_ver:
                 if not os.path.isdir(DEST):

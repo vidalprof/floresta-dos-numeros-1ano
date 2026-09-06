@@ -6174,3 +6174,51 @@ dizia "REPROVOU" sem nomear o portão — agora lista (`reprova()` em
 e conferiu os 16 (sha no ar = esperado em todos, 3ª tentativa cada), e o carimbo
 `_status/entrega-*.json` chegou no commit `84560d0e`. O aviso do hook de
 "conserto preso" era cópia local ATRÁS — sincronizar antes de acreditar nele.
+
+## 🎨💰 GERADOR "NÍVEL GEMINI/CHATGPT" + AUDITORIA DO BANCO DE IMAGENS (2026-09-06)
+
+Pedido do Marcos: *"Essas imagens do Pollinations ficam ruins, melhore e otimize
+nosso banco de imagens, procure por algum gerador de imagens no nível do Gemini
+ou ChatGPT."* O que ficou feito — e o que depende dele:
+
+- **`_banco/AUDITORIA.md`** — o banco medido: 1 912 figuras (279 MB), 800 com menos
+  de 300 px, 697 grupos de arquivos idênticos (quase todos cópias legítimas do
+  banco) e **13 duplicatas DENTRO da mesma atividade**, que são defeito: `pd_l_I`
+  é a figura do H; `nara_aponta` = `nara_acena`; `estrela_grande` do Clima é o
+  **sol** (`ic_sol`) servindo de estrela no boletim; mascotes de `_central`,
+  `_agora` e `_trem` "falam/piscam" com a pose parada.
+- **Portão novo 1c2 `_qa/duplicatas.py`** (na banca, depois do 1c): compara o
+  CONTEÚDO (sha1), não o nome. Reprova quando a criança vê os dois nomes; avisa
+  quando só está na pasta. Crachá = avatar é cópia declarada de fábrica; outras
+  cópias se declaram em `<pasta>/_copias_ok.json` com a razão (`_blu` declarou
+  `bl_mapa = bl_fundo`, a confirmar com o Marcos). Hoje reprova `_clima`,
+  `_trem`, `_central`, `_agora`.
+- **`_padrao/GERADORES-DE-IMAGEM.md`** — a comparação com preço por figura e por
+  atividade (fontes em `_pesquisa/web/precos-openai-gemini-imagem.md` e
+  `recraft-ideogram-stability-api-precos.md`). Resumo: **não há grátis no nível
+  pedido**; o pago custa US$0,01–0,07 por figura (40 figuras = US$0,5–2,7).
+  Recomendação: **OpenAI gpt-image-1** (fundo transparente NATIVO — mata o halo
+  do rembg — e edita a base do mascote), `low` para provar, `medium` para valer;
+  Gemini (Nano Banana 2 Lite, US$0,034) como segunda opção paga; Pollinations
+  segue para cena/fundo e como reserva automática.
+- **`gerar-imagens.yml` ganhou `modelo=openai` / `openai-mini`** (inputs
+  `qualidade` e `fundo`), em imagem única (gera e EDITA base via
+  `/v1/images/edits`) e no lote (global ou `"modelo":"openai"` por peça; a peça
+  já vem transparente e pula o rembg). Sem `OPENAI_API_KEY` ou com erro, cai
+  para o Pollinations e REGISTRA isso no `.origem.txt`, no commit e no
+  `_status/imagens-*.json` (que agora traz `motores` e `custo_usd`). Também:
+  piso de 512 px (sobe para 1024), `flux` com duas chances antes do `turbo`
+  (e `::warning::` quando cai), nomes da família Gemini 3.1 na fila.
+  **⚠️ A chave nunca passa pelo chat**: o Marcos cola em Settings → Secrets →
+  Actions → `OPENAI_API_KEY` (crédito pré-pago, US$5 basta para começar).
+- **`_banco/montar.py`** guarda `motor` e `semente` (do `.origem.txt`) em cada
+  objeto do índice.
+- **Refazer acionado hoje (grátis, para o Marcos aprovar em `_novo/`):**
+  `_novo/_lote_banco_refazer.json` → `pd_l_I` (pão em I) e `estrela_grande`
+  (estrela, não sol). **Esperando a chave paga:** as camadas dos mascotes
+  (`tr_coru_fala`, `ce_mascote_*`, `rn_pixel_*`, a pose `nara_acena`) — edição
+  de base, 2–3 chamadas por mascote.
+- Lição do dia: `pesquisar.yml` não lê página montada por JavaScript (preços da
+  OpenAI, Cloudflare) nem resposta JSON/Markdown crua (lista de modelos do
+  Pollinations voltou 200 "sem texto"). Para essas, ou eu uso o que sei e marco
+  "conferir", ou peço ao Marcos para colar o texto.

@@ -642,6 +642,13 @@ echo
 echo "--- 1c) RESTO DE CLONE (sobrou coisa da origem?) --"
 portao "1c resto de clone" python3 _qa/clone.py "$ARQ"
 
+echo
+echo "--- 1c2) DUPLICATA IGUAL (dois nomes, a MESMA figura?) --"
+# ⚠️ nasceu da auditoria do banco (set/2026): a letra I da Padaria era a figura
+#    do H, duas poses da Nara eram o mesmo desenho, mascotes "falavam" com a pose
+#    parada. Nenhum portao via, porque todos olham o NOME; este compara o CONTEUDO.
+portao "1c2 duplicata igual" python3 _qa/duplicatas.py "$ARQ"
+
 echo; echo "--- 1g) BECO SEM SAIDA (a fase leva para a seguinte?) -"
 # ⚠️ o defeito mais grave que a fabrica ja teve: a tela de BANCADA da peca
 #    ("PECA FECHADA", botao "Jogar de novo") virando fim de linha na fase 3 de
