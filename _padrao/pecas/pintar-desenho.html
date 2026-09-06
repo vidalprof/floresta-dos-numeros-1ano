@@ -456,7 +456,15 @@ function telaPintar(){
   var z=el("button","zap","");
   z.appendChild(el("i","fone",""));
   z.setAttribute("aria-label","Ouvir de novo: "+pedido);
-  z.onclick=function(){ sTap(); fala(tinta?(nomeDaTinta(tinta)+". "+pedido):pedido); };
+  /* data-voz = o que o botao DIZ. Sem isto o portao (e o motor) leem o texto ao
+     lado — "Escolha uma cor" — e cobram uma gravacao que ninguem pediu. */
+  z.setAttribute("data-voz", pedido);
+  /* ⚠️ BANCA DA PADARIA (set/2026, portao 0n): com uma tinta na mao o botao
+     falava "vermelho. Pinte a placa..." — frase COMPOSTA que nao existe gravada
+     (a chave sai do texto), entao tocava uma chave sem mp3: silencio. A cor ja e
+     dita na hora de escolher (`fala(TINTAS[i].voz)`); "ouvir de novo" repete o
+     PEDIDO, que e o que esta gravado. */
+  z.onclick=function(){ sTap(); fala(pedido); };
   f.appendChild(baldeEl); f.appendChild(nomeEl); f.appendChild(z);
   c.appendChild(f);
 

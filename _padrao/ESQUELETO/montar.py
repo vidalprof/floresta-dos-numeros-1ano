@@ -930,6 +930,22 @@ def falas_de(c):
                                       _opn.get(_op, _op),
                                       _nom.get(str(_b), _b))
                 poe("op_" + chave_voz(texto_limpo(_txt)), _txt)
+        # ⭐ TRACAR-LETRA com `som`: o alto-falante diz "pê. p." (nome + som), uma
+        #    frase COMPOSTA que nao existe em campo nenhum — so a peca a monta.
+        #    Sem isto a chave nao tem mp3 e o botao fica mudo (banca da Padaria,
+        #    set/2026: tres fases com o alto-falante da letra em silencio).
+        if f.get("mec") == "tracar-letra":
+            for it in (f.get("dados") or []):
+                if not isinstance(it, dict) or not it.get("voz"):
+                    continue
+                # a peca diz `LT.voz` ("pê") pelo `diz()`, cuja chave sai DESSE texto;
+                # a gravacao do nome da letra existia so sob a chave da LETRA ("P" ->
+                # "Pê"), entao o botao da peca nao achava mp3. Grava tambem sob a
+                # chave do proprio texto.
+                poe("op_" + chave_voz(texto_limpo(it["voz"])), it["voz"])
+                if it.get("som"):
+                    _t = u"%s. %s." % (it["voz"], it["som"])
+                    poe("op_" + chave_voz(texto_limpo(_t)), _t)
         # ⭐ MEMORIA: as dicas do andaime citam a PALAVRA sorteada ("Ouça: MALA.
         #    Ache o desenho que combina." / "Abri uma para você: MALA. Ache o par
         #    dela."). O colhedor so pega a palavra que o sorteio abriu naquela

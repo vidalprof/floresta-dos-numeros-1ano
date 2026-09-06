@@ -29963,7 +29963,15 @@ function telaPintar(){
   var z=el("button","zap","");
   z.appendChild(el("i","fone",""));
   z.setAttribute("aria-label","Ouvir de novo: "+pedido);
-  z.onclick=function(){ sTap(); fala(tinta?(nomeDaTinta(tinta)+". "+pedido):pedido); };
+  /* data-voz = o que o botao DIZ. Sem isto o portao (e o motor) leem o texto ao
+     lado — "Escolha uma cor" — e cobram uma gravacao que ninguem pediu. */
+  z.setAttribute("data-voz", pedido);
+  /* ⚠️ BANCA DA PADARIA (set/2026, portao 0n): com uma tinta na mao o botao
+     falava "vermelho. Pinte a placa..." — frase COMPOSTA que nao existe gravada
+     (a chave sai do texto), entao tocava uma chave sem mp3: silencio. A cor ja e
+     dita na hora de escolher (`fala(TINTAS[i].voz)`); "ouvir de novo" repete o
+     PEDIDO, que e o que esta gravado. */
+  z.onclick=function(){ sTap(); fala(pedido); };
   f.appendChild(baldeEl); f.appendChild(nomeEl); f.appendChild(z);
   c.appendChild(f);
 
@@ -40918,9 +40926,15 @@ function diz(txt){
    responde e a ponte (voz gravada); na bancada, a declaracao acima. */
 function fala(txt){ if(typeof diz==="function") diz(txt); }
 /* o nome + o som da letra, do jeito que a professora diz */
+/* ⚠️ BANCA DA PADARIA (set/2026, portao 0n): o botao falava `LT.voz+"."` ("pê.")
+   e o montador grava `voz` como esta na gaveta ("pê"). A chave da voz sai do
+   TEXTO: "pê." e "pê" sao arquivos diferentes — o alto-falante da letra tocava
+   uma chave SEM mp3 e a crianca ouvia SILENCIO em tres fases. Sem `som`, fala a
+   `voz` exatamente como gravada; com `som`, a frase composta e gravada pelo
+   montador (caso especial "tracar-letra"). */
 function falaLetra(){
   if(!LT) return;
-  fala(LT.som ? (LT.voz+". "+LT.som+".") : (LT.voz+"."));
+  fala(LT.som ? (LT.voz+". "+LT.som+".") : LT.voz);
 }
 function sPasso(k){ nota(430+k*40,.07,.11,"sine",0); }
 /* ⚠️ AQUI NAO EXISTE SOM DE TROPECO. Traçar e um GESTO em treino, nao uma
@@ -41083,7 +41097,7 @@ function tarjaPalavra(){
   /* ⭐ data-voz = EXATAMENTE o que falaLetra() diz, para o portao _qa/fala_o_escrito
      casar a gravacao pelo texto REAL (senao ele usa o texto visivel "A de ABELHA",
      que difere do falado "Á. Á de ABELHA." e acusa alto-falante sem voz). */
-  z.setAttribute("data-voz", LT.som ? (LT.voz+". "+LT.som+".") : (LT.voz+"."));
+  z.setAttribute("data-voz", LT.som ? (LT.voz+". "+LT.som+".") : LT.voz);
   z.onclick=function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
