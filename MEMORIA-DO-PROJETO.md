@@ -6331,8 +6331,15 @@ por isso você fez as pesquisas"*. Varri os quatro documentos de pesquisa
 - **#49 — `_qa/leiaute_mao.js`:** o leiaute dos apps À MÃO (que nunca tinham sido
   medidos): 6 tamanhos, figura esticada/cortada, fundo esticado, estouro lateral,
   alvo < 40 px, texto cortado; anda pelas telas só por botões de "começar/próximo".
-  Primeira medição: o Pixel Art estourava 5–18 px de lado no celular e tinha 7
-  botões de 32 px.
+  Primeira medição nos 23 apps: Pixel Art estourava 5–18 px de lado no celular
+  (o botão Salvar saía da tela) e tinha 7 botões de 32 px + bolinhas de cor de
+  20–26 px; alto-falantes `.zapb` de 38 px em 5 atividades antigas (história,
+  jardim, mapa, papagaios, tangram); botões de 37 px nos 4 painéis do professor;
+  chips de 39 px e um link de 17 px no painel de links; crachás em `cover`
+  cortando até 63 % do retrato (vale4, mat2, edf2 → `object-position:center top`);
+  mascote do Batata cortado 96 px na janela baixa. Tudo consertado e remedido:
+  23/23 com código 0. Falsos alarmes que o portão aprendeu a não dar: cenário em
+  `cover` (é de propósito), trilho que rola de lado (o que está fora é alcançável).
 
 **Lição:** pesquisa vira código quando tem PORTÃO junto — as 12 regras de §3 só
 saíram do papel quando cada uma ganhou uma medida em `_qa/`.
