@@ -164,8 +164,10 @@ def olho_local(pasta, pngs):
         #    figura errada, e ruido). Irmas de nome (bolo/bolinho, biscoito/bolacha,
         #    "a letra A"/"a letra B") disputam entre si por natureza: nao contam.
         irmas = rot[top1][:4] == rot[i][:4] or (rot[top1].startswith("a letra") and rot[i].startswith("a letra"))
+        # (rodada 8) "a letra A" da Padaria E um pao em forma de letra: parecer "pao" ou
+        # "biscoito" e o esperado, nao defeito. Letra-figura nao entra na acusacao.
         margem = sims[top1] - sims[i]
-        ok = (pos <= 2) or irmas or (margem < 0.02)
+        ok = (pos <= 2) or irmas or (margem < 0.02) or rot[i].startswith("a letra")
         saida.append((f, rot[i], rot[top1], round(sims[i], 3), round(sims[top1], 3), ok))
     return saida
 
