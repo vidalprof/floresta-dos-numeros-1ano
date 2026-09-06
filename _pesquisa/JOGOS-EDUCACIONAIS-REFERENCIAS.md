@@ -292,6 +292,60 @@ Pontos/medalhas/ranking são **incentivo extrínseco** — servem para dar ritmo
 percurso, não competição. **Regra que fica:** sem ranking entre crianças; sem
 "moedas"; a recompensa é **ver o mundo mudar** e o artefato próprio.
 
+### 2.7b Andaime implícito (Podolefsky, Moore & Perkins 2014 — o PDF lido)
+O framework do PhET, agora lido na fonte: o andaime é construído **na própria
+ferramenta**, por **affordances** (o que convida a ser pego/mexido),
+**restrições** (o que a ferramenta NÃO deixa fazer — e por isso guia), **pistas**
+(*cueing*: cor, posição, movimento que chamam para o próximo passo) e **feedback**
+(o mundo responde na hora). Assim o aluno acha caminhos produtivos **sem
+instrução explícita**: *"guides without students feeling guided"*, servindo ao
+mesmo tempo metas de conteúdo, de processo e de **agência** (o aluno se sente
+dono do que está fazendo) — o que a instrução dirigida não dá. Contexto: o
+debate instrução direta (Kirschner, Sweller & Clark 2006) × descoberta guiada
+(Hmelo-Silver 2007); o andaime implícito é a terceira via.
+- **Para as nossas peças:** é a definição precisa do que o Marcos chama de "o
+  gesto ensina": a `divisao-dourado` só deixa dar um bloco por grupo por rodada
+  (restrição), o grupo que falta pisca (pista), o total muda na hora (feedback),
+  o bloco tem cara de pegável (affordance). **⇒ REGRA (proposta para o
+  `EDUVERSE-FILOSOFIA.md`):** antes de escrever um enunciado, perguntar "que
+  restrição/pista no DESENHO faria a criança descobrir isto sozinha?" — enunciado
+  é o último recurso, não o primeiro.
+
+### 2.7c Gamificação — os números (meta-análises lidas)
+Efeito **positivo mas moderado** sobre aprendizagem: *g* = 0,50 (19 estudos,
+*Educ. Psych. Review*) a 0,82 (41 estudos, 5 000+ participantes, *Frontiers*);
+revisão 2008–2023 (*BJET*) confirma. **O que decide é o desenho, não a presença**
+de gamificação: "BPL" (badges, points, leaderboards) colado por cima de tarefa
+chata **subdesempenha** e dispara o **efeito de superjustificação** (recompensa
+externa por algo que já era interessante reduz a motivação; tirada a recompensa,
+o engajamento cai abaixo do inicial). Ranking **absoluto** desanima quem está
+embaixo e leva a otimizar pontos em vez de entender; ranking **relativo** (só
+os vizinhos) ou de **melhora** funciona melhor. Pela SDT, gamificação mexe em
+autonomia e vínculo, **quase nada em competência**.
+- **Para nós:** confirma a política da casa (sem ranking, sem moeda; medalha =
+  percurso). Onde há "pontos" (placar de pares na memória, estrelas do boletim),
+  eles são **marcadores de progresso da própria tarefa**, não recompensa externa
+  — manter assim e nunca introduzir loja/moeda.
+
+### 2.7d Como o PBS KIDS testa antes de publicar (WestEd, Ready To Learn)
+A WestEd avaliou formativamente **24 versões alfa** de jogos de matemática com
+professores e alunos de pré e fundamental: alinhamento a padrões, adequação à
+sala, sugestões de melhoria e uma **análise cognitiva de tarefa** por jogo
+(forças e pontos a melhorar). Ou seja: a casa mais rica do ramo publica só depois
+de professor + criança + análise de tarefa — a nossa banca automática + "Aprovação
+do professor" é a versão de escola pública disso, e a **análise cognitiva de
+tarefa** é o que o `pedagogo.py`/`curriculo.py` tentam fazer sozinhos.
+
+### 2.7e Fontes que não rendiam texto (registro honesto)
+- **Shute 2008** (*Focus on Formative Feedback*): o PDF veio (37 pág.) mas com 4 KB
+  de texto legível — não dá para citar da fonte. O que sei dela de formação (a
+  confirmar quando abrir): feedback **elaborado** > só verificação; **específico
+  e simples**; **imediato para tarefa difícil/novato**, **atrasado para
+  transferência**; evitar comparação normativa e elogio à pessoa; dosar ("não
+  interromper a criança que está tentando"). Nova busca por resumo HTML em curso.
+- **H5P**: as páginas de tipo em `h5p.org` viraram home/fórum; o catálogo de tipos
+  fica para o lote 3 do `ver-rodando` ou para a documentação (`h5p.org/documentation`).
+
 ### 2.8 O que medi por baixo das casas (lotes 1–2 do `ver-rodando`)
 | casa | eventos | touch-action | alvo mín. | som | feedback (mutações/1 s) |
 |---|---|---|--:|---|--:|
