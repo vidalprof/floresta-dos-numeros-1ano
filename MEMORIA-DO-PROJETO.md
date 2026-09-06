@@ -6107,6 +6107,16 @@ GraphoGame Brasil (o app do MEC) são exatamente *"a pronúncia de algumas letra
   imagem em `_trem/_lote_hipopotamo.json` (Pollinations + rembg, grátis).
   A nuvem (Gemini) ainda serve para o que o CLIP não vê — texto desenhado, corte,
   fundo (rodada 8 pegou "abelha cortada") — quando há cota.
+- **TREM REPUBLICADO (2026-09-06 14:10Z) com o hipopótamo de verdade** (Pollinations
+  + rembg, `_trem/_lote_hipopotamo.json`; o `gerar-imagens.yml` exige o input
+  `prompt` mesmo em lote — passar um texto qualquer). A remontagem trouxe também a
+  mesma cura da Padaria (frases de jogo colhidas → 0g 34/34) e três defeitos
+  mudos que a banca do Trem revelou e o `montar.py` passou a cobrir: **os nomes
+  das cores** das peças de pintar ("vermelho" era dito pelo `fala(_corNome)` sem
+  mp3), **as frases que a peça só fala** (`fala("Limpei o desenho!…")`, que o
+  colhedor nunca vê porque não aparecem na tela) e **o pedido "Pinte X do jeito
+  que você quiser"** montado no ato. `pintar-canvas` ganhou `data-voz`. 0n
+  161/161. Padaria republicada junto (14:11Z, 133/133).
 - **Limites honestos:** o reconhecedor erra em fala muito curta (nome de letra)
   — por isso "conferir", não "reprovado"; o olho depende de cota do Gemini
   (a de imagem estava esgotada em 2026-08-12; a de visão é outra, medir); e o
