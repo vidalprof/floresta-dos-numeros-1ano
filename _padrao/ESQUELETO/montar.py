@@ -946,6 +946,17 @@ def falas_de(c):
                 if it.get("som"):
                     _t = u"%s. %s." % (it["voz"], it["som"])
                     poe("op_" + chave_voz(texto_limpo(_t)), _t)
+        # ⭐ PINTAR: o pedido e montado no ato — "Pinte <voz> do jeito que você quiser."
+        #    (canvas usa `voz`, desenho usa `nome`). O molde `(d0.voz||"o desenho")`
+        #    escapa do balao_por_item, e o colhedor so pega a fase que jogou. Aqui
+        #    saem todas (banca do Trem, set/2026: f06c ficou sem a voz do pedido).
+        if f.get("mec") in ("pintar-canvas", "pintar-desenho"):
+            for it in (f.get("dados") or []):
+                if not isinstance(it, dict):
+                    continue
+                _q = (it.get("voz") if f.get("mec") == "pintar-canvas" else it.get("nome")) or u"o desenho"
+                _t = u"Pinte %s do jeito que você quiser." % _q
+                poe("op_" + chave_voz(texto_limpo(_t)), _t)
         # ⭐ MEMORIA: as dicas do andaime citam a PALAVRA sorteada ("Ouça: MALA.
         #    Ache o desenho que combina." / "Abri uma para você: MALA. Ache o par
         #    dela."). O colhedor so pega a palavra que o sorteio abriu naquela
@@ -959,8 +970,11 @@ def falas_de(c):
                 _rot = it.get("pal") or it.get("voz") or u""
                 if not _rot or not (it.get("pal") or it.get("sen")):
                     continue
+                _rot2 = it.get("sen") or it.get("vozsen") or _rot
                 for _t in (u"Ouça: %s. Ache o desenho que combina." % _rot,
-                           u"Abri uma para você: %s. Ache o par dela." % _rot):
+                           u"Abri uma para você: %s. Ache o par dela." % _rot,
+                           # 3o degrau: abre o par inteiro e diz os dois lados
+                           u"Vou abrir este par: %s — %s." % (_rot, _rot2)):
                     poe("op_" + chave_voz(texto_limpo(_t)), _t)
         # ⚠️ ...e do `dadosExtra` TAMBEM. Faltava, e nao era detalhe: o balao da
         #    mecanica `ordenar` mora em `dadosExtra.ORDTXT.balao`, entao as tres
@@ -1042,6 +1056,19 @@ def balaoes_das_pecas(c, poe):
         src = io.open(cam, encoding="utf-8").read()
         lits = re.findall(r'"balao[^"]*"\s*,\s*"([^"]{6,160})"', src)
         lits += re.findall(r'balao[^\n]{0,40}?innerHTML\s*=\s*"([^"]{6,160})"', src)
+        # ⭐ (banca do Trem, set/2026) FRASE QUE A PECA SO FALA, sem escrever:
+        #    `fala("Limpei o desenho! Pode pintar de novo.")`. O colhedor le a TELA,
+        #    entao nunca a via; a chave sai do texto e nao havia mp3 — silencio.
+        #    Literal completo dentro de fala()/diz() tambem vai para a gravacao.
+        lits += re.findall(r'\b(?:fala|diz)\(\s*"([^"+]{6,160})"\s*\)', src)
+        # ⭐ e os NOMES DA PALETA das pecas de pintar ({c:"#e53935", n:"vermelho"} /
+        #    {..., voz:"vermelho"}): a peca diz a cor ao escolher (`fala(_corNome)`),
+        #    e a paleta e gaveta TECNICA — o montador nunca gravava "vermelho".
+        if mec in ("pintar-canvas", "pintar-desenho", "pintar"):
+            _pal = re.search(r'var\s+(?:TINTAS|CORES|PALETA)\s*=\s*\[(.*?)\];', src, re.S)
+            if _pal:
+                for _n in re.findall(r'\b(?:n|voz)\s*:\s*"([^"]{3,30})"', _pal.group(1)):
+                    poe("op_" + chave_voz(texto_limpo(_n)), _n)
         for bruto in lits:
             txt = como_na_tela(bruto)
             if len(txt.split()) < 3 or txt[-1:] not in u".!?":

@@ -205,6 +205,9 @@ function pintarCanvas(){
   var nomeEl=el("span","cnome", nomeDaCor(_cor)); nomeEl.id="cnome";
   var z=el("button","zap",""); z.appendChild(el("i","fone",""));
   z.setAttribute("aria-label","Ouvir de novo");
+  /* data-voz = o que o botao DIZ (banca do Trem, set/2026): sem isto o portao e o
+     motor leem o texto ao lado — o nome da cor — e cobram gravacao de "vermelho". */
+  z.setAttribute("data-voz","Pinte "+(d0.voz||"o desenho")+" do jeito que você quiser.");
   z.onclick=function(){ sTap(); fala("Pinte "+(d0.voz||"o desenho")+" do jeito que você quiser."); };
   f.appendChild(nomeEl); f.appendChild(z);
   c.appendChild(f);
