@@ -6285,3 +6285,10 @@ em bater-sílabas foi contenção de CPU, não a peça).
   classes, beco, cor, espera) antes da bancada de Chromium. Nenhum build
   publicado levou o defeito (Padaria e Trem foram montados antes da edição;
   conferido com `node --check` no índice publicado).
+- **(7) O portão do catálogo salvou uma entrega errada (16:21Z):** disparei
+  `entregar.yml` com `_divisao:a-bancada-da-divisao`, mas `_divisao` é **A Grande
+  Expedição** (`a-grande-expedicao-divisao`); a **Bancada da Divisão é `_gincana`**.
+  O `_qa/catalogo.py` dentro do workflow reprovou ("a linha de `_divisao` não aponta
+  para o site que está sendo publicado") e **nada subiu**. Regra que fica: antes de
+  disparar o entregar, ler `_status/entrega-<repo>.json` (campo `pasta`) ou a linha
+  do `ATIVIDADES.md` — nunca deduzir a pasta pelo nome do repositório.
