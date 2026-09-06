@@ -109,6 +109,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#12233a;color:#
 .siletra{display:block;font-size:40px;font-weight:800;line-height:1;color:#fff;
   text-align:center;margin:2px auto 4px;width:64px;height:64px;line-height:64px;border-radius:16px;
   background:rgba(18,22,32,.72);text-shadow:0 1px 4px rgba(0,0,0,.55)}
+/* ⭐ (set/2026) A FIGURA-ANCORA DA CASA. Pesquisa NCIL ("Tips for teaching
+   letter-sound correspondence"): ao apresentar letra e som, associar UMA FIGURA
+   cujo nome comeca com aquele som (o porco para o /p/) — a figura e o que a
+   crianca lembra quando ve a letra depois. A casa do M ganha a MAO; a do S, o SOL.
+   Opcional (`img` na gaveta); sem ela a casa fica como era. Arte de IA do banco. */
+.sifig{display:block;width:64px;height:64px;margin:0 auto 2px}
+.sifig img{width:100%;height:100%;object-fit:contain;
+  -webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));filter:drop-shadow(0 3px 5px rgba(0,0,0,.35))}
 /* ⚠️ o caption carrega a MESA dele (rgba escura) — sem isso, sobre o vidro da
    casa numa atividade de tema CLARO, o texto claro sumia (1,09:1, portao 5c). */
 .sicap{display:inline-block;text-align:center;font-size:12.5px;font-weight:700;color:#f7f3ea;
@@ -124,6 +132,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#12233a;color:#
   .sic{min-width:0;width:96%;font-size:20px}
   .sicasas{-webkit-column-gap:8px;column-gap:8px;gap:8px;max-width:100%}
   .siletra{width:52px;height:52px;line-height:52px;font-size:32px}
+  .sifig{width:52px;height:52px}
 }
 @media (max-height:520px){
   .hint{display:none}
@@ -131,6 +140,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#12233a;color:#
   .sic{min-height:56px;font-size:20px}
   .sicasa{min-height:120px}
   .siletra{width:50px;height:50px;line-height:50px;font-size:30px}
+  .sifig{width:44px;height:44px}
 }
 .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
        border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
@@ -181,11 +191,21 @@ document.addEventListener("pointerdown",function(){ac();},false);
    (mais que isso a criança não segura de uma vez). ⭐ 1ª rodada por SOM CONTÍNUO
    (M, S, F, V, N, L, R, Z), nunca de parada (B, P, T, D, K, G). */
 /* `n` = a LETRA grande (pista visual); `voz` = o SOM que o alto-falante diz
-   (o SOM, não o nome da letra: "o som M", nunca "ême"). */
+   (o SOM, não o nome da letra: "o som M", nunca "ême"); `img` (opcional) = a
+   FIGURA-ÂNCORA da casa, cujo nome começa com aquele som (a MÃO do M, o SOL do
+   S) — vem do banco de imagens pelo `imgEl` do motor; na bancada não há figura.
+   ⚠️ (set/2026) NÃO pôr na MESMA rodada duas casas que se confundem no OUVIDO
+   (B/V, F/V, T/D, M/N, P/B) ou no OLHO (B/D, P/Q) antes de cada uma ter sido
+   vista sozinha — NCIL: "separe e escalone as relações letra-som que se
+   confundem". O `_qa/dinamicas.py` avisa. */
 var CASAS=[
-  {k:"m", n:"M", voz:"o som M, de MÃO"},
-  {k:"s", n:"S", voz:"o som S, de SOL"}
+  {k:"m", n:"M", voz:"o som M, de MÃO", img:""},
+  {k:"s", n:"S", voz:"o som S, de SOL", img:""}
 ];
+/* a figura de verdade vem do MOTOR; na bancada ela nao existe. Pegar por
+   `window.imgEl` deixa o nome DECLARADO, e o portao "funcao que nao existe"
+   consegue medir. */
+var imgEl = window.imgEl || null;
 /* cada carta: a palavra `t` e o `alvo` = a casa do som com que ela COMEÇA.
    A carta NÃO destaca a letra inicial — a criança tem que ESCUTAR o começo. */
 var CARTAS=[
@@ -287,6 +307,12 @@ function fazCasa(g){
   var d=el("div","sicasa ptxt");
   d.setAttribute("data-qa",g.k);
   d.setAttribute("data-voz", g.voz || g.n);   /* o motor le O SOM, nao a letra */
+  /* a figura-ancora (opcional): a MAO em cima do M. So dentro da atividade. */
+  if(g.img && imgEl){
+    var f=el("div","sifig","");
+    f.appendChild(imgEl(g.img));
+    d.appendChild(f);
+  }
   d.appendChild(el("div","siletra",g.n));
   d.appendChild(el("div","sicap","o som "+g.n));
   d.onclick=function(){

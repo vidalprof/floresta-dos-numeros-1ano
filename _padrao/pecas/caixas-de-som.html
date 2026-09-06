@@ -24,6 +24,10 @@
        3. só DEPOIS de fechar a palavra as LETRAS aparecem dentro das caixas.
           Primeiro o som, depois a letra — nunca o contrário. É o degrau que
           liga o que ela ouve ao que ela vai escrever.
+       4. (set/2026) e a peça LÊ A PALAVRA de volta: a seta corre embaixo das
+          caixas e a voz diz a palavra INTEIRA, de uma vez. Separar e não juntar
+          é meio caminho (NCIL, caixas de Elkonin: "deslize o dedo pela seta e
+          leia a palavra"). Ver `_pesquisa/ALFABETIZACAO-O-QUE-FUNCIONA.md`.
 
      ⚠️ A REGRA QUE MANDA AQUI: FUNCIONA NO MUDO.
      A palavra aparece SEMPRE ESCRITA e (quando a fase traz) com a FIGURA. PC de
@@ -114,7 +118,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
        filter:drop-shadow(0 5px 7px rgba(0,0,0,.35))}
 .csEsc{display:inline-block;vertical-align:middle;font-size:34px;font-weight:800;letter-spacing:2px;
        color:#ffd54a;line-height:1.1;margin-top:2px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;}
-.csDiz{font-size:13px;font-weight:700;letter-spacing:.6px;color:var(--texto,#f0e6d4);opacity:.9}
+/* ⚠️ (set/2026, portao 4c) texto DENTRO de superficie da peca leva TINTA propria e
+   a MESA dele — o token `--texto` e a tinta do fundo da atividade, nao desta. */
+.csDiz{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.6px;color:#f4efe6;
+       background:rgba(22,24,30,.72);border-radius:8px;padding:2px 9px}
 /* a linha da palavra escrita: o texto e o alto-falante dela, lado a lado e
    centrados. Envolve (`flex-wrap`) para o botao nunca precisar encolher. */
 .csLin{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
@@ -226,7 +233,8 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
       -webkit-box-shadow:inset 0 -4px 0 rgba(160,120,10,.45);
       box-shadow:inset 0 -4px 0 rgba(160,120,10,.45)}
 /* etiqueta em PALAVRAS, nunca so a cor */
-.csConta{display:block;font-size:14px;font-weight:700;color:var(--texto,#f0e6d4);margin-top:10px}
+.csConta{display:inline-block;font-size:14px;font-weight:700;color:#f4efe6;margin-top:10px;
+         background:rgba(22,24,30,.72);border-radius:999px;padding:3px 12px}
 .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
        border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
        font-size:44px;line-height:92px;text-align:center;font-weight:800}
@@ -266,6 +274,20 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* ⭐ (set/2026) MEDIDO na cobaia (_qa/toque.js): este alvo escuta o dedo e nao tinha
    touch-action — o dedo ARRASTA aqui: sem isto o iOS/Android le o gesto como rolagem e a peca some sob o dedo. */
 .fichaq{-ms-touch-action:none;touch-action:none}
+/* ⭐ (set/2026) LER A PALAVRA — depois de SEPARAR, JUNTAR. Pesquisa de alfabetizacao
+   (NCIL, "How to use systematic phonics instruction", caixas de Elkonin): depois
+   que a crianca pos uma ficha em cada caixa, ela "desliza o dedo pela SETA embaixo
+   das caixas e le a palavra". Separar sem juntar de volta e meio caminho: a
+   consciencia fonemica so vira leitura quando os sons voltam a ser UMA palavra
+   (fonacao conectada, a mesma regra do juntar-silabas). A seta corre da esquerda
+   para a direita enquanto a voz diz a palavra INTEIRA, de uma vez. Sem @keyframes
+   de proposito: e uma transicao de largura, que o integrador nunca perde. */
+.csLer{display:block;height:9px;max-width:430px;margin:10px auto 0;border-radius:9px;
+       background:rgba(255,255,255,.18);position:relative;overflow:hidden;visibility:hidden}
+.csLer i{display:block;position:absolute;left:0;top:0;bottom:0;width:0;background:#ffd54a;border-radius:9px;
+         -webkit-transition:width 1.1s ease-in-out;transition:width 1.1s ease-in-out}
+.csLer.vai{visibility:visible}
+.csLer.vai i{width:100%}
 </style></head>
 <body>
 <div id="app"></div>
@@ -489,6 +511,10 @@ function pecaCaixas(){
     cxs.appendChild(b);
   }
   c.appendChild(cxs);
+  /* a SETA DE LER: nasce invisivel e corre quando a palavra fecha */
+  var ler=el("div","csLer","");
+  ler.appendChild(el("i","",""));
+  c.appendChild(ler);
 
   /* o estoque de fichas: uma por som */
   var fs=el("div","csFic");
@@ -670,13 +696,21 @@ function poe(b,q){
         })(cx[i],i);
       }
       var msg=TEXTOS.certo.replace("%P%",r.pal).replace("%N%",r.sons);
-      fala(msg);
+      /* ⭐ LER A PALAVRA (set/2026): separou som a som — agora JUNTA. A seta corre
+         da esquerda para a direita e a voz diz a palavra INTEIRA, de uma vez
+         (fonacao conectada). So depois vem o "Isso! PAO tem 3 sons". */
+      var seta=app.getElementsByClassName("csLer")[0];
+      if(seta){ seta.className="csLer vai"; }
+      fala(palavraFalada(r));
+      falaEmSeguida(msg,900);
+      /* ⚠️ o botao de seguir aparece em ate 900 ms (teto da casa, portao 0b3):
+         a seta e a voz continuam correndo COM o botao na tela, nao no lugar dele. */
       setTimeout(function(){
         if(ge!==ger) return;
         rodada++;
         if(rodada>=PALAVRAS.length) mostraBanner(TEXTOS.fim, fimDaPeca);
         else mostraBanner(msg, pecaCaixas);
-      },700);
+      },900);
     },380);
   }
 }

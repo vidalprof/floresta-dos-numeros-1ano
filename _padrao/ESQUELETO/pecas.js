@@ -6441,6 +6441,10 @@ function pecaCaixas(){
     cxs.appendChild(b);
   }
   c.appendChild(cxs);
+  /* a SETA DE LER: nasce invisivel e corre quando a palavra fecha */
+  var ler=el("div","csLer","");
+  ler.appendChild(el("i","",""));
+  c.appendChild(ler);
 
   /* o estoque de fichas: uma por som */
   var fs=el("div","csFic");
@@ -6622,13 +6626,21 @@ function poe(b,q){
         })(cx[i],i);
       }
       var msg=TEXTOS.certo.replace("%P%",r.pal).replace("%N%",r.sons);
-      fala(msg);
+      /* ⭐ LER A PALAVRA (set/2026): separou som a som — agora JUNTA. A seta corre
+         da esquerda para a direita e a voz diz a palavra INTEIRA, de uma vez
+         (fonacao conectada). So depois vem o "Isso! PAO tem 3 sons". */
+      var seta=app.getElementsByClassName("csLer")[0];
+      if(seta){ seta.className="csLer vai"; }
+      fala(palavraFalada(r));
+      falaEmSeguida(msg,900);
+      /* ⚠️ o botao de seguir aparece em ate 900 ms (teto da casa, portao 0b3):
+         a seta e a voz continuam correndo COM o botao na tela, nao no lugar dele. */
       setTimeout(function(){
         if(ge!==ger) return;
         rodada++;
         if(rodada>=PALAVRAS.length) mostraBanner(TEXTOS.fim, fimDaPeca);
         else mostraBanner(msg, pecaCaixas);
-      },700);
+      },900);
     },380);
   }
 }
@@ -13578,19 +13590,37 @@ function destreme(b){
     if(b.className.indexOf("usada")<0) b.className="tecl";
   },340);
 }
-/* o andaime CRESCE: ouvir de novo -> a letra da vez pisca -> revelar e seguir.
-   Nunca X, nunca a palavra "errou", nunca fica travado. */
+/* o andaime CRESCE: ouvir de novo -> VER a palavra um instante + a letra da vez
+   pisca -> revelar e seguir. Nunca X, nunca a palavra "errou", nunca fica travado.
+   ⭐ (set/2026) o 2o degrau ganhou o "ver texto" do EdiLIM: a palavra aparece
+   escrita por 2,5 s e se esconde — apoio CONCRETO (ela ve a palavra inteira, nao
+   so a letra), sem entregar a resposta de graca. Pesquisa: `_pesquisa/
+   ALFABETIZACAO-O-QUE-FUNCIONA.md`. */
 function ajuda(n){
   if(n===1){
     mostraDica("Vou ditar de novo, com calma. "+DITADOS[rodada].dic);
     dita();
   }else if(n===2){
-    mostraDica("A letra que vem agora est&#225; <b>piscando</b> no teclado.");
+    mostraDica("Olhe a palavra <b>escrita</b>: ela vai se esconder. A letra que vem agora est&#225; <b>piscando</b>.");
+    mostraPalavra(2500);
     acendeCerta();
   }else{
     mostraDica("Era esta! Eu ponho e voc&#234; segue.");
     revela();
   }
+}
+/* a palavra aparece ESCRITA na caixa da voz e se esconde sozinha. Guardada pela
+   geracao e pela tela: relogio de rodada velha nao mexe na rodada nova. */
+function mostraPalavra(ms){
+  if(!telaAtual||!telaAtual.parentNode||!vozEl) return;
+  var meu=++ger;
+  vozEl.className="voz vendo";
+  vozEl.innerHTML=DITADOS[rodada].txt;
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode||meu!==ger) return;
+    vozEl.className="voz";
+    vozEl.innerHTML=ESPERA;
+  },ms||2500);
 }
 function acendeCerta(){
   var b=achaTecla(letras.charAt(pos));
@@ -37917,11 +37947,21 @@ MEC["som-inicial"] = function(f, cen, fim){
    (mais que isso a criança não segura de uma vez). ⭐ 1ª rodada por SOM CONTÍNUO
    (M, S, F, V, N, L, R, Z), nunca de parada (B, P, T, D, K, G). */
 /* `n` = a LETRA grande (pista visual); `voz` = o SOM que o alto-falante diz
-   (o SOM, não o nome da letra: "o som M", nunca "ême"). */
+   (o SOM, não o nome da letra: "o som M", nunca "ême"); `img` (opcional) = a
+   FIGURA-ÂNCORA da casa, cujo nome começa com aquele som (a MÃO do M, o SOL do
+   S) — vem do banco de imagens pelo `imgEl` do motor; na bancada não há figura.
+   ⚠️ (set/2026) NÃO pôr na MESMA rodada duas casas que se confundem no OUVIDO
+   (B/V, F/V, T/D, M/N, P/B) ou no OLHO (B/D, P/Q) antes de cada uma ter sido
+   vista sozinha — NCIL: "separe e escalone as relações letra-som que se
+   confundem". O `_qa/dinamicas.py` avisa. */
 var CASAS=[
-  {k:"m", n:"M", voz:"o som M, de MÃO"},
-  {k:"s", n:"S", voz:"o som S, de SOL"}
+  {k:"m", n:"M", voz:"o som M, de MÃO", img:""},
+  {k:"s", n:"S", voz:"o som S, de SOL", img:""}
 ];
+/* a figura de verdade vem do MOTOR; na bancada ela nao existe. Pegar por
+   `window.imgEl` deixa o nome DECLARADO, e o portao "funcao que nao existe"
+   consegue medir. */
+var imgEl = window.imgEl || null;
 /* cada carta: a palavra `t` e o `alvo` = a casa do som com que ela COMEÇA.
    A carta NÃO destaca a letra inicial — a criança tem que ESCUTAR o começo. */
 var CARTAS=[
@@ -38023,6 +38063,12 @@ function fazCasa(g){
   var d=el("div","sicasa ptxt");
   d.setAttribute("data-qa",g.k);
   d.setAttribute("data-voz", g.voz || g.n);   /* o motor le O SOM, nao a letra */
+  /* a figura-ancora (opcional): a MAO em cima do M. So dentro da atividade. */
+  if(g.img && imgEl){
+    var f=el("div","sifig","");
+    f.appendChild(imgEl(g.img));
+    d.appendChild(f);
+  }
   d.appendChild(el("div","siletra",g.n));
   d.appendChild(el("div","sicap","o som "+g.n));
   d.onclick=function(){

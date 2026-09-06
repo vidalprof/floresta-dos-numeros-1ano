@@ -777,7 +777,7 @@
 
 .mec-bater-silabas .bsBatida.eco{background:#f6c23a;-webkit-transform:scale(1.18);transform:scale(1.18)}
 
-.mec-bater-silabas .bsVazio{font-size:15px;color:var(--texto,#e6dcc9);opacity:.8;font-weight:600}
+.mec-bater-silabas .bsVazio{display:inline-block;font-size:15px;color:#f4efe6;font-weight:600; background:rgba(22,24,30,.72);border-radius:999px;padding:3px 12px}
 
 .mec-bater-silabas .bsBater{display:block;width:200px;max-width:86%;min-height:86px;margin:6px auto 0; border:0;border-radius:26px;background:#e8734a;color:#fff;font-size:24px;font-weight:800; letter-spacing:1px;cursor:pointer;-webkit-box-shadow:0 6px 0 #a94f31;box-shadow:0 6px 0 #a94f31}
 
@@ -1209,7 +1209,7 @@
 
 .mec-caixas-de-som .csEsc{display:inline-block;vertical-align:middle;font-size:34px;font-weight:800;letter-spacing:2px; color:#ffd54a;line-height:1.1;margin-top:2px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;}
 
-.mec-caixas-de-som .csDiz{font-size:13px;font-weight:700;letter-spacing:.6px;color:var(--texto,#f0e6d4);opacity:.9}
+.mec-caixas-de-som .csDiz{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.6px;color:#f4efe6; background:rgba(22,24,30,.72);border-radius:8px;padding:2px 9px}
 
 .mec-caixas-de-som .csLin{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center; -webkit-flex-wrap:wrap;flex-wrap:wrap;margin-top:2px}
 
@@ -1257,7 +1257,7 @@
 
 .mec-caixas-de-som .fant{position:fixed;z-index:50;width:46px;height:46px;border-radius:50%;background:#ffd54a; pointer-events:none;opacity:.9; -webkit-box-shadow:inset 0 -4px 0 rgba(160,120,10,.45); box-shadow:inset 0 -4px 0 rgba(160,120,10,.45)}
 
-.mec-caixas-de-som .csConta{display:block;font-size:14px;font-weight:700;color:var(--texto,#f0e6d4);margin-top:10px}
+.mec-caixas-de-som .csConta{display:inline-block;font-size:14px;font-weight:700;color:#f4efe6;margin-top:10px; background:rgba(22,24,30,.72);border-radius:999px;padding:3px 12px}
 
 .mec-caixas-de-som .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
 
@@ -1306,6 +1306,14 @@
 .mec-caixas-de-som .medal{width:70px;height:70px;font-size:30px;line-height:60px}}
 
 .mec-caixas-de-som .fichaq{-ms-touch-action:none;touch-action:none}
+
+.mec-caixas-de-som .csLer{display:block;height:9px;max-width:430px;margin:10px auto 0;border-radius:9px; background:rgba(255,255,255,.18);position:relative;overflow:hidden;visibility:hidden}
+
+.mec-caixas-de-som .csLer i{display:block;position:absolute;left:0;top:0;bottom:0;width:0;background:#ffd54a;border-radius:9px; -webkit-transition:width 1.1s ease-in-out;transition:width 1.1s ease-in-out}
+
+.mec-caixas-de-som .csLer.vai{visibility:visible}
+
+.mec-caixas-de-som .csLer.vai i{width:100%}
 /* ==== PECA: calendario ==== */
 
 
@@ -2264,6 +2272,8 @@
 .mec-ditado .voz:after{content:"";position:absolute;left:38px;top:50%;margin-top:-13px;width:26px;height:26px; border:3px solid #eaf3ff;border-left-color:transparent;border-bottom-color:transparent; border-radius:50%;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
 
 .mec-ditado .voz.falando{background:#1f6b12;border-color:#8fe07a; -webkit-animation:kf-ditado-vozpulsa .9s ease-in-out infinite;animation:kf-ditado-vozpulsa .9s ease-in-out infinite}
+
+.mec-ditado .voz.vendo{background:#fff3c9;color:#3a2c07;border-color:#ffd54a;letter-spacing:3px}
 
 .mec-ditado .vagas{display:block;text-align:center;margin:13px auto 4px}
 
@@ -3783,7 +3793,7 @@
 
 .mec-ligar-pontos .pronta .lpluz{opacity:1}
 
-.mec-ligar-pontos .pronta .pt{color:var(--texto,#241d12);opacity:.34;pointer-events:none}
+.mec-ligar-pontos .pronta .pt{color:#241d12;opacity:.34;pointer-events:none}
 
 .mec-ligar-pontos .pronta .fioh{opacity:.35}
 
@@ -4575,7 +4585,7 @@
 
 .mec-ouvir-achar .palvbox{display:block;text-align:center}
 
-.mec-ouvir-achar .palvr{font-size:12px;font-weight:800;letter-spacing:.7px;color:var(--texto,#f0e6d4)}
+.mec-ouvir-achar .palvr{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.7px;color:#f4efe6; background:rgba(22,24,30,.72);border-radius:8px;padding:2px 9px}
 
 .mec-ouvir-achar .palv{display:block;font-size:32px;line-height:1.1;font-weight:800;color:#ffd54a;letter-spacing:1px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;}
 
@@ -6513,6 +6523,10 @@
 
 .mec-som-inicial .siletra{display:block;font-size:40px;font-weight:800;line-height:1;color:#fff; text-align:center;margin:2px auto 4px;width:64px;height:64px;line-height:64px;border-radius:16px; background:rgba(18,22,32,.72);text-shadow:0 1px 4px rgba(0,0,0,.55)}
 
+.mec-som-inicial .sifig{display:block;width:64px;height:64px;margin:0 auto 2px}
+
+.mec-som-inicial .sifig img{width:100%;height:100%;object-fit:contain; -webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));filter:drop-shadow(0 3px 5px rgba(0,0,0,.35))}
+
 .mec-som-inicial .sicap{display:inline-block;text-align:center;font-size:12.5px;font-weight:700;color:#f7f3ea; background:rgba(18,20,28,.62);border-radius:8px;padding:2px 8px;text-shadow:0 1px 3px rgba(0,0,0,.6)}
 
 .mec-som-inicial .sicasa .sic{font-size:14px;min-width:0;min-height:0;padding:7px 10px;margin:5px 3px 0; border-radius:12px;box-shadow:0 3px 0 #7cb464;background:#d6f5c8;cursor:default}
@@ -6525,7 +6539,9 @@
 
 .mec-som-inicial .sicasas{-webkit-column-gap:8px;column-gap:8px;gap:8px;max-width:100%}
 
-.mec-som-inicial .siletra{width:52px;height:52px;line-height:52px;font-size:32px}}@media (max-height:520px){
+.mec-som-inicial .siletra{width:52px;height:52px;line-height:52px;font-size:32px}
+
+.mec-som-inicial .sifig{width:52px;height:52px}}@media (max-height:520px){
 
 .mec-som-inicial .hint{display:none}
 
@@ -6535,7 +6551,9 @@
 
 .mec-som-inicial .sicasa{min-height:120px}
 
-.mec-som-inicial .siletra{width:50px;height:50px;line-height:50px;font-size:30px}}
+.mec-som-inicial .siletra{width:50px;height:50px;line-height:50px;font-size:30px}
+
+.mec-som-inicial .sifig{width:44px;height:44px}}
 
 .mec-som-inicial .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
 

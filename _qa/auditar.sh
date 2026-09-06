@@ -104,6 +104,12 @@ echo "==================================================="
 #    quebrado. Cada corrida agora tem o seu arquivo.
 JSTMP="$(mktemp -t qajs.XXXXXX.js)"
 FALHOU=0
+# ⭐ (set/2026) QUEM reprovou. A banca dizia "REPROVOU" sem nomear o portao, e eu
+#    cacei o culpado lendo 350 linhas tres vezes. Todo FALHOU=1 passa por aqui e
+#    o veredito no fim lista os nomes.
+REPROVADOS=""
+reprova(){ FALHOU=1; REPROVADOS="$REPROVADOS
+   · $1"; }
 
 # ============================================================
 #  ⭐ O PORTAO QUE OLHA OS PORTOES — "aprovou" ou "rodou cego"?
@@ -147,7 +153,7 @@ portao(){
   if [ "$st" = "2" ]; then
     if _nao_se_aplica "$saida"; then NSA="$NSA $nome ·"; else CEGOS="$CEGOS
    · $nome (o portao disse NAO MEDI)"; fi
-  elif [ "$st" != "0" ]; then FALHOU=1; fi
+  elif [ "$st" != "0" ]; then reprova "$nome (codigo $st)"; fi
   # ⚠️ LICAO PAGA (ago/2026), e a ironia de sempre: ESTE portao, que existe para
   #    pegar portao cego, passou a acusar INOCENTE. "10 dica(s) conferida(s)"
   #    contem "0 dica(s)" como pedaco de texto — e o `vozdica`, que tinha medido
@@ -247,7 +253,7 @@ colhe(){  # colhe <nome> <arquivo_base>   (mesma regra do `portao`)
     if [ -z "$(printf '%s' "$saida" | tr -d '[:space:]')" ]; then
       CEGOS="$CEGOS
    · $nome (o navegador CAIU sem medir — rodar de novo na mao)"
-    else FALHOU=1; fi
+    else reprova "$nome (codigo $st)"; fi
   fi
   if printf '%s' "$saida" | grep -qE '(^|[^0-9])0 (fase|dica|alvo|texto|palavra|imagem)\(s\)|\-> *0 ([a-z]|$)|[Nn]ada a conferir'; then
     if _nao_se_aplica "$saida"; then NSA="$NSA $nome ·"; else CEGOS="$CEGOS
@@ -322,7 +328,7 @@ import re,sys
 h=open(sys.argv[1],encoding="utf-8").read()
 print("".join(re.findall(r"<script>(.*?)</script>",h,re.S)))
 PY
-if node --check "$JSTMP" >/dev/null 2>&1; then echo "  JS ok (node --check)"; else echo "  ERRO DE SINTAXE NO JS"; node --check "$JSTMP"; FALHOU=1; fi
+if node --check "$JSTMP" >/dev/null 2>&1; then echo "  JS ok (node --check)"; else echo "  ERRO DE SINTAXE NO JS"; node --check "$JSTMP"; reprova "JS (node --check)"; fi
 
 # ⭐ 1y) O ESTATICO (ESLint) — o `ReferenceError` SEM abrir o navegador.
 #    Complementa o boot: o boot ve FUNDO um caminho so (o que ele percorre);
@@ -481,7 +487,7 @@ portao "0f voz da pergunta" python3 _qa/vozpergunta.py "$ARQ"
 if [ "$REPARO" != "1" ]; then
 if grep -q "pecabox" "$ARQ" && grep -q "MEC\[" "$ARQ"; then
   echo "--- 0f2) VOZ DA RODADA, MEDIDA JOGANDO (atividade montada) -"
-  python3 _padrao/ESQUELETO/colher.py "$(dirname "$ARQ")" --so-ver || FALHOU=1
+  python3 _padrao/ESQUELETO/colher.py "$(dirname "$ARQ")" --so-ver || reprova "colher --so-ver"
 fi
 fi
 if [ "$REPARO" != "1" ]; then
@@ -680,11 +686,11 @@ portao "1d promessa" python3 _qa/promessa.py "$ARQ"
 
 echo
 echo "--- 2) ARQUITETO DE FLUXO (da para chegar ao fim?) -"
-python3 _qa/fluxo.py "$ARQ" telaCapa || FALHOU=1
+python3 _qa/fluxo.py "$ARQ" telaCapa || reprova "fluxo (telaCapa)"
 
 echo
 echo "--- 3) DESIGNER (toda classe tem estilo de base?) --"
-python3 _qa/classes.py "$ARQ" || FALHOU=1
+python3 _qa/classes.py "$ARQ" || reprova "classes (designer)"
 
 echo
 echo "--- 3b) PROGRESSAO (a barra so anda para a frente?) -"
@@ -713,7 +719,7 @@ if [ "$REPARO" != "1" ]; then colhe "3h selo unico" "$TMPQ/g_selo.txt"; fi
 echo
 if [ "$REPARO" != "1" ]; then
 echo "--- 4) ACESSIBILIDADE (a crianca ENXERGA o texto?) -"
-wait $PID_CON; [ "$(cat "$TMPQ/contraste.st" 2>/dev/null)" = "0" ] || FALHOU=1
+wait $PID_CON; [ "$(cat "$TMPQ/contraste.st" 2>/dev/null)" = "0" ] || reprova "contraste"
 cat "$TMPQ/contraste.txt"; _tempo_larga "$TMPQ/contraste"
 fi
 
@@ -725,7 +731,7 @@ fi
 
 if [ "$REPARO" != "1" ]; then
 echo "--- 1e) IMAGEM QUEBRADA (a figura aparece mesmo?) --"
-wait $PID_IMG; [ "$(cat "$TMPQ/imagens.st" 2>/dev/null)" = "0" ] || FALHOU=1
+wait $PID_IMG; [ "$(cat "$TMPQ/imagens.st" 2>/dev/null)" = "0" ] || reprova "imagens"
 cat "$TMPQ/imagens.txt"; _tempo_larga "$TMPQ/imagens"
 fi
 
@@ -735,14 +741,14 @@ echo "--- 4b) NARRACAO (a voz fala direito?) -------------"
 # atividade. Ele dizia "narracao ok" depois de conferir 34 falas alheias,
 # enquanto as ~100 falas DESTA atividade passavam sem ninguem olhar. Falso
 # "passou" e pior que reprovar. Agora le o falas.json DA PASTA.
-if [ -f "$PASTA/falas.json" ]; then python3 _qa/falas.py "$PASTA/falas.json" || FALHOU=1
-elif [ -f _lote_falas.json ]; then python3 _qa/falas.py _lote_falas.json || FALHOU=1
+if [ -f "$PASTA/falas.json" ]; then python3 _qa/falas.py "$PASTA/falas.json" || reprova "falas (narracao)"
+elif [ -f _lote_falas.json ]; then python3 _qa/falas.py _lote_falas.json || reprova "falas (narracao, lote)"
 else echo "  (sem falas.json na pasta e sem _lote_falas.json)"; fi
 
 echo
 if [ "$REPARO" != "1" ]; then
 echo "--- 5) LEIAUTE (cabe na tela? da para tocar?) ------"
-wait $PID_LEI; [ "$(cat "$TMPQ/leiaute.st" 2>/dev/null)" = "0" ] || FALHOU=1
+wait $PID_LEI; [ "$(cat "$TMPQ/leiaute.st" 2>/dev/null)" = "0" ] || reprova "leiaute"
 cat "$TMPQ/leiaute.txt"; _tempo_larga "$TMPQ/leiaute"
 fi
 
@@ -772,7 +778,7 @@ echo "--- 6) JOGADOR (joga sozinho ate a medalha) --------"
 #    fase boa). Atividade escrita a mao (sem conteudo.json com fases) cai no
 #    jogador serial (joga_par sai 2 = "nao da para segmentar").
 if [ "$REPARO" != "1" ]; then
-wait $PID_JOG; [ "$(cat "$TMPQ/jogador.st" 2>/dev/null)" = "0" ] || FALHOU=1
+wait $PID_JOG; [ "$(cat "$TMPQ/jogador.st" 2>/dev/null)" = "0" ] || reprova "jogador"
 tail -6 "$TMPQ/jogador.txt"; _tempo_larga "$TMPQ/jogador"
 fi
 
@@ -802,11 +808,13 @@ if [ "$REPARO" = "1" ]; then
     echo " acabamento, jogador e a colheita da voz)."
   else
     echo " REPARO REPROVOU — e o barato ja pegou. Conserte e rode de novo."
+    echo " portao(oes) que reprovaram:$REPROVADOS"
   fi
 elif [ "$FALHOU" = "0" ]; then
   echo " BANCA APROVOU. Falta so o PROFESSOR (portao final)."
 else
   echo " BANCA REPROVOU — conserte antes de mostrar ao Marcos."
+  echo " portao(oes) que reprovaram:$REPROVADOS"
 fi
 echo "==================================================="
 rm -rf "$TMPQ"

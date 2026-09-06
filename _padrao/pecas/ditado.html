@@ -93,6 +93,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
            border-radius:50%;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
 .voz.falando{background:#1f6b12;border-color:#8fe07a;
              -webkit-animation:vozpulsa .9s ease-in-out infinite;animation:vozpulsa .9s ease-in-out infinite}
+/* ⭐ (set/2026) VENDO A PALAVRA — o 2o degrau do andaime, vindo do EdiLIM ("Dictado",
+   opcao "ver texto"): a palavra aparece ESCRITA por 2,5 s e se esconde. E o
+   "mostro, voce faz" da RECEITA: apoio concreto que nao entrega a letra — ela ve
+   a palavra inteira, guarda na cabeca, e escreve com a palavra ja escondida
+   (mapeamento ortografico, Ehri). Fundo claro, letra escura: e para LER. */
+.voz.vendo{background:#fff3c9;color:#3a2c07;border-color:#ffd54a;letter-spacing:3px}
 @-webkit-keyframes vozpulsa{0%,100%{box-shadow:0 0 0 0 rgba(143,224,122,.55)}50%{box-shadow:0 0 0 9px rgba(143,224,122,0)}}
 @keyframes vozpulsa{0%,100%{box-shadow:0 0 0 0 rgba(143,224,122,.55)}50%{box-shadow:0 0 0 9px rgba(143,224,122,0)}}
 /* AS VAGAS (uma por letra). O espaco entre as palavras ja vem posto. */
@@ -342,19 +348,37 @@ function destreme(b){
     if(b.className.indexOf("usada")<0) b.className="tecl";
   },340);
 }
-/* o andaime CRESCE: ouvir de novo -> a letra da vez pisca -> revelar e seguir.
-   Nunca X, nunca a palavra "errou", nunca fica travado. */
+/* o andaime CRESCE: ouvir de novo -> VER a palavra um instante + a letra da vez
+   pisca -> revelar e seguir. Nunca X, nunca a palavra "errou", nunca fica travado.
+   ⭐ (set/2026) o 2o degrau ganhou o "ver texto" do EdiLIM: a palavra aparece
+   escrita por 2,5 s e se esconde — apoio CONCRETO (ela ve a palavra inteira, nao
+   so a letra), sem entregar a resposta de graca. Pesquisa: `_pesquisa/
+   ALFABETIZACAO-O-QUE-FUNCIONA.md`. */
 function ajuda(n){
   if(n===1){
     mostraDica("Vou ditar de novo, com calma. "+DITADOS[rodada].dic);
     dita();
   }else if(n===2){
-    mostraDica("A letra que vem agora est&#225; <b>piscando</b> no teclado.");
+    mostraDica("Olhe a palavra <b>escrita</b>: ela vai se esconder. A letra que vem agora est&#225; <b>piscando</b>.");
+    mostraPalavra(2500);
     acendeCerta();
   }else{
     mostraDica("Era esta! Eu ponho e voc&#234; segue.");
     revela();
   }
+}
+/* a palavra aparece ESCRITA na caixa da voz e se esconde sozinha. Guardada pela
+   geracao e pela tela: relogio de rodada velha nao mexe na rodada nova. */
+function mostraPalavra(ms){
+  if(!telaAtual||!telaAtual.parentNode||!vozEl) return;
+  var meu=++ger;
+  vozEl.className="voz vendo";
+  vozEl.innerHTML=DITADOS[rodada].txt;
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode||meu!==ger) return;
+    vozEl.className="voz";
+    vozEl.innerHTML=ESPERA;
+  },ms||2500);
 }
 function acendeCerta(){
   var b=achaTecla(letras.charAt(pos));

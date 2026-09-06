@@ -133,6 +133,12 @@ def revisa_texto(t, display=False):
         w = m.group(1).lower()
         if w in ("que","the"):  # "que que" às vezes é fala real; the=inglês
             continue
+        # ⚠️ (set/2026) NOME DE LETRA nao e palavra repetida: "do A ate o E e
+        #    continue", "escreveu o O! O de ovo". Na alfabetizacao a letra vira
+        #    palavra da frase — se um dos dois esta em MAIUSCULA e tem uma letra
+        #    so, e a letra sendo nomeada. Falso-positivo pego na Padaria (3x).
+        if len(w) == 1 and re.search(r"[A-Z]", m.group(0)):
+            continue
         achados.append(("ERRO", u'palavra repetida: "%s %s"' % (m.group(1), m.group(1))))
 
     # 3) espaço duplo
@@ -153,6 +159,13 @@ def revisa_texto(t, display=False):
     for m in re.finditer(r"\b([Oo]|[Aa])\s+([A-Za-zãáâàéêíóôõúüç][A-Za-zãáâàéêíóôõúüç-]{2,})", fala):
         art = m.group(1).lower()
         pal = m.group(2)
+        # ⚠️ (set/2026) "igual A bo-lo": o "a" e PREPOSICAO (igual a, junto a,
+        #    frente a), e "bo-lo" e palavra SILABADA (a fala de alfabetizacao
+        #    soletra de proposito). Nenhum dos dois e artigo+nome. Falso-positivo
+        #    pego na Padaria.
+        antes = fala[max(0, m.start() - 8):m.start()].lower().rstrip()
+        if "-" in pal or re.search(r"(igual|junto|frente|rumo|devido|quanto)$", antes):
+            continue
         msg = _genero_suspeito(art, pal)
         if msg:
             achados.append(("ERRO", u"concordância: " + msg))

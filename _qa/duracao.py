@@ -245,8 +245,11 @@ def confere(pasta, piso_min=40.0):
         return 0
 
     if mins < piso_min:
-        print(u"   !! A ATIVIDADE NAO ENCHE A AULA (piso: %d min)." % piso_min)
-        print(u"   a aula do laboratorio dura 55 min. Terminando em %.0f, a turma"
+        # ⚠️ (set/2026) imprimia "40 min" arredondado e reprovava por 39,6 < 40 —
+        #    a tela dizia uma coisa e o veredito outra. Reprova mostra o decimal.
+        print(u"   !! A ATIVIDADE NAO ENCHE A AULA (piso: %d min; estimativa exata: %.1f min)."
+              % (piso_min, mins))
+        print(u"   a aula do laboratorio dura 55 min. Terminando em %.1f, a turma"
               % mins)
         print(u"   fica ociosa e o professor sem plano B — foi essa a cobranca.")
         print(u"   conserto: mais rodadas nas listas que ja existem (sai de graca,")

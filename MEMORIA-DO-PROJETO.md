@@ -6008,3 +6008,73 @@ o montador embute só as peças usadas; `preventDefault` no `touchstart` = 0 (12
 suspeitas eram do `touchmove`); toque simples (WCAG 2.5.7) existe nas 5 peças
 que pareciam sem; caminho duplo mouse+toque em 32 peças **funciona** — Pointer
 Events só para peça NOVA.
+
+## 👂👁 O TESTADOR HUMANO — a banca que ESCUTA e VÊ (set/2026)
+
+Pedido do Marcos: *"verifique a possibilidade de um testador humano que testa
+tudo, áudio, imagens etc, a maioria desses erros que reportei"*. Ele tem razão
+no diagnóstico: a banca de 37 portões lê CÓDIGO e mede PIXEL; os defeitos que
+mais chegaram até ele eram de **ouvido** ("ilefante", voz de outra fala, mp3
+cortado) e de **olho** (o OVO apontando para o mamão) — e **nenhum portão de
+código pega isso**, porque o código está certo; o ARQUIVO é que está errado.
+A pesquisa de alfabetização confirmou: as duas reclamações mais votadas do
+GraphoGame Brasil (o app do MEC) são exatamente *"a pronúncia de algumas letras
+é ruim"* e *"onde era para sair o G saiu F"*.
+
+**O que existe agora (`.github/workflows/testador-humano.yml`):**
+- **OUVIDO** — `_qa/testador_ouvido.py <pasta>`: **faster-whisper** (modelo
+  `small`, CPU, sem chave) transcreve CADA mp3 que o `falas.json` promete
+  (inclusive as `op_*` das respostas) e compara com o texto (normaliza HTML,
+  acentos, símbolos de conta "÷ × + −", números por extenso; rapidfuzz). Classes:
+  ✅ bate (≥80) · 🟡 conferir (62–80, ou fala curta tipo "Cê") · ❌ diz OUTRA
+  coisa / CORTADA (voz parou antes de 60% do texto) · 🔇 muda · 🗑 mp3 órfão
+  (peso morto). Sai 1 se há ❌/🔇.
+- **OLHO** — `_qa/testador_olho.py <pasta>`: Gemini (`GEMINI_API_KEY`, só no
+  runner) olha cada figura de conteúdo de `img/` (fora mascote, fundo, medalha,
+  crachás, pintar) e responde `VEREDITO=SIM/NAO | VEJO=… | PROBLEMAS=…` (texto
+  desenhado, corte, fundo, objeto errado). Para em 429 (cota) e diz que parou.
+- **Como acionar:** escrever `_status/TESTAR.json` (`pastas`, `modelo`, `max`) e
+  dar push — workflow novo fora da `main` não aceita dispatch (404). Veredito em
+  `_status/testador-ouvido-<pasta>.md` e `_status/testador-olho-<pasta>.md`
+  (+ .json), commitados pelo runner (push em 6 tentativas). 1ª rodada pedida:
+  **Trem + Padaria** (458 + 466 falas, 27 + 25 figuras).
+- **Limites honestos:** o reconhecedor erra em fala muito curta (nome de letra)
+  — por isso "conferir", não "reprovado"; o olho depende de cota do Gemini
+  (a de imagem estava esgotada em 2026-08-12; a de visão é outra, medir); e o
+  testador julga o ARQUIVO, não a mecânica — a banca de código continua.
+  O que ele ainda **não** faz: ouvir a fase RODANDO (voz × tela no tempo) e
+  julgar a tela inteira (print por fase) — é o próximo degrau (`_qa/revisor.py`
+  é o olho de TEXTO; este é o de VOZ e o VISUAL).
+
+## 🔤 ALFABETIZAÇÃO COM EVIDÊNCIA — o estudo e o que virou peça (set/2026)
+
+Pedido: *"estude dinâmicas para alfabetização que funcionam e são pedagógicas…
+EdiLIM…"*. Cinco pesquisas lidas (GraphoGame Brasil/MEC + avaliações reais de
+professores; Teach Your Monster to Read; ciência da leitura + o PDF operacional
+do **NCIL**; prática brasileira de consciência fonológica; manual do EdiLIM
+relido com pypdf) → **`_pesquisa/ALFABETIZACAO-O-QUE-FUNCIONA.md`**: a escada
+(5 pilares), o que cada casa faz, **14 regras** (9 já eram da casa, 5 novas) e
+**3 lapidações aplicadas na fonte e medidas** (`_qa/peca.sh` → PRONTA nas três;
+`dinamicas.py` código 0):
+1. `caixas-de-som` **lê a palavra de volta** (seta `.csLer` + a voz diz a palavra
+   inteira, de uma vez) — NCIL: "deslize o dedo pela seta embaixo das caixas e
+   leia a palavra". Separar sem juntar era meio caminho.
+2. `ditado` ganhou o 2º degrau **"ver a palavra"** (EdiLIM "ver texto"): a
+   palavra aparece 2,5 s e se esconde, a letra da vez pisca. Errador: 3 dicas
+   distintas, chegou à medalha.
+3. `som-inicial`: casa com **figura-âncora** (`img`, a MÃO em cima do M — NCIL
+   "picture cue") e **aviso do portão** quando duas casas confundíveis (B/D, P/Q,
+   M/N, B/V, F/V, T/D, P/B) caem na mesma rodada.
+**Portões novos** em `_qa/dinamicas.py`: "caixas de som" (não existia — a linha
+do DINAMICAS havia, o portão não), "ditado" (duas portas, `mostraPalavra`,
+acento), "som inicial" armadilha 4. **Para o Marcos decidir** (§6 do documento):
+peça `ler-e-fazer` (TYMTR "tap the crayon"), caça-palavras com pista em figura
+(EdiLIM), escada de palavras (NCIL), frase aliterada do mascote por bloco,
+escalonar B/D/P/M na fase 6 da Padaria. **Lição de método:** a reclamação de
+usuário real (loja do GraphoGame) valeu mais que dez artigos — cada uma era um
+defeito que a casa já tinha pago ou um portão que faltava.
+
+**Entrega dos 16 sites (2026-09-06 00:16Z):** o `entregar.yml` (run 330) publicou
+e conferiu os 16 (sha no ar = esperado em todos, 3ª tentativa cada), e o carimbo
+`_status/entrega-*.json` chegou no commit `84560d0e`. O aviso do hook de
+"conserto preso" era cópia local ATRÁS — sincronizar antes de acreditar nele.

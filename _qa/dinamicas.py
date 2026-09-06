@@ -232,6 +232,68 @@ def analisa(js, css, baixo, html=None):
         if not re.search(r'function\s+revela\b', js):
             avisos.append(u"som inicial: nao achei o 3o degrau do andaime (revela). Sem ele, "
                           u"quem erra tres vezes fica sem a casa acesa e pode travar.")
+        # ⭐ ARMADILHA QUATRO (set/2026, pesquisa de alfabetizacao — NCIL, "systematic
+        #    phonics": "separe e escalone as relacoes letra-som que se confundem no
+        #    ouvido (b/v) ou no olho (b/d)"). Duas casas que se confundem na MESMA
+        #    rodada e o degrau mais dificil posto primeiro: a crianca que ainda nao
+        #    firmou nenhum dos dois sons trava logo na entrada. Aviso, nao reprova:
+        #    quem decide e o pedagogo — mas ele precisa saber que esta fazendo isso.
+        _cas = re.search(r'CASAS\s*=\s*\[(.*?)\];', js, re.S) or \
+               re.search(r'"?casas"?\s*:\s*\[(.*?)\]', js, re.S)
+        if _cas:
+            _ls = set(m.upper() for m in re.findall(r'\bn"?\s*:\s*"([A-Za-z])"', _cas.group(1)))
+            for _a, _b in (("B","D"),("P","Q"),("M","N"),("B","V"),("F","V"),("T","D"),("P","B"),("G","J"),("C","S"),("D","T")):
+                if _a in _ls and _b in _ls:
+                    avisos.append(u"som inicial: as casas %s e %s se CONFUNDEM (ouvido ou olho) e estao "
+                                  u"na mesma rodada. A pesquisa manda escalonar: cada uma sozinha "
+                                  u"primeiro, o par confundivel so depois (NCIL)." % (_a, _b))
+
+    # ---------------------------------------------------- CAIXAS DE SOM (Elkonin)
+    # Gatilho honesto: so esta peca tem a CAIXA `.csb` e a FICHA `.fichaq`. A
+    # mecanica com mais evidencia da alfabetizacao (RECEITA §alfabetizacao, item 2)
+    # nao tinha regra aqui — a linha do DINAMICAS.md existia, o portao nao.
+    if re.search(r'\.csb\b', css) and re.search(r'\.fichaq\b', css):
+        usa.append("caixas de som")
+        # ⭐ SOM NAO E LETRA: a letra (`.let`) so pode nascer DEPOIS de a palavra
+        #    fechar. Se a caixa ja nasce com a letra, virou ditado. Olho o lugar:
+        #    a linha que cria a caixa (`"csb"`) nao pode criar `.let` nas 300
+        #    letras seguintes.
+        _cx = re.search(r'el\(\s*"div"\s*,\s*"csb"', js)
+        if _cx and re.search(r'"let"', js[_cx.end():_cx.end() + 300]):
+            ruins.append(u"caixas de som: a LETRA nasce junto com a caixa. Primeiro o som, a letra "
+                         u"so no fim — senao a peca virou ditado.")
+        # nunca trava: 3o degrau revela
+        if not re.search(r'function\s+revela\b', js):
+            avisos.append(u"caixas de som: nao achei o 3o degrau do andaime (revela). Quem erra a "
+                          u"ordem tres vezes fica sem a caixa acesa e pode travar.")
+        # ⭐ (set/2026) separou -> JUNTA: depois das fichas, a palavra e LIDA inteira
+        #    (seta `.csLer` + a voz diz a palavra de uma vez). Sem isso e meio caminho.
+        if not re.search(r'\.csLer\b', css):
+            avisos.append(u"caixas de som: falta o passo LER A PALAVRA (.csLer): depois de separar "
+                          u"som a som, a voz tem que juntar de volta — e a leitura, nao so a analise.")
+
+    # ---------------------------------------------------- DITADO (a voz dita, a crianca escreve)
+    # Gatilho honesto: so esta peca tem a VAGA por letra (`.vaga`) e o teclado da
+    # tela (`.tecl`) com a lista DITADOS.
+    if re.search(r'\.vaga\b', css) and re.search(r'\.tecl\b', css) and re.search(r'\bDITADOS\b', js):
+        usa.append("ditado")
+        # as DUAS portas: teclado na tela E o de verdade
+        if not re.search(r'onkeydown|keydown', js):
+            ruins.append(u"ditado: so tem o teclado da tela. No PC da escola a crianca vai DIGITAR "
+                         u"— falta document.onkeydown (as duas portas, regra 3b).")
+        # ⭐ (set/2026) o 2o degrau do andaime e VER A PALAVRA um instante (EdiLIM
+        #    "ver texto" + mapeamento ortografico): apoio concreto sem entregar a
+        #    letra. Sem ele o andaime pula de "ouca de novo" para "a letra pisca".
+        if not re.search(r'function\s+mostraPalavra\b', js):
+            avisos.append(u"ditado: nao achei o degrau 'ver a palavra' (mostraPalavra). O andaime "
+                          u"pula do ouvido direto para a letra piscando — falta o apoio concreto.")
+        # a frase vai SEM ACENTO (o teclado da crianca nao tem tecla de acento)
+        _dit = re.search(r'DITADOS\s*=\s*\[(.*?)\];', js, re.S)
+        if _dit:
+            for m in re.finditer(r'\btxt"?\s*:\s*"([^"]+)"', _dit.group(1)):
+                if re.search(u'[ÁÉÍÓÚÂÊÔÃÕÇáéíóúâêôãõç]', m.group(1)):
+                    ruins.append(u"ditado: a frase '%s' tem ACENTO/cedilha — o teclado da peca nao tem "
+                                 u"essa tecla, e vira erro garantido." % m.group(1))
 
     # ------------------------------------------- BATER AS SILABAS (contar)
     # Gatilho honesto: so esta mecanica publica um TAMBOR (`.bsBater`) junto com

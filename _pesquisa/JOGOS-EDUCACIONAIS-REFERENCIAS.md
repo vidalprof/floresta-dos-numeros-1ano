@@ -387,12 +387,28 @@ alfabetização, baratas), 5 e 11 (roteiro/`FIM-DE-ATIVIDADE`), 10 e 12 (só reg
 
 ---
 
-## 4. Pendências desta pesquisa (o que ainda não li)
-- Shute 2008 (*Focus on Formative Feedback*) — 3ª busca em andamento.
-- PhET *implicit scaffolding* em PDF (arXiv 1306.6544) — em andamento.
-- PBS KIDS Ready To Learn — lições de design (PDF) — em andamento.
-- H5P tipos (a página de tipos) e gamificação × jogo — 2ª busca em andamento.
-- Lote 3 do `ver-rodando` (Reino Unido, EUA, Espanha) — em andamento; buscas
-  com diagnóstico (`BUSCAS.md`).
-- Pesquisa brasileira: a busca trouxe mais alfabetização científica do que jogos
-  digitais — refazer com termos de jogo digital + alfabetização.
+## 4. Pendências desta pesquisa (o que ainda não li) — atualizado 2026-09-06
+- Shute 2008 (*Focus on Formative Feedback*) — a 3ª busca (resumo em HTML) ainda
+  não voltou com o texto; o que temos é o resumo de 2ª mão (Hattie). Continua aberto.
+- PhET *implicit scaffolding* — **lido** (§2.7b).
+- PBS KIDS Ready To Learn — **lido** (§2.7d).
+- H5P tipos (a página de tipos) — não rendeu texto (redireciona); fica.
+- **Lote 3 do `ver-rodando` (internacionais) — RODOU, e rendeu pouco, com
+  registro honesto:** 15 alvos fotografados em `_pesquisa/rodando/
+  referencias-3-internacionais/` (52 fotos). **Topmarks (6 jogos) barrou o
+  Chromium com o Cloudflare** ("Attention Required") — só a tela de bloqueio.
+  **PhET (2 sims) é canvas puro**: 0 alvos tocáveis medidos, 29 e 22 sons
+  registrados, 14 px de fonte mínima. **ICT Games** só a página inicial (34
+  alvos, 16 animados, clique). Sesame Street: 61 tocáveis, 42 px de alvo mínimo,
+  21 animados, `gotpointercapture` (Pointer Events). Starfall: 19 tocáveis,
+  alvo mínimo 14 px. Das 25 buscas, o DuckDuckGo por POST devolveu **202**
+  (desafio de robô) em todas; a porta GET html achou 2 em 25. O `BUSCAS.md`
+  guarda cada tentativa. **Lição:** sites comerciais do Reino Unido se protegem
+  de navegador automatizado; o que dá para ver de graça é o aberto (PhET, H5P,
+  GCompris, Sesame) — e é deles que vieram as medidas do §2.8.
+- Pesquisa brasileira de jogos digitais de alfabetização — **feita** (GraphoGame
+  Brasil/MEC, Elefante Letrado). Destilado em `ALFABETIZACAO-O-QUE-FUNCIONA.md`.
+- **Alfabetização com evidência (GraphoGame, Teach Your Monster, NCIL, ciência da
+  leitura, EdiLIM manual) — lida e destilada em
+  `_pesquisa/ALFABETIZACAO-O-QUE-FUNCIONA.md`** (set/2026), com três lapidações
+  já aplicadas nas peças e medidas.
