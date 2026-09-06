@@ -5984,6 +5984,25 @@ iguais — ler as fotos antes de acreditar na tabela); PhET precisa de
 de JOGO; e um regex de `href` deixou as 10 buscas vazias em silêncio (busca que
 não acha tem que gritar — consertado).
 
+**📚 "Aprenda tudo sobre esses jogos" (Marcos, set/2026) → `_pesquisa/JOGOS-EDUCACIONAIS-REFERENCIAS.md`.**
+Campanha de ~25 pesquisas pelo `pesquisar.yml` (casas + fundamentos) + 3 lotes
+do `ver-rodando`. O documento tem: as casas (H5P, PhET, MLC, Toy Theater, PBS
+KIDS, Cooney Center, ICT Games/Topmarks, GCompris, JClic, Wordwall/LearningApps/
+Educaplay, Toca Boca/Khan Kids, Escola Games/NOAS), os fundamentos (4 pilares
+de Hirsh-Pasek; Malone & Lepper + integração intrínseca; Plass GBL; andaime
+implícito do PhET; gamificação em números + superjustificação; NN/g; WCAG 2.5.7;
+UDL), a tabela do que medi por baixo de cada casa e **12 regras propostas** para
+as 88 peças (prioridade: pressionar responde ≤150 ms; nada anima sem função;
+figura responde ao toque; nunca só cor; simulador tematizável; caça-palavras
+que ensina ao achar; cruzadinha falada; reflexão no relâmpago; artefato da
+criança no fim). **Lições da campanha, para não repetir:** (1) as fontes boas
+são PDF — `pesquisar.yml` agora lê PDF (pypdf); (2) 20 workflows commitando ao
+mesmo tempo → push em corrida "cannot lock ref" → o lote 3 inteiro do
+`ver-rodando` (40 fotos) se perdeu; os dois workflows agora tentam 6 vezes; (3)
+`h5p.org/<tipo>` redireciona para a home — ler as FOTOS antes da tabela; (4)
+PhET abre em tela de escolha → `?screens=1`; (5) busca que não acha tem que
+gritar (o `BUSCAS.md` do lote diz status e trecho da resposta).
+
 **O que a medida mostrou que NÃO é defeito (não "consertar"):** carga 55–128 ms;
 o montador embute só as peças usadas; `preventDefault` no `touchstart` = 0 (12
 suspeitas eram do `touchmove`); toque simples (WCAG 2.5.7) existe nas 5 peças
