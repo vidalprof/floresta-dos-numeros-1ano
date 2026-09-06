@@ -1,27 +1,14 @@
 # 👂 TESTADOR HUMANO — OUVIDO — `_padaria`
 
-> 467 fala(s) do `falas.json` ouvidas com faster-whisper (small, CPU) em 950 s. Sai 1 se alguma voz NAO diz o texto. Isto é o olho de VOZ do Revisor (`_qa/revisor.py` é o de TEXTO).
+> 470 fala(s) do `falas.json` ouvidas com faster-whisper (small, CPU) em 977 s. Sai 1 se alguma voz NAO diz o texto. Isto é o olho de VOZ do Revisor (`_qa/revisor.py` é o de TEXTO).
 
 | resultado | quantas |
 |---|--:|
-| ✅ diz o que está escrito | 393 |
-| ❌ diz OUTRA coisa / cortada | 8 |
+| ✅ diz o que está escrito | 404 |
+| ❌ diz OUTRA coisa / cortada | 0 |
 | 🔇 muda ou não abre | 0 |
 | 🟡 conferir no ouvido (curta/parecida) | 66 |
-| 🗑 mp3 órfão (nenhuma fala do falas.json usa; peso morto, não defeito) | 137 |
-
-## ❌ Vozes que não dizem o texto
-
-| id | texto esperado | o que ouvi | parecido | motivo |
-|---|---|---|--:|---|
-| `op_1v36kn8` | M0 0 H100 V100 H0 Z | m00h100v100h0z. | 27 | CORTADA (3.9s) |
-| `op_10e9w24` | M10 26 H90 V70 H10 Z | M1026H90V70H10e. | 16 | CORTADA (4.5s) |
-| `op_12m1y43` | M6 26 L18 10 H82 L94 26 Z | m626l1810h82l9426e | 10 | CORTADA (6.2s) |
-| `op_5cqh6m` | M34 78 C34 70 42 66 50 66 C58 66 66 70 66 78 C66 86 58 90 50 90 C42 90 34 86 34  | m34 78 c 34 70 42 66 50 66 58 66 66 70 66 78 66 86 58 90 50 90 c 42 90 34 86 34  | 21 | CORTADA (20.9s) |
-| `op_ay4ucn` | M20 82 V54 H80 V82 Z | M2082 v54h80v82e. | 16 | CORTADA (5.1s) |
-| `op_1ha1lmu` | M20 54 C28 46 36 58 44 50 C52 44 60 56 68 50 C74 46 78 52 80 54 Z | M-20-54-C-28-46-36-58-44-50-C-52-44-60-56-68-50-C-74-46-78-52-80-54-Z. | 25 | CORTADA (16.5s) |
-| `op_1p0rw7r` | M46 30 H54 V50 H46 Z | m4630h54v50h46e. | 11 | CORTADA (5.3s) |
-| `op_4ac2f7` | M50 86 L24 62 L16 42 L26 26 L42 26 L50 38 L58 26 L74 26 L84 42 L76 62 Z | M5086L 24-62L 16-42L 26-26L 42-26L 50-38L 58-26L 74-26L 84-40  E 2L 76-62E | 23 | CORTADA (17.9s) |
+| 🗑 mp3 órfão (nenhuma fala do falas.json usa; peso morto, não defeito) | 145 |
 
 ## 🟡 Conferir no ouvido
 
@@ -46,7 +33,7 @@
 | `op_3t3g` | Gê | G! | 67 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_3t3c` | Cê | C | 67 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_3t3z` | Zê | Z. | 67 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
-| `op_3t3x` | Xis | She's | 25 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
+| `op_3t3x` | Xis | Cheese! | 22 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_377m8p` | xis | Cheese! | 22 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_ykf7s2` | chão | Xion. | 25 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_47fwcm` | D, E, | de I. | 57 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
@@ -59,8 +46,7 @@
 | `op_3773r7` | bis | Bees! | 57 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_3774qo` | coi | Quai! | 29 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_3hoko` | to | Do. | 50 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
-| `op_3hoke` | te | Che. | 40 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
-| `op_yks5du` | taça | Tassa! | 67 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
+| `op_3hoke` | te | XI | 0 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_3t3v` | Vê | Z | 0 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_3t6w` | Ã | Ah. | 67 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_377fb9` | pao | Bom. | 33 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
@@ -82,8 +68,9 @@
 | `3t3x` | Xis | Cheese! | 22 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `3t3z` | Zê | Z. | 67 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_3ho6r` | ei | I. | 67 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
-| `op_3hoi3` | qu | Co. | 0 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
+| `op_3hoi3` | qu | Co... | 0 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_1yhpici` | quei-jo tem 2. bis-coi-to tem 3. | Queijo tem 2. Bisco 8 tem 3. | 74 | parecido mas nao igual |
+| `op_3hod6` | li | Lee. | 40 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_377dt6` | nho | Oh. | 40 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_377c1r` | lei | Lee. | 67 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
 | `op_3hrly` | çú | Su. | 50 | fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido |
