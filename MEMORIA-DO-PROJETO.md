@@ -6338,7 +6338,9 @@ por isso você fez as pesquisas"*. Varri os quatro documentos de pesquisa
   chips de 39 px e um link de 17 px no painel de links; crachás em `cover`
   cortando até 63 % do retrato (vale4, mat2, edf2 → `object-position:center top`);
   mascote do Batata cortado 96 px na janela baixa. Tudo consertado e remedido:
-  23/23 com código 0. Falsos alarmes que o portão aprendeu a não dar: cenário em
+  22/23 com código 0 — sobra só a `_pub_confeitaria` (espelho antigo publicado: uma
+  figura tocável de 38 px e o enfeite do `#fundoVivo` que passa da borda na janela
+  baixa), deixada como está por ser cópia antiga. Falsos alarmes que o portão aprendeu a não dar: cenário em
   `cover` (é de propósito), trilho que rola de lado (o que está fora é alcançável).
 
 **Medido na estreia da esteira (Padaria, 2026-09-06 21:36Z):** `produzir.sh _padaria

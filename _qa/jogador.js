@@ -694,6 +694,21 @@ catch (e) {
    const ord=_esperas.slice().sort((x,y)=>x.ms-y.ms);
    const med=ord.length?ord[Math.floor(ord.length/2)].ms:0;
    const pior=ord.length?ord[ord.length-1].ms:0;
+   /* ⭐ DIAGNOSTICO DA PIOR ESPERA (set/2026): numero sozinho nao diz o que a
+      crianca viu. Aqui vai a linha do tempo das marcas ao redor da pior espera —
+      o que aconteceu entre o acerto e a tela responder — para consertar a CAUSA
+      e nao adivinhar (foi assim que um "20 s na memoria" pode ser lido). */
+   if(pior>0){
+     let ki=-1; for(let k=0;k<linha.length;k++){ if(linha[k].tipo!=='acertou') continue;
+       for(let j=k+1;j<linha.length;j++){ if(linha[j].tipo==='acertou') break;
+         if((linha[j].tipo==='tela'||linha[j].tipo==='botao') && linha[j].t-linha[k].t===pior){ ki=k; break; } }
+       if(ki>=0) break; }
+     if(ki>=0){
+       const a=Math.max(0,ki-3), z=Math.min(linha.length-1,ki+6);
+       console.log('  linha do tempo da PIOR espera (fase '+linha[ki].fase+', '+linha[ki].mec+'):');
+       for(let q=a;q<=z;q++) console.log('     '+(q===ki?'>> ':'   ')+linha[q].tipo+'  +'+(linha[q].t-linha[ki].t)+' ms  (fase '+linha[q].fase+' '+linha[q].mec+')');
+     }
+   }
    console.log('');
    console.log('=== PROVA DE SALA (processador 6x mais lento, rede de escola, voz LIGADA) ===');
    console.log('  esperas medidas (acertou -> tela/botao): '+ord.length);

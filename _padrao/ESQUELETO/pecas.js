@@ -26089,6 +26089,12 @@ function fechaPar(a,b){
      prova de sala (senao o pulsar do ultimo par contava como 1,7 s de espera
      vazia ate o banner, set/2026). */
   if(typeof __qa==="function") __qa("tela");
+  /* ⚠️ medido (set/2026): o `acertou` deste par nao nasce aqui — nasce no OLHEIRO
+     do motor (MutationObserver que ve a classe `par` e toca o sCerto), uns 70 ms
+     DEPOIS desta linha. Marca so antes dele e a prova de sala media "acertou ->
+     proximo par" (10-20 s: o tempo de a crianca PROCURAR o par seguinte, nao o
+     app parado). A marca atrasada cai depois do olheiro, enquanto o par pulsa. */
+  setTimeout(function(){ if(typeof __qa==="function") __qa("tela"); }, 250);
   feitos++;
   atualiza();
   if(feitos===PARES.length) setTimeout(fim,800);
@@ -42566,6 +42572,10 @@ function completou(revelado){
      que mede "acertou -> algo novo na tela" — sem isto o tempo de leitura da
      mensagem contava como espera vazia (1,7 s medidos, set/2026). */
   if(typeof __qa==="function") __qa("tela");
+  /* e de novo 250 ms depois: o `acertou` desta letra nasce no OLHEIRO do motor
+     (classe `feito` dos pedacos), uns 70 ms depois desta linha — a marca atrasada
+     cai depois dele, enquanto a letra brilha (medido: 1,7 s sem ela, set/2026). */
+  setTimeout(function(){ if(typeof __qa==="function") __qa("tela"); }, 250);
   feitasTudo++;
   sPronto(); sCerto();
   guardaLetra();
