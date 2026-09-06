@@ -1,0 +1,146 @@
+name: Testador humano (ouve cada voz e olha cada figura)
+
+# 👂👁 O TESTADOR HUMANO — a banca que ESCUTA e VÊ, não só lê o código.
+#
+# Pedido do Marcos (set/2026): *"verifique a possibilidade de um testador humano
+# que testa tudo — áudio, imagens etc. — a maioria desses erros que reportei"*.
+# Os portões da banca leem TEXTO e medem PIXEL; os defeitos que mais chegaram
+# até ele eram de OUVIDO e de OLHO: a voz que diz "ilefante", a voz de outra
+# fala no arquivo, o mp3 cortado, e a figura que não é o que a palavra diz (o
+# OVO apontando para o mamão). Este workflow faz o que um testador humano faria:
+#
+#   · OUVIDO (`_qa/testador_ouvido.py`): faster-whisper escuta CADA mp3 que o
+#     `falas.json` promete (inclusive as `op_*` das respostas) e compara com o
+#     texto. Sem chave nenhuma, roda no runner (CPU).
+#   · OLHO (`_qa/testador_olho.py`): um modelo de visão (Gemini, GEMINI_API_KEY)
+#     olha CADA figura de conteúdo de `img/` e diz se ela mostra o que o NOME
+#     promete, e se a IA desenhou texto/letras dentro dela sem pedir.
+#
+# Saída: `_status/testador-ouvido-<pasta>.md` e `_status/testador-olho-<pasta>.md`
+# (+ .json), commitados aqui. Eu leio, corrijo a fala/figura, e o Marcos aprova.
+#
+# ⚠️ Workflow NOVO numa branch que não é a `main` não aceita `workflow_dispatch`
+#    pela API (404 até existir na main). Gatilho por PUSH em `_status/TESTAR.json`
+#    (campos: pastas = "_trem,_padaria"; modelo = small|base|medium; max = 0).
+
+on:
+  push:
+    paths:
+      - "_status/TESTAR.json"
+  workflow_dispatch:
+    inputs:
+      pastas:
+        description: "Pastas separadas por vírgula (ex.: _trem,_padaria)"
+        required: false
+        default: ""
+        type: string
+      modelo:
+        description: "Modelo do faster-whisper (small = rápido e bom; medium = mais fiel, 3x mais lento)"
+        required: false
+        default: "small"
+        type: string
+
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar o ouvido (faster-whisper) e os comparadores
+        run: |
+          python -m pip install --quiet --upgrade pip
+          python -m pip install --quiet "faster-whisper==1.0.3" rapidfuzz num2words
+          sudo apt-get install -y -qq ffmpeg >/dev/null 2>&1 || true
+          python - <<'PY'
+          from faster_whisper import WhisperModel
+          import os, sys
+          m = os.environ.get("MODELO","small")
+          WhisperModel(m, device="cpu", compute_type="int8")   # baixa o modelo uma vez só
+          print("modelo", m, "pronto")
+          PY
+        env:
+          MODELO: ${{ inputs.modelo || 'small' }}
+
+      - name: Ler o pedido
+        id: pedido
+        env:
+          IN_PASTAS: ${{ inputs.pastas }}
+          IN_MODELO: ${{ inputs.modelo }}
+        run: |
+          eval "$(python3 - <<'PY'
+          import json, os
+          pastas = os.environ.get("IN_PASTAS","").strip(); modelo = os.environ.get("IN_MODELO","").strip(); mx = "0"
+          try:
+              d = json.load(open("_status/TESTAR.json", encoding="utf-8"))
+              if not pastas: pastas = d.get("pastas","")
+              if isinstance(pastas, list): pastas = ",".join(pastas)
+              if not modelo: modelo = d.get("modelo","small")
+              mx = str(d.get("max", 0) or 0)
+          except Exception as e:
+              print("# sem TESTAR.json legivel:", e)
+          print('PASTAS="%s"' % pastas.replace(" ", ""))
+          print('MODELO="%s"' % (modelo or "small"))
+          print('MAX="%s"' % mx)
+          PY
+          )"
+          echo "pastas=$PASTAS" >> "$GITHUB_OUTPUT"
+          echo "modelo=$MODELO" >> "$GITHUB_OUTPUT"
+          echo "max=$MAX" >> "$GITHUB_OUTPUT"
+          echo "vou testar: $PASTAS (whisper $MODELO, max $MAX)"
+
+      - name: 👂 Ouvir cada voz e 👁 olhar cada figura
+        env:
+          PASTAS: ${{ steps.pedido.outputs.pastas }}
+          MODELO: ${{ steps.pedido.outputs.modelo }}
+          MAX: ${{ steps.pedido.outputs.max }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          set +e
+          mkdir -p _status
+          : > /tmp/resumo.txt
+          IFS=',' read -ra LISTA <<< "$PASTAS"
+          for p in "${LISTA[@]}"; do
+            [ -z "$p" ] && continue
+            if [ ! -d "$p" ]; then echo "$p -> pasta nao existe" | tee -a /tmp/resumo.txt; continue; fi
+            echo "== OUVIDO $p =="
+            python3 _qa/testador_ouvido.py "$p" --modelo "$MODELO" --max "$MAX" 2>&1 | tee "/tmp/ouvido_$p.log"
+            echo "ouvido $p: codigo ${PIPESTATUS[0]} — $(tail -n 1 /tmp/ouvido_$p.log | head -c 300)" >> /tmp/resumo.txt
+            echo "== OLHO $p =="
+            python3 _qa/testador_olho.py "$p" --max "$MAX" 2>&1 | tee "/tmp/olho_$p.log"
+            echo "olho   $p: codigo ${PIPESTATUS[0]} — $(grep -m1 ' -> ' /tmp/olho_$p.log | head -c 300)" >> /tmp/resumo.txt
+          done
+          echo "## 👂👁 Testador humano" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"; cat /tmp/resumo.txt >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
+          for p in "${LISTA[@]}"; do
+            n="$(echo "$p" | sed 's#^_##; s#/#-#g')"
+            for a in ouvido olho; do
+              [ -f "_status/testador-$a-$n.md" ] && { echo "### $a — $p" >> "$GITHUB_STEP_SUMMARY"; head -n 40 "_status/testador-$a-$n.md" >> "$GITHUB_STEP_SUMMARY"; }
+            done
+          done
+          exit 0
+
+      - name: Guardar o veredito no repo
+        run: |
+          git config user.name "Testador humano"
+          git config user.email "testador@users.noreply.github.com"
+          git add -A _status/testador-*.md _status/testador-*.json 2>/dev/null || true
+          if git diff --cached --quiet; then echo "nada novo"; exit 0; fi
+          git commit -m "testador humano: $(tr '\n' ';' < /tmp/resumo.txt | head -c 200)"
+          # push em corrida com as pesquisas (ja perdeu trabalho uma vez): 6 tentativas.
+          for t in 1 2 3 4 5 6; do
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then echo "push ok (tentativa $t)"; break; fi
+            echo "push rejeitado (tentativa $t) — espero e tento de novo"; sleep $((t*7))
+            [ "$t" = "6" ] && { echo "::error::nao consegui guardar o veredito depois de 6 tentativas"; exit 1; }
+          done
