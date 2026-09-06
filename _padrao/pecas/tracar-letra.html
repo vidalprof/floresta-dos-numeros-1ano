@@ -815,6 +815,10 @@ function completou(revelado){
   /* ⭐ a recompensa visual e a PROPRIA LETRA: o fantasma acende inteiro. */
   if(fantEl) fantEl.className="fant fantok";
   if(elAviso){ elAviso.innerHTML=LT.msg; elAviso.className="aviso ver"; }
+  /* a tela RESPONDEU (letra acesa + mensagem + voz): marca para a prova de sala,
+     que mede "acertou -> algo novo na tela" — sem isto o tempo de leitura da
+     mensagem contava como espera vazia (1,7 s medidos, set/2026). */
+  if(typeof __qa==="function") __qa("tela");
   feitasTudo++;
   sPronto(); sCerto();
   guardaLetra();

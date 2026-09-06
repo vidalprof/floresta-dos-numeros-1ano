@@ -737,5 +737,12 @@ catch (e) {
  /* ⚠️ ate ago/2026 este portao NAO reprovava nada: a saida ia para um `tail -4`
     e o codigo de saida se perdia no cano. Ou seja, o auditor jogava a partida
     inteira e o resultado dele era decorativo. Agora ele vota como os outros. */
- process.exit(chegou&&!reais.length&&encaixeOk&&!certoQuebrado ? 0 : 1);
+ /* ⚠️⚠️ LICAO PAGA (set/2026, Padaria): a PROVA DE SALA escrevia "⛔ REPROVA" e
+    `process.exitCode=1` la em cima — e esta linha, com `process.exit(...)`
+    explicito, PISAVA no codigo: a banca lia 0 e dizia "APROVOU" embaixo de um
+    REPROVA impresso. Portao que imprime REPROVA e nao segura e o pior dos dois
+    mundos. Agora o veredito da prova entra no voto (1 = reprovou; 2 = nao mediu
+    continua nao segurando). */
+ const salaReprovou = (process.exitCode===1);
+ process.exit(chegou&&!reais.length&&encaixeOk&&!certoQuebrado&&!salaReprovou ? 0 : 1);
 })();

@@ -4112,6 +4112,7 @@ function acerta(r){
     setTimeout(function(){
       if(meu!==ger) return;
       fala(r.pal);
+      if(typeof __qa==="function") __qa("tela");   /* a palavra inteira voltou: a tela respondeu */
       setTimeout(function(){
         if(meu!==ger) return;
         ri++;
@@ -4129,6 +4130,10 @@ function ritmo(r, i, meu, aoFim, mudo){
   if(i>=r.sil.length){ if(aoFim) aoFim(); return; }
   var s=document.getElementById("bss"+i);
   if(s) s.className="bsSil toca";
+  /* cada silaba que ACENDE e a tela respondendo: marca para a prova de sala
+     (ela mede "acertou -> algo novo na tela"; sem a marca, o replay picado —
+     que E o ensino — contava como 2,4 s de espera vazia, set/2026). */
+  if(typeof __qa==="function") __qa("tela");
   sBatida();
   if(!mudo) fala(r.sil[i]);
   setTimeout(function(){
@@ -42553,6 +42558,10 @@ function completou(revelado){
   /* ⭐ a recompensa visual e a PROPRIA LETRA: o fantasma acende inteiro. */
   if(fantEl) fantEl.className="fant fantok";
   if(elAviso){ elAviso.innerHTML=LT.msg; elAviso.className="aviso ver"; }
+  /* a tela RESPONDEU (letra acesa + mensagem + voz): marca para a prova de sala,
+     que mede "acertou -> algo novo na tela" — sem isto o tempo de leitura da
+     mensagem contava como espera vazia (1,7 s medidos, set/2026). */
+  if(typeof __qa==="function") __qa("tela");
   feitasTudo++;
   sPronto(); sCerto();
   guardaLetra();

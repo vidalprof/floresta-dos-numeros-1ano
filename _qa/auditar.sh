@@ -784,6 +784,16 @@ fi
 echo
 if [ "$REPARO" != "1" ]; then
 echo "--- 0b5) PROVA DE SALA (resultado) -----------------"
+# ⚠️ A prova de sala freia o processador 6x E roda na faixa paralela, com outros
+#    navegadores disputando a CPU. Quando ela REPROVA, antes de julgar ela roda de
+#    novo SOZINHA (mesma regra do navegador que caiu): so vale a espera medida sem
+#    briga por CPU. Se reprovar de novo, e defeito da atividade — e segura.
+if [ -f "$TMPQ/g_sala.txt.st" ] && [ "$(cat "$TMPQ/g_sala.txt.st")" = "1" ] \
+   && grep -q "REPROVA: a crianca acerta" "$TMPQ/g_sala.txt" 2>/dev/null && [ -f "$TMPQ/g_sala.txt.cmd" ]; then
+  echo "   (reprovou na faixa paralela — repetindo SOZINHA para tirar a briga por CPU da conta)"
+  wait $_LARGA_PIDS 2>/dev/null || true
+  eval "$(cat "$TMPQ/g_sala.txt.cmd")" > "$TMPQ/g_sala.txt" 2>&1; echo $? > "$TMPQ/g_sala.txt.st"
+fi
 colhe "0b5 prova de sala" "$TMPQ/g_sala.txt"
 kill $_SRV 2>/dev/null || true
 fi
