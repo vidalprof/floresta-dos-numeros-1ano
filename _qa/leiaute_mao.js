@@ -66,6 +66,7 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
       if(se && se.scrollWidth>W+2) out.push("estoura na horizontal ("+se.scrollWidth+"px numa tela de "+W+"px)");
       const vis=e=>{ const cs=getComputedStyle(e); if(cs.display==="none"||cs.visibility==="hidden"||parseFloat(cs.opacity)===0) return false; const r=e.getBoundingClientRect(); return r.width>1&&r.height>1; };
       const nome=e=>(e.id?"#"+e.id:"")+(e.className&&typeof e.className==="string"?"."+e.className.trim().split(/\s+/)[0]:"")||e.tagName.toLowerCase();
+      const ehAlvoImg=e=>getComputedStyle(e).cursor==="pointer"||!!e.closest("button,a,[onclick],[role=button]");
       /* 2/3 — as <img> */
       for(const im of document.images){
         if(!vis(im)||!im.naturalWidth||!im.naturalHeight) continue;
@@ -88,6 +89,9 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
           else if(posDecl) av.push(msg+" — corte declarado por object-position");
           else out.push(msg);
         }
+        /* enfeite que se MEXE (nuvem, balao, confete: animacao CSS rodando) passa de
+           proposito pela borda da caixa — nao e figura cortada, e cenario vivo. */
+        if(cs.animationName&&cs.animationName!=="none"&&!ehAlvoImg(im)) continue;
         /* dentro de um trilho que ROLA de lado (catalogo de adereços, galeria), o que
            esta fora do trilho e alcancavel: nao e corte. */
         let rolaX=false;

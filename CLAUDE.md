@@ -52,6 +52,12 @@ Leia tudo antes de agir e responda sempre em **português**.
 > (`_qa/leiaute.js` — 6 tamanhos, resposta fora da tela, alvo < 40px) e jogador
 > (`_qa/jogador.js` — joga sozinho até a medalha). Há ainda o pedagogo
 > (`_qa/curriculo.py`), fora da banca automática.
+> **🖼️ APP À MÃO (sem motor: Batata, Pixel, UNO, painéis, hub…) TAMBÉM SE MEDE** (set/2026,
+> tarefa #49 — Marcos: *"ainda acontecem imagens cortadas"*): `node _qa/leiaute_mao.js
+> <pasta>/index.html` abre o app em 6 tamanhos e reprova figura esticada/cortada, fundo
+> esticado, estouro lateral, alvo < 40 px (tudo com `cursor:pointer` conta) e avisa texto
+> cortado. Na estreia pegou 8 apps com defeito real (todos consertados). Rodar antes de
+> publicar qualquer app à mão — a banca (`auditar.sh`) não o alcança.
 > **⚠️ Portão que imprime NADA não é "passou": é "rodou CEGO"** — rodar na mão, sem
 > `2>/dev/null`, e ler o erro (já aconteceu: uma `telaBase()` estourava sem config e
 > derrubava o contraste e o leiaute na primeira tela).
