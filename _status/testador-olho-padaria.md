@@ -1,38 +1,39 @@
 # 👁 TESTADOR HUMANO — OLHO (imagens) — `_padaria`
 
-> 25 figura(s) de conteúdo julgadas por gemini-flash-latest em 216 s: a imagem mostra o que o NOME promete? Camadas do mascote, fundo, medalha, crachás e desenhos para colorir ficam de fora.
+> 25 figura(s) de conteúdo julgadas por gemini-2.0-flash em 797 s: a imagem mostra o que o NOME promete? Camadas do mascote, fundo, medalha, crachás e desenhos para colorir ficam de fora.
 
 | resultado | quantas |
 |---|--:|
-| ✅ mostra o que o nome diz, sem problema | 1 |
+| ✅ mostra o que o nome diz, sem problema | 0 |
 | ❌ NÃO é o que o nome diz | 0 |
 | 🟡 é, mas com problema (texto na figura, corte, fundo…) | 0 |
-| ⚠️ não consegui julgar | 24 |
+| ⚠️ não consegui julgar | 25 |
 
 ## ⚠️ Não julgadas
 
-- `pd_biscoito.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_bolacha.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_bolinho.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_bolo.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_A.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_B.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_C.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_D.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_E.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_F.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_G.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_H.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_l_I.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_leite.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_mala.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_mamao.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_massa.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_mel.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_ovo.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_pao.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_pato.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_queijo.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_sal.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `pd_sapato.png` — gemini-2.5-flash: HTTP Error 404: Not Found
+- `pd_acucar.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_biscoito.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_bolacha.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_bolinho.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_bolo.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_A.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_B.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_C.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_D.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_E.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_F.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_G.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_H.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_l_I.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_leite.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_mala.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_mamao.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_massa.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_mel.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_ovo.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_pao.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_pato.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_queijo.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_sal.png` — pollinations: HTTP Error 402: Payment Required
+- `pd_sapato.png` — pollinations: HTTP Error 402: Payment Required
 

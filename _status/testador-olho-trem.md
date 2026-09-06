@@ -1,6 +1,6 @@
 # 👁 TESTADOR HUMANO — OLHO (imagens) — `_trem`
 
-> 27 figura(s) de conteúdo julgadas por gemini-2.0-flash em 135 s: a imagem mostra o que o NOME promete? Camadas do mascote, fundo, medalha, crachás e desenhos para colorir ficam de fora.
+> 27 figura(s) de conteúdo julgadas por gemini-2.0-flash em 785 s: a imagem mostra o que o NOME promete? Camadas do mascote, fundo, medalha, crachás e desenhos para colorir ficam de fora.
 
 | resultado | quantas |
 |---|--:|
@@ -11,31 +11,31 @@
 
 ## ⚠️ Não julgadas
 
-- `tr_abelha.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_bola.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_casa.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_dado.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_elefante.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_flor.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_gato.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_hipopotamo.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_igreja.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_jacare.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_kiwi.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_leao.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_maca.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_medalha.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_navio.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_ovo.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_pato.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_queijo.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_rato.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_sapo.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_trem.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_uva.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_vaca.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_waffle.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_xicara.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_yoyo.png` — gemini-2.5-flash: HTTP Error 404: Not Found
-- `tr_zebra.png` — gemini-2.5-flash: HTTP Error 404: Not Found
+- `tr_abelha.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_bola.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_casa.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_dado.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_elefante.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_flor.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_gato.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_hipopotamo.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_igreja.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_jacare.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_kiwi.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_leao.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_maca.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_medalha.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_navio.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_ovo.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_pato.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_queijo.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_rato.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_sapo.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_trem.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_uva.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_vaca.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_waffle.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_xicara.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_yoyo.png` — pollinations: HTTP Error 402: Payment Required
+- `tr_zebra.png` — pollinations: HTTP Error 402: Payment Required
 
