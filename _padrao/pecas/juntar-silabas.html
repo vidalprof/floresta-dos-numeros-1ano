@@ -407,9 +407,9 @@ function pecaJuntar(){
   /* a FIGURA diz qual palavra é — a criança de 6 anos não lê */
   var fg=el("div","jsFig");
   if(figEl && figDe(r)){ fg.appendChild(figEl(figDe(r))); }
+  else { fg.appendChild(el("div","semfig", r.pal)); }
   /* ⭐ a figura RESPONDE ao toque e diz a palavra inteira (regras 6 e 13) */
   fg.onclick=function(){ sTap(); voz(r.pal); };
-  else { fg.appendChild(el("div","semfig", r.pal)); }
   c.appendChild(fg);
   c.appendChild(ouvidos(r));
 
