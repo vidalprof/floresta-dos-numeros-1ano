@@ -118,8 +118,13 @@ def main():
         # fala cortada: o texto e longo e a voz parou muito antes (menos de 60% do tamanho)
         cortada = len(esperado) >= 30 and len(ouv) < 0.6 * len(esperado)
         if curto:
-            (conferir if sim < 70 else None) and conferir.append((fid, texto[:60], ouvido[:60], sim, u"fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido"))
-            if sim >= 70: ok += 1
+            # ⚠️ (rodada 3) estava `(conferir if sim<70 else None) and conferir.append(...)`:
+            #    com a lista ainda VAZIA, `[]` e falso e o `and` nunca chegava ao append —
+            #    o Trem saiu com "0 a conferir" e 52 falas curtas sumiram do relatorio.
+            if sim >= 70:
+                ok += 1
+            else:
+                conferir.append((fid, texto[:60], ouvido[:60], sim, u"fala curta: o reconhecedor erra em nome de letra/silaba — conferir no ouvido"))
         elif sim >= 80 and not cortada:
             ok += 1
         elif sim >= 62 and not cortada:

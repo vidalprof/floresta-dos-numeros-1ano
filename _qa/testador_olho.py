@@ -37,13 +37,20 @@ def pergunta(key, modelo, png, rot):
               u"Responda em UMA linha, neste formato exato: "
               u"VEREDITO=SIM ou VEREDITO=NAO | VEJO=<3 a 6 palavras do que a imagem mostra> | "
               u"PROBLEMAS=<nenhum, ou: texto/letras/números desenhados na imagem, figura cortada, fundo não transparente, figura vazia ou escura, mais de um objeto, objeto errado>" % rot)
+    # ⚠️ (rodada 3) com 120 tokens de saida o Gemini 2.5 gastava tudo PENSANDO e a
+    #    resposta chegava cortada ("VEREDIT"). Pensamento desligado + saida folgada.
     corpo = {"contents": [{"parts": [{"text": prompt}, {"inline_data": {"mime_type": "image/png", "data": b64}}]}],
-             "generationConfig": {"temperature": 0.1, "maxOutputTokens": 120}}
+             "generationConfig": {"temperature": 0.1, "maxOutputTokens": 400, "thinkingConfig": {"thinkingBudget": 0}}}
     url = "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s" % (modelo, key)
     req = urllib.request.Request(url, data=json.dumps(corpo).encode("utf-8"), headers={"Content-Type": "application/json"})
     with urllib.request.urlopen(req, timeout=60) as r:
         d = json.loads(r.read().decode("utf-8"))
-    return d["candidates"][0]["content"]["parts"][0]["text"].strip()
+    try:
+        partes = d["candidates"][0]["content"]["parts"]
+    except (KeyError, IndexError):
+        raise RuntimeError("resposta sem texto (bloqueio/vazia): %s" % json.dumps(d)[:120])
+    txt = u" ".join(p.get("text", "") for p in partes).strip()
+    return txt.replace("*", "").replace("\n", " ")
 
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
@@ -65,19 +72,25 @@ def main():
     # ⚠️ (1a rodada, set/2026) `gemini-2.0-flash` respondeu 404 em TODAS as figuras: o
     #    nome do modelo aposentou. Nome de modelo e coisa que muda por baixo de nos —
     #    entao ha uma FILA de nomes, e o 404 pula para o proximo em vez de parar.
-    fila = [modelo] + [m for m in ("gemini-2.5-flash", "gemini-flash-latest", "gemini-2.0-flash", "gemini-1.5-flash") if m != modelo]
+    fila = [modelo] + [m for m in ("gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash") if m != modelo]
     for n, f in enumerate(pngs):
         rot = rotulo(f[:-4])
-        resp = None
+        resp = None; paciencia = 2
         while fila and resp is None:
             try:
                 resp = pergunta(key, fila[0], os.path.join(pasta, "img", f), rot)
             except Exception as e:
                 msg = str(e)
                 if "429" in msg or "quota" in msg.lower() or "RESOURCE_EXHAUSTED" in msg:
+                    # ⚠️ (rodada 3) o 429 era LIMITE POR MINUTO (bateu na 30a figura), nao
+                    #    cota do dia: espera e tenta de novo antes de desistir.
+                    if paciencia > 0:
+                        paciencia -= 1; print(u"   429 em %s: espero 45 s e tento de novo" % fila[0]); time.sleep(45); continue
                     falhas.append((f, u"COTA do Gemini esgotada (429) em %s — parei aqui" % fila[0]))
                     fila = []
                     break
+                if "503" in msg and paciencia > 0:
+                    paciencia -= 1; time.sleep(8); continue
                 if "404" in msg and len(fila) > 1:
                     print(u"   modelo %s -> 404; tentando %s" % (fila[0], fila[1])); fila.pop(0); continue
                 falhas.append((f, u"%s: %s" % (fila[0], msg[:90]))); break
@@ -96,7 +109,7 @@ def main():
             avisos.append((f, rot, vejo, prob))
         else:
             ruins.append((f, rot, vejo, prob))
-        time.sleep(0.6)
+        time.sleep(4.5)   # o plano gratis conta pedidos por MINUTO: sem folga, 429 na 30a figura
     dt = time.time() - t0
     L = [u"# 👁 TESTADOR HUMANO — OLHO (imagens) — `%s`" % pasta, u"",
          u"> %d figura(s) de conteúdo julgadas por %s em %.0f s: a imagem mostra o que o NOME promete? "
