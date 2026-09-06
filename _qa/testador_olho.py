@@ -72,6 +72,46 @@ def pergunta(key, modelo, png, rot):
     txt = u" ".join(p.get("text", "") for p in partes).strip()
     return txt.replace("*", "").replace("\n", " ")
 
+def olho_local(pasta, pngs):
+    u"""⭐ O JUIZ QUE NAO DEPENDE DE NINGUEM (rodada 6, set/2026): os Gemini gratis
+    acabaram a cota do dia em cinco rodadas e o Pollinations passou a cobrar (402).
+    Um testador que so funciona quando a nuvem deixa nao e testador. Este roda no
+    runner, sem rede depois do download: CLIP multilingue (sentence-transformers,
+    `clip-ViT-B-32` para a imagem + `clip-ViT-B-32-multilingual-v1` para o texto em
+    PORTUGUES). A pergunta e a que importa: esta figura combina mais com o NOME
+    dela do que com os nomes das OUTRAS figuras da atividade? E a familia "o OVO
+    apontando para o mamao". O que ele NAO ve: texto desenhado, corte, fundo —
+    isso fica para o Gemini quando houver cota.
+    Devolve lista de (arquivo, rotulo, top1, score_proprio, score_top1, ok)."""
+    try:
+        from sentence_transformers import SentenceTransformer, util
+        from PIL import Image
+    except Exception as e:
+        print(u"   olho local indisponivel (%s) — instale sentence-transformers + torch cpu." % str(e)[:80])
+        return None
+    rot = [rotulo(f[:-4]) for f in pngs]
+    frases = [u"um desenho de %s" % r for r in rot]
+    img_model = SentenceTransformer("clip-ViT-B-32")
+    txt_model = SentenceTransformer("sentence-transformers/clip-ViT-B-32-multilingual-v1")
+    emb_t = txt_model.encode(frases, convert_to_tensor=True, normalize_embeddings=True)
+    saida = []
+    for i, f in enumerate(pngs):
+        try:
+            im = Image.open(os.path.join(pasta, "img", f)).convert("RGBA")
+            fundo = Image.new("RGBA", im.size, (255, 255, 255, 255))   # transparente vira branco
+            im = Image.alpha_composite(fundo, im).convert("RGB")
+            emb_i = img_model.encode(im, convert_to_tensor=True, normalize_embeddings=True)
+        except Exception as e:
+            saida.append((f, rot[i], u"(nao abriu: %s)" % str(e)[:40], 0.0, 0.0, None)); continue
+        sims = util.cos_sim(emb_i, emb_t)[0].tolist()
+        ordem = sorted(range(len(sims)), key=lambda k: -sims[k])
+        top1 = ordem[0]; pos = ordem.index(i)
+        # ok = o proprio nome e o 1o ou o 2o mais parecido (nomes parecidos — bolo/bolinho,
+        # biscoito/bolacha — disputam entre si e isso nao e defeito).
+        saida.append((f, rot[i], rot[top1], round(sims[i], 3), round(sims[top1], 3), pos <= 1))
+    return saida
+
+
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     if not args:
@@ -138,6 +178,11 @@ def main():
         else:
             ruins.append((f, rot, vejo, prob))
         time.sleep(6.5)   # o plano gratis conta pedidos por MINUTO (~5–15/min conforme o modelo)
+    # ⭐ O JUIZ LOCAL roda SEMPRE (e barato e nao tem cota): e ele quem garante que
+    #    o relatorio nunca sai vazio. Se a nuvem julgou tudo, ele e a segunda opiniao.
+    loc = olho_local(pasta, pngs) if not os.environ.get("TESTADOR_SEM_LOCAL") else None
+    loc_ruins = [x for x in (loc or []) if x[5] is False]
+    loc_ok = [x for x in (loc or []) if x[5] is True]
     dt = time.time() - t0
     L = [u"# 👁 TESTADOR HUMANO — OLHO (imagens) — `%s`" % pasta, u"",
          u"> %d figura(s) de conteúdo julgadas por %s em %.0f s: a imagem mostra o que o NOME promete? "
@@ -152,16 +197,32 @@ def main():
         L += [u"## 🟡 Batem, mas com problema", u"", u"| arquivo | nome | vê | problema |", u"|---|---|---|---|"]
         L += [u"| `%s` | %s | %s | %s |" % tuple(x.replace(u"|", u"/") for x in r) for r in avisos] + [u""]
     if falhas:
-        L += [u"## ⚠️ Não julgadas", u""] + [u"- `%s` — %s" % x for x in falhas] + [u""]
+        L += [u"## ⚠️ Não julgadas pela nuvem", u""] + [u"- `%s` — %s" % x for x in falhas] + [u""]
+    if loc is not None:
+        L += [u"## 🧭 Juiz LOCAL (CLIP multilíngue, sem cota): a figura combina mais com o SEU nome?", u"",
+              u"> %d figura(s): **%d combinam com o próprio nome** (1º ou 2º lugar entre os %d nomes da atividade), **%d NÃO** — nessas, o nome que mais combina é outro. "
+              u"Ele não vê texto desenhado, corte nem fundo: isso é do Gemini, quando há cota." % (len(loc), len(loc_ok), len(loc), len(loc_ruins)), u""]
+        if loc_ruins:
+            L += [u"| arquivo | nome promete | parece mais com | score do próprio | score do outro |", u"|---|---|---|--:|--:|"]
+            L += [u"| `%s` | %s | **%s** | %.3f | %.3f |" % (x[0], x[1], x[2], x[3], x[4]) for x in loc_ruins] + [u""]
+        L += [u"<details><summary>todas as figuras (juiz local)</summary>", u"", u"| arquivo | nome | 1º lugar | score próprio |", u"|---|---|---|--:|"]
+        L += [u"| `%s` | %s | %s | %.3f |" % (x[0], x[1], x[2], x[3]) for x in loc] + [u"", u"</details>", u""]
     os.makedirs("_status", exist_ok=True)
     nome = pasta.strip("_/").replace("/", "-")
     io.open(os.path.join("_status", "testador-olho-%s.md" % nome), "w", encoding="utf-8").write(u"\n".join(L) + u"\n")
-    json.dump({"pasta": pasta, "modelo": modelo, "figuras": len(pngs), "ok": ok, "ruins": ruins, "avisos": avisos, "falhas": falhas, "segundos": round(dt)},
+    json.dump({"pasta": pasta, "modelo": modelo, "figuras": len(pngs), "ok": ok, "ruins": ruins, "avisos": avisos, "falhas": falhas,
+               "local": loc, "segundos": round(dt)},
               io.open(os.path.join("_status", "testador-olho-%s.json" % nome), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(u"%s -> olho: %d ok, %d NAO sao o que o nome diz, %d com problema, %d nao julgadas (%.0fs)" % (pasta, ok, len(ruins), len(avisos), len(falhas), dt))
+    print(u"%s -> olho: nuvem %d ok, %d NAO sao o que o nome diz, %d com problema, %d nao julgadas | local: %s (%.0fs)"
+          % (pasta, ok, len(ruins), len(avisos), len(falhas),
+             (u"%d combinam, %d NAO" % (len(loc_ok), len(loc_ruins))) if loc is not None else u"indisponivel", dt))
     for r in ruins[:10]: print(u"   ❌ %s: promete \"%s\", o modelo ve \"%s\" (%s)" % r)
-    if falhas and len(falhas) == len(pngs): return 2
-    return 1 if ruins else 0
+    for x in loc_ruins[:10]: print(u"   🧭 %s: promete \"%s\", parece mais com \"%s\" (%.3f x %.3f)" % (x[0], x[1], x[2], x[4], x[3]))
+    if ruins or loc_ruins:
+        return 1
+    if loc is None and falhas and len(falhas) == len(pngs):
+        return 2
+    return 0
 
 if __name__ == "__main__":
     sys.exit(main())

@@ -63,6 +63,11 @@ jobs:
           # ⚠️ (1a rodada, set/2026) o faster-whisper importa `requests` e nao o declara:
           #    o runner morreu em "No module named 'requests'". Instalado explicitamente.
           python -m pip install --quiet "faster-whisper==1.0.3" requests rapidfuzz num2words
+          # ⭐ (rodada 6) o OLHO LOCAL: CLIP multilingue no proprio runner, sem cota nem
+          #    chave (Gemini gratis esgotou em 5 rodadas; Pollinations passou a cobrar).
+          #    torch so CPU (a roda com CUDA tem 800 MB e nao serve aqui).
+          python -m pip install --quiet torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --quiet sentence-transformers pillow
           sudo apt-get install -y -qq ffmpeg >/dev/null 2>&1 || true
           python - <<'PY'
           from faster_whisper import WhisperModel
