@@ -72,7 +72,12 @@ def main():
     # ⚠️ (1a rodada, set/2026) `gemini-2.0-flash` respondeu 404 em TODAS as figuras: o
     #    nome do modelo aposentou. Nome de modelo e coisa que muda por baixo de nos —
     #    entao ha uma FILA de nomes, e o 404 pula para o proximo em vez de parar.
-    fila = [modelo] + [m for m in ("gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash") if m != modelo]
+    # ⚠️ (rodada 4) o plano gratis do `gemini-flash-latest` (2.5 Flash) deu 429 na 7a
+    #    figura mesmo com 4,5 s de folga: o limite dele e ~5 pedidos/minuto. O
+    #    `gemini-2.5-flash-lite` tem cota propria e mais folgada: e o primeiro da fila;
+    #    quando UM modelo esgota, a fila passa ao proximo em vez de parar tudo.
+    fila = [m for m in (modelo, "gemini-2.5-flash-lite", "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash") if m]
+    fila = list(dict.fromkeys(fila))
     for n, f in enumerate(pngs):
         rot = rotulo(f[:-4])
         resp = None; paciencia = 2
@@ -85,7 +90,9 @@ def main():
                     # ⚠️ (rodada 3) o 429 era LIMITE POR MINUTO (bateu na 30a figura), nao
                     #    cota do dia: espera e tenta de novo antes de desistir.
                     if paciencia > 0:
-                        paciencia -= 1; print(u"   429 em %s: espero 45 s e tento de novo" % fila[0]); time.sleep(45); continue
+                        paciencia -= 1; print(u"   429 em %s: espero 65 s e tento de novo" % fila[0]); time.sleep(65); continue
+                    if len(fila) > 1:
+                        print(u"   %s esgotou a cota: passo para %s" % (fila[0], fila[1])); fila.pop(0); paciencia = 1; continue
                     falhas.append((f, u"COTA do Gemini esgotada (429) em %s — parei aqui" % fila[0]))
                     fila = []
                     break
@@ -99,8 +106,10 @@ def main():
         if resp is None:
             continue
         modelo = fila[0]
-        m = re.search(r"VEREDITO\s*=\s*(SIM|NAO|N[ÃA]O)", resp, re.I)
-        vejo = re.search(r"VEJO\s*=\s*([^|]+)", resp); prob = re.search(r"PROBLEMAS\s*=\s*(.+)$", resp)
+        # (rodada 4) o modelo as vezes responde "VEREDITO: SIM" ou "VEREDITO - SIM":
+        # aceitar =, : e - — senao a abelha certa virava "NAO e o que o nome diz".
+        m = re.search(r"VEREDITO\s*[=:\-]\s*(SIM|NAO|N[ÃA]O)", resp, re.I)
+        vejo = re.search(r"VEJO\s*[=:\-]\s*([^|]+)", resp, re.I); prob = re.search(r"PROBLEMAS\s*[=:\-]\s*(.+)$", resp, re.I)
         vejo = vejo.group(1).strip() if vejo else resp[:60]; prob = prob.group(1).strip() if prob else u"?"
         sim = bool(m and m.group(1).upper() == "SIM")
         if sim and re.match(r"(?i)nenhum", prob):
@@ -109,7 +118,7 @@ def main():
             avisos.append((f, rot, vejo, prob))
         else:
             ruins.append((f, rot, vejo, prob))
-        time.sleep(4.5)   # o plano gratis conta pedidos por MINUTO: sem folga, 429 na 30a figura
+        time.sleep(6.5)   # o plano gratis conta pedidos por MINUTO (~5–15/min conforme o modelo)
     dt = time.time() - t0
     L = [u"# 👁 TESTADOR HUMANO — OLHO (imagens) — `%s`" % pasta, u"",
          u"> %d figura(s) de conteúdo julgadas por %s em %.0f s: a imagem mostra o que o NOME promete? "

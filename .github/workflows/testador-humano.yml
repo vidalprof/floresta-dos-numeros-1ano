@@ -115,12 +115,18 @@ jobs:
           for p in "${LISTA[@]}"; do
             [ -z "$p" ] && continue
             if [ ! -d "$p" ]; then echo "$p -> pasta nao existe" | tee -a /tmp/resumo.txt; continue; fi
-            echo "== OUVIDO $p =="
-            python3 _qa/testador_ouvido.py "$p" --modelo "$MODELO" --max "$MAX" 2>&1 | tee "/tmp/ouvido_$p.log"
-            echo "ouvido $p: codigo ${PIPESTATUS[0]} — $(tail -n 1 /tmp/ouvido_$p.log | head -c 300)" >> /tmp/resumo.txt
-            echo "== OLHO $p =="
-            python3 _qa/testador_olho.py "$p" --max "$MAX" 2>&1 | tee "/tmp/olho_$p.log"
-            echo "olho   $p: codigo ${PIPESTATUS[0]} — $(grep -m1 ' -> ' /tmp/olho_$p.log | head -c 300)" >> /tmp/resumo.txt
+            # TESTAR.json pode pedir so um dos dois olhos ("ouvido": false / "olho": false):
+            # o ouvido leva ~15 min por atividade e nao precisa repetir quando so o olho mudou.
+            if [ "$(python3 -c "import json;d=json.load(open('_status/TESTAR.json'));print(str(d.get('ouvido',True)).lower())")" != "false" ]; then
+              echo "== OUVIDO $p =="
+              python3 _qa/testador_ouvido.py "$p" --modelo "$MODELO" --max "$MAX" 2>&1 | tee "/tmp/ouvido_$p.log"
+              echo "ouvido $p: codigo ${PIPESTATUS[0]} — $(tail -n 1 /tmp/ouvido_$p.log | head -c 300)" >> /tmp/resumo.txt
+            fi
+            if [ "$(python3 -c "import json;d=json.load(open('_status/TESTAR.json'));print(str(d.get('olho',True)).lower())")" != "false" ]; then
+              echo "== OLHO $p =="
+              python3 _qa/testador_olho.py "$p" --max "$MAX" 2>&1 | tee "/tmp/olho_$p.log"
+              echo "olho   $p: codigo ${PIPESTATUS[0]} — $(grep -m1 ' -> ' /tmp/olho_$p.log | head -c 300)" >> /tmp/resumo.txt
+            fi
           done
           echo "## 👂👁 Testador humano" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"; cat /tmp/resumo.txt >> "$GITHUB_STEP_SUMMARY"; echo '```' >> "$GITHUB_STEP_SUMMARY"
