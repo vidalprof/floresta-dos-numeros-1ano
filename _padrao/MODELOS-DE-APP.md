@@ -79,7 +79,7 @@ no `_padrao/INTERATIVIDADES.md` como ✅ só depois da banca.
 |---|---|---|---|---|
 | Conversa | `conversa` | Padaria (1º) | 2026-09-07 20:25Z | cabeçalho sai em `max-height:640px` (netbook 1024×600: o Pronto do bater-sílabas caía fora da tela) |
 | Trilha | `trilha` | Trem (1º) | 2026-09-07 19:31Z | título do mapa precisa de fundo próprio (4c); overlay leva `casca-transicao` |
-| Lição (Duolingo) | `licao` | Divisão (5º) | 2026-09-07 (carimbo em `_status/entrega-a-grande-expedicao-divisao.json`) | painel branco 88% SEM `backdrop-filter` (vira bloco-contenedor da figura `fixed` da forca); selo #555 (contraste); a casca não infla letra/altura da peça; CONTINUAR na largura da casa |
+| Lição (Duolingo) | `licao` | Divisão (5º) | 2026-09-07 21:44Z | painel branco 88% SEM `backdrop-filter` (vira bloco-contenedor da figura `fixed` da forca); selo #555 (contraste); a casca não infla letra/altura da peça; CONTINUAR na largura da casa |
 
 ## Estado (2026-09-07, noite)
 
