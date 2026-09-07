@@ -6667,6 +6667,20 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
   clássica o veredito fica em y=972 e na Lição em 977 — igual; o jogador rola a tela.
   Refazer limpo (fila3) antes de concluir qualquer coisa.
 - Trem com a casca **Trilha** publicado (19:31Z, cobaia 91/91, banca aprovou).
+- **🔊 UNO dos Números com a VOZ DA CASA** (pedido do Marcos: *"vozes no mesmo padrão das
+  atividades, geradas do Antônio, sem voz do navegador"*). App à mão não passa pelo
+  montador, então nasceu `_uno345/gerar_falas.py`: enumera TODAS as frases possíveis
+  (127: regras da rodada × prefixos × "sua vez/sem carta", cores, tutorial, capa por ano),
+  limpa emoji como o `limparTexto` do jogo, calcula a MESMA chave do motor (`chaveVoz`,
+  djb2 base 36 — conferido JS = Python) e grava `VOZOK` no index entre `/*VOZOK-INI*/`
+  e `/*VOZOK-FIM*/`. `falar()` toca `audio/un_<chave>.mp3`; a voz do navegador virou
+  reserva (frase nova ainda não gravada). `voz.txt` = Antônio (o Robô Esperto). O
+  `entregar.yml` grava os mp3 no push com a marca. **Regra que fica: app à mão que fala
+  ganha `gerar_falas.py` + `falas.json` + `voz.txt`; mudou frase no código → rodar o
+  gerador de novo, senão a frase nova sai na voz do navegador.** `catalogo.py` passou a
+  aceitar link com `?ano=` (o mesmo site serve 3 turmas).
+- Publicados hoje também: Sólidos (20:01Z) e Museu (20:13Z) com motor novo e imagens
+  leves; Padaria (20:25Z) na casca Conversa.
 - Fila da noite (`fila.sh` destacado do chat): cobaia Trilha → banca Trem → cobaia Lição →
   banca Divisão → banca Sólidos → banca Museu → (fila2) banca Padaria. Publicar o que
   aprovar com a marca `[entregar …]`.
