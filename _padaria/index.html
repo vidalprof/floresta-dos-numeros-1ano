@@ -195,6 +195,11 @@ body.casca-conversa .centro > .balao:before{content:"";position:absolute;left:-5
 /* tela baixa (PC da escola 1366x720, janela baixa): a conversa encolhe o cabecalho e
    guarda a mensagem anterior, para a RESPOSTA ficar na tela sem rolar */
 @media (max-height:780px){ .cv-hist{display:none} .cv-cab{padding:3px 8px;margin-bottom:6px} .cv-av{width:32px;height:32px} .cv-cab b{font-size:14px} .cv-cab .cv-on{font-size:11.5px} }
+/* ⚠️ MEDIDO (set/2026, prova de sala da Padaria): no netbook da escola (1024x600) o
+   cabecalho da conversa empurrava o "Pronto" do bater-silabas para y=608 — fora da
+   tela, e o robo (que clica onde a crianca clicaria) ficou 28 s "congelado". Em tela
+   baixa o cabecalho SAI: a barra de progresso ja diz onde ela esta. */
+@media (max-height:640px){ .cv-cab{display:none} body.casca-conversa .centro > .balao{margin-left:44px;max-width:min(430px, calc(100% - 44px))} body.casca-conversa .centro > .balao:before{left:-44px;width:36px;height:36px} }
 body.casca-conversa .cv-resp{width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:10px 4px 12px;margin-top:12px;background:rgba(255,255,255,.40);border-radius:22px 6px 22px 22px;-webkit-box-shadow:inset 0 0 0 2px rgba(255,255,255,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
 /* o balao que a PECA escreve dentro do cartao continua sendo fala do mascote */
 body.casca-conversa .cv-resp .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;border-radius:6px 22px 22px 22px}
@@ -211,6 +216,7 @@ body.casca-conversa .cv-resp.mt-entra{-webkit-animation-name:cvDir;animation-nam
    `pointer-events:none` (é só visual, nada trava o toque), some sozinha, fora em
    reduced-motion. Os portões esperam a classe `casca-transicao` sumir antes de medir e a
    foto do 5c a esconde. Só transform/opacity (gamefeel R5). */
+.casca-transicao{pointer-events:none}   /* marca comum das transicoes de casca (os portoes esperam ela sumir) */
 .tr-mapa{position:fixed;left:0;top:0;right:0;bottom:0;z-index:60;pointer-events:none;background:rgba(20,30,16,.55);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-animation:trFade 1.15s both;animation:trFade 1.15s both}
 @-webkit-keyframes trFade{0%{opacity:0}12%{opacity:1}82%{opacity:1}100%{opacity:0}}
 @keyframes trFade{0%{opacity:0}12%{opacity:1}82%{opacity:1}100%{opacity:0}}
@@ -223,6 +229,22 @@ body.casca-conversa .cv-resp.mt-entra{-webkit-animation-name:cvDir;animation-nam
 .tr-band{position:absolute;width:26px;height:30px;margin:-30px 0 0 -3px}
 .tr-tit{position:absolute;left:50%;top:8px;-webkit-transform:translateX(-50%);transform:translateX(-50%);white-space:nowrap;text-align:center;font-weight:800;color:#1f2a14;background:rgba(255,253,246,.96);border-radius:999px;padding:3px 12px;font-size:15px;letter-spacing:.3px}
 .tr-tit b{color:#2c7318}
+/* ⭐⭐ CASCA "LIÇÃO" (set/2026, pedido do Marcos: "leiaute de app tipo Duolingo", do 3º ao
+   9º): a fase vira uma LIÇÃO limpa — painel branco por cima da cena, barra de progresso
+   grossa, rótulo discreto, pergunta em caixa com borda, opções brancas com borda grossa
+   embaixo, e a folha de feedback verde de ponta a ponta. O botão CONTINUAR mantém a
+   largura medida da casa (o Marcos já reprovou o botão-faixa). Só CSS. */
+.tela.lc{background:rgba(255,255,255,.93)}
+.tela.lc .prog{height:16px;background:#e5e5e5;-webkit-box-shadow:none;box-shadow:none}
+.tela.lc .selo{background:transparent;color:#6b6b6b;font-size:12.5px;letter-spacing:.8px;padding:0 2px;margin-bottom:6px;text-transform:uppercase}
+.tela.lc .centro > .balao{background:#fff;border:2px solid #e5e5e5;-webkit-box-shadow:none;box-shadow:none;text-align:left;font-size:19px;font-weight:700;color:#3c3c3c;width:100%;max-width:520px;-webkit-box-sizing:border-box;box-sizing:border-box;border-radius:16px}
+.tela.lc .opt{background:#fff;border:2px solid #e5e5e5;border-bottom-width:5px;border-radius:16px;font-size:18px;color:#4b4b4b;min-height:64px;-webkit-box-shadow:none;box-shadow:none}
+.tela.lc .opt.ok{border-color:var(--verde);background:#d7ffb8;color:#2c5e0f}
+.tela.lc .opt.no{border-color:var(--coral);background:#ffe9e5;color:#7a2a20}
+.tela.lc .hint{color:#555}
+body.casca-licao .banner{max-width:none;border-radius:0;border-top:2px solid rgba(0,0,0,.06)}
+body.casca-licao .banner.bom{background:#d7ffb8}
+body.casca-licao .banner .msg{text-align:left;font-size:19px;color:#3f7d04}
 @media (prefers-reduced-motion: reduce){
   .vitrine .pgfill,.vitrine .pgfill:before,.vitrine .pgcomet{-webkit-animation:none;animation:none}
 }
@@ -4361,7 +4383,7 @@ function montaFase(i, aoFim){
   _faseViva = true;   /* daqui ate o proximo limpa(), todo relogio e DESTA fase */
   /* o relogio do "esta parada?" zera a cada fase (ver `acordaParada`) */
   acordaParada();
-  var t = el("div","tela");
+  var t = el("div","tela" + (ID.casca === "licao" ? " lc" : ""));
   /* a vitrine SUBSTITUI a barra fina quando a atividade tem figuras para ela */
   if(VITRINE.length) poeVitrine(t, i); else setProg(t, progDaFase(i));
   var cen = el("div","centro");
