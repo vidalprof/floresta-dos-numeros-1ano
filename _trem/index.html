@@ -167,6 +167,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 @keyframes pgshine{0%{left:-45%}55%,100%{left:130%}}
 @-webkit-keyframes pgpulse{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.22)}}
 @keyframes pgpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.22)}}
+/* ⭐ cascata de entrada da fase (ver _mtEntra): so opacity/transform, finita,
+   fill BACKWARDS para o elemento nascer invisivel e nao piscar antes do atraso. */
+.mt-entra{-webkit-animation:mtEntra .36s cubic-bezier(.2,.9,.3,1.15) both;animation:mtEntra .36s cubic-bezier(.2,.9,.3,1.15) both}
+@-webkit-keyframes mtEntra{from{opacity:0;-webkit-transform:translateY(14px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes mtEntra{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){ .mt-entra{-webkit-animation:none;animation:none} }
 @media (prefers-reduced-motion: reduce){
   .vitrine .pgfill,.vitrine .pgfill:before,.vitrine .pgcomet{-webkit-animation:none;animation:none}
 }
@@ -2160,7 +2166,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    ⚠️ A chave do localStorage E CRITICA: no GitHub Pages TODAS as atividades
    moram na MESMA origem (vidalprof.github.io). Duas atividades com a chave
    "jardim_med" apagariam o progresso uma da outra na mesma tarde. */
-var ID = {"pre": "tr", "mascote": "coru", "mascoteNome": "Coru", "titulo": "O Trem do Alfabeto", "sub": "Língua Portuguesa · 1º ano · Alfabeto, sílabas e palavras", "fundo": "tr_fundo.png", "fundoSuave": false, "crachas": 6, "convite": "<b>Quem vai pilotar</b> o trem hoje?", "narrar": "tudo"};
+var ID = {"pre": "tr", "mascote": "coru", "mascoteNome": "Coru", "titulo": "O Trem do Alfabeto", "sub": "Língua Portuguesa · 1º ano · Alfabeto, sílabas e palavras", "fundo": "tr_fundo.png", "fundoSuave": false, "crachas": 6, "mascoteVetor": {"vb": [172, 260], "olhos": [[62, 105, 17, 15], [110, 105, 17, 15]], "palpebra": "#ead9b8", "cilio": "#5a3a1e", "boca": "M76 130 Q86 148 96 130 Z", "bocaCor": "#4a1d0a", "bocaBorda": "#e08a2b", "bocaBordaLarg": 3}, "convite": "<b>Quem vai pilotar</b> o trem hoje?", "narrar": "tudo"};
 
 "use strict";
 /* ============================================================
@@ -2763,9 +2769,39 @@ carregaEstado();
 var app=document.getElementById("app"),banner=document.getElementById("banner"),bmsg=document.getElementById("bmsg"),bcta=document.getElementById("bcta"),barra=document.getElementById("barra");
 var btnOuvir=null,btnDica=null,dicaAtual="",dicaTexto="";
 function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+/* ⭐ MASCOTE VETORIAL (set/2026, Marcos: "coisa mais profissional, sem erros"): boca e
+   palpebras sao SVG desenhado por cima da pose parada (ID.mascoteVetor, do
+   conteudo.json). O corpo nunca troca de imagem — entao nao treme (o defeito que o
+   portao 3d media) e nao depende de gerador que edite a base. O SVG usa o viewBox
+   da imagem e `meet`, como o object-fit:contain da camada base: os dois escalam
+   igual e a boca cai sempre no bico. As camadas continuam se chamando `fala` e
+   `pisca` e continuam sendo ligadas por `style.opacity` — o lip-sync nao mudou. */
+function _svgCamada(classe, miolo){
+  var V=ID.mascoteVetor||{}, vb=V.vb||[100,100];
+  var s=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  s.setAttribute("viewBox","0 0 "+vb[0]+" "+vb[1]); s.setAttribute("preserveAspectRatio","xMidYMid meet");
+  s.setAttribute("class","lay "+classe); s.setAttribute("aria-hidden","true");
+  s.innerHTML=miolo; return s;
+}
+function _mascVetorFala(){
+  var V=ID.mascoteVetor||{};
+  return '<path d="'+(V.boca||"")+'" fill="'+(V.bocaCor||"#3a1a0a")+'"/>'
+    +(V.bocaBorda?'<path d="'+(V.boca||"")+'" fill="none" stroke="'+V.bocaBorda+'" stroke-width="'+(V.bocaBordaLarg||2.6)+'" stroke-linecap="round"/>':"");
+}
+function _mascVetorPisca(){
+  var V=ID.mascoteVetor||{}, h="", i, o;
+  for(i=0;i<(V.olhos||[]).length;i++){ o=V.olhos[i];
+    h+='<ellipse cx="'+o[0]+'" cy="'+o[1]+'" rx="'+o[2]+'" ry="'+o[3]+'" fill="'+(V.palpebra||"#e9d8b8")+'"/>';
+    /* o cilio: um arco sorridente na altura de baixo da palpebra */
+    h+='<path d="M'+(o[0]-o[2]*0.85)+' '+(o[1]+o[3]*0.2)+' Q'+o[0]+' '+(o[1]+o[3]*0.85)+' '+(o[0]+o[2]*0.85)+' '+(o[1]+o[3]*0.2)+'" fill="none" stroke="'+(V.cilio||"#5a3a1e")+'" stroke-width="'+(V.cilioLarg||2.4)+'" stroke-linecap="round"/>';
+  }
+  return h;
+}
 function brotoEl(tam){
   var d=el("div","broto"+(tam?" "+tam:""));
-  var base=imgEl(ID.pre+"_"+ID.mascote+"_feliz","lay base"), fala=imgEl(ID.pre+"_"+ID.mascote+"_fala","lay fala"), pisca=imgEl(ID.pre+"_"+ID.mascote+"_pisca","lay pisca");
+  var base=imgEl(ID.pre+"_"+ID.mascote+"_feliz","lay base"), fala, pisca;
+  if(ID.mascoteVetor){ fala=_svgCamada("fala",_mascVetorFala()); pisca=_svgCamada("pisca",_mascVetorPisca()); }
+  else { fala=imgEl(ID.pre+"_"+ID.mascote+"_fala","lay fala"); pisca=imgEl(ID.pre+"_"+ID.mascote+"_pisca","lay pisca"); }
   d.appendChild(base);d.appendChild(fala);d.appendChild(pisca);
   brotoAtual={el:d,base:base,fala:fala,pisca:pisca};
   return d;
@@ -3838,7 +3874,44 @@ function montaFase(i, aoFim){
     if(_aoFimOrig) _aoFimOrig();
   };
   m(f, cen, aoFimReg);
+  /* ⭐ ACABAMENTO DE APP (Marcos, set/2026: "coisa mais profissional, mais bonita"):
+     o que a peca acabou de desenhar ENTRA em cascata — selo, balao e cada carta/
+     opcao/tecla sobem 14px e aparecem, uma atras da outra, como nos apps que ele
+     ve na internet (PBS KIDS, Duolingo). So opacity/transform (gamefeel R5),
+     finita (leiaute regra 12), desligada em prefers-reduced-motion e congelada
+     na foto do portao 5c. Roda DEPOIS da peca, no proximo tick, para pegar o que
+     ela apendou de forma sincrona. */
+  setTimeout(function(){ _mtEntra(t); }, 0);   /* setTimeout da fase: morre no limpa() */
 
+}
+
+/* cascata de entrada — ver montaFase. Alvos: os filhos diretos do .centro; quando
+   um filho e uma GRADE (flex/grid com 3+ filhos: opcoes, cartas, teclas), a cascata
+   desce aos netos, com o atraso limitado para a ultima entrar antes de 0,5 s. */
+function _mtEntra(t){
+  try{
+    if(_reduzMov || !t) return;
+    var cen=t.querySelector(".centro")||t, kids=[].slice.call(cen.children), alvos=[], k, g, cs;
+    for(k=0;k<kids.length;k++){
+      var e=kids[k];
+      if(!e||e.nodeType!==1) continue;
+      if(/(^|\s)(vitrine|prog|barra|hint)(\s|$)/.test(e.className||"")) continue;
+      g=[].slice.call(e.children).filter(function(c){ return c.nodeType===1; });
+      cs=getComputedStyle(e);
+      if(g.length>=3 && /flex|grid/.test(cs.display||"")){ alvos=alvos.concat(g.slice(0,30)); }
+      else alvos.push(e);
+    }
+    /* toda a cascata cabe em 0,6 s (8 x 30 ms + 0,36 s): os portoes esperam 650 ms
+       depois de abrir a fase e ainda conferem se sobrou `.mt-entra` na tela. A
+       classe sai no animationend (com relogio de garantia), nao num tempo fixo. */
+    alvos.forEach(function(e,i){
+      var d=Math.min(i,8)*30, tirou=false;
+      function tira(){ if(tirou) return; tirou=true; try{ e.classList.remove("mt-entra"); e.style.animationDelay=""; }catch(_e){} }
+      e.classList.add("mt-entra"); e.style.animationDelay=d+"ms";
+      try{ e.addEventListener("animationend", tira, {once:true}); }catch(_e){}
+      setTimeout(tira, 800+d);
+    });
+  }catch(e){}
 }
 
 function abreFase(i){
@@ -10348,7 +10421,7 @@ function fimDaPeca(){
 
 /* ====== O CONTEUDO DESTA ATIVIDADE (escrito pelo montador) ====== */
 ROTULOS = {"objetivo1": "O alfabeto: conhecer as letras e pô-las em ordem", "objetivo2": "As sílabas: o começo, o meio e o fim das palavras", "objetivo3": "Formar e escrever palavras simples"};
-IMGS = ["tr_coru_feliz", "tr_coru_fala", "tr_coru_pisca", "tr_cr1", "tr_cr2", "tr_cr3", "tr_cr4", "tr_cr5", "tr_cr6", "med_tr"];
+IMGS = ["tr_coru_feliz", "tr_cr1", "tr_cr2", "tr_cr3", "tr_cr4", "tr_cr5", "tr_cr6", "med_tr"];
 VITRINE = ["tr_abelha", "tr_abelha", "tr_maca", "tr_abelha", "tr_maca", "tr_sapo", "tr_pintar_letra", "tr_navio", "tr_sapo", "tr_navio", "tr_vaca", "tr_gato", "tr_casa", "tr_sapo", "tr_bola", "tr_casa", "tr_maca", "tr_sapo", "tr_pato", "tr_pato", "tr_pintar_letra", "tr_pintar_trem", "tr_sapo", "tr_bola", "tr_gato", "tr_navio", "tr_vaca", "tr_bola", "tr_vaca", "tr_gato", "tr_gato", "tr_trem", "tr_abelha", "tr_pintar_coru"];
 FIM = {titulo:"O Trem do Alfabeto!", texto:"Você arrumou o trem inteiro e formou um montão de palavras! Piiii! Agora olhe à sua volta: quantas palavras você consegue ler nas placas da rua? Amanhã tem mais estação para descobrir!", cracha:"O Trem do Alfabeto"};
 ABERTURA = {texto:"Piiii! O Trem do Alfabeto vai partir, mas os vagões se embaralharam e as letras se perderam pelo caminho! Sem elas na ordem certa, o trem não anda e as palavras não se formam. Vem comigo pôr cada letra no seu vagão?", voz:"tr_abertura"};

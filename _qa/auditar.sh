@@ -300,7 +300,11 @@ fi
 #    ja da o codigo 0 confiavel). O `joga_par.sh` fica como FERRAMENTA avulsa para
 #    validar rapido em runner folgado (`bash _qa/joga_par.sh <index.html>`).
 if [ "$REPARO" != "1" ]; then
-_espera_vaga; date +%s > "$TMPQ/jogador.t0"; ( bash _qa/joga_banca.sh "$ARQ" > "$TMPQ/jogador.txt" 2>&1; echo $? > "$TMPQ/jogador.st"; date +%s > "$TMPQ/jogador.t1" ) & PID_JOG=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_JOG"
+# ⭐ 5c FOTOS: o jogador tira ate 3 fotos por fase (inicio/meio/fim) enquanto joga,
+#    com o acaso semeado; o `_qa/fotos.py` compara com a versao aprovada la embaixo.
+#    Nasceu do pilar verde (set/2026): defeito que so aparece com o progresso.
+_FOTOS_DIR="_qa/_fotos/$(basename "$PASTA")"; rm -rf "$_FOTOS_DIR"; mkdir -p "$_FOTOS_DIR"
+_espera_vaga; date +%s > "$TMPQ/jogador.t0"; ( QA_FOTOS="$_FOTOS_DIR" bash _qa/joga_banca.sh "$ARQ" > "$TMPQ/jogador.txt" 2>&1; echo $? > "$TMPQ/jogador.st"; date +%s > "$TMPQ/jogador.t1" ) & PID_JOG=$!; _LARGA_PIDS="$_LARGA_PIDS $PID_JOG"
 fi
 # ⚡ e os OUTROS portoes de navegador tambem largam agora, na sombra do jogador
 #    (que e o mais lento). Colhidos mais abaixo, cada um no seu lugar, com a mesma
@@ -808,6 +812,8 @@ echo "--- 6) JOGADOR (joga sozinho ate a medalha) --------"
 if [ "$REPARO" != "1" ]; then
 wait $PID_JOG; [ "$(cat "$TMPQ/jogador.st" 2>/dev/null)" = "0" ] || reprova "jogador"
 tail -6 "$TMPQ/jogador.txt"; _tempo_larga "$TMPQ/jogador"
+echo "--- 5c) FOTOS (o que a crianca ve JOGANDO mudou em relacao ao aprovado?) -"
+portao "5c fotos" python3 _qa/fotos.py "$PASTA"
 fi
 
 echo

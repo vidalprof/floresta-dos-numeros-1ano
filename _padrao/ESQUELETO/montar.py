@@ -1448,7 +1448,7 @@ def arte_de(c, pasta="."):
     #    (`ID.pre+"_"+ID.mascote+"_feliz"`, `ID.pre+"_cr"+n`, `"med_"+ID.pre`).
     pre = c.get("prefixo") or ""
     masc = c.get("mascote") or "mascote"
-    for camada in ("feliz", "fala", "pisca"):
+    for camada in (("feliz",) if c.get("mascote_vetor") else ("feliz", "fala", "pisca")):
         pedidos.append("%s_%s_%s" % (pre, masc, camada))
     for n in range(1, int(c.get("crachas") or 6) + 1):
         pedidos.append("%s_cr%d" % (pre, n))
@@ -1611,6 +1611,12 @@ def escreve_index(pasta, c, falas):
         #    que nao pede continua igual.
         "fundoSuave": bool(c.get("fundoSuave")),
         "crachas": int(c.get("crachas", 6)),
+        # ⭐ MASCOTE VETORIAL (set/2026): boca e palpebras desenhadas em SVG sobre a
+        #    pose parada — o corpo nunca troca de imagem, entao nao treme e nao
+        #    precisa de gerador que edite a base. `{"vb":[w,h], "olhos":[[cx,cy,rx,ry],...],
+        #    "palpebra":"#cor", "cilio":"#cor", "boca":"<path d>", "bocaCor":"#cor",
+        #    "bocaBorda":"#cor"}`. Sem o campo, o motor usa as camadas PNG de sempre.
+        "mascoteVetor": c.get("mascote_vetor") or None,
         # o convite do crachá é da HISTÓRIA desta atividade ("Quem vai pilotar
         # o foguete hoje?"), não um texto de sistema
         "convite": c.get("convite") or u"<b>Quem vai jogar</b> hoje?",
@@ -1631,7 +1637,8 @@ def escreve_index(pasta, c, falas):
     # sao MOVIMENTO da pose parada (ver `.mascote.pensando`/`.festejando` no
     # tema). Desenho novo do mascote sai fora do personagem com facilidade
     # assustadora; movimento nao tem como sair.
-    imgs = ["%s_%s_%s" % (pre, mascote, x) for x in ("feliz", "fala", "pisca")]
+    imgs = ["%s_%s_%s" % (pre, mascote, x)
+            for x in (("feliz",) if c.get("mascote_vetor") else ("feliz", "fala", "pisca"))]
     for extra in ("pensa", "festa"):
         nome_extra = "%s_%s_%s" % (pre, mascote, extra)
         if os.path.exists(os.path.join(pasta, "img", nome_extra + ".png")):

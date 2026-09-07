@@ -76,6 +76,11 @@ Leia tudo antes de agir e responda sempre em **português**.
 > sha. `--reparo` pula só a banca inteira (ajuste pequeno, regra da casa); `--msg-arquivo`
 > leva a mensagem com os trailers. Sem a marca, push nenhum dispara nada.
 > A banca não substitui o Marcos: depois dela ainda vem o portão do professor.
+> **📸 PORTÃO 5c FOTOS (set/2026): a banca fotografa o que a criança vê JOGANDO** (início,
+> meio e fim de cada fase, acaso semeado) e compara pixel a pixel com a versão aprovada em
+> `_qa/_fotos_ok/<pasta>/`. Mudou sem declarar → reprova e mostra ANTES | DEPOIS | DIFERENÇA
+> em `_qa/_dossie/fotos-<pasta>.png`. Mudança intencional → olhar o contato-folha e
+> `python3 _qa/fotos.py <pasta> --aprovar`. Estreia vira aprovada sozinha: OLHAR a folha.
 > **⛔ CSS DE MOTOR/PEÇA: `position`/`display` mudou → COBAIA ANTES DO COMMIT** (set/2026,
 > regressão do pilar verde: a barrinha da peça virou `static`, o preenchimento absoluto
 > passou a medir a tela inteira e 4 atividades foram ao ar assim — o Marcos viu no celular
@@ -319,6 +324,12 @@ Leia tudo antes de agir e responda sempre em **português**.
 > recortando as três com a **mesma bbox**. No print parado as três parecem
 > iguais: **o defeito só existe em movimento, então tem que ser MEDIDO**
 > (`_qa/mascote.py`, portão 3d, reprova acima de 15%).
+> **⭐ (set/2026) O CAMINHO NOVO É O MASCOTE VETORIAL:** `"mascote_vetor"` no
+> `conteudo.json` (viewBox, olhos, cor da pálpebra/cílio, path da boca) e o motor desenha
+> boca e pálpebras em SVG sobre a pose parada — o corpo nunca troca de imagem, não treme,
+> não precisa de gerador que edite a base, e `_fala`/`_pisca` deixam de existir. Trem é o
+> primeiro; a receita está na MEMORIA ("MASCOTE VETORIAL"). Mascote novo = pose parada +
+> coordenadas, medido com foto dos 3 estados.
 >
 > **🖐️ FASE DE ARRASTAR:** testar SEMPRE os três caminhos separados — arrastar
 > com mouse, **tocar com o dedo** e clicar. No celular o navegador dispara

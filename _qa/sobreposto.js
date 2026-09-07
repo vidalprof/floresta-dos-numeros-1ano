@@ -89,7 +89,9 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
 
     for (const f of paradas) {
       if (f !== null) {
-        try { await p.evaluate((n) => montaFase(n), f); await p.waitForTimeout(1100); }
+        try { await p.evaluate((n) => montaFase(n), f); await p.waitForTimeout(1100);
+              /* a cascata de entrada do motor (.mt-entra) tem que ter ASSENTADO antes de medir */
+              try { await p.waitForFunction(() => !document.querySelector('.mt-entra'), {timeout: 1500}); } catch (e2) {} }
         catch (e) { continue; }
       }
       const r = await p.evaluate((sel) => {

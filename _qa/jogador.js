@@ -37,6 +37,42 @@ catch (e) {
    await p.setViewportSize({width:1024,height:600});
    await p.addInitScript(()=>{ window.__QAON=1; });
  }
+ /* ⭐⭐ FOTOS DO QUE A CRIANCA VE, JOGANDO (QA_FOTOS=<pasta de saida>) — set/2026,
+    depois do pilar verde que nenhum portao viu: todos mediam a fase no COMECO,
+    e o defeito so aparecia com o progresso. Aqui, enquanto joga, o jogador tira
+    tres fotos por fase (inicio, meio, fim) e o `_qa/fotos.py` compara cada uma
+    com a ultima versao aprovada, pixel a pixel. Qualquer mudanca visual que nao
+    foi declarada reprova e mostra antes/depois. Para a comparacao valer, o acaso
+    e SEMEADO (o mesmo Math.random para o motor e para o proprio jogador) e as
+    animacoes sao congeladas so no instante da foto. */
+ const FOTOS = process.env.QA_FOTOS || '';
+ if(FOTOS){
+   require('fs').mkdirSync(FOTOS,{recursive:true});
+   const seed = (parseInt(process.env.QA_SEED||'20260907',10)>>>0);
+   /* ⚠️ MEDIDO (set/2026): semear UMA vez no inicio nao basta — o numero de sorteios
+      antes de cada fase depende do relogio (quantos cliques o jogador deu), entao a
+      fase 5 embaralhava diferente a cada corrida e 75 de 94 fotos "mudavam" sem
+      mudanca nenhuma. A semente e REFEITA a cada fase (IFASE), no primeiro sorteio
+      da fase: o embaralhado do inicio fica identico corrida a corrida. */
+   await p.addInitScript((s)=>{ const base=s>>>0; let a=base, lastF=null;
+     Math.random=function(){ const f=(typeof window.IFASE==='number')?window.IFASE:-1;
+       if(f!==lastF){ lastF=f; a=(base+(f+2)*7919)>>>0; }
+       a|=0; a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }, seed);
+ }
+ const fotosFeitas=new Set(); let fotosPre=0;
+ async function foto(chave){
+   if(!FOTOS||fotosFeitas.has(chave)) return; fotosFeitas.add(chave);
+   let folha=null;
+   try{
+     /* o que e de RELOGIO, nao de leiaute, sai da foto: confete (canvas), o "Boa!"
+        que sobe, o mascote (lip-sync troca a camada 60x/s) e a barra de tempo. */
+     folha=await p.addStyleTag({content:'*,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:0s!important;caret-color:transparent!important}'
+       +'#conf,.flut,.broto,.tbar{visibility:hidden!important}'});
+     await p.waitForTimeout(160);
+     await p.screenshot({path:require('path').join(FOTOS,chave+'.png')});
+   }catch(e){}
+   try{ if(folha) await folha.evaluate(e=>e.remove()); }catch(e){}
+ }
  const erros=[];
  p.on('pageerror',e=>{erros.push(e.message);});
  /* ⚠️ LICAO PAGA na propria prova de sala (set/2026): rodando em `file://` a
@@ -234,7 +270,21 @@ catch (e) {
        +(tb?'<'+Math.round(parseFloat(tb.style.width||'0'))+'>':'')
        +'|'+((bn&&bn.className.indexOf('show')>=0)?'BANNER':'');
    });
-   if(est!==ultimo){ visto.push(i+' '+est.replace(/\{[^}]*\}/,'').replace(/<\d+>/,'')); ultimo=est; paradas=0; } else paradas++;
+   if(est!==ultimo){ visto.push(i+' '+est.replace(/\{[^}]*\}/,'').replace(/<\d+>/,'')); ultimo=est; paradas=0;
+     if(FOTOS){
+       /* tres fotos por fase: inicio (progresso 0), meio (a peca ja andou), fim (banner) */
+       const f=await p.evaluate(()=>{
+         const bn=document.getElementById('banner'), pp=document.querySelector('.progpeca i');
+         const feitos=document.querySelectorAll('.par,.feito,.ok,.certo,.achou,.resolvido,.preenchida,.on,.sel').length;
+         return {f:(typeof IFASE==='number')?IFASE:-1, pp:pp?parseFloat(pp.style.width||'0'):0, feitos:feitos,
+                 banner:!!(bn&&bn.className.indexOf('show')>=0)};
+       });
+       if(f.f>=0){
+         const base='fase'+String(f.f+1).padStart(2,'0');
+         await foto(base+(f.banner?'-fim':(f.pp>=30||f.feitos>=1)?'-meio':'-inicio'));
+       } else if(fotosPre<6){ await foto('tela'+(fotosPre++)); }
+     }
+   } else paradas++;
    if(SALA){
      /* ⚠️ A PRIMEIRA VERSAO DESTA MEDIDA NAO PEGAVA NADA, e vale registrar:
         eu cronometrava do clique ate o BANNER aparecer. Mas o banner e o fim da

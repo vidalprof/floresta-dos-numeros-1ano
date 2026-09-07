@@ -6511,6 +6511,45 @@ negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
   família. Regra da casa a partir de hoje: **toda mudança de `position`/`display` em CSS
   do motor ou de peça passa pela cobaia ANTES do commit** — não depois de publicar. Crachá da barra virou quadrado arredondado
   (o círculo cortava o topo da cabeça — "faltam partes das fotos").
+## 📸 ACABAMENTO DE APP + PORTÃO DE FOTOS — 2026-09-07 (tarde)
+
+Pedido do Marcos: *"visual melhor, melhoria de interatividade, coisa mais profissional,
+sem erros… vários estilos de app… ferramenta profissional que a IA possa usar"*.
+
+- **Portão 5c FOTOS (`_qa/fotos.py` + `QA_FOTOS` no `jogador.js`):** o jogador tira até
+  3 fotos por fase (início, meio, fim) ENQUANTO JOGA, com o acaso semeado (o mesmo
+  `Math.random` para o motor e para o próprio jogador) e as animações congeladas no
+  instante da foto; o portão compara pixel a pixel com a versão aprovada em
+  `_qa/_fotos_ok/<pasta>/` (206×410, leve). Diferença > 1,5% reprova e sai um
+  contato-folha ANTES | DEPOIS | DIFERENÇA em `_qa/_dossie/fotos-<pasta>.png`. Sem
+  aprovada = estreia (vira a aprovada; olhar o contato-folha). Mudança intencional:
+  `python3 _qa/fotos.py <pasta> --aprovar`. **É o portão que teria pego o pilar
+  verde.** Roda dentro da banca, depois do jogador.
+- **Ferramentas profissionais — o que dá e o que não dá:** GSAP, Lottie, canvas-confetti
+  seriam as escolhas (grátis, offline, num HTML só), **mas o chat não baixa arquivo** e
+  só os workflows que estão na `main` são disparáveis (`pegar-html.yml`, que baixaria,
+  só existe nesta branch → 404). Enquanto a branch não vai para a `main`, a camada de
+  movimento é NATIVA no motor (mesmo efeito, 40 linhas, sem dependência):
+  · **cascata de entrada** (`_mtEntra`, `.mt-entra`): selo, balão e cada carta/opção/
+    tecla entram em sequência (42 ms de atraso cada, teto 10), só opacity/transform,
+    finita, off em reduced-motion, congelada na foto. Medido: 3 elementos em cascata a
+    140 ms, 0 depois de 1,2 s.
+  · o pop no elemento acertado (`pfesta` + faíscas) e o confete já existiam.
+- **✅ MASCOTE VETORIAL (feito no mesmo dia):** `conteudo.json` ganha `"mascote_vetor":
+  {"vb":[w,h], "olhos":[[cx,cy,rx,ry],…], "palpebra":"#cor", "cilio":"#cor",
+  "boca":"<path d>", "bocaCor", "bocaBorda", "bocaBordaLarg"}` (coordenadas no tamanho
+  da imagem parada). O motor (`brotoEl`) desenha boca e pálpebras em SVG por cima da
+  pose parada; as camadas continuam se chamando `fala`/`pisca` e o lip-sync não mudou.
+  O montador deixa de pedir/pré-carregar `_fala`/`_pisca`; o `mascote.py` aprova
+  "vetorial" (e reprova se faltar vb/olhos/boca). **Trem é o primeiro** (coruja: olhos
+  em (62,105) e (110,105) r 17×15, bico `M76 130 Q86 148 96 130 Z`); os PNGs
+  `tr_coru_fala/pisca` (cópias da parada) foram apagados — some o 1c2 e o 3d do Trem
+  sem precisar do OPENAI_API_KEY. Medido no app: boca aparece (bico aberto com borda
+  laranja) e as pálpebras na cor da pena. ⚠️ Para fotografar a boca à mão, forçar
+  `.broto .fala{opacity:1!important}` — o lip-sync zera o `style.opacity` a cada quadro.
+  Próximos: Central (moça), Padaria (Fubá) e os demais mascotes, um por vez, com foto.
+- **Fila:** as seis cascas; cobaia depois de cada passo.
+
 - **Trem: a esteira `produzir.sh` PARA no pré-voo** pela duplicata conhecida
   `tr_coru_fala = tr_coru_feliz` (1c2) — e pararia de novo na banca pelo 3d. Enquanto
   o `OPENAI_API_KEY` não chega, o Trem publica pelo caminho manual: banca inteira à

@@ -115,6 +115,8 @@ function parseCor(s){
     }
     abertas++;
     await p.waitForTimeout(900);
+    /* a cascata de entrada do motor (.mt-entra) tem que ter ASSENTADO antes de medir */
+    try{ await p.waitForFunction(()=>!document.querySelector('.mt-entra'),{timeout:1500}); }catch(e){}
     /* ⚠️ LICAO PAGA (ago/2026, na Oficina da Lina): a tela entra com um fade
        (`aparece .4s`). Medido no PIXEL, um balao ainda a 60% de opacidade
        deixa o FUNDO passar por baixo da letra — e o portao acusou 1,7:1 numa

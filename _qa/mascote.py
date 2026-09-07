@@ -46,6 +46,24 @@ if not os.path.isdir(img):
     print("%s -> sem pasta img/, nada a conferir" % pasta)
     sys.exit(0)
 
+# ⭐ MASCOTE VETORIAL (set/2026): boca e palpebras sao SVG sobre a pose parada — nao
+#    ha camada PNG para tremer. O portao confere so que a pose parada existe.
+try:
+    import json as _json
+    _c = _json.load(open(os.path.join(pasta, "conteudo.json"), encoding="utf-8"))
+    if _c.get("mascote_vetor"):
+        _v = _c["mascote_vetor"]
+        _ok = isinstance(_v, dict) and _v.get("vb") and _v.get("olhos") and _v.get("boca")
+        if not _ok:
+            print("%s -> mascote VETORIAL incompleto: precisa de vb, olhos e boca em mascote_vetor" % pasta)
+            sys.exit(1)
+        print("%s -> mascote VETORIAL (boca/palpebras em SVG sobre a pose parada): nao ha camada que trema" % pasta)
+        sys.exit(0)
+except SystemExit:
+    raise
+except Exception:
+    pass
+
 arquivos = [f[:-4] for f in sorted(os.listdir(img)) if f.endswith(".png")]
 
 def acha(*chaves):
