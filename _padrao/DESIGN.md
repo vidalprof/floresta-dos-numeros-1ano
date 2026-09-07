@@ -74,6 +74,23 @@ Casca muda a CENA e o GESTO, não os tokens: Conversa, Trilha, Cartas, Livro, Sh
 Bancada usam a mesma paleta, a mesma escala e as mesmas sombras. É isso que faz a
 criança sentir "outro app" sem perder a identidade da casa.
 
+## 8. Orçamento de desempenho — `_qa/peso.py <pasta>` (0b8 no pré-voo)
+
+Leve é número, não opinião. Medido em 2026-09-07 nas seis atividades no ar: index
+comprimido 134–226 KB (o montador só embute as mecânicas usadas), imagens 2–12 MB,
+maior imagem 177–756 KB, áudio 9–14 MB (carregado por demanda, não pesa na abertura).
+
+| Medida | Alvo (aviso acima) | Reprova acima |
+|---|---|---|
+| index comprimido (gzip) | 220 KB | 300 KB |
+| uma imagem | 400 KB | 900 KB |
+| imagens somadas | 6 MB | 15 MB |
+
+O portão diz **o que otimizar primeiro** (as 5 maiores, com dimensão): figura de peça em
+~512 px no lado maior, fundo/cena em ~1024 px, e recompressão (PNG com paleta ou WebP)
+quando a dimensão já está certa. Fila de hoje: Museu (11,8 MB em 69 imagens), Sólidos
+(medalha de 756 KB, quebra-cabeça de 672 KB), Central (5 imagens acima de 400 KB).
+
 ## 7. Como se mede — `_qa/design.py`
 
 ```
