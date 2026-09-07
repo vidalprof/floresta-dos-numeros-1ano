@@ -221,6 +221,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   font-weight:800;min-height:48px;padding:12px 26px;cursor:pointer;
   -webkit-box-shadow:0 4px 0 #3a8730;box-shadow:0 4px 0 #3a8730}
 .bsPronto:active,.bsLimpa:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+.bsPronto:disabled{opacity:.55;cursor:default;-webkit-transform:none;transform:none}
 /* os PEDAÇOS ESCRITOS: só aparecem no acerto (ou no 3º erro, para revelar) */
 .bsSilabas{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
   -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin:12px auto 0;max-width:430px}
@@ -566,7 +567,12 @@ function zera(r){
 var travando=false;
 function confere(r){
   if(travando) return;
-  if(bat===r.sil.length){ travando=true; acerta(r); return; }
+  if(bat===r.sil.length){
+    travando=true;
+    /* a porta fechada FICA VISIVEL (e legivel para o auditor-jogador): o Pronto
+       desabilita durante a festa; a rodada nova cria outro botao, aberto. */
+    var _pr=document.getElementById("bsPr"); if(_pr){ _pr.disabled=true; _pr.setAttribute("aria-disabled","true"); }
+    acerta(r); return; }
   /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
      Contar errado no 1º ano é o normal — é justamente o que está em treino. */
   err++; sVolta();

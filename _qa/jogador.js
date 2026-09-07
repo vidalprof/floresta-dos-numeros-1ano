@@ -650,6 +650,11 @@ catch (e) {
      /* ⭐ resposta DECLARADA certa (data-qa="1") -> clica ELA e avisa (return 2),
         para o portao acima poder cobrar que fechou a fase. So no acaso quando a
         peca nao declara resposta (botao "continuar", etc.). */
+     /* ⚠️ (set/2026, Padaria na prova de sala) a peca TRANCA a resposta durante a festa
+        do acerto (bater-silabas fala silaba por silaba; com voz ligada e CPU 6x mais
+        lenta isso passa de 16 s) e o robo, clicando o "Pronto" trancado, lia
+        "congelou". Botao DESABILITADO nao e resposta que nao fechou: e espera. */
+     if(marcado && (marcado.disabled || marcado.getAttribute('aria-disabled')==='true')) return 3;
      if(marcado){ marcado.click(); return 2; }
      const e=els[Math.floor(Math.random()*els.length)];
      e.click(); return 1;

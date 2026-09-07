@@ -4117,7 +4117,12 @@ function zera(r){
 var travando=false;
 function confere(r){
   if(travando) return;
-  if(bat===r.sil.length){ travando=true; acerta(r); return; }
+  if(bat===r.sil.length){
+    travando=true;
+    /* a porta fechada FICA VISIVEL (e legivel para o auditor-jogador): o Pronto
+       desabilita durante a festa; a rodada nova cria outro botao, aberto. */
+    var _pr=document.getElementById("bsPr"); if(_pr){ _pr.disabled=true; _pr.setAttribute("aria-disabled","true"); }
+    acerta(r); return; }
   /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
      Contar errado no 1º ano é o normal — é justamente o que está em treino. */
   err++; sVolta();
