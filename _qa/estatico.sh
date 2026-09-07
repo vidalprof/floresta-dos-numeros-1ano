@@ -61,6 +61,19 @@ if [ ! -s "$TMP" ]; then echo "NAO MEDI: nao achei <script> em $ARQ"; exit 2; fi
 SAIDA="$("$BIN" --no-config-lookup -c "$CFG" "$TMP" 2>&1)"
 ST=$?
 
+# ⚠️ (set/2026, UNO dos Numeros) APP A MAO em JavaScript moderno: o parser ES5 para
+#    em "The keyword 'const' is reserved" antes de conferir qualquer nome — e o
+#    entregar.yml segurou a voz da casa por isso. Se o arquivo NAO e do motor (sem
+#    conteudo.json ao lado) e o tropeco e de SINTAXE, confere com as MESMAS regras
+#    em ES2020. Atividade do motor continua obrigada ao ES5.
+if [ "$ST" != "0" ] && printf '%s' "$SAIDA" | grep -q "Parsing error" \
+   && [ ! -f "$(dirname "$ARQ")/conteudo.json" ]; then
+  CFG2="_qa/ferramentas/eslint.es2020.config.mjs"
+  SAIDA="$("$BIN" --no-config-lookup -c "$CFG2" "$TMP" 2>&1)"
+  ST=$?
+  echo "   (app a mao em JavaScript moderno: conferido com as mesmas regras em ES2020)"
+fi
+
 # "outside of base path" = o ESLint NAO leu o arquivo. Isso e cegueira, nao aprovacao.
 if printf '%s' "$SAIDA" | grep -q "outside of base path"; then
   echo "NAO MEDI: o ESLint recusou o arquivo (fora da base). Nada foi conferido."
