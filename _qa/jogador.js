@@ -744,6 +744,21 @@ catch (e) {
    const linha=await p.evaluate(()=>window.__QA||[]);
    for(let k=0;k<linha.length;k++){
      if(linha[k].tipo!=='acertou') continue;
+     /* ⚠️ (set/2026, Divisao/quociente-parcial) resposta SINCRONA: a peca redesenha e
+        marca `tela` DENTRO do proprio clique, antes de a marca `acertou` ser gravada —
+        as duas caem no mesmo instante, com a `tela` ANTES no vetor. O laco abaixo so
+        olhava para a frente e ia achar a `tela` do PROXIMO clique, 2 s depois: a
+        prova acusava "2141 ms sem nada acontecer" numa peca que responde na hora.
+        Marca de tela ate 120 ms ANTES do acerto e a resposta dele (espera 0). */
+     /* dois `acertou` em ate 300 ms sao o MESMO acerto (sCerto + festa, ou o eco do
+        6x mais lento): o segundo nao abre uma espera nova. */
+     if(k>0 && linha[k-1].tipo==='acertou' && linha[k].t-linha[k-1].t<=300) continue;
+     let sinc=false;
+     for(let j=k-1;j>=0 && linha[k].t-linha[j].t<=150;j--){
+       /* (nao para em outro `acertou`: sCerto + festa marcam duas vezes no mesmo tick) */
+       if(linha[j].tipo==='tela'||linha[j].tipo==='botao'){ sinc=true; break; }
+     }
+     if(sinc){ _esperas.push({ms:0,fase:linha[k].fase,mec:linha[k].mec}); continue; }
      for(let j=k+1;j<linha.length;j++){
        if(linha[j].tipo==='acertou') break;
        if(linha[j].tipo==='tela'||linha[j].tipo==='botao'){ _esperas.push({ms:linha[j].t-linha[k].t,fase:linha[k].fase,mec:linha[k].mec}); break; }
