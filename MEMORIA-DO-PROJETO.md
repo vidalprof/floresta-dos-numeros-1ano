@@ -6620,6 +6620,19 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
   `COBAIA_CASCA=conversa bash _qa/cobaia.sh` testa as 91 mecânicas dentro dela). Padaria
   marcada para a estreia (`"casca":"conversa"`), pré-voo 30/0. Falta: foto, cobaia com a
   casca, banca inteira da Padaria, publicar.
+- **Casca "Trilha/mapa" codificada** (`_trMapa`/`_trPos`: overlay de 1,15 s com o caminho,
+  paradas verdes/amarela, mascote pulando, bandeira; `pointer-events:none`; classe
+  `casca-transicao` que leiaute/visual/contraste/sobreposto esperam sumir e a foto do 5c
+  esconde). Trem marcado para a estreia (`"casca":"trilha"`, pré-voo 31/0). O 4c pegou o
+  título do mapa com cor cravada sem fundo → ganhou pílula própria.
+- **📐 SISTEMA DE DESIGN + PORTÃO CATRACA (tarefa #94, 1º passo):** `_padrao/DESIGN.md`
+  (tokens de cor = `:root` do motor + 3 neutros; escala de letra 12·13.5·15·17·19·22·26·32;
+  raios 8·12·16·22·999·50%; sombras; durações .16/.36/.6/1.15 s) e `_qa/design.py`, que
+  conta a DERIVA de cada peça (cor hex fora dos tokens, raio e letra fora da escala) e
+  reprova se alguma peça PIOROU em relação à marca `_qa/_design_base.json`. **Estreia
+  honesta: 92 peças, deriva total 2.221** (piores: divisao-dourado 71, passo-a-passo 68,
+  estimar 59, relogio 44). Entrou no pré-voo como `4c2`. Lapidar peça = trocar pelos
+  tokens + `--gravar`. Regra: peça nova nasce com deriva 0.
 - **Seis cascas** (`_padrao/MODELOS-DE-APP.md` + mockup enviado): trilha, livro, cartas,
   bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
   proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma

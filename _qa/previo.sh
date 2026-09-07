@@ -90,6 +90,7 @@ PORTOES=(
   "3f pares da memoria|python3 _qa/memoria_pares.py $PASTA"
   "3g duracao|python3 _qa/duracao.py $PASTA"
   "4c cor cravada|python3 _qa/cor_fixa.py $ARQ"
+  "4c2 design (catraca)|python3 _qa/design.py"
   "0p game-feel|python3 _qa/gamefeel.py $ARQ"
   "0q curiosidade|python3 _qa/curiosidade.py $ARQ"
   "falas (narracao)|python3 _qa/falas.py $PASTA/falas.json"
