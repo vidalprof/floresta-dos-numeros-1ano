@@ -205,6 +205,28 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           });
         });
         if(barraVaza) out.push(barraVaza+" preenchimento(s) de barra (.prog>i) FORA da propria barra (o verde toma a tela e cresce com o progresso)");
+        /* ⭐ REGRA 15 (set/2026) — a CLASSE do erro da regra 14, nao so o caso: um filho
+           `position:absolute` com fundo pintado cuja caixa de referencia (offsetParent)
+           NAO e o proprio pai. Isso acontece quando alguem tira o `position` do pai —
+           o filho passa a medir a tela, o cartao, o que estiver acima. E estrutural:
+           aparece no comeco da fase, com progresso 0, ao contrario do tamanho. Fica de
+           fora quem foi feito para isso (filho direto do #app/.tela/body, camadas
+           fixas) e enfeite sem fundo (ponteiro, brilho transparente). */
+        let solto=0, soltos=[];
+        document.querySelectorAll("#app *").forEach(function(e){
+          const cs=getComputedStyle(e);
+          if(cs.position!=="absolute"||cs.display==="none"||cs.visibility==="hidden") return;
+          const pai=e.parentElement; if(!pai||pai.id==="app"||pai===document.body) return;
+          if(/\btela\b/.test(pai.className||"")) return;
+          if(e.offsetParent===pai||e.offsetParent===null) return;
+          const semFundo=(cs.backgroundColor==="rgba(0, 0, 0, 0)"||cs.backgroundColor==="transparent")&&cs.backgroundImage==="none";
+          if(semFundo) return;
+          /* pela MAIOR medida, nao pela area: com progresso 0 o preenchimento tem
+             largura 0 e altura 820 — a area esconderia justamente o caso que motivou. */
+          const r=e.getBoundingClientRect(); if(Math.max(r.width,r.height)<Math.min(innerWidth,innerHeight)*0.25) return;
+          solto++; if(soltos.length<3) soltos.push("."+String(e.className||e.tagName).split(" ")[0]+" dentro de ."+String(pai.className||pai.tagName).split(" ")[0]);
+        });
+        if(solto) out.push(solto+" filho(s) absoluto(s) pintado(s) SOLTO(S) do proprio pai (o pai perdeu o position): "+soltos.join(", "));
         if(forams) out.push(forams+" resposta(s) FORA da tela SEM ROLAGEM (a crianca nao ve o que tocar)");
         if(atras) out.push(atras+" resposta(s) presa(s) atras da barra, sem rolagem");
         if(pequenos) out.push(pequenos+" alvo(s) menor(es) que "+piso+"px"+(piso>40?" (ate o 2o ano a pesquisa pede 44)":""));

@@ -6500,7 +6500,16 @@ negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
   (2) defeito que só aparece com o PROGRESSO precisa de portão que mede a geometria
   depois de jogar, não só no início da fase (fila: leiaute a 50% da fase).
   Republicadas as 4 atividades que saíram com o defeito (Trem, Padaria, Sólidos,
-  Museu), em um push só, 13:07–13:09Z. Crachá da barra virou quadrado arredondado
+  Museu), em um push só, 13:07–13:09Z.
+  **Marcos: *"erro bobo acontecendo novamente, é disso que estou cansado"*.** A resposta
+  não é "vou ter mais cuidado": é fechar a CLASSE do erro. **Regra 15 do leiaute**
+  (estrutural, independe do progresso): filho `position:absolute` com fundo pintado cuja
+  caixa de referência (`offsetParent`) não é o próprio pai — o pai perdeu o `position` —
+  reprova, pela MAIOR medida (não pela área: com progresso 0 a largura é 0 e a altura
+  já é 820). Provado: versão com defeito 204 reprovações ("`.I` dentro de `.prog`"),
+  corrigida 0, cobaia 91/91 sem falso positivo. A regra 14 pega o caso; a 15 pega a
+  família. Regra da casa a partir de hoje: **toda mudança de `position`/`display` em CSS
+  do motor ou de peça passa pela cobaia ANTES do commit** — não depois de publicar. Crachá da barra virou quadrado arredondado
   (o círculo cortava o topo da cabeça — "faltam partes das fotos").
 - **Trem: a esteira `produzir.sh` PARA no pré-voo** pela duplicata conhecida
   `tr_coru_fala = tr_coru_feliz` (1c2) — e pararia de novo na banca pelo 3d. Enquanto

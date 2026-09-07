@@ -76,6 +76,13 @@ Leia tudo antes de agir e responda sempre em **português**.
 > sha. `--reparo` pula só a banca inteira (ajuste pequeno, regra da casa); `--msg-arquivo`
 > leva a mensagem com os trailers. Sem a marca, push nenhum dispara nada.
 > A banca não substitui o Marcos: depois dela ainda vem o portão do professor.
+> **⛔ CSS DE MOTOR/PEÇA: `position`/`display` mudou → COBAIA ANTES DO COMMIT** (set/2026,
+> regressão do pilar verde: a barrinha da peça virou `static`, o preenchimento absoluto
+> passou a medir a tela inteira e 4 atividades foram ao ar assim — o Marcos viu no celular
+> antes de qualquer portão). Mudar o `position` de um pai muda a caixa de TODOS os filhos
+> absolutos: procurar `position:absolute` nos filhos antes de mexer. Portões que fecham a
+> família: leiaute regra 14 (preenchimento fora da barra) e regra 15 (filho absoluto
+> pintado solto do próprio pai).
 
 > **🎭 MASCOTE E AVATAR TÊM REGRA MEDIDA (set/2026, `_pesquisa/MASCOTE-E-AVATAR.md`):** o
 > mascote funciona só como **guia que aponta e responde** (Mayer: pistas sociais e
