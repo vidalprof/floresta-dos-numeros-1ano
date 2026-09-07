@@ -6633,6 +6633,35 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
   honesta: 92 peças, deriva total 2.221** (piores: divisao-dourado 71, passo-a-passo 68,
   estimar 59, relogio 44). Entrou no pré-voo como `4c2`. Lapidar peça = trocar pelos
   tokens + `--gravar`. Regra: peça nova nasce com deriva 0.
+- **⚖️ ORÇAMENTO DE PESO (`_qa/peso.py`, 0b8 no pré-voo):** index gzip alvo 220 KB / teto
+  300; imagem alvo 400 KB / teto 900; imagens somadas alvo 6 MB / teto 15. Medido nas 6 no
+  ar: nenhuma estoura. `_padrao/otimizar_img.py <pasta> --aplicar` encolhe ao tamanho de
+  tela (512/1024 px) e regrava: Museu −23%, Sólidos −22% (camadas do mascote só juntas).
+- **🔎 PESQUISA "APPS BONITOS" (pesquisar.yml + buscar-fotos.yml):** as lojas (Play/App
+  Store) bloqueiam robô — não dá para baixar telas reais; as páginas oficiais só dão arte
+  de divulgação (Toca Boca, Sago Mini: `_pesquisa/fotos/apps-bonitos`, 69 MB — ⚠️ pesado no
+  histórico, não repetir). Os textos (`_pesquisa/web/apps-educativos-*.md`): Khan Academy
+  Kids é o mais citado (24×), Duolingo 21×, ABCmouse 15×, Homer 11×; Apple Design Awards
+  2024/25 premiaram Crayola Adventures, Lost in Play, Rytmos, Rooms, Bears Gratitude. O
+  Marcos esclareceu: quer **LEIAUTE de app tipo Duolingo, do Pré ao 9º**. Desenhei 5
+  esquemas (Duolingo casa, Duolingo lição, Brilliant, Kahoot, Khan Kids) e propus: Pré–2º
+  Conversa/Khan Kids; 3º–5º Trilha + Lição; 6º–9º Brilliant, Kahoot no quiz.
+- **Casca "Lição" (Duolingo) codificada** (`.tela.lc` + `body.casca-licao`: painel branco
+  93% sobre a cena, barra grossa, rótulo discreto em caixa alta, pergunta em caixa,
+  opções brancas com borda grossa embaixo, folha verde de ponta a ponta — o CONTINUAR
+  mantém a largura medida, o Marcos já reprovou botão-faixa). Estreia: Divisão (5º).
+- **🛑 LIÇÃO PAGA DA NOITE — o netbook da escola tem 600 px de altura:** o cabeçalho da
+  casca Conversa empurrou o "Pronto" do bater-sílabas para y=608 na Padaria. Quem pegou
+  foi a **prova de sala** (1024×600): o robô só clica o que está NA TELA (como a criança)
+  e ficou 28 s "congelado". Primeiro achei que era a festa do acerto (tranquei o Pronto na
+  festa — melhoria legítima, mas não era a causa); a reprodução isolada em 412×820 e em
+  1024×600 sem o fluxo do robô passava. A causa só apareceu lendo o filtro
+  `r.top<innerHeight` do jogador. Conserto: em `max-height:640px` o cabeçalho da conversa
+  sai (a barra de progresso já diz onde ela está). **Regra: toda casca nova se mede
+  primeiro em 1024×600 e 1024×420, não no celular.**
+- Fila da noite (`fila.sh` destacado do chat): cobaia Trilha → banca Trem → cobaia Lição →
+  banca Divisão → banca Sólidos → banca Museu → (fila2) banca Padaria. Publicar o que
+  aprovar com a marca `[entregar …]`.
 - **Seis cascas** (`_padrao/MODELOS-DE-APP.md` + mockup enviado): trilha, livro, cartas,
   bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
   proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma
