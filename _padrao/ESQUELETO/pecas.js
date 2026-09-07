@@ -33456,6 +33456,9 @@ function confere(){
   var dv=document.getElementById("dicaP"); if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
   desenha();
   elTotal.className="total ok";
+  /* a tela RESPONDEU aqui (total verde + voz): a marca e para a prova de sala, que
+     media "acertou -> nada" por 1,9 s — a pausa para LER o resultado e de proposito */
+  if(typeof __qa==="function") __qa("tela");
   var txt="Somei os peda&ccedil;os: <b>"+quo+"</b>. ";
   if(falta>0) txt+="Sobra <b>"+falta+"</b>. Ent&atilde;o <b>"+n+" &divide; "+d+" = "+quo+" e sobra "+falta+"</b>.";
   else        txt+="Ent&atilde;o <b>"+n+" &divide; "+d+" = "+quo+"</b>, exato!";

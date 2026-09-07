@@ -6659,6 +6659,14 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
   `r.top<innerHeight` do jogador. Conserto: em `max-height:640px` o cabeçalho da conversa
   sai (a barra de progresso já diz onde ela está). **Regra: toda casca nova se mede
   primeiro em 1024×600 e 1024×420, não no celular.**
+- **⚠️ LIÇÃO PAGA (noite): NÃO rodar navegador em paralelo com a fila.** Eu rodei
+  reproduções e fotos enquanto a fila media a Divisão; a prova de sala dela (que mede
+  TEMPO com CPU 6× mais lenta) saiu 1,8 s numa rodada e 4,1 s na seguinte — número
+  contaminado pela minha concorrência, não pela peça. Timing só vale com a máquina só
+  para ele. O "PRESO em investigar-fonte" da cobaia da Lição tem a mesma cara: na casca
+  clássica o veredito fica em y=972 e na Lição em 977 — igual; o jogador rola a tela.
+  Refazer limpo (fila3) antes de concluir qualquer coisa.
+- Trem com a casca **Trilha** publicado (19:31Z, cobaia 91/91, banca aprovou).
 - Fila da noite (`fila.sh` destacado do chat): cobaia Trilha → banca Trem → cobaia Lição →
   banca Divisão → banca Sólidos → banca Museu → (fila2) banca Padaria. Publicar o que
   aprovar com a marca `[entregar …]`.

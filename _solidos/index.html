@@ -167,6 +167,84 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 @keyframes pgshine{0%{left:-45%}55%,100%{left:130%}}
 @-webkit-keyframes pgpulse{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.22)}}
 @keyframes pgpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.22)}}
+/* ⭐ cascata de entrada da fase (ver _mtEntra): so opacity/transform, finita,
+   fill BACKWARDS para o elemento nascer invisivel e nao piscar antes do atraso. */
+.mt-entra{-webkit-animation:mtEntra .36s cubic-bezier(.2,.9,.3,1.15) both;animation:mtEntra .36s cubic-bezier(.2,.9,.3,1.15) both}
+@-webkit-keyframes mtEntra{from{opacity:0;-webkit-transform:translateY(14px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes mtEntra{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){ .mt-entra{-webkit-animation:none;animation:none} }
+/* ⭐⭐ CASCA "CONVERSA" (set/2026, `_padrao/MODELOS-DE-APP.md`, pedido do Marcos: "vários
+   estilos de app para a criança não enjoar"). Mesmo miolo, outra cara: a tela vira uma
+   conversa — cabeçalho com o mascote ("Fubá · está aqui · 3 de 32"), o enunciado é a
+   MENSAGEM DELE (balão à esquerda, com o avatar), a peça mora no CARTÃO DE RESPOSTA da
+   criança (à direita), a mensagem anterior fica esmaecida em cima. Liga com
+   `"casca":"conversa"` no conteudo.json; sem o campo, nada disto se aplica.
+   Só CSS: transform/opacity (gamefeel R5), nada em laço, reduced-motion respeitado. */
+body.casca-conversa .tela{-webkit-animation:none;animation:none}
+body.casca-conversa .centro{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;padding-top:2px}
+.cv-cab{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;width:100%;max-width:520px;margin:0 auto 10px;padding:6px 10px;-webkit-box-sizing:border-box;box-sizing:border-box;background:rgba(255,253,246,.94);border-radius:16px;-webkit-box-shadow:0 3px 10px rgba(0,0,0,.12);box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.cv-av{display:inline-block;width:40px;height:40px;border-radius:50%;background:#fff var(--cv-masc) center/86% no-repeat;-webkit-box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.18);box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.18);margin-right:10px;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:0 0 auto}
+.cv-cab b{font-size:16px;color:#1f2a14;line-height:1.15}
+.cv-cab .cv-on{display:block;font-size:12.5px;font-weight:700;color:#1f5a10}
+.cv-cab .cv-falta{margin-left:auto;font-size:12.5px;font-weight:700;background:rgba(18,26,14,.74);color:#fff;border-radius:999px;padding:5px 10px;white-space:nowrap}
+/* ⚠️ o selo era um veu de 48% e no TEMA CLARO dava 3.7:1 (4d reprovou 33 telas): veu de 74% */
+body.casca-conversa .selo{-webkit-align-self:center;-ms-flex-item-align:center;align-self:center;background:rgba(18,26,14,.74);color:#fff;font-size:12px;letter-spacing:.4px}
+body.casca-conversa .centro > .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;margin-left:52px;border-radius:6px 22px 22px 22px;max-width:430px;max-width:min(430px, calc(100% - 52px))}
+body.casca-conversa .centro > .balao:before{content:"";position:absolute;left:-52px;top:-2px;width:42px;height:42px;border-radius:50%;background:#fff var(--cv-masc) center/88% no-repeat;-webkit-box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.2);box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.2)}
+.cv-hist{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;margin:0 0 10px 52px;max-width:430px;max-width:min(430px, calc(100% - 52px));background:rgba(255,253,246,.62);border-radius:6px 18px 18px 18px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#4a4536;line-height:1.3;text-align:left}
+/* tela baixa (PC da escola 1366x720, janela baixa): a conversa encolhe o cabecalho e
+   guarda a mensagem anterior, para a RESPOSTA ficar na tela sem rolar */
+@media (max-height:780px){ .cv-hist{display:none} .cv-cab{padding:3px 8px;margin-bottom:6px} .cv-av{width:32px;height:32px} .cv-cab b{font-size:14px} .cv-cab .cv-on{font-size:11.5px} }
+/* ⚠️ MEDIDO (set/2026, prova de sala da Padaria): no netbook da escola (1024x600) o
+   cabecalho da conversa empurrava o "Pronto" do bater-silabas para y=608 — fora da
+   tela, e o robo (que clica onde a crianca clicaria) ficou 28 s "congelado". Em tela
+   baixa o cabecalho SAI: a barra de progresso ja diz onde ela esta. */
+@media (max-height:640px){ .cv-cab{display:none} body.casca-conversa .centro > .balao{margin-left:44px;max-width:min(430px, calc(100% - 44px))} body.casca-conversa .centro > .balao:before{left:-44px;width:36px;height:36px} }
+body.casca-conversa .cv-resp{width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:10px 4px 12px;margin-top:12px;background:rgba(255,255,255,.40);border-radius:22px 6px 22px 22px;-webkit-box-shadow:inset 0 0 0 2px rgba(255,255,255,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
+/* o balao que a PECA escreve dentro do cartao continua sendo fala do mascote */
+body.casca-conversa .cv-resp .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;border-radius:6px 22px 22px 22px}
+body.casca-conversa .centro > .balao.mt-entra,body.casca-conversa .cv-hist.mt-entra{-webkit-animation-name:cvEsq;animation-name:cvEsq}
+body.casca-conversa .cv-resp.mt-entra{-webkit-animation-name:cvDir;animation-name:cvDir}
+@-webkit-keyframes cvEsq{from{opacity:0;-webkit-transform:translateX(-18px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes cvEsq{from{opacity:0;transform:translateX(-18px) scale(.97)}to{opacity:1;transform:none}}
+@-webkit-keyframes cvDir{from{opacity:0;-webkit-transform:translateX(18px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes cvDir{from{opacity:0;transform:translateX(18px) scale(.97)}to{opacity:1;transform:none}}
+/* ⭐⭐ CASCA "TRILHA / MAPA" (set/2026, `_padrao/MODELOS-DE-APP.md` casca 1): a cada fase
+   nova o MAPA aparece por ~1,1 s — um caminho com uma parada por fase, as feitas em
+   verde, a atual em amarelo, o mascote pulando da parada anterior para a nova e a
+   bandeira no fim. A criança VÊ quanto falta (Trem, Padaria, Gincana: atividades longas).
+   `pointer-events:none` (é só visual, nada trava o toque), some sozinha, fora em
+   reduced-motion. Os portões esperam a classe `casca-transicao` sumir antes de medir e a
+   foto do 5c a esconde. Só transform/opacity (gamefeel R5). */
+.casca-transicao{pointer-events:none}   /* marca comum das transicoes de casca (os portoes esperam ela sumir) */
+.tr-mapa{position:fixed;left:0;top:0;right:0;bottom:0;z-index:60;pointer-events:none;background:rgba(20,30,16,.55);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-animation:trFade 1.15s both;animation:trFade 1.15s both}
+@-webkit-keyframes trFade{0%{opacity:0}12%{opacity:1}82%{opacity:1}100%{opacity:0}}
+@keyframes trFade{0%{opacity:0}12%{opacity:1}82%{opacity:1}100%{opacity:0}}
+.tr-cx{position:relative;width:92vw;max-width:520px;height:58vh;max-height:340px;background:rgba(255,253,246,.97);border-radius:24px;-webkit-box-shadow:0 12px 40px rgba(0,0,0,.35);box-shadow:0 12px 40px rgba(0,0,0,.35);overflow:hidden}
+.tr-cx svg{position:absolute;left:0;top:0;width:100%;height:100%}
+.tr-par{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#e9e2d1;border:3px solid #c9bda6;-webkit-box-sizing:border-box;box-sizing:border-box}
+.tr-par.ok{background:#8be05a;border-color:#2c7318}
+.tr-par.atual{background:#ffd54a;border-color:#c9a52f;-webkit-box-shadow:0 0 0 6px rgba(255,213,74,.35);box-shadow:0 0 0 6px rgba(255,213,74,.35)}
+.tr-masc{position:absolute;width:58px;height:58px;margin:-54px 0 0 -29px;background:var(--cv-masc) center/contain no-repeat;-webkit-filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.tr-band{position:absolute;width:26px;height:30px;margin:-30px 0 0 -3px}
+.tr-tit{position:absolute;left:50%;top:8px;-webkit-transform:translateX(-50%);transform:translateX(-50%);white-space:nowrap;text-align:center;font-weight:800;color:#1f2a14;background:rgba(255,253,246,.96);border-radius:999px;padding:3px 12px;font-size:15px;letter-spacing:.3px}
+.tr-tit b{color:#2c7318}
+/* ⭐⭐ CASCA "LIÇÃO" (set/2026, pedido do Marcos: "leiaute de app tipo Duolingo", do 3º ao
+   9º): a fase vira uma LIÇÃO limpa — painel branco por cima da cena, barra de progresso
+   grossa, rótulo discreto, pergunta em caixa com borda, opções brancas com borda grossa
+   embaixo, e a folha de feedback verde de ponta a ponta. O botão CONTINUAR mantém a
+   largura medida da casa (o Marcos já reprovou o botão-faixa). Só CSS. */
+.tela.lc{background:rgba(255,255,255,.93)}
+.tela.lc .prog{height:16px;background:#e5e5e5;-webkit-box-shadow:none;box-shadow:none}
+.tela.lc .selo{background:transparent;color:#6b6b6b;font-size:12.5px;letter-spacing:.8px;padding:0 2px;margin-bottom:6px;text-transform:uppercase}
+.tela.lc .centro > .balao{background:#fff;border:2px solid #e5e5e5;-webkit-box-shadow:none;box-shadow:none;text-align:left;font-size:19px;font-weight:700;color:#3c3c3c;width:100%;max-width:520px;-webkit-box-sizing:border-box;box-sizing:border-box;border-radius:16px}
+.tela.lc .opt{background:#fff;border:2px solid #e5e5e5;border-bottom-width:5px;border-radius:16px;font-size:18px;color:#4b4b4b;min-height:64px;-webkit-box-shadow:none;box-shadow:none}
+.tela.lc .opt.ok{border-color:var(--verde);background:#d7ffb8;color:#2c5e0f}
+.tela.lc .opt.no{border-color:var(--coral);background:#ffe9e5;color:#7a2a20}
+.tela.lc .hint{color:#555}
+body.casca-licao .banner{max-width:none;border-radius:0;border-top:2px solid rgba(0,0,0,.06)}
+body.casca-licao .banner.bom{background:#d7ffb8}
+body.casca-licao .banner .msg{text-align:left;font-size:19px;color:#3f7d04}
 @media (prefers-reduced-motion: reduce){
   .vitrine .pgfill,.vitrine .pgfill:before,.vitrine .pgcomet{-webkit-animation:none;animation:none}
 }
@@ -2181,7 +2259,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    ⚠️ A chave do localStorage E CRITICA: no GitHub Pages TODAS as atividades
    moram na MESMA origem (vidalprof.github.io). Duas atividades com a chave
    "jardim_med" apagariam o progresso uma da outra na mesma tarde. */
-var ID = {"pre": "sg", "mascote": "bloco", "mascoteNome": "Bloco", "titulo": "A Cidade dos Sólidos", "sub": "Matemática · 2º ano · Sólidos geométricos", "fundo": "sg_fundo.png", "fundoSuave": false, "crachas": 6, "convite": "<b>Quem vai construir</b> a cidade hoje?", "narrar": "tudo"};
+var ID = {"pre": "sg", "mascote": "bloco", "mascoteNome": "Bloco", "titulo": "A Cidade dos Sólidos", "sub": "Matemática · 2º ano · Sólidos geométricos", "fundo": "sg_fundo.png", "fundoSuave": false, "crachas": 6, "mascoteVetor": null, "casca": "classica", "convite": "<b>Quem vai construir</b> a cidade hoje?", "narrar": "tudo"};
 
 "use strict";
 /* ============================================================
@@ -2784,9 +2862,39 @@ carregaEstado();
 var app=document.getElementById("app"),banner=document.getElementById("banner"),bmsg=document.getElementById("bmsg"),bcta=document.getElementById("bcta"),barra=document.getElementById("barra");
 var btnOuvir=null,btnDica=null,dicaAtual="",dicaTexto="";
 function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+/* ⭐ MASCOTE VETORIAL (set/2026, Marcos: "coisa mais profissional, sem erros"): boca e
+   palpebras sao SVG desenhado por cima da pose parada (ID.mascoteVetor, do
+   conteudo.json). O corpo nunca troca de imagem — entao nao treme (o defeito que o
+   portao 3d media) e nao depende de gerador que edite a base. O SVG usa o viewBox
+   da imagem e `meet`, como o object-fit:contain da camada base: os dois escalam
+   igual e a boca cai sempre no bico. As camadas continuam se chamando `fala` e
+   `pisca` e continuam sendo ligadas por `style.opacity` — o lip-sync nao mudou. */
+function _svgCamada(classe, miolo){
+  var V=ID.mascoteVetor||{}, vb=V.vb||[100,100];
+  var s=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  s.setAttribute("viewBox","0 0 "+vb[0]+" "+vb[1]); s.setAttribute("preserveAspectRatio","xMidYMid meet");
+  s.setAttribute("class","lay "+classe); s.setAttribute("aria-hidden","true");
+  s.innerHTML=miolo; return s;
+}
+function _mascVetorFala(){
+  var V=ID.mascoteVetor||{};
+  return '<path d="'+(V.boca||"")+'" fill="'+(V.bocaCor||"#3a1a0a")+'"/>'
+    +(V.bocaBorda?'<path d="'+(V.boca||"")+'" fill="none" stroke="'+V.bocaBorda+'" stroke-width="'+(V.bocaBordaLarg||2.6)+'" stroke-linecap="round"/>':"");
+}
+function _mascVetorPisca(){
+  var V=ID.mascoteVetor||{}, h="", i, o;
+  for(i=0;i<(V.olhos||[]).length;i++){ o=V.olhos[i];
+    h+='<ellipse cx="'+o[0]+'" cy="'+o[1]+'" rx="'+o[2]+'" ry="'+o[3]+'" fill="'+(V.palpebra||"#e9d8b8")+'"/>';
+    /* o cilio: um arco sorridente na altura de baixo da palpebra */
+    h+='<path d="M'+(o[0]-o[2]*0.85)+' '+(o[1]+o[3]*0.2)+' Q'+o[0]+' '+(o[1]+o[3]*0.85)+' '+(o[0]+o[2]*0.85)+' '+(o[1]+o[3]*0.2)+'" fill="none" stroke="'+(V.cilio||"#5a3a1e")+'" stroke-width="'+(V.cilioLarg||2.4)+'" stroke-linecap="round"/>';
+  }
+  return h;
+}
 function brotoEl(tam){
   var d=el("div","broto"+(tam?" "+tam:""));
-  var base=imgEl(ID.pre+"_"+ID.mascote+"_feliz","lay base"), fala=imgEl(ID.pre+"_"+ID.mascote+"_fala","lay fala"), pisca=imgEl(ID.pre+"_"+ID.mascote+"_pisca","lay pisca");
+  var base=imgEl(ID.pre+"_"+ID.mascote+"_feliz","lay base"), fala, pisca;
+  if(ID.mascoteVetor){ fala=_svgCamada("fala",_mascVetorFala()); pisca=_svgCamada("pisca",_mascVetorPisca()); }
+  else { fala=imgEl(ID.pre+"_"+ID.mascote+"_fala","lay fala"); pisca=imgEl(ID.pre+"_"+ID.mascote+"_pisca","lay pisca"); }
   d.appendChild(base);d.appendChild(fala);d.appendChild(pisca);
   brotoAtual={el:d,base:base,fala:fala,pisca:pisca};
   return d;
@@ -3785,12 +3893,17 @@ function montaFase(i, aoFim){
   _faseViva = true;   /* daqui ate o proximo limpa(), todo relogio e DESTA fase */
   /* o relogio do "esta parada?" zera a cada fase (ver `acordaParada`) */
   acordaParada();
-  var t = el("div","tela");
+  var t = el("div","tela" + (ID.casca === "licao" ? " lc" : ""));
   /* a vitrine SUBSTITUI a barra fina quando a atividade tem figuras para ela */
   if(VITRINE.length) poeVitrine(t, i); else setProg(t, progDaFase(i));
   var cen = el("div","centro");
+  /* ⭐ CASCA CONVERSA (ver CSS `.casca-conversa`): cabecalho com o mascote e o "3 de 32",
+     a mensagem anterior esmaecida, e a peca dentro do cartao de resposta (`_cvAlvo`). */
+  var _cv = (ID.casca === "conversa");
+  if(_cv){ t.appendChild(_cvCab(i)); if(_cvUltimo) cen.appendChild(el("div","cv-hist", _cvUltimo)); }
   if(f.selo) cen.appendChild(el("div","selo", f.selo));
   if(f.enunciado) cen.appendChild(el("div","balao", f.enunciado));
+  if(_cv && f.enunciado) _cvUltimo = f.enunciado;
   /* ⭐ o enunciado desta fase, para as pecas que dao `limpa()` e remontam a
      propria tela de abertura (relampago/caca/cruzadinha): sem isto o balao
      narrado do motor era apagado e a tela de abertura ficava MUDA (o gate
@@ -3804,6 +3917,7 @@ function montaFase(i, aoFim){
      enunciado gravado da fase. */
   try{ window.__faseVozIntro = f.vozIntro || ""; }catch(_e){}
   t.appendChild(cen); app.appendChild(t);
+  _trMapa(i);   /* casca TRILHA: o mapa por 1 s, o mascote pula para esta parada */
 
   /* o andaime que cresce — o mesmo do mascote (ajudaJd), com a dica desta fase */
   var err = 0;
@@ -3858,8 +3972,49 @@ function montaFase(i, aoFim){
     if(!window.__regou && f.conceito) reg(f.conceito, 1);
     if(_aoFimOrig) _aoFimOrig();
   };
-  m(f, cen, aoFimReg);
+  /* na casca conversa a peca desenha dentro do CARTAO DE RESPOSTA da crianca; para a
+     peca ele e o "centro" de sempre (coluna, centralizado, largura toda). */
+  var _cvAlvo = cen;
+  if(_cv){ _cvAlvo = el("div","cv-resp"); cen.appendChild(_cvAlvo); }
+  m(f, _cvAlvo, aoFimReg);
+  /* ⭐ ACABAMENTO DE APP (Marcos, set/2026: "coisa mais profissional, mais bonita"):
+     o que a peca acabou de desenhar ENTRA em cascata — selo, balao e cada carta/
+     opcao/tecla sobem 14px e aparecem, uma atras da outra, como nos apps que ele
+     ve na internet (PBS KIDS, Duolingo). So opacity/transform (gamefeel R5),
+     finita (leiaute regra 12), desligada em prefers-reduced-motion e congelada
+     na foto do portao 5c. Roda DEPOIS da peca, no proximo tick, para pegar o que
+     ela apendou de forma sincrona. */
+  setTimeout(function(){ _mtEntra(t); }, 0);   /* setTimeout da fase: morre no limpa() */
 
+}
+
+/* cascata de entrada — ver montaFase. Alvos: os filhos diretos do .centro; quando
+   um filho e uma GRADE (flex/grid com 3+ filhos: opcoes, cartas, teclas), a cascata
+   desce aos netos, com o atraso limitado para a ultima entrar antes de 0,5 s. */
+function _mtEntra(t){
+  try{
+    if(_reduzMov || !t) return;
+    var cen=t.querySelector(".centro")||t, kids=[].slice.call(cen.children), alvos=[], k, g, cs;
+    for(k=0;k<kids.length;k++){
+      var e=kids[k];
+      if(!e||e.nodeType!==1) continue;
+      if(/(^|\s)(vitrine|prog|barra|hint)(\s|$)/.test(e.className||"")) continue;
+      g=[].slice.call(e.children).filter(function(c){ return c.nodeType===1; });
+      cs=getComputedStyle(e);
+      if(g.length>=3 && /flex|grid/.test(cs.display||"")){ alvos=alvos.concat(g.slice(0,30)); }
+      else alvos.push(e);
+    }
+    /* toda a cascata cabe em 0,6 s (8 x 30 ms + 0,36 s): os portoes esperam 650 ms
+       depois de abrir a fase e ainda conferem se sobrou `.mt-entra` na tela. A
+       classe sai no animationend (com relogio de garantia), nao num tempo fixo. */
+    alvos.forEach(function(e,i){
+      var d=Math.min(i,8)*30, tirou=false;
+      function tira(){ if(tirou) return; tirou=true; try{ e.classList.remove("mt-entra"); e.style.animationDelay=""; }catch(_e){} }
+      e.classList.add("mt-entra"); e.style.animationDelay=d+"ms";
+      try{ e.addEventListener("animationend", tira, {once:true}); }catch(_e){}
+      setTimeout(tira, 800+d);
+    });
+  }catch(e){}
 }
 
 function abreFase(i){
@@ -3916,7 +4071,66 @@ function semTag(h){ return String(h || "").replace(/<[^>]+>/g, ""); }
 
 /* o motor so comeca DEPOIS que a identidade e as fases existem — a linha
    original do mascote abria a capa antes disso (ver TROCAS) */
+/* ⭐ CASCA (set/2026): `ID.casca` vem do conteudo.json ("classica" = a de sempre). A
+   classe no body liga o CSS da casca; o avatar do cabecalho/balao e a pose parada do
+   mascote da atividade (a mesma do `.broto`). */
+var _cvUltimo = "";
+function _cvCab(i){
+  var h = el("div","cv-cab"), n = el("b", null, (MASCOTE_NOME || ID.mascoteNome || ""));
+  h.appendChild(el("i","cv-av",""));
+  n.appendChild(el("span","cv-on","est&#225; aqui com voc&#234;"));
+  h.appendChild(n);
+  h.appendChild(el("span","cv-falta", (i + 1) + " de " + FASES.length));
+  return h;
+}
+/* ⭐ CASCA TRILHA — as paradas em % da caixa: serpentina de ate 9 por fileira. */
+function _trPos(N){
+  var porFila = N <= 9 ? N : Math.ceil(N / Math.ceil(N / 9)), filas = Math.ceil(N / porFila), out = [], k, f, c, x, y;
+  for(k = 0; k < N; k++){
+    f = Math.floor(k / porFila); c = k % porFila; if(f % 2) c = porFila - 1 - c;
+    x = porFila > 1 ? 9 + c * (82 / (porFila - 1)) : 50;
+    y = filas > 1 ? 22 + f * (62 / (filas - 1)) : 55;
+    out.push([Math.round(x * 10) / 10, Math.round(y * 10) / 10]);
+  }
+  return out;
+}
+function _trMapa(i){
+  try{
+    if(ID.casca !== "trilha" || _reduzMov) return;
+    var N = FASES.length, ov = el("div","tr-mapa casca-transicao"), cx = el("div","tr-cx"), pos = _trPos(N), k, p;
+    var pts = pos.map(function(q){ return q[0] + "," + q[1]; }).join(" ");
+    cx.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'
+      + '<polyline fill="none" stroke="#d8ccb0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + pts + '"/>'
+      + '<polyline fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + pts + '"/></svg>';
+    for(k = 0; k < N; k++){
+      p = el("i","tr-par" + (k < i ? " ok" : (k === i ? " atual" : "")));
+      p.style.left = pos[k][0] + "%"; p.style.top = pos[k][1] + "%"; cx.appendChild(p);
+    }
+    var fim = pos[N - 1], band = el("i","tr-band");
+    band.innerHTML = '<svg viewBox="0 0 26 30" width="26" height="30" aria-hidden="true"><rect x="2" y="2" width="3" height="28" rx="1.5" fill="#6b4a2a"/><path d="M5 3h18l-4 6 4 6H5z" fill="#e0483a"/></svg>';
+    band.style.left = fim[0] + "%"; band.style.top = fim[1] + "%"; cx.appendChild(band);
+    var m = el("i","tr-masc"), de = pos[Math.max(0, i - 1)], para = pos[i] || fim;
+    m.style.left = para[0] + "%"; m.style.top = para[1] + "%"; cx.appendChild(m);
+    cx.appendChild(el("div","tr-tit","Parada <b>" + (i + 1) + "</b> de " + N));
+    ov.appendChild(cx); document.body.appendChild(ov);
+    var r = cx.getBoundingClientRect(), dx = (de[0] - para[0]) / 100 * r.width, dy = (de[1] - para[1]) / 100 * r.height;
+    if(i > 0){
+      m.style.transform = "translate(" + dx + "px," + dy + "px)";
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        m.style.transition = "transform .6s cubic-bezier(.3,1.4,.5,1)"; m.style.transform = "translate(0,0)"; }); });
+    }
+    setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); }, 1180);
+  }catch(e){}
+}
+function _ligaCasca(){
+  try{
+    if(!ID.casca || ID.casca === "classica") return;
+    document.body.className += " casca-" + ID.casca;
+    document.documentElement.style.setProperty("--cv-masc", "url(img/" + ID.pre + "_" + ID.mascote + "_feliz.png)");
+  }catch(e){}
+}
 function inicia(){
+  _ligaCasca();
   preparaIdentidade();
   if(location.search.indexOf("painel") >= 0){ telaPainel(); } else { telaCapa(); }
 }
@@ -4227,8 +4441,12 @@ MEC["arrastar-sombra"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -4814,8 +5032,12 @@ MEC["caca-palavras"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -5412,8 +5634,12 @@ MEC["classificar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -5940,8 +6166,12 @@ MEC["completar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -6353,8 +6583,12 @@ MEC["digitar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -6740,8 +6974,12 @@ MEC["escolher"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -7160,8 +7398,12 @@ MEC["forca"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -7605,8 +7847,12 @@ MEC["intruso"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -8148,8 +8394,12 @@ MEC["ligar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -8677,8 +8927,12 @@ MEC["memoria"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -8917,6 +9171,12 @@ var PASSO_AJUDA=4;
 var TEMPO_VOLTA=1400;
 /* a ESPIADA de abertura: o tabuleiro nasce aberto e vira sozinho. */
 var TEMPO_ESPIADA=2600;
+/* ⭐ (set/2026, Central f22/f34) o ENUNCIADO da fase, quando a atividade quer o
+   dela ("Vire as fichas e case cada genero com a marca que entrega ele"). Vazio
+   = o balao padrao conforme o modo. Sem isto a voz dizia o `enunciado` do
+   conteudo.json e a tela mostrava "Ache a palavra e o desenho que combina" —
+   os portoes 0g/0n reprovaram a Central por isso. */
+var ENUN=""; /*TECNICA*/
 
 var cartas, virada, travado, feitos, tentativas, progI, elPlacar, elPares, elHint, ger=0;
 
@@ -8957,11 +9217,11 @@ function pecaMemoria(){
   /* balão conforme o modo: par de imagens (1º ano) x palavra×significado */
   var soImg=true, temSom=false, _pi;
   for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; } if(PARES[_pi].som) temSom=true; }
-  c.appendChild(el("div","balao", temSom
+  c.appendChild(el("div","balao", ENUN || (temSom
     ? "Ache a <b>figura</b> e o <b>som</b> que combinam."
     : (soImg
     ? "Ache as <b>figuras iguais</b>."
-    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>.")));
+    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>."))));
 
   /* monta as 8 cartas: metade palavra, metade significado.
      Cada uma leva a SUA figura — as duas do par sao desenhos diferentes. */
@@ -9242,6 +9502,9 @@ function fim(){
                +PARES.length+' pares.', pecaMemoria);
 }
     if(f && f.dados) PARES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+    }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaMemoria();
   })();
@@ -9262,8 +9525,12 @@ MEC["quebra-cabeca"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -9789,8 +10056,12 @@ MEC["quem-sou-eu"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -10112,8 +10383,12 @@ MEC["vitrine"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
