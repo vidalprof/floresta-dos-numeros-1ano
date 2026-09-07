@@ -222,7 +222,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
      baixo, sem rolagem (banca leiaute). Encolho o teclado ao piso de toque
      (40px, o minimo da casa) e aperto as folgas: a 5a fileira sobe acima da
      barra. */
-  .tecl{width:40px;height:40px;line-height:40px;font-size:18px;margin:2px}
+  /* 44px, nao 40: piso do alvo ate o 2o ano (leiaute.js, set/2026) — os Solidos do 2o
+     ano reprovavam com 26 teclas de 40px no celular. A 320px cabem 6 por fileira
+     (5 fileiras) e a tela rola; e o que o portao aceita. */
+  .tecl{width:44px;height:44px;line-height:44px;font-size:18px;margin:2px}
 }
 /* JANELA LARGA E BAIXA (1024x420, projetor): aqui nao ha altura para nada, mas
    SOBRA largura dos dois lados do app. A figura sai da coluna e fica ao lado,
@@ -242,7 +245,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .letrafc{width:32px;height:38px;line-height:34px;font-size:18px;margin:2px}
   .chances{margin-top:5px;font-size:13px}
   .teclado{margin-top:7px}
-  .tecl{height:42px;line-height:42px;font-size:17px}
+  .tecl{height:44px;line-height:44px;font-size:17px}
   .hint{font-size:12px;margin-top:6px}
   /* JANELA BAIXA: a figura encolhe ANTES do teclado e das casinhas — quem
      precisa caber inteiro na tela é o que a criança toca. (Em janela LARGA e
