@@ -6550,12 +6550,36 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
   Próximos: Central (moça), Padaria (Fubá) e os demais mascotes, um por vez, com foto.
 - **Fila:** as seis cascas; cobaia depois de cada passo.
 
-- **Trem: a esteira `produzir.sh` PARA no pré-voo** pela duplicata conhecida
-  `tr_coru_fala = tr_coru_feliz` (1c2) — e pararia de novo na banca pelo 3d. Enquanto
-  o `OPENAI_API_KEY` não chega, o Trem publica pelo caminho manual: banca inteira à
-  mão (aceitando só 1c2 + 3d), commit com a marca `[entregar _trem:o-trem-do-alfabeto]`
-  e push. **Não** declarar a cópia em `_copias_ok.json`: seria esconder um defeito real
-  (o mascote fala de boca fechada) atrás de um carimbo.
+- **Trem publicado com o mascote vetorial (17:21Z, sha `4b692e174ee4`):** banca inteira
+  0 reprovações de verdade (só o 0b7 "fotos.py fora do git", que o próprio commit
+  resolveu); 1c2 e 3d SUMIRAM sem `OPENAI_API_KEY`. O parágrafo antigo ("a esteira para
+  no pré-voo pela duplicata") deixou de valer: o Trem volta a passar pelo `produzir.sh`.
+  91 fotos aprovadas em `_qa/_fotos_ok/_trem/` (grade conferida: sem pilar verde, sem
+  figura cortada).
+- **Central de Entregas (Vera) = 2º mascote vetorial.** O `mascote.py` media as duas
+  camadas dela como **CÓPIA 0,0%** (a moça falava de boca fechada NO AR). Coordenadas
+  (imagem 452×728): olhos `[171,159,18,11]` e `[257,151,18,11]`, pálpebra `#a8684c`,
+  cílio `#3a2416`, boca `M196 212 Q227 246 257 208 Q227 216 196 212 Z` (borda de lábio
+  `#c38571`). Foto conferida: boca aberta natural, olhos fechados com a cor da pele.
+  Receita que funcionou para posicionar: recortar o rosto, ampliar 4× com grade de
+  10 px numerada, ler as coordenadas na grade, tirar a foto, ajustar uma vez.
+- **Quatro portões acusavam inocente na Central (e a Central estava no ar aprovada):**
+  · `clone.py` item 8: o prefixo "dominante" era `op_` (575 áudios de alto-falante, nome
+    igual em toda a casa) e o `ce_` da própria Central virava "alheio". Agora o prefixo
+    vem do `conteudo.json` (`"prefixo"`), com `op_/med_/ok_/erro_/som_/fx_` fora da conta;
+    e identificador que existe no **código da casa** (`pecas.js/css`, `motor.html` —
+    `pd_mel` do exemplo comentado, `rn_placar` classe CSS, `mv_cachorro` exemplo do
+    classificar) não é resto de clone de ninguém.
+  · `clone.py` item 12 (nome de mascote alheio): "Carta de **dona Marta**", "o **Téo**
+    escondeu a bola", "**Bloco** com data no alto?" são conteúdo. Título na frente
+    (dona/seu/professor…), campo de conteúdo (`t`, `p`, `aut`, `op`…) ou nome comum
+    sem artigo → **aviso**; só reprova o nome na voz da casa (dica/intro/elogio).
+  · `revisor.py`: "passo **a** passo" não é artigo+nome (mesma palavra dos dois lados).
+  · `beco_peca.py`: o arquivo integrado tem uma `function fimDaPeca()` POR PEÇA; a busca
+    pelo nome achava sempre a primeira e o portão dizia "NÃO MEDI" em toda atividade
+    com relâmpago. Agora procura a partir da posição de cada função.
+  Conferido depois nos 18 conteudo.json: só `_agora`/`_rightnow9` reprovam (cache `rn`
+  dividido — WIP antigo, não é desta rodada).
 - **Seis cascas** (`_padrao/MODELOS-DE-APP.md` + mockup enviado): trilha, livro, cartas,
   bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
   proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma

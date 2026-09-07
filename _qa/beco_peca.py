@@ -43,9 +43,14 @@ import re
 import sys
 
 
-def limites(js, nome):
-    u"""(inicio, fim) do corpo de `function nome(){...}`, ou (None, None)."""
-    m = re.search(r"function\s+%s\s*\([^)]*\)\s*\{" % re.escape(nome), js)
+def limites(js, nome, desde=0):
+    u"""(inicio, fim) do corpo de `function nome(){...}`, ou (None, None).
+
+    `desde`: procurar a partir desta posicao. ⚠️ (set/2026, Central) o arquivo
+    INTEGRADO tem uma `function fimDaPeca()` POR PECA — procurar so pelo nome
+    achava sempre a primeira e este portao dizia "o botao nao esta dentro de
+    funcao nenhuma. NAO MEDI" para toda atividade com relampago."""
+    m = re.compile(r"function\s+%s\s*\([^)]*\)\s*\{" % re.escape(nome)).search(js, desde)
     if not m:
         return None, None
     i = m.end() - 1
@@ -97,7 +102,7 @@ def main():
     # em que função ele mora? (a tela de fim)
     dono = None
     for fm in re.finditer(r"function\s+([A-Za-z_$][\w$]*)\s*\(", js):
-        i, k = limites(js, fm.group(1))
+        i, k = limites(js, fm.group(1), fm.start())
         if i is not None and i <= bot.start() < k:
             dono = fm.group(1)
     if not dono:

@@ -214,6 +214,18 @@ for campo in sorted(set(re.findall(r"MED\.([a-z]+)(?:&&|\.length|\[)", js))):
 def prefixo_de(pasta_):
     """o prefixo dominante dos arquivos de uma atividade (ex.: 'hv_')"""
     from collections import Counter
+    # ⚠️ (set/2026, Central) o prefixo declarado no conteudo.json manda. Sem isto,
+    #    os 575 `op_*.mp3` (alto-falante das respostas, nome IGUAL em toda a casa)
+    #    venciam os 96 `ce_*` e este portao dizia que `ce_fundo` era "de OUTRA
+    #    atividade" — a propria Central, reprovada por ter as proprias imagens.
+    try:
+        import json as _j
+        _pf = _j.load(open(os.path.join(pasta_, "conteudo.json"), encoding="utf-8")).get("prefixo")
+        if _pf and re.match(r"^[a-z]{2,6}_?$", _pf):
+            return _pf if _pf.endswith("_") else _pf + "_"
+    except Exception:
+        pass
+    GENERICOS = ("op_", "med_", "ok_", "erro_", "som_", "fx_")   # nomes da casa, nao da atividade
     c = Counter()
     for sub in ("img", "audio"):
         d = os.path.join(pasta_, sub)
@@ -221,7 +233,7 @@ def prefixo_de(pasta_):
             continue
         for f in os.listdir(d):
             m = re.match(r"([a-z]{2,6}_)", f)
-            if m:
+            if m and m.group(1) not in GENERICOS:
                 c[m.group(1)] += 1
     if not c:
         return None
@@ -260,10 +272,23 @@ if meu:
             _portoes.add(os.path.splitext(_f)[0])
     except Exception:
         pass
+    # ⚠️ (set/2026) o que esta no CODIGO DA CASA nao e resto de clone desta atividade:
+    #    `pd_mel` e exemplo comentado da peca bater-silabas, `rn_placar` e classe CSS
+    #    da reta numerica, `mv_cachorro` e o exemplo da peca classificar. Estao em
+    #    TODA atividade montada — e so viraram "alheios" quando o prefixo passou a
+    #    vir do conteudo.json (antes o `op_` escondia `pd_`/`mv_`/`rn_` da lista).
+    _casa = ""
+    for _arq in ("_padrao/ESQUELETO/pecas.js", "_padrao/ESQUELETO/pecas.css", "_padrao/ESQUELETO/motor.html"):
+        try:
+            _casa += io.open(_arq, encoding="utf-8", errors="replace").read()
+        except Exception:
+            pass
     for pf, dona in sorted(alheios.items()):
         # so conta se aparecer como NOME de arquivo/identificador, nao dentro de palavra
         for m in re.finditer(r"[\"'/(]\s*(%s\w+)" % re.escape(pf), html):
             if m.group(1) in _portoes or html[max(0, m.start() - 3):m.start()] == "_qa":
+                continue
+            if _casa and m.group(1) in _casa:
                 continue
             achados.append((m.group(1), dona))
             break
@@ -445,8 +470,37 @@ else:
         if nome_o == meu_masc or re.search(r"\b" + re.escape(nome_o) + r"\b", meu_masc) \
            or re.search(r"\b" + re.escape(meu_masc) + r"\b", nome_o):
             gemeos.append(outra); continue
-        if len(nome_o) >= 3 and re.search(r"\b" + re.escape(nome_o) + r"\b", corpo4):
+        if len(nome_o) < 3:
+            continue
+        # ⚠️ (set/2026, Central — no ar, aprovada) este item reprovava "Carta de
+        #    dona Marta", "o Téo escondeu a bola" e "Bloco com data no alto?":
+        #    personagem da historia, nome comum, texto do CONTEUDO. Resto de clone
+        #    de mascote e o nome dele na VOZ DA CASA (dica, intro, elogio...),
+        #    sem titulo na frente. O que e conteudo vira AVISO; o que e nome comum
+        #    (bloco, broto, pixel) so conta com artigo na frente ("o Bloco").
+        _TITULOS = r"(dona|dono|seu|senhor|senhora|sr\.|sra\.|tia|tio|vov[oó]|vov[oô]|professor|professora|doutor|doutora|dr\.|dra\.|padre|madre|rei|rainha|capit[aã]o)\s+$"
+        _CONTEUDO = {"t", "aut", "texto", "frase", "frases", "op", "ops", "opcoes", "itens", "rot",
+                     "nome", "legenda", "pergunta", "p", "q", "enun", "enunciado", "leia", "txt",
+                     "resposta", "certa", "titulo", "trecho",
+                     "historia", "cena", "fala_personagem", "personagem", "autor", "fonte"}
+        _COMUNS = {"bloco", "broto", "pixel", "tato", "fuba", "fubá", "pipo", "tico", "castor",
+                   "raposa", "coruja", "robo", "robô", "doutor", "leao", "leão"}
+        _reprova, _aviso = False, False
+        for _m in re.finditer(r"\b" + re.escape(nome_o) + r"\b", corpo4):
+            _antes = corpo4[max(0, _m.start() - 14):_m.start()].lower()
+            if re.search(_TITULOS, _antes):
+                _aviso = True; continue
+            if nome_o.lower() in _COMUNS and not re.search(r"\b[oa]\s+$", _antes):
+                _aviso = True; continue
+            _k = re.findall(r'"([A-Za-z_][\w]*)"\s*:\s*(?:\[\s*)?"[^"]*$', corpo4[max(0, _m.start() - 400):_m.start()])
+            if _k and _k[-1].lower() in _CONTEUDO:
+                _aviso = True; continue
+            _reprova = True; break
+        if _reprova:
             alheios4.append((nome_o, outra))
+        elif _aviso:
+            print("   aviso: %r (mascote de %s) aparece no CONTEUDO desta atividade — personagem/"
+                  "palavra comum, nao resto de clone. Confira se foi de proposito." % (nome_o, outra))
     if gemeos:
         # ⚠️ ISTO DEIXOU DE SER DEFEITO (regra do Marcos, ago/2026, registrada no
         #    CLAUDE.md): *"mascote e imagens do banco podem ser reaproveitados em

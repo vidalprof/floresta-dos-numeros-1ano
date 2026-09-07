@@ -166,6 +166,10 @@ def revisa_texto(t, display=False):
         antes = fala[max(0, m.start() - 8):m.start()].lower().rstrip()
         if "-" in pal or re.search(r"(igual|junto|frente|rumo|devido|quanto)$", antes):
             continue
+        # ⚠️ (set/2026, Central) "passo A passo", "dia a dia", "lado a lado": a
+        #    mesma palavra dos dois lados do "a" e locucao, nao artigo+nome.
+        if art == "a" and re.search(r"\b" + re.escape(pal.lower()) + r"$", antes):
+            continue
         msg = _genero_suspeito(art, pal)
         if msg:
             achados.append(("ERRO", u"concordância: " + msg))
