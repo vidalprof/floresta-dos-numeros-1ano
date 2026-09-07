@@ -6607,6 +6607,19 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
     ("Atenciosamente, Ana Souza**?**", "Acrescente o fubá aos poucos**✓**"): o
     `jogador.js` agora tira `.bdg` antes de ler o texto (como já tirava `.marca`/`.zap`),
     e as 4 saíram do `falas.json` à mão. Regra: rótulo de estado nunca é fala.
+- **Cobaia 91/91 com as peças mudadas** (ordenar em flex, memória com `ENUN`, investigar-fonte).
+- **🏢 ORDEM DO MARCOS (noite de 2026-09-07): "produção como os grandes sites e empresas:
+  apps bonitos, leves, funcionais, completos, modernos e sem erros".** Registrado no
+  CLAUDE.md como critério de aprovação e na tarefa #94. O plano que respondi a ele: (1)
+  sistema de design com tokens + portão; (2) movimento com intenção (cascata já; faltam
+  transição entre telas, resposta tátil, celebração calibrada); (3) as seis cascas; (4)
+  orçamento de desempenho medido; (5) todo defeito que escapa vira portão. Pedi a ele
+  prints de 2–3 apps de referência.
+- **Casca "Conversa" codificada no motor** (`body.casca-conversa`, `_cvCab`, `_ligaCasca`,
+  cartão `.cv-resp` em `montaFase`; `montar.py` valida `casca` em `CASCAS`;
+  `COBAIA_CASCA=conversa bash _qa/cobaia.sh` testa as 91 mecânicas dentro dela). Padaria
+  marcada para a estreia (`"casca":"conversa"`), pré-voo 30/0. Falta: foto, cobaia com a
+  casca, banca inteira da Padaria, publicar.
 - **Seis cascas** (`_padrao/MODELOS-DE-APP.md` + mockup enviado): trilha, livro, cartas,
   bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
   proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma

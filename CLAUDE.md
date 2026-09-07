@@ -89,6 +89,17 @@ Leia tudo antes de agir e responda sempre em **português**.
 > família: leiaute regra 14 (preenchimento fora da barra) e regra 15 (filho absoluto
 > pintado solto do próprio pai).
 
+> **🏢 O PADRÃO É "EMPRESA GRANDE" (ordem do Marcos, 2026-09-07):** *"quero que nossa
+> produção de atividade seja como os grandes sites e empresas por aí: apps bonitos, leves,
+> funcionais, completos, modernos e sem erros"*. Isto é critério de aprovação, não enfeite.
+> O que já cumpre: um HTML só, sem biblioteca; banca + cobaia + fotos + prova de sala; voz
+> em tudo. O que está em construção e NÃO pode ser esquecido (tarefa #94): **sistema de
+> design** (`_padrao/DESIGN.md` com tokens de cor/tipo/espaço/raio/sombra/movimento + portão
+> `_qa/design.py` que reprova peça fora dele), **orçamento de desempenho medido** (peso,
+> tempo até a 1ª interação, fps), **transição entre telas + resposta tátil** em tudo que se
+> toca, e as **seis cascas** (Conversa codificada; Trilha, Cartas, Livro, Show, Bancada na
+> fila). Pedir ao Marcos prints de apps que ele acha bonitos como referência visual.
+>
 > **🎭 MASCOTE E AVATAR TÊM REGRA MEDIDA (set/2026, `_pesquisa/MASCOTE-E-AVATAR.md`):** o
 > mascote funciona só como **guia que aponta e responde** (Mayer: pistas sociais e
 > sinalização; Calvert: respostas contingentes + personagem encarnado transferem mais);
