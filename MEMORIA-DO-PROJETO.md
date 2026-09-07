@@ -6447,6 +6447,30 @@ negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
   · **Falso alarme do hook "conserto preso":** `_blu` aparecia como não publicado, mas
     o sha local do `index.html` era igual ao do carimbo — o commit só mexeu em
     arquivos vizinhos (banco/prompt). Conferir o sha antes de republicar.
+- **O que a banca inteira dos Sólidos e do Museu destapou (as duas estavam no ar
+  desde 2026-09-06 e passaram pelos portões daquele dia; hoje há mais portões):**
+  · **1x PC ruim:** o `nota()` compartilhado das peças (`integrar.py`) chamava `arma()`
+    FORA do try — no PC sem áudio a fase `quem-sou-eu` morria no `sPista`. Agora som
+    falha em silêncio. Vale para as ~90 peças que tocam nota.
+  · **0g/0n voz × tela e a tabela fonética:** a tela diz "face", a voz diz "fásse" de
+    propósito (`montar._FONETICA_VOZ`); os portões tiravam acento e comparavam letras
+    → 6 "defeitos" numa atividade certa. Agora `_qa/fonetica_dump.py` despeja a tabela
+    do montador e `_qa/fonetica_voz.js` a aplica aos dois lados antes de comparar. A
+    tabela continua com UMA fonte (o montar.py). Regra: **portão que compara texto
+    com voz tem que conhecer o que o montador troca no áudio.**
+  · **0i voz sem mp3 para texto novo:** o `gerar-audio.yml` usa outra voz
+    (StreamElements/Polly) — NÃO serve para completar uma atividade Edge TTS. O caminho
+    certo é **`entregar.yml` com `so_voz=sim`** (grava só o que falta, não publica),
+    depois `git pull`. Foi assim com as 6 falas novas da memória dos Sólidos.
+  · **1h vazamento (digitar, janela baixa):** a caixa `.dgfig` encolhia para 72 px e a
+    figura ficava em 128 px — vazava 28 px de cada lado. A figura encolhe junto.
+  · **5b diretor de arte (quem-sou-eu, celular):** três opções por linha (120 px) e
+    "INVERTEBRADO" encostava na borda. Base 140/min 128 px → duas por linha no celular.
+  · **0o6 halo (`mv_pinguim.png`, 1,67%):** apagado por flood-fill a partir da borda
+    (transparente OU quase-branco). O `rembg` não roda aqui; o flood-fill roda.
+  · **`produzir.sh`: `pull --rebase` antes do push** (o `entregar.yml` deixa um commit
+    "entrega: recado" a cada corrida e o segundo push do dia era recusado) e status
+    REAL do push (o `| tail` devolvia sempre 0 — a recusa passava por sucesso).
 - **Trem: a esteira `produzir.sh` PARA no pré-voo** pela duplicata conhecida
   `tr_coru_fala = tr_coru_feliz` (1c2) — e pararia de novo na banca pelo 3d. Enquanto
   o `OPENAI_API_KEY` não chega, o Trem publica pelo caminho manual: banca inteira à
