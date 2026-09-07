@@ -294,7 +294,7 @@ MAPA_DE_DADOS = {"imgs"}
 
 # ⭐ as cascas de app que o motor sabe desenhar (`_padrao/MODELOS-DE-APP.md`). Cada
 #    casca nova entra aqui SO depois da cobaia + banca numa atividade real.
-CASCAS = ("classica", "conversa", "trilha")
+CASCAS = ("classica", "conversa", "trilha", "licao")
 
 def _valida_casca(v):
     v = v or "classica"
