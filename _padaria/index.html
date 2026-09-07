@@ -167,6 +167,40 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 @keyframes pgshine{0%{left:-45%}55%,100%{left:130%}}
 @-webkit-keyframes pgpulse{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.22)}}
 @keyframes pgpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.22)}}
+/* ⭐ cascata de entrada da fase (ver _mtEntra): so opacity/transform, finita,
+   fill BACKWARDS para o elemento nascer invisivel e nao piscar antes do atraso. */
+.mt-entra{-webkit-animation:mtEntra .36s cubic-bezier(.2,.9,.3,1.15) both;animation:mtEntra .36s cubic-bezier(.2,.9,.3,1.15) both}
+@-webkit-keyframes mtEntra{from{opacity:0;-webkit-transform:translateY(14px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes mtEntra{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){ .mt-entra{-webkit-animation:none;animation:none} }
+/* ⭐⭐ CASCA "CONVERSA" (set/2026, `_padrao/MODELOS-DE-APP.md`, pedido do Marcos: "vários
+   estilos de app para a criança não enjoar"). Mesmo miolo, outra cara: a tela vira uma
+   conversa — cabeçalho com o mascote ("Fubá · está aqui · 3 de 32"), o enunciado é a
+   MENSAGEM DELE (balão à esquerda, com o avatar), a peça mora no CARTÃO DE RESPOSTA da
+   criança (à direita), a mensagem anterior fica esmaecida em cima. Liga com
+   `"casca":"conversa"` no conteudo.json; sem o campo, nada disto se aplica.
+   Só CSS: transform/opacity (gamefeel R5), nada em laço, reduced-motion respeitado. */
+body.casca-conversa .tela{-webkit-animation:none;animation:none}
+body.casca-conversa .centro{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;padding-top:2px}
+.cv-cab{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;width:100%;max-width:520px;margin:0 auto 10px;padding:6px 10px;-webkit-box-sizing:border-box;box-sizing:border-box;background:rgba(255,255,255,.66);border-radius:16px;-webkit-box-shadow:0 3px 10px rgba(0,0,0,.12);box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.cv-av{display:inline-block;width:40px;height:40px;border-radius:50%;background:#fff var(--cv-masc) center/86% no-repeat;-webkit-box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.18);box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.18);margin-right:10px;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:0 0 auto}
+.cv-cab b{font-size:16px;color:#1f2a14;line-height:1.15}
+.cv-cab .cv-on{display:block;font-size:12.5px;font-weight:600;color:#2c7318}
+.cv-cab .cv-falta{margin-left:auto;font-size:12.5px;font-weight:700;background:rgba(18,26,14,.74);color:#fff;border-radius:999px;padding:5px 10px;white-space:nowrap}
+body.casca-conversa .selo{-webkit-align-self:center;-ms-flex-item-align:center;align-self:center;background:rgba(18,26,14,.48);color:#fff;font-size:12px;letter-spacing:.4px}
+body.casca-conversa .centro > .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;margin-left:52px;border-radius:6px 22px 22px 22px;max-width:430px;max-width:min(430px, calc(100% - 52px))}
+body.casca-conversa .centro > .balao:before{content:"";position:absolute;left:-52px;top:-2px;width:42px;height:42px;border-radius:50%;background:#fff var(--cv-masc) center/88% no-repeat;-webkit-box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.2);box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.2)}
+.cv-hist{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;margin:0 0 10px 52px;max-width:430px;max-width:min(430px, calc(100% - 52px));background:rgba(255,253,246,.62);border-radius:6px 18px 18px 18px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#4a4536;line-height:1.3;text-align:left}
+@media (max-height:640px){ .cv-hist{display:none} }
+body.casca-conversa .cv-resp{width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:10px 4px 12px;margin-top:12px;background:rgba(255,255,255,.40);border-radius:22px 6px 22px 22px;-webkit-box-shadow:inset 0 0 0 2px rgba(255,255,255,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
+/* o balao que a PECA escreve dentro do cartao continua sendo fala do mascote */
+body.casca-conversa .cv-resp .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;border-radius:6px 22px 22px 22px}
+body.casca-conversa .centro > .balao.mt-entra,body.casca-conversa .cv-hist.mt-entra{-webkit-animation-name:cvEsq;animation-name:cvEsq}
+body.casca-conversa .cv-resp.mt-entra{-webkit-animation-name:cvDir;animation-name:cvDir}
+@-webkit-keyframes cvEsq{from{opacity:0;-webkit-transform:translateX(-18px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes cvEsq{from{opacity:0;transform:translateX(-18px) scale(.97)}to{opacity:1;transform:none}}
+@-webkit-keyframes cvDir{from{opacity:0;-webkit-transform:translateX(18px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes cvDir{from{opacity:0;transform:translateX(18px) scale(.97)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){
   .vitrine .pgfill,.vitrine .pgfill:before,.vitrine .pgcomet{-webkit-animation:none;animation:none}
 }
@@ -1903,7 +1937,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-ordenar .cam.ok{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12;font-size:24px;font-weight:800; -webkit-animation:kf-ordenar-opoe .3s ease;animation:kf-ordenar-opoe .3s ease}
 
-.mec-ordenar .banco{display:block;text-align:center;margin-top:6px}
+.mec-ordenar .banco{display:block;text-align:center;margin-top:6px; display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-ms-flex-pack:center;justify-content:center; -webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}
 
 .mec-ordenar .pc{-ms-touch-action:none;touch-action:none}
 
@@ -1935,7 +1969,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-ordenar .oval{display:block}
 
-.mec-ordenar .zap{display:inline-block;vertical-align:middle;width:44px;height:44px;margin:3px 0 0; border:0;border-radius:12px;background-color:#efe6d2;cursor:pointer;padding:0;line-height:44px}
+.mec-ordenar .zap{display:inline-block;vertical-align:middle;width:44px;height:44px;margin:3px 0 0; border:0;border-radius:12px;background-color:#efe6d2;cursor:pointer;padding:0;line-height:44px; -ms-touch-action:manipulation;touch-action:manipulation}
 
 .mec-ordenar .zap:hover{background-color:#e6d9bd}
 
@@ -2669,7 +2703,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    ⚠️ A chave do localStorage E CRITICA: no GitHub Pages TODAS as atividades
    moram na MESMA origem (vidalprof.github.io). Duas atividades com a chave
    "jardim_med" apagariam o progresso uma da outra na mesma tarde. */
-var ID = {"pre": "pd", "mascote": "fuba", "mascoteNome": "Fubá", "titulo": "A Padaria das Letras", "sub": "Língua Portuguesa · 1º ano · o alfabeto e os pedaços das palavras", "fundo": "pd_fundo.jpg", "fundoSuave": false, "crachas": 6, "convite": "<b>Quem vai ajudar na padaria</b> hoje?", "narrar": "tudo"};
+var ID = {"pre": "pd", "mascote": "fuba", "mascoteNome": "Fubá", "titulo": "A Padaria das Letras", "sub": "Língua Portuguesa · 1º ano · o alfabeto e os pedaços das palavras", "fundo": "pd_fundo.jpg", "fundoSuave": false, "crachas": 6, "mascoteVetor": null, "casca": "conversa", "convite": "<b>Quem vai ajudar na padaria</b> hoje?", "narrar": "tudo"};
 
 "use strict";
 /* ============================================================
@@ -3272,9 +3306,39 @@ carregaEstado();
 var app=document.getElementById("app"),banner=document.getElementById("banner"),bmsg=document.getElementById("bmsg"),bcta=document.getElementById("bcta"),barra=document.getElementById("barra");
 var btnOuvir=null,btnDica=null,dicaAtual="",dicaTexto="";
 function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;}
+/* ⭐ MASCOTE VETORIAL (set/2026, Marcos: "coisa mais profissional, sem erros"): boca e
+   palpebras sao SVG desenhado por cima da pose parada (ID.mascoteVetor, do
+   conteudo.json). O corpo nunca troca de imagem — entao nao treme (o defeito que o
+   portao 3d media) e nao depende de gerador que edite a base. O SVG usa o viewBox
+   da imagem e `meet`, como o object-fit:contain da camada base: os dois escalam
+   igual e a boca cai sempre no bico. As camadas continuam se chamando `fala` e
+   `pisca` e continuam sendo ligadas por `style.opacity` — o lip-sync nao mudou. */
+function _svgCamada(classe, miolo){
+  var V=ID.mascoteVetor||{}, vb=V.vb||[100,100];
+  var s=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  s.setAttribute("viewBox","0 0 "+vb[0]+" "+vb[1]); s.setAttribute("preserveAspectRatio","xMidYMid meet");
+  s.setAttribute("class","lay "+classe); s.setAttribute("aria-hidden","true");
+  s.innerHTML=miolo; return s;
+}
+function _mascVetorFala(){
+  var V=ID.mascoteVetor||{};
+  return '<path d="'+(V.boca||"")+'" fill="'+(V.bocaCor||"#3a1a0a")+'"/>'
+    +(V.bocaBorda?'<path d="'+(V.boca||"")+'" fill="none" stroke="'+V.bocaBorda+'" stroke-width="'+(V.bocaBordaLarg||2.6)+'" stroke-linecap="round"/>':"");
+}
+function _mascVetorPisca(){
+  var V=ID.mascoteVetor||{}, h="", i, o;
+  for(i=0;i<(V.olhos||[]).length;i++){ o=V.olhos[i];
+    h+='<ellipse cx="'+o[0]+'" cy="'+o[1]+'" rx="'+o[2]+'" ry="'+o[3]+'" fill="'+(V.palpebra||"#e9d8b8")+'"/>';
+    /* o cilio: um arco sorridente na altura de baixo da palpebra */
+    h+='<path d="M'+(o[0]-o[2]*0.85)+' '+(o[1]+o[3]*0.2)+' Q'+o[0]+' '+(o[1]+o[3]*0.85)+' '+(o[0]+o[2]*0.85)+' '+(o[1]+o[3]*0.2)+'" fill="none" stroke="'+(V.cilio||"#5a3a1e")+'" stroke-width="'+(V.cilioLarg||2.4)+'" stroke-linecap="round"/>';
+  }
+  return h;
+}
 function brotoEl(tam){
   var d=el("div","broto"+(tam?" "+tam:""));
-  var base=imgEl(ID.pre+"_"+ID.mascote+"_feliz","lay base"), fala=imgEl(ID.pre+"_"+ID.mascote+"_fala","lay fala"), pisca=imgEl(ID.pre+"_"+ID.mascote+"_pisca","lay pisca");
+  var base=imgEl(ID.pre+"_"+ID.mascote+"_feliz","lay base"), fala, pisca;
+  if(ID.mascoteVetor){ fala=_svgCamada("fala",_mascVetorFala()); pisca=_svgCamada("pisca",_mascVetorPisca()); }
+  else { fala=imgEl(ID.pre+"_"+ID.mascote+"_fala","lay fala"); pisca=imgEl(ID.pre+"_"+ID.mascote+"_pisca","lay pisca"); }
   d.appendChild(base);d.appendChild(fala);d.appendChild(pisca);
   brotoAtual={el:d,base:base,fala:fala,pisca:pisca};
   return d;
@@ -4277,8 +4341,13 @@ function montaFase(i, aoFim){
   /* a vitrine SUBSTITUI a barra fina quando a atividade tem figuras para ela */
   if(VITRINE.length) poeVitrine(t, i); else setProg(t, progDaFase(i));
   var cen = el("div","centro");
+  /* ⭐ CASCA CONVERSA (ver CSS `.casca-conversa`): cabecalho com o mascote e o "3 de 32",
+     a mensagem anterior esmaecida, e a peca dentro do cartao de resposta (`_cvAlvo`). */
+  var _cv = (ID.casca === "conversa");
+  if(_cv){ t.appendChild(_cvCab(i)); if(_cvUltimo) cen.appendChild(el("div","cv-hist", _cvUltimo)); }
   if(f.selo) cen.appendChild(el("div","selo", f.selo));
   if(f.enunciado) cen.appendChild(el("div","balao", f.enunciado));
+  if(_cv && f.enunciado) _cvUltimo = f.enunciado;
   /* ⭐ o enunciado desta fase, para as pecas que dao `limpa()` e remontam a
      propria tela de abertura (relampago/caca/cruzadinha): sem isto o balao
      narrado do motor era apagado e a tela de abertura ficava MUDA (o gate
@@ -4346,8 +4415,49 @@ function montaFase(i, aoFim){
     if(!window.__regou && f.conceito) reg(f.conceito, 1);
     if(_aoFimOrig) _aoFimOrig();
   };
-  m(f, cen, aoFimReg);
+  /* na casca conversa a peca desenha dentro do CARTAO DE RESPOSTA da crianca; para a
+     peca ele e o "centro" de sempre (coluna, centralizado, largura toda). */
+  var _cvAlvo = cen;
+  if(_cv){ _cvAlvo = el("div","cv-resp"); cen.appendChild(_cvAlvo); }
+  m(f, _cvAlvo, aoFimReg);
+  /* ⭐ ACABAMENTO DE APP (Marcos, set/2026: "coisa mais profissional, mais bonita"):
+     o que a peca acabou de desenhar ENTRA em cascata — selo, balao e cada carta/
+     opcao/tecla sobem 14px e aparecem, uma atras da outra, como nos apps que ele
+     ve na internet (PBS KIDS, Duolingo). So opacity/transform (gamefeel R5),
+     finita (leiaute regra 12), desligada em prefers-reduced-motion e congelada
+     na foto do portao 5c. Roda DEPOIS da peca, no proximo tick, para pegar o que
+     ela apendou de forma sincrona. */
+  setTimeout(function(){ _mtEntra(t); }, 0);   /* setTimeout da fase: morre no limpa() */
 
+}
+
+/* cascata de entrada — ver montaFase. Alvos: os filhos diretos do .centro; quando
+   um filho e uma GRADE (flex/grid com 3+ filhos: opcoes, cartas, teclas), a cascata
+   desce aos netos, com o atraso limitado para a ultima entrar antes de 0,5 s. */
+function _mtEntra(t){
+  try{
+    if(_reduzMov || !t) return;
+    var cen=t.querySelector(".centro")||t, kids=[].slice.call(cen.children), alvos=[], k, g, cs;
+    for(k=0;k<kids.length;k++){
+      var e=kids[k];
+      if(!e||e.nodeType!==1) continue;
+      if(/(^|\s)(vitrine|prog|barra|hint)(\s|$)/.test(e.className||"")) continue;
+      g=[].slice.call(e.children).filter(function(c){ return c.nodeType===1; });
+      cs=getComputedStyle(e);
+      if(g.length>=3 && /flex|grid/.test(cs.display||"")){ alvos=alvos.concat(g.slice(0,30)); }
+      else alvos.push(e);
+    }
+    /* toda a cascata cabe em 0,6 s (8 x 30 ms + 0,36 s): os portoes esperam 650 ms
+       depois de abrir a fase e ainda conferem se sobrou `.mt-entra` na tela. A
+       classe sai no animationend (com relogio de garantia), nao num tempo fixo. */
+    alvos.forEach(function(e,i){
+      var d=Math.min(i,8)*30, tirou=false;
+      function tira(){ if(tirou) return; tirou=true; try{ e.classList.remove("mt-entra"); e.style.animationDelay=""; }catch(_e){} }
+      e.classList.add("mt-entra"); e.style.animationDelay=d+"ms";
+      try{ e.addEventListener("animationend", tira, {once:true}); }catch(_e){}
+      setTimeout(tira, 800+d);
+    });
+  }catch(e){}
 }
 
 function abreFase(i){
@@ -4404,7 +4514,27 @@ function semTag(h){ return String(h || "").replace(/<[^>]+>/g, ""); }
 
 /* o motor so comeca DEPOIS que a identidade e as fases existem — a linha
    original do mascote abria a capa antes disso (ver TROCAS) */
+/* ⭐ CASCA (set/2026): `ID.casca` vem do conteudo.json ("classica" = a de sempre). A
+   classe no body liga o CSS da casca; o avatar do cabecalho/balao e a pose parada do
+   mascote da atividade (a mesma do `.broto`). */
+var _cvUltimo = "";
+function _cvCab(i){
+  var h = el("div","cv-cab"), n = el("b", null, (MASCOTE_NOME || ID.mascoteNome || ""));
+  h.appendChild(el("i","cv-av",""));
+  n.appendChild(el("span","cv-on","est&#225; aqui com voc&#234;"));
+  h.appendChild(n);
+  h.appendChild(el("span","cv-falta", (i + 1) + " de " + FASES.length));
+  return h;
+}
+function _ligaCasca(){
+  try{
+    if(!ID.casca || ID.casca === "classica") return;
+    document.body.className += " casca-" + ID.casca;
+    document.documentElement.style.setProperty("--cv-masc", "url(img/" + ID.pre + "_" + ID.mascote + "_feliz.png)");
+  }catch(e){}
+}
 function inicia(){
+  _ligaCasca();
   preparaIdentidade();
   if(location.search.indexOf("painel") >= 0){ telaPainel(); } else { telaCapa(); }
 }
@@ -9503,6 +9633,12 @@ var PASSO_AJUDA=4;
 var TEMPO_VOLTA=1400;
 /* a ESPIADA de abertura: o tabuleiro nasce aberto e vira sozinho. */
 var TEMPO_ESPIADA=2600;
+/* ⭐ (set/2026, Central f22/f34) o ENUNCIADO da fase, quando a atividade quer o
+   dela ("Vire as fichas e case cada genero com a marca que entrega ele"). Vazio
+   = o balao padrao conforme o modo. Sem isto a voz dizia o `enunciado` do
+   conteudo.json e a tela mostrava "Ache a palavra e o desenho que combina" —
+   os portoes 0g/0n reprovaram a Central por isso. */
+var ENUN=""; /*TECNICA*/
 
 var cartas, virada, travado, feitos, tentativas, progI, elPlacar, elPares, elHint, ger=0;
 
@@ -9543,11 +9679,11 @@ function pecaMemoria(){
   /* balão conforme o modo: par de imagens (1º ano) x palavra×significado */
   var soImg=true, temSom=false, _pi;
   for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; } if(PARES[_pi].som) temSom=true; }
-  c.appendChild(el("div","balao", temSom
+  c.appendChild(el("div","balao", ENUN || (temSom
     ? "Ache a <b>figura</b> e o <b>som</b> que combinam."
     : (soImg
     ? "Ache as <b>figuras iguais</b>."
-    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>.")));
+    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>."))));
 
   /* monta as 8 cartas: metade palavra, metade significado.
      Cada uma leva a SUA figura — as duas do par sao desenhos diferentes. */
@@ -9828,6 +9964,9 @@ function fim(){
                +PARES.length+' pares.', pecaMemoria);
 }
     if(f && f.dados) PARES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+    }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaMemoria();
   })();

@@ -73,6 +73,15 @@ no `_padrao/INTERATIVIDADES.md` como ✅ só depois da banca.
 - Recompensa **parcimoniosa**: "pequenas conquistas que celebram marcos sem pressão".
   Estrelas no fim de rodada, não a cada toque.
 
+## Estado (2026-09-07, noite)
+
+- **Conversa — CODIFICADA no motor** (`motor.html`: CSS `body.casca-conversa`, `_cvCab`,
+  `_ligaCasca`, cartão `.cv-resp` em `montaFase`; `montar.py` valida `"casca"` em
+  `CASCAS`; `COBAIA_CASCA=conversa bash _qa/cobaia.sh` roda as 91 mecânicas dentro
+  dela). Estreia marcada na **Padaria** (`"casca":"conversa"` no conteudo.json).
+  Entra como ✅ só depois da cobaia com a casca + banca inteira da Padaria.
+- As outras cinco: ainda só proposta.
+
 ## Decisão pendente
 
 O Marcos escolhe **quais** cascas (todas ou algumas) e **em qual atividade** cada uma

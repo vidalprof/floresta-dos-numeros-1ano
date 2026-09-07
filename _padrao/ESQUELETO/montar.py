@@ -292,6 +292,16 @@ def confere(c, mecs):
 #    acusava "campo que a peca NAO le: 5, 10, 50..." e ABORTAVA a montagem.
 MAPA_DE_DADOS = {"imgs"}
 
+# ⭐ as cascas de app que o motor sabe desenhar (`_padrao/MODELOS-DE-APP.md`). Cada
+#    casca nova entra aqui SO depois da cobaia + banca numa atividade real.
+CASCAS = ("classica", "conversa")
+
+def _valida_casca(v):
+    v = v or "classica"
+    if v not in CASCAS:
+        raise SystemExit(u"casca %r nao existe no motor (validas: %s)" % (v, ", ".join(CASCAS)))
+    return v
+
 def chaves_de(v, fundo=None):
     u"""todos os nomes de campo que aparecem dentro de uma estrutura."""
     fundo = set() if fundo is None else fundo
@@ -1617,6 +1627,10 @@ def escreve_index(pasta, c, falas):
         #    "palpebra":"#cor", "cilio":"#cor", "boca":"<path d>", "bocaCor":"#cor",
         #    "bocaBorda":"#cor"}`. Sem o campo, o motor usa as camadas PNG de sempre.
         "mascoteVetor": c.get("mascote_vetor") or None,
+        # ⭐ CASCA DE APP (set/2026, `_padrao/MODELOS-DE-APP.md`): "classica" (padrão) ou
+        #    "conversa". Casca que não existe no motor derruba a montagem aqui, não na
+        #    mão da criança.
+        "casca": _valida_casca(c.get("casca")),
         # o convite do crachá é da HISTÓRIA desta atividade ("Quem vai pilotar
         # o foguete hoje?"), não um texto de sistema
         "convite": c.get("convite") or u"<b>Quem vai jogar</b> hoje?",

@@ -70,6 +70,9 @@ def build():
         u"sub": u"Fixture interno — todas as mecânicas em modo exemplo",
         u"ano": u"3º ano",
         u"prefixo": u"cb",
+        # ⭐ casca de app a testar: `COBAIA_CASCA=conversa bash _qa/cobaia.sh` roda as 91
+        #    mecanicas DENTRO da casca (cada casca passa pela cobaia antes de estrear).
+        u"casca": __import__("os").environ.get("COBAIA_CASCA") or u"classica",
         u"mascote": u"coruja",
         u"mascoteNome": u"Byte",
         u"voz": u"feminina",

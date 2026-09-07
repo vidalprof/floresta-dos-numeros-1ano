@@ -173,6 +173,34 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 @-webkit-keyframes mtEntra{from{opacity:0;-webkit-transform:translateY(14px) scale(.97)}to{opacity:1;-webkit-transform:none}}
 @keyframes mtEntra{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){ .mt-entra{-webkit-animation:none;animation:none} }
+/* ⭐⭐ CASCA "CONVERSA" (set/2026, `_padrao/MODELOS-DE-APP.md`, pedido do Marcos: "vários
+   estilos de app para a criança não enjoar"). Mesmo miolo, outra cara: a tela vira uma
+   conversa — cabeçalho com o mascote ("Fubá · está aqui · 3 de 32"), o enunciado é a
+   MENSAGEM DELE (balão à esquerda, com o avatar), a peça mora no CARTÃO DE RESPOSTA da
+   criança (à direita), a mensagem anterior fica esmaecida em cima. Liga com
+   `"casca":"conversa"` no conteudo.json; sem o campo, nada disto se aplica.
+   Só CSS: transform/opacity (gamefeel R5), nada em laço, reduced-motion respeitado. */
+body.casca-conversa .tela{-webkit-animation:none;animation:none}
+body.casca-conversa .centro{-webkit-box-pack:start;-ms-flex-pack:start;justify-content:flex-start;padding-top:2px}
+.cv-cab{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;width:100%;max-width:520px;margin:0 auto 10px;padding:6px 10px;-webkit-box-sizing:border-box;box-sizing:border-box;background:rgba(255,255,255,.66);border-radius:16px;-webkit-box-shadow:0 3px 10px rgba(0,0,0,.12);box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.cv-av{display:inline-block;width:40px;height:40px;border-radius:50%;background:#fff var(--cv-masc) center/86% no-repeat;-webkit-box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.18);box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.18);margin-right:10px;-webkit-box-flex:0;-ms-flex:0 0 auto;flex:0 0 auto}
+.cv-cab b{font-size:16px;color:#1f2a14;line-height:1.15}
+.cv-cab .cv-on{display:block;font-size:12.5px;font-weight:600;color:#2c7318}
+.cv-cab .cv-falta{margin-left:auto;font-size:12.5px;font-weight:700;background:rgba(18,26,14,.74);color:#fff;border-radius:999px;padding:5px 10px;white-space:nowrap}
+body.casca-conversa .selo{-webkit-align-self:center;-ms-flex-item-align:center;align-self:center;background:rgba(18,26,14,.48);color:#fff;font-size:12px;letter-spacing:.4px}
+body.casca-conversa .centro > .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;margin-left:52px;border-radius:6px 22px 22px 22px;max-width:430px;max-width:min(430px, calc(100% - 52px))}
+body.casca-conversa .centro > .balao:before{content:"";position:absolute;left:-52px;top:-2px;width:42px;height:42px;border-radius:50%;background:#fff var(--cv-masc) center/88% no-repeat;-webkit-box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.2);box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.2)}
+.cv-hist{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;margin:0 0 10px 52px;max-width:430px;max-width:min(430px, calc(100% - 52px));background:rgba(255,253,246,.62);border-radius:6px 18px 18px 18px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#4a4536;line-height:1.3;text-align:left}
+@media (max-height:640px){ .cv-hist{display:none} }
+body.casca-conversa .cv-resp{width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:10px 4px 12px;margin-top:12px;background:rgba(255,255,255,.40);border-radius:22px 6px 22px 22px;-webkit-box-shadow:inset 0 0 0 2px rgba(255,255,255,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
+/* o balao que a PECA escreve dentro do cartao continua sendo fala do mascote */
+body.casca-conversa .cv-resp .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;border-radius:6px 22px 22px 22px}
+body.casca-conversa .centro > .balao.mt-entra,body.casca-conversa .cv-hist.mt-entra{-webkit-animation-name:cvEsq;animation-name:cvEsq}
+body.casca-conversa .cv-resp.mt-entra{-webkit-animation-name:cvDir;animation-name:cvDir}
+@-webkit-keyframes cvEsq{from{opacity:0;-webkit-transform:translateX(-18px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes cvEsq{from{opacity:0;transform:translateX(-18px) scale(.97)}to{opacity:1;transform:none}}
+@-webkit-keyframes cvDir{from{opacity:0;-webkit-transform:translateX(18px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes cvDir{from{opacity:0;transform:translateX(18px) scale(.97)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){
   .vitrine .pgfill,.vitrine .pgfill:before,.vitrine .pgcomet{-webkit-animation:none;animation:none}
 }
@@ -2349,8 +2377,13 @@ function montaFase(i, aoFim){
   /* a vitrine SUBSTITUI a barra fina quando a atividade tem figuras para ela */
   if(VITRINE.length) poeVitrine(t, i); else setProg(t, progDaFase(i));
   var cen = el("div","centro");
+  /* ⭐ CASCA CONVERSA (ver CSS `.casca-conversa`): cabecalho com o mascote e o "3 de 32",
+     a mensagem anterior esmaecida, e a peca dentro do cartao de resposta (`_cvAlvo`). */
+  var _cv = (ID.casca === "conversa");
+  if(_cv){ t.appendChild(_cvCab(i)); if(_cvUltimo) cen.appendChild(el("div","cv-hist", _cvUltimo)); }
   if(f.selo) cen.appendChild(el("div","selo", f.selo));
   if(f.enunciado) cen.appendChild(el("div","balao", f.enunciado));
+  if(_cv && f.enunciado) _cvUltimo = f.enunciado;
   /* ⭐ o enunciado desta fase, para as pecas que dao `limpa()` e remontam a
      propria tela de abertura (relampago/caca/cruzadinha): sem isto o balao
      narrado do motor era apagado e a tela de abertura ficava MUDA (o gate
@@ -2418,7 +2451,11 @@ function montaFase(i, aoFim){
     if(!window.__regou && f.conceito) reg(f.conceito, 1);
     if(_aoFimOrig) _aoFimOrig();
   };
-  m(f, cen, aoFimReg);
+  /* na casca conversa a peca desenha dentro do CARTAO DE RESPOSTA da crianca; para a
+     peca ele e o "centro" de sempre (coluna, centralizado, largura toda). */
+  var _cvAlvo = cen;
+  if(_cv){ _cvAlvo = el("div","cv-resp"); cen.appendChild(_cvAlvo); }
+  m(f, _cvAlvo, aoFimReg);
   /* ⭐ ACABAMENTO DE APP (Marcos, set/2026: "coisa mais profissional, mais bonita"):
      o que a peca acabou de desenhar ENTRA em cascata — selo, balao e cada carta/
      opcao/tecla sobem 14px e aparecem, uma atras da outra, como nos apps que ele
@@ -2513,7 +2550,27 @@ function semTag(h){ return String(h || "").replace(/<[^>]+>/g, ""); }
 
 /* o motor so comeca DEPOIS que a identidade e as fases existem — a linha
    original do mascote abria a capa antes disso (ver TROCAS) */
+/* ⭐ CASCA (set/2026): `ID.casca` vem do conteudo.json ("classica" = a de sempre). A
+   classe no body liga o CSS da casca; o avatar do cabecalho/balao e a pose parada do
+   mascote da atividade (a mesma do `.broto`). */
+var _cvUltimo = "";
+function _cvCab(i){
+  var h = el("div","cv-cab"), n = el("b", null, (MASCOTE_NOME || ID.mascoteNome || ""));
+  h.appendChild(el("i","cv-av",""));
+  n.appendChild(el("span","cv-on","est&#225; aqui com voc&#234;"));
+  h.appendChild(n);
+  h.appendChild(el("span","cv-falta", (i + 1) + " de " + FASES.length));
+  return h;
+}
+function _ligaCasca(){
+  try{
+    if(!ID.casca || ID.casca === "classica") return;
+    document.body.className += " casca-" + ID.casca;
+    document.documentElement.style.setProperty("--cv-masc", "url(img/" + ID.pre + "_" + ID.mascote + "_feliz.png)");
+  }catch(e){}
+}
 function inicia(){
+  _ligaCasca();
   preparaIdentidade();
   if(location.search.indexOf("painel") >= 0){ telaPainel(); } else { telaCapa(); }
 }
