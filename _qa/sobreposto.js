@@ -205,6 +205,24 @@ const TOCAVEL = 'button, [onclick], .btn, .op, .cor, .pc, .lig, .mcarta, .gthumb
           if (!emCima) continue;
           /* ⚠️ armadilha 2: filho e pai não se cobrem */
           if (emCima === el || el.contains(emCima) || emCima.contains(el)) continue;
+          /* ⚠️ armadilha 4 (set/2026, Trem): a BARRA de baixo (Ouvir/Dica) e camada
+             FIXA de proposito. Quando a `.tela` ROLA, a crianca rola e o alvo sai de
+             baixo dela — e a regra 3 do `leiaute.js` ja reprova o caso SEM rolagem
+             ("resposta presa atras da barra, sem rolagem"). Aqui era a mesma
+             acusacao duas vezes, uma delas errada: o botao de ouvir da vitrine com
+             o centro a 0px do topo da barra, numa tela que rola 100px. */
+          if (emCima.closest && emCima.closest('#barra')) {
+            /* quem rola e o PRIMEIRO ancestral com overflow auto/scroll e sobra
+               de altura — nao o `.tela` mais proximo: a peca monta um `.tela`
+               proprio (estatico) DENTRO do `.tela` do motor, que e o que rola. */
+            let rola = document.documentElement.scrollHeight > innerHeight + 4;
+            for (let a = el.parentElement; a && !rola; a = a.parentElement) {
+              const ca = getComputedStyle(a);
+              if ((ca.overflowY === 'auto' || ca.overflowY === 'scroll') &&
+                  a.scrollHeight > a.clientHeight + 4) rola = true;
+            }
+            if (rola) continue;
+          }
           /* ⚠️ armadilha 3: TELA DE CAPA nao e obstrucao. Achada varrendo as 74
              atividades: no Aventura e no Voxel o portao acusou os botoes de
              baixo de `#telaIntro` e `#start` — mas aquilo e a capa cobrindo a
