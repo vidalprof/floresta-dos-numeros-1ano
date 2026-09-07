@@ -150,7 +150,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .vitrine .pgtick{position:absolute;top:50%;width:2px;height:9px;margin-top:-4.5px;
   background:rgba(255,255,255,.45);border-radius:2px}
 .vitrine .pgeu{-webkit-box-flex:0;-webkit-flex:none;flex:none;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;gap:5px;max-width:118px;background:rgba(255,253,246,.92);color:#3a2a14;border-radius:999px;padding:2px 9px 2px 2px;margin-right:8px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.18);box-shadow:0 2px 6px rgba(0,0,0,.18)}
-.vitrine .pgeufoto{width:26px;height:26px;border-radius:50%;-o-object-fit:contain;object-fit:contain;background:#eafce0;-webkit-flex:none;flex:none}
+.vitrine .pgeufoto{width:26px;height:26px;border-radius:8px;/* quadrado arredondado, nao circulo: o circulo cortava o topo da cabeca do cracha (Marcos, set/2026) */-o-object-fit:contain;object-fit:contain;background:#eafce0;-webkit-flex:none;flex:none}
 .vitrine .pgeunome{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:359px){ .vitrine .pgeunome{display:none} .vitrine .pgeu{padding:2px;margin-right:6px} }
 .vitrine .pgchip{-webkit-box-flex:0;-webkit-flex:none;flex:none;
@@ -845,7 +845,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    "7 / 34" e o chip do cracha (medido em set/2026 no Trem, tema claro; no fundo
    escuro ela passava por reflexo de madeira). Estatica, ela fica onde a frase
    acima promete: dentro do cartao, menorzinha, abaixo da vitrine.            */
-.progpeca{position:static;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
+/* ⚠️⚠️ RELATIVE, nunca STATIC (set/2026, pego pelo Marcos no celular, Trem fase 2):
+   com `static` a barra deixou de ser o pai posicionado do preenchimento `.prog>i`
+   (absoluto, top:0;bottom:0) — ele passou a medir a `.tela` INTEIRA: um pilar verde
+   do tamanho da tela, crescendo a cada letra colocada. `relative` mantem a barra
+   no fluxo E continua sendo a caixa do preenchimento. Medido pelo leiaute.js
+   (regra 14: preenchimento fora da propria barra).                                */
+.progpeca{position:relative;top:auto;left:auto;right:auto;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
 /* ⚠️ o SELO da peca e o mesmo rotulo que o motor ja poe em cima, vindo do
    conteudo.json: duas plaquinhas iguais, uma embaixo da outra, so ocupam a tela
    da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda

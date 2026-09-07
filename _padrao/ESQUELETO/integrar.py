@@ -760,7 +760,13 @@ CSS_PONTE = u'''
    "7 / 34" e o chip do cracha (medido em set/2026 no Trem, tema claro; no fundo
    escuro ela passava por reflexo de madeira). Estatica, ela fica onde a frase
    acima promete: dentro do cartao, menorzinha, abaixo da vitrine.            */
-.progpeca{position:static;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
+/* ⚠️⚠️ RELATIVE, nunca STATIC (set/2026, pego pelo Marcos no celular, Trem fase 2):
+   com `static` a barra deixou de ser o pai posicionado do preenchimento `.prog>i`
+   (absoluto, top:0;bottom:0) — ele passou a medir a `.tela` INTEIRA: um pilar verde
+   do tamanho da tela, crescendo a cada letra colocada. `relative` mantem a barra
+   no fluxo E continua sendo a caixa do preenchimento. Medido pelo leiaute.js
+   (regra 14: preenchimento fora da propria barra).                                */
+.progpeca{position:relative;top:auto;left:auto;right:auto;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
 /* ⚠️ o SELO da peca e o mesmo rotulo que o motor ja poe em cima, vindo do
    conteudo.json: duas plaquinhas iguais, uma embaixo da outra, so ocupam a tela
    da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda

@@ -189,6 +189,22 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           if(naGrade){ if(b.height<30||b.width<30) grade++; }
           else if(b.height<piso||b.width<piso) pequenos++;
         }
+        /* ⭐ REGRA 14 (set/2026, pego pelo MARCOS no celular, Trem fase 2): o
+           preenchimento da barra de progresso (`.prog>i`, absoluto) tem que caber
+           DENTRO da propria barra. Um `position:static` na barra da peca fez o
+           preenchimento medir a `.tela` inteira: um pilar verde translucido do
+           tamanho da tela, crescendo a cada letra colocada — e NENHUM portao viu,
+           porque no comeco da fase ele tem largura 0. A altura, porem, ja denuncia
+           (820px numa barra de 6px). Vale para qualquer barra, do motor ou da peca. */
+        let barraVaza=0;
+        document.querySelectorAll(".prog").forEach(function(pr){
+          const rp=pr.getBoundingClientRect(); if(rp.width<4&&rp.height<4) return;
+          pr.querySelectorAll(":scope > i").forEach(function(f){
+            const rf=f.getBoundingClientRect();
+            if(rf.height>rp.height+4||rf.width>rp.width+4||rf.top<rp.top-4||rf.bottom>rp.bottom+4||rf.left<rp.left-4) barraVaza++;
+          });
+        });
+        if(barraVaza) out.push(barraVaza+" preenchimento(s) de barra (.prog>i) FORA da propria barra (o verde toma a tela e cresce com o progresso)");
         if(forams) out.push(forams+" resposta(s) FORA da tela SEM ROLAGEM (a crianca nao ve o que tocar)");
         if(atras) out.push(atras+" resposta(s) presa(s) atras da barra, sem rolagem");
         if(pequenos) out.push(pequenos+" alvo(s) menor(es) que "+piso+"px"+(piso>40?" (ate o 2o ano a pesquisa pede 44)":""));

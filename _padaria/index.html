@@ -150,7 +150,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .vitrine .pgtick{position:absolute;top:50%;width:2px;height:9px;margin-top:-4.5px;
   background:rgba(255,255,255,.45);border-radius:2px}
 .vitrine .pgeu{-webkit-box-flex:0;-webkit-flex:none;flex:none;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;gap:5px;max-width:118px;background:rgba(255,253,246,.92);color:#3a2a14;border-radius:999px;padding:2px 9px 2px 2px;margin-right:8px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.18);box-shadow:0 2px 6px rgba(0,0,0,.18)}
-.vitrine .pgeufoto{width:26px;height:26px;border-radius:50%;-o-object-fit:contain;object-fit:contain;background:#eafce0;-webkit-flex:none;flex:none}
+.vitrine .pgeufoto{width:26px;height:26px;border-radius:8px;/* quadrado arredondado, nao circulo: o circulo cortava o topo da cabeca do cracha (Marcos, set/2026) */-o-object-fit:contain;object-fit:contain;background:#eafce0;-webkit-flex:none;flex:none}
 .vitrine .pgeunome{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-width:359px){ .vitrine .pgeunome{display:none} .vitrine .pgeu{padding:2px;margin-right:6px} }
 .vitrine .pgchip{-webkit-box-flex:0;-webkit-flex:none;flex:none;
@@ -845,7 +845,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
    "7 / 34" e o chip do cracha (medido em set/2026 no Trem, tema claro; no fundo
    escuro ela passava por reflexo de madeira). Estatica, ela fica onde a frase
    acima promete: dentro do cartao, menorzinha, abaixo da vitrine.            */
-.progpeca{position:static;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
+/* ⚠️⚠️ RELATIVE, nunca STATIC (set/2026, pego pelo Marcos no celular, Trem fase 2):
+   com `static` a barra deixou de ser o pai posicionado do preenchimento `.prog>i`
+   (absoluto, top:0;bottom:0) — ele passou a medir a `.tela` INTEIRA: um pilar verde
+   do tamanho da tela, crescendo a cada letra colocada. `relative` mantem a barra
+   no fluxo E continua sendo a caixa do preenchimento. Medido pelo leiaute.js
+   (regra 14: preenchimento fora da propria barra).                                */
+.progpeca{position:relative;top:auto;left:auto;right:auto;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
 /* ⚠️ o SELO da peca e o mesmo rotulo que o motor ja poe em cima, vindo do
    conteudo.json: duas plaquinhas iguais, uma embaixo da outra, so ocupam a tela
    da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda
@@ -1349,7 +1355,9 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-digitar .d2_vaga.cheia{-webkit-transform:none;transform:none}}@media (max-height:560px){
 
-.mec-digitar .dgfig{width:72px;height:72px;margin-top:10px}}
+.mec-digitar .dgfig{width:72px;height:72px;margin-top:10px;padding:8px}
+
+.mec-digitar .dgfig img{width:72px;height:72px}}
 
 .mec-digitar .zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none; width:46px;height:46px;min-width:46px;margin-left:10px;padding:0;border:0; border-radius:50%;cursor:pointer;opacity:1; background-color:#efe6d2; background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E"); background-repeat:no-repeat;background-position:center center; -webkit-background-size:24px 24px;background-size:24px 24px; -webkit-transition:background-color .15s;transition:background-color .15s}
 
@@ -4647,7 +4655,10 @@ setTimeout(inicia, 0);
    baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
    mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
 function nota(f, dur, vol, tipo, atraso){
-  if(typeof arma === "function") arma();
+  /* ⚠️ (set/2026, Solidos, portao 1x "PC ruim") o `arma()` ficava FORA do try: num
+     PC sem audio ele estoura e a fase inteira (quem-sou-eu -> sPista) morria com
+     ele. Enfeite quebrado nao pode prender a crianca — som falha em silencio. */
+  try{ if(typeof arma === "function") arma(); }catch(e){ return; }
   var c = window.ac; if(!c || !c.createOscillator) return;
   try{
     var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
@@ -9773,6 +9784,9 @@ function ajuda(n){
     abreUma(alvo.k);
   }else{
     if(soI){ mostraDica("Vou abrir este <b>par de figuras iguais</b>."); }
+    /* ⚠️ (set/2026, Solidos) par palavra+figura tem o MESMO rotulo nos dois lados:
+       "cubo — cubo" saia repetido na tela e na voz (revisor 0o). */
+    else if(String(rot2).toLowerCase()===String(rot).toLowerCase()){ mostraDica("Vou abrir este par: <b>"+rot+"</b> e o desenho dele."); }
     else   { mostraDica("Vou abrir este par: <b>"+rot+"</b> &mdash; "+rot2+"."); }
     abrePar(alvo.k);
   }
