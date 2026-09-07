@@ -134,7 +134,7 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
       medidas++;
       await p.waitForTimeout(650);
       /* a cascata de entrada do motor (.mt-entra) tem que ter ASSENTADO antes de medir */
-      try{ await p.waitForFunction(()=>!document.querySelector('.mt-entra'),{timeout:1500}); }catch(e){}
+      try{ await p.waitForFunction(()=>!document.querySelector('.mt-entra,.casca-transicao'),{timeout:2000}); }catch(e){}
       const r=await p.evaluate(({sel,clic,piso})=>{
         const out=[];
         const barra=document.getElementById("barra");

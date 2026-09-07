@@ -67,7 +67,7 @@ catch (e) {
      /* o que e de RELOGIO, nao de leiaute, sai da foto: confete (canvas), o "Boa!"
         que sobe, o mascote (lip-sync troca a camada 60x/s) e a barra de tempo. */
      folha=await p.addStyleTag({content:'*,*::before,*::after{animation-duration:.001s!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:0s!important;caret-color:transparent!important}'
-       +'#conf,.flut,.broto,.tbar{visibility:hidden!important}'});
+       +'#conf,.flut,.broto,.tbar,.casca-transicao{visibility:hidden!important}'});
      await p.waitForTimeout(160);
      await p.screenshot({path:require('path').join(FOTOS,chave+'.png')});
    }catch(e){}

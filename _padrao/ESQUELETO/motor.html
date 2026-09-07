@@ -203,6 +203,25 @@ body.casca-conversa .cv-resp.mt-entra{-webkit-animation-name:cvDir;animation-nam
 @keyframes cvEsq{from{opacity:0;transform:translateX(-18px) scale(.97)}to{opacity:1;transform:none}}
 @-webkit-keyframes cvDir{from{opacity:0;-webkit-transform:translateX(18px) scale(.97)}to{opacity:1;-webkit-transform:none}}
 @keyframes cvDir{from{opacity:0;transform:translateX(18px) scale(.97)}to{opacity:1;transform:none}}
+/* ⭐⭐ CASCA "TRILHA / MAPA" (set/2026, `_padrao/MODELOS-DE-APP.md` casca 1): a cada fase
+   nova o MAPA aparece por ~1,1 s — um caminho com uma parada por fase, as feitas em
+   verde, a atual em amarelo, o mascote pulando da parada anterior para a nova e a
+   bandeira no fim. A criança VÊ quanto falta (Trem, Padaria, Gincana: atividades longas).
+   `pointer-events:none` (é só visual, nada trava o toque), some sozinha, fora em
+   reduced-motion. Os portões esperam a classe `casca-transicao` sumir antes de medir e a
+   foto do 5c a esconde. Só transform/opacity (gamefeel R5). */
+.tr-mapa{position:fixed;left:0;top:0;right:0;bottom:0;z-index:60;pointer-events:none;background:rgba(20,30,16,.55);display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;-webkit-animation:trFade 1.15s both;animation:trFade 1.15s both}
+@-webkit-keyframes trFade{0%{opacity:0}12%{opacity:1}82%{opacity:1}100%{opacity:0}}
+@keyframes trFade{0%{opacity:0}12%{opacity:1}82%{opacity:1}100%{opacity:0}}
+.tr-cx{position:relative;width:92vw;max-width:520px;height:58vh;max-height:340px;background:rgba(255,253,246,.97);border-radius:24px;-webkit-box-shadow:0 12px 40px rgba(0,0,0,.35);box-shadow:0 12px 40px rgba(0,0,0,.35);overflow:hidden}
+.tr-cx svg{position:absolute;left:0;top:0;width:100%;height:100%}
+.tr-par{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#e9e2d1;border:3px solid #c9bda6;-webkit-box-sizing:border-box;box-sizing:border-box}
+.tr-par.ok{background:#8be05a;border-color:#2c7318}
+.tr-par.atual{background:#ffd54a;border-color:#c9a52f;-webkit-box-shadow:0 0 0 6px rgba(255,213,74,.35);box-shadow:0 0 0 6px rgba(255,213,74,.35)}
+.tr-masc{position:absolute;width:58px;height:58px;margin:-54px 0 0 -29px;background:var(--cv-masc) center/contain no-repeat;-webkit-filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.tr-band{position:absolute;width:26px;height:30px;margin:-30px 0 0 -3px}
+.tr-tit{position:absolute;left:50%;top:8px;-webkit-transform:translateX(-50%);transform:translateX(-50%);white-space:nowrap;text-align:center;font-weight:800;color:#1f2a14;background:rgba(255,253,246,.96);border-radius:999px;padding:3px 12px;font-size:15px;letter-spacing:.3px}
+.tr-tit b{color:#2c7318}
 @media (prefers-reduced-motion: reduce){
   .vitrine .pgfill,.vitrine .pgfill:before,.vitrine .pgcomet{-webkit-animation:none;animation:none}
 }
@@ -2399,6 +2418,7 @@ function montaFase(i, aoFim){
      enunciado gravado da fase. */
   try{ window.__faseVozIntro = f.vozIntro || ""; }catch(_e){}
   t.appendChild(cen); app.appendChild(t);
+  _trMapa(i);   /* casca TRILHA: o mapa por 1 s, o mascote pula para esta parada */
 
   /* o andaime que cresce — o mesmo do mascote (ajudaJd), com a dica desta fase */
   var err = 0;
@@ -2563,6 +2583,45 @@ function _cvCab(i){
   h.appendChild(n);
   h.appendChild(el("span","cv-falta", (i + 1) + " de " + FASES.length));
   return h;
+}
+/* ⭐ CASCA TRILHA — as paradas em % da caixa: serpentina de ate 9 por fileira. */
+function _trPos(N){
+  var porFila = N <= 9 ? N : Math.ceil(N / Math.ceil(N / 9)), filas = Math.ceil(N / porFila), out = [], k, f, c, x, y;
+  for(k = 0; k < N; k++){
+    f = Math.floor(k / porFila); c = k % porFila; if(f % 2) c = porFila - 1 - c;
+    x = porFila > 1 ? 9 + c * (82 / (porFila - 1)) : 50;
+    y = filas > 1 ? 22 + f * (62 / (filas - 1)) : 55;
+    out.push([Math.round(x * 10) / 10, Math.round(y * 10) / 10]);
+  }
+  return out;
+}
+function _trMapa(i){
+  try{
+    if(ID.casca !== "trilha" || _reduzMov) return;
+    var N = FASES.length, ov = el("div","tr-mapa casca-transicao"), cx = el("div","tr-cx"), pos = _trPos(N), k, p;
+    var pts = pos.map(function(q){ return q[0] + "," + q[1]; }).join(" ");
+    cx.innerHTML = '<svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'
+      + '<polyline fill="none" stroke="#d8ccb0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + pts + '"/>'
+      + '<polyline fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" points="' + pts + '"/></svg>';
+    for(k = 0; k < N; k++){
+      p = el("i","tr-par" + (k < i ? " ok" : (k === i ? " atual" : "")));
+      p.style.left = pos[k][0] + "%"; p.style.top = pos[k][1] + "%"; cx.appendChild(p);
+    }
+    var fim = pos[N - 1], band = el("i","tr-band");
+    band.innerHTML = '<svg viewBox="0 0 26 30" width="26" height="30" aria-hidden="true"><rect x="2" y="2" width="3" height="28" rx="1.5" fill="#6b4a2a"/><path d="M5 3h18l-4 6 4 6H5z" fill="#e0483a"/></svg>';
+    band.style.left = fim[0] + "%"; band.style.top = fim[1] + "%"; cx.appendChild(band);
+    var m = el("i","tr-masc"), de = pos[Math.max(0, i - 1)], para = pos[i] || fim;
+    m.style.left = para[0] + "%"; m.style.top = para[1] + "%"; cx.appendChild(m);
+    cx.appendChild(el("div","tr-tit","Parada <b>" + (i + 1) + "</b> de " + N));
+    ov.appendChild(cx); document.body.appendChild(ov);
+    var r = cx.getBoundingClientRect(), dx = (de[0] - para[0]) / 100 * r.width, dy = (de[1] - para[1]) / 100 * r.height;
+    if(i > 0){
+      m.style.transform = "translate(" + dx + "px," + dy + "px)";
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){
+        m.style.transition = "transform .6s cubic-bezier(.3,1.4,.5,1)"; m.style.transform = "translate(0,0)"; }); });
+    }
+    setTimeout(function(){ if(ov.parentNode) ov.parentNode.removeChild(ov); }, 1180);
+  }catch(e){}
 }
 function _ligaCasca(){
   try{

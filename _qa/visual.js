@@ -95,7 +95,7 @@ const TAMANHOS = [
       } catch (e) { continue; }
       await p.waitForTimeout(420);
       /* a cascata de entrada do motor (.mt-entra) tem que ter ASSENTADO antes de medir */
-      try { await p.waitForFunction(() => !document.querySelector('.mt-entra'), {timeout: 1500}); } catch (e) {}
+      try { await p.waitForFunction(() => !document.querySelector('.mt-entra,.casca-transicao'), {timeout:2000}); } catch (e) {}
       medidas++;
 
       const r = await p.evaluate(() => {

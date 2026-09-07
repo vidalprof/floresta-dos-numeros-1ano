@@ -80,7 +80,10 @@ no `_padrao/INTERATIVIDADES.md` como ✅ só depois da banca.
   `CASCAS`; `COBAIA_CASCA=conversa bash _qa/cobaia.sh` roda as 91 mecânicas dentro
   dela). Estreia marcada na **Padaria** (`"casca":"conversa"` no conteudo.json).
   Entra como ✅ só depois da cobaia com a casca + banca inteira da Padaria.
-- As outras cinco: ainda só proposta.
+- **Trilha — CODIFICADA no motor** (`_trMapa`/`_trPos`, CSS `.tr-mapa`; overlay de 1,15 s
+  com `pointer-events:none`, classe `casca-transicao` que os 4 portões de medida esperam
+  sumir e a foto do 5c esconde). Estreia marcada no **Trem** (`"casca":"trilha"`).
+- As outras quatro: ainda só proposta.
 
 ## Decisão pendente
 
