@@ -6413,7 +6413,24 @@ negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
   `integrar.py`: fica dentro do cartão, como a frase do CSS sempre prometeu. Lição:
   **portão que pula "escondido" pode estar escondendo o defeito** — quando um item
   passa a reprovar sem mudança nele, perguntar o que o DESTAPOU antes de "consertar".
-  Cobaia rodada de novo depois disso (motor mudou).
+  Cobaia rodada de novo depois disso: **91/91** (terceira vez no dia).
+- **Efeito colateral medido e corrigido no portão 1w (`sobreposto.js`):** com a
+  barrinha 18 px mais para baixo, o botão de ouvir da vitrine (26×26) ficou com o
+  centro a 0 px do topo da barra fixa no celular e o portão acusou "coberto" — numa
+  tela que ROLA 200 px. A regra 3 do `leiaute.js` já perdoa a barra fixa quando a
+  tela rola (e reprova quando não rola); o `sobreposto.js` agora segue a mesma regra,
+  procurando o **primeiro ancestral que rola** (a peça monta um `.tela` estático
+  dentro do `.tela` do motor). Trem 49/49, cobaia 32/32.
+- **Fila aberta (não é regressão, é achado):** o botão de ouvir da peça `vitrine`
+  (`.vzap`) tem **26 px** — abaixo do piso de 44 px do 1º ano. O `leiaute.js` não o
+  conta porque só mede `RESPOSTA`/`CLICAVEL` e o card inteiro também fala. Lapidar a
+  peça (botão ≥ 44 px ou tirar o botão e deixar o card falar) na próxima rodada.
+- **Trem: a esteira `produzir.sh` PARA no pré-voo** pela duplicata conhecida
+  `tr_coru_fala = tr_coru_feliz` (1c2) — e pararia de novo na banca pelo 3d. Enquanto
+  o `OPENAI_API_KEY` não chega, o Trem publica pelo caminho manual: banca inteira à
+  mão (aceitando só 1c2 + 3d), commit com a marca `[entregar _trem:o-trem-do-alfabeto]`
+  e push. **Não** declarar a cópia em `_copias_ok.json`: seria esconder um defeito real
+  (o mascote fala de boca fechada) atrás de um carimbo.
 - **Seis cascas** (`_padrao/MODELOS-DE-APP.md` + mockup enviado): trilha, livro, cartas,
   bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
   proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma
