@@ -147,7 +147,10 @@ catch (e) {
           de gravacao. Quando a peca DECLARA a voz (`data-voz`), e ela que vale —
           a mesma regra que o motor (`poeZap`) e o portao (`vozresposta`) ja usam. */
        if(e.getAttribute && e.getAttribute("data-voz")) return e.getAttribute("data-voz");
-       var c=e.cloneNode(true), i, fora=c.querySelectorAll(".marca,.fmarca,.zap,.zapb,.tent,.inmarca");
+       /* ⚠️ (set/2026, Central) o `conserte-o-erro` carimba a ficha com um distintivo
+          `<i class="bdg">?</i>` / `✓` — a colheita trouxe "Atenciosamente, Ana Souza?"
+          e "Acrescente o fubá aos poucos✓" para a fila de gravação. Distintivo é rótulo. */
+       var c=e.cloneNode(true), i, fora=c.querySelectorAll(".marca,.fmarca,.zap,.zapb,.tent,.inmarca,.bdg");
        for(i=0;i<fora.length;i++) if(fora[i].parentNode) fora[i].parentNode.removeChild(fora[i]);
        return (c.textContent||"").replace(/\s+/g," ").replace(/^ | $/g,"");
      }

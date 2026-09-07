@@ -6580,6 +6580,33 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
     com relâmpago. Agora procura a partir da posição de cada função.
   Conferido depois nos 18 conteudo.json: só `_agora`/`_rightnow9` reprovam (cache `rn`
   dividido — WIP antigo, não é desta rodada).
+- **A banca inteira da Central (1ª rodada, 712 s) achou SETE coisas — na atividade que
+  estava NO AR.** Nenhuma era do mascote; eram portões novos medindo uma atividade
+  antiga. O que cada uma era e onde foi o conserto (sempre na FONTE da peça):
+  · **0g/0n — a voz não dizia o escrito (f18, f22, f34):** a peça desenha o balão DELA
+    (`ENUN` do investigar-fonte; o texto padrão da memória "Ache a palavra e o
+    desenho…") e o motor narra o balão; o `enunciado` do `conteudo.json` só virava a
+    fala `_intro` — que ninguém ouvia, e a fase ficava MUDA. Conserto: a memória ganhou
+    `var ENUN=""; /*TECNICA*/` (vazio = padrão) e a Central passa `dadosExtra.ENUN` =
+    `enunciado` nas três fases. **Regra que fica:** peça com enunciado próprio expõe
+    `ENUN` como gaveta; atividade que quer o texto dela manda `dadosExtra.ENUN` IGUAL
+    ao `enunciado`. ⚠️ Gaveta partida em DUAS linhas (`var ENUN="…"\n "…";`) o montador
+    não vê ("ENUN não é gaveta") — declarar numa linha só.
+  · **4d — texto sumindo no tema claro (`.ftxt`, investigar-fonte):** `var(--texto)`
+    escurece no claro mas a fonte continua sobre mesa escura (1.28:1). Como os irmãos
+    `.fcab/.fmeta/.pergunta`: cor própria + mesa própria.
+  · **5b — fileira torta no ordenar (f33, 93..110 px):** frases de 2 e 3 linhas; reservar
+    N linhas não resolve (a próxima tem N+1). `.banco` virou flex com `align-items:
+    stretch`: quem está na mesma fileira fica da altura do mais alto. (`display` de pai
+    mudou → cobaia antes do commit, regra da casa.)
+  · **1t — `.zap` do ordenar sem `touch-action`:** `manipulation` (só se toca).
+  · **0i — 2 falas do relâmpago (reflexão) sem mp3:** o `entregar.yml` grava ao publicar.
+  · **colher --so-ver — 24 falas que a criança VÊ e não tinham voz** (dicas do andaime,
+    "Já achou 2 de 5!", os enunciados novos). `colher.py _central` + montar. ⚠️ A
+    colheita trouxe 4 frases com o **distintivo** do conserte-o-erro grudado
+    ("Atenciosamente, Ana Souza**?**", "Acrescente o fubá aos poucos**✓**"): o
+    `jogador.js` agora tira `.bdg` antes de ler o texto (como já tirava `.marca`/`.zap`),
+    e as 4 saíram do `falas.json` à mão. Regra: rótulo de estado nunca é fala.
 - **Seis cascas** (`_padrao/MODELOS-DE-APP.md` + mockup enviado): trilha, livro, cartas,
   bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
   proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma

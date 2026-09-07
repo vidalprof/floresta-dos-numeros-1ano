@@ -20102,8 +20102,9 @@ MEC["investigar-fonte"] = function(f, cen, fim){
    Gemeo do "achou as 5 palavras da horta" e do "ligue cada parte da planta".
    Regra que fica: TODO texto que a crianca le mora numa GAVETA — assim o aviso
    de "gaveta com conteudo de exemplo", que ja existe, cobre a familia. */
-var ENUN="Tr&#234;s pessoas contaram o que aconteceu &#8212; e n&#227;o contaram "
-         "igual. Leia <b>quem</b> escreveu, <b>quando</b> e <b>por qu&#234;</b>.";
+/* ⚠️ (set/2026) numa linha SO: a gaveta partida em duas linhas nao era vista pelo
+   montador ("ENUN nao e gaveta") e a atividade nao conseguia trocar o enunciado. */
+var ENUN="Tr&#234;s pessoas contaram o que aconteceu &#8212; e n&#227;o contaram igual. Leia <b>quem</b> escreveu, <b>quando</b> e <b>por qu&#234;</b>.";
 var ENUN2="Voc&#234; deu o seu veredito. Agora mostre <b>onde</b> voc&#234; viu isso.";
 var FECHO="Quem escreveu depois, s&#243; de <b>ouvir falar</b>, contou outra coisa. "
           "<b>Quem conta muda a hist&#243;ria?</b>";
@@ -20343,6 +20344,7 @@ function fimDaPeca(){
       if(_d.DICAS !== undefined) DICAS = _d.DICAS;
       if(_d.PROVAS !== undefined) PROVAS = _d.PROVAS;
       if(_d.DICAS2 !== undefined) DICAS2 = _d.DICAS2;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
       if(_d.ENUN2 !== undefined) ENUN2 = _d.ENUN2;
       if(_d.PERGUNTA !== undefined) PERGUNTA = _d.PERGUNTA;
     }
@@ -25850,6 +25852,12 @@ var PASSO_AJUDA=4;
 var TEMPO_VOLTA=1400;
 /* a ESPIADA de abertura: o tabuleiro nasce aberto e vira sozinho. */
 var TEMPO_ESPIADA=2600;
+/* ⭐ (set/2026, Central f22/f34) o ENUNCIADO da fase, quando a atividade quer o
+   dela ("Vire as fichas e case cada genero com a marca que entrega ele"). Vazio
+   = o balao padrao conforme o modo. Sem isto a voz dizia o `enunciado` do
+   conteudo.json e a tela mostrava "Ache a palavra e o desenho que combina" —
+   os portoes 0g/0n reprovaram a Central por isso. */
+var ENUN=""; /*TECNICA*/
 
 var cartas, virada, travado, feitos, tentativas, progI, elPlacar, elPares, elHint, ger=0;
 
@@ -25890,11 +25898,11 @@ function pecaMemoria(){
   /* balão conforme o modo: par de imagens (1º ano) x palavra×significado */
   var soImg=true, temSom=false, _pi;
   for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; } if(PARES[_pi].som) temSom=true; }
-  c.appendChild(el("div","balao", temSom
+  c.appendChild(el("div","balao", ENUN || (temSom
     ? "Ache a <b>figura</b> e o <b>som</b> que combinam."
     : (soImg
     ? "Ache as <b>figuras iguais</b>."
-    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>.")));
+    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>."))));
 
   /* monta as 8 cartas: metade palavra, metade significado.
      Cada uma leva a SUA figura — as duas do par sao desenhos diferentes. */
@@ -26175,6 +26183,9 @@ function fim(){
                +PARES.length+' pares.', pecaMemoria);
 }
     if(f && f.dados) PARES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+    }
     try{ fimDaPeca = _seguir; }catch(_e){}
     pecaMemoria();
   })();

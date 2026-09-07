@@ -102,7 +102,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    acomoda). E o "ploc" que diz `entrou aqui` sem nenhuma palavra. */
 @-webkit-keyframes opoe{0%{-webkit-transform:scale(.8)}60%{-webkit-transform:scale(1.08)}100%{-webkit-transform:scale(1)}}
 @keyframes opoe{0%{transform:scale(.8)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
-.banco{display:block;text-align:center;margin-top:6px}
+/* ⚠️ (set/2026, Central f33) fichas de TEXTO com 2 e 3 linhas na mesma fileira
+   (93..110px) — o portao 5b reprovou de novo. Reservar N linhas nao resolve
+   (a frase seguinte tem N+1). O banco vira flex: quem esta na MESMA fileira
+   estica ate a altura do mais alto, caiba o que couber. */
+.banco{display:block;text-align:center;margin-top:6px;
+       display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;
+       -webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch}
 /* ⚠️ GESTO NO CELULAR: sem touch-action o navegador ROLA a pagina ao arrastar
    a peca — o dedo mexe a tela, nao a peca. `-ms-` cobre o Edge/IE antigo
    do PC da escola. Regenerado no pecas.css pelo integrar.py. */
@@ -172,7 +179,8 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* ⭐ O ALTO-FALANTE DA FICHA (pilar SONORA). So aparece quando a fase deu um
    NOME para dizer — botao que nao tem o que falar e pior que botao nenhum. */
 .zap{display:inline-block;vertical-align:middle;width:44px;height:44px;margin:3px 0 0;
-     border:0;border-radius:12px;background-color:#efe6d2;cursor:pointer;padding:0;line-height:44px}
+     border:0;border-radius:12px;background-color:#efe6d2;cursor:pointer;padding:0;line-height:44px;
+     -ms-touch-action:manipulation;touch-action:manipulation}
 .zap:hover{background-color:#e6d9bd}
 .zap:active{background-color:#ded3b8}
 /* ⚠️ o alto-falante e um SVG embutido (§5 da RECEITA): ele se centra sozinho

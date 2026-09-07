@@ -742,6 +742,7 @@
    "exemplos": {
     "DICAS": "[\n  \"Olhe a DATA de cada fonte. Quem escreveu no dia em que a coisa aconteceu?\",\n  \"Duas fontes falam da RUA: o cartaz da prefeitura (3 de março) e o bilhete de dona Alzira (5 de março). O jornal escreveu 17 dias depois, e só de ouvir falar.\",\n  \"A resposta está acesa e marcada “é esta”: a feira mudou por causa da obra na rua.\"\n]",
     "DICAS2": "[\n  \"A prova precisa falar da OBRA. Procure quem contou o que estava acontecendo NA RUA.\",\n  \"“Quase ninguém veio” é o que ACONTECEU depois da mudança, não o motivo dela. E “é mais bonita” é opinião de quem ouviu falar, 17 dias depois.\",\n  \"As duas provas certas estão acesas e marcadas “é esta”: as que falam da rua consertada.\"\n]",
+    "ENUN": "\"Tr&#234;s pessoas contaram o que aconteceu &#8212; e n&#227;o contaram igual. Leia <b>quem</b> escreveu, <b>quando</b> e <b>por qu&#234;</b>.\"",
     "ENUN2": "\"Voc&#234; deu o seu veredito. Agora mostre <b>onde</b> voc&#234; viu isso.\"",
     "FONTES": "[\n  {aut:\"Cartaz da prefeitura\",\n   meta:\"3 de março · feito para AVISAR os moradores\",\n   txt:\"“A feira passa para a Praça Nova enquanto a rua for consertada.”\"},\n  {aut:\"Bilhete de dona Alzira, que vende frutas na feira\",\n   meta:\"5 de março · escrito para o filho, no mesmo dia\",\n   txt:\"“Hoje quase ninguém veio. A rua está toda aberta, com máquinas trabalhando nela.”\"},\n  {aut:\"Jornal do bairro\",\n   meta:\"20 de março · escrito para CONTAR a notícia, 17 dias depois\",\n   txt:\"“Moradores contam que a feira mudou porque a Praça Nova é mais bonita.”\"}\n]",
     "PERGUNTA": "\"Por que a feira mudou de lugar?\"",
@@ -754,6 +755,7 @@
     "DICAS",
     "PROVAS",
     "DICAS2",
+    "ENUN",
     "ENUN2",
     "PERGUNTA"
    ],
@@ -943,13 +945,17 @@
   "memoria": {
    "exemplo": "[\n {k:\"abelha\", pal:\"ABELHA\",  fig:\"abelha\",  sen:\"faz o mel\",          figsen:\"mel\"},\n {k:\"semen\",  pal:\"SEMENTE\", fig:\"semente\", sen:\"vira uma planta\",    figsen:\"broto\"},\n {k:\"chuva\",  pal:\"CHUVA\",   fig:\"chuva\",   sen:\"molha a terra\",      figsen:\"poca\"},\n {k:\"ninho\",  pal:\"NINHO\",   fig:\"ninho\",   sen:\"casa do passarinho\", figsen:\"passaro\"}\n]",
    "exemplos": {
+    "ENUN": "\"\"",
     "PARES": "[\n {k:\"abelha\", pal:\"ABELHA\",  fig:\"abelha\",  sen:\"faz o mel\",          figsen:\"mel\"},\n {k:\"semen\",  pal:\"SEMENTE\", fig:\"semente\", sen:\"vira uma planta\",    figsen:\"broto\"},\n {k:\"chuva\",  pal:\"CHUVA\",   fig:\"chuva\",   sen:\"molha a terra\",      figsen:\"poca\"},\n {k:\"ninho\",  pal:\"NINHO\",   fig:\"ninho\",   sen:\"casa do passarinho\", figsen:\"passaro\"}\n]"
    },
    "gavetas": [
-    "PARES"
+    "PARES",
+    "ENUN"
    ],
    "regra": "marca na peca",
-   "tecnicas": [],
+   "tecnicas": [
+    "ENUN"
+   ],
    "var": "PARES"
   },
   "misterio": {
