@@ -6394,7 +6394,26 @@ negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
   representar e pertencer; "efeito guarda-roupa" e gancho de compra ficam fora.
 - **Motor:** chip do crachá (`.pgeu`: figura + primeiro nome) na barra de progresso em
   toda fase; elogio flutuante com o nome (1 em 3); mascote inclina quando a dica entra.
-  Cobaia rodada depois (ver resultado abaixo).
+  **Cobaia depois disso: 91 de 91 mecânicas** (leiaute nos 6 tamanhos + jogador), duas
+  vezes (uma após o motor, outra após o chip/elogio/inclinar). Prints a 320 e 1366 px
+  confirmam o chip ("Ana" + figura) ao lado da barra.
+- **Lição do 4c paga no chip:** pintei `color` no `.pgeunome` (span sem fundo próprio) e
+  o pré-voo reprovou "cor cravada". A regra da casa: **a tinta mora na regra que pinta o
+  fundo** (`.pgeu` tem `background` e `color`; o span herda). Vale para todo chip/selo novo.
+- **Padaria republicada pela esteira (rodada 4)** com o chip: commit `d132d6ca` com a
+  marca `[entregar _padaria:a-padaria-das-letras]`, NO AR em 850 s, sha conferido.
+- **O chip destapou dois defeitos velhos (banca do Trem, portão 4d tema claro):**
+  (1) o contador "7 / 34" (`.pgchip`) era vidro fino (`rgba(18,26,14,.58)`) e sobre
+  papel dava **2,9:1** — passava porque a barrinha da peça cobria o centro dele e o
+  `contraste.js` o pulava como "escondido"; com a vitrine 7 px mais alta ele saiu de
+  baixo e foi medido. Agora `.82` → **10,8:1** medido sobre papel. (2) A barrinha da
+  peça (`.prog.progpeca`) herdava `position:absolute; top:12px` do `.prog` do motor e
+  caía **em cima da vitrine** (faixa branca translúcida atravessando barra, contador e
+  chip) — em fundo escuro passava por reflexo. Agora `position:static` no
+  `integrar.py`: fica dentro do cartão, como a frase do CSS sempre prometeu. Lição:
+  **portão que pula "escondido" pode estar escondendo o defeito** — quando um item
+  passa a reprovar sem mudança nele, perguntar o que o DESTAPOU antes de "consertar".
+  Cobaia rodada de novo depois disso (motor mudou).
 - **Seis cascas** (`_padrao/MODELOS-DE-APP.md` + mockup enviado): trilha, livro, cartas,
   bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
   proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma

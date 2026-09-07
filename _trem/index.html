@@ -155,7 +155,9 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 @media (max-width:359px){ .vitrine .pgeunome{display:none} .vitrine .pgeu{padding:2px;margin-right:6px} }
 .vitrine .pgchip{-webkit-box-flex:0;-webkit-flex:none;flex:none;
   font-size:12px;font-weight:800;color:#fff;padding:3px 11px;border-radius:999px;
-  background:rgba(18,26,14,.58);
+  /* .82, nao .58: em atividade de tema CLARO (papel) o vidro fino dava 2,9:1 —
+     o portao 4d so enxergou quando o chip do cracha subiu a vitrine em 7px. */
+  background:rgba(18,26,14,.82);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   border:1px solid rgba(255,255,255,.28);letter-spacing:.4px;
   -webkit-box-shadow:0 2px 8px rgba(0,0,0,.28);box-shadow:0 2px 8px rgba(0,0,0,.28)}
@@ -837,7 +839,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 /* a barra de DENTRO da fase (quantas palavras achou, que rodada e esta) — a de
    cima, do motor, e a da atividade inteira. Duas informacoes diferentes, entao
    as duas ficam; esta e menorzinha para nao competir com a de cima.          */
-.progpeca{height:6px;margin:2px 0 10px;opacity:.85}
+/* ⚠️ `position:static` e obrigatorio: o `.prog` do motor e ABSOLUTO (top:12px,
+   z-index 3) e, sem isto, a barrinha da peca caia EM CIMA da vitrine do motor —
+   uma faixa branca translucida atravessando a barra da atividade, o contador
+   "7 / 34" e o chip do cracha (medido em set/2026 no Trem, tema claro; no fundo
+   escuro ela passava por reflexo de madeira). Estatica, ela fica onde a frase
+   acima promete: dentro do cartao, menorzinha, abaixo da vitrine.            */
+.progpeca{position:static;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
 /* ⚠️ o SELO da peca e o mesmo rotulo que o motor ja poe em cima, vindo do
    conteudo.json: duas plaquinhas iguais, uma embaixo da outra, so ocupam a tela
    da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda

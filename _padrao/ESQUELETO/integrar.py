@@ -754,7 +754,13 @@ CSS_PONTE = u'''
 /* a barra de DENTRO da fase (quantas palavras achou, que rodada e esta) — a de
    cima, do motor, e a da atividade inteira. Duas informacoes diferentes, entao
    as duas ficam; esta e menorzinha para nao competir com a de cima.          */
-.progpeca{height:6px;margin:2px 0 10px;opacity:.85}
+/* ⚠️ `position:static` e obrigatorio: o `.prog` do motor e ABSOLUTO (top:12px,
+   z-index 3) e, sem isto, a barrinha da peca caia EM CIMA da vitrine do motor —
+   uma faixa branca translucida atravessando a barra da atividade, o contador
+   "7 / 34" e o chip do cracha (medido em set/2026 no Trem, tema claro; no fundo
+   escuro ela passava por reflexo de madeira). Estatica, ela fica onde a frase
+   acima promete: dentro do cartao, menorzinha, abaixo da vitrine.            */
+.progpeca{position:static;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
 /* ⚠️ o SELO da peca e o mesmo rotulo que o motor ja poe em cima, vindo do
    conteudo.json: duas plaquinhas iguais, uma embaixo da outra, so ocupam a tela
    da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda
