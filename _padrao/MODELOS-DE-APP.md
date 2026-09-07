@@ -73,6 +73,14 @@ no `_padrao/INTERATIVIDADES.md` como ✅ só depois da banca.
 - Recompensa **parcimoniosa**: "pequenas conquistas que celebram marcos sem pressão".
   Estrelas no fim de rodada, não a cada toque.
 
+## ✅ Cascas no catálogo (cobaia 91/91 + banca inteira numa atividade real, publicada)
+
+| Casca | `"casca"` | Estreia | Publicada | Lição paga |
+|---|---|---|---|---|
+| Conversa | `conversa` | Padaria (1º) | 2026-09-07 20:25Z | cabeçalho sai em `max-height:640px` (netbook 1024×600: o Pronto do bater-sílabas caía fora da tela) |
+| Trilha | `trilha` | Trem (1º) | 2026-09-07 19:31Z | título do mapa precisa de fundo próprio (4c); overlay leva `casca-transicao` |
+| Lição (Duolingo) | `licao` | Divisão (5º) | em banca | vidro fosco, não branco chapado (5b); a casca não infla letra/altura da peça |
+
 ## Estado (2026-09-07, noite)
 
 - **Conversa — CODIFICADA no motor** (`motor.html`: CSS `body.casca-conversa`, `_cvCab`,
