@@ -6485,6 +6485,23 @@ negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
   `nota()` blindado) · Painel 10:43Z · **Sólidos 12:04Z pela esteira inteira (711 s,
   banca aprovada em TODOS os portões)** · **Museu 12:18Z pela esteira inteira (843 s, banca aprovada em todos os portões)**.
   Cobaia 91/91 cinco vezes no dia. `_blu` não precisava (falso alarme, sha igual).
+- **⚠️⚠️ REGRESSÃO MINHA, PEGA PELO MARCOS NO CELULAR (2026-09-07, 09:52, Trem fase 2):**
+  um pilar verde translúcido do tamanho da tela, crescendo a cada letra colocada.
+  Causa: a barrinha da peça virou `position:static` (para sair de cima da vitrine) e o
+  preenchimento `.prog>i` (absoluto, `top:0;bottom:0`) passou a medir a `.tela`
+  inteira (199×820 px). Conserto: `position:relative` (fica no fluxo E segue sendo a
+  caixa do preenchimento). **Por que NENHUM portão viu:** no começo da fase o
+  preenchimento tem largura 0 — a cobaia, o leiaute, o coberto e o diretor de arte
+  medem a fase no começo; só quem JOGA vê o verde crescer, e o jogador não mede
+  geometria. **Portão novo: leiaute.js regra 14** — preenchimento fora da própria
+  barra reprova (a ALTURA denuncia mesmo com largura 0; provado: versão com defeito
+  205 reprovações, corrigida 0). Lições: (1) mudar `position` de um pai é mudar a
+  caixa de TODOS os filhos absolutos — procurar `position:absolute` nos filhos antes;
+  (2) defeito que só aparece com o PROGRESSO precisa de portão que mede a geometria
+  depois de jogar, não só no início da fase (fila: leiaute a 50% da fase).
+  Republicadas as 4 atividades que saíram com o defeito (Trem, Padaria, Sólidos,
+  Museu), em um push só, 13:07–13:09Z. Crachá da barra virou quadrado arredondado
+  (o círculo cortava o topo da cabeça — "faltam partes das fotos").
 - **Trem: a esteira `produzir.sh` PARA no pré-voo** pela duplicata conhecida
   `tr_coru_fala = tr_coru_feliz` (1c2) — e pararia de novo na banca pelo 3d. Enquanto
   o `OPENAI_API_KEY` não chega, o Trem publica pelo caminho manual: banca inteira à
