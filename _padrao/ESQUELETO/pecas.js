@@ -33430,6 +33430,8 @@ function tira(m){
   sPoe();
   diz(d+" vezes "+m+" é "+prod+". Faltam "+falta);
   limpaTotal(); desenha();
+  /* cada pedaco tirado REDESENHA o quadro: a tela respondeu (marca da prova de sala) */
+  if(typeof __qa==="function") __qa("tela");
 }
 
 function naoCabe(m,prod){
