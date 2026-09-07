@@ -111,7 +111,9 @@ def confere(pasta=None, destino=None):
                 u"`python3 _painel/montar_painel.py`." % p)
         elif destino:
             alvo = u"https://vidalprof.github.io/%s/" % destino.strip().strip("/")
-            temlink = [a for a in linha if a["link"].rstrip("/") + u"/" == alvo]
+            # ⚠️ (set/2026, UNO dos Numeros) o MESMO site serve tres turmas por
+            #    `?ano=3|4|5`: o que se compara e o endereco SEM a pergunta.
+            temlink = [a for a in linha if a["link"].split("?")[0].split("#")[0].rstrip("/") + u"/" == alvo]
             if not temlink:
                 tem = u" · ".join(a["link"] or u"(sem link)" for a in linha)
                 problemas.append(

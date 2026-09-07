@@ -1124,10 +1124,22 @@ function limparTexto(t){
   return t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu,'').replace(/\s+/g,' ').trim();
 }
 
-function falar(texto){
-  if(!vozLigada || !('speechSynthesis' in window)) return;
-  var limpo = limparTexto(texto);
-  if(!limpo) return;
+/* ⭐⭐ VOZ DA CASA (pedido do Marcos, 2026-09-07: *"o UNO deveria ser com as vozes no
+   mesmo padrão das atividades, vozes geradas do Antônio, sem voz do navegador"*).
+   Toda frase que o jogo fala está enumerada em `falas.json` (gerado por
+   `gerar_falas.py`) e gravada pelo `entregar.yml` em `audio/un_<chave>.mp3`. Aqui a
+   frase vira a MESMA chave (djb2 do texto limpo, igual ao `chaveVoz` do motor) e toca
+   o mp3. A voz do navegador só entra se a gravação não existir (frase nova ainda não
+   gravada) ou falhar ao carregar — nunca como padrão. */
+/*VOZOK-INI*/var VOZOK = {"13eqc7p":1,"xdosg4":1,"1e40d5y":1,"fyu7p4":1,"k1vbin":1,"bbtqxt":1,"1ju956k":1,"16ebx21":1,"1va85go":1,"r480us":1,"15sga3u":1,"j6dvuo":1,"1isih9n":1,"1l4hv5d":1,"cl88dr":1,"1r7jk5u":1,"xx1zvq":1,"pqe99l":1,"1ne9jgs":1,"1livzkw":1,"14piatf":1,"1jf42w6":1,"1soswmy":1,"15jxp2m":1,"11zrdsh":1,"19prcbp":1,"19l9c5p":1,"wo9buv":1,"1f3kqft":1,"116bbdn":1,"84z8ae":1,"1c7jebc":1,"yokydb":1,"1n124ob":1,"adeupz":1,"rejx09":1,"1hr44c8":1,"10zjy7e":1,"1pigayx":1,"19tvpb8":1,"1omte2r":1,"rm5f1y":1,"smhlp1":1,"1bba0wo":1,"15hxsjb":1,"v8sghf":1,"115ommq":1,"vkfbjp":1,"crkgk":1,"1knhygs":1,"gbsvvf":1,"1gesiko":1,"1kqd2f":1,"1q9vx2c":1,"3yffer":1,"vtk6l7":1,"13ay2d6":1,"hojcks":1,"73j37v":1,"1aq1p0m":1,"16zzo1x":1,"1nfcni0":1,"s1vjpz":1,"1w4cspm":1,"dj9a7t":1,"9ugrud":1,"c0z8r8":1,"a63mwn":1,"1a968k6":1,"1nrouf2":1,"r2maal":1,"d6vp1m":1,"104b3d":1,"f0jlt2":1,"u40c79":1,"nyfngp":1,"gl8ejs":1,"mxakyi":1,"1mu7z95":1,"33ps44":1,"1pwl8ab":1,"1jxn5eu":1,"1tlzv0l":1,"ibcb7s":1,"15mq2cn":1,"r0f677":1,"16kdoi":1,"rc219h":1,"zerdhg":1,"1h7ez58":1,"12z17nv":1,"9p66yg":1,"12k8mdz":1,"1b3pihg":1,"lv1e2b":1,"jzr51x":1,"4efhpw":1,"17k13l2":1,"16e5xxh":1,"p49w80":1,"1fzd05b":1,"ydbf8y":1,"1xv1f2p":1,"1qsfjtg":1,"1gt7dmb":1,"1shwy5r":1,"1qqykni":1,"1stjt81":1,"py1ihc":1,"1kuv8ag":1,"10y6lav":1,"1n5yiro":1,"16ta6g3":1,"1wqkotc":1,"1bmougv":1,"qnqn1c":1,"7vzldu":1,"ncwxf4":1,"723e3z":1,"1volndc":1,"9q9u5e":1,"1lof5o6":1,"9yc8zc":1,"1btuswt":1,"b8rg1u":1,"vowytb":1,"rpbxlm":1};/*VOZOK-FIM*/
+var _narr = null;
+function chaveVoz(s){
+  s=(s||"").replace(/\s+/g," ").replace(/^ | $/g,"").toLowerCase();
+  var hh=5381,i; for(i=0;i<s.length;i++){ hh=((hh<<5)+hh+s.charCodeAt(i))>>>0; }
+  return hh.toString(36);
+}
+function falarNavegador(limpo){
+  if(!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   var u = new SpeechSynthesisUtterance(limpo);
   u.lang = 'pt-BR';
@@ -1135,12 +1147,30 @@ function falar(texto){
   u.rate = 0.95; u.pitch = 1.05;
   window.speechSynthesis.speak(u);
 }
+function falar(texto){
+  if(!vozLigada) return;
+  var limpo = limparTexto(texto);
+  if(!limpo) return;
+  if('speechSynthesis' in window) window.speechSynthesis.cancel();
+  if(_narr){ try{ _narr.pause(); }catch(e){} }
+  var k = chaveVoz(limpo);
+  if(VOZOK[k]){
+    if(!_narr){ _narr = new Audio(); _narr.preload = 'auto'; }
+    _narr.onerror = function(){ falarNavegador(limpo); };
+    _narr.src = 'audio/un_' + k + '.mp3';
+    try{ _narr.currentTime = 0; }catch(e){}
+    var p = _narr.play();
+    if(p && p.catch) p.catch(function(){ /* sem gesto ainda: fica em silencio, como as outras atividades */ });
+    return;
+  }
+  falarNavegador(limpo);
+}
 
 function alternarVoz(){
   vozLigada = !vozLigada;
   var b = document.getElementById('btnVoz');
   if(vozLigada){ b.innerHTML = '🔊 Voz'; b.classList.remove('voz-off'); falar('Narração ligada!'); }
-  else{ b.innerHTML = '🔇 Voz'; b.classList.add('voz-off'); if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
+  else{ b.innerHTML = '🔇 Voz'; b.classList.add('voz-off'); if('speechSynthesis' in window) window.speechSynthesis.cancel(); if(_narr){ try{ _narr.pause(); }catch(e){} } }
 }
 
 function setMensagem(t){
