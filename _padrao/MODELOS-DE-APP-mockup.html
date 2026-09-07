@@ -1,0 +1,128 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<style>
+body{margin:0;background:#1d2233;font-family:"Segoe UI",Arial,sans-serif;color:#fff;padding:22px}
+h1{margin:0 0 4px;font-size:22px}
+.sub{opacity:.75;font-size:13px;margin-bottom:18px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.item{text-align:center}
+.item h2{font-size:15px;margin:10px 0 2px}
+.item p{font-size:11.5px;opacity:.8;margin:0 8px;line-height:1.35}
+.fone{width:250px;height:470px;margin:0 auto;border-radius:32px;background:#000;padding:10px;box-shadow:0 18px 40px rgba(0,0,0,.5);position:relative}
+.tela{width:100%;height:100%;border-radius:24px;overflow:hidden;position:relative;font-size:11px;color:#2b2118}
+.tag{position:absolute;top:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);color:#fff;font-size:9px;padding:2px 8px;border-radius:99px}
+.masc{position:absolute;width:38px;height:38px;border-radius:50% 50% 45% 45%;background:radial-gradient(circle at 35% 35%,#ffe08a,#e8a020);box-shadow:0 3px 6px rgba(0,0,0,.3)}
+.masc:before,.masc:after{content:"";position:absolute;top:13px;width:7px;height:7px;border-radius:50%;background:#2b2118}
+.masc:before{left:9px}.masc:after{right:9px}
+.bt{background:#ffd54a;color:#3a2a14;font-weight:800;border-radius:999px;padding:7px 0;text-align:center;box-shadow:0 3px 0 #d5a800}
+/* 1 TRILHA */
+.t1{background:linear-gradient(#bfe9ff,#dff5c7)}
+.t1 svg{position:absolute;inset:0;width:100%;height:100%}
+.t1 .par{position:absolute;width:30px;height:30px;border-radius:50%;background:#fffdf6;border:3px solid #5bbf3a;box-shadow:0 3px 0 #3f9a26;display:flex;align-items:center;justify-content:center;font-weight:800;color:#3f9a26}
+.t1 .par.feito{background:#5bbf3a;color:#fff}
+.t1 .par.trava{background:#e6dcc6;border-color:#c9bfa6;box-shadow:0 3px 0 #b3a98f;color:#8a8070}
+/* 2 LIVRO */
+.t2{background:#7a4b22}
+.t2 .pag{position:absolute;left:12px;right:12px;top:22px;bottom:22px;background:#fffbf0;border-radius:6px 14px 14px 6px;box-shadow:inset 12px 0 18px -12px rgba(0,0,0,.35),0 6px 14px rgba(0,0,0,.4);padding:14px 12px}
+.t2 .pag:before{content:"";position:absolute;left:0;top:0;bottom:0;width:8px;background:linear-gradient(90deg,#c9b48f,#fffbf0)}
+.t2 .tit{font-weight:800;font-size:12px;color:#7a4b22;margin:6px 0 6px 10px}
+.t2 .txt{height:7px;background:#e0d6c2;border-radius:4px;margin:6px 10px}
+.t2 .fig{height:74px;margin:8px 10px;border-radius:8px;background:linear-gradient(135deg,#a9dcff,#6fb8e8)}
+.t2 .opt{margin:5px 10px;padding:6px 8px;border-radius:10px;background:#fff;border:1.5px solid #e0d6c2;font-size:10px}
+.t2 .num{position:absolute;bottom:8px;right:14px;font-size:9px;color:#9a8b6d}
+.t2 .canto{position:absolute;right:0;bottom:0;width:0;height:0;border-left:26px solid transparent;border-bottom:26px solid #7a4b22;filter:drop-shadow(-3px -3px 3px rgba(0,0,0,.3))}
+/* 3 CARTAS */
+.t3{background:linear-gradient(#2f3d6b,#1d2740)}
+.t3 .card{position:absolute;left:20px;right:20px;top:60px;height:300px;border-radius:20px;background:#fffdf6;box-shadow:0 10px 24px rgba(0,0,0,.4);padding:12px}
+.t3 .card.b{top:52px;left:28px;right:28px;transform:rotate(-3deg);background:#f3ecd8;z-index:0}
+.t3 .card.c{top:46px;left:36px;right:36px;transform:rotate(3deg);background:#e8e0c8;z-index:-1}
+.t3 .card.a{z-index:2}
+.t3 .fig{height:120px;border-radius:14px;background:linear-gradient(135deg,#ffb37a,#ff7a6b);margin-bottom:10px}
+.t3 .pill{display:inline-block;background:#7d3fe0;color:#fff;font-size:9px;padding:3px 8px;border-radius:99px;margin-bottom:6px}
+.t3 .q{font-weight:700;font-size:11px}
+.t3 .resp{display:flex;gap:6px;margin-top:8px}
+.t3 .resp div{flex:1;background:#fff;border:1.5px solid #e6dcc6;border-bottom-width:4px;border-radius:12px;padding:8px 0;text-align:center;font-weight:700}
+.t3 .pilha{position:absolute;bottom:14px;left:20px;right:20px;color:#fff;font-size:10px;display:flex;justify-content:space-between;opacity:.85}
+/* 4 BANCADA */
+.t4{background:linear-gradient(#f7e9c9 0 40%,#b98552 40% 100%)}
+.t4 .quadro{position:absolute;left:12px;right:12px;top:26px;height:64px;background:#2e5e3a;border:5px solid #8a5a2b;border-radius:6px;padding:6px;display:flex;gap:6px}
+.t4 .nota{width:44px;height:44px;background:#fff59a;box-shadow:2px 3px 4px rgba(0,0,0,.3);font-size:8px;padding:3px;transform:rotate(-2deg)}
+.t4 .nota.ok{background:#c9f0b0}
+.t4 .nota:nth-child(2){transform:rotate(2deg)}
+.t4 .mesa{position:absolute;left:0;right:0;bottom:0;height:60%}
+.t4 .obj{position:absolute;border-radius:10px;box-shadow:0 6px 10px rgba(0,0,0,.35)}
+.t4 .balao{position:absolute;left:14px;right:14px;top:104px;background:rgba(255,253,246,.96);border-radius:14px;padding:8px;font-weight:600;font-size:10.5px}
+/* 5 CHAT */
+.t5{background:#eef3fc}
+.t5 .topo{height:44px;background:#4a86ff;color:#fff;display:flex;align-items:center;gap:8px;padding:0 10px;font-weight:700;font-size:12px}
+.t5 .topo i{width:26px;height:26px;border-radius:50%;background:#ffe08a;display:inline-block}
+.t5 .msg{max-width:78%;margin:8px 10px;padding:8px 10px;border-radius:14px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.08);font-size:10.5px}
+.t5 .msg.eu{margin-left:auto;background:#d6f5c8}
+.t5 .fig{height:70px;border-radius:10px;background:linear-gradient(135deg,#8be05a,#3f9a26);margin-top:6px}
+.t5 .chips{position:absolute;bottom:10px;left:8px;right:8px;display:flex;gap:6px;flex-wrap:wrap}
+.t5 .chips div{background:#fff;border:1.5px solid #4a86ff;color:#1d3557;border-radius:999px;padding:7px 10px;font-weight:700;font-size:10.5px}
+/* 6 SHOW */
+.t6{background:radial-gradient(ellipse at 50% 30%,#3a2470,#12081f 70%)}
+.t6 .luz{position:absolute;top:-40px;left:50%;width:170px;height:260px;margin-left:-85px;background:linear-gradient(rgba(255,255,255,.22),transparent);clip-path:polygon(40% 0,60% 0,100% 100%,0 100%)}
+.t6 .telao{position:absolute;left:16px;right:16px;top:60px;height:130px;background:#fffdf6;border:6px solid #ffd54a;border-radius:14px;padding:10px;font-weight:700;font-size:12px;box-shadow:0 0 30px rgba(255,213,74,.5)}
+.t6 .telao small{display:block;font-weight:600;font-size:9px;color:#7d3fe0;margin-bottom:6px}
+.t6 .buz{position:absolute;bottom:60px;left:16px;right:16px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.t6 .buz div{background:#ff7a6b;color:#fff;font-weight:800;border-radius:14px;padding:12px 0;text-align:center;box-shadow:0 4px 0 #b64a3e}
+.t6 .buz div:nth-child(2){background:#5bc8ff;box-shadow:0 4px 0 #2f8fc0}
+.t6 .buz div:nth-child(3){background:#8be05a;box-shadow:0 4px 0 #3f9a26}
+.t6 .buz div:nth-child(4){background:#ffd54a;color:#3a2a14;box-shadow:0 4px 0 #d5a800}
+.t6 .estrelas{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#ffd54a;font-size:16px;letter-spacing:3px}
+.t6 .plateia{position:absolute;bottom:0;left:0;right:0;height:26px;background:repeating-radial-gradient(circle at 10px 26px,#2a1a4a 0 8px,transparent 9px 20px)}
+</style></head><body>
+<h1>Seis cascas para o mesmo motor</h1>
+<div class="sub">As peças, o conteúdo, a voz e a banca não mudam. O que muda é a CASCA: como a criança entra, anda entre as fases e vê o progresso.</div>
+<div class="grid">
+
+<div class="item"><div class="fone"><div class="tela t1">
+<svg viewBox="0 0 250 450"><path d="M40 420 C 120 400, 40 340, 110 320 S 210 280, 150 240 S 40 200, 90 160 S 210 120, 160 80 S 80 60, 120 30" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" opacity=".9"/><path d="M40 420 C 120 400, 40 340, 110 320 S 210 280, 150 240 S 40 200, 90 160 S 210 120, 160 80 S 80 60, 120 30" fill="none" stroke="#e8a020" stroke-width="4" stroke-dasharray="8 8"/></svg>
+<div class="par feito" style="left:26px;top:404px">✓</div><div class="par feito" style="left:96px;top:304px">✓</div><div class="par" style="left:136px;top:224px">3</div><div class="par trava" style="left:76px;top:144px">4</div><div class="par trava" style="left:146px;top:64px">5</div>
+<div class="masc" style="left:150px;top:180px"></div>
+<div class="tag">TRILHA</div><div class="bt" style="position:absolute;left:30px;right:30px;bottom:14px">Parada 3: a ponte</div>
+</div></div><h2>1. Trilha / mapa</h2><p>Um caminho com paradas. Cada fase é uma parada; o mascote anda. Entre fases a criança volta ao mapa por 1 s e vê o quanto já andou. Serve para qualquer conteúdo, 1º–9º.</p></div>
+
+<div class="item"><div class="fone"><div class="tela t2">
+<div class="pag"><div class="tit">Capítulo 3 · A ponte</div><div class="fig"></div><div class="txt"></div><div class="txt" style="width:70%"></div><div class="opt">○ a ponte de pedra</div><div class="opt" style="background:#eaf7ff;border-color:#6fb8e8">● a ponte de madeira</div><div class="opt">○ a ponte de ferro</div><div class="num">pág. 7 de 20</div><div class="canto"></div></div>
+<div class="masc" style="left:196px;top:20px;width:30px;height:30px"></div>
+<div class="tag">LIVRO</div>
+</div></div><h2>2. Livro / revista</h2><p>Cada fase é uma página que vira. Progresso = número da página e marcador. O fim fecha o livro. Encaixe natural em Português, História e leitura (Revista, Teatro, Detetives).</p></div>
+
+<div class="item"><div class="fone"><div class="tela t3">
+<div class="card c"></div><div class="card b"></div>
+<div class="card a"><span class="pill">RODADA 4</span><div class="fig"></div><div class="q">Qual pedaço vem primeiro?</div><div class="resp"><div>BO</div><div>LO</div><div>MA</div></div></div>
+<div class="pilha"><span>▮▮▮▮▯▯▯▯ 4 de 8</span><span>feitas: 3</span></div>
+<div class="masc" style="left:14px;top:14px;width:30px;height:30px"></div>
+<div class="tag">CARTAS</div>
+</div></div><h2>3. Baralho de cartas</h2><p>Cada fase é uma carta que entra deslizando de um baralho; a feita vai para a pilha. Rápido, uma coisa por vez, ótimo no celular. Encaixe em relâmpago, quiz, vocabulário; 3º–9º.</p></div>
+
+<div class="item"><div class="fone"><div class="tela t4">
+<div class="quadro"><div class="nota ok">pedido 1 ✓</div><div class="nota ok">pedido 2 ✓</div><div class="nota">pedido 3: 3 caixas de 10</div></div>
+<div class="balao">Encha a caixa e troque 10 por 1.</div>
+<div class="mesa"><div class="obj" style="left:20px;bottom:70px;width:90px;height:60px;background:#d8b47a;border:3px solid #8a5a2b"></div><div class="obj" style="left:130px;bottom:80px;width:26px;height:26px;background:#ff7a6b"></div><div class="obj" style="left:165px;bottom:80px;width:26px;height:26px;background:#ff7a6b"></div><div class="obj" style="left:200px;bottom:80px;width:26px;height:26px;background:#ff7a6b"></div><div class="obj" style="left:130px;bottom:44px;width:26px;height:26px;background:#ff7a6b"></div><div class="obj" style="left:165px;bottom:44px;width:26px;height:26px;background:#ff7a6b"></div></div>
+<div class="masc" style="left:200px;top:100px"></div>
+<div class="bt" style="position:absolute;left:30px;right:30px;bottom:14px">Não dá mais 10</div>
+<div class="tag">BANCADA</div>
+</div></div><h2>4. Bancada / oficina</h2><p>Uma cena fixa (mesa) e um quadro de pedidos: cada fase é um pedido pregado, riscado ao terminar. Os objetos ficam na mesa. Encaixe em Matemática e Ciências, manipuláveis; 1º–5º.</p></div>
+
+<div class="item"><div class="fone"><div class="tela t5">
+<div class="topo"><i></i>Coru <span style="opacity:.7;font-weight:400">· digitando…</span></div>
+<div class="msg">Olá! Achei uma palavra escondida no trem. Você me ajuda?</div>
+<div class="msg eu">Sim!</div>
+<div class="msg">Escute: <b>sa… po</b>. Qual figura é essa?<div class="fig"></div></div>
+<div class="chips"><div>🔊 sapo</div><div>🔊 bola</div><div>🔊 casa</div></div>
+<div class="tag">CONVERSA</div>
+</div></div><h2>5. Conversa com o mascote</h2><p>Tela de mensagens: o mascote manda a pergunta, a criança responde por chips ou pela peça dentro do balão. Uma coisa por vez, ritmo dela, retomar é só rolar. Encaixe em 1º–3º e línguas.</p></div>
+
+<div class="item"><div class="fone"><div class="tela t6">
+<div class="luz"></div>
+<div class="telao"><small>RODADA 2 · VALE UMA ESTRELA</small>Qual desses NÃO rima com PATO?</div>
+<div class="buz"><div>GATO</div><div>RATO</div><div>BOLA</div><div>SAPATO</div></div>
+<div class="estrelas">★★☆☆☆</div><div class="plateia"></div>
+<div class="masc" style="left:14px;top:200px;width:30px;height:30px"></div>
+<div class="tag">SHOW</div>
+</div></div><h2>6. Programa de auditório</h2><p>Palco, telão, quatro botões grandes e a plateia que vibra. Estrelas, nunca pontos nem ranking. Encaixe em aquecimento e revisão, 4º–9º; combina com relâmpago e quiz.</p></div>
+
+</div></body></html>

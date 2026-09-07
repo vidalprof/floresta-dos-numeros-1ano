@@ -6379,3 +6379,27 @@ tinham passado pelo `entregar.yml`; e o parser do catálogo não lia a célula
 
 **Lição:** pesquisa vira código quando tem PORTÃO junto — as 12 regras de §3 só
 saíram do papel quando cada uma ganhou uma medida em `_qa/`.
+
+## 🎭🧩 MASCOTE, AVATAR E AS SEIS CASCAS — 2026-09-07
+
+Perguntas do Marcos: *"o que falta? consegue me dar uns 5 a 6 modelos de app... para a
+criança pensar que está fazendo algo novo sempre? faça uma pesquisa para ver se esse
+negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
+
+- **Pesquisa (6 rodadas do `pesquisar.yml`; 2 vazias por paywall):** destilada em
+  `_pesquisa/MASCOTE-E-AVATAR.md`. Mascote: efeito pequeno e só como **sinalizador que
+  responde** (Mayer; ERIC 2022 gaze+gesto; Calvert/Georgetown: personagem encarnado +
+  resposta contingente = mais transferência; vínculo parassocial cresce com repetição).
+  Avatar: identificação/autonomia só se **visível**; criança de 8–13 faz avatar para se
+  representar e pertencer; "efeito guarda-roupa" e gancho de compra ficam fora.
+- **Motor:** chip do crachá (`.pgeu`: figura + primeiro nome) na barra de progresso em
+  toda fase; elogio flutuante com o nome (1 em 3); mascote inclina quando a dica entra.
+  Cobaia rodada depois (ver resultado abaixo).
+- **Seis cascas** (`_padrao/MODELOS-DE-APP.md` + mockup enviado): trilha, livro, cartas,
+  bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
+  proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma
+  implementada ainda: o Marcos escolhe quais e onde estreiam.
+- **Pré-voo da cobaia (fixture, nunca publicada) já reprovava antes de hoje** em 4c
+  (4 peças com `var(--texto)` em superfície própria: experimento-justo, montar-frase,
+  termometro) e falas ("tangram" fonético nos textos de exemplo). Fica na fila de
+  lapidação das peças; não chega a nenhuma atividade publicada.

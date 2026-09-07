@@ -149,6 +149,10 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   -webkit-animation:pgpulse 1.4s ease-in-out infinite;animation:pgpulse 1.4s ease-in-out infinite}
 .vitrine .pgtick{position:absolute;top:50%;width:2px;height:9px;margin-top:-4.5px;
   background:rgba(255,255,255,.45);border-radius:2px}
+.vitrine .pgeu{-webkit-box-flex:0;-webkit-flex:none;flex:none;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;gap:5px;max-width:118px;background:rgba(255,253,246,.92);border-radius:999px;padding:2px 9px 2px 2px;margin-right:8px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.18);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.vitrine .pgeufoto{width:26px;height:26px;border-radius:50%;-o-object-fit:contain;object-fit:contain;background:#eafce0;-webkit-flex:none;flex:none}
+.vitrine .pgeunome{font-size:12px;font-weight:800;color:#3a2a14;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:359px){ .vitrine .pgeunome{display:none} .vitrine .pgeu{padding:2px;margin-right:6px} }
 .vitrine .pgchip{-webkit-box-flex:0;-webkit-flex:none;flex:none;
   font-size:12px;font-weight:800;color:#fff;padding:3px 11px;border-radius:999px;
   background:rgba(18,26,14,.58);
@@ -2849,7 +2853,16 @@ document.addEventListener("pointerdown", function(ev){ _marcaPonto(ev.clientX,ev
 document.addEventListener("touchstart", function(ev){ try{ var t=ev.touches&&ev.touches[0]; if(t) _marcaPonto(t.clientX,t.clientY); }catch(e){} }, true);
 function vibra(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
 var _ELOGIOS=["Boa!","Isso!","Muito bem!","Uhu!","Mandou bem!","+1"];
-function _elogioCurto(){ return _ELOGIOS[Math.floor(Math.random()*_ELOGIOS.length)]; }
+/* ⭐ CONTINGÊNCIA SOCIAL (set/2026, Calvert/Georgetown — `_pesquisa/MASCOTE-E-AVATAR.md`):
+   a resposta que fala COM a criança (nome, o que ela fez) e a que faz o personagem
+   valer; elogio generico e ruido. A voz e gravada e nao sabe o nome dela, entao o
+   nome entra no texto flutuante — uma em cada tres vezes, para nao virar bordao. */
+function _elogioCurto(){
+  var e=_ELOGIOS[Math.floor(Math.random()*_ELOGIOS.length)];
+  try{ var pn=(perfil&&perfil.nome||"").trim().split(/\s+/)[0];
+    if(pn && pn.length<=12 && Math.random()<0.34) return e.replace(/!$/,"")+", "+pn+"!"; }catch(x){}
+  return e;
+}
 /* o texto flutuante: nasce no ponto do toque (ou no centro, se ainda não houve
    toque), sobe e apaga sozinho. NUNCA tapa o alvo — sobe para cima do dedo. */
 function _flutua(txt){
@@ -3439,6 +3452,11 @@ function mostraDica(txt){
   if(ref&&ref.parentNode) ref.parentNode.insertBefore(b,ref.nextSibling);
   else tela.insertBefore(b,tela.firstChild);
   try{ tela.scrollTop=0; }catch(e){}
+  /* ⭐ SINALIZAÇÃO (Mayer: o agente so ajuda como quem APONTA o que importa —
+     `_pesquisa/MASCOTE-E-AVATAR.md`): quando a dica entra, o mascote se inclina
+     para o conteudo (a mesma pose do "estou aqui" da hesitacao) e volta sozinho.
+     Enfeite nunca derruba a dica: tudo dentro do try. */
+  try{ mascotePensa(true); setTimeout(function(){ try{ mascotePensa(false); }catch(e){} },2600); }catch(e){}
   setTimeout(function(){ if(b.parentNode)b.parentNode.removeChild(b); },7000);
 }
 function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
@@ -3457,6 +3475,20 @@ function poeVitrine(t, feitas){
   /* meio-degrau na fase de agora: nunca 0%, e o cometa fica no "aqui" */
   var pct=Math.max(3, Math.min(100, Math.round((f+0.5)/total*100)));
   var v=el("div","vitrine");
+  /* ⭐ O CRACHÁ VIAJA JUNTO (set/2026, `_pesquisa/MASCOTE-E-AVATAR.md`): a criança
+     escolhia o crachá na 2ª tela e só o revia na medalha. A pesquisa de avatar
+     (identificação e autonomia — Deci & Ryan; Proteus) diz que o avatar só
+     trabalha se está À VISTA: ela precisa se ver na viagem. Um chip pequeno, a
+     figura dela e o primeiro nome, ao lado da barra. Não é alvo (não clica). */
+  try{
+    if(perfil && perfil.fig){
+      var eu=el("div","pgeu");
+      eu.appendChild(imgEl(perfil.fig,"pgeufoto"));
+      var pn=(perfil.nome||"").trim().split(/\s+/)[0];
+      if(pn) eu.appendChild(el("span","pgeunome",pn.replace(/</g,"&lt;")));
+      v.appendChild(eu);
+    }
+  }catch(e){}
   var tr=el("div","pgtrack"), n;
   for(n=1;n<total;n++){ var tk=el("div","pgtick"); tk.style.left=(n/total*100)+"%"; tr.appendChild(tk); }
   var fill=el("div","pgfill");   /* nasce em 0 (CSS) para a barra ENCHER animando */

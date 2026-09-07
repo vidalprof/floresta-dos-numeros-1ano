@@ -77,6 +77,18 @@ Leia tudo antes de agir e responda sempre em **português**.
 > leva a mensagem com os trailers. Sem a marca, push nenhum dispara nada.
 > A banca não substitui o Marcos: depois dela ainda vem o portão do professor.
 
+> **🎭 MASCOTE E AVATAR TÊM REGRA MEDIDA (set/2026, `_pesquisa/MASCOTE-E-AVATAR.md`):** o
+> mascote funciona só como **guia que aponta e responde** (Mayer: pistas sociais e
+> sinalização; Calvert: respostas contingentes + personagem encarnado transferem mais);
+> como enfeite que chama atenção, atrapalha. Motor: inclina para a dica, elogio com o nome
+> da criança (1 em 3), hesitação de 8 s. **Mesmo mascote para a mesma turma** (vínculo
+> parassocial é acumulativo). O **crachá viaja junto** na barra de progresso (`.pgeu`):
+> avatar só funciona se ela se vê. Nunca ranking, moeda ou loja de avatar.
+> **🧩 SEIS CASCAS DE APP** (`_padrao/MODELOS-DE-APP.md`): trilha, livro, cartas, bancada,
+> conversa, show — mesmo miolo (peças, voz, banca), casca diferente para a criança sentir
+> app novo. Campo `"casca"` no `conteudo.json` (padrão `classica`). Cada casca só entra no
+> catálogo depois da cobaia + banca numa atividade real; o Marcos escolhe quais e onde.
+
 > **Toda atividade EducaVerso passa pelo `EDUCAVERSO-QA.md`** (3 portões: Verificar
 > → Auditar → Aprovação do professor) ANTES de chegar ao Marcos. Nada de "entregar e
 > ver depois"; nunca afirmar que funciona sem testar; todo asset visto pela criança é IA.
