@@ -6681,6 +6681,21 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
   aceitar link com `?ano=` (o mesmo site serve 3 turmas).
 - Publicados hoje também: Sólidos (20:01Z) e Museu (20:13Z) com motor novo e imagens
   leves; Padaria (20:25Z) na casca Conversa.
+- **📗 Casca LIÇÃO (Duolingo) estreou na Divisão (5º)** — terceira casca no catálogo.
+  `"casca":"licao"`: `.tela.lc` painel branco 88% (SEM `backdrop-filter`: ele torna a
+  `.tela` bloco-contenedor e a figura `position:fixed` da forca sobe 91 px para dentro
+  do painel na janela baixa), `.prog` grossa no topo, `.selo` caixa alta #555 (4.36 de
+  contraste em #666 reprovava), `.opt` branca com borda inferior grossa, banner verde de
+  largura total (`body.casca-licao .banner`); o CONTINUAR fica na largura da casa (o
+  Marcos já reprovou botão de largura total). A casca **não infla** letra nem altura da
+  peça — foi tentado e a cobaia mostrou opções saindo da tela. Cobaia 91/91, banca
+  inteira 350 s código 0, 39 fotos de estreia conferidas na folha.
+- **⏱ Prova de sala media errado (e culpava a peça).** Duas falhas de medição: (1) uma
+  `tela` SÍNCRONA (a peça chama `__qa("tela")` no mesmo tique do acerto) vinha ANTES do
+  `acertou` na linha do tempo e o portão ia buscar a próxima `tela`, 2–4 s adiante;
+  (2) a mesma resposta disparava dois `acertou` em 130 ms e o segundo media a espera do
+  primeiro. Agora: `tela`/`botao` até 150 ms ANTES do acerto conta como 0 ms, e dois
+  `acertou` em ≤300 ms são o mesmo acerto. Divisão limpa: mediana 0 ms, pior 930 ms.
 - Fila da noite (`fila.sh` destacado do chat): cobaia Trilha → banca Trem → cobaia Lição →
   banca Divisão → banca Sólidos → banca Museu → (fila2) banca Padaria. Publicar o que
   aprovar com a marca `[entregar …]`.
