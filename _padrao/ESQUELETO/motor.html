@@ -234,7 +234,10 @@ body.casca-conversa .cv-resp.mt-entra{-webkit-animation-name:cvDir;animation-nam
    grossa, rótulo discreto, pergunta em caixa com borda, opções brancas com borda grossa
    embaixo, e a folha de feedback verde de ponta a ponta. O botão CONTINUAR mantém a
    largura medida da casa (o Marcos já reprovou o botão-faixa). Só CSS. */
-.tela.lc{background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}  /* vidro fosco, nao quadrado chapado (5b) */
+/* ⚠️ SEM backdrop-filter: ele vira "containing block" de todo filho position:fixed — a
+   figura fixa da forca (janela baixa) passou a se posicionar dentro da .tela e caiu 91 px
+   sobre o enunciado (cobaia da Lição, 2 rodadas). Alpha .88 já não é "chapado" (5b). */
+.tela.lc{background:rgba(255,255,255,.88)}
 .tela.lc .prog{height:16px;background:#e5e5e5;-webkit-box-shadow:none;box-shadow:none}
 .tela.lc .selo{background:transparent;color:#555;font-size:12.5px;letter-spacing:.8px;padding:2px 10px;margin-bottom:6px;text-transform:uppercase}
 /* ⚠️ a casca NAO infla o conteudo da peca (tamanho de letra/altura ficam os da casa):
