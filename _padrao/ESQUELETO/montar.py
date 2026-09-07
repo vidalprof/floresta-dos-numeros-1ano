@@ -999,7 +999,12 @@ def falas_de(c):
                 _rot2 = it.get("sen") or it.get("vozsen") or _rot
                 for _t in (u"Ouça: %s. Ache o desenho que combina." % _rot,
                            u"Abri uma para você: %s. Ache o par dela." % _rot,
-                           # 3o degrau: abre o par inteiro e diz os dois lados
+                           # 3o degrau: abre o par inteiro e diz os dois lados —
+                           # e quando os dois lados tem o MESMO rotulo (palavra +
+                           # figura, Solidos), a peca diz "e o desenho dele" em vez
+                           # de repetir a palavra ("cubo — cubo", revisor 0o).
+                           (u"Vou abrir este par: %s e o desenho dele." % _rot)
+                             if _rot2.lower() == _rot.lower() else
                            u"Vou abrir este par: %s — %s." % (_rot, _rot2)):
                     poe("op_" + chave_voz(texto_limpo(_t)), _t)
         # ⚠️ ...e do `dadosExtra` TAMBEM. Faltava, e nao era detalhe: o balao da

@@ -26128,6 +26128,9 @@ function ajuda(n){
     abreUma(alvo.k);
   }else{
     if(soI){ mostraDica("Vou abrir este <b>par de figuras iguais</b>."); }
+    /* ⚠️ (set/2026, Solidos) par palavra+figura tem o MESMO rotulo nos dois lados:
+       "cubo — cubo" saia repetido na tela e na voz (revisor 0o). */
+    else if(String(rot2).toLowerCase()===String(rot).toLowerCase()){ mostraDica("Vou abrir este par: <b>"+rot+"</b> e o desenho dele."); }
     else   { mostraDica("Vou abrir este par: <b>"+rot+"</b> &mdash; "+rot2+"."); }
     abrePar(alvo.k);
   }

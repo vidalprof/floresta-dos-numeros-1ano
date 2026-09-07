@@ -58,6 +58,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   max-width:94%;box-sizing:border-box;word-wrap:break-word;overflow-wrap:break-word;line-height:1.12;
   text-shadow:0 2px 0 #1e5410,0 4px 10px rgba(0,0,0,.45)}
 .sub{font-size:15px;color:#fff;font-weight:600;margin-bottom:10px;background:rgba(40,52,20,.82);padding:6px 14px;border-radius:999px}
+/* a galeria do que a crianca FEZ (telaFim / guardaArtefato): cartoes brancos,
+   figura inteira (contain), rotulo curto; cabe 3 por linha no celular */
+.galeria{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:10px;margin:6px 0 10px;max-width:420px;width:100%}
+.gfig{margin:0;width:104px;background:#fffdf6;color:#3a2a14;border-radius:14px;padding:6px;box-shadow:0 4px 10px rgba(0,0,0,.22)}
+.gfig img{display:block;width:100%;height:88px;object-fit:contain;border-radius:10px;background:#fff}
+.gcap{font-size:12px;font-weight:800;text-align:center;margin-top:4px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* MASCOTE em camadas (lip-sync) */
 .broto{position:relative;width:150px;height:150px;-webkit-filter:drop-shadow(0 8px 10px rgba(0,0,0,.22));filter:drop-shadow(0 8px 10px rgba(0,0,0,.22));-webkit-animation:bob 2.8s ease-in-out infinite;animation:bob 2.8s ease-in-out infinite}
 .broto.gg{width:250px;height:250px}
@@ -143,9 +149,15 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   -webkit-animation:pgpulse 1.4s ease-in-out infinite;animation:pgpulse 1.4s ease-in-out infinite}
 .vitrine .pgtick{position:absolute;top:50%;width:2px;height:9px;margin-top:-4.5px;
   background:rgba(255,255,255,.45);border-radius:2px}
+.vitrine .pgeu{-webkit-box-flex:0;-webkit-flex:none;flex:none;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;gap:5px;max-width:118px;background:rgba(255,253,246,.92);color:#3a2a14;border-radius:999px;padding:2px 9px 2px 2px;margin-right:8px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.18);box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.vitrine .pgeufoto{width:26px;height:26px;border-radius:50%;-o-object-fit:contain;object-fit:contain;background:#eafce0;-webkit-flex:none;flex:none}
+.vitrine .pgeunome{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:359px){ .vitrine .pgeunome{display:none} .vitrine .pgeu{padding:2px;margin-right:6px} }
 .vitrine .pgchip{-webkit-box-flex:0;-webkit-flex:none;flex:none;
   font-size:12px;font-weight:800;color:#fff;padding:3px 11px;border-radius:999px;
-  background:rgba(18,26,14,.58);
+  /* .82, nao .58: em atividade de tema CLARO (papel) o vidro fino dava 2,9:1 —
+     o portao 4d so enxergou quando o chip do cracha subiu a vitrine em 7px. */
+  background:rgba(18,26,14,.82);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
   border:1px solid rgba(255,255,255,.28);letter-spacing:.4px;
   -webkit-box-shadow:0 2px 8px rgba(0,0,0,.28);box-shadow:0 2px 8px rgba(0,0,0,.28)}
@@ -645,6 +657,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .jsFig img,.bsFig img,.oaFig img,.figrod img{
   -webkit-animation:figflutua 3.6s ease-in-out infinite;animation:figflutua 3.6s ease-in-out infinite}
 @media (prefers-reduced-motion: reduce){
+  /* ⭐ REGRA GERAL (set/2026, `_pesquisa/REGRAS-NEUROCIENCIA.md` item 6, portao
+     `_qa/gamefeel.py` R6): cada peca traz os seus @keyframes e nenhuma delas
+     sabe da preferencia do sistema. Aqui NADA FICA EM LACO: toda animacao roda
+     uma vez e para (brilho correndo, pulso, pisca). As de entrada (uma vez so)
+     continuam iguais — sao curtas e nao cansam. Nenhuma peca escuta
+     `animationend` (medido), entao parar o laco nao quebra logica nenhuma. */
+  #app *,#app *:before,#app *:after{-webkit-animation-iteration-count:1 !important;animation-iteration-count:1 !important}
   .tela{-webkit-animation:fade .3s;animation:fade .3s}
   .pecabox img,.jsFig img,.bsFig img,.oaFig img,.figrod img{
     -webkit-animation:none !important;animation:none !important}
@@ -654,6 +673,15 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   .broto.pensando{-webkit-animation:none !important;animation:none !important;
     -webkit-transform:rotate(-7deg);transform:rotate(-7deg)}
 }
+
+/* ⭐ RESPOSTA AO PRESSIONAR (pesquisa set/2026, regra 1): alvo do motor que nao tinha :active */
+.alim:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+.btntreino:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+.vaso:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+.zapb:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+.banner .cta2:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+/* zonas de soltar e bandejas de qualquer peca: brilho leve ao pressionar (regra 11) */
+.cam:active,.bandeja:active,.zona:active,.vaga:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 /* GERADO por integrar.py — nao editar a mao */
 
 /* ⭐ O BOTAO "PROXIMO" generico (ver o FERRAMENTAS). Mesmo desenho do Broto:
@@ -811,7 +839,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 /* a barra de DENTRO da fase (quantas palavras achou, que rodada e esta) — a de
    cima, do motor, e a da atividade inteira. Duas informacoes diferentes, entao
    as duas ficam; esta e menorzinha para nao competir com a de cima.          */
-.progpeca{height:6px;margin:2px 0 10px;opacity:.85}
+/* ⚠️ `position:static` e obrigatorio: o `.prog` do motor e ABSOLUTO (top:12px,
+   z-index 3) e, sem isto, a barrinha da peca caia EM CIMA da vitrine do motor —
+   uma faixa branca translucida atravessando a barra da atividade, o contador
+   "7 / 34" e o chip do cracha (medido em set/2026 no Trem, tema claro; no fundo
+   escuro ela passava por reflexo de madeira). Estatica, ela fica onde a frase
+   acima promete: dentro do cartao, menorzinha, abaixo da vitrine.            */
+.progpeca{position:static;height:6px;margin:2px 0 10px;opacity:.85;z-index:auto}
 /* ⚠️ o SELO da peca e o mesmo rotulo que o motor ja poe em cima, vindo do
    conteudo.json: duas plaquinhas iguais, uma embaixo da outra, so ocupam a tela
    da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda
@@ -910,6 +944,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-arrastar-sombra .banco{margin-top:5px}
 
 .mec-arrastar-sombra .hint{display:none}}
+
+.mec-arrastar-sombra .cam:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 /* ==== PECA: caca-palavras ==== */
 @-webkit-keyframes kf-caca-palavras-pchipok{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.22)}100%{-webkit-transform:scale(1)}}@keyframes kf-caca-palavras-pchipok{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}@-webkit-keyframes kf-caca-palavras-pis{50%{background:#ffe9a8;-webkit-box-shadow:0 0 0 3px #ffd54a}}@keyframes kf-caca-palavras-pis{50%{background:#ffe9a8;box-shadow:0 0 0 3px #ffd54a}}@-webkit-keyframes kf-caca-palavras-cai{0%{-webkit-transform:translateY(0) rotate(0);opacity:1}
   100%{-webkit-transform:translateY(118vh) rotate(600deg);opacity:.85}}@keyframes kf-caca-palavras-cai{0%{transform:translateY(0) rotate(0);opacity:1}
@@ -954,6 +990,16 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-caca-palavras .ptxt{-webkit-box-flex:1;-webkit-flex:1 1 auto;flex:1 1 auto}
 
 .mec-caca-palavras .pnome{display:none}
+
+.mec-caca-palavras .pfig{width:44px;height:44px;object-fit:contain;vertical-align:middle;margin:0 8px 0 2px;display:inline-block}
+
+.mec-caca-palavras .pchip.pfigc .plin{-webkit-box-align:center;align-items:center}
+
+.mec-caca-palavras .pchip.pfigc .pfig{width:64px;height:64px}
+
+.mec-caca-palavras .pchip .pfim{width:34px;height:34px;margin:0 0 0 6px}
+
+.mec-caca-palavras .pchip.pfigc.feito .pnome{display:block;text-align:center;font-weight:800;font-size:17px;margin-top:4px;letter-spacing:1px}
 
 .mec-caca-palavras .pchip.pdef.feito{text-decoration:none}
 
@@ -1032,10 +1078,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-caca-palavras .pchip.pdef{font-size:12px;margin:4px 2px;padding:5px 9px}
 
 .mec-caca-palavras .zap{width:44px;height:44px;min-width:44px;margin-left:6px}}
+
+.mec-caca-palavras .cp_cel:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 /* ==== PECA: classificar ==== */
 @-webkit-keyframes kf-classificar-clcaiu{from{opacity:.35;-webkit-transform:translateY(-16px) scale(1.08)}}@keyframes kf-classificar-clcaiu{from{opacity:.35;transform:translateY(-16px) scale(1.08)}}@-webkit-keyframes kf-classificar-clchega{from{opacity:0;-webkit-transform:translateY(12px) scale(.93)}}@keyframes kf-classificar-clchega{from{opacity:0;transform:translateY(12px) scale(.93)}}@-webkit-keyframes kf-classificar-clbate{40%{-webkit-transform:scale(1.035)}}@keyframes kf-classificar-clbate{40%{transform:scale(1.035)}}
 
-.mec-classificar .bandeja{background:none;border:0; border-radius:20px;padding:8px 8px;min-height:150px;margin:10px 0 2px; display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center; -webkit-box-align:center;align-items:center}
+.mec-classificar .c3_bandeja{background:none;border:0; border-radius:20px;padding:8px 8px;min-height:150px;margin:10px 0 2px; display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center; -webkit-box-align:center;align-items:center}
 
 .mec-classificar .pc{-ms-touch-action:none;touch-action:none}
 
@@ -1055,13 +1103,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-classificar .gavs{display:-webkit-box;display:-webkit-flex;display:flex;width:100%; -webkit-align-self:stretch;align-self:stretch; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch; -webkit-column-gap:26px;column-gap:26px;gap:26px;margin-top:12px;max-width:440px; margin-left:auto;margin-right:auto}
 
-.mec-classificar .bandeja .pc{width:auto;min-width:264px;max-width:340px;min-height:118px;margin:0; padding:12px 20px; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row; -webkit-box-align:center;-webkit-align-items:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-column-gap:16px;column-gap:16px;gap:16px;font-size:22px; background:-webkit-linear-gradient(top,rgba(255,255,255,.66),rgba(255,255,255,.5)); background:linear-gradient(180deg,rgba(255,255,255,.66),rgba(255,255,255,.5)); -webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1); border:2px solid rgba(255,255,255,.65);border-radius:22px; -webkit-box-shadow:0 8px 20px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.7); box-shadow:0 8px 20px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.7); -webkit-animation:kf-classificar-clchega .3s ease;animation:kf-classificar-clchega .3s ease}
+.mec-classificar .c3_bandeja .pc{width:auto;min-width:264px;max-width:340px;min-height:118px;margin:0; padding:12px 20px; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row; -webkit-box-align:center;-webkit-align-items:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-column-gap:16px;column-gap:16px;gap:16px;font-size:22px; background:-webkit-linear-gradient(top,rgba(255,255,255,.66),rgba(255,255,255,.5)); background:linear-gradient(180deg,rgba(255,255,255,.66),rgba(255,255,255,.5)); -webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1); border:2px solid rgba(255,255,255,.65);border-radius:22px; -webkit-box-shadow:0 8px 20px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.7); box-shadow:0 8px 20px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.7); -webkit-animation:kf-classificar-clchega .3s ease;animation:kf-classificar-clchega .3s ease}
 
-.mec-classificar .bandeja .pcmold{width:88px;height:88px;background:transparent;-webkit-box-shadow:none;box-shadow:none;margin:0}
+.mec-classificar .c3_bandeja .pcmold{width:88px;height:88px;background:transparent;-webkit-box-shadow:none;box-shadow:none;margin:0}
 
-.mec-classificar .bandeja .pcfig{width:86px;height:86px}
+.mec-classificar .c3_bandeja .pcfig{width:86px;height:86px}
 
-.mec-classificar .bandeja .pc .pctxt{margin-top:0;color:#20303f;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.mec-classificar .c3_bandeja .pc .pctxt{margin-top:0;color:#20303f;text-shadow:0 1px 0 rgba(255,255,255,.5)}
 
 .mec-classificar .pcmold{position:relative;width:92px;height:92px;border-radius:22px;background:#f4ecd8; -webkit-box-shadow:inset 0 2px 6px rgba(0,0,0,.12);box-shadow:inset 0 2px 6px rgba(0,0,0,.12); margin-bottom:6px;display:-webkit-box;display:flex; -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
 
@@ -1091,7 +1139,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-classificar .cam.alvo{border-color:#ffd54a;background:rgba(255,213,74,.20)}
 
-.mec-classificar .gfig{display:block;width:66px;height:66px;object-fit:contain;margin:0 auto 5px;position:relative;z-index:1}
+.mec-classificar .c3_gfig{display:block;width:66px;height:66px;object-fit:contain;margin:0 auto 5px;position:relative;z-index:1}
 
 .mec-classificar .ghead{position:relative;z-index:2;display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-align:center;-webkit-align-items:center;align-items:center; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; gap:6px;margin-bottom:6px}
 
@@ -1115,15 +1163,15 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-classificar .gzap .fone{width:22px;height:22px;-webkit-background-size:22px 22px;background-size:22px 22px}@media (prefers-reduced-motion:reduce){
 
-.mec-classificar .clcai, .mec-classificar .bandeja .pc, .mec-classificar .cam.luz{-webkit-animation:none;animation:none}
+.mec-classificar .clcai, .mec-classificar .c3_bandeja .pc, .mec-classificar .cam.luz{-webkit-animation:none;animation:none}
 
 .mec-classificar .pc, .mec-classificar .pc:hover{-webkit-transition:none;transition:none}}@media (max-height:520px){
 
 .mec-classificar .hint{display:none}
 
-.mec-classificar .bandeja{min-height:132px;padding:6px}
+.mec-classificar .c3_bandeja{min-height:132px;padding:6px}
 
-.mec-classificar .bandeja .pc{min-height:124px;width:142px}
+.mec-classificar .c3_bandeja .pc{min-height:124px;width:142px}
 
 .mec-classificar .pcmold{width:70px;height:70px;border-radius:18px;margin-bottom:4px}
 
@@ -1131,29 +1179,33 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-classificar .cam{min-height:116px}
 
-.mec-classificar .gfig{width:54px;height:54px}}@media (max-width:360px){
+.mec-classificar .c3_gfig{width:54px;height:54px}}@media (max-width:360px){
 
-.mec-classificar .bandeja{padding:6px 2px}
+.mec-classificar .c3_bandeja{padding:6px 2px}
 
-.mec-classificar .bandeja .pc{min-width:0;width:100%;max-width:100%;-webkit-box-sizing:border-box;box-sizing:border-box; font-size:18px;-webkit-column-gap:8px;column-gap:8px;gap:8px;padding:10px 10px}
+.mec-classificar .c3_bandeja .pc{min-width:0;width:100%;max-width:100%;-webkit-box-sizing:border-box;box-sizing:border-box; font-size:18px;-webkit-column-gap:8px;column-gap:8px;gap:8px;padding:10px 10px}
 
-.mec-classificar .bandeja .pc .pctxt{white-space:normal;word-break:break-word}
+.mec-classificar .c3_bandeja .pc .pctxt{white-space:normal;word-break:break-word}
 
-.mec-classificar .bandeja .pcmold{width:66px;height:66px}
+.mec-classificar .c3_bandeja .pcmold{width:66px;height:66px}
 
-.mec-classificar .bandeja .pcfig{width:64px;height:64px}
+.mec-classificar .c3_bandeja .pcfig{width:64px;height:64px}
 
 .mec-classificar .gavs{-webkit-column-gap:8px;column-gap:8px;gap:8px;max-width:100%;padding:0 2px; -webkit-box-sizing:border-box;box-sizing:border-box}
 
 .mec-classificar .cam{padding:12px 4px 14px}
 
-.mec-classificar .gfig{width:54px;height:54px}
+.mec-classificar .c3_gfig{width:54px;height:54px}
 
 .mec-classificar .gtit{font-size:11.5px;padding:6px 5px}}
 
 .mec-classificar .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
 
 .mec-classificar .medal:before{content:"\2605"}
+
+.mec-classificar .cam:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+
+.mec-classificar .pc:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 /* ==== PECA: completar ==== */
 @-webkit-keyframes kf-completar-cqshine{0%{left:-45%}55%{left:120%}100%{left:120%}}@keyframes kf-completar-cqshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
 
@@ -1259,11 +1311,11 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-digitar .vagas{display:block;text-align:center;margin:13px auto 12px}
 
-.mec-digitar .vaga{display:inline-block;vertical-align:top;width:44px;height:50px;line-height:44px;margin:0 2px; border:3px dashed #a08e73;border-radius:12px;background:rgba(255,255,255,.10); color:#f4efe6;font-size:24px;font-weight:800;text-align:center; -webkit-transition:-webkit-transform .16s ease;transition:transform .16s ease}
+.mec-digitar .d2_vaga{display:inline-block;vertical-align:top;width:44px;height:50px;line-height:44px;margin:0 2px; border:3px dashed #a08e73;border-radius:12px;background:rgba(255,255,255,.10); color:#f4efe6;font-size:24px;font-weight:800;text-align:center; -webkit-transition:-webkit-transform .16s ease;transition:transform .16s ease}
 
-.mec-digitar .vaga.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12; -webkit-transform:scale(1.14);transform:scale(1.14)}
+.mec-digitar .d2_vaga.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12; -webkit-transform:scale(1.14);transform:scale(1.14)}
 
-.mec-digitar .vaga.cheia.pousa{-webkit-transform:none;transform:none}
+.mec-digitar .d2_vaga.cheia.pousa{-webkit-transform:none;transform:none}
 
 .mec-digitar .d2_letras{display:block;text-align:center;margin-top:6px}
 
@@ -1281,11 +1333,11 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-digitar .tecl.treme2{-webkit-transform:translateX(7px);transform:translateX(7px)}@media (prefers-reduced-motion:reduce){
 
-.mec-digitar .tecl, .mec-digitar .vaga{-webkit-transition:none;transition:none}
+.mec-digitar .tecl, .mec-digitar .d2_vaga{-webkit-transition:none;transition:none}
 
 .mec-digitar .tecl:hover{-webkit-transform:none;transform:none;box-shadow:0 4px 0 #c9bda6}
 
-.mec-digitar .vaga.cheia{-webkit-transform:none;transform:none}}@media (max-height:560px){
+.mec-digitar .d2_vaga.cheia{-webkit-transform:none;transform:none}}@media (max-height:560px){
 
 .mec-digitar .dgfig{width:72px;height:72px;margin-top:10px}}
 
@@ -1654,6 +1706,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-ligar .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
 
 .mec-ligar .medal:before{content:"\2605"}
+
+.mec-ligar .lig:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 /* ==== PECA: memoria ==== */
 @-webkit-keyframes kf-memoria-brilha{0%{left:-60%}55%{left:120%}100%{left:120%}}@keyframes kf-memoria-brilha{0%{left:-60%}55%{left:120%}100%{left:120%}}@-webkit-keyframes kf-memoria-pulsa{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.07)}100%{-webkit-transform:scale(1)}}@keyframes kf-memoria-pulsa{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}@-webkit-keyframes kf-memoria-mcai{0%{-webkit-transform:translateY(0) rotate(0);opacity:1}100%{-webkit-transform:translateY(104vh) rotate(720deg);opacity:.4}}@keyframes kf-memoria-mcai{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(104vh) rotate(720deg);opacity:.4}}
 
@@ -1764,6 +1818,14 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-memoria .mverso:after{-webkit-animation:none;animation:none}
 
 .mec-memoria .mcarta.par{-webkit-animation:none;animation:none}}
+
+.mec-memoria .mcarta:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+
+.mec-memoria .mcarta.tsom .msomg{text-align:center;padding-top:8px}
+
+.mec-memoria .mcarta.tsom .msomf{display:block;width:54px;height:54px;margin:0 auto; background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M15.6 5a7.4 7.4 0 0 1 0 10'/%3E%3C/svg%3E") center center no-repeat; -webkit-background-size:54px 54px;background-size:54px 54px}
+
+.mec-memoria .mcarta.tsom .msomt{font-size:13px;font-weight:800;letter-spacing:1px;color:#5a4408;margin-top:4px}
 /* ==== PECA: quebra-cabeca ==== */
 @-webkit-keyframes kf-quebra-cabeca-pisc{from{-webkit-box-shadow:inset 0 0 0 3px rgba(255,213,74,.25)}
                         to{-webkit-box-shadow:inset 0 0 0 6px rgba(255,213,74,.95)}}@keyframes kf-quebra-cabeca-pisc{from{box-shadow:inset 0 0 0 3px rgba(255,213,74,.25)}
@@ -1804,6 +1866,10 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-quebra-cabeca .qc_placar{margin-top:10px;font-size:16px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:5px 12px;display:inline-block;}
 
 .mec-quebra-cabeca .qc_placar b{color:#ffd54a}
+
+.mec-quebra-cabeca .qcpc:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
+
+.mec-quebra-cabeca .qcvaga:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 /* ==== PECA: quem-sou-eu ==== */
 @-webkit-keyframes kf-quem-sou-eu-chega{0%{opacity:0;-webkit-transform:translateY(-14px)}100%{opacity:1}}@keyframes kf-quem-sou-eu-chega{0%{opacity:0;transform:translateY(-14px)}100%{opacity:1}}
 
@@ -1959,11 +2025,11 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-vitrine .vitcard .vinfo{margin-top:6px;font-size:12.5px;font-weight:600;line-height:1.28;color:#fff;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.55)}
 
-.mec-vitrine .vzap{-webkit-flex:none;flex:none;width:26px;height:26px;border:0;border-radius:50%;background:rgba(255,212,59,.85);cursor:pointer;padding:0;position:relative}
+.mec-vitrine .vzap{-webkit-flex:none;flex:none;width:44px;height:44px;margin:-9px;border:0;border-radius:50%; background:-webkit-radial-gradient(center,circle,rgba(255,212,59,.85) 12.5px,rgba(255,212,59,0) 13.5px); background:radial-gradient(circle at center,rgba(255,212,59,.85) 12.5px,rgba(255,212,59,0) 13.5px); cursor:pointer;padding:0;position:relative}
 
-.mec-vitrine .vzap:before{content:"";position:absolute;left:8px;top:8px;width:4px;height:10px;background:#33280a}
+.mec-vitrine .vzap:before{content:"";position:absolute;left:17px;top:17px;width:4px;height:10px;background:#33280a}
 
-.mec-vitrine .vzap:after{content:"";position:absolute;left:11px;top:5px;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid #33280a}@media (min-width:620px){
+.mec-vitrine .vzap:after{content:"";position:absolute;left:20px;top:14px;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid #33280a}@media (min-width:620px){
 
 .mec-vitrine .vitcard{width:30%}
 
@@ -1974,6 +2040,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-vitrine .vfig img{max-height:80px}
 
 .mec-vitrine .vinfo{font-size:11.5px}}
+
+.mec-vitrine .vzap:active{-webkit-filter:brightness(1.12);filter:brightness(1.12)}
 /* ==== TEMA DA ATIVIDADE (_solidos/tema.css) ==== */
 /* ===== A Cidade dos Sólidos — tema =====
    Injetado por ÚLTIMO → vence a cascata do motor/peça.
@@ -2236,6 +2304,19 @@ function precarregaVoz(){
   _stRaw(passo,400);   /* deixa a capa desenhar primeiro */
 }
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
+/* ⭐ O ARTEFATO DA CRIANCA (set/2026, `_pesquisa/JOGOS-EDUCACIONAIS-REFERENCIAS.md`
+   §3 regra 11 — reconhecimento ENDOGENO): a tela final mostra o que ELA FEZ,
+   nao so a medalha. As pecas de producao (pintar-canvas, pintar-desenho,
+   tracar-letra) guardam aqui uma foto do que a crianca produziu; a telaFim
+   pendura tudo numa galeria embaixo da medalha. Nenhum ranking, nenhuma moeda:
+   a recompensa e a propria obra. Guarda no maximo 6 (as ultimas) e NUNCA
+   estoura: figura que falhar (canvas manchado por origem, por exemplo) e
+   simplesmente pulada. */
+var ARTEFATOS=[];
+function guardaArtefato(rotulo,src){
+  if(!src||typeof src!=="string"||src.indexOf("data:")!==0) return;
+  try{ ARTEFATOS.push({r:rotulo||"",s:src}); while(ARTEFATOS.length>6) ARTEFATOS.shift(); }catch(e){}
+}
 /* ============ SOM (efeitos) ============ */
 /* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE
    travam"). `new AudioContext()` roda no CARREGAMENTO e ESTOURA em alguns PCs —
@@ -2292,7 +2373,16 @@ document.addEventListener("pointerdown", function(ev){ _marcaPonto(ev.clientX,ev
 document.addEventListener("touchstart", function(ev){ try{ var t=ev.touches&&ev.touches[0]; if(t) _marcaPonto(t.clientX,t.clientY); }catch(e){} }, true);
 function vibra(p){ try{ if(navigator.vibrate) navigator.vibrate(p); }catch(e){} }
 var _ELOGIOS=["Boa!","Isso!","Muito bem!","Uhu!","Mandou bem!","+1"];
-function _elogioCurto(){ return _ELOGIOS[Math.floor(Math.random()*_ELOGIOS.length)]; }
+/* ⭐ CONTINGÊNCIA SOCIAL (set/2026, Calvert/Georgetown — `_pesquisa/MASCOTE-E-AVATAR.md`):
+   a resposta que fala COM a criança (nome, o que ela fez) e a que faz o personagem
+   valer; elogio generico e ruido. A voz e gravada e nao sabe o nome dela, entao o
+   nome entra no texto flutuante — uma em cada tres vezes, para nao virar bordao. */
+function _elogioCurto(){
+  var e=_ELOGIOS[Math.floor(Math.random()*_ELOGIOS.length)];
+  try{ var pn=(perfil&&perfil.nome||"").trim().split(/\s+/)[0];
+    if(pn && pn.length<=12 && Math.random()<0.34) return e.replace(/!$/,"")+", "+pn+"!"; }catch(x){}
+  return e;
+}
 /* o texto flutuante: nasce no ponto do toque (ou no centro, se ainda não houve
    toque), sobe e apaga sozinho. NUNCA tapa o alvo — sobe para cima do dedo. */
 function _flutua(txt){
@@ -2336,7 +2426,14 @@ function __qa(tipo){ if(window.__QAON){ var f=(typeof IFASE==="number"&&typeof F
    `sTira is not defined` na mão da criança — calado, só ao tirar uma peça.
    Som usado por várias mecânicas mora no motor, como o `nota` e o `confete`. */
 function sTira(){ tom(392,0.07,"triangle",0.12); tom(294,0.09,"triangle",0.11,0.05); }
-function sCerto(){ __qa("acertou"); tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(1318,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
+/* ⭐ O ACERTO NAO E SEMPRE IGUAL (set/2026, `_pesquisa/REGRAS-NEUROCIENCIA.md`,
+   item 14 — e o portao `_qa/gamefeel.py` R14 cobra): som de recompensa 100%
+   identico vira ruido de fundo em dez minutos (habituacao). A frase e a mesma
+   (3 notas subindo), mas a TONALIDADE muda entre quatro — um semitom acima,
+   dois acima, um abaixo. A crianca nao percebe a regra; percebe que "cada
+   acerto soa vivo". Sem aleatorio na duracao: o compasso da tela nao muda. */
+var _kCerto=[1,1.0595,1.1225,0.9439];
+function sCerto(){ __qa("acertou"); var k=_kCerto[Math.floor(Math.random()*_kCerto.length)]; tom(659*k,0.12,"sine",0.2); tom(880*k,0.14,"sine",0.2,0.09); tom(1318*k,0.22,"sine",0.18,0.18); vibra(32); _flutua(_elogioCurto()); }
 /* erro: som grave + pulso háptico DUPLO e leve (não pune) — sem texto (a ajuda
    escrita/dita é que responde ao erro; um "errou!" flutuante seria castigo). */
 function sErro(){ tom(200,0.18,"sawtooth",0.12); tom(150,0.24,"sawtooth",0.12,0.08); vibra([14,46,14]); }
@@ -2875,6 +2972,11 @@ function mostraDica(txt){
   if(ref&&ref.parentNode) ref.parentNode.insertBefore(b,ref.nextSibling);
   else tela.insertBefore(b,tela.firstChild);
   try{ tela.scrollTop=0; }catch(e){}
+  /* ⭐ SINALIZAÇÃO (Mayer: o agente so ajuda como quem APONTA o que importa —
+     `_pesquisa/MASCOTE-E-AVATAR.md`): quando a dica entra, o mascote se inclina
+     para o conteudo (a mesma pose do "estou aqui" da hesitacao) e volta sozinho.
+     Enfeite nunca derruba a dica: tudo dentro do try. */
+  try{ mascotePensa(true); setTimeout(function(){ try{ mascotePensa(false); }catch(e){} },2600); }catch(e){}
   setTimeout(function(){ if(b.parentNode)b.parentNode.removeChild(b); },7000);
 }
 function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
@@ -2893,6 +2995,20 @@ function poeVitrine(t, feitas){
   /* meio-degrau na fase de agora: nunca 0%, e o cometa fica no "aqui" */
   var pct=Math.max(3, Math.min(100, Math.round((f+0.5)/total*100)));
   var v=el("div","vitrine");
+  /* ⭐ O CRACHÁ VIAJA JUNTO (set/2026, `_pesquisa/MASCOTE-E-AVATAR.md`): a criança
+     escolhia o crachá na 2ª tela e só o revia na medalha. A pesquisa de avatar
+     (identificação e autonomia — Deci & Ryan; Proteus) diz que o avatar só
+     trabalha se está À VISTA: ela precisa se ver na viagem. Um chip pequeno, a
+     figura dela e o primeiro nome, ao lado da barra. Não é alvo (não clica). */
+  try{
+    if(perfil && perfil.fig){
+      var eu=el("div","pgeu");
+      eu.appendChild(imgEl(perfil.fig,"pgeufoto"));
+      var pn=(perfil.nome||"").trim().split(/\s+/)[0];
+      if(pn) eu.appendChild(el("span","pgeunome",pn.replace(/</g,"&lt;")));
+      v.appendChild(eu);
+    }
+  }catch(e){}
   var tr=el("div","pgtrack"), n;
   for(n=1;n<total;n++){ var tk=el("div","pgtick"); tk.style.left=(n/total*100)+"%"; tr.appendChild(tk); }
   var fill=el("div","pgfill");   /* nasce em 0 (CSS) para a barra ENCHER animando */
@@ -3392,6 +3508,18 @@ function telaFim(){
   c.appendChild(el("h1","",FIM.titulo));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", ":"")+FIM.texto));
   c.appendChild(crachaEl(FIM.cracha));
+  /* a galeria do que ela fez (ver `guardaArtefato`) — so aparece quando ha obra */
+  if(ARTEFATOS.length){
+    var ga=el("div","galeria"), gi, gf, gim;
+    for(gi=0;gi<ARTEFATOS.length;gi++){
+      gf=el("figure","gfig");
+      gim=document.createElement("img"); gim.src=ARTEFATOS[gi].s; gim.alt=""; gim.draggable=false;
+      gf.appendChild(gim);
+      if(ARTEFATOS[gi].r) gf.appendChild(el("figcaption","gcap",ARTEFATOS[gi].r));
+      ga.appendChild(gf);
+    }
+    c.appendChild(ga);
+  }
   resumoAnimado(c);
   if(fracos().length){
     var bt=el("button","btntreino","Treinar o que faltou<small>s&#243; as partes que voc&#234; quer melhorar</small>");
@@ -4810,6 +4938,16 @@ var LETRAS="ABCDEFGHIJLMNOPRSTUVZ"; /*TECNICA*/
    sentido) e o titulo virou gaveta. Frase que nao cita o tema nunca mente. */
 var TITULO="CA&#199;A-PALAVRAS";
 var MODO="cp_lista"; /*TECNICA*/
+/* ⭐ FIGURA POR PALAVRA (pesquisa set/2026 — JClic "caça-palavras que ENSINA ao
+   achar" e EdiLIM "sopa de letras: mostrar imágenes"). Dois usos:
+   · com MODO="cp_lista" ou "definicoes": ao ACHAR a palavra o chip ganha a figura
+     dela e a voz diz a palavra — a criança liga a forma escrita ao sentido na
+     hora em que acertou, que é quando mais fixa;
+   · com MODO="figuras": a lista mostra SÓ a figura (com alto-falante que diz a
+     palavra) e a palavra escrita aparece quando ela acha — a criança tem que
+     PENSAR a palavra e procurá-la pelos sons, não copiar letra a letra.
+   Palavra sem figura volta a aparecer escrita, como antes. */
+var PALFIG={}; /*TECNICA*/
 /* ⭐ NIVEL DIFICIL (pedido do Marcos, RIGHT NOW 9o ano, ago/2026: "o caca
    palavras e pra ser mais dificil, palavras na diagonal etc"). Ligado por
    conteudo (`"DIFICIL":true` no dadosExtra). Com ele, as palavras entram nas
@@ -4842,12 +4980,15 @@ function voz(txt){
 }
 /* a pista daquela palavra (vazia = a palavra volta a aparecer escrita) */
 function pistaDe(w){ return (PALDEF&&PALDEF[w])?PALDEF[w]:""; }
+/* a figura daquela palavra (vazia = sem figura) */
+function figDe(w){ return (PALFIG&&PALFIG[w])?PALFIG[w]:""; }
 /* ⭐ O ALTO-FALANTE DA PISTA — o apoio de quem ainda lê devagar. Ele só FALA:
    o evento para nele para que tocar no botão não conte como toque na lista. */
-function fazZap(txt){
+function fazZap(txt,rotulo){
   var z=el("button","zap","");
   z.type="button";
-  z.setAttribute("aria-label","Ouvir a pista");
+  z.setAttribute("aria-label",rotulo||"Ouvir a pista");
+  z.setAttribute("data-voz",String(txt).replace(/<[^>]+>/g,""));
   z.onclick=function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
@@ -5006,14 +5147,17 @@ function pecaCaca(){
     if(!g[i][j]) g[i][j]=LETRAS.charAt(Math.floor(Math.random()*LETRAS.length));
 
   /* --- 3) a tela --------------------------------------------------------- */
-  var porDef=(MODO==="definicoes");
+  var porFig=(MODO==="figuras");
+  var porDef=(MODO==="definicoes")||porFig;
   var c=el("div","centro");
   c.appendChild(el("div","selo",TITULO));
   /* ⚠️ o balao principal e o enunciado (narrado pelo motor); a instrucao com o
      numero de palavras vira hint (nao precisa de voz, e o numero varia). */
-  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:(porDef
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:(porFig
+     ? "Olhe cada <b>figura</b>, pense na palavra e ache ela na grade."
+     : (porDef
      ? "Leia cada <b>pista</b>, pense na palavra e ache ela na grade."
-     : "Ache as palavras na grade.");
+     : "Ache as palavras na grade."));
   var bal=el("div","balao", _enun);
   c.appendChild(bal);
   c.appendChild(el("div","hint", porDef
@@ -5023,8 +5167,19 @@ function pecaCaca(){
   /* ⭐ A LISTA — de palavras (padrão) ou de PISTAS (modo definições). */
   var lista=el("div","cp_lista"+(porDef?" ldef":"")), chips={};
   for(i=0;i<PAL.length;i++){(function(w){
-    var ch, lin, nm, pista=porDef?pistaDe(w):"";
-    if(pista){
+    var ch, lin, nm, pista=porDef?pistaDe(w):"", fg=figDe(w);
+    if(porFig&&fg){
+      /* ⭐ modo FIGURAS: a figura no lugar da palavra; o alto-falante diz a
+         palavra (quem ainda não lê ouve e procura pelos sons) */
+      ch=el("div","pchip pdef pfigc "+cor[w]);
+      lin=el("div","plin","");
+      lin.appendChild(el("i","pbola",""));
+      var im=el("img","pfig"); im.src=fg; im.alt=""; lin.appendChild(im);
+      lin.appendChild(fazZap(w,"Ouvir a palavra"));
+      ch.appendChild(lin);
+      nm=el("div","pnome",w);
+      ch.appendChild(nm);
+    } else if(pista){
       ch=el("div","pchip pdef "+cor[w]);
       lin=el("div","plin","");
       lin.appendChild(el("i","pbola",""));
@@ -5068,9 +5223,11 @@ function pecaCaca(){
     grade.appendChild(q);
   })(i,j);}
   c.appendChild(grade);
-  c.appendChild(el("div","hint", porDef
+  c.appendChild(el("div","hint", porFig
+    ? "Toque no alto-falante para OUVIR a palavra da figura. Depois toque em cada letra dela na grade."
+    : (porDef
     ? "Toque no alto-falante para OUVIR a pista. Depois toque em cada letra da palavra na grade."
-    : "Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
+    : "Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar.")));
   t.appendChild(c);
   app.appendChild(t);
 
@@ -5101,7 +5258,13 @@ function pecaCaca(){
     faixa(w);
     /* ⭐ no modo definições o chip GUARDA a classe `pdef` — é ela que revela a
        palavra por baixo da pista. Perder a classe aqui apagaria a recompensa. */
-    chips[w].className=(chips[w].className.indexOf("pdef")>=0?"pchip pdef ":"pchip ")+cor[w]+" feito";
+    chips[w].className=(chips[w].className.indexOf("pdef")>=0?"pchip pdef "+(chips[w].className.indexOf("pfigc")>=0?"pfigc ":""):"pchip ")+cor[w]+" feito";
+    /* ⭐ ENSINA AO ACHAR: a figura da palavra aparece no chip (quando há) e a
+       voz diz a palavra — forma escrita + sentido + som, no momento do acerto. */
+    if(!porFig&&figDe(w)&&!chips[w].getElementsByTagName("img").length){
+      var fim=el("img","pfig pfim"); fim.src=figDe(w); fim.alt="";
+      chips[w].appendChild(fim);
+    }
     voz(w);
   }
   function confere(){
@@ -5150,6 +5313,11 @@ function pecaCaca(){
      inteira. No modo lista continua exatamente como sempre foi: dois degraus. */
   function degrau1(w){
     var pista=porDef?pistaDe(w):"";
+    if(porFig&&!pista&&figDe(w)){
+      mostraDica("Ou&#231;a de novo a palavra da figura e procure as letras dela na grade.");
+      voz(w);
+      return false;
+    }
     if(pista){
       mostraDica("A pista que falta: <b>"+pista+"</b>");
       voz(pista);
@@ -5206,6 +5374,7 @@ function fimDaPeca(){
     if(f && f.dados) PAL = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.CORP !== undefined) CORP = _d.CORP;
+      if(_d.PALFIG !== undefined) PALFIG = _d.PALFIG;
       if(_d.PALDEF !== undefined) PALDEF = _d.PALDEF;
       if(_d.LETRAS !== undefined) LETRAS = _d.LETRAS;
       if(_d.TITULO !== undefined) TITULO = _d.TITULO;
@@ -5451,7 +5620,7 @@ function pecaClassificar(){
   var i;
   for(i=0;i<FICHAS.length;i++) fila.push(FICHAS[i]);
   baguncar(fila);
-  var band=el("div","bandeja"); band.id="esteira";
+  var band=el("div","c3_bandeja"); band.id="esteira";
   c.appendChild(band);
 
   var gs=el("div","gavs");
@@ -5628,7 +5797,7 @@ function fazGaveta(g){
        · `rot:false` + img -> marca d'agua fraca (legado dinheiro), inalterado;
        · sem img -> só o nome. */
   if(g.img && g.rot){
-    d.appendChild(figura(g.img,"gfig"));            /* figura nitida, 66px */
+    d.appendChild(figura(g.img,"c3_gfig"));            /* figura nitida, 66px */
   }else if(g.img){
     var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w);
   }
@@ -6362,7 +6531,7 @@ function telaDigitar(){
   ln.appendChild(fazZap(vozDaPalavra(r),r.palavra));
   c.appendChild(ln);
   var cx=el("div","vagas");
-  for(i=0;i<palavra.length;i++){ v=el("div","vaga",""); cx.appendChild(v); vagas.push(v); }
+  for(i=0;i<palavra.length;i++){ v=el("div","d2_vaga",""); cx.appendChild(v); vagas.push(v); }
   c.appendChild(cx);
   /* o teclado da tela: as letras DESTA palavra, embaralhadas. `data-qa` na
      caixa e so para o auditor-jogador; a crianca nao ve nada. */
@@ -6420,7 +6589,7 @@ function usaLetra(k,bot){
   if(k===palavra.charAt(pos)) poeLetra(k,bot||achaTecla(k)); else erraLetra(bot);
 }
 function poeLetra(k,bot){
-  vagas[pos].className="vaga cheia";
+  vagas[pos].className="d2_vaga cheia";
   vagas[pos].innerHTML=k;
   /* ⭐ a letra entra COMEMORANDO: cresce e pousa de volta (duas transições,
      sem `@keyframes` — ver a lição no CSS). */
@@ -7843,8 +8012,11 @@ function telaPorque(){
      não pertence". Cada rodada pode trazer `enunPorque` já dizendo o que a de
      fora não faz igual às outras ("O cubo NÃO rola como os outros..."). Sem
      esse campo, a reserva genérica pergunta o porquê sem a fórmula estranha. */
+  /* ⚠️ (set/2026, colheita da Padaria) a reserva dizia "O que A BOLO faz..." — o
+     artigo cravado erra o genero de metade das palavras. Sem artigo: o nome fica
+     sozinho e a frase serve para BOLO e para MAO. */
   c.appendChild(el("div","balao", R.enunPorque ||
-    ("O que a <b>"+R.nomeFora+"</b> faz de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.")));
+    ("O que <b>"+R.nomeFora+"</b> tem de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.")));
   var box=el("div","opts"), i;
   var ordem=baguncar(R.razoes.slice(0));
   for(i=0;i<ordem.length;i++) box.appendChild(fazRazao(ordem[i]));
@@ -8772,11 +8944,13 @@ function pecaMemoria(){
      toda vez que ele muda, e trocar o texto para avisar da espiada faria a voz
      falar duas coisas seguidas. O aviso da espiada vai no `.hint`.          */
   /* balão conforme o modo: par de imagens (1º ano) x palavra×significado */
-  var soImg=true, _pi;
-  for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; break; } }
-  c.appendChild(el("div","balao", soImg
+  var soImg=true, temSom=false, _pi;
+  for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; } if(PARES[_pi].som) temSom=true; }
+  c.appendChild(el("div","balao", temSom
+    ? "Ache a <b>figura</b> e o <b>som</b> que combinam."
+    : (soImg
     ? "Ache as <b>figuras iguais</b>."
-    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>."));
+    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>.")));
 
   /* monta as 8 cartas: metade palavra, metade significado.
      Cada uma leva a SUA figura — as duas do par sao desenhos diferentes. */
@@ -8785,8 +8959,17 @@ function pecaMemoria(){
   for(i=0;i<PARES.length;i++){
     cartas.push({k:PARES[i].k,tipo:"pal",txt:PARES[i].pal,
                  fig:PARES[i].fig,img:PARES[i].img,voz:PARES[i].voz||PARES[i].pal});
-    cartas.push({k:PARES[i].k,tipo:"sen",txt:PARES[i].sen,
-                 fig:PARES[i].figsen,img:PARES[i].imgsen,voz:PARES[i].vozsen||PARES[i].sen});
+    /* ⭐ MEMORIA DE SONS (set/2026, EdiLIM "memoria de sonidos"; ALFABETIZACAO §6
+       item 4): com `som:true` a segunda carta do par NAO tem texto nem figura — e
+       um alto-falante grande; virar toca a voz (`vozsen` ou a propria palavra) e a
+       crianca casa o que OUVE com o que VE. Sem `som`, tudo como sempre foi. */
+    if(PARES[i].som){
+      cartas.push({k:PARES[i].k,tipo:"som",txt:"",fig:"",img:"",
+                   voz:PARES[i].vozsen||PARES[i].voz||PARES[i].pal});
+    } else {
+      cartas.push({k:PARES[i].k,tipo:"sen",txt:PARES[i].sen,
+                   fig:PARES[i].figsen,img:PARES[i].imgsen,voz:PARES[i].vozsen||PARES[i].sen});
+    }
   }
   baguncar(cartas);
 
@@ -8845,7 +9028,7 @@ function fazCarta(o){
      ⭐ tpal = carta com FOTO+palavra; tsen = carta-LEGENDA (so a frase). O tipo
      vira classe para a legenda ganhar cara de legenda de jornal (ver CSS) em
      vez de parecer "imagem faltando" (o Marcos pegou, ago/2026). */
-  var d=el("div","mcarta m2_vira "+(o.tipo==="pal"?"tpal":"tsen"));
+  var d=el("div","mcarta m2_vira "+(o.tipo==="pal"?"tpal":(o.tipo==="som"?"tsom":"tsen")));
   d.setAttribute("data-qa",o.k);          /* para o auditor conferir os pares */
   /* ⭐ QUEM SABE O QUE A VOZ DEVE DIZER E A PECA (mesma licao do `ouvir-achar`):
      o motor montaria a chave a partir do texto visivel, e aqui dentro ha a
@@ -8862,7 +9045,14 @@ function fazCarta(o){
      carta so-palavra fica LIMPA, sem caixa de figura vazia (era "imagem
      faltando"). As memorias palavra×significado seguem iguais (tem os dois). */
   var temFig=(o.img && typeof imgEl==="function")||(o.fig && ARTE[o.fig]);
-  if(temFig) cnt.appendChild(figuraDe(o));
+  if(o.tipo==="som"){
+    /* a carta-SOM: um alto-falante grande no lugar de texto e figura — a
+       resposta dela e o que a crianca OUVE ao virar */
+    var sg=el("div","msomg",""); sg.appendChild(el("i","fone msomf",""));
+    sg.appendChild(el("div","msomt","OU&#199;A"));
+    cnt.appendChild(sg);
+  }
+  else if(temFig) cnt.appendChild(figuraDe(o));
   if(o.txt){
     var et=(o.tipo==="pal")?"PALAVRA":"QUER DIZER";
     var tx=el("div",(o.tipo==="pal")?"mtxt":"mtxt msent",
@@ -8881,7 +9071,7 @@ function fazCarta(o){
      ("MALA"). O alto-falante pedia a gravacao de "PALAVRAMALA", que nunca
      existiu. A peca sabe o que quer dizer: ela tem que DECLARAR. */
   z.setAttribute("data-voz", o.voz);
-  z.setAttribute("aria-label","Ouvir "+o.txt);
+  z.setAttribute("aria-label","Ouvir "+(o.txt||o.voz||""));
   z.onclick=(function(carta){ return function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
@@ -8954,6 +9144,16 @@ function fechaPar(a,b){
   b.el.removeAttribute("data-qa");
   sPar();
   confete(20);        /* ⭐ estouro pequeno a cada par (a festa grande fica no fim) */
+  /* o par acendeu, ganhou o certo e o confete: a tela RESPONDEU — marca para a
+     prova de sala (senao o pulsar do ultimo par contava como 1,7 s de espera
+     vazia ate o banner, set/2026). */
+  if(typeof __qa==="function") __qa("tela");
+  /* ⚠️ medido (set/2026): o `acertou` deste par nao nasce aqui — nasce no OLHEIRO
+     do motor (MutationObserver que ve a classe `par` e toca o sCerto), uns 70 ms
+     DEPOIS desta linha. Marca so antes dele e a prova de sala media "acertou ->
+     proximo par" (10-20 s: o tempo de a crianca PROCURAR o par seguinte, nao o
+     app parado). A marca atrasada cai depois do olheiro, enquanto o par pulsa. */
+  setTimeout(function(){ if(typeof __qa==="function") __qa("tela"); }, 250);
   feitos++;
   atualiza();
   if(feitos===PARES.length) setTimeout(fim,800);
@@ -8987,6 +9187,9 @@ function ajuda(n){
     abreUma(alvo.k);
   }else{
     if(soI){ mostraDica("Vou abrir este <b>par de figuras iguais</b>."); }
+    /* ⚠️ (set/2026, Solidos) par palavra+figura tem o MESMO rotulo nos dois lados:
+       "cubo — cubo" saia repetido na tela e na voz (revisor 0o). */
+    else if(String(rot2).toLowerCase()===String(rot).toLowerCase()){ mostraDica("Vou abrir este par: <b>"+rot+"</b> e o desenho dele."); }
     else   { mostraDica("Vou abrir este par: <b>"+rot+"</b> &mdash; "+rot2+"."); }
     abrePar(alvo.k);
   }
@@ -10100,10 +10303,10 @@ IMGS = ["sg_bloco_feliz", "sg_bloco_fala", "sg_bloco_pisca", "sg_cr1", "sg_cr2",
 VITRINE = ["sg_cubo_v", "sg_bola", "sg_bola", "sg_cubo_v", "sg_cubo_v", "sg_cilindro_v", "sg_cubo_v", "sg_esfera_v", "sg_esfera_v", "sg_esfera_v", "sg_cubo_v", "sg_esfera_v", "sg_cubo_v", "sg_cubo_v", "sg_esfera_v", "sg_puzzle1", "sg_lata", "sg_bola", "sg_cilindro_v", "sg_cilindro_v", "sg_esfera_v", "sg_bola", "sg_puzzle2", "sg_piramide_v", "sg_bola", "sg_puzzle1", "sg_cubo_v", "sg_lata", "sg_telhado", "sg_cubo_v", "sg_cilindro_v", "sg_cubo_v"];
 FIM = {titulo:"A Cidade dos Sólidos!", texto:"Você construiu a cidade inteira com as formas certas! Agora olhe ao seu redor: quantos sólidos você consegue achar na sua casa? Amanhã tem mais para descobrir!", cracha:"A Cidade dos Sólidos"};
 ABERTURA = {texto:"A cidade de brinquedo precisa ser construída! Mas cuidado: se eu empilhar a bola, ela ROLA e cai tudo. Qual peça fica firme e qual foge rolando? Vem me ajudar a escolher a forma certa para cada coisa!", voz:"sg_abertura"};
-FASES = [{"id": "f01", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo1", "enunciado": "Olhe cada <b>sólido</b> colorido. Toque para ouvir o nome dele.", "dica": "Toque num sólido: eu falo o nome e para que serve.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "É cubo. Parece dado.", "voz": "Este é o cubo. Ele parece dado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "É esfera. Parece bola.", "voz": "Esta é a esfera. Ela parece bola."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "É cilindro. Parece lata.", "voz": "Este é o cilindro. Ele parece lata."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "É cone. Parece sorvete.", "voz": "Este é o cone. Ele parece sorvete."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "É pirâmide. Parece pirâmide.", "voz": "Esta é a pirâmide. Ela parece pirâmide."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "É bloco retangular. Parece caixa de sapato.", "voz": "Este é o bloco retangular. Ele parece caixa de sapato."}], "vozIntro": "sg_f01_intro", "dicaVoz": "sg_f01_dica"}, {"id": "f02", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo1", "enunciado": "Ache o objeto que tem a forma do <b>sólido</b>.", "dica": "Pense no formato: é redondo de rolar ou tem cantos?", "dados": [{"p": "Qual objeto tem a forma de uma <b>esfera</b>?", "c": {"t": "BOLA", "img": "sg_bola", "voz": "bola"}, "e": [{"t": "DADO", "img": "sg_dado", "voz": "dado"}, {"t": "LATA", "img": "sg_lata", "voz": "lata"}, {"t": "CAIXA DE PRESENTE", "img": "sg_presente", "voz": "caixa de presente"}], "d": ["A esfera é toda redondinha, sem nenhum canto.", "É a que rola para todo lado, igual a uma bolinha.", "É a BOLA. Ela está acesa aí: toque nela para seguir."]}, {"p": "Qual objeto tem a forma de um <b>cubo</b>?", "c": {"t": "DADO", "img": "sg_dado", "voz": "dado"}, "e": [{"t": "BOLA", "img": "sg_bola", "voz": "bola"}, {"t": "SORVETE", "img": "sg_sorvete", "voz": "sorvete"}, {"t": "LATA", "img": "sg_lata", "voz": "lata"}], "d": ["O cubo tem 6 lados iguais, todos quadrados.", "Pense num dado de jogar: quadradinho de todos os lados.", "É o DADO. Ele está aceso aí: toque nele para seguir."]}, {"p": "Qual objeto tem a forma de um <b>cilindro</b>?", "c": {"t": "LATA", "img": "sg_lata", "voz": "lata"}, "e": [{"t": "DADO", "img": "sg_dado", "voz": "dado"}, {"t": "SORVETE", "img": "sg_sorvete", "voz": "sorvete"}, {"t": "CAIXA DE SAPATO", "img": "sg_sapato", "voz": "caixa de sapato"}], "d": ["O cilindro é reto e redondo, igual a um cano.", "Pense numa lata de comida: redonda em cima e embaixo.", "É a LATA. Ela está acesa aí: toque nela para seguir."]}], "dadosExtra": {"TITULO": "QUE FORMA É ESSA?", "FECHO": "Você já reconhece os sólidos pelos objetos!", "SOIMG": true}, "vozIntro": "sg_f02_intro", "dicaVoz": "sg_f02_dica"}, {"id": "f03", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo1", "enunciado": "Ligue cada <b>objeto</b> ao nome do sólido que tem a forma dele.", "dica": "Toque no objeto para ouvir. Pense na forma dele.", "dados": [{"k": "p0", "img": "sg_bola", "voz": "BOLA", "s": "ESFERA"}, {"k": "p1", "img": "sg_dado", "voz": "DADO", "s": "CUBO"}, {"k": "p2", "img": "sg_lata", "voz": "LATA", "s": "CILINDRO"}, {"k": "p3", "img": "sg_sorvete", "voz": "sorvete", "s": "CONE"}], "dadosExtra": {"DICAS": ["Pense no formato de cada objeto.", "A bola é esfera, o dado é cubo, a lata é cilindro, a casquinha é cone. Siga a linha tracejada.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada sólido ao seu objeto.", "FECHO": "Você ligou todos os sólidos aos objetos!"}, "vozIntro": "sg_f03_intro", "dicaVoz": "sg_f03_dica"}, {"id": "f04", "mec": "memoria", "selo": "MEMÓRIA", "conceito": "objetivo1", "enunciado": "Ache a <b>palavra</b> e o <b>desenho que combina</b>.", "dica": "Vire duas cartas: uma tem o nome, a outra o desenho. Combinaram? É par!", "dados": [{"k": "cubo", "pal": "CUBO", "voz": "cubo", "imgsen": "sg_cubo_v", "vozsen": "cubo"}, {"k": "esf", "pal": "ESFERA", "voz": "esfera", "imgsen": "sg_esfera_v", "vozsen": "esfera"}, {"k": "cil", "pal": "CILINDRO", "voz": "cilindro", "imgsen": "sg_cilindro_v", "vozsen": "cilindro"}, {"k": "cone", "pal": "CONE", "voz": "cone", "imgsen": "sg_cone_v", "vozsen": "cone"}], "vozIntro": "sg_f04_intro", "dicaVoz": "sg_f04_dica"}, {"id": "f05", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo1", "enunciado": "Ouça as pistas e descubra <b>qual sólido</b> sou eu.", "dica": "Cada pista conta uma parte. Junte todas antes de responder.", "dados": [{"resp": "ESFERA", "pistas": ["Eu sou todo <b>redondo</b>, não tenho nenhum canto.", "Eu <b>rolo</b> para qualquer lado que você me empurrar.", "Você me chuta no jogo de futebol: sou a <b>bola</b>."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}, {"resp": "CUBO", "pistas": ["Eu tenho <b>6 lados iguais</b>, todos quadrados.", "Eu <b>fico firme</b> e dá para me empilhar.", "Você me joga para ver o número: sou o <b>dado</b>."], "outros": ["ESFERA", "CONE", "CILINDRO"]}, {"resp": "CONE", "pistas": ["Eu tenho uma <b>ponta</b> em cima e sou redondo embaixo.", "De cabeça para baixo, eu seguro o <b>sorvete</b>.", "Na festa, eu viro o <b>chapéu</b> pontudo."], "outros": ["CUBO", "ESFERA", "BLOCO"]}], "vozIntro": "sg_f05_intro", "dicaVoz": "sg_f05_dica"}, {"id": "f06", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo1", "enunciado": "Olhe o <b>sólido</b> e escolha o nome certo.", "dica": "Conte os cantos e veja se é redondo de rolar.", "dados": [{"img": "sg_cilindro_v", "p": "Qual é o nome deste sólido?", "c": "CILINDRO", "e": ["CUBO", "CONE", "ESFERA"], "d": ["Ele é reto e redondo, como um cano ou uma lata.", "Tem um círculo em cima e um embaixo.", "É o CILINDRO. Toque nele para seguir."]}, {"img": "sg_piramide_v", "p": "Qual é o nome deste sólido?", "c": "PIRÂMIDE", "e": ["CUBO", "CILINDRO", "ESFERA"], "d": ["Ela tem uma ponta em cima e lados de triângulo.", "Parece o telhado de uma casa ou um monumento antigo.", "É a PIRÂMIDE. Toque nela para seguir."]}, {"img": "sg_bloco_v", "p": "Qual é o nome deste sólido?", "c": "BLOCO RETANGULAR", "e": ["CUBO", "CONE", "ESFERA"], "d": ["Ele tem 6 lados, mas são retângulos (mais compridos).", "Parece uma caixa de sapato ou um tijolo.", "É o BLOCO RETANGULAR. Toque nele para seguir."]}], "dadosExtra": {"TITULO": "O NOME DO SÓLIDO", "FECHO": "Você já sabe o nome dos sólidos!"}, "vozIntro": "sg_f06_intro", "dicaVoz": "sg_f06_dica"}, {"id": "f06b", "mec": "digitar", "selo": "ESCREVA O NOME", "conceito": "objetivo1", "enunciado": "Agora <b>escreva</b> o nome do sólido, letra por letra.", "dica": "Diga o nome devagar e ache cada letra no teclado.", "dados": [{"palavra": "CUBO", "img": "sg_cubo_v", "pista": "Ele tem 6 lados quadrados, igual a um dado. Escreva o nome dele.", "dic": "Diga devagar: <b>CU-BO</b>."}, {"palavra": "CONE", "img": "sg_cone_v", "pista": "Tem uma ponta em cima, igual à casquinha de sorvete. Escreva o nome.", "dic": "Diga devagar: <b>CO-NE</b>."}], "dadosExtra": {"ENUN": "Escreva o nome do sólido, letra por letra.", "FECHO": "Você escreveu os nomes!"}, "vozIntro": "sg_f06b_intro", "dicaVoz": "sg_f06b_dica"}, {"id": "f07", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo2", "enunciado": "Ligue cada <b>sólido</b> ao que ele faz na rampa.", "dica": "Redondo escorrega rolando; lado reto fica parado, firme.", "dados": [{"k": "p0", "img": "sg_esfera_v", "voz": "esfera", "s": "Rola pela rampa", "g": "rola"}, {"k": "p1", "img": "sg_cubo_v", "voz": "cubo", "s": "Fica firme, parado", "g": "firme"}, {"k": "p2", "img": "sg_cilindro_v", "voz": "cilindro", "s": "Rola deitado", "g": "rola"}, {"k": "p3", "img": "sg_piramide_v", "voz": "pirâmide", "s": "Fica firme, parada", "g": "firme"}], "dadosExtra": {"DICAS": ["Pergunte de cada um: se eu soltar na rampa, ele rola ou fica parado?", "Esfera e cilindro têm parte redonda: rolam. Cubo e pirâmide têm lados retos: ficam firmes. Siga a linha tracejada.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada sólido ao que ele faz.", "FECHO": "Você ligou cada sólido ao seu jeito de se mexer!"}, "vozIntro": "sg_f07_intro", "dicaVoz": "sg_f07_dica"}, {"id": "f08", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo2", "enunciado": "Cada sólido numa gaveta: <b>ROLA</b> ou <b>FICA FIRME</b>?", "dica": "Redondo de rolar vai numa gaveta; com lados retos vai na outra.", "dados": [{"k": "rola", "n": "ROLA<br>(redondo)", "img": "", "voz": "rola", "rot": false}, {"k": "firme", "n": "FICA FIRME<br>(lados retos)", "img": "", "voz": "fica firme", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "ESFERA", "alvo": "rola", "img": "sg_esfera_v"}, {"t": "CILINDRO", "alvo": "rola", "img": "sg_cilindro_v"}, {"t": "CONE", "alvo": "rola", "img": "sg_cone_v"}, {"t": "CUBO", "alvo": "firme", "img": "sg_cubo_v"}, {"t": "PIRÂMIDE", "alvo": "firme", "img": "sg_piramide_v"}, {"t": "BLOCO", "alvo": "firme", "img": "sg_bloco_v"}], "DICAS": ["Pergunte: se eu empurrar, ele rola ou fica parado?", "Esfera, cilindro e cone têm parte redonda: rolam. Cubo, pirâmide e bloco têm lados retos: ficam firmes.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque no <b>sólido</b>. Depois toque na gaveta certa: <b>ROLA</b> ou <b>FICA FIRME</b>?"}, "vozIntro": "sg_f08_intro", "dicaVoz": "sg_f08_dica"}, {"id": "f09", "mec": "completar", "selo": "COMPLETE A FRASE", "conceito": "objetivo2", "enunciado": "Termine a frase sobre o <b>sólido</b>: toque no pedaço que falta.", "dica": "Pense: redondo rola; lado reto fica firme.", "dados": [{"img": "sg_esfera_v", "ante": "A esfera é toda redonda, por isso ela ", "dep": ".", "cer": "rola", "out": ["fica firme", "empilha"], "dic": "O que a bola faz quando você empurra?"}, {"img": "sg_cubo_v", "ante": "O cubo tem lados retos e planos, por isso ele ", "dep": ".", "cer": "fica firme", "out": ["rola", "escorrega"], "dic": "O dado sai rolando ou fica parado no lugar?"}, {"img": "sg_cilindro_v", "ante": "A lata é um cilindro: em pé ela empilha, mas deitada ela ", "dep": ".", "cer": "rola", "out": ["fica firme", "voa"], "dic": "Deite a lata e dê um empurrão: o que acontece?"}], "dadosExtra": {"ENUN": "Toque no pedaço que <b>falta</b> na frase.", "DEPOIS": "Leia a frase inteira antes de escolher.", "FECHO": "Você completou as frases dos sólidos!"}, "vozIntro": "sg_f09_intro", "dicaVoz": "sg_f09_dica"}, {"id": "f10", "mec": "arrastar-sombra", "selo": "CADA UM, SUA SOMBRA", "conceito": "objetivo2", "enunciado": "Leve cada <b>sólido</b> até a sombra com o mesmo contorno.", "dica": "Compare o contorno: a sombra tem o mesmo formato do sólido.", "dados": [{"selo": "CADA UM, SUA SOMBRA", "semSom": true, "pool": ["circ", "quad", "tri", "cil"], "n": 3, "quais": ["circ", "quad", "tri"]}, {"selo": "OLHE BEM O CONTORNO", "semSom": true, "pool": ["quad", "circ", "tri", "ret", "cil", "con"], "n": 4, "quais": ["quad", "circ", "tri", "ret"]}], "dadosExtra": {"FORMAS": {"quad": {"n": "CUBO", "voz": "CUBO", "img": "sg_cubo_v"}, "circ": {"n": "ESFERA", "voz": "ESFERA", "img": "sg_esfera_v"}, "tri": {"n": "PIRÂMIDE", "voz": "PIRÂMIDE", "img": "sg_piramide_v"}, "ret": {"n": "BLOCO", "voz": "BLOCO", "img": "sg_bloco_v"}, "cil": {"n": "CILINDRO", "voz": "CILINDRO", "img": "sg_cilindro_v"}, "con": {"n": "CONE", "voz": "CONE", "img": "sg_cone_v"}}, "DICAS": ["Compare o <b>contorno</b>: a sombra tem o mesmo formato.", "A sombra certa está <b>piscando</b>. Leve o sólido até ela.", "Deixa comigo: eu levo esta e você continua."]}, "vozIntro": "sg_f10_intro", "dicaVoz": "sg_f10_dica"}, {"id": "f11", "mec": "intruso", "selo": "QUAL NÃO É?", "conceito": "objetivo2", "enunciado": "Três fazem a mesma coisa. <b>Qual é o diferente?</b>", "dica": "Descubra o que três têm em comum e ache o diferente.", "dados": [{"selo": "OS QUE ROLAM", "tipo": "texto", "enun": "Três destes rolam. <b>Qual NÃO rola?</b>", "itens": [{"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v"}, {"k": "cilindro", "n": "CILINDRO", "img": "sg_cilindro_v"}, {"k": "cone", "n": "CONE", "img": "sg_cone_v"}, {"k": "cubo", "n": "CUBO", "img": "sg_cubo_v"}], "fora": "cubo", "nomeFora": "CUBO", "d1": "Imagine empurrar cada um. Qual NÃO sai rolando?", "d2": "Esfera, cilindro e cone têm parte redonda e rolam. Um tem só lados retos.", "d3": "O que não pertence é o CUBO: ele fica firme, os outros rolam.", "razoes": [{"t": "Os outros três rolam; o cubo fica firme.", "ok": 1}, {"t": "Porque o cubo é o maior.", "ok": 0}, {"t": "Porque o cubo é azul.", "ok": 0}, {"t": "Porque o cubo é de brincar.", "ok": 0}], "enunPorque": "O <b>cubo</b> n&#227;o rola como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ele de fora?", "p1": "O que você tocou até pode ser verdade. Mas olhe o que os OUTROS três fazem.", "p2": "Cor e tamanho não decidem. O que decide é <b>rolar ou não</b>.", "p3": "Esfera, cilindro e cone rolam. O cubo <b>não rola</b>: fica firme — por isso ele é o diferente.", "regra": "esfera, cilindro e cone rolam; o cubo fica firme"}, {"selo": "OS QUE FICAM FIRMES", "tipo": "texto", "enun": "Três ficam firmes. <b>Qual NÃO fica firme?</b>", "itens": [{"k": "cubo", "n": "CUBO", "img": "sg_cubo_v"}, {"k": "bloco", "n": "BLOCO", "img": "sg_bloco_v"}, {"k": "piramide", "n": "PIRÂMIDE", "img": "sg_piramide_v"}, {"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v"}], "fora": "esfera", "nomeFora": "ESFERA", "d1": "Qual deles NÃO dá para deixar parado sem rolar?", "d2": "Cubo, bloco e pirâmide têm lados retos e ficam firmes. Um é todo redondo.", "d3": "A que não pertence é a ESFERA: ela rola, os outros ficam firmes.", "razoes": [{"t": "Os outros três ficam firmes; a esfera rola.", "ok": 1}, {"t": "Porque a esfera é a menor.", "ok": 0}, {"t": "Porque a esfera é laranja.", "ok": 0}, {"t": "Porque a esfera é de futebol.", "ok": 0}], "enunPorque": "A <b>esfera</b> n&#227;o fica firme como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ela de fora?", "p1": "Pode ser verdade, mas olhe o que os outros três têm em comum.", "p2": "O que junta os três é <b>ficar firme</b>, não a cor nem o tamanho.", "p3": "Cubo, bloco e pirâmide ficam firmes. A esfera <b>não fica firme</b>: ela rola — por isso ela é a diferente.", "regra": "cubo, bloco e pirâmide ficam firmes; a esfera rola"}], "vozIntro": "sg_f11_intro", "dicaVoz": "sg_f11_dica"}, {"id": "f12", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo2", "enunciado": "Toque em cada <b>sólido</b> e ouça: ele <b>rola</b> ou <b>fica firme</b>?", "dica": "Redondo rola; lados retos ficam firmes.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "O cubo fica firme, porque tem lados retos."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "A esfera rola, porque é redonda."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "O cilindro rola, porque é redondo."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "O cone rola, porque é redondo."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "A pirâmide fica firme, porque tem lados retos."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "O bloco retangular fica firme, porque tem lados retos."}], "vozIntro": "sg_f12_intro", "dicaVoz": "sg_f12_dica"}, {"id": "f13", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo3", "enunciado": "Ligue cada <b>sólido</b> à forma da face dele.", "dica": "Olhe o lado do sólido: que figura plana aparece ali?", "dados": [{"k": "p0", "img": "sg_cubo_v", "voz": "cubo", "s": "Faces QUADRADAS"}, {"k": "p1", "img": "sg_bloco_v", "voz": "bloco", "s": "Faces RETÂNGULOS"}, {"k": "p2", "img": "sg_piramide_v", "voz": "pirâmide", "s": "Faces de TRIÂNGULO"}, {"k": "p3", "img": "sg_cilindro_v", "voz": "cilindro", "s": "Base em CÍRCULO"}], "dadosExtra": {"DICAS": ["Olhe UM lado do sólido de cada vez.", "O cubo tem lados quadrados; o bloco, retângulos; a pirâmide, triângulos; o cilindro tem círculo embaixo.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada face ao sólido dela.", "FECHO": "Você achou as faces dos sólidos!"}, "vozIntro": "sg_f13_intro", "dicaVoz": "sg_f13_dica"}, {"id": "f14", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo3", "enunciado": "Cada objeto na gaveta do <b>sólido</b> dele.", "dica": "Pense na forma do objeto: é redondo de rolar ou tem cantos?", "dados": [{"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v", "voz": "esfera", "rot": true}, {"k": "cubo", "n": "CUBO", "img": "sg_cubo_v", "voz": "cubo", "rot": true}], "dadosExtra": {"FICHAS": [{"t": "BOLA", "alvo": "esfera", "img": "sg_bola"}, {"t": "LARANJA", "alvo": "esfera", "img": "sg_laranja"}, {"t": "DADO", "alvo": "cubo", "img": "sg_dado"}, {"t": "CAIXA DE PRESENTE", "alvo": "cubo", "img": "sg_presente"}], "DICAS": ["A bola e a laranja são redondas; o dado e a caixa têm cantos.", "Objeto redondo é esfera; objeto quadradinho é cubo.", "Olhe a gaveta com a borda amarela: é ali que este objeto mora."], "ENUN": "Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."}, "vozIntro": "sg_f14_intro", "dicaVoz": "sg_f14_dica"}, {"id": "f15", "mec": "quebra-cabeca", "selo": "QUEBRA-CABEÇA", "conceito": "objetivo3", "enunciado": "Monte a <b>casinha</b> feita de sólidos.", "dica": "Comece pelos cantos e olhe as cores que combinam.", "dados": {"img": "sg_puzzle1", "cols": 3, "lins": 2, "w": 360, "h": 360, "fundo": false}, "vozIntro": "sg_f15_intro", "dicaVoz": "sg_f15_dica"}, {"id": "aquecimento", "mec": "escolher", "selo": "AQUECIMENTO", "conceito": "objetivo3", "enunciado": "<b>Aquecimento!</b> Que sólido tem a forma deste objeto?", "dica": "Compare o objeto com os sólidos que você já conhece.", "dados": [{"img": "sg_lata", "p": "A <b>lata</b> tem a forma de qual sólido?", "c": "CILINDRO", "e": ["CUBO", "ESFERA", "PIRÂMIDE"], "d": ["Ela é reta e redonda, com círculo em cima e embaixo.", "Pense num cano ou num copo.", "É o CILINDRO. Toque para seguir."]}, {"img": "sg_sorvete", "p": "A <b>casquinha de sorvete</b> tem a forma de qual sólido?", "c": "CONE", "e": ["CILINDRO", "CUBO", "ESFERA"], "d": ["Ela tem uma ponta embaixo e é redonda em cima.", "É a mesma forma do chapéu de festa.", "É o CONE. Toque para seguir."]}, {"img": "sg_sapato", "p": "A <b>caixa de sapato</b> tem a forma de qual sólido?", "c": "BLOCO RETANGULAR", "e": ["CUBO", "CILINDRO", "CONE"], "d": ["Ela tem 6 lados, mas são retângulos compridos.", "Parece um tijolo ou um livro fechado.", "É o BLOCO RETANGULAR. Toque para seguir."]}], "dadosExtra": {"TITULO": "O SÓLIDO ESCONDIDO", "FECHO": "Você acha sólidos em tudo agora!"}, "vozIntro": "sg_aquecimento_intro", "dicaVoz": "sg_aquecimento_dica"}, {"id": "f17", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo3", "enunciado": "Ouça as pistas e descubra o <b>sólido</b>.", "dica": "Junte todas as pistas antes de escolher.", "dados": [{"resp": "CILINDRO", "pistas": ["Eu sou reto e tenho um <b>círculo</b> em cima e embaixo.", "Deitado eu <b>rolo</b>; em pé eu fico firme.", "Na cozinha eu sou a <b>lata</b> de comida."], "outros": ["CUBO", "ESFERA", "PIRÂMIDE"]}, {"resp": "BLOCO RETANGULAR", "pistas": ["Eu tenho 6 lados, mas eles são <b>retângulos</b>.", "Eu <b>fico firme</b> e dá para me empilhar.", "Eu sou a <b>caixa de sapato</b> e também o tijolo."], "outros": ["CUBO", "CONE", "ESFERA"]}, {"resp": "PIRÂMIDE", "pistas": ["Eu tenho lados de <b>triângulo</b> e uma <b>ponta</b> em cima.", "Eu <b>fico firme</b>, apoiada na minha base.", "No Egito antigo, eu sou gigante no deserto."], "outros": ["CILINDRO", "ESFERA", "CUBO"]}], "vozIntro": "sg_f17_intro", "dicaVoz": "sg_f17_dica"}, {"id": "f17b", "mec": "forca", "selo": "FORCA", "conceito": "objetivo1", "enunciado": "Descubra o <b>sólido</b> pela pista e monte o nome, letra por letra.", "dica": "Leia a pista e pense na forma antes de escolher as letras.", "dados": [{"p": "CILINDRO", "ac": "CILINDRO", "fig": "sg_cilindro_v", "d": "Rola deitado e fica firme em pé, igual a uma lata."}, {"p": "PIRAMIDE", "ac": "PIRÂMIDE", "fig": "sg_piramide_v", "d": "Tem base quadrada e sobe até uma ponta, como no Egito."}, {"p": "ESFERA", "ac": "ESFERA", "fig": "sg_esfera_v", "d": "É toda redonda, sem nenhum canto, e rola para todo lado."}], "vozIntro": "sg_f17b_intro", "dicaVoz": "sg_f17b_dica"}, {"id": "f20", "mec": "caca-palavras", "selo": "CAÇA-PALAVRAS", "conceito": "objetivo1", "enunciado": "Ache os <b>nomes dos sólidos</b> escondidos no quadro.", "dica": "Os nomes estão deitados (→) e em pé (↓). Ache um de cada vez.", "dados": ["CUBO", "ESFERA", "CONE", "BLOCO"], "dadosExtra": {"MODO": "lista", "TITULO": "CAÇA-PALAVRAS DOS SÓLIDOS", "LETRAS": "ABCDEFGHIJLMNOPRSTUVZ", "DIFICIL": "", "CORP": ["p1", "p2", "p3", "p4"]}, "vozIntro": "sg_f20_intro", "dicaVoz": "sg_f20_dica"}, {"id": "f22", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo2", "enunciado": "Ouça as pistas de como eu me mexo e descubra <b>qual sólido</b> sou.", "dica": "Cada pista conta se eu rolo ou fico firme. Junte todas antes de responder.", "dados": [{"resp": "ESFERA", "pistas": ["Eu não tenho nenhum lado reto: sou todo <b>redondo</b>.", "Se você me solta na rampa, eu <b>rolo</b> para qualquer lado.", "Nunca fico parado num lugar: sou a <b>bola</b>."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}, {"resp": "CUBO", "pistas": ["Eu tenho <b>lados retos e planos</b>, sem nada redondo.", "Na rampa eu <b>fico firme</b> e não saio rolando.", "Dá para me <b>empilhar</b> sem cair: sou o dado."], "outros": ["ESFERA", "CONE", "CILINDRO"]}, {"resp": "CILINDRO", "pistas": ["Eu tenho dois <b>círculos</b>, um em cada ponta.", "Deitado eu <b>rolo</b>; em pé eu <b>fico firme</b>.", "Pareço uma <b>lata</b> de comida."], "outros": ["CUBO", "ESFERA", "PIRÂMIDE"]}], "vozIntro": "sg_f22_intro", "dicaVoz": "sg_f22_dica"}, {"id": "f23", "mec": "intruso", "selo": "QUAL NÃO É?", "conceito": "objetivo3", "enunciado": "Três fazem a mesma coisa. <b>Qual é o diferente?</b>", "dica": "Pense na forma de cada objeto: rola ou fica firme?", "dados": [{"selo": "OS QUE ROLAM", "tipo": "texto", "enun": "Três destes rolam. <b>Qual NÃO rola?</b>", "itens": [{"k": "bola", "n": "BOLA", "img": "sg_bola"}, {"k": "laranja", "n": "LARANJA", "img": "sg_laranja"}, {"k": "lata", "n": "LATA", "img": "sg_lata"}, {"k": "dado", "n": "DADO", "img": "sg_dado"}], "fora": "dado", "nomeFora": "DADO", "d1": "Qual deles NÃO rola de todo jeito?", "d2": "Bola e laranja são esferas; a lata é cilindro (rola deitada). O dado tem só cantos.", "d3": "O que não pertence é o DADO: é cubo e fica firme.", "razoes": [{"t": "Os outros três rolam; o dado fica firme.", "ok": 1}, {"t": "Porque o dado tem números.", "ok": 0}, {"t": "Porque o dado é pequeno.", "ok": 0}, {"t": "Porque o dado é de jogar.", "ok": 0}], "enunPorque": "O <b>dado</b> n&#227;o rola como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ele de fora?", "p1": "O número no dado não decide a forma. Olhe o que os outros fazem.", "p2": "O que junta os três é a forma <b>redonda de rolar</b>.", "p3": "Bola, laranja e lata rolam. O dado <b>não rola</b>: fica firme — por isso ele é o diferente.", "regra": "bola, laranja e lata rolam; o dado fica firme"}], "vozIntro": "sg_f23_intro", "dicaVoz": "sg_f23_dica"}, {"id": "f24", "mec": "quebra-cabeca", "selo": "QUEBRA-CABEÇA", "conceito": "objetivo3", "enunciado": "Monte a <b>torre</b> de sólidos empilhados.", "dica": "Comece de baixo: o que fica firme vai embaixo.", "dados": {"img": "sg_puzzle2", "cols": 3, "lins": 2, "w": 360, "h": 360, "fundo": false}, "vozIntro": "sg_f24_intro", "dicaVoz": "sg_f24_dica"}, {"id": "f25", "mec": "memoria", "selo": "MEMÓRIA", "conceito": "objetivo3", "enunciado": "Ache a <b>palavra</b> e o <b>desenho que combina</b>.", "dica": "Vire duas cartas: uma tem o nome, a outra o desenho. Combinaram? É par!", "dados": [{"k": "pir", "pal": "PIRÂMIDE", "voz": "pirâmide", "imgsen": "sg_piramide_v", "vozsen": "pirâmide"}, {"k": "bloco", "pal": "BLOCO", "voz": "bloco", "imgsen": "sg_bloco_v", "vozsen": "bloco"}, {"k": "cone", "pal": "CONE", "voz": "cone", "imgsen": "sg_cone_v", "vozsen": "cone"}, {"k": "cil", "pal": "CILINDRO", "voz": "cilindro", "imgsen": "sg_cilindro_v", "vozsen": "cilindro"}], "vozIntro": "sg_f25_intro", "dicaVoz": "sg_f25_dica"}, {"id": "f26", "mec": "arrastar-sombra", "selo": "CADA UM, SUA SOMBRA", "conceito": "objetivo2", "enunciado": "Leve cada <b>objeto</b> até a sombra da forma dele.", "dica": "Compare o contorno da sombra com o objeto.", "dados": [{"selo": "CADA UM, SUA SOMBRA", "semSom": true, "pool": ["bola", "lata", "dado", "sorvete"], "n": 3, "quais": ["bola", "lata", "dado"]}, {"selo": "OLHE BEM O CONTORNO", "semSom": true, "pool": ["bola", "lata", "dado", "sorvete"], "n": 4, "quais": ["bola", "lata", "dado", "sorvete"]}], "dadosExtra": {"FORMAS": {"bola": {"n": "BOLA", "voz": "BOLA", "img": "sg_bola"}, "lata": {"n": "LATA", "voz": "LATA", "img": "sg_lata"}, "dado": {"n": "DADO", "voz": "DADO", "img": "sg_dado"}, "sorvete": {"n": "SORVETE", "voz": "SORVETE", "img": "sg_sorvete"}}, "DICAS": ["Compare o <b>contorno</b>: a sombra tem o mesmo formato.", "A sombra certa está <b>piscando</b>. Leve até ela.", "Deixa comigo: eu levo esta e você continua."]}, "vozIntro": "sg_f26_intro", "dicaVoz": "sg_f26_dica"}, {"id": "f27", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo2", "enunciado": "Ajude o Bloco a <b>construir</b>: escolha a forma certa.", "dica": "Pense se a peça precisa ficar firme ou rolar.", "dados": [{"img": "", "p": "Para a <b>base de uma torre</b> bem firme, qual sólido usar?", "c": "BLOCO RETANGULAR", "e": ["ESFERA", "CONE", "CILINDRO deitado"], "d": ["A base não pode rolar nem escorregar.", "Precisa de lados retos e planos embaixo.", "É o BLOCO RETANGULAR. Toque para seguir."]}, {"img": "", "p": "Para o <b>telhado pontudo</b> da casa, qual sólido combina?", "c": "PIRÂMIDE", "e": ["CILINDRO", "ESFERA", "CUBO"], "d": ["O telhado tem uma ponta em cima.", "Lados de triângulo que sobem até o topo.", "É a PIRÂMIDE. Toque para seguir."]}, {"img": "", "p": "Para um <b>rolo que desce a ladeira</b>, qual sólido escolher?", "c": "CILINDRO", "e": ["CUBO", "PIRÂMIDE", "BLOCO"], "d": ["Precisa rolar reto, sem sair do caminho.", "A esfera rolaria torto; escolha o que rola em linha.", "É o CILINDRO. Toque para seguir."]}], "dadosExtra": {"TITULO": "MÃO NA MASSA", "FECHO": "Você escolheu as formas certas para construir!"}, "vozIntro": "sg_f27_intro", "dicaVoz": "sg_f27_dica"}, {"id": "f28", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo2", "enunciado": "Dá para <b>empilhar</b> firme ou <b>escorrega</b>?", "dica": "Lados retos empilham; parte redonda escorrega.", "dados": [{"k": "empilha", "n": "EMPILHA FIRME", "img": "", "voz": "empilha firme", "rot": false}, {"k": "escorrega", "n": "ESCORREGA / ROLA", "img": "", "voz": "escorrega", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "CUBO", "alvo": "empilha", "img": "sg_cubo_v"}, {"t": "BLOCO", "alvo": "empilha", "img": "sg_bloco_v"}, {"t": "ESFERA", "alvo": "escorrega", "img": "sg_esfera_v"}, {"t": "CONE", "alvo": "escorrega", "img": "sg_cone_v"}], "DICAS": ["Imagine empilhar dois iguais: fica em pé ou cai?", "Cubo e bloco têm topo plano: empilham. Esfera e cone têm parte redonda: escorregam.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque no <b>sólido</b>. Depois toque na gaveta: <b>EMPILHA FIRME</b> ou <b>ESCORREGA</b>?"}, "vozIntro": "sg_f28_intro", "dicaVoz": "sg_f28_dica"}, {"id": "f29", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo1", "enunciado": "Última rodada de pistas: qual <b>sólido</b> sou eu?", "dica": "Junte as três pistas antes de responder.", "dados": [{"resp": "CUBO", "pistas": ["Tenho <b>6 faces</b>, todas quadradas e iguais.", "Fico <b>firme</b> e sou fácil de empilhar.", "Você me joga no jogo de tabuleiro: sou o <b>dado</b>."], "outros": ["ESFERA", "CILINDRO", "CONE"]}, {"resp": "ESFERA", "pistas": ["Não tenho <b>nenhum canto</b> nem lado reto.", "Eu <b>rolo</b> para qualquer lado.", "Sou a <b>bola</b> e também a laranja."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}], "vozIntro": "sg_f29_intro", "dicaVoz": "sg_f29_dica"}, {"id": "f31", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo3", "enunciado": "Ligue o <b>objeto</b> ao sólido dele.", "dica": "Pense na forma de cada objeto.", "dados": [{"k": "p0", "img": "sg_telhado", "voz": "telhado", "s": "PIRÂMIDE"}, {"k": "p1", "img": "sg_presente", "voz": "presente", "s": "CUBO"}, {"k": "p2", "img": "sg_copo", "voz": "copo", "s": "CILINDRO"}, {"k": "p3", "img": "sg_tijolo", "voz": "tijolo", "s": "BLOCO RETANGULAR"}], "dadosExtra": {"DICAS": ["Pense na forma de cada objeto.", "Telhado é pirâmide; presente é cubo; copo é cilindro; tijolo é bloco. Siga a linha.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue o objeto ao sólido.", "FECHO": "Você ligou todos!"}, "vozIntro": "sg_f31_intro", "dicaVoz": "sg_f31_dica"}, {"id": "f32", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo3", "enunciado": "Toque em cada sólido e descubra a <b>figura plana</b> da face dele.", "dica": "Olhe um lado do sólido: que figura aparece?", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "QUADRADO", "info": "A face é um quadrado.", "voz": "O cubo tem face de quadrado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "SEM FACE PLANA", "info": "É toda redonda, não tem face plana.", "voz": "A esfera é toda redonda, não tem face plana."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "CÍRCULO", "info": "A face é um círculo.", "voz": "O cilindro tem face de círculo."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "CÍRCULO", "info": "A face é um círculo.", "voz": "O cone tem face de círculo."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "TRIÂNGULO", "info": "A face é um triângulo.", "voz": "A pirâmide tem face de triângulo."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "RETÂNGULO", "info": "A face é um retângulo.", "voz": "O bloco retangular tem face de retângulo."}], "vozIntro": "sg_f32_intro", "dicaVoz": "sg_f32_dica"}, {"id": "f34", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo3", "enunciado": "Cada objeto na gaveta do <b>sólido</b> dele.", "dica": "Redondo de rolar ou com cantos retos?", "dados": [{"k": "cilindro", "n": "CILINDRO", "img": "sg_cilindro_v", "voz": "cilindro", "rot": true}, {"k": "cone", "n": "CONE", "img": "sg_cone_v", "voz": "cone", "rot": true}], "dadosExtra": {"FICHAS": [{"t": "LATA", "alvo": "cilindro", "img": "sg_lata"}, {"t": "COPO", "alvo": "cilindro", "img": "sg_copo"}, {"t": "SORVETE", "alvo": "cone", "img": "sg_sorvete"}, {"t": "CHAPÉU", "alvo": "cone", "img": "sg_chapeu"}], "DICAS": ["Lata e copo são retos e redondos (cilindro); casquinha e chapéu têm ponta (cone).", "Cilindro é reto com círculo em cima e embaixo; cone tem uma ponta.", "Olhe a gaveta com a borda amarela: é ali que este objeto mora."], "ENUN": "Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."}, "vozIntro": "sg_f34_intro", "dicaVoz": "sg_f34_dica"}, {"id": "f30", "mec": "vitrine", "selo": "A GRANDE VITRINE", "conceito": "objetivo1", "enunciado": "A cidade ficou pronta! Toque nos <b>6 sólidos</b> e ouça o que você aprendeu.", "dica": "Toque em cada um e ouça o resumo.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "cubo — fica firme; parece dado.", "voz": "O cubo: fica firme e parece dado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "esfera — rola; parece bola.", "voz": "A esfera: rola e parece bola."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "cilindro — rola; parece lata.", "voz": "O cilindro: rola e parece lata."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "cone — rola; parece sorvete.", "voz": "O cone: rola e parece sorvete."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "pirâmide — fica firme; parece pirâmide.", "voz": "A pirâmide: fica firme e parece pirâmide."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "bloco retangular — fica firme; parece caixa de sapato.", "voz": "O bloco retangular: fica firme e parece caixa de sapato."}], "vozIntro": "sg_f30_intro", "dicaVoz": "sg_f30_dica"}];
+FASES = [{"id": "f01", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo1", "enunciado": "Olhe cada <b>sólido</b> colorido. Toque para ouvir o nome dele.", "dica": "Toque num sólido: eu falo o nome e para que serve.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "É cubo. Parece dado.", "voz": "Este é o cubo. Ele parece dado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "É esfera. Parece bola.", "voz": "Esta é a esfera. Ela parece bola."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "É cilindro. Parece lata.", "voz": "Este é o cilindro. Ele parece lata."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "É cone. Parece sorvete.", "voz": "Este é o cone. Ele parece sorvete."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "É pirâmide. Parece pirâmide.", "voz": "Esta é a pirâmide. Ela parece pirâmide."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "É bloco retangular. Parece caixa de sapato.", "voz": "Este é o bloco retangular. Ele parece caixa de sapato."}], "vozIntro": "sg_f01_intro", "dicaVoz": "sg_f01_dica"}, {"id": "f02", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo1", "enunciado": "Ache o objeto que tem a forma do <b>sólido</b>.", "dica": "Pense no formato: é redondo de rolar ou tem cantos?", "dados": [{"p": "Qual objeto tem a forma de uma <b>esfera</b>?", "c": {"t": "BOLA", "img": "sg_bola", "voz": "bola"}, "e": [{"t": "DADO", "img": "sg_dado", "voz": "dado"}, {"t": "LATA", "img": "sg_lata", "voz": "lata"}, {"t": "CAIXA DE PRESENTE", "img": "sg_presente", "voz": "caixa de presente"}], "d": ["A esfera é toda redondinha, sem nenhum canto.", "É a que rola para todo lado, igual a uma bolinha.", "É a BOLA. Ela está acesa aí: toque nela para seguir."]}, {"p": "Qual objeto tem a forma de um <b>cubo</b>?", "c": {"t": "DADO", "img": "sg_dado", "voz": "dado"}, "e": [{"t": "BOLA", "img": "sg_bola", "voz": "bola"}, {"t": "SORVETE", "img": "sg_sorvete", "voz": "sorvete"}, {"t": "LATA", "img": "sg_lata", "voz": "lata"}], "d": ["O cubo tem 6 lados iguais, todos quadrados.", "Pense num dado de jogar: quadradinho de todos os lados.", "É o DADO. Ele está aceso aí: toque nele para seguir."]}, {"p": "Qual objeto tem a forma de um <b>cilindro</b>?", "c": {"t": "LATA", "img": "sg_lata", "voz": "lata"}, "e": [{"t": "DADO", "img": "sg_dado", "voz": "dado"}, {"t": "SORVETE", "img": "sg_sorvete", "voz": "sorvete"}, {"t": "CAIXA DE SAPATO", "img": "sg_sapato", "voz": "caixa de sapato"}], "d": ["O cilindro é reto e redondo, igual a um cano.", "Pense numa lata de comida: redonda em cima e embaixo.", "É a LATA. Ela está acesa aí: toque nela para seguir."]}], "dadosExtra": {"TITULO": "QUE FORMA É ESSA?", "FECHO": "Você já reconhece os sólidos pelos objetos!", "SOIMG": true}, "vozIntro": "sg_f02_intro", "dicaVoz": "sg_f02_dica"}, {"id": "f03", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo1", "enunciado": "Ligue cada <b>objeto</b> ao nome do sólido que tem a forma dele.", "dica": "Toque no objeto para ouvir. Pense na forma dele.", "dados": [{"k": "p0", "img": "sg_bola", "voz": "BOLA", "s": "ESFERA"}, {"k": "p1", "img": "sg_dado", "voz": "DADO", "s": "CUBO"}, {"k": "p2", "img": "sg_lata", "voz": "LATA", "s": "CILINDRO"}, {"k": "p3", "img": "sg_sorvete", "voz": "sorvete", "s": "CONE"}], "dadosExtra": {"DICAS": ["Pense no formato de cada objeto.", "A bola é esfera, o dado é cubo, a lata é cilindro, a casquinha é cone. Siga a linha tracejada.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada sólido ao seu objeto.", "FECHO": "Você ligou todos os sólidos aos objetos!"}, "vozIntro": "sg_f03_intro", "dicaVoz": "sg_f03_dica"}, {"id": "f04", "mec": "memoria", "selo": "MEMÓRIA", "conceito": "objetivo1", "enunciado": "Ache a <b>palavra</b> e o <b>desenho que combina</b>.", "dica": "Vire duas cartas: uma tem o nome, a outra o desenho. Combinaram? É par!", "dados": [{"k": "cubo", "pal": "CUBO", "voz": "cubo", "imgsen": "sg_cubo_v", "vozsen": "cubo"}, {"k": "esf", "pal": "ESFERA", "voz": "esfera", "imgsen": "sg_esfera_v", "vozsen": "esfera"}, {"k": "cil", "pal": "CILINDRO", "voz": "cilindro", "imgsen": "sg_cilindro_v", "vozsen": "cilindro"}, {"k": "cone", "pal": "CONE", "voz": "cone", "imgsen": "sg_cone_v", "vozsen": "cone"}], "vozIntro": "sg_f04_intro", "dicaVoz": "sg_f04_dica"}, {"id": "f05", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo1", "enunciado": "Ouça as pistas e descubra <b>qual sólido</b> sou eu.", "dica": "Cada pista conta uma parte. Junte todas antes de responder.", "dados": [{"resp": "ESFERA", "pistas": ["Eu sou todo <b>redondo</b>, não tenho nenhum canto.", "Eu <b>rolo</b> para qualquer lado que você me empurrar.", "Você me chuta no jogo de futebol: sou a <b>bola</b>."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}, {"resp": "CUBO", "pistas": ["Eu tenho <b>6 lados iguais</b>, todos quadrados.", "Eu <b>fico firme</b> e dá para me empilhar.", "Você me joga para ver o número: sou o <b>dado</b>."], "outros": ["ESFERA", "CONE", "CILINDRO"]}, {"resp": "CONE", "pistas": ["Eu tenho uma <b>ponta</b> em cima e sou redondo embaixo.", "De cabeça para baixo, eu seguro o <b>sorvete</b>.", "Na festa, eu viro o <b>chapéu</b> pontudo."], "outros": ["CUBO", "ESFERA", "BLOCO"]}], "vozIntro": "sg_f05_intro", "dicaVoz": "sg_f05_dica"}, {"id": "f06", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo1", "enunciado": "Olhe o <b>sólido</b> e escolha o nome certo.", "dica": "Conte os cantos e veja se é redondo de rolar.", "dados": [{"img": "sg_cilindro_v", "p": "Qual é o nome deste sólido?", "c": "CILINDRO", "e": ["CUBO", "CONE", "ESFERA"], "d": ["Ele é reto e redondo, como um cano ou uma lata.", "Tem um círculo em cima e um embaixo.", "É o CILINDRO. Toque nele para seguir."]}, {"img": "sg_piramide_v", "p": "Qual é o nome deste sólido?", "c": "PIRÂMIDE", "e": ["CUBO", "CILINDRO", "ESFERA"], "d": ["Ela tem uma ponta em cima e lados de triângulo.", "Parece o telhado de uma casa ou um monumento antigo.", "É a PIRÂMIDE. Toque nela para seguir."]}, {"img": "sg_bloco_v", "p": "Qual é o nome deste sólido?", "c": "BLOCO RETANGULAR", "e": ["CUBO", "CONE", "ESFERA"], "d": ["Ele tem 6 lados, mas são retângulos (mais compridos).", "Parece uma caixa de sapato ou um tijolo.", "É o BLOCO RETANGULAR. Toque nele para seguir."]}], "dadosExtra": {"TITULO": "O NOME DO SÓLIDO", "FECHO": "Você já sabe o nome dos sólidos!"}, "vozIntro": "sg_f06_intro", "dicaVoz": "sg_f06_dica"}, {"id": "f06b", "mec": "digitar", "selo": "ESCREVA O NOME", "conceito": "objetivo1", "enunciado": "Agora <b>escreva</b> o nome do sólido, letra por letra.", "dica": "Diga o nome devagar e ache cada letra no teclado.", "dados": [{"palavra": "CUBO", "img": "sg_cubo_v", "pista": "Ele tem 6 lados quadrados, igual a um dado. Escreva o nome dele.", "dic": "Diga devagar: <b>CU-BO</b>."}, {"palavra": "CONE", "img": "sg_cone_v", "pista": "Tem uma ponta em cima, igual à casquinha de sorvete. Escreva o nome.", "dic": "Diga devagar: <b>CO-NE</b>."}], "dadosExtra": {"ENUN": "Escreva o nome do sólido, letra por letra.", "FECHO": "Você escreveu os nomes!"}, "vozIntro": "sg_f06b_intro", "dicaVoz": "sg_f06b_dica"}, {"id": "f07", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo2", "enunciado": "Ligue cada <b>sólido</b> ao que ele faz na rampa.", "dica": "Redondo escorrega rolando; lado reto fica parado, firme.", "dados": [{"k": "p0", "img": "sg_esfera_v", "voz": "esfera", "s": "Rola pela rampa", "g": "rola"}, {"k": "p1", "img": "sg_cubo_v", "voz": "cubo", "s": "Fica firme, parado", "g": "firme"}, {"k": "p2", "img": "sg_cilindro_v", "voz": "cilindro", "s": "Rola deitado", "g": "rola"}, {"k": "p3", "img": "sg_piramide_v", "voz": "pirâmide", "s": "Fica firme, parada", "g": "firme"}], "dadosExtra": {"DICAS": ["Pergunte de cada um: se eu soltar na rampa, ele rola ou fica parado?", "Esfera e cilindro têm parte redonda: rolam. Cubo e pirâmide têm lados retos: ficam firmes. Siga a linha tracejada.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada sólido ao que ele faz.", "FECHO": "Você ligou cada sólido ao seu jeito de se mexer!"}, "vozIntro": "sg_f07_intro", "dicaVoz": "sg_f07_dica"}, {"id": "f08", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo2", "enunciado": "Cada sólido numa gaveta: <b>ROLA</b> ou <b>FICA FIRME</b>?", "dica": "Redondo de rolar vai numa gaveta; com lados retos vai na outra.", "dados": [{"k": "rola", "n": "ROLA<br>(redondo)", "img": "", "voz": "rola", "rot": false}, {"k": "firme", "n": "FICA FIRME<br>(lados retos)", "img": "", "voz": "fica firme", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "ESFERA", "alvo": "rola", "img": "sg_esfera_v"}, {"t": "CILINDRO", "alvo": "rola", "img": "sg_cilindro_v"}, {"t": "CONE", "alvo": "rola", "img": "sg_cone_v"}, {"t": "CUBO", "alvo": "firme", "img": "sg_cubo_v"}, {"t": "PIRÂMIDE", "alvo": "firme", "img": "sg_piramide_v"}, {"t": "BLOCO", "alvo": "firme", "img": "sg_bloco_v"}], "DICAS": ["Pergunte: se eu empurrar, ele rola ou fica parado?", "Esfera, cilindro e cone têm parte redonda: rolam. Cubo, pirâmide e bloco têm lados retos: ficam firmes.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque no <b>sólido</b>. Depois toque na gaveta certa: <b>ROLA</b> ou <b>FICA FIRME</b>?"}, "vozIntro": "sg_f08_intro", "dicaVoz": "sg_f08_dica"}, {"id": "f09", "mec": "completar", "selo": "COMPLETE A FRASE", "conceito": "objetivo2", "enunciado": "Termine a frase sobre o <b>sólido</b>: toque no pedaço que falta.", "dica": "Pense: redondo rola; lado reto fica firme.", "dados": [{"img": "sg_esfera_v", "ante": "A esfera é toda redonda, por isso ela ", "dep": ".", "cer": "rola", "out": ["fica firme", "empilha"], "dic": "O que a bola faz quando você empurra?"}, {"img": "sg_cubo_v", "ante": "O cubo tem lados retos e planos, por isso ele ", "dep": ".", "cer": "fica firme", "out": ["rola", "escorrega"], "dic": "O dado sai rolando ou fica parado no lugar?"}, {"img": "sg_cilindro_v", "ante": "A lata é um cilindro: em pé ela empilha, mas deitada ela ", "dep": ".", "cer": "rola", "out": ["fica firme", "voa"], "dic": "Deite a lata e dê um empurrão: o que acontece?"}], "dadosExtra": {"ENUN": "Toque no pedaço que <b>falta</b> na frase.", "DEPOIS": "Leia a frase inteira antes de escolher.", "FECHO": "Você completou as frases dos sólidos!"}, "vozIntro": "sg_f09_intro", "dicaVoz": "sg_f09_dica"}, {"id": "f10", "mec": "arrastar-sombra", "selo": "CADA UM, SUA SOMBRA", "conceito": "objetivo2", "enunciado": "Leve cada <b>sólido</b> até a sombra com o mesmo contorno.", "dica": "Compare o contorno: a sombra tem o mesmo formato do sólido.", "dados": [{"selo": "CADA UM, SUA SOMBRA", "semSom": true, "pool": ["circ", "quad", "tri", "cil"], "n": 3, "quais": ["circ", "quad", "tri"]}, {"selo": "OLHE BEM O CONTORNO", "semSom": true, "pool": ["quad", "circ", "tri", "ret", "cil", "con"], "n": 4, "quais": ["quad", "circ", "tri", "ret"]}], "dadosExtra": {"FORMAS": {"quad": {"n": "CUBO", "voz": "CUBO", "img": "sg_cubo_v"}, "circ": {"n": "ESFERA", "voz": "ESFERA", "img": "sg_esfera_v"}, "tri": {"n": "PIRÂMIDE", "voz": "PIRÂMIDE", "img": "sg_piramide_v"}, "ret": {"n": "BLOCO", "voz": "BLOCO", "img": "sg_bloco_v"}, "cil": {"n": "CILINDRO", "voz": "CILINDRO", "img": "sg_cilindro_v"}, "con": {"n": "CONE", "voz": "CONE", "img": "sg_cone_v"}}, "DICAS": ["Compare o <b>contorno</b>: a sombra tem o mesmo formato.", "A sombra certa está <b>piscando</b>. Leve o sólido até ela.", "Deixa comigo: eu levo esta e você continua."]}, "vozIntro": "sg_f10_intro", "dicaVoz": "sg_f10_dica"}, {"id": "f11", "mec": "intruso", "selo": "QUAL NÃO É?", "conceito": "objetivo2", "enunciado": "Três fazem a mesma coisa. <b>Qual é o diferente?</b>", "dica": "Descubra o que três têm em comum e ache o diferente.", "dados": [{"selo": "OS QUE ROLAM", "tipo": "texto", "enun": "Três destes rolam. <b>Qual NÃO rola?</b>", "itens": [{"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v"}, {"k": "cilindro", "n": "CILINDRO", "img": "sg_cilindro_v"}, {"k": "cone", "n": "CONE", "img": "sg_cone_v"}, {"k": "cubo", "n": "CUBO", "img": "sg_cubo_v"}], "fora": "cubo", "nomeFora": "CUBO", "d1": "Imagine empurrar cada um. Qual NÃO sai rolando?", "d2": "Esfera, cilindro e cone têm parte redonda e rolam. Um tem só lados retos.", "d3": "O que não pertence é o CUBO: ele fica firme, os outros rolam.", "razoes": [{"t": "Os outros três rolam; o cubo fica firme.", "ok": 1}, {"t": "Porque o cubo é o maior.", "ok": 0}, {"t": "Porque o cubo é azul.", "ok": 0}, {"t": "Porque o cubo é de brincar.", "ok": 0}], "enunPorque": "O <b>cubo</b> n&#227;o rola como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ele de fora?", "p1": "O que você tocou até pode ser verdade. Mas olhe o que os OUTROS três fazem.", "p2": "Cor e tamanho não decidem. O que decide é <b>rolar ou não</b>.", "p3": "Esfera, cilindro e cone rolam. O cubo <b>não rola</b>: fica firme — por isso ele é o diferente.", "regra": "esfera, cilindro e cone rolam; o cubo fica firme"}, {"selo": "OS QUE FICAM FIRMES", "tipo": "texto", "enun": "Três ficam firmes. <b>Qual NÃO fica firme?</b>", "itens": [{"k": "cubo", "n": "CUBO", "img": "sg_cubo_v"}, {"k": "bloco", "n": "BLOCO", "img": "sg_bloco_v"}, {"k": "piramide", "n": "PIRÂMIDE", "img": "sg_piramide_v"}, {"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v"}], "fora": "esfera", "nomeFora": "ESFERA", "d1": "Qual deles NÃO dá para deixar parado sem rolar?", "d2": "Cubo, bloco e pirâmide têm lados retos e ficam firmes. Um é todo redondo.", "d3": "A que não pertence é a ESFERA: ela rola, os outros ficam firmes.", "razoes": [{"t": "Os outros três ficam firmes; a esfera rola.", "ok": 1}, {"t": "Porque a esfera é a menor.", "ok": 0}, {"t": "Porque a esfera é laranja.", "ok": 0}, {"t": "Porque a esfera é de futebol.", "ok": 0}], "enunPorque": "A <b>esfera</b> n&#227;o fica firme como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ela de fora?", "p1": "Pode ser verdade, mas olhe o que os outros três têm em comum.", "p2": "O que junta os três é <b>ficar firme</b>, não a cor nem o tamanho.", "p3": "Cubo, bloco e pirâmide ficam firmes. A esfera <b>não fica firme</b>: ela rola — por isso ela é a diferente.", "regra": "cubo, bloco e pirâmide ficam firmes; a esfera rola"}], "vozIntro": "sg_f11_intro", "dicaVoz": "sg_f11_dica"}, {"id": "f12", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo2", "enunciado": "Toque em cada <b>sólido</b> e ouça: ele <b>rola</b> ou <b>fica firme</b>?", "dica": "Redondo rola; lados retos ficam firmes.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "O cubo fica firme, porque tem lados retos."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "A esfera rola, porque é redonda."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "O cilindro rola, porque é redondo."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "Rola, porque é redondo.", "voz": "O cone rola, porque é redondo."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "A pirâmide fica firme, porque tem lados retos."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "Fica firme, porque tem lados retos.", "voz": "O bloco retangular fica firme, porque tem lados retos."}], "vozIntro": "sg_f12_intro", "dicaVoz": "sg_f12_dica"}, {"id": "f13", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo3", "enunciado": "Ligue cada <b>sólido</b> à forma da face dele.", "dica": "Olhe o lado do sólido: que figura plana aparece ali?", "dados": [{"k": "p0", "img": "sg_cubo_v", "voz": "cubo", "s": "Faces QUADRADAS"}, {"k": "p1", "img": "sg_bloco_v", "voz": "bloco", "s": "Faces RETÂNGULOS"}, {"k": "p2", "img": "sg_piramide_v", "voz": "pirâmide", "s": "Faces de TRIÂNGULO"}, {"k": "p3", "img": "sg_cilindro_v", "voz": "cilindro", "s": "Base em CÍRCULO"}], "dadosExtra": {"DICAS": ["Olhe UM lado do sólido de cada vez.", "O cubo tem lados quadrados; o bloco, retângulos; a pirâmide, triângulos; o cilindro tem círculo embaixo.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue cada face ao sólido dela.", "FECHO": "Você achou as faces dos sólidos!"}, "vozIntro": "sg_f13_intro", "dicaVoz": "sg_f13_dica"}, {"id": "f14", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo3", "enunciado": "Cada objeto na gaveta do <b>sólido</b> dele.", "dica": "Pense na forma do objeto: é redondo de rolar ou tem cantos?", "dados": [{"k": "esfera", "n": "ESFERA", "img": "sg_esfera_v", "voz": "esfera", "rot": true}, {"k": "cubo", "n": "CUBO", "img": "sg_cubo_v", "voz": "cubo", "rot": true}], "dadosExtra": {"FICHAS": [{"t": "BOLA", "alvo": "esfera", "img": "sg_bola"}, {"t": "LARANJA", "alvo": "esfera", "img": "sg_laranja"}, {"t": "DADO", "alvo": "cubo", "img": "sg_dado"}, {"t": "CAIXA DE PRESENTE", "alvo": "cubo", "img": "sg_presente"}], "DICAS": ["A bola e a laranja são redondas; o dado e a caixa têm cantos.", "Objeto redondo é esfera; objeto quadradinho é cubo.", "Olhe a gaveta com a borda amarela: é ali que este objeto mora."], "ENUN": "Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."}, "vozIntro": "sg_f14_intro", "dicaVoz": "sg_f14_dica"}, {"id": "f15", "mec": "quebra-cabeca", "selo": "QUEBRA-CABEÇA", "conceito": "objetivo3", "enunciado": "Monte a <b>casinha</b> feita de sólidos.", "dica": "Comece pelos cantos e olhe as cores que combinam.", "dados": {"img": "sg_puzzle1", "cols": 3, "lins": 2, "w": 360, "h": 360, "fundo": false}, "vozIntro": "sg_f15_intro", "dicaVoz": "sg_f15_dica"}, {"id": "aquecimento", "mec": "escolher", "selo": "AQUECIMENTO", "conceito": "objetivo3", "enunciado": "<b>Aquecimento!</b> Que sólido tem a forma deste objeto?", "dica": "Compare o objeto com os sólidos que você já conhece.", "dados": [{"img": "sg_lata", "p": "A <b>lata</b> tem a forma de qual sólido?", "c": "CILINDRO", "e": ["CUBO", "ESFERA", "PIRÂMIDE"], "d": ["Ela é reta e redonda, com círculo em cima e embaixo.", "Pense num cano ou num copo.", "É o CILINDRO. Toque para seguir."]}, {"img": "sg_sorvete", "p": "A <b>casquinha de sorvete</b> tem a forma de qual sólido?", "c": "CONE", "e": ["CILINDRO", "CUBO", "ESFERA"], "d": ["Ela tem uma ponta embaixo e é redonda em cima.", "É a mesma forma do chapéu de festa.", "É o CONE. Toque para seguir."]}, {"img": "sg_sapato", "p": "A <b>caixa de sapato</b> tem a forma de qual sólido?", "c": "BLOCO RETANGULAR", "e": ["CUBO", "CILINDRO", "CONE"], "d": ["Ela tem 6 lados, mas são retângulos compridos.", "Parece um tijolo ou um livro fechado.", "É o BLOCO RETANGULAR. Toque para seguir."]}], "dadosExtra": {"TITULO": "O SÓLIDO ESCONDIDO", "FECHO": "Você acha sólidos em tudo agora!"}, "vozIntro": "sg_aquecimento_intro", "dicaVoz": "sg_aquecimento_dica"}, {"id": "f17", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo3", "enunciado": "Ouça as pistas e descubra o <b>sólido</b>.", "dica": "Junte todas as pistas antes de escolher.", "dados": [{"resp": "CILINDRO", "pistas": ["Eu sou reto e tenho um <b>círculo</b> em cima e embaixo.", "Deitado eu <b>rolo</b>; em pé eu fico firme.", "Na cozinha eu sou a <b>lata</b> de comida."], "outros": ["CUBO", "ESFERA", "PIRÂMIDE"]}, {"resp": "BLOCO RETANGULAR", "pistas": ["Eu tenho 6 lados, mas eles são <b>retângulos</b>.", "Eu <b>fico firme</b> e dá para me empilhar.", "Eu sou a <b>caixa de sapato</b> e também o tijolo."], "outros": ["CUBO", "CONE", "ESFERA"]}, {"resp": "PIRÂMIDE", "pistas": ["Eu tenho lados de <b>triângulo</b> e uma <b>ponta</b> em cima.", "Eu <b>fico firme</b>, apoiada na minha base.", "No Egito antigo, eu sou gigante no deserto."], "outros": ["CILINDRO", "ESFERA", "CUBO"]}], "vozIntro": "sg_f17_intro", "dicaVoz": "sg_f17_dica"}, {"id": "f17b", "mec": "forca", "selo": "FORCA", "conceito": "objetivo1", "enunciado": "Descubra o <b>sólido</b> pela pista e monte o nome, letra por letra.", "dica": "Leia a pista e pense na forma antes de escolher as letras.", "dados": [{"p": "CILINDRO", "ac": "CILINDRO", "fig": "sg_cilindro_v", "d": "Rola deitado e fica firme em pé, igual a uma lata."}, {"p": "PIRÂMIDE", "ac": "PIRÂMIDE", "fig": "sg_piramide_v", "d": "Tem base quadrada e sobe até uma ponta, como no Egito."}, {"p": "ESFERA", "ac": "ESFERA", "fig": "sg_esfera_v", "d": "É toda redonda, sem nenhum canto, e rola para todo lado."}], "vozIntro": "sg_f17b_intro", "dicaVoz": "sg_f17b_dica"}, {"id": "f20", "mec": "caca-palavras", "selo": "CAÇA-PALAVRAS", "conceito": "objetivo1", "enunciado": "Ache os <b>nomes dos sólidos</b> escondidos no quadro.", "dica": "Os nomes estão deitados (→) e em pé (↓). Ache um de cada vez.", "dados": ["CUBO", "ESFERA", "CONE", "BLOCO"], "dadosExtra": {"MODO": "lista", "TITULO": "CAÇA-PALAVRAS DOS SÓLIDOS", "LETRAS": "ABCDEFGHIJLMNOPRSTUVZ", "DIFICIL": "", "CORP": ["p1", "p2", "p3", "p4"]}, "vozIntro": "sg_f20_intro", "dicaVoz": "sg_f20_dica"}, {"id": "f22", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo2", "enunciado": "Ouça as pistas de como eu me mexo e descubra <b>qual sólido</b> sou.", "dica": "Cada pista conta se eu rolo ou fico firme. Junte todas antes de responder.", "dados": [{"resp": "ESFERA", "pistas": ["Eu não tenho nenhum lado reto: sou todo <b>redondo</b>.", "Se você me solta na rampa, eu <b>rolo</b> para qualquer lado.", "Nunca fico parado num lugar: sou a <b>bola</b>."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}, {"resp": "CUBO", "pistas": ["Eu tenho <b>lados retos e planos</b>, sem nada redondo.", "Na rampa eu <b>fico firme</b> e não saio rolando.", "Dá para me <b>empilhar</b> sem cair: sou o dado."], "outros": ["ESFERA", "CONE", "CILINDRO"]}, {"resp": "CILINDRO", "pistas": ["Eu tenho dois <b>círculos</b>, um em cada ponta.", "Deitado eu <b>rolo</b>; em pé eu <b>fico firme</b>.", "Pareço uma <b>lata</b> de comida."], "outros": ["CUBO", "ESFERA", "PIRÂMIDE"]}], "vozIntro": "sg_f22_intro", "dicaVoz": "sg_f22_dica"}, {"id": "f23", "mec": "intruso", "selo": "QUAL NÃO É?", "conceito": "objetivo3", "enunciado": "Três fazem a mesma coisa. <b>Qual é o diferente?</b>", "dica": "Pense na forma de cada objeto: rola ou fica firme?", "dados": [{"selo": "OS QUE ROLAM", "tipo": "texto", "enun": "Três destes rolam. <b>Qual NÃO rola?</b>", "itens": [{"k": "bola", "n": "BOLA", "img": "sg_bola"}, {"k": "laranja", "n": "LARANJA", "img": "sg_laranja"}, {"k": "lata", "n": "LATA", "img": "sg_lata"}, {"k": "dado", "n": "DADO", "img": "sg_dado"}], "fora": "dado", "nomeFora": "DADO", "d1": "Qual deles NÃO rola de todo jeito?", "d2": "Bola e laranja são esferas; a lata é cilindro (rola deitada). O dado tem só cantos.", "d3": "O que não pertence é o DADO: é cubo e fica firme.", "razoes": [{"t": "Os outros três rolam; o dado fica firme.", "ok": 1}, {"t": "Porque o dado tem números.", "ok": 0}, {"t": "Porque o dado é pequeno.", "ok": 0}, {"t": "Porque o dado é de jogar.", "ok": 0}], "enunPorque": "O <b>dado</b> n&#227;o rola como os outros tr&#234;s. <b>Por qu&#234;</b> isso deixa ele de fora?", "p1": "O número no dado não decide a forma. Olhe o que os outros fazem.", "p2": "O que junta os três é a forma <b>redonda de rolar</b>.", "p3": "Bola, laranja e lata rolam. O dado <b>não rola</b>: fica firme — por isso ele é o diferente.", "regra": "bola, laranja e lata rolam; o dado fica firme"}], "vozIntro": "sg_f23_intro", "dicaVoz": "sg_f23_dica"}, {"id": "f24", "mec": "quebra-cabeca", "selo": "QUEBRA-CABEÇA", "conceito": "objetivo3", "enunciado": "Monte a <b>torre</b> de sólidos empilhados.", "dica": "Comece de baixo: o que fica firme vai embaixo.", "dados": {"img": "sg_puzzle2", "cols": 3, "lins": 2, "w": 360, "h": 360, "fundo": false}, "vozIntro": "sg_f24_intro", "dicaVoz": "sg_f24_dica"}, {"id": "f25", "mec": "memoria", "selo": "MEMÓRIA", "conceito": "objetivo3", "enunciado": "Ache a <b>palavra</b> e o <b>desenho que combina</b>.", "dica": "Vire duas cartas: uma tem o nome, a outra o desenho. Combinaram? É par!", "dados": [{"k": "pir", "pal": "PIRÂMIDE", "voz": "pirâmide", "imgsen": "sg_piramide_v", "vozsen": "pirâmide"}, {"k": "bloco", "pal": "BLOCO", "voz": "bloco", "imgsen": "sg_bloco_v", "vozsen": "bloco"}, {"k": "cone", "pal": "CONE", "voz": "cone", "imgsen": "sg_cone_v", "vozsen": "cone"}, {"k": "cil", "pal": "CILINDRO", "voz": "cilindro", "imgsen": "sg_cilindro_v", "vozsen": "cilindro"}], "vozIntro": "sg_f25_intro", "dicaVoz": "sg_f25_dica"}, {"id": "f26", "mec": "arrastar-sombra", "selo": "CADA UM, SUA SOMBRA", "conceito": "objetivo2", "enunciado": "Leve cada <b>objeto</b> até a sombra da forma dele.", "dica": "Compare o contorno da sombra com o objeto.", "dados": [{"selo": "CADA UM, SUA SOMBRA", "semSom": true, "pool": ["bola", "lata", "dado", "sorvete"], "n": 3, "quais": ["bola", "lata", "dado"]}, {"selo": "OLHE BEM O CONTORNO", "semSom": true, "pool": ["bola", "lata", "dado", "sorvete"], "n": 4, "quais": ["bola", "lata", "dado", "sorvete"]}], "dadosExtra": {"FORMAS": {"bola": {"n": "BOLA", "voz": "BOLA", "img": "sg_bola"}, "lata": {"n": "LATA", "voz": "LATA", "img": "sg_lata"}, "dado": {"n": "DADO", "voz": "DADO", "img": "sg_dado"}, "sorvete": {"n": "SORVETE", "voz": "SORVETE", "img": "sg_sorvete"}}, "DICAS": ["Compare o <b>contorno</b>: a sombra tem o mesmo formato.", "A sombra certa está <b>piscando</b>. Leve até ela.", "Deixa comigo: eu levo esta e você continua."]}, "vozIntro": "sg_f26_intro", "dicaVoz": "sg_f26_dica"}, {"id": "f27", "mec": "escolher", "selo": "ESCOLHA", "conceito": "objetivo2", "enunciado": "Ajude o Bloco a <b>construir</b>: escolha a forma certa.", "dica": "Pense se a peça precisa ficar firme ou rolar.", "dados": [{"img": "", "p": "Para a <b>base de uma torre</b> bem firme, qual sólido usar?", "c": "BLOCO RETANGULAR", "e": ["ESFERA", "CONE", "CILINDRO deitado"], "d": ["A base não pode rolar nem escorregar.", "Precisa de lados retos e planos embaixo.", "É o BLOCO RETANGULAR. Toque para seguir."]}, {"img": "", "p": "Para o <b>telhado pontudo</b> da casa, qual sólido combina?", "c": "PIRÂMIDE", "e": ["CILINDRO", "ESFERA", "CUBO"], "d": ["O telhado tem uma ponta em cima.", "Lados de triângulo que sobem até o topo.", "É a PIRÂMIDE. Toque para seguir."]}, {"img": "", "p": "Para um <b>rolo que desce a ladeira</b>, qual sólido escolher?", "c": "CILINDRO", "e": ["CUBO", "PIRÂMIDE", "BLOCO"], "d": ["Precisa rolar reto, sem sair do caminho.", "A esfera rolaria torto; escolha o que rola em linha.", "É o CILINDRO. Toque para seguir."]}], "dadosExtra": {"TITULO": "MÃO NA MASSA", "FECHO": "Você escolheu as formas certas para construir!"}, "vozIntro": "sg_f27_intro", "dicaVoz": "sg_f27_dica"}, {"id": "f28", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo2", "enunciado": "Dá para <b>empilhar</b> firme ou <b>escorrega</b>?", "dica": "Lados retos empilham; parte redonda escorrega.", "dados": [{"k": "empilha", "n": "EMPILHA FIRME", "img": "", "voz": "empilha firme", "rot": false}, {"k": "escorrega", "n": "ESCORREGA / ROLA", "img": "", "voz": "escorrega", "rot": false}], "dadosExtra": {"FICHAS": [{"t": "CUBO", "alvo": "empilha", "img": "sg_cubo_v"}, {"t": "BLOCO", "alvo": "empilha", "img": "sg_bloco_v"}, {"t": "ESFERA", "alvo": "escorrega", "img": "sg_esfera_v"}, {"t": "CONE", "alvo": "escorrega", "img": "sg_cone_v"}], "DICAS": ["Imagine empilhar dois iguais: fica em pé ou cai?", "Cubo e bloco têm topo plano: empilham. Esfera e cone têm parte redonda: escorregam.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Toque no <b>sólido</b>. Depois toque na gaveta: <b>EMPILHA FIRME</b> ou <b>ESCORREGA</b>?"}, "vozIntro": "sg_f28_intro", "dicaVoz": "sg_f28_dica"}, {"id": "f29", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "conceito": "objetivo1", "enunciado": "Última rodada de pistas: qual <b>sólido</b> sou eu?", "dica": "Junte as três pistas antes de responder.", "dados": [{"resp": "CUBO", "pistas": ["Tenho <b>6 faces</b>, todas quadradas e iguais.", "Fico <b>firme</b> e sou fácil de empilhar.", "Você me joga no jogo de tabuleiro: sou o <b>dado</b>."], "outros": ["ESFERA", "CILINDRO", "CONE"]}, {"resp": "ESFERA", "pistas": ["Não tenho <b>nenhum canto</b> nem lado reto.", "Eu <b>rolo</b> para qualquer lado.", "Sou a <b>bola</b> e também a laranja."], "outros": ["CUBO", "PIRÂMIDE", "BLOCO"]}], "vozIntro": "sg_f29_intro", "dicaVoz": "sg_f29_dica"}, {"id": "f31", "mec": "ligar", "selo": "LIGUE", "conceito": "objetivo3", "enunciado": "Ligue o <b>objeto</b> ao sólido dele.", "dica": "Pense na forma de cada objeto.", "dados": [{"k": "p0", "img": "sg_telhado", "voz": "telhado", "s": "PIRÂMIDE"}, {"k": "p1", "img": "sg_presente", "voz": "presente", "s": "CUBO"}, {"k": "p2", "img": "sg_copo", "voz": "copo", "s": "CILINDRO"}, {"k": "p3", "img": "sg_tijolo", "voz": "tijolo", "s": "BLOCO RETANGULAR"}], "dadosExtra": {"DICAS": ["Pense na forma de cada objeto.", "Telhado é pirâmide; presente é cubo; copo é cilindro; tijolo é bloco. Siga a linha.", "A resposta certa está acesa, no fim da linha. Toque nela."], "FEITOS": [], "ENUN": "Ligue o objeto ao sólido.", "FECHO": "Você ligou todos!"}, "vozIntro": "sg_f31_intro", "dicaVoz": "sg_f31_dica"}, {"id": "f32", "mec": "vitrine", "selo": "VITRINE", "conceito": "objetivo3", "enunciado": "Toque em cada sólido e descubra a <b>figura plana</b> da face dele.", "dica": "Olhe um lado do sólido: que figura aparece?", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "QUADRADO", "info": "A face é um quadrado.", "voz": "O cubo tem face de quadrado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "SEM FACE PLANA", "info": "É toda redonda, não tem face plana.", "voz": "A esfera é toda redonda, não tem face plana."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "CÍRCULO", "info": "A face é um círculo.", "voz": "O cilindro tem face de círculo."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "CÍRCULO", "info": "A face é um círculo.", "voz": "O cone tem face de círculo."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "TRIÂNGULO", "info": "A face é um triângulo.", "voz": "A pirâmide tem face de triângulo."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "RETÂNGULO", "info": "A face é um retângulo.", "voz": "O bloco retangular tem face de retângulo."}], "vozIntro": "sg_f32_intro", "dicaVoz": "sg_f32_dica"}, {"id": "f34", "mec": "classificar", "selo": "SEPARE", "conceito": "objetivo3", "enunciado": "Cada objeto na gaveta do <b>sólido</b> dele.", "dica": "Redondo de rolar ou com cantos retos?", "dados": [{"k": "cilindro", "n": "CILINDRO", "img": "sg_cilindro_v", "voz": "cilindro", "rot": true}, {"k": "cone", "n": "CONE", "img": "sg_cone_v", "voz": "cone", "rot": true}], "dadosExtra": {"FICHAS": [{"t": "LATA", "alvo": "cilindro", "img": "sg_lata"}, {"t": "COPO", "alvo": "cilindro", "img": "sg_copo"}, {"t": "SORVETE", "alvo": "cone", "img": "sg_sorvete"}, {"t": "CHAPÉU", "alvo": "cone", "img": "sg_chapeu"}], "DICAS": ["Lata e copo são retos e redondos (cilindro); casquinha e chapéu têm ponta (cone).", "Cilindro é reto com círculo em cima e embaixo; cone tem uma ponta.", "Olhe a gaveta com a borda amarela: é ali que este objeto mora."], "ENUN": "Toque no <b>objeto</b>. Depois toque na <b>gaveta do sólido</b> dele."}, "vozIntro": "sg_f34_intro", "dicaVoz": "sg_f34_dica"}, {"id": "f30", "mec": "vitrine", "selo": "A GRANDE VITRINE", "conceito": "objetivo1", "enunciado": "A cidade ficou pronta! Toque nos <b>6 sólidos</b> e ouça o que você aprendeu.", "dica": "Toque em cada um e ouça o resumo.", "dados": [{"img": "sg_cubo_v", "nome": "CUBO", "grupo": "FICA FIRME", "info": "cubo — fica firme; parece dado.", "voz": "O cubo: fica firme e parece dado."}, {"img": "sg_esfera_v", "nome": "ESFERA", "grupo": "ROLA", "info": "esfera — rola; parece bola.", "voz": "A esfera: rola e parece bola."}, {"img": "sg_cilindro_v", "nome": "CILINDRO", "grupo": "ROLA", "info": "cilindro — rola; parece lata.", "voz": "O cilindro: rola e parece lata."}, {"img": "sg_cone_v", "nome": "CONE", "grupo": "ROLA", "info": "cone — rola; parece sorvete.", "voz": "O cone: rola e parece sorvete."}, {"img": "sg_piramide_v", "nome": "PIRÂMIDE", "grupo": "FICA FIRME", "info": "pirâmide — fica firme; parece pirâmide.", "voz": "A pirâmide: fica firme e parece pirâmide."}, {"img": "sg_bloco_v", "nome": "BLOCO RETANGULAR", "grupo": "FICA FIRME", "info": "bloco retangular — fica firme; parece caixa de sapato.", "voz": "O bloco retangular: fica firme e parece caixa de sapato."}], "vozIntro": "sg_f30_intro", "dicaVoz": "sg_f30_dica"}];
 AMBI = "poeira";
-VOZOK = {"ykfff2": 1, "135xshn": 1, "1klh3e9": 1, "1xve2zf": 1, "ghenda": 1, "1v877fy": 1, "uwlnp5": 1, "deeghc": 1, "jbhbhi": 1, "ykfaoa": 1, "le0a07": 1, "r8u4t9": 1, "10z97qp": 1, "1knxek2": 1, "ge0owi": 1, "15rxj6x": 1, "1xq7onp": 1, "uhykwb": 1, "bmr1q0": 1, "ykeiw3": 1, "ykfqe5": 1, "yklwmf": 1, "1b1y8ka": 1, "1vkm58o": 1, "1bl7lyn": 1, "nuemzy": 1, "2ej3my": 1, "19c6brh": 1, "11c4vmd": 1, "1xf82o3": 1, "1n0r8y4": 1, "y5s3n9": 1, "9xw0m4": 1, "12ns217": 1, "zdkfgk": 1, "g67i2a": 1, "1dqhj6h": 1, "54cpgr": 1, "185sxrs": 1, "13gz56g": 1, "g4eads": 1, "1m6wvvk": 1, "37b2bh": 1, "hn8x7z": 1, "1as1u7u": 1, "1quntr6": 1, "47g79w": 1, "f8zo8f": 1, "1oovger": 1, "18shwiz": 1, "114ej6w": 1, "p4x514": 1, "n7g9ql": 1, "1058nfl": 1, "l7i3lu": 1, "1eli4dk": 1, "1nbmo5u": 1, "b8zxn7": 1, "658ndt": 1, "15s5p88": 1, "j6stmi": 1, "1fy6jg4": 1, "h6odfm": 1, "1wb5ndw": 1, "i4vboj": 1, "1j0wuas": 1, "ndrahe": 1, "bz5zwr": 1, "n9j1xq": 1, "17kov54": 1, "17lyxoe": 1, "15viome": 1, "ykquk3": 1, "zslyb2": 1, "4a7n3s": 1, "ptn2ml": 1, "zslyao": 1, "lupvpd": 1, "15dehjg": 1, "vvjzbm": 1, "1k3r2yx": 1, "10abecv": 1, "1fc1fuk": 1, "vzmbhn": 1, "qq6b46": 1, "1ililmi": 1, "1t5zox6": 1, "wdgbd1": 1, "1ye03lj": 1, "t3n9mt": 1, "76i71w": 1, "17kpr5y": 1, "1o5enwg": 1, "hmco3h": 1, "oabudl": 1, "377kp7": 1, "1wcnyiy": 1, "siqqjl": 1, "m88xhh": 1, "vzes27": 1, "v2v1e1": 1, "ykf5qe": 1, "ykq7lc": 1, "377j3o": 1, "3774l9": 1, "1lk1u3m": 1, "377h3k": 1, "3774qt": 1, "16ju9vs": 1, "p7it7w": 1, "mxia6j": 1, "57xsnh": 1, "hxb35l": 1, "q53obo": 1, "fcndrn": 1, "tty4gf": 1, "1ojvuxk": 1, "rzsjmf": 1, "68fbg": 1, "b5h64a": 1, "10k5cyw": 1, "1junoq1": 1, "19jze3m": 1, "149fsuh": 1, "mw5h21": 1, "15bf37c": 1, "jfo4l0": 1, "zyv1eu": 1, "btmo3c": 1, "1tuhg6n": 1, "w6tvre": 1, "145ggcx": 1, "lrnsq0": 1, "1id8myx": 1, "12qu17f": 1, "1khjh0e": 1, "x39r1": 1, "1wqqzfs": 1, "gkbfi8": 1, "1afzzgn": 1, "twc9of": 1, "e1y4t9": 1, "yn3eva": 1, "sizla8": 1, "y1xz0x": 1, "1bdko9g": 1, "1hhq2ze": 1, "28d7rx": 1, "bd34j0": 1, "vwhll2": 1, "1q9dntz": 1, "1nguhz9": 1, "r4rgbx": 1, "1ega9px": 1, "cg6ibp": 1, "steoe6": 1, "1bcz86f": 1, "1y1q0f4": 1, "177e9km": 1, "2gtmf7": 1, "hxztd9": 1, "1752nua": 1, "1pkyao4": 1, "1ubtym": 1, "dy0qyh": 1, "3gt0uk": 1, "f7uw8e": 1, "t6colb": 1, "1u5mi9u": 1, "19yxo2j": 1, "1svbj6a": 1, "yhjue6": 1, "nmursq": 1, "11pgpz2": 1, "1dp69m6": 1, "rsiq2f": 1, "1vttwm0": 1, "yljltg": 1, "94fcxn": 1, "t8rwgj": 1, "b36u9f": 1, "15n1jx5": 1, "yy0oet": 1, "yg68og": 1, "e5v1rr": 1, "7aaje3": 1, "15a06lb": 1, "12uzrky": 1, "16fhryg": 1, "9xdkl7": 1, "1ewujhp": 1, "1k2xmv5": 1, "ibs77g": 1, "p738a5": 1, "cdw67g": 1, "pf4mng": 1, "jijijw": 1, "dh1u96": 1, "173vtrb": 1, "15vskru": 1, "1g98png": 1, "pu97h7": 1, "tw122f": 1, "cmva0n": 1, "19nps3d": 1, "nx6r7m": 1, "zm989e": 1, "1k9azan": 1, "20ek7f": 1, "1wxegwj": 1, "1gzp7dw": 1, "d2vaqi": 1, "1cy9750": 1, "1swk5p6": 1, "nym1yt": 1, "q9ul08": 1, "1x3ymx6": 1, "19qrqqu": 1, "bhia4s": 1, "1i6gzqg": 1, "1v58fff": 1, "dwt5o8": 1, "wsa6t9": 1, "1ixnv6y": 1, "1xl4u6q": 1, "1l8uhsg": 1, "1p6ctcd": 1, "bptmnx": 1, "vd84ek": 1, "lesa17": 1, "bk7ptp": 1, "1hwtqwy": 1, "1o3jhuu": 1, "5imuej": 1, "ykfaqe": 1, "8ct9hy": 1, "6o8q6f": 1, "1cvcunc": 1, "1ffvby1": 1, "1nvysox": 1, "m2zif3": 1, "uebbyy": 1, "hpxib2": 1, "fv625h": 1, "vu106b": 1, "xpsqnd": 1, "rg3k4a": 1, "cltq84": 1, "16gt7ck": 1, "r5i3xc": 1, "xeycba": 1, "1wcxctb": 1, "p3h0nz": 1, "1qabu4f": 1, "ljitfd": 1, "1923jx4": 1, "ajkb04": 1, "17mcclh": 1, "kb5x3q": 1, "g3xinp": 1, "1izeskt": 1, "1ujzzfw": 1, "adtf80": 1, "14gmvkx": 1, "70yptf": 1, "1jyts36": 1, "137rt4g": 1, "1v8u0y8": 1, "1ih8zjc": 1, "1uzgvic": 1, "k4o16y": 1, "u45fpu": 1, "yqzdtt": 1, "rortei": 1, "vuuerh": 1, "93uyb1": 1, "1llkc0w": 1, "18um191": 1, "1vrqwxc": 1, "q8km67": 1, "o0zpvd": 1, "1lovj3v": 1, "1olb1sx": 1, "emo8p2": 1, "11wjyrh": 1, "1eul1it": 1, "1dhahmt": 1, "vln04w": 1, "4j3feu": 1, "1ejvkm1": 1, "u2frnf": 1, "1ftcsub": 1, "f3z2ot": 1, "cv18ts": 1, "1rhtz0j": 1, "8n9o10": 1, "pw03ei": 1, "1wysoa0": 1, "ofcd4y": 1, "j4ocfj": 1, "1ua2jdx": 1, "16vtni0": 1, "g8xsnl": 1, "9u2bbp": 1, "10dx3fk": 1, "1c9skd6": 1, "1w6bmpo": 1, "1jrbpwi": 1, "1jqs8jn": 1, "jo957z": 1, "1kuh751": 1, "1aqfdon": 1, "1xr7up8": 1, "neriy4": 1, "n1f29v": 1, "eirl8c": 1, "rxlyzr": 1, "3y0t6y": 1, "1dplq4y": 1, "wz9s3h": 1, "1h6izit": 1, "1dj8nky": 1, "13061wq": 1, "14vyfq9": 1, "1rtikuo": 1, "159f9k4": 1, "xtyayf": 1, "1j6nhc0": 1, "dz6yhj": 1, "1g7jz5m": 1, "1p8mjva": 1, "16mlwrf": 1, "i6ufji": 1, "1wh0ql4": 1, "1v4203i": 1, "1xo9hsg": 1, "19l8d8l": 1, "r7iurr": 1, "1m6x2bn": 1, "1wbfmpt": 1, "6igq8e": 1, "1bkss28": 1, "10lu8zj": 1};
-AUDIOS = ["sg_abertura", "sg_f01_intro", "sg_f01_dica", "op_ykfff2", "op_135xshn", "op_1klh3e9", "op_1xve2zf", "op_ghenda", "op_1v877fy", "op_uwlnp5", "op_deeghc", "op_jbhbhi", "op_ykfaoa", "op_le0a07", "op_r8u4t9", "op_10z97qp", "op_1knxek2", "op_ge0owi", "op_15rxj6x", "op_1xq7onp", "op_uhykwb", "sg_f02_intro", "sg_f02_dica", "op_bmr1q0", "op_ykeiw3", "op_ykfqe5", "op_yklwmf", "op_1b1y8ka", "op_1vkm58o", "op_1bl7lyn", "op_nuemzy", "op_2ej3my", "op_19c6brh", "op_11c4vmd", "op_1xf82o3", "op_1n0r8y4", "op_y5s3n9", "op_9xw0m4", "op_12ns217", "op_zdkfgk", "op_g67i2a", "op_1dqhj6h", "op_54cpgr", "sg_f03_intro", "sg_f03_dica", "op_185sxrs", "op_13gz56g", "op_g4eads", "op_1m6wvvk", "op_37b2bh", "sg_f04_intro", "sg_f04_dica", "sg_f05_intro", "sg_f05_dica", "op_hn8x7z", "op_1as1u7u", "op_1quntr6", "op_47g79w", "op_f8zo8f", "op_1oovger", "op_18shwiz", "op_114ej6w", "op_p4x514", "op_n7g9ql", "sg_f06_intro", "sg_f06_dica", "op_1058nfl", "op_l7i3lu", "op_1eli4dk", "op_1nbmo5u", "op_b8zxn7", "op_658ndt", "op_15s5p88", "op_j6stmi", "op_1fy6jg4", "op_h6odfm", "op_1wb5ndw", "op_i4vboj", "sg_f06b_intro", "sg_f06b_dica", "op_1j0wuas", "op_ndrahe", "op_bz5zwr", "op_n9j1xq", "3t3a", "3t3b", "3t3c", "3t3d", "3t3e", "3t3f", "3t3g", "3t3h", "3t3i", "3t3j", "3t3k", "3t3l", "3t3m", "3t3n", "3t3o", "3t3p", "3t3q", "3t3r", "3t3s", "3t3t", "3t3u", "3t3v", "3t3w", "3t3x", "3t3y", "3t3z", "op_17kov54", "op_17lyxoe", "sg_f07_intro", "sg_f07_dica", "op_15viome", "op_ykquk3", "op_zslyb2", "op_4a7n3s", "op_ptn2ml", "op_zslyao", "op_lupvpd", "op_15dehjg", "op_vvjzbm", "op_1k3r2yx", "sg_f08_intro", "sg_f08_dica", "op_10abecv", "op_1fc1fuk", "op_vzmbhn", "op_qq6b46", "op_1ililmi", "op_1t5zox6", "op_wdgbd1", "sg_f09_intro", "sg_f09_dica", "op_1ye03lj", "op_t3n9mt", "op_76i71w", "op_17kpr5y", "op_1o5enwg", "op_hmco3h", "op_oabudl", "op_377kp7", "op_1wcnyiy", "op_siqqjl", "op_m88xhh", "op_vzes27", "sg_f10_intro", "sg_f10_dica", "op_v2v1e1", "op_ykf5qe", "op_ykq7lc", "op_377j3o", "op_3774l9", "op_1lk1u3m", "op_377h3k", "op_3774qt", "op_16ju9vs", "op_p7it7w", "op_mxia6j", "sg_f11_intro", "sg_f11_dica", "op_57xsnh", "op_hxb35l", "op_q53obo", "op_fcndrn", "op_tty4gf", "op_1ojvuxk", "op_rzsjmf", "op_68fbg", "op_b5h64a", "op_10k5cyw", "op_1junoq1", "op_19jze3m", "op_149fsuh", "op_mw5h21", "op_15bf37c", "op_jfo4l0", "op_zyv1eu", "op_btmo3c", "op_1tuhg6n", "op_w6tvre", "op_145ggcx", "op_lrnsq0", "op_1id8myx", "op_12qu17f", "op_1khjh0e", "op_x39r1", "op_1wqqzfs", "op_gkbfi8", "sg_f12_intro", "sg_f12_dica", "op_1afzzgn", "op_twc9of", "op_e1y4t9", "op_yn3eva", "op_sizla8", "op_y1xz0x", "op_1bdko9g", "op_1hhq2ze", "sg_f13_intro", "sg_f13_dica", "op_28d7rx", "op_bd34j0", "op_vwhll2", "op_1q9dntz", "op_1nguhz9", "op_r4rgbx", "op_1ega9px", "op_cg6ibp", "sg_f14_intro", "sg_f14_dica", "op_steoe6", "op_1bcz86f", "op_1y1q0f4", "op_177e9km", "op_2gtmf7", "sg_f15_intro", "sg_f15_dica", "sg_aquecimento_intro", "sg_aquecimento_dica", "op_hxztd9", "op_1752nua", "op_1pkyao4", "op_1ubtym", "op_dy0qyh", "op_3gt0uk", "op_f7uw8e", "op_t6colb", "op_1u5mi9u", "op_19yxo2j", "op_1svbj6a", "op_yhjue6", "op_nmursq", "op_11pgpz2", "sg_f17_intro", "sg_f17_dica", "op_1dp69m6", "op_rsiq2f", "op_1vttwm0", "op_yljltg", "op_94fcxn", "op_t8rwgj", "op_b36u9f", "op_15n1jx5", "sg_f17b_intro", "sg_f17b_dica", "op_yy0oet", "op_yg68og", "op_e5v1rr", "op_7aaje3", "sg_f20_intro", "sg_f20_dica", "op_15a06lb", "sg_f22_intro", "sg_f22_dica", "op_12uzrky", "op_16fhryg", "op_9xdkl7", "op_1ewujhp", "op_1k2xmv5", "op_ibs77g", "op_p738a5", "op_cdw67g", "sg_f23_intro", "sg_f23_dica", "op_pf4mng", "op_jijijw", "op_dh1u96", "op_173vtrb", "op_15vskru", "op_1g98png", "op_pu97h7", "op_tw122f", "op_cmva0n", "op_19nps3d", "op_nx6r7m", "op_zm989e", "sg_f24_intro", "sg_f24_dica", "sg_f25_intro", "sg_f25_dica", "sg_f26_intro", "sg_f26_dica", "op_1k9azan", "sg_f27_intro", "sg_f27_dica", "op_20ek7f", "op_1wxegwj", "op_1gzp7dw", "op_d2vaqi", "op_1cy9750", "op_1swk5p6", "op_nym1yt", "op_q9ul08", "op_1x3ymx6", "op_19qrqqu", "op_bhia4s", "op_1i6gzqg", "op_1v58fff", "sg_f28_intro", "sg_f28_dica", "op_dwt5o8", "op_wsa6t9", "op_1ixnv6y", "op_1xl4u6q", "op_1l8uhsg", "sg_f29_intro", "sg_f29_dica", "op_1p6ctcd", "op_bptmnx", "op_vd84ek", "op_lesa17", "op_bk7ptp", "op_1hwtqwy", "sg_f31_intro", "sg_f31_dica", "op_1o3jhuu", "op_5imuej", "op_ykfaqe", "op_8ct9hy", "op_6o8q6f", "op_1cvcunc", "op_1ffvby1", "op_1nvysox", "sg_f32_intro", "sg_f32_dica", "op_m2zif3", "op_uebbyy", "op_hpxib2", "op_fv625h", "op_vu106b", "op_xpsqnd", "op_rg3k4a", "op_cltq84", "op_16gt7ck", "op_r5i3xc", "op_xeycba", "sg_f34_intro", "sg_f34_dica", "op_1wcxctb", "op_p3h0nz", "op_1qabu4f", "sg_f30_intro", "sg_f30_dica", "op_ljitfd", "op_1923jx4", "op_ajkb04", "op_17mcclh", "op_kb5x3q", "op_g3xinp", "op_1izeskt", "op_1ujzzfw", "op_adtf80", "op_14gmvkx", "op_70yptf", "op_1jyts36", "op_137rt4g", "op_1v8u0y8", "op_1ih8zjc", "op_1uzgvic", "op_k4o16y", "op_u45fpu", "op_yqzdtt", "sg_fim", "sg_f35_intro", "sg_f35_dica", "op_rortei", "op_vuuerh", "op_93uyb1", "op_1llkc0w", "sg_f18_intro", "sg_f18_dica", "op_18um191", "op_1vrqwxc", "op_q8km67", "op_o0zpvd", "op_1lovj3v", "op_1olb1sx", "op_emo8p2", "op_11wjyrh", "op_1eul1it", "op_1dhahmt", "op_vln04w", "op_4j3feu", "sg_f21_intro", "op_1ejvkm1", "op_u2frnf", "sg_f33_intro", "sg_f33_dica", "op_1ftcsub", "op_f3z2ot", "op_cv18ts", "op_1rhtz0j", "op_8n9o10", "op_pw03ei", "op_1wysoa0", "op_ofcd4y", "op_j4ocfj", "op_1ua2jdx", "op_16vtni0", "op_g8xsnl", "op_9u2bbp", "op_10dx3fk", "op_1c9skd6", "op_1w6bmpo", "op_1jrbpwi", "op_1jqs8jn", "op_jo957z", "op_1kuh751", "op_1aqfdon", "op_1xr7up8", "op_neriy4", "op_n1f29v", "op_eirl8c", "op_rxlyzr", "op_3y0t6y", "op_1dplq4y", "op_wz9s3h", "op_1h6izit", "op_1dj8nky", "op_13061wq", "op_14vyfq9", "op_1rtikuo", "op_159f9k4", "op_xtyayf", "op_1j6nhc0", "sg_f19_intro", "sg_f19_dica", "op_dz6yhj", "op_1g7jz5m", "op_1p8mjva", "op_16mlwrf", "op_i6ufji", "op_1wh0ql4", "op_1v4203i", "op_1xo9hsg", "op_19l8d8l", "op_r7iurr", "op_1m6x2bn", "op_1wbfmpt", "op_6igq8e", "op_1bkss28", "op_10lu8zj"];
+VOZOK = {"ykfff2": 1, "135xshn": 1, "1klh3e9": 1, "1xve2zf": 1, "ghenda": 1, "1v877fy": 1, "uwlnp5": 1, "deeghc": 1, "jbhbhi": 1, "ykfaoa": 1, "le0a07": 1, "r8u4t9": 1, "10z97qp": 1, "1knxek2": 1, "ge0owi": 1, "15rxj6x": 1, "1xq7onp": 1, "uhykwb": 1, "bmr1q0": 1, "ykeiw3": 1, "ykfqe5": 1, "yklwmf": 1, "1b1y8ka": 1, "1vkm58o": 1, "1bl7lyn": 1, "nuemzy": 1, "2ej3my": 1, "19c6brh": 1, "11c4vmd": 1, "1xf82o3": 1, "1n0r8y4": 1, "y5s3n9": 1, "9xw0m4": 1, "12ns217": 1, "zdkfgk": 1, "g67i2a": 1, "1dqhj6h": 1, "54cpgr": 1, "185sxrs": 1, "13gz56g": 1, "g4eads": 1, "1m6wvvk": 1, "37b2bh": 1, "pjupyy": 1, "1lvq95g": 1, "1oedmso": 1, "12w2xyf": 1, "t0le75": 1, "e15mt1": 1, "1jkhtmt": 1, "1sme2yn": 1, "ps5nmb": 1, "15dcghi": 1, "14yfgeo": 1, "17h2u1w": 1, "hn8x7z": 1, "1as1u7u": 1, "1quntr6": 1, "47g79w": 1, "f8zo8f": 1, "1oovger": 1, "18shwiz": 1, "114ej6w": 1, "p4x514": 1, "n7g9ql": 1, "1058nfl": 1, "l7i3lu": 1, "1eli4dk": 1, "1nbmo5u": 1, "b8zxn7": 1, "658ndt": 1, "15s5p88": 1, "j6stmi": 1, "1fy6jg4": 1, "h6odfm": 1, "1wb5ndw": 1, "i4vboj": 1, "1j0wuas": 1, "ndrahe": 1, "bz5zwr": 1, "n9j1xq": 1, "17kov54": 1, "17lyxoe": 1, "15viome": 1, "ykquk3": 1, "zslyb2": 1, "4a7n3s": 1, "ptn2ml": 1, "zslyao": 1, "lupvpd": 1, "15dehjg": 1, "vvjzbm": 1, "1k3r2yx": 1, "10abecv": 1, "1fc1fuk": 1, "vzmbhn": 1, "qq6b46": 1, "1ililmi": 1, "1t5zox6": 1, "wdgbd1": 1, "1ye03lj": 1, "t3n9mt": 1, "76i71w": 1, "17kpr5y": 1, "1o5enwg": 1, "hmco3h": 1, "oabudl": 1, "377kp7": 1, "1wcnyiy": 1, "siqqjl": 1, "m88xhh": 1, "vzes27": 1, "v2v1e1": 1, "ykf5qe": 1, "ykq7lc": 1, "377j3o": 1, "3774l9": 1, "1lk1u3m": 1, "377h3k": 1, "3774qt": 1, "16ju9vs": 1, "p7it7w": 1, "mxia6j": 1, "57xsnh": 1, "hxb35l": 1, "q53obo": 1, "fcndrn": 1, "tty4gf": 1, "1ojvuxk": 1, "rzsjmf": 1, "68fbg": 1, "b5h64a": 1, "10k5cyw": 1, "1junoq1": 1, "19jze3m": 1, "149fsuh": 1, "mw5h21": 1, "15bf37c": 1, "jfo4l0": 1, "zyv1eu": 1, "btmo3c": 1, "1tuhg6n": 1, "w6tvre": 1, "145ggcx": 1, "lrnsq0": 1, "1id8myx": 1, "12qu17f": 1, "1khjh0e": 1, "x39r1": 1, "1wqqzfs": 1, "gkbfi8": 1, "1afzzgn": 1, "twc9of": 1, "e1y4t9": 1, "yn3eva": 1, "sizla8": 1, "y1xz0x": 1, "1bdko9g": 1, "1hhq2ze": 1, "28d7rx": 1, "bd34j0": 1, "vwhll2": 1, "1q9dntz": 1, "1nguhz9": 1, "r4rgbx": 1, "1ega9px": 1, "cg6ibp": 1, "steoe6": 1, "1bcz86f": 1, "1y1q0f4": 1, "177e9km": 1, "2gtmf7": 1, "hxztd9": 1, "1752nua": 1, "1pkyao4": 1, "1ubtym": 1, "dy0qyh": 1, "3gt0uk": 1, "f7uw8e": 1, "t6colb": 1, "1u5mi9u": 1, "19yxo2j": 1, "1svbj6a": 1, "yhjue6": 1, "nmursq": 1, "11pgpz2": 1, "1dp69m6": 1, "rsiq2f": 1, "1vttwm0": 1, "yljltg": 1, "94fcxn": 1, "t8rwgj": 1, "b36u9f": 1, "15n1jx5": 1, "yy0oet": 1, "e5v1rr": 1, "7aaje3": 1, "15a06lb": 1, "12uzrky": 1, "16fhryg": 1, "9xdkl7": 1, "1ewujhp": 1, "1k2xmv5": 1, "ibs77g": 1, "p738a5": 1, "cdw67g": 1, "pf4mng": 1, "jijijw": 1, "dh1u96": 1, "173vtrb": 1, "15vskru": 1, "1g98png": 1, "pu97h7": 1, "tw122f": 1, "cmva0n": 1, "19nps3d": 1, "nx6r7m": 1, "zm989e": 1, "ucs4n1": 1, "1o1f5br": 1, "l76pzf": 1, "7pl5kw": 1, "1oxz0a": 1, "g8bdwu": 1, "1k9azan": 1, "20ek7f": 1, "1wxegwj": 1, "1gzp7dw": 1, "d2vaqi": 1, "1cy9750": 1, "1swk5p6": 1, "nym1yt": 1, "q9ul08": 1, "1x3ymx6": 1, "19qrqqu": 1, "bhia4s": 1, "1i6gzqg": 1, "1v58fff": 1, "dwt5o8": 1, "wsa6t9": 1, "1ixnv6y": 1, "1xl4u6q": 1, "1l8uhsg": 1, "1p6ctcd": 1, "bptmnx": 1, "vd84ek": 1, "lesa17": 1, "bk7ptp": 1, "1hwtqwy": 1, "1o3jhuu": 1, "5imuej": 1, "ykfaqe": 1, "8ct9hy": 1, "6o8q6f": 1, "1cvcunc": 1, "1ffvby1": 1, "1nvysox": 1, "m2zif3": 1, "uebbyy": 1, "hpxib2": 1, "fv625h": 1, "vu106b": 1, "xpsqnd": 1, "rg3k4a": 1, "cltq84": 1, "16gt7ck": 1, "r5i3xc": 1, "xeycba": 1, "1wcxctb": 1, "p3h0nz": 1, "1qabu4f": 1, "ljitfd": 1, "1923jx4": 1, "ajkb04": 1, "17mcclh": 1, "kb5x3q": 1, "g3xinp": 1, "1izeskt": 1, "1ujzzfw": 1, "adtf80": 1, "14gmvkx": 1, "70yptf": 1, "1jyts36": 1, "137rt4g": 1, "1v8u0y8": 1, "1ih8zjc": 1, "1uzgvic": 1, "k4o16y": 1, "u45fpu": 1, "yqzdtt": 1, "yg68og": 1, "rortei": 1, "vuuerh": 1, "93uyb1": 1, "1llkc0w": 1, "18um191": 1, "1vrqwxc": 1, "q8km67": 1, "o0zpvd": 1, "1lovj3v": 1, "1olb1sx": 1, "emo8p2": 1, "11wjyrh": 1, "1eul1it": 1, "1dhahmt": 1, "vln04w": 1, "4j3feu": 1, "1ejvkm1": 1, "u2frnf": 1, "1ftcsub": 1, "f3z2ot": 1, "cv18ts": 1, "1rhtz0j": 1, "8n9o10": 1, "pw03ei": 1, "1wysoa0": 1, "ofcd4y": 1, "j4ocfj": 1, "1ua2jdx": 1, "16vtni0": 1, "g8xsnl": 1, "9u2bbp": 1, "10dx3fk": 1, "1c9skd6": 1, "1w6bmpo": 1, "1jrbpwi": 1, "1jqs8jn": 1, "jo957z": 1, "1kuh751": 1, "1aqfdon": 1, "1xr7up8": 1, "neriy4": 1, "n1f29v": 1, "eirl8c": 1, "rxlyzr": 1, "3y0t6y": 1, "1dplq4y": 1, "wz9s3h": 1, "1h6izit": 1, "1dj8nky": 1, "13061wq": 1, "14vyfq9": 1, "1rtikuo": 1, "159f9k4": 1, "xtyayf": 1, "1j6nhc0": 1, "dz6yhj": 1, "1g7jz5m": 1, "1p8mjva": 1, "16mlwrf": 1, "i6ufji": 1, "1wh0ql4": 1, "1v4203i": 1, "1xo9hsg": 1, "19l8d8l": 1, "r7iurr": 1, "1m6x2bn": 1, "1wbfmpt": 1, "6igq8e": 1, "1bkss28": 1, "10lu8zj": 1};
+AUDIOS = ["sg_abertura", "sg_f01_intro", "sg_f01_dica", "op_ykfff2", "op_135xshn", "op_1klh3e9", "op_1xve2zf", "op_ghenda", "op_1v877fy", "op_uwlnp5", "op_deeghc", "op_jbhbhi", "op_ykfaoa", "op_le0a07", "op_r8u4t9", "op_10z97qp", "op_1knxek2", "op_ge0owi", "op_15rxj6x", "op_1xq7onp", "op_uhykwb", "sg_f02_intro", "sg_f02_dica", "op_bmr1q0", "op_ykeiw3", "op_ykfqe5", "op_yklwmf", "op_1b1y8ka", "op_1vkm58o", "op_1bl7lyn", "op_nuemzy", "op_2ej3my", "op_19c6brh", "op_11c4vmd", "op_1xf82o3", "op_1n0r8y4", "op_y5s3n9", "op_9xw0m4", "op_12ns217", "op_zdkfgk", "op_g67i2a", "op_1dqhj6h", "op_54cpgr", "sg_f03_intro", "sg_f03_dica", "op_185sxrs", "op_13gz56g", "op_g4eads", "op_1m6wvvk", "op_37b2bh", "sg_f04_intro", "sg_f04_dica", "op_pjupyy", "op_1lvq95g", "op_1oedmso", "op_12w2xyf", "op_t0le75", "op_e15mt1", "op_1jkhtmt", "op_1sme2yn", "op_ps5nmb", "op_15dcghi", "op_14yfgeo", "op_17h2u1w", "sg_f05_intro", "sg_f05_dica", "op_hn8x7z", "op_1as1u7u", "op_1quntr6", "op_47g79w", "op_f8zo8f", "op_1oovger", "op_18shwiz", "op_114ej6w", "op_p4x514", "op_n7g9ql", "sg_f06_intro", "sg_f06_dica", "op_1058nfl", "op_l7i3lu", "op_1eli4dk", "op_1nbmo5u", "op_b8zxn7", "op_658ndt", "op_15s5p88", "op_j6stmi", "op_1fy6jg4", "op_h6odfm", "op_1wb5ndw", "op_i4vboj", "sg_f06b_intro", "sg_f06b_dica", "op_1j0wuas", "op_ndrahe", "op_bz5zwr", "op_n9j1xq", "3t3a", "3t3b", "3t3c", "3t3d", "3t3e", "3t3f", "3t3g", "3t3h", "3t3i", "3t3j", "3t3k", "3t3l", "3t3m", "3t3n", "3t3o", "3t3p", "3t3q", "3t3r", "3t3s", "3t3t", "3t3u", "3t3v", "3t3w", "3t3x", "3t3y", "3t3z", "op_17kov54", "op_17lyxoe", "sg_f07_intro", "sg_f07_dica", "op_15viome", "op_ykquk3", "op_zslyb2", "op_4a7n3s", "op_ptn2ml", "op_zslyao", "op_lupvpd", "op_15dehjg", "op_vvjzbm", "op_1k3r2yx", "sg_f08_intro", "sg_f08_dica", "op_10abecv", "op_1fc1fuk", "op_vzmbhn", "op_qq6b46", "op_1ililmi", "op_1t5zox6", "op_wdgbd1", "sg_f09_intro", "sg_f09_dica", "op_1ye03lj", "op_t3n9mt", "op_76i71w", "op_17kpr5y", "op_1o5enwg", "op_hmco3h", "op_oabudl", "op_377kp7", "op_1wcnyiy", "op_siqqjl", "op_m88xhh", "op_vzes27", "sg_f10_intro", "sg_f10_dica", "op_v2v1e1", "op_ykf5qe", "op_ykq7lc", "op_377j3o", "op_3774l9", "op_1lk1u3m", "op_377h3k", "op_3774qt", "op_16ju9vs", "op_p7it7w", "op_mxia6j", "sg_f11_intro", "sg_f11_dica", "op_57xsnh", "op_hxb35l", "op_q53obo", "op_fcndrn", "op_tty4gf", "op_1ojvuxk", "op_rzsjmf", "op_68fbg", "op_b5h64a", "op_10k5cyw", "op_1junoq1", "op_19jze3m", "op_149fsuh", "op_mw5h21", "op_15bf37c", "op_jfo4l0", "op_zyv1eu", "op_btmo3c", "op_1tuhg6n", "op_w6tvre", "op_145ggcx", "op_lrnsq0", "op_1id8myx", "op_12qu17f", "op_1khjh0e", "op_x39r1", "op_1wqqzfs", "op_gkbfi8", "sg_f12_intro", "sg_f12_dica", "op_1afzzgn", "op_twc9of", "op_e1y4t9", "op_yn3eva", "op_sizla8", "op_y1xz0x", "op_1bdko9g", "op_1hhq2ze", "sg_f13_intro", "sg_f13_dica", "op_28d7rx", "op_bd34j0", "op_vwhll2", "op_1q9dntz", "op_1nguhz9", "op_r4rgbx", "op_1ega9px", "op_cg6ibp", "sg_f14_intro", "sg_f14_dica", "op_steoe6", "op_1bcz86f", "op_1y1q0f4", "op_177e9km", "op_2gtmf7", "sg_f15_intro", "sg_f15_dica", "sg_aquecimento_intro", "sg_aquecimento_dica", "op_hxztd9", "op_1752nua", "op_1pkyao4", "op_1ubtym", "op_dy0qyh", "op_3gt0uk", "op_f7uw8e", "op_t6colb", "op_1u5mi9u", "op_19yxo2j", "op_1svbj6a", "op_yhjue6", "op_nmursq", "op_11pgpz2", "sg_f17_intro", "sg_f17_dica", "op_1dp69m6", "op_rsiq2f", "op_1vttwm0", "op_yljltg", "op_94fcxn", "op_t8rwgj", "op_b36u9f", "op_15n1jx5", "sg_f17b_intro", "sg_f17b_dica", "op_yy0oet", "op_e5v1rr", "op_7aaje3", "sg_f20_intro", "sg_f20_dica", "op_15a06lb", "sg_f22_intro", "sg_f22_dica", "op_12uzrky", "op_16fhryg", "op_9xdkl7", "op_1ewujhp", "op_1k2xmv5", "op_ibs77g", "op_p738a5", "op_cdw67g", "sg_f23_intro", "sg_f23_dica", "op_pf4mng", "op_jijijw", "op_dh1u96", "op_173vtrb", "op_15vskru", "op_1g98png", "op_pu97h7", "op_tw122f", "op_cmva0n", "op_19nps3d", "op_nx6r7m", "op_zm989e", "sg_f24_intro", "sg_f24_dica", "sg_f25_intro", "sg_f25_dica", "op_ucs4n1", "op_1o1f5br", "op_l76pzf", "op_7pl5kw", "op_1oxz0a", "op_g8bdwu", "sg_f26_intro", "sg_f26_dica", "op_1k9azan", "sg_f27_intro", "sg_f27_dica", "op_20ek7f", "op_1wxegwj", "op_1gzp7dw", "op_d2vaqi", "op_1cy9750", "op_1swk5p6", "op_nym1yt", "op_q9ul08", "op_1x3ymx6", "op_19qrqqu", "op_bhia4s", "op_1i6gzqg", "op_1v58fff", "sg_f28_intro", "sg_f28_dica", "op_dwt5o8", "op_wsa6t9", "op_1ixnv6y", "op_1xl4u6q", "op_1l8uhsg", "sg_f29_intro", "sg_f29_dica", "op_1p6ctcd", "op_bptmnx", "op_vd84ek", "op_lesa17", "op_bk7ptp", "op_1hwtqwy", "sg_f31_intro", "sg_f31_dica", "op_1o3jhuu", "op_5imuej", "op_ykfaqe", "op_8ct9hy", "op_6o8q6f", "op_1cvcunc", "op_1ffvby1", "op_1nvysox", "sg_f32_intro", "sg_f32_dica", "op_m2zif3", "op_uebbyy", "op_hpxib2", "op_fv625h", "op_vu106b", "op_xpsqnd", "op_rg3k4a", "op_cltq84", "op_16gt7ck", "op_r5i3xc", "op_xeycba", "sg_f34_intro", "sg_f34_dica", "op_1wcxctb", "op_p3h0nz", "op_1qabu4f", "sg_f30_intro", "sg_f30_dica", "op_ljitfd", "op_1923jx4", "op_ajkb04", "op_17mcclh", "op_kb5x3q", "op_g3xinp", "op_1izeskt", "op_1ujzzfw", "op_adtf80", "op_14gmvkx", "op_70yptf", "op_1jyts36", "op_137rt4g", "op_1v8u0y8", "op_1ih8zjc", "op_1uzgvic", "op_k4o16y", "op_u45fpu", "op_yqzdtt", "sg_fim", "op_yg68og", "sg_f35_intro", "sg_f35_dica", "op_rortei", "op_vuuerh", "op_93uyb1", "op_1llkc0w", "sg_f18_intro", "sg_f18_dica", "op_18um191", "op_1vrqwxc", "op_q8km67", "op_o0zpvd", "op_1lovj3v", "op_1olb1sx", "op_emo8p2", "op_11wjyrh", "op_1eul1it", "op_1dhahmt", "op_vln04w", "op_4j3feu", "sg_f21_intro", "op_1ejvkm1", "op_u2frnf", "sg_f33_intro", "sg_f33_dica", "op_1ftcsub", "op_f3z2ot", "op_cv18ts", "op_1rhtz0j", "op_8n9o10", "op_pw03ei", "op_1wysoa0", "op_ofcd4y", "op_j4ocfj", "op_1ua2jdx", "op_16vtni0", "op_g8xsnl", "op_9u2bbp", "op_10dx3fk", "op_1c9skd6", "op_1w6bmpo", "op_1jrbpwi", "op_1jqs8jn", "op_jo957z", "op_1kuh751", "op_1aqfdon", "op_1xr7up8", "op_neriy4", "op_n1f29v", "op_eirl8c", "op_rxlyzr", "op_3y0t6y", "op_1dplq4y", "op_wz9s3h", "op_1h6izit", "op_1dj8nky", "op_13061wq", "op_14vyfq9", "op_1rtikuo", "op_159f9k4", "op_xtyayf", "op_1j6nhc0", "sg_f19_intro", "sg_f19_dica", "op_dz6yhj", "op_1g7jz5m", "op_1p8mjva", "op_16mlwrf", "op_i6ufji", "op_1wh0ql4", "op_1v4203i", "op_1xo9hsg", "op_19l8d8l", "op_r7iurr", "op_1m6x2bn", "op_1wbfmpt", "op_6igq8e", "op_1bkss28", "op_10lu8zj"];
 RELBNCC = "EF02MA14";
 </script>
 </body></html>

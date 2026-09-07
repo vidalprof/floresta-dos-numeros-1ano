@@ -6425,6 +6425,28 @@ negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
   (`.vzap`) tem **26 px** — abaixo do piso de 44 px do 1º ano. O `leiaute.js` não o
   conta porque só mede `RESPOSTA`/`CLICAVEL` e o card inteiro também fala. Lapidar a
   peça (botão ≥ 44 px ou tirar o botão e deixar o card falar) na próxima rodada.
+- **Rodada "faça o resto" (Marcos, 2026-09-07):**
+  · **Vitrine: botão de ouvir com 44 px** (`_padrao/pecas/vitrine.html`): caixa 44×44,
+    disco de 26 px só como desenho (gradiente radial) e `margin:-9px` devolvendo ao card
+    os 26 px de leiaute — o card não cresce, o dedo ganha. Medido no Trem: 44×44,
+    linha do nome continua 26 px. Vitrine roda em Trem, Museu e Sólidos.
+  · **Memória: "cubo — cubo" virou "cubo e o desenho dele"** quando os dois lados do
+    par têm o mesmo rótulo (palavra + figura). Consertado em DOIS lugares, porque a
+    frase nasce em dois: a peça (`memoria.html`, `ajuda()`) e o **gerador de falas do
+    `montar.py`** (linha ~1003, que prevê as falas da memória em tempo de montagem).
+    Comparação sem caixa (`CUBO` × `cubo`). Lição: **fala prevista pelo montador tem
+    que mudar junto com a peça**, senão a voz gravada diz a frase velha.
+  · **Falas colhidas em jogo NÃO morrem sozinhas:** o `montar.py` preserva as falas
+    antigas do `falas.json` cujo id não existe mais (colheita). Texto que a peça deixou
+    de dizer fica lá para sempre e o revisor 0o reprova. Tirar à mão do `falas.json`
+    e remontar (foi assim nos Sólidos, 6 linhas). Fila: um portão que compare as
+    preservadas com o que a peça ainda diz.
+  · **Sólidos: `PIRAMIDE` → `PIRÂMIDE`** na forca (0j2; a grade dobra o acento).
+  · **`_qa/clone.py` item 12:** "Professor Tato" e "Tato" são o mesmo mascote reusado
+    (nome de lá dentro do meu, como palavra inteira) — era falso positivo no Museu.
+  · **Falso alarme do hook "conserto preso":** `_blu` aparecia como não publicado, mas
+    o sha local do `index.html` era igual ao do carimbo — o commit só mexeu em
+    arquivos vizinhos (banco/prompt). Conferir o sha antes de republicar.
 - **Trem: a esteira `produzir.sh` PARA no pré-voo** pela duplicata conhecida
   `tr_coru_fala = tr_coru_feliz` (1c2) — e pararia de novo na banca pelo 3d. Enquanto
   o `OPENAI_API_KEY` não chega, o Trem publica pelo caminho manual: banca inteira à

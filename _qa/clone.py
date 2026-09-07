@@ -439,7 +439,11 @@ else:
                        open(cam, encoding="utf-8", errors="replace").read())
         if not mo: continue
         nome_o = _texto(mo.group(1))
-        if nome_o == meu_masc:
+        # ⚠️ (set/2026, Museu) "Professor Tato" E "Tato" sao o MESMO mascote reusado
+        #    com titulo — o nome de la dentro do meu, como palavra inteira, e reuso,
+        #    nao resto. Sem isto o Museu reprovava por citar o proprio mascote.
+        if nome_o == meu_masc or re.search(r"\b" + re.escape(nome_o) + r"\b", meu_masc) \
+           or re.search(r"\b" + re.escape(meu_masc) + r"\b", nome_o):
             gemeos.append(outra); continue
         if len(nome_o) >= 3 and re.search(r"\b" + re.escape(nome_o) + r"\b", corpo4):
             alheios4.append((nome_o, outra))
