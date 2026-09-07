@@ -191,7 +191,9 @@ body.casca-conversa .selo{-webkit-align-self:center;-ms-flex-item-align:center;a
 body.casca-conversa .centro > .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;margin-left:52px;border-radius:6px 22px 22px 22px;max-width:430px;max-width:min(430px, calc(100% - 52px))}
 body.casca-conversa .centro > .balao:before{content:"";position:absolute;left:-52px;top:-2px;width:42px;height:42px;border-radius:50%;background:#fff var(--cv-masc) center/88% no-repeat;-webkit-box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.2);box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.2)}
 .cv-hist{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;margin:0 0 10px 52px;max-width:430px;max-width:min(430px, calc(100% - 52px));background:rgba(255,253,246,.62);border-radius:6px 18px 18px 18px;padding:8px 14px;font-size:13.5px;font-weight:600;color:#4a4536;line-height:1.3;text-align:left}
-@media (max-height:640px){ .cv-hist{display:none} }
+/* tela baixa (PC da escola 1366x720, janela baixa): a conversa encolhe o cabecalho e
+   guarda a mensagem anterior, para a RESPOSTA ficar na tela sem rolar */
+@media (max-height:780px){ .cv-hist{display:none} .cv-cab{padding:3px 8px;margin-bottom:6px} .cv-av{width:32px;height:32px} .cv-cab b{font-size:14px} .cv-cab .cv-on{font-size:11.5px} }
 body.casca-conversa .cv-resp{width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;padding:10px 4px 12px;margin-top:12px;background:rgba(255,255,255,.40);border-radius:22px 6px 22px 22px;-webkit-box-shadow:inset 0 0 0 2px rgba(255,255,255,.55);box-shadow:inset 0 0 0 2px rgba(255,255,255,.55)}
 /* o balao que a PECA escreve dentro do cartao continua sendo fala do mascote */
 body.casca-conversa .cv-resp .balao{-webkit-align-self:flex-start;-ms-flex-item-align:start;align-self:flex-start;text-align:left;border-radius:6px 22px 22px 22px}
@@ -4845,8 +4847,12 @@ MEC["bater-silabas"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -5401,8 +5407,12 @@ MEC["caixas-de-som"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -5943,8 +5953,12 @@ MEC["classificar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -6471,8 +6485,12 @@ MEC["completar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -6884,8 +6902,12 @@ MEC["digitar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -7271,8 +7293,12 @@ MEC["escolher"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -7691,8 +7717,12 @@ MEC["intruso"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -8234,8 +8264,12 @@ MEC["juntar-silabas"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -8744,8 +8778,12 @@ MEC["ligar-pontos"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -9393,8 +9431,12 @@ MEC["memoria"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -9987,8 +10029,12 @@ MEC["ordenar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -10502,8 +10548,12 @@ MEC["ouvir-achar"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -11220,8 +11270,12 @@ MEC["pintar-desenho"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
@@ -11745,8 +11799,12 @@ MEC["tracar-letra"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */

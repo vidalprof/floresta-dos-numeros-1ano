@@ -486,8 +486,12 @@ MEC["%(nome)s"] = function(f, cen, fim){
   /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
   setTimeout(function(){
     var b = cen.getElementsByClassName("pecabox")[0];
+    /* ⚠️ (set/2026, casca CONVERSA) a peca desenha dentro do cartao `.cv-resp`, e o
+       balao do enunciado mora no PAI (`.centro`): a marca vai para quem tem o balao
+       a esconder — senao a crianca lia DOIS enunciados na casca nova. */
+    var cc = (cen.className.indexOf("cv-resp") >= 0 && cen.parentNode) ? cen.parentNode : cen;
     if(b && b.getElementsByClassName("balao").length)
-      cen.className = cen.className + " tembalaopeca";
+      cc.className = cc.className + " tembalaopeca";
   }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
