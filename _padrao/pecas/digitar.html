@@ -167,7 +167,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .vaga.cheia{-webkit-transform:none;transform:none}
 }
 @media (max-height:560px){
-  .dgfig{width:72px;height:72px;margin-top:10px}
+  /* ⚠️ (set/2026, Museu, portao 1h) a caixa encolhia para 72px mas a figura
+     continuava 128px e vazava 28px de cada lado. A figura encolhe JUNTO. */
+  .dgfig{width:72px;height:72px;margin-top:10px;padding:8px}
+  .dgfig img{width:72px;height:72px}
 }
 /* ⭐ O ALTO-FALANTE (pilar SONORA da casa).
    ⚠️ `background-color` e `background-image` SEPARADOS, nunca o atalho

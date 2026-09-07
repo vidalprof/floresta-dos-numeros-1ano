@@ -70,7 +70,9 @@ const path = require('path');
      pergunta honesta nao e "o id bate?", e "a crianca OUVE o que esta escrito
      no balao?" — entao o indice abaixo tambem guarda o TEXTO de cada fala. */
   const porTexto = {};
-  const achata = s => (s || '').replace(/&[a-z]+;|&#\d+;/gi, ' ')
+  /* ⚠️ (set/2026, Solidos) tela "face" x voz "fásse" (tabela fonetica do montador,
+     de proposito): os dois lados passam pela MESMA tabela antes de achatar. */
+  const achata = s => require('./fonetica_voz').fonetica((s || '').replace(/&[a-z]+;|&#\d+;/gi, ' '))
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
   JSON.parse(fs.readFileSync(jf, 'utf8')).forEach(f => {
@@ -115,7 +117,8 @@ const path = require('path');
   /* ⚠️ a LACUNA do completar ("___" na tela) vira PAUSA no audio ("…"): e um GAP
      nos dois lados, entao sai da conta (senao "___" != "…" reprova uma fase certa).
      Detetive, ago/2026. */
-  const norm = s => (s || '').replace(/[_…]+/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+  /* ...e a tabela fonetica do montador ("face" -> "fásse") entra aqui tambem. */
+  const norm = s => require('./fonetica_voz').fonetica((s || '').replace(/[_…]+/g, ' ')).replace(/\s+/g, ' ').trim().toLowerCase();
   /* ⭐ LICAO PAGA (ago/2026, Trem do Alfabeto). O `montar.py` (eh_fala) grava,
      DE PROPOSITO, uma letra sozinha pelo NOME dela: o vagao "D" fala "Dê", o "I"
      fala "Í". E o certo — a crianca do 1o ano aprende a NOMEAR a letra, e a voz

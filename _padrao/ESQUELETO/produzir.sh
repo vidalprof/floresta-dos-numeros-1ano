@@ -107,8 +107,14 @@ else
   git commit -q -m "$ASSUNTO" -m "$CORPO" || { echo "commit falhou"; exit 1; }
 fi
 ANTES="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+# ⚠️ (set/2026) o entregar.yml deixa um commit ("entrega: recado") no remoto a cada
+#    corrida; sem rebasear antes, o SEGUNDO push do dia era recusado (non-fast-forward)
+#    e a esteira parava com o commit preso local. E o `push | tail` escondia a
+#    recusa: o status era o do tail, sempre 0.
+git pull -q --rebase --autostash origin "$BR" 2>/dev/null || echo "   (nao consegui rebasear sobre o remoto; tento o push assim mesmo)"
 ok=0; for tent in 1 2 3 4 5; do
-  if git push -u origin "$BR" 2>&1 | tail -2; then ok=1; break; fi
+  if saida="$(git push -u origin "$BR" 2>&1)"; then printf '%s\n' "$saida" | tail -2; ok=1; break; fi
+  printf '%s\n' "$saida" | tail -2
   s=$((2**tent)); echo "push falhou; tento de novo em ${s}s"; sleep $s
 done
 [ "$ok" = "1" ] || { echo ">> push nao foi. O commit esta local; empurre a mao (git push -u origin $BR)."; exit 1; }

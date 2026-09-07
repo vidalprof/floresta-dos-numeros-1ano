@@ -158,7 +158,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
   -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch;
   gap:10px;max-width:min(720px,calc(100vw - 14px));margin:10px auto 0}
-.opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 92px;flex:1 1 92px;min-width:86px;max-width:200px;margin:0;width:auto;font-size:14.5px;padding:10px 8px}
+/* ⚠️ (set/2026, Museu, diretor de arte 5b) com base 92px cabiam TRES por linha no
+   celular (120px cada) e "INVERTEBRADO" (108px de letra) encostava na borda com
+   2px de folga. Base 140/min 128: no celular viram DUAS por linha (~194px), no
+   netbook continuam quatro. Palavra nao se quebra — a crianca esta aprendendo a ler. */
+.opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 140px;flex:1 1 140px;min-width:128px;max-width:220px;margin:0;width:auto;font-size:14.5px;padding:10px 8px}
 /* ⭐ Marcos (ago/2026): o "Quero outra pista" nao pode encostar/ficar em cima
    das opcoes — folga clara abaixo delas. */
 .opts + .btn{margin-top:22px}

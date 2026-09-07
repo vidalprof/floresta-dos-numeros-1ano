@@ -48,7 +48,11 @@ const fs = require('fs');
    o "___" na tela mas apagava o "…" da voz -> "diferentes" numa fase que esta
    certa. O buraco do preenchimento e um GAP nos dois lados: ele sai da conta.
    Por isso a classe agora e `[^a-z0-9 ]` (tira `_` e `…`), como o achata do 0n. */
-const norm = t => (t || '').toLowerCase()
+/* ⚠️ (set/2026, Solidos) a TELA diz "face" e a voz, DE PROPOSITO, "fásse" (tabela
+   fonetica do montador). Os dois lados passam pela mesma tabela antes da norma —
+   senao "fasse" != "face" acusa 2 fases certas. Ver _qa/fonetica_voz.js. */
+const {fonetica} = require('./fonetica_voz');
+const norm = t => fonetica(t || '').toLowerCase()
   .normalize('NFD').replace(/[̀-ͯ]/g, '')
   .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 

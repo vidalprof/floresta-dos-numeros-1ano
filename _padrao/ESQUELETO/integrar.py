@@ -1037,7 +1037,10 @@ FERRAMENTAS = u'''
    baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
    mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
 function nota(f, dur, vol, tipo, atraso){
-  if(typeof arma === "function") arma();
+  /* ⚠️ (set/2026, Solidos, portao 1x "PC ruim") o `arma()` ficava FORA do try: num
+     PC sem audio ele estoura e a fase inteira (quem-sou-eu -> sPista) morria com
+     ele. Enfeite quebrado nao pode prender a crianca — som falha em silencio. */
+  try{ if(typeof arma === "function") arma(); }catch(e){ return; }
   var c = window.ac; if(!c || !c.createOscillator) return;
   try{
     var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);

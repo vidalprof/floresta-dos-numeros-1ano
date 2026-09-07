@@ -1143,7 +1143,9 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-digitar .d2_vaga.cheia{-webkit-transform:none;transform:none}}@media (max-height:560px){
 
-.mec-digitar .dgfig{width:72px;height:72px;margin-top:10px}}
+.mec-digitar .dgfig{width:72px;height:72px;margin-top:10px;padding:8px}
+
+.mec-digitar .dgfig img{width:72px;height:72px}}
 
 .mec-digitar .zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none; width:46px;height:46px;min-width:46px;margin-left:10px;padding:0;border:0; border-radius:50%;cursor:pointer;opacity:1; background-color:#efe6d2; background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E"); background-repeat:no-repeat;background-position:center center; -webkit-background-size:24px 24px;background-size:24px 24px; -webkit-transition:background-color .15s;transition:background-color .15s}
 
@@ -1857,7 +1859,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-quem-sou-eu .opts{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch; gap:10px;max-width:min(720px,calc(100vw - 14px));margin:10px auto 0}
 
-.mec-quem-sou-eu .opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 92px;flex:1 1 92px;min-width:86px;max-width:200px;margin:0;width:auto;font-size:14.5px;padding:10px 8px}
+.mec-quem-sou-eu .opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 140px;flex:1 1 140px;min-width:128px;max-width:220px;margin:0;width:auto;font-size:14.5px;padding:10px 8px}
 
 .mec-quem-sou-eu .opts + .btn{margin-top:22px}
 /* ==== PECA: vitrine ==== */
@@ -4138,7 +4140,10 @@ setTimeout(inicia, 0);
    baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
    mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
 function nota(f, dur, vol, tipo, atraso){
-  if(typeof arma === "function") arma();
+  /* ⚠️ (set/2026, Solidos, portao 1x "PC ruim") o `arma()` ficava FORA do try: num
+     PC sem audio ele estoura e a fase inteira (quem-sou-eu -> sPista) morria com
+     ele. Enfeite quebrado nao pode prender a crianca — som falha em silencio. */
+  try{ if(typeof arma === "function") arma(); }catch(e){ return; }
   var c = window.ac; if(!c || !c.createOscillator) return;
   try{
     var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
