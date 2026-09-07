@@ -6468,9 +6468,23 @@ negócio de mascote e avatar funciona, melhore tudo que pode ser melhorado"*.
     "INVERTEBRADO" encostava na borda. Base 140/min 128 px → duas por linha no celular.
   · **0o6 halo (`mv_pinguim.png`, 1,67%):** apagado por flood-fill a partir da borda
     (transparente OU quase-branco). O `rembg` não roda aqui; o flood-fill roda.
+  · **5 leiaute (forca, 2º ano):** as regras de celular estreito (40 px) e janela baixa
+    (42 px) da `forca.html` ficaram abaixo do piso de 44 px que entrou esta semana para
+    pré/1º/2º — 26 teclas reprovadas. Tecla 44 px nas duas regras; a 320 px cabem 6 por
+    fileira e a tela rola. Lição: **piso novo no portão = revisar toda `@media` que
+    encolhe alvo** (o piso de 40 estava escrito à mão em várias peças).
+  · **0f2 colheita:** frases de peça lapidadas depois da última publicação ("Já achou 1
+    de 4!", "O que BALEIA tem de diferente…") aparecem em jogo sem voz. Ritual antes da
+    banca de uma REPUBLICAÇÃO: `python3 _padrao/ESQUELETO/colher.py <pasta>` → montar →
+    `entregar.yml so_voz=sim` → pull → banca. A esteira não faz isso sozinha (fila).
   · **`produzir.sh`: `pull --rebase` antes do push** (o `entregar.yml` deixa um commit
     "entrega: recado" a cada corrida e o segundo push do dia era recusado) e status
     REAL do push (o `| tail` devolvia sempre 0 — a recusa passava por sucesso).
+- **Resultado da rodada "faça o resto" (publicações, todas com sha conferido pelo
+  carimbo):** Padaria 02:26Z · Trem 10:43Z e 11:08Z (duas rodadas: vitrine 44 px, depois
+  `nota()` blindado) · Painel 10:43Z · **Sólidos 12:04Z pela esteira inteira (711 s,
+  banca aprovada em TODOS os portões)** · **Museu 12:18Z pela esteira inteira (843 s, banca aprovada em todos os portões)**.
+  Cobaia 91/91 cinco vezes no dia. `_blu` não precisava (falso alarme, sha igual).
 - **Trem: a esteira `produzir.sh` PARA no pré-voo** pela duplicata conhecida
   `tr_coru_fala = tr_coru_feliz` (1c2) — e pararia de novo na banca pelo 3d. Enquanto
   o `OPENAI_API_KEY` não chega, o Trem publica pelo caminho manual: banca inteira à
