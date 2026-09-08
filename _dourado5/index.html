@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>A Oficina do Material Dourado — Divisão</title>
+<meta name="description" content="Dez folhas interativas de divisão com material dourado para o 5º ano: valor das peças, montar o número, repartir igual, a troca do 'abaixa', resto, conta armada, problemas e prova real.">
+<!-- ============================================================
+     A OFICINA DO MATERIAL DOURADO — DIVISÃO (5º ano)
+     LIVRO DE FOLHAS INTERATIVAS, 10 folhas. Pedido do Marcos (8/set/2026):
+     *"uma atividade de matemática para o quinto ano, divisão com material
+     dourado... umas 10 folhas de atividades relacionadas com esse tema"*, no
+     formato que ele batizou: *"tipo folhas interativas em um livro"*.
+
+     AUTORIA (regra dele, no mesmo dia): *"pode recriar tudo para ser autoria,
+     mas tem que usar imagem gerada pelo ChatGPT — no caso eu gero — ou utilizar
+     o banco de imagem"*. Aqui não foi preciso nem um nem outro: o material
+     dourado é DESENHADO EM SVG pela própria casa (as funções vieram da peça
+     `_padrao/pecas/divisao-dourado.html`, da Oficina da Divisão que ele já
+     aprovou). Cubinho, barra, placa e cubão saem do código — nada é copiado de
+     folha nenhuma da internet.
+
+     O QUE AS 40 FOLHAS REAIS DA INTERNET ENSINARAM (só o repertório, nunca a
+     imagem): valor das peças; "qual é o número"; representar com C-D-U; pintar
+     conforme o numeral; repartir em grupos; a TROCA da placa/barra que sobra
+     (o "abaixa" da conta armada); resto; conta armada; problemas; prova real.
+
+     COMO A FOLHA MUDA: cada folha sorteia os itens de um POOL fixo (`ITENS`) e
+     nunca repete o mesmo resultado em itens vizinhos. Todas as frases possíveis
+     estão enumeradas no `gerar_falas.py` — não existe frase sem mp3.
+     ES5 puro (Chrome 109 / Firefox 106), um arquivo, sem biblioteca.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#e7e0d2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M0 39.5h40M39.5 0v40' stroke='%23d8cfbc' stroke-width='1'/%3E%3C/svg%3E");color:#2b2118;padding-bottom:150px}
+#topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff8ea;border-bottom:3px solid #c9a52f;box-shadow:0 2px 8px rgba(60,40,10,.15);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:820px;margin:0 auto}
+#topo .tit{font-weight:800;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:12px;background:#e6dcc4;border-radius:8px;overflow:hidden;flex:1;min-width:60px;max-width:200px}
+.prog i{display:block;height:100%;width:0;background:#1f6b12;border-radius:8px;-webkit-transition:width .5s;transition:width .5s}
+.pg{font-weight:800;font-size:14px;color:#6b4a1a;white-space:nowrap}
+button{font-family:inherit;cursor:pointer}
+.bt{min-width:44px;min-height:44px;border:0;border-radius:14px;background:#f5b400;color:#3a2600;font-weight:800;font-size:17px;padding:8px 16px;box-shadow:0 3px 0 #b98400;-webkit-transition:transform .08s;transition:transform .08s}
+.bt:active{transform:translateY(2px);box-shadow:0 1px 0 #b98400}
+.bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
+.bt.cinza{background:#e6dcc4;color:#5b4a2a;box-shadow:0 3px 0 #b9ad92}
+.bt.verde{background:#1f6b12;color:#fff;box-shadow:0 3px 0 #14480b}
+.zap{width:40px;height:40px;border-radius:50%;border:0;background:#f5b400;box-shadow:0 2px 0 #b98400;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.zap svg{width:22px;height:22px;fill:#3a2600}
+.zap.off{background:#c9c0ac}
+.zap.ouvir{background:#fff;box-shadow:0 2px 0 #cbbf9f;border:2px solid #c9a52f}
+.zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
+#livro{max-width:820px;margin:10px auto 0;padding:0 8px}
+.pagina{position:relative;background:#fff;border-radius:10px;box-shadow:0 6px 24px rgba(50,30,0,.22);display:none;overflow:hidden;padding:0 0 18px}
+.pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
+@-webkit-keyframes entra{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes entra{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.faixa{background:#8a6b12;color:#fff;padding:13px 16px 11px;display:flex;align-items:center;gap:12px}
+.faixa h2{margin:0;font-size:clamp(17px,4.2vw,24px);letter-spacing:.5px;text-transform:uppercase;flex:1}
+.faixa .num{background:#fff;color:#8a6b12;font-weight:900;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.pagina.c1 .faixa{background:#1f6b12}.pagina.c1 .faixa .num{color:#1f6b12}
+.pagina.c2 .faixa{background:#1565c0}.pagina.c2 .faixa .num{color:#1565c0}
+.pagina.c3 .faixa{background:#8a6b12}.pagina.c3 .faixa .num{color:#8a6b12}
+.pagina.c4 .faixa{background:#6a1b9a}.pagina.c4 .faixa .num{color:#6a1b9a}
+.pagina.c5 .faixa{background:#c62828}.pagina.c5 .faixa .num{color:#c62828}
+.enun{margin:12px 16px 4px;font-size:clamp(14px,3.4vw,18px);font-weight:700;color:#3a2600;line-height:1.35}
+.enun b{color:#1f6b12}
+.item{margin:10px 12px;padding:10px;border:2px solid #efe6cf;border-radius:14px;background:#fffdf7}
+.item .n{font-weight:900;color:#a08a5a;font-size:14px;margin-right:6px}
+.mat{display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;margin:6px 0;min-height:46px}
+.mat .gr{display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px}
+.linhaop{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+.conta{font-family:"Segoe UI",Arial,sans-serif;font-weight:900;font-size:clamp(20px,5vw,30px);color:#3a2600}
+.resp{position:relative;min-width:44px;min-height:44px;width:clamp(56px,13vw,74px);height:clamp(50px,12vw,64px);display:flex;align-items:center;justify-content:center;flex:none;
+  font-family:"Comic Sans MS","Chalkboard SE","Segoe Print","Bradley Hand",cursive;font-weight:700;color:#1d4ed8;font-size:clamp(20px,5vw,32px);
+  background:rgba(255,244,190,.55);border:3px dashed #c9a52f;border-radius:12px;cursor:pointer;-webkit-transition:background .2s,border-color .2s;transition:background .2s,border-color .2s}
+.resp .zi{position:absolute;left:3px;top:3px;width:13px;height:13px;opacity:.5;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233a2600' d='M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z'/%3E%3C/svg%3E") center/contain no-repeat}
+.resp.ativa .zi,.resp.certa .zi{display:none}
+.resp .rot{position:absolute;left:0;right:0;bottom:-17px;font-family:"Segoe UI",Arial,sans-serif;font-size:11px;font-weight:800;color:#8a6b12;letter-spacing:.5px}
+.resp.ativa{border-style:solid;border-color:#f59e0b;background:rgba(255,236,150,.9);-webkit-animation:pulsa 1.2s infinite;animation:pulsa 1.2s infinite}
+@-webkit-keyframes pulsa{0%,100%{box-shadow:0 0 0 4px rgba(245,158,11,.35)}50%{box-shadow:0 0 0 9px rgba(245,158,11,.12)}}
+@keyframes pulsa{0%,100%{box-shadow:0 0 0 4px rgba(245,158,11,.35)}50%{box-shadow:0 0 0 9px rgba(245,158,11,.12)}}
+.resp.certa{border-style:solid;border-color:#1f6b12;background:rgba(200,240,200,.55);color:#14480b;cursor:default;-webkit-animation:none;animation:none}
+.resp.certa:after{content:"";position:absolute;right:-8px;top:-9px;width:24px;height:24px;border-radius:50%;background:#1f6b12 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 13l4 4L19 7' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/70% no-repeat;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.resp.treme{-webkit-animation:treme .45s;animation:treme .45s;border-color:#e57373;background:rgba(255,205,205,.7)}
+@-webkit-keyframes treme{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes treme{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.resp .cursor{display:inline-block;width:3px;height:60%;background:#1d4ed8;margin-left:2px;-webkit-animation:pisca 1s steps(1) infinite;animation:pisca 1s steps(1) infinite}
+@-webkit-keyframes pisca{50%{opacity:0}}
+@keyframes pisca{50%{opacity:0}}
+/* grupos da divisão */
+.grupos{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.grupo{flex:1 1 96px;min-width:88px;max-width:150px;min-height:70px;border:3px dashed #c9a52f;border-radius:12px;background:rgba(255,244,190,.4);padding:6px;text-align:center}
+.grupo .rotg{font-size:11px;font-weight:800;color:#8a6b12;letter-spacing:.4px;display:block;margin-bottom:4px}
+/* chave da conta armada */
+.chave{display:inline-block;margin:6px auto;text-align:left;font-family:"Segoe UI",Arial,sans-serif}
+.chave .lin1{display:flex;align-items:flex-start;gap:0}
+.chave .dvd{font-size:clamp(22px,5.4vw,32px);font-weight:900;padding:2px 8px 2px 0;border-right:3px solid #3a2600}
+.chave .dir{padding-left:8px;display:flex;flex-direction:column;gap:4px}
+.chave .dvs{font-size:clamp(22px,5.4vw,32px);font-weight:900;border-bottom:3px solid #3a2600;padding-bottom:2px}
+/* ligar */
+.ligar{position:relative;display:flex;justify-content:space-between;gap:10px;margin:8px 12px;padding:6px}
+.ligar .col{display:flex;flex-direction:column;gap:10px;flex:1}
+.ponta{position:relative;display:flex;align-items:center;justify-content:center;gap:6px;min-height:56px;border:3px solid #efe6cf;border-radius:14px;background:#fffdf7;cursor:pointer;touch-action:none;padding:6px;font-weight:800;font-size:clamp(15px,3.8vw,20px);color:#3a2600;-webkit-transition:background .15s,border-color .15s;transition:background .15s,border-color .15s}
+.ponta.marcada{border-color:#f59e0b;background:rgba(255,236,150,.55);-webkit-animation:pulsa 1.2s infinite;animation:pulsa 1.2s infinite}
+.ponta.feita{border-color:#1f6b12;background:rgba(200,240,200,.35);cursor:default}
+.ponta.treme{-webkit-animation:treme .45s;animation:treme .45s;border-color:#e57373}
+.ponta.mostra{border-color:#f59e0b;border-style:dashed;-webkit-animation:pulsa 1.2s infinite;animation:pulsa 1.2s infinite}
+svg.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.blk{vertical-align:bottom}
+.maisN{font-weight:800;color:#8a6b12;font-size:13px;align-self:center}
+.carimbo{position:absolute;right:3%;top:56px;width:20%;min-width:86px;aspect-ratio:1/1;border-radius:50%;border:5px solid #1f6b12;color:#1f6b12;font-weight:900;font-size:clamp(13px,2.4vw,22px);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05;background:rgba(255,255,255,.85);transform:rotate(-14deg) scale(0);opacity:0;pointer-events:none;-webkit-transition:transform .5s cubic-bezier(.2,1.4,.4,1),opacity .3s;transition:transform .5s cubic-bezier(.2,1.4,.4,1),opacity .3s;z-index:5}
+.pagina.pronta .carimbo{transform:rotate(-14deg) scale(1);opacity:1}
+/* capa */
+.capa{text-align:center;padding:18px 16px 24px}
+.capa h1{margin:6px 0 4px;font-size:clamp(24px,6vw,40px);color:#8a6b12;letter-spacing:1px;text-transform:uppercase;line-height:1.05}
+.capa .sub{font-weight:700;color:#6b4a1a;font-size:clamp(14px,3.6vw,18px);margin-bottom:10px}
+.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:clamp(6px,3vw,22px);margin:12px 0 6px}
+.capa .nomef{font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;color:#1d4ed8;font-size:clamp(18px,4.6vw,28px);min-height:34px;margin-top:10px}
+.capa .nomef.vazio{color:#a08a5a;font-family:"Segoe UI",Arial,sans-serif;font-size:14px;font-weight:600}
+.capa .legenda{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:10px;font-weight:800;color:#6b4a1a;font-size:13px}
+.capa .legenda span{display:flex;align-items:center;gap:5px}
+#barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff8ea;border-top:3px solid #c9a52f;box-shadow:0 -4px 14px rgba(60,40,10,.2);padding:10px 8px;display:none}
+#barraCapa.aberta{display:block}
+#barraCapa .lin{max-width:560px;margin:0 auto;display:flex;gap:10px;align-items:center}
+#barraCapa label{font-weight:800;color:#6b4a1a;font-size:14px;white-space:nowrap}
+#nomeIn{flex:1;min-width:0;min-height:48px;border:3px solid #c9a52f;border-radius:12px;padding:0 12px;font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
+#nomeIn:focus{outline:none;border-color:#f59e0b;box-shadow:0 0 0 4px rgba(245,158,11,.3)}
+.comecar{font-size:clamp(18px,4vw,24px);padding:10px 22px;border-radius:40px;-webkit-animation:respira 1.6s infinite;animation:respira 1.6s infinite}
+@-webkit-keyframes respira{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes respira{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+#teclado{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff8ea;border-top:3px solid #c9a52f;box-shadow:0 -4px 14px rgba(60,40,10,.2);padding:8px 8px 10px;display:none}
+#teclado.aberto{display:block}
+#teclado .tk{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
+#teclado button{min-height:52px;font-size:25px;font-weight:800;border:0;border-radius:12px;background:#fff;color:#1d4ed8;box-shadow:0 3px 0 #cbbf9f}
+#teclado button:active{transform:translateY(2px);box-shadow:0 1px 0 #cbbf9f}
+#teclado button.ap{color:#8d3b00;font-size:19px}
+#teclado button.ok{background:#1f6b12;color:#fff;box-shadow:0 3px 0 #14480b;grid-column:span 2}
+#teclado .dica{max-width:520px;margin:0 auto 6px;font-size:14px;font-weight:700;color:#6b4a1a;text-align:center}
+#nav{max-width:820px;margin:12px auto 0;padding:0 8px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+#nav .meio{flex:1;text-align:center;font-weight:700;color:#6b4a1a;font-size:14px}
+#fim{max-width:580px;margin:14px auto;background:#fff8ea;border-radius:18px;padding:18px;box-shadow:0 6px 24px rgba(50,30,0,.2);text-align:center;display:none}
+#fim h2{margin:0 0 6px;color:#3a2600}
+.estrelas{display:flex;justify-content:center;gap:8px;margin:10px 0}
+.estrela{width:48px;height:48px;transform:scale(0);-webkit-transition:transform .5s cubic-bezier(.2,1.6,.4,1);transition:transform .5s cubic-bezier(.2,1.6,.4,1)}
+.estrela.acesa{transform:scale(1)}
+.barras{text-align:left;margin:10px auto;max-width:460px}
+.barra{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;font-weight:700;color:#3a2600}
+.barra span{width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barra .tr{flex:1;height:13px;background:#e6dcc4;border-radius:8px;overflow:hidden}
+.barra .tr i{display:block;height:100%;width:0;background:#1f6b12;-webkit-transition:width 1s;transition:width 1s}
+.medalha{width:118px;height:118px;margin:8px auto;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe98a,#f5b400 60%,#b98400);box-shadow:0 6px 16px rgba(0,0,0,.25),inset 0 0 0 6px rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;color:#3a2600;font-weight:900;font-size:34px;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.medalha.segurando{transform:scale(.95)}
+#relatorio{display:none;text-align:left;background:#fff;border-radius:12px;padding:12px;margin-top:10px;font-size:13px;border:2px solid #c9a52f}
+#relatorio table{width:100%;border-collapse:collapse}
+#relatorio td,#relatorio th{padding:4px 6px;border-bottom:1px solid #eee;text-align:left}
+#retomar{max-width:560px;margin:14px auto;background:#fff8ea;border-radius:18px;padding:18px;box-shadow:0 6px 24px rgba(50,30,0,.2);text-align:center;display:none}
+.confete{position:fixed;top:-10px;width:10px;height:14px;z-index:40;pointer-events:none;-webkit-animation:cai 1.8s linear forwards;animation:cai 1.8s linear forwards}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(720deg)}}
+@keyframes cai{to{transform:translateY(105vh) rotate(720deg)}}
+@media (prefers-reduced-motion:reduce){*{-webkit-animation:none!important;animation:none!important;-webkit-transition:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header id="topo">
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir o que a página pede" title="Ouvir a página"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3H4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v-8a5 5 0 0 1 10 0v8h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-1V9a7 7 0 0 0-7-7z"/></svg></button>
+  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração" title="Narração"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg></button>
+  <div class="tit">Oficina do Material Dourado</div>
+  <div class="prog" aria-hidden="true"><i id="progI"></i></div>
+  <div class="pg" id="pg">Capa</div>
+</header>
+
+<div id="retomar" role="dialog" aria-live="polite">
+  <p style="font-weight:800;font-size:18px;margin:0 0 10px" id="retTxt">Você estava no meio do caderno. Quer continuar de onde parou?</p>
+  <button class="bt verde" id="bRetSim">Continuar</button>
+  <button class="bt cinza" id="bRetNao">Começar do início</button>
+</div>
+
+<div id="livro"></div>
+
+<div id="nav">
+  <button class="bt cinza" id="bAnt">◀ Anterior</button>
+  <div class="meio" id="navTxt"></div>
+  <button class="bt" id="bProx">Próxima ▶</button>
+</div>
+
+<div id="fim" aria-live="polite">
+  <h2>Caderno completo!</h2>
+  <div class="estrelas" id="estrelas"></div>
+  <div class="barras" id="barras"></div>
+  <p id="fimTxt" style="font-weight:700;color:#3a2600"></p>
+  <div class="medalha" id="medalha" title="Medalha">★</div>
+  <div id="relatorio"></div>
+  <button class="bt cinza" id="bRever">Rever o caderno</button>
+  <button class="bt verde" id="bRecomecar">Caderno novo</button>
+</div>
+
+<div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt comecar" id="bComecar">Começar</button></div></div>
+<div id="teclado" aria-label="Teclado de números">
+  <div class="dica" id="tkDica">Digite a resposta</div>
+  <div class="tk" id="tk"></div>
+</div>
+
+<script>
+/* ---------- OS ITENS DE CADA FOLHA (o gerar_falas.py lê este bloco) ---------- */
+/*ITENS-INI*/
+var ITENS = {
+ "p2": [{"c":2,"d":4,"u":3},{"c":1,"d":5,"u":2},{"c":3,"d":0,"u":6},{"c":4,"d":2,"u":0},{"c":2,"d":7,"u":5},{"c":5,"d":1,"u":8}],
+ "p3": [243,152,306,420,275,518],
+ "p4": [{"n":36,"d":3},{"n":48,"d":4},{"n":55,"d":5},{"n":84,"d":2},{"n":63,"d":3},{"n":88,"d":4}],
+ "p5": [{"n":45,"d":3},{"n":52,"d":4},{"n":75,"d":5},{"n":96,"d":6}],
+ "p6": [{"n":25,"d":4},{"n":38,"d":5},{"n":47,"d":6},{"n":59,"d":7},{"n":33,"d":4},{"n":68,"d":9}],
+ "p7": [{"n":138,"d":6},{"n":245,"d":5},{"n":168,"d":12},{"n":312,"d":4},{"n":210,"d":7},{"n":288,"d":8}],
+ "p8": [{"n":36,"d":6},{"n":45,"d":5},{"n":81,"d":9},{"n":64,"d":8},{"n":90,"d":9},{"n":56,"d":7}],
+ "p9": [
+  {"n":60,"d":12,"un":"balas","hist":"A professora organizou uma festa de aniversário e comprou 60 balas para dividir igualmente entre 12 amigos.","q":"Quantas balas cada amigo recebe?"},
+  {"n":144,"d":6,"un":"livros","hist":"A biblioteca da escola recebeu uma doação de 144 livros. Eles serão distribuídos igualmente entre 6 salas de aula.","q":"Quantos livros cada sala recebe?"},
+  {"n":84,"d":4,"un":"figurinhas","hist":"Pedro tem uma coleção de 84 figurinhas e quer organizá-las em 4 páginas do álbum, com a mesma quantidade em cada página.","q":"Quantas figurinhas ele põe em cada página?"},
+  {"n":150,"d":5,"un":"cadeiras","hist":"O ginásio tem 150 cadeiras para arrumar em 5 fileiras iguais.","q":"Quantas cadeiras ficam em cada fileira?"}
+ ],
+ "p10": [{"n":25,"d":4},{"n":38,"d":5},{"n":47,"d":6},{"n":59,"d":7}]
+};
+/*ITENS-FIM*/
+/*FALAS-INI*/
+var FALAS = {};
+/*FALAS-FIM*/
+/*VOZOK-INI*/var VOZOK = {};/*VOZOK-FIM*/
+
+/* ---------- o material dourado, desenhado em SVG (casa: peça divisao-dourado) ---------- */
+function svgUnidade(px){var s=px||16;var d=Math.max(3,Math.round(s*0.26)),f=s-d;
+  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'" aria-hidden="true">'+
+  '<polygon points="0,'+d+' '+d+',0 '+s+',0 '+f+','+d+'" fill="#f3d071"/>'+
+  '<polygon points="'+f+','+d+' '+s+',0 '+s+','+f+' '+f+','+s+'" fill="#c8971f"/>'+
+  '<rect x="0" y="'+d+'" width="'+f+'" height="'+f+'" fill="#e8b53a"/></svg>';}
+function svgDezena(px){var h=px||44;var w=Math.max(7,Math.round(h*0.17));var seg='',gap=(h-2)/10,i;
+  for(i=1;i<10;i++)seg+='<line x1="0" y1="'+(i*gap)+'" x2="'+w+'" y2="'+(i*gap)+'" stroke="#a9781a" stroke-width="1"/>';
+  return '<svg class="blk" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" aria-hidden="true">'+
+  '<rect x="0" y="0" width="'+w+'" height="'+h+'" rx="2" fill="#e8b53a" stroke="#a9781a"/>'+seg+'</svg>';}
+function svgCentena(px){var s=px||44;var lado=s-4,st=lado/10,g='',i;
+  for(i=1;i<10;i++){g+='<line x1="2" y1="'+(2+i*st)+'" x2="'+(2+lado)+'" y2="'+(2+i*st)+'" stroke="#a9781a" stroke-width=".8"/>';
+                    g+='<line x1="'+(2+i*st)+'" y1="2" x2="'+(2+i*st)+'" y2="'+(2+lado)+'" stroke="#a9781a" stroke-width=".8"/>';}
+  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'" aria-hidden="true">'+
+  '<rect x="2" y="2" width="'+lado+'" height="'+lado+'" rx="2" fill="#e8b53a" stroke="#a9781a"/>'+g+'</svg>';}
+function svgMilhar(px){var s=px||54;var d=Math.round(s*0.17),f=s-d,grid='',st=f/10,i;
+  for(i=1;i<10;i++){grid+='<line x1="0" y1="'+(d+i*st)+'" x2="'+f+'" y2="'+(d+i*st)+'" stroke="#a9781a" stroke-width=".7"/>';
+                    grid+='<line x1="'+(i*st)+'" y1="'+d+'" x2="'+(i*st)+'" y2="'+s+'" stroke="#a9781a" stroke-width=".7"/>';}
+  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'" aria-hidden="true">'+
+  '<polygon points="0,'+d+' '+d+',0 '+s+',0 '+f+','+d+'" fill="#f3d071"/>'+
+  '<polygon points="'+f+','+d+' '+s+',0 '+s+','+f+' '+f+','+s+'" fill="#c8971f"/>'+
+  '<rect x="0" y="'+d+'" width="'+f+'" height="'+f+'" fill="#e8b53a" stroke="#a9781a"/>'+grid+'</svg>';}
+function bloco(kind, px){ return kind === 0 ? svgMilhar(px) : kind === 1 ? svgCentena(px) : kind === 2 ? svgDezena(px) : svgUnidade(px); }
+function grupoBlocos(kind, n, px, cap){
+  cap = cap || 12; var out = '<span class="gr">', m = Math.min(n, cap), i;
+  for(i = 0; i < m; i++) out += bloco(kind, px);
+  if(n > cap) out += '<span class="maisN">…' + n + '</span>';
+  return out + '</span>';
+}
+function material(c, d, u, px){
+  px = px || 34; var s = '<div class="mat">';
+  if(c) s += grupoBlocos(1, c, px);
+  if(d) s += grupoBlocos(2, d, px);
+  if(u) s += grupoBlocos(3, u, Math.round(px * .36));
+  return s + '</div>';
+}
+function cdu(n){ return {c: Math.floor(n / 100), d: Math.floor(n / 10) % 10, u: n % 10}; }
+
+/* ---------- estado ---------- */
+var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
+var ATIVA = null, vozLigada = true, _narr = null, vozPtBR = null, ultimoBotaoFala = null;
+var CHAVE_LS = "oficina_dourado_5ano";
+var NOMES = ["As peças e seus valores", "Qual é o número?", "Monte o número", "Repartir igual",
+             "A troca do abaixa", "Divisão com resto", "A conta armada", "Ligue ao resultado",
+             "Problemas", "A prova real"];
+var CORES = ["c1", "c2", "c3", "c1", "c4", "c5", "c3", "c2", "c1", "c4"];
+
+/* ---------- sorteio ---------- */
+function rnd(n){ return Math.floor(Math.random() * n); }
+function pega(pool, qtd, chaveRes){
+  /* tira `qtd` itens do pool, embaralhados, sem dois resultados iguais em seguida */
+  var p = pool.slice(), out = [], ult = null;
+  while(out.length < qtd && p.length){
+    var i = rnd(p.length), it = p[i];
+    var r = chaveRes ? chaveRes(it) : null;
+    if(out.length && r !== null && r === ult && p.length > 1){
+      var j = (i + 1) % p.length; i = j; it = p[i]; r = chaveRes(it);
+    }
+    p.splice(i, 1); out.push(it); ult = r;
+  }
+  return out;
+}
+function novaFolha(){
+  return {
+    p2: pega(ITENS.p2, 4, function(x){ return x.c * 100 + x.d * 10 + x.u; }),
+    p3: pega(ITENS.p3, 3, function(x){ return x; }),
+    p4: pega(ITENS.p4, 4, function(x){ return x.n / x.d; }),
+    p5: pega(ITENS.p5, 3, function(x){ return x.n / x.d; }),
+    p6: pega(ITENS.p6, 4, function(x){ return Math.floor(x.n / x.d); }),
+    p7: pega(ITENS.p7, 3, function(x){ return Math.floor(x.n / x.d); }),
+    p8: pega(ITENS.p8, 4, function(x){ return x.n / x.d; }),
+    p9: pega(ITENS.p9, 3, function(x){ return x.n / x.d; }),
+    p10: pega(ITENS.p10, 3, function(x){ return Math.floor(x.n / x.d); })
+  };
+}
+
+/* ---------- som ---------- */
+var _ac = null;
+function ac(){ try{ if(!_ac){ var C = window.AudioContext || window.webkitAudioContext; if(C) _ac = new C(); } if(_ac && _ac.state === "suspended") _ac.resume(); }catch(e){} return _ac; }
+function tom(f, t0, dur, tipo, vol){ var c = ac(); if(!c) return; try{ var o = c.createOscillator(), g = c.createGain(); o.type = tipo || "sine"; o.frequency.value = f; g.gain.setValueAtTime(0.0001, c.currentTime + t0); g.gain.exponentialRampToValueAtTime(vol || .25, c.currentTime + t0 + .02); g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + t0 + dur); o.connect(g); g.connect(c.destination); o.start(c.currentTime + t0); o.stop(c.currentTime + t0 + dur + .05); }catch(e){} }
+function sPasso(){ tom(660, 0, .07, "triangle", .12); }
+function sTecla(){ tom(880, 0, .05, "square", .06); }
+function sCerto(){ tom(523, 0, .12); tom(659, .1, .12); tom(784, .2, .2); }
+function sErro(){ tom(180, 0, .18, "triangle", .2); }
+function sFesta(){ var n = [523, 587, 659, 784, 880, 1047]; for(var i = 0; i < n.length; i++) tom(n[i], i * .09, .18); }
+
+/* ---------- voz ---------- */
+function carregaVozes(){ if(!("speechSynthesis" in window)) return; var v = window.speechSynthesis.getVoices(), i; for(i = 0; i < v.length; i++){ if(v[i].lang && v[i].lang.toLowerCase().indexOf("pt-br") > -1){ vozPtBR = v[i]; return; } } for(i = 0; i < v.length; i++){ if(v[i].lang && v[i].lang.toLowerCase().indexOf("pt") > -1){ vozPtBR = v[i]; return; } } }
+if("speechSynthesis" in window){ carregaVozes(); window.speechSynthesis.onvoiceschanged = carregaVozes; }
+function chaveVoz(s){ s = (s || "").replace(/\s+/g, " ").replace(/^ | $/g, "").toLowerCase(); var hh = 5381, i; for(i = 0; i < s.length; i++){ hh = ((hh << 5) + hh + s.charCodeAt(i)) >>> 0; } return hh.toString(36); }
+function falarNavegador(t){ if(!("speechSynthesis" in window)) return; try{ window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(t); u.lang = "pt-BR"; if(vozPtBR) u.voice = vozPtBR; u.rate = .98; window.speechSynthesis.speak(u); }catch(e){} }
+function calar(){ if("speechSynthesis" in window){ try{ window.speechSynthesis.cancel(); }catch(e){} } if(_narr){ try{ _narr.pause(); }catch(e){} } if(ultimoBotaoFala){ ultimoBotaoFala.className = ultimoBotaoFala.className.replace(" tocando", ""); ultimoBotaoFala = null; } }
+function falar(k, botao, depois){
+  var t = FALAS[k] || k; if(!vozLigada || !t) return;
+  calar();
+  if(botao){ botao.className += " tocando"; ultimoBotaoFala = botao; }
+  var jaFoi = false;
+  var fim = function(){ if(jaFoi) return; jaFoi = true; if(botao && ultimoBotaoFala === botao){ botao.className = botao.className.replace(" tocando", ""); ultimoBotaoFala = null; } if(depois) depois(); };
+  var key = chaveVoz(t);
+  if(VOZOK[key]){
+    if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+    _narr.onended = fim; _narr.onerror = function(){ falarNavegador(t); setTimeout(fim, 2500); };
+    _narr.src = "audio/od_" + key + ".mp3";
+    try{ _narr.currentTime = 0; }catch(e){}
+    var p = _narr.play(); if(p && p["catch"]) p["catch"](function(){ fim(); });
+    return;
+  }
+  falarNavegador(t); setTimeout(fim, Math.min(12000, 400 + t.length * 62));
+}
+function falarDepois(k, ms){ setTimeout(function(){ falar(k); }, ms || 0); }
+
+/* ---------- utilidades ---------- */
+function el(tag, cls, html){ var e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+function salvar(){ try{ ST.quando = Date.now(); localStorage.setItem(CHAVE_LS, JSON.stringify(ST)); }catch(e){} }
+function carregar(){ try{ var s = localStorage.getItem(CHAVE_LS); if(!s) return null; var o = JSON.parse(s); if(!o || !o.quando || Date.now() - o.quando > 55 * 60 * 1000 || !o.folha) return null; return o; }catch(e){ return null; } }
+function tentativa(id, ok){ if(!ST.tent[id]) ST.tent[id] = {erros: 0, ok: false}; if(ok) ST.tent[id].ok = true; else ST.tent[id].erros++; salvar(); }
+
+/* ---------- caixa de resposta ---------- */
+var CAIXAS = {};   /* id -> {certo, falaItem, falaCerto, falaDica, pag} */
+function caixa(pag, id, certo, falaItem, falaCerto, falaDica, rot){
+  var e = el("div", "resp"); e.id = id; e.setAttribute("role", "button"); e.setAttribute("tabindex", "0");
+  e.setAttribute("aria-label", "Resposta" + (rot ? " " + rot : "") + ": toque e digite"); e.setAttribute("data-qa", "resp");
+  CAIXAS[id] = {certo: certo, fi: falaItem, fc: falaCerto, fd: falaDica, pag: pag};
+  if(ST.resp[id] === certo){ e.textContent = certo; e.className = "resp certa"; }
+  else e.innerHTML = '<i class="zi"></i>';
+  if(rot) e.innerHTML += '<span class="rot">' + rot + '</span>';
+  e.onclick = function(){ if(e.className.indexOf("certa") > -1) return; sPasso(); ativar(e); };
+  e.onkeydown = function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); e.onclick(); } };
+  return e;
+}
+function ativar(e){
+  if(ATIVA && ATIVA.el !== e){ var v = ATIVA.el; v.className = v.className.replace(" ativa", ""); if(!v.textContent || v.textContent === CAIXAS[v.id].rot) v.innerHTML = '<i class="zi"></i>' + (CAIXAS[v.id].rot ? '<span class="rot">' + CAIXAS[v.id].rot + '</span>' : ''); }
+  var C = CAIXAS[e.id];
+  ATIVA = {el: e, val: "", C: C};
+  e.className = "resp ativa";
+  e.innerHTML = '<span class="v"></span><span class="cursor"></span>' + (e.getAttribute("data-rot") ? '<span class="rot">' + e.getAttribute("data-rot") + '</span>' : '');
+  document.getElementById("teclado").className = "aberto";
+  if(C.fi) falar(C.fi);
+}
+function digita(ch){
+  if(!ATIVA){ falar("digite"); return; }
+  sTecla();
+  if(ch === "ap"){ ATIVA.val = ATIVA.val.slice(0, -1); }
+  else if(ch === "ok"){ confere(); return; }
+  else { if(ATIVA.val.length >= 4) return; ATIVA.val += ch; }
+  var v = ATIVA.el.querySelector(".v"); if(v) v.textContent = ATIVA.val;
+  var esperado = String(ATIVA.C.certo);
+  if(ATIVA.val.length && ATIVA.val.length >= esperado.length) setTimeout(confere, 430);
+}
+function confere(){
+  if(!ATIVA || !ATIVA.val) return;
+  var A = ATIVA, C = A.C, e = A.el, id = e.id;
+  if(parseInt(A.val, 10) === C.certo){
+    tentativa(id, true); ST.resp[id] = C.certo; salvar();
+    e.className = "resp certa"; e.innerHTML = String(C.certo) + (e.getAttribute("data-rot") ? '<span class="rot">' + e.getAttribute("data-rot") + '</span>' : '');
+    ATIVA = null; document.getElementById("teclado").className = "";
+    sCerto(); if(C.fc) falar(C.fc);
+    setTimeout(function(){ confereFolha(C.pag); }, 850);
+  } else {
+    tentativa(id, false); var n = ST.tent[id].erros;
+    e.className = "resp ativa treme"; sErro();
+    setTimeout(function(){ if(ATIVA === A) e.className = "resp ativa"; }, 500);
+    A.val = ""; var v = e.querySelector(".v"); if(v) v.textContent = "";
+    falar(n >= 2 && C.fd ? C.fd : "quase");
+  }
+}
+(function(){
+  var tk = document.getElementById("tk"), ordem = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "ap", "ok"];
+  for(var i = 0; i < ordem.length; i++){
+    var b = el("button", ordem[i] === "ap" ? "ap" : (ordem[i] === "ok" ? "ok" : ""), ordem[i] === "ap" ? "⌫ apagar" : (ordem[i] === "ok" ? "OK" : ordem[i]));
+    b.setAttribute("aria-label", ordem[i] === "ap" ? "Apagar" : (ordem[i] === "ok" ? "Confirmar" : "Número " + ordem[i]));
+    b.onclick = (function(t){ return function(){ digita(t); }; })(ordem[i]); tk.appendChild(b);
+  }
+})();
+document.addEventListener("keydown", function(ev){
+  if(!ATIVA) return;
+  if(document.activeElement && document.activeElement.id === "nomeIn") return;
+  if(ev.key >= "0" && ev.key <= "9"){ ev.preventDefault(); digita(ev.key); }
+  else if(ev.key === "Backspace"){ ev.preventDefault(); digita("ap"); }
+  else if(ev.key === "Enter"){ ev.preventDefault(); digita("ok"); }
+  else if(ev.key === "Escape"){ ATIVA.el.className = "resp"; ATIVA.el.innerHTML = '<i class="zi"></i>'; ATIVA = null; document.getElementById("teclado").className = ""; }
+});
+
+/* ---------- as folhas ---------- */
+var livro = document.getElementById("livro"), PAGEL = [];
+function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
+function monta(){
+  livro.innerHTML = ""; PAGEL = []; CAIXAS = {};
+  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10];
+  for(var i = 0; i < caps.length; i++){
+    var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
+    caps[i](d, i);
+    if(i > 0) d.appendChild(el("div", "carimbo", "FOLHA<br>PRONTA"));
+    livro.appendChild(d); PAGEL.push(d);
+  }
+}
+function f0(d){
+  var c = el("div", "capa");
+  c.innerHTML = '<h1>A Oficina do Material Dourado</h1><div class="sub">Divisão · 5º ano · 10 folhas</div>' +
+    '<div class="cena">' + bloco(0, 70) + bloco(1, 56) + bloco(2, 56) + bloco(3, 22) + '</div>' +
+    '<div class="legenda"><span>' + bloco(3, 16) + ' cubinho = 1</span><span>' + bloco(2, 26) + ' barra = 10</span><span>' + bloco(1, 26) + ' placa = 100</span><span>' + bloco(0, 30) + ' cubão = 1000</span></div>' +
+    '<div class="nomef vazio" id="nomef">escreva o seu nome ali embaixo</div>';
+  d.appendChild(c);
+}
+/* 1 — as peças e o valor (ligar) */
+function f1(d, pi){
+  faixa(d, pi, NOMES[0]);
+  d.appendChild(el("div", "enun", "Toque na peça e depois no <b>valor</b> dela, ou puxe uma linha."));
+  var pares = [{k: "u", kind: 3, v: 1, px: 22}, {k: "d", kind: 2, v: 10, px: 46}, {k: "c", kind: 1, v: 100, px: 46}, {k: "m", kind: 0, v: 1000, px: 52}];
+  montaLigar(d, pi, pares.map(function(p){ return {k: p.k, esq: bloco(p.kind, p.px), dir: String(p.v), fe: "peca_" + p.k, fd: "n" + p.v, fc: "vale_" + p.k, dica: "dica_" + p.k}; }));
+}
+/* 2 — qual é o número (digitar) */
+function f2(d, pi){
+  faixa(d, pi, NOMES[1]);
+  d.appendChild(el("div", "enun", "Conte as peças e escreva <b>que número</b> elas formam."));
+  var L = ST.folha.p2;
+  for(var i = 0; i < L.length; i++){
+    var it = L[i], n = it.c * 100 + it.d * 10 + it.u;
+    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span>');
+    box.innerHTML += material(it.c, it.d, it.u, 34);
+    var lin = el("div", "linhaop");
+    lin.appendChild(caixa(pi, "r2_" + i, n, "qual2_" + n, "certo2_" + n, "dica2_" + n));
+    box.appendChild(lin); d.appendChild(box);
+  }
+}
+/* 3 — monte o número (C, D, U) */
+function f3(d, pi){
+  faixa(d, pi, NOMES[2]);
+  d.appendChild(el("div", "enun", "Quantas peças de cada tipo formam este número? Escreva nas <b>três caixas</b>."));
+  var L = ST.folha.p3;
+  for(var i = 0; i < L.length; i++){
+    var n = L[i], p = cdu(n);
+    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + n + '</span>');
+    var lin = el("div", "linhaop");
+    lin.appendChild(caixa(pi, "r3_" + i + "c", p.c, "monte_" + n, "certo3_" + n, "dica3_" + n, "placas"));
+    lin.appendChild(caixa(pi, "r3_" + i + "d", p.d, "monte_" + n, "certo3_" + n, "dica3_" + n, "barras"));
+    lin.appendChild(caixa(pi, "r3_" + i + "u", p.u, "monte_" + n, "certo3_" + n, "dica3_" + n, "cubinhos"));
+    box.appendChild(lin); box.appendChild(el("div", null, '<div style="height:18px"></div>')); d.appendChild(box);
+  }
+}
+/* 4 — repartir igual, sem sobra */
+function f4(d, pi){
+  faixa(d, pi, NOMES[3]);
+  d.appendChild(el("div", "enun", "As peças foram repartidas <b>igualmente</b> entre os grupos. Quanto ficou em cada grupo?"));
+  var L = ST.folha.p4;
+  for(var i = 0; i < L.length; i++){
+    var it = L[i], q = it.n / it.d, p = cdu(it.n);
+    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + it.n + ' ÷ ' + it.d + '</span>');
+    box.innerHTML += material(p.c, p.d, p.u, 30);
+    var gs = el("div", "grupos");
+    for(var g = 0; g < Math.min(it.d, 6); g++){
+      var gq = cdu(q);
+      gs.appendChild(el("div", "grupo", '<span class="rotg">GRUPO ' + (g + 1) + '</span>' + material(gq.c, gq.d, gq.u, 22)));
+    }
+    box.appendChild(gs);
+    var lin = el("div", "linhaop", '<span class="conta">cada grupo:</span>');
+    lin.appendChild(caixa(pi, "r4_" + i, q, "quanto4_" + it.n + "_" + it.d, "certo4_" + it.n + "_" + it.d, "dica4_" + it.n + "_" + it.d));
+    box.appendChild(lin); d.appendChild(box);
+  }
+}
+/* 5 — a troca do "abaixa" */
+function f5(d, pi){
+  faixa(d, pi, NOMES[4]);
+  d.appendChild(el("div", "enun", "Sobrou <b>1 barra</b> e ela não dá para repartir inteira. Troque a barra por <b>10 cubinhos</b> e termine a conta."));
+  var L = ST.folha.p5;
+  for(var i = 0; i < L.length; i++){
+    var it = L[i], q = it.n / it.d, p = cdu(it.n);
+    var porGrupoD = Math.floor(p.d / it.d), sobraD = p.d - porGrupoD * it.d, unidades = sobraD * 10 + p.u;
+    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + it.n + ' ÷ ' + it.d + '</span>');
+    box.innerHTML += material(0, p.d, p.u, 30);
+    var lin1 = el("div", "linhaop", '<span class="conta">barras para cada grupo:</span>');
+    lin1.appendChild(caixa(pi, "r5_" + i + "a", porGrupoD, "troca_" + it.n + "_" + it.d, "certo5a_" + it.n + "_" + it.d, "dica5a_" + it.n + "_" + it.d));
+    box.appendChild(lin1);
+    var lin2 = el("div", "linhaop", '<span class="conta">cubinhos depois da troca:</span>');
+    lin2.appendChild(caixa(pi, "r5_" + i + "b", unidades, "trocaB_" + it.n + "_" + it.d, "certo5b_" + it.n + "_" + it.d, "dica5b_" + it.n + "_" + it.d));
+    box.appendChild(lin2);
+    var lin3 = el("div", "linhaop", '<span class="conta">resultado da conta:</span>');
+    lin3.appendChild(caixa(pi, "r5_" + i + "c", q, "quanto4_" + it.n + "_" + it.d, "certo4_" + it.n + "_" + it.d, "dica4_" + it.n + "_" + it.d));
+    box.appendChild(lin3); d.appendChild(box);
+  }
+}
+/* 6 — divisão com resto */
+function f6(d, pi){
+  faixa(d, pi, NOMES[5]);
+  d.appendChild(el("div", "enun", "Nem tudo dá para repartir igual: o que não fecha um grupo é o <b>resto</b>. Escreva o resultado e o resto."));
+  var L = ST.folha.p6;
+  for(var i = 0; i < L.length; i++){
+    var it = L[i], q = Math.floor(it.n / it.d), r = it.n % it.d, p = cdu(it.n);
+    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + it.n + ' ÷ ' + it.d + '</span>');
+    box.innerHTML += material(0, p.d, p.u, 28);
+    var lin = el("div", "linhaop");
+    lin.appendChild(caixa(pi, "r6_" + i + "q", q, "resto_" + it.n + "_" + it.d, "certo6_" + it.n + "_" + it.d, "dica6_" + it.n + "_" + it.d, "resultado"));
+    lin.appendChild(caixa(pi, "r6_" + i + "r", r, "resto_" + it.n + "_" + it.d, "certo6_" + it.n + "_" + it.d, "dica6_" + it.n + "_" + it.d, "resto"));
+    box.appendChild(lin); box.appendChild(el("div", null, '<div style="height:18px"></div>')); d.appendChild(box);
+  }
+}
+/* 7 — a conta armada */
+function f7(d, pi){
+  faixa(d, pi, NOMES[6]);
+  d.appendChild(el("div", "enun", "Agora só com os números: complete a <b>chave</b> da conta armada."));
+  var L = ST.folha.p7;
+  for(var i = 0; i < L.length; i++){
+    var it = L[i], q = Math.floor(it.n / it.d), r = it.n % it.d;
+    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span>');
+    var ch = el("div", "chave");
+    var l1 = el("div", "lin1", '<div class="dvd">' + it.n + '</div>');
+    var dir = el("div", "dir", '<div class="dvs">' + it.d + '</div>');
+    dir.appendChild(caixa(pi, "r7_" + i + "q", q, "armada_" + it.n + "_" + it.d, "certo7_" + it.n + "_" + it.d, "dica7_" + it.n + "_" + it.d, "resultado"));
+    l1.appendChild(dir); ch.appendChild(l1);
+    var lr = el("div", "linhaop", '<span class="conta">resto:</span>');
+    lr.appendChild(caixa(pi, "r7_" + i + "r", r, "armadaR_" + it.n + "_" + it.d, "certo7_" + it.n + "_" + it.d, "dica7_" + it.n + "_" + it.d));
+    box.appendChild(ch); box.appendChild(lr); box.appendChild(el("div", null, '<div style="height:16px"></div>'));
+    d.appendChild(box);
+  }
+}
+/* 8 — ligar divisão ao resultado */
+function f8(d, pi){
+  faixa(d, pi, NOMES[7]);
+  d.appendChild(el("div", "enun", "Toque na conta e depois no <b>resultado</b> dela, ou puxe uma linha."));
+  var L = ST.folha.p8;
+  montaLigar(d, pi, L.map(function(it, i){
+    return {k: "k" + i, esq: '<span class="conta">' + it.n + ' ÷ ' + it.d + '</span>', dir: String(it.n / it.d),
+            fe: "conta_" + it.n + "_" + it.d, fd: "n" + (it.n / it.d), fc: "certo8_" + it.n + "_" + it.d, dica: "dica8_" + it.n + "_" + it.d};
+  }));
+}
+/* 9 — problemas */
+function f9(d, pi){
+  faixa(d, pi, NOMES[8]);
+  d.appendChild(el("div", "enun", "Leia o problema, descubra a <b>divisão</b> e escreva a resposta."));
+  var L = ST.folha.p9;
+  for(var i = 0; i < L.length; i++){
+    var it = L[i], q = it.n / it.d;
+    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span>' + it.hist + '<br><b>' + it.q + '</b>');
+    var lin = el("div", "linhaop", '<span class="conta">' + it.n + ' ÷ ' + it.d + ' =</span>');
+    lin.appendChild(caixa(pi, "r9_" + i, q, "prob_" + it.n + "_" + it.d, "certo9_" + it.n + "_" + it.d, "dica9_" + it.n + "_" + it.d));
+    box.appendChild(lin); d.appendChild(box);
+  }
+}
+/* 10 — a prova real */
+function f10(d, pi){
+  faixa(d, pi, NOMES[9]);
+  d.appendChild(el("div", "enun", "Para conferir a divisão: <b>resultado × divisor + resto</b> tem que dar o número de novo."));
+  var L = ST.folha.p10;
+  for(var i = 0; i < L.length; i++){
+    var it = L[i], q = Math.floor(it.n / it.d), r = it.n % it.d, prod = q * it.d;
+    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + it.n + ' ÷ ' + it.d + ' = ' + q + ' com resto ' + r + '</span>');
+    var lin1 = el("div", "linhaop", '<span class="conta">' + q + ' × ' + it.d + ' =</span>');
+    lin1.appendChild(caixa(pi, "r10_" + i + "a", prod, "prova_" + it.n + "_" + it.d, "certo10a_" + it.n + "_" + it.d, "dica10_" + it.n + "_" + it.d));
+    box.appendChild(lin1);
+    var lin2 = el("div", "linhaop", '<span class="conta">' + prod + ' + ' + r + ' =</span>');
+    lin2.appendChild(caixa(pi, "r10_" + i + "b", it.n, "provaB_" + it.n + "_" + it.d, "certo10b_" + it.n + "_" + it.d, "dica10_" + it.n + "_" + it.d));
+    box.appendChild(lin2); d.appendChild(box);
+  }
+}
+
+/* ---------- ligar (usado nas folhas 1 e 8) ---------- */
+function montaLigar(d, pi, pares){
+  var box = el("div", "ligar"), ce = el("div", "col"), cd = el("div", "col");
+  var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("class", "linhas");
+  box.appendChild(ce); box.appendChild(cd); box.appendChild(svg); d.appendChild(box);
+  var ordem = pares.map(function(_, i){ return i; }).sort(function(){ return Math.random() - .5; });
+  var E = {}, D = {}, marcada = null, viva = null, arrastando = false;
+  function centro(e, lado){ var r = e.getBoundingClientRect(), b = box.getBoundingClientRect(); return {x: (lado === "e" ? r.right : r.left) - b.left, y: r.top + r.height / 2 - b.top}; }
+  function linha(a, b2, cor, larg, trac){ var l = document.createElementNS("http://www.w3.org/2000/svg", "line"); l.setAttribute("x1", a.x); l.setAttribute("y1", a.y); l.setAttribute("x2", b2.x); l.setAttribute("y2", b2.y); l.setAttribute("stroke", cor); l.setAttribute("stroke-width", larg || 6); l.setAttribute("stroke-linecap", "round"); if(trac) l.setAttribute("stroke-dasharray", "10 8"); svg.appendChild(l); return l; }
+  function ponto(ev){ var b2 = box.getBoundingClientRect(); return {x: ev.clientX - b2.left, y: ev.clientY - b2.top}; }
+  function desmarca(){ if(marcada) marcada.el.className = marcada.el.className.replace(" marcada", ""); marcada = null; if(viva){ svg.removeChild(viva); viva = null; } for(var k in D) D[k].el.className = D[k].el.className.replace(" mostra", ""); }
+  function redesenha(){ while(svg.firstChild) svg.removeChild(svg.firstChild); viva = null; for(var k in E) if(ST.lig["l" + pi + "_" + k]) linha(centro(E[k].el, "e"), centro(D[k].el, "d"), "#1f6b12", 7); }
+  function fecha(Re, Rd){
+    var id = "l" + pi + "_" + Re.k;
+    if(Rd.k === Re.k){
+      tentativa(id, true); ST.lig[id] = 1; salvar();
+      Re.el.className += " feita"; Rd.el.className += " feita"; desmarca(); redesenha();
+      sCerto(); falar(Re.fc);
+      setTimeout(function(){ confereFolha(pi); }, 850);
+    } else {
+      tentativa(id, false); var n = ST.tent[id].erros;
+      var l = linha(centro(Re.el, "e"), centro(Rd.el, "d"), "#e57373", 6); setTimeout(function(){ if(l.parentNode) svg.removeChild(l); }, 600);
+      Rd.el.className += " treme"; setTimeout(function(){ Rd.el.className = Rd.el.className.replace(" treme", ""); }, 500);
+      sErro(); falar(n >= 2 ? Re.dica : "essaNao");
+      if(n >= 2 && D[Re.k].el.className.indexOf("feita") < 0) D[Re.k].el.className += " mostra";
+      if(viva){ svg.removeChild(viva); viva = null; }
+    }
+  }
+  pares.forEach(function(P){
+    var e = el("div", "ponta" + (ST.lig["l" + pi + "_" + P.k] ? " feita" : ""), P.esq);
+    e.setAttribute("role", "button"); e.setAttribute("tabindex", "0"); e.setAttribute("aria-label", FALAS[P.fe] || P.k); e.setAttribute("data-qa", "lig-" + P.k);
+    var R = {k: P.k, el: e, fc: P.fc, dica: P.dica}; E[P.k] = R;
+    e.addEventListener("pointerdown", function(ev){ if(e.className.indexOf("feita") > -1) return; ev.preventDefault(); try{ e.setPointerCapture(ev.pointerId); }catch(x){} desmarca(); marcada = R; e.className += " marcada"; sPasso(); falar(P.fe); arrastando = true; var c = centro(e, "e"); viva = linha(c, c, "#f59e0b", 6, true); });
+    e.addEventListener("pointermove", function(ev){ if(!arrastando || !viva || marcada !== R) return; var p = ponto(ev); viva.setAttribute("x2", p.x); viva.setAttribute("y2", p.y); });
+    e.addEventListener("pointerup", function(ev){ if(!arrastando || marcada !== R) return; arrastando = false; var alvo = null; for(var kk in D){ var r = D[kk].el.getBoundingClientRect(); if(ev.clientX >= r.left - 12 && ev.clientX <= r.right + 12 && ev.clientY >= r.top - 8 && ev.clientY <= r.bottom + 8 && D[kk].el.className.indexOf("feita") < 0) alvo = D[kk]; } if(alvo) fecha(R, alvo); else if(viva){ var c = centro(e, "e"); viva.setAttribute("x2", c.x + 30); viva.setAttribute("y2", c.y); } });
+    e.onkeydown = function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); desmarca(); marcada = R; e.className += " marcada"; falar(P.fe); } };
+    ce.appendChild(e);
+  });
+  ordem.forEach(function(j){
+    var P = pares[j];
+    var e = el("div", "ponta" + (ST.lig["l" + pi + "_" + P.k] ? " feita" : ""), P.dir);
+    e.setAttribute("role", "button"); e.setAttribute("tabindex", "0"); e.setAttribute("aria-label", FALAS[P.fd] || P.dir); e.setAttribute("data-qa", "lig-" + P.k);
+    var R = {k: P.k, el: e}; D[P.k] = R;
+    e.addEventListener("pointerdown", function(ev){ if(e.className.indexOf("feita") > -1) return; ev.preventDefault(); if(marcada) fecha(marcada, R); else { sPasso(); falar(P.fd); falarDepois("ligue", 900); } });
+    e.onkeydown = function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); if(marcada) fecha(marcada, R); } };
+    cd.appendChild(e);
+  });
+  d._redesenha = redesenha;
+  window.addEventListener("resize", function(){ if(d.className.indexOf("viva") > -1) redesenha(); });
+}
+
+/* ---------- folha pronta / navegação ---------- */
+function idsDaPagina(pi){
+  var ids = [], i, F = ST.folha;
+  if(pi === 1) for(i = 0; i < 4; i++) ids.push("l1_" + ["u", "d", "c", "m"][i]);
+  if(pi === 2) for(i = 0; i < F.p2.length; i++) ids.push("r2_" + i);
+  if(pi === 3) for(i = 0; i < F.p3.length; i++){ ids.push("r3_" + i + "c"); ids.push("r3_" + i + "d"); ids.push("r3_" + i + "u"); }
+  if(pi === 4) for(i = 0; i < F.p4.length; i++) ids.push("r4_" + i);
+  if(pi === 5) for(i = 0; i < F.p5.length; i++){ ids.push("r5_" + i + "a"); ids.push("r5_" + i + "b"); ids.push("r5_" + i + "c"); }
+  if(pi === 6) for(i = 0; i < F.p6.length; i++){ ids.push("r6_" + i + "q"); ids.push("r6_" + i + "r"); }
+  if(pi === 7) for(i = 0; i < F.p7.length; i++){ ids.push("r7_" + i + "q"); ids.push("r7_" + i + "r"); }
+  if(pi === 8) for(i = 0; i < F.p8.length; i++) ids.push("l8_k" + i);
+  if(pi === 9) for(i = 0; i < F.p9.length; i++) ids.push("r9_" + i);
+  if(pi === 10) for(i = 0; i < F.p10.length; i++){ ids.push("r10_" + i + "a"); ids.push("r10_" + i + "b"); }
+  return ids;
+}
+function pendentes(pi){
+  var ids = idsDaPagina(pi), n = 0;
+  for(var i = 0; i < ids.length; i++){
+    var id = ids[i];
+    if(id.charAt(0) === "l"){ if(!ST.lig[id]) n++; }
+    else if(!(CAIXAS[id] && ST.resp[id] === CAIXAS[id].certo)) n++;
+  }
+  return n;
+}
+function confereFolha(pi){
+  if(pendentes(pi) > 0 || ST.prontas[pi]) return;
+  ST.prontas[pi] = 1; salvar();
+  PAGEL[pi].className += " pronta"; sFesta(); confete(22);
+  if(pi < PAGEL.length - 1){ falar("folhaPronta"); setTimeout(function(){ if(ST.pag === pi) vaiPara(pi + 1); }, 2400); }
+  else { setTimeout(fim, 1400); }
+  atualizaNav();
+}
+function espelhaNome(t){ var n = document.getElementById("nomef"); if(n){ n.textContent = t || "escreva o seu nome ali embaixo"; n.className = t ? "nomef" : "nomef vazio"; } var i = document.getElementById("nomeIn"); if(i && i.value !== t) i.value = t; }
+function vaiPara(pi){
+  calar(); if(ATIVA){ ATIVA.el.className = ATIVA.el.className.indexOf("certa") > -1 ? "resp certa" : "resp"; if(ATIVA.el.className === "resp") ATIVA.el.innerHTML = '<i class="zi"></i>'; ATIVA = null; }
+  document.getElementById("teclado").className = "";
+  document.getElementById("barraCapa").className = pi === 0 ? "aberta" : "";
+  if(pi === 0) espelhaNome(ST.nome || "");
+  document.getElementById("fim").style.display = "none"; document.getElementById("retomar").style.display = "none";
+  document.getElementById("nav").style.display = pi === 0 ? "none" : "flex";
+  for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
+  ST.pag = pi; salvar();
+  var d = PAGEL[pi]; d.className += " viva";
+  if(pi > 0) window.scrollTo(0, 0);
+  if(d._redesenha) setTimeout(d._redesenha, 60);
+  atualizaNav();
+  falarDepois(pi === 0 ? "capa" : "p" + pi + "enun", 280);
+}
+function atualizaNav(){
+  var pi = ST.pag, total = PAGEL.length;
+  document.getElementById("pg").textContent = pi === 0 ? "Capa" : "Folha " + pi + " de " + (total - 1);
+  var feitas = 0; for(var k in ST.prontas) feitas++;
+  document.getElementById("progI").style.width = (feitas / (total - 1) * 100) + "%";
+  document.getElementById("bAnt").disabled = pi === 0;
+  var prox = document.getElementById("bProx");
+  prox.style.visibility = pi === 0 ? "hidden" : "visible";
+  var pend = pi > 0 ? pendentes(pi) : 0;
+  prox.textContent = pi === total - 1 ? (pend ? "Faltam " + pend : "Ver o resultado ★") : (pend ? "Faltam " + pend + " ▶" : "Próxima ▶");
+  prox.className = pend ? "bt cinza" : "bt verde";
+  document.getElementById("navTxt").textContent = pi === 0 ? "" : NOMES[pi - 1];
+}
+document.getElementById("bAnt").onclick = function(){ sPasso(); if(ST.pag > 0) vaiPara(ST.pag - 1); };
+document.getElementById("bProx").onclick = function(){
+  sPasso(); var pi = ST.pag, pend = pendentes(pi);
+  if(pend){ falar("faltam"); var r = PAGEL[pi].querySelector(".resp:not(.certa), .ponta:not(.feita)"); if(r){ r.className += " treme"; setTimeout(function(){ r.className = r.className.replace(" treme", ""); }, 500); try{ r.scrollIntoView({behavior: "smooth", block: "center"}); }catch(e){} } return; }
+  if(pi < PAGEL.length - 1) vaiPara(pi + 1); else fim();
+};
+document.getElementById("bOuvir").onclick = function(){ sPasso(); var b = this; if(document.getElementById("fim").style.display === "block"){ falar("fim", b); return; } falar(ST.pag === 0 ? "capa" : "p" + ST.pag + "enun", b); };
+document.getElementById("bVoz").onclick = function(){ vozLigada = !vozLigada; var b = document.getElementById("bVoz"); if(vozLigada){ b.className = "zap"; falar("vozOn"); } else { calar(); b.className = "zap off"; } };
+document.getElementById("nomeIn").oninput = function(){ ST.nome = this.value.slice(0, 24); espelhaNome(ST.nome); salvar(); };
+document.getElementById("nomeIn").onkeydown = function(ev){ if(ev.key === "Enter"){ ev.preventDefault(); this.blur(); if(ST.nome) falar("nomeOk"); } };
+document.getElementById("bComecar").onclick = function(){ ac(); sPasso(); if(!ST.inicio) ST.inicio = Date.now(); vaiPara(1); };
+
+function confete(n){ var cs = ["#f5b400", "#1f6b12", "#1565c0", "#c62828", "#6a1b9a"]; for(var i = 0; i < n; i++){ var c = el("div", "confete"); c.style.left = (Math.random() * 100) + "vw"; c.style.background = cs[i % cs.length]; c.style.animationDelay = (Math.random() * .5) + "s"; document.body.appendChild(c); setTimeout((function(x){ return function(){ if(x.parentNode) x.parentNode.removeChild(x); }; })(c), 2600); } }
+
+/* ---------- fim ---------- */
+var _segura = null;
+function fim(){
+  calar(); for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
+  document.getElementById("teclado").className = ""; document.getElementById("barraCapa").className = ""; document.getElementById("nav").style.display = "none";
+  var f = document.getElementById("fim"); f.style.display = "block"; window.scrollTo(0, 0);
+  sFesta(); confete(60); falar("fim");
+  var tot = 0, prim = 0, k; for(k in ST.tent){ tot++; if(ST.tent[k].erros === 0) prim++; }
+  var est = document.getElementById("estrelas"); est.innerHTML = "";
+  var n = prim >= tot * .85 ? 3 : (prim >= tot * .6 ? 2 : 1);
+  for(i = 0; i < 3; i++){ var s = el("div", "estrela", '<svg viewBox="0 0 24 24" width="48" height="48"><path d="M12 2l3 6.6 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.2l1.5-7L2 9.4l7-.8z" fill="' + (i < n ? "#f5b400" : "#e6dcc4") + '" stroke="#b98400" stroke-width="1"/></svg>'); est.appendChild(s); setTimeout((function(x){ return function(){ x.className = "estrela acesa"; }; })(s), 300 + i * 320); }
+  var bar = document.getElementById("barras"); bar.innerHTML = "";
+  for(var pi = 1; pi <= 10; pi++){ (function(pi){ var ids = idsDaPagina(pi), t = ids.length, p = 0; for(var j = 0; j < ids.length; j++){ var tt = ST.tent[ids[j]]; if(tt && tt.erros === 0 && tt.ok) p++; } var b = el("div", "barra", "<span>" + NOMES[pi - 1] + "</span><div class='tr'><i></i></div><b>" + p + "/" + t + "</b>"); bar.appendChild(b); setTimeout(function(){ b.querySelector("i").style.width = (t ? p / t * 100 : 0) + "%"; }, 400); })(pi); }
+  document.getElementById("fimTxt").textContent = (ST.nome ? ST.nome + ", você" : "Você") + " acertou de primeira " + prim + " de " + tot + " itens.";
+  document.getElementById("relatorio").style.display = "none";
+}
+(function(){
+  var m = document.getElementById("medalha");
+  function comeca(ev){ ev.preventDefault(); m.className = "medalha segurando"; _segura = setTimeout(function(){ m.className = "medalha"; relatorio(); }, 2000); }
+  function solta(){ m.className = "medalha"; if(_segura){ clearTimeout(_segura); _segura = null; } }
+  m.addEventListener("pointerdown", comeca); m.addEventListener("pointerup", solta); m.addEventListener("pointerleave", solta); m.addEventListener("pointercancel", solta);
+})();
+function relatorio(){
+  var r = document.getElementById("relatorio"), h = "<b>Relatório do professor</b> — " + (ST.nome || "(sem nome)") + " · " + Math.round(((Date.now() - (ST.inicio || Date.now())) / 60000)) + " min<table><tr><th>Folha</th><th>De primeira</th><th>Com 2+ tentativas</th></tr>";
+  var tot = 0, prim = 0, fracas = [];
+  for(var pi = 1; pi <= 10; pi++){
+    var ids = idsDaPagina(pi), t = ids.length, p = 0, ruins = 0;
+    for(var j = 0; j < ids.length; j++){ var tt = ST.tent[ids[j]]; if(tt && tt.erros === 0) p++; if(tt && tt.erros >= 2) ruins++; }
+    tot += t; prim += p; if(ruins) fracas.push(NOMES[pi - 1]);
+    h += "<tr><td>" + pi + ". " + NOMES[pi - 1] + "</td><td>" + p + "/" + t + "</td><td>" + ruins + "</td></tr>";
+  }
+  var parecer = prim >= tot * .85 ? "Dominou a divisão com material dourado, inclusive a troca e o resto." :
+                (prim >= tot * .6 ? "Está construindo: acerta, mas ainda hesita na troca da barra e no resto." :
+                 "Precisa retomar com o material concreto antes da conta armada.");
+  h += "</table><p><b>Parecer:</b> " + parecer + (fracas.length ? "<br><b>Folhas para retomar:</b> " + fracas.join("; ") : "") + "</p><p style='color:#6b4a1a'>As contas deste caderno são sorteadas: cada aluno pode receber um caderno diferente.</p>";
+  r.innerHTML = h; r.style.display = "block"; falar("fimRel");
+}
+document.getElementById("bRever").onclick = function(){ sPasso(); vaiPara(1); };
+document.getElementById("bRecomecar").onclick = function(){ sPasso(); try{ localStorage.removeItem(CHAVE_LS); }catch(e){} ST = {pag: 0, nome: ST.nome, folha: novaFolha(), resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0}; monta(); vaiPara(0); falarDepois("novoCaderno", 400); };
+
+/* ---------- retomar (55 min) ---------- */
+(function(){
+  var salvo = carregar();
+  ST.folha = (salvo && salvo.folha) ? salvo.folha : novaFolha();
+  monta();
+  if(salvo && salvo.pag > 0 && !(salvo.prontas && salvo.prontas[10])){
+    document.getElementById("retomar").style.display = "block";
+    document.getElementById("retTxt").textContent = (salvo.nome ? salvo.nome + ", você" : "Você") + " estava na folha " + salvo.pag + ". Quer continuar de onde parou?";
+    document.getElementById("bRetSim").onclick = function(){ ST = salvo; monta(); vaiPara(salvo.pag); };
+    document.getElementById("bRetNao").onclick = function(){ try{ localStorage.removeItem(CHAVE_LS); }catch(e){} ST.folha = novaFolha(); monta(); vaiPara(0); };
+    PAGEL[0].className += " viva"; document.getElementById("nav").style.display = "none"; atualizaNav(); falarDepois("retomar", 400);
+  } else { vaiPara(0); }
+  var destrava = function(){ ac(); document.removeEventListener("pointerdown", destrava); document.removeEventListener("keydown", destrava); };
+  document.addEventListener("pointerdown", destrava); document.addEventListener("keydown", destrava);
+})();
+</script>
+</body></html>
