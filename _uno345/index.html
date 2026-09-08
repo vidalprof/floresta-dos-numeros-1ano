@@ -527,7 +527,7 @@
   <section class="jogador-area">
     <h2><span class="avatar">🧒</span> Você <span id="qtdEu">(7 cartas)</span></h2>
     <div class="minhas-cartas" id="minhasCartas"></div>
-    <div class="dica" id="dica">As cartas que brilham são as que você pode jogar! ✨</div>
+    <div class="dica" id="dica">Toque em uma carta que combina com a da mesa. As que combinam ficam acesas! ✨</div>
   </section>
 
 </main>
@@ -771,14 +771,14 @@ function jogarCarta(idx){
   if(!vezDoJogador || esperandoCor) return;
   const carta = mao[idx];
   if(!podeJogar(carta)){
-    setMensagem('Essa não dá! Escolha uma que brilha. 😊');
+    setMensagem('Essa não combina. Toque em uma carta que combina. 😊');
     return;
   }
   /* ⚠️ FEEDBACK ESPECÍFICO (Hattie), não um "errou" genérico: se a carta serve
      no UNO mas a REGRA da rodada barrou, dizer QUAL regra é o que ensina. Um
      "essa não dá" aqui faria a criança achar que o jogo bugou. */
   if(!regraDeixa(carta)){
-    setMensagem('Essa serve na cor, mas hoje ' + regraAtiva.t + '. Olhe as que brilham! 🔎');
+    setMensagem('Essa serve na cor, mas hoje ' + regraAtiva.t + '. Olhe as que combinam! 🔎');
     return;
   }
   var btnC = document.getElementById('btnComprar');
@@ -1076,7 +1076,7 @@ function vezDoJogadorComMensagem(prefixo){
   var btn = document.getElementById('btnComprar');
   if(temJogada()){
     if(btn) btn.classList.remove('destaque');
-    setMensagem(ini + 'Sua vez! Toque numa carta que brilha. ✨');
+    setMensagem(ini + 'Sua vez! Toque em uma carta que combina. ✨');
   }else{
     if(btn) btn.classList.add('destaque');
     setMensagem(ini + 'Você não tem carta para jogar. Toque em "Pegar 1" para comprar uma carta! 🃏');
@@ -1131,7 +1131,7 @@ function limparTexto(t){
    frase vira a MESMA chave (djb2 do texto limpo, igual ao `chaveVoz` do motor) e toca
    o mp3. A voz do navegador só entra se a gravação não existir (frase nova ainda não
    gravada) ou falhar ao carregar — nunca como padrão. */
-/*VOZOK-INI*/var VOZOK = {"13eqc7p":1,"xdosg4":1,"1e40d5y":1,"fyu7p4":1,"k1vbin":1,"bbtqxt":1,"1ju956k":1,"16ebx21":1,"1va85go":1,"r480us":1,"15sga3u":1,"j6dvuo":1,"1isih9n":1,"1l4hv5d":1,"cl88dr":1,"1r7jk5u":1,"xx1zvq":1,"pqe99l":1,"1ne9jgs":1,"1livzkw":1,"14piatf":1,"1jf42w6":1,"1soswmy":1,"15jxp2m":1,"11zrdsh":1,"19prcbp":1,"19l9c5p":1,"wo9buv":1,"1f3kqft":1,"116bbdn":1,"84z8ae":1,"1c7jebc":1,"yokydb":1,"1n124ob":1,"adeupz":1,"rejx09":1,"1hr44c8":1,"10zjy7e":1,"1pigayx":1,"19tvpb8":1,"1omte2r":1,"rm5f1y":1,"smhlp1":1,"1bba0wo":1,"15hxsjb":1,"v8sghf":1,"115ommq":1,"vkfbjp":1,"crkgk":1,"1knhygs":1,"gbsvvf":1,"1gesiko":1,"1kqd2f":1,"1q9vx2c":1,"3yffer":1,"vtk6l7":1,"13ay2d6":1,"hojcks":1,"73j37v":1,"1aq1p0m":1,"16zzo1x":1,"1nfcni0":1,"s1vjpz":1,"1w4cspm":1,"dj9a7t":1,"9ugrud":1,"c0z8r8":1,"a63mwn":1,"1a968k6":1,"1nrouf2":1,"r2maal":1,"d6vp1m":1,"104b3d":1,"f0jlt2":1,"u40c79":1,"nyfngp":1,"gl8ejs":1,"mxakyi":1,"1mu7z95":1,"33ps44":1,"1pwl8ab":1,"1jxn5eu":1,"1tlzv0l":1,"ibcb7s":1,"15mq2cn":1,"r0f677":1,"16kdoi":1,"rc219h":1,"zerdhg":1,"1h7ez58":1,"12z17nv":1,"9p66yg":1,"12k8mdz":1,"1b3pihg":1,"lv1e2b":1,"jzr51x":1,"4efhpw":1,"17k13l2":1,"16e5xxh":1,"p49w80":1,"1fzd05b":1,"ydbf8y":1,"1xv1f2p":1,"1qsfjtg":1,"1gt7dmb":1,"1shwy5r":1,"1qqykni":1,"1stjt81":1,"py1ihc":1,"1kuv8ag":1,"10y6lav":1,"1n5yiro":1,"16ta6g3":1,"1wqkotc":1,"1bmougv":1,"qnqn1c":1,"7vzldu":1,"ncwxf4":1,"723e3z":1,"1volndc":1,"9q9u5e":1,"1lof5o6":1,"9yc8zc":1,"1btuswt":1,"b8rg1u":1,"vowytb":1,"rpbxlm":1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"13eqc7p":1,"e2bq0o":1,"1e40d5y":1,"fyu7p4":1,"k1vbin":1,"bbtqxt":1,"1ju956k":1,"16ebx21":1,"1va85go":1,"r480us":1,"15sga3u":1,"j6dvuo":1,"1isih9n":1,"1l4hv5d":1,"cl88dr":1,"1r7jk5u":1,"xx1zvq":1,"pqe99l":1,"1ne9jgs":1,"1livzkw":1,"14piatf":1,"1jf42w6":1,"1soswmy":1,"15jxp2m":1,"11zrdsh":1,"19prcbp":1,"1xjuk0k":1,"1xhilxq":1,"128yhcw":1,"4y0082":1,"155hxwd":1,"dwuf8f":1,"1sr26va":1,"ftgb8y":1,"17upg7i":1,"4w3mg4":1,"1hr44c8":1,"1889tjp":1,"1pigayx":1,"lcqdn3":1,"1omte2r":1,"1nkuajl":1,"smhlp1":1,"1gkam2r":1,"15hxsjb":1,"1m7fu0u":1,"115ommq":1,"nutqv4":1,"crkgk":1,"1rhe9nr":1,"gbsvvf":1,"1kc6ur7":1,"1kqd2f":1,"e6ldqn":1,"3yffer":1,"1ez62ee":1,"13ay2d6":1,"2onhuf":1,"73j37v":1,"pj5c9d":1,"16zzo1x":1,"dzxder":1,"s1vjpz":1,"5ayath":1,"dj9a7t":1,"1qatji8":1,"c0z8r8":1,"ry7gci":1,"1a968k6":1,"16q9ze1":1,"r2maal":1,"ar9xmd":1,"104b3d":1,"1xincsx":1,"u40c79":1,"1gk0v10":1,"gl8ejs":1,"1iv3hj9":1,"1mu7z95":1,"nqs27z":1,"1pwl8ab":1,"11750nl":1,"1tlzv0l":1,"11e47hv":1,"15mq2cn":1,"wz6ctq":1,"16kdoi":1,"1xnobn4":1,"zerdhg":1,"4osqaf":1,"12z17nv":1,"xyhkv7":1,"12k8mdz":1,"pbdtvj":1,"lv1e2b":1,"12cclls":1,"4efhpw":1,"1andd":1,"16e5xxh":1,"1h95rbf":1,"1fzd05b":1,"h7quot":1,"1xv1f2p":1,"1n0zdtr":1,"1gt7dmb":1,"1s0lp6i":1,"1qqykni":1,"tnzm0s":1,"py1ihc":1,"w2cfz7":1,"10y6lav":1,"dz3ewf":1,"16ta6g3":1,"nzre8b":1,"1bmougv":1,"qnqn1c":1,"7vzldu":1,"ncwxf4":1,"723e3z":1,"1volndc":1,"9q9u5e":1,"vkb6ur":1,"9yc8zc":1,"1btuswt":1,"b8rg1u":1,"vowytb":1,"rpbxlm":1};/*VOZOK-FIM*/
 var _narr = null;
 function chaveVoz(s){
   s=(s||"").replace(/\s+/g," ").replace(/^ | $/g,"").toLowerCase();
@@ -1323,8 +1323,8 @@ const slides = [
     texto:'Você e eu começamos com 7 cartas cada um. Vá jogando suas cartas na mesa até a sua mão ficar vazia!' },
   { emoji:'🌈', titulo:'A regra das cores e números', cartas:'cores',
     texto:'Você só pode jogar uma carta da MESMA COR ou do MESMO NÚMERO da carta que está na mesa. Igualzinho!' },
-  { emoji:'✨', titulo:'As cartas que brilham',
-    texto:'As cartas que você PODE jogar ficam brilhando e crescem quando você passa o dedo. As apagadas, não dá!' },
+  { emoji:'✨', titulo:'As cartas que combinam',
+    texto:'As cartas que combinam com a da mesa ficam acesas e crescem quando você passa o dedo. As apagadas não combinam!' },
   { emoji:'🃏', titulo:'Minhas cartas especiais', cartas:'especiais',
     texto:'Pular: eu perco a vez. Mais 2: eu pego 2 cartas. Girar: você joga de novo. Cuidado, eu também posso usá-las em você!' },
   { emoji:'🌈', titulo:'As cartas coringa', cartas:'coringas',

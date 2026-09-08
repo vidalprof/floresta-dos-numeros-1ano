@@ -64,7 +64,7 @@ SLIDES = [
     (u"Oi! Eu sou o Robô Esperto!", u"Bem-vindo ao UNO dos Números! Eu não jogo qualquer carta: eu penso antes. Guardo os coringas, ataco quando você está quase ganhando. Vai precisar de estratégia para me vencer!"),
     (u"Nosso objetivo", u"Você e eu começamos com 7 cartas cada um. Vá jogando suas cartas na mesa até a sua mão ficar vazia!"),
     (u"A regra das cores e números", u"Você só pode jogar uma carta da MESMA COR ou do MESMO NÚMERO da carta que está na mesa. Igualzinho!"),
-    (u"As cartas que brilham", u"As cartas que você PODE jogar ficam brilhando e crescem quando você passa o dedo. As apagadas, não dá!"),
+    (u"As cartas que combinam", u"As cartas que combinam com a da mesa ficam acesas e crescem quando você passa o dedo. As apagadas não combinam!"),
     (u"Minhas cartas especiais", u"Pular: eu perco a vez. Mais 2: eu pego 2 cartas. Girar: você joga de novo. Cuidado, eu também posso usá-las em você!"),
     (u"As cartas coringa", u"Arco-íris: você escolhe a cor que quiser! Mais 4: você escolhe a cor E eu pego 4 cartas!"),
     (u"A REGRA DA RODADA", u"De vez em quando aparece uma tarja amarela em cima da mesa com uma regra a mais, só para você. Enquanto ela estiver ali, o número da sua carta também precisa obedecer a ela. Vale por uma rodada só — e as cartas especiais nunca ficam bloqueadas."),
@@ -75,7 +75,7 @@ SLIDES = [
 textos = []
 fixas = [
     u"Narração ligada!",
-    u"Essa não dá! Escolha uma que brilha. 😊",
+    u"Essa não combina. Toque em uma carta que combina. 😊",
     u"Você pulou o robô! Jogue de novo. 🚫",
     u"Você pulou o robô! Não tem carta pra jogar, toque em \"Pegar 1\". 🃏",
     u"Você girou o jogo! Jogue de novo. 🔄",
@@ -95,13 +95,13 @@ for c in CORES:
     textos.append(u"Você escolheu %s! 🎨" % c)
     textos.append(u"O robô escolheu %s! 🎨" % c)
 for r in REGRAS:
-    textos.append(u"Essa serve na cor, mas hoje %s. Olhe as que brilham! 🔎" % r)
+    textos.append(u"Essa serve na cor, mas hoje %s. Olhe as que combinam! 🔎" % r)
 for p in PREFIXOS:
     for r in [None] + REGRAS:
         ini = (p + " ") if p else ""
         if r:
             ini += u"Atenção, regra desta rodada: %s! " % r
-        textos.append(ini + u"Sua vez! Toque numa carta que brilha. ✨")
+        textos.append(ini + u"Sua vez! Toque em uma carta que combina. ✨")
         textos.append(ini + u"Você não tem carta para jogar. Toque em \"Pegar 1\" para comprar uma carta! 🃏")
 for ano in (3, 4, 5):
     textos.append(u"UNO dos Números, %dº ano. " % ano + CAPA % CURTO[ano])
