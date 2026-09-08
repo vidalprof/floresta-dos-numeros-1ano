@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>A Fábrica de Palavras — 1º ano</title>
+<meta name="description" content="Dez folhas interativas de alfabetização para o 1º ano: letra escondida, contar sílabas, sequência lógica, sílaba inicial, medial e final, formar e escrever palavras.">
+<!-- ============================================================
+     A FÁBRICA DE PALAVRAS — alfabetização, 1º ano
+     LIVRO DE FOLHAS INTERATIVAS, 10 folhas. Segunda folha viva, pedida pelo
+     Marcos em 8/set/2026: *"crie uma atividade dessas, igual essa última...
+     sequência alfabética, sílaba inicial, medial e final, formando palavras
+     simples, sequência lógica, para o 1º ano"*.
+
+     ⭐ A REGRA QUE ELE CORRIGIU NO MEIO DO CAMINHO: *"não quero as
+     interatividades da fábrica, as nossas; lembre que é a interatividade
+     COBRADA NAS FOLHAS"*. Então cada folha daqui nasceu de um VERBO impresso
+     numa folha real (41 delas em `_pesquisa/fotos/ddg-alfa-1ano/`): completar
+     a sílaba que falta, ligar, circular, pintar a sílaba, marcar X, ordenar as
+     sílabas embaralhadas, recortar e colar, descobrir a letra escondida.
+     O catálogo desses verbos é o `_padrao/INTERATIVIDADES-FOLHA.md`.
+     E: *"tem que ser fiel como está, só que de um jeito autoral nosso, pode
+     deixar o design moderno"*.
+
+     ⭐ A ESCADA DIDÁTICA (ele: *"tem que ser bem pedagógico e progressivo"*),
+     conferida contra o currículo de Blumenau do 1º ano — que pede, verbatim,
+     "nomear as letras do alfabeto e ordená-las", "comparar palavras,
+     identificando semelhanças e diferenças entre sons de sílabas iniciais,
+     mediais e finais" e "segmentar oralmente palavras em sílabas":
+       1 letra  →  2 quantas sílabas  →  3 sequência lógica (respiro)
+       →  4 e 5 sílaba INICIAL  →  6 sílaba FINAL  →  7 sílaba MEDIAL
+       →  8 escrever a sílaba  →  9 formar a palavra  →  10 colar a sílaba.
+     A inicial vem antes da final, e a final antes da medial: é a ordem em que
+     a criança as percebe, e é o que a pesquisa de consciência fonológica manda.
+
+     ARTE: 42 figuras REAPROVEITADAS do banco (`_banco/index.json`) — nenhuma
+     imagem nova foi gerada. Regra do Marcos, set/2026.
+     ES5 puro, um arquivo, sem biblioteca. NÃO usa o motor (folha viva).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#eef1f7;color:#1e2334;padding-bottom:160px}
+#topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid #6d5ae6;
+  box-shadow:0 2px 14px rgba(40,30,90,.13);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:880px;margin:0 auto}
+#topo .tit{font-weight:800;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:12px;background:#e6e6f4;border-radius:8px;overflow:hidden;flex:1;min-width:60px;max-width:200px}
+.prog i{display:block;height:100%;width:0;background:#6d5ae6;border-radius:8px;-webkit-transition:width .5s;transition:width .5s}
+.pg{font-weight:800;font-size:14px;color:#5b4fc4;white-space:nowrap}
+button{font-family:inherit;cursor:pointer}
+.bt{min-width:48px;min-height:48px;border:0;border-radius:16px;background:#6d5ae6;color:#fff;font-weight:800;font-size:17px;
+  padding:10px 18px;box-shadow:0 4px 0 #4c3cbb;-webkit-transition:transform .08s;transition:transform .08s}
+.bt:active{transform:translateY(3px);box-shadow:0 1px 0 #4c3cbb}
+.bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
+.bt.cinza{background:#e4e6f2;color:#4a4f66;box-shadow:0 4px 0 #c3c7dc}
+.bt.verde{background:#15a34a;box-shadow:0 4px 0 #0d7736}
+.zap{width:42px;height:42px;border-radius:50%;border:0;background:#6d5ae6;box-shadow:0 3px 0 #4c3cbb;
+  display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none}
+.zap svg{width:22px;height:22px;fill:#fff}
+.zap.off{background:#b9bcd0;box-shadow:0 3px 0 #9599b3}
+.zap.ouvir{background:#fff;box-shadow:0 3px 0 #cdd0e4;border:2px solid #6d5ae6}
+.zap.ouvir svg{fill:#6d5ae6}
+.zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
+@-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+
+#livro{max-width:880px;margin:12px auto 0;padding:0 10px}
+.pagina{position:relative;background:#fff;border-radius:22px;box-shadow:0 10px 34px rgba(35,25,80,.16);display:none;overflow:hidden;padding:0 0 20px}
+.pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
+@-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.faixa{background:#6d5ae6;color:#fff;padding:15px 18px 13px;display:flex;align-items:center;gap:12px}
+.faixa h2{margin:0;font-size:clamp(17px,4.4vw,25px);letter-spacing:.4px;text-transform:uppercase;flex:1;line-height:1.1}
+.faixa .num{background:#fff;color:#6d5ae6;font-weight:900;border-radius:50%;width:36px;height:36px;display:flex;
+  align-items:center;justify-content:center;font-size:18px;flex:none}
+.pagina.c1 .faixa{background:#e0562f}.pagina.c1 .faixa .num{color:#e0562f}
+.pagina.c2 .faixa{background:#1179bf}.pagina.c2 .faixa .num{color:#1179bf}
+.pagina.c3 .faixa{background:#15a34a}.pagina.c3 .faixa .num{color:#15a34a}
+.pagina.c4 .faixa{background:#b0308f}.pagina.c4 .faixa .num{color:#b0308f}
+.pagina.c5 .faixa{background:#c98a06}.pagina.c5 .faixa .num{color:#c98a06}
+.enun{margin:14px 16px 4px;font-size:clamp(15px,3.9vw,19px);font-weight:700;line-height:1.35}
+.enun b{color:#6d5ae6}
+.item{margin:12px 14px;padding:14px;border:2px solid #eceefa;border-radius:20px;background:#fbfbff}
+.item.feito{border-color:#bfe6ce;background:#f3fcf6}
+.item .n{font-weight:900;color:#9aa0bd;font-size:15px;margin-right:8px}
+.fig{display:block;max-width:100%;height:auto;image-rendering:auto}
+.figbt{border:0;background:none;padding:4px;border-radius:16px;min-width:48px;min-height:48px}
+.pal{font-weight:900;letter-spacing:2px;font-size:clamp(22px,6vw,34px);color:#1e2334}
+
+/* fileira genérica de opções */
+.ops{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.op{min-width:64px;min-height:56px;border:3px solid #d9ddf2;border-radius:16px;background:#fff;color:#1e2334;
+  font-weight:900;font-size:22px;padding:8px 14px;-webkit-transition:transform .1s;transition:transform .1s}
+.op:active{transform:scale(.94)}
+.op.certa{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.op.erro{border-color:#e0562f;background:#fdeee9;-webkit-animation:treme .4s;animation:treme .4s}
+@-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.op.fig{padding:6px;min-width:96px}
+.op.fig img{width:88px;height:88px;object-fit:contain;display:block}
+
+/* 1 — a letra escondida */
+.escondida{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0}
+.escondida .lt{font-weight:900;font-size:clamp(26px,7vw,40px);letter-spacing:2px}
+.escondida .buraco{width:52px;height:56px;border-bottom:5px solid #6d5ae6;display:inline-flex;align-items:center;
+  justify-content:center;background:#f2efff;border-radius:10px 10px 0 0;font-weight:900;font-size:34px;color:#6d5ae6}
+.escondida .buraco.ok{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+
+/* 2 — bater a palavra */
+.bater{display:flex;flex-direction:column;align-items:center;gap:10px}
+.palma{min-width:190px;min-height:96px;border:0;border-radius:24px;background:#ffd233;color:#4a3800;font-weight:900;
+  font-size:20px;box-shadow:0 6px 0 #d5a800}
+.palma:active{transform:translateY(4px);box-shadow:0 2px 0 #d5a800}
+.contab{font-weight:900;font-size:20px;color:#5b4fc4}
+.contab b{font-size:30px}
+
+/* 3 — sequência lógica */
+.fila{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
+.fila .q{width:78px;height:78px;border:3px solid #e2e5f5;border-radius:16px;background:#fff;display:flex;
+  align-items:center;justify-content:center}
+.fila .q img{width:66px;height:66px;object-fit:contain}
+.fila .q.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;font-size:34px;color:#6d5ae6;font-weight:900}
+
+/* 4 — circular */
+.grade{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:10px 0}
+.circ{position:relative;border:0;background:none;padding:6px;border-radius:50%;min-width:104px;min-height:104px}
+.circ img{width:92px;height:92px;object-fit:contain;display:block}
+.circ:after{content:"";position:absolute;inset:0;border:5px solid transparent;border-radius:50%}
+.circ.marcada:after{border-color:#e0562f}
+.circ.certa:after{border-color:#15a34a}
+.circ.errada:after{border-color:#e0562f;border-style:dotted}
+.chip{display:inline-flex;align-items:center;justify-content:center;background:#6d5ae6;color:#fff;font-weight:900;
+  font-size:24px;border-radius:14px;padding:6px 16px;letter-spacing:2px}
+
+/* 5 — pintar a sílaba · 7 — marcar X */
+.op.pinta.certa{background:#ffd233;border-color:#d5a800;color:#4a3800}
+.marcax{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin-top:10px}
+.lx{display:flex;align-items:center;gap:12px;min-height:56px;border:3px solid #d9ddf2;border-radius:16px;
+  background:#fff;padding:6px 16px;font-weight:900;font-size:22px;color:#1e2334;width:100%;max-width:320px}
+.lx .cx{width:34px;height:34px;border:3px solid #9aa0bd;border-radius:8px;display:inline-flex;align-items:center;
+  justify-content:center;font-size:24px;color:#e0562f;flex:none}
+.lx.certa{border-color:#15a34a;background:#e7f8ee}
+.lx.certa .cx{border-color:#15a34a;color:#15a34a}
+.lx.erro{border-color:#e0562f;-webkit-animation:treme .4s;animation:treme .4s}
+
+/* 6 · 10 — ligar e colar */
+.ligar{position:relative;display:flex;gap:16px;justify-content:space-between;margin:12px 6px}
+.ligar .col{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.ponta{border:3px solid #d9ddf2;border-radius:16px;background:#fff;min-height:64px;display:flex;align-items:center;
+  justify-content:center;font-weight:900;font-size:22px;padding:6px;-ms-touch-action:none;touch-action:none}
+.ponta img{width:64px;height:64px;object-fit:contain}
+.ponta.marcada{border-color:#6d5ae6;box-shadow:0 0 0 4px rgba(109,90,230,.22)}
+.ponta.feita{border-color:#15a34a;background:#e7f8ee}
+.ponta.mostra{border-color:#ffd233;box-shadow:0 0 0 4px rgba(255,210,51,.4)}
+.ponta.treme{-webkit-animation:treme .4s;animation:treme .4s}
+
+/* 8 — escrever a sílaba que falta */
+.silbox{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
+.sq{min-width:70px;min-height:64px;border:3px solid #d9ddf2;border-radius:14px;background:#fff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:26px;letter-spacing:2px;color:#1e2334}
+.sq.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;color:#6d5ae6}
+.sq.vaga.ativa{background:#fff;box-shadow:0 0 0 4px rgba(109,90,230,.25)}
+.sq.ok{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.cursor{display:inline-block;width:3px;height:28px;background:#6d5ae6;margin-left:2px;
+  -webkit-animation:pisca .9s steps(2) infinite;animation:pisca .9s steps(2) infinite}
+@-webkit-keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* 9 — ordenar as sílabas */
+.tira{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
+.sil{min-width:74px;min-height:58px;border:3px solid #d9ddf2;border-radius:14px;background:#fff;font-weight:900;
+  font-size:24px;letter-spacing:2px;color:#1e2334;-ms-touch-action:none;touch-action:none}
+.sil.usada{opacity:.28;pointer-events:none}
+.sil.arrastando{opacity:.5}
+.vagas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.vaga{min-width:74px;min-height:58px;border:3px dashed #6d5ae6;border-radius:14px;background:#f4f2ff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:24px;letter-spacing:2px;color:#6d5ae6}
+.vaga.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+
+/* 10 — recortar e colar */
+.colar{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:10px 0}
+.cel{width:118px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.cel img{width:96px;height:96px;object-fit:contain}
+.cel .alvo{width:84px;min-height:58px;border:3px dashed #6d5ae6;border-radius:14px;background:#f4f2ff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:24px;letter-spacing:2px;color:#6d5ae6}
+.cel .alvo.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.cel .alvo.perto{box-shadow:0 0 0 5px rgba(109,90,230,.28)}
+
+/* carimbo, nav, capa, fim */
+.carimbo{position:absolute;right:14px;top:60px;transform:rotate(-14deg) scale(.4);opacity:0;color:#15a34a;
+  border:5px solid #15a34a;border-radius:14px;padding:6px 14px;font-weight:900;font-size:20px;text-align:center;
+  line-height:1.05;pointer-events:none;-webkit-transition:all .45s;transition:all .45s}
+.pagina.pronta .carimbo{opacity:.92;transform:rotate(-14deg) scale(1)}
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:18;background:#fff;border-top:3px solid #6d5ae6;padding:8px 10px;
+  display:none;align-items:center;gap:10px;box-shadow:0 -3px 14px rgba(40,30,90,.14)}
+#nav .txt{flex:1;text-align:center;font-weight:800;color:#5b4fc4;font-size:14px;min-width:0}
+#barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:19;background:#fff;border-top:3px solid #6d5ae6;padding:10px;display:none}
+#barraCapa.aberta{display:block}
+#barraCapa .lin{display:flex;gap:10px;align-items:center;max-width:640px;margin:0 auto}
+#barraCapa label{font-weight:800;color:#5b4fc4;font-size:15px;white-space:nowrap}
+#nomeIn{flex:1;min-width:0;min-height:50px;border:3px solid #6d5ae6;border-radius:14px;padding:0 12px;
+  font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
+#nomeIn:focus{outline:none;border-color:#b0308f;box-shadow:0 0 0 4px rgba(176,48,143,.25)}
+.capa{text-align:center;padding:20px 16px 26px}
+.capa h1{margin:6px 0 4px;font-size:clamp(26px,7vw,44px);color:#6d5ae6;letter-spacing:1px;text-transform:uppercase;line-height:1.03}
+.capa .sub{font-weight:700;color:#5b4fc4;font-size:clamp(14px,3.8vw,19px);margin-bottom:12px}
+.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:10px;flex-wrap:wrap;margin:14px 0 6px}
+.capa .cena img{width:92px;height:92px;object-fit:contain}
+.capa .nomef{font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;color:#1d4ed8;
+  font-size:clamp(19px,4.8vw,30px);min-height:36px;margin-top:12px}
+.capa .nomef.vazio{color:#9aa0bd;font-family:"Segoe UI",Arial,sans-serif;font-size:14px;font-weight:600}
+#fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
+  box-shadow:0 10px 34px rgba(35,25,80,.16);text-align:center}
+#fim h2{margin:0 0 6px;color:#6d5ae6;font-size:clamp(21px,5.5vw,30px)}
+.estrelas{font-size:44px;letter-spacing:8px;margin:6px 0}
+.barras{max-width:520px;margin:10px auto;text-align:left}
+.barra{display:flex;align-items:center;gap:8px;margin:6px 0;font-weight:700;font-size:14px}
+.barra span{flex:0 0 42%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barra .tr{flex:1;height:14px;background:#e6e6f4;border-radius:8px;overflow:hidden}
+.barra .tr i{display:block;height:100%;width:0;background:#15a34a;-webkit-transition:width .8s;transition:width .8s}
+.barra b{flex:none;color:#5b4fc4}
+#medalha{width:132px;height:132px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe680,#e0a800);
+  margin:14px auto;display:flex;align-items:center;justify-content:center;font-size:52px;
+  box-shadow:0 8px 22px rgba(180,140,0,.42);cursor:pointer;-ms-touch-action:none;touch-action:none}
+#relatorio{display:none;text-align:left;background:#f6f7fd;border:2px solid #d9ddf2;border-radius:16px;padding:12px;margin-top:12px;font-size:13px}
+#relatorio table{border-collapse:collapse;width:100%;margin-top:8px}
+#relatorio th,#relatorio td{border:1px solid #d9ddf2;padding:5px 7px;text-align:left}
+#relatorio th{background:#eceefa}
+#menuProf{display:none;position:fixed;inset:0;z-index:60;background:rgba(20,16,45,.62);align-items:center;justify-content:center;padding:14px}
+#menuProf.aberto{display:flex}
+#menuProf .cx{background:#fff;border:4px solid #6d5ae6;border-radius:20px;padding:16px;max-width:520px;width:100%;
+  max-height:92vh;overflow:auto;box-shadow:0 14px 44px rgba(0,0,0,.4)}
+#menuProf h3{margin:0 0 4px;color:#6d5ae6;font-size:20px}
+#menuProf p{margin:0 0 12px;font-size:13px;color:#4a4f66;line-height:1.4}
+#menuProf .folhas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#menuProf .folhas button{min-height:46px;border:0;border-radius:12px;background:#eceefa;color:#4a4f66;font-weight:800;
+  font-size:14px;padding:8px 12px;box-shadow:0 3px 0 #d3d7ea;flex:1 1 150px;text-align:left}
+#teclado{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:3px solid #6d5ae6;padding:8px;display:none}
+#teclado.aberto{display:block}
+#teclado .dica{text-align:center;font-weight:800;color:#5b4fc4;font-size:13px;margin-bottom:6px}
+#tk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:560px;margin:0 auto}
+#tk button{min-height:48px;border:0;border-radius:12px;background:#eceefa;color:#1e2334;font-weight:900;font-size:19px;box-shadow:0 3px 0 #d3d7ea}
+#tk button:active{transform:translateY(2px);box-shadow:0 1px 0 #d3d7ea}
+#tk button.ap{background:#fde2da;grid-column:span 3}
+#tk button.ok{background:#d9f2e3;grid-column:span 4}
+#confete{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.cf{position:absolute;width:9px;height:14px;opacity:.95;-webkit-animation:cai 1.5s linear forwards;animation:cai 1.5s linear forwards}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+@keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+.oculto{display:none!important}
+</style></head><body>
+
+<div id="topo">
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir de novo"><svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v1H5v6h2v1a5 5 0 0 0 10 0v-1h2V9h-2V8a5 5 0 0 0-5-5z"/></svg></button>
+  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
+  <div class="tit">Fábrica de Palavras</div>
+  <div class="prog"><i id="progI"></i></div>
+  <div class="pg" id="pg">Capa</div>
+</div>
+
+<div id="livro"></div>
+
+<div id="fim">
+  <h2>Caderno completo!</h2>
+  <div class="estrelas" id="estrelas"></div>
+  <div class="barras" id="barras"></div>
+  <p id="resumo" style="font-weight:800;font-size:16px"></p>
+  <div id="medalha" role="button" tabindex="0" aria-label="Medalha. Segure dois segundos para abrir o relatório do professor">★</div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt cinza" id="bRever">Rever o caderno</button>
+    <button class="bt verde" id="bRecomecar">Caderno novo</button>
+  </div>
+  <div id="relatorio"></div>
+</div>
+
+<div id="retomar">
+  <h2 style="color:#6d5ae6;margin:0 0 6px">Você estava aqui!</h2>
+  <p id="retTxt" style="font-weight:700"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bContinuar">Continuar de onde parei</button>
+    <button class="bt cinza" id="bZerar">Começar um caderno novo</button>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="bt cinza" id="bAnt">◀ Anterior</button>
+  <div class="txt" id="navTxt"></div>
+  <button class="bt" id="bProx">Próxima ▶</button>
+</div>
+
+<div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt" id="bComecar">Começar</button></div></div>
+
+<div id="menuProf" role="dialog" aria-label="Menu do professor" aria-modal="true">
+  <div class="cx">
+    <h3>Menu do professor</h3>
+    <p>Chave mestra <b>1275@</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
+    <div class="folhas" id="mpFolhas"></div>
+    <button class="bt cinza" id="mpFechar">Fechar</button>
+  </div>
+</div>
+
+<div id="teclado" aria-label="Teclado de letras">
+  <div class="dica" id="tkDica">Escreva a sílaba</div>
+  <div id="tk"></div>
+</div>
+<div id="confete" aria-hidden="true"></div>
+
+<script>
+/* ---------- AS PALAVRAS DE CADA FOLHA (o gerar_falas.py lê este bloco) ---------- */
+/*ITENS-INI*/
+var ITENS = {
+ "p1": [{"p":"bola","pos":0},{"p":"gato","pos":0},{"p":"pato","pos":3},{"p":"casa","pos":3},{"p":"dado","pos":0},{"p":"mala","pos":3}],
+ "p2": ["bola","banana","sapato","gato","tomate","casa"],
+ "p3": [{"a":"bola","b":"dado"},{"a":"gato","b":"rato"},{"a":"casa","b":"mala"},{"a":"sapo","b":"pato"}],
+ "p4": [{"sil":"CA","sim":["casa","cana","caneca"],"nao":["bola","gato"]},
+        {"sil":"BO","sim":["bola","bolo","boneca"],"nao":["rato","mala"]},
+        {"sil":"MA","sim":["mala","mapa","macaco"],"nao":["dado","sapo"]},
+        {"sil":"SA","sim":["saco","sapo","sapato"],"nao":["pato","roda"]}],
+ "p5": [{"p":"sapato","op":["SA","PA","TO"]},{"p":"boneca","op":["BO","NE","CA"]},
+        {"p":"tomate","op":["TO","MA","TE"]},{"p":"cavalo","op":["CA","VA","LO"]},
+        {"p":"macaco","op":["MA","CA","CO"]}],
+ "p6": [["gato","bola","vaca","dado"],["rato","mala","roda","copo"],["pato","cana","casa","bolo"]],
+ "p7": [{"p":"banana","op":["NA","BA","TA"]},{"p":"batata","op":["TA","BA","NA"]},
+        {"p":"coruja","op":["RU","CO","JA"]},{"p":"tucano","op":["CA","TU","NO"]},
+        {"p":"menina","op":["NI","ME","NA"]},{"p":"tijolo","op":["JO","TI","LO"]}],
+ "p8": [{"p":"boneca","falta":1},{"p":"sapato","falta":1},{"p":"banana","falta":1},
+        {"p":"cavalo","falta":2},{"p":"tomate","falta":0},{"p":"macaco","falta":2}],
+ "p9": ["macaco","cavalo","tomate","boneca","sapato","banana"],
+ "p10": [["bola","gato","casa"],["mala","dado","rato"],["sapo","vaca","roda"]]
+};
+/*ITENS-FIM*/
+/*FALAS-INI*/
+var FALAS = {};
+/*FALAS-FIM*/
+/*VOZOK-INI*/var VOZOK = {};/*VOZOK-FIM*/
+
+/* ---------- as palavras: figura, escrita e sílabas ----------
+   ⚠️ As sílabas ficam DECLARADAS, uma a uma. Separar sílaba por regra em
+   JavaScript erra em português (na-vi-o, a-be-lha, li-mão) — e sílaba errada
+   numa folha de alfabetização não é um defeito de tela: ensina errado. */
+var PAL = {
+ bola:["BOLA",["BO","LA"]], bolo:["BOLO",["BO","LO"]], boneca:["BONECA",["BO","NE","CA"]],
+ bolacha:["BOLACHA",["BO","LA","CHA"]], cana:["CANA",["CA","NA"]], casa:["CASA",["CA","SA"]],
+ caneca:["CANECA",["CA","NE","CA"]], cavalo:["CAVALO",["CA","VA","LO"]], copo:["COPO",["CO","PO"]],
+ dado:["DADO",["DA","DO"]], fada:["FADA",["FA","DA"]], gato:["GATO",["GA","TO"]],
+ lata:["LATA",["LA","TA"]], mala:["MALA",["MA","LA"]], mapa:["MAPA",["MA","PA"]],
+ menina:["MENINA",["ME","NI","NA"]], menino:["MENINO",["ME","NI","NO"]], mola:["MOLA",["MO","LA"]],
+ pato:["PATO",["PA","TO"]], pote:["POTE",["PO","TE"]], rato:["RATO",["RA","TO"]],
+ roda:["RODA",["RO","DA"]], rosa:["ROSA",["RO","SA"]], saco:["SACO",["SA","CO"]],
+ sapo:["SAPO",["SA","PO"]], sapato:["SAPATO",["SA","PA","TO"]], tomate:["TOMATE",["TO","MA","TE"]],
+ vaca:["VACA",["VA","CA"]], banana:["BANANA",["BA","NA","NA"]], batata:["BATATA",["BA","TA","TA"]],
+ macaco:["MACACO",["MA","CA","CO"]], tucano:["TUCANO",["TU","CA","NO"]], coruja:["CORUJA",["CO","RU","JA"]],
+ jacare:["JACARÉ",["JA","CA","RÉ"]], navio:["NAVIO",["NA","VI","O"]], limao:["LIMÃO",["LI","MÃO"]],
+ mamao:["MAMÃO",["MA","MÃO"]], maca:["MAÇÃ",["MA","ÇÃ"]], xicara:["XÍCARA",["XÍ","CA","RA"]],
+ tijolo:["TIJOLO",["TI","JO","LO"]], abelha:["ABELHA",["A","BE","LHA"]], abobora:["ABÓBORA",["A","BÓ","BO","RA"]]
+};
+function esc(w){ return PAL[w] ? PAL[w][0] : w.toUpperCase(); }
+function sil(w){ return PAL[w] ? PAL[w][1] : [w.toUpperCase()]; }
+function img(w, cls){ return '<img class="' + (cls || "fig") + '" src="img/al_' + w + '.png" alt="' + esc(w) + '">'; }
+
+/* ---------- estado ---------- */
+var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
+var vozLigada = true, _narr = null, vozPtBR = null, ATIVA = null;
+var CHAVE_LS = "fabrica_palavras_1ano";
+var NOMES = ["A letra escondida", "Quantas sílabas?", "O que vem depois?", "Circule quem começa igual",
+             "Pinte a sílaba inicial", "Ligue à sílaba final", "Marque a sílaba do meio",
+             "Complete a sílaba que falta", "Ordene e forme a palavra", "Recorte e cole"];
+var CORES = ["c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5"];
+
+/* ---------- som ---------- */
+var AC = null;
+function ac(){ try{ if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); }catch(e){} return AC; }
+function bip(f, dur, tipo, vol){
+  var a = ac(); if(!a) return;
+  try{
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = tipo || "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(vol || .13, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, a.currentTime + dur);
+    o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + dur);
+  }catch(e){}
+}
+function sPasso(){ bip(560, .07, "triangle", .08); }
+function sTecla(){ bip(760, .05, "square", .05); }
+function sCerto(){ bip(680, .1, "sine", .12); setTimeout(function(){ bip(920, .14, "sine", .12); }, 95); }
+function sErro(){ bip(190, .17, "sawtooth", .07); }
+function sFesta(){ [523, 659, 784, 1047].forEach(function(f, i){ setTimeout(function(){ bip(f, .16, "sine", .12); }, i * 110); }); }
+function sPalma(){ bip(1200, .04, "square", .07); setTimeout(function(){ bip(420, .06, "sawtooth", .05); }, 18); }
+
+/* ---------- voz ---------- */
+function chaveVoz(t){
+  t = (t || "").replace(/\s+/g, " ").trim().toLowerCase();
+  var h = 5381, i;
+  for(i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function achaVoz(){
+  try{
+    var vs = window.speechSynthesis.getVoices();
+    for(var i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt-br") === 0) return vs[i];
+    for(i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt") === 0) return vs[i];
+  }catch(e){}
+  return null;
+}
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = function(){ vozPtBR = achaVoz(); };
+function calar(){
+  try{ if(_narr){ _narr.pause(); _narr.currentTime = 0; } }catch(e){}
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir";
+}
+function falarNavegador(t){
+  if(!window.speechSynthesis) return;
+  try{
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = "pt-BR"; u.rate = .92; if(!vozPtBR) vozPtBR = achaVoz(); if(vozPtBR) u.voice = vozPtBR;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+var ultimaFala = null;
+function falar(k){
+  var t = FALAS[k]; if(!t) return;
+  ultimaFala = k;
+  if(!vozLigada) return;
+  calar();
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir tocando";
+  function fim(){ var x = document.getElementById("bOuvir"); if(x) x.className = "zap ouvir"; }
+  var key = chaveVoz(t);
+  if(VOZOK[key]){
+    if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+    _narr.onended = fim; _narr.onerror = function(){ falarNavegador(t); setTimeout(fim, 2500); };
+    _narr.src = "audio/al_" + key + ".mp3";
+    try{ _narr.currentTime = 0; }catch(e){}
+    var p = _narr.play(); if(p && p["catch"]) p["catch"](function(){ fim(); });
+    return;
+  }
+  falarNavegador(t); setTimeout(fim, Math.min(12000, 400 + t.length * 62));
+}
+function falarDepois(k, ms){ setTimeout(function(){ falar(k); }, ms || 0); }
+
+/* ---------- utilidades ---------- */
+function el(tag, cls, html){ var e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+function salvar(){ try{ ST.quando = Date.now(); localStorage.setItem(CHAVE_LS, JSON.stringify(ST)); }catch(e){} }
+function carregar(){ try{ var s = localStorage.getItem(CHAVE_LS); if(!s) return null; var o = JSON.parse(s); if(!o || !o.quando || Date.now() - o.quando > 55 * 60 * 1000 || !o.folha) return null; return o; }catch(e){ return null; } }
+function tentativa(id, ok){ if(!ST.tent[id]) ST.tent[id] = {erros: 0, ok: false}; if(ok) ST.tent[id].ok = true; else ST.tent[id].erros++; salvar(); }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function baralha(a){ var b = a.slice(), i, j, t; for(i = b.length - 1; i > 0; i--){ j = rnd(i + 1); t = b[i]; b[i] = b[j]; b[j] = t; } return b; }
+function pega(pool, qtd){ return baralha(pool).slice(0, Math.min(qtd, pool.length)); }
+function confete(n){
+  var c = document.getElementById("confete"), cores = ["#6d5ae6", "#ffd233", "#15a34a", "#e0562f", "#1179bf"], i;
+  for(i = 0; i < n; i++){
+    (function(i){
+      var d = el("div", "cf");
+      d.style.left = rnd(100) + "%"; d.style.top = "-20px";
+      d.style.background = cores[rnd(cores.length)];
+      d.style.animationDelay = (i * 26) + "ms";
+      c.appendChild(d); setTimeout(function(){ if(d.parentNode) c.removeChild(d); }, 1900 + i * 26);
+    })(i);
+  }
+}
+
+/* ---------- registro das respostas (o boletim e o relatório leem daqui) ---------- */
+var RESP = {};   /* id -> {certo, pag} */
+function registra(id, pag, certo){ RESP[id] = {certo: certo, pag: pag}; }
+function acertou(id, fala){
+  if(ST.resp[id]) return;
+  tentativa(id, true); ST.resp[id] = 1; salvar(); sCerto();
+  if(fala) falar(fala);
+  setTimeout(function(){ confereFolha(RESP[id].pag); }, 850);
+}
+function errou(id, dica){
+  tentativa(id, false); sErro();
+  falar(ST.tent[id].erros >= 2 && dica ? dica : "quase");
+}
+
+/* ---------- sorteio da folha ---------- */
+function novaFolha(){
+  return {
+    p1: pega(ITENS.p1, 5), p2: pega(ITENS.p2, 5), p3: pega(ITENS.p3, 4), p4: pega(ITENS.p4, 3),
+    p5: pega(ITENS.p5, 4), p6: pega(ITENS.p6, 2), p7: pega(ITENS.p7, 5), p8: pega(ITENS.p8, 5),
+    p9: pega(ITENS.p9, 5), p10: pega(ITENS.p10, 2)
+  };
+}
+</script>
+<script src="folhas.js"></script>
+</body></html>
