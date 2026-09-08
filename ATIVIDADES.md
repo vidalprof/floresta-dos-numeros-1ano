@@ -47,7 +47,6 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
-| **O Piquenique do Sr. Batata** | Matemática (Pré): contar um a um até 10, juntar duas quantidades, comparar (mais/menos/igual) e ligar a quantidade ao número — colher frutas na cesta (contadores), quem tem mais, estimar no pote, balança das frutas, quantas frutas?, ligar, trilha dos números e contas com figuras; voz em tudo, mascote Sr. Batata | `_somapre` | https://vidalprof.github.io/o-piquenique-do-sr-batata/ |
 | **O Ateliê do Sr. Batata** | Partes do rosto/corpo, criação livre, coordenação | `_batata` | https://vidalprof.github.io/atelie-do-sr-batata/ |
 | **O Ateliê de Cores da Rai** | Cores, formas, expressão | `_colorir` | https://vidalprof.github.io/o-atelie-de-cores/ |
 | **Mundo Mágico — Brincar e Aprender** | Pré (rota geral) | — | https://vidalprof.github.io/pr-escola-1/ |
