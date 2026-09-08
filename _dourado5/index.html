@@ -176,12 +176,34 @@ svg.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:
 .carimbo{position:absolute;right:3%;top:56px;width:20%;min-width:86px;aspect-ratio:1/1;border-radius:50%;border:5px solid #1f6b12;color:#1f6b12;font-weight:900;font-size:clamp(13px,2.4vw,22px);display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.05;background:rgba(255,255,255,.85);transform:rotate(-14deg) scale(0);opacity:0;pointer-events:none;-webkit-transition:transform .5s cubic-bezier(.2,1.4,.4,1),opacity .3s;transition:transform .5s cubic-bezier(.2,1.4,.4,1),opacity .3s;z-index:5}
 .pagina.pronta .carimbo{transform:rotate(-14deg) scale(1);opacity:1}
 /* capa */
-.capa{text-align:center;padding:18px 16px 24px}
-.capa h1{margin:6px 0 4px;font-size:clamp(24px,6vw,40px);color:#8a6b12;letter-spacing:1px;text-transform:uppercase;line-height:1.05}
+.capa{position:relative;text-align:center;padding:16px 16px 22px;overflow:hidden;
+  background:-webkit-linear-gradient(top,#fdf3d8 0%,#fffaf0 58%,#fff 100%);
+  background:linear-gradient(180deg,#fdf3d8 0%,#fffaf0 58%,#fff 100%)}
+.capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:1px}
+.capa .titu .lt{display:inline-block;font-size:clamp(20px,5.2vw,38px);font-weight:900;color:#8a6b12;
+  text-shadow:0 3px 0 #f0e3bd,0 5px 10px rgba(120,90,10,.20);
+  -webkit-animation:caiLetra .5s both;animation:caiLetra .5s both}
+.capa .titu .esp{display:inline-block;width:12px}
+@-webkit-keyframes caiLetra{from{opacity:0;-webkit-transform:translateY(-24px) rotate(-7deg)}to{opacity:1;-webkit-transform:none}}
+@keyframes caiLetra{from{opacity:0;transform:translateY(-24px) rotate(-7deg)}to{opacity:1;transform:none}}
+.capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
+.capa .nv{position:absolute;display:block;border-radius:50%;
+  background:-webkit-radial-gradient(circle,rgba(245,180,0,.18),rgba(245,180,0,0) 70%);
+  background:radial-gradient(circle,rgba(245,180,0,.18),rgba(245,180,0,0) 70%)}
+.capa .n1{width:240px;height:240px;left:-60px;top:-40px}
+.capa .n2{width:300px;height:300px;right:-90px;top:10px}
+.capa .n3{width:180px;height:180px;left:44%;bottom:-70px}
+/* a bancada da oficina: as peças em cima e a tábua embaixo */
+.capa .bancada{max-width:640px;margin:14px auto 4px}
+.capa .tabua{height:16px;border-radius:6px;margin-top:6px;
+  background:-webkit-linear-gradient(top,#a9793d,#7d5527);
+  background:linear-gradient(180deg,#a9793d,#7d5527);
+  box-shadow:0 6px 14px rgba(80,50,10,.28)}
 .capa .sub{font-weight:700;color:#6b4a1a;font-size:clamp(14px,3.6vw,18px);margin-bottom:10px}
 .capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:clamp(6px,3vw,22px);margin:12px 0 6px}
-.capa .nomef{font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;color:#1d4ed8;font-size:clamp(18px,4.6vw,28px);min-height:34px;margin-top:10px}
-.capa .nomef.vazio{color:#a08a5a;font-family:"Segoe UI",Arial,sans-serif;font-size:14px;font-weight:600}
+/* ⚠️ o nome NÃO se repete na capa (pedido do Marcos): já aparece no campo onde
+   a criança digita, e repetir ali em cima era eco que empurrava a capa. */
+.capa .chamada{margin-top:12px;font-weight:700;color:#6b4a1a;font-size:clamp(13px,3.4vw,16px)}
 .capa .legenda{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:10px;font-weight:800;color:#6b4a1a;font-size:13px}
 .capa .legenda span{display:flex;align-items:center;gap:5px}
 #barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff8ea;border-top:3px solid #c9a52f;box-shadow:0 -4px 14px rgba(60,40,10,.2);padding:10px 8px;display:none}
@@ -223,9 +245,38 @@ svg.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:
 .barra .tr i{display:block;height:100%;width:0;background:#1f6b12;-webkit-transition:width 1s;transition:width 1s}
 .medalha{width:118px;height:118px;margin:8px auto;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe98a,#f5b400 60%,#b98400);box-shadow:0 6px 16px rgba(0,0,0,.25),inset 0 0 0 6px rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;color:#3a2600;font-weight:900;font-size:34px;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 .medalha.segurando{transform:scale(.95)}
+.medalha img{width:84px;height:84px;object-fit:contain;display:block;pointer-events:none}
+/* ⚠️ OS ÍCONES DO CABEÇALHO SÃO DESENHADOS EM CSS (ordem do Marcos, set/2026:
+   *"evite usar svg e emojis pois não aparecem em alguns navegadores"*). O
+   desenho das PEÇAS de ouro continua em SVG: ali o SVG é o próprio conteúdo (o
+   prisma em perspectiva não se faz com borda de CSS) e ele já aparece bem nas
+   máquinas dele — o problema dos navegadores antigos é com ícone e emoji. */
+.zap{position:relative}
+.zap .fone{position:absolute;left:50%;top:50%;width:22px;height:11px;margin:-9px 0 0 -11px;
+  border:3px solid currentColor;border-bottom:0;border-radius:11px 11px 0 0}
+.zap .fone:before,.zap .fone:after{content:"";position:absolute;bottom:-9px;width:6px;height:11px;
+  background:currentColor;border-radius:3px}
+.zap .fone:before{left:-3px} .zap .fone:after{right:-3px}
+.zap .cone{position:absolute;left:50%;top:50%;width:6px;height:9px;margin:-5px 0 0 -8px;
+  background:currentColor;border-radius:2px 0 0 2px}
+.zap .cone:after{content:"";position:absolute;left:5px;top:-5px;width:0;height:0;
+  border-top:10px solid transparent;border-bottom:10px solid transparent;
+  border-right:10px solid currentColor}
+.zap .onda{position:absolute;left:50%;top:50%;border:3px solid currentColor;
+  border-left-color:transparent;border-top-color:transparent;border-bottom-color:transparent;
+  border-radius:50%}
+.zap .o1{width:7px;height:11px;margin:-6px 0 0 4px}
+.zap .o2{width:12px;height:20px;margin:-11px 0 0 7px;opacity:.6}
+.estrela img{width:52px;height:52px;object-fit:contain;display:block}
+img{-webkit-user-drag:none;user-drag:none}
 #relatorio{display:none;text-align:left;background:#fff;border-radius:12px;padding:12px;margin-top:10px;font-size:13px;border:2px solid #c9a52f}
 #relatorio table{width:100%;border-collapse:collapse}
 #relatorio td,#relatorio th{padding:4px 6px;border-bottom:1px solid #eee;text-align:left}
+/* a nota grande do professor: porcentagem + conceito em palavras */
+.notao{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid #e6dcc4;
+  border-radius:14px;padding:10px 14px;margin:10px 0}
+.notao .nn{font-size:38px;font-weight:900;color:#15803d;line-height:1}
+.notao .nl{font-size:13px;color:#4a3a18;line-height:1.35}
 #retomar{max-width:560px;margin:14px auto;background:#fff8ea;border-radius:18px;padding:18px;box-shadow:0 6px 24px rgba(50,30,0,.2);text-align:center;display:none}
 .confete{position:fixed;top:-10px;width:10px;height:14px;z-index:40;pointer-events:none;-webkit-animation:cai 1.8s linear forwards;animation:cai 1.8s linear forwards}
 @-webkit-keyframes cai{to{transform:translateY(105vh) rotate(720deg)}}
@@ -235,8 +286,8 @@ svg.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:
 </head>
 <body>
 <header id="topo">
-  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir o que a página pede" title="Ouvir a página"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3H4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v-8a5 5 0 0 1 10 0v8h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-1V9a7 7 0 0 0-7-7z"/></svg></button>
-  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração" title="Narração"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg></button>
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir o que a página pede" title="Ouvir a página"><i class="fone"></i></button>
+  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração" title="Narração"><i class="cone"></i><i class="onda o1"></i><i class="onda o2"></i></button>
   <div class="tit">Oficina do Material Dourado</div>
   <div class="prog" aria-hidden="true"><i id="progI"></i></div>
   <div class="pg" id="pg">Capa</div>
@@ -261,7 +312,7 @@ svg.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:
   <div class="estrelas" id="estrelas"></div>
   <div class="barras" id="barras"></div>
   <p id="fimTxt" style="font-weight:700;color:#3a2600"></p>
-  <div class="medalha" id="medalha" title="Medalha">★</div>
+  <div class="medalha" id="medalha" title="Troféu"><img src="img/od_trofeu.png?v=1" alt="Troféu" draggable="false"></div>
   <div id="relatorio"></div>
   <button class="bt cinza" id="bRever">Rever o caderno</button>
   <button class="bt verde" id="bRecomecar">Caderno novo</button>
@@ -285,82 +336,298 @@ svg.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:
 /* ---------- OS ITENS DE CADA FOLHA (o gerar_falas.py lê este bloco) ---------- */
 /*ITENS-INI*/
 var ITENS = {
- "p2": [{"c":2,"d":4,"u":3},{"c":1,"d":5,"u":2},{"c":3,"d":0,"u":6},{"c":4,"d":2,"u":0},{"c":2,"d":7,"u":5},{"c":5,"d":1,"u":8}],
- "p3": [243,152,306,420,275,518],
- "p4": [{"n":36,"d":3},{"n":48,"d":4},{"n":55,"d":5},{"n":84,"d":2},{"n":63,"d":3},{"n":88,"d":4}],
- "p5": [{"n":45,"d":3},{"n":52,"d":4},{"n":75,"d":5},{"n":96,"d":6},{"n":72,"d":4},{"n":91,"d":7}],
- "p6": [{"n":25,"d":4},{"n":38,"d":5},{"n":47,"d":6},{"n":59,"d":7},{"n":33,"d":4},{"n":68,"d":9}],
- "p7": [{"n":138,"d":6},{"n":245,"d":5},{"n":168,"d":12},{"n":312,"d":4},{"n":210,"d":7},{"n":288,"d":8}],
- "p8": [{"n":36,"d":6},{"n":45,"d":5},{"n":81,"d":9},{"n":64,"d":8},{"n":90,"d":9},{"n":56,"d":7}],
- "p9": [
-  {"n":144,"d":6,"tipo":"parte","un":"mudas","g":"RUA","hist":"Chegaram 144 mudas de árvore para plantar em 6 ruas do bairro, a mesma quantidade em cada rua.","q":"Quantas mudas vão para cada rua?"},
-  {"n":150,"d":5,"tipo":"parte","un":"alunos","g":"ÔNIBUS","hist":"A escola vai levar 150 alunos ao teatro em 5 ônibus, com o mesmo número de alunos em cada um.","q":"Quantos alunos vão em cada ônibus?"},
-  {"n":60,"d":12,"tipo":"medida","un":"pães de queijo","g":"BANDEJA","hist":"A turma fez 60 pães de queijo para a feira e vai arrumá-los em bandejas de 12.","q":"Quantas bandejas dá para encher?"},
-  {"n":84,"d":4,"tipo":"medida","un":"garrafinhas","g":"CAIXA","hist":"Há 84 garrafinhas de água para guardar em caixas de 4.","q":"Quantas caixas serão usadas?"}
+ "p2": [
+  {
+   "c": 2,
+   "d": 4,
+   "u": 3
+  },
+  {
+   "c": 1,
+   "d": 5,
+   "u": 2
+  },
+  {
+   "c": 3,
+   "d": 0,
+   "u": 6
+  },
+  {
+   "c": 4,
+   "d": 2,
+   "u": 0
+  },
+  {
+   "c": 2,
+   "d": 7,
+   "u": 5
+  },
+  {
+   "c": 5,
+   "d": 1,
+   "u": 8
+  }
  ],
- "p10": [{"n":25,"d":4},{"n":38,"d":5},{"n":47,"d":6},{"n":59,"d":7},{"n":74,"d":8},{"n":66,"d":9}]
+ "p3": [
+  243,
+  152,
+  306,
+  420,
+  275,
+  518
+ ],
+ "p4": [
+  {
+   "n": 24,
+   "d": 2
+  },
+  {
+   "n": 36,
+   "d": 3
+  },
+  {
+   "n": 40,
+   "d": 4
+  },
+  {
+   "n": 48,
+   "d": 4
+  },
+  {
+   "n": 55,
+   "d": 5
+  },
+  {
+   "n": 63,
+   "d": 3
+  }
+ ],
+ "p5": [
+  {
+   "n": 45,
+   "d": 3
+  },
+  {
+   "n": 52,
+   "d": 4
+  },
+  {
+   "n": 56,
+   "d": 4
+  },
+  {
+   "n": 75,
+   "d": 5
+  },
+  {
+   "n": 72,
+   "d": 4
+  },
+  {
+   "n": 84,
+   "d": 6
+  }
+ ],
+ "p6": [
+  {
+   "n": 13,
+   "d": 4
+  },
+  {
+   "n": 17,
+   "d": 5
+  },
+  {
+   "n": 25,
+   "d": 4
+  },
+  {
+   "n": 29,
+   "d": 6
+  },
+  {
+   "n": 33,
+   "d": 4
+  },
+  {
+   "n": 38,
+   "d": 5
+  }
+ ],
+ "p7": [
+  {
+   "n": 48,
+   "d": 4
+  },
+  {
+   "n": 96,
+   "d": 3
+  },
+  {
+   "n": 128,
+   "d": 4
+  },
+  {
+   "n": 138,
+   "d": 6
+  },
+  {
+   "n": 150,
+   "d": 5
+  },
+  {
+   "n": 245,
+   "d": 5
+  }
+ ],
+ "p8": [
+  {
+   "n": 20,
+   "d": 4
+  },
+  {
+   "n": 30,
+   "d": 5
+  },
+  {
+   "n": 36,
+   "d": 6
+  },
+  {
+   "n": 45,
+   "d": 5
+  },
+  {
+   "n": 56,
+   "d": 7
+  },
+  {
+   "n": 64,
+   "d": 8
+  }
+ ],
+ "p9": [
+  {
+   "n": 144,
+   "d": 6,
+   "tipo": "parte",
+   "un": "mudas",
+   "g": "RUA",
+   "hist": "Chegaram 144 mudas de árvore para plantar em 6 ruas do bairro, a mesma quantidade em cada rua.",
+   "q": "Quantas mudas vão para cada rua?"
+  },
+  {
+   "n": 150,
+   "d": 5,
+   "tipo": "parte",
+   "un": "alunos",
+   "g": "ÔNIBUS",
+   "hist": "A escola vai levar 150 alunos ao teatro em 5 ônibus, com o mesmo número de alunos em cada um.",
+   "q": "Quantos alunos vão em cada ônibus?"
+  },
+  {
+   "n": 60,
+   "d": 12,
+   "tipo": "medida",
+   "un": "pães de queijo",
+   "g": "BANDEJA",
+   "hist": "A turma fez 60 pães de queijo para a feira e vai arrumá-los em bandejas de 12.",
+   "q": "Quantas bandejas dá para encher?"
+  },
+  {
+   "n": 84,
+   "d": 4,
+   "tipo": "medida",
+   "un": "garrafinhas",
+   "g": "CAIXA",
+   "hist": "Há 84 garrafinhas de água para guardar em caixas de 4.",
+   "q": "Quantas caixas serão usadas?"
+  }
+ ],
+ "p10": [
+  {
+   "n": 13,
+   "d": 4
+  },
+  {
+   "n": 17,
+   "d": 5
+  },
+  {
+   "n": 25,
+   "d": 4
+  },
+  {
+   "n": 29,
+   "d": 6
+  },
+  {
+   "n": 38,
+   "d": 5
+  },
+  {
+   "n": 47,
+   "d": 6
+  }
+ ]
 };
 /*ITENS-FIM*/
 /*FALAS-INI*/
 var FALAS = {
+ "armadaR_128_4": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_138_6": "E quanto sobrou nesta conta? Escreva o resto.",
- "armadaR_168_12": "E quanto sobrou nesta conta? Escreva o resto.",
- "armadaR_210_7": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_13_4": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_150_5": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_17_5": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_245_5": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_25_4": "E quanto sobrou nesta conta? Escreva o resto.",
- "armadaR_288_8": "E quanto sobrou nesta conta? Escreva o resto.",
- "armadaR_312_4": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_29_6": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_33_4": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_38_5": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_47_6": "E quanto sobrou nesta conta? Escreva o resto.",
- "armadaR_59_7": "E quanto sobrou nesta conta? Escreva o resto.",
- "armadaR_66_9": "E quanto sobrou nesta conta? Escreva o resto.",
- "armadaR_68_9": "E quanto sobrou nesta conta? Escreva o resto.",
- "armadaR_74_8": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_48_4": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_96_3": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armada_128_4": "Na chave: cento e vinte e oito dividido por quatro. Escreva o resultado.",
  "armada_138_6": "Na chave: cento e trinta e oito dividido por seis. Escreva o resultado.",
- "armada_168_12": "Na chave: cento e sessenta e oito dividido por doze. Escreva o resultado.",
- "armada_210_7": "Na chave: duzentos e dez dividido por sete. Escreva o resultado.",
+ "armada_13_4": "Na chave: treze dividido por quatro. Escreva o resultado.",
+ "armada_150_5": "Na chave: cento e cinquenta dividido por cinco. Escreva o resultado.",
+ "armada_17_5": "Na chave: dezessete dividido por cinco. Escreva o resultado.",
  "armada_245_5": "Na chave: duzentos e quarenta e cinco dividido por cinco. Escreva o resultado.",
  "armada_25_4": "Na chave: vinte e cinco dividido por quatro. Escreva o resultado.",
- "armada_288_8": "Na chave: duzentos e oitenta e oito dividido por oito. Escreva o resultado.",
- "armada_312_4": "Na chave: trezentos e doze dividido por quatro. Escreva o resultado.",
+ "armada_29_6": "Na chave: vinte e nove dividido por seis. Escreva o resultado.",
  "armada_33_4": "Na chave: trinta e três dividido por quatro. Escreva o resultado.",
  "armada_38_5": "Na chave: trinta e oito dividido por cinco. Escreva o resultado.",
  "armada_47_6": "Na chave: quarenta e sete dividido por seis. Escreva o resultado.",
- "armada_59_7": "Na chave: cinquenta e nove dividido por sete. Escreva o resultado.",
- "armada_66_9": "Na chave: sessenta e seis dividido por nove. Escreva o resultado.",
- "armada_68_9": "Na chave: sessenta e oito dividido por nove. Escreva o resultado.",
- "armada_74_8": "Na chave: setenta e quatro dividido por oito. Escreva o resultado.",
+ "armada_48_4": "Na chave: quarenta e oito dividido por quatro. Escreva o resultado.",
+ "armada_96_3": "Na chave: noventa e seis dividido por três. Escreva o resultado.",
  "capa": "A Oficina do Material Dourado. Divisão, quinto ano, dez folhas. Escreva o seu nome ali embaixo e toque em Começar.",
  "casaCheia": "Cada casa vai só até nove. Se juntar dez, é hora de trocar por uma peça maior.",
+ "certo10a_128_4": "Isso! Trinta e dois vezes quatro dá cento e vinte e oito.",
  "certo10a_138_6": "Isso! Vinte e três vezes seis dá cento e trinta e oito.",
- "certo10a_168_12": "Isso! Catorze vezes doze dá cento e sessenta e oito.",
- "certo10a_210_7": "Isso! Trinta vezes sete dá duzentos e dez.",
+ "certo10a_13_4": "Isso! Três vezes quatro dá doze.",
+ "certo10a_150_5": "Isso! Trinta vezes cinco dá cento e cinquenta.",
+ "certo10a_17_5": "Isso! Três vezes cinco dá quinze.",
  "certo10a_245_5": "Isso! Quarenta e nove vezes cinco dá duzentos e quarenta e cinco.",
  "certo10a_25_4": "Isso! Seis vezes quatro dá vinte e quatro.",
- "certo10a_288_8": "Isso! Trinta e seis vezes oito dá duzentos e oitenta e oito.",
- "certo10a_312_4": "Isso! Setenta e oito vezes quatro dá trezentos e doze.",
+ "certo10a_29_6": "Isso! Quatro vezes seis dá vinte e quatro.",
  "certo10a_33_4": "Isso! Oito vezes quatro dá trinta e dois.",
  "certo10a_38_5": "Isso! Sete vezes cinco dá trinta e cinco.",
  "certo10a_47_6": "Isso! Sete vezes seis dá quarenta e dois.",
- "certo10a_59_7": "Isso! Oito vezes sete dá cinquenta e seis.",
- "certo10a_66_9": "Isso! Sete vezes nove dá sessenta e três.",
- "certo10a_68_9": "Isso! Sete vezes nove dá sessenta e três.",
- "certo10a_74_8": "Isso! Nove vezes oito dá setenta e dois.",
+ "certo10a_48_4": "Isso! Doze vezes quatro dá quarenta e oito.",
+ "certo10a_96_3": "Isso! Trinta e dois vezes três dá noventa e seis.",
+ "certo10b_128_4": "Isso! Voltou para cento e vinte e oito: a divisão está certa.",
  "certo10b_138_6": "Isso! Voltou para cento e trinta e oito: a divisão está certa.",
- "certo10b_168_12": "Isso! Voltou para cento e sessenta e oito: a divisão está certa.",
- "certo10b_210_7": "Isso! Voltou para duzentos e dez: a divisão está certa.",
+ "certo10b_13_4": "Isso! Voltou para treze: a divisão está certa.",
+ "certo10b_150_5": "Isso! Voltou para cento e cinquenta: a divisão está certa.",
+ "certo10b_17_5": "Isso! Voltou para dezessete: a divisão está certa.",
  "certo10b_245_5": "Isso! Voltou para duzentos e quarenta e cinco: a divisão está certa.",
  "certo10b_25_4": "Isso! Voltou para vinte e cinco: a divisão está certa.",
- "certo10b_288_8": "Isso! Voltou para duzentos e oitenta e oito: a divisão está certa.",
- "certo10b_312_4": "Isso! Voltou para trezentos e doze: a divisão está certa.",
+ "certo10b_29_6": "Isso! Voltou para vinte e nove: a divisão está certa.",
  "certo10b_33_4": "Isso! Voltou para trinta e três: a divisão está certa.",
  "certo10b_38_5": "Isso! Voltou para trinta e oito: a divisão está certa.",
  "certo10b_47_6": "Isso! Voltou para quarenta e sete: a divisão está certa.",
- "certo10b_59_7": "Isso! Voltou para cinquenta e nove: a divisão está certa.",
- "certo10b_66_9": "Isso! Voltou para sessenta e seis: a divisão está certa.",
- "certo10b_68_9": "Isso! Voltou para sessenta e oito: a divisão está certa.",
- "certo10b_74_8": "Isso! Voltou para setenta e quatro: a divisão está certa.",
+ "certo10b_48_4": "Isso! Voltou para quarenta e oito: a divisão está certa.",
+ "certo10b_96_3": "Isso! Voltou para noventa e seis: a divisão está certa.",
  "certo2_152": "Isso! Um placa, cinco barras e dois cubinhos formam cento e cinquenta e dois.",
  "certo2_243": "Isso! Dois placas, quatro barras e três cubinhos formam duzentos e quarenta e três.",
  "certo2_275": "Isso! Dois placas, sete barras e cinco cubinhos formam duzentos e setenta e cinco.",
@@ -373,88 +640,85 @@ var FALAS = {
  "certo3_306": "Isso! Trezentos e seis são três placas e seis cubinhos.",
  "certo3_420": "Isso! Quatrocentos e vinte são quatro placas e dois barras.",
  "certo3_518": "Isso! Quinhentos e dezoito são cinco placas, um barra e oito cubinhos.",
+ "certo4_24_2": "Isso! Vinte e quatro dividido por dois dá doze.",
  "certo4_36_3": "Isso! Trinta e seis dividido por três dá doze.",
+ "certo4_40_4": "Isso! Quarenta dividido por quatro dá dez.",
  "certo4_45_3": "Isso! Quarenta e cinco dividido por três dá quinze.",
  "certo4_48_4": "Isso! Quarenta e oito dividido por quatro dá doze.",
  "certo4_52_4": "Isso! Cinquenta e dois dividido por quatro dá treze.",
  "certo4_55_5": "Isso! Cinquenta e cinco dividido por cinco dá onze.",
+ "certo4_56_4": "Isso! Cinquenta e seis dividido por quatro dá catorze.",
  "certo4_63_3": "Isso! Sessenta e três dividido por três dá vinte e um.",
  "certo4_72_4": "Isso! Setenta e dois dividido por quatro dá dezoito.",
  "certo4_75_5": "Isso! Setenta e cinco dividido por cinco dá quinze.",
- "certo4_84_2": "Isso! Oitenta e quatro dividido por dois dá quarenta e dois.",
- "certo4_88_4": "Isso! Oitenta e oito dividido por quatro dá vinte e dois.",
- "certo4_91_7": "Isso! Noventa e um dividido por sete dá treze.",
- "certo4_96_6": "Isso! Noventa e seis dividido por seis dá dezesseis.",
+ "certo4_84_6": "Isso! Oitenta e quatro dividido por seis dá catorze.",
  "certo5a_45_3": "Isso! Uma barra para cada grupo.",
  "certo5a_52_4": "Isso! Uma barra para cada grupo.",
+ "certo5a_56_4": "Isso! Uma barra para cada grupo.",
  "certo5a_72_4": "Isso! Uma barra para cada grupo.",
  "certo5a_75_5": "Isso! Uma barra para cada grupo.",
- "certo5a_91_7": "Isso! Uma barra para cada grupo.",
- "certo5a_96_6": "Isso! Uma barra para cada grupo.",
+ "certo5a_84_6": "Isso! Uma barra para cada grupo.",
  "certo5b_45_3": "Isso! Ficaram quinze cubinhos para repartir.",
  "certo5b_52_4": "Isso! Ficaram doze cubinhos para repartir.",
+ "certo5b_56_4": "Isso! Ficaram dezesseis cubinhos para repartir.",
  "certo5b_72_4": "Isso! Ficaram trinta e dois cubinhos para repartir.",
  "certo5b_75_5": "Isso! Ficaram vinte e cinco cubinhos para repartir.",
- "certo5b_91_7": "Isso! Ficaram vinte e um cubinhos para repartir.",
- "certo5b_96_6": "Isso! Ficaram trinta e seis cubinhos para repartir.",
+ "certo5b_84_6": "Isso! Ficaram vinte e quatro cubinhos para repartir.",
+ "certo6_128_4": "Isso! Cento e vinte e oito dividido por quatro dá trinta e dois e sobram zero.",
  "certo6_138_6": "Isso! Cento e trinta e oito dividido por seis dá vinte e três e sobram zero.",
- "certo6_168_12": "Isso! Cento e sessenta e oito dividido por doze dá catorze e sobram zero.",
- "certo6_210_7": "Isso! Duzentos e dez dividido por sete dá trinta e sobram zero.",
+ "certo6_13_4": "Isso! Treze dividido por quatro dá três e sobram um.",
+ "certo6_150_5": "Isso! Cento e cinquenta dividido por cinco dá trinta e sobram zero.",
+ "certo6_17_5": "Isso! Dezessete dividido por cinco dá três e sobram dois.",
  "certo6_245_5": "Isso! Duzentos e quarenta e cinco dividido por cinco dá quarenta e nove e sobram zero.",
  "certo6_25_4": "Isso! Vinte e cinco dividido por quatro dá seis e sobram um.",
- "certo6_288_8": "Isso! Duzentos e oitenta e oito dividido por oito dá trinta e seis e sobram zero.",
- "certo6_312_4": "Isso! Trezentos e doze dividido por quatro dá setenta e oito e sobram zero.",
+ "certo6_29_6": "Isso! Vinte e nove dividido por seis dá quatro e sobram cinco.",
  "certo6_33_4": "Isso! Trinta e três dividido por quatro dá oito e sobram um.",
  "certo6_38_5": "Isso! Trinta e oito dividido por cinco dá sete e sobram três.",
  "certo6_47_6": "Isso! Quarenta e sete dividido por seis dá sete e sobram cinco.",
- "certo6_59_7": "Isso! Cinquenta e nove dividido por sete dá oito e sobram três.",
- "certo6_66_9": "Isso! Sessenta e seis dividido por nove dá sete e sobram três.",
- "certo6_68_9": "Isso! Sessenta e oito dividido por nove dá sete e sobram cinco.",
- "certo6_74_8": "Isso! Setenta e quatro dividido por oito dá nove e sobram dois.",
+ "certo6_48_4": "Isso! Quarenta e oito dividido por quatro dá doze e sobram zero.",
+ "certo6_96_3": "Isso! Noventa e seis dividido por três dá trinta e dois e sobram zero.",
+ "certo7_128_4": "Isso! Cento e vinte e oito dividido por quatro dá trinta e dois, certinho, sem resto.",
  "certo7_138_6": "Isso! Cento e trinta e oito dividido por seis dá vinte e três, certinho, sem resto.",
- "certo7_168_12": "Isso! Cento e sessenta e oito dividido por doze dá catorze, certinho, sem resto.",
- "certo7_210_7": "Isso! Duzentos e dez dividido por sete dá trinta, certinho, sem resto.",
+ "certo7_13_4": "Isso! Treze dividido por quatro dá três, com resto um.",
+ "certo7_150_5": "Isso! Cento e cinquenta dividido por cinco dá trinta, certinho, sem resto.",
+ "certo7_17_5": "Isso! Dezessete dividido por cinco dá três, com resto dois.",
  "certo7_245_5": "Isso! Duzentos e quarenta e cinco dividido por cinco dá quarenta e nove, certinho, sem resto.",
  "certo7_25_4": "Isso! Vinte e cinco dividido por quatro dá seis, com resto um.",
- "certo7_288_8": "Isso! Duzentos e oitenta e oito dividido por oito dá trinta e seis, certinho, sem resto.",
- "certo7_312_4": "Isso! Trezentos e doze dividido por quatro dá setenta e oito, certinho, sem resto.",
+ "certo7_29_6": "Isso! Vinte e nove dividido por seis dá quatro, com resto cinco.",
  "certo7_33_4": "Isso! Trinta e três dividido por quatro dá oito, com resto um.",
  "certo7_38_5": "Isso! Trinta e oito dividido por cinco dá sete, com resto três.",
  "certo7_47_6": "Isso! Quarenta e sete dividido por seis dá sete, com resto cinco.",
- "certo7_59_7": "Isso! Cinquenta e nove dividido por sete dá oito, com resto três.",
- "certo7_66_9": "Isso! Sessenta e seis dividido por nove dá sete, com resto três.",
- "certo7_68_9": "Isso! Sessenta e oito dividido por nove dá sete, com resto cinco.",
- "certo7_74_8": "Isso! Setenta e quatro dividido por oito dá nove, com resto dois.",
+ "certo7_48_4": "Isso! Quarenta e oito dividido por quatro dá doze, certinho, sem resto.",
+ "certo7_96_3": "Isso! Noventa e seis dividido por três dá trinta e dois, certinho, sem resto.",
+ "certo8_20_4": "Isso! Vinte dividido por quatro dá cinco.",
+ "certo8_30_5": "Isso! Trinta dividido por cinco dá seis.",
  "certo8_36_6": "Isso! Trinta e seis dividido por seis dá seis.",
  "certo8_45_5": "Isso! Quarenta e cinco dividido por cinco dá nove.",
  "certo8_56_7": "Isso! Cinquenta e seis dividido por sete dá oito.",
  "certo8_64_8": "Isso! Sessenta e quatro dividido por oito dá oito.",
- "certo8_81_9": "Isso! Oitenta e um dividido por nove dá nove.",
- "certo8_90_9": "Isso! Noventa dividido por nove dá dez.",
  "certo9_144_6": "Isso! Cento e quarenta e quatro dividido por seis dá vinte e quatro.",
  "certo9_150_5": "Isso! Cento e cinquenta dividido por cinco dá trinta.",
  "certo9_60_12": "Isso! Em sessenta cabem cinco grupos de doze.",
  "certo9_84_4": "Isso! Em oitenta e quatro cabem vinte e um grupos de quatro.",
+ "conta_20_4": "vinte dividido por quatro.",
+ "conta_30_5": "trinta dividido por cinco.",
  "conta_36_6": "trinta e seis dividido por seis.",
  "conta_45_5": "quarenta e cinco dividido por cinco.",
  "conta_56_7": "cinquenta e seis dividido por sete.",
  "conta_64_8": "sessenta e quatro dividido por oito.",
- "conta_81_9": "oitenta e um dividido por nove.",
- "conta_90_9": "noventa dividido por nove.",
+ "dica10_128_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_138_6": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
- "dica10_168_12": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
- "dica10_210_7": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_13_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_150_5": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_17_5": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_245_5": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_25_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
- "dica10_288_8": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
- "dica10_312_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_29_6": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_33_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_38_5": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_47_6": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
- "dica10_59_7": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
- "dica10_66_9": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
- "dica10_68_9": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
- "dica10_74_8": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_48_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_96_3": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica2_152": "Conte por partes: uma placa são cem; cinco barras são cinquenta; e dois cubinhos. Junte tudo.",
  "dica2_243": "Conte por partes: dois placas são duzentos; quatro barras são quarenta; e três cubinhos. Junte tudo.",
  "dica2_275": "Conte por partes: dois placas são duzentos; sete barras são setenta; e cinco cubinhos. Junte tudo.",
@@ -467,64 +731,62 @@ var FALAS = {
  "dica3_306": "Olhe cada algarismo do número trezentos e seis: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
  "dica3_420": "Olhe cada algarismo do número quatrocentos e vinte: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
  "dica3_518": "Olhe cada algarismo do número quinhentos e dezoito: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
+ "dica4_24_2": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_36_3": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_40_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_45_3": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_48_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_52_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_55_5": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_56_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_63_3": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_72_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_75_5": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
- "dica4_84_2": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
- "dica4_88_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
- "dica4_91_7": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
- "dica4_96_6": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_84_6": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica5a_45_3": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
  "dica5a_52_4": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
+ "dica5a_56_4": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
  "dica5a_72_4": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
  "dica5a_75_5": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
- "dica5a_91_7": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
- "dica5a_96_6": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
+ "dica5a_84_6": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
  "dica5b_45_3": "Dez cubinhos da barra trocada mais os cinco cubinhos que já estavam ali.",
  "dica5b_52_4": "Dez cubinhos da barra trocada mais os dois cubinhos que já estavam ali.",
+ "dica5b_56_4": "Dez cubinhos da barra trocada mais os seis cubinhos que já estavam ali.",
  "dica5b_72_4": "Dez cubinhos da barra trocada mais os dois cubinhos que já estavam ali.",
  "dica5b_75_5": "Dez cubinhos da barra trocada mais os cinco cubinhos que já estavam ali.",
- "dica5b_91_7": "Dez cubinhos da barra trocada mais os um cubinhos que já estavam ali.",
- "dica5b_96_6": "Dez cubinhos da barra trocada mais os seis cubinhos que já estavam ali.",
+ "dica5b_84_6": "Dez cubinhos da barra trocada mais os quatro cubinhos que já estavam ali.",
+ "dica6_128_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
  "dica6_138_6": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que seis.",
- "dica6_168_12": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que doze.",
- "dica6_210_7": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que sete.",
+ "dica6_13_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
+ "dica6_150_5": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que cinco.",
+ "dica6_17_5": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que cinco.",
  "dica6_245_5": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que cinco.",
  "dica6_25_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
- "dica6_288_8": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que oito.",
- "dica6_312_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
+ "dica6_29_6": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que seis.",
  "dica6_33_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
  "dica6_38_5": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que cinco.",
  "dica6_47_6": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que seis.",
- "dica6_59_7": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que sete.",
- "dica6_66_9": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que nove.",
- "dica6_68_9": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que nove.",
- "dica6_74_8": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que oito.",
+ "dica6_48_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
+ "dica6_96_3": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que três.",
+ "dica7_128_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_138_6": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
- "dica7_168_12": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
- "dica7_210_7": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_13_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_150_5": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_17_5": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_245_5": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_25_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
- "dica7_288_8": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
- "dica7_312_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_29_6": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_33_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_38_5": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_47_6": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
- "dica7_59_7": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
- "dica7_66_9": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
- "dica7_68_9": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
- "dica7_74_8": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_48_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_96_3": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica8_20_4": "Pense na tabuada do quatro: quantas vezes o quatro cabe em vinte?",
+ "dica8_30_5": "Pense na tabuada do cinco: quantas vezes o cinco cabe em trinta?",
  "dica8_36_6": "Pense na tabuada do seis: quantas vezes o seis cabe em trinta e seis?",
  "dica8_45_5": "Pense na tabuada do cinco: quantas vezes o cinco cabe em quarenta e cinco?",
  "dica8_56_7": "Pense na tabuada do sete: quantas vezes o sete cabe em cinquenta e seis?",
  "dica8_64_8": "Pense na tabuada do oito: quantas vezes o oito cabe em sessenta e quatro?",
- "dica8_81_9": "Pense na tabuada do nove: quantas vezes o nove cabe em oitenta e um?",
- "dica8_90_9": "Pense na tabuada do nove: quantas vezes o nove cabe em noventa?",
  "dica9_144_6": "O problema manda repartir cento e quarenta e quatro em seis partes iguais. Isso é uma divisão: cento e quarenta e quatro dividido por seis.",
  "dica9_150_5": "O problema manda repartir cento e cinquenta em cinco partes iguais. Isso é uma divisão: cento e cinquenta dividido por cinco.",
  "dica9_60_12": "Aqui o problema não reparte em partes iguais: ele pergunta quantas vezes o doze cabe em sessenta. Isso também é uma divisão: sessenta dividido por doze.",
@@ -550,6 +812,7 @@ var FALAS = {
  "n10": "dez",
  "n100": "cem",
  "n1000": "mil",
+ "n5": "cinco",
  "n6": "seis",
  "n8": "oito",
  "n9": "nove",
@@ -574,68 +837,65 @@ var FALAS = {
  "prob_150_5": "A escola vai levar 150 alunos ao teatro em 5 ônibus, com o mesmo número de alunos em cada um. Quantos alunos vão em cada ônibus?",
  "prob_60_12": "A turma fez 60 pães de queijo para a feira e vai arrumá-los em bandejas de 12. Quantas bandejas dá para encher?",
  "prob_84_4": "Há 84 garrafinhas de água para guardar em caixas de 4. Quantas caixas serão usadas?",
+ "provaB_128_4": "Agora some o resto: cento e vinte e oito mais zero.",
  "provaB_138_6": "Agora some o resto: cento e trinta e oito mais zero.",
- "provaB_168_12": "Agora some o resto: cento e sessenta e oito mais zero.",
- "provaB_210_7": "Agora some o resto: duzentos e dez mais zero.",
+ "provaB_13_4": "Agora some o resto: doze mais um.",
+ "provaB_150_5": "Agora some o resto: cento e cinquenta mais zero.",
+ "provaB_17_5": "Agora some o resto: quinze mais dois.",
  "provaB_245_5": "Agora some o resto: duzentos e quarenta e cinco mais zero.",
  "provaB_25_4": "Agora some o resto: vinte e quatro mais um.",
- "provaB_288_8": "Agora some o resto: duzentos e oitenta e oito mais zero.",
- "provaB_312_4": "Agora some o resto: trezentos e doze mais zero.",
+ "provaB_29_6": "Agora some o resto: vinte e quatro mais cinco.",
  "provaB_33_4": "Agora some o resto: trinta e dois mais um.",
  "provaB_38_5": "Agora some o resto: trinta e cinco mais três.",
  "provaB_47_6": "Agora some o resto: quarenta e dois mais cinco.",
- "provaB_59_7": "Agora some o resto: cinquenta e seis mais três.",
- "provaB_66_9": "Agora some o resto: sessenta e três mais três.",
- "provaB_68_9": "Agora some o resto: sessenta e três mais cinco.",
- "provaB_74_8": "Agora some o resto: setenta e dois mais dois.",
+ "provaB_48_4": "Agora some o resto: quarenta e oito mais zero.",
+ "provaB_96_3": "Agora some o resto: noventa e seis mais zero.",
+ "prova_128_4": "A prova real: trinta e dois vezes quatro dá quanto?",
  "prova_138_6": "A prova real: vinte e três vezes seis dá quanto?",
- "prova_168_12": "A prova real: catorze vezes doze dá quanto?",
- "prova_210_7": "A prova real: trinta vezes sete dá quanto?",
+ "prova_13_4": "A prova real: três vezes quatro dá quanto?",
+ "prova_150_5": "A prova real: trinta vezes cinco dá quanto?",
+ "prova_17_5": "A prova real: três vezes cinco dá quanto?",
  "prova_245_5": "A prova real: quarenta e nove vezes cinco dá quanto?",
  "prova_25_4": "A prova real: seis vezes quatro dá quanto?",
- "prova_288_8": "A prova real: trinta e seis vezes oito dá quanto?",
- "prova_312_4": "A prova real: setenta e oito vezes quatro dá quanto?",
+ "prova_29_6": "A prova real: quatro vezes seis dá quanto?",
  "prova_33_4": "A prova real: oito vezes quatro dá quanto?",
  "prova_38_5": "A prova real: sete vezes cinco dá quanto?",
  "prova_47_6": "A prova real: sete vezes seis dá quanto?",
- "prova_59_7": "A prova real: oito vezes sete dá quanto?",
- "prova_66_9": "A prova real: sete vezes nove dá quanto?",
- "prova_68_9": "A prova real: sete vezes nove dá quanto?",
- "prova_74_8": "A prova real: nove vezes oito dá quanto?",
+ "prova_48_4": "A prova real: doze vezes quatro dá quanto?",
+ "prova_96_3": "A prova real: trinta e dois vezes três dá quanto?",
  "qual2_152": "Aqui estão um placa, cinco barras e dois cubinhos. Que número elas formam?",
  "qual2_243": "Aqui estão dois placas, quatro barras e três cubinhos. Que número elas formam?",
  "qual2_275": "Aqui estão dois placas, sete barras e cinco cubinhos. Que número elas formam?",
  "qual2_306": "Aqui estão três placas e seis cubinhos. Que número elas formam?",
  "qual2_420": "Aqui estão quatro placas e dois barras. Que número elas formam?",
  "qual2_518": "Aqui estão cinco placas, um barra e oito cubinhos. Que número elas formam?",
+ "quanto4_24_2": "vinte e quatro dividido por dois. Quanto fica em cada grupo?",
  "quanto4_36_3": "trinta e seis dividido por três. Quanto fica em cada grupo?",
+ "quanto4_40_4": "quarenta dividido por quatro. Quanto fica em cada grupo?",
  "quanto4_45_3": "quarenta e cinco dividido por três. Quanto fica em cada grupo?",
  "quanto4_48_4": "quarenta e oito dividido por quatro. Quanto fica em cada grupo?",
  "quanto4_52_4": "cinquenta e dois dividido por quatro. Quanto fica em cada grupo?",
  "quanto4_55_5": "cinquenta e cinco dividido por cinco. Quanto fica em cada grupo?",
+ "quanto4_56_4": "cinquenta e seis dividido por quatro. Quanto fica em cada grupo?",
  "quanto4_63_3": "sessenta e três dividido por três. Quanto fica em cada grupo?",
  "quanto4_72_4": "setenta e dois dividido por quatro. Quanto fica em cada grupo?",
  "quanto4_75_5": "setenta e cinco dividido por cinco. Quanto fica em cada grupo?",
- "quanto4_84_2": "oitenta e quatro dividido por dois. Quanto fica em cada grupo?",
- "quanto4_88_4": "oitenta e oito dividido por quatro. Quanto fica em cada grupo?",
- "quanto4_91_7": "noventa e um dividido por sete. Quanto fica em cada grupo?",
- "quanto4_96_6": "noventa e seis dividido por seis. Quanto fica em cada grupo?",
+ "quanto4_84_6": "oitenta e quatro dividido por seis. Quanto fica em cada grupo?",
  "quase": "Quase! Confira a conta e tente de novo.",
  "rascLimpo": "Rascunho limpo. Pode armar a conta de novo.",
+ "resto_128_4": "cento e vinte e oito dividido por quatro. Qual é o resultado e qual é o resto?",
  "resto_138_6": "cento e trinta e oito dividido por seis. Qual é o resultado e qual é o resto?",
- "resto_168_12": "cento e sessenta e oito dividido por doze. Qual é o resultado e qual é o resto?",
- "resto_210_7": "duzentos e dez dividido por sete. Qual é o resultado e qual é o resto?",
+ "resto_13_4": "treze dividido por quatro. Qual é o resultado e qual é o resto?",
+ "resto_150_5": "cento e cinquenta dividido por cinco. Qual é o resultado e qual é o resto?",
+ "resto_17_5": "dezessete dividido por cinco. Qual é o resultado e qual é o resto?",
  "resto_245_5": "duzentos e quarenta e cinco dividido por cinco. Qual é o resultado e qual é o resto?",
  "resto_25_4": "vinte e cinco dividido por quatro. Qual é o resultado e qual é o resto?",
- "resto_288_8": "duzentos e oitenta e oito dividido por oito. Qual é o resultado e qual é o resto?",
- "resto_312_4": "trezentos e doze dividido por quatro. Qual é o resultado e qual é o resto?",
+ "resto_29_6": "vinte e nove dividido por seis. Qual é o resultado e qual é o resto?",
  "resto_33_4": "trinta e três dividido por quatro. Qual é o resultado e qual é o resto?",
  "resto_38_5": "trinta e oito dividido por cinco. Qual é o resultado e qual é o resto?",
  "resto_47_6": "quarenta e sete dividido por seis. Qual é o resultado e qual é o resto?",
- "resto_59_7": "cinquenta e nove dividido por sete. Qual é o resultado e qual é o resto?",
- "resto_66_9": "sessenta e seis dividido por nove. Qual é o resultado e qual é o resto?",
- "resto_68_9": "sessenta e oito dividido por nove. Qual é o resultado e qual é o resto?",
- "resto_74_8": "setenta e quatro dividido por oito. Qual é o resultado e qual é o resto?",
+ "resto_48_4": "quarenta e oito dividido por quatro. Qual é o resultado e qual é o resto?",
+ "resto_96_3": "noventa e seis dividido por três. Qual é o resultado e qual é o resto?",
  "retomar": "Você estava no meio do caderno. Quer continuar de onde parou?",
  "tab_12_1": "Um vezes doze é igual a doze.",
  "tab_12_10": "Dez vezes doze é igual a cento e vinte.",
@@ -717,28 +977,18 @@ var FALAS = {
  "tab_8_7": "Sete vezes oito é igual a cinquenta e seis.",
  "tab_8_8": "Oito vezes oito é igual a sessenta e quatro.",
  "tab_8_9": "Nove vezes oito é igual a setenta e dois.",
- "tab_9_1": "Um vezes nove é igual a nove.",
- "tab_9_10": "Dez vezes nove é igual a noventa.",
- "tab_9_2": "Dois vezes nove é igual a dezoito.",
- "tab_9_3": "Três vezes nove é igual a vinte e sete.",
- "tab_9_4": "Quatro vezes nove é igual a trinta e seis.",
- "tab_9_5": "Cinco vezes nove é igual a quarenta e cinco.",
- "tab_9_6": "Seis vezes nove é igual a cinquenta e quatro.",
- "tab_9_7": "Sete vezes nove é igual a sessenta e três.",
- "tab_9_8": "Oito vezes nove é igual a setenta e dois.",
- "tab_9_9": "Nove vezes nove é igual a oitenta e um.",
  "trocaB_45_3": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
  "trocaB_52_4": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
+ "trocaB_56_4": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
  "trocaB_72_4": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
  "trocaB_75_5": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
- "trocaB_91_7": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
- "trocaB_96_6": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
+ "trocaB_84_6": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
  "troca_45_3": "Comece pelas barras: são quatro barras para três grupos. Quantas barras vão para cada grupo?",
  "troca_52_4": "Comece pelas barras: são cinco barras para quatro grupos. Quantas barras vão para cada grupo?",
+ "troca_56_4": "Comece pelas barras: são cinco barras para quatro grupos. Quantas barras vão para cada grupo?",
  "troca_72_4": "Comece pelas barras: são sete barras para quatro grupos. Quantas barras vão para cada grupo?",
  "troca_75_5": "Comece pelas barras: são sete barras para cinco grupos. Quantas barras vão para cada grupo?",
- "troca_91_7": "Comece pelas barras: são nove barras para sete grupos. Quantas barras vão para cada grupo?",
- "troca_96_6": "Comece pelas barras: são nove barras para seis grupos. Quantas barras vão para cada grupo?",
+ "troca_84_6": "Comece pelas barras: são oito barras para seis grupos. Quantas barras vão para cada grupo?",
  "vale_c": "Isso! A placa tem dez barras: vale cem.",
  "vale_d": "Isso! A barra tem dez cubinhos: vale dez.",
  "vale_m": "Isso! O cubão tem dez placas: vale mil.",
@@ -747,7 +997,7 @@ var FALAS = {
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {"19oy0am":1,"1l1mif1":1,"fpgtn3":1,"136357y":1,"14z1ioo":1,"p955v0":1,"136967d":1,"7cjdm":1,"3soi9b":1,"gor1fb":1,"c7sgxw":1,"1ukqb73":1,"f12bv4":1,"846yrb":1,"1235lux":1,"f6gnjm":1,"xt43e1":1,"25ln06":1,"1dqxik2":1,"1h3wcqz":1,"6nnirl":1,"z3ytzv":1,"jp1r7j":1,"qkacbd":1,"1mnu9cx":1,"12t76n8":1,"124re7y":1,"100o429":1,"5jnwxn":1,"aqipj3":1,"22ae8n":1,"1d65cyz":1,"6hdlnv":1,"gemyai":1,"1fkd4e6":1,"1x5elks":1,"ri3d2k":1,"1y7rmch":1,"rx1e2h":1,"1aer0e6":1,"1ymipqk":1,"xxe3wm":1,"531e8d":1,"1o79bi4":1,"1fu8e4z":1,"1gazz5z":1,"78nugx":1,"jx4oxy":1,"7lzhja":1,"1309lg6":1,"o02nh2":1,"1tzeh56":1,"11gbtwk":1,"1262dex":1,"i6hz55":1,"xd4ypl":1,"1cw6ims":1,"1hk19ut":1,"lsjicj":1,"1govyye":1,"pjufbp":1,"1eu2olu":1,"10tcms6":1,"hqjan5":1,"1ygah7x":1,"1ffqxj2":1,"r11lsh":1,"3jdn6z":1,"cgennb":1,"hj88qx":1,"14tm0nz":1,"bjo13n":1,"19jiq84":1,"1fdp5q2":1,"3w2yt4":1,"12akqmn":1,"1o58ubv":1,"9jai1w":1,"1ngyzfe":1,"102mcli":1,"t4qj20":1,"1fphynm":1,"1wvzc8g":1,"1j4hbu7":1,"18xsith":1,"3ds7ld":1,"1ujznig":1,"1j2cy48":1,"q44j04":1,"1n3j9rg":1,"1he0aco":1,"1oakg4h":1,"1x2kno7":1,"1sreqhh":1,"1yisi0l":1,"8lvrn3":1,"1cl3zz":1,"n49y66":1,"1dadj04":1,"40s1ds":1,"14uvh1z":1,"1vnrt0n":1,"uunfyb":1,"1dc3087":1,"jurgwa":1,"pfdh7l":1,"ycrkz5":1,"1s8yinz":1,"rtqje2":1,"1otzgv":1,"r1hp3s":1,"1ydd2q1":1,"6t9qn7":1,"xfnxjj":1,"bca8xa":1,"1d9fmaq":1,"y31zyq":1,"j52uo3":1,"1ys4aoz":1,"1r4oge9":1,"73hoy5":1,"10vbpxs":1,"11r9ttt":1,"1ev2u6i":1,"1651f0e":1,"1c7i8od":1,"dcx7u7":1,"p4golb":1,"12ml3gb":1,"1fyd3ng":1,"q4ybgo":1,"1x0yk5i":1,"dfhr83":1,"nsc5lh":1,"1iq4f8s":1,"v1i8lr":1,"1jebvmq":1,"yj0l78":1,"ssup8f":1,"sihiil":1,"ssuy4c":1,"grsp6f":1,"7nfulj":1,"sq4d1i":1,"spjls3":1,"13xtwj9":1,"19g4k0m":1,"13cs219":1,"utjpfq":1,"q63rj4":1,"defbzi":1,"1vwng4u":1,"1tx2zqh":1,"1hjggat":1,"1je56ts":1,"alwu1u":1,"1y291ph":1,"1wrypms":1,"mybc9o":1,"1i9yr26":1,"1fngpx":1,"27dz8h":1,"13mc8is":1,"1wjyi27":1,"43v2fv":1,"uj2w9t":1,"kmbslg":1,"1ajxf22":1,"nw3etm":1,"1dn72x2":1,"1434qqv":1,"y31nar":1,"1pbc4c1":1,"3holj":1,"3775c8":1,"3774hm":1,"377czr":1,"ykrdtl":1,"ykoejk":1,"yknrwd":1,"1t0fcn2":1,"1u6qgnb":1,"1tqidfc":1,"nk5lfm":1,"1aebda1":1,"kzrgwc":1,"dsu410":1,"1reeb7n":1,"5m8zbg":1,"17rn1k8":1,"mr8r8p":1,"1yulkic":1,"qdm2y2":1,"1c0cclx":1,"12qqw1o":1,"y44qb2":1,"1yg6rka":1,"1cnqx7b":1,"1c18t6y":1,"1uy9r45":1,"qe3jzt":1,"j3sach":1,"1qh4lv9":1,"1ncrbud":1,"fls02s":1,"1dp5hcq":1,"6r4hdy":1,"10r8jli":1,"xqi1q1":1,"7qamgn":1,"1f5r2mq":1,"9l1yr9":1,"1ac2p2a":1,"q5zht7":1,"11yi5u0":1,"8ztdjr":1,"rlfdj3":1,"1pm98qg":1,"1i9y2qn":1,"17rlrz9":1,"p87s1n":1,"z3jpl1":1,"fceyfg":1,"nhvg2":1,"ht4ska":1,"1hsqns1":1,"1fu234u":1,"1cyikaw":1,"2r2umq":1,"k22bau":1,"1lyx1zo":1,"11me4rc":1,"vgf28c":1,"ch3c72":1,"j02ryo":1,"1wt7a2f":1,"1g1nc3j":1,"4hw7u":1,"m9wi1z":1,"fdm5f7":1,"1vfwqsm":1,"ik7ann":1,"17hvkva":1,"mhta9e":1,"1hthsmt":1,"p3eymi":1,"12h9mt7":1,"u1dqg1":1,"kek5ke":1,"1pj71j4":1,"2o89lr":1,"18eg095":1,"547exp":1,"yt94pm":1,"12pjm2z":1,"c61528":1,"ey2qnc":1,"kuwbp1":1,"11bfogw":1,"1oqde69":1,"azj0mg":1,"8o8zmi":1,"6mtexw":1,"178gx42":1,"1nbq9jp":1,"1ertc84":1,"9q30sc":1,"1j3u9t7":1,"jej8ww":1,"1jncwh6":1,"1mine1g":1,"490yyl":1,"2zxtz3":1,"1mwa22k":1,"s5k8ms":1,"1slkpee":1,"7qzski":1,"1ukp5lu":1,"119n9cq":1,"17mwh81":1,"1wbu5w":1,"2fufat":1,"14rxyn5":1,"19dwdpg":1,"1333vro":1,"u80vz6":1,"1suz256":1,"1gj8m4t":1,"dfmk1z":1,"1h5opxt":1,"1cfyfod":1,"1ax4hfl":1,"14pwgib":1,"ic7a5y":1,"j1emn0":1,"1yjm4zm":1,"v5a27h":1,"q57dk3":1,"l3nhsa":1,"748hoz":1,"188h2zz":1,"1tovnll":1,"nfncwr":1,"195yc6":1,"1t378r7":1,"bxq6d6":1,"8hash3":1,"1afwnfu":1,"1x7fa2z":1,"1m6t5ym":1,"zm8png":1,"d1odz8":1,"5gsvoy":1,"1r05a06":1,"5vq3mh":1,"1bkz1ht":1,"xtap69":1,"1rrg0nn":1,"18gy5vy":1,"1psaxin":1,"tdbsie":1,"r7qkrw":1,"mj4ez5":1,"64tjy8":1,"kzrq78":1,"1m6pq5w":1,"abhhul":1,"1gy2h3j":1,"1tyxirg":1,"3qz48m":1,"xmwzx8":1,"nq4mix":1,"evrshf":1,"s2aufo":1,"vlzzfy":1,"xqjxpx":1,"1usfx35":1,"12h6duh":1,"rast2c":1,"pfw7ik":1,"tco47d":1,"1nlv93t":1,"1hn5e8n":1,"1pin10u":1,"1sjdxle":1,"ebruwx":1,"1jkshir":1,"5s9sgr":1,"eo6maa":1,"1prkaq9":1,"10l7cyb":1,"j502nr":1,"19n8znr":1,"g5deou":1,"v5olwl":1,"1i5g9ym":1,"740tcj":1,"k52nsz":1,"5n4exb":1,"ql3wz6":1,"1780men":1,"8rek04":1,"1yxsw0e":1,"12441rn":1,"19nw8k7":1,"13eqc7p":1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"19oy0am":1,"1k5255l":1,"1l1mif1":1,"3nntjz":1,"4v2dwr":1,"3gtmtt":1,"14z1ioo":1,"p955v0":1,"urg2ls":1,"3soi9b":1,"gor1fb":1,"c7sgxw":1,"1s73vau":1,"pm4bww":1,"f6gnjm":1,"xt43e1":1,"14gssq2":1,"25ln06":1,"1wbpfth":1,"166grxk":1,"1j5amb3":1,"6nnirl":1,"z3ytzv":1,"pean8b":1,"1mnu9cx":1,"12t76n8":1,"124re7y":1,"q5c1pv":1,"5idiip":1,"wez557":1,"22ae8n":1,"1sd36j5":1,"oqexyl":1,"2qktzn":1,"gemyai":1,"1fkd4e6":1,"yh1wru":1,"1y7rmch":1,"rx1e2h":1,"1aer0e6":1,"bxulfs":1,"1r3iv8b":1,"1fu8e4z":1,"1gazz5z":1,"78nugx":1,"jx4oxy":1,"7lzhja":1,"1309lg6":1,"o02nh2":1,"1tzeh56":1,"11gbtwk":1,"1262dex":1,"i6hz55":1,"xd4ypl":1,"xswz8c":1,"1cw6ims":1,"epoyj8":1,"1hk19ut":1,"lsjicj":1,"1govyye":1,"pjufbp":1,"33tb6x":1,"1eu2olu":1,"10tcms6":1,"hqjan5":1,"w3gf5h":1,"cgennb":1,"hj88qx":1,"14tm0nz":1,"4bnm58":1,"bjo13n":1,"19jiq84":1,"smzj10":1,"20v8w3":1,"12akqmn":1,"yhbx1k":1,"22sc1t":1,"1mkkq6f":1,"1ngyzfe":1,"102mcli":1,"a86x3w":1,"1wvzc8g":1,"1j4hbu7":1,"18xsith":1,"1vz05fw":1,"1g5a1q2":1,"1xjh8rk":1,"1n3j9rg":1,"10hjjkn":1,"255fku":1,"32l5zq":1,"1x2kno7":1,"1sreqhh":1,"11bsyyz":1,"1cl3zz":1,"n49y66":1,"1dadj04":1,"b5dd8p":1,"17hdhkn":1,"k0bh7m":1,"weyiu":1,"1dc3087":1,"jurgwa":1,"pfdh7l":1,"ycrkz5":1,"1otzgv":1,"r1hp3s":1,"1ydd2q1":1,"6t9qn7":1,"1qf00fm":1,"1o1cp4e":1,"xfnxjj":1,"bca8xa":1,"1d9fmaq":1,"y31zyq":1,"1r4oge9":1,"73hoy5":1,"10vbpxs":1,"11r9ttt":1,"1ev2u6i":1,"1651f0e":1,"1c7i8od":1,"dcx7u7":1,"p4golb":1,"12ml3gb":1,"1fyd3ng":1,"q4ybgo":1,"1x0yk5i":1,"dfhr83":1,"nsc5lh":1,"1iq4f8s":1,"v1i8lr":1,"yj0l78":1,"103ssfw":1,"7nfulj":1,"ssup8f":1,"grsp6f":1,"stx566":1,"13xtwj9":1,"1d5w081":1,"14kj5sd":1,"19g4k0m":1,"13cs219":1,"utjpfq":1,"q63rj4":1,"1tx2zqh":1,"1hjggat":1,"1je56ts":1,"alwu1u":1,"1y291ph":1,"1wrypms":1,"mybc9o":1,"1i9yr26":1,"1fngpx":1,"27dz8h":1,"13mc8is":1,"1wjyi27":1,"43v2fv":1,"uj2w9t":1,"kmbslg":1,"1ajxf22":1,"nw3etm":1,"1dn72x2":1,"1434qqv":1,"y31nar":1,"1pbc4c1":1,"3holj":1,"3775c8":1,"3774hm":1,"377czr":1,"483ab5":1,"ykrdtl":1,"ykoejk":1,"yknrwd":1,"1t0fcn2":1,"1u6qgnb":1,"1tqidfc":1,"nk5lfm":1,"1aebda1":1,"kzrgwc":1,"dsu410":1,"1reeb7n":1,"5m8zbg":1,"17rn1k8":1,"mr8r8p":1,"1yulkic":1,"qdm2y2":1,"1c0cclx":1,"12qqw1o":1,"y44qb2":1,"1yg6rka":1,"1cnqx7b":1,"1c18t6y":1,"1uy9r45":1,"qe3jzt":1,"4ppnrp":1,"j3sach":1,"12fjkjp":1,"1xlwhmf":1,"k4hfj0":1,"fls02s":1,"1dp5hcq":1,"8gjv50":1,"xqi1q1":1,"7qamgn":1,"1f5r2mq":1,"6b7m8i":1,"5kkajp":1,"6pfhvb":1,"8ztdjr":1,"1plbi2c":1,"b5ai43":1,"8hboro":1,"1i9y2qn":1,"17rlrz9":1,"1fgrv6t":1,"fceyfg":1,"nhvg2":1,"ht4ska":1,"vfqqqr":1,"1umbjum":1,"2r2umq":1,"k22bau":1,"1lyx1zo":1,"11me4rc":1,"vgf28c":1,"ch3c72":1,"yslhh4":1,"j02ryo":1,"uax78f":1,"1wt7a2f":1,"1g1nc3j":1,"4hw7u":1,"m9wi1z":1,"9yqwsf":1,"fdm5f7":1,"1vfwqsm":1,"ik7ann":1,"13apcej":1,"12h9mt7":1,"u1dqg1":1,"17soave":1,"kek5ke":1,"rjcr80":1,"16kdbh8":1,"h4nio2":1,"18eg095":1,"547exp":1,"e6gotd":1,"c61528":1,"ey2qnc":1,"kuwbp1":1,"1nzgo87":1,"jv4zb5":1,"6mtexw":1,"178gx42":1,"1nbq9jp":1,"1ertc84":1,"9q30sc":1,"1j3u9t7":1,"jej8ww":1,"1jncwh6":1,"1mine1g":1,"490yyl":1,"2zxtz3":1,"1mwa22k":1,"s5k8ms":1,"1slkpee":1,"7qzski":1,"1ukp5lu":1,"119n9cq":1,"17mwh81":1,"1wbu5w":1,"2fufat":1,"14rxyn5":1,"19dwdpg":1,"1333vro":1,"u80vz6":1,"1suz256":1,"1gj8m4t":1,"dfmk1z":1,"1h5opxt":1,"1cfyfod":1,"1ax4hfl":1,"14pwgib":1,"ic7a5y":1,"j1emn0":1,"1yjm4zm":1,"v5a27h":1,"q57dk3":1,"l3nhsa":1,"748hoz":1,"188h2zz":1,"1tovnll":1,"nfncwr":1,"195yc6":1,"1t378r7":1,"bxq6d6":1,"8hash3":1,"1afwnfu":1,"1x7fa2z":1,"1m6t5ym":1,"zm8png":1,"d1odz8":1,"5gsvoy":1,"1r05a06":1,"5vq3mh":1,"1bkz1ht":1,"xtap69":1,"1rrg0nn":1,"18gy5vy":1,"1psaxin":1,"tdbsie":1,"r7qkrw":1,"mj4ez5":1,"64tjy8":1,"kzrq78":1,"1m6pq5w":1,"abhhul":1,"1gy2h3j":1,"1tyxirg":1,"3qz48m":1,"xmwzx8":1,"nq4mix":1,"evrshf":1,"s2aufo":1,"vlzzfy":1,"xqjxpx":1,"1usfx35":1,"12h6duh":1,"rast2c":1,"pfw7ik":1,"tco47d":1,"1nlv93t":1,"1hn5e8n":1,"g5deou":1,"v5olwl":1,"1i5g9ym":1,"740tcj":1,"k52nsz":1,"k64rw5":1,"1780men":1,"8rek04":1,"1yxsw0e":1,"12441rn":1,"19nw8k7":1,"13eqc7p":1};/*VOZOK-FIM*/
 
 /* ---------- o material dourado, desenhado em SVG (casa: peça divisao-dourado) ---------- */
 /* Um SÓ desenhista para as quatro peças: o PRISMA em projeção oblíqua (a mesma
@@ -963,12 +1213,29 @@ function monta(){
     livro.appendChild(d); PAGEL.push(d);
   }
 }
+/* ---------- capa ----------
+   Pedido do Marcos (set/2026): *"a atividade do 5º ano precisa melhorar a capa,
+   da mesma forma que fizemos na atividade do 1º ano, sem o nome lá na capa"*.
+   O tema sai do próprio nome: uma OFICINA. A bancada de madeira embaixo, as
+   peças de ouro em cima dela e o título entrando letra por letra. Tudo CSS e
+   as peças desenhadas — nada de SVG solto, nada de emoji. */
 function f0(d){
-  var c = el("div", "capa");
-  c.innerHTML = '<h1>A Oficina do Material Dourado</h1><div class="sub">Divisão · 5º ano · 10 folhas</div>' +
-    '<div class="cena">' + bloco(0, 104) + bloco(1, 82) + bloco(2, 82) + bloco(3, 22) + '</div>' +
+  var c = el("div", "capa"), nome = "OFICINA DO MATERIAL DOURADO", k, letras = "";
+  for(k = 0; k < nome.length; k++){
+    var ch = nome.charAt(k);
+    letras += ch === " " ? '<span class="esp"></span>'
+      : '<span class="lt" style="animation-delay:' + (0.04 * k).toFixed(2) + 's">' + ch + '</span>';
+  }
+  c.innerHTML =
+    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
+    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="sub">Divisão &middot; 5º ano &middot; dez folhas de oficina</div>' +
+    '<div class="bancada">' +
+      '<div class="cena">' + bloco(0, 104) + bloco(1, 82) + bloco(2, 82) + bloco(3, 22) + '</div>' +
+      '<div class="tabua"></div>' +
+    '</div>' +
     '<div class="legenda"><span>' + bloco(3, 20) + ' cubinho = 1</span><span>' + bloco(2, 50) + ' barra = 10</span><span>' + bloco(1, 50) + ' placa = 100</span><span>' + bloco(0, 62) + ' cubão = 1000</span></div>' +
-    '<div class="nomef vazio" id="nomef">escreva o seu nome ali embaixo</div>';
+    '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
 /* 1 — as peças e o valor (ligar) */
@@ -1442,7 +1709,9 @@ function confereFolha(pi){
   else { setTimeout(fim, 1400); }
   atualizaNav();
 }
-function espelhaNome(t){ var n = document.getElementById("nomef"); if(n){ n.textContent = t || "escreva o seu nome ali embaixo"; n.className = t ? "nomef" : "nomef vazio"; } var i = document.getElementById("nomeIn"); if(i && i.value !== t) i.value = t; }
+/* ⚠️ o nome não se repete na capa (pedido do Marcos, set/2026): só se mantém o
+   campo em dia com o estado, que importa ao retomar de onde parou. */
+function espelhaNome(t){ var i = document.getElementById("nomeIn"); if(i && i.value !== t) i.value = t; }
 function vaiPara(pi){
   calar(); if(ATIVA){ ATIVA.el.className = ATIVA.el.className.indexOf("certa") > -1 ? "resp certa" : "resp"; if(ATIVA.el.className === "resp") ATIVA.el.innerHTML = '<i class="zi"></i>'; ATIVA = null; }
   document.getElementById("teclado").className = "";
@@ -1522,7 +1791,9 @@ function fim(){
   var tot = 0, prim = 0, k; for(k in ST.tent){ tot++; if(ST.tent[k].erros === 0) prim++; }
   var est = document.getElementById("estrelas"); est.innerHTML = "";
   var n = prim >= tot * .85 ? 3 : (prim >= tot * .6 ? 2 : 1);
-  for(i = 0; i < 3; i++){ var s = el("div", "estrela", '<svg viewBox="0 0 24 24" width="48" height="48"><path d="M12 2l3 6.6 7 .8-5.2 4.8 1.5 7L12 17.6 5.7 21.2l1.5-7L2 9.4l7-.8z" fill="' + (i < n ? "#f5b400" : "#e6dcc4") + '" stroke="#b98400" stroke-width="1"/></svg>'); est.appendChild(s); setTimeout((function(x){ return function(){ x.className = "estrela acesa"; }; })(s), 300 + i * 320); }
+    /* ⚠️ estrelas de FIGURA, não de SVG (ordem do Marcos, set/2026: *"evite usar
+     svg e emojis pois não aparecem em alguns navegadores"*). */
+  for(i = 0; i < 3; i++){ var s = el("div", "estrela", '<img src="img/od_estrela' + (i < n ? "" : "_off") + '.png?v=1" alt="" draggable="false">'); est.appendChild(s); setTimeout((function(x){ return function(){ x.className = "estrela acesa"; }; })(s), 300 + i * 320); }
   var bar = document.getElementById("barras"); bar.innerHTML = "";
   for(var pi = 1; pi <= 10; pi++){ (function(pi){ var ids = idsDaPagina(pi), t = ids.length, p = 0; for(var j = 0; j < ids.length; j++){ var tt = ST.tent[ids[j]]; if(tt && tt.erros === 0 && tt.ok) p++; } var b = el("div", "barra", "<span>" + NOMES[pi - 1] + "</span><div class='tr'><i></i></div><b>" + p + "/" + t + "</b>"); bar.appendChild(b); setTimeout(function(){ b.querySelector("i").style.width = (t ? p / t * 100 : 0) + "%"; }, 400); })(pi); }
   document.getElementById("fimTxt").textContent = (ST.nome ? ST.nome + ", você" : "Você") + " acertou de primeira " + prim + " de " + tot + " itens.";
@@ -1534,20 +1805,59 @@ function fim(){
   function solta(){ m.className = "medalha"; if(_segura){ clearTimeout(_segura); _segura = null; } }
   m.addEventListener("pointerdown", comeca); m.addEventListener("pointerup", solta); m.addEventListener("pointerleave", solta); m.addEventListener("pointercancel", solta);
 })();
+/* O QUE CADA FOLHA MEDE — vira a frase do "já domina" no relatório.
+   ⚠️ O relatório é do PROFESSOR: aqui pode haver porcentagem e nome técnico da
+   habilidade. Na tela da criança, nunca (§FIM-DE-ATIVIDADE). */
+var HABILIDADE = [
+  "reconhecer o valor de cada peça do material dourado",
+  "ler o número representado pelas peças",
+  "representar um número com as peças",
+  "repartir uma quantidade em partes iguais",
+  "trocar a peça maior pela menor para poder repartir",
+  "reconhecer e nomear o resto da divisão",
+  "armar e resolver a divisão pelo algoritmo",
+  "estimar o resultado de uma divisão",
+  "resolver problemas de divisão em contexto",
+  "conferir a divisão pela prova real"
+];
 function relatorio(){
-  var r = document.getElementById("relatorio"), h = "<b>Relatório do professor</b> — " + (ST.nome || "(sem nome)") + " · " + Math.round(((Date.now() - (ST.inicio || Date.now())) / 60000)) + " min<table><tr><th>Folha</th><th>De primeira</th><th>Precisou de dica</th></tr>";
-  var tot = 0, prim = 0, fracas = [];
-  for(var pi = 1; pi <= 10; pi++){
-    var ids = idsDaPagina(pi), t = ids.length, p = 0, ruins = 0;
-    for(var j = 0; j < ids.length; j++){ var tt = ST.tent[ids[j]]; if(tt && tt.erros === 0) p++; if(tt && tt.erros >= 2) ruins++; }
-    tot += t; prim += p; if(ruins) fracas.push(NOMES[pi - 1]);
-    h += "<tr><td>" + pi + ". " + NOMES[pi - 1] + "</td><td>" + p + "/" + t + "</td><td>" + ruins + "</td></tr>";
+  var r = document.getElementById("relatorio");
+  var linhas = "", fracas = [], domina = [], pi, tot = 0, prim = 0;
+  for(pi = 1; pi <= 10; pi++){
+    var ids = idsDaPagina(pi), t = ids.length, p = 0, ruins = 0, j2;
+    for(j2 = 0; j2 < ids.length; j2++){
+      var tt = ST.tent[ids[j2]];
+      if(tt && tt.erros === 0 && tt.ok) p++;
+      if(tt && tt.erros >= 2) ruins++;
+    }
+    tot += t; prim += p;
+    var pcf = t ? Math.round(100 * p / t) : 0;
+    /* ⚠️ AS DUAS LISTAS SÃO COMPLEMENTARES — 75% é a única linha que decide.
+       Se a mesma folha aparecesse em "já domina" e em "retomar", o professor
+       não teria informação: teria ruído. */
+    if(pcf >= 75) domina.push(HABILIDADE[pi - 1]);
+    else fracas.push(NOMES[pi - 1] + " (" + pcf + "%)");
+    linhas += "<tr><td>" + pi + ". " + NOMES[pi - 1] + "</td><td>" + p + "/" + t +
+      "</td><td><b>" + pcf + "%</b></td><td>" + ruins + "</td></tr>";
   }
-  var parecer = prim >= tot * .85 ? "Dominou a divisão com material dourado, inclusive a troca e o resto." :
-                (prim >= tot * .6 ? "Está construindo: acerta, mas ainda hesita na troca da barra e no resto." :
-                 "Precisa retomar com o material concreto antes da conta armada.");
-  h += "</table><p><b>Parecer:</b> " + parecer + (fracas.length ? "<br><b>Folhas para retomar:</b> " + fracas.join("; ") : "") + "</p><p style='color:#6b4a1a'>As contas deste caderno são sorteadas: cada aluno pode receber um caderno diferente.</p>";
+  var pc = tot ? Math.round(100 * prim / tot) : 0;
+  var conceito = pc >= 85 ? "Dominou" : pc >= 60 ? "Está construindo" : "Precisa retomar";
+  var h = "<b>Relatório do professor</b> &mdash; " + esch(ST.nome || "(sem nome)") + " &middot; " +
+    Math.round((Date.now() - (ST.inicio || Date.now())) / 60000) + " min" +
+    "<div class='notao'><span class='nn'>" + pc + "%</span><span class='nl'>" +
+    prim + " de " + tot + " acertos de primeira<br><b>" + conceito + "</b></span></div>" +
+    "<table><tr><th>Folha</th><th>De primeira</th><th>%</th><th>Precisou de dica</th></tr>" +
+    linhas + "</table>";
+  h += "<p style='margin:10px 0 0'><b>Já domina:</b> " +
+    (domina.length ? domina.join("; ") + "." : "ainda nenhuma habilidade com 75% ou mais.") + "</p>";
+  h += "<p style='margin:6px 0 0'><b>Retomar:</b> " +
+    (fracas.length ? fracas.join(", ") + "." : "nada — foi bem nas dez folhas.") + "</p>";
+  h += "<p style='margin:8px 0 0;color:#6b4a1a'>As contas deste caderno são sorteadas: " +
+    "cada aluno pode receber um caderno diferente.</p>";
   r.innerHTML = h; r.style.display = "block"; falar("fimRel");
+}
+function esch(t){
+  return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 document.getElementById("bRever").onclick = function(){ sPasso(); vaiPara(1); };
 document.getElementById("bRecomecar").onclick = function(){ sPasso(); try{ localStorage.removeItem(CHAVE_LS); }catch(e){} ST = {pag: 0, nome: ST.nome, folha: novaFolha(), resp: {}, lig: {}, tent: {}, prontas: {}, rasc: {}, marc: {}, inicio: 0}; monta(); vaiPara(0); falarDepois("novoCaderno", 400); };
