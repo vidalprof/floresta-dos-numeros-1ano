@@ -39,9 +39,11 @@ button{font-family:inherit;cursor:pointer}
 .bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
 .bt.cinza{background:#e6dcc4;color:#5b4a2a;box-shadow:0 3px 0 #b9ad92}
 .bt.verde{background:#43a047;color:#fff;box-shadow:0 3px 0 #2e7031}
-.zap{width:44px;height:44px;border-radius:50%;border:0;background:#f5b400;box-shadow:0 2px 0 #b98400;display:inline-flex;align-items:center;justify-content:center;padding:0}
-.zap svg{width:24px;height:24px;fill:#3a2600}
+.zap{width:40px;height:40px;border-radius:50%;border:0;background:#f5b400;box-shadow:0 2px 0 #b98400;display:inline-flex;align-items:center;justify-content:center;padding:0}
+.zap svg{width:22px;height:22px;fill:#3a2600}
 .zap.off{background:#c9c0ac}
+.zap.ouvir{background:#fff;box-shadow:0 2px 0 #cbbf9f;border:2px solid #d9a520}
+.zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
 #livro{max-width:760px;margin:10px auto 0;padding:0 8px}
 .pagina{position:relative;width:100%;background:#fff;border-radius:6px;box-shadow:0 6px 24px rgba(50,30,0,.22);display:none;overflow:hidden}
 .pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
@@ -55,6 +57,8 @@ button{font-family:inherit;cursor:pointer}
   font-size:clamp(22px,4.6vw,40px);background:rgba(255,244,190,.55);border:3px dashed #d9a520;border-radius:10px;cursor:pointer;
   -webkit-transition:background .2s,border-color .2s;transition:background .2s,border-color .2s}
 .resp:hover{background:rgba(255,236,150,.8)}
+.resp .zi{position:absolute;left:4px;top:4px;width:14px;height:14px;opacity:.55;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%233a2600' d='M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z'/%3E%3C/svg%3E") center/contain no-repeat}
+.resp.ativa .zi,.resp.certa .zi{display:none}
 .resp.ativa{border-style:solid;border-color:#f59e0b;background:rgba(255,236,150,.9);box-shadow:0 0 0 4px rgba(245,158,11,.35);-webkit-animation:pulsa 1.2s infinite;animation:pulsa 1.2s infinite}
 @-webkit-keyframes pulsa{0%,100%{box-shadow:0 0 0 4px rgba(245,158,11,.35)}50%{box-shadow:0 0 0 9px rgba(245,158,11,.12)}}
 @keyframes pulsa{0%,100%{box-shadow:0 0 0 4px rgba(245,158,11,.35)}50%{box-shadow:0 0 0 9px rgba(245,158,11,.12)}}
@@ -67,9 +71,9 @@ button{font-family:inherit;cursor:pointer}
 @-webkit-keyframes pisca{50%{opacity:0}}
 @keyframes pisca{50%{opacity:0}}
 /* alto-falante sobre a folha */
-.fala{position:absolute;z-index:2;width:44px;height:44px;border-radius:50%;border:0;background:#f5b400;box-shadow:0 2px 0 #b98400,0 2px 6px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;padding:0;transform:translate(-50%,-50%);-webkit-transition:transform .1s;transition:transform .1s}
+.fala{position:absolute;z-index:2;width:40px;height:40px;border-radius:50%;border:0;background:#f5b400;box-shadow:0 2px 0 #b98400,0 2px 6px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;padding:0;transform:translate(-50%,-50%);-webkit-transition:transform .1s;transition:transform .1s}
 .fala:active{transform:translate(-50%,-50%) scale(.92)}
-.fala svg{width:24px;height:24px;fill:#3a2600}
+.fala svg{width:22px;height:22px;fill:#3a2600}
 .fala.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
 /* nome e data na capa */
 .nome{position:absolute;font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;color:#1d4ed8;font-size:clamp(14px,3.4vw,30px);background:rgba(255,244,190,.45);border:2px dashed #d9a520;border-radius:8px;padding:0 8px;outline:none;display:flex;align-items:center;overflow:hidden;white-space:nowrap;pointer-events:none}
@@ -140,12 +144,13 @@ svg.linhas line{stroke-linecap:round}
 @keyframes cai{to{transform:translateY(105vh) rotate(720deg)}}
 @media (prefers-reduced-motion:reduce){*{-webkit-animation:none!important;animation:none!important;-webkit-transition:none!important;transition:none!important}}
 @media (min-width:900px){#livro,#topo,#nav{max-width:720px}}
-@media (max-width:600px){.ferr .cor:not(.sel){display:none}}
+@media (max-width:600px){.ferr .cor:not(.sel){display:none} .fala{display:none}}
 </style>
 </head>
 <body>
 <header id="topo">
   <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração" title="Narração"><svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg></button>
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir o que a página pede" title="Ouvir a página"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7v3H4a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3v-8a5 5 0 0 1 10 0v8h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2h-1V9a7 7 0 0 0-7-7z"/></svg></button>
   <div class="tit">Somando com Desenhos</div>
   <div class="prog" aria-hidden="true"><i id="progI"></i></div>
   <div class="pg" id="pg">Capa</div>
@@ -264,28 +269,25 @@ function pc(x, y, w, h){ return {left:(x/PW*100).toFixed(2)+"%", top:(y/PH*100).
 var PAGINAS = [
  {img:"img/fv_p1.jpg", tipo:"capa", fala:"capa"},
  {img:"img/fv_p2.jpg", tipo:"folha", fala:"p2enun", nome:"Conte e complete",
-  falas:[{k:"p2intro", x:1000, y:330}, {k:"p2enun", x:760, y:680}],
+  falas:[{k:"p2intro", x:985, y:303}, {k:"p2enun", x:745, y:680}],
   resps:[
-   {x:868, y:766, w:196, h:78, r:3, fala:"p2i1", certo:"p2c1", dica:"p2d1", zx:800, zy:790},
-   {x:868, y:930, w:196, h:78, r:4, fala:"p2i2", certo:"p2c2", dica:"p2d2", zx:800, zy:955},
-   {x:868, y:1097, w:196, h:78, r:4, fala:"p2i3", certo:"p2c3", dica:"p2d3", zx:800, zy:1122},
-   {x:868, y:1253, w:196, h:78, r:5, fala:"p2i4", certo:"p2c4", dica:"p2d4", zx:800, zy:1278}]},
+   {x:868, y:766, w:196, h:78, r:3, fala:"p2i1", certo:"p2c1", dica:"p2d1"},
+   {x:868, y:930, w:196, h:78, r:4, fala:"p2i2", certo:"p2c2", dica:"p2d2"},
+   {x:868, y:1097, w:196, h:78, r:4, fala:"p2i3", certo:"p2c3", dica:"p2d3"},
+   {x:868, y:1253, w:196, h:78, r:5, fala:"p2i4", certo:"p2c4", dica:"p2d4"}]},
  {img:"img/fv_p3.jpg", tipo:"folha", fala:"p3enun", nome:"Conte e some",
-  falas:[{k:"p3enun", x:1000, y:345}],
   resps:[
-   {x:893, y:500, w:170, h:80, r:5, fala:"p3i1", certo:"p3c1", dica:"p3d1", zx:828, zy:515},
-   {x:893, y:707, w:170, h:80, r:5, fala:"p3i2", certo:"p3c2", dica:"p3d2", zx:828, zy:722},
-   {x:893, y:915, w:170, h:80, r:6, fala:"p3i3", certo:"p3c3", dica:"p3d3", zx:828, zy:930},
-   {x:893, y:1117, w:170, h:80, r:7, fala:"p3i4", certo:"p3c4", dica:"p3d4", zx:828, zy:1132},
-   {x:893, y:1294, w:170, h:80, r:5, fala:"p3i5", certo:"p3c5", dica:"p3d5", zx:828, zy:1309}]},
+   {x:893, y:500, w:170, h:80, r:5, fala:"p3i1", certo:"p3c1", dica:"p3d1"},
+   {x:893, y:707, w:170, h:80, r:5, fala:"p3i2", certo:"p3c2", dica:"p3d2"},
+   {x:893, y:915, w:170, h:80, r:6, fala:"p3i3", certo:"p3c3", dica:"p3d3"},
+   {x:893, y:1117, w:170, h:80, r:7, fala:"p3i4", certo:"p3c4", dica:"p3d4"},
+   {x:893, y:1294, w:170, h:80, r:5, fala:"p3i5", certo:"p3c5", dica:"p3d5"}]},
  {img:"img/fv_p4.jpg", tipo:"folha", fala:"p4enun", nome:"Resolva",
-  falas:[{k:"p4enun", x:900, y:295}],
   resps:[
-   {x:278, y:672, w:250, h:80, r:5, fala:"p4i1", certo:"p4c1", dica:"p4d1", zx:590, zy:715},
-   {x:278, y:1036, w:250, h:80, r:7, fala:"p4i2", certo:"p4c2", dica:"p4d2", zx:590, zy:1079},
-   {x:278, y:1397, w:250, h:80, r:6, fala:"p4i3", certo:"p4c3", dica:"p4d3", zx:590, zy:1440}]},
+   {x:278, y:672, w:250, h:80, r:5, fala:"p4i1", certo:"p4c1", dica:"p4d1"},
+   {x:278, y:1036, w:250, h:80, r:7, fala:"p4i2", certo:"p4c2", dica:"p4d2"},
+   {x:278, y:1397, w:250, h:80, r:6, fala:"p4i3", certo:"p4c3", dica:"p4d3"}]},
  {img:"img/fv_p5.jpg", tipo:"ligar", fala:"p5enun", nome:"Ligue",
-  falas:[{k:"p5enun", x:990, y:355}],
   esq:[{x:88, y:525, w:342, h:155, k:"a", fala:"p5i1", certo:"p5c1", dica:"p5d1"},
        {x:88, y:713, w:342, h:155, k:"b", fala:"p5i2", certo:"p5c2", dica:"p5d2"},
        {x:88, y:901, w:342, h:155, k:"c", fala:"p5i3", certo:"p5c3", dica:"p5d3"},
@@ -297,13 +299,12 @@ var PAGINAS = [
        {x:825, y:1090, w:145, h:155, k:"b", fala:"p5r5"},
        {x:825, y:1278, w:145, h:155, k:"c", fala:"p5r7"}]},
  {img:"img/fv_p6.jpg", tipo:"folha", fala:"p6enun", nome:"Desenhe e some",
-  falas:[{k:"p6enun", x:1005, y:255}],
   desenhos:[{x:70, y:392, w:985, h:150, ty:545}, {x:70, y:727, w:985, h:150, ty:880}, {x:70, y:1061, w:985, h:135, ty:1202}, {x:70, y:1383, w:985, h:120, ty:1496}],
   resps:[
-   {x:658, y:545, w:120, h:80, r:5, fala:"p6i1", certo:"p6c1", dica:"p6d1", zx:1020, zy:355},
-   {x:658, y:880, w:120, h:80, r:6, fala:"p6i2", certo:"p6c2", dica:"p6d2", zx:1020, zy:690},
-   {x:658, y:1202, w:120, h:80, r:10, fala:"p6i3", certo:"p6c3", dica:"p6d3", zx:1020, zy:1025},
-   {x:658, y:1496, w:120, h:80, r:7, fala:"p6i4", certo:"p6c4", dica:"p6d4", zx:1020, zy:1345}]}
+   {x:658, y:545, w:120, h:80, r:5, fala:"p6i1", certo:"p6c1", dica:"p6d1"},
+   {x:658, y:880, w:120, h:80, r:6, fala:"p6i2", certo:"p6c2", dica:"p6d2"},
+   {x:658, y:1202, w:120, h:80, r:10, fala:"p6i3", certo:"p6c3", dica:"p6d3"},
+   {x:658, y:1496, w:120, h:80, r:7, fala:"p6i4", certo:"p6c4", dica:"p6d4"}]}
 ];
 
 /* ---------- estado ---------- */
@@ -329,11 +330,12 @@ if("speechSynthesis" in window){ carregaVozes(); window.speechSynthesis.onvoices
 function chaveVoz(s){ s = (s || "").replace(/\s+/g, " ").replace(/^ | $/g, "").toLowerCase(); var hh = 5381, i; for(i = 0; i < s.length; i++){ hh = ((hh << 5) + hh + s.charCodeAt(i)) >>> 0; } return hh.toString(36); }
 function falarNavegador(t){ if(!("speechSynthesis" in window)) return; try{ window.speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(t); u.lang = "pt-BR"; if(vozPtBR) u.voice = vozPtBR; u.rate = .95; u.pitch = 1.05; window.speechSynthesis.speak(u); }catch(e){} }
 function calar(){ if("speechSynthesis" in window){ try{ window.speechSynthesis.cancel(); }catch(e){} } if(_narr){ try{ _narr.pause(); }catch(e){} } if(ultimoBotaoFala){ ultimoBotaoFala.className = ultimoBotaoFala.className.replace(" tocando", ""); ultimoBotaoFala = null; } }
-function falar(k, botao){
+function falar(k, botao, depois){
   var t = FALAS[k] || k; if(!vozLigada || !t) return;
   calar();
   if(botao){ botao.className += " tocando"; ultimoBotaoFala = botao; }
-  var fim = function(){ if(botao && ultimoBotaoFala === botao){ botao.className = botao.className.replace(" tocando", ""); ultimoBotaoFala = null; } };
+  var jaFoi = false;
+  var fim = function(){ if(jaFoi) return; jaFoi = true; if(botao && ultimoBotaoFala === botao){ botao.className = botao.className.replace(" tocando", ""); ultimoBotaoFala = null; } if(depois) depois(); };
   var key = chaveVoz(t);
   if(VOZOK[key]){
     if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
@@ -387,7 +389,6 @@ function montaCapa(d, P, i){
   d.appendChild(n);
   var hoje = new Date(), dd = ("0" + hoje.getDate()).slice(-2), mm = ("0" + (hoje.getMonth() + 1)).slice(-2), aa = String(hoje.getFullYear());
   var dt = el("div", "data", dd + "&nbsp;&nbsp;/&nbsp;&nbsp;" + mm + "&nbsp;&nbsp;/&nbsp;&nbsp;" + aa); pos(dt, 188, 1500, 330, 56); d.appendChild(dt);
-  d.appendChild(botaoFala("capa", 1040, 1260));
   d._nome = n;
 }
 function espelhaNome(t){ var n = PAGEL[0] && PAGEL[0]._nome; if(n){ n.textContent = t; n.className = t ? "nome" : "nome vazio"; } var i = document.getElementById("nomeIn"); if(i && i.value !== t) i.value = t; }
@@ -400,13 +401,14 @@ function montaResp(d, R, pi, ri){
   pos(e, R.x, R.y, R.w, R.h); e.id = id;
   var v = ST.resp[id];
   if(v && String(v) === String(R.r)){ e.textContent = v; e.className = "resp certa"; }
+  else e.innerHTML = '<i class="zi"></i>';
   e.onclick = function(){ if(e.className.indexOf("certa") > -1) return; sPasso(); ativar(pi, ri, e); };
   e.onkeydown = function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); e.onclick(); } };
+  e.innerHTML = '<i class="zi"></i>';
   d.appendChild(e);
-  if(R.fala) d.appendChild(botaoFala(R.fala, R.zx, R.zy));
 }
 function ativar(pi, ri, e){
-  if(ATIVA && ATIVA.el !== e){ ATIVA.el.className = ATIVA.el.className.replace(" ativa", ""); if(!ATIVA.el.textContent) ATIVA.el.innerHTML = ""; }
+  if(ATIVA && ATIVA.el !== e){ ATIVA.el.className = ATIVA.el.className.replace(" ativa", ""); if(!ATIVA.el.textContent) ATIVA.el.innerHTML = '<i class="zi"></i>'; }
   ATIVA = {pag:pi, i:ri, el:e, val:""};
   e.className = "resp ativa"; e.innerHTML = '<span class="v"></span><span class="cursor"></span>';
   document.getElementById("teclado").className = "aberto";
@@ -458,7 +460,7 @@ document.addEventListener("keydown", function(ev){
   if(ev.key >= "0" && ev.key <= "9"){ ev.preventDefault(); digita(ev.key); }
   else if(ev.key === "Backspace"){ ev.preventDefault(); digita("ap"); }
   else if(ev.key === "Enter"){ ev.preventDefault(); digita("ok"); }
-  else if(ev.key === "Escape"){ ATIVA.el.className = "resp"; ATIVA.el.innerHTML = ""; ATIVA = null; document.getElementById("teclado").className = ""; }
+  else if(ev.key === "Escape"){ ATIVA.el.className = "resp"; ATIVA.el.innerHTML = '<i class="zi"></i>'; ATIVA = null; document.getElementById("teclado").className = ""; }
 });
 
 /* ---------- ligar ---------- */
@@ -567,7 +569,7 @@ function confereFolha(pi){
   atualizaNav();
 }
 function vaiPara(pi){
-  calar(); if(ATIVA){ ATIVA.el.className = ATIVA.el.className.indexOf("certa") > -1 ? "resp certa" : "resp"; if(ATIVA.el.className === "resp") ATIVA.el.innerHTML = ""; ATIVA = null; }
+  calar(); if(ATIVA){ ATIVA.el.className = ATIVA.el.className.indexOf("certa") > -1 ? "resp certa" : "resp"; if(ATIVA.el.className === "resp") ATIVA.el.innerHTML = '<i class="zi"></i>'; ATIVA = null; }
   document.getElementById("teclado").className = "";
   document.getElementById("barraCapa").className = pi === 0 ? "aberta" : "";
   if(pi === 0) espelhaNome(ST.nome || "");
@@ -602,6 +604,7 @@ document.getElementById("bProx").onclick = function(){
   if(pend){ falar("faltam"); var r = PAGEL[pi].querySelector(".resp:not(.certa), .ponta:not(.feita)"); if(r){ r.className += " treme"; setTimeout(function(){ r.className = r.className.replace(" treme", ""); }, 500); try{ r.scrollIntoView({behavior:"smooth", block:"center"}); }catch(e){} } return; }
   if(pi < PAGINAS.length - 1) vaiPara(pi + 1); else fim();
 };
+document.getElementById("bOuvir").onclick = function(){ sPasso(); var b = this, P = PAGINAS[ST.pag]; if(document.getElementById("fim").style.display === "block"){ falar("fim", b); return; } if(ST.pag === 1){ falar("p2intro", b, function(){ falar("p2enun", b); }); return; } falar(P.fala, b); };
 document.getElementById("bVoz").onclick = function(){ vozLigada = !vozLigada; var b = document.getElementById("bVoz"); if(vozLigada){ b.className = "zap"; falar("vozOn"); } else { calar(); b.className = "zap off"; } };
 
 /* ---------- confete ---------- */
