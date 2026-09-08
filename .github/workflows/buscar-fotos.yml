@@ -24,6 +24,11 @@ on:
         required: false
         default: ""
         type: string
+      imagens:
+        description: "BUSCA DE IMAGENS (DuckDuckGo Images): o que procurar (ex: 'atividade soma com os dedos ate 10'). Baixa os resultados direto."
+        required: false
+        default: ""
+        type: string
       destino:
         description: "Pasta onde salvar (default _novo/fotos)"
         required: false
@@ -57,6 +62,7 @@ jobs:
         env:
           PAGINAS: ${{ inputs.paginas }}
           COMMONS: ${{ inputs.commons }}
+          IMAGENS: ${{ inputs.imagens }}
           DEST: ${{ inputs.destino }}
           MINKB: ${{ inputs.minkb }}
           MAXN: ${{ inputs.max }}
@@ -141,6 +147,56 @@ jobs:
                       "kb": round(len(dados) / 1024)
                   })
                   print("   OK %-28s %5d KB  %s" % (nome, len(dados) // 1024, leg[:60]))
+
+          # ---- DuckDuckGo IMAGES (set/2026, cobranca do Marcos: "a internet esta cheia
+          # destas atividades"). Buscar por PAGINA trazia anuncio e capa de produto; a
+          # busca de IMAGEM acha a folha em si. Fluxo conhecido do DDG: pegar o token
+          # `vqd` na pagina de resultados e chamar o i.js, que devolve JSON com a URL
+          # da imagem e da pagina de origem (fica no relatorio, para o credito).
+          busca_img = os.environ.get("IMAGENS", "").strip()
+          if busca_img:
+              q = urllib.parse.quote_plus(busca_img)
+              vqd = None
+              try:
+                  h0 = pega("https://duckduckgo.com/?q=%s&iax=images&ia=images" % q).decode("utf-8", "replace")
+                  mv = re.search(r"vqd=[\"']?([\d-]+)", h0) or re.search(r'vqd\W{1,3}([\d-]{10,})', h0)
+                  vqd = mv.group(1) if mv else None
+              except Exception as e:
+                  print("!! DDG nao respondeu a pagina de busca:", e)
+              if not vqd:
+                  print("!! sem token vqd: a busca de imagens nao rodou")
+              prox = "https://duckduckgo.com/i.js?l=br-pt&o=json&q=%s&vqd=%s&f=,,,,,&p=1" % (q, vqd) if vqd else None
+              paginas_ddg = 0
+              while prox and baixadas < maxn and paginas_ddg < 6:
+                  paginas_ddg += 1
+                  try:
+                      req = urllib.request.Request(prox, headers={"User-Agent": UA, "Accept": "application/json",
+                                                                  "Referer": "https://duckduckgo.com/", "Accept-Language": "pt-BR,pt;q=0.9"})
+                      js = json.loads(urllib.request.urlopen(req, timeout=45).read().decode("utf-8", "replace"))
+                  except Exception as e:
+                      print("!! i.js falhou:", e); break
+                  for r in js.get("results", []):
+                      if baixadas >= maxn: break
+                      url = r.get("image") or ""
+                      if not url or url in vistos: continue
+                      vistos.add(url)
+                      try:
+                          dados = pega(url, timeout=30)
+                      except Exception as e:
+                          print("   x", url[:90], str(e)[:60]); continue
+                      if len(dados) < minkb * 1024: continue
+                      ext = ".jpg" if b"\xff\xd8" == dados[:2] else (".png" if dados[1:4] == b"PNG" else "")
+                      if not ext: continue
+                      nome = "d%02d_%s%s" % (baixadas + 1, hashlib.md5(url.encode()).hexdigest()[:6], ext)
+                      open(os.path.join(dest, nome), "wb").write(dados)
+                      baixadas += 1
+                      relatorio.append({"arquivo": nome, "url": url, "pagina": r.get("url", ""),
+                                        "pagina_titulo": r.get("title", ""), "legenda": r.get("title", ""),
+                                        "kb": round(len(dados) / 1024), "busca": busca_img,
+                                        "largura": r.get("width"), "altura": r.get("height")})
+                      print("   OK %-28s %5d KB  %s" % (nome, len(dados) // 1024, (r.get("title") or "")[:60]))
+                  nx = js.get("next")
+                  prox = ("https://duckduckgo.com/" + nx + "&vqd=" + vqd) if nx else None
 
           # ---- Wikimedia Commons: API propria, com licenca e autor declarados.
           # E a fonte CERTA para reuso: cada arquivo diz em que licenca esta e
