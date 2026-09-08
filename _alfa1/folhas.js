@@ -297,7 +297,7 @@ function f2(d, pi){
         n++; sPalma(); cont.innerHTML = "palmas: <b>" + n + "</b>";
         var caixas = trilha.childNodes, k;
         for(k = 0; k < caixas.length; k++) caixas[k].className = "silbox" + (k < n ? " acesa" : "");
-        if(n <= alvo) falar("sb_" + sil(p)[n - 1]);
+        if(n <= alvo) falarSilaba(p, n - 1, sil(p)[n - 1]);
       };
       function zera(){
         n = 0; cont.innerHTML = "palmas: <b>0</b>";
@@ -541,7 +541,7 @@ function f5(d, pi){
           e._pintada = true;
           var L2 = LAPIS[LAPIS_ESCOLHIDO];
           e.style.background = L2.claro; e.style.borderColor = L2.c; e.style.color = L2.c;
-          sPasso(); falar("sb_" + s);
+          sPasso(); falarSilaba(null, 0, s);
           if(s === certa){
             setTimeout(function(){
               e.className = "op pinta certa"; e.style.background = ""; e.style.borderColor = ""; e.style.color = "";
@@ -608,7 +608,7 @@ function f7(d, pi){
         l.setAttribute("aria-label", "Sílaba " + o);
         l.onclick = function(){
           if(ST.resp[id]) return;
-          sPasso(); falar("sb_" + o);
+          sPasso(); falarSilaba(null, 0, o);
           if(o === certa){
             l.className = "lx certa"; l.querySelector(".cx").textContent = "X";
             cx.childNodes[1].className = "sq ok"; cx.childNodes[1].textContent = certa;
@@ -685,7 +685,7 @@ function f9(d, pi){
         c.setAttribute("aria-label", "Sílaba " + o.x);
         function poe(){
           if(ST.resp[id]) return;
-          sPasso(); falar("sb_" + o.x);
+          sPasso(); falarSilaba(p, o.k, o.x);
           if(o.k === posto){
             caixas[posto].className = "vaga cheia"; caixas[posto].textContent = o.x;
             c.className = "sil usada"; posto++;
@@ -745,7 +745,7 @@ function f10(d, pi){
         c.addEventListener("pointerdown", function(ev){
           if(c.className.indexOf("usada") > -1) return;
           ev.preventDefault(); try{ c.setPointerCapture(ev.pointerId); }catch(x){}
-          pego = s0; c.className = "sil arrastando"; sPasso(); falar("sb_" + s0);
+          pego = s0; c.className = "sil arrastando"; sPasso(); falarSilaba(w, 0, s0);
         });
         c.addEventListener("pointermove", function(ev){
           if(pego !== s0) return;
@@ -1024,7 +1024,7 @@ function fim(){
   var pc = tot ? prim / tot : 0;
   var cheias = pc >= .85 ? 3 : pc >= .6 ? 2 : 1, est = "", ke;
   for(ke = 0; ke < 3; ke++)
-    est += '<img src="img/al_estrela' + (ke < cheias ? "" : "_off") + '.png?v=4" alt="" draggable="false">';
+    est += '<img src="img/al_estrela' + (ke < cheias ? "" : "_off") + '.png?v=5" alt="" draggable="false">';
   document.getElementById("estrelas").innerHTML = est;
   document.getElementById("estrelas").setAttribute("aria-label", cheias + " de 3 estrelas");
   var bar = document.getElementById("barras"); bar.innerHTML = "";

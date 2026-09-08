@@ -133,24 +133,48 @@ for w in [u"casa", u"mala", u"gato", u"roda", u"vaca", u"copo", u"sino", u"faca"
 for w in sorted(usadas):
     F[u"pal_%s" % w] = falado(w) + u"."
     F[u"sil_%s" % w] = u"%s. %s." % (emsilabas(w), falado(w))
-# ⚠️⚠️ SÍLABA SOLTA SE ESCREVE COMO SE FALA (set/2026, o Marcos ouviu:
-#   *"a pronúncia de algumas sílabas não está [certa], corrija"*).
-#   É a MESMA lição das letras do Trem, onde a casa já escreve "Éfe", "Agá",
-#   "Jóta" em vez de F, H, J. A voz não lê símbolo: lê palavra. E há sequências
-#   que NÃO EXISTEM em começo de palavra em português — a voz não tem regra para
-#   elas e sai soletrando:
-#     · Ç nunca inicia palavra  -> "çã" (maçã) vira letra soletrada; escrevo "sã"
-#     · X inicial tem 4 sons    -> "xí"/"xe" (xícara, peixe) escorrega para "csi";
-#                                  escrevo "chi"/"che", que é [ʃ] garantido
-#   ⚠️ O que eu NÃO faço aqui é acentuar por conta própria (bo -> bó/bô): a
-#   abertura da vogal MUDA de palavra para palavra (bóla x bôlo) e eu trocaria
-#   um defeito raro por um erro sistemático. Sílaba nova entra nesta tabela só
-#   com prova — o portão que ouve (`_qa/pronuncia.py`) é quem dá a prova.
-COMO_SE_FALA = {
-    u"ÇÃ": u"sã",     # maçã
-    u"XÍ": u"chi",    # xícara
-    u"XE": u"che",    # peixe
-}
+# ⚠️⚠️ A SÍLABA SOLTA NÃO SE SINTETIZA MAIS (set/2026 — ordem do Marcos:
+#   *"a pronúncia das sílabas precisa ser precisa e melhorada, use alguma
+#   ferramenta profissional"*). O remendo anterior escrevia a sílaba "como se
+#   fala" (çã -> "sã") e consertava um caso por vez, sem nunca fechar a família:
+#   a MESMA sílaba escrita tem sons diferentes conforme a palavra ("bo" é [bɔ]
+#   em BOLA e [bo] em BOLO), e nenhuma reescrita resolve isso.
+#
+#   Agora cada sílaba é RECORTADA de dentro da palavra: o
+#   `_padrao/silabas_voz.py` manda o Edge TTS ler `gi, ra, fa`, recebe do próprio
+#   serviço os marcadores de tempo de cada pedaço e corta o mp3 neles. A criança
+#   ouve a sílaba na voz, no ritmo e na altura daquela palavra.
+#
+#   O que sai daqui é o MAPA que aquela ferramenta lê (`silabas.json`) e o mapa
+#   que o app usa para saber, dada uma sílaba solta (um distrator, por exemplo),
+#   de qual palavra ela deve ser tocada.
+# ---- o mapa sílaba -> (palavra, posição) -------------------------------------
+# Toda sílaba que o app fala sozinha precisa ter uma palavra de onde ser
+# recortada. Procura primeiro nas palavras que a atividade já usa; entre elas,
+# prefere aquela em que a sílaba está no MESMO lugar em que aparece na folha.
+PALAVRAS_SIL = {}
+MAPA_SIL = {}
+for s in sorted(silabas):
+    achou = None
+    for w in sorted(usadas) + sorted(set(PAL) - usadas):
+        ss = sil(w)
+        if s in ss:
+            achou = (w, ss.index(s))
+            break
+    if not achou:
+        continue
+    MAPA_SIL[s] = [achou[0], achou[1]]
+    PALAVRAS_SIL[achou[0]] = sil(achou[0])
+# e as palavras cujas sílabas o app fala uma a uma (a folha 2, das palmas)
+for w in IT[u"p2"]:
+    PALAVRAS_SIL[w] = sil(w)
+for w in IT[u"p9"]:
+    PALAVRAS_SIL[w] = sil(w)
+
+# ⚠️ a fala de RESERVA (quando o mp3 recortado não existir): o app cai para a
+#    voz do navegador com este texto. Continua sendo remendo, mas agora é só
+#    rede de segurança, não o caminho principal.
+COMO_SE_FALA = {u"ÇÃ": u"sã", u"XÍ": u"chi", u"XE": u"che"}
 for s in sorted(silabas):
     F[u"sb_%s" % s] = COMO_SE_FALA.get(s, s.lower()) + u"."
 
@@ -255,10 +279,17 @@ io.open(os.path.join(AQUI, u"falas.json"), u"w", encoding=u"utf-8").write(
     json.dumps(falas, ensure_ascii=False, indent=1))
 io.open(os.path.join(AQUI, u"voz.txt"), u"w", encoding=u"utf-8").write(VOZ + u"\n")
 
+# ---- o mapa das sílabas, para o cortador e para o app ------------------------
+io.open(os.path.join(AQUI, u"silabas.json"), u"w", encoding=u"utf-8").write(
+    json.dumps({u"prefixo": PREFIXO, u"palavras": PALAVRAS_SIL, u"mapa": MAPA_SIL},
+               ensure_ascii=False, indent=1, sort_keys=True))
+
 blocoF = u"/*FALAS-INI*/\nvar FALAS = " + json.dumps(F, ensure_ascii=False, indent=1, sort_keys=True) + u";\n/*FALAS-FIM*/"
+blocoS = (u"/*SILMAP-INI*/var SILMAP = " + json.dumps(MAPA_SIL, ensure_ascii=False, sort_keys=True) + u";/*SILMAP-FIM*/")
 blocoV = u"/*VOZOK-INI*/var VOZOK = " + json.dumps(dict((c, 1) for c in vistos), ensure_ascii=False) + u";/*VOZOK-FIM*/"
 novo = re.sub(r"/\*FALAS-INI\*/.*?/\*FALAS-FIM\*/", lambda m: blocoF, html, flags=re.S)
 novo = re.sub(r"/\*VOZOK-INI\*/.*?/\*VOZOK-FIM\*/", lambda m: blocoV, novo, flags=re.S)
+novo = re.sub(r"/\*SILMAP-INI\*/.*?/\*SILMAP-FIM\*/", lambda m: blocoS, novo, flags=re.S)
 io.open(CAM, u"w", encoding=u"utf-8").write(novo)
 
 print(u"FALAS: %d chaves; falas.json: %d fala(s); VOZOK gravado" % (len(F), len(falas)))

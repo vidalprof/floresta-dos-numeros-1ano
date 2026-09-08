@@ -379,6 +379,30 @@ jobs:
             fi
           done
 
+      # ⭐⭐ AS SÍLABAS SE RECORTAM DA PALAVRA (set/2026 — ordem do Marcos: *"a
+      # pronúncia das sílabas precisa ser precisa e melhorada, use alguma
+      # ferramenta profissional"*). Sílaba sintetizada solta sai errada por
+      # construção: a voz não lê som, lê PALAVRA — e "bo" é [bɔ] em BOLA e [bo]
+      # em BOLO. Aqui a atividade que tiver `silabas.json` recebe cada sílaba
+      # RECORTADA do áudio em que a voz leu as sílabas daquela palavra, nos
+      # marcadores de tempo que o próprio serviço devolve.
+      # Roda logo depois da narração e antes de guardar, para os mp3 entrarem
+      # no mesmo commit. Não trava a entrega se falhar: a atividade tem a fala
+      # de reserva.
+      - name: Recortar as silabas de dentro das palavras
+        continue-on-error: true
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          pip3 install --quiet imageio-ffmpeg 2>&1 | tail -1 || true
+          IFS=',' read -ra ALVS <<< "$LISTA"
+          for a in "${ALVS[@]}"; do
+            pasta="${a%%:*}"; [ -d "$pasta" ] || continue
+            [ -f "$pasta/silabas.json" ] || continue
+            echo "=========== silabas de $pasta ==========="
+            python3 _padrao/silabas_voz.py "$pasta" || echo "::warning::$pasta: alguma silaba nao saiu"
+          done
+
       - name: Guardar as vozes novas no repo
         env:
           LISTA: ${{ steps.alvos.outputs.lista }}
