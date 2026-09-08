@@ -53,7 +53,11 @@ REGRAS = [
     u"só vale o DOBRO da carta da mesa", u"só vale a METADE da carta da mesa",
     u"a soma das duas é MÚLTIPLO DE 3",
 ]
-PREFIXOS = ["", u"O robô pegou uma carta.", u"Você pegou 2 cartas.", u"O robô jogou +4! Você pegou 4 cartas."]
+PREFIXOS = ["", u"O robô pegou uma carta.", u"Você pegou 2 cartas."]
+# a cor do coringa viaja no PREFIXO (uma fala só com a mensagem da vez dela)
+for _c in CORES:
+    PREFIXOS.append(u"O robô jogou um coringa e escolheu %s! 🎨" % _c)
+    PREFIXOS.append(u"O robô jogou +4! Você pegou 4 cartas. Agora a cor é %s! 🎨" % _c)
 CURTO = {3: u"par e ímpar, maior e menor, e somar 10",
          4: u"múltiplos de 3 e de 5, dobro e metade",
          5: u"múltiplos de 3, dobro, e a soma das duas cartas"}

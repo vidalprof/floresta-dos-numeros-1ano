@@ -47,6 +47,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **Somando com os Dedinhos** (folha autoral · Pré e 1º) | Matemática: adição até 10 com os dedos das mãos — contar e digitar, ligar mãos ao número, MOSTRAR a quantidade levantando dedos, quantos faltam; mãos em vetor, somas sorteadas a cada abertura, voz em tudo, sem cabeçalho (1ª folha autoral, modelo: 40 folhas da internet) | `_dedos` | https://vidalprof.github.io/somando-com-os-dedinhos/ |
 | **O Ateliê do Sr. Batata** | Partes do rosto/corpo, criação livre, coordenação | `_batata` | https://vidalprof.github.io/atelie-do-sr-batata/ |
 | **O Ateliê de Cores da Rai** | Cores, formas, expressão | `_colorir` | https://vidalprof.github.io/o-atelie-de-cores/ |
 | **Mundo Mágico — Brincar e Aprender** | Pré (rota geral) | — | https://vidalprof.github.io/pr-escola-1/ |

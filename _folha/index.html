@@ -573,7 +573,7 @@ function vaiPara(pi){
   document.getElementById("teclado").className = "";
   document.getElementById("barraCapa").className = pi === 0 ? "aberta" : "";
   if(pi === 0) espelhaNome(ST.nome || "");
-  document.getElementById("fim").style.display = "none"; document.getElementById("retomar").style.display = "none";
+  document.getElementById("fim").style.display = "none"; document.getElementById("retomar").style.display = "none"; document.getElementById("nav").style.display = pi === 0 ? "none" : "flex";
   for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
   ST.pag = pi; salvar();
   var d = PAGEL[pi]; d.className += " viva";
