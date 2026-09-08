@@ -82,7 +82,14 @@ button{font-family:inherit;cursor:pointer}
 .item{margin:12px 14px;padding:14px;border:2px solid #eceefa;border-radius:20px;background:#fbfbff}
 .item.feito{border-color:#bfe6ce;background:#f3fcf6}
 .item .n{font-weight:900;color:#9aa0bd;font-size:15px;margin-right:8px}
-.fig{display:block;max-width:100%;height:auto;image-rendering:auto}
+/* ⚠️ A FIGURA TEM ALTURA FIXA, E ISSO NÃO É ENFEITE (set/2026). Antes era
+   `height:auto`: cada figura entrava no seu tamanho natural — a casa com 230 px
+   e a bola com 90 — e, como `display:block` ignora o `text-align:center` do pai,
+   todas encostavam na ESQUERDA. O item ficava com um buraco branco do lado
+   direito e as folhas, desiguais. Altura igual + `margin:auto` resolve as duas
+   coisas de uma vez: peso visual igual e figura no meio. */
+.fig{display:block;width:auto;height:clamp(76px,19vw,116px);max-width:100%;
+  margin:2px auto 6px;object-fit:contain;image-rendering:auto}
 .figbt{border:0;background:none;padding:4px;border-radius:16px;min-width:48px;min-height:48px}
 .pal{font-weight:900;letter-spacing:2px;font-size:clamp(22px,6vw,34px);color:#1e2334}
 
