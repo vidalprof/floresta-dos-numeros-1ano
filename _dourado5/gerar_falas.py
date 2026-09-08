@@ -72,6 +72,7 @@ F.update({
     "p2enun": u"Conte as peças e escreva que número elas formam. Lembre: cada placa vale cem, cada barra vale dez e cada cubinho vale um.",
     "p3enun": u"Agora monte o número com as peças de verdade. Toque na peça de baixo para pôr na mesa; toque numa peça da mesa para tirar.",
     "casaCheia": u"Cada casa vai só até nove. Se juntar dez, é hora de trocar por uma peça maior.",
+    "rascLimpo": u"Rascunho limpo. Pode armar a conta de novo.",
     "passou": u"Passou do número! Toque numa peça da mesa para tirar.",
     "p4enun": u"As peças foram repartidas igualmente entre os grupos. Olhe um grupo e escreva quanto ficou em cada um.",
     "p5enun": u"Sobrou uma barra e ela não dá para repartir inteira. Troque a barra por dez cubinhos e termine a conta. É isso que a conta armada chama de abaixar o número.",

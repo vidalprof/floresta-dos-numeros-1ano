@@ -6867,3 +6867,34 @@ estimados, com 74 respostas.
 **Chave mestra `1275@` no campo do nome** (pedido dele no mesmo dia): abre o menu do
 professor com as 10 folhas. O nome digitado é preservado — a senha não vira o nome
 da criança na folha.
+
+## ✏️ O RASCUNHO — a folha na tela também precisa de canto para armar a conta (8/set/2026)
+
+Pedido do Marcos: *"tem como adicionar nessas fases quadrados para eles poderem
+calcular, ou um espaço para eles desenharem a conta para ajudar?"*
+
+**Por que isso importa mais do que parece:** a folha de papel SEMPRE teve esse canto.
+Quando a atividade vira tela e o canto some, uma conta de três algarismos deixa de ser
+"armar e resolver" e vira **cálculo de cabeça** — que não é o que a folha pede, e é
+exatamente onde a criança do 5º ano trava. O rascunho não é enfeite: é a metade do
+trabalho que eu tinha deixado de fora.
+
+**Como ficou (em `_dourado5/index.html`, função `rascunho(d, pi)`):**
+- papel **QUADRICULADO de verdade** (22 px), porque o quadradinho é a coluna da ordem
+  — unidade embaixo de unidade — e é isso que sustenta o algoritmo;
+- um canvas transparente por cima: escreve com o dedo ou com a setinha;
+- **lápis / borracha / limpar**, botões de 44 px;
+- entra em toda folha de CONTA (2 a 7, 9 e 10); as de ligar (1 e 8) não têm.
+
+**Duas armadilhas que já estão resolvidas aqui — copiar, não redescobrir:**
+1. **Guardar TRAÇOS, não a imagem.** Uma imagem de canvas por folha estoura o
+   `localStorage` da retomada de 55 min. Guardo os pontos em escala 0–1000, o que
+   ainda tem o bônus de **voltar certo em qualquer tamanho de tela**.
+2. **`touch-action:none` no canvas — e SÓ nele.** É o que faz o dedo desenhar em vez
+   de rolar a página. Continua proibido dar `preventDefault` no `touchstart` da página
+   (isso mata o toque, defeito que o Marcos já pegou duas vezes).
+
+⚠️ **Ao TESTAR rascunho com o Playwright:** `boundingBox()` de um elemento fora da
+dobra devolve coordenada fora da janela e o mouse não acerta nada — o teste diz
+"0 traços" e parece defeito do app. `await el.scrollIntoViewIfNeeded()` ANTES de
+pegar a caixa. Perdi uma rodada nisso.
