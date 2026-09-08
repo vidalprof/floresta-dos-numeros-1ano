@@ -6703,6 +6703,22 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
   bancada, conversa, show. Miolo igual, casca por `"casca"` no `conteudo.json`. Ordem
   proposta por custo: conversa → trilha → cartas → livro → show → bancada. Nenhuma
   implementada ainda: o Marcos escolhe quais e onde estreiam.
+- **⛔ CONGELAMENTO PEDIDO PELO MARCOS (noite de 7/set → 8/set): atividade publicada NÃO se
+  toca sem pedido dele.** Palavras dele: *"podemos deixar as atividades que foram alteradas em
+  suas versões anteriores e todas as melhorias seriam válidas para as atividades novas feitas
+  a partir de agora"* e *"eu não sei se as melhorias ou mudanças estragaram as atividades"*.
+  Exceção declarada: o **UNO dos Números (3º/4º/5º)** fica na versão nova (voz do Antônio).
+  Ficou em aberto (ele ainda não respondeu): se Padaria/Trem/Divisão voltam para a casca
+  clássica, se Central/Sólidos/Museu/Bancada voltam para a versão de 5/set, e se roda a prova
+  "ANTES | DEPOIS" das 27 republicadas (banca inteira nas 9 que só tiveram pré-voo +
+  fotos da versão de 4/set × versão no ar). Enquanto não responder: **nada se republica**.
+  - **Pinta e Monta tem defeito CONHECIDO e o Marcos disse NÃO ao conserto (8/set):** em
+    celular 360×740 a primeira fileira de cores fica atrás do quadro (quadro até 508 px,
+    paleta a partir de 462 px); em 412×915 cabe. Está assim desde a versão de 4/set 17:46
+    (miniaturas e quadro maiores). Causa: coluna não cabe na altura, `#pmwrap` encolhe e o
+    palco vaza sobre a paleta. Conserto pronto na cabeça (paleta com prioridade, quadro
+    encolhe) + portão de elemento coberto em tamanhos de celular para apps à mão
+    (`leiaute_mao.js` não mede sobreposição). **Só executar quando ELE pedir.**
 - **Pré-voo da cobaia (fixture, nunca publicada) já reprovava antes de hoje** em 4c
   (4 peças com `var(--texto)` em superfície própria: experimento-justo, montar-frase,
   termometro) e falas ("tangram" fonético nos textos de exemplo). Fica na fila de
