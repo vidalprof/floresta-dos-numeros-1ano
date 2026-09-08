@@ -97,6 +97,15 @@ def confere(pasta, piso_min=40.0):
         print(u"%s -> sem index.html. NAO MEDI." % pasta)
         return 2
     html = io.open(cam, encoding=u"utf-8").read()
+    # ⚠️ LICAO PAGA (set/2026, na Fabrica de Palavras): a atividade a mao pode partir
+    #    o codigo em `<script src="folhas.js">` ao lado. O portao lia so o index, nao
+    #    achava as funcoes `fN` das folhas e precificava TUDO como "digitar" (25 s) —
+    #    dizia 39 min numa atividade cujos gestos sao quase todos de tocar. Aqui os
+    #    irmaos locais entram na leitura, e o gesto de cada folha volta a ser medido.
+    for m_src in re.finditer(r'<script[^>]+src="([^":]+\.js)"', html):
+        irmao = os.path.join(pasta, m_src.group(1))
+        if os.path.exists(irmao):
+            html += u"\n" + io.open(irmao, encoding=u"utf-8").read()
 
     # 1) quanto tempo de voz gravada
     seg_voz = 0.0

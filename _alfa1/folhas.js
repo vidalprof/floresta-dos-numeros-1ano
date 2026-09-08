@@ -137,7 +137,7 @@ function f3(d, pi){
       seq.forEach(function(w){ fila.appendChild(el("div", "q", img(w))); });
       fila.appendChild(el("div", "q vaga", ST.resp[id] ? img(it.a) : "?"));
       b.appendChild(fila);
-      var erradas = ["casa", "mala", "gato", "roda", "vaca"].filter(function(x){ return x !== it.a && x !== it.b; });
+      var erradas = ["casa", "mala", "gato", "roda", "vaca", "sino", "faca"].filter(function(x){ return x !== it.a && x !== it.b; });
       var ops = baralha([it.a, it.b, erradas[rnd(erradas.length)]]).map(function(w){
         return {v: w, rot: img(w), fala: "pal_" + w, aria: esc(w)};
       });

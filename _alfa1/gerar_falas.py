@@ -123,7 +123,7 @@ for g in IT[u"p10"]:
     for w in g:
         usa(w)
 # a folha 3 sorteia distratores desta lista fixa (ver f3 no folhas.js)
-for w in [u"casa", u"mala", u"gato", u"roda", u"vaca", u"copo"]:
+for w in [u"casa", u"mala", u"gato", u"roda", u"vaca", u"copo", u"sino", u"faca"]:
     usa(w)
 
 for w in sorted(usadas):
