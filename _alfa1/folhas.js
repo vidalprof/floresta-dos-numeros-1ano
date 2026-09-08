@@ -483,17 +483,85 @@ function f4(d, pi){
 
 /* ============ 5 — PINTE A SÍLABA INICIAL ============
    Da folha: *"pinte a sílaba inicial do nome de cada desenho"* (d18). */
+/* ---------- AS CANETINHAS (pedido do Marcos, set/2026) ----------
+   Palavras dele: *"no pinte a sílaba coloque umas 3 ou quatro cores, para o
+   estudante escolher qual ele quer pintar, serve tanto para clicar quanto
+   pintar esfregando o ponteiro do mouse como se fosse uma canetinha"*.
+
+   Por que isto é bom e não é enfeite: na folha de papel a criança ESCOLHE a
+   cor do lápis, e essa escolha pequena é dela (autonomia — Deci & Ryan). E o
+   gesto de pintar esfregando é o gesto real do exercício: "pinte", não
+   "clique". Quem prefere tocar continua tocando — as duas portas, como sempre.
+   A cor é só tinta: quem decide certo/errado continua sendo a sílaba. */
+var LAPIS = [
+  {n: "roxo",    c: "#7c3aed", claro: "#ede9fe"},
+  {n: "laranja", c: "#ea580c", claro: "#ffedd5"},
+  {n: "verde",   c: "#0f9d58", claro: "#dcfce7"},
+  {n: "rosa",    c: "#db2777", claro: "#fce7f3"}
+];
+var LAPIS_ESCOLHIDO = 0;
+
+function estojo(pai){
+  var cx = el("div", "estojo");
+  cx.appendChild(el("span", "rot", "Escolha a cor:"));
+  LAPIS.forEach(function(L, k){
+    var b = el("button", "lapis" + (k === LAPIS_ESCOLHIDO ? " esc" : ""));
+    b.style.background = L.c;
+    b.setAttribute("aria-label", "Canetinha " + L.n);
+    b.setAttribute("data-qa", "lapis-" + L.n);
+    b.onclick = function(){
+      LAPIS_ESCOLHIDO = k; sPasso();
+      var ir = cx.childNodes, j;
+      for(j = 1; j < ir.length; j++) ir[j].className = "lapis" + (j - 1 === k ? " esc" : "");
+    };
+    cx.appendChild(b);
+  });
+  pai.appendChild(cx);
+}
+
 function f5(d, pi){
   faixa(d, pi, NOMES[4]);
-  d.appendChild(el("div", "enun", "Pinte a sílaba com que a palavra <b>começa</b>."));
+  d.appendChild(el("div", "enun", "Pinte a sílaba com que a palavra <b>começa</b>. " +
+    "Escolha a cor da canetinha e <b>toque ou esfregue</b> em cima da sílaba."));
+  estojo(d);
   var L = ST.folha.p5;
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "r5_" + i, certa = sil(it.p)[0], b = item(i + 1);
       b.appendChild(el("div", null, '<div style="text-align:center">' + img(it.p) +
         '<div class="pal">' + esc(it.p) + '</div></div>'));
-      var ops = baralha(it.op).map(function(s){ return {v: s, rot: s, fala: "sb_" + s, aria: "Sílaba " + s}; });
-      opcoes(b, pi, id, ops, certa, "pinta", "certo5_" + it.p, "dica5_" + it.p);
+      registra(id, pi, certa);
+      var box = el("div", "ops"), feito = !!ST.resp[id];
+      baralha(it.op).forEach(function(s){
+        var e = el("button", "op pinta" + (feito && s === certa ? " certa" : ""), s);
+        e.setAttribute("data-qa", "op-" + id + "-" + s);
+        e.setAttribute("aria-label", "Sílaba " + s);
+        function pinta(){
+          if(ST.resp[id] || e._pintada) return;
+          e._pintada = true;
+          var L2 = LAPIS[LAPIS_ESCOLHIDO];
+          e.style.background = L2.claro; e.style.borderColor = L2.c; e.style.color = L2.c;
+          sPasso(); falar("sb_" + s);
+          if(s === certa){
+            setTimeout(function(){
+              e.className = "op pinta certa"; e.style.background = ""; e.style.borderColor = ""; e.style.color = "";
+              acertou(id, "certo5_" + it.p);
+            }, 380);
+          } else {
+            errou(id, "dica5_" + it.p);
+            setTimeout(function(){
+              e._pintada = false;
+              e.style.background = ""; e.style.borderColor = ""; e.style.color = "";
+            }, 700);
+          }
+        }
+        e.onclick = pinta;
+        /* esfregar: o dedo/mouse APERTADO passando por cima já pinta */
+        e.addEventListener("pointerenter", function(ev){ if(ev.buttons === 1) pinta(); });
+        e.addEventListener("pointerdown", function(){ pinta(); });
+        box.appendChild(e);
+      });
+      b.appendChild(box);
       b.setAttribute("data-qa", "item-" + id); d.appendChild(b);
     })(L[i], i);
   }
@@ -732,11 +800,35 @@ function montaLigar(caixa, pi, tag, pares, pagina){
     var r = e.getBoundingClientRect(), b = box.getBoundingClientRect();
     return {x: (lado === "e" ? r.right : r.left) - b.left, y: r.top + r.height / 2 - b.top};
   }
+  /* ⭐ O TRAÇO (pedido do Marcos, set/2026: *"melhore o traço que liga para
+     parecer mais profissional"*). Antes era um segmento reto de ponta a ponta.
+     Agora é uma CURVA suave — sai na horizontal de cada caixa e vira no meio,
+     como o cabo de um painel — com um halo branco por baixo (para o traço não
+     sumir quando passa por cima de outra caixa) e um pontinho cheio em cada
+     ponta, que é o que dá o acabamento de "ligado". */
   function linha(a, b2, cor){
-    var l = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    l.setAttribute("x1", a.x); l.setAttribute("y1", a.y); l.setAttribute("x2", b2.x); l.setAttribute("y2", b2.y);
-    l.setAttribute("stroke", cor); l.setAttribute("stroke-width", 7); l.setAttribute("stroke-linecap", "round");
-    svg.appendChild(l); return l;
+    var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    var dx = Math.max(28, Math.abs(b2.x - a.x) * 0.45);
+    var d = "M" + a.x + "," + a.y +
+            " C" + (a.x + dx) + "," + a.y +
+            " " + (b2.x - dx) + "," + b2.y +
+            " " + b2.x + "," + b2.y;
+    var halo = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    halo.setAttribute("d", d); halo.setAttribute("fill", "none");
+    halo.setAttribute("stroke", "#ffffff"); halo.setAttribute("stroke-width", 11);
+    halo.setAttribute("stroke-linecap", "round");
+    var l = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    l.setAttribute("d", d); l.setAttribute("fill", "none");
+    l.setAttribute("stroke", cor); l.setAttribute("stroke-width", 6);
+    l.setAttribute("stroke-linecap", "round");
+    g.appendChild(halo); g.appendChild(l);
+    [a, b2].forEach(function(p){
+      var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", p.x); c.setAttribute("cy", p.y); c.setAttribute("r", 6);
+      c.setAttribute("fill", cor); c.setAttribute("stroke", "#fff"); c.setAttribute("stroke-width", 2.5);
+      g.appendChild(c);
+    });
+    svg.appendChild(g); return g;
   }
   function desmarca(){ if(marcada) marcada.el.className = marcada.el.className.replace(" marcada", ""); marcada = null; }
   function redesenha(){
@@ -932,7 +1024,7 @@ function fim(){
   var pc = tot ? prim / tot : 0;
   var cheias = pc >= .85 ? 3 : pc >= .6 ? 2 : 1, est = "", ke;
   for(ke = 0; ke < 3; ke++)
-    est += '<img src="img/al_estrela' + (ke < cheias ? "" : "_off") + '.png?v=3" alt="" draggable="false">';
+    est += '<img src="img/al_estrela' + (ke < cheias ? "" : "_off") + '.png?v=4" alt="" draggable="false">';
   document.getElementById("estrelas").innerHTML = est;
   document.getElementById("estrelas").setAttribute("aria-label", cheias + " de 3 estrelas");
   var bar = document.getElementById("barras"); bar.innerHTML = "";

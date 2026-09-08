@@ -102,6 +102,14 @@ button{font-family:inherit;cursor:pointer}
 .op.erro{border-color:#e0562f;background:#fdeee9;-webkit-animation:treme .4s;animation:treme .4s}
 @-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 @keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* o estojo de canetinhas da folha 5 */
+.estojo{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px}
+.estojo .rot{font-weight:800;color:#5b4fc4;font-size:14px}
+.lapis{width:44px;height:44px;border:4px solid #fff;border-radius:50%;padding:0;cursor:pointer;
+  box-shadow:0 2px 8px rgba(35,25,80,.22);-webkit-transition:transform .12s;transition:transform .12s}
+.lapis.esc{-webkit-transform:scale(1.18);transform:scale(1.18);box-shadow:0 0 0 4px rgba(60,50,120,.28)}
+.op.pinta{-webkit-transition:background .18s,border-color .18s,color .18s;
+  transition:background .18s,border-color .18s,color .18s}
 .op.fig{padding:6px;min-width:96px}
 .op.fig img{width:88px;height:88px;object-fit:contain;display:block}
 
@@ -195,12 +203,22 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .lx.erro{border-color:#e0562f;-webkit-animation:treme .4s;animation:treme .4s}
 
 /* 6 · 10 — ligar e colar */
-.ligar{position:relative;display:flex;gap:16px;justify-content:space-between;margin:12px 6px}
-.ligar .col{display:flex;flex-direction:column;gap:12px;flex:1;min-width:0}
+/* ⚠️ AS DUAS COLUNAS TÊM QUE TER A MESMA CAIXA (pedido do Marcos, set/2026:
+   *"deixe os retângulos das sílabas iguais ao retângulo que estão os desenhos
+   dentro, para ficar proporcional, igual e não ficar feio"*). Antes a caixa era
+   `min-height`: a da esquerda crescia com a figura de 64px e a da direita ficava
+   no mínimo — duas alturas diferentes lado a lado. Agora a altura é FIXA e igual
+   nas duas, e a largura de cada coluna também.
+   E as colunas ficam mais afastadas, para o traço ter onde desenhar a curva. */
+.ligar{position:relative;display:flex;gap:clamp(30px,10vw,96px);justify-content:space-between;margin:14px 6px}
+.ligar .col{display:flex;flex-direction:column;gap:14px;flex:1 1 0;min-width:0}
 .linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.ponta{border:3px solid #d9ddf2;border-radius:16px;background:#fff;min-height:64px;display:flex;align-items:center;
-  justify-content:center;font-weight:900;font-size:22px;padding:6px;-ms-touch-action:none;touch-action:none}
-.ponta img{width:64px;height:64px;object-fit:contain}
+.ponta{border:3px solid #d9ddf2;border-radius:16px;background:#fff;height:86px;display:flex;align-items:center;
+  justify-content:center;font-weight:900;font-size:24px;letter-spacing:1px;padding:6px;
+  -ms-touch-action:none;touch-action:none;-webkit-transition:border-color .15s,box-shadow .15s;
+  transition:border-color .15s,box-shadow .15s}
+.ponta img{width:68px;height:68px;object-fit:contain}
+@media (max-width:420px){ .ponta{height:74px;font-size:21px} .ponta img{width:58px;height:58px} }
 .ponta.marcada{border-color:#6d5ae6;box-shadow:0 0 0 4px rgba(109,90,230,.22)}
 .ponta.feita{border-color:#15a34a;background:#e7f8ee}
 .ponta.mostra{border-color:#ffd233;box-shadow:0 0 0 4px rgba(255,210,51,.4)}
@@ -387,7 +405,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   <div class="estrelas" id="estrelas"></div>
   <div class="barras" id="barras"></div>
   <p id="resumo" style="font-weight:800;font-size:16px"></p>
-  <div id="medalha" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/al_trofeu.png?v=3" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
+  <div id="medalha" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/al_trofeu.png?v=4" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
   <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
     <button class="bt cinza" id="bRever">Rever o caderno</button>
     <button class="bt verde" id="bRecomecar">Caderno novo</button>
@@ -983,7 +1001,7 @@ function sil(w){ return PAL[w] ? PAL[w][1] : [w.toUpperCase()]; }
    que no repositório já estava limpa. Não adianta consertar o desenho se a
    criança continua recebendo o antigo: subir o VIMG obriga o navegador a buscar
    tudo de novo. REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
-var VIMG = 3;
+var VIMG = 4;
 /* ⚠️⚠️ `draggable="false"` NÃO É DETALHE (set/2026, três horas de caça).
    Toda imagem é arrastável de fábrica no navegador. Quando a criança apertava
    a figura e puxava, o Chrome começava o SEU arrasto nativo do `<img>` e
