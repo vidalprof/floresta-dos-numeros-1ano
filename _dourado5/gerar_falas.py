@@ -73,6 +73,7 @@ F.update({
     "p3enun": u"Agora monte o número com as peças de verdade. Toque na peça de baixo para pôr na mesa; toque numa peça da mesa para tirar.",
     "casaCheia": u"Cada casa vai só até nove. Se juntar dez, é hora de trocar por uma peça maior.",
     "rascLimpo": u"Rascunho limpo. Pode armar a conta de novo.",
+    "verPecas": u"Aqui está o número em peças. Olhe quantas placas, quantas barras e quantos cubinhos você tem para repartir.",
     "passou": u"Passou do número! Toque numa peça da mesa para tirar.",
     "p4enun": u"As peças foram repartidas igualmente entre os grupos. Olhe um grupo e escreva quanto ficou em cada um.",
     "p5enun": u"Sobrou uma barra e ela não dá para repartir inteira. Troque a barra por dez cubinhos e termine a conta. É isso que a conta armada chama de abaixar o número.",
@@ -180,9 +181,18 @@ for it in IT["p9"]:
     q = n // d
     k = "%d_%d" % (n, d)
     F["prob_" + k] = it["hist"] + u" " + it["q"]
-    F["certo9_" + k] = u"Isso! %s dividido por %s dá %s." % (ext(n).capitalize(), ext(d), ext(q))
-    F["dica9_" + k] = u"O problema manda repartir %s em %s partes iguais. Isso é uma divisão: %s dividido por %s." % (
-        ext(n), ext(d), ext(n), ext(d))
+    if it.get("tipo") == "medida":
+        # ⭐ IDEIA DE MEDIDA ("quantas vezes cabe"), que o currículo de Blumenau
+        # pede junto com a repartição: aqui o divisor é o TAMANHO do grupo e a
+        # resposta é QUANTOS grupos. A dica tem que dizer isso, senão ensina a
+        # ideia errada — foi o que o especialista pegou.
+        F["certo9_" + k] = u"Isso! Em %s cabem %s grupos de %s." % (ext(n), ext(q), ext(d))
+        F["dica9_" + k] = u"Aqui o problema não reparte em partes iguais: ele pergunta quantas vezes o %s cabe em %s. Isso também é uma divisão: %s dividido por %s." % (
+            ext(d), ext(n), ext(n), ext(d))
+    else:
+        F["certo9_" + k] = u"Isso! %s dividido por %s dá %s." % (ext(n).capitalize(), ext(d), ext(q))
+        F["dica9_" + k] = u"O problema manda repartir %s em %s partes iguais. Isso é uma divisão: %s dividido por %s." % (
+            ext(n), ext(d), ext(n), ext(d))
 
 # ---- MATERIAL DE APOIO: a tabuada de todo divisor que aparece na folha -----
 # ⭐ O Marcos, 8/set/2026: *"estudantes do 5º ano não sabem a tabuada do 12, por

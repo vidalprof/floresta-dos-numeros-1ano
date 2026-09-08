@@ -6924,3 +6924,35 @@ tabuadas de todos os divisores que aparecem nela e um rascunho largo.
 
 **Regra que fica para toda folha de conta:** onde há divisor, há a tabuada dele ao
 lado. Custou 90 falas novas (9 divisores × 10 linhas) e nada de arte.
+
+## 👩‍🏫 O ESPECIALISTA DA DISCIPLINA CONFERE A FOLHA — regra nova (8/set/2026)
+
+Palavras do Marcos: *"nesse tipo de atividade é sempre bom um especialista da área
+de cada disciplina ou pedagogo para buscar as atividades e verificar se está
+adequado"*. Isto **não é o mesmo** que a banca: a banca mede se FUNCIONA; o
+especialista mede se **ENSINA O QUE TEM QUE ENSINAR NAQUELE ANO**.
+
+**Onde ele entra na folha viva:** duas vezes.
+1. **Antes de montar** — é ele quem ESCOLHE quais folhas da internet servem de
+   repertório (nem toda folha achada é adequada ao ano; muita coisa que se acha
+   como "5º ano" é de 3º).
+2. **Depois de montada** — confere a folha contra o **currículo de Blumenau**
+   (`_curriculo/blumenau.txt`, 440 páginas, está no repo) antes de publicar.
+
+**A estreia dele já pegou uma falta de verdade, na Oficina do Material Dourado.**
+O currículo pede, com todas as letras, *"repartição equitativa **e de medida**"* e
+*"problemas de divisão cujo divisor tenha no máximo dois algarismos"*. Conferindo:
+- ✅ repartição equitativa · ✅ divisor de dois algarismos (o 12) · ✅ algoritmo ·
+  ✅ relação multiplicação × divisão (a prova real) · ✅ resolver problemas;
+- ❌ **a ideia de MEDIDA ("quantas vezes cabe") não existia** — dez folhas inteiras
+  só de repartir. A criança que nunca vê a outra ideia não reconhece *"quantas
+  caixas de 4 dá para encher com 84 garrafinhas?"* como divisão. Consertado: a
+  folha 9 ficou com **duas de repartição e duas de medida**, e o desenho muda com
+  a ideia — na repartição mostram-se os grupos vazios; na medida mostra-se **um
+  grupo cheio** (porque ali quem é a resposta é o NÚMERO de grupos, e mostrar os
+  grupos entregaria tudo). A dica falada também muda, senão ensinava a ideia errada.
+- ⏳ fica na fila, para uma próxima: **estimativa e cálculo mental**, que o
+  currículo lista junto com o algoritmo.
+
+**Onde procurar no currículo (é um .txt de 2 MB, não se lê inteiro):** procurar
+por `algoritmo` + `divis`, por `EF05MA`, e pelo nome do objeto de conhecimento.

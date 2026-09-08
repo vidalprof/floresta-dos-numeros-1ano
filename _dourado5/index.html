@@ -99,6 +99,16 @@ button{font-family:inherit;cursor:pointer}
   .apoio.largo .tab{flex:0 0 200px}
   .apoio.largo .rasc{flex:1 1 320px}
 }
+.rot9{font-weight:800;color:#8a6b12;font-size:13px;margin:10px 0 0}
+.grupos.vazios .grupo{min-height:64px;justify-content:flex-start}
+.grupo.cheio{background:rgba(255,244,190,.7);border-style:solid}
+.grupo .mat{background:none;border:0;padding:0;margin:4px 0 0;min-height:0}
+.maisG{align-self:center;font-weight:800;color:#8a6b12;font-size:13px}
+.verpc{min-height:44px;border:2px solid #c9a52f;border-radius:12px;background:#fff;color:#6b4a1a;
+  font-weight:800;font-size:14px;padding:8px 12px;width:100%}
+.verpc.on{background:#fdf0bd}
+.verbox{border:2px dashed #e3d2a0;border-radius:12px;background:#fdf9ee;padding:8px}
+.verbox .mat{background:none;border:0;padding:0;margin:0}
 .tab{border:2px solid #e0cf9c;border-radius:12px;background:#fffdf5;padding:8px}
 .tabt{font-weight:800;color:#8a6b12;font-size:13px;margin-bottom:6px;text-align:center}
 .tabg{display:grid;grid-template-columns:1fr 1fr;gap:4px}
@@ -283,10 +293,10 @@ var ITENS = {
  "p7": [{"n":138,"d":6},{"n":245,"d":5},{"n":168,"d":12},{"n":312,"d":4},{"n":210,"d":7},{"n":288,"d":8}],
  "p8": [{"n":36,"d":6},{"n":45,"d":5},{"n":81,"d":9},{"n":64,"d":8},{"n":90,"d":9},{"n":56,"d":7}],
  "p9": [
-  {"n":60,"d":12,"un":"pães de queijo","hist":"Na feira da nossa escola, a turma vendeu 60 pães de queijo e vai dividir a mesma quantidade para as 12 mesas do pátio.","q":"Quantos pães de queijo ficam em cada mesa?"},
-  {"n":144,"d":6,"un":"mudas","hist":"Chegaram 144 mudas de árvore para plantar em 6 ruas do bairro, a mesma quantidade em cada rua.","q":"Quantas mudas vão para cada rua?"},
-  {"n":84,"d":4,"un":"garrafinhas","hist":"O ônibus do passeio levou 84 garrafinhas de água para as 4 turmas, todas com a mesma quantidade.","q":"Quantas garrafinhas cada turma recebe?"},
-  {"n":150,"d":5,"un":"alunos","hist":"A escola vai levar 150 alunos ao teatro em 5 ônibus, com o mesmo número de alunos em cada um.","q":"Quantos alunos vão em cada ônibus?"}
+  {"n":144,"d":6,"tipo":"parte","un":"mudas","g":"RUA","hist":"Chegaram 144 mudas de árvore para plantar em 6 ruas do bairro, a mesma quantidade em cada rua.","q":"Quantas mudas vão para cada rua?"},
+  {"n":150,"d":5,"tipo":"parte","un":"alunos","g":"ÔNIBUS","hist":"A escola vai levar 150 alunos ao teatro em 5 ônibus, com o mesmo número de alunos em cada um.","q":"Quantos alunos vão em cada ônibus?"},
+  {"n":60,"d":12,"tipo":"medida","un":"pães de queijo","g":"BANDEJA","hist":"A turma fez 60 pães de queijo para a feira e vai arrumá-los em bandejas de 12.","q":"Quantas bandejas dá para encher?"},
+  {"n":84,"d":4,"tipo":"medida","un":"garrafinhas","g":"CAIXA","hist":"Há 84 garrafinhas de água para guardar em caixas de 4.","q":"Quantas caixas serão usadas?"}
  ],
  "p10": [{"n":25,"d":4},{"n":38,"d":5},{"n":47,"d":6},{"n":59,"d":7},{"n":74,"d":8},{"n":66,"d":9}]
 };
@@ -423,8 +433,8 @@ var FALAS = {
  "certo8_90_9": "Isso! Noventa dividido por nove dá dez.",
  "certo9_144_6": "Isso! Cento e quarenta e quatro dividido por seis dá vinte e quatro.",
  "certo9_150_5": "Isso! Cento e cinquenta dividido por cinco dá trinta.",
- "certo9_60_12": "Isso! Sessenta dividido por doze dá cinco.",
- "certo9_84_4": "Isso! Oitenta e quatro dividido por quatro dá vinte e um.",
+ "certo9_60_12": "Isso! Em sessenta cabem cinco grupos de doze.",
+ "certo9_84_4": "Isso! Em oitenta e quatro cabem vinte e um grupos de quatro.",
  "conta_36_6": "trinta e seis dividido por seis.",
  "conta_45_5": "quarenta e cinco dividido por cinco.",
  "conta_56_7": "cinquenta e seis dividido por sete.",
@@ -517,8 +527,8 @@ var FALAS = {
  "dica8_90_9": "Pense na tabuada do nove: quantas vezes o nove cabe em noventa?",
  "dica9_144_6": "O problema manda repartir cento e quarenta e quatro em seis partes iguais. Isso é uma divisão: cento e quarenta e quatro dividido por seis.",
  "dica9_150_5": "O problema manda repartir cento e cinquenta em cinco partes iguais. Isso é uma divisão: cento e cinquenta dividido por cinco.",
- "dica9_60_12": "O problema manda repartir sessenta em doze partes iguais. Isso é uma divisão: sessenta dividido por doze.",
- "dica9_84_4": "O problema manda repartir oitenta e quatro em quatro partes iguais. Isso é uma divisão: oitenta e quatro dividido por quatro.",
+ "dica9_60_12": "Aqui o problema não reparte em partes iguais: ele pergunta quantas vezes o doze cabe em sessenta. Isso também é uma divisão: sessenta dividido por doze.",
+ "dica9_84_4": "Aqui o problema não reparte em partes iguais: ele pergunta quantas vezes o quatro cabe em oitenta e quatro. Isso também é uma divisão: oitenta e quatro dividido por quatro.",
  "dica_c": "A placa é um quadrado de dez por dez: dez barras, cem cubinhos.",
  "dica_d": "Conte os riscos da barra: são dez cubinhos grudados.",
  "dica_m": "O cubão é um cubo grande: dez placas empilhadas.",
@@ -562,8 +572,8 @@ var FALAS = {
  "peca_u": "O cubinho.",
  "prob_144_6": "Chegaram 144 mudas de árvore para plantar em 6 ruas do bairro, a mesma quantidade em cada rua. Quantas mudas vão para cada rua?",
  "prob_150_5": "A escola vai levar 150 alunos ao teatro em 5 ônibus, com o mesmo número de alunos em cada um. Quantos alunos vão em cada ônibus?",
- "prob_60_12": "Na feira da nossa escola, a turma vendeu 60 pães de queijo e vai dividir a mesma quantidade para as 12 mesas do pátio. Quantos pães de queijo ficam em cada mesa?",
- "prob_84_4": "O ônibus do passeio levou 84 garrafinhas de água para as 4 turmas, todas com a mesma quantidade. Quantas garrafinhas cada turma recebe?",
+ "prob_60_12": "A turma fez 60 pães de queijo para a feira e vai arrumá-los em bandejas de 12. Quantas bandejas dá para encher?",
+ "prob_84_4": "Há 84 garrafinhas de água para guardar em caixas de 4. Quantas caixas serão usadas?",
  "provaB_138_6": "Agora some o resto: cento e trinta e oito mais zero.",
  "provaB_168_12": "Agora some o resto: cento e sessenta e oito mais zero.",
  "provaB_210_7": "Agora some o resto: duzentos e dez mais zero.",
@@ -733,10 +743,11 @@ var FALAS = {
  "vale_d": "Isso! A barra tem dez cubinhos: vale dez.",
  "vale_m": "Isso! O cubão tem dez placas: vale mil.",
  "vale_u": "Isso! O cubinho é uma unidade: vale um.",
+ "verPecas": "Aqui está o número em peças. Olhe quantas placas, quantas barras e quantos cubinhos você tem para repartir.",
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {"19oy0am":1,"1l1mif1":1,"fpgtn3":1,"136357y":1,"14z1ioo":1,"p955v0":1,"136967d":1,"7cjdm":1,"3soi9b":1,"gor1fb":1,"c7sgxw":1,"1ukqb73":1,"f12bv4":1,"846yrb":1,"1235lux":1,"f6gnjm":1,"xt43e1":1,"25ln06":1,"1dqxik2":1,"1h3wcqz":1,"6nnirl":1,"z3ytzv":1,"jp1r7j":1,"qkacbd":1,"1mnu9cx":1,"12t76n8":1,"124re7y":1,"100o429":1,"5jnwxn":1,"aqipj3":1,"22ae8n":1,"1d65cyz":1,"6hdlnv":1,"gemyai":1,"1fkd4e6":1,"1x5elks":1,"ri3d2k":1,"1y7rmch":1,"rx1e2h":1,"1aer0e6":1,"1ymipqk":1,"xxe3wm":1,"531e8d":1,"1o79bi4":1,"1fu8e4z":1,"1gazz5z":1,"78nugx":1,"jx4oxy":1,"7lzhja":1,"1309lg6":1,"o02nh2":1,"1tzeh56":1,"11gbtwk":1,"1262dex":1,"i6hz55":1,"xd4ypl":1,"1cw6ims":1,"1hk19ut":1,"lsjicj":1,"1govyye":1,"pjufbp":1,"1eu2olu":1,"10tcms6":1,"hqjan5":1,"1ygah7x":1,"1ffqxj2":1,"r11lsh":1,"3jdn6z":1,"cgennb":1,"hj88qx":1,"14tm0nz":1,"bjo13n":1,"19jiq84":1,"1fdp5q2":1,"3w2yt4":1,"12akqmn":1,"1o58ubv":1,"9jai1w":1,"1ngyzfe":1,"102mcli":1,"t4qj20":1,"1fphynm":1,"1wvzc8g":1,"1j4hbu7":1,"18xsith":1,"3ds7ld":1,"1ujznig":1,"1j2cy48":1,"q44j04":1,"1n3j9rg":1,"1he0aco":1,"1oakg4h":1,"1x2kno7":1,"1sreqhh":1,"1yisi0l":1,"8lvrn3":1,"1cl3zz":1,"n49y66":1,"1dadj04":1,"40s1ds":1,"14uvh1z":1,"1vnrt0n":1,"uunfyb":1,"1dc3087":1,"jurgwa":1,"pfdh7l":1,"ycrkz5":1,"1s8yinz":1,"rtqje2":1,"1otzgv":1,"r1hp3s":1,"1eunwxk":1,"17eqp4i":1,"xfnxjj":1,"bca8xa":1,"1d9fmaq":1,"y31zyq":1,"j52uo3":1,"1ys4aoz":1,"1r4oge9":1,"73hoy5":1,"10vbpxs":1,"11r9ttt":1,"1ev2u6i":1,"1651f0e":1,"1c7i8od":1,"dcx7u7":1,"p4golb":1,"12ml3gb":1,"1fyd3ng":1,"q4ybgo":1,"1x0yk5i":1,"dfhr83":1,"nsc5lh":1,"1iq4f8s":1,"v1i8lr":1,"1jebvmq":1,"yj0l78":1,"ssup8f":1,"sihiil":1,"ssuy4c":1,"grsp6f":1,"7nfulj":1,"sq4d1i":1,"spjls3":1,"13xtwj9":1,"19g4k0m":1,"13cs219":1,"utjpfq":1,"q63rj4":1,"defbzi":1,"1vwng4u":1,"1tx2zqh":1,"1hjggat":1,"gfmx9t":1,"yj9gdf":1,"1y291ph":1,"1wrypms":1,"mybc9o":1,"1i9yr26":1,"1fngpx":1,"27dz8h":1,"13mc8is":1,"1wjyi27":1,"43v2fv":1,"uj2w9t":1,"kmbslg":1,"1ajxf22":1,"nw3etm":1,"1dn72x2":1,"1434qqv":1,"y31nar":1,"1pbc4c1":1,"3holj":1,"3775c8":1,"3774hm":1,"377czr":1,"ykrdtl":1,"ykoejk":1,"yknrwd":1,"1t0fcn2":1,"1u6qgnb":1,"1tqidfc":1,"nk5lfm":1,"1aebda1":1,"kzrgwc":1,"dsu410":1,"1reeb7n":1,"5m8zbg":1,"17rn1k8":1,"mr8r8p":1,"1yulkic":1,"qdm2y2":1,"1c0cclx":1,"12qqw1o":1,"y44qb2":1,"1yg6rka":1,"1cnqx7b":1,"1c18t6y":1,"vdufmp":1,"18cx2zi":1,"j3sach":1,"1qh4lv9":1,"1ncrbud":1,"fls02s":1,"1dp5hcq":1,"6r4hdy":1,"10r8jli":1,"xqi1q1":1,"7qamgn":1,"1f5r2mq":1,"9l1yr9":1,"1ac2p2a":1,"q5zht7":1,"11yi5u0":1,"8ztdjr":1,"rlfdj3":1,"1pm98qg":1,"1i9y2qn":1,"17rlrz9":1,"p87s1n":1,"z3jpl1":1,"fceyfg":1,"nhvg2":1,"ht4ska":1,"1hsqns1":1,"1fu234u":1,"1cyikaw":1,"2r2umq":1,"k22bau":1,"1lyx1zo":1,"11me4rc":1,"vgf28c":1,"ch3c72":1,"j02ryo":1,"1wt7a2f":1,"1g1nc3j":1,"4hw7u":1,"m9wi1z":1,"fdm5f7":1,"1vfwqsm":1,"ik7ann":1,"17hvkva":1,"mhta9e":1,"1hthsmt":1,"p3eymi":1,"12h9mt7":1,"u1dqg1":1,"kek5ke":1,"1pj71j4":1,"2o89lr":1,"18eg095":1,"547exp":1,"yt94pm":1,"12pjm2z":1,"c61528":1,"ey2qnc":1,"kuwbp1":1,"11bfogw":1,"1oqde69":1,"azj0mg":1,"8o8zmi":1,"6mtexw":1,"178gx42":1,"1nbq9jp":1,"1ertc84":1,"9q30sc":1,"1j3u9t7":1,"jej8ww":1,"1jncwh6":1,"1mine1g":1,"490yyl":1,"2zxtz3":1,"1mwa22k":1,"s5k8ms":1,"1slkpee":1,"7qzski":1,"1ukp5lu":1,"119n9cq":1,"17mwh81":1,"1wbu5w":1,"2fufat":1,"14rxyn5":1,"19dwdpg":1,"1333vro":1,"u80vz6":1,"1suz256":1,"1gj8m4t":1,"dfmk1z":1,"1h5opxt":1,"1cfyfod":1,"1ax4hfl":1,"14pwgib":1,"ic7a5y":1,"j1emn0":1,"1yjm4zm":1,"v5a27h":1,"q57dk3":1,"l3nhsa":1,"748hoz":1,"188h2zz":1,"1tovnll":1,"nfncwr":1,"195yc6":1,"1t378r7":1,"bxq6d6":1,"8hash3":1,"1afwnfu":1,"1x7fa2z":1,"1m6t5ym":1,"zm8png":1,"d1odz8":1,"5gsvoy":1,"1r05a06":1,"5vq3mh":1,"1bkz1ht":1,"xtap69":1,"1rrg0nn":1,"18gy5vy":1,"1psaxin":1,"tdbsie":1,"r7qkrw":1,"mj4ez5":1,"64tjy8":1,"kzrq78":1,"1m6pq5w":1,"abhhul":1,"1gy2h3j":1,"1tyxirg":1,"3qz48m":1,"xmwzx8":1,"nq4mix":1,"evrshf":1,"s2aufo":1,"vlzzfy":1,"xqjxpx":1,"1usfx35":1,"12h6duh":1,"rast2c":1,"pfw7ik":1,"tco47d":1,"1nlv93t":1,"1hn5e8n":1,"1pin10u":1,"1sjdxle":1,"ebruwx":1,"1jkshir":1,"5s9sgr":1,"eo6maa":1,"1prkaq9":1,"10l7cyb":1,"j502nr":1,"19n8znr":1,"g5deou":1,"v5olwl":1,"1i5g9ym":1,"740tcj":1,"k52nsz":1,"5n4exb":1,"ql3wz6":1,"1780men":1,"8rek04":1,"1yxsw0e":1,"12441rn":1,"13eqc7p":1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"19oy0am":1,"1l1mif1":1,"fpgtn3":1,"136357y":1,"14z1ioo":1,"p955v0":1,"136967d":1,"7cjdm":1,"3soi9b":1,"gor1fb":1,"c7sgxw":1,"1ukqb73":1,"f12bv4":1,"846yrb":1,"1235lux":1,"f6gnjm":1,"xt43e1":1,"25ln06":1,"1dqxik2":1,"1h3wcqz":1,"6nnirl":1,"z3ytzv":1,"jp1r7j":1,"qkacbd":1,"1mnu9cx":1,"12t76n8":1,"124re7y":1,"100o429":1,"5jnwxn":1,"aqipj3":1,"22ae8n":1,"1d65cyz":1,"6hdlnv":1,"gemyai":1,"1fkd4e6":1,"1x5elks":1,"ri3d2k":1,"1y7rmch":1,"rx1e2h":1,"1aer0e6":1,"1ymipqk":1,"xxe3wm":1,"531e8d":1,"1o79bi4":1,"1fu8e4z":1,"1gazz5z":1,"78nugx":1,"jx4oxy":1,"7lzhja":1,"1309lg6":1,"o02nh2":1,"1tzeh56":1,"11gbtwk":1,"1262dex":1,"i6hz55":1,"xd4ypl":1,"1cw6ims":1,"1hk19ut":1,"lsjicj":1,"1govyye":1,"pjufbp":1,"1eu2olu":1,"10tcms6":1,"hqjan5":1,"1ygah7x":1,"1ffqxj2":1,"r11lsh":1,"3jdn6z":1,"cgennb":1,"hj88qx":1,"14tm0nz":1,"bjo13n":1,"19jiq84":1,"1fdp5q2":1,"3w2yt4":1,"12akqmn":1,"1o58ubv":1,"9jai1w":1,"1ngyzfe":1,"102mcli":1,"t4qj20":1,"1fphynm":1,"1wvzc8g":1,"1j4hbu7":1,"18xsith":1,"3ds7ld":1,"1ujznig":1,"1j2cy48":1,"q44j04":1,"1n3j9rg":1,"1he0aco":1,"1oakg4h":1,"1x2kno7":1,"1sreqhh":1,"1yisi0l":1,"8lvrn3":1,"1cl3zz":1,"n49y66":1,"1dadj04":1,"40s1ds":1,"14uvh1z":1,"1vnrt0n":1,"uunfyb":1,"1dc3087":1,"jurgwa":1,"pfdh7l":1,"ycrkz5":1,"1s8yinz":1,"rtqje2":1,"1otzgv":1,"r1hp3s":1,"1ydd2q1":1,"6t9qn7":1,"xfnxjj":1,"bca8xa":1,"1d9fmaq":1,"y31zyq":1,"j52uo3":1,"1ys4aoz":1,"1r4oge9":1,"73hoy5":1,"10vbpxs":1,"11r9ttt":1,"1ev2u6i":1,"1651f0e":1,"1c7i8od":1,"dcx7u7":1,"p4golb":1,"12ml3gb":1,"1fyd3ng":1,"q4ybgo":1,"1x0yk5i":1,"dfhr83":1,"nsc5lh":1,"1iq4f8s":1,"v1i8lr":1,"1jebvmq":1,"yj0l78":1,"ssup8f":1,"sihiil":1,"ssuy4c":1,"grsp6f":1,"7nfulj":1,"sq4d1i":1,"spjls3":1,"13xtwj9":1,"19g4k0m":1,"13cs219":1,"utjpfq":1,"q63rj4":1,"defbzi":1,"1vwng4u":1,"1tx2zqh":1,"1hjggat":1,"1je56ts":1,"alwu1u":1,"1y291ph":1,"1wrypms":1,"mybc9o":1,"1i9yr26":1,"1fngpx":1,"27dz8h":1,"13mc8is":1,"1wjyi27":1,"43v2fv":1,"uj2w9t":1,"kmbslg":1,"1ajxf22":1,"nw3etm":1,"1dn72x2":1,"1434qqv":1,"y31nar":1,"1pbc4c1":1,"3holj":1,"3775c8":1,"3774hm":1,"377czr":1,"ykrdtl":1,"ykoejk":1,"yknrwd":1,"1t0fcn2":1,"1u6qgnb":1,"1tqidfc":1,"nk5lfm":1,"1aebda1":1,"kzrgwc":1,"dsu410":1,"1reeb7n":1,"5m8zbg":1,"17rn1k8":1,"mr8r8p":1,"1yulkic":1,"qdm2y2":1,"1c0cclx":1,"12qqw1o":1,"y44qb2":1,"1yg6rka":1,"1cnqx7b":1,"1c18t6y":1,"1uy9r45":1,"qe3jzt":1,"j3sach":1,"1qh4lv9":1,"1ncrbud":1,"fls02s":1,"1dp5hcq":1,"6r4hdy":1,"10r8jli":1,"xqi1q1":1,"7qamgn":1,"1f5r2mq":1,"9l1yr9":1,"1ac2p2a":1,"q5zht7":1,"11yi5u0":1,"8ztdjr":1,"rlfdj3":1,"1pm98qg":1,"1i9y2qn":1,"17rlrz9":1,"p87s1n":1,"z3jpl1":1,"fceyfg":1,"nhvg2":1,"ht4ska":1,"1hsqns1":1,"1fu234u":1,"1cyikaw":1,"2r2umq":1,"k22bau":1,"1lyx1zo":1,"11me4rc":1,"vgf28c":1,"ch3c72":1,"j02ryo":1,"1wt7a2f":1,"1g1nc3j":1,"4hw7u":1,"m9wi1z":1,"fdm5f7":1,"1vfwqsm":1,"ik7ann":1,"17hvkva":1,"mhta9e":1,"1hthsmt":1,"p3eymi":1,"12h9mt7":1,"u1dqg1":1,"kek5ke":1,"1pj71j4":1,"2o89lr":1,"18eg095":1,"547exp":1,"yt94pm":1,"12pjm2z":1,"c61528":1,"ey2qnc":1,"kuwbp1":1,"11bfogw":1,"1oqde69":1,"azj0mg":1,"8o8zmi":1,"6mtexw":1,"178gx42":1,"1nbq9jp":1,"1ertc84":1,"9q30sc":1,"1j3u9t7":1,"jej8ww":1,"1jncwh6":1,"1mine1g":1,"490yyl":1,"2zxtz3":1,"1mwa22k":1,"s5k8ms":1,"1slkpee":1,"7qzski":1,"1ukp5lu":1,"119n9cq":1,"17mwh81":1,"1wbu5w":1,"2fufat":1,"14rxyn5":1,"19dwdpg":1,"1333vro":1,"u80vz6":1,"1suz256":1,"1gj8m4t":1,"dfmk1z":1,"1h5opxt":1,"1cfyfod":1,"1ax4hfl":1,"14pwgib":1,"ic7a5y":1,"j1emn0":1,"1yjm4zm":1,"v5a27h":1,"q57dk3":1,"l3nhsa":1,"748hoz":1,"188h2zz":1,"1tovnll":1,"nfncwr":1,"195yc6":1,"1t378r7":1,"bxq6d6":1,"8hash3":1,"1afwnfu":1,"1x7fa2z":1,"1m6t5ym":1,"zm8png":1,"d1odz8":1,"5gsvoy":1,"1r05a06":1,"5vq3mh":1,"1bkz1ht":1,"xtap69":1,"1rrg0nn":1,"18gy5vy":1,"1psaxin":1,"tdbsie":1,"r7qkrw":1,"mj4ez5":1,"64tjy8":1,"kzrq78":1,"1m6pq5w":1,"abhhul":1,"1gy2h3j":1,"1tyxirg":1,"3qz48m":1,"xmwzx8":1,"nq4mix":1,"evrshf":1,"s2aufo":1,"vlzzfy":1,"xqjxpx":1,"1usfx35":1,"12h6duh":1,"rast2c":1,"pfw7ik":1,"tco47d":1,"1nlv93t":1,"1hn5e8n":1,"1pin10u":1,"1sjdxle":1,"ebruwx":1,"1jkshir":1,"5s9sgr":1,"eo6maa":1,"1prkaq9":1,"10l7cyb":1,"j502nr":1,"19n8znr":1,"g5deou":1,"v5olwl":1,"1i5g9ym":1,"740tcj":1,"k52nsz":1,"5n4exb":1,"ql3wz6":1,"1780men":1,"8rek04":1,"1yxsw0e":1,"12441rn":1,"19nw8k7":1,"13eqc7p":1};/*VOZOK-FIM*/
 
 /* ---------- o material dourado, desenhado em SVG (casa: peça divisao-dourado) ---------- */
 /* Um SÓ desenhista para as quatro peças: o PRISMA em projeção oblíqua (a mesma
@@ -1128,7 +1139,7 @@ function f7(d, pi){
     l1.appendChild(dir); ch.appendChild(l1);
     var lr = el("div", "linhaop", '<span class="conta">resto:</span>');
     lr.appendChild(caixa(pi, "r7_" + i + "r", r, "armadaR_" + it.n + "_" + it.d, "certo7_" + it.n + "_" + it.d, "dica7_" + it.n + "_" + it.d));
-    box.appendChild(ch); box.appendChild(lr); fechaItem(d, box, "r7_" + i, it.d);
+    box.appendChild(ch); box.appendChild(lr); fechaItem(d, box, "r7_" + i, it.d, it.n);
   }
 }
 /* 8 — ligar divisão ao resultado */
@@ -1155,6 +1166,29 @@ function f9(d, pi){
   for(var i = 0; i < L.length; i++){
     var it = L[i], q = it.n / it.d;
     var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span>' + it.hist + '<br><b>' + it.q + '</b>');
+    /* ⭐ O DESENHO DA SITUAÇÃO (8/set/2026). Esta era a única folha em que a
+       criança lia um texto e não via NADA: tinha que imaginar 144 mudas em 6
+       ruas. E é justo aqui que o apoio pesa mais, porque o obstáculo não é a
+       conta — é PERCEBER que a situação é uma divisão. Mostramos o total em
+       peças e os grupos VAZIOS (com o nome do contexto: rua, mesa, turma,
+       ônibus). O modelo aparece; a resposta continua sendo dela. */
+    var p9 = cdu(it.n);
+    box.appendChild(el("div", "rot9", it.tipo === "medida" ? "o que há para guardar:" : "o que há para repartir:"));
+    box.innerHTML += material(p9.c, p9.d, p9.u, 46);
+    var gs = el("div", "grupos vazios"), g;
+    if(it.tipo === "medida"){
+      /* MEDIDA ("quantas vezes cabe"): quem é a RESPOSTA aqui é o NÚMERO de
+         grupos — então mostrar os grupos entregaria tudo. O que se mostra é o
+         TAMANHO de um grupo; a pergunta é quantos desses cabem. */
+      var pg = cdu(it.d);
+      gs.appendChild(el("div", "grupo cheio", '<span class="rotg">1 ' + (it.g || "GRUPO") + ' = ' + it.d + '</span>' + material(pg.c, pg.d, pg.u, 40)));
+      gs.appendChild(el("div", "maisG", "quantas assim dá para encher?"));
+    } else {
+      for(g = 0; g < Math.min(it.d, 6); g++)
+        gs.appendChild(el("div", "grupo", '<span class="rotg">' + (it.g || "GRUPO") + ' ' + (g + 1) + '</span>'));
+      if(it.d > 6) gs.appendChild(el("div", "maisG", "… " + it.d + " no total"));
+    }
+    box.appendChild(gs);
     var lin = el("div", "linhaop", '<span class="conta">' + it.n + ' ÷ ' + it.d + ' =</span>');
     lin.appendChild(caixa(pi, "r9_" + i, q, "prob_" + it.n + "_" + it.d, "certo9_" + it.n + "_" + it.d, "dica9_" + it.n + "_" + it.d));
     box.appendChild(lin); fechaItem(d, box, "r9_" + i, it.d);
@@ -1344,17 +1378,35 @@ function tabuada(dv, chave){
   t.appendChild(g);
   return t;
 }
-function apoio(d, chave, dv){
+function apoio(d, chave, dv, verNum){
   var a = el("div", "apoio");
+  /* ⭐ "VER COM AS PEÇAS" (8/set/2026): na conta armada o "só números" é o degrau
+     simbólico, e é de propósito. Mas quem trava ali ficava sem escada nenhuma.
+     O botão abre o material daquele número ao lado — a criança que já não precisa
+     nem toca, e a que precisa desce um degrau sem sair da folha. */
+  if(verNum){
+    var vb = el("button", "verpc", "👀 ver com as peças"), cx = el("div", "verbox");
+    cx.style.display = "none";
+    var q = cdu(verNum);
+    cx.innerHTML = material(q.c, q.d, q.u, 46);
+    vb.onclick = function(){
+      var ab = cx.style.display === "none";
+      cx.style.display = ab ? "block" : "none";
+      vb.className = ab ? "verpc on" : "verpc";
+      vb.innerHTML = ab ? "👀 esconder as peças" : "👀 ver com as peças";
+      sPasso(); if(ab) falar("verPecas");
+    };
+    a.appendChild(vb); a.appendChild(cx);
+  }
   if(dv) a.appendChild(tabuada(dv, chave));
   a.appendChild(rascunho(d, chave));
   return a;
 }
 /* põe tudo o que o item já tinha dentro de `.trab` e pendura o apoio ao lado */
-function fechaItem(d, box, chave, dv){
+function fechaItem(d, box, chave, dv, verNum){
   var trab = el("div", "trab");
   while(box.firstChild) trab.appendChild(box.firstChild);
-  box.appendChild(trab); box.appendChild(apoio(d, chave, dv));
+  box.appendChild(trab); box.appendChild(apoio(d, chave, dv, verNum));
   d.appendChild(box);
 }
 
