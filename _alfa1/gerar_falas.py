@@ -99,6 +99,10 @@ for it in IT[u"p1"]:
     usa(it[u"p"])
 for w in IT[u"p2"]:
     usa(w)
+    # ⭐ cada palma diz a SUA sílaba (pedido do Marcos, set/2026) — então toda
+    #    sílaba da folha 2 precisa do seu mp3 solto.
+    for s in sil(w):
+        silabas.add(s)
 for it in IT[u"p3"]:
     usa(it[u"a"]); usa(it[u"b"])
 for it in IT[u"p4"]:
@@ -129,8 +133,26 @@ for w in [u"casa", u"mala", u"gato", u"roda", u"vaca", u"copo", u"sino", u"faca"
 for w in sorted(usadas):
     F[u"pal_%s" % w] = falado(w) + u"."
     F[u"sil_%s" % w] = u"%s. %s." % (emsilabas(w), falado(w))
+# ⚠️⚠️ SÍLABA SOLTA SE ESCREVE COMO SE FALA (set/2026, o Marcos ouviu:
+#   *"a pronúncia de algumas sílabas não está [certa], corrija"*).
+#   É a MESMA lição das letras do Trem, onde a casa já escreve "Éfe", "Agá",
+#   "Jóta" em vez de F, H, J. A voz não lê símbolo: lê palavra. E há sequências
+#   que NÃO EXISTEM em começo de palavra em português — a voz não tem regra para
+#   elas e sai soletrando:
+#     · Ç nunca inicia palavra  -> "çã" (maçã) vira letra soletrada; escrevo "sã"
+#     · X inicial tem 4 sons    -> "xí"/"xe" (xícara, peixe) escorrega para "csi";
+#                                  escrevo "chi"/"che", que é [ʃ] garantido
+#   ⚠️ O que eu NÃO faço aqui é acentuar por conta própria (bo -> bó/bô): a
+#   abertura da vogal MUDA de palavra para palavra (bóla x bôlo) e eu trocaria
+#   um defeito raro por um erro sistemático. Sílaba nova entra nesta tabela só
+#   com prova — o portão que ouve (`_qa/pronuncia.py`) é quem dá a prova.
+COMO_SE_FALA = {
+    u"ÇÃ": u"sã",     # maçã
+    u"XÍ": u"chi",    # xícara
+    u"XE": u"che",    # peixe
+}
 for s in sorted(silabas):
-    F[u"sb_%s" % s] = s.lower() + u"."
+    F[u"sb_%s" % s] = COMO_SE_FALA.get(s, s.lower()) + u"."
 
 # ---- folha 1: a letra escondida ----------------------------------------------
 for it in IT[u"p1"]:
@@ -144,9 +166,12 @@ for it in IT[u"p1"]:
 NUM = {1: u"uma", 2: u"duas", 3: u"três", 4: u"quatro"}
 for w in IT[u"p2"]:
     n = len(sil(w))
+    # ⚠️ "SÍLABA", não "pedaço" — é o nome que a BNCC e o currículo de Blumenau
+    #    usam já no 1º ano, e é o que o Marcos pediu. O apoio "pedacinho" fica só
+    #    no enunciado escrito da folha, uma vez.
     F[u"certo2_%s" % w] = u"Isso! %s tem %s %s: %s." % (
         falado(w).capitalize(), NUM.get(n, unicode(n) if str is bytes else str(n)),
-        u"pedaço" if n == 1 else u"pedaços", emsilabas(w))
+        u"sílaba" if n == 1 else u"sílabas", emsilabas(w))
     F[u"dica2_%s" % w] = u"Escute e bata junto: %s. Quantas palmas você bateu?" % emsilabas(w)
 
 # ---- folha 3: o que vem depois ------------------------------------------------

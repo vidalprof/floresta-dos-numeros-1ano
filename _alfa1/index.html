@@ -111,14 +111,43 @@ button{font-family:inherit;cursor:pointer}
 .escondida .buraco{width:52px;height:56px;border-bottom:5px solid #6d5ae6;display:inline-flex;align-items:center;
   justify-content:center;background:#f2efff;border-radius:10px 10px 0 0;font-weight:900;font-size:34px;color:#6d5ae6}
 .escondida .buraco.ok{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+/* o voo da letra até o buraco (ver voaLetra no folhas.js) */
+.escondida .buraco.indo{color:transparent}
+.voa{position:fixed;z-index:60;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:30px;color:#0d7736;background:#e7f8ee;border:3px solid #15a34a;
+  border-radius:14px;pointer-events:none;-webkit-transition:-webkit-transform .5s cubic-bezier(.2,.9,.25,1);
+  transition:transform .5s cubic-bezier(.2,.9,.25,1);box-shadow:0 8px 20px rgba(21,163,74,.35)}
+@-webkit-keyframes pulo{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-9px)}100%{-webkit-transform:translateY(0)}}
+@keyframes pulo{0%{transform:translateY(0)}40%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+.escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:pulo .42s ease;animation:pulo .42s ease}
+.escondida.completa .lt:nth-child(2),.escondida.completa .buraco:nth-child(2){-webkit-animation-delay:.06s;animation-delay:.06s}
+.escondida.completa .lt:nth-child(3),.escondida.completa .buraco:nth-child(3){-webkit-animation-delay:.12s;animation-delay:.12s}
+.escondida.completa .lt:nth-child(4),.escondida.completa .buraco:nth-child(4){-webkit-animation-delay:.18s;animation-delay:.18s}
+.escondida.completa .lt:nth-child(5),.escondida.completa .buraco:nth-child(5){-webkit-animation-delay:.24s;animation-delay:.24s}
+.escondida.completa .lt:nth-child(6),.escondida.completa .buraco:nth-child(6){-webkit-animation-delay:.3s;animation-delay:.3s}
+.escondida.completa .lt:nth-child(7),.escondida.completa .buraco:nth-child(7){-webkit-animation-delay:.36s;animation-delay:.36s}
+@media (prefers-reduced-motion: reduce){
+  .voa{-webkit-transition:none;transition:none}
+  .escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:none;animation:none}
+}
 
 /* 2 — bater a palavra */
 .bater{display:flex;flex-direction:column;align-items:center;gap:10px}
+.icb{width:34px;height:34px;object-fit:contain;vertical-align:middle;margin-right:8px;display:inline-block}
+.icb.pq{width:22px;height:22px;margin-right:6px}
 .palma{min-width:190px;min-height:96px;border:0;border-radius:24px;background:#ffd233;color:#4a3800;font-weight:900;
   font-size:20px;box-shadow:0 6px 0 #d5a800}
 .palma:active{transform:translateY(4px);box-shadow:0 2px 0 #d5a800}
 .contab{font-weight:900;font-size:20px;color:#5b4fc4}
 .contab b{font-size:30px}
+/* a trilha de sílabas: acende uma a cada palma e a voz diz aquela sílaba */
+.trilhasil{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:2px}
+.silbox{min-width:56px;padding:8px 12px;border:3px dashed #d9ddf2;border-radius:14px;background:#fff;
+  color:#c3c7dd;font-weight:900;font-size:22px;letter-spacing:1px;
+  -webkit-transition:all .18s;transition:all .18s}
+.silbox.acesa{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.06);transform:scale(1.06)}
+@media (prefers-reduced-motion: reduce){ .silbox{-webkit-transition:none;transition:none} }
 
 /* 3 — sequência lógica */
 .fila{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
@@ -126,9 +155,25 @@ button{font-family:inherit;cursor:pointer}
   align-items:center;justify-content:center}
 .fila .q img{width:66px;height:66px;object-fit:contain}
 .fila .q.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;font-size:34px;color:#6d5ae6;font-weight:900}
+/* o quadro vazio acende quando a figura puxada chega perto */
+.fila .q.vaga.perto{border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.08);transform:scale(1.08)}
+.fila .q.vaga.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.ajuda{text-align:center;font-size:14px;color:#6b7192;margin:2px 0 6px}
+/* a cópia que segue o dedo/mouse enquanto a criança puxa */
+/* o cinto e o suspensório do `draggable="false"`: navegador antigo não olha o
+   atributo, mas olha esta regra */
+img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:none}
+.fantasma{position:fixed;z-index:70;pointer-events:none;opacity:.92;
+  -webkit-transform:scale(1.1);transform:scale(1.1);
+  -webkit-box-shadow:0 12px 26px rgba(30,35,52,.3);box-shadow:0 12px 26px rgba(30,35,52,.3)}
+.op.puxada{opacity:.35}
 
 /* 4 — circular */
-.grade{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:10px 0}
+.grade{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:10px 0;position:relative}
+/* a folha de acetato onde a criança risca o círculo (ver riscoDeCircular) */
+.riscocv{position:absolute;left:0;top:0;pointer-events:none;z-index:5}
+.riscocv.ativo{z-index:5}
 .circ{position:relative;border:0;background:none;padding:6px;border-radius:50%;min-width:104px;min-height:104px}
 .circ img{width:92px;height:92px;object-fit:contain;display:block}
 .circ:after{content:"";position:absolute;inset:0;border:5px solid transparent;border-radius:50%}
@@ -183,6 +228,9 @@ button{font-family:inherit;cursor:pointer}
 .vaga{min-width:74px;min-height:58px;border:3px dashed #6d5ae6;border-radius:14px;background:#f4f2ff;display:flex;
   align-items:center;justify-content:center;font-weight:900;font-size:24px;letter-spacing:2px;color:#6d5ae6}
 .vaga.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.vaga.perto{border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.08);transform:scale(1.08)}
+.sil.puxada{opacity:.35}
 
 /* 10 — recortar e colar */
 .colar{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:10px 0}
@@ -208,14 +256,62 @@ button{font-family:inherit;cursor:pointer}
 #nomeIn{flex:1;min-width:0;min-height:50px;border:3px solid #6d5ae6;border-radius:14px;padding:0 12px;
   font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
 #nomeIn:focus{outline:none;border-color:#b0308f;box-shadow:0 0 0 4px rgba(176,48,143,.25)}
-.capa{text-align:center;padding:20px 16px 26px}
-.capa h1{margin:6px 0 4px;font-size:clamp(26px,7vw,44px);color:#6d5ae6;letter-spacing:1px;text-transform:uppercase;line-height:1.03}
-.capa .sub{font-weight:700;color:#5b4fc4;font-size:clamp(14px,3.8vw,19px);margin-bottom:12px}
-.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:10px;flex-wrap:wrap;margin:14px 0 6px}
-.capa .cena img{width:92px;height:92px;object-fit:contain}
-.capa .nomef{font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;color:#1d4ed8;
-  font-size:clamp(19px,4.8vw,30px);min-height:36px;margin-top:12px}
-.capa .nomef.vazio{color:#9aa0bd;font-family:"Segoe UI",Arial,sans-serif;font-size:14px;font-weight:600}
+/* ================= A CAPA =================
+   Pedido do Marcos (set/2026): *"essas atividades deveriam ter uma capa bem
+   legal e bonita"*. O tema sai do próprio nome — uma FÁBRICA de palavras:
+   telhado de fábrica, letras que entram uma a uma como se saíssem da linha de
+   montagem, e a esteira embaixo carregando as figuras das folhas.
+   Feita só com CSS e PNG: nada de SVG, nada de emoji (regra dele). */
+.capa{position:relative;text-align:center;padding:18px 16px 24px;overflow:hidden;
+  background:-webkit-linear-gradient(top,#efe9ff 0%,#fdf6ff 58%,#fff 100%);
+  background:linear-gradient(180deg,#efe9ff 0%,#fdf6ff 58%,#fff 100%)}
+.capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
+/* bolhas de luz ao fundo — dão profundidade sem competir com o título.
+   ⚠️ Antes eram três retângulos brancos arredondados que, na tela, pareciam
+   FALHA de desenho. Círculo suave da própria cor da capa lê como fundo. */
+.capa .nv{position:absolute;display:block;border-radius:50%;
+  background:-webkit-radial-gradient(circle,rgba(124,102,255,.20),rgba(124,102,255,0) 70%);
+  background:radial-gradient(circle,rgba(124,102,255,.20),rgba(124,102,255,0) 70%)}
+.capa .n1{width:240px;height:240px;left:-60px;top:-40px}
+.capa .n2{width:300px;height:300px;right:-90px;top:10px}
+.capa .n3{width:180px;height:180px;left:44%;bottom:-70px}
+/* o telhadinho da fábrica com a inicial */
+.capa .chapeu{position:relative;width:66px;height:66px;margin:14px auto 2px;border-radius:16px;
+  background:-webkit-linear-gradient(top left,#7c66ff,#5b4fc4);
+  background:linear-gradient(135deg,#7c66ff,#5b4fc4);color:#fff;font-weight:900;font-size:34px;
+  line-height:66px;box-shadow:0 8px 18px rgba(91,79,196,.36)}
+.capa .chapeu:before{content:"";position:absolute;left:-9px;right:-9px;top:-13px;height:0;
+  border-left:42px solid transparent;border-right:42px solid transparent;border-bottom:16px solid #b0308f}
+.capa h1.titu{margin:10px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+.capa .titu .lt{display:inline-block;font-size:clamp(24px,6.4vw,42px);font-weight:900;letter-spacing:0;
+  color:#4b3fb0;text-shadow:0 3px 0 #d9d2ff,0 5px 10px rgba(60,40,140,.18);
+  -webkit-animation:caiLetra .5s both;animation:caiLetra .5s both}
+.capa .titu .esp{display:inline-block;width:14px}
+/* ⚠️ `caiLetra` e não `cai`: o confete JÁ tinha um `@keyframes cai` que
+   termina em `opacity:0`, declarado mais abaixo — e ele vencia. As letras
+   do título animavam para invisível e a capa aparecia sem título nenhum.
+   Nome de keyframe é global: conferir antes de criar um. */
+@-webkit-keyframes caiLetra{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
+@keyframes caiLetra{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
+.capa .sub{font-weight:700;color:#5b4fc4;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
+/* a esteira: as figuras em cima, a cinta rodando embaixo */
+.capa .esteira{max-width:660px;margin:16px auto 4px;position:relative}
+.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:8px;flex-wrap:nowrap}
+.capa .cena img{width:clamp(54px,14vw,110px);height:clamp(54px,14vw,110px);object-fit:contain;
+  -webkit-animation:sobe 2.6s ease-in-out infinite;animation:sobe 2.6s ease-in-out infinite}
+.capa .cena img:nth-child(2){-webkit-animation-delay:.35s;animation-delay:.35s}
+.capa .cena img:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
+.capa .cena img:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
+.capa .cena img:nth-child(5){-webkit-animation-delay:1.4s;animation-delay:1.4s}
+@-webkit-keyframes sobe{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
+@keyframes sobe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.capa .cinta{display:flex;gap:6px;justify-content:center;background:#3b3560;border-radius:9px;
+  padding:6px 8px;margin-top:6px;box-shadow:0 6px 14px rgba(35,25,80,.22)}
+.capa .cinta i{display:block;width:26px;height:9px;background:#6d5ae6;border-radius:5px}
+.capa .chamada{margin-top:14px;font-weight:700;color:#4b4f70;font-size:clamp(13px,3.4vw,16px)}
+@media (prefers-reduced-motion: reduce){
+  .capa .titu .lt,.capa .cena img{-webkit-animation:none;animation:none}
+}
 #fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
   box-shadow:0 10px 34px rgba(35,25,80,.16);text-align:center}
 #fim h2{margin:0 0 6px;color:#6d5ae6;font-size:clamp(21px,5.5vw,30px)}
@@ -226,13 +322,32 @@ button{font-family:inherit;cursor:pointer}
 .barra .tr{flex:1;height:14px;background:#e6e6f4;border-radius:8px;overflow:hidden}
 .barra .tr i{display:block;height:100%;width:0;background:#15a34a;-webkit-transition:width .8s;transition:width .8s}
 .barra b{flex:none;color:#5b4fc4}
+/* ⚠️ SEM EMOJI E SEM SVG (ordem do Marcos, set/2026: *"evite usar svg e
+   emojis pois não aparecem em alguns navegadores"*). Nos PCs da escola o
+   emoji vira quadradinho vazio e a criança de seis anos não sabe o que é um
+   quadradinho. Aqui: troféu e estrelas são PNG de argila (do banco), as
+   setas são triângulos de CSS puro e o resto é palavra escrita. */
 #medalha{width:132px;height:132px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe680,#e0a800);
-  margin:14px auto;display:flex;align-items:center;justify-content:center;font-size:52px;
+  margin:14px auto;display:flex;align-items:center;justify-content:center;
   box-shadow:0 8px 22px rgba(180,140,0,.42);cursor:pointer;-ms-touch-action:none;touch-action:none}
+#medalha img{width:92px;height:92px;object-fit:contain;display:block;pointer-events:none}
+/* se a figura do troféu faltar, o disco ainda é um disco de ouro com a
+   palavra — nunca um quadradinho quebrado. */
+#medalha.semfig:after{content:"BOA!";font-weight:900;font-size:26px;color:#7a5600}
+.seta{display:inline-block;width:0;height:0;vertical-align:middle;
+  border-top:8px solid transparent;border-bottom:8px solid transparent}
+.seta.esq{border-right:11px solid currentColor;margin-right:7px}
+.seta.dir{border-left:11px solid currentColor;margin-left:7px}
+#estrelas img{width:52px;height:52px;object-fit:contain;display:inline-block;margin:0 3px;vertical-align:middle}
 #relatorio{display:none;text-align:left;background:#f6f7fd;border:2px solid #d9ddf2;border-radius:16px;padding:12px;margin-top:12px;font-size:13px}
 #relatorio table{border-collapse:collapse;width:100%;margin-top:8px}
 #relatorio th,#relatorio td{border:1px solid #d9ddf2;padding:5px 7px;text-align:left}
 #relatorio th{background:#eceefa}
+/* a nota grande do professor: porcentagem + conceito em palavras */
+.notao{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid #d9ddf2;
+  border-radius:14px;padding:10px 14px;margin-top:10px}
+.notao .nn{font-size:38px;font-weight:900;color:#15a34a;line-height:1}
+.notao .nl{font-size:13px;color:#3b4064;line-height:1.35}
 #menuProf{display:none;position:fixed;inset:0;z-index:60;background:rgba(20,16,45,.62);align-items:center;justify-content:center;padding:14px}
 #menuProf.aberto{display:flex}
 #menuProf .cx{background:#fff;border:4px solid #6d5ae6;border-radius:20px;padding:16px;max-width:520px;width:100%;
@@ -272,7 +387,7 @@ button{font-family:inherit;cursor:pointer}
   <div class="estrelas" id="estrelas"></div>
   <div class="barras" id="barras"></div>
   <p id="resumo" style="font-weight:800;font-size:16px"></p>
-  <div id="medalha" role="button" tabindex="0" aria-label="Medalha. Segure dois segundos para abrir o relatório do professor">★</div>
+  <div id="medalha" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/al_trofeu.png?v=3" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
   <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
     <button class="bt cinza" id="bRever">Rever o caderno</button>
     <button class="bt verde" id="bRecomecar">Caderno novo</button>
@@ -290,9 +405,9 @@ button{font-family:inherit;cursor:pointer}
 </div>
 
 <div id="nav">
-  <button class="bt cinza" id="bAnt">◀ Anterior</button>
+  <button class="bt cinza" id="bAnt"><i class="seta esq"></i>Anterior</button>
   <div class="txt" id="navTxt"></div>
-  <button class="bt" id="bProx">Próxima ▶</button>
+  <button class="bt" id="bProx">Próxima<i class="seta dir"></i></button>
 </div>
 
 <div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt" id="bComecar">Começar</button></div></div>
@@ -395,18 +510,18 @@ var FALAS = {
  "certo1_pipa": "Isso! Pipa começa com a letra P.",
  "certo1_sino": "Isso! Sino termina com a letra O.",
  "certo1_vela": "Isso! Vela termina com a letra A.",
- "certo2_banana": "Isso! Banana tem três pedaços: ba... na... na.",
- "certo2_bolo": "Isso! Bolo tem duas pedaços: bo... lo.",
- "certo2_casa": "Isso! Casa tem duas pedaços: ca... sa.",
- "certo2_gato": "Isso! Gato tem duas pedaços: ga... to.",
- "certo2_girafa": "Isso! Girafa tem três pedaços: gi... ra... fa.",
- "certo2_panela": "Isso! Panela tem três pedaços: pa... ne... la.",
- "certo2_peixe": "Isso! Peixe tem duas pedaços: pei... xe.",
- "certo2_pipa": "Isso! Pipa tem duas pedaços: pi... pa.",
- "certo2_sapato": "Isso! Sapato tem três pedaços: sa... pa... to.",
- "certo2_tesoura": "Isso! Tesoura tem três pedaços: te... sou... ra.",
- "certo2_tomate": "Isso! Tomate tem três pedaços: to... ma... te.",
- "certo2_uva": "Isso! Uva tem duas pedaços: u... va.",
+ "certo2_banana": "Isso! Banana tem três sílabas: ba... na... na.",
+ "certo2_bolo": "Isso! Bolo tem duas sílabas: bo... lo.",
+ "certo2_casa": "Isso! Casa tem duas sílabas: ca... sa.",
+ "certo2_gato": "Isso! Gato tem duas sílabas: ga... to.",
+ "certo2_girafa": "Isso! Girafa tem três sílabas: gi... ra... fa.",
+ "certo2_panela": "Isso! Panela tem três sílabas: pa... ne... la.",
+ "certo2_peixe": "Isso! Peixe tem duas sílabas: pei... xe.",
+ "certo2_pipa": "Isso! Pipa tem duas sílabas: pi... pa.",
+ "certo2_sapato": "Isso! Sapato tem três sílabas: sa... pa... to.",
+ "certo2_tesoura": "Isso! Tesoura tem três sílabas: te... sou... ra.",
+ "certo2_tomate": "Isso! Tomate tem três sílabas: to... ma... te.",
+ "certo2_uva": "Isso! Uva tem duas sílabas: u... va.",
  "certo3_bola_peixe": "Isso! A fila é bola, peixe, bola, peixe, e agora bola de novo.",
  "certo3_casa_mala": "Isso! A fila é casa, mala, casa, mala, e agora casa de novo.",
  "certo3_dado_copo": "Isso! A fila é dado, copo, dado, copo, e agora dado de novo.",
@@ -774,9 +889,9 @@ var FALAS = {
  "sb_U": "u.",
  "sb_VA": "va.",
  "sb_VE": "ve.",
- "sb_XE": "xe.",
- "sb_XÍ": "xí.",
- "sb_ÇÃ": "çã.",
+ "sb_XE": "che.",
+ "sb_XÍ": "chi.",
+ "sb_ÇÃ": "sã.",
  "sil_banana": "ba... na... na. banana.",
  "sil_batata": "ba... ta... ta. batata.",
  "sil_boca": "bo... ca. boca.",
@@ -828,7 +943,7 @@ var FALAS = {
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {"1n3vjkw": 1, "wiloz1": 1, "bitzc2": 1, "ecdwx8": 1, "1qzsncq": 1, "glu0jh": 1, "jpyof": 1, "p7ohyc": 1, "cg4ist": 1, "1quiugd": 1, "2hqaus": 1, "tvnd55": 1, "bqmqg7": 1, "1w7n5eq": 1, "kmux1a": 1, "130hfki": 1, "1pdvf1w": 1, "1i4gvmy": 1, "nnao59": 1, "ip5enk": 1, "1vgsgoe": 1, "1o6rz4o": 1, "g8gld9": 1, "1voim1u": 1, "1gbcc9q": 1, "1yyz4q5": 1, "1nob6h8": 1, "1mx824b": 1, "1p0vjt6": 1, "1d121ri": 1, "1sxbq99": 1, "pctwey": 1, "tccpm2": 1, "x750mn": 1, "9332mw": 1, "k145oe": 1, "1bytgj9": 1, "hlc5um": 1, "1sttj9o": 1, "1h06rrg": 1, "q0nquk": 1, "1kqii2m": 1, "1rgz866": 1, "1s08o5o": 1, "1m2fbpo": 1, "18y1igu": 1, "jk13r2": 1, "nim96m": 1, "zq2umk": 1, "1h1pqrk": 1, "1e64dm8": 1, "1tveni": 1, "kfks1p": 1, "wpsb6w": 1, "shw6p9": 1, "ouhdia": 1, "1yfgdha": 1, "6ptfi0": 1, "di3vyk": 1, "1pb5mcu": 1, "7blo58": 1, "1dc03b6": 1, "8ncpdn": 1, "12d08m3": 1, "2axua0": 1, "1woy1ja": 1, "rc80p2": 1, "17daw2j": 1, "2j9nob": 1, "hd9gqp": 1, "41s7nt": 1, "wxwbet": 1, "hmf3ed": 1, "11alz4i": 1, "68am2w": 1, "1lnmbvs": 1, "1bg9fjc": 1, "1lf1960": 1, "1vadqyv": 1, "1cnbj6v": 1, "1vbfw0e": 1, "374qfd": 1, "prdgdc": 1, "1rsy5s2": 1, "xt04wc": 1, "1yns98j": 1, "1t5lxwp": 1, "4moj7t": 1, "41lwax": 1, "18lxwhg": 1, "1h3r92x": 1, "jyn8qk": 1, "1x5tarn": 1, "130bsae": 1, "1cu1rjs": 1, "1wof6fs": 1, "tuz8hj": 1, "8bhwgv": 1, "xahtw2": 1, "14dg8wg": 1, "c11vpu": 1, "mu4l2u": 1, "e9s26b": 1, "h77lll": 1, "8rvnwo": 1, "vtncwf": 1, "1ydhmpw": 1, "mnvytk": 1, "1mldmx2": 1, "1oonudl": 1, "iwcgg8": 1, "wlmkur": 1, "a1oytw": 1, "u07ufl": 1, "1kl7ci7": 1, "16u47rd": 1, "163r4uf": 1, "1j191hj": 1, "1xr0qv": 1, "1tx8k7b": 1, "19tcxhj": 1, "19ml093": 1, "vkko3r": 1, "8jks07": 1, "hh5vd3": 1, "1d0kwnb": 1, "hdp5hj": 1, "17omdc7": 1, "23wux3": 1, "ghgufb": 1, "ogye": 1, "tvtq6u": 1, "1ethxue": 1, "1uor1qu": 1, "1vyok2e": 1, "wmbh1y": 1, "11hm63a": 1, "7i23h2": 1, "1mb0t06": 1, "22wphy": 1, "4s82za": 1, "h8nb1y": 1, "8u8r6e": 1, "1amx2xi": 1, "ewpjod": 1, "nhdpki": 1, "172fxh8": 1, "bpay2": 1, "60pjtu": 1, "1wap4wq": 1, "1ddqjuk": 1, "174dd93": 1, "ss9y1": 1, "8cauhb": 1, "1kghi41": 1, "uguet2": 1, "1bhnd3n": 1, "tr42uy": 1, "j3a66w": 1, "3en3cq": 1, "jbn8oa": 1, "xwnhel": 1, "8fiuov": 1, "1t2d0uh": 1, "1mnrq40": 1, "gx3z9j": 1, "1g7milo": 1, "1gcb848": 1, "6gy2lh": 1, "fmmrk4": 1, "x9b0vk": 1, "1p972ro": 1, "oqq411": 1, "1ldqof5": 1, "1lfzpo7": 1, "1w4yae9": 1, "xzpr8q": 1, "1dvpps2": 1, "1gdt6gr": 1, "1e1xjzy": 1, "1mddttp": 1, "fjqwqm": 1, "1v0yffk": 1, "poakst": 1, "ydq5z8": 1, "zw678p": 1, "vel1e9": 1, "e2nuns": 1, "1c2tjd2": 1, "10hqzhx": 1, "co8xnc": 1, "ibsfsi": 1, "ol39pc": 1, "wrp761": 1, "wrp1ja": 1, "wrpakj": 1, "wrp348": 1, "wros7p": 1, "wros0t": 1, "wroo46": 1, "1dn2f43": 1, "wka2zx": 1, "3ohpt9": 1, "19u14xc": 1, "btl350": 1, "1xk30j4": 1, "17gbxnm": 1, "4pb3vu": 1, "1n25rxe": 1, "1cpf7g9": 1, "1myhcj2": 1, "wpi96m": 1, "hosxdl": 1, "1nhyc51": 1, "s2ot4b": 1, "5ahaej": 1, "jjvtgr": 1, "yutv57": 1, "1vbrsbo": 1, "1w0uso4": 1, "1vyqdtv": 1, "1qr273e": 1, "1214boj": 1, "10p6crl": 1, "pxmzqn": 1, "qsyqsg": 1, "1a9k3oq": 1, "1o62i7e": 1, "pxay7e": 1, "yp6l9z": 1, "2u0yre": 1, "us8jlr": 1, "lh3y32": 1, "nmofxx": 1, "vv5ngb": 1, "p30lff": 1, "89gsac": 1, "vmdxh8": 1, "mwqtzz": 1, "1inigab": 1, "15qtdf5": 1, "1rfzm7p": 1, "z3luuy": 1, "1pgzy0q": 1, "18v524z": 1, "hle7ea": 1, "1khgzdr": 1, "1pzjh5": 1, "1vvhooz": 1, "11b1j90": 1, "1hbkmqh": 1, "1cv3626": 1, "1yexobh": 1, "17l38f6": 1, "18kpj2z": 1, "1f63wpp": 1, "levuks": 1, "altpy8": 1, "vig4b3": 1, "1lh4iv4": 1, "5gx21h": 1, "84kih7": 1, "1v2gjk9": 1, "8f0f0m": 1, "1ib2pe6": 1, "hzgzh8": 1, "51f123": 1, "x41361": 1, "1u5ttul": 1, "vqp0jq": 1, "11fue5o": 1, "1xiq3lx": 1, "dwjiuj": 1, "1ed1bg9": 1, "1iga09": 1, "hjo6et": 1, "plr92a": 1, "1wl7ckt": 1, "ftcp14": 1, "17xp297": 1, "fxsrav": 1, "1a4pd7o": 1, "28ax9l": 1, "fi0ysr": 1, "1xo4xm8": 1, "1vdyq87": 1, "1d9s73k": 1, "1fy7krp": 1, "1fy7kna": 1, "1fy7kpz": 1, "1fy7ksg": 1, "1fy7kv5": 1, "1fy7kqq": 1, "1fy7ktf": 1, "1fy7ki4": 1, "1fy7kkt": 1, "1fy7kge": 1, "1fy7klk": 1, "1fy7ko9": 1, "1fy7kju": 1, "1fy7kmj": 1, "1fy7l3o": 1, "1fy7l6d": 1, "1fy7l1y": 1, "1fy7l4n": 1, "1fy7l74": 1, "1fy7l9t": 1, "1fy7l5e": 1, "1fy7kws": 1, "1fy7kv2": 1, "q9aj2x": 1, "hutccf": 1, "1e0jp4o": 1, "17tnxur": 1, "1c1ve42": 1, "txls1w": 1, "l41oe5": 1, "he3chm": 1, "1ayqes4": 1, "qwu83p": 1, "1mzkcuq": 1, "1g61ro": 1, "12umqw8": 1, "134fag8": 1, "2wkdqc": 1, "2wk6a3": 1, "wz6q0x": 1, "2wk6f9": 1, "11jv35b": 1, "2wkqfn": 1, "2x858m": 1, "1lqks9s": 1, "2x8g63": 1, "1lw57lp": 1, "1j2o7cd": 1, "2xd388": 1, "1puf2y3": 1, "2pmm9x": 1, "2ts28e": 1, "2ts4uh": 1, "2twvb4": 1, "2uezfa": 1, "1cqusj5": 1, "1vcg752": 1, "2vtc3n": 1, "hjre95": 1, "2vwemn": 1, "2vw8zu": 1, "2vwpsm": 1, "k1id0r": 1, "1637by4": 1, "33qfk1": 1, "vc0jii": 1, "33woeb": 1, "1aqyh7z": 1, "37vy6b": 1, "37v1zn": 1, "37upac": 1, "38irv9": 1, "181h06r": 1, "38iifa": 1, "38omz4": 1, "1q1tae8": 1, "wmnwkw": 1, "xxr6ct": 1, "jtecix": 1, "yj4fyh": 1, "352r8e": 1, "355wr9": 1, "3t4mnj": 1, "1aj4oy6": 1, "375k14": 1, "375k2u": 1, "375kvd": 1, "375krx": 1, "yj08ld": 1, "375kx3": 1, "375bqm": 1, "375c2o": 1, "375goc": 1, "375gwy": 1, "375hil": 1, "375hph": 1, "375hr7": 1, "375qqo": 1, "375qem": 1, "375ig6": 1, "375ieg": 1, "375jaf": 1, "375jdv": 1, "375ndw": 1, "375nhc": 1, "375n70": 1, "375n8q": 1, "375sje": 1, "yj725z": 1, "375sqa": 1, "375sok": 1, "375xh4": 1, "375xiu": 1, "375wz0": 1, "375ybd": 1, "375yi9": 1, "yjchc2": 1, "375p6m": 1, "375pa2": 1, "375pdi": 1, "375pio": 1, "375ove": 1, "3hmny": 1, "375u4c": 1, "375u7s": 1, "375z5i": 1, "37627y": 1, "372enj": 1, "twntvp": 1, "omtmrp": 1, "1w136tn": 1, "1p00wuj": 1, "sefqbp": 1, "1rghosr": 1, "unbhad": 1, "m0jqrv": 1, "avmh57": 1, "1fvcttx": 1, "1hq2v2j": 1, "3zx551": 1, "1l9tidh": 1, "1j458sr": 1, "k9d1h": 1, "h18iiz": 1, "fqvnez": 1, "1l3rm4r": 1, "12ny0cr": 1, "t6j1aj": 1, "1f3knut": 1, "1rmlnd1": 1, "11oafkb": 1, "84lsxx": 1, "jx9gzv": 1, "14ios7f": 1, "uty7yj": 1, "bj8uh1": 1, "1utb0g5": 1, "ipkb0r": 1, "1kxp8x7": 1, "1glqvnv": 1, "1lgc4w5": 1, "fuu1qj": 1, "gcch8r": 1, "1qzgkej": 1, "1eifd1n": 1, "127pznp": 1, "m4dljf": 1, "1x02jwr": 1, "lxbr51": 1, "og42yt": 1, "1dsfi9x": 1, "1e4ji6d": 1, "bo1xjf": 1, "tzmssr": 1, "flysi3": 1, "1c46gg5": 1, "swkns7": 1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1n3vjkw": 1, "wiloz1": 1, "bitzc2": 1, "ecdwx8": 1, "1qzsncq": 1, "glu0jh": 1, "jpyof": 1, "p7ohyc": 1, "cg4ist": 1, "1quiugd": 1, "2hqaus": 1, "tvnd55": 1, "bqmqg7": 1, "1w7n5eq": 1, "kmux1a": 1, "130hfki": 1, "1pdvf1w": 1, "1i4gvmy": 1, "nnao59": 1, "ip5enk": 1, "1vgsgoe": 1, "1o6rz4o": 1, "g8gld9": 1, "1voim1u": 1, "1gbcc9q": 1, "1yyz4q5": 1, "1nob6h8": 1, "1mx824b": 1, "1p0vjt6": 1, "1d121ri": 1, "1sxbq99": 1, "pctwey": 1, "tccpm2": 1, "x750mn": 1, "9332mw": 1, "k145oe": 1, "1bytgj9": 1, "1ofroly": 1, "h0dzlw": 1, "1jbl5xg": 1, "1ecu9r8": 1, "1h01e46": 1, "1064qfq": 1, "uf73es": 1, "1nwox8k": 1, "199msja": 1, "e2o9rq": 1, "1ioygty": 1, "17g8hc4": 1, "1h1pqrk": 1, "1e64dm8": 1, "1tveni": 1, "kfks1p": 1, "wpsb6w": 1, "shw6p9": 1, "ouhdia": 1, "1yfgdha": 1, "6ptfi0": 1, "di3vyk": 1, "1pb5mcu": 1, "7blo58": 1, "1dc03b6": 1, "8ncpdn": 1, "12d08m3": 1, "2axua0": 1, "1woy1ja": 1, "rc80p2": 1, "17daw2j": 1, "2j9nob": 1, "hd9gqp": 1, "41s7nt": 1, "wxwbet": 1, "hmf3ed": 1, "11alz4i": 1, "68am2w": 1, "1lnmbvs": 1, "1bg9fjc": 1, "1lf1960": 1, "1vadqyv": 1, "1cnbj6v": 1, "1vbfw0e": 1, "374qfd": 1, "prdgdc": 1, "1rsy5s2": 1, "xt04wc": 1, "1yns98j": 1, "1t5lxwp": 1, "4moj7t": 1, "41lwax": 1, "18lxwhg": 1, "1h3r92x": 1, "jyn8qk": 1, "1x5tarn": 1, "130bsae": 1, "1cu1rjs": 1, "1wof6fs": 1, "tuz8hj": 1, "8bhwgv": 1, "xahtw2": 1, "14dg8wg": 1, "c11vpu": 1, "mu4l2u": 1, "e9s26b": 1, "h77lll": 1, "8rvnwo": 1, "vtncwf": 1, "1ydhmpw": 1, "mnvytk": 1, "1mldmx2": 1, "1oonudl": 1, "iwcgg8": 1, "wlmkur": 1, "a1oytw": 1, "u07ufl": 1, "1kl7ci7": 1, "16u47rd": 1, "163r4uf": 1, "1j191hj": 1, "1xr0qv": 1, "1tx8k7b": 1, "19tcxhj": 1, "19ml093": 1, "vkko3r": 1, "8jks07": 1, "hh5vd3": 1, "1d0kwnb": 1, "hdp5hj": 1, "17omdc7": 1, "23wux3": 1, "ghgufb": 1, "ogye": 1, "tvtq6u": 1, "1ethxue": 1, "1uor1qu": 1, "1vyok2e": 1, "wmbh1y": 1, "11hm63a": 1, "7i23h2": 1, "1mb0t06": 1, "22wphy": 1, "4s82za": 1, "h8nb1y": 1, "8u8r6e": 1, "1amx2xi": 1, "ewpjod": 1, "nhdpki": 1, "172fxh8": 1, "bpay2": 1, "60pjtu": 1, "1wap4wq": 1, "1ddqjuk": 1, "174dd93": 1, "ss9y1": 1, "8cauhb": 1, "1kghi41": 1, "uguet2": 1, "1bhnd3n": 1, "tr42uy": 1, "j3a66w": 1, "3en3cq": 1, "jbn8oa": 1, "xwnhel": 1, "8fiuov": 1, "1t2d0uh": 1, "1mnrq40": 1, "gx3z9j": 1, "1g7milo": 1, "1gcb848": 1, "6gy2lh": 1, "fmmrk4": 1, "x9b0vk": 1, "1p972ro": 1, "oqq411": 1, "1ldqof5": 1, "1lfzpo7": 1, "1w4yae9": 1, "xzpr8q": 1, "1dvpps2": 1, "1gdt6gr": 1, "1e1xjzy": 1, "1mddttp": 1, "fjqwqm": 1, "1v0yffk": 1, "poakst": 1, "ydq5z8": 1, "zw678p": 1, "vel1e9": 1, "e2nuns": 1, "1c2tjd2": 1, "10hqzhx": 1, "co8xnc": 1, "ibsfsi": 1, "ol39pc": 1, "wrp761": 1, "wrp1ja": 1, "wrpakj": 1, "wrp348": 1, "wros7p": 1, "wros0t": 1, "wroo46": 1, "1dn2f43": 1, "wka2zx": 1, "3ohpt9": 1, "19u14xc": 1, "btl350": 1, "1xk30j4": 1, "17gbxnm": 1, "4pb3vu": 1, "1n25rxe": 1, "1cpf7g9": 1, "1myhcj2": 1, "wpi96m": 1, "hosxdl": 1, "1nhyc51": 1, "s2ot4b": 1, "5ahaej": 1, "jjvtgr": 1, "yutv57": 1, "1vbrsbo": 1, "1w0uso4": 1, "1vyqdtv": 1, "1qr273e": 1, "1214boj": 1, "10p6crl": 1, "pxmzqn": 1, "qsyqsg": 1, "1a9k3oq": 1, "1o62i7e": 1, "pxay7e": 1, "yp6l9z": 1, "2u0yre": 1, "us8jlr": 1, "lh3y32": 1, "nmofxx": 1, "vv5ngb": 1, "p30lff": 1, "89gsac": 1, "vmdxh8": 1, "mwqtzz": 1, "1inigab": 1, "15qtdf5": 1, "1rfzm7p": 1, "z3luuy": 1, "1pgzy0q": 1, "18v524z": 1, "hle7ea": 1, "1khgzdr": 1, "1pzjh5": 1, "1vvhooz": 1, "11b1j90": 1, "1hbkmqh": 1, "1cv3626": 1, "1yexobh": 1, "17l38f6": 1, "18kpj2z": 1, "1f63wpp": 1, "levuks": 1, "altpy8": 1, "vig4b3": 1, "1lh4iv4": 1, "5gx21h": 1, "84kih7": 1, "1v2gjk9": 1, "8f0f0m": 1, "1ib2pe6": 1, "hzgzh8": 1, "51f123": 1, "x41361": 1, "1u5ttul": 1, "vqp0jq": 1, "11fue5o": 1, "1xiq3lx": 1, "dwjiuj": 1, "1ed1bg9": 1, "1iga09": 1, "hjo6et": 1, "plr92a": 1, "1wl7ckt": 1, "ftcp14": 1, "17xp297": 1, "fxsrav": 1, "1a4pd7o": 1, "28ax9l": 1, "fi0ysr": 1, "1xo4xm8": 1, "1vdyq87": 1, "1d9s73k": 1, "1fy7krp": 1, "1fy7kna": 1, "1fy7kpz": 1, "1fy7ksg": 1, "1fy7kv5": 1, "1fy7kqq": 1, "1fy7ktf": 1, "1fy7ki4": 1, "1fy7kkt": 1, "1fy7kge": 1, "1fy7klk": 1, "1fy7ko9": 1, "1fy7kju": 1, "1fy7kmj": 1, "1fy7l3o": 1, "1fy7l6d": 1, "1fy7l1y": 1, "1fy7l4n": 1, "1fy7l74": 1, "1fy7l9t": 1, "1fy7l5e": 1, "1fy7kws": 1, "1fy7kv2": 1, "q9aj2x": 1, "hutccf": 1, "1e0jp4o": 1, "17tnxur": 1, "1c1ve42": 1, "txls1w": 1, "l41oe5": 1, "he3chm": 1, "1ayqes4": 1, "qwu83p": 1, "1mzkcuq": 1, "1g61ro": 1, "12umqw8": 1, "134fag8": 1, "2wkdqc": 1, "2wk6a3": 1, "wz6q0x": 1, "2wk6f9": 1, "11jv35b": 1, "2wkqfn": 1, "2x858m": 1, "1lqks9s": 1, "2x8g63": 1, "1lw57lp": 1, "1j2o7cd": 1, "2xd388": 1, "1puf2y3": 1, "2pmm9x": 1, "2ts28e": 1, "2ts4uh": 1, "2twvb4": 1, "2uezfa": 1, "1cqusj5": 1, "1vcg752": 1, "2vtc3n": 1, "hjre95": 1, "2vwemn": 1, "2vw8zu": 1, "2vwpsm": 1, "k1id0r": 1, "1637by4": 1, "33qfk1": 1, "vc0jii": 1, "33woeb": 1, "1aqyh7z": 1, "37vy6b": 1, "37v1zn": 1, "37upac": 1, "38irv9": 1, "181h06r": 1, "38iifa": 1, "38omz4": 1, "1q1tae8": 1, "wmnwkw": 1, "xxr6ct": 1, "jtecix": 1, "yj4fyh": 1, "352r8e": 1, "355wr9": 1, "3t4mnj": 1, "1aj4oy6": 1, "375k14": 1, "375k2u": 1, "375kvd": 1, "375krx": 1, "yj08ld": 1, "375kx3": 1, "375bqm": 1, "375c2o": 1, "375goc": 1, "375gwy": 1, "375hil": 1, "375hph": 1, "375hr7": 1, "375qqo": 1, "375qem": 1, "375ig6": 1, "375ieg": 1, "375jaf": 1, "375jdv": 1, "375ndw": 1, "375nhc": 1, "375n70": 1, "375n8q": 1, "375sje": 1, "yj725z": 1, "375sqa": 1, "375sok": 1, "375xh4": 1, "375xiu": 1, "375wz0": 1, "375ybd": 1, "375yi9": 1, "yjchc2": 1, "375p6m": 1, "375pa2": 1, "375pdi": 1, "375pio": 1, "375ove": 1, "3hmny": 1, "375u4c": 1, "375u7s": 1, "yj08hx": 1, "yj08eh": 1, "375v0b": 1, "twntvp": 1, "omtmrp": 1, "1w136tn": 1, "1p00wuj": 1, "sefqbp": 1, "1rghosr": 1, "unbhad": 1, "m0jqrv": 1, "avmh57": 1, "1fvcttx": 1, "1hq2v2j": 1, "3zx551": 1, "1l9tidh": 1, "1j458sr": 1, "k9d1h": 1, "h18iiz": 1, "fqvnez": 1, "1l3rm4r": 1, "12ny0cr": 1, "t6j1aj": 1, "1f3knut": 1, "1rmlnd1": 1, "11oafkb": 1, "84lsxx": 1, "jx9gzv": 1, "14ios7f": 1, "uty7yj": 1, "bj8uh1": 1, "1utb0g5": 1, "ipkb0r": 1, "1kxp8x7": 1, "1glqvnv": 1, "1lgc4w5": 1, "fuu1qj": 1, "gcch8r": 1, "1qzgkej": 1, "1eifd1n": 1, "127pznp": 1, "m4dljf": 1, "1x02jwr": 1, "lxbr51": 1, "og42yt": 1, "1dsfi9x": 1, "1e4ji6d": 1, "bo1xjf": 1, "tzmssr": 1, "flysi3": 1, "1c46gg5": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ---------- as palavras: figura, escrita e sílabas ----------
    ⚠️ As sílabas ficam DECLARADAS, uma a uma. Separar sílaba por regra em
@@ -862,7 +977,19 @@ var PAL = {
 };
 function esc(w){ return PAL[w] ? PAL[w][0] : w.toUpperCase(); }
 function sil(w){ return PAL[w] ? PAL[w][1] : [w.toUpperCase()]; }
-function img(w, cls){ return '<img class="' + (cls || "fig") + '" src="img/al_' + w + '.png" alt="' + esc(w) + '">'; }
+/* ⚠️ A MARCA DE VERSÃO NA FIGURA (set/2026, defeito que chegou ao Marcos).
+   Quando eu troco uma figura, o NOME do arquivo continua o mesmo — e o navegador
+   dele serve a cópia velha do cache. Ele viu preto na alça da xícara numa figura
+   que no repositório já estava limpa. Não adianta consertar o desenho se a
+   criança continua recebendo o antigo: subir o VIMG obriga o navegador a buscar
+   tudo de novo. REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
+var VIMG = 3;
+/* ⚠️⚠️ `draggable="false"` NÃO É DETALHE (set/2026, três horas de caça).
+   Toda imagem é arrastável de fábrica no navegador. Quando a criança apertava
+   a figura e puxava, o Chrome começava o SEU arrasto nativo do `<img>` e
+   disparava um `pointercancel` — o nosso arrasto morria no primeiro milímetro,
+   sem erro nenhum na tela. Com isto desligado, o gesto é nosso. */
+function img(w, cls){ return '<img class="' + (cls || "fig") + '" draggable="false" src="img/al_' + w + '.png?v=' + VIMG + '" alt="' + esc(w) + '">'; }
 
 /* ---------- estado ---------- */
 var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};

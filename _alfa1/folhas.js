@@ -24,38 +24,200 @@ function monta(){
   }
 }
 
-/* ---------- capa ---------- */
+/* ---------- capa ----------
+   Pedido do Marcos (set/2026): *"essas atividades deveriam ter uma capa bem
+   legal e bonita"*. A capa não é enfeite: é a primeira coisa que a criança de
+   seis anos vê, e é ela que diz "isto aqui é um lugar bom".
+
+   A ideia vem do nome: uma FÁBRICA de palavras. Então há uma esteira, e da
+   esteira saem as letras que formam o título; embaixo, as figuras que ela vai
+   encontrar nas folhas, como se tivessem acabado de ser fabricadas.
+   Tudo em CSS e PNG — nada de SVG, nada de emoji (regra do Marcos).
+   As letras entram uma a uma; quem pediu menos movimento recebe tudo parado. */
 function f0(d){
-  var c = el("div", "capa");
-  c.innerHTML = '<h1>A Fábrica de Palavras</h1><div class="sub">Alfabetização · 1º ano · 10 folhas</div>' +
-    '<div class="cena">' + img("bola") + img("gato") + img("casa") + img("sapo") + '</div>' +
-    '<div class="nomef vazio" id="nomef">escreva o seu nome ali embaixo</div>';
+  var c = el("div", "capa"), nome = "FÁBRICA DE PALAVRAS", k, letras = "";
+  for(k = 0; k < nome.length; k++){
+    var ch = nome.charAt(k);
+    letras += ch === " " ? '<span class="esp"></span>'
+      : '<span class="lt" style="animation-delay:' + (0.05 * k).toFixed(2) + 's">' + ch + '</span>';
+  }
+  c.innerHTML =
+    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
+    '<div class="chapeu">A</div>' +
+    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="sub">Alfabetização &middot; 1º ano &middot; dez folhas para brincar</div>' +
+    '<div class="esteira">' +
+      '<div class="cena">' + img("bola") + img("gato") + img("casa") + img("sapo") + img("uva") + '</div>' +
+      '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
+    '</div>' +
+    '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
 
-/* ---------- fileira de opções (usada em várias folhas) ---------- */
-function opcoes(pai, pi, id, lista, certa, cls, falaCerto, falaDica){
+/* ---------- fileira de opções (usada em várias folhas) ----------
+   `soltarEm` (opcional) liga o ARRASTAR: a criança pode puxar a figura até o
+   quadro vazio em vez de só tocar nela. Pedido do Marcos, set/2026:
+   *"da atividade o que vem depois a criança pode tanto clicar como arrastar a
+   imagem até o local"*. As DUAS portas, sempre — no PC da escola ela usa o
+   mouse e arrastar é o gesto natural; no celular, tocar é. */
+function opcoes(pai, pi, id, lista, certa, cls, falaCerto, falaDica, aoAcertar, soltarEm){
   registra(id, pi, certa);
   var box = el("div", "ops"), feito = !!ST.resp[id];
+  function responde(o, b){
+    if(ST.resp[id]) return;
+    sPasso(); if(o.fala) falar(o.fala);
+    if(o.v === certa){
+      b.className = "op" + (cls ? " " + cls : "") + " certa";
+      if(aoAcertar) aoAcertar(b);
+      setTimeout(function(){ acertou(id, falaCerto); }, aoAcertar ? 620 : 240);
+    } else {
+      b.className = "op" + (cls ? " " + cls : "") + " erro";
+      setTimeout(function(){ b.className = "op" + (cls ? " " + cls : ""); }, 500);
+      errou(id, falaDica);
+    }
+  }
   lista.forEach(function(o){
     var b = el("button", "op" + (cls ? " " + cls : "") + (feito && o.v === certa ? " certa" : ""), o.rot);
     b.setAttribute("data-qa", "op-" + id + "-" + o.v);
     b.setAttribute("aria-label", o.aria || o.v);
-    b.onclick = function(){
-      if(ST.resp[id]) return;
-      sPasso(); if(o.fala) falar(o.fala);
-      if(o.v === certa){
-        b.className = "op" + (cls ? " " + cls : "") + " certa";
-        setTimeout(function(){ acertou(id, falaCerto); }, 240);
-      } else {
-        b.className = "op" + (cls ? " " + cls : "") + " erro";
-        setTimeout(function(){ b.className = "op" + (cls ? " " + cls : ""); }, 500);
-        errou(id, falaDica);
-      }
-    };
+    b.onclick = function(){ if(b._arrastou){ b._arrastou = false; return; } responde(o, b); };
+    if(soltarEm) puxavel(b, soltarEm, function(){ responde(o, b); });
     box.appendChild(b);
   });
   pai.appendChild(box);
+}
+
+/* ---------- PUXAR uma peça até um alvo (mouse, dedo e caneta) ----------
+   ⚠️ Pointer Events e não mouse+touch separados: no celular o navegador dispara
+   eventos de mouse FANTASMA depois do toque, e foi assim que o arrastar já
+   quebrou duas vezes nesta casa. Aqui o `setPointerCapture` prende o ponteiro
+   no botão e o mesmo código serve para os três.
+   ⚠️ E nada de `preventDefault` no início: isso mataria o toque. Só depois de
+   o dedo ANDAR 8 px é que vira arrasto — antes disso continua sendo um toque
+   normal, e o `onclick` responde igual. */
+var PUXA = null;   /* o arrasto em andamento (um de cada vez) */
+
+function puxavel(bt, alvos, aoSoltar){
+  if(!alvos.push) alvos = [alvos];
+  bt.style.touchAction = "none";
+  bt.addEventListener("pointerdown", function(ev){
+    if(ev.button && ev.button !== 0) return;
+    PUXA = {bt: bt, alvos: alvos, aoSoltar: aoSoltar,
+            x0: ev.clientX, y0: ev.clientY,
+            lx: ev.clientX, ly: ev.clientY,   /* último lugar onde o dedo esteve */
+            andando: false, fantasma: null};
+  });
+}
+
+/* ⚠️⚠️ DUAS LIÇÕES PAGAS AQUI (set/2026), as duas achadas por teste e nenhuma
+   delas dava erro na tela — o arrasto simplesmente não acontecia:
+
+   1. `setPointerCapture` no próprio botão + `pointermove` NELE: só o primeiro
+      movimento chegava. O padrão certo é ouvir no DOCUMENTO — o dedo precisa
+      poder SAIR de cima da peça, que é justamente o que ele faz ao levá-la.
+
+   2. O navegador FUNDE os movimentos (coalescing). Num teste com 8 passos
+      chegou UM `pointermove`, de 5 px. Se eu decidir "isto é um arrasto" pela
+      contagem de movimentos, perco a jogada. Então quem MANDA é a SOLTURA:
+      apertou na peça e soltou em cima do alvo = soltou ali, tenham chegado dez
+      movimentos ou um. O fantasma que segue o dedo é enfeite útil; a resposta
+      não depende dele.
+
+   E um só par de ouvintes no documento, não um por peça: com 18 figuras numa
+   folha eram 18 cópias do mesmo tratador rodando a cada movimento. */
+function _puxaAnda(ev){
+  var P = PUXA; if(!P) return;
+  P.lx = ev.clientX; P.ly = ev.clientY;
+  var dx = ev.clientX - P.x0, dy = ev.clientY - P.y0;
+  if(!P.andando){
+    if(dx * dx + dy * dy < 64) return;            /* menos de 8 px: ainda é toque */
+    P.andando = true; P.bt._arrastou = true;
+    var f = P.bt.cloneNode(true);
+    f.className = "fantasma " + P.bt.className;
+    var r = P.bt.getBoundingClientRect();
+    f.style.width = r.width + "px"; f.style.height = r.height + "px";
+    f._ox = r.left; f._oy = r.top;
+    document.body.appendChild(f); P.fantasma = f;
+    P.bt.className = P.bt.className + " puxada";
+  }
+  if(ev.cancelable) ev.preventDefault();
+  P.fantasma.style.left = (P.fantasma._ox + dx) + "px";
+  P.fantasma.style.top = (P.fantasma._oy + dy) + "px";
+  P.alvos.forEach(function(a){
+    a.className = a.className.replace(/ ?perto/, "") + (sobre(ev, a) ? " perto" : "");
+  });
+}
+function _puxaSolta(ev){
+  var P = PUXA; if(!P) return;
+  PUXA = null;
+  P.alvos.forEach(function(a){ a.className = a.className.replace(/ ?perto/, ""); });
+  P.bt.className = P.bt.className.replace(/ ?puxada/, "");
+  if(P.fantasma && P.fantasma.parentNode) P.fantasma.parentNode.removeChild(P.fantasma);
+  /* ⚠️ TERCEIRA LIÇÃO PAGA: o `pointercancel` chega ANTES do `pointerup` e vem
+     com clientX/clientY = 0,0. Quem usasse a coordenada dele concluiria que a
+     criança soltou no canto superior esquerdo da tela — e a peça nunca cairia
+     no lugar. Por isso o último ponto REAL fica guardado (`lx`,`ly`) e é ele
+     que manda quando o evento chega sem posição. */
+  var px = ev.clientX, py = ev.clientY;
+  if(!px && !py){ px = P.lx; py = P.ly; }
+  var onde = {clientX: px, clientY: py};
+  var andou = (px - P.x0) * (px - P.x0) + (py - P.y0) * (py - P.y0) >= 64;
+  if(!andou) return;                              /* foi toque, o onclick resolve */
+  P.bt._arrastou = true;
+  var i;
+  for(i = 0; i < P.alvos.length; i++){
+    if(sobre(onde, P.alvos[i])){ P.aoSoltar(P.alvos[i], i); break; }
+  }
+  setTimeout(function(){ P.bt._arrastou = false; }, 60);
+}
+/* e o arrasto NATIVO do navegador fica desligado na atividade inteira: era ele
+   que disparava o `pointercancel` e matava o nosso. */
+document.addEventListener("dragstart", function(ev){ ev.preventDefault(); });
+document.addEventListener("pointermove", _puxaAnda);
+document.addEventListener("pointerup", _puxaSolta);
+document.addEventListener("pointercancel", _puxaSolta);
+
+function sobre(ev, alvo){
+  var r = alvo.getBoundingClientRect(), m = 14;
+  return ev.clientX >= r.left - m && ev.clientX <= r.right + m &&
+         ev.clientY >= r.top - m && ev.clientY <= r.bottom + m;
+}
+
+/* ---------- a letra VOA para o buraco (pedido do Marcos, set/2026) ----------
+   Palavras dele: *"ao clicar na letra certa ele completar a palavra de cima,
+   saindo o ponto de interrogação, uma animação bem legal"*.
+
+   Por que isto não é enfeite: a criança de 6 anos precisa VER a ligação entre
+   o que ela tocou e o buraco lá em cima. O voo é a linha que liga as duas
+   coisas — sem ele, o "?" simplesmente vira letra e metade da turma não repara
+   que foi a escolha dela que fez aquilo.
+
+   ⚠️ O clone voa em `position:fixed` por cima de tudo: assim ele não empurra
+   nada do leiaute e atravessa a rolagem sem entortar. E quem não quer animação
+   (`prefers-reduced-motion`) recebe o resultado na hora, sem voo. */
+function voaLetra(botao, buraco, letra, linha){
+  function pousa(){
+    buraco.className = "buraco ok";
+    buraco.innerHTML = letra;
+    linha.className = "escondida completa";
+    sPalma();
+  }
+  var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(quieto || !botao.getBoundingClientRect){ pousa(); return; }
+  var de = botao.getBoundingClientRect(), pra = buraco.getBoundingClientRect();
+  var v = el("div", "voa", letra);
+  v.style.left = de.left + "px"; v.style.top = de.top + "px";
+  v.style.width = de.width + "px"; v.style.height = de.height + "px";
+  document.body.appendChild(v);
+  buraco.className = "buraco indo";
+  setTimeout(function(){
+    v.style.transform = "translate(" + (pra.left - de.left + (pra.width - de.width) / 2) + "px," +
+                        (pra.top - de.top + (pra.height - de.height) / 2) + "px) scale(1.25)";
+  }, 20);
+  setTimeout(function(){
+    if(v.parentNode) v.parentNode.removeChild(v);
+    pousa();
+  }, 520);
 }
 
 /* ============ 1 — A LETRA ESCONDIDA ============
@@ -70,17 +232,22 @@ function f1(d, pi){
       var w = esc(it.p), certa = w.charAt(it.pos), id = "r1_" + i;
       var b = item(i + 1);
       b.appendChild(el("div", null, '<div style="text-align:center">' + img(it.p) + '</div>'));
-      var lin = el("div", "escondida");
+      var lin = el("div", "escondida"), buraco = null;
       for(var k = 0; k < w.length; k++){
-        if(k === it.pos) lin.appendChild(el("div", "buraco" + (ST.resp[id] ? " ok" : ""), ST.resp[id] ? certa : "?"));
-        else lin.appendChild(el("span", "lt", w.charAt(k)));
+        if(k === it.pos){
+          buraco = el("div", "buraco" + (ST.resp[id] ? " ok" : ""), ST.resp[id] ? certa : "?");
+          lin.appendChild(buraco);
+        } else lin.appendChild(el("span", "lt", w.charAt(k)));
       }
+      if(ST.resp[id]) lin.className = "escondida completa";
       b.appendChild(lin);
       var outras = "ABCDEFGHIJLMNOPRSTUVZ".split("").filter(function(x){ return x !== certa; });
       var ops = baralha([certa, outras[rnd(outras.length)], outras[rnd(outras.length)]]).map(function(x){
         return {v: x, rot: x, fala: "letra_" + x, aria: "Letra " + x};
       });
-      opcoes(b, pi, id, ops, certa, null, "certo1_" + it.p, "dica1_" + it.p);
+      opcoes(b, pi, id, ops, certa, null, "certo1_" + it.p, "dica1_" + it.p, function(botao){
+        voaLetra(botao, buraco, certa, lin);
+      });
       b.setAttribute("data-qa", "item-" + id);
       d.appendChild(b);
     })(L[i], i);
@@ -92,7 +259,14 @@ function f1(d, pi){
    O currículo pede SEGMENTAR ORALMENTE: então ela BATE, uma vez por pedaço. */
 function f2(d, pi){
   faixa(d, pi, NOMES[1]);
-  d.appendChild(el("div", "enun", "Fale a palavra batendo palma em cada pedaço. Depois toque em <b>Pronto</b>."));
+  /* ⚠️ "SÍLABA", NÃO "PEDAÇO" (pedido do Marcos, set/2026: *"não tem outra
+     expressão mais didática, tipo sílaba?"*). Ele tem razão e o currículo
+     também: a BNCC do 1º ano (EF01LP08/EF01LP09) e o currículo de Blumenau
+     dizem SÍLABA com todas as letras. "Pedacinho" serve como apoio na PRIMEIRA
+     vez — é assim que a professora apresenta —, mas quem fica é a palavra
+     certa; senão a criança chega no 2º ano sem o nome da coisa. */
+  d.appendChild(el("div", "enun", "Fale a palavra batendo <b>uma palma em cada sílaba</b> " +
+    "(cada pedacinho). Depois toque em <b>Pronto</b>."));
   var L = ST.folha.p2;
   for(var i = 0; i < L.length; i++){
     (function(p, i){
@@ -102,19 +276,45 @@ function f2(d, pi){
       cx.appendChild(el("div", null, img(p)));
       cx.appendChild(el("div", "pal", esc(p)));
       var cont = el("div", "contab", "palmas: <b>0</b>");
-      var bt = el("button", "palma", "👏 BATER");
+      var trilha = el("div", "trilhasil");   /* as sílabas acendendo, uma por palma */
+      sil(p).forEach(function(s, k){
+        var c = el("span", "silbox" + (ST.resp[id] ? " acesa" : ""), s);
+        c.setAttribute("data-qa", "silbox-" + id + "-" + k);
+        trilha.appendChild(c);
+      });
+      var bt = el("button", "palma", "BATER PALMA");
       bt.setAttribute("data-qa", "bater-" + id);
       var ok = el("button", "bt verde", "Pronto");
       ok.setAttribute("data-qa", "pronto-" + id);
-      bt.onclick = function(){ if(ST.resp[id]) return; n++; sPalma(); cont.innerHTML = "palmas: <b>" + n + "</b>"; };
+      /* ⭐ CADA PALMA DIZ A SUA SÍLABA (pedido do Marcos, set/2026: *"depois que
+         ele faça dos pedaços ele tem que pronunciar todas as sílabas, exemplo
+         gi ra fa"*). É exatamente o que a professora faz na roda: bate e FALA.
+         Sem a voz, a criança só conta batidas — e contar batida não é segmentar.
+         Bateu além do fim da palavra, ninguém fala: o silêncio já avisa que
+         passou. */
+      bt.onclick = function(){
+        if(ST.resp[id]) return;
+        n++; sPalma(); cont.innerHTML = "palmas: <b>" + n + "</b>";
+        var caixas = trilha.childNodes, k;
+        for(k = 0; k < caixas.length; k++) caixas[k].className = "silbox" + (k < n ? " acesa" : "");
+        if(n <= alvo) falar("sb_" + sil(p)[n - 1]);
+      };
+      function zera(){
+        n = 0; cont.innerHTML = "palmas: <b>0</b>";
+        var caixas = trilha.childNodes, k;
+        for(k = 0; k < caixas.length; k++) caixas[k].className = "silbox";
+      }
       ok.onclick = function(){
         if(ST.resp[id]) return;
-        if(n === alvo){ acertou(id, "certo2_" + p); b.className = "item feito"; }
-        else { errou(id, "dica2_" + p); n = 0; cont.innerHTML = "palmas: <b>0</b>"; }
+        if(n === alvo){
+          var caixas = trilha.childNodes, k;
+          for(k = 0; k < caixas.length; k++) caixas[k].className = "silbox acesa";
+          acertou(id, "certo2_" + p); b.className = "item feito";
+        } else { errou(id, "dica2_" + p); zera(); }
       };
-      var ouv = el("button", "bt cinza", "🔊 ouvir em pedaços");
+      var ouv = el("button", "bt cinza", "OUVIR EM SÍLABAS");
       ouv.onclick = function(){ sPasso(); falar("sil_" + p); };
-      cx.appendChild(bt); cx.appendChild(cont);
+      cx.appendChild(bt); cx.appendChild(cont); cx.appendChild(trilha);
       var lin = el("div", "ops"); lin.appendChild(ouv); lin.appendChild(ok);
       cx.appendChild(lin);
       if(ST.resp[id]){ b.className = "item feito"; cont.innerHTML = "palmas: <b>" + alvo + "</b>"; }
@@ -135,23 +335,105 @@ function f3(d, pi){
       var id = "r3_" + i, seq = [it.a, it.b, it.a, it.b], b = item(i + 1);
       var fila = el("div", "fila");
       seq.forEach(function(w){ fila.appendChild(el("div", "q", img(w))); });
-      fila.appendChild(el("div", "q vaga", ST.resp[id] ? img(it.a) : "?"));
+      var vaga = el("div", "q vaga", ST.resp[id] ? img(it.a) : "?");
+      vaga.setAttribute("data-qa", "vaga-" + id);
+      fila.appendChild(vaga);
       b.appendChild(fila);
+      b.appendChild(el("div", "ajuda", "Toque na figura certa <b>ou puxe</b> ela até o quadro vazio."));
       var erradas = ["casa", "mala", "gato", "roda", "vaca", "sino", "faca"].filter(function(x){ return x !== it.a && x !== it.b; });
       var ops = baralha([it.a, it.b, erradas[rnd(erradas.length)]]).map(function(w){
         return {v: w, rot: img(w), fala: "pal_" + w, aria: esc(w)};
       });
-      opcoes(b, pi, id, ops, it.a, "fig", "certo3_" + it.a + "_" + it.b, "dica3");
+      opcoes(b, pi, id, ops, it.a, "fig", "certo3_" + it.a + "_" + it.b, "dica3", function(){
+        vaga.className = "q vaga cheia"; vaga.innerHTML = img(it.a);
+      }, vaga);
       b.setAttribute("data-qa", "item-" + id); d.appendChild(b);
     })(L[i], i);
   }
+}
+
+/* ---------- RISCAR O CÍRCULO, como no papel (pedido do Marcos, set/2026) ----
+   Palavras dele: *"na de circular, está sendo clicar; não seria legal fazer o
+   círculo ao redor com o mouse também?"*. Ele tem razão: a folha manda CIRCULAR,
+   e circular é um gesto — o dedo/mouse dá a volta. Tocar continua valendo (é o
+   que serve no celular); o risco é a segunda porta.
+
+   Como decide quem foi circulado: o traço é uma sequência de pontos; ao soltar,
+   um desenho conta como circulado se o seu CENTRO ficou dentro do polígono
+   fechado pelo traço (regra do número de cruzamentos). Não exige círculo bonito
+   — rabisco de criança de 6 anos fecha assim mesmo.
+   ⚠️ Traço curto (menos de 60 px) é descartado: senão um clique que escorrega
+   dois pixels viraria "circulou tudo". */
+function riscoDeCircular(grade, botoes, alterna){
+  var cv = document.createElement("canvas");
+  cv.className = "riscocv"; grade.appendChild(cv);
+  var ctx = cv.getContext("2d"), pts = [], riscando = false;
+  function tamanho(){
+    var r = grade.getBoundingClientRect();
+    if(!r.width) return;
+    cv.width = r.width; cv.height = r.height;
+    cv.style.width = r.width + "px"; cv.style.height = r.height + "px";
+  }
+  function pinta(){
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    if(pts.length < 2) return;
+    ctx.strokeStyle = "#e0562f"; ctx.lineWidth = 5;
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+    for(var k = 1; k < pts.length; k++) ctx.lineTo(pts[k].x, pts[k].y);
+    ctx.stroke();
+  }
+  function ponto(ev){
+    var r = cv.getBoundingClientRect();
+    return {x: ev.clientX - r.left, y: ev.clientY - r.top};
+  }
+  grade.addEventListener("pointerdown", function(ev){
+    if(ev.pointerType === "touch") return;      /* no dedo, tocar já resolve */
+    tamanho(); riscando = true; pts = [ponto(ev)];
+    cv.className = "riscocv ativo";
+    try { grade.setPointerCapture(ev.pointerId); } catch(e){}
+  });
+  grade.addEventListener("pointermove", function(ev){
+    if(!riscando) return;
+    pts.push(ponto(ev)); pinta();
+  });
+  function fim(){
+    if(!riscando) return;
+    riscando = false; cv.className = "riscocv";
+    var comp = 0, k;
+    for(k = 1; k < pts.length; k++)
+      comp += Math.abs(pts[k].x - pts[k-1].x) + Math.abs(pts[k].y - pts[k-1].y);
+    if(comp > 60){
+      var r0 = cv.getBoundingClientRect(), w;
+      for(w in botoes){
+        var rb = botoes[w].getBoundingClientRect();
+        if(dentro(pts, rb.left - r0.left + rb.width / 2, rb.top - r0.top + rb.height / 2)) alterna(w);
+      }
+    }
+    pts = []; ctx.clearRect(0, 0, cv.width, cv.height);
+  }
+  grade.addEventListener("pointerup", fim);
+  grade.addEventListener("pointercancel", fim);
+  grade.addEventListener("pointerleave", fim);
+}
+/* ponto dentro do rabisco: conta quantas vezes uma reta para a direita cruza o
+   traço (fechando o último ponto no primeiro). Ímpar = está dentro. */
+function dentro(pts, x, y){
+  var n = pts.length, cruz = false, i, j;
+  if(n < 3) return false;
+  for(i = 0, j = n - 1; i < n; j = i++){
+    var yi = pts[i].y, yj = pts[j].y, xi = pts[i].x, xj = pts[j].x;
+    if(((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) cruz = !cruz;
+  }
+  return cruz;
 }
 
 /* ============ 4 — CIRCULE QUEM COMEÇA IGUAL (sílaba inicial) ============
    Da folha: *"circule os desenhos que se iniciam com a sílaba CA"* (d12/d02). */
 function f4(d, pi){
   faixa(d, pi, NOMES[3]);
-  d.appendChild(el("div", "enun", "Circule <b>todos</b> os desenhos que começam com a sílaba mostrada."));
+  d.appendChild(el("div", "enun", "Circule <b>todos</b> os desenhos que começam com a sílaba mostrada. " +
+    "Toque no desenho <b>ou risque um círculo em volta dele</b>, como no papel."));
   var L = ST.folha.p4;
   for(var i = 0; i < L.length; i++){
     (function(it, i){
@@ -172,6 +454,12 @@ function f4(d, pi){
         botoes[w] = e; grade.appendChild(e);
       });
       b.appendChild(grade);
+      riscoDeCircular(grade, botoes, function(w){
+        if(ST.resp[id]) return;
+        marcadas[w] = !marcadas[w];
+        botoes[w].className = "circ" + (marcadas[w] ? " marcada" : "");
+        sPasso(); falar("pal_" + w);
+      });
       var ok = el("button", "bt verde", "Conferir");
       ok.setAttribute("data-qa", "conferir-" + id);
       ok.onclick = function(){
@@ -246,7 +534,7 @@ function f7(d, pi){
       var lista = el("div", "marcax");
       baralha(it.op).forEach(function(o){
         var l = el("div", "lx" + (ST.resp[id] && o === certa ? " certa" : ""),
-          '<span class="cx">' + (ST.resp[id] && o === certa ? "✕" : "") + '</span><span>' + o + '</span>');
+          '<span class="cx">' + (ST.resp[id] && o === certa ? "X" : "") + '</span><span>' + o + '</span>');
         l.setAttribute("role", "button"); l.setAttribute("tabindex", "0");
         l.setAttribute("data-qa", "x-" + id + "-" + o);
         l.setAttribute("aria-label", "Sílaba " + o);
@@ -254,7 +542,7 @@ function f7(d, pi){
           if(ST.resp[id]) return;
           sPasso(); falar("sb_" + o);
           if(o === certa){
-            l.className = "lx certa"; l.querySelector(".cx").textContent = "✕";
+            l.className = "lx certa"; l.querySelector(".cx").textContent = "X";
             cx.childNodes[1].className = "sq ok"; cx.childNodes[1].textContent = certa;
             setTimeout(function(){ acertou(id, "certo7_" + it.p); b.className = "item feito"; }, 240);
           } else {
@@ -307,7 +595,8 @@ function f8(d, pi){
    Da folha: *"ordene as sílabas e forme a palavra: CA-MA-CO"* (d16/d03). */
 function f9(d, pi){
   faixa(d, pi, NOMES[8]);
-  d.appendChild(el("div", "enun", "As sílabas embaralharam! Toque nelas <b>na ordem certa</b>."));
+  d.appendChild(el("div", "enun", "As sílabas embaralharam! Toque nelas <b>na ordem certa</b>, " +
+    "ou <b>puxe cada uma</b> para o seu quadradinho."));
   var L = ST.folha.p9;
   for(var i = 0; i < L.length; i++){
     (function(p, i){
@@ -317,6 +606,7 @@ function f9(d, pi){
       var vagas = el("div", "vagas"), caixas = [];
       s.forEach(function(x, k){
         var v = el("div", "vaga" + (ST.resp[id] ? " cheia" : ""), ST.resp[id] ? x : "");
+        v.setAttribute("data-qa", "vaga-" + id + "-" + k);
         caixas.push(v); vagas.appendChild(v);
       });
       b.appendChild(vagas);
@@ -325,7 +615,7 @@ function f9(d, pi){
         var c = el("button", "sil" + (ST.resp[id] ? " usada" : ""), o.x);
         c.setAttribute("data-qa", "sil-" + id + "-" + o.k);
         c.setAttribute("aria-label", "Sílaba " + o.x);
-        c.onclick = function(){
+        function poe(){
           if(ST.resp[id]) return;
           sPasso(); falar("sb_" + o.x);
           if(o.k === posto){
@@ -333,7 +623,15 @@ function f9(d, pi){
             c.className = "sil usada"; posto++;
             if(posto === s.length){ acertou(id, "certo9_" + p); b.className = "item feito"; }
           } else { c.className = "sil"; errou(id, "dica9_" + p); }
-        };
+        }
+        c.onclick = function(){ if(c._arrastou){ c._arrastou = false; return; } poe(); };
+        /* ⭐ PUXAR TAMBÉM (pedido do Marcos, set/2026: *"na 9, de ordenar a
+           palavra, seria legal o estudante poder arrastar também"*). Soltar em
+           QUALQUER quadradinho vale — a peça vai para o lugar dela na ordem, e
+           se a sílaba não era a da vez a resposta é a mesma de tocar: a dica.
+           Assim a criança que arrasta e a que toca recebem exatamente o mesmo
+           ensino. */
+        puxavel(c, caixas, function(){ poe(); });
         tira.appendChild(c);
       });
       b.appendChild(tira);
@@ -538,7 +836,7 @@ function confereSil(){
     b.onclick = function(){ digita(L); };
     tk.appendChild(b);
   });
-  var ap = el("button", "ap", "⌫ apagar"); ap.setAttribute("aria-label", "Apagar");
+  var ap = el("button", "ap", "apagar"); ap.setAttribute("aria-label", "Apagar");
   ap.onclick = function(){ digita("ap"); }; tk.appendChild(ap);
   var ok = el("button", "ok", "OK"); ok.setAttribute("aria-label", "Confirmar");
   ok.onclick = function(){ digita("ok"); }; tk.appendChild(ok);
@@ -581,9 +879,12 @@ function confereFolha(pi){
   else setTimeout(fim, 1400);
   atualizaNav();
 }
+/* ⚠️ O nome NÃO se repete na capa (pedido do Marcos, set/2026: *"o nome ao
+   digitar não precisa aparecer lá em cima na capa"*). Ele já aparece dentro do
+   campo onde a criança digita; escrever de novo lá em cima era eco, e ainda
+   empurrava a capa para baixo. Aqui só se mantém o campo em dia com o estado
+   (importa ao retomar de onde parou). */
 function espelhaNome(t){
-  var n = document.getElementById("nomef");
-  if(n){ n.textContent = t || "escreva o seu nome ali embaixo"; n.className = t ? "nomef" : "nomef vazio"; }
   var i = document.getElementById("nomeIn"); if(i && i.value !== t) i.value = t;
 }
 function vaiPara(pi){
@@ -610,7 +911,8 @@ function atualizaNav(){
   var prox = document.getElementById("bProx");
   prox.style.visibility = pi === 0 ? "hidden" : "visible";
   var pend = pi > 0 ? pendentes(pi) : 0;
-  prox.textContent = pi === total - 1 ? (pend ? "Faltam " + pend : "Ver o resultado ★") : (pend ? "Faltam " + pend + " ▶" : "Próxima ▶");
+  prox.innerHTML = pi === total - 1 ? (pend ? "Faltam " + pend : "Ver o resultado")
+    : (pend ? "Faltam " + pend + '<i class="seta dir"></i>' : 'Próxima<i class="seta dir"></i>');
   prox.className = pend ? "bt cinza" : "bt verde";
   document.getElementById("navTxt").textContent = pi === 0 ? "" : NOMES[pi - 1];
 }
@@ -628,7 +930,11 @@ function fim(){
     for(var j = 0; j < ids.length; j++){ var t = ST.tent[ids[j]]; if(t && t.erros === 0 && t.ok) prim++; }
   }
   var pc = tot ? prim / tot : 0;
-  document.getElementById("estrelas").textContent = pc >= .85 ? "★★★" : pc >= .6 ? "★★☆" : "★☆☆";
+  var cheias = pc >= .85 ? 3 : pc >= .6 ? 2 : 1, est = "", ke;
+  for(ke = 0; ke < 3; ke++)
+    est += '<img src="img/al_estrela' + (ke < cheias ? "" : "_off") + '.png?v=3" alt="" draggable="false">';
+  document.getElementById("estrelas").innerHTML = est;
+  document.getElementById("estrelas").setAttribute("aria-label", cheias + " de 3 estrelas");
   var bar = document.getElementById("barras"); bar.innerHTML = "";
   for(pi = 1; pi <= 10; pi++){
     (function(pi){
@@ -652,27 +958,61 @@ function fim(){
   m.addEventListener("pointerleave", larga);
   m.addEventListener("pointercancel", larga);
 })();
+/* O QUE CADA FOLHA MEDE — é isto que vira a frase do "dominou".
+   ⚠️ O relatório é do PROFESSOR, não da criança: aqui pode haver porcentagem e
+   o nome técnico da habilidade. Na tela da criança, nunca (§FIM-DE-ATIVIDADE). */
+var HABILIDADE = [
+  "reconhecer a letra que falta na palavra",
+  "contar as sílabas da palavra batendo palma",
+  "descobrir a ordem que se repete numa sequência",
+  "identificar a sílaba inicial",
+  "marcar a sílaba com que a palavra começa",
+  "identificar a sílaba final",
+  "identificar a sílaba do meio",
+  "escrever a sílaba que falta",
+  "ordenar as sílabas e formar a palavra",
+  "juntar a sílaba inicial à figura certa"
+];
 function abreRelatorio(){
   var r = document.getElementById("relatorio");
-  var h = "<b>Relatório do professor</b> — " + (ST.nome || "(sem nome)") + " · " +
-    Math.round((Date.now() - (ST.inicio || Date.now())) / 60000) + " min" +
-    "<table><tr><th>Folha</th><th>De primeira</th><th>Precisou de dica</th></tr>";
-  var fracas = [], pi;
+  var linhas = "", fracas = [], dominou = [], pi, geralAcertos = 0, geralTotal = 0;
   for(pi = 1; pi <= 10; pi++){
-    var ids = idsDaPagina(pi), t = ids.length, p = 0, ruins = 0, j;
+    var ids = idsDaPagina(pi), t = ids.length, p = 0, ruins = 0, feitos = 0, j;
     for(j = 0; j < ids.length; j++){
       var tt = ST.tent[ids[j]];
-      if(tt && tt.erros === 0) p++;
+      if(tt && tt.ok) feitos++;
+      if(tt && tt.erros === 0 && tt.ok) p++;
       if(tt && tt.erros >= 2) ruins++;
     }
-    if(ruins) fracas.push(NOMES[pi - 1]);
-    h += "<tr><td>" + pi + ". " + NOMES[pi - 1] + "</td><td>" + p + "/" + t + "</td><td>" + ruins + "</td></tr>";
+    geralAcertos += p; geralTotal += t;
+    /* ⚠️ AS DUAS LISTAS SÃO COMPLEMENTARES — 75% é a única linha que decide.
+       Na primeira versão a folha entrava em "Retomar" se tivesse UM item com
+       duas tentativas, e aí a mesma folha aparecia em "Já domina" e em
+       "Retomar" ao mesmo tempo. Para o professor isso não é informação: é
+       ruído. Quem precisou de dica já está na coluna da tabela. */
+    var pcf = t ? Math.round(100 * p / t) : 0;
+    if(pcf >= 75) dominou.push(HABILIDADE[pi - 1]);
+    else fracas.push(NOMES[pi - 1] + " (" + pcf + "%)");
+    linhas += "<tr><td>" + pi + ". " + NOMES[pi - 1] + "</td><td>" + p + "/" + t +
+      "</td><td><b>" + pcf + "%</b></td><td>" + ruins + "</td></tr>";
   }
-  h += "</table><p style='margin:10px 0 0'><b>Parecer:</b> " +
-    (fracas.length === 0 ? "Dominou o conteúdo das dez folhas." :
-     fracas.length <= 2 ? "Está construindo. Retomar: " + fracas.join(", ") + "." :
-     "Precisa retomar com apoio: " + fracas.join(", ") + ".") + "</p>";
+  var pc = geralTotal ? Math.round(100 * geralAcertos / geralTotal) : 0;
+  var conceito = pc >= 85 ? "Dominou" : pc >= 60 ? "Está construindo" : "Precisa retomar";
+  var h = "<b>Relatório do professor</b> &mdash; " + esch(ST.nome || "(sem nome)") + " &middot; " +
+    Math.round((Date.now() - (ST.inicio || Date.now())) / 60000) + " min" +
+    "<div class='notao'><span class='nn'>" + pc + "%</span>" +
+    "<span class='nl'>" + geralAcertos + " de " + geralTotal + " acertos de primeira<br><b>" +
+    conceito + "</b></span></div>" +
+    "<table><tr><th>Folha</th><th>De primeira</th><th>%</th><th>Precisou de dica</th></tr>" +
+    linhas + "</table>";
+  h += "<p style='margin:10px 0 0'><b>Já domina:</b> " +
+    (dominou.length ? dominou.join("; ") + "." : "ainda nenhuma habilidade com 75% ou mais.") + "</p>";
+  h += "<p style='margin:6px 0 0'><b>Retomar:</b> " +
+    (fracas.length ? fracas.join(", ") + "." : "nada — foi bem nas dez folhas.") + "</p>";
   r.innerHTML = h; r.style.display = "block"; sPasso();
+}
+function esch(t){
+  return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 /* ---------- retomar, chave mestra e a partida ---------- */
