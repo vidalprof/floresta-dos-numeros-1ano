@@ -7023,3 +7023,40 @@ o recorte vira exato, sem perder um pixel e sem deixar franja de outra cor.
 **Sinal de que o prompt estava ruim:** se eu preciso de regra fina no recorte
 (medir a beirada, contar a área do anel, tratar peça fina à parte), o defeito é do
 prompt. Recorte bom é `cor do fundo → transparente`, e mais nada.
+
+## 🐝 A GRADE DE 6 COLAPSA NO FLUX — peça a peça é o caminho grátis (8/set/2026)
+
+Ao trocar as seis fotografias da Fábrica de Palavras por argila, tentei o que a
+casa manda: **cartela**. Pedi uma folha 2×3 com abelha, gato, jacaré, macaco,
+sapo e tucano, com o molde completo (estilo + luz + limpo + magenta).
+**Voltou um caleidoscópio simétrico** — nem animal havia nele. Prompt curto e
+outra semente: mesma família de defeito.
+
+**O que aprendi, medido:** o Flux (Pollinations) desenha **um** objeto muito bem
+e **desmonta em grade**. A cartela nasceu para o **Gemini**, que entende "cada
+objeto na sua célula"; o gerador grátis não entende. Insistir na grade aqui é
+gastar rodada.
+
+**O caminho que funcionou, e que passa a ser o padrão no Pollinations:**
+- **uma peça por chamada**, com o bloco de estilo IDÊNTICO e a **mesma semente**
+  na família toda (é isso que irmana, não a grade);
+- `gerar-imagens.yml` com `lote=<arquivo.json>` e `grupo:"peca"` — o **rembg
+  recorta dentro do runner** e a peça volta transparente, sem a minha mão no
+  recorte (foi o recorte à mão que custou quatro rodadas na cartela anterior);
+- **fundo magenta** (§ regra do recorte) sempre que a peça tiver preto ou
+  branco na beirada — o tucano é preto e a abelha tem faixas pretas; sobre o
+  preto do molde da casa o recorte os comeria;
+- custo: **R$ 0,00**. O portão `_qa/cartela.py` existe para o dinheiro do
+  Gemini — no caminho grátis a grade não economiza nada e ainda estraga a peça.
+
+**A receita das 3 sementes se pagou:** quatro das seis saíram boas de primeira;
+abelha e sapo foram às três sementes. A abelha saía **dentro de um âmbar
+amarelo** na semente 70108 — e saiu perfeita na 24601, com o MESMO prompt.
+Peça que não sai não é prompt ruim por definição: **tente a semente antes de
+reescrever**.
+
+**E o portão que ficou:** figura de atividade tem que ser da mesma família. Foto
+no meio de argila a criança não vê como "estilo diferente" — ela vê um bicho de
+verdade ao lado de um brinquedo, e no 1º ano isso atrapalha o reconhecimento,
+que é o trabalho da folha. Antes de publicar atividade com muita figura, montar
+o **contato-folha** (todas as figuras numa imagem só, sobre xadrez) e OLHAR.
