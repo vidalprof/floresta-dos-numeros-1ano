@@ -6898,3 +6898,29 @@ trabalho que eu tinha deixado de fora.
 dobra devolve coordenada fora da janela e o mouse não acerta nada — o teste diz
 "0 traços" e parece defeito do app. `await el.scrollIntoViewIfNeeded()` ANTES de
 pegar a caixa. Perdi uma rodada nisso.
+
+## 🧮 MATERIAL DE APOIO AO LADO DA CONTA — a observação mais importante do dia (8/set/2026)
+
+Palavras do Marcos: *"seria legal se esse rascunho fosse ao lado das contas; também
+precisamos analisar que estudantes do 5º ano não sabem a tabuada do 12, por exemplo,
+e que eles precisam de material de apoio para armar as contas e resolver"*.
+
+**Por que isso é grande:** sem a tabuada do divisor à vista, `168 ÷ 12` não é divisão
+— é adivinhação. A criança que não decorou a tabuada do 12 **não está falhando em
+dividir**: está travada num pré-requisito, e a folha passa a medir a coisa errada.
+Com a tabela ao lado, ela procura "quantos 12 cabem em 16?", acha o 12, marca a linha
+e SEGUE — que é exatamente o raciocínio da divisão. **É andaime, não é cola**: a conta
+continua sendo dela.
+
+**Como ficou (`_dourado5`):** cada conta virou duas metades — `.trab` (o exercício) e
+`.apoio` ao lado (embaixo no celular):
+- **tabuada do divisor daquela conta**, 1 a 10, cada linha **falada ao toque** (quem
+  ainda soletra ouve) e **marcável com o dedo**, para não perder o lugar; a marca fica
+  guardada na retomada;
+- **rascunho quadriculado próprio**, para armar aquela conta ali — não mais um só no
+  pé da folha.
+Na folha 8 (ligar), onde as contas ficam nas duas colunas, o apoio é da FOLHA: as
+tabuadas de todos os divisores que aparecem nela e um rascunho largo.
+
+**Regra que fica para toda folha de conta:** onde há divisor, há a tabuada dele ao
+lado. Custou 90 falas novas (9 divisores × 10 linhas) e nada de arte.

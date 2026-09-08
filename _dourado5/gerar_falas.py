@@ -184,6 +184,21 @@ for it in IT["p9"]:
     F["dica9_" + k] = u"O problema manda repartir %s em %s partes iguais. Isso é uma divisão: %s dividido por %s." % (
         ext(n), ext(d), ext(n), ext(d))
 
+# ---- MATERIAL DE APOIO: a tabuada de todo divisor que aparece na folha -----
+# ⭐ O Marcos, 8/set/2026: *"estudantes do 5º ano não sabem a tabuada do 12, por
+# exemplo, e precisam de material de apoio para armar as contas e resolver"*.
+# Cada linha da tabuada fala ao toque — quem ainda soletra ouve, e quem não
+# decorou não fica travada num pré-requisito enquanto a folha cobra DIVISÃO.
+DIVISORES = set()
+for _ch in ("p4", "p5", "p6", "p7", "p8", "p9", "p10"):
+    for _it in IT.get(_ch, []):
+        if isinstance(_it, dict) and _it.get("d"):
+            DIVISORES.add(int(_it["d"]))
+for _dv in sorted(DIVISORES):
+    for _i in range(1, 11):
+        F["tab_%d_%d" % (_dv, _i)] = u"%s vezes %s é igual a %s." % (
+            ext(_i).capitalize(), ext(_dv), ext(_i * _dv))
+
 
 def chave(s):
     s = re.sub(r"\s+", " ", s or "").strip().lower()
