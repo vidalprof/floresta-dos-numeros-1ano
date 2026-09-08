@@ -72,9 +72,9 @@ button{font-family:inherit;cursor:pointer}
 .fala svg{width:24px;height:24px;fill:#3a2600}
 .fala.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
 /* nome e data na capa */
-.nome{position:absolute;font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;color:#1d4ed8;font-size:clamp(16px,3.4vw,30px);background:rgba(255,244,190,.55);border:3px dashed #d9a520;border-radius:10px;padding:0 10px;outline:none;min-height:44px;display:flex;align-items:center;overflow:hidden;white-space:nowrap}
+.nome{position:absolute;font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;color:#1d4ed8;font-size:clamp(14px,3.4vw,30px);background:rgba(255,244,190,.45);border:2px dashed #d9a520;border-radius:8px;padding:0 8px;outline:none;display:flex;align-items:center;overflow:hidden;white-space:nowrap;pointer-events:none}
 .nome:focus{border-style:solid;border-color:#f59e0b;background:rgba(255,236,150,.9)}
-.nome.vazio:before{content:"toque e escreva o seu nome";color:#a08a5a;font-size:.6em;font-family:"Segoe UI",Arial,sans-serif;font-weight:600}
+.nome.vazio:before{content:"escreva o seu nome ali embaixo";color:#a08a5a;font-size:.6em;font-family:"Segoe UI",Arial,sans-serif;font-weight:600}
 .data{position:absolute;font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;color:#1d4ed8;font-size:clamp(16px,3.2vw,28px);display:flex;align-items:center;pointer-events:none}
 .nome{z-index:2}
 #barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff8ea;border-top:3px solid #d9b56a;box-shadow:0 -4px 14px rgba(60,40,10,.2);padding:10px 8px;display:none}
@@ -378,7 +378,7 @@ function monta(){
   }
 }
 function montaCapa(d, P, i){
-  var n = el("div", "nome vazio"); n.setAttribute("contenteditable", "true"); n.setAttribute("aria-label", "Escreva o seu nome"); n.setAttribute("spellcheck", "false");
+  var n = el("div", "nome vazio"); n.setAttribute("aria-hidden", "true");
   pos(n, 180, 1425, 725, 62);
   if(ST.nome){ n.textContent = ST.nome; n.className = "nome"; }
   n.oninput = function(){ var t = n.textContent.replace(/\n/g, " "); if(t.length > 24){ t = t.slice(0, 24); n.textContent = t; } ST.nome = t; n.className = t ? "nome" : "nome vazio"; var i = document.getElementById("nomeIn"); if(i) i.value = t; salvar(); };
