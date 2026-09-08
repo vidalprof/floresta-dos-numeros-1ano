@@ -6956,3 +6956,41 @@ O currículo pede, com todas as letras, *"repartição equitativa **e de medida*
 
 **Onde procurar no currículo (é um .txt de 2 MB, não se lê inteiro):** procurar
 por `algoritmo` + `divis`, por `EF05MA`, e pelo nome do objeto de conhecimento.
+
+## 🧒🖼️ A REGRA DA PALAVRA DO 1º ANO — a figura tem que ter UM nome só (8/set/2026)
+
+O Marcos gerou as cartelas que eu pedi e devolveu a pergunta certa: *"essas imagens
+estão adequadas a essa faixa etária? digo, para eles saberem o que é? é fácil
+identificar?"*. A resposta honesta foi **não para várias** — e o defeito não estava
+no desenho, estava na PALAVRA que eu escolhi.
+
+**As duas regras que faltavam, e que agora valem para toda folha de alfabetização:**
+1. **A criança tem que DIZER aquela palavra sozinha.** Não adianta o desenho estar
+   perfeito se o nome não é do vocabulário dela. Um fio enrolado desenhado com
+   capricho continua sendo *"fio"* na boca de uma criança de 6 anos — nunca *"cabo"*.
+2. **A figura só pode ter UM nome óbvio.** Se dá para chamar de duas coisas, ela não
+   serve: a criança acerta ou erra por causa do desenho, não do som — e a folha passa
+   a medir a coisa errada.
+
+**O que reprovou, e por quê** (todas com desenho bom):
+| palavra | o que a criança diz olhando | veredito |
+|---|---|---|
+| cabo | "fio" | ⛔ fora |
+| gola | "camisa" (o desenho mostra a camisa inteira) | ⛔ fora |
+| goma | "creme", "pote" | ⛔ fora |
+| tora | "tronco", "madeira", "lenha" | ⛔ fora |
+| lama | "chocolate" ou "sujeira" | ⚠️ arriscada |
+| dedo | "mão" | ⚠️ arriscada |
+| lago | "água", "piscina" | ⚠️ arriscada |
+| lobo | "cachorro" (mas o lobo do Chapeuzinho salva) | ⚠️ passa |
+
+**A consequência, e ela é grande:** eu tinha escolhido cabo, gola, goma e tora **só
+para fechar os pares da folha "troque as sílabas de lugar"** (CABO↔BOCA, LAGO↔GOLA,
+GOMA↔MAGO, RATO↔TORA). Tirando essas palavras, sobram dois pares (BOLO↔LOBO,
+MALA↔LAMA) — pouco para uma folha. **Conclusão do especialista: essa folha não é de
+1º ano.** A folha de referência (d05) que a inspirou é de turma mais adiantada, onde
+a criança já lê. Fica para o 2º/3º ano.
+
+⚠️ **A armadilha em que eu caí, escrita para não repetir:** eu deixei a MECÂNICA
+escolher o vocabulário. O certo é o contrário — primeiro a lista de palavras que a
+criança de 6 anos diz, depois o exercício que couber nelas.
