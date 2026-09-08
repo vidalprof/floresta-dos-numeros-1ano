@@ -49,11 +49,20 @@ TMP="_qa/.estatico-$$.js"
 trap 'rm -f "$TMP"' EXIT
 
 python3 - "$ARQ" "$TMP" <<'PY'
-import re, sys
+import os, re, sys
 h = open(sys.argv[1], encoding="utf-8").read()
 # so os <script> sem atributo (os mesmos que o `node --check` da banca le)
-open(sys.argv[2], "w", encoding="utf-8").write(
-    "".join(re.findall(r"<script>(.*?)</script>", h, re.S)))
+js = "".join(re.findall(r"<script>(.*?)</script>", h, re.S))
+# ⚠️ (set/2026, Fabrica de Palavras) APP A MAO PARTIDO EM DOIS ARQUIVOS: o miolo
+#    pode morar num `<script src="folhas.js">` ao lado. Lendo so o index, o portao
+#    acusava "confereFolha is not defined" (funcao que existe, no irmao) e, pior,
+#    ficaria CEGO para os erros do arquivo de fora. Os irmaos locais entram aqui.
+base = os.path.dirname(os.path.abspath(sys.argv[1]))
+for src in re.findall(r'<script[^>]+src="([^":]+\.js)"', h):
+    p = os.path.join(base, src)
+    if os.path.exists(p):
+        js += "\n" + open(p, encoding="utf-8").read()
+open(sys.argv[2], "w", encoding="utf-8").write(js)
 PY
 
 if [ ! -s "$TMP" ]; then echo "NAO MEDI: nao achei <script> em $ARQ"; exit 2; fi
