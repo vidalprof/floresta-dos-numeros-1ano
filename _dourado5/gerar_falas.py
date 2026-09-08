@@ -70,7 +70,9 @@ F.update({
     "vozOn": u"Narração ligada!",
     "p1enun": u"Cada peça do material dourado vale um tanto. Toque na peça e depois no valor dela, ou puxe uma linha.",
     "p2enun": u"Conte as peças e escreva que número elas formam. Lembre: cada placa vale cem, cada barra vale dez e cada cubinho vale um.",
-    "p3enun": u"Agora ao contrário: quantas peças de cada tipo formam este número? Escreva quantas placas, quantas barras e quantos cubinhos.",
+    "p3enun": u"Agora monte o número com as peças de verdade. Toque na peça de baixo para pôr na mesa; toque numa peça da mesa para tirar.",
+    "casaCheia": u"Cada casa vai só até nove. Se juntar dez, é hora de trocar por uma peça maior.",
+    "passou": u"Passou do número! Toque numa peça da mesa para tirar.",
     "p4enun": u"As peças foram repartidas igualmente entre os grupos. Olhe um grupo e escreva quanto ficou em cada um.",
     "p5enun": u"Sobrou uma barra e ela não dá para repartir inteira. Troque a barra por dez cubinhos e termine a conta. É isso que a conta armada chama de abaixar o número.",
     "p6enun": u"Nem tudo dá para repartir igual: o que não fecha um grupo é o resto. Escreva o resultado e o resto.",
@@ -116,7 +118,7 @@ for it in IT["p2"]:
 # ---- folha 3: monte o número ---------------------------------------------
 for n in IT["p3"]:
     c, d, u_ = n // 100, (n // 10) % 10, n % 10
-    F["monte_%d" % n] = u"Que peças formam o número %s? Escreva quantas placas, quantas barras e quantos cubinhos." % ext(n)
+    F["monte_%d" % n] = u"Monte o número %s na mesa: quantas placas, quantas barras e quantos cubinhos?" % ext(n)
     F["certo3_%d" % n] = u"Isso! %s são %s." % (ext(n).capitalize(), pecas_txt(c, d, u_))
     F["dica3_%d" % n] = u"Olhe cada algarismo do número %s: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos." % ext(n)
 

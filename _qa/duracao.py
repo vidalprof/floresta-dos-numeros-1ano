@@ -219,6 +219,53 @@ def confere(pasta, piso_min=40.0):
                 cont[mec] += len(dd) if isinstance(dd, list) else 1
         detalhe = [(m, q, m) for m, q in cont.most_common()]
 
+    # 2c) FOLHA A MAO (livro de folhas interativas — set/2026, na Oficina do
+    #     Material Dourado). ⚠️ LICAO PAGA: o app a mao nao tem `FASES` nem
+    #     `var LISTA=[...]` de conteudo; o que a crianca resolve mora no bloco
+    #     `/*ITENS-INI*/ var ITENS = {...}` (uma lista por FOLHA, chave "pN").
+    #     Sem isto o portao lia as listas ERRADAS — pegava NOMES e CORES (os
+    #     titulos e as cores das folhas!) e dizia "20 itens, 23 min" numa
+    #     atividade de 57 respostas. Contar o titulo da folha como trabalho da
+    #     crianca e pior que nao medir: da um numero com cara de medida.
+    #     O preco sai do GESTO da folha, lido na funcao `fN` que a desenha:
+    #     cada `caixa(` e uma resposta digitada; `montador(` e manipular pecas
+    #     (por em cima da mesa uma a uma); `montaLigar(` e ligar; e um item com
+    #     `hist` e um PROBLEMA, que antes de resolver precisa ser lido.
+    m_it = re.search(r'/\*ITENS-INI\*/\s*var\s+ITENS\s*=\s*(\{.*?\})\s*;\s*/\*ITENS-FIM\*/',
+                     html, re.S)
+    if m_it and not fases_m:
+        try:
+            itens_js = json.loads(m_it.group(1))
+        except ValueError:
+            itens_js = None
+        if itens_js:
+            itens, seg_itens, detalhe = 0, 0.0, []
+            for chave in sorted(itens_js.keys()):
+                lista = itens_js[chave]
+                if not isinstance(lista, list) or not lista:
+                    continue
+                # ⚠️ conta o que a folha SORTEIA, nao o tamanho do pote: o pool
+                #    tem 6 contas e a folha pede 3. Contar o pote inflava a
+                #    estimativa em quase o dobro — numero com cara de medida, de
+                #    novo. O `pega(ITENS.pN, Q, ...)` do `novaFolha` diz o Q.
+                mq = re.search(r'pega\(\s*ITENS\.' + re.escape(chave) + r'\s*,\s*(\d+)', html)
+                n = min(len(lista), int(mq.group(1))) if mq else len(lista)
+                mm = re.match(r'^p(\d+)$', chave)
+                corpo = corpos.get(u"f%s" % mm.group(1), u"") if mm else u""
+                if u"montador(" in corpo:
+                    custo, gesto = 45.0, u"manipular"
+                elif u"montaLigar(" in corpo:
+                    custo, gesto = 14.0, u"ligar"
+                else:
+                    caixas = len(re.findall(r'\bcaixa\(', corpo)) or 1
+                    custo, gesto = 25.0 * caixas, (u"digitar x%d" % caixas)
+                if isinstance(lista[0], dict) and lista[0].get(u"hist"):
+                    custo += 45.0            # ler e entender o problema
+                    gesto = u"problema"
+                itens += n
+                seg_itens += n * custo
+                detalhe.append((chave, n, gesto))
+
     # 3) quantas telas
     telas = len(re.findall(r'^function\s+tela\w+\(', html, re.M))
 

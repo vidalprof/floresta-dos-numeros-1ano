@@ -6827,3 +6827,43 @@ pela casa) e deixei o TEXTO passar.
 
 Consertado no mesmo dia: os quatro problemas viraram feira da escola, mudas nas ruas
 do bairro, garrafinhas do passeio e ônibus para o teatro.
+
+## 🧪 A FOLHA VIVA É UM CAMINHO À PARTE — NÃO É O MOTOR (8/set/2026)
+
+Palavras do Marcos, no meio do teste: *"veja que isso é uma atividade exceção, não
+utiliza o motor"* e *"isso não pode modificar as nossas outras atividades normais
+nem o jeito de montá-las"* — e, sobre o método: *"vc monta o livro com os arquivos
+da internet, dá as interatividades que se pede, redesenha tudo, para não ficar
+cópia... me parece que montar atividades assim é mais rápido e tem menos erros, só
+que tem que ser mais profissional"*. Ele fechou: *"estou testando outros jeitos de
+criar atividades"*.
+
+**O que isso quer dizer, na prática:**
+1. `_folha`, `_dedos` e `_dourado5` são **HTML próprio**, como a Oficina da Divisão e
+   o UNO. **Não** têm `conteudo.json`, **não** passam pelo `montar.py`, **não** são
+   alcançadas pela banca (`auditar.sh`). Nunca tentar "remontá-las" pelo Esqueleto.
+2. Os portões delas são os de app à mão: `node --check`, `_qa/estatico.sh`,
+   `_qa/falas.py`, `_qa/leiaute_mao.js`, `_qa/sobreposto.js`, `_qa/peso.py`,
+   `_qa/duracao.py`, `_qa/catalogo.py` — mais jogar a atividade inteira no Chromium
+   em 1024×600 e 360×740.
+3. **Mexer num portão compartilhado por causa da folha viva é permitido, mexer no
+   motor não.** E quando eu mexo num portão, tenho que PROVAR que as atividades do
+   motor não mudaram: rodar o portão antes e depois nas montadas e comparar a saída.
+   Feito em 8/set com o `_qa/duracao.py` (Padaria, Trem, Sólidos, Museu, Divisão,
+   Central: linha idêntica antes e depois).
+
+**O portão de duração aprendeu a ler folha à mão** no mesmo dia: ele procurava
+`FASES` ou `var LISTA=[...]` e, não achando, contava `NOMES` e `CORES` — os títulos
+e as cores das folhas! — e dizia "23 min" numa atividade de 74 respostas. Agora lê o
+bloco `/*ITENS-INI*/ var ITENS = {...}` e, principalmente, conta **o que a folha
+SORTEIA** (`pega(ITENS.pN, Q, …)`), não o tamanho do pote. Preço por gesto: `caixa(`
+= 25 s cada, `montador(` = 45 s (manipular peça a peça), `montaLigar(` = 14 s, item
+com `hist` = +45 s de leitura.
+
+**O piso agora é 45 minutos** (*"a atividade tem que durar ao menos 45 minutos, não
+importando para qual turma"*). A Oficina do Material Dourado ficou em 52 min
+estimados, com 74 respostas.
+
+**Chave mestra `1275@` no campo do nome** (pedido dele no mesmo dia): abre o menu do
+professor com as 10 folhas. O nome digitado é preservado — a senha não vira o nome
+da criança na folha.

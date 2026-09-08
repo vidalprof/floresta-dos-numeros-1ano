@@ -88,6 +88,28 @@ button{font-family:inherit;cursor:pointer}
 @-webkit-keyframes pisca{50%{opacity:0}}
 @keyframes pisca{50%{opacity:0}}
 /* grupos da divisão */
+.montar .mesa{min-height:78px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:8px;
+  background:#fdf9ee;border:2px dashed #e3d2a0;border-radius:14px;padding:12px 10px;margin:10px 0}
+.montar .mesa .pc{min-width:44px;min-height:44px;border:0;background:none;padding:2px;border-radius:10px;
+  display:inline-flex;align-items:flex-end;justify-content:center;-webkit-transition:transform .12s;transition:transform .12s}
+.montar .mesa .pc:active{transform:scale(.9)}
+.montar .vaziaMsg{color:#a08a5a;font-size:13px;font-weight:600;align-self:center}
+.montar .leitura{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;
+  font-weight:700;color:#6b4a1a;font-size:15px;margin:2px 0 10px}
+.montar .leitura b{font-size:19px;color:#3a2600}
+.montar .leitura em{font-style:normal;font-weight:900;font-size:20px;color:#a08a5a}
+.montar .leitura .tot{background:#f3e8c8;border-radius:10px;padding:2px 12px}
+.montar .leitura .tot.ok{background:#1f6b12;color:#fff}
+.montar .leitura .tot.ok b{color:#fff}
+.montar .estoque{display:flex;flex-wrap:wrap;justify-content:center;gap:10px}
+.montar .fonte{min-width:104px;min-height:98px;border:2px solid #e0cf9c;border-radius:14px;background:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;padding:8px 6px;
+  box-shadow:0 3px 0 #e6dcc4;-webkit-transition:transform .1s;transition:transform .1s}
+.montar .fonte:active{transform:translateY(2px);box-shadow:0 1px 0 #e6dcc4}
+.montar .fonte .rotf{font-size:12px;font-weight:800;color:#8a6b12}
+.montar.feito{border-color:#1f6b12;background:#f3fbef}
+.montar.feito .mesa{border-style:solid;border-color:#bfe0b3}
+.montar.feito .estoque{opacity:.4}
 .grupos{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
 .grupo{flex:1 1 112px;min-width:104px;max-width:170px;min-height:96px;border:3px dashed #c9a52f;border-radius:12px;background:rgba(255,244,190,.45);padding:8px 6px;text-align:center;display:flex;flex-direction:column;align-items:center}
 .grupo .rotg{font-size:12px;font-weight:800;color:#8a6b12;letter-spacing:.4px;display:block;margin-bottom:4px}
@@ -129,6 +151,14 @@ svg.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:
 .comecar{font-size:clamp(18px,4vw,24px);padding:10px 22px;border-radius:40px;-webkit-animation:respira 1.6s infinite;animation:respira 1.6s infinite}
 @-webkit-keyframes respira{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 @keyframes respira{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+#menuProf{display:none;position:fixed;inset:0;z-index:60;background:rgba(30,20,5,.62);align-items:center;justify-content:center;padding:14px}
+#menuProf.aberto{display:flex}
+#menuProf .cx{background:#fff8ea;border:4px solid #c9a52f;border-radius:18px;padding:16px;max-width:520px;width:100%;max-height:92vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+#menuProf h3{margin:0 0 4px;color:#8a6b12;font-size:20px}
+#menuProf p{margin:0 0 12px;font-size:13px;color:#6b4a1a;line-height:1.4}
+#menuProf .folhas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#menuProf .folhas button{min-height:44px;border:0;border-radius:12px;background:#f3e8c8;color:#5b4a2a;font-weight:800;font-size:14px;padding:8px 12px;box-shadow:0 3px 0 #ded0a8;flex:1 1 150px;text-align:left}
+#menuProf .folhas button:active{transform:translateY(2px);box-shadow:0 1px 0 #ded0a8}
 #teclado{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff8ea;border-top:3px solid #c9a52f;box-shadow:0 -4px 14px rgba(60,40,10,.2);padding:8px 8px 10px;display:none}
 #teclado.aberto{display:block}
 #teclado .tk{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:7px}
@@ -196,6 +226,14 @@ svg.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:
 </div>
 
 <div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt comecar" id="bComecar">Começar</button></div></div>
+<div id="menuProf" role="dialog" aria-label="Menu do professor" aria-modal="true">
+  <div class="cx">
+    <h3>Menu do professor</h3>
+    <p>Chave mestra <b>1275@</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
+    <div class="folhas" id="mpFolhas"></div>
+    <button class="bt cinza" id="mpFechar">Fechar</button>
+  </div>
+</div>
 <div id="teclado" aria-label="Teclado de números">
   <div class="dica" id="tkDica">Digite a resposta</div>
   <div class="tk" id="tk"></div>
@@ -208,7 +246,7 @@ var ITENS = {
  "p2": [{"c":2,"d":4,"u":3},{"c":1,"d":5,"u":2},{"c":3,"d":0,"u":6},{"c":4,"d":2,"u":0},{"c":2,"d":7,"u":5},{"c":5,"d":1,"u":8}],
  "p3": [243,152,306,420,275,518],
  "p4": [{"n":36,"d":3},{"n":48,"d":4},{"n":55,"d":5},{"n":84,"d":2},{"n":63,"d":3},{"n":88,"d":4}],
- "p5": [{"n":45,"d":3},{"n":52,"d":4},{"n":75,"d":5},{"n":96,"d":6}],
+ "p5": [{"n":45,"d":3},{"n":52,"d":4},{"n":75,"d":5},{"n":96,"d":6},{"n":72,"d":4},{"n":91,"d":7}],
  "p6": [{"n":25,"d":4},{"n":38,"d":5},{"n":47,"d":6},{"n":59,"d":7},{"n":33,"d":4},{"n":68,"d":9}],
  "p7": [{"n":138,"d":6},{"n":245,"d":5},{"n":168,"d":12},{"n":312,"d":4},{"n":210,"d":7},{"n":288,"d":8}],
  "p8": [{"n":36,"d":6},{"n":45,"d":5},{"n":81,"d":9},{"n":64,"d":8},{"n":90,"d":9},{"n":56,"d":7}],
@@ -218,7 +256,7 @@ var ITENS = {
   {"n":84,"d":4,"un":"garrafinhas","hist":"O ônibus do passeio levou 84 garrafinhas de água para as 4 turmas, todas com a mesma quantidade.","q":"Quantas garrafinhas cada turma recebe?"},
   {"n":150,"d":5,"un":"alunos","hist":"A escola vai levar 150 alunos ao teatro em 5 ônibus, com o mesmo número de alunos em cada um.","q":"Quantos alunos vão em cada ônibus?"}
  ],
- "p10": [{"n":25,"d":4},{"n":38,"d":5},{"n":47,"d":6},{"n":59,"d":7}]
+ "p10": [{"n":25,"d":4},{"n":38,"d":5},{"n":47,"d":6},{"n":59,"d":7},{"n":74,"d":8},{"n":66,"d":9}]
 };
 /*ITENS-FIM*/
 /*FALAS-INI*/
@@ -234,7 +272,9 @@ var FALAS = {
  "armadaR_38_5": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_47_6": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_59_7": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_66_9": "E quanto sobrou nesta conta? Escreva o resto.",
  "armadaR_68_9": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_74_8": "E quanto sobrou nesta conta? Escreva o resto.",
  "armada_138_6": "Na chave: cento e trinta e oito dividido por seis. Escreva o resultado.",
  "armada_168_12": "Na chave: cento e sessenta e oito dividido por doze. Escreva o resultado.",
  "armada_210_7": "Na chave: duzentos e dez dividido por sete. Escreva o resultado.",
@@ -246,8 +286,11 @@ var FALAS = {
  "armada_38_5": "Na chave: trinta e oito dividido por cinco. Escreva o resultado.",
  "armada_47_6": "Na chave: quarenta e sete dividido por seis. Escreva o resultado.",
  "armada_59_7": "Na chave: cinquenta e nove dividido por sete. Escreva o resultado.",
+ "armada_66_9": "Na chave: sessenta e seis dividido por nove. Escreva o resultado.",
  "armada_68_9": "Na chave: sessenta e oito dividido por nove. Escreva o resultado.",
+ "armada_74_8": "Na chave: setenta e quatro dividido por oito. Escreva o resultado.",
  "capa": "A Oficina do Material Dourado. Divisão, quinto ano, dez folhas. Escreva o seu nome ali embaixo e toque em Começar.",
+ "casaCheia": "Cada casa vai só até nove. Se juntar dez, é hora de trocar por uma peça maior.",
  "certo10a_138_6": "Isso! Vinte e três vezes seis dá cento e trinta e oito.",
  "certo10a_168_12": "Isso! Catorze vezes doze dá cento e sessenta e oito.",
  "certo10a_210_7": "Isso! Trinta vezes sete dá duzentos e dez.",
@@ -259,7 +302,9 @@ var FALAS = {
  "certo10a_38_5": "Isso! Sete vezes cinco dá trinta e cinco.",
  "certo10a_47_6": "Isso! Sete vezes seis dá quarenta e dois.",
  "certo10a_59_7": "Isso! Oito vezes sete dá cinquenta e seis.",
+ "certo10a_66_9": "Isso! Sete vezes nove dá sessenta e três.",
  "certo10a_68_9": "Isso! Sete vezes nove dá sessenta e três.",
+ "certo10a_74_8": "Isso! Nove vezes oito dá setenta e dois.",
  "certo10b_138_6": "Isso! Voltou para cento e trinta e oito: a divisão está certa.",
  "certo10b_168_12": "Isso! Voltou para cento e sessenta e oito: a divisão está certa.",
  "certo10b_210_7": "Isso! Voltou para duzentos e dez: a divisão está certa.",
@@ -271,7 +316,9 @@ var FALAS = {
  "certo10b_38_5": "Isso! Voltou para trinta e oito: a divisão está certa.",
  "certo10b_47_6": "Isso! Voltou para quarenta e sete: a divisão está certa.",
  "certo10b_59_7": "Isso! Voltou para cinquenta e nove: a divisão está certa.",
+ "certo10b_66_9": "Isso! Voltou para sessenta e seis: a divisão está certa.",
  "certo10b_68_9": "Isso! Voltou para sessenta e oito: a divisão está certa.",
+ "certo10b_74_8": "Isso! Voltou para setenta e quatro: a divisão está certa.",
  "certo2_152": "Isso! Um placa, cinco barras e dois cubinhos formam cento e cinquenta e dois.",
  "certo2_243": "Isso! Dois placas, quatro barras e três cubinhos formam duzentos e quarenta e três.",
  "certo2_275": "Isso! Dois placas, sete barras e cinco cubinhos formam duzentos e setenta e cinco.",
@@ -290,17 +337,23 @@ var FALAS = {
  "certo4_52_4": "Isso! Cinquenta e dois dividido por quatro dá treze.",
  "certo4_55_5": "Isso! Cinquenta e cinco dividido por cinco dá onze.",
  "certo4_63_3": "Isso! Sessenta e três dividido por três dá vinte e um.",
+ "certo4_72_4": "Isso! Setenta e dois dividido por quatro dá dezoito.",
  "certo4_75_5": "Isso! Setenta e cinco dividido por cinco dá quinze.",
  "certo4_84_2": "Isso! Oitenta e quatro dividido por dois dá quarenta e dois.",
  "certo4_88_4": "Isso! Oitenta e oito dividido por quatro dá vinte e dois.",
+ "certo4_91_7": "Isso! Noventa e um dividido por sete dá treze.",
  "certo4_96_6": "Isso! Noventa e seis dividido por seis dá dezesseis.",
  "certo5a_45_3": "Isso! Uma barra para cada grupo.",
  "certo5a_52_4": "Isso! Uma barra para cada grupo.",
+ "certo5a_72_4": "Isso! Uma barra para cada grupo.",
  "certo5a_75_5": "Isso! Uma barra para cada grupo.",
+ "certo5a_91_7": "Isso! Uma barra para cada grupo.",
  "certo5a_96_6": "Isso! Uma barra para cada grupo.",
  "certo5b_45_3": "Isso! Ficaram quinze cubinhos para repartir.",
  "certo5b_52_4": "Isso! Ficaram doze cubinhos para repartir.",
+ "certo5b_72_4": "Isso! Ficaram trinta e dois cubinhos para repartir.",
  "certo5b_75_5": "Isso! Ficaram vinte e cinco cubinhos para repartir.",
+ "certo5b_91_7": "Isso! Ficaram vinte e um cubinhos para repartir.",
  "certo5b_96_6": "Isso! Ficaram trinta e seis cubinhos para repartir.",
  "certo6_138_6": "Isso! Cento e trinta e oito dividido por seis dá vinte e três e sobram zero.",
  "certo6_168_12": "Isso! Cento e sessenta e oito dividido por doze dá catorze e sobram zero.",
@@ -313,7 +366,9 @@ var FALAS = {
  "certo6_38_5": "Isso! Trinta e oito dividido por cinco dá sete e sobram três.",
  "certo6_47_6": "Isso! Quarenta e sete dividido por seis dá sete e sobram cinco.",
  "certo6_59_7": "Isso! Cinquenta e nove dividido por sete dá oito e sobram três.",
+ "certo6_66_9": "Isso! Sessenta e seis dividido por nove dá sete e sobram três.",
  "certo6_68_9": "Isso! Sessenta e oito dividido por nove dá sete e sobram cinco.",
+ "certo6_74_8": "Isso! Setenta e quatro dividido por oito dá nove e sobram dois.",
  "certo7_138_6": "Isso! Cento e trinta e oito dividido por seis dá vinte e três, certinho, sem resto.",
  "certo7_168_12": "Isso! Cento e sessenta e oito dividido por doze dá catorze, certinho, sem resto.",
  "certo7_210_7": "Isso! Duzentos e dez dividido por sete dá trinta, certinho, sem resto.",
@@ -325,7 +380,9 @@ var FALAS = {
  "certo7_38_5": "Isso! Trinta e oito dividido por cinco dá sete, com resto três.",
  "certo7_47_6": "Isso! Quarenta e sete dividido por seis dá sete, com resto cinco.",
  "certo7_59_7": "Isso! Cinquenta e nove dividido por sete dá oito, com resto três.",
+ "certo7_66_9": "Isso! Sessenta e seis dividido por nove dá sete, com resto três.",
  "certo7_68_9": "Isso! Sessenta e oito dividido por nove dá sete, com resto cinco.",
+ "certo7_74_8": "Isso! Setenta e quatro dividido por oito dá nove, com resto dois.",
  "certo8_36_6": "Isso! Trinta e seis dividido por seis dá seis.",
  "certo8_45_5": "Isso! Quarenta e cinco dividido por cinco dá nove.",
  "certo8_56_7": "Isso! Cinquenta e seis dividido por sete dá oito.",
@@ -353,7 +410,9 @@ var FALAS = {
  "dica10_38_5": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_47_6": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_59_7": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_66_9": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica10_68_9": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_74_8": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
  "dica2_152": "Conte por partes: uma placa são cem; cinco barras são cinquenta; e dois cubinhos. Junte tudo.",
  "dica2_243": "Conte por partes: dois placas são duzentos; quatro barras são quarenta; e três cubinhos. Junte tudo.",
  "dica2_275": "Conte por partes: dois placas são duzentos; sete barras são setenta; e cinco cubinhos. Junte tudo.",
@@ -372,17 +431,23 @@ var FALAS = {
  "dica4_52_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_55_5": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_63_3": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_72_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_75_5": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_84_2": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_88_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_91_7": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica4_96_6": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
  "dica5a_45_3": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
  "dica5a_52_4": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
+ "dica5a_72_4": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
  "dica5a_75_5": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
+ "dica5a_91_7": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
  "dica5a_96_6": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
  "dica5b_45_3": "Dez cubinhos da barra trocada mais os cinco cubinhos que já estavam ali.",
  "dica5b_52_4": "Dez cubinhos da barra trocada mais os dois cubinhos que já estavam ali.",
+ "dica5b_72_4": "Dez cubinhos da barra trocada mais os dois cubinhos que já estavam ali.",
  "dica5b_75_5": "Dez cubinhos da barra trocada mais os cinco cubinhos que já estavam ali.",
+ "dica5b_91_7": "Dez cubinhos da barra trocada mais os um cubinhos que já estavam ali.",
  "dica5b_96_6": "Dez cubinhos da barra trocada mais os seis cubinhos que já estavam ali.",
  "dica6_138_6": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que seis.",
  "dica6_168_12": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que doze.",
@@ -395,7 +460,9 @@ var FALAS = {
  "dica6_38_5": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que cinco.",
  "dica6_47_6": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que seis.",
  "dica6_59_7": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que sete.",
+ "dica6_66_9": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que nove.",
  "dica6_68_9": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que nove.",
+ "dica6_74_8": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que oito.",
  "dica7_138_6": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_168_12": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_210_7": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
@@ -407,7 +474,9 @@ var FALAS = {
  "dica7_38_5": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_47_6": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_59_7": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_66_9": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica7_68_9": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_74_8": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
  "dica8_36_6": "Pense na tabuada do seis: quantas vezes o seis cabe em trinta e seis?",
  "dica8_45_5": "Pense na tabuada do cinco: quantas vezes o cinco cabe em quarenta e cinco?",
  "dica8_56_7": "Pense na tabuada do sete: quantas vezes o sete cabe em cinquenta e seis?",
@@ -429,12 +498,12 @@ var FALAS = {
  "fimRel": "Relatório do professor aberto.",
  "folhaPronta": "Folha pronta! Vamos para a próxima.",
  "ligue": "Primeiro toque na peça da esquerda, depois no valor.",
- "monte_152": "Que peças formam o número cento e cinquenta e dois? Escreva quantas placas, quantas barras e quantos cubinhos.",
- "monte_243": "Que peças formam o número duzentos e quarenta e três? Escreva quantas placas, quantas barras e quantos cubinhos.",
- "monte_275": "Que peças formam o número duzentos e setenta e cinco? Escreva quantas placas, quantas barras e quantos cubinhos.",
- "monte_306": "Que peças formam o número trezentos e seis? Escreva quantas placas, quantas barras e quantos cubinhos.",
- "monte_420": "Que peças formam o número quatrocentos e vinte? Escreva quantas placas, quantas barras e quantos cubinhos.",
- "monte_518": "Que peças formam o número quinhentos e dezoito? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "monte_152": "Monte o número cento e cinquenta e dois na mesa: quantas placas, quantas barras e quantos cubinhos?",
+ "monte_243": "Monte o número duzentos e quarenta e três na mesa: quantas placas, quantas barras e quantos cubinhos?",
+ "monte_275": "Monte o número duzentos e setenta e cinco na mesa: quantas placas, quantas barras e quantos cubinhos?",
+ "monte_306": "Monte o número trezentos e seis na mesa: quantas placas, quantas barras e quantos cubinhos?",
+ "monte_420": "Monte o número quatrocentos e vinte na mesa: quantas placas, quantas barras e quantos cubinhos?",
+ "monte_518": "Monte o número quinhentos e dezoito na mesa: quantas placas, quantas barras e quantos cubinhos?",
  "n1": "um",
  "n10": "dez",
  "n100": "cem",
@@ -447,13 +516,14 @@ var FALAS = {
  "p10enun": "Para conferir uma divisão a gente faz a prova real: o resultado vezes o divisor, mais o resto, tem que dar o número de novo.",
  "p1enun": "Cada peça do material dourado vale um tanto. Toque na peça e depois no valor dela, ou puxe uma linha.",
  "p2enun": "Conte as peças e escreva que número elas formam. Lembre: cada placa vale cem, cada barra vale dez e cada cubinho vale um.",
- "p3enun": "Agora ao contrário: quantas peças de cada tipo formam este número? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "p3enun": "Agora monte o número com as peças de verdade. Toque na peça de baixo para pôr na mesa; toque numa peça da mesa para tirar.",
  "p4enun": "As peças foram repartidas igualmente entre os grupos. Olhe um grupo e escreva quanto ficou em cada um.",
  "p5enun": "Sobrou uma barra e ela não dá para repartir inteira. Troque a barra por dez cubinhos e termine a conta. É isso que a conta armada chama de abaixar o número.",
  "p6enun": "Nem tudo dá para repartir igual: o que não fecha um grupo é o resto. Escreva o resultado e o resto.",
  "p7enun": "Agora só com os números: preencha a chave da conta armada, com o resultado e o resto.",
  "p8enun": "Toque na conta e depois no resultado dela, ou puxe uma linha até ele.",
  "p9enun": "Leia o problema, descubra que divisão ele pede e escreva a resposta.",
+ "passou": "Passou do número! Toque numa peça da mesa para tirar.",
  "peca_c": "A placa.",
  "peca_d": "A barra.",
  "peca_m": "O cubão.",
@@ -473,7 +543,9 @@ var FALAS = {
  "provaB_38_5": "Agora some o resto: trinta e cinco mais três.",
  "provaB_47_6": "Agora some o resto: quarenta e dois mais cinco.",
  "provaB_59_7": "Agora some o resto: cinquenta e seis mais três.",
+ "provaB_66_9": "Agora some o resto: sessenta e três mais três.",
  "provaB_68_9": "Agora some o resto: sessenta e três mais cinco.",
+ "provaB_74_8": "Agora some o resto: setenta e dois mais dois.",
  "prova_138_6": "A prova real: vinte e três vezes seis dá quanto?",
  "prova_168_12": "A prova real: catorze vezes doze dá quanto?",
  "prova_210_7": "A prova real: trinta vezes sete dá quanto?",
@@ -485,7 +557,9 @@ var FALAS = {
  "prova_38_5": "A prova real: sete vezes cinco dá quanto?",
  "prova_47_6": "A prova real: sete vezes seis dá quanto?",
  "prova_59_7": "A prova real: oito vezes sete dá quanto?",
+ "prova_66_9": "A prova real: sete vezes nove dá quanto?",
  "prova_68_9": "A prova real: sete vezes nove dá quanto?",
+ "prova_74_8": "A prova real: nove vezes oito dá quanto?",
  "qual2_152": "Aqui estão um placa, cinco barras e dois cubinhos. Que número elas formam?",
  "qual2_243": "Aqui estão dois placas, quatro barras e três cubinhos. Que número elas formam?",
  "qual2_275": "Aqui estão dois placas, sete barras e cinco cubinhos. Que número elas formam?",
@@ -498,9 +572,11 @@ var FALAS = {
  "quanto4_52_4": "cinquenta e dois dividido por quatro. Quanto fica em cada grupo?",
  "quanto4_55_5": "cinquenta e cinco dividido por cinco. Quanto fica em cada grupo?",
  "quanto4_63_3": "sessenta e três dividido por três. Quanto fica em cada grupo?",
+ "quanto4_72_4": "setenta e dois dividido por quatro. Quanto fica em cada grupo?",
  "quanto4_75_5": "setenta e cinco dividido por cinco. Quanto fica em cada grupo?",
  "quanto4_84_2": "oitenta e quatro dividido por dois. Quanto fica em cada grupo?",
  "quanto4_88_4": "oitenta e oito dividido por quatro. Quanto fica em cada grupo?",
+ "quanto4_91_7": "noventa e um dividido por sete. Quanto fica em cada grupo?",
  "quanto4_96_6": "noventa e seis dividido por seis. Quanto fica em cada grupo?",
  "quase": "Quase! Confira a conta e tente de novo.",
  "resto_138_6": "cento e trinta e oito dividido por seis. Qual é o resultado e qual é o resto?",
@@ -514,15 +590,21 @@ var FALAS = {
  "resto_38_5": "trinta e oito dividido por cinco. Qual é o resultado e qual é o resto?",
  "resto_47_6": "quarenta e sete dividido por seis. Qual é o resultado e qual é o resto?",
  "resto_59_7": "cinquenta e nove dividido por sete. Qual é o resultado e qual é o resto?",
+ "resto_66_9": "sessenta e seis dividido por nove. Qual é o resultado e qual é o resto?",
  "resto_68_9": "sessenta e oito dividido por nove. Qual é o resultado e qual é o resto?",
+ "resto_74_8": "setenta e quatro dividido por oito. Qual é o resultado e qual é o resto?",
  "retomar": "Você estava no meio do caderno. Quer continuar de onde parou?",
  "trocaB_45_3": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
  "trocaB_52_4": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
+ "trocaB_72_4": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
  "trocaB_75_5": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
+ "trocaB_91_7": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
  "trocaB_96_6": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
  "troca_45_3": "Comece pelas barras: são quatro barras para três grupos. Quantas barras vão para cada grupo?",
  "troca_52_4": "Comece pelas barras: são cinco barras para quatro grupos. Quantas barras vão para cada grupo?",
+ "troca_72_4": "Comece pelas barras: são sete barras para quatro grupos. Quantas barras vão para cada grupo?",
  "troca_75_5": "Comece pelas barras: são sete barras para cinco grupos. Quantas barras vão para cada grupo?",
+ "troca_91_7": "Comece pelas barras: são nove barras para sete grupos. Quantas barras vão para cada grupo?",
  "troca_96_6": "Comece pelas barras: são nove barras para seis grupos. Quantas barras vão para cada grupo?",
  "vale_c": "Isso! A placa tem dez barras: vale cem.",
  "vale_d": "Isso! A barra tem dez cubinhos: vale dez.",
@@ -531,7 +613,7 @@ var FALAS = {
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {"19oy0am":1,"1l1mif1":1,"fpgtn3":1,"136357y":1,"14z1ioo":1,"p955v0":1,"136967d":1,"7cjdm":1,"3soi9b":1,"gor1fb":1,"c7sgxw":1,"1ukqb73":1,"846yrb":1,"f6gnjm":1,"25ln06":1,"1dqxik2":1,"1h3wcqz":1,"6nnirl":1,"z3ytzv":1,"jp1r7j":1,"qkacbd":1,"1mnu9cx":1,"12t76n8":1,"124re7y":1,"100o429":1,"5jnwxn":1,"22ae8n":1,"1d65cyz":1,"6hdlnv":1,"gemyai":1,"1fkd4e6":1,"1x5elks":1,"ri3d2k":1,"1y7rmch":1,"rx1e2h":1,"1aer0e6":1,"1ymipqk":1,"531e8d":1,"1fu8e4z":1,"1gazz5z":1,"78nugx":1,"jx4oxy":1,"7lzhja":1,"1309lg6":1,"o02nh2":1,"1tzeh56":1,"11gbtwk":1,"1262dex":1,"i6hz55":1,"xd4ypl":1,"1cw6ims":1,"1hk19ut":1,"lsjicj":1,"1govyye":1,"pjufbp":1,"1eu2olu":1,"hqjan5":1,"1ygah7x":1,"1ffqxj2":1,"3jdn6z":1,"cgennb":1,"hj88qx":1,"14tm0nz":1,"19jiq84":1,"3w2yt4":1,"12akqmn":1,"1o58ubv":1,"9jai1w":1,"1ngyzfe":1,"102mcli":1,"t4qj20":1,"1fphynm":1,"1wvzc8g":1,"1j4hbu7":1,"18xsith":1,"3ds7ld":1,"1j2cy48":1,"1n3j9rg":1,"1he0aco":1,"1oakg4h":1,"1x2kno7":1,"1sreqhh":1,"1yisi0l":1,"8lvrn3":1,"1cl3zz":1,"n49y66":1,"1dadj04":1,"40s1ds":1,"1vnrt0n":1,"1dc3087":1,"jurgwa":1,"pfdh7l":1,"ycrkz5":1,"1s8yinz":1,"rtqje2":1,"1otzgv":1,"r1hp3s":1,"1eunwxk":1,"17eqp4i":1,"xfnxjj":1,"bca8xa":1,"1d9fmaq":1,"y31zyq":1,"j52uo3":1,"1ys4aoz":1,"1r4oge9":1,"73hoy5":1,"10vbpxs":1,"11r9ttt":1,"1ev2u6i":1,"1651f0e":1,"1c7i8od":1,"dcx7u7":1,"p4golb":1,"12ml3gb":1,"1fyd3ng":1,"q4ybgo":1,"1x0yk5i":1,"dfhr83":1,"nsc5lh":1,"1iq4f8s":1,"v1i8lr":1,"yj0l78":1,"ssup8f":1,"sihiil":1,"ssuy4c":1,"grsp6f":1,"7nfulj":1,"sq4d1i":1,"spjls3":1,"13xtwj9":1,"19g4k0m":1,"13cs219":1,"utjpfq":1,"q63rj4":1,"defbzi":1,"1vwng4u":1,"1tx2zqh":1,"1hjggat":1,"gfmx9t":1,"yj9gdf":1,"1y291ph":1,"1wrypms":1,"mybc9o":1,"1i9yr26":1,"1fngpx":1,"27dz8h":1,"13mc8is":1,"1wjyi27":1,"43v2fv":1,"uj2w9t":1,"kmbslg":1,"xd9mqk":1,"1n36hws":1,"dt6414":1,"1jaabt5":1,"1n2vmdx":1,"fa21g3":1,"3holj":1,"3775c8":1,"3774hm":1,"377czr":1,"ykrdtl":1,"ykoejk":1,"yknrwd":1,"1t0fcn2":1,"1u6qgnb":1,"1tqidfc":1,"nk5lfm":1,"1aebda1":1,"dq9qh5":1,"dsu410":1,"1reeb7n":1,"5m8zbg":1,"17rn1k8":1,"mr8r8p":1,"1yulkic":1,"1c0cclx":1,"12qqw1o":1,"y44qb2":1,"1yg6rka":1,"1cnqx7b":1,"1c18t6y":1,"vdufmp":1,"18cx2zi":1,"j3sach":1,"1qh4lv9":1,"1ncrbud":1,"fls02s":1,"1dp5hcq":1,"6r4hdy":1,"10r8jli":1,"xqi1q1":1,"7qamgn":1,"1f5r2mq":1,"9l1yr9":1,"q5zht7":1,"8ztdjr":1,"rlfdj3":1,"1pm98qg":1,"1i9y2qn":1,"17rlrz9":1,"p87s1n":1,"z3jpl1":1,"fceyfg":1,"nhvg2":1,"ht4ska":1,"1hsqns1":1,"1fu234u":1,"2r2umq":1,"k22bau":1,"1lyx1zo":1,"11me4rc":1,"vgf28c":1,"ch3c72":1,"j02ryo":1,"1wt7a2f":1,"1g1nc3j":1,"4hw7u":1,"m9wi1z":1,"fdm5f7":1,"ik7ann":1,"17hvkva":1,"mhta9e":1,"p3eymi":1,"12h9mt7":1,"kek5ke":1,"1pj71j4":1,"2o89lr":1,"18eg095":1,"547exp":1,"yt94pm":1,"12pjm2z":1,"c61528":1,"ey2qnc":1,"kuwbp1":1,"11bfogw":1,"azj0mg":1,"6mtexw":1,"g5deou":1,"v5olwl":1,"1i5g9ym":1,"k52nsz":1,"ql3wz6":1,"1780men":1,"8rek04":1,"1yxsw0e":1,"12441rn":1,"13eqc7p":1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"19oy0am":1,"1l1mif1":1,"fpgtn3":1,"136357y":1,"14z1ioo":1,"p955v0":1,"136967d":1,"7cjdm":1,"3soi9b":1,"gor1fb":1,"c7sgxw":1,"1ukqb73":1,"f12bv4":1,"846yrb":1,"1235lux":1,"f6gnjm":1,"xt43e1":1,"25ln06":1,"1dqxik2":1,"1h3wcqz":1,"6nnirl":1,"z3ytzv":1,"jp1r7j":1,"qkacbd":1,"1mnu9cx":1,"12t76n8":1,"124re7y":1,"100o429":1,"5jnwxn":1,"aqipj3":1,"22ae8n":1,"1d65cyz":1,"6hdlnv":1,"gemyai":1,"1fkd4e6":1,"1x5elks":1,"ri3d2k":1,"1y7rmch":1,"rx1e2h":1,"1aer0e6":1,"1ymipqk":1,"xxe3wm":1,"531e8d":1,"1o79bi4":1,"1fu8e4z":1,"1gazz5z":1,"78nugx":1,"jx4oxy":1,"7lzhja":1,"1309lg6":1,"o02nh2":1,"1tzeh56":1,"11gbtwk":1,"1262dex":1,"i6hz55":1,"xd4ypl":1,"1cw6ims":1,"1hk19ut":1,"lsjicj":1,"1govyye":1,"pjufbp":1,"1eu2olu":1,"10tcms6":1,"hqjan5":1,"1ygah7x":1,"1ffqxj2":1,"r11lsh":1,"3jdn6z":1,"cgennb":1,"hj88qx":1,"14tm0nz":1,"bjo13n":1,"19jiq84":1,"1fdp5q2":1,"3w2yt4":1,"12akqmn":1,"1o58ubv":1,"9jai1w":1,"1ngyzfe":1,"102mcli":1,"t4qj20":1,"1fphynm":1,"1wvzc8g":1,"1j4hbu7":1,"18xsith":1,"3ds7ld":1,"1ujznig":1,"1j2cy48":1,"q44j04":1,"1n3j9rg":1,"1he0aco":1,"1oakg4h":1,"1x2kno7":1,"1sreqhh":1,"1yisi0l":1,"8lvrn3":1,"1cl3zz":1,"n49y66":1,"1dadj04":1,"40s1ds":1,"14uvh1z":1,"1vnrt0n":1,"uunfyb":1,"1dc3087":1,"jurgwa":1,"pfdh7l":1,"ycrkz5":1,"1s8yinz":1,"rtqje2":1,"1otzgv":1,"r1hp3s":1,"1eunwxk":1,"17eqp4i":1,"xfnxjj":1,"bca8xa":1,"1d9fmaq":1,"y31zyq":1,"j52uo3":1,"1ys4aoz":1,"1r4oge9":1,"73hoy5":1,"10vbpxs":1,"11r9ttt":1,"1ev2u6i":1,"1651f0e":1,"1c7i8od":1,"dcx7u7":1,"p4golb":1,"12ml3gb":1,"1fyd3ng":1,"q4ybgo":1,"1x0yk5i":1,"dfhr83":1,"nsc5lh":1,"1iq4f8s":1,"v1i8lr":1,"1jebvmq":1,"yj0l78":1,"ssup8f":1,"sihiil":1,"ssuy4c":1,"grsp6f":1,"7nfulj":1,"sq4d1i":1,"spjls3":1,"13xtwj9":1,"19g4k0m":1,"13cs219":1,"utjpfq":1,"q63rj4":1,"defbzi":1,"1vwng4u":1,"1tx2zqh":1,"1hjggat":1,"gfmx9t":1,"yj9gdf":1,"1y291ph":1,"1wrypms":1,"mybc9o":1,"1i9yr26":1,"1fngpx":1,"27dz8h":1,"13mc8is":1,"1wjyi27":1,"43v2fv":1,"uj2w9t":1,"kmbslg":1,"1ajxf22":1,"nw3etm":1,"1dn72x2":1,"1434qqv":1,"y31nar":1,"1pbc4c1":1,"3holj":1,"3775c8":1,"3774hm":1,"377czr":1,"ykrdtl":1,"ykoejk":1,"yknrwd":1,"1t0fcn2":1,"1u6qgnb":1,"1tqidfc":1,"nk5lfm":1,"1aebda1":1,"kzrgwc":1,"dsu410":1,"1reeb7n":1,"5m8zbg":1,"17rn1k8":1,"mr8r8p":1,"1yulkic":1,"qdm2y2":1,"1c0cclx":1,"12qqw1o":1,"y44qb2":1,"1yg6rka":1,"1cnqx7b":1,"1c18t6y":1,"vdufmp":1,"18cx2zi":1,"j3sach":1,"1qh4lv9":1,"1ncrbud":1,"fls02s":1,"1dp5hcq":1,"6r4hdy":1,"10r8jli":1,"xqi1q1":1,"7qamgn":1,"1f5r2mq":1,"9l1yr9":1,"1ac2p2a":1,"q5zht7":1,"11yi5u0":1,"8ztdjr":1,"rlfdj3":1,"1pm98qg":1,"1i9y2qn":1,"17rlrz9":1,"p87s1n":1,"z3jpl1":1,"fceyfg":1,"nhvg2":1,"ht4ska":1,"1hsqns1":1,"1fu234u":1,"1cyikaw":1,"2r2umq":1,"k22bau":1,"1lyx1zo":1,"11me4rc":1,"vgf28c":1,"ch3c72":1,"j02ryo":1,"1wt7a2f":1,"1g1nc3j":1,"4hw7u":1,"m9wi1z":1,"fdm5f7":1,"1vfwqsm":1,"ik7ann":1,"17hvkva":1,"mhta9e":1,"1hthsmt":1,"p3eymi":1,"12h9mt7":1,"kek5ke":1,"1pj71j4":1,"2o89lr":1,"18eg095":1,"547exp":1,"yt94pm":1,"12pjm2z":1,"c61528":1,"ey2qnc":1,"kuwbp1":1,"11bfogw":1,"1oqde69":1,"azj0mg":1,"8o8zmi":1,"6mtexw":1,"g5deou":1,"v5olwl":1,"1i5g9ym":1,"740tcj":1,"k52nsz":1,"5n4exb":1,"ql3wz6":1,"1780men":1,"8rek04":1,"1yxsw0e":1,"12441rn":1,"13eqc7p":1};/*VOZOK-FIM*/
 
 /* ---------- o material dourado, desenhado em SVG (casa: peça divisao-dourado) ---------- */
 /* Um SÓ desenhista para as quatro peças: o PRISMA em projeção oblíqua (a mesma
@@ -615,15 +697,15 @@ function pega(pool, qtd, chaveRes){
 }
 function novaFolha(){
   return {
-    p2: pega(ITENS.p2, 4, function(x){ return x.c * 100 + x.d * 10 + x.u; }),
-    p3: pega(ITENS.p3, 3, function(x){ return x; }),
-    p4: pega(ITENS.p4, 4, function(x){ return x.n / x.d; }),
-    p5: pega(ITENS.p5, 3, function(x){ return x.n / x.d; }),
-    p6: pega(ITENS.p6, 4, function(x){ return Math.floor(x.n / x.d); }),
-    p7: pega(ITENS.p7, 3, function(x){ return Math.floor(x.n / x.d); }),
-    p8: pega(ITENS.p8, 4, function(x){ return x.n / x.d; }),
-    p9: pega(ITENS.p9, 3, function(x){ return x.n / x.d; }),
-    p10: pega(ITENS.p10, 3, function(x){ return Math.floor(x.n / x.d); })
+    p2: pega(ITENS.p2, 5, function(x){ return x.c * 100 + x.d * 10 + x.u; }),
+    p3: pega(ITENS.p3, 4, function(x){ return x; }),
+    p4: pega(ITENS.p4, 5, function(x){ return x.n / x.d; }),
+    p5: pega(ITENS.p5, 4, function(x){ return x.n / x.d; }),
+    p6: pega(ITENS.p6, 5, function(x){ return Math.floor(x.n / x.d); }),
+    p7: pega(ITENS.p7, 5, function(x){ return Math.floor(x.n / x.d); }),
+    p8: pega(ITENS.p8, 6, function(x){ return x.n / x.d; }),
+    p9: pega(ITENS.p9, 4, function(x){ return x.n / x.d; }),
+    p10: pega(ITENS.p10, 4, function(x){ return Math.floor(x.n / x.d); })
   };
 }
 
@@ -776,20 +858,81 @@ function f2(d, pi){
     box.appendChild(lin); d.appendChild(box);
   }
 }
-/* 3 — monte o número (C, D, U) */
+/* 3 — monte o número PONDO AS PEÇAS NA MESA (manipulação)
+   ⭐ PEDIDO DO MARCOS (8/set/2026): *"naquela parte, a segunda, onde é para
+   colocar o número de barras, seria legal MANIPULAR elas"*. Antes a criança
+   digitava "3, 0, 6" em três caixinhas — o que é responder de cabeça, não
+   montar. Agora ela PÕE as peças: toca na placa e a placa vai para a mesa;
+   toca numa peça da mesa e ela volta. É o concreto antes do símbolo (CPA),
+   e é o gesto que a folha de papel pede e o papel não consegue dar. */
 function f3(d, pi){
   faixa(d, pi, NOMES[2]);
-  d.appendChild(el("div", "enun", "Quantas peças de cada tipo formam este número? Escreva nas <b>três caixas</b>."));
+  d.appendChild(el("div", "enun", "<b>Monte</b> o número na mesa: toque na peça de baixo para pôr, toque na peça da mesa para tirar."));
   var L = ST.folha.p3;
-  for(var i = 0; i < L.length; i++){
-    var n = L[i], p = cdu(n);
-    var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + n + '</span>');
-    var lin = el("div", "linhaop");
-    lin.appendChild(caixa(pi, "r3_" + i + "c", p.c, "monte_" + n, "certo3_" + n, "dica3_" + n, "placas"));
-    lin.appendChild(caixa(pi, "r3_" + i + "d", p.d, "monte_" + n, "certo3_" + n, "dica3_" + n, "barras"));
-    lin.appendChild(caixa(pi, "r3_" + i + "u", p.u, "monte_" + n, "certo3_" + n, "dica3_" + n, "cubinhos"));
-    box.appendChild(lin); box.appendChild(el("div", null, '<div style="height:18px"></div>')); d.appendChild(box);
+  for(var i = 0; i < L.length; i++) d.appendChild(montador(pi, "r3_" + i, L[i], i + 1));
+}
+/* a mesa de montar: estoque embaixo, mesa em cima, leitura no meio */
+/* `px` é o tamanho NA MESA — e ali a proporção é sagrada: o cubinho tem que
+   parecer 1/10 da barra, senão a figura mente sobre a matemática. `pxe` é o
+   tamanho no ESTOQUE, que não é uma cena e sim um menu de peças com o nome e o
+   valor escritos: lá o cubinho aparece legível, para o dedo achar o botão. */
+var CASAS = [{k: "c", kind: 1, rot: "placas", val: 100, px: 66, pxe: 60},
+             {k: "d", kind: 2, rot: "barras", val: 10, px: 66, pxe: 60},
+             {k: "u", kind: 3, rot: "cubinhos", val: 1, px: 9.2, pxe: 30}];
+function montador(pi, id, n, ord){
+  var alvo = cdu(n), tem = {c: 0, d: 0, u: 0}, pronto = false;
+  CAIXAS[id] = {certo: n, fi: "monte_" + n, fc: "certo3_" + n, fd: "dica3_" + n, pag: pi};
+  var box = el("div", "item montar", '<span class="n">' + ord + '.</span><span class="conta">' + n + '</span>');
+  box.setAttribute("data-qa", "montar-" + id);
+  var mesa = el("div", "mesa"); mesa.setAttribute("aria-label", "Mesa: as peças que você pôs");
+  var leitura = el("div", "leitura");
+  var estoque = el("div", "estoque");
+  function total(){ return tem.c * 100 + tem.d * 10 + tem.u; }
+  function desenha(){
+    mesa.innerHTML = "";
+    var vazia = true, j;
+    for(var q = 0; q < CASAS.length; q++){
+      var C = CASAS[q];
+      for(j = 0; j < tem[C.k]; j++){
+        vazia = false;
+        var pc = el("button", "pc", bloco(C.kind, C.px));
+        pc.setAttribute("aria-label", "Tirar uma " + C.rot.slice(0, -1) + " da mesa");
+        pc.onclick = (function(k){ return function(){ if(pronto) return; tem[k]--; sPasso(); desenha(); confereMesa(); }; })(C.k);
+        mesa.appendChild(pc);
+      }
+    }
+    if(vazia) mesa.appendChild(el("div", "vaziaMsg", "mesa vazia — ponha as peças aqui"));
+    var t = total();
+    leitura.innerHTML = '<span><b>' + tem.c + '</b> placas</span><span><b>' + tem.d + '</b> barras</span>' +
+      '<span><b>' + tem.u + '</b> cubinhos</span><em>=</em><span class="tot' + (pronto ? " ok" : "") + '"><b>' + t + '</b></span>';
+    box.className = "item montar" + (pronto ? " feito" : "");
+    box.setAttribute("data-qa", "montar-" + id);
   }
+  function confereMesa(){
+    salvar();
+    if(pronto || total() !== n) return;
+    pronto = true; tentativa(id, true); ST.resp[id] = n; salvar();
+    desenha(); sCerto(); falar("certo3_" + n);
+    setTimeout(function(){ confereFolha(pi); }, 900);
+  }
+  for(var q = 0; q < CASAS.length; q++){
+    (function(C){
+      var b = el("button", "fonte", bloco(C.kind, C.pxe) + '<span class="rotf">' + C.rot.slice(0, -1) + ' &middot; ' + C.val + '</span>');
+      b.setAttribute("aria-label", "Pôr uma " + C.rot.slice(0, -1) + " na mesa. Vale " + C.val);
+      b.onclick = function(){
+        if(pronto) return;
+        if(tem[C.k] >= 9){ sErro(); falar("casaCheia"); return; }
+        tem[C.k]++; sPasso(); falar("peca_" + C.k); desenha();
+        if(total() > n){ tentativa(id, false); if(ST.tent[id].erros >= 2) falar("dica3_" + n); else falar("passou"); return; }
+        confereMesa();
+      };
+      estoque.appendChild(b);
+    })(CASAS[q]);
+  }
+  if(ST.resp[id] === n){ tem = {c: alvo.c, d: alvo.d, u: alvo.u}; pronto = true; }
+  box.appendChild(mesa); box.appendChild(leitura); box.appendChild(estoque);
+  desenha();
+  return box;
 }
 /* 4 — repartir igual, sem sobra */
 function f4(d, pi){
@@ -962,7 +1105,7 @@ function idsDaPagina(pi){
   var ids = [], i, F = ST.folha;
   if(pi === 1) for(i = 0; i < 4; i++) ids.push("l1_" + ["u", "d", "c", "m"][i]);
   if(pi === 2) for(i = 0; i < F.p2.length; i++) ids.push("r2_" + i);
-  if(pi === 3) for(i = 0; i < F.p3.length; i++){ ids.push("r3_" + i + "c"); ids.push("r3_" + i + "d"); ids.push("r3_" + i + "u"); }
+  if(pi === 3) for(i = 0; i < F.p3.length; i++) ids.push("r3_" + i);
   if(pi === 4) for(i = 0; i < F.p4.length; i++) ids.push("r4_" + i);
   if(pi === 5) for(i = 0; i < F.p5.length; i++){ ids.push("r5_" + i + "a"); ids.push("r5_" + i + "b"); ids.push("r5_" + i + "c"); }
   if(pi === 6) for(i = 0; i < F.p6.length; i++){ ids.push("r6_" + i + "q"); ids.push("r6_" + i + "r"); }
@@ -1026,7 +1169,34 @@ document.getElementById("bProx").onclick = function(){
 };
 document.getElementById("bOuvir").onclick = function(){ sPasso(); var b = this; if(document.getElementById("fim").style.display === "block"){ falar("fim", b); return; } falar(ST.pag === 0 ? "capa" : "p" + ST.pag + "enun", b); };
 document.getElementById("bVoz").onclick = function(){ vozLigada = !vozLigada; var b = document.getElementById("bVoz"); if(vozLigada){ b.className = "zap"; falar("vozOn"); } else { calar(); b.className = "zap off"; } };
-document.getElementById("nomeIn").oninput = function(){ ST.nome = this.value.slice(0, 24); espelhaNome(ST.nome); salvar(); };
+/* ⭐ CHAVE MESTRA (pedido do Marcos, 8/set/2026): *"seria legal ter a chave
+   mestra, sendo colocada no campo nome eu posso ver todas as atividades, senha
+   1275@"*. Digitar 1275@ no campo do nome abre o menu do professor, que pula
+   para qualquer folha. Não é segurança (está no código-fonte) — é atalho para
+   ele conferir a atividade inteira sem resolver tudo. O nome digitado é
+   descartado ali, para a senha não virar o nome da criança na folha. */
+var CHAVE_MESTRA = "1275@";
+function abreMenuProf(){
+  var cx = document.getElementById("mpFolhas");
+  if(!cx.childNodes.length){
+    var mk = function(rot, alvo){
+      var b = el("button", null, rot);
+      b.onclick = function(){ fechaMenuProf(); vaiPara(alvo); };
+      cx.appendChild(b);
+    };
+    mk("Capa", 0);
+    for(var k = 1; k <= 10; k++) mk(k + ". " + NOMES[k - 1], k);
+  }
+  calar();
+  document.getElementById("menuProf").className = "aberto";
+}
+function fechaMenuProf(){ document.getElementById("menuProf").className = ""; }
+document.getElementById("mpFechar").onclick = fechaMenuProf;
+document.getElementById("menuProf").onclick = function(ev){ if(ev.target === this) fechaMenuProf(); };
+document.getElementById("nomeIn").oninput = function(){
+  if(this.value.indexOf(CHAVE_MESTRA) > -1){ this.value = ST.nome || ""; abreMenuProf(); return; }
+  ST.nome = this.value.slice(0, 24); espelhaNome(ST.nome); salvar();
+};
 document.getElementById("nomeIn").onkeydown = function(ev){ if(ev.key === "Enter"){ ev.preventDefault(); this.blur(); if(ST.nome) falar("nomeOk"); } };
 document.getElementById("bComecar").onclick = function(){ ac(); sPasso(); if(!ST.inicio) ST.inicio = Date.now(); vaiPara(1); };
 
