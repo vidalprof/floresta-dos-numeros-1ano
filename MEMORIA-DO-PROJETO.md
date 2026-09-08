@@ -6994,3 +6994,32 @@ a criança já lê. Fica para o 2º/3º ano.
 ⚠️ **A armadilha em que eu caí, escrita para não repetir:** eu deixei a MECÂNICA
 escolher o vocabulário. O certo é o contrário — primeiro a lista de palavras que a
 criança de 6 anos diz, depois o exercício que couber nelas.
+
+## ✂️ O PROMPT TEM QUE FACILITAR O RECORTE — regra nova (8/set/2026)
+
+Palavras do Marcos, depois de eu errar o recorte três vezes seguidas: *"você tem que
+fazer prompts que o recortar seja mais fácil para você, para não faltar partes ou
+ficar pedaços de outras cores no contorno"*. **Ele está certo, e a lição é sobre
+PROMPT, não sobre recorte.**
+
+**O que eu fiz de errado:** pedi *"uma folha de figurinhas"* — e o gerador desenhou
+o **contorno branco de adesivo** em volta de cada objeto, mais uma sombrinha. Esse
+contorno é o problema inteiro: para tirá-lo eu tenho que adivinhar onde acaba o
+adesivo e onde começa o desenho, e **onde o desenho é claro na beirada não existe
+resposta** — foi assim que a bola de futebol (branca na borda) perdeu uma meia-lua.
+Nenhuma esperteza de recorte conserta um prompt ruim.
+
+**A regra, para toda cartela daqui em diante:**
+```
+fundo MAGENTA PURO (#FF00FF), chapado, sem nada mais.
+Sem contorno, sem borda branca, sem moldura, sem sombra embaixo, sem adesivo.
+Cada objeto inteiro dentro do seu espaço, com margem, sem encostar nos outros.
+```
+**Por que magenta e não preto:** o preto falha justamente com os objetos pretos e
+brancos (a bola, a caneca, a vela, a faca) — a beirada do desenho se confunde com o
+fundo ou com a borda. O magenta puro não existe nesses desenhos de massinha, então
+o recorte vira exato, sem perder um pixel e sem deixar franja de outra cor.
+
+**Sinal de que o prompt estava ruim:** se eu preciso de regra fina no recorte
+(medir a beirada, contar a área do anel, tratar peça fina à parte), o defeito é do
+prompt. Recorte bom é `cor do fundo → transparente`, e mais nada.
