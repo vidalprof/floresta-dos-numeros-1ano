@@ -66,8 +66,8 @@ button{font-family:inherit;cursor:pointer}
 .enun b{color:#1f6b12}
 .item{margin:10px 12px;padding:10px;border:2px solid #efe6cf;border-radius:14px;background:#fffdf7}
 .item .n{font-weight:900;color:#a08a5a;font-size:14px;margin-right:6px}
-.mat{display:flex;flex-wrap:wrap;align-items:flex-end;gap:6px;margin:6px 0;min-height:46px}
-.mat .gr{display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px}
+.mat{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:12px;margin:10px 0;min-height:56px;background:#fdf9ee;border:2px dashed #e3d2a0;border-radius:14px;padding:12px 10px}
+.mat .gr{display:flex;flex-wrap:wrap;align-items:flex-end;gap:3px}
 .linhaop{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:6px}
 .conta{font-family:"Segoe UI",Arial,sans-serif;font-weight:900;font-size:clamp(20px,5vw,30px);color:#3a2600}
 .resp{position:relative;min-width:44px;min-height:44px;width:clamp(56px,13vw,74px);height:clamp(50px,12vw,64px);display:flex;align-items:center;justify-content:center;flex:none;
@@ -89,8 +89,9 @@ button{font-family:inherit;cursor:pointer}
 @keyframes pisca{50%{opacity:0}}
 /* grupos da divisão */
 .grupos{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
-.grupo{flex:1 1 96px;min-width:88px;max-width:150px;min-height:70px;border:3px dashed #c9a52f;border-radius:12px;background:rgba(255,244,190,.4);padding:6px;text-align:center}
-.grupo .rotg{font-size:11px;font-weight:800;color:#8a6b12;letter-spacing:.4px;display:block;margin-bottom:4px}
+.grupo{flex:1 1 112px;min-width:104px;max-width:170px;min-height:96px;border:3px dashed #c9a52f;border-radius:12px;background:rgba(255,244,190,.45);padding:8px 6px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.grupo .rotg{font-size:12px;font-weight:800;color:#8a6b12;letter-spacing:.4px;display:block;margin-bottom:4px}
+.grupo .mat{background:none;border:0;padding:0;margin:0;min-height:0}
 /* chave da conta armada */
 .chave{display:inline-block;margin:6px auto;text-align:left;font-family:"Segoe UI",Arial,sans-serif}
 .chave .lin1{display:flex;align-items:flex-start;gap:0}
@@ -221,32 +222,355 @@ var ITENS = {
 };
 /*ITENS-FIM*/
 /*FALAS-INI*/
-var FALAS = {};
+var FALAS = {
+ "armadaR_138_6": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_168_12": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_210_7": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_245_5": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_25_4": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_288_8": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_312_4": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_33_4": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_38_5": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_47_6": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_59_7": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armadaR_68_9": "E quanto sobrou nesta conta? Escreva o resto.",
+ "armada_138_6": "Na chave: cento e trinta e oito dividido por seis. Escreva o resultado.",
+ "armada_168_12": "Na chave: cento e sessenta e oito dividido por doze. Escreva o resultado.",
+ "armada_210_7": "Na chave: duzentos e dez dividido por sete. Escreva o resultado.",
+ "armada_245_5": "Na chave: duzentos e quarenta e cinco dividido por cinco. Escreva o resultado.",
+ "armada_25_4": "Na chave: vinte e cinco dividido por quatro. Escreva o resultado.",
+ "armada_288_8": "Na chave: duzentos e oitenta e oito dividido por oito. Escreva o resultado.",
+ "armada_312_4": "Na chave: trezentos e doze dividido por quatro. Escreva o resultado.",
+ "armada_33_4": "Na chave: trinta e três dividido por quatro. Escreva o resultado.",
+ "armada_38_5": "Na chave: trinta e oito dividido por cinco. Escreva o resultado.",
+ "armada_47_6": "Na chave: quarenta e sete dividido por seis. Escreva o resultado.",
+ "armada_59_7": "Na chave: cinquenta e nove dividido por sete. Escreva o resultado.",
+ "armada_68_9": "Na chave: sessenta e oito dividido por nove. Escreva o resultado.",
+ "capa": "A Oficina do Material Dourado. Divisão, quinto ano, dez folhas. Escreva o seu nome ali embaixo e toque em Começar.",
+ "certo10a_138_6": "Isso! Vinte e três vezes seis dá cento e trinta e oito.",
+ "certo10a_168_12": "Isso! Catorze vezes doze dá cento e sessenta e oito.",
+ "certo10a_210_7": "Isso! Trinta vezes sete dá duzentos e dez.",
+ "certo10a_245_5": "Isso! Quarenta e nove vezes cinco dá duzentos e quarenta e cinco.",
+ "certo10a_25_4": "Isso! Seis vezes quatro dá vinte e quatro.",
+ "certo10a_288_8": "Isso! Trinta e seis vezes oito dá duzentos e oitenta e oito.",
+ "certo10a_312_4": "Isso! Setenta e oito vezes quatro dá trezentos e doze.",
+ "certo10a_33_4": "Isso! Oito vezes quatro dá trinta e dois.",
+ "certo10a_38_5": "Isso! Sete vezes cinco dá trinta e cinco.",
+ "certo10a_47_6": "Isso! Sete vezes seis dá quarenta e dois.",
+ "certo10a_59_7": "Isso! Oito vezes sete dá cinquenta e seis.",
+ "certo10a_68_9": "Isso! Sete vezes nove dá sessenta e três.",
+ "certo10b_138_6": "Isso! Voltou para cento e trinta e oito: a divisão está certa.",
+ "certo10b_168_12": "Isso! Voltou para cento e sessenta e oito: a divisão está certa.",
+ "certo10b_210_7": "Isso! Voltou para duzentos e dez: a divisão está certa.",
+ "certo10b_245_5": "Isso! Voltou para duzentos e quarenta e cinco: a divisão está certa.",
+ "certo10b_25_4": "Isso! Voltou para vinte e cinco: a divisão está certa.",
+ "certo10b_288_8": "Isso! Voltou para duzentos e oitenta e oito: a divisão está certa.",
+ "certo10b_312_4": "Isso! Voltou para trezentos e doze: a divisão está certa.",
+ "certo10b_33_4": "Isso! Voltou para trinta e três: a divisão está certa.",
+ "certo10b_38_5": "Isso! Voltou para trinta e oito: a divisão está certa.",
+ "certo10b_47_6": "Isso! Voltou para quarenta e sete: a divisão está certa.",
+ "certo10b_59_7": "Isso! Voltou para cinquenta e nove: a divisão está certa.",
+ "certo10b_68_9": "Isso! Voltou para sessenta e oito: a divisão está certa.",
+ "certo2_152": "Isso! Um placa, cinco barras e dois cubinhos formam cento e cinquenta e dois.",
+ "certo2_243": "Isso! Dois placas, quatro barras e três cubinhos formam duzentos e quarenta e três.",
+ "certo2_275": "Isso! Dois placas, sete barras e cinco cubinhos formam duzentos e setenta e cinco.",
+ "certo2_306": "Isso! Três placas e seis cubinhos formam trezentos e seis.",
+ "certo2_420": "Isso! Quatro placas e dois barras formam quatrocentos e vinte.",
+ "certo2_518": "Isso! Cinco placas, um barra e oito cubinhos formam quinhentos e dezoito.",
+ "certo3_152": "Isso! Cento e cinquenta e dois são um placa, cinco barras e dois cubinhos.",
+ "certo3_243": "Isso! Duzentos e quarenta e três são dois placas, quatro barras e três cubinhos.",
+ "certo3_275": "Isso! Duzentos e setenta e cinco são dois placas, sete barras e cinco cubinhos.",
+ "certo3_306": "Isso! Trezentos e seis são três placas e seis cubinhos.",
+ "certo3_420": "Isso! Quatrocentos e vinte são quatro placas e dois barras.",
+ "certo3_518": "Isso! Quinhentos e dezoito são cinco placas, um barra e oito cubinhos.",
+ "certo4_36_3": "Isso! Trinta e seis dividido por três dá doze.",
+ "certo4_45_3": "Isso! Quarenta e cinco dividido por três dá quinze.",
+ "certo4_48_4": "Isso! Quarenta e oito dividido por quatro dá doze.",
+ "certo4_52_4": "Isso! Cinquenta e dois dividido por quatro dá treze.",
+ "certo4_55_5": "Isso! Cinquenta e cinco dividido por cinco dá onze.",
+ "certo4_63_3": "Isso! Sessenta e três dividido por três dá vinte e um.",
+ "certo4_75_5": "Isso! Setenta e cinco dividido por cinco dá quinze.",
+ "certo4_84_2": "Isso! Oitenta e quatro dividido por dois dá quarenta e dois.",
+ "certo4_88_4": "Isso! Oitenta e oito dividido por quatro dá vinte e dois.",
+ "certo4_96_6": "Isso! Noventa e seis dividido por seis dá dezesseis.",
+ "certo5a_45_3": "Isso! Uma barra para cada grupo.",
+ "certo5a_52_4": "Isso! Uma barra para cada grupo.",
+ "certo5a_75_5": "Isso! Uma barra para cada grupo.",
+ "certo5a_96_6": "Isso! Uma barra para cada grupo.",
+ "certo5b_45_3": "Isso! Ficaram quinze cubinhos para repartir.",
+ "certo5b_52_4": "Isso! Ficaram doze cubinhos para repartir.",
+ "certo5b_75_5": "Isso! Ficaram vinte e cinco cubinhos para repartir.",
+ "certo5b_96_6": "Isso! Ficaram trinta e seis cubinhos para repartir.",
+ "certo6_138_6": "Isso! Cento e trinta e oito dividido por seis dá vinte e três e sobram zero.",
+ "certo6_168_12": "Isso! Cento e sessenta e oito dividido por doze dá catorze e sobram zero.",
+ "certo6_210_7": "Isso! Duzentos e dez dividido por sete dá trinta e sobram zero.",
+ "certo6_245_5": "Isso! Duzentos e quarenta e cinco dividido por cinco dá quarenta e nove e sobram zero.",
+ "certo6_25_4": "Isso! Vinte e cinco dividido por quatro dá seis e sobram um.",
+ "certo6_288_8": "Isso! Duzentos e oitenta e oito dividido por oito dá trinta e seis e sobram zero.",
+ "certo6_312_4": "Isso! Trezentos e doze dividido por quatro dá setenta e oito e sobram zero.",
+ "certo6_33_4": "Isso! Trinta e três dividido por quatro dá oito e sobram um.",
+ "certo6_38_5": "Isso! Trinta e oito dividido por cinco dá sete e sobram três.",
+ "certo6_47_6": "Isso! Quarenta e sete dividido por seis dá sete e sobram cinco.",
+ "certo6_59_7": "Isso! Cinquenta e nove dividido por sete dá oito e sobram três.",
+ "certo6_68_9": "Isso! Sessenta e oito dividido por nove dá sete e sobram cinco.",
+ "certo7_138_6": "Isso! Cento e trinta e oito dividido por seis dá vinte e três, certinho, sem resto.",
+ "certo7_168_12": "Isso! Cento e sessenta e oito dividido por doze dá catorze, certinho, sem resto.",
+ "certo7_210_7": "Isso! Duzentos e dez dividido por sete dá trinta, certinho, sem resto.",
+ "certo7_245_5": "Isso! Duzentos e quarenta e cinco dividido por cinco dá quarenta e nove, certinho, sem resto.",
+ "certo7_25_4": "Isso! Vinte e cinco dividido por quatro dá seis, com resto um.",
+ "certo7_288_8": "Isso! Duzentos e oitenta e oito dividido por oito dá trinta e seis, certinho, sem resto.",
+ "certo7_312_4": "Isso! Trezentos e doze dividido por quatro dá setenta e oito, certinho, sem resto.",
+ "certo7_33_4": "Isso! Trinta e três dividido por quatro dá oito, com resto um.",
+ "certo7_38_5": "Isso! Trinta e oito dividido por cinco dá sete, com resto três.",
+ "certo7_47_6": "Isso! Quarenta e sete dividido por seis dá sete, com resto cinco.",
+ "certo7_59_7": "Isso! Cinquenta e nove dividido por sete dá oito, com resto três.",
+ "certo7_68_9": "Isso! Sessenta e oito dividido por nove dá sete, com resto cinco.",
+ "certo8_36_6": "Isso! Trinta e seis dividido por seis dá seis.",
+ "certo8_45_5": "Isso! Quarenta e cinco dividido por cinco dá nove.",
+ "certo8_56_7": "Isso! Cinquenta e seis dividido por sete dá oito.",
+ "certo8_64_8": "Isso! Sessenta e quatro dividido por oito dá oito.",
+ "certo8_81_9": "Isso! Oitenta e um dividido por nove dá nove.",
+ "certo8_90_9": "Isso! Noventa dividido por nove dá dez.",
+ "certo9_144_6": "Isso! Cento e quarenta e quatro dividido por seis dá vinte e quatro.",
+ "certo9_150_5": "Isso! Cento e cinquenta dividido por cinco dá trinta.",
+ "certo9_60_12": "Isso! Sessenta dividido por doze dá cinco.",
+ "certo9_84_4": "Isso! Oitenta e quatro dividido por quatro dá vinte e um.",
+ "conta_36_6": "trinta e seis dividido por seis.",
+ "conta_45_5": "quarenta e cinco dividido por cinco.",
+ "conta_56_7": "cinquenta e seis dividido por sete.",
+ "conta_64_8": "sessenta e quatro dividido por oito.",
+ "conta_81_9": "oitenta e um dividido por nove.",
+ "conta_90_9": "noventa dividido por nove.",
+ "dica10_138_6": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_168_12": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_210_7": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_245_5": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_25_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_288_8": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_312_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_33_4": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_38_5": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_47_6": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_59_7": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica10_68_9": "A prova real é o caminho de volta: resultado vezes divisor, e depois soma o resto.",
+ "dica2_152": "Conte por partes: uma placa são cem; cinco barras são cinquenta; e dois cubinhos. Junte tudo.",
+ "dica2_243": "Conte por partes: dois placas são duzentos; quatro barras são quarenta; e três cubinhos. Junte tudo.",
+ "dica2_275": "Conte por partes: dois placas são duzentos; sete barras são setenta; e cinco cubinhos. Junte tudo.",
+ "dica2_306": "Conte por partes: três placas são trezentos; zero barras são zero; e seis cubinhos. Junte tudo.",
+ "dica2_420": "Conte por partes: quatro placas são quatrocentos; dois barras são vinte; e zero cubinhos. Junte tudo.",
+ "dica2_518": "Conte por partes: cinco placas são quinhentos; uma barra são dez; e oito cubinhos. Junte tudo.",
+ "dica3_152": "Olhe cada algarismo do número cento e cinquenta e dois: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
+ "dica3_243": "Olhe cada algarismo do número duzentos e quarenta e três: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
+ "dica3_275": "Olhe cada algarismo do número duzentos e setenta e cinco: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
+ "dica3_306": "Olhe cada algarismo do número trezentos e seis: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
+ "dica3_420": "Olhe cada algarismo do número quatrocentos e vinte: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
+ "dica3_518": "Olhe cada algarismo do número quinhentos e dezoito: o primeiro diz as placas, o do meio diz as barras e o último diz os cubinhos.",
+ "dica4_36_3": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_45_3": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_48_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_52_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_55_5": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_63_3": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_75_5": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_84_2": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_88_4": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica4_96_6": "Olhe UM grupo e conte as peças dele: some as barras e os cubinhos daquele grupo.",
+ "dica5a_45_3": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
+ "dica5a_52_4": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
+ "dica5a_75_5": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
+ "dica5a_96_6": "Reparta só as barras, uma de cada vez, até não dar mais uma para cada grupo.",
+ "dica5b_45_3": "Dez cubinhos da barra trocada mais os cinco cubinhos que já estavam ali.",
+ "dica5b_52_4": "Dez cubinhos da barra trocada mais os dois cubinhos que já estavam ali.",
+ "dica5b_75_5": "Dez cubinhos da barra trocada mais os cinco cubinhos que já estavam ali.",
+ "dica5b_96_6": "Dez cubinhos da barra trocada mais os seis cubinhos que já estavam ali.",
+ "dica6_138_6": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que seis.",
+ "dica6_168_12": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que doze.",
+ "dica6_210_7": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que sete.",
+ "dica6_245_5": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que cinco.",
+ "dica6_25_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
+ "dica6_288_8": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que oito.",
+ "dica6_312_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
+ "dica6_33_4": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que quatro.",
+ "dica6_38_5": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que cinco.",
+ "dica6_47_6": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que seis.",
+ "dica6_59_7": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que sete.",
+ "dica6_68_9": "Reparta o quanto der em grupos iguais. O que não fecha mais um grupo é o resto — e o resto é sempre menor que nove.",
+ "dica7_138_6": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_168_12": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_210_7": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_245_5": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_25_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_288_8": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_312_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_33_4": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_38_5": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_47_6": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_59_7": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica7_68_9": "Vá por partes, como no material: primeiro as centenas, depois as dezenas, depois as unidades.",
+ "dica8_36_6": "Pense na tabuada do seis: quantas vezes o seis cabe em trinta e seis?",
+ "dica8_45_5": "Pense na tabuada do cinco: quantas vezes o cinco cabe em quarenta e cinco?",
+ "dica8_56_7": "Pense na tabuada do sete: quantas vezes o sete cabe em cinquenta e seis?",
+ "dica8_64_8": "Pense na tabuada do oito: quantas vezes o oito cabe em sessenta e quatro?",
+ "dica8_81_9": "Pense na tabuada do nove: quantas vezes o nove cabe em oitenta e um?",
+ "dica8_90_9": "Pense na tabuada do nove: quantas vezes o nove cabe em noventa?",
+ "dica9_144_6": "O problema manda repartir cento e quarenta e quatro em seis partes iguais. Isso é uma divisão: cento e quarenta e quatro dividido por seis.",
+ "dica9_150_5": "O problema manda repartir cento e cinquenta em cinco partes iguais. Isso é uma divisão: cento e cinquenta dividido por cinco.",
+ "dica9_60_12": "O problema manda repartir sessenta em doze partes iguais. Isso é uma divisão: sessenta dividido por doze.",
+ "dica9_84_4": "O problema manda repartir oitenta e quatro em quatro partes iguais. Isso é uma divisão: oitenta e quatro dividido por quatro.",
+ "dica_c": "A placa é um quadrado de dez por dez: dez barras, cem cubinhos.",
+ "dica_d": "Conte os riscos da barra: são dez cubinhos grudados.",
+ "dica_m": "O cubão é um cubo grande: dez placas empilhadas.",
+ "dica_u": "O cubinho é a menor peça de todas. Ele é a unidade.",
+ "digite": "Toque numa caixa e digite a resposta.",
+ "essaNao": "Essa não. Faça a conta de novo e procure o resultado certo.",
+ "faltam": "Ainda falta responder nesta folha. Olhe as caixas tracejadas.",
+ "fim": "Você terminou o caderno inteiro da Oficina do Material Dourado! Parabéns!",
+ "fimRel": "Relatório do professor aberto.",
+ "folhaPronta": "Folha pronta! Vamos para a próxima.",
+ "ligue": "Primeiro toque na peça da esquerda, depois no valor.",
+ "monte_152": "Que peças formam o número cento e cinquenta e dois? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "monte_243": "Que peças formam o número duzentos e quarenta e três? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "monte_275": "Que peças formam o número duzentos e setenta e cinco? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "monte_306": "Que peças formam o número trezentos e seis? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "monte_420": "Que peças formam o número quatrocentos e vinte? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "monte_518": "Que peças formam o número quinhentos e dezoito? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "n1": "um",
+ "n10": "dez",
+ "n100": "cem",
+ "n1000": "mil",
+ "n6": "seis",
+ "n8": "oito",
+ "n9": "nove",
+ "nomeOk": "Pronto! Agora toque em Começar.",
+ "novoCaderno": "Caderno novo! As contas mudaram. Vamos lá?",
+ "p10enun": "Para conferir uma divisão a gente faz a prova real: o resultado vezes o divisor, mais o resto, tem que dar o número de novo.",
+ "p1enun": "Cada peça do material dourado vale um tanto. Toque na peça e depois no valor dela, ou puxe uma linha.",
+ "p2enun": "Conte as peças e escreva que número elas formam. Lembre: cada placa vale cem, cada barra vale dez e cada cubinho vale um.",
+ "p3enun": "Agora ao contrário: quantas peças de cada tipo formam este número? Escreva quantas placas, quantas barras e quantos cubinhos.",
+ "p4enun": "As peças foram repartidas igualmente entre os grupos. Olhe um grupo e escreva quanto ficou em cada um.",
+ "p5enun": "Sobrou uma barra e ela não dá para repartir inteira. Troque a barra por dez cubinhos e termine a conta. É isso que a conta armada chama de abaixar o número.",
+ "p6enun": "Nem tudo dá para repartir igual: o que não fecha um grupo é o resto. Escreva o resultado e o resto.",
+ "p7enun": "Agora só com os números: preencha a chave da conta armada, com o resultado e o resto.",
+ "p8enun": "Toque na conta e depois no resultado dela, ou puxe uma linha até ele.",
+ "p9enun": "Leia o problema, descubra que divisão ele pede e escreva a resposta.",
+ "peca_c": "A placa.",
+ "peca_d": "A barra.",
+ "peca_m": "O cubão.",
+ "peca_u": "O cubinho.",
+ "prob_144_6": "A biblioteca da escola recebeu uma doação de 144 livros. Eles serão distribuídos igualmente entre 6 salas de aula. Quantos livros cada sala recebe?",
+ "prob_150_5": "O ginásio tem 150 cadeiras para arrumar em 5 fileiras iguais. Quantas cadeiras ficam em cada fileira?",
+ "prob_60_12": "A professora organizou uma festa de aniversário e comprou 60 balas para dividir igualmente entre 12 amigos. Quantas balas cada amigo recebe?",
+ "prob_84_4": "Pedro tem uma coleção de 84 figurinhas e quer organizá-las em 4 páginas do álbum, com a mesma quantidade em cada página. Quantas figurinhas ele põe em cada página?",
+ "provaB_138_6": "Agora some o resto: cento e trinta e oito mais zero.",
+ "provaB_168_12": "Agora some o resto: cento e sessenta e oito mais zero.",
+ "provaB_210_7": "Agora some o resto: duzentos e dez mais zero.",
+ "provaB_245_5": "Agora some o resto: duzentos e quarenta e cinco mais zero.",
+ "provaB_25_4": "Agora some o resto: vinte e quatro mais um.",
+ "provaB_288_8": "Agora some o resto: duzentos e oitenta e oito mais zero.",
+ "provaB_312_4": "Agora some o resto: trezentos e doze mais zero.",
+ "provaB_33_4": "Agora some o resto: trinta e dois mais um.",
+ "provaB_38_5": "Agora some o resto: trinta e cinco mais três.",
+ "provaB_47_6": "Agora some o resto: quarenta e dois mais cinco.",
+ "provaB_59_7": "Agora some o resto: cinquenta e seis mais três.",
+ "provaB_68_9": "Agora some o resto: sessenta e três mais cinco.",
+ "prova_138_6": "A prova real: vinte e três vezes seis dá quanto?",
+ "prova_168_12": "A prova real: catorze vezes doze dá quanto?",
+ "prova_210_7": "A prova real: trinta vezes sete dá quanto?",
+ "prova_245_5": "A prova real: quarenta e nove vezes cinco dá quanto?",
+ "prova_25_4": "A prova real: seis vezes quatro dá quanto?",
+ "prova_288_8": "A prova real: trinta e seis vezes oito dá quanto?",
+ "prova_312_4": "A prova real: setenta e oito vezes quatro dá quanto?",
+ "prova_33_4": "A prova real: oito vezes quatro dá quanto?",
+ "prova_38_5": "A prova real: sete vezes cinco dá quanto?",
+ "prova_47_6": "A prova real: sete vezes seis dá quanto?",
+ "prova_59_7": "A prova real: oito vezes sete dá quanto?",
+ "prova_68_9": "A prova real: sete vezes nove dá quanto?",
+ "qual2_152": "Aqui estão um placa, cinco barras e dois cubinhos. Que número elas formam?",
+ "qual2_243": "Aqui estão dois placas, quatro barras e três cubinhos. Que número elas formam?",
+ "qual2_275": "Aqui estão dois placas, sete barras e cinco cubinhos. Que número elas formam?",
+ "qual2_306": "Aqui estão três placas e seis cubinhos. Que número elas formam?",
+ "qual2_420": "Aqui estão quatro placas e dois barras. Que número elas formam?",
+ "qual2_518": "Aqui estão cinco placas, um barra e oito cubinhos. Que número elas formam?",
+ "quanto4_36_3": "trinta e seis dividido por três. Quanto fica em cada grupo?",
+ "quanto4_45_3": "quarenta e cinco dividido por três. Quanto fica em cada grupo?",
+ "quanto4_48_4": "quarenta e oito dividido por quatro. Quanto fica em cada grupo?",
+ "quanto4_52_4": "cinquenta e dois dividido por quatro. Quanto fica em cada grupo?",
+ "quanto4_55_5": "cinquenta e cinco dividido por cinco. Quanto fica em cada grupo?",
+ "quanto4_63_3": "sessenta e três dividido por três. Quanto fica em cada grupo?",
+ "quanto4_75_5": "setenta e cinco dividido por cinco. Quanto fica em cada grupo?",
+ "quanto4_84_2": "oitenta e quatro dividido por dois. Quanto fica em cada grupo?",
+ "quanto4_88_4": "oitenta e oito dividido por quatro. Quanto fica em cada grupo?",
+ "quanto4_96_6": "noventa e seis dividido por seis. Quanto fica em cada grupo?",
+ "quase": "Quase! Confira a conta e tente de novo.",
+ "resto_138_6": "cento e trinta e oito dividido por seis. Qual é o resultado e qual é o resto?",
+ "resto_168_12": "cento e sessenta e oito dividido por doze. Qual é o resultado e qual é o resto?",
+ "resto_210_7": "duzentos e dez dividido por sete. Qual é o resultado e qual é o resto?",
+ "resto_245_5": "duzentos e quarenta e cinco dividido por cinco. Qual é o resultado e qual é o resto?",
+ "resto_25_4": "vinte e cinco dividido por quatro. Qual é o resultado e qual é o resto?",
+ "resto_288_8": "duzentos e oitenta e oito dividido por oito. Qual é o resultado e qual é o resto?",
+ "resto_312_4": "trezentos e doze dividido por quatro. Qual é o resultado e qual é o resto?",
+ "resto_33_4": "trinta e três dividido por quatro. Qual é o resultado e qual é o resto?",
+ "resto_38_5": "trinta e oito dividido por cinco. Qual é o resultado e qual é o resto?",
+ "resto_47_6": "quarenta e sete dividido por seis. Qual é o resultado e qual é o resto?",
+ "resto_59_7": "cinquenta e nove dividido por sete. Qual é o resultado e qual é o resto?",
+ "resto_68_9": "sessenta e oito dividido por nove. Qual é o resultado e qual é o resto?",
+ "retomar": "Você estava no meio do caderno. Quer continuar de onde parou?",
+ "trocaB_45_3": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
+ "trocaB_52_4": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
+ "trocaB_75_5": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
+ "trocaB_96_6": "A barra que sobrou virou dez cubinhos. Com os cubinhos que já tinha, quantos cubinhos há agora?",
+ "troca_45_3": "Comece pelas barras: são quatro barras para três grupos. Quantas barras vão para cada grupo?",
+ "troca_52_4": "Comece pelas barras: são cinco barras para quatro grupos. Quantas barras vão para cada grupo?",
+ "troca_75_5": "Comece pelas barras: são sete barras para cinco grupos. Quantas barras vão para cada grupo?",
+ "troca_96_6": "Comece pelas barras: são nove barras para seis grupos. Quantas barras vão para cada grupo?",
+ "vale_c": "Isso! A placa tem dez barras: vale cem.",
+ "vale_d": "Isso! A barra tem dez cubinhos: vale dez.",
+ "vale_m": "Isso! O cubão tem dez placas: vale mil.",
+ "vale_u": "Isso! O cubinho é uma unidade: vale um.",
+ "vozOn": "Narração ligada!"
+};
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"19oy0am":1,"1l1mif1":1,"fpgtn3":1,"136357y":1,"14z1ioo":1,"p955v0":1,"136967d":1,"7cjdm":1,"3soi9b":1,"gor1fb":1,"c7sgxw":1,"1ukqb73":1,"846yrb":1,"f6gnjm":1,"25ln06":1,"1dqxik2":1,"1h3wcqz":1,"6nnirl":1,"z3ytzv":1,"jp1r7j":1,"qkacbd":1,"1mnu9cx":1,"12t76n8":1,"124re7y":1,"100o429":1,"5jnwxn":1,"22ae8n":1,"1d65cyz":1,"6hdlnv":1,"gemyai":1,"1fkd4e6":1,"1x5elks":1,"ri3d2k":1,"1y7rmch":1,"rx1e2h":1,"1aer0e6":1,"1ymipqk":1,"531e8d":1,"1fu8e4z":1,"1gazz5z":1,"78nugx":1,"jx4oxy":1,"7lzhja":1,"1309lg6":1,"o02nh2":1,"1tzeh56":1,"11gbtwk":1,"1262dex":1,"i6hz55":1,"xd4ypl":1,"1cw6ims":1,"1hk19ut":1,"lsjicj":1,"1govyye":1,"pjufbp":1,"1eu2olu":1,"hqjan5":1,"1ygah7x":1,"1ffqxj2":1,"3jdn6z":1,"cgennb":1,"hj88qx":1,"14tm0nz":1,"19jiq84":1,"3w2yt4":1,"12akqmn":1,"1o58ubv":1,"9jai1w":1,"1ngyzfe":1,"102mcli":1,"t4qj20":1,"1fphynm":1,"1wvzc8g":1,"1j4hbu7":1,"18xsith":1,"3ds7ld":1,"1j2cy48":1,"1n3j9rg":1,"1he0aco":1,"1oakg4h":1,"1x2kno7":1,"1sreqhh":1,"1yisi0l":1,"8lvrn3":1,"1cl3zz":1,"n49y66":1,"1dadj04":1,"40s1ds":1,"1vnrt0n":1,"1dc3087":1,"jurgwa":1,"pfdh7l":1,"ycrkz5":1,"1s8yinz":1,"rtqje2":1,"1otzgv":1,"r1hp3s":1,"1eunwxk":1,"17eqp4i":1,"xfnxjj":1,"bca8xa":1,"1d9fmaq":1,"y31zyq":1,"j52uo3":1,"1ys4aoz":1,"1r4oge9":1,"73hoy5":1,"10vbpxs":1,"11r9ttt":1,"1ev2u6i":1,"1651f0e":1,"1c7i8od":1,"dcx7u7":1,"p4golb":1,"12ml3gb":1,"1fyd3ng":1,"q4ybgo":1,"1x0yk5i":1,"dfhr83":1,"nsc5lh":1,"1iq4f8s":1,"v1i8lr":1,"yj0l78":1,"ssup8f":1,"sihiil":1,"ssuy4c":1,"grsp6f":1,"7nfulj":1,"sq4d1i":1,"spjls3":1,"13xtwj9":1,"19g4k0m":1,"13cs219":1,"utjpfq":1,"q63rj4":1,"defbzi":1,"1vwng4u":1,"1tx2zqh":1,"1hjggat":1,"gfmx9t":1,"yj9gdf":1,"1y291ph":1,"1wrypms":1,"mybc9o":1,"1i9yr26":1,"1fngpx":1,"27dz8h":1,"13mc8is":1,"1wjyi27":1,"43v2fv":1,"uj2w9t":1,"kmbslg":1,"xd9mqk":1,"1n36hws":1,"dt6414":1,"1jaabt5":1,"1n2vmdx":1,"fa21g3":1,"3holj":1,"3775c8":1,"3774hm":1,"377czr":1,"ykrdtl":1,"ykoejk":1,"yknrwd":1,"1t0fcn2":1,"1u6qgnb":1,"1tqidfc":1,"nk5lfm":1,"1aebda1":1,"dq9qh5":1,"dsu410":1,"1reeb7n":1,"5m8zbg":1,"17rn1k8":1,"mr8r8p":1,"1yulkic":1,"1c0cclx":1,"12qqw1o":1,"y44qb2":1,"1yg6rka":1,"k3b1fy":1,"ot4tvt":1,"1qpnykh":1,"i7ttan":1,"j3sach":1,"1qh4lv9":1,"1ncrbud":1,"fls02s":1,"1dp5hcq":1,"6r4hdy":1,"10r8jli":1,"xqi1q1":1,"7qamgn":1,"1f5r2mq":1,"9l1yr9":1,"q5zht7":1,"8ztdjr":1,"rlfdj3":1,"1pm98qg":1,"1i9y2qn":1,"17rlrz9":1,"p87s1n":1,"z3jpl1":1,"fceyfg":1,"nhvg2":1,"ht4ska":1,"1hsqns1":1,"1fu234u":1,"2r2umq":1,"k22bau":1,"1lyx1zo":1,"11me4rc":1,"vgf28c":1,"ch3c72":1,"j02ryo":1,"1wt7a2f":1,"1g1nc3j":1,"4hw7u":1,"m9wi1z":1,"fdm5f7":1,"ik7ann":1,"17hvkva":1,"mhta9e":1,"p3eymi":1,"12h9mt7":1,"kek5ke":1,"1pj71j4":1,"2o89lr":1,"18eg095":1,"547exp":1,"yt94pm":1,"12pjm2z":1,"c61528":1,"ey2qnc":1,"kuwbp1":1,"11bfogw":1,"azj0mg":1,"6mtexw":1,"g5deou":1,"v5olwl":1,"1i5g9ym":1,"k52nsz":1,"ql3wz6":1,"1780men":1,"8rek04":1,"1yxsw0e":1,"12441rn":1,"13eqc7p":1};/*VOZOK-FIM*/
 
 /* ---------- o material dourado, desenhado em SVG (casa: peça divisao-dourado) ---------- */
-function svgUnidade(px){var s=px||16;var d=Math.max(3,Math.round(s*0.26)),f=s-d;
-  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'" aria-hidden="true">'+
-  '<polygon points="0,'+d+' '+d+',0 '+s+',0 '+f+','+d+'" fill="#f3d071"/>'+
-  '<polygon points="'+f+','+d+' '+s+',0 '+s+','+f+' '+f+','+s+'" fill="#c8971f"/>'+
-  '<rect x="0" y="'+d+'" width="'+f+'" height="'+f+'" fill="#e8b53a"/></svg>';}
-function svgDezena(px){var h=px||44;var w=Math.max(7,Math.round(h*0.17));var seg='',gap=(h-2)/10,i;
-  for(i=1;i<10;i++)seg+='<line x1="0" y1="'+(i*gap)+'" x2="'+w+'" y2="'+(i*gap)+'" stroke="#a9781a" stroke-width="1"/>';
-  return '<svg class="blk" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" aria-hidden="true">'+
-  '<rect x="0" y="0" width="'+w+'" height="'+h+'" rx="2" fill="#e8b53a" stroke="#a9781a"/>'+seg+'</svg>';}
-function svgCentena(px){var s=px||44;var lado=s-4,st=lado/10,g='',i;
-  for(i=1;i<10;i++){g+='<line x1="2" y1="'+(2+i*st)+'" x2="'+(2+lado)+'" y2="'+(2+i*st)+'" stroke="#a9781a" stroke-width=".8"/>';
-                    g+='<line x1="'+(2+i*st)+'" y1="2" x2="'+(2+i*st)+'" y2="'+(2+lado)+'" stroke="#a9781a" stroke-width=".8"/>';}
-  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'" aria-hidden="true">'+
-  '<rect x="2" y="2" width="'+lado+'" height="'+lado+'" rx="2" fill="#e8b53a" stroke="#a9781a"/>'+g+'</svg>';}
-function svgMilhar(px){var s=px||54;var d=Math.round(s*0.17),f=s-d,grid='',st=f/10,i;
-  for(i=1;i<10;i++){grid+='<line x1="0" y1="'+(d+i*st)+'" x2="'+f+'" y2="'+(d+i*st)+'" stroke="#a9781a" stroke-width=".7"/>';
-                    grid+='<line x1="'+(i*st)+'" y1="'+d+'" x2="'+(i*st)+'" y2="'+s+'" stroke="#a9781a" stroke-width=".7"/>';}
-  return '<svg class="blk" width="'+s+'" height="'+s+'" viewBox="0 0 '+s+' '+s+'" aria-hidden="true">'+
-  '<polygon points="0,'+d+' '+d+',0 '+s+',0 '+f+','+d+'" fill="#f3d071"/>'+
-  '<polygon points="'+f+','+d+' '+s+',0 '+s+','+f+' '+f+','+s+'" fill="#c8971f"/>'+
-  '<rect x="0" y="'+d+'" width="'+f+'" height="'+f+'" fill="#e8b53a" stroke="#a9781a"/>'+grid+'</svg>';}
+/* Um SÓ desenhista para as quatro peças: o PRISMA em projeção oblíqua (a mesma
+   que as folhas impressas usam — frente reta, profundidade jogada para trás e
+   para cima). `w × a × p` são medidos em CUBINHOS, e é isso que faz a família
+   ficar irmã: a barra é 1×10×1, a placa 10×10×1 e o cubão 10×10×10, sempre com
+   o MESMO cubinho de lado `u`. As riscas de cada face são o que a criança conta:
+   sem elas a peça vira um retângulo amarelo e a folha não ensina nada.
+   Abaixo de ~2,2 px por cubinho a risca vira sujeira — aí só o contorno fica. */
+var OURO = {frente: "#eab93f", topo: "#f7dd97", lado: "#c08a1a", risca: "#9c6f14", traco: "#7d570d"};
+function prisma(w, a, p, u){
+  u = u || 6; var K = 0.45, W = w * u, A = a * u, D = p * u * K;
+  var LW = W + D, LA = A + D, fino = u < 2.2, r = Math.max(.5, Math.min(1, u / 7)), s = "";
+  s += '<svg class="blk" width="' + LW.toFixed(1) + '" height="' + LA.toFixed(1) + '" viewBox="0 0 ' + LW.toFixed(1) + ' ' + LA.toFixed(1) + '" aria-hidden="true">';
+  s += '<polygon points="0,' + D + ' ' + D + ',0 ' + (D + W) + ',0 ' + W + ',' + D + '" fill="' + OURO.topo + '"/>';
+  s += '<polygon points="' + W + ',' + D + ' ' + (W + D) + ',0 ' + (W + D) + ',' + A + ' ' + W + ',' + (A + D) + '" fill="' + OURO.lado + '"/>';
+  s += '<rect x="0" y="' + D + '" width="' + W + '" height="' + A + '" fill="' + OURO.frente + '"/>';
+  if(!fino){
+    var g = '<g stroke="' + OURO.risca + '" stroke-width="' + (r * .8).toFixed(2) + '" fill="none">', i, o;
+    for(i = 1; i < w; i++) g += '<path d="M' + (i * u) + ',' + D + 'V' + (D + A) + '"/>';          /* frente ↕ */
+    for(i = 1; i < a; i++) g += '<path d="M0,' + (D + i * u) + 'H' + W + '"/>';                     /* frente ↔ */
+    for(i = 1; i < w; i++) g += '<path d="M' + (i * u) + ',' + D + 'l' + D + ',' + (-D) + '"/>';    /* topo ↗ */
+    for(i = 1; i < a; i++) g += '<path d="M' + W + ',' + (D + i * u) + 'l' + D + ',' + (-D) + '"/>';/* lado ↗ */
+    for(i = 1; i < p; i++){ o = i * u * K;
+      g += '<path d="M' + o + ',' + (D - o) + 'H' + (W + o) + '"/>';                                 /* topo ↔ */
+      g += '<path d="M' + (W + o) + ',' + (D - o) + 'V' + (D - o + A) + '"/>';                       /* lado ↕ */
+    }
+    s += g + '</g>';
+  }
+  s += '<g stroke="' + OURO.traco + '" stroke-width="' + r.toFixed(2) + '" fill="none" stroke-linejoin="round">' +
+       '<path d="M0,' + D + 'L' + D + ',0H' + (D + W) + 'V' + A + 'L' + W + ',' + (A + D) + 'H0Z"/>' +
+       '<path d="M0,' + D + 'H' + W + 'V' + (A + D) + 'M' + W + ',' + D + 'L' + (W + D) + ',0"/></g>';
+  return s + '</svg>';
+}
+/* px = o TAMANHO TOTAL da peça na tela; cada uma acha o seu cubinho a partir dele */
+function svgUnidade(px){ return prisma(1, 1, 1, (px || 14) / 1.45); }
+function svgDezena(px){ return prisma(1, 10, 1, (px || 62) / 10.45); }
+function svgCentena(px){ return prisma(10, 10, 1, (px || 62) / 10.45); }
+function svgMilhar(px){ return prisma(10, 10, 10, (px || 74) / 14.5); }
 function bloco(kind, px){ return kind === 0 ? svgMilhar(px) : kind === 1 ? svgCentena(px) : kind === 2 ? svgDezena(px) : svgUnidade(px); }
 function grupoBlocos(kind, n, px, cap){
   cap = cap || 12; var out = '<span class="gr">', m = Math.min(n, cap), i;
@@ -255,10 +579,12 @@ function grupoBlocos(kind, n, px, cap){
   return out + '</span>';
 }
 function material(c, d, u, px){
-  px = px || 34; var s = '<div class="mat">';
+  /* placa e barra saem do MESMO cubinho; o cubinho solto sai desse cubinho também
+     (px/10.45 é o lado, ×1.45 com a profundidade) — é o que deixa a família irmã */
+  px = px || 62; var s = '<div class="mat">', cub = Math.max(9, px * 0.1387);
   if(c) s += grupoBlocos(1, c, px);
   if(d) s += grupoBlocos(2, d, px);
-  if(u) s += grupoBlocos(3, u, Math.round(px * .36));
+  if(u) s += grupoBlocos(3, u, cub);
   return s + '</div>';
 }
 function cdu(n){ return {c: Math.floor(n / 100), d: Math.floor(n / 10) % 10, u: n % 10}; }
@@ -424,8 +750,8 @@ function monta(){
 function f0(d){
   var c = el("div", "capa");
   c.innerHTML = '<h1>A Oficina do Material Dourado</h1><div class="sub">Divisão · 5º ano · 10 folhas</div>' +
-    '<div class="cena">' + bloco(0, 70) + bloco(1, 56) + bloco(2, 56) + bloco(3, 22) + '</div>' +
-    '<div class="legenda"><span>' + bloco(3, 16) + ' cubinho = 1</span><span>' + bloco(2, 26) + ' barra = 10</span><span>' + bloco(1, 26) + ' placa = 100</span><span>' + bloco(0, 30) + ' cubão = 1000</span></div>' +
+    '<div class="cena">' + bloco(0, 104) + bloco(1, 82) + bloco(2, 82) + bloco(3, 22) + '</div>' +
+    '<div class="legenda"><span>' + bloco(3, 20) + ' cubinho = 1</span><span>' + bloco(2, 50) + ' barra = 10</span><span>' + bloco(1, 50) + ' placa = 100</span><span>' + bloco(0, 62) + ' cubão = 1000</span></div>' +
     '<div class="nomef vazio" id="nomef">escreva o seu nome ali embaixo</div>';
   d.appendChild(c);
 }
@@ -433,7 +759,7 @@ function f0(d){
 function f1(d, pi){
   faixa(d, pi, NOMES[0]);
   d.appendChild(el("div", "enun", "Toque na peça e depois no <b>valor</b> dela, ou puxe uma linha."));
-  var pares = [{k: "u", kind: 3, v: 1, px: 22}, {k: "d", kind: 2, v: 10, px: 46}, {k: "c", kind: 1, v: 100, px: 46}, {k: "m", kind: 0, v: 1000, px: 52}];
+  var pares = [{k: "u", kind: 3, v: 1, px: 24}, {k: "d", kind: 2, v: 10, px: 66}, {k: "c", kind: 1, v: 100, px: 66}, {k: "m", kind: 0, v: 1000, px: 78}];
   montaLigar(d, pi, pares.map(function(p){ return {k: p.k, esq: bloco(p.kind, p.px), dir: String(p.v), fe: "peca_" + p.k, fd: "n" + p.v, fc: "vale_" + p.k, dica: "dica_" + p.k}; }));
 }
 /* 2 — qual é o número (digitar) */
@@ -444,7 +770,7 @@ function f2(d, pi){
   for(var i = 0; i < L.length; i++){
     var it = L[i], n = it.c * 100 + it.d * 10 + it.u;
     var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span>');
-    box.innerHTML += material(it.c, it.d, it.u, 34);
+    box.innerHTML += material(it.c, it.d, it.u, 62);
     var lin = el("div", "linhaop");
     lin.appendChild(caixa(pi, "r2_" + i, n, "qual2_" + n, "certo2_" + n, "dica2_" + n));
     box.appendChild(lin); d.appendChild(box);
@@ -473,11 +799,11 @@ function f4(d, pi){
   for(var i = 0; i < L.length; i++){
     var it = L[i], q = it.n / it.d, p = cdu(it.n);
     var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + it.n + ' ÷ ' + it.d + '</span>');
-    box.innerHTML += material(p.c, p.d, p.u, 30);
+    box.innerHTML += material(p.c, p.d, p.u, 58);
     var gs = el("div", "grupos");
     for(var g = 0; g < Math.min(it.d, 6); g++){
       var gq = cdu(q);
-      gs.appendChild(el("div", "grupo", '<span class="rotg">GRUPO ' + (g + 1) + '</span>' + material(gq.c, gq.d, gq.u, 22)));
+      gs.appendChild(el("div", "grupo", '<span class="rotg">GRUPO ' + (g + 1) + '</span>' + material(gq.c, gq.d, gq.u, 44)));
     }
     box.appendChild(gs);
     var lin = el("div", "linhaop", '<span class="conta">cada grupo:</span>');
@@ -494,7 +820,7 @@ function f5(d, pi){
     var it = L[i], q = it.n / it.d, p = cdu(it.n);
     var porGrupoD = Math.floor(p.d / it.d), sobraD = p.d - porGrupoD * it.d, unidades = sobraD * 10 + p.u;
     var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + it.n + ' ÷ ' + it.d + '</span>');
-    box.innerHTML += material(0, p.d, p.u, 30);
+    box.innerHTML += material(0, p.d, p.u, 58);
     var lin1 = el("div", "linhaop", '<span class="conta">barras para cada grupo:</span>');
     lin1.appendChild(caixa(pi, "r5_" + i + "a", porGrupoD, "troca_" + it.n + "_" + it.d, "certo5a_" + it.n + "_" + it.d, "dica5a_" + it.n + "_" + it.d));
     box.appendChild(lin1);
@@ -514,7 +840,7 @@ function f6(d, pi){
   for(var i = 0; i < L.length; i++){
     var it = L[i], q = Math.floor(it.n / it.d), r = it.n % it.d, p = cdu(it.n);
     var box = el("div", "item", '<span class="n">' + (i + 1) + '.</span><span class="conta">' + it.n + ' ÷ ' + it.d + '</span>');
-    box.innerHTML += material(0, p.d, p.u, 28);
+    box.innerHTML += material(0, p.d, p.u, 54);
     var lin = el("div", "linhaop");
     lin.appendChild(caixa(pi, "r6_" + i + "q", q, "resto_" + it.n + "_" + it.d, "certo6_" + it.n + "_" + it.d, "dica6_" + it.n + "_" + it.d, "resultado"));
     lin.appendChild(caixa(pi, "r6_" + i + "r", r, "resto_" + it.n + "_" + it.d, "certo6_" + it.n + "_" + it.d, "dica6_" + it.n + "_" + it.d, "resto"));
@@ -524,7 +850,7 @@ function f6(d, pi){
 /* 7 — a conta armada */
 function f7(d, pi){
   faixa(d, pi, NOMES[6]);
-  d.appendChild(el("div", "enun", "Agora só com os números: complete a <b>chave</b> da conta armada."));
+  d.appendChild(el("div", "enun", "Agora só com os números: preencha a <b>chave</b> da conta armada."));
   var L = ST.folha.p7;
   for(var i = 0; i < L.length; i++){
     var it = L[i], q = Math.floor(it.n / it.d), r = it.n % it.d;
@@ -729,7 +1055,7 @@ function fim(){
   m.addEventListener("pointerdown", comeca); m.addEventListener("pointerup", solta); m.addEventListener("pointerleave", solta); m.addEventListener("pointercancel", solta);
 })();
 function relatorio(){
-  var r = document.getElementById("relatorio"), h = "<b>Relatório do professor</b> — " + (ST.nome || "(sem nome)") + " · " + Math.round(((Date.now() - (ST.inicio || Date.now())) / 60000)) + " min<table><tr><th>Folha</th><th>De primeira</th><th>Com 2+ tentativas</th></tr>";
+  var r = document.getElementById("relatorio"), h = "<b>Relatório do professor</b> — " + (ST.nome || "(sem nome)") + " · " + Math.round(((Date.now() - (ST.inicio || Date.now())) / 60000)) + " min<table><tr><th>Folha</th><th>De primeira</th><th>Precisou de dica</th></tr>";
   var tot = 0, prim = 0, fracas = [];
   for(var pi = 1; pi <= 10; pi++){
     var ids = idsDaPagina(pi), t = ids.length, p = 0, ruins = 0;
