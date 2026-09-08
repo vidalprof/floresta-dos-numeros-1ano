@@ -25,9 +25,19 @@ u"""PORTÃO DO BURACO DE FUNDO — "sobrou preto dentro da peça?"
    não uma superfície com luz. Arte tem sombreado; fundo não tem. Com essa
    regra o mesmo lote acusou UMA figura, e ela estava mesmo defeituosa.
 
+⚠️⚠️ E POR QUE ELE PERGUNTA EM VEZ DE DECIDIR SOZINHO. Medindo o banco inteiro
+   (709 figuras) ele acusou doze — e, olhando uma a uma, DEZ eram preto legítimo:
+   o contorno grosso dos óculos de festa, as pintas da bola de futebol, a lâmpada
+   apagada, as casas escuras da amarelinha, o olho das crianças. As assinaturas
+   se sobrepõem: o olho de uma criança é tão chapado e tão preto quanto o fundo
+   que sobrou numa alça. **Nenhum número separa os dois.** Então o portão faz o
+   que o portão das fotos já faz: ACUSA, e quem decide OLHA. A figura aprovada
+   entra em `_qa/_buraco_ok.json` com o motivo e não incomoda mais.
+
 Uso:
     python3 _qa/buraco.py <pasta-ou-arquivo> [...]      # mede e reprova (1)
     python3 _qa/buraco.py <pasta> --consertar           # apaga os buracos
+    python3 _qa/buraco.py <arquivo> --aprovar "motivo"  # é desenho, não defeito
 
 Códigos: 0 limpo · 1 há buraco de fundo · 2 não consegui medir.
 """
@@ -44,7 +54,10 @@ except ImportError:
     print(u"nao consegui medir: falta Pillow/numpy")
     sys.exit(2)
 
+APROVADOS = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_buraco_ok.json")
 MIN_PIXELS = 120     # menor que isto e sujeira de recorte, nao mancha visivel
+MAX_FRACAO = 0.08    # buraco de alca e alguns por cento da peca, nunca um terco
+MIN_TRANSP = 0.02    # a peca tem que SER recortada (ter fundo transparente)
 LUM_MEDIA = 26       # o fundo e quase preto puro
 LUM_DESVIO = 7       # ... e CHAPADO: arte sombreada passa disto
 CERCA = 0.93         # quase todo o anel em volta e peca opaca
@@ -61,6 +74,14 @@ def _blobs(cam):
     achados = []
     if not escuro.any():
         return achados, im, a
+    # ⚠️ GUARDA 1 — SÓ PEÇA RECORTADA. Ilustração de página inteira (céu de
+    #    noite, fundo escuro) é opaca de ponta a ponta: ali o preto chapado é
+    #    desenho, não sobra de recorte. Sem esta linha o portão acusou as oito
+    #    páginas `pg*.png` do banco, com 150 mil pixels cada — nenhuma defeituosa.
+    opacos = (al > 120)
+    if (1.0 - opacos.mean()) < MIN_TRANSP:
+        return achados, im, a
+    area_peca = float(opacos.sum())
     vis = np.zeros(escuro.shape, bool)
     H, W = escuro.shape
     for y0, x0 in zip(*np.nonzero(escuro)):
@@ -90,6 +111,10 @@ def _blobs(cam):
         x1, x2 = max(0, P[:, 1].min() - 3), min(W - 1, P[:, 1].max() + 3)
         if (al[y1:y2 + 1, x1:x2 + 1] > 120).mean() < CERCA:
             continue                      # nao esta cercado por peca
+        # ⚠️ GUARDA 2 — TAMANHO. Buraco de alca, de furo de tesoura ou de vao de
+        #    janela e alguns por cento da peca. Mancha grande e desenho.
+        if len(pix) > area_peca * MAX_FRACAO:
+            continue
         achados.append(P)
     return achados, im, a
 
@@ -133,9 +158,32 @@ def arquivos(alvos):
     return saida
 
 
+def _ok():
+    try:
+        import json
+        return json.load(open(APROVADOS, encoding="utf-8"))
+    except Exception:                                            # noqa: BLE001
+        return {}
+
+
+def _aprova(cams, motivo):
+    import json
+    d = _ok()
+    for c in cams:
+        d[os.path.basename(c)] = motivo
+    open(APROVADOS, "w", encoding="utf-8").write(
+        json.dumps(d, ensure_ascii=False, indent=1, sort_keys=True))
+    print(u"aprovadas %d figura(s): %s" % (len(cams), motivo))
+
+
 def main():
     args = [x for x in sys.argv[1:] if not x.startswith("--")]
     consertar = "--consertar" in sys.argv
+    aprovar = None
+    if "--aprovar" in sys.argv:
+        i = sys.argv.index("--aprovar")
+        aprovar = sys.argv[i + 1] if i + 1 < len(sys.argv) else u"desenho, nao defeito"
+        args = [a for a in args if a != aprovar]
     if not args:
         print(__doc__)
         return 2
@@ -143,6 +191,11 @@ def main():
     if not alvos:
         print(u"nao consegui medir: nenhum .png em %s" % ", ".join(args))
         return 2
+    if aprovar:
+        _aprova(alvos, aprovar)
+        return 0
+    ok = _ok()
+    alvos = [c for c in alvos if os.path.basename(c) not in ok]
     maus = []
     for cam in alvos:
         try:

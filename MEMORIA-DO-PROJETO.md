@@ -7060,3 +7060,133 @@ no meio de argila a criança não vê como "estilo diferente" — ela vê um bic
 verdade ao lado de um brinquedo, e no 1º ano isso atrapalha o reconhecimento,
 que é o trabalho da folha. Antes de publicar atividade com muita figura, montar
 o **contato-folha** (todas as figuras numa imagem só, sobre xadrez) e OLHAR.
+
+## 🖼️🚫 AS FIGURAS SÃO DELE — e eu quase apaguei o banco (8/set/2026)
+
+Três ordens do Marcos numa noite só, e as três nasceram de erro meu:
+
+> *"a imagem do gato não é a imagem que gerei, esse gato é feio, favor trocar,
+> **não gere imagens no Pollinations**"* · *"não gerar no Pollinations fica
+> horrível, **utilize o banco ou peça para eu gerar**"* · *"delete essas imagens
+> que citei do banco de imagens"*.
+
+**ISTO REVOGA a permissão de set/2026 de eu gerar arte no Pollinations.** A
+troca que ele tinha feito era por velocidade; a qualidade não pagou. A regra
+volta a ser: **procurar no banco; se não houver, PASSAR O PROMPT para ele
+gerar** (ChatGPT/Gemini) e eu só recortar e instalar.
+
+### ⚠️⚠️ O ERRO GRAVE: eu sobrescrevi as figuras dele no banco
+
+O `_banco/montar.py` cataloga copiando da atividade para o banco **pelo
+nome-base** (`_alfa1/img/al_gato.png` → `_banco/img/gato.png`). Como eu tinha
+posto as MINHAS figuras na atividade, ao catalogar elas entraram **por cima das
+dele** — oito figuras (gato, sapo, jacaré, abelha, macaco, tucano, vaca, rato).
+Ele percebeu porque conhecia o gato dele.
+
+Restaurei do histórico (`git checkout <commit-anterior> -- _banco/img/<nome>.png`)
+e troquei a atividade pelas versões dele, que eram melhores.
+
+**REGRA QUE FICA:** antes de rodar o `_banco/montar.py`, conferir se a figura
+já existe no banco com aquele nome. Se existir e for diferente, **não
+sobrescrever** — a do banco é a dele. Figura minha, se houver, entra com sufixo
+(`-2`, `-3`), nunca no nome principal.
+
+### 🕳️ O PORTÃO DO BURACO — `_qa/buraco.py` (nasceu aqui)
+
+O mesmo defeito chegou a ele TRÊS vezes: *"a xícara está com magenta entre a
+alça"*, *"a xícara ficou com preto dentro da alça"*, *"a caneca aparece o preto
+dentro da parte entre a alça e a caneca"*. A causa é sempre de RECORTE: a peça
+saiu de cartela de fundo preto/magenta e o recorte por cor só alcança o fundo de
+FORA — todo buraco **fechado** (alça, furo de tesoura, vão de janela) guarda o
+fundo lá dentro.
+
+`python3 _qa/buraco.py <pasta> [--consertar]` mede e conserta.
+
+⚠️ **Como ele distingue fundo de desenho** (a primeira versão acusou 42 de 62
+figuras — a bola de futebol, o dado, o olho do gato): o fundo é **CHAPADO**,
+luminância média quase zero e desvio quase nulo; arte tem sombreado. Com essa
+regra o mesmo lote acusou UMA figura — a tesoura, com preto nos dois furos dos
+dedos, que ninguém tinha visto. **Rodar em toda pasta de imagens antes de
+publicar.** O banco inteiro ainda tem casos: fila.
+
+### 🎨 A ARGILA É PEDAGÓGICA — mas não em tudo
+
+Ele perguntou: *"essas figuras na forma de argila são pedagógicas? estão
+corretas usar?"*. A resposta medida:
+
+- **Alfabetização e vocabulário → argila, sim.** O trabalho é recuperar o NOME
+  da figura, e as normas de nomeação (Snodgrass & Vanderwart; Rossion &
+  Pourtois) mostram desenho colorido simplificado nomeado tão rápido e tão certo
+  quanto fotografia. Vista canônica, cor prototípica, fundo transparente: pelo
+  princípio da coerência (Mayer), detalhe irrelevante só ocupa memória.
+- **Ciências e conteúdo factual sobre o animal/objeto real → foto ou arte
+  realista.** Há evidência (Ganea et al., 2011 e 2014) de que a criança pequena
+  transfere melhor o FATO para o mundo real a partir de imagem realista, e que
+  antropomorfismo (bicho de roupa, em pé como gente) atrapalha.
+- Em qualquer caso: exemplar TÍPICO e **um estilo só na atividade inteira** —
+  foi por isso que seis fotografias no meio de 53 figuras de argila eram defeito.
+
+## 🖐️ TRÊS DEFEITOS DE NAVEGADOR NO ARRASTAR — todos silenciosos (8/set/2026)
+
+Ao pôr "arrastar além de clicar" na folha viva, o arrasto simplesmente NÃO
+acontecia. Nenhum erro na tela, nada no console. Foram três causas empilhadas, e
+qualquer uma sozinha mata o gesto:
+
+1. **`setPointerCapture` no botão + ouvir `pointermove` NELE:** só o primeiro
+   movimento chega. O padrão certo é ouvir no **documento** — o dedo precisa
+   poder sair de cima da peça, que é o que ele faz ao levá-la.
+2. **O navegador FUNDE os movimentos** (coalescing): num teste de 8 passos
+   chegou UM `pointermove`, de 5 px. Decidir "isto é arrasto" contando
+   movimentos perde a jogada. **Quem manda é a SOLTURA**: apertou na peça e
+   soltou sobre o alvo = soltou ali.
+3. **A IMAGEM tem arrasto nativo.** Ao puxar, o Chrome começava o SEU arrasto do
+   `<img>` e disparava um `pointercancel` — e esse cancel vem com
+   **clientX/clientY = 0,0**, então quem confiasse nele concluiria que a criança
+   soltou no canto da tela. Conserto: `draggable="false"` em toda imagem,
+   `user-drag:none` no CSS, `dragstart` cancelado no documento, e guardar o
+   último ponto REAL do ponteiro para usar quando o evento vier sem posição.
+
+**Ao pôr arrastar em qualquer peça nova, conferir os três.**
+
+## 🗣️ A SÍLABA SE RECORTA DA PALAVRA — não se sintetiza solta (8/set/2026)
+
+Ordem dele: *"a pronúncia das sílabas precisa ser precisa e melhorada, use
+alguma ferramenta profissional"*.
+
+**Por que a sílaba solta sai errada por construção:** o sintetizador não lê SOM,
+lê PALAVRA. "çã" sozinho não tem regra em português (ç não começa palavra) e sai
+soletrado; e — pior porque é invisível — a MESMA sílaba escrita tem sons
+diferentes conforme a palavra: **"bo" é [bɔ] em BOLA e [bo] em BOLO**. Reescrever
+a sílaba "como se fala" (çã → "sã") conserta um caso por vez e nunca fecha a
+família.
+
+**`_padrao/silabas_voz.py`** faz o certo: manda o Edge TTS ler as sílabas
+daquela palavra numa tacada (`gi, ra, fa`), recebe do **próprio serviço** os
+marcadores de tempo de cada pedaço (`WordBoundary`, em unidades de 100 ns — é do
+protocolo) e corta o mp3 exatamente neles. A criança ouve a sílaba na voz, no
+ritmo e na altura daquela palavra. Roda no `entregar.yml`, `continue-on-error`.
+
+O `gerar_falas.py` monta junto o mapa **sílaba → (palavra, posição)**, para a
+sílaba que aparece solta (um distrator) ser tocada a partir de alguma palavra.
+
+## 👩‍🏫 O PEDAGOGO NÃO É FORMALIDADE — ele achou o que faltava (8/set/2026)
+
+Ordem dele: *"é muito imperativo que essas atividades passem pelo pedagogo, e
+especialista de cada disciplina no caso dos anos finais"* e *"tem que estar
+adequado e pedagógico"*.
+
+Passei a Fábrica de Palavras pelo currículo de Blumenau (1º ano, LP) **linha por
+linha**, e o parecer achou uma falta real: o **primeiro** objetivo do ano é
+*"nomear as letras do alfabeto e ordená-las"*, o Marcos tinha pedido "sequência
+alfabética" no encargo — e não havia folha nenhuma disso. Entrou a folha "A fila
+do alfabeto", como folha 1.
+
+**Como fazer o parecer (virou receita):** abrir o `_curriculo/blumenau.txt` na
+seção do ano e da disciplina, **transcrever os objetivos verbatim** numa tabela,
+mapear folha por folha contra eles, e escrever o que FALTA e o que está fora da
+disciplina. O resultado fica em `<pasta>/PARECER-PEDAGOGICO.md`, junto da
+atividade. Modelo pronto: `_alfa1/PARECER-PEDAGOGICO.md`.
+
+⚠️ E o parecer diz a verdade inclusive quando é inconveniente: ali está escrito
+que a folha "O que vem depois" é objetivo de **Matemática**, não de Português, e
+que **falta rima** (objetivo de oralidade).
