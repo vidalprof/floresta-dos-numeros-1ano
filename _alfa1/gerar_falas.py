@@ -62,16 +62,17 @@ F = {}
 F.update({
  u"capa": u"A Fábrica de Palavras. Dez folhas para brincar com as letras e as sílabas. Escreva o seu nome ali embaixo e toque em Começar.",
  u"p1enum": u"",  # (reservado)
- u"p1enun": u"Folha um: a letra escondida. Uma letra fugiu da palavra. Olhe a figura, ouça a palavra e toque na letra certa.",
- u"p2enun": u"Folha dois: quantas sílabas. Fale a palavra batendo uma palma em cada pedaço. Depois toque em Pronto.",
- u"p3enun": u"Folha três: o que vem depois. Olhe a fila de figuras, descubra a ordem que se repete e escolha a que vem depois.",
- u"p4enun": u"Folha quatro: circule quem começa igual. Toque em todos os desenhos que começam com a sílaba mostrada. Depois toque em Conferir.",
- u"p5enun": u"Folha cinco: pinte a sílaba inicial. Toque na sílaba com que a palavra começa.",
- u"p6enun": u"Folha seis: ligue à sílaba final. Toque na figura e depois na sílaba com que ela termina.",
- u"p7enun": u"Folha sete: marque a sílaba do meio. Toque na sílaba que fica no meio da palavra.",
- u"p8enun": u"Folha oito: escreva a sílaba que falta. Toque no quadradinho e escreva a sílaba, no teclado da tela ou no teclado de verdade.",
- u"p9enun": u"Folha nove: ordene e forme a palavra. As sílabas embaralharam. Toque nelas na ordem certa.",
- u"p10enun": u"Folha dez: recorte e cole. Puxe cada sílaba para debaixo da figura certa, ou toque na sílaba e depois na figura.",
+ u"p1enun": u"Folha um: a fila do alfabeto. Olhe a fila das letras e descubra qual delas fugiu do lugar.",
+ u"p2enun": u"Folha dois: a letra escondida. Uma letra fugiu da palavra. Olhe a figura, ouça a palavra e toque na letra certa.",
+ u"p3enun": u"Folha três: quantas sílabas. Fale a palavra batendo uma palma em cada pedaço. Depois toque em Pronto.",
+ u"p4enun": u"Folha quatro: o que vem depois. Olhe a fila de figuras, descubra a ordem que se repete e escolha a que vem depois.",
+ u"p5enun": u"Folha cinco: circule quem começa igual. Toque em todos os desenhos que começam com a sílaba mostrada. Depois toque em Conferir.",
+ u"p6enun": u"Folha seis: pinte a sílaba inicial. Toque na sílaba com que a palavra começa.",
+ u"p7enun": u"Folha sete: ligue à sílaba final. Toque na figura e depois na sílaba com que ela termina.",
+ u"p8enun": u"Folha oito: marque a sílaba do meio. Toque na sílaba que fica no meio da palavra.",
+ u"p9enun": u"Folha nove: escreva a sílaba que falta. Toque no quadradinho e escreva a sílaba, no teclado da tela ou no teclado de verdade.",
+ u"p10enun": u"Folha dez: ordene e forme a palavra. As sílabas embaralharam. Toque nelas na ordem certa.",
+ u"p11enun": u"Folha onze: recorte e cole. Puxe cada sílaba para debaixo da figura certa, ou toque na sílaba e depois na figura.",
  u"quase": u"Quase! Escute de novo e tente outra vez.",
  u"ligue": u"Toque primeiro na figura e depois na sílaba.",
  u"escreva": u"Escreva a sílaba que falta.",
@@ -95,35 +96,35 @@ def usa(w):
     for s in sil(w):
         silabas.add(s)
 
-for it in IT[u"p1"]:
+for it in IT[u"p2"]:
     usa(it[u"p"])
-for w in IT[u"p2"]:
+for w in IT[u"p3"]:
     usa(w)
     # ⭐ cada palma diz a SUA sílaba (pedido do Marcos, set/2026) — então toda
     #    sílaba da folha 2 precisa do seu mp3 solto.
     for s in sil(w):
         silabas.add(s)
-for it in IT[u"p3"]:
-    usa(it[u"a"]); usa(it[u"b"])
 for it in IT[u"p4"]:
+    usa(it[u"a"]); usa(it[u"b"])
+for it in IT[u"p5"]:
     for w in it[u"sim"] + it[u"nao"]:
         usa(w)
-for it in IT[u"p5"]:
+for it in IT[u"p6"]:
     usa(it[u"p"])
     for s in it[u"op"]:
         silabas.add(s)
-for g in IT[u"p6"]:
+for g in IT[u"p7"]:
     for w in g:
         usa(w)
-for it in IT[u"p7"]:
+for it in IT[u"p8"]:
     usa(it[u"p"])
     for s in it[u"op"]:
         silabas.add(s)
-for it in IT[u"p8"]:
+for it in IT[u"p9"]:
     usa(it[u"p"])
-for w in IT[u"p9"]:
+for w in IT[u"p10"]:
     usa(w)
-for g in IT[u"p10"]:
+for g in IT[u"p11"]:
     for w in g:
         usa(w)
 # a folha 3 sorteia distratores desta lista fixa (ver f3 no folhas.js)
@@ -166,9 +167,9 @@ for s in sorted(silabas):
     MAPA_SIL[s] = [achou[0], achou[1]]
     PALAVRAS_SIL[achou[0]] = sil(achou[0])
 # e as palavras cujas sílabas o app fala uma a uma (a folha 2, das palmas)
-for w in IT[u"p2"]:
+for w in IT[u"p3"]:
     PALAVRAS_SIL[w] = sil(w)
-for w in IT[u"p9"]:
+for w in IT[u"p10"]:
     PALAVRAS_SIL[w] = sil(w)
 
 # ⚠️ a fala de RESERVA (quando o mp3 recortado não existir): o app cai para a
@@ -178,74 +179,84 @@ COMO_SE_FALA = {u"ÇÃ": u"sã", u"XÍ": u"chi", u"XE": u"che"}
 for s in sorted(silabas):
     F[u"sb_%s" % s] = COMO_SE_FALA.get(s, s.lower()) + u"."
 
-# ---- folha 1: a letra escondida ----------------------------------------------
+# ---- folha 1: a fila do alfabeto ---------------------------------------------
+ALF = u"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 for it in IT[u"p1"]:
+    k = it[u"i"]
+    L = ALF[k]
+    antes = ALF[k - 1] if k > 0 else u""
+    F[u"certo1_%s" % L] = u"Isso! Depois do %s vem o %s." % (antes, L)
+    F[u"dica1a_%s" % L] = u"Fale a fila em voz alta: %s, %s... qual vem agora?" % (
+        ALF[max(0, k - 2)], antes)
+
+# ---- folha 2: a letra escondida ----------------------------------------------
+for it in IT[u"p2"]:
     w = it[u"p"]
     L = esc(w)[it[u"pos"]]
     onde = u"começa" if it[u"pos"] == 0 else u"termina"
-    F[u"certo1_%s" % w] = u"Isso! %s %s com a letra %s." % (falado(w).capitalize(), onde, L)
-    F[u"dica1_%s" % w] = u"Fale a palavra bem devagar: %s. Qual é o som com que ela %s?" % (emsilabas(w), onde)
+    F[u"certo2_%s" % w] = u"Isso! %s %s com a letra %s." % (falado(w).capitalize(), onde, L)
+    F[u"dica2_%s" % w] = u"Fale a palavra bem devagar: %s. Qual é o som com que ela %s?" % (emsilabas(w), onde)
 
-# ---- folha 2: quantas sílabas -------------------------------------------------
+# ---- folha 3: quantas sílabas -------------------------------------------------
 NUM = {1: u"uma", 2: u"duas", 3: u"três", 4: u"quatro"}
-for w in IT[u"p2"]:
+for w in IT[u"p3"]:
     n = len(sil(w))
     # ⚠️ "SÍLABA", não "pedaço" — é o nome que a BNCC e o currículo de Blumenau
     #    usam já no 1º ano, e é o que o Marcos pediu. O apoio "pedacinho" fica só
     #    no enunciado escrito da folha, uma vez.
-    F[u"certo2_%s" % w] = u"Isso! %s tem %s %s: %s." % (
+    F[u"certo3_%s" % w] = u"Isso! %s tem %s %s: %s." % (
         falado(w).capitalize(), NUM.get(n, unicode(n) if str is bytes else str(n)),
         u"sílaba" if n == 1 else u"sílabas", emsilabas(w))
-    F[u"dica2_%s" % w] = u"Escute e bata junto: %s. Quantas palmas você bateu?" % emsilabas(w)
+    F[u"dica3_%s" % w] = u"Escute e bata junto: %s. Quantas palmas você bateu?" % emsilabas(w)
 
-# ---- folha 3: o que vem depois ------------------------------------------------
-for it in IT[u"p3"]:
-    F[u"certo3_%s_%s" % (it[u"a"], it[u"b"])] = u"Isso! A fila é %s, %s, %s, %s, e agora %s de novo." % (
+# ---- folha 4: o que vem depois ------------------------------------------------
+for it in IT[u"p4"]:
+    F[u"certo4_%s_%s" % (it[u"a"], it[u"b"])] = u"Isso! A fila é %s, %s, %s, %s, e agora %s de novo." % (
         falado(it[u"a"]), falado(it[u"b"]), falado(it[u"a"]), falado(it[u"b"]), falado(it[u"a"]))
 
-# ---- folha 4: circule quem começa igual ---------------------------------------
-for it in IT[u"p4"]:
+# ---- folha 5: circule quem começa igual ---------------------------------------
+for it in IT[u"p5"]:
     s = it[u"sil"]
     nomes = u", ".join(falado(w) for w in it[u"sim"])
-    F[u"certo4_%s" % s] = u"Isso! %s começam com %s." % (nomes.capitalize(), s.lower())
-    F[u"dica4_%s" % s] = u"Fale cada palavra devagar e escute só o começo. Qual delas começa com %s?" % s.lower()
+    F[u"certo5_%s" % s] = u"Isso! %s começam com %s." % (nomes.capitalize(), s.lower())
+    F[u"dica5_%s" % s] = u"Fale cada palavra devagar e escute só o começo. Qual delas começa com %s?" % s.lower()
 
-# ---- folha 5: pinte a sílaba inicial ------------------------------------------
-for it in IT[u"p5"]:
+# ---- folha 6: pinte a sílaba inicial ------------------------------------------
+for it in IT[u"p6"]:
     w = it[u"p"]; s = sil(w)
-    F[u"certo5_%s" % w] = u"Isso! %s começa com %s." % (falado(w).capitalize(), s[0].lower())
-    F[u"dica5_%s" % w] = u"Escute o começo: %s. O primeiro pedaço é %s." % (emsilabas(w), s[0].lower())
+    F[u"certo6_%s" % w] = u"Isso! %s começa com %s." % (falado(w).capitalize(), s[0].lower())
+    F[u"dica6_%s" % w] = u"Escute o começo: %s. O primeiro pedaço é %s." % (emsilabas(w), s[0].lower())
 
-# ---- folha 6: ligue à sílaba final --------------------------------------------
-for g in IT[u"p6"]:
+# ---- folha 7: ligue à sílaba final --------------------------------------------
+for g in IT[u"p7"]:
     for w in g:
         s = sil(w)
-        F[u"certo6_%s" % w] = u"Isso! %s termina com %s." % (falado(w).capitalize(), s[-1].lower())
-        F[u"dica6_%s" % w] = u"Escute o fim da palavra: %s. O último pedaço é %s." % (emsilabas(w), s[-1].lower())
+        F[u"certo7_%s" % w] = u"Isso! %s termina com %s." % (falado(w).capitalize(), s[-1].lower())
+        F[u"dica7_%s" % w] = u"Escute o fim da palavra: %s. O último pedaço é %s." % (emsilabas(w), s[-1].lower())
 
-# ---- folha 7: a sílaba do meio ------------------------------------------------
-for it in IT[u"p7"]:
-    w = it[u"p"]; s = sil(w)
-    F[u"certo7_%s" % w] = u"Isso! No meio de %s fica %s." % (falado(w), s[1].lower())
-    F[u"dica7_%s" % w] = u"São três pedaços: %s. O do meio é o segundo." % emsilabas(w)
-
-# ---- folha 8: escreva a sílaba que falta -------------------------------------
+# ---- folha 8: a sílaba do meio ------------------------------------------------
 for it in IT[u"p8"]:
+    w = it[u"p"]; s = sil(w)
+    F[u"certo8_%s" % w] = u"Isso! No meio de %s fica %s." % (falado(w), s[1].lower())
+    F[u"dica8_%s" % w] = u"São três pedaços: %s. O do meio é o segundo." % emsilabas(w)
+
+# ---- folha 9: escreva a sílaba que falta -------------------------------------
+for it in IT[u"p9"]:
     w = it[u"p"]; s = sil(w); k = it[u"falta"]
-    F[u"certo8_%s" % w] = u"Isso! A palavra é %s: %s." % (falado(w), emsilabas(w))
-    F[u"dica8_%s" % w] = u"Fale a palavra inteira e escute o pedaço que falta: %s. O que falta é %s." % (
+    F[u"certo9_%s" % w] = u"Isso! A palavra é %s: %s." % (falado(w), emsilabas(w))
+    F[u"dica9_%s" % w] = u"Fale a palavra inteira e escute o pedaço que falta: %s. O que falta é %s." % (
         emsilabas(w), s[k].lower())
 
-# ---- folha 9: ordene e forme a palavra ----------------------------------------
-for w in IT[u"p9"]:
-    F[u"certo9_%s" % w] = u"Isso! %s: %s." % (falado(w).capitalize(), emsilabas(w))
-    F[u"dica9_%s" % w] = u"Comece pelo primeiro pedaço. A palavra é %s." % emsilabas(w)
+# ---- folha 10: ordene e forme a palavra ----------------------------------------
+for w in IT[u"p10"]:
+    F[u"certo10_%s" % w] = u"Isso! %s: %s." % (falado(w).capitalize(), emsilabas(w))
+    F[u"dica10_%s" % w] = u"Comece pelo primeiro pedaço. A palavra é %s." % emsilabas(w)
 
-# ---- folha 10: recorte e cole -------------------------------------------------
-for g in IT[u"p10"]:
+# ---- folha 11: recorte e cole -------------------------------------------------
+for g in IT[u"p11"]:
     for w in g:
-        F[u"certo10_%s" % w] = u"Isso! %s começa com %s." % (falado(w).capitalize(), sil(w)[0].lower())
-        F[u"dica10_%s" % w] = u"Olhe a figura e fale o nome dela: %s. Com que pedaço ela começa?" % emsilabas(w)
+        F[u"certo11_%s" % w] = u"Isso! %s começa com %s." % (falado(w).capitalize(), sil(w)[0].lower())
+        F[u"dica11_%s" % w] = u"Olhe a figura e fale o nome dela: %s. Com que pedaço ela começa?" % emsilabas(w)
 
 
 # ---- a chave da casa (igual à do JS) ------------------------------------------
