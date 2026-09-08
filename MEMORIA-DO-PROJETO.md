@@ -6803,3 +6803,27 @@ atividade, é dali que se clona (a peça velha do `_padrao/pecas/divisao-dourado
 é a versão chapada). **Comparar com as folhas de referência antes de publicar virou
 parte do trabalho** — é barato: fotografar as telas em 1024×600 e pôr ao lado de 5
 folhas reais num contato.
+
+## ⚠️ ENUNCIADO DE PROBLEMA TAMBÉM É CÓPIA (8/set/2026 — peguei em mim mesmo)
+
+O Marcos perguntou, depois de publicada a Oficina do Material Dourado: *"mas essas
+atividades foram baseadas nas reais?"* Fui conferir e achei um problema de verdade:
+**três dos quatro problemas da folha 9 estavam quase literais** da folha `d21` das 40
+que baixamos (rodapé: todamateria.com.br) — "60 balas para dividir igualmente entre
+12 amigos", "144 livros distribuídos igualmente entre 6 salas de aula", "84
+figurinhas no álbum". Eu tinha me policiado quanto à IMAGEM (as peças são desenhadas
+pela casa) e deixei o TEXTO passar.
+
+**A regra que fica, e vale para toda folha viva/autoral:**
+1. Das folhas da internet vem só o **repertório de exercícios** — que tipo de tarefa
+   existe, em que ordem ela ensina. Isso é currículo, é de todo mundo.
+2. **Número e conta não são de ninguém** (60 ÷ 12 é 60 ÷ 12).
+3. **A HISTÓRIA do problema é texto de autor.** Reescrever sempre, em contexto nosso:
+   a escola, o pátio, o bairro, o ônibus do passeio, Blumenau. Se a frase pudesse ser
+   colada de volta na folha de origem sem ninguém notar, ela é cópia.
+4. Isto **não é medido por portão nenhum** (não temos o texto das folhas, só as
+   imagens). É regra de leitura: ao montar, ler os enunciados e perguntar "esta frase
+   é minha?". Registro aqui porque a memória é o que sobra entre uma sessão e outra.
+
+Consertado no mesmo dia: os quatro problemas viraram feira da escola, mudas nas ruas
+do bairro, garrafinhas do passeio e ônibus para o teatro.
