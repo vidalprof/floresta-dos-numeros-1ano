@@ -6765,3 +6765,41 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
   (4 peças com `var(--texto)` em superfície própria: experimento-justo, montar-frase,
   termometro) e falas ("tangram" fonético nos textos de exemplo). Fica na fila de
   lapidação das peças; não chega a nenhuma atividade publicada.
+
+---
+
+## 🟨 O MATERIAL DOURADO AGORA É DESENHADO DE VERDADE (8/set/2026)
+
+**A régua que o Marcos deu**, no meio do teste das folhas: *"o material autoral tem
+que ficar bom com as páginas na qual se baseiam"*. Quer dizer: recriar do zero é
+permitido (e é o caminho da autoria), mas o resultado tem que aguentar ser posto ao
+lado da folha impressa que serviu de modelo — se ao lado dela a nossa parecer pobre,
+não serve.
+
+**O que estava errado na 1ª versão do `_dourado5`:** as quatro peças eram formas
+chapadas de 26 a 44 px — a barra era um retângulo com quatro riscas, a placa um
+quadrado com grade fina, o cubão um quadrado com um chanfro. No print isolado
+passava; ao lado das 40 folhas reais (`_pesquisa/fotos/ddg-divisao-dourado/`) a
+diferença era gritante, e pior: **a criança não conseguia CONTAR as divisões**, que
+é a coisa toda do material dourado.
+
+**O conserto, e a regra que fica:** um só desenhista, a função **`prisma(w, a, p, u)`**,
+em projeção oblíqua (frente reta, profundidade jogada para trás e para cima).
+- As medidas vão em **CUBINHOS**, não em pixels: cubinho `1×1×1`, barra `1×10×1`,
+  placa `10×10×1`, cubão `10×10×10` — sempre com o **mesmo `u`**. É isso que faz as
+  quatro saírem irmãs por construção, sem ninguém conferir proporção na mão.
+- As **riscas nas três faces visíveis** (frente, topo e lado) são obrigatórias: são
+  elas que a criança conta. Abaixo de ~2,2 px por cubinho a risca vira sujeira — aí
+  só o contorno fica.
+- `bloco(kind, px)` recebe o **tamanho total** da peça na tela e cada uma acha o seu
+  cubinho: `/1.45` para o cubinho, `/10.45` para barra e placa, `/14.5` para o cubão.
+  Quem chama pensa em "que tamanho quero na folha", não em geometria.
+- No `material(c, d, u, px)` o cubinho solto sai do **mesmo cubinho** da barra
+  (`px × 0,1387`). Cubinho grande demais mente sobre a matemática: ele é 1/10 da
+  barra e tem que parecer 1/10.
+
+**Onde mora:** `_dourado5/index.html`. Quando for preciso material dourado em outra
+atividade, é dali que se clona (a peça velha do `_padrao/pecas/divisao-dourado.html`
+é a versão chapada). **Comparar com as folhas de referência antes de publicar virou
+parte do trabalho** — é barato: fotografar as telas em 1024×600 e pôr ao lado de 5
+folhas reais num contato.
