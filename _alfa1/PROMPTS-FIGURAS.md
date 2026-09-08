@@ -67,3 +67,37 @@ A sheet showing 12 separate objects arranged in a tidy 4x3 grid. Each object sit
   Fábrica de Palavras por falta EXATAMENTE dessas figuras — o exercício só funciona com as duas.
 - **Cartela B** engorda o vocabulário de todas as folhas: sílabas novas (PI, LU, DE, FO, SI, VE,
   PEI, FA, U, PA, GI, TE) e palavras de 1, 2 e 3 sílabas para a escada didática ficar mais larga.
+
+---
+
+## Cartela C — as SETE que o banco tem ERRADAS (auditoria visual, 8/set/2026)
+
+> ⛔ **Isto não é capricho: numa folha de alfabetização a figura É o enunciado.**
+> Abri as 42 figuras do banco lado a lado e sete não servem — a criança olharia a
+> imagem e diria outra palavra. Elas foram TIRADAS da Fábrica de Palavras hoje;
+> esta cartela as devolve, e conserta o banco para todas as atividades futuras.
+>
+> | palavra | o que o banco tem hoje | por que reprova |
+> |---|---|---|
+> | **bola** | um brasão verde com faixa e estrela | ninguém chama isso de bola |
+> | **rosa** | a rosa DOS VENTOS de um mapa | é bússola, não é flor |
+> | **caneca** | uma caneca de **chopp** com espuma | não entra em folha de criança |
+> | **saco** | um saquinho de presente com laço | ambíguo demais |
+> | **mapa** | um tapete de brincar de cidade | lê-se "tapete", não "mapa" |
+> | **fada** | desenho a traço, preto e branco | quebra o estilo de todas as outras |
+> | **navio** | desenho a traço, preto e branco | idem |
+
+**Nomes dos arquivos, na ordem de leitura:** `bola, rosa, caneca, saco, mapa, fada, navio`
+
+```
+A sheet showing 7 separate objects arranged in a tidy 3x3 grid (the last two cells empty). Each object sits alone inside its own cell, well separated from the others, none of them touching, all drawn at the same scale and lit the same way. Soft matte clay 3D illustration, children's storybook style, rich saturated colours, soft shadows. Soft even studio light coming from the upper left, gentle contact shadow directly under the object. The background behind every object is plain, perfectly flat, pure black (#000000). Every surface is smooth, blank and unmarked. The image contains only the objects themselves. The objects, in reading order from left to right and top to bottom, are:
+  1. a classic football, a round ball with black and white patches
+  2. a single red rose flower with a green stem and two leaves
+  3. a plain white ceramic mug with a handle, empty
+  4. a simple brown paper sack, open at the top, standing up
+  5. a folded paper road map of a town, seen flat from above
+  6. a friendly little fairy with pink wings and a wand, standing
+  7. a cheerful cargo ship on blue water, seen from the side
+```
+
+**Semente:** `7013`
