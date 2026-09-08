@@ -6751,6 +6751,14 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
     altura): o que a criança tem de tocar para começar vai em barra FIXA; (3) `.data`
     sem `pointer-events:none` interceptava o toque no campo vizinho; (4) o Playwright
     não clica em botão com animação de `transform` (respira) sem `force:true`.
+  - **Regras que o Marcos deu depois de ver a 1ª (8/set, manhã), valem para TODA folha viva:**
+    (1) *"sempre remover cabeçalho ou torná-lo invisível, ficando perfeito"* — escola/data/
+    logotipo/rodapé do site saem; (2) *"variar as somas, para não dar o mesmo resultado
+    sempre"* — resultados diferentes em itens vizinhos, e se a folha for redesenhada por
+    nós, sortear as quantidades a cada abertura; (3) *"podemos colorir e deixar um pouco
+    diferente para não ser cópia exata"*; (4) alto-falantes nunca em cima de nada: botão
+    OUVIR no topo + tocar no quadradinho lê o item. A 2ª folha pedida: **"soma até 10 com
+    auxílio dos dedos"** (busca em `_pesquisa/fotos/folhas-soma-dedos/`).
   - **Limite honesto:** no celular a área de desenhar da página 6 fica com ~35 px de
     altura (a folha inteira cabe em 360 px); no PC/netbook da escola está confortável.
 - **Pré-voo da cobaia (fixture, nunca publicada) já reprovava antes de hoje** em 4c
