@@ -6719,6 +6719,40 @@ sem erros… vários estilos de app… ferramenta profissional que a IA possa us
     palco vaza sobre a paleta. Conserto pronto na cabeça (paleta com prioridade, quadro
     encolhe) + portão de elemento coberto em tamanhos de celular para apps à mão
     (`leiaute_mao.js` não mede sobreposição). **Só executar quando ELE pedir.**
+- **📄 TESTE "FOLHA VIVA" (8/set, madrugada) — a folha de papel resolvida no computador.**
+  Pedido do Marcos, com as palavras dele: *"Sabe essas atividades de alfabetização que
+  tem aos milhares na internet em Word ou PDF? É possível pegar uma e dar interatividade
+  a ela? Tudo o que se pede no papel fazer no computador"* — e quando eu comecei a
+  reconstruir a folha com as peças do motor, ele me parou: *"Não quero que copie. A
+  folha continua sendo a folha; a interatividade que você tem que dar é O QUE A
+  ATIVIDADE PEDE: digitar no quadradinho, e a parte de som"*. **Nada disto vira regra**
+  (palavras dele: *"algo novo só para ver como fica, nada de virar regra"*).
+  - Folha escolhida (buscada pelo `pesquisar.yml` + `buscar-fotos.yml` nas páginas dos
+    artigos, não nas páginas de resultado — essas só devolvem foto de banco): PDF de 6
+    páginas "Somando com Desenhos — adição simples até 10" (1º ano, EF01MA06,
+    atividadesdealfabetizacao.com.br, material gratuito para professores; o site diz que
+    as imagens são geradas por IA e revisadas). Guardada em
+    `_pesquisa/fotos/folhas-soma-ate-10-artigos/`.
+  - App à mão em `_folha/` (prefixo `fv`): as 6 páginas como imagem (1000 px, ~180 KB
+    cada) e, por cima, em coordenadas medidas na própria imagem (detecção dos traços de
+    resposta e bordas com PIL), só o que o papel pede: `.resp` (digitar, teclado na tela +
+    teclado de verdade, confere ao completar os dígitos, 2 erros → voz conta junto), ligar
+    (toque-toque OU arrasto, SVG em viewBox da página, no 2º erro o destino se mostra),
+    desenhar (canvas por área, cor + apagar), nome/data na capa (barra fixa embaixo; a
+    folha espelha), carimbo "PÁGINA PRONTA", boletim, medalha 2 s → relatório, retoma 55
+    min. Voz da casa pelo mesmo padrão do UNO (`gerar_falas.py` lê o bloco
+    `/*FALAS-INI*/`, 98 falas, Antônio). Publicada em
+    **https://vidalprof.github.io/folha-viva-soma-ate-10/** (fabrica.yml cria o repo →
+    commit `[entregar _folha:...]` grava a voz).
+  - **Lições medidas nesta noite:** (1) alvo com `min-height:44px` sobre uma folha
+    escalada vira GIGANTE no celular (44 px = 208 px da página em 360 de largura) — o
+    campo do nome cobriu a linha da DATA; o que não é alvo não leva mínimo; (2) botão
+    "Começar" posicionado NA folha fica abaixo da dobra no netbook (y≈997 em 600 de
+    altura): o que a criança tem de tocar para começar vai em barra FIXA; (3) `.data`
+    sem `pointer-events:none` interceptava o toque no campo vizinho; (4) o Playwright
+    não clica em botão com animação de `transform` (respira) sem `force:true`.
+  - **Limite honesto:** no celular a área de desenhar da página 6 fica com ~35 px de
+    altura (a folha inteira cabe em 360 px); no PC/netbook da escola está confortável.
 - **Pré-voo da cobaia (fixture, nunca publicada) já reprovava antes de hoje** em 4c
   (4 peças com `var(--texto)` em superfície própria: experimento-justo, montar-frase,
   termometro) e falas ("tangram" fonético nos textos de exemplo). Fica na fila de
