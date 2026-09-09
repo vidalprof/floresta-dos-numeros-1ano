@@ -8,16 +8,37 @@ PORTÃO — "a atividade enche a aula?"
 
 Eu tinha entregado uma atividade que ele mediu em **catorze minutos**. Não
 faltava nada nela — as fases funcionavam, a arte estava lá, a voz gravada. O
-que faltava era CHÃO: a aula do laboratório dura 55 minutos e a criança
+que faltava era CHÃO: a aula do laboratório dura 50 minutos e a criança
 terminava com meia aula sobrando, o que na prática significa a turma inteira
 ociosa e o professor sem plano B.
+
+⭐ E O ERRO TEM DOIS LADOS (set/2026). Palavras do Marcos: *"cada aula deve
+   durar 50 minutos"*. Até aqui o portão só tinha PISO. Mas a atividade que
+   PASSA da aula não é "com conteúdo de sobra": é uma atividade que a criança
+   **nunca termina** — e o fim é onde mora o fecho pedagógico (o boletim dela, o
+   parecer, o relatório do professor, o "treinar o que faltou"). Estourar a aula
+   corta fora exatamente a parte que fecha a aprendizagem. Agora há TETO.
+
+⚠️⚠️ A VOZ OUVIDA NÃO É O BANCO DE VOZ — e este portão media errado. Ele somava
+   o `falas.json` INTEIRO como se a criança ouvisse tudo. Na Fábrica de Palavras
+   são 515 falas, e 333 delas são o `certo_` e o `dica_` de CADA item possível do
+   pote; a criança resolve 73 itens. O portão dizia 24 min de voz onde há 5 a 15.
+   É a MESMA lição que ele já tinha aprendido para os ITENS — *"conta o que a
+   folha SORTEIA, não o tamanho do pote"* — e que a voz não tinha recebido.
+   Consertado, as duas últimas atividades saíram de "54 min" para "35 a 45".
+
+⚠️ POR QUE UMA FAIXA E NÃO UM NÚMERO. Quantas falas cada item aciona depende da
+   criança: a econômica ouve só o retorno; a que usa a atividade como ela foi
+   feita toca no alto-falante de cada opção, erra, ouve a dica. São 20 minutos de
+   diferença, e as duas crianças são reais. O portão dá a FAIXA e só reprova
+   quando ela cai fora INTEIRA.
 
 E nenhum portão via, porque nenhum portão contava o **tamanho** do trabalho: a
 bancada media se funciona, se ilustra, se fala — nunca se DÁ AULA.
 
 COMO ESTE PORTÃO MEDE (é uma ESTIMATIVA, e ele diz isso em voz alta):
-  · a voz gravada: `falas.json` inteiro, a 2,6 palavras por segundo (a Francisca
-    e o Antônio falam nesse passo com a pontuação da casa);
+  · a voz OUVIDA: as falas fixas (capa, enunciado de folha, fim) inteiras, mais
+    o banco pelo que a criança de fato aciona, a 2,6 palavras por segundo;
   · o trabalho da criança: cada item das listas de conteúdo, com o preço do
     GESTO daquela fase — escrever no teclado da tela 25 s, achar palavra na
     grade 20 s, virar carta 20 s, arrastar 14 s, tocar numa opção 8 s. (Preço
@@ -30,7 +51,8 @@ Não é cronômetro: é ordem de grandeza. Serve para separar "catorze minutos" 
 
 Uso:  python3 _qa/duracao.py _lina            (piso padrão: 40 min)
       python3 _qa/duracao.py _lina 25          (piso próprio, p/ atividade curta)
-Sai 0 se enche a aula, 1 se ficou curta, 2 se não deu para medir.
+Sai 0 se enche a aula sem estourar, 1 se ficou curta OU se não cabe nos
+50 min, 2 se não deu para medir.
 ============================================================
 """
 import io
@@ -42,6 +64,17 @@ import sys
 PAL_POR_S = 2.6      # passo da voz da casa
 S_POR_ITEM = 9.0     # ler, pensar e tocar (4o/5o ano)
 S_POR_TELA = 12.0    # capa, cracha, banner, elogio
+# ⚠️ QUANTAS FALAS DO BANCO CADA ITEM ACIONA — e por que sao DUAS numeros e nao
+#    um. A crianca economica ouve so o retorno ("muito bem!"): 1 por item. A que
+#    usa a atividade como ela foi feita toca no alto-falante de cada opcao, erra,
+#    ouve a dica e o retorno: 4. Entre uma e outra ha 20 minutos de diferenca
+#    numa atividade de 1o ano — e as DUAS sao criancas reais. Fingir um numero
+#    unico aqui e dar cara de medida a um palpite meu; por isso o portao calcula
+#    a FAIXA e so reprova quando a faixa INTEIRA cai fora.
+FALAS_ITEM_MIN = 1.0
+FALAS_ITEM_MAX = 4.0
+AULA_MIN = 50.0       # ⭐ a aula do laboratorio (Marcos, set/2026: *"cada aula
+                      #    deve durar 50 minutos"*). Acima disso NAO CABE.
 
 # custo por GESTO na atividade montada (segundos por item resolvido)
 # ⚠️ LICAO PAGA (set/2026, na Grande Expedicao de divisao): a montada precificava
@@ -121,6 +154,8 @@ def confere(pasta, piso_min=40.0):
     else:
         print(u"%s -> sem falas.json: NAO MEDI (MP3 nao se le)." % pasta)
         return 2
+    seg_voz_banco = seg_voz
+    faixa = None
 
     # 2) quantos itens a crianca tem que resolver — e QUANTO CUSTA CADA UM.
     #    ⚠️ nao se conta item por item igual: escrever uma palavra no teclado da
@@ -275,15 +310,75 @@ def confere(pasta, piso_min=40.0):
                 seg_itens += n * custo
                 detalhe.append((chave, n, gesto))
 
+    # 2d) ⭐⭐ A VOZ OUVIDA NÃO É O BANCO DE VOZ (set/2026 — o Marcos: *"cada aula
+    #     deve durar 50 minutos"*, e ao conferir se as duas últimas cabiam achei
+    #     ISTO).
+    #
+    #     ⚠️ LIÇÃO PAGA, E É A MESMA DE ANTES, NOUTRO LUGAR. Este portão já tinha
+    #     aprendido, para os ITENS, que *"conta o que a folha SORTEIA, não o
+    #     tamanho do pote"*. A VOZ ficou com o defeito antigo: somava o
+    #     `falas.json` INTEIRO como se a criança ouvisse tudo.
+    #
+    #     Na Fábrica de Palavras isso são 515 falas — e 333 delas são o `certo_`
+    #     e o `dica_` de CADA item possível do pote. A criança resolve 73 itens:
+    #     ela ouve uns 160 desses arquivos, nunca os 501. O portão dizia 24 min
+    #     de voz onde há ~9. Numa atividade que SORTEIA, o `falas.json` é o
+    #     BANCO de voz, não o ROTEIRO da aula.
+    #
+    #     Como se separa: o bloco `/*FALAS-INI*/var FALAS={...}` tem as chaves
+    #     com NOME (o `falas.json` só tem o id embaralhado). Chave FIXA (`capa`,
+    #     `fim`, `pNenun`) a criança ouve sempre e conta inteira; o resto é banco
+    #     e conta pelo que ela de fato aciona: por item resolvido, o retorno mais
+    #     o enunciado/alto-falante ocasional e parte das dicas.
+    m_fal = re.search(r'/\*FALAS-INI\*/\s*var\s+FALAS\s*=\s*(\{.*?\})\s*;?\s*/\*FALAS-FIM\*/',
+                      html, re.S)
+    if m_fal and itens:
+        try:
+            dfal = json.loads(m_fal.group(1))
+        except ValueError:
+            dfal = None
+        if dfal:
+            fixa = re.compile(r'^(capa|fim|fimRel|escreva|intro|abertura|medalha|'
+                              r'relat|p\d+enu[nm]|p\d+ajuda)')
+            s_fix = s_banco = 0.0
+            n_banco = 0
+            for k, v in dfal.items():
+                dur = len((u"%s" % v).split()) / PAL_POR_S
+                if fixa.match(k):
+                    s_fix += dur
+                else:
+                    s_banco += dur
+                    n_banco += 1
+            if n_banco:
+                media = s_banco / n_banco
+                voz_min = s_fix + media * min(n_banco, itens * FALAS_ITEM_MIN)
+                voz_max = s_fix + media * min(n_banco, itens * FALAS_ITEM_MAX)
+                seg_voz = (voz_min + voz_max) / 2.0
+                faixa = (voz_min, voz_max)
+
     # 3) quantas telas
     telas = len(re.findall(r'^function\s+tela\w+\(', html, re.M))
 
     seg = seg_voz + seg_itens + telas * S_POR_TELA
     mins = seg / 60.0
 
-    print(u"%s -> ESTIMATIVA de duracao: %.0f min" % (pasta, mins))
-    print(u"   voz gravada: %.0f min | %d itens para resolver | %d telas"
-          % (seg_voz / 60.0, itens, telas))
+    if faixa:
+        base = seg_itens + telas * S_POR_TELA
+        lo, hi = (base + faixa[0]) / 60.0, (base + faixa[1]) / 60.0
+    else:
+        lo = hi = mins
+
+    if faixa:
+        print(u"%s -> ESTIMATIVA de duracao: %.0f a %.0f min" % (pasta, lo, hi))
+        print(u"   voz ouvida: %.0f a %.0f min (banco gravado: %.0f min) | %d itens "
+              u"para resolver | %d telas"
+              % (faixa[0] / 60.0, faixa[1] / 60.0, seg_voz_banco / 60.0, itens, telas))
+        print(u"   (a faixa e a crianca que so ouve o retorno x a que toca em todo")
+        print(u"    alto-falante; as duas existem na turma)")
+    else:
+        print(u"%s -> ESTIMATIVA de duracao: %.0f min" % (pasta, mins))
+        print(u"   voz gravada: %.0f min | %d itens para resolver | %d telas"
+              % (seg_voz / 60.0, itens, telas))
     detalhe.sort(key=lambda x: -x[1])
     print(u"   maiores listas: %s"
           % u", ".join(u"%s %d %s" % (n, q, g) for (n, q, g) in detalhe[:8]))
@@ -300,19 +395,54 @@ def confere(pasta, piso_min=40.0):
               % piso_min)
         return 0
 
-    if mins < piso_min:
+    if hi < piso_min:
         # ⚠️ (set/2026) imprimia "40 min" arredondado e reprovava por 39,6 < 40 —
         #    a tela dizia uma coisa e o veredito outra. Reprova mostra o decimal.
         print(u"   !! A ATIVIDADE NAO ENCHE A AULA (piso: %d min; estimativa exata: %.1f min)."
               % (piso_min, mins))
-        print(u"   a aula do laboratorio dura 55 min. Terminando em %.1f, a turma"
+        print(u"   a aula do laboratorio dura 50 min. Terminando em %.1f, a turma"
               % mins)
         print(u"   fica ociosa e o professor sem plano B — foi essa a cobranca.")
         print(u"   conserto: mais rodadas nas listas que ja existem (sai de graca,")
         print(u"   sem arte nem voz nova) ou uma fase a mais com gesto diferente.")
         return 1
-    print(u"   duracao ok: da para ocupar a aula (%.0f min, piso %d)"
-          % (mins, piso_min))
+
+    # ⭐⭐ O TETO — "cada aula deve durar 50 minutos" (Marcos, set/2026).
+    #    Ate aqui o portao so tinha PISO: nasceu de uma atividade de catorze
+    #    minutos que deixava a turma ociosa. Mas o erro tem DOIS lados, e o de
+    #    cima e pior do que parece: a atividade que passa da aula NAO E "com
+    #    conteudo de sobra" — e uma atividade que a crianca NUNCA TERMINA. E o
+    #    fim e justamente onde mora o fecho pedagogico: o boletim dela, o
+    #    parecer, o relatorio do professor, o "treinar o que faltou". Estourar a
+    #    aula corta fora exatamente a parte que fecha a aprendizagem.
+    # ⚠️ O TETO SÓ REPROVA QUANDO A VOZ FOI MEDIDA DIREITO. Na atividade MONTADA
+    #    (motor) não há o bloco `FALAS-INI` com as chaves NOMEADAS, então a voz
+    #    ainda entra como o banco INTEIRO — inflada, do mesmo jeito que estava na
+    #    folha viva antes desta rodada. Reprovar por estouro com um número que eu
+    #    sei estar alto seria mandar cortar conteúdo bom. Sem faixa, o teto AVISA.
+    #    (Próximo passo: dar às montadas o mesmo corte fixa × banco.)
+    if lo > AULA_MIN and not faixa:
+        print(u"   ⚠ pode nao caber: %.0f min numa aula de %d — mas nesta atividade"
+              % (lo, AULA_MIN))
+        print(u"      a voz entra como o BANCO INTEIRO (montada nao tem o bloco")
+        print(u"      FALAS nomeado), entao o numero esta ALTO. Confirmar no relogio.")
+    elif lo > AULA_MIN:
+        print(u"   !! NAO CABE NA AULA (a aula tem %d min; ate a crianca mais rapida"
+              % AULA_MIN)
+        print(u"      leva %.1f min)." % lo)
+        print(u"   a crianca nao chega no fim — e o fim e o boletim dela, o parecer")
+        print(u"   e o relatorio do professor. Atividade que nao termina perde o fecho.")
+        print(u"   conserto: menos itens sorteados por folha (mexer no `pega(...)`,")
+        print(u"   que nao mexe no pote nem pede voz nova) ou uma folha a menos.")
+        return 1
+    if hi > AULA_MIN:
+        print(u"   ⚠ pode nao caber: a crianca que ouve tudo leva %.0f min numa aula"
+              % hi)
+        print(u"      de %d — e ainda ha a entrada da turma, o login e a explicacao."
+              % AULA_MIN)
+        print(u"      da turma, o login e a explicacao do professor.")
+    print(u"   duracao ok: enche a aula sem estourar (%.0f a %.0f min; piso %d, "
+          u"aula %d)" % (lo, hi, piso_min, AULA_MIN))
     return 0
 
 

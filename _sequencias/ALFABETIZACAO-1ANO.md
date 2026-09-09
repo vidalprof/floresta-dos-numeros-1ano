@@ -80,7 +80,32 @@ fiz"*).
 A ordem segue a consciência fonológica como a pesquisa e o currículo pedem:
 **unidade grande antes da pequena** (rima → sílaba → dentro da sílaba) e, dentro
 da sílaba, **inicial → final → medial** (a medial é a mais difícil e vem por
-último). Cada caderno = **uma aula de ~50 min**, no molde da folha viva.
+último). Cada caderno = **uma aula**, no molde da folha viva.
+
+### ⏱️ A AULA TEM 50 MINUTOS — e isso virou portão
+
+Ordem do Marcos (9/set/2026): *"cada aula deve durar 50 minutos"*. Não é meta
+vaga: o `_qa/duracao.py` agora tem **teto**, não só piso.
+
+**Por que o teto importa tanto quanto o piso.** O piso nasceu de uma atividade de
+catorze minutos que deixava a turma ociosa. O teto é o erro do outro lado, e ele
+é pior do que parece: a atividade que passa da aula **não é "com conteúdo de
+sobra" — é uma atividade que a criança nunca termina.** E o fim é justamente
+onde mora o fecho: o boletim dela, o parecer, o relatório do professor, o
+"treinar o que faltou". Estourar a aula corta fora a parte que fecha a
+aprendizagem.
+
+**O alvo de projeto de cada caderno: 40 a 45 min de tela**, para caber nos 50 com
+a entrada da turma, o login e a explicação do professor. Na prática, no molde da
+folha viva, isso dá **10 a 11 folhas com 4 a 8 itens sorteados cada**.
+
+⚠️ **E ao conferir isso descobri que o portão media errado** — vale saber, porque
+muda o número de todas as atividades: ele somava o `falas.json` **inteiro** como
+se a criança ouvisse tudo. Na Fábrica de Palavras são 515 falas, e 333 delas são
+o "certo" e a "dica" de **cada item possível do pote**; a criança resolve 73. O
+portão dizia 24 min de voz onde há 5 a 15. Corrigido, as duas últimas atividades
+saíram de "54 min" (estouraria) para **35 a 45 min** (cabe). Ou seja: **não era
+para cortar nada delas.**
 
 | # | Caderno | Objetivo | O degrau |
 |---|---|---|---|
