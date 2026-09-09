@@ -7190,3 +7190,32 @@ atividade. Modelo pronto: `_alfa1/PARECER-PEDAGOGICO.md`.
 ⚠️ E o parecer diz a verdade inclusive quando é inconveniente: ali está escrito
 que a folha "O que vem depois" é objetivo de **Matemática**, não de Português, e
 que **falta rima** (objetivo de oralidade).
+
+## 🎬 CAPA COM MOVIMENTO — duas armadilhas de CSS que não dão erro (9/set/2026)
+
+Pedido do Marcos: *"para a oficina do 5º ano uma capa bem legal com efeitos de
+animação"*. Ficou: as quatro peças **caem na bancada na ordem do valor** (cubão,
+placa, barra, cubinho), quicando ao tocar a tábua — que é o gesto de quem
+despeja o material na mesa antes de repartir —, depois respiram de leve; o
+brilho do ouro corre pelo título; faíscas de serragem sobem da tábua.
+
+**O movimento CONTA a atividade.** Peça caindo em ordem de valor é a própria
+ideia da folha 1. Enfeite que não diz nada cansa e ainda pesa (regra 2 da
+pesquisa: *nada anima sem função*).
+
+**Armadilha 1 — `@keyframes` de mesmo nome não brigam: o ÚLTIMO do arquivo
+vence, calado.** Já custou a capa do 1º ano: meu `@keyframes cai` do título foi
+apagado pelo `cai` do confete, que termina em `opacity:0` — o título
+simplesmente não existia na tela e nenhum portão viu. Regra da casa: **todo
+`@keyframes` tem nome próprio e dono** (`caiLetra`, `caiPeca`, `respiraPeca`,
+`corre`, `sobeFaisca`), nunca um verbo genérico.
+
+**Armadilha 2 — `animation-delay` inline apaga a segunda animação.** A peça tem
+DUAS (cair, depois respirar), então o atraso é um PAR (`.50s,1.12s`). Um
+`style="animation-delay:.5s"` no HTML é um valor só: o segundo vira 0 e a peça
+começa a respirar antes de cair. Quando o elemento tem mais de uma animação, o
+atraso mora no **CSS**, por classe — nunca em `style`.
+
+**E a peça tem que ENCOSTAR.** Havia 12 px de vão entre a cena e a tábua: as
+peças pareciam boiando e a queda perdia o sentido. Margem 0 resolveu.
+`prefers-reduced-motion` recebe a mesma capa, parada e inteira.
