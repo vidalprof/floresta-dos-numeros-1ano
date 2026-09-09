@@ -8,16 +8,18 @@ PORTÃO — "a atividade enche a aula?"
 
 Eu tinha entregado uma atividade que ele mediu em **catorze minutos**. Não
 faltava nada nela — as fases funcionavam, a arte estava lá, a voz gravada. O
-que faltava era CHÃO: a aula do laboratório dura 50 minutos e a criança
+que faltava era CHÃO: a aula do laboratório dura 55 minutos e a criança
 terminava com meia aula sobrando, o que na prática significa a turma inteira
 ociosa e o professor sem plano B.
 
-⭐ E O ERRO TEM DOIS LADOS (set/2026). Palavras do Marcos: *"cada aula deve
-   durar 50 minutos"*. Até aqui o portão só tinha PISO. Mas a atividade que
-   PASSA da aula não é "com conteúdo de sobra": é uma atividade que a criança
-   **nunca termina** — e o fim é onde mora o fecho pedagógico (o boletim dela, o
-   parecer, o relatório do professor, o "treinar o que faltou"). Estourar a aula
-   corta fora exatamente a parte que fecha a aprendizagem. Agora há TETO.
+⭐ E O OUTRO LADO — O TETO, QUE AVISA (set/2026). O Marcos primeiro disse *"cada
+   aula deve durar 50 minutos"* e logo corrigiu: *"não tem problema se a aula
+   durar mais, na verdade tem 55 minutos"*. Ficou assim: a aula tem **55 min**, e
+   passar disso **não reprova** — a criança volta de onde parou (o convite do
+   `RETOMAR` dura os mesmos 55). O portão só AVISA, porque quem passa muito
+   talvez não chegue no fecho (o boletim dela, o parecer, o relatório do
+   professor), e quem decide se isso importa naquela atividade é o professor.
+   O PISO continua reprovando: catorze minutos com a turma ociosa é defeito.
 
 ⚠️⚠️ A VOZ OUVIDA NÃO É O BANCO DE VOZ — e este portão media errado. Ele somava
    o `falas.json` INTEIRO como se a criança ouvisse tudo. Na Fábrica de Palavras
@@ -51,8 +53,8 @@ Não é cronômetro: é ordem de grandeza. Serve para separar "catorze minutos" 
 
 Uso:  python3 _qa/duracao.py _lina            (piso padrão: 40 min)
       python3 _qa/duracao.py _lina 25          (piso próprio, p/ atividade curta)
-Sai 0 se enche a aula sem estourar, 1 se ficou curta OU se não cabe nos
-50 min, 2 se não deu para medir.
+Sai 0 se enche a aula, 1 se ficou CURTA, 2 se não deu para medir. Passar dos
+55 min avisa, não reprova.
 ============================================================
 """
 import io
@@ -73,8 +75,16 @@ S_POR_TELA = 12.0    # capa, cracha, banner, elogio
 #    a FAIXA e so reprova quando a faixa INTEIRA cai fora.
 FALAS_ITEM_MIN = 1.0
 FALAS_ITEM_MAX = 4.0
-AULA_MIN = 50.0       # ⭐ a aula do laboratorio (Marcos, set/2026: *"cada aula
-                      #    deve durar 50 minutos"*). Acima disso NAO CABE.
+# ⭐ A AULA DO LABORATORIO — 55 MINUTOS (Marcos, set/2026, corrigindo o 50 que
+#    ele tinha dito na frase anterior: *"nao tem problema se a aula durar mais,
+#    na verdade tem 55 minutos"*). E o mesmo 55 do convite do `RETOMAR`: a
+#    crianca que nao termina volta de onde parou, dentro da aula.
+#    ⚠️ POR ISSO O TETO AVISA E NAO REPROVA. Passar de 55 nao e defeito — e
+#    informacao: quem passa muito talvez nao chegue no fecho (o boletim, o
+#    parecer, o relatorio). Quem decide se isso importa naquela atividade e o
+#    professor, nao o portao. O PISO continua reprovando: catorze minutos
+#    deixando a turma ociosa e' defeito, e foi o que deu origem a este portao.
+AULA_MIN = 55.0
 
 # custo por GESTO na atividade montada (segundos por item resolvido)
 # ⚠️ LICAO PAGA (set/2026, na Grande Expedicao de divisao): a montada precificava
@@ -311,7 +321,7 @@ def confere(pasta, piso_min=40.0):
                 detalhe.append((chave, n, gesto))
 
     # 2d) ⭐⭐ A VOZ OUVIDA NÃO É O BANCO DE VOZ (set/2026 — o Marcos: *"cada aula
-    #     deve durar 50 minutos"*, e ao conferir se as duas últimas cabiam achei
+    #     deve durar 55 minutos"*, e ao conferir se as duas últimas cabiam achei
     #     ISTO).
     #
     #     ⚠️ LIÇÃO PAGA, E É A MESMA DE ANTES, NOUTRO LUGAR. Este portão já tinha
@@ -400,49 +410,39 @@ def confere(pasta, piso_min=40.0):
         #    a tela dizia uma coisa e o veredito outra. Reprova mostra o decimal.
         print(u"   !! A ATIVIDADE NAO ENCHE A AULA (piso: %d min; estimativa exata: %.1f min)."
               % (piso_min, mins))
-        print(u"   a aula do laboratorio dura 50 min. Terminando em %.1f, a turma"
+        print(u"   a aula do laboratorio dura 55 min. Terminando em %.1f, a turma"
               % mins)
         print(u"   fica ociosa e o professor sem plano B — foi essa a cobranca.")
         print(u"   conserto: mais rodadas nas listas que ja existem (sai de graca,")
         print(u"   sem arte nem voz nova) ou uma fase a mais com gesto diferente.")
         return 1
 
-    # ⭐⭐ O TETO — "cada aula deve durar 50 minutos" (Marcos, set/2026).
-    #    Ate aqui o portao so tinha PISO: nasceu de uma atividade de catorze
-    #    minutos que deixava a turma ociosa. Mas o erro tem DOIS lados, e o de
-    #    cima e pior do que parece: a atividade que passa da aula NAO E "com
-    #    conteudo de sobra" — e uma atividade que a crianca NUNCA TERMINA. E o
-    #    fim e justamente onde mora o fecho pedagogico: o boletim dela, o
-    #    parecer, o relatorio do professor, o "treinar o que faltou". Estourar a
-    #    aula corta fora exatamente a parte que fecha a aprendizagem.
-    # ⚠️ O TETO SÓ REPROVA QUANDO A VOZ FOI MEDIDA DIREITO. Na atividade MONTADA
-    #    (motor) não há o bloco `FALAS-INI` com as chaves NOMEADAS, então a voz
-    #    ainda entra como o banco INTEIRO — inflada, do mesmo jeito que estava na
-    #    folha viva antes desta rodada. Reprovar por estouro com um número que eu
-    #    sei estar alto seria mandar cortar conteúdo bom. Sem faixa, o teto AVISA.
-    #    (Próximo passo: dar às montadas o mesmo corte fixa × banco.)
-    if lo > AULA_MIN and not faixa:
-        print(u"   ⚠ pode nao caber: %.0f min numa aula de %d — mas nesta atividade"
-              % (lo, AULA_MIN))
-        print(u"      a voz entra como o BANCO INTEIRO (montada nao tem o bloco")
-        print(u"      FALAS nomeado), entao o numero esta ALTO. Confirmar no relogio.")
-    elif lo > AULA_MIN:
-        print(u"   !! NAO CABE NA AULA (a aula tem %d min; ate a crianca mais rapida"
-              % AULA_MIN)
-        print(u"      leva %.1f min)." % lo)
-        print(u"   a crianca nao chega no fim — e o fim e o boletim dela, o parecer")
-        print(u"   e o relatorio do professor. Atividade que nao termina perde o fecho.")
-        print(u"   conserto: menos itens sorteados por folha (mexer no `pega(...)`,")
-        print(u"   que nao mexe no pote nem pede voz nova) ou uma folha a menos.")
-        return 1
-    if hi > AULA_MIN:
-        print(u"   ⚠ pode nao caber: a crianca que ouve tudo leva %.0f min numa aula"
-              % hi)
-        print(u"      de %d — e ainda ha a entrada da turma, o login e a explicacao."
-              % AULA_MIN)
-        print(u"      da turma, o login e a explicacao do professor.")
-    print(u"   duracao ok: enche a aula sem estourar (%.0f a %.0f min; piso %d, "
-          u"aula %d)" % (lo, hi, piso_min, AULA_MIN))
+    # ⭐ O OUTRO LADO DA REGUA — e ele AVISA, nao reprova.
+    #    O Marcos primeiro disse *"cada aula deve durar 50 minutos"* e logo
+    #    corrigiu: *"nao tem problema se a aula durar mais, na verdade tem 55"*.
+    #    Entao passar de 55 NAO e defeito: a crianca volta de onde parou (o
+    #    convite do RETOMAR dura os mesmos 55 min). O que o portao faz e AVISAR,
+    #    porque quem passa muito talvez nao chegue no fecho — o boletim dela, o
+    #    parecer, o relatorio do professor — e quem decide se isso importa
+    #    naquela atividade e o professor, nao o portao.
+    if lo > AULA_MIN:
+        print(u"   ⚠ passa da aula: ate a crianca mais rapida leva %.0f min "
+              u"(a aula tem %d)." % (lo, AULA_MIN))
+    elif hi > AULA_MIN:
+        print(u"   ⚠ a crianca que ouve todo alto-falante leva %.0f min "
+              u"(a aula tem %d)." % (hi, AULA_MIN))
+    if lo > AULA_MIN or hi > AULA_MIN:
+        print(u"      Nao e defeito: ela volta de onde parou. Mas quem passa muito")
+        print(u"      talvez nao chegue no fecho (boletim, parecer, relatorio). Se")
+        print(u"      quiser encurtar: menos itens sorteados por folha, no `pega(...)`")
+        print(u"      — nao mexe no pote nem pede voz nova.")
+        # ⚠️ na atividade MONTADA a voz ainda entra como o BANCO INTEIRO (nao ha
+        #    bloco FALAS nomeado), entao este numero esta ALTO de proposito.
+        if not faixa:
+            print(u"      ⚠ nesta montada a voz conta o banco inteiro: o numero")
+            print(u"         esta ALTO. Confirmar no relogio antes de encurtar.")
+    print(u"   duracao ok: enche a aula (%.0f a %.0f min; piso %d, aula %d)"
+          % (lo, hi, piso_min, AULA_MIN))
     return 0
 
 
