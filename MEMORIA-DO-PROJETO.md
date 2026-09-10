@@ -7148,6 +7148,75 @@ qualquer uma sozinha mata o gesto:
 
 **Ao pôr arrastar em qualquer peça nova, conferir os três.**
 
+## 🗣️⭐ A SÍLABA SAI DA PALAVRA INTEIRA, POR ALINHAMENTO FORÇADO (10/set/2026)
+
+**Isto encerra a família "sílaba mal pronunciada", que custou três rodadas e o
+ouvido do Marcos duas vezes.** Ele disse: *"ele está dizendo 'v a' ao invés de
+'va'"*, depois *"não, ele não pronuncia algumas sílabas corretamente"*, e por
+fim *"quero que ela pronuncie as sílabas corretamente"*.
+
+### O erro era de MÉTODO, não de código
+A ferramenta mandava a voz ler **`gi, ra, fa`** — os pedaços separados por
+vírgula — e cortava nas pausas. Parece a mesma coisa que cortar a palavra, e não
+é: **a voz lê cada pedaço ISOLADO**, e quando o pedaço não é palavra do
+português ela **SOLETRA**. "va" vira "vê-á", "ga" vira "gê-á". O erro já nascia
+dentro do áudio; cortar depois só repartia o erro em pedaços menores.
+
+Eu levei duas rodadas para enxergar isso porque consertei o sintoma errado:
+primeiro fiz os recortes EXISTIREM (eles não existiam), comemorei, e o defeito
+continuou. **Arquivo gerado não é arquivo certo.**
+
+### A medida que denuncia, e não precisa de ouvido
+**Sílaba soletrada leva o DOBRO da duração**, porque são dois nomes de letra em
+vez de um som. Medido no `_sil1`:
+
+| certas | soletradas |
+|---|---|
+| LA 0,26s · TA 0,28s · TO 0,26s | **VA 0,66s · GA 0,63s · FO 0,64s · PA 0,50s · NE 0,52s** |
+
+Está no portão `_qa/silabas.py`, com critério RELATIVO (o dobro da mediana das
+sílabas de mesmo tamanho de escrita) — voz e velocidade mudam a base, a
+soletração dobra em qualquer base.
+
+### O método certo
+1. a voz lê a **PALAVRA INTEIRA** (`cavalo.`), devagar. Ela pronuncia
+   perfeitamente, porque é palavra de verdade;
+2. o **`ctc-forced-aligner`** (modelo MMS, roda em CPU, cobre português) alinha
+   áudio e texto em **nível de caractere** e devolve o tempo de cada letra;
+3. a fronteira da sílaba é o **COMEÇO da primeira letra da sílaba seguinte**:
+
+       CAVALO   c@0,22  a@0,32  v@0,52  a@0,64  l@0,78  o@0,86
+                └── CA ─────────┘└── VA ───────┘└── LO ──────────
+
+4. corta com ffmpeg **aparando o silêncio** de cada pedaço (inverte, tira o
+   silêncio do começo, desinverte).
+
+**Resultado medido:** VA 0,66→0,22s · GA 0,63→0,18s · FO 0,64→0,28s ·
+NE 0,52→0,32s · PA 0,50→0,20s. Todas na faixa das que já estavam certas.
+
+### As armadilhas, todas pagas em prova de bancada
+- **só o `start` de cada letra serve.** O `end` da última vem furado (estica até
+  o fim do arquivo) e letras de confiança baixa saem fora de lugar — o 'o' de
+  GATO apareceu a 1,86s num áudio de 1,x s;
+- **a última sílaba leva o rabo de silêncio** e sai com 1,4s se não se aparar;
+- **o alinhador chama o `ffmpeg` PELO NOME**, no PATH do sistema, e o runner do
+  GitHub não tem — o do `imageio-ffmpeg` resolve com um link;
+- a opção é **`--split_size char`** (e a API em Python é mais direta que a CLI);
+- alinhar pela CHAVE da figura (`pao`, `maca`) erra a contagem de letras: tem
+  que ser a palavra ESCRITA (`pão`, `maçã`), remontada das sílabas do `PAL`.
+
+### A regra de processo que sai daqui
+**Antes de reescrever uma ferramenta em cima de suposição, faça uma PROVA DE
+BANCADA que não publica nada e responde com fato.** Foram três (o
+`provar-silaba.yml`), cada uma ensinando exatamente uma coisa, e o resultado de
+cada uma ficou em `_pesquisa/prova-silaba.txt` — commitado, porque o que o log
+da execução engole, o repo guarda.
+
+E a outra: **a pesquisa mora no GitHub.** O Marcos perguntou *"tem como fazer
+uma pesquisa de alguma ferramenta que ajude?"* — tinha: duas rodadas do
+`pesquisar.yml` trouxeram o alinhador e o caminho B (SSML `<phoneme>` da
+Microsoft, que resolveria também mas só no Azure pago).
+
 ## 🗣️🚨 A FERRAMENTA DA SÍLABA NUNCA TINHA RODADO — e ninguém viu (10/set/2026)
 
 **O Marcos ouviu:** *"na bate palmas das palavras, as sílabas precisam ser
