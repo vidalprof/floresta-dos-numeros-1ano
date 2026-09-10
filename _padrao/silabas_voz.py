@@ -57,6 +57,10 @@ import subprocess
 import sys
 
 RATE = "-10%"          # um tico mais devagar que a narração: é segmentação
+# ⚠️ O MOTIVO DE CADA FALHA FICA GUARDADO AQUI e vai para o `_silabas-log.txt`.
+#    Antes o erro só era impresso, e "impresso" quer dizer "morreu no log da
+#    execução". Sem o motivo, a sessão seguinte fica adivinhando.
+MOTIVOS = []
 FOLGA_MS = 60          # sobra no fim de cada corte, para não cortar o ar final
 PAR = 4                # palavras ao mesmo tempo
 
@@ -112,16 +116,25 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
                     dur = marcas[i][1] / 10000000.0 + FOLGA_MS / 1000.0
                     saida = os.path.join(os.path.dirname(destino_base),
                                          "%ssb_%s_%d.mp3" % (prefixo, palavra, i))
-                    r = subprocess.call(
-                        [ff, "-y", "-loglevel", "error", "-ss", "%.3f" % ini,
-                         "-t", "%.3f" % dur, "-i", inteiro, "-c", "copy", saida])
-                    if r != 0 or not os.path.exists(saida) or os.path.getsize(saida) < 300:
-                        # sem cópia direta: recodifica (mp3 nem sempre corta no quadro)
-                        subprocess.call(
-                            [ff, "-y", "-loglevel", "error", "-ss", "%.3f" % ini,
-                             "-t", "%.3f" % dur, "-i", inteiro, saida])
+                    # ⚠️ ENTRADA PRIMEIRO, DEPOIS O `-ss`, E SEMPRE RECODIFICANDO.
+                    #    O jeito antigo (`-ss` antes do `-i` com `-c copy`) é o
+                    #    rápido, mas em mp3 ele corta no meio do quadro e às vezes
+                    #    devolve arquivo quebrado — e como o corte não levantava
+                    #    exceção nenhuma, a falha saía como "0 de 3 sílabas" SEM
+                    #    motivo registrado. São pedaços de meio segundo: o custo
+                    #    de recodificar é nada perto de um defeito invisível.
+                    p = subprocess.Popen(
+                        [ff, "-y", "-loglevel", "error", "-i", inteiro,
+                         "-ss", "%.3f" % ini, "-t", "%.3f" % dur,
+                         "-c:a", "libmp3lame", "-q:a", "5", saida],
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    _, err = p.communicate()
                     if os.path.exists(saida) and os.path.getsize(saida) > 300:
                         n += 1
+                    elif i == 0:
+                        MOTIVOS.append(u"%s: ffmpeg nao cortou (%s) -- %s"
+                                       % (palavra, ff,
+                                          (err or b"").decode("utf-8", "replace")[:120]))
                 try:
                     os.remove(inteiro)
                 except OSError:
@@ -130,6 +143,7 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
             except Exception as e:                               # noqa: BLE001
                 if tent == 3:
                     print(u"   ERRO em %s: %s" % (palavra, e))
+                    MOTIVOS.append(u"%s: %s" % (palavra, e))
                     return 0
                 await asyncio.sleep(1.5 * tent)
     return 0
@@ -178,8 +192,9 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
         json.dumps(carimbo, ensure_ascii=False, indent=1))
     print(u"%s -> silabas ok: %d palavra(s) gravadas, %d com falha"
           % (pasta, len(alvos) - falhou, falhou))
-    _diario(pasta, u"%d palavra(s) gravadas, %d com falha (voz %s, rate %s)"
-            % (len(alvos) - falhou, falhou, voz, RATE))
+    _diario(pasta, u"%d palavra(s) gravadas, %d com falha (voz %s, rate %s)\n%s"
+            % (len(alvos) - falhou, falhou, voz, RATE,
+               u"\n".join(u"   " + m for m in MOTIVOS[:12]) or u"   (sem motivo registrado)"))
     return 1 if falhou else 0
 
 
