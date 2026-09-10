@@ -1,0 +1,1886 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>O Desfile das Letras — 1º ano</title>
+<meta name="description" content="Dez folhas interativas de rima para o 1º ano: julgar se rima, achar a que rima, pintar, a pegadinha, circular, arrastar, ligar, completar a parlenda, escrever e montar o mural.">
+<!-- ============================================================
+     O BANDO DAS RIMAS — alfabetizacao, 1o ano (consciencia fonologica)
+     LIVRO DE FOLHAS INTERATIVAS, 10 folhas.
+
+     ⭐ NASCEU DO METODO NOVO (Marcos, set/2026): *"criar sequencias didaticas
+     de alfabetizacao com essas atividades da internet, dando a interatividade
+     que elas pedem"* e *"pode ser em folhas soltas; com elas sera montada a
+     sequencia didatica — o pedagogo consegue"*.
+
+     ENTAO CADA FOLHA DAQUI VEIO DE UMA FOLHA REAL DE PROFESSOR, e e FIEL a ela:
+     as mesmas palavras, os mesmos distratores, o mesmo comando impresso. As
+     folhas estao em `_sequencias/folhas/` (d06, d08, d17, d18, d24) e os itens
+     em `_sequencias/POTE-RIMA.md`, com cada correcao justificada.
+     O que muda e so o GESTO — a folha foi feita para o papel, e transpor direto
+     daria "papel na tela", que e pior que papel.
+
+     ⭐ POR QUE RIMA, E POR QUE ELA VEM PRIMEIRO. O parecer pedagogico da Fabrica
+     de Palavras achou este buraco: o objetivo F do curriculo de Blumenau para o
+     1o ano — *"recitar parlendas, quadras, quadrinhas, trava-linguas...
+     observando as RIMAS"* — nao estava em folha nenhuma. E na consciencia
+     fonologica a rima e o degrau ANTERIOR a silaba: unidade grande antes da
+     pequena. Ela e a porta de entrada, e faltava.
+
+     A ESCADA (da mais facil para a mais dificil, nao a ordem das folhas):
+       1 julgar se rima  →  2 achar entre tres  →  3 pintar a palavra escrita
+       →  4 a PEGADINHA (comeca igual, nao rima)  →  5 circular as duas
+       →  6 arrastar  →  7 ligar  →  8 completar a parlenda (objetivo F puro)
+       →  9 escrever  →  10 montar o proprio mural.
+
+     ARTE: 56 figuras — 37 RECORTADAS das proprias folhas de professor (prefixo
+     `al2_` no banco) e 19 REAPROVEITADAS do banco. Nenhuma imagem gerada.
+     ES5 puro, um arquivo, sem biblioteca. NAO usa o motor (folha viva).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#eef1f7;color:#1e2334;padding-bottom:160px}
+#topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid #6d5ae6;
+  box-shadow:0 2px 14px rgba(40,30,90,.13);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:880px;margin:0 auto}
+#topo .tit{font-weight:800;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:12px;background:#e6e6f4;border-radius:8px;overflow:hidden;flex:1;min-width:60px;max-width:200px}
+.prog i{display:block;height:100%;width:0;background:#6d5ae6;border-radius:8px;-webkit-transition:width .5s;transition:width .5s}
+.pg{font-weight:800;font-size:14px;color:#5b4fc4;white-space:nowrap}
+button{font-family:inherit;cursor:pointer}
+.bt{min-width:48px;min-height:48px;border:0;border-radius:16px;background:#6d5ae6;color:#fff;font-weight:800;font-size:17px;
+  padding:10px 18px;box-shadow:0 4px 0 #4c3cbb;-webkit-transition:transform .08s;transition:transform .08s}
+.bt:active{transform:translateY(3px);box-shadow:0 1px 0 #4c3cbb}
+.bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
+.bt.cinza{background:#e4e6f2;color:#4a4f66;box-shadow:0 4px 0 #c3c7dc}
+.bt.verde{background:#15a34a;box-shadow:0 4px 0 #0d7736}
+.zap{width:42px;height:42px;border-radius:50%;border:0;background:#6d5ae6;box-shadow:0 3px 0 #4c3cbb;
+  display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none}
+.zap svg{width:22px;height:22px;fill:#fff}
+.zap.off{background:#b9bcd0;box-shadow:0 3px 0 #9599b3}
+.zap.ouvir{background:#fff;box-shadow:0 3px 0 #cdd0e4;border:2px solid #6d5ae6}
+.zap.ouvir svg{fill:#6d5ae6}
+.zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
+@-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+
+#livro{max-width:880px;margin:12px auto 0;padding:0 10px}
+.pagina{position:relative;background:#fff;border-radius:22px;box-shadow:0 10px 34px rgba(35,25,80,.16);display:none;overflow:hidden;padding:0 0 20px}
+.pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
+@-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.faixa{background:#6d5ae6;color:#fff;padding:15px 18px 13px;display:flex;align-items:center;gap:12px}
+.faixa h2{margin:0;font-size:clamp(17px,4.4vw,25px);letter-spacing:.4px;text-transform:uppercase;flex:1;line-height:1.1}
+.faixa .num{background:#fff;color:#6d5ae6;font-weight:900;border-radius:50%;width:36px;height:36px;display:flex;
+  align-items:center;justify-content:center;font-size:18px;flex:none}
+.pagina.c1 .faixa{background:#e0562f}.pagina.c1 .faixa .num{color:#e0562f}
+.pagina.c2 .faixa{background:#1179bf}.pagina.c2 .faixa .num{color:#1179bf}
+.pagina.c3 .faixa{background:#15a34a}.pagina.c3 .faixa .num{color:#15a34a}
+.pagina.c4 .faixa{background:#b0308f}.pagina.c4 .faixa .num{color:#b0308f}
+.pagina.c5 .faixa{background:#c98a06}.pagina.c5 .faixa .num{color:#c98a06}
+.enun{margin:14px 16px 4px;font-size:clamp(15px,3.9vw,19px);font-weight:700;line-height:1.35}
+.enun b{color:#6d5ae6}
+
+/* =========================================================================
+   AS PEÇAS DO BANDO DAS RIMAS
+   ⚠️ Cada classe daqui nasceu de uma folha impressa. O leiaute copia o que o
+   papel faz — figura-chave grande de um lado, opções do outro — porque é assim
+   que a criança já viu a folha na mão do professor.
+   ⚠️ E TUDO O QUE SE TOCA TEM 44 px NO MÍNIMO (regra do 1º e 2º ano). Dedo de
+   seis anos não acerta alvo pequeno, e alvo pequeno vira erro que não é erro.
+   ========================================================================= */
+
+/* folha 1 — as duas palavras lado a lado, com o "e" no meio */
+.parrima{display:flex;align-items:center;justify-content:center;gap:clamp(8px,4vw,26px);
+  flex-wrap:nowrap;margin:6px 0 12px}
+.parrima .eou{font-weight:800;color:#6d5ae6;font-size:clamp(15px,4vw,20px);flex:none}
+.figsom{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.figsom .fig{height:clamp(70px,17vw,104px)}
+.figsom .rot{font-weight:800;color:#2c3350;font-size:clamp(13px,3.4vw,16px);letter-spacing:.5px}
+
+/* a chamada da folha: "PASSARINHO rima com:" */
+.chamrima{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px}
+.chamrima .figgrande{display:block;width:auto;height:clamp(84px,21vw,128px);max-width:100%;
+  margin:0 auto;object-fit:contain}
+.chamlin{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.chamlin b{font-size:clamp(15px,4vw,19px);color:#2c3350;letter-spacing:.5px}
+
+/* as opções COM figura (folhas 2, 4 e 6) */
+.op.figbt{display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:96px;min-height:112px;padding:8px 10px}
+.op.figbt .figop{display:block;width:auto;height:clamp(56px,14vw,80px);max-width:100%;object-fit:contain}
+.rotop{font-weight:800;font-size:clamp(11px,2.9vw,13px);color:#2c3350;letter-spacing:.4px;
+  line-height:1.1;word-break:break-word}
+
+/* as opções em PALAVRA, que a folha 08 imprime — e que se PINTAM */
+.op.pintavel{min-width:132px;min-height:52px;font-size:clamp(14px,3.6vw,17px);font-weight:800;
+  letter-spacing:.6px}
+
+/* folha 5 — a grade que se circula */
+.gradecirc{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin:8px 0 4px;touch-action:none}
+@media (max-width:430px){.gradecirc{grid-template-columns:repeat(2,1fr)}}
+.figcirc{display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-height:104px;padding:8px 4px;border:3px solid #e4e7f6;border-radius:16px;background:#fff;
+  cursor:pointer;-webkit-transition:border-color .18s,background .18s;transition:border-color .18s,background .18s}
+.figcirc .figop{display:block;width:auto;height:clamp(50px,13vw,72px);max-width:100%;object-fit:contain}
+.figcirc.marcada{border-color:#f59e0b;background:#fff7e6}
+
+/* folha 6 — o alvo para onde a peça é puxada */
+.alvorima{display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:10px;
+  padding:10px;border:3px dashed #c9cdec;border-radius:20px;background:#fff}
+.alvorima.alvo{border-color:#6d5ae6;background:#f2efff}
+.alvorima .figgrande{display:block;width:auto;height:clamp(80px,20vw,120px);max-width:100%;object-fit:contain}
+
+/* folha 8 — a parlenda e a lacuna que se preenche */
+.parlenda{font-size:clamp(16px,4.2vw,21px);font-weight:700;color:#2c3350;line-height:1.5;
+  text-align:center;margin:4px 6px 8px}
+.lacuna{display:inline-block;min-width:74px;padding:1px 10px;border-bottom:4px solid #6d5ae6;
+  color:#6d5ae6;font-weight:900;text-align:center}
+.lacuna.cheia{border-bottom-color:#1f9d55;color:#1f9d55;background:#eafaf0;border-radius:8px 8px 0 0}
+
+/* folha 9 — a caixa de escrever é LARGA (palavra inteira, não sílaba) */
+.sq.larga{min-width:168px;padding:0 12px}
+
+/* folha 10 — o mural que a criança monta, e que vai para o relatório */
+.mural{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 10px}
+.cartaorima{display:flex;align-items:center;gap:4px;min-height:96px;padding:10px 12px;
+  border:3px solid #d9ddf2;border-radius:20px;background:#fff;cursor:pointer;
+  -webkit-transition:transform .18s,border-color .18s,background .18s;
+  transition:transform .18s,border-color .18s,background .18s}
+.cartaorima .figop{display:block;width:auto;height:clamp(48px,12vw,66px);max-width:100%;object-fit:contain}
+.cartaorima .mais{font-weight:900;color:#6d5ae6;font-size:18px;padding:0 2px}
+.cartaorima.escolhido{border-color:#1f9d55;background:#eafaf0;-webkit-transform:scale(1.03);transform:scale(1.03)}
+.cartaorima:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+
+
+/* ---- AS PEÇAS DO DESFILE DAS LETRAS ----
+   ⚠️ LETRA GRANDE E EM BASTÃO. Foi o que a professora pediu nos comentários da
+   folha de origem, e vale mais aqui do que em qualquer outro caderno: a criança
+   está aprendendo a FORMA da letra. Letra pequena vira mancha. */
+.ltbox{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ltg{font-size:clamp(38px,11vw,62px);font-weight:900;color:#6d5ae6;line-height:1;
+  letter-spacing:1px;font-family:Arial,Helvetica,sans-serif}
+.ltbox.grandona .ltg{font-size:clamp(46px,13vw,76px)}
+.ltop{font-size:clamp(26px,7vw,40px);font-weight:900;color:#2c3350;line-height:1.05;
+  letter-spacing:1px;font-family:Arial,Helvetica,sans-serif}
+.ltop.grande{font-size:clamp(30px,8vw,46px);color:#6d5ae6}
+.op.figbt .ltop{margin:2px 0}
+
+/* folha 1 — o desfile: a fila que se percorre com o dedo */
+.desfile{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 4px}
+.ltdesf{min-width:62px;min-height:64px;border:3px solid #d9ddf2;border-radius:16px;background:#fff;
+  cursor:pointer;-webkit-transition:background .2s,border-color .2s,transform .15s;
+  transition:background .2s,border-color .2s,transform .15s}
+.ltdesf.aceso{border-color:#1f9d55;background:#eafaf0}
+.ltdesf.aceso .ltop{color:#1f9d55}
+.ltdesf:active{-webkit-transform:scale(.94);transform:scale(.94)}
+
+/* folhas 4, 5 e 6 — a letra e as vagas dos lados */
+.vizinha{display:flex;align-items:center;justify-content:center;gap:clamp(6px,3vw,16px);
+  flex-wrap:nowrap;margin:4px 0 10px}
+/* ⚠️ A SETA É DESENHADA EM CSS, não é o caractere "→". Regra do Marcos: nada de
+   emoji nem SVG, porque não aparecem em alguns navegadores da escola — e a seta
+   Unicode é exatamente esse caso (vira quadradinho no PC antigo). Aqui ela é uma
+   haste com uma ponta feita de borda: aparece em qualquer navegador. */
+.vizinha .setacss{position:relative;display:inline-block;width:34px;height:4px;flex:none;
+  background:#9aa0c4;border-radius:2px;margin:0 2px}
+.vizinha .setacss:after{content:"";position:absolute;right:-2px;top:-6px;
+  width:0;height:0;border-left:12px solid #9aa0c4;
+  border-top:8px solid transparent;border-bottom:8px solid transparent}
+.vaga{min-width:62px;min-height:64px;display:flex;align-items:center;justify-content:center;
+  border:3px dashed #c9cdec;border-radius:16px;background:#fff;
+  font-size:clamp(26px,7vw,40px);font-weight:900;color:#9aa0c4;
+  font-family:Arial,Helvetica,sans-serif;letter-spacing:1px}
+.vaga.ok{border-style:solid;border-color:#1f9d55;background:#eafaf0;color:#1f9d55}
+
+/* folha 7 — a trilha onde as letras entram em ordem */
+.trilhalt{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 0 10px}
+.op.figbt.usada{opacity:.35;pointer-events:none}
+
+/* folha 8 — a fila com o intruso: uma linha só, para a ordem ficar visível */
+.gradecirc.filaerr{grid-template-columns:repeat(4,1fr)}
+.figcirc.erro{border-color:#e2574c;background:#fdeceb}
+
+/* folha 10 — o cartão do alfabeto da turma */
+.cartaorima.cartalt{flex-direction:column;gap:2px;min-height:132px;min-width:104px}
+
+/* a capa: as letras desfilando */
+.capa .ltcapa{display:inline-block;font-size:clamp(30px,8vw,52px);font-weight:900;color:#6d5ae6;
+  letter-spacing:2px;font-family:Arial,Helvetica,sans-serif;
+  text-shadow:0 3px 0 #e6e2fb,0 5px 10px rgba(80,60,180,.18);
+  -webkit-animation:entraDupla .55s cubic-bezier(.3,1.4,.5,1) both;
+  animation:entraDupla .55s cubic-bezier(.3,1.4,.5,1) both}
+@media (prefers-reduced-motion:reduce){
+  .capa .ltcapa{-webkit-animation:none!important;animation:none!important;opacity:1!important}
+}
+
+.item{margin:12px 14px;padding:14px;border:2px solid #eceefa;border-radius:20px;background:#fbfbff}
+.item.feito{border-color:#bfe6ce;background:#f3fcf6}
+.item .n{font-weight:900;color:#9aa0bd;font-size:15px;margin-right:8px}
+/* ⚠️ A FIGURA TEM ALTURA FIXA, E ISSO NÃO É ENFEITE (set/2026). Antes era
+   `height:auto`: cada figura entrava no seu tamanho natural — a casa com 230 px
+   e a bola com 90 — e, como `display:block` ignora o `text-align:center` do pai,
+   todas encostavam na ESQUERDA. O item ficava com um buraco branco do lado
+   direito e as folhas, desiguais. Altura igual + `margin:auto` resolve as duas
+   coisas de uma vez: peso visual igual e figura no meio. */
+.fig{display:block;width:auto;height:clamp(76px,19vw,116px);max-width:100%;
+  margin:2px auto 6px;object-fit:contain;image-rendering:auto}
+.figbt{border:0;background:none;padding:4px;border-radius:16px;min-width:48px;min-height:48px}
+/* ⚠️ O ALTO-FALANTE É DESENHADO EM CSS — caixinha + triângulo + duas ondas de
+   borda arredondada. Nada de emoji (vira quadradinho nos PCs da escola) e nada
+   de SVG (ordem do Marcos, set/2026). */
+.som{position:relative;width:46px;height:46px;min-width:46px;border:3px solid #6d5ae6;
+  border-radius:50%;background:#f2efff;padding:0;cursor:pointer;flex:none}
+.som:active{-webkit-transform:scale(.93);transform:scale(.93)}
+.som .cone{position:absolute;left:12px;top:17px;width:7px;height:10px;background:#4b3fb0;
+  border-radius:2px 0 0 2px}
+.som .cone:after{content:"";position:absolute;left:6px;top:-6px;width:0;height:0;
+  border-top:11px solid transparent;border-bottom:11px solid transparent;
+  border-right:11px solid #4b3fb0}
+.som .onda{position:absolute;border:3px solid #4b3fb0;border-left-color:transparent;
+  border-top-color:transparent;border-bottom-color:transparent;border-radius:50%}
+.som .o1{left:26px;top:16px;width:8px;height:12px}
+.som .o2{left:29px;top:11px;width:13px;height:22px;opacity:.65}
+.enunlin{display:flex;align-items:center;gap:10px;margin:0 2px}
+.enunlin .enun{flex:1;min-width:0}
+.palin{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:2px}
+.pal{font-weight:900;letter-spacing:2px;font-size:clamp(22px,6vw,34px);color:#1e2334}
+
+/* fileira genérica de opções */
+.ops{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.op{min-width:64px;min-height:56px;border:3px solid #d9ddf2;border-radius:16px;background:#fff;color:#1e2334;
+  font-weight:900;font-size:22px;padding:8px 14px;-webkit-transition:transform .1s;transition:transform .1s}
+.op:active{transform:scale(.94)}
+.op.certa{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.op.erro{border-color:#e0562f;background:#fdeee9;-webkit-animation:treme .4s;animation:treme .4s}
+@-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* o estojo de canetinhas da folha 5 */
+.estojo{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px}
+.estojo .rot{font-weight:800;color:#5b4fc4;font-size:14px}
+.lapis{width:44px;height:44px;border:4px solid #fff;border-radius:50%;padding:0;cursor:pointer;
+  box-shadow:0 2px 8px rgba(35,25,80,.22);-webkit-transition:transform .12s;transition:transform .12s}
+.lapis.esc{-webkit-transform:scale(1.18);transform:scale(1.18);box-shadow:0 0 0 4px rgba(60,50,120,.28)}
+.op.pinta{-webkit-transition:background .18s,border-color .18s,color .18s;
+  transition:background .18s,border-color .18s,color .18s}
+.op.fig{padding:6px;min-width:96px}
+.op.fig img{width:88px;height:88px;object-fit:contain;display:block}
+
+/* 1 — a letra escondida */
+.escondida{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0}
+.escondida .lt{font-weight:900;font-size:clamp(26px,7vw,40px);letter-spacing:2px}
+.escondida .buraco{width:52px;height:56px;border-bottom:5px solid #6d5ae6;display:inline-flex;align-items:center;
+  justify-content:center;background:#f2efff;border-radius:10px 10px 0 0;font-weight:900;font-size:34px;color:#6d5ae6}
+/* a fila do alfabeto usa o mesmo visual da letra escondida */
+.filalfa{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:10px 0}
+.filalfa .lt{font-weight:900;font-size:clamp(26px,7vw,40px);letter-spacing:2px;color:#3b4064}
+.filalfa .buraco{width:52px;height:56px;border-bottom:5px solid #6d5ae6;display:inline-flex;
+  align-items:center;justify-content:center;background:#f2efff;border-radius:10px 10px 0 0;
+  font-weight:900;font-size:34px;color:#6d5ae6}
+.filalfa .buraco.ok{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+.filalfa .buraco.indo{color:transparent}
+.filalfa.completa .lt,.filalfa.completa .buraco{-webkit-animation:pulo .42s ease;animation:pulo .42s ease}
+.escondida .buraco.ok{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+.escondida .buraco.perto,.filalfa .buraco.perto{background:#e7f8ee;border-color:#15a34a;
+  -webkit-transform:scale(1.12);transform:scale(1.12)}
+/* o voo da letra até o buraco (ver voaLetra no folhas.js) */
+.escondida .buraco.indo{color:transparent}
+.voa{position:fixed;z-index:60;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:30px;color:#0d7736;background:#e7f8ee;border:3px solid #15a34a;
+  border-radius:14px;pointer-events:none;-webkit-transition:-webkit-transform .5s cubic-bezier(.2,.9,.25,1);
+  transition:transform .5s cubic-bezier(.2,.9,.25,1);box-shadow:0 8px 20px rgba(21,163,74,.35)}
+@-webkit-keyframes pulo{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-9px)}100%{-webkit-transform:translateY(0)}}
+@keyframes pulo{0%{transform:translateY(0)}40%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+.escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:pulo .42s ease;animation:pulo .42s ease}
+.escondida.completa .lt:nth-child(2),.escondida.completa .buraco:nth-child(2){-webkit-animation-delay:.06s;animation-delay:.06s}
+.escondida.completa .lt:nth-child(3),.escondida.completa .buraco:nth-child(3){-webkit-animation-delay:.12s;animation-delay:.12s}
+.escondida.completa .lt:nth-child(4),.escondida.completa .buraco:nth-child(4){-webkit-animation-delay:.18s;animation-delay:.18s}
+.escondida.completa .lt:nth-child(5),.escondida.completa .buraco:nth-child(5){-webkit-animation-delay:.24s;animation-delay:.24s}
+.escondida.completa .lt:nth-child(6),.escondida.completa .buraco:nth-child(6){-webkit-animation-delay:.3s;animation-delay:.3s}
+.escondida.completa .lt:nth-child(7),.escondida.completa .buraco:nth-child(7){-webkit-animation-delay:.36s;animation-delay:.36s}
+@media (prefers-reduced-motion: reduce){
+  .voa{-webkit-transition:none;transition:none}
+  .escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:none;animation:none}
+}
+
+/* 2 — bater a palavra */
+.bater{display:flex;flex-direction:column;align-items:center;gap:10px}
+.icb{width:34px;height:34px;object-fit:contain;vertical-align:middle;margin-right:8px;display:inline-block}
+.icb.pq{width:22px;height:22px;margin-right:6px}
+.palma{min-width:190px;min-height:96px;border:0;border-radius:24px;background:#ffd233;color:#4a3800;font-weight:900;
+  font-size:20px;box-shadow:0 6px 0 #d5a800}
+.palma:active{transform:translateY(4px);box-shadow:0 2px 0 #d5a800}
+.contab{font-weight:900;font-size:20px;color:#5b4fc4}
+.contab b{font-size:30px}
+/* a trilha de sílabas: acende uma a cada palma e a voz diz aquela sílaba */
+.trilhasil{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:2px}
+.silbox{min-width:56px;padding:8px 12px;border:3px dashed #d9ddf2;border-radius:14px;background:#fff;
+  color:#c3c7dd;font-weight:900;font-size:22px;letter-spacing:1px;
+  -webkit-transition:all .18s;transition:all .18s}
+.silbox.acesa{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.06);transform:scale(1.06)}
+@media (prefers-reduced-motion: reduce){ .silbox{-webkit-transition:none;transition:none} }
+
+/* 3 — sequência lógica */
+.fila{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
+.fila .q{width:78px;height:78px;border:3px solid #e2e5f5;border-radius:16px;background:#fff;display:flex;
+  align-items:center;justify-content:center}
+.fila .q img{width:66px;height:66px;object-fit:contain}
+.fila .q.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;font-size:34px;color:#6d5ae6;font-weight:900}
+/* o quadro vazio acende quando a figura puxada chega perto */
+.fila .q.vaga.perto{border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.08);transform:scale(1.08)}
+.fila .q.vaga.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.ajuda{text-align:center;font-size:14px;color:#6b7192;margin:2px 0 6px}
+/* a cópia que segue o dedo/mouse enquanto a criança puxa */
+/* o cinto e o suspensório do `draggable="false"`: navegador antigo não olha o
+   atributo, mas olha esta regra */
+img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:none}
+.fantasma{position:fixed;z-index:70;pointer-events:none;opacity:.92;
+  -webkit-transform:scale(1.1);transform:scale(1.1);
+  -webkit-box-shadow:0 12px 26px rgba(30,35,52,.3);box-shadow:0 12px 26px rgba(30,35,52,.3)}
+.op.puxada{opacity:.35}
+
+/* 4 — circular */
+.grade{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:10px 0;position:relative}
+/* a folha de acetato onde a criança risca o círculo (ver riscoDeCircular) */
+.riscocv{position:absolute;left:0;top:0;pointer-events:none;z-index:5}
+.riscocv.ativo{z-index:5}
+.circ{position:relative;border:0;background:none;padding:6px;border-radius:50%;min-width:104px;min-height:104px}
+.circ img{width:92px;height:92px;object-fit:contain;display:block}
+.circ:after{content:"";position:absolute;inset:0;border:5px solid transparent;border-radius:50%}
+.circ.marcada:after{border-color:#e0562f}
+.circ.certa:after{border-color:#15a34a}
+.circ.errada:after{border-color:#e0562f;border-style:dotted}
+.chip{display:inline-flex;align-items:center;justify-content:center;background:#6d5ae6;color:#fff;font-weight:900;
+  font-size:24px;border-radius:14px;padding:6px 16px;letter-spacing:2px}
+
+/* 5 — pintar a sílaba · 7 — marcar X */
+.op.pinta.certa{background:#ffd233;border-color:#d5a800;color:#4a3800}
+.marcax{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin-top:10px}
+.lx{display:flex;align-items:center;gap:12px;min-height:56px;border:3px solid #d9ddf2;border-radius:16px;
+  background:#fff;padding:6px 16px;font-weight:900;font-size:22px;color:#1e2334;width:100%;max-width:320px}
+.lx .cx{width:34px;height:34px;border:3px solid #9aa0bd;border-radius:8px;display:inline-flex;align-items:center;
+  justify-content:center;font-size:24px;color:#e0562f;flex:none}
+.lx.certa{border-color:#15a34a;background:#e7f8ee}
+.lx.certa .cx{border-color:#15a34a;color:#15a34a}
+.lx.erro{border-color:#e0562f;-webkit-animation:treme .4s;animation:treme .4s}
+
+/* 6 · 10 — ligar e colar */
+/* ⚠️ AS DUAS COLUNAS TÊM QUE TER A MESMA CAIXA (pedido do Marcos, set/2026:
+   *"deixe os retângulos das sílabas iguais ao retângulo que estão os desenhos
+   dentro, para ficar proporcional, igual e não ficar feio"*). Antes a caixa era
+   `min-height`: a da esquerda crescia com a figura de 64px e a da direita ficava
+   no mínimo — duas alturas diferentes lado a lado. Agora a altura é FIXA e igual
+   nas duas, e a largura de cada coluna também.
+   E as colunas ficam mais afastadas, para o traço ter onde desenhar a curva. */
+.ligar{position:relative;display:flex;gap:clamp(30px,10vw,96px);justify-content:space-between;margin:14px 6px}
+.ligar .col{display:flex;flex-direction:column;gap:14px;flex:1 1 0;min-width:0}
+.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.ponta{border:3px solid #d9ddf2;border-radius:16px;background:#fff;height:86px;display:flex;align-items:center;
+  justify-content:center;font-weight:900;font-size:24px;letter-spacing:1px;padding:6px;
+  -ms-touch-action:none;touch-action:none;-webkit-transition:border-color .15s,box-shadow .15s;
+  transition:border-color .15s,box-shadow .15s}
+.ponta img{width:68px;height:68px;object-fit:contain}
+@media (max-width:420px){ .ponta{height:74px;font-size:21px} .ponta img{width:58px;height:58px} }
+.ponta.marcada{border-color:#6d5ae6;box-shadow:0 0 0 4px rgba(109,90,230,.22)}
+.ponta.feita{border-color:#15a34a;background:#e7f8ee}
+.ponta.mostra{border-color:#ffd233;box-shadow:0 0 0 4px rgba(255,210,51,.4)}
+.ponta.treme{-webkit-animation:treme .4s;animation:treme .4s}
+
+/* 8 — escrever a sílaba que falta */
+.silbox{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
+.sq{min-width:70px;min-height:64px;border:3px solid #d9ddf2;border-radius:14px;background:#fff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:26px;letter-spacing:2px;color:#1e2334}
+.sq.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;color:#6d5ae6}
+.sq.vaga.ativa{background:#fff;box-shadow:0 0 0 4px rgba(109,90,230,.25)}
+.sq.ok{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.cursor{display:inline-block;width:3px;height:28px;background:#6d5ae6;margin-left:2px;
+  -webkit-animation:pisca .9s steps(2) infinite;animation:pisca .9s steps(2) infinite}
+@-webkit-keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* 9 — ordenar as sílabas */
+.tira{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
+.sil{min-width:74px;min-height:58px;border:3px solid #d9ddf2;border-radius:14px;background:#fff;font-weight:900;
+  font-size:24px;letter-spacing:2px;color:#1e2334;-ms-touch-action:none;touch-action:none}
+.sil.usada{opacity:.28;pointer-events:none}
+.sil.arrastando{opacity:.5}
+.vagas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.vaga{min-width:74px;min-height:58px;border:3px dashed #6d5ae6;border-radius:14px;background:#f4f2ff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:24px;letter-spacing:2px;color:#6d5ae6}
+.vaga.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.vaga.perto{border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.08);transform:scale(1.08)}
+.sil.puxada{opacity:.35}
+
+/* 10 — recortar e colar */
+.colar{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:10px 0}
+.cel{width:118px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.cel img{width:96px;height:96px;object-fit:contain}
+.cel .alvo{width:84px;min-height:58px;border:3px dashed #6d5ae6;border-radius:14px;background:#f4f2ff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:24px;letter-spacing:2px;color:#6d5ae6}
+.cel .alvo.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.cel .alvo.perto{box-shadow:0 0 0 5px rgba(109,90,230,.28)}
+
+/* carimbo, nav, capa, fim */
+.carimbo{position:absolute;right:14px;top:60px;transform:rotate(-14deg) scale(.4);opacity:0;color:#15a34a;
+  border:5px solid #15a34a;border-radius:14px;padding:6px 14px;font-weight:900;font-size:20px;text-align:center;
+  line-height:1.05;pointer-events:none;-webkit-transition:all .45s;transition:all .45s}
+.pagina.pronta .carimbo{opacity:.92;transform:rotate(-14deg) scale(1)}
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:18;background:#fff;border-top:3px solid #6d5ae6;padding:8px 10px;
+  display:none;align-items:center;gap:10px;box-shadow:0 -3px 14px rgba(40,30,90,.14)}
+#nav .txt{flex:1;text-align:center;font-weight:800;color:#5b4fc4;font-size:14px;min-width:0}
+#barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:19;background:#fff;border-top:3px solid #6d5ae6;padding:10px;display:none}
+#barraCapa.aberta{display:block}
+#barraCapa .lin{display:flex;gap:10px;align-items:center;max-width:640px;margin:0 auto}
+#barraCapa label{font-weight:800;color:#5b4fc4;font-size:15px;white-space:nowrap}
+#nomeIn{flex:1;min-width:0;min-height:50px;border:3px solid #6d5ae6;border-radius:14px;padding:0 12px;
+  font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
+#nomeIn:focus{outline:none;border-color:#b0308f;box-shadow:0 0 0 4px rgba(176,48,143,.25)}
+/* ================= A CAPA =================
+   Pedido do Marcos (set/2026): *"essas atividades deveriam ter uma capa bem
+   legal e bonita"*. O tema sai do próprio nome — uma FÁBRICA de palavras:
+   telhado de fábrica, letras que entram uma a uma como se saíssem da linha de
+   montagem, e a esteira embaixo carregando as figuras das folhas.
+   Feita só com CSS e PNG: nada de SVG, nada de emoji (regra dele). */
+.capa{position:relative;text-align:center;padding:18px 16px 24px;overflow:hidden;
+  background:-webkit-linear-gradient(top,#efe9ff 0%,#fdf6ff 58%,#fff 100%);
+  background:linear-gradient(180deg,#efe9ff 0%,#fdf6ff 58%,#fff 100%)}
+.capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
+/* bolhas de luz ao fundo — dão profundidade sem competir com o título.
+   ⚠️ Antes eram três retângulos brancos arredondados que, na tela, pareciam
+   FALHA de desenho. Círculo suave da própria cor da capa lê como fundo. */
+.capa .nv{position:absolute;display:block;border-radius:50%;
+  background:-webkit-radial-gradient(circle,rgba(124,102,255,.20),rgba(124,102,255,0) 70%);
+  background:radial-gradient(circle,rgba(124,102,255,.20),rgba(124,102,255,0) 70%)}
+.capa .n1{width:240px;height:240px;left:-60px;top:-40px}
+.capa .n2{width:300px;height:300px;right:-90px;top:10px}
+.capa .n3{width:180px;height:180px;left:44%;bottom:-70px}
+/* o telhadinho da fábrica com a inicial */
+.capa .chapeu{position:relative;width:66px;height:66px;margin:14px auto 2px;border-radius:16px;
+  background:-webkit-linear-gradient(top left,#7c66ff,#5b4fc4);
+  background:linear-gradient(135deg,#7c66ff,#5b4fc4);color:#fff;font-weight:900;font-size:34px;
+  line-height:66px;box-shadow:0 8px 18px rgba(91,79,196,.36)}
+.capa .chapeu:before{content:"";position:absolute;left:-9px;right:-9px;top:-13px;height:0;
+  border-left:42px solid transparent;border-right:42px solid transparent;border-bottom:16px solid #b0308f}
+.capa h1.titu{margin:10px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+.capa .titu .lt{display:inline-block;font-size:clamp(24px,6.4vw,42px);font-weight:900;letter-spacing:0;
+  color:#4b3fb0;text-shadow:0 3px 0 #d9d2ff,0 5px 10px rgba(60,40,140,.18);
+  -webkit-animation:caiLetra .5s both;animation:caiLetra .5s both}
+.capa .titu .esp{display:inline-block;width:14px}
+/* ⚠️ `caiLetra` e não `cai`: o confete JÁ tinha um `@keyframes cai` que
+   termina em `opacity:0`, declarado mais abaixo — e ele vencia. As letras
+   do título animavam para invisível e a capa aparecia sem título nenhum.
+   Nome de keyframe é global: conferir antes de criar um. */
+@-webkit-keyframes caiLetra{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
+@keyframes caiLetra{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
+.capa .sub{font-weight:700;color:#5b4fc4;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
+/* a esteira: as figuras em cima, a cinta rodando embaixo */
+.capa .esteira{max-width:660px;margin:16px auto 4px;position:relative}
+/* ---- as duplas da capa: rima é coisa de DOIS, então os pares entram juntos ----
+   ⚠️ sem `white-space:nowrap` no par, o navegador quebra entre a figura e o
+   sinal de igual e a dupla deixa de se ler como dupla. */
+.capa .dupla{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;
+  -webkit-animation:entraDupla .6s cubic-bezier(.3,1.4,.5,1) both;
+  animation:entraDupla .6s cubic-bezier(.3,1.4,.5,1) both}
+.capa .dupla .fig{height:clamp(54px,13vw,86px)}
+.capa .igual{display:inline-block;width:16px;height:12px;flex:none;
+  border-top:3px solid #6d5ae6;border-bottom:3px solid #6d5ae6}
+@-webkit-keyframes entraDupla{from{opacity:0;-webkit-transform:translateY(-18px) scale(.85)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraDupla{from{opacity:0;transform:translateY(-18px) scale(.85)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.capa .dupla{-webkit-animation:none!important;animation:none!important;opacity:1!important;-webkit-transform:none!important;transform:none!important}}
+.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:8px;flex-wrap:nowrap}
+.capa .cena img{width:clamp(54px,14vw,110px);height:clamp(54px,14vw,110px);object-fit:contain;
+  -webkit-animation:sobe 2.6s ease-in-out infinite;animation:sobe 2.6s ease-in-out infinite}
+.capa .cena img:nth-child(2){-webkit-animation-delay:.35s;animation-delay:.35s}
+.capa .cena img:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
+.capa .cena img:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
+.capa .cena img:nth-child(5){-webkit-animation-delay:1.4s;animation-delay:1.4s}
+@-webkit-keyframes sobe{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
+@keyframes sobe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.capa .cinta{display:flex;gap:6px;justify-content:center;background:#3b3560;border-radius:9px;
+  padding:6px 8px;margin-top:6px;box-shadow:0 6px 14px rgba(35,25,80,.22)}
+.capa .cinta i{display:block;width:26px;height:9px;background:#6d5ae6;border-radius:5px}
+.capa .chamada{margin-top:14px;font-weight:700;color:#4b4f70;font-size:clamp(13px,3.4vw,16px)}
+@media (prefers-reduced-motion: reduce){
+  .capa .titu .lt,.capa .cena img{-webkit-animation:none;animation:none}
+}
+#fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
+  box-shadow:0 10px 34px rgba(35,25,80,.16);text-align:center}
+#fim h2{margin:0 0 6px;color:#6d5ae6;font-size:clamp(21px,5.5vw,30px)}
+.estrelas{font-size:44px;letter-spacing:8px;margin:6px 0}
+.barras{max-width:520px;margin:10px auto;text-align:left}
+.barra{display:flex;align-items:center;gap:8px;margin:6px 0;font-weight:700;font-size:14px}
+.barra span{flex:0 0 42%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barra .tr{flex:1;height:14px;background:#e6e6f4;border-radius:8px;overflow:hidden}
+.barra .tr i{display:block;height:100%;width:0;background:#15a34a;-webkit-transition:width .8s;transition:width .8s}
+.barra b{flex:none;color:#5b4fc4}
+/* ⚠️ SEM EMOJI E SEM SVG (ordem do Marcos, set/2026: *"evite usar svg e
+   emojis pois não aparecem em alguns navegadores"*). Nos PCs da escola o
+   emoji vira quadradinho vazio e a criança de seis anos não sabe o que é um
+   quadradinho. Aqui: troféu e estrelas são PNG de argila (do banco), as
+   setas são triângulos de CSS puro e o resto é palavra escrita. */
+#medalha{width:132px;height:132px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe680,#e0a800);
+  margin:14px auto;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(180,140,0,.42);cursor:pointer;-ms-touch-action:none;touch-action:none}
+#medalha img{width:92px;height:92px;object-fit:contain;display:block;pointer-events:none}
+/* se a figura do troféu faltar, o disco ainda é um disco de ouro com a
+   palavra — nunca um quadradinho quebrado. */
+#medalha.semfig:after{content:"BOA!";font-weight:900;font-size:26px;color:#7a5600}
+.seta{display:inline-block;width:0;height:0;vertical-align:middle;
+  border-top:8px solid transparent;border-bottom:8px solid transparent}
+.seta.esq{border-right:11px solid currentColor;margin-right:7px}
+.seta.dir{border-left:11px solid currentColor;margin-left:7px}
+#estrelas img{width:52px;height:52px;object-fit:contain;display:inline-block;margin:0 3px;vertical-align:middle}
+
+/* ---- o parecer descritivo e a nota (relatório do PROFESSOR) ----
+   ⚠️ A NOTA GRANDE fica aqui e SÓ aqui. Na tela da criança nunca aparece
+   número: ela vê estrelas e barras. Ver o comentário em `folhas.js`. */
+#relatorio .parecer{margin:10px 0 4px;padding:10px 12px;border-left:5px solid #6d5ae6;
+  background:#fff;border-radius:0 12px 12px 0;font-size:13.5px;line-height:1.55;color:#2c3350}
+#relatorio .comonota{margin:8px 0 0;font-size:11.5px;color:#6a7090;line-height:1.45}
+.notao{display:flex;align-items:center;gap:14px;margin:10px 0 2px;padding:10px 14px;
+  border:3px solid #6d5ae6;border-radius:18px;background:#fff}
+.notao .nn{font-size:clamp(30px,9vw,44px);font-weight:900;color:#6d5ae6;line-height:1;
+  font-variant-numeric:tabular-nums}
+.notao .nl{font-size:12.5px;color:#2c3350;line-height:1.45}
+
+/* =========================================================================
+   ANIMAÇÃO DAS FOLHAS (pedido do Marcos, set/2026: *"consegue deixar as
+   páginas mais animadas e atraentes?"*)
+
+   ⚠️ E A REGRA QUE MANDA AQUI É A REGRA 2 DA PESQUISA: NADA ANIMA SEM FUNÇÃO.
+   Movimento por movimento cansa a criança de seis anos e ainda pesa no PC da
+   escola. Cada animação daqui faz um trabalho:
+     · os itens ENTRAM EM CASCATA → a criança vê que a folha tem começo e ordem,
+       e o olho dela é levado ao item 1 em vez de cair no meio da tela;
+     · a faixa do título DESLIZA → marca a troca de folha (transição entre telas,
+       que é justamente o que falta no padrão "empresa grande");
+     · o acerto DÁ UM PULINHO e a opção certa BRILHA → resposta tátil, o gesto
+       que confirma sem precisar de texto;
+     · o erro BALANÇA de leve → diz "de novo" sem dizer "errou".
+   `prefers-reduced-motion` desliga tudo e a folha continua inteira.
+   ========================================================================= */
+.pagina.viva .item{-webkit-animation:entraItem .42s ease-out both;animation:entraItem .42s ease-out both}
+.pagina.viva .item:nth-child(2){-webkit-animation-delay:.05s;animation-delay:.05s}
+.pagina.viva .item:nth-child(3){-webkit-animation-delay:.10s;animation-delay:.10s}
+.pagina.viva .item:nth-child(4){-webkit-animation-delay:.15s;animation-delay:.15s}
+.pagina.viva .item:nth-child(5){-webkit-animation-delay:.20s;animation-delay:.20s}
+.pagina.viva .item:nth-child(6){-webkit-animation-delay:.25s;animation-delay:.25s}
+.pagina.viva .item:nth-child(n+7){-webkit-animation-delay:.30s;animation-delay:.30s}
+@-webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.pagina.viva .faixa{-webkit-animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both;
+  animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both}
+@-webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
+@keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+
+/* o acerto: um pulinho curto e um brilho que corre pela opção certa */
+.op.certa,.figcirc.marcada,.cartaorima.escolhido{
+  -webkit-animation:pulinho .4s cubic-bezier(.3,1.6,.5,1);animation:pulinho .4s cubic-bezier(.3,1.6,.5,1)}
+@-webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
+@keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.op.certa{position:relative;overflow:hidden}
+.op.certa::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:38%;pointer-events:none;
+  background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
+  -webkit-animation:brilhoOp .55s .1s ease-out;animation:brilhoOp .55s .1s ease-out}
+@-webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
+@keyframes brilhoOp{from{left:-40%}to{left:112%}}
+
+/* o erro: balança de leve — diz "de novo" sem dizer "errou" */
+.op.erro{-webkit-animation:balanca .34s;animation:balanca .34s}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* o item que fecha: some o contorno e entra o verde, sem susto */
+.item{-webkit-transition:border-color .4s,background .4s;transition:border-color .4s,background .4s}
+
+/* a figura responde ao toque — regra 1: o alvo reage ao PRESSIONAR */
+.op.figbt:active,.figcirc:active,.cartaorima:active{-webkit-transform:scale(.96);transform:scale(.96)}
+
+@media (prefers-reduced-motion:reduce){
+  .pagina.viva .item,.pagina.viva .faixa,.op.certa,.op.erro,
+  .figcirc.marcada,.cartaorima.escolhido{
+    -webkit-animation:none!important;animation:none!important;opacity:1!important;
+    -webkit-transform:none!important;transform:none!important}
+  .op.certa::after{display:none}
+}
+
+#relatorio{display:none;text-align:left;background:#f6f7fd;border:2px solid #d9ddf2;border-radius:16px;padding:12px;margin-top:12px;font-size:13px}
+#relatorio table{border-collapse:collapse;width:100%;margin-top:8px}
+#relatorio th,#relatorio td{border:1px solid #d9ddf2;padding:5px 7px;text-align:left}
+#relatorio th{background:#eceefa}
+/* a nota grande do professor: porcentagem + conceito em palavras */
+.notao{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid #d9ddf2;
+  border-radius:14px;padding:10px 14px;margin-top:10px}
+.notao .nn{font-size:38px;font-weight:900;color:#15a34a;line-height:1}
+.notao .nl{font-size:13px;color:#3b4064;line-height:1.35}
+#menuProf{display:none;position:fixed;inset:0;z-index:60;background:rgba(20,16,45,.62);align-items:center;justify-content:center;padding:14px}
+#menuProf.aberto{display:flex}
+#menuProf .cx{background:#fff;border:4px solid #6d5ae6;border-radius:20px;padding:16px;max-width:520px;width:100%;
+  max-height:92vh;overflow:auto;box-shadow:0 14px 44px rgba(0,0,0,.4)}
+#menuProf h3{margin:0 0 4px;color:#6d5ae6;font-size:20px}
+#menuProf p{margin:0 0 12px;font-size:13px;color:#4a4f66;line-height:1.4}
+#menuProf .folhas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#menuProf .folhas button{min-height:46px;border:0;border-radius:12px;background:#eceefa;color:#4a4f66;font-weight:800;
+  font-size:14px;padding:8px 12px;box-shadow:0 3px 0 #d3d7ea;flex:1 1 150px;text-align:left}
+#teclado{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:3px solid #6d5ae6;padding:8px;display:none}
+#teclado.aberto{display:block}
+#teclado .dica{text-align:center;font-weight:800;color:#5b4fc4;font-size:13px;margin-bottom:6px}
+#tk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:560px;margin:0 auto}
+#tk button{min-height:48px;border:0;border-radius:12px;background:#eceefa;color:#1e2334;font-weight:900;font-size:19px;box-shadow:0 3px 0 #d3d7ea}
+#tk button:active{transform:translateY(2px);box-shadow:0 1px 0 #d3d7ea}
+#tk button.ap{background:#fde2da;grid-column:span 3}
+#tk button.ok{background:#d9f2e3;grid-column:span 4}
+#confete{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.cf{position:absolute;width:9px;height:14px;opacity:.95;-webkit-animation:cai 1.5s linear forwards;animation:cai 1.5s linear forwards}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+@keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+.oculto{display:none!important}
+</style></head><body>
+
+<div id="topo">
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir de novo"><svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v1H5v6h2v1a5 5 0 0 0 10 0v-1h2V9h-2V8a5 5 0 0 0-5-5z"/></svg></button>
+  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
+  <div class="tit">O Desfile das Letras</div>
+  <div class="prog"><i id="progI"></i></div>
+  <div class="pg" id="pg">Capa</div>
+</div>
+
+<div id="livro"></div>
+
+<div id="fim">
+  <h2>Caderno completo!</h2>
+  <div class="estrelas" id="estrelas"></div>
+  <div class="barras" id="barras"></div>
+  <p id="resumo" style="font-weight:800;font-size:16px"></p>
+  <div id="medalha" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/ab_trofeu.png?v=1" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt cinza" id="bRever">Rever o caderno</button>
+    <button class="bt verde" id="bRecomecar">Caderno novo</button>
+  </div>
+  <div id="relatorio"></div>
+</div>
+
+<div id="retomar">
+  <h2 style="color:#6d5ae6;margin:0 0 6px">Você estava aqui!</h2>
+  <p id="retTxt" style="font-weight:700"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bContinuar">Continuar de onde parei</button>
+    <button class="bt cinza" id="bZerar">Começar um caderno novo</button>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="bt cinza" id="bAnt"><i class="seta esq"></i>Anterior</button>
+  <div class="txt" id="navTxt"></div>
+  <button class="bt" id="bProx">Próxima<i class="seta dir"></i></button>
+</div>
+
+<div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt" id="bComecar">Começar</button></div></div>
+
+<div id="menuProf" role="dialog" aria-label="Menu do professor" aria-modal="true">
+  <div class="cx">
+    <h3>Menu do professor</h3>
+    <p>Chave mestra <b>1275@</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
+    <div class="folhas" id="mpFolhas"></div>
+    <button class="bt cinza" id="mpFechar">Fechar</button>
+  </div>
+</div>
+
+<div id="teclado" aria-label="Teclado de letras">
+  <div class="dica" id="tkDica">Escreva a sílaba</div>
+  <div id="tk"></div>
+</div>
+<div id="confete" aria-hidden="true"></div>
+
+<script>
+/* ---------- AS PALAVRAS DE CADA FOLHA (o gerar_falas.py lê este bloco) ---------- */
+/*ITENS-INI*/
+var ITENS = {
+ "p1": [
+  {
+   "i": 0
+  },
+  {
+   "i": 3
+  },
+  {
+   "i": 7
+  },
+  {
+   "i": 11
+  },
+  {
+   "i": 15
+  },
+  {
+   "i": 19
+  },
+  {
+   "i": 21
+  },
+  {
+   "i": 4
+  },
+  {
+   "i": 9
+  },
+  {
+   "i": 16
+  }
+ ],
+ "p2": [
+  {
+   "L": "B",
+   "op": [
+    "B",
+    "E",
+    "F"
+   ]
+  },
+  {
+   "L": "F",
+   "op": [
+    "B",
+    "C",
+    "F"
+   ]
+  },
+  {
+   "L": "I",
+   "op": [
+    "E",
+    "F",
+    "I"
+   ]
+  },
+  {
+   "L": "M",
+   "op": [
+    "I",
+    "J",
+    "M"
+   ]
+  },
+  {
+   "L": "R",
+   "op": [
+    "N",
+    "O",
+    "R"
+   ]
+  },
+  {
+   "L": "U",
+   "op": [
+    "Q",
+    "R",
+    "U"
+   ]
+  },
+  {
+   "L": "Y",
+   "op": [
+    "U",
+    "V",
+    "Y"
+   ]
+  },
+  {
+   "L": "C",
+   "op": [
+    "C",
+    "F",
+    "G"
+   ]
+  },
+  {
+   "L": "O",
+   "op": [
+    "K",
+    "L",
+    "O"
+   ]
+  },
+  {
+   "L": "S",
+   "op": [
+    "O",
+    "P",
+    "S"
+   ]
+  }
+ ],
+ "p3": [
+  {
+   "i": 2,
+   "op": [
+    "C",
+    "F",
+    "G"
+   ]
+  },
+  {
+   "i": 6,
+   "op": [
+    "C",
+    "D",
+    "G"
+   ]
+  },
+  {
+   "i": 10,
+   "op": [
+    "G",
+    "H",
+    "K"
+   ]
+  },
+  {
+   "i": 13,
+   "op": [
+    "J",
+    "K",
+    "N"
+   ]
+  },
+  {
+   "i": 16,
+   "op": [
+    "M",
+    "N",
+    "Q"
+   ]
+  },
+  {
+   "i": 20,
+   "op": [
+    "Q",
+    "R",
+    "U"
+   ]
+  },
+  {
+   "i": 4,
+   "op": [
+    "A",
+    "B",
+    "E"
+   ]
+  },
+  {
+   "i": 8,
+   "op": [
+    "E",
+    "F",
+    "I"
+   ]
+  },
+  {
+   "i": 18,
+   "op": [
+    "O",
+    "P",
+    "S"
+   ]
+  },
+  {
+   "i": 22,
+   "op": [
+    "S",
+    "T",
+    "W"
+   ]
+  }
+ ],
+ "p4": [
+  {
+   "L": "A",
+   "c": "B",
+   "op": [
+    "B",
+    "D",
+    "E"
+   ]
+  },
+  {
+   "L": "E",
+   "c": "F",
+   "op": [
+    "A",
+    "B",
+    "F"
+   ]
+  },
+  {
+   "L": "I",
+   "c": "J",
+   "op": [
+    "E",
+    "F",
+    "J"
+   ]
+  },
+  {
+   "L": "M",
+   "c": "N",
+   "op": [
+    "I",
+    "J",
+    "N"
+   ]
+  },
+  {
+   "L": "Q",
+   "c": "R",
+   "op": [
+    "M",
+    "N",
+    "R"
+   ]
+  },
+  {
+   "L": "T",
+   "c": "U",
+   "op": [
+    "P",
+    "Q",
+    "U"
+   ]
+  },
+  {
+   "L": "C",
+   "c": "D",
+   "op": [
+    "D",
+    "F",
+    "G"
+   ]
+  },
+  {
+   "L": "K",
+   "c": "L",
+   "op": [
+    "G",
+    "H",
+    "L"
+   ]
+  },
+  {
+   "L": "O",
+   "c": "P",
+   "op": [
+    "K",
+    "L",
+    "P"
+   ]
+  },
+  {
+   "L": "V",
+   "c": "W",
+   "op": [
+    "R",
+    "S",
+    "W"
+   ]
+  }
+ ],
+ "p5": [
+  {
+   "L": "D",
+   "c": "C",
+   "op": [
+    "A",
+    "C",
+    "G"
+   ]
+  },
+  {
+   "L": "H",
+   "c": "G",
+   "op": [
+    "D",
+    "E",
+    "G"
+   ]
+  },
+  {
+   "L": "L",
+   "c": "K",
+   "op": [
+    "H",
+    "I",
+    "K"
+   ]
+  },
+  {
+   "L": "P",
+   "c": "O",
+   "op": [
+    "L",
+    "M",
+    "O"
+   ]
+  },
+  {
+   "L": "S",
+   "c": "R",
+   "op": [
+    "O",
+    "P",
+    "R"
+   ]
+  },
+  {
+   "L": "W",
+   "c": "V",
+   "op": [
+    "S",
+    "T",
+    "V"
+   ]
+  },
+  {
+   "L": "F",
+   "c": "E",
+   "op": [
+    "B",
+    "C",
+    "E"
+   ]
+  },
+  {
+   "L": "J",
+   "c": "I",
+   "op": [
+    "F",
+    "G",
+    "I"
+   ]
+  },
+  {
+   "L": "N",
+   "c": "M",
+   "op": [
+    "J",
+    "K",
+    "M"
+   ]
+  },
+  {
+   "L": "U",
+   "c": "T",
+   "op": [
+    "Q",
+    "R",
+    "T"
+   ]
+  }
+ ],
+ "p6": [
+  {
+   "L": "C"
+  },
+  {
+   "L": "G"
+  },
+  {
+   "L": "J"
+  },
+  {
+   "L": "N"
+  },
+  {
+   "L": "R"
+  },
+  {
+   "L": "V"
+  },
+  {
+   "L": "E"
+  },
+  {
+   "L": "L"
+  },
+  {
+   "L": "P"
+  },
+  {
+   "L": "T"
+  }
+ ],
+ "p7": [
+  {
+   "g": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ]
+  },
+  {
+   "g": [
+    "F",
+    "G",
+    "H",
+    "I"
+   ]
+  },
+  {
+   "g": [
+    "K",
+    "L",
+    "M",
+    "N"
+   ]
+  },
+  {
+   "g": [
+    "O",
+    "P",
+    "Q",
+    "R"
+   ]
+  },
+  {
+   "g": [
+    "S",
+    "T",
+    "U",
+    "V"
+   ]
+  },
+  {
+   "g": [
+    "V",
+    "W",
+    "X",
+    "Y"
+   ]
+  },
+  {
+   "g": [
+    "D",
+    "E",
+    "F",
+    "G"
+   ]
+  },
+  {
+   "g": [
+    "I",
+    "J",
+    "K",
+    "L"
+   ]
+  },
+  {
+   "g": [
+    "M",
+    "N",
+    "O",
+    "P"
+   ]
+  },
+  {
+   "g": [
+    "Q",
+    "R",
+    "S",
+    "T"
+   ]
+  }
+ ],
+ "p8": [
+  {
+   "g": [
+    "B",
+    "C",
+    "J",
+    "D"
+   ],
+   "c": "J"
+  },
+  {
+   "g": [
+    "G",
+    "H",
+    "U",
+    "I"
+   ],
+   "c": "U"
+  },
+  {
+   "g": [
+    "L",
+    "M",
+    "C",
+    "N"
+   ],
+   "c": "C"
+  },
+  {
+   "g": [
+    "P",
+    "Q",
+    "Z",
+    "R"
+   ],
+   "c": "Z"
+  },
+  {
+   "g": [
+    "D",
+    "E",
+    "R",
+    "F"
+   ],
+   "c": "R"
+  },
+  {
+   "g": [
+    "S",
+    "T",
+    "H",
+    "U"
+   ],
+   "c": "H"
+  },
+  {
+   "g": [
+    "I",
+    "J",
+    "Y",
+    "K"
+   ],
+   "c": "Y"
+  },
+  {
+   "g": [
+    "N",
+    "O",
+    "A",
+    "P"
+   ],
+   "c": "A"
+  }
+ ],
+ "p9": [
+  {
+   "w": "bola",
+   "c": "B",
+   "op": [
+    "B",
+    "E",
+    "F"
+   ]
+  },
+  {
+   "w": "dado",
+   "c": "D",
+   "op": [
+    "A",
+    "D",
+    "G"
+   ]
+  },
+  {
+   "w": "gato",
+   "c": "G",
+   "op": [
+    "C",
+    "D",
+    "G"
+   ]
+  },
+  {
+   "w": "mala",
+   "c": "M",
+   "op": [
+    "I",
+    "J",
+    "M"
+   ]
+  },
+  {
+   "w": "pato",
+   "c": "P",
+   "op": [
+    "L",
+    "M",
+    "P"
+   ]
+  },
+  {
+   "w": "sapo",
+   "c": "S",
+   "op": [
+    "O",
+    "P",
+    "S"
+   ]
+  },
+  {
+   "w": "tomate",
+   "c": "T",
+   "op": [
+    "P",
+    "Q",
+    "T"
+   ]
+  },
+  {
+   "w": "vaca",
+   "c": "V",
+   "op": [
+    "R",
+    "S",
+    "V"
+   ]
+  },
+  {
+   "w": "zebra",
+   "c": "Z",
+   "op": [
+    "V",
+    "W",
+    "Z"
+   ]
+  },
+  {
+   "w": "faca",
+   "c": "F",
+   "op": [
+    "B",
+    "C",
+    "F"
+   ]
+  }
+ ],
+ "p10": [
+  {
+   "L": "A",
+   "w": "abelha"
+  },
+  {
+   "L": "C",
+   "w": "casa"
+  },
+  {
+   "L": "E",
+   "w": "escola"
+  },
+  {
+   "L": "G",
+   "w": "gato"
+  },
+  {
+   "L": "J",
+   "w": "janela"
+  },
+  {
+   "L": "M",
+   "w": "mala"
+  },
+  {
+   "L": "P",
+   "w": "pato"
+  },
+  {
+   "L": "R",
+   "w": "rato"
+  },
+  {
+   "L": "U",
+   "w": "uva"
+  },
+  {
+   "L": "Z",
+   "w": "zebra"
+  }
+ ]
+};
+/*ITENS-FIM*/
+/*FALAS-INI*/
+var FALAS = {
+ "capa": "O Desfile das Letras. Dez folhas para conhecer o alfabeto e a ordem das letras. Escreva o seu nome ali embaixo e toque em Começar.",
+ "certo10_A": "Á de abelha foi para o seu alfabeto!",
+ "certo10_C": "Cê de casa foi para o seu alfabeto!",
+ "certo10_E": "É de escola foi para o seu alfabeto!",
+ "certo10_G": "Gê de gato foi para o seu alfabeto!",
+ "certo10_J": "Jota de janela foi para o seu alfabeto!",
+ "certo10_M": "Ême de mala foi para o seu alfabeto!",
+ "certo10_P": "Pê de pato foi para o seu alfabeto!",
+ "certo10_R": "Érre de rato foi para o seu alfabeto!",
+ "certo10_U": "U de uva foi para o seu alfabeto!",
+ "certo10_Z": "Zê de zebra foi para o seu alfabeto!",
+ "certo1_A": "Muito bem! á, bê, cê, dê, é. Essa é a ordem certa.",
+ "certo1_D": "Muito bem! dê, é, éfe, gê, agá. Essa é a ordem certa.",
+ "certo1_E": "Muito bem! é, éfe, gê, agá, i. Essa é a ordem certa.",
+ "certo1_H": "Muito bem! agá, i, jota, cá, éle. Essa é a ordem certa.",
+ "certo1_J": "Muito bem! jota, cá, éle, ême, êne. Essa é a ordem certa.",
+ "certo1_L": "Muito bem! éle, ême, êne, ó, pê. Essa é a ordem certa.",
+ "certo1_P": "Muito bem! pê, quê, érre, ésse, tê. Essa é a ordem certa.",
+ "certo1_Q": "Muito bem! quê, érre, ésse, tê, u. Essa é a ordem certa.",
+ "certo1_T": "Muito bem! tê, u, vê, dábliu, xis. Essa é a ordem certa.",
+ "certo1_V": "Muito bem! vê, dábliu, xis, ípsilon, zê. Essa é a ordem certa.",
+ "certo2_B": "Isso! Esta é a letra bê.",
+ "certo2_C": "Isso! Esta é a letra cê.",
+ "certo2_F": "Isso! Esta é a letra éfe.",
+ "certo2_I": "Isso! Esta é a letra i.",
+ "certo2_M": "Isso! Esta é a letra ême.",
+ "certo2_O": "Isso! Esta é a letra ó.",
+ "certo2_R": "Isso! Esta é a letra érre.",
+ "certo2_S": "Isso! Esta é a letra ésse.",
+ "certo2_U": "Isso! Esta é a letra u.",
+ "certo2_Y": "Isso! Esta é a letra ípsilon.",
+ "certo3_C": "Muito bem! Depois do bê vem o cê.",
+ "certo3_E": "Muito bem! Depois do dê vem o é.",
+ "certo3_G": "Muito bem! Depois do éfe vem o gê.",
+ "certo3_I": "Muito bem! Depois do agá vem o i.",
+ "certo3_K": "Muito bem! Depois do jota vem o cá.",
+ "certo3_N": "Muito bem! Depois do ême vem o êne.",
+ "certo3_Q": "Muito bem! Depois do pê vem o quê.",
+ "certo3_S": "Muito bem! Depois do érre vem o ésse.",
+ "certo3_U": "Muito bem! Depois do tê vem o u.",
+ "certo3_W": "Muito bem! Depois do vê vem o dábliu.",
+ "certo4_A": "Isso! Depois do á vem o bê.",
+ "certo4_C": "Isso! Depois do cê vem o dê.",
+ "certo4_E": "Isso! Depois do é vem o éfe.",
+ "certo4_I": "Isso! Depois do i vem o jota.",
+ "certo4_K": "Isso! Depois do cá vem o éle.",
+ "certo4_M": "Isso! Depois do ême vem o êne.",
+ "certo4_O": "Isso! Depois do ó vem o pê.",
+ "certo4_Q": "Isso! Depois do quê vem o érre.",
+ "certo4_T": "Isso! Depois do tê vem o u.",
+ "certo4_V": "Isso! Depois do vê vem o dábliu.",
+ "certo5_D": "Muito bem! Antes do dê vem o cê.",
+ "certo5_F": "Muito bem! Antes do éfe vem o é.",
+ "certo5_H": "Muito bem! Antes do agá vem o gê.",
+ "certo5_J": "Muito bem! Antes do jota vem o i.",
+ "certo5_L": "Muito bem! Antes do éle vem o cá.",
+ "certo5_N": "Muito bem! Antes do êne vem o ême.",
+ "certo5_P": "Muito bem! Antes do pê vem o ó.",
+ "certo5_S": "Muito bem! Antes do ésse vem o érre.",
+ "certo5_U": "Muito bem! Antes do u vem o tê.",
+ "certo5_W": "Muito bem! Antes do dábliu vem o vê.",
+ "certo6_C": "Isso! bê, cê, dê.",
+ "certo6_E": "Isso! dê, é, éfe.",
+ "certo6_G": "Isso! éfe, gê, agá.",
+ "certo6_J": "Isso! i, jota, cá.",
+ "certo6_L": "Isso! cá, éle, ême.",
+ "certo6_N": "Isso! ême, êne, ó.",
+ "certo6_P": "Isso! ó, pê, quê.",
+ "certo6_R": "Isso! quê, érre, ésse.",
+ "certo6_T": "Isso! ésse, tê, u.",
+ "certo6_V": "Isso! u, vê, dábliu.",
+ "certo7_A": "Muito bem! á, bê, cê, dê.",
+ "certo7_D": "Muito bem! dê, é, éfe, gê.",
+ "certo7_F": "Muito bem! éfe, gê, agá, i.",
+ "certo7_I": "Muito bem! i, jota, cá, éle.",
+ "certo7_K": "Muito bem! cá, éle, ême, êne.",
+ "certo7_M": "Muito bem! ême, êne, ó, pê.",
+ "certo7_O": "Muito bem! ó, pê, quê, érre.",
+ "certo7_Q": "Muito bem! quê, érre, ésse, tê.",
+ "certo7_S": "Muito bem! ésse, tê, u, vê.",
+ "certo7_V": "Muito bem! vê, dábliu, xis, ípsilon.",
+ "certo8_A": "Isso! O á não é dessa parte da fila. Sem ele fica êne, ó, pê.",
+ "certo8_C": "Isso! O cê não é dessa parte da fila. Sem ele fica éle, ême, êne.",
+ "certo8_H": "Isso! O agá não é dessa parte da fila. Sem ele fica ésse, tê, u.",
+ "certo8_J": "Isso! O jota não é dessa parte da fila. Sem ele fica bê, cê, dê.",
+ "certo8_R": "Isso! O érre não é dessa parte da fila. Sem ele fica dê, é, éfe.",
+ "certo8_U": "Isso! O u não é dessa parte da fila. Sem ele fica gê, agá, i.",
+ "certo8_Y": "Isso! O ípsilon não é dessa parte da fila. Sem ele fica i, jota, cá.",
+ "certo8_Z": "Isso! O zê não é dessa parte da fila. Sem ele fica pê, quê, érre.",
+ "certo9_bola": "Muito bem! Bola começa com bê.",
+ "certo9_dado": "Muito bem! Dado começa com dê.",
+ "certo9_faca": "Muito bem! Faca começa com éfe.",
+ "certo9_gato": "Muito bem! Gato começa com gê.",
+ "certo9_mala": "Muito bem! Mala começa com ême.",
+ "certo9_pato": "Muito bem! Pato começa com pê.",
+ "certo9_sapo": "Muito bem! Sapo começa com ésse.",
+ "certo9_tomate": "Muito bem! Tomate começa com tê.",
+ "certo9_vaca": "Muito bem! Vaca começa com vê.",
+ "certo9_zebra": "Muito bem! Zebra começa com zê.",
+ "dica1_A": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_D": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_E": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_H": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_J": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_L": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_P": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_Q": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_T": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_V": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica2_B": "Toque no alto-falante e escute de novo: bê. Qual delas é?",
+ "dica2_C": "Toque no alto-falante e escute de novo: cê. Qual delas é?",
+ "dica2_F": "Toque no alto-falante e escute de novo: éfe. Qual delas é?",
+ "dica2_I": "Toque no alto-falante e escute de novo: i. Qual delas é?",
+ "dica2_M": "Toque no alto-falante e escute de novo: ême. Qual delas é?",
+ "dica2_O": "Toque no alto-falante e escute de novo: ó. Qual delas é?",
+ "dica2_R": "Toque no alto-falante e escute de novo: érre. Qual delas é?",
+ "dica2_S": "Toque no alto-falante e escute de novo: ésse. Qual delas é?",
+ "dica2_U": "Toque no alto-falante e escute de novo: u. Qual delas é?",
+ "dica2_Y": "Toque no alto-falante e escute de novo: ípsilon. Qual delas é?",
+ "dica3_C": "Fale as letras da fila em voz alta e continue: qual vem depois do bê?",
+ "dica3_E": "Fale as letras da fila em voz alta e continue: qual vem depois do dê?",
+ "dica3_G": "Fale as letras da fila em voz alta e continue: qual vem depois do éfe?",
+ "dica3_I": "Fale as letras da fila em voz alta e continue: qual vem depois do agá?",
+ "dica3_K": "Fale as letras da fila em voz alta e continue: qual vem depois do jota?",
+ "dica3_N": "Fale as letras da fila em voz alta e continue: qual vem depois do ême?",
+ "dica3_Q": "Fale as letras da fila em voz alta e continue: qual vem depois do pê?",
+ "dica3_S": "Fale as letras da fila em voz alta e continue: qual vem depois do érre?",
+ "dica3_U": "Fale as letras da fila em voz alta e continue: qual vem depois do tê?",
+ "dica3_W": "Fale as letras da fila em voz alta e continue: qual vem depois do vê?",
+ "dica4_A": "Comece a falar o alfabeto e pare no á. Qual vem logo em seguida?",
+ "dica4_C": "Comece a falar o alfabeto e pare no cê. Qual vem logo em seguida?",
+ "dica4_E": "Comece a falar o alfabeto e pare no é. Qual vem logo em seguida?",
+ "dica4_I": "Comece a falar o alfabeto e pare no i. Qual vem logo em seguida?",
+ "dica4_K": "Comece a falar o alfabeto e pare no cá. Qual vem logo em seguida?",
+ "dica4_M": "Comece a falar o alfabeto e pare no ême. Qual vem logo em seguida?",
+ "dica4_O": "Comece a falar o alfabeto e pare no ó. Qual vem logo em seguida?",
+ "dica4_Q": "Comece a falar o alfabeto e pare no quê. Qual vem logo em seguida?",
+ "dica4_T": "Comece a falar o alfabeto e pare no tê. Qual vem logo em seguida?",
+ "dica4_V": "Comece a falar o alfabeto e pare no vê. Qual vem logo em seguida?",
+ "dica5_D": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do dê é a resposta.",
+ "dica5_F": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do éfe é a resposta.",
+ "dica5_H": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do agá é a resposta.",
+ "dica5_J": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do jota é a resposta.",
+ "dica5_L": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do éle é a resposta.",
+ "dica5_N": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do êne é a resposta.",
+ "dica5_P": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do pê é a resposta.",
+ "dica5_S": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do ésse é a resposta.",
+ "dica5_U": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do u é a resposta.",
+ "dica5_W": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do dábliu é a resposta.",
+ "dica6_C": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o cê e escute quem está de cada lado.",
+ "dica6_E": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o é e escute quem está de cada lado.",
+ "dica6_G": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o gê e escute quem está de cada lado.",
+ "dica6_J": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o jota e escute quem está de cada lado.",
+ "dica6_L": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o éle e escute quem está de cada lado.",
+ "dica6_N": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o êne e escute quem está de cada lado.",
+ "dica6_P": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o pê e escute quem está de cada lado.",
+ "dica6_R": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o érre e escute quem está de cada lado.",
+ "dica6_T": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o tê e escute quem está de cada lado.",
+ "dica6_V": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o vê e escute quem está de cada lado.",
+ "dica7_A": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_D": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_F": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_I": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_K": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_M": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_O": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_Q": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_S": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica7_V": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica8_A": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica8_C": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica8_H": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica8_J": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica8_R": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica8_U": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica8_Y": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica8_Z": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica9_bola": "Fale o nome da figura devagar: bola. Escute só o comecinho.",
+ "dica9_dado": "Fale o nome da figura devagar: dado. Escute só o comecinho.",
+ "dica9_faca": "Fale o nome da figura devagar: faca. Escute só o comecinho.",
+ "dica9_gato": "Fale o nome da figura devagar: gato. Escute só o comecinho.",
+ "dica9_mala": "Fale o nome da figura devagar: mala. Escute só o comecinho.",
+ "dica9_pato": "Fale o nome da figura devagar: pato. Escute só o comecinho.",
+ "dica9_sapo": "Fale o nome da figura devagar: sapo. Escute só o comecinho.",
+ "dica9_tomate": "Fale o nome da figura devagar: tomate. Escute só o comecinho.",
+ "dica9_vaca": "Fale o nome da figura devagar: vaca. Escute só o comecinho.",
+ "dica9_zebra": "Fale o nome da figura devagar: zebra. Escute só o comecinho.",
+ "escreva": "Escreva a letra.",
+ "fim": "Você chegou ao fim do Desfile das Letras! Agora você conhece a fila do alfabeto. Olhe o seu alfabeto ali embaixo.",
+ "let_A": "á.",
+ "let_B": "bê.",
+ "let_C": "cê.",
+ "let_D": "dê.",
+ "let_E": "é.",
+ "let_F": "éfe.",
+ "let_G": "gê.",
+ "let_H": "agá.",
+ "let_I": "i.",
+ "let_J": "jota.",
+ "let_K": "cá.",
+ "let_L": "éle.",
+ "let_M": "ême.",
+ "let_N": "êne.",
+ "let_O": "ó.",
+ "let_P": "pê.",
+ "let_Q": "quê.",
+ "let_R": "érre.",
+ "let_S": "ésse.",
+ "let_T": "tê.",
+ "let_U": "u.",
+ "let_V": "vê.",
+ "let_W": "dábliu.",
+ "let_X": "xis.",
+ "let_Y": "ípsilon.",
+ "let_Z": "zê.",
+ "p10enun": "Toque nas letras que você quer no seu alfabeto. Ele fica guardado no fim.",
+ "p1enun": "Toque nas letras na ordem, do começo ao fim. Ouça o nome de cada uma.",
+ "p2enun": "Ouça o nome da letra e toque nela.",
+ "p3enun": "Uma letra fugiu da fila. Qual é?",
+ "p4enun": "Qual letra vem depois desta?",
+ "p5enun": "Qual letra vem antes desta?",
+ "p6enun": "Preencha os dois lados: quem vem antes e quem vem depois.",
+ "p7enun": "Estas letras embaralharam. Toque nelas na ordem certa do alfabeto.",
+ "p8enun": "Uma letra entrou no lugar errado. Circule quem saiu da fila.",
+ "p9enun": "Com que letra começa o nome da figura?",
+ "pal_abelha": "abelha.",
+ "pal_bola": "bola.",
+ "pal_casa": "casa.",
+ "pal_dado": "dado.",
+ "pal_escola": "escola.",
+ "pal_faca": "faca.",
+ "pal_gato": "gato.",
+ "pal_janela": "janela.",
+ "pal_mala": "mala.",
+ "pal_pato": "pato.",
+ "pal_rato": "rato.",
+ "pal_sapo": "sapo.",
+ "pal_tomate": "tomate.",
+ "pal_uva": "uva.",
+ "pal_vaca": "vaca.",
+ "pal_zebra": "zebra.",
+ "volte_A": "Espere! A próxima da fila é o á.",
+ "volte_B": "Espere! A próxima da fila é o bê.",
+ "volte_C": "Espere! A próxima da fila é o cê.",
+ "volte_D": "Espere! A próxima da fila é o dê.",
+ "volte_E": "Espere! A próxima da fila é o é.",
+ "volte_F": "Espere! A próxima da fila é o éfe.",
+ "volte_G": "Espere! A próxima da fila é o gê.",
+ "volte_H": "Espere! A próxima da fila é o agá.",
+ "volte_I": "Espere! A próxima da fila é o i.",
+ "volte_J": "Espere! A próxima da fila é o jota.",
+ "volte_K": "Espere! A próxima da fila é o cá.",
+ "volte_L": "Espere! A próxima da fila é o éle.",
+ "volte_M": "Espere! A próxima da fila é o ême.",
+ "volte_N": "Espere! A próxima da fila é o êne.",
+ "volte_O": "Espere! A próxima da fila é o ó.",
+ "volte_P": "Espere! A próxima da fila é o pê.",
+ "volte_Q": "Espere! A próxima da fila é o quê.",
+ "volte_R": "Espere! A próxima da fila é o érre.",
+ "volte_S": "Espere! A próxima da fila é o ésse.",
+ "volte_T": "Espere! A próxima da fila é o tê.",
+ "volte_U": "Espere! A próxima da fila é o u.",
+ "volte_V": "Espere! A próxima da fila é o vê.",
+ "volte_W": "Espere! A próxima da fila é o dábliu.",
+ "volte_X": "Espere! A próxima da fila é o xis.",
+ "volte_Y": "Espere! A próxima da fila é o ípsilon.",
+ "volte_Z": "Espere! A próxima da fila é o zê.",
+ "vozOn": "Narração ligada!"
+};
+/*FALAS-FIM*/
+/*SILMAP-INI*/var SILMAP = {};/*SILMAP-FIM*/
+/*VOZOK-INI*/var VOZOK = {"ub8z6v": 1, "15pqry7": 1, "eqf1b8": 1, "1cn6xk3": 1, "1jvgsrx": 1, "12x58u8": 1, "1592a1q": 1, "1vkmral": 1, "1lvs6c9": 1, "1q8s53e": 1, "10p2pyb": 1, "756dpb": 1, "6wwadb": 1, "fg7law": 1, "1um98lg": 1, "1dvs2o9": 1, "14j5spe": 1, "ahd33m": 1, "11o1w8t": 1, "1eecndm": 1, "k8f1kb": 1, "uoz5cx": 1, "uoyt40": 1, "ijfs6b": 1, "1ti4r28": 1, "ijgaob": 1, "1ti4uhm": 1, "17kz9hh": 1, "17kyk9x": 1, "1ti4r6k": 1, "9fhzhf": 1, "wh9d91": 1, "1kvois3": 1, "4y051v": 1, "11nkq3e": 1, "1j0395y": 1, "vv012v": 1, "nia0w": 1, "1dfvn04": 1, "16vwf8f": 1, "1sv2xun": 1, "1cjh717": 1, "1ux7zjp": 1, "19jb041": 1, "zz8u2z": 1, "1vkk3dc": 1, "14l9241": 1, "137qa8r": 1, "8xaemo": 1, "p8q3fd": 1, "16293dl": 1, "k5f0vu": 1, "vr3ge6": 1, "3b9dh3": 1, "1kd5thg": 1, "175tchr": 1, "8tkdy6": 1, "1wyqhn8": 1, "jrb0nx": 1, "rjvi8m": 1, "j0240m": 1, "sb3myr": 1, "14iibnl": 1, "hv4gvg": 1, "1q7248n": 1, "qzw5e4": 1, "nbeakc": 1, "1ns43zf": 1, "l2hy3m": 1, "bpkc3v": 1, "16z0eky": 1, "eypdoo": 1, "1rupzpi": 1, "1tsr5pr": 1, "1xxb0hp": 1, "17newhz": 1, "17e5770": 1, "1ywoe8d": 1, "1d9ua46": 1, "1ch1swt": 1, "1k2lrtx": 1, "1aw3dk0": 1, "m0gq2r": 1, "1gkroh5": 1, "12mgy52": 1, "1xbnkvc": 1, "1apmm3j": 1, "1yz9o60": 1, "16a1hmp": 1, "izg79d": 1, "klslah": 1, "qdtr1i": 1, "vqtie1": 1, "1riatvu": 1, "17tvsgp": 1, "8dhp1k": 1, "1bl7zg1": 1, "10vis74": 1, "1kbwwif": 1, "u6942z": 1, "dime01": 1, "ia0dr4": 1, "wny0tf": 1, "1i3fny8": 1, "1cjjqyz": 1, "xc8bq2": 1, "hdv879": 1, "10xcvxh": 1, "1rnx9jw": 1, "i07tib": 1, "11xk801": 1, "11xjwg7": 1, "185wi8z": 1, "188h1ri": 1, "13csq6x": 1, "185ylsb": 1, "11xjswj": 1, "10sar39": 1, "11xjj13": 1, "11xjkph": 1, "1gpw9m1": 1, "49ampt": 1, "bc7esh": 1, "wzbaxt": 1, "dx7ine": 1, "97scdm": 1, "mbf4e3": 1, "1y9g73a": 1, "13g668m": 1, "1opd8r8": 1, "7g84j3": 1, "sdmswb": 1, "1dinqna": 1, "19vd775": 1, "c1lc3l": 1, "1ye0uww": 1, "1oo33i3": 1, "1i0uup9": 1, "1hxw9uc": 1, "1evdymu": 1, "130hw29": 1, "296nch": 1, "1739fo5": 1, "14ogmfc": 1, "2fq4uw": 1, "1us0jy1": 1, "bgql8i": 1, "a5f1tg": 1, "1nsdrt2": 1, "1jbnk3o": 1, "jlu7ih": 1, "arv9ad": 1, "10qxwkn": 1, "1lp5o4p": 1, "l1hnnm": 1, "1qm5y2": 1, "mbhphi": 1, "1odjffx": 1, "jku07e": 1, "1w0ucqp": 1, "1t039xu": 1, "1lz95k9": 1, "cfgrkh": 1, "1039adj": 1, "3hj3e": 1, "375gw3": 1, "375hoi": 1, "3758p1": 1, "3hjaa": 1, "ygayip": 1, "375kue": 1, "yivgcs": 1, "3hmjm": 1, "31vra3": 1, "375hm1": 1, "ygate3": 1, "ygen6x": 1, "ygehey": 1, "3hjjs": 1, "375w0h": 1, "yj7gh1": 1, "gnqcn": 1, "gstmv": 1, "375m51": 1, "3hmny": 1, "375xhz": 1, "t7suzg": 1, "yjd42x": 1, "1r5yv5": 1, "3760nv": 1, "16129lx": 1, "aeq602": 1, "101gllv": 1, "bmzxm4": 1, "14nmuw0": 1, "8wlull": 1, "vqatwj": 1, "6n92g6": 1, "x2awbo": 1, "18txncr": 1, "2grgq0": 1, "2wk6a3": 1, "2x8g63": 1, "2pmm9x": 1, "2tz8cc": 1, "2ts28e": 1, "2uezfa": 1, "1vcg752": 1, "2vw8zu": 1, "33qfk1": 1, "37vy6b": 1, "38iifa": 1, "xxr6ct": 1, "yj4fyh": 1, "352r8e": 1, "14b1cx1": 1, "p5njhv": 1, "1cu94fu": 1, "1cu9gor": 1, "1cu99a4": 1, "p5njaz": 1, "1d4k8ew": 1, "1cu96tb": 1, "1d1zjv9": 1, "p5ng1n": 1, "1jz315u": 1, "1cu9guo": 1, "1d4ka6q": 1, "1d4jje8": 1, "1d4jltf": 1, "p5nj4x": 1, "1cu8so8": 1, "1d1nn3w": 1, "1mhtlr2": 1, "1mhoby6": 1, "1cu8vu4": 1, "p5nfqf": 1, "1cu8u5q": 1, "3k6lut": 1, "1d1i67k": 1, "ea6dco": 1, "1cu8ko2": 1, "swkns7": 1};/*VOZOK-FIM*/
+
+/* ---------- as palavras: figura, escrita e sílabas ----------
+   ⚠️ As sílabas ficam DECLARADAS, uma a uma. Separar sílaba por regra em
+   JavaScript erra em português (na-vi-o, a-be-lha, li-mão) — e sílaba errada
+   numa folha de alfabetização não é um defeito de tela: ensina errado. */
+var PAL = {
+ bola:["BOLA",["BO","LA"]], bolo:["BOLO",["BO","LO"]], boneca:["BONECA",["BO","NE","CA"]],
+ bolacha:["BOLACHA",["BO","LA","CHA"]], cana:["CANA",["CA","NA"]], casa:["CASA",["CA","SA"]],
+ caneca:["CANECA",["CA","NE","CA"]], cavalo:["CAVALO",["CA","VA","LO"]], copo:["COPO",["CO","PO"]],
+ dado:["DADO",["DA","DO"]], fada:["FADA",["FA","DA"]], gato:["GATO",["GA","TO"]],
+ lata:["LATA",["LA","TA"]], mala:["MALA",["MA","LA"]], mapa:["MAPA",["MA","PA"]],
+ menina:["MENINA",["ME","NI","NA"]], menino:["MENINO",["ME","NI","NO"]], mola:["MOLA",["MO","LA"]],
+ pato:["PATO",["PA","TO"]], pote:["POTE",["PO","TE"]], rato:["RATO",["RA","TO"]],
+ roda:["RODA",["RO","DA"]], rosa:["ROSA",["RO","SA"]], saco:["SACO",["SA","CO"]],
+ sapo:["SAPO",["SA","PO"]], sapato:["SAPATO",["SA","PA","TO"]], tomate:["TOMATE",["TO","MA","TE"]],
+ vaca:["VACA",["VA","CA"]], banana:["BANANA",["BA","NA","NA"]], batata:["BATATA",["BA","TA","TA"]],
+ macaco:["MACACO",["MA","CA","CO"]], tucano:["TUCANO",["TU","CA","NO"]], coruja:["CORUJA",["CO","RU","JA"]],
+ jacare:["JACARÉ",["JA","CA","RÉ"]], navio:["NAVIO",["NA","VI","O"]], limao:["LIMÃO",["LI","MÃO"]],
+ mamao:["MAMÃO",["MA","MÃO"]], maca:["MAÇÃ",["MA","ÇÃ"]], xicara:["XÍCARA",["XÍ","CA","RA"]],
+ tijolo:["TIJOLO",["TI","JO","LO"]], abelha:["ABELHA",["A","BE","LHA"]], abobora:["ABÓBORA",["A","BÓ","BO","RA"]],
+ /* as 20 que o Marcos gerou nas cartelas de 8/set */
+ peixe:["PEIXE",["PEI","XE"]], faca:["FACA",["FA","CA"]], uva:["UVA",["U","VA"]],
+ panela:["PANELA",["PA","NE","LA"]], girafa:["GIRAFA",["GI","RA","FA"]],
+ tesoura:["TESOURA",["TE","SOU","RA"]], pipa:["PIPA",["PI","PA"]], foca:["FOCA",["FO","CA"]],
+ sino:["SINO",["SI","NO"]], vela:["VELA",["VE","LA"]], mago:["MAGO",["MA","GO"]],
+ boca:["BOCA",["BO","CA"]], lobo:["LOBO",["LO","BO"]],
+ /* cartela D, 8/set — a primeira com fundo magenta (recorte perfeito) */
+ pipoca:["PIPOCA",["PI","PO","CA"]],
+ janela:["JANELA",["JA","NE","LA"]], cebola:["CEBOLA",["CE","BO","LA"]],
+ bota:["BOTA",["BO","TA"]]
+};
+function esc(w){ return PAL[w] ? PAL[w][0] : w.toUpperCase(); }
+function sil(w){ return PAL[w] ? PAL[w][1] : [w.toUpperCase()]; }
+/* ⚠️ A MARCA DE VERSÃO NA FIGURA (set/2026, defeito que chegou ao Marcos).
+   Quando eu troco uma figura, o NOME do arquivo continua o mesmo — e o navegador
+   dele serve a cópia velha do cache. Ele viu preto na alça da xícara numa figura
+   que no repositório já estava limpa. Não adianta consertar o desenho se a
+   criança continua recebendo o antigo: subir o VIMG obriga o navegador a buscar
+   tudo de novo. REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
+var VIMG = 1;
+/* ⚠️⚠️ `draggable="false"` NÃO É DETALHE (set/2026, três horas de caça).
+   Toda imagem é arrastável de fábrica no navegador. Quando a criança apertava
+   a figura e puxava, o Chrome começava o SEU arrasto nativo do `<img>` e
+   disparava um `pointercancel` — o nosso arrasto morria no primeiro milímetro,
+   sem erro nenhum na tela. Com isto desligado, o gesto é nosso. */
+function img(w, cls){ return '<img class="' + (cls || "fig") + '" draggable="false" src="img/ab_' + w + '.png?v=' + VIMG + '" alt="' + esc(w) + '">'; }
+
+/* ---------- estado ---------- */
+var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
+var vozLigada = true, _narr = null, vozPtBR = null, ATIVA = null;
+var CHAVE_LS = "desfile_das_letras_1ano";
+/* ⚠️ A FILA DO ALFABETO É A FOLHA 1 (parecer pedagógico, set/2026 — ver
+   `PARECER-PEDAGOGICO.md`). O currículo de Blumenau abre o 1º ano com *"nomear
+   as letras do alfabeto e ordená-las"*, o Marcos pediu "sequência alfabética"
+   no encargo, e não havia folha nenhuma disso. O lugar dela é o começo: ordenar
+   letra é o degrau anterior a tudo o que vem depois. */
+var NOMES = ["O desfile do alfabeto", "Que letra é esta?", "A letra que fugiu",
+             "Quem vem DEPOIS?", "Quem vem ANTES?", "Antes e depois",
+             "Ponha na ordem", "Quem saiu da fila?", "Com que letra começa?",
+             "O alfabeto da turma"];
+var CORES = ["c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5"];
+var ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+/* ---------- som ---------- */
+var AC = null;
+function ac(){ try{ if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); }catch(e){} return AC; }
+function bip(f, dur, tipo, vol){
+  var a = ac(); if(!a) return;
+  try{
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = tipo || "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(vol || .13, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, a.currentTime + dur);
+    o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + dur);
+  }catch(e){}
+}
+function sPasso(){ bip(560, .07, "triangle", .08); }
+function sTecla(){ bip(760, .05, "square", .05); }
+function sCerto(){ bip(680, .1, "sine", .12); setTimeout(function(){ bip(920, .14, "sine", .12); }, 95); }
+function sErro(){ bip(190, .17, "sawtooth", .07); }
+function sFesta(){ [523, 659, 784, 1047].forEach(function(f, i){ setTimeout(function(){ bip(f, .16, "sine", .12); }, i * 110); }); }
+function sPalma(){ bip(1200, .04, "square", .07); setTimeout(function(){ bip(420, .06, "sawtooth", .05); }, 18); }
+
+/* ---------- voz ---------- */
+function chaveVoz(t){
+  t = (t || "").replace(/\s+/g, " ").trim().toLowerCase();
+  var h = 5381, i;
+  for(i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function achaVoz(){
+  try{
+    var vs = window.speechSynthesis.getVoices();
+    for(var i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt-br") === 0) return vs[i];
+    for(i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt") === 0) return vs[i];
+  }catch(e){}
+  return null;
+}
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = function(){ vozPtBR = achaVoz(); };
+function calar(){
+  try{ if(_narr){ _narr.pause(); _narr.currentTime = 0; } }catch(e){}
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir";
+}
+function falarNavegador(t){
+  if(!window.speechSynthesis) return;
+  try{
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = "pt-BR"; u.rate = .92; if(!vozPtBR) vozPtBR = achaVoz(); if(vozPtBR) u.voice = vozPtBR;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+var ultimaFala = null;
+function falar(k){
+  var t = FALAS[k]; if(!t) return;
+  ultimaFala = k;
+  if(!vozLigada) return;
+  calar();
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir tocando";
+  function fim(){ var x = document.getElementById("bOuvir"); if(x) x.className = "zap ouvir"; }
+  var key = chaveVoz(t);
+  if(VOZOK[key]){
+    if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+    _narr.onended = fim; _narr.onerror = function(){ falarNavegador(t); setTimeout(fim, 2500); };
+    _narr.src = "audio/ab_" + key + ".mp3";
+    try{ _narr.currentTime = 0; }catch(e){}
+    var p = _narr.play(); if(p && p["catch"]) p["catch"](function(){ fim(); });
+    return;
+  }
+  falarNavegador(t); setTimeout(fim, Math.min(12000, 400 + t.length * 62));
+}
+/* ⭐⭐ A SÍLABA VEM DA PALAVRA (set/2026 — ordem do Marcos: *"a pronúncia das
+   sílabas precisa ser precisa e melhorada, use alguma ferramenta profissional"*).
+
+   `audio/al_sb_<palavra>_<i>.mp3` não foi sintetizado como fragmento solto: é um
+   RECORTE do áudio em que a voz leu as sílabas daquela palavra, cortado nos
+   marcadores de tempo que o próprio serviço devolve (ver
+   `_padrao/silabas_voz.py`). Por isso "bo" de BOLA e "bo" de BOLO soam
+   diferentes — como devem.
+
+   Se o recorte não existir (atividade ainda sem gravar), cai para a fala de
+   reserva `sb_<SÍLABA>`, que é o caminho antigo. Rede de segurança, não padrão. */
+function falarSilaba(palavra, i, silaba){
+  if(!vozLigada) return;
+  if(!palavra && silaba && SILMAP[silaba]){ palavra = SILMAP[silaba][0]; i = SILMAP[silaba][1]; }
+  if(!palavra){ if(silaba) falar("sb_" + silaba); return; }
+  calar();
+  if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+  _narr.onended = null;
+  _narr.onerror = function(){ if(silaba) falar("sb_" + silaba); };
+  _narr.src = "audio/ab_sb_" + palavra + "_" + i + ".mp3";
+  try{ _narr.currentTime = 0; }catch(e){}
+  var pr = _narr.play(); if(pr && pr["catch"]) pr["catch"](function(){ if(silaba) falar("sb_" + silaba); });
+}
+function falarDepois(k, ms){ setTimeout(function(){ falar(k); }, ms || 0); }
+
+/* ---------- utilidades ---------- */
+function el(tag, cls, html){ var e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+function salvar(){ try{ ST.quando = Date.now(); localStorage.setItem(CHAVE_LS, JSON.stringify(ST)); }catch(e){} }
+function carregar(){ try{ var s = localStorage.getItem(CHAVE_LS); if(!s) return null; var o = JSON.parse(s); if(!o || !o.quando || Date.now() - o.quando > 55 * 60 * 1000 || !o.folha) return null; return o; }catch(e){ return null; } }
+function tentativa(id, ok){ if(!ST.tent[id]) ST.tent[id] = {erros: 0, ok: false}; if(ok) ST.tent[id].ok = true; else ST.tent[id].erros++; salvar(); }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function baralha(a){ var b = a.slice(), i, j, t; for(i = b.length - 1; i > 0; i--){ j = rnd(i + 1); t = b[i]; b[i] = b[j]; b[j] = t; } return b; }
+function pega(pool, qtd){ return baralha(pool).slice(0, Math.min(qtd, pool.length)); }
+function confete(n){
+  var c = document.getElementById("confete"), cores = ["#6d5ae6", "#ffd233", "#15a34a", "#e0562f", "#1179bf"], i;
+  for(i = 0; i < n; i++){
+    (function(i){
+      var d = el("div", "cf");
+      d.style.left = rnd(100) + "%"; d.style.top = "-20px";
+      d.style.background = cores[rnd(cores.length)];
+      d.style.animationDelay = (i * 26) + "ms";
+      c.appendChild(d); setTimeout(function(){ if(d.parentNode) c.removeChild(d); }, 1900 + i * 26);
+    })(i);
+  }
+}
+
+/* ---------- registro das respostas (o boletim e o relatório leem daqui) ---------- */
+var RESP = {};   /* id -> {certo, pag} */
+function registra(id, pag, certo){ RESP[id] = {certo: certo, pag: pag}; }
+function acertou(id, fala){
+  if(ST.resp[id]) return;
+  tentativa(id, true); ST.resp[id] = 1; salvar(); sCerto();
+  if(fala) falar(fala);
+  setTimeout(function(){ confereFolha(RESP[id].pag); }, 850);
+}
+function errou(id, dica){
+  tentativa(id, false); sErro();
+  falar(ST.tent[id].erros >= 2 && dica ? dica : "quase");
+}
+
+/* ---------- sorteio da folha ---------- */
+function novaFolha(){
+  return {
+    p1: pega(ITENS.p1, 6), p2: pega(ITENS.p2, 8), p3: pega(ITENS.p3, 8),
+    p4: pega(ITENS.p4, 8), p5: pega(ITENS.p5, 8), p6: pega(ITENS.p6, 6),
+    p7: pega(ITENS.p7, 6), p8: pega(ITENS.p8, 6), p9: pega(ITENS.p9, 8),
+    p10: pega(ITENS.p10, 8)
+  };
+}
+</script>
+<script src="folhas.js"></script>
+</body></html>
