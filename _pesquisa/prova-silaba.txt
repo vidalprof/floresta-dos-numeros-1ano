@@ -1,86 +1,145 @@
-/home/runner/.local/bin/ctc-forced-aligner
-============================================================
-1) O ALINHADOR INSTALOU?
-   SIM. o que ele exporta:
-    ['alignment_utils', 'ctc_forced_aligner', 'forced_align', 'generate_emissions', 'get_alignments', 'get_spans', 'get_uroman_tokens', 'load_alignment_model', 'load_audio', 'merge_repeats', 'merge_segments', 'norm_config', 'postprocess_results', 'preprocess_text', 'split_text', 'text_normalize', 'text_utils']
-   CLI: True
-============================================================
-2) SINTETIZANDO A PALAVRA INTEIRA (sem virgulas, sem pedacos)
-   cavalo      12528 bytes, 1 marca(s) de tempo
-   gato        11376 bytes, 1 marca(s) de tempo
-   foguete     12816 bytes, 1 marca(s) de tempo
-   uva         10944 bytes, 1 marca(s) de tempo
-============================================================
-3) ALINHANDO EM NIVEL DE CARACTERE — e este e o ponto:
-   se o alinhador disser onde acaba o 'ca' e comeca o 'va',
-   a silaba sai da palavra inteira, com a pronuncia de verdade.
-------------------------------------------------------------
-   palavra: cavalo | silabas esperadas: ['CA', 'VA', 'LO']
-   codigo: 2
-   saida: usage: ctc-forced-aligner [-h] --audio_path AUDIO_PATH --text_path TEXT_PATH
-                          --language LANGUAGE [--romanize]
-                          [--split_size {sentence,word,char}]
-                          [--star_frequency {segment,edges}]
-                          [--merge_threshold MERGE_THRESHOLD]
-                          [--alignment_model ALIGNMENT_MODEL]
-                          [--compute_dtype {bfloat16,float16,float32}]
-                          [--batch_size BATCH_SIZE]
-                          [--window_size WINDOW_SIZE]
-                          [--context_size CONTEXT_SIZE]
-                          [--attn_implementation {eager,sdpa,flash_attention_2,None}]
-                          [--device DEVICE]
-ctc-forced-aligner: error: unrecognized arguments: --alignment_level char
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+audio da PALAVRA INTEIRA gravado para 6 palavras
+==============================================================
+Loading weights:   0%|          | 0/423 [00:00<?, ?it/s]Loading weights: 100%|██████████| 423/423 [00:00<00:00, 5029.23it/s]
+Traceback (most recent call last):
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 127, in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ffmpeg'
 
-------------------------------------------------------------
-   palavra: gato | silabas esperadas: ['GA', 'TO']
-   codigo: 2
-   saida: usage: ctc-forced-aligner [-h] --audio_path AUDIO_PATH --text_path TEXT_PATH
-                          --language LANGUAGE [--romanize]
-                          [--split_size {sentence,word,char}]
-                          [--star_frequency {segment,edges}]
-                          [--merge_threshold MERGE_THRESHOLD]
-                          [--alignment_model ALIGNMENT_MODEL]
-                          [--compute_dtype {bfloat16,float16,float32}]
-                          [--batch_size BATCH_SIZE]
-                          [--window_size WINDOW_SIZE]
-                          [--context_size CONTEXT_SIZE]
-                          [--attn_implementation {eager,sdpa,flash_attention_2,None}]
-                          [--device DEVICE]
-ctc-forced-aligner: error: unrecognized arguments: --alignment_level char
+During handling of the above exception, another exception occurred:
 
-------------------------------------------------------------
-   palavra: foguete | silabas esperadas: ['FO', 'GUE', 'TE']
-   codigo: 2
-   saida: usage: ctc-forced-aligner [-h] --audio_path AUDIO_PATH --text_path TEXT_PATH
-                          --language LANGUAGE [--romanize]
-                          [--split_size {sentence,word,char}]
-                          [--star_frequency {segment,edges}]
-                          [--merge_threshold MERGE_THRESHOLD]
-                          [--alignment_model ALIGNMENT_MODEL]
-                          [--compute_dtype {bfloat16,float16,float32}]
-                          [--batch_size BATCH_SIZE]
-                          [--window_size WINDOW_SIZE]
-                          [--context_size CONTEXT_SIZE]
-                          [--attn_implementation {eager,sdpa,flash_attention_2,None}]
-                          [--device DEVICE]
-ctc-forced-aligner: error: unrecognized arguments: --alignment_level char
+Traceback (most recent call last):
+  File "<stdin>", line 42, in <module>
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 131, in load_audio
+    raise ImportError("ffmpeg not found. Please ensure ffmpeg is installed and in PATH.")
+ImportError: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+Traceback (most recent call last):
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 127, in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ffmpeg'
 
-------------------------------------------------------------
-   palavra: uva | silabas esperadas: ['U', 'VA']
-   codigo: 2
-   saida: usage: ctc-forced-aligner [-h] --audio_path AUDIO_PATH --text_path TEXT_PATH
-                          --language LANGUAGE [--romanize]
-                          [--split_size {sentence,word,char}]
-                          [--star_frequency {segment,edges}]
-                          [--merge_threshold MERGE_THRESHOLD]
-                          [--alignment_model ALIGNMENT_MODEL]
-                          [--compute_dtype {bfloat16,float16,float32}]
-                          [--batch_size BATCH_SIZE]
-                          [--window_size WINDOW_SIZE]
-                          [--context_size CONTEXT_SIZE]
-                          [--attn_implementation {eager,sdpa,flash_attention_2,None}]
-                          [--device DEVICE]
-ctc-forced-aligner: error: unrecognized arguments: --alignment_level char
+During handling of the above exception, another exception occurred:
 
-============================================================
+Traceback (most recent call last):
+  File "<stdin>", line 42, in <module>
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 131, in load_audio
+    raise ImportError("ffmpeg not found. Please ensure ffmpeg is installed and in PATH.")
+ImportError: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+Traceback (most recent call last):
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 127, in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ffmpeg'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 42, in <module>
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 131, in load_audio
+    raise ImportError("ffmpeg not found. Please ensure ffmpeg is installed and in PATH.")
+ImportError: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+Traceback (most recent call last):
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 127, in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ffmpeg'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 42, in <module>
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 131, in load_audio
+    raise ImportError("ffmpeg not found. Please ensure ffmpeg is installed and in PATH.")
+ImportError: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+Traceback (most recent call last):
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 127, in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ffmpeg'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 42, in <module>
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 131, in load_audio
+    raise ImportError("ffmpeg not found. Please ensure ffmpeg is installed and in PATH.")
+ImportError: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+Traceback (most recent call last):
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 127, in load_audio
+    out = run(cmd, capture_output=True, check=True).stdout
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'ffmpeg'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "<stdin>", line 42, in <module>
+  File "/home/runner/.local/lib/python3.12/site-packages/ctc_forced_aligner/alignment_utils.py", line 131, in load_audio
+    raise ImportError("ffmpeg not found. Please ensure ffmpeg is installed and in PATH.")
+ImportError: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+modelo carregado
+--------------------------------------------------------------
+PALAVRA: cavalo | silabas: ['CA', 'VA', 'LO']
+  ERRO: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+--------------------------------------------------------------
+PALAVRA: gato | silabas: ['GA', 'TO']
+  ERRO: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+--------------------------------------------------------------
+PALAVRA: foguete | silabas: ['FO', 'GUE', 'TE']
+  ERRO: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+--------------------------------------------------------------
+PALAVRA: uva | silabas: ['U', 'VA']
+  ERRO: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+--------------------------------------------------------------
+PALAVRA: panela | silabas: ['PA', 'NE', 'LA']
+  ERRO: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+--------------------------------------------------------------
+PALAVRA: borboleta | silabas: ['BOR', 'BO', 'LE', 'TA']
+  ERRO: ffmpeg not found. Please ensure ffmpeg is installed and in PATH.
+==============================================================
 FIM DA PROVA
