@@ -395,7 +395,23 @@ jobs:
           LISTA: ${{ steps.alvos.outputs.lista }}
         run: |
           pip3 install --quiet imageio-ffmpeg 2>&1 | tail -1 || true
+          # ⭐ o alinhador forçado só se instala se ALGUMA pasta falar sílaba —
+          #    ele leva o torch junto (~2 min), e não faz sentido pagar isso na
+          #    entrega de uma atividade que não tem sílaba nenhuma.
+          precisa=0
           IFS=',' read -ra ALVS <<< "$LISTA"
+          for a in "${ALVS[@]}"; do
+            pasta="${a%%:*}"
+            [ -f "$pasta/silabas.json" ] && precisa=1
+          done
+          if [ "$precisa" = "1" ]; then
+            echo "=== instalando o alinhador forcado (palavra inteira -> silaba) ==="
+            pip3 install --quiet "git+https://github.com/MahmoudAshraf97/ctc-forced-aligner.git" 2>&1 | tail -2 || true
+            # ⚠️ o alinhador chama o `ffmpeg` PELO NOME, no PATH do sistema, e o
+            #    runner não tem. O do imageio resolve — basta dar o nome a ele.
+            FF=$(python3 -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())")
+            sudo ln -sf "$FF" /usr/local/bin/ffmpeg || true
+          fi
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"; [ -d "$pasta" ] || continue
             [ -f "$pasta/silabas.json" ] || continue

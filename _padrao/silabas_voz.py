@@ -18,24 +18,39 @@ Escrever a sílaba "como se fala" (foi o remendo anterior: çã → "sã") conse
 um caso de cada vez e nunca fecha a família.
 
 ────────────────────────────────────────────────────────────────────────
-O QUE ESTA FERRAMENTA FAZ
+O QUE ESTA FERRAMENTA FAZ (reescrita em 10/set/2026)
 
-Grava a palavra INTEIRA, sílaba por sílaba, numa tacada só — e recorta.
+Grava a PALAVRA INTEIRA e corta as sílabas de dentro dela.
 
-  1. manda ao Edge TTS o texto `gi, ra, fa` (as sílabas da palavra, na ordem);
-  2. o serviço devolve, junto com o áudio, os **marcadores de tempo** de cada
-     pedaço (WordBoundary: início e duração em unidades de 100 ns). Isto é do
-     protocolo, não é adivinhação minha;
-  3. corta o mp3 nesses tempos com ffmpeg e grava um arquivo por sílaba.
+  1. manda ao Edge TTS o texto `cavalo.` — a palavra inteira, devagar. A voz
+     pronuncia certo porque é palavra de verdade, e não um fragmento;
+  2. o `ctc-forced-aligner` (modelo MMS, CPU) alinha o áudio com o texto em
+     NÍVEL DE CARACTERE e devolve o tempo de cada letra;
+  3. a fronteira da sílaba é o COMEÇO da primeira letra da sílaba seguinte;
+  4. corta o mp3 nesses tempos com ffmpeg, um arquivo por sílaba.
 
-Ou seja: a criança ouve a sílaba **na voz, no ritmo e na altura daquela
-palavra**, porque o áudio veio da mesma respiração. Nada de fragmento avulso.
+Medido na prova de bancada (`_pesquisa/prova-silaba.txt`):
 
-⚠️ Por que ler a sequência e não a palavra corrida: para cortar dentro de
-   "girafa" eu precisaria de alinhamento forçado (nível de fonema), que é
-   pesado e frágil num runner. Lendo `gi, ra, fa` o próprio serviço me dá o
-   corte de graça e a leitura é a que a professora faz na roda — sílaba a
-   sílaba, com a entoação da palavra.
+    CAVALO   c@0,22  a@0,32  v@0,52  a@0,64  l@0,78  o@0,86
+             └── CA ─────────┘└── VA ───────┘└── LO ──────────
+
+⚠️ O QUE ESTA FERRAMENTA FAZIA ANTES, E POR QUE ESTAVA ERRADO: ela mandava a
+   voz ler `gi, ra, fa` (os pedaços separados por vírgula) e cortava nas pausas.
+   Parece a mesma coisa e não é: a voz lê cada pedaço ISOLADO e, quando o pedaço
+   não é palavra do português, ela SOLETRA — "va" vira "vê-á". O erro nascia
+   dentro do áudio, e cortar depois só repartia o erro. O Marcos ouviu isso duas
+   vezes antes de eu enxergar. Medida que denuncia: sílaba soletrada leva o
+   DOBRO da duração (VA 0,66s contra LA 0,26s) — é o que o portão
+   `_qa/silabas.py` mede hoje.
+
+⚠️ Só o `start` de cada letra é usado. O `end` da última vem furado (estica até
+   o fim do arquivo) e letras de confiança baixa saem fora de lugar — na prova,
+   o 'o' de GATO apareceu a 1,86s. Usando só o começo, nada disso atrapalha; o
+   fim da última sílaba vem do fim da FALA, medido por silêncio.
+
+⚠️ O corte por silêncio continua no arquivo como REDE (se o alinhador não
+   estiver instalado), mas não é mais o caminho — e o portão reprova o resultado
+   dele quando sai soletrado.
 
 Uso:
     python3 _padrao/silabas_voz.py <pasta>            # grava o que falta
@@ -57,7 +72,7 @@ import re
 import subprocess
 import sys
 
-RATE = "-10%"          # um tico mais devagar que a narração: é segmentação
+RATE = "-25%"          # bem devagar: ajuda a criança E ajuda o alinhamento
 # ⚠️ O MOTIVO DE CADA FALHA FICA GUARDADO AQUI e vai para o `_silabas-log.txt`.
 #    Antes o erro só era impresso, e "impresso" quer dizer "morreu no log da
 #    execução". Sem o motivo, a sessão seguinte fica adivinhando.
@@ -153,6 +168,142 @@ def _cortes_por_silencio(ff, caminho, quantas):
     return []
 
 
+
+# ══════════════════════════════════════════════════════════════════════
+#  ⭐⭐ O CAMINHO CERTO: A PALAVRA INTEIRA + ALINHAMENTO FORÇADO
+#
+#  ⚠️ POR QUE MUDOU (10/set/2026 — o Marcos ouviu, duas vezes):
+#     mandar a voz ler "bo, la, ca" e cortar NÃO conserta a pronúncia. Ela lê
+#     cada pedaço ISOLADO e, quando o pedaço não é palavra do português, ela
+#     SOLETRA: "va" vira "vê-á", "ga" vira "gê-á". O erro já nasce dentro do
+#     áudio; cortar depois só reparte o erro em pedaços menores. Medido: as
+#     sílabas soletradas saíam com o DOBRO da duração das outras
+#     (VA 0,66s · GA 0,63s · FO 0,64s contra LA 0,26s · TA 0,28s).
+#
+#  ⭐ O QUE SE FAZ AGORA: a voz lê a PALAVRA INTEIRA — "cavalo" —, que ela
+#     pronuncia perfeitamente porque é palavra de verdade; e o alinhamento
+#     forçado (`ctc-forced-aligner`, modelo MMS, roda em CPU) diz o tempo de
+#     CADA LETRA dentro dela. Medido na prova de bancada:
+#
+#         CAVALO   c@0,22  a@0,32  v@0,52  a@0,64  l@0,78  o@0,86
+#                  └── CA ─────────┘└── VA ───────┘└── LO ──────────
+#
+#     A fronteira da sílaba é o COMEÇO DA PRIMEIRA LETRA DA SÍLABA SEGUINTE.
+#     Só o `start` da primeira letra de cada sílaba é usado — e isso importa,
+#     porque o `end` da última letra vem furado (estica até o fim do arquivo) e
+#     letras de confiança baixa saem fora de lugar (o 'o' de GATO veio a 1,86s).
+#     Usando só o começo, nada disso atrapalha.
+#
+#     Resultado: a criança ouve a sílaba com a pronúncia, a coarticulação e a
+#     entonação REAIS da palavra — que é o que a alfabetização pede.
+#
+#  A queda para o corte por silêncio continua existindo, para o caso de o
+#  alinhador não estar instalado. Mas ela é REDE, não caminho: o portão
+#  `_qa/silabas.py` mede a soletração e reprova.
+# ══════════════════════════════════════════════════════════════════════
+_ALINHADOR = {}
+
+
+def _carrega_alinhador():
+    u"""Devolve (modelo, tokenizador) ou None. Carrega uma vez só."""
+    if "m" in _ALINHADOR:
+        return _ALINHADOR["m"]
+    _ALINHADOR["m"] = None
+    try:
+        import torch
+        from ctc_forced_aligner import load_alignment_model
+        _ALINHADOR["m"] = load_alignment_model("cpu", dtype=torch.float32)
+        print(u"   alinhador forcado: carregado (palavra inteira -> silaba)")
+    except Exception as e:                                       # noqa: BLE001
+        print(u"   alinhador forcado indisponivel (%s) — caindo para o silencio" % e)
+    return _ALINHADOR["m"]
+
+
+def _sem_acento(t):
+    import unicodedata
+    return u"".join(c for c in unicodedata.normalize("NFD", t)
+                    if unicodedata.category(c) != "Mn")
+
+
+def _fim_da_fala(ff, caminho, total):
+    u"""Onde a voz PARA de falar (o resto do arquivo é silêncio).
+
+    ⚠️ Necessário porque a última sílaba vai até o fim da fala, e o `end` que o
+    alinhador dá para a última letra estica até o fim do ARQUIVO — foi assim que
+    o 'o' de CAVALO apareceu com 2,08s num áudio de 1,x s."""
+    p = subprocess.Popen(
+        [ff, "-i", caminho, "-af", "silencedetect=noise=-40dB:d=0.15", "-f", "null", "-"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    _, err = p.communicate()
+    txt = (err or b"").decode("utf-8", "replace")
+    inicios = [float(x) for x in re.findall(r"silence_start: (-?\d+\.?\d*)", txt)]
+    fins = [float(x) for x in re.findall(r"silence_end: (\d+\.?\d*)", txt)]
+    # o último silêncio que vai até o fim do arquivo marca o fim da fala
+    for ini in reversed(inicios):
+        if not [f for f in fins if f > ini]:
+            return ini
+    return total
+
+
+def _cortes_por_alinhamento(ff, mp3, palavra, silabas):
+    u"""[(inicio, duracao)] por sílaba, a partir da PALAVRA INTEIRA falada."""
+    mt = _carrega_alinhador()
+    if not mt:
+        return []
+    modelo, tok = mt
+    wav = mp3[:-4] + ".wav"
+    subprocess.call([ff, "-y", "-loglevel", "error", "-i", mp3,
+                     "-ar", "16000", "-ac", "1", wav])
+    try:
+        from ctc_forced_aligner import (load_audio, generate_emissions,
+                                        preprocess_text, get_alignments,
+                                        get_spans, postprocess_results)
+        onda = load_audio(wav, modelo.dtype, modelo.device)
+        em, stride = generate_emissions(modelo, onda, batch_size=1)
+        # ⚠️ A PALAVRA ESCRITA, não a chave da figura: a chave é `pao`/`maca`
+        #    (sem acento, para virar nome de arquivo), e alinhar por ela erraria
+        #    a contagem de letras. A escrita se remonta das sílabas do PAL.
+        escrito = u"".join(silabas).lower()
+        tks, txts = preprocess_text(escrito, romanize=True, language="por",
+                                    split_size="char")
+        seg, sc, branco = get_alignments(em, tks, tok)
+        res = postprocess_results(txts, get_spans(tks, seg, branco), stride, sc)
+    except Exception as e:                                       # noqa: BLE001
+        MOTIVOS.append(u"%s: alinhamento falhou (%s)" % (palavra, e))
+        return []
+    finally:
+        try:
+            os.remove(wav)
+        except OSError:
+            pass
+
+    letras = [r for r in res if (r.get("text") or u"").strip()]
+    escrita = _sem_acento(u"".join(silabas)).lower()
+    # ⚠️ o alinhador devolve o texto ROMANIZADO (ç->c, ã->a). Se por algum motivo
+    #    o número de letras não bater com a palavra, não dá para mapear sílaba —
+    #    e mapear errado é pior que não cortar.
+    if len(letras) != len(escrita):
+        MOTIVOS.append(u"%s: %d letra(s) alinhada(s) para %d escrita(s)"
+                       % (palavra, len(letras), len(escrita)))
+        return []
+
+    total = _duracao(ff, mp3)
+    fim = _fim_da_fala(ff, mp3, total)
+    inicios, k = [], 0
+    for s in silabas:
+        inicios.append(float(letras[k]["start"]))
+        k += len(_sem_acento(s))
+    cortes = []
+    for i, ini in enumerate(inicios):
+        prox = inicios[i + 1] if i + 1 < len(inicios) else fim
+        dur = prox - ini
+        if dur <= 0.05:
+            MOTIVOS.append(u"%s: silaba %d saiu com %.2fs" % (palavra, i, dur))
+            return []
+        cortes.append((max(0.0, ini - 0.02), dur + 0.04))
+    return cortes
+
+
 async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavra):
     u"""Grava a sequência da palavra e corta cada sílaba. Devolve nº de cortes."""
     async with sem:
@@ -172,23 +323,19 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
                 inteiro = destino_base + "_todo.mp3"
                 open(inteiro, "wb").write(dados)
                 ff = _ffmpeg()
-                # 1º os marcadores do serviço (exatos, quando vêm);
-                # 2º o silêncio entre as vírgulas (não depende de ninguém).
-                if len(marcas) >= len(silabas):
-                    cortes = [(marcas[i][0] / 10000000.0,
-                               marcas[i][1] / 10000000.0 + FOLGA_MS / 1000.0)
-                              for i in range(len(silabas))]
-                else:
+                # ⭐ 1º o ALINHAMENTO na palavra inteira (o caminho certo);
+                #    2º o silêncio, só como rede se o alinhador não estiver lá.
+                cortes = _cortes_por_alinhamento(ff, inteiro, palavra, silabas)
+                if not cortes:
                     cortes = _cortes_por_silencio(ff, inteiro, len(silabas))
-                    if not cortes:
-                        try:
-                            os.remove(inteiro)
-                        except OSError:
-                            pass
-                        raise RuntimeError(
-                            "sem marcas (%d) e o silencio nao separou em %d trecho(s)"
-                            % (len(marcas), len(silabas)))
                     cortes = [(a, b + FOLGA_MS / 1000.0) for a, b in cortes]
+                if not cortes:
+                    try:
+                        os.remove(inteiro)
+                    except OSError:
+                        pass
+                    raise RuntimeError("nao consegui achar as fronteiras de %d silaba(s)"
+                                       % len(silabas))
                 n = 0
                 for i, s in enumerate(silabas):
                     ini, dur = cortes[i]
@@ -250,7 +397,10 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
             audio, "%ssb_%s_%d.mp3" % (prefixo, palavra, i))) for i in range(len(sil)))
         if carimbo.get(palavra) == assinatura and prontos:
             continue
-        texto = u", ".join(s.lower() for s in sil) + u"."
+        # ⭐⭐ A PALAVRA INTEIRA, e não mais "bo, la, ca".
+        #    Esta linha É o conserto: a voz pronuncia bem porque "cavalo" é
+        #    palavra de verdade. Quem separa as sílabas depois é o alinhamento.
+        texto = u"".join(sil).lower() + u"."
         base = os.path.join(audio, "_seq_" + palavra)
         alvos.append((palavra, assinatura, len(sil)))
         tarefas.append(_uma(sem, edge_tts, texto, voz, base, sil, prefixo, palavra))
