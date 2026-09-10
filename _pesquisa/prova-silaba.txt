@@ -1,0 +1,86 @@
+/home/runner/.local/bin/ctc-forced-aligner
+============================================================
+1) O ALINHADOR INSTALOU?
+   SIM. o que ele exporta:
+    ['alignment_utils', 'ctc_forced_aligner', 'forced_align', 'generate_emissions', 'get_alignments', 'get_spans', 'get_uroman_tokens', 'load_alignment_model', 'load_audio', 'merge_repeats', 'merge_segments', 'norm_config', 'postprocess_results', 'preprocess_text', 'split_text', 'text_normalize', 'text_utils']
+   CLI: True
+============================================================
+2) SINTETIZANDO A PALAVRA INTEIRA (sem virgulas, sem pedacos)
+   cavalo      12528 bytes, 1 marca(s) de tempo
+   gato        11376 bytes, 1 marca(s) de tempo
+   foguete     12816 bytes, 1 marca(s) de tempo
+   uva         10944 bytes, 1 marca(s) de tempo
+============================================================
+3) ALINHANDO EM NIVEL DE CARACTERE — e este e o ponto:
+   se o alinhador disser onde acaba o 'ca' e comeca o 'va',
+   a silaba sai da palavra inteira, com a pronuncia de verdade.
+------------------------------------------------------------
+   palavra: cavalo | silabas esperadas: ['CA', 'VA', 'LO']
+   codigo: 2
+   saida: usage: ctc-forced-aligner [-h] --audio_path AUDIO_PATH --text_path TEXT_PATH
+                          --language LANGUAGE [--romanize]
+                          [--split_size {sentence,word,char}]
+                          [--star_frequency {segment,edges}]
+                          [--merge_threshold MERGE_THRESHOLD]
+                          [--alignment_model ALIGNMENT_MODEL]
+                          [--compute_dtype {bfloat16,float16,float32}]
+                          [--batch_size BATCH_SIZE]
+                          [--window_size WINDOW_SIZE]
+                          [--context_size CONTEXT_SIZE]
+                          [--attn_implementation {eager,sdpa,flash_attention_2,None}]
+                          [--device DEVICE]
+ctc-forced-aligner: error: unrecognized arguments: --alignment_level char
+
+------------------------------------------------------------
+   palavra: gato | silabas esperadas: ['GA', 'TO']
+   codigo: 2
+   saida: usage: ctc-forced-aligner [-h] --audio_path AUDIO_PATH --text_path TEXT_PATH
+                          --language LANGUAGE [--romanize]
+                          [--split_size {sentence,word,char}]
+                          [--star_frequency {segment,edges}]
+                          [--merge_threshold MERGE_THRESHOLD]
+                          [--alignment_model ALIGNMENT_MODEL]
+                          [--compute_dtype {bfloat16,float16,float32}]
+                          [--batch_size BATCH_SIZE]
+                          [--window_size WINDOW_SIZE]
+                          [--context_size CONTEXT_SIZE]
+                          [--attn_implementation {eager,sdpa,flash_attention_2,None}]
+                          [--device DEVICE]
+ctc-forced-aligner: error: unrecognized arguments: --alignment_level char
+
+------------------------------------------------------------
+   palavra: foguete | silabas esperadas: ['FO', 'GUE', 'TE']
+   codigo: 2
+   saida: usage: ctc-forced-aligner [-h] --audio_path AUDIO_PATH --text_path TEXT_PATH
+                          --language LANGUAGE [--romanize]
+                          [--split_size {sentence,word,char}]
+                          [--star_frequency {segment,edges}]
+                          [--merge_threshold MERGE_THRESHOLD]
+                          [--alignment_model ALIGNMENT_MODEL]
+                          [--compute_dtype {bfloat16,float16,float32}]
+                          [--batch_size BATCH_SIZE]
+                          [--window_size WINDOW_SIZE]
+                          [--context_size CONTEXT_SIZE]
+                          [--attn_implementation {eager,sdpa,flash_attention_2,None}]
+                          [--device DEVICE]
+ctc-forced-aligner: error: unrecognized arguments: --alignment_level char
+
+------------------------------------------------------------
+   palavra: uva | silabas esperadas: ['U', 'VA']
+   codigo: 2
+   saida: usage: ctc-forced-aligner [-h] --audio_path AUDIO_PATH --text_path TEXT_PATH
+                          --language LANGUAGE [--romanize]
+                          [--split_size {sentence,word,char}]
+                          [--star_frequency {segment,edges}]
+                          [--merge_threshold MERGE_THRESHOLD]
+                          [--alignment_model ALIGNMENT_MODEL]
+                          [--compute_dtype {bfloat16,float16,float32}]
+                          [--batch_size BATCH_SIZE]
+                          [--window_size WINDOW_SIZE]
+                          [--context_size CONTEXT_SIZE]
+                          [--attn_implementation {eager,sdpa,flash_attention_2,None}]
+                          [--device DEVICE]
+ctc-forced-aligner: error: unrecognized arguments: --alignment_level char
+
+============================================================
+FIM DA PROVA
