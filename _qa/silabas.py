@@ -42,6 +42,76 @@ import re
 import sys
 
 MIN_BYTES = 300          # abaixo disso é arquivo vazio, não é áudio
+FATOR = 1.7              # acima disso a sílaba está sendo soletrada, não falada
+
+
+def _ffmpeg():
+    try:
+        import imageio_ffmpeg
+        return imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:                                            # noqa: BLE001
+        return "ffmpeg"
+
+
+def _dur(ff, caminho):
+    import subprocess
+    p = subprocess.Popen([ff, "-i", caminho, "-f", "null", "-"],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    _, err = p.communicate()
+    t = re.findall(r"time=(\d+):(\d+):(\d+\.\d+)", (err or b"").decode("utf-8", "replace"))
+    if not t:
+        return 0.0
+    h, m, s = t[-1]
+    return int(h) * 3600 + int(m) * 60 + float(s)
+
+
+def _mediana(v):
+    v = sorted(v)
+    if not v:
+        return 0.0
+    meio = len(v) // 2
+    return v[meio] if len(v) % 2 else (v[meio - 1] + v[meio]) / 2.0
+
+
+def _mede_duracoes(audio, mapa, prefixo):
+    u"""Devolve [(silaba, palavra, duracao, esperado)] das compridas demais.
+
+    Compara cada sílaba com a MEDIANA das sílabas de mesmo tamanho de escrita
+    (duas letras com duas letras, três com três): sílaba fechada como TAR e COM
+    é naturalmente um pouco mais longa que LA, e comparar tudo junto acusaria
+    falso. Se não houver ffmpeg, devolve [] — mede-se o que dá para medir, e o
+    portão não reprova por não conseguir medir."""
+    ff = _ffmpeg()
+    try:
+        if _dur(ff, os.devnull) < 0:
+            return []
+    except Exception:                                            # noqa: BLE001
+        return []
+    porTam, tudo = {}, []
+    for palavra in sorted(mapa):
+        for i, s in enumerate(mapa[palavra]):
+            if not s:
+                continue
+            f = os.path.join(audio, u"%ssb_%s_%d.mp3" % (prefixo, palavra, i))
+            if not os.path.exists(f):
+                continue
+            d = _dur(ff, f)
+            if d <= 0:
+                continue
+            porTam.setdefault(len(s), []).append(d)
+            tudo.append((s, palavra, d))
+    if not tudo:
+        return []
+    ruins = []
+    for s, palavra, d in tudo:
+        base = _mediana(porTam.get(len(s), []))
+        # ⚠️ com menos de 4 exemplos daquele tamanho a mediana não vale nada:
+        #    uma única sílaba soletrada viraria a própria referência.
+        if base <= 0 or len(porTam.get(len(s), [])) < 4:
+            continue
+        if d > base * FATOR:
+            ruins.append((s, palavra, d, base))
+    return sorted(ruins, key=lambda r: -r[2])
 
 
 def mede(pasta):
@@ -88,6 +158,38 @@ def mede(pasta):
             f = os.path.join(audio, u"%ssb_%s_%d.mp3" % (prefixo, palavra, i))
             if not os.path.exists(f) or os.path.getsize(f) < MIN_BYTES:
                 faltam.append(u"%s[%d]=%s" % (palavra, i, s))
+
+    # ══════════════════════════════════════════════════════════════════
+    #  2ª MEDIDA: A SÍLABA SOLETRADA É COMPRIDA DEMAIS
+    #
+    #  ⚠️ Existir o recorte não quer dizer que ele esteja certo — foi o meu erro
+    #     de 10/set/2026. Eu gerei os 42 arquivos, comemorei, e o Marcos ouviu de
+    #     novo "vê-á" no lugar de "va". Cortar uma sequência com vírgulas não
+    #     conserta nada: a voz continua lendo cada pedaço ISOLADO, e pedaço
+    #     isolado de consoante+A ela soletra.
+    #
+    #  E isso SE MEDE, sem ouvir: uma sílaba falada leva ~0,25 s; a mesma sílaba
+    #  soletrada leva o dobro, porque são dois nomes de letra em vez de um som.
+    #  Na medição que denunciou o defeito: LA 0,26 · TA 0,28 · TO 0,26 contra
+    #  VA 0,66 · GA 0,63 · FO 0,64 · PA 0,50. Não é sutil.
+    #
+    #  O critério é RELATIVO (o dobro da mediana das sílabas de mesmo tamanho de
+    #  escrita), não um número fixo: voz, velocidade e sílaba fechada mudam a
+    #  base, mas a soletração dobra em qualquer base.
+    # ══════════════════════════════════════════════════════════════════
+    if not faltam:
+        compridas = _mede_duracoes(audio, mapa, prefixo)
+        if compridas:
+            print(u"%s -> REPROVADO: %d silaba(s) SOLETRADA(S).\n"
+                  u"   O recorte existe, mas dentro dele a voz diz o nome das letras\n"
+                  u"   ('ve-a') em vez do som ('va') — dá o dobro da duração das outras.\n"
+                  u"   %s\n"
+                  u"   conserto: a sílaba tem que sair da PALAVRA INTEIRA falada, com\n"
+                  u"   alinhamento forçado. Cortar uma sequencia com virgulas nao resolve:\n"
+                  u"   a voz le cada pedaco isolado e soletra do mesmo jeito."
+                  % (pasta, len(compridas),
+                     u"; ".join(u"%s de %s (%.2fs, esperado ~%.2fs)" % c for c in compridas[:8])))
+            return 1
 
     if faltam:
         log = os.path.join(audio, u"_silabas-log.txt")
