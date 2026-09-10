@@ -53,6 +53,7 @@ import asyncio
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -89,6 +90,69 @@ def _ffmpeg():
         return "ffmpeg"
 
 
+# ══════════════════════════════════════════════════════════════════════
+#  ONDE ESTÃO OS CORTES — duas fontes, e a segunda é a que salva
+#
+#  ⚠️⚠️ MEDIDO EM 10/set/2026: o serviço da Microsoft **parou de mandar os
+#     marcadores de tempo** (`WordBoundary`). Vieram ZERO marcas em todas as 17
+#     palavras, inclusive nas de uma sílaba só. A ferramenta inteira dependia
+#     deles, então não saía recorte nenhum — e como o passo era
+#     `continue-on-error`, isso durou semanas em silêncio.
+#
+#     Depender de um campo opcional de um protocolo alheio foi o erro de
+#     projeto. Agora há um caminho que não depende de ninguém: o texto que se
+#     manda é `bo, la, ca.` — as VÍRGULAS produzem pausas de verdade no áudio —
+#     e o corte sai medindo o SILÊNCIO com o próprio ffmpeg. Se as marcas
+#     voltarem um dia, elas continuam sendo preferidas (são exatas); se não
+#     voltarem, o silêncio resolve.
+# ══════════════════════════════════════════════════════════════════════
+def _duracao(ff, caminho):
+    p = subprocess.Popen([ff, "-i", caminho, "-f", "null", "-"],
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    _, err = p.communicate()
+    txt = (err or b"").decode("utf-8", "replace")
+    achado = re.findall(r"time=(\d+):(\d+):(\d+\.\d+)", txt)
+    if not achado:
+        return 0.0
+    h, m, s = achado[-1]
+    return int(h) * 3600 + int(m) * 60 + float(s)
+
+
+def _cortes_por_silencio(ff, caminho, quantas):
+    u"""Devolve [(inicio, duracao)] de cada trecho FALADO, ou [] se não deu.
+
+    Tenta vários limiares porque voz e volume variam: começa exigente (silêncio
+    bem definido) e vai afrouxando. Só aceita quando o número de trechos bate
+    exatamente com o número de sílabas — trecho a mais ou a menos significa que
+    a leitura saiu diferente do esperado, e aí é melhor não cortar do que cortar
+    errado (sílaba cortada no lugar errado ensina errado igual)."""
+    total = _duracao(ff, caminho)
+    if total <= 0:
+        return []
+    for ruido, minimo in (("-35dB", 0.10), ("-40dB", 0.08), ("-30dB", 0.12),
+                          ("-45dB", 0.06)):
+        p = subprocess.Popen(
+            [ff, "-i", caminho, "-af",
+             "silencedetect=noise=%s:d=%.2f" % (ruido, minimo), "-f", "null", "-"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        _, err = p.communicate()
+        txt = (err or b"").decode("utf-8", "replace")
+        inicios = [float(x) for x in re.findall(r"silence_start: (-?\d+\.?\d*)", txt)]
+        fins = [float(x) for x in re.findall(r"silence_end: (\d+\.?\d*)", txt)]
+        # monta os trechos FALADOS a partir dos vãos de silêncio
+        trechos, cursor = [], 0.0
+        for k, ini in enumerate(inicios):
+            if ini > cursor + 0.04:
+                trechos.append((cursor, ini - cursor))
+            cursor = fins[k] if k < len(fins) else ini
+        if total > cursor + 0.04:
+            trechos.append((cursor, total - cursor))
+        trechos = [t for t in trechos if t[1] >= 0.08]
+        if len(trechos) == quantas:
+            return trechos
+    return []
+
+
 async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavra):
     u"""Grava a sequência da palavra e corta cada sílaba. Devolve nº de cortes."""
     async with sem:
@@ -103,17 +167,31 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
                     elif pedaco["type"] == "WordBoundary":
                         marcas.append((pedaco["offset"], pedaco["duration"]))
                 dados = audio.getvalue()
-                if len(dados) < 800 or len(marcas) < len(silabas):
-                    raise RuntimeError("audio curto ou marcas de menos "
-                                       "(%d marcas para %d silabas)"
-                                       % (len(marcas), len(silabas)))
+                if len(dados) < 800:
+                    raise RuntimeError("audio curto (%d bytes)" % len(dados))
                 inteiro = destino_base + "_todo.mp3"
                 open(inteiro, "wb").write(dados)
                 ff = _ffmpeg()
+                # 1º os marcadores do serviço (exatos, quando vêm);
+                # 2º o silêncio entre as vírgulas (não depende de ninguém).
+                if len(marcas) >= len(silabas):
+                    cortes = [(marcas[i][0] / 10000000.0,
+                               marcas[i][1] / 10000000.0 + FOLGA_MS / 1000.0)
+                              for i in range(len(silabas))]
+                else:
+                    cortes = _cortes_por_silencio(ff, inteiro, len(silabas))
+                    if not cortes:
+                        try:
+                            os.remove(inteiro)
+                        except OSError:
+                            pass
+                        raise RuntimeError(
+                            "sem marcas (%d) e o silencio nao separou em %d trecho(s)"
+                            % (len(marcas), len(silabas)))
+                    cortes = [(a, b + FOLGA_MS / 1000.0) for a, b in cortes]
                 n = 0
                 for i, s in enumerate(silabas):
-                    ini = marcas[i][0] / 10000000.0
-                    dur = marcas[i][1] / 10000000.0 + FOLGA_MS / 1000.0
+                    ini, dur = cortes[i]
                     saida = os.path.join(os.path.dirname(destino_base),
                                          "%ssb_%s_%d.mp3" % (prefixo, palavra, i))
                     # ⚠️ ENTRADA PRIMEIRO, DEPOIS O `-ss`, E SEMPRE RECODIFICANDO.
