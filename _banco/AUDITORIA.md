@@ -75,3 +75,14 @@ par está numa lista de cópias declaradas (crachá = avatar).
 5. **Banco com nota**: o `_banco/index.json` ganha `motor` (quem desenhou),
    `semente` e `nota_olho` (o veredito do testador), para escolher a melhor
    versão quando há duas e para saber o que ainda precisa ser refeito.
+
+
+## Peças recortadas de folhas de professor (10/set/2026)
+
+Ordem do Marcos: *"pode aproveitar as imagens dessas folhas quando possível"* + *"recorte as imagens e insira no banco de imagens e na atividade"*.
+
+Recortadas das folhas `d06`, `d17`, `d18` e `d24` em `_sequencias/folhas/`, com fundo removido por inundação a partir da borda (o branco de DENTRO do desenho fica — o dente e o olho não viram buraco).
+
+⚠️ **São arte de terceiros**, ao contrário do resto do banco. Ficam com o prefixo `al2_` justamente para se distinguirem: quando houver equivalente próprio, o próprio ganha. Origem de cada uma: as folhas em `_sequencias/folhas/` e o `fotos.json` ao lado, que guarda a página de onde vieram.
+
+**37 peças:** abacate · apito · aviao · balao · banana · boca · bola · bolo · bolsa · cabrito · cachorro · cafe · caracol · casa · estrela · ferro · foguete · gato · gota · janela · livro · mala · mola · ninho · ovo · panela · passarinho · pato · pente · porco · queijo · rato · sorvete_casquinha · sorvete_taca · tomate · ursinho · uva
