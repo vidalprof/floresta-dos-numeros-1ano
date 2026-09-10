@@ -10,7 +10,48 @@
 > Este documento é o **mapa**. Ele vem ANTES do código: o Marcos olha a escada
 > inteira e corrige, e só então eu monto caderno por caderno.
 
+## 0. ⚗️ ISTO É UM TESTE — o que ele tem que responder
+
+Palavras do Marcos (set/2026): *"isso é um teste para ver a possibilidade de ser
+uma maneira nova de criar atividades"*. Então o entregável não são sete cadernos:
+é **uma resposta**. E ela precisa de critério escrito ANTES, senão daqui a uma
+semana teremos um caderno bonito e nenhuma conclusão.
+
+**A pergunta que decide tudo:** *quanto do material da internet SOBREVIVE ao
+crivo do currículo?*
+
+- Se sobrevive muito, o método ganha de lavada: a parte cara da produção (decidir
+  o quê, em que ordem, com quais itens) vem pronta e testada em sala.
+- **Se sobrevive pouco, o método não economiza nada** — porque aí o pedagogo
+  descarta quase tudo e eu escrevo o conteúdo do zero do mesmo jeito, só que
+  depois de ter gasto tempo procurando. Este é o risco real, e é ele que o
+  piloto mede.
+
+**Os três números do teste**, medidos no caderno-piloto:
+1. **Aproveitamento** — de N folhas achadas, quantas passam no crivo do pedagogo?
+2. **Relógio** — do "quero uma aula de rima" até publicado, comparado com o
+   caminho de hoje (a Fábrica de Palavras e a Oficina são a linha de base).
+3. **Portões** — passa nos mesmos, com a mesma nota? O pedagogo assina sem
+   ressalva grave?
+
 ## 1. O método — de onde vem cada coisa
+
+### O fluxo, em quatro passos (do Marcos, set/2026)
+
+1. **A matéria-prima são as atividades prontas da internet.** Nada de inventar
+   conteúdo do zero: busca-se o que já existe escalonado e rodado em sala.
+2. **O pedagogo faz a SELEÇÃO, e é aí que o trabalho dele acontece.** Ele olha o
+   que veio e confere **contra o currículo**: serve a qual objetivo? é do ano
+   certo? a ordem bate? O que não passa é descartado — não entra, não vira
+   atividade.
+3. **Ele confere os livros também**, pelo mesmo crivo (ver a ressalva abaixo).
+4. **Só o que sobrou é que eu monto** — dando o gesto, a voz, o retorno, o
+   relatório, e amarrando caderno com caderno.
+
+**A curadoria vem ANTES da produção, e ela é do pedagogo.** O que chega até mim já
+está aprovado no conteúdo; meu trabalho é dar interatividade ao que ele
+selecionou, não escolher o que ensinar.
+
 
 A unidade de produção deixa de ser a *atividade* e passa a ser a **sequência**.
 Uma folha ensina; uma sequência **alfabetiza**. E são **três fontes**, cada uma
@@ -19,12 +60,17 @@ entrando com o que só ela tem:
 | Fonte | O que ela dá | Quem manda |
 |---|---|---|
 | **Currículo de Blumenau** (`_curriculo/blumenau.txt`) | os **objetivos** — o que a criança tem que dominar | ⭐ manda sempre |
-| **O livro** (sumário basta) | a **ordem e o ritmo** — quantas aulas em cada degrau | ajusta ao que a escola adota |
+| **O livro** (sumário basta) | uma sugestão de **ordem e ritmo** | ⚠️ tambem e CONFERIDO contra o curriculo |
 | **As folhas da internet** | os **itens** — palavras, figuras, exercícios já graduados | matéria-prima |
 
 Nenhuma das três sozinha basta. O currículo diz *o quê* mas não diz *em quantas
-aulas*; o livro diz a ordem mas não é o currículo daqui; a folha da internet tem
-os itens mas nenhuma garantia pedagógica.
+aulas*; a folha da internet tem os itens mas nenhuma garantia pedagógica.
+
+⚠️ **E o livro NÃO é autoridade** (correção do Marcos, set/2026). Eu tinha
+escrito que ele "dá a ordem e o ritmo", como se mandasse. Não manda: **quem manda
+é o currículo**, e o livro passa pelo mesmo crivo — o pedagogo confere se o que
+ele traz está adequado ao ano. Livro é referência conferida, não fonte de
+verdade.
 
 ### ⚠️ A REGRA QUE NÃO SE NEGOCIA — a folha dá o conteúdo, o GESTO se escolhe de novo
 
