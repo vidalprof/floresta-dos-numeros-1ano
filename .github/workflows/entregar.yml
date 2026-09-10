@@ -403,6 +403,28 @@ jobs:
             python3 _padrao/silabas_voz.py "$pasta" || echo "::warning::$pasta: alguma silaba nao saiu"
           done
 
+      # ⚠️ ESTE PASSO VEM ANTES DO PORTÃO DA SÍLABA, e é de propósito: o portão
+      # barra a PUBLICAÇÃO, mas o recado da ferramenta (`audio/_silabas-log.txt`)
+      # precisa chegar ao repo de qualquer jeito. Na primeira rodada o portão
+      # parou a entrega e levou junto o diagnóstico — fiquei sem saber por quê.
+      - name: Guardar as vozes novas no repo
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          git config user.name "Entregador"
+          git config user.email "entregador@users.noreply.github.com"
+          for par in $(echo "$LISTA" | tr ',' ' '); do
+            p="${par%%:*}"; p="${p%/}"
+            [ -d "$p/audio" ] && git add -A "$p/audio" || true
+          done
+          if git diff --cached --quiet; then
+            echo "nenhuma voz nova"
+          else
+            git commit -m "audio: vozes que faltavam"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+
       # ⚠️⚠️ E AGORA SE CONFERE, PORQUE O PASSO DE CIMA JÁ FALHOU EM SILÊNCIO
       # (set/2026 — o Marcos ouviu "vê-á" no lugar de "va"). O `continue-on-error`
       # ali em cima é de propósito: quero chegar AQUI com o recado da ferramenta.
@@ -422,24 +444,6 @@ jobs:
           if [ "$ruim" = "1" ]; then
             echo "::error::silaba falada sem recorte — a entrega PARA aqui."
             exit 1
-          fi
-
-      - name: Guardar as vozes novas no repo
-        env:
-          LISTA: ${{ steps.alvos.outputs.lista }}
-        run: |
-          git config user.name "Entregador"
-          git config user.email "entregador@users.noreply.github.com"
-          for par in $(echo "$LISTA" | tr ',' ' '); do
-            p="${par%%:*}"; p="${p%/}"
-            [ -d "$p/audio" ] && git add -A "$p/audio" || true
-          done
-          if git diff --cached --quiet; then
-            echo "nenhuma voz nova"
-          else
-            git commit -m "audio: vozes que faltavam"
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-            git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
       # ---------------------------------------------------------------
