@@ -1795,14 +1795,19 @@ function falar(k){
 function falarSilaba(palavra, i, silaba){
   if(!vozLigada) return;
   if(!palavra && silaba && SILMAP[silaba]){ palavra = SILMAP[silaba][0]; i = SILMAP[silaba][1]; }
-  if(!palavra){ if(silaba) falar("sb_" + silaba); return; }
+  /* ⚠️⚠️ A RESERVA NUNCA É A SÍLABA SOLTA (set/2026, o Marcos ouviu "vê-á" no
+     lugar de "va" no caderno irmão). A sílaba sintetizada solta sai errada por
+     construção — a voz não lê som, lê PALAVRA — e aqui ela virou o caminho
+     NORMAL, porque o recorte nunca chegou a ser gerado. Reserva agora é a
+     palavra inteira; o portão `_qa/silabas.py` impede publicar sem recorte. */
+  if(!palavra){ return; }
   calar();
   if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
   _narr.onended = null;
-  _narr.onerror = function(){ if(silaba) falar("sb_" + silaba); };
+  _narr.onerror = function(){ falar("pal_" + palavra); };
   _narr.src = "audio/al_sb_" + palavra + "_" + i + ".mp3";
   try{ _narr.currentTime = 0; }catch(e){}
-  var pr = _narr.play(); if(pr && pr["catch"]) pr["catch"](function(){ if(silaba) falar("sb_" + silaba); });
+  var pr = _narr.play(); if(pr && pr["catch"]) pr["catch"](function(){ falar("pal_" + palavra); });
 }
 function falarDepois(k, ms){ setTimeout(function(){ falar(k); }, ms || 0); }
 

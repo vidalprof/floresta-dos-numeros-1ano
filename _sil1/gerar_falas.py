@@ -225,11 +225,18 @@ for s in sorted(silabas):
     MAPA_SIL[s] = [achou[0], achou[1]]
     PALAVRAS_SIL[achou[0]] = sil(achou[0])
 
-# ⚠️ a fala de RESERVA (quando o mp3 recortado não existir): o app cai para a
-#    voz do navegador com este texto. É rede de segurança, não o caminho normal.
-COMO_SE_FALA = {u"ÇÃ": u"sã", u"XÍ": u"chi", u"ÃO": u"ão", u"Ô": u"ô"}
-for s in sorted(silabas):
-    F[u"sb_%s" % s] = COMO_SE_FALA.get(s, s.lower()) + u"."
+# ⚠️⚠️ AQUI NÃO SE GRAVA MAIS A SÍLABA SOLTA — e o motivo é o defeito que o
+#    Marcos ouviu (set/2026): *"ele está dizendo 'v a' ao invés de 'va'"*.
+#    Havia aqui uma fala de RESERVA por sílaba (`sb_VA` = "va."), gravada como
+#    mp3 e usada quando o recorte faltasse. Só que ela É o erro: o sintetizador
+#    não lê som, lê PALAVRA, e "VA" sozinho ele soletra. Pior: como o recorte
+#    nunca chegou a existir, a reserva virou o caminho NORMAL e a criança ouviu
+#    o nome das letras a atividade inteira.
+#    Agora a reserva do app é a PALAVRA INTEIRA (ver `falarSilaba` no
+#    index.html), e o portão `_qa/silabas.py` impede publicar sem os recortes.
+#    Escrever a sílaba "como se fala" (ÇÃ → "sã") era o remendo antigo: conserta
+#    um caso por vez e nunca fecha a família, porque a MESMA sílaba escrita tem
+#    sons diferentes conforme a palavra ("BO" é [bɔ] em BOLA e [bo] em BOLO).
 
 
 def chave(s):

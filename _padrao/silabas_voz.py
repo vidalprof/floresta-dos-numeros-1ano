@@ -61,6 +61,22 @@ FOLGA_MS = 60          # sobra no fim de cada corte, para não cortar o ar final
 PAR = 4                # palavras ao mesmo tempo
 
 
+def _diario(pasta, texto):
+    u"""Deixa o RECADO no repo (`<pasta>/audio/_silabas-log.txt`).
+
+    ⚠️ Existe porque esta ferramenta já falhou em silêncio: o passo do workflow
+    tem `continue-on-error`, o aviso morre no log da execução e ninguém volta lá.
+    O que o repo guarda, a próxima sessão lê."""
+    try:
+        d = os.path.join(pasta, "audio")
+        if not os.path.isdir(d):
+            os.makedirs(d)
+        io.open(os.path.join(d, "_silabas-log.txt"), "w",
+                encoding="utf-8").write(texto + u"\n")
+    except Exception:                                            # noqa: BLE001
+        pass
+
+
 def _ffmpeg():
     try:
         import imageio_ffmpeg
@@ -162,6 +178,8 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
         json.dumps(carimbo, ensure_ascii=False, indent=1))
     print(u"%s -> silabas ok: %d palavra(s) gravadas, %d com falha"
           % (pasta, len(alvos) - falhou, falhou))
+    _diario(pasta, u"%d palavra(s) gravadas, %d com falha (voz %s, rate %s)"
+            % (len(alvos) - falhou, falhou, voz, RATE))
     return 1 if falhou else 0
 
 
@@ -188,9 +206,23 @@ def main():
         import edge_tts                                          # noqa: F401
     except ImportError:
         print(u"nao consegui rodar: falta o edge-tts (roda no workflow)")
+        _diario(pasta, u"FALHOU: sem o edge-tts neste ambiente")
         return 2
-    return asyncio.get_event_loop().run_until_complete(
-        _tudo(pasta, mapa, voz, prefixo, "--refazer" in sys.argv))
+    # ⚠️⚠️ LIÇÃO PAGA (set/2026, o Marcos ouviu "vê-á" no lugar de "va"):
+    #    aqui estava `asyncio.get_event_loop().run_until_complete(...)`. A partir
+    #    do Python 3.12 chamar isso sem um laço em andamento é obsoleto e do 3.14
+    #    em diante ESTOURA — e o passo do workflow tinha `continue-on-error`, de
+    #    modo que a falha só deixava um aviso que ninguém lia. Resultado: NENHUM
+    #    recorte foi gerado, nem aqui nem no `_alfa1`, e a criança ouviu a sílaba
+    #    sintetizada solta (a fala de reserva), que é justamente o que este
+    #    arquivo inteiro existe para não acontecer.
+    #    `asyncio.run` é o mesmo que a narração do `entregar.yml` já usava.
+    try:
+        return asyncio.run(_tudo(pasta, mapa, voz, prefixo, "--refazer" in sys.argv))
+    except Exception as e:                                       # noqa: BLE001
+        print(u"nao consegui rodar: %s" % e)
+        _diario(pasta, u"FALHOU: %s" % e)
+        return 2
 
 
 if __name__ == "__main__":

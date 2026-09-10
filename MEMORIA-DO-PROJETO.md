@@ -7148,6 +7148,57 @@ qualquer uma sozinha mata o gesto:
 
 **Ao pôr arrastar em qualquer peça nova, conferir os três.**
 
+## 🗣️🚨 A FERRAMENTA DA SÍLABA NUNCA TINHA RODADO — e ninguém viu (10/set/2026)
+
+**O Marcos ouviu:** *"na bate palmas das palavras, as sílabas precisam ser
+pronunciadas corretamente, ele está dizendo 'v a' ao invés de 'va', tem alguma
+ferramenta para ajudar a fazer correto?"* — e depois, sem meio-termo: *"quero
+que ela pronuncie as sílabas corretamente"*.
+
+**A ferramenta existia desde 8/set** (`_padrao/silabas_voz.py`, que recorta cada
+sílaba de dentro do mp3 da própria palavra). O que se descobriu agora é pior do
+que um caso isolado: **ela nunca produziu um único arquivo**. Zero recortes no
+`_sil1`, zero no `_alfa1` — que usa sílaba falada desde agosto e está no ar.
+
+**Por que ficou invisível — três camadas de silêncio empilhadas:**
+1. `silabas_voz.py` chamava `asyncio.get_event_loop().run_until_complete(...)`.
+   Do Python 3.12 em diante isso é obsoleto e do 3.14 **estoura**. O runner do
+   GitHub subiu de versão e a ferramenta passou a morrer na primeira linha.
+   (A narração do `entregar.yml`, ao lado, já usava `asyncio.run` e por isso
+   nunca quebrou — o defeito era só do recortador.)
+2. O passo no `entregar.yml` tinha `continue-on-error: true` e um
+   `|| echo "::warning::"`. A falha virou um aviso no log de uma execução que
+   ninguém reabre.
+3. **O app tinha uma reserva que escondia o buraco:** `falar("sb_" + silaba)`,
+   a sílaba SINTETIZADA solta. Como o recorte nunca existiu, a reserva virou o
+   caminho normal — e ela é justamente o erro que o arquivo inteiro existe para
+   evitar. A criança ouviu o NOME DAS LETRAS a atividade inteira.
+
+**Nenhum portão via**, e não por descuido: o `_qa/falas.py` confere o TEXTO (que
+estava certo), o `estatico` confere o JS (que estava certo), o jogador joga até
+a medalha (e joga sem som). **Só o ouvido pega.**
+
+### O conserto — as quatro partes
+1. `asyncio.run(...)` no lugar do `get_event_loop()`, com `try/except` que diz o
+   que deu errado.
+2. **`_diario()`**: a ferramenta agora deixa o recado em
+   `<pasta>/audio/_silabas-log.txt`, que entra no commit. O que o log da
+   execução engole, o repo guarda.
+3. ⭐ **PORTÃO NOVO `_qa/silabas.py`**: para toda pasta que chama `falarSilaba`,
+   exige um mp3 recortado por sílaba declarada em `silabas.json`. Falta um?
+   Reprova. E ele roda **dentro do `entregar.yml`, depois do recorte e antes de
+   publicar** — caderno com sílaba errada não chega na criança.
+4. **A reserva do app deixou de ser a sílaba solta**: agora é a PALAVRA INTEIRA.
+   Ouvir "vaca" é menos do que ouvir "va", mas está CERTO. Errado nunca.
+
+### A lição que fica, e ela é maior que a sílaba
+**Ferramenta que não deixa rastro no repo é ferramenta que pode nunca ter
+rodado.** Toda ferramenta de workflow que PRODUZ arquivo tem que ter um portão
+que conte os arquivos produzidos — senão o `continue-on-error` transforma falha
+em silêncio, e o silêncio some no meio de mil linhas de log.
+E o corolário: **fala de reserva que soa plausível é pior que fala nenhuma**,
+porque ela esconde a falha em vez de denunciá-la.
+
 ## 🗣️ A SÍLABA SE RECORTA DA PALAVRA — não se sintetiza solta (8/set/2026)
 
 Ordem dele: *"a pronúncia das sílabas precisa ser precisa e melhorada, use
