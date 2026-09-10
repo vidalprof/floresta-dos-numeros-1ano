@@ -220,3 +220,73 @@ numa escada.
 
 _Escrito em 9/set/2026, contra `_curriculo/blumenau.txt` (1º ano, Língua
 Portuguesa) e o parecer pedagógico de `_alfa1`._
+
+---
+
+## 8. ⚗️ RESULTADO DA 1ª RODADA DO TESTE (9/set/2026)
+
+Rodei o passo 1 do método — buscar a matéria-prima — para o caderno-piloto da
+rima. Seis sites de professor, 536 linhas de texto, ~4 minutos de relógio.
+Está em `_pesquisa/web/folhas-rima-1ano.md`.
+
+**O resultado contraria a premissa, e é melhor saber agora.**
+
+### O que NÃO veio: os itens
+
+**As folhas em si não chegam.** Elas moram em **PDF e em imagem**, atrás de um
+botão de download — e o `pesquisar.yml` lê HTML, não abre PDF nem enxerga
+figura. Em 536 linhas vieram **cinco ou seis pares de palavras** (GATO/PATO,
+BOLA/ESCOLA, BRINCAR/PULAR). Isso não monta folha nenhuma.
+
+E mesmo que chegassem: os sites são explícitos sobre direito autoral
+(*"todo o conteúdo é original… não pode ser copiado. Pirataria é crime!"*).
+Copiar os itens não é caminho, e não seria mesmo com o PDF na mão.
+
+**Ou seja: a premissa "as folhas trazem os exercícios já graduados" não se
+sustenta.** Os itens vão ser nossos, sempre.
+
+### O que VEIO — e vale mais do que eu esperava
+
+O que a internet entrega em texto aberto, de graça e em abundância, é o que eu
+tinha subestimado: **o repertório de dinâmicas e a progressão**, escritos por
+quem dá essa aula.
+
+- **Dinâmicas**, descritas com detalhe de aplicação: memória de rimas, roda de
+  rimas (a criança tem 5 s para responder), versos incompletos, varal de rimas
+  da semana, polegar-para-cima/para-baixo, circular no poema com a mesma cor,
+  criar quadrinha coletiva. Uma das fontes trouxe uma **lista numerada de 22
+  tipos** de folha de consciência fonológica.
+- **A progressão declarada**: "do concreto ao abstrato", e como diferenciar por
+  nível dentro da mesma turma.
+- **⭐ E uma armadilha que eu não teria pensado sozinho:** incluir pares
+  *pegadinha* — palavras que **começam** igual mas **não rimam** (BOLA / BOLSA).
+  No meu esboço eu tinha proposto a folha 3 "as duas erradas começam igual" por
+  intuição; a professora confirma como técnica, com o porquê. Isso é exatamente
+  o tipo de coisa que faz a atividade medir o que ela diz medir.
+
+### A conclusão da rodada
+
+**O método funciona — mas não pelo motivo que imaginávamos.** Ele não é
+*"reaproveitar exercícios prontos"*; é **"aprender a sequência e o repertório de
+quem já dá essa aula, e escrever os itens nossos"**.
+
+E isso, olhando com honestidade, **não é uma decepção: é o negócio certo.**
+Escrever 40 pares de palavras que rimam com vocabulário de 1º ano é trabalho de
+minutos e nunca foi o gargalo. O gargalo era saber **quais dinâmicas existem,
+em que ordem, e quais armadilhas evitar** — e é justamente isso que a internet
+deu, em quatro minutos.
+
+**Os três números, até aqui:**
+
+| # | Medida | Resultado |
+|---|---|---|
+| 1 | Aproveitamento de **itens** | ~0 (as folhas estão em PDF/imagem, e são protegidas) |
+| 1b | Aproveitamento de **dinâmicas e progressão** | **alto** — 10+ dinâmicas e a escada, utilizáveis |
+| 2 | Relógio | 4 min para a matéria-prima chegar |
+| 3 | Portões | ainda não (depende do caderno montado) |
+
+**O que muda no fluxo dos 4 passos:** o passo 1 continua sendo "buscar na
+internet", e o passo 2 continua sendo o pedagogo conferindo contra o currículo —
+mas o que ele confere **não é uma pilha de exercícios: é uma pilha de dinâmicas
+e uma proposta de ordem**. Ele decide quais dinâmicas entram, em que sequência,
+e com que armadilhas. Os itens ele especifica; eu escrevo.
