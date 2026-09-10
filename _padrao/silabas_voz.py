@@ -348,9 +348,19 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
                     #    exceção nenhuma, a falha saía como "0 de 3 sílabas" SEM
                     #    motivo registrado. São pedaços de meio segundo: o custo
                     #    de recodificar é nada perto de um defeito invisível.
+                    # ⚠️⚠️ APARAR O SILÊNCIO DO FIM DE CADA PEDAÇO.
+                    #    Sem isto a ÚLTIMA sílaba de cada palavra levava junto o
+                    #    rabo de silêncio do arquivo e saía com 1,4 s — medido em
+                    #    todas as 17 palavras na primeira rodada do alinhamento.
+                    #    O truque é o de sempre: inverte, tira o silêncio do
+                    #    começo (que era o do fim), desinverte. Não faz nada
+                    #    quando não há silêncio, então serve para todos os
+                    #    pedaços e não só para o último.
                     p = subprocess.Popen(
                         [ff, "-y", "-loglevel", "error", "-i", inteiro,
                          "-ss", "%.3f" % ini, "-t", "%.3f" % dur,
+                         "-af", ("areverse,silenceremove=start_periods=1:"
+                                 "start_silence=0.03:start_threshold=-42dB,areverse"),
                          "-c:a", "libmp3lame", "-q:a", "5", saida],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     _, err = p.communicate()
