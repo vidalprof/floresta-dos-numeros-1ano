@@ -46,6 +46,12 @@ jobs:
           pip3 install --quiet edge-tts imageio-ffmpeg 2>&1 | tail -2 || true
           echo "--- ctc-forced-aligner (pode demorar: leva o torch junto) ---"
           pip3 install --quiet "git+https://github.com/MahmoudAshraf97/ctc-forced-aligner.git" 2>&1 | tail -3 || true
+          # ⚠️ PROVA 2 ENSINOU: o alinhador chama o `ffmpeg` PELO NOME, no PATH do
+          #    sistema — e este runner não tem. O ffmpeg do `imageio-ffmpeg` (que
+          #    a casa já usa em tudo) resolve, basta dar o nome a ele.
+          FF=$(python3 -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())")
+          sudo ln -sf "$FF" /usr/local/bin/ffmpeg
+          ffmpeg -version | head -1
 
       - name: Sintetizar a palavra INTEIRA e alinhar
         run: |
