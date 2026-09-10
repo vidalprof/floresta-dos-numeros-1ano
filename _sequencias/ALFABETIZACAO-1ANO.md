@@ -223,7 +223,23 @@ Portuguesa) e o parecer pedagógico de `_alfa1`._
 
 ---
 
-## 8. ⚗️ RESULTADO DA 1ª RODADA DO TESTE (9/set/2026)
+## 8. ⚗️ RESULTADO DO TESTE
+
+> ⚠️ **A 1ª rodada abaixo tirou a conclusão errada, por busca errada.** Eu
+> procurei *"atividades de rima para imprimir"* e vieram folhas em PDF/imagem —
+> daí concluí que "a internet não dá os itens". O Marcos corrigiu: *"são
+> SEQUÊNCIAS DIDÁTICAS, lembra? você vai fazer a interatividade que as
+> atividades pedem"*. Sequência didática é outro documento: escrita para o
+> professor LER e aplicar, **vem em texto corrido com as atividades descritas**.
+> Buscando com o termo certo veio uma sequência de **10 aulas inteira**, e o mapa
+> dela está em **`_sequencias/SD-ALFABETIZACAO-10-AULAS.md`**: 8 das 10 aulas
+> cabem em gestos que a casa já tem prontos.
+>
+> Fica registrado o erro, porque a lição é de PROCURA, não de método: o nome do
+> documento muda tudo. "Atividade para imprimir" = PDF fechado. "Sequência
+> didática" / "plano de aula" = texto aberto.
+
+### 8.1 A 1ª rodada (busca errada — mantida como registro)
 
 Rodei o passo 1 do método — buscar a matéria-prima — para o caderno-piloto da
 rima. Seis sites de professor, 536 linhas de texto, ~4 minutos de relógio.
