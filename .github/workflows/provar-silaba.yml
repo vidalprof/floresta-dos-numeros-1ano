@@ -1,0 +1,135 @@
+name: Prova da silaba (alinhamento forcado)
+
+# 🔬 PROVA DE BANCADA — não publica nada, não mexe em atividade nenhuma.
+#
+# ⚠️ POR QUE ELA EXISTE (set/2026): o Marcos ouviu o app dizer "vê-á" no lugar
+#    de "va". A causa medida: a voz lê o pedaço ISOLADO ("bo, la, ca") e, quando
+#    o pedaço não é palavra do português, ela SOLETRA. Cortar essa sequência não
+#    conserta — o erro já está dentro do áudio.
+#
+#    O caminho certo, que a pesquisa apontou (`_pesquisa/web/silaba-*.md`):
+#    sintetizar a PALAVRA INTEIRA — que a voz pronuncia bem, porque é palavra de
+#    verdade — e cortar nas fronteiras de sílaba achadas por ALINHAMENTO FORÇADO.
+#
+#    Antes de reescrever o `_padrao/silabas_voz.py` em cima de suposição, esta
+#    prova responde três perguntas com FATO:
+#      1. o `ctc-forced-aligner` instala num runner comum?
+#      2. qual é EXATAMENTE o formato de saída dele?
+#      3. as fronteiras que ele acha batem com as sílabas de CA-VA-LO?
+#
+#    Tudo o que ela descobre fica em `_pesquisa/prova-silaba.txt`, commitado —
+#    porque o que o log da execução engole, o repo guarda (lição de hoje).
+
+on:
+  workflow_dispatch:
+
+jobs:
+  provar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Instalar
+        run: |
+          pip3 install --quiet edge-tts imageio-ffmpeg 2>&1 | tail -2 || true
+          echo "--- ctc-forced-aligner (pode demorar: leva o torch junto) ---"
+          pip3 install --quiet "git+https://github.com/MahmoudAshraf97/ctc-forced-aligner.git" 2>&1 | tail -3 || true
+
+      - name: Sintetizar a palavra INTEIRA e alinhar
+        run: |
+          mkdir -p _pesquisa
+          python3 - <<'PY' 2>&1 | tee _pesquisa/prova-silaba.txt
+          # -*- coding: utf-8 -*-
+          import asyncio, io, json, os, subprocess, sys
+
+          PALAVRAS = [("cavalo", ["CA","VA","LO"]), ("gato", ["GA","TO"]),
+                      ("foguete", ["FO","GUE","TE"]), ("uva", ["U","VA"])]
+          VOZ = "pt-BR-AntonioNeural"
+
+          print("=" * 60)
+          print("1) O ALINHADOR INSTALOU?")
+          try:
+              import ctc_forced_aligner as CFA
+              print("   SIM. o que ele exporta:")
+              print("   ", [x for x in dir(CFA) if not x.startswith("_")])
+          except Exception as e:
+              print("   NAO:", e)
+              CFA = None
+          print("   CLI:", subprocess.call(["which", "ctc-forced-aligner"]) == 0)
+
+          print("=" * 60)
+          print("2) SINTETIZANDO A PALAVRA INTEIRA (sem virgulas, sem pedacos)")
+
+          async def grava(texto, saida):
+              import edge_tts
+              com = edge_tts.Communicate(texto, VOZ, rate="-25%")
+              dados = io.BytesIO()
+              marcas = 0
+              async for p in com.stream():
+                  if p["type"] == "audio":
+                      dados.write(p["data"])
+                  else:
+                      marcas += 1
+              open(saida, "wb").write(dados.getvalue())
+              return len(dados.getvalue()), marcas
+
+          import imageio_ffmpeg
+          ff = imageio_ffmpeg.get_ffmpeg_exe()
+
+          async def tudo():
+              for w, sil in PALAVRAS:
+                  mp3 = "/tmp/%s.mp3" % w
+                  wav = "/tmp/%s.wav" % w
+                  n, marcas = await grava(w + ".", mp3)
+                  subprocess.call([ff, "-y", "-loglevel", "error", "-i", mp3,
+                                   "-ar", "16000", "-ac", "1", wav])
+                  print("   %-10s %6d bytes, %d marca(s) de tempo" % (w, n, marcas))
+                  open("/tmp/%s.txt" % w, "w").write(w)
+              return True
+
+          asyncio.run(tudo())
+
+          print("=" * 60)
+          print("3) ALINHANDO EM NIVEL DE CARACTERE — e este e o ponto:")
+          print("   se o alinhador disser onde acaba o 'ca' e comeca o 'va',")
+          print("   a silaba sai da palavra inteira, com a pronuncia de verdade.")
+          for w, sil in PALAVRAS:
+              print("-" * 60)
+              print("   palavra:", w, "| silabas esperadas:", sil)
+              r = subprocess.run(
+                  ["ctc-forced-aligner", "--audio_path", "/tmp/%s.wav" % w,
+                   "--text_path", "/tmp/%s.txt" % w, "--language", "por",
+                   "--romanize", "--alignment_level", "char"],
+                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+              print("   codigo:", r.returncode)
+              print("   saida:", (r.stdout or b"").decode("utf-8", "replace")[:900])
+              for f in sorted(os.listdir("/tmp")):
+                  if f.startswith(w) and not f.endswith((".mp3", ".wav", ".txt")):
+                      print("   ARQUIVO GERADO:", f)
+                      try:
+                          print("   conteudo:",
+                                open("/tmp/" + f, encoding="utf-8").read()[:700])
+                      except Exception as e:
+                          print("   (nao consegui ler:", e, ")")
+          print("=" * 60)
+          print("FIM DA PROVA")
+          PY
+
+      - name: Guardar a prova no repo
+        if: ${{ always() }}
+        run: |
+          git config user.name "Provador"
+          git config user.email "provador@users.noreply.github.com"
+          git add -A _pesquisa/prova-silaba.txt
+          if git diff --cached --quiet; then
+            echo "nada a guardar"
+          else
+            git commit -m "prova: o que o alinhador forcado devolve"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
