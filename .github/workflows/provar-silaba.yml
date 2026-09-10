@@ -52,78 +52,61 @@ jobs:
           mkdir -p _pesquisa
           python3 - <<'PY' 2>&1 | tee _pesquisa/prova-silaba.txt
           # -*- coding: utf-8 -*-
-          import asyncio, io, json, os, subprocess, sys
+          import asyncio, io, os, subprocess
 
+          # ⚠️ A 1ª prova ensinou duas coisas: o alinhador INSTALA no runner, e a
+          #    opcao chama-se `--split_size char` (eu tinha chutado outro nome).
+          #    Agora vou pela API em Python, que devolve os tempos direto.
           PALAVRAS = [("cavalo", ["CA","VA","LO"]), ("gato", ["GA","TO"]),
-                      ("foguete", ["FO","GUE","TE"]), ("uva", ["U","VA"])]
+                      ("foguete", ["FO","GUE","TE"]), ("uva", ["U","VA"]),
+                      ("panela", ["PA","NE","LA"]), ("borboleta", ["BOR","BO","LE","TA"])]
           VOZ = "pt-BR-AntonioNeural"
-
-          print("=" * 60)
-          print("1) O ALINHADOR INSTALOU?")
-          try:
-              import ctc_forced_aligner as CFA
-              print("   SIM. o que ele exporta:")
-              print("   ", [x for x in dir(CFA) if not x.startswith("_")])
-          except Exception as e:
-              print("   NAO:", e)
-              CFA = None
-          print("   CLI:", subprocess.call(["which", "ctc-forced-aligner"]) == 0)
-
-          print("=" * 60)
-          print("2) SINTETIZANDO A PALAVRA INTEIRA (sem virgulas, sem pedacos)")
+          import imageio_ffmpeg
+          ff = imageio_ffmpeg.get_ffmpeg_exe()
 
           async def grava(texto, saida):
               import edge_tts
               com = edge_tts.Communicate(texto, VOZ, rate="-25%")
-              dados = io.BytesIO()
-              marcas = 0
+              d = io.BytesIO()
               async for p in com.stream():
                   if p["type"] == "audio":
-                      dados.write(p["data"])
-                  else:
-                      marcas += 1
-              open(saida, "wb").write(dados.getvalue())
-              return len(dados.getvalue()), marcas
-
-          import imageio_ffmpeg
-          ff = imageio_ffmpeg.get_ffmpeg_exe()
+                      d.write(p["data"])
+              open(saida, "wb").write(d.getvalue())
 
           async def tudo():
-              for w, sil in PALAVRAS:
-                  mp3 = "/tmp/%s.mp3" % w
-                  wav = "/tmp/%s.wav" % w
-                  n, marcas = await grava(w + ".", mp3)
-                  subprocess.call([ff, "-y", "-loglevel", "error", "-i", mp3,
-                                   "-ar", "16000", "-ac", "1", wav])
-                  print("   %-10s %6d bytes, %d marca(s) de tempo" % (w, n, marcas))
-                  open("/tmp/%s.txt" % w, "w").write(w)
-              return True
-
+              for w, _ in PALAVRAS:
+                  await grava(w + ".", "/tmp/%s.mp3" % w)
+                  subprocess.call([ff, "-y", "-loglevel", "error", "-i", "/tmp/%s.mp3" % w,
+                                   "-ar", "16000", "-ac", "1", "/tmp/%s.wav" % w])
           asyncio.run(tudo())
+          print("audio da PALAVRA INTEIRA gravado para", len(PALAVRAS), "palavras")
 
-          print("=" * 60)
-          print("3) ALINHANDO EM NIVEL DE CARACTERE — e este e o ponto:")
-          print("   se o alinhador disser onde acaba o 'ca' e comeca o 'va',")
-          print("   a silaba sai da palavra inteira, com a pronuncia de verdade.")
+          print("=" * 62)
+          import torch
+          from ctc_forced_aligner import (load_audio, load_alignment_model,
+                                          generate_emissions, preprocess_text,
+                                          get_alignments, get_spans, postprocess_results)
+          modelo, tok = load_alignment_model("cpu", dtype=torch.float32)
+          print("modelo carregado")
           for w, sil in PALAVRAS:
-              print("-" * 60)
-              print("   palavra:", w, "| silabas esperadas:", sil)
-              r = subprocess.run(
-                  ["ctc-forced-aligner", "--audio_path", "/tmp/%s.wav" % w,
-                   "--text_path", "/tmp/%s.txt" % w, "--language", "por",
-                   "--romanize", "--alignment_level", "char"],
-                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-              print("   codigo:", r.returncode)
-              print("   saida:", (r.stdout or b"").decode("utf-8", "replace")[:900])
-              for f in sorted(os.listdir("/tmp")):
-                  if f.startswith(w) and not f.endswith((".mp3", ".wav", ".txt")):
-                      print("   ARQUIVO GERADO:", f)
-                      try:
-                          print("   conteudo:",
-                                open("/tmp/" + f, encoding="utf-8").read()[:700])
-                      except Exception as e:
-                          print("   (nao consegui ler:", e, ")")
-          print("=" * 60)
+              print("-" * 62)
+              print("PALAVRA:", w, "| silabas:", sil)
+              try:
+                  onda = load_audio("/tmp/%s.wav" % w, modelo.dtype, modelo.device)
+                  em, stride = generate_emissions(modelo, onda, batch_size=1)
+                  tks, txts = preprocess_text(w, romanize=True, language="por",
+                                              split_size="char")
+                  seg, sc, branco = get_alignments(em, tks, tok)
+                  vaos = get_spans(tks, seg, branco)
+                  res = postprocess_results(txts, vaos, stride, sc)
+                  print("  tipo devolvido:", type(res).__name__, "| itens:", len(res))
+                  for r in res:
+                      print("   ", r)
+              except Exception as e:
+                  import traceback
+                  print("  ERRO:", e)
+                  traceback.print_exc()
+          print("=" * 62)
           print("FIM DA PROVA")
           PY
 
