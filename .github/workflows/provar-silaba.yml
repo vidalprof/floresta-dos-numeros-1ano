@@ -20,8 +20,15 @@ name: Prova da silaba (alinhamento forcado)
 #    Tudo o que ela descobre fica em `_pesquisa/prova-silaba.txt`, commitado —
 #    porque o que o log da execução engole, o repo guarda (lição de hoje).
 
+# ⚠️ DISPARA POR PUSH, e não por `workflow_dispatch`: o GitHub só aceita
+#    despachar workflow que já existe na branch PADRÃO, e este nasceu numa
+#    branch de trabalho. Tocar no arquivo-marca abaixo faz a prova rodar.
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/provar-silaba.yml'
+      - '_pesquisa/PROVAR-SILABA'
 
 jobs:
   provar:
