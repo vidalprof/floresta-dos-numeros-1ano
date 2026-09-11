@@ -377,14 +377,29 @@ jobs:
           #    Para ouvir TUDO de uma atividade, o caminho continua sendo o ouvir.yml.
           LIM=$(( 360 / ${#ALVS[@]} )); [ "$LIM" -lt 40 ] && LIM=40; [ "$LIM" -gt 120 ] && LIM=120
           echo "orcamento: $LIM falas por atividade (${#ALVS[@]} alvo(s))"
+          # ⚡ O VEREDITO DA VOZ TAMBEM VOLTA BARATO (set/2026). O `::warning::`
+          #    so existe dentro do log do Actions, e ler log daqui do chat custa
+          #    dezenas de milhares de caracteres — na pratica eu acabava NAO
+          #    lendo, e um portao que ninguem le e um portao que nao existe.
+          #    Agora ele deixa `_status/voz-<pasta>.json`, do mesmo tamanho do
+          #    recado da publicacao: um `git fetch` e a resposta esta na mao.
+          #    "estado": ok | torta | naomedi.
+          mkdir -p _status
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"; [ -d "$pasta" ] || continue
             echo "=========== ouvindo $pasta ==========="
-            if python3 _qa/pronuncia.py "$pasta" --limite "$LIM"; then :; else
-              rc=$?
-              if [ "$rc" = "1" ]; then echo "::warning::$pasta: ha fala que NAO diz o que esta escrito (veja acima)"
-              else echo "::warning::$pasta: nao consegui ouvir (codigo $rc)"; fi
-            fi
+            saida=$(python3 _qa/pronuncia.py "$pasta" --limite "$LIM" 2>&1); rc=$?
+            echo "$saida"
+            case "$rc" in
+              0) estado=ok ;;
+              1) estado=torta; echo "::warning::$pasta: ha fala que NAO diz o que esta escrito (veja acima)" ;;
+              *) estado=naomedi; echo "::warning::$pasta: nao consegui ouvir (codigo $rc)" ;;
+            esac
+            # a 1a linha do portao ja resume ("ouvi N fala(s)..." ou "NAO MEDI: ...")
+            resumo=$(printf '%s' "$saida" | head -1 | tr -d '"\\' | cut -c1-200)
+            printf '{"pasta":"%s","estado":"%s","codigo":%s,"resumo":"%s","quando":"%s"}\n' \
+              "$pasta" "$estado" "$rc" "$resumo" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              > "_status/voz-$pasta.json"
           done
 
       # ⭐⭐ AS SÍLABAS SE RECORTAM DA PALAVRA (set/2026 — ordem do Marcos: *"a
