@@ -34,7 +34,12 @@ import sys, os, io, json, re
 # palavras terminadas em -a que são MASCULINAS (não reprovar "o dia")
 MASC_A = set("""dia mapa planeta planetinha problema clima sistema tema poema programa dilema
 cinema mapa telefonema esquema drama panorama diagrama grama(peso) alerta guarda-chuva
-lápis(nao) sofa(nao) pijama dia maquinista salta zeca quebra-cabeça quebra-cabeças""".split())
+lápis(nao) sofa(nao) pijama dia maquinista salta zeca quebra-cabeça quebra-cabeças
+jota agá""".split())
+# ⚠️ "jota" e "agá" são NOMES DE LETRA, e nome de letra é masculino em português:
+#    "o jota", "o agá", "o a", "o eme". Terminam em -a e não são femininos.
+#    Falso-positivo pego no Desfile das Letras (set/2026), o caderno do degrau 0
+#    da sequência de alfabetização — que é justamente o que fala de letra.
 # ⚠️ "quebra-cabeça" é MASCULINO ("o quebra-cabeça"), apesar do -a — composto cuja
 #    cabeça semântica não decide o gênero. Falso-positivo pego no Pinta e Monta (set/2026).
 # ⚠️ "salta" = nome do personagem pulador da peca saltos-na-fita ("o Salta pula de
