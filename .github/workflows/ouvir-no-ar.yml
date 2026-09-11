@@ -20,7 +20,17 @@ name: Ouvir no ar (a voz chegou ao site?)
 #    O veredito fica em `_diag/voz-no-ar-<repo>.txt`, que eu leio com um
 #    `git fetch` — 300 bytes, sem gastar log.
 
+# ⚠️ E POR QUE ELE DISPARA POR MARCA NO COMMIT, e nao so pelo botao: um
+#    `workflow_dispatch` so pode ser acionado se o arquivo do workflow existir na
+#    BRANCH PADRAO. Este nasce numa branch de trabalho, entao o botao responde
+#    404 — foi o que aconteceu na estreia. Gatilho de `push`, ao contrario, roda
+#    a partir da propria branch empurrada. E a mesma saida que o `entregar.yml`
+#    ja usa com a marca `[entregar ...]`.
+#
+#    Marca:  [ouvir a-familia-das-palavras,o-desfile-das-letras]
 on:
+  push:
+    branches: ['**']
   workflow_dispatch:
     inputs:
       repos:
@@ -36,6 +46,10 @@ on:
 jobs:
   ouvir:
     runs-on: ubuntu-latest
+    # so roda se veio pelo botao OU se o commit traz a marca [ouvir ...]
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.head_commit.message, '[ouvir ')
     permissions:
       contents: write
     steps:
@@ -44,10 +58,20 @@ jobs:
 
       - name: Pedir os mp3 ao site e gravar o veredito
         env:
-          REPOS: ${{ inputs.repos }}
-          QUANTAS: ${{ inputs.quantas }}
+          REPOS_IN: ${{ inputs.repos }}
+          QUANTAS_IN: ${{ inputs.quantas }}
+          MSG: ${{ github.event.head_commit.message }}
           OWNER: vidalprof
         run: |
+          # a lista vem do botao; se veio por push, sai de dentro da marca
+          REPOS="$REPOS_IN"
+          if [ -z "$REPOS" ]; then
+            REPOS=$(printf '%s' "$MSG" | sed -n 's/.*\[ouvir \([^]]*\)\].*/\1/p' | head -1)
+          fi
+          QUANTAS="${QUANTAS_IN:-12}"
+          export REPOS QUANTAS
+          echo "vou ouvir: $REPOS"
+          [ -n "$REPOS" ] || { echo "sem lista de repos"; exit 1; }
           mkdir -p _diag
           python3 - <<'EOP'
           import json, os, random, re, urllib.request, urllib.error, datetime
