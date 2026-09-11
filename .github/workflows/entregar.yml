@@ -366,9 +366,10 @@ jobs:
           EOP
           fi
           IFS=',' read -ra ALVS <<< "$LISTA"
-          # ⚠️ MEDIDO EM 11/set/2026, e doeu: com NOVE alvos a 120 falas cada, este
-          #    passo sozinho passou de 75 MINUTOS — mais que a corrida inteira antes
-          #    dele existir, e o Marcos esperando o link. O limite agora e um
+          # ⚠️ MEDIDO EM 11/set/2026: com NOVE alvos a 120 falas cada, este passo
+          #    levou 16min30 (01:30:49 -> 01:47:18). Vale um teto, mas — e isto eu
+          #    diagnostiquei errado de primeira — o gargalo daquela corrida NAO era
+          #    aqui: era o passo seguinte, o recorte das silabas. O limite agora e um
           #    ORCAMENTO DE LOTE (~360 falas na corrida toda), dividido pelos alvos,
           #    com piso de 40 por atividade. Um alvo sozinho continua ouvindo 120;
           #    nove ouvem 40 cada, que ainda cobre a abertura de cada caderno — que
@@ -405,11 +406,22 @@ jobs:
           # ⭐ o alinhador forçado só se instala se ALGUMA pasta falar sílaba —
           #    ele leva o torch junto (~2 min), e não faz sentido pagar isso na
           #    entrega de uma atividade que não tem sílaba nenhuma.
+          # ⚠️ MEDIDO EM 11/set/2026: o guarda olhava so se o ARQUIVO existe — e
+          #    caderno que NAO fala silaba tambem tem `silabas.json`, com
+          #    `"palavras": {}` (e assim de proposito: o portao `_qa/silabas.py`
+          #    confere o vazio). Resultado: bastava um alvo qualquer para o torch e
+          #    o modelo MMS serem baixados, mesmo sem nenhuma silaba para cortar.
+          #    Agora o guarda pergunta o que interessa: ha PALAVRA declarada?
           precisa=0
           IFS=',' read -ra ALVS <<< "$LISTA"
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"
-            [ -f "$pasta/silabas.json" ] && precisa=1
+            [ -f "$pasta/silabas.json" ] || continue
+            if python3 -c 'import json,io,sys; d=json.load(io.open(sys.argv[1],encoding="utf-8")); sys.exit(0 if (d.get("palavras") or {}) else 1)' "$pasta/silabas.json" 2>/dev/null; then
+              precisa=1; echo "$pasta fala silaba"
+            else
+              echo "$pasta nao fala silaba (palavras vazio) — nao paga o alinhador por ele"
+            fi
           done
           if [ "$precisa" = "1" ]; then
             echo "=== instalando o alinhador forcado (palavra inteira -> silaba) ==="
