@@ -813,6 +813,53 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🧩 CLONE DE CADERNO: DUAS ARMADILHAS QUE NÃO DÃO ERRO (set/2026, no degrau 5)
+
+Montando **A Máquina de Juntar Palavras** (`_mont1`, degrau 5 da sequência de
+alfabetização, clonada do `_sil1`) apareceram dois defeitos da MESMA família: o
+código fica correto, o app abre bonito, o `node --check` passa, e mesmo assim a
+criança vê a coisa errada. Os dois viraram PORTÃO.
+
+### 1. Nome de peça de INTERFACE que colide com palavra do pote
+
+A estrelinha da medalha chamava-se `sl_estrela.png` e era carregada por um
+caminho **literal** no código. No dia em que a palavra **ESTRELA** entrou no pote
+de palavras do caderno, o `img("estrela")` passou a montar exatamente o mesmo
+caminho — e a criança veria o **selo dourado da medalha** no lugar do desenho da
+estrela. Nada quebra: o arquivo existe, a imagem carrega.
+
+- **Conserto:** a peça de interface passou a se chamar `<pref>_selo.png` /
+  `_selo_off.png` — em `_mont1`, `_sil1`, `_ini1` e `_som1` (os três últimos já
+  publicados, e a colisão estava LATENTE neles).
+- **Portão:** `_qa/duplicatas.py` ganhou uma **2ª medida**. Todo caminho
+  `img/<prefixo><nome>` escrito LITERALMENTE no código é peça de interface (as
+  figuras do pote nascem de `img/<prefixo>' + palavra`), e nenhum desses nomes
+  pode ser também uma palavra do `var PAL`. Reprova com código 1.
+- **Regra:** nome de peça de interface (selo, troféu, moldura, fundo) **nunca**
+  pode ser um substantivo comum que possa virar palavra de atividade.
+
+### 2. `pega()` embaralha — e a ESCADA declarada morre em silêncio
+
+As folhas viva sorteiam os itens com `pega(pool, n)`, que **embaralha**. Eu havia
+escrito no código o comentário *"a escada está na ordem das linhas: começa com
+três figuras que não se parecem em nada e termina com três que começam igual"* —
+e o sorteio destruía essa ordem. O comentário prometia progressão; a criança
+recebia a pergunta mais difícil no item 1.
+
+- **Conserto:** `pegaEmEscada(pool, n)` — escolhe ao acaso e devolve **na ordem
+  em que os itens foram declarados**. Variedade entre cadernos, progressão dentro
+  de cada um.
+- **Regra:** folha cujo pote é uma ESCADA usa `pegaEmEscada`; folha cujo pote é
+  um saco de itens equivalentes usa `pega`. Escrever "escada" no comentário sem
+  usar a função certa é pior que não escrever nada.
+
+### 3. E o terceiro, pequeno: o botão que pulsa com `scale` não se deixa clicar
+
+O botão JUNTAR pulsava com `transform: scale(1.06)` em laço infinito para chamar
+a criança. O **jogador automático não conseguiu clicar nele nem uma vez em oito**
+— o alvo nunca para. A criança de seis anos tem a mesma mira. **Convite pulsa na
+LUZ (`box-shadow`), nunca no tamanho.**
+
 ## ⚖️ AS LEIS FIXAS DO EDUCAVERSO + COMO A FÁBRICA FUNCIONA DE VERDADE (Marcos aprovou, 2026-07-19)
 > **LER SEMPRE antes de criar QUALQUER atividade. O Marcos cravou isto nesta sessão.**
 >

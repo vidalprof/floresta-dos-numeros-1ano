@@ -19,6 +19,17 @@ u"""
 
  O que REPROVA (codigo 1): duas imagens identicas, com nomes diferentes, e as
  DUAS usadas pelo `index.html` — a crianca ve as duas.
+
+ ⭐ 2a MEDIDA (set/2026) — NOME DE PECA DE INTERFACE QUE COLIDE COM PALAVRA DO
+    POTE. A estrelinha da medalha chamava-se `xx_estrela.png` e era carregada por
+    um caminho LITERAL no codigo. No dia em que a palavra ESTRELA entrou no pote
+    de um caderno de alfabetizacao, o `img("estrela")` passou a montar exatamente
+    o mesmo caminho — e a crianca via o selo dourado da medalha no lugar do
+    desenho da estrela. Nada quebrava: o arquivo existe, a imagem carrega, o
+    `node --check` passa. Por isso o portao compara os dois mundos: todo caminho
+    `img/<prefixo><nome>` escrito LITERALMENTE no codigo e peca de interface (as
+    figuras do pote nascem de `img/<prefixo>' + palavra`), e nenhum desses nomes
+    pode ser tambem uma palavra do `var PAL`.
  O que so AVISA: a duplicata existe na pasta mas so um nome (ou nenhum) e usado
  pela atividade. Ainda e sujeira no banco (o `_banco/montar.py` copia a figura
  errada com o nome errado), mas nao chega na crianca hoje.
@@ -109,8 +120,46 @@ for f in sorted(os.listdir(img)):
         continue
     grupos.setdefault(sha, []).append(os.path.splitext(f)[0])
 
+# ---- 2a medida: peca de INTERFACE com nome de palavra do pote -----------------
+fontes = html
+for extra_js in ("folhas.js", "app.js", "pecas.js"):
+    cam_js = os.path.join(pasta, extra_js)
+    if os.path.isfile(cam_js):
+        try:
+            fontes += io.open(cam_js, encoding="utf-8").read()
+        except Exception:
+            pass
+
+pote = set()
+m_pal = re.search(r"var PAL\s*=\s*\{(.*?)\n\};", fontes, re.S)
+if m_pal:
+    pote = set(re.findall(r'(\w+)\s*:\s*\[', m_pal.group(1)))
+
+colisoes = []
+if pote:
+    vistos = set()
+    for bruto, _off in re.findall(
+            r'''["']img/([A-Za-z0-9_]+?)(_off)?(?:\.png|\.jpg|\.jpeg|\.webp|["'])''', fontes):
+        if bruto.endswith("_"):          # `img/mo_` + palavra -> figura do pote, nao interface
+            continue
+        nu = re.sub(r"^[A-Za-z]{1,4}_", "", bruto)
+        if nu in pote and nu not in vistos:
+            vistos.add(nu)
+            colisoes.append((bruto, nu))
+
+for bruto, nu in colisoes:
+    print(u"   REPROVA img/%s  — este caminho esta escrito LITERALMENTE no codigo "
+          u"(e peca de INTERFACE), mas `%s` tambem e uma palavra do pote: o "
+          u"`img(\"%s\")` monta o MESMO arquivo e a crianca ve a peca de interface "
+          u"no lugar do desenho. Renomeie a peca de interface (ex.: `selo`)."
+          % (bruto, nu, nu))
+
 pares = [g for g in grupos.values() if len(g) > 1]
 if not pares:
+    if colisoes:
+        print(u"%s -> %d imagem(ns); REPROVADO: %d nome(s) de interface colidindo com "
+              u"palavra do pote" % (pasta, total, len(colisoes)))
+        sys.exit(1)
     print(u"%s -> %d imagem(ns), nenhuma duplicata com nome diferente" % (pasta, total))
     sys.exit(0)
 
@@ -141,8 +190,9 @@ for g, em_uso in reprovas:
           u"%s/_copias_ok.json com a razao."
           % (u" = ".join(g), len(em_uso), u", ".join(em_uso), pasta))
 
-if reprovas:
-    print(u"REPROVADO: %d duplicata(s) que a crianca ve" % len(reprovas))
+if reprovas or colisoes:
+    print(u"REPROVADO: %d duplicata(s) que a crianca ve + %d colisao(oes) "
+          u"interface x pote" % (len(reprovas), len(colisoes)))
     sys.exit(1)
 print(u"passou (%d aviso(s) de sujeira no banco)" % len(avisos) if avisos else u"passou")
 sys.exit(0)

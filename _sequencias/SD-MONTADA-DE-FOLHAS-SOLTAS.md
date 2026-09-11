@@ -76,17 +76,21 @@ publica em folha avulsa (porque são conversa de sala, não exercício de papel)
 
 ## 5. A escada completa, com a interatividade de cada degrau
 
-| Degrau | Interatividade | Já temos? |
-|---|---|---|
-| 0. **Alfabeto e ordem** *(da SD de 10 aulas)* | ordenar arrastando + achar na cena | ✅ |
-| 1. **Rima** | escolher · ligar · **pintar com a canetinha** (é o gesto que a folha pede) | ✅ |
-| 2. **A palavra tem pedaços** | **bater palma**, cada palma dizendo a sua sílaba | ✅ |
-| 3. **Como começa** (sílaba inicial) | circular com o laço · pintar · completar | ✅ |
-| 4. **O som que abre** (fonema) | marcar vários · classificar nas gavetas | ✅ |
-| 5. **A sílaba que falta** | juntar sílabas · ordenar · teclado (as duas portas) | ✅ |
-| 6. **A letra que falta** | letra escondida · forca | ✅ |
-| 7. **Espaços entre palavras** *(da SD de 10 aulas)* | ⭐ **cortar a frase** tocando entre as palavras | ⚠️ nova |
-| 8. **Jogar com tudo** | memória de sons · caça-palavras | ✅ |
+> **⭐ ONDE A SEQUÊNCIA ESTÁ (atualizado a cada caderno publicado).** A coluna
+> "Já temos?" abaixo dizia se a MECÂNICA existia; a coluna nova diz se o
+> **caderno** existe e está no ar.
+
+| Degrau | Interatividade | Mecânica? | O caderno |
+|---|---|---|---|
+| 0. **Alfabeto e ordem** *(da SD de 10 aulas)* | ordenar arrastando + achar na cena | ✅ | ✅ **O Desfile das Letras** (`_abc1`) |
+| 1. **Rima** | escolher · ligar · **pintar com a canetinha** (é o gesto que a folha pede) | ✅ | ✅ **Palavras que Rimam** (`_rima1`) |
+| 2. **A palavra tem pedaços** | **bater palma**, cada palma dizendo a sua sílaba | ✅ | ✅ **Bate-Palma das Palavras** (`_sil1`) |
+| 3. **Como começa** (sílaba inicial) | circular com o laço · pintar · completar | ✅ | ✅ **A Família das Palavras** (`_ini1`) |
+| 4. **O som que abre** (fonema) | marcar vários · classificar nas gavetas | ✅ | ✅ **O Som que Abre** (`_som1`) |
+| 5. **A sílaba que falta** | juntar sílabas · ordenar · teclado (as duas portas) | ✅ | ✅ **A Máquina de Juntar Palavras** (`_mont1`) |
+| 6. **A letra que falta** | letra escondida · forca | ✅ | ⬜ a montar (`_sequencias/folhas_d6`) |
+| 7. **Espaços entre palavras** *(da SD de 10 aulas)* | ⭐ **cortar a frase** tocando entre as palavras | ⚠️ nova | ⬜ a montar (`_sequencias/folhas_d7`) |
+| 8. **Jogar com tudo** | memória de sons · caça-palavras | ✅ | ⬜ a montar |
 
 **Uma única mecânica nova em nove degraus.** Todo o resto a casa já tem pronto e
 lapidado.
