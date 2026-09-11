@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>A Prova da Coruja Cora — Matemática 3º ano</title>
+<title>Expedição Cartográfica — Geografia de Santa Catarina — 5º ano</title>
 <style>
 /* ===== PROVA de Matemática — 3º ano (adição e subtração com reagrupamento) =====
    Tema INFANTIL, LÚDICO e COLORIDO: céu + gramado, cartões brancos arredondados,
@@ -17,7 +17,8 @@ body{
   background:linear-gradient(to bottom,#8fd3ff 0%,#c9efff 46%,#bdeb9a 100%);
   min-height:100vh;-webkit-text-size-adjust:100%;
 }
-#fundo{position:fixed;inset:0;z-index:-1;background:url("img/ma_fundo.png") center bottom no-repeat;background-size:cover;opacity:.28;}
+#fundo{position:fixed;inset:0;z-index:-1;background:url("img/geo_serra.jpg") center bottom no-repeat;background-size:100% auto;opacity:.30;}
+#fundo::before{content:"";position:absolute;inset:0;background:-webkit-linear-gradient(top,#eaf4fb 0%,#eaf4fb 46%,rgba(234,244,251,0) 78%);background:linear-gradient(to bottom,#eaf4fb 0%,#eaf4fb 46%,rgba(234,244,251,0) 78%);}
 #app{max-width:820px;margin:0 auto;padding:12px 16px 40px;min-height:100vh;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
 
 /* ---- o CARTÃO ---- */
@@ -58,26 +59,25 @@ img{max-width:100%;}
 /* chip do tema */
 .disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:14px;padding:5px 13px;margin:2px 0 8px;color:#fff;}
 .disc.jun{background:#3fb356;} .disc.acr{background:#2aa9b0;} .disc.sep{background:#ef6d3a;} .disc.ret{background:#d64b7a;} .disc.conc{background:#8a63d2;} .disc.cmp{background:#e0a41f;}
-/* material dourado (ajuda visual) */
-.dourado{margin:2px auto 12px;padding:10px 8px;background:#fffdf4;border:3px solid #f0d488;border-radius:16px;max-width:480px;-webkit-box-shadow:0 4px 12px rgba(150,120,20,.16);box-shadow:0 4px 12px rgba(150,120,20,.16);}
-.dourado .dlbl{font-size:13px;font-weight:bold;color:#9a7b16;margin-bottom:5px;letter-spacing:.4px;}
-.dourado .drow{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:4px 10px;}
-.dourado .dop{font-size:30px;font-weight:bold;color:#c58b12;margin:0 4px;}
-.dgrp{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:flex-end;-webkit-align-items:flex-end;align-items:flex-end;gap:5px;padding:3px;}
-.mdd{display:inline-block;width:14px;height:105px;border:1.5px solid #b9860f;border-radius:2px;
-  background:#f6c945;background-image:-webkit-repeating-linear-gradient(top,#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px);background-image:repeating-linear-gradient(#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px);}
-.mdc{display:inline-block;width:105px;height:105px;border:1.5px solid #b9860f;border-radius:2px;background:#f6c945;
-  background-image:-webkit-repeating-linear-gradient(top,#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px),-webkit-repeating-linear-gradient(left,#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px);
-  background-image:repeating-linear-gradient(#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px),repeating-linear-gradient(90deg,#f6c945 0,#f6c945 9px,#b9860f 9px,#b9860f 10.5px);}
-.mdunits{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;width:34px;-webkit-box-align:flex-end;align-items:flex-end;-webkit-align-content:flex-end;align-content:flex-end;gap:3px;}
-.mdu{display:inline-block;width:13px;height:13px;background:#f6c945;border:1.5px solid #b9860f;border-radius:2px;}
-.mdframe{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;width:100px;gap:4px;-webkit-box-pack:center;justify-content:center;margin:0 auto;}
-.mdslot{width:26px;height:26px;border-radius:4px;border:2px dashed #d8b84e;background:#fffef7;}
-.mdslot.on{background:#f6c945;border-style:solid;border-color:#b9860f;}
 
 /* foto da questão */
-.qfig{display:block;max-height:132px;margin:2px auto 8px;padding:5px;background:#fff;border:3px solid #ffe0a3;border-radius:16px;
+/* ⚠️ A FIGURA DESTA PROVA É O ENUNCIADO. Aqui a criança não olha um desenho
+   bonitinho: ela LÊ um mapa — procura a legenda, acha o rio, compara o tom da
+   cor. Os 132px que a prova de matemática usava deixavam Santa Catarina do
+   tamanho de uma unha dentro do mapa do Brasil: a pergunta ficava impossível.
+   Por isso a figura é grande E abre em tela cheia ao toque (os mapas têm 1100px
+   de largura de verdade — há o que ampliar). */
+.qfig{display:block;max-height:300px;max-width:100%;margin:2px auto 2px;padding:5px;background:#fff;border:3px solid #ffe0a3;border-radius:16px;
+  cursor:-webkit-zoom-in;cursor:zoom-in;
   -webkit-box-shadow:0 6px 14px rgba(40,80,120,.20);box-shadow:0 6px 14px rgba(40,80,120,.20);}
+.qlupa{display:block;margin:0 auto 8px;padding:8px 14px;border:0;background:none;color:#2f6f8f;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer;}
+#lupa{position:fixed;inset:0;z-index:60;background:rgba(14,30,45,.92);padding:10px;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;}
+#lupa.off{display:none;}
+#lupa img{max-width:100%;max-height:86vh;background:#fff;padding:6px;border-radius:14px;}
+#lupaFecha{position:absolute;top:12px;right:12px;min-width:52px;min-height:52px;border-radius:50%;border:0;
+  background:#fff;color:#25506e;font-size:26px;font-weight:bold;cursor:pointer;font-family:inherit;}
 
 .pergunta{font-family:"Trebuchet MS",sans-serif;font-size:22px;font-weight:bold;color:#22384a;line-height:1.3;margin:2px 8px 10px;}
 
@@ -100,7 +100,7 @@ img{max-width:100%;}
 .btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);}
 input{font-family:inherit;font-size:19px;padding:11px 10px;border:3px solid #9fd0ec;border-radius:16px;width:84%;max-width:320px;margin:4px auto;display:block;text-align:center;color:#22384a;background:#fbfeff;}
 label{font-size:16px;font-weight:bold;color:#2f6f8f;display:block;margin-top:6px;}
-.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
+.turmas{max-width:252px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
 .tbox{margin:6px;min-width:80px;padding:13px 12px;border:3px solid #9fd0ec;border-radius:18px;background:#fbfeff;color:#2f6f8f;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #cfe6f4;box-shadow:0 4px 0 #cfe6f4;}
 .tbox.on{background:#3fb356;color:#fff;border-color:#2e8b41;-webkit-box-shadow:0 4px 0 #2e8b41;box-shadow:0 4px 0 #2e8b41;}
 .tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
@@ -145,6 +145,7 @@ label{font-size:16px;font-weight:bold;color:#2f6f8f;display:block;margin-top:6px
 
 <div id="fundo"></div>
 <div id="app" class="tela"></div>
+<div id="lupa" class="off" onclick="fecharLupa()"><button id="lupaFecha" type="button" onclick="fecharLupa()" aria-label="Fechar">&times;</button><img id="lupaImg" src="" alt="Figura da pergunta ampliada"></div>
 <div id="barra">
   <button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>
   <button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">&#8635;</button>
@@ -152,64 +153,104 @@ label{font-size:16px;font-weight:bold;color:#2f6f8f;display:block;margin-top:6px
 
 <script>
 /* ====== CONFIG ====== */
-var TURMAS=["3º A","3º B","3º C","3º D"];
+var TURMAS=["5º A","5º B","5º C","5º D"];
 /* avatares: reaproveitados dos crachás da casa (a criança escolhe o seu). */
 var AVATARES=[
- {id:"ma_cr1.png", cor:"#3fb356"},{id:"ma_cr2.png", cor:"#3a7bd5"},
- {id:"ma_cr3.png", cor:"#ef6d3a"},{id:"ma_cr4.png", cor:"#8a63d2"},
- {id:"ma_cr5.png", cor:"#d64b7a"},{id:"ma_cr6.png", cor:"#e0a41f"}
+ {id:"geo_cr1.png", cor:"#2f7d4f"},{id:"geo_cr2.png", cor:"#2a6fb0"},
+ {id:"geo_cr3.png", cor:"#c25a2c"},{id:"geo_cr4.png", cor:"#6f4fa8"},
+ {id:"geo_cr5.png", cor:"#b03a63"},{id:"geo_cr6.png", cor:"#b8860b"}
 ];
-var SLUG="matematica-2ano";   /* caminho no Firebase: /provas/<SLUG> */
+var SLUG="geografia-sc-5ano";   /* caminho no Firebase: /provas/<SLUG> */
 var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 var URL_PLANILHA="";
-var HISTORIA="Oi! Eu sou a Cora, a coruja da matemática. Hoje você vai resolver dez problemas de somar e de tirar com números maiores. Em uns a gente JUNTA ou ACRESCENTA, em outros a gente SEPARA, RETIRA ou COMPARA. Embaixo de cada problema tem o material dourado, com dezenas e centenas, para você contar e se ajudar. Eu leio cada problema e cada resposta em voz alta, e você toca na resposta certa. Agora escreva o seu nome, escolha a sua turma e o seu personagem, e toque em começar!";
+var HISTORIA="Olá, explorador! Esta é a sua expedição pela Geografia de Santa Catarina. São vinte perguntas sobre o nosso estado: onde ele fica, como é o relevo, o clima, os rios, a vegetação — e, principalmente, como LER um mapa de verdade. Quase toda pergunta tem um mapa ou uma foto junto: olhe com calma antes de responder, porque a resposta quase sempre está ali. Eu leio cada pergunta e cada alternativa em voz alta, e você toca na que achar certa. Agora escreva o seu nome, escolha a sua turma e o seu personagem, e toque em começar!";
 var _histTocada=false;
 
 /* ====== As 10 questões (múltipla escolha) — resposta controlada aqui ======
    disc: brinc = brincadeiras e jogos | corpo = o corpo em movimento | conviv = convivência
    img: figura da questão (aparece se existir em img/). */
 var QUESTOES=[
- {disc:"jun", img:"ma_p1.png", dourado:{a:28,b:15,op:"+"}, pergunta:"Na festa, Ana encheu 28 balões e o papai encheu mais 15. JUNTANDO os dois, quantos balões ficaram?",
-  opcoes:["43 balões.","33 balões.","44 balões."], correta:0,
-  fala:"Pergunta um. Na festa, Ana encheu vinte e oito balões e o papai encheu mais quinze. Juntando os dois, quantos balões ficaram? Olhe o material dourado para ajudar. Letra A: quarenta e três balões. Letra B: trinta e três balões. Letra C: quarenta e quatro balões."},
+ {disc:"loc", img:"geo_mapa_sc_brasil.png", pergunta:"Olhe o mapa. Em qual região do Brasil fica Santa Catarina?",
+  opcoes:["Região Norte.", "Região Sul.", "Região Sudeste.", "Região Nordeste."], correta:1,
+  fala:"Pergunta um. Olhe o mapa. Em qual região do Brasil fica Santa Catarina? Letra A: Região Norte. Letra B: Região Sul. Letra C: Região Sudeste. Letra D: Região Nordeste."},
 
- {disc:"acr", img:"ma_p2.png", dourado:{a:45,b:27,op:"+"}, pergunta:"No pote havia 45 pipocas. A vovó ACRESCENTOU mais 27. Com quantas pipocas o pote ficou?",
-  opcoes:["62 pipocas.","73 pipocas.","72 pipocas."], correta:2,
-  fala:"Pergunta dois. No pote havia quarenta e cinco pipocas. A vovó acrescentou mais vinte e sete. Com quantas pipocas o pote ficou? Olhe o material dourado para ajudar. Letra A: sessenta e duas pipocas. Letra B: setenta e três pipocas. Letra C: setenta e duas pipocas."},
+ {disc:"loc", img:"geo_mapa_ibge.jpg", pergunta:"No mapa, qual estado faz divisa com Santa Catarina ao NORTE?",
+  opcoes:["Mato Grosso do Sul.", "São Paulo.", "Rio Grande do Sul.", "Paraná."], correta:3,
+  fala:"Pergunta dois. No mapa, qual estado faz divisa com Santa Catarina ao NORTE? Letra A: Mato Grosso do Sul. Letra B: São Paulo. Letra C: Rio Grande do Sul. Letra D: Paraná."},
 
- {disc:"ret", img:"ma_p3.png", dourado:{a:34,b:8,op:"-"}, pergunta:"No prato havia 34 morangos. O Téo comeu 8. Quantos morangos SOBRARAM no prato?",
-  opcoes:["24 morangos.","26 morangos.","28 morangos."], correta:1,
-  fala:"Pergunta três. No prato havia trinta e quatro morangos. O Téo comeu oito. Quantos morangos sobraram no prato? Olhe o material dourado para ajudar. Letra A: vinte e quatro morangos. Letra B: vinte e seis morangos. Letra C: vinte e oito morangos."},
+ {disc:"loc", img:"geo_mapa_ibge.jpg", pergunta:"Ainda no mapa: o que fica a LESTE de Santa Catarina, do lado onde o sol nasce?",
+  opcoes:["O oceano Atlântico.", "O Paraná.", "O Rio Grande do Sul.", "A Argentina."], correta:0,
+  fala:"Pergunta três. Ainda no mapa: o que fica a LESTE de Santa Catarina, do lado onde o sol nasce? Letra A: O oceano Atlântico. Letra B: O Paraná. Letra C: O Rio Grande do Sul. Letra D: A Argentina."},
 
- {disc:"ret", img:"ma_p4.png", dourado:{a:60,b:25,op:"-"}, pergunta:"Numa caixa havia 60 lápis. A professora tirou 25. Quantos lápis FICARAM na caixa?",
-  opcoes:["35 lápis.","25 lápis.","45 lápis."], correta:0,
-  fala:"Pergunta quatro. Numa caixa havia sessenta lápis. A professora tirou vinte e cinco. Quantos lápis ficaram na caixa? Olhe o material dourado para ajudar. Letra A: trinta e cinco lápis. Letra B: vinte e cinco lápis. Letra C: quarenta e cinco lápis."},
+ {disc:"loc", img:"geo_ponte.jpg", pergunta:"Esta é a Ponte Hercílio Luz, em Florianópolis. Por que a capital de Santa Catarina precisa de pontes?",
+  opcoes:["Porque a cidade fica no alto de uma serra muito íngreme.", "Porque a cidade foi construída em cima de um grande lago.", "Porque a cidade é cortada ao meio por uma rodovia federal.", "Porque a parte principal da cidade fica numa ILHA, separada do continente."], correta:3,
+  fala:"Pergunta quatro. Esta é a Ponte Hercílio Luz, em Florianópolis. Por que a capital de Santa Catarina precisa de pontes? Letra A: Porque a cidade fica no alto de uma serra muito íngreme. Letra B: Porque a cidade foi construída em cima de um grande lago. Letra C: Porque a cidade é cortada ao meio por uma rodovia federal. Letra D: Porque a parte principal da cidade fica numa ILHA, separada do continente."},
 
- {disc:"cmp", img:"ma_p5.png", dourado:{a:24,b:15,op:"-"}, pergunta:"Lia tem 24 figurinhas e Bia tem 15. Quantas figurinhas Lia tem A MAIS que Bia?",
-  opcoes:["8 figurinhas.","11 figurinhas.","9 figurinhas."], correta:2,
-  fala:"Pergunta cinco. Lia tem vinte e quatro figurinhas e Bia tem quinze. Quantas figurinhas Lia tem a mais que Bia? Para comparar, a gente tira. Olhe o material dourado para ajudar. Letra A: oito figurinhas. Letra B: onze figurinhas. Letra C: nove figurinhas."},
+ {disc:"meso", img:"geo_mapa_regioes.png", pergunta:"O mapa mostra as regiões de Santa Catarina. Em qual delas fica a capital, Florianópolis?",
+  opcoes:["Oeste.", "Grande Florianópolis.", "Serrana.", "Norte."], correta:1,
+  fala:"Pergunta cinco. O mapa mostra as regiões de Santa Catarina. Em qual delas fica a capital, Florianópolis? Letra A: Oeste. Letra B: Grande Florianópolis. Letra C: Serrana. Letra D: Norte."},
 
- {disc:"sep", img:"ma_p6.png", dourado:{a:43,b:16,op:"-"}, pergunta:"Havia 43 balas na mesa. A mãe SEPAROU 16 para levar. Quantas balas ficaram na mesa?",
-  opcoes:["33 balas.","27 balas.","37 balas."], correta:1,
-  fala:"Pergunta seis. Havia quarenta e três balas na mesa. A mãe separou dezesseis para levar. Quantas balas ficaram na mesa? Olhe o material dourado para ajudar. Letra A: trinta e três balas. Letra B: vinte e sete balas. Letra C: trinta e sete balas."},
+ {disc:"meso", img:"geo_mapa_regioes.png", pergunta:"Ache Blumenau no mapa. Em que região ela fica?",
+  opcoes:["Oeste.", "Sul.", "Vale do Itajaí.", "Serrana."], correta:2,
+  fala:"Pergunta seis. Ache Blumenau no mapa. Em que região ela fica? Letra A: Oeste. Letra B: Sul. Letra C: Vale do Itajaí. Letra D: Serrana."},
 
- {disc:"jun", img:"ma_p7.png", dourado:{a:27,b:18,op:"+"}, pergunta:"No recreio, 27 crianças brincavam e mais 18 vieram brincar. JUNTANDO todas, quantas crianças ficaram no recreio?",
-  opcoes:["35 crianças.","46 crianças.","45 crianças."], correta:2,
-  fala:"Pergunta sete. No recreio, vinte e sete crianças brincavam e mais dezoito vieram brincar. Juntando todas, quantas crianças ficaram no recreio? Olhe o material dourado para ajudar. Letra A: trinta e cinco crianças. Letra B: quarenta e seis crianças. Letra C: quarenta e cinco crianças."},
+ {disc:"meso", img:"geo_mapa_regioes.png", pergunta:"Uma família sai de Chapecó, no Oeste, e viaja até Florianópolis, no litoral. Pela rosa dos ventos do mapa, em que sentido ela viaja?",
+  opcoes:["Do leste para o oeste.", "Do norte para o sul.", "Do sul para o norte.", "Do oeste para o leste."], correta:3,
+  fala:"Pergunta sete. Uma família sai de Chapecó, no Oeste, e viaja até Florianópolis, no litoral. Pela rosa dos ventos do mapa, em que sentido ela viaja? Letra A: Do leste para o oeste. Letra B: Do norte para o sul. Letra C: Do sul para o norte. Letra D: Do oeste para o leste."},
 
- {disc:"ret", img:"ma_p8.png", dourado:{a:52,b:17,op:"-"}, pergunta:"No cesto havia 52 bolinhas. O Téo TIROU 17 para brincar. Quantas bolinhas FICARAM no cesto?",
-  opcoes:["35 bolinhas.","45 bolinhas.","25 bolinhas."], correta:0,
-  fala:"Pergunta oito. No cesto havia cinquenta e duas bolinhas. O Téo tirou dezessete para brincar. Quantas bolinhas ficaram no cesto? Olhe o material dourado para ajudar. Letra A: trinta e cinco bolinhas. Letra B: quarenta e cinco bolinhas. Letra C: vinte e cinco bolinhas."},
+ {disc:"rel", img:"geo_perfil.svg", pergunta:"O desenho mostra um corte do relevo catarinense, do mar para o interior. O que acontece com o terreno quando a gente se afasta do litoral?",
+  opcoes:["Ele DESCE: vai ficando cada vez mais baixo até virar planície.", "Ele SOBE: da planície litorânea para a serra e depois para o planalto.", "Ele sobe até a serra e depois vira mar de novo.", "Ele fica sempre na mesma altura, plano do começo ao fim."], correta:1,
+  fala:"Pergunta oito. O desenho mostra um corte do relevo catarinense, do mar para o interior. O que acontece com o terreno quando a gente se afasta do litoral? Letra A: Ele DESCE: vai ficando cada vez mais baixo até virar planície. Letra B: Ele SOBE: da planície litorânea para a serra e depois para o planalto. Letra C: Ele sobe até a serra e depois vira mar de novo. Letra D: Ele fica sempre na mesma altura, plano do começo ao fim."},
 
- {disc:"jun", img:"ma_p9.png", dourado:{a:36,b:29,op:"+"}, pergunta:"Na caixa de brinquedos há 36 carrinhos e 29 bonecas. JUNTANDO tudo, quantos brinquedos há ao todo?",
-  opcoes:["55 brinquedos.","65 brinquedos.","66 brinquedos."], correta:1,
-  fala:"Pergunta nove. Na caixa de brinquedos há trinta e seis carrinhos e vinte e nove bonecas. Juntando tudo, quantos brinquedos há ao todo? Olhe o material dourado para ajudar. Letra A: cinquenta e cinco brinquedos. Letra B: sessenta e cinco brinquedos. Letra C: sessenta e seis brinquedos."},
+ {disc:"rel", img:"geo_mapa_relevo.jpg", pergunta:"Neste mapa de relevo, o VERDE é terra baixa e o MARROM é terra alta. O que ele mostra sobre Santa Catarina?",
+  opcoes:["O terreno é mais baixo perto do mar e mais alto no interior.", "O terreno é mais alto perto do mar e mais baixo no interior.", "O estado inteiro fica abaixo do nível do mar.", "O terreno é igualzinho em todo o estado."], correta:0,
+  fala:"Pergunta nove. Neste mapa de relevo, o VERDE é terra baixa e o MARROM é terra alta. O que ele mostra sobre Santa Catarina? Letra A: O terreno é mais baixo perto do mar e mais alto no interior. Letra B: O terreno é mais alto perto do mar e mais baixo no interior. Letra C: O estado inteiro fica abaixo do nível do mar. Letra D: O terreno é igualzinho em todo o estado."},
 
- {disc:"acr", img:"ma_p10.png", dourado:{a:148,b:25,op:"+"}, pergunta:"A turma tinha 148 estrelinhas e GANHOU mais 25. Com quantas estrelinhas a turma ficou?",
-  opcoes:["163 estrelinhas.","172 estrelinhas.","173 estrelinhas."], correta:2,
-  fala:"Pergunta dez, a última. A turma tinha cento e quarenta e oito estrelinhas e ganhou mais vinte e cinco. Com quantas estrelinhas a turma ficou? Olhe o material dourado para ajudar. Letra A: cento e sessenta e três estrelinhas. Letra B: cento e setenta e duas estrelinhas. Letra C: cento e setenta e três estrelinhas."}
+ {disc:"rel", img:"geo_praia.jpg", pergunta:"Esta faixa de terra baixa e plana, colada no mar, tem um nome na Geografia. Qual é?",
+  opcoes:["Depressão.", "Planície litorânea.", "Planalto.", "Serra."], correta:1,
+  fala:"Pergunta dez. Esta faixa de terra baixa e plana, colada no mar, tem um nome na Geografia. Qual é? Letra A: Depressão. Letra B: Planície litorânea. Letra C: Planalto. Letra D: Serra."},
+
+ {disc:"cli", img:"geo_neve.jpg", pergunta:"Em algumas cidades da Serra, como São Joaquim, cai geada e às vezes neve no inverno. Por que isso acontece bem ali, e não no litoral?",
+  opcoes:["Porque a Serra fica muito mais ALTA, e quanto mais alto, mais frio.", "Porque na Serra chove menos durante o ano todo.", "Porque a Serra fica mais perto da linha do Equador.", "Porque a Serra fica muito mais perto do oceano."], correta:0,
+  fala:"Pergunta onze. Em algumas cidades da Serra, como São Joaquim, cai geada e às vezes neve no inverno. Por que isso acontece bem ali, e não no litoral? Letra A: Porque a Serra fica muito mais ALTA, e quanto mais alto, mais frio. Letra B: Porque na Serra chove menos durante o ano todo. Letra C: Porque a Serra fica mais perto da linha do Equador. Letra D: Porque a Serra fica muito mais perto do oceano."},
+
+ {disc:"cli", img:"", pergunta:"Qual é o clima de Santa Catarina?",
+  opcoes:["Subtropical úmido, com as quatro estações bem definidas e chuva o ano todo.", "Desértico, com muito calor de dia e muito frio de noite.", "Semiárido, com longos períodos de seca.", "Equatorial, quente e úmido o ano inteiro, sem inverno."], correta:0,
+  fala:"Pergunta doze. Qual é o clima de Santa Catarina? Letra A: Subtropical úmido, com as quatro estações bem definidas e chuva o ano todo. Letra B: Desértico, com muito calor de dia e muito frio de noite. Letra C: Semiárido, com longos períodos de seca. Letra D: Equatorial, quente e úmido o ano inteiro, sem inverno."},
+
+ {disc:"hid", img:"geo_mapa_bacias.jpg", pergunta:"No mapa das bacias, as bacias do Sudeste (roxo) ficam do lado do oceano. Para onde correm as águas desses rios?",
+  opcoes:["Para o interior, a oeste.", "Para o norte, entrando no Paraná.", "Elas ficam paradas em lagos.", "Para o mar, a leste."], correta:3,
+  fala:"Pergunta treze. No mapa das bacias, as bacias do Sudeste (roxo) ficam do lado do oceano. Para onde correm as águas desses rios? Letra A: Para o interior, a oeste. Letra B: Para o norte, entrando no Paraná. Letra C: Elas ficam paradas em lagos. Letra D: Para o mar, a leste."},
+
+ {disc:"hid", img:"geo_mapa_bacias.jpg", pergunta:"Ainda no mapa das bacias: a parte amarela, que ocupa quase todo o interior, é a bacia de qual rio?",
+  opcoes:["Do rio São Francisco.", "Do rio Amazonas.", "Do rio Uruguai.", "Do rio Tietê."], correta:2,
+  fala:"Pergunta catorze. Ainda no mapa das bacias: a parte amarela, que ocupa quase todo o interior, é a bacia de qual rio? Letra A: Do rio São Francisco. Letra B: Do rio Amazonas. Letra C: Do rio Uruguai. Letra D: Do rio Tietê."},
+
+ {disc:"veg", img:"", pergunta:"No planalto catarinense há uma floresta com um pinheiro muito típico, de galhos abertos como um guarda-chuva. Que árvore é essa?",
+  opcoes:["A araucária, o pinheiro-do-paraná.", "O coqueiro.", "O cacto mandacaru.", "A seringueira."], correta:0,
+  fala:"Pergunta quinze. No planalto catarinense há uma floresta com um pinheiro muito típico, de galhos abertos como um guarda-chuva. Que árvore é essa? Letra A: A araucária, o pinheiro-do-paraná. Letra B: O coqueiro. Letra C: O cacto mandacaru. Letra D: A seringueira."},
+
+ {disc:"veg", img:"geo_praia2.jpg", pergunta:"Perto do mar, onde a água doce do rio encontra a água salgada, cresce uma vegetação de raízes tortas dentro da lama. Como se chama esse ambiente?",
+  opcoes:["Cerrado.", "Pampa.", "Mangue.", "Caatinga."], correta:2,
+  fala:"Pergunta dezesseis. Perto do mar, onde a água doce do rio encontra a água salgada, cresce uma vegetação de raízes tortas dentro da lama. Como se chama esse ambiente? Letra A: Cerrado. Letra B: Pampa. Letra C: Mangue. Letra D: Caatinga."},
+
+ {disc:"cart", img:"geo_mapa_ibge.jpg", pergunta:"Olhe a LEGENDA deste mapa do IBGE, no canto de baixo. Para que ela serve?",
+  opcoes:["Para dizer o nome de quem desenhou o mapa.", "Para indicar onde fica o norte.", "Para explicar o que cada símbolo e cada cor do mapa querem dizer.", "Para mostrar o ano em que o mapa foi feito."], correta:2,
+  fala:"Pergunta dezessete. Olhe a LEGENDA deste mapa do IBGE, no canto de baixo. Para que ela serve? Letra A: Para dizer o nome de quem desenhou o mapa. Letra B: Para indicar onde fica o norte. Letra C: Para explicar o que cada símbolo e cada cor do mapa querem dizer. Letra D: Para mostrar o ano em que o mapa foi feito."},
+
+ {disc:"cart", img:"geo_mapa_bacias.jpg", pergunta:"Na escala deste mapa está escrito: 1 cm = 40 km. Se dois lugares estão a 2 cm um do outro no papel, que distância há entre eles de verdade?",
+  opcoes:["4 quilômetros.", "80 quilômetros.", "2 quilômetros.", "40 quilômetros."], correta:1,
+  fala:"Pergunta dezoito. Na escala deste mapa está escrito: 1 cm = 40 km. Se dois lugares estão a 2 cm um do outro no papel, que distância há entre eles de verdade? Letra A: 4 quilômetros. Letra B: 80 quilômetros. Letra C: 2 quilômetros. Letra D: 40 quilômetros."},
+
+ {disc:"cart", img:"geo_mapa_regioes.png", pergunta:"A rosa dos ventos do mapa tem o N apontando para cima. O que fica, então, na parte de BAIXO do mapa?",
+  opcoes:["O norte.", "O oeste.", "O leste.", "O sul."], correta:3,
+  fala:"Pergunta dezenove. A rosa dos ventos do mapa tem o N apontando para cima. O que fica, então, na parte de BAIXO do mapa? Letra A: O norte. Letra B: O oeste. Letra C: O leste. Letra D: O sul."},
+
+ {disc:"esp", img:"geo_blumenau.jpg", pergunta:"Blumenau já teve enchentes grandes, porque a cidade cresceu perto do rio e nas encostas dos morros. O que ajuda a diminuir esse problema?",
+  opcoes:["Jogar o lixo no rio para ele ficar mais raso.", "Construir mais casas exatamente na beira do rio.", "Preservar a mata das encostas e as margens do rio, e não construir nelas.", "Cortar todas as árvores das encostas para a água descer mais rápido."], correta:2,
+  fala:"Pergunta vinte. Blumenau já teve enchentes grandes, porque a cidade cresceu perto do rio e nas encostas dos morros. O que ajuda a diminuir esse problema? Letra A: Jogar o lixo no rio para ele ficar mais raso. Letra B: Construir mais casas exatamente na beira do rio. Letra C: Preservar a mata das encostas e as margens do rio, e não construir nelas. Letra D: Cortar todas as árvores das encostas para a água descer mais rápido."}
 ];
-var DISCNOME={jun:"JUNTAR", acr:"ACRESCENTAR", sep:"SEPARAR", ret:"RETIRAR", cmp:"COMPARAR", conc:"A CONTA CERTA"};
+var DISCNOME={"loc": "Localização e limites", "meso": "As mesorregiões", "rel": "Relevo", "cli": "Clima", "hid": "Hidrografia", "veg": "Vegetação", "cart": "Cartografia (ler o mapa)", "esp": "Análise espacial"};
 
 /* ====== estado ====== */
 var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, turmaSel="", avatarSel="", avatarAluno="";
@@ -218,7 +259,7 @@ function $(id){return document.getElementById(id);}
 function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
 /* ====== VOZ (arquivos audio/v<hash>.mp3) ====== */
-var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("mat2prova_mudo")==="1");}catch(e){}
+var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("geo5prova_mudo")==="1");}catch(e){}
 var _falaAudio=null, _ultimaFala="";
 function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
 function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
@@ -240,40 +281,27 @@ function falar(texto,_forcar){
   pararFala();
   try{var a=new Audio("audio/"+_chaveVoz(texto)+".mp3");_falaAudio=a;a.play();}catch(e){}
 }
+function ampliar(arq){
+  var l=$("lupa");if(!l){return;}
+  $("lupaImg").src="img/"+arq;l.className="";somToque();
+}
+function fecharLupa(){var l=$("lupa");if(l){l.className="off";$("lupaImg").src="";}}
+document.onkeydown=function(e){if((e||window.event).keyCode===27){fecharLupa();}};
 function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
 /* ====== MATERIAL DOURADO (ajuda visual — currículo: material manipulável) ====== */
-function mdNum(n){
-  var cen=Math.floor(n/100), dez=Math.floor((n%100)/10), uni=n%10, h='<div class="dgrp">', i;
-  for(i=0;i<cen;i++){h+='<span class="mdc" title="uma centena"></span>';}
-  for(i=0;i<dez;i++){h+='<span class="mdd" title="uma dezena"></span>';}
-  if(uni>0){h+='<span class="mdunits">';for(i=0;i<uni;i++){h+='<span class="mdu"></span>';}h+='</span>';}
-  return h+'</div>';
-}
-function renderDourado(d){
-  if(!d){return '';}
-  var h='<div class="dourado"><div class="dlbl">&#128176; Material dourado &mdash; conte para ajudar</div>';
-  if(d.op==="falta"){
-    h+='<div class="dlbl" style="color:#7a6a2a">Ele já tem '+d.b+'. Quantos faltam para '+d.a+'?</div><div class="mdframe">';
-    var i;for(i=0;i<d.a;i++){h+='<span class="mdslot'+(i<d.b?' on':'')+'"></span>';}
-    h+='</div>';
-  }else{
-    h+='<div class="drow">'+mdNum(d.a)+'<span class="dop">'+(d.op==="-"?"&minus;":"+")+'</span>'+mdNum(d.b)+'</div>';
-  }
-  return h+'</div>';
-}
 function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
-function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("mat2prova_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
+function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("geo5prova_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
 function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
 
 /* ====== TELAS ====== */
 function telaCapa(){
   var h='';
   h+='<div class="card">';
-  h+='<img class="masc-capa" src="img/ma_coruja.png" alt="Cora, a coruja" onerror="this.style.display=\'none\'">';
-  h+='<h1>A Prova da Coruja Cora</h1>';
-  h+='<h2>Matemática &middot; 3º ano &middot; Somar e tirar</h2>';
-  h+='<p class="grande">Eu sou a Cora, a coruja! Leio cada probleminha e cada resposta em voz alta. É só ouvir com atenção e tocar na resposta certa.</p>';
-  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir a Cora</button>';
+  h+='<img class="masc-capa" src="img/geo_guia.png" alt="Gali, a gaivota exploradora" onerror="this.style.display=\'none\'">';
+  h+='<h1>Expedi&ccedil;&atilde;o Cartogr&aacute;fica</h1>';
+  h+='<h2>Geografia &middot; 5&ordm; ano &middot; Santa Catarina no mapa</h2>';
+  h+='<p class="grande">Eu sou a Gali, a gaivota exploradora! Leio cada pergunta e cada resposta em voz alta. Olhe bem o mapa ou a foto, ou&ccedil;a com aten&ccedil;&atilde;o e toque na resposta certa.</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir a Gali</button>';
   h+='<div class="formrow">';
   h+='<div class="fcol">';
   h+='<label>Qual é o seu nome?</label>';
@@ -320,11 +348,10 @@ function telaPergunta(){
   h+=passaporte();
   h+='<div class="card qcard">';
   h+=crachaHTML();
-  h+='<img class="guia" src="img/ma_coruja.png" alt="Cora, a coruja" onerror="this.style.display=\'none\'">';
+  h+='<img class="guia" src="img/geo_guia.png" alt="Gali, a gaivota exploradora" onerror="this.style.display=\'none\'">';
   h+='<span class="disc '+q.disc+'">'+(DISCNOME[q.disc]||"")+'</span>';
-  if(q.img){h+='<img class="qfig" src="img/'+q.img+'" alt="" onerror="this.style.display=\'none\'">';}
+  if(q.img){h+='<img class="qfig" src="img/'+q.img+'" alt="Figura da pergunta '+(atual+1)+'" onclick="ampliar(\''+q.img+'\')" onerror="this.style.display=\'none\'">';h+='<button type="button" class="qlupa" onclick="ampliar(\''+q.img+'\')">&#128269; Ver maior</button>';}
   h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
-  h+=renderDourado(q.dourado);
   h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pergunta</button>';
   h+='<div class="opcoes">';
   var letras=["A","B","C","D"],i;
@@ -361,11 +388,11 @@ function telaFinal(){
   h+='<div class="card">';
   h+='<h1>Prontinho!</h1>';
   h+=medalhaHTML();
-  h+='<h2>'+esc(nomeAluno)+', você terminou a prova!</h2>';
-  h+='<p class="grande">A Cora gostou muito de resolver os problemas com você. Parabéns!</p>';
+  h+='<h2>'+esc(nomeAluno)+', você terminou a expedição!</h2>';
+  h+='<p class="grande">A Gali adorou explorar Santa Catarina com voc&ecirc;. Parab&eacute;ns, explorador!</p>';
   h+='<p id="statusenvio"></p></div>';
   $("app").innerHTML=h;
-  falar("Prontinho! Você terminou a prova. A Cora gostou muito de resolver os problemas com você. Parabéns!");
+  falar("Prontinho! Você terminou a expedição. A Gali adorou explorar Santa Catarina com você. Parabéns, explorador!");
   enviarResultado(ac);
 }
 

@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Painel — Prova de Matemática (3º ano)</title>
+<title>Painel — Expedição Cartográfica</title>
 <style>
 *{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
 body{margin:0;background:#0f2740;color:#eaf1f8;}
@@ -31,7 +31,15 @@ select{font-size:14px;padding:6px 8px;border-radius:10px;border:2px solid #2b567
 <div id="root"></div>
 <script>
 var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
-var SLUG="matematica-2ano";
+var SLUG="geografia-sc-5ano";
+/*DADOS-INI*/
+var TITULO="Geografia de Santa Catarina · 5º ano · Prova trimestral";
+var TURMAS=["5º A", "5º B", "5º C", "5º D"];
+var GABARITO=[1, 3, 0, 3, 1, 2, 3, 1, 0, 1, 0, 0, 3, 2, 0, 2, 2, 1, 3, 2];
+var EIXOS=["Localização e limites", "Localização e limites", "Localização e limites", "Localização e limites", "As mesorregiões", "As mesorregiões", "As mesorregiões", "Relevo", "Relevo", "Relevo", "Clima", "Clima", "Hidrografia", "Hidrografia", "Vegetação", "Vegetação", "Cartografia (ler o mapa)", "Cartografia (ler o mapa)", "Cartografia (ler o mapa)", "Análise espacial"];
+var ARQCSV="geografia-sc-5ano-notas.csv";
+var CURRICULO={"_leia": "O QUE ESTA PROVA MEDE, dito no vocabulário do currículo de Blumenau — e não no meu. Cada objetivo aponta as questões que o medem e cita a habilidade COPIADA do _curriculo/blumenau.txt (GEOGRAFIA – ANOS INICIAIS – 5º ANO, páginas 251-252). O portão `_qa/curriculo_verbatim.py` confere palavra por palavra: citação que o documento não tem como ter dito reprova. É a única coisa que o professor não consegue auditar sozinho sem abrir 440 páginas de PDF.", "ano": "5º ano", "componente": "Geografia", "rede": "Rede Municipal de Ensino de Blumenau", "documento": "Currículo da Educação Básica do Sistema Municipal de Ensino de Blumenau — Geografia, Anos Iniciais, 5º ano", "instrumento": "Avaliação trimestral · 20 questões objetivas · aplicação individual no laboratório", "objetivos": [{"objetivo": "Localizar Santa Catarina no Brasil e reconhecer seus limites", "questoes": [1, 2, 3, 4], "unidade": "Conexões e escalas", "objeto": "Território, redes e urbanização", "habilidade": "HABILIDADE: \"Santa Catarina no contexto do território brasileiro.\""}, {"objetivo": "Identificar as mesorregiões catarinenses e situá-las no mapa", "questoes": [5, 6, 7], "unidade": "Conexões e escalas", "objeto": "Território, redes e urbanização", "habilidade": "HABILIDADE: \"As mesorregiões do território catarinense: Oeste, Norte, Serrana, Vale do Itajaí, Grande Florianópolis e Sul.\""}, {"objetivo": "Reconhecer o relevo, o clima, a hidrografia e a vegetação do estado", "questoes": [8, 9, 10, 11, 12, 13, 14, 15, 16], "unidade": "Natureza, ambientes e qualidade de vida", "objeto": "Qualidade ambiental", "habilidade": "HABILIDADE: \"Aspectos físico-naturais do estado (clima, relevo, vegetação e hidrografia) e qualidade ambiental.\""}, {"objetivo": "Ler um mapa temático: legenda, escala e rosa dos ventos", "questoes": [17, 18, 19], "unidade": "Formas de representação e pensamento espacial", "objeto": "Representações cartográficas", "habilidade": "HABILIDADE: \"Estabelecer conexões e hierarquias entre diferentes cidades, utilizando mapas temáticos e representações gráficas.\""}, {"objetivo": "Relacionar interior e litoral a partir do que o mapa mostra", "questoes": [20], "unidade": "Conexões e escalas", "objeto": "Território, redes e urbanização", "habilidade": "HABILIDADE: \"Relações entre campo-cidade, interior-litoral em Santa Catarina.\""}]};
+/*DADOS-FIM*/
 var SENHA="1275";          /* atalho do professor (nao e seguranca, so um portao) */
 var dados=[], ordem="chegada", filtroTurma="", timer=null, selMode=false, sel={};
 function $(id){return document.getElementById(id);}
@@ -39,26 +47,27 @@ function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace
 
 function telaTrava(){
   $("root").innerHTML='<div class="wrap"><div class="trava"><h1>Painel do Professor</h1>'+
-   '<p class="sub">A Prova da Coruja Cora &middot; Matemática &middot; 3º ano · Adição e subtração</p>'+
+   '<p class="sub">'+esc(TITULO)+'</p>'+
    '<input id="s" type="password" placeholder="senha" onkeydown="if(event.keyCode===13)destravar()">'+
    '<div><button class="bt" onclick="destravar()">Entrar</button></div></div></div>';
 }
-function destravar(){ if($("s").value===SENHA){ telaPainel(); carregar(); if(!timer)timer=setInterval(carregar,10000);} else { $("s").value=""; $("s").placeholder="senha errada"; } }
+function destravar(){ if($("s").value===SENHA){ telaPainel(); pintarCurriculo(); carregar(); if(!timer)timer=setInterval(carregar,10000);} else { $("s").value=""; $("s").placeholder="senha errada"; } }
 
 function telaPainel(){
-  $("root").innerHTML='<div class="wrap"><h1>&#128202; Matemática — 3º ano · Notas</h1>'+
+  $("root").innerHTML='<div class="wrap"><h1>&#128202; '+esc(TITULO)+' &middot; Notas</h1>'+
    '<p class="sub">Prova trimestral &middot; a lista atualiza sozinha a cada 10 segundos.</p>'+
    '<div class="bar">Ordenar: '+
      '<button class="bt sec" id="o_chegada" onclick="setOrdem(\'chegada\')">Chegada</button>'+
      '<button class="bt sec" id="o_nome" onclick="setOrdem(\'nome\')">Nome A→Z</button>'+
      '<button class="bt sec" id="o_nota" onclick="setOrdem(\'nota\')">Maior nota</button>'+
-     ' &nbsp;Turma: <select id="fturma" onchange="filtroTurma=this.value;pintar()"><option value="">todas</option><option>3º A</option><option>3º B</option><option>3º C</option><option>3º D</option></select>'+
+     ' &nbsp;Turma: <select id="fturma" onchange="filtroTurma=this.value;pintar()"><option value="">todas</option>'+TURMAS.map(function(x){return "<option>"+esc(x)+"</option>";}).join("")+'</select>'+
      ' &nbsp;<button class="bt" onclick="baixarCSV()">Baixar CSV</button>'+
      '<button class="bt sec" onclick="window.print()">Imprimir / PDF</button>'+
      '<button class="bt sec" onclick="carregar()">Atualizar</button>'+
      '<button class="bt del" id="btDel" onclick="toggleSel()">&#128465; Remover provas de teste</button></div>'+
    '<div id="seltool"></div>'+
-   '<div id="stats"></div><div id="tabela"><p class="mut">Carregando…</p></div></div>';
+   '<div id="stats"></div><div id="tabela"><p class="mut">Carregando…</p></div>'+
+   '<div id="analise"></div><div id="curric"></div></div>';
   setOrdem(ordem);
 }
 function setOrdem(o){ ordem=o; ["chegada","nome","nota"].forEach(function(k){var b=$("o_"+k);if(b)b.className="bt "+(k===o?"on":"sec");}); pintar(); }
@@ -87,7 +96,7 @@ function pintar(){
   $("stats").innerHTML='<span class="stat">Provas: <b>'+n+'</b></span>'+
     '<span class="stat">Média da turma: <b>'+(n?media.toFixed(1):"—")+'</b></span>';
   pintarSeltool();
-  if(!n){ $("tabela").innerHTML='<p class="mut">Nenhuma prova enviada ainda. Assim que um aluno terminar, a nota aparece aqui.</p>'; return; }
+  if(!n){ $("tabela").innerHTML='<p class="mut">Nenhuma prova enviada ainda. Assim que um aluno terminar, a nota aparece aqui.</p>'; pintarAnalise([]); return; }
   var cab=selMode?'<th class="sel">&#10003;</th>':'';
   var h='<table><tr>'+cab+'<th>#</th><th>Nome</th><th>Turma</th><th>Nota</th><th>Acertos</th><th>Quando</th></tr>';
   for(i=0;i<lista.length;i++){ var r=lista[i];
@@ -98,6 +107,84 @@ function pintar(){
   }
   h+='</table>';
   $("tabela").innerHTML=h;
+  pintarAnalise(lista);
+}
+/* ====== ONDE A TURMA TROPEÇOU ======================================
+   Uma nota de 6,5 não diz ao professor o que reensinar. Isto diz: questão a
+   questão, quantos por cento da turma acertaram — e o mesmo somado por eixo
+   (relevo, clima, cartografia...). É a diferença entre "medir" e "avaliar".
+   ⚠️ Conta só quem respondeu: `respostas` guarda o ÍNDICE escolhido, e "-"
+      é questão deixada em branco. Somar branco como erro inflaria o problema.  */
+function pintarAnalise(lista){
+  var el=$("analise"); if(!el){return;}
+  if(!lista.length||!GABARITO.length){ el.innerHTML=""; return; }
+  var q,i,r,certo=[],resp=[];
+  for(q=0;q<GABARITO.length;q++){certo.push(0);resp.push(0);}
+  for(i=0;i<lista.length;i++){
+    r=""+(lista[i].respostas||"");
+    for(q=0;q<GABARITO.length;q++){
+      var ch=r.charAt(q); if(ch===""||ch==="-"){continue;}
+      resp[q]++; if(parseInt(ch,10)===GABARITO[q]){certo[q]++;}
+    }
+  }
+  var porEixo={},ordemEixo=[];
+  for(q=0;q<GABARITO.length;q++){
+    var e=EIXOS[q]||"—";
+    if(!porEixo[e]){porEixo[e]={c:0,t:0};ordemEixo.push(e);}
+    porEixo[e].c+=certo[q]; porEixo[e].t+=resp[q];
+  }
+  var h='<h1 style="font-size:19px;margin-top:26px">&#128269; Onde a turma tropeçou</h1>'+
+        '<p class="sub">Percentual de acerto de cada questão, contando só quem respondeu.</p>';
+  h+='<table><tr><th>#</th><th>O que a questão mede</th><th>Certa</th><th>Acertos</th><th>Da turma</th></tr>';
+  for(q=0;q<GABARITO.length;q++){
+    var pc=resp[q]?Math.round(certo[q]/resp[q]*100):0;
+    var cor=pc>=70?"#8ee79a":(pc>=50?"#ffe08a":"#ffb0a6");
+    h+='<tr><td class="num">'+(q+1)+'</td><td>'+esc(EIXOS[q]||"—")+'</td>'+
+       '<td class="num"><b style="color:#ffd98a">'+"ABCD".charAt(GABARITO[q])+'</b></td>'+
+       '<td class="num">'+certo[q]+'/'+resp[q]+'</td>'+
+       '<td><span style="display:inline-block;height:13px;border-radius:7px;background:'+cor+';width:'+
+       Math.max(pc,3)+'%;vertical-align:middle"></span> <span class="mut">'+(resp[q]?pc+"%":"—")+'</span></td></tr>';
+  }
+  h+='</table>';
+  h+='<h1 style="font-size:19px;margin-top:22px">&#129517; Por assunto</h1><table>'+
+     '<tr><th>Assunto</th><th>Acertos</th><th>Da turma</th></tr>';
+  for(i=0;i<ordemEixo.length;i++){
+    var k=ordemEixo[i],d=porEixo[k],p2=d.t?Math.round(d.c/d.t*100):0;
+    var c2=p2>=70?"#8ee79a":(p2>=50?"#ffe08a":"#ffb0a6");
+    h+='<tr><td>'+esc(k)+'</td><td class="num">'+d.c+'/'+d.t+'</td>'+
+       '<td><span style="display:inline-block;height:13px;border-radius:7px;background:'+c2+';width:'+
+       Math.max(p2,3)+'%;vertical-align:middle"></span> <span class="mut">'+(d.t?p2+"%":"—")+'</span></td></tr>';
+  }
+  el.innerHTML=h+'</table>';
+}
+/* ====== O QUE ESTA PROVA MEDE, NO VOCABULÁRIO DO CURRÍCULO ==========
+   Pedido do Marcos: "preciso que quando um professor olhe e analise a atividade
+   ele veja que está ótima". Um professor não julga uma prova pela tela bonita:
+   ele quer saber a QUE habilidade cada questão responde — e quer a habilidade
+   escrita como o documento da rede escreve, não parafraseada por mim.
+   ⚠️ Cada citação daqui foi conferida palavra por palavra contra o
+      `_curriculo/blumenau.txt` pelo portão `_qa/curriculo_verbatim.py`.       */
+/* o `curriculo.json` guarda a citacao com a etiqueta HABILIDADE: "..." porque
+   e assim que o portao `_qa/curriculo_verbatim.py` a reconhece. Na tela do
+   professor a etiqueta so atrapalha: a coluna ja diz o que aquilo e.       */
+function soAFrase(s){
+  return (""+(s||"")).replace(/^\s*HABILIDADE\s*:\s*/,"").replace(/^[\u201c"]|[\u201d"]\s*$/g,"");
+}
+function pintarCurriculo(){
+  var el=$("curric"); if(!el||!CURRICULO){return;}
+  var h='<h1 style="font-size:19px;margin-top:26px">&#128218; O que esta prova mede</h1>'+
+        '<p class="sub">'+esc(CURRICULO.documento)+'</p><table>'+
+        '<tr><th>Objetivo</th><th>Questões</th><th>Unidade temática</th>'+
+        '<th>Habilidade, copiada do currículo</th></tr>';
+  var i,o;
+  for(i=0;i<CURRICULO.objetivos.length;i++){
+    o=CURRICULO.objetivos[i];
+    h+='<tr><td>'+esc(o.objetivo)+'</td>'+
+       '<td class="num">'+o.questoes.join(", ")+'</td>'+
+       '<td class="mut">'+esc(o.unidade)+'<br>'+esc(o.objeto)+'</td>'+
+       '<td class="mut">&ldquo;'+esc(soAFrase(o.habilidade))+'&rdquo;</td></tr>';
+  }
+  el.innerHTML=h+'</table>';
 }
 function nSel(){ var n=0,z; for(z in sel){ if(sel.hasOwnProperty(z))n++; } return n; }
 function pintarSeltool(){
@@ -134,14 +221,20 @@ function removerSelecionadas(){
     }catch(e){ falta--; erros++; if(falta===0){ sel={}; selMode=false; carregar(); } }
   });
 }
+/* as respostas ficam gravadas como ÍNDICE (0..3); o professor lê LETRA. */
+function letrasDe(s){
+  s=""+(s||"");var o="",i;
+  for(i=0;i<s.length;i++){var ch=s.charAt(i);o+=(ch==="-"?"-":"ABCD".charAt(parseInt(ch,10))||"?");}
+  return o;
+}
 function baixarCSV(){
   var lista=dados.slice(); if(filtroTurma){ lista=lista.filter(function(r){return (r.turma||"")===filtroTurma;}); }
   lista.sort(function(a,b){return (""+(a.nome||"")).localeCompare(""+(b.nome||""),"pt");});
   function cel(v){ v=""+(v==null?"":v); if(/^[=+\-@\t\r]/.test(v))v="'"+v; if(/[",;\n]/.test(v))v='"'+v.replace(/"/g,'""')+'"'; return v; }
-  var lin=["Nome;Turma;Nota;Acertos;Quando"],i;
-  for(i=0;i<lista.length;i++){ var r=lista[i]; lin.push([cel(r.nome),cel(r.turma),cel(r.nota),cel(r.acertos),cel(r.data)].join(";")); }
+  var lin=["Nome;Turma;Nota;Acertos;Respostas;Quando"],i;
+  for(i=0;i<lista.length;i++){ var r=lista[i]; lin.push([cel(r.nome),cel(r.turma),cel(r.nota),cel(r.acertos),cel(letrasDe(r.respostas)),cel(r.data)].join(";")); }
   var blob=new Blob(["﻿"+lin.join("\r\n")],{type:"text/csv;charset=utf-8;"});
-  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="matematica-2ano-notas.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=ARQCSV; document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 telaTrava();
 </script>
