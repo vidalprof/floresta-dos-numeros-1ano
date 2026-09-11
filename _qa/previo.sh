@@ -77,6 +77,14 @@ PORTOES=(
   #    curriculo da rede, os objetivos do relatorio batem com ela um a um, e o
   #    professor ve o dossie DENTRO da atividade. Em pasta que nao e caderno de
   #    folha viva ele sai com 2 ("nao medi"), que o previo trata como aviso.
+  # ⚠️ O ESLINT FALTAVA AQUI, e custou uma entrega inteira (set/2026).
+  #    `node --check` so olha SINTAXE: um nome que nunca foi declarado passa
+  #    por ele liso e so estoura no clique da crianca. Eu deixei um `anel`
+  #    orfao ao refazer a roda, o pre-voo disse "nenhum erro barato", e quem
+  #    pegou foi o portao pre-entrega do workflow — DEPOIS do push, travando
+  #    a publicacao da voz. O portao ja existia; so nao estava no caminho
+  #    rapido. Agora esta.
+  "0a2 estatico (nome nao declarado)|bash _qa/estatico.sh $ARQ"
   "0b9 pedagogo (curriculo)|python3 _qa/pedagogo_curriculo.py $PASTA"
   # ⚠️ nasceu de "cita laranja e aparece lata": a silaba saia da palavra errada
   "0b10 fonte da silaba|python3 _qa/silaba_fonte.py $PASTA"
