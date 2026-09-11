@@ -475,6 +475,15 @@ portao "0b6 catalogo/painel" python3 _qa/catalogo.py "$PASTA"
 echo "--- 0b9) PEDAGOGO (o curriculo citado existe? o professor ve?) -"
 portao "0b9 pedagogo (curriculo)" python3 _qa/pedagogo_curriculo.py "$PASTA"
 
+# ⭐ 1i3) ANDAR O CADERNO DE FOLHA VIVA, FOLHA POR FOLHA (set/2026). Nasceu no dia
+#    em que eu aumentei os potes e tres coisas quebraram sem que UM portao de
+#    texto piscasse: palavra sem figura (o selo da medalha tinha sido renomeado),
+#    e uma tabela de apoio (`LETRAOPS`) que so a folha 5 usa e que ficou sem as
+#    palavras novas — a folha estourava no meio e a crianca parava ali.
+#    Em atividade do motor ele sai com 2 ("nao medi").
+echo "--- 1i3) ANDARILHO (a folha viva anda inteira? figura carrega?) -"
+portao "1i3 andarilho da folha" node _qa/andar_folha.js "$PASTA"
+
 # ⚠️⚠️ OS PORTOES QUE EXISTIAM E NUNCA ERAM CHAMADOS (set/2026). Contei arquivo
 #    por arquivo depois da cobranca do Marcos — *"já pedi essas correções várias
 #    vezes, e sempre acontece a mesma coisa"* — e o numero era **26 dos 80**: eu
