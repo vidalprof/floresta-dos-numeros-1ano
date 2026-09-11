@@ -1,6 +1,6 @@
 # Gabarito — Expedição Cartográfica — Geografia de Santa Catarina
 
-(gerado por `python3 _geo5/montar.py`; semente 20260386)
+(gerado por `python3 _geo5fonte/montar.py`; semente 20260386)
 
 | # | eixo | resposta | o que a questão mede |
 |---|---|---|---|

@@ -304,11 +304,11 @@ function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b
 function telaCapa(){
   var h='';
   h+='<div class="card">';
-  h+='<img class="masc-capa" src="img/geo_guia.png" alt="Gali, a gaivota exploradora" onerror="this.style.display=\'none\'">';
+  h+='<img class="masc-capa" src="img/geo_guia.png" alt="Gali, o explorador" onerror="this.style.display=\'none\'">';
   h+='<h1>Expedi&ccedil;&atilde;o Cartogr&aacute;fica</h1>';
   h+='<h2>Geografia &middot; 5&ordm; ano &middot; Santa Catarina no mapa</h2>';
-  h+='<p class="grande">Eu sou a Gali, a gaivota exploradora! Leio cada pergunta e cada resposta em voz alta. Olhe bem o mapa ou a foto, ou&ccedil;a com aten&ccedil;&atilde;o e toque na resposta certa.</p>';
-  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir a Gali</button>';
+  h+='<p class="grande">Eu sou o Gali, o explorador! Leio cada pergunta e cada resposta em voz alta. Olhe bem o mapa ou a foto, ou&ccedil;a com aten&ccedil;&atilde;o e toque na resposta certa.</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir o Gali</button>';
   h+='<div class="formrow">';
   h+='<div class="fcol">';
   h+='<label>Qual é o seu nome?</label>';
@@ -355,7 +355,7 @@ function telaPergunta(){
   h+=passaporte();
   h+='<div class="card qcard">';
   h+=crachaHTML();
-  h+='<img class="guia" src="img/geo_guia.png" alt="Gali, a gaivota exploradora" onerror="this.style.display=\'none\'">';
+  h+='<img class="guia" src="img/geo_guia.png" alt="Gali, o explorador" onerror="this.style.display=\'none\'">';
   h+='<span class="disc '+q.disc+'">'+(DISCNOME[q.disc]||"")+'</span>';
   if(q.img){h+='<img class="qfig" src="img/'+q.img+'" alt="Figura da pergunta '+(atual+1)+'" onclick="ampliar(\''+q.img+'\')" onerror="this.style.display=\'none\'">';h+='<button type="button" class="qlupa" onclick="ampliar(\''+q.img+'\')">&#128269; Ver maior</button>';}
   h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
@@ -396,10 +396,10 @@ function telaFinal(){
   h+='<h1>Prontinho!</h1>';
   h+=medalhaHTML();
   h+='<h2>'+esc(nomeAluno)+', você terminou a expedição!</h2>';
-  h+='<p class="grande">A Gali adorou explorar Santa Catarina com voc&ecirc;. Parab&eacute;ns, explorador!</p>';
+  h+='<p class="grande">O Gali adorou explorar Santa Catarina com voc&ecirc;. Parab&eacute;ns, explorador!</p>';
   h+='<p id="statusenvio"></p></div>';
   $("app").innerHTML=h;
-  falar("Prontinho! Você terminou a expedição. A Gali adorou explorar Santa Catarina com você. Parabéns, explorador!");
+  falar("Prontinho! Você terminou a expedição. O Gali adorou explorar Santa Catarina com você. Parabéns, explorador!");
   enviarResultado(ac);
 }
 

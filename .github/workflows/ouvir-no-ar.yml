@@ -1,0 +1,140 @@
+name: Ouvir no ar (a voz chegou ao site?)
+
+# ⭐ POR QUE ESTA FERRAMENTA EXISTE (set/2026 — Marcos: *"as sequências didáticas
+#    estão com voz de navegador"*).
+#
+#    "Voz de navegador" é o sintetizador do Chrome falando no lugar do mp3
+#    gravado. No código do caderno isso acontece num caminho só: o `falar()`
+#    pede `audio/<pref><chave>.mp3`, o arquivo não carrega, cai no `onerror` e
+#    o app usa o `speechSynthesis`. Ou seja: se a criança ouve voz de robô, é
+#    porque o MP3 NÃO CHEGOU AO SITE.
+#
+#    ⚠️ E EU NÃO TENHO COMO VER ISSO DAQUI. No container o caderno toca perfeito
+#       — medi: zero 404 e zero queda no sintetizador. O que eu não alcanço é o
+#       site publicado: a rede do chat é fechada e o repositório de destino não
+#       está na sessão. Então eu concluía "está tudo bem" olhando para o lugar
+#       errado, que é a pior forma de errar.
+#
+#    Este workflow vai lá: baixa o `index.html` DO SITE, lê a lista `VOZOK` e o
+#    prefixo que o app usa, sorteia falas e pede os mp3 ao próprio servidor.
+#    O veredito fica em `_diag/voz-no-ar-<repo>.txt`, que eu leio com um
+#    `git fetch` — 300 bytes, sem gastar log.
+
+on:
+  workflow_dispatch:
+    inputs:
+      repos:
+        description: "Repos a ouvir, separados por virgula (ex: a-familia-das-palavras,o-desfile-das-letras)"
+        required: true
+        type: string
+      quantas:
+        description: "Quantas falas pedir por atividade"
+        required: false
+        default: "12"
+        type: string
+
+jobs:
+  ouvir:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}" }
+
+      - name: Pedir os mp3 ao site e gravar o veredito
+        env:
+          REPOS: ${{ inputs.repos }}
+          QUANTAS: ${{ inputs.quantas }}
+          OWNER: vidalprof
+        run: |
+          mkdir -p _diag
+          python3 - <<'EOP'
+          import json, os, random, re, urllib.request, urllib.error, datetime
+
+          OWNER = os.environ["OWNER"]
+          N = int(os.environ.get("QUANTAS") or "12")
+          repos = [r.strip() for r in os.environ["REPOS"].split(",") if r.strip()]
+
+          def pega(url, binario=False):
+              req = urllib.request.Request(url, headers={"User-Agent": "ouvir-no-ar"})
+              with urllib.request.urlopen(req, timeout=45) as r:
+                  return r.status, r.read() if binario else r.read().decode("utf-8", "replace")
+
+          for repo in repos:
+              base = "https://%s.github.io/%s" % (OWNER, repo)
+              linhas = ["site: %s/" % base,
+                        "quando: %s" % datetime.datetime.utcnow().isoformat() + "Z"]
+              try:
+                  _, html = pega(base + "/index.html?v=%d" % random.randint(1, 99999))
+              except Exception as e:
+                  linhas.append("VEREDITO: NAO ABRI o index.html (%s)" % e)
+                  open("_diag/voz-no-ar-%s.txt" % repo, "w").write("\n".join(linhas) + "\n")
+                  continue
+
+              # o prefixo que o app usa ao montar o nome do mp3
+              m = re.search(r'"audio/([a-z0-9_]+)"\s*\+\s*key', html) or \
+                  re.search(r'audio/([a-z0-9_]+)"\s*\+', html)
+              pref = m.group(1) if m else ""
+              # a lista de falas que o app considera gravadas
+              mv = re.search(r"var VOZOK\s*=\s*(\{.*?\});", html, re.S)
+              try:
+                  vozok = list(json.loads(mv.group(1)).keys()) if mv else []
+              except Exception:
+                  vozok = re.findall(r'"([A-Za-z0-9_]+)"\s*:', mv.group(1)) if mv else []
+
+              linhas.append("prefixo do audio: %s" % (pref or "(NAO ACHEI)"))
+              linhas.append("falas declaradas gravadas (VOZOK): %d" % len(vozok))
+              if not vozok:
+                  linhas.append("VEREDITO: o app NAO declara nenhuma fala gravada -> "
+                                "tudo sai na voz do navegador.")
+                  open("_diag/voz-no-ar-%s.txt" % repo, "w").write("\n".join(linhas) + "\n")
+                  continue
+
+              random.seed(20260911)
+              amostra = random.sample(vozok, min(N, len(vozok)))
+              ok = falta = 0
+              for k in amostra:
+                  url = "%s/audio/%s%s.mp3" % (base, pref, k)
+                  try:
+                      st, dados = pega(url, binario=True)
+                      if st == 200 and len(dados) > 800:
+                          ok += 1
+                      else:
+                          falta += 1
+                          linhas.append("  magro/estranho: %s%s.mp3 (%s, %d bytes)"
+                                        % (pref, k, st, len(dados)))
+                  except urllib.error.HTTPError as e:
+                      falta += 1
+                      linhas.append("  FALTANDO: %s%s.mp3 (HTTP %s)" % (pref, k, e.code))
+                  except Exception as e:
+                      falta += 1
+                      linhas.append("  FALTANDO: %s%s.mp3 (%s)" % (pref, k, e))
+
+              linhas.append("pedidos: %d | chegaram: %d | faltaram: %d" % (len(amostra), ok, falta))
+              if falta == 0:
+                  linhas.append("VEREDITO: OK — a voz gravada esta no ar. "
+                                "Se a crianca ouve robo, o problema e outro "
+                                "(cache do navegador, ou o botao de som desligado).")
+              elif ok == 0:
+                  linhas.append("VEREDITO: REPROVADO — NENHUM mp3 esta no ar. "
+                                "A crianca ouve o sintetizador do navegador em TUDO. "
+                                "Conserto: republicar a pasta pelo entregar.yml.")
+              else:
+                  linhas.append("VEREDITO: REPROVADO — parte dos mp3 nao esta no ar.")
+              open("_diag/voz-no-ar-%s.txt" % repo, "w").write("\n".join(linhas) + "\n")
+              print("\n".join(linhas))
+              print("---")
+          EOP
+
+      - name: Guardar o veredito no repo
+        run: |
+          git config user.name "Ouvinte"
+          git config user.email "ouvinte@users.noreply.github.com"
+          git add -A _diag || true
+          if git diff --cached --quiet; then echo "sem veredito novo";
+          else
+            git commit -m "diag: a voz chegou ao site?"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
