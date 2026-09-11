@@ -813,6 +813,52 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## ⌨️ CLONE DE CADERNO, PARTE 2: O TETO DO TECLADO E A FRASE QUE NÃO PARECIA GRUDADA
+   (set/2026, nos degraus 6 e 7 da alfabetização)
+
+### 1. O teto do teclado veio junto com o clone — e ele era um NÚMERO MÁGICO
+
+O teclado da tela nasceu no caderno da SÍLABA, onde a resposta tinha até quatro
+letras, e a linha era:
+
+    else { if(ATIVA.val.length >= 4) return; ATIVA.val += ch; }
+
+No degrau 6 (a LETRA) a resposta tem uma letra só: o teto nunca incomodou. No
+degrau 7 (a FRASE) a resposta é uma PALAVRA — e **PEIXE parava em "PEIX",
+MACACO em "MACA"**. A criança digitava certo e o quadradinho simplesmente não
+aceitava a última letra: **sem erro, sem som, sem nada na tela**. Três itens da
+folha 9 ficaram impossíveis de resolver.
+
+- **Conserto:** o teto passa a ser o TAMANHO DA RESPOSTA
+  (`ATIVA.val.length >= ATIVA.certa.length`), não um número escrito à mão.
+- **Regra:** número mágico herdado de clone é dívida. Se ele existe, ou vira uma
+  medida do próprio conteúdo, ou ganha um comentário dizendo de onde saiu.
+- **Quem pegou:** só o **jogar-até-o-fim** no navegador. Nenhum portão de texto
+  vê isso, e no print a tela está perfeita.
+
+### 2. A frase não parecia grudada — e a atividade inteira perdia o sentido
+
+No degrau 7 a criança tem que consertar `OGATOCOMEUOPEIXE`. A primeira versão
+punha **cada letra na sua caixinha**, com borda e folga. Na tela apareciam dez
+letras separadas — e **não havia problema nenhum para consertar**. O código
+estava certo, o portão de leiaute passou, e a atividade não existia.
+
+- **Conserto:** a moldura é da FILA, não da letra. As letras encostam (gap zero,
+  sem borda), e a única coisa que separa alguma coisa é o corte que ela faz.
+- **Regra:** quando o ENUNCIADO é visual (um paredão de letras, uma pilha
+  torta, duas coisas quase iguais), o desenho não é enfeite — é o enunciado.
+  Olhar o contato-folha não é opcional nessas telas.
+
+### 3. E o alvo de 20 px que virou o gesto do caderno
+
+No papel, o degrau 7 manda *"passar um traço"* entre as palavras. O traço mora no
+vazio entre duas letras, e na tela esse vazio dá um alvo de ~20 px — metade do
+dedo de uma criança de seis anos (o piso da casa é 40 px). Em vez de encolher o
+piso, o gesto foi VIRADO: ela toca na **letra que COMEÇA a próxima palavra**, e o
+corte nasce antes dela. Mesmo conceito, alvo inteiro, e a pergunta ficou até mais
+honesta. **Quando a régua de acessibilidade briga com a mecânica, quem muda é a
+mecânica — não a régua.**
+
 ## 🧩 CLONE DE CADERNO: DUAS ARMADILHAS QUE NÃO DÃO ERRO (set/2026, no degrau 5)
 
 Montando **A Máquina de Juntar Palavras** (`_mont1`, degrau 5 da sequência de

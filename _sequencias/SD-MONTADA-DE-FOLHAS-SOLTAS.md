@@ -89,7 +89,7 @@ publica em folha avulsa (porque são conversa de sala, não exercício de papel)
 | 4. **O som que abre** (fonema) | marcar vários · classificar nas gavetas | ✅ | ✅ **O Som que Abre** (`_som1`) |
 | 5. **A sílaba que falta** | juntar sílabas · ordenar · teclado (as duas portas) | ✅ | ✅ **A Máquina de Juntar Palavras** (`_mont1`) |
 | 6. **A letra que falta** | letra escondida · forca | ✅ | ✅ **A Letra que Muda Tudo** (`_let1`) |
-| 7. **Espaços entre palavras** *(da SD de 10 aulas)* | ⭐ **cortar a frase** tocando entre as palavras | ⚠️ nova | ⬜ a montar (`_sequencias/folhas_d7`) |
+| 7. **Espaços entre palavras** *(da SD de 10 aulas)* | ⭐ **cortar a frase** tocando na letra que começa a palavra | ✅ feita | ✅ **A Tecla do Espaço Quebrou** (`_fra1`) |
 | 8. **Jogar com tudo** | memória de sons · caça-palavras | ✅ | ⬜ a montar |
 
 **Uma única mecânica nova em nove degraus.** Todo o resto a casa já tem pronto e
