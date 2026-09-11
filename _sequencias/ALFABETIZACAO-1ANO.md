@@ -10,6 +10,34 @@
 > Este documento é o **mapa**. Ele vem ANTES do código: o Marcos olha a escada
 > inteira e corrige, e só então eu monto caderno por caderno.
 
+## ⭐ ONDE A SEQUÊNCIA ESTÁ — TERMINADA (set/2026)
+
+> **Os oito degraus estão montados, jogados até o fim e no ar.** Este bloco é o
+> índice; o desenho de cada caderno está no `PARECER-PEDAGOGICO.md` da pasta dele
+> e o crivo das folhas de origem no `POTE-*.md` correspondente.
+>
+> ⚠️ A numeração que vale é a da `SD-MONTADA-DE-FOLHAS-SOLTAS.md` (degraus 0 a 8).
+> A tabela de "sete cadernos" mais abaixo neste documento é o ESBOÇO de julho, de
+> antes da colheita das folhas — ficou como registro do plano, não como mapa.
+
+| Degrau | Caderno | Pasta | No ar |
+|---|---|---|---|
+| 0 | **O Desfile das Letras** — a fila do alfabeto | `_abc1` | https://vidalprof.github.io/o-desfile-das-letras/ |
+| 1 | **O Bando das Rimas** | `_rima1` | https://vidalprof.github.io/o-bando-das-rimas/ |
+| 2 | **Bate-Palma das Palavras** — a palavra tem pedaços | `_sil1` | https://vidalprof.github.io/bate-palma-das-palavras/ |
+| 3 | **A Família das Palavras** — sílaba inicial | `_ini1` | https://vidalprof.github.io/a-familia-das-palavras/ |
+| 4 | **O Som que Abre** — o fonema e a letra | `_som1` | https://vidalprof.github.io/o-som-que-abre/ |
+| 5 | **A Máquina de Juntar Palavras** — síntese silábica | `_mont1` | https://vidalprof.github.io/a-maquina-de-juntar-palavras/ |
+| 6 | **A Letra que Muda Tudo** — o grafema | `_let1` | https://vidalprof.github.io/a-letra-que-muda-tudo/ |
+| 7 | **A Tecla do Espaço Quebrou** — o espaço em branco | `_fra1` | https://vidalprof.github.io/a-tecla-do-espaco-quebrou/ |
+| 8 | **O Grande Jogo das Palavras** — a revisão de tudo | `_jogo1` | https://vidalprof.github.io/o-grande-jogo-das-palavras/ |
+
+**O que a sequência inteira soma:** ~100 folhas, ~660 itens, cerca de sete horas
+de laboratório, todas as figuras do banco (arte nova: zero) e uma única mecânica
+inventada em oito degraus — o **cortar a frase** do degrau 7. Todo o resto a casa
+já tinha pronto e lapidado, que era exatamente o que a
+`SD-MONTADA-DE-FOLHAS-SOLTAS.md` previa.
+
 ## 0. ⚗️ ISTO É UM TESTE — o que ele tem que responder
 
 Palavras do Marcos (set/2026): *"isso é um teste para ver a possibilidade de ser

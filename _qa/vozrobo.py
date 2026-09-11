@@ -33,7 +33,8 @@ u"""
 
  O QUE ESTE PORTÃO FAZ: procura `speechSynthesis` na atividade montada e exige
  que ele só apareça como ÚLTIMO RECURSO — depois de a ponte ter tentado a voz
- gravada (`temVoz`). Se uma peça chamar a voz-robô direto, reprova.
+ gravada (`temVoz` no motor, `VOZOK` + `falarNavegador` na folha viva).
+ Se uma peça chamar a voz-robô direto, reprova.
 
  Uso: python3 _qa/vozrobo.py <arquivo.html>
 ============================================================
@@ -97,6 +98,16 @@ def main():
 
     ruins, ok = [], 0
     for m in re.finditer(r"speechSynthesis", js):
+        # ⚠️ SÓ `speak` FAZ BARULHO (set/2026). O portão contava toda menção a
+        #    `speechSynthesis`, e a maioria delas é o CONTRÁRIO de um defeito:
+        #    `.getVoices()` só lê a lista, `.cancel()` CALA, `onvoiceschanged`
+        #    guarda a voz e `if(!window.speechSynthesis)` é a checagem de existir.
+        #    Nenhuma dessas emite som nenhum. Acusar as quatro é ruído, e ruído é
+        #    o que faz portão virar coisa que se ignora.
+        depois = js[m.end():m.end() + 60]
+        if not re.match(r"\s*\.\s*speak\s*\(", depois):
+            ok += 1
+            continue
         if dentro_de_fechado(m.start()):
             ok += 1
             continue
@@ -121,7 +132,20 @@ def main():
             ok += 1
             continue
         antes = js[max(0, m.start() - 700):m.start()]
-        if re.search(r"\btemVoz\s*\(", antes) or re.search(r"\btocaVoz\s*\(", antes):
+        # ⚠️ A FOLHA VIVA TEM O MESMO GUARDA COM OUTRO NOME (set/2026).
+        #    Os cadernos de "folha viva" (a sequência de alfabetização) não usam
+        #    o motor: eles declaram `var VOZOK = {...}` — o mapa do que está
+        #    GRAVADO — e só caem no navegador dentro de `falarNavegador(...)`,
+        #    que é chamado do `onerror` do mp3. É exatamente a regra da casa,
+        #    escrita noutra letra. O portão reprovava os oito cadernos todos os
+        #    dias por isso, e portão que reprova sempre é portão que ninguém lê.
+        tem_gravada = re.search(r"\bvar\s+VOZOK\s*=", js) is not None
+        dono = None
+        for _f in re.finditer(r"function\s+([A-Za-z_$][\w$]*)\s*\(", js[:m.start()]):
+            dono = _f.group(1)
+        if tem_gravada and dono == "falarNavegador":
+            ok += 1
+        elif re.search(r"\btemVoz\s*\(", antes) or re.search(r"\btocaVoz\s*\(", antes):
             ok += 1
         else:
             linha = js[:m.start()].count("\n") + 1

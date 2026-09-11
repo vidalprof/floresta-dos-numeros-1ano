@@ -27,6 +27,22 @@ if not arq:
 html = open(arq, encoding="utf-8").read()
 js = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
 
+# ⚠️ O JS DE FORA TAMBEM CONTA (set/2026, os cadernos de "folha viva").
+#    Esses apps guardam as dez folhas num `folhas.js` ao lado e o carregam com
+#    `<script src="folhas.js">`. O portao so lia os `<script>` inline, entao
+#    TODA funcao definida la aparecia como "chamada e nao existe" — e ele
+#    reprovava os oito cadernos da sequencia de alfabetizacao, todos os dias,
+#    por um defeito que nao existia. Portao que reprova sempre e portao que
+#    ninguem le mais.
+import os
+_pasta = os.path.dirname(os.path.abspath(arq))
+for _src in re.findall(r'<script[^>]+src\s*=\s*["\']([^"\']+)["\']', html):
+    if _src.startswith(("http://", "https://", "//")):
+        continue                      # biblioteca de fora: nao e nossa
+    _cam = os.path.join(_pasta, _src.split("?")[0])
+    if os.path.isfile(_cam):
+        js += "\n" + open(_cam, encoding="utf-8").read()
+
 # ---- tirar comentários e textos entre aspas (inclusive regex literais simples)
 def limpa(s):
     # ⚠️ LICAO PAGA (Teatro, ago/2026): o `limpa()` tirava comentario e string,
