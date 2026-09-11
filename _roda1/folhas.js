@@ -312,48 +312,149 @@ function ini(w){ return sil(w)[0]; }
    ============================================================ */
 function f1(d, pi){
   faixa(d, pi, NOMES[0]);
-  enunciado(d, pi, "Toque nas <b>vogais</b> e ouça. O <b>L</b> fica parado; a vogal é que muda.", "p1enun");
+  enunciado(d, pi, "<b>Gire a roda</b> e ouça. O <b>L</b> fica parado no meio; a vogal é que muda.", "p1enun");
 
   var L = ST.folha.p1, R = RODAS.L;
 
-  /* ---- a roda, livre ---- */
+  /* ---- A RODA QUE GIRA ------------------------------------------------
+     ⚠️⚠️ A PRIMEIRA VERSÃO NÃO GIRAVA e eu ia deixar assim. Era um círculo
+        bonito com cinco botões: a criança TOCAVA numa vogal. O nome da folha
+        promete um gesto — girar — e eu entreguei outro, mais fácil de
+        programar. Ordem do Marcos (set/2026): *"você precisa atender o que as
+        atividades pedem, as interações que as atividades pedem, sem fugir
+        muito; se não sabe, aprenda e crie, coisa profissional"*.
+        A roda de sílabas de papel, a que o professor recorta e prende com um
+        colchete, GIRA: o disco de vogais roda atrás de uma janelinha e a sílaba
+        nasce ali. É esse gesto que a criança tem de fazer aqui.
+
+     ⚠️ TRÊS PORTAS, e todas terminam na roda GIRANDO — nunca num atalho que
+        pule o gesto:
+          · arrastar o disco com o dedo, o mouse ou a caneta;
+          · as setas ◀ ▶ (para quem não consegue arrastar — e no PC da escola
+            elas são o caminho natural);
+          · as setas do teclado de verdade.
+        Tocar direto numa vogal também vale, e o disco GIRA até ela: a criança
+        que não entendeu o gesto ainda avança, e de quebra vê o gesto acontecer.
+
+     ⚠️ AS LETRAS NÃO PODEM VIRAR DE CABEÇA PARA BAIXO. O disco roda por
+        `transform`, e tudo que está dentro roda junto. Cada vogal leva uma
+        contra-rotação igual e oposta, senão o U vira n aos olhos de quem está
+        aprendendo a ler — que é o pior momento possível para isso.           */
+  var N = R.s.length, PASSO = 360 / N;
+  var cx = el("div", "rodacx");
   var roda = el("div", "roda");
-  var meio = el("div", "rmeio", "L");
+  roda.appendChild(el("div", "rseta"));           /* a janelinha, no alto */
+  var disco = el("div", "rdisco");
+  var vogs = [];
+  R.s.forEach(function(s, k){
+    var voc = s.charAt(1);
+    var ang = -90 + k * PASSO, rad = ang * Math.PI / 180;
+    var b = el("button", "rvog", '<span class="rvl">' + voc + "</span>");
+    b.style.left = (50 + 37 * Math.cos(rad)) + "%";
+    b.style.top  = (50 + 37 * Math.sin(rad)) + "%";
+    b.setAttribute("data-qa", "vogal-" + voc);
+    b.setAttribute("aria-label", "vogal " + voc + ", faz " + s);
+    b.onclick = function(){ if(!disco._arrastou) vaiPara_(k); disco._arrastou = false; };
+    disco.appendChild(b); vogs.push(b);
+  });
+  roda.appendChild(disco);
+  var meio = el("div", "rmeio", "L");             /* o L fica PARADO no centro */
   meio.setAttribute("aria-hidden", "true");
+  roda.appendChild(meio);
+
   var mostra = el("div", "rmostra");
   var msil = el("b", "rsil", "L_");
   var mfig = el("div", "rfig", "");
   mostra.appendChild(msil); mostra.appendChild(mfig);
 
-  /* as cinco vogais em volta: ângulo fixo, começando no alto e girando no
-     sentido do relógio — a mesma ordem A E I O U que ela já viu no degrau 0. */
-  R.s.forEach(function(s, k){
-    var voc = s.charAt(1), w = R.w[k];
-    var ang = -90 + k * (360 / R.s.length), rad = ang * Math.PI / 180;
-    var b = el("button", "rvog", voc);
-    b.style.left = (50 + 37 * Math.cos(rad)) + "%";
-    b.style.top  = (50 + 37 * Math.sin(rad)) + "%";
-    b.setAttribute("data-qa", "vogal-" + voc);
-    b.setAttribute("aria-label", "vogal " + voc + ", faz " + s);
-    b.onclick = function(){
-      sPasso();
-      var els = anel.getElementsByClassName("rvog"), i;
-      for(i = 0; i < els.length; i++) els[i].className = "rvog";
-      b.className = "rvog acesa";
-      msil.innerHTML = esc(s);
-      mfig.innerHTML = img(w, "figgrande") + '<span class="rnome">' + esc(w) + "</span>";
-      /* ⚠️ AQUI SE PASSA A PALAVRA, não a sílaba solta. `falar("sb1_LA")`
-         resolveria pelo mapa global, e foi assim que a folha mostrou LATA e
-         disse LARANJA. Quando a tela sabe qual é a palavra, ela manda. */
+  var setas = el("div", "rsetas");
+  function btSeta(rot, passo, rotulo){
+    var b = el("button", "rbt", rot);
+    b.setAttribute("aria-label", rotulo);
+    b.onclick = function(){ vaiPara_(((atual_ + passo) % N + N) % N); };
+    return b;
+  }
+  setas.appendChild(btSeta("&#9664;", -1, "girar a roda para a esquerda"));
+  setas.appendChild(el("span", "rdica", "gire a roda"));
+  setas.appendChild(btSeta("&#9654;", 1, "girar a roda para a direita"));
+
+  var atual_ = -1, giro_ = 0;
+  function pinta_(){
+    for(var i = 0; i < vogs.length; i++){
+      vogs[i].className = "rvog" + (i === atual_ ? " acesa" : "");
+      /* a contra-rotação que mantém a letra em pé */
+      var l = vogs[i].firstChild;
+      if(l) l.style.transform = "rotate(" + (-giro_) + "deg)";
+    }
+  }
+  function poe_(g, anima){
+    giro_ = g;
+    disco.style.transition = anima ? "transform .42s cubic-bezier(.22,.9,.28,1)" : "none";
+    disco.style.transform = "rotate(" + g + "deg)";
+    pinta_();
+  }
+  function vaiPara_(k){
+    /* gira pelo caminho CURTO: virar 288° para andar uma casa fica esquisito */
+    var alvo = -k * PASSO;
+    while(alvo - giro_ > 180) alvo -= 360;
+    while(alvo - giro_ < -180) alvo += 360;
+    atual_ = k; poe_(alvo, true); sPasso();
+    var s = R.s[k], w = R.w[k];
+    msil.innerHTML = esc(s);
+    mfig.innerHTML = img(w, "figgrande") + '<span class="rnome">' + esc(w) + "</span>";
+    setTimeout(function(){
+      /* ⚠️ a palavra explícita: `falar("sb1_LA")` iria pelo mapa global, e foi
+         assim que a folha mostrou LATA e disse LARANJA. */
       falarSilaba(w, 0, s);
-      /* a palavra vem logo depois da sílaba: é ela que dá sentido ao pedaço */
       setTimeout(function(){ falar("pal_" + w); }, 900);
-    };
-    roda.appendChild(b);
+    }, 300);
+  }
+
+  /* ---- arrastar o disco (dedo, mouse e caneta na mesma porta) ---- */
+  var arr = null;
+  function angDe_(ev){
+    var r = roda.getBoundingClientRect();
+    var x = (ev.clientX !== undefined ? ev.clientX : 0) - (r.left + r.width / 2);
+    var y = (ev.clientY !== undefined ? ev.clientY : 0) - (r.top + r.height / 2);
+    return Math.atan2(y, x) * 180 / Math.PI;
+  }
+  disco.addEventListener("pointerdown", function(ev){
+    arr = {a0: angDe_(ev), g0: giro_, andou: 0};
+    disco._arrastou = false;
+    try{ disco.setPointerCapture(ev.pointerId); }catch(e){}
   });
-  roda.appendChild(meio);
-  var cx = el("div", "rodacx");
-  cx.appendChild(roda); cx.appendChild(mostra);
+  disco.addEventListener("pointermove", function(ev){
+    if(!arr) return;
+    var d2 = angDe_(ev) - arr.a0;
+    while(d2 > 180) d2 -= 360;
+    while(d2 < -180) d2 += 360;
+    arr.andou = Math.max(arr.andou, Math.abs(d2));
+    if(arr.andou > 6) disco._arrastou = true;
+    poe_(arr.g0 + d2, false);
+  });
+  function solta_(){
+    if(!arr) return;
+    arr = null;
+    /* encaixa na vogal mais perto — roda de papel não para no meio do caminho */
+    var k = Math.round(-giro_ / PASSO) % N; if(k < 0) k += N;
+    vaiPara_(k);
+  }
+  disco.addEventListener("pointerup", solta_);
+  disco.addEventListener("pointercancel", solta_);
+
+  /* ---- o teclado de verdade (a outra porta obrigatória da casa) ---- */
+  roda.setAttribute("tabindex", "0");
+  roda.setAttribute("role", "group");
+  roda.setAttribute("aria-label", "roda das vogais; use as setas para girar");
+  roda.onkeydown = function(ev){
+    var k2 = (ev || window.event).keyCode;
+    if(k2 === 37 || k2 === 38){ vaiPara_(((atual_ - 1) % N + N) % N); ev.preventDefault(); }
+    if(k2 === 39 || k2 === 40){ vaiPara_(((atual_ + 1) % N + N) % N); ev.preventDefault(); }
+  };
+
+  poe_(0, false);
+  cx.appendChild(el("div", "rodalado", "")); cx.lastChild.appendChild(roda); cx.lastChild.appendChild(setas);
+  cx.appendChild(mostra);
   d.appendChild(cx);
 
   /* ---- os pedidos ----

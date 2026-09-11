@@ -179,38 +179,46 @@ button{font-family:inherit;cursor:pointer}
 
 /* folha 1 — o desfile: a fila que se percorre com o dedo */
 .desfile{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 4px}
-/* ---------- A RODA DAS SÍLABAS (folha 1) ----------
-   ⚠️ A PRIMEIRA VERSÃO NÃO ERA REDONDA e eu quase a publiquei assim. Tinha o L
-      ao lado de cinco botões em grade 3+2 — funcionava, passava nos portões, e
-      MENTIA: a folha se chama "a roda do L" e a criança via um retângulo. O
-      desenho aqui É o conteúdo — é vendo as vogais em volta de um L parado que
-      ela entende que é sempre o mesmo L.
-   ⚠️ E O MOTIVO DE EU TER FUGIDO DO CÍRCULO ERA REAL: botão girado por
-      `transform` fica bonito e vira armadilha, porque a área que responde ao
-      toque continua sendo o retângulo. A saída é não girar nada: cada vogal é um
-      botão REDONDO de 66px posicionado por `top/left` num raio de 96px. O alvo é
-      o próprio círculo que ela vê, com 66px — acima do piso de 44px que a casa
-      mede até o 2º ano — e com esse raio dois vizinhos ficam a 113px de centro a
-      centro, ou seja, nunca se tocam. */
-.rodacx{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 22px;margin:4px 0 12px}
+/* ---------- A RODA DAS SÍLABAS (folha 1) — ELA GIRA ----------
+   ⚠️ O disco roda por `transform`; o L e a janelinha ficam FORA dele, parados.
+      Se o L rodasse junto, não haveria nada fixo contra o que a vogal se
+      encaixa — e a ideia inteira da folha é "o L fica, a vogal muda".
+   ⚠️ `touch-action:none` no disco: sem isso, o dedo que gira a roda ROLA A
+      PÁGINA junto e a criança nunca consegue virar. E é `touch-action`, não
+      `preventDefault` no touchstart — esse mata o toque (lição paga duas vezes).
+   ⚠️ Alvos: as setas têm 52px e a vogal 66px, acima do piso de 44px que a casa
+      mede até o 2º ano. O disco inteiro também é alvo de arraste. */
+.rodacx{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 22px;margin:4px 0 12px}
+.rodalado{display:flex;flex-direction:column;align-items:center;gap:6px}
 .roda{position:relative;width:258px;height:258px;flex:none;border-radius:50%;
   background:radial-gradient(circle at 50% 45%,#fbfbff 58%,#eef0fb 59%,#f7f8ff 100%);
   border:3px dashed #cfd5f0;box-shadow:0 3px 12px rgba(40,50,90,.08)}
+.roda:focus{outline:4px solid #7d8de0;outline-offset:3px}
+.rdisco{position:absolute;inset:0;border-radius:50%;cursor:grab;
+  -ms-touch-action:none;touch-action:none;-webkit-user-select:none;user-select:none}
+.rdisco:active{cursor:grabbing}
+/* a janelinha: o lugar onde a sílaba nasce, parado no alto */
+.rseta{position:absolute;left:50%;top:-2px;margin-left:-13px;width:26px;height:20px;z-index:3;
+  background:#4b62c9;border-radius:0 0 13px 13px;box-shadow:0 2px 0 #35499e}
 .rmeio{position:absolute;top:50%;left:50%;margin:-38px 0 0 -38px;width:76px;height:76px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;z-index:2;
   font-weight:900;font-size:40px;color:#fff;background:#4b62c9;box-shadow:0 3px 0 #35499e}
 .rvog{position:absolute;width:66px;height:66px;margin:-33px 0 0 -33px;border-radius:50%;
   border:3px solid #f0b64a;background:#fff8e8;color:#a06a10;
-  font-family:inherit;font-weight:900;font-size:30px;cursor:pointer;box-shadow:0 3px 0 #e0a534}
-.rvog:active{box-shadow:0 1px 0 #e0a534}
+  font-family:inherit;font-weight:900;font-size:30px;cursor:pointer;box-shadow:0 3px 0 #e0a534;
+  display:flex;align-items:center;justify-content:center;padding:0}
+.rvl{display:block;line-height:1}
 .rvog.acesa{background:#f0b64a;color:#fff;border-color:#c98f22}
+.rsetas{display:flex;align-items:center;gap:10px}
+.rbt{min-width:52px;min-height:52px;border-radius:50%;border:3px solid #4b62c9;background:#fff;
+  color:#4b62c9;font-size:20px;cursor:pointer;font-family:inherit;box-shadow:0 3px 0 #cfd5f0}
+.rbt:active{transform:translateY(2px);box-shadow:0 1px 0 #cfd5f0}
+.rdica{font-weight:800;color:#4b62c9;font-size:15px;letter-spacing:.3px}
 .rmostra{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:132px}
 .rsil{font-size:44px;font-weight:900;color:#2b3566;letter-spacing:2px}
 .rfig{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:96px}
 .rfig .figgrande{display:block;width:auto;height:clamp(74px,18vw,98px)}
 .rnome{font-weight:800;color:#3a4470;font-size:15px}
-/* ⚠️ em tela estreita a roda encolhe INTEIRA (raio e centro vêm do JS pelo
-   tamanho lido aqui), nunca o alvo: o botão continua com 66px. */
 @media (max-width:430px){ .roda{width:232px;height:232px} }
 .ltdesf{min-width:62px;min-height:64px;border:3px solid #d9ddf2;border-radius:16px;background:#fff;
   cursor:pointer;-webkit-transition:background .2s,border-color .2s,transform .15s;
