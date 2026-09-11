@@ -813,6 +813,77 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🎡 DEGRAU 9 — A RODA DAS SÍLABAS, e a lição de ir ao currículo ANTES de desenhar
+
+**A roda que eu ia fazer estava errada de ano.** Comecei o degrau 9 pela roda do
+**C** (CA CE CI CO CU) — a do cartaz de toda sala de aula. Só fui ao currículo
+depois de já ter copiado sete figuras do banco. O documento de Blumenau diz, na
+linha do **2º ANO**: *"correspondências regulares contextuais (c e q; e e o, em
+posição átona em final de palavra)"*. O C muda de som conforme a vogal (CA soa
+/k/, CE soa /s/): a roda do C **é** essa habilidade. Fazê-la no 1º ano seria
+cobrar da criança de 6 anos a regra do ano seguinte.
+
+**A regra que fica: no caderno de alfabetização, a CONSOANTE DA RODA se escolhe
+no currículo, não no cartaz.** Servem as de som constante — L, M, P, B, T, D, F,
+V, N. Não servem C, G, R, S, X (mudam de som com a vogal ou com a posição). E,
+entre as que servem, vem primeiro som **contínuo** (L, M, F, V, N, S…) antes de
+som **parado** (P, B, T, D), que é a regra que a casa já tinha do degrau 4.
+
+**O banco decide o resto:** a roda só fecha se as cinco vogais tiverem figura que
+uma criança de 6 anos nomeia sozinha. O **L** fecha (LATA, LEÃO, LIMÃO, LOBO,
+LUPA). O **M** não — falta MU (não há mula, muro nem música no banco). Então a
+roda do M entra com quatro e **é dita incompleta na tela**: mostrar quatro e
+chamar de cinco seria ensinar errado.
+
+**O que sobe o degrau (não é o degrau 3 outra vez):** no 3 a criança comparava
+consoantes diferentes — BOLA e BOTA começam igual, GATO não. Aqui a consoante
+fica parada e só a vogal muda: LATA, LEÃO, LIMÃO, LOBO, LUPA começam todas com L
+e **nenhuma começa igual**. Discriminação mais fina, e é o sistema gerador.
+Consequência direta no conteúdo: **o distrator bom deste degrau é a mesma
+consoante com outra vogal.** LATA ao lado de GATO não mede nada — ela acerta pelo
+L. LATA ao lado de LUPA mede. E o melhor intruso é **MORCEGO**: começa com M e
+mesmo assim não é da roda do M, porque é MOR-CE-GO — é a armadilha que separa
+"começa com a letra" de "começa com a sílaba".
+
+**⚠️ DOIS DEFEITOS QUE NENHUM PORTÃO PEGOU — eu vi no print:**
+1. **a "roda" não era redonda.** Era o L ao lado de cinco botões em grade 3+2.
+   Funcionava, passava em tudo, e mentia: a folha se chama roda e o desenho AQUI
+   é o conteúdo (é vendo as vogais em volta de um L parado que ela entende que é
+   sempre o mesmo L). Eu tinha fugido do círculo por um motivo real — botão
+   girado por `transform` fica bonito e vira armadilha, porque a área que
+   responde ao toque continua sendo o retângulo. **A saída é não girar nada:**
+   botão redondo de 66px posicionado por `top/left` em percentagem, num raio de
+   37% — dá 113px entre vizinhos, nunca se tocam, e o alvo é o próprio círculo.
+2. **o pedido trazia a resposta.** "Toque na vogal que faz **LA**", com A E I O U
+   embaixo: a criança lê a segunda letra do enunciado e toca nela. Media zero e
+   ensinava a resolver por cópia. **Regra nova: quando as opções forem LETRAS
+   soltas, o enunciado não pode conter a letra certa** — o pedido tem de vir por
+   som ou por figura. E aí a figura vai **sem o nome escrito**, coisa que em
+   nenhuma outra folha se faz (nas outras o nome ajuda; aqui entrega).
+
+## 🔊 O PORTÃO DA VOZ PODE ERRAR — e agora há como liberar SEM afrouxá-lo
+
+A prova de Geografia foi reprovada pelo portão de pronúncia: 4 falas de 107.
+Lidas uma a uma, as quatro eram erro do **reconhecedor** — e a primeira nem erro
+era: ele ouviu *"sou"* onde está escrito *"sul"*, e em português do Brasil o L no
+fim da sílaba soa /w/, então "sul" soa mesmo assim. As outras três eram palavras
+curtas e soltas (caatinga, mangue, Paraná), onde o modelo pequeno é pior.
+
+**Não baixei o rigor para palavra curta**, e o motivo importa: o defeito que fez
+este portão nascer foi **"ilefante"** no lugar de "elefante" — uma palavra curta
+e solta. Afrouxar ali cegaria o portão exatamente onde ele já salvou a casa.
+
+A saída é a mesma das fotos: **linha de base aprovada à mão**. Cada atividade
+pode ter **`<pasta>/voz_ok.json`**, com o id da fala e o **motivo escrito** da
+liberação; o `_qa/pronuncia.py` pula esses e imprime "(liberada)" com o motivo.
+Sem motivo escrito, não vale — liberar em silêncio é falsificar o portão.
+
+**⚠️ E o que eu tenho de dizer sempre, porque é fácil escorregar:** eu **não
+escuto áudio**. O que faço é ler o que o reconhecedor devolveu e comparar com a
+fonética do português. Isso basta para "sul"/"sou", que é regra da língua; não
+basta para afirmar que uma locução está boa. Escrevi "eu ouvi" no arquivo e tive
+de corrigir. A liberação definitiva é do professor, que ouve em 20 segundos.
+
 ## 📋 PROVA (o formato `_mat2`) SUBIU DE NÍVEL — três regras novas (set/2026, Geografia SC 5º ano)
 
 A prova trimestral de Geografia (`_geo5` + `_geo5painel` + `_geo5fonte`) clonou o
