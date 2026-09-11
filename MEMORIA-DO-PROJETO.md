@@ -813,6 +813,42 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🔤 CHAVE DE FALA NÃO PODE TER FORMA DE PREFIXO DE PASTA (set/2026, degrau 8)
+
+No degrau 7 as frases ganharam a chave de fala `fr_<frase>`. No degrau 8, que
+nasceu clonado dele, o portão `_qa/clone.py` reprovou: leu `fr_f_abelha` como
+**"asset da atividade de origem vazando"** — porque `fr_` é exatamente o
+**prefixo de pasta do `_fra1`**.
+
+- **Regra:** chave de fala nunca deve ter a forma de um prefixo de pasta (duas ou
+  três letras e um traço baixo). `frase_`, `pal_`, `certo3_` estão bem; `fr_`,
+  `sl_`, `mo_`, `le_` não.
+- E o portão estava CERTO em reprovar: com esse nome, um dia um asset de verdade
+  passaria batido no meio das chaves.
+
+## 🕹️ OS TRÊS CLÁSSICOS ENTRARAM — E CADA UM COM UMA DECISÃO (degrau 8, set/2026)
+
+O Marcos nomeou em ago/2026: *"completar lacunas, digitar resposta, **forca**,
+**memória**, **caça-palavras**, cruzadinha, quiz, simuladores…"*. Os três que
+faltavam entraram no caderno de revisão da alfabetização (`_jogo1`), e cada um
+veio com uma regra que vale para qualquer atividade futura:
+
+1. **MEMÓRIA: o par não é a carta IGUAL, é a carta que RIMA.** Memória de par
+   idêntico treina memória visual e não ensina língua nenhuma. ⚠️ E o crivo do
+   montador confere o que passa fácil: **duas palavras de PARES diferentes não
+   podem rimar entre si**, senão a criança casa certo e o app diz errado (pegou
+   de verdade: VELA e PANELA rimavam com BOLA e MOLA no mesmo tabuleiro).
+2. **CAÇA-PALAVRAS: só horizontal e vertical**, nunca diagonal nem de trás para
+   frente — no 1º ano a direção da leitura ainda está firmando. E o gesto é
+   **tocar na primeira e na última letra**, não arrastar: arrastar numa grade
+   exige mira fina e o dedo de seis anos escorrega. ⚠️ O crivo confere que a
+   palavra **não aparece duas vezes na grade**.
+3. **FORCA: ninguém é enforcado.** O desenho da forca é violento e não tem nada a
+   ver com o conteúdo. O que desce a cada erro é um **BALÃO**; com seis erros ele
+   pousa, a palavra se revela, a voz a diz sem nenhuma palavra de derrota e a
+   folha **segue** — travar num item seria beco sem saída. E a figura fica à
+   vista desde o começo: sem ela, quem ainda não lê chuta letra no escuro.
+
 ## ⌨️ CLONE DE CADERNO, PARTE 2: O TETO DO TECLADO E A FRASE QUE NÃO PARECIA GRUDADA
    (set/2026, nos degraus 6 e 7 da alfabetização)
 

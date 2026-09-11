@@ -90,7 +90,7 @@ publica em folha avulsa (porque são conversa de sala, não exercício de papel)
 | 5. **A sílaba que falta** | juntar sílabas · ordenar · teclado (as duas portas) | ✅ | ✅ **A Máquina de Juntar Palavras** (`_mont1`) |
 | 6. **A letra que falta** | letra escondida · forca | ✅ | ✅ **A Letra que Muda Tudo** (`_let1`) |
 | 7. **Espaços entre palavras** *(da SD de 10 aulas)* | ⭐ **cortar a frase** tocando na letra que começa a palavra | ✅ feita | ✅ **A Tecla do Espaço Quebrou** (`_fra1`) |
-| 8. **Jogar com tudo** | memória de sons · caça-palavras | ✅ | ⬜ a montar |
+| 8. **Jogar com tudo** | memória das rimas · caça-palavras · **forca do balão** | ✅ | ✅ **O Grande Jogo das Palavras** (`_jogo1`) |
 
 **Uma única mecânica nova em nove degraus.** Todo o resto a casa já tem pronto e
 lapidado.
