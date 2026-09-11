@@ -1890,16 +1890,16 @@ function errou(id, dica){
 /* ---------- sorteio da folha ---------- */
 function novaFolha(){
   return {
-    p1: pega(ITENS.p1, 8), p2: pega(ITENS.p2, 10),
+    p1: pega(ITENS.p1, 10), p2: pega(ITENS.p2, 12),
     /* \u26a0\ufe0f a folha 3 \u00e9 ESCADA: sete buracos no come\u00e7o e, no fim dela, tr\u00eas
        no MEIO da palavra (a folha d18 da colheita). O `pegaEmEscada` guarda a
        ordem; o `concat` garante que os do meio venham SEMPRE por \u00faltimo. */
-    p3: pegaEmEscada(ITENS.p3, 7).concat(pegaEmEscada(ITENS.p3b, 3)),
-    p4: pega(ITENS.p4, 8), p5: pega(ITENS.p5, 8), p6: pegaEmEscada(ITENS.p6, 8),
+    p3: pegaEmEscada(ITENS.p3, 10).concat(pegaEmEscada(ITENS.p3b, 4)),
+    p4: pega(ITENS.p4, 10), p5: pega(ITENS.p5, 9), p6: pegaEmEscada(ITENS.p6, 9),
     /* \u26a0\ufe0f a folha 7 \u00e9 de LIGAR: cada grupo precisa dos tr\u00eas pares
        inteiros, ent\u00e3o o sorteio escolhe GRUPOS, nunca palavras soltas */
-    p7: pega(ITENS.p7, 3), p8: pega(ITENS.p8, 8), p9: pega(ITENS.p9, 10),
-    p10: pega(ITENS.p10, 10)
+    p7: pega(ITENS.p7, 3), p8: pega(ITENS.p8, 8), p9: pega(ITENS.p9, 12),
+    p10: pega(ITENS.p10, 12)
   };
 }
 </script>
