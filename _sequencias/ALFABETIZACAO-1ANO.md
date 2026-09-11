@@ -32,6 +32,31 @@
 | 7 | **A Tecla do Espaço Quebrou** — o espaço em branco | `_fra1` | https://vidalprof.github.io/a-tecla-do-espaco-quebrou/ |
 | 8 | **O Grande Jogo das Palavras** — a revisão de tudo | `_jogo1` | https://vidalprof.github.io/o-grande-jogo-das-palavras/ |
 
+### 👩‍🏫 O que o PROFESSOR vê (set/2026)
+
+Os oito cadernos carregam, cada um, um **`curriculo.json`** que liga cada
+objetivo do relatório a uma habilidade do **currículo de Blumenau copiada
+verbatim** (1º ano, Alfabetização e Língua Portuguesa) — e um **dossiê
+pedagógico dentro da atividade**, que abre pelo menu do professor (chave
+`1275@`, a qualquer hora) e por um botão no relatório. Ele mostra as habilidades
+citadas, a escada didática folha a folha, como a criança é avaliada e o que foi
+medido antes de publicar. O portão `_qa/pedagogo_curriculo.py` (0b9) reprova se a citação
+não existir no documento, se relatório e currículo deixarem de bater, se alguma
+folha ficar sem objetivo que a meça ou se o dossiê sumir da tela.
+
+As habilidades usadas nos oito degraus (todas conferidas palavra por palavra):
+*Nomear as letras do alfabeto e ordená-las* · *Recitar parlendas, quadras,
+quadrinhas, trava-línguas, com entonação adequada e observando as rimas* ·
+*Segmentar oralmente palavras em sílabas* · *Comparar palavras, identificando
+semelhanças e diferenças entre sons de sílabas iniciais, mediais e finais* ·
+*Identificar fonemas e sua representação por letras* · *Reconhecer o sistema de
+escrita alfabética como representação dos sons da fala* · *Relacionar elementos
+sonoros (sílabas, fonemas, partes de palavras) com sua representação escrita* ·
+*Reconhecer a separação das palavras, na escrita, por espaços em branco* ·
+*Reconhecer que textos são lidos e escritos da esquerda para a direita e de cima
+para baixo da página* · *Escrever, espontaneamente ou por ditado, palavras e
+frases de forma alfabética – usando letras/grafemas que representam fonemas*.
+
 **O que a sequência inteira soma:** ~100 folhas, ~660 itens, cerca de sete horas
 de laboratório, todas as figuras do banco (arte nova: zero) e uma única mecânica
 inventada em oito degraus — o **cortar a frase** do degrau 7. Todo o resto a casa

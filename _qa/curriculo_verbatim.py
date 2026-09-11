@@ -84,12 +84,17 @@ def main():
         print(u"uso: python3 _qa/curriculo_verbatim.py <pasta> [curriculo.txt]")
         return 2
     pasta = sys.argv[1].rstrip("/")
+    # ⭐ set/2026: caderno de FOLHA VIVA nao tem `conteudo.json` — ele declara o
+    #    curriculo num `curriculo.json` proprio (ver `_qa/pedagogo.py`). Este
+    #    portao le os dois, porque a pergunta que ele faz e a mesma.
     cam = os.path.join(pasta, "conteudo.json")
+    if not os.path.exists(cam):
+        cam = os.path.join(pasta, "curriculo.json")
     cur = sys.argv[2] if len(sys.argv) > 2 else "_curriculo/blumenau.txt"
 
     if not os.path.exists(cam):
-        print(u"%s -> sem conteudo.json (atividade escrita a mao?): NAO MEDI "
-              u"se as habilidades sao do curriculo." % pasta)
+        print(u"%s -> sem conteudo.json nem curriculo.json (atividade escrita a mao?): "
+              u"NAO MEDI se as habilidades sao do curriculo." % pasta)
         return 2
     if not os.path.exists(cur):
         print(u"%s -> nao achei o curriculo em %s: NAO MEDI NADA "

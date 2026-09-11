@@ -366,13 +366,20 @@ jobs:
           EOP
           fi
           IFS=',' read -ra ALVS <<< "$LISTA"
+          # ⚠️ MEDIDO EM 11/set/2026, e doeu: com NOVE alvos a 120 falas cada, este
+          #    passo sozinho passou de 75 MINUTOS — mais que a corrida inteira antes
+          #    dele existir, e o Marcos esperando o link. O limite agora e um
+          #    ORCAMENTO DE LOTE (~360 falas na corrida toda), dividido pelos alvos,
+          #    com piso de 40 por atividade. Um alvo sozinho continua ouvindo 120;
+          #    nove ouvem 40 cada, que ainda cobre a abertura de cada caderno — que
+          #    e onde os defeitos que o Marcos pegou com a turma estavam.
+          #    Para ouvir TUDO de uma atividade, o caminho continua sendo o ouvir.yml.
+          LIM=$(( 360 / ${#ALVS[@]} )); [ "$LIM" -lt 40 ] && LIM=40; [ "$LIM" -gt 120 ] && LIM=120
+          echo "orcamento: $LIM falas por atividade (${#ALVS[@]} alvo(s))"
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"; [ -d "$pasta" ] || continue
             echo "=========== ouvindo $pasta ==========="
-            # ⚠️ limite de 120 falas por atividade: ouvir 660 levaria a corrida
-            #    inteira. 120 cobre a abertura e o miolo, que e onde os defeitos
-            #    do Marcos estavam. Para ouvir TUDO, rode o ouvir.yml a parte.
-            if python3 _qa/pronuncia.py "$pasta" --limite 120; then :; else
+            if python3 _qa/pronuncia.py "$pasta" --limite "$LIM"; then :; else
               rc=$?
               if [ "$rc" = "1" ]; then echo "::warning::$pasta: ha fala que NAO diz o que esta escrito (veja acima)"
               else echo "::warning::$pasta: nao consegui ouvir (codigo $rc)"; fi

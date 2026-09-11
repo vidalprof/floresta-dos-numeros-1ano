@@ -464,6 +464,17 @@ portao "0b7 invisivel" python3 _qa/invisivel.py
 echo "--- 0b6) CATALOGO/PAINEL (a atividade esta no painel de links?) -"
 portao "0b6 catalogo/painel" python3 _qa/catalogo.py "$PASTA"
 
+# ⭐ 0b9) O PEDAGOGO VIROU MEDIDA (set/2026 — pergunta do Marcos: *"o pedagogo
+#    esta bem criterioso quanto ao curriculo e didatica? ele esta especialista?
+#    preciso que quando um professor olhe e analise a atividade ele veja que
+#    esta otima"*). Ate aqui o unico portao de curriculo era de MATEMATICA
+#    (tabuada por ano) e ficava fora da banca; o crivo de Lingua Portuguesa era
+#    o meu olho, e olho nao e portao. Este confere que a habilidade citada
+#    existe MESMO no curriculo da rede, que os objetivos do relatorio batem com
+#    ela um a um, e que o professor ve o dossie DENTRO da atividade.
+echo "--- 0b9) PEDAGOGO (o curriculo citado existe? o professor ve?) -"
+portao "0b9 pedagogo (curriculo)" python3 _qa/pedagogo_curriculo.py "$PASTA"
+
 # ⚠️⚠️ OS PORTOES QUE EXISTIAM E NUNCA ERAM CHAMADOS (set/2026). Contei arquivo
 #    por arquivo depois da cobranca do Marcos — *"já pedi essas correções várias
 #    vezes, e sempre acontece a mesma coisa"* — e o numero era **26 dos 80**: eu

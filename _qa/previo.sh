@@ -73,6 +73,11 @@ PORTOES=(
   "0b padrao da casa|python3 _qa/padrao.py $ARQ"
   "0b2 dinamicas|python3 _qa/dinamicas.py $ARQ"
   "0b6 catalogo/painel|python3 _qa/catalogo.py $PASTA"
+  # ⭐ o PEDAGOGO virou medida (set/2026): habilidade citada existe mesmo no
+  #    curriculo da rede, os objetivos do relatorio batem com ela um a um, e o
+  #    professor ve o dossie DENTRO da atividade. Em pasta que nao e caderno de
+  #    folha viva ele sai com 2 ("nao medi"), que o previo trata como aviso.
+  "0b9 pedagogo (curriculo)|python3 _qa/pedagogo_curriculo.py $PASTA"
   # ⭐ so responde em jogo de UNO (nos outros ele sai com 2 = "nao medi")
   "3u regra da compra (UNO)|node _qa/uno.js $ARQ"
   "0c pergunta ambigua|python3 _qa/ambiguo.py $ARQ"

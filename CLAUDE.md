@@ -50,8 +50,27 @@ Leia tudo antes de agir e responda sempre em **português**.
 > acessibilidade (`_qa/contraste.js` — mede o PIXEL real do fundo, não o CSS), narração
 > (`_qa/falas.py` — palavra que a voz erra, tipo "Complete" virando "complite"), leiaute
 > (`_qa/leiaute.js` — 6 tamanhos, resposta fora da tela, alvo < 40px) e jogador
-> (`_qa/jogador.js` — joga sozinho até a medalha). Há ainda o pedagogo
-> (`_qa/curriculo.py`), fora da banca automática.
+> (`_qa/jogador.js` — joga sozinho até a medalha). Há ainda o pedagogo de contas
+> (`_qa/curriculo.py` — que tabuada cabe em que ano), fora da banca automática.
+> **👩‍🏫 O PEDAGOGO DE VERDADE É PORTÃO DESDE set/2026 — `_qa/pedagogo_curriculo.py` (0b9)**,
+> no pré-voo E na banca. Nasceu da pergunta do Marcos: *"o pedagogo está bem
+> criterioso quanto ao currículo e didática? Ele está especialista? Preciso que
+> quando um professor olhe e analise a atividade ele veja que está ótima"* — e a
+> resposta honesta, na hora, era NÃO: currículo só tinha portão em MATEMÁTICA e
+> o parecer pedagógico morava num `.md` que professor nenhum abre. Agora cada
+> atividade declara em **`<pasta>/curriculo.json`** a habilidade do currículo de
+> Blumenau **copiada verbatim** por objetivo do relatório, e o portão reprova se
+> (1) não declarar, (2) a citação não existir palavra por palavra no
+> `_curriculo/blumenau.txt`, (3) os objetivos do relatório e os do currículo não
+> baterem um a um (nome e folhas), (4) alguma folha de trabalho ficar sem
+> objetivo que a meça, ou (5) o **dossiê do professor** não estar dentro da
+> atividade mostrando esses dados. O dossiê se injeta com
+> `python3 _padrao/dossie_professor.py <pasta>` (fonte:
+> `_padrao/dossie-professor.js`) e abre pelo menu do professor (chave `1275@`) e
+> por um botão dentro do relatório. ⚠️ Citação de currículo é a única coisa que o
+> professor **não tem como conferir sozinho** sem abrir 440 páginas de PDF — por
+> isso ela é medida (lição paga na Padaria: dois "verbatim" que eu inventei).
+> ⚠️ Não confundir com `_qa/dossie.js`, que é o contato-folha de fotos do Revisor.
 > **🖼️ APP À MÃO (sem motor: Batata, Pixel, UNO, painéis, hub…) TAMBÉM SE MEDE** (set/2026,
 > tarefa #49 — Marcos: *"ainda acontecem imagens cortadas"*): `node _qa/leiaute_mao.js
 > <pasta>/index.html` abre o app em 6 tamanhos e reprova figura esticada/cortada, fundo

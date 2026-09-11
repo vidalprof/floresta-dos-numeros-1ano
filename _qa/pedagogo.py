@@ -284,10 +284,16 @@ def main():
         print(u"%s -> so consegui seguir %d fase(s) de ~%d que existem no arquivo. "
               u"Cadeia pela metade NAO se julga (a conta sairia errada). "
               u"Nada a conferir." % (alvo, len(ordem), quantas))
-        return 0
+        return 2
     if len(ordem) < 3:
-        print(u"%s -> nao consegui ler a cadeia de fases. Nada a conferir." % alvo)
-        return 0
+        # ⚠️ LICAO PAGA (11/set/2026): isto saia com codigo **0**, e 0 na casa
+        #    significa "mediu e passou". Entao todo caderno de FOLHA VIVA (que nao
+        #    tem cadeia de fases nenhuma: e um caderno de folhas) aparecia na banca
+        #    como se a escada didatica tivesse sido conferida — e nao tinha. Portao
+        #    que nao consegue medir diz **2**, e a banca poe na lista dos CEGOS.
+        print(u"%s -> nao consegui ler a cadeia de fases: NAO MEDI a escada "
+              u"didatica (isso nao e 'passou')." % alvo)
+        return 2
 
     problemas = []
 

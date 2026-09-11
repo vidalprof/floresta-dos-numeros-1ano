@@ -7498,3 +7498,75 @@ atraso mora no **CSS**, por classe — nunca em `style`.
 **E a peça tem que ENCOSTAR.** Havia 12 px de vão entre a cena e a tábua: as
 peças pareciam boiando e a queda perdia o sentido. Margem 0 resolveu.
 `prefers-reduced-motion` recebe a mesma capa, parada e inteira.
+
+## 👩‍🏫⭐ O PEDAGOGO VIROU MEDIDA — e o professor agora VÊ o currículo (11/set/2026)
+
+**As três perguntas do Marcos:** *"agora temos uma ferramenta de pronúncia
+profissional que utiliza as falas completas? O pedagogo está bem criterioso
+quanto ao currículo e didática? Ele está especialista? Preciso que quando um
+professor olhe e analise a atividade ele veja que está ótima."*
+
+**Pronúncia — SIM, e é medida.** `_padrao/silabas_voz.py` grava a PALAVRA
+INTEIRA no Edge TTS e corta as sílabas de dentro dela por alinhamento forçado
+(`ctc-forced-aligner`, modelo MMS, nível de caractere). Nenhuma sílaba é
+sintetizada solta — era daí que vinha "va" virando "vê-á" e o "bo" de BOLA com
+o som do "bo" de BOLO. E há um portão que OUVE: `_qa/pronuncia.py`, que roda
+dentro do `entregar.yml` logo depois de a voz ser gravada e antes de publicar,
+com reconhecimento de voz (Vosk pt) comparando o mp3 ao `falas.json`.
+⚠️ **Duas ressalvas honestas, para não virar promessa maior do que é:** esse
+passo está com `continue-on-error: true` (na estreia ele AVISA, ainda não trava)
+e ouve uma amostra de **120 falas por atividade** — ouvir tudo é o `ouvir.yml`,
+à parte.
+
+**Pedagogo — a resposta era NÃO, e agora é SIM.** O que existia:
+`_qa/curriculo.py` só sabe de MATEMÁTICA (que tabuada cabe em que ano) e o
+próprio CLAUDE.md dizia que ele fica *fora da banca automática*;
+`_qa/curriculo_verbatim.py` só lê `conteudo.json`, que caderno de folha viva não
+tem; e o parecer pedagógico morava num `.md` do repositório — que professor
+nenhum abre. Ou seja: o crivo pedagógico existia, mas era **o meu olho**, e olho
+não é portão.
+
+**O que passou a existir:**
+1. **`<pasta>/curriculo.json`** — cada objetivo do relatório declara a
+   habilidade do currículo de Blumenau **copiada verbatim**, com a prática de
+   linguagem e o objeto de conhecimento. Os nove cadernos da alfabetização já
+   nasceram com o seu.
+2. **`_qa/pedagogo_curriculo.py`** (portão **0b9**, no pré-voo E na banca) — cinco
+   perguntas: (1) declarou o currículo? (2) cada habilidade citada existe mesmo
+   no `_curriculo/blumenau.txt`, palavra por palavra? (3) os objetivos do
+   relatório e os do currículo batem um a um, nome e folhas? (4) toda folha de
+   trabalho é medida por algum objetivo? (5) o dossiê está dentro da atividade
+   mostrando exatamente esses dados? **Provado com quatro defeitos plantados:
+   habilidade inventada, relatório mexido sem o json, folha solta e dossiê
+   arrancado — reprovou os quatro.**
+3. **Dossiê pedagógico DENTRO da atividade** (`_padrao/dossie-professor.js` +
+   `_padrao/dossie_professor.py`): abre pelo menu do professor (chave `1275@`, a
+   qualquer hora) e por um botão dentro do relatório. Mostra as habilidades
+   citadas, a escada didática folha a folha, como a criança é avaliada e o que
+   foi medido antes de publicar. É isto que responde ao *"o professor tem que
+   ver que está ótima"*: ele deixa de depender da minha palavra.
+
+⚠️ **Por que a citação é a parte que MAIS precisa de portão:** tela torta o
+professor vê e manda arrumar; citação falsa de currículo ele **não tem como
+conferir** sem abrir 440 páginas de PDF — e é justamente o que ele mostra à
+coordenação. Lição paga na Padaria das Letras (dois "verbatim" que eu escrevi).
+
+⚠️ **Não confundir com `_qa/dossie.js`**, que é outra coisa: o contato-folha de
+fotos que o Revisor Final julga. Por isso o do professor chama
+`dossie-professor`. E não confundir `_qa/pedagogo_curriculo.py` (currículo, novo)
+com `_qa/pedagogo.py` (a ESCADA DIDÁTICA, que já existia desde ago/2026) — são as
+duas metades da mesma pergunta, e as duas rodam.
+
+### ⚠️ E no meio disso apareceu um portão que rodava CEGO dizendo "passou"
+
+O `_qa/pedagogo.py` só sabe ler atividade com **cadeia de fases** (motor, ou
+escrita à mão no estilo `mAlgo`/`telaAlgo`). Caderno de **folha viva** não tem
+cadeia — é um caderno de folhas — e ele imprimia *"não consegui ler a cadeia de
+fases. Nada a conferir."* **saindo com código 0**. Na casa, 0 significa "mediu e
+passou": a banca lia aquilo e seguia em frente, e a escada didática dos nove
+cadernos de alfabetização **não estava sendo medida por ninguém**. Agora ele sai
+com **2 (NÃO MEDI)** e a banca põe na lista dos CEGOS, que é a verdade. Ensinar
+ele a ler o formato folha viva ficou na fila (tarefa #104).
+⚠️ **A lição é a de sempre, e é a terceira vez que ela aparece neste arquivo:**
+portão que imprime "nada a conferir" e devolve 0 é pior que portão que não
+existe — porque o "não existe" a gente lembra, e o 0 a gente confunde com verde.
