@@ -813,6 +813,36 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🚨 PORTÃO QUE REPROVA SEMPRE É PORTÃO QUE NINGUÉM LÊ (set/2026)
+
+Os oito cadernos da sequência de alfabetização saíam do pré-voo com **três
+reprovações fixas, todos os dias**. Eu me acostumei a dizer "são as de sempre" e
+seguir — que é exatamente como um defeito de verdade passa despercebido no meio
+do barulho. Fui medir as três, uma a uma:
+
+| Portão | O que era |
+|---|---|
+| `1b funcoes.py` | **Defeito do portão.** Ele só lia os `<script>` INLINE. A folha viva guarda as dez folhas num `folhas.js` ao lado, com `<script src>`, e toda função de lá aparecia como "chamada e não existe". Agora ele segue o `src` dos scripts locais |
+| `1j vozrobo.py` | **Defeito do portão, duas vezes.** (a) Contava TODA menção a `speechSynthesis`, e a maioria é o contrário de um defeito — `.getVoices()` só lê a lista, `.cancel()` CALA. Só o `.speak(` faz barulho. (b) Não reconhecia o guarda da folha viva, que é o mesmo do motor com outro nome (`var VOZOK` + `falarNavegador` no `onerror` do mp3) |
+| `4c cor_fixa.py` | **REAL, e só da folha viva.** O motor já tinha `--texto`; estes cadernos cravavam nove cores de texto sem fundo próprio. Ganharam os tokens |
+
+E dois menores, na mesma varredura: o comentário do `falarSilaba` citava
+`audio/al_sb_…` (prefixo do `_alfa1`) nos cinco cadernos antigos — o `clone.py`
+estava **certo**, prefixo alheio é prefixo alheio mesmo dentro de comentário,
+porque é assim que ele sobrevive ao próximo clone; e o revisor reprovava "o
+jota", sem saber que **nome de letra é masculino** (o jota, o agá, o eme) —
+justo no caderno que fala de letra.
+
+**A regra que fica:** quando um portão reprova a MESMA coisa em toda uma família
+de atividades, a primeira hipótese é que o defeito é dele. Medir antes de
+conviver. Depois desta varredura os NOVE cadernos passam os 34 portões de texto
+sem uma reprovação — e agora, quando um deles ficar vermelho, quer dizer alguma
+coisa.
+
+⚠️ E o portão continua mordendo onde deve: o `_uno1` (UNO do 1º ano) REPROVA no
+`vozrobo` de verdade — ele não tem `falas.json` e fala tudo com a voz do
+navegador. Dívida real, de antes da regra, anotada.
+
 ## 🔤 CHAVE DE FALA NÃO PODE TER FORMA DE PREFIXO DE PASTA (set/2026, degrau 8)
 
 No degrau 7 as frases ganharam a chave de fala `fr_<frase>`. No degrau 8, que
