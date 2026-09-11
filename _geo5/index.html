@@ -39,7 +39,11 @@ img{max-width:100%;}
 /* ---- barra de progresso: pegadinhas coloridas ---- */
 #trilha{display:block;text-align:center;margin:2px 0 4px;font-size:16px;color:#2f6f8f;font-weight:bold;}
 #passa{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
-  -webkit-flex-wrap:nowrap;flex-wrap:nowrap;gap:3px;margin:2px auto 8px;max-width:340px;}
+  /* ⚠️ ESTE MOLDE VEIO DA PROVA DE 10 QUESTOES, onde os selos cabiam numa
+     fila so. Com 20 eles passavam da tela e a crianca perdia de vista em que
+     pergunta estava justamente no fim, quando mais quer saber quanto falta.
+     Agora quebram em duas fileiras de 10, certinhas. */
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:3px;margin:2px auto 8px;max-width:290px;}
 .selo{-webkit-flex:none;flex:none;width:25px;height:25px;line-height:21px;text-align:center;border-radius:50%;
   border:2px dashed #7fc4ec;background:#eaf7ff;color:#2f6f8f;font-size:12px;font-weight:bold;}
 .selo.feito{border-style:solid;border-color:#3fb356;background:#dbf5df;color:#248239;}
@@ -139,6 +143,9 @@ label{font-size:16px;font-weight:bold;color:#2f6f8f;display:block;margin-top:6px
      Em cima não há nada para tocar (é a faixa do mascote), então é lá que
      eles moram na tela estreita. */
   #barra{top:calc(8px + env(safe-area-inset-top));bottom:auto}
+  /* ...e como eles moram em cima na tela estreita, o cabecalho desce para
+     nao ficar por baixo deles. */
+  #trilha{margin-top:58px}
 }
 #barra .cv-bt{-webkit-appearance:none;appearance:none;width:48px;height:48px;border:3px solid #2f6f8f;border-radius:50%;background:#fbfeff;color:#2f6f8f;font-size:20px;line-height:42px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
 </style>
