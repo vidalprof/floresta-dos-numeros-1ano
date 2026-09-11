@@ -813,6 +813,60 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 📋 PROVA (o formato `_mat2`) SUBIU DE NÍVEL — três regras novas (set/2026, Geografia SC 5º ano)
+
+A prova trimestral de Geografia (`_geo5` + `_geo5painel` + `_geo5fonte`) clonou o
+formato da Prova da Coruja Cora e mudou três coisas que valem para **toda prova
+daqui em diante**. Não são enfeite: cada uma nasceu de um defeito medido.
+
+**1. A SEMENTE DO EMBARALHO SE ESCOLHE MEDINDO, e há portão.** No `questoes.json`
+a resposta certa é SEMPRE a primeira — é o que torna possível auditar 20 questões
+numa passada. O montador embaralha com semente fixa (a turma toda vê a mesma
+prova e o gabarito do painel vale). **Mas semente qualquer não serve:** a primeira
+que usei punha **C em nove das vinte** — quem marcasse tudo C levava 45% sem ler
+nada, e a prova deixava de medir o que mede. O `montar.py` agora **recusa a
+montagem** se uma letra passar de 6 em 20 ou se a mesma letra aparecer 3× seguidas.
+Procurar semente boa é um `for` de 3 linhas; foi assim que saiu 5A/5B/5C/5D.
+⚠️ Ao buscar semente, cuidado com `itertools.groupby`: ele devolve `(chave, grupo)`,
+então `len(list(x))` mede o PAR (sempre 2) e não a sequência. Errei isso e o portão
+me pegou — que é exatamente para o que ele serve.
+
+**2. A FONTE E O PRODUTO MORAM EM PASTAS SEPARADAS.** `<pasta>fonte/` fica só no
+repositório da fábrica e **nunca sobe**: o `questoes.json` (com a certa em primeiro),
+o `GABARITO.md` e os megabytes de material baixado. `<pasta>/` é só o que o navegador
+precisa: HTML, figuras, `falas.json`, `voz.txt`. Junto, a criança acharia o gabarito
+digitando o endereço, e os 25 MB de mapas engasgariam o build do Pages (já aconteceu
+nesta casa). O montador mora na FONTE e escreve na pasta publicada.
+
+**3. O PAINEL DO PROFESSOR NÃO É MAIS SÓ A LISTA DE NOTAS.** Uma nota 6,5 não diz ao
+professor o que reensinar. O painel agora tem três blocos, e este é o padrão:
+- **"Onde a turma tropeçou"** — acerto questão a questão, com a letra certa ao lado,
+  contando **só quem respondeu** (branco não é erro: somá-lo inflaria o problema);
+- **"Por assunto"** — o mesmo somado por eixo (relevo, clima, cartografia…);
+- **"O que esta prova mede"** — cada objetivo com as questões que o medem e a
+  habilidade **copiada do currículo de Blumenau**, conferida pelo
+  `_qa/curriculo_verbatim.py`. É a resposta ao pedido do Marcos: *"preciso que quando
+  um professor olhe e analise a atividade ele veja que está ótima"*.
+O painel **não se edita à mão**: o `montar.py` escreve `GABARITO`/`EIXOS`/`TURMAS`/
+`CURRICULO` entre `/*DADOS-INI*/` e `/*DADOS-FIM*/`. Se os dois se separassem, o
+professor veria "a turma toda errou a 3" quando ninguém errou nada.
+
+**E duas coisas de tela que o molde da prova de 10 questões escondia:**
+- **a figura de uma prova de Geografia É o enunciado.** Os 132 px herdados deixavam
+  Santa Catarina do tamanho de uma unha dentro do mapa do Brasil. Virou 300 px **e
+  abre em tela cheia ao toque** (os mapas reais têm 1100 px — há o que ampliar).
+- **a fita de progresso cabia 10 selos, não 20.** Em `nowrap` com 340 px, os últimos
+  saíam da tela e a criança perdia de vista onde estava justo no fim. Quebra em duas
+  fileiras de 10.
+
+**Mapas reais:** dá para usar mapa de terceiro, e é muito melhor que desenhar um
+esquemático — desde que **licenciado** (Wikimedia Commons, CC BY / CC BY-SA), com
+`creditos.json` na pasta e o bloco de créditos dentro da própria prova. O mapa
+escolar do IBGE traz legenda, rosa dos ventos, escala e inserção do Brasil numa
+figura só: três questões de cartografia saem dele. E **conferir o peso**: o mapa de
+relevo vinha com 1,8 MB em PNG; num PC de escola em rede filtrada isso é uma tela
+branca esperando. JPG qualidade 88 → 324 KB, sem perder nada que a criança leia.
+
 ## 🚨 PORTÃO QUE REPROVA SEMPRE É PORTÃO QUE NINGUÉM LÊ (set/2026)
 
 Os oito cadernos da sequência de alfabetização saíam do pré-voo com **três

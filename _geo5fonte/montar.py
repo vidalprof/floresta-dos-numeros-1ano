@@ -253,7 +253,7 @@ def main():
     io.open(camp, "w", encoding="utf-8").write(p)
 
     # ---- o gabarito, para o professor conferir sem abrir o código
-    gab = u"# Gabarito — %s\n\n(gerado por `python3 _geo5/montar.py`; semente %d)\n\n" % (TITULO, SEMENTE)
+    gab = u"# Gabarito — %s\n\n(gerado por `python3 _geo5fonte/montar.py`; semente %d)\n\n" % (TITULO, SEMENTE)
     gab += u"| # | eixo | resposta | o que a questão mede |\n|---|---|---|---|\n"
     for q, g in zip(qs, gabarito):
         gab += u"| %d | %s | **%s** | %s |\n" % (q["n"], fonte["eixos"][q["eixo"]], g,
