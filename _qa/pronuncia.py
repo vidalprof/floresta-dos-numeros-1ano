@@ -143,6 +143,42 @@ def transcreve(modelo, wav):
     return limpa(u" ".join(t for t in txt if t))
 
 
+def liberadas(pasta):
+    u"""as falas acusadas pelo reconhecedor que foram EXAMINADAS e liberadas.
+
+    ⚠️ POR QUE ISTO EXISTE (set/2026, prova de Geografia). O portão reprovou 4
+    falas de 107. Ouvidas uma a uma, as quatro eram erro do RECONHECEDOR, não da
+    voz — e uma delas nem erro era: ele ouviu "sou" onde estava escrito "sul", e
+    em português do Brasil "sul" soa mesmo assim. As outras três eram palavras
+    curtas e soltas ("caatinga", "mangue", "Paraná"), justo onde o modelo pequeno
+    é pior.
+
+    ⚠️ E POR QUE NÃO BAIXEI O RIGOR PARA PALAVRA CURTA, que seria mais simples: o
+    defeito que fez este portão nascer foi "ilefante" no lugar de "elefante" —
+    UMA palavra curta e solta. Afrouxar ali cegaria o portão exatamente onde ele
+    já salvou a casa uma vez.
+
+    A saída é a mesma que a casa usa para as fotos: uma linha de base APROVADA À
+    MÃO. Cada id liberado vem com o motivo escrito, em `<pasta>/voz_ok.json`:
+
+        {"vyk33yf": "eu ouvi: a voz diz 'sul' certo; o ASR ouve 'sou' porque
+                     em pt-BR o L final soa /w/"}
+
+    ⚠️⚠️ E SEJA EXATO SOBRE QUEM EXAMINOU. Eu, do chat, NÃO escuto áudio — leio
+       o que o reconhecedor devolveu e comparo com a fonética do português. Isso
+       basta para casos como "sul"/"sou", que é regra da língua; NÃO basta para
+       afirmar que uma locução está bonita. Por isso o motivo escrito deve dizer
+       o que foi feito, e a liberação definitiva é do professor, que ouve em 20
+       segundos. Liberar em silêncio, sem motivo, é falsificar o portão."""
+    cam = os.path.join(pasta, "voz_ok.json")
+    if not os.path.exists(cam):
+        return {}
+    with open(cam, encoding="utf-8") as f:
+        d = json.load(f)
+    return dict((k, v) for k, v in d.items()
+                if not k.startswith("_") and isinstance(v, str) and v.strip())
+
+
 def confere(pasta, cam_modelo=None, limite=0):
     fal = os.path.join(pasta, "falas.json")
     aud = os.path.join(pasta, "audio")
@@ -250,6 +286,12 @@ def confere(pasta, cam_modelo=None, limite=0):
                 tortas.append((fid, esperado, ouvido, d))
         elif d > DISTANCIA_LONGA:
             tortas.append((fid, esperado, ouvido, d))
+    ok = liberadas(pasta)
+    perdoadas = [x for x in tortas if x[0] in ok]
+    tortas = [x for x in tortas if x[0] not in ok]
+    for fid, esp, ouv, d in perdoadas:
+        print(u"   (liberada) [%s] \u201c%s\u201d: %s" % (fid, esp, ok[fid]))
+
     try:
         os.rmdir(tmpdir)
     except Exception:

@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 u"""
 ============================================================
- A FAMÍLIA DAS PALAVRAS — gerador das falas (degrau 3: sílaba inicial)
+ A RODA DAS SÍLABAS — gerador das falas (degrau 9: a vogal que muda a sílaba)
 
  ⚠️ REGRA DA CASA: o `falas.json` é a VERDADE. Texto escrito aqui = voz gravada.
 
- ⚠️⚠️ E AQUI A VOZ É O CONTEÚDO INTEIRO. O objetivo é *comparar palavras pelo
-    som da sílaba INICIAL* — comparar SOM. Uma folha de sílaba inicial sem voz
-    ensina a criança a comparar o desenho da palavra, que é outra coisa e não
-    serve para ler.
+ ⚠️⚠️ E AQUI A VOZ É O CONTEÚDO INTEIRO — mais ainda que no degrau 3. Ali as
+    palavras comparadas começavam com CONSOANTES diferentes, e no papel isso
+    ainda se vê. Aqui LATA, LEÃO, LIMÃO, LOBO e LUPA começam todas com a MESMA
+    letra: a diferença mora só na vogal, e só no OUVIDO. Sem voz esta folha não
+    ensina nada — vira leitura disfarçada.
 
  ⚠️⚠️ A SÍLABA SAI RECORTADA DA PALAVRA INTEIRA (`silabas.json` +
     `_padrao/silabas_voz.py`). Lição paga em 10/set/2026: sintetizar a sílaba
@@ -16,7 +17,7 @@ u"""
     palavra. Aqui a voz lê "cavalo" e o alinhamento forçado corta o "ca" de
     dentro. O portão `_qa/silabas.py` mede e reprova se sair soletrado.
 
- Uso:  python3 _ini1/gerar_falas.py
+ Uso:  python3 _roda1/gerar_falas.py
 ============================================================
 """
 from __future__ import print_function
@@ -69,32 +70,37 @@ def empedacos(w):
 F = {}
 
 # ---- a casa ------------------------------------------------------------------
-F[u"capa"] = (u"A Família das Palavras. Dez folhas para descobrir que muitas palavras "
-              u"começam com o mesmo pedacinho. Escreva o seu nome ali embaixo e toque "
-              u"em Começar.")
-F[u"fim"] = (u"Você chegou ao fim! Agora você sabe ouvir com que pedacinho uma palavra "
-             u"começa. Olhe o seu mural ali embaixo.")
+F[u"capa"] = (u"A Roda das Sílabas. Dez folhas para descobrir uma coisa muito útil: o "
+              u"éle sozinho não fala. Quando a vogal chega, nasce um pedacinho — e com "
+              u"cinco vogais nascem cinco pedacinhos. Escreva o seu nome ali embaixo e "
+              u"toque em Começar.")
+F[u"fim"] = (u"Você chegou ao fim! Agora você sabe montar a roda: uma letra parada e as "
+             u"cinco vogais girando. Existe uma roda para cada letra — quantas você "
+             u"consegue montar? Olhe o seu mural ali embaixo.")
 F[u"escreva"] = u"Escreva o pedacinho do começo."
 F[u"vozOn"] = u"Narração ligada!"
 F[u"quase"] = u"Quase! Escute o começo de novo e tente outra."
 F[u"folhaPronta"] = u"Folha pronta! Muito bem."
 F[u"ligue"] = u"Toque numa figura e depois no pedacinho com que ela começa."
+F[u"rodaLivre"] = u"Esta é a roda do éle. Toque numa vogal e escute o que nasce."
 F[u"novoCaderno"] = u"Caderno novo! As palavras mudaram."
 
-F[u"p1enun"] = (u"Folha um: ouça o começo da palavra. Toque no primeiro pedaço e escute. "
-                u"É por ele que a palavra começa.")
+F[u"p1enun"] = (u"Folha um: a roda do éle. Toque nas vogais e escute. O éle fica parado "
+                u"no meio; a vogal é que muda. Brinque à vontade primeiro; os pedidos "
+                u"vêm depois.")
 F[u"p2enun"] = u"Folha dois: ouça a palavra. Com que pedacinho ela começa?"
 F[u"p3enun"] = (u"Folha três: toque em todas as figuras que começam com o pedacinho "
-                u"mostrado. Depois toque em Conferir.")
+                u"mostrado. Cuidado: as outras começam com a mesma letra, mas com outra "
+                u"vogal. Depois toque em Conferir.")
 F[u"p4enun"] = u"Folha quatro: ligue cada figura ao pedacinho com que ela começa."
 F[u"p5enun"] = (u"Folha cinco: nesta grade há duas que começam com o mesmo pedacinho. "
                 u"Ache as duas.")
 F[u"p6enun"] = u"Folha seis: falta o começo da palavra. Ponha o pedacinho certo no lugar."
-F[u"p7enun"] = (u"Folha sete: três começam com o mesmo pedacinho e uma não. "
-                u"Circule quem não é da família.")
+F[u"p7enun"] = (u"Folha sete: três são da mesma roda e uma não é. Circule quem não é da "
+                u"roda. Preste atenção: às vezes a intrusa começa com a mesma letra.")
 F[u"p8enun"] = u"Folha oito: ponha cada figura na gaveta do começo dela."
 F[u"p9enun"] = u"Folha nove: ouça a palavra e escreva o pedacinho com que ela começa."
-F[u"p10enun"] = u"Folha dez: toque nas palavras que você quer no seu mural."
+F[u"p10enun"] = u"Folha dez: toque nas palavras que você quer no mural das rodas."
 
 # ---- toda palavra que aparece --------------------------------------------------
 usadas = set()

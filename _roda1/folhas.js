@@ -250,7 +250,7 @@ function sobre(ev, alvo){
    ⚠️ Todos são sílaba de VERDADE, de outra palavra deste caderno. A folha
    D01 da colheita foi recusada por oferecer KO/KA/KU, que não existem na
    escrita do português: distrator inventado ensina grafia errada. */
-var DISTRA = {"banana": ["JA", "SI"], "bolacha": ["CO", "PEI"], "boneca": ["CO", "PEI"], "cachorro": ["PI", "TU"], "cavalo": ["PI", "TU"], "cebola": ["A", "BA"], "celular": ["A", "BA"], "escola": ["CA", "RA"], "espelho": ["CA", "RA"], "macaco": ["NA", "PEI"], "mapa": ["NA", "PEI"], "panela": ["BO", "FO"], "papagaio": ["BO", "FO"], "pipoca": ["TO", "VE"], "pirulito": ["TO", "VE"], "tesoura": ["BA", "VA"], "tucano": ["GI", "PA"], "zebra": ["CA", "FA"]};
+var DISTRA = {"laranja": ["LO", "LU"], "lata": ["LE", "LU"], "leao": ["LA", "LI"], "limao": ["LE", "LO"], "lobo": ["LA", "LU"], "luneta": ["LA", "LE"], "lupa": ["LO", "LI"], "maca": ["MI", "MO"], "macaco": ["ME", "MI"], "mala": ["ME", "MO"], "mapa": ["ME", "MO"], "menina": ["MA", "MI"], "menino": ["MI", "MO"], "minhoca": ["ME", "MO"], "mola": ["MA", "MI"]};
 
 /* ============================================================
    A FAMÍLIA DAS PALAVRAS — as dez folhas
@@ -291,43 +291,118 @@ function figComSom(w, cls){
 }
 function ini(w){ return sil(w)[0]; }
 
-/* 1 — OUÇA O COMEÇO DA PALAVRA (a folha que ENSINA)
-   ⭐ A palavra aparece partida e o PRIMEIRO pedaço está aceso. A criança toca
-   nele e ouve — recortado de dentro da palavra inteira, com a pronúncia de
-   verdade. É daqui que sai tudo o que as outras nove cobram. */
+/* 1 — A RODA DO L (a folha que ENSINA, e a única mecânica nova do caderno)
+   ============================================================
+   ⭐ O QUE ELA ENSINA, e por que uma roda e não uma lista:
+   numa lista (LA, LE, LI, LO, LU) a criança lê cinco coisas soltas. Na roda ela
+   VÊ que é sempre o MESMO L, e que o que muda é a vogal que entra — o L fica
+   parado no meio e as cinco vogais giram em volta dele. É a ideia geradora: com
+   uma consoante e cinco vogais ela fabrica cinco sílabas, e com elas palavras
+   que nunca viu. Sair da soletração é isso.
+
+   ⚠️ PRIMEIRO A MÃO, DEPOIS A PERGUNTA (regra da casa, vinda da pesquisa).
+   A roda começa LIVRE: a criança toca em qualquer vogal quantas vezes quiser,
+   ouve a sílaba montada e vê a palavra aparecer. Só quando ela já brincou é que
+   vêm os cinco pedidos ("toque na vogal que faz LU"). Perguntar antes de deixar
+   mexer transforma descoberta em prova.
+
+   ⚠️ A SÍLABA É RECORTADA DA PALAVRA, nunca sintetizada solta (`sb1_LA` sai de
+   dentro de LATA falada). Voz não lê som, lê palavra: pedir "la" ao sintetizador
+   devolve "éle-á". Lição paga em 10/set/2026.
+   ============================================================ */
 function f1(d, pi){
   faixa(d, pi, NOMES[0]);
-  enunciado(d, pi, "Toque no <b>primeiro pedaço</b> e ouça. É por ele que a palavra começa.", "p1enun");
-  var L = ST.folha.p1;
+  enunciado(d, pi, "Toque nas <b>vogais</b> e ouça. O <b>L</b> fica parado; a vogal é que muda.", "p1enun");
+
+  var L = ST.folha.p1, R = RODAS.L;
+
+  /* ---- a roda, livre ---- */
+  var roda = el("div", "roda");
+  var meio = el("div", "rmeio", "L");
+  meio.setAttribute("aria-hidden", "true");
+  var mostra = el("div", "rmostra");
+  var msil = el("b", "rsil", "L_");
+  var mfig = el("div", "rfig", "");
+  mostra.appendChild(msil); mostra.appendChild(mfig);
+
+  /* as cinco vogais em volta: ângulo fixo, começando no alto e girando no
+     sentido do relógio — a mesma ordem A E I O U que ela já viu no degrau 0. */
+  R.s.forEach(function(s, k){
+    var voc = s.charAt(1), w = R.w[k];
+    var ang = -90 + k * (360 / R.s.length), rad = ang * Math.PI / 180;
+    var b = el("button", "rvog", voc);
+    b.style.left = (50 + 37 * Math.cos(rad)) + "%";
+    b.style.top  = (50 + 37 * Math.sin(rad)) + "%";
+    b.setAttribute("data-qa", "vogal-" + voc);
+    b.setAttribute("aria-label", "vogal " + voc + ", faz " + s);
+    b.onclick = function(){
+      sPasso();
+      var els = anel.getElementsByClassName("rvog"), i;
+      for(i = 0; i < els.length; i++) els[i].className = "rvog";
+      b.className = "rvog acesa";
+      msil.innerHTML = esc(s);
+      mfig.innerHTML = img(w, "figgrande") + '<span class="rnome">' + esc(w) + "</span>";
+      falar("sb1_" + s);
+      /* a palavra vem logo depois da sílaba: é ela que dá sentido ao pedaço */
+      setTimeout(function(){ falar("pal_" + w); }, 900);
+    };
+    roda.appendChild(b);
+  });
+  roda.appendChild(meio);
+  var cx = el("div", "rodacx");
+  cx.appendChild(roda); cx.appendChild(mostra);
+  d.appendChild(cx);
+
+  /* ---- os pedidos ----
+     ⚠️⚠️ O PEDIDO NÃO PODE TRAZER A RESPOSTA ESCRITA. Na primeira versão eu
+        escrevia "Toque na vogal que faz **LA**" e punha A, E, I, O, U embaixo:
+        a criança lia a segunda letra do enunciado e tocava nela. Media zero —
+        e pior, ensinava a resolver por cópia. Vi isso no print, não num portão.
+     ⚠️ Agora o pedido chega por DOIS caminhos que nunca mostram a letra:
+        · pelo OUVIDO (só o alto-falante: ouça o pedacinho e ache a vogal);
+        · pela FIGURA (que vogal começa LUPA?).
+        Os dois se alternam, o que também tira a sensação de "a mesma tela cinco
+        vezes" — a queixa que as crianças fazem ao Marcos. */
   for(var i = 0; i < L.length; i++){
     (function(w, i){
-      var id = "n1_" + i, box = item(i + 1), ss = sil(w), pronto = !!ST.resp[id];
-      registra(id, pi, ss[0]);
-      box.appendChild(figComSom(w));
-      var fila = el("div", "desfile");
-      ss.forEach(function(s, k){
-        var b = el("button", "silped" + (k === 0 ? " alvo" : " apagada") +
-                              (pronto && k === 0 ? " acesa" : ""), esc(s));
-        b.setAttribute("data-qa", "ini-" + id + "-" + k);
-        b.setAttribute("aria-label", (k === 0 ? "o começo: " : "pedaço ") + s);
-        b.onclick = function(){
-          if(ST.resp[id]) return;
-          if(k !== 0){
-            /* ⚠️ tocar num pedaço do meio não é erro: é a pergunta errada. A voz
-               diz onde está o começo, sem a palavra "errado". */
-            sPasso(); falarSilaba(w, k, s);
-            errou(id, "volte1_" + w); return;
-          }
-          sPasso(); falarSilaba(w, 0, ss[0]);
-          b.className = "silped alvo acesa";
-          setTimeout(function(){ acertou(id, "certo1_" + w); }, 620);
-        };
-        fila.appendChild(b);
+      var id = "n1_" + i, box = item(i + 1), s = ini(w), voc = s.charAt(1);
+      var porFigura = (i % 2 === 1);
+      var lin = el("div", "chamlin");
+      if(porFigura){
+        /* ⚠️ AQUI A FIGURA VAI SEM O NOME ESCRITO, e é a única folha do caderno
+           em que isso acontece. Nas outras o nome ajuda; aqui ele ENTREGA: as
+           opções são vogais soltas, e a segunda letra de LEÃO é a resposta. Com
+           só a figura e o alto-falante, a criança tem de dizer a palavra por
+           dentro e ouvir o comecinho — que é o que a folha mede. */
+        var fc = el("div", "figsil");
+        fc.innerHTML = img(w, "figgrande");
+        var fl = el("div", "chamlin");
+        fl.appendChild(botaoSom("Ouvir a palavra", function(){ falar("pal_" + w); }));
+        fc.appendChild(fl);
+        box.appendChild(fc);
+        lin.appendChild(el("span", "", "Ouça a palavra. Com que vogal ela começa?"));
+      } else {
+        lin.appendChild(el("span", "", "Ouça o pedacinho e toque na vogal dele."));
+        lin.appendChild(botaoSom("Ouvir o pedacinho", function(){ falar("sb1_" + s); }));
+      }
+      box.appendChild(lin);
+      var ops = R.s.map(function(x){
+        return {v: x.charAt(1), rot: '<span class="ltop">' + x.charAt(1) + "</span>",
+                aria: "vogal " + x.charAt(1), fala: "sb1_" + x};
       });
-      box.appendChild(fila);
+      opcoes(box, pi, id, ops, voc, "figbt", "certo1_" + w, "volte1_" + w, function(){
+        /* ao acertar, a roda do alto mostra o que ela acabou de montar */
+        msil.innerHTML = esc(s);
+        mfig.innerHTML = img(w, "figgrande") + '<span class="rnome">' + esc(w) + "</span>";
+      });
       fechaItem(d, box, id);
     })(L[i], i);
   }
+
+  /* ⚠️ o pedido "por ouvido" toca a sílaba assim que a folha abre a primeira
+     vez; sem isso a criança fica olhando um alto-falante sem saber que tem de
+     apertar (medido com crianças no degrau 4). */
+  aoAbrir(d, function(){ if(!ST.resp["n1_0"]) setTimeout(function(){ falar("sb1_" + ini(L[0])); }, 1200); });
 }
 
 /* 2 — QUAL É O COMEÇO? (das folhas D07 e D10)
@@ -1107,30 +1182,29 @@ var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
    Duas folhas podem medir a mesma coisa com gestos diferentes, e para o
    professor interessa o que ela domina, não em qual tela. */
 var OBJETIVOS = [
-  {n: "Ouvir o começo da palavra", f: [1],
-   ok: "acha o primeiro pedaço da palavra e o escuta",
-   nao: "ainda não separa o começo do resto da palavra"},
-  {n: "Dizer QUAL é o começo", f: [2],
-   ok: "ouve a palavra e diz com que pedacinho ela começa",
-   nao: "ainda erra o pedacinho do começo entre as opções"},
-  {n: "Achar quem começa igual (com o alvo)", f: [3],
-   ok: "acha todas as figuras que começam com o pedacinho mostrado",
-   nao: "ainda para na primeira que serve, ou marca uma que não é"},
-  {n: "Ligar a figura ao seu começo", f: [4],
-   ok: "segura quatro começos ao mesmo tempo e liga cada um ao seu",
-   nao: "ainda se perde quando são quatro de uma vez"},
-  {n: "Achar o par SEM o alvo dado", f: [5],
-   ok: "compara as figuras entre si e acha as duas que começam igual",
-   nao: "ainda precisa do pedacinho na tela para comparar"},
-  {n: "Completar o começo que falta", f: [6],
-   ok: "descobre qual pedacinho falta no começo da palavra",
-   nao: "ainda não usa o resto da palavra como pista"},
-  {n: "Achar o intruso e classificar", f: [7, 8],
-   ok: "enxerga quem não é da família e põe cada figura na gaveta certa",
-   nao: "ainda confunde começar com a mesma LETRA e com o mesmo PEDACINHO"},
-  {n: "Escrever o começo sozinha", f: [9],
-   ok: "escreve o pedacinho do começo sem ter opção na tela",
-   nao: "ainda depende das opções prontas"}
+  /* ⚠️ ESTA LISTA E O `curriculo.json` SÃO A MESMA COISA, ditas para dois
+     leitores: aqui em palavras que o professor lê no relatório, lá no
+     vocabulário do currículo da rede. O portão 0b9 reprova se os nomes e as
+     folhas não baterem um a um — foi ele que me pegou ao eu deixar aqui os
+     objetivos do degrau 3 depois de já ter reescrito o dossiê. */
+  {n: "Montar a roda: a mesma consoante com as cinco vogais", f: [1],
+   ok: "entende que o L fica parado e a vogal é que muda o pedacinho",
+   nao: "ainda não liga a vogal escolhida ao pedacinho que nasce"},
+  {n: "Ouvir a palavra e dizer com que pedacinho ela começa", f: [2, 3],
+   ok: "ouve a palavra e acha o pedacinho do começo, escrito ou na figura",
+   nao: "ainda troca o pedacinho do começo pelo de outra vogal"},
+  {n: "Distinguir sílabas que só diferem na vogal", f: [4, 5],
+   ok: "separa LA de LE, LI, LO e LU — a letra é a mesma, o pedacinho não",
+   nao: "ainda decide pela LETRA e não pelo pedacinho inteiro"},
+  {n: "Completar e classificar pelo pedacinho do começo", f: [6, 7, 8],
+   ok: "põe o pedacinho que falta e separa as figuras por ele",
+   nao: "ainda se perde quando as palavras começam todas com a mesma letra"},
+  {n: "Escrever o pedacinho que se ouve", f: [9],
+   ok: "escreve sozinha o pedacinho do começo, sem opções",
+   nao: "ainda precisa das opções para escolher o pedacinho"},
+  {n: "Montar o próprio mural de rodas", f: [10],
+   ok: "escolhe as palavras e monta o mural das rodas",
+   nao: "ainda não escolheu as palavras do mural"}
 ];
 
 /* mede um objetivo: devolve acertos de primeira, com ajuda, total e pontos */
