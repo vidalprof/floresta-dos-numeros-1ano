@@ -73,6 +73,8 @@ PORTOES=(
   "0b padrao da casa|python3 _qa/padrao.py $ARQ"
   "0b2 dinamicas|python3 _qa/dinamicas.py $ARQ"
   "0b6 catalogo/painel|python3 _qa/catalogo.py $PASTA"
+  # ⭐ so responde em jogo de UNO (nos outros ele sai com 2 = "nao medi")
+  "3u regra da compra (UNO)|node _qa/uno.js $ARQ"
   "0c pergunta ambigua|python3 _qa/ambiguo.py $ARQ"
   "0d voz da tela|python3 _qa/voztela.py $ARQ"
   "0e tela vazia|python3 _qa/telavazia.py $ARQ"

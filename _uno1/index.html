@@ -493,8 +493,29 @@ function aplicarEfeito(carta, quem){
   setTimeout(passarVezParaCpu, 800);
 }
 
+/* ⭐⭐ "PEGAR 1" SÓ EXISTE QUANDO NÃO HÁ O QUE JOGAR — E É UMA CARTA SÓ.
+   Ordem do Marcos (set/2026): *"se a criança não tiver uma carta para jogar ela
+   deve comprar uma no monte; caso ela compre e ainda assim não tenha, passa a
+   vez de jogar, para não ficar comprando um monte de cartas"*.
+
+   O jogo já passava a vez quando a carta comprada não servia. O buraco estava do
+   outro lado: NADA impedia a criança de apertar "Pegar 1" tendo carta boa na
+   mão. Se a comprada servisse, a vez continuava — e ela podia apertar de novo, e
+   de novo. Dava para chegar ao fim da partida com quinze cartas na mão sem nunca
+   jogar, que é exatamente o "monte de cartas" que ele não quer.
+
+   A regra virou, então, a do UNO de mesa: compra-se só quando não dá para jogar,
+   e uma carta por vez. Com carta jogável na mão, o botão não compra — responde
+   dizendo onde tocar (nunca uma recusa muda: no PC da escola botão que não faz
+   nada lê como app quebrado). */
 function comprarCarta(){
   if(!vezDoJogador || esperandoCor) return;
+  if(temJogada()){
+    setMensagem('Você TEM carta para jogar! Toque na carta que brilha. ✨');
+    var bd = document.getElementById('btnComprar');
+    if(bd) bd.classList.remove('destaque');
+    return;
+  }
   if(baralho.length===0) reabastecer();
   const c = baralho.pop();
   mao.push(c);
