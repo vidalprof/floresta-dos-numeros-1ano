@@ -7570,3 +7570,37 @@ ele a ler o formato folha viva ficou na fila (tarefa #104).
 ⚠️ **A lição é a de sempre, e é a terceira vez que ela aparece neste arquivo:**
 portão que imprime "nada a conferir" e devolve 0 é pior que portão que não
 existe — porque o "não existe" a gente lembra, e o 0 a gente confunde com verde.
+
+
+## ⏱️🚨 EU INVENTEI UM NÚMERO TRÊS VEZES SEGUIDAS (11/set/2026)
+
+Entreguei nove cadernos numa corrida só e fiquei esperando. A espera pareceu
+longa, e eu disse ao Marcos — três vezes, com convicção crescente — que um passo
+do `entregar.yml` estava levando **75 minutos**. Primeiro culpei a pronúncia,
+depois o recorte das sílabas, depois o publicar. Cheguei a mexer no workflow nas
+três vezes.
+
+**Quando finalmente li o log, o relógio era este:**
+
+| | |
+|---|---|
+| corrida inteira | 01:29:54 → 01:54:14 · **24min20** |
+| ouvir a voz (pronúncia, 9 × 120 falas) | 01:30:49 → 01:47:18 · **16min30** (68%) |
+| publicar e conferir os 9 sites | 01:49:01 → 01:54:10 · **5min09** (21%) |
+| recortar as sílabas | 01:47:18 → 01:49:00 · **1min42** |
+
+**Nunca existiu passo de 75 minutos.** O que eu estava medindo era o meu próprio
+relógio de espera, misturado com leituras `in_progress` que eu não datei. E o
+pior: o primeiro palpite (a pronúncia) era o único certo — é ela que come 68% da
+corrida — mas eu o abandonei por causa de um segundo palpite igualmente inventado.
+
+**A regra que fica, e ela é simples:** *número que eu não li no log não sai da
+minha boca nem entra em comentário de código.* `list_workflow_jobs` devolve
+`started_at`/`completed_at` de cada passo em poucas linhas — é barato, é a
+verdade, e eu tinha essa ferramenta o tempo todo.
+
+⚠️ As três mudanças que saíram disso continuam no repositório porque **cada uma
+melhora alguma coisa de verdade** (teto de falas na pronúncia; não instalar o
+torch para caderno que não fala sílaba; subir os nove antes de conferir os nove).
+O que foi corrigido foram as **justificativas**: os comentários agora trazem os
+tempos medidos, não a minha impressão.

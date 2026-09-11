@@ -493,15 +493,22 @@ jobs:
           mkdir -p _status
           echo "## Entrega" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
-          # ⚡⚡ DUAS VOLTAS, E ISSO E O CONSERTO (medido em 11/set/2026).
-          #    Antes era UMA volta so: subia o repo 1, ESPERAVA ate 3 minutos o
-          #    Pages dele trocar, e so entao ia para o repo 2. Com nove alvos as
-          #    esperas iam uma atras da outra e este passo sozinho passou de 75
-          #    MINUTOS — era ele o gargalo da corrida (eu tinha culpado a pronuncia
-          #    e depois as silabas; as duas juntas dao 18 min).
-          #    Agora: a 1a volta SOBE os nove e pede o build dos nove; a 2a volta
-          #    pergunta ao site. Enquanto o nono sobe, o primeiro ja esta pronto —
-          #    as esperas passam a acontecer ao mesmo tempo, nao em fila.
+          # ⚡ DUAS VOLTAS: a 1a SOBE os nove e pede o build dos nove; a 2a pergunta
+          #    ao site. Antes era uma volta so — subia o repo 1, esperava ALI ate 3
+          #    minutos o Pages dele trocar, e so entao ia para o repo 2. Assim as
+          #    esperas acontecem ao mesmo tempo em vez de em fila.
+          # ⚠️ HONESTIDADE SOBRE O GANHO (11/set/2026): isto e uma folga, NAO o
+          #    conserto de um gargalo. Eu tinha anunciado que este passo levava 75
+          #    minutos — era invencao minha, medida no meu proprio relogio de espera
+          #    e nao no log. O log da corrida de nove alvos diz:
+          #        corrida inteira        01:29:54 -> 01:54:14   24min20
+          #        ouvir a voz            01:30:49 -> 01:47:18   16min30  (68%)
+          #        publicar e conferir    01:49:01 -> 01:54:10    5min09  (21%)
+          #        recortar as silabas    01:47:18 -> 01:49:00    1min42
+          #    Ou seja: o passo caro e o de OUVIR. Este aqui ja custava 34 segundos
+          #    por atividade porque quase sempre o Pages ja trocou na 1a pergunta;
+          #    as duas voltas so protegem o dia em que ele demorar.
+          #    A licao: numero que eu nao li no log nao entra em comentario nenhum.
           SRCS=(); DESTS=(); MARCAS=()
           for par in $(echo "$LISTA" | tr ',' ' '); do
             SRC="${par%%:*}"; DEST="${par#*:}"
