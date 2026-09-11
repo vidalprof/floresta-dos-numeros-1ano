@@ -484,6 +484,16 @@ portao "0b9 pedagogo (curriculo)" python3 _qa/pedagogo_curriculo.py "$PASTA"
 echo "--- 1i3) ANDARILHO (a folha viva anda inteira? figura carrega?) -"
 portao "1i3 andarilho da folha" node _qa/andar_folha.js "$PASTA"
 
+# ⭐ 1i4) A RESPOSTA ESTA IMPRESSA NO ENUNCIADO? (set/2026 — e ja estava NO AR)
+#    A folha dos quadradinhos da Roda mostrava a figura da mola, a legenda
+#    "MOLA" logo abaixo e, embaixo dela, [ ][ ] L A para a crianca completar.
+#    A resposta estava impressa dois centimetros acima da pergunta: quem le um
+#    pouco resolvia COPIANDO e a folha media zero. Herdado do `figComSom`, o
+#    mesmo defeito aparecia em NOVE folhas do caderno de uma vez.
+#    ⚠️ Quem pegou foi uma FOTO, nao um portao. Este e o portao.
+echo "--- 1i4) RESPOSTA IMPRESSA (a legenda entrega a resposta?) -"
+portao "1i4 resposta impressa" python3 _qa/resposta_impressa.py "$PASTA"
+
 # ⚠️⚠️ OS PORTOES QUE EXISTIAM E NUNCA ERAM CHAMADOS (set/2026). Contei arquivo
 #    por arquivo depois da cobranca do Marcos — *"já pedi essas correções várias
 #    vezes, e sempre acontece a mesma coisa"* — e o numero era **26 dos 80**: eu

@@ -7,7 +7,9 @@
    cardápio: a folha é que manda.
    ============================================================ */
 
-var livro = document.getElementById("livro"), PAGEL = [];
+var livro = document.getElementById("livro"), PAGEL = [], TIRAS = [];
+/* a posição da folha de LIGAR — o único id que não nasce de `n<pi>_` */
+var LIGAR = 5;
 
 function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
 function aoAbrir(d, fn){ if(!d._aoAbrir) d._aoAbrir = []; d._aoAbrir.push(fn); }
@@ -50,9 +52,37 @@ function fechaItem(d, box, id){
   d.appendChild(box);
 }
 
+/* ⭐ A ORDEM DAS FOLHAS — e ela é a ESCADA, não uma lista.
+   Regra da casa (Marcos, ago/2026): *"as repetições das interatividades têm que
+   ser seguidas e não espaçadas — as crianças me dizem 'isso eu já fiz'"*. Então
+   cada gesto que repete vem em BLOCO COLADO, subindo um degrau dentro do bloco:
+
+     marcar vários   3 (figuras, pelo som)  → 4 (sílabas escritas, pelos olhos)
+     completar       7 (banco de sílabas)   → 8 (letra a letra, nos quadradinhos)
+     classificar    10 (figuras na gaveta)  → 11 (palavras escritas nas colunas)
+     escrever       13 (uma sílaba)         → 14 (a roda inteira, e ler)
+
+   ⚠️ A POSIÇÃO É A IDENTIDADE: a folha da posição 7 usa o pote `p7`, grava os
+      ids `n7_*` e fala `p7enun`. Mudar a ordem aqui muda tudo junto, e é de
+      propósito — antes eram três listas para combinar à mão. */
 function monta(){
-  livro.innerHTML = ""; PAGEL = []; RESP = {};
-  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10], i;
+  livro.innerHTML = ""; PAGEL = []; RESP = {}; TIRAS = [];
+  var caps = [f0,
+              f1,              /*  1 a roda do L, que gira                   */
+              f2,              /*  2 que pedacinho é este                    */
+              f3,              /*  3 ache as figuras que começam assim       */
+              fBaloes,         /*  4 ⭐ pinte só os balões do pedacinho      */
+              f4,              /*  5 ligue figura ao pedacinho               */
+              f5,              /*  6 ache as duas que começam igual          */
+              f6,              /*  7 complete o começo                       */
+              fQuadradinhos,   /*  8 ⭐ os dois quadradinhos de letra        */
+              f7,              /*  9 quem não é da roda                      */
+              f8,              /* 10 as gavetas (figuras)                    */
+              fColunas,        /* 11 ⭐ as colunas (palavras escritas)       */
+              fGrafia,         /* 12 ⭐ qual está escrita certa              */
+              f9,              /* 13 escreva o começo                        */
+              fMinhaRoda,      /* 14 ⭐ a minha roda, e leia                 */
+              f10], i;         /* 15 o mural                                 */
   for(i = 0; i < caps.length; i++){
     var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
     caps[i](d, i);
@@ -280,11 +310,42 @@ var DISTRA = {"laranja": ["LO", "LU"], "lata": ["LE", "LU"], "leao": ["LA", "LI"
 /* a figura com o nome e o alto-falante — a peça que se repete.
    ⚠️ ALTO-FALANTE EM TODA PALAVRA: este degrau é de SOM. Sem ouvir, a criança
    compara o desenho da palavra em vez do começo dela. */
-function figComSom(w, cls){
+/* ⚠️⚠️ A PALAVRA ESCRITA NÃO PODE APARECER ANTES DA RESPOSTA — achado em
+   set/2026, olhando a foto da folha 8 (e o defeito já estava NO AR).
+
+   A figura da MOLA vinha com a legenda "MOLA" logo abaixo, e embaixo os
+   quadradinhos `[ ][ ] L A` para a criança completar. Ou seja: a resposta
+   estava impressa dois centímetros acima da pergunta. Quem já lê um pouco
+   resolvia o caderno inteiro COPIANDO, e a folha media zero.
+
+   Nenhuma das 26 folhas de papel colhidas faz isso — e não é por acaso: quando
+   a tarefa é achar o começo, a folha impressa mostra a figura e a palavra COM O
+   COMEÇO FALTANDO, nunca a palavra inteira.
+
+   ⚠️ Mas tirar a legenda por completo traz outro problema, que é por que ela
+      existia: a criança pode chamar a LUNETA de "telescópio" e responder TE.
+      Por isso a legenda não some — ela fica INVISÍVEL e aparece no instante em
+      que o item é respondido. Mis-nomear continua protegido (o alto-falante
+      está sempre ali, e a fala diz o nome), e a palavra escrita chega no
+      melhor momento possível: junto com o acerto.
+
+   ⚠️ `visibility:hidden` e não `display:none`, de propósito: o espaço fica
+      guardado e a folha não pula quando a palavra aparece. */
+function nomeSecreto(w, id){
+  var b = el("b", "segredo" + (ST.resp[id] ? " revelado" : ""), esc(w));
+  b.setAttribute("data-nome", id);
+  return b;
+}
+function rotuloSecreto(w, id){
+  return '<span class="rotop segredo' + (ST.resp[id] ? " revelado" : "") +
+         '" data-nome="' + esc(id) + '">' + esc(w) + "</span>";
+}
+function figComSom(w, cls, id){
   var c = el("div", "figsil" + (cls ? " " + cls : ""));
   c.innerHTML = img(w, "figgrande");
   var lin = el("div", "chamlin");
-  lin.appendChild(el("b", "", esc(w)));
+  /* sem id = folha em que a palavra NÃO é a resposta (a capa, a roda, o mural) */
+  lin.appendChild(id ? nomeSecreto(w, id) : el("b", "", esc(w)));
   lin.appendChild(botaoSom("Ouvir " + esc(w), function(){ falar("pal_" + w); }));
   c.appendChild(lin);
   return c;
@@ -311,10 +372,10 @@ function ini(w){ return sil(w)[0]; }
    devolve "éle-á". Lição paga em 10/set/2026.
    ============================================================ */
 function f1(d, pi){
-  faixa(d, pi, NOMES[0]);
-  enunciado(d, pi, "<b>Gire a roda</b> e ouça. O <b>L</b> fica parado no meio; a vogal é que muda.", "p1enun");
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "<b>Gire a roda</b> e ouça. O <b>L</b> fica parado no meio; a vogal é que muda.", "p" + pi + "enun");
 
-  var L = ST.folha.p1, R = RODAS.L;
+  var L = ST.folha["p" + pi], R = RODAS.L;
 
   /* ---- A RODA QUE GIRA ------------------------------------------------
      ⚠️⚠️ A PRIMEIRA VERSÃO NÃO GIRAVA e eu ia deixar assim. Era um círculo
@@ -469,7 +530,7 @@ function f1(d, pi){
         vezes" — a queixa que as crianças fazem ao Marcos. */
   for(var i = 0; i < L.length; i++){
     (function(w, i){
-      var id = "n1_" + i, box = item(i + 1), s = ini(w), voc = s.charAt(1);
+      var id = "n" + pi + "_" + i, box = item(i + 1), s = ini(w), voc = s.charAt(1);
       var porFigura = (i % 2 === 1);
       var lin = el("div", "chamlin");
       if(porFigura){
@@ -494,7 +555,7 @@ function f1(d, pi){
         return {v: x.charAt(1), rot: '<span class="ltop">' + x.charAt(1) + "</span>",
                 aria: "vogal " + x.charAt(1), fala: "sb1_" + x};
       });
-      opcoes(box, pi, id, ops, voc, "figbt", "certo1_" + w, "volte1_" + w, function(){
+      opcoes(box, pi, id, ops, voc, "figbt", "certo" + pi + "_" + w, "volte" + pi + "_" + w, function(){
         /* ao acertar, a roda do alto mostra o que ela acabou de montar */
         msil.innerHTML = esc(s);
         mfig.innerHTML = img(w, "figgrande") + '<span class="rnome">' + esc(w) + "</span>";
@@ -506,25 +567,25 @@ function f1(d, pi){
   /* ⚠️ o pedido "por ouvido" toca a sílaba assim que a folha abre a primeira
      vez; sem isso a criança fica olhando um alto-falante sem saber que tem de
      apertar (medido com crianças no degrau 4). */
-  aoAbrir(d, function(){ if(!ST.resp["n1_0"]) setTimeout(function(){ falarSilaba(L[0], 0, ini(L[0])); }, 1200); });
+  aoAbrir(d, function(){ if(!ST.resp["n" + pi + "_0"]) setTimeout(function(){ falarSilaba(L[0], 0, ini(L[0])); }, 1200); });
 }
 
 /* 2 — QUAL É O COMEÇO? (das folhas D07 e D10)
    O mesmo ouvido da folha 1, agora ESCOLHENDO — e os distratores são sílabas
    de verdade, tiradas de outras palavras do caderno (ver a recusa da D01). */
 function f2(d, pi){
-  faixa(d, pi, NOMES[1]);
-  enunciado(d, pi, "Ouça a palavra. Com que <b>pedacinho</b> ela começa?", "p2enun");
-  var L = ST.folha.p2;
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ouça a palavra. Com que <b>pedacinho</b> ela começa?", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
   for(var i = 0; i < L.length; i++){
     (function(w, i){
-      var id = "n2_" + i, box = item(i + 1), certa = ini(w);
-      box.appendChild(figComSom(w));
+      var id = "n" + pi + "_" + i, box = item(i + 1), certa = ini(w);
+      box.appendChild(figComSom(w, null, id));
       var ops = (DISTRA[w] || []).concat([certa]).sort().map(function(s){
         return {v: s, rot: '<span class="ltop">' + esc(s) + "</span>",
                 aria: "pedaço " + s, fala: "sb1_" + s};
       });
-      opcoes(box, pi, id, ops, certa, "figbt", "certo2_" + w, "dica2_" + w);
+      opcoes(box, pi, id, ops, certa, "figbt", "certo" + pi + "_" + w, "dica" + pi + "_" + w);
       fechaItem(d, box, id);
     })(L[i], i);
   }
@@ -535,22 +596,23 @@ function f2(d, pi){
    por figura, e não pode parar na primeira que serve. O alvo é DADO aqui — na
    folha 5 ele some, e é isso que sobe o degrau. */
 function f3(d, pi){
-  faixa(d, pi, NOMES[2]);
-  enunciado(d, pi, "Toque em <b>todas</b> as figuras que começam com este pedacinho. Depois toque em Conferir.", "p3enun");
-  var L = ST.folha.p3;
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque em <b>todas</b> as figuras que começam com este pedacinho. Depois toque em Conferir.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
   for(var i = 0; i < L.length; i++){
     (function(it, i){
-      var id = "n3_" + i, box = item(i + 1), feito = !!ST.resp[id];
+      var id = "n" + pi + "_" + i, box = item(i + 1), feito = !!ST.resp[id];
       var certas = it.g.filter(function(w){ return ini(w) === it.s; });
       registra(id, pi, certas.join(","));
       var alvo = el("div", "alvosil");
+      alvo.setAttribute("data-alvo", "1");   /* é o ALVO, pode mostrar a resposta */
       alvo.appendChild(el("span", "ltop grandao", esc(it.s)));
       alvo.appendChild(botaoSom("Ouvir o pedacinho " + it.s, function(){ falar("sb1_" + it.s); }));
       box.appendChild(alvo);
       var grade = el("div", "gradecirc"), marc = {};
       it.g.forEach(function(w){
         var b = el("button", "figcirc" + (feito && ini(w) === it.s ? " marcada" : ""),
-                   img(w, "figop") + '<span class="rotop">' + esc(w) + "</span>");
+                   img(w, "figop") + rotuloSecreto(w, id));
         b.setAttribute("data-qa", "marc-" + id + "-" + w);
         b.setAttribute("aria-label", esc(w));
         b.onclick = function(){
@@ -568,8 +630,8 @@ function f3(d, pi){
         if(ST.resp[id]) return;
         var ok = certas.every(function(w){ return marc[w]; }) &&
                  it.g.every(function(w){ return ini(w) === it.s || !marc[w]; });
-        if(ok){ acertou(id, "certo3_" + it.s); box.className = "item feito"; }
-        else { sErro(); errou(id, "dica3_" + it.s); }
+        if(ok){ acertou(id, "certo" + pi + "_" + it.s); box.className = "item feito"; }
+        else { sErro(); errou(id, "dica" + pi + "_" + it.s); }
       };
       if(feito) pr.style.display = "none";
       box.appendChild(pr);
@@ -582,17 +644,17 @@ function f3(d, pi){
    Quatro de uma vez, e os quatro começos são DIFERENTES: a criança tem que
    segurar quatro sons na cabeça e ainda decidir qual vai com qual. */
 function f4(d, pi){
-  faixa(d, pi, NOMES[3]);
-  enunciado(d, pi, "<b>Ligue</b> cada figura ao pedacinho com que ela começa.", "p4enun");
-  var L = ST.folha.p4;
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "<b>Ligue</b> cada figura ao pedacinho com que ela começa.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
   for(var i = 0; i < L.length; i++){
     var g = L[i], cx = el("div", "");
-    montaLigar(cx, pi, "n4g" + i, g.map(function(w){
+    montaLigar(cx, pi, "g" + i, g.map(function(w){
       return {k: w, w: esc(w), wd: esc(ini(w)),
-              esq: img(w, "figop") + '<span class="rotop">' + esc(w) + "</span>",
+              esq: img(w, "figop") + rotuloSecreto(w, "l" + pi + "g" + i + "_" + w),
               dir: '<span class="ltop grandao">' + esc(ini(w)) + "</span>",
               fe: "pal_" + w, fd: "sb1_" + ini(w),
-              fc: "certo4_" + w, dica: "dica4_" + w};
+              fc: "certo" + pi + "_" + w, dica: "dica" + pi + "_" + w};
     }), d);
     d.appendChild(cx);
   }
@@ -602,15 +664,20 @@ function f4(d, pi){
    Todas as folhas de origem DÃO o pedacinho e mandam procurar quem combina.
    Aqui não há alvo: a criança tem que comparar todas com todas até achar o par.
    É a diferença entre reconhecer e PROCURAR — e é onde a habilidade fica dela.
-   ⚠️ Os distratores são escolhidos para NÃO começarem com a mesma letra do par,
-   nesta folha: a discriminação letra × sílaba tem folha própria (a 7). */
+   ⚠️ CORRIGIDO (set/2026): este comentário dizia que os distratores NÃO começam
+   com a mesma letra do par. Nunca foi verdade nesta atividade — os dados sempre
+   trouxeram as seis da mesma roda — e comentário que mente é pior que nenhum.
+   Aqui as outras quatro começam com a MESMA letra e vogal diferente, DE
+   PROPÓSITO: é a roda, e é exatamente a dificuldade que o caderno veio ensinar.
+   (Na roda do M, que só tem cinco palavras, entra uma de fora para fechar as
+   seis — é um item mais fácil, e está registrado que é.) */
 function f5(d, pi){
-  faixa(d, pi, NOMES[4]);
-  enunciado(d, pi, "Nesta grade há <b>duas</b> que começam com o mesmo pedacinho. Ache as duas.", "p5enun");
-  var L = ST.folha.p5;
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Nesta grade há <b>duas</b> que começam com o mesmo pedacinho. Ache as duas.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
   for(var i = 0; i < L.length; i++){
     (function(g, i){
-      var id = "n5_" + i, box = item(i + 1), feito = !!ST.resp[id];
+      var id = "n" + pi + "_" + i, box = item(i + 1), feito = !!ST.resp[id];
       var conta = {}, par = null, k;
       g.forEach(function(w){ conta[ini(w)] = (conta[ini(w)] || 0) + 1; });
       for(k in conta) if(conta[k] === 2) par = k;
@@ -619,7 +686,7 @@ function f5(d, pi){
       var grade = el("div", "gradecirc"), marc = [];
       g.forEach(function(w){
         var b = el("button", "figcirc" + (feito && ini(w) === par ? " marcada" : ""),
-                   img(w, "figop") + '<span class="rotop">' + esc(w) + "</span>");
+                   img(w, "figop") + rotuloSecreto(w, id));
         b.setAttribute("data-qa", "par-" + id + "-" + w);
         b.setAttribute("aria-label", esc(w));
         b.onclick = function(){
@@ -630,12 +697,12 @@ function f5(d, pi){
           if(marc.length >= 2) return;          /* só duas por vez */
           marc.push(w); b.className = "figcirc marcada";
           if(marc.length === 2){
-            if(ini(marc[0]) === ini(marc[1])) acertou(id, "certo5_" + certas[0]);
+            if(ini(marc[0]) === ini(marc[1])) acertou(id, "certo" + pi + "_" + certas[0]);
             else {
               sErro();
               var todos = grade.querySelectorAll("button"), z;
               for(z = 0; z < todos.length; z++) todos[z].className = "figcirc";
-              marc = []; errou(id, "dica5_" + certas[0]);
+              marc = []; errou(id, "dica" + pi + "_" + certas[0]);
             }
           }
         };
@@ -651,15 +718,15 @@ function f5(d, pi){
    No papel ela recorta a sílaba e cola. Aqui ela PUXA — e quem não consegue
    arrastar, toca. Escrever a sílaba é o degrau 5 da sequência, não este. */
 function f6(d, pi){
-  faixa(d, pi, NOMES[5]);
-  enunciado(d, pi, "Falta o <b>começo</b> da palavra. Ponha o pedacinho certo no lugar.", "p6enun");
-  var L = ST.folha.p6;
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Falta o <b>começo</b> da palavra. Ponha o pedacinho certo no lugar.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
   for(var i = 0; i < L.length; i++){
     (function(w, i){
-      var id = "n6_" + i, box = item(i + 1), ss = sil(w), certa = ss[0];
+      var id = "n" + pi + "_" + i, box = item(i + 1), ss = sil(w), certa = ss[0];
       var feito = !!ST.resp[id];
       registra(id, pi, certa);
-      box.appendChild(figComSom(w));
+      box.appendChild(figComSom(w, null, id));
       var lin = el("div", "vagas");
       var v = el("div", "vaga" + (feito ? " ok" : ""), feito ? esc(certa) : "");
       lin.appendChild(v);
@@ -677,12 +744,12 @@ function f6(d, pi){
           if(s !== certa){
             sErro(); b.className = "sil erro";
             setTimeout(function(){ b.className = "sil"; }, 460);
-            errou(id, "dica6_" + w); return;
+            errou(id, "dica" + pi + "_" + w); return;
           }
           sPasso(); falarSilaba(w, 0, certa);
           v.className = "vaga ok"; v.textContent = esc(certa);
           b.className = "sil usada";
-          setTimeout(function(){ acertou(id, "certo6_" + w); }, 560);
+          setTimeout(function(){ acertou(id, "certo" + pi + "_" + w); }, 560);
         }
         b.onclick = function(){ if(b._arrastou){ b._arrastou = false; return; } poe(); };
         puxavel(b, [v], poe);
@@ -700,17 +767,23 @@ function f6(d, pi){
    uma família que já está montada — e para isso precisa do critério na cabeça,
    não na tela. */
 function f7(d, pi){
-  faixa(d, pi, NOMES[6]);
-  enunciado(d, pi, "Três começam com o <b>mesmo pedacinho</b> e uma não. Circule quem não é da família.", "p7enun");
-  var L = ST.folha.p7;
+  faixa(d, pi, NOMES[pi - 1]);
+  /* ⚠️ ERRO CORRIGIDO EM set/2026, achado relendo as folhas de origem.
+     O enunciado dizia *"três começam com o mesmo pedacinho"* e mostrava
+     MALA · MENINA · MOLA · MORCEGO. As três primeiras NÃO começam com o mesmo
+     pedacinho — MA, ME e MO são pedacinhos diferentes. O que elas têm em comum
+     é a RODA. E o intruso oferecido, morcego, COMEÇA COM M: a criança que o
+     aceitava como da família estava certa no que enxergava, e o app dizia que
+     ela errou. Agora o texto diz roda, e toda intrusa é de outra consoante. */
+  enunciado(d, pi, "Três são da <b>mesma roda</b> e uma não é. Circule quem não é da roda.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
   for(var i = 0; i < L.length; i++){
     (function(it, i){
-      var id = "n7_" + i, box = item(i + 1);
+      var id = "n" + pi + "_" + i, box = item(i + 1);
       registra(id, pi, it.c);
       var grade = el("div", "gradecirc filaerr"), bts = [];
       it.g.forEach(function(w){
-        var b = el("button", "figcirc", img(w, "figop") +
-                   '<span class="rotop">' + esc(w) + "</span>");
+        var b = el("button", "figcirc", img(w, "figop") + rotuloSecreto(w, id));
         b.setAttribute("data-qa", "int-" + id + "-" + w);
         b.setAttribute("aria-label", esc(w));
         b._w = w; grade.appendChild(b); bts.push(b);
@@ -719,10 +792,10 @@ function f7(d, pi){
       riscoDeCircular(grade, bts, function(b){
         if(ST.resp[id]) return;
         sPasso(); falar("pal_" + b._w);
-        if(b._w === it.c){ b.className = "figcirc marcada"; acertou(id, "certo7_" + it.c); }
+        if(b._w === it.c){ b.className = "figcirc marcada"; acertou(id, "certo" + pi + "_" + it.c); }
         else { b.className = "figcirc erro";
                setTimeout(function(){ b.className = "figcirc"; }, 480);
-               errou(id, "dica7_" + it.c); }
+               errou(id, "dica" + pi + "_" + it.c); }
       });
       fechaItem(d, box, id);
     })(L[i], i);
@@ -734,9 +807,9 @@ function f7(d, pi){
    cabeça E do critério fora da palavra — na gaveta. É a primeira vez neste
    caderno em que a resposta não está na figura. */
 function f8(d, pi){
-  faixa(d, pi, NOMES[7]);
-  enunciado(d, pi, "Ponha cada figura na <b>gaveta do começo dela</b>.", "p8enun");
-  var L = ST.folha.p8, gav = el("div", "gavetas"), caixas = [], vistos = [];
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ponha cada figura na <b>gaveta do começo dela</b>.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi], gav = el("div", "gavetas"), caixas = [], vistos = [];
   L.forEach(function(w){ if(vistos.indexOf(ini(w)) < 0) vistos.push(ini(w)); });
   vistos.sort();
   vistos.forEach(function(s){
@@ -748,15 +821,16 @@ function f8(d, pi){
     var dentro = el("div", "gdentro");
     c.appendChild(dentro); c._dentro = dentro; c._s = s;
     c.setAttribute("data-qa", "gaveta-" + s);
+    c.setAttribute("data-alvo", "1");
     gav.appendChild(c); caixas.push(c);
   });
   var banco = el("div", "figbanco");
   for(var i = 0; i < L.length; i++){
     (function(w, i){
-      var id = "n8_" + i, feito = !!ST.resp[id];
+      var id = "n" + pi + "_" + i, feito = !!ST.resp[id];
       registra(id, pi, ini(w));
       var b = el("button", "op fig" + (feito ? " usada" : ""),
-                 img(w, "figop") + '<span class="rotop">' + esc(w) + "</span>");
+                 img(w, "figop") + rotuloSecreto(w, id));
       b.setAttribute("data-qa", "gav-" + id + "-" + ini(w));
       b.setAttribute("aria-label", esc(w));
       function poe(alvo){
@@ -765,11 +839,11 @@ function f8(d, pi){
         if(alvo._s === ini(w)){
           b.className = "op fig usada";
           alvo._dentro.appendChild(el("span", "gfig", img(w, "figmini")));
-          acertou(id, "certo8_" + w);
+          acertou(id, "certo" + pi + "_" + w);
         } else {
           alvo.className = "gaveta erro";
           setTimeout(function(){ alvo.className = "gaveta"; }, 480);
-          errou(id, "dica8_" + w);
+          errou(id, "dica" + pi + "_" + w);
         }
       }
       /* as DUAS portas: puxar até a gaveta, ou tocar na figura e na gaveta */
@@ -808,18 +882,18 @@ var MARCADA = null;
    Sem opção nenhuma na tela: ela ouve e escreve. As DUAS portas, regra da casa
    — teclado na tela E teclado de verdade. */
 function f9(d, pi){
-  faixa(d, pi, NOMES[8]);
-  enunciado(d, pi, "Ouça a palavra e <b>escreva o pedacinho</b> com que ela começa.", "p9enun");
-  var L = ST.folha.p9;
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ouça a palavra e <b>escreva o pedacinho</b> com que ela começa.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
   for(var i = 0; i < L.length; i++){
     (function(w, i){
-      var id = "n9_" + i, box = item(i + 1), certa = ini(w), feito = !!ST.resp[id];
+      var id = "n" + pi + "_" + i, box = item(i + 1), certa = ini(w), feito = !!ST.resp[id];
       registra(id, pi, certa);
-      box.appendChild(figComSom(w));
+      box.appendChild(figComSom(w, null, id));
       var lin = el("div", "vagas"), ss = sil(w);
       var q = el("div", feito ? "sq ok" : "sq vaga", feito ? esc(certa) : "");
       q.setAttribute("data-qa", "esc-" + id);
-      q.onclick = function(){ if(!ST.resp[id]) ativa(q, esc(certa), id, "certo9_" + w, "dica9_" + w); };
+      q.onclick = function(){ if(!ST.resp[id]) ativa(q, esc(certa), id, "certo" + pi + "_" + w, "dica" + pi + "_" + w); };
       lin.appendChild(q);
       for(var k = 1; k < ss.length; k++)
         lin.appendChild(el("div", "sq larga", esc(ss[k])));
@@ -834,12 +908,12 @@ function f9(d, pi){
    que ela escolhe entra no mural com o começo dela em destaque — e o painel
    fica no relatório. É o cartaz da família silábica, feito por ela. */
 function f10(d, pi){
-  faixa(d, pi, NOMES[9]);
-  enunciado(d, pi, "Toque nas palavras que você quer no <b>seu mural</b>. Ele fica guardado no fim.", "p10enun");
-  var L = ST.folha.p10, mural = el("div", "mural");
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque nas palavras que você quer no <b>seu mural</b>. Ele fica guardado no fim.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi], mural = el("div", "mural");
   for(var i = 0; i < L.length; i++){
     (function(w, i){
-      var id = "n10_" + i;
+      var id = "n" + pi + "_" + i;
       registra(id, pi, w);
       var c = el("button", "cartaorima cartasil",
         img(w, "figop") +
@@ -852,13 +926,356 @@ function f10(d, pi){
         sPasso(); falarSilaba(w, 0, ini(w));
         setTimeout(function(){ falar("pal_" + w); }, 700);
         c.className = "cartaorima cartasil escolhido";
-        acertou(id, "certo10_" + w);
+        acertou(id, "certo" + pi + "_" + w);
       };
       if(ST.resp[id]) c.className = "cartaorima cartasil escolhido";
       mural.appendChild(c);
     })(L[i], i);
   }
   d.appendChild(mural);
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   AS CINCO FOLHAS QUE NASCERAM DAS 26 COLHIDAS (set/2026)
+
+   Ordem do Marcos, depois de ver a Roda no ar: *"como falei veja o que as
+   atividades pedem que o estudante faça"* e, logo em seguida: *"seria legal se
+   vc conseguisse recriar como está ali, a interatividade necessária para
+   executar as tarefas"*.
+
+   Então não é "inspirado na folha": é a folha, com o gesto dela funcionando. O
+   crivo das 26 está no `_sequencias/POTE-RODA.md`. As dez folhas antigas
+   trabalhavam a sílaba pelo SOM; estas cinco trazem o outro lado, que faltava
+   inteiro — a sílaba ESCRITA.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ⭐ BALÕES — "PINTE SÓ OS BA" (folha d13 das colhidas)
+   Uma parede de sílabas irmãs (LA LE LI LO LU) e o comando: pinte só as LA.
+   Parece bobo e não é. Até aqui a criança sempre decidiu pelo OUVIDO: ouvia a
+   palavra e procurava. Nesta folha não há palavra nenhuma para ouvir no balão —
+   há o desenho da sílaba, e LA e LE se separam por um traço. É a primeira vez
+   no caderno em que a resposta está nos OLHOS.
+
+   ⚠️ O alvo continua falado (o botão do alto-falante ao lado do pedido), senão
+      quem ainda não lê não sabe o que procurar. O que não se fala é cada balão:
+      falar o balão entregaria a resposta e a folha viraria ditado. */
+function fBaloes(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "<b>Pinte</b> todos os balões com este pedacinho. Depois toque em Conferir.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n" + pi + "_" + i, box = item(i + 1), feito = !!ST.resp[id];
+      var certas = [];
+      it.g.forEach(function(s, k){ if(s === it.s) certas.push(k); });
+      registra(id, pi, certas.join(","));
+      var alvo = el("div", "alvosil");
+      alvo.setAttribute("data-alvo", "1");
+      alvo.appendChild(el("span", "ltop grandao", esc(it.s)));
+      alvo.appendChild(botaoSom("Ouvir o pedacinho " + it.s, function(){ falarSilaba(it.w, 0, it.s); }));
+      box.appendChild(alvo);
+      var ceu = el("div", "ceubaloes"), marc = {};
+      it.g.forEach(function(s, k){
+        var b = el("button", "balao b" + (k % 4) + (feito && s === it.s ? " pintado" : ""),
+                   '<span class="bsil">' + esc(s) + "</span><i class=\"bfio\"></i>");
+        b.setAttribute("data-qa", "balao-" + id + "-" + k);
+        b.setAttribute("aria-label", "balão com " + s);
+        b.onclick = function(){
+          if(ST.resp[id]) return;
+          sPasso();
+          marc[k] = !marc[k];
+          b.className = "balao b" + (k % 4) + (marc[k] ? " pintado" : "");
+        };
+        ceu.appendChild(b);
+      });
+      box.appendChild(ceu);
+      var pr = el("button", "bt verde pronto", "Conferir");
+      pr.setAttribute("data-qa", "conf-" + id);
+      pr.onclick = function(){
+        if(ST.resp[id]) return;
+        var ok = it.g.every(function(s, k){ return (s === it.s) === !!marc[k]; });
+        if(ok){ acertou(id, "certo" + pi + "_" + it.s); box.className = "item feito"; }
+        else { sErro(); errou(id, "dica" + pi + "_" + it.s); }
+      };
+      if(feito) pr.style.display = "none";
+      box.appendChild(pr);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* ⭐ DOIS QUADRADINHOS — "COMPLETE COM BA BE BI BO BU" (folha d17 das colhidas)
+   A palavra em quadradinhos, UM POR LETRA, e os dois primeiros vazios. Das 26
+   folhas colhidas é a única que mostra, no desenho, que o pedacinho é feito de
+   PARTES — e é um passo enorme: até aqui a sílaba era um bloco só.
+
+   ⚠️ Por isso o teclado entra LETRA A LETRA e o quadradinho acende a cada uma.
+      Se a criança escrevesse a sílaba inteira num campo só, a folha perderia
+      exatamente o que ela veio ensinar. */
+function fQuadradinhos(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "A palavra está em quadradinhos, <b>um para cada letra</b>. Escreva as duas letras que faltam.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
+  for(var i = 0; i < L.length; i++){
+    (function(w, i){
+      var id = "n" + pi + "_" + i, box = item(i + 1);
+      var certa = ini(w), resto = esc(w).slice(certa.length), feito = !!ST.resp[id];
+      registra(id, pi, certa);
+      box.appendChild(figComSom(w, null, id));
+      var lin = el("div", "letras");
+      var vagas = [];
+      for(var c = 0; c < certa.length; c++){
+        var q = el("div", feito ? "lq ok" : "lq vaga", feito ? certa.charAt(c) : "");
+        lin.appendChild(q); vagas.push(q);
+      }
+      for(var k = 0; k < resto.length; k++)
+        lin.appendChild(el("div", "lq", resto.charAt(k)));
+      /* o alvo de toque é a DUPLA de quadradinhos: um quadradinho de letra tem
+         40 px e o dedo de seis anos não é preciso — quem recebe o toque é a
+         faixa inteira das vagas (medido pelo leiaute_mao.js, regra do alvo). */
+      var pega_ = el("button", "lqpega", "");
+      pega_.setAttribute("data-qa", "esc-" + id);
+      pega_.setAttribute("aria-label", "Escrever o começo de " + esc(w));
+      pega_.onclick = function(){
+        if(ST.resp[id]) return;
+        ativaLetras(vagas, certa, id, "certo" + pi + "_" + w, "dica" + pi + "_" + w);
+      };
+      var env = el("div", "lqenv");
+      env.appendChild(lin); env.appendChild(pega_);
+      box.appendChild(env);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* ⭐ AS COLUNAS DA RODA — "RECORTE, COLE E CLASSIFIQUE" (folha d24 das colhidas)
+   A folha 10 já tem gavetas, mas o que se arrasta lá é a FIGURA: a criança lê o
+   desenho, não a palavra. Aqui o que se recorta são as PALAVRAS ESCRITAS, e as
+   colunas são LA LE LI LO LU. É a mesma mecânica um degrau acima — e é o degrau
+   que faltava, porque é o único momento do caderno em que ela tem de LER para
+   classificar.
+
+   ⚠️ As DUAS portas, regra da casa: puxar a ficha até a coluna, ou tocar na
+      ficha e depois na coluna. No PC da escola o arrasto falha; no celular, o
+      toque duplo é o natural. */
+function fColunas(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ponha cada <b>palavra escrita</b> na coluna do pedacinho com que ela começa.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi], cols = el("div", "colunas"), caixas = [], vistos = [];
+  L.forEach(function(w){ if(vistos.indexOf(ini(w)) < 0) vistos.push(ini(w)); });
+  vistos.sort();
+  vistos.forEach(function(s){
+    var c = el("div", "coluna"), t = el("div", "ctit");
+    t.appendChild(el("span", "", esc(s)));
+    t.appendChild(botaoSom("Ouvir o pedacinho " + s, function(){ falar("sb1_" + s); }));
+    c.appendChild(t);
+    var dentro = el("div", "cdentro");
+    c.appendChild(dentro); c._dentro = dentro; c._s = s;
+    c.setAttribute("data-qa", "coluna-" + s);
+    c.setAttribute("data-alvo", "1");
+    cols.appendChild(c); caixas.push(c);
+  });
+  var banco = el("div", "fichbanco");
+  for(var i = 0; i < L.length; i++){
+    (function(w, i){
+      var id = "n" + pi + "_" + i, feito = !!ST.resp[id];
+      registra(id, pi, ini(w));
+      var b = el("button", "ficha" + (feito ? " usada" : ""), esc(w));
+      b.setAttribute("data-qa", "col-" + id + "-" + ini(w));
+      b.setAttribute("aria-label", "ficha " + esc(w));
+      function poe(alvo){
+        if(ST.resp[id]) return;
+        sPasso();
+        if(alvo._s === ini(w)){
+          falar("pal_" + w);
+          b.className = "ficha usada";
+          alvo._dentro.appendChild(el("span", "fdentro", esc(w)));
+          acertou(id, "certo" + pi + "_" + w);
+        } else {
+          alvo.className = "coluna erro";
+          setTimeout(function(){ alvo.className = "coluna"; }, 480);
+          errou(id, "dica" + pi + "_" + w);
+        }
+      }
+      b.onclick = function(){
+        if(b._arrastou){ b._arrastou = false; return; }
+        if(ST.resp[id]) return;
+        falar("pal_" + w);
+        MARCADA = (MARCADA === b) ? null : b;
+        var todos = banco.querySelectorAll("button"), j;
+        for(j = 0; j < todos.length; j++)
+          todos[j].className = todos[j].className.replace(/ ?marcada/, "");
+        if(MARCADA) b.className = b.className + " marcada";
+      };
+      b._poe = poe;
+      puxavel(b, caixas, function(alvo){ poe(alvo); });
+      if(feito) caixas.forEach(function(c){
+        if(c._s === ini(w)) c._dentro.appendChild(el("span", "fdentro", esc(w)));
+      });
+      banco.appendChild(b);
+    })(L[i], i);
+  }
+  caixas.forEach(function(c){
+    c.onclick = function(){
+      if(!MARCADA) return;
+      var b = MARCADA; MARCADA = null;
+      b.className = b.className.replace(/ ?marcada/, "");
+      b._poe(c);
+    };
+  });
+  d.appendChild(cols);
+  d.appendChild(banco);
+}
+
+/* ⭐ QUAL ESTÁ ESCRITA CERTA? (folha d26 das colhidas — DIA / DINHA / DEIA)
+   A folha mais difícil e a mais honesta do lote inteiro: as três opções
+   descrevem a MESMA figura, então o desenho não entrega nada. Só uma está
+   escrita certa, e o que muda entre elas é a VOGAL do primeiro pedacinho —
+   que é, letra por letra, o conteúdo deste caderno.
+
+   ⚠️ AS OPÇÕES NÃO SE FALAM. É a única folha do caderno com o alto-falante
+      apagado nas respostas, e de propósito: ouvir "LATA, LETA, LOTA" resolve o
+      item sem ler nada, e a folha existe justamente para medir a leitura. O
+      alto-falante fica na PALAVRA (na figura), que é a pergunta, não a
+      resposta. Isto é uma exceção declarada à regra 3 da casa — e está aqui
+      escrito para ninguém a "consertar" por engano. */
+function fGrafia(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "As três dizem quase a mesma coisa. <b>Pinte a que está escrita certa.</b>", "p" + pi + "enun");
+  var L = ST.folha["p" + pi];
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n" + pi + "_" + i, box = item(i + 1), feito = !!ST.resp[id];
+      var w = it.w, certa = esc(w);
+      registra(id, pi, certa);
+      var quadro = el("div", "quadrografia");
+      var fc = el("div", "gfigura");
+      fc.innerHTML = img(w, "figgrande");
+      fc.appendChild(botaoSom("Ouvir a palavra", function(){ falar("pal_" + w); }));
+      quadro.appendChild(fc);
+      var pilha = el("div", "gpilha");
+      it.ops.forEach(function(txt){
+        var b = el("button", "gop" + (feito && txt === certa ? " marcada" : ""), esc(txt));
+        b.setAttribute("data-qa", "graf-" + id + "-" + txt);
+        b.setAttribute("aria-label", "palavra escrita " + txt);
+        b.onclick = function(){
+          if(ST.resp[id]) return;
+          if(txt === certa){
+            sPasso(); b.className = "gop marcada";
+            acertou(id, "certo" + pi + "_" + w);
+          } else {
+            sErro(); b.className = "gop erro";
+            setTimeout(function(){ b.className = "gop"; }, 480);
+            errou(id, "dica" + pi + "_" + w);
+          }
+        };
+        pilha.appendChild(b);
+      });
+      quadro.appendChild(pilha);
+      box.appendChild(quadro);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* ⭐ A MINHA RODA — "B + A = ___ ... escreva a família e LEIA" (d20 e d21)
+   O fecho que faltava. O caderno inteiro escreve UMA sílaba de cada vez; as
+   folhas de papel terminam pedindo a família INTEIRA, de uma vez, e depois
+   mandam LER em voz alta. Que é o ponto: no fim ela não tem cinco respostas
+   soltas, tem uma RODA, que é uma coisa só.
+
+   ⚠️ A leitura em voz alta não dá para medir num app — não vou fingir que dá.
+      O que o app faz é o que ele pode fazer honestamente: quando a família
+      fica completa, a tira acende e LÊ junto com a criança, uma sílaba de cada
+      vez, recortadas das palavras de verdade. */
+function fMinhaRoda(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Some a letra com a vogal e <b>escreva o pedacinho</b> que nasce. No fim, leia a sua roda.", "p" + pi + "enun");
+  var L = ST.folha["p" + pi], porRoda = {}, ordemR = [];
+  L.forEach(function(s){
+    var c = s.charAt(0);
+    if(!porRoda[c]){ porRoda[c] = []; ordemR.push(c); }
+    porRoda[c].push(s);
+  });
+  var k = 0;
+  ordemR.forEach(function(c){
+    var R = RODAS[c], bloco = el("div", "somaroda");
+    bloco.appendChild(el("div", "somatit", "A roda do " + c));
+    var linhas = el("div", "somalin"), vagas = [];
+    porRoda[c].forEach(function(s){
+      var id = "n" + pi + "_" + k, feito = !!ST.resp[id];
+      k++;
+      registra(id, pi, s);
+      var w = R.w[R.s.indexOf(s)];
+      var li = el("div", "somai");
+      li.appendChild(el("span", "sparc", c));
+      li.appendChild(el("span", "smais", "+"));
+      li.appendChild(el("span", "sparc", s.charAt(1)));
+      li.appendChild(el("span", "smais", "="));
+      var q = el("button", feito ? "sq ok" : "sq vaga", feito ? esc(s) : "");
+      q.setAttribute("data-qa", "esc-" + id);
+      q.setAttribute("aria-label", c + " mais " + s.charAt(1));
+      q.onclick = function(){
+        if(ST.resp[id]) return;
+        ativa(q, esc(s), id, "certo" + pi + "_" + s, "dica" + pi + "_" + s);
+      };
+      li.appendChild(q);
+      linhas.appendChild(li);
+      vagas.push({s: s, w: w, id: id});
+    });
+    bloco.appendChild(linhas);
+    /* a tira que LÊ a roda inteira — só acende quando as cinco estiverem lá */
+    var tira = el("div", "tiraroda"), bts = [];
+    tira.setAttribute("data-alvo", "1");   /* a tira MOSTRA a roda: é o modelo */
+    vagas.forEach(function(v){
+      var t = el("span", "tsil", esc(v.s));
+      tira.appendChild(t); bts.push(t);
+    });
+    var ler = el("button", "bt verde pronto", "Ler a minha roda");
+    ler.setAttribute("data-qa", "ler-" + c);
+    ler.onclick = function(){
+      sPasso();
+      var j = 0;
+      (function passo(){
+        if(j >= vagas.length) return;
+        var v = vagas[j];
+        bts[j].className = "tsil acesa";
+        falarSilaba(v.w, 0, v.s);
+        j++;
+        setTimeout(function(){
+          for(var z = 0; z < bts.length; z++) bts[z].className = "tsil";
+          passo();
+        }, 1150);
+      })();
+    };
+    function atualiza(){
+      var completa = vagas.every(function(v){ return ST.resp[v.id]; });
+      tira.className = "tiraroda" + (completa ? " completa" : "");
+      ler.disabled = !completa;
+    }
+    bloco.appendChild(tira);
+    bloco.appendChild(ler);
+    aoAbrir(d, atualiza);
+    bloco._atualiza = atualiza;
+    d.appendChild(bloco);
+    TIRAS.push(atualiza);
+  });
+}
+
+
+/* teclado de LETRA A LETRA — só a folha dos quadradinhos usa.
+   ⚠️ Não dá para reaproveitar o `ativa()`: lá o campo é UM e recebe a sílaba
+      inteira; aqui são dois quadradinhos que acendem um por vez, que é o que a
+      folha de origem desenha. */
+function ativaLetras(vagas, certa, id, fc, fd){
+  if(ATIVA) fechaAtiva();
+  var fake = {className: "", textContent: "", innerHTML: "", querySelector: function(){ return null; },
+              parentNode: null};
+  ATIVA = {q: fake, val: "", certa: certa, id: id, fc: fc, fd: fd, vagas: vagas};
+  vagas.forEach(function(v, i){ v.className = "lq vaga" + (i === 0 ? " ativa" : ""); v.textContent = ""; });
+  document.getElementById("teclado").className = "aberto";
+  document.getElementById("tkDica").textContent = "Escreva as duas letras do começo";
+  falar("escreva");
 }
 
 function riscoDeCircular(grade, botoes, alterna){
@@ -1055,8 +1472,23 @@ function montaLigar(caixa, pi, tag, pares, pagina){
 }
 function fechaAtiva(){
   if(!ATIVA) return;
-  if(!ST.resp[ATIVA.id]){ ATIVA.q.className = "sq vaga"; ATIVA.q.textContent = ""; }
+  if(!ST.resp[ATIVA.id]){
+    if(ATIVA.vagas) ATIVA.vagas.forEach(function(v){ v.className = "lq vaga"; v.textContent = ""; });
+    else { ATIVA.q.className = "sq vaga"; ATIVA.q.textContent = ""; }
+  }
   ATIVA = null; document.getElementById("teclado").className = "";
+}
+/* pinta o que já foi digitado — num campo só, ou nos quadradinhos de letra */
+function pintaDigitado(){
+  var A = ATIVA;
+  if(A.vagas){
+    A.vagas.forEach(function(v, i){
+      v.textContent = A.val.charAt(i) || "";
+      v.className = "lq vaga" + (i === A.val.length ? " ativa" : "");
+    });
+    return;
+  }
+  var v = A.q.querySelector(".v"); if(v) v.textContent = A.val;
 }
 function digita(ch){
   if(!ATIVA) return;
@@ -1064,19 +1496,27 @@ function digita(ch){
   if(ch === "ap") ATIVA.val = ATIVA.val.slice(0, -1);
   else if(ch === "ok") return confereSil();
   else { if(ATIVA.val.length >= 4) return; ATIVA.val += ch; }
-  var v = ATIVA.q.querySelector(".v"); if(v) v.textContent = ATIVA.val;
+  pintaDigitado();
   if(ATIVA.val.length >= ATIVA.certa.length) setTimeout(confereSil, 380);
 }
 function confereSil(){
   if(!ATIVA || !ATIVA.val) return;
   var A = ATIVA;
   if(A.val === A.certa){
-    A.q.className = "sq ok"; A.q.textContent = A.certa;
+    var it;
+    if(A.vagas){
+      A.vagas.forEach(function(v, i){ v.className = "lq ok"; v.textContent = A.certa.charAt(i); });
+      it = A.vagas[0].parentNode.parentNode.parentNode;
+    } else {
+      A.q.className = "sq ok"; A.q.textContent = A.certa;
+      it = A.q.parentNode.parentNode;
+    }
     ATIVA = null; document.getElementById("teclado").className = "";
     acertou(A.id, A.fc);
-    var it = A.q.parentNode.parentNode; if(it) it.className = "item feito";
+    if(it && it.className.indexOf("item") === 0) it.className = "item feito";
+    for(var z = 0; z < TIRAS.length; z++) TIRAS[z]();
   } else {
-    A.val = ""; var v = A.q.querySelector(".v"); if(v) v.textContent = "";
+    A.val = ""; pintaDigitado();
     errou(A.id, A.fd);
   }
 }
@@ -1106,24 +1546,23 @@ document.addEventListener("keydown", function(ev){
 
 /* ---------- folha pronta e navegação ---------- */
 function idsDaPagina(pi){
-  /* ⚠️⚠️ OS IDS TÊM QUE BATER COM O QUE AS FOLHAS GRAVAM (prefixo `n`).
-     É aqui que um caderno clonado mente no relatório sem dar erro nenhum: os
-     dois lados ficam sintaticamente corretos e a nota sai ZERO com a folha toda
-     respondida. Aconteceu duas vezes nesta casa. Conferir JOGANDO até o fim.
-     ⚠️ A folha 4 é de LIGAR: o id nasce dentro do `montaLigar` e tem outra
-     forma (`l<pagina><tag>_<chave>`). */
-  var ids = [], i, k, F = ST.folha;
-  if(pi === 1) for(i = 0; i < F.p1.length; i++) ids.push("n1_" + i);
-  if(pi === 2) for(i = 0; i < F.p2.length; i++) ids.push("n2_" + i);
-  if(pi === 3) for(i = 0; i < F.p3.length; i++) ids.push("n3_" + i);
-  if(pi === 4) for(i = 0; i < F.p4.length; i++) for(k = 0; k < F.p4[i].length; k++)
-    ids.push("l4n4g" + i + "_" + F.p4[i][k]);
-  if(pi === 5) for(i = 0; i < F.p5.length; i++) ids.push("n5_" + i);
-  if(pi === 6) for(i = 0; i < F.p6.length; i++) ids.push("n6_" + i);
-  if(pi === 7) for(i = 0; i < F.p7.length; i++) ids.push("n7_" + i);
-  if(pi === 8) for(i = 0; i < F.p8.length; i++) ids.push("n8_" + i);
-  if(pi === 9) for(i = 0; i < F.p9.length; i++) ids.push("n9_" + i);
-  if(pi === 10) for(i = 0; i < F.p10.length; i++) ids.push("n10_" + i);
+  /* ⚠️⚠️ ISTO AQUI JÁ MENTIU DUAS VEZES NESTA CASA — e agora não tem como.
+     Antes, cada folha gravava `n6_0` à mão e esta função dizia à mão que a
+     página 6 tinha ids `n6_`. Eram DOIS lugares a combinar, os dois
+     sintaticamente corretos, e quando a ordem das folhas mudava o relatório
+     saía ZERO com a folha toda respondida — sem erro nenhum no console.
+
+     Agora o id NASCE DA POSIÇÃO (`"n" + pi + "_" + i`, dentro da própria
+     folha) e aqui se lê a mesma posição. Não há segunda lista para
+     desencontrar. A única forma diferente é a folha de LIGAR, cujo id nasce
+     dentro do `montaLigar` — e ela se declara no `LIGAR` abaixo. */
+  var ids = [], i, k, L = (ST.folha["p" + pi] || []);
+  if(pi === LIGAR){
+    for(i = 0; i < L.length; i++)
+      for(k = 0; k < L[i].length; k++) ids.push("l" + pi + "g" + i + "_" + L[i][k]);
+    return ids;
+  }
+  for(i = 0; i < L.length; i++) ids.push("n" + pi + "_" + i);
   return ids;
 }
 function pendentes(pi){
@@ -1290,25 +1729,30 @@ var OBJETIVOS = [
      leitores: aqui em palavras que o professor lê no relatório, lá no
      vocabulário do currículo da rede. O portão 0b9 reprova se os nomes e as
      folhas não baterem um a um — foi ele que me pegou ao eu deixar aqui os
-     objetivos do degrau 3 depois de já ter reescrito o dossiê. */
-  {n: "Montar a roda: a mesma consoante com as cinco vogais", f: [1],
-   ok: "entende que o L fica parado e a vogal é que muda o pedacinho",
+     objetivos do degrau 3 depois de já ter reescrito o dossiê.
+     ⚠️ Os números são POSIÇÕES de folha. Mudou a ordem, mudam aqui e no
+        `curriculo.json`, no mesmo commit. */
+  {n: "Montar a roda: a mesma consoante com as cinco vogais", f: [1, 14],
+   ok: "entende que a letra fica parada e a vogal é que muda o pedacinho",
    nao: "ainda não liga a vogal escolhida ao pedacinho que nasce"},
   {n: "Ouvir a palavra e dizer com que pedacinho ela começa", f: [2, 3],
    ok: "ouve a palavra e acha o pedacinho do começo, escrito ou na figura",
    nao: "ainda troca o pedacinho do começo pelo de outra vogal"},
-  {n: "Distinguir sílabas que só diferem na vogal", f: [4, 5],
-   ok: "separa LA de LE, LI, LO e LU — a letra é a mesma, o pedacinho não",
-   nao: "ainda decide pela LETRA e não pelo pedacinho inteiro"},
-  {n: "Completar e classificar pelo pedacinho do começo", f: [6, 7, 8],
-   ok: "põe o pedacinho que falta e separa as figuras por ele",
+  {n: "Reconhecer o pedacinho ESCRITO entre os parecidos", f: [4, 12],
+   ok: "separa LA de LE, LI, LO e LU lendo — sem precisar da figura",
+   nao: "ainda decide pela primeira letra e não pelo pedacinho inteiro"},
+  {n: "Distinguir sílabas que só diferem na vogal", f: [5, 6],
+   ok: "ouve duas palavras da mesma letra e diz se o começo é o mesmo",
+   nao: "ainda junta LA e LO como se fossem o mesmo pedacinho"},
+  {n: "Completar e classificar pelo pedacinho do começo", f: [7, 8, 9, 10, 11],
+   ok: "põe o pedacinho que falta e separa figuras e palavras por ele",
    nao: "ainda se perde quando as palavras começam todas com a mesma letra"},
-  {n: "Escrever o pedacinho que se ouve", f: [9],
+  {n: "Escrever o pedacinho que se ouve", f: [13],
    ok: "escreve sozinha o pedacinho do começo, sem opções",
    nao: "ainda precisa das opções para escolher o pedacinho"},
-  {n: "Montar o próprio mural de rodas", f: [10],
+  {n: "Montar o próprio mural de rodas", f: [15],
    ok: "escolhe as palavras e monta o mural das rodas",
-   nao: "ainda não escolheu as palavras do mural"}
+   nao: "ainda não escolheu palavras para o mural"}
 ];
 
 /* mede um objetivo: devolve acertos de primeira, com ajuda, total e pontos */

@@ -152,6 +152,13 @@ button{font-family:inherit;cursor:pointer}
 /* folha 9 — a caixa de escrever é LARGA (palavra inteira, não sílaba) */
 .sq.larga{min-width:168px;padding:0 12px}
 
+
+/* ⚠️ A LEGENDA SECRETA (set/2026) — ver o comentário do `figComSom`.
+   `visibility` e não `display`: o espaço fica guardado e a folha não pula
+   quando a palavra aparece no acerto. */
+.segredo{visibility:hidden}
+.segredo.revelado{visibility:visible;-webkit-animation:aparece .35s;animation:aparece .35s}
+
 /* folha 10 — o mural que a criança monta, e que vai para o relatório */
 .mural{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 10px}
 .cartaorima{display:flex;align-items:center;gap:4px;min-height:96px;padding:10px 12px;
@@ -1836,6 +1843,12 @@ function registra(id, pag, certo){ RESP[id] = {certo: certo, pag: pag}; }
 function acertou(id, fala){
   if(ST.resp[id]) return;
   tentativa(id, true); ST.resp[id] = 1; salvar(); sCerto();
+  /* ⭐ a palavra escrita aparece AGORA, junto com o acerto — nunca antes.
+     Ver o comentário do `figComSom` no folhas.js. */
+  var segs = document.querySelectorAll('[data-nome="' + id + '"]'), sg;
+  for(sg = 0; sg < segs.length; sg++)
+    segs[sg].className = segs[sg].className.replace(/ ?revelado/, "") + " revelado";
+
   if(fala) falar(fala);
   setTimeout(function(){ confereFolha(RESP[id].pag); }, 850);
 }

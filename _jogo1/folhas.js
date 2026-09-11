@@ -234,11 +234,28 @@ function sobre(ev, alvo){
    ⚠️ ALTO-FALANTE EM TODA PALAVRA: sem ouvir, a criança que ainda não lê conta
    as sílabas do que ELA acha que a figura é ("cachorro" ou "cão"?), e a folha
    vira loteria. A figura tem que ter um nome só, e a voz é quem o diz. */
-function figComSom(w, cls){
+/* ⚠️⚠️ A LEGENDA DA FIGURA ENTREGAVA A RESPOSTA — set/2026, e estava NO AR.
+   Achado por um portão novo (`_qa/resposta_impressa.py`), que nasceu quando a
+   mesma coisa apareceu numa foto da Roda das Sílabas: a figura da mola vinha
+   com "MOLA" escrito por baixo e, logo abaixo, os quadradinhos para a criança
+   escrever MO. Quem lê um pouco resolvia COPIANDO.
+
+   Aqui o portão encontrou o mesmo, em quatro cadernos de uma vez — sendo o pior
+   deles uma FORCA com a palavra impressa na tela.
+
+   ⚠️ A legenda não some: fica INVISÍVEL (`visibility`, para o espaço não pular)
+      e aparece no instante do acerto. Assim a criança que chama a luneta de
+      "telescópio" continua protegida — pelo alto-falante antes, pela palavra
+      escrita depois, que é o melhor momento para ela aparecer. */
+function figComSom(w, cls, id){
   var c = el("div", "figsil" + (cls ? " " + cls : ""));
   c.innerHTML = img(w, "figgrande");
   var lin = el("div", "chamlin");
-  lin.appendChild(el("b", "", esc(w)));
+  if(id){
+    var b = el("b", "segredo" + (ST.resp[id] ? " revelado" : ""), esc(w));
+    b.setAttribute("data-nome", id);
+    lin.appendChild(b);
+  } else lin.appendChild(el("b", "", esc(w)));
   lin.appendChild(botaoSom("Ouvir " + esc(w), function(){ falar("pal_" + w); }));
   c.appendChild(lin);
   return c;
@@ -387,7 +404,7 @@ function f2(d, pi){
   var L = ST.folha.p2;
   for(var i = 0; i < L.length; i++){
     var w = L[i], id = "g2_" + i, box = item(i + 1);
-    box.appendChild(figComSom(w));
+    box.appendChild(figComSom(w, null, id));
     opcoes(box, pi, id, opsNum(4), String(sil(w).length), "figbt",
            "certo2_" + w, "dica2_" + w);
     fechaItem(d, box, id);
@@ -403,7 +420,7 @@ function f3(d, pi){
   for(var i = 0; i < L.length; i++){
     (function(reg, i){
       var alvo = reg[0], certa = reg[1], id = "g3_" + i, box = item(i + 1);
-      box.appendChild(figComSom(alvo));
+      box.appendChild(figComSom(alvo, null, id));
       var ops = reg.slice(1);
       var gira = i % 3;
       ops = ops.slice(gira).concat(ops.slice(0, gira));
@@ -527,7 +544,7 @@ function f5(d, pi){
     (function(w, i){
       var id = "g5_" + i, box = item(i + 1), txt = esc(w), pronto = !!ST.resp[id];
       registra(id, pi, txt);
-      box.appendChild(figComSom(w));
+      box.appendChild(figComSom(w, null, id));
       var ceu = el("div", "ceuforca");
       ceu.innerHTML = '<i class="balao" style="top:0%"></i><i class="chao"></i>';
       box.appendChild(ceu);
@@ -587,7 +604,7 @@ function f6(d, pi){
     (function(w, i){
       var id = "g6_" + i, box = item(i + 1), txt = esc(w), pronto = !!ST.resp[id];
       registra(id, pi, txt);
-      box.appendChild(figComSom(w));
+      box.appendChild(figComSom(w, null, id));
       var trilha = el("div", "vagas letvagas"), vagas = [], k;
       for(k = 0; k < txt.length; k++){
         var v = el("div", "vaga vagalet2" + (pronto ? " ok" : ""), pronto ? txt.charAt(k) : "");
@@ -703,7 +720,7 @@ function f9(d, pi){
     (function(w, i){
       var id = "g9_" + i, box = item(i + 1), certa = esc(w), feito = !!ST.resp[id];
       registra(id, pi, certa);
-      box.appendChild(figComSom(w));
+      box.appendChild(figComSom(w, null, id));
       var lin = el("div", "letfila");
       var q = el("div", "sq larga" + (feito ? " ok" : " vaga"), feito ? certa : "");
       q.setAttribute("data-qa", "sq-" + id);

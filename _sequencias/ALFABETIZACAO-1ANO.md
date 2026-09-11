@@ -12,7 +12,11 @@
 
 ## ⭐ ONDE A SEQUÊNCIA ESTÁ — TERMINADA (set/2026)
 
-> **Os oito degraus estão montados, jogados até o fim e no ar.** Este bloco é o
+> **Os NOVE degraus estão montados, jogados até o fim e no ar.** (O nono, a
+> Roda das Sílabas, entrou em set/2026 — nasceu do crivo de 26 folhas impressas
+> de família silábica, registrado no `POTE-RODA.md`. Tem 15 folhas, não 10.)
+>
+> **Os oito primeiros degraus:** Este bloco é o
 > índice; o desenho de cada caderno está no `PARECER-PEDAGOGICO.md` da pasta dele
 > e o crivo das folhas de origem no `POTE-*.md` correspondente.
 >
@@ -31,6 +35,7 @@
 | 6 | **A Letra que Muda Tudo** — o grafema | `_let1` | https://vidalprof.github.io/a-letra-que-muda-tudo/ |
 | 7 | **A Tecla do Espaço Quebrou** — o espaço em branco | `_fra1` | https://vidalprof.github.io/a-tecla-do-espaco-quebrou/ |
 | 8 | **O Grande Jogo das Palavras** — a revisão de tudo | `_jogo1` | https://vidalprof.github.io/o-grande-jogo-das-palavras/ |
+| 9 | **A Roda das Sílabas** — a família silábica | `_roda1` | https://vidalprof.github.io/a-roda-das-silabas/ |
 
 ### 👩‍🏫 O que o PROFESSOR vê (set/2026)
 

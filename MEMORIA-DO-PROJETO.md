@@ -7729,3 +7729,111 @@ melhora alguma coisa de verdade** (teto de falas na pronúncia; não instalar o
 torch para caderno que não fala sílaba; subir os nove antes de conferir os nove).
 O que foi corrigido foram as **justificativas**: os comentários agora trazem os
 tempos medidos, não a minha impressão.
+
+## 📖🔍 O CRIVO DAS 26 FOLHAS, E O DEFEITO QUE ESTAVA NO AR EM 5 CADERNOS (11/set/2026)
+
+Ordem do Marcos, em duas frases, no mesmo dia:
+
+> *"vc faz a pesquisa de atividades na internet, utiliza as imagens, o pedagogo
+> analisa tudo e aprova, vc verifica o que cada uma pede e cria a atividade"*
+> — e depois, mais curto: **"como falei veja o que as atividades pedem que o
+> estudante faça"**; e, ao ver o resultado, **"seria legal se vc conseguisse
+> recriar como está ali, a interatividade necessária para executar as tarefas"**.
+
+### O que eu fiz de diferente, e que virou método
+Colhi 26 folhas de família silábica da internet (`_sequencias/folhas_d9/`) e li
+**uma a uma**, anotando só uma coisa: **o verbo** — o que a folha manda a criança
+FAZER com o lápis na mão. O crivo inteiro, com o veredito de cada uma e o motivo
+por escrito, está em **`_sequencias/POTE-RODA.md`**.
+
+Resultado: 26 folhas → **15 entram**, 5 são de outro degrau, 4 ensinam as
+famílias do **C e do Q** (que o currículo de Blumenau põe no **2º ano**, porque
+essas letras mudam de som conforme a vogal) e 2 são cartaz sem tarefa. E, dentro
+das que entram, **cinco mecânicas que o caderno não tinha** — todas do mesmo
+lado que faltava: a sílaba **ESCRITA**, não a ouvida.
+
+A Roda foi de 10 para **15 folhas** e de 34–41 para **52–65 min** (medido pelo
+`_qa/duracao.py`, não estimado por mim).
+
+### ⚠️⚠️ O DEFEITO: A RESPOSTA ESTAVA IMPRESSA NO ENUNCIADO — e já estava NO AR
+
+Numa foto da folha nova dos quadradinhos eu vi isto:
+
+```
+      [figura de mola]
+          MOLA           ← a legenda da figura
+      [ ][ ] L  A        ← e a criança tinha de escrever MO
+```
+
+A resposta estava impressa dois centímetros acima da pergunta. Quem já lê um
+pouco resolvia o caderno **copiando**, sem ouvir nada — e a folha, que existe
+para medir se a criança isola o começo da palavra, media **zero**.
+
+A causa era o `figComSom`, que escrevia o nome da figura por baixo dela. Ele é
+clonado por todos os cadernos de folha viva. Quando escrevi o portão e o rodei
+nos dez, ele achou o mesmo em **quatro atividades publicadas**:
+
+| Caderno | Folha | Itens |
+|---|---|---|
+| `_ini1` A Família das Palavras | 1 — "Ouça o começo da palavra" | 22 |
+| `_mont1` A Máquina de Juntar | 3 — "Qual pedaço falta" | 20 |
+| `_let1` A Letra que Muda Tudo | 6 — "Monte o nome da figura" | 21 |
+| `_jogo1` O Grande Jogo | 5 — **a FORCA do balão** | 32 |
+
+Uma **forca com a palavra escrita na tela**. Cento e poucos itens, em cinco
+atividades no ar, em que a criança podia copiar em vez de pensar.
+
+### O conserto, e por que ele não é "apagar a legenda"
+A legenda existia por um motivo real: sem ela a criança chama a LUNETA de
+"telescópio" e responde TE. Então ela **não some — fica invisível**
+(`visibility`, para o espaço não pular) e **aparece no instante do acerto**.
+Antes, o alto-falante protege o nome; depois, a palavra escrita chega no melhor
+momento possível, junto com o acerto.
+
+### O PORTÃO — `_qa/resposta_impressa.py` (1i4 na banca)
+Abre o caderno no navegador, anda folha por folha e, em cada item **ainda não
+respondido**, pega o texto que a criança REALMENTE vê (`innerText` + checagem de
+`visibility`), tira o que é resposta (todo `button`) e o que é alvo declarado
+(`[data-alvo]`), e reprova se o que sobrar contiver a resposta que o próprio
+caderno declara no `RESP[id].certo`.
+
+- **O que é ALVO se declara**: a testa da gaveta precisa mostrar "LA", a tira da
+  roda precisa mostrar o modelo. Esses ganham `data-alvo="1"`. Tudo o que não se
+  declarar é tratado como enunciado — de propósito, o padrão é o mais severo.
+- **Provado que reprova**: repus o defeito (`visibility:visible`) e ele deu
+  código 1 com 8 itens; desfiz e voltou a 0. Portão que nunca foi visto
+  reprovando é portão cego.
+- **Uma armadilha já paga**: a primeira versão acusou a folha 14, cujo enunciado
+  diz *"some a **letra** com a vogal"* — e "LETRA" começa com "LE". A regra do
+  prefixo agora só vale para **palavra do próprio caderno**. É a mesma lição do
+  `silaba_fonte.py`, que na estreia acusou 21 recortes legítimos: portão que
+  acusa inocente é portão que se aprende a ignorar.
+
+### ⚠️ E a lição de método, que é a maior
+**Quem pegou esse defeito foi uma FOTO, não um portão.** O app abria, a figura
+carregava, o `node --check` passava, a fala estava certa, o leiaute estava
+certo, o pedagogo estava certo. O defeito só existia no SENTIDO — e só aparece
+com a tela na frente e a pergunta na cabeça. Vale a regra de sempre: **depois de
+montar, OLHAR a tela**; e o que a foto achar vira portão no mesmo commit.
+
+### E dois erros dentro das folhas de ORIGEM
+Duas das 26 ensinam separação silábica errada: **PORCO** como exemplo de PO (é
+POR-CO) e **CIRCO** como exemplo de CI (é CIR-CO). Não entraram. Registrado no
+`POTE-RODA.md` §4 — folha da internet não é fonte confiável, é matéria-prima.
+
+### E um erro que era NOSSO, achado relendo as folhas
+A folha do intruso dizia *"três começam com o **mesmo pedacinho**"* e mostrava
+MALA · MENINA · MOLA · MORCEGO. As três primeiras **não** começam com o mesmo
+pedacinho (MA, ME, MO são diferentes) — o que elas têm em comum é a **roda**. E
+o intruso oferecido, *morcego*, **começa com M**: a criança que o aceitava como
+da família estava certa no que enxergava, e o app dizia que ela errou. Corrigido:
+o texto agora fala em roda, e toda intrusa é de outra consoante.
+
+### 🔢 E uma dívida técnica que morreu junto
+Cada folha gravava seus ids à mão (`n6_0`, `p6enun`, `certo6_...`) e o
+`idsDaPagina` repetia a mesma tabela à mão. Eram **dois lugares para combinar**,
+os dois sintaticamente corretos — e quando a ordem das folhas mudava o relatório
+saía ZERO com a folha toda respondida, sem erro nenhum no console (já aconteceu
+duas vezes nesta casa). Agora **a posição é a identidade**: a folha da posição 7
+usa o pote `p7`, grava `n7_*` e fala `p7enun`, tudo derivado de `pi`. Inserir
+cinco folhas no meio do caderno passou a ser mexer em uma lista só.

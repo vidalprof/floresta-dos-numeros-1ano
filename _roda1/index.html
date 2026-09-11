@@ -757,6 +757,102 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .tn:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
 .sq.vaga.erro{border-color:#e2574c;background:#fdeceb;color:#b5352b}
 
+/* ══════════════════════════════════════════════════════════════════════
+   AS CINCO FOLHAS NOVAS — o visual é o da folha impressa que as gerou.
+   ⚠️ Nada de emoji (vira quadradinho nos PCs da escola) e nada de SVG (ordem
+      do Marcos): o balão, o fio e a coluna são todos caixa + borda + gradiente.
+   ⚠️ Todo alvo de toque tem no mínimo 44 px (regra do 1º ano, medida pelo
+      `_qa/leiaute_mao.js`). Foi por isso que o quadradinho de LETRA, que tem
+      40 px por desenho, ganhou um botão invisível por cima da dupla inteira.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ⚠️ A LEGENDA SECRETA (set/2026). `visibility` e não `display`: o espaço fica
+   guardado, então a folha não pula quando a palavra aparece no acerto. */
+.segredo{visibility:hidden}
+.segredo.revelado{visibility:visible;-webkit-animation:aparece .35s;animation:aparece .35s}
+
+/* ── folha 4 — a parede de balões (da folha d13: "pinte só os BA") ───── */
+.ceubaloes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 2px 4px}
+.balao{position:relative;min-height:74px;border:3px solid #d9ddf2;border-radius:50% 50% 46% 46%;
+  background:#fff;cursor:pointer;padding:6px 2px 10px;display:flex;align-items:center;
+  justify-content:center;-webkit-transition:transform .12s,background .2s;transition:transform .12s,background .2s}
+.balao .bsil{font-weight:900;font-size:clamp(17px,4.6vw,24px);color:#2c3350;letter-spacing:.5px}
+.balao .bfio{position:absolute;left:50%;bottom:-9px;width:2px;height:10px;background:#c3c8e4;
+  margin-left:-1px;display:block}
+.balao.b0{background:#fff7f2;border-color:#f3cdb4}
+.balao.b1{background:#f2fbff;border-color:#b7dcef}
+.balao.b2{background:#f6fff4;border-color:#bfe3b8}
+.balao.b3{background:#fdf4ff;border-color:#ddc0e8}
+.balao:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+.balao.pintado{border-color:#5b4fc4;background:#e9e6ff;color:#3a2fa0;
+  -webkit-box-shadow:0 0 0 4px rgba(91,79,196,.2);box-shadow:0 0 0 4px rgba(91,79,196,.2)}
+.balao.pintado .bsil{color:#3a2fa0}
+@media(min-width:620px){.ceubaloes{grid-template-columns:repeat(6,1fr)}}
+
+/* ── folha 8 — a palavra em quadradinhos de LETRA (da folha d17) ─────── */
+.lqenv{position:relative;margin:8px 0 2px}
+.letras{display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+.lq{min-width:40px;min-height:46px;border:2px solid #cfd4ee;border-radius:8px;background:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;
+  font-size:clamp(18px,4.6vw,24px);color:var(--texto3)}
+.lq.vaga{border:3px dashed #6d5ae6;background:#f4f2ff;color:#6d5ae6}
+.lq.vaga.ativa{background:#fff;-webkit-box-shadow:0 0 0 4px rgba(109,90,230,.25);
+  box-shadow:0 0 0 4px rgba(109,90,230,.25)}
+.lq.ok{border:3px solid #15a34a;background:#e7f8ee;color:#0d7736}
+/* ⚠️ O ALVO É ESTE, não o quadradinho: 40 px é menos que o dedo de seis anos.
+   O botão cobre a faixa inteira das vagas e é transparente de propósito. */
+.lqpega{position:absolute;left:0;top:0;width:100%;height:100%;background:transparent;
+  border:0;cursor:pointer;padding:0;min-height:46px}
+.item.feito .lqpega{display:none}
+
+/* ── folha 11 — as colunas da família (da folha d24: recorte e classifique) */
+.colunas{display:flex;gap:clamp(4px,1.6vw,10px);justify-content:center;margin:8px 8px 4px;
+  flex-wrap:wrap}
+.coluna{flex:1 1 17%;min-width:82px;max-width:160px;border:3px solid #d9ddf2;border-radius:14px;
+  background:#fbfcff;padding:4px;min-height:108px;cursor:pointer}
+.coluna.perto{border-color:#5b4fc4;background:#f2f0ff}
+.coluna.erro{border-color:#e2574c;background:#fdeceb}
+.ctit{font-weight:900;font-size:clamp(14px,3.6vw,19px);color:#4a4f77;margin-bottom:4px;
+  border-bottom:2px solid #e3e6f5;padding-bottom:3px;display:flex;align-items:center;
+  justify-content:center;gap:4px;flex-wrap:wrap}
+.cdentro{display:flex;flex-direction:column;gap:3px;align-items:center;min-height:56px}
+.fdentro{font-weight:800;font-size:clamp(11px,3vw,14px);color:#0d7736;background:#e7f8ee;
+  border-radius:8px;padding:3px 6px;display:block;max-width:100%;word-break:break-word}
+.fichbanco{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:6px 10px 10px}
+.ficha{min-height:46px;padding:8px 12px;border:3px solid #d9ddf2;border-radius:12px;background:#fff;
+  font-weight:900;font-size:clamp(14px,3.8vw,18px);color:var(--texto3);cursor:pointer;
+  border-style:dashed}
+.ficha.marcada{border-style:solid;border-color:#5b4fc4;background:#f2f0ff;
+  -webkit-box-shadow:0 0 0 4px rgba(91,79,196,.18);box-shadow:0 0 0 4px rgba(91,79,196,.18)}
+.ficha.usada{opacity:.34;pointer-events:none;border-style:solid}
+
+/* ── folha 12 — qual está escrita certa (da folha d26) ───────────────── */
+.quadrografia{display:flex;align-items:center;gap:10px;border:2px dashed #cfd4ee;border-radius:14px;
+  padding:8px;background:#fff;flex-wrap:wrap;justify-content:center}
+.gfigura{display:flex;flex-direction:column;align-items:center;gap:4px;flex:0 0 auto}
+.gpilha{display:flex;flex-direction:column;gap:5px;flex:1 1 150px;min-width:140px}
+.gop{min-height:46px;border:2px solid #dfe3f3;border-radius:10px;background:#fcfcff;font-weight:900;
+  font-size:clamp(15px,4vw,20px);color:var(--texto3);cursor:pointer;letter-spacing:1px;padding:6px 8px}
+.gop:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+.gop.marcada{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.gop.erro{border-color:#e2574c;background:#fdeceb;color:#b5352b}
+
+/* ── folha 14 — a soma da roda e a tira que se LÊ (das folhas d20 e d21) */
+.somaroda{margin:12px 14px;padding:12px;border:2px solid #eceefa;border-radius:20px;background:#fbfbff}
+.somatit{font-weight:900;font-size:clamp(15px,4vw,19px);color:#4a4f77;margin-bottom:8px;text-align:center}
+.somalin{display:flex;flex-direction:column;gap:8px;align-items:center}
+.somai{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
+.sparc{font-weight:900;font-size:clamp(20px,5.4vw,28px);color:var(--texto3);min-width:26px;text-align:center}
+.smais{font-weight:900;font-size:clamp(17px,4.4vw,22px);color:#9aa0bd}
+.tiraroda{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;margin:12px 0 8px;
+  opacity:.42;-webkit-transition:opacity .4s;transition:opacity .4s}
+.tiraroda.completa{opacity:1}
+.tsil{font-weight:900;font-size:clamp(14px,3.8vw,19px);color:#4a4f77;background:#f1f0ff;
+  border:2px solid #d9d5f6;border-radius:10px;padding:6px 9px;display:block}
+.tsil.acesa{background:#ffe9a8;border-color:#e5b93c;color:#6a4b00;
+  -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.somaroda .pronto[disabled]{opacity:.4;cursor:default}
+
 /* folha 10 — a carta do mural, com as bolinhas das palmas */
 .cartaorima.cartasil{min-width:clamp(104px,27vw,140px)}
 .blin{display:flex;gap:4px;justify-content:center;margin-top:3px}
@@ -882,380 +978,663 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 /*ITENS-INI*/
 var ITENS = {
  "p1": [
-  "lata",
-  "leao",
-  "limao",
-  "lobo",
-  "lupa"
+   "lata",
+   "leao",
+   "limao",
+   "lobo",
+   "lupa"
  ],
  "p2": [
-  "lata",
-  "leao",
-  "limao",
-  "lobo",
-  "lupa",
-  "laranja",
-  "luneta",
-  "mala",
-  "menina",
-  "minhoca",
-  "mola"
+   "lata",
+   "laranja",
+   "leao",
+   "limao",
+   "lobo",
+   "lupa",
+   "luneta",
+   "mala",
+   "maca",
+   "menina",
+   "minhoca"
  ],
  "p3": [
-  {
-   "s": "LA",
-   "g": [
-    "lata",
-    "leao",
-    "lupa",
-    "laranja",
-    "limao",
-    "lobo"
-   ]
-  },
-  {
-   "s": "LU",
-   "g": [
-    "lupa",
-    "luneta",
-    "lata",
-    "lobo",
-    "leao",
-    "limao"
-   ]
-  },
-  {
-   "s": "LI",
-   "g": [
-    "limao",
-    "lata",
-    "lupa",
-    "lobo",
-    "laranja",
-    "leao"
-   ]
-  },
-  {
-   "s": "LO",
-   "g": [
-    "lobo",
-    "lupa",
-    "lata",
-    "limao",
-    "luneta",
-    "leao"
-   ]
-  },
-  {
-   "s": "MA",
-   "g": [
-    "mala",
-    "maca",
-    "menina",
-    "mola",
-    "minhoca",
-    "mapa"
-   ]
-  },
-  {
-   "s": "ME",
-   "g": [
-    "menina",
-    "menino",
-    "mala",
-    "mola",
-    "minhoca",
-    "maca"
-   ]
-  },
-  {
-   "s": "MO",
-   "g": [
-    "mola",
-    "mala",
-    "minhoca",
-    "menina",
-    "maca",
-    "macaco"
-   ]
-  },
-  {
-   "s": "MI",
-   "g": [
-    "minhoca",
-    "mola",
-    "mala",
-    "menina",
-    "mapa",
-    "macaco"
-   ]
-  }
+   {
+     "s": "LA",
+     "g": [
+       "lata",
+       "laranja",
+       "leao",
+       "limao",
+       "lobo",
+       "lupa"
+     ]
+   },
+   {
+     "s": "LE",
+     "g": [
+       "leao",
+       "lata",
+       "laranja",
+       "limao",
+       "lobo",
+       "lupa"
+     ]
+   },
+   {
+     "s": "LI",
+     "g": [
+       "limao",
+       "lata",
+       "laranja",
+       "leao",
+       "lobo",
+       "lupa"
+     ]
+   },
+   {
+     "s": "LO",
+     "g": [
+       "lobo",
+       "lata",
+       "laranja",
+       "leao",
+       "limao",
+       "lupa"
+     ]
+   },
+   {
+     "s": "LU",
+     "g": [
+       "lupa",
+       "luneta",
+       "lata",
+       "laranja",
+       "leao",
+       "limao"
+     ]
+   },
+   {
+     "s": "MA",
+     "g": [
+       "mala",
+       "maca",
+       "menina",
+       "minhoca",
+       "mola"
+     ]
+   },
+   {
+     "s": "ME",
+     "g": [
+       "menina",
+       "mala",
+       "maca",
+       "minhoca",
+       "mola"
+     ]
+   },
+   {
+     "s": "MI",
+     "g": [
+       "minhoca",
+       "mala",
+       "maca",
+       "menina",
+       "mola"
+     ]
+   }
  ],
  "p4": [
-  [
-   "lata",
-   "leao",
-   "limao",
-   "lobo"
-  ],
-  [
-   "leao",
-   "limao",
-   "lobo",
-   "lupa"
-  ],
-  [
-   "lata",
-   "limao",
-   "lobo",
-   "lupa"
-  ],
-  [
-   "lata",
-   "leao",
-   "lobo",
-   "lupa"
-  ],
-  [
-   "lata",
-   "leao",
-   "limao",
-   "lupa"
-  ],
-  [
-   "mala",
-   "menina",
-   "minhoca",
-   "mola"
-  ],
-  [
-   "laranja",
-   "leao",
-   "limao",
-   "luneta"
-  ],
-  [
-   "lata",
-   "menina",
-   "limao",
-   "mola"
-  ]
+   {
+     "s": "LA",
+     "w": "lata",
+     "g": [
+       "LE",
+       "LA",
+       "LU",
+       "LE",
+       "LI",
+       "LI",
+       "LU",
+       "LA",
+       "LE",
+       "LA",
+       "LO",
+       "LO"
+     ]
+   },
+   {
+     "s": "LE",
+     "w": "leao",
+     "g": [
+       "LA",
+       "LU",
+       "LO",
+       "LI",
+       "LE",
+       "LO",
+       "LE",
+       "LE",
+       "LU",
+       "LI",
+       "LE",
+       "LA"
+     ]
+   },
+   {
+     "s": "LI",
+     "w": "limao",
+     "g": [
+       "LE",
+       "LO",
+       "LA",
+       "LU",
+       "LA",
+       "LE",
+       "LI",
+       "LO",
+       "LI",
+       "LU",
+       "LI",
+       "LA"
+     ]
+   },
+   {
+     "s": "LO",
+     "w": "lobo",
+     "g": [
+       "LO",
+       "LI",
+       "LE",
+       "LI",
+       "LU",
+       "LA",
+       "LO",
+       "LU",
+       "LO",
+       "LE",
+       "LO",
+       "LA"
+     ]
+   },
+   {
+     "s": "LU",
+     "w": "lupa",
+     "g": [
+       "LA",
+       "LE",
+       "LI",
+       "LU",
+       "LU",
+       "LO",
+       "LI",
+       "LA",
+       "LE",
+       "LU",
+       "LA",
+       "LO"
+     ]
+   },
+   {
+     "s": "MA",
+     "w": "mala",
+     "g": [
+       "MO",
+       "MA",
+       "MA",
+       "MO",
+       "MO",
+       "MI",
+       "ME",
+       "MI",
+       "MA",
+       "ME",
+       "MI",
+       "ME"
+     ]
+   },
+   {
+     "s": "ME",
+     "w": "menina",
+     "g": [
+       "MO",
+       "MO",
+       "MA",
+       "MA",
+       "ME",
+       "ME",
+       "ME",
+       "ME",
+       "MI",
+       "MI",
+       "MA",
+       "MI"
+     ]
+   },
+   {
+     "s": "MI",
+     "w": "minhoca",
+     "g": [
+       "MA",
+       "ME",
+       "MA",
+       "MI",
+       "MO",
+       "ME",
+       "MI",
+       "MO",
+       "ME",
+       "MO",
+       "MI",
+       "MA"
+     ]
+   }
  ],
  "p5": [
-  [
-   "lata",
-   "laranja",
-   "leao",
-   "limao",
-   "lobo",
-   "lupa"
-  ],
-  [
-   "lupa",
-   "luneta",
-   "lata",
-   "leao",
-   "limao",
-   "lobo"
-  ],
-  [
-   "mala",
-   "maca",
-   "menina",
-   "minhoca",
-   "mola",
-   "morcego"
-  ],
-  [
-   "menina",
-   "menino",
-   "mola",
-   "minhoca",
-   "macaco",
-   "morcego"
-  ],
-  [
-   "lata",
-   "laranja",
-   "lupa",
-   "lobo",
-   "menina",
-   "mola"
-  ],
-  [
-   "lupa",
-   "luneta",
-   "limao",
-   "leao",
-   "mala",
-   "minhoca"
-  ],
-  [
-   "mala",
-   "macaco",
-   "mola",
-   "menina",
-   "lata",
-   "lobo"
-  ],
-  [
-   "maca",
-   "mapa",
-   "mola",
-   "minhoca",
-   "leao",
-   "lupa"
-  ]
+   [
+     "lata",
+     "leao",
+     "limao",
+     "lobo"
+   ],
+   [
+     "laranja",
+     "leao",
+     "limao",
+     "lobo"
+   ],
+   [
+     "leao",
+     "limao",
+     "lobo",
+     "lupa"
+   ],
+   [
+     "limao",
+     "lobo",
+     "lupa",
+     "lata"
+   ],
+   [
+     "lobo",
+     "lupa",
+     "lata",
+     "leao"
+   ],
+   [
+     "mala",
+     "menina",
+     "minhoca",
+     "mola"
+   ],
+   [
+     "maca",
+     "menina",
+     "minhoca",
+     "mola"
+   ],
+   [
+     "menina",
+     "minhoca",
+     "mola",
+     "mala"
+   ]
  ],
  "p6": [
-  "lata",
-  "leao",
-  "limao",
-  "lobo",
-  "lupa",
-  "laranja",
-  "luneta",
-  "mala",
-  "menina",
-  "minhoca",
-  "mola"
+   [
+     "limao",
+     "lata",
+     "lupa",
+     "leao",
+     "lobo",
+     "laranja"
+   ],
+   [
+     "lata",
+     "lupa",
+     "lobo",
+     "leao",
+     "luneta",
+     "limao"
+   ],
+   [
+     "gato",
+     "minhoca",
+     "mola",
+     "mala",
+     "menina",
+     "maca"
+   ],
+   [
+     "leao",
+     "lupa",
+     "laranja",
+     "lata",
+     "lobo",
+     "limao"
+   ],
+   [
+     "lobo",
+     "lata",
+     "lupa",
+     "leao",
+     "luneta",
+     "limao"
+   ],
+   [
+     "minhoca",
+     "mola",
+     "mala",
+     "gato",
+     "maca",
+     "menina"
+   ]
  ],
  "p7": [
-  {
-   "g": [
-    "mala",
-    "menina",
-    "mola",
-    "morcego"
-   ],
-   "c": "morcego"
-  },
-  {
-   "g": [
-    "minhoca",
-    "maca",
-    "mola",
-    "morcego"
-   ],
-   "c": "morcego"
-  },
-  {
-   "g": [
-    "lata",
-    "leao",
-    "limao",
-    "gato"
-   ],
-   "c": "gato"
-  },
-  {
-   "g": [
-    "lobo",
-    "lupa",
-    "laranja",
-    "sapo"
-   ],
-   "c": "sapo"
-  },
-  {
-   "g": [
-    "luneta",
-    "lata",
-    "limao",
-    "rato"
-   ],
-   "c": "rato"
-  },
-  {
-   "g": [
-    "leao",
-    "lobo",
-    "lupa",
-    "navio"
-   ],
-   "c": "navio"
-  },
-  {
-   "g": [
-    "mala",
-    "mola",
-    "menina",
-    "navio"
-   ],
-   "c": "navio"
-  },
-  {
-   "g": [
-    "limao",
-    "laranja",
-    "lobo",
-    "uva"
-   ],
-   "c": "uva"
-  }
+   "lata",
+   "laranja",
+   "leao",
+   "limao",
+   "lobo",
+   "lupa",
+   "luneta",
+   "mala",
+   "maca",
+   "menina",
+   "minhoca",
+   "mola"
  ],
  "p8": [
-  "lata",
-  "laranja",
-  "limao",
-  "lupa",
-  "luneta",
-  "lata",
-  "limao",
-  "lupa",
-  "laranja",
-  "luneta"
+   "lata",
+   "laranja",
+   "leao",
+   "limao",
+   "lobo",
+   "lupa",
+   "luneta",
+   "mala",
+   "maca",
+   "menina",
+   "minhoca",
+   "mola"
  ],
  "p9": [
-  "lata",
-  "leao",
-  "limao",
-  "lobo",
-  "lupa",
-  "laranja",
-  "luneta",
-  "mala",
-  "menina",
-  "minhoca",
-  "mola"
+   {
+     "g": [
+       "gato",
+       "lata",
+       "leao",
+       "limao"
+     ],
+     "c": "gato"
+   },
+   {
+     "g": [
+       "sapo",
+       "laranja",
+       "limao",
+       "leao"
+     ],
+     "c": "sapo"
+   },
+   {
+     "g": [
+       "rato",
+       "lobo",
+       "limao",
+       "leao"
+     ],
+     "c": "rato"
+   },
+   {
+     "g": [
+       "limao",
+       "lupa",
+       "navio",
+       "lobo"
+     ],
+     "c": "navio"
+   },
+   {
+     "g": [
+       "uva",
+       "lobo",
+       "lata",
+       "lupa"
+     ],
+     "c": "uva"
+   },
+   {
+     "g": [
+       "gato",
+       "menina",
+       "mala",
+       "minhoca"
+     ],
+     "c": "gato"
+   },
+   {
+     "g": [
+       "sapo",
+       "maca",
+       "menina",
+       "minhoca"
+     ],
+     "c": "sapo"
+   },
+   {
+     "g": [
+       "menina",
+       "rato",
+       "minhoca",
+       "mola"
+     ],
+     "c": "rato"
+   }
  ],
  "p10": [
-  "lata",
-  "leao",
-  "limao",
-  "lobo",
-  "lupa",
-  "laranja",
-  "luneta",
-  "mala",
-  "menina",
-  "minhoca",
-  "mola",
-  "maca",
-  "macaco",
-  "menino",
-  "mapa"
+   "lata",
+   "laranja",
+   "leao",
+   "limao",
+   "lobo",
+   "lupa",
+   "luneta"
+ ],
+ "p11": [
+   "mala",
+   "maca",
+   "mapa",
+   "macaco",
+   "menina",
+   "menino",
+   "minhoca",
+   "mola"
+ ],
+ "p12": [
+   {
+     "w": "lata",
+     "ops": [
+       "LOTA",
+       "LATA",
+       "LETA"
+     ]
+   },
+   {
+     "w": "leao",
+     "ops": [
+       "LEÃO",
+       "LIÃO",
+       "LOÃO"
+     ]
+   },
+   {
+     "w": "limao",
+     "ops": [
+       "LEMÃO",
+       "LAMÃO",
+       "LIMÃO"
+     ]
+   },
+   {
+     "w": "lobo",
+     "ops": [
+       "LOBO",
+       "LEBO",
+       "LIBO"
+     ]
+   },
+   {
+     "w": "lupa",
+     "ops": [
+       "LEPA",
+       "LUPA",
+       "LIPA"
+     ]
+   },
+   {
+     "w": "laranja",
+     "ops": [
+       "LIRANJA",
+       "LORANJA",
+       "LARANJA"
+     ]
+   },
+   {
+     "w": "luneta",
+     "ops": [
+       "LANETA",
+       "LONETA",
+       "LUNETA"
+     ]
+   },
+   {
+     "w": "mala",
+     "ops": [
+       "MALA",
+       "MELA",
+       "MILA"
+     ]
+   },
+   {
+     "w": "menina",
+     "ops": [
+       "MANINA",
+       "MENINA",
+       "MONINA"
+     ]
+   },
+   {
+     "w": "minhoca",
+     "ops": [
+       "MINHOCA",
+       "MANHOCA",
+       "MUNHOCA"
+     ]
+   }
+ ],
+ "p13": [
+   "lata",
+   "laranja",
+   "leao",
+   "limao",
+   "lobo",
+   "lupa",
+   "luneta",
+   "mala",
+   "maca",
+   "menina",
+   "minhoca",
+   "mola"
+ ],
+ "p14": [
+   "LA",
+   "LE",
+   "LI",
+   "LO",
+   "LU",
+   "MA",
+   "ME",
+   "MI",
+   "MO"
+ ],
+ "p15": [
+   "laranja",
+   "lata",
+   "leao",
+   "limao",
+   "lobo",
+   "luneta",
+   "lupa",
+   "maca",
+   "mala",
+   "menina",
+   "minhoca",
+   "mola"
  ]
 };
 /*ITENS-FIM*/
 /*FALAS-INI*/
 var FALAS = {
- "capa": "A Roda das Sílabas. Dez folhas para descobrir uma coisa muito útil: o éle sozinho não fala. Quando a vogal chega, nasce um pedacinho — e com cinco vogais nascem cinco pedacinhos. Escreva o seu nome ali embaixo e toque em Começar.",
- "certo10_laranja": "Laranja, da família do la. Foi para o seu mural!",
- "certo10_lata": "Lata, da família do la. Foi para o seu mural!",
- "certo10_leao": "Leão, da família do le. Foi para o seu mural!",
- "certo10_limao": "Limão, da família do li. Foi para o seu mural!",
- "certo10_lobo": "Lobo, da família do lo. Foi para o seu mural!",
- "certo10_luneta": "Luneta, da família do lu. Foi para o seu mural!",
- "certo10_lupa": "Lupa, da família do lu. Foi para o seu mural!",
- "certo10_maca": "Maçã, da família do ma. Foi para o seu mural!",
- "certo10_macaco": "Macaco, da família do ma. Foi para o seu mural!",
- "certo10_mala": "Mala, da família do ma. Foi para o seu mural!",
- "certo10_mapa": "Mapa, da família do ma. Foi para o seu mural!",
- "certo10_menina": "Menina, da família do me. Foi para o seu mural!",
- "certo10_menino": "Menino, da família do me. Foi para o seu mural!",
- "certo10_minhoca": "Minhoca, da família do mi. Foi para o seu mural!",
- "certo10_mola": "Mola, da família do mo. Foi para o seu mural!",
+ "capa": "A Roda das Sílabas. Quinze folhas para descobrir uma coisa muito útil: o éle sozinho não fala. Quando a vogal chega, nasce um pedacinho — e com cinco vogais nascem cinco pedacinhos. Escreva o seu nome ali embaixo e toque em Começar.",
+ "certo10_laranja": "Boa! Laranja vai na gaveta do la.",
+ "certo10_lata": "Boa! Lata vai na gaveta do la.",
+ "certo10_leao": "Boa! Leão vai na gaveta do le.",
+ "certo10_limao": "Boa! Limão vai na gaveta do li.",
+ "certo10_lobo": "Boa! Lobo vai na gaveta do lo.",
+ "certo10_luneta": "Boa! Luneta vai na gaveta do lu.",
+ "certo10_lupa": "Boa! Lupa vai na gaveta do lu.",
+ "certo11_maca": "Isso! MAÇÃ está escrita com MA no começo, então vai nessa coluna.",
+ "certo11_macaco": "Isso! MACACO está escrita com MA no começo, então vai nessa coluna.",
+ "certo11_mala": "Isso! MALA está escrita com MA no começo, então vai nessa coluna.",
+ "certo11_mapa": "Isso! MAPA está escrita com MA no começo, então vai nessa coluna.",
+ "certo11_menina": "Isso! MENINA está escrita com ME no começo, então vai nessa coluna.",
+ "certo11_menino": "Isso! MENINO está escrita com ME no começo, então vai nessa coluna.",
+ "certo11_minhoca": "Isso! MINHOCA está escrita com MI no começo, então vai nessa coluna.",
+ "certo11_mola": "Isso! MOLA está escrita com MO no começo, então vai nessa coluna.",
+ "certo12_laranja": "Isso! LARANJA, com LA no começo. É assim que se escreve.",
+ "certo12_lata": "Isso! LATA, com LA no começo. É assim que se escreve.",
+ "certo12_leao": "Isso! LEÃO, com LE no começo. É assim que se escreve.",
+ "certo12_limao": "Isso! LIMÃO, com LI no começo. É assim que se escreve.",
+ "certo12_lobo": "Isso! LOBO, com LO no começo. É assim que se escreve.",
+ "certo12_luneta": "Isso! LUNETA, com LU no começo. É assim que se escreve.",
+ "certo12_lupa": "Isso! LUPA, com LU no começo. É assim que se escreve.",
+ "certo12_mala": "Isso! MALA, com MA no começo. É assim que se escreve.",
+ "certo12_menina": "Isso! MENINA, com ME no começo. É assim que se escreve.",
+ "certo12_minhoca": "Isso! MINHOCA, com MI no começo. É assim que se escreve.",
+ "certo13_laranja": "Muito bem! Laranja começa com la.",
+ "certo13_lata": "Muito bem! Lata começa com la.",
+ "certo13_leao": "Muito bem! Leão começa com le.",
+ "certo13_limao": "Muito bem! Limão começa com li.",
+ "certo13_lobo": "Muito bem! Lobo começa com lo.",
+ "certo13_luneta": "Muito bem! Luneta começa com lu.",
+ "certo13_lupa": "Muito bem! Lupa começa com lu.",
+ "certo13_maca": "Muito bem! Maçã começa com ma.",
+ "certo13_mala": "Muito bem! Mala começa com ma.",
+ "certo13_menina": "Muito bem! Menina começa com me.",
+ "certo13_minhoca": "Muito bem! Minhoca começa com mi.",
+ "certo13_mola": "Muito bem! Mola começa com mo.",
+ "certo14_LA": "Isso! L com A faz la.",
+ "certo14_LE": "Isso! L com E faz le.",
+ "certo14_LI": "Isso! L com I faz li.",
+ "certo14_LO": "Isso! L com O faz lo.",
+ "certo14_LU": "Isso! L com U faz lu.",
+ "certo14_MA": "Isso! M com A faz ma.",
+ "certo14_ME": "Isso! M com E faz me.",
+ "certo14_MI": "Isso! M com I faz mi.",
+ "certo14_MO": "Isso! M com O faz mo.",
+ "certo15_laranja": "Laranja, da roda do L. Foi para o seu mural!",
+ "certo15_lata": "Lata, da roda do L. Foi para o seu mural!",
+ "certo15_leao": "Leão, da roda do L. Foi para o seu mural!",
+ "certo15_limao": "Limão, da roda do L. Foi para o seu mural!",
+ "certo15_lobo": "Lobo, da roda do L. Foi para o seu mural!",
+ "certo15_luneta": "Luneta, da roda do L. Foi para o seu mural!",
+ "certo15_lupa": "Lupa, da roda do L. Foi para o seu mural!",
+ "certo15_maca": "Maçã, da roda do M. Foi para o seu mural!",
+ "certo15_mala": "Mala, da roda do M. Foi para o seu mural!",
+ "certo15_menina": "Menina, da roda do M. Foi para o seu mural!",
+ "certo15_minhoca": "Minhoca, da roda do M. Foi para o seu mural!",
+ "certo15_mola": "Mola, da roda do M. Foi para o seu mural!",
  "certo1_lata": "Isso! Lata começa com la. la... ta.",
  "certo1_leao": "Isso! Leão começa com le. le... ão.",
  "certo1_limao": "Isso! Limão começa com li. li... mão.",
@@ -1268,67 +1647,116 @@ var FALAS = {
  "certo2_lobo": "Muito bem! Lobo começa com lo.",
  "certo2_luneta": "Muito bem! Luneta começa com lu.",
  "certo2_lupa": "Muito bem! Lupa começa com lu.",
+ "certo2_maca": "Muito bem! Maçã começa com ma.",
  "certo2_mala": "Muito bem! Mala começa com ma.",
  "certo2_menina": "Muito bem! Menina começa com me.",
  "certo2_minhoca": "Muito bem! Minhoca começa com mi.",
- "certo2_mola": "Muito bem! Mola começa com mo.",
  "certo3_LA": "Isso! lata, laranja começam com la.",
+ "certo3_LE": "Isso! leão começam com le.",
  "certo3_LI": "Isso! limão começam com li.",
  "certo3_LO": "Isso! lobo começam com lo.",
  "certo3_LU": "Isso! lupa, luneta começam com lu.",
- "certo3_MA": "Isso! mala, maçã, mapa começam com ma.",
- "certo3_ME": "Isso! menina, menino começam com me.",
+ "certo3_MA": "Isso! mala, maçã começam com ma.",
+ "certo3_ME": "Isso! menina começam com me.",
  "certo3_MI": "Isso! minhoca começam com mi.",
- "certo3_MO": "Isso! mola começam com mo.",
- "certo4_laranja": "Isso! Laranja começa com la.",
- "certo4_lata": "Isso! Lata começa com la.",
- "certo4_leao": "Isso! Leão começa com le.",
- "certo4_limao": "Isso! Limão começa com li.",
- "certo4_lobo": "Isso! Lobo começa com lo.",
- "certo4_luneta": "Isso! Luneta começa com lu.",
- "certo4_lupa": "Isso! Lupa começa com lu.",
- "certo4_mala": "Isso! Mala começa com ma.",
- "certo4_menina": "Isso! Menina começa com me.",
- "certo4_minhoca": "Isso! Minhoca começa com mi.",
- "certo4_mola": "Isso! Mola começa com mo.",
- "certo5_lata": "Muito bem! Lata e laranja começam as duas com la.",
- "certo5_lupa": "Muito bem! Lupa e luneta começam as duas com lu.",
- "certo5_maca": "Muito bem! Maçã e mapa começam as duas com ma.",
- "certo5_mala": "Muito bem! Mala e macaco começam as duas com ma.",
- "certo5_menina": "Muito bem! Menina e menino começam as duas com me.",
- "certo6_laranja": "Isso! la... ran... ja. O começo é la.",
- "certo6_lata": "Isso! la... ta. O começo é la.",
- "certo6_leao": "Isso! le... ão. O começo é le.",
- "certo6_limao": "Isso! li... mão. O começo é li.",
- "certo6_lobo": "Isso! lo... bo. O começo é lo.",
- "certo6_luneta": "Isso! lu... ne... ta. O começo é lu.",
- "certo6_lupa": "Isso! lu... pa. O começo é lu.",
- "certo6_mala": "Isso! ma... la. O começo é ma.",
- "certo6_menina": "Isso! me... ni... na. O começo é me.",
- "certo6_minhoca": "Isso! mi... nho... ca. O começo é mi.",
- "certo6_mola": "Isso! mo... la. O começo é mo.",
- "certo7_gato": "Isso! lata, leão, limão começam com la, e gato não.",
- "certo7_morcego": "Isso! minhoca, maçã, mola começam com mi, e morcego não.",
- "certo7_navio": "Isso! mala, mola, menina começam com ma, e navio não.",
- "certo7_rato": "Isso! luneta, lata, limão começam com lu, e rato não.",
- "certo7_sapo": "Isso! lobo, lupa, laranja começam com lo, e sapo não.",
- "certo7_uva": "Isso! limão, laranja, lobo começam com li, e uva não.",
- "certo8_laranja": "Boa! Laranja vai na gaveta do la.",
- "certo8_lata": "Boa! Lata vai na gaveta do la.",
- "certo8_limao": "Boa! Limão vai na gaveta do li.",
- "certo8_luneta": "Boa! Luneta vai na gaveta do lu.",
- "certo8_lupa": "Boa! Lupa vai na gaveta do lu.",
- "certo9_laranja": "Muito bem! Laranja começa com la.",
- "certo9_lata": "Muito bem! Lata começa com la.",
- "certo9_leao": "Muito bem! Leão começa com le.",
- "certo9_limao": "Muito bem! Limão começa com li.",
- "certo9_lobo": "Muito bem! Lobo começa com lo.",
- "certo9_luneta": "Muito bem! Luneta começa com lu.",
- "certo9_lupa": "Muito bem! Lupa começa com lu.",
- "certo9_mala": "Muito bem! Mala começa com ma.",
- "certo9_menina": "Muito bem! Menina começa com me.",
- "certo9_minhoca": "Muito bem! Minhoca começa com mi.",
- "certo9_mola": "Muito bem! Mola começa com mo.",
+ "certo4_LA": "Isso! Você achou todos os la, e não pintou nenhum irmão dele.",
+ "certo4_LE": "Isso! Você achou todos os le, e não pintou nenhum irmão dele.",
+ "certo4_LI": "Isso! Você achou todos os li, e não pintou nenhum irmão dele.",
+ "certo4_LO": "Isso! Você achou todos os lo, e não pintou nenhum irmão dele.",
+ "certo4_LU": "Isso! Você achou todos os lu, e não pintou nenhum irmão dele.",
+ "certo4_MA": "Isso! Você achou todos os ma, e não pintou nenhum irmão dele.",
+ "certo4_ME": "Isso! Você achou todos os me, e não pintou nenhum irmão dele.",
+ "certo4_MI": "Isso! Você achou todos os mi, e não pintou nenhum irmão dele.",
+ "certo5_laranja": "Isso! Laranja começa com la.",
+ "certo5_lata": "Isso! Lata começa com la.",
+ "certo5_leao": "Isso! Leão começa com le.",
+ "certo5_limao": "Isso! Limão começa com li.",
+ "certo5_lobo": "Isso! Lobo começa com lo.",
+ "certo5_lupa": "Isso! Lupa começa com lu.",
+ "certo5_maca": "Isso! Maçã começa com ma.",
+ "certo5_mala": "Isso! Mala começa com ma.",
+ "certo5_menina": "Isso! Menina começa com me.",
+ "certo5_minhoca": "Isso! Minhoca começa com mi.",
+ "certo5_mola": "Isso! Mola começa com mo.",
+ "certo6_laranja": "Muito bem! Laranja e lata começam as duas com la.",
+ "certo6_lata": "Muito bem! Lata e laranja começam as duas com la.",
+ "certo6_lupa": "Muito bem! Lupa e luneta começam as duas com lu.",
+ "certo6_mala": "Muito bem! Mala e maçã começam as duas com ma.",
+ "certo7_laranja": "Isso! la... ran... ja. O começo é la.",
+ "certo7_lata": "Isso! la... ta. O começo é la.",
+ "certo7_leao": "Isso! le... ão. O começo é le.",
+ "certo7_limao": "Isso! li... mão. O começo é li.",
+ "certo7_lobo": "Isso! lo... bo. O começo é lo.",
+ "certo7_luneta": "Isso! lu... ne... ta. O começo é lu.",
+ "certo7_lupa": "Isso! lu... pa. O começo é lu.",
+ "certo7_maca": "Isso! ma... çã. O começo é ma.",
+ "certo7_mala": "Isso! ma... la. O começo é ma.",
+ "certo7_menina": "Isso! me... ni... na. O começo é me.",
+ "certo7_minhoca": "Isso! mi... nho... ca. O começo é mi.",
+ "certo7_mola": "Isso! mo... la. O começo é mo.",
+ "certo8_laranja": "Muito bem! LA tem duas letras: L e A. Juntas elas fazem la.",
+ "certo8_lata": "Muito bem! LA tem duas letras: L e A. Juntas elas fazem la.",
+ "certo8_leao": "Muito bem! LE tem duas letras: L e E. Juntas elas fazem le.",
+ "certo8_limao": "Muito bem! LI tem duas letras: L e I. Juntas elas fazem li.",
+ "certo8_lobo": "Muito bem! LO tem duas letras: L e O. Juntas elas fazem lo.",
+ "certo8_luneta": "Muito bem! LU tem duas letras: L e U. Juntas elas fazem lu.",
+ "certo8_lupa": "Muito bem! LU tem duas letras: L e U. Juntas elas fazem lu.",
+ "certo8_maca": "Muito bem! MA tem duas letras: M e A. Juntas elas fazem ma.",
+ "certo8_mala": "Muito bem! MA tem duas letras: M e A. Juntas elas fazem ma.",
+ "certo8_menina": "Muito bem! ME tem duas letras: M e E. Juntas elas fazem me.",
+ "certo8_minhoca": "Muito bem! MI tem duas letras: M e I. Juntas elas fazem mi.",
+ "certo8_mola": "Muito bem! MO tem duas letras: M e O. Juntas elas fazem mo.",
+ "certo9_gato": "Isso! menina, mala, minhoca são todas da roda do M, e gato não é.",
+ "certo9_navio": "Isso! limão, lupa, lobo são todas da roda do L, e navio não é.",
+ "certo9_rato": "Isso! menina, minhoca, mola são todas da roda do M, e rato não é.",
+ "certo9_sapo": "Isso! maçã, menina, minhoca são todas da roda do M, e sapo não é.",
+ "certo9_uva": "Isso! lobo, lata, lupa são todas da roda do L, e uva não é.",
+ "dica10_laranja": "Escute o começo: la... ran... ja. Procure a gaveta com esse pedacinho.",
+ "dica10_lata": "Escute o começo: la... ta. Procure a gaveta com esse pedacinho.",
+ "dica10_leao": "Escute o começo: le... ão. Procure a gaveta com esse pedacinho.",
+ "dica10_limao": "Escute o começo: li... mão. Procure a gaveta com esse pedacinho.",
+ "dica10_lobo": "Escute o começo: lo... bo. Procure a gaveta com esse pedacinho.",
+ "dica10_luneta": "Escute o começo: lu... ne... ta. Procure a gaveta com esse pedacinho.",
+ "dica10_lupa": "Escute o começo: lu... pa. Procure a gaveta com esse pedacinho.",
+ "dica11_maca": "Aqui não tem desenho para ajudar. Leia só as duas primeiras letras da ficha e procure essa dupla lá em cima.",
+ "dica11_macaco": "Aqui não tem desenho para ajudar. Leia só as duas primeiras letras da ficha e procure essa dupla lá em cima.",
+ "dica11_mala": "Aqui não tem desenho para ajudar. Leia só as duas primeiras letras da ficha e procure essa dupla lá em cima.",
+ "dica11_mapa": "Aqui não tem desenho para ajudar. Leia só as duas primeiras letras da ficha e procure essa dupla lá em cima.",
+ "dica11_menina": "Aqui não tem desenho para ajudar. Leia só as duas primeiras letras da ficha e procure essa dupla lá em cima.",
+ "dica11_menino": "Aqui não tem desenho para ajudar. Leia só as duas primeiras letras da ficha e procure essa dupla lá em cima.",
+ "dica11_minhoca": "Aqui não tem desenho para ajudar. Leia só as duas primeiras letras da ficha e procure essa dupla lá em cima.",
+ "dica11_mola": "Aqui não tem desenho para ajudar. Leia só as duas primeiras letras da ficha e procure essa dupla lá em cima.",
+ "dica12_laranja": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_lata": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_leao": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_limao": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_lobo": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_luneta": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_lupa": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_mala": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_menina": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica12_minhoca": "As três começam com a mesma letra. O que muda é a VOGAL depois dela. Fale o nome da figura devagar e escute qual vogal aparece logo no começo.",
+ "dica13_laranja": "Escute devagar: la... ran... ja. Escreva só o primeiro pedaço.",
+ "dica13_lata": "Escute devagar: la... ta. Escreva só o primeiro pedaço.",
+ "dica13_leao": "Escute devagar: le... ão. Escreva só o primeiro pedaço.",
+ "dica13_limao": "Escute devagar: li... mão. Escreva só o primeiro pedaço.",
+ "dica13_lobo": "Escute devagar: lo... bo. Escreva só o primeiro pedaço.",
+ "dica13_luneta": "Escute devagar: lu... ne... ta. Escreva só o primeiro pedaço.",
+ "dica13_lupa": "Escute devagar: lu... pa. Escreva só o primeiro pedaço.",
+ "dica13_maca": "Escute devagar: ma... çã. Escreva só o primeiro pedaço.",
+ "dica13_mala": "Escute devagar: ma... la. Escreva só o primeiro pedaço.",
+ "dica13_menina": "Escute devagar: me... ni... na. Escreva só o primeiro pedaço.",
+ "dica13_minhoca": "Escute devagar: mi... nho... ca. Escreva só o primeiro pedaço.",
+ "dica13_mola": "Escute devagar: mo... la. Escreva só o primeiro pedaço.",
+ "dica14_LA": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
+ "dica14_LE": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
+ "dica14_LI": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
+ "dica14_LO": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
+ "dica14_LU": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
+ "dica14_MA": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
+ "dica14_ME": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
+ "dica14_MI": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
+ "dica14_MO": "É a letra do lado esquerdo e a vogal do lado direito, nessa ordem. Escreva as duas juntas.",
  "dica2_laranja": "Fale a palavra bem devagar: la... ran... ja. Escute só o comecinho.",
  "dica2_lata": "Fale a palavra bem devagar: la... ta. Escute só o comecinho.",
  "dica2_leao": "Fale a palavra bem devagar: le... ão. Escute só o comecinho.",
@@ -1336,82 +1764,90 @@ var FALAS = {
  "dica2_lobo": "Fale a palavra bem devagar: lo... bo. Escute só o comecinho.",
  "dica2_luneta": "Fale a palavra bem devagar: lu... ne... ta. Escute só o comecinho.",
  "dica2_lupa": "Fale a palavra bem devagar: lu... pa. Escute só o comecinho.",
+ "dica2_maca": "Fale a palavra bem devagar: ma... çã. Escute só o comecinho.",
  "dica2_mala": "Fale a palavra bem devagar: ma... la. Escute só o comecinho.",
  "dica2_menina": "Fale a palavra bem devagar: me... ni... na. Escute só o comecinho.",
  "dica2_minhoca": "Fale a palavra bem devagar: mi... nho... ca. Escute só o comecinho.",
- "dica2_mola": "Fale a palavra bem devagar: mo... la. Escute só o comecinho.",
  "dica3_LA": "Ouça cada figura e compare só o começo com la. Não se esqueça: pode ser mais de uma.",
+ "dica3_LE": "Ouça cada figura e compare só o começo com le. Não se esqueça: pode ser mais de uma.",
  "dica3_LI": "Ouça cada figura e compare só o começo com li. Não se esqueça: pode ser mais de uma.",
  "dica3_LO": "Ouça cada figura e compare só o começo com lo. Não se esqueça: pode ser mais de uma.",
  "dica3_LU": "Ouça cada figura e compare só o começo com lu. Não se esqueça: pode ser mais de uma.",
  "dica3_MA": "Ouça cada figura e compare só o começo com ma. Não se esqueça: pode ser mais de uma.",
  "dica3_ME": "Ouça cada figura e compare só o começo com me. Não se esqueça: pode ser mais de uma.",
  "dica3_MI": "Ouça cada figura e compare só o começo com mi. Não se esqueça: pode ser mais de uma.",
- "dica3_MO": "Ouça cada figura e compare só o começo com mo. Não se esqueça: pode ser mais de uma.",
- "dica4_laranja": "Escute o comecinho: la... ran... ja. Procure esse pedacinho do outro lado.",
- "dica4_lata": "Escute o comecinho: la... ta. Procure esse pedacinho do outro lado.",
- "dica4_leao": "Escute o comecinho: le... ão. Procure esse pedacinho do outro lado.",
- "dica4_limao": "Escute o comecinho: li... mão. Procure esse pedacinho do outro lado.",
- "dica4_lobo": "Escute o comecinho: lo... bo. Procure esse pedacinho do outro lado.",
- "dica4_luneta": "Escute o comecinho: lu... ne... ta. Procure esse pedacinho do outro lado.",
- "dica4_lupa": "Escute o comecinho: lu... pa. Procure esse pedacinho do outro lado.",
- "dica4_mala": "Escute o comecinho: ma... la. Procure esse pedacinho do outro lado.",
- "dica4_menina": "Escute o comecinho: me... ni... na. Procure esse pedacinho do outro lado.",
- "dica4_minhoca": "Escute o comecinho: mi... nho... ca. Procure esse pedacinho do outro lado.",
- "dica4_mola": "Escute o comecinho: mo... la. Procure esse pedacinho do outro lado.",
- "dica5_lata": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
- "dica5_lupa": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
- "dica5_maca": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
- "dica5_mala": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
- "dica5_menina": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
- "dica6_laranja": "Escute a palavra inteira: laranja. Qual pedacinho falta lá no começo?",
- "dica6_lata": "Escute a palavra inteira: lata. Qual pedacinho falta lá no começo?",
- "dica6_leao": "Escute a palavra inteira: leão. Qual pedacinho falta lá no começo?",
- "dica6_limao": "Escute a palavra inteira: limão. Qual pedacinho falta lá no começo?",
- "dica6_lobo": "Escute a palavra inteira: lobo. Qual pedacinho falta lá no começo?",
- "dica6_luneta": "Escute a palavra inteira: luneta. Qual pedacinho falta lá no começo?",
- "dica6_lupa": "Escute a palavra inteira: lupa. Qual pedacinho falta lá no começo?",
- "dica6_mala": "Escute a palavra inteira: mala. Qual pedacinho falta lá no começo?",
- "dica6_menina": "Escute a palavra inteira: menina. Qual pedacinho falta lá no começo?",
- "dica6_minhoca": "Escute a palavra inteira: minhoca. Qual pedacinho falta lá no começo?",
- "dica6_mola": "Escute a palavra inteira: mola. Qual pedacinho falta lá no começo?",
- "dica7_gato": "Escute as quatro e guarde só o comecinho de cada uma. Três são iguais; uma é diferente.",
- "dica7_morcego": "Escute as quatro e guarde só o comecinho de cada uma. Três são iguais; uma é diferente.",
- "dica7_navio": "Escute as quatro e guarde só o comecinho de cada uma. Três são iguais; uma é diferente.",
- "dica7_rato": "Escute as quatro e guarde só o comecinho de cada uma. Três são iguais; uma é diferente.",
- "dica7_sapo": "Escute as quatro e guarde só o comecinho de cada uma. Três são iguais; uma é diferente.",
- "dica7_uva": "Escute as quatro e guarde só o comecinho de cada uma. Três são iguais; uma é diferente.",
- "dica8_laranja": "Escute o começo: la... ran... ja. Procure a gaveta com esse pedacinho.",
- "dica8_lata": "Escute o começo: la... ta. Procure a gaveta com esse pedacinho.",
- "dica8_limao": "Escute o começo: li... mão. Procure a gaveta com esse pedacinho.",
- "dica8_luneta": "Escute o começo: lu... ne... ta. Procure a gaveta com esse pedacinho.",
- "dica8_lupa": "Escute o começo: lu... pa. Procure a gaveta com esse pedacinho.",
- "dica9_laranja": "Escute devagar: la... ran... ja. Escreva só o primeiro pedaço.",
- "dica9_lata": "Escute devagar: la... ta. Escreva só o primeiro pedaço.",
- "dica9_leao": "Escute devagar: le... ão. Escreva só o primeiro pedaço.",
- "dica9_limao": "Escute devagar: li... mão. Escreva só o primeiro pedaço.",
- "dica9_lobo": "Escute devagar: lo... bo. Escreva só o primeiro pedaço.",
- "dica9_luneta": "Escute devagar: lu... ne... ta. Escreva só o primeiro pedaço.",
- "dica9_lupa": "Escute devagar: lu... pa. Escreva só o primeiro pedaço.",
- "dica9_mala": "Escute devagar: ma... la. Escreva só o primeiro pedaço.",
- "dica9_menina": "Escute devagar: me... ni... na. Escreva só o primeiro pedaço.",
- "dica9_minhoca": "Escute devagar: mi... nho... ca. Escreva só o primeiro pedaço.",
- "dica9_mola": "Escute devagar: mo... la. Escreva só o primeiro pedaço.",
+ "dica4_LA": "Olhe a segunda letra de cada balão. LA termina em a; os irmãos terminam em outra vogal. Confira um por um.",
+ "dica4_LE": "Olhe a segunda letra de cada balão. LE termina em e; os irmãos terminam em outra vogal. Confira um por um.",
+ "dica4_LI": "Olhe a segunda letra de cada balão. LI termina em i; os irmãos terminam em outra vogal. Confira um por um.",
+ "dica4_LO": "Olhe a segunda letra de cada balão. LO termina em o; os irmãos terminam em outra vogal. Confira um por um.",
+ "dica4_LU": "Olhe a segunda letra de cada balão. LU termina em u; os irmãos terminam em outra vogal. Confira um por um.",
+ "dica4_MA": "Olhe a segunda letra de cada balão. MA termina em a; os irmãos terminam em outra vogal. Confira um por um.",
+ "dica4_ME": "Olhe a segunda letra de cada balão. ME termina em e; os irmãos terminam em outra vogal. Confira um por um.",
+ "dica4_MI": "Olhe a segunda letra de cada balão. MI termina em i; os irmãos terminam em outra vogal. Confira um por um.",
+ "dica5_laranja": "Escute o comecinho: la... ran... ja. Procure esse pedacinho do outro lado.",
+ "dica5_lata": "Escute o comecinho: la... ta. Procure esse pedacinho do outro lado.",
+ "dica5_leao": "Escute o comecinho: le... ão. Procure esse pedacinho do outro lado.",
+ "dica5_limao": "Escute o comecinho: li... mão. Procure esse pedacinho do outro lado.",
+ "dica5_lobo": "Escute o comecinho: lo... bo. Procure esse pedacinho do outro lado.",
+ "dica5_lupa": "Escute o comecinho: lu... pa. Procure esse pedacinho do outro lado.",
+ "dica5_maca": "Escute o comecinho: ma... çã. Procure esse pedacinho do outro lado.",
+ "dica5_mala": "Escute o comecinho: ma... la. Procure esse pedacinho do outro lado.",
+ "dica5_menina": "Escute o comecinho: me... ni... na. Procure esse pedacinho do outro lado.",
+ "dica5_minhoca": "Escute o comecinho: mi... nho... ca. Procure esse pedacinho do outro lado.",
+ "dica5_mola": "Escute o comecinho: mo... la. Procure esse pedacinho do outro lado.",
+ "dica6_laranja": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
+ "dica6_lata": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
+ "dica6_lupa": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
+ "dica6_mala": "Vá uma por uma: fale o nome e guarde só o comecinho. Quando dois comecinhos forem iguais, achou.",
+ "dica7_laranja": "Escute a palavra inteira: laranja. Qual pedacinho falta lá no começo?",
+ "dica7_lata": "Escute a palavra inteira: lata. Qual pedacinho falta lá no começo?",
+ "dica7_leao": "Escute a palavra inteira: leão. Qual pedacinho falta lá no começo?",
+ "dica7_limao": "Escute a palavra inteira: limão. Qual pedacinho falta lá no começo?",
+ "dica7_lobo": "Escute a palavra inteira: lobo. Qual pedacinho falta lá no começo?",
+ "dica7_luneta": "Escute a palavra inteira: luneta. Qual pedacinho falta lá no começo?",
+ "dica7_lupa": "Escute a palavra inteira: lupa. Qual pedacinho falta lá no começo?",
+ "dica7_maca": "Escute a palavra inteira: maçã. Qual pedacinho falta lá no começo?",
+ "dica7_mala": "Escute a palavra inteira: mala. Qual pedacinho falta lá no começo?",
+ "dica7_menina": "Escute a palavra inteira: menina. Qual pedacinho falta lá no começo?",
+ "dica7_minhoca": "Escute a palavra inteira: minhoca. Qual pedacinho falta lá no começo?",
+ "dica7_mola": "Escute a palavra inteira: mola. Qual pedacinho falta lá no começo?",
+ "dica8_laranja": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em la... ran... ja.",
+ "dica8_lata": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em la... ta.",
+ "dica8_leao": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em le... ão.",
+ "dica8_limao": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em li... mão.",
+ "dica8_lobo": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em lo... bo.",
+ "dica8_luneta": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em lu... ne... ta.",
+ "dica8_lupa": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em lu... pa.",
+ "dica8_maca": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em ma... çã.",
+ "dica8_mala": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em ma... la.",
+ "dica8_menina": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em me... ni... na.",
+ "dica8_minhoca": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em mi... nho... ca.",
+ "dica8_mola": "O pedacinho do começo é feito de duas letras. A primeira é a consoante; a segunda é a vogal que você ouve em mo... la.",
+ "dica9_gato": "Olhe a primeira letra de cada uma. Três têm a mesma letra, mudando só a vogal. Uma tem outra letra: é essa.",
+ "dica9_navio": "Olhe a primeira letra de cada uma. Três têm a mesma letra, mudando só a vogal. Uma tem outra letra: é essa.",
+ "dica9_rato": "Olhe a primeira letra de cada uma. Três têm a mesma letra, mudando só a vogal. Uma tem outra letra: é essa.",
+ "dica9_sapo": "Olhe a primeira letra de cada uma. Três têm a mesma letra, mudando só a vogal. Uma tem outra letra: é essa.",
+ "dica9_uva": "Olhe a primeira letra de cada uma. Três têm a mesma letra, mudando só a vogal. Uma tem outra letra: é essa.",
  "escreva": "Escreva o pedacinho do começo.",
  "fim": "Você chegou ao fim! Agora você sabe montar a roda: uma letra parada e as cinco vogais girando. Existe uma roda para cada letra — quantas você consegue montar? Olhe o seu mural ali embaixo.",
  "folhaPronta": "Folha pronta! Muito bem.",
  "ligue": "Toque numa figura e depois no pedacinho com que ela começa.",
  "novoCaderno": "Caderno novo! As palavras mudaram.",
- "p10enun": "Folha dez: toque nas palavras que você quer no mural das rodas.",
+ "p10enun": "Folha dez: ponha cada figura na gaveta do começo dela.",
+ "p11enun": "Folha onze: agora não há figura nenhuma. Leia cada palavra e ponha na coluna do pedacinho com que ela começa.",
+ "p12enun": "Folha doze: as três dizem quase a mesma coisa, e só uma está escrita certa. Olhe com atenção a vogal do primeiro pedacinho. Pinte a certa.",
+ "p13enun": "Folha treze: ouça a palavra e escreva o pedacinho com que ela começa.",
+ "p14enun": "Folha catorze: some a letra com a vogal e escreva o pedacinho que nasce. Quando a roda ficar cheia, leia a sua roda em voz alta.",
+ "p15enun": "Folha quinze: toque nas palavras que você quer no mural das rodas.",
  "p1enun": "Folha um: a roda do éle. Toque nas vogais e escute. O éle fica parado no meio; a vogal é que muda. Brinque à vontade primeiro; os pedidos vêm depois.",
  "p2enun": "Folha dois: ouça a palavra. Com que pedacinho ela começa?",
  "p3enun": "Folha três: toque em todas as figuras que começam com o pedacinho mostrado. Cuidado: as outras começam com a mesma letra, mas com outra vogal. Depois toque em Conferir.",
- "p4enun": "Folha quatro: ligue cada figura ao pedacinho com que ela começa.",
- "p5enun": "Folha cinco: nesta grade há duas que começam com o mesmo pedacinho. Ache as duas.",
- "p6enun": "Folha seis: falta o começo da palavra. Ponha o pedacinho certo no lugar.",
- "p7enun": "Folha sete: três são da mesma roda e uma não é. Circule quem não é da roda. Preste atenção: às vezes a intrusa começa com a mesma letra.",
- "p8enun": "Folha oito: ponha cada figura na gaveta do começo dela.",
- "p9enun": "Folha nove: ouça a palavra e escreva o pedacinho com que ela começa.",
+ "p4enun": "Folha quatro: agora é só de olhar. Pinte todos os balões que têm o pedacinho mostrado. Os outros balões são os irmãos dele: mesma letra, outra vogal. Depois toque em Conferir.",
+ "p5enun": "Folha cinco: ligue cada figura ao pedacinho com que ela começa.",
+ "p6enun": "Folha seis: nesta grade há duas que começam com o mesmo pedacinho. Ache as duas.",
+ "p7enun": "Folha sete: falta o começo da palavra. Ponha o pedacinho certo no lugar.",
+ "p8enun": "Folha oito: a palavra está em quadradinhos, um para cada letra. Escreva as duas letras que faltam lá no começo.",
+ "p9enun": "Folha nove: três são da mesma roda e uma não é. Circule quem não é da roda.",
  "pal_gato": "gato.",
  "pal_laranja": "laranja.",
  "pal_lata": "lata.",
@@ -1428,7 +1864,6 @@ var FALAS = {
  "pal_menino": "menino.",
  "pal_minhoca": "minhoca.",
  "pal_mola": "mola.",
- "pal_morcego": "morcego.",
  "pal_navio": "navio.",
  "pal_rato": "rato.",
  "pal_sapo": "sapo.",
@@ -1444,7 +1879,7 @@ var FALAS = {
 };
 /*FALAS-FIM*/
 /*SILMAP-INI*/var SILMAP = {"LA": ["lata", 0], "LE": ["leao", 0], "LI": ["limao", 0], "LO": ["lobo", 0], "LU": ["lupa", 0], "MA": ["mala", 0], "ME": ["menina", 0], "MI": ["minhoca", 0], "MO": ["mola", 0]};/*SILMAP-FIM*/
-/*VOZOK-INI*/var VOZOK = {"1safve5": 1, "1d4es0k": 1, "1s88xtj": 1, "1c2ki26": 1, "ks0483": 1, "1o6ivsf": 1, "s25s4c": 1, "zq7m0j": 1, "kfqaw6": 1, "gopdvw": 1, "qsj0xb": 1, "mqvsj": 1, "poe6tm": 1, "vwur44": 1, "fxlq4p": 1, "ooy2cv": 1, "zhhs6a": 1, "19vn8h2": 1, "a67x4a": 1, "vk7iy4": 1, "rvm646": 1, "117kanz": 1, "a5lldo": 1, "u92uxx": 1, "5pi30o": 1, "18ptpgk": 1, "16nzslz": 1, "3n38fs": 1, "16tmy90": 1, "1guyx4x": 1, "es6uoy": 1, "131ov38": 1, "jqsx0g": 1, "12zwhsz": 1, "1cddv0v": 1, "19n0daw": 1, "kpvwgq": 1, "1t6hbrc": 1, "qqa1pl": 1, "mjdbe7": 1, "7yriex": 1, "akitoa": 1, "1gynwf7": 1, "1f5mnny": 1, "1jcrhsy": 1, "1hx6t3l": 1, "khurb2": 1, "1w7n5eq": 1, "1rve747": 1, "oj0y5g": 1, "spfh5u": 1, "1t3ftsu": 1, "1afxzwm": 1, "rgbyg9": 1, "f9nblr": 1, "1bujfdi": 1, "1ras7lq": 1, "186fhsj": 1, "1qry7oq": 1, "1cu3207": 1, "19ly2bv": 1, "rafbrq": 1, "a57lxz": 1, "ytai3v": 1, "7uhlr4": 1, "1en1y3n": 1, "1r7r563": 1, "1nup9s0": 1, "1qlqvbv": 1, "593e44": 1, "3jbqar": 1, "1yuegnu": 1, "2tbd1b": 1, "102j7pm": 1, "insm89": 1, "1urdwzh": 1, "1jrvh9e": 1, "xmm9vx": 1, "1mi0n2b": 1, "1x37rf2": 1, "1m6boab": 1, "l2fp8y": 1, "b1vyzc": 1, "twrp3z": 1, "1b75bmm": 1, "12bi6d3": 1, "1pvjghk": 1, "1lld85z": 1, "1jh4rll": 1, "1r1dqk6": 1, "or0ibi": 1, "1mo86t4": 1, "1m5sqhu": 1, "nt73hz": 1, "ia2ub7": 1, "1kjxx8f": 1, "1zte7t": 1, "1udxf18": 1, "1870pch": 1, "1hxcx8s": 1, "jau8tp": 1, "l4nznr": 1, "pr48rk": 1, "1getn7l": 1, "1q70k3s": 1, "4pntbb": 1, "1lbeu88": 1, "1m96uti": 1, "qewxre": 1, "cfsvv8": 1, "1k3st9z": 1, "tr5wne": 1, "1ea9e6j": 1, "fm9hpd": 1, "1kj5dyg": 1, "8r5bqf": 1, "1eq5c0e": 1, "of4ihb": 1, "emadfk": 1, "100tbi8": 1, "1a8kgr9": 1, "uf8u21": 1, "1a1xvok": 1, "z2edfc": 1, "1e5xgtx": 1, "1ink304": 1, "vz7r7m": 1, "1exefnz": 1, "13xq4eq": 1, "1r0y1kj": 1, "1e708d5": 1, "1lp5gu6": 1, "1ybtpi7": 1, "11qv5jq": 1, "tsv48p": 1, "lzd7x2": 1, "1ckusk8": 1, "10b6xol": 1, "98spk": 1, "1d9s73k": 1, "1i3wdg1": 1, "175a16h": 1, "gj4az7": 1, "oj84py": 1, "18q5ga6": 1, "129815r": 1, "mq7kt": 1, "1jglqf1": 1, "cnkzp5": 1, "t1pf34": 1, "16912ph": 1, "1j7xtvx": 1, "2uezfa": 1, "15qrk34": 1, "2vac2b": 1, "2vg1hq": 1, "nhlsun": 1, "2v5dz9": 1, "bid2ng": 1, "2voweb": 1, "2vtc3n": 1, "hjre95": 1, "2vw8zu": 1, "2vwpsm": 1, "k1id0r": 1, "k1id5x": 1, "1t4tpd0": 1, "2vxvt0": 1, "1r8zm0l": 1, "rgai44": 1, "37vy6b": 1, "38iifa": 1, "yj4fyh": 1, "mldqo4": 1, "184t2f7": 1, "j429w9": 1, "swkns7": 1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1lao34a": 1, "102j7pm": 1, "insm89": 1, "15oacb4": 1, "1urdwzh": 1, "3khcr5": 1, "1jrvh9e": 1, "xmm9vx": 1, "ept4wd": 1, "1exfxyf": 1, "1mzsxhg": 1, "84kt5k": 1, "os9me9": 1, "4x0hnz": 1, "r3txaa": 1, "7cjslg": 1, "jm2x1a": 1, "dihz1": 1, "1svp1us": 1, "1h16ux5": 1, "1723aqt": 1, "yac6qe": 1, "1djn721": 1, "ulz1d1": 1, "13ppslc": 1, "10zas83": 1, "117kanz": 1, "a5lldo": 1, "u92uxx": 1, "5pi30o": 1, "18ptpgk": 1, "16nzslz": 1, "3n38fs": 1, "170cv1p": 1, "16tmy90": 1, "1guyx4x": 1, "es6uoy": 1, "131ov38": 1, "18f81f4": 1, "ez64s0": 1, "1yakzzk": 1, "1dqx7u8": 1, "y9jjjk": 1, "1pfj9dc": 1, "vzhcq8": 1, "g9s5yo": 1, "1ur8fsg": 1, "4rabgu": 1, "1ryz6jx": 1, "1ypbx9s": 1, "4e4wtt": 1, "1buj6nv": 1, "p8zvwy": 1, "tevtdp": 1, "1npq7a4": 1, "1f8bnmd": 1, "72tulw": 1, "nvw3y3": 1, "107fogr": 1, "zhhs6a": 1, "19vn8h2": 1, "a67x4a": 1, "vk7iy4": 1, "rvm646": 1, "jqsx0g": 1, "176ter2": 1, "12zwhsz": 1, "1cddv0v": 1, "19n0daw": 1, "agokob": 1, "1d93hwq": 1, "qqa1pl": 1, "vcucx7": 1, "19zd8q7": 1, "12knaar": 1, "1iyjpd1": 1, "1u5br0f": 1, "1xvlxm2": 1, "dh0rfy": 1, "62at0i": 1, "7yriex": 1, "akitoa": 1, "1gynwf7": 1, "1f5mnny": 1, "1jcrhsy": 1, "khurb2": 1, "1dk4r1n": 1, "1w7n5eq": 1, "1rve747": 1, "oj0y5g": 1, "spfh5u": 1, "peui1q": 1, "1t3ftsu": 1, "1afxzwm": 1, "8s1mfp": 1, "1ras7lq": 1, "186fhsj": 1, "1qry7oq": 1, "1cu3207": 1, "19ly2bv": 1, "rafbrq": 1, "a57lxz": 1, "1vaxvcy": 1, "ytai3v": 1, "7uhlr4": 1, "1en1y3n": 1, "1r7r563": 1, "1gcvnx": 1, "jntb9l": 1, "1vbu81x": 1, "1sf2thf": 1, "cbxgm1": 1, "dfq7d8": 1, "vn6myw": 1, "8a3hs4": 1, "18vq8g2": 1, "ipx9x0": 1, "8ia8nv": 1, "bhsln3": 1, "1pbftd9": 1, "12e0o62": 1, "uf8u21": 1, "1a1xvok": 1, "1nuy95l": 1, "z2edfc": 1, "ov8t0y": 1, "1e5xgtx": 1, "1ink304": 1, "1l3bbk7": 1, "1nn1460": 1, "vz7r7m": 1, "1exefnz": 1, "13xq4eq": 1, "1r0y1kj": 1, "1e708d5": 1, "1lp5gu6": 1, "1ybtpi7": 1, "gj54nz": 1, "11qv5jq": 1, "tsv48p": 1, "lzd7x2": 1, "1ckusk8": 1, "1gh8u52": 1, "1mi0n2b": 1, "1x37rf2": 1, "1m6boab": 1, "l2fp8y": 1, "b1vyzc": 1, "twrp3z": 1, "1b75bmm": 1, "df3z8e": 1, "12bi6d3": 1, "1pvjghk": 1, "1lld85z": 1, "1r1dqk6": 1, "1z076eq": 1, "or0ibi": 1, "1mo86t4": 1, "1m5sqhu": 1, "nt73hz": 1, "ia2ub7": 1, "1kjxx8f": 1, "1tiskz6": 1, "woes36": 1, "155gisy": 1, "18283xu": 1, "vshigi": 1, "1m7zas3": 1, "pdlhw3": 1, "xun8lv": 1, "1udxf18": 1, "1870pch": 1, "1hxcx8s": 1, "jau8tp": 1, "l4nznr": 1, "1getn7l": 1, "15pe7r5": 1, "1q70k3s": 1, "4pntbb": 1, "1lbeu88": 1, "1m96uti": 1, "qewxre": 1, "cfsvv8": 1, "1k3st9z": 1, "tr5wne": 1, "1ea9e6j": 1, "fm9hpd": 1, "1kj5dyg": 1, "8r5bqf": 1, "kf5vdz": 1, "1eq5c0e": 1, "of4ihb": 1, "emadfk": 1, "100tbi8": 1, "1twplgs": 1, "1bgq5fl": 1, "m4mxss": 1, "15zffkt": 1, "1dy45g7": 1, "j8ttv4": 1, "12qwrdd": 1, "1e7r5ht": 1, "1e7o00o": 1, "1j3nwaf": 1, "137btbs": 1, "1gp7xau": 1, "16vhbmn": 1, "10b6xol": 1, "98spk": 1, "1d9s73k": 1, "1i3wdg1": 1, "175a16h": 1, "n0saur": 1, "1dz0rj7": 1, "ijfsip": 1, "1eg8dj7": 1, "ampk48": 1, "dh2o6s": 1, "oj84py": 1, "18q5ga6": 1, "129815r": 1, "q9ljry": 1, "puwxw9": 1, "1a6bg6x": 1, "1ofj2tu": 1, "1x46qa4": 1, "gxxgyp": 1, "2uezfa": 1, "15qrk34": 1, "2vac2b": 1, "2vg1hq": 1, "nhlsun": 1, "2v5dz9": 1, "bid2ng": 1, "2voweb": 1, "2vtc3n": 1, "hjre95": 1, "2vw8zu": 1, "2vwpsm": 1, "k1id0r": 1, "k1id5x": 1, "1t4tpd0": 1, "2vxvt0": 1, "rgai44": 1, "37vy6b": 1, "38iifa": 1, "yj4fyh": 1, "mldqo4": 1, "184t2f7": 1, "j429w9": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ---------- as palavras: figura, escrita e sílabas ----------
    ⚠️ As sílabas ficam DECLARADAS, uma a uma. Separar sílaba por regra em
@@ -1547,7 +1982,7 @@ var CHAVE_LS = "a_roda_das_silabas_1ano";
    as letras do alfabeto e ordená-las"*, o Marcos pediu "sequência alfabética"
    no encargo, e não havia folha nenhuma disso. O lugar dela é o começo: ordenar
    letra é o degrau anterior a tudo o que vem depois. */
-var NOMES = ["A roda do L", "Que pedacinho é este?", "Ache quem começa assim", "Ligue cada figura ao seu pedaço", "Ache as DUAS que começam igual", "Complete o começo", "Quem não é da roda?", "As três gavetas", "Escreva o começo", "O mural das rodas"];
+var NOMES = ["A roda do L", "Que pedacinho é este?", "Ache quem começa assim", "Pinte só os balões deste pedacinho", "Ligue cada figura ao seu pedaço", "Ache as DUAS que começam igual", "Complete o começo", "Os dois quadradinhos", "Quem não é da roda?", "As gavetas do começo", "As colunas das palavras", "Qual está escrita certa?", "Escreva o começo", "A minha roda", "O mural das rodas"];
 /*<dossie-dados>*/
 var CURRICULO = {
  "ano": 1,
@@ -1562,17 +1997,20 @@ var CURRICULO = {
   "Uma amostra das falas é ouvida por reconhecimento automático de voz e comparada com o texto escrito.",
   "Contraste do texto medido no pixel real do fundo, não na folha de estilo.",
   "As habilidades citadas neste dossiê são conferidas, palavra por palavra, contra o currículo da rede.",
-  "A consoante da roda foi escolhida NO CURRÍCULO: o L soa igual com as cinco vogais. Rodas de C, G, R e S mudam o som conforme a vogal — isso é 'correspondências regulares contextuais', que o currículo de Blumenau situa no 2º ano, não no 1º."
+  "A consoante da roda foi escolhida NO CURRÍCULO: o L soa igual com as cinco vogais. Rodas de C, G, R e S mudam o som conforme a vogal — isso é 'correspondências regulares contextuais', que o currículo de Blumenau situa no 2º ano, não no 1º.",
+  "As quinze folhas nasceram do crivo de 26 atividades impressas de família silábica, lidas uma a uma para registrar o que cada uma manda o estudante FAZER (_sequencias/POTE-RODA.md). Onze foram recusadas com o motivo escrito — cinco por serem de outro degrau, quatro por ensinarem as famílias do C e do Q, que esta rede situa no 2º ano, e duas por serem cartaz sem tarefa.",
+  "Duas das folhas recusadas traziam erro de separação silábica (PORCO como exemplo de PO e CIRCO como exemplo de CI). Toda palavra deste caderno tem a separação declarada à mão e conferida por portão."
  ],
  "objetivos": [
   {
    "objetivo": "Montar a roda: a mesma consoante com as cinco vogais",
    "folhas": [
-    1
+    1,
+    14
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Construção do sistema alfabético",
-   "habilidade": "HABILIDADE: \"Reconhecer o sistema de escrita alfabética como representação dos sons da fala.\""
+   "habilidade": "HABILIDADE: \"Relacionar elementos sonoros (sílabas, fonemas, partes de palavras) com sua representação escrita.\""
   },
   {
    "objetivo": "Ouvir a palavra e dizer com que pedacinho ela começa",
@@ -1585,10 +2023,20 @@ var CURRICULO = {
    "habilidade": "HABILIDADE: \"Comparar palavras, identificando semelhanças e diferenças entre sons de sílabas iniciais, mediais e finais.\""
   },
   {
-   "objetivo": "Distinguir sílabas que só diferem na vogal",
+   "objetivo": "Reconhecer o pedacinho ESCRITO entre os parecidos",
    "folhas": [
     4,
-    5
+    12
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Construção do sistema alfabético",
+   "habilidade": "HABILIDADE: \"Reconhecer o sistema de escrita alfabética como representação dos sons da fala.\""
+  },
+  {
+   "objetivo": "Distinguir sílabas que só diferem na vogal",
+   "folhas": [
+    5,
+    6
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Construção do sistema alfabético",
@@ -1597,9 +2045,11 @@ var CURRICULO = {
   {
    "objetivo": "Completar e classificar pelo pedacinho do começo",
    "folhas": [
-    6,
     7,
-    8
+    8,
+    9,
+    10,
+    11
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Construção do sistema alfabético",
@@ -1608,7 +2058,7 @@ var CURRICULO = {
   {
    "objetivo": "Escrever o pedacinho que se ouve",
    "folhas": [
-    9
+    13
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Construção do sistema alfabético e da ortografia",
@@ -1617,7 +2067,7 @@ var CURRICULO = {
   {
    "objetivo": "Montar o próprio mural de rodas",
    "folhas": [
-    10
+    15
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Construção do sistema alfabético",
@@ -1626,7 +2076,7 @@ var CURRICULO = {
  ]
 };
 /*</dossie-dados>*/
-var CORES = ["c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5"];
+var CORES = ["c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5"];
 var ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 /* ---------- som ---------- */
@@ -1766,6 +2216,13 @@ function registra(id, pag, certo){ RESP[id] = {certo: certo, pag: pag}; }
 function acertou(id, fala){
   if(ST.resp[id]) return;
   tentativa(id, true); ST.resp[id] = 1; salvar(); sCerto();
+  /* ⭐ a palavra escrita aparece AGORA, junto com o acerto — nunca antes.
+     Ver o comentário do `figComSom` no folhas.js: mostrá-la antes entregava a
+     resposta, e escondê-la para sempre deixaria a criança sem saber se aquilo
+     era "luneta" ou "telescópio". Este é o instante certo. */
+  var segs = document.querySelectorAll('[data-nome="' + id + '"]'), sg;
+  for(sg = 0; sg < segs.length; sg++)
+    segs[sg].className = segs[sg].className.replace(/ ?revelado/, "") + " revelado";
   if(fala) falar(fala);
   setTimeout(function(){ confereFolha(RESP[id].pag); }, 850);
 }
@@ -1776,21 +2233,36 @@ function errou(id, dica){
 
 /* ---------- sorteio da folha ---------- */
 function novaFolha(){
+  /* ⚠️ O SAQUE É O TAMANHO DA AULA — e ele MUDOU em set/2026.
+     Ordem do Marcos: *"cada sequência didática tem que durar os 55 minutos ou
+     perto disso... acho que 10 folhas é pouco para cada aula"*. A Roda media
+     34 a 41 min, a mais curta dos dez cadernos. As folhas de papel que deram
+     origem a este caderno são generosas — uma delas traz 16 palavras, outra 14
+     balões, outra 15 fichas — e a nossa estava sovina.
+
+     ⚠️ O que NÃO se faz para encher: inventar palavra com L que a criança de
+        seis anos não nomeia. Foi assim que o "pote de sal" caiu no `_sil1`. O
+        que enche é o pote das DUAS rodas (L e M) e as folhas novas, que são
+        gesto novo — não mais do mesmo. */
   return {
-    /* ⚠️ O SAQUE É O TAMANHO DA AULA. Os potes deste caderno são menores que os
-       do degrau 3 de propósito: a roda do L tem CINCO sílabas e sete palavras,
-       e inventar palavra com L só para encher o pote traria figura que a criança
-       de 6 anos não nomeia (foi assim que o pote de sal caiu no `_sil1`).
-       Então cada folha saca o que o pote sustenta, e a variedade vem de a roda
-       do M entrar junto — o que, além de encher, é o conteúdo: mostrar que a
-       roda do L não é a única. */
-    p1: ITENS.p1.slice(0),            /* a roda inteira: as cinco vogais */
-    p2: pega(ITENS.p2, 8), p3: pega(ITENS.p3, 5),
-    p4: pega(ITENS.p4, 4), p5: pega(ITENS.p5, 5), p6: pega(ITENS.p6, 8),
-    p7: pega(ITENS.p7, 5),
-    /* ⚠️ a folha 8 vai INTEIRA e sem sorteio: as três gavetas precisam de
-       figuras suficientes, e sortear um subconjunto deixaria gaveta vazia */
-    p8: ITENS.p8.slice(0), p9: pega(ITENS.p9, 8), p10: pega(ITENS.p10, 12)
+    p1: ITENS.p1.slice(0),             /* a roda inteira: as cinco vogais    */
+    p2: pega(ITENS.p2, 8),
+    p3: pega(ITENS.p3, 5),
+    p4: pega(ITENS.p4, 5),             /* balões                             */
+    p5: pega(ITENS.p5, 4),             /* ligar (4 pares cada)               */
+    p6: pega(ITENS.p6, 5),
+    p7: pega(ITENS.p7, 9),
+    p8: pega(ITENS.p8, 7),             /* quadradinhos                       */
+    p9: pega(ITENS.p9, 6),
+    /* ⚠️ as gavetas e as colunas vão INTEIRAS e sem sorteio: sortear um
+       subconjunto deixaria gaveta (ou coluna) vazia, e coluna vazia numa folha
+       de classificar não é dificuldade, é defeito. */
+    p10: ITENS.p10.slice(0),
+    p11: ITENS.p11.slice(0),
+    p12: pega(ITENS.p12, 7),           /* qual está escrita certa            */
+    p13: pega(ITENS.p13, 8),
+    p14: ITENS.p14.slice(0),           /* a roda inteira, as duas            */
+    p15: pega(ITENS.p15, 10)
   };
 }
 </script>

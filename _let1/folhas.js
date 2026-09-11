@@ -236,11 +236,28 @@ function sobre(ev, alvo){
    ⚠️ ALTO-FALANTE EM TODA PALAVRA: sem ouvir, a criança que ainda não lê conta
    as sílabas do que ELA acha que a figura é ("cachorro" ou "cão"?), e a folha
    vira loteria. A figura tem que ter um nome só, e a voz é quem o diz. */
-function figComSom(w, cls){
+/* ⚠️⚠️ A LEGENDA DA FIGURA ENTREGAVA A RESPOSTA — set/2026, e estava NO AR.
+   Achado por um portão novo (`_qa/resposta_impressa.py`), que nasceu quando a
+   mesma coisa apareceu numa foto da Roda das Sílabas: a figura da mola vinha
+   com "MOLA" escrito por baixo e, logo abaixo, os quadradinhos para a criança
+   escrever MO. Quem lê um pouco resolvia COPIANDO.
+
+   Aqui o portão encontrou o mesmo, em quatro cadernos de uma vez — sendo o pior
+   deles uma FORCA com a palavra impressa na tela.
+
+   ⚠️ A legenda não some: fica INVISÍVEL (`visibility`, para o espaço não pular)
+      e aparece no instante do acerto. Assim a criança que chama a luneta de
+      "telescópio" continua protegida — pelo alto-falante antes, pela palavra
+      escrita depois, que é o melhor momento para ela aparecer. */
+function figComSom(w, cls, id){
   var c = el("div", "figsil" + (cls ? " " + cls : ""));
   c.innerHTML = img(w, "figgrande");
   var lin = el("div", "chamlin");
-  lin.appendChild(el("b", "", esc(w)));
+  if(id){
+    var b = el("b", "segredo" + (ST.resp[id] ? " revelado" : ""), esc(w));
+    b.setAttribute("data-nome", id);
+    lin.appendChild(b);
+  } else lin.appendChild(el("b", "", esc(w)));
   lin.appendChild(botaoSom("Ouvir " + esc(w), function(){ falar("pal_" + w); }));
   c.appendChild(lin);
   return c;
@@ -375,7 +392,7 @@ function buracoDeLetra(d, pi, tag, L, chaveEnun, texto, nomeIdx){
     (function(reg, i){
       var w = reg[0], onde = reg[1], id = tag + i, box = item(i + 1);
       var certa = esc(w).charAt(onde);
-      box.appendChild(figComSom(w));
+      box.appendChild(figComSom(w, null, id));
       box.appendChild(palavraComBuraco(w, onde));
       var ops = [certa, reg[2], reg[3]];
       var gira = i % 3;
@@ -499,7 +516,7 @@ function montaLetras(d, pi, tag, L, comSobra, nome, chaveEnun, texto){
       var w = comSobra ? reg[0] : reg, id = tag + i, box = item(i + 1);
       var txt = esc(w), pronto = !!ST.resp[id];
       registra(id, pi, txt);
-      box.appendChild(figComSom(w));
+      box.appendChild(figComSom(w, null, id));
       var trilha = el("div", "vagas letvagas"), vagas = [], k;
       for(k = 0; k < txt.length; k++){
         var v = el("div", "vaga vagalet2" + (pronto ? " ok" : ""), pronto ? txt.charAt(k) : "");
@@ -577,7 +594,7 @@ function f9(d, pi){
       var w = reg[0], onde = reg[1], id = "t9_" + i, box = item(i + 1);
       var txt = esc(w), certa = txt.charAt(onde), feito = !!ST.resp[id];
       registra(id, pi, certa);
-      box.appendChild(figComSom(w));
+      box.appendChild(figComSom(w, null, id));
       var lin = el("div", "letfila"), k, q = null;
       for(k = 0; k < txt.length; k++){
         if(k === onde){

@@ -70,7 +70,7 @@ def empedacos(w):
 F = {}
 
 # ---- a casa ------------------------------------------------------------------
-F[u"capa"] = (u"A Roda das Sílabas. Dez folhas para descobrir uma coisa muito útil: o "
+F[u"capa"] = (u"A Roda das Sílabas. Quinze folhas para descobrir uma coisa muito útil: o "
               u"éle sozinho não fala. Quando a vogal chega, nasce um pedacinho — e com "
               u"cinco vogais nascem cinco pedacinhos. Escreva o seu nome ali embaixo e "
               u"toque em Começar.")
@@ -85,37 +85,56 @@ F[u"ligue"] = u"Toque numa figura e depois no pedacinho com que ela começa."
 F[u"rodaLivre"] = u"Esta é a roda do éle. Toque numa vogal e escute o que nasce."
 F[u"novoCaderno"] = u"Caderno novo! As palavras mudaram."
 
-F[u"p1enun"] = (u"Folha um: a roda do éle. Toque nas vogais e escute. O éle fica parado "
-                u"no meio; a vogal é que muda. Brinque à vontade primeiro; os pedidos "
-                u"vêm depois.")
-F[u"p2enun"] = u"Folha dois: ouça a palavra. Com que pedacinho ela começa?"
-F[u"p3enun"] = (u"Folha três: toque em todas as figuras que começam com o pedacinho "
-                u"mostrado. Cuidado: as outras começam com a mesma letra, mas com outra "
-                u"vogal. Depois toque em Conferir.")
-F[u"p4enun"] = u"Folha quatro: ligue cada figura ao pedacinho com que ela começa."
-F[u"p5enun"] = (u"Folha cinco: nesta grade há duas que começam com o mesmo pedacinho. "
-                u"Ache as duas.")
-F[u"p6enun"] = u"Folha seis: falta o começo da palavra. Ponha o pedacinho certo no lugar."
-F[u"p7enun"] = (u"Folha sete: três são da mesma roda e uma não é. Circule quem não é da "
-                u"roda. Preste atenção: às vezes a intrusa começa com a mesma letra.")
-F[u"p8enun"] = u"Folha oito: ponha cada figura na gaveta do começo dela."
-F[u"p9enun"] = u"Folha nove: ouça a palavra e escreva o pedacinho com que ela começa."
-F[u"p10enun"] = u"Folha dez: toque nas palavras que você quer no mural das rodas."
+# ---- o que cada folha pede (a ordem É a identidade: p7enun = folha 7) -------
+ENUN = [
+ (1,  u"folha um: a roda do éle. Toque nas vogais e escute. O éle fica parado no "
+      u"meio; a vogal é que muda. Brinque à vontade primeiro; os pedidos vêm depois."),
+ (2,  u"folha dois: ouça a palavra. Com que pedacinho ela começa?"),
+ (3,  u"folha três: toque em todas as figuras que começam com o pedacinho mostrado. "
+      u"Cuidado: as outras começam com a mesma letra, mas com outra vogal. Depois "
+      u"toque em Conferir."),
+ (4,  u"folha quatro: agora é só de olhar. Pinte todos os balões que têm o pedacinho "
+      u"mostrado. Os outros balões são os irmãos dele: mesma letra, outra vogal. "
+      u"Depois toque em Conferir."),
+ (5,  u"folha cinco: ligue cada figura ao pedacinho com que ela começa."),
+ (6,  u"folha seis: nesta grade há duas que começam com o mesmo pedacinho. Ache as duas."),
+ (7,  u"folha sete: falta o começo da palavra. Ponha o pedacinho certo no lugar."),
+ (8,  u"folha oito: a palavra está em quadradinhos, um para cada letra. Escreva as "
+      u"duas letras que faltam lá no começo."),
+ (9,  u"folha nove: três são da mesma roda e uma não é. Circule quem não é da roda."),
+ (10, u"folha dez: ponha cada figura na gaveta do começo dela."),
+ (11, u"folha onze: agora não há figura nenhuma. Leia cada palavra e ponha na coluna "
+      u"do pedacinho com que ela começa."),
+ (12, u"folha doze: as três dizem quase a mesma coisa, e só uma está escrita certa. "
+      u"Olhe com atenção a vogal do primeiro pedacinho. Pinte a certa."),
+ (13, u"folha treze: ouça a palavra e escreva o pedacinho com que ela começa."),
+ (14, u"folha catorze: some a letra com a vogal e escreva o pedacinho que nasce. "
+      u"Quando a roda ficar cheia, leia a sua roda em voz alta."),
+ (15, u"folha quinze: toque nas palavras que você quer no mural das rodas."),
+]
+for _n, _t in ENUN:
+    F[u"p%denun" % _n] = _t[0].upper() + _t[1:]
 
 # ---- toda palavra que aparece --------------------------------------------------
 usadas = set()
 for chave, lista in IT.items():
     for x in lista:
         if isinstance(x, dict):
-            usadas.update(x[u"g"])
+            usadas.update(x.get(u"g", []) if not isinstance(x.get(u"g"), list) or
+                          not x.get(u"g") or isinstance(x[u"g"][0], dict) else
+                          [y for y in x[u"g"] if y in PAL])
+            if x.get(u"w"):
+                usadas.add(x[u"w"])
+            if x.get(u"c"):
+                usadas.add(x[u"c"])
         elif isinstance(x, list):
-            usadas.update(x)
-        else:
+            usadas.update(y for y in x if y in PAL)
+        elif x in PAL:
             usadas.add(x)
 for w in sorted(usadas):
     F[u"pal_%s" % w] = falado(w) + u"."
 
-# ---- folha 1: ouvir o começo ---------------------------------------------------
+# ---- folha 1: a roda que gira ---------------------------------------------------
 for w in IT[u"p1"]:
     F[u"certo1_%s" % w] = (u"Isso! %s começa com %s. %s."
                            % (falado(w).capitalize(), ini(w).lower(), empedacos(w)))
@@ -131,69 +150,113 @@ for w in IT[u"p2"]:
 
 # ---- folha 3: circule quem começa igual ----------------------------------------
 for it in IT[u"p3"]:
-    s, g = it[u"s"], it[u"g"]
-    certas = [w for w in g if ini(w) == s]
-    F[u"certo3_%s" % s] = (u"Isso! %s começam com %s."
-                           % (u", ".join(falado(w) for w in certas), s.lower()))
-    F[u"dica3_%s" % s] = (u"Ouça cada figura e compare só o começo com %s. "
-                          u"Não se esqueça: pode ser mais de uma." % s.lower())
+    s_, g = it[u"s"], it[u"g"]
+    certas = [w for w in g if ini(w) == s_]
+    F[u"certo3_%s" % s_] = (u"Isso! %s começam com %s."
+                            % (u", ".join(falado(w) for w in certas), s_.lower()))
+    F[u"dica3_%s" % s_] = (u"Ouça cada figura e compare só o começo com %s. "
+                           u"Não se esqueça: pode ser mais de uma." % s_.lower())
 
-# ---- folha 4: ligar --------------------------------------------------------------
-for g in IT[u"p4"]:
+# ---- folha 4 ⭐ os balões: aqui a voz NÃO pode entregar ------------------------
+#  ⚠️ A dica desta folha é a única que não manda "escutar": a folha existe para
+#     medir o OLHO. Mandar ouvir seria ensinar a driblar o exercício.
+for it in IT[u"p4"]:
+    s_ = it[u"s"]
+    F[u"certo4_%s" % s_] = (u"Isso! Você achou todos os %s, e não pintou nenhum irmão "
+                            u"dele." % s_.lower())
+    F[u"dica4_%s" % s_] = (u"Olhe a segunda letra de cada balão. %s termina em %s; os "
+                           u"irmãos terminam em outra vogal. Confira um por um."
+                           % (s_, s_[-1].lower()))
+
+# ---- folha 5: ligar --------------------------------------------------------------
+for g in IT[u"p5"]:
     for w in g:
-        F[u"certo4_%s" % w] = u"Isso! %s começa com %s." % (falado(w).capitalize(),
+        F[u"certo5_%s" % w] = u"Isso! %s começa com %s." % (falado(w).capitalize(),
                                                             ini(w).lower())
-        F[u"dica4_%s" % w] = (u"Escute o comecinho: %s. Procure esse pedacinho do outro "
+        F[u"dica5_%s" % w] = (u"Escute o comecinho: %s. Procure esse pedacinho do outro "
                               u"lado." % empedacos(w))
 
-# ---- folha 5: achar as duas ------------------------------------------------------
-for g in IT[u"p5"]:
+# ---- folha 6: achar as duas ------------------------------------------------------
+for g in IT[u"p6"]:
     conta = {}
     for w in g:
         conta[ini(w)] = conta.get(ini(w), 0) + 1
     par = [k for k in conta if conta[k] == 2][0]
     certas = [w for w in g if ini(w) == par]
-    F[u"certo5_%s" % certas[0]] = (u"Muito bem! %s e %s começam as duas com %s."
+    F[u"certo6_%s" % certas[0]] = (u"Muito bem! %s e %s começam as duas com %s."
                                    % (falado(certas[0]).capitalize(), falado(certas[1]),
                                       par.lower()))
     # ⭐ a dica ENSINA O MÉTODO, que é o que falta a quem compara ao acaso
-    F[u"dica5_%s" % certas[0]] = (u"Vá uma por uma: fale o nome e guarde só o comecinho. "
+    F[u"dica6_%s" % certas[0]] = (u"Vá uma por uma: fale o nome e guarde só o comecinho. "
                                   u"Quando dois comecinhos forem iguais, achou.")
 
-# ---- folha 6: completar o começo -------------------------------------------------
-for w in IT[u"p6"]:
-    F[u"certo6_%s" % w] = u"Isso! %s. O começo é %s." % (empedacos(w), ini(w).lower())
-    F[u"dica6_%s" % w] = (u"Escute a palavra inteira: %s. Qual pedacinho falta lá no "
+# ---- folha 7: completar o começo -------------------------------------------------
+for w in IT[u"p7"]:
+    F[u"certo7_%s" % w] = u"Isso! %s. O começo é %s." % (empedacos(w), ini(w).lower())
+    F[u"dica7_%s" % w] = (u"Escute a palavra inteira: %s. Qual pedacinho falta lá no "
                           u"começo?" % falado(w))
 
-# ---- folha 7: o intruso -----------------------------------------------------------
-for it in IT[u"p7"]:
+# ---- folha 8 ⭐ os dois quadradinhos ---------------------------------------------
+for w in IT[u"p8"]:
+    s_ = ini(w)
+    F[u"certo8_%s" % w] = (u"Muito bem! %s tem duas letras: %s e %s. Juntas elas fazem %s."
+                           % (s_, s_[0], s_[1], s_.lower()))
+    F[u"dica8_%s" % w] = (u"O pedacinho do começo é feito de duas letras. A primeira é a "
+                          u"consoante; a segunda é a vogal que você ouve em %s."
+                          % empedacos(w))
+
+# ---- folha 9: o intruso -----------------------------------------------------------
+for it in IT[u"p9"]:
     c = it[u"c"]
     fam = [w for w in it[u"g"] if w != c]
-    F[u"certo7_%s" % c] = (u"Isso! %s começam com %s, e %s não."
-                           % (u", ".join(falado(w) for w in fam), ini(fam[0]).lower(),
+    F[u"certo9_%s" % c] = (u"Isso! %s são todas da roda do %s, e %s não é."
+                           % (u", ".join(falado(w) for w in fam), ini(fam[0])[0],
                               falado(c)))
-    F[u"dica7_%s" % c] = (u"Escute as quatro e guarde só o comecinho de cada uma. "
-                          u"Três são iguais; uma é diferente.")
+    F[u"dica9_%s" % c] = (u"Olhe a primeira letra de cada uma. Três têm a mesma letra, "
+                          u"mudando só a vogal. Uma tem outra letra: é essa.")
 
-# ---- folha 8: as gavetas ----------------------------------------------------------
-for w in IT[u"p8"]:
-    F[u"certo8_%s" % w] = u"Boa! %s vai na gaveta do %s." % (falado(w).capitalize(),
-                                                             ini(w).lower())
-    F[u"dica8_%s" % w] = (u"Escute o começo: %s. Procure a gaveta com esse pedacinho."
-                          % empedacos(w))
-
-# ---- folha 9: escrever o começo ----------------------------------------------------
-for w in IT[u"p9"]:
-    F[u"certo9_%s" % w] = u"Muito bem! %s começa com %s." % (falado(w).capitalize(),
-                                                             ini(w).lower())
-    F[u"dica9_%s" % w] = (u"Escute devagar: %s. Escreva só o primeiro pedaço."
-                          % empedacos(w))
-
-# ---- folha 10: o mural --------------------------------------------------------------
+# ---- folha 10: as gavetas ----------------------------------------------------------
 for w in IT[u"p10"]:
-    F[u"certo10_%s" % w] = u"%s, da família do %s. Foi para o seu mural!" % (
-        falado(w).capitalize(), ini(w).lower())
+    F[u"certo10_%s" % w] = u"Boa! %s vai na gaveta do %s." % (falado(w).capitalize(),
+                                                              ini(w).lower())
+    F[u"dica10_%s" % w] = (u"Escute o começo: %s. Procure a gaveta com esse pedacinho."
+                           % empedacos(w))
+
+# ---- folha 11 ⭐ as colunas (palavra escrita, sem figura) -------------------------
+for w in IT[u"p11"]:
+    F[u"certo11_%s" % w] = (u"Isso! %s está escrita com %s no começo, então vai nessa "
+                            u"coluna." % (esc(w), ini(w)))
+    F[u"dica11_%s" % w] = (u"Aqui não tem desenho para ajudar. Leia só as duas primeiras "
+                           u"letras da ficha e procure essa dupla lá em cima.")
+
+# ---- folha 12 ⭐ qual está escrita certa ------------------------------------------
+#  ⚠️ A fala de acerto NÃO lê as três opções: ler as erradas em voz alta grava na
+#     criança uma grafia que não existe. Diz só a certa.
+for it in IT[u"p12"]:
+    w = it[u"w"]
+    F[u"certo12_%s" % w] = (u"Isso! %s, com %s no começo. É assim que se escreve."
+                            % (esc(w), ini(w)))
+    F[u"dica12_%s" % w] = (u"As três começam com a mesma letra. O que muda é a VOGAL "
+                           u"depois dela. Fale o nome da figura devagar e escute qual "
+                           u"vogal aparece logo no começo.")
+
+# ---- folha 13: escrever o começo ---------------------------------------------------
+for w in IT[u"p13"]:
+    F[u"certo13_%s" % w] = u"Muito bem! %s começa com %s." % (falado(w).capitalize(),
+                                                              ini(w).lower())
+    F[u"dica13_%s" % w] = (u"Escute devagar: %s. Escreva só o primeiro pedaço."
+                           % empedacos(w))
+
+# ---- folha 14 ⭐ a minha roda -------------------------------------------------------
+for s_ in IT[u"p14"]:
+    F[u"certo14_%s" % s_] = (u"Isso! %s com %s faz %s." % (s_[0], s_[1], s_.lower()))
+    F[u"dica14_%s" % s_] = (u"É a letra do lado esquerdo e a vogal do lado direito, "
+                            u"nessa ordem. Escreva as duas juntas.")
+
+# ---- folha 15: o mural --------------------------------------------------------------
+for w in IT[u"p15"]:
+    F[u"certo15_%s" % w] = u"%s, da roda do %s. Foi para o seu mural!" % (
+        falado(w).capitalize(), ini(w)[0])
 
 # ══════════════════════════════════════════════════════════════════════
 #  O MAPA DAS SÍLABAS INICIAIS — de qual palavra cada uma é recortada
@@ -205,11 +268,25 @@ for w in IT[u"p10"]:
 # ══════════════════════════════════════════════════════════════════════
 PALAVRAS_SIL, MAPA_SIL = {}, {}
 precisa = set()
-for w in IT[u"p1"] + IT[u"p6"] + IT[u"p8"] + IT[u"p10"]:
+# ⚠️ TODA folha que TOCA uma sílaba sozinha entra aqui — e a conta é por
+#    POSIÇÃO, a mesma numeração das folhas. Esquecer uma folha não dá erro
+#    nenhum: o mp3 simplesmente não existe, o `falar` cai no sintetizador do
+#    navegador e a criança ouve robô. Foi assim que a voz de navegador chegou
+#    ao Marcos em set/2026.
+#      7  completar (banco de sílabas)   10 gavetas (figuras)
+#      3  marcar figuras                 11 colunas (palavras escritas)
+#      1  a roda                         15 mural
+#      5  ligar                           4 balões · 14 a minha roda
+for w in IT[u"p1"] + IT[u"p7"] + IT[u"p10"] + IT[u"p15"] + IT[u"p11"]:
     precisa.add(ini(w))
 for it in IT[u"p3"]:
     precisa.add(it[u"s"])
-for g in IT[u"p4"]:
+for it in IT[u"p4"]:
+    precisa.add(it[u"s"])
+    PALAVRAS_SIL[it[u"w"]] = sil(it[u"w"])      # a folha 4 corta da palavra da roda
+for s_ in IT[u"p14"]:
+    precisa.add(s_)
+for g in IT[u"p5"]:
     for w in g:
         precisa.add(ini(w))
 for lista in DISTRA.values():
