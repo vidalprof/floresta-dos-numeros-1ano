@@ -215,12 +215,34 @@ for g in IT[u"p4"]:
 for lista in DISTRA.values():
     precisa.update(lista)
 
+# ⚠️⚠️ DE QUAL PALAVRA SAI CADA SÍLABA — O DEFEITO QUE O MARCOS OUVIU (set/2026).
+#    Palavras dele: *"não entendi muito o sentido da primeira atividade, pois
+#    cita laranja e aparece lata"*. A folha 1 mostrava LATA e o alto-falante
+#    dizia LARANJA. A causa estava AQUI: a fonte da sílaba era a primeira palavra
+#    em ordem ALFABÉTICA que começa com ela — e "laranja" vem antes de "lata".
+#    Num caderno de roda isso é fatal: a criança vê uma figura e ouve outra
+#    palavra, e o pedaço que ela devia guardar chega grudado na palavra errada.
+#
+#    A regra agora: **a sílaba sai da palavra DA RODA**. Se LA é a sílaba da
+#    roda do L e a palavra da roda é LATA, o recorte vem de LATA. Só quando a
+#    sílaba não pertence a nenhuma roda é que se cai na ordem antiga.
+import re as _re
+_mr = _re.search(r"/\*RODAS-INI\*/\s*var RODAS = (\{.*?\});", html, _re.S)
+DA_RODA = {}
+if _mr:
+    for _k, _r in json.loads(_mr.group(1)).items():
+        for _s, _w in zip(_r["s"], _r["w"]):
+            DA_RODA.setdefault(_s, _w)
+
 for s in sorted(precisa):
-    fonte = None
-    for w in sorted(usadas) + sorted(set(PAL) - usadas):
-        if ini(w) == s:
-            fonte = w
-            break
+    fonte = DA_RODA.get(s)
+    if fonte and fonte not in PAL:
+        fonte = None
+    if not fonte:
+        for w in sorted(usadas) + sorted(set(PAL) - usadas):
+            if ini(w) == s:
+                fonte = w
+                break
     if not fonte:
         continue
     MAPA_SIL[s] = [fonte, 0]

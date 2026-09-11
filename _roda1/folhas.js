@@ -342,7 +342,10 @@ function f1(d, pi){
       b.className = "rvog acesa";
       msil.innerHTML = esc(s);
       mfig.innerHTML = img(w, "figgrande") + '<span class="rnome">' + esc(w) + "</span>";
-      falar("sb1_" + s);
+      /* ⚠️ AQUI SE PASSA A PALAVRA, não a sílaba solta. `falar("sb1_LA")`
+         resolveria pelo mapa global, e foi assim que a folha mostrou LATA e
+         disse LARANJA. Quando a tela sabe qual é a palavra, ela manda. */
+      falarSilaba(w, 0, s);
       /* a palavra vem logo depois da sílaba: é ela que dá sentido ao pedaço */
       setTimeout(function(){ falar("pal_" + w); }, 900);
     };
@@ -383,7 +386,7 @@ function f1(d, pi){
         lin.appendChild(el("span", "", "Ouça a palavra. Com que vogal ela começa?"));
       } else {
         lin.appendChild(el("span", "", "Ouça o pedacinho e toque na vogal dele."));
-        lin.appendChild(botaoSom("Ouvir o pedacinho", function(){ falar("sb1_" + s); }));
+        lin.appendChild(botaoSom("Ouvir o pedacinho", function(){ falarSilaba(w, 0, s); }));
       }
       box.appendChild(lin);
       var ops = R.s.map(function(x){
@@ -402,7 +405,7 @@ function f1(d, pi){
   /* ⚠️ o pedido "por ouvido" toca a sílaba assim que a folha abre a primeira
      vez; sem isso a criança fica olhando um alto-falante sem saber que tem de
      apertar (medido com crianças no degrau 4). */
-  aoAbrir(d, function(){ if(!ST.resp["n1_0"]) setTimeout(function(){ falar("sb1_" + ini(L[0])); }, 1200); });
+  aoAbrir(d, function(){ if(!ST.resp["n1_0"]) setTimeout(function(){ falarSilaba(L[0], 0, ini(L[0])); }, 1200); });
 }
 
 /* 2 — QUAL É O COMEÇO? (das folhas D07 e D10)
