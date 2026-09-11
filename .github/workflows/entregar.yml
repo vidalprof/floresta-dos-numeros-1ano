@@ -403,8 +403,16 @@ jobs:
             esac
             # a 1a linha do portao ja resume ("ouvi N fala(s)..." ou "NAO MEDI: ...")
             resumo=$(printf '%s' "$saida" | head -1 | tr -d '"\\' | cut -c1-200)
-            printf '{"pasta":"%s","estado":"%s","codigo":%s,"resumo":"%s","quando":"%s"}\n' \
-              "$pasta" "$estado" "$rc" "$resumo" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            # ⚠️ O RESUMO SOZINHO NAO BASTA. "4 falas sairam tortas" nao me deixa
+            #    decidir nada: pode ser a voz errando de verdade ou o reconhecedor
+            #    tropecando num nome proprio (Florianopolis, Itajai). Sem saber
+            #    QUAIS, o portao vira alarme que eu aprendo a ignorar — que e
+            #    exatamente o defeito que a casa ja registrou. Entao o carimbo leva
+            #    as linhas tortas junto, que sao curtas.
+            tortas=$(printf '%s' "$saida" | grep -E '^\s+(✗|e eu ouvi)' | head -24 \
+                     | sed 's/^[[:space:]]*//' | tr -d '"\\' | paste -sd'|' -)
+            printf '{"pasta":"%s","estado":"%s","codigo":%s,"resumo":"%s","tortas":"%s","quando":"%s"}\n' \
+              "$pasta" "$estado" "$rc" "$resumo" "$tortas" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
               > "_status/voz-$pasta.json"
           done
 
