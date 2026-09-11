@@ -388,7 +388,13 @@ jobs:
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"; [ -d "$pasta" ] || continue
             echo "=========== ouvindo $pasta ==========="
-            saida=$(python3 _qa/pronuncia.py "$pasta" --limite "$LIM" 2>&1); rc=$?
+            # ⚠️ `shell: bash -e` DERRUBA O PASSO na primeira linha que falha.
+            #    Escrito como `saida=$(...); rc=$?`, um portao que reprova (1) ou
+            #    que nao consegue medir (2) matava o passo AQUI — antes de escrever
+            #    o carimbo. Resultado: eu criei o recado barato e ele nunca era
+            #    gravado, justo nos casos em que ele importa. O `|| rc=$?` protege.
+            rc=0
+            saida=$(python3 _qa/pronuncia.py "$pasta" --limite "$LIM" 2>&1) || rc=$?
             echo "$saida"
             case "$rc" in
               0) estado=ok ;;
