@@ -1,5 +1,31 @@
 # 🧠 MEMÓRIA DO PROJETO — ler no INÍCIO de CADA sessão
 
+> ## 🚫🎲 REGRA PERMANENTE — **"NUNCA CHUTE NUNCA INVENTE"** (Marcos, 12/set/2026)
+>
+> Palavras dele, exatamente estas quatro. Está no topo deste arquivo porque é a
+> regra que mais me pegou, e porque a próxima sessão começa sem memória.
+>
+> **O que ela proíbe, na prática:**
+> 1. **Número sem fonte.** Se eu não li no log, não sai da minha boca — e mais:
+>    **se o log vem de um modelo, eu tenho que ter aberto o modelo.** Foi assim
+>    que eu repeti "39 a 65 minutos" para ele com um portão que cobrava o preço
+>    de DIGITAR por um TOQUE, e com um "2,6 palavras por segundo" que eu tinha
+>    inventado (o relógio diz 1,66 a 1,90 — 37% de diferença).
+> 2. **Constante inventada dentro de portão.** Portão é medida; se um pedaço
+>    dele é palpite, o palpite tem que estar ESCRITO no comentário E IMPRESSO na
+>    saída, com estas palavras: `PALPITE DECLARADO`. Sem isso ele vira medida
+>    falsa — e portão que aprova por causa do próprio erro é pior que portão
+>    nenhum, porque dá confiança.
+> 3. **"Deve ser assim", "normalmente é", "provavelmente".** Se dá para medir,
+>    mede. Se não dá para medir daqui, **diz que não dá** e mostra o caminho de
+>    quem pode medir (o Marcos na escola, um workflow, um arquivo no disco).
+> 4. **Dizer que fiz o que não fiz.** Quando ele perguntou se eu tinha analisado
+>    TODAS as sequências com olhar de pedagogo, a resposta honesta era 4 de 10.
+>
+> **O teste, antes de mandar qualquer número:** *de onde veio este número, e o
+> que eu teria que abrir para ele estar errado?* Se eu não souber responder,
+> ainda não posso mandar.
+
 > **Por que este arquivo existe:** eu (Claude) começo cada sessão do zero, SEM
 > lembrar das anteriores. Então esta é a minha memória, por escrito, para eu
 > reler e "lembrar" na hora. Se algo importante não estiver aqui (ou no

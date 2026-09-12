@@ -63,7 +63,11 @@ import os
 import re
 import sys
 
-PAL_POR_S = 2.6      # passo da voz da casa
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from mp3_dur import por_id as mp3_por_id   # o RELOGIO da voz
+
+PAL_POR_S = 1.8      # MEDIDO: 890 mp3 da casa, 1,66 a 1,90 palavra/s
+                     # (antes era 2,6, inventado por mim — ver o bloco da voz)
 S_POR_ITEM = 9.0     # ler, pensar e tocar (4o/5o ano)
 S_POR_TELA = 12.0    # capa, cracha, banner, elogio
 # ⚠️ QUANTAS FALAS DO BANCO CADA ITEM ACIONA — e por que sao DUAS numeros e nao
@@ -151,16 +155,38 @@ def confere(pasta, piso_min=40.0):
             html += u"\n" + io.open(irmao, encoding=u"utf-8").read()
 
     # 1) quanto tempo de voz gravada
+    # ⚠️⚠️ AQUI HAVIA UM CHUTE COM CARA DE MEDIDA (12/set/2026 — ordem do Marcos,
+    #    em quatro palavras: *"Nunca chute nunca invente"*).
+    #
+    #    Este bloco calculava o tempo de voz dividindo as PALAVRAS por 2,6 — um
+    #    numero que eu inventei, sem cronometro e sem fonte, e que saia impresso
+    #    no log como se fosse medida. Os mp3 estao no disco: a duracao exata
+    #    esta DENTRO deles, quadro a quadro.
+    #
+    #    Conferido nos tres cadernos com voz completa (890 arquivos): a voz da
+    #    casa fala a 1,66-1,90 palavra por segundo. O meu 2,6 era 37% rapido
+    #    demais — ou seja, eu vinha SUBESTIMANDO a voz em quase 40%.
+    #
+    #    Agora: se o mp3 existe, vale o RELOGIO. So quando ele ainda nao foi
+    #    gravado e que se estima — e aí pelo passo MEDIDO, dizendo que estimou.
     seg_voz = 0.0
+    voz_medida, voz_estimada = 0, 0
     camf = os.path.join(pasta, u"falas.json")
     if os.path.exists(camf):
         try:
             falas = json.loads(io.open(camf, encoding=u"utf-8").read())
-            for f in falas:
-                seg_voz += len((f.get(u"texto") or u"").split()) / PAL_POR_S
         except ValueError:
             print(u"%s -> falas.json ilegivel. NAO MEDI o tempo de voz." % pasta)
             return 2
+        relogio = mp3_por_id(os.path.join(pasta, u"audio"))
+        for f in falas:
+            real = relogio.get(f.get(u"id") or u"")
+            if real:
+                seg_voz += real
+                voz_medida += 1
+            else:
+                seg_voz += len((f.get(u"texto") or u"").split()) / PAL_POR_S
+                voz_estimada += 1
     else:
         print(u"%s -> sem falas.json: NAO MEDI (MP3 nao se le)." % pasta)
         return 2
@@ -420,6 +446,18 @@ def confere(pasta, piso_min=40.0):
         print(u"%s -> ESTIMATIVA de duracao: %.0f min" % (pasta, mins))
         print(u"   voz gravada: %.0f min | %d itens para resolver | %d telas"
               % (seg_voz / 60.0, itens, telas))
+    # ⭐ O QUE FOI MEDIDO E O QUE FOI ESTIMADO — dito em voz alta, SEMPRE.
+    #    Regra do Marcos (12/set/2026): *"Nunca chute nunca invente"*. Numero de
+    #    portao que nao diz de onde veio e chute com cara de medida — foi assim
+    #    que este mesmo portao me fez repetir "39 a 65 min" para ele.
+    print(u"   MEDIDO no relogio: %d fala(s) lida(s) do proprio mp3%s"
+          % (voz_medida,
+             u"" if not voz_estimada
+             else u"; ESTIMADAS %d ainda sem mp3 (a %.1f palavra/s, o passo MEDIDO"
+                  u" em 890 arquivos)" % (voz_estimada, PAL_POR_S)))
+    print(u"   PALPITE DECLARADO (nunca cronometrado com crianca): o tempo por "
+          u"gesto — escrever 25s, memoria/procurar 20s, ligar/arrastar 14s, "
+          u"marcar 12s, tocar 9s.")
     detalhe.sort(key=lambda x: -x[1])
     print(u"   maiores listas: %s"
           % u", ".join(u"%s %d %s" % (n, q, g) for (n, q, g) in detalhe[:8]))

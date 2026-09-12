@@ -4,6 +4,17 @@ Este repositório publica páginas educativas no **GitHub Pages** e contém uma
 **"Fábrica de Sites"** que cria/atualiza outros repositórios automaticamente.
 Leia tudo antes de agir e responda sempre em **português**.
 
+> ## 🚫🎲 REGRA ZERO — **"NUNCA CHUTE NUNCA INVENTE"** (Marcos, 12/set/2026)
+>
+> Quatro palavras dele, e vêm antes de todo o resto. Número sem fonte não sai da
+> minha boca; **e "li no log" só vale se eu tiver aberto o MODELO que gerou o
+> log**. Constante inventada dentro de portão tem que estar escrita no
+> comentário e impressa na saída como `PALPITE DECLARADO` — senão o portão vira
+> medida falsa, e portão que aprova por causa do próprio erro é pior que portão
+> nenhum. O que não dá para medir daqui, eu digo que não dá e mostro quem pode
+> medir. E nunca dizer que fiz o que não fiz. Detalhe e as lições pagas: o topo
+> do `MEMORIA-DO-PROJETO.md`.
+
 > ## 0. ORIENTAÇÃO OBRIGATÓRIA — LER PRIMEIRO (evita o erro de "cópia velha")
 >
 > **⭐ ANTES DE TUDO, leia o `EDUVERSE-FILOSOFIA.md`** — é a LEI pedagógica do EduVerse:
