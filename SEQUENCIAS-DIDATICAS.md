@@ -348,27 +348,37 @@ por isso é o crivo escrito do `POTE-*.md` — e ele é meu, não é medida.
 
 | Degrau | Caderno | Folhas | Duração | Crivo com o VERBO? |
 |---|---|---|---|---|
-| 0 | O Desfile das Letras | 10 | 22–37 | ⛔ sem colheita própria |
+| 0 | O Desfile das Letras | 10 | 22–37 | ⛔ **sem colheita própria** |
 | 1 | O Bando das Rimas | 10 | 24–41 | ✅ **28 folhas, 12/set** |
 | 2 | Bate-Palma das Palavras | 10 | 26–42 | ✅ |
 | 3 | A Família das Palavras | 10 | 29–43 | ✅ |
 | 4 | O Som que Abre | 10 | 30–51 | ✅ |
-| 5 | A Máquina de Juntar | 8 | 31–48 | ⛔ só itens |
-| 6 | A Letra que Muda Tudo | 7 | 31–51 | ⛔ só itens |
-| 7 | A Tecla do Espaço Quebrou | 10 | 26–43 | ⛔ só itens |
-| 8 | O Grande Jogo das Palavras | 10 | 26–47 | ⛔ sem colheita própria |
+| 5 | A Máquina de Juntar | 8 | 31–48 | ✅ |
+| 6 | A Letra que Muda Tudo | 7 | 31–51 | ✅ |
+| 7 | A Tecla do Espaço Quebrou | 10 | 26–43 | ✅ |
+| 8 | O Grande Jogo das Palavras | 10 | 26–47 | ⛔ **sem colheita própria** (a colheita já chegou: `folhas_d8`) |
 | 9 | **A Roda das Sílabas** | **15** | 34–53 | ✅ 26 folhas |
 
-**Nenhum chega às 25 folhas. Quatro de dez passaram pelo crivo de verdade.**
+**Nenhum chega às 25 folhas** — o maior, a Roda, tem 15. **Oito de dez têm o
+crivo do verbo**; faltam o degrau 0 e o 8, que nunca tiveram colheita própria.
+
+> ⚠️ **CORREÇÃO, e ela é lição de método (12/set/2026).** Eu disse ao Marcos que
+> só **quatro** de dez tinham crivo. Estava errado: contei com um `grep` que só
+> reconhecia UM formato de tabela, e os `POTE-MONTAR`, `POTE-LETRA`,
+> `POTE-FRASE` e `POTE-SOM` usam outro (*"As folhas que viraram folha, uma a
+> uma"* + *"As folhas RECUSADAS — e o motivo de cada uma"*). É a **Regra Zero**
+> me pegando: rodei uma medida sem abrir o modelo dela e repeti o número.
+> O conserto de processo: **antes de contar arquivo com `grep`, abrir dois deles
+> e ver se o padrão casa** — senão a contagem mede o meu regex, não o repositório.
 
 ### A fila, na ordem
 1. **O fecho alcançável a qualquer momento** (§4) — vem antes das folhas novas,
    senão 25 folhas piora a vida de quem vai devagar.
-2. **Crivo** dos degraus que não têm. **O degrau 1 já foi feito** (12/set: 28
-   folhas lidas uma a uma, `POTE-RIMA.md` §crivo — achou **seis** gestos que o
-   caderno não faz, sendo o maior deles **PRODUZIR rima**, que quatro das 28
-   pedem e o nosso caderno não pede nenhuma vez). **Faltam 0, 5, 6, 7 e 8**; a
-   colheita do 8 já está em `_sequencias/folhas_d8`.
+2. **Crivo** dos degraus que não têm: **faltam só o 0 e o 8**. O degrau 1 foi
+   feito em 12/set (28 folhas lidas uma a uma, `POTE-RIMA.md` §crivo — achou
+   **seis** gestos que o caderno não faz, sendo o maior deles **PRODUZIR rima**,
+   que quatro das 28 pedem e o nosso caderno não pede nenhuma vez). A colheita
+   do 8 já está em `_sequencias/folhas_d8`; a do 0 ainda não foi feita.
 3. **Crescer cada caderno até 25 folhas**, na ordem do mais curto.
 4. **Portão da escada didática e do leque de gestos** para folha viva (#104).
 

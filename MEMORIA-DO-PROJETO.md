@@ -7919,8 +7919,18 @@ interatividades que as atividades pediam, com o olhar crítico de pedagogo?"* �
 |---|---|
 | 9 Roda | ✅ 26 folhas, veredito uma a uma |
 | 2 Sílaba · 3 Inicial · 4 Som | ✅ tabela de crivo com veredito |
-| 5 Montar · 6 Letra · 7 Frase | ⛔ só transcrição de itens, sem o verbo |
-| 1 Rima | ⛔ transcreveu 5 das 30 folhas colhidas |
+| 5 Montar · 6 Letra · 7 Frase | ✅ (ver a correção abaixo) |
+| 1 Rima | ✅ feito em 12/set — 28 folhas novas |
 | 0 Letras · 8 Jogo | ⛔ sem colheita própria |
 
-Quatro de dez passaram pelo crivo de verdade. É essa a dívida.
+> ⚠️ **CORREÇÃO NO MESMO DIA — e é a Regra Zero me pegando.** Eu disse "quatro
+> de dez" para o Marcos. **São oito de dez.** A conta saiu de um `grep` que só
+> reconhecia UM formato de tabela; os `POTE-MONTAR`, `POTE-LETRA`, `POTE-FRASE`
+> e `POTE-SOM` escrevem o crivo noutro formato (*"As folhas que viraram folha,
+> uma a uma"* + *"As folhas RECUSADAS — e o motivo de cada uma"*), que é o mesmo
+> método com outro título. Rodei uma medida **sem abrir o modelo dela** e repeti
+> o número — exatamente o que a regra proíbe, no mesmo dia em que a escrevi.
+>
+> **Conserto de processo:** antes de contar arquivos com `grep`, **abrir dois
+> deles e conferir se o padrão casa**. Senão a contagem mede o meu regex, não o
+> repositório. A dívida real é só o degrau **0** e o **8**.
