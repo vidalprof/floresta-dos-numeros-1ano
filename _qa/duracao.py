@@ -306,13 +306,44 @@ def confere(pasta, piso_min=40.0):
                 n = min(len(lista), int(mq.group(1))) if mq else len(lista)
                 mm = re.match(r'^p(\d+)$', chave)
                 corpo = corpos.get(u"f%s" % mm.group(1), u"") if mm else u""
+                # ⚠️⚠️ ESTE PORTAO ESTAVA INFLANDO A AULA, e quem desconfiou foi o
+                #    Marcos (set/2026): *"eu nao acredito que 10 folhas durem uma aula
+                #    toda"*. Ele estava certo, e a causa era aqui.
+                #
+                #    O galho da FOLHA VIVA so sabia reconhecer dois gestos (o montador
+                #    e o ligar). Tudo o mais caia no `else` e era precificado a 25 s
+                #    por item — que e o preco de DIGITAR uma palavra no teclado da
+                #    tela. Uma folha em que a crianca so TOCA numa de tres opcoes
+                #    custava o mesmo que escrever a palavra inteira letra por letra.
+                #    Nos dez cadernos de alfabetizacao quase toda folha caia nesse
+                #    `else`: a estimativa inteira saiu com cara de medida e era um
+                #    palpite caro.
+                #
+                #    ⚠️ E o pior: o portao usava o numero para dizer "duracao ok:
+                #       enche a aula". Ele APROVAVA por causa do proprio erro.
+                #
+                #    O galho da MONTADA ja sabia fazer isto direito (ver
+                #    `custo_da_lista` la em cima) — so nunca tinha sido trazido para
+                #    ca. Agora o gesto e lido no corpo da propria folha.
                 if u"montador(" in corpo:
                     custo, gesto = 45.0, u"manipular"
                 elif u"montaLigar(" in corpo:
                     custo, gesto = 14.0, u"ligar"
-                else:
-                    caixas = len(re.findall(r'\bcaixa\(', corpo)) or 1
+                elif re.search(r'\bcaixa\(', corpo):
+                    caixas = len(re.findall(r'\bcaixa\(', corpo))
                     custo, gesto = 25.0 * caixas, (u"digitar x%d" % caixas)
+                elif re.search(r'\bativa\(|\bativaLetras\(|\.tec\b|<input', corpo):
+                    custo, gesto = 25.0, u"escrever"      # teclado de verdade
+                elif u"mcarta" in corpo:
+                    custo, gesto = 20.0, u"memoria"
+                elif re.search(r'celula|caca|cruzad', corpo):
+                    custo, gesto = 20.0, u"procurar"
+                elif re.search(r'gaveta|coluna|puxavel\(|arrast', corpo):
+                    custo, gesto = 14.0, u"arrastar"
+                elif re.search(r'riscoDeCircular\(|Conferir', corpo):
+                    custo, gesto = 12.0, u"marcar varios"
+                else:
+                    custo, gesto = S_POR_ITEM, u"tocar"
                 if isinstance(lista[0], dict) and lista[0].get(u"hist"):
                     custo += 45.0            # ler e entender o problema
                     gesto = u"problema"

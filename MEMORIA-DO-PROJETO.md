@@ -7837,3 +7837,64 @@ saía ZERO com a folha toda respondida, sem erro nenhum no console (já acontece
 duas vezes nesta casa). Agora **a posição é a identidade**: a folha da posição 7
 usa o pote `p7`, grava `n7_*` e fala `p7enun`, tudo derivado de `pi`. Inserir
 cinco folhas no meio do caderno passou a ser mexer em uma lista só.
+
+## ⏱️🚨 O PORTÃO DA DURAÇÃO APROVAVA POR CAUSA DO PRÓPRIO ERRO (12/set/2026)
+
+Palavras do Marcos, e ele estava certo: *"eu não acredito que 10 folhas durem
+uma aula toda"*.
+
+O `_qa/duracao.py` dizia que os dez cadernos de alfabetização davam **39 a 65
+min**. Fui olhar o modelo. O galho da **folha viva** só sabia reconhecer dois
+gestos — o `montador(` e o `montaLigar(`. **Todo o resto caía num `else` que
+cobrava 25 segundos por item**, que é o preço de DIGITAR uma palavra no teclado
+da tela. Uma folha em que a criança só toca numa de três opções custava o mesmo
+que escrever a palavra inteira, letra por letra. Nos dez cadernos quase toda
+folha caía nesse `else`.
+
+**E o pior: o portão usava esse número para escrever "duracao ok: enche a
+aula".** Ele aprovava por causa do próprio erro — a pior espécie de portão, pior
+que não existir, porque dá confiança.
+
+O galho da atividade MONTADA já sabia fazer isso direito (`custo_da_lista`, que
+lê o gesto no corpo da fase). Nunca tinha sido trazido para cá. Agora o gesto é
+lido no corpo da própria folha: escrever 25 s · memória 20 · procurar 20 ·
+ligar/arrastar 14 · marcar vários 12 · tocar 9.
+
+**O que a medida virou depois do conserto** (a mesma ferramenta, o mesmo dia):
+
+| Caderno | antes | DEPOIS |
+|---|---|---|
+| O Desfile das Letras | 41–52 | **20–30** |
+| O Bando das Rimas | 39–51 | **21–33** |
+| Bate-Palma das Palavras | 46–58 | **23–34** |
+| A Tecla do Espaço Quebrou | 40–52 | **23–35** |
+| O Grande Jogo das Palavras | 39–53 | **23–37** |
+| A Família das Palavras | 45–55 | **26–36** |
+| A Máquina de Juntar | 52–63 | **27–39** |
+| O Som que Abre | 50–64 | **27–41** |
+| A Letra que Muda Tudo | 51–64 | **27–41** |
+| A Roda das Sílabas (15 folhas) | 52–65 | **30–43** |
+
+**Os dez estão curtos, inclusive a Roda.** Sete reprovam no piso de 40 min.
+
+### ⚠️ A lição, e ela é de método
+Eu já tinha escrito neste arquivo que *"número que eu não li no log não sai da
+minha boca"*. Não basta: **ler no log também não basta se o log vem de um modelo
+que eu nunca conferi**. A pergunta que faltava é *"esse número é medido como?"* —
+e a resposta aqui era "cobrando digitação por um toque". Quando o Marcos
+desconfia de um número, o caminho não é defender o número: é abrir o modelo.
+
+### E a segunda pergunta dele, respondida com número
+*"você analisou todas as sequências, as folhas escolhidas e criou as
+interatividades que as atividades pediam, com o olhar crítico de pedagogo?"* —
+**não.** Contado nos `POTE-*.md`:
+
+| Degrau | Crivo com o VERBO de cada folha? |
+|---|---|
+| 9 Roda | ✅ 26 folhas, veredito uma a uma |
+| 2 Sílaba · 3 Inicial · 4 Som | ✅ tabela de crivo com veredito |
+| 5 Montar · 6 Letra · 7 Frase | ⛔ só transcrição de itens, sem o verbo |
+| 1 Rima | ⛔ transcreveu 5 das 30 folhas colhidas |
+| 0 Letras · 8 Jogo | ⛔ sem colheita própria |
+
+Quatro de dez passaram pelo crivo de verdade. É essa a dívida.
