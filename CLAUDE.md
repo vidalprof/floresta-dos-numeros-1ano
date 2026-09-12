@@ -4,6 +4,20 @@ Este repositório publica páginas educativas no **GitHub Pages** e contém uma
 **"Fábrica de Sites"** que cria/atualiza outros repositórios automaticamente.
 Leia tudo antes de agir e responda sempre em **português**.
 
+> ## 📚 SEQUÊNCIA DIDÁTICA (formato "folha viva") → **`SEQUENCIAS-DIDATICAS.md`**
+>
+> Pedido do Marcos (12/set/2026): *"registre um documento para essas nossas
+> novas atividades separado das outras, e registre minhas regras, o que
+> aprendemos, os erros"*. Os cadernos de folha viva — as dez sequências de
+> alfabetização do 1º ano — **não** seguem o molde do motor: têm outra anatomia,
+> outros portões e uma banca que só os alcança pela metade. Antes de tocar em
+> qualquer um deles, ler o `SEQUENCIAS-DIDATICAS.md` inteiro.
+>
+> **Duas regras de lá que valem citar aqui:** sequência tem **no mínimo 25
+> folhas** (medido: é o que enche os 55 min da criança rápida); e **o fecho tem
+> que ser alcançável a qualquer momento**, senão 25 folhas castiga justamente
+> quem vai devagar.
+
 > ## 🚫🎲 REGRA ZERO — **"NUNCA CHUTE NUNCA INVENTE"** (Marcos, 12/set/2026)
 >
 > Quatro palavras dele, e vêm antes de todo o resto. Número sem fonte não sai da
