@@ -194,8 +194,8 @@ intacto).
 | O Grande Jogo das Palavras | 10 | 79 | 26–47 | 2,6–4,7 |
 | A Família das Palavras | 10 | 95 | 29–43 | 2,9–4,3 |
 | O Som que Abre | 10 | 103 | 30–51 | 3,0–5,1 |
-| A Máquina de Juntar | 8 | 106 | 31–48 | 3,9–6,0 |
-| A Letra que Muda Tudo | 7 | 103 | 31–51 | 4,4–7,3 |
+| A Máquina de Juntar | 10 | 105 | 31–48 | 3,1–4,8 |
+| A Letra que Muda Tudo | 10 | 99 | 31–51 | 3,1–5,1 |
 | **A Roda das Sílabas** | **15** | 103 | **34–53** | 2,3–3,5 |
 
 ### A conta
@@ -209,6 +209,14 @@ Para a aula de 55 minutos:
 |---|---|
 | pela criança **rápida** (só o retorno) | **18 a 25** |
 | pela criança **devagar** (toca em tudo) | 11 a 16 |
+
+> ⚠️ **SEGUNDA CORREÇÃO DO MESMO TIPO, no mesmo dia.** Eu tinha escrito aqui que
+> a Máquina de Juntar tem 8 folhas e a Letra que Muda Tudo tem 7. **Têm 10 cada
+> uma.** O número saiu de um `grep` no `novaFolha()` que não reconhecia todas as
+> formas de sacar o pote. **Contagem de folha agora se faz no NAVEGADOR**
+> (`PAGEL.length - 1`), que é onde a criança conta — a mesma lição da Regra
+> Zero: se o modelo não foi aberto, o número mede o meu regex.
+> Medido em 12/set: nove cadernos com **10 folhas** e a Roda com **15**.
 
 **Por isso 25 é o número certo — e o Marcos chegou nele de ouvido.** Com 25
 folhas a criança rápida enche a aula; com menos, ela termina com meia aula
@@ -224,14 +232,41 @@ seria a única que nunca o veria.
 
 **Então a regra completa é:**
 1. **25 folhas no mínimo** — o pote do dia.
-2. **O fecho tem que ser alcançável a qualquer momento.** Quando a aula acaba (ou
-   quando a criança quer parar), ela fecha o caderno e vê o boletim **do que ela
-   fez**, não uma tela de "faltam 11 folhas".
+2. **O fecho tem que ser alcançável a qualquer momento.**
 3. **O convite de 55 minutos continua** (`_padrao/RETOMAR.md`): quem volta na
    mesma aula continua de onde parou.
 
-Sem o item 2, aumentar para 25 piora a vida de quem já vai devagar. **Isto é
-tarefa de código, não de conteúdo, e vem antes das folhas novas.**
+### ✅ O item 2 está FEITO nos dez cadernos (12/set/2026)
+
+Sem ele, aumentar para 25 folhas pioraria a vida de quem já vai devagar — a
+criança mais lenta da turma seria a única a nunca ver o próprio elogio. O que
+mudou, e é contrato do formato daqui para a frente:
+
+| | Como era | Como é |
+|---|---|---|
+| chegar ao fecho | só depois da última folha | **botão "Terminar"** na barra de baixo, a qualquer momento |
+| título do fecho | "Caderno completo!" | "**O seu boletim de hoje**" quando não terminou |
+| folha não aberta | barra com **0 de 8** | "**ainda não**", apagadinha — nunca um zero |
+| estrelas e barras | sobre o caderno inteiro | **sobre o que ela tentou** |
+| parecer da criança | objetivo não alcançado caía em "vale treinar" | **não entra em lista nenhuma** |
+| a linha de resumo | — | "*Ana, você fez 4 de 15 folhas hoje — e olhe o que já dá para ver…*" |
+| voltar | impossível | **"Voltar para o caderno"**, se ainda houver aula |
+| relatório do professor | 4 folhas bem feitas viravam **"Precisa retomar"** | aviso de caderno não terminado + coluna **"do que fez"** + nota sobre o que foi feito + "*ainda não chegou a fazer (a aula acabou antes)*" |
+
+⚠️ **O relatório era o pior dos dois.** Ele dividia os acertos pelo caderno
+inteiro: quem fez 4 de 15 folhas, e as fez bem, aparecia com **21%** e conceito
+**"Precisa retomar"**. Um julgamento errado com cara de medida, exatamente o que
+a Regra Zero proíbe — só que contra a criança.
+
+⚠️ **Tensão que eu NÃO mexi, e que é decisão do Marcos:** a nota credita o acerto
+com ajuda (1,0 de primeira, 0,6 com ajuda), mas a tabela por objetivo conta só o
+acerto **de primeira**. Por isso é possível ler "**Dominou**" ao lado de "nenhum
+objetivo chegou a 75%". Não é defeito novo — é como a nota sempre foi — mas para
+o professor soa contraditório. Mudar o critério é escolha pedagógica, não minha.
+
+**Medido nos dez** (12/set): fecho no meio do caderno funciona, nenhuma barra em
+zero, "Voltar para o caderno" retorna, zero erro de JS; leiaute em 6 tamanhos
+com todo alvo ≥ 40 px.
 
 ---
 
@@ -353,8 +388,8 @@ por isso é o crivo escrito do `POTE-*.md` — e ele é meu, não é medida.
 | 2 | Bate-Palma das Palavras | 10 | 26–42 | ✅ |
 | 3 | A Família das Palavras | 10 | 29–43 | ✅ |
 | 4 | O Som que Abre | 10 | 30–51 | ✅ |
-| 5 | A Máquina de Juntar | 8 | 31–48 | ✅ |
-| 6 | A Letra que Muda Tudo | 7 | 31–51 | ✅ |
+| 5 | A Máquina de Juntar | 10 | 31–48 | ✅ |
+| 6 | A Letra que Muda Tudo | 10 | 31–51 | ✅ |
 | 7 | A Tecla do Espaço Quebrou | 10 | 26–43 | ✅ |
 | 8 | O Grande Jogo das Palavras | 10 | 26–47 | ⛔ **sem colheita própria** (a colheita já chegou: `folhas_d8`) |
 | 9 | **A Roda das Sílabas** | **15** | 34–53 | ✅ 26 folhas |

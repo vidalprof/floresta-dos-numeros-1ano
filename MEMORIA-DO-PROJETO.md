@@ -7934,3 +7934,55 @@ interatividades que as atividades pediam, com o olhar crítico de pedagogo?"* �
 > **Conserto de processo:** antes de contar arquivos com `grep`, **abrir dois
 > deles e conferir se o padrão casa**. Senão a contagem mede o meu regex, não o
 > repositório. A dívida real é só o degrau **0** e o **8**.
+
+## 🏁 O FECHO A QUALQUER MOMENTO — e o relatório que julgava errado (12/set/2026)
+
+O Marcos fixou o tamanho da sequência: *"eu acredito que cada sequência precise
+de no mínimo 25 folhas"*. A medida deu razão a ele — 25 folhas é o que enche os
+55 minutos da criança **rápida** (2,2 a 4,3 min por folha, medido).
+
+**Mas 25 folhas cobram uma mudança junto.** A criança **devagar** — a que toca no
+alto-falante de cada opção, erra, ouve a dica — levaria ~85 min nas mesmas 25
+folhas. Ela não termina. E até hoje o fecho (boletim animado, parecer, medalha,
+relatório do professor) **só existia depois da última folha**: crescer para 25
+faria a criança mais lenta da turma, que é justamente quem mais precisa do
+elogio, ser **a única que nunca o vê**.
+
+### O que mudou nos dez cadernos
+| | Como era | Como é |
+|---|---|---|
+| chegar ao fecho | só na última folha | **botão "Terminar"** na barra de baixo |
+| título | "Caderno completo!" | "**O seu boletim de hoje**" quando é parcial |
+| folha não aberta | barra com **0 de 8** | "**ainda não**", apagadinha |
+| estrelas e barras | sobre o caderno inteiro | **sobre o que ela tentou** |
+| parecer da criança | objetivo não alcançado caía em "vale treinar" | não entra em lista nenhuma |
+| voltar | impossível | **"Voltar para o caderno"** |
+
+### ⚠️⚠️ E O RELATÓRIO DO PROFESSOR ERA PIOR QUE O BOLETIM
+Ele dividia os acertos pelo caderno INTEIRO. A criança que fez **4 de 15 folhas,
+e as fez bem**, aparecia com **21%** e conceito **"Precisa retomar"** — e o
+parecer escrito dizia *"nenhum objetivo chegou a 75%, vale retomar oralmente"*.
+
+**Um julgamento errado com cara de medida — exatamente o que a Regra Zero
+proíbe, só que contra a criança.** Agora o relatório traz: aviso de caderno não
+terminado com quantas folhas ela fez, coluna **"do que fez"** (desempenho só no
+que ela respondeu), nota e conceito sobre o que foi feito (rotulado *parcial*), e
+a frase *"ainda não chegou a fazer (a aula acabou antes): …"*.
+
+### ⚠️ Tensão que eu NÃO mexi — é decisão do Marcos
+A nota credita o acerto com ajuda (1,0 de primeira · 0,6 com ajuda); a tabela por
+objetivo conta só o acerto **de primeira**. Dá para ler "**Dominou**" ao lado de
+"nenhum objetivo chegou a 75%". Não é defeito novo, mas soa contraditório para
+quem lê. Mudar o critério é escolha pedagógica.
+
+### 🔁 E A TERCEIRA VEZ NO MESMO DIA EM QUE UM `grep` MEU MENTIU
+1. contei "4 de 10 crivos" — eram **8** (o regex só via um formato de tabela);
+2. contei "8 e 7 folhas" no `_mont1` e `_let1` — são **10** (o regex não via
+   todas as formas de sacar o pote);
+3. contei "1 falha" no andarilho — o padrão `✗|erro de JS` casou com a linha
+   **"✓ sem erro de JS"**.
+
+**Regra de processo que sai daqui, e ela é operacional:** contagem por `grep`
+é hipótese, não medida. **Ou se lê o CÓDIGO DE SAÍDA da ferramenta, ou se abre
+dois arquivos e se confere o padrão antes de contar.** Número de folha se conta
+no navegador (`PAGEL.length - 1`), que é onde a criança conta.
