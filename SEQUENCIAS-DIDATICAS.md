@@ -349,7 +349,7 @@ por isso é o crivo escrito do `POTE-*.md` — e ele é meu, não é medida.
 | Degrau | Caderno | Folhas | Duração | Crivo com o VERBO? |
 |---|---|---|---|---|
 | 0 | O Desfile das Letras | 10 | 22–37 | ⛔ sem colheita própria |
-| 1 | O Bando das Rimas | 10 | 24–41 | ⛔ 5 de 30 folhas |
+| 1 | O Bando das Rimas | 10 | 24–41 | ✅ **28 folhas, 12/set** |
 | 2 | Bate-Palma das Palavras | 10 | 26–42 | ✅ |
 | 3 | A Família das Palavras | 10 | 29–43 | ✅ |
 | 4 | O Som que Abre | 10 | 30–51 | ✅ |
@@ -364,8 +364,11 @@ por isso é o crivo escrito do `POTE-*.md` — e ele é meu, não é medida.
 ### A fila, na ordem
 1. **O fecho alcançável a qualquer momento** (§4) — vem antes das folhas novas,
    senão 25 folhas piora a vida de quem vai devagar.
-2. **Crivo** dos seis degraus que não têm (0, 1, 5, 6, 7, 8). As colheitas de 1 e
-   8 já estão em `_sequencias/folhas_d1` e `folhas_d8`.
+2. **Crivo** dos degraus que não têm. **O degrau 1 já foi feito** (12/set: 28
+   folhas lidas uma a uma, `POTE-RIMA.md` §crivo — achou **seis** gestos que o
+   caderno não faz, sendo o maior deles **PRODUZIR rima**, que quatro das 28
+   pedem e o nosso caderno não pede nenhuma vez). **Faltam 0, 5, 6, 7 e 8**; a
+   colheita do 8 já está em `_sequencias/folhas_d8`.
 3. **Crescer cada caderno até 25 folhas**, na ordem do mais curto.
 4. **Portão da escada didática e do leque de gestos** para folha viva (#104).
 
