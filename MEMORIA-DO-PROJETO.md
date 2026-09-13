@@ -839,6 +839,34 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🧱 BLOCO MARCADO TEM DONO — e nem se cita a marca dele (13/set/2026)
+
+Ao pôr o CSS das catorze folhas novas do Desfile, perdi o trabalho **duas vezes
+seguidas**, pelo mesmo motivo com duas caras:
+
+1. **Escrevi dentro do bloco marcado.** As regras entraram logo antes do
+   fechamento do bloco do dossiê no `index.html` — e o
+   `_padrao/dossie_professor.py` é o DONO daquele bloco: ele apaga de `ini` até
+   `fim` e escreve o dele. Rodei o injetor para consertar outro portão e ele
+   levou o CSS junto.
+2. **Movi para fora e CITEI a marca no comentário**, para explicar por que o
+   bloco morava ali. A citação virou a ocorrência **mais antiga** do `ini` no
+   arquivo, e o injetor apagou dali até o fim do bloco de verdade — mais uma vez
+   tudo.
+
+**Nos dois casos não houve erro nenhum.** A página abriu, o `node --check`
+passou, o pré-voo passou. Só que o teclado da folha 13 ficou sem fundo e as
+gavetas sem caixa — defeito que só existe para o OLHO, e que eu só vi porque
+tirei foto da tela antes de publicar.
+
+**A regra:** não se escreve dentro de um bloco marcado, **e não se cita a marca
+dele em texto livre no mesmo arquivo**. É a mesma família do comentário que eu
+pus dentro do JSON do `LUG` e quebrou o `gerar_falas.py`. E o corolário de
+processo: **peça visual nova = FOTO da tela antes de publicar**, porque nenhum
+portão de texto vê CSS que sumiu.
+
+---
+
 ## 🩹 O HALO BRANCO, E A LIÇÃO QUE VALE PARA TODO PORTÃO (13/set/2026)
 
 Recorte de figura sobre papel branco deixa em volta da silhueta uma casca de
