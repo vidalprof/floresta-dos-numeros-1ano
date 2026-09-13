@@ -440,6 +440,28 @@ aprovação.
 | **A palavra escrita entregava a resposta** — a tela mostrava JANELA e pedia para pintar JA | `_alfa1`, folha 6 | a palavra virou segredo até o acerto (o alto-falante fica). É a mesma lição da MOLA na Roda |
 | **Não enchia a aula** (22–37 min; piso 40) | `_abc1`, `_alfa1` | pote com o **alfabeto inteiro** (era 10 de 26 letras) e saque maior. 30–42 e 32–54 |
 | **Cor cravada sem fundo** (portão 4c) | `_alfa1` | herdar; as duas regras só repetiam à mão o preto do `body` |
+| **Sete palavras do pote SEM VOZ** — e fui eu que criei, no mesmo commit em que aumentei o pote | `_abc1` | as sete falas escritas; e o portão novo **`_qa/voz_do_pote.py` (0i2)**, que confere o pote INTEIRO |
+
+#### ⚠️ O portão `0i2` nasceu de um erro meu, e a lição é sobre SORTEIO
+
+Ao pôr o alfabeto inteiro no pote do Desfile das Letras, entraram sete palavras
+novas com figura — **e nenhuma com voz**. Num caderno de 1º ano a voz não é
+enfeite: a criança que ainda não lê aperta o alto-falante para saber o que é a
+figura. Se o sorteio lhe desse "xícara", ela apertava e não vinha nada.
+
+**Por que nenhum portão viu:** a folha é SORTEADA, e o `andar_folha.js` anda UMA
+tirada. Numa tirada de 12 entre 23 palavras, a chance de não cair nenhuma das
+sete é alta. **Portão que depende de sorte não é portão: é aposta.** O `0i2` não
+sorteia — confere o pote inteiro, item por item.
+
+E ele custou duas versões erradas antes de ficar de pé, o que também é lição:
+a primeira juntava todos os textos do pote num saco só e adivinhava a família
+pelo tamanho (416 acusações falsas na moradia); a segunda separou por campo mas
+ainda cruzava folhas (`perg12_` cobrado da folha 10). A terceira lê o
+`folhas.js` **função por função** e só cobra de `pN` os prefixos que aparecem
+dentro de `fN` — e ainda exige que a MAIORIA do campo já seja falada com aquele
+prefixo, senão se cala. **"Não medi" é melhor que acusar inocente**: portão que
+acusa inocente é portão que se aprende a ignorar.
 
 ⚠️ **O remendo da duração NÃO é a regra das 25 folhas.** Os dez cadernos de
 alfabetização têm 10 a 15 folhas; só a moradia tem 26. A **tarefa #105 continua
