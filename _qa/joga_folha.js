@@ -101,7 +101,18 @@ const ESPERA_FECHA = 1400;
         await executa(pg, id, plano);
         await pg.waitForTimeout(ESPERA_FECHA);
         const fechou = await pg.evaluate(x => !!ST.resp[x], id);
-        if (fechou) fechados++; else presos.push(id + (plano.tipo !== 'clique' ? ' [' + plano.tipo + ']' : ''));
+        if (fechou) { fechados++; continue; }
+        /* ⚠️ ISTO AQUI É A LIÇÃO MAIS CARA DESTE ARQUIVO, e ela é de método:
+           na primeira varredura o jogador REPROVOU três cadernos, e em DOIS
+           deles ele estava errado — a folha do `_fra1` marca as palavras numa
+           bolinha e confirma no botão "pronto"; a do `_alfa1` pega uma peça
+           e depois solta no alvo. Ele não conhecia nenhuma das duas, mas achou
+           um botão parecido, chutou um plano, e chamou de defeito o que era
+           ignorância dele. Portão que acusa inocente é portão que se aprende a
+           ignorar. Agora só REPROVA o que ele entendeu de verdade; o resto sai
+           como dívida, que é o que é. */
+        if (plano.fe === 'baixa') { semJeito++; continue; }
+        presos.push(id + (plano.tipo !== 'clique' ? ' [' + plano.tipo + ']' : ''));
       }
       relato.push({ pi, nome, tem: ids.length, fechados, semJeito, presos });
     }
@@ -174,11 +185,11 @@ function montaPlano(id) {
 
   /* o teclado: a folha de DIGITAR publica `esc-<id>` no quadro vazio */
   const cxEsc = qa.filter(e => e.getAttribute('data-qa') === 'esc-' + id)[0];
-  if (cxEsc) return { tipo: 'digitar', alvo: 'esc-' + id, texto: certo };
+  if (cxEsc) return { tipo: 'digitar', alvo: 'esc-' + id, texto: certo, fe: 'alta' };
 
   /* o canvas: a folha de TRAÇAR publica `traca-<id>` */
   const cv = qa.filter(e => e.getAttribute('data-qa') === 'traca-' + id)[0];
-  if (cv) return { tipo: 'tracar', alvo: 'traca-' + id };
+  if (cv) return { tipo: 'tracar', alvo: 'traca-' + id, fe: 'alta' };
 
   /* LIGAR: o id é `l<pi><tag>_<k>` e as pontas são `lig<tag>-e-<k>` / `-d-<k>` */
   const mLig = id.match(/^l\d+(.+)_(.+)$/);
@@ -186,8 +197,31 @@ function montaPlano(id) {
     const e = 'lig' + mLig[1] + '-e-' + mLig[2], d = 'lig' + mLig[1] + '-d-' + mLig[2];
     if (qa.some(x => x.getAttribute('data-qa') === e) &&
         qa.some(x => x.getAttribute('data-qa') === d)) {
-      return { tipo: 'ligar', alvos: [e, d] };
+      return { tipo: 'ligar', alvos: [e, d], fe: 'alta' };
     }
+  }
+
+  /* ⭐ A FAMÍLIA "MARQUE E CONFIRME" — a folha não fecha no clique da peça, e sim
+     num botão de confirmar no fim ("Pronto", "Conferir"). Eu não sabia disto e
+     por causa disso acusei o `_fra1` de ter uma folha quebrada: ele pinta uma
+     bolinha por palavra e só depois confirma. Clicar a bolinha e esperar o item
+     fechar era eu não conhecer a peça.
+     ⚠️ Quando a resposta é um NÚMERO, ela não é o nome de um alvo: é QUANTAS.
+        As bolinhas pintam da esquerda para a direita, então tocar a de índice
+        N-1 deixa N pintadas. */
+  const fecha = qa.filter(e => {
+    const v = e.getAttribute('data-qa') || '';
+    return v === 'pronto-' + id || v === 'conferir-' + id;
+  })[0];
+  if (fecha && /^\d+$/.test(certo)) {
+    const n = parseInt(certo, 10);
+    const bol = qa.filter(e => {
+      const v = (e.getAttribute('data-qa') || '');
+      return v.indexOf(id) > -1 && v.slice(-('-' + (n - 1)).length) === '-' + (n - 1);
+    })[0];
+    if (bol) return { tipo: 'clique', fe: 'alta',
+                      alvos: [bol.getAttribute('data-qa'), fecha.getAttribute('data-qa')] };
+    return { tipo: 'nao-sei' };
   }
 
   /* ⚠️ OS PEDAÇOS DA RESPOSTA, e a ambiguidade que precisou de MEDIDA e não de
@@ -235,13 +269,19 @@ function montaPlano(id) {
     if (!ok) {
       /* último caso: um alvo só, que carrega o id (o mural) */
       const so = qa.filter(e => (e.getAttribute('data-qa') || '').indexOf(id) > -1);
-      if (so.length === 1) return { tipo: 'clique', alvos: [so[0].getAttribute('data-qa')] };
+      if (so.length === 1) return { tipo: 'clique', alvos: [so[0].getAttribute('data-qa')], fe: 'baixa' };
       return { tipo: 'nao-sei' };
     }
     parciais.forEach(a => { usados.push(a); alvos.push(a); });
   }
   if (!alvos.length) return { tipo: 'nao-sei' };
-  return { tipo: 'clique', alvos: alvos };
+  /* ⚠️ CONFIANÇA ALTA só quando TODO alvo carrega o id do item. Quando um deles
+     veio de peça compartilhada (a tira do alfabeto) ou do último recurso, o
+     plano pode estar simplesmente errado — e aí um item que não fecha é
+     ignorância minha, não defeito da folha. */
+  const forte = alvos.every(a => a.toLowerCase().indexOf(id.toLowerCase()) > -1);
+  if (fecha) alvos.push(fecha.getAttribute('data-qa'));
+  return { tipo: 'clique', alvos: alvos, fe: forte ? 'alta' : 'baixa' };
 }
 
 /* --------------------------------------------------------------- */
