@@ -179,6 +179,46 @@ contorno leitoso no fundo colorido da folha. → `_padrao/tirar_halo.py` (inunda
 partir da BORDA, por vizinhança, com degradê: o branco de dentro da figura fica
 intacto).
 
+### 3.12 A cartela voltou em MANCHA — e várias delas iguais
+Na Rua do Mundo pedi a arte em **oito cartelas de seis peças**, todas com a
+**mesma semente**. Vieram **duas imagens distintas** entre as oito (md5 igual em
+c1=c3=c4=c6=c7 e em c2=c5=c8) e nenhuma servia: o que chegou foram manchas de
+argila sem forma.
+
+Duas causas, as duas medidas:
+1. **Semente igual em pedidos parecidos devolve a MESMA imagem.** A receita da
+   casa diz *"semente fixa POR CARTELA"* — uma por cartela, não **uma para
+   todas**. Eu li "fixa" e esqueci o "por".
+2. **O Flux não lê "seis objetos numa grade"** com uma lista numerada longa: ele
+   funde tudo. A cartela existe para **economizar chamada PAGA** — e no caminho
+   grátis (Pollinations) não há chamada paga. Uma peça por chamada custa o mesmo
+   **zero** e é o que o modelo sabe desenhar.
+
+→ **A regra, daqui para a frente:** cartela quando a chamada é paga (Gemini,
+OpenAI); **uma peça por chamada quando é de graça**, sempre com **semente
+diferente por peça**. A irmandade continua vindo do BLOCO DE ESTILO, que é o
+mesmo em todas.
+
+### 3.13 Um portão que só funcionava num caderno mede um caderno
+O `_qa/resposta_impressa.py` lia as palavras do caderno em
+`Object.keys(PAL)` — o dicionário dos cadernos de **alfabetização**. Num caderno
+de Geografia, que guarda as moradias em `MOR`, o `PAL` não existe: o script
+estourava no navegador e o portão imprimia **"NÃO MEDI"**, com código 2.
+E "NÃO MEDI" **não é "passou"**: é *rodou cego*. Fosse eu confiar no resumo do
+pré-voo, teria publicado sem que nada ali tivesse sido olhado.
+→ As palavras agora saem das **próprias respostas** (`RESP`), que todo caderno
+tem. Conferido: o `_roda1` continua passando com a regra nova.
+
+### 3.14 `data-alvo` só valia DENTRO do item
+Há folhas em que a coisa que a criança **toca** é a resposta visível — e isso é
+a tarefa, não defeito: o caça-palavras imprime a lista do que procurar (a folha
+de papel de origem também imprime), o poema mostra as palavras que ela tem de
+**achar no texto**, e o mural mostra o nome da casa que ela **escolhe** (ali não
+existe resposta errada). O portão reprovava os três.
+→ A marca passa a valer **na raiz do item**, e os itens declarados são
+**impressos no log**: declarado não é escondido.
+
+
 ---
 
 ## 4. 📏 O TAMANHO DA SEQUÊNCIA — a conta, e por que 25 está certo
@@ -394,7 +434,26 @@ por isso é o crivo escrito do `POTE-*.md` — e ele é meu, não é medida.
 | 8 | O Grande Jogo das Palavras | 10 | 26–47 | ⛔ **sem colheita própria** (a colheita já chegou: `folhas_d8`) |
 | 9 | **A Roda das Sílabas** | **15** | 34–53 | ✅ 26 folhas |
 
-**Nenhum chega às 25 folhas** — o maior, a Roda, tem 15. **Oito de dez têm o
+**E há uma sequência FORA da alfabetização** (13/set/2026), a primeira do
+formato em outro componente:
+
+| Ano | Caderno | Folhas | Duração | Crivo com o VERBO? |
+|---|---|---|---|---|
+| 2º · Geografia | **A Rua do Mundo** (tipos de moradia) | **25** | 39–69 | ✅ 30 folhas, `POTE-MORADIA.md` |
+
+> ⭐ **É o primeiro caderno a cumprir a REGRA DO TAMANHO** (25 folhas) e o
+> primeiro com **dezenove gestos diferentes** — nenhum passa de duas folhas.
+>
+> ⚠️ **E ele trouxe uma lição que vale para toda sequência nova:** o crivo
+> mostrou que **22 das 30 folhas de papel param no degrau do ANO ANTERIOR**
+> (pedem só o nome da moradia, que em Blumenau é habilidade do 1º ano). Quando
+> isso acontece, **quem manda deixa de ser o pote e passa a ser o currículo**:
+> quatro blocos deste caderno (a visão vertical, o tempo, o porquê do material
+> e o porquê do lugar) não existem em folha impressa nenhuma do pote — nasceram
+> da rede. A REGRA DA ORIGEM continua valendo; ela só não pode rebaixar o ano.
+
+**Nenhum caderno de alfabetização chega às 25 folhas** — o maior, a Roda, tem 15.
+(A Rua do Mundo, de Geografia, nasceu já com 25.) **Oito de dez têm o
 crivo do verbo**; faltam o degrau 0 e o 8, que nunca tiveram colheita própria.
 
 > ⚠️ **CORREÇÃO, e ela é lição de método (12/set/2026).** Eu disse ao Marcos que
