@@ -152,6 +152,22 @@ if [ -n "$REPROVOU" ]; then
   echo "==================================================="
   rm -rf "$TMP"; exit 1
 fi
+# ⚠️ SILENCIO NAO E APROVACAO — e este arquivo passou a primeira semana de vida
+#    se contradizendo: imprimia "NAO MEDIU — isto nao e passou" em cima e
+#    "BANCA APROVOU" embaixo, na mesma tela. Quem le a ultima linha (e é ela que
+#    o script chamador le, pelo codigo de saida) levava um portao cego embrulhado
+#    como aprovacao. Agora portao que nao mediu segura o veredito em 2, e quem
+#    quiser publicar assim tem que dizer, com todas as letras, que conferiu na mao
+#    que o caderno nao tem aquilo. É a mesma regra do CLAUDE.md: portao que
+#    imprime NADA nao e "passou", e "nao medi" e divida, nao carimbo.
+if [ -n "$CEGO" ]; then
+  echo
+  echo " BANCA NAO CONCLUIU — $OK portao(oes) passaram, mas estes nao mediram:$CEGO"
+  echo " Isto NAO e aprovacao. Conferir na mao se o caderno realmente nao tem"
+  echo " aquilo (ai a divida e legitima) ou se o portao ficou cego (ai e defeito)."
+  echo "==================================================="
+  rm -rf "$TMP"; exit 2
+fi
 echo
 echo " BANCA APROVOU (nos portoes que alcancam este formato)."
 echo "==================================================="

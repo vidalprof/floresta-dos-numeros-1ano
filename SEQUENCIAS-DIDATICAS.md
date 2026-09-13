@@ -484,10 +484,36 @@ existe e ninguém roda): `previo.sh` (39 portões de texto), `boot.js`,
 `catalogo.py`, `node --check`. Fora da banca, por rodarem no Actions:
 `pronuncia.py` (ASR) e `silaba_fonte.py`.
 
-**A dívida (tarefa #104):** a escada didática e o leque de gestos **não são
-medidos** em folha viva. Nenhum portão hoje diz se as 25 folhas sobem de
-verdade, nem se um gesto passa de 40%. Enquanto isso não existir, quem responde
-por isso é o crivo escrito do `POTE-*.md` — e ele é meu, não é medida.
+**A dívida (tarefa #104) — PAGA em 13/set/2026, e só pela metade que dá para
+medir.** Nasceu o **`_qa/leque_folha.py` (portão 0b7)**, dentro da banca: ele
+conta o gesto de cada folha e reprova se um só gesto passar de **40%**, se o
+caderno tiver menos de **4 gestos** diferentes, ou se a **escada descer** (o
+último terço mais leve que o primeiro). O peso vem importado do `duracao.py`, e
+é PALPITE DECLARADO — nunca cronometrado com criança.
+
+⚠️ **O gesto é DECLARADO pelo caderno, não adivinhado do código**, e essa foi a
+lição mais cara do arquivo, paga na primeira hora de vida dele. A primeira
+versão lia o gesto do corpo da `fN` reusando o classificador do `duracao.py` —
+parecia elegante (uma régua só) e era falsa: *"Ligue cada figura ao seu pedaço"*
+saía como **arrastar**, *"Pinte só os balões deste pedacinho"* saía como
+**ligar**. Para o relógio isso não importa (erra 5 s e a soma continua na ordem
+certa); para dizer QUAL é o gesto, importa tudo — e o portão chegou a reprovar
+três cadernos por conta do próprio erro. Agora cada `index.html` traz um bloco
+`/*GESTOS-INI*/ var GESTOS = {"f1":"..."}` escrito pela mão de quem monta, como
+já são o `LIGAR` e o `curriculo.json`. Sem declaração o portão diz **NÃO MEDI**,
+que aparece na banca como dívida e não como carimbo.
+
+⚠️ **O que ele continua NÃO medindo, e eu não vou fingir que mede:** se o
+CONTEÚDO sobe — sílaba simples antes da complexa, palavra curta antes da
+comprida, o degrau do currículo. O peso do gesto é um proxy honesto e está dito
+assim na tela. Quem responde pelo resto continua sendo o crivo do `POTE-*.md` e
+o professor.
+
+**⚠️ E a banca deixou de carimbar o que não mediu (13/set/2026).** O
+`auditar_folha.sh` imprimia *"NÃO MEDIU — isto não é passou"* no meio da tela e
+**"BANCA APROVOU"** no fim, na mesma corrida — e é a última linha (o código de
+saída) que o script chamador lê. Portão cego ia embrulhado como aprovação. Agora
+qualquer 2 segura o veredito em **"BANCA NÃO CONCLUIU"**, código 2.
 
 ---
 
@@ -495,7 +521,7 @@ por isso é o crivo escrito do `POTE-*.md` — e ele é meu, não é medida.
 
 | Degrau | Caderno | Folhas | Duração | Crivo com o VERBO? |
 |---|---|---|---|---|
-| 0 | O Desfile das Letras | 10 | 22–37 | ⛔ **sem colheita própria** |
+| 0 | O Desfile das Letras | **11** | 33–48 | ✅ **45 folhas, 13/set** (`folhas_d0`) |
 | 1 | O Bando das Rimas | 10 | 24–41 | ✅ **28 folhas, 12/set** |
 | 2 | Bate-Palma das Palavras | 10 | 26–42 | ✅ |
 | 3 | A Família das Palavras | 10 | 29–43 | ✅ |
@@ -525,8 +551,25 @@ formato em outro componente:
 > da rede. A REGRA DA ORIGEM continua valendo; ela só não pode rebaixar o ano.
 
 **Nenhum caderno de alfabetização chega às 25 folhas** — o maior, a Roda, tem 15.
-(A Rua do Mundo, de Geografia, nasceu já com 25.) **Oito de dez têm o
-crivo do verbo**; faltam o degrau 0 e o 8, que nunca tiveram colheita própria.
+(A Rua do Mundo, de Geografia, nasceu já com 25.) **Nove de dez têm o
+crivo do verbo**; falta só o degrau 8, cuja colheita já está em `folhas_d8`.
+
+> **O degrau 0 saiu da fila em 13/set/2026.** Colhi **45 folhas de papel** de
+> sequência alfabética (`_sequencias/folhas_d0`) e o comando impresso delas
+> mandou fazer duas coisas que o Desfile não fazia:
+> - **`CIRCULE O NOME QUE ESTÁ FORA DA ORDEM EM CADA GRUPO`** (folha d14) →
+>   virou a **folha 5, "Qual palavra está fora da ordem?"**, que substituiu uma
+>   folha de escolher que era a quinta seguida do mesmo gesto e repetia o que a
+>   folha 6 já pedia.
+> - **pôr PALAVRAS (não letras) em ordem alfabética** → virou a **folha 10,
+>   "Palavras em ordem alfabética"**, clonando a mecânica de ordenar da folha 7.
+>
+> É a REGRA DA ORIGEM funcionando como o Marcos a escreveu: *"as
+> interatividades têm que vir das atividades que você seleciona na internet, o
+> que as atividades pedem para o aluno fazer, então você dá essa
+> interatividade"*. Eu não inventei os dois gestos — li o comando impresso.
+> Resultado medido pelo 0b7: o Desfile passou de **5 para 7 gestos** e o
+> "escolher" caiu de 55% para **36%** (o teto é 40%).
 
 > ⚠️ **CORREÇÃO, e ela é lição de método (12/set/2026).** Eu disse ao Marcos que
 > só **quatro** de dez tinham crivo. Estava errado: contei com um `grep` que só

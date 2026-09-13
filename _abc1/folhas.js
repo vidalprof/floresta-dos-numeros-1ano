@@ -52,7 +52,7 @@ function fechaItem(d, box, id){
 
 function monta(){
   livro.innerHTML = ""; PAGEL = []; RESP = {};
-  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10], i;
+  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11], i;
   for(i = 0; i < caps.length; i++){
     var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
     caps[i](d, i);
@@ -402,24 +402,46 @@ function f4(d, pi){
    ensina o truque: recitar do começo até chegar na letra. */
 function f5(d, pi){
   faixa(d, pi, NOMES[4]);
-  enunciado(d, pi, "Qual letra vem <b>antes</b> desta?", "p5enun");
+  /* ⭐ ESTA FOLHA TAMBÉM VEIO DA COLHEITA (13/set/2026), pela regra do Marcos:
+     o gesto vem do COMANDO IMPRESSO. A folha d14 manda *"CIRCULE O NOME QUE
+     ESTÁ FORA DA ORDEM EM CADA GRUPO"* — e o Desfile não tinha nada assim com
+     PALAVRAS (a folha 8 faz isso com letras soltas).
+
+     ⚠️ E ela substituiu "Quem vem ANTES?", que era a quinta folha seguida de
+     ESCOLHER-ENTRE-TRÊS e repetia o que a folha 6 ("Antes e depois") já faz
+     inteiro. Quem apontou isso foi o portão 0b7: cinco folhas do mesmo gesto
+     são, para a criança, a mesma tela cinco vezes — o "isso eu já fiz" que o
+     Marcos ouve na sala. Não se perdeu conteúdo: perdeu-se repetição.
+
+     A mecânica é CLONADA da folha 8 deste mesmo caderno (riscoDeCircular). */
+  enunciado(d, pi, "Estas palavras estão em ordem alfabética — menos <b>UMA</b>. " +
+            "Circule a que está fora da ordem.", "p5enun");
   var L = ST.folha.p5;
   for(var i = 0; i < L.length; i++){
-    var it = L[i], id = "a5_" + i, box = item(i + 1);
-    var lin = el("div", "vizinha");
-    lin.appendChild(el("div", "vaga", "?"));
-    lin.appendChild(el("i", "setacss"));
-    lin.appendChild(letraSom(it.L, "grandona"));
-    box.appendChild(lin);
-    opcoes(box, pi, id, opsLetra(it.op), it.c, "figbt", "certo5_" + it.L, "dica5_" + it.L);
-    fechaItem(d, box, id);
+    (function(it, i){
+      var id = "a5_" + i, box = item(i + 1);
+      registra(id, pi, it.c);
+      var grade = el("div", "gradecirc filaerr"), bts = [];
+      it.g.forEach(function(P){
+        var b = el("button", "figcirc palcirc", esc(P));
+        b.setAttribute("data-qa", "forap-" + id + "-" + P);
+        b.setAttribute("aria-label", "palavra " + P);
+        b._w = P; grade.appendChild(b); bts.push(b);
+      });
+      box.appendChild(grade);
+      riscoDeCircular(grade, bts, function(b){
+        if(ST.resp[id]) return;
+        sPasso(); falar("pal_" + b._w.toLowerCase());
+        if(b._w === it.c){ b.className = "figcirc palcirc marcada"; acertou(id, "certo5_" + it.c); }
+        else { b.className = "figcirc palcirc erro";
+               setTimeout(function(){ b.className = "figcirc palcirc"; }, 480);
+               errou(id, "dica5_" + it.c); }
+      });
+      fechaItem(d, box, id);
+    })(L[i], i);
   }
 }
 
-/* 6 — ANTES E DEPOIS ao mesmo tempo (as duas na mesma cabeça)
-   ⚠️ AS DUAS VAGAS SÃO O MESMO ITEM: só fecha quando as duas estão certas. É
-   isso que faz o degrau ser maior que a soma das folhas 4 e 5 — a criança tem
-   que segurar a fila inteira, não meia fila. */
 function f6(d, pi){
   faixa(d, pi, NOMES[5]);
   enunciado(d, pi, "<b>Preencha</b> os dois lados: quem vem antes e quem vem depois.", "p6enun");
@@ -580,13 +602,13 @@ function f9(d, pi){
    monta o próprio alfabeto ilustrado — a letra e uma palavra que começa com ela
    — e o painel fica no relatório. É também a ideia da aula 10 da sequência de
    professor: um cartaz coletivo que fica exposto na sala. */
-function f10(d, pi){
-  faixa(d, pi, NOMES[9]);
-  enunciado(d, pi, "Toque nas letras que você quer no <b>seu alfabeto</b>. Ele fica guardado no fim.", "p10enun");
-  var L = ST.folha.p10, mural = el("div", "mural");
+function f11(d, pi){
+  faixa(d, pi, NOMES[10]);
+  enunciado(d, pi, "Toque nas letras que você quer no <b>seu alfabeto</b>. Ele fica guardado no fim.", "p11enun");
+  var L = ST.folha.p11, mural = el("div", "mural");
   for(var i = 0; i < L.length; i++){
     (function(it, i){
-      var id = "a10_" + i;
+      var id = "a11_" + i;
       registra(id, pi, it.L);
       var c = el("button", "cartaorima cartalt",
         '<span class="ltop grande">' + esc(it.L) + "</span>" +
@@ -598,7 +620,7 @@ function f10(d, pi){
         sPasso(); falar("let_" + it.L);
         setTimeout(function(){ falar("pal_" + it.w); }, 620);
         c.className = "cartaorima cartalt escolhido";
-        acertou(id, "certo10_" + it.L);
+        acertou(id, "certo11_" + it.L);
       };
       if(ST.resp[id]) c.className = "cartaorima cartalt escolhido";
       mural.appendChild(c);
@@ -866,6 +888,11 @@ function idsDaPagina(pi){
   if(pi === 8) for(i = 0; i < F.p8.length; i++) ids.push("a8_" + i);
   if(pi === 9) for(i = 0; i < F.p9.length; i++) ids.push("a9_" + i);
   if(pi === 10) for(i = 0; i < F.p10.length; i++) ids.push("a10_" + i);
+  /* ⚠️ FOLHA NOVA = LINHA NOVA AQUI. A POSIÇÃO É A IDENTIDADE: a folha 11 usa o
+     pote p11 e grava ids a11_. Eu tentei encaixar a folha nova como `p10b` para
+     não mexer no mural, e o app estourou em `F.p11.length` — porque este ajudante
+     percorre `p<posição>`. Não há atalho: entrou folha, renumera. */
+  if(pi === 11) for(i = 0; i < F.p11.length; i++) ids.push("a11_" + i);
   return ids;
 }
 function pendentes(pi){
@@ -1103,7 +1130,14 @@ var OBJETIVOS = [
    nao: "ainda constrói a ordem, mas não a confere sozinha"},
   {n: "A letra que abre a palavra", f: [9],
    ok: "sabe com que letra começa o nome da figura",
-   nao: "ainda não liga a letra ao som que ela faz na palavra"}
+   nao: "ainda não liga a letra ao som que ela faz na palavra"},
+  /* ⚠️ O DEGRAU QUE FALTAVA, e ele veio da colheita de folhas de papel: seis das
+     quinze mandam "escreva as palavras em ordem alfabética". Recitar o alfabeto
+     é uma coisa; USÁ-LO para achar a palavra na lista de chamada, na agenda, no
+     dicionário, é outra — e é essa que a criança leva para fora da escola. */
+  {n: "Usar o alfabeto para ordenar PALAVRAS", f: [10],
+   ok: "põe palavras em ordem alfabética olhando a primeira letra",
+   nao: "ainda ordena letras soltas, mas não palavras"}
 ];
 
 /* mede um objetivo: devolve acertos de primeira, com ajuda, total e pontos */
@@ -1409,3 +1443,72 @@ function fechaDossie(){ document.getElementById("dossie").className = ""; }
     vaiPara(ST.pag || 1);
   };
 })();
+
+/* ============ 11 — PONHA AS PALAVRAS EM ORDEM ALFABÉTICA ============
+   ⭐ ESTA FOLHA VEIO DA COLHEITA, pela regra do Marcos (13/set/2026): *"as
+   interatividades têm que vir das atividades que você seleciona na internet, o
+   que as atividades pedem para o aluno fazer"*. De quinze folhas de alfabeto
+   colhidas, **seis** mandam a mesma coisa, com estas palavras: *"ESCREVA AS
+   PALAVRAS EM ORDEM ALFABÉTICA"* (d02, d08, d11, d13, d14, d15). É o comando
+   mais repetido da colheita inteira — e o Desfile não tinha nada parecido.
+
+   ⚠️ E é ele que faz o alfabeto SERVIR para alguma coisa. Saber recitar o
+   alfabeto é uma coisa; usá-lo para achar a palavra no dicionário, na lista de
+   chamada, na agenda, é outra — e é essa que a criança leva para fora da escola.
+
+   ⚠️ ORDENAR PELA PRIMEIRA LETRA, e as palavras do pote nunca começam iguais:
+   comparar a segunda letra é degrau de 2º ano, e aqui isso viraria erro sem que
+   ela soubesse por quê.
+
+   A mecânica é CLONADA da folha 7 (ordenar letras), como manda a casa. */
+function f10(d, pi){
+  faixa(d, pi, NOMES[9]);
+  enunciado(d, pi, "Estas palavras estão fora de ordem. Toque nelas <b>na ordem " +
+            "do alfabeto</b>, olhando a primeira letra.", "p10enun");
+  var L = ST.folha.p10;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "a10_" + i, box = item(i + 1);
+      var certa = it.g.slice().sort(function(a, b){
+        return a.charCodeAt(0) - b.charCodeAt(0);
+      });
+      registra(id, pi, certa.join(" "));
+      var emb = certa.slice(), tmp;
+      /* embaralhar SEM sorteio (mesma razão da folha 7: o jogador precisa de
+         resultado estável, e a criança não vê diferença) */
+      tmp = emb[0]; emb[0] = emb[emb.length - 1]; emb[emb.length - 1] = tmp;
+      if(emb.length > 2){ tmp = emb[1]; emb[1] = emb[2]; emb[2] = tmp; }
+      var trilha = el("div", "trilhapal"), k, vagas = [];
+      for(k = 0; k < certa.length; k++){
+        var v = el("div", "vagapal" + (ST.resp[id] ? " ok" : ""),
+                   ST.resp[id] ? esc(certa[k]) : '<span class="np">' + (k + 1) + "º</span>");
+        trilha.appendChild(v); vagas.push(v);
+      }
+      box.appendChild(trilha);
+      var banco = el("div", "ops"), posto = 0;
+      emb.forEach(function(P){
+        var b = el("button", "op palbt" + (ST.resp[id] ? " usada" : ""), esc(P));
+        b.setAttribute("data-qa", "ordp-" + id + "-" + P);
+        b.setAttribute("aria-label", "palavra " + P);
+        function poe(){
+          if(ST.resp[id] || b.className.indexOf("usada") > -1) return;
+          if(P !== certa[posto]){
+            sErro(); b.className = "op palbt erro";
+            setTimeout(function(){ b.className = "op palbt"; }, 480);
+            errou(id, "dica10_" + certa[0]); return;
+          }
+          sPasso(); falar("pal_" + P.toLowerCase());
+          vagas[posto].className = "vagapal ok"; vagas[posto].textContent = P;
+          b.className = "op palbt usada"; posto++;
+          if(posto === certa.length)
+            setTimeout(function(){ acertou(id, "certo10_" + certa[0]); }, 420);
+        }
+        b.onclick = function(){ if(b._arrastou){ b._arrastou = false; return; } poe(); };
+        puxavel(b, vagas, poe);
+        banco.appendChild(b);
+      });
+      box.appendChild(banco);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}

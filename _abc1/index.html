@@ -225,6 +225,15 @@ button{font-family:inherit;cursor:pointer}
 
 /* folha 7 — a trilha onde as letras entram em ordem */
 .trilhalt{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 0 10px}
+/* a fila das PALAVRAS em ordem alfabética (folha 11). Alvo alto e largo: a
+   palavra inteira é o botão, e no 1º ano o dedo precisa de espaço. */
+.trilhapal{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.vagapal{min-height:52px;border:3px dashed #b9b3e6;border-radius:14px;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:20px;letter-spacing:1px}
+.vagapal .np{color:#8a83c9;font-size:15px}
+.vagapal.ok{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.palbt{min-height:52px;padding:10px 18px;font-weight:900;font-size:19px;letter-spacing:1px}
+.palbt.usada{opacity:.35}
 .op.figbt.usada{opacity:.35;pointer-events:none}
 
 /* folha 8 — a fila com o intruso: uma linha só, para a ordem ficar visível */
@@ -769,12 +778,13 @@ var GESTOS = {
  "f2": "escolher",
  "f3": "escolher",
  "f4": "escolher",
- "f5": "escolher",
+ "f5": "achar o intruso",
  "f6": "completar",
  "f7": "ordenar",
  "f8": "achar o intruso",
  "f9": "escolher",
- "f10": "mural"
+ "f10": "ordenar palavras",
+ "f11": "mural"
 };
 /*GESTOS-FIM*/
 /*ITENS-INI*/
@@ -1508,229 +1518,112 @@ var ITENS = {
  ],
  "p5": [
   {
-   "L": "D",
-   "c": "C",
-   "op": [
-    "A",
-    "C",
-    "G"
-   ]
+   "g": [
+    "ABELHA",
+    "BOLA",
+    "ZEBRA",
+    "CASA"
+   ],
+   "c": "ZEBRA"
   },
   {
-   "L": "H",
-   "c": "G",
-   "op": [
-    "D",
-    "E",
-    "G"
-   ]
+   "g": [
+    "DADO",
+    "ESCOLA",
+    "UVA",
+    "FACA"
+   ],
+   "c": "UVA"
   },
   {
-   "L": "L",
-   "c": "K",
-   "op": [
-    "H",
-    "I",
-    "K"
-   ]
+   "g": [
+    "GATO",
+    "IGREJA",
+    "PATO",
+    "JANELA"
+   ],
+   "c": "PATO"
   },
   {
-   "L": "P",
-   "c": "O",
-   "op": [
-    "L",
-    "M",
-    "O"
-   ]
+   "g": [
+    "LEAO",
+    "MALA",
+    "VACA",
+    "NAVIO"
+   ],
+   "c": "VACA"
   },
   {
-   "L": "S",
-   "c": "R",
-   "op": [
-    "O",
-    "P",
-    "R"
-   ]
+   "g": [
+    "OVO",
+    "PATO",
+    "ABELHA",
+    "QUEIJO"
+   ],
+   "c": "ABELHA"
   },
   {
-   "L": "W",
-   "c": "V",
-   "op": [
-    "S",
-    "T",
-    "V"
-   ]
+   "g": [
+    "RATO",
+    "SAPO",
+    "BOLA",
+    "TOMATE"
+   ],
+   "c": "BOLA"
   },
   {
-   "L": "F",
-   "c": "E",
-   "op": [
-    "B",
-    "C",
-    "E"
-   ]
+   "g": [
+    "UVA",
+    "VACA",
+    "DADO",
+    "XICARA"
+   ],
+   "c": "DADO"
   },
   {
-   "L": "J",
-   "c": "I",
-   "op": [
-    "F",
-    "G",
-    "I"
-   ]
+   "g": [
+    "BOLA",
+    "CASA",
+    "RATO",
+    "DADO"
+   ],
+   "c": "RATO"
   },
   {
-   "L": "N",
-   "c": "M",
-   "op": [
-    "J",
-    "K",
-    "M"
-   ]
+   "g": [
+    "ESCOLA",
+    "FACA",
+    "OVO",
+    "GATO"
+   ],
+   "c": "OVO"
   },
   {
-   "L": "U",
-   "c": "T",
-   "op": [
-    "Q",
-    "R",
-    "T"
-   ]
+   "g": [
+    "MALA",
+    "NAVIO",
+    "CASA",
+    "OVO"
+   ],
+   "c": "CASA"
   },
   {
-   "L": "B",
-   "c": "A",
-   "op": [
-    "A",
-    "B",
-    "E"
-   ]
+   "g": [
+    "IGREJA",
+    "JANELA",
+    "SAPO",
+    "LEAO"
+   ],
+   "c": "SAPO"
   },
   {
-   "L": "C",
-   "c": "B",
-   "op": [
-    "B",
-    "C",
-    "D"
-   ]
-  },
-  {
-   "L": "E",
-   "c": "D",
-   "op": [
-    "B",
-    "D",
-    "G"
-   ]
-  },
-  {
-   "L": "G",
-   "c": "F",
-   "op": [
-    "C",
-    "F",
-    "J"
-   ]
-  },
-  {
-   "L": "I",
-   "c": "H",
-   "op": [
-    "D",
-    "H",
-    "K"
-   ]
-  },
-  {
-   "L": "K",
-   "c": "J",
-   "op": [
-    "J",
-    "K",
-    "M"
-   ]
-  },
-  {
-   "L": "M",
-   "c": "L",
-   "op": [
-    "L",
-    "N",
-    "O"
-   ]
-  },
-  {
-   "L": "O",
-   "c": "N",
-   "op": [
-    "J",
-    "N",
-    "P"
-   ]
-  },
-  {
-   "L": "Q",
-   "c": "P",
-   "op": [
-    "N",
-    "O",
-    "P"
-   ]
-  },
-  {
-   "L": "R",
-   "c": "Q",
-   "op": [
-    "N",
-    "Q",
-    "S"
-   ]
-  },
-  {
-   "L": "T",
-   "c": "S",
-   "op": [
-    "S",
-    "T",
-    "V"
-   ]
-  },
-  {
-   "L": "V",
-   "c": "U",
-   "op": [
-    "U",
-    "V",
-    "W"
-   ]
-  },
-  {
-   "L": "X",
-   "c": "W",
-   "op": [
-    "V",
-    "W",
-    "Z"
-   ]
-  },
-  {
-   "L": "Y",
-   "c": "X",
-   "op": [
-    "T",
-    "X",
-    "Y"
-   ]
-  },
-  {
-   "L": "Z",
-   "c": "Y",
-   "op": [
-    "U",
-    "V",
-    "Y"
-   ]
+   "g": [
+    "QUEIJO",
+    "RATO",
+    "GATO",
+    "SAPO"
+   ],
+   "c": "GATO"
   }
  ],
  "p6": [
@@ -2393,7 +2286,7 @@ var ITENS = {
    ]
   }
  ],
- "p10": [
+ "p11": [
   {
    "L": "A",
    "w": "abelha"
@@ -2486,22 +2379,118 @@ var ITENS = {
    "L": "X",
    "w": "xicara"
   }
+ ],
+ "p10": [
+  {
+   "g": [
+    "ABELHA",
+    "BOLA",
+    "CASA"
+   ]
+  },
+  {
+   "g": [
+    "DADO",
+    "ESCOLA",
+    "FACA"
+   ]
+  },
+  {
+   "g": [
+    "GATO",
+    "IGREJA",
+    "JANELA"
+   ]
+  },
+  {
+   "g": [
+    "LEAO",
+    "MALA",
+    "NAVIO"
+   ]
+  },
+  {
+   "g": [
+    "OVO",
+    "PATO",
+    "QUEIJO"
+   ]
+  },
+  {
+   "g": [
+    "RATO",
+    "SAPO",
+    "TOMATE"
+   ]
+  },
+  {
+   "g": [
+    "UVA",
+    "VACA",
+    "XICARA"
+   ]
+  },
+  {
+   "g": [
+    "BOLA",
+    "GATO",
+    "ZEBRA"
+   ]
+  },
+  {
+   "g": [
+    "CASA",
+    "ESCOLA",
+    "MALA"
+   ]
+  },
+  {
+   "g": [
+    "DADO",
+    "JANELA",
+    "PATO"
+   ]
+  },
+  {
+   "g": [
+    "FACA",
+    "NAVIO",
+    "UVA"
+   ]
+  },
+  {
+   "g": [
+    "ABELHA",
+    "OVO",
+    "VACA"
+   ]
+  }
  ]
 };
 /*ITENS-FIM*/
 /*FALAS-INI*/
 var FALAS = {
  "capa": "O Desfile das Letras. Dez folhas para conhecer o alfabeto e a ordem das letras. Escreva o seu nome ali embaixo e toque em Começar.",
- "certo10_A": "Á de abelha foi para o seu alfabeto!",
- "certo10_C": "Cê de casa foi para o seu alfabeto!",
- "certo10_E": "É de escola foi para o seu alfabeto!",
- "certo10_G": "Gê de gato foi para o seu alfabeto!",
- "certo10_J": "Jota de janela foi para o seu alfabeto!",
- "certo10_M": "Ême de mala foi para o seu alfabeto!",
- "certo10_P": "Pê de pato foi para o seu alfabeto!",
- "certo10_R": "Érre de rato foi para o seu alfabeto!",
- "certo10_U": "U de uva foi para o seu alfabeto!",
- "certo10_Z": "Zê de zebra foi para o seu alfabeto!",
+ "certo10_ABELHA": "Isso! Em ordem do alfabeto: abelha, depois ovo, depois vaca.",
+ "certo10_BOLA": "Isso! Em ordem do alfabeto: bola, depois gato, depois zebra.",
+ "certo10_CASA": "Isso! Em ordem do alfabeto: casa, depois escola, depois mala.",
+ "certo10_DADO": "Isso! Em ordem do alfabeto: dado, depois janela, depois pato.",
+ "certo10_FACA": "Isso! Em ordem do alfabeto: faca, depois navio, depois uva.",
+ "certo10_GATO": "Isso! Em ordem do alfabeto: gato, depois igreja, depois janela.",
+ "certo10_LEAO": "Isso! Em ordem do alfabeto: leao, depois mala, depois navio.",
+ "certo10_OVO": "Isso! Em ordem do alfabeto: ovo, depois pato, depois queijo.",
+ "certo10_RATO": "Isso! Em ordem do alfabeto: rato, depois sapo, depois tomate.",
+ "certo10_UVA": "Isso! Em ordem do alfabeto: uva, depois vaca, depois xicara.",
+ "certo11_A": "Á de abelha foi para o seu alfabeto!",
+ "certo11_C": "Cê de casa foi para o seu alfabeto!",
+ "certo11_E": "É de escola foi para o seu alfabeto!",
+ "certo11_G": "Gê de gato foi para o seu alfabeto!",
+ "certo11_J": "Jota de janela foi para o seu alfabeto!",
+ "certo11_M": "Ême de mala foi para o seu alfabeto!",
+ "certo11_P": "Pê de pato foi para o seu alfabeto!",
+ "certo11_R": "Érre de rato foi para o seu alfabeto!",
+ "certo11_U": "U de uva foi para o seu alfabeto!",
+ "certo11_Z": "Zê de zebra foi para o seu alfabeto!",
  "certo1_A": "Muito bem! á, bê, cê, dê, é. Essa é a ordem certa.",
  "certo1_D": "Muito bem! dê, é, éfe, gê, agá. Essa é a ordem certa.",
  "certo1_E": "Muito bem! é, éfe, gê, agá, i. Essa é a ordem certa.",
@@ -2542,16 +2531,18 @@ var FALAS = {
  "certo4_Q": "Isso! Depois do quê vem o érre.",
  "certo4_T": "Isso! Depois do tê vem o u.",
  "certo4_V": "Isso! Depois do vê vem o dábliu.",
- "certo5_D": "Muito bem! Antes do dê vem o cê.",
- "certo5_F": "Muito bem! Antes do éfe vem o é.",
- "certo5_H": "Muito bem! Antes do agá vem o gê.",
- "certo5_J": "Muito bem! Antes do jota vem o i.",
- "certo5_L": "Muito bem! Antes do éle vem o cá.",
- "certo5_N": "Muito bem! Antes do êne vem o ême.",
- "certo5_P": "Muito bem! Antes do pê vem o ó.",
- "certo5_S": "Muito bem! Antes do ésse vem o érre.",
- "certo5_U": "Muito bem! Antes do u vem o tê.",
- "certo5_W": "Muito bem! Antes do dábliu vem o vê.",
+ "certo5_ABELHA": "Isso! abelha não é da fila: em ordem ficam ovo, pato, queijo.",
+ "certo5_BOLA": "Isso! bola não é da fila: em ordem ficam rato, sapo, tomate.",
+ "certo5_CASA": "Isso! casa não é da fila: em ordem ficam mala, navio, ovo.",
+ "certo5_DADO": "Isso! dado não é da fila: em ordem ficam uva, vaca, xicara.",
+ "certo5_GATO": "Isso! gato não é da fila: em ordem ficam queijo, rato, sapo.",
+ "certo5_OVO": "Isso! ovo não é da fila: em ordem ficam escola, faca, gato.",
+ "certo5_PATO": "Isso! pato não é da fila: em ordem ficam gato, igreja, janela.",
+ "certo5_RATO": "Isso! rato não é da fila: em ordem ficam bola, casa, dado.",
+ "certo5_SAPO": "Isso! sapo não é da fila: em ordem ficam igreja, janela, leao.",
+ "certo5_UVA": "Isso! uva não é da fila: em ordem ficam dado, escola, faca.",
+ "certo5_VACA": "Isso! vaca não é da fila: em ordem ficam leao, mala, navio.",
+ "certo5_ZEBRA": "Isso! zebra não é da fila: em ordem ficam abelha, bola, casa.",
  "certo6_C": "Isso! Antes do cê vem o bê… e depois do cê vem o dê.",
  "certo6_E": "Isso! Antes do é vem o dê… e depois do é vem o éfe.",
  "certo6_G": "Isso! Antes do gê vem o éfe… e depois do gê vem o agá.",
@@ -2590,6 +2581,16 @@ var FALAS = {
  "certo9_tomate": "Muito bem! Tomate começa com tê.",
  "certo9_vaca": "Muito bem! Vaca começa com vê.",
  "certo9_zebra": "Muito bem! Zebra começa com zê.",
+ "dica10_ABELHA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_BOLA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_CASA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_DADO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_FACA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_GATO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_LEAO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_OVO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_RATO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "dica10_UVA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
  "dica1_A": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_D": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_E": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
@@ -2630,16 +2631,18 @@ var FALAS = {
  "dica4_Q": "Comece a falar o alfabeto e pare no quê. Qual vem logo em seguida?",
  "dica4_T": "Comece a falar o alfabeto e pare no tê. Qual vem logo em seguida?",
  "dica4_V": "Comece a falar o alfabeto e pare no vê. Qual vem logo em seguida?",
- "dica5_D": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do dê é a resposta.",
- "dica5_F": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do éfe é a resposta.",
- "dica5_H": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do agá é a resposta.",
- "dica5_J": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do jota é a resposta.",
- "dica5_L": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do éle é a resposta.",
- "dica5_N": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do êne é a resposta.",
- "dica5_P": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do pê é a resposta.",
- "dica5_S": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do ésse é a resposta.",
- "dica5_U": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do u é a resposta.",
- "dica5_W": "Fale o alfabeto desde o começo e vá com atenção: a letra que você diz logo ANTES do dábliu é a resposta.",
+ "dica5_ABELHA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_BOLA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_CASA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_DADO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_GATO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_OVO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_PATO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_RATO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_SAPO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_UVA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_VACA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
+ "dica5_ZEBRA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
  "dica6_C": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o cê e escute quem está de cada lado.",
  "dica6_E": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o é e escute quem está de cada lado.",
  "dica6_G": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o gê e escute quem está de cada lado.",
@@ -2706,12 +2709,13 @@ var FALAS = {
  "let_X": "xis.",
  "let_Y": "ípsilon.",
  "let_Z": "zê.",
- "p10enun": "Toque nas letras que você quer no seu alfabeto. Ele fica guardado no fim.",
+ "p10enun": "Folha dez: estas palavras estão fora de ordem. Toque nelas na ordem do alfabeto, olhando a primeira letra de cada uma.",
+ "p11enun": "Toque nas letras que você quer no seu alfabeto. Ele fica guardado no fim.",
  "p1enun": "Toque nas letras na ordem, do começo ao fim. Ouça o nome de cada uma.",
  "p2enun": "Ouça o nome da letra e toque nela.",
  "p3enun": "Uma letra fugiu da fila. Qual é?",
  "p4enun": "Qual letra vem depois desta?",
- "p5enun": "Qual letra vem antes desta?",
+ "p5enun": "Folha cinco: estas palavras estão em ordem alfabética, menos uma. Circule a que está fora da ordem.",
  "p6enun": "Preencha os dois lados: quem vem antes e quem vem depois.",
  "p7enun": "Estas letras embaralharam. Toque nelas na ordem certa do alfabeto.",
  "p8enun": "Uma letra entrou no lugar errado. Circule quem saiu da fila.",
@@ -2799,6 +2803,7 @@ var FALAS = {
  "15pqry7": 1,
  "16129lx": 1,
  "16293dl": 1,
+ "165oolt": 1,
  "16a1hmp": 1,
  "16vwf8f": 1,
  "1739fo5": 1,
@@ -2807,15 +2812,19 @@ var FALAS = {
  "17kyk9x": 1,
  "17kz9hh": 1,
  "17newhz": 1,
+ "17ngsr4": 1,
  "17tvsgp": 1,
  "185wi8z": 1,
  "185ylsb": 1,
  "188h1ri": 1,
  "18txncr": 1,
+ "19dibr5": 1,
  "19jb041": 1,
  "19vd775": 1,
  "1apmm3j": 1,
  "1aw3dk0": 1,
+ "1b8ag0k": 1,
+ "1bgbknv": 1,
  "1bl7zg1": 1,
  "1bxm5ra": 1,
  "1cdi469": 1,
@@ -2847,9 +2856,11 @@ var FALAS = {
  "1evdymu": 1,
  "1gkroh5": 1,
  "1gpw9m1": 1,
+ "1hcj1u9": 1,
  "1hxw9uc": 1,
  "1i0uup9": 1,
  "1i3fny8": 1,
+ "1ihvrn9": 1,
  "1j0395y": 1,
  "1jbnk3o": 1,
  "1jvgsrx": 1,
@@ -2878,6 +2889,7 @@ var FALAS = {
  "1rx7ptr": 1,
  "1sv2xun": 1,
  "1t039xu": 1,
+ "1t7t4jn": 1,
  "1ti4r28": 1,
  "1ti4r6k": 1,
  "1ti4uhm": 1,
@@ -2889,6 +2901,7 @@ var FALAS = {
  "1vkk3dc": 1,
  "1vkmral": 1,
  "1w0ucqp": 1,
+ "1wbctgq": 1,
  "1wyqhn8": 1,
  "1xbnkvc": 1,
  "1xxb0hp": 1,
@@ -2954,6 +2967,7 @@ var FALAS = {
  "c1lc3l": 1,
  "cfgrkh": 1,
  "cj0j1i": 1,
+ "d0ll2d": 1,
  "dime01": 1,
  "dvwtwb": 1,
  "dx7ine": 1,
@@ -2963,6 +2977,7 @@ var FALAS = {
  "fg7law": 1,
  "gnqcn": 1,
  "gstmv": 1,
+ "h8p85s": 1,
  "hdv879": 1,
  "i07tib": 1,
  "ia0dr4": 1,
@@ -2975,6 +2990,7 @@ var FALAS = {
  "jrb0nx": 1,
  "k5f0vu": 1,
  "k8f1kb": 1,
+ "ka9y5u": 1,
  "klslah": 1,
  "l1hnnm": 1,
  "m0gq2r": 1,
@@ -2992,6 +3008,7 @@ var FALAS = {
  "rjvi8m": 1,
  "sdmswb": 1,
  "swkns7": 1,
+ "t0g8a3": 1,
  "t7suzg": 1,
  "u6942z": 1,
  "ub8z6v": 1,
@@ -3078,9 +3095,9 @@ var CHAVE_LS = "desfile_das_letras_1ano";
    no encargo, e não havia folha nenhuma disso. O lugar dela é o começo: ordenar
    letra é o degrau anterior a tudo o que vem depois. */
 var NOMES = ["O desfile do alfabeto", "Que letra é esta?", "A letra que fugiu",
-             "Quem vem DEPOIS?", "Quem vem ANTES?", "Antes e depois",
+             "Quem vem DEPOIS?", "Qual palavra está fora da ordem?", "Antes e depois",
              "Ponha na ordem", "Quem saiu da fila?", "Com que letra começa?",
-             "O alfabeto da turma"];
+             "Palavras em ordem alfabética", "O alfabeto da turma"];
 /*<dossie-dados>*/
 var CURRICULO = {
  "ano": 1,
@@ -3161,11 +3178,20 @@ var CURRICULO = {
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Construção do sistema alfabético e da ortografia",
    "habilidade": "HABILIDADE: \"Identificar fonemas e sua representação por letras.\""
+  },
+  {
+   "objetivo": "Usar o alfabeto para ordenar PALAVRAS",
+   "folhas": [
+    10
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Conhecimento do alfabeto do português do Brasil",
+   "habilidade": "HABILIDADE: \"Nomear as letras do alfabeto e ordená-las.\""
   }
  ]
 };
 /*</dossie-dados>*/
-var CORES = ["c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5"];
+var CORES = ["c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5", "c1"];
 var ALFABETO = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 /* ---------- som ---------- */
@@ -3312,7 +3338,9 @@ function novaFolha(){
     p1: pega(ITENS.p1, 11), p2: pega(ITENS.p2, 12), p3: pega(ITENS.p3, 12),
     p4: pega(ITENS.p4, 12), p5: pega(ITENS.p5, 12), p6: pega(ITENS.p6, 11),
     p7: pega(ITENS.p7, 10), p8: pega(ITENS.p8, 10), p9: pega(ITENS.p9, 12),
-    p10: pega(ITENS.p10, 12)
+    /* ⚠️ 5 grupos na folha 10: cada grupo são 3 toques em ordem, então a folha
+       já dá 15 gestos — mais que isso vira lista, não exercício. */
+    p10: pega(ITENS.p10, 5), p11: pega(ITENS.p11, 12)
   };
 }
 </script>
