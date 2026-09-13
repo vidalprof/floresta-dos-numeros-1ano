@@ -71,14 +71,14 @@ button{font-family:inherit;cursor:pointer}
 .zap.ouvir{background:#fff;box-shadow:0 3px 0 #cdd0e4;border:2px solid #6d5ae6}
 .zap.ouvir svg{fill:#6d5ae6}
 .zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
-@-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
-@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
 
 #livro{max-width:880px;margin:12px auto 0;padding:0 10px}
 .pagina{position:relative;background:#fff;border-radius:22px;box-shadow:0 10px 34px rgba(35,25,80,.16);display:none;overflow:hidden;padding:0 0 20px}
 .pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
-@-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .faixa{background:#6d5ae6;color:#fff;padding:15px 18px 13px;display:flex;align-items:center;gap:12px}
 .faixa h2{margin:0;font-size:clamp(17px,4.4vw,25px);letter-spacing:.4px;text-transform:uppercase;flex:1;line-height:1.1}
 .faixa .num{background:#fff;color:#6d5ae6;font-weight:900;border-radius:50%;width:36px;height:36px;display:flex;
@@ -133,7 +133,7 @@ button{font-family:inherit;cursor:pointer}
 /* folha 5 — a grade que se circula */
 .gradecirc{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
   margin:8px 0 4px;touch-action:none}
-@media (max-width:430px){.gradecirc{grid-template-columns:repeat(2,1fr)}}
+media (max-width:430px){.gradecirc{grid-template-columns:repeat(2,1fr)}}
 .figcirc{display:flex;flex-direction:column;align-items:center;gap:3px;
   min-height:104px;padding:8px 4px;border:3px solid #e4e7f6;border-radius:16px;background:#fff;
   cursor:pointer;-webkit-transition:border-color .18s,background .18s;transition:border-color .18s,background .18s}
@@ -249,7 +249,7 @@ button{font-family:inherit;cursor:pointer}
   text-shadow:0 3px 0 #e6e2fb,0 5px 10px rgba(80,60,180,.18);
   -webkit-animation:entraDupla .55s cubic-bezier(.3,1.4,.5,1) both;
   animation:entraDupla .55s cubic-bezier(.3,1.4,.5,1) both}
-@media (prefers-reduced-motion:reduce){
+media (prefers-reduced-motion:reduce){
   .capa .ltcapa{-webkit-animation:none!important;animation:none!important;opacity:1!important}
 }
 
@@ -292,8 +292,8 @@ button{font-family:inherit;cursor:pointer}
 .op:active{transform:scale(.94)}
 .op.certa{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
 .op.erro{border-color:#e0562f;background:#fdeee9;-webkit-animation:treme .4s;animation:treme .4s}
-@-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 /* o estojo de canetinhas da folha 5 */
 .estojo{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px}
 .estojo .rot{font-weight:800;color:#5b4fc4;font-size:14px}
@@ -328,8 +328,8 @@ button{font-family:inherit;cursor:pointer}
   font-weight:900;font-size:30px;color:#0d7736;background:#e7f8ee;border:3px solid #15a34a;
   border-radius:14px;pointer-events:none;-webkit-transition:-webkit-transform .5s cubic-bezier(.2,.9,.25,1);
   transition:transform .5s cubic-bezier(.2,.9,.25,1);box-shadow:0 8px 20px rgba(21,163,74,.35)}
-@-webkit-keyframes pulo{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-9px)}100%{-webkit-transform:translateY(0)}}
-@keyframes pulo{0%{transform:translateY(0)}40%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+-webkit-keyframes pulo{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-9px)}100%{-webkit-transform:translateY(0)}}
+keyframes pulo{0%{transform:translateY(0)}40%{transform:translateY(-9px)}100%{transform:translateY(0)}}
 .escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:pulo .42s ease;animation:pulo .42s ease}
 .escondida.completa .lt:nth-child(2),.escondida.completa .buraco:nth-child(2){-webkit-animation-delay:.06s;animation-delay:.06s}
 .escondida.completa .lt:nth-child(3),.escondida.completa .buraco:nth-child(3){-webkit-animation-delay:.12s;animation-delay:.12s}
@@ -337,7 +337,7 @@ button{font-family:inherit;cursor:pointer}
 .escondida.completa .lt:nth-child(5),.escondida.completa .buraco:nth-child(5){-webkit-animation-delay:.24s;animation-delay:.24s}
 .escondida.completa .lt:nth-child(6),.escondida.completa .buraco:nth-child(6){-webkit-animation-delay:.3s;animation-delay:.3s}
 .escondida.completa .lt:nth-child(7),.escondida.completa .buraco:nth-child(7){-webkit-animation-delay:.36s;animation-delay:.36s}
-@media (prefers-reduced-motion: reduce){
+media (prefers-reduced-motion: reduce){
   .voa{-webkit-transition:none;transition:none}
   .escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:none;animation:none}
 }
@@ -358,7 +358,7 @@ button{font-family:inherit;cursor:pointer}
   -webkit-transition:all .18s;transition:all .18s}
 .silbox.acesa{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736;
   -webkit-transform:scale(1.06);transform:scale(1.06)}
-@media (prefers-reduced-motion: reduce){ .silbox{-webkit-transition:none;transition:none} }
+media (prefers-reduced-motion: reduce){ .silbox{-webkit-transition:none;transition:none} }
 
 /* 3 — sequência lógica */
 .fila{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
@@ -421,7 +421,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   -ms-touch-action:none;touch-action:none;-webkit-transition:border-color .15s,box-shadow .15s;
   transition:border-color .15s,box-shadow .15s}
 .ponta img{width:68px;height:68px;object-fit:contain}
-@media (max-width:420px){ .ponta{height:74px;font-size:21px} .ponta img{width:58px;height:58px} }
+media (max-width:420px){ .ponta{height:74px;font-size:21px} .ponta img{width:58px;height:58px} }
 .ponta.marcada{border-color:#6d5ae6;box-shadow:0 0 0 4px rgba(109,90,230,.22)}
 .ponta.feita{border-color:#15a34a;background:#e7f8ee}
 .ponta.mostra{border-color:#ffd233;box-shadow:0 0 0 4px rgba(255,210,51,.4)}
@@ -436,8 +436,8 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .sq.ok{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
 .cursor{display:inline-block;width:3px;height:28px;background:#6d5ae6;margin-left:2px;
   -webkit-animation:pisca .9s steps(2) infinite;animation:pisca .9s steps(2) infinite}
-@-webkit-keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
-@keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+-webkit-keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
 
 /* 9 — ordenar as sílabas */
 .tira{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
@@ -508,12 +508,12 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   color:#4b3fb0;text-shadow:0 3px 0 #d9d2ff,0 5px 10px rgba(60,40,140,.18);
   -webkit-animation:caiLetra .5s both;animation:caiLetra .5s both}
 .capa .titu .esp{display:inline-block;width:14px}
-/* ⚠️ `caiLetra` e não `cai`: o confete JÁ tinha um `@keyframes cai` que
+/* ⚠️ `caiLetra` e não `cai`: o confete JÁ tinha um `keyframes cai` que
    termina em `opacity:0`, declarado mais abaixo — e ele vencia. As letras
    do título animavam para invisível e a capa aparecia sem título nenhum.
    Nome de keyframe é global: conferir antes de criar um. */
-@-webkit-keyframes caiLetra{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
-@keyframes caiLetra{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
+-webkit-keyframes caiLetra{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
+keyframes caiLetra{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
 .capa .sub{font-weight:700;color:#5b4fc4;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
 /* a esteira: as figuras em cima, a cinta rodando embaixo */
 .capa .esteira{max-width:660px;margin:16px auto 4px;position:relative}
@@ -526,9 +526,9 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .capa .dupla .fig{height:clamp(54px,13vw,86px)}
 .capa .igual{display:inline-block;width:16px;height:12px;flex:none;
   border-top:3px solid #6d5ae6;border-bottom:3px solid #6d5ae6}
-@-webkit-keyframes entraDupla{from{opacity:0;-webkit-transform:translateY(-18px) scale(.85)}to{opacity:1;-webkit-transform:none}}
-@keyframes entraDupla{from{opacity:0;transform:translateY(-18px) scale(.85)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.capa .dupla{-webkit-animation:none!important;animation:none!important;opacity:1!important;-webkit-transform:none!important;transform:none!important}}
+-webkit-keyframes entraDupla{from{opacity:0;-webkit-transform:translateY(-18px) scale(.85)}to{opacity:1;-webkit-transform:none}}
+keyframes entraDupla{from{opacity:0;transform:translateY(-18px) scale(.85)}to{opacity:1;transform:none}}
+media (prefers-reduced-motion:reduce){.capa .dupla{-webkit-animation:none!important;animation:none!important;opacity:1!important;-webkit-transform:none!important;transform:none!important}}
 .capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:8px;flex-wrap:nowrap}
 .capa .cena img{width:clamp(54px,14vw,110px);height:clamp(54px,14vw,110px);object-fit:contain;
   -webkit-animation:sobe 2.6s ease-in-out infinite;animation:sobe 2.6s ease-in-out infinite}
@@ -536,13 +536,13 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .capa .cena img:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
 .capa .cena img:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
 .capa .cena img:nth-child(5){-webkit-animation-delay:1.4s;animation-delay:1.4s}
-@-webkit-keyframes sobe{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
-@keyframes sobe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+-webkit-keyframes sobe{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
+keyframes sobe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 .capa .cinta{display:flex;gap:6px;justify-content:center;background:#3b3560;border-radius:9px;
   padding:6px 8px;margin-top:6px;box-shadow:0 6px 14px rgba(35,25,80,.22)}
 .capa .cinta i{display:block;width:26px;height:9px;background:#6d5ae6;border-radius:5px}
 .capa .chamada{margin-top:14px;font-weight:700;color:#4b4f70;font-size:clamp(13px,3.4vw,16px)}
-@media (prefers-reduced-motion: reduce){
+media (prefers-reduced-motion: reduce){
   .capa .titu .lt,.capa .cena img{-webkit-animation:none;animation:none}
 }
 #fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
@@ -608,32 +608,32 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .pagina.viva .item:nth-child(5){-webkit-animation-delay:.20s;animation-delay:.20s}
 .pagina.viva .item:nth-child(6){-webkit-animation-delay:.25s;animation-delay:.25s}
 .pagina.viva .item:nth-child(n+7){-webkit-animation-delay:.30s;animation-delay:.30s}
-@-webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
-@keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+-webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
 .pagina.viva .faixa{-webkit-animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both;
   animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both}
-@-webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
-@keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+-webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
+keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
 
 /* o acerto: um pulinho curto e um brilho que corre pela opção certa */
 .op.certa,.figcirc.marcada,.cartaorima.escolhido{
   -webkit-animation:pulinho .4s cubic-bezier(.3,1.6,.5,1);animation:pulinho .4s cubic-bezier(.3,1.6,.5,1)}
-@-webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
-@keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+-webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
+keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
 .op.certa{position:relative;overflow:hidden}
 .op.certa::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:38%;pointer-events:none;
   background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
   background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
   -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
   -webkit-animation:brilhoOp .55s .1s ease-out;animation:brilhoOp .55s .1s ease-out}
-@-webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
-@keyframes brilhoOp{from{left:-40%}to{left:112%}}
+-webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
+keyframes brilhoOp{from{left:-40%}to{left:112%}}
 
 /* o erro: balança de leve — diz "de novo" sem dizer "errou" */
 .op.erro{-webkit-animation:balanca .34s;animation:balanca .34s}
-@-webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
-@keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+-webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* o item que fecha: some o contorno e entra o verde, sem susto */
 .item{-webkit-transition:border-color .4s,background .4s;transition:border-color .4s,background .4s}
@@ -641,7 +641,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 /* a figura responde ao toque — regra 1: o alvo reage ao PRESSIONAR */
 .op.figbt:active,.figcirc:active,.cartaorima:active{-webkit-transform:scale(.96);transform:scale(.96)}
 
-@media (prefers-reduced-motion:reduce){
+media (prefers-reduced-motion:reduce){
   .pagina.viva .item,.pagina.viva .faixa,.op.certa,.op.erro,
   .figcirc.marcada,.cartaorima.escolhido{
     -webkit-animation:none!important;animation:none!important;opacity:1!important;
@@ -677,8 +677,8 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 #tk button.ok{background:#d9f2e3;grid-column:span 4}
 #confete{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
 .cf{position:absolute;width:9px;height:14px;opacity:.95;-webkit-animation:cai 1.5s linear forwards;animation:cai 1.5s linear forwards}
-@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
-@keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
 .oculto{display:none!important}
 /*<dossie-css>*/
 #dossie{display:none;position:fixed;inset:0;z-index:70;background:rgba(20,16,45,.72);
@@ -749,7 +749,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 <div id="menuProf" role="dialog" aria-label="Menu do professor" aria-modal="true">
   <div class="cx">
     <h3>Menu do professor</h3>
-    <p>Chave mestra <b>1275@</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
+    <p>Chave mestra <b>1275</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
     <div class="folhas" id="mpFolhas"></div>
     <!--<dossie-bt>--><button class="bt" id="bDossie">Dossiê pedagógico (currículo da rede)</button><!--</dossie-bt>-->
 <button class="bt cinza" id="mpFechar">Fechar</button>
@@ -775,16 +775,30 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
       "NAO MEDI" — que não é "passou". */
 var GESTOS = {
  "f1": "sequenciar",
- "f2": "escolher",
+ "f2": "ouvir e achar",
  "f3": "escolher",
  "f4": "escolher",
- "f5": "achar o intruso",
- "f6": "completar",
- "f7": "ordenar",
- "f8": "achar o intruso",
- "f9": "escolher",
- "f10": "ordenar palavras",
- "f11": "mural"
+ "f5": "escolher",
+ "f6": "ligar",
+ "f7": "escolher",
+ "f8": "escolher",
+ "f9": "completar",
+ "f10": "completar",
+ "f11": "digitar",
+ "f12": "arrastar",
+ "f13": "ordenar letras",
+ "f14": "ordenar letras",
+ "f15": "achar o intruso",
+ "f16": "achar o intruso",
+ "f17": "ordenar palavras",
+ "f18": "ordenar palavras",
+ "f19": "marcar",
+ "f20": "escolher",
+ "f21": "gaveta",
+ "f22": "ordenar figuras",
+ "f23": "ordenar palavras",
+ "f24": "tracar",
+ "f25": "mural"
 };
 /*GESTOS-FIM*/
 /*ITENS-INI*/
@@ -870,6 +884,86 @@ var ITENS = {
   }
  ],
  "p2": [
+  {
+   "L": "A"
+  },
+  {
+   "L": "B"
+  },
+  {
+   "L": "C"
+  },
+  {
+   "L": "D"
+  },
+  {
+   "L": "E"
+  },
+  {
+   "L": "F"
+  },
+  {
+   "L": "G"
+  },
+  {
+   "L": "H"
+  },
+  {
+   "L": "I"
+  },
+  {
+   "L": "J"
+  },
+  {
+   "L": "K"
+  },
+  {
+   "L": "L"
+  },
+  {
+   "L": "M"
+  },
+  {
+   "L": "N"
+  },
+  {
+   "L": "O"
+  },
+  {
+   "L": "P"
+  },
+  {
+   "L": "Q"
+  },
+  {
+   "L": "R"
+  },
+  {
+   "L": "S"
+  },
+  {
+   "L": "T"
+  },
+  {
+   "L": "U"
+  },
+  {
+   "L": "V"
+  },
+  {
+   "L": "W"
+  },
+  {
+   "L": "X"
+  },
+  {
+   "L": "Y"
+  },
+  {
+   "L": "Z"
+  }
+ ],
+ "p3": [
   {
    "L": "B",
    "op": [
@@ -1079,7 +1173,7 @@ var ITENS = {
    ]
   }
  ],
- "p3": [
+ "p4": [
   {
    "i": 2,
    "op": [
@@ -1289,7 +1383,283 @@ var ITENS = {
    ]
   }
  ],
- "p4": [
+ "p5": [
+  {
+   "i": 0,
+   "op": [
+    "A",
+    "F",
+    "N"
+   ]
+  },
+  {
+   "i": 1,
+   "op": [
+    "B",
+    "G",
+    "O"
+   ]
+  },
+  {
+   "i": 2,
+   "op": [
+    "C",
+    "H",
+    "P"
+   ]
+  },
+  {
+   "i": 3,
+   "op": [
+    "D",
+    "I",
+    "Q"
+   ]
+  },
+  {
+   "i": 4,
+   "op": [
+    "E",
+    "J",
+    "R"
+   ]
+  },
+  {
+   "i": 5,
+   "op": [
+    "F",
+    "K",
+    "S"
+   ]
+  },
+  {
+   "i": 6,
+   "op": [
+    "G",
+    "L",
+    "T"
+   ]
+  },
+  {
+   "i": 7,
+   "op": [
+    "H",
+    "M",
+    "U"
+   ]
+  },
+  {
+   "i": 8,
+   "op": [
+    "I",
+    "N",
+    "V"
+   ]
+  },
+  {
+   "i": 9,
+   "op": [
+    "J",
+    "O",
+    "W"
+   ]
+  },
+  {
+   "i": 10,
+   "op": [
+    "K",
+    "P",
+    "X"
+   ]
+  },
+  {
+   "i": 11,
+   "op": [
+    "L",
+    "Q",
+    "Y"
+   ]
+  },
+  {
+   "i": 12,
+   "op": [
+    "M",
+    "R",
+    "Z"
+   ]
+  },
+  {
+   "i": 13,
+   "op": [
+    "A",
+    "N",
+    "S"
+   ]
+  },
+  {
+   "i": 14,
+   "op": [
+    "B",
+    "O",
+    "T"
+   ]
+  },
+  {
+   "i": 15,
+   "op": [
+    "C",
+    "P",
+    "U"
+   ]
+  },
+  {
+   "i": 16,
+   "op": [
+    "D",
+    "Q",
+    "V"
+   ]
+  },
+  {
+   "i": 17,
+   "op": [
+    "E",
+    "R",
+    "W"
+   ]
+  },
+  {
+   "i": 18,
+   "op": [
+    "F",
+    "S",
+    "X"
+   ]
+  },
+  {
+   "i": 19,
+   "op": [
+    "G",
+    "T",
+    "Y"
+   ]
+  },
+  {
+   "i": 20,
+   "op": [
+    "H",
+    "U",
+    "Z"
+   ]
+  },
+  {
+   "i": 21,
+   "op": [
+    "A",
+    "I",
+    "V"
+   ]
+  },
+  {
+   "i": 22,
+   "op": [
+    "B",
+    "J",
+    "W"
+   ]
+  },
+  {
+   "i": 23,
+   "op": [
+    "C",
+    "K",
+    "X"
+   ]
+  },
+  {
+   "i": 24,
+   "op": [
+    "D",
+    "L",
+    "Y"
+   ]
+  },
+  {
+   "i": 25,
+   "op": [
+    "E",
+    "M",
+    "Z"
+   ]
+  }
+ ],
+ "p6": [
+  {
+   "g": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ]
+  },
+  {
+   "g": [
+    "D",
+    "E",
+    "F",
+    "G"
+   ]
+  },
+  {
+   "g": [
+    "G",
+    "H",
+    "I",
+    "J"
+   ]
+  },
+  {
+   "g": [
+    "J",
+    "K",
+    "L",
+    "M"
+   ]
+  },
+  {
+   "g": [
+    "M",
+    "N",
+    "O",
+    "P"
+   ]
+  },
+  {
+   "g": [
+    "P",
+    "Q",
+    "R",
+    "S"
+   ]
+  },
+  {
+   "g": [
+    "S",
+    "T",
+    "U",
+    "V"
+   ]
+  },
+  {
+   "g": [
+    "V",
+    "W",
+    "X",
+    "Y"
+   ]
+  }
+ ],
+ "p7": [
   {
    "L": "A",
    "c": "B",
@@ -1516,117 +1886,234 @@ var ITENS = {
    ]
   }
  ],
- "p5": [
+ "p8": [
   {
-   "g": [
-    "ABELHA",
-    "BOLA",
-    "ZEBRA",
-    "CASA"
-   ],
-   "c": "ZEBRA"
+   "L": "B",
+   "c": "A",
+   "op": [
+    "A",
+    "F",
+    "N"
+   ]
   },
   {
-   "g": [
-    "DADO",
-    "ESCOLA",
-    "UVA",
-    "FACA"
-   ],
-   "c": "UVA"
+   "L": "C",
+   "c": "B",
+   "op": [
+    "B",
+    "G",
+    "O"
+   ]
   },
   {
-   "g": [
-    "GATO",
-    "IGREJA",
-    "PATO",
-    "JANELA"
-   ],
-   "c": "PATO"
+   "L": "D",
+   "c": "C",
+   "op": [
+    "C",
+    "H",
+    "P"
+   ]
   },
   {
-   "g": [
-    "LEAO",
-    "MALA",
-    "VACA",
-    "NAVIO"
-   ],
-   "c": "VACA"
+   "L": "E",
+   "c": "D",
+   "op": [
+    "D",
+    "I",
+    "Q"
+   ]
   },
   {
-   "g": [
-    "OVO",
-    "PATO",
-    "ABELHA",
-    "QUEIJO"
-   ],
-   "c": "ABELHA"
+   "L": "F",
+   "c": "E",
+   "op": [
+    "E",
+    "J",
+    "R"
+   ]
   },
   {
-   "g": [
-    "RATO",
-    "SAPO",
-    "BOLA",
-    "TOMATE"
-   ],
-   "c": "BOLA"
+   "L": "G",
+   "c": "F",
+   "op": [
+    "F",
+    "K",
+    "S"
+   ]
   },
   {
-   "g": [
-    "UVA",
-    "VACA",
-    "DADO",
-    "XICARA"
-   ],
-   "c": "DADO"
+   "L": "H",
+   "c": "G",
+   "op": [
+    "G",
+    "L",
+    "T"
+   ]
   },
   {
-   "g": [
-    "BOLA",
-    "CASA",
-    "RATO",
-    "DADO"
-   ],
-   "c": "RATO"
+   "L": "I",
+   "c": "H",
+   "op": [
+    "H",
+    "M",
+    "U"
+   ]
   },
   {
-   "g": [
-    "ESCOLA",
-    "FACA",
-    "OVO",
-    "GATO"
-   ],
-   "c": "OVO"
+   "L": "J",
+   "c": "I",
+   "op": [
+    "I",
+    "N",
+    "V"
+   ]
   },
   {
-   "g": [
-    "MALA",
-    "NAVIO",
-    "CASA",
-    "OVO"
-   ],
-   "c": "CASA"
+   "L": "K",
+   "c": "J",
+   "op": [
+    "J",
+    "O",
+    "W"
+   ]
   },
   {
-   "g": [
-    "IGREJA",
-    "JANELA",
-    "SAPO",
-    "LEAO"
-   ],
-   "c": "SAPO"
+   "L": "L",
+   "c": "K",
+   "op": [
+    "K",
+    "P",
+    "X"
+   ]
   },
   {
-   "g": [
-    "QUEIJO",
-    "RATO",
-    "GATO",
-    "SAPO"
-   ],
-   "c": "GATO"
+   "L": "M",
+   "c": "L",
+   "op": [
+    "L",
+    "Q",
+    "Y"
+   ]
+  },
+  {
+   "L": "N",
+   "c": "M",
+   "op": [
+    "M",
+    "R",
+    "Z"
+   ]
+  },
+  {
+   "L": "O",
+   "c": "N",
+   "op": [
+    "A",
+    "N",
+    "S"
+   ]
+  },
+  {
+   "L": "P",
+   "c": "O",
+   "op": [
+    "B",
+    "O",
+    "T"
+   ]
+  },
+  {
+   "L": "Q",
+   "c": "P",
+   "op": [
+    "C",
+    "P",
+    "U"
+   ]
+  },
+  {
+   "L": "R",
+   "c": "Q",
+   "op": [
+    "D",
+    "Q",
+    "V"
+   ]
+  },
+  {
+   "L": "S",
+   "c": "R",
+   "op": [
+    "E",
+    "R",
+    "W"
+   ]
+  },
+  {
+   "L": "T",
+   "c": "S",
+   "op": [
+    "F",
+    "S",
+    "X"
+   ]
+  },
+  {
+   "L": "U",
+   "c": "T",
+   "op": [
+    "G",
+    "T",
+    "Y"
+   ]
+  },
+  {
+   "L": "V",
+   "c": "U",
+   "op": [
+    "H",
+    "U",
+    "Z"
+   ]
+  },
+  {
+   "L": "W",
+   "c": "V",
+   "op": [
+    "A",
+    "I",
+    "V"
+   ]
+  },
+  {
+   "L": "X",
+   "c": "W",
+   "op": [
+    "B",
+    "J",
+    "W"
+   ]
+  },
+  {
+   "L": "Y",
+   "c": "X",
+   "op": [
+    "C",
+    "K",
+    "X"
+   ]
+  },
+  {
+   "L": "Z",
+   "c": "Y",
+   "op": [
+    "D",
+    "L",
+    "Y"
+   ]
   }
  ],
- "p6": [
+ "p9": [
   {
    "L": "C"
   },
@@ -1700,7 +2187,480 @@ var ITENS = {
    "L": "Y"
   }
  ],
- "p7": [
+ "p10": [
+  {
+   "L": "B",
+   "op": [
+    "B",
+    "G",
+    "O"
+   ]
+  },
+  {
+   "L": "C",
+   "op": [
+    "C",
+    "H",
+    "P"
+   ]
+  },
+  {
+   "L": "D",
+   "op": [
+    "D",
+    "I",
+    "Q"
+   ]
+  },
+  {
+   "L": "E",
+   "op": [
+    "E",
+    "J",
+    "R"
+   ]
+  },
+  {
+   "L": "F",
+   "op": [
+    "F",
+    "K",
+    "S"
+   ]
+  },
+  {
+   "L": "G",
+   "op": [
+    "G",
+    "L",
+    "T"
+   ]
+  },
+  {
+   "L": "H",
+   "op": [
+    "H",
+    "M",
+    "U"
+   ]
+  },
+  {
+   "L": "I",
+   "op": [
+    "I",
+    "N",
+    "V"
+   ]
+  },
+  {
+   "L": "J",
+   "op": [
+    "J",
+    "O",
+    "W"
+   ]
+  },
+  {
+   "L": "K",
+   "op": [
+    "K",
+    "P",
+    "X"
+   ]
+  },
+  {
+   "L": "L",
+   "op": [
+    "L",
+    "Q",
+    "Y"
+   ]
+  },
+  {
+   "L": "M",
+   "op": [
+    "M",
+    "R",
+    "Z"
+   ]
+  },
+  {
+   "L": "N",
+   "op": [
+    "A",
+    "N",
+    "S"
+   ]
+  },
+  {
+   "L": "O",
+   "op": [
+    "B",
+    "O",
+    "T"
+   ]
+  },
+  {
+   "L": "P",
+   "op": [
+    "C",
+    "P",
+    "U"
+   ]
+  },
+  {
+   "L": "Q",
+   "op": [
+    "D",
+    "Q",
+    "V"
+   ]
+  },
+  {
+   "L": "R",
+   "op": [
+    "E",
+    "R",
+    "W"
+   ]
+  },
+  {
+   "L": "S",
+   "op": [
+    "F",
+    "S",
+    "X"
+   ]
+  },
+  {
+   "L": "T",
+   "op": [
+    "G",
+    "T",
+    "Y"
+   ]
+  },
+  {
+   "L": "U",
+   "op": [
+    "H",
+    "U",
+    "Z"
+   ]
+  },
+  {
+   "L": "V",
+   "op": [
+    "A",
+    "I",
+    "V"
+   ]
+  },
+  {
+   "L": "W",
+   "op": [
+    "B",
+    "J",
+    "W"
+   ]
+  },
+  {
+   "L": "X",
+   "op": [
+    "C",
+    "K",
+    "X"
+   ]
+  },
+  {
+   "L": "Y",
+   "op": [
+    "D",
+    "L",
+    "Y"
+   ]
+  }
+ ],
+ "p11": [
+  {
+   "L": "A",
+   "lado": "depois",
+   "c": "B"
+  },
+  {
+   "L": "C",
+   "lado": "depois",
+   "c": "D"
+  },
+  {
+   "L": "E",
+   "lado": "depois",
+   "c": "F"
+  },
+  {
+   "L": "G",
+   "lado": "depois",
+   "c": "H"
+  },
+  {
+   "L": "I",
+   "lado": "depois",
+   "c": "J"
+  },
+  {
+   "L": "K",
+   "lado": "depois",
+   "c": "L"
+  },
+  {
+   "L": "M",
+   "lado": "depois",
+   "c": "N"
+  },
+  {
+   "L": "O",
+   "lado": "depois",
+   "c": "P"
+  },
+  {
+   "L": "Q",
+   "lado": "depois",
+   "c": "R"
+  },
+  {
+   "L": "S",
+   "lado": "depois",
+   "c": "T"
+  },
+  {
+   "L": "U",
+   "lado": "depois",
+   "c": "V"
+  },
+  {
+   "L": "W",
+   "lado": "depois",
+   "c": "X"
+  },
+  {
+   "L": "Y",
+   "lado": "depois",
+   "c": "Z"
+  },
+  {
+   "L": "B",
+   "lado": "antes",
+   "c": "A"
+  },
+  {
+   "L": "D",
+   "lado": "antes",
+   "c": "C"
+  },
+  {
+   "L": "F",
+   "lado": "antes",
+   "c": "E"
+  },
+  {
+   "L": "H",
+   "lado": "antes",
+   "c": "G"
+  },
+  {
+   "L": "J",
+   "lado": "antes",
+   "c": "I"
+  },
+  {
+   "L": "L",
+   "lado": "antes",
+   "c": "K"
+  },
+  {
+   "L": "N",
+   "lado": "antes",
+   "c": "M"
+  },
+  {
+   "L": "P",
+   "lado": "antes",
+   "c": "O"
+  },
+  {
+   "L": "R",
+   "lado": "antes",
+   "c": "Q"
+  },
+  {
+   "L": "T",
+   "lado": "antes",
+   "c": "S"
+  },
+  {
+   "L": "V",
+   "lado": "antes",
+   "c": "U"
+  },
+  {
+   "L": "X",
+   "lado": "antes",
+   "c": "W"
+  },
+  {
+   "L": "Z",
+   "lado": "antes",
+   "c": "Y"
+  }
+ ],
+ "p12": [
+  {
+   "i": 0,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 2,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 4,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 6,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 8,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 10,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 12,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 14,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 16,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "i": 18,
+   "faltam": [
+    1,
+    3,
+    5
+   ]
+  }
+ ],
+ "p13": [
+  {
+   "g": [
+    "Q",
+    "W",
+    "E",
+    "R"
+   ]
+  },
+  {
+   "g": [
+    "R",
+    "T",
+    "Y",
+    "U"
+   ]
+  },
+  {
+   "g": [
+    "U",
+    "I",
+    "O",
+    "P"
+   ]
+  },
+  {
+   "g": [
+    "A",
+    "S",
+    "D",
+    "F"
+   ]
+  },
+  {
+   "g": [
+    "F",
+    "G",
+    "H",
+    "J"
+   ]
+  },
+  {
+   "g": [
+    "J",
+    "K",
+    "L"
+   ]
+  },
+  {
+   "g": [
+    "Z",
+    "X",
+    "C",
+    "V"
+   ]
+  },
+  {
+   "g": [
+    "V",
+    "B",
+    "N",
+    "M"
+   ]
+  }
+ ],
+ "p14": [
   {
    "g": [
     "A",
@@ -1886,7 +2846,7 @@ var ITENS = {
    ]
   }
  ],
- "p8": [
+ "p15": [
   {
    "g": [
     "B",
@@ -2077,7 +3037,337 @@ var ITENS = {
    "c": "P"
   }
  ],
- "p9": [
+ "p16": [
+  {
+   "g": [
+    "ABELHA",
+    "BOLA",
+    "ZEBRA",
+    "CASA"
+   ],
+   "c": "ZEBRA"
+  },
+  {
+   "g": [
+    "DADO",
+    "ESCOLA",
+    "UVA",
+    "FACA"
+   ],
+   "c": "UVA"
+  },
+  {
+   "g": [
+    "GATO",
+    "IGREJA",
+    "PATO",
+    "JANELA"
+   ],
+   "c": "PATO"
+  },
+  {
+   "g": [
+    "LEAO",
+    "MALA",
+    "VACA",
+    "NAVIO"
+   ],
+   "c": "VACA"
+  },
+  {
+   "g": [
+    "OVO",
+    "PATO",
+    "ABELHA",
+    "QUEIJO"
+   ],
+   "c": "ABELHA"
+  },
+  {
+   "g": [
+    "RATO",
+    "SAPO",
+    "BOLA",
+    "TOMATE"
+   ],
+   "c": "BOLA"
+  },
+  {
+   "g": [
+    "UVA",
+    "VACA",
+    "DADO",
+    "XICARA"
+   ],
+   "c": "DADO"
+  },
+  {
+   "g": [
+    "BOLA",
+    "CASA",
+    "RATO",
+    "DADO"
+   ],
+   "c": "RATO"
+  },
+  {
+   "g": [
+    "ESCOLA",
+    "FACA",
+    "OVO",
+    "GATO"
+   ],
+   "c": "OVO"
+  },
+  {
+   "g": [
+    "MALA",
+    "NAVIO",
+    "CASA",
+    "OVO"
+   ],
+   "c": "CASA"
+  },
+  {
+   "g": [
+    "IGREJA",
+    "JANELA",
+    "SAPO",
+    "LEAO"
+   ],
+   "c": "SAPO"
+  },
+  {
+   "g": [
+    "QUEIJO",
+    "RATO",
+    "GATO",
+    "SAPO"
+   ],
+   "c": "GATO"
+  }
+ ],
+ "p17": [
+  {
+   "g": [
+    "ABELHA",
+    "BOLA",
+    "CASA"
+   ]
+  },
+  {
+   "g": [
+    "DADO",
+    "ESCOLA",
+    "FACA"
+   ]
+  },
+  {
+   "g": [
+    "GATO",
+    "IGREJA",
+    "JANELA"
+   ]
+  },
+  {
+   "g": [
+    "LEAO",
+    "MALA",
+    "NAVIO"
+   ]
+  },
+  {
+   "g": [
+    "OVO",
+    "PATO",
+    "QUEIJO"
+   ]
+  },
+  {
+   "g": [
+    "RATO",
+    "SAPO",
+    "TOMATE"
+   ]
+  },
+  {
+   "g": [
+    "UVA",
+    "VACA",
+    "XICARA"
+   ]
+  },
+  {
+   "g": [
+    "BOLA",
+    "GATO",
+    "ZEBRA"
+   ]
+  },
+  {
+   "g": [
+    "CASA",
+    "ESCOLA",
+    "MALA"
+   ]
+  },
+  {
+   "g": [
+    "DADO",
+    "JANELA",
+    "PATO"
+   ]
+  },
+  {
+   "g": [
+    "FACA",
+    "NAVIO",
+    "UVA"
+   ]
+  },
+  {
+   "g": [
+    "ABELHA",
+    "OVO",
+    "VACA"
+   ]
+  }
+ ],
+ "p18": [
+  {
+   "g": [
+    "ABELHA",
+    "ABACAXI",
+    "ARROZ"
+   ]
+  },
+  {
+   "g": [
+    "BOLA",
+    "BICO",
+    "BALDE"
+   ]
+  },
+  {
+   "g": [
+    "CASA",
+    "COLA",
+    "CHUVA"
+   ]
+  },
+  {
+   "g": [
+    "DADO",
+    "DEDO",
+    "DOCE"
+   ]
+  },
+  {
+   "g": [
+    "FACA",
+    "FOCA",
+    "FESTA"
+   ]
+  },
+  {
+   "g": [
+    "GATO",
+    "GELO",
+    "GIRAFA"
+   ]
+  },
+  {
+   "g": [
+    "MALA",
+    "MESA",
+    "MOEDA"
+   ]
+  },
+  {
+   "g": [
+    "PATO",
+    "PENA",
+    "PIPA"
+   ]
+  },
+  {
+   "g": [
+    "SAPO",
+    "SINO",
+    "SUCO"
+   ]
+  },
+  {
+   "g": [
+    "TATU",
+    "TELHA",
+    "TIJOLO"
+   ]
+  }
+ ],
+ "p19": [
+  {
+   "a": "GATO",
+   "b": "GELO",
+   "c": "GATO"
+  },
+  {
+   "a": "BICO",
+   "b": "BOLA",
+   "c": "BICO"
+  },
+  {
+   "a": "CASA",
+   "b": "COLA",
+   "c": "CASA"
+  },
+  {
+   "a": "MALA",
+   "b": "MESA",
+   "c": "MALA"
+  },
+  {
+   "a": "PATO",
+   "b": "PENA",
+   "c": "PATO"
+  },
+  {
+   "a": "SAPO",
+   "b": "SINO",
+   "c": "SAPO"
+  },
+  {
+   "a": "FACA",
+   "b": "FOCA",
+   "c": "FACA"
+  },
+  {
+   "a": "DADO",
+   "b": "DEDO",
+   "c": "DADO"
+  },
+  {
+   "a": "LEAO",
+   "b": "LUA",
+   "c": "LEAO"
+  },
+  {
+   "a": "TATU",
+   "b": "TELHA",
+   "c": "TATU"
+  },
+  {
+   "a": "VACA",
+   "b": "VELA",
+   "c": "VACA"
+  },
+  {
+   "a": "NAVIO",
+   "b": "NINHO",
+   "c": "NAVIO"
+  }
+ ],
+ "p20": [
   {
    "w": "bola",
    "c": "B",
@@ -2286,7 +3576,297 @@ var ITENS = {
    ]
   }
  ],
- "p11": [
+ "p21": [
+  {
+   "ws": [
+    "abelha",
+    "bola",
+    "casa",
+    "dado"
+   ]
+  },
+  {
+   "ws": [
+    "escola",
+    "faca",
+    "gato",
+    "igreja"
+   ]
+  },
+  {
+   "ws": [
+    "janela",
+    "leao",
+    "mala",
+    "navio"
+   ]
+  },
+  {
+   "ws": [
+    "ovo",
+    "pato",
+    "queijo",
+    "rato"
+   ]
+  },
+  {
+   "ws": [
+    "sapo",
+    "tomate",
+    "uva",
+    "vaca"
+   ]
+  },
+  {
+   "ws": [
+    "xicara",
+    "zebra",
+    "abelha",
+    "gato"
+   ]
+  },
+  {
+   "ws": [
+    "bola",
+    "escola",
+    "navio",
+    "uva"
+   ]
+  },
+  {
+   "ws": [
+    "casa",
+    "janela",
+    "pato",
+    "tomate"
+   ]
+  }
+ ],
+ "p22": [
+  {
+   "g": [
+    "abelha",
+    "casa",
+    "gato"
+   ]
+  },
+  {
+   "g": [
+    "bola",
+    "dado",
+    "faca"
+   ]
+  },
+  {
+   "g": [
+    "escola",
+    "janela",
+    "mala"
+   ]
+  },
+  {
+   "g": [
+    "igreja",
+    "leao",
+    "ovo"
+   ]
+  },
+  {
+   "g": [
+    "navio",
+    "pato",
+    "rato"
+   ]
+  },
+  {
+   "g": [
+    "queijo",
+    "sapo",
+    "uva"
+   ]
+  },
+  {
+   "g": [
+    "tomate",
+    "vaca",
+    "zebra"
+   ]
+  },
+  {
+   "g": [
+    "casa",
+    "navio",
+    "xicara"
+   ]
+  },
+  {
+   "g": [
+    "dado",
+    "igreja",
+    "queijo"
+   ]
+  },
+  {
+   "g": [
+    "bola",
+    "mala",
+    "tomate"
+   ]
+  }
+ ],
+ "p23": [
+  {
+   "g": [
+    "ANA",
+    "BRUNO",
+    "CAIO"
+   ]
+  },
+  {
+   "g": [
+    "DAVI",
+    "ELISA",
+    "FELIPE"
+   ]
+  },
+  {
+   "g": [
+    "GABI",
+    "HELOISA",
+    "IGOR"
+   ]
+  },
+  {
+   "g": [
+    "JOAO",
+    "LARA",
+    "MIGUEL"
+   ]
+  },
+  {
+   "g": [
+    "NOAH",
+    "OLIVIA",
+    "PEDRO"
+   ]
+  },
+  {
+   "g": [
+    "RAFA",
+    "SOFIA",
+    "TIAGO"
+   ]
+  },
+  {
+   "g": [
+    "VITOR",
+    "YASMIN",
+    "ZEZE"
+   ]
+  },
+  {
+   "g": [
+    "BEATRIZ",
+    "KAUA",
+    "NINA"
+   ]
+  },
+  {
+   "g": [
+    "CLARA",
+    "HENRIQUE",
+    "LUCAS"
+   ]
+  },
+  {
+   "g": [
+    "ARTUR",
+    "EMILY",
+    "MURILO"
+   ]
+  }
+ ],
+ "p24": [
+  {
+   "L": "A"
+  },
+  {
+   "L": "B"
+  },
+  {
+   "L": "C"
+  },
+  {
+   "L": "D"
+  },
+  {
+   "L": "E"
+  },
+  {
+   "L": "F"
+  },
+  {
+   "L": "G"
+  },
+  {
+   "L": "H"
+  },
+  {
+   "L": "I"
+  },
+  {
+   "L": "J"
+  },
+  {
+   "L": "K"
+  },
+  {
+   "L": "L"
+  },
+  {
+   "L": "M"
+  },
+  {
+   "L": "N"
+  },
+  {
+   "L": "O"
+  },
+  {
+   "L": "P"
+  },
+  {
+   "L": "Q"
+  },
+  {
+   "L": "R"
+  },
+  {
+   "L": "S"
+  },
+  {
+   "L": "T"
+  },
+  {
+   "L": "U"
+  },
+  {
+   "L": "V"
+  },
+  {
+   "L": "W"
+  },
+  {
+   "L": "X"
+  },
+  {
+   "L": "Y"
+  },
+  {
+   "L": "Z"
+  }
+ ],
+ "p25": [
   {
    "L": "A",
    "w": "abelha"
@@ -2379,308 +3959,975 @@ var ITENS = {
    "L": "X",
    "w": "xicara"
   }
- ],
- "p10": [
-  {
-   "g": [
-    "ABELHA",
-    "BOLA",
-    "CASA"
-   ]
-  },
-  {
-   "g": [
-    "DADO",
-    "ESCOLA",
-    "FACA"
-   ]
-  },
-  {
-   "g": [
-    "GATO",
-    "IGREJA",
-    "JANELA"
-   ]
-  },
-  {
-   "g": [
-    "LEAO",
-    "MALA",
-    "NAVIO"
-   ]
-  },
-  {
-   "g": [
-    "OVO",
-    "PATO",
-    "QUEIJO"
-   ]
-  },
-  {
-   "g": [
-    "RATO",
-    "SAPO",
-    "TOMATE"
-   ]
-  },
-  {
-   "g": [
-    "UVA",
-    "VACA",
-    "XICARA"
-   ]
-  },
-  {
-   "g": [
-    "BOLA",
-    "GATO",
-    "ZEBRA"
-   ]
-  },
-  {
-   "g": [
-    "CASA",
-    "ESCOLA",
-    "MALA"
-   ]
-  },
-  {
-   "g": [
-    "DADO",
-    "JANELA",
-    "PATO"
-   ]
-  },
-  {
-   "g": [
-    "FACA",
-    "NAVIO",
-    "UVA"
-   ]
-  },
-  {
-   "g": [
-    "ABELHA",
-    "OVO",
-    "VACA"
-   ]
-  }
  ]
 };
 /*ITENS-FIM*/
 /*FALAS-INI*/
 var FALAS = {
- "capa": "O Desfile das Letras. Dez folhas para conhecer o alfabeto e a ordem das letras. Escreva o seu nome ali embaixo e toque em Começar.",
- "certo10_ABELHA": "Isso! Em ordem do alfabeto: abelha, depois ovo, depois vaca.",
- "certo10_BOLA": "Isso! Em ordem do alfabeto: bola, depois gato, depois zebra.",
- "certo10_CASA": "Isso! Em ordem do alfabeto: casa, depois escola, depois mala.",
- "certo10_DADO": "Isso! Em ordem do alfabeto: dado, depois janela, depois pato.",
- "certo10_FACA": "Isso! Em ordem do alfabeto: faca, depois navio, depois uva.",
- "certo10_GATO": "Isso! Em ordem do alfabeto: gato, depois igreja, depois janela.",
- "certo10_LEAO": "Isso! Em ordem do alfabeto: leao, depois mala, depois navio.",
- "certo10_OVO": "Isso! Em ordem do alfabeto: ovo, depois pato, depois queijo.",
- "certo10_RATO": "Isso! Em ordem do alfabeto: rato, depois sapo, depois tomate.",
- "certo10_UVA": "Isso! Em ordem do alfabeto: uva, depois vaca, depois xicara.",
- "certo11_A": "Á de abelha foi para o seu alfabeto!",
- "certo11_C": "Cê de casa foi para o seu alfabeto!",
- "certo11_E": "É de escola foi para o seu alfabeto!",
- "certo11_G": "Gê de gato foi para o seu alfabeto!",
- "certo11_J": "Jota de janela foi para o seu alfabeto!",
- "certo11_M": "Ême de mala foi para o seu alfabeto!",
- "certo11_P": "Pê de pato foi para o seu alfabeto!",
- "certo11_R": "Érre de rato foi para o seu alfabeto!",
- "certo11_U": "U de uva foi para o seu alfabeto!",
- "certo11_Z": "Zê de zebra foi para o seu alfabeto!",
+ "capa": "O Desfile das Letras. Vinte e cinco folhas para conhecer o alfabeto e a ordem das letras. Escreva o seu nome ali embaixo e toque em Começar.",
+ "certo10_B": "Isso! Entre o á e o cê mora o bê.",
+ "certo10_C": "Isso! Entre o bê e o dê mora o cê.",
+ "certo10_D": "Isso! Entre o cê e o é mora o dê.",
+ "certo10_E": "Isso! Entre o dê e o éfe mora o é.",
+ "certo10_F": "Isso! Entre o é e o gê mora o éfe.",
+ "certo10_G": "Isso! Entre o éfe e o agá mora o gê.",
+ "certo10_H": "Isso! Entre o gê e o i mora o agá.",
+ "certo10_I": "Isso! Entre o agá e o jota mora o i.",
+ "certo10_J": "Isso! Entre o i e o cá mora o jota.",
+ "certo10_K": "Isso! Entre o jota e o éle mora o cá.",
+ "certo10_L": "Isso! Entre o cá e o ême mora o éle.",
+ "certo10_M": "Isso! Entre o éle e o êne mora o ême.",
+ "certo10_N": "Isso! Entre o ême e o ó mora o êne.",
+ "certo10_O": "Isso! Entre o êne e o pê mora o ó.",
+ "certo10_P": "Isso! Entre o ó e o quê mora o pê.",
+ "certo10_Q": "Isso! Entre o pê e o érre mora o quê.",
+ "certo10_R": "Isso! Entre o quê e o ésse mora o érre.",
+ "certo10_S": "Isso! Entre o érre e o tê mora o ésse.",
+ "certo10_T": "Isso! Entre o ésse e o u mora o tê.",
+ "certo10_U": "Isso! Entre o tê e o vê mora o u.",
+ "certo10_V": "Isso! Entre o u e o dábliu mora o vê.",
+ "certo10_W": "Isso! Entre o vê e o xis mora o dábliu.",
+ "certo10_X": "Isso! Entre o dábliu e o ípsilon mora o xis.",
+ "certo10_Y": "Isso! Entre o xis e o zê mora o ípsilon.",
+ "certo11_A_depois": "Muito bem, você escreveu! Bê vem depois do á.",
+ "certo11_B_antes": "Muito bem, você escreveu! Á vem antes do bê.",
+ "certo11_C_depois": "Muito bem, você escreveu! Dê vem depois do cê.",
+ "certo11_D_antes": "Muito bem, você escreveu! Cê vem antes do dê.",
+ "certo11_E_depois": "Muito bem, você escreveu! Éfe vem depois do é.",
+ "certo11_F_antes": "Muito bem, você escreveu! É vem antes do éfe.",
+ "certo11_G_depois": "Muito bem, você escreveu! Agá vem depois do gê.",
+ "certo11_H_antes": "Muito bem, você escreveu! Gê vem antes do agá.",
+ "certo11_I_depois": "Muito bem, você escreveu! Jota vem depois do i.",
+ "certo11_J_antes": "Muito bem, você escreveu! I vem antes do jota.",
+ "certo11_K_depois": "Muito bem, você escreveu! Éle vem depois do cá.",
+ "certo11_L_antes": "Muito bem, você escreveu! Cá vem antes do éle.",
+ "certo11_M_depois": "Muito bem, você escreveu! Êne vem depois do ême.",
+ "certo11_N_antes": "Muito bem, você escreveu! Ême vem antes do êne.",
+ "certo11_O_depois": "Muito bem, você escreveu! Pê vem depois do ó.",
+ "certo11_P_antes": "Muito bem, você escreveu! Ó vem antes do pê.",
+ "certo11_Q_depois": "Muito bem, você escreveu! Érre vem depois do quê.",
+ "certo11_R_antes": "Muito bem, você escreveu! Quê vem antes do érre.",
+ "certo11_S_depois": "Muito bem, você escreveu! Tê vem depois do ésse.",
+ "certo11_T_antes": "Muito bem, você escreveu! Ésse vem antes do tê.",
+ "certo11_U_depois": "Muito bem, você escreveu! Vê vem depois do u.",
+ "certo11_V_antes": "Muito bem, você escreveu! U vem antes do vê.",
+ "certo11_W_depois": "Muito bem, você escreveu! Xis vem depois do dábliu.",
+ "certo11_X_antes": "Muito bem, você escreveu! Dábliu vem antes do xis.",
+ "certo11_Y_depois": "Muito bem, você escreveu! Zê vem depois do ípsilon.",
+ "certo11_Z_antes": "Muito bem, você escreveu! Ípsilon vem antes do zê.",
+ "certo12_A": "Isso! A grade ficou pronta a partir do á.",
+ "certo12_C": "Isso! A grade ficou pronta a partir do cê.",
+ "certo12_E": "Isso! A grade ficou pronta a partir do é.",
+ "certo12_G": "Isso! A grade ficou pronta a partir do gê.",
+ "certo12_I": "Isso! A grade ficou pronta a partir do i.",
+ "certo12_K": "Isso! A grade ficou pronta a partir do cá.",
+ "certo12_M": "Isso! A grade ficou pronta a partir do ême.",
+ "certo12_O": "Isso! A grade ficou pronta a partir do ó.",
+ "certo12_Q": "Isso! A grade ficou pronta a partir do quê.",
+ "certo12_S": "Isso! A grade ficou pronta a partir do ésse.",
+ "certo13_A": "Isso! No teclado elas estão bagunçadas, mas no alfabeto elas ficam assim: á, dê, éfe, ésse.",
+ "certo13_B": "Isso! No teclado elas estão bagunçadas, mas no alfabeto elas ficam assim: bê, ême, êne, vê.",
+ "certo13_C": "Isso! No teclado elas estão bagunçadas, mas no alfabeto elas ficam assim: cê, vê, xis, zê.",
+ "certo13_E": "Isso! No teclado elas estão bagunçadas, mas no alfabeto elas ficam assim: é, quê, érre, dábliu.",
+ "certo13_F": "Isso! No teclado elas estão bagunçadas, mas no alfabeto elas ficam assim: éfe, gê, agá, jota.",
+ "certo13_I": "Isso! No teclado elas estão bagunçadas, mas no alfabeto elas ficam assim: i, ó, pê, u.",
+ "certo13_J": "Isso! No teclado elas estão bagunçadas, mas no alfabeto elas ficam assim: jota, cá, éle.",
+ "certo13_R": "Isso! No teclado elas estão bagunçadas, mas no alfabeto elas ficam assim: érre, tê, u, ípsilon.",
+ "certo14_A": "Muito bem! á, bê, cê, dê.",
+ "certo14_B": "Muito bem! bê, cê, dê, é.",
+ "certo14_C": "Muito bem! cê, dê, é, éfe.",
+ "certo14_D": "Muito bem! dê, é, éfe, gê.",
+ "certo14_E": "Muito bem! é, éfe, gê, agá.",
+ "certo14_F": "Muito bem! éfe, gê, agá, i.",
+ "certo14_G": "Muito bem! gê, agá, i, jota.",
+ "certo14_H": "Muito bem! agá, i, jota, cá.",
+ "certo14_I": "Muito bem! i, jota, cá, éle.",
+ "certo14_J": "Muito bem! jota, cá, éle, ême.",
+ "certo14_K": "Muito bem! cá, éle, ême, êne.",
+ "certo14_L": "Muito bem! éle, ême, êne, ó.",
+ "certo14_M": "Muito bem! ême, êne, ó, pê.",
+ "certo14_N": "Muito bem! êne, ó, pê, quê.",
+ "certo14_O": "Muito bem! ó, pê, quê, érre.",
+ "certo14_P": "Muito bem! pê, quê, érre, ésse.",
+ "certo14_Q": "Muito bem! quê, érre, ésse, tê.",
+ "certo14_R": "Muito bem! érre, ésse, tê, u.",
+ "certo14_S": "Muito bem! ésse, tê, u, vê.",
+ "certo14_T": "Muito bem! tê, u, vê, dábliu.",
+ "certo14_U": "Muito bem! u, vê, dábliu, xis.",
+ "certo14_V": "Muito bem! vê, dábliu, xis, ípsilon.",
+ "certo14_W": "Muito bem! dábliu, xis, ípsilon, zê.",
+ "certo15_A": "Isso! O á não é dessa parte da fila. Sem ele fica êne, ó, pê.",
+ "certo15_B": "Isso! O bê não é dessa parte da fila. Sem ele fica tê, u, vê.",
+ "certo15_C": "Isso! O cê não é dessa parte da fila. Sem ele fica éle, ême, êne.",
+ "certo15_D": "Isso! O dê não é dessa parte da fila. Sem ele fica êne, ó, pê.",
+ "certo15_G": "Isso! O gê não é dessa parte da fila. Sem ele fica pê, quê, érre.",
+ "certo15_H": "Isso! O agá não é dessa parte da fila. Sem ele fica ésse, tê, u.",
+ "certo15_I": "Isso! O i não é dessa parte da fila. Sem ele fica ó, pê, quê.",
+ "certo15_J": "Isso! O jota não é dessa parte da fila. Sem ele fica bê, cê, dê.",
+ "certo15_K": "Isso! O cá não é dessa parte da fila. Sem ele fica érre, ésse, tê.",
+ "certo15_L": "Isso! O éle não é dessa parte da fila. Sem ele fica éfe, gê, agá.",
+ "certo15_N": "Isso! O êne não é dessa parte da fila. Sem ele fica á, bê, cê.",
+ "certo15_O": "Isso! O ó não é dessa parte da fila. Sem ele fica dê, é, éfe.",
+ "certo15_P": "Isso! O pê não é dessa parte da fila. Sem ele fica xis, ípsilon, zê.",
+ "certo15_Q": "Isso! O quê não é dessa parte da fila. Sem ele fica cê, dê, é.",
+ "certo15_R": "Isso! O érre não é dessa parte da fila. Sem ele fica dê, é, éfe.",
+ "certo15_S": "Isso! O ésse não é dessa parte da fila. Sem ele fica i, jota, cá.",
+ "certo15_T": "Isso! O tê não é dessa parte da fila. Sem ele fica é, éfe, gê.",
+ "certo15_U": "Isso! O u não é dessa parte da fila. Sem ele fica gê, agá, i.",
+ "certo15_W": "Isso! O dábliu não é dessa parte da fila. Sem ele fica gê, agá, i.",
+ "certo15_Y": "Isso! O ípsilon não é dessa parte da fila. Sem ele fica i, jota, cá.",
+ "certo15_Z": "Isso! O zê não é dessa parte da fila. Sem ele fica pê, quê, érre.",
+ "certo16_ABELHA": "Isso! Abelha é que estava fora da ordem. As outras vão bem: ovo, pato, queijo.",
+ "certo16_BOLA": "Isso! Bola é que estava fora da ordem. As outras vão bem: rato, sapo, tomate.",
+ "certo16_CASA": "Isso! Casa é que estava fora da ordem. As outras vão bem: mala, navio, ovo.",
+ "certo16_DADO": "Isso! Dado é que estava fora da ordem. As outras vão bem: uva, vaca, xícara.",
+ "certo16_GATO": "Isso! Gato é que estava fora da ordem. As outras vão bem: queijo, rato, sapo.",
+ "certo16_OVO": "Isso! Ovo é que estava fora da ordem. As outras vão bem: escola, faca, gato.",
+ "certo16_PATO": "Isso! Pato é que estava fora da ordem. As outras vão bem: gato, igreja, janela.",
+ "certo16_RATO": "Isso! Rato é que estava fora da ordem. As outras vão bem: bola, casa, dado.",
+ "certo16_SAPO": "Isso! Sapo é que estava fora da ordem. As outras vão bem: igreja, janela, leão.",
+ "certo16_UVA": "Isso! Uva é que estava fora da ordem. As outras vão bem: dado, escola, faca.",
+ "certo16_VACA": "Isso! Vaca é que estava fora da ordem. As outras vão bem: leão, mala, navio.",
+ "certo16_ZEBRA": "Isso! Zebra é que estava fora da ordem. As outras vão bem: abelha, bola, casa.",
+ "certo17_ABELHA": "Isso! Em ordem do alfabeto: abelha, depois ovo, depois vaca.",
+ "certo17_BOLA": "Isso! Em ordem do alfabeto: bola, depois gato, depois zebra.",
+ "certo17_CASA": "Isso! Em ordem do alfabeto: casa, depois escola, depois mala.",
+ "certo17_DADO": "Isso! Em ordem do alfabeto: dado, depois janela, depois pato.",
+ "certo17_FACA": "Isso! Em ordem do alfabeto: faca, depois navio, depois uva.",
+ "certo17_GATO": "Isso! Em ordem do alfabeto: gato, depois igreja, depois janela.",
+ "certo17_LEAO": "Isso! Em ordem do alfabeto: leão, depois mala, depois navio.",
+ "certo17_OVO": "Isso! Em ordem do alfabeto: ovo, depois pato, depois queijo.",
+ "certo17_RATO": "Isso! Em ordem do alfabeto: rato, depois sapo, depois tomate.",
+ "certo17_UVA": "Isso! Em ordem do alfabeto: uva, depois vaca, depois xícara.",
+ "certo18_ABACAXI": "Muito bem! Todas começam igual, então mandou a segunda letra: abacaxi, depois abelha, depois arroz.",
+ "certo18_BALDE": "Muito bem! Todas começam igual, então mandou a segunda letra: balde, depois bico, depois bola.",
+ "certo18_CASA": "Muito bem! Todas começam igual, então mandou a segunda letra: casa, depois chuva, depois cola.",
+ "certo18_DADO": "Muito bem! Todas começam igual, então mandou a segunda letra: dado, depois dedo, depois doce.",
+ "certo18_FACA": "Muito bem! Todas começam igual, então mandou a segunda letra: faca, depois festa, depois foca.",
+ "certo18_GATO": "Muito bem! Todas começam igual, então mandou a segunda letra: gato, depois gelo, depois girafa.",
+ "certo18_MALA": "Muito bem! Todas começam igual, então mandou a segunda letra: mala, depois mesa, depois moeda.",
+ "certo18_PATO": "Muito bem! Todas começam igual, então mandou a segunda letra: pato, depois pena, depois pipa.",
+ "certo18_SAPO": "Muito bem! Todas começam igual, então mandou a segunda letra: sapo, depois sino, depois suco.",
+ "certo18_TATU": "Muito bem! Todas começam igual, então mandou a segunda letra: tatu, depois telha, depois tijolo.",
+ "certo19_BICO": "Isso! Bico vem antes de bola no dicionário.",
+ "certo19_CASA": "Isso! Casa vem antes de cola no dicionário.",
+ "certo19_DADO": "Isso! Dado vem antes de dedo no dicionário.",
+ "certo19_FACA": "Isso! Faca vem antes de foca no dicionário.",
+ "certo19_GATO": "Isso! Gato vem antes de gelo no dicionário.",
+ "certo19_LEAO": "Isso! Leão vem antes de lua no dicionário.",
+ "certo19_MALA": "Isso! Mala vem antes de mesa no dicionário.",
+ "certo19_NAVIO": "Isso! Navio vem antes de ninho no dicionário.",
+ "certo19_PATO": "Isso! Pato vem antes de pena no dicionário.",
+ "certo19_SAPO": "Isso! Sapo vem antes de sino no dicionário.",
+ "certo19_TATU": "Isso! Tatu vem antes de telha no dicionário.",
+ "certo19_VACA": "Isso! Vaca vem antes de vela no dicionário.",
  "certo1_A": "Muito bem! á, bê, cê, dê, é. Essa é a ordem certa.",
+ "certo1_B": "Muito bem! bê, cê, dê, é, éfe. Essa é a ordem certa.",
+ "certo1_C": "Muito bem! cê, dê, é, éfe, gê. Essa é a ordem certa.",
  "certo1_D": "Muito bem! dê, é, éfe, gê, agá. Essa é a ordem certa.",
  "certo1_E": "Muito bem! é, éfe, gê, agá, i. Essa é a ordem certa.",
+ "certo1_F": "Muito bem! éfe, gê, agá, i, jota. Essa é a ordem certa.",
+ "certo1_G": "Muito bem! gê, agá, i, jota, cá. Essa é a ordem certa.",
  "certo1_H": "Muito bem! agá, i, jota, cá, éle. Essa é a ordem certa.",
+ "certo1_I": "Muito bem! i, jota, cá, éle, ême. Essa é a ordem certa.",
  "certo1_J": "Muito bem! jota, cá, éle, ême, êne. Essa é a ordem certa.",
+ "certo1_K": "Muito bem! cá, éle, ême, êne, ó. Essa é a ordem certa.",
  "certo1_L": "Muito bem! éle, ême, êne, ó, pê. Essa é a ordem certa.",
+ "certo1_M": "Muito bem! ême, êne, ó, pê, quê. Essa é a ordem certa.",
+ "certo1_N": "Muito bem! êne, ó, pê, quê, érre. Essa é a ordem certa.",
+ "certo1_O": "Muito bem! ó, pê, quê, érre, ésse. Essa é a ordem certa.",
  "certo1_P": "Muito bem! pê, quê, érre, ésse, tê. Essa é a ordem certa.",
  "certo1_Q": "Muito bem! quê, érre, ésse, tê, u. Essa é a ordem certa.",
+ "certo1_R": "Muito bem! érre, ésse, tê, u, vê. Essa é a ordem certa.",
+ "certo1_S": "Muito bem! ésse, tê, u, vê, dábliu. Essa é a ordem certa.",
  "certo1_T": "Muito bem! tê, u, vê, dábliu, xis. Essa é a ordem certa.",
+ "certo1_U": "Muito bem! u, vê, dábliu, xis, ípsilon. Essa é a ordem certa.",
  "certo1_V": "Muito bem! vê, dábliu, xis, ípsilon, zê. Essa é a ordem certa.",
- "certo2_B": "Isso! Esta é a letra bê.",
- "certo2_C": "Isso! Esta é a letra cê.",
- "certo2_F": "Isso! Esta é a letra éfe.",
- "certo2_I": "Isso! Esta é a letra i.",
- "certo2_M": "Isso! Esta é a letra ême.",
- "certo2_O": "Isso! Esta é a letra ó.",
- "certo2_R": "Isso! Esta é a letra érre.",
- "certo2_S": "Isso! Esta é a letra ésse.",
- "certo2_U": "Isso! Esta é a letra u.",
- "certo2_Y": "Isso! Esta é a letra ípsilon.",
- "certo3_C": "Muito bem! Depois do bê vem o cê.",
- "certo3_E": "Muito bem! Depois do dê vem o é.",
- "certo3_G": "Muito bem! Depois do éfe vem o gê.",
- "certo3_I": "Muito bem! Depois do agá vem o i.",
- "certo3_K": "Muito bem! Depois do jota vem o cá.",
- "certo3_N": "Muito bem! Depois do ême vem o êne.",
- "certo3_Q": "Muito bem! Depois do pê vem o quê.",
- "certo3_S": "Muito bem! Depois do érre vem o ésse.",
- "certo3_U": "Muito bem! Depois do tê vem o u.",
- "certo3_W": "Muito bem! Depois do vê vem o dábliu.",
- "certo4_A": "Isso! Depois do á vem o bê.",
- "certo4_C": "Isso! Depois do cê vem o dê.",
- "certo4_E": "Isso! Depois do é vem o éfe.",
- "certo4_I": "Isso! Depois do i vem o jota.",
- "certo4_K": "Isso! Depois do cá vem o éle.",
- "certo4_M": "Isso! Depois do ême vem o êne.",
- "certo4_O": "Isso! Depois do ó vem o pê.",
- "certo4_Q": "Isso! Depois do quê vem o érre.",
- "certo4_T": "Isso! Depois do tê vem o u.",
- "certo4_V": "Isso! Depois do vê vem o dábliu.",
- "certo5_ABELHA": "Isso! abelha não é da fila: em ordem ficam ovo, pato, queijo.",
- "certo5_BOLA": "Isso! bola não é da fila: em ordem ficam rato, sapo, tomate.",
- "certo5_CASA": "Isso! casa não é da fila: em ordem ficam mala, navio, ovo.",
- "certo5_DADO": "Isso! dado não é da fila: em ordem ficam uva, vaca, xicara.",
- "certo5_GATO": "Isso! gato não é da fila: em ordem ficam queijo, rato, sapo.",
- "certo5_OVO": "Isso! ovo não é da fila: em ordem ficam escola, faca, gato.",
- "certo5_PATO": "Isso! pato não é da fila: em ordem ficam gato, igreja, janela.",
- "certo5_RATO": "Isso! rato não é da fila: em ordem ficam bola, casa, dado.",
- "certo5_SAPO": "Isso! sapo não é da fila: em ordem ficam igreja, janela, leao.",
- "certo5_UVA": "Isso! uva não é da fila: em ordem ficam dado, escola, faca.",
- "certo5_VACA": "Isso! vaca não é da fila: em ordem ficam leao, mala, navio.",
- "certo5_ZEBRA": "Isso! zebra não é da fila: em ordem ficam abelha, bola, casa.",
- "certo6_C": "Isso! Antes do cê vem o bê… e depois do cê vem o dê.",
- "certo6_E": "Isso! Antes do é vem o dê… e depois do é vem o éfe.",
- "certo6_G": "Isso! Antes do gê vem o éfe… e depois do gê vem o agá.",
- "certo6_J": "Isso! Antes do jota vem o i… e depois do jota vem o cá.",
- "certo6_L": "Isso! Antes do éle vem o cá… e depois do éle vem o ême.",
- "certo6_N": "Isso! Antes do êne vem o ême… e depois do êne vem o ó.",
- "certo6_P": "Isso! Antes do pê vem o ó… e depois do pê vem o quê.",
- "certo6_R": "Isso! Antes do érre vem o quê… e depois do érre vem o ésse.",
- "certo6_T": "Isso! Antes do tê vem o ésse… e depois do tê vem o u.",
- "certo6_V": "Isso! Antes do vê vem o u… e depois do vê vem o dáblio.",
- "certo7_A": "Muito bem! á, bê, cê, dê.",
- "certo7_D": "Muito bem! dê, é, éfe, gê.",
- "certo7_F": "Muito bem! éfe, gê, agá, i.",
- "certo7_I": "Muito bem! i, jota, cá, éle.",
- "certo7_K": "Muito bem! cá, éle, ême, êne.",
- "certo7_M": "Muito bem! ême, êne, ó, pê.",
- "certo7_O": "Muito bem! ó, pê, quê, érre.",
- "certo7_Q": "Muito bem! quê, érre, ésse, tê.",
- "certo7_S": "Muito bem! ésse, tê, u, vê.",
- "certo7_V": "Muito bem! vê, dábliu, xis, ípsilon.",
- "certo8_A": "Isso! O á não é dessa parte da fila. Sem ele fica êne, ó, pê.",
- "certo8_C": "Isso! O cê não é dessa parte da fila. Sem ele fica éle, ême, êne.",
- "certo8_H": "Isso! O agá não é dessa parte da fila. Sem ele fica ésse, tê, u.",
- "certo8_J": "Isso! O jota não é dessa parte da fila. Sem ele fica bê, cê, dê.",
- "certo8_R": "Isso! O érre não é dessa parte da fila. Sem ele fica dê, é, éfe.",
- "certo8_U": "Isso! O u não é dessa parte da fila. Sem ele fica gê, agá, i.",
- "certo8_Y": "Isso! O ípsilon não é dessa parte da fila. Sem ele fica i, jota, cá.",
- "certo8_Z": "Isso! O zê não é dessa parte da fila. Sem ele fica pê, quê, érre.",
- "certo9_bola": "Muito bem! Bola começa com bê.",
- "certo9_dado": "Muito bem! Dado começa com dê.",
- "certo9_faca": "Muito bem! Faca começa com éfe.",
- "certo9_gato": "Muito bem! Gato começa com gê.",
- "certo9_mala": "Muito bem! Mala começa com ême.",
- "certo9_pato": "Muito bem! Pato começa com pê.",
- "certo9_sapo": "Muito bem! Sapo começa com ésse.",
- "certo9_tomate": "Muito bem! Tomate começa com tê.",
- "certo9_vaca": "Muito bem! Vaca começa com vê.",
- "certo9_zebra": "Muito bem! Zebra começa com zê.",
- "dica10_ABELHA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_BOLA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_CASA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_DADO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_FACA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_GATO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_LEAO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_OVO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_RATO": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
- "dica10_UVA": "Olhe só a PRIMEIRA letra de cada palavra e pense: no alfabeto, qual delas vem antes?",
+ "certo1_W": "Muito bem! dábliu, xis, ípsilon, zê. Essa é a ordem certa.",
+ "certo1_X": "Muito bem! xis, ípsilon, zê. Essa é a ordem certa.",
+ "certo1_Y": "Muito bem! ípsilon, zê. Essa é a ordem certa.",
+ "certo1_Z": "Muito bem! zê. Essa é a ordem certa.",
+ "certo20_abelha": "Muito bem! Abelha começa com á.",
+ "certo20_bola": "Muito bem! Bola começa com bê.",
+ "certo20_casa": "Muito bem! Casa começa com cê.",
+ "certo20_dado": "Muito bem! Dado começa com dê.",
+ "certo20_escola": "Muito bem! Escola começa com é.",
+ "certo20_faca": "Muito bem! Faca começa com éfe.",
+ "certo20_gato": "Muito bem! Gato começa com gê.",
+ "certo20_hipopotamo": "Muito bem! Hipopótamo começa com agá.",
+ "certo20_igreja": "Muito bem! Igreja começa com i.",
+ "certo20_janela": "Muito bem! Janela começa com jota.",
+ "certo20_leao": "Muito bem! Leão começa com éle.",
+ "certo20_mala": "Muito bem! Mala começa com ême.",
+ "certo20_navio": "Muito bem! Navio começa com êne.",
+ "certo20_ovo": "Muito bem! Ovo começa com ó.",
+ "certo20_pato": "Muito bem! Pato começa com pê.",
+ "certo20_queijo": "Muito bem! Queijo começa com quê.",
+ "certo20_rato": "Muito bem! Rato começa com érre.",
+ "certo20_sapo": "Muito bem! Sapo começa com ésse.",
+ "certo20_tomate": "Muito bem! Tomate começa com tê.",
+ "certo20_uva": "Muito bem! Uva começa com u.",
+ "certo20_vaca": "Muito bem! Vaca começa com vê.",
+ "certo20_xicara": "Muito bem! Xícara começa com xis.",
+ "certo20_zebra": "Muito bem! Zebra começa com zê.",
+ "certo21_abelha": "Isso! Cada palavra foi para a gaveta da letra dela.",
+ "certo21_bola": "Isso! Cada palavra foi para a gaveta da letra dela.",
+ "certo21_casa": "Isso! Cada palavra foi para a gaveta da letra dela.",
+ "certo21_escola": "Isso! Cada palavra foi para a gaveta da letra dela.",
+ "certo21_janela": "Isso! Cada palavra foi para a gaveta da letra dela.",
+ "certo21_ovo": "Isso! Cada palavra foi para a gaveta da letra dela.",
+ "certo21_sapo": "Isso! Cada palavra foi para a gaveta da letra dela.",
+ "certo21_xicara": "Isso! Cada palavra foi para a gaveta da letra dela.",
+ "certo22_abelha": "Isso! Em ordem do alfabeto: abelha, depois casa, depois gato.",
+ "certo22_bola": "Isso! Em ordem do alfabeto: bola, depois mala, depois tomate.",
+ "certo22_casa": "Isso! Em ordem do alfabeto: casa, depois navio, depois xícara.",
+ "certo22_dado": "Isso! Em ordem do alfabeto: dado, depois igreja, depois queijo.",
+ "certo22_escola": "Isso! Em ordem do alfabeto: escola, depois janela, depois mala.",
+ "certo22_igreja": "Isso! Em ordem do alfabeto: igreja, depois leão, depois ovo.",
+ "certo22_navio": "Isso! Em ordem do alfabeto: navio, depois pato, depois rato.",
+ "certo22_queijo": "Isso! Em ordem do alfabeto: queijo, depois sapo, depois uva.",
+ "certo22_tomate": "Isso! Em ordem do alfabeto: tomate, depois vaca, depois zebra.",
+ "certo23_ANA": "Isso! Na chamada eles ficariam assim: ana, depois bruno, depois caio.",
+ "certo23_ARTUR": "Isso! Na chamada eles ficariam assim: artur, depois Emili, depois murilo.",
+ "certo23_BEATRIZ": "Isso! Na chamada eles ficariam assim: beatriz, depois Kauã, depois Nina.",
+ "certo23_CLARA": "Isso! Na chamada eles ficariam assim: clara, depois henrique, depois lucas.",
+ "certo23_DAVI": "Isso! Na chamada eles ficariam assim: davi, depois elisa, depois felipe.",
+ "certo23_GABI": "Isso! Na chamada eles ficariam assim: Gabi, depois Heloísa, depois igor.",
+ "certo23_JOAO": "Isso! Na chamada eles ficariam assim: João, depois lara, depois miguel.",
+ "certo23_NOAH": "Isso! Na chamada eles ficariam assim: Noá, depois Olívia, depois pedro.",
+ "certo23_RAFA": "Isso! Na chamada eles ficariam assim: Rafa, depois sofia, depois tiago.",
+ "certo23_VITOR": "Isso! Na chamada eles ficariam assim: Vítor, depois Iasmin, depois Zezé.",
+ "certo24_A": "Você escreveu o á! Ficou muito bom.",
+ "certo24_B": "Você escreveu o bê! Ficou muito bom.",
+ "certo24_C": "Você escreveu o cê! Ficou muito bom.",
+ "certo24_D": "Você escreveu o dê! Ficou muito bom.",
+ "certo24_E": "Você escreveu o é! Ficou muito bom.",
+ "certo24_F": "Você escreveu o éfe! Ficou muito bom.",
+ "certo24_G": "Você escreveu o gê! Ficou muito bom.",
+ "certo24_H": "Você escreveu o agá! Ficou muito bom.",
+ "certo24_I": "Você escreveu o i! Ficou muito bom.",
+ "certo24_J": "Você escreveu o jota! Ficou muito bom.",
+ "certo24_K": "Você escreveu o cá! Ficou muito bom.",
+ "certo24_L": "Você escreveu o éle! Ficou muito bom.",
+ "certo24_M": "Você escreveu o ême! Ficou muito bom.",
+ "certo24_N": "Você escreveu o êne! Ficou muito bom.",
+ "certo24_O": "Você escreveu o ó! Ficou muito bom.",
+ "certo24_P": "Você escreveu o pê! Ficou muito bom.",
+ "certo24_Q": "Você escreveu o quê! Ficou muito bom.",
+ "certo24_R": "Você escreveu o érre! Ficou muito bom.",
+ "certo24_S": "Você escreveu o ésse! Ficou muito bom.",
+ "certo24_T": "Você escreveu o tê! Ficou muito bom.",
+ "certo24_U": "Você escreveu o u! Ficou muito bom.",
+ "certo24_V": "Você escreveu o vê! Ficou muito bom.",
+ "certo24_W": "Você escreveu o dábliu! Ficou muito bom.",
+ "certo24_X": "Você escreveu o xis! Ficou muito bom.",
+ "certo24_Y": "Você escreveu o ípsilon! Ficou muito bom.",
+ "certo24_Z": "Você escreveu o zê! Ficou muito bom.",
+ "certo25_A": "Á de abelha foi para o seu alfabeto!",
+ "certo25_B": "Bê de bola foi para o seu alfabeto!",
+ "certo25_C": "Cê de casa foi para o seu alfabeto!",
+ "certo25_D": "Dê de dado foi para o seu alfabeto!",
+ "certo25_E": "É de escola foi para o seu alfabeto!",
+ "certo25_F": "Éfe de faca foi para o seu alfabeto!",
+ "certo25_G": "Gê de gato foi para o seu alfabeto!",
+ "certo25_H": "Agá de hipopótamo foi para o seu alfabeto!",
+ "certo25_I": "I de igreja foi para o seu alfabeto!",
+ "certo25_J": "Jota de janela foi para o seu alfabeto!",
+ "certo25_L": "Éle de leão foi para o seu alfabeto!",
+ "certo25_M": "Ême de mala foi para o seu alfabeto!",
+ "certo25_N": "Êne de navio foi para o seu alfabeto!",
+ "certo25_O": "Ó de ovo foi para o seu alfabeto!",
+ "certo25_P": "Pê de pato foi para o seu alfabeto!",
+ "certo25_Q": "Quê de queijo foi para o seu alfabeto!",
+ "certo25_R": "Érre de rato foi para o seu alfabeto!",
+ "certo25_S": "Ésse de sapo foi para o seu alfabeto!",
+ "certo25_T": "Tê de tomate foi para o seu alfabeto!",
+ "certo25_U": "U de uva foi para o seu alfabeto!",
+ "certo25_V": "Vê de vaca foi para o seu alfabeto!",
+ "certo25_X": "Xis de xícara foi para o seu alfabeto!",
+ "certo25_Z": "Zê de zebra foi para o seu alfabeto!",
+ "certo2_A": "Achou! O á estava ali na fila.",
+ "certo2_B": "Achou! O bê estava ali na fila.",
+ "certo2_C": "Achou! O cê estava ali na fila.",
+ "certo2_D": "Achou! O dê estava ali na fila.",
+ "certo2_E": "Achou! O é estava ali na fila.",
+ "certo2_F": "Achou! O éfe estava ali na fila.",
+ "certo2_G": "Achou! O gê estava ali na fila.",
+ "certo2_H": "Achou! O agá estava ali na fila.",
+ "certo2_I": "Achou! O i estava ali na fila.",
+ "certo2_J": "Achou! O jota estava ali na fila.",
+ "certo2_K": "Achou! O cá estava ali na fila.",
+ "certo2_L": "Achou! O éle estava ali na fila.",
+ "certo2_M": "Achou! O ême estava ali na fila.",
+ "certo2_N": "Achou! O êne estava ali na fila.",
+ "certo2_O": "Achou! O ó estava ali na fila.",
+ "certo2_P": "Achou! O pê estava ali na fila.",
+ "certo2_Q": "Achou! O quê estava ali na fila.",
+ "certo2_R": "Achou! O érre estava ali na fila.",
+ "certo2_S": "Achou! O ésse estava ali na fila.",
+ "certo2_T": "Achou! O tê estava ali na fila.",
+ "certo2_U": "Achou! O u estava ali na fila.",
+ "certo2_V": "Achou! O vê estava ali na fila.",
+ "certo2_W": "Achou! O dábliu estava ali na fila.",
+ "certo2_X": "Achou! O xis estava ali na fila.",
+ "certo2_Y": "Achou! O ípsilon estava ali na fila.",
+ "certo2_Z": "Achou! O zê estava ali na fila.",
+ "certo3_A": "Isso! Esta é a letra á.",
+ "certo3_B": "Isso! Esta é a letra bê.",
+ "certo3_C": "Isso! Esta é a letra cê.",
+ "certo3_D": "Isso! Esta é a letra dê.",
+ "certo3_E": "Isso! Esta é a letra é.",
+ "certo3_F": "Isso! Esta é a letra éfe.",
+ "certo3_G": "Isso! Esta é a letra gê.",
+ "certo3_H": "Isso! Esta é a letra agá.",
+ "certo3_I": "Isso! Esta é a letra i.",
+ "certo3_J": "Isso! Esta é a letra jota.",
+ "certo3_K": "Isso! Esta é a letra cá.",
+ "certo3_L": "Isso! Esta é a letra éle.",
+ "certo3_M": "Isso! Esta é a letra ême.",
+ "certo3_N": "Isso! Esta é a letra êne.",
+ "certo3_O": "Isso! Esta é a letra ó.",
+ "certo3_P": "Isso! Esta é a letra pê.",
+ "certo3_Q": "Isso! Esta é a letra quê.",
+ "certo3_R": "Isso! Esta é a letra érre.",
+ "certo3_S": "Isso! Esta é a letra ésse.",
+ "certo3_T": "Isso! Esta é a letra tê.",
+ "certo3_U": "Isso! Esta é a letra u.",
+ "certo3_V": "Isso! Esta é a letra vê.",
+ "certo3_W": "Isso! Esta é a letra dábliu.",
+ "certo3_X": "Isso! Esta é a letra xis.",
+ "certo3_Y": "Isso! Esta é a letra ípsilon.",
+ "certo3_Z": "Isso! Esta é a letra zê.",
+ "certo4_A": "Muito bem! O á abre o alfabeto.",
+ "certo4_B": "Muito bem! Depois do á vem o bê.",
+ "certo4_C": "Muito bem! Depois do bê vem o cê.",
+ "certo4_D": "Muito bem! Depois do cê vem o dê.",
+ "certo4_E": "Muito bem! Depois do dê vem o é.",
+ "certo4_F": "Muito bem! Depois do é vem o éfe.",
+ "certo4_G": "Muito bem! Depois do éfe vem o gê.",
+ "certo4_H": "Muito bem! Depois do gê vem o agá.",
+ "certo4_I": "Muito bem! Depois do agá vem o i.",
+ "certo4_J": "Muito bem! Depois do i vem o jota.",
+ "certo4_K": "Muito bem! Depois do jota vem o cá.",
+ "certo4_L": "Muito bem! Depois do cá vem o éle.",
+ "certo4_M": "Muito bem! Depois do éle vem o ême.",
+ "certo4_N": "Muito bem! Depois do ême vem o êne.",
+ "certo4_O": "Muito bem! Depois do êne vem o ó.",
+ "certo4_P": "Muito bem! Depois do ó vem o pê.",
+ "certo4_Q": "Muito bem! Depois do pê vem o quê.",
+ "certo4_R": "Muito bem! Depois do quê vem o érre.",
+ "certo4_S": "Muito bem! Depois do érre vem o ésse.",
+ "certo4_T": "Muito bem! Depois do ésse vem o tê.",
+ "certo4_U": "Muito bem! Depois do tê vem o u.",
+ "certo4_V": "Muito bem! Depois do u vem o vê.",
+ "certo4_W": "Muito bem! Depois do vê vem o dábliu.",
+ "certo4_X": "Muito bem! Depois do dábliu vem o xis.",
+ "certo4_Y": "Muito bem! Depois do xis vem o ípsilon.",
+ "certo4_Z": "Muito bem! Depois do ípsilon vem o zê.",
+ "certo5_A": "Muito bem! O á abre o alfabeto. Repare que é a mesma letra, só que pequena.",
+ "certo5_B": "Muito bem! Depois do á vem o bê. Repare que é a mesma letra, só que pequena.",
+ "certo5_C": "Muito bem! Depois do bê vem o cê. Repare que é a mesma letra, só que pequena.",
+ "certo5_D": "Muito bem! Depois do cê vem o dê. Repare que é a mesma letra, só que pequena.",
+ "certo5_E": "Muito bem! Depois do dê vem o é. Repare que é a mesma letra, só que pequena.",
+ "certo5_F": "Muito bem! Depois do é vem o éfe. Repare que é a mesma letra, só que pequena.",
+ "certo5_G": "Muito bem! Depois do éfe vem o gê. Repare que é a mesma letra, só que pequena.",
+ "certo5_H": "Muito bem! Depois do gê vem o agá. Repare que é a mesma letra, só que pequena.",
+ "certo5_I": "Muito bem! Depois do agá vem o i. Repare que é a mesma letra, só que pequena.",
+ "certo5_J": "Muito bem! Depois do i vem o jota. Repare que é a mesma letra, só que pequena.",
+ "certo5_K": "Muito bem! Depois do jota vem o cá. Repare que é a mesma letra, só que pequena.",
+ "certo5_L": "Muito bem! Depois do cá vem o éle. Repare que é a mesma letra, só que pequena.",
+ "certo5_M": "Muito bem! Depois do éle vem o ême. Repare que é a mesma letra, só que pequena.",
+ "certo5_N": "Muito bem! Depois do ême vem o êne. Repare que é a mesma letra, só que pequena.",
+ "certo5_O": "Muito bem! Depois do êne vem o ó. Repare que é a mesma letra, só que pequena.",
+ "certo5_P": "Muito bem! Depois do ó vem o pê. Repare que é a mesma letra, só que pequena.",
+ "certo5_Q": "Muito bem! Depois do pê vem o quê. Repare que é a mesma letra, só que pequena.",
+ "certo5_R": "Muito bem! Depois do quê vem o érre. Repare que é a mesma letra, só que pequena.",
+ "certo5_S": "Muito bem! Depois do érre vem o ésse. Repare que é a mesma letra, só que pequena.",
+ "certo5_T": "Muito bem! Depois do ésse vem o tê. Repare que é a mesma letra, só que pequena.",
+ "certo5_U": "Muito bem! Depois do tê vem o u. Repare que é a mesma letra, só que pequena.",
+ "certo5_V": "Muito bem! Depois do u vem o vê. Repare que é a mesma letra, só que pequena.",
+ "certo5_W": "Muito bem! Depois do vê vem o dábliu. Repare que é a mesma letra, só que pequena.",
+ "certo5_X": "Muito bem! Depois do dábliu vem o xis. Repare que é a mesma letra, só que pequena.",
+ "certo5_Y": "Muito bem! Depois do xis vem o ípsilon. Repare que é a mesma letra, só que pequena.",
+ "certo5_Z": "Muito bem! Depois do ípsilon vem o zê. Repare que é a mesma letra, só que pequena.",
+ "certo6_A": "Isso! O á grande e o á pequeno são a mesma letra.",
+ "certo6_B": "Isso! O bê grande e o bê pequeno são a mesma letra.",
+ "certo6_C": "Isso! O cê grande e o cê pequeno são a mesma letra.",
+ "certo6_D": "Isso! O dê grande e o dê pequeno são a mesma letra.",
+ "certo6_E": "Isso! O é grande e o é pequeno são a mesma letra.",
+ "certo6_F": "Isso! O éfe grande e o éfe pequeno são a mesma letra.",
+ "certo6_G": "Isso! O gê grande e o gê pequeno são a mesma letra.",
+ "certo6_H": "Isso! O agá grande e o agá pequeno são a mesma letra.",
+ "certo6_I": "Isso! O i grande e o i pequeno são a mesma letra.",
+ "certo6_J": "Isso! O jota grande e o jota pequeno são a mesma letra.",
+ "certo6_K": "Isso! O cá grande e o cá pequeno são a mesma letra.",
+ "certo6_L": "Isso! O éle grande e o éle pequeno são a mesma letra.",
+ "certo6_M": "Isso! O ême grande e o ême pequeno são a mesma letra.",
+ "certo6_N": "Isso! O êne grande e o êne pequeno são a mesma letra.",
+ "certo6_O": "Isso! O ó grande e o ó pequeno são a mesma letra.",
+ "certo6_P": "Isso! O pê grande e o pê pequeno são a mesma letra.",
+ "certo6_Q": "Isso! O quê grande e o quê pequeno são a mesma letra.",
+ "certo6_R": "Isso! O érre grande e o érre pequeno são a mesma letra.",
+ "certo6_S": "Isso! O ésse grande e o ésse pequeno são a mesma letra.",
+ "certo6_T": "Isso! O tê grande e o tê pequeno são a mesma letra.",
+ "certo6_U": "Isso! O u grande e o u pequeno são a mesma letra.",
+ "certo6_V": "Isso! O vê grande e o vê pequeno são a mesma letra.",
+ "certo6_W": "Isso! O dábliu grande e o dábliu pequeno são a mesma letra.",
+ "certo6_X": "Isso! O xis grande e o xis pequeno são a mesma letra.",
+ "certo6_Y": "Isso! O ípsilon grande e o ípsilon pequeno são a mesma letra.",
+ "certo7_A": "Isso! Depois do á vem o bê.",
+ "certo7_B": "Isso! Depois do bê vem o cê.",
+ "certo7_C": "Isso! Depois do cê vem o dê.",
+ "certo7_D": "Isso! Depois do dê vem o é.",
+ "certo7_E": "Isso! Depois do é vem o éfe.",
+ "certo7_F": "Isso! Depois do éfe vem o gê.",
+ "certo7_G": "Isso! Depois do gê vem o agá.",
+ "certo7_H": "Isso! Depois do agá vem o i.",
+ "certo7_I": "Isso! Depois do i vem o jota.",
+ "certo7_J": "Isso! Depois do jota vem o cá.",
+ "certo7_K": "Isso! Depois do cá vem o éle.",
+ "certo7_L": "Isso! Depois do éle vem o ême.",
+ "certo7_M": "Isso! Depois do ême vem o êne.",
+ "certo7_N": "Isso! Depois do êne vem o ó.",
+ "certo7_O": "Isso! Depois do ó vem o pê.",
+ "certo7_P": "Isso! Depois do pê vem o quê.",
+ "certo7_Q": "Isso! Depois do quê vem o érre.",
+ "certo7_R": "Isso! Depois do érre vem o ésse.",
+ "certo7_S": "Isso! Depois do ésse vem o tê.",
+ "certo7_T": "Isso! Depois do tê vem o u.",
+ "certo7_U": "Isso! Depois do u vem o vê.",
+ "certo7_V": "Isso! Depois do vê vem o dábliu.",
+ "certo7_W": "Isso! Depois do dábliu vem o xis.",
+ "certo7_X": "Isso! Depois do xis vem o ípsilon.",
+ "certo7_Y": "Isso! Depois do ípsilon vem o zê.",
+ "certo8_B": "Muito bem! Antes do bê vem o á.",
+ "certo8_C": "Muito bem! Antes do cê vem o bê.",
+ "certo8_D": "Muito bem! Antes do dê vem o cê.",
+ "certo8_E": "Muito bem! Antes do é vem o dê.",
+ "certo8_F": "Muito bem! Antes do éfe vem o é.",
+ "certo8_G": "Muito bem! Antes do gê vem o éfe.",
+ "certo8_H": "Muito bem! Antes do agá vem o gê.",
+ "certo8_I": "Muito bem! Antes do i vem o agá.",
+ "certo8_J": "Muito bem! Antes do jota vem o i.",
+ "certo8_K": "Muito bem! Antes do cá vem o jota.",
+ "certo8_L": "Muito bem! Antes do éle vem o cá.",
+ "certo8_M": "Muito bem! Antes do ême vem o éle.",
+ "certo8_N": "Muito bem! Antes do êne vem o ême.",
+ "certo8_O": "Muito bem! Antes do ó vem o êne.",
+ "certo8_P": "Muito bem! Antes do pê vem o ó.",
+ "certo8_Q": "Muito bem! Antes do quê vem o pê.",
+ "certo8_R": "Muito bem! Antes do érre vem o quê.",
+ "certo8_S": "Muito bem! Antes do ésse vem o érre.",
+ "certo8_T": "Muito bem! Antes do tê vem o ésse.",
+ "certo8_U": "Muito bem! Antes do u vem o tê.",
+ "certo8_V": "Muito bem! Antes do vê vem o u.",
+ "certo8_W": "Muito bem! Antes do dábliu vem o vê.",
+ "certo8_X": "Muito bem! Antes do xis vem o dábliu.",
+ "certo8_Y": "Muito bem! Antes do ípsilon vem o xis.",
+ "certo8_Z": "Muito bem! Antes do zê vem o ípsilon.",
+ "certo9_B": "Isso! á, bê, cê.",
+ "certo9_C": "Isso! bê, cê, dê.",
+ "certo9_D": "Isso! cê, dê, é.",
+ "certo9_E": "Isso! dê, é, éfe.",
+ "certo9_F": "Isso! é, éfe, gê.",
+ "certo9_G": "Isso! éfe, gê, agá.",
+ "certo9_H": "Isso! gê, agá, i.",
+ "certo9_I": "Isso! agá, i, jota.",
+ "certo9_J": "Isso! i, jota, cá.",
+ "certo9_K": "Isso! jota, cá, éle.",
+ "certo9_L": "Isso! cá, éle, ême.",
+ "certo9_M": "Isso! éle, ême, êne.",
+ "certo9_N": "Isso! ême, êne, ó.",
+ "certo9_O": "Isso! êne, ó, pê.",
+ "certo9_P": "Isso! ó, pê, quê.",
+ "certo9_Q": "Isso! pê, quê, érre.",
+ "certo9_R": "Isso! quê, érre, ésse.",
+ "certo9_S": "Isso! érre, ésse, tê.",
+ "certo9_T": "Isso! ésse, tê, u.",
+ "certo9_U": "Isso! tê, u, vê.",
+ "certo9_V": "Isso! u, vê, dábliu.",
+ "certo9_W": "Isso! vê, dábliu, xis.",
+ "certo9_X": "Isso! dábliu, xis, ípsilon.",
+ "certo9_Y": "Isso! xis, ípsilon, zê.",
+ "crianca_ANA": "Ana.",
+ "crianca_ARTUR": "Artur.",
+ "crianca_BEATRIZ": "Beatriz.",
+ "crianca_BRUNO": "Bruno.",
+ "crianca_CAIO": "Caio.",
+ "crianca_CLARA": "Clara.",
+ "crianca_DAVI": "Davi.",
+ "crianca_ELISA": "Elisa.",
+ "crianca_EMILY": "Emili.",
+ "crianca_FELIPE": "Felipe.",
+ "crianca_GABI": "Gabi.",
+ "crianca_HELOISA": "Heloísa.",
+ "crianca_HENRIQUE": "Henrique.",
+ "crianca_IGOR": "Igor.",
+ "crianca_JOAO": "João.",
+ "crianca_KAUA": "Kauã.",
+ "crianca_LARA": "Lara.",
+ "crianca_LUCAS": "Lucas.",
+ "crianca_MIGUEL": "Miguel.",
+ "crianca_MURILO": "Murilo.",
+ "crianca_NINA": "Nina.",
+ "crianca_NOAH": "Noá.",
+ "crianca_OLIVIA": "Olívia.",
+ "crianca_PEDRO": "Pedro.",
+ "crianca_RAFA": "Rafa.",
+ "crianca_SOFIA": "Sofia.",
+ "crianca_TIAGO": "Tiago.",
+ "crianca_VITOR": "Vítor.",
+ "crianca_YASMIN": "Iasmin.",
+ "crianca_ZEZE": "Zezé.",
+ "dica10_B": "Diga as duas em voz alta: á… cê. Quem cabe no meio?",
+ "dica10_C": "Diga as duas em voz alta: bê… dê. Quem cabe no meio?",
+ "dica10_D": "Diga as duas em voz alta: cê… é. Quem cabe no meio?",
+ "dica10_E": "Diga as duas em voz alta: dê… éfe. Quem cabe no meio?",
+ "dica10_F": "Diga as duas em voz alta: é… gê. Quem cabe no meio?",
+ "dica10_G": "Diga as duas em voz alta: éfe… agá. Quem cabe no meio?",
+ "dica10_H": "Diga as duas em voz alta: gê… i. Quem cabe no meio?",
+ "dica10_I": "Diga as duas em voz alta: agá… jota. Quem cabe no meio?",
+ "dica10_J": "Diga as duas em voz alta: i… cá. Quem cabe no meio?",
+ "dica10_K": "Diga as duas em voz alta: jota… éle. Quem cabe no meio?",
+ "dica10_L": "Diga as duas em voz alta: cá… ême. Quem cabe no meio?",
+ "dica10_M": "Diga as duas em voz alta: éle… êne. Quem cabe no meio?",
+ "dica10_N": "Diga as duas em voz alta: ême… ó. Quem cabe no meio?",
+ "dica10_O": "Diga as duas em voz alta: êne… pê. Quem cabe no meio?",
+ "dica10_P": "Diga as duas em voz alta: ó… quê. Quem cabe no meio?",
+ "dica10_Q": "Diga as duas em voz alta: pê… érre. Quem cabe no meio?",
+ "dica10_R": "Diga as duas em voz alta: quê… ésse. Quem cabe no meio?",
+ "dica10_S": "Diga as duas em voz alta: érre… tê. Quem cabe no meio?",
+ "dica10_T": "Diga as duas em voz alta: ésse… u. Quem cabe no meio?",
+ "dica10_U": "Diga as duas em voz alta: tê… vê. Quem cabe no meio?",
+ "dica10_V": "Diga as duas em voz alta: u… dábliu. Quem cabe no meio?",
+ "dica10_W": "Diga as duas em voz alta: vê… xis. Quem cabe no meio?",
+ "dica10_X": "Diga as duas em voz alta: dábliu… ípsilon. Quem cabe no meio?",
+ "dica10_Y": "Diga as duas em voz alta: xis… zê. Quem cabe no meio?",
+ "dica11_A_depois": "Ainda não. Fale o alfabeto até o á e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_B_antes": "Ainda não. Fale o alfabeto até o bê e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_C_depois": "Ainda não. Fale o alfabeto até o cê e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_D_antes": "Ainda não. Fale o alfabeto até o dê e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_E_depois": "Ainda não. Fale o alfabeto até o é e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_F_antes": "Ainda não. Fale o alfabeto até o éfe e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_G_depois": "Ainda não. Fale o alfabeto até o gê e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_H_antes": "Ainda não. Fale o alfabeto até o agá e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_I_depois": "Ainda não. Fale o alfabeto até o i e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_J_antes": "Ainda não. Fale o alfabeto até o jota e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_K_depois": "Ainda não. Fale o alfabeto até o cá e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_L_antes": "Ainda não. Fale o alfabeto até o éle e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_M_depois": "Ainda não. Fale o alfabeto até o ême e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_N_antes": "Ainda não. Fale o alfabeto até o êne e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_O_depois": "Ainda não. Fale o alfabeto até o ó e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_P_antes": "Ainda não. Fale o alfabeto até o pê e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_Q_depois": "Ainda não. Fale o alfabeto até o quê e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_R_antes": "Ainda não. Fale o alfabeto até o érre e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_S_depois": "Ainda não. Fale o alfabeto até o ésse e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_T_antes": "Ainda não. Fale o alfabeto até o tê e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_U_depois": "Ainda não. Fale o alfabeto até o u e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_V_antes": "Ainda não. Fale o alfabeto até o vê e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_W_depois": "Ainda não. Fale o alfabeto até o dábliu e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_X_antes": "Ainda não. Fale o alfabeto até o xis e escute qual vem antes. Depois escreva essa letra.",
+ "dica11_Y_depois": "Ainda não. Fale o alfabeto até o ípsilon e escute qual vem depois. Depois escreva essa letra.",
+ "dica11_Z_antes": "Ainda não. Fale o alfabeto até o zê e escute qual vem antes. Depois escreva essa letra.",
+ "dica12_A": "Essa letra é de outra casinha. Fale a fila a partir do á e conte os quadrados até achar o lugar dela.",
+ "dica12_C": "Essa letra é de outra casinha. Fale a fila a partir do cê e conte os quadrados até achar o lugar dela.",
+ "dica12_E": "Essa letra é de outra casinha. Fale a fila a partir do é e conte os quadrados até achar o lugar dela.",
+ "dica12_G": "Essa letra é de outra casinha. Fale a fila a partir do gê e conte os quadrados até achar o lugar dela.",
+ "dica12_I": "Essa letra é de outra casinha. Fale a fila a partir do i e conte os quadrados até achar o lugar dela.",
+ "dica12_K": "Essa letra é de outra casinha. Fale a fila a partir do cá e conte os quadrados até achar o lugar dela.",
+ "dica12_M": "Essa letra é de outra casinha. Fale a fila a partir do ême e conte os quadrados até achar o lugar dela.",
+ "dica12_O": "Essa letra é de outra casinha. Fale a fila a partir do ó e conte os quadrados até achar o lugar dela.",
+ "dica12_Q": "Essa letra é de outra casinha. Fale a fila a partir do quê e conte os quadrados até achar o lugar dela.",
+ "dica12_S": "Essa letra é de outra casinha. Fale a fila a partir do ésse e conte os quadrados até achar o lugar dela.",
+ "dica13_A": "Não siga a ordem do teclado. Pense na fila do alfabeto: qual destas vem primeiro?",
+ "dica13_B": "Não siga a ordem do teclado. Pense na fila do alfabeto: qual destas vem primeiro?",
+ "dica13_C": "Não siga a ordem do teclado. Pense na fila do alfabeto: qual destas vem primeiro?",
+ "dica13_E": "Não siga a ordem do teclado. Pense na fila do alfabeto: qual destas vem primeiro?",
+ "dica13_F": "Não siga a ordem do teclado. Pense na fila do alfabeto: qual destas vem primeiro?",
+ "dica13_I": "Não siga a ordem do teclado. Pense na fila do alfabeto: qual destas vem primeiro?",
+ "dica13_J": "Não siga a ordem do teclado. Pense na fila do alfabeto: qual destas vem primeiro?",
+ "dica13_R": "Não siga a ordem do teclado. Pense na fila do alfabeto: qual destas vem primeiro?",
+ "dica14_A": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_B": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_C": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_D": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_E": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_F": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_G": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_H": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_I": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_J": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_K": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_L": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_M": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_N": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_O": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_P": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_Q": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_R": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_S": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_T": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_U": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_V": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica14_W": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
+ "dica15_A": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_B": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_C": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_D": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_G": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_H": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_I": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_J": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_K": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_L": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_N": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_O": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_P": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_Q": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_R": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_S": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_T": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_U": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_W": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_Y": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica15_Z": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
+ "dica16_ABELHA": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_BOLA": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_CASA": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_DADO": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_GATO": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_OVO": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_PATO": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_RATO": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_SAPO": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_UVA": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_VACA": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica16_ZEBRA": "Olhe só a primeira letra de cada palavra e fale o alfabeto. Uma delas está no lugar errado.",
+ "dica17_ABELHA": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_BOLA": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_CASA": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_DADO": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_FACA": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_GATO": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_LEAO": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_OVO": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_RATO": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica17_UVA": "Olhe só a primeira letra de cada palavra. Qual delas vem primeiro no alfabeto?",
+ "dica18_ABACAXI": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_BALDE": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_CASA": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_DADO": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_FACA": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_GATO": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_MALA": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_PATO": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_SAPO": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica18_TATU": "A primeira letra é a mesma nas três, então ela não decide nada. Olhe a segunda letra de cada uma.",
+ "dica19_BICO": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_CASA": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_DADO": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_FACA": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_GATO": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_LEAO": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_MALA": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_NAVIO": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_PATO": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_SAPO": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_TATU": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
+ "dica19_VACA": "As duas começam com a mesma letra. Olhe a segunda letra de cada uma e veja qual vem primeiro no alfabeto.",
  "dica1_A": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_B": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_C": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_D": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_E": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_F": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_G": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_H": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_I": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_J": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_K": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_L": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_M": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_N": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_O": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_P": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_Q": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_R": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_S": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_T": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_U": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
  "dica1_V": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
- "dica2_B": "Toque no alto-falante e escute de novo: bê. Qual delas é?",
- "dica2_C": "Toque no alto-falante e escute de novo: cê. Qual delas é?",
- "dica2_F": "Toque no alto-falante e escute de novo: éfe. Qual delas é?",
- "dica2_I": "Toque no alto-falante e escute de novo: i. Qual delas é?",
- "dica2_M": "Toque no alto-falante e escute de novo: ême. Qual delas é?",
- "dica2_O": "Toque no alto-falante e escute de novo: ó. Qual delas é?",
- "dica2_R": "Toque no alto-falante e escute de novo: érre. Qual delas é?",
- "dica2_S": "Toque no alto-falante e escute de novo: ésse. Qual delas é?",
- "dica2_U": "Toque no alto-falante e escute de novo: u. Qual delas é?",
- "dica2_Y": "Toque no alto-falante e escute de novo: ípsilon. Qual delas é?",
- "dica3_C": "Fale as letras da fila em voz alta e continue: qual vem depois do bê?",
- "dica3_E": "Fale as letras da fila em voz alta e continue: qual vem depois do dê?",
- "dica3_G": "Fale as letras da fila em voz alta e continue: qual vem depois do éfe?",
- "dica3_I": "Fale as letras da fila em voz alta e continue: qual vem depois do agá?",
- "dica3_K": "Fale as letras da fila em voz alta e continue: qual vem depois do jota?",
- "dica3_N": "Fale as letras da fila em voz alta e continue: qual vem depois do ême?",
- "dica3_Q": "Fale as letras da fila em voz alta e continue: qual vem depois do pê?",
- "dica3_S": "Fale as letras da fila em voz alta e continue: qual vem depois do érre?",
- "dica3_U": "Fale as letras da fila em voz alta e continue: qual vem depois do tê?",
- "dica3_W": "Fale as letras da fila em voz alta e continue: qual vem depois do vê?",
- "dica4_A": "Comece a falar o alfabeto e pare no á. Qual vem logo em seguida?",
- "dica4_C": "Comece a falar o alfabeto e pare no cê. Qual vem logo em seguida?",
- "dica4_E": "Comece a falar o alfabeto e pare no é. Qual vem logo em seguida?",
- "dica4_I": "Comece a falar o alfabeto e pare no i. Qual vem logo em seguida?",
- "dica4_K": "Comece a falar o alfabeto e pare no cá. Qual vem logo em seguida?",
- "dica4_M": "Comece a falar o alfabeto e pare no ême. Qual vem logo em seguida?",
- "dica4_O": "Comece a falar o alfabeto e pare no ó. Qual vem logo em seguida?",
- "dica4_Q": "Comece a falar o alfabeto e pare no quê. Qual vem logo em seguida?",
- "dica4_T": "Comece a falar o alfabeto e pare no tê. Qual vem logo em seguida?",
- "dica4_V": "Comece a falar o alfabeto e pare no vê. Qual vem logo em seguida?",
- "dica5_ABELHA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_BOLA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_CASA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_DADO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_GATO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_OVO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_PATO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_RATO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_SAPO": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_UVA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_VACA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica5_ZEBRA": "Vá dizendo o alfabeto e olhe a PRIMEIRA letra de cada palavra, uma de cada vez. Uma delas pula para trás.",
- "dica6_C": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o cê e escute quem está de cada lado.",
- "dica6_E": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o é e escute quem está de cada lado.",
- "dica6_G": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o gê e escute quem está de cada lado.",
- "dica6_J": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o jota e escute quem está de cada lado.",
- "dica6_L": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o éle e escute quem está de cada lado.",
- "dica6_N": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o êne e escute quem está de cada lado.",
- "dica6_P": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o pê e escute quem está de cada lado.",
- "dica6_R": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o érre e escute quem está de cada lado.",
- "dica6_T": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o tê e escute quem está de cada lado.",
- "dica6_V": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o vê e escute quem está de cada lado.",
- "dica7_A": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_D": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_F": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_I": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_K": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_M": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_O": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_Q": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_S": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica7_V": "Qual destas vem primeiro no alfabeto? Comece por ela e vá seguindo a fila.",
- "dica8_A": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
- "dica8_C": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
- "dica8_H": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
- "dica8_J": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
- "dica8_R": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
- "dica8_U": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
- "dica8_Y": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
- "dica8_Z": "Fale as quatro em voz alta na ordem do alfabeto. Uma delas não encaixa — qual atrapalha a fila?",
- "dica9_bola": "Fale o nome da figura devagar: bola. Escute só o comecinho.",
- "dica9_dado": "Fale o nome da figura devagar: dado. Escute só o comecinho.",
- "dica9_faca": "Fale o nome da figura devagar: faca. Escute só o comecinho.",
- "dica9_gato": "Fale o nome da figura devagar: gato. Escute só o comecinho.",
- "dica9_mala": "Fale o nome da figura devagar: mala. Escute só o comecinho.",
- "dica9_pato": "Fale o nome da figura devagar: pato. Escute só o comecinho.",
- "dica9_sapo": "Fale o nome da figura devagar: sapo. Escute só o comecinho.",
- "dica9_tomate": "Fale o nome da figura devagar: tomate. Escute só o comecinho.",
- "dica9_vaca": "Fale o nome da figura devagar: vaca. Escute só o comecinho.",
- "dica9_zebra": "Fale o nome da figura devagar: zebra. Escute só o comecinho.",
+ "dica1_W": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_X": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_Y": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica1_Z": "Comece pela primeira e vá seguindo a fila, uma de cada vez.",
+ "dica20_abelha": "Fale o nome da figura devagar: abelha. Escute só o comecinho.",
+ "dica20_bola": "Fale o nome da figura devagar: bola. Escute só o comecinho.",
+ "dica20_casa": "Fale o nome da figura devagar: casa. Escute só o comecinho.",
+ "dica20_dado": "Fale o nome da figura devagar: dado. Escute só o comecinho.",
+ "dica20_escola": "Fale o nome da figura devagar: escola. Escute só o comecinho.",
+ "dica20_faca": "Fale o nome da figura devagar: faca. Escute só o comecinho.",
+ "dica20_gato": "Fale o nome da figura devagar: gato. Escute só o comecinho.",
+ "dica20_hipopotamo": "Fale o nome da figura devagar: hipopótamo. Escute só o comecinho.",
+ "dica20_igreja": "Fale o nome da figura devagar: igreja. Escute só o comecinho.",
+ "dica20_janela": "Fale o nome da figura devagar: janela. Escute só o comecinho.",
+ "dica20_leao": "Fale o nome da figura devagar: leão. Escute só o comecinho.",
+ "dica20_mala": "Fale o nome da figura devagar: mala. Escute só o comecinho.",
+ "dica20_navio": "Fale o nome da figura devagar: navio. Escute só o comecinho.",
+ "dica20_ovo": "Fale o nome da figura devagar: ovo. Escute só o comecinho.",
+ "dica20_pato": "Fale o nome da figura devagar: pato. Escute só o comecinho.",
+ "dica20_queijo": "Fale o nome da figura devagar: queijo. Escute só o comecinho.",
+ "dica20_rato": "Fale o nome da figura devagar: rato. Escute só o comecinho.",
+ "dica20_sapo": "Fale o nome da figura devagar: sapo. Escute só o comecinho.",
+ "dica20_tomate": "Fale o nome da figura devagar: tomate. Escute só o comecinho.",
+ "dica20_uva": "Fale o nome da figura devagar: uva. Escute só o comecinho.",
+ "dica20_vaca": "Fale o nome da figura devagar: vaca. Escute só o comecinho.",
+ "dica20_xicara": "Fale o nome da figura devagar: xícara. Escute só o comecinho.",
+ "dica20_zebra": "Fale o nome da figura devagar: zebra. Escute só o comecinho.",
+ "dica21_abelha": "Essa gaveta não é a de abelha. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_bola": "Essa gaveta não é a de bola. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_casa": "Essa gaveta não é a de casa. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_dado": "Essa gaveta não é a de dado. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_escola": "Essa gaveta não é a de escola. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_faca": "Essa gaveta não é a de faca. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_gato": "Essa gaveta não é a de gato. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_igreja": "Essa gaveta não é a de igreja. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_janela": "Essa gaveta não é a de janela. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_leao": "Essa gaveta não é a de leão. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_mala": "Essa gaveta não é a de mala. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_navio": "Essa gaveta não é a de navio. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_ovo": "Essa gaveta não é a de ovo. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_pato": "Essa gaveta não é a de pato. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_queijo": "Essa gaveta não é a de queijo. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_rato": "Essa gaveta não é a de rato. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_sapo": "Essa gaveta não é a de sapo. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_tomate": "Essa gaveta não é a de tomate. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_uva": "Essa gaveta não é a de uva. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_vaca": "Essa gaveta não é a de vaca. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_xicara": "Essa gaveta não é a de xícara. Fale o nome devagar e escute com que letra ele começa.",
+ "dica21_zebra": "Essa gaveta não é a de zebra. Fale o nome devagar e escute com que letra ele começa.",
+ "dica22_abelha": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica22_bola": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica22_casa": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica22_dado": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica22_escola": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica22_igreja": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica22_navio": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica22_queijo": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica22_tomate": "Diga o nome de cada figura para você mesmo e escute a primeira letra. Qual vem primeiro no alfabeto?",
+ "dica23_ANA": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_ARTUR": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_BEATRIZ": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_CLARA": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_DAVI": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_GABI": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_JOAO": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_NOAH": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_RAFA": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica23_VITOR": "É como na lista da professora: olhe a primeira letra de cada nome e siga o alfabeto.",
+ "dica2_A": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no á.",
+ "dica2_B": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no bê.",
+ "dica2_C": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no cê.",
+ "dica2_D": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no dê.",
+ "dica2_E": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no é.",
+ "dica2_F": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no éfe.",
+ "dica2_G": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no gê.",
+ "dica2_H": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no agá.",
+ "dica2_I": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no i.",
+ "dica2_J": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no jota.",
+ "dica2_K": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no cá.",
+ "dica2_L": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no éle.",
+ "dica2_M": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no ême.",
+ "dica2_N": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no êne.",
+ "dica2_O": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no ó.",
+ "dica2_P": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no pê.",
+ "dica2_Q": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no quê.",
+ "dica2_R": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no érre.",
+ "dica2_S": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no ésse.",
+ "dica2_T": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no tê.",
+ "dica2_U": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no u.",
+ "dica2_V": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no vê.",
+ "dica2_W": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no dábliu.",
+ "dica2_X": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no xis.",
+ "dica2_Y": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no ípsilon.",
+ "dica2_Z": "Ainda não é essa. Vá andando pela fila e dizendo os nomes até chegar no zê.",
+ "dica3_A": "Toque no alto-falante e escute de novo: á. Qual delas é?",
+ "dica3_B": "Toque no alto-falante e escute de novo: bê. Qual delas é?",
+ "dica3_C": "Toque no alto-falante e escute de novo: cê. Qual delas é?",
+ "dica3_D": "Toque no alto-falante e escute de novo: dê. Qual delas é?",
+ "dica3_E": "Toque no alto-falante e escute de novo: é. Qual delas é?",
+ "dica3_F": "Toque no alto-falante e escute de novo: éfe. Qual delas é?",
+ "dica3_G": "Toque no alto-falante e escute de novo: gê. Qual delas é?",
+ "dica3_H": "Toque no alto-falante e escute de novo: agá. Qual delas é?",
+ "dica3_I": "Toque no alto-falante e escute de novo: i. Qual delas é?",
+ "dica3_J": "Toque no alto-falante e escute de novo: jota. Qual delas é?",
+ "dica3_K": "Toque no alto-falante e escute de novo: cá. Qual delas é?",
+ "dica3_L": "Toque no alto-falante e escute de novo: éle. Qual delas é?",
+ "dica3_M": "Toque no alto-falante e escute de novo: ême. Qual delas é?",
+ "dica3_N": "Toque no alto-falante e escute de novo: êne. Qual delas é?",
+ "dica3_O": "Toque no alto-falante e escute de novo: ó. Qual delas é?",
+ "dica3_P": "Toque no alto-falante e escute de novo: pê. Qual delas é?",
+ "dica3_Q": "Toque no alto-falante e escute de novo: quê. Qual delas é?",
+ "dica3_R": "Toque no alto-falante e escute de novo: érre. Qual delas é?",
+ "dica3_S": "Toque no alto-falante e escute de novo: ésse. Qual delas é?",
+ "dica3_T": "Toque no alto-falante e escute de novo: tê. Qual delas é?",
+ "dica3_U": "Toque no alto-falante e escute de novo: u. Qual delas é?",
+ "dica3_V": "Toque no alto-falante e escute de novo: vê. Qual delas é?",
+ "dica3_W": "Toque no alto-falante e escute de novo: dábliu. Qual delas é?",
+ "dica3_X": "Toque no alto-falante e escute de novo: xis. Qual delas é?",
+ "dica3_Y": "Toque no alto-falante e escute de novo: ípsilon. Qual delas é?",
+ "dica3_Z": "Toque no alto-falante e escute de novo: zê. Qual delas é?",
+ "dica4_A": "Esta é a primeira letra de todas.",
+ "dica4_B": "Fale as letras da fila em voz alta e continue: qual vem depois do á?",
+ "dica4_C": "Fale as letras da fila em voz alta e continue: qual vem depois do bê?",
+ "dica4_D": "Fale as letras da fila em voz alta e continue: qual vem depois do cê?",
+ "dica4_E": "Fale as letras da fila em voz alta e continue: qual vem depois do dê?",
+ "dica4_F": "Fale as letras da fila em voz alta e continue: qual vem depois do é?",
+ "dica4_G": "Fale as letras da fila em voz alta e continue: qual vem depois do éfe?",
+ "dica4_H": "Fale as letras da fila em voz alta e continue: qual vem depois do gê?",
+ "dica4_I": "Fale as letras da fila em voz alta e continue: qual vem depois do agá?",
+ "dica4_J": "Fale as letras da fila em voz alta e continue: qual vem depois do i?",
+ "dica4_K": "Fale as letras da fila em voz alta e continue: qual vem depois do jota?",
+ "dica4_L": "Fale as letras da fila em voz alta e continue: qual vem depois do cá?",
+ "dica4_M": "Fale as letras da fila em voz alta e continue: qual vem depois do éle?",
+ "dica4_N": "Fale as letras da fila em voz alta e continue: qual vem depois do ême?",
+ "dica4_O": "Fale as letras da fila em voz alta e continue: qual vem depois do êne?",
+ "dica4_P": "Fale as letras da fila em voz alta e continue: qual vem depois do ó?",
+ "dica4_Q": "Fale as letras da fila em voz alta e continue: qual vem depois do pê?",
+ "dica4_R": "Fale as letras da fila em voz alta e continue: qual vem depois do quê?",
+ "dica4_S": "Fale as letras da fila em voz alta e continue: qual vem depois do érre?",
+ "dica4_T": "Fale as letras da fila em voz alta e continue: qual vem depois do ésse?",
+ "dica4_U": "Fale as letras da fila em voz alta e continue: qual vem depois do tê?",
+ "dica4_V": "Fale as letras da fila em voz alta e continue: qual vem depois do u?",
+ "dica4_W": "Fale as letras da fila em voz alta e continue: qual vem depois do vê?",
+ "dica4_X": "Fale as letras da fila em voz alta e continue: qual vem depois do dábliu?",
+ "dica4_Y": "Fale as letras da fila em voz alta e continue: qual vem depois do xis?",
+ "dica4_Z": "Fale as letras da fila em voz alta e continue: qual vem depois do ípsilon?",
+ "dica5_A": "Esta é a primeira letra de todas.",
+ "dica5_B": "Fale as letras da fila em voz alta e continue: qual vem depois do á?",
+ "dica5_C": "Fale as letras da fila em voz alta e continue: qual vem depois do bê?",
+ "dica5_D": "Fale as letras da fila em voz alta e continue: qual vem depois do cê?",
+ "dica5_E": "Fale as letras da fila em voz alta e continue: qual vem depois do dê?",
+ "dica5_F": "Fale as letras da fila em voz alta e continue: qual vem depois do é?",
+ "dica5_G": "Fale as letras da fila em voz alta e continue: qual vem depois do éfe?",
+ "dica5_H": "Fale as letras da fila em voz alta e continue: qual vem depois do gê?",
+ "dica5_I": "Fale as letras da fila em voz alta e continue: qual vem depois do agá?",
+ "dica5_J": "Fale as letras da fila em voz alta e continue: qual vem depois do i?",
+ "dica5_K": "Fale as letras da fila em voz alta e continue: qual vem depois do jota?",
+ "dica5_L": "Fale as letras da fila em voz alta e continue: qual vem depois do cá?",
+ "dica5_M": "Fale as letras da fila em voz alta e continue: qual vem depois do éle?",
+ "dica5_N": "Fale as letras da fila em voz alta e continue: qual vem depois do ême?",
+ "dica5_O": "Fale as letras da fila em voz alta e continue: qual vem depois do êne?",
+ "dica5_P": "Fale as letras da fila em voz alta e continue: qual vem depois do ó?",
+ "dica5_Q": "Fale as letras da fila em voz alta e continue: qual vem depois do pê?",
+ "dica5_R": "Fale as letras da fila em voz alta e continue: qual vem depois do quê?",
+ "dica5_S": "Fale as letras da fila em voz alta e continue: qual vem depois do érre?",
+ "dica5_T": "Fale as letras da fila em voz alta e continue: qual vem depois do ésse?",
+ "dica5_U": "Fale as letras da fila em voz alta e continue: qual vem depois do tê?",
+ "dica5_V": "Fale as letras da fila em voz alta e continue: qual vem depois do u?",
+ "dica5_W": "Fale as letras da fila em voz alta e continue: qual vem depois do vê?",
+ "dica5_X": "Fale as letras da fila em voz alta e continue: qual vem depois do dábliu?",
+ "dica5_Y": "Fale as letras da fila em voz alta e continue: qual vem depois do xis?",
+ "dica5_Z": "Fale as letras da fila em voz alta e continue: qual vem depois do ípsilon?",
+ "dica6_A": "Procure a letrinha pequena que tem o mesmo nome: á.",
+ "dica6_B": "Procure a letrinha pequena que tem o mesmo nome: bê.",
+ "dica6_C": "Procure a letrinha pequena que tem o mesmo nome: cê.",
+ "dica6_D": "Procure a letrinha pequena que tem o mesmo nome: dê.",
+ "dica6_E": "Procure a letrinha pequena que tem o mesmo nome: é.",
+ "dica6_F": "Procure a letrinha pequena que tem o mesmo nome: éfe.",
+ "dica6_G": "Procure a letrinha pequena que tem o mesmo nome: gê.",
+ "dica6_H": "Procure a letrinha pequena que tem o mesmo nome: agá.",
+ "dica6_I": "Procure a letrinha pequena que tem o mesmo nome: i.",
+ "dica6_J": "Procure a letrinha pequena que tem o mesmo nome: jota.",
+ "dica6_K": "Procure a letrinha pequena que tem o mesmo nome: cá.",
+ "dica6_L": "Procure a letrinha pequena que tem o mesmo nome: éle.",
+ "dica6_M": "Procure a letrinha pequena que tem o mesmo nome: ême.",
+ "dica6_N": "Procure a letrinha pequena que tem o mesmo nome: êne.",
+ "dica6_O": "Procure a letrinha pequena que tem o mesmo nome: ó.",
+ "dica6_P": "Procure a letrinha pequena que tem o mesmo nome: pê.",
+ "dica6_Q": "Procure a letrinha pequena que tem o mesmo nome: quê.",
+ "dica6_R": "Procure a letrinha pequena que tem o mesmo nome: érre.",
+ "dica6_S": "Procure a letrinha pequena que tem o mesmo nome: ésse.",
+ "dica6_T": "Procure a letrinha pequena que tem o mesmo nome: tê.",
+ "dica6_U": "Procure a letrinha pequena que tem o mesmo nome: u.",
+ "dica6_V": "Procure a letrinha pequena que tem o mesmo nome: vê.",
+ "dica6_W": "Procure a letrinha pequena que tem o mesmo nome: dábliu.",
+ "dica6_X": "Procure a letrinha pequena que tem o mesmo nome: xis.",
+ "dica6_Y": "Procure a letrinha pequena que tem o mesmo nome: ípsilon.",
+ "dica7_A": "Comece a falar o alfabeto e pare no á. Qual vem logo em seguida?",
+ "dica7_B": "Comece a falar o alfabeto e pare no bê. Qual vem logo em seguida?",
+ "dica7_C": "Comece a falar o alfabeto e pare no cê. Qual vem logo em seguida?",
+ "dica7_D": "Comece a falar o alfabeto e pare no dê. Qual vem logo em seguida?",
+ "dica7_E": "Comece a falar o alfabeto e pare no é. Qual vem logo em seguida?",
+ "dica7_F": "Comece a falar o alfabeto e pare no éfe. Qual vem logo em seguida?",
+ "dica7_G": "Comece a falar o alfabeto e pare no gê. Qual vem logo em seguida?",
+ "dica7_H": "Comece a falar o alfabeto e pare no agá. Qual vem logo em seguida?",
+ "dica7_I": "Comece a falar o alfabeto e pare no i. Qual vem logo em seguida?",
+ "dica7_J": "Comece a falar o alfabeto e pare no jota. Qual vem logo em seguida?",
+ "dica7_K": "Comece a falar o alfabeto e pare no cá. Qual vem logo em seguida?",
+ "dica7_L": "Comece a falar o alfabeto e pare no éle. Qual vem logo em seguida?",
+ "dica7_M": "Comece a falar o alfabeto e pare no ême. Qual vem logo em seguida?",
+ "dica7_N": "Comece a falar o alfabeto e pare no êne. Qual vem logo em seguida?",
+ "dica7_O": "Comece a falar o alfabeto e pare no ó. Qual vem logo em seguida?",
+ "dica7_P": "Comece a falar o alfabeto e pare no pê. Qual vem logo em seguida?",
+ "dica7_Q": "Comece a falar o alfabeto e pare no quê. Qual vem logo em seguida?",
+ "dica7_R": "Comece a falar o alfabeto e pare no érre. Qual vem logo em seguida?",
+ "dica7_S": "Comece a falar o alfabeto e pare no ésse. Qual vem logo em seguida?",
+ "dica7_T": "Comece a falar o alfabeto e pare no tê. Qual vem logo em seguida?",
+ "dica7_U": "Comece a falar o alfabeto e pare no u. Qual vem logo em seguida?",
+ "dica7_V": "Comece a falar o alfabeto e pare no vê. Qual vem logo em seguida?",
+ "dica7_W": "Comece a falar o alfabeto e pare no dábliu. Qual vem logo em seguida?",
+ "dica7_X": "Comece a falar o alfabeto e pare no xis. Qual vem logo em seguida?",
+ "dica7_Y": "Comece a falar o alfabeto e pare no ípsilon. Qual vem logo em seguida?",
+ "dica8_B": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do bê. Essa é a resposta.",
+ "dica8_C": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do cê. Essa é a resposta.",
+ "dica8_D": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do dê. Essa é a resposta.",
+ "dica8_E": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do é. Essa é a resposta.",
+ "dica8_F": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do éfe. Essa é a resposta.",
+ "dica8_G": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do gê. Essa é a resposta.",
+ "dica8_H": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do agá. Essa é a resposta.",
+ "dica8_I": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do i. Essa é a resposta.",
+ "dica8_J": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do jota. Essa é a resposta.",
+ "dica8_K": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do cá. Essa é a resposta.",
+ "dica8_L": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do éle. Essa é a resposta.",
+ "dica8_M": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do ême. Essa é a resposta.",
+ "dica8_N": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do êne. Essa é a resposta.",
+ "dica8_O": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do ó. Essa é a resposta.",
+ "dica8_P": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do pê. Essa é a resposta.",
+ "dica8_Q": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do quê. Essa é a resposta.",
+ "dica8_R": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do érre. Essa é a resposta.",
+ "dica8_S": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do ésse. Essa é a resposta.",
+ "dica8_T": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do tê. Essa é a resposta.",
+ "dica8_U": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do u. Essa é a resposta.",
+ "dica8_V": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do vê. Essa é a resposta.",
+ "dica8_W": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do dábliu. Essa é a resposta.",
+ "dica8_X": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do xis. Essa é a resposta.",
+ "dica8_Y": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do ípsilon. Essa é a resposta.",
+ "dica8_Z": "Fale o alfabeto desde o começo e vá com atenção. A letra que você diz logo antes do zê. Essa é a resposta.",
+ "dica9_B": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o bê e escute quem está de cada lado.",
+ "dica9_C": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o cê e escute quem está de cada lado.",
+ "dica9_D": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o dê e escute quem está de cada lado.",
+ "dica9_E": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o é e escute quem está de cada lado.",
+ "dica9_F": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o éfe e escute quem está de cada lado.",
+ "dica9_G": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o gê e escute quem está de cada lado.",
+ "dica9_H": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o agá e escute quem está de cada lado.",
+ "dica9_I": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o i e escute quem está de cada lado.",
+ "dica9_J": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o jota e escute quem está de cada lado.",
+ "dica9_K": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o cá e escute quem está de cada lado.",
+ "dica9_L": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o éle e escute quem está de cada lado.",
+ "dica9_M": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o ême e escute quem está de cada lado.",
+ "dica9_N": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o êne e escute quem está de cada lado.",
+ "dica9_O": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o ó e escute quem está de cada lado.",
+ "dica9_P": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o pê e escute quem está de cada lado.",
+ "dica9_Q": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o quê e escute quem está de cada lado.",
+ "dica9_R": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o érre e escute quem está de cada lado.",
+ "dica9_S": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o ésse e escute quem está de cada lado.",
+ "dica9_T": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o tê e escute quem está de cada lado.",
+ "dica9_U": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o u e escute quem está de cada lado.",
+ "dica9_V": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o vê e escute quem está de cada lado.",
+ "dica9_W": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o dábliu e escute quem está de cada lado.",
+ "dica9_X": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o xis e escute quem está de cada lado.",
+ "dica9_Y": "Uma das duas vagas ainda não é essa. Fale o alfabeto até o ípsilon e escute quem está de cada lado.",
  "escreva": "Escreva a letra.",
  "fim": "Você chegou ao fim do Desfile das Letras! Agora você conhece a fila do alfabeto. Olhe o seu alfabeto ali embaixo.",
  "let_A": "á.",
@@ -2709,40 +4956,82 @@ var FALAS = {
  "let_X": "xis.",
  "let_Y": "ípsilon.",
  "let_Z": "zê.",
- "p10enun": "Folha dez: estas palavras estão fora de ordem. Toque nelas na ordem do alfabeto, olhando a primeira letra de cada uma.",
- "p11enun": "Toque nas letras que você quer no seu alfabeto. Ele fica guardado no fim.",
+ "p10enun": "Qual letra mora entre estas duas?",
+ "p11enun": "Agora escreva você a letra que falta. Toque no quadro vazio.",
+ "p12enun": "Esta grade perdeu três letras. Puxe cada uma para o lugar dela.",
+ "p13enun": "No teclado do computador as letras não estão na ordem do alfabeto. Toque nelas na ordem certa.",
+ "p14enun": "Estas letras embaralharam. Toque nelas na ordem certa do alfabeto.",
+ "p15enun": "Uma letra entrou no lugar errado. Circule quem saiu da fila.",
+ "p16enun": "Estas palavras estão em ordem alfabética, menos uma. Circule a que está fora da ordem.",
+ "p17enun": "Estas palavras estão fora de ordem. Toque nelas na ordem do alfabeto, olhando a primeira letra.",
+ "p18enun": "Estas palavras começam com a mesma letra. Olhe a segunda e ponha em ordem.",
+ "p19enun": "Qual das duas vem primeiro no dicionário? Pinte ela.",
  "p1enun": "Toque nas letras na ordem, do começo ao fim. Ouça o nome de cada uma.",
- "p2enun": "Ouça o nome da letra e toque nela.",
- "p3enun": "Uma letra fugiu da fila. Qual é?",
- "p4enun": "Qual letra vem depois desta?",
- "p5enun": "Folha cinco: estas palavras estão em ordem alfabética, menos uma. Circule a que está fora da ordem.",
- "p6enun": "Preencha os dois lados: quem vem antes e quem vem depois.",
- "p7enun": "Estas letras embaralharam. Toque nelas na ordem certa do alfabeto.",
- "p8enun": "Uma letra entrou no lugar errado. Circule quem saiu da fila.",
- "p9enun": "Com que letra começa o nome da figura?",
+ "p20enun": "Com que letra começa o nome da figura?",
+ "p21enun": "Puxe cada figura para a gaveta da letra com que ela começa.",
+ "p22enun": "Toque nas figuras na ordem do alfabeto. Use o alto-falante para ouvir o nome de cada uma.",
+ "p23enun": "Estes são nomes de crianças, como na chamada. Ponha em ordem alfabética.",
+ "p24enun": "Passe o dedo por cima da letra, como se estivesse escrevendo. Escolha a cor da canetinha.",
+ "p25enun": "Toque nas letras que você quer no seu alfabeto. Ele fica guardado no fim.",
+ "p2enun": "Ouça o poema. Depois ache na fila a letra que a voz pedir.",
+ "p3enun": "Ouça o nome da letra e toque nela.",
+ "p4enun": "Uma letra fugiu da fila. Qual é?",
+ "p5enun": "Agora a fila está em letra pequena. Qual letrinha fugiu?",
+ "p6enun": "Ligue cada letra grande à mesma letra pequena.",
+ "p7enun": "Qual letra vem depois desta?",
+ "p8enun": "Qual letra vem antes desta?",
+ "p9enun": "Preencha os dois lados: quem vem antes e quem vem depois.",
+ "pal_abacaxi": "abacaxi.",
  "pal_abelha": "abelha.",
+ "pal_arroz": "arroz.",
+ "pal_balde": "balde.",
+ "pal_bico": "bico.",
  "pal_bola": "bola.",
  "pal_casa": "casa.",
+ "pal_chuva": "chuva.",
+ "pal_cola": "cola.",
  "pal_dado": "dado.",
+ "pal_dedo": "dedo.",
+ "pal_doce": "doce.",
  "pal_escola": "escola.",
  "pal_faca": "faca.",
+ "pal_festa": "festa.",
+ "pal_foca": "foca.",
  "pal_gato": "gato.",
+ "pal_gelo": "gelo.",
+ "pal_girafa": "girafa.",
  "pal_hipopotamo": "hipopótamo.",
  "pal_igreja": "igreja.",
  "pal_janela": "janela.",
  "pal_leao": "leão.",
+ "pal_lua": "lua.",
  "pal_mala": "mala.",
+ "pal_mesa": "mesa.",
+ "pal_moeda": "moeda.",
  "pal_navio": "navio.",
+ "pal_ninho": "ninho.",
  "pal_ovo": "ovo.",
  "pal_pato": "pato.",
+ "pal_pena": "pena.",
+ "pal_pipa": "pipa.",
  "pal_queijo": "queijo.",
  "pal_rato": "rato.",
  "pal_sapo": "sapo.",
+ "pal_sino": "sino.",
+ "pal_suco": "suco.",
+ "pal_tatu": "tatu.",
+ "pal_telha": "telha.",
+ "pal_tijolo": "tijolo.",
  "pal_tomate": "tomate.",
  "pal_uva": "uva.",
  "pal_vaca": "vaca.",
+ "pal_vela": "vela.",
  "pal_xicara": "xícara.",
  "pal_zebra": "zebra.",
+ "verso_0": "O alfabeto tem muitas letras,",
+ "verso_1": "todas elas importantes.",
+ "verso_2": "Algumas são simples,",
+ "verso_3": "e outras, muito elegantes.",
  "volte_A": "Espere! A próxima da fila é o á.",
  "volte_B": "Espere! A próxima da fila é o bê.",
  "volte_C": "Espere! A próxima da fila é o cê.",
@@ -2773,271 +5062,7 @@ var FALAS = {
 };
 /*FALAS-FIM*/
 /*SILMAP-INI*/var SILMAP = {};/*SILMAP-FIM*/
-/*VOZOK-INI*/var VOZOK = {
- "101gllv": 1,
- "1039adj": 1,
- "10p2pyb": 1,
- "10qxwkn": 1,
- "10sar39": 1,
- "10vis74": 1,
- "10xcvxh": 1,
- "11nkq3e": 1,
- "11o1w8t": 1,
- "11xjj13": 1,
- "11xjkph": 1,
- "11xjswj": 1,
- "11xjwg7": 1,
- "11xk801": 1,
- "12mgy52": 1,
- "12x58u8": 1,
- "130hw29": 1,
- "137qa8r": 1,
- "13csq6x": 1,
- "13g668m": 1,
- "14b1cx1": 1,
- "14j5spe": 1,
- "14l9241": 1,
- "14nmuw0": 1,
- "14ogmfc": 1,
- "1592a1q": 1,
- "15pqry7": 1,
- "16129lx": 1,
- "16293dl": 1,
- "165oolt": 1,
- "16a1hmp": 1,
- "16vwf8f": 1,
- "1739fo5": 1,
- "175tchr": 1,
- "17e5770": 1,
- "17kyk9x": 1,
- "17kz9hh": 1,
- "17newhz": 1,
- "17ngsr4": 1,
- "17tvsgp": 1,
- "185wi8z": 1,
- "185ylsb": 1,
- "188h1ri": 1,
- "18txncr": 1,
- "19dibr5": 1,
- "19jb041": 1,
- "19vd775": 1,
- "1apmm3j": 1,
- "1aw3dk0": 1,
- "1b8ag0k": 1,
- "1bgbknv": 1,
- "1bl7zg1": 1,
- "1bxm5ra": 1,
- "1cdi469": 1,
- "1ch1swt": 1,
- "1cjh717": 1,
- "1cjjqyz": 1,
- "1cn6xk3": 1,
- "1cu8ko2": 1,
- "1cu8so8": 1,
- "1cu8u5q": 1,
- "1cu8vu4": 1,
- "1cu94fu": 1,
- "1cu96tb": 1,
- "1cu99a4": 1,
- "1cu9gor": 1,
- "1cu9guo": 1,
- "1d1i67k": 1,
- "1d1nn3w": 1,
- "1d1zjv9": 1,
- "1d4jje8": 1,
- "1d4jltf": 1,
- "1d4k8ew": 1,
- "1d4ka6q": 1,
- "1d9ua46": 1,
- "1dfvn04": 1,
- "1dinqna": 1,
- "1dvs2o9": 1,
- "1eecndm": 1,
- "1evdymu": 1,
- "1gkroh5": 1,
- "1gpw9m1": 1,
- "1hcj1u9": 1,
- "1hxw9uc": 1,
- "1i0uup9": 1,
- "1i3fny8": 1,
- "1ihvrn9": 1,
- "1j0395y": 1,
- "1jbnk3o": 1,
- "1jvgsrx": 1,
- "1jz315u": 1,
- "1k2lrtx": 1,
- "1kbwwif": 1,
- "1kd5thg": 1,
- "1kjfaci": 1,
- "1kvois3": 1,
- "1lp5o4p": 1,
- "1ltb7eo": 1,
- "1lvs6c9": 1,
- "1lz95k9": 1,
- "1mhoby6": 1,
- "1mhtlr2": 1,
- "1nsdrt2": 1,
- "1odjffx": 1,
- "1oo33i3": 1,
- "1opd8r8": 1,
- "1q8s53e": 1,
- "1qm5y2": 1,
- "1r5yv5": 1,
- "1riatvu": 1,
- "1rnx9jw": 1,
- "1rupzpi": 1,
- "1rx7ptr": 1,
- "1sv2xun": 1,
- "1t039xu": 1,
- "1t7t4jn": 1,
- "1ti4r28": 1,
- "1ti4r6k": 1,
- "1ti4uhm": 1,
- "1tsr5pr": 1,
- "1um98lg": 1,
- "1us0jy1": 1,
- "1ux7zjp": 1,
- "1vcg752": 1,
- "1vkk3dc": 1,
- "1vkmral": 1,
- "1w0ucqp": 1,
- "1wbctgq": 1,
- "1wyqhn8": 1,
- "1xbnkvc": 1,
- "1xxb0hp": 1,
- "1y9g73a": 1,
- "1ye0uww": 1,
- "1ywoe8d": 1,
- "1yz9o60": 1,
- "296nch": 1,
- "2fq4uw": 1,
- "2grgq0": 1,
- "2pmm9x": 1,
- "2ts28e": 1,
- "2tz8cc": 1,
- "2uezfa": 1,
- "2vg1hq": 1,
- "2vw8zu": 1,
- "2wk6a3": 1,
- "2x8g63": 1,
- "31vra3": 1,
- "33qfk1": 1,
- "352r8e": 1,
- "3758p1": 1,
- "375gw3": 1,
- "375hm1": 1,
- "375hoi": 1,
- "375kue": 1,
- "375m51": 1,
- "375w0h": 1,
- "375xhz": 1,
- "3760nv": 1,
- "37vy6b": 1,
- "38iifa": 1,
- "3b9dh3": 1,
- "3hj3e": 1,
- "3hjaa": 1,
- "3hjjs": 1,
- "3hmjm": 1,
- "3hmny": 1,
- "3k6lut": 1,
- "3t4mnj": 1,
- "49ampt": 1,
- "4y051v": 1,
- "5fi0jv": 1,
- "6n92g6": 1,
- "6wwadb": 1,
- "756dpb": 1,
- "7g84j3": 1,
- "7oyl8t": 1,
- "8dhp1k": 1,
- "8tkdy6": 1,
- "8wlull": 1,
- "8xaemo": 1,
- "97roif": 1,
- "97scdm": 1,
- "9fhzhf": 1,
- "a5f1tg": 1,
- "aeq602": 1,
- "ahd33m": 1,
- "arv9ad": 1,
- "bc7esh": 1,
- "bgql8i": 1,
- "bmzxm4": 1,
- "c1lc3l": 1,
- "cfgrkh": 1,
- "cj0j1i": 1,
- "d0ll2d": 1,
- "dime01": 1,
- "dvwtwb": 1,
- "dx7ine": 1,
- "ea6dco": 1,
- "eqf1b8": 1,
- "eypdoo": 1,
- "fg7law": 1,
- "gnqcn": 1,
- "gstmv": 1,
- "h8p85s": 1,
- "hdv879": 1,
- "i07tib": 1,
- "ia0dr4": 1,
- "ijfs6b": 1,
- "ijgaob": 1,
- "izg79d": 1,
- "j0240m": 1,
- "jku07e": 1,
- "jlu7ih": 1,
- "jrb0nx": 1,
- "k5f0vu": 1,
- "k8f1kb": 1,
- "ka9y5u": 1,
- "klslah": 1,
- "l1hnnm": 1,
- "m0gq2r": 1,
- "mbf4e3": 1,
- "mbhphi": 1,
- "nia0w": 1,
- "p5nfqf": 1,
- "p5ng1n": 1,
- "p5nj4x": 1,
- "p5njaz": 1,
- "p5njhv": 1,
- "p8q3fd": 1,
- "qdtr1i": 1,
- "rgai44": 1,
- "rjvi8m": 1,
- "sdmswb": 1,
- "swkns7": 1,
- "t0g8a3": 1,
- "t7suzg": 1,
- "u6942z": 1,
- "ub8z6v": 1,
- "uoyt40": 1,
- "uoz5cx": 1,
- "vqatwj": 1,
- "vqtie1": 1,
- "vr3ge6": 1,
- "vv012v": 1,
- "wh9d91": 1,
- "wny0tf": 1,
- "wugtz2": 1,
- "wzbaxt": 1,
- "x2awbo": 1,
- "xc8bq2": 1,
- "xjdjy1": 1,
- "xxr6ct": 1,
- "ygate3": 1,
- "ygayip": 1,
- "ygehey": 1,
- "ygen6x": 1,
- "yivgcs": 1,
- "yj3gf1": 1,
- "yj4fyh": 1,
- "yj7gh1": 1,
- "yjd42x": 1,
- "zgcux0": 1,
- "zz8u2z": 1
-};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1gy5bqp": 1, "1gmef27": 1, "5598kw": 1, "fjnexd": 1, "h7emq": 1, "pe5ek1": 1, "1y4cakf": 1, "1kvl7oc": 1, "1d4dp35": 1, "5y3e10": 1, "1gleryl": 1, "1u0zxmn": 1, "cli598": 1, "1v4ldm7": 1, "1ijb053": 1, "8shhdk": 1, "1b3xv1j": 1, "1jhb9gx": 1, "1yvli81": 1, "1a9p1ug": 1, "8swbk8": 1, "1otrdb5": 1, "gac7me": 1, "a6g5pc": 1, "16q68hz": 1, "4xpove": 1, "mwhqgz": 1, "1y7xtxg": 1, "12cz5e5": 1, "pjfx4w": 1, "stp421": 1, "9hklft": 1, "1u9wny8": 1, "1wuycoq": 1, "jz3jkj": 1, "i72kzl": 1, "1gkhubs": 1, "z2qsv4": 1, "63xde1": 1, "182z2sq": 1, "1lf01z7": 1, "1j05x4x": 1, "1jfk414": 1, "9r9lw1": 1, "r49ymw": 1, "806v56": 1, "1hdk7k3": 1, "wqghsm": 1, "1ag4o73": 1, "hftyxl": 1, "6864z4": 1, "l1ny2n": 1, "1j8unp3": 1, "l1ny9j": 1, "1j8uxkj": 1, "l1nv07": 1, "1j8unh8": 1, "1bfalrw": 1, "l1nxpp": 1, "1bc2ru8": 1, "2cnrci": 1, "ldodie": 1, "1eew4jc": 1, "1l0kbvs": 1, "4umldf": 1, "o4vbfj": 1, "skoibe": 1, "1x989d": 1, "jny5aa": 1, "eypdoo": 1, "5j96u8": 1, "7rvc3m": 1, "1rupzpi": 1, "14v0tnz": 1, "1tsr5pr": 1, "qzot1x": 1, "c2nk6y": 1, "1xxb0hp": 1, "118gnva": 1, "17newhz": 1, "kjgt1y": 1, "17e5770": 1, "o3ub34": 1, "1ywoe8d": 1, "qpf3le": 1, "1d9ua46": 1, "81tdnx": 1, "1ch1swt": 1, "yumczq": 1, "4dqd7e": 1, "1k2lrtx": 1, "1fox2nd": 1, "1aw3dk0": 1, "tc2646": 1, "m0gq2r": 1, "1rgjywf": 1, "byadng": 1, "1gkroh5": 1, "1yl76nb": 1, "12mgy52": 1, "7lvwd1": 1, "cugbc9": 1, "1l14saw": 1, "1cjt2af": 1, "5jdiqz": 1, "1qku52h": 1, "1xbnkvc": 1, "10bndge": 1, "7en315": 1, "1apmm3j": 1, "14o0fnh": 1, "1yz9o60": 1, "16a1hmp": 1, "hhi4lw": 1, "13hcihx": 1, "1jzo02m": 1, "128oli3": 1, "yv7kz7": 1, "voben3": 1, "fmivke": 1, "105lsb4": 1, "8pk8lt": 1, "z3hv88": 1, "h83mg8": 1, "wgqy2j": 1, "ka9y5u": 1, "19dibr5": 1, "1b8ag0k": 1, "1bgbknv": 1, "1wbctgq": 1, "17ngsr4": 1, "1uvzusp": 1, "1t7t4jn": 1, "165oolt": 1, "3shja9": 1, "1u2lz8h": 1, "1gd7cge": 1, "ef6ly7": 1, "19nqdla": 1, "hl56ks": 1, "1s86rgh": 1, "xz9kta": 1, "1u3o4db": 1, "1p9xzzv": 1, "z6cq8s": 1, "lv3p3f": 1, "zdxivx": 1, "1unodu0": 1, "2k6ebm": 1, "15a5lu8": 1, "1v2mcj5": 1, "1q0rwt3": 1, "9ygksd": 1, "12ks6ho": 1, "1ufgbq2": 1, "119jzd8": 1, "17j8ypz": 1, "756dpb": 1, "jnjp1w": 1, "1dnepht": 1, "6wwadb": 1, "fg7law": 1, "1xo4qld": 1, "1gg2gmh": 1, "1um98lg": 1, "mnaiip": 1, "1dvs2o9": 1, "11tvlyi": 1, "14j5spe": 1, "1tjpqpo": 1, "xzd7bm": 1, "1tlaj4v": 1, "ahd33m": 1, "11o1w8t": 1, "11aazu7": 1, "1dmcd5g": 1, "1eecndm": 1, "1i3gtf2": 1, "k8f1kb": 1, "10k25iz": 1, "1mh7aw0": 1, "fwr6jy": 1, "1teoars": 1, "xff1wr": 1, "izg79d": 1, "14scle8": 1, "klslah": 1, "16x9otz": 1, "qdtr1i": 1, "vqtie1": 1, "gsrt5w": 1, "1fftweq": 1, "kx1zhw": 1, "3yo9rg": 1, "1riatvu": 1, "zspcd3": 1, "11358jw": 1, "17tvsgp": 1, "114ncx6": 1, "1u76trh": 1, "8dhp1k": 1, "1bl7zg1": 1, "129muam": 1, "10vis74": 1, "57w87j": 1, "1kbwwif": 1, "1i9kpna": 1, "1vzzjjw": 1, "vlxv4l": 1, "1c8xuft": 1, "1oh5yf7": 1, "9ineuh": 1, "2k7afn": 1, "11o6a7": 1, "mkern4": 1, "v5tran": 1, "mfc9ec": 1, "r6i6v2": 1, "t58pp": 1, "xp1z7a": 1, "173xbvl": 1, "kuc0gl": 1, "106bdci": 1, "epdlra": 1, "q2v5u0": 1, "1gtov85": 1, "8wl1l8": 1, "11wq2p1": 1, "p90gck": 1, "1yts21v": 1, "xr8qx0": 1, "163s6dj": 1, "18t1lxc": 1, "ooq0fe": 1, "3gh6tg": 1, "j3d5bx": 1, "24g9e7": 1, "q1bklp": 1, "pezi7j": 1, "1nm08i4": 1, "1p76jfi": 1, "a4drsn": 1, "18irgdf": 1, "1xiy4qp": 1, "tr0wyp": 1, "toexdf": 1, "1bws6oo": 1, "gbe3ld": 1, "dyok2i": 1, "tyc8of": 1, "160jx6v": 1, "1hde8fx": 1, "15pqry7": 1, "s4bgz9": 1, "eqf1b8": 1, "diamyl": 1, "1cn6xk3": 1, "acp6ya": 1, "1jvgsrx": 1, "1mvp72o": 1, "13nat7q": 1, "12x58u8": 1, "izkdrs": 1, "1592a1q": 1, "mnyd5v": 1, "z4baoo": 1, "1vkmral": 1, "qemsqm": 1, "1lvs6c9": 1, "95alh8": 1, "1nlv5ad": 1, "1q8s53e": 1, "n8nc6s": 1, "1u0mquz": 1, "10p2pyb": 1, "1jr3d0p": 1, "xyackg": 1, "1v36lq9": 1, "15xcj52": 1, "755wo1": 1, "14l46ci": 1, "upd2x1": 1, "4qpc5r": 1, "14uwfmp": 1, "k7kpiw": 1, "167362": 1, "uemtt4": 1, "11y77ka": 1, "1ig53zd": 1, "1a58m9n": 1, "1a1tq42": 1, "qohz5y": 1, "107xr2c": 1, "s5t6ck": 1, "gva7ee": 1, "1ihikd": 1, "17jijzo": 1, "azmjbz": 1, "1ffw1sa": 1, "5698de": 1, "1hwih4o": 1, "1ti4u4o": 1, "uoz5cx": 1, "uoyt40": 1, "uoytt3": 1, "1ti4ubk": 1, "ijfs6b": 1, "uoyw9w": 1, "igj3ce": 1, "1ti4r28": 1, "152sr95": 1, "uoysuj": 1, "ijfqeh": 1, "ijgaob": 1, "ijgers": 1, "1ti4uhm": 1, "uozh4j": 1, "igv03r": 1, "17kz9hh": 1, "17kyk9x": 1, "uoz793": 1, "1ti4r6k": 1, "uoz8xh": 1, "ymxqim": 1, "ih0npn": 1, "9fhzhf": 1, "uozp4p": 1, "ygubxl": 1, "zg7pnh": 1, "wh9d91": 1, "42q1tf": 1, "1kvois3": 1, "13qdk9j": 1, "4y051v": 1, "kgbh8e": 1, "11nkq3e": 1, "ctgob1": 1, "1j0395y": 1, "11caz12": 1, "bw966u": 1, "vv012v": 1, "12dny06": 1, "1thm719": 1, "nia0w": 1, "wmvsra": 1, "1dfvn04": 1, "12vr98m": 1, "16vwf8f": 1, "qu4tgd": 1, "1sv2xun": 1, "1lapfep": 1, "zg9kyk": 1, "1rwy13i": 1, "2uft8w": 1, "15tois": 1, "1d5lm7g": 1, "1ew4zka": 1, "16isove": 1, "wflyr2": 1, "vdf7u2": 1, "5hshdz": 1, "lgrfhf": 1, "1ft87hw": 1, "1nxb1sv": 1, "dwyd7z": 1, "olhcxb": 1, "gspxse": 1, "338f": 1, "1jqs2qs": 1, "1jo18mx": 1, "18124mn": 1, "hiucp9": 1, "9rf3r3": 1, "1wwbld2": 1, "w3fgmc": 1, "1xtkp46": 1, "1qlzq9k": 1, "1h1j2ed": 1, "auv6lz": 1, "20r29s": 1, "rr8dvk": 1, "1b1poao": 1, "oy0jpc": 1, "h6ls1s": 1, "dlut9c": 1, "188ikw0": 1, "1ga9lz4": 1, "n9c20w": 1, "1jbawxs": 1, "47fk8w": 1, "1tb77q8": 1, "tz99sw": 1, "1qoscao": 1, "1abunwg": 1, "bybkcg": 1, "12978io": 1, "qnfp34": 1, "64uv4": 1, "180cvcw": 1, "rvsq0w": 1, "180dm4g": 1, "qrdge8": 1, "xfyl0g": 1, "j16ops": 1, "1cjh717": 1, "oao2fn": 1, "1ux7zjp": 1, "138i6s5": 1, "19jb041": 1, "zuv8t1": 1, "16hq8qg": 1, "1m9vjx8": 1, "zz8u2z": 1, "12vsfj4": 1, "1vkk3dc": 1, "104pxn4": 1, "14l9241": 1, "ti5xeo": 1, "137qa8r": 1, "z01w92": 1, "8xaemo": 1, "s7hq9e": 1, "b9jedc": 1, "p8q3fd": 1, "p3o8kb": 1, "16293dl": 1, "ir893b": 1, "ohuafu": 1, "gsfhl4": 1, "13f7ztg": 1, "14hv0nw": 1, "k5f0vu": 1, "ghq4d6": 1, "vr3ge6": 1, "lqn7ga": 1, "3b9dh3": 1, "d9ozhv": 1, "1kd5thg": 1, "12xn07j": 1, "175tchr": 1, "1ier8cf": 1, "8tkdy6": 1, "1e8dyof": 1, "1wyqhn8": 1, "1lpy12h": 1, "lbvhtr": 1, "jrb0nx": 1, "1u04men": 1, "rjvi8m": 1, "ovgt1w": 1, "j0240m": 1, "1h8b4mg": 1, "bn3m0l": 1, "zsyiqv": 1, "ttdxzg": 1, "sb3myr": 1, "f87u76": 1, "14iibnl": 1, "2gfc3m": 1, "hv4gvg": 1, "1novwun": 1, "xroa36": 1, "1q7248n": 1, "18ehdge": 1, "qzw5e4": 1, "14z38bz": 1, "nbeakc": 1, "13p8lgk": 1, "1ns43zf": 1, "1pmhe2c": 1, "l2hy3m": 1, "1qyc642": 1, "bpkc3v": 1, "1p8prbv": 1, "16z0eky": 1, "1oh5ig5": 1, "4da7n7": 1, "v4lgqc": 1, "yivkn9": 1, "lwk1ij": 1, "1p5spa0": 1, "p0vkun": 1, "2x87in": 1, "pivbue": 1, "2pn4pd": 1, "ja38s9": 1, "j9gi5r": 1, "r5b5q0": 1, "2uedty": 1, "1nodwnu": 1, "17kmxiq": 1, "2yr9q0": 1, "31sf9e": 1, "32vkev": 1, "2vadn9": 1, "o15o8z": 1, "cgfwlw": 1, "ub5lm3": 1, "2z9dab": 1, "yj2417": 1, "1qrf3v": 1, "vbscpz": 1, "37w6fz": 1, "zwdxzt": 1, "sz4sin": 1, "zct7x5": 1, "w9bhqy": 1, "3dg2o7": 1, "19farov": 1, "128asv5": 1, "13sushz": 1, "1azms1v": 1, "1ycww83": 1, "15aszd6": 1, "1v1gtab": 1, "auqdio": 1, "13s4wq4": 1, "p3lmqf": 1, "1lgbnrb": 1, "12bpwm": 1, "eanv6e": 1, "rg9ee4": 1, "1tqjlq2": 1, "61vyq9": 1, "h32jfp": 1, "wlolcl": 1, "13vy07y": 1, "9kt25h": 1, "f9z0px": 1, "kmpdfd": 1, "1mg73iy": 1, "1rjcb5h": 1, "1e2m61f": 1, "y1n0sz": 1, "j8soij": 1, "1jqrudx": 1, "17ahvrv": 1, "crsga9": 1, "1olb9y7": 1, "1i63h8": 1, "1skug0r": 1, "1qvp6mj": 1, "1h2fkfk": 1, "27ok3f": 1, "ng7v4g": 1, "1cltd2y": 1, "1d8wvgh": 1, "2utvcx": 1, "tjr0nw": 1, "lffqgn": 1, "fzypwe": 1, "1uo7ret": 1, "injabr": 1, "19xwldz": 1, "1b56sn9": 1, "j0r2c9": 1, "1qj2z5k": 1, "kit58r": 1, "ul7k78": 1, "10qmlos": 1, "cm6eq4": 1, "1ik5aa0": 1, "ewbo98": 1, "1fx35k7": 1, "xap0ef": 1, "4ddv86": 1, "1ydii6j": 1, "x7bcuh": 1, "1yapw2e": 1, "jlu7ih": 1, "arv9ad": 1, "1yx3eja": 1, "hfbi4b": 1, "1dydwnf": 1, "1i90jll": 1, "u6942z": 1, "1yaj2zo": 1, "10qxwkn": 1, "1v8wq47": 1, "1lp5o4p": 1, "prflrk": 1, "l1hnnm": 1, "1qm5y2": 1, "14xc6vh": 1, "1l8yiqd": 1, "n4musq": 1, "6hckaq": 1, "mbhphi": 1, "1r2epqw": 1, "8aw175": 1, "1odjffx": 1, "11ev65m": 1, "1ft5fsf": 1, "jku07e": 1, "1w0ucqp": 1, "ulfv5x": 1, "1t039xu": 1, "1yq3ytf": 1, "1lz95k9": 1, "1pqhmlz": 1, "16iec50": 1, "1z00jxg": 1, "370k3e": 1, "vt3g6b": 1, "1r1h4k1": 1, "1rl4wy1": 1, "k1enpi": 1, "hc9k55": 1, "12b7qtt": 1, "19mread": 1, "dxr5aj": 1, "1tj7v7m": 1, "vewu2m": 1, "1vz5ygp": 1, "16xmpdo": 1, "1tzz5jt": 1, "1wb52vm": 1, "8om4ba": 1, "1yuze4h": 1, "1q6byds": 1, "16q23ei": 1, "1qyaicv": 1, "187tr16": 1, "1jhkzi1": 1, "1jcc10w": 1, "1jcc08h": 1, "1jcc2ie": 1, "1jhkzox": 1, "1emaspe": 1, "1jcc3ed": 1, "1ejdz1b": 1, "1jhkwfl": 1, "y4buaw": 1, "1jcbzx6": 1, "1emakew": 1, "1em6qpm": 1, "1em6whl": 1, "1jhkz1n": 1, "1jcblwi": 1, "1ej1zee": 1, "10q25sk": 1, "10pwvzo": 1, "1jcbp2e": 1, "1jhkvql": 1, "1jcbqqs": 1, "bgg8j3": 1, "1ej2h8a": 1, "16y09jm": 1, "1jcbtwo": 1, "15ccoeg": 1, "dime01": 1, "ia0dr4": 1, "1gf0u07": 1, "1pgvou8": 1, "wny0tf": 1, "1m6em5g": 1, "1e294by": 1, "1i3fny8": 1, "1u6dvnd": 1, "uf5vyj": 1, "htblbd": 1, "1cjjqyz": 1, "nayrig": 1, "xc8bq2": 1, "1wo710z": 1, "3wfb7r": 1, "hdv879": 1, "10xcvxh": 1, "81q707": 1, "1rnx9jw": 1, "91pzed": 1, "1p5wl6m": 1, "3o1wln": 1, "i07tib": 1, "yssha1": 1, "1uoz3zv": 1, "3av6q0": 1, "11xk801": 1, "11xk77k": 1, "11xjwg7": 1, "3av6ww": 1, "185wi8z": 1, "11xjxc4": 1, "188h1ri": 1, "3ava68": 1, "13csq6x": 1, "11xk6zv": 1, "185w9yh": 1, "185ylsb": 1, "185yl1k": 1, "3av6ai": 1, "11xjswj": 1, "1885213": 1, "10sar39": 1, "10sbgat": 1, "11xjj13": 1, "3av9i4": 1, "11xjkph": 1, "bkii72": 1, "188biyz": 1, "4s1wir": 1, "ruseg5": 1, "1uulmb0": 1, "1uullil": 1, "1uulhgq": 1, "ruse99": 1, "45x7pq": 1, "1uulicp": 1, "43cpvn": 1, "rusazx": 1, "1rspv04": 1, "1uulll2": 1, "45xcuc": 1, "45tj52": 1, "45tox1": 1, "ruset3": 1, "1uuly2m": 1, "43omay": 1, "1uel1hk": 1, "1uefroo": 1, "1uuluwq": 1, "rusbox": 1, "1uulwl4": 1, "1ly3n03": 1, "43dpnq": 1, "1hpdary": 1, "1gpw9m1": 1, "ry518g": 1, "49ampt": 1, "1m1uhhi": 1, "bc7esh": 1, "1hlveo2": 1, "1jm75hh": 1, "1x1n0i7": 1, "wzbaxt": 1, "1yb2hlk": 1, "dx7ine": 1, "817v9k": 1, "97scdm": 1, "gyxqp5": 1, "mbf4e3": 1, "3ml636": 1, "1y9g73a": 1, "1ubdexw": 1, "1b6shxg": 1, "13g668m": 1, "1xxsyil": 1, "1opd8r8": 1, "1r4vbmn": 1, "v0mvfu": 1, "1rnnlaa": 1, "18nthbr": 1, "1x2i4nq": 1, "1axf8vl": 1, "1qr6x3q": 1, "xvtt05": 1, "ctj7o2": 1, "1mpoha0": 1, "2o5m6u": 1, "hc44v": 1, "1fownrx": 1, "1t5xj6n": 1, "z9e7r1": 1, "10sn3ha": 1, "p9cdqk": 1, "1m0plwl": 1, "18perxt": 1, "15nst3n": 1, "2y2ofn": 1, "1iic8td": 1, "1mpes22": 1, "15j342r": 1, "mijjns": 1, "1nrfc1p": 1, "qdq5cl": 1, "tfj7cf": 1, "11ra3dc": 1, "130hw29": 1, "1aaruom": 1, "296nch": 1, "xd3b4i": 1, "1739fo5": 1, "17froin": 1, "1o5vgvl": 1, "14ogmfc": 1, "18rfliy": 1, "2fq4uw": 1, "1a4xzqy": 1, "1us0jy1": 1, "pm4rjf": 1, "bgql8i": 1, "k4h43a": 1, "a5f1tg": 1, "8ph3kk": 1, "1nsdrt2": 1, "1s4c8fh": 1, "1jbnk3o": 1, "1sron0v": 1, "10a6i4a": 1, "1q4m07m": 1, "cfgrkh": 1, "1039adj": 1, "3hj3e": 1, "375gw3": 1, "375hoi": 1, "3758p1": 1, "3hjaa": 1, "ygayip": 1, "375kue": 1, "yivgcs": 1, "3hmjm": 1, "31vra3": 1, "375hm1": 1, "ygate3": 1, "ygen6x": 1, "ygehey": 1, "3hjjs": 1, "375w0h": 1, "yj7gh1": 1, "gnqcn": 1, "gstmv": 1, "375m51": 1, "3hmny": 1, "375xhz": 1, "t7suzg": 1, "yjd42x": 1, "1r5yv5": 1, "3760nv": 1, "1u68svr": 1, "16e90sm": 1, "1oxwki0": 1, "1orw5ur": 1, "6n92g6": 1, "x2awbo": 1, "fcqd8z": 1, "7ivgf6": 1, "hyxv1": 1, "hqtr7h": 1, "aeq602": 1, "18txncr": 1, "1ljqat4": 1, "1nra0ab": 1, "19yxpk6": 1, "1dq75bz": 1, "16129lx": 1, "fp4ghs": 1, "101gllv": 1, "bmzxm4": 1, "1pt4mhf": 1, "1h643t": 1, "14nmuw0": 1, "8wlull": 1, "vqatwj": 1, "cr45ei": 1, "2grgq0": 1, "lwo64f": 1, "ouvrvp": 1, "2wrw24": 1, "2wk6a3": 1, "2x8g63": 1, "plxlb6": 1, "2xcmh6": 1, "2pmm9x": 1, "2ppio1": 1, "2puc1y": 1, "2tz8cc": 1, "2ts28e": 1, "mcrmj2": 1, "2twvb4": 1, "2uezfa": 1, "2uhop6": 1, "1cqusj5": 1, "1cdi469": 1, "xjdjy1": 1, "1vcg752": 1, "2vg1hq": 1, "yiyddf": 1, "2vw8zu": 1, "2vzryp": 1, "o8svhl": 1, "rgai44": 1, "rah0md": 1, "yj3gf1": 1, "33qfk1": 1, "33o841": 1, "33woeb": 1, "1bxm5ra": 1, "37vy6b": 1, "38iifa": 1, "38omz4": 1, "383dhd": 1, "30wxzz": 1, "sw8p8f": 1, "wmnwkw": 1, "xxr6ct": 1, "yj4fyh": 1, "352r8e": 1, "355wr9": 1, "3t4mnj": 1, "14b1cx1": 1, "1b8we92": 1, "1hto9cd": 1, "1cva2uj": 1, "1hs88ow": 1, "p5njhv": 1, "1cu94fu": 1, "1cu9gor": 1, "1cu99a4": 1, "p5njaz": 1, "1d4k8ew": 1, "1cu96tb": 1, "1d1zjv9": 1, "p5ng1n": 1, "1jz315u": 1, "1cu9guo": 1, "1d4ka6q": 1, "1d4jje8": 1, "1d4jltf": 1, "p5nj4x": 1, "1cu8so8": 1, "1d1nn3w": 1, "1mhtlr2": 1, "1mhoby6": 1, "1cu8vu4": 1, "p5nfqf": 1, "1cu8u5q": 1, "3k6lut": 1, "1d1i67k": 1, "ea6dco": 1, "1cu8ko2": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ---------- as palavras: figura, escrita e sílabas ----------
    ⚠️ As sílabas ficam DECLARADAS, uma a uma. Separar sílaba por regra em
@@ -3094,10 +5119,41 @@ var CHAVE_LS = "desfile_das_letras_1ano";
    as letras do alfabeto e ordená-las"*, o Marcos pediu "sequência alfabética"
    no encargo, e não havia folha nenhuma disso. O lugar dela é o começo: ordenar
    letra é o degrau anterior a tudo o que vem depois. */
-var NOMES = ["O desfile do alfabeto", "Que letra é esta?", "A letra que fugiu",
-             "Quem vem DEPOIS?", "Qual palavra está fora da ordem?", "Antes e depois",
-             "Ponha na ordem", "Quem saiu da fila?", "Com que letra começa?",
-             "Palavras em ordem alfabética", "O alfabeto da turma"];
+/* ⚠️ AS 25 FOLHAS, NA ORDEM — e a ordem É a escada (13/set/2026).
+   O caderno tinha ONZE folhas e a REGRA DO TAMANHO pede 25 (o Marcos mediu de
+   ouvido: com menos, a criança rápida termina com meia aula sobrando). As
+   catorze novas NÃO saíram do meu cardápio: cada uma veio do COMANDO IMPRESSO
+   de uma folha de papel da colheita — as 24 folhas lidas uma a uma no
+   `_sequencias/POTE-ABC.md`, que diz de qual folha veio cada gesto.
+   Elas também vêm em BLOCOS (mecânica que repete vem colada, nunca espalhada):
+   escolher em 3-4-5 e 7-8, completar em 9-10, ordenar em 13-14, intruso em
+   15-16, ordenar palavras em 17-18. Espalhada, a criança sente que voltou. */
+var NOMES = [
+  /*  1 */ "O desfile do alfabeto",
+  /*  2 */ "O poema do alfabeto",
+  /*  3 */ "Que letra é esta?",
+  /*  4 */ "A letra que fugiu",
+  /*  5 */ "O alfabeto pequeno",
+  /*  6 */ "A mesma letra, pequenininha",
+  /*  7 */ "Quem vem DEPOIS?",
+  /*  8 */ "Quem vem ANTES?",
+  /*  9 */ "Antes e depois",
+  /* 10 */ "A letra do MEIO",
+  /* 11 */ "Escreva a vizinha",
+  /* 12 */ "A grade do alfabeto",
+  /* 13 */ "O teclado fora de ordem",
+  /* 14 */ "Ponha na ordem",
+  /* 15 */ "Quem saiu da fila?",
+  /* 16 */ "Qual palavra está fora da ordem?",
+  /* 17 */ "Palavras em ordem alfabética",
+  /* 18 */ "Mesma letra no começo",
+  /* 19 */ "Quem vem primeiro no dicionário?",
+  /* 20 */ "Com que letra começa?",
+  /* 21 */ "A gaveta de cada palavra",
+  /* 22 */ "As figuras em ordem alfabética",
+  /* 23 */ "Os nomes da turma em ordem",
+  /* 24 */ "Pratique a escrita do alfabeto",
+  /* 25 */ "O alfabeto da turma"];
 /*<dossie-dados>*/
 var CURRICULO = {
  "ano": 1,
@@ -3117,7 +5173,8 @@ var CURRICULO = {
   {
    "objetivo": "Seguir a ordem do alfabeto",
    "folhas": [
-    1
+    1,
+    2
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Conhecimento do alfabeto do português do Brasil",
@@ -3126,7 +5183,7 @@ var CURRICULO = {
   {
    "objetivo": "Nomear a letra pelo som do nome",
    "folhas": [
-    2
+    3
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Conhecimento do alfabeto do português do Brasil",
@@ -3135,16 +5192,27 @@ var CURRICULO = {
   {
    "objetivo": "Achar a letra que falta na fila",
    "folhas": [
-    3
+    4,
+    12
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Conhecimento do alfabeto do português do Brasil",
    "habilidade": "HABILIDADE: \"Nomear as letras do alfabeto e ordená-las.\""
   },
   {
+   "objetivo": "Reconhecer a letra pequena (minúscula)",
+   "folhas": [
+    5,
+    6
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Conhecimento das diversas grafias do alfabeto/acentuação",
+   "habilidade": "HABILIDADE: \"Conhecer, diferenciar e relacionar letras em formato imprensa e cursiva, maiúsculas e minúsculas.\""
+  },
+  {
    "objetivo": "Quem vem DEPOIS (sucessor)",
    "folhas": [
-    4
+    7
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Conhecimento do alfabeto do português do Brasil",
@@ -3153,18 +5221,50 @@ var CURRICULO = {
   {
    "objetivo": "Quem vem ANTES (antecessor)",
    "folhas": [
-    5,
-    6
+    8
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Conhecimento do alfabeto do português do Brasil",
    "habilidade": "HABILIDADE: \"Nomear as letras do alfabeto e ordená-las.\""
   },
   {
-   "objetivo": "Ordenar e conferir a ordem",
+   "objetivo": "As duas vizinhas e a do meio",
    "folhas": [
-    7,
-    8
+    9,
+    10
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Conhecimento do alfabeto do português do Brasil",
+   "habilidade": "HABILIDADE: \"Nomear as letras do alfabeto e ordená-las.\""
+  },
+  {
+   "objetivo": "ESCREVER a letra vizinha",
+   "folhas": [
+    11
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Conhecimento das diversas grafias do alfabeto/acentuação",
+   "habilidade": "HABILIDADE: \"Conhecer, diferenciar e relacionar letras em formato imprensa e cursiva, maiúsculas e minúsculas.\""
+  },
+  {
+   "objetivo": "Ordenar e conferir a ordem das letras",
+   "folhas": [
+    13,
+    14,
+    15
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Conhecimento do alfabeto do português do Brasil",
+   "habilidade": "HABILIDADE: \"Nomear as letras do alfabeto e ordená-las.\""
+  },
+  {
+   "objetivo": "Usar o alfabeto para ordenar PALAVRAS",
+   "folhas": [
+    16,
+    17,
+    18,
+    19,
+    23
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Conhecimento do alfabeto do português do Brasil",
@@ -3173,16 +5273,27 @@ var CURRICULO = {
   {
    "objetivo": "A letra que abre a palavra",
    "folhas": [
-    9
+    20,
+    21,
+    22
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Construção do sistema alfabético e da ortografia",
    "habilidade": "HABILIDADE: \"Identificar fonemas e sua representação por letras.\""
   },
   {
-   "objetivo": "Usar o alfabeto para ordenar PALAVRAS",
+   "objetivo": "Traçar a letra com a própria mão",
    "folhas": [
-    10
+    24
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Conhecimento das diversas grafias do alfabeto/acentuação",
+   "habilidade": "HABILIDADE: \"Conhecer, diferenciar e relacionar letras em formato imprensa e cursiva, maiúsculas e minúsculas.\""
+  },
+  {
+   "objetivo": "Montar o próprio alfabeto ilustrado",
+   "folhas": [
+    25
    ],
    "pratica": "Análise linguística/semiótica (alfabetização)",
    "objeto": "Conhecimento do alfabeto do português do Brasil",
@@ -3333,14 +5444,24 @@ function errou(id, dica){
    inventar folha nova: foi pôr no pote **o alfabeto inteiro**, que é o assunto
    deste caderno. Agora cada folha sorteia 11 ou 12 de 21 a 26 — e duas crianças
    da mesma turma não fazem a mesma folha. */
+/* ⚠️ O SAQUE DE CADA FOLHA — e ele ENCOLHEU quando o caderno foi para 25.
+   Com onze folhas cada uma sacava 10 a 12 itens; com 25, o mesmo saque daria
+   ~290 itens e três aulas de trabalho. O que enche a aula é o número de
+   FOLHAS (a criança sente que andou), não o tamanho de cada lista — lista
+   comprida da mesma coisa é exatamente o "isso eu já fiz" que o Marcos ouve.
+   ⚠️ Folha nova = linha nova AQUI **e** em `idsDaPagina`. Sem a segunda, o
+      app estoura em `F.pN.length` — já aconteceu hoje. */
 function novaFolha(){
   return {
-    p1: pega(ITENS.p1, 11), p2: pega(ITENS.p2, 12), p3: pega(ITENS.p3, 12),
-    p4: pega(ITENS.p4, 12), p5: pega(ITENS.p5, 12), p6: pega(ITENS.p6, 11),
-    p7: pega(ITENS.p7, 10), p8: pega(ITENS.p8, 10), p9: pega(ITENS.p9, 12),
-    /* ⚠️ 5 grupos na folha 10: cada grupo são 3 toques em ordem, então a folha
-       já dá 15 gestos — mais que isso vira lista, não exercício. */
-    p10: pega(ITENS.p10, 5), p11: pega(ITENS.p11, 12)
+    p1:  pega(ITENS.p1,  5), p2:  pega(ITENS.p2,  6), p3:  pega(ITENS.p3,  6),
+    p4:  pega(ITENS.p4,  6), p5:  pega(ITENS.p5,  6), p6:  pega(ITENS.p6,  3),
+    p7:  pega(ITENS.p7,  6), p8:  pega(ITENS.p8,  6), p9:  pega(ITENS.p9,  6),
+    p10: pega(ITENS.p10, 6), p11: pega(ITENS.p11, 5), p12: pega(ITENS.p12, 2),
+    p13: pega(ITENS.p13, 2), p14: pega(ITENS.p14, 5), p15: pega(ITENS.p15, 6),
+    p16: pega(ITENS.p16, 6), p17: pega(ITENS.p17, 4), p18: pega(ITENS.p18, 4),
+    p19: pega(ITENS.p19, 6), p20: pega(ITENS.p20, 6), p21: pega(ITENS.p21, 3),
+    p22: pega(ITENS.p22, 4), p23: pega(ITENS.p23, 4), p24: pega(ITENS.p24, 5),
+    p25: pega(ITENS.p25, 8)
   };
 }
 </script>
