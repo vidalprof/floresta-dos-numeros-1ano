@@ -89,7 +89,7 @@ F[u"novoCaderno"] = u"Caderno novo! As moradias mudaram de ordem."
 F[u"toque_etiqueta"] = u"Primeiro toque num nome ali embaixo. Depois toque na casa dele."
 F[u"toque_figura"] = u"Primeiro toque numa figura ali embaixo. Depois toque na coluna."
 F[u"toque_objeto"] = u"Primeiro toque num objeto ali embaixo. Depois toque no cômodo."
-F[u"toque_cena"] = u"Primeiro toque numa cena ali embaixo. Depois toque no lugar da fila."
+F[u"toque_cena"] = u"Primeiro toque em quem você quer pôr na fila. Depois toque no lugar dela."
 F[u"montenesta"] = u"Agora toque nas sílabas desta moradia, uma de cada vez, na ordem certa."
 F[u"boa_metade"] = u"Boa! Falta a outra."
 F[u"vistacima"] = u"Uma vista de cima."
@@ -271,36 +271,37 @@ for k in IT[u"p16"]:
     F[u"dica16_%s" % k] = (u"Escute a pista de novo e conte as casinhas da cruzadinha: "
                            u"a palavra tem esse tanto de letras.")
 
-# ---- folha 17: vista de cima ---------------------------------------------------------------------
-for k in IT[u"p17"]:
-    F[u"certo17_%s" % k] = (u"Isso! De cima a gente vê o telhado. %s vista de cima é assim."
-                            % dizNome(k).capitalize())
-    F[u"dica17_%s" % k] = (u"De cima a gente não vê a porta nem a janela: vê o telhado e o "
-                           u"formato dele. Olhe o formato da casa na figura.")
+# ---- folha 17: a mesma coisa vista de cima -----------------------------------------------------------
+CIMA = bloco(u"CIMA")
+for k, C in CIMA.items():
+    F[u"certo17_%s" % k] = u"Isso! Esta é %s vista de cima. %s" % (C[u"n"], C[u"d"])
+    F[u"dica17_%s" % k] = (u"De cima a gente não vê a frente das coisas: vê o formato delas "
+                           u"por cima. %s" % C[u"d"])
 
-# ---- folha 18: achar no mapa do bairro -------------------------------------------------------------
+# ---- folha 18: achar na praça vista de cima ----------------------------------------------------------
 for k, A in MAPA[u"alvos"].items():
-    F[u"mapa_%s" % k] = u"Ache %s no mapa." % A[u"n"]
+    F[u"mapa_%s" % k] = u"Ache %s na praça." % A[u"n"]
     F[u"mapadica_%s" % k] = A[u"d"]
-    F[u"certo18_%s" % k] = u"Achou %s! De cima, ela é assim." % A[u"n"]
+    F[u"certo18_%s" % k] = u"Achou! %s %s" % (A[u"n"].capitalize(), A[u"d"].lower())
 
-# ---- folha 19: de lado, de cima ou de esguelha ---------------------------------------------------------
+# ---- folha 19: frontal, vertical ou oblíqua ----------------------------------------------------------
 for k, V in VISTAS.items():
-    F[u"vista_%s" % k] = u"%s: %s." % (V[u"n"].lower(), V[u"d"])
+    F[u"vista_%s" % k] = V[u"d"]
 for k, V in VISTA.items():
     F[u"fig_%s" % k] = u"%s." % V[u"n"]
-    F[u"certo19_%s" % k] = (u"Isso! Esta é %s vista %s."
-                            % (V[u"n"], VISTAS[V[u"v"]][u"n"].lower().replace(u"de ", u"de ")))
-    F[u"dica19_%s" % k] = (u"Pergunte: dá para ver a porta e a janela? Então é de lado. "
-                           u"Só o telhado? É de cima. Um pouco dos dois? É de esguelha.")
+    F[u"certo19_%s" % k] = (u"Isso! Aqui está %s na %s. %s"
+                            % (V[u"n"], VISTAS[V[u"v"]][u"n"].lower(), VISTAS[V[u"v"]][u"d"]))
+    F[u"dica19_%s" % k] = (u"Pergunte: dá para ver a frente? Então é visão frontal. Só o de "
+                           u"cima? É visão vertical. Um pouco dos dois, meio inclinado? "
+                           u"É visão oblíqua.")
 
 # ---- folha 20: antes e hoje -------------------------------------------------------------------------------
 for k, T in TEMPO.items():
     F[u"tempo_%s" % k] = (u"Aqui é %s. Antes: %s Hoje: %s" % (T[u"n"], T[u"qa"], T[u"qh"]))
     F[u"certo20_%s" % k] = (u"Isso! %s mudou: antes, %s Hoje, %s"
                             % (T[u"n"].capitalize(), T[u"qa"].lower(), T[u"qh"].lower()))
-    F[u"dica20_%s" % k] = (u"Procure as coisas que só existem hoje: poste, carro, "
-                           u"computador. Onde elas não aparecem, é o ANTES.")
+    F[u"dica20_%s" % k] = (u"Procure as coisas que só existem hoje: asfalto, poste, carro. "
+                           u"Onde elas não aparecem, é o ANTES.")
     F[u"fig_%s" % T[u"antes"]] = T[u"qa"]
     F[u"fig_%s" % T[u"hoje"]] = T[u"qh"]
 
@@ -308,8 +309,8 @@ for k, T in TEMPO.items():
 for k, O in OBRA.items():
     F[u"obra_%s" % k] = O[u"d"]
     F[u"certo21_%s" % k] = u"Isso! %sº: %s %s" % (O[u"i"], O[u"n"], O[u"d"].lower())
-    F[u"dica21_%s" % k] = (u"Pense na ordem de verdade: dá para pôr o telhado antes das "
-                           u"paredes? Dá para pintar antes de a casa existir?")
+    F[u"dica21_%s" % k] = (u"Pense na ordem de verdade: dá para levantar a parede antes de "
+                           u"alguém desenhar a casa? Dá para pintar antes de a parede existir?")
 
 # ---- folha 22: quem faz o quê ------------------------------------------------------------------------------
 for k, P in PROF.items():

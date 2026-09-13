@@ -278,14 +278,27 @@ button{font-family:inherit;cursor:pointer}
 .pista.ativa{border-color:var(--cor);background:var(--corclara)}
 
 /* ---- a imagem aérea com pontos (folha 18) ---- */
+.colho{text-align:center;margin:2px 0 4px;min-height:80px}
+.figolho{max-height:76px;width:auto;display:inline-block}
 .aerea{position:relative;max-width:520px;margin:8px auto 4px;width:100%}
 .aerea img{display:block;width:100%;height:auto;border-radius:16px;border:3px solid #e6dbd1}
+/* ⚠️ O ALVO DA FOLHA 18 É INVISÍVEL ATÉ SER ACHADO, e isso é a folha inteira.
+   A primeira versão pintava cada ponto com um anel branco por cima do desenho.
+   Com três alvos já era discutível; com os dezessete da praça (uma fonte,
+   quatro bancos, dez árvores e dois bebedouros) a figura virou um campo de
+   bolhas — a criança tocava em qualquer anel e acertava sem OLHAR a praça, que
+   é justamente o que a folha existe para medir. Agora o botão é só uma área de
+   toque transparente do tamanho do dedo (52px, acima do piso de 44), e o anel
+   verde só nasce quando ela acha. Achado por FOTO, 13/set/2026 — nenhum portão
+   via, porque todos os alvos estavam lá, do tamanho certo, funcionando. */
 .ponto{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;
-  border:3px solid #fff;background:rgba(176,86,42,.35);cursor:pointer;padding:0;
+  border:3px solid transparent;background:transparent;cursor:pointer;padding:0}
+.ponto.certo{background:rgba(21,163,74,.55);border-color:#0d7736;
   -webkit-box-shadow:0 2px 8px rgba(0,0,0,.3);box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.ponto.certo{background:rgba(21,163,74,.55);border-color:#0d7736}
-.ponto.errado{background:rgba(224,86,47,.5)}
+.ponto.errado{background:rgba(224,86,47,.5);border-color:#fff}
 .ponto:active{-webkit-transform:scale(.9);transform:scale(.9)}
+/* teclado: quem navega por TAB precisa ver onde está */
+.ponto:focus{outline:3px solid #fff;outline-offset:-3px}
 
 /* ---- ordenar as cenas / o antes e o hoje (folhas 20 e 21) ---- */
 .trilhaord{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 6px 4px}
@@ -734,48 +747,51 @@ var ITENS = {
   "iglu"
  ],
  "p17": [
-  "casa",
+  "caneca",
+  "carro",
   "predio",
-  "oca",
-  "tenda"
+  "bairro"
  ],
  "p18": [
-  "escola",
-  "campinho",
-  "casas"
+  "fonte",
+  "bancos",
+  "arvores",
+  "bebedouros"
  ],
  "p19": [
-  "casa",
-  "casacima",
-  "casaobliqua",
-  "escola",
-  "escolacima",
-  "escolaobliqua"
+  "caneca_frontal",
+  "caneca_vertical",
+  "caneca_obliqua",
+  "carro_frontal",
+  "carro_vertical",
+  "carro_obliqua"
  ],
  "p20": [
   "casa",
-  "rua",
-  "escola"
+  "rua"
  ],
  "p21": [
-  "planta",
-  "paredes",
-  "telhado",
-  "pronta"
+  "arquiteto",
+  "pedreiro",
+  "eletricista",
+  "pintor"
  ],
  "p22": [
   "arquiteto",
   "pedreiro",
   "eletricista",
-  "encanador"
+  "encanador",
+  "pintor"
  ],
  "p23": [
   "cama",
   "armario",
   "sofa",
+  "tv",
   "geladeira",
   "fogao",
-  "chuveiro"
+  "banheira",
+  "vaso"
  ],
  "p24": [
   "IGLU,",
@@ -849,38 +865,41 @@ var FALAS = {
  "certo16_predio": "Isso! Prédio. Tem muitos andares: as casas ficam uma em cima da outra.",
  "certo16_sobrado": "Isso! Sobrado. É uma casa de dois andares, com escada dentro dela.",
  "certo16_tenda": "Isso! Tenda. Casa de pano, que se arma e se desarma quando a família muda de lugar.",
- "certo17_casa": "Isso! De cima a gente vê o telhado. Casa vista de cima é assim.",
- "certo17_oca": "Isso! De cima a gente vê o telhado. Oca vista de cima é assim.",
- "certo17_predio": "Isso! De cima a gente vê o telhado. Prédio vista de cima é assim.",
- "certo17_tenda": "Isso! De cima a gente vê o telhado. Tenda vista de cima é assim.",
- "certo18_campinho": "Achou o campo de futebol! De cima, ela é assim.",
- "certo18_casas": "Achou as casas! De cima, ela é assim.",
- "certo18_escola": "Achou a escola! De cima, ela é assim.",
- "certo19_casa": "Isso! Esta é a casa vista de lado.",
- "certo19_casacima": "Isso! Esta é a casa vista de cima.",
- "certo19_casaobliqua": "Isso! Esta é a casa vista de esguelha.",
- "certo19_escola": "Isso! Esta é a escola vista de lado.",
- "certo19_escolacima": "Isso! Esta é a escola vista de cima.",
- "certo19_escolaobliqua": "Isso! Esta é a escola vista de esguelha.",
+ "certo17_bairro": "Isso! Esta é o bairro vista de cima. De cima as ruas viram riscos e as casas viram manchas coloridas.",
+ "certo17_caneca": "Isso! Esta é a caneca vista de cima. Olhe a boca da caneca: de cima ela vira um círculo.",
+ "certo17_carro": "Isso! Esta é o carro vista de cima. De cima do carro a gente vê o teto e a sirene.",
+ "certo17_predio": "Isso! Esta é o prédio vista de cima. De cima o prédio vira o desenho do telhado dele no terreno.",
+ "certo18_arvores": "Achou! Uma árvore são as rodas verdes escuras em cima da grama.",
+ "certo18_bancos": "Achou! Um banco são as tabuinhas marrons, viradas para o meio.",
+ "certo18_bebedouros": "Achou! Um bebedouro são os dois ovais azul-claros, um de cada lado.",
+ "certo18_fonte": "Achou! A fonte é a roda azul bem no meio da praça, com água.",
+ "certo19_caneca_frontal": "Isso! Aqui está a caneca na visão frontal. A visão frontal é quando observamos um objeto de frente.",
+ "certo19_caneca_obliqua": "Isso! Aqui está a caneca na visão oblíqua. A visão oblíqua é quando observamos o objeto de cima e de lado ao mesmo tempo, de forma inclinada.",
+ "certo19_caneca_vertical": "Isso! Aqui está a caneca na visão vertical. A visão vertical é quando observamos o objeto de cima (vista de cima).",
+ "certo19_carro_frontal": "Isso! Aqui está o carro na visão frontal. A visão frontal é quando observamos um objeto de frente.",
+ "certo19_carro_obliqua": "Isso! Aqui está o carro na visão oblíqua. A visão oblíqua é quando observamos o objeto de cima e de lado ao mesmo tempo, de forma inclinada.",
+ "certo19_carro_vertical": "Isso! Aqui está o carro na visão vertical. A visão vertical é quando observamos o objeto de cima (vista de cima).",
  "certo1_precisa": "Isso mesmo! Toda casa precisa ter… teto, parede, chão, porta.",
  "certo1_serve": "Isso mesmo! A moradia serve para… abrigar a família, proteger do sol e da chuva, dar um lugar para dormir, guardar as nossas coisas.",
  "certo20_casa": "Isso! A casa mudou: antes, casa de madeira, com fogão de lenha e sem energia elétrica. Hoje, casa de tijolo, com energia elétrica e água encanada.",
- "certo20_escola": "Isso! A escola mudou: antes, uma sala só, de madeira, com lousa de giz. Hoje, escola de alvenaria, com várias salas e computadores.",
- "certo20_rua": "Isso! A rua mudou: antes, rua de chão batido, com carroça. Hoje, rua de asfalto, com carros e postes.",
- "certo21_paredes": "Isso! 2º: as paredes depois sobem as paredes, tijolo por tijolo.",
- "certo21_planta": "Isso! 1º: o desenho da casa primeiro alguém desenha a casa no papel.",
- "certo21_pronta": "Isso! 4º: a casa pronta no fim vem a pintura, e a família se muda.",
- "certo21_telhado": "Isso! 3º: o telhado só então entra o telhado, para tapar a chuva.",
+ "certo20_rua": "Isso! A rua mudou: antes, rua de chão, onde o cavalo puxava a carroça. Hoje, rua de asfalto, com calçada, poste e loja.",
+ "certo21_arquiteto": "Isso! 1º: o arquiteto primeiro o arquiteto desenha a casa no papel.",
+ "certo21_eletricista": "Isso! 3º: o eletricista com a parede de pé, o eletricista passa os fios por dentro dela.",
+ "certo21_pedreiro": "Isso! 2º: o pedreiro depois o pedreiro levanta as paredes, tijolo por tijolo.",
+ "certo21_pintor": "Isso! 4º: o pintor e a pintura é o último serviço: depois dela a família se muda.",
  "certo22_arquiteto": "Isso! Arquiteto: desenha a casa no papel antes de ela existir.",
  "certo22_eletricista": "Isso! Eletricista: passa os fios que levam a luz pela casa.",
  "certo22_encanador": "Isso! Encanador: põe os canos por onde a água anda.",
  "certo22_pedreiro": "Isso! Pedreiro: levanta as paredes, tijolo por tijolo.",
+ "certo22_pintor": "Isso! Pintor: pinta a parede quando a obra está quase pronta.",
  "certo23_armario": "Isso! O armário fica no quarto.",
+ "certo23_banheira": "Isso! A banheira fica no banheiro.",
  "certo23_cama": "Isso! A cama fica no quarto.",
- "certo23_chuveiro": "Isso! O chuveiro fica no banheiro.",
  "certo23_fogao": "Isso! O fogão fica na cozinha.",
  "certo23_geladeira": "Isso! A geladeira fica na cozinha.",
  "certo23_sofa": "Isso! O sofá fica na sala.",
+ "certo23_tv": "Isso! A televisão fica na sala.",
+ "certo23_vaso": "Isso! O vaso fica no banheiro.",
  "certo24": "Achou uma moradia! Continue procurando.",
  "certo25_casa": "Casa entrou na sua rua! O tijolo é duro e não deixa a chuva entrar.",
  "certo25_casabarro": "Casa de barro entrou na sua rua! O barro está debaixo dos pés e não custa nada.",
@@ -998,35 +1017,37 @@ var FALAS = {
  "dica16_predio": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
  "dica16_sobrado": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
  "dica16_tenda": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
- "dica17_casa": "De cima a gente não vê a porta nem a janela: vê o telhado e o formato dele. Olhe o formato da casa na figura.",
- "dica17_oca": "De cima a gente não vê a porta nem a janela: vê o telhado e o formato dele. Olhe o formato da casa na figura.",
- "dica17_predio": "De cima a gente não vê a porta nem a janela: vê o telhado e o formato dele. Olhe o formato da casa na figura.",
- "dica17_tenda": "De cima a gente não vê a porta nem a janela: vê o telhado e o formato dele. Olhe o formato da casa na figura.",
- "dica19_casa": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
- "dica19_casacima": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
- "dica19_casaobliqua": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
- "dica19_escola": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
- "dica19_escolacima": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
- "dica19_escolaobliqua": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
+ "dica17_bairro": "De cima a gente não vê a frente das coisas: vê o formato delas por cima. De cima as ruas viram riscos e as casas viram manchas coloridas.",
+ "dica17_caneca": "De cima a gente não vê a frente das coisas: vê o formato delas por cima. Olhe a boca da caneca: de cima ela vira um círculo.",
+ "dica17_carro": "De cima a gente não vê a frente das coisas: vê o formato delas por cima. De cima do carro a gente vê o teto e a sirene.",
+ "dica17_predio": "De cima a gente não vê a frente das coisas: vê o formato delas por cima. De cima o prédio vira o desenho do telhado dele no terreno.",
+ "dica19_caneca_frontal": "Pergunte: dá para ver a frente? Então é visão frontal. Só o de cima? É visão vertical. Um pouco dos dois, meio inclinado? É visão oblíqua.",
+ "dica19_caneca_obliqua": "Pergunte: dá para ver a frente? Então é visão frontal. Só o de cima? É visão vertical. Um pouco dos dois, meio inclinado? É visão oblíqua.",
+ "dica19_caneca_vertical": "Pergunte: dá para ver a frente? Então é visão frontal. Só o de cima? É visão vertical. Um pouco dos dois, meio inclinado? É visão oblíqua.",
+ "dica19_carro_frontal": "Pergunte: dá para ver a frente? Então é visão frontal. Só o de cima? É visão vertical. Um pouco dos dois, meio inclinado? É visão oblíqua.",
+ "dica19_carro_obliqua": "Pergunte: dá para ver a frente? Então é visão frontal. Só o de cima? É visão vertical. Um pouco dos dois, meio inclinado? É visão oblíqua.",
+ "dica19_carro_vertical": "Pergunte: dá para ver a frente? Então é visão frontal. Só o de cima? É visão vertical. Um pouco dos dois, meio inclinado? É visão oblíqua.",
  "dica1_precisa": "Falta alguma, ou sobrou alguma. Leia de novo uma por uma e pergunte: isto é mesmo coisa de casa?",
  "dica1_serve": "Falta alguma, ou sobrou alguma. Leia de novo uma por uma e pergunte: isto é mesmo coisa de casa?",
- "dica20_casa": "Procure as coisas que só existem hoje: poste, carro, computador. Onde elas não aparecem, é o ANTES.",
- "dica20_escola": "Procure as coisas que só existem hoje: poste, carro, computador. Onde elas não aparecem, é o ANTES.",
- "dica20_rua": "Procure as coisas que só existem hoje: poste, carro, computador. Onde elas não aparecem, é o ANTES.",
- "dica21_paredes": "Pense na ordem de verdade: dá para pôr o telhado antes das paredes? Dá para pintar antes de a casa existir?",
- "dica21_planta": "Pense na ordem de verdade: dá para pôr o telhado antes das paredes? Dá para pintar antes de a casa existir?",
- "dica21_pronta": "Pense na ordem de verdade: dá para pôr o telhado antes das paredes? Dá para pintar antes de a casa existir?",
- "dica21_telhado": "Pense na ordem de verdade: dá para pôr o telhado antes das paredes? Dá para pintar antes de a casa existir?",
+ "dica20_casa": "Procure as coisas que só existem hoje: asfalto, poste, carro. Onde elas não aparecem, é o ANTES.",
+ "dica20_rua": "Procure as coisas que só existem hoje: asfalto, poste, carro. Onde elas não aparecem, é o ANTES.",
+ "dica21_arquiteto": "Pense na ordem de verdade: dá para levantar a parede antes de alguém desenhar a casa? Dá para pintar antes de a parede existir?",
+ "dica21_eletricista": "Pense na ordem de verdade: dá para levantar a parede antes de alguém desenhar a casa? Dá para pintar antes de a parede existir?",
+ "dica21_pedreiro": "Pense na ordem de verdade: dá para levantar a parede antes de alguém desenhar a casa? Dá para pintar antes de a parede existir?",
+ "dica21_pintor": "Pense na ordem de verdade: dá para levantar a parede antes de alguém desenhar a casa? Dá para pintar antes de a parede existir?",
  "dica22_arquiteto": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
  "dica22_eletricista": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
  "dica22_encanador": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
  "dica22_pedreiro": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
+ "dica22_pintor": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
  "dica23_armario": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica23_banheira": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
  "dica23_cama": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
- "dica23_chuveiro": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
  "dica23_fogao": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
  "dica23_geladeira": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
  "dica23_sofa": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica23_tv": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica23_vaso": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
  "dica2_casa": "Escute a descrição de novo, no alto-falante: Tem um andar só, com paredes de tijolo e telhado de telhas.",
  "dica2_casabarro": "Escute a descrição de novo, no alto-falante: As paredes são de barro amassado sobre um trançado de varas.",
  "dica2_casamadeira": "Escute a descrição de novo, no alto-falante: As paredes são tábuas de madeira, uma ao lado da outra.",
@@ -1102,18 +1123,16 @@ var FALAS = {
  "dupla_tenda_gelo": "Tenda, na terra do gelo.",
  "dupla_tenda_rio": "Tenda, na beira do rio.",
  "escreva": "Escreva a palavra usando o teclado.",
- "fig_casa": "a casa.",
+ "fig_caneca_frontal": "a caneca.",
+ "fig_caneca_obliqua": "a caneca.",
+ "fig_caneca_vertical": "a caneca.",
+ "fig_carro_frontal": "o carro.",
+ "fig_carro_obliqua": "o carro.",
+ "fig_carro_vertical": "o carro.",
  "fig_casaantiga": "Casa de madeira, com fogão de lenha e sem energia elétrica.",
- "fig_casacima": "a casa.",
  "fig_casahoje": "Casa de tijolo, com energia elétrica e água encanada.",
- "fig_casaobliqua": "a casa.",
- "fig_escola": "a escola.",
- "fig_escolaantiga": "Uma sala só, de madeira, com lousa de giz.",
- "fig_escolacima": "a escola.",
- "fig_escolahoje": "Escola de alvenaria, com várias salas e computadores.",
- "fig_escolaobliqua": "a escola.",
- "fig_ruaantiga": "Rua de chão batido, com carroça.",
- "fig_ruahoje": "Rua de asfalto, com carros e postes.",
+ "fig_ruaantiga": "Rua de chão, onde o cavalo puxava a carroça.",
+ "fig_ruahoje": "Rua de asfalto, com calçada, poste e loja.",
  "fim": "Você chegou ao fim! Agora você já sabe olhar uma casa e perguntar: de que ela é feita, e por que ela é assim neste lugar? Olhe a sua rua ali embaixo. E, no caminho de casa hoje, repare: quantos tipos de moradia você consegue achar no seu bairro?",
  "folhaPronta": "Folha pronta! Muito bem.",
  "frase_abriga": "A moradia ... a família do sol, da chuva e do frio.",
@@ -1128,12 +1147,14 @@ var FALAS = {
  "lug_deserto": "no deserto.",
  "lug_gelo": "na terra do gelo.",
  "lug_rio": "na beira do rio.",
- "mapa_campinho": "Ache o campo de futebol no mapa.",
- "mapa_casas": "Ache as casas no mapa.",
- "mapa_escola": "Ache a escola no mapa.",
- "mapadica_campinho": "O retângulo verde, no meio do quarteirão.",
- "mapadica_casas": "Os telhadinhos pequenos, um do lado do outro.",
- "mapadica_escola": "O telhado maior e comprido, com o pátio do lado.",
+ "mapa_arvores": "Ache uma árvore na praça.",
+ "mapa_bancos": "Ache um banco na praça.",
+ "mapa_bebedouros": "Ache um bebedouro na praça.",
+ "mapa_fonte": "Ache a fonte na praça.",
+ "mapadica_arvores": "São as rodas verdes escuras em cima da grama.",
+ "mapadica_bancos": "São as tabuinhas marrons, viradas para o meio.",
+ "mapadica_bebedouros": "São os dois ovais azul-claros, um de cada lado.",
+ "mapadica_fonte": "É a roda azul bem no meio da praça, com água.",
  "mat_barro": "barro.",
  "mat_gelo": "gelo.",
  "mat_madeira": "madeira.",
@@ -1145,15 +1166,17 @@ var FALAS = {
  "naoemoradia": "Essa palavra não é uma moradia. Procure os nomes de casa no poema.",
  "novoCaderno": "Caderno novo! As moradias mudaram de ordem.",
  "obj_armario": "o armário.",
+ "obj_banheira": "a banheira.",
  "obj_cama": "a cama.",
- "obj_chuveiro": "o chuveiro.",
  "obj_fogao": "o fogão.",
  "obj_geladeira": "a geladeira.",
  "obj_sofa": "o sofá.",
- "obra_paredes": "Depois sobem as paredes, tijolo por tijolo.",
- "obra_planta": "Primeiro alguém desenha a casa no papel.",
- "obra_pronta": "No fim vem a pintura, e a família se muda.",
- "obra_telhado": "Só então entra o telhado, para tapar a chuva.",
+ "obj_tv": "a televisão.",
+ "obj_vaso": "o vaso.",
+ "obra_arquiteto": "Primeiro o arquiteto desenha a casa no papel.",
+ "obra_eletricista": "Com a parede de pé, o eletricista passa os fios por dentro dela.",
+ "obra_pedreiro": "Depois o pedreiro levanta as paredes, tijolo por tijolo.",
+ "obra_pintor": "E a pintura é o último serviço: depois dela a família se muda.",
  "olhe_casa": "Tem um andar só, com paredes de tijolo e telhado de telhas.",
  "olhe_casabarro": "As paredes são de barro amassado sobre um trançado de varas.",
  "olhe_casamadeira": "As paredes são tábuas de madeira, uma ao lado da outra.",
@@ -1229,26 +1252,27 @@ var FALAS = {
  "prof_eletricista": "eletricista.",
  "prof_encanador": "encanador.",
  "prof_pedreiro": "pedreiro.",
+ "prof_pintor": "pintor.",
  "quase": "Quase! Olhe de novo com calma e tente outra.",
  "tarefa_arquiteto": "Desenha a casa no papel antes de ela existir.",
  "tarefa_eletricista": "Passa os fios que levam a luz pela casa.",
  "tarefa_encanador": "Põe os canos por onde a água anda.",
  "tarefa_pedreiro": "Levanta as paredes, tijolo por tijolo.",
+ "tarefa_pintor": "Pinta a parede quando a obra está quase pronta.",
  "tempo_casa": "Aqui é a casa. Antes: Casa de madeira, com fogão de lenha e sem energia elétrica. Hoje: Casa de tijolo, com energia elétrica e água encanada.",
- "tempo_escola": "Aqui é a escola. Antes: Uma sala só, de madeira, com lousa de giz. Hoje: Escola de alvenaria, com várias salas e computadores.",
- "tempo_rua": "Aqui é a rua. Antes: Rua de chão batido, com carroça. Hoje: Rua de asfalto, com carros e postes.",
- "toque_cena": "Primeiro toque numa cena ali embaixo. Depois toque no lugar da fila.",
+ "tempo_rua": "Aqui é a rua. Antes: Rua de chão, onde o cavalo puxava a carroça. Hoje: Rua de asfalto, com calçada, poste e loja.",
+ "toque_cena": "Primeiro toque em quem você quer pôr na fila. Depois toque no lugar dela.",
  "toque_etiqueta": "Primeiro toque num nome ali embaixo. Depois toque na casa dele.",
  "toque_figura": "Primeiro toque numa figura ali embaixo. Depois toque na coluna.",
  "toque_objeto": "Primeiro toque num objeto ali embaixo. Depois toque no cômodo.",
- "vista_cima": "de cima: como quem está num avião, bem em cima.",
- "vista_esguelha": "de esguelha: como quem está num avião mas de banda.",
- "vista_lado": "de lado: como quem está na calçada olhando.",
+ "vista_frontal": "A visão frontal é quando observamos um objeto de frente.",
+ "vista_obliqua": "A visão oblíqua é quando observamos o objeto de cima e de lado ao mesmo tempo, de forma inclinada.",
+ "vista_vertical": "A visão vertical é quando observamos o objeto de cima (vista de cima).",
  "vistacima": "Uma vista de cima.",
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {"1x2w6dg": 1, "1k4x79h": 1, "rzzuck": 1, "qpn3mi": 1, "miy0y4": 1, "1s3uuat": 1, "17vl72y": 1, "zffp6x": 1, "1vwn21o": 1, "jvgk54": 1, "1hn18ad": 1, "1tzqbbq": 1, "a6iknv": 1, "nq0dts": 1, "gqpkov": 1, "bzf9ec": 1, "1u2u6ew": 1, "1eg4f83": 1, "1vsgy6s": 1, "uxetb": 1, "1aidlee": 1, "1impafx": 1, "fpz28s": 1, "pe931z": 1, "1wf9t79": 1, "qlvqta": 1, "lrn9kp": 1, "ltsicr": 1, "7j5eyj": 1, "coeu7h": 1, "oml86c": 1, "19hdodg": 1, "12tgdwr": 1, "1g4yed8": 1, "5g6k9m": 1, "1b5b75t": 1, "168cwfb": 1, "6d8fhu": 1, "d0tc3c": 1, "azcb8l": 1, "1br7rok": 1, "cxb6jw": 1, "1rnu88g": 1, "1e0krqv": 1, "1xik6ay": 1, "ya00jy": 1, "18noo4d": 1, "ajf7fs": 1, "1115zms": 1, "136n22r": 1, "1rr08jt": 1, "1rnh7t5": 1, "187d563": 1, "3hwoz2": 1, "3fs6we": 1, "135euks": 1, "1m4kzen": 1, "17lw2my": 1, "vqi6v5": 1, "mgeiok": 1, "aepj2q": 1, "1kh9hhp": 1, "1si66gt": 1, "psdxeu": 1, "db2bow": 1, "7kzqkm": 1, "1scc08u": 1, "1vihrn5": 1, "z00nxi": 1, "1jje154": 1, "zhkvb7": 1, "18km7r6": 1, "ozfjq3": 1, "1b4s4v7": 1, "14t9f39": 1, "skwt3m": 1, "1kxr236": 1, "3vmva5": 1, "4gc6wc": 1, "1j3qhhd": 1, "toyq3v": 1, "16aw3mv": 1, "1la7g05": 1, "1yannnz": 1, "gon45g": 1, "15thzba": 1, "3eepud": 1, "2fkx5k": 1, "1v4mgqr": 1, "dumxt8": 1, "1054k83": 1, "l7brba": 1, "3d168i": 1, "3mky0": 1, "dfqjnn": 1, "1l9hbr3": 1, "12w5yfr": 1, "1d4tlil": 1, "1wlxheu": 1, "1hcbgyx": 1, "1d43l9i": 1, "1l80j7e": 1, "5ppgo2": 1, "18ul3d8": 1, "n329ak": 1, "2ja3ya": 1, "1dz5jkc": 1, "17kqxjk": 1, "1xecuve": 1, "1w764fe": 1, "ji3pnx": 1, "2174ua": 1, "4t861m": 1, "1d91gp6": 1, "166612h": 1, "zglpgx": 1, "12g9qtr": 1, "r1yo9x": 1, "145b6b6": 1, "dqsjlp": 1, "ni48ad": 1, "5539ke": 1, "1yzk6rb": 1, "1xz2zvb": 1, "1eik9o1": 1, "10mta7b": 1, "j2qky5": 1, "2x8g63": 1, "q9bnva": 1, "jr2q5": 1, "1ug0cp4": 1, "2yrdng": 1, "yj35ja": 1, "y8hh1p": 1, "rdf6le": 1, "ozofjh": 1, "swdib5": 1, "14tz6kf": 1, "1b8h82b": 1, "1bv3umf": 1, "38iz6c": 1, "vgx5pk": 1, "uui6vv": 1, "1wwlfo1": 1, "1q4k3em": 1, "17p2rcc": 1, "1o9he1o": 1, "x6az56": 1, "1lts8hw": 1, "1bfjpnn": 1, "14bh37n": 1, "1kjr20y": 1, "14cwk6m": 1, "3z4t14": 1, "1iotda": 1, "1wizi9z": 1, "1gbaggy": 1, "v0b5h4": 1, "1ias5ic": 1, "1l94amb": 1, "1p8phb": 1, "1twjf7r": 1, "10wks6q": 1, "ni7nqi": 1, "1pgqji5": 1, "1rfaqwt": 1, "pxhqsk": 1, "1aioemr": 1, "17lrsvj": 1, "xb2cex": 1, "ola0ei": 1, "1oukiu8": 1, "17765ed": 1, "cjaafm": 1, "1xhq0jz": 1, "whemjh": 1, "hpjerx": 1, "31qtnf": 1, "1fxwfrm": 1, "11t39bv": 1, "ibft26": 1, "4rwpao": 1, "1gwcpk3": 1, "ye3jl5": 1, "1yfr5jo": 1, "d8qz1g": 1, "1wnj66e": 1, "1anpnf6": 1, "18exdq4": 1, "h33j5n": 1, "1calzoa": 1, "gjkvd8": 1, "qhbw9q": 1, "goxpbi": 1, "1ysbz14": 1, "uof0hd": 1, "jd4uyy": 1, "pp95sg": 1, "1451gg": 1, "1nbt9oe": 1, "5ij7kk": 1, "xnmz3g": 1, "15f8jej": 1, "93xrcx": 1, "1x7gy8h": 1, "1b4woq7": 1, "1llsb0l": 1, "1e7fo7x": 1, "jqlzvl": 1, "sd9gwr": 1, "x4bj0r": 1, "5ikvxx": 1, "1p8657j": 1, "kejo93": 1, "5b3aa2": 1, "1wbontc": 1, "1m37iqo": 1, "ln1mpq": 1, "1el9gr8": 1, "1bxqoto": 1, "14fd1c5": 1, "w8bxof": 1, "gfxokv": 1, "jx1itt": 1, "bl0v23": 1, "56ll0j": 1, "kwaqye": 1, "o37yb0": 1, "1dqzu58": 1, "1vxv6v6": 1, "6uplyg": 1, "1kuol3k": 1, "s69mtb": 1, "16pe36i": 1, "9no52l": 1, "12ybbhi": 1, "ki1q7x": 1, "1k4njcb": 1, "1y2ydbm": 1, "c0wfw8": 1, "10mz5di": 1, "xa8bbx": 1, "1d9s73k": 1, "15s280s": 1, "1wdlwof": 1, "1o4utpa": 1, "jl8af1": 1, "1r6agth": 1, "dudk3k": 1, "1uws2gw": 1, "40beze": 1, "y99d9m": 1, "1k637w4": 1, "17pljj2": 1, "18ajw4m": 1, "5qytnp": 1, "1b71und": 1, "htdbta": 1, "w0f877": 1, "1ostm37": 1, "4i6gej": 1, "ouzzdz": 1, "2uhop6": 1, "e0lp4s": 1, "vem98f": 1, "33r463": 1, "vbsco9": 1, "wmnwkw": 1, "1yxrutj": 1, "1nnh1x7": 1, "1ynvdf1": 1, "g1mr4f": 1, "16pdy10": 1, "jul3vh": 1, "trtgme": 1, "1mfn5y6": 1, "t3uftr": 1, "oywa2m": 1, "13endqn": 1, "ctw5si": 1, "1xzxo0k": 1, "150et4c": 1, "jmz0xh": 1, "oklf8a": 1, "18mz4pg": 1, "1qt8f9c": 1, "u2ebzo": 1, "fo8rw5": 1, "1f1sx4z": 1, "1slzcbd": 1, "2hctnh": 1, "1iq5yns": 1, "1l6pnic": 1, "12q5vig": 1, "nsp258": 1, "ysn5hc": 1, "x7k2y6": 1, "ef9clm": 1, "1w84bg1": 1, "1iqcvk8": 1, "1qzn7pj": 1, "13cmu7t": 1, "1rwhn6w": 1, "19us335": 1, "1qvccuh": 1, "e6czn7": 1, "wivsv2": 1, "1sg7ifm": 1, "2wxudx": 1, "o2iup2": 1, "mwtskg": 1, "1sbbuny": 1, "1exkga9": 1, "15qwec1": 1, "nesnu7": 1, "1dk3r2h": 1, "1lewon9": 1, "13nnpbv": 1, "y4pwgr": 1, "o76b2e": 1, "eiz0v1": 1, "150cash": 1, "d4yu00": 1, "1ldh491": 1, "1ydco4f": 1, "sh944a": 1, "1cm0v08": 1, "813z02": 1, "h8jlfe": 1, "22yvc4": 1, "1uzrnn6": 1, "4c84gr": 1, "1j5bcn2": 1, "imiksa": 1, "q5xstg": 1, "a6u3jz": 1, "ri8a1w": 1, "1nipedw": 1, "191ybsp": 1, "1a3lyjf": 1, "1frg173": 1, "1ehn12k": 1, "1cez6ab": 1, "1991b55": 1, "1xrji35": 1, "15q90as": 1, "kc1gea": 1, "1u5yf0y": 1, "8hb0q7": 1, "flp4ej": 1, "15cjfxz": 1, "16f2dgb": 1, "11wm5vr": 1, "1s714d6": 1, "ubqbgs": 1, "swkns7": 1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1x2w6dg": 1, "1k4x79h": 1, "rzzuck": 1, "qpn3mi": 1, "miy0y4": 1, "1s3uuat": 1, "17vl72y": 1, "zffp6x": 1, "1vwn21o": 1, "jvgk54": 1, "1hn18ad": 1, "1tzqbbq": 1, "a6iknv": 1, "nq0dts": 1, "gqpkov": 1, "bzf9ec": 1, "1u2u6ew": 1, "1eg4f83": 1, "1vsgy6s": 1, "uxetb": 1, "1aidlee": 1, "1impafx": 1, "fpz28s": 1, "pe931z": 1, "1wf9t79": 1, "qlvqta": 1, "lrn9kp": 1, "ltsicr": 1, "7j5eyj": 1, "coeu7h": 1, "oml86c": 1, "19hdodg": 1, "12tgdwr": 1, "1g4yed8": 1, "5g6k9m": 1, "1b5b75t": 1, "168cwfb": 1, "6d8fhu": 1, "d0tc3c": 1, "azcb8l": 1, "1br7rok": 1, "cxb6jw": 1, "1rnu88g": 1, "1laef7q": 1, "1dfkqwq": 1, "p4t46q": 1, "3dklb8": 1, "c4kxnc": 1, "eszq3e": 1, "12uhjze": 1, "13dmqg5": 1, "19kropt": 1, "1uerwah": 1, "1jv6w81": 1, "daw57t": 1, "1e7gbe9": 1, "1hx0561": 1, "1m4kzen": 1, "17lw2my": 1, "vqi6v5": 1, "nz3ck1": 1, "dz28w2": 1, "qkwzn8": 1, "12hl0d4": 1, "1iickdr": 1, "7kzqkm": 1, "1scc08u": 1, "1vihrn5": 1, "z00nxi": 1, "6luo5x": 1, "1jje154": 1, "1jpah5b": 1, "zhkvb7": 1, "ozfjq3": 1, "1b4s4v7": 1, "14t9f39": 1, "bgz5qg": 1, "1s28hw0": 1, "skwt3m": 1, "1kxr236": 1, "3vmva5": 1, "4gc6wc": 1, "1j3qhhd": 1, "toyq3v": 1, "16aw3mv": 1, "1la7g05": 1, "1yannnz": 1, "gon45g": 1, "15thzba": 1, "3eepud": 1, "2fkx5k": 1, "1v4mgqr": 1, "dumxt8": 1, "1054k83": 1, "l7brba": 1, "3d168i": 1, "3mky0": 1, "dfqjnn": 1, "1l9hbr3": 1, "12w5yfr": 1, "1d4tlil": 1, "1wlxheu": 1, "1hcbgyx": 1, "1d43l9i": 1, "1l80j7e": 1, "5ppgo2": 1, "18ul3d8": 1, "n329ak": 1, "2ja3ya": 1, "1dz5jkc": 1, "17kqxjk": 1, "1xecuve": 1, "1w764fe": 1, "ji3pnx": 1, "2174ua": 1, "4t861m": 1, "1d91gp6": 1, "166612h": 1, "zglpgx": 1, "12g9qtr": 1, "r1yo9x": 1, "145b6b6": 1, "dqsjlp": 1, "ni48ad": 1, "5539ke": 1, "1yzk6rb": 1, "1xz2zvb": 1, "1eik9o1": 1, "10mta7b": 1, "j2qky5": 1, "2x8g63": 1, "q9bnva": 1, "jr2q5": 1, "1ug0cp4": 1, "2yrdng": 1, "yj35ja": 1, "y8hh1p": 1, "rdf6le": 1, "ozofjh": 1, "swdib5": 1, "14tz6kf": 1, "1b8h82b": 1, "1bv3umf": 1, "38iz6c": 1, "vgx5pk": 1, "uui6vv": 1, "1wwlfo1": 1, "1q4k3em": 1, "17p2rcc": 1, "1o9he1o": 1, "x6az56": 1, "1lts8hw": 1, "1bfjpnn": 1, "14bh37n": 1, "1kjr20y": 1, "14cwk6m": 1, "3z4t14": 1, "1iotda": 1, "1wizi9z": 1, "1gbaggy": 1, "v0b5h4": 1, "1ias5ic": 1, "1l94amb": 1, "1p8phb": 1, "1twjf7r": 1, "17avm52": 1, "1agw93e": 1, "1fncbca": 1, "jjeu0": 1, "4rkf4o": 1, "1pgqji5": 1, "1d6jys7": 1, "1gdgz3j": 1, "1aioemr": 1, "17lrsvj": 1, "xb2cex": 1, "ola0ei": 1, "1oukiu8": 1, "17765ed": 1, "cjaafm": 1, "1xhq0jz": 1, "whemjh": 1, "hpjerx": 1, "31qtnf": 1, "1fxwfrm": 1, "11t39bv": 1, "ibft26": 1, "4rwpao": 1, "1gwcpk3": 1, "ye3jl5": 1, "1yfr5jo": 1, "d8qz1g": 1, "1wnj66e": 1, "1anpnf6": 1, "18exdq4": 1, "h33j5n": 1, "1calzoa": 1, "gjkvd8": 1, "qhbw9q": 1, "goxpbi": 1, "1ysbz14": 1, "uof0hd": 1, "jd4uyy": 1, "pp95sg": 1, "1451gg": 1, "1nbt9oe": 1, "5ij7kk": 1, "xnmz3g": 1, "15f8jej": 1, "93xrcx": 1, "1x7gy8h": 1, "1b4woq7": 1, "1llsb0l": 1, "1e7fo7x": 1, "jqlzvl": 1, "sd9gwr": 1, "x4bj0r": 1, "5ikvxx": 1, "1p8657j": 1, "kejo93": 1, "5b3aa2": 1, "1wbontc": 1, "1m37iqo": 1, "ln1mpq": 1, "1el9gr8": 1, "1bxqoto": 1, "14fd1c5": 1, "w8bxof": 1, "gfxokv": 1, "jx1itt": 1, "bl0v23": 1, "56ll0j": 1, "kwaqye": 1, "o37yb0": 1, "1dqzu58": 1, "1vxv6v6": 1, "6uplyg": 1, "1kuol3k": 1, "s69mtb": 1, "1fns68x": 1, "qqq99l": 1, "9no52l": 1, "12ybbhi": 1, "1tp3uvz": 1, "f6cwc2": 1, "xa8bbx": 1, "1d9s73k": 1, "15s280s": 1, "1wdlwof": 1, "1o4utpa": 1, "jl8af1": 1, "1r6agth": 1, "dudk3k": 1, "1uws2gw": 1, "40beze": 1, "y99d9m": 1, "1k637w4": 1, "17pljj2": 1, "18ajw4m": 1, "1wtbk5m": 1, "11cq1j": 1, "nm5mr9": 1, "aanjt": 1, "n71jyl": 1, "10bj5hu": 1, "19ycvpc": 1, "iy8u2r": 1, "ouzzdz": 1, "2uhop6": 1, "e0lp4s": 1, "vem98f": 1, "33r463": 1, "vbsco9": 1, "wmnwkw": 1, "1yxrutj": 1, "1nnh1x7": 1, "1ynvdf1": 1, "g1mr4f": 1, "yqd2k0": 1, "16pdy10": 1, "trtgme": 1, "1mfn5y6": 1, "t3uftr": 1, "15fzar6": 1, "t7euof": 1, "eo7twv": 1, "15dpmsg": 1, "1xen1gw": 1, "4iipal": 1, "150et4c": 1, "jmz0xh": 1, "oklf8a": 1, "18mz4pg": 1, "1qt8f9c": 1, "u2ebzo": 1, "fo8rw5": 1, "1f1sx4z": 1, "1slzcbd": 1, "2hctnh": 1, "1iq5yns": 1, "1l6pnic": 1, "12q5vig": 1, "nsp258": 1, "ysn5hc": 1, "x7k2y6": 1, "ef9clm": 1, "1w84bg1": 1, "1iqcvk8": 1, "1qzn7pj": 1, "13cmu7t": 1, "1rwhn6w": 1, "19us335": 1, "1qvccuh": 1, "e6czn7": 1, "wivsv2": 1, "1sg7ifm": 1, "2wxudx": 1, "o2iup2": 1, "mwtskg": 1, "1sbbuny": 1, "1exkga9": 1, "15qwec1": 1, "nesnu7": 1, "1dk3r2h": 1, "1lewon9": 1, "13nnpbv": 1, "y4pwgr": 1, "o76b2e": 1, "eiz0v1": 1, "150cash": 1, "d4yu00": 1, "1ldh491": 1, "1ydco4f": 1, "sh944a": 1, "1cm0v08": 1, "813z02": 1, "h8jlfe": 1, "22yvc4": 1, "1uzrnn6": 1, "4c84gr": 1, "1j5bcn2": 1, "imiksa": 1, "q5xstg": 1, "a6u3jz": 1, "ri8a1w": 1, "1nipedw": 1, "191ybsp": 1, "1axzwj9": 1, "1a3lyjf": 1, "1frg173": 1, "1ehn12k": 1, "1cez6ab": 1, "1991b55": 1, "743t86": 1, "1xrji35": 1, "17fyngh": 1, "igfvl6": 1, "8hb0q7": 1, "flp4ej": 1, "15cjfxz": 1, "6b8afi": 1, "m8co1f": 1, "ybdyj4": 1, "ubqbgs": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ============================================================
    OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
@@ -1308,6 +1332,11 @@ var LUG = {
  "gelo":    {"n":"NA TERRA DO GELO","f":"terradogelo", "c":"a terra do gelo"},
  "deserto": {"n":"NO DESERTO",      "f":"deserto",     "c":"o deserto"}
 };
+/* ⚠️ COMENTÁRIO FICA FORA DA CHAVE. O `gerar_falas.py` lê estes blocos como JSON
+   puro, e JSON não tem comentário: uma linha destas dentro do `{}` derruba a
+   geração de voz inteira. (Pago em 13/set/2026.)
+   ⚠️ A cena do deserto é um OÁSIS — areia, palmeiras e um poço de água. É onde a
+   tenda dos nômades para de verdade, e é o que a folha de origem desenha. */
 /* folha 15 — as frases com lacuna (da d23: "complete as frases com o quadro") */
 var FRASES = {
  "estacas":  {"a":"As ", "b":" são construções feitas sobre estacas, onde a água sobe.", "r":"PALAFITAS"},
@@ -1328,38 +1357,77 @@ var PISTAS = {
  "palafita": {"p":"Casa levantada sobre estacas, na beira do rio."},
  "iglu":     {"p":"Casa de blocos de neve."}
 };
-/* folha 18 — a imagem aérea do bairro, e os três lugares que se acham nela.
-   ⚠️ `x` e `y` são POR CENTO da largura e da altura da figura, medidos NA
-   figura depois de ela ficar pronta. Número chutado aqui vira alvo no lugar
-   errado, e a criança que acerta leva erro. */
-var MAPA = {
- "figura": "bairroaereo",
- "alvos": {
-  "escola":   {"n":"a escola",           "x":27, "y":32, "d":"O telhado maior e comprido, com o pátio do lado."},
-  "campinho": {"n":"o campo de futebol", "x":72, "y":66, "d":"O retângulo verde, no meio do quarteirão."},
-  "casas":    {"n":"as casas",           "x":48, "y":78, "d":"Os telhadinhos pequenos, um do lado do outro."}
- }
-};
-/* folha 19 — a mesma coisa vista de três jeitos (habilidade B da rede) */
-var VISTA = {
- "casa":         {"n":"a casa",   "v":"lado",    "f":"casa"},
- "casacima":     {"n":"a casa",   "v":"cima",    "f":"casacima"},
- "casaobliqua":  {"n":"a casa",   "v":"esguelha","f":"casaobliqua"},
- "escola":       {"n":"a escola", "v":"lado",    "f":"escola"},
- "escolacima":   {"n":"a escola", "v":"cima",    "f":"escolacima"},
- "escolaobliqua":{"n":"a escola", "v":"esguelha","f":"escolaobliqua"}
-};
+/* ⚠️ AS TRÊS PALAVRAS SÃO AS DA REDE, e não as minhas (13/set/2026). Eu tinha
+   escrito "de lado, de cima e de esguelha", achando que era mais fácil — e com
+   isso afastava a criança da palavra que o livro dela e o professor usam. As
+   folhas de 2º ano de verdade (Pequeno Lobato, Colégio Dinâmico, o livro
+   didático) dizem VISÃO FRONTAL, VISÃO VERTICAL e VISÃO OBLÍQUA. As definições
+   abaixo são COPIADAS da folha do Pequeno Lobato, palavra por palavra.
+   `olho` é a figurinha do menino mostrando de onde ele olha (do livro didático,
+   ilustração de André Aguiar): é o desenho que explica sem precisar de texto. */
 var VISTAS = {
- "lado":     {"n":"DE LADO",     "d":"como quem está na calçada olhando"},
- "cima":     {"n":"DE CIMA",     "d":"como quem está num avião, bem em cima"},
- "esguelha": {"n":"DE ESGUELHA", "d":"como quem está num avião mas de banda"}
+ "frontal":  {"n":"VISÃO FRONTAL",
+              "d":"A visão frontal é quando observamos um objeto de frente.",
+              "olho": ""},
+ "vertical": {"n":"VISÃO VERTICAL",
+              "d":"A visão vertical é quando observamos o objeto de cima (vista de cima).",
+              "olho": "olho_vertical"},
+ "obliqua":  {"n":"VISÃO OBLÍQUA",
+              "d":"A visão oblíqua é quando observamos o objeto de cima e de lado ao mesmo tempo, de forma inclinada.",
+              "olho": "olho_obliqua"}
 };
-/* folha 17 — a moradia vista de cima */
+/* folha 19 — a MESMA coisa vista dos três jeitos. A caneca é o exemplo da folha
+   de origem; o carro é o exercício 1 dela. As seis figuras saíram daquela folha,
+   então as três visões são mesmo do mesmo objeto — e não de objetos parecidos. */
+var VISTA = {
+ "caneca_frontal":  {"n":"a caneca", "v":"frontal",  "f":"caneca_frontal"},
+ "caneca_vertical": {"n":"a caneca", "v":"vertical", "f":"caneca_vertical"},
+ "caneca_obliqua":  {"n":"a caneca", "v":"obliqua",  "f":"caneca_obliqua"},
+ "carro_frontal":   {"n":"o carro",  "v":"frontal",  "f":"carro_frontal"},
+ "carro_vertical":  {"n":"o carro",  "v":"vertical", "f":"carro_vertical"},
+ "carro_obliqua":   {"n":"o carro",  "v":"obliqua",  "f":"carro_obliqua"}
+};
+/* folha 17 — a mesma coisa vista de cima.
+   `mostra` é a figura que a criança VÊ (de frente ou oblíqua) e `cima` é a
+   resposta. ⚠️ Os pares são REAIS: caneca e carro vêm da mesma folha; o prédio e
+   o bairro vêm das duas folhas que trazem o MESMO desenho nas duas visões (a do
+   Colégio Dinâmico e a do livro). Par montado com figuras de origens diferentes
+   seria pedir que a criança reconheça uma casa que ela nunca viu. */
 var CIMA = {
- "casa":     {"f":"casacima"},
- "predio":   {"f":"prediocima"},
- "oca":      {"f":"ocacima"},
- "tenda":    {"f":"tendacima"}
+ "caneca": {"n":"a caneca", "mostra":"caneca_frontal", "cima":"caneca_vertical",
+            "d":"Olhe a boca da caneca: de cima ela vira um círculo."},
+ "carro":  {"n":"o carro",  "mostra":"carro_frontal",  "cima":"carro_vertical",
+            "d":"De cima do carro a gente vê o teto e a sirene."},
+ "predio": {"n":"o prédio", "mostra":"predio_obliqua", "cima":"predio_vertical",
+            "d":"De cima o prédio vira o desenho do telhado dele no terreno."},
+ "bairro": {"n":"o bairro", "mostra":"bairro_obliqua", "cima":"bairro_vertical",
+            "d":"De cima as ruas viram riscos e as casas viram manchas coloridas."}
+};
+/* folha 18 — a praça vista de cima, e os elementos que se acham nela.
+   ⚠️ ESTA FOLHA É A DO COLÉGIO DINÂMICO INTEIRA: o desenho é o dela, a pergunta
+      é a dela (*"o desenho representa a praça na visão oblíqua ou na visão
+      vertical? Que elementos existem na praça?"*) e até os nomes são os da
+      legenda impressa: ÁRVORE, FONTE, BANCO e BEBEDOURO. Nada aqui é inventado.
+   ⚠️ `x` e `y` são POR CENTO da largura e da altura da figura, MEDIDOS na figura
+      pronta (201×152 px), não chutados: alvo no lugar errado faz a criança que
+      acertou levar erro, e ela não tem como saber que o errado era o app.
+   ⚠️ CADA ELEMENTO TEM VÁRIOS PONTOS porque a praça tem vários de cada um —
+      quatro bancos, dez árvores, dois bebedouros. Tocar em QUALQUER um deles
+      vale, senão a folha vira adivinhação de qual banco eu escolhi. */
+var MAPA = {
+ "figura": "praca_vertical",
+ "alvos": {
+  "fonte":     {"n":"a fonte",        "d":"É a roda azul bem no meio da praça, com água.",
+                "pts":[{"x":47,"y":48}]},
+  "bancos":    {"n":"um banco",       "d":"São as tabuinhas marrons, viradas para o meio.",
+                "pts":[{"x":30,"y":30},{"x":63,"y":30},{"x":30,"y":68},{"x":62,"y":68}]},
+  "arvores":   {"n":"uma árvore",     "d":"São as rodas verdes escuras em cima da grama.",
+                "pts":[{"x":14,"y":13},{"x":30,"y":14},{"x":66,"y":14},{"x":83,"y":13},
+                       {"x":83,"y":33},{"x":13,"y":63},{"x":14,"y":86},{"x":29,"y":87},
+                       {"x":70,"y":82},{"x":79,"y":88}]},
+  "bebedouros":{"n":"um bebedouro",   "d":"São os dois ovais azul-claros, um de cada lado.",
+                "pts":[{"x":15,"y":34},{"x":81,"y":66}]}
+ }
 };
 /* folha 20 — o mesmo lugar em dois tempos (habilidade C) */
 var TEMPO = {
@@ -1367,38 +1435,61 @@ var TEMPO = {
             "qa":"Casa de madeira, com fogão de lenha e sem energia elétrica.",
             "qh":"Casa de tijolo, com energia elétrica e água encanada."},
  "rua":    {"n":"a rua",    "antes":"ruaantiga",    "hoje":"ruahoje",
-            "qa":"Rua de chão batido, com carroça.",
-            "qh":"Rua de asfalto, com carros e postes."},
- "escola": {"n":"a escola", "antes":"escolaantiga", "hoje":"escolahoje",
-            "qa":"Uma sala só, de madeira, com lousa de giz.",
-            "qh":"Escola de alvenaria, com várias salas e computadores."}
+            "qa":"Rua de chão, onde o cavalo puxava a carroça.",
+            "qh":"Rua de asfalto, com calçada, poste e loja."}
 };
-/* folha 21 — a ordem em que a casa é construída (da d11, questão 5) */
+/* ⚠️ O PAR DA ESCOLA SAIU (13/set/2026). Ele existia no papel, mas as duas
+   figuras nunca ficaram boas, e par de "antes e hoje" com desenho mal resolvido
+   não ensina: ensina a chutar. Ficam os dois pares que têm figura de verdade.
+   ⚠️ E UMA FOLHA DA COLHEITA FICOU DE FORA DE PROPÓSITO: a `mor_tempo/d06` traz
+      a tira de Robert Crumb com o mesmo lugar virando cidade em doze quadros —
+      seria a figura perfeita, e é obra assinada. Não republico. */
+/* folha 21 — a ordem em que a casa é construída (da d11, questão 5).
+   ⚠️ A FILA É DE GENTE, não de cenas de obra (13/set/2026). As quatro cenas que
+      eu tinha pedido ao gerador voltaram em branco, e a folha do CPR Emprego
+      Integra já trazia os profissionais desenhados um a um. Trocar foi melhor
+      que remendar: a criança ordena QUEM entra primeiro na casa, que é a mesma
+      ideia de sequência e ainda amarra na folha 22.
+   ⚠️ A ORDEM É A QUE DÁ PARA DEFENDER: quem desenha vem antes de quem levanta a
+      parede; a fiação passa por dentro da parede, então vem depois dela; e a
+      pintura é a última coisa da obra. O encanador não entra nesta fila — ele e
+      o eletricista trabalham no mesmo momento, e eu não vou inventar uma ordem
+      entre os dois para caber num exercício. Ele está na folha 22. */
 var OBRA = {
- "planta":   {"i":1, "n":"o desenho da casa", "f":"obraplanta",  "d":"Primeiro alguém desenha a casa no papel."},
- "paredes":  {"i":2, "n":"as paredes",        "f":"obraparedes", "d":"Depois sobem as paredes, tijolo por tijolo."},
- "telhado":  {"i":3, "n":"o telhado",         "f":"obratelhado", "d":"Só então entra o telhado, para tapar a chuva."},
- "pronta":   {"i":4, "n":"a casa pronta",     "f":"obrapronta",  "d":"No fim vem a pintura, e a família se muda."}
+ "arquiteto":   {"i":1, "n":"o arquiteto",   "f":"arquiteto",
+                 "d":"Primeiro o arquiteto desenha a casa no papel."},
+ "pedreiro":    {"i":2, "n":"o pedreiro",     "f":"pedreiro",
+                 "d":"Depois o pedreiro levanta as paredes, tijolo por tijolo."},
+ "eletricista": {"i":3, "n":"o eletricista",  "f":"eletricista",
+                 "d":"Com a parede de pé, o eletricista passa os fios por dentro dela."},
+ "pintor":      {"i":4, "n":"o pintor",       "f":"pintor",
+                 "d":"E a pintura é o último serviço: depois dela a família se muda."}
 };
 /* folha 22 — quem faz o quê na construção (da d02 e da d11, questão 3) */
 var PROF = {
  "arquiteto":   {"n":"ARQUITETO",   "t":"Desenha a casa no papel antes de ela existir."},
  "pedreiro":    {"n":"PEDREIRO",    "t":"Levanta as paredes, tijolo por tijolo."},
  "eletricista": {"n":"ELETRICISTA", "t":"Passa os fios que levam a luz pela casa."},
- "encanador":   {"n":"ENCANADOR",   "t":"Põe os canos por onde a água anda."}
+ "encanador":   {"n":"ENCANADOR",   "t":"Põe os canos por onde a água anda."},
+ "pintor":      {"n":"PINTOR",      "t":"Pinta a parede quando a obra está quase pronta."}
 };
 /* folha 23 — cada objeto no seu cômodo (da d11, questão 4) */
 var COMODO = {
  "quarto":   {"n":"QUARTO"},   "sala":     {"n":"SALA"},
  "cozinha":  {"n":"COZINHA"},  "banheiro": {"n":"BANHEIRO"}
 };
+/* ⚠️ DOIS OBJETOS POR CÔMODO, e não um chuveiro sozinho no banheiro: com um só,
+   a criança que já colocou os outros acerta o último por eliminação, sem olhar.
+   Os oito saíram todos da mesma folha de recortar (mor_comodos/d02). */
 var OBJ = {
  "cama":      {"n":"a cama",      "c":"quarto"},
  "armario":   {"n":"o armário",   "c":"quarto"},
  "sofa":      {"n":"o sofá",      "c":"sala"},
+ "tv":        {"n":"a televisão", "c":"sala"},
  "geladeira": {"n":"a geladeira", "c":"cozinha"},
  "fogao":     {"n":"o fogão",     "c":"cozinha"},
- "chuveiro":  {"n":"o chuveiro",  "c":"banheiro"}
+ "banheira":  {"n":"a banheira",  "c":"banheiro"},
+ "vaso":      {"n":"o vaso",      "c":"banheiro"}
 };
 /* folha 1 — para que serve uma casa, e o que toda casa precisa ter.
    ⚠️ A segunda pergunta nasceu do poema "A Casa", de Vinicius de Moraes (a
@@ -1437,7 +1528,7 @@ var POEMA = {
 /* ⚠️ A MARCA DE VERSÃO NA FIGURA. Quando eu troco uma figura, o NOME do arquivo
    continua o mesmo — e o navegador da escola serve a cópia velha do cache.
    REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
-var VIMG = 1;
+var VIMG = 2;
 /* ⚠️⚠️ `draggable="false"` NÃO É DETALHE: toda imagem é arrastável de fábrica no
    navegador, e quando a criança apertava a figura e puxava, o Chrome começava o
    SEU arrasto nativo e disparava um `pointercancel` — o nosso arrasto morria no
@@ -1457,8 +1548,8 @@ var NOMES = ["Para que serve uma casa?", "Que moradia é esta?", "Moradias de ou
  "De que é feita? (quatro opções)", "Ligue a moradia ao material", "Ache os materiais no diagrama",
  "Por que é feita desse material?", "Em que lugar fica cada uma?", "Por que a casa é assim ali?",
  "Esta casa combina com este lugar?", "Qual frase explica a moradia?", "Complete a frase",
- "A cruzadinha das casas", "Esta casa vista de cima", "Ache no mapa do bairro",
- "De lado, de cima ou de esguelha?", "Como era antes, como é hoje", "A ordem da construção",
+ "A cruzadinha das casas", "A mesma coisa vista de cima", "Ache na praça vista de cima",
+ "Frontal, vertical ou oblíqua?", "Como era antes, como é hoje", "Quem entra primeiro na obra",
  "Quem faz o quê na obra", "Cada coisa no seu cômodo", "Ache as casas dentro do poema",
  "A rua do mundo"];
 /*<dossie-dados>*/
@@ -1539,7 +1630,7 @@ var CURRICULO = {
    "habilidade": "HABILIDADE: \"Reconhecer semelhanças e diferenças nos hábitos, nas relações com a natureza e no modo de viver de pessoas em diferentes lugares.\""
   },
   {
-   "objetivo": "Reconhecer a moradia vista de cima e de esguelha",
+   "objetivo": "Reconhecer a visão frontal, a vertical e a oblíqua",
    "folhas": [
     17,
     18,
@@ -1722,7 +1813,9 @@ function novaFolha(){
     p19: ITENS.p19.slice(0),
     p20: ITENS.p20.slice(0),
     p21: ITENS.p21.slice(0),
-    p22: [ITENS.p22.slice(0)],
+    /* ⚠️ quatro dos cinco: o ligar de cinco pares fica alto demais no celular,
+       e sortear quatro ainda faz a folha mudar de uma criança para a outra */
+    p22: [pega(ITENS.p22, 4)],
     p23: ITENS.p23.slice(0),
     p24: ITENS.p24.slice(0),
     p25: ITENS.p25.slice(0)

@@ -994,67 +994,85 @@ function confereCruz(){
    aéreas e mapas (visão vertical) e fotografias (visão oblíqua)"*.
    A criança vê a moradia de lado — como ela conhece — e escolhe qual das três
    figuras é a MESMA moradia vista lá de cima. */
+/* ============ 17 — A MESMA COISA VISTA DE CIMA ============
+   Primeira folha do bloco da VISÃO VERTICAL. A criança vê a coisa do jeito que
+   ela conhece (de frente, ou de cima e de lado) e escolhe, entre três figuras de
+   cima, qual é a MESMA coisa.
+   ⚠️ As três opções são todas vistas de cima — se só uma fosse, dava para
+      acertar sem olhar o objeto. E a resposta é sempre um par que existe de
+      verdade na folha de origem (ver o comentário do `CIMA` no index.html). */
 function f17(d, pi){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Imagine que você está num avião, bem em cima. Qual destas é " +
-            "<b>esta mesma moradia vista de cima</b>?", "p" + pi + "enun");
+  enunciado(d, pi, "Esta é a coisa vista por fora. Qual destas é <b>ela mesma vista " +
+            "de cima</b>? Isso se chama <b>visão vertical</b>.", "p" + pi + "enun");
   ST.folha["p" + pi].forEach(function(k, i){
-    var id = "n" + pi + "_" + i, box = item(i + 1);
-    box.appendChild(figMor(k, id));
+    var id = "n" + pi + "_" + i, C = CIMA[k], box = item(i + 1);
+    registra(id, pi, C.n + " de cima");
+    var cab = el("div", "celmor");
+    cab.innerHTML = img(C.mostra, "figop", C.n);
+    box.appendChild(cab);
     var outros = [], j;
     for(j in CIMA) if(j !== k) outros.push(j);
     var lista = baralha([k].concat(pega(outros, 2))).map(function(m){
-      return {v: m, rot: img(CIMA[m].f, "figop", "Vista de cima"), aria: "Uma vista de cima",
-              fala: "vistacima"};
+      return {v: m, rot: img(CIMA[m].cima, "figop", "Uma vista de cima"),
+              aria: "Uma vista de cima", fala: "vistacima"};
     });
     opcoes(box, pi, id, lista, k, "figbt", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
     fechaItem(d, box, id);
   });
 }
 
-/* ============ 18 — ACHE NO MAPA DO BAIRRO ============
-   A mesma habilidade B, agora na imagem aérea de verdade: a criança olha o
-   bairro de cima e acha a escola, o campinho e as casas.
-   ⚠️ AS COORDENADAS SÃO MEDIDAS NA FIGURA, não chutadas (ver o comentário do
-      `MAPA` no index.html). Alvo no lugar errado faz a criança que acertou
-      levar erro — e ela não tem como saber que o errado era o app. */
+/* ============ 18 — ACHE NA PRAÇA VISTA DE CIMA ============
+   A mesma habilidade B, agora num desenho de verdade visto de cima: a praça da
+   folha do Colégio Dinâmico, com a legenda dela (árvore, fonte, banco,
+   bebedouro). A pergunta impressa é *"que elementos existem na praça?"*; aqui a
+   criança não escreve a lista — ela ACHA cada um no desenho.
+   ⚠️ AS COORDENADAS SÃO MEDIDAS NA FIGURA, não chutadas, e cada elemento tem
+      TODOS os pontos dele (ver o comentário do `MAPA` no index.html). Alvo no
+      lugar errado faz a criança que acertou levar erro — e ela não tem como
+      saber que o errado era o app. */
 function f18(d, pi){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Este é o bairro visto <b>de cima</b>. Ache o que a folha pedir.",
+  enunciado(d, pi, "Esta é uma <b>praça vista de cima</b>. Ache o que a folha pedir.",
             "p" + pi + "enun");
   var cx = el("div", "aerea");
-  cx.innerHTML = img(MAPA.figura, "", "O bairro visto de cima");
+  cx.innerHTML = img(MAPA.figura, "", "Uma praça vista de cima");
   var pontos = {};
   ST.folha["p" + pi].forEach(function(k, i){
     var id = "n" + pi + "_" + i, A = MAPA.alvos[k];
     registra(id, pi, A.n);
-    var b = el("button", "ponto" + (ST.resp[id] ? " certo" : ""));
-    b.style.left = A.x + "%"; b.style.top = A.y + "%";
-    b.setAttribute("aria-label", "Um lugar do bairro");
-    b.setAttribute("data-qa", "ponto-" + k);
-    pontos[k] = {el: b, id: id, k: k};
-    cx.appendChild(b);
+    pontos[k] = {els: [], id: id, k: k};
+    A.pts.forEach(function(P, j){
+      var b = el("button", "ponto" + (ST.resp[id] ? " certo" : ""));
+      b.style.left = P.x + "%"; b.style.top = P.y + "%";
+      b.setAttribute("aria-label", "Um lugar da praça");
+      b.setAttribute("data-qa", "ponto-" + k + "-" + j);
+      pontos[k].els.push(b);
+      cx.appendChild(b);
+    });
   });
   d.appendChild(cx);
-  /* os pedidos, um por vez: a criança lê (e ouve) e toca no mapa */
+  /* os pedidos, um por vez: a criança lê (e ouve) e toca no desenho */
   ST.folha["p" + pi].forEach(function(k, i){
     var id = "n" + pi + "_" + i, A = MAPA.alvos[k], box = item(i + 1);
     var lin = el("div", "enunlin");
-    lin.appendChild(el("div", "enun", "Ache <b>" + A.n + "</b> no mapa."));
+    lin.appendChild(el("div", "enun", "Ache <b>" + A.n + "</b> na praça."));
     lin.appendChild(botaoSom("Ouvir a pista", function(){ falar("mapa_" + k); }));
     box.appendChild(lin);
-    box.appendChild(el("div", "ajuda", ST.resp[id] ? "Achou!" : "Toque no mapa lá em cima."));
+    box.appendChild(el("div", "ajuda", ST.resp[id] ? "Achou!" : "Toque na praça lá em cima."));
     fechaItem(d, box, id);
   });
   var j;
   for(j in pontos){
     (function(P){
-      P.el.onclick = function(){
-        if(ST.resp[P.id]) return;
-        sPasso();
-        P.el.className = "ponto certo";
-        acertou(P.id, "certo" + pi + "_" + P.k);
-      };
+      P.els.forEach(function(b){
+        b.onclick = function(){
+          if(ST.resp[P.id]) return;
+          sPasso();
+          P.els.forEach(function(o){ o.className = "ponto certo"; });
+          acertou(P.id, "certo" + pi + "_" + P.k);
+        };
+      });
     })(pontos[j]);
   }
   /* tocar no lugar errado responde — e diz o que olhar, nunca "errou" */
@@ -1068,10 +1086,14 @@ function f18(d, pi){
   });
 }
 
-/* ============ 19 — DE LADO, DE CIMA OU DE ESGUELHA? ============
-   O fecho do bloco da visão vertical: a mesma casa e a mesma escola aparecem
-   nos três pontos de vista, misturadas, e a criança classifica. É aqui que a
-   palavra "de cima" deixa de ser um truque de uma folha e vira uma ideia.
+/* ============ 19 — FRONTAL, VERTICAL OU OBLÍQUA? ============
+   O fecho do bloco: a mesma caneca e o mesmo carro aparecem nos três pontos de
+   vista, misturados, e a criança classifica. É aqui que "de cima" deixa de ser
+   um truque de uma folha e vira uma palavra que ela leva para o livro.
+   ⚠️ AS PALAVRAS SÃO AS DA REDE — visão frontal, vertical e oblíqua —, e a
+      definição de cada coluna é a da folha do Pequeno Lobato, copiada palavra
+      por palavra. O menino do livro didático aparece em cima da coluna: é o
+      desenho que explica de onde se olha, sem precisar ler.
    ⚠️ AS DUAS PORTAS: arrastar a figura até a coluna (PC) ou tocar na figura e
       depois na coluna (celular). */
 function f19(d, pi){
@@ -1087,6 +1109,17 @@ function f19(d, pi){
       var som = botaoSom("Ouvir o que é " + VISTAS[vk].n, function(){ falar("vista_" + vk); });
       t.appendChild(som);
       c.appendChild(t);
+      /* o menino mostrando de onde se olha. ⚠️ A COLUNA FRONTAL FICA COM A CAIXA
+         VAZIA, e não sem caixa: o livro só desenha o menino nas duas outras
+         visões, e eu não vou apontar o desenho dele para uma visão que o livro
+         não nomeou assim. Sem a caixa vazia as três colunas começavam a receber
+         figura em alturas diferentes. */
+      var ol = el("div", "colho");
+      if(VISTAS[vk].olho){
+        ol.innerHTML = img(VISTAS[vk].olho, "figolho", "De onde o menino olha");
+        ol.setAttribute("data-alvo", "1");
+      }
+      c.appendChild(ol);
       var dentro = el("div", "cdentro");
       c.appendChild(dentro);
       c._v = vk; c._dentro = dentro;
@@ -1211,13 +1244,15 @@ function f20(d, pi){
   });
 }
 
-/* ============ 21 — A ORDEM DA CONSTRUÇÃO ============
+/* ============ 21 — QUEM ENTRA PRIMEIRO NA OBRA ============
    Da d11, questão 5: *"enumere as cenas abaixo na sequência correta da
    construção da moradia"*. No papel a criança escreve 1, 2, 3, 4 nos
-   quadradinhos; aqui ela LEVA cada cena para o seu lugar na fila. */
+   quadradinhos; aqui ela LEVA cada um para o seu lugar na fila.
+   ⚠️ A fila é de PROFISSIONAIS, e a ordem é a que dá para defender — ver o
+      comentário do `OBRA` no index.html. */
 function f21(d, pi){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Em que <b>ordem</b> uma casa é construída? Ponha as cenas na fila.",
+  enunciado(d, pi, "Em que <b>ordem</b> eles trabalham na casa? Ponha cada um na fila.",
             "p" + pi + "enun");
   var pool = ST.folha["p" + pi];
   var trilha = el("div", "trilhaord"), slots = [], listaS = [];
@@ -1242,7 +1277,7 @@ function f21(d, pi){
     var i = pool.indexOf(k), id = "n" + pi + "_" + i, O = OBRA[k];
     if(ST.resp[id]) return;
     var b = el("button", "op fig", img(O.f, "figmini", ""));
-    b.setAttribute("aria-label", "Uma cena da obra");
+    b.setAttribute("aria-label", "Um profissional da obra");
     b.setAttribute("data-qa", "item-" + id);
     function larga(s){
       if(ST.resp[id]) return;
@@ -1794,8 +1829,8 @@ var OBJETIVOS = [
   {n: "Relacionar a moradia ao lugar onde ela fica", f: [11, 15, 16],
    ok: "sabe em que lugar cada moradia aparece, e por quê",
    nao: "ainda não relaciona a casa ao lugar dela"},
-  {n: "Reconhecer a moradia vista de cima e de esguelha", f: [17, 18, 19],
-   ok: "reconhece a mesma casa vista de lado, de cima e de esguelha",
+  {n: "Reconhecer a visão frontal, a vertical e a oblíqua", f: [17, 18, 19],
+   ok: "reconhece a mesma coisa na visão frontal, na vertical e na oblíqua",
    nao: "ainda não reconhece as coisas vistas de cima"},
   {n: "Comparar como era antes e como é hoje, e quem constrói", f: [20, 21, 22, 23],
    ok: "compara o mesmo lugar em dois tempos e conhece quem faz a obra",
