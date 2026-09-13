@@ -13,6 +13,8 @@
      · figura que não carrega (404 e <img> com naturalWidth 0);
      · itens registrados (o `RESP` do caderno) — se uma folha registra ZERO,
        ela não tem o que a criança responda;
+     · **o número de folhas que a CAPA promete** — o escrito E o falado —
+       contra o número de folhas que o caderno TEM;
      · e no fim abre o relatório do professor, que é onde a conta se fecha.
 
    ⚠️ Precisa de http:// — o `localStorage` do "continuar de onde parou" não
@@ -67,6 +69,52 @@ if (!pasta) { console.log('uso: node _qa/andar_folha.js <pasta> [porta]'); proce
 
     const total = await pg.evaluate(() => (typeof PAGEL !== 'undefined' ? PAGEL.length : 0));
     if (!total) { console.log(pasta + ' -> NAO MEDI: nao achei o PAGEL do caderno.'); process.exit(2); }
+
+    /* ⚠️⚠️ A PROMESSA DA CAPA (13/set/2026, achado pelo MARCOS, não por mim).
+       Eu levei o Desfile de 11 para 25 folhas, troquei a VOZ da capa para
+       "vinte e cinco" e deixei o ESCRITO em "dez folhas do alfabeto". Ele viu
+       na tela inicial. É a família "a tela diz uma coisa e a voz diz outra" —
+       a mesma que o `falas.json` existe para matar — só que na capa, que é
+       justamente onde nenhum portão olhava.
+
+       E a varredura mostrou que não era só o meu: a Fábrica prometia dez e
+       tinha onze, e a Roda prometia "dez folhas DO COMEÇO DAS PALAVRAS" tendo
+       quinze e sendo de sílabas — o subtítulo era resto de clone da Família,
+       invisível para o `clone.py` porque não há prefixo alheio nenhum nele.
+
+       ⚠️ A medida só olha número que vem colado em "folha(s)". Sem isso,
+          "a revisão dos oito degraus" (o Grande Jogo) seria acusada de mentir
+          sobre oito folhas — e ela não fala de folhas, fala de degraus. */
+    const NUM = {um:1,uma:1,dois:2,duas:2,tres:3,'três':3,quatro:4,cinco:5,seis:6,sete:7,
+      oito:8,nove:9,dez:10,onze:11,doze:12,treze:13,catorze:14,quatorze:14,quinze:15,
+      dezesseis:16,dezessete:17,dezoito:18,dezenove:19,vinte:20,trinta:30};
+    function promessa(txt) {
+      const t = (txt || '').toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      /* "vinte e cinco folhas", "dez folhas", "25 folhas" */
+      const m = t.match(/([a-z]+(?:\s+e\s+[a-z]+)?|\d+)\s+folhas?\b/);
+      if (!m) return null;
+      const cru = m[1].trim();
+      if (/^\d+$/.test(cru)) return parseInt(cru, 10);
+      const partes = cru.split(/\s+e\s+/);
+      let soma = 0;
+      for (const w of partes) { if (NUM[w] === undefined) return null; soma += NUM[w]; }
+      return soma;
+    }
+    const capaEscrita = await pg.evaluate(() => {
+      const e = document.querySelector('.capa .sub'); return e ? e.textContent : '';
+    });
+    const capaFalada = await pg.evaluate(() =>
+      (typeof FALAS !== 'undefined' && FALAS.capa) ? FALAS.capa : '');
+    const folhasReais = total - 1;
+    for (const [onde, txt] of [['escrita na capa', capaEscrita], ['falada na capa', capaFalada]]) {
+      const p = promessa(txt);
+      if (p !== null && p !== folhasReais) {
+        ruim = 1;
+        console.log(`   X  a promessa ${onde} nao bate: ela diz ${p} folha(s) e o caderno tem ${folhasReais}`);
+        console.log(`      "${(txt || '').trim().slice(0, 110)}"`);
+      }
+    }
 
     const linhas = [];
     for (let i = 1; i < total; i++) {

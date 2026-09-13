@@ -80,7 +80,7 @@ function f0(d){
     '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
     '<div class="chapeu">A</div>' +
     '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Alfabetização &middot; 1º ano &middot; dez folhas para brincar</div>' +
+    '<div class="sub">Alfabetização &middot; 1º ano &middot; onze folhas para brincar</div>' +
     '<div class="esteira">' +
       '<div class="cena">' + img("bola") + img("gato") + img("casa") + img("sapo") + img("uva") + '</div>' +
       '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +

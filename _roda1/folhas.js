@@ -125,7 +125,7 @@ function f0(d){
   c.innerHTML =
     '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
     '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Alfabetização &middot; 1º ano &middot; dez folhas do começo das palavras</div>' +
+    '<div class="sub">Alfabetização &middot; 1º ano &middot; quinze folhas de bater as sílabas</div>' +
     '<div class="esteira">' +
       '<div class="cena cenaped">' + cena + "</div>" +
       '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +

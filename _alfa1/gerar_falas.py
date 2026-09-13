@@ -60,7 +60,7 @@ F = {}
 
 # ---- as fixas ----------------------------------------------------------------
 F.update({
- u"capa": u"A Fábrica de Palavras. Dez folhas para brincar com as letras e as sílabas. Escreva o seu nome ali embaixo e toque em Começar.",
+ u"capa": u"A Fábrica de Palavras. Onze folhas para brincar com as letras e as sílabas. Escreva o seu nome ali embaixo e toque em Começar.",
  u"p1enum": u"",  # (reservado)
  u"p1enun": u"Folha um: a fila do alfabeto. Olhe a fila das letras e descubra qual delas fugiu do lugar.",
  u"p2enun": u"Folha dois: a letra escondida. Uma letra fugiu da palavra. Olhe a figura, ouça a palavra e toque na letra certa.",

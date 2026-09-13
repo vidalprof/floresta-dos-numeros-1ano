@@ -97,6 +97,42 @@ segunda parte, o trabalho não está feito.
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o
 > Marcos, ou chegou até a criança.
 
+### 3.000 ⭐ A CAPA PROMETIA DEZ FOLHAS E O CADERNO TINHA VINTE E CINCO
+
+**Quem viu foi o Marcos, não eu, e no mesmo dia em que subi o caderno**
+(13/set/2026): *"na última atividade que você fez ou atualizou você fala de 10
+folhas na página inicial, Desfile das Letras, quando agora são 25; favor de
+atentar a isso"*.
+
+Eu levei o Desfile de 11 para 25 folhas, troquei a **voz** da capa para *"vinte
+e cinco"* e deixei o **escrito** em *"dez folhas do alfabeto"*. É a família **"a
+tela diz uma coisa e a voz diz outra"** — a mesma que o `falas.json` existe para
+matar — só que **na capa**, que é justamente onde nenhum portão olhava. E a capa
+é a primeira coisa que a criança e o professor veem.
+
+**A varredura mostrou que não era só o meu.** Medindo `PAGEL` contra o que cada
+capa promete, nos doze cadernos:
+
+| caderno | a capa prometia | tinha |
+|---|---|---|
+| O Desfile das Letras | dez folhas | **25** |
+| A Fábrica de Palavras | dez folhas (escrito **e** falado) | **11** |
+| A Roda das Sílabas | *"dez folhas **do começo das palavras**"* | **15**, e é de sílabas |
+
+⚠️ **A Roda tinha DOIS erros na mesma linha:** o número e o ASSUNTO — *"do
+começo das palavras"* é o subtítulo da **Família das Palavras**, resto de clone
+que o `clone.py` nunca veria, porque não há prefixo alheio nenhum num pedaço de
+texto em português.
+
+**O portão (conserto duplo):** o `_qa/andar_folha.js` agora lê o número que a
+capa promete — **no escrito e na fala** — e compara com o número de folhas que o
+caderno tem. Ele já abria o caderno e já contava o `PAGEL`; faltava cruzar as
+duas coisas.
+
+⚠️ **E ele só olha número colado em "folha(s)"**, senão acusaria o Grande Jogo
+por dizer *"a revisão dos oito degraus"* — que não fala de folhas, fala de
+degraus. Portão que acusa inocente é portão que se aprende a ignorar.
+
 ### 3.00 ⭐ A FOLHA DE CIRCULAR NÃO FECHAVA — em SETE cadernos, todos no ar
 
 **Nasceu de uma pergunta do Marcos** (13/set/2026): *"a outra banca, aquela que
