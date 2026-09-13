@@ -75,14 +75,22 @@ RAIZ = os.path.dirname(AQUI)
 SEQ = os.path.join(RAIZ, u"_sequencias")
 DEST = os.path.join(AQUI, u"img")
 
-LIM = 236        # a partir daqui o pixel conta como "papel"
+LIM = 236        # a partir daqui o pixel conta como "papel" (para APERTAR a caixa)
+# ⚠️ AS DUAS RÉGUAS DO FUNDO, e elas são as MESMAS do `_qa/halo.py` de propósito
+#    (ver a lição no `limpa_fundo`): a água entra por tudo acima de LIM_AGUA, e o
+#    alfa chega a zero em FADE_HI — um pixel abaixo do 225 que o portão vigia.
+LIM_AGUA = 210
+FADE_LO, FADE_HI = 210, 226
 FOLGA = 5        # respiro em volta da figura, depois de apertar no pixel
 MAIOR = 420      # lado máximo: a folha viva mostra no máximo ~128 px (256 no 2x)
 
 # pasta/prefixo da folha -> {figura: caixa generosa}
 CORTES = [
  (u"folhas_moradia", u"d01", {
-   u"barraco":     (70, 538, 232, 694),
+   # ⚠️ o BARRACO não entra: ele está na folha de origem, mas o `MOR` deste
+   #    caderno tem dez moradias e ele não é uma delas. Recortar o que não se usa
+   #    enche a pasta de figura órfã — e a próxima sessão não sabe se é sobra ou
+   #    se alguém esqueceu de ligar.
    u"casa":        (276, 534, 447, 692),
    u"predio":      (500, 474, 702, 690),
    u"oca":         (50, 743, 244, 934),
@@ -222,22 +230,37 @@ def tira_moldura(im, escuro=120, prop=0.55, faixa=0.3):
     return im.crop((l, t, r, b))
 
 
-def limpa_fundo(c, lim, alvo=255):
+def limpa_fundo(c, lim, alvo=None):
     u"""Fundo transparente POR VIZINHANÇA, entrando pela borda, com degradê.
 
-    ⚠️ `alvo` É O TOM QUE JÁ CONTA COMO PAPEL PURO, e ele existe porque PÁGINA DE
-       LIVRO ESCANEADA NÃO TEM BRANCO. O degradê ia de `lim` até 255: com o fundo
-       do livro em 241, a conta dava 26% de apagamento e sobrava uma névoa cinza
-       opaca em volta do menino — e eu tinha "consertado" isso mexendo no `lim`,
-       que é o parâmetro errado (subir o `lim` deixa a névoa MAIS opaca). Agora o
-       degradê termina no `alvo`: com `alvo=240`, o 241 do livro vira papel puro.
+    ⚠️⚠️ O HALO BRANCO — a lição mais cara deste recortador (13/set/2026).
+       O `_qa/halo.py` reprovou **43 das 57 figuras**: em volta de cada silhueta
+       sobrava um anel claro e OPACO — o papel da folha grudado no desenho. No
+       creme da folha viva isso aparece como uma auréola em torno de tudo.
+
+       A causa era uma conta minha que não conversava com o portão. O portão
+       chama de "quase-branco" tudo acima de **225** e só perdoa o que estiver
+       com alfa **abaixo de 40**. O meu degradê ia de 236 a 255: a faixa 225–236
+       a água nem alcançava (ficava 100% opaca) e a faixa 236–245 saía com alfa
+       200 e tanto. Ou seja: eu media o recorte com uma régua e apagava com
+       outra.
+
+       Agora as duas réguas são a mesma. A água entra por tudo o que estiver
+       acima de `LIM_AGUA` (210) e o alfa vai a ZERO em `FADE_HI` (226) — o mesmo
+       225 do portão, com um pixel de folga. Sobra o degradê 210→226 para o
+       contorno não serrilhar. Nada que o portão chame de quase-branco sai opaco.
+
+    ⚠️ E POR ISSO A ÁGUA ENTRA MAIS FUNDO QUE ANTES: um cinza-claro do PRÓPRIO
+       desenho que encoste na silhueta pode ser comido junto. É troca consciente
+       — halo em 43 figuras é defeito que a criança vê; mordida em cinza-claro
+       encostado na borda é caso raro, e a folha de conferência mostra.
     """
     w, h = c.size
     px = c.load()
 
     def papel(x, y):
         r, g, b, al = px[x, y]
-        return al < 16 or (r >= lim and g >= lim and b >= lim)
+        return al < 16 or (r >= LIM_AGUA and g >= LIM_AGUA and b >= LIM_AGUA)
 
     vis = [[False] * h for _ in range(w)]
     fila = deque()
@@ -255,7 +278,7 @@ def limpa_fundo(c, lim, alvo=255):
         x, y = fila.popleft()
         r, g, b, al = px[x, y]
         if al:
-            claro = (min(r, g, b) - lim) / float(max(1, alvo - lim))
+            claro = (min(r, g, b) - FADE_LO) / float(FADE_HI - FADE_LO)
             px[x, y] = (r, g, b, int(al * (1.0 - max(0.0, min(1.0, claro)))))
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             nx, ny = x + dx, y + dy
@@ -297,12 +320,12 @@ MOLDURA_FAIXA = {u"armario": 0.16, u"fogao": 0.16}
 #    `limpa_fundo` ia até 255, então esse papel só apagava 26% e os dois meninos
 #    saíam dentro de uma névoa cinza opaca — que aparece no creme da folha.
 #    Aqui o degradê termina em 240: o papel do livro vira papel puro.
-ALVO_FIG = {u"olho_obliqua": 238, u"olho_vertical": 238}
-# ⚠️ E O LIMIAR DESCE, não sobe: a página de trás do livro TRANSPARECE em cinza
-#    claro (~225) ao lado do menino. Em 236 esse cinza não conta como papel, a
-#    água para nele e ele fica opaco. Em 210 a água passa — e a figura continua
-#    inteira porque o tom mais claro DELA (o cone de luz) tem mínimo 162.
-LIM_FIG = {u"olho_obliqua": 210, u"olho_vertical": 210}
+# ⚠️ OS REMENDOS POR FIGURA SUMIRAM. Os dois meninos do livro precisavam de um
+#    limiar próprio porque a página de trás transparece em cinza claro (~225) ao
+#    lado deles. Com LIM_AGUA=210 valendo para todo mundo, a regra geral já os
+#    cobre — e uma regra só é melhor que uma exceção por figura.
+ALVO_FIG = {}
+LIM_FIG = {}
 
 
 def recorta(im, box, saida, lim=LIM, moldura=False, faixa=0.3, alvo=255):
@@ -319,7 +342,7 @@ def recorta(im, box, saida, lim=LIM, moldura=False, faixa=0.3, alvo=255):
 def main():
     if not os.path.isdir(DEST):
         os.makedirs(DEST)
-    feitas, faltam = 0, []
+    feitas, faltam, feitas_nomes = 0, [], set()
 
     def roda(pasta, prefixo, alvos, lim=LIM, moldura=False, apagar=None, pintar=None):
         cam = acha(pasta, prefixo)
@@ -346,6 +369,7 @@ def main():
                 faltam.append((nome, u"%s/%s" % (pasta, prefixo)))
                 continue
             n += 1
+            feitas_nomes.add(nome)
             print(u"   mo_%-18s %4dx%-4d  <- %s/%s" % (nome + u".png", c.width, c.height,
                                                        pasta, prefixo))
         return n
@@ -373,8 +397,33 @@ def main():
             saida = os.path.join(DEST, u"mo_%s.png" % nome)
             c.save(saida, optimize=True)
             feitas += 1
+            feitas_nomes.add(nome)
             print(u"   mo_%-18s %4dx%-4d  <- %s/%s (foto, corte cru)"
                   % (nome + u".png", c.width, c.height, pasta, prefixo))
+
+    # ⚠️ E AS QUE NÃO VIERAM DO RECORTE TAMBÉM PASSAM PELA ÁGUA. O selo do
+    #    caderno foi desenhado pelo Pollinations e chegou com a mesma auréola
+    #    clara que o portão `halo.py` reprova (3,06%). Uma regra de limpeza que
+    #    vale só para metade das figuras não é regra: é costume.
+    limpas = 0
+    for cam in sorted(glob.glob(os.path.join(DEST, u"mo_*.png"))):
+        nome = os.path.basename(cam)[3:-4]
+        if nome in feitas_nomes:
+            continue
+        im = Image.open(cam).convert(u"RGBA")
+        if np.asarray(im)[..., 3].min() > 250:
+            continue            # sem transparência: não é recorte
+        antes = np.asarray(im)[..., 3].copy()
+        im = limpa_fundo(im, LIM)
+        bb = im.getbbox()
+        if bb:
+            im = im.crop(bb)
+        if not np.array_equal(antes, np.asarray(im)[..., 3]) or bb:
+            im.save(cam, optimize=True)
+            limpas += 1
+    if limpas:
+        print(u"   +%d figura(s) que não vieram do recorte passaram pela mesma água"
+              % limpas)
 
     print(u"_casa1 -> %d figura(s) recortada(s) das folhas de professor" % feitas)
     if faltam:
