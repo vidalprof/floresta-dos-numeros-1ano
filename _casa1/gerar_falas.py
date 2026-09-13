@@ -157,7 +157,7 @@ for k, M in MOR.items():
     # `olhe_` é a descrição falada: nunca diz o NOME, senão o alto-falante
     # entregaria a resposta das folhas 2, 3, 4 e 14.
     F[u"olhe_%s" % k] = M[u"def"]
-    F[u"nome_%s" % k] = dizNome(k) + u"."
+    F[u"chamar_%s" % k] = dizNome(k) + u"."
     F[u"por_%s" % k] = M[u"por"]
     F[u"def_%s" % k] = M[u"def"]
 for k, M in MAT.items():

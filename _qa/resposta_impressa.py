@@ -81,6 +81,22 @@ const pasta = process.argv[2], porta = process.argv[3];
         const ids = Object.keys(RESP).filter(id => RESP[id].pag === pi && !ST.resp[id]);
         if (!ids.length) continue;
         const marca = cx.getAttribute && cx.getAttribute('data-qa');
+        /* ⚠️ O PRÓPRIO ITEM DECLARADO COMO ALVO (13/set/2026). Há folhas em que a
+           coisa que a criança TOCA é a resposta visível, e isso não é defeito —
+           é a tarefa: o caça-palavras imprime a lista do que procurar (a folha
+           de papel de origem também imprime), o poema mostra as palavras que
+           ela tem de ACHAR dentro do texto, e o mural mostra o nome da casa que
+           ela ESCOLHE (ali não existe resposta errada).
+           Antes, `[data-alvo]` só valia para elementos DE DENTRO do item: se o
+           próprio item carregava a marca, o portão reprovava assim mesmo. Agora
+           ela vale também na raiz — e o item entra na lista de DECLARADOS, que
+           é impressa. Declarado não é escondido: quem ler o log vê quais foram. */
+        if (cx.getAttribute && cx.getAttribute('data-alvo')) {
+          const meusD = marca ? ids.filter(id => marca === 'item-' + id) : ids;
+          if (meusD.length) out.push({ pi: pi, nome: NOMES[pi - 1], declarado: true,
+                                       ids: meusD, certos: [], txt: '', palavras: [] });
+          continue;
+        }
         const meus = marca ? ids.filter(id => marca === 'item-' + id) : ids;
         if (!meus.length) continue;
         /* o texto que a criança VÊ, tirando botões e alvos declarados */
@@ -95,10 +111,16 @@ const pasta = process.argv[2], porta = process.argv[3];
         });
         let txt = (clone.innerText || clone.textContent || '');
         for (const esc of escondidos) if (esc) txt = txt.split(esc).join(' ');
+        /* ⚠️ AS PALAVRAS DO CADERNO SÃO AS RESPOSTAS DELE, e não uma variável
+           com nome fixo (13/set/2026). Antes isto era `Object.keys(PAL)` — o
+           dicionário dos cadernos de alfabetização. Num caderno de Geografia,
+           que guarda as moradias em `MOR`, o `PAL` não existe: o script
+           estourava e o portão devolvia "NAO MEDI" — que não é "passou", é
+           "rodou cego". Portão que só funciona num caderno mede um caderno. */
         out.push({ pi: pi, nome: NOMES[pi - 1], ids: meus,
                    certos: meus.map(id => RESP[id].certo), txt: txt,
-                   /* as palavras QUE ESTE CADERNO usa — ver o filtro no Python */
-                   palavras: Object.keys(PAL).map(k => PAL[k][0]) });
+                   palavras: Object.keys(RESP).map(id => RESP[id].certo)
+                                .filter(v => typeof v === 'string') });
       }
     }
     return out;
@@ -156,8 +178,11 @@ def main():
         print(u"NAO MEDI: %s" % dados.get(u"erro"))
         return 2
 
-    erros, conferidos = [], 0
+    erros, conferidos, declarados = [], 0, []
     for bloco in dados:
+        if bloco.get(u"declarado"):
+            declarados.append((bloco[u"pi"], bloco[u"nome"], len(bloco[u"ids"])))
+            continue
         fora = [w for w in re.split(r"[^\wÀ-ÿ]+", limpa(bloco[u"txt"])) if len(w) >= 3]
         for certo in bloco[u"certos"]:
             c = limpa(certo)
@@ -180,6 +205,16 @@ def main():
 
     print(u"%s -> resposta impressa: %d item(ns) conferido(s) em %d folha(s)"
           % (pasta, conferidos, len(set(b[u"pi"] for b in dados))))
+    if declarados:
+        porf = {}
+        for pi, nome, n in declarados:
+            porf.setdefault((pi, nome), 0)
+            porf[(pi, nome)] += n
+        print(u"   %d item(ns) DECLARADO(S) como alvo (a coisa tocada e a propria"
+              u" resposta visivel — o caca-palavras, o poema, o mural):"
+              % sum(porf.values()))
+        for (pi, nome), n in sorted(porf.items()):
+            print(u"    - folha %d (%s): %d item(ns)" % (pi, nome, n))
     if erros:
         print(u"   %d ITEM(NS) COM A RESPOSTA IMPRESSA NO ENUNCIADO:" % len(erros))
         for pi, nome, certo, w in erros[:14]:

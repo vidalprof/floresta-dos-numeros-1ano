@@ -80,6 +80,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **A Rua do Mundo** | Geografia: tipos de moradia — de que material, em que lugar e por quê, a casa vista de cima, como era antes e como é hoje (caderno de 25 folhas) | `_casa1` | https://vidalprof.github.io/tipos-de-moradia-2ano/ |
 | **A Feirinha da Dona Coruja** | Adição/subtração: juntar, acrescentar, separar, retirar, comparar (com digitar-resultado e arrastar) | `_feirinha` | https://vidalprof.github.io/feirinha-da-coruja/ |
 | **As Plaquinhas do Téo** | Substantivos próprios e comuns | `_subs` | https://vidalprof.github.io/as-plaquinhas-da-coruja/ |
 | **A Cidade dos Sólidos** | Sólidos geométricos | `_solidos` | https://vidalprof.github.io/a-cidade-dos-solidos/ |
