@@ -829,7 +829,14 @@ function f16(d, pi){
   }
   function cabe(w, x, y, hor){
     var i;
-    if(x < 0 || y < 0) return false;
+    /* ⚠️ AQUI HAVIA UM `if(x < 0 || y < 0) return false` — e ele quebrava a
+       cruzadinha inteira (achado na foto, 13/set/2026). A primeira palavra
+       entra em 0,0; qualquer palavra que cruze por uma letra ADIANTE da
+       primeira letra dela cai em coordenada negativa, que é perfeitamente
+       válida: a grade é normalizada no fim (`minX`/`minY`). Com a guarda, só
+       cruzava quem tivesse a letra comum na posição 0 — e as outras iam para a
+       "linha livre", soltas, sem cruzar nada. Cruzadinha sem cruzamento é lista
+       de palavras com quadradinho. */
     for(i = 0; i < w.length; i++){
       var cx = x + (hor ? i : 0), cy = y + (hor ? 0 : i);
       var q = mapa[cx + "," + cy];

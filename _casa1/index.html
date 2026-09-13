@@ -329,7 +329,14 @@ button{font-family:inherit;cursor:pointer}
 .pagina.pronta .carimbo{opacity:.92;transform:rotate(-14deg) scale(1)}
 #nav{position:fixed;left:0;right:0;bottom:0;z-index:18;background:#fff;border-top:3px solid var(--cor);padding:8px 10px;
   display:none;align-items:center;gap:10px;box-shadow:0 -3px 14px rgba(70,40,20,.14)}
-#nav .txt{flex:1;text-align:center;font-weight:800;color:var(--cor2);font-size:14px;min-width:0}
+/* ⚠️ ACHADO NA FOTO, não em portão nenhum (13/set/2026): com um título
+   comprido ("Ache os materiais no diagrama") esta linha quebrava em QUATRO
+   e espremia "Anterior", "Terminar" e "Próxima" contra as bordas — e
+   "construção" ainda estourava para fora. O nome da folha já está na faixa
+   colorida do topo da página, então na tela estreita ele some daqui. */
+#nav .txt{flex:1;text-align:center;font-weight:800;color:var(--cor2);font-size:14px;
+  min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:560px){ #nav .txt{display:none} }
 /* ⭐ o botão de terminar a qualquer momento: discreto de propósito — ele existe
    para o sinal da escola, não para tentar a criança a pular tudo */
 .bt.terminar{background:#f3ece5;color:#6b5a4d;border:2px solid #e2d6ca;
@@ -363,7 +370,12 @@ button{font-family:inherit;cursor:pointer}
   background:-webkit-radial-gradient(circle at 40% 38%,#fff2b8,#f5b301);
   background:radial-gradient(circle at 40% 38%,#fff2b8,#f5b301);
   box-shadow:0 0 26px rgba(245,179,1,.55)}
-.capa .chapeu{position:relative;width:66px;height:66px;margin:16px auto 2px;border-radius:16px;
+/* ⚠️ O SOL TAPAVA O SUBTÍTULO (achado na foto). O `.ceu` vem antes no HTML,
+   mas os filhos dele são absolutos — e elemento posicionado pinta POR CIMA
+   de irmão não posicionado, mesmo vindo antes. O conserto é levantar o
+   conteúdo, não abaixar o céu. */
+.capa .titu,.capa .sub,.capa .esteira,.capa .chamada{position:relative;z-index:1}
+.capa .chapeu{position:relative;z-index:1;width:66px;height:66px;margin:16px auto 2px;border-radius:16px;
   background:-webkit-linear-gradient(top left,#d2703c,#8d4120);
   background:linear-gradient(135deg,#d2703c,#8d4120);color:#fff;font-weight:900;font-size:34px;
   line-height:66px;box-shadow:0 8px 18px rgba(141,65,32,.36)}
