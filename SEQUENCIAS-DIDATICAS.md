@@ -97,6 +97,55 @@ segunda parte, o trabalho não está feito.
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o
 > Marcos, ou chegou até a criança.
 
+### 3.00 ⭐ A FOLHA DE CIRCULAR NÃO FECHAVA — em SETE cadernos, todos no ar
+
+**Nasceu de uma pergunta do Marcos** (13/set/2026): *"a outra banca, aquela que
+corrige as atividades normais, seria uma boa utilizar para essas sequências
+didáticas?"*. A resposta foi que a banca do motor inteira não serve aqui, mas
+que **três juízes dela mediam coisa que em folha viva ninguém media** — e o mais
+sério era o **jogador**, que RESOLVE a atividade. Escrevi o
+`_qa/joga_folha.js`. **Na primeira hora de vida ele achou três defeitos, dois
+deles em sete cadernos publicados.**
+
+O mais grave é o do `riscoDeCircular` (a folha de *"circule quem saiu da fila"*),
+e ele tem duas metades:
+
+1. **O toque não fazia nada.** O `pointerdown` saía cedo em
+   `pointerType === "touch"`, com o comentário *"no dedo, tocar já resolve"* — e
+   **nada implementava esse "tocar já resolve"**. Nenhum botão tinha `onclick`.
+   No celular e no tablet a folha era uma parede. No PC, o clique simples
+   também não fazia nada: só valia o gesto de circular com o rato.
+2. **Circular a resposta CERTA contava como ERRO.** O `for(w in botoes)`
+   percorre um ARRAY, então `w` é o ÍNDICE ("0", "1"…) — e era isso que ia para
+   a função de resposta. Só o `_alfa1` passa um OBJETO indexado por palavra, e
+   por isso só ele funcionava. Nos outros sete a função recebia `"0"` onde
+   esperava o BOTÃO, lia `"0"._w` (undefined), não batia com a resposta certa e
+   caía no ramo do erro. **Sempre.**
+
+Somando as duas: **a folha não fechava por caminho nenhum** — nem clicando, nem
+tocando, nem circulando certo. A criança acertava e o caderno dizia que não.
+
+- **Alcance:** `_abc1` (duas folhas), `_ini1`, `_novo`, `_rima1`, `_roda1`,
+  `_som1` — e o `_sil1`, que tem a função clonada. Seis deles no ar.
+- **Por que nenhum portão via:** o `andar_folha.js` abre a folha e confere erro
+  de JS e figura quebrada — e não havia nem um nem outro. O `leiaute_mao.js`
+  mede tamanho de alvo — e o alvo era grande. A folha estava *bonita e morta*.
+- **Conserto (na fonte, nos oito):** `alterna` passa o BOTÃO quando recebeu um
+  array e a CHAVE quando recebeu um objeto; e cada botão ganhou um `click` — a
+  segunda porta — com um guarda de 400 ms para o traço que termina em cima de um
+  botão não contar duas vezes.
+
+E o terceiro defeito, do mesmo dia e do mesmo juiz: **o teclado não tinha K, W
+nem Y**. Num caderno cujo assunto é o alfabeto de 26 letras, o pote da folha de
+digitar sorteia as 26 — e em três delas a criança batia num teclado sem a tecla.
+Corrigido nos doze cadernos, no teclado da tela e no `document.onkeydown`.
+
+> ⚠️ **A lição de método, e ela é a mesma de sempre:** quando o jogador reprovou
+> DEZESSEIS folhas de uma vez, a primeira suspeita foi a régua, não a peça — e
+> estava certa: eu devolvia o `data-qa` em minúsculas e procurava por ele com
+> `[data-qa="op-a7_0-b"]`, que não casa com `op-a7_0-B`. Consertada a régua,
+> sobraram três reprovações — e as três eram verdadeiras.
+
 ### 3.0 `var` no fim do arquivo: o caderno morria na folha 2, e o `node --check` passava
 
 Ao escrever as catorze folhas novas do Desfile (13/set/2026) eu pus o código

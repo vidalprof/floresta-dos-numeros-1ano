@@ -645,7 +645,7 @@ function f25(d, pi){
 function riscoDeCircular(grade, botoes, alterna){
   var cv = document.createElement("canvas");
   cv.className = "riscocv"; grade.appendChild(cv);
-  var ctx = cv.getContext("2d"), pts = [], riscando = false;
+  var ctx = cv.getContext("2d"), pts = [], riscando = false, ultRisco = 0;
   function tamanho(){
     var r = grade.getBoundingClientRect();
     if(!r.width) return;
@@ -666,7 +666,9 @@ function riscoDeCircular(grade, botoes, alterna){
     return {x: ev.clientX - r.left, y: ev.clientY - r.top};
   }
   grade.addEventListener("pointerdown", function(ev){
-    if(ev.pointerType === "touch") return;      /* no dedo, tocar já resolve */
+    /* ⚠️ no dedo o traço não começa (rolar a página é mais importante);
+       quem atende o toque é o clique de cada botão, ligado lá embaixo. */
+    if(ev.pointerType === "touch") return;
     tamanho(); riscando = true; pts = [ponto(ev)];
     cv.className = "riscocv ativo";
     try { grade.setPointerCapture(ev.pointerId); } catch(e){}
@@ -685,7 +687,14 @@ function riscoDeCircular(grade, botoes, alterna){
       var r0 = cv.getBoundingClientRect(), w;
       for(w in botoes){
         var rb = botoes[w].getBoundingClientRect();
-        if(dentro(pts, rb.left - r0.left + rb.width / 2, rb.top - r0.top + rb.height / 2)) alterna(w);
+        if(dentro(pts, rb.left - r0.left + rb.width / 2, rb.top - r0.top + rb.height / 2)){
+          /* ⚠️ ARRAY dá ÍNDICE, OBJETO dá CHAVE — e a resposta de quem monta
+             espera o BOTÃO quando passou um array. Sem esta linha, `alterna`
+             recebia "0" no lugar do elemento, `b._w` era undefined e circular
+             a resposta CERTA caía no ramo do erro. Sempre. */
+          ultRisco = Date.now();
+          alterna(botoes.length !== undefined ? botoes[w] : w);
+        }
       }
     }
     pts = []; ctx.clearRect(0, 0, cv.width, cv.height);
@@ -693,6 +702,23 @@ function riscoDeCircular(grade, botoes, alterna){
   grade.addEventListener("pointerup", fim);
   grade.addEventListener("pointercancel", fim);
   grade.addEventListener("pointerleave", fim);
+
+  /* ⭐ A SEGUNDA PORTA (regra da casa: nunca só uma). Circular com o rato é o
+     gesto que a folha de papel pede; tocar é o gesto que o celular tem. Este
+     `click` atende os dois — o toque simples e o clique do rato do PC.
+     ⚠️ O guarda de 400 ms existe porque soltar o traço EM CIMA de um botão
+        também dispara `click`: sem ele, circular contaria duas vezes. */
+  (function(){
+    var k;
+    for(k in botoes) (function(w){
+      var e = botoes[w];
+      if(!e || !e.addEventListener) return;
+      e.addEventListener("click", function(){
+        if(Date.now() - ultRisco < 400) return;
+        alterna(botoes.length !== undefined ? e : w);
+      });
+    })(k);
+  })();
 }
 /* ponto dentro do rabisco: conta quantas vezes uma reta para a direita cruza o
    traço (fechando o último ponto no primeiro). Ímpar = está dentro. */
@@ -863,7 +889,13 @@ function confereSil(){
 }
 (function(){
   var tk = document.getElementById("tk");
-  var letras = "ABCDEFGHIJLMNOPQRSTUVXZÇÃ".split("");
+  /* ⚠️ O K, O W E O Y ESTAVAM DE FORA — e num caderno cujo assunto É o
+     alfabeto de 26 letras isso não é detalhe: o pote da folha de digitar
+     sorteia as 26, e em três delas a criança batia num teclado que não
+     tinha a tecla. Ela acertava de cabeça e não conseguia responder.
+     (As três entraram no alfabeto oficial do português em 2009.)
+     Quem pegou foi o `_qa/joga_folha.js`: um item de cinco não fechava. */
+  var letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZÇÃ".split("");
   letras.forEach(function(L){
     var b = el("button", null, L);
     b.setAttribute("aria-label", "Letra " + L);
@@ -879,7 +911,7 @@ document.addEventListener("keydown", function(ev){
   if(!ATIVA) return;
   if(document.activeElement && document.activeElement.id === "nomeIn") return;
   var k = (ev.key || "").toUpperCase();
-  if(k.length === 1 && "ABCDEFGHIJLMNOPQRSTUVXZÇÃ".indexOf(k) > -1){ ev.preventDefault(); digita(k); }
+  if(k.length === 1 && "ABCDEFGHIJKLMNOPQRSTUVWXYZÇÃ".indexOf(k) > -1){ ev.preventDefault(); digita(k); }
   else if(ev.key === "Backspace"){ ev.preventDefault(); digita("ap"); }
   else if(ev.key === "Enter"){ ev.preventDefault(); digita("ok"); }
   else if(ev.key === "Escape"){ fechaAtiva(); }
@@ -896,7 +928,16 @@ function idsDaPagina(pi){
   if(pi === 3) for(i = 0; i < F.p3.length; i++) ids.push("a3_" + i);
   if(pi === 4) for(i = 0; i < F.p4.length; i++) ids.push("a4_" + i);
   if(pi === 5) for(i = 0; i < F.p5.length; i++) ids.push("a5_" + i);
-  if(pi === 6) for(i = 0; i < F.p6.length; i++) ids.push("a6_" + i);
+  /* ⚠️ A FOLHA 6 (ligar) NÃO grava `a6_<i>` — o `montaLigar` grava um id POR
+     PAR, no formato `l6g<grupo>_<letra>`. Enquanto esta linha dizia `a6_`, o
+     caderno pedia ao relatório a nota de três ids que nunca existiram: a folha
+     6 nunca ficava "pronta", o `pendentes(6)` dizia 3 para sempre e o objetivo
+     do currículo que a mede (o da minúscula) contava zero. E nada disso dava
+     erro: o app abria, a criança ligava, as linhas ficavam verdes.
+     Quem pegou foi o `_qa/joga_folha.js`, no primeiro minuto de vida dele —
+     ele tentou resolver os `a6_` e não achou resposta declarada nenhuma. */
+  if(pi === 6) for(i = 0; i < F.p6.length; i++)
+    for(var q = 0; q < F.p6[i].g.length; q++) ids.push("l6g" + i + "_" + F.p6[i].g[q]);
   if(pi === 7) for(i = 0; i < F.p7.length; i++) ids.push("a7_" + i);
   if(pi === 8) for(i = 0; i < F.p8.length; i++) ids.push("a8_" + i);
   if(pi === 9) for(i = 0; i < F.p9.length; i++) ids.push("a9_" + i);

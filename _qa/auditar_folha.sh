@@ -67,6 +67,14 @@ PORTOES=(
   "0z pre-voo (39 portoes de texto)|bash _qa/previo.sh $PASTA"
   "1z boot (abre limpa?)|node _qa/boot.js $ARQ"
   "1w andar folha (anda as 25, item por item)|node _qa/andar_folha.js $PASTA"
+  # ⭐ O JOGADOR DA FOLHA VIVA (13/set/2026, pergunta do Marcos: "a outra banca
+  #    seria uma boa para essas sequencias?"). O `andar_folha` mede o caderno
+  #    ABRINDO; este mede o caderno FECHANDO — ele le a resposta declarada em
+  #    RESP e resolve item por item. Na estreia achou tres defeitos, dois deles
+  #    em sete cadernos ja no ar (a folha de circular nao fechava por caminho
+  #    nenhum, e o teclado nao tinha K, W nem Y). Os dois na banca, porque
+  #    medem coisas diferentes.
+  "1v jogador (resolve item por item)|node _qa/joga_folha.js $PASTA 8794"
   "4b leiaute a mao (6 tamanhos, alvo >= 40px)|node _qa/leiaute_mao.js $ARQ"
   "1i4 resposta impressa no enunciado|python3 _qa/resposta_impressa.py $PASTA"
   "0b9 pedagogo (curriculo verbatim)|python3 _qa/pedagogo_curriculo.py $PASTA"
@@ -85,7 +93,6 @@ PORTOES=(
 #  ausência deles seja visível em vez de silenciosa.
 # ------------------------------------------------------------------
 FORA=(
-  "jogador.js|procura telaCapa/FASES — a folha viva nao tem fase, tem folha"
   "0b5 prova de sala|idem: joga a cadeia de fases do motor"
   "contraste.js|abre telas por nome (telaBase/telaFim)"
   "imagens.js|idem, e le a pre-carga IMGS que a folha viva nao publica"
