@@ -31,7 +31,7 @@ PRECO = 0.20  # R$ por chamada paga do Gemini (registrado no MANUAL-MESTRE)
 #    lugares e garantia de que um dia elas discordam — e ja discordaram: numa
 #    primeira versao o portao contou 3 pecas e o planejador contou 2.
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "_padrao"))
-from cartela import e_cena, e_edicao  # noqa: E402
+from cartela import e_cena, e_edicao, e_cartela, quantas_pecas  # noqa: E402
 
 
 def main():
@@ -41,7 +41,13 @@ def main():
     lote = json.load(io.open(sys.argv[1], encoding="utf-8"))
     cenas = [x for x in lote if e_cena(x)]
     edicoes = [x for x in lote if not e_cena(x) and e_edicao(x)]
-    pecas = [x for x in lote if not e_cena(x) and not e_edicao(x)]
+    # ⚠️ PEDIDO QUE JA E CARTELA NAO E "PECA SOLTA" (13/set/2026). Este portao
+    #    contava PEDIDOS e nao FIGURAS: um lote ja montado em oito cartelas de
+    #    seis aparecia como "oito pecas indo uma a uma" e era reprovado por uma
+    #    economia que nao existia -- o lote ja estava do jeito que o portao
+    #    manda. Ver `e_cartela` no _padrao/cartela.py.
+    jacart = [x for x in lote if not e_cena(x) and not e_edicao(x) and e_cartela(x)]
+    pecas = [x for x in lote if not e_cena(x) and not e_edicao(x) and not e_cartela(x)]
     # ⚠️ ESTE PORTAO SO SABIA CONTAR DINHEIRO DO GEMINI (ago/2026). Com o
     #    credito esgotado, a casa passou a desenhar TUDO pelo caminho gratis
     #    (`gerar-imagens.yml` com `lote=`: Pollinations desenha, o rembg
@@ -61,6 +67,9 @@ def main():
 
     print(u"%s -> %d imagem(ns) no lote" % (sys.argv[1], len(lote)))
     print(u"   %d cena(s) larga(s)  (Pollinations, de graca)" % len(cenas))
+    if jacart:
+        print(u"   %d pedido(s) JA EM CARTELA, com %d figura(s) dentro  (e o jeito certo)"
+              % (len(jacart), sum(quantas_pecas(x) for x in jacart)))
     print(u"   %d edicao(oes) do mascote  (uma a uma e o certo aqui)" % len(edicoes))
     print(u"   %d peca(s) recortavel(is)" % len(pecas))
 

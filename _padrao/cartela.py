@@ -79,6 +79,46 @@ def e_edicao(x):
     return bool(x.get("base")) or x.get("nome", "").endswith(("_fala", "_pisca"))
 
 
+def e_cartela(x):
+    u"""O pedido JA É UMA CARTELA: uma chamada que devolve uma FOLHA com várias
+    peças, para recortar depois.
+
+    ⚠️ POR QUE ISTO EXISTE (13/set/2026). O `_qa/cartela.py` contava PEDIDOS, não
+       FIGURAS. Um lote já montado em cartelas — oito pedidos, cada um com seis
+       peças dentro — era lido como "oito peças indo uma a uma" e reprovado com
+       uma economia de R$ 1,40 que não existia: o lote já estava do jeito que o
+       portão manda.
+       Portão que acusa inocente é portão que se aprende a ignorar, e a casa já
+       pagou essa lição duas vezes (o `silaba_fonte.py` reprovou 21 recortes
+       legítimos; o `resposta_impressa.py` acusou a folha 14 por coincidência do
+       português). Aqui o conserto é o mesmo: ensinar o portão a reconhecer o
+       caso legítimo.
+
+    Reconhece pelos DOIS caminhos, para não depender de rótulo:
+      · `grupo == "cartela"` — dito pelo autor do lote;
+      · o prompt começar com a frase que o próprio montador da casa escreve
+        (`_padrao/superprompt.cartela` e o `MOLDE` daqui) — "A sheet showing N
+        separate objects".
+    """
+    if (x.get("grupo") or "").lower() == "cartela":
+        return True
+    p = (x.get("prompt") or "").lower().lstrip()
+    return p.startswith("a sheet showing") or p.startswith("a single sheet showing")
+
+
+def quantas_pecas(x):
+    u"""Quantas FIGURAS sairão deste pedido (a cartela traz várias)."""
+    if not e_cartela(x):
+        return 1
+    import re as _re
+    m = _re.search(r"a (?:single )?sheet showing (\d+) separate objects",
+                   (x.get("prompt") or "").lower())
+    if m:
+        return int(m.group(1))
+    # sem o número na frase, conta os itens numerados da lista
+    return max(1, len(_re.findall(r"(?m)^\s*\d+\.\s", x.get("prompt") or "")))
+
+
 def grade(n):
     u"""linhas x colunas mais quadrada possível para n peças."""
     c = 1

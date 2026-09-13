@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>A Rua do Mundo — tipos de moradia, 2º ano</title>
+<meta name="description" content="Vinte e cinco folhas interativas de Geografia para o 2º ano: nomear a moradia, descobrir de que ela é feita, em que lugar ela fica e por quê, vê-la de cima, comparar como era antes e como é hoje, e montar a rua do mundo.">
+<!-- ============================================================
+     A RUA DO MUNDO — tipos de moradia, 2º ano (Geografia)
+     CADERNO DE FOLHA VIVA, 25 folhas. Um HTML, ES5 puro, sem biblioteca.
+     NÃO usa o motor: as regras deste formato estão no `SEQUENCIAS-DIDATICAS.md`.
+
+     ⭐ COMO ELE NASCEU. Trinta folhas impressas de "tipos de moradia" foram
+     colhidas da internet (`_sequencias/folhas_moradia/`) e lidas UMA A UMA,
+     anotando o VERBO de cada uma — o que ela manda a criança fazer com o lápis
+     na mão. O crivo está inteiro em `_sequencias/POTE-MORADIA.md`: 19 entram,
+     4 são cartaz, 2 pedem desenhar (gesto que a folha viva não tem), 2 ensinam
+     errado e 3 são duplicata.
+
+     ⚠️ O ACHADO QUE MUDOU O CADERNO, e ele é desconfortável: "tipos de moradia",
+     palavra por palavra, está no **1º ANO** do currículo de Blumenau — *"Descrever
+     e comparar diferentes tipos de moradia ou objetos de uso cotidiano..."*
+     (Geografia, Mundo do trabalho) e *"Materiais usados na construção de moradias
+     e suas características"* (Ciências). Vinte e duas das trinta folhas colhidas
+     param aí: pedem só o NOME.
+
+     O 2º ano sobe o degrau, e é ele que manda aqui:
+       A  modo de viver de pessoas em DIFERENTES LUGARES  → folhas 11, 12, 13
+       B  a moradia em imagem aérea e mapa (VISÃO VERTICAL) → folhas 17, 18, 19
+       C  MUDANÇAS E PERMANÊNCIAS no mesmo lugar          → folhas 20, 21, 22
+       D  respeito às DIFERENÇAS                          → folha 24 (e o tom todo)
+       E  de que MATERIAIS as coisas são feitas (Ciências) → folhas 6 a 10
+       F  representar a paisagem (mural)                  → folha 25
+     Nomear a moradia (o que as folhas de papel fazem) fica só nas folhas 2 a 5,
+     como RETOMADA do 1º ano. As citações verbatim estão no `curriculo.json` e
+     aparecem para o professor no dossiê (chave mestra 1275@).
+
+     ⚠️ DUAS FOLHAS DE ORIGEM ENSINAM O CONTRÁRIO DO 2º ANO e foram reescritas:
+     a cruzadinha d08/d27 chama a oca de "casa de índios" e a tenda de "casa de
+     ciganos". A habilidade D é justamente *"reconhecendo a importância do
+     respeito às diferenças"*. As pistas daqui dizem "casa dos povos indígenas"
+     e "casa de pano, que se arma e se desarma quando a família muda de lugar".
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+:root{
+  /* os tokens de cor da folha viva — sem eles o portão `_qa/cor_fixa.py` reprova
+     cor de texto cravada, que num tema diferente vira letra invisível */
+  --texto:#26201c;
+  --texto2:#3a2f27;
+  --texto3:#4a3d33;
+  /* a cor deste caderno é a TELHA: ele é sobre casas */
+  --cor:#b0562a;
+  --cor2:#8d4120;
+  --corclara:#fdf1e9;
+}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#f4efe9;color:var(--texto);padding-bottom:160px}
+#topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--cor);
+  box-shadow:0 2px 14px rgba(70,40,20,.13);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:880px;margin:0 auto}
+#topo .tit{font-weight:800;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:12px;background:#eee3d9;border-radius:8px;overflow:hidden;flex:1;min-width:60px;max-width:200px}
+.prog i{display:block;height:100%;width:0;background:var(--cor);border-radius:8px;-webkit-transition:width .5s;transition:width .5s}
+.pg{font-weight:800;font-size:14px;color:var(--cor2);white-space:nowrap}
+button{font-family:inherit;cursor:pointer}
+.bt{min-width:48px;min-height:48px;border:0;border-radius:16px;background:var(--cor);color:#fff;font-weight:800;font-size:17px;
+  padding:10px 18px;box-shadow:0 4px 0 var(--cor2);-webkit-transition:transform .08s;transition:transform .08s}
+.bt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cor2)}
+.bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
+.bt.cinza{background:#eae2da;color:#57493f;box-shadow:0 4px 0 #cdc0b4}
+.bt.verde{background:#15a34a;box-shadow:0 4px 0 #0d7736}
+.zap{width:42px;height:42px;border-radius:50%;border:0;background:var(--cor);box-shadow:0 3px 0 var(--cor2);
+  display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none}
+.zap svg{width:22px;height:22px;fill:#fff}
+.zap.off{background:#c2b6ab;box-shadow:0 3px 0 #a3968b}
+.zap.ouvir{background:#fff;box-shadow:0 3px 0 #ddd0c4;border:2px solid var(--cor)}
+.zap.ouvir svg{fill:var(--cor)}
+.zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
+@-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+
+#livro{max-width:880px;margin:12px auto 0;padding:0 10px}
+.pagina{position:relative;background:#fff;border-radius:22px;box-shadow:0 10px 34px rgba(70,40,20,.16);display:none;overflow:hidden;padding:0 0 20px}
+.pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
+@-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.faixa{background:var(--cor);color:#fff;padding:15px 18px 13px;display:flex;align-items:center;gap:12px}
+.faixa h2{margin:0;font-size:clamp(17px,4.4vw,25px);letter-spacing:.4px;text-transform:uppercase;flex:1;line-height:1.1}
+.faixa .num{background:#fff;color:var(--cor);font-weight:900;border-radius:50%;width:36px;height:36px;display:flex;
+  align-items:center;justify-content:center;font-size:18px;flex:none}
+/* uma cor por BLOCO da escada — a criança vê que mudou de assunto */
+.pagina.c1 .faixa{background:#b0562a}.pagina.c1 .faixa .num{color:#b0562a}
+.pagina.c2 .faixa{background:#1179bf}.pagina.c2 .faixa .num{color:#1179bf}
+.pagina.c3 .faixa{background:#15803d}.pagina.c3 .faixa .num{color:#15803d}
+.pagina.c4 .faixa{background:#8b5cf6}.pagina.c4 .faixa .num{color:#8b5cf6}
+.pagina.c5 .faixa{background:#b45309}.pagina.c5 .faixa .num{color:#b45309}
+.enun{margin:14px 16px 4px;font-size:clamp(15px,3.9vw,19px);font-weight:700;line-height:1.35}
+.enun b{color:var(--cor2)}
+
+.item{margin:12px 14px;padding:14px;border:2px solid #f0e6dd;border-radius:20px;background:#fffdfb}
+.item.feito{border-color:#bfe6ce;background:#f3fcf6}
+.item .n{font-weight:900;color:#b3a294;font-size:15px;margin-right:8px}
+/* ⚠️ A FIGURA TEM ALTURA FIXA: com `height:auto` cada figura entrava no seu
+   tamanho natural (o prédio com 230 px e o tijolo com 90) e, como `display:block`
+   ignora o `text-align:center` do pai, todas encostavam na esquerda. */
+.fig{display:block;width:auto;height:clamp(76px,19vw,116px);max-width:100%;
+  margin:2px auto 6px;object-fit:contain;image-rendering:auto}
+.figgrande{display:block;width:auto;height:clamp(84px,21vw,128px);max-width:100%;
+  margin:0 auto;object-fit:contain}
+.figbt{border:0;background:none;padding:4px;border-radius:16px;min-width:48px;min-height:48px}
+/* ⚠️ O ALTO-FALANTE É DESENHADO EM CSS — caixinha + triângulo + duas ondas de
+   borda arredondada. Nada de emoji (vira quadradinho nos PCs da escola) e nada
+   de SVG solto (ordem do Marcos, set/2026). */
+.som{position:relative;width:46px;height:46px;min-width:46px;border:3px solid var(--cor);
+  border-radius:50%;background:var(--corclara);padding:0;cursor:pointer;flex:none}
+.som:active{-webkit-transform:scale(.93);transform:scale(.93)}
+.som .cone{position:absolute;left:12px;top:17px;width:7px;height:10px;background:var(--cor2);
+  border-radius:2px 0 0 2px}
+.som .cone:after{content:"";position:absolute;left:6px;top:-6px;width:0;height:0;
+  border-top:11px solid transparent;border-bottom:11px solid transparent;
+  border-right:11px solid var(--cor2)}
+.som .onda{position:absolute;border:3px solid var(--cor2);border-left-color:transparent;
+  border-top-color:transparent;border-bottom-color:transparent;border-radius:50%}
+.som .o1{left:26px;top:16px;width:8px;height:12px}
+.som .o2{left:29px;top:11px;width:13px;height:22px;opacity:.65}
+.enunlin{display:flex;align-items:center;gap:10px;margin:0 2px}
+.enunlin .enun{flex:1;min-width:0}
+
+/* fileira genérica de opções */
+.ops{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.op{min-width:64px;min-height:56px;border:3px solid #e6dbd1;border-radius:16px;background:#fff;color:var(--texto);
+  font-weight:900;font-size:20px;padding:8px 14px;-webkit-transition:transform .1s;transition:transform .1s}
+.op:active{transform:scale(.94)}
+.op.certa{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.op.erro{border-color:#e0562f;background:#fdeee9}
+/* a opção que é uma FRASE (a definição, o porquê): texto corrido, alinhado à
+   esquerda, largura cheia — frase centralizada em caixinha não se lê */
+.op.frase{display:block;width:100%;max-width:420px;text-align:left;font-size:clamp(14px,3.7vw,17px);
+  font-weight:700;line-height:1.35;letter-spacing:0;min-height:52px}
+.op.curta{font-size:clamp(15px,4vw,19px);letter-spacing:.5px}
+/* a opção COM figura */
+.op.figbt{display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:96px;min-height:112px;padding:8px 10px}
+.op.figbt .figop{display:block;width:auto;height:clamp(56px,14vw,80px);max-width:100%;object-fit:contain}
+.rotop{font-weight:800;font-size:clamp(11px,2.9vw,13px);color:var(--texto2);letter-spacing:.4px;
+  line-height:1.1;word-break:break-word}
+/* ⚠️ A LEGENDA SECRETA. `visibility` e não `display`: o espaço fica guardado,
+   então a folha não pula quando a palavra aparece no acerto. */
+.segredo{visibility:hidden}
+.segredo.revelado{visibility:visible;-webkit-animation:aparece .35s;animation:aparece .35s}
+@-webkit-keyframes aparece{from{opacity:0}to{opacity:1}}
+@keyframes aparece{from{opacity:0}to{opacity:1}}
+.figsil{display:flex;flex-direction:column;align-items:center;gap:4px;margin:2px 0 6px}
+.chamlin{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.chamlin b{font-size:clamp(15px,4vw,19px);color:var(--texto2);letter-spacing:.5px}
+
+/* ---- marcar VÁRIAS certas (folha 1, da d18: "marque com x as corretas") ---- */
+.marcax{display:flex;flex-direction:column;gap:8px;align-items:center;margin-top:10px}
+.lx{display:flex;align-items:center;gap:12px;min-height:56px;border:3px solid #e6dbd1;border-radius:16px;
+  background:#fff;padding:8px 14px;font-weight:700;font-size:clamp(14px,3.7vw,17px);color:var(--texto);
+  width:100%;max-width:430px;text-align:left;line-height:1.3}
+.lx .cx{width:34px;height:34px;border:3px solid #b3a294;border-radius:8px;display:inline-flex;align-items:center;
+  justify-content:center;font-size:24px;font-weight:900;color:var(--cor);flex:none}
+.lx.marcada{border-color:var(--cor);background:var(--corclara)}
+.lx.marcada .cx{border-color:var(--cor)}
+.lx.certa{border-color:#15a34a;background:#e7f8ee}
+.lx.certa .cx{border-color:#15a34a;color:#15a34a}
+.lx.errada{border-color:#e0562f;background:#fdeee9}
+
+/* ---- arrastar o nome ESCRITO até a moradia (folha 4, da d10) ---- */
+.grelha{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:8px 10px 4px}
+@media(min-width:620px){.grelha{grid-template-columns:repeat(4,1fr)}}
+.celmor{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;
+  border:3px solid #f0e6dd;border-radius:16px;background:#fffdfb}
+.celmor .figop{display:block;width:auto;height:clamp(60px,15vw,86px);max-width:100%;object-fit:contain}
+.alvonome{width:100%;min-height:48px;border:3px dashed var(--cor);border-radius:12px;background:var(--corclara);
+  display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(12px,3.2vw,15px);
+  color:var(--cor2);text-align:center;padding:4px;line-height:1.15}
+.alvonome.perto{border-style:solid;background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+.alvonome.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.banconome{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 10px 10px}
+.etiq{min-height:46px;padding:8px 14px;border:3px dashed #e6dbd1;border-radius:12px;background:#fff;
+  font-weight:900;font-size:clamp(13px,3.6vw,17px);color:var(--texto3);cursor:pointer;letter-spacing:.5px;
+  -ms-touch-action:none;touch-action:none}
+.etiq.marcada{border-style:solid;border-color:var(--cor);background:var(--corclara)}
+.etiq.usada{opacity:.32;pointer-events:none;border-style:solid}
+.etiq.puxada{opacity:.35}
+
+/* ---- juntar as sílabas numeradas (folha 5, da d18 item 4) ---- */
+.tabsil{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:8px 10px 6px}
+.tsc{border:2px solid #e6dbd1;border-radius:10px;background:#fff;text-align:center;padding:5px 2px;
+  min-height:46px;display:flex;flex-direction:column;justify-content:center;cursor:pointer}
+.tsc .tsn{font-size:11px;font-weight:800;color:#b3a294;display:block;line-height:1}
+.tsc .tss{font-size:clamp(13px,3.6vw,18px);font-weight:900;color:var(--texto3);display:block;letter-spacing:.5px}
+.tsc.usada{background:var(--corclara);border-color:var(--cor)}
+.tsc:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.montada{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;min-height:52px;align-items:center;margin:6px 0}
+.mped{font-weight:900;font-size:clamp(17px,4.6vw,24px);color:#0d7736;background:#e7f8ee;border:2px solid #15a34a;
+  border-radius:10px;padding:6px 10px;display:block}
+.montada .vazio{font-weight:900;color:#c9bcb0;font-size:clamp(15px,4vw,19px)}
+
+/* ---- ligar (folhas 8 e 22) ---- */
+.ligar{position:relative;display:flex;gap:clamp(30px,10vw,96px);justify-content:space-between;margin:14px 6px}
+.ligar .col{display:flex;flex-direction:column;gap:14px;flex:1 1 0;min-width:0}
+.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.ponta{border:3px solid #e6dbd1;border-radius:16px;background:#fff;height:92px;display:flex;align-items:center;
+  justify-content:center;font-weight:900;font-size:clamp(13px,3.4vw,17px);letter-spacing:.4px;padding:6px;
+  text-align:center;line-height:1.15;color:var(--texto2);
+  -ms-touch-action:none;touch-action:none;-webkit-transition:border-color .15s,box-shadow .15s;
+  transition:border-color .15s,box-shadow .15s}
+.ponta img{width:auto;height:70px;max-width:100%;object-fit:contain}
+@media (max-width:420px){ .ponta{height:78px} .ponta img{height:58px} }
+.ponta.marcada{border-color:var(--cor);box-shadow:0 0 0 4px rgba(176,86,42,.22)}
+.ponta.feita{border-color:#15a34a;background:#e7f8ee}
+.ponta.mostra{border-color:#f0b64a;box-shadow:0 0 0 4px rgba(240,182,74,.4)}
+.ponta.treme{-webkit-animation:treme .4s;animation:treme .4s}
+@-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ---- caça-palavras dos materiais (folha 9, da d02) ---- */
+.diagrama{display:grid;gap:2px;margin:8px auto 4px;max-width:430px;touch-action:none;
+  -webkit-user-select:none;user-select:none}
+.dcel{min-width:0;aspect-ratio:1/1;min-height:30px;border:1px solid #eee0d4;border-radius:6px;background:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;
+  font-size:clamp(11px,3.1vw,16px);color:var(--texto3);cursor:pointer;padding:0}
+.dcel.tracando{background:#ffe9d6;border-color:var(--cor)}
+.dcel.achada{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+.listamat{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 10px 4px}
+.pmat{font-weight:900;font-size:clamp(12px,3.3vw,15px);color:var(--texto3);border:2px solid #e6dbd1;
+  border-radius:10px;padding:5px 10px;background:#fff;letter-spacing:.5px}
+.pmat.achada{border-color:#15a34a;background:#e7f8ee;color:#0d7736;text-decoration:line-through}
+
+/* ---- classificar em colunas: lugares (11), vistas (19), cômodos (23) ---- */
+.colunas{display:flex;gap:clamp(4px,1.6vw,10px);justify-content:center;margin:8px 8px 4px;flex-wrap:wrap}
+.coluna{flex:1 1 28%;min-width:96px;max-width:200px;border:3px solid #e6dbd1;border-radius:14px;
+  background:#fffdfb;padding:5px;min-height:112px;cursor:pointer}
+.coluna.perto{border-color:var(--cor);background:var(--corclara)}
+.coluna.erro{border-color:#e0562f;background:#fdeee9}
+.ctit{font-weight:900;font-size:clamp(12px,3.2vw,15px);color:var(--texto2);margin-bottom:4px;
+  border-bottom:2px solid #f0e6dd;padding-bottom:3px;display:flex;align-items:center;
+  justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;line-height:1.1}
+.ctit .figmini{height:clamp(30px,7vw,40px)}
+.cdentro{display:flex;flex-direction:column;gap:3px;align-items:center;min-height:56px}
+.fdentro{font-weight:800;font-size:clamp(11px,3vw,14px);color:#0d7736;background:#e7f8ee;
+  border-radius:8px;padding:3px 6px;display:block;max-width:100%;word-break:break-word;text-align:center}
+.figmini{width:auto;height:clamp(34px,8vw,44px);max-width:100%;object-fit:contain;display:block}
+.figbanco{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 10px 10px}
+.op.fig{padding:6px;min-width:96px;min-height:96px}
+.op.fig .figmini{height:clamp(48px,12vw,64px)}
+.op.fig.marcada{border-color:var(--cor);background:var(--corclara);
+  -webkit-box-shadow:0 0 0 4px rgba(176,86,42,.18);box-shadow:0 0 0 4px rgba(176,86,42,.18)}
+.op.fig.usada{opacity:.3;pointer-events:none}
+
+/* ---- completar a lacuna (folha 15, da d23) ---- */
+.frasel{font-size:clamp(15px,4vw,19px);font-weight:700;color:var(--texto2);line-height:1.7;
+  text-align:center;margin:4px 6px 8px}
+.lacuna{display:inline-block;min-width:96px;padding:2px 10px;border-bottom:4px solid var(--cor);
+  color:var(--cor);font-weight:900;text-align:center}
+.lacuna.cheia{border-bottom-color:#1f9d55;color:#1f9d55;background:#eafaf0;border-radius:8px 8px 0 0}
+
+/* ---- cruzadinha (folha 16, da d08 reescrita) ---- */
+.cruzenv{overflow-x:auto;margin:8px 0 4px}
+.cruz{display:grid;gap:2px;margin:0 auto;width:-webkit-max-content;width:max-content}
+.ccel{width:clamp(26px,7vw,34px);height:clamp(26px,7vw,34px);border:0;background:transparent;padding:0}
+.ccel.viva{border:2px solid #d9c9bb;border-radius:5px;background:#fff;font-weight:900;
+  font-size:clamp(13px,3.6vw,18px);color:var(--texto3);cursor:pointer;position:relative}
+.ccel.viva.ativa{border-color:var(--cor);background:var(--corclara);
+  -webkit-box-shadow:0 0 0 3px rgba(176,86,42,.25);box-shadow:0 0 0 3px rgba(176,86,42,.25)}
+.ccel.viva.ok{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.ccel .cn{position:absolute;left:1px;top:0;font-size:9px;font-weight:800;color:#b3a294;line-height:1}
+.pistas{display:flex;flex-direction:column;gap:6px;margin:8px 12px 4px}
+.pista{display:flex;align-items:center;gap:8px;border:2px solid #f0e6dd;border-radius:12px;background:#fffdfb;
+  padding:6px 10px;min-height:48px;font-size:clamp(13px,3.5vw,16px);font-weight:600;color:var(--texto2);
+  line-height:1.3;cursor:pointer;text-align:left;width:100%}
+.pista .pn{font-weight:900;color:var(--cor);flex:none;min-width:18px}
+.pista.feita{border-color:#15a34a;background:#f3fcf6}
+.pista.ativa{border-color:var(--cor);background:var(--corclara)}
+
+/* ---- a imagem aérea com pontos (folha 18) ---- */
+.aerea{position:relative;max-width:520px;margin:8px auto 4px;width:100%}
+.aerea img{display:block;width:100%;height:auto;border-radius:16px;border:3px solid #e6dbd1}
+.ponto{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;
+  border:3px solid #fff;background:rgba(176,86,42,.35);cursor:pointer;padding:0;
+  -webkit-box-shadow:0 2px 8px rgba(0,0,0,.3);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.ponto.certo{background:rgba(21,163,74,.55);border-color:#0d7736}
+.ponto.errado{background:rgba(224,86,47,.5)}
+.ponto:active{-webkit-transform:scale(.9);transform:scale(.9)}
+
+/* ---- ordenar as cenas / o antes e o hoje (folhas 20 e 21) ---- */
+.trilhaord{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 6px 4px}
+.slot{width:clamp(84px,23vw,124px);min-height:clamp(84px,23vw,124px);border:3px dashed var(--cor);
+  border-radius:16px;background:var(--corclara);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-weight:900;font-size:20px;color:var(--cor2);padding:4px}
+.slot .figmini{height:clamp(56px,15vw,86px)}
+.slot.perto{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.slot.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.slot .rot{font-size:clamp(10px,2.7vw,12px);font-weight:800;color:#0d7736;line-height:1.05;text-align:center}
+.sn{font-size:12px;font-weight:900;color:var(--cor2);display:block}
+
+/* ---- achar as casas dentro do poema (folha 24, da d19) ---- */
+.poema{font-size:clamp(15px,4vw,19px);line-height:1.9;text-align:center;color:var(--texto2);
+  font-weight:600;margin:8px 12px 4px}
+.poema .aut{display:block;font-size:13px;font-weight:800;color:#8a7768;margin-top:6px}
+.pw{display:inline-block;border:0;background:transparent;font:inherit;color:inherit;padding:2px 6px;
+  border-radius:8px;cursor:pointer;min-height:44px;line-height:1.4}
+.pw.achada{background:#ffe9a8;color:#6a4b00;font-weight:900;-webkit-box-shadow:0 0 0 2px #e5b93c;
+  box-shadow:0 0 0 2px #e5b93c}
+.pw.nao{-webkit-animation:treme .34s;animation:treme .34s}
+.placar{font-weight:900;color:var(--cor2);text-align:center;font-size:15px;margin:4px 0}
+
+/* ---- o mural da rua do mundo (folha 25) ---- */
+.mural{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 10px}
+.cartaocasa{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:118px;min-width:104px;
+  padding:8px 10px;border:3px solid #e6dbd1;border-radius:20px;background:#fff;cursor:pointer;
+  -webkit-transition:transform .18s,border-color .18s,background .18s;
+  transition:transform .18s,border-color .18s,background .18s}
+.cartaocasa .figop{display:block;width:auto;height:clamp(52px,13vw,72px);max-width:100%;object-fit:contain}
+.cartaocasa.escolhido{border-color:#15a34a;background:#eafaf0;-webkit-transform:scale(1.03);transform:scale(1.03)}
+.cartaocasa:focus-visible{outline:3px solid #f0b64a;outline-offset:2px}
+.rua{display:flex;gap:2px;justify-content:center;align-items:flex-end;flex-wrap:wrap;
+  border-bottom:8px solid #7b6a5c;margin:10px 12px 4px;padding-bottom:2px;min-height:60px}
+.rua img{height:clamp(44px,12vw,68px);width:auto;object-fit:contain;display:block}
+
+/* ---- carimbo, nav, capa, fim ---- */
+.carimbo{position:absolute;right:14px;top:60px;transform:rotate(-14deg) scale(.4);opacity:0;color:#15a34a;
+  border:5px solid #15a34a;border-radius:14px;padding:6px 14px;font-weight:900;font-size:20px;text-align:center;
+  line-height:1.05;pointer-events:none;-webkit-transition:all .45s;transition:all .45s}
+.pagina.pronta .carimbo{opacity:.92;transform:rotate(-14deg) scale(1)}
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:18;background:#fff;border-top:3px solid var(--cor);padding:8px 10px;
+  display:none;align-items:center;gap:10px;box-shadow:0 -3px 14px rgba(70,40,20,.14)}
+#nav .txt{flex:1;text-align:center;font-weight:800;color:var(--cor2);font-size:14px;min-width:0}
+/* ⭐ o botão de terminar a qualquer momento: discreto de propósito — ele existe
+   para o sinal da escola, não para tentar a criança a pular tudo */
+.bt.terminar{background:#f3ece5;color:#6b5a4d;border:2px solid #e2d6ca;
+  font-size:12px;padding:8px 10px;min-height:44px;font-weight:800;flex:0 0 auto}
+.bt.terminar:active{background:#e9dfd5}
+.barra.naoabriu{opacity:.5}
+.barra.naoabriu b{font-weight:700;font-size:12px;color:#9c8b7c}
+#barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:19;background:#fff;border-top:3px solid var(--cor);padding:10px;display:none}
+#barraCapa.aberta{display:block}
+#barraCapa .lin{display:flex;gap:10px;align-items:center;max-width:640px;margin:0 auto}
+#barraCapa label{font-weight:800;color:var(--cor2);font-size:15px;white-space:nowrap}
+#nomeIn{flex:1;min-width:0;min-height:50px;border:3px solid var(--cor);border-radius:14px;padding:0 12px;
+  font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
+#nomeIn:focus{outline:none;border-color:#1179bf;box-shadow:0 0 0 4px rgba(17,121,191,.25)}
+
+/* ================= A CAPA =================
+   O tema sai do nome: uma RUA onde as casas do mundo inteiro são vizinhas.
+   O céu com o sol, a fileira de casas subindo uma depois da outra e a calçada
+   embaixo. Só CSS e PNG: nada de SVG, nada de emoji. */
+.capa{position:relative;text-align:center;padding:18px 16px 24px;overflow:hidden;
+  background:-webkit-linear-gradient(top,#cbe7f7 0%,#fdf3ea 62%,#fff 100%);
+  background:linear-gradient(180deg,#cbe7f7 0%,#fdf3ea 62%,#fff 100%)}
+.capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
+.capa .nv{position:absolute;display:block;border-radius:50%;
+  background:-webkit-radial-gradient(circle,rgba(255,255,255,.85),rgba(255,255,255,0) 70%);
+  background:radial-gradient(circle,rgba(255,255,255,.85),rgba(255,255,255,0) 70%)}
+.capa .n1{width:220px;height:130px;left:-40px;top:14px}
+.capa .n2{width:280px;height:150px;right:-70px;top:44px}
+.capa .n3{width:170px;height:110px;left:46%;top:6px}
+.capa .sol{position:absolute;right:22px;top:16px;width:56px;height:56px;border-radius:50%;
+  background:-webkit-radial-gradient(circle at 40% 38%,#fff2b8,#f5b301);
+  background:radial-gradient(circle at 40% 38%,#fff2b8,#f5b301);
+  box-shadow:0 0 26px rgba(245,179,1,.55)}
+.capa .chapeu{position:relative;width:66px;height:66px;margin:16px auto 2px;border-radius:16px;
+  background:-webkit-linear-gradient(top left,#d2703c,#8d4120);
+  background:linear-gradient(135deg,#d2703c,#8d4120);color:#fff;font-weight:900;font-size:34px;
+  line-height:66px;box-shadow:0 8px 18px rgba(141,65,32,.36)}
+.capa .chapeu:before{content:"";position:absolute;left:-9px;right:-9px;top:-15px;height:0;
+  border-left:42px solid transparent;border-right:42px solid transparent;border-bottom:18px solid #a33d1e}
+.capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+.capa .titu .lt{display:inline-block;font-size:clamp(24px,6.4vw,42px);font-weight:900;letter-spacing:0;
+  color:#8d4120;text-shadow:0 3px 0 #f6dcc8,0 5px 10px rgba(120,60,25,.2);
+  -webkit-animation:caiCasa .5s both;animation:caiCasa .5s both}
+.capa .titu .esp{display:inline-block;width:14px}
+/* ⚠️ `caiCasa` e não `cai`: o confete já tem um `@keyframes cai` que termina em
+   `opacity:0`. Nome de keyframe é global — numa outra capa desta casa a colisão
+   apagou o título inteiro, em silêncio. */
+@-webkit-keyframes caiCasa{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
+@keyframes caiCasa{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
+.capa .sub{font-weight:700;color:#8d4120;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
+.capa .esteira{max-width:660px;margin:16px auto 4px;position:relative}
+.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:6px;flex-wrap:nowrap}
+.capa .cena img{width:clamp(46px,13vw,96px);height:clamp(46px,13vw,96px);object-fit:contain;
+  -webkit-animation:sobeCasa 2.6s ease-in-out infinite;animation:sobeCasa 2.6s ease-in-out infinite}
+.capa .cena img:nth-child(2){-webkit-animation-delay:.35s;animation-delay:.35s}
+.capa .cena img:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
+.capa .cena img:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
+.capa .cena img:nth-child(5){-webkit-animation-delay:1.4s;animation-delay:1.4s}
+@-webkit-keyframes sobeCasa{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
+@keyframes sobeCasa{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.capa .cinta{display:flex;gap:6px;justify-content:center;background:#7b6a5c;border-radius:9px;
+  padding:6px 8px;margin-top:6px;box-shadow:0 6px 14px rgba(70,40,20,.22)}
+.capa .cinta i{display:block;width:26px;height:9px;background:#cbb9a8;border-radius:5px}
+.capa .chamada{margin-top:14px;font-weight:700;color:#5c4c40;font-size:clamp(13px,3.4vw,16px)}
+@media (prefers-reduced-motion: reduce){
+  .capa .titu .lt,.capa .cena img{-webkit-animation:none;animation:none}
+}
+
+#fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
+  box-shadow:0 10px 34px rgba(70,40,20,.16);text-align:center}
+#fim h2{margin:0 0 6px;color:var(--cor2);font-size:clamp(21px,5.5vw,30px)}
+.estrelas{font-size:44px;letter-spacing:8px;margin:6px 0}
+.barras{max-width:520px;margin:10px auto;text-align:left}
+.barra{display:flex;align-items:center;gap:8px;margin:6px 0;font-weight:700;font-size:14px}
+.barra span{flex:0 0 42%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barra .tr{flex:1;height:14px;background:#eee3d9;border-radius:8px;overflow:hidden}
+.barra .tr i{display:block;height:100%;width:0;background:#15a34a;-webkit-transition:width .8s;transition:width .8s}
+.barra b{flex:none;color:var(--cor2)}
+/* ⚠️ SEM EMOJI E SEM SVG na tela da criança: nos PCs da escola o emoji vira
+   quadradinho vazio, e a criança de sete anos não sabe o que é um quadradinho.
+   Troféu e selos são PNG; as setas são triângulos de CSS puro. */
+#medalha{width:132px;height:132px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe680,#e0a800);
+  margin:14px auto;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(180,140,0,.42);cursor:pointer;-ms-touch-action:none;touch-action:none}
+#medalha img{width:92px;height:92px;object-fit:contain;display:block;pointer-events:none}
+#medalha.semfig:after{content:"BOA!";font-weight:900;font-size:26px;color:#7a5600}
+.seta{display:inline-block;width:0;height:0;vertical-align:middle;
+  border-top:8px solid transparent;border-bottom:8px solid transparent}
+.seta.esq{border-right:11px solid currentColor;margin-right:7px}
+.seta.dir{border-left:11px solid currentColor;margin-left:7px}
+#estrelas img{width:52px;height:52px;object-fit:contain;display:inline-block;margin:0 3px;vertical-align:middle}
+
+#relatorio{display:none;text-align:left;background:#fbf7f3;border:2px solid #e6dbd1;border-radius:16px;padding:12px;margin-top:12px;font-size:13px}
+#relatorio table{border-collapse:collapse;width:100%;margin-top:8px}
+#relatorio th,#relatorio td{border:1px solid #e6dbd1;padding:5px 7px;text-align:left}
+#relatorio th{background:#f4ebe3}
+#relatorio table th:nth-child(4),#relatorio table td:nth-child(4){background:#f3fbf5}
+#relatorio .parecer{margin:10px 0 4px;padding:10px 12px;border-left:5px solid var(--cor);
+  background:#fff;border-radius:0 12px 12px 0;font-size:13.5px;line-height:1.55;color:var(--texto2)}
+#relatorio .comonota{margin:8px 0 0;font-size:11.5px;color:#7d6c5e;line-height:1.45}
+/* ⭐ o aviso de caderno não terminado */
+.avisoparcial{background:#fff6e5;border:2px solid #e5b93c;border-radius:10px;
+  padding:8px 10px;margin:8px 0;font-size:12.5px;line-height:1.45;color:#6a4b00}
+.notao{display:flex;align-items:center;gap:14px;background:#fff;border:3px solid var(--cor);
+  border-radius:18px;padding:10px 14px;margin:10px 0 2px}
+.notao .nn{font-size:clamp(30px,9vw,44px);font-weight:900;color:var(--cor);line-height:1;
+  font-variant-numeric:tabular-nums}
+.notao .nl{font-size:12.5px;color:var(--texto2);line-height:1.45}
+
+#menuProf{display:none;position:fixed;inset:0;z-index:60;background:rgba(45,28,16,.62);align-items:center;justify-content:center;padding:14px}
+#menuProf.aberto{display:flex}
+#menuProf .cx{background:#fff;border:4px solid var(--cor);border-radius:20px;padding:16px;max-width:520px;width:100%;
+  max-height:92vh;overflow:auto;box-shadow:0 14px 44px rgba(0,0,0,.4)}
+#menuProf h3{margin:0 0 4px;color:var(--cor2);font-size:20px}
+#menuProf p{margin:0 0 12px;font-size:13px;color:#57493f;line-height:1.4}
+#menuProf .folhas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#menuProf .folhas button{min-height:46px;border:0;border-radius:12px;background:#f4ebe3;color:#57493f;font-weight:800;
+  font-size:14px;padding:8px 12px;box-shadow:0 3px 0 #ddd0c4;flex:1 1 150px;text-align:left}
+#teclado{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:3px solid var(--cor);padding:8px;display:none}
+#teclado.aberto{display:block}
+#teclado .dica{text-align:center;font-weight:800;color:var(--cor2);font-size:13px;margin-bottom:6px}
+#tk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:560px;margin:0 auto}
+#tk button{min-height:48px;border:0;border-radius:12px;background:#f4ebe3;color:var(--texto);font-weight:900;font-size:19px;box-shadow:0 3px 0 #ddd0c4}
+#tk button:active{transform:translateY(2px);box-shadow:0 1px 0 #ddd0c4}
+#tk button.ap{background:#fde2da;grid-column:span 3}
+#tk button.ok{background:#d9f2e3;grid-column:span 4}
+#confete{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.cf{position:absolute;width:9px;height:14px;opacity:.95;-webkit-animation:cai 1.5s linear forwards;animation:cai 1.5s linear forwards}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+@keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+.oculto{display:none!important}
+.ajuda{text-align:center;font-size:14px;color:#7d6c5e;margin:2px 0 6px}
+.fantasma{position:fixed;z-index:70;pointer-events:none;opacity:.92;
+  -webkit-transform:scale(1.1);transform:scale(1.1);
+  -webkit-box-shadow:0 12px 26px rgba(50,30,15,.3);box-shadow:0 12px 26px rgba(50,30,15,.3)}
+/* o cinto e o suspensório do `draggable="false"`: navegador antigo não olha o
+   atributo, mas olha esta regra */
+img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:none}
+.bt.pronto{min-height:48px;padding:0 22px;font-size:16px;margin:6px auto 0;display:block}
+
+/* =========================================================================
+   ANIMAÇÃO DAS FOLHAS — e a regra que manda é NADA ANIMA SEM FUNÇÃO.
+     · os itens ENTRAM EM CASCATA → a criança vê que a folha tem começo e ordem;
+     · a faixa do título DESLIZA → marca a troca de folha;
+     · o acerto DÁ UM PULINHO e a opção certa BRILHA → resposta tátil;
+     · o erro BALANÇA de leve → diz "de novo" sem dizer "errou".
+   `prefers-reduced-motion` desliga tudo e a folha continua inteira.
+   ========================================================================= */
+.pagina.viva .item{-webkit-animation:entraItem .42s ease-out both;animation:entraItem .42s ease-out both}
+.pagina.viva .item:nth-child(2){-webkit-animation-delay:.05s;animation-delay:.05s}
+.pagina.viva .item:nth-child(3){-webkit-animation-delay:.10s;animation-delay:.10s}
+.pagina.viva .item:nth-child(4){-webkit-animation-delay:.15s;animation-delay:.15s}
+.pagina.viva .item:nth-child(5){-webkit-animation-delay:.20s;animation-delay:.20s}
+.pagina.viva .item:nth-child(6){-webkit-animation-delay:.25s;animation-delay:.25s}
+.pagina.viva .item:nth-child(n+7){-webkit-animation-delay:.30s;animation-delay:.30s}
+@-webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pagina.viva .faixa{-webkit-animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both;
+  animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both}
+@-webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
+@keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+.op.certa,.cartaocasa.escolhido{
+  -webkit-animation:pulinho .4s cubic-bezier(.3,1.6,.5,1);animation:pulinho .4s cubic-bezier(.3,1.6,.5,1)}
+@-webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
+@keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.op.certa{position:relative;overflow:hidden}
+.op.certa::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:38%;pointer-events:none;
+  background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
+  -webkit-animation:brilhoOp .55s .1s ease-out;animation:brilhoOp .55s .1s ease-out}
+@-webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
+@keyframes brilhoOp{from{left:-40%}to{left:112%}}
+.op.erro{-webkit-animation:balanca .34s;animation:balanca .34s}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.item{-webkit-transition:border-color .4s,background .4s;transition:border-color .4s,background .4s}
+/* a figura responde ao toque — o alvo reage ao PRESSIONAR */
+.op.figbt:active,.cartaocasa:active,.celmor:active{-webkit-transform:scale(.96);transform:scale(.96)}
+@media (prefers-reduced-motion:reduce){
+  .pagina.viva .item,.pagina.viva .faixa,.op.certa,.op.erro,.cartaocasa.escolhido{
+    -webkit-animation:none!important;animation:none!important;opacity:1!important;
+    -webkit-transform:none!important;transform:none!important}
+  .op.certa::after{display:none}
+}
+/*<dossie-css>*/
+/*</dossie-css>*/
+</style></head><body>
+
+<div id="topo">
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir de novo"><svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v1H5v6h2v1a5 5 0 0 0 10 0v-1h2V9h-2V8a5 5 0 0 0-5-5z"/></svg></button>
+  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
+  <div class="tit">A Rua do Mundo</div>
+  <div class="prog"><i id="progI"></i></div>
+  <div class="pg" id="pg">Capa</div>
+</div>
+
+<div id="livro"></div>
+
+<div id="fim">
+  <h2 id="fimTit">Caderno completo!</h2>
+  <div class="estrelas" id="estrelas"></div>
+  <div class="barras" id="barras"></div>
+  <p id="resumo" style="font-weight:800;font-size:16px"></p>
+  <div id="medalha" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/mo_trofeu.png?v=1" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bVoltar" style="display:none">Voltar para o caderno</button>
+    <button class="bt cinza" id="bRever">Rever o caderno</button>
+    <button class="bt verde" id="bRecomecar">Caderno novo</button>
+  </div>
+  <div id="relatorio"></div>
+</div>
+
+<div id="retomar">
+  <h2 style="color:#8d4120;margin:0 0 6px">Você estava aqui!</h2>
+  <p id="retTxt" style="font-weight:700"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bContinuar">Continuar de onde parei</button>
+    <button class="bt cinza" id="bZerar">Começar um caderno novo</button>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="bt cinza" id="bAnt"><i class="seta esq"></i>Anterior</button>
+  <div class="txt" id="navTxt"></div>
+  <!-- ⭐ O FECHO A QUALQUER MOMENTO — ver o comentário do `fim()` no folhas.js.
+       Sem ele, 25 folhas castigam justamente a criança que vai devagar: ela
+       nunca chegaria a ver o próprio boletim. -->
+  <button class="bt terminar" id="bTerminar" aria-label="Terminar agora e ver o meu boletim">Terminar</button>
+  <button class="bt" id="bProx">Próxima<i class="seta dir"></i></button>
+</div>
+
+<div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt" id="bComecar">Começar</button></div></div>
+
+<div id="menuProf" role="dialog" aria-label="Menu do professor" aria-modal="true">
+  <div class="cx">
+    <h3>Menu do professor</h3>
+    <p>Chave mestra <b>1275@</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
+    <div class="folhas" id="mpFolhas"></div>
+    <!--<dossie-bt>--><!--</dossie-bt>-->
+<button class="bt cinza" id="mpFechar">Fechar</button>
+  </div>
+</div>
+
+<div id="teclado" aria-label="Teclado de letras">
+  <div class="dica" id="tkDica">Escreva a palavra</div>
+  <div id="tk"></div>
+</div>
+<div id="confete" aria-hidden="true"></div>
+
+<script>
+/* ---------- OS POTES DE CADA FOLHA (o gerar_falas.py lê este bloco) ----------
+   ⚠️ A POSIÇÃO É A IDENTIDADE: o pote `pN` é da folha N, os ids dela são
+   `nN_i` e a fala do enunciado é `pNenun`. Mudar a ordem das folhas muda tudo
+   junto — e é de propósito, porque antes eram três listas para combinar à mão
+   e o relatório saía zero com a folha inteira respondida. */
+/*ITENS-INI*/
+var ITENS = {
+ "p1": [
+  "serve",
+  "precisa"
+ ],
+ "p2": [
+  "casa",
+  "predio",
+  "sobrado",
+  "casamadeira",
+  "casabarro"
+ ],
+ "p3": [
+  "oca",
+  "palafita",
+  "iglu",
+  "tenda",
+  "castelo"
+ ],
+ "p4": [
+  "oca",
+  "palafita",
+  "iglu",
+  "predio",
+  "tenda",
+  "sobrado"
+ ],
+ "p5": [
+  "palafita",
+  "sobrado",
+  "castelo",
+  "iglu",
+  "tenda"
+ ],
+ "p6": [
+  "iglu",
+  "oca",
+  "casa",
+  "casamadeira",
+  "casabarro"
+ ],
+ "p7": [
+  "palafita",
+  "tenda",
+  "casabarro",
+  "castelo",
+  "predio",
+  "oca"
+ ],
+ "p8": [
+  "casa",
+  "oca",
+  "palafita",
+  "iglu",
+  "tenda",
+  "castelo"
+ ],
+ "p9": [
+  "tijolo",
+  "madeira",
+  "palha",
+  "barro",
+  "pedra"
+ ],
+ "p10": [
+  "palafita",
+  "iglu",
+  "oca",
+  "tenda",
+  "casa"
+ ],
+ "p11": [
+  "oca",
+  "palafita",
+  "iglu",
+  "tenda",
+  "predio",
+  "casamadeira"
+ ],
+ "p12": [
+  "iglu",
+  "oca",
+  "palafita",
+  "tenda",
+  "predio"
+ ],
+ "p13": [
+  "oca",
+  "palafita",
+  "iglu",
+  "tenda",
+  "casamadeira",
+  "predio"
+ ],
+ "p14": [
+  "oca",
+  "palafita",
+  "iglu",
+  "sobrado",
+  "tenda",
+  "castelo"
+ ],
+ "p15": [
+  "estacas",
+  "andares",
+  "comodos",
+  "abriga",
+  "material"
+ ],
+ "p16": [
+  "oca",
+  "tenda",
+  "predio",
+  "sobrado",
+  "palafita",
+  "iglu"
+ ],
+ "p17": [
+  "casa",
+  "predio",
+  "oca",
+  "tenda"
+ ],
+ "p18": [
+  "escola",
+  "campinho",
+  "casas"
+ ],
+ "p19": [
+  "casa",
+  "casacima",
+  "casaobliqua",
+  "escola",
+  "escolacima",
+  "escolaobliqua"
+ ],
+ "p20": [
+  "casa",
+  "rua",
+  "escola"
+ ],
+ "p21": [
+  "planta",
+  "paredes",
+  "telhado",
+  "pronta"
+ ],
+ "p22": [
+  "arquiteto",
+  "pedreiro",
+  "eletricista",
+  "encanador"
+ ],
+ "p23": [
+  "cama",
+  "armario",
+  "sofa",
+  "geladeira",
+  "fogao",
+  "chuveiro"
+ ],
+ "p24": [
+  "IGLU,",
+  "PALAFITA",
+  "OCA,",
+  "TENDA",
+  "CASA,",
+  "SOBRADO,",
+  "PRÉDIO"
+ ],
+ "p25": [
+  "casa",
+  "predio",
+  "sobrado",
+  "casamadeira",
+  "casabarro",
+  "oca",
+  "palafita",
+  "iglu",
+  "tenda",
+  "castelo"
+ ]
+};
+/*ITENS-FIM*/
+/*FALAS-INI*/
+var FALAS = {
+ "boa_metade": "Boa! Falta a outra.",
+ "capa": "A Rua do Mundo. Vinte e cinco folhas para descobrir uma coisa: não existe um jeito certo de fazer casa. Existe o jeito que combina com o lugar. Escreva o seu nome ali embaixo e toque em Começar.",
+ "certo10_casa": "Isso mesmo! O tijolo é duro e não deixa a chuva entrar.",
+ "certo10_iglu": "Isso mesmo! Lá não cresce árvore nenhuma: o que sobra é neve.",
+ "certo10_oca": "Isso mesmo! A palha da mata é fresca por dentro no calor.",
+ "certo10_palafita": "Isso mesmo! Quando o rio enche, a água passa por baixo e não molha a casa.",
+ "certo10_tenda": "Isso mesmo! Quem anda atrás da água precisa de uma casa que vá junto.",
+ "certo11_casamadeira": "Isso! A gente encontra casa de madeira no campo.",
+ "certo11_iglu": "Isso! A gente encontra iglu na terra do gelo.",
+ "certo11_oca": "Isso! A gente encontra oca na aldeia.",
+ "certo11_palafita": "Isso! A gente encontra palafita na beira do rio.",
+ "certo11_predio": "Isso! A gente encontra prédio na cidade.",
+ "certo11_tenda": "Isso! A gente encontra tenda no deserto.",
+ "certo12_iglu": "Isso mesmo! Lá não cresce árvore nenhuma: o que sobra é neve.",
+ "certo12_oca": "Isso mesmo! A palha da mata é fresca por dentro no calor.",
+ "certo12_palafita": "Isso mesmo! Quando o rio enche, a água passa por baixo e não molha a casa.",
+ "certo12_predio": "Isso mesmo! Na cidade sobra pouco chão, então as casas sobem.",
+ "certo12_tenda": "Isso mesmo! Quem anda atrás da água precisa de uma casa que vá junto.",
+ "certo13_casamadeira_nao": "Isso! Esta dupla está trocada. Casa de madeira no campo tem árvore perto, e a madeira segura o frio.",
+ "certo13_casamadeira_sim": "Isso! Casa de madeira combina com esse lugar. No campo tem árvore perto, e a madeira segura o frio.",
+ "certo13_iglu_nao": "Isso! Esta dupla está trocada. Iglu lá não cresce árvore nenhuma: o que sobra é neve.",
+ "certo13_iglu_sim": "Isso! Iglu combina com esse lugar. Lá não cresce árvore nenhuma: o que sobra é neve.",
+ "certo13_oca_nao": "Isso! Esta dupla está trocada. Oca a palha da mata é fresca por dentro no calor.",
+ "certo13_oca_sim": "Isso! Oca combina com esse lugar. A palha da mata é fresca por dentro no calor.",
+ "certo13_palafita_nao": "Isso! Esta dupla está trocada. Palafita quando o rio enche, a água passa por baixo e não molha a casa.",
+ "certo13_palafita_sim": "Isso! Palafita combina com esse lugar. Quando o rio enche, a água passa por baixo e não molha a casa.",
+ "certo13_predio_nao": "Isso! Esta dupla está trocada. Prédio na cidade sobra pouco chão, então as casas sobem.",
+ "certo13_predio_sim": "Isso! Prédio combina com esse lugar. Na cidade sobra pouco chão, então as casas sobem.",
+ "certo13_tenda_nao": "Isso! Esta dupla está trocada. Tenda quem anda atrás da água precisa de uma casa que vá junto.",
+ "certo13_tenda_sim": "Isso! Tenda combina com esse lugar. Quem anda atrás da água precisa de uma casa que vá junto.",
+ "certo14_castelo": "Isso! Casa enorme de pedra, com torres, que os reis mandavam construir.",
+ "certo14_iglu": "Isso! Casa redonda feita de blocos de neve, na terra do gelo.",
+ "certo14_oca": "Isso! Casa comprida dos povos indígenas, coberta de palha.",
+ "certo14_palafita": "Isso! Casa de madeira levantada sobre estacas, acima da água.",
+ "certo14_sobrado": "Isso! É uma casa de dois andares, com escada dentro dela.",
+ "certo14_tenda": "Isso! Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "certo15_abriga": "Isso! A moradia abriga a família do sol, da chuva e do frio.",
+ "certo15_andares": "Isso! Nos prédios moram muitas famílias, uma em cima da outra.",
+ "certo15_comodos": "Isso! As salas, os quartos e a cozinha são os cômodos da casa.",
+ "certo15_estacas": "Isso! As palafitas são construções feitas sobre estacas, onde a água sobe.",
+ "certo15_material": "Isso! Cada moradia é construída com o material que existe no lugar dela.",
+ "certo16_iglu": "Isso! Iglu. Casa redonda feita de blocos de neve, na terra do gelo.",
+ "certo16_oca": "Isso! Oca. Casa comprida dos povos indígenas, coberta de palha.",
+ "certo16_palafita": "Isso! Palafita. Casa de madeira levantada sobre estacas, acima da água.",
+ "certo16_predio": "Isso! Prédio. Tem muitos andares: as casas ficam uma em cima da outra.",
+ "certo16_sobrado": "Isso! Sobrado. É uma casa de dois andares, com escada dentro dela.",
+ "certo16_tenda": "Isso! Tenda. Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "certo17_casa": "Isso! De cima a gente vê o telhado. Casa vista de cima é assim.",
+ "certo17_oca": "Isso! De cima a gente vê o telhado. Oca vista de cima é assim.",
+ "certo17_predio": "Isso! De cima a gente vê o telhado. Prédio vista de cima é assim.",
+ "certo17_tenda": "Isso! De cima a gente vê o telhado. Tenda vista de cima é assim.",
+ "certo18_campinho": "Achou o campo de futebol! De cima, ela é assim.",
+ "certo18_casas": "Achou as casas! De cima, ela é assim.",
+ "certo18_escola": "Achou a escola! De cima, ela é assim.",
+ "certo19_casa": "Isso! Esta é a casa vista de lado.",
+ "certo19_casacima": "Isso! Esta é a casa vista de cima.",
+ "certo19_casaobliqua": "Isso! Esta é a casa vista de esguelha.",
+ "certo19_escola": "Isso! Esta é a escola vista de lado.",
+ "certo19_escolacima": "Isso! Esta é a escola vista de cima.",
+ "certo19_escolaobliqua": "Isso! Esta é a escola vista de esguelha.",
+ "certo1_precisa": "Isso mesmo! Toda casa precisa ter… teto, parede, chão, porta.",
+ "certo1_serve": "Isso mesmo! A moradia serve para… abrigar a família, proteger do sol e da chuva, dar um lugar para dormir, guardar as nossas coisas.",
+ "certo20_casa": "Isso! A casa mudou: antes, casa de madeira, com fogão de lenha e sem energia elétrica. Hoje, casa de tijolo, com energia elétrica e água encanada.",
+ "certo20_escola": "Isso! A escola mudou: antes, uma sala só, de madeira, com lousa de giz. Hoje, escola de alvenaria, com várias salas e computadores.",
+ "certo20_rua": "Isso! A rua mudou: antes, rua de chão batido, com carroça. Hoje, rua de asfalto, com carros e postes.",
+ "certo21_paredes": "Isso! 2º: as paredes depois sobem as paredes, tijolo por tijolo.",
+ "certo21_planta": "Isso! 1º: o desenho da casa primeiro alguém desenha a casa no papel.",
+ "certo21_pronta": "Isso! 4º: a casa pronta no fim vem a pintura, e a família se muda.",
+ "certo21_telhado": "Isso! 3º: o telhado só então entra o telhado, para tapar a chuva.",
+ "certo22_arquiteto": "Isso! Arquiteto: desenha a casa no papel antes de ela existir.",
+ "certo22_eletricista": "Isso! Eletricista: passa os fios que levam a luz pela casa.",
+ "certo22_encanador": "Isso! Encanador: põe os canos por onde a água anda.",
+ "certo22_pedreiro": "Isso! Pedreiro: levanta as paredes, tijolo por tijolo.",
+ "certo23_armario": "Isso! O armário fica no quarto.",
+ "certo23_cama": "Isso! A cama fica no quarto.",
+ "certo23_chuveiro": "Isso! O chuveiro fica no banheiro.",
+ "certo23_fogao": "Isso! O fogão fica na cozinha.",
+ "certo23_geladeira": "Isso! A geladeira fica na cozinha.",
+ "certo23_sofa": "Isso! O sofá fica na sala.",
+ "certo24": "Achou uma moradia! Continue procurando.",
+ "certo25_casa": "Casa entrou na sua rua! O tijolo é duro e não deixa a chuva entrar.",
+ "certo25_casabarro": "Casa de barro entrou na sua rua! O barro está debaixo dos pés e não custa nada.",
+ "certo25_casamadeira": "Casa de madeira entrou na sua rua! No campo tem árvore perto, e a madeira segura o frio.",
+ "certo25_castelo": "Castelo entrou na sua rua! A pedra é a coisa mais dura que havia para fazer parede.",
+ "certo25_iglu": "Iglu entrou na sua rua! Lá não cresce árvore nenhuma: o que sobra é neve.",
+ "certo25_oca": "Oca entrou na sua rua! A palha da mata é fresca por dentro no calor.",
+ "certo25_palafita": "Palafita entrou na sua rua! Quando o rio enche, a água passa por baixo e não molha a casa.",
+ "certo25_predio": "Prédio entrou na sua rua! Na cidade sobra pouco chão, então as casas sobem.",
+ "certo25_sobrado": "Sobrado entrou na sua rua! Dois andares no mesmo terreno cabem mais gente.",
+ "certo25_tenda": "Tenda entrou na sua rua! Quem anda atrás da água precisa de uma casa que vá junto.",
+ "certo2_casa": "Isso! É casa.",
+ "certo2_casabarro": "Isso! É casa de barro.",
+ "certo2_casamadeira": "Isso! É casa de madeira.",
+ "certo2_predio": "Isso! É prédio.",
+ "certo2_sobrado": "Isso! É sobrado.",
+ "certo3_castelo": "Isso! É castelo.",
+ "certo3_iglu": "Isso! É iglu.",
+ "certo3_oca": "Isso! É oca.",
+ "certo3_palafita": "Isso! É palafita.",
+ "certo3_tenda": "Isso! É tenda.",
+ "certo4_iglu": "Muito bem! Iglu é esta.",
+ "certo4_oca": "Muito bem! Oca é esta.",
+ "certo4_palafita": "Muito bem! Palafita é esta.",
+ "certo4_predio": "Muito bem! Prédio é esta.",
+ "certo4_sobrado": "Muito bem! Sobrado é esta.",
+ "certo4_tenda": "Muito bem! Tenda é esta.",
+ "certo5_castelo": "Isso! cas... te... lo. Castelo.",
+ "certo5_iglu": "Isso! i... glu. Iglu.",
+ "certo5_palafita": "Isso! pa... la... fi... ta. Palafita.",
+ "certo5_sobrado": "Isso! so... bra... do. Sobrado.",
+ "certo5_tenda": "Isso! ten... da. Tenda.",
+ "certo6_casa": "Isso! Casa é feita de tijolo.",
+ "certo6_casabarro": "Isso! Casa de barro é feita de barro.",
+ "certo6_casamadeira": "Isso! Casa de madeira é feita de madeira.",
+ "certo6_iglu": "Isso! Iglu é feita de gelo.",
+ "certo6_oca": "Isso! Oca é feita de palha.",
+ "certo7_casabarro": "Isso! Casa de barro é feita de barro.",
+ "certo7_castelo": "Isso! Castelo é feita de pedra.",
+ "certo7_oca": "Isso! Oca é feita de palha.",
+ "certo7_palafita": "Isso! Palafita é feita de madeira.",
+ "certo7_predio": "Isso! Prédio é feita de tijolo.",
+ "certo7_tenda": "Isso! Tenda é feita de pano.",
+ "certo8_casa": "Isso! Casa é de tijolo.",
+ "certo8_castelo": "Isso! Castelo é de pedra.",
+ "certo8_iglu": "Isso! Iglu é de gelo.",
+ "certo8_oca": "Isso! Oca é de palha.",
+ "certo8_palafita": "Isso! Palafita é de madeira.",
+ "certo8_tenda": "Isso! Tenda é de pano.",
+ "certo9_barro": "Achou: barro! É o material do casa de barro.",
+ "certo9_madeira": "Achou: madeira! É o material do casa de madeira.",
+ "certo9_palha": "Achou: palha! É o material da oca.",
+ "certo9_pedra": "Achou: pedra! É o material do castelo.",
+ "certo9_tijolo": "Achou: tijolo! É o material do casa.",
+ "comodo_banheiro": "banheiro.",
+ "comodo_cozinha": "cozinha.",
+ "comodo_quarto": "quarto.",
+ "comodo_sala": "sala.",
+ "def_casa": "Tem um andar só, com paredes de tijolo e telhado de telhas.",
+ "def_casabarro": "As paredes são de barro amassado sobre um trançado de varas.",
+ "def_casamadeira": "As paredes são tábuas de madeira, uma ao lado da outra.",
+ "def_castelo": "Casa enorme de pedra, com torres, que os reis mandavam construir.",
+ "def_iglu": "Casa redonda feita de blocos de neve, na terra do gelo.",
+ "def_oca": "Casa comprida dos povos indígenas, coberta de palha.",
+ "def_palafita": "Casa de madeira levantada sobre estacas, acima da água.",
+ "def_predio": "Tem muitos andares: as casas ficam uma em cima da outra.",
+ "def_sobrado": "É uma casa de dois andares, com escada dentro dela.",
+ "def_tenda": "Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "dica10_casa": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica10_iglu": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica10_oca": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica10_palafita": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica10_tenda": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica11_casamadeira": "Olhe o chão e o que está em volta da casa na figura. No campo tem árvore perto, e a madeira segura o frio.",
+ "dica11_iglu": "Olhe o chão e o que está em volta da casa na figura. Lá não cresce árvore nenhuma: o que sobra é neve.",
+ "dica11_oca": "Olhe o chão e o que está em volta da casa na figura. A palha da mata é fresca por dentro no calor.",
+ "dica11_palafita": "Olhe o chão e o que está em volta da casa na figura. Quando o rio enche, a água passa por baixo e não molha a casa.",
+ "dica11_predio": "Olhe o chão e o que está em volta da casa na figura. Na cidade sobra pouco chão, então as casas sobem.",
+ "dica11_tenda": "Olhe o chão e o que está em volta da casa na figura. Quem anda atrás da água precisa de uma casa que vá junto.",
+ "dica12_iglu": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica12_oca": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica12_palafita": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica12_predio": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica12_tenda": "Pense no lugar onde essa casa fica. O que existe lá para construir? E o que NÃO existe?",
+ "dica13_casamadeira": "Pergunte duas coisas: esse material existe naquele lugar? E essa casa aguenta o tempo que faz lá?",
+ "dica13_iglu": "Pergunte duas coisas: esse material existe naquele lugar? E essa casa aguenta o tempo que faz lá?",
+ "dica13_oca": "Pergunte duas coisas: esse material existe naquele lugar? E essa casa aguenta o tempo que faz lá?",
+ "dica13_palafita": "Pergunte duas coisas: esse material existe naquele lugar? E essa casa aguenta o tempo que faz lá?",
+ "dica13_predio": "Pergunte duas coisas: esse material existe naquele lugar? E essa casa aguenta o tempo que faz lá?",
+ "dica13_tenda": "Pergunte duas coisas: esse material existe naquele lugar? E essa casa aguenta o tempo que faz lá?",
+ "dica14_castelo": "Leia as três de novo. Olhe a figura e veja qual frase fala do que você está vendo.",
+ "dica14_iglu": "Leia as três de novo. Olhe a figura e veja qual frase fala do que você está vendo.",
+ "dica14_oca": "Leia as três de novo. Olhe a figura e veja qual frase fala do que você está vendo.",
+ "dica14_palafita": "Leia as três de novo. Olhe a figura e veja qual frase fala do que você está vendo.",
+ "dica14_sobrado": "Leia as três de novo. Olhe a figura e veja qual frase fala do que você está vendo.",
+ "dica14_tenda": "Leia as três de novo. Olhe a figura e veja qual frase fala do que você está vendo.",
+ "dica15_abriga": "Escute a frase inteira de novo e veja qual das palavras faz sentido no buraco.",
+ "dica15_andares": "Escute a frase inteira de novo e veja qual das palavras faz sentido no buraco.",
+ "dica15_comodos": "Escute a frase inteira de novo e veja qual das palavras faz sentido no buraco.",
+ "dica15_estacas": "Escute a frase inteira de novo e veja qual das palavras faz sentido no buraco.",
+ "dica15_material": "Escute a frase inteira de novo e veja qual das palavras faz sentido no buraco.",
+ "dica16_iglu": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
+ "dica16_oca": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
+ "dica16_palafita": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
+ "dica16_predio": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
+ "dica16_sobrado": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
+ "dica16_tenda": "Escute a pista de novo e conte as casinhas da cruzadinha: a palavra tem esse tanto de letras.",
+ "dica17_casa": "De cima a gente não vê a porta nem a janela: vê o telhado e o formato dele. Olhe o formato da casa na figura.",
+ "dica17_oca": "De cima a gente não vê a porta nem a janela: vê o telhado e o formato dele. Olhe o formato da casa na figura.",
+ "dica17_predio": "De cima a gente não vê a porta nem a janela: vê o telhado e o formato dele. Olhe o formato da casa na figura.",
+ "dica17_tenda": "De cima a gente não vê a porta nem a janela: vê o telhado e o formato dele. Olhe o formato da casa na figura.",
+ "dica19_casa": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
+ "dica19_casacima": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
+ "dica19_casaobliqua": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
+ "dica19_escola": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
+ "dica19_escolacima": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
+ "dica19_escolaobliqua": "Pergunte: dá para ver a porta e a janela? Então é de lado. Só o telhado? É de cima. Um pouco dos dois? É de esguelha.",
+ "dica1_precisa": "Falta alguma, ou sobrou alguma. Leia de novo uma por uma e pergunte: isto é mesmo coisa de casa?",
+ "dica1_serve": "Falta alguma, ou sobrou alguma. Leia de novo uma por uma e pergunte: isto é mesmo coisa de casa?",
+ "dica20_casa": "Procure as coisas que só existem hoje: poste, carro, computador. Onde elas não aparecem, é o ANTES.",
+ "dica20_escola": "Procure as coisas que só existem hoje: poste, carro, computador. Onde elas não aparecem, é o ANTES.",
+ "dica20_rua": "Procure as coisas que só existem hoje: poste, carro, computador. Onde elas não aparecem, é o ANTES.",
+ "dica21_paredes": "Pense na ordem de verdade: dá para pôr o telhado antes das paredes? Dá para pintar antes de a casa existir?",
+ "dica21_planta": "Pense na ordem de verdade: dá para pôr o telhado antes das paredes? Dá para pintar antes de a casa existir?",
+ "dica21_pronta": "Pense na ordem de verdade: dá para pôr o telhado antes das paredes? Dá para pintar antes de a casa existir?",
+ "dica21_telhado": "Pense na ordem de verdade: dá para pôr o telhado antes das paredes? Dá para pintar antes de a casa existir?",
+ "dica22_arquiteto": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
+ "dica22_eletricista": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
+ "dica22_encanador": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
+ "dica22_pedreiro": "Escute de novo o que está escrito do outro lado e procure a palavra que combina com o nome do trabalho.",
+ "dica23_armario": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica23_cama": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica23_chuveiro": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica23_fogao": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica23_geladeira": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica23_sofa": "Pense na sua casa: em que cômodo essa coisa fica? É onde a gente dorme, come, toma banho, ou fica junto?",
+ "dica2_casa": "Escute a descrição de novo, no alto-falante: Tem um andar só, com paredes de tijolo e telhado de telhas.",
+ "dica2_casabarro": "Escute a descrição de novo, no alto-falante: As paredes são de barro amassado sobre um trançado de varas.",
+ "dica2_casamadeira": "Escute a descrição de novo, no alto-falante: As paredes são tábuas de madeira, uma ao lado da outra.",
+ "dica2_predio": "Escute a descrição de novo, no alto-falante: Tem muitos andares: as casas ficam uma em cima da outra.",
+ "dica2_sobrado": "Escute a descrição de novo, no alto-falante: É uma casa de dois andares, com escada dentro dela.",
+ "dica3_castelo": "Escute a descrição de novo, no alto-falante: Casa enorme de pedra, com torres, que os reis mandavam construir.",
+ "dica3_iglu": "Escute a descrição de novo, no alto-falante: Casa redonda feita de blocos de neve, na terra do gelo.",
+ "dica3_oca": "Escute a descrição de novo, no alto-falante: Casa comprida dos povos indígenas, coberta de palha.",
+ "dica3_palafita": "Escute a descrição de novo, no alto-falante: Casa de madeira levantada sobre estacas, acima da água.",
+ "dica3_tenda": "Escute a descrição de novo, no alto-falante: Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "dica4_iglu": "Esse nome é de outra casa. Ouça a descrição desta aqui antes de escolher.",
+ "dica4_oca": "Esse nome é de outra casa. Ouça a descrição desta aqui antes de escolher.",
+ "dica4_palafita": "Esse nome é de outra casa. Ouça a descrição desta aqui antes de escolher.",
+ "dica4_predio": "Esse nome é de outra casa. Ouça a descrição desta aqui antes de escolher.",
+ "dica4_sobrado": "Esse nome é de outra casa. Ouça a descrição desta aqui antes de escolher.",
+ "dica4_tenda": "Esse nome é de outra casa. Ouça a descrição desta aqui antes de escolher.",
+ "dica5_castelo": "Escute a dica de novo e vá devagar: a primeira sílaba primeiro, depois a segunda.",
+ "dica5_iglu": "Escute a dica de novo e vá devagar: a primeira sílaba primeiro, depois a segunda.",
+ "dica5_palafita": "Escute a dica de novo e vá devagar: a primeira sílaba primeiro, depois a segunda.",
+ "dica5_sobrado": "Escute a dica de novo e vá devagar: a primeira sílaba primeiro, depois a segunda.",
+ "dica5_tenda": "Escute a dica de novo e vá devagar: a primeira sílaba primeiro, depois a segunda.",
+ "dica6_casa": "Olhe a parede e o telhado da figura. Tem um andar só, com paredes de tijolo e telhado de telhas.",
+ "dica6_casabarro": "Olhe a parede e o telhado da figura. As paredes são de barro amassado sobre um trançado de varas.",
+ "dica6_casamadeira": "Olhe a parede e o telhado da figura. As paredes são tábuas de madeira, uma ao lado da outra.",
+ "dica6_iglu": "Olhe a parede e o telhado da figura. Casa redonda feita de blocos de neve, na terra do gelo.",
+ "dica6_oca": "Olhe a parede e o telhado da figura. Casa comprida dos povos indígenas, coberta de palha.",
+ "dica7_casabarro": "Olhe a parede e o telhado da figura. As paredes são de barro amassado sobre um trançado de varas.",
+ "dica7_castelo": "Olhe a parede e o telhado da figura. Casa enorme de pedra, com torres, que os reis mandavam construir.",
+ "dica7_oca": "Olhe a parede e o telhado da figura. Casa comprida dos povos indígenas, coberta de palha.",
+ "dica7_palafita": "Olhe a parede e o telhado da figura. Casa de madeira levantada sobre estacas, acima da água.",
+ "dica7_predio": "Olhe a parede e o telhado da figura. Tem muitos andares: as casas ficam uma em cima da outra.",
+ "dica7_tenda": "Olhe a parede e o telhado da figura. Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "dica8_casa": "Escute de novo: Tem um andar só, com paredes de tijolo e telhado de telhas.",
+ "dica8_castelo": "Escute de novo: Casa enorme de pedra, com torres, que os reis mandavam construir.",
+ "dica8_iglu": "Escute de novo: Casa redonda feita de blocos de neve, na terra do gelo.",
+ "dica8_oca": "Escute de novo: Casa comprida dos povos indígenas, coberta de palha.",
+ "dica8_palafita": "Escute de novo: Casa de madeira levantada sobre estacas, acima da água.",
+ "dica8_tenda": "Escute de novo: Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "dupla_casamadeira_aldeia": "Casa de madeira, na aldeia.",
+ "dupla_casamadeira_campo": "Casa de madeira, no campo.",
+ "dupla_casamadeira_cidade": "Casa de madeira, na cidade.",
+ "dupla_casamadeira_deserto": "Casa de madeira, no deserto.",
+ "dupla_casamadeira_gelo": "Casa de madeira, na terra do gelo.",
+ "dupla_casamadeira_rio": "Casa de madeira, na beira do rio.",
+ "dupla_iglu_aldeia": "Iglu, na aldeia.",
+ "dupla_iglu_campo": "Iglu, no campo.",
+ "dupla_iglu_cidade": "Iglu, na cidade.",
+ "dupla_iglu_deserto": "Iglu, no deserto.",
+ "dupla_iglu_gelo": "Iglu, na terra do gelo.",
+ "dupla_iglu_rio": "Iglu, na beira do rio.",
+ "dupla_oca_aldeia": "Oca, na aldeia.",
+ "dupla_oca_campo": "Oca, no campo.",
+ "dupla_oca_cidade": "Oca, na cidade.",
+ "dupla_oca_deserto": "Oca, no deserto.",
+ "dupla_oca_gelo": "Oca, na terra do gelo.",
+ "dupla_oca_rio": "Oca, na beira do rio.",
+ "dupla_palafita_aldeia": "Palafita, na aldeia.",
+ "dupla_palafita_campo": "Palafita, no campo.",
+ "dupla_palafita_cidade": "Palafita, na cidade.",
+ "dupla_palafita_deserto": "Palafita, no deserto.",
+ "dupla_palafita_gelo": "Palafita, na terra do gelo.",
+ "dupla_palafita_rio": "Palafita, na beira do rio.",
+ "dupla_predio_aldeia": "Prédio, na aldeia.",
+ "dupla_predio_campo": "Prédio, no campo.",
+ "dupla_predio_cidade": "Prédio, na cidade.",
+ "dupla_predio_deserto": "Prédio, no deserto.",
+ "dupla_predio_gelo": "Prédio, na terra do gelo.",
+ "dupla_predio_rio": "Prédio, na beira do rio.",
+ "dupla_tenda_aldeia": "Tenda, na aldeia.",
+ "dupla_tenda_campo": "Tenda, no campo.",
+ "dupla_tenda_cidade": "Tenda, na cidade.",
+ "dupla_tenda_deserto": "Tenda, no deserto.",
+ "dupla_tenda_gelo": "Tenda, na terra do gelo.",
+ "dupla_tenda_rio": "Tenda, na beira do rio.",
+ "escreva": "Escreva a palavra usando o teclado.",
+ "fig_casa": "a casa.",
+ "fig_casaantiga": "Casa de madeira, com fogão de lenha e sem energia elétrica.",
+ "fig_casacima": "a casa.",
+ "fig_casahoje": "Casa de tijolo, com energia elétrica e água encanada.",
+ "fig_casaobliqua": "a casa.",
+ "fig_escola": "a escola.",
+ "fig_escolaantiga": "Uma sala só, de madeira, com lousa de giz.",
+ "fig_escolacima": "a escola.",
+ "fig_escolahoje": "Escola de alvenaria, com várias salas e computadores.",
+ "fig_escolaobliqua": "a escola.",
+ "fig_ruaantiga": "Rua de chão batido, com carroça.",
+ "fig_ruahoje": "Rua de asfalto, com carros e postes.",
+ "fim": "Você chegou ao fim! Agora você já sabe olhar uma casa e perguntar: de que ela é feita, e por que ela é assim neste lugar? Olhe a sua rua ali embaixo. E, no caminho de casa hoje, repare: quantos tipos de moradia você consegue achar no seu bairro?",
+ "folhaPronta": "Folha pronta! Muito bem.",
+ "frase_abriga": "A moradia ... a família do sol, da chuva e do frio.",
+ "frase_andares": "Nos ... moram muitas famílias, uma em cima da outra.",
+ "frase_comodos": "As salas, os quartos e a cozinha são os ... da casa.",
+ "frase_estacas": "As ... são construções feitas sobre estacas, onde a água sobe.",
+ "frase_material": "Cada moradia é construída com o ... que existe no lugar dela.",
+ "ligue": "Toque numa figura do lado esquerdo e depois na do lado direito.",
+ "lug_aldeia": "na aldeia.",
+ "lug_campo": "no campo.",
+ "lug_cidade": "na cidade.",
+ "lug_deserto": "no deserto.",
+ "lug_gelo": "na terra do gelo.",
+ "lug_rio": "na beira do rio.",
+ "mapa_campinho": "Ache o campo de futebol no mapa.",
+ "mapa_casas": "Ache as casas no mapa.",
+ "mapa_escola": "Ache a escola no mapa.",
+ "mapadica_campinho": "O retângulo verde, no meio do quarteirão.",
+ "mapadica_casas": "Os telhadinhos pequenos, um do lado do outro.",
+ "mapadica_escola": "O telhado maior e comprido, com o pátio do lado.",
+ "mat_barro": "barro.",
+ "mat_gelo": "gelo.",
+ "mat_madeira": "madeira.",
+ "mat_palha": "palha.",
+ "mat_pano": "pano.",
+ "mat_pedra": "pedra.",
+ "mat_tijolo": "tijolo.",
+ "montenesta": "Agora toque nas sílabas desta moradia, uma de cada vez, na ordem certa.",
+ "naoemoradia": "Essa palavra não é uma moradia. Procure os nomes de casa no poema.",
+ "nome_casa": "casa.",
+ "nome_casabarro": "casa de barro.",
+ "nome_casamadeira": "casa de madeira.",
+ "nome_castelo": "castelo.",
+ "nome_iglu": "iglu.",
+ "nome_oca": "oca.",
+ "nome_palafita": "palafita.",
+ "nome_predio": "prédio.",
+ "nome_sobrado": "sobrado.",
+ "nome_tenda": "tenda.",
+ "novoCaderno": "Caderno novo! As moradias mudaram de ordem.",
+ "obj_armario": "o armário.",
+ "obj_cama": "a cama.",
+ "obj_chuveiro": "o chuveiro.",
+ "obj_fogao": "o fogão.",
+ "obj_geladeira": "a geladeira.",
+ "obj_sofa": "o sofá.",
+ "obra_paredes": "Depois sobem as paredes, tijolo por tijolo.",
+ "obra_planta": "Primeiro alguém desenha a casa no papel.",
+ "obra_pronta": "No fim vem a pintura, e a família se muda.",
+ "obra_telhado": "Só então entra o telhado, para tapar a chuva.",
+ "olhe_casa": "Tem um andar só, com paredes de tijolo e telhado de telhas.",
+ "olhe_casabarro": "As paredes são de barro amassado sobre um trançado de varas.",
+ "olhe_casamadeira": "As paredes são tábuas de madeira, uma ao lado da outra.",
+ "olhe_castelo": "Casa enorme de pedra, com torres, que os reis mandavam construir.",
+ "olhe_iglu": "Casa redonda feita de blocos de neve, na terra do gelo.",
+ "olhe_oca": "Casa comprida dos povos indígenas, coberta de palha.",
+ "olhe_palafita": "Casa de madeira levantada sobre estacas, acima da água.",
+ "olhe_predio": "Tem muitos andares: as casas ficam uma em cima da outra.",
+ "olhe_sobrado": "É uma casa de dois andares, com escada dentro dela.",
+ "olhe_tenda": "Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "op_nao": "Não combina.",
+ "op_sim": "Sim, combina.",
+ "p10enun": "Folha dez: esta é a pergunta mais importante do caderno. Por que esta moradia é feita desse material? Leia as três frases e toque na certa.",
+ "p11enun": "Folha onze: em que lugar do mundo a gente encontra esta moradia? Toque no lugar.",
+ "p12enun": "Folha doze: a moradia está no lugar dela. Agora diga por quê: o que existe naquele lugar que fez a casa ficar assim?",
+ "p13enun": "Folha treze: aqui algumas duplas estão trocadas. Olhe a moradia e o lugar e diga: eles combinam, ou não combinam?",
+ "p14enun": "Folha catorze: leia as três frases com calma. Só uma explica esta moradia.",
+ "p15enun": "Folha quinze: agora não tem figura nenhuma para ajudar. Leia a frase inteira e toque na palavra que falta.",
+ "p16enun": "Folha dezesseis: a cruzadinha das casas. Toque numa pista, escute, e escreva a palavra na cruzadinha. Dá para usar o teclado da tela ou o teclado de verdade.",
+ "p17enun": "Folha dezessete: imagine que você está num avião, bem em cima da casa. Qual destas figuras é esta mesma moradia vista de cima?",
+ "p18enun": "Folha dezoito: este é um bairro visto de cima, como o avião vê. Ache no mapa o que a folha pedir, e toque ali.",
+ "p19enun": "Folha dezenove: a mesma casa e a mesma escola aparecem de três jeitos. De lado, de cima, ou de esguelha? Ponha cada figura na coluna certa.",
+ "p1enun": "Folha um: antes de conhecer as casas do mundo, uma pergunta. Para que serve uma moradia? Marque TODAS as respostas certas, porque aqui é mais de uma. Depois toque em Conferir.",
+ "p20enun": "Folha vinte: as duas figuras são do mesmo lugar, mas em tempos diferentes. Ponha uma no ANTES e a outra no HOJE.",
+ "p21enun": "Folha vinte e um: uma casa não nasce pronta. Ponha as cenas da construção na ordem em que elas acontecem.",
+ "p22enun": "Folha vinte e dois: muita gente trabalha para uma casa ficar de pé. Ligue cada profissional ao que ele faz na obra.",
+ "p23enun": "Folha vinte e três: agora entramos na casa. Em que cômodo fica cada coisa?",
+ "p24enun": "Folha vinte e quatro: neste poema estão escondidas várias moradias. Toque em todas as que você achar.",
+ "p25enun": "Folha vinte e cinco: agora é a sua rua. Escolha as moradias que você quer nela — pode ser quantas você quiser, do mundo inteiro.",
+ "p2enun": "Folha dois: olhe a moradia e toque no nome dela. Estas são as que você vê no caminho da escola.",
+ "p3enun": "Folha três: agora são moradias de outros lugares do mundo. Olhe com atenção e toque no nome de cada uma.",
+ "p4enun": "Folha quatro: leve cada nome escrito até a moradia certa. Você pode arrastar o nome, ou tocar no nome e depois na casa.",
+ "p5enun": "Folha cinco: as sílabas estão embaralhadas na tabela lá em cima. Toque nelas na ordem certa e descubra que moradia aparece.",
+ "p6enun": "Folha seis: agora a pergunta muda. Não é mais o nome: é de QUE a casa é feita. Toque no material certo.",
+ "p7enun": "Folha sete: mesma pergunta, mas agora são quatro materiais para escolher. Olhe bem a moradia antes de responder.",
+ "p8enun": "Folha oito: ligue cada moradia ao material de que ela é feita. Toque na moradia e depois no material.",
+ "p9enun": "Folha nove: no diagrama estão escondidos cinco materiais de construção. Arraste o dedo sobre as letras para achar cada um. Eles estão deitados ou em pé.",
+ "pal_abriga": "abriga.",
+ "pal_cômodos": "cômodos.",
+ "pal_material": "material.",
+ "pal_palafitas": "palafitas.",
+ "pal_prédios": "prédios.",
+ "perg12_iglu": "Esta moradia fica na terra do gelo. Por quê?",
+ "perg12_oca": "Esta moradia fica na aldeia. Por quê?",
+ "perg12_palafita": "Esta moradia fica na beira do rio. Por quê?",
+ "perg12_predio": "Esta moradia fica na cidade. Por quê?",
+ "perg12_tenda": "Esta moradia fica no deserto. Por quê?",
+ "perg1_precisa": "Toda casa precisa ter… teto; parede; chão; porta; piscina; elevador.",
+ "perg1_serve": "A moradia serve para… abrigar a família; proteger do sol e da chuva; dar um lugar para dormir; guardar as nossas coisas; deixar a gente na chuva; deixar a gente no frio.",
+ "pista_iglu": "Casa de blocos de neve.",
+ "pista_oca": "Casa comprida dos povos indígenas, coberta de palha.",
+ "pista_palafita": "Casa levantada sobre estacas, na beira do rio.",
+ "pista_predio": "Construção alta, com muitos andares.",
+ "pista_sobrado": "Casa de dois andares.",
+ "pista_tenda": "Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "pistasil_castelo": "Casa enorme de pedra, com torres, que os reis mandavam construir.",
+ "pistasil_iglu": "Casa redonda feita de blocos de neve, na terra do gelo.",
+ "pistasil_palafita": "Casa de madeira levantada sobre estacas, acima da água.",
+ "pistasil_sobrado": "É uma casa de dois andares, com escada dentro dela.",
+ "pistasil_tenda": "Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+ "poema": "CADA UM NA SUA. No gelo mora o IGLU, redondo e branquinho. Na beira do rio, a PALAFITA de pauzinho. Na aldeia é a OCA, de palha cheirosa. No deserto a TENDA viaja e repousa. E aqui no meu bairro, que casa eu vejo? A CASA, o SOBRADO, o PRÉDIO e o sobejo. Cada um na sua — e todas são lar: a casa do outro também é lugar.",
+ "por_casa": "O tijolo é duro e não deixa a chuva entrar.",
+ "por_casabarro": "O barro está debaixo dos pés e não custa nada.",
+ "por_casamadeira": "No campo tem árvore perto, e a madeira segura o frio.",
+ "por_castelo": "A pedra é a coisa mais dura que havia para fazer parede.",
+ "por_iglu": "Lá não cresce árvore nenhuma: o que sobra é neve.",
+ "por_oca": "A palha da mata é fresca por dentro no calor.",
+ "por_palafita": "Quando o rio enche, a água passa por baixo e não molha a casa.",
+ "por_predio": "Na cidade sobra pouco chão, então as casas sobem.",
+ "por_sobrado": "Dois andares no mesmo terreno cabem mais gente.",
+ "por_tenda": "Quem anda atrás da água precisa de uma casa que vá junto.",
+ "prof_arquiteto": "arquiteto.",
+ "prof_eletricista": "eletricista.",
+ "prof_encanador": "encanador.",
+ "prof_pedreiro": "pedreiro.",
+ "quase": "Quase! Olhe de novo com calma e tente outra.",
+ "tarefa_arquiteto": "Desenha a casa no papel antes de ela existir.",
+ "tarefa_eletricista": "Passa os fios que levam a luz pela casa.",
+ "tarefa_encanador": "Põe os canos por onde a água anda.",
+ "tarefa_pedreiro": "Levanta as paredes, tijolo por tijolo.",
+ "tempo_casa": "Aqui é a casa. Antes: Casa de madeira, com fogão de lenha e sem energia elétrica. Hoje: Casa de tijolo, com energia elétrica e água encanada.",
+ "tempo_escola": "Aqui é a escola. Antes: Uma sala só, de madeira, com lousa de giz. Hoje: Escola de alvenaria, com várias salas e computadores.",
+ "tempo_rua": "Aqui é a rua. Antes: Rua de chão batido, com carroça. Hoje: Rua de asfalto, com carros e postes.",
+ "toque_cena": "Primeiro toque numa cena ali embaixo. Depois toque no lugar da fila.",
+ "toque_etiqueta": "Primeiro toque num nome ali embaixo. Depois toque na casa dele.",
+ "toque_figura": "Primeiro toque numa figura ali embaixo. Depois toque na coluna.",
+ "toque_objeto": "Primeiro toque num objeto ali embaixo. Depois toque no cômodo.",
+ "vista_cima": "de cima: como quem está num avião, bem em cima.",
+ "vista_esguelha": "de esguelha: como quem está num avião mas de banda.",
+ "vista_lado": "de lado: como quem está na calçada olhando.",
+ "vistacima": "Uma vista de cima.",
+ "vozOn": "Narração ligada!"
+};
+/*FALAS-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1x2w6dg": 1, "1k4x79h": 1, "rzzuck": 1, "qpn3mi": 1, "miy0y4": 1, "1s3uuat": 1, "17vl72y": 1, "zffp6x": 1, "1vwn21o": 1, "jvgk54": 1, "1hn18ad": 1, "1tzqbbq": 1, "a6iknv": 1, "nq0dts": 1, "gqpkov": 1, "bzf9ec": 1, "1u2u6ew": 1, "1eg4f83": 1, "1vsgy6s": 1, "uxetb": 1, "1aidlee": 1, "1impafx": 1, "fpz28s": 1, "pe931z": 1, "1wf9t79": 1, "qlvqta": 1, "lrn9kp": 1, "ltsicr": 1, "7j5eyj": 1, "coeu7h": 1, "oml86c": 1, "19hdodg": 1, "12tgdwr": 1, "1g4yed8": 1, "5g6k9m": 1, "1b5b75t": 1, "168cwfb": 1, "6d8fhu": 1, "d0tc3c": 1, "azcb8l": 1, "1br7rok": 1, "cxb6jw": 1, "1rnu88g": 1, "1e0krqv": 1, "1xik6ay": 1, "ya00jy": 1, "18noo4d": 1, "ajf7fs": 1, "1115zms": 1, "136n22r": 1, "1rr08jt": 1, "1rnh7t5": 1, "187d563": 1, "3hwoz2": 1, "3fs6we": 1, "135euks": 1, "1m4kzen": 1, "17lw2my": 1, "vqi6v5": 1, "mgeiok": 1, "aepj2q": 1, "1kh9hhp": 1, "1si66gt": 1, "psdxeu": 1, "db2bow": 1, "7kzqkm": 1, "1scc08u": 1, "1vihrn5": 1, "z00nxi": 1, "1jje154": 1, "zhkvb7": 1, "18km7r6": 1, "ozfjq3": 1, "1b4s4v7": 1, "14t9f39": 1, "skwt3m": 1, "1kxr236": 1, "3vmva5": 1, "4gc6wc": 1, "1j3qhhd": 1, "toyq3v": 1, "16aw3mv": 1, "1la7g05": 1, "1yannnz": 1, "gon45g": 1, "15thzba": 1, "3eepud": 1, "2fkx5k": 1, "1v4mgqr": 1, "dumxt8": 1, "1054k83": 1, "l7brba": 1, "3d168i": 1, "3mky0": 1, "dfqjnn": 1, "1l9hbr3": 1, "12w5yfr": 1, "1d4tlil": 1, "1wlxheu": 1, "1hcbgyx": 1, "1d43l9i": 1, "1l80j7e": 1, "5ppgo2": 1, "18ul3d8": 1, "n329ak": 1, "2ja3ya": 1, "1dz5jkc": 1, "17kqxjk": 1, "1xecuve": 1, "1w764fe": 1, "ji3pnx": 1, "2174ua": 1, "4t861m": 1, "1d91gp6": 1, "166612h": 1, "zglpgx": 1, "12g9qtr": 1, "r1yo9x": 1, "145b6b6": 1, "dqsjlp": 1, "ni48ad": 1, "5539ke": 1, "1yzk6rb": 1, "1xz2zvb": 1, "1eik9o1": 1, "10mta7b": 1, "j2qky5": 1, "14tz6kf": 1, "1b8h82b": 1, "1bv3umf": 1, "38iz6c": 1, "vgx5pk": 1, "uui6vv": 1, "1wwlfo1": 1, "1q4k3em": 1, "17p2rcc": 1, "1o9he1o": 1, "x6az56": 1, "1lts8hw": 1, "1bfjpnn": 1, "14bh37n": 1, "1kjr20y": 1, "14cwk6m": 1, "3z4t14": 1, "1iotda": 1, "1wizi9z": 1, "1gbaggy": 1, "v0b5h4": 1, "1ias5ic": 1, "1l94amb": 1, "1p8phb": 1, "1twjf7r": 1, "10wks6q": 1, "ni7nqi": 1, "1pgqji5": 1, "1rfaqwt": 1, "pxhqsk": 1, "1aioemr": 1, "17lrsvj": 1, "xb2cex": 1, "ola0ei": 1, "1oukiu8": 1, "17765ed": 1, "cjaafm": 1, "1xhq0jz": 1, "whemjh": 1, "hpjerx": 1, "31qtnf": 1, "1fxwfrm": 1, "11t39bv": 1, "ibft26": 1, "4rwpao": 1, "1gwcpk3": 1, "ye3jl5": 1, "1yfr5jo": 1, "d8qz1g": 1, "1wnj66e": 1, "1anpnf6": 1, "18exdq4": 1, "h33j5n": 1, "1calzoa": 1, "gjkvd8": 1, "qhbw9q": 1, "goxpbi": 1, "1ysbz14": 1, "uof0hd": 1, "jd4uyy": 1, "pp95sg": 1, "1451gg": 1, "1nbt9oe": 1, "5ij7kk": 1, "xnmz3g": 1, "15f8jej": 1, "93xrcx": 1, "1x7gy8h": 1, "1b4woq7": 1, "1llsb0l": 1, "1e7fo7x": 1, "jqlzvl": 1, "sd9gwr": 1, "x4bj0r": 1, "5ikvxx": 1, "1p8657j": 1, "kejo93": 1, "5b3aa2": 1, "1wbontc": 1, "1m37iqo": 1, "ln1mpq": 1, "1el9gr8": 1, "1bxqoto": 1, "14fd1c5": 1, "w8bxof": 1, "gfxokv": 1, "jx1itt": 1, "bl0v23": 1, "56ll0j": 1, "kwaqye": 1, "o37yb0": 1, "1dqzu58": 1, "1vxv6v6": 1, "6uplyg": 1, "1kuol3k": 1, "s69mtb": 1, "16pe36i": 1, "9no52l": 1, "12ybbhi": 1, "ki1q7x": 1, "1k4njcb": 1, "1y2ydbm": 1, "c0wfw8": 1, "10mz5di": 1, "xa8bbx": 1, "1d9s73k": 1, "15s280s": 1, "1wdlwof": 1, "1o4utpa": 1, "jl8af1": 1, "1r6agth": 1, "dudk3k": 1, "1uws2gw": 1, "40beze": 1, "y99d9m": 1, "1k637w4": 1, "17pljj2": 1, "18ajw4m": 1, "5qytnp": 1, "1b71und": 1, "htdbta": 1, "w0f877": 1, "1ostm37": 1, "4i6gej": 1, "ouzzdz": 1, "2uhop6": 1, "e0lp4s": 1, "vem98f": 1, "33r463": 1, "vbsco9": 1, "wmnwkw": 1, "1yxrutj": 1, "1nnh1x7": 1, "2x8g63": 1, "q9bnva": 1, "jr2q5": 1, "1ug0cp4": 1, "2yrdng": 1, "yj35ja": 1, "y8hh1p": 1, "rdf6le": 1, "ozofjh": 1, "swdib5": 1, "1ynvdf1": 1, "g1mr4f": 1, "16pdy10": 1, "jul3vh": 1, "trtgme": 1, "1mfn5y6": 1, "t3uftr": 1, "oywa2m": 1, "13endqn": 1, "ctw5si": 1, "1xzxo0k": 1, "150et4c": 1, "jmz0xh": 1, "oklf8a": 1, "18mz4pg": 1, "1qt8f9c": 1, "u2ebzo": 1, "fo8rw5": 1, "1f1sx4z": 1, "1slzcbd": 1, "2hctnh": 1, "1iq5yns": 1, "1l6pnic": 1, "12q5vig": 1, "nsp258": 1, "ysn5hc": 1, "x7k2y6": 1, "ef9clm": 1, "1w84bg1": 1, "1iqcvk8": 1, "1qzn7pj": 1, "13cmu7t": 1, "1rwhn6w": 1, "19us335": 1, "1qvccuh": 1, "e6czn7": 1, "wivsv2": 1, "1sg7ifm": 1, "2wxudx": 1, "o2iup2": 1, "mwtskg": 1, "1sbbuny": 1, "1exkga9": 1, "15qwec1": 1, "nesnu7": 1, "1dk3r2h": 1, "1lewon9": 1, "13nnpbv": 1, "y4pwgr": 1, "o76b2e": 1, "eiz0v1": 1, "150cash": 1, "d4yu00": 1, "1ldh491": 1, "1ydco4f": 1, "sh944a": 1, "1cm0v08": 1, "813z02": 1, "h8jlfe": 1, "22yvc4": 1, "1uzrnn6": 1, "4c84gr": 1, "1j5bcn2": 1, "imiksa": 1, "q5xstg": 1, "a6u3jz": 1, "ri8a1w": 1, "1nipedw": 1, "191ybsp": 1, "1a3lyjf": 1, "1frg173": 1, "1ehn12k": 1, "1cez6ab": 1, "1991b55": 1, "1xrji35": 1, "15q90as": 1, "kc1gea": 1, "1u5yf0y": 1, "8hb0q7": 1, "flp4ej": 1, "15cjfxz": 1, "16f2dgb": 1, "11wm5vr": 1, "1s714d6": 1, "ubqbgs": 1, "swkns7": 1};/*VOZOK-FIM*/
+
+/* ============================================================
+   OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
+   ⚠️ POR QUE JSON E NÃO OBJETO SOLTO: o `gerar_falas.py` LÊ ESTE BLOCO para
+   escrever as falas. Se os dados vivessem em dois lugares (aqui e lá), a voz
+   diria uma coisa e a tela mostraria outra — que é o defeito que o `falas.json`
+   existe para matar. Um lugar só, lido pelos dois.
+   ============================================================ */
+/*DADOS-INI*/
+/* AS MORADIAS. `mat` = do que é feita · `lug` = onde costuma ficar ·
+   `s` = as sílabas, DECLARADAS À MÃO (separar por regra em JavaScript erra em
+   português) · `def` = a frase que a explica, do jeito que a folha impressa
+   escreve · `por` = por que ela é feita desse material naquele lugar. */
+var MOR = {
+ "casa":        {"n":"CASA",             "s":["CA","SA"],           "mat":"tijolo",  "lug":"cidade",  "art":"a",
+                 "def":"Tem um andar só, com paredes de tijolo e telhado de telhas.",
+                 "por":"O tijolo é duro e não deixa a chuva entrar."},
+ "predio":      {"n":"PRÉDIO",           "s":["PRÉ","DIO"],         "mat":"tijolo",  "lug":"cidade",  "art":"o",
+                 "def":"Tem muitos andares: as casas ficam uma em cima da outra.",
+                 "por":"Na cidade sobra pouco chão, então as casas sobem."},
+ "sobrado":     {"n":"SOBRADO",          "s":["SO","BRA","DO"],     "mat":"tijolo",  "lug":"cidade",  "art":"o",
+                 "def":"É uma casa de dois andares, com escada dentro dela.",
+                 "por":"Dois andares no mesmo terreno cabem mais gente."},
+ "casamadeira": {"n":"CASA DE MADEIRA",  "s":["MA","DEI","RA"],     "mat":"madeira", "lug":"campo",   "art":"a",
+                 "def":"As paredes são tábuas de madeira, uma ao lado da outra.",
+                 "por":"No campo tem árvore perto, e a madeira segura o frio."},
+ "casabarro":   {"n":"CASA DE BARRO",    "s":["BAR","RO"],          "mat":"barro",   "lug":"campo",   "art":"a",
+                 "def":"As paredes são de barro amassado sobre um trançado de varas.",
+                 "por":"O barro está debaixo dos pés e não custa nada."},
+ "oca":         {"n":"OCA",              "s":["O","CA"],            "mat":"palha",   "lug":"aldeia",  "art":"a",
+                 "def":"Casa comprida dos povos indígenas, coberta de palha.",
+                 "por":"A palha da mata é fresca por dentro no calor."},
+ "palafita":    {"n":"PALAFITA",         "s":["PA","LA","FI","TA"], "mat":"madeira", "lug":"rio",     "art":"a",
+                 "def":"Casa de madeira levantada sobre estacas, acima da água.",
+                 "por":"Quando o rio enche, a água passa por baixo e não molha a casa."},
+ "iglu":        {"n":"IGLU",             "s":["I","GLU"],           "mat":"gelo",    "lug":"gelo",    "art":"o",
+                 "def":"Casa redonda feita de blocos de neve, na terra do gelo.",
+                 "por":"Lá não cresce árvore nenhuma: o que sobra é neve."},
+ "tenda":       {"n":"TENDA",            "s":["TEN","DA"],          "mat":"pano",    "lug":"deserto", "art":"a",
+                 "def":"Casa de pano, que se arma e se desarma quando a família muda de lugar.",
+                 "por":"Quem anda atrás da água precisa de uma casa que vá junto."},
+ "castelo":     {"n":"CASTELO",          "s":["CAS","TE","LO"],     "mat":"pedra",   "lug":"cidade",  "art":"o",
+                 "def":"Casa enorme de pedra, com torres, que os reis mandavam construir.",
+                 "por":"A pedra é a coisa mais dura que havia para fazer parede."}
+};
+var MAT = {
+ "tijolo":  {"n":"TIJOLO"},  "madeira": {"n":"MADEIRA"}, "palha": {"n":"PALHA"},
+ "gelo":    {"n":"GELO"},    "barro":   {"n":"BARRO"},   "pano":  {"n":"PANO"},
+ "pedra":   {"n":"PEDRA"}
+};
+/* os lugares. `f` é o nome do arquivo da cena, que não é igual à chave */
+var LUG = {
+ "cidade":  {"n":"NA CIDADE",       "f":"cidade",      "c":"a cidade"},
+ "campo":   {"n":"NO CAMPO",        "f":"campo",       "c":"o campo"},
+ "aldeia":  {"n":"NA ALDEIA",       "f":"aldeia",      "c":"a aldeia"},
+ "rio":     {"n":"NA BEIRA DO RIO", "f":"beiradorio",  "c":"a beira do rio"},
+ "gelo":    {"n":"NA TERRA DO GELO","f":"terradogelo", "c":"a terra do gelo"},
+ "deserto": {"n":"NO DESERTO",      "f":"deserto",     "c":"o deserto"}
+};
+/* folha 15 — as frases com lacuna (da d23: "complete as frases com o quadro") */
+var FRASES = {
+ "estacas":  {"a":"As ", "b":" são construções feitas sobre estacas, onde a água sobe.", "r":"PALAFITAS"},
+ "andares":  {"a":"Nos ", "b":" moram muitas famílias, uma em cima da outra.",           "r":"PRÉDIOS"},
+ "comodos":  {"a":"As salas, os quartos e a cozinha são os ", "b":" da casa.",           "r":"CÔMODOS"},
+ "abriga":   {"a":"A moradia ", "b":" a família do sol, da chuva e do frio.",            "r":"ABRIGA"},
+ "material": {"a":"Cada moradia é construída com o ", "b":" que existe no lugar dela.",  "r":"MATERIAL"}
+};
+/* folha 16 — a cruzadinha, com as pistas REESCRITAS.
+   ⚠️ As pistas 7 e 8 da folha de origem (d08/d27) diziam "casa de ciganos" e
+   "casa de índios". A habilidade D do 2º ano é justamente o respeito às
+   diferenças: a palavra entra, o apelido não. */
+var PISTAS = {
+ "oca":      {"p":"Casa comprida dos povos indígenas, coberta de palha."},
+ "tenda":    {"p":"Casa de pano, que se arma e se desarma quando a família muda de lugar."},
+ "predio":   {"p":"Construção alta, com muitos andares."},
+ "sobrado":  {"p":"Casa de dois andares."},
+ "palafita": {"p":"Casa levantada sobre estacas, na beira do rio."},
+ "iglu":     {"p":"Casa de blocos de neve."}
+};
+/* folha 18 — a imagem aérea do bairro, e os três lugares que se acham nela.
+   ⚠️ `x` e `y` são POR CENTO da largura e da altura da figura, medidos NA
+   figura depois de ela ficar pronta. Número chutado aqui vira alvo no lugar
+   errado, e a criança que acerta leva erro. */
+var MAPA = {
+ "figura": "bairroaereo",
+ "alvos": {
+  "escola":   {"n":"a escola",           "x":27, "y":32, "d":"O telhado maior e comprido, com o pátio do lado."},
+  "campinho": {"n":"o campo de futebol", "x":72, "y":66, "d":"O retângulo verde, no meio do quarteirão."},
+  "casas":    {"n":"as casas",           "x":48, "y":78, "d":"Os telhadinhos pequenos, um do lado do outro."}
+ }
+};
+/* folha 19 — a mesma coisa vista de três jeitos (habilidade B da rede) */
+var VISTA = {
+ "casa":         {"n":"a casa",   "v":"lado",    "f":"casa"},
+ "casacima":     {"n":"a casa",   "v":"cima",    "f":"casacima"},
+ "casaobliqua":  {"n":"a casa",   "v":"esguelha","f":"casaobliqua"},
+ "escola":       {"n":"a escola", "v":"lado",    "f":"escola"},
+ "escolacima":   {"n":"a escola", "v":"cima",    "f":"escolacima"},
+ "escolaobliqua":{"n":"a escola", "v":"esguelha","f":"escolaobliqua"}
+};
+var VISTAS = {
+ "lado":     {"n":"DE LADO",     "d":"como quem está na calçada olhando"},
+ "cima":     {"n":"DE CIMA",     "d":"como quem está num avião, bem em cima"},
+ "esguelha": {"n":"DE ESGUELHA", "d":"como quem está num avião mas de banda"}
+};
+/* folha 17 — a moradia vista de cima */
+var CIMA = {
+ "casa":     {"f":"casacima"},
+ "predio":   {"f":"prediocima"},
+ "oca":      {"f":"ocacima"},
+ "tenda":    {"f":"tendacima"}
+};
+/* folha 20 — o mesmo lugar em dois tempos (habilidade C) */
+var TEMPO = {
+ "casa":   {"n":"a casa",   "antes":"casaantiga",   "hoje":"casahoje",
+            "qa":"Casa de madeira, com fogão de lenha e sem energia elétrica.",
+            "qh":"Casa de tijolo, com energia elétrica e água encanada."},
+ "rua":    {"n":"a rua",    "antes":"ruaantiga",    "hoje":"ruahoje",
+            "qa":"Rua de chão batido, com carroça.",
+            "qh":"Rua de asfalto, com carros e postes."},
+ "escola": {"n":"a escola", "antes":"escolaantiga", "hoje":"escolahoje",
+            "qa":"Uma sala só, de madeira, com lousa de giz.",
+            "qh":"Escola de alvenaria, com várias salas e computadores."}
+};
+/* folha 21 — a ordem em que a casa é construída (da d11, questão 5) */
+var OBRA = {
+ "planta":   {"i":1, "n":"o desenho da casa", "f":"obraplanta",  "d":"Primeiro alguém desenha a casa no papel."},
+ "paredes":  {"i":2, "n":"as paredes",        "f":"obraparedes", "d":"Depois sobem as paredes, tijolo por tijolo."},
+ "telhado":  {"i":3, "n":"o telhado",         "f":"obratelhado", "d":"Só então entra o telhado, para tapar a chuva."},
+ "pronta":   {"i":4, "n":"a casa pronta",     "f":"obrapronta",  "d":"No fim vem a pintura, e a família se muda."}
+};
+/* folha 22 — quem faz o quê na construção (da d02 e da d11, questão 3) */
+var PROF = {
+ "arquiteto":   {"n":"ARQUITETO",   "t":"Desenha a casa no papel antes de ela existir."},
+ "pedreiro":    {"n":"PEDREIRO",    "t":"Levanta as paredes, tijolo por tijolo."},
+ "eletricista": {"n":"ELETRICISTA", "t":"Passa os fios que levam a luz pela casa."},
+ "encanador":   {"n":"ENCANADOR",   "t":"Põe os canos por onde a água anda."}
+};
+/* folha 23 — cada objeto no seu cômodo (da d11, questão 4) */
+var COMODO = {
+ "quarto":   {"n":"QUARTO"},   "sala":     {"n":"SALA"},
+ "cozinha":  {"n":"COZINHA"},  "banheiro": {"n":"BANHEIRO"}
+};
+var OBJ = {
+ "cama":      {"n":"a cama",      "c":"quarto"},
+ "armario":   {"n":"o armário",   "c":"quarto"},
+ "sofa":      {"n":"o sofá",      "c":"sala"},
+ "geladeira": {"n":"a geladeira", "c":"cozinha"},
+ "fogao":     {"n":"o fogão",     "c":"cozinha"},
+ "chuveiro":  {"n":"o chuveiro",  "c":"banheiro"}
+};
+/* folha 1 — para que serve uma casa, e o que toda casa precisa ter.
+   ⚠️ A segunda pergunta nasceu do poema "A Casa", de Vinicius de Moraes (a
+   folha d17): a casa da música não tinha teto, não tinha parede, não tinha
+   chão. É a lista do que uma casa PRECISA, dita ao contrário — e a criança de
+   sete anos já sabe a música de cor. */
+var MARCAR = {
+ "serve": {"q":"A moradia serve para…",
+           "c":["abrigar a família","proteger do sol e da chuva","dar um lugar para dormir","guardar as nossas coisas"],
+           "e":["deixar a gente na chuva","deixar a gente no frio"]},
+ "precisa":{"q":"Toda casa precisa ter…",
+           "c":["teto","parede","chão","porta"],
+           "e":["piscina","elevador"]}
+};
+/* folha 24 — o poema, e as casas escondidas dentro dele.
+   ⚠️ POEMA DE AUTOR NÃO SE INVENTA. Este é NOSSO, escrito para a folha, com o
+   mesmo trabalho que a d19 faz (achar os tipos de moradia dentro do texto).
+   A folha de origem usa "O melhor lugar do mundo", de Noele Belger — copiar o
+   texto dela seria pegar o trabalho de outra pessoa. */
+var POEMA = {
+ "titulo": "CADA UM NA SUA",
+ "versos": [
+  ["No", "gelo", "mora", "o", "IGLU,", "redondo", "e", "branquinho."],
+  ["Na", "beira", "do", "rio,", "a", "PALAFITA", "de", "pauzinho."],
+  ["Na", "aldeia", "é", "a", "OCA,", "de", "palha", "cheirosa."],
+  ["No", "deserto", "a", "TENDA", "viaja", "e", "repousa."],
+  ["E", "aqui", "no", "meu", "bairro,", "que", "casa", "eu", "vejo?"],
+  ["A", "CASA,", "o", "SOBRADO,", "o", "PRÉDIO", "e", "o", "sobejo."],
+  ["Cada", "um", "na", "sua", "—", "e", "todas", "são", "lar:"],
+  ["a", "casa", "do", "outro", "também", "é", "lugar."]
+ ],
+ "achar": ["IGLU,", "PALAFITA", "OCA,", "TENDA", "CASA,", "SOBRADO,", "PRÉDIO"]
+};
+/*DADOS-FIM*/
+
+/* ⚠️ A MARCA DE VERSÃO NA FIGURA. Quando eu troco uma figura, o NOME do arquivo
+   continua o mesmo — e o navegador da escola serve a cópia velha do cache.
+   REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
+var VIMG = 1;
+/* ⚠️⚠️ `draggable="false"` NÃO É DETALHE: toda imagem é arrastável de fábrica no
+   navegador, e quando a criança apertava a figura e puxava, o Chrome começava o
+   SEU arrasto nativo e disparava um `pointercancel` — o nosso arrasto morria no
+   primeiro milímetro, sem erro nenhum na tela. */
+function img(f, cls, alt){
+  return '<img class="' + (cls || "fig") + '" draggable="false" src="img/mo_' + f +
+         '.png?v=' + VIMG + '" alt="' + (alt || "") + '">';
+}
+function nomeM(k){ return MOR[k] ? MOR[k].n : (MAT[k] ? MAT[k].n : k.toUpperCase()); }
+
+/* ---------- estado ---------- */
+var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
+var vozLigada = true, _narr = null, vozPtBR = null, ATIVA = null;
+var CHAVE_LS = "a_rua_do_mundo_2ano";
+var NOMES = ["Para que serve uma casa?", "Que moradia é esta?", "Moradias de outros lugares",
+ "Arraste o nome até a casa", "Junte as sílabas e descubra", "De que é feita? (duas opções)",
+ "De que é feita? (quatro opções)", "Ligue a moradia ao material", "Ache os materiais no diagrama",
+ "Por que é feita desse material?", "Em que lugar fica cada uma?", "Por que a casa é assim ali?",
+ "Esta casa combina com este lugar?", "Qual frase explica a moradia?", "Complete a frase",
+ "A cruzadinha das casas", "Esta casa vista de cima", "Ache no mapa do bairro",
+ "De lado, de cima ou de esguelha?", "Como era antes, como é hoje", "A ordem da construção",
+ "Quem faz o quê na obra", "Cada coisa no seu cômodo", "Ache as casas dentro do poema",
+ "A rua do mundo"];
+/*<dossie-dados>*/
+var CURRICULO = {};
+/*</dossie-dados>*/
+
+/* ---------- som ---------- */
+var AC = null;
+function ac(){ try{ if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); }catch(e){} return AC; }
+function bip(f, dur, tipo, vol){
+  var a = ac(); if(!a) return;
+  try{
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = tipo || "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(vol || .13, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, a.currentTime + dur);
+    o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + dur);
+  }catch(e){}
+}
+function sPasso(){ bip(560, .07, "triangle", .08); }
+function sTecla(){ bip(760, .05, "square", .05); }
+function sCerto(){ bip(680, .1, "sine", .12); setTimeout(function(){ bip(920, .14, "sine", .12); }, 95); }
+function sErro(){ bip(190, .17, "sawtooth", .07); }
+function sFesta(){ [523, 659, 784, 1047].forEach(function(f, i){ setTimeout(function(){ bip(f, .16, "sine", .12); }, i * 110); }); }
+
+/* ---------- voz ---------- */
+function chaveVoz(t){
+  t = (t || "").replace(/\s+/g, " ").trim().toLowerCase();
+  var h = 5381, i;
+  for(i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function achaVoz(){
+  try{
+    var vs = window.speechSynthesis.getVoices();
+    for(var i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt-br") === 0) return vs[i];
+    for(i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt") === 0) return vs[i];
+  }catch(e){}
+  return null;
+}
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = function(){ vozPtBR = achaVoz(); };
+function calar(){
+  try{ if(_narr){ _narr.pause(); _narr.currentTime = 0; } }catch(e){}
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir";
+}
+function falarNavegador(t){
+  if(!window.speechSynthesis) return;
+  try{
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = "pt-BR"; u.rate = .92; if(!vozPtBR) vozPtBR = achaVoz(); if(vozPtBR) u.voice = vozPtBR;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+var ultimaFala = null;
+/* ⚠️ O MP3 É O PADRÃO E O SINTETIZADOR É A RESERVA — nunca o contrário. Se a
+   criança ouvir voz de robô, o mp3 não chegou ao site: é defeito de entrega,
+   não "jeito alternativo". O portão de voz mede isso. */
+function falar(k){
+  var t = FALAS[k]; if(!t) return;
+  ultimaFala = k;
+  if(!vozLigada) return;
+  calar();
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir tocando";
+  function fim(){ var x = document.getElementById("bOuvir"); if(x) x.className = "zap ouvir"; }
+  var key = chaveVoz(t);
+  if(VOZOK[key]){
+    if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+    _narr.onended = fim; _narr.onerror = function(){ falarNavegador(t); setTimeout(fim, 2500); };
+    _narr.src = "audio/mo_" + key + ".mp3";
+    try{ _narr.currentTime = 0; }catch(e){}
+    var p = _narr.play(); if(p && p["catch"]) p["catch"](function(){ fim(); });
+    return;
+  }
+  falarNavegador(t); setTimeout(fim, Math.min(12000, 400 + t.length * 62));
+}
+function falarDepois(k, ms){ setTimeout(function(){ falar(k); }, ms || 0); }
+
+/* ---------- utilidades ---------- */
+function el(tag, cls, html){ var e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+function salvar(){ try{ ST.quando = Date.now(); localStorage.setItem(CHAVE_LS, JSON.stringify(ST)); }catch(e){} }
+/* ⭐ 55 MINUTOS = A AULA. Dentro dela quem volta é a MESMA criança; passada a
+   aula, quem senta ali é da outra turma e cairia no meio da viagem de um
+   colega — por isso o convite expira sozinho. */
+function carregar(){ try{ var s = localStorage.getItem(CHAVE_LS); if(!s) return null; var o = JSON.parse(s); if(!o || !o.quando || Date.now() - o.quando > 55 * 60 * 1000 || !o.folha) return null; return o; }catch(e){ return null; } }
+function tentativa(id, ok){ if(!ST.tent[id]) ST.tent[id] = {erros: 0, ok: false}; if(ok) ST.tent[id].ok = true; else ST.tent[id].erros++; salvar(); }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function baralha(a){ var b = a.slice(), i, j, t; for(i = b.length - 1; i > 0; i--){ j = rnd(i + 1); t = b[i]; b[i] = b[j]; b[j] = t; } return b; }
+function pega(pool, qtd){ return baralha(pool).slice(0, Math.min(qtd, pool.length)); }
+function confete(n){
+  var c = document.getElementById("confete"), cores = ["#b0562a", "#f5b301", "#15a34a", "#1179bf", "#8b5cf6"], i;
+  for(i = 0; i < n; i++){
+    (function(i){
+      var d = el("div", "cf");
+      d.style.left = rnd(100) + "%"; d.style.top = "-20px";
+      d.style.background = cores[rnd(cores.length)];
+      d.style.animationDelay = (i * 26) + "ms";
+      c.appendChild(d); setTimeout(function(){ if(d.parentNode) c.removeChild(d); }, 1900 + i * 26);
+    })(i);
+  }
+}
+
+/* ---------- registro das respostas (o boletim e o relatório leem daqui) ---------- */
+var RESP = {};   /* id -> {certo, pag} */
+function registra(id, pag, certo){ RESP[id] = {certo: certo, pag: pag}; }
+function acertou(id, fala){
+  if(ST.resp[id]) return;
+  tentativa(id, true); ST.resp[id] = 1; salvar(); sCerto();
+  /* ⭐ a palavra escrita aparece AGORA, junto com o acerto — nunca antes.
+     Mostrá-la antes entrega a resposta (o defeito que o `_qa/resposta_impressa.py`
+     mede); escondê-la para sempre deixaria a criança sem saber se aquilo era
+     "oca" ou "cabana". Este é o instante certo. */
+  var segs = document.querySelectorAll('[data-nome="' + id + '"]'), sg;
+  for(sg = 0; sg < segs.length; sg++)
+    segs[sg].className = segs[sg].className.replace(/ ?revelado/, "") + " revelado";
+  if(fala) falar(fala);
+  setTimeout(function(){ confereFolha(RESP[id].pag); }, 850);
+}
+function errou(id, dica){
+  tentativa(id, false); sErro();
+  falar(ST.tent[id].erros >= 2 && dica ? dica : "quase");
+}
+
+/* ---------- o sorteio da folha do dia ----------
+   ⚠️ O SAQUE É O TAMANHO DA AULA. A regra do Marcos (12/set/2026) é no mínimo
+   25 folhas, e a medição deu razão a ele: é o que enche os 55 minutos da criança
+   RÁPIDA. O que NÃO se faz para encher é inventar moradia que a criança de sete
+   anos nunca ouviu falar — o pote tem dez, e são as dez que as folhas de papel
+   trazem. O que enche são os GESTOS: dezenove diferentes em vinte e cinco folhas. */
+function novaFolha(){
+  return {
+    p1:  ITENS.p1.slice(0),
+    p2:  pega(ITENS.p2, 5),
+    p3:  pega(ITENS.p3, 5),
+    p4:  pega(ITENS.p4, 4),
+    p5:  pega(ITENS.p5, 4),
+    p6:  pega(ITENS.p6, 4),
+    p7:  pega(ITENS.p7, 5),
+    /* ⚠️ o ligar vai em GRUPO: um grupo = uma folha de quatro pares */
+    p8:  [pega(ITENS.p8, 4)],
+    p9:  ITENS.p9.slice(0),
+    p10: pega(ITENS.p10, 4),
+    p11: ITENS.p11.slice(0),
+    p12: pega(ITENS.p12, 4),
+    p13: null,   /* montado logo abaixo: precisa de pares certos E errados */
+    p14: pega(ITENS.p14, 4),
+    p15: ITENS.p15.slice(0),
+    p16: ITENS.p16.slice(0),
+    p17: ITENS.p17.slice(0),
+    p18: ITENS.p18.slice(0),
+    p19: ITENS.p19.slice(0),
+    p20: ITENS.p20.slice(0),
+    p21: ITENS.p21.slice(0),
+    p22: [ITENS.p22.slice(0)],
+    p23: ITENS.p23.slice(0),
+    p24: ITENS.p24.slice(0),
+    p25: ITENS.p25.slice(0)
+  };
+}
+/* ⚠️ A FOLHA 13 SORTEIA PARES CERTOS E ERRADOS, e por isso não cabe no bloco
+   acima: ela precisa garantir que HAJA pelo menos um "não combina". Sem essa
+   garantia o sorteio pode devolver cinco "sim" — e aí a criança acerta tudo
+   respondendo sempre a mesma coisa, sem olhar. */
+(function(){
+  var f = novaFolha;
+  novaFolha = function(){
+    var o = f(), todos = ["oca", "palafita", "iglu", "tenda", "casamadeira", "predio"], i, k;
+    var certos = baralha(todos).slice(0, 3), sobra = [], errados = [];
+    for(i = 0; i < todos.length; i++) if(certos.indexOf(todos[i]) < 0) sobra.push(todos[i]);
+    for(i = 0; i < 2; i++){
+      k = sobra[i % sobra.length];
+      /* o lugar ERRADO é o de outra moradia — nunca um lugar inventado */
+      var outros = [], j;
+      for(j in LUG) if(j !== MOR[k].lug) outros.push(j);
+      errados.push({m: k, l: outros[rnd(outros.length)], ok: 0});
+    }
+    o.p13 = baralha(certos.map(function(m){ return {m: m, l: MOR[m].lug, ok: 1}; }).concat(errados));
+    return o;
+  };
+})();
+
+</script>
+<!--<dossie-html>-->
+<!--</dossie-html>-->
+<script src="folhas.js"></script>
+</body></html>
