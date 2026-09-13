@@ -88,6 +88,12 @@ def gesto_da_folha(corpo):
     """
     if u"montador(" in corpo:
         return 45.0, u"manipular"
+    # ⚠️ TRAÇAR A LETRA COM O DEDO (folha viva, 13/set/2026). Sem esta linha a
+    #    folha caía no fundo da lista e valia 9 s de "tocar" — e ela é o gesto
+    #    MAIS pesado do caderno: a criança percorre o caminho inteiro da letra
+    #    até cobrir 60% do traçado. Peso do "escrever", que é o que ela faz.
+    if u"tracaLetra(" in corpo:
+        return 25.0, u"tracar"
     if u"montaLigar(" in corpo:
         return 14.0, u"ligar"
     if re.search(r'\bcaixa\(', corpo):

@@ -97,6 +97,28 @@ segunda parte, o trabalho não está feito.
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o
 > Marcos, ou chegou até a criança.
 
+### 3.0 `var` no fim do arquivo: o caderno morria na folha 2, e o `node --check` passava
+
+Ao escrever as catorze folhas novas do Desfile (13/set/2026) eu pus o código
+delas **no fim** do `folhas.js` — e os DADOS delas junto: `var POEMA = [...]`,
+`var TRA_CEL = 10`. O arquivo tem, mais acima, um `monta()` que roda no
+carregamento e chama todas as folhas.
+
+**`function` sobe no arquivo (hoisting); `var x = ...` NÃO.** A declaração sobe
+vazia e a atribuição fica onde está. Então, na hora em que `monta()` chamou a
+folha 2, `POEMA` existia e valia `undefined` — e o caderno estourou em
+`POEMA.forEach`, morrendo na segunda folha das 25.
+
+- **Por que nenhum portão de texto viu:** não há erro de sintaxe nenhum. O
+  `node --check` passou, o pré-voo passou, os 39 portões de texto passaram.
+- **Quem pegou:** o `_qa/andar_folha.js`, que abre o caderno no navegador de
+  verdade e anda folha por folha. Ele parou na folha 1 e imprimiu o
+  `TypeError`. É exatamente para isso que ele existe.
+- **A regra, daqui para a frente:** **dado de folha (`var` com valor) mora no
+  TOPO do `folhas.js`**, junto do `var livro = ...`. Só as `function` podem
+  ficar no fim. E folha nova **sempre** passa pelo `andar_folha.js` antes de
+  qualquer outra coisa — "compilou" não é "abre".
+
 ### 3.1 A resposta estava IMPRESSA no enunciado — em 5 cadernos NO AR
 A figura da mola vinha com a legenda **MOLA** logo abaixo e, embaixo dela,
 `[ ][ ] L A` para a criança completar. **A resposta impressa dois centímetros
@@ -521,7 +543,7 @@ qualquer 2 segura o veredito em **"BANCA NÃO CONCLUIU"**, código 2.
 
 | Degrau | Caderno | Folhas | Duração | Crivo com o VERBO? |
 |---|---|---|---|---|
-| 0 | O Desfile das Letras | **11** | 33–48 | ✅ **45 folhas, 13/set** (`folhas_d0`) |
+| 0 | **O Desfile das Letras** | **25** | 41–80 | ✅ **24 folhas**, `POTE-ABC.md` |
 | 1 | O Bando das Rimas | 10 | 24–41 | ✅ **28 folhas, 12/set** |
 | 2 | Bate-Palma das Palavras | 10 | 26–42 | ✅ |
 | 3 | A Família das Palavras | 10 | 29–43 | ✅ |
@@ -550,7 +572,40 @@ formato em outro componente:
 > e o porquê do lugar) não existem em folha impressa nenhuma do pote — nasceram
 > da rede. A REGRA DA ORIGEM continua valendo; ela só não pode rebaixar o ano.
 
-**Nenhum caderno de alfabetização chega às 25 folhas** — o maior, a Roda, tem 15.
+> ⭐⭐ **E ELE É O PRIMEIRO CADERNO DE ALFABETIZAÇÃO A CUMPRIR A REGRA DO
+> TAMANHO** (13/set/2026): saiu de 11 para **25 folhas**, com **15 gestos** e
+> nenhum passando de **24%**. As catorze folhas novas vieram todas do comando
+> impresso — a lista está no `POTE-ABC.md §3`, com a folha de papel de cada uma.
+> O que ele ganhou, e que não existia em caderno nenhum da sequência:
+>
+> | folha nova | de onde veio | o que a criança faz |
+> |---|---|---|
+> | O poema do alfabeto | d09 "VAMOS LER JUNTOS?" | ouve o poema e **acha a letra na tira de 26**, sem três opções |
+> | O alfabeto pequeno · A mesma letra, pequenininha | d12 | a **minúscula**, que o caderno inteiro ignorava |
+> | Quem vem ANTES | d08 | voltou como folha própria, colada no "depois" |
+> | A letra do MEIO | d13 "ANTES, **ENTRE** E DEPOIS" | segura as duas pontas ao mesmo tempo |
+> | **Escreva a vizinha** | d01, d03, d06, d16 | **digita** a letra, teclado da tela e o de verdade |
+> | A grade do alfabeto | d09, d17 | o quadro com buracos, não a fila |
+> | **O teclado fora de ordem** | d19 | as letras do **teclado do PC da escola**, em QWERTY |
+> | Mesma letra no começo | d05 | ordena pela **segunda** letra |
+> | Quem vem primeiro no dicionário | d04 "PINTE A PALAVRA QUE VEM PRIMEIRO" | pinta a 1ª das duas |
+> | A gaveta de cada palavra | d18, d21 | uma gaveta por letra — a ideia do índice |
+> | As figuras em ordem alfabética | d02 | ordena FIGURAS, dizendo o nome para si |
+> | Os nomes da turma em ordem | d24 | a **chamada** da sala |
+> | Pratique a escrita do alfabeto | d15 | **traça a letra com o dedo** e o app mede a cobertura |
+>
+> ⚠️ **A folha mais importante da lista é a de DIGITAR**, e por um motivo
+> constrangedor: *escrever a letra vizinha* é o verbo mais pedido do pote (seis
+> das 24 folhas de papel) e o caderno pedia isso **zero vezes**. Todas as nossas
+> folhas de vizinhança eram de escolher entre três. Escolher entre três é
+> reconhecer; escrever é produzir. Era o meu cardápio mandando, não o pote.
+>
+> ⚠️ **E o preço da regra do tamanho, medido:** 11 folhas de 12 itens dariam,
+> em 25, quase 300 itens e três aulas. O saque de cada folha teve que ENCOLHER
+> (de 10-12 para 4-6). O que enche a aula é o número de FOLHAS — a criança sente
+> que andou; lista comprida da mesma coisa é o "isso eu já fiz". Deu 135 itens.
+
+**Só um caderno de alfabetização chega às 25 folhas** — o Desfile. O seguinte, a Roda, tem 15.
 (A Rua do Mundo, de Geografia, nasceu já com 25.) **Nove de dez têm o
 crivo do verbo**; falta só o degrau 8, cuja colheita já está em `folhas_d8`.
 
@@ -589,6 +644,10 @@ crivo do verbo**; falta só o degrau 8, cuja colheita já está em `folhas_d8`.
    que quatro das 28 pedem e o nosso caderno não pede nenhuma vez). A colheita
    do 8 já está em `_sequencias/folhas_d8`; a do 0 ainda não foi feita.
 3. **Crescer cada caderno até 25 folhas**, na ordem do mais curto.
+   O degrau **0 está feito** (13/set): 11 → 25 folhas, catorze delas tiradas do
+   comando impresso. Faltam os degraus 1 a 9 — e o caminho está provado: ler o
+   crivo do `POTE-*.md`, pegar os verbos que ficaram de fora, clonar a mecânica
+   de quem já a tem, encolher o saque de cada folha e medir com a banca.
 4. **Portão da escada didática e do leque de gestos** para folha viva (#104).
 
 ---

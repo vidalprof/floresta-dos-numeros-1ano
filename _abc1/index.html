@@ -680,6 +680,151 @@ media (prefers-reduced-motion:reduce){
 -webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
 keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
 .oculto{display:none!important}
+/* ============================================================
+   AS PEÇAS DAS CATORZE FOLHAS NOVAS (13/set/2026 — a regra das 25 folhas)
+
+   ⚠️ ESTE BLOCO MORA **ANTES** DO `/* ============================================================
+   AS PEÇAS DAS CATORZE FOLHAS NOVAS (13/set/2026 — a regra das 25 folhas)
+
+   ⚠️ ESTE BLOCO MORA **ANTES** DAS MARCAS DO DOSSIÊ, e isso não é detalhe —
+      são DUAS lições pagas em 13/set/2026, uma em cima da outra:
+
+      1. Eu escrevi estas regras DENTRO do bloco marcado do dossiê, e o
+         `_padrao/dossie_professor.py` — que é o dono dele — reescreveu o bloco
+         inteiro e apagou tudo. Nenhum erro apareceu: a página abriu, só que o
+         teclado da folha 13 ficou sem fundo e as gavetas sem caixa.
+      2. Movi para cá e ESCREVI O NOME DA MARCA neste comentário, para explicar.
+         O injetor apaga de `ini` até `fim` — e a marca citada aqui virou o
+         `ini` mais antigo do arquivo. Ele comeu tudo de novo, pelo mesmo motivo
+         com outra cara.
+
+      A regra que fica: **não se escreve dentro de um bloco marcado, e nem se
+      cita a marca dele em texto livre.** É a mesma família do comentário
+      dentro do JSON do `LUG`: bloco marcado tem dono.
+
+   ⚠️ ALVO MÍNIMO 40 px em tudo que se toca (o `_qa/leiaute_mao.js` mede em 6
+      tamanhos e reprova abaixo disso). No 1º ano o dedo é grande e a mira é
+      curta: alvo pequeno não é "compacto", é injusto.
+   ============================================================ */
+
+/* folha 2 — o poema e a tira do alfabeto inteira */
+.poema{background:#f7f5ff;border:3px solid #e2ddfb;border-radius:18px;
+  padding:12px 14px;margin:6px 0 10px}
+.poema .verso{display:-webkit-box;display:-ms-flexbox;display:flex;
+  align-items:center;gap:8px;justify-content:space-between;padding:3px 0}
+.poema .vt{font-size:clamp(15px,4vw,18px);font-weight:700;color:#2c3350;line-height:1.35}
+.poema .autor{text-align:right;font-size:13px;color:#3b4064;margin-top:4px;font-style:italic}
+.perguntas{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:8px;justify-content:center;margin:8px 0}
+.chipq{display:-webkit-box;display:-ms-flexbox;display:flex;align-items:center;
+  gap:6px;min-height:48px;padding:4px 10px;border:3px solid #d9ddf2;border-radius:16px;background:#fff}
+.chipq .nq{font-weight:800;color:#3b4064;font-size:14px}
+.chipq .vq{font-weight:900;font-size:24px;color:#9aa0c4;min-width:26px;text-align:center}
+/* ⚠️ a pergunta da vez NÃO se distingue só pela cor (regra 4 da pesquisa: nada
+   de resposta só por cor) — ela ganha borda grossa, sombra e a palavra "agora" */
+.chipq.agora{border-color:#6d5ae6;box-shadow:0 0 0 4px rgba(109,90,230,.18)}
+.chipq.agora:before{content:"agora";font-size:11px;font-weight:900;color:#6d5ae6;
+  letter-spacing:.6px;text-transform:uppercase}
+.chipq.feito{border-color:#15a34a;background:#e7f8ee}
+.chipq.feito .vq{color:#0d7736}
+.tiralfa{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:6px;justify-content:center;background:#fff;border:3px solid #e2ddfb;
+  border-radius:18px;padding:10px;margin:6px 0}
+.ltira{min-width:44px;min-height:48px;border:2px solid #d9ddf2;border-radius:12px;
+  background:#fff;display:-webkit-box;display:-ms-flexbox;display:flex;
+  align-items:center;justify-content:center;cursor:pointer}
+.ltira .ltop{font-size:clamp(20px,5vw,26px)}
+.ltira.aceso{border-color:#1f9d55;background:#eafaf0}
+.ltira.aceso .ltop{color:#1f9d55}
+.ltira.erro{border-color:#e05b5b;background:#fdeaea}
+.ltira:active{-webkit-transform:scale(.92);transform:scale(.92)}
+
+/* folhas 5 e 6 — a letra MINÚSCULA. Fonte com serifa: é a forma que ela vai
+   encontrar no livro, e a diferença entre "a" e "A" fica evidente. */
+.peq{text-transform:lowercase;font-family:Georgia,'Times New Roman',serif}
+.filalfa.peq .lt{text-transform:lowercase;font-family:Georgia,'Times New Roman',serif}
+
+/* folhas 8 e 11 — a seta que aponta para TRÁS (quem vem antes) */
+.vizinha .setacss.volta:after{right:auto;left:-2px;
+  border-left:0;border-right:12px solid #9aa0c4}
+.rotlado{text-align:center;font-size:12px;font-weight:900;letter-spacing:.8px;
+  color:var(--texto3);text-transform:uppercase;margin-top:-4px}
+
+/* folha 12 — a grade do alfabeto (o quadro, não a fila) */
+.gradealfa{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 10px}
+@media (min-width:520px){ .gradealfa{grid-template-columns:repeat(6,1fr)} }
+.celalfa{min-height:56px;border:3px solid #d9ddf2;border-radius:14px;background:#fff;
+  display:-webkit-box;display:-ms-flexbox;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:clamp(22px,6vw,32px);color:#2c3350}
+.celalfa.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;color:#6d5ae6}
+.celalfa.vaga.ok{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.celalfa.vaga.erro{border-color:#e05b5b;background:#fdeaea}
+
+/* folha 13 — o teclado do computador, com as teclas na ordem QWERTY */
+.teclas{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:8px;justify-content:center;margin:10px auto 0;max-width:420px;
+  background:#3b3f57;border-radius:16px;padding:12px}
+.tecla{min-width:56px;min-height:56px;border:0;border-radius:10px;background:#f2f3f8;
+  box-shadow:0 4px 0 #b9bcd0;display:-webkit-box;display:-ms-flexbox;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;padding:0}
+.tecla .ltop{font-size:clamp(20px,5vw,28px);color:#3b3f57}
+.tecla:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #b9bcd0}
+.tecla.usada{opacity:.35;box-shadow:none}
+.tecla.erro{background:#fdeaea}
+
+/* folha 19 — as duas palavras do dicionário, lado a lado */
+.dicpar{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:10px;justify-content:center;margin:6px 0 4px}
+.dicbt{border:3px solid #d9ddf2;border-radius:16px;background:#fff;color:#1e2334;
+  min-width:42%;cursor:pointer}
+.dicbt.pintada{border-width:4px;font-weight:900}
+.dicbt.pintada:after{content:"1º";display:block;font-size:11px;letter-spacing:.6px;
+  color:#0d7736;font-weight:900}
+.dicbt.erro{border-color:#e05b5b;background:#fdeaea}
+
+/* folha 21 — as gavetas por letra (a ideia do dicionário) */
+.gavetas{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:6px 0 10px}
+@media (min-width:520px){ .gavetas{grid-template-columns:repeat(4,1fr)} }
+.gaveta{min-height:76px;border:3px dashed #b9b3e6;border-radius:16px;background:#f7f5ff;
+  padding:6px;display:-webkit-box;display:-ms-flexbox;display:flex;
+  -webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;
+  flex-direction:column;align-items:center;gap:4px}
+.gaveta .gl{font-weight:900;font-size:clamp(20px,5vw,26px);color:#6d5ae6}
+.gaveta .gdentro{display:-webkit-box;display:-ms-flexbox;display:flex;
+  flex-wrap:wrap;gap:4px;justify-content:center}
+.gaveta .gpeca{font-size:12px;font-weight:800;color:#0d7736;background:#e7f8ee;
+  border-radius:8px;padding:2px 6px}
+.gaveta.erro{border-color:#e05b5b;background:#fdeaea}
+.pecagav{min-height:74px;padding:6px 10px;display:-webkit-box;display:-ms-flexbox;
+  display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;
+  -ms-flex-direction:column;flex-direction:column;align-items:center;gap:2px}
+.pecagav .figop{max-height:44px;width:auto}
+
+/* folha 22 — a fila das FIGURAS em ordem alfabética */
+.trilhafig{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:8px;justify-content:center;margin:6px 0 10px}
+.vagafig{min-width:76px;min-height:76px;border:3px dashed #b9b3e6;border-radius:16px;
+  background:#f7f5ff;display:-webkit-box;display:-ms-flexbox;display:flex;
+  align-items:center;justify-content:center}
+.vagafig .np{color:#8a83c9;font-size:15px;font-weight:900}
+.vagafig.ok{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.vagafig .figop{max-height:60px;width:auto}
+.figlin{display:-webkit-box;display:-ms-flexbox;display:flex;
+  -webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;
+  flex-direction:column;align-items:center;gap:4px}
+.figop2{min-width:76px;min-height:76px;padding:6px}
+.figop2 .figop{max-height:58px;width:auto}
+.figop2.usada{opacity:.35;pointer-events:none}
+
+/* folha 23 — os nomes da chamada, em cor de nome próprio */
+.nomebt{color:#6d5ae6}
+
+/* folha 24 — o quadro de traçar a letra com o dedo */
+.traclin{display:-webkit-box;display:-ms-flexbox;display:flex;justify-content:center;margin-bottom:4px}
+.tracacx{display:-webkit-box;display:-ms-flexbox;display:flex;justify-content:center;margin:2px 0 8px}
+.tracacv{width:min(220px,72vw);max-width:100%;height:auto;background:#fff;
+  border:3px solid #d9ddf2;border-radius:18px;cursor:crosshair;touch-action:none}
+
 /*<dossie-css>*/
 #dossie{display:none;position:fixed;inset:0;z-index:70;background:rgba(20,16,45,.72);
   align-items:center;justify-content:center;padding:12px}
@@ -5092,7 +5237,14 @@ var PAL = {
  /* cartela D, 8/set — a primeira com fundo magenta (recorte perfeito) */
  pipoca:["PIPOCA",["PI","PO","CA"]],
  janela:["JANELA",["JA","NE","LA"]], cebola:["CEBOLA",["CE","BO","LA"]],
- bota:["BOTA",["BO","TA"]]
+ bota:["BOTA",["BO","TA"]],
+ /* ⚠️ SEM ACENTO NA TELA (13/set/2026). O pote guarda o nome sem acento
+    (é chave de arquivo de figura) e o `esc()` cai no `w.toUpperCase()`
+    quando a palavra não está aqui — então a criança lia LEAO e
+    HIPOPOTAMO escritos errado, nas folhas 20, 21, 22 e 25. A voz já
+    dizia certo (o DIZ do gerador de falas cuida disso); o ESCRITO não.
+    Regra: palavra acentuada no pote = linha aqui, no mesmo commit. */
+ leao:["LEÃO",["LE","ÃO"]], hipopotamo:["HIPOPÓTAMO",["HI","PO","PÓ","TA","MO"]]
 };
 function esc(w){ return PAL[w] ? PAL[w][0] : w.toUpperCase(); }
 function sil(w){ return PAL[w] ? PAL[w][1] : [w.toUpperCase()]; }
