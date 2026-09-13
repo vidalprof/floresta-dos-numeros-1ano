@@ -69,6 +69,41 @@ from mp3_dur import por_id as mp3_por_id   # o RELOGIO da voz
 PAL_POR_S = 1.8      # MEDIDO: 890 mp3 da casa, 1,66 a 1,90 palavra/s
                      # (antes era 2,6, inventado por mim — ver o bloco da voz)
 S_POR_ITEM = 9.0     # ler, pensar e tocar (4o/5o ano)
+
+
+def gesto_da_folha(corpo):
+    u"""O GESTO de uma folha viva, lido no corpo da funcao `fN` dela.
+
+    Devolve (segundos por item, nome do gesto).
+
+    ⚠️ ELA MORA AQUI E SE IMPORTA — nao se copia. O `_qa/leque_folha.py` precisa
+       EXATAMENTE desta classificacao, e copiar cria duas reguas que um dia
+       divergem. Foi assim que nasceu o halo branco (13/set/2026): o portao media
+       "quase-branco" acima de 225 e a ferramenta apagava de 236 para cima —
+       trabalho que parecia feito e nao estava. Regra da casa desde entao:
+       medida usada em dois lugares tem UM dono, e o outro importa.
+
+    ⚠️ Os segundos sao PALPITE DECLARADO (nunca cronometrado com crianca). Quem
+       usa este numero tem que dizer isso na tela, como o `duracao.py` diz.
+    """
+    if u"montador(" in corpo:
+        return 45.0, u"manipular"
+    if u"montaLigar(" in corpo:
+        return 14.0, u"ligar"
+    if re.search(r'\bcaixa\(', corpo):
+        caixas = len(re.findall(r'\bcaixa\(', corpo))
+        return 25.0 * caixas, (u"digitar x%d" % caixas)
+    if re.search(r'\bativa\(|\bativaLetras\(|\.tec\b|<input', corpo):
+        return 25.0, u"escrever"      # teclado de verdade
+    if u"mcarta" in corpo:
+        return 20.0, u"memoria"
+    if re.search(r'celula|caca|cruzad', corpo):
+        return 20.0, u"procurar"
+    if re.search(r'gaveta|coluna|puxavel\(|arrast', corpo):
+        return 14.0, u"arrastar"
+    if re.search(r'riscoDeCircular\(|Conferir', corpo):
+        return 12.0, u"marcar varios"
+    return S_POR_ITEM, u"tocar"
 S_POR_TELA = 12.0    # capa, cracha, banner, elogio
 # ⚠️ QUANTAS FALAS DO BANCO CADA ITEM ACIONA — e por que sao DUAS numeros e nao
 #    um. A crianca economica ouve so o retorno ("muito bem!"): 1 por item. A que
@@ -351,25 +386,7 @@ def confere(pasta, piso_min=40.0):
                 #    O galho da MONTADA ja sabia fazer isto direito (ver
                 #    `custo_da_lista` la em cima) — so nunca tinha sido trazido para
                 #    ca. Agora o gesto e lido no corpo da propria folha.
-                if u"montador(" in corpo:
-                    custo, gesto = 45.0, u"manipular"
-                elif u"montaLigar(" in corpo:
-                    custo, gesto = 14.0, u"ligar"
-                elif re.search(r'\bcaixa\(', corpo):
-                    caixas = len(re.findall(r'\bcaixa\(', corpo))
-                    custo, gesto = 25.0 * caixas, (u"digitar x%d" % caixas)
-                elif re.search(r'\bativa\(|\bativaLetras\(|\.tec\b|<input', corpo):
-                    custo, gesto = 25.0, u"escrever"      # teclado de verdade
-                elif u"mcarta" in corpo:
-                    custo, gesto = 20.0, u"memoria"
-                elif re.search(r'celula|caca|cruzad', corpo):
-                    custo, gesto = 20.0, u"procurar"
-                elif re.search(r'gaveta|coluna|puxavel\(|arrast', corpo):
-                    custo, gesto = 14.0, u"arrastar"
-                elif re.search(r'riscoDeCircular\(|Conferir', corpo):
-                    custo, gesto = 12.0, u"marcar varios"
-                else:
-                    custo, gesto = S_POR_ITEM, u"tocar"
+                custo, gesto = gesto_da_folha(corpo)
                 if isinstance(lista[0], dict) and lista[0].get(u"hist"):
                     custo += 45.0            # ler e entender o problema
                     gesto = u"problema"

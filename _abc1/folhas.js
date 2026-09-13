@@ -559,7 +559,15 @@ function f9(d, pi){
     var cx = el("div", "chamrima");
     cx.innerHTML = img(it.w, "figgrande");
     var lin = el("div", "chamlin");
-    lin.appendChild(el("b", "", esc(it.w.toUpperCase())));
+    /* ⚠️ A PALAVRA ESCRITA É SEGREDO até a criança responder. A folha pergunta
+       "com que letra COMEÇA?" e mostrava BOLA escrito ao lado: quem já lê pegava
+       a primeira letra do impresso e acertava sem ouvir nada. É a mesma lição da
+       MOLA na Roda e da JANELA na Fábrica — a terceira vez que ela aparece hoje.
+       O alto-falante continua ali: ela ouve quantas vezes quiser. O escrito
+       aparece no acerto, que é quando ele ensina como se escreve. */
+    var pw = el("b", "segredo" + (ST.resp[id] ? " revelado" : ""), esc(it.w.toUpperCase()));
+    pw.setAttribute("data-nome", id);
+    lin.appendChild(pw);
     lin.appendChild(botaoSom("Ouvir " + esc(it.w), (function(w){ return function(){ falar("pal_" + w); }; })(it.w)));
     cx.appendChild(lin); box.appendChild(cx);
     opcoes(box, pi, id, opsLetra(it.op), it.c, "figbt", "certo9_" + it.w, "dica9_" + it.w);

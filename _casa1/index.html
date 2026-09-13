@@ -629,6 +629,43 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
    `nN_i` e a fala do enunciado é `pNenun`. Mudar a ordem das folhas muda tudo
    junto — e é de propósito, porque antes eram três listas para combinar à mão
    e o relatório saía zero com a folha inteira respondida. */
+/*GESTOS-INI*/
+/* ⚠️ O GESTO DE CADA FOLHA, DECLARADO À MÃO — uma palavra: o que a criança FAZ
+   com o dedo, não o que o código parece. Ele existe porque o portão 0b7
+   (`_qa/leque_folha.py`) tentou ADIVINHAR isto do código e errou feio: "Ligue
+   cada figura ao seu pedaço" saiu como *arrastar* e "Pinte só os balões" saiu
+   como *ligar*, e três cadernos foram reprovados por conta do erro do portão.
+   Gesto é decisão de quem monta, então quem monta escreve.
+   ⚠️ Folha nova = linha nova AQUI, no mesmo commit. Sem isso o portão diz
+      "NAO MEDI" — que não é "passou". */
+var GESTOS = {
+ "f1": "marcar varios",
+ "f2": "escolher",
+ "f3": "escolher",
+ "f4": "arrastar",
+ "f5": "montar",
+ "f6": "escolher",
+ "f7": "escolher",
+ "f8": "ligar",
+ "f9": "procurar",
+ "f10": "escolher",
+ "f11": "escolher",
+ "f12": "julgar",
+ "f13": "julgar",
+ "f14": "escolher",
+ "f15": "completar",
+ "f16": "cruzadinha",
+ "f17": "escolher",
+ "f18": "achar na figura",
+ "f19": "classificar",
+ "f20": "ordenar no tempo",
+ "f21": "ordenar",
+ "f22": "ligar",
+ "f23": "classificar",
+ "f24": "marca-texto",
+ "f25": "mural"
+};
+/*GESTOS-FIM*/
 /*ITENS-INI*/
 var ITENS = {
  "p1": [

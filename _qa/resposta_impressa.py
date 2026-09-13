@@ -117,7 +117,19 @@ const pasta = process.argv[2], porta = process.argv[3];
            que guarda as moradias em `MOR`, o `PAL` não existe: o script
            estourava e o portão devolvia "NAO MEDI" — que não é "passou", é
            "rodou cego". Portão que só funciona num caderno mede um caderno. */
-        out.push({ pi: pi, nome: NOMES[pi - 1], ids: meus,
+        /* ⚠️ O ENUNCIADO VAI SEPARADO (13/set/2026). A regra de UMA letra
+           acusava "a resposta é E e a tela mostra ESTA" — e "esta" é a palavra
+           da PERGUNTA ("Que letra é esta?"), não a resposta entregue. Pergunta
+           não é resposta impressa. Para 2 letras ou mais a coincidência é
+           improvável e o enunciado continua valendo (enunciado que entrega a
+           sílaba É defeito); para uma letra só, ele sai da conta. */
+        /* os NOMES DE FIGURA deste item, tirados do src das imagens: é a única
+           coisa que a regra de UMA letra aceita como "resposta impressa". */
+        const figs = [].map.call(cx.querySelectorAll('img'), e => {
+          const m = (e.getAttribute('src') || '').match(/([a-z0-9_]+)\.png/i);
+          return m ? m[1].replace(/^[a-z]{2,3}_/, '') : '';
+        }).filter(Boolean);
+        out.push({ pi: pi, nome: NOMES[pi - 1], ids: meus, figs: figs,
                    certos: meus.map(id => RESP[id].certo), txt: txt,
                    palavras: Object.keys(RESP).map(id => RESP[id].certo)
                                 .filter(v => typeof v === 'string') });
@@ -184,6 +196,16 @@ def main():
             declarados.append((bloco[u"pi"], bloco[u"nome"], len(bloco[u"ids"])))
             continue
         fora = [w for w in re.split(r"[^\wÀ-ÿ]+", limpa(bloco[u"txt"])) if len(w) >= 3]
+        # ⚠️ A REGRA DE UMA LETRA SÓ VALE PARA O NOME DA FIGURA — e foi preciso
+        #    apertá-la três vezes. Solta, ela acusou "a resposta é E e a tela
+        #    mostra ESTA" (palavra do título "Que letra é esta?") e mais dois
+        #    cadernos inteiros. Com uma letra só, quase toda palavra do
+        #    português começa por alguma resposta: o sinal some no ruído.
+        #    O defeito de verdade tem forma exata — **a figura está na tela com
+        #    o NOME dela escrito ao lado, e a resposta é a inicial desse nome**.
+        #    É só isso que ela olha agora, e o nome vem do `src` da imagem, que
+        #    o caderno não tem como falsear.
+        doFig = set(limpa(x) for x in bloco.get(u"figs", []))
         for certo in bloco[u"certos"]:
             # ⚠️ RESPOSTA NEM SEMPRE É PALAVRA (13/set/2026). Na Fábrica de
             #    Palavras a folha "Quantas sílabas?" declara `certo` como NÚMERO,
@@ -209,7 +231,27 @@ def main():
             for w in fora:
                 # a resposta inteira impressa, ou a PALAVRA DO CADERNO que
                 # começa por ela (o caso da MOLA: resposta MO, legenda "MOLA")
-                if w == c or (2 <= len(c) <= 3 and w.startswith(c) and w in doCaderno):
+                # ⚠️ UMA LETRA TAMBÉM CONTA (13/set/2026). A regra pedia de 2 a 3
+                #    caracteres, e por isso deixou passar a folha "Com que letra
+                #    começa?" do Desfile das Letras: a tela mostrava BOLA escrito
+                #    e a resposta era B. Quem já lê pega a primeira letra do que
+                #    está impresso e acerta sem ouvir — exatamente o defeito da
+                #    MOLA, só que com uma letra em vez de uma sílaba.
+                #    O piso de 2 existia para não acusar coincidência do
+                #    português; com UMA letra o risco seria enorme, por isso ela
+                #    só conta quando a palavra é DO CADERNO **e** o item tem essa
+                #    palavra como figura — que é o caso em que ela foi impressa
+                #    ali de propósito.
+                #    ⚠️ O RISCO ASSUMIDO, dito em voz alta: com uma letra só, o
+                #    portão pode acusar coincidência (resposta "B" e sobrar a
+                #    palavra "Bote" no apoio). Ele é estreito de propósito — só
+                #    olha o texto DENTRO do item, de onde os botões já saíram,
+                #    e ali quase só resta a palavra da figura. Se um dia acusar
+                #    inocente, o conserto é declarar `data-alvo="1"` naquele
+                #    texto, não afrouxar a regra.
+                umaLetra = (len(c) == 1 and w in doFig and w.startswith(c))
+                if w == c or (2 <= len(c) <= 3 and w.startswith(c) and w in doCaderno) \
+                   or umaLetra:
                     erros.append((bloco[u"pi"], bloco[u"nome"], certo, w))
                     break
 
