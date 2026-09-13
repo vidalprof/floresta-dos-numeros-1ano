@@ -839,6 +839,36 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🩹 O HALO BRANCO, E A LIÇÃO QUE VALE PARA TODO PORTÃO (13/set/2026)
+
+Recorte de figura sobre papel branco deixa em volta da silhueta uma casca de
+branco **sujo** — nem tinta nem papel — de dois ou três pixels. Ela fica opaca e
+a figura vira adesivo cortado com tesoura. No creme da folha quase não se nota;
+em fundo escuro salta (foi assim que apareceu, na chapa de raio-X do Museu).
+
+**Estava em 43 das 57 figuras da moradia e em 517 figuras dos dez cadernos de
+alfabetização que já estavam no ar** — e ninguém via, porque não havia um comando
+que olhasse os cadernos de folha viva de uma vez.
+
+**A causa é a lição, e ela é maior que o halo:** o portão `_qa/halo.py` chama de
+quase-branco tudo acima de **225** e só perdoa alfa abaixo de **40**. O meu
+apagador trabalhava de 236 para cima. **Eu media com uma régua e apagava com
+outra** — então eu deixava intacto exatamente aquilo que o portão vigiava, e
+ficava sem entender a reprovação. Hoje as duas réguas estão escritas juntas, no
+cabeçalho do `_padrao/limpar_halo.py`, com um aviso: mexeu num número, rode o
+portão.
+
+**Regra que fica:** quando um portão reprova e o conserto "não funciona", a
+primeira suspeita não é o portão — é se a ferramenta do conserto usa a MESMA
+medida que ele. Ferramenta e portão que discordam de um número produzem trabalho
+que parece feito e não está.
+
+Ferramenta: `python3 _padrao/limpar_halo.py <pasta> [--ensaio] [--folha out.png]`.
+Não toca em imagem sem transparência (foto não se recorta), só anda a partir da
+borda (o branco legítimo de dentro da figura nunca é alcançado) e o `--folha`
+monta o contato-folha ANTES | DEPOIS para o olho conferir. **Mexeu em figura,
+sobe o `VIMG`** no mesmo commit, senão o navegador da escola serve a cópia velha.
+
 ## 🎡 DEGRAU 9 — A RODA DAS SÍLABAS, e a lição de ir ao currículo ANTES de desenhar
 
 **A roda que eu ia fazer estava errada de ano.** Comecei o degrau 9 pela roda do

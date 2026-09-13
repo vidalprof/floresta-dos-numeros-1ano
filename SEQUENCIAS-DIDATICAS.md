@@ -431,6 +431,21 @@ Tem também o portão do próprio portão: se a pasta não tiver `PAGEL` nem
 num app do motor daria uma enxurrada de "não medi" que alguém leria como
 aprovação.
 
+### 🩹 O QUE A ESTREIA DA BANCA CONSERTOU (13/set/2026)
+
+| Defeito | Onde | Conserto |
+|---|---|---|
+| **Halo branco** — o papel da folha grudado na silhueta | **os onze**, 517 figuras | `_padrao/limpar_halo.py`, com as **mesmas duas réguas** do `_qa/halo.py` escritas no cabeçalho. Foi a divergência entre elas que criou o defeito: eu media com uma e apagava com outra |
+| **Portão que ESTOURA** (`int.upper()`) quando a resposta é número | `_alfa1`, folha "Quantas sílabas?" | `resposta_impressa.py` pula resposta que não é palavra. ⚠️ Portão que estoura é o pior tipo: acusa a atividade de um defeito que é **dele** |
+| **A palavra escrita entregava a resposta** — a tela mostrava JANELA e pedia para pintar JA | `_alfa1`, folha 6 | a palavra virou segredo até o acerto (o alto-falante fica). É a mesma lição da MOLA na Roda |
+| **Não enchia a aula** (22–37 min; piso 40) | `_abc1`, `_alfa1` | pote com o **alfabeto inteiro** (era 10 de 26 letras) e saque maior. 30–42 e 32–54 |
+| **Cor cravada sem fundo** (portão 4c) | `_alfa1` | herdar; as duas regras só repetiam à mão o preto do `body` |
+
+⚠️ **O remendo da duração NÃO é a regra das 25 folhas.** Os dez cadernos de
+alfabetização têm 10 a 15 folhas; só a moradia tem 26. A **tarefa #105 continua
+aberta** e é ela que fecha isso de verdade — com folhas novas, tiradas do crivo,
+e não com saque maior.
+
 **⚠️ NA ESTREIA ELE REPROVOU OS ONZE CADERNOS**, dez deles já no ar: os onze com
 **halo branco** no recorte (o papel da folha grudado na silhueta), o `_abc1` e o
 `_alfa1` também na duração e no pré-voo, e o `_alfa1` ainda na resposta impressa.
