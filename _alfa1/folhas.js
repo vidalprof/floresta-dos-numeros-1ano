@@ -35,9 +35,14 @@ function enunciado(d, pi, texto, chave){
   cx.appendChild(botaoSom("Ouvir o que a folha pede", function(){ falar(chave); }));
   d.appendChild(cx);
 }
-function palavraComSom(w){
+function palavraComSom(w, id){
   var cx = el("div", "palin");
-  cx.appendChild(el("span", "pal", esc(w)));
+  /* ⚠️ COM `id`, A PALAVRA É SEGREDO até o item ser respondido — ver o comentário
+     do `.segredo` no index.html. Sem `id`, ela é só apoio de leitura e aparece
+     desde o começo (é o caso das folhas em que a palavra NÃO é a resposta). */
+  var pa = el("span", "pal" + (id ? " segredo" + (ST.resp[id] ? " revelado" : "") : ""), esc(w));
+  if(id) pa.setAttribute("data-nome", id);
+  cx.appendChild(pa);
   cx.appendChild(botaoSom("Ouvir a palavra " + esc(w), function(){ falar("pal_" + w); }));
   return cx;
 }
@@ -620,7 +625,7 @@ function f6(d, pi){
     (function(it, i){
       var id = "r6_" + i, certa = sil(it.p)[0], b = item(i + 1);
       var cxp = el("div", null, '<div style="text-align:center">' + img(it.p) + '</div>');
-      cxp.appendChild(palavraComSom(it.p));
+      cxp.appendChild(palavraComSom(it.p, id));
       b.appendChild(cxp);
       registra(id, pi, certa);
       var box = el("div", "ops"), feito = !!ST.resp[id];

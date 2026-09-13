@@ -23,6 +23,38 @@ Leia tudo antes de agir e responda sempre em **português**.
 > tipo de atividade?"* — e não tinha; a escolha dos portões dependia da minha
 > memória. Na estreia ela reprovou os ONZE cadernos, dez já no ar.
 
+> ## ✂️➡️🎮 DE ONDE VEM A INTERATIVIDADE (regra do Marcos, 13/set/2026)
+>
+> Palavras dele: *"as interatividades têm que vir das atividades que você seleciona
+> na internet, o que as atividades pedem para o aluno fazer, então você dá essa
+> interatividade"*.
+>
+> **Quem escolhe o gesto é o COMANDO IMPRESSO na folha de papel, não eu.** A folha
+> colhida diz *"ligue cada moradia ao material"* → a tela dá **ligar**. Diz
+> *"enumere as cenas na sequência correta"* → a tela dá **ordenar**. Diz *"pinte
+> no poema os tipos de moradia"* → a tela dá **marca-texto**. Diz *"circule as
+> paisagens modificadas"* → a tela dá **marcar vários**. O papel já sabe qual é o
+> gesto natural daquele conteúdo, porque quem o escreveu é professor e ele foi
+> usado em sala; inventar outro por cima é trocar uma coisa testada por um palpite
+> meu.
+>
+> **Como isso vira trabalho, e não intenção:**
+> 1. Colher as folhas por workflow (`buscar-fotos.yml`, input `imagens=`).
+> 2. **Ler as trinta, uma a uma**, e anotar em `_sequencias/POTE-<assunto>.md`,
+>    para cada folha: o **comando impresso VERBATIM**, o **verbo** que ele manda
+>    fazer, e o veredito (entra · é cartaz sem tarefa · pede desenhar, que a tela
+>    não tem · ensina errado · é duplicata).
+> 3. O roteiro de folhas sai **desse inventário de verbos** — e o que o currículo
+>    pede e nenhuma folha cobre entra declarado como bloco novo (na moradia foram
+>    quatro: visão vertical, tempo, porquê do material, porquê do lugar).
+> 4. A figura vem da MESMA folha (`recortar_das_folhas.py`): gesto e desenho
+>    nascem juntos, e a criança reconhece a atividade que a professora dá no papel.
+>
+> ⚠️ **O contrário disto já custou caro:** quando eu escolhia a mecânica "por
+> encaixe" só com a minha cabeça, saía atividade com 84% de um gesto só (Fábrica)
+> — a criança dizendo *"isso eu já fiz"*. A folha de papel não tem esse vício:
+> cada uma pede uma coisa diferente porque foi feita para uma aula diferente.
+
 > ## 🚫🎲 REGRA ZERO — **"NUNCA CHUTE NUNCA INVENTE"** (Marcos, 12/set/2026)
 >
 > Quatro palavras dele, e vêm antes de todo o resto. Número sem fonte não sai da

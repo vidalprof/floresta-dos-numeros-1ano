@@ -185,6 +185,16 @@ def main():
             continue
         fora = [w for w in re.split(r"[^\wÀ-ÿ]+", limpa(bloco[u"txt"])) if len(w) >= 3]
         for certo in bloco[u"certos"]:
+            # ⚠️ RESPOSTA NEM SEMPRE É PALAVRA (13/set/2026). Na Fábrica de
+            #    Palavras a folha "Quantas sílabas?" declara `certo` como NÚMERO,
+            #    e o `limpa()` estourava em `int.upper()` — o portão MORRIA no
+            #    meio e a banca lia "reprovou". Portão que estoura não é
+            #    "reprovou": é portão quebrado, e o pior tipo, porque acusa a
+            #    atividade de um defeito que é dele. Número (e lista) não têm
+            #    como aparecer impressos no enunciado como palavra, então são
+            #    pulados — e a contagem de conferidos não os conta.
+            if not isinstance(certo, (str, bytes)) and not hasattr(certo, u"upper"):
+                continue
             c = limpa(certo)
             if not c or u"," in certo:
                 continue           # resposta que é uma lista (marcar vários)
