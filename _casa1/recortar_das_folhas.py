@@ -165,6 +165,21 @@ RUA_CEU = (184, 212, 215)
 PINTA_D05 = [((338, 196, 488, 226), RUA_CEU)]
 CORTES_RUA = {u"ruahoje": (336, 190, 592, 372)}
 
+# ⚠️ FOTO NÃO SE APERTA NEM SE APAGA O FUNDO. As duas fotos do "antes e hoje"
+#    são retângulos inteiros: o céu delas é claro, e o `limpa_fundo` comeria o
+#    céu pela borda até a foto virar um recorte esburacado. Estas passam por um
+#    caminho CRU — corta e redimensiona, mais nada.
+#  · a de 1910 é de AUGUSTO MALTA (Copacabana, 1910), reproduzida na folha
+#    `mor_tempo/d27` (mundoindica) e em domínio público pela idade;
+#  · a de hoje veio do Wikimedia Commons em CC0 (Wilfredor), e o crédito das
+#    duas aparece na tela, embaixo da figura.
+CORTES_CRUS = [
+ (u"mor_tempo", u"d27", # ⚠️ 538 e não 568: a legenda impressa ("Augusto Malta – Copacabana, 1910")
+  #    e o endereço de onde a folha tirou a foto começam em y=545
+  {u"copa1910": (90, 326, 452, 538)}),
+ (u"mor_copa",  u"c12", {u"copahoje": (0, 0, 1920, 1280)}),
+]
+
 # a folha dos profissionais numera cada figura: os números são apagados antes
 NUMEROS_D03 = [(40, 66, 78, 112), (366, 190, 404, 238), (238, 330, 274, 378),
                (234, 655, 270, 703), (654, 490, 692, 538)]
@@ -343,6 +358,23 @@ def main():
         feitas += roda(pasta, prefixo, alvos, moldura=True)
     feitas += roda(u"mor_obra", u"d03", CORTES_PROFISSOES, apagar=NUMEROS_D03)
     feitas += roda(u"mor_bairro", u"d05", CORTES_RUA, pintar=PINTA_D05)
+    for pasta, prefixo, alvos in CORTES_CRUS:
+        cam = acha(pasta, prefixo)
+        if not cam:
+            for n in alvos:
+                faltam.append((n, u"%s/%s" % (pasta, prefixo)))
+            continue
+        im = Image.open(cam).convert(u"RGB")
+        for nome in sorted(alvos):
+            c = im.crop(alvos[nome])
+            if max(c.size) > MAIOR:
+                k = MAIOR / float(max(c.size))
+                c = c.resize((int(c.width * k), int(c.height * k)), Image.LANCZOS)
+            saida = os.path.join(DEST, u"mo_%s.png" % nome)
+            c.save(saida, optimize=True)
+            feitas += 1
+            print(u"   mo_%-18s %4dx%-4d  <- %s/%s (foto, corte cru)"
+                  % (nome + u".png", c.width, c.height, pasta, prefixo))
 
     print(u"_casa1 -> %d figura(s) recortada(s) das folhas de professor" % feitas)
     if faltam:

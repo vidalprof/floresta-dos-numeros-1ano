@@ -1240,6 +1240,9 @@ function f20(d, pi){
       };
     });
     box.appendChild(banco);
+    /* ⚠️ O CRÉDITO DA FOTO FICA NA TELA, embaixo do par. Só o par de Copacabana
+       tem: as outras figuras são desenho de folha de professor. */
+    if(T.cred) box.appendChild(el("div", "credito", T.cred));
     fechaItem(d, box, id);
   });
 }

@@ -279,6 +279,7 @@ button{font-family:inherit;cursor:pointer}
 
 /* ---- a imagem aérea com pontos (folha 18) ---- */
 .colho{text-align:center;margin:2px 0 4px;min-height:80px}
+.credito{font-size:11px;line-height:1.35;color:#6b5347;margin:6px 2px 0;text-align:center}
 .figolho{max-height:76px;width:auto;display:inline-block}
 .aerea{position:relative;max-width:520px;margin:8px auto 4px;width:100%}
 .aerea img{display:block;width:100%;height:auto;border-radius:16px;border:3px solid #e6dbd1}
@@ -576,7 +577,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   <div class="estrelas" id="estrelas"></div>
   <div class="barras" id="barras"></div>
   <p id="resumo" style="font-weight:800;font-size:16px"></p>
-  <div id="medalha" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/mo_trofeu.png?v=1" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
+  <div id="medalha" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/mo_trofeu.png?v=2" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
   <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
     <button class="bt verde" id="bVoltar" style="display:none">Voltar para o caderno</button>
     <button class="bt cinza" id="bRever">Rever o caderno</button>
@@ -768,7 +769,8 @@ var ITENS = {
  ],
  "p20": [
   "casa",
-  "rua"
+  "rua",
+  "praia"
  ],
  "p21": [
   "arquiteto",
@@ -882,6 +884,7 @@ var FALAS = {
  "certo1_precisa": "Isso mesmo! Toda casa precisa ter… teto, parede, chão, porta.",
  "certo1_serve": "Isso mesmo! A moradia serve para… abrigar a família, proteger do sol e da chuva, dar um lugar para dormir, guardar as nossas coisas.",
  "certo20_casa": "Isso! A casa mudou: antes, casa de madeira, com fogão de lenha e sem energia elétrica. Hoje, casa de tijolo, com energia elétrica e água encanada.",
+ "certo20_praia": "Isso! A praia de copacabana mudou: antes, areia, poucas casas baixas e o morro atrás. Hoje, o mesmo morro, e agora uma parede de prédios ao longo da praia.",
  "certo20_rua": "Isso! A rua mudou: antes, rua de chão, onde o cavalo puxava a carroça. Hoje, rua de asfalto, com calçada, poste e loja.",
  "certo21_arquiteto": "Isso! 1º: o arquiteto primeiro o arquiteto desenha a casa no papel.",
  "certo21_eletricista": "Isso! 3º: o eletricista com a parede de pé, o eletricista passa os fios por dentro dela.",
@@ -1030,6 +1033,7 @@ var FALAS = {
  "dica1_precisa": "Falta alguma, ou sobrou alguma. Leia de novo uma por uma e pergunte: isto é mesmo coisa de casa?",
  "dica1_serve": "Falta alguma, ou sobrou alguma. Leia de novo uma por uma e pergunte: isto é mesmo coisa de casa?",
  "dica20_casa": "Procure as coisas que só existem hoje: asfalto, poste, carro. Onde elas não aparecem, é o ANTES.",
+ "dica20_praia": "Procure as coisas que só existem hoje: asfalto, poste, carro. Onde elas não aparecem, é o ANTES.",
  "dica20_rua": "Procure as coisas que só existem hoje: asfalto, poste, carro. Onde elas não aparecem, é o ANTES.",
  "dica21_arquiteto": "Pense na ordem de verdade: dá para levantar a parede antes de alguém desenhar a casa? Dá para pintar antes de a parede existir?",
  "dica21_eletricista": "Pense na ordem de verdade: dá para levantar a parede antes de alguém desenhar a casa? Dá para pintar antes de a parede existir?",
@@ -1131,6 +1135,8 @@ var FALAS = {
  "fig_carro_vertical": "o carro.",
  "fig_casaantiga": "Casa de madeira, com fogão de lenha e sem energia elétrica.",
  "fig_casahoje": "Casa de tijolo, com energia elétrica e água encanada.",
+ "fig_copa1910": "Areia, poucas casas baixas e o morro atrás.",
+ "fig_copahoje": "O mesmo morro, e agora uma parede de prédios ao longo da praia.",
  "fig_ruaantiga": "Rua de chão, onde o cavalo puxava a carroça.",
  "fig_ruahoje": "Rua de asfalto, com calçada, poste e loja.",
  "fim": "Você chegou ao fim! Agora você já sabe olhar uma casa e perguntar: de que ela é feita, e por que ela é assim neste lugar? Olhe a sua rua ali embaixo. E, no caminho de casa hoje, repare: quantos tipos de moradia você consegue achar no seu bairro?",
@@ -1260,6 +1266,7 @@ var FALAS = {
  "tarefa_pedreiro": "Levanta as paredes, tijolo por tijolo.",
  "tarefa_pintor": "Pinta a parede quando a obra está quase pronta.",
  "tempo_casa": "Aqui é a casa. Antes: Casa de madeira, com fogão de lenha e sem energia elétrica. Hoje: Casa de tijolo, com energia elétrica e água encanada.",
+ "tempo_praia": "Aqui é a praia de Copacabana. Antes: Areia, poucas casas baixas e o morro atrás. Hoje: O mesmo morro, e agora uma parede de prédios ao longo da praia.",
  "tempo_rua": "Aqui é a rua. Antes: Rua de chão, onde o cavalo puxava a carroça. Hoje: Rua de asfalto, com calçada, poste e loja.",
  "toque_cena": "Primeiro toque em quem você quer pôr na fila. Depois toque no lugar dela.",
  "toque_etiqueta": "Primeiro toque num nome ali embaixo. Depois toque na casa dele.",
@@ -1272,7 +1279,7 @@ var FALAS = {
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {"1x2w6dg": 1, "1k4x79h": 1, "rzzuck": 1, "qpn3mi": 1, "miy0y4": 1, "1s3uuat": 1, "17vl72y": 1, "zffp6x": 1, "1vwn21o": 1, "jvgk54": 1, "1hn18ad": 1, "1tzqbbq": 1, "a6iknv": 1, "nq0dts": 1, "gqpkov": 1, "bzf9ec": 1, "1u2u6ew": 1, "1eg4f83": 1, "1vsgy6s": 1, "uxetb": 1, "1aidlee": 1, "1impafx": 1, "fpz28s": 1, "pe931z": 1, "1wf9t79": 1, "qlvqta": 1, "lrn9kp": 1, "ltsicr": 1, "7j5eyj": 1, "coeu7h": 1, "oml86c": 1, "19hdodg": 1, "12tgdwr": 1, "1g4yed8": 1, "5g6k9m": 1, "1b5b75t": 1, "168cwfb": 1, "6d8fhu": 1, "d0tc3c": 1, "azcb8l": 1, "1br7rok": 1, "cxb6jw": 1, "1rnu88g": 1, "1laef7q": 1, "1dfkqwq": 1, "p4t46q": 1, "3dklb8": 1, "c4kxnc": 1, "eszq3e": 1, "12uhjze": 1, "13dmqg5": 1, "19kropt": 1, "1uerwah": 1, "1jv6w81": 1, "daw57t": 1, "1e7gbe9": 1, "1hx0561": 1, "1m4kzen": 1, "17lw2my": 1, "vqi6v5": 1, "nz3ck1": 1, "dz28w2": 1, "qkwzn8": 1, "12hl0d4": 1, "1iickdr": 1, "7kzqkm": 1, "1scc08u": 1, "1vihrn5": 1, "z00nxi": 1, "6luo5x": 1, "1jje154": 1, "1jpah5b": 1, "zhkvb7": 1, "ozfjq3": 1, "1b4s4v7": 1, "14t9f39": 1, "bgz5qg": 1, "1s28hw0": 1, "skwt3m": 1, "1kxr236": 1, "3vmva5": 1, "4gc6wc": 1, "1j3qhhd": 1, "toyq3v": 1, "16aw3mv": 1, "1la7g05": 1, "1yannnz": 1, "gon45g": 1, "15thzba": 1, "3eepud": 1, "2fkx5k": 1, "1v4mgqr": 1, "dumxt8": 1, "1054k83": 1, "l7brba": 1, "3d168i": 1, "3mky0": 1, "dfqjnn": 1, "1l9hbr3": 1, "12w5yfr": 1, "1d4tlil": 1, "1wlxheu": 1, "1hcbgyx": 1, "1d43l9i": 1, "1l80j7e": 1, "5ppgo2": 1, "18ul3d8": 1, "n329ak": 1, "2ja3ya": 1, "1dz5jkc": 1, "17kqxjk": 1, "1xecuve": 1, "1w764fe": 1, "ji3pnx": 1, "2174ua": 1, "4t861m": 1, "1d91gp6": 1, "166612h": 1, "zglpgx": 1, "12g9qtr": 1, "r1yo9x": 1, "145b6b6": 1, "dqsjlp": 1, "ni48ad": 1, "5539ke": 1, "1yzk6rb": 1, "1xz2zvb": 1, "1eik9o1": 1, "10mta7b": 1, "j2qky5": 1, "2x8g63": 1, "q9bnva": 1, "jr2q5": 1, "1ug0cp4": 1, "2yrdng": 1, "yj35ja": 1, "y8hh1p": 1, "rdf6le": 1, "ozofjh": 1, "swdib5": 1, "14tz6kf": 1, "1b8h82b": 1, "1bv3umf": 1, "38iz6c": 1, "vgx5pk": 1, "uui6vv": 1, "1wwlfo1": 1, "1q4k3em": 1, "17p2rcc": 1, "1o9he1o": 1, "x6az56": 1, "1lts8hw": 1, "1bfjpnn": 1, "14bh37n": 1, "1kjr20y": 1, "14cwk6m": 1, "3z4t14": 1, "1iotda": 1, "1wizi9z": 1, "1gbaggy": 1, "v0b5h4": 1, "1ias5ic": 1, "1l94amb": 1, "1p8phb": 1, "1twjf7r": 1, "17avm52": 1, "1agw93e": 1, "1fncbca": 1, "jjeu0": 1, "4rkf4o": 1, "1pgqji5": 1, "1d6jys7": 1, "1gdgz3j": 1, "1aioemr": 1, "17lrsvj": 1, "xb2cex": 1, "ola0ei": 1, "1oukiu8": 1, "17765ed": 1, "cjaafm": 1, "1xhq0jz": 1, "whemjh": 1, "hpjerx": 1, "31qtnf": 1, "1fxwfrm": 1, "11t39bv": 1, "ibft26": 1, "4rwpao": 1, "1gwcpk3": 1, "ye3jl5": 1, "1yfr5jo": 1, "d8qz1g": 1, "1wnj66e": 1, "1anpnf6": 1, "18exdq4": 1, "h33j5n": 1, "1calzoa": 1, "gjkvd8": 1, "qhbw9q": 1, "goxpbi": 1, "1ysbz14": 1, "uof0hd": 1, "jd4uyy": 1, "pp95sg": 1, "1451gg": 1, "1nbt9oe": 1, "5ij7kk": 1, "xnmz3g": 1, "15f8jej": 1, "93xrcx": 1, "1x7gy8h": 1, "1b4woq7": 1, "1llsb0l": 1, "1e7fo7x": 1, "jqlzvl": 1, "sd9gwr": 1, "x4bj0r": 1, "5ikvxx": 1, "1p8657j": 1, "kejo93": 1, "5b3aa2": 1, "1wbontc": 1, "1m37iqo": 1, "ln1mpq": 1, "1el9gr8": 1, "1bxqoto": 1, "14fd1c5": 1, "w8bxof": 1, "gfxokv": 1, "jx1itt": 1, "bl0v23": 1, "56ll0j": 1, "kwaqye": 1, "o37yb0": 1, "1dqzu58": 1, "1vxv6v6": 1, "6uplyg": 1, "1kuol3k": 1, "s69mtb": 1, "1fns68x": 1, "qqq99l": 1, "9no52l": 1, "12ybbhi": 1, "1tp3uvz": 1, "f6cwc2": 1, "xa8bbx": 1, "1d9s73k": 1, "15s280s": 1, "1wdlwof": 1, "1o4utpa": 1, "jl8af1": 1, "1r6agth": 1, "dudk3k": 1, "1uws2gw": 1, "40beze": 1, "y99d9m": 1, "1k637w4": 1, "17pljj2": 1, "18ajw4m": 1, "1wtbk5m": 1, "11cq1j": 1, "nm5mr9": 1, "aanjt": 1, "n71jyl": 1, "10bj5hu": 1, "19ycvpc": 1, "iy8u2r": 1, "ouzzdz": 1, "2uhop6": 1, "e0lp4s": 1, "vem98f": 1, "33r463": 1, "vbsco9": 1, "wmnwkw": 1, "1yxrutj": 1, "1nnh1x7": 1, "1ynvdf1": 1, "g1mr4f": 1, "yqd2k0": 1, "16pdy10": 1, "trtgme": 1, "1mfn5y6": 1, "t3uftr": 1, "15fzar6": 1, "t7euof": 1, "eo7twv": 1, "15dpmsg": 1, "1xen1gw": 1, "4iipal": 1, "150et4c": 1, "jmz0xh": 1, "oklf8a": 1, "18mz4pg": 1, "1qt8f9c": 1, "u2ebzo": 1, "fo8rw5": 1, "1f1sx4z": 1, "1slzcbd": 1, "2hctnh": 1, "1iq5yns": 1, "1l6pnic": 1, "12q5vig": 1, "nsp258": 1, "ysn5hc": 1, "x7k2y6": 1, "ef9clm": 1, "1w84bg1": 1, "1iqcvk8": 1, "1qzn7pj": 1, "13cmu7t": 1, "1rwhn6w": 1, "19us335": 1, "1qvccuh": 1, "e6czn7": 1, "wivsv2": 1, "1sg7ifm": 1, "2wxudx": 1, "o2iup2": 1, "mwtskg": 1, "1sbbuny": 1, "1exkga9": 1, "15qwec1": 1, "nesnu7": 1, "1dk3r2h": 1, "1lewon9": 1, "13nnpbv": 1, "y4pwgr": 1, "o76b2e": 1, "eiz0v1": 1, "150cash": 1, "d4yu00": 1, "1ldh491": 1, "1ydco4f": 1, "sh944a": 1, "1cm0v08": 1, "813z02": 1, "h8jlfe": 1, "22yvc4": 1, "1uzrnn6": 1, "4c84gr": 1, "1j5bcn2": 1, "imiksa": 1, "q5xstg": 1, "a6u3jz": 1, "ri8a1w": 1, "1nipedw": 1, "191ybsp": 1, "1axzwj9": 1, "1a3lyjf": 1, "1frg173": 1, "1ehn12k": 1, "1cez6ab": 1, "1991b55": 1, "743t86": 1, "1xrji35": 1, "17fyngh": 1, "igfvl6": 1, "8hb0q7": 1, "flp4ej": 1, "15cjfxz": 1, "6b8afi": 1, "m8co1f": 1, "ybdyj4": 1, "ubqbgs": 1, "swkns7": 1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1x2w6dg": 1, "1k4x79h": 1, "rzzuck": 1, "qpn3mi": 1, "miy0y4": 1, "1s3uuat": 1, "17vl72y": 1, "zffp6x": 1, "1vwn21o": 1, "jvgk54": 1, "1hn18ad": 1, "1tzqbbq": 1, "a6iknv": 1, "nq0dts": 1, "gqpkov": 1, "bzf9ec": 1, "1u2u6ew": 1, "1eg4f83": 1, "1vsgy6s": 1, "uxetb": 1, "1aidlee": 1, "1impafx": 1, "fpz28s": 1, "pe931z": 1, "1wf9t79": 1, "qlvqta": 1, "lrn9kp": 1, "ltsicr": 1, "7j5eyj": 1, "coeu7h": 1, "oml86c": 1, "19hdodg": 1, "12tgdwr": 1, "1g4yed8": 1, "5g6k9m": 1, "1b5b75t": 1, "168cwfb": 1, "6d8fhu": 1, "d0tc3c": 1, "azcb8l": 1, "1br7rok": 1, "cxb6jw": 1, "1rnu88g": 1, "1laef7q": 1, "1dfkqwq": 1, "p4t46q": 1, "3dklb8": 1, "c4kxnc": 1, "eszq3e": 1, "12uhjze": 1, "13dmqg5": 1, "19kropt": 1, "1uerwah": 1, "1jv6w81": 1, "daw57t": 1, "1e7gbe9": 1, "1hx0561": 1, "1m4kzen": 1, "17lw2my": 1, "vqi6v5": 1, "olo85v": 1, "nz3ck1": 1, "dz28w2": 1, "qkwzn8": 1, "12hl0d4": 1, "1iickdr": 1, "7kzqkm": 1, "1scc08u": 1, "1vihrn5": 1, "z00nxi": 1, "6luo5x": 1, "1jje154": 1, "1jpah5b": 1, "zhkvb7": 1, "ozfjq3": 1, "1b4s4v7": 1, "14t9f39": 1, "bgz5qg": 1, "1s28hw0": 1, "skwt3m": 1, "1kxr236": 1, "3vmva5": 1, "4gc6wc": 1, "1j3qhhd": 1, "toyq3v": 1, "16aw3mv": 1, "1la7g05": 1, "1yannnz": 1, "gon45g": 1, "15thzba": 1, "3eepud": 1, "2fkx5k": 1, "1v4mgqr": 1, "dumxt8": 1, "1054k83": 1, "l7brba": 1, "3d168i": 1, "3mky0": 1, "dfqjnn": 1, "1l9hbr3": 1, "12w5yfr": 1, "1d4tlil": 1, "1wlxheu": 1, "1hcbgyx": 1, "1d43l9i": 1, "1l80j7e": 1, "5ppgo2": 1, "18ul3d8": 1, "n329ak": 1, "2ja3ya": 1, "1dz5jkc": 1, "17kqxjk": 1, "1xecuve": 1, "1w764fe": 1, "ji3pnx": 1, "2174ua": 1, "4t861m": 1, "1d91gp6": 1, "166612h": 1, "zglpgx": 1, "12g9qtr": 1, "r1yo9x": 1, "145b6b6": 1, "dqsjlp": 1, "ni48ad": 1, "5539ke": 1, "1yzk6rb": 1, "1xz2zvb": 1, "1eik9o1": 1, "10mta7b": 1, "j2qky5": 1, "2x8g63": 1, "q9bnva": 1, "jr2q5": 1, "1ug0cp4": 1, "2yrdng": 1, "yj35ja": 1, "y8hh1p": 1, "rdf6le": 1, "ozofjh": 1, "swdib5": 1, "14tz6kf": 1, "1b8h82b": 1, "1bv3umf": 1, "38iz6c": 1, "vgx5pk": 1, "uui6vv": 1, "1wwlfo1": 1, "1q4k3em": 1, "17p2rcc": 1, "1o9he1o": 1, "x6az56": 1, "1lts8hw": 1, "1bfjpnn": 1, "14bh37n": 1, "1kjr20y": 1, "14cwk6m": 1, "3z4t14": 1, "1iotda": 1, "1wizi9z": 1, "1gbaggy": 1, "v0b5h4": 1, "1ias5ic": 1, "1l94amb": 1, "1p8phb": 1, "1twjf7r": 1, "17avm52": 1, "1agw93e": 1, "1fncbca": 1, "jjeu0": 1, "4rkf4o": 1, "1pgqji5": 1, "1d6jys7": 1, "1gdgz3j": 1, "1aioemr": 1, "17lrsvj": 1, "xb2cex": 1, "ola0ei": 1, "1oukiu8": 1, "17765ed": 1, "cjaafm": 1, "1xhq0jz": 1, "whemjh": 1, "hpjerx": 1, "31qtnf": 1, "1fxwfrm": 1, "11t39bv": 1, "ibft26": 1, "4rwpao": 1, "1gwcpk3": 1, "ye3jl5": 1, "1yfr5jo": 1, "d8qz1g": 1, "1wnj66e": 1, "1anpnf6": 1, "18exdq4": 1, "h33j5n": 1, "1calzoa": 1, "gjkvd8": 1, "qhbw9q": 1, "goxpbi": 1, "1ysbz14": 1, "uof0hd": 1, "jd4uyy": 1, "pp95sg": 1, "1451gg": 1, "1nbt9oe": 1, "5ij7kk": 1, "xnmz3g": 1, "15f8jej": 1, "93xrcx": 1, "1x7gy8h": 1, "1b4woq7": 1, "1llsb0l": 1, "1e7fo7x": 1, "jqlzvl": 1, "sd9gwr": 1, "x4bj0r": 1, "5ikvxx": 1, "1p8657j": 1, "kejo93": 1, "5b3aa2": 1, "1wbontc": 1, "1m37iqo": 1, "ln1mpq": 1, "1el9gr8": 1, "1bxqoto": 1, "14fd1c5": 1, "w8bxof": 1, "gfxokv": 1, "jx1itt": 1, "bl0v23": 1, "56ll0j": 1, "kwaqye": 1, "o37yb0": 1, "1dqzu58": 1, "1vxv6v6": 1, "6uplyg": 1, "1kuol3k": 1, "s69mtb": 1, "1fns68x": 1, "qqq99l": 1, "9no52l": 1, "12ybbhi": 1, "h775gz": 1, "12v5ioz": 1, "1tp3uvz": 1, "f6cwc2": 1, "xa8bbx": 1, "1d9s73k": 1, "15s280s": 1, "1wdlwof": 1, "1o4utpa": 1, "jl8af1": 1, "1r6agth": 1, "dudk3k": 1, "1uws2gw": 1, "40beze": 1, "y99d9m": 1, "1k637w4": 1, "17pljj2": 1, "18ajw4m": 1, "1wtbk5m": 1, "11cq1j": 1, "nm5mr9": 1, "aanjt": 1, "n71jyl": 1, "10bj5hu": 1, "19ycvpc": 1, "iy8u2r": 1, "ouzzdz": 1, "2uhop6": 1, "e0lp4s": 1, "vem98f": 1, "33r463": 1, "vbsco9": 1, "wmnwkw": 1, "1yxrutj": 1, "1nnh1x7": 1, "1ynvdf1": 1, "g1mr4f": 1, "yqd2k0": 1, "16pdy10": 1, "trtgme": 1, "1mfn5y6": 1, "t3uftr": 1, "15fzar6": 1, "t7euof": 1, "eo7twv": 1, "15dpmsg": 1, "1xen1gw": 1, "4iipal": 1, "150et4c": 1, "jmz0xh": 1, "oklf8a": 1, "18mz4pg": 1, "1qt8f9c": 1, "u2ebzo": 1, "fo8rw5": 1, "1f1sx4z": 1, "1slzcbd": 1, "2hctnh": 1, "1iq5yns": 1, "1l6pnic": 1, "12q5vig": 1, "nsp258": 1, "ysn5hc": 1, "x7k2y6": 1, "ef9clm": 1, "1w84bg1": 1, "1iqcvk8": 1, "1qzn7pj": 1, "13cmu7t": 1, "1rwhn6w": 1, "19us335": 1, "1qvccuh": 1, "e6czn7": 1, "wivsv2": 1, "1sg7ifm": 1, "2wxudx": 1, "o2iup2": 1, "mwtskg": 1, "1sbbuny": 1, "1exkga9": 1, "15qwec1": 1, "nesnu7": 1, "1dk3r2h": 1, "1lewon9": 1, "13nnpbv": 1, "y4pwgr": 1, "o76b2e": 1, "eiz0v1": 1, "150cash": 1, "d4yu00": 1, "1ldh491": 1, "1ydco4f": 1, "sh944a": 1, "1cm0v08": 1, "813z02": 1, "h8jlfe": 1, "22yvc4": 1, "1uzrnn6": 1, "4c84gr": 1, "1j5bcn2": 1, "imiksa": 1, "q5xstg": 1, "a6u3jz": 1, "ri8a1w": 1, "1nipedw": 1, "191ybsp": 1, "1axzwj9": 1, "1a3lyjf": 1, "1frg173": 1, "1ehn12k": 1, "1cez6ab": 1, "1991b55": 1, "743t86": 1, "1xrji35": 1, "1xrzw8z": 1, "17fyngh": 1, "igfvl6": 1, "8hb0q7": 1, "flp4ej": 1, "15cjfxz": 1, "6b8afi": 1, "m8co1f": 1, "ybdyj4": 1, "ubqbgs": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ============================================================
    OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
@@ -1436,9 +1443,21 @@ var TEMPO = {
             "qh":"Casa de tijolo, com energia elétrica e água encanada."},
  "rua":    {"n":"a rua",    "antes":"ruaantiga",    "hoje":"ruahoje",
             "qa":"Rua de chão, onde o cavalo puxava a carroça.",
-            "qh":"Rua de asfalto, com calçada, poste e loja."}
+            "qh":"Rua de asfalto, com calçada, poste e loja."},
+ "praia":  {"n":"a praia de Copacabana", "antes":"copa1910", "hoje":"copahoje",
+            "qa":"Areia, poucas casas baixas e o morro atrás.",
+            "qh":"O mesmo morro, e agora uma parede de prédios ao longo da praia.",
+            "cred":"Foto de 1910 de Augusto Malta (domínio público). Foto de hoje de Wilfredor, Wikimedia Commons, CC0."}
 };
-/* ⚠️ O PAR DA ESCOLA SAIU (13/set/2026). Ele existia no papel, mas as duas
+/* ⭐ O PAR DE COPACABANA É O MELHOR DESTA FOLHA, e é o único par de FOTO: o mesmo
+   pedaço de praia em 1910 e hoje, com o mesmo morro ao fundo servindo de âncora.
+   A habilidade C da rede pede literalmente *"comparando imagens de um mesmo lugar
+   em diferentes tempos"* — desenho de "antes" genérico não é isso; isto é.
+   ⚠️ AS DUAS FOTOS TÊM DONO E O CRÉDITO APARECE NA TELA (campo `cred`). A de 1910
+      é de Augusto Malta e está em domínio público pela idade; a de hoje veio do
+      Wikimedia Commons em CC0. Crédito não é rodapé jurídico: é o que a folha de
+      2º ano da própria rede faz quando reproduz a mesma foto.
+   ⚠️ O PAR DA ESCOLA SAIU (13/set/2026). Ele existia no papel, mas as duas
    figuras nunca ficaram boas, e par de "antes e hoje" com desenho mal resolvido
    não ensina: ensina a chutar. Ficam os dois pares que têm figura de verdade.
    ⚠️ E UMA FOLHA DA COLHEITA FICOU DE FORA DE PROPÓSITO: a `mor_tempo/d06` traz
@@ -1811,7 +1830,9 @@ function novaFolha(){
     p17: ITENS.p17.slice(0),
     p18: ITENS.p18.slice(0),
     p19: ITENS.p19.slice(0),
-    p20: ITENS.p20.slice(0),
+    /* ⚠️ dois dos três pares: com os três a folha 20 fica com seis figuras para
+       arrastar e passa de dois minutos numa ideia só */
+    p20: pega(ITENS.p20, 2),
     p21: ITENS.p21.slice(0),
     /* ⚠️ quatro dos cinco: o ligar de cinco pares fica alto demais no celular,
        e sortear quatro ainda faz a folha mudar de uma criança para a outra */
