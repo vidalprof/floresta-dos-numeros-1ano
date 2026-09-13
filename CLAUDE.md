@@ -13,10 +13,15 @@ Leia tudo antes de agir e responda sempre em **português**.
 > outros portões e uma banca que só os alcança pela metade. Antes de tocar em
 > qualquer um deles, ler o `SEQUENCIAS-DIDATICAS.md` inteiro.
 >
-> **Duas regras de lá que valem citar aqui:** sequência tem **no mínimo 25
-> folhas** (medido: é o que enche os 55 min da criança rápida); e **o fecho tem
+> **Três regras de lá que valem citar aqui:** sequência tem **no mínimo 25
+> folhas** (medido: é o que enche os 55 min da criança rápida); **o fecho tem
 > que ser alcançável a qualquer momento**, senão 25 folhas castiga justamente
-> quem vai devagar.
+> quem vai devagar; e **a banca deste formato é outra** —
+> **`bash _qa/auditar_folha.sh <pasta>`**, 13 portões em ~18 s, e NÃO a
+> `auditar.sh`, que é do motor e em folha viva reprova ou diz "não medi" por
+> desenho. Nasceu da pergunta do Marcos (13/set/2026): *"Mas tem banca para esse
+> tipo de atividade?"* — e não tinha; a escolha dos portões dependia da minha
+> memória. Na estreia ela reprovou os ONZE cadernos, dez já no ar.
 
 > ## 🚫🎲 REGRA ZERO — **"NUNCA CHUTE NUNCA INVENTE"** (Marcos, 12/set/2026)
 >

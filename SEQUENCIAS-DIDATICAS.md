@@ -407,10 +407,45 @@ MOTOR e, em folha viva, dizem **"NÃO MEDI"** — o que **não é "passou"**:
 | `0b padrão da casa` (leque de gestos) | conta fases, não folhas |
 | `entrega` · `enunciado_bate` · `figura_certa` | precisam de `conteudo.json` |
 
-**O que cobre a folha viva hoje:** `andar_folha.js` (anda tudo, erro de JS e
-figura quebrada), `leiaute_mao.js` (6 tamanhos, alvo ≥ 40 px), `resposta_impressa.py`,
-`duracao.py`, `pedagogo_curriculo.py`, `silaba_fonte.py`, `revisor.py`, `clone.py`,
-`duplicatas.py`, `pronuncia.py` (ASR), `halo.py`, `previo.sh`.
+### ⭐ E AGORA EXISTE UMA BANCA PRÓPRIA: `bash _qa/auditar_folha.sh <pasta>`
+
+Pergunta do Marcos (13/set/2026), depois de eu dizer que a `auditar.sh` tinha
+reprovado o caderno de moradia e que metade daquilo "não era deste formato":
+*"Mas tem banca para esse tipo de atividade?"* — e a resposta honesta era **não**.
+
+O que existia era esta tabela, escrita, mais a minha memória para escolher quais
+portões rodar. Memória não é portão: é o defeito que este projeto inteiro
+combate, e é pior que portão nenhum, porque leva a chamar de "aprovado" o que
+ninguém mediu.
+
+Agora é um comando só, **13 portões em ~18 segundos**, e ele imprime três grupos:
+**passou** (código 0, medido), **NÃO MEDIU** (o portão rodou e não achou o que
+medir — isto não é "passou", e aparece na tela para ninguém confundir silêncio
+com aprovação) e **não alcança** (os do motor, com o motivo escrito ao lado, para
+a ausência ficar visível). Ele só diz APROVOU com 0 em todos, e o rodapé repete,
+toda vez, o que nenhum portão mede ainda (a escada didática e o leque de gestos —
+tarefa #104).
+
+Tem também o portão do próprio portão: se a pasta não tiver `PAGEL` nem
+`folhas.js`, ele PARA e manda usar a `auditar.sh`. Rodar a banca da folha viva
+num app do motor daria uma enxurrada de "não medi" que alguém leria como
+aprovação.
+
+**⚠️ NA ESTREIA ELE REPROVOU OS ONZE CADERNOS**, dez deles já no ar: os onze com
+**halo branco** no recorte (o papel da folha grudado na silhueta), o `_abc1` e o
+`_alfa1` também na duração e no pré-voo, e o `_alfa1` ainda na resposta impressa.
+Nenhum desses defeitos era novo — eles estavam lá desde sempre, e ninguém os via
+porque não havia um comando que olhasse. Isso é o argumento a favor da banca, não
+contra ela.
+
+**O que cobre a folha viva hoje** (é a lista que vive dentro do `auditar_folha.sh`;
+portão novo que passe a alcançar este formato entra LÁ no mesmo commit, senão ele
+existe e ninguém roda): `previo.sh` (39 portões de texto), `boot.js`,
+`andar_folha.js` (anda tudo, erro de JS e figura quebrada), `leiaute_mao.js`
+(6 tamanhos, alvo ≥ 40 px), `resposta_impressa.py`, `duracao.py`,
+`pedagogo_curriculo.py`, `halo.py`, `clone.py`, `duplicatas.py`, `revisor.py`,
+`catalogo.py`, `node --check`. Fora da banca, por rodarem no Actions:
+`pronuncia.py` (ASR) e `silaba_fonte.py`.
 
 **A dívida (tarefa #104):** a escada didática e o leque de gestos **não são
 medidos** em folha viva. Nenhum portão hoje diz se as 25 folhas sobem de
