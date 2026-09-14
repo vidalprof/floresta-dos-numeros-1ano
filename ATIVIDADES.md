@@ -80,6 +80,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **A Confeitaria do Cacau** | Matemática: multiplicação como adição de parcelas iguais (fatores 2, 3, 4 e 5), dobro e triplo, o caixa com moedas e "você é o chefe" — 25 telas com o mascote Cacau, narração e relatório do professor. É a Doceria do Cacau (3º ano) adequada ao 2º: mesmas dinâmicas e figuras, fatores dentro do teto do ano | `_doce2` | https://vidalprof.github.io/a-confeitaria-do-cacau/ |
 | **A Horta do Vovô** | Matemática: multiplicação como adição de parcelas iguais (fatores 2, 3, 4 e 5), as quatro tabuadas do ano, contar de tanto em tanto e dobro, metade e triplo — 21 folhas de folha viva, com voz em tudo e as figuras recortadas das próprias folhas de papel | `_mult2` | https://vidalprof.github.io/a-horta-do-vovo/ |
 | **A Rua do Mundo** | Geografia: tipos de moradia — de que material, em que lugar e por quê, a casa vista de cima, como era antes e como é hoje (caderno de 25 folhas) | `_casa1` | https://vidalprof.github.io/tipos-de-moradia-2ano/ |
 | **A Feirinha da Dona Coruja** | Adição/subtração: juntar, acrescentar, separar, retirar, comparar (com digitar-resultado e arrastar) | `_feirinha` | https://vidalprof.github.io/feirinha-da-coruja/ |
