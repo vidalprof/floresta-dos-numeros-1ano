@@ -110,6 +110,10 @@ PORTOES=(
   "3f pares da memoria|python3 _qa/memoria_pares.py $PASTA"
   "3g duracao|python3 _qa/duracao.py $PASTA"
   "4c cor cravada|python3 _qa/cor_fixa.py $ARQ"
+  # ⭐ 4c3) a regra-@ que some do CSS (14/set/2026): o Desfile foi ao ar com 36
+  #    `@keyframes`/`@media` sem o arroba — animacao morta e celular sem as
+  #    regras de tela pequena, sem uma linha de erro em lugar nenhum.
+  "4c3 regra-@ do CSS|python3 _qa/css_atregra.py $ARQ"
   "4c2 design (catraca)|python3 _qa/design.py"
   "0b8 peso (orcamento)|python3 _qa/peso.py $ARQ"
   "0p game-feel|python3 _qa/gamefeel.py $ARQ"

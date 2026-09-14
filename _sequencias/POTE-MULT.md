@@ -127,4 +127,48 @@ rede lhe dá. Também será reforçada por decisão de currículo, e isso fica d
 
 ---
 
+## 5. O CADERNO QUE SAIU DAQUI — as 25 folhas, e de onde veio cada uma
+
+**`_mult3` · "O Armazém do Mesmo Tanto" · 3º ano · 14/set/2026.**
+
+| # | Folha | Gesto | De onde veio |
+|---|---|---|---|
+| 1 | Quantos grupos? | escolher | papel d29 ("QUANTOS SÃO OS GRUPOS?") |
+| 2 | Quantos em cada grupo? | escolher | papel d29 (a segunda pergunta da mesma folha) |
+| 3 | Monte a bandeja | arrastar | papel d16 ("DESENHE 5 lápis em cada quadro") |
+| 4 | A soma das parcelas iguais | escolher | papel d09 ("REALIZE A SOMA DAS PARCELAS IGUAIS") |
+| 5 | A conta de vezes | escolher | papel d01 ("5 vezes o 2 =") |
+| 6 | A soma e a multiplicação | ligar | papel d02 ("Transforma as adições em multiplicações") |
+| 7 | Como se lê a conta | ouvir e achar | papel d10 ("4 X 2 lê-se: quatro vezes o dois") |
+| 8 | Escreva o total da soma | digitar | papel d05 ("adição: ____") |
+| 9 | Escreva o total da multiplicação | digitar | papel d04 ("__ X __ = __") |
+| 10 | A tabela do armazém | completar | papel d07 ("COMPLETE A TABELA") |
+| 11–15 | As máquinas do 2, 5, 10, 3 e 4 | máquina | papéis d06 e d03 (o nó "2 X" e a máquina) |
+| 16–17 | De 2 em 2 … de 10 em 10 | sequenciar | papel d21 ("complete a sequência") |
+| 18 | O tapete do armazém | escolher | **currículo** (3 de 40 folhas; reforço declarado) |
+| 19 | Pinte o tapete na malha | pintar | papel d20 + reforço de currículo |
+| 20 | A virada do tapete | prever | papel d24 ("3 x 4 = 4 x 3"), com a aposta acrescentada |
+| 21 | A cesta que falta | marcar | **currículo** — combinação: zero folhas de papel |
+| 22 | Quantas cestas diferentes? | digitar | **currículo** — idem |
+| 23–24 | Os problemas do armazém | digitar | papel d31 ("Resolva os problemas") |
+| 25 | O cartaz do armazém | mural | o fecho da casa (regra dos 4 itens de fim) |
+
+**Medido na banca:** 12 gestos, nenhum acima de 20 %; escada 12,2 → 15,6 s/item;
+116 itens sorteados por caderno; 36 a 73 min; 565 falas gravadas; fatores
+sempre dentro de 2, 3, 4, 5 e 10.
+
+**Duas decisões que este caderno registra, e que não estavam no crivo:**
+
+1. **O distrator NUNCA é a conta comutada.** Na folha 5 (`q grupos de n` →
+   `q × n`) seria fácil pôr `n × q` como "erro". Seria erro de leitura, mas dá
+   o mesmo total — e a folha 20 ensina justamente que dá o mesmo. Marcar como
+   errado aquilo que duas folhas depois se ensina como certo é confundir a
+   criança de propósito. Os distratores mudam os NÚMEROS, nunca a ordem.
+2. **A linha "4 grupos de 3" saiu da folha 5.** Ela estava lá como andaime e
+   entregava a resposta: a criança casava os dois números da frase com os dois
+   números do botão e acertava sem olhar a prateleira uma vez sequer. Quem
+   explica a ordem passou a ser a dica que cresce a cada erro.
+
+---
+
 *Escrito em 13/set/2026, lendo as folhas uma a uma, com o currículo lido antes.*

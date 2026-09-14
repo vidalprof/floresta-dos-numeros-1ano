@@ -92,6 +92,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **O Armazém do Mesmo Tanto** | Matemática: multiplicação como soma de parcelas iguais (fatores 2, 3, 4, 5 e 10), disposição retangular, a ordem dos fatores e combinação de possibilidades — 25 folhas de folha viva, com voz em tudo | `_mult3` | https://vidalprof.github.io/o-armazem-do-mesmo-tanto/ |
 | **UNO dos Números** (3º ano) | Matemática + estratégia: UNO contra um robô que PENSA (guarda coringa, encadeia pula/gira, ataca quando você está quase ganhando, conta cartas). De vez em quando a mesa impõe uma REGRA DA RODADA sobre o número da carta — par/ímpar, maior que a da mesa, soma 10. Tutorial em slides, narração e alívio invisível para quem perde seguido | `_uno345` | https://vidalprof.github.io/uno-dos-numeros-345/?ano=3 |
 | **Prova de Matemática — Coruja Cora** | Adição/subtração: conceitos, significados e algoritmos (com reagrupamento) | `_mat2` (+ `_mat2painel`) | https://vidalprof.github.io/matematica-2ano/ · [painel](https://vidalprof.github.io/matematica-2ano-painel/) |
 | **O Museu Vivo dos Bichos** | Ciências: vertebrados e invertebrados | `_museu` | https://vidalprof.github.io/o-museu-vivo-dos-bichos/ |

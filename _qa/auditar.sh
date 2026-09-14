@@ -506,6 +506,12 @@ echo "--- 1m) TOQUE (arrastar tambem funciona com o dedo?) -"
 portao "1m toque" python3 _qa/toque.py "$ARQ"
 echo "--- 4c) COR CRAVADA (tinta herdada em fundo proprio) -"
 portao "4c cor cravada" python3 _qa/cor_fixa.py "$ARQ"
+# ⭐ 4c3) A REGRA-@ QUE SOME DO CSS (14/set/2026). O Desfile das Letras foi ao ar
+#    com 36 `@keyframes`/`@media` sem o arroba: nenhuma animacao rodava e o
+#    celular ficava com o leiaute da tela larga. Nada reclamou — o navegador
+#    aceita `keyframes pulsa{...}` como um seletor que nunca casa. Defeito que
+#    so existe em MOVIMENTO tem que ser medido.
+portao "4c3 regra-@ do CSS" python3 _qa/css_atregra.py "$ARQ"
 echo "--- 1g2) BECO NA PECA (a peca tem 'jogar de novo' solto?) -"
 portao "1g2 beco na peca" python3 _qa/beco_peca.py "$ARQ"
 echo "--- 1i2) PALAVRA x FIGURA (a figura e da palavra dela?) -"

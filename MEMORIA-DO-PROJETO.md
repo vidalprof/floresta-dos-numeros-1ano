@@ -839,6 +839,33 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🎞️ O `@` QUE SOME DO CSS — e o portão 4c3 (14/set/2026)
+
+O Desfile das Letras foi ao ar com **36 regras-@ sem o arroba**: `@keyframes`
+virou `keyframes`, `@media` virou `media`. Uma edição minha em massa comeu o
+caractere. **Nenhum dos doze portões viu** — e cada um por um motivo diferente,
+o que é a parte que interessa: o `node --check` não olha CSS; o contraste mede o
+pixel do fundo (a cor continuava certa); o leiaute mede a caixa (a caixa
+continuava certa); o jogador e o `andar_folha` só sabem se o app responde, e
+animação não é resposta; e a foto de regressão fotografa a tela **parada**,
+enquanto o que morreu foi o **movimento**.
+
+O navegador também não reclama: `keyframes pulsa{...}` sem arroba não é erro de
+sintaxe — é uma regra de estilo com o seletor `keyframes pulsa`, que nunca casa
+com nada. O CSS segue válido e a página segue abrindo bonita. O que a criança
+perdeu foi toda a animação **e todas as regras de tela pequena** (no celular, o
+leiaute da tela larga).
+
+**Regra:** defeito que só existe em MOVIMENTO tem que ser MEDIDO — a mesma
+lição do tremor do mascote. Portão **4c3 `_qa/css_atregra.py`** (pré-voo +
+`auditar.sh` + banca de folha viva): reprova regra-@ sem arroba e **animação
+órfã** (`animation:` apontando para `@keyframes` inexistente — que fica
+invisível para sempre quando vem com `opacity:0` e `forwards`). Na estreia
+achou mais dezesseis atividades com animação órfã (`pop`, `revIn`, `aparece`):
+tarefa #109.
+
+---
+
 ## 🧱 BLOCO MARCADO TEM DONO — e nem se cita a marca dele (13/set/2026)
 
 Ao pôr o CSS das catorze folhas novas do Desfile, perdi o trabalho **duas vezes

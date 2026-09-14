@@ -143,7 +143,7 @@ def main():
 
     linhas, semDeclarar = [], []
     for n, corpo in folhas:
-        custo, _ = gesto_da_folha(corpo)          # o PESO vem do duracao.py
+        custo, _ = gesto_da_folha(corpo, js)      # o PESO vem do duracao.py
         gesto = GES.get(u"f%d" % n)               # o GESTO vem da declaração
         if not gesto:
             semDeclarar.append(n)

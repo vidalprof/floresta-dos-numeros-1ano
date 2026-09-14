@@ -97,6 +97,44 @@ segunda parte, o trabalho não está feito.
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o
 > Marcos, ou chegou até a criança.
 
+### 3.0000 ⭐⭐ O `@` QUE SUMIU DO CSS — 36 REGRAS MORTAS NUM CADERNO NO AR
+
+**Data: 14/set/2026. Achado por mim, um dia depois de publicar — e por acaso.**
+
+Ao escrever o estilo do caderno de multiplicação eu reparei que o arquivo tinha
+`keyframes pulsa{...}` e `media (max-width:430px){...}` **sem o arroba**. Fui
+conferir o Desfile das Letras, que tinha subido no dia anterior: **36 regras-@
+sem o `@`** — 28 `@keyframes` e 8 `@media`. Uma edição minha em massa comeu o
+caractere, e o git confirma o commit exato em que isso aconteceu.
+
+**O que a criança perdeu:** *toda* animação (o confete do fim, o tremor do erro,
+a letra que entra no desfile, o brilho do botão) **e todas as regras de tela
+pequena** — no celular da escola o caderno ficava com o leiaute da tela larga.
+
+**Por que nada reclamou, e esta é a parte que interessa:**
+
+| portão | por que passou |
+|---|---|
+| `node --check` | não olha CSS |
+| contraste (`contraste.js`) | mede o pixel do fundo — a cor continuava certa |
+| leiaute (`leiaute_mao.js`) | mede a caixa — a caixa continuava certa |
+| `andar_folha` / `joga_folha` | o app abre e responde igual: animação não é função |
+| foto de regressão (5c) | fotografa a tela **parada**; o que morreu foi o **movimento** |
+
+E o navegador não dá erro: `keyframes pulsa{...}` sem arroba não é sintaxe
+inválida — vira uma **regra de estilo com o seletor "keyframes pulsa"**, que
+nunca casa com nada. O CSS segue válido. A página segue abrindo bonita.
+
+**A regra que fica:** *defeito que só existe em MOVIMENTO tem que ser MEDIDO* —
+é a mesma lição do tremor do mascote, com outra roupa. Portão novo **4c3
+`_qa/css_atregra.py`**, no pré-voo e nas duas bancas: reprova regra-@ sem o
+arroba e **animação órfã** (`animation:` apontando para um `@keyframes` que não
+existe). Na estreia achou, além das 36, uma `aparece` órfã que estava em TODOS
+os cadernos de folha viva desde o primeiro, e animações órfãs em mais dezesseis
+atividades (`pop`, `revIn`) — fila registrada na tarefa #109.
+
+---
+
 ### 3.000 ⭐ A CAPA PROMETIA DEZ FOLHAS E O CADERNO TINHA VINTE E CINCO
 
 **Quem viu foi o Marcos, não eu, e no mesmo dia em que subi o caderno**

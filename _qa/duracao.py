@@ -71,7 +71,69 @@ PAL_POR_S = 1.8      # MEDIDO: 890 mp3 da casa, 1,66 a 1,90 palavra/s
 S_POR_ITEM = 9.0     # ler, pensar e tocar (4o/5o ano)
 
 
-def gesto_da_folha(corpo):
+def _corpo_ate_o_fecho(txt):
+    u"""o miolo de `...{ ... }`, cortado na chave que fecha (e sem comentario).
+
+    ⚠️ Sem este corte, ler o ajudante de uma folha significava ler 4000 letras a
+       partir dele — e essas 4000 letras caiam DENTRO da folha seguinte. Foi
+       assim que "toque nos numeros na ordem" saiu classificado como ARRASTAR:
+       a palavra `coluna` que casava estava na folha de baixo. A regua tem que
+       parar onde a funcao para."""
+    limpo = re.sub(r"/\*.*?\*/", u" ", txt, flags=re.S)
+    limpo = re.sub(r"//[^\n]*", u" ", limpo)
+    i = limpo.find(u"{")
+    if i < 0:
+        return None
+    nivel = 0
+    for k in range(i, len(limpo)):
+        if limpo[k] == u"{":
+            nivel += 1
+        elif limpo[k] == u"}":
+            nivel -= 1
+            if nivel == 0:
+                return limpo[i + 1:k]
+    return None
+
+
+def _delegacao(corpo, js):
+    u"""Se a folha so DELEGA (`function f23(d, pi){ problemas(d, pi, ...); }`),
+    devolve o corpo do ajudante que ela chama.
+
+    ⚠️ POR QUE ISTO EXISTE (14/set/2026, no Armazem do Mesmo Tanto): cinco folhas
+       de maquina, duas de sequencia e duas de problema foram escritas como uma
+       linha so, chamando um ajudante comum — que e a forma certa de escrever
+       (nao se repete a mecanica cinco vezes). So que a regua le o CORPO da `fN`,
+       e no corpo de uma linha nao ha `ativa(` nem `puxavel(` nenhum: as duas
+       folhas de PROBLEMA, que sao de teclado, foram medidas como 9 s de "tocar"
+       em vez de 25 s de "escrever". A medida ficava errada por causa da forma do
+       codigo, e nao da folha. Regua que mede a forma do codigo em vez da folha
+       nao esta medindo nada."""
+    if not js:
+        return None
+    # ⚠️ o CORPO que chega aqui vem de um `split` e carrega o que vem DEPOIS da
+    #    funcao (o comentario da folha seguinte, por exemplo). Sem cortar no `}`
+    #    que fecha a funcao, uma folha de uma linha so parecia ter dez — e a
+    #    delegacao nao era reconhecida. Aconteceu com a f24 e a f17 no mesmo
+    #    minuto em que a f23 funcionou: meia medida e medida errada.
+    dentro = _corpo_ate_o_fecho(corpo)
+    if dentro is None:
+        return None
+    dentro = dentro.strip()
+    if u";" in dentro.rstrip(u";") or len(dentro) > 160:
+        return None          # tem mais de um comando: nao e delegacao
+    m = re.search(r"\b([a-zA-Z_]\w*)\s*\(", dentro)
+    if not m:
+        return None
+    nome = m.group(1)
+    if nome in (u"faixa", u"enunciado", u"item", u"el"):
+        return None
+    m2 = re.search(r"\nfunction %s\s*\(" % re.escape(nome), u"\n" + js)
+    if not m2:
+        return None
+    return _corpo_ate_o_fecho(js[m2.end() - 1:])
+
+
+def gesto_da_folha(corpo, js=None):
     u"""O GESTO de uma folha viva, lido no corpo da funcao `fN` dela.
 
     Devolve (segundos por item, nome do gesto).
@@ -86,6 +148,9 @@ def gesto_da_folha(corpo):
     ⚠️ Os segundos sao PALPITE DECLARADO (nunca cronometrado com crianca). Quem
        usa este numero tem que dizer isso na tela, como o `duracao.py` diz.
     """
+    d = _delegacao(corpo, js)
+    if d:
+        corpo = d
     if u"montador(" in corpo:
         return 45.0, u"manipular"
     # ⚠️ TRAÇAR A LETRA COM O DEDO (folha viva, 13/set/2026). Sem esta linha a
@@ -392,7 +457,7 @@ def confere(pasta, piso_min=40.0):
                 #    O galho da MONTADA ja sabia fazer isto direito (ver
                 #    `custo_da_lista` la em cima) — so nunca tinha sido trazido para
                 #    ca. Agora o gesto e lido no corpo da propria folha.
-                custo, gesto = gesto_da_folha(corpo)
+                custo, gesto = gesto_da_folha(corpo, html)
                 if isinstance(lista[0], dict) and lista[0].get(u"hist"):
                     custo += 45.0            # ler e entender o problema
                     gesto = u"problema"

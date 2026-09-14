@@ -71,14 +71,21 @@ button{font-family:inherit;cursor:pointer}
 .zap.ouvir{background:#fff;box-shadow:0 3px 0 #cdd0e4;border:2px solid #6d5ae6}
 .zap.ouvir svg{fill:#6d5ae6}
 .zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
--webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+/* ⚠️ `aparece` estava ORFA nos cadernos de folha viva desde o primeiro deles:
+   varias pecas escreviam `animation:aparece` e o bloco nunca existiu. Quem
+   achou foi o portao 4c3 (`_qa/css_atregra.py`), na primeira hora de vida dele.
+   O defeito era mudo — o elemento so nao fazia o fade — mas vira INVISIVEL
+   para sempre em quem combina `opacity:0` com `forwards`. */
+@-webkit-keyframes aparece{from{opacity:0}to{opacity:1}}
+@keyframes aparece{from{opacity:0}to{opacity:1}}
+@-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
 
 #livro{max-width:880px;margin:12px auto 0;padding:0 10px}
 .pagina{position:relative;background:#fff;border-radius:22px;box-shadow:0 10px 34px rgba(35,25,80,.16);display:none;overflow:hidden;padding:0 0 20px}
 .pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
--webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .faixa{background:#6d5ae6;color:#fff;padding:15px 18px 13px;display:flex;align-items:center;gap:12px}
 .faixa h2{margin:0;font-size:clamp(17px,4.4vw,25px);letter-spacing:.4px;text-transform:uppercase;flex:1;line-height:1.1}
 .faixa .num{background:#fff;color:#6d5ae6;font-weight:900;border-radius:50%;width:36px;height:36px;display:flex;
@@ -133,7 +140,7 @@ keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform
 /* folha 5 — a grade que se circula */
 .gradecirc{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
   margin:8px 0 4px;touch-action:none}
-media (max-width:430px){.gradecirc{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:430px){.gradecirc{grid-template-columns:repeat(2,1fr)}}
 .figcirc{display:flex;flex-direction:column;align-items:center;gap:3px;
   min-height:104px;padding:8px 4px;border:3px solid #e4e7f6;border-radius:16px;background:#fff;
   cursor:pointer;-webkit-transition:border-color .18s,background .18s;transition:border-color .18s,background .18s}
@@ -249,7 +256,7 @@ media (max-width:430px){.gradecirc{grid-template-columns:repeat(2,1fr)}}
   text-shadow:0 3px 0 #e6e2fb,0 5px 10px rgba(80,60,180,.18);
   -webkit-animation:entraDupla .55s cubic-bezier(.3,1.4,.5,1) both;
   animation:entraDupla .55s cubic-bezier(.3,1.4,.5,1) both}
-media (prefers-reduced-motion:reduce){
+@media (prefers-reduced-motion:reduce){
   .capa .ltcapa{-webkit-animation:none!important;animation:none!important;opacity:1!important}
 }
 
@@ -292,8 +299,8 @@ media (prefers-reduced-motion:reduce){
 .op:active{transform:scale(.94)}
 .op.certa{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
 .op.erro{border-color:#e0562f;background:#fdeee9;-webkit-animation:treme .4s;animation:treme .4s}
--webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 /* o estojo de canetinhas da folha 5 */
 .estojo{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px}
 .estojo .rot{font-weight:800;color:#5b4fc4;font-size:14px}
@@ -328,8 +335,8 @@ keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transf
   font-weight:900;font-size:30px;color:#0d7736;background:#e7f8ee;border:3px solid #15a34a;
   border-radius:14px;pointer-events:none;-webkit-transition:-webkit-transform .5s cubic-bezier(.2,.9,.25,1);
   transition:transform .5s cubic-bezier(.2,.9,.25,1);box-shadow:0 8px 20px rgba(21,163,74,.35)}
--webkit-keyframes pulo{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-9px)}100%{-webkit-transform:translateY(0)}}
-keyframes pulo{0%{transform:translateY(0)}40%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+@-webkit-keyframes pulo{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-9px)}100%{-webkit-transform:translateY(0)}}
+@keyframes pulo{0%{transform:translateY(0)}40%{transform:translateY(-9px)}100%{transform:translateY(0)}}
 .escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:pulo .42s ease;animation:pulo .42s ease}
 .escondida.completa .lt:nth-child(2),.escondida.completa .buraco:nth-child(2){-webkit-animation-delay:.06s;animation-delay:.06s}
 .escondida.completa .lt:nth-child(3),.escondida.completa .buraco:nth-child(3){-webkit-animation-delay:.12s;animation-delay:.12s}
@@ -337,7 +344,7 @@ keyframes pulo{0%{transform:translateY(0)}40%{transform:translateY(-9px)}100%{tr
 .escondida.completa .lt:nth-child(5),.escondida.completa .buraco:nth-child(5){-webkit-animation-delay:.24s;animation-delay:.24s}
 .escondida.completa .lt:nth-child(6),.escondida.completa .buraco:nth-child(6){-webkit-animation-delay:.3s;animation-delay:.3s}
 .escondida.completa .lt:nth-child(7),.escondida.completa .buraco:nth-child(7){-webkit-animation-delay:.36s;animation-delay:.36s}
-media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion: reduce){
   .voa{-webkit-transition:none;transition:none}
   .escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:none;animation:none}
 }
@@ -358,7 +365,7 @@ media (prefers-reduced-motion: reduce){
   -webkit-transition:all .18s;transition:all .18s}
 .silbox.acesa{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736;
   -webkit-transform:scale(1.06);transform:scale(1.06)}
-media (prefers-reduced-motion: reduce){ .silbox{-webkit-transition:none;transition:none} }
+@media (prefers-reduced-motion: reduce){ .silbox{-webkit-transition:none;transition:none} }
 
 /* 3 — sequência lógica */
 .fila{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
@@ -421,7 +428,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   -ms-touch-action:none;touch-action:none;-webkit-transition:border-color .15s,box-shadow .15s;
   transition:border-color .15s,box-shadow .15s}
 .ponta img{width:68px;height:68px;object-fit:contain}
-media (max-width:420px){ .ponta{height:74px;font-size:21px} .ponta img{width:58px;height:58px} }
+@media (max-width:420px){ .ponta{height:74px;font-size:21px} .ponta img{width:58px;height:58px} }
 .ponta.marcada{border-color:#6d5ae6;box-shadow:0 0 0 4px rgba(109,90,230,.22)}
 .ponta.feita{border-color:#15a34a;background:#e7f8ee}
 .ponta.mostra{border-color:#ffd233;box-shadow:0 0 0 4px rgba(255,210,51,.4)}
@@ -436,8 +443,8 @@ media (max-width:420px){ .ponta{height:74px;font-size:21px} .ponta img{width:58p
 .sq.ok{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
 .cursor{display:inline-block;width:3px;height:28px;background:#6d5ae6;margin-left:2px;
   -webkit-animation:pisca .9s steps(2) infinite;animation:pisca .9s steps(2) infinite}
--webkit-keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
-keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+@-webkit-keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
 
 /* 9 — ordenar as sílabas */
 .tira{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
@@ -512,8 +519,8 @@ keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
    termina em `opacity:0`, declarado mais abaixo — e ele vencia. As letras
    do título animavam para invisível e a capa aparecia sem título nenhum.
    Nome de keyframe é global: conferir antes de criar um. */
--webkit-keyframes caiLetra{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
-keyframes caiLetra{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
+@-webkit-keyframes caiLetra{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
+@keyframes caiLetra{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
 .capa .sub{font-weight:700;color:#5b4fc4;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
 /* a esteira: as figuras em cima, a cinta rodando embaixo */
 .capa .esteira{max-width:660px;margin:16px auto 4px;position:relative}
@@ -526,9 +533,9 @@ keyframes caiLetra{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{o
 .capa .dupla .fig{height:clamp(54px,13vw,86px)}
 .capa .igual{display:inline-block;width:16px;height:12px;flex:none;
   border-top:3px solid #6d5ae6;border-bottom:3px solid #6d5ae6}
--webkit-keyframes entraDupla{from{opacity:0;-webkit-transform:translateY(-18px) scale(.85)}to{opacity:1;-webkit-transform:none}}
-keyframes entraDupla{from{opacity:0;transform:translateY(-18px) scale(.85)}to{opacity:1;transform:none}}
-media (prefers-reduced-motion:reduce){.capa .dupla{-webkit-animation:none!important;animation:none!important;opacity:1!important;-webkit-transform:none!important;transform:none!important}}
+@-webkit-keyframes entraDupla{from{opacity:0;-webkit-transform:translateY(-18px) scale(.85)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraDupla{from{opacity:0;transform:translateY(-18px) scale(.85)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.capa .dupla{-webkit-animation:none!important;animation:none!important;opacity:1!important;-webkit-transform:none!important;transform:none!important}}
 .capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:8px;flex-wrap:nowrap}
 .capa .cena img{width:clamp(54px,14vw,110px);height:clamp(54px,14vw,110px);object-fit:contain;
   -webkit-animation:sobe 2.6s ease-in-out infinite;animation:sobe 2.6s ease-in-out infinite}
@@ -536,13 +543,13 @@ media (prefers-reduced-motion:reduce){.capa .dupla{-webkit-animation:none!import
 .capa .cena img:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
 .capa .cena img:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
 .capa .cena img:nth-child(5){-webkit-animation-delay:1.4s;animation-delay:1.4s}
--webkit-keyframes sobe{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
-keyframes sobe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@-webkit-keyframes sobe{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
+@keyframes sobe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
 .capa .cinta{display:flex;gap:6px;justify-content:center;background:#3b3560;border-radius:9px;
   padding:6px 8px;margin-top:6px;box-shadow:0 6px 14px rgba(35,25,80,.22)}
 .capa .cinta i{display:block;width:26px;height:9px;background:#6d5ae6;border-radius:5px}
 .capa .chamada{margin-top:14px;font-weight:700;color:#4b4f70;font-size:clamp(13px,3.4vw,16px)}
-media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion: reduce){
   .capa .titu .lt,.capa .cena img{-webkit-animation:none;animation:none}
 }
 #fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
@@ -608,32 +615,32 @@ media (prefers-reduced-motion: reduce){
 .pagina.viva .item:nth-child(5){-webkit-animation-delay:.20s;animation-delay:.20s}
 .pagina.viva .item:nth-child(6){-webkit-animation-delay:.25s;animation-delay:.25s}
 .pagina.viva .item:nth-child(n+7){-webkit-animation-delay:.30s;animation-delay:.30s}
--webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
-keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@-webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
 .pagina.viva .faixa{-webkit-animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both;
   animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both}
--webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
-keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+@-webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
+@keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
 
 /* o acerto: um pulinho curto e um brilho que corre pela opção certa */
 .op.certa,.figcirc.marcada,.cartaorima.escolhido{
   -webkit-animation:pulinho .4s cubic-bezier(.3,1.6,.5,1);animation:pulinho .4s cubic-bezier(.3,1.6,.5,1)}
--webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
-keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+@-webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
+@keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
 .op.certa{position:relative;overflow:hidden}
 .op.certa::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:38%;pointer-events:none;
   background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
   background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
   -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
   -webkit-animation:brilhoOp .55s .1s ease-out;animation:brilhoOp .55s .1s ease-out}
--webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
-keyframes brilhoOp{from{left:-40%}to{left:112%}}
+@-webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
+@keyframes brilhoOp{from{left:-40%}to{left:112%}}
 
 /* o erro: balança de leve — diz "de novo" sem dizer "errou" */
 .op.erro{-webkit-animation:balanca .34s;animation:balanca .34s}
--webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
-keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 
 /* o item que fecha: some o contorno e entra o verde, sem susto */
 .item{-webkit-transition:border-color .4s,background .4s;transition:border-color .4s,background .4s}
@@ -641,7 +648,7 @@ keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)
 /* a figura responde ao toque — regra 1: o alvo reage ao PRESSIONAR */
 .op.figbt:active,.figcirc:active,.cartaorima:active{-webkit-transform:scale(.96);transform:scale(.96)}
 
-media (prefers-reduced-motion:reduce){
+@media (prefers-reduced-motion:reduce){
   .pagina.viva .item,.pagina.viva .faixa,.op.certa,.op.erro,
   .figcirc.marcada,.cartaorima.escolhido{
     -webkit-animation:none!important;animation:none!important;opacity:1!important;
@@ -677,8 +684,8 @@ media (prefers-reduced-motion:reduce){
 #tk button.ok{background:#d9f2e3;grid-column:span 4}
 #confete{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
 .cf{position:absolute;width:9px;height:14px;opacity:.95;-webkit-animation:cai 1.5s linear forwards;animation:cai 1.5s linear forwards}
--webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+@keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
 .oculto{display:none!important}
 /* ============================================================
    AS PEÇAS DAS CATORZE FOLHAS NOVAS (13/set/2026 — a regra das 25 folhas)
