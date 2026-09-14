@@ -91,6 +91,11 @@ PORTOES=(
   # ⭐ 1i2) palavra do pote SEM figura no disco — a familia do dia em que o
   #    selo da medalha foi renomeado e a PALAVRA "estrela" ficou sem desenho.
   "1i2 figura do pote|python3 _qa/figura_pote.py $PASTA"
+  # ⭐ 1i5) a figura veio da FOLHA DE PAPEL? (14/set/2026, pergunta do Marcos:
+  #    "por que você não cumpre o que combinamos?"). A regra existia desde
+  #    set/2026 e era só lembrete; lembrete depende da minha memória, que comeca
+  #    do zero a cada sessao. Agora e medida.
+  "1i5 figura veio da folha|python3 _qa/figura_da_folha.py $PASTA"
   # ⭐ so responde em jogo de UNO (nos outros ele sai com 2 = "nao medi")
   "3u regra da compra (UNO)|node _qa/uno.js $ARQ"
   "0c pergunta ambigua|python3 _qa/ambiguo.py $ARQ"

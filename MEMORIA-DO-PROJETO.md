@@ -839,6 +839,40 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🧷 REGRA QUE NÃO É PORTÃO É LEMBRETE — e lembrete eu esqueço (14/set/2026)
+
+**Pergunta do Marcos, e ela é a mais importante deste dia:** *"Por que você não
+cumpre o que combinamos?"*
+
+**O caso.** A regra da origem da figura está escrita no `CLAUDE.md` desde
+set/2026, com todas as letras: *"A figura vem da MESMA folha
+(`recortar_das_folhas.py`): gesto e desenho nascem juntos, e a criança reconhece
+a atividade que a professora dá no papel."* No Armazém do Mesmo Tanto eu colhi
+40 folhas, li as 40, tirei o gesto de cada uma — **e fui buscar as 22 figuras no
+banco**. E TODO defeito de imagem daquela entrega veio daí: um balão que era
+folha de colorir em preto e branco, halo branco em cinco figuras, a forminha de
+papel do brigadeiro que custou uma volta inteira de banca.
+
+**A causa não foi falta de regra.** Foi a regra ter ficado como LEMBRETE em vez
+de MEDIDA. Eu começo cada sessão sem memória — é por isso que esta casa é feita
+de portões e não de boas intenções. Uma regra em prosa é cumprida quando eu
+lembro; um portão é cumprido sempre.
+
+**O critério, daqui para a frente:** quando uma regra é dita pelo Marcos como
+"sempre" ou "nunca", ela não é anotada e pronto — ela **nasce com portão no
+mesmo commit**, como já vale para o conserto de defeito. Se eu não souber medir,
+eu digo isso na hora, em vez de anotar e deixar por minha conta.
+
+**Portão 1i5 — `_qa/figura_da_folha.py`** (pré-voo + banca de folha viva). Cada
+caderno declara em `img/ORIGEM.json` de onde veio cada figura
+(`folha:d29` · `banco:uva` · `gerada:...`), e ele REPROVA quando existe colheita
+para aquele caderno e **nenhuma** figura foi recortada dela. Não inventa
+porcentagem: "tem colheita e você não usou nenhuma" é linha dura, sem palpite.
+Na estreia **reprovou o `_mult3`, que é meu**, e os doze cadernos de
+alfabetização saíram como NÃO MEDI (falta a declaração deles).
+
+---
+
 ## 🎞️ O `@` QUE SOME DO CSS — e o portão 4c3 (14/set/2026)
 
 O Desfile das Letras foi ao ar com **36 regras-@ sem o arroba**: `@keyframes`
