@@ -58,7 +58,13 @@ js = "".join(re.findall(r"<script>(.*?)</script>", h, re.S))
 #    acusava "confereFolha is not defined" (funcao que existe, no irmao) e, pior,
 #    ficaria CEGO para os erros do arquivo de fora. Os irmaos locais entram aqui.
 base = os.path.dirname(os.path.abspath(sys.argv[1]))
-for src in re.findall(r'<script[^>]+src="([^":]+\.js)"', h):
+# ⚠️ (14/set/2026) O ENDERECO PODE TER VERSAO: desde que o `folhas.js` passou a
+#    subir como `folhas.js?v=<sha>` (portao 1s, para o navegador nao servir copia
+#    velha), este padrao deixou de achar o irmao — e o portao voltou a acusar
+#    "confereFolha is not defined", uma funcao que EXISTE. Pior: isso REPROVA no
+#    `entregar.yml` e TRAVOU a publicacao do conserto do Armazem, com o Marcos
+#    esperando. Corte o `?...` antes de procurar o arquivo.
+for src in re.findall(r'<script[^>]+src="([^":]+\.js)(?:\?[^"]*)?"', h):
     p = os.path.join(base, src)
     if os.path.exists(p):
         js += "\n" + open(p, encoding="utf-8").read()
