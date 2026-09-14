@@ -2,21 +2,28 @@ name: Listar modelos de IA disponiveis (diagnostico)
 
 # ⚠️ POR QUE ESTE WORKFLOW EXISTE (14/set/2026).
 #
-# O registro da casa dizia, desde 12/ago: "O GEMINI ESTA SEM COTA — HTTP 429".
-# Em 14/set eu fui REMEDIR, como a regra manda, e o erro de hoje e OUTRO:
+# ⚠️ E ELE NASCEU DE UM ERRO MEU, que fica registrado porque foi a REGRA ZERO me
+#    pegando em flagrante.
 #
-#   modelo gemini-2.5-flash-image-preview   -> HTTP 404 "is not found for API
-#   modelo gemini-2.0-flash-preview-image-generation -> HTTP 404  version v1beta"
+#    O registro da casa dizia, desde 12/ago: "O GEMINI ESTA SEM COTA — HTTP 429".
+#    Fui remedir em 14/set, li o FIM do log e anunciei: "nao e cota, e nome de
+#    modelo" — porque as duas ultimas linhas mostravam dois 404. Estava ERRADO.
+#    Lendo o log INTEIRO:
 #
-# Ou seja: nao e saldo, e NOME DE MODELO. Os `preview` do Google foram
-# aposentados e o `gerar-imagens.yml` continua chamando os nomes velhos. Eu teria
-# dito ao Marcos "precisa do secret do OpenAI" em cima de um diagnostico de um
-# mes atras — e estaria errado.
+#      gemini-2.5-flash-image                    -> HTTP 429 (4 tentativas)
+#                                                   "You exceeded your current quota"
+#      gemini-2.5-flash-image-preview            -> HTTP 404 (nome aposentado)
+#      gemini-2.0-flash-preview-image-generation -> HTTP 404 (nome aposentado)
 #
-# A licao que este arquivo resolve: **nome de modelo de terceiro caduca**, e
-# adivinhar qual e o novo e chute. Este workflow PERGUNTA ao proprio servico
-# quais existem hoje e quais aceitam gerar imagem. Rodar sempre que um gerador
-# comecar a dar 404.
+#    O modelo que EXISTE responde 429. Os 404 sao so os nomes velhos no fim da
+#    lista. **E cota mesmo, e o registro de 12/ago continua valendo em 14/set.**
+#    Ler o rabo do log e o primo do conferir em miniatura: os dois dao uma
+#    resposta com cara de conclusao.
+#
+# Mesmo assim este workflow fica, e serve para duas coisas: limpar os nomes
+# aposentados da lista do `gerar-imagens.yml` (que hoje gasta tentativa a toa) e
+# responder, sem chute, quais modelos a chave enxerga quando algo der 404.
+# `ListModels` e consulta, nao gasta cota.
 #
 # Nao gasta cota: `ListModels` e consulta, nao geracao.
 
