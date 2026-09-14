@@ -46,6 +46,30 @@ u"""
     Folha que nenhum objetivo cobre é trabalho que a criança faz e que não
     aparece no relatório: o professor lê "dominou" sobre metade do caderno.
 
+ 6. O CONTEÚDO que a atividade ENSINA cabe no ano? (`conceitos`)
+    ⚠️⚠️ ESTA É A PERGUNTA QUE FALTAVA, e ela custou uma rodada inteira com o
+    Marcos (14/set/2026). A Coroa dos Cinco Reinos passou nas cinco perguntas
+    de cima com nota cheia: as dez habilidades citadas existiam palavra por
+    palavra no currículo. E mesmo assim o caderno ensinava DUAS coisas que não
+    são do 4º ano da rede — a gaveta "já foram vivos" e o critério do NÚCLEO
+    (o "cofrinho da receita"). Quem pegou foi ELE, lendo: *"aquela parte de já
+    foi vivo é adequado ao 4 ano?"*. E a cobrança veio junto: *"essas coisas
+    não podem acontecer, pois existe o pedagogo o especialista"*.
+
+    Ele tinha razão, e o buraco era exatamente este: a pergunta 2 confere a
+    CITAÇÃO (a frase que eu digo estar cumprindo), não o CONTEÚDO (o que a
+    criança de fato faz na tela). Dá para citar "Conhecer os reinos dos seres
+    vivos" com honestidade total e, na folha, ensinar núcleo celular.
+
+    Como se mede, sem chute: a atividade DECLARA em `curriculo.json` a lista
+    `conceitos` — os termos de conteúdo que ela ensina — e o portão procura
+    cada um no BLOCO DO ANO E DO COMPONENTE do documento da rede (não no
+    documento inteiro: "célula" existe no 3º ano e no 6º; o que importa é se
+    existe NO ANO desta atividade). Termo que não estiver lá reprova, a menos
+    que esteja declarado em `fora_do_curriculo` com o motivo — e aí o portão
+    IMPRIME a declaração em toda rodada, para que ela nunca mais passe calada.
+    ⚠️ Sem `conceitos` o portão diz NÃO MEDI, que não é "passou".
+
  5. O DOSSIÊ está dentro da atividade, e mostrando ESTES dados?
     De nada adianta declarar num json que só o repositório vê. O `var
     CURRICULO` do index.html tem que ser o mesmo do `curriculo.json`, e o
@@ -80,6 +104,75 @@ def achata(s):
     s = unicodedata.normalize("NFD", s or u"")
     s = u"".join(c for c in s if unicodedata.category(c) != "Mn")
     return re.sub(r"[^a-z0-9]+", u" ", s.lower())
+
+
+# ⚠️ O CABECALHO DE BLOCO DO PDF DA REDE: "CIENCIAS - ANOS INICIAIS - 4o ANO",
+#    "LINGUA PORTUGUESA - ANOS INICIAIS - 1o ANO"... Ele se repete no topo E no
+#    rodape de cada pagina, entao NAO da para pegar "do primeiro ate o proximo":
+#    o certo e varrer o arquivo guardando qual cabecalho esta valendo e juntar
+#    todas as linhas em que o cabecalho valendo e o alvo.
+_CABEC = re.compile(u"^\\s*([A-Za-zÁÉÍÓÚÂÊÔÃÕÇáéíóúâêôãõç ]{4,40}?)\\s*[–—-]\\s*"
+                    u"ANOS\\s+(?:INICIAIS|FINAIS)\\s*[–—-]\\s*(\\d)\\s*[ºo]?\\s*ANO\\s*$",
+                    re.I | re.M)
+
+
+def bloco_do_ano(texto, componente, ano):
+    u"""Palavras do bloco DESTE componente e DESTE ano. Devolve None se o
+    documento nao tiver nenhum cabecalho desse par (ai e NAO MEDI, nao e
+    'passou'): melhor dizer que nao medi do que medir no documento inteiro e
+    aprovar "celula" no 4o ano porque ela existe no 6o."""
+    alvo = (achata(componente).strip(), str(ano))
+    linhas = texto.split(u"\n")
+    valendo, pegas, viu = None, [], False
+    for ln in linhas:
+        m = _CABEC.match(ln)
+        if m:
+            valendo = (achata(m.group(1)).strip(), m.group(2))
+            if valendo == alvo:
+                viu = True
+            continue
+        if valendo == alvo:
+            pegas.append(ln)
+    if not viu:
+        return None
+    return set(achata(u" ".join(pegas)).split())
+
+
+def fora_dec_termos(lista):
+    for it in lista:
+        yield it.get("termo", u"") if isinstance(it, dict) else it
+
+
+# ⚠️ PALPITE DECLARADO — a RAIZ de 4 letras. O documento da rede escreve
+#    "cadeias alimentares" e a atividade declara "cadeia alimentar"; comparar
+#    palavra inteira reprovaria por causa do plural. Entao compara-se pela
+#    raiz: 4 letras, ou a palavra menos 2 letras, o que for maior. E um numero
+#    escolhido por mim, nao medido — esta dito aqui e impresso no cabecalho da
+#    saida para que ninguem o tome por medida.
+RAIZ = 4
+
+
+def _raiz(w):
+    return w[:max(RAIZ, len(w) - 2)]
+
+
+def no_bloco(termo, bloco):
+    u"""Todo termo-palavra de 4+ letras tem de casar por raiz com alguma palavra
+    do bloco do ano. Palavra curta (de, e, do) nao conta."""
+    palavras = [w for w in achata(termo).split() if len(w) >= RAIZ and w not in NOSSAS]
+    if not palavras:
+        return True
+    for w in palavras:
+        rw = _raiz(w)
+        # ⚠️ `len(b) >= RAIZ` NAO E DETALHE: o PDF foi extraido em COLUNAS e o
+        #    bloco vem cheio de cacos de uma e duas letras ("m", "ma", "o").
+        #    Sem este filtro, _raiz("o") = "o" e QUALQUER palavra comecada por o
+        #    casava — "materia organica" passava no 4o ano, onde ela nao esta.
+        #    Pego na propria prova do portao, 14/set/2026.
+        if not any(len(b) >= RAIZ and (b.startswith(rw) or w.startswith(_raiz(b)))
+                   for b in bloco):
+            return False
+    return True
 
 
 def objetivos_do_relatorio(js):
@@ -194,6 +287,48 @@ def confere(pasta, palavras):
     else:
         L.append(u"   ⚠️ sem `var NOMES`: nao conferi a cobertura das folhas")
         ruim = max(ruim, 2)
+
+    # ---- 6. o CONTEUDO que a atividade ensina cabe no ano?
+    conceitos = d.get("conceitos")
+    fora_dec = d.get("fora_do_curriculo") or []
+    if not conceitos:
+        L.append(u"   ⚠️ o curriculo.json nao declara `conceitos`: NAO MEDI se o "
+                 u"CONTEUDO cabe no ano (isso nao e 'passou'). Ver a pergunta 6 "
+                 u"no topo deste arquivo.")
+        ruim = max(ruim, 2)
+    else:
+        doc = io.open(CURRICULO, encoding="utf-8").read() if os.path.exists(CURRICULO) else u""
+        bloco = bloco_do_ano(doc, d.get("componente") or u"", d.get("ano"))
+        if bloco is None:
+            L.append(u"   ⚠️ o documento da rede nao tem um bloco «%s – ANOS ... – %sº ANO»: "
+                     u"NAO MEDI os %d conceito(s). (O PDF so traz cabecalho por ano em "
+                     u"Ciencias, Geografia e Historia; Lingua Portuguesa e Matematica vem "
+                     u"em faixas, e medir no documento inteiro aprovaria conteudo de "
+                     u"outro ano.)" % (d.get("componente"), d.get("ano"), len(conceitos)))
+            ruim = max(ruim, 2)
+        else:
+            declarados = set(achata(x).strip() for x in fora_dec_termos(fora_dec))
+            maus = []
+            for termo in conceitos:
+                if achata(termo).strip() in declarados:
+                    continue
+                if not no_bloco(termo, bloco):
+                    maus.append(termo)
+            if maus:
+                ruim = 1
+                L.append(u"   REPROVADO 6: a atividade ensina conteudo que o bloco do %sº ano "
+                         u"de %s NAO tem:" % (d.get("ano"), d.get("componente")))
+                for t in maus:
+                    L.append(u"      • %s" % t)
+                L.append(u"      -> ou tira do caderno, ou declara em `fora_do_curriculo` "
+                         u"com o motivo (e ai o portao imprime a declaracao em toda rodada).")
+            else:
+                L.append(u"   ✓ os %d conceito(s) que o caderno ensina existem no bloco do "
+                         u"%sº ano de %s" % (len(conceitos), d.get("ano"), d.get("componente")))
+            for it in fora_dec:
+                t = it.get("termo") if isinstance(it, dict) else it
+                pq = it.get("porque", u"") if isinstance(it, dict) else u""
+                L.append(u"   ⚠️ FORA DO CURRICULO, DECLARADO: «%s» — %s" % (t, pq))
 
     # ---- 5. o dossie esta na atividade e mostra ESTES dados
     falta = []

@@ -130,7 +130,26 @@ Leia tudo antes de agir e responda sempre em **português**.
 > `_curriculo/blumenau.txt`, (3) os objetivos do relatório e os do currículo não
 > baterem um a um (nome e folhas), (4) alguma folha de trabalho ficar sem
 > objetivo que a meça, ou (5) o **dossiê do professor** não estar dentro da
-> atividade mostrando esses dados. O dossiê se injeta com
+> atividade mostrando esses dados, e — desde 14/set/2026 — **(6) o CONTEÚDO que
+> a atividade ENSINA cabe no ano**. A sexta nasceu de uma rodada inteira perdida:
+> a Coroa dos Cinco Reinos passou nas cinco primeiras com nota cheia (as dez
+> citações existiam palavra por palavra) e **mesmo assim ensinava duas coisas
+> que não são do 4º ano** — a gaveta "já foram vivos" e o NÚCLEO da célula.
+> Quem pegou foi o Marcos, LENDO (*"aquela parte de já foi vivo é adequado ao 4
+> ano?"*), e a cobrança veio junto: *"essas coisas não podem acontecer, pois
+> existe o pedagogo o especialista"*. O buraco era exato: a pergunta 2 confere a
+> **citação** (a frase que eu digo cumprir), não o **conteúdo** (o que a criança
+> faz na tela) — dá para citar "Conhecer os reinos dos seres vivos" com
+> honestidade total e, na folha, ensinar núcleo celular. Agora o
+> `curriculo.json` declara a lista **`conceitos`** e o portão procura cada termo
+> **no bloco DAQUELE ano e daquele componente** (não no documento inteiro:
+> "célula" existe no 3º e no 6º ano). Termo que não estiver lá **reprova**, a
+> menos que esteja em `fora_do_curriculo` com o motivo — e aí ele é IMPRESSO em
+> toda rodada. ⚠️ Sem `conceitos`, o portão diz **NÃO MEDI**, que não é "passou"
+> — e hoje 13 dos 14 cadernos com `curriculo.json` estão assim (o PDF só traz
+> cabeçalho por ano em Ciências, Geografia e História; Português e Matemática
+> vêm em faixas, e medir no documento inteiro aprovaria conteúdo de outro ano).
+> O dossiê se injeta com
 > `python3 _padrao/dossie_professor.py <pasta>` (fonte:
 > `_padrao/dossie-professor.js`) e abre pelo menu do professor (chave `1275@`) e
 > por um botão dentro do relatório. ⚠️ Citação de currículo é a única coisa que o
