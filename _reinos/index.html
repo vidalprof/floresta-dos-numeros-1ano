@@ -1115,6 +1115,69 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 #dossie #dsFechar{margin-top:10px;min-height:46px}
 .bdossie{display:block;width:100%;margin-top:10px;min-height:46px}
 /*</dossie-css>*/
+/*TETO-FIG-INI*/
+/* ⭐ TETO DE AMPLIACAO POR FIGURA (14/set/2026, queixa do Marcos: "as imagens
+   estao muito grandes e nao estao tao bonitas").
+   ⚠️ O QUE ESTAVA ERRADO: o CSS mandava `height:clamp(78px,20vw,124px)` para
+      TODA figura, sem olhar o tamanho do arquivo. A areia tem 42 px de altura
+      e era mostrada a 124 — o navegador inventava 3 pixels para cada 1 que
+      existe, e dai vinha o borrao. Medido: 23 das 47 figuras ampliadas.
+   ⚠️ E POR QUE NAO SE RESOLVE AMPLIANDO MELHOR: testei Lanczos + nitidez contra
+      o bilinear do navegador e fica PIOR (borda serrilhada). Nao se inventa
+      detalhe que nao existe.
+   A regra do Marcos e: figura vem da INTERNET, da propria atividade, nunca de
+   IA. Onde a colheita em alta resolucao deu folha maior, a figura cresceu (8
+   delas, de 1,6x a 2,8x). Onde nao deu, ela aparece do tamanho que e — o teto
+   abaixo e a altura REAL de cada arquivo, escrita uma a uma.
+   Quem mede isso agora e a regra de resolucao do `_qa/leiaute_mao.js`. */
+img[src*="rn_agua.png"]{max-height:45px}
+img[src*="rn_areia.png"]{max-height:42px}
+img[src*="rn_arvore.png"]{max-height:286px}
+img[src*="rn_arvore2.png"]{max-height:171px}
+img[src*="rn_arvore3.png"]{max-height:208px}
+img[src*="rn_bebe.png"]{max-height:185px}
+img[src*="rn_bola.png"]{max-height:170px}
+img[src*="rn_borboleta.png"]{max-height:136px}
+img[src*="rn_borboleta2.png"]{max-height:120px}
+img[src*="rn_borboleta3.png"]{max-height:182px}
+img[src*="rn_cachorro.png"]{max-height:251px}
+img[src*="rn_carro.png"]{max-height:62px}
+img[src*="rn_casa.png"]{max-height:144px}
+img[src*="rn_cavalo.png"]{max-height:185px}
+img[src*="rn_celular.png"]{max-height:133px}
+img[src*="rn_cupcake.png"]{max-height:176px}
+img[src*="rn_elefante.png"]{max-height:123px}
+img[src*="rn_estrela.png"]{max-height:180px}
+img[src*="rn_estrela_off.png"]{max-height:170px}
+img[src*="rn_fogo.png"]{max-height:90px}
+img[src*="rn_formiga.png"]{max-height:119px}
+img[src*="rn_lanche.png"]{max-height:186px}
+img[src*="rn_lapis.png"]{max-height:130px}
+img[src*="rn_menino.png"]{max-height:70px}
+img[src*="rn_milho.png"]{max-height:235px}
+img[src*="rn_nuvem.png"]{max-height:55px}
+img[src*="rn_passarinho.png"]{max-height:85px}
+img[src*="rn_pedras.png"]{max-height:117px}
+img[src*="rn_pedras2.png"]{max-height:227px}
+img[src*="rn_reino_animal.png"]{max-height:61px}
+img[src*="rn_reino_fungi.png"]{max-height:97px}
+img[src*="rn_reino_monera.png"]{max-height:67px}
+img[src*="rn_reino_plantae.png"]{max-height:66px}
+img[src*="rn_reino_protista.png"]{max-height:60px}
+img[src*="rn_rosa.png"]{max-height:185px}
+img[src*="rn_sapo.png"]{max-height:79px}
+img[src*="rn_sapo2.png"]{max-height:199px}
+img[src*="rn_sol.png"]{max-height:97px}
+img[src*="rn_sol2.png"]{max-height:151px}
+img[src*="rn_terra.png"]{max-height:48px}
+img[src*="rn_tijolos.png"]{max-height:70px}
+img[src*="rn_tomateiro.png"]{max-height:205px}
+img[src*="rn_trofeu.png"]{max-height:300px}
+img[src*="rn_tubarao.png"]{max-height:223px}
+img[src*="rn_urso_pelucia.png"]{max-height:145px}
+img[src*="rn_urso_pelucia2.png"]{max-height:203px}
+img[src*="rn_vento.png"]{max-height:70px}
+/*TETO-FIG-FIM*/
 </style></head><body>
 
 <div id="topo">
