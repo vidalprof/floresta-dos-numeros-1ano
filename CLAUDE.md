@@ -499,6 +499,39 @@ Leia tudo antes de agir e responda sempre em **português**.
 > rolar. Em tela baixa encolhe a LETRA (`font-size`), nunca a carta. Piso medido
 > pelo auditor: **130 × 88 px** (`_qa/leiaute.js`, regra 6) — abaixo disso reprova.
 
+> ## 🔎🚫🤖 EM FOLHA VIVA, A FIGURA VEM DA INTERNET — NÃO DE IA (Marcos, 14/set/2026)
+>
+> Palavras dele, e são uma ordem: ***"procure na internet, nada de imagem gerada
+> por IA, utilize das atividades"***.
+>
+> **O que isso decide.** Quando a figura de um caderno de folha viva sair borrada
+> ou pequena, o conserto **NÃO** é redesenhar com Gemini/OpenAI. É **buscar na
+> internet a mesma atividade em resolução maior** (`buscar-fotos.yml`, input
+> `imagens=` com `minkb` alto) e recortar dela. A figura tem que continuar sendo a
+> que a professora dá no papel — é isso que a regra da origem protege, e IA no
+> meio quebra exatamente isso.
+>
+> **O que já estava medido quando ele decidiu** (14/set, tudo conferido em log, e
+> registrado porque me pouparia de refazer):
+> - **23 das 47 figuras dos Cinco Reinos aparecem ampliadas** na tela, até 2,95×
+>   — a areia tem 42 px de altura no arquivo e é mostrada a 124 px. Daí o borrão.
+> - A raiz é a folha: a **d26 tem 768×1024** e a **d05 veio do Pinterest pelo
+>   endereço `/736x/`**, que é a versão reduzida.
+> - **Upscale não resolve** — testei Lanczos + nitidez contra o bilinear do
+>   navegador e o resultado fica serrilhado (borda picotada na areia, granulado na
+>   terra). Não se inventa detalhe que não existe.
+> - **Gemini: HTTP 429, sem cota** (remedido em 14/set; o registro de 12/ago
+>   continua valendo). **OpenAI: `OPENAI_API_KEY` vazio.** Os dois caminhos de IA
+>   estavam fechados de qualquer jeito — mas a ordem dele vale mesmo com eles
+>   abertos.
+> - Quem mede isso agora é a **regra de resolução dentro do `_qa/leiaute_mao.js`**:
+>   figura mostrada acima de 1,35× da própria altura reprova.
+>
+> **Como fazer, então:** colher de novo (`imagens=` + `minkb=180`), OLHAR a folha
+> de contato a 300 px, recortar com o `_padrao/recorte_folha.py`, e conferir que o
+> portão de resolução passa. Se a internet não der versão maior, a saída honesta é
+> **mostrar a figura no tamanho dela** — nunca ampliar, nunca gerar.
+
 > **♻️⭐ REAPROVEITAR O BANCO DE IMAGENS — REGRA NOVA (Marcos, ago/2026, REVERTE a
 > antiga "arte sempre nova").** Palavras dele: *"mascote e imagens do banco de
 > imagens podem ser reaproveitados em outras atividades; mascote novo só quando eu
