@@ -1,0 +1,1982 @@
+/* ============================================================
+   A COROA DOS CINCO REINOS — as vinte e cinco folhas (Ciências, 4º ano).
+
+   ⭐ PEDIDO DO MARCOS (14/set/2026): *"uma atividade para o 4º ano, seres vivos
+      e os reinos. Identificar critérios — tipo de célula, nutrição e número de
+      células. Reconhecer os cinco reinos."*
+
+   ⭐ E O GESTO VEM DA FOLHA DE PAPEL: *"aproveite as imagens e preste atenção no
+      que as atividades pedem para criar as interatividades"*. Foram colhidas 40
+      folhas (`_sequencias/folhas_reinos/`) e LIDAS UMA A UMA no crivo
+      `_sequencias/POTE-REINOS.md` — 22 aprovadas, 18 recusadas, cada uma com o
+      comando impresso verbatim. Nenhuma mecânica saiu do meu cardápio.
+
+   ⭐ E AS 45 FIGURAS SÃO RECORTADAS DAS PRÓPRIAS FOLHAS
+      (`recortar_das_folhas.py`; a origem de cada uma fica declarada em
+      `img/ORIGEM.json` e o portão 1i5 confere). É a regra que eu tinha deixado
+      como lembrete e o Marcos cobrou: *"por que você não cumpre o que
+      combinamos?"*
+
+   ⚠️ O NOME DOS REINOS: a folha d05 os chama pelos nomes do DIA A DIA —
+      PLANTAS, ANIMAIS, ALGAS, FUNGOS, BACTÉRIAS. É o caminho certo no 4º ano; o
+      nome científico (Plantae, Animalia, Protista, Fungi, Monera) entra como
+      APELIDO, depois, e nunca é o que se cobra.
+
+   ⚠️ OS TRÊS CRITÉRIOS, em linguagem de criança (folhas d15 e d29):
+      · quantas células — uma só ou muitas;
+      · o alimento — fabrica o próprio com o Sol, ou precisa comer;
+      · o cofrinho — a célula guarda a receita num cofrinho (núcleo), ou não.
+      Procarionte/eucarionte/autótrofo/heterótrofo aparecem uma vez, como
+      apelido de gente grande, e ficam fora do que a criança tem de acertar.
+
+   ⚠️ DADO DE FOLHA MORA NO TOPO (lição paga em 13/set/2026): `function` sobe,
+      `var x = ...` não.
+   ============================================================ */
+
+var livro = document.getElementById("livro"), PAGEL = [];
+
+/* ============================================================
+   ⚠️⚠️ DADO DE FOLHA MORA AQUI EM CIMA, E ESTA LIÇÃO FOI PAGA DUAS VEZES.
+   `function` sobe sozinha (hoisting); `var X = [...]` NÃO — a atribuição só
+   acontece quando a linha é executada. O `boot()` deste arquivo roda no MEIO
+   dele, então qualquer tabela declarada lá embaixo ainda vale `undefined` na
+   hora em que a capa é montada. Foi exatamente isso: a capa chamava
+   `REINOS.length` e o app abria em branco, com um TypeError e nada na tela.
+   ⚠️ Tabela nova = linha nova AQUI, nunca junto da folha que a usa.
+   ============================================================ */
+/* ---------- os cinco reinos, e é aqui que mora o conteúdo ---------- */
+/* ⚠️ `dia` é o nome do DIA A DIA (o que a criança usa e o que a folha d05
+   imprime). `ap` é o APELIDO científico, que aparece uma vez e nunca é cobrado.
+   Os três critérios vêm das folhas d15 e d29, em linguagem de criança. */
+var REINOS = [
+  {k: "animais", dia: "ANIMAIS", ap: "Animalia", fig: "reino_animal",
+   cel: "muitas", com: "come", cof: "tem",
+   quem: "o cachorro, a borboleta, o peixe e você"},
+  {k: "plantas", dia: "PLANTAS", ap: "Plantae", fig: "reino_plantae",
+   cel: "muitas", com: "fabrica", cof: "tem",
+   quem: "a árvore, o milho, a rosa e o tomateiro"},
+  {k: "fungos", dia: "FUNGOS", ap: "Fungi", fig: "reino_fungi",
+   cel: "muitas", com: "come", cof: "tem",
+   quem: "o cogumelo, o bolor do pão e o fermento do bolo"},
+  {k: "algas", dia: "ALGAS", ap: "Protista", fig: "reino_protista",
+   cel: "uma", com: "fabrica", cof: "tem",
+   quem: "a ameba, o paramécio e as algas do mar"},
+  {k: "bacterias", dia: "BACTÉRIAS", ap: "Monera", fig: "reino_monera",
+   cel: "uma", com: "come", cof: "nao",
+   quem: "as bactérias, que só se veem no microscópio"}
+];
+/* ⚠️ O NOME DA FIGURA NÃO É A CHAVE DO ARQUIVO. `urso_pelucia` é o nome do PNG;
+   o que a criança lê no botão e o leitor de tela anuncia é "o urso de pelúcia".
+   O mapa vem do gerador (bloco ITENS), junto com os potes — dono só. */
+function nomeDe(w){ return (typeof FIGNOME !== "undefined" && FIGNOME[w]) || w.replace(/_/g, " "); }
+
+
+
+/* ⚠️ DADO DE FOLHA MORA NO TOPO, e esta é uma lição paga em 13/set/2026, no
+   navegador. Eu escrevi as catorze folhas novas no FIM do arquivo, com os
+   dados delas junto — e `function` sobe (hoisting), mas `var x = ...` NÃO: a
+   declaração sobe vazia e a atribuição fica onde está. Resultado: `monta()`
+   rodava, chamava a folha 2 e estourava em `POEMA.forEach` de um `undefined`,
+   e o caderno morria na folha 2 sem nenhum erro de sintaxe. O `node --check`
+   passou; quem pegou foi o `andar_folha.js`, abrindo no navegador. */
+function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
+function aoAbrir(d, fn){ if(!d._aoAbrir) d._aoAbrir = []; d._aoAbrir.push(fn); }
+/* ---------- O ALTO-FALANTE (pedido do Marcos, set/2026) ----------
+   Palavras dele: *"os enunciados podem ter o botão de som para a criança clicar
+   e ouvir"* e *"assim como as palavras"*.
+
+   É regra da casa e tem motivo: no 1º ano metade da turma ainda soletra. Tudo o
+   que a criança PRECISA LER tem que poder ser OUVIDO, senão ela responde pelo
+   desenho e a folha vira loteria.
+
+   ⚠️ O desenho do alto-falante é CSS puro — caixinha + triângulo + duas ondas
+   feitas com borda arredondada. Nada de emoji (vira quadradinho nos PCs da
+   escola) e nada de SVG (ordem dele). */
+function botaoSom(rot, aoTocar){
+  var b = el("button", "som");
+  b.innerHTML = '<i class="cone"></i><i class="onda o1"></i><i class="onda o2"></i>';
+  b.setAttribute("aria-label", rot || "Ouvir");
+  b.onclick = function(ev){ ev.stopPropagation(); sPasso(); aoTocar(); };
+  return b;
+}
+function enunciado(d, pi, texto, chave){
+  var cx = el("div", "enunlin");
+  cx.appendChild(el("div", "enun", texto));
+  cx.appendChild(botaoSom("Ouvir o que a folha pede", function(){ falar(chave); }));
+  d.appendChild(cx);
+}
+function item(n){ return el("div", "item", n ? '<span class="n">' + n + '.</span>' : ""); }
+/* fecha o item e o prega na folha — o padrão que o `_alfa1` repetia à mão em
+   cada uma das onze folhas (marca o `feito`, o `data-qa` do jogador e anexa) */
+function fechaItem(d, box, id){
+  if(ST.resp[id]) box.className = "item feito";
+  box.setAttribute("data-qa", "item-" + id);
+  d.appendChild(box);
+}
+
+function monta(){
+  livro.innerHTML = ""; PAGEL = []; RESP = {};
+  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13,
+              f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25], i;
+  for(i = 0; i < caps.length; i++){
+    var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
+    caps[i](d, i);
+    if(i > 0) d.appendChild(el("div", "carimbo", "FOLHA<br>PRONTA"));
+    livro.appendChild(d); PAGEL.push(d);
+  }
+}
+
+/* ---------- fileira de opções (usada em várias folhas) ----------
+   `soltarEm` (opcional) liga o ARRASTAR: a criança pode puxar a figura até o
+   quadro vazio em vez de só tocar nela. Pedido do Marcos, set/2026:
+   *"da atividade o que vem depois a criança pode tanto clicar como arrastar a
+   imagem até o local"*. As DUAS portas, sempre — no PC da escola ela usa o
+   mouse e arrastar é o gesto natural; no celular, tocar é. */
+function opcoes(pai, pi, id, lista, certa, cls, falaCerto, falaDica, aoAcertar, soltarEm){
+  registra(id, pi, certa);
+  var box = el("div", "ops"), feito = !!ST.resp[id];
+  function responde(o, b){
+    if(ST.resp[id]) return;
+    sPasso(); if(o.fala) falar(o.fala);
+    if(o.v === certa){
+      b.className = "op" + (cls ? " " + cls : "") + " certa";
+      if(aoAcertar) aoAcertar(b);
+      setTimeout(function(){ acertou(id, falaCerto); }, aoAcertar ? 620 : 240);
+    } else {
+      b.className = "op" + (cls ? " " + cls : "") + " erro";
+      setTimeout(function(){ b.className = "op" + (cls ? " " + cls : ""); }, 500);
+      errou(id, falaDica);
+    }
+  }
+  lista.forEach(function(o){
+    var b = el("button", "op" + (cls ? " " + cls : "") + (feito && o.v === certa ? " certa" : ""), o.rot);
+    b.setAttribute("data-qa", "op-" + id + "-" + o.v);
+    b.setAttribute("aria-label", o.aria || o.v);
+    b.onclick = function(){ if(b._arrastou){ b._arrastou = false; return; } responde(o, b); };
+    if(soltarEm) puxavel(b, soltarEm, function(){ responde(o, b); });
+    box.appendChild(b);
+  });
+  pai.appendChild(box);
+}
+
+/* ---------- PUXAR uma peça até um alvo (mouse, dedo e caneta) ----------
+   ⚠️ Pointer Events e não mouse+touch separados: no celular o navegador dispara
+   eventos de mouse FANTASMA depois do toque, e foi assim que o arrastar já
+   quebrou duas vezes nesta casa. Aqui o `setPointerCapture` prende o ponteiro
+   no botão e o mesmo código serve para os três.
+   ⚠️ E nada de `preventDefault` no início: isso mataria o toque. Só depois de
+   o dedo ANDAR 8 px é que vira arrasto — antes disso continua sendo um toque
+   normal, e o `onclick` responde igual. */
+var PUXA = null;   /* o arrasto em andamento (um de cada vez) */
+
+function puxavel(bt, alvos, aoSoltar){
+  if(!alvos.push) alvos = [alvos];
+  bt.style.touchAction = "none";
+  bt.addEventListener("pointerdown", function(ev){
+    if(ev.button && ev.button !== 0) return;
+    PUXA = {bt: bt, alvos: alvos, aoSoltar: aoSoltar,
+            x0: ev.clientX, y0: ev.clientY,
+            lx: ev.clientX, ly: ev.clientY,   /* último lugar onde o dedo esteve */
+            andando: false, fantasma: null};
+  });
+}
+
+/* ⚠️⚠️ DUAS LIÇÕES PAGAS AQUI (set/2026), as duas achadas por teste e nenhuma
+   delas dava erro na tela — o arrasto simplesmente não acontecia:
+
+   1. `setPointerCapture` no próprio botão + `pointermove` NELE: só o primeiro
+      movimento chegava. O padrão certo é ouvir no DOCUMENTO — o dedo precisa
+      poder SAIR de cima da peça, que é justamente o que ele faz ao levá-la.
+
+   2. O navegador FUNDE os movimentos (coalescing). Num teste com 8 passos
+      chegou UM `pointermove`, de 5 px. Se eu decidir "isto é um arrasto" pela
+      contagem de movimentos, perco a jogada. Então quem MANDA é a SOLTURA:
+      apertou na peça e soltou em cima do alvo = soltou ali, tenham chegado dez
+      movimentos ou um. O fantasma que segue o dedo é enfeite útil; a resposta
+      não depende dele.
+
+   E um só par de ouvintes no documento, não um por peça: com 18 figuras numa
+   folha eram 18 cópias do mesmo tratador rodando a cada movimento. */
+function _puxaAnda(ev){
+  var P = PUXA; if(!P) return;
+  P.lx = ev.clientX; P.ly = ev.clientY;
+  var dx = ev.clientX - P.x0, dy = ev.clientY - P.y0;
+  if(!P.andando){
+    if(dx * dx + dy * dy < 64) return;            /* menos de 8 px: ainda é toque */
+    P.andando = true; P.bt._arrastou = true;
+    var f = P.bt.cloneNode(true);
+    f.className = "fantasma " + P.bt.className;
+    var r = P.bt.getBoundingClientRect();
+    f.style.width = r.width + "px"; f.style.height = r.height + "px";
+    f._ox = r.left; f._oy = r.top;
+    document.body.appendChild(f); P.fantasma = f;
+    P.bt.className = P.bt.className + " puxada";
+  }
+  if(ev.cancelable) ev.preventDefault();
+  P.fantasma.style.left = (P.fantasma._ox + dx) + "px";
+  P.fantasma.style.top = (P.fantasma._oy + dy) + "px";
+  P.alvos.forEach(function(a){
+    a.className = a.className.replace(/ ?perto/, "") + (sobre(ev, a) ? " perto" : "");
+  });
+}
+function _puxaSolta(ev){
+  var P = PUXA; if(!P) return;
+  PUXA = null;
+  P.alvos.forEach(function(a){ a.className = a.className.replace(/ ?perto/, ""); });
+  P.bt.className = P.bt.className.replace(/ ?puxada/, "");
+  if(P.fantasma && P.fantasma.parentNode) P.fantasma.parentNode.removeChild(P.fantasma);
+  /* ⚠️ TERCEIRA LIÇÃO PAGA: o `pointercancel` chega ANTES do `pointerup` e vem
+     com clientX/clientY = 0,0. Quem usasse a coordenada dele concluiria que a
+     criança soltou no canto superior esquerdo da tela — e a peça nunca cairia
+     no lugar. Por isso o último ponto REAL fica guardado (`lx`,`ly`) e é ele
+     que manda quando o evento chega sem posição. */
+  var px = ev.clientX, py = ev.clientY;
+  if(!px && !py){ px = P.lx; py = P.ly; }
+  var onde = {clientX: px, clientY: py};
+  var andou = (px - P.x0) * (px - P.x0) + (py - P.y0) * (py - P.y0) >= 64;
+  if(!andou) return;                              /* foi toque, o onclick resolve */
+  P.bt._arrastou = true;
+  var i;
+  for(i = 0; i < P.alvos.length; i++){
+    if(sobre(onde, P.alvos[i])){ P.aoSoltar(P.alvos[i], i); break; }
+  }
+  setTimeout(function(){ P.bt._arrastou = false; }, 60);
+}
+/* e o arrasto NATIVO do navegador fica desligado na atividade inteira: era ele
+   que disparava o `pointercancel` e matava o nosso. */
+document.addEventListener("dragstart", function(ev){ ev.preventDefault(); });
+document.addEventListener("pointermove", _puxaAnda);
+document.addEventListener("pointerup", _puxaSolta);
+document.addEventListener("pointercancel", _puxaSolta);
+
+function sobre(ev, alvo){
+  var r = alvo.getBoundingClientRect(), m = 14;
+  return ev.clientX >= r.left - m && ev.clientX <= r.right + m &&
+         ev.clientY >= r.top - m && ev.clientY <= r.bottom + m;
+}
+
+/* ============ 1 — A FILA DO ALFABETO (sequência alfabética) ============
+   Da folha impressa: *"complete a sequência do alfabeto"* / *"que letra vem
+   depois?"* — está em quase toda folha de 1º ano.
+
+   ⚠️ POR QUE ELA É A FOLHA 1 (parecer pedagógico, set/2026): o currículo de
+   Blumenau abre o 1º ano com *"nomear as letras do alfabeto e ordená-las"*, e a
+   atividade não tinha nenhuma folha disso — o Marcos tinha pedido no encargo
+   ("sequência alfabética") e escapou. Ordenar letra é o degrau anterior a tudo
+   o que vem depois; por isso ela abre o caderno.
+
+   O ANDAIME: mostra-se um pedacinho da fila (três letras) com um buraco no
+   meio, nunca o alfabeto inteiro — carga cognitiva de uma ideia por vez
+   (Sweller). A criança escolhe entre três letras VIZINHAS na fila, que é o que
+   força olhar a ordem em vez de reconhecer a forma. *//* ============================================================
+   O DESFILE DAS LETRAS — as dez folhas
+
+   ⭐ Degrau 0 da sequência de alfabetização (`_sequencias/SD-MONTADA-DE-FOLHAS-SOLTAS.md`).
+   Cada folha veio de uma FOLHA REAL de professor — as 45 em `_sequencias/folhas_d0/`
+   — e é fiel ao comando impresso. O que muda é só o GESTO.
+
+   ⚠️ O CRIVO DO PEDAGOGO CORTOU MAIS DA METADE, e o motivo importa: sete das 24
+   folhas da primeira colheita pediam ORDENAR PALAVRAS alfabeticamente (BANANA,
+   XÍCARA, CEBOLA…) e várias mandavam ESCREVER a lista inteira. Isso é 2º/3º ano:
+   supõe que a criança já lê e escreve com fluência. No 1º ano ela ainda está
+   NOMEANDO as letras. Ordenar palavra pela 1ª letra só faz sentido depois que a
+   ordem das letras está automática — que é justamente o que este caderno constrói.
+
+   ⚠️ E TUDO EM LETRA BASTÃO MAIÚSCULA. Foi uma professora que apontou isso nos
+   comentários de uma das folhas: *"por que não usar as letras em bastão
+   maiúsculas tanto no comando quanto nos exercícios?"*. Ela tem razão — a
+   criança que está aprendendo o alfabeto lê bastão, não cursiva nem minúscula.
+   Duas folhas da colheita foram descartadas por isso (uma em minúscula, uma com
+   teclado QWERTY, que não é ordem alfabética coisa nenhuma).
+
+   ⚠️ A ESCADA É DE DIFICULDADE, não a ordem das folhas de papel:
+     reconhecer a letra → nomear → achar a que falta → DEPOIS (fácil: recita-se
+     para frente) → ANTES (difícil: obriga a voltar) → as duas juntas →
+     ordenar → achar o intruso → a letra da palavra → o mural.
+   ============================================================ */
+
+function riscoDeCircular(grade, botoes, alterna){
+  var cv = document.createElement("canvas");
+  cv.className = "riscocv"; grade.appendChild(cv);
+  var ctx = cv.getContext("2d"), pts = [], riscando = false, ultRisco = 0;
+  function tamanho(){
+    var r = grade.getBoundingClientRect();
+    if(!r.width) return;
+    cv.width = r.width; cv.height = r.height;
+    cv.style.width = r.width + "px"; cv.style.height = r.height + "px";
+  }
+  function pinta(){
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    if(pts.length < 2) return;
+    ctx.strokeStyle = "#e0562f"; ctx.lineWidth = 5;
+    ctx.lineCap = "round"; ctx.lineJoin = "round";
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+    for(var k = 1; k < pts.length; k++) ctx.lineTo(pts[k].x, pts[k].y);
+    ctx.stroke();
+  }
+  function ponto(ev){
+    var r = cv.getBoundingClientRect();
+    return {x: ev.clientX - r.left, y: ev.clientY - r.top};
+  }
+  grade.addEventListener("pointerdown", function(ev){
+    /* ⚠️ no dedo o traço não começa (rolar a página é mais importante);
+       quem atende o toque é o clique de cada botão, ligado lá embaixo. */
+    if(ev.pointerType === "touch") return;
+    tamanho(); riscando = true; pts = [ponto(ev)];
+    cv.className = "riscocv ativo";
+    try { grade.setPointerCapture(ev.pointerId); } catch(e){}
+  });
+  grade.addEventListener("pointermove", function(ev){
+    if(!riscando) return;
+    pts.push(ponto(ev)); pinta();
+  });
+  function fim(){
+    if(!riscando) return;
+    riscando = false; cv.className = "riscocv";
+    var comp = 0, k;
+    for(k = 1; k < pts.length; k++)
+      comp += Math.abs(pts[k].x - pts[k-1].x) + Math.abs(pts[k].y - pts[k-1].y);
+    if(comp > 60){
+      var r0 = cv.getBoundingClientRect(), w;
+      for(w in botoes){
+        var rb = botoes[w].getBoundingClientRect();
+        if(dentro(pts, rb.left - r0.left + rb.width / 2, rb.top - r0.top + rb.height / 2)){
+          /* ⚠️ ARRAY dá ÍNDICE, OBJETO dá CHAVE — e a resposta de quem monta
+             espera o BOTÃO quando passou um array. Sem esta linha, `alterna`
+             recebia "0" no lugar do elemento, `b._w` era undefined e circular
+             a resposta CERTA caía no ramo do erro. Sempre. */
+          ultRisco = Date.now();
+          alterna(botoes.length !== undefined ? botoes[w] : w);
+        }
+      }
+    }
+    pts = []; ctx.clearRect(0, 0, cv.width, cv.height);
+  }
+  grade.addEventListener("pointerup", fim);
+  grade.addEventListener("pointercancel", fim);
+  grade.addEventListener("pointerleave", fim);
+
+  /* ⭐ A SEGUNDA PORTA (regra da casa: nunca só uma). Circular com o rato é o
+     gesto que a folha de papel pede; tocar é o gesto que o celular tem. Este
+     `click` atende os dois — o toque simples e o clique do rato do PC.
+     ⚠️ O guarda de 400 ms existe porque soltar o traço EM CIMA de um botão
+        também dispara `click`: sem ele, circular contaria duas vezes. */
+  (function(){
+    var k;
+    for(k in botoes) (function(w){
+      var e = botoes[w];
+      if(!e || !e.addEventListener) return;
+      e.addEventListener("click", function(){
+        if(Date.now() - ultRisco < 400) return;
+        alterna(botoes.length !== undefined ? e : w);
+      });
+    })(k);
+  })();
+}
+/* ponto dentro do rabisco: conta quantas vezes uma reta para a direita cruza o
+   traço (fechando o último ponto no primeiro). Ímpar = está dentro. */
+function dentro(pts, x, y){
+  var n = pts.length, cruz = false, i, j;
+  if(n < 3) return false;
+  for(i = 0, j = n - 1; i < n; j = i++){
+    var yi = pts[i].y, yj = pts[j].y, xi = pts[i].x, xj = pts[j].x;
+    if(((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) cruz = !cruz;
+  }
+  return cruz;
+}
+
+/* ============ O ESTOJO DE CANETINHAS ============
+   ⭐ AS CINCO CORES SÃO AS DA LEGENDA DA FOLHA DE PAPEL, não as minhas: a d05
+   manda *"pinte cada reino que compõe os seres vivos seguindo a legenda"* e
+   imprime PLANTAS verde · ANIMAIS vermelho · ALGAS azul · FUNGOS amarelo ·
+   BACTÉRIAS rosa. Trocar a cor aqui é trocar a folha que a professora entrega —
+   a criança que fez no papel tem que reencontrar a mesma legenda na tela. */
+var LAPIS = [
+  {n: "verde",    c: "#0f9d58", claro: "#dcfce7"},
+  {n: "vermelho", c: "#dc2626", claro: "#fee2e2"},
+  {n: "azul",     c: "#1d4ed8", claro: "#dbeafe"},
+  {n: "amarelo",  c: "#eab308", claro: "#fef9c3"},
+  {n: "rosa",     c: "#db2777", claro: "#fce7f3"}
+];
+var LAPIS_ESCOLHIDO = 0;
+
+function estojo(pai){
+  var cx = el("div", "estojo");
+  cx.appendChild(el("span", "rot", "Escolha a cor:"));
+  LAPIS.forEach(function(L, k){
+    var b = el("button", "lapis" + (k === LAPIS_ESCOLHIDO ? " esc" : ""));
+    b.style.background = L.c;
+    b.setAttribute("aria-label", "Canetinha " + L.n);
+    b.setAttribute("data-qa", "lapis-" + L.n);
+    b.onclick = function(){
+      LAPIS_ESCOLHIDO = k; sPasso();
+      var ir = cx.childNodes, j;
+      for(j = 1; j < ir.length; j++) ir[j].className = "lapis" + (j - 1 === k ? " esc" : "");
+    };
+    cx.appendChild(b);
+  });
+  pai.appendChild(cx);
+}
+function montaLigar(caixa, pi, tag, pares, pagina){
+  var box = el("div", "ligar"), ce = el("div", "col"), cd = el("div", "col");
+  var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("class", "linhas");
+  box.appendChild(ce); box.appendChild(cd); box.appendChild(svg); caixa.appendChild(box);
+  var ordem = baralha(pares.map(function(_, i){ return i; }));
+  var E = {}, D = {}, marcada = null;
+  pares.forEach(function(P){ registra("l" + pi + tag + "_" + P.k, pi, P.k); });
+  function centro(e, lado){
+    var r = e.getBoundingClientRect(), b = box.getBoundingClientRect();
+    return {x: (lado === "e" ? r.right : r.left) - b.left, y: r.top + r.height / 2 - b.top};
+  }
+  /* ⭐ O TRAÇO (pedido do Marcos, set/2026: *"melhore o traço que liga para
+     parecer mais profissional"*). Antes era um segmento reto de ponta a ponta.
+     Agora é uma CURVA suave — sai na horizontal de cada caixa e vira no meio,
+     como o cabo de um painel — com um halo branco por baixo (para o traço não
+     sumir quando passa por cima de outra caixa) e um pontinho cheio em cada
+     ponta, que é o que dá o acabamento de "ligado". */
+  function linha(a, b2, cor){
+    var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    var dx = Math.max(28, Math.abs(b2.x - a.x) * 0.45);
+    var d = "M" + a.x + "," + a.y +
+            " C" + (a.x + dx) + "," + a.y +
+            " " + (b2.x - dx) + "," + b2.y +
+            " " + b2.x + "," + b2.y;
+    var halo = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    halo.setAttribute("d", d); halo.setAttribute("fill", "none");
+    halo.setAttribute("stroke", "#ffffff"); halo.setAttribute("stroke-width", 11);
+    halo.setAttribute("stroke-linecap", "round");
+    var l = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    l.setAttribute("d", d); l.setAttribute("fill", "none");
+    l.setAttribute("stroke", cor); l.setAttribute("stroke-width", 6);
+    l.setAttribute("stroke-linecap", "round");
+    g.appendChild(halo); g.appendChild(l);
+    [a, b2].forEach(function(p){
+      var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", p.x); c.setAttribute("cy", p.y); c.setAttribute("r", 6);
+      c.setAttribute("fill", cor); c.setAttribute("stroke", "#fff"); c.setAttribute("stroke-width", 2.5);
+      g.appendChild(c);
+    });
+    svg.appendChild(g); return g;
+  }
+  function desmarca(){ if(marcada) marcada.el.className = marcada.el.className.replace(" marcada", ""); marcada = null; }
+  function redesenha(){
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+    for(var k in E) if(ST.lig["l" + pi + tag + "_" + k]) linha(centro(E[k].el, "e"), centro(D[k].el, "d"), "#15a34a");
+  }
+  aoAbrir(pagina, redesenha);
+  window.addEventListener("resize", function(){ if(pagina.className.indexOf("viva") > -1) redesenha(); });
+  function fecha(Re, Rd){
+    var id = "l" + pi + tag + "_" + Re.k;
+    if(Rd.k === Re.k){
+      ST.lig[id] = 1; tentativa(id, true); ST.resp[id] = 1; salvar();
+      Re.el.className += " feita"; Rd.el.className += " feita"; desmarca(); redesenha(); sCerto();
+      falar(Re.fc); setTimeout(function(){ confereFolha(pi); }, 850);
+    } else {
+      tentativa(id, false); sErro();
+      Rd.el.className += " treme";
+      setTimeout(function(){ Rd.el.className = Rd.el.className.replace(" treme", ""); }, 500);
+      falar(ST.tent[id].erros >= 2 ? Re.dica : "quase");
+      if(ST.tent[id].erros >= 2 && D[Re.k].el.className.indexOf("feita") < 0) D[Re.k].el.className += " mostra";
+    }
+  }
+  pares.forEach(function(P){
+    var e = el("div", "ponta" + (ST.lig["l" + pi + tag + "_" + P.k] ? " feita" : ""), P.esq);
+    e.setAttribute("role", "button"); e.setAttribute("tabindex", "0");
+    e.setAttribute("data-qa", "lig" + tag + "-e-" + P.k);
+    e.setAttribute("aria-label", esc(P.w));
+    var R = {k: P.k, el: e, fc: P.fc, dica: P.dica};
+    E[P.k] = R;
+    e.addEventListener("pointerdown", function(ev){
+      if(e.className.indexOf("feita") > -1) return;
+      ev.preventDefault(); desmarca(); marcada = R; e.className += " marcada"; sPasso(); falar(P.fe);
+    });
+    e.onkeydown = function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); desmarca(); marcada = R; e.className += " marcada"; falar(P.fe); } };
+    ce.appendChild(e);
+  });
+  ordem.forEach(function(j){
+    var P = pares[j];
+    var e = el("div", "ponta" + (ST.lig["l" + pi + tag + "_" + P.k] ? " feita" : ""), P.dir);
+    e.setAttribute("role", "button"); e.setAttribute("tabindex", "0");
+    e.setAttribute("data-qa", "lig" + tag + "-d-" + P.k);
+    e.setAttribute("aria-label", esc(P.wd || P.k));
+    var R = {k: P.k, el: e}; D[P.k] = R;
+    e.addEventListener("pointerdown", function(ev){
+      if(e.className.indexOf("feita") > -1) return;
+      ev.preventDefault();
+      if(marcada) fecha(marcada, R); else { sPasso(); falar(P.fd); falarDepois("ligue", 900); }
+    });
+    e.onkeydown = function(ev){ if((ev.key === "Enter" || ev.key === " ") && marcada){ ev.preventDefault(); fecha(marcada, R); } };
+    cd.appendChild(e);
+  });
+}
+
+/* ---------- O TECLADO DE LETRAS ----------
+   ⚠️ ELE TEM DUAS PORTAS, E AS DUAS PRECISAM TROCAR JUNTAS. Este teclado chegou
+      aqui vindo do caderno de multiplicação, onde as teclas eram ALGARISMOS;
+      aqui a criança escreve o NOME DO REINO, então voltou a ser o alfabeto — K,
+      W e Y inclusos. Trocar as teclas da tela não basta: o
+      `document.addEventListener("keydown")` (a segunda porta, o teclado de
+      verdade do PC da escola) tem que aceitar as mesmas coisas. Deixar só uma
+      das duas é o defeito que o Marcos já pegou duas vezes noutro lugar. */
+function ativa(q, certa, id, fc, fd){
+  if(ATIVA) fechaAtiva();
+  ATIVA = {q: q, val: "", certa: certa, id: id, fc: fc, fd: fd};
+  q.className = "sq vaga ativa";
+  q.innerHTML = '<span class="v"></span><span class="cursor"></span>';
+  document.getElementById("teclado").className = "aberto";
+  document.getElementById("tkDica").textContent = "Escreva o nome do reino";
+  falar("escreva");
+}
+function fechaAtiva(){
+  if(!ATIVA) return;
+  if(!ST.resp[ATIVA.id]){ ATIVA.q.className = "sq vaga"; ATIVA.q.textContent = ""; }
+  ATIVA = null; document.getElementById("teclado").className = "";
+}
+function digita(ch){
+  if(!ATIVA) return;
+  sTecla();
+  if(ch === "ap") ATIVA.val = ATIVA.val.slice(0, -1);
+  else if(ch === "ok") return confereLetras();
+  else { if(ATIVA.val.length >= 12) return; ATIVA.val += ch; }
+  var v = ATIVA.q.querySelector(".v"); if(v) v.textContent = ATIVA.val;
+  if(ATIVA.val.length >= ATIVA.certa.length) setTimeout(confereLetras, 380);
+}
+function confereLetras(){
+  if(!ATIVA || !ATIVA.val) return;
+  var A = ATIVA;
+  if(A.val === A.certa){
+    A.q.className = "sq ok"; A.q.textContent = A.certa;
+    ATIVA = null; document.getElementById("teclado").className = "";
+    acertou(A.id, A.fc);
+    var it = A.q.parentNode.parentNode; if(it) it.className = "item feito";
+  } else {
+    A.val = ""; var v = A.q.querySelector(".v"); if(v) v.textContent = "";
+    errou(A.id, A.fd);
+  }
+}
+(function(){
+  var tk = document.getElementById("tk");
+  /* ⚠️ TODO O ALFABETO, K W Y INCLUSOS — a lição paga em 13/set/2026: o teclado
+     saiu sem eles e três palavras do pote ficaram sem resposta possível. */
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(D){
+    var b = el("button", null, D);
+    b.setAttribute("aria-label", "Letra " + D);
+    b.onclick = function(){ digita(D); };
+    tk.appendChild(b);
+  });
+  var ap = el("button", "ap", "apagar"); ap.setAttribute("aria-label", "Apagar");
+  ap.onclick = function(){ digita("ap"); }; tk.appendChild(ap);
+  var ok = el("button", "ok", "OK"); ok.setAttribute("aria-label", "Confirmar");
+  ok.onclick = function(){ digita("ok"); }; tk.appendChild(ok);
+})();
+document.addEventListener("keydown", function(ev){
+  if(!ATIVA) return;
+  if(document.activeElement && document.activeElement.id === "nomeIn") return;
+  var k = (ev.key || "").toUpperCase();
+  if(k.length === 1 && "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(k) > -1){ ev.preventDefault(); digita(k); }
+  else if(ev.key === "Backspace"){ ev.preventDefault(); digita("ap"); }
+  else if(ev.key === "Enter"){ ev.preventDefault(); digita("ok"); }
+  else if(ev.key === "Escape"){ fechaAtiva(); }
+});
+
+/* ---------- folha pronta e navegação ---------- */
+function idsDaPagina(pi){
+  /* ⚠️ OS IDS TÊM QUE BATER COM O QUE AS FOLHAS GRAVAM (prefixo `n`, de número,
+     deste caderno). Ver a lição no topo — este é o ponto onde um caderno clonado
+     mente no relatório sem dar erro nenhum: o app abre, a criança responde, e o
+     objetivo do currículo conta zero para sempre.
+     ⚠️ AS FOLHAS 14 E 15 (ligar) NÃO gravam `n14_<i>`: o `montaLigar` grava
+        um id POR PAR, no formato `l<folha><tag><item>_<chave da figura>` — aqui,
+        `l14a0_cachorro`. Foi exatamente esta linha que, no caderno de
+        alfabetização, deixou a folha de ligar sem nunca ficar pronta: a criança
+        ligava tudo, a folha não carimbava, e nenhum portão via — porque o app
+        não dá erro nenhum, só nunca termina. */
+  var ids = [], i, q, F = ST.folha;
+  var LIG = {14: "a", 15: "b"};
+  if(LIG[pi]){
+    var G = F["p" + pi];
+    for(i = 0; i < G.length; i++)
+      for(q = 0; q < G[i].g.length; q++)
+        ids.push("l" + pi + LIG[pi] + i + "_" + G[i].g[q][0]);
+    return ids;
+  }
+  for(i = 1; i <= 25; i++){
+    if(pi === i){
+      var L = F["p" + i];
+      for(q = 0; q < L.length; q++) ids.push("n" + i + "_" + q);
+    }
+  }
+  return ids;
+}
+function pendentes(pi){
+  var ids = idsDaPagina(pi), n = 0, i;
+  for(i = 0; i < ids.length; i++) if(!ST.resp[ids[i]]) n++;
+  return n;
+}
+function confereFolha(pi){
+  if(pendentes(pi) > 0 || ST.prontas[pi]) return;
+  ST.prontas[pi] = 1; salvar();
+  PAGEL[pi].className += " pronta"; sFesta(); confete(24);
+  if(pi < PAGEL.length - 1){ falar("folhaPronta"); setTimeout(function(){ if(ST.pag === pi) vaiPara(pi + 1); }, 2400); }
+  else setTimeout(fim, 1400);
+  atualizaNav();
+}
+/* ⚠️ O nome NÃO se repete na capa (pedido do Marcos, set/2026: *"o nome ao
+   digitar não precisa aparecer lá em cima na capa"*). Ele já aparece dentro do
+   campo onde a criança digita; escrever de novo lá em cima era eco, e ainda
+   empurrava a capa para baixo. Aqui só se mantém o campo em dia com o estado
+   (importa ao retomar de onde parou). */
+function espelhaNome(t){
+  var i = document.getElementById("nomeIn"); if(i && i.value !== t) i.value = t;
+}
+function vaiPara(pi){
+  calar(); fechaAtiva();
+  document.getElementById("barraCapa").className = pi === 0 ? "aberta" : "";
+  if(pi === 0) espelhaNome(ST.nome || "");
+  document.getElementById("fim").style.display = "none";
+  document.getElementById("retomar").style.display = "none";
+  document.getElementById("nav").style.display = pi === 0 ? "none" : "flex";
+  for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
+  ST.pag = pi; salvar();
+  var d = PAGEL[pi]; d.className += " viva";
+  if(pi > 0) window.scrollTo(0, 0);
+  if(d._aoAbrir) for(var z = 0; z < d._aoAbrir.length; z++) (function(fn){ setTimeout(fn, 60); })(d._aoAbrir[z]);
+  atualizaNav();
+  falarDepois(pi === 0 ? "capa" : "p" + pi + "enun", 280);
+}
+function atualizaNav(){
+  var pi = ST.pag, total = PAGEL.length;
+  document.getElementById("pg").textContent = pi === 0 ? "Capa" : "Folha " + pi + " de " + (total - 1);
+  var feitas = 0, k; for(k in ST.prontas) feitas++;
+  document.getElementById("progI").style.width = (feitas / (total - 1) * 100) + "%";
+  document.getElementById("bAnt").disabled = pi === 0;
+  var prox = document.getElementById("bProx");
+  prox.style.visibility = pi === 0 ? "hidden" : "visible";
+  var pend = pi > 0 ? pendentes(pi) : 0;
+  prox.innerHTML = pi === total - 1 ? (pend ? "Faltam " + pend : "Ver o resultado")
+    : (pend ? "Faltam " + pend + '<i class="seta dir"></i>' : 'Próxima<i class="seta dir"></i>');
+  prox.className = pend ? "bt cinza" : "bt verde";
+  document.getElementById("navTxt").textContent = pi === 0 ? "" : NOMES[pi - 1];
+}
+
+/* ---------- fim: boletim, medalha e relatório ---------- */
+/* ⭐⭐ O FECHO A QUALQUER MOMENTO (12/set/2026).
+   O Marcos fixou a sequência em no mínimo 25 folhas, e a medida deu razão a ele:
+   é o que enche os 55 min da criança RÁPIDA. Só que a criança DEVAGAR leva ~85
+   min nas mesmas 25 folhas — ela não termina. E até aqui o boletim, o parecer, a
+   medalha e o relatório só existiam DEPOIS da última folha: quem mais precisa do
+   elogio seria a única a nunca vê-lo.
+
+   Agora a criança fecha o caderno quando quiser (botão "Terminar", na barra de
+   baixo) e vê o boletim DO QUE ELA FEZ.
+
+   ⚠️ E o boletim conta só o que ela TENTOU. Folha que ela não chegou a abrir
+      aparece como "ainda não" — jamais como 0 de 8, que transformaria o fecho
+      num boletim de defeitos justamente para quem foi mais devagar. */
+function fim(){
+  calar();
+  /* quantas folhas ela chegou a tocar, e quantas ficaram para depois */
+  var abertas = 0, naoAbertas = [], pp;
+  for(pp = 1; pp <= NOMES.length; pp++){
+    var idp = idsDaPagina(pp), algum = false, z;
+    for(z = 0; z < idp.length; z++) if(ST.tent[idp[z]]) { algum = true; break; }
+    if(algum) abertas++; else naoAbertas.push(pp);
+  }
+  var completo = naoAbertas.length === 0;
+  var tf = document.getElementById("fimTit");
+  if(tf) tf.textContent = completo ? "Caderno completo!" : "O seu boletim de hoje";
+  var bv = document.getElementById("bVoltar");
+  if(bv) bv.style.display = completo ? "none" : "";
+  for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
+  document.getElementById("nav").style.display = "none";
+  var f = document.getElementById("fim"); f.style.display = "block";
+  /* ⚠️ o denominador é o que ela TENTOU, não o caderno inteiro: a estrela tem
+     de falar do trabalho dela, não do tempo que a aula tinha. */
+  var tot = 0, prim = 0, pi;
+  for(pi = 1; pi <= NOMES.length; pi++){
+    var ids = idsDaPagina(pi);
+    for(var j = 0; j < ids.length; j++){
+      var t = ST.tent[ids[j]];
+      if(!t) continue;
+      tot++;
+      if(t.erros === 0 && t.ok) prim++;
+    }
+  }
+  var pc = tot ? prim / tot : 0;
+  var cheias = pc >= .85 ? 3 : pc >= .6 ? 2 : 1, est = "", ke;
+  for(ke = 0; ke < 3; ke++)
+    est += '<img src="img/rn_estrela' + (ke < cheias ? "" : "_off") + '.png?v=' + VIMG + '" alt="" draggable="false">';
+  document.getElementById("estrelas").innerHTML = est;
+  document.getElementById("estrelas").setAttribute("aria-label", cheias + " de 3 estrelas");
+  var bar = document.getElementById("barras"); bar.innerHTML = "";
+  for(pi = 1; pi <= NOMES.length; pi++){
+    (function(pi){
+      var ids = idsDaPagina(pi), t = ids.length, p = 0, nt = 0, j;
+      for(j = 0; j < ids.length; j++){
+        var tt = ST.tent[ids[j]];
+        if(tt) nt++;
+        if(tt && tt.erros === 0 && tt.ok) p++;
+      }
+      /* folha que ela não abriu não vira zero: vira "ainda não" */
+      if(nt === 0){
+        bar.appendChild(el("div", "barra naoabriu",
+          "<span>" + NOMES[pi - 1] + "</span><div class='tr'></div><b>ainda não</b>"));
+        return;
+      }
+      var b = el("div", "barra", "<span>" + NOMES[pi - 1] + "</span><div class='tr'><i></i></div><b>" + p + "/" + nt + "</b>");
+      bar.appendChild(b);
+      setTimeout(function(){ b.querySelector("i").style.width = (nt ? p / nt * 100 : 0) + "%"; }, 400);
+    })(pi);
+  }
+  /* ⭐⭐ O CARTAZ DO ARMAZÉM, montado por ela na folha 25.
+     A folha promete "ele fica guardado no fim" e a voz do fecho repete isso; se
+     o fim não mostrasse o cartaz, a promessa seria só texto. É a regra 11 da
+     casa: a tela final mostra o que a criança FEZ, não só a nota dela. */
+  (function(){
+    var cx = document.getElementById("cartazFim");
+    if(!cx) return;
+    var L = ST.folha.p25 || [], escolhidas = [], k;
+    for(k = 0; k < L.length; k++) if(ST.resp["n25_" + k]) escolhidas.push(L[k]);
+    if(!escolhidas.length){
+      cx.innerHTML = '<h3>A sua coroa</h3><div class="quadro">' +
+        '<span class="vazio">A última folha é a sua coroa: escolha ali um ser vivo para cada reino.</span></div>';
+      return;
+    }
+    var dentro = "";
+    escolhidas.forEach(function(it){
+      dentro += '<span class="cc">' + img(it.w, "figgr") +
+                reino(it.r).dia + "</span>";
+    });
+    cx.innerHTML = "<h3>A coroa de " + esch(ST.nome || "hoje") + "</h3>" +
+                   '<div class="quadro">' + dentro + "</div>";
+  })();
+
+  /* ⭐ O PARECER DA CRIANÇA (mudança de set/2026 — ver o bloco dos OBJETIVOS).
+     O currículo de Blumenau diz que a avaliação orienta *"o professor E O
+     ESTUDANTE acerca de quais objetivos foram alcançados"*, e que *"mostrar o
+     que sabe ou o que não sabe é pertinente, faz parte do crescimento e não da
+     exclusão"*. Então ela vê o que já sabe — na linguagem dela, sem número,
+     sem a palavra "errou" e sem porcentagem.
+     ⚠️ A ORDEM IMPORTA: primeiro o que ela JÁ SABE, sempre; o "vale treinar" vem
+     depois e no máximo dois, senão a lista vira boletim de defeitos. */
+  var jaSabe = [], treinar = [], q;
+  for(q = 0; q < OBJETIVOS.length; q++){
+    var Oq = OBJETIVOS[q], mq = mede(Oq.f);
+    /* ⚠️ objetivo que ela NÃO CHEGOU a tentar não entra no "vale treinar":
+       seria cobrar dela a folha que a aula não deu tempo de alcançar. */
+    if(mq.tot === 0 || !mq.tent) continue;
+    var pcq = Math.round(100 * mq.prim / mq.tent);
+    (pcq >= 75 ? jaSabe : treinar).push(pcq >= 75 ? Oq.ok : Oq.n.toLowerCase());
+  }
+  var txt = "";
+  /* ⚠️ "Você JÁ ..." e não "Você já SABE ..." (set/2026, achado na leitura da
+     tela de fim). Os textos dos OBJETIVOS estão escritos em terceira pessoa
+     ("junta os dois pedaços", "conta as palmas") — que em português é a MESMA
+     forma de "você". Com o "sabe" no meio saía "Você já sabe junta os dois
+     pedaços", e era a PRIMEIRA frase que a criança lia no fim do caderno. */
+  if(jaSabe.length) txt = "Você já " + jaSabe.slice(0, 3).join("; ") + ".";
+  else txt = "Você começou a conhecer a fila das letras — e ela é comprida!";
+  if(treinar.length) txt += " Vale treinar mais: " + treinar.slice(0, 2).join(" e ") + ".";
+  /* ⭐ o quanto ela andou é FATO e entra celebrado, nunca como cobrança */
+  if(!completo)
+    txt = "você fez " + abertas + " de " + NOMES.length + " folhas hoje — e olhe o "
+        + "que já dá para ver: " + txt.charAt(0).toLowerCase() + txt.slice(1);
+  /* ⚠️ DEFEITO ANTIGO, achado ao testar o fecho (12/set/2026): sem nome digitado
+     a linha saía **"Você, você já entende…"** — o prefixo caía no "Você" e o
+     texto do parecer também começa com "Você". Só aparecia para a criança que
+     não escreve o nome na capa, que é justamente a que mais precisa que a tela
+     fale direito com ela. Sem nome, não há prefixo. */
+  var quem = (ST.nome || "").replace(/^\s+|\s+$/g, "");
+  document.getElementById("resumo").innerHTML = quem
+    ? "<b>" + esch(quem) + "</b>, " + txt.charAt(0).toLowerCase() + txt.slice(1)
+    : txt.charAt(0).toUpperCase() + txt.slice(1);
+  sFesta(); confete(40); falar("fim");
+}
+(function(){
+  var m = document.getElementById("medalha"), t = null;
+  function segura(){ t = setTimeout(function(){ abreRelatorio(); }, 2000); }
+  function larga(){ if(t){ clearTimeout(t); t = null; } }
+  m.addEventListener("pointerdown", segura);
+  m.addEventListener("pointerup", larga);
+  m.addEventListener("pointerleave", larga);
+  m.addEventListener("pointercancel", larga);
+})();
+/* ============================================================
+   O QUE A ATIVIDADE MEDE — e como isso vira PARECER e NOTA
+
+   ⭐ PEDIDO DO MARCOS (set/2026): *"acho interessante ter um relatório, tipo uma
+   avaliação descritiva sobre o que o aluno conseguiu dominar nesses objetivos
+   das atividades"* e *"algo que dê para converter em nota"*.
+
+   ⭐⭐ E A REGRA DA CASA MUDOU AQUI — o Marcos mandou conferir e ele tinha razão:
+   *"essa regra pode ser alterada, consulta do pedagogo e do currículo seria
+   interessante"*. Fui ao currículo de Blumenau e ele diz, com todas as letras:
+
+     · a avaliação *"está a serviço de orientar o professor E O ESTUDANTE acerca
+       de quais objetivos de aprendizagem foram alcançados"* — o estudante é
+       destinatário da avaliação, não só o professor;
+     · e, citado com aprovação (Pinto, 2016, p. 120): *"na perspectiva do sujeito
+       histórico-cultural, MOSTRAR O QUE SABE OU O QUE NÃO SABE É PERTINENTE,
+       faz parte do crescimento e NÃO DA EXCLUSÃO"*.
+
+   Ou seja: esconder da criança o que ela domina não era exigência pedagógica —
+   era escolha nossa, e o currículo aponta para o contrário. Então a criança
+   PASSA A VER o parecer dela, na linguagem dela.
+
+   ⚠️ O QUE NÃO MUDA É O NÚMERO. A Instrução Normativa SEMED nº 1/2017, art. 3º,
+   citada no currículo, manda avaliar *"com PREPONDERÂNCIA DOS ASPECTOS
+   QUALITATIVOS SOBRE OS QUANTITATIVOS"*. Então o parecer vai para a criança e a
+   NOTA fica com o professor: não por medo do número, mas porque o currículo diz
+   qual dos dois deve pesar na frente dela.
+
+   ⚠️ E O CRITÉRIO DA NOTA É EXPOSTO POR EXIGÊNCIA, não por capricho: a mesma
+   Instrução manda *"a exposição de critérios utilizados em cada um dos
+   instrumentos avaliativos"*. Por isso a linha "1,0 de primeira, 0,6 com ajuda"
+   aparece impressa no relatório.
+
+   ⚠️ E NÃO SE CONTA TUDO IGUAL. Quem acerta de primeira e quem acerta depois de
+   duas dicas não sabem a mesma coisa. Acerto de primeira vale 1,0; acerto com
+   ajuda vale 0,6. O relatório mostra os dois números lado a lado, para o
+   professor ver a nota E o esforço que ela custou.
+   ============================================================ */
+var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
+
+/* OS OBJETIVOS — e quais folhas medem cada um.
+   ⚠️ Isto NÃO é a lista de folhas: é a lista do que a criança tem que SABER.
+   Duas folhas podem medir a mesma coisa com gestos diferentes, e para o
+   professor interessa o que ela domina, não em qual tela. */
+var OBJETIVOS = [
+  {n: "O que é estar vivo", f: [1, 2, 3, 4, 5],
+   ok: "separa o que está vivo do que nunca viveu e do que já foi vivo, e reconhece o ciclo nascer, crescer, reproduzir e morrer",
+   nao: "ainda decide pelo desenho (bicho sim, resto não) em vez de perguntar se aquilo nasce, cresce e se alimenta"},
+  {n: "Contar as células: uma ou muitas", f: [6],
+   ok: "diz se um ser é feito de uma célula só ou de muitas",
+   nao: "ainda não usa o número de células como critério para separar os seres"},
+  {n: "Os seres que só o microscópio mostra", f: [7, 24],
+   ok: "sabe que existem seres vivos pequenos demais para o olho, e os põe no lugar certo numa fila de tamanhos",
+   nao: "ainda trata o mundo vivo como só aquilo que ela consegue enxergar"},
+  {n: "De onde vem o alimento", f: [8, 9],
+   ok: "separa quem fabrica o próprio alimento com a luz do Sol de quem precisa comer outro ser vivo",
+   nao: "ainda não usa o alimento como critério, ou acha que toda planta também come"},
+  {n: "Onde a receita fica guardada", f: [10],
+   ok: "sabe que a célula guarda a receita num cofrinho, e que a bactéria é a única que não tem esse cofrinho",
+   nao: "ainda não distingue a célula da bactéria da célula dos outros reinos"},
+  {n: "Os cinco reinos, um a um", f: [11, 12, 13],
+   ok: "nomeia os cinco reinos e reconhece um ser de cada um deles, inclusive os que não se veem a olho nu",
+   nao: "ainda troca os reinos entre si, principalmente fungos, algas e bactérias"},
+  {n: "Ligar o ser vivo ao reino dele", f: [14, 15],
+   ok: "liga cada ser ao reino certo sem precisar da dica",
+   nao: "ainda liga por tentativa, sem usar as características do reino"},
+  {n: "Cruzar reino e característica", f: [16, 17, 18, 19],
+   ok: "diz, para cada reino, as três características ao mesmo tempo: células, alimento e cofrinho",
+   nao: "ainda acerta uma característica de cada vez, mas não monta o quadro inteiro do reino"},
+  {n: "Classificar sozinha nos cinco reinos", f: [20, 21, 23],
+   ok: "distribui os seres nas cinco gavetas, acha o intruso e escreve o nome do reino de próprio punho",
+   nao: "ainda reconhece o reino quando as opções aparecem, mas não o produz sozinha"},
+  {n: "A importância: quem produz, quem come, quem desmancha", f: [22],
+   ok: "explica que fungos e bactérias desmancham os restos e devolvem tudo para a terra",
+   nao: "ainda vê fungo e bactéria só como sujeira ou doença, sem o papel deles no ambiente"},
+  {n: "Registrar o que aprendeu", f: [25],
+   ok: "monta a coroa dela com um ser vivo de cada reino",
+   nao: "ainda não montou a coroa dela"}
+];
+
+
+/* mede um objetivo: devolve acertos de primeira, com ajuda, total e pontos */
+function mede(folhas){
+  var prim = 0, ajuda = 0, tot = 0, tentados = 0, k, j;
+  for(k = 0; k < folhas.length; k++){
+    var ids = idsDaPagina(folhas[k]);
+    tot += ids.length;
+    for(j = 0; j < ids.length; j++){
+      var t = ST.tent[ids[j]];
+      if(t) tentados++;      /* ⭐ o que ela chegou a tocar */
+      if(!t || !t.ok) continue;
+      if(t.erros === 0) prim++; else ajuda++;
+    }
+  }
+  return {prim: prim, ajuda: ajuda, tot: tot, tent: tentados,
+          pontos: prim * PESO_PRIMEIRA + ajuda * PESO_COM_AJUDA,
+          pc: tot ? Math.round(100 * prim / tot) : 0};
+}
+
+function abreRelatorio(){
+  var r = document.getElementById("relatorio");
+  var linhas = "", domina = [], retomar = [], k;
+  var pontos = 0, total = 0, primG = 0, ajudaG = 0, tentG = 0;
+  var naoAlcancou = [];
+  /* ⭐ ATÉ ONDE ELA CHEGOU — o professor precisa saber disto ANTES de ler
+     qualquer porcentagem (ver a coluna "do que fez", logo abaixo). */
+  var folhasFeitas = 0, fz;
+  for(fz = 1; fz <= NOMES.length; fz++){
+    var idf = idsDaPagina(fz), tocou = false, y;
+    for(y = 0; y < idf.length; y++) if(ST.tent[idf[y]]) { tocou = true; break; }
+    if(tocou) folhasFeitas++;
+  }
+  var inteiro = folhasFeitas >= NOMES.length;
+
+  for(k = 0; k < OBJETIVOS.length; k++){
+    var O = OBJETIVOS[k], m = mede(O.f);
+    pontos += m.pontos; total += m.tot; primG += m.prim; ajudaG += m.ajuda;
+    tentG += m.tent;
+    /* ⚠️ 75% é a ÚNICA linha que decide, e as duas listas são complementares:
+       um objetivo não pode aparecer em "domina" e em "retomar" ao mesmo tempo —
+       para o professor isso não é informação, é ruído. */
+    /* ⚠️⚠️ O QUE DECIDE É O QUE ELA FEZ (12/set/2026). Antes, num caderno não
+       terminado, o objetivo cujas folhas ela nem alcançou entrava em "retomar"
+       com 0% — e o parecer do professor dizia "precisa retomar" de uma criança
+       que tinha ido bem no que deu tempo de fazer. Isso é pior que não ter
+       parecer: é um julgamento errado com cara de medida.
+       Objetivo que ela NÃO TOCOU não entra em lista nenhuma; os que ela tocou
+       são julgados pelo desempenho DELES. */
+    var pcObj = m.tent ? Math.round(100 * m.prim / m.tent) : -1;
+    if(pcObj < 0) naoAlcancou.push(O.n.toLowerCase());
+    else if(pcObj >= 75) domina.push(O.ok);
+    else retomar.push(O.n.toLowerCase() + " (" + pcObj + "%)");
+    /* ⭐ A COLUNA "DO QUE FEZ" (12/set/2026) — nasceu junto com o fecho a
+       qualquer momento. Sem ela o relatório MENTE num caderno não terminado: a
+       criança que fez 4 folhas de 15, e as fez bem, aparecia com 27% — o
+       professor leria "precisa retomar" de quem na verdade só ficou sem tempo.
+       A coluna da direita mostra o desempenho SÓ no que ela chegou a responder. */
+    var pcf = m.tent ? Math.round(100 * m.prim / m.tent) : 0;
+    linhas += "<tr><td>" + esch(O.n) + "</td><td>" + m.prim + "/" + m.tot +
+      "</td><td><b>" + m.pc + "%</b></td><td>" +
+      (m.tent ? "<b>" + pcf + "%</b> <small>(" + m.prim + "/" + m.tent + ")</small>"
+              : "<small>não fez</small>") + "</td><td>" + m.ajuda + "</td></tr>";
+  }
+
+  /* ⭐ A NOTA. É de 0 a 10, com um decimal, e sai dos PONTOS — não dos acertos
+     crus: 1,0 de primeira, 0,6 com ajuda. */
+  /* ⚠️ A NOTA DE UM CADERNO NÃO TERMINADO SE MEDE NO QUE FOI FEITO. Dividir
+     pelos itens que ela nunca viu dá uma nota que não fala dela — fala do
+     relógio. Quando o caderno está completo, os dois denominadores são o
+     mesmo número e nada muda. */
+  var baseNota = inteiro ? total : tentG;
+  var nota = baseNota ? Math.round(100 * pontos / baseNota) / 10 : 0;
+  var pc = baseNota ? Math.round(100 * primG / baseNota) : 0;
+  var conceito = !baseNota ? "Sem dados" :
+    nota >= 8.5 ? "Dominou" : nota >= 6 ? "Está construindo" : "Precisa retomar";
+  if(!inteiro) conceito += " (parcial)";
+
+  /* ⭐ O PARECER EM PALAVRAS — a "avaliação descritiva" que o Marcos pediu.
+     Não é uma frase de efeito: é a lista do que ela SABE FAZER, escrita como o
+     professor escreveria no parecer bimestral. */
+  var nome = esch(ST.nome || "O aluno");
+  var parecer = nome + " ";
+  if(domina.length && !retomar.length && !naoAlcancou.length)
+    parecer += "domina a ordem do alfabeto em todos os degraus avaliados: " +
+      domina.join("; ") + ".";
+  else if(domina.length)
+    parecer += "já " + domina.join("; ") + ". Ainda precisa retomar: " + retomar.join(", ") + ".";
+  else
+    parecer += "está começando a construir a ordem do alfabeto. Nenhum objetivo chegou a " +
+      "75% de acerto de primeira — vale retomar oralmente, cantando o alfabeto e apontando " +
+      "as letras no varal da sala, antes de voltar à tela.";
+
+
+  /* ⚠️ o que a aula não deu tempo de alcançar é INFORMAÇÃO para o professor,
+     nunca falha da criança — por isso frase própria, e no fim. */
+  if(naoAlcancou.length)
+    parecer += " Ainda não chegou a fazer (a aula acabou antes): " +
+               naoAlcancou.join(", ") + ".";
+
+  var h = "<b>Relatório do professor</b> &mdash; " + nome + " &middot; " +
+    Math.round((Date.now() - (ST.inicio || Date.now())) / 60000) + " min" +
+    "<div class='notao'><span class='nn'>" + nota.toFixed(1).replace(".", ",") + "</span>" +
+    "<span class='nl'><b>" + conceito + "</b><br>" + primG + " de " + baseNota +
+    " de primeira (" + pc + "%)<br>" + ajudaG + " com ajuda</span></div>" +
+    "<p class='parecer'>" + parecer + "</p>" +
+    (inteiro ? "" :
+      "<p class='avisoparcial'><b>Caderno não terminado:</b> " + folhasFeitas +
+      " de " + NOMES.length + " folhas. A coluna <b>%</b> conta o caderno inteiro; " +
+      "a coluna <b>do que fez</b> conta só o que a criança chegou a responder — " +
+      "é esta que diz como ela foi.</p>") +
+    "<table><tr><th>Objetivo</th><th>De primeira</th><th>%</th>" +
+    "<th>do que fez</th><th>Com ajuda</th></tr>" +
+    linhas + "</table>" +
+    "<p class='comonota'>Nota de 0 a 10: acerto de primeira vale 1,0 e acerto com ajuda vale 0,6. " +
+    "A criança não vê este número — ele fica só aqui.</p>";
+  r.innerHTML = h; r.style.display = "block"; sPasso();
+}
+function esch(t){
+  return String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/* ---------- retomar, chave mestra e a partida ---------- */
+var CHAVE_MESTRA = "1275";
+function abreMenuProf(){
+  var cx = document.getElementById("mpFolhas");
+  if(!cx.childNodes.length){
+    var mk = function(rot, alvo){
+      var b = el("button", null, rot);
+      b.onclick = function(){ fechaMenuProf(); vaiPara(alvo); };
+      cx.appendChild(b);
+    };
+    mk("Capa", 0);
+    for(var k = 1; k <= 10; k++) mk(k + ". " + NOMES[k - 1], k);
+  }
+  calar(); document.getElementById("menuProf").className = "aberto";
+}
+function fechaMenuProf(){ document.getElementById("menuProf").className = ""; }
+document.getElementById("mpFechar").onclick = fechaMenuProf;
+document.getElementById("menuProf").onclick = function(ev){ if(ev.target === this) fechaMenuProf(); };
+document.getElementById("nomeIn").oninput = function(){
+  if(this.value.indexOf(CHAVE_MESTRA) > -1){ this.value = ST.nome || ""; abreMenuProf(); return; }
+  ST.nome = this.value.slice(0, 24); espelhaNome(ST.nome); salvar();
+};
+document.getElementById("nomeIn").onkeydown = function(ev){ if(ev.key === "Enter"){ ev.preventDefault(); this.blur(); } };
+document.getElementById("bComecar").onclick = function(){ ac(); sPasso(); if(!ST.inicio) ST.inicio = Date.now(); vaiPara(1); };
+document.getElementById("bAnt").onclick = function(){ sPasso(); vaiPara(Math.max(0, ST.pag - 1)); };
+document.getElementById("bProx").onclick = function(){
+  sPasso();
+  if(ST.pag === PAGEL.length - 1 && pendentes(ST.pag) === 0) return fim();
+  vaiPara(Math.min(PAGEL.length - 1, ST.pag + 1));
+};
+document.getElementById("bOuvir").onclick = function(){ ac(); if(ultimaFala) falar(ultimaFala); };
+document.getElementById("bVoz").onclick = function(){
+  vozLigada = !vozLigada; this.className = vozLigada ? "zap" : "zap off";
+  if(!vozLigada) calar(); else falar("vozOn");
+};
+document.getElementById("bRever").onclick = function(){ sPasso(); vaiPara(1); };
+document.getElementById("bRecomecar").onclick = function(){
+  sPasso(); try{ localStorage.removeItem(CHAVE_LS); }catch(e){}
+  ST = {pag: 0, nome: ST.nome, folha: novaFolha(), resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
+  monta(); vaiPara(0); falarDepois("novoCaderno", 400);
+};
+document.getElementById("bContinuar").onclick = function(){ ac(); sPasso(); vaiPara(ST.pag || 1); };
+document.getElementById("bZerar").onclick = function(){ document.getElementById("bRecomecar").onclick(); };
+
+(function boot(){
+  var velho = carregar();
+  if(velho && velho.folha){
+    ST = velho;
+    if(!ST.resp) ST.resp = {}; if(!ST.lig) ST.lig = {}; if(!ST.tent) ST.tent = {}; if(!ST.prontas) ST.prontas = {};
+    monta();
+    document.getElementById("retomar").style.display = "block";
+    document.getElementById("retTxt").textContent =
+      (ST.nome ? ST.nome + ", você" : "Você") + " parou na folha " + (ST.pag || 1) + ": " + NOMES[(ST.pag || 1) - 1] + ".";
+    document.getElementById("nav").style.display = "none";
+  } else {
+    ST.folha = novaFolha(); monta(); vaiPara(0);
+  }
+})();
+
+/*<dossie-js>*/
+/* ============================================================
+   DOSSIÊ PEDAGÓGICO — o que o PROFESSOR vê quando abre a atividade
+
+   ⭐ PEDIDO DO MARCOS (set/2026): *"preciso que quando um professor olhe e
+      analise a atividade ele veja que está ótima"*.
+
+   O buraco que isto fecha: o parecer pedagógico de cada caderno existia — mas
+   morava num arquivo `.md` DENTRO DO REPOSITÓRIO, que nenhum professor abre.
+   Quem olhava a atividade via um joguinho bonito e não tinha como saber se
+   aquilo estava alinhado ao currículo da rede. Agora o alinhamento está DENTRO
+   da atividade, a um toque — e a qualquer momento, não só no fim.
+
+   ⚠️ E não é texto solto: cada habilidade citada aqui vem do
+   `<pasta>/curriculo.json`, e o portão `_qa/pedagogo_curriculo.py` reprova se a frase
+   citada não existir, palavra por palavra, no `_curriculo/blumenau.txt`, ou se
+   os objetivos do relatório e os do currículo não baterem um a um. Citação de
+   currículo é a única coisa que o professor NÃO tem como conferir sozinho sem
+   abrir 440 páginas de PDF — por isso ela é medida.
+
+   Abre por dois caminhos: o botão no menu do professor (chave mestra 1275@,
+   vale a qualquer hora) e o botão dentro do relatório, no fim.
+
+   Este arquivo é a FONTE: `python3 _padrao/dossie_professor.py <pasta>` injeta o CSS, o
+   trecho de tela e este código no caderno. Não editar a cópia injetada.
+   ============================================================ */
+function dossieCita(s){
+  var m = String(s || "").match(/[“"]([^”"]+)[”"]/);
+  return m ? m[1] : String(s || "");
+}
+function dossieHTML(){
+  var C = (typeof CURRICULO === "object" && CURRICULO) ? CURRICULO : null;
+  if(!C) return "<p>Este caderno ainda não declarou o currículo.</p>";
+  var h = "", k, o;
+  h += "<p class='dfonte'><b>" + esch(C.componente) + " &middot; " + C.ano +
+       "º ano.</b> " + esch(C.rede) + ". As habilidades abaixo estão " +
+       "<b>copiadas do documento oficial, palavra por palavra</b> &mdash; nenhuma " +
+       "foi reescrita nem resumida.</p>";
+  h += "<table><tr><th>O que a atividade mede</th><th>Folhas</th>" +
+       "<th>Habilidade do currículo da rede</th></tr>";
+  for(k = 0; k < C.objetivos.length; k++){
+    o = C.objetivos[k];
+    h += "<tr><td>" + esch(o.objetivo) + "</td><td>" + o.folhas.join(", ") +
+         "</td><td>&ldquo;" + esch(dossieCita(o.habilidade)) + "&rdquo;" +
+         "<span class='dobj'>" + esch(o.pratica) + " &middot; " +
+         esch(o.objeto) + "</span></td></tr>";
+  }
+  h += "</table>";
+
+  h += "<p class='dsub'><b>A escada didática</b> &mdash; uma folha por degrau, e " +
+       "nenhuma repete o gesto da anterior:</p><ol class='descada'>";
+  for(k = 0; k < NOMES.length; k++) h += "<li>" + esch(NOMES[k]) + "</li>";
+  h += "</ol>";
+
+  h += "<p class='dsub'><b>Como a criança é avaliada</b></p>" +
+       "<p class='dtxt'>O relatório do professor (no fim, segurando a medalha por " +
+       "2 segundos) traz, por objetivo: quantos itens ela acertou <b>de primeira</b>, " +
+       "quantos precisou de ajuda e a porcentagem. A partir de 75% de acerto de " +
+       "primeira o objetivo conta como dominado. Sai também um parecer em palavras " +
+       "&mdash; do jeito que se escreve no bimestral &mdash; e uma nota de 0 a 10 " +
+       "que <b>a criança não vê</b>. Dentro da atividade não há nota, nem ranking, " +
+       "nem a palavra &ldquo;errou&rdquo;: o erro responde na hora e diz o que " +
+       "olhar, e a ajuda cresce a cada tentativa (dica &rarr; apoio concreto &rarr; " +
+       "revelar).</p>";
+
+  if(C.evidencia && C.evidencia.length){
+    h += "<p class='dsub'><b>O que foi medido antes de publicar</b></p><ul class='dev'>";
+    for(k = 0; k < C.evidencia.length; k++) h += "<li>" + esch(C.evidencia[k]) + "</li>";
+    h += "</ul>";
+  }
+  return h;
+}
+function abreDossie(){
+  var cx = document.getElementById("dsCorpo");
+  if(!cx) return;
+  if(typeof calar === "function") calar();
+  cx.innerHTML = dossieHTML();
+  document.getElementById("dossie").className = "aberto";
+  cx.scrollTop = 0;
+}
+function fechaDossie(){ document.getElementById("dossie").className = ""; }
+(function(){
+  var b = document.getElementById("bDossie"), f = document.getElementById("dsFechar"),
+      cx = document.getElementById("dossie");
+  if(b) b.onclick = function(){ fechaMenuProf(); abreDossie(); };
+  if(f) f.onclick = fechaDossie;
+  if(cx) cx.onclick = function(ev){ if(ev.target === this) fechaDossie(); };
+
+  /* o segundo caminho: o botão nasce DENTRO do relatório, quando ele abre.
+     Fica ali e não na tela final porque o relatório é a parte que a criança
+     não vê — e o dossiê é conversa de adulto. */
+  if(typeof abreRelatorio === "function"){
+    var antes = abreRelatorio;
+    abreRelatorio = function(){
+      antes.apply(this, arguments);
+      var r = document.getElementById("relatorio");
+      if(r && !r.querySelector(".bdossie")){
+        var bt = document.createElement("button");
+        bt.className = "bt bdossie";
+        bt.textContent = "Dossiê pedagógico (currículo da rede)";
+        bt.onclick = abreDossie;
+        r.appendChild(bt);
+      }
+    };
+  }
+}());
+/*</dossie-js>*/
+
+/* ⭐ o botão "Terminar" e o "Voltar para o caderno" — ver o comentário do fim() */
+(function(){
+  var bt = document.getElementById("bTerminar");
+  if(bt) bt.onclick = function(){
+    var falta = 0, pz;
+    for(pz = 1; pz <= NOMES.length; pz++) falta += pendentes(pz);
+    if(falta && !confirm("Quer fechar o caderno e ver o seu boletim?\n\nVocê pode voltar depois e continuar de onde parou."))
+      return;
+    fim();
+  };
+  var bv = document.getElementById("bVoltar");
+  if(bv) bv.onclick = function(){
+    document.getElementById("fim").style.display = "none";
+    vaiPara(ST.pag || 1);
+  };
+})();
+
+/* ============================================================
+   AS 25 FOLHAS DA COROA DOS CINCO REINOS
+
+   A ESCADA, e ela é a do crivo, não a minha:
+     o que é estar VIVO (1–5)  →  os TRÊS CRITÉRIOS, um de cada vez (6–10)
+     →  os cinco reinos, um a um (11–15)  →  cruzar reino × característica
+     (16–19)  →  usar: classificar, o intruso, a importância, escrever (20–23)
+     →  o tamanho e o cartaz (24–25).
+
+   ⚠️ CADA FOLHA TEM, NO COMENTÁRIO, A FOLHA DE PAPEL DE ONDE VEIO O GESTO.
+      Onde não veio de papel nenhum (o microscópio, o tamanho), está dito que
+      veio do CURRÍCULO — mentir nisso seria mentir no lugar mais fácil.
+   ============================================================ */
+
+function reino(k){ for(var i = 0; i < REINOS.length; i++) if(REINOS[i].k === k) return REINOS[i]; return null; }
+
+/* ---------- ajudantes deste caderno ---------- */
+function figGrande(w, cls){ return img(w, cls || "figbicho"); }
+
+/* a gaveta: uma caixa com título que aceita peças puxadas */
+function gaveta(rot, cls){
+  var g = el("div", "gaveta" + (cls ? " " + cls : ""));
+  g.appendChild(el("div", "gtit", rot));
+  g.appendChild(el("div", "gdentro"));
+  return g;
+}
+/* ⭐ A FOLHA DE GAVETAS — é o gesto que a d20, a d22, a d26 e a d40 pedem
+   ("recorte e cole na coluna", "classifique em"). Uma peça de cada vez, com as
+   duas portas: puxar com o dedo ou tocar na peça e depois na gaveta. */
+function folhaGavetas(d, pi, id, pecas, gavetas, falaCerto, falaDica){
+  /* ⚠️ A RESPOSTA DECLARADA TEM QUE DIZER O PAR, não só as peças. A primeira
+     versão registrava "p0 p1 p2" — quais peças existem —, e com isso ninguém
+     (nem o jogador da banca, nem o relatório) sabia em QUAL gaveta cada uma
+     entra. O formato é `p<i>><gaveta>`, e é o mesmo contrato que o
+     `_qa/joga_folha.js` lê para resolver a folha sozinho. */
+  registra(id, pi, pecas.map(function(p, i){ return "p" + i + ">" + p.k; }).join(" "));
+  var linha = el("div", "gavetas" + (gavetas.length === 3 ? " g3" : gavetas.length >= 5 ? " g5" : "")), caixas = [], marcada = null;
+  gavetas.forEach(function(g){
+    var cx = gaveta(g.rot, g.cls);
+    cx._k = g.k;
+    cx.setAttribute("data-qa", "gav-" + id + "-" + g.k);
+    cx.onclick = function(){ if(marcada) solta(marcada, cx); };
+    linha.appendChild(cx); caixas.push(cx);
+  });
+  d.appendChild(linha);
+  var banco = el("div", "ops pecas"), faltam = pecas.length;
+  function solta(bt, cx){
+    if(ST.resp[id] || bt._usada) return;
+    if(bt._k !== cx._k){
+      sErro(); cx.className += " treme";
+      setTimeout(function(){ cx.className = cx.className.replace(" treme", ""); }, 480);
+      errou(id, falaDica); return;
+    }
+    sPasso(); bt._usada = true; bt.className += " usada";
+    var dentro = cx.querySelector(".gdentro");
+    dentro.innerHTML += img(bt._w, "figmini");
+    if(marcada === bt){ marcada = null; }
+    faltam--;
+    if(faltam === 0) setTimeout(function(){ acertou(id, falaCerto); }, 420);
+  }
+  pecas.forEach(function(p, i){
+    var b = el("button", "op pecafig", figGrande(p.w, "figop"));
+    b._k = p.k; b._w = p.w;
+    b.setAttribute("data-qa", "peca-" + id + "-p" + i);
+    b.setAttribute("aria-label", p.nome);
+    b.onclick = function(){
+      if(b._arrastou){ b._arrastou = false; return; }
+      if(b._usada) return;
+      sPasso(); falar("ser_" + p.w);
+      /* ⭐ tocar marca a peça; tocar de novo na gaveta a solta — a segunda
+         porta do arrastar, que no celular da escola é a única que existe */
+      if(marcada) marcada.className = marcada.className.replace(" marcada", "");
+      marcada = b; b.className += " marcada";
+    };
+    puxavel(b, caixas, function(alvo){ if(alvo) solta(b, alvo); });
+    banco.appendChild(b);
+  });
+  d.appendChild(banco);
+}
+
+/* ============ A CAPA ============
+   ⚠️ CAPA CLONADA = TROCAR A CENA, SEMPRE (lição paga no Bando das Rimas). A
+      cena tem que contar a atividade: aqui é a COROA se montando — as cinco
+      pontas sobem uma a uma, cada uma com a figura de um reino, e são as MESMAS
+      cinco figuras que a folha d07 imprime no papel. Quem fez a folha reconhece
+      a tela. */
+function f0(d){
+  var c = el("div", "capa"), nome = "A COROA DOS CINCO REINOS", k = 0, letras = "";
+  /* ⚠️ CADA PALAVRA NUM `<span>` QUE NÃO QUEBRA. As letras entram uma a uma
+     (cada uma é um `<span>` seu), e sem isto o navegador quebra a linha DENTRO
+     da palavra: na tela de 430 px o título sairia "A COROA DOS CINCO REIN / OS".
+     Título de capa partido no meio da palavra é a primeira coisa que o Marcos
+     vê — e não há portão que meça isso, então é olhar mesmo. */
+  nome.split(" ").forEach(function(palavra, p){
+    if(p) letras += '<span class="esp"> </span>';
+    var dentro = "";
+    palavra.split("").forEach(function(ch){
+      dentro += '<span class="lt" style="animation-delay:' + (0.05 * (k++)).toFixed(2) + 's">' +
+                ch + "</span>";
+    });
+    letras += '<span class="palcapa">' + dentro + "</span>";
+  });
+  var pontas = "";
+  for(k = 0; k < REINOS.length; k++){
+    pontas += '<span class="pontacapa" style="animation-delay:' +
+              (0.45 + k * 0.16).toFixed(2) + 's">' +
+              img(REINOS[k].fig, "figgr") +
+              '<span class="pnomecapa">' + REINOS[k].dia + "</span></span>";
+  }
+  c.innerHTML =
+    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
+    '<h1 class="titu">' + letras + "</h1>" +
+    '<div class="sub">Ciências &middot; 4º ano &middot; vinte e cinco folhas sobre os seres vivos</div>' +
+    '<div class="coroacapa">' + pontas + '<div class="arocapa"></div></div>' +
+    '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
+  d.appendChild(c);
+}
+
+/* 1 — CIRCULE OS SERES VIVOS (papel d39: "CIRCULE OS SERES VIVOS NA ILUSTRAÇÃO
+   ABAIXO"). O degrau zero: antes de repartir em reinos, saber o que está vivo.
+   O gesto é o do lápis no papel — circular com o rato, ou tocar no dedo. */
+function f1(d, pi){
+  faixa(d, pi, NOMES[0]);
+  enunciado(d, pi, "Circule (ou toque) <b>só os seres vivos</b>.", "p1enun");
+  var L = ST.folha.p1;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n1_" + i, box = item(i + 1);
+      registra(id, pi, it.vivos.join(" "));
+      var grade = el("div", "gradecirc"), bts = {}, achou = 0;
+      it.todos.forEach(function(w){
+        var b = el("button", "figcirc", figGrande(w));
+        b.setAttribute("data-qa", "circ-" + id + "-" + w);
+        b.setAttribute("aria-label", nomeDe(w));
+        b._w = w; bts[w] = b; grade.appendChild(b);
+      });
+      box.appendChild(grade);
+      /* ⚠️ O `riscoDeCircular` DEVOLVE A CHAVE, não o botão, quando se passa um
+         OBJETO de botões (`{chave: elemento}`) — só devolve o elemento quando o
+         que se passa é um ARRAY. Escrevi a primeira versão esperando o botão, e
+         o caderno estourava em `b.className` a cada acerto: oito TypeError e as
+         quatro folhas de circular sem fechar, mesmo circulando certo. Quem
+         pegou: o `_qa/joga_folha.js`, que resolve o caderno item por item. */
+      riscoDeCircular(grade, bts, function(w){
+        var b = bts[w];
+        if(ST.resp[id] || !b || b.className.indexOf("marcada") > -1) return;
+        sPasso(); falar("ser_" + w);
+        if(it.vivos.indexOf(w) > -1){
+          b.className = "figcirc marcada"; achou++;
+          if(achou >= it.vivos.length) setTimeout(function(){ acertou(id, "certo1"); }, 420);
+        } else {
+          b.className = "figcirc erro";
+          setTimeout(function(){ b.className = "figcirc"; }, 500);
+          errou(id, "dica1_" + w);
+        }
+      });
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 2 — ACHE OS SERES VIVOS NA CENA (papel d33: "Pinte a cena e complete abaixo,
+   com nomes de seres existentes nela"). A mesma pergunta da folha 1, agora numa
+   CENA cheia — que é mais difícil, porque nada está separado em quadradinhos. */
+function f2(d, pi){
+  faixa(d, pi, NOMES[1]);
+  enunciado(d, pi, "Nesta cena, toque em <b>tudo que está vivo</b>.", "p2enun");
+  var L = ST.folha.p2;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n2_" + i, box = item(i + 1);
+      registra(id, pi, it.vivos.join(" "));
+      box.appendChild(el("div", "pedido", "são <b>" + it.vivos.length + "</b> seres vivos escondidos aqui"));
+      var cena = el("div", "cenaviva"), achou = 0;
+      baralha(it.todos).forEach(function(w){
+        var b = el("button", "nacena", figGrande(w));
+        b.setAttribute("data-qa", "cena-" + id + "-" + w);
+        b.setAttribute("aria-label", nomeDe(w));
+        b.onclick = function(){
+          if(ST.resp[id] || b.className.indexOf("achado") > -1) return;
+          sPasso(); falar("ser_" + w);
+          if(it.vivos.indexOf(w) > -1){
+            b.className = "nacena achado"; achou++;
+            if(achou >= it.vivos.length) setTimeout(function(){ acertou(id, "certo2"); }, 420);
+          } else {
+            b.className = "nacena erro";
+            setTimeout(function(){ b.className = "nacena"; }, 500);
+            errou(id, "dica2_" + w);
+          }
+        };
+        cena.appendChild(b);
+      });
+      box.appendChild(cena);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 3 — DUAS GAVETAS: VIVO × NÃO VIVO (papéis d20, d22 e d26: "Recorte as
+   figuras e cole corretamente na coluna de seres vivos e não vivos"). */
+function f3(d, pi){
+  faixa(d, pi, NOMES[2]);
+  enunciado(d, pi, "Puxe cada figura para a <b>gaveta certa</b>.", "p3enun");
+  var L = ST.folha.p3;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n3_" + i, box = item(i + 1);
+      folhaGavetas(box, pi, id,
+        it.pecas.map(function(p){ return {w: p[0], k: p[1], nome: nomeDe(p[0])}; }),
+        [{k: "vivo", rot: "SERES VIVOS", cls: "gvivo"},
+         {k: "nao", rot: "NÃO VIVOS", cls: "gnao"}],
+        "certo3", "dica3");
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 4 — TRÊS GAVETAS (papel d40: "Vivos, Já foram vivos, Nunca viveram").
+   ⭐ A VIRADA DO DEGRAU ZERO, e ela é a folha mais inteligente da colheita: a
+      madeira e o lanche não são "não vivos" — são "JÁ FORAM". Duas gavetas
+      deixam a criança achar que o mundo se divide em bicho e pedra; a terceira
+      quebra isso, e é ela que prepara o fungo que come madeira lá na frente. */
+function f4(d, pi){
+  faixa(d, pi, NOMES[3]);
+  enunciado(d, pi, "Agora são <b>três</b> gavetas. Olhe bem antes de puxar.", "p4enun");
+  var L = ST.folha.p4;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n4_" + i, box = item(i + 1);
+      folhaGavetas(box, pi, id,
+        it.pecas.map(function(p){ return {w: p[0], k: p[1], nome: nomeDe(p[0])}; }),
+        [{k: "vivo", rot: "VIVOS", cls: "gvivo"},
+         {k: "foi", rot: "JÁ FORAM VIVOS", cls: "gfoi"},
+         {k: "nunca", rot: "NUNCA VIVERAM", cls: "gnao"}],
+        "certo4", "dica4");
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 5 — O CICLO DE VIDA (papel d16: "AS PLANTAS NASCEM, CRESCEM, PODEM SE
+   REPRODUZIR E MORREM… NUMERE AS FASES DE VIDA DA PLANTA"). É a definição de
+   ser vivo virando gesto: quem tem ciclo, vive. */
+function f5(d, pi){
+  faixa(d, pi, NOMES[4]);
+  enunciado(d, pi, "Toque nas fases <b>na ordem</b>, do começo ao fim.", "p5enun");
+  var L = ST.folha.p5;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n5_" + i, box = item(i + 1);
+      registra(id, pi, it.fases.join(" "));
+      var fila = el("div", "ops"), pos = 0;
+      baralha(it.fases.slice()).forEach(function(f){
+        var b = el("button", "op palbt fasebt", f.replace(/_/g, " "));
+        b.setAttribute("data-qa", "fase-" + id + "-" + f);
+        b.setAttribute("aria-label", f.replace(/_/g, " "));
+        b.onclick = function(){
+          if(ST.resp[id] || b.className.indexOf("certa") > -1) return;
+          sPasso(); falar("fase_" + f);
+          if(f === it.fases[pos]){
+            b.className = "op palbt fasebt certa"; pos++;
+            if(pos >= it.fases.length) setTimeout(function(){ acertou(id, "certo5_" + it.ser); }, 420);
+          } else {
+            b.className = "op palbt fasebt erro";
+            setTimeout(function(){ b.className = "op palbt fasebt"; }, 480);
+            errou(id, "dica5");
+          }
+        };
+        fila.appendChild(b);
+      });
+      box.appendChild(el("div", "pedido", "o ciclo de vida " + it.rot));
+      box.appendChild(fila);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 6 — QUANTAS CÉLULAS? (papéis d29 e d15: "a quantidade de célula (unicelular
+   ou pluricelular)" / "pluricelulares · unicelulares"). O primeiro critério, e
+   o único dos três que o currículo de Blumenau nomeia com todas as letras:
+   *"Seres unicelulares e multicelulares"*. */
+function f6(d, pi){
+  faixa(d, pi, NOMES[5]);
+  enunciado(d, pi, "Este ser é feito de <b>uma célula só</b> ou de <b>muitas</b>?", "p6enun");
+  var L = ST.folha.p6;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n6_" + i, box = item(i + 1), R = reino(it.r);
+      box.appendChild(el("div", "bicholin", figGrande(it.w, "figbicho")));
+      box.appendChild(el("div", "pedido", nomeDe(it.w)));
+      opcoes(box, pi, id, [
+        {v: "uma", rot: "<b>uma</b> célula só", aria: "uma célula só", fala: "op_uma"},
+        {v: "muitas", rot: "<b>muitas</b> células", aria: "muitas células", fala: "op_muitas"}
+      ], R.cel, "palbt", "certo6_" + it.r, "dica6_" + it.r);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 7 — O MICROSCÓPIO (⚠️ NÃO veio de folha nenhuma: veio do CURRÍCULO).
+   ⚠️ Das 40 folhas colhidas, NENHUMA põe a criança a olhar por um microscópio —
+      e a rede pede, com essas palavras: *"Seres microscópicos (uso de lupa e
+      microscópio)"*. Entra declarado, e é o gancho do caderno: a criança GIRA o
+      botão do foco e a gota de água revela o que não se via. */
+function f7(d, pi){
+  faixa(d, pi, NOMES[6]);
+  enunciado(d, pi, "Olhe no microscópio. Toque na lente para <b>focar</b>.", "p7enun");
+  var L = ST.folha.p7;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n7_" + i, box = item(i + 1), R = reino(it.r);
+      registra(id, pi, it.r);
+      var mic = el("div", "microscopio");
+      var lente = el("button", "lente", figGrande(R.fig, "figlente"));
+      lente.setAttribute("data-qa", "mic-" + id + "-" + it.r);
+      lente.setAttribute("aria-label", "lente do microscópio, toque para focar");
+      mic.appendChild(lente);
+      mic.appendChild(el("div", "tubo"));
+      box.appendChild(mic);
+      var resp = el("div", "ops escondida");
+      box.appendChild(el("div", "pedido", it.rot));
+      var focos = 0;
+      lente.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); focos++;
+        lente.className = "lente foco" + Math.min(focos, 3);
+        if(focos >= 3){
+          falar("foco_" + it.r);
+          resp.className = "ops";
+          lente.className = "lente foco3 pronto";
+        } else falar("focando");
+      };
+      /* ⚠️ A PERGUNTA DESTA FOLHA NÃO É "quantas células" — essa é a folha 6, e
+         repetir seria o *"isso eu já fiz"*. Aqui a pergunta é a do currículo:
+         *"Seres microscópicos (uso de lupa e microscópio)"* — este ser, dá para
+         ver a olho nu, ou ele só existe para quem tem o aparelho? É o que faz
+         "microscópico" querer dizer alguma coisa para a criança. */
+      opcoes(resp, pi, id, [
+        {v: "nao", rot: "só dá para ver <b>no microscópio</b>",
+         aria: "só dá para ver no microscópio", fala: "op_sonomic"},
+        {v: "sim", rot: "dá para ver <b>sem</b> o microscópio",
+         aria: "dá para ver sem o microscópio", fala: "op_semmic"}
+      ], it.certo, "palbt", "certo7_" + it.r, "dica7_" + it.certo);
+      box.appendChild(resp);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 8 — DE ONDE VEM O ALIMENTO (papéis d15 e d29: "fabrican su propio alimento" /
+   "se alimentan de otros seres vivos"; e o currículo, que chama isso de *"o
+   papel do Sol como fonte primária de energia na produção de alimentos"*). */
+function f8(d, pi){
+  faixa(d, pi, NOMES[7]);
+  enunciado(d, pi, "Ele <b>fabrica</b> o próprio alimento com o Sol, ou <b>precisa comer</b>?", "p8enun");
+  var L = ST.folha.p8;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n8_" + i, box = item(i + 1), R = reino(it.r);
+      box.appendChild(el("div", "bicholin", figGrande(it.w, "figbicho")));
+      box.appendChild(el("div", "pedido", nomeDe(it.w)));
+      opcoes(box, pi, id, [
+        {v: "fabrica", rot: "<b>fabrica</b> com o Sol", aria: "fabrica com o Sol", fala: "op_fabrica"},
+        {v: "come", rot: "<b>precisa comer</b>", aria: "precisa comer", fala: "op_come"}
+      ], R.com, "palbt", "certo8_" + it.w, "dica8_" + R.com);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 9 — DUAS GAVETAS DO ALIMENTO (o mesmo gesto da d20/d26, agora com o critério
+   do alimento em vez de vivo × não vivo). */
+function f9(d, pi){
+  faixa(d, pi, NOMES[8]);
+  enunciado(d, pi, "Puxe cada um para a gaveta do <b>seu alimento</b>.", "p9enun");
+  var L = ST.folha.p9;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n9_" + i, box = item(i + 1);
+      folhaGavetas(box, pi, id,
+        it.pecas.map(function(p){ return {w: p[0], k: p[1], nome: nomeDe(p[0])}; }),
+        [{k: "fabrica", rot: "FABRICA COM O SOL", cls: "gvivo"},
+         {k: "come", rot: "PRECISA COMER", cls: "gfoi"}],
+        "certo9", "dica9");
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 10 — O COFRINHO DA RECEITA (⚠️ o critério que o currículo do 4º ano NÃO
+   nomeia: veio do encargo do Marcos, e entra assim declarado).
+   ⚠️ E entra em linguagem de criança: a célula guarda a receita num COFRINHO, e
+      a bactéria não tem cofrinho — a receita dela fica solta. As palavras
+      "procarionte" e "eucarionte" aparecem UMA vez, como apelido de gente
+      grande, e nunca são o que se cobra. */
+function f10(d, pi){
+  faixa(d, pi, NOMES[9]);
+  enunciado(d, pi, "A receita dele fica guardada num <b>cofrinho</b>, ou fica <b>solta</b>?", "p10enun");
+  var L = ST.folha.p10;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n10_" + i, box = item(i + 1), R = reino(it.r);
+      var cx = el("div", "celulalin");
+      cx.appendChild(el("div", "celula" + (R.cof === "tem" ? " comcofre" : ""), "<i></i>"));
+      box.appendChild(cx);
+      box.appendChild(el("div", "pedido", "a célula " + it.rot));
+      opcoes(box, pi, id, [
+        {v: "tem", rot: "tem <b>cofrinho</b>", aria: "tem cofrinho", fala: "op_cofre"},
+        {v: "nao", rot: "a receita fica <b>solta</b>", aria: "a receita fica solta", fala: "op_solta"}
+      ], R.cof, "palbt", "certo10_" + it.r, "dica10_" + R.cof);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 11 — PINTE OS CINCO REINOS (papel d05: "Pinte cada reino que compõe os seres
+   vivos seguindo a legenda" — PLANTAS verde, ANIMAIS vermelho, ALGAS azul,
+   FUNGOS amarelo, BACTÉRIAS rosa). O gesto é o do lápis de cor. */
+function f11(d, pi){
+  faixa(d, pi, NOMES[10]);
+  enunciado(d, pi, "Pinte cada reino <b>na cor da legenda</b>.", "p11enun");
+  estojo(d);
+  var L = ST.folha.p11;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n11_" + i, box = item(i + 1), R = reino(it.r);
+      registra(id, pi, it.r);
+      box.appendChild(el("div", "legenda", "<b>" + R.dia + "</b> &rarr; " + LAPIS[it.cor].n));
+      var b = el("button", "petala", figGrande(R.fig, "figbicho") +
+                 '<span class="pnome">' + R.dia + "</span>");
+      b.setAttribute("data-qa", "pinta-" + id + "-" + it.r);
+      /* ⚠️ A CANETINHA CERTA VAI DECLARADA no elemento. Sem isso o jogador da
+         banca clicava na pétala com o lápis que estava na mão (o primeiro do
+         estojo) e quatro dos cinco itens "não fechavam" — quando o que faltava
+         era ele saber que esta folha tem DOIS passos: escolher a cor e só
+         então pintar. Portão que acusa inocente se aprende a ignorar. */
+      b.setAttribute("data-lapis", LAPIS[it.cor].n);
+      b.setAttribute("aria-label", "pintar o reino " + R.dia + " de " + LAPIS[it.cor].n);
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso();
+        if(LAPIS_ESCOLHIDO === it.cor){
+          b.style.background = LAPIS[it.cor].claro;
+          b.style.borderColor = LAPIS[it.cor].c;
+          b.className = "petala pintada";
+          setTimeout(function(){ acertou(id, "certo11_" + it.r); }, 380);
+        } else { errou(id, "dica11_" + it.cor); }
+      };
+      box.appendChild(b);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 12 e 13 — QUAL É O REINO DESTE SER (papéis d04 "MARQUE CONFORME A
+   CLASSIFICAÇÃO DO SEU REINO" e d03 "Os cinco reinos são"). Em BLOCO, colado:
+   mecânica que repete vem junta, nunca espalhada. */
+function escolheReino(d, pi, L){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Olhe a figura. De qual <b>reino</b> ela é?", "p" + pi + "enun");
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n" + pi + "_" + i, box = item(i + 1);
+      box.appendChild(el("div", "bicholin", figGrande(it.w, "figbicho")));
+      box.appendChild(el("div", "pedido", nomeDe(it.w)));
+      opcoes(box, pi, id, it.op.map(function(k){
+        var R = reino(k);
+        return {v: k, rot: R.dia, aria: "reino das " + R.dia.toLowerCase(), fala: "reino_" + k};
+      }), it.r, "palbt", "certo12_" + it.w, "dica12_" + it.r);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+function f12(d, pi){ escolheReino(d, pi, ST.folha.p12); }
+function f13(d, pi){ escolheReino(d, pi, ST.folha.p13); }
+
+/* 14 e 15 — LIGUE (papéis d09 "¿A qué reino pertenecen? Relaciona", d08 "UNE
+   SEGUNDO CORRESPONDA" e d25 "Une cada organismo con el reino"). Seis folhas da
+   colheita pedem este gesto — é o segundo mais pedido de todos. */
+function ligaReino(d, pi, L, tag){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ligue cada ser vivo ao <b>reino</b> dele.", "p" + pi + "enun");
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var box = item(0), pares = it.g.map(function(par){
+        var R = reino(par[1]);
+        return {k: par[0],
+                esq: figGrande(par[0], "figlig"),
+                dir: '<span class="reinonome">' + R.dia + "</span>",
+                w: nomeDe(par[0]), wd: "reino das " + R.dia.toLowerCase(),
+                fe: "ser_" + par[0], fd: "reino_" + par[1],
+                fc: "certo14_" + par[0], dica: "dica14_" + par[1]};
+      });
+      montaLigar(box, pi, tag + i, pares, d);
+      d.appendChild(box);
+    })(L[i], i);
+  }
+}
+function f14(d, pi){ ligaReino(d, pi, ST.folha.p14, "a"); }
+function f15(d, pi){ ligaReino(d, pi, ST.folha.p15, "b"); }
+
+/* 16 e 17 — A COROA (papel d07: "MARQUE AS CARACTERÍSTICAS ENCONTRADAS EM CADA
+   REINO"). ⭐ É a folha que dá o NOME do caderno, e é o encargo do Marcos
+   inteiro numa tela: os três critérios cruzados com o reino. */
+function coroaDoReino(d, pi, L){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Marque as <b>três características</b> deste reino.", "p" + pi + "enun");
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n" + pi + "_" + i, box = item(i + 1), R = reino(it.r);
+      registra(id, pi, R.cel + " " + R.com + " " + R.cof);
+      var cor = el("div", "coroa");
+      cor.appendChild(el("div", "ctopo", "<i></i><i></i><i></i>"));
+      cor.appendChild(el("div", "cfaixa", figGrande(R.fig, "figcoroa") +
+                        '<span class="creino">' + R.dia + "</span>"));
+      box.appendChild(cor);
+      var feitos = {};
+      [["cel", "Quantas células?", [["uma", "uma só"], ["muitas", "muitas"]]],
+       ["com", "O alimento?", [["fabrica", "fabrica com o Sol"], ["come", "precisa comer"]]],
+       ["cof", "A receita?", [["tem", "guardada no cofrinho"], ["nao", "solta na célula"]]]
+      ].forEach(function(cri){
+        var lin = el("div", "crilin");
+        lin.appendChild(el("span", "crot", cri[1]));
+        cri[2].forEach(function(o){
+          var b = el("button", "op cribt", o[1]);
+          b.setAttribute("data-qa", "cri-" + id + "-" + o[0]);
+          b.setAttribute("aria-label", o[1]);
+          b.onclick = function(){
+            if(ST.resp[id] || feitos[cri[0]]) return;
+            sPasso(); falar("op_" + o[0]);
+            if(R[cri[0]] === o[0]){
+              b.className = "op cribt certa"; feitos[cri[0]] = 1;
+              if(feitos.cel && feitos.com && feitos.cof)
+                setTimeout(function(){ acertou(id, "certocoroa_" + it.r); }, 420);
+            } else {
+              b.className = "op cribt erro";
+              setTimeout(function(){ b.className = "op cribt"; }, 500);
+              errou(id, "dicacoroa_" + cri[0] + "_" + it.r);
+            }
+          };
+          lin.appendChild(b);
+        });
+        box.appendChild(lin);
+      });
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+function f16(d, pi){ coroaDoReino(d, pi, ST.folha.p16); }
+function f17(d, pi){ coroaDoReino(d, pi, ST.folha.p17); }
+
+/* 18 — CASE O REINO COM A DESCRIÇÃO (papéis d01 "Enumere os reinos de acordo
+   com as informações" e d19 "numere a 1ª coluna, a dos Reinos, de acordo com a
+   2ª, a das características"). O texto delas é de EF2; aqui ele está reescrito
+   no nível do ano, com os três critérios que a criança acabou de aprender. */
+function f18(d, pi){
+  faixa(d, pi, NOMES[17]);
+  enunciado(d, pi, "Leia a descrição e toque no <b>reino</b> que ela descreve.", "p18enun");
+  var L = ST.folha.p18;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n18_" + i, box = item(i + 1);
+      var cx = el("div", "descrlin");
+      cx.appendChild(el("p", "descr", it.txt));
+      cx.appendChild(botaoSom("Ouvir a descrição", function(){ falar("descr_" + it.r); }));
+      box.appendChild(cx);
+      opcoes(box, pi, id, it.op.map(function(k){
+        var R = reino(k);
+        return {v: k, rot: R.dia, aria: "reino das " + R.dia.toLowerCase(), fala: "reino_" + k};
+      }), it.r, "palbt", "certo18_" + it.r, "dica18_" + it.r);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 19 — COMPLETE O QUADRO (papel d29: "Complete o quadro a seguir assinalando a
+   característica de cada reino", com a linha do reino Animalia já preenchida
+   como exemplo). O andaime vem da própria folha: a primeira linha é modelo. */
+function f19(d, pi){
+  faixa(d, pi, NOMES[18]);
+  enunciado(d, pi, "Uma casinha do quadro está vazia. Qual é?", "p19enun");
+  var L = ST.folha.p19;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n19_" + i, box = item(i + 1), R = reino(it.r);
+      var DIZ = {cel: {uma: "uma só", muitas: "muitas"},
+                 com: {fabrica: "fabrica com o Sol", come: "precisa comer"},
+                 cof: {tem: "no cofrinho", nao: "solta"}};
+      var tab = el("div", "tabmult");
+      [["cel", "células"], ["com", "alimento"], ["cof", "receita"]].forEach(function(c){
+        var vaga = c[0] === it.falta;
+        var cx = el("div", "tcel" + (vaga ? " vaga" : ""));
+        cx.appendChild(el("span", "trot", c[1]));
+        cx.appendChild(el("span", "tval", vaga ? "?" : DIZ[c[0]][R[c[0]]]));
+        tab.appendChild(cx);
+      });
+      box.appendChild(el("div", "pedido", "reino das <b>" + R.dia + "</b>"));
+      box.appendChild(tab);
+      var lista = it.falta === "cel"
+        ? [["uma", "uma só"], ["muitas", "muitas"]]
+        : it.falta === "com"
+        ? [["fabrica", "fabrica com o Sol"], ["come", "precisa comer"]]
+        : [["tem", "no cofrinho"], ["nao", "solta"]];
+      opcoes(box, pi, id, lista.map(function(o){
+        return {v: o[0], rot: o[1], aria: o[1], fala: "op_" + o[0]};
+      }), R[it.falta], "palbt", "certoquadro_" + it.r + "_" + it.falta,
+         "dicaquadro_" + it.falta + "_" + it.r);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 20 — AS CINCO GAVETAS DOS REINOS (papel d06: "Identifique, no cladograma
+   abaixo, os reinos aos quais pertencem os seres vivos representados pelas
+   letras A, B, C, D e E"). Agora a criança classifica, e não escolhe entre
+   duas: são as cinco gavetas ao mesmo tempo. */
+function f20(d, pi){
+  faixa(d, pi, NOMES[19]);
+  enunciado(d, pi, "Puxe cada ser vivo para a <b>gaveta do reino</b> dele.", "p20enun");
+  var L = ST.folha.p20;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n20_" + i, box = item(i + 1);
+      folhaGavetas(box, pi, id,
+        it.pecas.map(function(p){ return {w: p[0], k: p[1], nome: nomeDe(p[0])}; }),
+        it.gav.map(function(k){ return {k: k, rot: reino(k).dia, cls: "greino"}; }),
+        "certo20", "dica20");
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 21 — O INTRUSO (nasce do mesmo verbo de "circule o que não pertence" que a
+   d16 e a d39 usam, aplicado agora ao REINO). */
+function f21(d, pi){
+  faixa(d, pi, NOMES[20]);
+  enunciado(d, pi, "Um deles <b>não é</b> deste reino. Ache o intruso.", "p21enun");
+  var L = ST.folha.p21;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n21_" + i, box = item(i + 1), R = reino(it.r);
+      box.appendChild(el("div", "pedido", "todos são do reino das <b>" + R.dia + "</b>… menos um"));
+      var grade = el("div", "gradecirc"), bts = {};
+      baralha(it.todos.slice()).forEach(function(w){
+        var b = el("button", "figcirc", figGrande(w));
+        b.setAttribute("data-qa", "circ-" + id + "-" + w);
+        b.setAttribute("aria-label", nomeDe(w));
+        b._w = w; bts[w] = b; grade.appendChild(b);
+      });
+      box.appendChild(grade);
+      registra(id, pi, it.intruso);
+      riscoDeCircular(grade, bts, function(w){   /* chave, não botão — ver a folha 1 */
+        var b = bts[w];
+        if(ST.resp[id] || !b) return;
+        sPasso(); falar("ser_" + w);
+        if(w === it.intruso){
+          b.className = "figcirc marcada";
+          setTimeout(function(){ acertou(id, "certo21_" + it.intruso); }, 420);
+        } else {
+          b.className = "figcirc erro";
+          setTimeout(function(){ b.className = "figcirc"; }, 500);
+          errou(id, "dica21_" + it.r);
+        }
+      });
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 22 — PRODUTOR, CONSUMIDOR, DECOMPOSITOR (papel d30: "Complete as frases
+   abaixo com as palavras em destaque"). É a parte "sua IMPORTÂNCIA" do objetivo
+   do currículo — e o lugar onde fungo e bactéria deixam de ser bicho feio:
+   *"Relacionar a participação de fungos e bactérias no processo de
+   decomposição, reconhecendo a importância ambiental desse processo."* */
+function f22(d, pi){
+  faixa(d, pi, NOMES[21]);
+  enunciado(d, pi, "Preencha a frase. Toque na palavra que falta.", "p22enun");
+  var L = ST.folha.p22;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n22_" + i, box = item(i + 1);
+      var cx = el("div", "descrlin");
+      cx.appendChild(el("p", "descr", it.txt.replace("___", '<span class="lacuna">?</span>')));
+      cx.appendChild(botaoSom("Ouvir a frase", function(){ falar("frase_" + it.k); }));
+      box.appendChild(cx);
+      opcoes(box, pi, id, it.op.map(function(o){
+        return {v: o, rot: o, aria: o, fala: "pal_" + o};
+      }), it.certo, "palbt", "certo22_" + it.k, "dica22_" + it.k);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 23 — ESCREVA O NOME DO REINO (papéis d01 "Escreva o nome de cada Reino" e
+   d03 "Completa: os cinco reinos são"). O REGISTRO: até aqui ela reconheceu
+   entre duas ou cinco; agora produz a palavra sozinha. */
+function f23(d, pi){
+  faixa(d, pi, NOMES[22]);
+  enunciado(d, pi, "Agora <b>escreva</b> o nome do reino. Toque no quadro vazio.", "p23enun");
+  var L = ST.folha.p23;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n23_" + i, box = item(i + 1), R = reino(it.r);
+      registra(id, pi, R.dia.replace("É", "E"));
+      box.appendChild(el("div", "bicholin", figGrande(R.fig, "figbicho")));
+      /* ⚠️ A PISTA, NUNCA O NOME — nem escrito nem falado. Ver o comentário do
+         `PISTA` no gerar_falas.py: o portão 1i4 pegou a primeira versão, que
+         imprimia "as ALGAS do mar" logo acima do quadro de escrever ALGAS. */
+      box.appendChild(el("div", "pedido", it.pista));
+      var lin = el("div", "contalin");
+      var q = el("div", "sq vaga" + (ST.resp[id] ? " ok" : ""), ST.resp[id] ? R.dia : "");
+      q.setAttribute("data-qa", "esc-" + id);
+      q.setAttribute("role", "button"); q.setAttribute("tabindex", "0");
+      q.setAttribute("aria-label", "escrever o nome do reino");
+      q.onclick = function(){
+        if(ST.resp[id]) return;
+        ativa(q, R.dia.replace("É", "E"), id, "certo23_" + it.r, "dica23_" + it.r);
+      };
+      lin.appendChild(q);
+      lin.appendChild(botaoSom("Ouvir a pista", function(){ falar("pista_" + it.r); }));
+      box.appendChild(lin);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 24 — DO MENOR AO MAIOR (⚠️ do CURRÍCULO, não do papel: *"Seres microscópicos
+   (uso de lupa e microscópio)"*. Nenhuma das 40 folhas compara tamanhos, e sem
+   essa comparação "microscópico" não quer dizer nada para a criança). */
+function f24(d, pi){
+  faixa(d, pi, NOMES[23]);
+  enunciado(d, pi, "Toque <b>do menor para o maior</b>.", "p24enun");
+  var L = ST.folha.p24;
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n24_" + i, box = item(i + 1);
+      registra(id, pi, it.ordem.join(" "));
+      var fila = el("div", "ops"), pos = 0;
+      baralha(it.ordem.slice()).forEach(function(w){
+        var b = el("button", "op pecafig", figGrande(w, "figop") +
+                  '<span class="tamnome">' + nomeDe(w) + "</span>");
+        b.setAttribute("data-qa", "tam-" + id + "-" + w);
+        b.setAttribute("aria-label", nomeDe(w));
+        b.onclick = function(){
+          if(ST.resp[id] || b.className.indexOf("certa") > -1) return;
+          sPasso(); falar("ser_" + w);
+          if(w === it.ordem[pos]){
+            b.className = "op pecafig certa"; pos++;
+            if(pos >= it.ordem.length) setTimeout(function(){ acertou(id, "certo24"); }, 420);
+          } else {
+            b.className = "op pecafig erro";
+            setTimeout(function(){ b.className = "op pecafig"; }, 480);
+            errou(id, "dica24");
+          }
+        };
+        fila.appendChild(b);
+      });
+      box.appendChild(fila);
+      fechaItem(d, box, id);
+    })(L[i], i);
+  }
+}
+
+/* 25 — A MINHA COROA (o fecho da casa: a tela final mostra o que a criança FEZ).
+   Ela escolhe um ser vivo para cada reino e monta a coroa dela, que fica
+   guardada no boletim. */
+function f25(d, pi){
+  faixa(d, pi, NOMES[24]);
+  enunciado(d, pi, "Escolha <b>um ser vivo para cada reino</b>. A coroa fica no fim.", "p25enun");
+  var L = ST.folha.p25;
+  var mural = el("div", "mural");
+  for(var i = 0; i < L.length; i++){
+    (function(it, i){
+      var id = "n25_" + i, box = item(0), R = reino(it.r);
+      registra(id, pi, it.w);
+      var b = el("button", "op palbt cartazbt" + (ST.resp[id] ? " certa" : ""));
+      b.innerHTML = '<span class="cartazfig">' + figGrande(it.w, "figop") + "</span>" +
+                    '<span class="contaop">' + R.dia + "</span>";
+      b.setAttribute("data-qa", "mur-" + id + "-" + it.w);
+      b.setAttribute("aria-label", nomeDe(it.w) + ", reino das " + R.dia.toLowerCase());
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); b.className = "op palbt cartazbt certa";
+        acertou(id, "certo25_" + it.r);
+      };
+      box.className = "item solto";
+      box.appendChild(b);
+      mural.appendChild(box);
+      if(ST.resp[id]) box.className = "item solto feito";
+      box.setAttribute("data-qa", "item-" + id);
+    })(L[i], i);
+  }
+  d.appendChild(mural);
+}

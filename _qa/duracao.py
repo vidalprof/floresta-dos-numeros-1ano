@@ -417,7 +417,16 @@ def confere(pasta, piso_min=40.0):
     #     cada `caixa(` e uma resposta digitada; `montador(` e manipular pecas
     #     (por em cima da mesa uma a uma); `montaLigar(` e ligar; e um item com
     #     `hist` e um PROBLEMA, que antes de resolver precisa ser lido.
-    m_it = re.search(r'/\*ITENS-INI\*/\s*var\s+ITENS\s*=\s*(\{.*?\})\s*;\s*/\*ITENS-FIM\*/',
+    # ⚠️ O FECHO DO BLOCO NAO E O FECHO DO OBJETO (lição paga em 14/set/2026,
+    #    nos cinco reinos): o gerador daquele caderno passou a escrever DOIS vars
+    #    dentro do bloco marcado (`ITENS` e `FIGNOME`, o nome falado de cada
+    #    figura). A âncora antiga exigia que o `};` do ITENS viesse colado no
+    #    `/*ITENS-FIM*/`; com o segundo var no meio, o `json.loads` estourava, o
+    #    portão caía no galho seguinte e media 71 itens onde havia 112 — e ainda
+    #    imprimia "duracao ok" com esse número. Portão que aprova com número
+    #    errado é pior que portão nenhum. Agora ele para no `};` do próprio
+    #    objeto e não se importa com o que venha depois dentro do bloco.
+    m_it = re.search(r'/\*ITENS-INI\*/\s*var\s+ITENS\s*=\s*(\{.*?\})\s*;',
                      html, re.S)
     if m_it and not fases_m:
         try:

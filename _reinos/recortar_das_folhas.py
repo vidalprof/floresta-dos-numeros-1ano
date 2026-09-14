@@ -239,10 +239,101 @@ def limpa_fundo(c, lim=LIM):
     return c
 
 
+def tira_halo(c, lim=212, voltas=4):
+    u"""Come a FRANJA quase-branca que sobra grudada na silhueta.
+
+    ⚠️ POR QUE O `limpa_fundo` SOZINHO NAO RESOLVE: ele so apaga o que passa de
+       238 de claridade. Entre o papel (255) e o traco preto ha uma borda de
+       antialiasing do escaneamento — pixels de 210 a 237 — que ficam, e na tela
+       colorida do caderno viram um CONTORNO BRANCO em volta da figura. O portao
+       0o6 (`_qa/halo.py`) mede isso e reprovou dez das 45 figuras.
+
+    ⚠️ E POR QUE NAO UM SEGUNDO FLOOD-FILL, MAIS FROUXO: porque ha figuras cujo
+       CORPO e quase branco — a nuvem, o gelo, o bebe de traco. Um flood a 212
+       entraria pela beirada e comeria a nuvem inteira. Esta versao so morde o
+       que ENCOSTA no transparente, e no maximo `voltas` pixels para dentro: a
+       franja sai, o corpo fica."""
+    W, H = c.size
+    px = c.load()
+    for _ in range(voltas):
+        marcados = []
+        for y in range(H):
+            for x in range(W):
+                r, g, b, a = px[x, y]
+                if a < 24 or r < lim or g < lim or b < lim:
+                    continue
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    vx, vy = x + dx, y + dy
+                    if not (0 <= vx < W and 0 <= vy < H) or px[vx, vy][3] < 24:
+                        marcados.append((x, y))
+                        break
+        if not marcados:
+            break
+        for x, y in marcados:
+            r, g, b, a = px[x, y]
+            px[x, y] = (r, g, b, 0)
+    return c
+
+
 def aperta(c):
     u"""anda de fora para dentro até achar tinta (usa o alfa já limpo)."""
     bb = c.getbbox()
     return c.crop(bb) if bb else c
+
+
+def _risco_no_topo(c, densidade=0.30, grossura=4, vao=2):
+    u"""Apaga a LINHA que sobrou colada na beirada DE CIMA — e só ela.
+
+    ⚠️ LICAO PAGA (14/set/2026, contato-folha das 45 figuras): depois do
+       `tira_moldura` e do `aperta`, doze figuras ainda saíram com um risco na
+       beirada — a linha da célula da tabela (d20/d22, um traço cheio à direita)
+       ou o tracejado de recortar (d26, pontinhos em cima/embaixo). No
+       contato-folha eles aparecem como um risco solto ao lado do desenho, e é
+       exatamente o tipo de sujeira que a criança vê e eu não vejo se olhar só a
+       figura grande.
+
+    ⚠️ E ELE NAO PODE COMER O DESENHO. Duas travas medidas, não chutadas:
+       1. **GROSSURA**: risco de moldura tem 1 a 3 px; acima de `grossura` px
+          a coisa é desenho e fica.
+       2. **O VÃO**: entre o risco e a figura há papel BRANCO (já transparente).
+          Sem pelo menos `vao` linhas vazias logo depois, não é risco solto — é
+          o próprio desenho encostando na beirada, como a base do monte de terra
+          (que é a linha mais larga da figura e seria comida sem esta trava)."""
+    W, H = c.size
+    px = c.load()
+
+    def tinta(y):
+        return sum(1 for x in range(W) if px[x, y][3] > 24)
+
+    k = 0
+    while k < grossura and k < H and tinta(k) >= W * densidade:
+        k += 1
+    if k == 0:
+        return c
+    # ⚠️ "vazio" com FOLGA, e não zero absoluto: medido em 14/set/2026, logo
+    #    abaixo do traço da moldura sobram dois ou três pixelzinhos de tinta
+    #    esfarelada do escaneamento (2% a 3% da largura). Exigir zero cravado
+    #    fazia o portão desistir justamente nas três figuras mais sujas
+    #    (elefante, lápis, urso) — o traço ficava e eu achava que a regra rodara.
+    vazio = max(1, int(W * 0.03))
+    g = 0
+    while k + g < H and g < vao + 6 and tinta(k + g) <= vazio:
+        g += 1
+    if g < vao:
+        return c
+    for y in range(k + g):
+        for x in range(W):
+            r, gg, b, a = px[x, y]
+            px[x, y] = (r, gg, b, 0)
+    return c
+
+
+def tira_risco(c):
+    u"""o mesmo corte nas QUATRO beiradas — girando a figura quatro vezes."""
+    for _ in range(4):
+        c = _risco_no_topo(c)
+        c = c.rotate(90, expand=True)
+    return c
 
 
 def salva(c, nome):
@@ -264,6 +355,7 @@ def recorta(cod, nome, fr, moldura=False):
     if moldura:
         c = tira_moldura(c)
     c = aperta(tira_solto_direita(limpa_fundo(c)))
+    c = aperta(tira_halo(tira_risco(c)))
     if c.width < 12 or c.height < 12:
         return None
     salva(c, nome)
@@ -283,6 +375,14 @@ def main():
             feitos += 1
         else:
             falhou.append((cod, nome))
+    # ⚠️ OS SELOS DA CASA TAMBEM SE DECLARAM. O trofeu e as estrelinhas do
+    #    boletim nao vieram de folha de papel nenhuma — sao peca do motor desta
+    #    casa —, e o portao 1i5 reprova qualquer PNG que esteja no disco sem
+    #    dizer de onde veio. Declarar "selo:casa" e a resposta honesta; deixar de
+    #    fora seria o portao aprovando por descuido.
+    for selo in (u"trofeu", u"estrela", u"estrela_off"):
+        if os.path.exists(os.path.join(SAIDA, PREFIXO + selo + u".png")):
+            origem[PREFIXO + selo + u".png"] = u"selo:casa"
     cam_org = os.path.join(SAIDA, u"ORIGEM.json")
     antes = {}
     if os.path.exists(cam_org):

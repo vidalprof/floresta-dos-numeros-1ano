@@ -96,6 +96,7 @@ PORTOES=(
   #    set/2026 e era só lembrete; lembrete depende da minha memória, que comeca
   #    do zero a cada sessao. Agora e medida.
   "1i5 figura veio da folha|python3 _qa/figura_da_folha.py $PASTA"
+  "1l2 ligar com rotulo repetido|python3 _qa/ligar_rotulo.py $PASTA"
   # ⭐ so responde em jogo de UNO (nos outros ele sai com 2 = "nao medi")
   "3u regra da compra (UNO)|node _qa/uno.js $ARQ"
   "0c pergunta ambigua|python3 _qa/ambiguo.py $ARQ"

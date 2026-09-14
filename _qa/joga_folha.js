@@ -191,14 +191,56 @@ function montaPlano(id) {
   const cv = qa.filter(e => e.getAttribute('data-qa') === 'traca-' + id)[0];
   if (cv) return { tipo: 'tracar', alvo: 'traca-' + id, fe: 'alta' };
 
-  /* LIGAR: o id é `l<pi><tag>_<k>` e as pontas são `lig<tag>-e-<k>` / `-d-<k>` */
-  const mLig = id.match(/^l\d+(.+)_(.+)$/);
+  /* LIGAR: o id é `l<pi><tag>_<k>` e as pontas são `lig<tag>-e-<k>` / `-d-<k>`
+     ⚠️ A ETIQUETA É MÍNIMA, A CHAVE É O RESTO — e isto custou uma volta inteira
+        (14/set/2026, cinco reinos). Com `(.+)` guloso na etiqueta, o id
+        `l14a0_reino_fungi` era lido como etiqueta "a0_reino" e chave "fungi":
+        o jogador procurava uma ponta que não existe e saía dizendo "não conheço
+        a peça". Só quebrava quando a chave da figura TEM sublinhado — que é o
+        caso de `reino_fungi`, `reino_monera`, `urso_pelucia`… Régua errada, e a
+        folha estava certa. */
+  const mLig = id.match(/^l\d+(.+?)_(.+)$/);
   if (mLig) {
     const e = 'lig' + mLig[1] + '-e-' + mLig[2], d = 'lig' + mLig[1] + '-d-' + mLig[2];
     if (qa.some(x => x.getAttribute('data-qa') === e) &&
         qa.some(x => x.getAttribute('data-qa') === d)) {
       return { tipo: 'ligar', alvos: [e, d], fe: 'alta' };
     }
+  }
+
+  /* ⭐ A FAMÍLIA "GAVETA" (arrastar para a caixa certa) — declarada, não
+     deduzida. A folha registra a resposta como `p0>vivo p1>nao ...`: qual peça
+     vai em qual gaveta. O gesto tem DOIS toques (pega a peça, solta na gaveta),
+     e era exatamente por não conhecer isso que o jogador saía dizendo "NAO
+     RESOLVI" em quatro folhas seguidas dos cinco reinos. */
+  if (/^p\d+>/.test(certo)) {
+    const alvos = [];
+    let inteiro = true;
+    for (const par of certo.split(/\s+/)) {
+      const m = par.match(/^(p\d+)>(.+)$/);
+      if (!m) { inteiro = false; break; }
+      const pe = 'peca-' + id + '-' + m[1], gv = 'gav-' + id + '-' + m[2];
+      if (!qa.some(x => x.getAttribute('data-qa') === pe) ||
+          !qa.some(x => x.getAttribute('data-qa') === gv)) { inteiro = false; break; }
+      alvos.push(pe, gv);
+    }
+    if (inteiro && alvos.length) return { tipo: 'clique', alvos: alvos, fe: 'alta' };
+    return { tipo: 'nao-sei' };
+  }
+
+  /* ⭐ A FAMÍLIA "PINTAR POR LEGENDA" — também de dois toques: primeiro a
+     CANETINHA do estojo, depois a figura. O alvo diz qual cor ele pede, em
+     `data-lapis`, e o estojo publica `lapis-<cor>`. Sem isso o jogador pintava
+     tudo com a primeira cor e acusava a folha de não fechar. */
+  const pinta = qa.filter(e => {
+    const v = e.getAttribute('data-qa') || '';
+    return v.indexOf('pinta-' + id + '-') === 0 && e.getAttribute('data-lapis');
+  })[0];
+  if (pinta) {
+    const cor = 'lapis-' + pinta.getAttribute('data-lapis');
+    if (qa.some(x => x.getAttribute('data-qa') === cor))
+      return { tipo: 'clique', alvos: [cor, pinta.getAttribute('data-qa')], fe: 'alta' };
+    return { tipo: 'nao-sei' };
   }
 
   /* ⭐ A FAMÍLIA "MARQUE E CONFIRME" — a folha não fecha no clique da peça, e sim

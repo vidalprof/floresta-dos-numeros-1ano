@@ -20,6 +20,7 @@ borda legitimo (barriga branca na silhueta) fica para o olho do professor.
 Uso:  python3 _qa/halo.py <pasta-ou-arquivo> [limiar_percent]
 Sai 0 se limpo; 1 se achou halo; 2 se nao teve o que medir.
 """
+import io
 import sys, os, glob
 from collections import deque
 
@@ -91,7 +92,32 @@ def main():
         print("halo: nao achei %s" % alvo); return 2
     if not arqs:
         print("halo: nenhum .png em %s. NAO MEDI." % alvo); return 2
-    ruins, medidas = [], 0
+
+    # ⚠️ A EXCECAO DECLARADA — e ela existe porque este portao TEM um falso
+    #    positivo conhecido, e portao que reprova por causa do proprio erro e
+    #    pior que portao nenhum (regra da casa).
+    #    O QUE ELE NAO SABE DISTINGUIR: desenho de TRACO em que o branco E o
+    #    desenho e a silhueta e VAZADA — o chapeu do cogumelo, a asa rendada da
+    #    mariposa, a nuvem. Nesses, o flood entra pelos buracos do proprio
+    #    traco, e o branco de DENTRO e contado como fundo que sobrou. A erosao
+    #    de 3 px nao salva: essas areas brancas sao finas de verdade.
+    #    COMO SE DECLARA: `<pasta>/img/HALO-OK.json`, uma linha por figura, com
+    #    o MOTIVO escrito. Nao e "desligar o portao": e dizer que aquela figura
+    #    FOI OLHADA num fundo escuro e que o branco e o desenho. Figura nova
+    #    continua reprovando; so passa o que alguem olhou e assinou.
+    perdoadas = {}
+    if os.path.isdir(alvo):
+        cam_ok = os.path.join(alvo, "img", "HALO-OK.json")
+        if not os.path.exists(cam_ok):
+            cam_ok = os.path.join(alvo, "HALO-OK.json")
+        if os.path.exists(cam_ok):
+            try:
+                import json
+                perdoadas = json.load(io.open(cam_ok, encoding="utf-8"))
+            except Exception as e:
+                print("halo: %s nao e JSON valido (%s). NAO MEDI." % (cam_ok, e)); return 2
+
+    ruins, medidas, olhadas = [], 0, []
     for p in arqs:
         bn = os.path.basename(p)
         if bn.endswith("_xray.png"):
@@ -106,10 +132,19 @@ def main():
         # so reprova se a maior parte for CASCA FINA (razao alta) — branco
         # LEGITIMO grande (jaleco do mascote, gato/urso branco) tem razao baixa.
         if f > lim and razao >= 0.55:
-            ruins.append((f, bn))
+            if bn in perdoadas:
+                olhadas.append((f, bn, perdoadas[bn]))
+            else:
+                ruins.append((f, bn))
     print("halo: %d figura(s) com transparencia conferida(s) (limiar %.2f%%)" % (medidas, lim))
     if medidas == 0:
         print("   nenhuma figura recortada para medir. NAO MEDI."); return 2
+    if olhadas:
+        olhadas.sort(reverse=True)
+        print("   %d figura(s) de TRACO VAZADO, olhadas em fundo escuro e declaradas"
+              " em HALO-OK.json (o branco e o desenho, nao e fundo):" % len(olhadas))
+        for f, n, por in olhadas:
+            print("    - %6.2f%%  %-22s %s" % (f, n, por))
     if not ruins:
         print("   ok: nenhum halo branco de recorte."); return 0
     ruins.sort(reverse=True)

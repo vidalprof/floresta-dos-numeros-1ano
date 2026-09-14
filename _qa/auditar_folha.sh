@@ -85,6 +85,7 @@ PORTOES=(
   "1i5 figura veio da folha de papel|python3 _qa/figura_da_folha.py $PASTA"
   "1c resto de clone|python3 _qa/clone.py $ARQ"
   "1c2 duplicatas (mesma figura, dois nomes)|python3 _qa/duplicatas.py $PASTA"
+  "1l2 ligar com rotulo repetido|python3 _qa/ligar_rotulo.py $PASTA"
   "0r revisor (texto, concordancia, digitacao)|python3 _qa/revisor.py $PASTA"
   "0b6 catalogo + painel|python3 _qa/catalogo.py $PASTA"
 )

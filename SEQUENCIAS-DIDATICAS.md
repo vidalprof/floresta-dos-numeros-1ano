@@ -287,6 +287,15 @@ folha media zero.
 - ⚠️ **Quem pegou foi uma FOTO, não um portão.** Regra que sai daqui: **depois
   de montar, OLHAR a tela** — e o que a foto achar vira portão no mesmo commit.
 
+**E ela voltou em 14/set/2026, nos cinco reinos** — por um caminho novo: a folha
+de ESCREVER o nome do reino trazia, como pista, a lista de quem mora nele
+(*"o reino de a ameba, o paramécio e as **algas** do mar"*) e a resposta era
+ALGAS. Mesmo defeito, origem diferente: não foi uma legenda, foi um TEXTO DE
+APOIO que por acaso continha a palavra. → Em folha de escrever, a pista tem que
+ser **descrição**, nunca enumeração — e o alto-falante dela fala a PISTA, não o
+nome (senão a folha de escrever vira folha de copiar, e o relatório passa a dizer
+"dominou" sobre cópia). Quem pegou: o portão 1i4, sozinho.
+
 ### 3.2 A sílaba saía da palavra ERRADA
 A folha mostrava a figura da LATA e o alto-falante dizia LARANJA. Palavras dele:
 *"não entendi muito o sentido da primeira atividade, pois cita laranja e aparece
@@ -351,6 +360,95 @@ caso-limite conferido antes de entrar na banca.
 contorno leitoso no fundo colorido da folha. → `_padrao/tirar_halo.py` (inunda a
 partir da BORDA, por vizinhança, com degradê: o branco de dentro da figura fica
 intacto).
+
+### 3.11b ⭐ RECORTE DA FOLHA DE PAPEL: o portão do halo tem UM falso positivo, e ele é conhecido (14/set/2026, cinco reinos)
+Das 45 figuras recortadas das folhas de papel dos reinos, **dez** saíram com halo.
+Nove eram halo de verdade — a **franja de antialiasing** do escaneamento, pixels
+entre 210 e 237, que o `limpa_fundo` (corta acima de 238) não alcança. O conserto
+é o **`tira_halo`**: em vez de um segundo flood-fill mais frouxo (que comeria a
+nuvem inteira, porque o corpo dela é quase branco), morde **só o que ENCOSTA no
+transparente**, no máximo 4 px para dentro. Dez caíram para três.
+
+As **três que sobraram não são halo**: são desenhos de traço com a silhueta
+**VAZADA** — o chapéu do cogumelo, a asa rendada da mariposa, a nuvem. O flood do
+portão entra pelos buracos do próprio traço e conta o branco de DENTRO como fundo
+que sobrou; a erosão de 3 px não salva porque essas áreas brancas são finas de
+verdade. **Olhadas num fundo escuro, as três estão limpas.**
+
+→ O portão ganhou a **exceção declarada `<pasta>/img/HALO-OK.json`**: uma linha
+por figura, com o MOTIVO escrito. Ele continua reprovando figura nova; passa só o
+que alguém OLHOU e assinou, e ainda imprime as três com a porcentagem e o motivo,
+para ninguém dizer depois que "passou limpo". ⚠️ Isto **não** é desligar portão —
+é a diferença entre *"não medi"* e *"medi, vi, e este caso o portão não sabe
+distinguir"*. Desligar seria clarear a figura para enganar o limiar.
+
+### 3.11c A linha da moldura que sobra colada na beirada (14/set/2026)
+Depois do `tira_moldura` e do `aperta`, **doze** das 45 figuras ainda saíram com
+um risco na beirada: a linha da célula da tabela (d20/d22, traço cheio à direita)
+ou o tracejado de recortar (d26). No contato-folha ele aparece como um risco solto
+ao lado do desenho. → **`tira_risco`**, que corta as quatro beiradas girando a
+figura 4×, com duas travas MEDIDAS: **grossura** (risco de moldura tem 1–3 px;
+acima de 4 é desenho e fica) e o **VÃO** (entre o risco e a figura há papel
+branco; sem pelo menos 2 linhas vazias depois não é risco solto, e sim o próprio
+desenho encostando na beirada — é o que salva a base do monte de terra).
+⚠️ E o "vazio" tem que ter **folga** (3% da largura), não ser zero cravado: logo
+abaixo do traço sobram dois ou três pixelzinhos de tinta esfarelada, e exigir zero
+fazia a regra desistir justamente nas três figuras mais sujas.
+
+### 3.11d ⭐ O `riscoDeCircular` DEVOLVE A CHAVE, não o botão (14/set/2026)
+Nos cinco reinos as duas folhas de circular (a 1 e a 21) não fechavam **nunca**,
+mesmo circulando certo, e o console cuspia oito `TypeError: Cannot read
+properties of undefined (reading 'indexOf')`. O motivo: o ajudante só devolve o
+ELEMENTO quando se passa um **array** de botões; passando um **objeto**
+(`{chave: elemento}`), que é o caso normal, ele devolve a **CHAVE**. Eu escrevi a
+volta esperando o botão. → A volta recebe `w` e busca `bts[w]`. ⚠️ Isto não dava
+erro de sintaxe, não aparecia no print e o pré-voo passava; quem pegou foi o
+**`_qa/joga_folha.js`**, que resolve o caderno item por item. É o que ele existe
+para fazer.
+
+### 3.11e ⭐ LIGAR COM RÓTULO REPETIDO É ARMADILHA, não exercício (14/set/2026)
+A primeira versão das folhas de ligar dos reinos punha **três bichos num item
+só** — e a coluna da direita saía com **"ANIMAIS" escrito três vezes**. O motor
+casa por chave da FIGURA, não pelo texto: a criança que ligasse o cachorro na
+segunda caixa "ANIMAIS" levaria erro **por ter acertado**. → Item de ligar leva
+**um ser por reino**, sempre; nenhum rótulo se repete dentro do mesmo item.
+⚠️ E isto nenhum portão pegou: apareceu porque o jogador da banca não conseguiu
+resolver a folha e eu fui ver por quê. O portão que fecha esta família ainda não
+existe — fica como dívida declarada.
+
+### 3.11f O jogador da banca aprendeu duas peças novas (14/set/2026)
+O `joga_folha.js` saía com **"NAO RESOLVI"** nas quatro folhas de GAVETA e
+reprovava quatro dos cinco itens da folha de PINTAR. Nos dois casos a ignorância
+era dele, não defeito da folha — as duas peças têm **dois toques**:
+- **gaveta:** pega a peça, solta na gaveta. A folha passou a registrar a resposta
+  como `p0>vivo p1>nao …` (qual peça em qual gaveta, e não só quais peças
+  existem) e a peça publica `peca-<id>-p<i>`.
+- **pintar por legenda:** escolhe a canetinha, depois pinta. A pétala publica
+  `data-lapis="<cor>"` e o estojo já publicava `lapis-<cor>`.
+→ Regra que fica: **peça de dois toques declara o par**, e quem monta a folha
+ensina a peça ao jogador **no mesmo commit**. Enquanto não ensinar, aquilo é
+dívida (código 2), nunca aprovação.
+
+### 3.11g A régua do jogador quebrava quando a figura tem sublinhado (14/set/2026)
+Depois de ensinadas as duas peças novas, o `joga_folha.js` ainda dizia "não
+conheço a peça" nas duas folhas de LIGAR. Não era a folha: o id de um par é
+`l<folha><etiqueta>_<chave da figura>`, e a régua lia a etiqueta com `(.+)`
+**guloso** — então `l14a0_reino_fungi` virava etiqueta `a0_reino` e chave
+`fungi`, e a ponta procurada não existia. Só quebra quando a chave da figura TEM
+sublinhado (`reino_fungi`, `reino_monera`, `urso_pelucia`…), que é justamente o
+caso deste caderno. → `(.+?)`, mínimo. ⚠️ Terceira vez que a lição aparece neste
+arquivo: **quando o portão reprova em massa, a primeira suspeita é a régua.**
+
+### 3.11h ⭐ O PORTÃO DA DURAÇÃO MEDIU 71 ONDE HAVIA 112 (14/set/2026)
+O `_qa/duracao.py` exigia que o `};` do `var ITENS` viesse **colado** no
+`/*ITENS-FIM*/`. O gerador dos cinco reinos passou a escrever um SEGUNDO var
+dentro do bloco marcado (`FIGNOME`, o nome falado de cada figura) — e aí o
+`json.loads` estourava, o portão caía no galho seguinte e media **71 itens onde
+havia 112**, imprimindo *"duracao ok: enche a aula"* com o número errado. →
+A âncora agora para no `};` do próprio objeto e não se importa com o que venha
+depois **dentro** do bloco. ⚠️ **Portão que aprova com número errado é pior que
+portão nenhum**, e é por isso que a conta à mão (somar os `pega(...)`) vale a
+pena quando o número parece baixo.
 
 ### 3.12 A cartela voltou em MANCHA — e várias delas iguais
 Na Rua do Mundo pedi a arte em **oito cartelas de seis peças**, todas com a

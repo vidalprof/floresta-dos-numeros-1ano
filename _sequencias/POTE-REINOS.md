@@ -127,3 +127,29 @@ nenhuma. Também entra declarada — é o que dá sentido a "microscópico".
 
 *Escrito em 14/set/2026, lendo as 40 folhas uma a uma, com o currículo lido
 antes — e com o contato-folha das aprovadas em `_sequencias/crivo/`.*
+
+---
+
+## 5. AS 45 FIGURAS — recortadas das próprias folhas (14/set/2026)
+
+Nenhuma figura deste caderno veio do banco de imagens. Todas saíram das folhas
+de papel com o `_reinos/recortar_das_folhas.py`, e o `_reinos/img/ORIGEM.json`
+diz, figura por figura, de qual folha ela veio:
+
+| folha de papel | o que ela deu | quantas |
+|---|---|---|
+| **d26** (*"classifique em seres vivos e não vivos"*) | as coloridas: terra, vento, sapo, gelo, árvore, pedras, sol, rosa, água, passarinho, carro, borboleta, areia, formiga, casa, tijolos, menino, fogo, cavalo, nuvem | 20 |
+| **d22** (*"recorte e cole separando"*) | traço: pedras, árvore, milho, mariposa, cupcake, sapo, lanche, tubarão, ursinho, tomateiro, bebê, bola | 12 |
+| **d20** (*"recorte as figuras e cole na coluna"*) | traço: borboleta, celular, sol, árvore, urso de pelúcia, cachorro, elefante, lápis | 8 |
+| **d07** (a COROA) | a figura-emblema de cada reino: bactéria, folhas, ameba, cogumelos, borboleta | 5 |
+
+**Duas saíram do pote e continuam no disco, declaradas:** `gelo` e `sapo2`. O
+desenho original das duas é de traço claríssimo e, na tela do PC da escola, vira
+um rabisco que a criança não reconhece. Figura que não se reconhece não é
+ilustração: é adivinhação.
+
+**O que a colheita NÃO tem, e por isso muda o roteiro:** só a d07 traz figura de
+FUNGO, de ALGA e de BACTÉRIA — **uma de cada**. Reino com uma figura só não dá
+para montar "ache o intruso" nem "cinco gavetas cheias", então esses gestos usam
+ANIMAIS e PLANTAS (que a colheita tem de sobra) e a folha das cinco gavetas leva
+**um ser de cada reino**, não vários. Está dito aqui para não parecer descuido.

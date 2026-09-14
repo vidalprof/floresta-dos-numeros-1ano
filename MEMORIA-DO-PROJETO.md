@@ -839,6 +839,54 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🦠 A COROA DOS CINCO REINOS — 4º ano, Ciências (14/set/2026)
+
+Caderno de **folha viva** (sem motor), 25 folhas, pasta `_reinos`, repositório
+`a-coroa-dos-cinco-reinos`. Encargo do Marcos: *"seres vivos e os reinos —
+identificar critérios (tipo de célula, nutrição, número de células) e reconhecer
+os cinco reinos"*, e logo depois: *"aproveite as imagens e preste atenção no que
+as atividades pedem para criar as interatividades"*.
+
+**⭐ É O PRIMEIRO CADERNO EM QUE A REGRA DA ORIGEM FOI CUMPRIDA INTEIRA.** As 45
+figuras foram **recortadas das próprias folhas de papel** (`recortar_das_folhas.py`;
+`img/ORIGEM.json` diz de qual folha veio cada uma) — 20 da d26, 12 da d22, 8 da
+d20 e as 5 do emblema de cada reino da d07, que é a folha da COROA e dá o nome ao
+caderno. Nenhuma veio do banco. O portão **1i5** passou a medir isso no dia
+anterior, e ele **continua reprovando o `_mult3`** até o Marcos decidir se
+refazemos as figuras daquele.
+
+**Os três critérios em linguagem de criança** (e os dois primeiros são do
+currículo da rede, o terceiro é encargo dele, declarado no `curriculo.json`):
+quantas **células** · de onde vem o **alimento** · onde a **receita** fica
+guardada (o "cofrinho", que gente grande chama de núcleo).
+
+**O que a colheita NÃO deu, e mudou o roteiro:** só a d07 traz figura de fungo,
+de alga e de bactéria — **uma de cada**. Por isso "ache o intruso" e as gavetas
+cheias usam animais e plantas, e a folha das cinco gavetas leva **um ser por
+reino**. E **duas folhas vieram do CURRÍCULO, não do papel** — a 7 (o
+microscópio) e a 24 (do menor ao maior) —, porque nenhuma das 40 folhas põe a
+criança a olhar por um microscópio e a rede pede *"Seres microscópicos (uso de
+lupa e microscópio)"*.
+
+**Medido:** 13 gestos, o mais pesado com 20%; 112 itens sorteados; 36 a 62 min;
+323 falas. Crivo em `_sequencias/POTE-REINOS.md` (22 folhas aprovadas de 40).
+
+**Quatro defeitos que só o JOGADOR da banca pegou** (o `_qa/joga_folha.js`, que
+resolve o caderno item por item — nenhum deles dava erro de sintaxe nem aparecia
+no print): o `riscoDeCircular` devolvendo a CHAVE e não o botão (duas folhas que
+não fechavam nunca); `var REINOS` no fim do arquivo (a capa em branco); ligar com
+o rótulo "ANIMAIS" repetido três vezes no mesmo item (a criança levaria erro por
+acertar); e a pista da folha de escrever contendo a própria resposta.
+
+**E um defeito do PORTÃO, achado de raspão:** o `_qa/duracao.py` exigia que o
+`};` do `var ITENS` viesse colado no `/*ITENS-FIM*/`. Como o gerador deste
+caderno escreve um segundo var dentro do bloco (`FIGNOME`, o nome falado de cada
+figura), o `json.loads` estourava, o portão caía no galho seguinte e media **71
+itens onde havia 112** — imprimindo "duracao ok" com o número errado. Consertado.
+⚠️ A lição é a de sempre: **portão que aprova com número errado é pior que portão
+nenhum**, e a primeira suspeita, quando o número não bate com a conta à mão, é a
+régua.
+
 ## 🧷 REGRA QUE NÃO É PORTÃO É LEMBRETE — e lembrete eu esqueço (14/set/2026)
 
 **Pergunta do Marcos, e ela é a mais importante deste dia:** *"Por que você não

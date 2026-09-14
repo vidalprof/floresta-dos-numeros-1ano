@@ -1,0 +1,4327 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>A Coroa dos Cinco Reinos — 4º ano</title>
+<meta name="description" content="Vinte e cinco folhas interativas de multiplicação para o 3º ano: ver grupos iguais, somar parcelas iguais, escrever a multiplicação, as máquinas do 2, 5, 10, 3 e 4, contar de tanto em tanto, o tapete retangular, a virada e as combinações.">
+<!-- ============================================================
+     O ARMAZÉM DO MESMO TANTO — Matemática, 3º ano (multiplicação)
+     LIVRO DE FOLHAS INTERATIVAS, 25 folhas. Folha viva: NÃO usa o motor.
+
+     ⭐ PEDIDO DO MARCOS (13/set/2026): *"Preciso de uma atividade de
+     multiplicação para o terceiro ano. Objetivo: fazer o aluno entender que
+     multiplicar é o mesmo que somar quantidades iguais. No estilo de folhas
+     didáticas como estamos criando."*
+
+     ⭐ E O GESTO VEM DA FOLHA DE PAPEL (regra dele, 13/set/2026): *"as
+     interatividades têm que vir das atividades que você seleciona na internet,
+     o que as atividades pedem para o aluno fazer"*. Foram colhidas 40 folhas de
+     professor (`_sequencias/folhas_mult/`) e LIDAS UMA A UMA no crivo
+     `_sequencias/POTE-MULT.md`, que registra o comando impresso VERBATIM de
+     cada uma, o verbo que ela manda fazer e por que sete foram recusadas.
+
+     ⚠️ O TETO DA REDE — e ele reprovou metade da colheita. Blumenau manda, no
+     3º ano, *"problemas de multiplicação (por 2, 3, 4, 5 e 10)"*. Os fatores 6,
+     7, 8 e 9 ficam de fora, e METADE das folhas de papel os usa: entrou a
+     mecânica delas, não os números.
+
+     ⚠️ TRÊS FOLHAS NÃO VIERAM DO PAPEL, E ISSO ESTÁ DECLARADO. A combinação de
+     possibilidades (21 e 22) não aparece em NENHUMA das 40 folhas colhidas —
+     nem uma — e o currículo do 3º ano a pede com todas as letras; e a virada
+     (20) é decisão minha, apoiada na disposição retangular da folha 18. A
+     disposição retangular em si veio do papel (d19, d21 e d28), só que em 3
+     folhas de 40: ela ganhou DUAS folhas aqui por reforço de currículo.
+     Dizer que qualquer uma delas veio da colheita seria mentir no lugar mais
+     fácil de mentir.
+
+     A ESCADA: ver os grupos → somar as parcelas iguais → escrever a
+     multiplicação → achar o total → os fatos básicos → contar de tanto em
+     tanto → o retângulo → a virada → a combinação → os problemas → o cartaz.
+
+     ARTE: 22 figuras REAPROVEITADAS do banco (prefixo `mu_`). Nenhuma gerada.
+     ES5 puro, um arquivo (mais o `folhas.js` ao lado), sem biblioteca.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+:root{
+  /* ⚠️ OS TOKENS DE COR DA FOLHA VIVA (set/2026). Estes cadernos nasceram sem
+     eles e o portão `_qa/cor_fixa.py` reprovava nove regras em cada um: cor de
+     texto cravada, sem fundo próprio, que num tema diferente vira letra invisível.
+     O motor já tinha `--texto`; a folha viva não. Agora tem, e a peça segue o
+     tema em vez de apostar num. */
+  --texto:#1e2334;        /* o preto do texto corrido */
+  --texto2:#2c3350;       /* o preto dos rótulos de figura */
+  --texto3:#3b4064;       /* o preto mais claro das letras grandes */
+}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#eef1f7;color:var(--texto);padding-bottom:160px}
+#topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid #6d5ae6;
+  box-shadow:0 2px 14px rgba(40,30,90,.13);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:880px;margin:0 auto}
+#topo .tit{font-weight:800;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:12px;background:#e6e6f4;border-radius:8px;overflow:hidden;flex:1;min-width:60px;max-width:200px}
+.prog i{display:block;height:100%;width:0;background:#6d5ae6;border-radius:8px;-webkit-transition:width .5s;transition:width .5s}
+.pg{font-weight:800;font-size:14px;color:#5b4fc4;white-space:nowrap}
+button{font-family:inherit;cursor:pointer}
+.bt{min-width:48px;min-height:48px;border:0;border-radius:16px;background:#6d5ae6;color:#fff;font-weight:800;font-size:17px;
+  padding:10px 18px;box-shadow:0 4px 0 #4c3cbb;-webkit-transition:transform .08s;transition:transform .08s}
+.bt:active{transform:translateY(3px);box-shadow:0 1px 0 #4c3cbb}
+.bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
+.bt.cinza{background:#e4e6f2;color:#4a4f66;box-shadow:0 4px 0 #c3c7dc}
+.bt.verde{background:#15a34a;box-shadow:0 4px 0 #0d7736}
+.zap{width:42px;height:42px;border-radius:50%;border:0;background:#6d5ae6;box-shadow:0 3px 0 #4c3cbb;
+  display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none}
+.zap svg{width:22px;height:22px;fill:#fff}
+.zap.off{background:#b9bcd0;box-shadow:0 3px 0 #9599b3}
+.zap.ouvir{background:#fff;box-shadow:0 3px 0 #cdd0e4;border:2px solid #6d5ae6}
+.zap.ouvir svg{fill:#6d5ae6}
+.zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
+/* ⚠️ `aparece` estava ORFA nos cadernos de folha viva desde o primeiro deles:
+   varias pecas escreviam `animation:aparece` e o bloco nunca existiu. Quem
+   achou foi o portao 4c3 (`_qa/css_atregra.py`), na primeira hora de vida dele.
+   O defeito era mudo — o elemento so nao fazia o fade — mas vira INVISIVEL
+   para sempre em quem combina `opacity:0` com `forwards`. */
+@-webkit-keyframes aparece{from{opacity:0}to{opacity:1}}
+@keyframes aparece{from{opacity:0}to{opacity:1}}
+@-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+
+#livro{max-width:880px;margin:12px auto 0;padding:0 10px}
+.pagina{position:relative;background:#fff;border-radius:22px;box-shadow:0 10px 34px rgba(35,25,80,.16);display:none;overflow:hidden;padding:0 0 20px}
+.pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
+@-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.faixa{background:#6d5ae6;color:#fff;padding:15px 18px 13px;display:flex;align-items:center;gap:12px}
+.faixa h2{margin:0;font-size:clamp(17px,4.4vw,25px);letter-spacing:.4px;text-transform:uppercase;flex:1;line-height:1.1}
+.faixa .num{background:#fff;color:#6d5ae6;font-weight:900;border-radius:50%;width:36px;height:36px;display:flex;
+  align-items:center;justify-content:center;font-size:18px;flex:none}
+.pagina.c1 .faixa{background:#e0562f}.pagina.c1 .faixa .num{color:#e0562f}
+.pagina.c2 .faixa{background:#1179bf}.pagina.c2 .faixa .num{color:#1179bf}
+.pagina.c3 .faixa{background:#15a34a}.pagina.c3 .faixa .num{color:#15a34a}
+.pagina.c4 .faixa{background:#b0308f}.pagina.c4 .faixa .num{color:#b0308f}
+.pagina.c5 .faixa{background:#c98a06}.pagina.c5 .faixa .num{color:#c98a06}
+.enun{margin:14px 16px 4px;font-size:clamp(15px,3.9vw,19px);font-weight:700;line-height:1.35}
+.enun b{color:#6d5ae6}
+
+/* =========================================================================
+   AS PEÇAS DO BANDO DAS RIMAS
+   ⚠️ Cada classe daqui nasceu de uma folha impressa. O leiaute copia o que o
+   papel faz — figura-chave grande de um lado, opções do outro — porque é assim
+   que a criança já viu a folha na mão do professor.
+   ⚠️ E TUDO O QUE SE TOCA TEM 44 px NO MÍNIMO (regra do 1º e 2º ano). Dedo de
+   seis anos não acerta alvo pequeno, e alvo pequeno vira erro que não é erro.
+   ========================================================================= */
+
+/* folha 1 — as duas palavras lado a lado, com o "e" no meio */
+.parrima{display:flex;align-items:center;justify-content:center;gap:clamp(8px,4vw,26px);
+  flex-wrap:nowrap;margin:6px 0 12px}
+.parrima .eou{font-weight:800;color:#6d5ae6;font-size:clamp(15px,4vw,20px);flex:none}
+.figsom{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.figsom .fig{height:clamp(70px,17vw,104px)}
+.figsom .rot{font-weight:800;color:var(--texto2);font-size:clamp(13px,3.4vw,16px);letter-spacing:.5px}
+
+/* a chamada da folha: "PASSARINHO rima com:" */
+.chamrima{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:10px}
+.chamrima .figgrande{display:block;width:auto;height:clamp(84px,21vw,128px);max-width:100%;
+  margin:0 auto;object-fit:contain}
+.chamlin{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+/* a palavra escrita só aparece no acerto — ver o comentário no folhas.js (f9).
+   `visibility` e não `display`: o espaço fica guardado e a folha não pula. */
+.segredo{visibility:hidden}
+.segredo.revelado{visibility:visible;-webkit-animation:aparece .35s;animation:aparece .35s}
+.chamlin b{font-size:clamp(15px,4vw,19px);color:var(--texto2);letter-spacing:.5px}
+
+/* as opções COM figura (folhas 2, 4 e 6) */
+.op.figbt{display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:96px;min-height:112px;padding:8px 10px}
+.op.figbt .figop{display:block;width:auto;height:clamp(56px,14vw,80px);max-width:100%;object-fit:contain}
+.rotop{font-weight:800;font-size:clamp(11px,2.9vw,13px);color:var(--texto2);letter-spacing:.4px;
+  line-height:1.1;word-break:break-word}
+
+/* as opções em PALAVRA, que a folha 08 imprime — e que se PINTAM */
+.op.pintavel{min-width:132px;min-height:52px;font-size:clamp(14px,3.6vw,17px);font-weight:800;
+  letter-spacing:.6px}
+
+/* folha 5 — a grade que se circula */
+.gradecirc{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin:8px 0 4px;touch-action:none}
+@media (max-width:430px){.gradecirc{grid-template-columns:repeat(2,1fr)}}
+.figcirc{display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-height:104px;padding:8px 4px;border:3px solid #e4e7f6;border-radius:16px;background:#fff;
+  cursor:pointer;-webkit-transition:border-color .18s,background .18s;transition:border-color .18s,background .18s}
+.figcirc .figop{display:block;width:auto;height:clamp(50px,13vw,72px);max-width:100%;object-fit:contain}
+.figcirc.marcada{border-color:#f59e0b;background:#fff7e6}
+
+/* folha 6 — o alvo para onde a peça é puxada */
+.alvorima{display:flex;flex-direction:column;align-items:center;gap:5px;margin-bottom:10px;
+  padding:10px;border:3px dashed #c9cdec;border-radius:20px;background:#fff}
+.alvorima.alvo{border-color:#6d5ae6;background:#f2efff}
+.alvorima .figgrande{display:block;width:auto;height:clamp(80px,20vw,120px);max-width:100%;object-fit:contain}
+
+/* folha 8 — a parlenda e a lacuna que se preenche */
+.parlenda{font-size:clamp(16px,4.2vw,21px);font-weight:700;color:var(--texto2);line-height:1.5;
+  text-align:center;margin:4px 6px 8px}
+.lacuna{display:inline-block;min-width:74px;padding:1px 10px;border-bottom:4px solid #6d5ae6;
+  color:#6d5ae6;font-weight:900;text-align:center}
+.lacuna.cheia{border-bottom-color:#1f9d55;color:#1f9d55;background:#eafaf0;border-radius:8px 8px 0 0}
+
+/* folha 9 — a caixa de escrever é LARGA (palavra inteira, não sílaba) */
+.sq.larga{min-width:168px;padding:0 12px}
+
+
+/* ⭐ O botão de terminar a qualquer momento (12/set/2026). Pequeno e de canto:
+   ele existe para o sinal da escola, não para tentar a criança a pular tudo. */
+
+/* ⭐ o aviso de caderno não terminado, no relatório do professor (12/set/2026) */
+.avisoparcial{background:#fff6e5;border:2px solid #e5b93c;border-radius:10px;
+  padding:8px 10px;margin:8px 0;font-size:12.5px;line-height:1.45;color:#6a4b00}
+#relatorio table th:nth-child(4),#relatorio table td:nth-child(4){background:#f3fbf5}
+
+.bt.terminar{background:#eef0f8;color:#5a6080;border:2px solid #d9ddf2;
+  font-size:12px;padding:8px 10px;min-height:44px;font-weight:800;flex:0 0 auto}
+.bt.terminar:active{background:#e2e6f3}
+.barra.naoabriu{opacity:.5}
+.barra.naoabriu b{font-weight:700;font-size:12px;color:#8a8fae}
+
+/* folha 10 — o mural que a criança monta, e que vai para o relatório */
+.mural{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 10px}
+.cartaorima{display:flex;align-items:center;gap:4px;min-height:96px;padding:10px 12px;
+  border:3px solid #d9ddf2;border-radius:20px;background:#fff;cursor:pointer;
+  -webkit-transition:transform .18s,border-color .18s,background .18s;
+  transition:transform .18s,border-color .18s,background .18s}
+.cartaorima .figop{display:block;width:auto;height:clamp(48px,12vw,66px);max-width:100%;object-fit:contain}
+.cartaorima .mais{font-weight:900;color:#6d5ae6;font-size:18px;padding:0 2px}
+.cartaorima.escolhido{border-color:#1f9d55;background:#eafaf0;-webkit-transform:scale(1.03);transform:scale(1.03)}
+.cartaorima:focus-visible{outline:3px solid #f59e0b;outline-offset:2px}
+
+
+/* ---- AS PEÇAS DO DESFILE DAS LETRAS ----
+   ⚠️ LETRA GRANDE E EM BASTÃO. Foi o que a professora pediu nos comentários da
+   folha de origem, e vale mais aqui do que em qualquer outro caderno: a criança
+   está aprendendo a FORMA da letra. Letra pequena vira mancha. */
+.ltbox{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ltg{font-size:clamp(38px,11vw,62px);font-weight:900;color:#6d5ae6;line-height:1;
+  letter-spacing:1px;font-family:Arial,Helvetica,sans-serif}
+.ltbox.grandona .ltg{font-size:clamp(46px,13vw,76px)}
+.ltop{font-size:clamp(26px,7vw,40px);font-weight:900;color:var(--texto2);line-height:1.05;
+  letter-spacing:1px;font-family:Arial,Helvetica,sans-serif}
+.ltop.grande{font-size:clamp(30px,8vw,46px);color:#6d5ae6}
+.op.figbt .ltop{margin:2px 0}
+
+/* folha 1 — o desfile: a fila que se percorre com o dedo */
+.desfile{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 4px}
+.ltdesf{min-width:62px;min-height:64px;border:3px solid #d9ddf2;border-radius:16px;background:#fff;
+  cursor:pointer;-webkit-transition:background .2s,border-color .2s,transform .15s;
+  transition:background .2s,border-color .2s,transform .15s}
+.ltdesf.aceso{border-color:#1f9d55;background:#eafaf0}
+.ltdesf.aceso .ltop{color:#1f9d55}
+.ltdesf:active{-webkit-transform:scale(.94);transform:scale(.94)}
+
+/* folhas 4, 5 e 6 — a letra e as vagas dos lados */
+.vizinha{display:flex;align-items:center;justify-content:center;gap:clamp(6px,3vw,16px);
+  flex-wrap:nowrap;margin:4px 0 10px}
+/* ⚠️ A SETA É DESENHADA EM CSS, não é o caractere "→". Regra do Marcos: nada de
+   emoji nem SVG, porque não aparecem em alguns navegadores da escola — e a seta
+   Unicode é exatamente esse caso (vira quadradinho no PC antigo). Aqui ela é uma
+   haste com uma ponta feita de borda: aparece em qualquer navegador. */
+.vizinha .setacss{position:relative;display:inline-block;width:34px;height:4px;flex:none;
+  background:#9aa0c4;border-radius:2px;margin:0 2px}
+.vizinha .setacss:after{content:"";position:absolute;right:-2px;top:-6px;
+  width:0;height:0;border-left:12px solid #9aa0c4;
+  border-top:8px solid transparent;border-bottom:8px solid transparent}
+.vaga{min-width:62px;min-height:64px;display:flex;align-items:center;justify-content:center;
+  border:3px dashed #c9cdec;border-radius:16px;background:#fff;
+  font-size:clamp(26px,7vw,40px);font-weight:900;color:#9aa0c4;
+  font-family:Arial,Helvetica,sans-serif;letter-spacing:1px}
+.vaga.ok{border-style:solid;border-color:#1f9d55;background:#eafaf0;color:#1f9d55}
+
+/* folha 7 — a trilha onde as letras entram em ordem */
+.trilhalt{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 0 10px}
+/* a fila das PALAVRAS em ordem alfabética (folha 11). Alvo alto e largo: a
+   palavra inteira é o botão, e no 1º ano o dedo precisa de espaço. */
+.trilhapal{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.vagapal{min-height:52px;border:3px dashed #b9b3e6;border-radius:14px;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:20px;letter-spacing:1px}
+.vagapal .np{color:#8a83c9;font-size:15px}
+.vagapal.ok{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.palbt{min-height:52px;padding:10px 18px;font-weight:900;font-size:19px;letter-spacing:1px}
+.palbt.usada{opacity:.35}
+.op.figbt.usada{opacity:.35;pointer-events:none}
+
+/* folha 8 — a fila com o intruso: uma linha só, para a ordem ficar visível */
+.gradecirc.filaerr{grid-template-columns:repeat(4,1fr)}
+.figcirc.erro{border-color:#e2574c;background:#fdeceb}
+
+/* folha 10 — o cartão do alfabeto da turma */
+.cartaorima.cartalt{flex-direction:column;gap:2px;min-height:132px;min-width:104px}
+
+/* a capa: as letras desfilando */
+.capa .ltcapa{display:inline-block;font-size:clamp(30px,8vw,52px);font-weight:900;color:#6d5ae6;
+  letter-spacing:2px;font-family:Arial,Helvetica,sans-serif;
+  text-shadow:0 3px 0 #e6e2fb,0 5px 10px rgba(80,60,180,.18);
+  -webkit-animation:entraDupla .55s cubic-bezier(.3,1.4,.5,1) both;
+  animation:entraDupla .55s cubic-bezier(.3,1.4,.5,1) both}
+@media (prefers-reduced-motion:reduce){
+  .capa .ltcapa{-webkit-animation:none!important;animation:none!important;opacity:1!important}
+}
+
+.item{margin:12px 14px;padding:14px;border:2px solid #eceefa;border-radius:20px;background:#fbfbff}
+.item.feito{border-color:#bfe6ce;background:#f3fcf6}
+.item .n{font-weight:900;color:#9aa0bd;font-size:15px;margin-right:8px}
+/* ⚠️ A FIGURA TEM ALTURA FIXA, E ISSO NÃO É ENFEITE (set/2026). Antes era
+   `height:auto`: cada figura entrava no seu tamanho natural — a casa com 230 px
+   e a bola com 90 — e, como `display:block` ignora o `text-align:center` do pai,
+   todas encostavam na ESQUERDA. O item ficava com um buraco branco do lado
+   direito e as folhas, desiguais. Altura igual + `margin:auto` resolve as duas
+   coisas de uma vez: peso visual igual e figura no meio. */
+.fig{display:block;width:auto;height:clamp(76px,19vw,116px);max-width:100%;
+  margin:2px auto 6px;object-fit:contain;image-rendering:auto}
+.figbt{border:0;background:none;padding:4px;border-radius:16px;min-width:48px;min-height:48px}
+/* ⚠️ O ALTO-FALANTE É DESENHADO EM CSS — caixinha + triângulo + duas ondas de
+   borda arredondada. Nada de emoji (vira quadradinho nos PCs da escola) e nada
+   de SVG (ordem do Marcos, set/2026). */
+.som{position:relative;width:46px;height:46px;min-width:46px;border:3px solid #6d5ae6;
+  border-radius:50%;background:#f2efff;padding:0;cursor:pointer;flex:none}
+.som:active{-webkit-transform:scale(.93);transform:scale(.93)}
+.som .cone{position:absolute;left:12px;top:17px;width:7px;height:10px;background:#4b3fb0;
+  border-radius:2px 0 0 2px}
+.som .cone:after{content:"";position:absolute;left:6px;top:-6px;width:0;height:0;
+  border-top:11px solid transparent;border-bottom:11px solid transparent;
+  border-right:11px solid #4b3fb0}
+.som .onda{position:absolute;border:3px solid #4b3fb0;border-left-color:transparent;
+  border-top-color:transparent;border-bottom-color:transparent;border-radius:50%}
+.som .o1{left:26px;top:16px;width:8px;height:12px}
+.som .o2{left:29px;top:11px;width:13px;height:22px;opacity:.65}
+.enunlin{display:flex;align-items:center;gap:10px;margin:0 2px}
+.enunlin .enun{flex:1;min-width:0}
+.palin{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:2px}
+.pal{font-weight:900;letter-spacing:2px;font-size:clamp(22px,6vw,34px);color:var(--texto)}
+
+/* fileira genérica de opções */
+.ops{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.op{min-width:64px;min-height:56px;border:3px solid #d9ddf2;border-radius:16px;background:#fff;color:var(--texto);
+  font-weight:900;font-size:22px;padding:8px 14px;-webkit-transition:transform .1s;transition:transform .1s}
+.op:active{transform:scale(.94)}
+.op.certa{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.op.erro{border-color:#e0562f;background:#fdeee9;-webkit-animation:treme .4s;animation:treme .4s}
+@-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* o estojo de canetinhas da folha 5 */
+.estojo{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;margin:8px 0 4px}
+.estojo .rot{font-weight:800;color:#5b4fc4;font-size:14px}
+.lapis{width:44px;height:44px;border:4px solid #fff;border-radius:50%;padding:0;cursor:pointer;
+  box-shadow:0 2px 8px rgba(35,25,80,.22);-webkit-transition:transform .12s;transition:transform .12s}
+.lapis.esc{-webkit-transform:scale(1.18);transform:scale(1.18);box-shadow:0 0 0 4px rgba(60,50,120,.28)}
+.op.pinta{-webkit-transition:background .18s,border-color .18s,color .18s;
+  transition:background .18s,border-color .18s,color .18s}
+.op.fig{padding:6px;min-width:96px}
+.op.fig img{width:88px;height:88px;object-fit:contain;display:block}
+
+/* 1 — a letra escondida */
+.escondida{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0}
+.escondida .lt{font-weight:900;font-size:clamp(26px,7vw,40px);letter-spacing:2px}
+.escondida .buraco{width:52px;height:56px;border-bottom:5px solid #6d5ae6;display:inline-flex;align-items:center;
+  justify-content:center;background:#f2efff;border-radius:10px 10px 0 0;font-weight:900;font-size:34px;color:#6d5ae6}
+/* a fila do alfabeto usa o mesmo visual da letra escondida */
+.filalfa{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:10px 0}
+.filalfa .lt{font-weight:900;font-size:clamp(26px,7vw,40px);letter-spacing:2px;color:var(--texto3)}
+.filalfa .buraco{width:52px;height:56px;border-bottom:5px solid #6d5ae6;display:inline-flex;
+  align-items:center;justify-content:center;background:#f2efff;border-radius:10px 10px 0 0;
+  font-weight:900;font-size:34px;color:#6d5ae6}
+.filalfa .buraco.ok{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+.filalfa .buraco.indo{color:transparent}
+.filalfa.completa .lt,.filalfa.completa .buraco{-webkit-animation:pulo .42s ease;animation:pulo .42s ease}
+.escondida .buraco.ok{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+.escondida .buraco.perto,.filalfa .buraco.perto{background:#e7f8ee;border-color:#15a34a;
+  -webkit-transform:scale(1.12);transform:scale(1.12)}
+/* o voo da letra até o buraco (ver voaLetra no folhas.js) */
+.escondida .buraco.indo{color:transparent}
+.voa{position:fixed;z-index:60;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:30px;color:#0d7736;background:#e7f8ee;border:3px solid #15a34a;
+  border-radius:14px;pointer-events:none;-webkit-transition:-webkit-transform .5s cubic-bezier(.2,.9,.25,1);
+  transition:transform .5s cubic-bezier(.2,.9,.25,1);box-shadow:0 8px 20px rgba(21,163,74,.35)}
+@-webkit-keyframes pulo{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-9px)}100%{-webkit-transform:translateY(0)}}
+@keyframes pulo{0%{transform:translateY(0)}40%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+.escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:pulo .42s ease;animation:pulo .42s ease}
+.escondida.completa .lt:nth-child(2),.escondida.completa .buraco:nth-child(2){-webkit-animation-delay:.06s;animation-delay:.06s}
+.escondida.completa .lt:nth-child(3),.escondida.completa .buraco:nth-child(3){-webkit-animation-delay:.12s;animation-delay:.12s}
+.escondida.completa .lt:nth-child(4),.escondida.completa .buraco:nth-child(4){-webkit-animation-delay:.18s;animation-delay:.18s}
+.escondida.completa .lt:nth-child(5),.escondida.completa .buraco:nth-child(5){-webkit-animation-delay:.24s;animation-delay:.24s}
+.escondida.completa .lt:nth-child(6),.escondida.completa .buraco:nth-child(6){-webkit-animation-delay:.3s;animation-delay:.3s}
+.escondida.completa .lt:nth-child(7),.escondida.completa .buraco:nth-child(7){-webkit-animation-delay:.36s;animation-delay:.36s}
+@media (prefers-reduced-motion: reduce){
+  .voa{-webkit-transition:none;transition:none}
+  .escondida.completa .lt,.escondida.completa .buraco{-webkit-animation:none;animation:none}
+}
+
+/* 2 — bater a palavra */
+.bater{display:flex;flex-direction:column;align-items:center;gap:10px}
+.icb{width:34px;height:34px;object-fit:contain;vertical-align:middle;margin-right:8px;display:inline-block}
+.icb.pq{width:22px;height:22px;margin-right:6px}
+.palma{min-width:190px;min-height:96px;border:0;border-radius:24px;background:#ffd233;color:#4a3800;font-weight:900;
+  font-size:20px;box-shadow:0 6px 0 #d5a800}
+.palma:active{transform:translateY(4px);box-shadow:0 2px 0 #d5a800}
+.contab{font-weight:900;font-size:20px;color:#5b4fc4}
+.contab b{font-size:30px}
+/* a trilha de sílabas: acende uma a cada palma e a voz diz aquela sílaba */
+.trilhasil{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:2px}
+.silbox{min-width:56px;padding:8px 12px;border:3px dashed #d9ddf2;border-radius:14px;background:#fff;
+  color:#c3c7dd;font-weight:900;font-size:22px;letter-spacing:1px;
+  -webkit-transition:all .18s;transition:all .18s}
+.silbox.acesa{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.06);transform:scale(1.06)}
+@media (prefers-reduced-motion: reduce){ .silbox{-webkit-transition:none;transition:none} }
+
+/* 3 — sequência lógica */
+.fila{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
+.fila .q{width:78px;height:78px;border:3px solid #e2e5f5;border-radius:16px;background:#fff;display:flex;
+  align-items:center;justify-content:center}
+.fila .q img{width:66px;height:66px;object-fit:contain}
+.fila .q.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;font-size:34px;color:#6d5ae6;font-weight:900}
+/* o quadro vazio acende quando a figura puxada chega perto */
+.fila .q.vaga.perto{border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.08);transform:scale(1.08)}
+.fila .q.vaga.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.ajuda{text-align:center;font-size:14px;color:#6b7192;margin:2px 0 6px}
+/* a cópia que segue o dedo/mouse enquanto a criança puxa */
+/* o cinto e o suspensório do `draggable="false"`: navegador antigo não olha o
+   atributo, mas olha esta regra */
+img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:none}
+.fantasma{position:fixed;z-index:70;pointer-events:none;opacity:.92;
+  -webkit-transform:scale(1.1);transform:scale(1.1);
+  -webkit-box-shadow:0 12px 26px rgba(30,35,52,.3);box-shadow:0 12px 26px rgba(30,35,52,.3)}
+.op.puxada{opacity:.35}
+
+/* 4 — circular */
+.grade{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:10px 0;position:relative}
+/* a folha de acetato onde a criança risca o círculo (ver riscoDeCircular) */
+.riscocv{position:absolute;left:0;top:0;pointer-events:none;z-index:5}
+.riscocv.ativo{z-index:5}
+.circ{position:relative;border:0;background:none;padding:6px;border-radius:50%;min-width:104px;min-height:104px}
+.circ img{width:92px;height:92px;object-fit:contain;display:block}
+.circ:after{content:"";position:absolute;inset:0;border:5px solid transparent;border-radius:50%}
+.circ.marcada:after{border-color:#e0562f}
+.circ.certa:after{border-color:#15a34a}
+.circ.errada:after{border-color:#e0562f;border-style:dotted}
+.chip{display:inline-flex;align-items:center;justify-content:center;background:#6d5ae6;color:#fff;font-weight:900;
+  font-size:24px;border-radius:14px;padding:6px 16px;letter-spacing:2px}
+
+/* 5 — pintar a sílaba · 7 — marcar X */
+.op.pinta.certa{background:#ffd233;border-color:#d5a800;color:#4a3800}
+.marcax{display:flex;flex-direction:column;gap:8px;align-items:flex-start;margin-top:10px}
+.lx{display:flex;align-items:center;gap:12px;min-height:56px;border:3px solid #d9ddf2;border-radius:16px;
+  background:#fff;padding:6px 16px;font-weight:900;font-size:22px;color:var(--texto);width:100%;max-width:320px}
+.lx .cx{width:34px;height:34px;border:3px solid #9aa0bd;border-radius:8px;display:inline-flex;align-items:center;
+  justify-content:center;font-size:24px;color:#e0562f;flex:none}
+.lx.certa{border-color:#15a34a;background:#e7f8ee}
+.lx.certa .cx{border-color:#15a34a;color:#15a34a}
+.lx.erro{border-color:#e0562f;-webkit-animation:treme .4s;animation:treme .4s}
+
+/* 6 · 10 — ligar e colar */
+/* ⚠️ AS DUAS COLUNAS TÊM QUE TER A MESMA CAIXA (pedido do Marcos, set/2026:
+   *"deixe os retângulos das sílabas iguais ao retângulo que estão os desenhos
+   dentro, para ficar proporcional, igual e não ficar feio"*). Antes a caixa era
+   `min-height`: a da esquerda crescia com a figura de 64px e a da direita ficava
+   no mínimo — duas alturas diferentes lado a lado. Agora a altura é FIXA e igual
+   nas duas, e a largura de cada coluna também.
+   E as colunas ficam mais afastadas, para o traço ter onde desenhar a curva. */
+.ligar{position:relative;display:flex;gap:clamp(30px,10vw,96px);justify-content:space-between;margin:14px 6px}
+.ligar .col{display:flex;flex-direction:column;gap:14px;flex:1 1 0;min-width:0}
+.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.ponta{border:3px solid #d9ddf2;border-radius:16px;background:#fff;height:86px;display:flex;align-items:center;
+  justify-content:center;font-weight:900;font-size:24px;letter-spacing:1px;padding:6px;
+  -ms-touch-action:none;touch-action:none;-webkit-transition:border-color .15s,box-shadow .15s;
+  transition:border-color .15s,box-shadow .15s}
+.ponta img{width:68px;height:68px;object-fit:contain}
+@media (max-width:420px){ .ponta{height:74px;font-size:21px} .ponta img{width:58px;height:58px} }
+.ponta.marcada{border-color:#6d5ae6;box-shadow:0 0 0 4px rgba(109,90,230,.22)}
+.ponta.feita{border-color:#15a34a;background:#e7f8ee}
+.ponta.mostra{border-color:#ffd233;box-shadow:0 0 0 4px rgba(255,210,51,.4)}
+.ponta.treme{-webkit-animation:treme .4s;animation:treme .4s}
+
+/* 8 — escrever a sílaba que falta */
+.silbox{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin:10px 0}
+.sq{min-width:70px;min-height:64px;border:3px solid #d9ddf2;border-radius:14px;background:#fff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:26px;letter-spacing:2px;color:var(--texto)}
+.sq.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;color:#6d5ae6}
+.sq.vaga.ativa{background:#fff;box-shadow:0 0 0 4px rgba(109,90,230,.25)}
+.sq.ok{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.cursor{display:inline-block;width:3px;height:28px;background:#6d5ae6;margin-left:2px;
+  -webkit-animation:pisca .9s steps(2) infinite;animation:pisca .9s steps(2) infinite}
+@-webkit-keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+@keyframes pisca{0%,49%{opacity:1}50%,100%{opacity:0}}
+
+/* 9 — ordenar as sílabas */
+.tira{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:10px 0}
+.sil{min-width:74px;min-height:58px;border:3px solid #d9ddf2;border-radius:14px;background:#fff;font-weight:900;
+  font-size:24px;letter-spacing:2px;color:var(--texto);-ms-touch-action:none;touch-action:none}
+.sil.usada{opacity:.28;pointer-events:none}
+.sil.arrastando{opacity:.5}
+.vagas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+.vaga{min-width:74px;min-height:58px;border:3px dashed #6d5ae6;border-radius:14px;background:#f4f2ff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:24px;letter-spacing:2px;color:#6d5ae6}
+.vaga.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.vaga.perto{border-color:#15a34a;background:#e7f8ee;color:#0d7736;
+  -webkit-transform:scale(1.08);transform:scale(1.08)}
+.sil.puxada{opacity:.35}
+
+/* 10 — recortar e colar */
+.colar{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin:10px 0}
+.cel{width:118px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.cel img{width:96px;height:96px;object-fit:contain}
+.cel .alvo{width:84px;min-height:58px;border:3px dashed #6d5ae6;border-radius:14px;background:#f4f2ff;display:flex;
+  align-items:center;justify-content:center;font-weight:900;font-size:24px;letter-spacing:2px;color:#6d5ae6}
+.cel .alvo.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.cel .alvo.perto{box-shadow:0 0 0 5px rgba(109,90,230,.28)}
+
+/* carimbo, nav, capa, fim */
+.carimbo{position:absolute;right:14px;top:60px;transform:rotate(-14deg) scale(.4);opacity:0;color:#15a34a;
+  border:5px solid #15a34a;border-radius:14px;padding:6px 14px;font-weight:900;font-size:20px;text-align:center;
+  line-height:1.05;pointer-events:none;-webkit-transition:all .45s;transition:all .45s}
+.pagina.pronta .carimbo{opacity:.92;transform:rotate(-14deg) scale(1)}
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:18;background:#fff;border-top:3px solid #6d5ae6;padding:8px 10px;
+  display:none;align-items:center;gap:10px;box-shadow:0 -3px 14px rgba(40,30,90,.14)}
+#nav .txt{flex:1;text-align:center;font-weight:800;color:#5b4fc4;font-size:14px;min-width:0}
+#barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:19;background:#fff;border-top:3px solid #6d5ae6;padding:10px;display:none}
+#barraCapa.aberta{display:block}
+#barraCapa .lin{display:flex;gap:10px;align-items:center;max-width:640px;margin:0 auto}
+#barraCapa label{font-weight:800;color:#5b4fc4;font-size:15px;white-space:nowrap}
+#nomeIn{flex:1;min-width:0;min-height:50px;border:3px solid #6d5ae6;border-radius:14px;padding:0 12px;
+  font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
+#nomeIn:focus{outline:none;border-color:#b0308f;box-shadow:0 0 0 4px rgba(176,48,143,.25)}
+/* ================= A CAPA =================
+   Pedido do Marcos (set/2026): *"essas atividades deveriam ter uma capa bem
+   legal e bonita"*. O tema sai do próprio nome — uma FÁBRICA de palavras:
+   telhado de fábrica, letras que entram uma a uma como se saíssem da linha de
+   montagem, e a esteira embaixo carregando as figuras das folhas.
+   Feita só com CSS e PNG: nada de SVG, nada de emoji (regra dele). */
+.capa{position:relative;text-align:center;padding:18px 16px 24px;overflow:hidden;
+  background:-webkit-linear-gradient(top,#efe9ff 0%,#fdf6ff 58%,#fff 100%);
+  background:linear-gradient(180deg,#efe9ff 0%,#fdf6ff 58%,#fff 100%)}
+.capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
+/* bolhas de luz ao fundo — dão profundidade sem competir com o título.
+   ⚠️ Antes eram três retângulos brancos arredondados que, na tela, pareciam
+   FALHA de desenho. Círculo suave da própria cor da capa lê como fundo. */
+.capa .nv{position:absolute;display:block;border-radius:50%;
+  background:-webkit-radial-gradient(circle,rgba(124,102,255,.20),rgba(124,102,255,0) 70%);
+  background:radial-gradient(circle,rgba(124,102,255,.20),rgba(124,102,255,0) 70%)}
+.capa .n1{width:240px;height:240px;left:-60px;top:-40px}
+.capa .n2{width:300px;height:300px;right:-90px;top:10px}
+.capa .n3{width:180px;height:180px;left:44%;bottom:-70px}
+/* o telhadinho da fábrica com a inicial */
+.capa .chapeu{position:relative;width:66px;height:66px;margin:14px auto 2px;border-radius:16px;
+  background:-webkit-linear-gradient(top left,#7c66ff,#5b4fc4);
+  background:linear-gradient(135deg,#7c66ff,#5b4fc4);color:#fff;font-weight:900;font-size:34px;
+  line-height:66px;box-shadow:0 8px 18px rgba(91,79,196,.36)}
+.capa .chapeu:before{content:"";position:absolute;left:-9px;right:-9px;top:-13px;height:0;
+  border-left:42px solid transparent;border-right:42px solid transparent;border-bottom:16px solid #b0308f}
+.capa h1.titu{margin:10px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+.capa .titu .lt{display:inline-block;font-size:clamp(24px,6.4vw,42px);font-weight:900;letter-spacing:0;
+  color:#4b3fb0;text-shadow:0 3px 0 #d9d2ff,0 5px 10px rgba(60,40,140,.18);
+  -webkit-animation:caiLetra .5s both;animation:caiLetra .5s both}
+.capa .titu .esp{display:inline-block;width:14px}
+/* ⚠️ `caiLetra` e não `cai`: o confete JÁ tinha um `keyframes cai` que
+   termina em `opacity:0`, declarado mais abaixo — e ele vencia. As letras
+   do título animavam para invisível e a capa aparecia sem título nenhum.
+   Nome de keyframe é global: conferir antes de criar um. */
+@-webkit-keyframes caiLetra{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
+@keyframes caiLetra{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
+.capa .sub{font-weight:700;color:#5b4fc4;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
+/* a esteira: as figuras em cima, a cinta rodando embaixo */
+.capa .esteira{max-width:660px;margin:16px auto 4px;position:relative}
+/* ---- as duplas da capa: rima é coisa de DOIS, então os pares entram juntos ----
+   ⚠️ sem `white-space:nowrap` no par, o navegador quebra entre a figura e o
+   sinal de igual e a dupla deixa de se ler como dupla. */
+.capa .dupla{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;
+  -webkit-animation:entraDupla .6s cubic-bezier(.3,1.4,.5,1) both;
+  animation:entraDupla .6s cubic-bezier(.3,1.4,.5,1) both}
+.capa .dupla .fig{height:clamp(54px,13vw,86px)}
+.capa .igual{display:inline-block;width:16px;height:12px;flex:none;
+  border-top:3px solid #6d5ae6;border-bottom:3px solid #6d5ae6}
+@-webkit-keyframes entraDupla{from{opacity:0;-webkit-transform:translateY(-18px) scale(.85)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraDupla{from{opacity:0;transform:translateY(-18px) scale(.85)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.capa .dupla{-webkit-animation:none!important;animation:none!important;opacity:1!important;-webkit-transform:none!important;transform:none!important}}
+.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:8px;flex-wrap:nowrap}
+.capa .cena img{width:clamp(54px,14vw,110px);height:clamp(54px,14vw,110px);object-fit:contain;
+  -webkit-animation:sobe 2.6s ease-in-out infinite;animation:sobe 2.6s ease-in-out infinite}
+.capa .cena img:nth-child(2){-webkit-animation-delay:.35s;animation-delay:.35s}
+.capa .cena img:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
+.capa .cena img:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
+.capa .cena img:nth-child(5){-webkit-animation-delay:1.4s;animation-delay:1.4s}
+@-webkit-keyframes sobe{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
+@keyframes sobe{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.capa .cinta{display:flex;gap:6px;justify-content:center;background:#3b3560;border-radius:9px;
+  padding:6px 8px;margin-top:6px;box-shadow:0 6px 14px rgba(35,25,80,.22)}
+.capa .cinta i{display:block;width:26px;height:9px;background:#6d5ae6;border-radius:5px}
+.capa .chamada{margin-top:14px;font-weight:700;color:#4b4f70;font-size:clamp(13px,3.4vw,16px)}
+@media (prefers-reduced-motion: reduce){
+  .capa .titu .lt,.capa .cena img{-webkit-animation:none;animation:none}
+}
+#fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
+  box-shadow:0 10px 34px rgba(35,25,80,.16);text-align:center}
+#fim h2{margin:0 0 6px;color:#6d5ae6;font-size:clamp(21px,5.5vw,30px)}
+.estrelas{font-size:44px;letter-spacing:8px;margin:6px 0}
+.barras{max-width:520px;margin:10px auto;text-align:left}
+.barra{display:flex;align-items:center;gap:8px;margin:6px 0;font-weight:700;font-size:14px}
+.barra span{flex:0 0 42%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barra .tr{flex:1;height:14px;background:#e6e6f4;border-radius:8px;overflow:hidden}
+.barra .tr i{display:block;height:100%;width:0;background:#15a34a;-webkit-transition:width .8s;transition:width .8s}
+.barra b{flex:none;color:#5b4fc4}
+/* ⚠️ SEM EMOJI E SEM SVG (ordem do Marcos, set/2026: *"evite usar svg e
+   emojis pois não aparecem em alguns navegadores"*). Nos PCs da escola o
+   emoji vira quadradinho vazio e a criança de seis anos não sabe o que é um
+   quadradinho. Aqui: troféu e estrelas são PNG de argila (do banco), as
+   setas são triângulos de CSS puro e o resto é palavra escrita. */
+#medalha{width:132px;height:132px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe680,#e0a800);
+  margin:14px auto;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(180,140,0,.42);cursor:pointer;-ms-touch-action:none;touch-action:none}
+#medalha img{width:92px;height:92px;object-fit:contain;display:block;pointer-events:none}
+/* se a figura do troféu faltar, o disco ainda é um disco de ouro com a
+   palavra — nunca um quadradinho quebrado. */
+#medalha.semfig:after{content:"BOA!";font-weight:900;font-size:26px;color:#7a5600}
+.seta{display:inline-block;width:0;height:0;vertical-align:middle;
+  border-top:8px solid transparent;border-bottom:8px solid transparent}
+.seta.esq{border-right:11px solid currentColor;margin-right:7px}
+.seta.dir{border-left:11px solid currentColor;margin-left:7px}
+#estrelas img{width:52px;height:52px;object-fit:contain;display:inline-block;margin:0 3px;vertical-align:middle}
+
+/* ---- o parecer descritivo e a nota (relatório do PROFESSOR) ----
+   ⚠️ A NOTA GRANDE fica aqui e SÓ aqui. Na tela da criança nunca aparece
+   número: ela vê estrelas e barras. Ver o comentário em `folhas.js`. */
+#relatorio .parecer{margin:10px 0 4px;padding:10px 12px;border-left:5px solid #6d5ae6;
+  background:#fff;border-radius:0 12px 12px 0;font-size:13.5px;line-height:1.55;color:var(--texto2)}
+#relatorio .comonota{margin:8px 0 0;font-size:11.5px;color:#6a7090;line-height:1.45}
+.notao{display:flex;align-items:center;gap:14px;margin:10px 0 2px;padding:10px 14px;
+  border:3px solid #6d5ae6;border-radius:18px;background:#fff}
+.notao .nn{font-size:clamp(30px,9vw,44px);font-weight:900;color:#6d5ae6;line-height:1;
+  font-variant-numeric:tabular-nums}
+.notao .nl{font-size:12.5px;color:#2c3350;line-height:1.45}
+
+/* =========================================================================
+   ANIMAÇÃO DAS FOLHAS (pedido do Marcos, set/2026: *"consegue deixar as
+   páginas mais animadas e atraentes?"*)
+
+   ⚠️ E A REGRA QUE MANDA AQUI É A REGRA 2 DA PESQUISA: NADA ANIMA SEM FUNÇÃO.
+   Movimento por movimento cansa a criança de seis anos e ainda pesa no PC da
+   escola. Cada animação daqui faz um trabalho:
+     · os itens ENTRAM EM CASCATA → a criança vê que a folha tem começo e ordem,
+       e o olho dela é levado ao item 1 em vez de cair no meio da tela;
+     · a faixa do título DESLIZA → marca a troca de folha (transição entre telas,
+       que é justamente o que falta no padrão "empresa grande");
+     · o acerto DÁ UM PULINHO e a opção certa BRILHA → resposta tátil, o gesto
+       que confirma sem precisar de texto;
+     · o erro BALANÇA de leve → diz "de novo" sem dizer "errou".
+   `prefers-reduced-motion` desliga tudo e a folha continua inteira.
+   ========================================================================= */
+.pagina.viva .item{-webkit-animation:entraItem .42s ease-out both;animation:entraItem .42s ease-out both}
+.pagina.viva .item:nth-child(2){-webkit-animation-delay:.05s;animation-delay:.05s}
+.pagina.viva .item:nth-child(3){-webkit-animation-delay:.10s;animation-delay:.10s}
+.pagina.viva .item:nth-child(4){-webkit-animation-delay:.15s;animation-delay:.15s}
+.pagina.viva .item:nth-child(5){-webkit-animation-delay:.20s;animation-delay:.20s}
+.pagina.viva .item:nth-child(6){-webkit-animation-delay:.25s;animation-delay:.25s}
+.pagina.viva .item:nth-child(n+7){-webkit-animation-delay:.30s;animation-delay:.30s}
+@-webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.pagina.viva .faixa{-webkit-animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both;
+  animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both}
+@-webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
+@keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+
+/* o acerto: um pulinho curto e um brilho que corre pela opção certa */
+.op.certa,.figcirc.marcada,.cartaorima.escolhido{
+  -webkit-animation:pulinho .4s cubic-bezier(.3,1.6,.5,1);animation:pulinho .4s cubic-bezier(.3,1.6,.5,1)}
+@-webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
+@keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.op.certa{position:relative;overflow:hidden}
+.op.certa::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:38%;pointer-events:none;
+  background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
+  -webkit-animation:brilhoOp .55s .1s ease-out;animation:brilhoOp .55s .1s ease-out}
+@-webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
+@keyframes brilhoOp{from{left:-40%}to{left:112%}}
+
+/* o erro: balança de leve — diz "de novo" sem dizer "errou" */
+.op.erro{-webkit-animation:balanca .34s;animation:balanca .34s}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* o item que fecha: some o contorno e entra o verde, sem susto */
+.item{-webkit-transition:border-color .4s,background .4s;transition:border-color .4s,background .4s}
+
+/* a figura responde ao toque — regra 1: o alvo reage ao PRESSIONAR */
+.op.figbt:active,.figcirc:active,.cartaorima:active{-webkit-transform:scale(.96);transform:scale(.96)}
+
+@media (prefers-reduced-motion:reduce){
+  .pagina.viva .item,.pagina.viva .faixa,.op.certa,.op.erro,
+  .figcirc.marcada,.cartaorima.escolhido{
+    -webkit-animation:none!important;animation:none!important;opacity:1!important;
+    -webkit-transform:none!important;transform:none!important}
+  .op.certa::after{display:none}
+}
+
+#relatorio{display:none;text-align:left;background:#f6f7fd;border:2px solid #d9ddf2;border-radius:16px;padding:12px;margin-top:12px;font-size:13px}
+#relatorio table{border-collapse:collapse;width:100%;margin-top:8px}
+#relatorio th,#relatorio td{border:1px solid #d9ddf2;padding:5px 7px;text-align:left}
+#relatorio th{background:#eceefa}
+/* a nota grande do professor: porcentagem + conceito em palavras */
+.notao{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid #d9ddf2;
+  border-radius:14px;padding:10px 14px;margin-top:10px}
+.notao .nn{font-size:38px;font-weight:900;color:#15a34a;line-height:1}
+.notao .nl{font-size:13px;color:#3b4064;line-height:1.35}
+#menuProf{display:none;position:fixed;inset:0;z-index:60;background:rgba(20,16,45,.62);align-items:center;justify-content:center;padding:14px}
+#menuProf.aberto{display:flex}
+#menuProf .cx{background:#fff;border:4px solid #6d5ae6;border-radius:20px;padding:16px;max-width:520px;width:100%;
+  max-height:92vh;overflow:auto;box-shadow:0 14px 44px rgba(0,0,0,.4)}
+#menuProf h3{margin:0 0 4px;color:#6d5ae6;font-size:20px}
+#menuProf p{margin:0 0 12px;font-size:13px;color:#4a4f66;line-height:1.4}
+#menuProf .folhas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#menuProf .folhas button{min-height:46px;border:0;border-radius:12px;background:#eceefa;color:#4a4f66;font-weight:800;
+  font-size:14px;padding:8px 12px;box-shadow:0 3px 0 #d3d7ea;flex:1 1 150px;text-align:left}
+#teclado{position:fixed;left:0;right:0;bottom:0;z-index:30;background:#fff;border-top:3px solid #6d5ae6;padding:8px;display:none}
+#teclado.aberto{display:block}
+#teclado .dica{text-align:center;font-weight:800;color:#5b4fc4;font-size:13px;margin-bottom:6px}
+#tk{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:560px;margin:0 auto}
+#tk button{min-height:48px;border:0;border-radius:12px;background:#eceefa;color:var(--texto);font-weight:900;font-size:19px;box-shadow:0 3px 0 #d3d7ea}
+#tk button:active{transform:translateY(2px);box-shadow:0 1px 0 #d3d7ea}
+#tk button.ap{background:#fde2da;grid-column:span 3}
+#tk button.ok{background:#d9f2e3;grid-column:span 4}
+#confete{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.cf{position:absolute;width:9px;height:14px;opacity:.95;-webkit-animation:cai 1.5s linear forwards;animation:cai 1.5s linear forwards}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+@keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+.oculto{display:none!important}
+/* ============================================================
+   AS PEÇAS DAS CATORZE FOLHAS NOVAS (13/set/2026 — a regra das 25 folhas)
+
+   ⚠️ ESTE BLOCO MORA **ANTES** DO `/* ============================================================
+   AS PEÇAS DAS CATORZE FOLHAS NOVAS (13/set/2026 — a regra das 25 folhas)
+
+   ⚠️ ESTE BLOCO MORA **ANTES** DAS MARCAS DO DOSSIÊ, e isso não é detalhe —
+      são DUAS lições pagas em 13/set/2026, uma em cima da outra:
+
+      1. Eu escrevi estas regras DENTRO do bloco marcado do dossiê, e o
+         `_padrao/dossie_professor.py` — que é o dono dele — reescreveu o bloco
+         inteiro e apagou tudo. Nenhum erro apareceu: a página abriu, só que o
+         teclado da folha 13 ficou sem fundo e as gavetas sem caixa.
+      2. Movi para cá e ESCREVI O NOME DA MARCA neste comentário, para explicar.
+         O injetor apaga de `ini` até `fim` — e a marca citada aqui virou o
+         `ini` mais antigo do arquivo. Ele comeu tudo de novo, pelo mesmo motivo
+         com outra cara.
+
+      A regra que fica: **não se escreve dentro de um bloco marcado, e nem se
+      cita a marca dele em texto livre.** É a mesma família do comentário
+      dentro do JSON do `LUG`: bloco marcado tem dono.
+
+   ⚠️ ALVO MÍNIMO 40 px em tudo que se toca (o `_qa/leiaute_mao.js` mede em 6
+      tamanhos e reprova abaixo disso). No 1º ano o dedo é grande e a mira é
+      curta: alvo pequeno não é "compacto", é injusto.
+   ============================================================ */
+
+/* folha 2 — o poema e a tira do alfabeto inteira */
+.poema{background:#f7f5ff;border:3px solid #e2ddfb;border-radius:18px;
+  padding:12px 14px;margin:6px 0 10px}
+.poema .verso{display:-webkit-box;display:-ms-flexbox;display:flex;
+  align-items:center;gap:8px;justify-content:space-between;padding:3px 0}
+.poema .vt{font-size:clamp(15px,4vw,18px);font-weight:700;color:#2c3350;line-height:1.35}
+.poema .autor{text-align:right;font-size:13px;color:#3b4064;margin-top:4px;font-style:italic}
+.perguntas{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:8px;justify-content:center;margin:8px 0}
+.chipq{display:-webkit-box;display:-ms-flexbox;display:flex;align-items:center;
+  gap:6px;min-height:48px;padding:4px 10px;border:3px solid #d9ddf2;border-radius:16px;background:#fff}
+.chipq .nq{font-weight:800;color:#3b4064;font-size:14px}
+.chipq .vq{font-weight:900;font-size:24px;color:#9aa0c4;min-width:26px;text-align:center}
+/* ⚠️ a pergunta da vez NÃO se distingue só pela cor (regra 4 da pesquisa: nada
+   de resposta só por cor) — ela ganha borda grossa, sombra e a palavra "agora" */
+.chipq.agora{border-color:#6d5ae6;box-shadow:0 0 0 4px rgba(109,90,230,.18)}
+.chipq.agora:before{content:"agora";font-size:11px;font-weight:900;color:#6d5ae6;
+  letter-spacing:.6px;text-transform:uppercase}
+.chipq.feito{border-color:#15a34a;background:#e7f8ee}
+.chipq.feito .vq{color:#0d7736}
+.tiralfa{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:6px;justify-content:center;background:#fff;border:3px solid #e2ddfb;
+  border-radius:18px;padding:10px;margin:6px 0}
+.ltira{min-width:44px;min-height:48px;border:2px solid #d9ddf2;border-radius:12px;
+  background:#fff;display:-webkit-box;display:-ms-flexbox;display:flex;
+  align-items:center;justify-content:center;cursor:pointer}
+.ltira .ltop{font-size:clamp(20px,5vw,26px)}
+.ltira.aceso{border-color:#1f9d55;background:#eafaf0}
+.ltira.aceso .ltop{color:#1f9d55}
+.ltira.erro{border-color:#e05b5b;background:#fdeaea}
+.ltira:active{-webkit-transform:scale(.92);transform:scale(.92)}
+
+/* folhas 5 e 6 — a letra MINÚSCULA. Fonte com serifa: é a forma que ela vai
+   encontrar no livro, e a diferença entre "a" e "A" fica evidente. */
+.peq{text-transform:lowercase;font-family:Georgia,'Times New Roman',serif}
+.filalfa.peq .lt{text-transform:lowercase;font-family:Georgia,'Times New Roman',serif}
+
+/* folhas 8 e 11 — a seta que aponta para TRÁS (quem vem antes) */
+.vizinha .setacss.volta:after{right:auto;left:-2px;
+  border-left:0;border-right:12px solid #9aa0c4}
+.rotlado{text-align:center;font-size:12px;font-weight:900;letter-spacing:.8px;
+  color:var(--texto3);text-transform:uppercase;margin-top:-4px}
+
+/* folha 12 — a grade do alfabeto (o quadro, não a fila) */
+.gradealfa{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 10px}
+@media (min-width:520px){ .gradealfa{grid-template-columns:repeat(6,1fr)} }
+.celalfa{min-height:56px;border:3px solid #d9ddf2;border-radius:14px;background:#fff;
+  display:-webkit-box;display:-ms-flexbox;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:clamp(22px,6vw,32px);color:#2c3350}
+.celalfa.vaga{border-style:dashed;border-color:#6d5ae6;background:#f4f2ff;color:#6d5ae6}
+.celalfa.vaga.ok{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.celalfa.vaga.erro{border-color:#e05b5b;background:#fdeaea}
+
+/* folha 13 — o teclado do computador, com as teclas na ordem QWERTY */
+.teclas{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:8px;justify-content:center;margin:10px auto 0;max-width:420px;
+  background:#3b3f57;border-radius:16px;padding:12px}
+.tecla{min-width:56px;min-height:56px;border:0;border-radius:10px;background:#f2f3f8;
+  box-shadow:0 4px 0 #b9bcd0;display:-webkit-box;display:-ms-flexbox;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;padding:0}
+.tecla .ltop{font-size:clamp(20px,5vw,28px);color:#3b3f57}
+.tecla:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #b9bcd0}
+.tecla.usada{opacity:.35;box-shadow:none}
+.tecla.erro{background:#fdeaea}
+
+/* folha 19 — as duas palavras do dicionário, lado a lado */
+.dicpar{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:10px;justify-content:center;margin:6px 0 4px}
+.dicbt{border:3px solid #d9ddf2;border-radius:16px;background:#fff;color:#1e2334;
+  min-width:42%;cursor:pointer}
+.dicbt.pintada{border-width:4px;font-weight:900}
+.dicbt.pintada:after{content:"1º";display:block;font-size:11px;letter-spacing:.6px;
+  color:#0d7736;font-weight:900}
+.dicbt.erro{border-color:#e05b5b;background:#fdeaea}
+
+/* folha 21 — as gavetas por letra (a ideia do dicionário) */
+.gavetas{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:6px 0 10px}
+@media (min-width:520px){ .gavetas{grid-template-columns:repeat(4,1fr)} }
+.gaveta{min-height:76px;border:3px dashed #b9b3e6;border-radius:16px;background:#f7f5ff;
+  padding:6px;display:-webkit-box;display:-ms-flexbox;display:flex;
+  -webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;
+  flex-direction:column;align-items:center;gap:4px}
+.gaveta .gl{font-weight:900;font-size:clamp(20px,5vw,26px);color:#6d5ae6}
+.gaveta .gdentro{display:-webkit-box;display:-ms-flexbox;display:flex;
+  flex-wrap:wrap;gap:4px;justify-content:center}
+.gaveta .gpeca{font-size:12px;font-weight:800;color:#0d7736;background:#e7f8ee;
+  border-radius:8px;padding:2px 6px}
+.gaveta.erro{border-color:#e05b5b;background:#fdeaea}
+.pecagav{min-height:74px;padding:6px 10px;display:-webkit-box;display:-ms-flexbox;
+  display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;
+  -ms-flex-direction:column;flex-direction:column;align-items:center;gap:2px}
+.pecagav .figop{max-height:44px;width:auto}
+
+/* folha 22 — a fila das FIGURAS em ordem alfabética */
+.trilhafig{display:-webkit-box;display:-ms-flexbox;display:flex;flex-wrap:wrap;
+  gap:8px;justify-content:center;margin:6px 0 10px}
+.vagafig{min-width:76px;min-height:76px;border:3px dashed #b9b3e6;border-radius:16px;
+  background:#f7f5ff;display:-webkit-box;display:-ms-flexbox;display:flex;
+  align-items:center;justify-content:center}
+.vagafig .np{color:#8a83c9;font-size:15px;font-weight:900}
+.vagafig.ok{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.vagafig .figop{max-height:60px;width:auto}
+.figlin{display:-webkit-box;display:-ms-flexbox;display:flex;
+  -webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;
+  flex-direction:column;align-items:center;gap:4px}
+.figop2{min-width:76px;min-height:76px;padding:6px}
+.figop2 .figop{max-height:58px;width:auto}
+.figop2.usada{opacity:.35;pointer-events:none}
+
+/* folha 23 — os nomes da chamada, em cor de nome próprio */
+.nomebt{color:#6d5ae6}
+
+/* folha 24 — o quadro de traçar a letra com o dedo */
+.traclin{display:-webkit-box;display:-ms-flexbox;display:flex;justify-content:center;margin-bottom:4px}
+.tracacx{display:-webkit-box;display:-ms-flexbox;display:flex;justify-content:center;margin:2px 0 8px}
+.tracacv{width:min(220px,72vw);max-width:100%;height:auto;background:#fff;
+  border:3px solid #d9ddf2;border-radius:18px;cursor:crosshair;touch-action:none}
+
+
+/* ============================================================
+   AS PEÇAS DESTE CADERNO — o armazém, as bandejas, o tapete e a malha.
+
+   ⚠️ ESTE BLOCO FICA FORA do bloco de estilo do dossiê e ANTES dele, e a lição
+      é paga em dobro (13/set/2026): a primeira vez eu escrevi o estilo DENTRO
+      do bloco marcado e o gerador do dossiê o apagou; a segunda vez eu o tirei
+      de lá mas CITEI o nome da marca num comentário, e a citação virou a marca
+      mais antiga do arquivo — apagou de novo. Bloco marcado tem dono, e nem se
+      cita a marca dele em texto livre.
+   ⚠️ E NENHUM `position` de pai muda aqui sem olhar os filhos absolutos (a
+      regressão do pilar verde, set/2026: quatro atividades foram ao ar tortas).
+   ============================================================ */
+.prateleira{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 0 10px}
+.grupo{display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:3px;
+  min-width:64px;min-height:58px;padding:7px 8px;border-radius:14px;
+  background:#fff8e8;border:3px solid #e0a63a;
+  -webkit-box-shadow:0 2px 0 #d0922c;box-shadow:0 2px 0 #d0922c}
+.grupo.vazio{background:#f6f7fb;border-style:dashed;border-color:#b9bed4}
+.grupo.completo{background:#eafaf0;border-color:#1f9d55;-webkit-box-shadow:0 2px 0 #168043;box-shadow:0 2px 0 #168043}
+.grupo.cheio{background:#fdecec;border-color:#d94a3d}
+.prateleira.peq .grupo{min-width:52px;min-height:46px;padding:5px}
+.figgr{display:block;width:auto;height:26px;max-width:100%;object-fit:contain}
+.prateleira.peq .figgr{height:20px}
+.figmini{display:block;width:auto;height:20px;max-width:100%;object-fit:contain}
+/* ⚠️ A PEÇA DE PUXAR SEM TAMANHO — e este é o defeito que só a FOTO pega.
+   A figura dentro do botão herda o tamanho de `.op.figbt .figop` (56 a 80 px),
+   e a peça daqui NÃO é `figbt`: sem regra própria, a imagem saía no tamanho
+   natural do arquivo, cada peça virava uma faixa da largura da tela inteira e
+   as doze peças empilhadas faziam uma folha de sete mil pixels de altura.
+   Nenhum portão de texto vê isso; o `andar_folha` e o jogador passaram os dois. */
+.op.pecafig{padding:5px;min-width:52px;min-height:52px;width:auto;flex:0 0 auto}
+.op.pecafig .figop{display:block;width:auto;height:34px;max-width:100%;object-fit:contain}
+.op.pecafig.usada{opacity:.28;pointer-events:none}
+.pedido{font-weight:800;font-size:16px;color:var(--texto,#3b4059);margin:4px 0 6px;text-align:center}
+.numop{font-weight:900;font-size:26px;color:#5b4fc4;font-variant-numeric:tabular-nums}
+.contaop,.somaop{font-weight:900;font-size:20px;color:#5b4fc4;white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.op.contabt{min-height:52px;padding:9px 16px}
+.contalin{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:8px 0 4px}
+.conta{font-weight:900;font-size:20px;color:var(--texto,#3b4059);font-variant-numeric:tabular-nums}
+.conta.gr{font-size:24px;color:#5b4fc4}
+.ouvirlin{display:flex;align-items:center;justify-content:center;gap:10px;margin:6px 0 10px}
+.ouvirlin .pedido{margin:0;font-size:15px;color:#6b7190}
+/* a tabela da folha 10 */
+.tabmult{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0 10px}
+.tcel{min-width:120px;padding:8px 12px;border-radius:14px;background:#f2f3fa;
+  border:3px solid #d8dcec;text-align:center}
+.tcel.vaga{background:#fff8e8;border-style:dashed;border-color:#e0a63a}
+.trot{display:block;font-size:11px;font-weight:800;letter-spacing:.6px;
+  text-transform:uppercase;color:#6b7190;margin-bottom:2px}
+.tval{display:block;font-weight:900;font-size:19px;color:var(--texto,#3b4059);font-variant-numeric:tabular-nums}
+/* as cinco máquinas */
+.maq{display:flex;align-items:center;justify-content:center;gap:8px;margin:8px 0 10px;flex-wrap:wrap}
+.mentra,.msai{min-width:58px;min-height:58px;display:flex;align-items:center;justify-content:center;
+  border-radius:16px;font-weight:900;font-size:26px;font-variant-numeric:tabular-nums;
+  background:#f2f3fa;border:3px solid #d8dcec;color:#3b4059}
+.msai{background:#fff8e8;border-style:dashed;border-color:#e0a63a;color:#b07a13}
+.msai.ok{background:#eafaf0;border-style:solid;border-color:#1f9d55;color:#1f9d55}
+.mcorpo{min-width:86px;min-height:58px;display:flex;align-items:center;justify-content:center;
+  border-radius:16px;background:#5b4fc4;color:#fff;font-weight:900;font-size:24px;
+  -webkit-box-shadow:0 3px 0 #443a9c;box-shadow:0 3px 0 #443a9c}
+.op.seqbt{min-width:60px;min-height:56px}
+/* o tapete e a malha */
+.tapete{display:inline-flex;flex-direction:column;gap:4px;padding:8px;border-radius:16px;
+  background:#fff8e8;border:3px solid #e0a63a;margin:8px auto;max-width:100%}
+.girabox{display:flex;justify-content:center}
+.girabox.girou .tapete{border-color:#1f9d55;background:#eafaf0}
+.tapete .fileira{display:flex;gap:4px;justify-content:center}
+.malha{display:inline-flex;flex-direction:column;gap:3px;margin:8px auto;padding:6px;
+  border-radius:14px;background:#f2f3fa;border:3px solid #d8dcec;max-width:100%}
+.mlin{display:flex;gap:3px}
+.mcel{width:44px;height:44px;min-width:44px;min-height:44px;border-radius:8px;
+  border:2px solid #c7ccdf;background:#fff;padding:0;cursor:pointer}
+.mcel.pinta{border-color:#3b4059}
+/* as cestas da combinação */
+.cestas{display:inline-flex;flex-direction:column;gap:5px;margin:8px auto;max-width:100%}
+.clin{display:flex;gap:5px;justify-content:center}
+.ccanto{width:52px;min-width:52px}
+.ccab{width:52px;min-width:52px;height:44px;display:flex;align-items:center;justify-content:center;
+  border-radius:10px;background:#f2f3fa;border:2px solid #d8dcec}
+.ccel{width:64px;min-width:64px;height:52px;min-height:52px;display:flex;align-items:center;
+  justify-content:center;gap:2px;border-radius:12px;padding:0;cursor:pointer;
+  background:#fff;border:3px solid #d8dcec}
+.ccel.vazia{background:#fff8e8;border-style:dashed;border-color:#e0a63a}
+.ccel.nova{background:#eafaf0;border-color:#1f9d55}
+.ccel.treme{-webkit-animation:treme .4s;animation:treme .4s}
+/* os problemas */
+.problin{display:flex;align-items:flex-start;gap:10px;margin:4px 0 8px}
+.prob{margin:0;font-weight:700;font-size:17px;line-height:1.45;color:var(--texto,#3b4059)}
+/* o cartaz */
+.cartazbt{display:flex;align-items:center;gap:10px;min-height:56px}
+.cartazfig{display:flex;align-items:center}
+.item.solto{border:0;background:none;padding:0;margin:0}
+/* a capa */
+/* ⚠️ A REGRA DA CENA DA CAPA GANHA DA MINHA: `.capa .cena img` (tres nomes)
+   vence `.figgr` (um nome), e por isso a maca da bandeja saia com 110 px e a
+   bandeja inteira estourava para fora do quadro — uma bandeja so aparecia, com
+   as macas empilhadas. A regra daqui tem que ter peso maior, nao vir depois. */
+.capa .titu .palcapa{white-space:nowrap;display:inline-block}
+.capa .titu .esp{display:inline-block;width:.35em}
+/* ⭐ A COROA DA CAPA — as cinco pontas sobem uma a uma, cada uma com a figura
+   que a folha d07 imprime para aquele reino. É a cena que conta a atividade. */
+.coroacapa{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;
+  gap:6px;max-width:420px;margin:6px auto 0;padding:0 6px}
+.pontacapa{display:flex;flex-direction:column;align-items:center;gap:3px;
+  width:70px;min-height:92px;padding:8px 4px 6px;border-radius:16px 16px 0 0;
+  background:#fff8e8;border:3px solid #e0a63a;border-bottom:0;opacity:0;
+  -webkit-animation:aparece .5s forwards;animation:aparece .5s forwards}
+.coroacapa .pontacapa .figgr{display:block;width:auto;height:38px;min-width:0;
+  object-fit:contain;-webkit-animation:none;animation:none;opacity:1}
+.pnomecapa{font-weight:900;font-size:9px;letter-spacing:.5px;color:#8a5410;text-align:center}
+.arocapa{flex:0 0 100%;height:16px;border-radius:0 0 14px 14px;background:#e0a63a}
+@media (max-width:430px){
+  .mcel{width:40px;height:40px;min-width:40px;min-height:40px}
+  .ccel{width:54px;min-width:54px}
+  .ccab,.ccanto{width:44px;min-width:44px}
+  .tcel{min-width:96px}
+}
+
+#cartazFim{margin:10px auto 4px;max-width:420px}
+#cartazFim h3{margin:0 0 6px;font-size:15px;color:#5b4fc4;letter-spacing:.5px;text-transform:uppercase}
+#cartazFim .quadro{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px;
+  border-radius:16px;background:#fff8e8;border:3px solid #e0a63a}
+#cartazFim .cc{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #d9ddf2;
+  border-radius:12px;padding:6px 10px;font-weight:900;color:#5b4fc4;font-variant-numeric:tabular-nums}
+#cartazFim .cc img{display:block;width:auto;height:24px;object-fit:contain}
+#cartazFim .vazio{font-weight:700;color:#6b7190;padding:8px}
+
+/* ============================================================
+   AS PEÇAS DESTE CADERNO — os cinco reinos
+   ⚠️ TUDO EM CAIXA FLUIDA (`clamp`, `%`), nunca px cravado: o mesmo caderno
+      abre no netbook de 1366, no PC velho de 1024x600 e no celular de 360. O
+      `_qa/leiaute_folha` mede em seis tamanhos, e figura esticada/cortada é o
+      defeito que o Marcos mais pegou no celular.
+   ⚠️ E ALVO NUNCA ABAIXO DE 44 px: tudo aqui que tem `cursor:pointer` é dedo de
+      criança de 9 anos. ============================================================ */
+
+/* --- a figura grande do ser vivo (folhas 6, 8, 12, 13, 23) --- */
+.bicholin{display:flex;align-items:center;justify-content:center;margin:6px 0 2px}
+.figbicho{display:block;width:auto;height:clamp(78px,20vw,124px);max-width:100%;object-fit:contain}
+
+/* --- as gavetas (folhas 3, 4, 9 e 20) --- */
+/* ⚠️ A gaveta herdada do caderno de multiplicação usava `.gl` (uma letra
+   grande). Aqui o rótulo é uma FRASE ("JÁ FORAM VIVOS"), então ela ganha o
+   `.gtit`, que quebra linha e encolhe a letra em vez de estourar a caixa. */
+.gtit{font-weight:900;font-size:clamp(11px,2.8vw,14px);letter-spacing:.4px;
+  color:#4b4570;text-align:center;line-height:1.15;padding:0 4px}
+.gaveta .gdentro{min-height:26px}
+.gaveta.gvivo{border-color:#3aa76d;background:#f1fbf5}
+.gaveta.gvivo .gtit{color:#166f45}
+.gaveta.gnao{border-color:#b99a6b;background:#fdf8ef}
+.gaveta.gnao .gtit{color:#7a5a24}
+.gaveta.gfoi{border-color:#c98a3f;background:#fff6ea}
+.gaveta.gfoi .gtit{color:#8a5410}
+.gaveta.greino{border-color:#6d5ae6;background:#f6f4ff}
+.gaveta.greino .gtit{color:#4b3fae}
+.gavetas.g3{grid-template-columns:repeat(3,1fr)}
+.gavetas.g5{grid-template-columns:repeat(5,1fr)}
+.ops.pecas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 0 2px}
+.op.pecafig.marcada{border-color:#f59e0b;background:#fff7e6;
+  box-shadow:0 0 0 4px rgba(245,158,11,.22)}
+/* a peça deste caderno é FIGURA, e figura de 34 px ninguém reconhece */
+.op.pecafig .figop{height:clamp(40px,10vw,58px)}
+.gaveta .gdentro .figmini{height:clamp(20px,5vw,28px)}
+
+/* --- a cena cheia (folha 2) --- */
+.cenaviva{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+  padding:10px 8px;border-radius:18px;
+  background:linear-gradient(180deg,#eaf6ff 0%,#f4fbef 62%,#f7f3e6 100%);
+  border:3px solid #d6e6f2}
+.nacena{min-width:56px;min-height:56px;padding:5px;border:3px solid transparent;
+  border-radius:14px;background:transparent;cursor:pointer}
+.nacena .figbicho{height:clamp(46px,12vw,68px)}
+.nacena.achado{border-color:#15a34a;background:#e7f8ee}
+.nacena.erro{border-color:#e0562f;background:#fdeee9;
+  -webkit-animation:treme .4s;animation:treme .4s}
+.nacena:active{-webkit-transform:scale(.95);transform:scale(.95)}
+
+/* --- as fases do ciclo (folha 5) --- */
+.op.fasebt{min-height:52px;padding:10px 14px;font-weight:800;
+  font-size:clamp(13px,3.4vw,16px);letter-spacing:.3px}
+
+/* --- o microscópio (folha 7) --- */
+.microscopio{display:flex;flex-direction:column;align-items:center;margin:6px 0 2px}
+.lente{width:clamp(120px,34vw,168px);height:clamp(120px,34vw,168px);border-radius:50%;
+  border:10px solid #4b4570;background:#f7fbff;display:flex;align-items:center;
+  justify-content:center;overflow:hidden;cursor:pointer;padding:0;
+  box-shadow:inset 0 0 0 6px #fff,0 6px 0 rgba(0,0,0,.12)}
+/* ⚠️ O FOCO É O GANCHO DA FOLHA: a gota começa EMBAÇADA e cada toque limpa um
+   pouco. Sem isso o microscópio vira enfeite — a criança tem que sentir que foi
+   ELA que revelou o que não se via. */
+.figlente{display:block;width:auto;height:72%;max-width:86%;object-fit:contain;
+  -webkit-filter:blur(7px);filter:blur(7px);opacity:.45;
+  -webkit-transition:-webkit-filter .3s,opacity .3s;transition:filter .3s,opacity .3s}
+.lente.foco1 .figlente{-webkit-filter:blur(4px);filter:blur(4px);opacity:.7}
+.lente.foco2 .figlente{-webkit-filter:blur(2px);filter:blur(2px);opacity:.88}
+.lente.foco3 .figlente{-webkit-filter:none;filter:none;opacity:1}
+.lente.pronto{border-color:#15a34a}
+.tubo{width:clamp(48px,13vw,64px);height:clamp(26px,7vw,36px);
+  background:#4b4570;border-radius:0 0 12px 12px;margin-top:-4px}
+.ops.escondida{display:none}
+
+/* --- a célula e o cofrinho (folha 10) --- */
+.celulalin{display:flex;align-items:center;justify-content:center;margin:6px 0 2px}
+.celula{width:clamp(110px,30vw,150px);height:clamp(80px,22vw,110px);border-radius:50%;
+  border:6px solid #6d5ae6;background:#efeaff;position:relative}
+.celula i{position:absolute;left:50%;top:50%;width:34%;height:40%;
+  -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  border-radius:50%;background:transparent}
+.celula.comcofre i{background:#6d5ae6;box-shadow:inset 0 0 0 5px #cfc4ff}
+/* sem cofrinho a receita fica SOLTA: riscos espalhados dentro da célula */
+.celula:not(.comcofre) i{width:70%;height:52%;border-radius:20px;
+  background:repeating-linear-gradient(38deg,#6d5ae6 0 4px,transparent 4px 13px)}
+
+/* --- pintar por legenda (folha 11) --- */
+.legenda{font-weight:900;font-size:clamp(13px,3.4vw,16px);color:#4b4570;
+  text-align:center;margin:2px 0 6px}
+.petala{display:flex;flex-direction:column;align-items:center;gap:4px;margin:0 auto;
+  min-width:132px;min-height:120px;padding:10px 14px;border:4px dashed #b9b3e6;
+  border-radius:22px;background:#fff;cursor:pointer;
+  -webkit-transition:background .2s,border-color .2s;transition:background .2s,border-color .2s}
+.petala .figbicho{height:clamp(56px,15vw,84px)}
+.pnome{font-weight:900;letter-spacing:1px;font-size:clamp(13px,3.4vw,16px);color:#4b4570}
+.petala.pintada{border-style:solid}
+
+/* --- ligar (folhas 14 e 15) --- */
+.figlig{display:block;width:auto;height:clamp(44px,12vw,62px);max-width:100%;object-fit:contain}
+.reinonome{font-weight:900;letter-spacing:1px;font-size:clamp(13px,3.4vw,16px);color:#4b4570}
+
+/* --- A COROA (folhas 16 e 17) — a folha que dá nome ao caderno --- */
+.coroa{margin:4px auto 8px;max-width:330px}
+.ctopo{display:flex;justify-content:center;gap:6px;align-items:flex-end;height:28px}
+.ctopo i{display:block;width:0;height:0;border-left:14px solid transparent;
+  border-right:14px solid transparent;border-bottom:26px solid #e0a63a}
+.ctopo i:nth-child(2){border-bottom-width:34px;border-bottom-color:#f0b840}
+.cfaixa{display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:8px 14px;border-radius:0 0 18px 18px;background:#fff8e8;
+  border:3px solid #e0a63a;border-top:0}
+.figcoroa{display:block;width:auto;height:clamp(44px,12vw,62px);max-width:100%;object-fit:contain}
+.creino{font-weight:900;letter-spacing:1px;font-size:clamp(15px,4vw,20px);color:#8a5410}
+.crilin{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:6px 0}
+.crot{flex:0 0 100%;text-align:center;font-weight:800;font-size:14px;color:#6b7190}
+.op.cribt{min-height:48px;padding:9px 14px;font-weight:800;
+  font-size:clamp(13px,3.3vw,15px)}
+
+/* --- a descrição e a frase com lacuna (folhas 18 e 22) --- */
+.descrlin{display:flex;align-items:flex-start;gap:10px;margin:4px 0 8px}
+.descr{margin:0;font-weight:700;font-size:clamp(15px,4vw,17px);line-height:1.45;
+  color:var(--texto,#3b4059)}
+
+/* --- do menor ao maior (folha 24) --- */
+.tamnome{font-weight:800;font-size:12px;color:#6b7190;display:block;margin-top:2px;max-width:96px;line-height:1.15}
+/* a peca deste caderno empilha figura em cima e nome embaixo */
+.op.pecafig{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:2px}
+
+@media (max-width:430px){
+  .gavetas.g5{grid-template-columns:repeat(3,1fr)}
+  .cfaixa{gap:6px;padding:7px 8px}
+}
+/*<dossie-css>*/
+#dossie{display:none;position:fixed;inset:0;z-index:70;background:rgba(20,16,45,.72);
+  align-items:center;justify-content:center;padding:12px}
+#dossie.aberto{display:-webkit-box;display:-ms-flexbox;display:flex}
+#dossie .cx{background:#fff;border:4px solid #6d5ae6;border-radius:20px;padding:14px;
+  max-width:720px;width:100%;max-height:88vh;display:flex;flex-direction:column}
+#dossie h3{margin:0 0 6px;color:#6d5ae6;font-size:20px}
+#dsCorpo{overflow:auto;text-align:left;font-size:13px;line-height:1.5;color:var(--texto,#1e2334)}
+#dsCorpo table{border-collapse:collapse;width:100%;margin:8px 0}
+#dsCorpo th,#dsCorpo td{border:1px solid #d9ddf2;padding:6px 8px;text-align:left;vertical-align:top}
+#dsCorpo th{background:#eceefa;color:var(--texto2,#2c3350)}
+#dsCorpo .dobj{display:block;margin-top:4px;font-size:11.5px;color:var(--texto3,#3b4064)}
+#dsCorpo .dfonte{margin:0 0 6px}
+#dsCorpo .dsub{margin:12px 0 4px}
+#dsCorpo .dtxt{margin:0}
+#dsCorpo .descada,#dsCorpo .dev{margin:4px 0 0 18px;padding:0}
+#dossie #dsFechar{margin-top:10px;min-height:46px}
+.bdossie{display:block;width:100%;margin-top:10px;min-height:46px}
+/*</dossie-css>*/
+</style></head><body>
+
+<div id="topo">
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir de novo"><svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v1H5v6h2v1a5 5 0 0 0 10 0v-1h2V9h-2V8a5 5 0 0 0-5-5z"/></svg></button>
+  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
+  <div class="tit">A Coroa dos Cinco Reinos</div>
+  <div class="prog"><i id="progI"></i></div>
+  <div class="pg" id="pg">Capa</div>
+</div>
+
+<div id="livro"></div>
+
+<div id="fim">
+  <h2 id="fimTit">Caderno completo!</h2>
+  <div class="estrelas" id="estrelas"></div>
+  <div class="barras" id="barras"></div>
+  <p id="resumo" style="font-weight:800;font-size:16px"></p>
+  <!-- ⭐ O CARTAZ QUE A CRIANÇA MONTOU (regra 11 da casa: a tela final mostra
+       o que ela FEZ). A folha 25 promete "ele fica guardado no fim" — sem este
+       quadro, a promessa não se cumpre e a voz do fecho mente. -->
+  <div id="cartazFim"></div>
+  <div id="medalha" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/rn_trofeu.png?v=1" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bVoltar" style="display:none">Voltar para o caderno</button>
+    <button class="bt cinza" id="bRever">Rever o caderno</button>
+    <button class="bt verde" id="bRecomecar">Caderno novo</button>
+  </div>
+  <div id="relatorio"></div>
+</div>
+
+<div id="retomar">
+  <h2 style="color:#6d5ae6;margin:0 0 6px">Você estava aqui!</h2>
+  <p id="retTxt" style="font-weight:700"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bContinuar">Continuar de onde parei</button>
+    <button class="bt cinza" id="bZerar">Começar um caderno novo</button>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="bt cinza" id="bAnt"><i class="seta esq"></i>Anterior</button>
+  <div class="txt" id="navTxt"></div>
+  <!-- ⭐ O FECHO A QUALQUER MOMENTO (12/set/2026) — ver o comentário do `fim()`.
+       Discreto de propósito: não pode competir com o "Próxima", mas tem de
+       estar à mão quando o sinal toca. -->
+  <button class="bt terminar" id="bTerminar" aria-label="Terminar agora e ver o meu boletim">Terminar</button>
+  <button class="bt" id="bProx">Próxima<i class="seta dir"></i></button>
+</div>
+
+<div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt" id="bComecar">Começar</button></div></div>
+
+<div id="menuProf" role="dialog" aria-label="Menu do professor" aria-modal="true">
+  <div class="cx">
+    <h3>Menu do professor</h3>
+    <p>Chave mestra <b>1275</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
+    <div class="folhas" id="mpFolhas"></div>
+    <!--<dossie-bt>--><button class="bt" id="bDossie">Dossiê pedagógico (currículo da rede)</button><!--</dossie-bt>-->
+<button class="bt cinza" id="mpFechar">Fechar</button>
+  </div>
+</div>
+
+<div id="teclado" aria-label="Teclado de números">
+  <div class="dica" id="tkDica">Escreva o número</div>
+  <div id="tk"></div>
+</div>
+<div id="confete" aria-hidden="true"></div>
+
+<script>
+/* ---------- AS PALAVRAS DE CADA FOLHA (o gerar_falas.py lê este bloco) ---------- */
+/*GESTOS-INI*/
+/* ⚠️ O GESTO DE CADA FOLHA, DECLARADO À MÃO — uma palavra: o que a criança FAZ
+   com o dedo, não o que o código parece. Ele existe porque o portão 0b7
+   (`_qa/leque_folha.py`) tentou ADIVINHAR isto do código e errou feio, e um
+   portão que reprova por causa do próprio erro é pior que portão nenhum.
+   ⚠️ E O GESTO NÃO FOI ESCOLHIDO POR MIM: cada um saiu do COMANDO IMPRESSO na
+      folha de papel de onde a folha nasceu (regra do Marcos, 13/set/2026). A
+      d26 manda "classifique em", então a tela dá gaveta; a d05 manda "pinte
+      seguindo a legenda", então dá canetinha; a d07 manda "marque as
+      características", então dá marcar. Ver o `_sequencias/POTE-REINOS.md`.
+   ⚠️ Folha nova = linha nova AQUI, no mesmo commit. Sem isso o portão diz
+      "NAO MEDI" — que não é "passou". */
+var GESTOS = {
+ "f1": "circular",
+ "f2": "achar na cena",
+ "f3": "arrastar",
+ "f4": "arrastar",
+ "f5": "ordenar",
+ "f6": "escolher",
+ "f7": "microscopio",
+ "f8": "escolher",
+ "f9": "arrastar",
+ "f10": "escolher",
+ "f11": "pintar",
+ "f12": "escolher",
+ "f13": "escolher",
+ "f14": "ligar",
+ "f15": "ligar",
+ "f16": "marcar",
+ "f17": "marcar",
+ "f18": "escolher",
+ "f19": "completar",
+ "f20": "arrastar",
+ "f21": "intruso",
+ "f22": "completar",
+ "f23": "digitar",
+ "f24": "ordenar",
+ "f25": "mural"
+};
+/*GESTOS-FIM*/
+/*ITENS-INI*/
+var ITENS = {
+ "p1": [
+  {
+   "todos": [
+    "arvore",
+    "arvore2",
+    "agua",
+    "areia",
+    "pedras",
+    "pedras2"
+   ],
+   "vivos": [
+    "arvore",
+    "arvore2"
+   ]
+  },
+  {
+   "todos": [
+    "arvore3",
+    "rosa",
+    "pedras2",
+    "terra",
+    "sol",
+    "sol2"
+   ],
+   "vivos": [
+    "arvore3",
+    "rosa"
+   ]
+  },
+  {
+   "todos": [
+    "milho",
+    "tomateiro",
+    "sol2",
+    "nuvem",
+    "vento",
+    "fogo"
+   ],
+   "vivos": [
+    "milho",
+    "tomateiro"
+   ]
+  },
+  {
+   "todos": [
+    "reino_plantae",
+    "sapo",
+    "fogo",
+    "carro",
+    "casa",
+    "tijolos"
+   ],
+   "vivos": [
+    "reino_plantae",
+    "sapo"
+   ]
+  },
+  {
+   "todos": [
+    "passarinho",
+    "borboleta",
+    "tijolos",
+    "celular",
+    "bola",
+    "urso_pelucia"
+   ],
+   "vivos": [
+    "passarinho",
+    "borboleta"
+   ]
+  },
+  {
+   "todos": [
+    "borboleta2",
+    "borboleta3",
+    "urso_pelucia",
+    "urso_pelucia2",
+    "agua",
+    "areia"
+   ],
+   "vivos": [
+    "borboleta2",
+    "borboleta3"
+   ]
+  },
+  {
+   "todos": [
+    "formiga",
+    "cavalo",
+    "areia",
+    "pedras",
+    "pedras2",
+    "terra"
+   ],
+   "vivos": [
+    "formiga",
+    "cavalo"
+   ]
+  },
+  {
+   "todos": [
+    "cachorro",
+    "elefante",
+    "terra",
+    "sol",
+    "sol2",
+    "nuvem"
+   ],
+   "vivos": [
+    "cachorro",
+    "elefante"
+   ]
+  },
+  {
+   "todos": [
+    "tubarao",
+    "menino",
+    "nuvem",
+    "vento",
+    "fogo",
+    "carro"
+   ],
+   "vivos": [
+    "tubarao",
+    "menino"
+   ]
+  },
+  {
+   "todos": [
+    "bebe",
+    "reino_animal",
+    "carro",
+    "casa",
+    "tijolos",
+    "celular"
+   ],
+   "vivos": [
+    "bebe",
+    "reino_animal"
+   ]
+  }
+ ],
+ "p10": [
+  {
+   "r": "bacterias",
+   "rot": "da bactéria"
+  },
+  {
+   "r": "animais",
+   "rot": "do cachorro"
+  },
+  {
+   "r": "plantas",
+   "rot": "da folha da árvore"
+  },
+  {
+   "r": "fungos",
+   "rot": "do cogumelo"
+  },
+  {
+   "r": "algas",
+   "rot": "da ameba"
+  },
+  {
+   "r": "bacterias",
+   "rot": "do leite azedo"
+  },
+  {
+   "r": "animais",
+   "rot": "da borboleta"
+  },
+  {
+   "r": "plantas",
+   "rot": "do pé de milho"
+  }
+ ],
+ "p11": [
+  {
+   "cor": 1,
+   "r": "animais"
+  },
+  {
+   "cor": 0,
+   "r": "plantas"
+  },
+  {
+   "cor": 3,
+   "r": "fungos"
+  },
+  {
+   "cor": 2,
+   "r": "algas"
+  },
+  {
+   "cor": 4,
+   "r": "bacterias"
+  }
+ ],
+ "p12": [
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "w": "sapo"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "animais",
+   "w": "passarinho"
+  },
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "w": "borboleta"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "animais",
+   "w": "borboleta2"
+  },
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "w": "borboleta3"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "animais",
+   "w": "formiga"
+  },
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "w": "cavalo"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "animais",
+   "w": "cachorro"
+  },
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "w": "elefante"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "animais",
+   "w": "tubarao"
+  }
+ ],
+ "p13": [
+  {
+   "op": [
+    "plantas",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "plantas",
+   "w": "tomateiro"
+  },
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "w": "sapo"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "animais",
+   "w": "passarinho"
+  },
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "w": "borboleta"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "animais",
+   "w": "borboleta2"
+  },
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "w": "borboleta3"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "animais",
+   "w": "formiga"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "algas"
+   ],
+   "r": "fungos",
+   "w": "reino_fungi"
+  },
+  {
+   "op": [
+    "plantas",
+    "algas",
+    "bacterias"
+   ],
+   "r": "algas",
+   "w": "reino_protista"
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "bacterias",
+   "w": "reino_monera"
+  }
+ ],
+ "p14": [
+  {
+   "g": [
+    [
+     "sapo",
+     "animais"
+    ],
+    [
+     "arvore",
+     "plantas"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "borboleta",
+     "animais"
+    ],
+    [
+     "arvore2",
+     "plantas"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "borboleta3",
+     "animais"
+    ],
+    [
+     "arvore3",
+     "plantas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "cavalo",
+     "animais"
+    ],
+    [
+     "rosa",
+     "plantas"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "elefante",
+     "animais"
+    ],
+    [
+     "milho",
+     "plantas"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "menino",
+     "animais"
+    ],
+    [
+     "tomateiro",
+     "plantas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ]
+   ]
+  }
+ ],
+ "p15": [
+  {
+   "g": [
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "arvore3",
+     "plantas"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ],
+    [
+     "borboleta2",
+     "animais"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "reino_monera",
+     "bacterias"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "milho",
+     "plantas"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "tubarao",
+     "animais"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ],
+    [
+     "arvore",
+     "plantas"
+    ]
+   ]
+  },
+  {
+   "g": [
+    [
+     "reino_monera",
+     "bacterias"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "borboleta2",
+     "animais"
+    ]
+   ]
+  }
+ ],
+ "p16": [
+  {
+   "r": "animais"
+  },
+  {
+   "r": "plantas"
+  },
+  {
+   "r": "fungos"
+  }
+ ],
+ "p17": [
+  {
+   "r": "algas"
+  },
+  {
+   "r": "bacterias"
+  },
+  {
+   "r": "plantas"
+  },
+  {
+   "r": "animais"
+  }
+ ],
+ "p18": [
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "animais",
+   "txt": "Tem muitas células, precisa comer outros seres vivos e guarda a receita no cofrinho. Anda, nada ou voa."
+  },
+  {
+   "op": [
+    "plantas",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "plantas",
+   "txt": "Tem muitas células, fabrica o próprio alimento com o Sol e guarda a receita no cofrinho. Fica no mesmo lugar."
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "algas"
+   ],
+   "r": "fungos",
+   "txt": "Tem muitas células e guarda a receita no cofrinho, mas não fabrica alimento: come o que está apodrecendo."
+  },
+  {
+   "op": [
+    "plantas",
+    "algas",
+    "bacterias"
+   ],
+   "r": "algas",
+   "txt": "É feito de uma célula só, guarda a receita no cofrinho e quase sempre mora na água."
+  },
+  {
+   "op": [
+    "animais",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "bacterias",
+   "txt": "É feito de uma célula só e nem cofrinho tem: a receita fica solta dentro dela. É o menor ser vivo de todos."
+  },
+  {
+   "op": [
+    "plantas",
+    "fungos",
+    "bacterias"
+   ],
+   "r": "fungos",
+   "txt": "Tem muitas células e guarda a receita no cofrinho, mas não fabrica alimento: come o que está apodrecendo."
+  },
+  {
+   "op": [
+    "animais",
+    "plantas",
+    "algas"
+   ],
+   "r": "plantas",
+   "txt": "Tem muitas células, fabrica o próprio alimento com o Sol e guarda a receita no cofrinho. Fica no mesmo lugar."
+  },
+  {
+   "op": [
+    "plantas",
+    "algas",
+    "bacterias"
+   ],
+   "r": "bacterias",
+   "txt": "É feito de uma célula só e nem cofrinho tem: a receita fica solta dentro dela. É o menor ser vivo de todos."
+  }
+ ],
+ "p19": [
+  {
+   "falta": "cel",
+   "r": "animais"
+  },
+  {
+   "falta": "com",
+   "r": "plantas"
+  },
+  {
+   "falta": "cof",
+   "r": "fungos"
+  },
+  {
+   "falta": "cel",
+   "r": "algas"
+  },
+  {
+   "falta": "com",
+   "r": "bacterias"
+  },
+  {
+   "falta": "cof",
+   "r": "animais"
+  },
+  {
+   "falta": "cel",
+   "r": "plantas"
+  },
+  {
+   "falta": "com",
+   "r": "fungos"
+  },
+  {
+   "falta": "cof",
+   "r": "algas"
+  },
+  {
+   "falta": "cel",
+   "r": "bacterias"
+  }
+ ],
+ "p2": [
+  {
+   "todos": [
+    "arvore2",
+    "arvore3",
+    "rosa",
+    "lapis",
+    "lanche",
+    "cupcake",
+    "agua",
+    "areia"
+   ],
+   "vivos": [
+    "arvore2",
+    "arvore3",
+    "rosa"
+   ]
+  },
+  {
+   "todos": [
+    "milho",
+    "tomateiro",
+    "reino_plantae",
+    "areia",
+    "pedras",
+    "pedras2",
+    "terra",
+    "sol"
+   ],
+   "vivos": [
+    "milho",
+    "tomateiro",
+    "reino_plantae"
+   ]
+  },
+  {
+   "todos": [
+    "sapo",
+    "passarinho",
+    "borboleta",
+    "sol",
+    "sol2",
+    "nuvem",
+    "vento",
+    "fogo"
+   ],
+   "vivos": [
+    "sapo",
+    "passarinho",
+    "borboleta"
+   ]
+  },
+  {
+   "todos": [
+    "borboleta2",
+    "borboleta3",
+    "formiga",
+    "fogo",
+    "carro",
+    "casa",
+    "tijolos",
+    "celular"
+   ],
+   "vivos": [
+    "borboleta2",
+    "borboleta3",
+    "formiga"
+   ]
+  },
+  {
+   "todos": [
+    "cavalo",
+    "cachorro",
+    "elefante",
+    "celular",
+    "bola",
+    "urso_pelucia",
+    "urso_pelucia2",
+    "lapis"
+   ],
+   "vivos": [
+    "cavalo",
+    "cachorro",
+    "elefante"
+   ]
+  },
+  {
+   "todos": [
+    "tubarao",
+    "menino",
+    "bebe",
+    "lapis",
+    "lanche",
+    "cupcake",
+    "agua",
+    "areia"
+   ],
+   "vivos": [
+    "tubarao",
+    "menino",
+    "bebe"
+   ]
+  },
+  {
+   "todos": [
+    "reino_animal",
+    "reino_fungi",
+    "reino_protista",
+    "areia",
+    "pedras",
+    "pedras2",
+    "terra",
+    "sol"
+   ],
+   "vivos": [
+    "reino_animal",
+    "reino_fungi",
+    "reino_protista"
+   ]
+  },
+  {
+   "todos": [
+    "reino_monera",
+    "arvore",
+    "arvore2",
+    "sol",
+    "sol2",
+    "nuvem",
+    "vento",
+    "fogo"
+   ],
+   "vivos": [
+    "reino_monera",
+    "arvore",
+    "arvore2"
+   ]
+  },
+  {
+   "todos": [
+    "arvore3",
+    "rosa",
+    "milho",
+    "fogo",
+    "carro",
+    "casa",
+    "tijolos",
+    "celular"
+   ],
+   "vivos": [
+    "arvore3",
+    "rosa",
+    "milho"
+   ]
+  },
+  {
+   "todos": [
+    "tomateiro",
+    "reino_plantae",
+    "sapo",
+    "celular",
+    "bola",
+    "urso_pelucia",
+    "urso_pelucia2",
+    "lapis"
+   ],
+   "vivos": [
+    "tomateiro",
+    "reino_plantae",
+    "sapo"
+   ]
+  }
+ ],
+ "p20": [
+  {
+   "gav": [
+    "animais",
+    "plantas",
+    "fungos",
+    "algas",
+    "bacterias"
+   ],
+   "pecas": [
+    [
+     "sapo",
+     "animais"
+    ],
+    [
+     "arvore",
+     "plantas"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ]
+   ]
+  },
+  {
+   "gav": [
+    "animais",
+    "plantas",
+    "fungos",
+    "algas",
+    "bacterias"
+   ],
+   "pecas": [
+    [
+     "passarinho",
+     "animais"
+    ],
+    [
+     "arvore2",
+     "plantas"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ]
+   ]
+  },
+  {
+   "gav": [
+    "animais",
+    "plantas",
+    "fungos",
+    "algas",
+    "bacterias"
+   ],
+   "pecas": [
+    [
+     "borboleta",
+     "animais"
+    ],
+    [
+     "arvore3",
+     "plantas"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ]
+   ]
+  },
+  {
+   "gav": [
+    "animais",
+    "plantas",
+    "fungos",
+    "algas",
+    "bacterias"
+   ],
+   "pecas": [
+    [
+     "borboleta2",
+     "animais"
+    ],
+    [
+     "rosa",
+     "plantas"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ]
+   ]
+  },
+  {
+   "gav": [
+    "animais",
+    "plantas",
+    "fungos",
+    "algas",
+    "bacterias"
+   ],
+   "pecas": [
+    [
+     "borboleta3",
+     "animais"
+    ],
+    [
+     "milho",
+     "plantas"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ]
+   ]
+  },
+  {
+   "gav": [
+    "animais",
+    "plantas",
+    "fungos",
+    "algas",
+    "bacterias"
+   ],
+   "pecas": [
+    [
+     "formiga",
+     "animais"
+    ],
+    [
+     "tomateiro",
+     "plantas"
+    ],
+    [
+     "reino_fungi",
+     "fungos"
+    ],
+    [
+     "reino_protista",
+     "algas"
+    ],
+    [
+     "reino_monera",
+     "bacterias"
+    ]
+   ]
+  }
+ ],
+ "p21": [
+  {
+   "intruso": "arvore",
+   "r": "animais",
+   "todos": [
+    "sapo",
+    "passarinho",
+    "borboleta",
+    "arvore"
+   ]
+  },
+  {
+   "intruso": "arvore2",
+   "r": "animais",
+   "todos": [
+    "borboleta",
+    "borboleta2",
+    "borboleta3",
+    "arvore2"
+   ]
+  },
+  {
+   "intruso": "arvore3",
+   "r": "animais",
+   "todos": [
+    "borboleta3",
+    "formiga",
+    "cavalo",
+    "arvore3"
+   ]
+  },
+  {
+   "intruso": "rosa",
+   "r": "animais",
+   "todos": [
+    "cavalo",
+    "cachorro",
+    "elefante",
+    "rosa"
+   ]
+  },
+  {
+   "intruso": "milho",
+   "r": "animais",
+   "todos": [
+    "elefante",
+    "tubarao",
+    "menino",
+    "milho"
+   ]
+  },
+  {
+   "intruso": "sapo",
+   "r": "plantas",
+   "todos": [
+    "arvore",
+    "arvore2",
+    "arvore3",
+    "sapo"
+   ]
+  },
+  {
+   "intruso": "borboleta2",
+   "r": "plantas",
+   "todos": [
+    "arvore2",
+    "arvore3",
+    "rosa",
+    "borboleta2"
+   ]
+  },
+  {
+   "intruso": "cavalo",
+   "r": "plantas",
+   "todos": [
+    "arvore3",
+    "rosa",
+    "milho",
+    "cavalo"
+   ]
+  },
+  {
+   "intruso": "tubarao",
+   "r": "plantas",
+   "todos": [
+    "rosa",
+    "milho",
+    "tomateiro",
+    "tubarao"
+   ]
+  },
+  {
+   "intruso": "sapo",
+   "r": "plantas",
+   "todos": [
+    "milho",
+    "tomateiro",
+    "arvore",
+    "sapo"
+   ]
+  }
+ ],
+ "p22": [
+  {
+   "certo": "produtores",
+   "k": "planta",
+   "op": [
+    "produtores",
+    "consumidores",
+    "decompositores"
+   ],
+   "txt": "As plantas fabricam o próprio alimento com a luz do Sol. Por isso elas são chamadas de ___."
+  },
+  {
+   "certo": "consumidores",
+   "k": "animal",
+   "op": [
+    "produtores",
+    "consumidores",
+    "decompositores"
+   ],
+   "txt": "Os animais não fabricam alimento: eles comem plantas ou outros animais. Por isso são chamados de ___."
+  },
+  {
+   "certo": "decompositores",
+   "k": "fungo",
+   "op": [
+    "produtores",
+    "consumidores",
+    "decompositores"
+   ],
+   "txt": "Os fungos e as bactérias comem restos de folhas e de bichos mortos e devolvem tudo para a terra. Eles são os ___."
+  },
+  {
+   "certo": "decompositores",
+   "k": "tronco",
+   "op": [
+    "produtores",
+    "consumidores",
+    "decompositores"
+   ],
+   "txt": "Um tronco caído some devagarinho no meio do mato. Quem faz esse trabalho são os ___."
+  },
+  {
+   "certo": "produtores",
+   "k": "alga",
+   "op": [
+    "produtores",
+    "consumidores",
+    "decompositores"
+   ],
+   "txt": "As algas do mar também usam a luz do Sol para fabricar alimento. Elas são ___."
+  },
+  {
+   "certo": "decompositores",
+   "k": "pao",
+   "op": [
+    "produtores",
+    "consumidores",
+    "decompositores"
+   ],
+   "txt": "O bolor que aparece no pão velho é um fungo. Fungos que comem restos são ___."
+  }
+ ],
+ "p23": [
+  {
+   "pista": "quem precisa comer outros seres vivos e se mexe pelo mundo",
+   "r": "animais"
+  },
+  {
+   "pista": "quem fica parado no mesmo lugar e fabrica o alimento com o Sol",
+   "r": "plantas"
+  },
+  {
+   "pista": "quem come o que está apodrecendo — o cogumelo e o bolor do pão",
+   "r": "fungos"
+  },
+  {
+   "pista": "quem é feito de uma célula só, mora na água e fabrica o alimento",
+   "r": "algas"
+  },
+  {
+   "pista": "quem é feito de uma célula só e nem cofrinho tem",
+   "r": "bacterias"
+  }
+ ],
+ "p24": [
+  {
+   "ordem": [
+    "reino_monera",
+    "reino_protista",
+    "formiga",
+    "cachorro"
+   ]
+  },
+  {
+   "ordem": [
+    "reino_monera",
+    "reino_protista",
+    "borboleta",
+    "cavalo"
+   ]
+  },
+  {
+   "ordem": [
+    "reino_protista",
+    "formiga",
+    "passarinho",
+    "elefante"
+   ]
+  },
+  {
+   "ordem": [
+    "reino_monera",
+    "formiga",
+    "sapo",
+    "tubarao"
+   ]
+  },
+  {
+   "ordem": [
+    "reino_protista",
+    "reino_fungi",
+    "rosa",
+    "arvore"
+   ]
+  },
+  {
+   "ordem": [
+    "reino_monera",
+    "borboleta",
+    "menino",
+    "cavalo"
+   ]
+  }
+ ],
+ "p25": [
+  {
+   "r": "animais",
+   "w": "sapo"
+  },
+  {
+   "r": "animais",
+   "w": "passarinho"
+  },
+  {
+   "r": "animais",
+   "w": "borboleta"
+  },
+  {
+   "r": "animais",
+   "w": "borboleta2"
+  },
+  {
+   "r": "plantas",
+   "w": "arvore"
+  },
+  {
+   "r": "plantas",
+   "w": "arvore2"
+  },
+  {
+   "r": "plantas",
+   "w": "arvore3"
+  },
+  {
+   "r": "plantas",
+   "w": "rosa"
+  },
+  {
+   "r": "fungos",
+   "w": "reino_fungi"
+  },
+  {
+   "r": "algas",
+   "w": "reino_protista"
+  },
+  {
+   "r": "bacterias",
+   "w": "reino_monera"
+  }
+ ],
+ "p3": [
+  {
+   "pecas": [
+    [
+     "arvore",
+     "vivo"
+    ],
+    [
+     "arvore2",
+     "vivo"
+    ],
+    [
+     "arvore3",
+     "vivo"
+    ],
+    [
+     "agua",
+     "nao"
+    ],
+    [
+     "areia",
+     "nao"
+    ],
+    [
+     "pedras",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "rosa",
+     "vivo"
+    ],
+    [
+     "milho",
+     "vivo"
+    ],
+    [
+     "tomateiro",
+     "vivo"
+    ],
+    [
+     "pedras",
+     "nao"
+    ],
+    [
+     "pedras2",
+     "nao"
+    ],
+    [
+     "terra",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "reino_plantae",
+     "vivo"
+    ],
+    [
+     "sapo",
+     "vivo"
+    ],
+    [
+     "passarinho",
+     "vivo"
+    ],
+    [
+     "terra",
+     "nao"
+    ],
+    [
+     "sol",
+     "nao"
+    ],
+    [
+     "sol2",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "borboleta",
+     "vivo"
+    ],
+    [
+     "borboleta2",
+     "vivo"
+    ],
+    [
+     "borboleta3",
+     "vivo"
+    ],
+    [
+     "sol2",
+     "nao"
+    ],
+    [
+     "nuvem",
+     "nao"
+    ],
+    [
+     "vento",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "formiga",
+     "vivo"
+    ],
+    [
+     "cavalo",
+     "vivo"
+    ],
+    [
+     "cachorro",
+     "vivo"
+    ],
+    [
+     "vento",
+     "nao"
+    ],
+    [
+     "fogo",
+     "nao"
+    ],
+    [
+     "carro",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "elefante",
+     "vivo"
+    ],
+    [
+     "tubarao",
+     "vivo"
+    ],
+    [
+     "menino",
+     "vivo"
+    ],
+    [
+     "carro",
+     "nao"
+    ],
+    [
+     "casa",
+     "nao"
+    ],
+    [
+     "tijolos",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "bebe",
+     "vivo"
+    ],
+    [
+     "reino_animal",
+     "vivo"
+    ],
+    [
+     "reino_fungi",
+     "vivo"
+    ],
+    [
+     "tijolos",
+     "nao"
+    ],
+    [
+     "celular",
+     "nao"
+    ],
+    [
+     "bola",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "reino_protista",
+     "vivo"
+    ],
+    [
+     "reino_monera",
+     "vivo"
+    ],
+    [
+     "arvore",
+     "vivo"
+    ],
+    [
+     "bola",
+     "nao"
+    ],
+    [
+     "urso_pelucia",
+     "nao"
+    ],
+    [
+     "urso_pelucia2",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "arvore2",
+     "vivo"
+    ],
+    [
+     "arvore3",
+     "vivo"
+    ],
+    [
+     "rosa",
+     "vivo"
+    ],
+    [
+     "urso_pelucia2",
+     "nao"
+    ],
+    [
+     "agua",
+     "nao"
+    ],
+    [
+     "areia",
+     "nao"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "milho",
+     "vivo"
+    ],
+    [
+     "tomateiro",
+     "vivo"
+    ],
+    [
+     "reino_plantae",
+     "vivo"
+    ],
+    [
+     "areia",
+     "nao"
+    ],
+    [
+     "pedras",
+     "nao"
+    ],
+    [
+     "pedras2",
+     "nao"
+    ]
+   ]
+  }
+ ],
+ "p4": [
+  {
+   "pecas": [
+    [
+     "arvore",
+     "vivo"
+    ],
+    [
+     "arvore2",
+     "vivo"
+    ],
+    [
+     "lapis",
+     "foi"
+    ],
+    [
+     "lanche",
+     "foi"
+    ],
+    [
+     "agua",
+     "nunca"
+    ],
+    [
+     "areia",
+     "nunca"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "tomateiro",
+     "vivo"
+    ],
+    [
+     "reino_plantae",
+     "vivo"
+    ],
+    [
+     "lanche",
+     "foi"
+    ],
+    [
+     "cupcake",
+     "foi"
+    ],
+    [
+     "pedras2",
+     "nunca"
+    ],
+    [
+     "terra",
+     "nunca"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "borboleta2",
+     "vivo"
+    ],
+    [
+     "borboleta3",
+     "vivo"
+    ],
+    [
+     "cupcake",
+     "foi"
+    ],
+    [
+     "lapis",
+     "foi"
+    ],
+    [
+     "sol2",
+     "nunca"
+    ],
+    [
+     "nuvem",
+     "nunca"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "elefante",
+     "vivo"
+    ],
+    [
+     "tubarao",
+     "vivo"
+    ],
+    [
+     "lapis",
+     "foi"
+    ],
+    [
+     "lanche",
+     "foi"
+    ],
+    [
+     "fogo",
+     "nunca"
+    ],
+    [
+     "carro",
+     "nunca"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "reino_fungi",
+     "vivo"
+    ],
+    [
+     "reino_protista",
+     "vivo"
+    ],
+    [
+     "lanche",
+     "foi"
+    ],
+    [
+     "cupcake",
+     "foi"
+    ],
+    [
+     "tijolos",
+     "nunca"
+    ],
+    [
+     "celular",
+     "nunca"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "arvore3",
+     "vivo"
+    ],
+    [
+     "rosa",
+     "vivo"
+    ],
+    [
+     "cupcake",
+     "foi"
+    ],
+    [
+     "lapis",
+     "foi"
+    ],
+    [
+     "urso_pelucia",
+     "nunca"
+    ],
+    [
+     "urso_pelucia2",
+     "nunca"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "sapo",
+     "vivo"
+    ],
+    [
+     "passarinho",
+     "vivo"
+    ],
+    [
+     "lapis",
+     "foi"
+    ],
+    [
+     "lanche",
+     "foi"
+    ],
+    [
+     "areia",
+     "nunca"
+    ],
+    [
+     "pedras",
+     "nunca"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "formiga",
+     "vivo"
+    ],
+    [
+     "cavalo",
+     "vivo"
+    ],
+    [
+     "lanche",
+     "foi"
+    ],
+    [
+     "cupcake",
+     "foi"
+    ],
+    [
+     "terra",
+     "nunca"
+    ],
+    [
+     "sol",
+     "nunca"
+    ]
+   ]
+  }
+ ],
+ "p5": [
+  {
+   "fases": [
+    "semente",
+    "broto",
+    "planta_com_flor",
+    "semente_nova"
+   ],
+   "rot": "da planta",
+   "ser": "planta"
+  },
+  {
+   "fases": [
+    "ovo",
+    "girino",
+    "girino_com_pernas",
+    "sapo_adulto"
+   ],
+   "rot": "do sapo",
+   "ser": "sapo"
+  },
+  {
+   "fases": [
+    "ovo",
+    "lagarta",
+    "casulo",
+    "borboleta_adulta"
+   ],
+   "rot": "da borboleta",
+   "ser": "borboleta"
+  },
+  {
+   "fases": [
+    "ovo",
+    "filhote",
+    "passaro_adulto",
+    "ninho_novo"
+   ],
+   "rot": "do passarinho",
+   "ser": "passarinho"
+  },
+  {
+   "fases": [
+    "bebe",
+    "crianca",
+    "adulto",
+    "idoso"
+   ],
+   "rot": "do ser humano",
+   "ser": "menino"
+  },
+  {
+   "fases": [
+    "filhote",
+    "cachorro_jovem",
+    "cachorro_adulto",
+    "cachorro_velho"
+   ],
+   "rot": "do cachorro",
+   "ser": "cachorro"
+  },
+  {
+   "fases": [
+    "semente",
+    "broto",
+    "pe_de_milho",
+    "espiga_com_sementes"
+   ],
+   "rot": "do pé de milho",
+   "ser": "milho"
+  },
+  {
+   "fases": [
+    "ovo",
+    "larva",
+    "pupa",
+    "formiga_adulta"
+   ],
+   "rot": "da formiga",
+   "ser": "formiga"
+  }
+ ],
+ "p6": [
+  {
+   "r": "animais",
+   "w": "sapo"
+  },
+  {
+   "r": "animais",
+   "w": "passarinho"
+  },
+  {
+   "r": "animais",
+   "w": "borboleta"
+  },
+  {
+   "r": "animais",
+   "w": "borboleta2"
+  },
+  {
+   "r": "animais",
+   "w": "borboleta3"
+  },
+  {
+   "r": "plantas",
+   "w": "arvore"
+  },
+  {
+   "r": "plantas",
+   "w": "arvore2"
+  },
+  {
+   "r": "plantas",
+   "w": "arvore3"
+  },
+  {
+   "r": "plantas",
+   "w": "rosa"
+  },
+  {
+   "r": "bacterias",
+   "w": "reino_monera"
+  },
+  {
+   "r": "algas",
+   "w": "reino_protista"
+  },
+  {
+   "r": "fungos",
+   "w": "reino_fungi"
+  }
+ ],
+ "p7": [
+  {
+   "certo": "nao",
+   "r": "bacterias",
+   "rot": "uma gota de água do lago"
+  },
+  {
+   "certo": "nao",
+   "r": "algas",
+   "rot": "uma gota de água do lago"
+  },
+  {
+   "certo": "sim",
+   "r": "fungos",
+   "rot": "um cogumelo do quintal"
+  },
+  {
+   "certo": "sim",
+   "r": "plantas",
+   "rot": "uma folha da árvore"
+  },
+  {
+   "certo": "sim",
+   "r": "animais",
+   "rot": "uma borboleta do jardim"
+  }
+ ],
+ "p8": [
+  {
+   "r": "plantas",
+   "w": "arvore"
+  },
+  {
+   "r": "plantas",
+   "w": "arvore2"
+  },
+  {
+   "r": "plantas",
+   "w": "arvore3"
+  },
+  {
+   "r": "plantas",
+   "w": "rosa"
+  },
+  {
+   "r": "animais",
+   "w": "borboleta2"
+  },
+  {
+   "r": "animais",
+   "w": "borboleta3"
+  },
+  {
+   "r": "animais",
+   "w": "formiga"
+  },
+  {
+   "r": "animais",
+   "w": "cavalo"
+  },
+  {
+   "r": "animais",
+   "w": "cachorro"
+  },
+  {
+   "r": "fungos",
+   "w": "reino_fungi"
+  },
+  {
+   "r": "algas",
+   "w": "reino_protista"
+  },
+  {
+   "r": "bacterias",
+   "w": "reino_monera"
+  }
+ ],
+ "p9": [
+  {
+   "pecas": [
+    [
+     "arvore",
+     "fabrica"
+    ],
+    [
+     "arvore2",
+     "fabrica"
+    ],
+    [
+     "arvore3",
+     "fabrica"
+    ],
+    [
+     "sapo",
+     "come"
+    ],
+    [
+     "passarinho",
+     "come"
+    ],
+    [
+     "borboleta",
+     "come"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "arvore2",
+     "fabrica"
+    ],
+    [
+     "arvore3",
+     "fabrica"
+    ],
+    [
+     "rosa",
+     "fabrica"
+    ],
+    [
+     "borboleta",
+     "come"
+    ],
+    [
+     "borboleta2",
+     "come"
+    ],
+    [
+     "borboleta3",
+     "come"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "arvore3",
+     "fabrica"
+    ],
+    [
+     "rosa",
+     "fabrica"
+    ],
+    [
+     "milho",
+     "fabrica"
+    ],
+    [
+     "borboleta3",
+     "come"
+    ],
+    [
+     "formiga",
+     "come"
+    ],
+    [
+     "cavalo",
+     "come"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "rosa",
+     "fabrica"
+    ],
+    [
+     "milho",
+     "fabrica"
+    ],
+    [
+     "tomateiro",
+     "fabrica"
+    ],
+    [
+     "cavalo",
+     "come"
+    ],
+    [
+     "cachorro",
+     "come"
+    ],
+    [
+     "elefante",
+     "come"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "milho",
+     "fabrica"
+    ],
+    [
+     "tomateiro",
+     "fabrica"
+    ],
+    [
+     "arvore",
+     "fabrica"
+    ],
+    [
+     "elefante",
+     "come"
+    ],
+    [
+     "tubarao",
+     "come"
+    ],
+    [
+     "menino",
+     "come"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "tomateiro",
+     "fabrica"
+    ],
+    [
+     "arvore",
+     "fabrica"
+    ],
+    [
+     "arvore2",
+     "fabrica"
+    ],
+    [
+     "menino",
+     "come"
+    ],
+    [
+     "bebe",
+     "come"
+    ],
+    [
+     "sapo",
+     "come"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "arvore",
+     "fabrica"
+    ],
+    [
+     "arvore2",
+     "fabrica"
+    ],
+    [
+     "arvore3",
+     "fabrica"
+    ],
+    [
+     "sapo",
+     "come"
+    ],
+    [
+     "passarinho",
+     "come"
+    ],
+    [
+     "borboleta",
+     "come"
+    ]
+   ]
+  },
+  {
+   "pecas": [
+    [
+     "arvore2",
+     "fabrica"
+    ],
+    [
+     "arvore3",
+     "fabrica"
+    ],
+    [
+     "rosa",
+     "fabrica"
+    ],
+    [
+     "borboleta",
+     "come"
+    ],
+    [
+     "borboleta2",
+     "come"
+    ],
+    [
+     "borboleta3",
+     "come"
+    ]
+   ]
+  }
+ ]
+};
+/* o nome de gente de cada figura (o PNG chama-se `urso_pelucia`; a criança ouve "o urso de pelúcia") */
+var FIGNOME = {
+ "agua": "a água",
+ "areia": "a areia",
+ "arvore": "a árvore",
+ "arvore2": "a árvore",
+ "arvore3": "a árvore",
+ "bebe": "o bebê",
+ "bola": "a bola",
+ "borboleta": "a borboleta",
+ "borboleta2": "a borboleta",
+ "borboleta3": "a mariposa",
+ "cachorro": "o cachorro",
+ "carro": "o carro",
+ "casa": "a casa",
+ "cavalo": "o cavalo",
+ "celular": "o celular",
+ "cupcake": "o cupcake",
+ "elefante": "o elefante",
+ "fogo": "o fogo",
+ "formiga": "a formiga",
+ "lanche": "o lanche",
+ "lapis": "o lápis",
+ "menino": "o menino",
+ "milho": "o pé de milho",
+ "nuvem": "a nuvem",
+ "passarinho": "o passarinho",
+ "pedras": "as pedras",
+ "pedras2": "as pedras",
+ "reino_animal": "a borboleta",
+ "reino_fungi": "os cogumelos",
+ "reino_monera": "a bactéria",
+ "reino_plantae": "as folhas",
+ "reino_protista": "a ameba",
+ "rosa": "a rosa",
+ "sapo": "o sapo",
+ "sol": "o sol",
+ "sol2": "o sol",
+ "terra": "a terra",
+ "tijolos": "os tijolos",
+ "tomateiro": "o pé de tomate",
+ "tubarao": "o tubarão",
+ "urso_pelucia": "o urso de pelúcia",
+ "urso_pelucia2": "o ursinho de pano",
+ "vento": "o vento"
+};
+/*ITENS-FIM*/
+/*FALAS-INI*/
+var FALAS = {
+ "capa": "A Coroa dos Cinco Reinos. Vinte e cinco folhas para descobrir como os cientistas separam todos os seres vivos do mundo em cinco grandes grupos.",
+ "certo1": "Isso! Todos esses nascem, crescem e um dia morrem: estão vivos.",
+ "certo10_algas": "Isso! A célula dos seres do reino das algas guarda a receita num cofrinho. Gente grande chama esse cofrinho de núcleo.",
+ "certo10_animais": "Isso! A célula dos seres do reino das animais guarda a receita num cofrinho. Gente grande chama esse cofrinho de núcleo.",
+ "certo10_bacterias": "Isso! A célula das bactérias não tem cofrinho: a receita fica solta lá dentro. É o único reino assim, e é por isso que ele fica separado dos outros quatro.",
+ "certo10_fungos": "Isso! A célula dos seres do reino das fungos guarda a receita num cofrinho. Gente grande chama esse cofrinho de núcleo.",
+ "certo10_plantas": "Isso! A célula dos seres do reino das plantas guarda a receita num cofrinho. Gente grande chama esse cofrinho de núcleo.",
+ "certo11_algas": "Pintado! O reino das algas ficou com a cor da legenda.",
+ "certo11_animais": "Pintado! O reino das animais ficou com a cor da legenda.",
+ "certo11_bacterias": "Pintado! O reino das bactérias ficou com a cor da legenda.",
+ "certo11_fungos": "Pintado! O reino das fungos ficou com a cor da legenda.",
+ "certo11_plantas": "Pintado! O reino das plantas ficou com a cor da legenda.",
+ "certo12_borboleta": "Certo! A borboleta é do reino das animais.",
+ "certo12_borboleta2": "Certo! A borboleta é do reino das animais.",
+ "certo12_borboleta3": "Certo! A mariposa é do reino das animais.",
+ "certo12_cachorro": "Certo! O cachorro é do reino das animais.",
+ "certo12_cavalo": "Certo! O cavalo é do reino das animais.",
+ "certo12_elefante": "Certo! O elefante é do reino das animais.",
+ "certo12_formiga": "Certo! A formiga é do reino das animais.",
+ "certo12_passarinho": "Certo! O passarinho é do reino das animais.",
+ "certo12_reino_fungi": "Certo! Os cogumelos é do reino das fungos.",
+ "certo12_reino_monera": "Certo! A bactéria é do reino das bactérias.",
+ "certo12_reino_protista": "Certo! A ameba é do reino das algas.",
+ "certo12_sapo": "Certo! O sapo é do reino das animais.",
+ "certo12_tomateiro": "Certo! O pé de tomate é do reino das plantas.",
+ "certo12_tubarao": "Certo! O tubarão é do reino das animais.",
+ "certo14_arvore": "Ligado! A árvore mora no reino das plantas.",
+ "certo14_arvore2": "Ligado! A árvore mora no reino das plantas.",
+ "certo14_arvore3": "Ligado! A árvore mora no reino das plantas.",
+ "certo14_borboleta": "Ligado! A borboleta mora no reino das animais.",
+ "certo14_borboleta2": "Ligado! A borboleta mora no reino das animais.",
+ "certo14_borboleta3": "Ligado! A mariposa mora no reino das animais.",
+ "certo14_cavalo": "Ligado! O cavalo mora no reino das animais.",
+ "certo14_elefante": "Ligado! O elefante mora no reino das animais.",
+ "certo14_menino": "Ligado! O menino mora no reino das animais.",
+ "certo14_milho": "Ligado! O pé de milho mora no reino das plantas.",
+ "certo14_reino_fungi": "Ligado! Os cogumelos mora no reino das fungos.",
+ "certo14_reino_monera": "Ligado! A bactéria mora no reino das bactérias.",
+ "certo14_reino_protista": "Ligado! A ameba mora no reino das algas.",
+ "certo14_rosa": "Ligado! A rosa mora no reino das plantas.",
+ "certo14_sapo": "Ligado! O sapo mora no reino das animais.",
+ "certo14_tomateiro": "Ligado! O pé de tomate mora no reino das plantas.",
+ "certo14_tubarao": "Ligado! O tubarão mora no reino das animais.",
+ "certo18_algas": "Isso mesmo! Essa descrição é a do reino das algas.",
+ "certo18_animais": "Isso mesmo! Essa descrição é a do reino das animais.",
+ "certo18_bacterias": "Isso mesmo! Essa descrição é a do reino das bactérias.",
+ "certo18_fungos": "Isso mesmo! Essa descrição é a do reino das fungos.",
+ "certo18_plantas": "Isso mesmo! Essa descrição é a do reino das plantas.",
+ "certo2": "Você achou todos! Olho de cientista.",
+ "certo20": "Cinco gavetas, cinco reinos! Você classificou como um cientista.",
+ "certo21_arvore": "Achou o intruso! A árvore é do reino das plantas, e os outros são do reino das animais.",
+ "certo21_arvore2": "Achou o intruso! A árvore é do reino das plantas, e os outros são do reino das animais.",
+ "certo21_arvore3": "Achou o intruso! A árvore é do reino das plantas, e os outros são do reino das animais.",
+ "certo21_borboleta2": "Achou o intruso! A borboleta é do reino das animais, e os outros são do reino das plantas.",
+ "certo21_cavalo": "Achou o intruso! O cavalo é do reino das animais, e os outros são do reino das plantas.",
+ "certo21_milho": "Achou o intruso! O pé de milho é do reino das plantas, e os outros são do reino das animais.",
+ "certo21_rosa": "Achou o intruso! A rosa é do reino das plantas, e os outros são do reino das animais.",
+ "certo21_sapo": "Achou o intruso! O sapo é do reino das animais, e os outros são do reino das plantas.",
+ "certo21_tubarao": "Achou o intruso! O tubarão é do reino das animais, e os outros são do reino das plantas.",
+ "certo22_alga": "Isso! Quem fabrica o próprio alimento com a luz do Sol é produtor. Toda a comida do mundo começa neles.",
+ "certo22_animal": "Isso! Quem precisa comer outro ser vivo é consumidor.",
+ "certo22_fungo": "Isso! Os fungos e as bactérias são os decompositores: eles desmancham os restos e devolvem tudo para a terra, para as plantas usarem de novo. Sem eles o mundo ficaria entulhado.",
+ "certo22_pao": "Isso! Os fungos e as bactérias são os decompositores: eles desmancham os restos e devolvem tudo para a terra, para as plantas usarem de novo. Sem eles o mundo ficaria entulhado.",
+ "certo22_planta": "Isso! Quem fabrica o próprio alimento com a luz do Sol é produtor. Toda a comida do mundo começa neles.",
+ "certo22_tronco": "Isso! Os fungos e as bactérias são os decompositores: eles desmancham os restos e devolvem tudo para a terra, para as plantas usarem de novo. Sem eles o mundo ficaria entulhado.",
+ "certo23_algas": "Você escreveu certo: Algas! É o reino de a ameba, o paramécio e as algas do mar.",
+ "certo23_animais": "Você escreveu certo: Animais! É o reino de o cachorro, a borboleta, o peixe e você.",
+ "certo23_bacterias": "Você escreveu certo: Bactérias! É o reino de as bactérias, que só se veem no microscópio.",
+ "certo23_fungos": "Você escreveu certo: Fungos! É o reino de o cogumelo, o bolor do pão e o fermento do bolo.",
+ "certo23_plantas": "Você escreveu certo: Plantas! É o reino de a árvore, o milho, a rosa e o tomateiro.",
+ "certo24": "Do menor ao maior, na ordem certa! Tem ser vivo que não cabe no olho e ser vivo que não cabe na sala.",
+ "certo25_algas": "A ponta do reino das algas está na sua coroa!",
+ "certo25_animais": "A ponta do reino das animais está na sua coroa!",
+ "certo25_bacterias": "A ponta do reino das bactérias está na sua coroa!",
+ "certo25_fungos": "A ponta do reino das fungos está na sua coroa!",
+ "certo25_plantas": "A ponta do reino das plantas está na sua coroa!",
+ "certo3": "Gavetas certas! Ser vivo nasce, cresce, se alimenta e morre.",
+ "certo4": "Três gavetas certas! Tem coisa que está viva, tem coisa que já foi viva e virou outra coisa, e tem coisa que nunca viveu.",
+ "certo5_borboleta": "Na ordem certa! O ciclo de vida da borboleta é assim: ovo, lagarta, casulo, borboleta adulta. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
+ "certo5_cachorro": "Na ordem certa! O ciclo de vida do cachorro é assim: filhote, cachorro jovem, cachorro adulto, cachorro velho. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
+ "certo5_formiga": "Na ordem certa! O ciclo de vida da formiga é assim: ovo, larva, pupa, formiga adulta. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
+ "certo5_menino": "Na ordem certa! O ciclo de vida do ser humano é assim: bebê, criança, adulto, idoso. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
+ "certo5_milho": "Na ordem certa! O ciclo de vida do pé de milho é assim: semente, broto, pé de milho, espiga com sementes. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
+ "certo5_passarinho": "Na ordem certa! O ciclo de vida do passarinho é assim: ovo, filhote, pássaro adulto, ninho novo. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
+ "certo5_planta": "Na ordem certa! O ciclo de vida da planta é assim: semente, broto, planta com flor, semente nova. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
+ "certo5_sapo": "Na ordem certa! O ciclo de vida do sapo é assim: ovo, girino, girino com pernas, sapo adulto. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
+ "certo6_algas": "Certo! Os seres do reino das algas são feitos de uma célula só. Um ser vivo inteiro numa célula.",
+ "certo6_animais": "Certo! Os seres do reino das animais são feitos de muitas células, milhões delas juntas.",
+ "certo6_bacterias": "Certo! Os seres do reino das bactérias são feitos de uma célula só. Um ser vivo inteiro numa célula.",
+ "certo6_fungos": "Certo! Os seres do reino das fungos são feitos de muitas células, milhões delas juntas.",
+ "certo6_plantas": "Certo! Os seres do reino das plantas são feitos de muitas células, milhões delas juntas.",
+ "certo7_algas": "Isso! Os seres do reino das algas são microscópicos: eles existem, mas o olho sozinho não alcança. Foi por isso que o microscópio foi inventado.",
+ "certo7_animais": "Isso! Os seres do reino das animais a gente vê sem aparelho nenhum. Nem todo ser vivo é microscópico.",
+ "certo7_bacterias": "Isso! Os seres do reino das bactérias são microscópicos: eles existem, mas o olho sozinho não alcança. Foi por isso que o microscópio foi inventado.",
+ "certo7_fungos": "Isso! Os seres do reino das fungos a gente vê sem aparelho nenhum. Nem todo ser vivo é microscópico.",
+ "certo7_plantas": "Isso! Os seres do reino das plantas a gente vê sem aparelho nenhum. Nem todo ser vivo é microscópico.",
+ "certo8_arvore": "Certo! A árvore fabrica o próprio alimento usando a luz do Sol. Quem faz isso é chamado de produtor.",
+ "certo8_arvore2": "Certo! A árvore fabrica o próprio alimento usando a luz do Sol. Quem faz isso é chamado de produtor.",
+ "certo8_arvore3": "Certo! A árvore fabrica o próprio alimento usando a luz do Sol. Quem faz isso é chamado de produtor.",
+ "certo8_borboleta2": "Certo! A borboleta não fabrica alimento: precisa comer outros seres vivos.",
+ "certo8_borboleta3": "Certo! A mariposa não fabrica alimento: precisa comer outros seres vivos.",
+ "certo8_cachorro": "Certo! O cachorro não fabrica alimento: precisa comer outros seres vivos.",
+ "certo8_cavalo": "Certo! O cavalo não fabrica alimento: precisa comer outros seres vivos.",
+ "certo8_formiga": "Certo! A formiga não fabrica alimento: precisa comer outros seres vivos.",
+ "certo8_reino_fungi": "Certo! Os cogumelos não fabrica alimento: precisa comer outros seres vivos.",
+ "certo8_reino_monera": "Certo! A bactéria não fabrica alimento: precisa comer outros seres vivos.",
+ "certo8_reino_protista": "Certo! A ameba fabrica o próprio alimento usando a luz do Sol. Quem faz isso é chamado de produtor.",
+ "certo8_rosa": "Certo! A rosa fabrica o próprio alimento usando a luz do Sol. Quem faz isso é chamado de produtor.",
+ "certo9": "Isso! Quem tem folha verde fabrica o alimento com o Sol. Quem não tem precisa comer.",
+ "certocoroa_algas": "Ponta da coroa pronta! O reino das algas: uma célula só, fabrica o alimento e a receita fica no cofrinho.",
+ "certocoroa_animais": "Ponta da coroa pronta! O reino das animais: muitas células, precisa comer o alimento e a receita fica no cofrinho.",
+ "certocoroa_bacterias": "Ponta da coroa pronta! O reino das bactérias: uma célula só, precisa comer o alimento e a receita fica solta.",
+ "certocoroa_fungos": "Ponta da coroa pronta! O reino das fungos: muitas células, precisa comer o alimento e a receita fica no cofrinho.",
+ "certocoroa_plantas": "Ponta da coroa pronta! O reino das plantas: muitas células, fabrica o alimento e a receita fica no cofrinho.",
+ "certoquadro_algas_cel": "Quadro completo! No reino das algas, as células: uma célula só.",
+ "certoquadro_algas_cof": "Quadro completo! No reino das algas, a receita: a receita no cofrinho.",
+ "certoquadro_animais_cel": "Quadro completo! No reino das animais, as células: muitas células.",
+ "certoquadro_animais_cof": "Quadro completo! No reino das animais, a receita: a receita no cofrinho.",
+ "certoquadro_bacterias_cel": "Quadro completo! No reino das bactérias, as células: uma célula só.",
+ "certoquadro_bacterias_com": "Quadro completo! No reino das bactérias, o alimento: precisa comer.",
+ "certoquadro_fungos_cof": "Quadro completo! No reino das fungos, a receita: a receita no cofrinho.",
+ "certoquadro_fungos_com": "Quadro completo! No reino das fungos, o alimento: precisa comer.",
+ "certoquadro_plantas_cel": "Quadro completo! No reino das plantas, as células: muitas células.",
+ "certoquadro_plantas_com": "Quadro completo! No reino das plantas, o alimento: fabrica com o Sol.",
+ "descr_algas": "É feito de uma célula só, guarda a receita no cofrinho e quase sempre mora na água.",
+ "descr_animais": "Tem muitas células, precisa comer outros seres vivos e guarda a receita no cofrinho. Anda, nada ou voa.",
+ "descr_bacterias": "É feito de uma célula só e nem cofrinho tem: a receita fica solta dentro dela. É o menor ser vivo de todos.",
+ "descr_fungos": "Tem muitas células e guarda a receita no cofrinho, mas não fabrica alimento: come o que está apodrecendo.",
+ "descr_plantas": "Tem muitas células, fabrica o próprio alimento com o Sol e guarda a receita no cofrinho. Fica no mesmo lugar.",
+ "dica10_nao": "Este é o menor de todos e o mais simples de todos: nem cofrinho ele tem.",
+ "dica10_tem": "Quase todo ser vivo guarda a receita num cofrinho dentro da célula. Só um reino não guarda.",
+ "dica11_0": "A legenda pede a canetinha verde. Escolha ela no estojo antes de pintar.",
+ "dica11_1": "A legenda pede a canetinha vermelha. Escolha ela no estojo antes de pintar.",
+ "dica11_2": "A legenda pede a canetinha azul. Escolha ela no estojo antes de pintar.",
+ "dica11_3": "A legenda pede a canetinha amarela. Escolha ela no estojo antes de pintar.",
+ "dica11_4": "A legenda pede a canetinha rosa. Escolha ela no estojo antes de pintar.",
+ "dica12_algas": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem uma célula só, fabrica o alimento e tem cofrinho.",
+ "dica12_animais": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem muitas células, precisa comer o alimento e tem cofrinho.",
+ "dica12_bacterias": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem uma célula só, precisa comer o alimento e não tem cofrinho.",
+ "dica12_fungos": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem muitas células, precisa comer o alimento e tem cofrinho.",
+ "dica12_plantas": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem muitas células, fabrica o alimento e tem cofrinho.",
+ "dica14_algas": "Este é o reino das algas: a ameba, o paramécio e as algas do mar.",
+ "dica14_animais": "Este é o reino das animais: o cachorro, a borboleta, o peixe e você.",
+ "dica14_bacterias": "Este é o reino das bactérias: as bactérias, que só se veem no microscópio.",
+ "dica14_fungos": "Este é o reino das fungos: o cogumelo, o bolor do pão e o fermento do bolo.",
+ "dica14_plantas": "Este é o reino das plantas: a árvore, o milho, a rosa e o tomateiro.",
+ "dica18_algas": "Volte na primeira frase da descrição: ela diz quantas células o ser tem. Depois veja o alimento.",
+ "dica18_animais": "Volte na primeira frase da descrição: ela diz quantas células o ser tem. Depois veja o alimento.",
+ "dica18_bacterias": "Volte na primeira frase da descrição: ela diz quantas células o ser tem. Depois veja o alimento.",
+ "dica18_fungos": "Volte na primeira frase da descrição: ela diz quantas células o ser tem. Depois veja o alimento.",
+ "dica18_plantas": "Volte na primeira frase da descrição: ela diz quantas células o ser tem. Depois veja o alimento.",
+ "dica1_agua": "A água não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_areia": "A areia não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_bola": "A bola não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_carro": "O carro não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_casa": "A casa não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_celular": "O celular não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_fogo": "O fogo não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_nuvem": "A nuvem não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_pedras": "As pedras não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_pedras2": "As pedras não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_sol": "O sol não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_sol2": "O sol não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_terra": "A terra não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_tijolos": "Os tijolos não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_urso_pelucia": "O urso de pelúcia não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_urso_pelucia2": "O ursinho de pano não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica1_vento": "O vento não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
+ "dica20": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho.",
+ "dica21_animais": "Olhe um por um e pergunte: este fabrica o alimento com o Sol ou precisa comer? O intruso responde diferente dos outros.",
+ "dica21_plantas": "Olhe um por um e pergunte: este fabrica o alimento com o Sol ou precisa comer? O intruso responde diferente dos outros.",
+ "dica22_alga": "Pergunte: ele fabrica o alimento, ele come outro ser vivo, ou ele desmancha o que já morreu?",
+ "dica22_animal": "Pergunte: ele fabrica o alimento, ele come outro ser vivo, ou ele desmancha o que já morreu?",
+ "dica22_fungo": "Pergunte: ele fabrica o alimento, ele come outro ser vivo, ou ele desmancha o que já morreu?",
+ "dica22_pao": "Pergunte: ele fabrica o alimento, ele come outro ser vivo, ou ele desmancha o que já morreu?",
+ "dica22_planta": "Pergunte: ele fabrica o alimento, ele come outro ser vivo, ou ele desmancha o que já morreu?",
+ "dica22_tronco": "Pergunte: ele fabrica o alimento, ele come outro ser vivo, ou ele desmancha o que já morreu?",
+ "dica23_algas": "Olhe a figura e escute de novo: é o reino das algas.",
+ "dica23_animais": "Olhe a figura e escute de novo: é o reino das animais.",
+ "dica23_bacterias": "Olhe a figura e escute de novo: é o reino das bactérias.",
+ "dica23_fungos": "Olhe a figura e escute de novo: é o reino das fungos.",
+ "dica23_plantas": "Olhe a figura e escute de novo: é o reino das plantas.",
+ "dica24": "Comece pelo que só se vê no microscópio. Depois vá subindo de tamanho.",
+ "dica2_agua": "A água nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_areia": "A areia nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_bola": "A bola nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_carro": "O carro nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_casa": "A casa nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_celular": "O celular nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_cupcake": "O cupcake já foi de um ser vivo, mas agora não nasce nem cresce mais. Procure quem ainda está vivo.",
+ "dica2_fogo": "O fogo nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_lanche": "O lanche já foi de um ser vivo, mas agora não nasce nem cresce mais. Procure quem ainda está vivo.",
+ "dica2_lapis": "O lápis já foi de um ser vivo, mas agora não nasce nem cresce mais. Procure quem ainda está vivo.",
+ "dica2_nuvem": "A nuvem nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_pedras": "As pedras nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_pedras2": "As pedras nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_sol": "O sol nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_sol2": "O sol nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_terra": "A terra nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_tijolos": "Os tijolos nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_urso_pelucia": "O urso de pelúcia nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_urso_pelucia2": "O ursinho de pano nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica2_vento": "O vento nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
+ "dica3": "Pergunte assim: isso nasce e cresce sozinho? Se nasce, é vivo. Se alguém fabricou, não é.",
+ "dica4": "Pense de onde veio: o lápis veio da madeira da árvore, então já foi vivo. A pedra não veio de ser vivo nenhum.",
+ "dica5": "Comece pelo começo de tudo: o menorzinho, aquele que ainda vai crescer.",
+ "dica6_algas": "Este é tão pequeno que só se vê no microscópio. Quem é assim costuma ter uma célula só.",
+ "dica6_animais": "Este a gente vê sem microscópio nenhum. Quem é grande assim é feito de muitas células.",
+ "dica6_bacterias": "Este é tão pequeno que só se vê no microscópio. Quem é assim costuma ter uma célula só.",
+ "dica6_fungos": "Este a gente vê sem microscópio nenhum. Quem é grande assim é feito de muitas células.",
+ "dica6_plantas": "Este a gente vê sem microscópio nenhum. Quem é grande assim é feito de muitas células.",
+ "dica7_nao": "Pense no tamanho: se você nunca viu um desses andando por aí, é porque ele é pequeno demais para o olho.",
+ "dica7_sim": "Este você já viu de verdade, sem aparelho nenhum. Então dá para ver sem o microscópio.",
+ "dica8_come": "Ele não tem folha verde, então não consegue fabricar alimento. Quem não fabrica precisa comer.",
+ "dica8_fabrica": "Procure a cor verde: é nela que a luz do Sol vira alimento dentro da folha.",
+ "dica9": "Olhe se ele tem folhas verdes. Folha verde é a fábrica de alimento que usa a luz do Sol.",
+ "dicacoroa_cel_algas": "Pense no tamanho: este é tão pequeno que só se vê no microscópio.",
+ "dicacoroa_cel_animais": "Pense no tamanho: este a gente vê sem aparelho nenhum.",
+ "dicacoroa_cel_bacterias": "Pense no tamanho: este é tão pequeno que só se vê no microscópio.",
+ "dicacoroa_cel_fungos": "Pense no tamanho: este a gente vê sem aparelho nenhum.",
+ "dicacoroa_cel_plantas": "Pense no tamanho: este a gente vê sem aparelho nenhum.",
+ "dicacoroa_cof_algas": "Pense no cofrinho: só as bactérias ficam sem ele.",
+ "dicacoroa_cof_animais": "Pense no cofrinho: só as bactérias ficam sem ele.",
+ "dicacoroa_cof_bacterias": "Pense no cofrinho: este é o único reino sem cofrinho.",
+ "dicacoroa_cof_fungos": "Pense no cofrinho: só as bactérias ficam sem ele.",
+ "dicacoroa_cof_plantas": "Pense no cofrinho: só as bactérias ficam sem ele.",
+ "dicacoroa_com_algas": "Pense na cor verde: este tem verde, então fabrica alimento com o Sol.",
+ "dicacoroa_com_animais": "Pense na cor verde: este não tem verde, então precisa comer.",
+ "dicacoroa_com_bacterias": "Pense na cor verde: este não tem verde, então precisa comer.",
+ "dicacoroa_com_fungos": "Pense na cor verde: este não tem verde, então precisa comer.",
+ "dicacoroa_com_plantas": "Pense na cor verde: este tem verde, então fabrica alimento com o Sol.",
+ "dicaquadro_cel_algas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense as células dele.",
+ "dicaquadro_cel_animais": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense as células dele.",
+ "dicaquadro_cel_bacterias": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense as células dele.",
+ "dicaquadro_cel_plantas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense as células dele.",
+ "dicaquadro_cof_algas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense a receita dele.",
+ "dicaquadro_cof_animais": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense a receita dele.",
+ "dicaquadro_cof_fungos": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense a receita dele.",
+ "dicaquadro_com_bacterias": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o alimento dele.",
+ "dicaquadro_com_fungos": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o alimento dele.",
+ "dicaquadro_com_plantas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o alimento dele.",
+ "escreva": "Escreva o nome do reino.",
+ "fase_adulto": "Adulto.",
+ "fase_bebe": "Bebê.",
+ "fase_borboleta_adulta": "Borboleta adulta.",
+ "fase_broto": "Broto.",
+ "fase_cachorro_adulto": "Cachorro adulto.",
+ "fase_cachorro_jovem": "Cachorro jovem.",
+ "fase_cachorro_velho": "Cachorro velho.",
+ "fase_casulo": "Casulo.",
+ "fase_crianca": "Criança.",
+ "fase_espiga_com_sementes": "Espiga com sementes.",
+ "fase_filhote": "Filhote.",
+ "fase_formiga_adulta": "Formiga adulta.",
+ "fase_girino": "Girino.",
+ "fase_girino_com_pernas": "Girino com pernas.",
+ "fase_idoso": "Idoso.",
+ "fase_lagarta": "Lagarta.",
+ "fase_larva": "Larva.",
+ "fase_ninho_novo": "Ninho novo.",
+ "fase_ovo": "Ovo.",
+ "fase_passaro_adulto": "Pássaro adulto.",
+ "fase_pe_de_milho": "Pé de milho.",
+ "fase_planta_com_flor": "Planta com flor.",
+ "fase_pupa": "Pupa.",
+ "fase_sapo_adulto": "Sapo adulto.",
+ "fase_semente": "Semente.",
+ "fase_semente_nova": "Semente nova.",
+ "fim": "Você chegou ao fim da Coroa dos Cinco Reinos! Agora você sabe olhar um ser vivo e perguntar três coisas: quantas células ele tem, de onde vem o alimento dele e onde a receita fica guardada. Com essas três perguntas, qualquer ser vivo do mundo encontra o reino dele.",
+ "focando": "Ainda está embaçado. Toque de novo para focar melhor.",
+ "foco_algas": "Focou! Apareceu a ameba.",
+ "foco_animais": "Focou! Apareceu a borboleta.",
+ "foco_bacterias": "Focou! Apareceu a bactéria.",
+ "foco_fungos": "Focou! Apareceu os cogumelos.",
+ "foco_plantas": "Focou! Apareceu as folhas.",
+ "folhaPronta": "Folha pronta! Pode virar a página.",
+ "frase_alga": "As algas do mar também usam a luz do Sol para fabricar alimento. Elas são que palavra?.",
+ "frase_animal": "Os animais não fabricam alimento: eles comem plantas ou outros animais. Por isso são chamados de que palavra?.",
+ "frase_fungo": "Os fungos e as bactérias comem restos de folhas e de bichos mortos e devolvem tudo para a terra. Eles são os que palavra?.",
+ "frase_pao": "O bolor que aparece no pão velho é um fungo. Fungos que comem restos são que palavra?.",
+ "frase_planta": "As plantas fabricam o próprio alimento com a luz do Sol. Por isso elas são chamadas de que palavra?.",
+ "frase_tronco": "Um tronco caído some devagarinho no meio do mato. Quem faz esse trabalho são os que palavra?.",
+ "ligue": "Agora toque no reino a que ele pertence.",
+ "novoCaderno": "Caderno novo! As figuras mudaram.",
+ "op_cofre": "Tem cofrinho.",
+ "op_come": "Precisa comer.",
+ "op_fabrica": "Fabrica o alimento com o Sol.",
+ "op_muitas": "Muitas células.",
+ "op_nao": "Solta na célula.",
+ "op_semmic": "Dá para ver sem o microscópio.",
+ "op_solta": "A receita fica solta.",
+ "op_sonomic": "Só dá para ver no microscópio.",
+ "op_tem": "Guardada no cofrinho.",
+ "op_uma": "Uma célula só.",
+ "p10enun": "A receita dele fica guardada num cofrinho, ou fica solta?",
+ "p11enun": "Pinte cada reino na cor da legenda.",
+ "p12enun": "Olhe a figura. De qual reino ela é?",
+ "p13enun": "Olhe a figura. De qual reino ela é?",
+ "p14enun": "Ligue cada ser vivo ao reino dele.",
+ "p15enun": "Ligue cada ser vivo ao reino dele.",
+ "p16enun": "Marque as três características deste reino.",
+ "p17enun": "Marque as três características deste reino.",
+ "p18enun": "Leia a descrição e toque no reino que ela descreve.",
+ "p19enun": "Uma casinha do quadro está vazia. Qual é?",
+ "p1enun": "Circule, ou toque, só os seres vivos.",
+ "p20enun": "Puxe cada ser vivo para a gaveta do reino dele.",
+ "p21enun": "Um deles não é deste reino. Ache o intruso.",
+ "p22enun": "Preencha a frase. Toque na palavra que falta.",
+ "p23enun": "Agora escreva o nome do reino. Toque no quadro vazio.",
+ "p24enun": "Toque do menor para o maior.",
+ "p25enun": "Escolha um ser vivo para cada reino. A coroa fica no fim.",
+ "p2enun": "Nesta cena, toque em tudo que está vivo.",
+ "p3enun": "Puxe cada figura para a gaveta certa: seres vivos ou não vivos.",
+ "p4enun": "Agora são três gavetas. Olhe bem antes de puxar.",
+ "p5enun": "Toque nas fases na ordem, do começo ao fim.",
+ "p6enun": "Este ser é feito de uma célula só, ou de muitas?",
+ "p7enun": "Olhe no microscópio. Toque na lente para focar.",
+ "p8enun": "Ele fabrica o próprio alimento com o Sol, ou precisa comer?",
+ "p9enun": "Puxe cada um para a gaveta do seu alimento.",
+ "pal_consumidores": "Consumidores.",
+ "pal_decompositores": "Decompositores.",
+ "pal_produtores": "Produtores.",
+ "pista_algas": "Quem é feito de uma célula só, mora na água e fabrica o alimento.",
+ "pista_animais": "Quem precisa comer outros seres vivos e se mexe pelo mundo.",
+ "pista_bacterias": "Quem é feito de uma célula só e nem cofrinho tem.",
+ "pista_fungos": "Quem come o que está apodrecendo — o cogumelo e o bolor do pão.",
+ "pista_plantas": "Quem fica parado no mesmo lugar e fabrica o alimento com o Sol.",
+ "quase": "Quase! Olhe de novo e tente outra vez.",
+ "reino_algas": "Reino das algas. São a ameba, o paramécio e as algas do mar.",
+ "reino_animais": "Reino das animais. São o cachorro, a borboleta, o peixe e você.",
+ "reino_bacterias": "Reino das bactérias. São as bactérias, que só se veem no microscópio.",
+ "reino_fungos": "Reino das fungos. São o cogumelo, o bolor do pão e o fermento do bolo.",
+ "reino_plantas": "Reino das plantas. São a árvore, o milho, a rosa e o tomateiro.",
+ "ser_agua": "A água.",
+ "ser_areia": "A areia.",
+ "ser_arvore": "A árvore.",
+ "ser_arvore2": "A árvore.",
+ "ser_arvore3": "A árvore.",
+ "ser_bebe": "O bebê.",
+ "ser_bola": "A bola.",
+ "ser_borboleta": "A borboleta.",
+ "ser_borboleta2": "A borboleta.",
+ "ser_borboleta3": "A mariposa.",
+ "ser_cachorro": "O cachorro.",
+ "ser_carro": "O carro.",
+ "ser_casa": "A casa.",
+ "ser_cavalo": "O cavalo.",
+ "ser_celular": "O celular.",
+ "ser_cupcake": "O cupcake.",
+ "ser_elefante": "O elefante.",
+ "ser_fogo": "O fogo.",
+ "ser_formiga": "A formiga.",
+ "ser_lanche": "O lanche.",
+ "ser_lapis": "O lápis.",
+ "ser_menino": "O menino.",
+ "ser_milho": "O pé de milho.",
+ "ser_nuvem": "A nuvem.",
+ "ser_passarinho": "O passarinho.",
+ "ser_pedras": "As pedras.",
+ "ser_pedras2": "As pedras.",
+ "ser_reino_animal": "A borboleta.",
+ "ser_reino_fungi": "Os cogumelos.",
+ "ser_reino_monera": "A bactéria.",
+ "ser_reino_plantae": "As folhas.",
+ "ser_reino_protista": "A ameba.",
+ "ser_rosa": "A rosa.",
+ "ser_sapo": "O sapo.",
+ "ser_sol": "O sol.",
+ "ser_sol2": "O sol.",
+ "ser_terra": "A terra.",
+ "ser_tijolos": "Os tijolos.",
+ "ser_tomateiro": "O pé de tomate.",
+ "ser_tubarao": "O tubarão.",
+ "ser_urso_pelucia": "O urso de pelúcia.",
+ "ser_urso_pelucia2": "O ursinho de pano.",
+ "ser_vento": "O vento.",
+ "vozOn": "Narração ligada!"
+};
+/*FALAS-FIM*/
+/*SILMAP-INI*/var SILMAP = {};/*SILMAP-FIM*/
+/*VOZOK-INI*/var VOZOK = {"d28uw5": 1, "1cbs2s1": 1, "wlfg1v": 1, "zp5tpn": 1, "tun5r5": 1, "17rua8t": 1, "gk82ge": 1, "uvoia8": 1, "1xm7iwo": 1, "1057r7g": 1, "5bxfpq": 1, "7zaw2l": 1, "1ss9ne9": 1, "q0bg2t": 1, "wr0xi0": 1, "1glccxz": 1, "mnix1": 1, "ux33dy": 1, "1sy2sgj": 1, "ku231u": 1, "l3rnh8": 1, "e7o0pp": 1, "101ufz0": 1, "1lzmpka": 1, "1h0rw8d": 1, "1967lsi": 1, "1vug4f8": 1, "11o5tn4": 1, "1le4liq": 1, "nnc7n4": 1, "uhxpbe": 1, "1xopjxy": 1, "540cxz": 1, "7mv56x": 1, "18plers": 1, "1t93y4g": 1, "jtd3rd": 1, "c6kj4v": 1, "zvs54": 1, "o502de": 1, "pivn8q": 1, "750wz2": 1, "1sc8pfg": 1, "12vyqgf": 1, "1jpnf86": 1, "gncxys": 1, "123vyh3": 1, "1gjwuno": 1, "do6k8y": 1, "31i5oj": 1, "ehsm51": 1, "j82qqh": 1, "1gdbf1k": 1, "nw6shu": 1, "g71tt4": 1, "1j7z01q": 1, "1mktsmy": 1, "174brv5": 1, "11bdpsf": 1, "19tua5g": 1, "1qioibw": 1, "124tiyb": 1, "1y27w1s": 1, "ypr65k": 1, "1dyp3sc": 1, "1bon2bi": 1, "me9pm5": 1, "nssl9t": 1, "120kwx1": 1, "1czbs8l": 1, "qacp0e": 1, "6n2g2q": 1, "n726ik": 1, "h9csxc": 1, "wbet1u": 1, "27yw85": 1, "m8nhs4": 1, "1ssd3at": 1, "1ncvjtk": 1, "krduh": 1, "sc8q3y": 1, "148swe5": 1, "255zct": 1, "1ewut71": 1, "1urhv69": 1, "6lpbrv": 1, "1k2ljvs": 1, "zcnr2s": 1, "q7g649": 1, "fxkwvh": 1, "115so28": 1, "1os4rtb": 1, "n9v31q": 1, "hhajl8": 1, "1o2essw": 1, "q8tq2r": 1, "equi12": 1, "rd7l81": 1, "19xcjit": 1, "oze54l": 1, "t0y7tc": 1, "8qwxz7": 1, "3uixk5": 1, "iijxe3": 1, "1touwne": 1, "1skl6am": 1, "10m4vvm": 1, "n5ua7b": 1, "3xk0qo": 1, "vvvn9w": 1, "11dzhpu": 1, "grxahn": 1, "4ys00a": 1, "1k1xkjy": 1, "x0i4zf": 1, "13v2xf9": 1, "au59e8": 1, "57htc2": 1, "1tsak2s": 1, "1rxyeim": 1, "f8r2ww": 1, "ph5ycs": 1, "rlpb2a": 1, "1rx853r": 1, "1hz6enj": 1, "9l3odj": 1, "o2x8of": 1, "zzdnw0": 1, "1004wka": 1, "1e8ziz4": 1, "3bl37f": 1, "6vn2w5": 1, "ccot4e": 1, "1qmxybq": 1, "210s6g": 1, "1tx0l3r": 1, "dlsjx7": 1, "18wcb7p": 1, "dep4xy": 1, "1rosv2t": 1, "106orm3": 1, "1dw078q": 1, "2rgfs0": 1, "1ox5xnr": 1, "jazrbv": 1, "mdgac5": 1, "iy0euo": 1, "xl0zkp": 1, "1i5a6r2": 1, "10jmubx": 1, "1v9zgf2": 1, "v59z1r": 1, "17yhqjy": 1, "y4aoju": 1, "1t03siq": 1, "1lc4ome": 1, "u4izuc": 1, "195zrjb": 1, "1vu683i": 1, "hdipgg": 1, "1le988c": 1, "56dvoy": 1, "1mfuf9t": 1, "uwut5u": 1, "1oveepo": 1, "1qmrv3q": 1, "12df9tp": 1, "1ty5q9d": 1, "17wict7": 1, "113yn7b": 1, "1eea5jk": 1, "1yah1d8": 1, "sdhrtu": 1, "1uwhnhj": 1, "17dpo4u": 1, "1fwrgft": 1, "1u0gp2y": 1, "1k7n237": 1, "17ppnj5": 1, "1bxm24m": 1, "13h2vxx": 1, "1rdwxx7": 1, "gkvz2o": 1, "8exzcn": 1, "1rovybt": 1, "j7wcun": 1, "1mxczni": 1, "1syfr2j": 1, "1xpx9u0": 1, "1557vuc": 1, "fuihux": 1, "ue3sk2": 1, "1c64n6": 1, "1o7talo": 1, "xl4p8f": 1, "1eb0lph": 1, "9vcsks": 1, "1k6xyk": 1, "2wiles": 1, "1dmxpqk": 1, "p1bx5b": 1, "jyk9fp": 1, "141n0l5": 1, "1h35qii": 1, "1lz5ycs": 1, "gc2ha2": 1, "r8by35": 1, "1h1dsv2": 1, "5ma8pn": 1, "1cqot33": 1, "1nkwsl": 1, "qqlr91": 1, "x9nnnr": 1, "nne3xf": 1, "15h5hfh": 1, "yj3gf1": 1, "ogfdep": 1, "1187sfw": 1, "hq5exn": 1, "33buvz": 1, "10exx8h": 1, "vwrfsa": 1, "1rtm6os": 1, "8oup33": 1, "1k0m8ga": 1, "4sjyv9": 1, "2ub4xt": 1, "1xcym5k": 1, "1mgrklw": 1, "hahgf7": 1, "16gbegx": 1, "gtw7up": 1, "3hmnr0": 1, "1ok5r4a": 1, "1o7gbkd": 1, "roxycx": 1, "1v9gct": 1, "boz42v": 1, "19z127i": 1, "f5y71r": 1, "1eye2hu": 1, "1i2jf4v": 1, "jsn8sx": 1, "3pw2yn": 1, "139c5zq": 1, "1955tqn": 1, "lfeacj": 1, "1j4l8vn": 1, "e9i3yk": 1, "fiksua": 1, "199jvl": 1, "bipvoj": 1, "furi4l": 1, "wwc3ty": 1, "3oskfr": 1, "1icfacj": 1, "1l7iv9z": 1, "162hwi1": 1, "hkduc9": 1, "rkc48i": 1, "u5iqdw": 1, "q0fvjo": 1, "1corzb9": 1, "1ipbjy7": 1, "n18nwo": 1, "185t0i2": 1, "pw9ct2": 1, "19g0iqv": 1, "1tjaqnx": 1, "a29vag": 1, "11wadum": 1, "pdmlok": 1, "1jl5klt": 1, "vjujfs": 1, "1894ra": 1, "1jdr6g4": 1, "d6l6e6": 1, "130ic7j": 1, "14xswp3": 1, "vt4kup": 1, "a9wzcq": 1, "19xjkgh": 1, "1hh98lr": 1, "hlhkv8": 1, "1xh32y4": 1, "148dviw": 1, "1pazvbo": 1, "1y31sk7": 1, "ste0dn": 1, "16q4lqi": 1, "x7ltok": 1, "16ct900": 1, "hkxxe5": 1, "qqq99l": 1, "16pe36i": 1, "u7tbjm": 1, "1x2mvr8": 1, "1gsc8r2": 1, "modhm8": 1, "svturp": 1, "sbp94j": 1, "1yb5qw9": 1, "l5fbib": 1, "17ypelm": 1, "1ma0103": 1, "1rdfe6n": 1, "evwsyu": 1, "m673c": 1, "qtpii9": 1, "rey3bh": 1, "qub61y": 1, "1oz5xts": 1, "171ezwl": 1, "t3sr9l": 1, "qpm1ec": 1, "1xgekyi": 1, "1xji0nz": 1, "homiu2": 1, "1i5ixnc": 1, "3emy1i": 1, "43cdxd": 1, "14bk6de": 1, "swkns7": 1};/*VOZOK-FIM*/
+
+/* ---------- o nome de cada figura, para o texto alternativo ----------
+   ⚠️ Aqui NAO ha sílabas: este caderno é de multiplicação, e a lista de
+   sílabas que veio no clone era conteúdo da atividade de origem (uma das
+   armadilhas do `_padrao/CLONAR-MOTOR.md`: o pedaço não dá erro nenhum, só
+   fica mentindo dentro do arquivo). */
+var NOMEFIG = {
+ maca: "maçã", banana: "banana", laranja: "laranja", uva: "uva", ovo: "ovo",
+ bolacha: "bolacha", bolo: "bolo", sorvete: "sorvete",
+ pipoca: "pipoca", bola: "bola", estrela: "estrela",
+ flor: "flor", peixe: "peixe", pato: "pato", carro: "carrinho",
+ cadeira: "cadeira", abelha: "abelha", borboleta: "borboleta",
+ bandeja: "bandeja", caixa: "caixa", trofeu: "troféu"
+};
+function esc(w){ return NOMEFIG[w] || String(w); }
+/* ⚠️ A MARCA DE VERSÃO NA FIGURA (set/2026, defeito que chegou ao Marcos).
+   Quando eu troco uma figura, o NOME do arquivo continua o mesmo — e o navegador
+   dele serve a cópia velha do cache. Ele viu preto na alça da xícara numa figura
+   que no repositório já estava limpa. Não adianta consertar o desenho se a
+   criança continua recebendo o antigo: subir o VIMG obriga o navegador a buscar
+   tudo de novo. REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
+var VIMG = 2;
+/* ⚠️⚠️ `draggable="false"` NÃO É DETALHE (set/2026, três horas de caça).
+   Toda imagem é arrastável de fábrica no navegador. Quando a criança apertava
+   a figura e puxava, o Chrome começava o SEU arrasto nativo do `<img>` e
+   disparava um `pointercancel` — o nosso arrasto morria no primeiro milímetro,
+   sem erro nenhum na tela. Com isto desligado, o gesto é nosso. */
+function img(w, cls){ return '<img class="' + (cls || "fig") + '" draggable="false" src="img/rn_' + w + '.png?v=' + VIMG + '" alt="' + esc(w) + '">'; }
+
+/* ---------- estado ---------- */
+var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
+var vozLigada = true, _narr = null, vozPtBR = null, ATIVA = null;
+var CHAVE_LS = "coroa_cinco_reinos_4ano";
+/* ⚠️ AS 25 FOLHAS, NA ORDEM — e a ordem É a escada.
+   A escada sai do CRIVO (`_sequencias/POTE-REINOS.md`), não da minha cabeça:
+     o que é estar VIVO (1–5) → os TRÊS CRITÉRIOS, um de cada vez (6–10)
+     → os cinco reinos, um a um (11–15) → cruzar reino × característica
+     (16–19) → usar: classificar, o intruso, a importância, escrever (20–23)
+     → o tamanho e a coroa da criança (24–25).
+   ⚠️ DUAS FOLHAS NÃO VIERAM DE FOLHA DE PAPEL NENHUMA, e está dito no
+      comentário de cada uma no `folhas.js`: a 7 (o microscópio) e a 24 (do menor
+      ao maior). As duas vieram do CURRÍCULO — Blumenau pede *"Seres
+      microscópicos (uso de lupa e microscópio)"* e nenhuma das 40 folhas
+      colhidas põe a criança a olhar por um. Mentir a origem no lugar mais fácil
+      é o começo de mentir em tudo.
+   ⚠️ E VEM EM BLOCO, não espalhado (regra do Marcos: *"as crianças me dizem
+      'isso eu já fiz'"*): escolher o reino em 12-13, ligar em 14-15, a coroa em
+      16-17 — colados, subindo um degrau, nunca a mesma tela de novo no fim. */
+var NOMES = [
+  /*  1 */ "O que está vivo?",
+  /*  2 */ "Seres vivos na cena",
+  /*  3 */ "Vivo ou não vivo?",
+  /*  4 */ "Vivo, já foi vivo, nunca viveu",
+  /*  5 */ "O ciclo de vida",
+  /*  6 */ "Uma célula ou muitas?",
+  /*  7 */ "O microscópio",
+  /*  8 */ "De onde vem o alimento?",
+  /*  9 */ "Fabrica ou come?",
+  /* 10 */ "O cofrinho da receita",
+  /* 11 */ "Pinte os cinco reinos",
+  /* 12 */ "De qual reino é este ser?",
+  /* 13 */ "Os reinos que não se veem",
+  /* 14 */ "Ligue o bicho ao reino",
+  /* 15 */ "Ligue a planta e os minúsculos",
+  /* 16 */ "A coroa dos três grandes",
+  /* 17 */ "A coroa dos minúsculos",
+  /* 18 */ "Quem é este reino?",
+  /* 19 */ "Complete o quadro",
+  /* 20 */ "As cinco gavetas",
+  /* 21 */ "Ache o intruso",
+  /* 22 */ "Quem produz, quem come, quem desmancha",
+  /* 23 */ "Escreva o nome do reino",
+  /* 24 */ "Do menor ao maior",
+  /* 25 */ "A minha coroa"];
+/*<dossie-dados>*/
+var CURRICULO = {
+ "ano": 4,
+ "componente": "Ciências",
+ "rede": "Currículo da Educação Básica do Sistema Municipal de Ensino de Blumenau",
+ "documento": "_curriculo/blumenau.txt",
+ "degrau": 1,
+ "evidencia": [
+  "Jogado do começo ao fim no navegador, item por item, antes de publicar.",
+  "Um jogador automático resolve cada item pela resposta declarada e confere se a folha fecha.",
+  "Leiaute medido em 6 tamanhos de tela: nenhuma figura cortada e nenhum alvo de toque menor que 40 px.",
+  "Toda tela é narrada com voz real, e o texto de cada fala é conferido contra o que está escrito na tela.",
+  "Contraste do texto medido no pixel real do fundo, não na folha de estilo.",
+  "As 45 figuras foram recortadas das próprias folhas de papel usadas em sala (d05, d07, d20, d22, d26) — a criança reencontra na tela o desenho da atividade impressa.",
+  "As habilidades citadas neste dossiê são conferidas, palavra por palavra, contra o currículo da rede."
+ ],
+ "observacoes": [
+  "O critério do NÚCLEO (o \"cofrinho da receita\", folha 10) não está nos conceitos do 4º ano da rede: entrou por pedido do professor, que incluiu \"tipo de célula\" entre os critérios. Por isso ele aparece em linguagem de criança e nunca como palavra a decorar — as palavras procarionte e eucarionte são citadas uma única vez, como apelido de gente grande.",
+  "Duas folhas não vieram das folhas de papel colhidas, e sim do currículo: a 7 (o microscópio) e a 24 (do menor ao maior). Nenhuma das 40 folhas lidas põe a criança a olhar por um microscópio, e a rede pede exatamente isso.",
+  "Os reinos Fungi, Protista e Monera aparecem sempre com a mesma figura — a da folha d07 —, porque é a única figura de cada um desses reinos em toda a colheita de papel."
+ ],
+ "objetivos": [
+  {
+   "objetivo": "O que é estar vivo",
+   "folhas": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Cadeias alimentares simples",
+   "habilidade": "HABILIDADE: \"Conhecer os reinos dos seres vivos, sua importância e classificação.\""
+  },
+  {
+   "objetivo": "Contar as células: uma ou muitas",
+   "folhas": [
+    6
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Microrganismos",
+   "habilidade": "HABILIDADE: \"Seres unicelulares e multicelulares.\""
+  },
+  {
+   "objetivo": "Os seres que só o microscópio mostra",
+   "folhas": [
+    7,
+    24
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Microrganismos",
+   "habilidade": "HABILIDADE: \"Seres microscópicos (uso de lupa e microscópio).\""
+  },
+  {
+   "objetivo": "De onde vem o alimento",
+   "folhas": [
+    8,
+    9
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Cadeias alimentares simples",
+   "habilidade": "HABILIDADE: \"como fonte primária de energia na produção de alimentos.\""
+  },
+  {
+   "objetivo": "Onde a receita fica guardada",
+   "folhas": [
+    10
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Microrganismos",
+   "habilidade": "HABILIDADE: \"Conhecer os reinos dos seres vivos, sua importância e classificação.\""
+  },
+  {
+   "objetivo": "Os cinco reinos, um a um",
+   "folhas": [
+    11,
+    12,
+    13
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Microrganismos",
+   "habilidade": "HABILIDADE: \"Reino Monera, Fungi e Protista.\""
+  },
+  {
+   "objetivo": "Ligar o ser vivo ao reino dele",
+   "folhas": [
+    14,
+    15
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Cadeias alimentares simples",
+   "habilidade": "HABILIDADE: \"Reino das plantas e dos animais.\""
+  },
+  {
+   "objetivo": "Cruzar reino e característica",
+   "folhas": [
+    16,
+    17,
+    18,
+    19
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Cadeias alimentares simples",
+   "habilidade": "HABILIDADE: \"Conhecer os reinos dos seres vivos, sua importância e classificação.\""
+  },
+  {
+   "objetivo": "Classificar sozinha nos cinco reinos",
+   "folhas": [
+    20,
+    21,
+    23
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Microrganismos",
+   "habilidade": "HABILIDADE: \"Classificação em reinos.\""
+  },
+  {
+   "objetivo": "A importância: quem produz, quem come, quem desmancha",
+   "folhas": [
+    22
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Cadeias alimentares simples",
+   "habilidade": "HABILIDADE: \"Relacionar a participação de fungos e bactérias no processo de decomposição, reconhecendo a importância ambiental desse processo.\""
+  },
+  {
+   "objetivo": "Registrar o que aprendeu",
+   "folhas": [
+    25
+   ],
+   "pratica": "Vida e Evolução",
+   "objeto": "Cadeias alimentares simples",
+   "habilidade": "HABILIDADE: \"Conhecer os reinos dos seres vivos, sua importância e classificação.\""
+  }
+ ]
+};
+/*</dossie-dados>*/
+var CORES = ["c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5",
+             "c1", "c2", "c3", "c4", "c5", "c1", "c2", "c3", "c4", "c5",
+             "c1", "c2", "c3", "c4", "c5"];
+
+/* ---------- som ---------- */
+var AC = null;
+function ac(){ try{ if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); }catch(e){} return AC; }
+function bip(f, dur, tipo, vol){
+  var a = ac(); if(!a) return;
+  try{
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = tipo || "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(vol || .13, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, a.currentTime + dur);
+    o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + dur);
+  }catch(e){}
+}
+function sPasso(){ bip(560, .07, "triangle", .08); }
+function sTecla(){ bip(760, .05, "square", .05); }
+function sCerto(){ bip(680, .1, "sine", .12); setTimeout(function(){ bip(920, .14, "sine", .12); }, 95); }
+function sErro(){ bip(190, .17, "sawtooth", .07); }
+function sFesta(){ [523, 659, 784, 1047].forEach(function(f, i){ setTimeout(function(){ bip(f, .16, "sine", .12); }, i * 110); }); }
+function sPalma(){ bip(1200, .04, "square", .07); setTimeout(function(){ bip(420, .06, "sawtooth", .05); }, 18); }
+
+/* ---------- voz ---------- */
+function chaveVoz(t){
+  t = (t || "").replace(/\s+/g, " ").trim().toLowerCase();
+  var h = 5381, i;
+  for(i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function achaVoz(){
+  try{
+    var vs = window.speechSynthesis.getVoices();
+    for(var i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt-br") === 0) return vs[i];
+    for(i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt") === 0) return vs[i];
+  }catch(e){}
+  return null;
+}
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = function(){ vozPtBR = achaVoz(); };
+function calar(){
+  try{ if(_narr){ _narr.pause(); _narr.currentTime = 0; } }catch(e){}
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir";
+}
+function falarNavegador(t){
+  if(!window.speechSynthesis) return;
+  try{
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = "pt-BR"; u.rate = .92; if(!vozPtBR) vozPtBR = achaVoz(); if(vozPtBR) u.voice = vozPtBR;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+var ultimaFala = null;
+function falar(k){
+  var t = FALAS[k]; if(!t) return;
+  ultimaFala = k;
+  if(!vozLigada) return;
+  calar();
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir tocando";
+  function fim(){ var x = document.getElementById("bOuvir"); if(x) x.className = "zap ouvir"; }
+  var key = chaveVoz(t);
+  if(VOZOK[key]){
+    if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+    _narr.onended = fim; _narr.onerror = function(){ falarNavegador(t); setTimeout(fim, 2500); };
+    _narr.src = "audio/rn_" + key + ".mp3";
+    try{ _narr.currentTime = 0; }catch(e){}
+    var p = _narr.play(); if(p && p["catch"]) p["catch"](function(){ fim(); });
+    return;
+  }
+  falarNavegador(t); setTimeout(fim, Math.min(12000, 400 + t.length * 62));
+}
+function falarDepois(k, ms){ setTimeout(function(){ falar(k); }, ms || 0); }
+
+/* ---------- utilidades ---------- */
+function el(tag, cls, html){ var e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+function salvar(){ try{ ST.quando = Date.now(); localStorage.setItem(CHAVE_LS, JSON.stringify(ST)); }catch(e){} }
+function carregar(){ try{ var s = localStorage.getItem(CHAVE_LS); if(!s) return null; var o = JSON.parse(s); if(!o || !o.quando || Date.now() - o.quando > 55 * 60 * 1000 || !o.folha) return null; return o; }catch(e){ return null; } }
+function tentativa(id, ok){ if(!ST.tent[id]) ST.tent[id] = {erros: 0, ok: false}; if(ok) ST.tent[id].ok = true; else ST.tent[id].erros++; salvar(); }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function baralha(a){ var b = a.slice(), i, j, t; for(i = b.length - 1; i > 0; i--){ j = rnd(i + 1); t = b[i]; b[i] = b[j]; b[j] = t; } return b; }
+function pega(pool, qtd){ return baralha(pool).slice(0, Math.min(qtd, pool.length)); }
+function confete(n){
+  var c = document.getElementById("confete"), cores = ["#6d5ae6", "#ffd233", "#15a34a", "#e0562f", "#1179bf"], i;
+  for(i = 0; i < n; i++){
+    (function(i){
+      var d = el("div", "cf");
+      d.style.left = rnd(100) + "%"; d.style.top = "-20px";
+      d.style.background = cores[rnd(cores.length)];
+      d.style.animationDelay = (i * 26) + "ms";
+      c.appendChild(d); setTimeout(function(){ if(d.parentNode) c.removeChild(d); }, 1900 + i * 26);
+    })(i);
+  }
+}
+
+/* ---------- registro das respostas (o boletim e o relatório leem daqui) ---------- */
+var RESP = {};   /* id -> {certo, pag} */
+function registra(id, pag, certo){ RESP[id] = {certo: certo, pag: pag}; }
+function acertou(id, fala){
+  if(ST.resp[id]) return;
+  tentativa(id, true); ST.resp[id] = 1; salvar(); sCerto();
+  var segs = document.querySelectorAll('[data-nome="' + id + '"]'), sg;
+  for(sg = 0; sg < segs.length; sg++)
+    segs[sg].className = segs[sg].className.replace(/ ?revelado/, "") + " revelado";
+  if(fala) falar(fala);
+  setTimeout(function(){ confereFolha(RESP[id].pag); }, 850);
+}
+function errou(id, dica){
+  tentativa(id, false); sErro();
+  falar(ST.tent[id].erros >= 2 && dica ? dica : "quase");
+}
+
+/* ---------- sorteio da folha ---------- */
+/* ⚠️ O POTE ERA UM TERÇO DO ALFABETO (consertado em 13/set/2026). Cada folha
+   guardava só 10 das 26 letras, e o caderno terminava em 22 a 37 minutos — o
+   portão `_qa/duracao.py` reprova abaixo de 40, porque a aula do laboratório tem
+   55 e turma ociosa foi a cobrança que deu origem a ele. O conserto não foi
+   inventar folha nova: foi pôr no pote **o alfabeto inteiro**, que é o assunto
+   deste caderno. Agora cada folha sorteia 11 ou 12 de 21 a 26 — e duas crianças
+   da mesma turma não fazem a mesma folha. */
+/* ⚠️ O SAQUE DE CADA FOLHA — e ele ENCOLHEU quando o caderno foi para 25.
+   Com onze folhas cada uma sacava 10 a 12 itens; com 25, o mesmo saque daria
+   ~290 itens e três aulas de trabalho. O que enche a aula é o número de
+   FOLHAS (a criança sente que andou), não o tamanho de cada lista — lista
+   comprida da mesma coisa é exatamente o "isso eu já fiz" que o Marcos ouve.
+   ⚠️ Folha nova = linha nova AQUI **e** em `idsDaPagina`. Sem a segunda, o
+      app estoura em `F.pN.length` — já aconteceu hoje. */
+function novaFolha(){
+  return {
+    p1:  pega(ITENS.p1,  5), p2:  pega(ITENS.p2,  5), p3:  pega(ITENS.p3,  4),
+    p4:  pega(ITENS.p4,  4), p5:  pega(ITENS.p5,  4), p6:  pega(ITENS.p6,  6),
+    p7:  pega(ITENS.p7,  3), p8:  pega(ITENS.p8,  6), p9:  pega(ITENS.p9,  4),
+    p10: pega(ITENS.p10, 5), p11: pega(ITENS.p11, 5), p12: pega(ITENS.p12, 6),
+    p13: pega(ITENS.p13, 6), p14: pega(ITENS.p14, 2), p15: pega(ITENS.p15, 2),
+    p16: pega(ITENS.p16, 3), p17: pega(ITENS.p17, 3), p18: pega(ITENS.p18, 5),
+    p19: pega(ITENS.p19, 6), p20: pega(ITENS.p20, 2), p21: pega(ITENS.p21, 5),
+    p22: pega(ITENS.p22, 5), p23: pega(ITENS.p23, 5), p24: pega(ITENS.p24, 4),
+    p25: pega(ITENS.p25, 7)
+  };
+}
+</script>
+<!--<dossie-html>-->
+<div id="dossie" role="dialog" aria-label="Dossiê pedagógico" aria-modal="true">
+  <div class="cx">
+    <h3>Dossiê pedagógico</h3>
+    <div id="dsCorpo"></div>
+    <button class="bt cinza" id="dsFechar">Fechar</button>
+  </div>
+</div>
+<!--</dossie-html>-->
+<script src="folhas.js"></script>
+</body></html>

@@ -106,6 +106,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
+| **A Coroa dos Cinco Reinos** | Ciências (4º ano): os critérios que separam os seres vivos (uma célula ou muitas, fabrica ou come o alimento, onde a receita fica guardada) e os cinco reinos — Animais, Plantas, Fungos, Algas e Bactérias; inclui o microscópio, a decomposição e 25 folhas de folha viva, com voz em tudo. As 45 figuras foram recortadas das folhas de papel usadas em sala | `_reinos` | https://vidalprof.github.io/a-coroa-dos-cinco-reinos/ |
 | **UNO dos Números** (4º ano) | Matemática + estratégia: UNO contra um robô que PENSA (guarda coringa, encadeia pula/gira, ataca quando você está quase ganhando, conta cartas). De vez em quando a mesa impõe uma REGRA DA RODADA sobre o número da carta — múltiplos de 3 e de 5, dobro e metade da carta da mesa. Tutorial em slides, narração e alívio invisível para quem perde seguido | `_uno345` | https://vidalprof.github.io/uno-dos-numeros-345/?ano=4 |
 | **A Bancada da Divisão** | Matemática (4º ano): DIVISÃO do começo pela CONTA ARMADA com MATERIAL DOURADO que o aluno ARRASTA (a dinâmica da Oficina da Divisão, agora como peça do motor) — repartir um bloco por grupo, trocar a sobra (o "abaixa") e digitar o resultado. 32 contas progressivas | `_gincana` | https://vidalprof.github.io/a-bancada-da-divisao/ |
 | **A Oficina das Palavras** | Aumentativo/diminutivo, sílabas, mau×mal, verbos | `_por4` | https://vidalprof.github.io/a-oficina-das-palavras/ (painel embutido) |
