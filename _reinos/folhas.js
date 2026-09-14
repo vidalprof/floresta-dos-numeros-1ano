@@ -1613,7 +1613,15 @@ function f11(d, pi){
     (function(it, i){
       var id = "n11_" + i, box = item(i + 1), R = reino(it.r);
       registra(id, pi, it.r);
-      box.appendChild(el("div", "legenda", "<b>" + R.dia + "</b> &rarr; " + LAPIS[it.cor].n));
+      /* ⚠️ A LEGENDA É O ALVO DESTA FOLHA, e por isso vai DECLARADA (`data-alvo`).
+         O portão 1i4 reprova, com razão, texto de apoio que entrega a resposta —
+         mas aqui a folha de papel d05 IMPRIME a legenda e manda *"pinte cada
+         reino seguindo a legenda"*: a tarefa é justamente SEGUIR uma legenda,
+         não lembrar de cor. Esconder a legenda mudaria o exercício. Declarado é
+         diferente de escondido: o log do portão imprime quais foram. */
+      var lg = el("div", "legenda", "<b>" + R.dia + "</b> &rarr; " + LAPIS[it.cor].n);
+      lg.setAttribute("data-alvo", "1");
+      box.appendChild(lg);
       var b = el("button", "petala", figGrande(R.fig, "figbicho") +
                  '<span class="pnome">' + R.dia + "</span>");
       b.setAttribute("data-qa", "pinta-" + id + "-" + it.r);
