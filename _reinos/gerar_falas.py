@@ -71,6 +71,36 @@ ORDEM = [u"animais", u"plantas", u"fungos", u"algas", u"bacterias"]
 DIZR = {u"animais": u"animais", u"plantas": u"plantas", u"fungos": u"fungos",
         u"algas": u"algas", u"bacterias": u"bactérias"}
 
+# ⚠️ O ARTIGO DO REINO — 14/set/2026, pergunta do Marcos sobre a folha da célula.
+#    Dezesseis frases deste arquivo diziam "do reino DAS %s" com o artigo FIXO, e
+#    dois dos cinco reinos são masculinos: saía **"do reino das animais"** e
+#    **"do reino das fungos"** em 49 falas — e a criança OUVE isso, porque cada
+#    fala vira mp3. Erro de português que qualquer professor pega na primeira
+#    tela, e que o portão do revisor (0r) não pegou.
+ARTR = {u"animais": u"dos", u"plantas": u"das", u"fungos": u"dos",
+        u"algas": u"das", u"bacterias": u"das"}
+
+
+def reinoDe(k):
+    u"""«dos animais» · «das plantas» — o artigo vem do reino, não é chutado."""
+    return u"%s %s" % (ARTR[k], DIZR[k])
+
+
+def plural(nome, sing, plur):
+    u"""Escolhe a forma do verbo pelo NOME da figura. Toda figura de nome plural
+    («os cogumelos») quebrava qualquer modelo que fixasse o verbo no singular:
+    saía *"os cogumelos é do reino"*, *"os cogumelos não fabrica"*, *"Apareceu os
+    cogumelos"*. É a mesma família do artigo do reino, achada junto com ela."""
+    n = nome.strip().lower()
+    return plur if n.startswith((u"os ", u"as ")) else sing
+
+
+def ehSaoDe(nome):
+    u"""«é» ou «são», conforme o NOME da figura. "os cogumelos é do reino" era a
+    outra metade do mesmo defeito: o modelo fixava o verbo no singular."""
+    n = nome.strip().lower()
+    return u"são" if n.startswith((u"os ", u"as ")) else u"é"
+
 # ============================================================
 #  AS FIGURAS — o nome falado, o artigo e a que reino pertencem.
 #  ⚠️ O NOME NÃO É A CHAVE DO ARQUIVO. `urso_pelucia` é o PNG; o que a criança
@@ -446,8 +476,13 @@ for w in NOMEF:
     F[u"ser_" + w] = cap(NOMEF[w]) + u"."
 # ---- o nome de cada reino
 for k in ORDEM:
-    F[u"reino_" + k] = (u"Reino das %s. São %s."
-                        % (DIZR[k], REINOS[k][u"quem"]))
+    # ⚠️ "Reino DAS %s" com R maiusculo escapou da troca em massa e, com o
+    #    reinoDe() ja trazendo o artigo, virou "Reino das das algas". Quem pegou
+    #    foi o revisor (0o), no mesmo minuto — e serve de lembrete de que o
+    #    conserto de um molde tem que olhar TODOS os moldes, nao os que o meu
+    #    `grep` casou.
+    F[u"reino_" + k] = (u"Reino %s. São %s."
+                        % (reinoDe(k), REINOS[k][u"quem"]))
 
 # ---- as opções que se repetem em várias folhas
 F[u"op_uma"] = u"Uma célula só."
@@ -468,7 +503,15 @@ ENUN = {
     3: u"Puxe cada figura para a gaveta certa: seres vivos ou não vivos.",
     4: u"Agora são três gavetas. Olhe bem antes de puxar.",
     5: u"Toque nas fases na ordem, do começo ao fim.",
-    6: u"Este ser é feito de uma célula só, ou de muitas?",
+    # ⚠️ A PALAVRA "CÉLULA" CHEGAVA COMO PERGUNTA (14/set/2026, o Marcos:
+    #    *"falou de célula única etc em uma folha, não sei se isso o 4 ano já
+    #    sabe"*). Ele estava certo em desconfiar: as folhas 1 a 5 tratam de vivo
+    #    x não vivo, e a 6 abria perguntando "uma célula só ou muitas?" sem que
+    #    nenhuma tela antes tivesse dito o que é uma célula. O conteúdo É do 4º
+    #    ano da rede (está verbatim: "Seres unicelulares e multicelulares"), mas
+    #    a palavra tem que ser APRESENTADA antes de virar pergunta.
+    6: u"Todo ser vivo é feito de células — pecinhas tão pequenas que só se "
+       u"veem no microscópio. Este ser é feito de uma célula só, ou de muitas?",
     7: u"Olhe no microscópio. Toque na lente para focar.",
     8: u"Ele fabrica o próprio alimento com o Sol, ou precisa comer?",
     9: u"Puxe cada um para a gaveta do seu alimento.",
@@ -496,8 +539,12 @@ for n in ENUN:
 F[u"certo1"] = u"Isso! Todos esses nascem, crescem e um dia morrem: estão vivos."
 for w in set(sum([it[u"todos"] for it in IT[u"p1"]], [])):
     if VIDA[w] != u"vivo":
-        F[u"dica1_" + w] = (u"%s não nasce nem cresce sozinho. Procure quem "
-                            u"nasce, cresce e pode ter filhos." % cap(NOMEF[w]))
+        F[u"dica1_" + w] = (u"%s não %s nem %s %s. Procure quem "
+                            u"nasce, cresce e pode ter filhos."
+                            % (cap(NOMEF[w]),
+                               plural(NOMEF[w], u"nasce", u"nascem"),
+                               plural(NOMEF[w], u"cresce", u"crescem"),
+                               plural(NOMEF[w], u"sozinho", u"sozinhos")))
 
 # ---- folha 2
 F[u"certo2"] = u"Você achou todos! Olho de cientista."
@@ -551,15 +598,15 @@ F[u"dica5"] = u"Comece pelo começo de tudo: o menorzinho, aquele que ainda vai 
 for k in ORDEM:
     R = REINOS[k]
     if R[u"cel"] == u"uma":
-        F[u"certo6_" + k] = (u"Certo! Os seres do reino das %s são feitos de uma "
+        F[u"certo6_" + k] = (u"Certo! Os seres do reino %s são feitos de uma "
                              u"célula só. Um ser vivo inteiro numa célula."
-                             % DIZR[k])
+                             % reinoDe(k))
         F[u"dica6_" + k] = (u"Este é tão pequeno que só se vê no microscópio. "
                             u"Quem é assim costuma ter uma célula só.")
     else:
-        F[u"certo6_" + k] = (u"Certo! Os seres do reino das %s são feitos de "
+        F[u"certo6_" + k] = (u"Certo! Os seres do reino %s são feitos de "
                              u"muitas células, milhões delas juntas."
-                             % DIZR[k])
+                             % reinoDe(k))
         F[u"dica6_" + k] = (u"Este a gente vê sem microscópio nenhum. Quem é "
                             u"grande assim é feito de muitas células.")
 
@@ -571,16 +618,18 @@ F[u"dica7_sim"] = (u"Este você já viu de verdade, sem aparelho nenhum. Então 
                    u"para ver sem o microscópio.")
 for it in IT[u"p7"]:
     k = it[u"r"]
-    F[u"foco_" + k] = (u"Focou! Apareceu %s." % NOMEF[REINOS[k][u"fig"]])
+    F[u"foco_" + k] = (u"Focou! %s %s."
+                       % (plural(NOMEF[REINOS[k][u"fig"]], u"Apareceu", u"Apareceram"),
+                          NOMEF[REINOS[k][u"fig"]]))
     if it[u"certo"] == u"nao":
-        F[u"certo7_" + k] = (u"Isso! Os seres do reino das %s são microscópicos: "
+        F[u"certo7_" + k] = (u"Isso! Os seres do reino %s são microscópicos: "
                              u"eles existem, mas o olho sozinho não alcança. "
                              u"Foi por isso que o microscópio foi inventado."
-                             % DIZR[k])
+                             % reinoDe(k))
     else:
-        F[u"certo7_" + k] = (u"Isso! Os seres do reino das %s a gente vê sem "
+        F[u"certo7_" + k] = (u"Isso! Os seres do reino %s a gente vê sem "
                              u"aparelho nenhum. Nem todo ser vivo é "
-                             u"microscópico." % DIZR[k])
+                             u"microscópico." % reinoDe(k))
 
 # ---- folha 8
 F[u"dica8_fabrica"] = (u"Procure a cor verde: é nela que a luz do Sol vira "
@@ -590,12 +639,14 @@ F[u"dica8_come"] = (u"Ele não tem folha verde, então não consegue fabricar "
 for it in IT[u"p8"]:
     w, k = it[u"w"], it[u"r"]
     if REINOS[k][u"com"] == u"fabrica":
-        F[u"certo8_" + w] = (u"Certo! %s fabrica o próprio alimento usando a luz "
+        F[u"certo8_" + w] = (u"Certo! %s %s o próprio alimento usando a luz "
                              u"do Sol. Quem faz isso é chamado de produtor."
-                             % cap(NOMEF[w]))
+                             % (cap(NOMEF[w]), plural(NOMEF[w], u"fabrica", u"fabricam")))
     else:
-        F[u"certo8_" + w] = (u"Certo! %s não fabrica alimento: precisa comer "
-                             u"outros seres vivos." % cap(NOMEF[w]))
+        F[u"certo8_" + w] = (u"Certo! %s não %s alimento: %s comer "
+                             u"outros seres vivos."
+                             % (cap(NOMEF[w]), plural(NOMEF[w], u"fabrica", u"fabricam"),
+                                plural(NOMEF[w], u"precisa", u"precisam")))
 
 # ---- folha 10
 F[u"dica10_tem"] = (u"Quase todo ser vivo guarda a receita num cofrinho dentro "
@@ -604,9 +655,9 @@ F[u"dica10_nao"] = (u"Este é o menor de todos e o mais simples de todos: nem "
                     u"cofrinho ele tem.")
 for k in ORDEM:
     if REINOS[k][u"cof"] == u"tem":
-        F[u"certo10_" + k] = (u"Isso! A célula dos seres do reino das %s guarda "
+        F[u"certo10_" + k] = (u"Isso! A célula dos seres do reino %s guarda "
                               u"a receita num cofrinho. Gente grande chama esse "
-                              u"cofrinho de núcleo." % DIZR[k])
+                              u"cofrinho de núcleo." % reinoDe(k))
     else:
         F[u"certo10_" + k] = (u"Isso! A célula das bactérias não tem cofrinho: a "
                               u"receita fica solta lá dentro. É o único reino "
@@ -616,8 +667,8 @@ for k in ORDEM:
 # ---- folha 11
 for it in IT[u"p11"]:
     k = it[u"r"]
-    F[u"certo11_" + k] = (u"Pintado! O reino das %s ficou com a cor da legenda."
-                          % DIZR[k])
+    F[u"certo11_" + k] = (u"Pintado! O reino %s ficou com a cor da legenda."
+                          % reinoDe(k))
 CORNOME = [u"verde", u"vermelha", u"azul", u"amarela", u"rosa"]
 for i, c in enumerate(CORNOME):
     F[u"dica11_%d" % i] = (u"A legenda pede a canetinha %s. Escolha ela no "
@@ -627,8 +678,8 @@ for i, c in enumerate(CORNOME):
 for pote in (u"p12", u"p13"):
     for it in IT[pote]:
         w, k = it[u"w"], it[u"r"]
-        F[u"certo12_" + w] = (u"Certo! %s é do reino das %s."
-                              % (cap(NOMEF[w]), DIZR[k]))
+        F[u"certo12_" + w] = (u"Certo! %s %s do reino %s."
+                              % (cap(NOMEF[w]), ehSaoDe(NOMEF[w]), reinoDe(k)))
 for k in ORDEM:
     F[u"dica12_" + k] = (u"Faça as três perguntas: quantas células, de onde vem "
                          u"o alimento e se a receita tem cofrinho. Este aqui "
@@ -641,18 +692,18 @@ for k in ORDEM:
 for pote in (u"p14", u"p15"):
     for it in IT[pote]:
         for par in it[u"g"]:
-            F[u"certo14_" + par[0]] = (u"Ligado! %s mora no reino das %s."
-                                       % (cap(NOMEF[par[0]]), DIZR[par[1]]))
+            F[u"certo14_" + par[0]] = (u"Ligado! %s %s no reino %s."
+                                       % (cap(NOMEF[par[0]]), u"moram" if ehSaoDe(NOMEF[par[0]]) == u"são" else u"mora", reinoDe(par[1])))
 for k in ORDEM:
-    F[u"dica14_" + k] = (u"Este é o reino das %s: %s."
-                         % (DIZR[k], REINOS[k][u"quem"]))
+    F[u"dica14_" + k] = (u"Este é o reino %s: %s."
+                         % (reinoDe(k), REINOS[k][u"quem"]))
 
 # ---- folhas 16 e 17 (a coroa)
 for k in ORDEM:
     R = REINOS[k]
     F[u"certocoroa_" + k] = (
-        u"Ponta da coroa pronta! O reino das %s: %s, %s o alimento e %s."
-        % (DIZR[k],
+        u"Ponta da coroa pronta! O reino %s: %s, %s o alimento e %s."
+        % (reinoDe(k),
            u"uma célula só" if R[u"cel"] == u"uma" else u"muitas células",
            u"fabrica" if R[u"com"] == u"fabrica" else u"precisa comer",
            u"a receita fica no cofrinho" if R[u"cof"] == u"tem" else u"a receita fica solta"))
@@ -672,8 +723,8 @@ for k in ORDEM:
 # ---- folha 18
 for k in ORDEM:
     F[u"descr_" + k] = DESCR[k]
-    F[u"certo18_" + k] = (u"Isso mesmo! Essa descrição é a do reino das %s."
-                          % DIZR[k])
+    F[u"certo18_" + k] = (u"Isso mesmo! Essa descrição é a do reino %s."
+                          % reinoDe(k))
     F[u"dica18_" + k] = (u"Volte na primeira frase da descrição: ela diz quantas "
                          u"células o ser tem. Depois veja o alimento.")
 
@@ -685,8 +736,8 @@ ROTC = {u"cel": u"as células", u"com": u"o alimento", u"cof": u"a receita"}
 for it in IT[u"p19"]:
     k, c = it[u"r"], it[u"falta"]
     F[u"certoquadro_%s_%s" % (k, c)] = (
-        u"Quadro completo! No reino das %s, %s: %s."
-        % (DIZR[k], ROTC[c], DIZC[c][REINOS[k][c]]))
+        u"Quadro completo! No reino %s, %s: %s."
+        % (reinoDe(k), ROTC[c], DIZC[c][REINOS[k][c]]))
     F[u"dicaquadro_%s_%s" % (c, k)] = (
         u"Olhe as duas casinhas que já estão preenchidas: elas contam quem é "
         u"este reino. Agora pense %s dele." % ROTC[c])
@@ -694,9 +745,10 @@ for it in IT[u"p19"]:
 # ---- folha 21 (o intruso)
 for it in IT[u"p21"]:
     w = it[u"intruso"]
-    F[u"certo21_" + w] = (u"Achou o intruso! %s é do reino das %s, e os outros "
-                          u"são do reino das %s."
-                          % (cap(NOMEF[w]), DIZR[DEQUEM[w]], DIZR[it[u"r"]]))
+    F[u"certo21_" + w] = (u"Achou o intruso! %s %s do reino %s, e os outros "
+                          u"são do reino %s."
+                          % (cap(NOMEF[w]), ehSaoDe(NOMEF[w]),
+                             reinoDe(DEQUEM[w]), reinoDe(it[u"r"])))
 for k in (u"animais", u"plantas"):
     F[u"dica21_" + k] = (u"Olhe um por um e pergunte: este fabrica o alimento "
                          u"com o Sol ou precisa comer? O intruso responde "
@@ -725,8 +777,8 @@ for k in ORDEM:
     F[u"pista_" + k] = cap(PISTA[k]) + u"."
     F[u"certo23_" + k] = (u"Você escreveu certo: %s! É o reino de %s."
                           % (REINOS[k][u"dia"].capitalize(), REINOS[k][u"quem"]))
-    F[u"dica23_" + k] = (u"Olhe a figura e escute de novo: é o reino das %s."
-                         % DIZR[k])
+    F[u"dica23_" + k] = (u"Olhe a figura e escute de novo: é o reino %s."
+                         % reinoDe(k))
 
 # ---- folha 24
 F[u"certo24"] = (u"Do menor ao maior, na ordem certa! Tem ser vivo que não cabe "
@@ -736,7 +788,7 @@ F[u"dica24"] = (u"Comece pelo que só se vê no microscópio. Depois vá subindo
 
 # ---- folha 25
 for k in ORDEM:
-    F[u"certo25_" + k] = (u"A ponta do reino das %s está na sua coroa!" % DIZR[k])
+    F[u"certo25_" + k] = (u"A ponta do reino %s está na sua coroa!" % reinoDe(k))
 
 
 # ============================================================

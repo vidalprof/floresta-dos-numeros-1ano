@@ -1469,7 +1469,7 @@ function f5(d, pi){
    *"Seres unicelulares e multicelulares"*. */
 function f6(d, pi){
   faixa(d, pi, NOMES[5]);
-  enunciado(d, pi, "Este ser é feito de <b>uma célula só</b> ou de <b>muitas</b>?", "p6enun");
+  enunciado(d, pi, "Todo ser vivo é feito de <b>células</b> — pecinhas tão pequenas que só se veem no microscópio. Este ser é feito de <b>uma célula só</b> ou de <b>muitas</b>?", "p6enun");
   var L = ST.folha.p6;
   for(var i = 0; i < L.length; i++){
     (function(it, i){

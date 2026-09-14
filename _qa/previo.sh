@@ -101,6 +101,10 @@ PORTOES=(
   #    da folha certa; este pergunta se veio SO a figura, sem o quadradinho de
   #    marcar, sem a moldura tracejada e sem a linha da coluna.
   "1i6 sobra da pauta da folha|python3 _qa/sobra_da_folha.py $PASTA"
+  # ⭐ 0r2) a criança OUVE o que está escrito no falas.json. O revisor (0r) pega
+  #    digitação; a concordância de artigo e de verbo, ninguém media — e os Cinco
+  #    Reinos foram ao ar com 54 falas erradas ("do reino DAS animais").
+  "0r2 concordancia nas falas|python3 _qa/concordancia.py $PASTA"
   "1l2 ligar com rotulo repetido|python3 _qa/ligar_rotulo.py $PASTA"
   # ⭐ so responde em jogo de UNO (nos outros ele sai com 2 = "nao medi")
   "3u regra da compra (UNO)|node _qa/uno.js $ARQ"

@@ -84,6 +84,10 @@ PORTOES=(
   "0o6 halo branco no recorte|python3 _qa/halo.py $PASTA"
   "1i5 figura veio da folha de papel|python3 _qa/figura_da_folha.py $PASTA"
   "1i6 sobra da pauta da folha|python3 _qa/sobra_da_folha.py $PASTA"
+  # ⭐ 0r2) a criança OUVE o que está escrito no falas.json. O revisor (0r) pega
+  #    digitação; a concordância de artigo e de verbo, ninguém media — e os Cinco
+  #    Reinos foram ao ar com 54 falas erradas ("do reino DAS animais").
+  "0r2 concordancia nas falas|python3 _qa/concordancia.py $PASTA"
   "1c resto de clone|python3 _qa/clone.py $ARQ"
   "1c2 duplicatas (mesma figura, dois nomes)|python3 _qa/duplicatas.py $PASTA"
   "1l2 ligar com rotulo repetido|python3 _qa/ligar_rotulo.py $PASTA"
