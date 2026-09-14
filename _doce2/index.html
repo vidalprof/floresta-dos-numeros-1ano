@@ -841,6 +841,42 @@ function cacauEl(tam){
 }
 function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
 function limpa(){ tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML=""; btnOuvir=null; btnDica=null; }
+
+/* ⭐⭐ AS DUAS PORTAS — o teclado DE VERDADE também resolve (regra da casa).
+   Palavras do Marcos: *"seria interessante se o aluno além de teclar no teclado
+   virtual funcionasse se ele tocasse no teclado de verdade, as duas opções"*.
+   No PC do laboratório TEM teclado e a criança vai digitar; no celular, não tem.
+   Nunca só uma porta.
+
+   ⚠️ E não é enfeite: o portão `_qa/dinamicas.py` REPROVA a atividade que tem
+   teclado na tela e não escuta o de verdade — foi ele que pegou esta aqui antes
+   de publicar.
+
+   Como funciona: as teclas da tela são `<div class="tecl">` com o número
+   escrito dentro. Ao apertar um número no teclado, procuramos a tecla VISÍVEL
+   com aquele número e disparamos o clique dela — o mesmo caminho do dedo, sem
+   duplicar regra nenhuma. Enter/espaço tocam o botão principal da vez. */
+document.addEventListener("keydown", function(ev){
+  try{
+    var k = ev.key;
+    if(k === undefined) return;
+    /* não atrapalha quem está escrevendo o nome na capa */
+    var alvo = ev.target || {};
+    var tag = (alvo.tagName || "").toLowerCase();
+    if(tag === "input" || tag === "textarea") return;
+    if(!/^[0-9]$/.test(k)) return;
+    var teclas = document.querySelectorAll(".tecl"), i;
+    for(i = 0; i < teclas.length; i++){
+      var t = teclas[i];
+      if(t.offsetParent === null) continue;                  /* só o que está na tela */
+      if((t.textContent || "").trim() !== k) continue;
+      if((t.className || "").indexOf("ok") >= 0) continue;    /* já acertada */
+      ev.preventDefault();
+      t.click();
+      return;
+    }
+  }catch(e){}
+}, false);
 function montaBarra(dId,dTxt){
   barra.innerHTML="";
   btnOuvir=el("button","mini","Ouvir de novo");
