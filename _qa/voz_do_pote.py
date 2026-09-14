@@ -46,8 +46,16 @@ import sys
 
 
 def bloco(html, nome, ini, fim):
-    m = re.search(r"/\*%s\*/\s*var %s = (\{.*?\})\s*;\s*/\*%s\*/" % (ini, nome, fim),
-                  html, re.S)
+    # ⚠️ O FECHO DO BLOCO NAO E O FECHO DO OBJETO (licao paga em 14/set/2026,
+    #    nos cinco reinos, e a MESMA que o `_qa/duracao.py` pagou no mesmo dia).
+    #    O gerador daquele caderno escreve DOIS vars dentro do bloco marcado
+    #    (`ITENS` e `FIGNOME`, o nome falado de cada figura). A ancora antiga
+    #    exigia o `};` colado no `/*ITENS-FIM*/`; com o segundo var no meio ela
+    #    nao casava, o portao dizia "NAO MEDI" e a banca inteira passava batido
+    #    por cima da pergunta *"tudo que o pote sorteia tem voz?"* — que e a
+    #    pergunta que ele existe para fazer. Agora ele para no `};` do proprio
+    #    objeto e nao se importa com o que venha depois DENTRO do bloco.
+    m = re.search(r"/\*%s\*/\s*var %s = (\{.*?\})\s*;" % (ini, nome), html, re.S)
     if not m:
         m = re.search(r"var %s = (\{.*?\n\});" % nome, html, re.S)
     if not m:
