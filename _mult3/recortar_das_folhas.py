@@ -66,11 +66,11 @@ PREFIXO = u"mu_"
 CAIXAS = [
     # --- d11 "Responda fazendo multiplicação": cinco linhas, uma por bicho.
     #     As cinco bandas de tinta colorida bateram com as cinco perguntas.
-    (u"passarinho", u"d11", (0.190, 0.287, 0.03, 0.40)),
-    (u"borboleta",  u"d11", (0.332, 0.449, 0.03, 0.40)),
-    (u"sorvete",    u"d11", (0.490, 0.607, 0.03, 0.40)),
-    (u"abelha",     u"d11", (0.651, 0.781, 0.03, 0.40)),
-    (u"sol",        u"d11", (0.828, 0.947, 0.03, 0.40)),
+    (u"passarinho", u"d11", (0.190, 0.287, 0.060, 0.150)),
+    (u"borboleta",  u"d11", (0.332, 0.449, 0.060, 0.140)),
+    (u"sorvete",    u"d11", (0.490, 0.607, 0.060, 0.135)),
+    (u"abelha",     u"d11", (0.651, 0.781, 0.060, 0.120)),
+    (u"sol",        u"d11", (0.828, 0.947, 0.060, 0.224)),
 
     # --- d15 "Escreva a adição e a multiplicação": bola de basquete (exemplo),
     #     apontador e patinho. ⚠️ o x corta o COPO DE LÁPIS decorativo da margem
@@ -96,7 +96,7 @@ CAIXAS = [
     (u"laco",       u"d05", (0.690, 0.860, 0.30, 0.50)),
 
     # --- d21 "Adição de parcelas iguais" (pinguins do exemplo) e os 10 vasos.
-    (u"pinguim",    u"d21", (0.212, 0.290, 0.04, 0.45)),
+    (u"pinguim",    u"d21", (0.212, 0.290, 0.050, 0.130)),
     (u"roseira",    u"d21", (0.458, 0.560, 0.05, 0.95)),
 ]
 
@@ -106,7 +106,7 @@ def acha(cod):
     return a[0] if a else None
 
 
-def maior_ilha(cam, faixa, cola=6, piso=0.0006):
+def maior_ilha(cam, faixa, cola=2, piso=150):
     u"""A MAIOR ilha de tinta COLORIDA dentro da faixa — um exemplar do objeto.
 
     ⚠️ POR QUE TINTA COLORIDA E NÃO TINTA ESCURA: a folha de multiplicação é
@@ -134,7 +134,7 @@ def maior_ilha(cam, faixa, cola=6, piso=0.0006):
             continue
         dentro = (rot[sl] == i) & m[sl]
         q = int(dentro.sum())
-        if q < piso * H * W or q <= melhor:
+        if q < piso or q <= melhor:
             continue
         yy, xx = np.where(dentro)
         melhor = q
