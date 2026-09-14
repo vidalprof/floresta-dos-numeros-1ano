@@ -92,6 +92,34 @@ segunda parte, o trabalho não está feito.
 
 ---
 
+## 2b. 📸 ⭐ MOSTRAR AS FOLHAS DE PAPEL — SEMPRE (ordem do Marcos, 14/set/2026)
+
+**Palavras dele:** *"sempre mostre as folhas das atividades que encontrou, que
+passaram pelo crivo do especialista"*.
+
+Não é pedido de relatório: é **prova**. A regra da origem diz que o gesto vem do
+comando impresso da folha de papel — e até aqui essa prova ficava só escrita, num
+`.md` que ele teria de abrir para conferir. Escrever "veio do papel d29" é uma
+afirmação minha; **mostrar o d29** é a evidência.
+
+**Como fica, e é parte da entrega, não um extra:**
+
+1. O crivo (`_sequencias/POTE-<assunto>.md`) continua igual: comando impresso
+   VERBATIM, o verbo, e o veredito de cada folha colhida.
+2. **Monta-se um CONTATO-FOLHA das APROVADAS**, uma miniatura por folha, com o
+   código (`d29`) e **o que ela virou no caderno** escrito embaixo. Fica guardado
+   em `_sequencias/crivo/<assunto>-aprovadas-*.png`, commitado junto.
+3. **Esse contato-folha vai para o Marcos na mesma mensagem em que o caderno é
+   entregue** — nunca só o link.
+4. O que foi **recusado** continua listado no crivo com o motivo; se ele pedir,
+   monta-se o contato-folha das recusadas também.
+
+⚠️ E vale para o que JÁ existe: os cadernos de alfabetização foram entregues sem
+este contato-folha. Quando algum deles for mexido, o contato-folha da colheita
+dele entra junto.
+
+---
+
 ## 3. ⚠️ OS ERROS JÁ PAGOS NESTE FORMATO — um por um
 
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o

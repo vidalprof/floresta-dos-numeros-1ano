@@ -87,7 +87,6 @@ FIGS = [
     (u"ovo", u"ovo", u"ovos"),
     (u"bolacha", u"bolacha", u"bolachas"),
     (u"bolo", u"bolo", u"bolos"),
-    (u"brigadeiro", u"brigadeiro", u"brigadeiros"),
     (u"sorvete", u"sorvete", u"sorvetes"),
     (u"pipoca", u"pipoca", u"pipocas"),
     (u"bola", u"bola", u"bolas"),
@@ -113,7 +112,7 @@ def quantas(v, w):
     return (dzf(v) if w in FEM else dz(v))
 
 FRUTAS = [u"maca", u"banana", u"laranja", u"uva"]
-DOCES = [u"bolo", u"sorvete", u"brigadeiro", u"bolacha", u"pipoca"]
+DOCES = [u"bolo", u"sorvete", u"bolacha", u"pipoca"]
 
 
 def fig(i):
@@ -235,7 +234,7 @@ for a in (2, 3):
 
 # --- 22: quantas cestas diferentes
 IT[u"p22"] = [{u"a": a, u"b": b, u"fr": FRUTAS[:a], u"dc": DOCES[:b]}
-              for a in (2, 3, 4) for b in (2, 3, 4, 5) if a * b <= 20]
+              for a in (2, 3, 4) for b in (2, 3, 4) if a * b <= 20]
 
 # --- 23 e 24: os problemas do armazém
 #     ⚠️ O TEXTO AQUI É O MESMO QUE A VOZ LÊ (a fala se monta deste campo `t`,
@@ -246,7 +245,7 @@ IT[u"p23"] = [
     {u"t": u"A dona Rita fez 5 pacotes de bolachas. Em cada pacote pôs 10 bolachas. Quantas bolachas ela fez?", u"q": 5, u"n": 10, u"w": u"bolacha"},
     {u"t": u"O armazém recebeu 2 engradados de laranjas. Cada engradado tem 10 laranjas. Quantas laranjas chegaram?", u"q": 2, u"n": 10, u"w": u"laranja"},
     {u"t": u"São 5 cestas de maçãs, com 3 maçãs em cada cesta. Quantas maçãs são ao todo?", u"q": 5, u"n": 3, u"w": u"maca"},
-    {u"t": u"Cada saquinho leva 4 brigadeiros. O Beto encheu 4 saquinhos. Quantos brigadeiros ele usou?", u"q": 4, u"n": 4, u"w": u"brigadeiro"},
+    {u"t": u"Cada saquinho leva 4 bolachas. O Beto encheu 4 saquinhos. Quantas bolachas ele usou?", u"q": 4, u"n": 4, u"w": u"bolacha"},
     {u"t": u"Há 3 caixas de sorvete e cada caixa tem 10 sorvetes. Quantos sorvetes há no freezer?", u"q": 3, u"n": 10, u"w": u"sorvete"},
     {u"t": u"O armazém arrumou 2 fileiras de bolas, com 5 bolas em cada fileira. Quantas bolas arrumou?", u"q": 2, u"n": 5, u"w": u"bola"},
 ]

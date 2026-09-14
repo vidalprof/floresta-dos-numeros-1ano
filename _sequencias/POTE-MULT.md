@@ -144,10 +144,10 @@ rede lhe dá. Também será reforçada por decisão de currículo, e isso fica d
 | 9 | Escreva o total da multiplicação | digitar | papel d04 ("__ X __ = __") |
 | 10 | A tabela do armazém | completar | papel d07 ("COMPLETE A TABELA") |
 | 11–15 | As máquinas do 2, 5, 10, 3 e 4 | máquina | papéis d06 e d03 (o nó "2 X" e a máquina) |
-| 16–17 | De 2 em 2 … de 10 em 10 | sequenciar | papel d21 ("complete a sequência") |
-| 18 | O tapete do armazém | escolher | **currículo** (3 de 40 folhas; reforço declarado) |
-| 19 | Pinte o tapete na malha | pintar | papel d20 + reforço de currículo |
-| 20 | A virada do tapete | prever | papel d24 ("3 x 4 = 4 x 3"), com a aposta acrescentada |
+| 16–17 | De 2 em 2 … de 10 em 10 | sequenciar | papel d28 ("Descubra o segredo e complete as sequências numéricas") + d22 |
+| 18 | O tapete do armazém | escolher | papel d19 ("OBSERVE OS TAPETES… NA VERTICAL E NA HORIZONTAL") + d21 |
+| 19 | Pinte o tapete na malha | pintar | papel d28 ("Utilize a malha para representar as seguintes multiplicações") |
+| 20 | A virada do tapete | prever | **decisão minha** — nenhuma das 40 folhas pede a comutativa; apoia-se na folha 18 |
 | 21 | A cesta que falta | marcar | **currículo** — combinação: zero folhas de papel |
 | 22 | Quantas cestas diferentes? | digitar | **currículo** — idem |
 | 23–24 | Os problemas do armazém | digitar | papel d31 ("Resolva os problemas") |

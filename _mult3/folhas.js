@@ -1546,8 +1546,10 @@ function f13(d, pi){ maquina(d, pi, ST.folha.p13, 10, "p13"); }
 function f14(d, pi){ maquina(d, pi, ST.folha.p14, 3,  "p14"); }
 function f15(d, pi){ maquina(d, pi, ST.folha.p15, 4,  "p15"); }
 
-/* 16 e 17 — CONTAR DE TANTO EM TANTO (papel d21: "complete a sequência 2, 4,
-   6, ___"). É a ponte entre contar e multiplicar: a criança que conta de 5 em 5
+/* 16 e 17 — CONTAR DE TANTO EM TANTO (papel d28, segunda metade: "Descubra o
+   segredo e complete as sequências numéricas" — e as cinco filas impressas ali
+   são justamente de 2 em 2, 3 em 3, 4 em 4, 5 em 5 e 10 em 10, os cinco fatores
+   da rede; também no d22: "Complete na sequência: 5×1, 5×2, 5×3…"). É a ponte entre contar e multiplicar: a criança que conta de 5 em 5
    já tem a tabuada do 5 na boca antes de decorar coisa nenhuma. */
 function sequencia(d, pi, L){
   faixa(d, pi, NOMES[pi - 1]);
@@ -1587,10 +1589,13 @@ function sequencia(d, pi, L){
 function f16(d, pi){ sequencia(d, pi, ST.folha.p16); }
 function f17(d, pi){ sequencia(d, pi, ST.folha.p17); }
 
-/* 18 — O TAPETE (papel d19: "quantas fileiras? quantos em cada fileira?").
-   ⚠️ A DISPOSIÇÃO RETANGULAR é uma das três ideias que o currículo do 3º ano
-      acrescenta — e ela NÃO aparece em nenhuma das quarenta folhas colhidas com
-      o nome certo. Entrou declarada, tirada do currículo e não do pote. */
+/* 18 — O TAPETE (papel d19: "OBSERVE OS TAPETES. CONTE A QUANTIDADE DE
+   QUADRADINHOS NA VERTICAL E NA HORIZONTAL… ESCREVA A MULTIPLICAÇÃO"; e o d21,
+   que dá nome à ideia: "ORGANIZAÇÃO RETANGULAR — 2 LINHAS COM 4 COLUNAS = 8").
+   ⚠️ A DISPOSIÇÃO RETANGULAR aparece em só 3 das 40 folhas colhidas (d19, d21
+      e d28) — bem menos do que o peso que a rede lhe dá. Por isso ela ocupa
+      DUAS folhas aqui: é reforço decidido pelo currículo, sobre material que o
+      papel deu. */
 function f18(d, pi){
   faixa(d, pi, NOMES[17]);
   enunciado(d, pi, "Conte as <b>fileiras</b> e quantos tem em cada uma. Qual é a conta?", "p18enun");
@@ -1606,7 +1611,8 @@ function f18(d, pi){
   }
 }
 
-/* 19 — PINTE O TAPETE NA MALHA (papel d20: "pinte 3 fileiras de 4 quadradinhos")
+/* 19 — PINTE O TAPETE NA MALHA (papel d28: "Utilize a malha para representar
+   as seguintes multiplicações", com dez malhas de 5×3, 4×4, 2×5, 5×5, 3×3…)
    ⭐ Tocar num quadradinho pinta o RETÂNGULO inteiro do canto até ele — a
       criança desenha o tapete de uma vez e vê a forma nascer. É o gesto que a
       folha de papel pede com o lápis, e o único jeito de a malha não virar
@@ -1655,7 +1661,12 @@ function f19(d, pi){
   }
 }
 
-/* 20 — A VIRADA (papel d24: "3 x 4 = 4 x 3")
+/* 20 — A VIRADA (⚠️ NÃO veio do papel: é decisão minha, e fica declarada)
+   ⚠️ Das 40 folhas colhidas, NENHUMA pede a comutativa. Esta folha nasce do
+      degrau que a folha 18 abriu (o tapete): girar o retângulo é a maneira de
+      VER que a ordem dos fatores não muda o total, e o currículo põe a
+      disposição retangular no 3º ano. Dizer que veio da colheita seria mentir
+      no lugar mais fácil de mentir.
    ⭐ A CRIANÇA PREVÊ ANTES DE VER — e é essa a diferença entre a folha de papel
       e esta. No papel ela lê que a ordem não muda o total; aqui ela APOSTA e
       depois o tapete gira na frente dela. É a lacuna de curiosidade do
