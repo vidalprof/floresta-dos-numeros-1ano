@@ -83,6 +83,20 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
            por exemplo): aviso. */
         const posDecl=(im.style.objectPosition||"")!=="" || (cs.objectPosition&&cs.objectPosition!=="50% 50%");
         if((fit==="fill"||fit==="none")&&dif>0.12&&r.width>24&&r.height>24) out.push("figura ESTICADA "+Math.round(dif*100)+"% ("+src+" em "+nome(im)+", object-fit:"+fit+")");
+        /* ⭐ AMPLIADA ALEM DA PROPRIA RESOLUCAO (14/set/2026, queixa do Marcos:
+           *"as imagens estao muito grandes e nao estao tao bonitas"*).
+           ⚠️ O QUE ESTA REGRA VE E O QUE AS DE CIMA NAO VIAM: elas comparam a
+              PROPORCAO (`an` x `ar`) — pegam a figura achatada ou cortada. Uma
+              figura de 122x42 px mostrada a 124 px de altura mantem a proporcao
+              PERFEITA e passa limpa por elas; o que ela perde e NITIDEZ, porque
+              o navegador inventa 3 pixels para cada 1 que existe no arquivo.
+              Foi assim que os Cinco Reinos foram ao ar com 23 das 47 figuras
+              ampliadas, uma delas em 2,95x — e o portao dizia "leiaute ok".
+           O limiar 1.35x e PALPITE DECLARADO: acima disso o borrao ja aparece na
+           tela da escola; abaixo, a tela de celular (que tem 2 a 3 pixels fisicos
+           por pixel de CSS) ainda segura. Quem quiser apertar, que meça. */
+        const amp=r.height/im.naturalHeight;
+        if(amp>1.35&&r.height>24&&!fundo) out.push("figura AMPLIADA "+amp.toFixed(2)+"x alem da propria resolucao ("+src+": arquivo de "+im.naturalWidth+"x"+im.naturalHeight+"px mostrado a "+Math.round(r.width)+"x"+Math.round(r.height)+"px) — sai borrada. PALPITE DECLARADO: o limiar 1.35x e juizo, nao medida");
         if(fit==="cover"&&dif>0.10&&r.width>24&&r.height>24){
           const msg="figura CORTADA por object-fit:cover, "+Math.round(dif*100)+"% de diferenca ("+src+" em "+nome(im)+")";
           if(fundo) av.push("fundo em cover ("+src+", "+Math.round(dif*100)+"% de diferenca): confira se a cena importante nao some");
