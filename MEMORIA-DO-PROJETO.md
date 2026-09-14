@@ -25,6 +25,25 @@
 > **O teste, antes de mandar qualquer número:** *de onde veio este número, e o
 > que eu teria que abrir para ele estar errado?* Se eu não souber responder,
 > ainda não posso mandar.
+>
+> **5. CONFERIR EM MINIATURA NÃO É CONFERIR (14/set/2026, custou os cinco reinos).**
+> O Marcos viu na tela da escola: *"tem resto de outras imagens nas imagens, e
+> imagens que faltam partes"*. Eu tinha recortado as 44 figuras dividindo a folha
+> de papel numa **grade regular medida no olho** — chute — e depois conferido numa
+> folha de contato de **130 px por figura**, onde um colchete colado na cauda do
+> passarinho simplesmente não aparece. Dois chutes empilhados, e os dois com cara
+> de trabalho feito. O conserto foi trocar a grade por MEDIDA (a caixa sai da
+> tinta; se o número de caixas não bate com o de nomes, o recortador PARA) e a
+> miniatura por 300 px, que sai sozinha. **A regra que fica: quando o defeito é
+> visual, "eu olhei" só vale se eu olhei no tamanho em que o defeito existiria.**
+>
+> **6. EXCEÇÃO PELO NOME NÃO É CONSERTO.** No meio desse mesmo trabalho eu afirmei
+> que o `reino_animal` já estava limpo — tinha medido o PNG, um componente só.
+> Ele estava limpo **por causa de uma exceção pelo nome dele** numa lista que eu
+> estava apagando naquele instante. Lista de nomes é bilhete para não esquecer,
+> não medida: os cinco nomes viraram duas regras que valem para qualquer folha, e
+> a lista ficou vazia de propósito. **Antes de dizer "esse já está bom", pergunte
+> o que o está deixando bom.**
 
 > **Por que este arquivo existe:** eu (Claude) começo cada sessão do zero, SEM
 > lembrar das anteriores. Então esta é a minha memória, por escrito, para eu

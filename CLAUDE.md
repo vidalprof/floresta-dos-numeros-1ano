@@ -17,7 +17,7 @@ Leia tudo antes de agir e responda sempre em **português**.
 > folhas** (medido: é o que enche os 55 min da criança rápida); **o fecho tem
 > que ser alcançável a qualquer momento**, senão 25 folhas castiga justamente
 > quem vai devagar; e **a banca deste formato é outra** —
-> **`bash _qa/auditar_folha.sh <pasta>`**, 13 portões em ~18 s, e NÃO a
+> **`bash _qa/auditar_folha.sh <pasta>`**, 19 portões (~4 min), e NÃO a
 > `auditar.sh`, que é do motor e em folha viva reprova ou diz "não medi" por
 > desenho. Nasceu da pergunta do Marcos (13/set/2026): *"Mas tem banca para esse
 > tipo de atividade?"* — e não tinha; a escolha dos portões dependia da minha

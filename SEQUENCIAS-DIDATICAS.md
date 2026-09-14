@@ -689,7 +689,8 @@ portões rodar. Memória não é portão: é o defeito que este projeto inteiro
 combate, e é pior que portão nenhum, porque leva a chamar de "aprovado" o que
 ninguém mediu.
 
-Agora é um comando só, **13 portões em ~18 segundos**, e ele imprime três grupos:
+Agora é um comando só — eram **13 portões em ~18 s** na estreia, hoje são **19**
+(o pré-voo, que é um deles, sozinho carrega 43) — e ele imprime três grupos:
 **passou** (código 0, medido), **NÃO MEDIU** (o portão rodou e não achou o que
 medir — isto não é "passou", e aparece na tela para ninguém confundir silêncio
 com aprovação) e **não alcança** (os do motor, com o motivo escrito ao lado, para
@@ -752,8 +753,60 @@ existe e ninguém roda): `previo.sh` (39 portões de texto), `boot.js`,
 `andar_folha.js` (anda tudo, erro de JS e figura quebrada), `leiaute_mao.js`
 (6 tamanhos, alvo ≥ 40 px), `resposta_impressa.py`, `duracao.py`,
 `pedagogo_curriculo.py`, `halo.py`, `clone.py`, `duplicatas.py`, `revisor.py`,
-`catalogo.py`, `node --check`. Fora da banca, por rodarem no Actions:
-`pronuncia.py` (ASR) e `silaba_fonte.py`.
+`catalogo.py`, `figura_da_folha.py`, `sobra_da_folha.py`, `node --check`. Fora da
+banca, por rodarem no Actions: `pronuncia.py` (ASR) e `silaba_fonte.py`.
+
+### ✂️🧾 A PAUTA DA FOLHA VEIO JUNTO — portão 1i6 (14/set/2026)
+
+Palavras do Marcos, olhando os cinco reinos no ar: *"a atividade do reino, tem
+resto de outras imagens nas imagens, e imagens que faltam partes, resolva por
+favor"*. E logo depois, quando eu ainda tateava: *"já falei mil vezes, não chute
+nem ache nada, faça para não haver erros"*.
+
+**A causa não foi descuido, foi método errado.** A folha de papel não traz só o
+desenho: traz o **quadradinho de marcar** ao lado dele, a **moldura tracejada**
+de recortar, a **linha que separa as colunas** da tabela. Eu recortava dividindo
+a folha numa **grade regular medida no olho** — e grade chutada erra dos dois
+lados ao mesmo tempo: larga demais traz o vizinho, apertada demais come a figura
+(o urso sem os pés, o elefante sem as pernas, o bebê cortado). Depois eu conferia
+numa folha de contato de **130 px por figura**, onde nada disso aparece. Conferir
+em miniatura não é conferir: é se tranquilizar.
+
+**O que ficou no lugar disso, e tudo medido na própria folha:**
+1. **A caixa sai da TINTA**, não de uma grade — ilhas de tinta, ou o interior da
+   moldura impressa quando a folha tem uma. E se o número de caixas não bater com
+   o número de nomes, o recortador **PARA** em vez de casar no escuro.
+2. **`apaga_quadradinhos`** mata o quadradinho na FOLHA, onde ele ainda é um dos
+   vinte quadrados iguais de uma grade 4×5 (medidos 19 dos 20; o vigésimo, que
+   estava grudado no monte de terra, sai do cruzamento das colunas e linhas que
+   os outros dezenove formam). No recorte já seria tarde: lá o quadradinho e o
+   rabo do passarinho são **um componente só**.
+3. **`tira_linha_impressa`** mata o tracejado e a régua da tabela, por tamanho
+   (≤ 0,5% do corpo, encostado na beirada) e por forma (traço de ≤ 4 px que
+   atravessa 90% de um lado). Entre o maior risco (0,19%) e a menor parte de
+   desenho que também encosta na beirada (o raio do sol2, 1,83%) há folga de 10×.
+4. **A folha de contato sai SEMPRE, a 300 px** e em lotes de 12.
+
+**O portão: `python3 _qa/sobra_da_folha.py <pasta>` (1i6)**, no pré-voo e na
+banca. Rodado nas figuras do commit anterior, reprovou 8 — entre elas a árvore
+com a moldura em volta e o reino animal com a linha da coluna atravessando.
+
+⚠️ **E ele diz, na própria tela, as DUAS coisas que não vê** — porque tentei
+medir as duas e as assinaturas se confundem com figura limpa:
+- **quadradinho fundido no desenho**: passarinho sujo e passarinho limpo dão o
+  mesmo número (8 px de corrida, 13% de coluna);
+- **figura cortada**: o urso truncado deu 67% de tinta na beirada, e o menino
+  INTEIRO dá 67% também; a água, que é um retângulo, dá 100%.
+Para esses dois, a defesa é **olhar a folha de contato** — e é por isso que ela
+passou a sair sozinha e grande. Um "ok" do 1i6 **não** quer dizer que alguém
+olhou as figuras.
+
+⚠️ **Lição de método, e esta doeu:** no meio do conserto eu declarei que o
+`reino_animal` já estava limpo — tinha medido o PNG e ele tinha um componente só.
+Estava limpo **por causa de uma exceção pelo nome dele** numa lista que eu estava
+justamente apagando. Exceção pelo nome não é conserto: é um bilhete para não
+esquecer. A lista `SOBRA_COLADA` tinha cinco nomes e hoje está **vazia de
+propósito** — os cinco viraram duas medidas que valem para qualquer folha.
 
 **A dívida (tarefa #104) — PAGA em 13/set/2026, e só pela metade que dá para
 medir.** Nasceu o **`_qa/leque_folha.py` (portão 0b7)**, dentro da banca: ele

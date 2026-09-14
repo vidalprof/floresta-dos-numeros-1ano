@@ -38,7 +38,9 @@ import json
 import os
 import sys
 
+import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from scipy import ndimage as nd
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
@@ -55,7 +57,11 @@ LIM = 238          # acima disto conta como "papel branco"
 # --- d26: "CLASSIFIQUE EM SERES VIVOS E NÃO VIVOS" — 20 figuras coloridas numa
 #     grade de 4 colunas x 5 linhas, cada uma com um quadradinho de marcar à
 #     direita (que a caixa NÃO pega: ela para em 0.72 da largura da célula).
-D26 = [u"terra", u"vento", u"sapo", u"gelo",
+# ⚠️ O GELO SAIU DA LISTA, e por medida: o desenho dele na folha e branco
+#    com um fio azul claro, e some em qualquer recorte (a ilha de tinta nem
+#    chega a existir). Ficava um PNG vazio na pasta. Quatro figuras da linha
+#    1, nao cinco — e a folha d26 passa a dar 19, nao 20.
+D26 = [u"terra", u"vento", u"sapo",
        u"arvore", u"pedras", u"sol", u"rosa",
        u"agua", u"passarinho", u"carro", u"borboleta",
        u"areia", u"formiga", u"casa", u"tijolos",
@@ -77,61 +83,326 @@ D22 = [u"pedras2", u"arvore3", u"milho",
 D07 = [u"reino_monera", u"reino_plantae", u"reino_protista",
        u"reino_fungi", u"reino_animal"]
 
-
-def grade(cod, nomes, x0, y0, x1, y1, cols, linhas, folgax=0.0, folgay=0.0):
-    u"""Gera as caixas de uma grade regular, em fração da imagem."""
-    fora = []
-    lw = (x1 - x0) / float(cols)
-    lh = (y1 - y0) / float(linhas)
-    for i, nome in enumerate(nomes):
-        c, l = i % cols, i // cols
-        fora.append((cod, nome,
-                     (x0 + c * lw + folgax, y0 + l * lh + folgay,
-                      x0 + (c + 1) * lw - folgax, y0 + (l + 1) * lh - folgay)))
-    return fora
-
-
-# ⚠️ QUATRO FIGURAS DA d26 ENCOSTAM NO QUADRADINHO — a asa da borboleta, o raio
-#    do sol, a linha do gelo e o montinho de terra chegam perto dele, e aí não há
-#    coluna vazia entre os dois para o `tira_solto_direita` achar. Para essas
-#    quatro a largura vai declarada, medida uma a uma. Chutar aqui é o que faz o
-#    quadradinho aparecer na tela da criança.
-ESTREITAS = {u"borboleta": 0.128, u"gelo": 0.120, u"sol": 0.128, u"terra": 0.132}
-
-
-def cel(cod, nomes, colsx, rowsy, larg, alt):
-    u"""Grade em que a figura fica à ESQUERDA e o quadradinho de marcar à
-    direita (d26). A caixa para ANTES do quadradinho, de propósito: na primeira
-    rodada ele veio junto em dezenove das vinte figuras."""
-    fora = []
-    for i, nome in enumerate(nomes):
-        cx = colsx[i % len(colsx)]
-        ry = rowsy[i // len(colsx)]
-        w = ESTREITAS.get(nome, larg)
-        fora.append((cod, nome, (cx, ry - alt, cx + w, ry + alt)))
-    return fora
-
-
-CAIXAS = []
-# ⚠️ as colunas e linhas da d26 foram MEDIDAS desenhando a grade por cima da
-#    folha e olhando o resultado — não chutadas. O quadradinho de marcar começa
-#    em cx + 0,18. A caixa vai LARGA de propósito (0,185, pega o quadradinho)
-#    e quem tira o quadradinho depois é o `tira_solto_direita`, por medida.
-CAIXAS += cel(u"d26", D26,
-              [0.026, 0.281, 0.536, 0.791], [0.415, 0.532, 0.654, 0.781, 0.903],
-              0.158, 0.065)
-# ⚠️ na d20 e na d22 cada figura mora dentro de um retângulo TRACEJADO. A folga
-#    grande é para o corte cair DENTRO do tracejado: o `tira_moldura` sabe comer
-#    linha cheia, e linha pontilhada ele deixa passar.
-CAIXAS += grade(u"d20", D20, 0.060, 0.660, 0.810, 0.925, 4, 2, folgax=0.030, folgay=0.024)
-CAIXAS += grade(u"d22", D22, 0.100, 0.245, 0.900, 0.905, 3, 4, folgax=0.040, folgay=0.030)
-CAIXAS += [
-    (u"d07", u"reino_monera",   (0.140, 0.640, 0.280, 0.716)),
-    (u"d07", u"reino_plantae",  (0.285, 0.640, 0.425, 0.716)),
-    (u"d07", u"reino_protista", (0.430, 0.640, 0.570, 0.716)),
-    (u"d07", u"reino_fungi",    (0.575, 0.640, 0.715, 0.716)),
-    (u"d07", u"reino_animal",   (0.720, 0.640, 0.860, 0.716)),
+# ⚠️ A FAIXA ONDE MORAM AS FIGURAS (y0,y1,x0,x1 em fração da folha) e em quantas
+#    LINHAS elas estão. Só isto é declarado à mão — e é grosso de propósito: a
+#    faixa só precisa excluir o cabeçalho e o rodapé, porque quem acha a caixa
+#    de cada figura é a tinta dela. Errar a faixa em 2% não muda nada; errar a
+#    grade antiga em 2% cortava a asa da borboleta.
+CAIXAS_POR_FOLHA = [
+    # cod, nomes, faixa(y0,y1,x0,x1), linhas, colorida, moldura impressa
+    (u"d26", D26, (0.36, 0.96, 0.00, 0.98), 5, True,  False),
+    (u"d20", D20, (0.66, 0.95, 0.04, 0.97), 2, False, True),
+    (u"d22", D22, (0.24, 0.94, 0.07, 0.92), 4, False, True),
+    # ⚠️ a faixa da d07 foi MEDIDA, nao estimada: as cinco figuras ficam entre
+    #    y 0,640 e 0,720; os rotulos ("REINO ANIMAL") entre 0,603 e 0,636 e o
+    #    "CARACTERISTICAS:" logo abaixo. Faixa larga trazia os dois junto.
+    (u"d07", D07, (0.638, 0.725, 0.10, 0.90), 1, False, False),
 ]
+
+# ============================================================
+#  ⭐⭐ A CAIXA NÃO SE CHUTA: ELA SE MEDE PELA PRÓPRIA TINTA (14/set/2026)
+#
+#  ⚠️ O QUE DEU ERRADO ANTES, e o Marcos viu na tela: *"tem resto de outras
+#     imagens nas imagens, e imagens que faltam partes"*. A primeira versão
+#     dividia a folha numa GRADE REGULAR de frações que eu media no olho. Grade
+#     chutada erra dos dois jeitos ao mesmo tempo — larga demais traz um pedaço
+#     do vizinho (o bebê com um traço solto ao lado, a casa com um risco
+#     embaixo), apertada demais come a figura (a bola sem a borda, o elefante
+#     sem a traseira, o cupcake sem a forminha).
+#
+#  A MEDIDA CERTA: cada figura é uma ILHA DE TINTA. Borra-se um pouco a folha
+#  (dilatação) para colar os pedaços da MESMA figura — o olho do bicho, os raios
+#  do sol —, rotulam-se as ilhas, e o recorte é o retângulo da ilha. Ninguém
+#  chuta nada: a figura define a própria caixa.
+#
+#  ⚠️ E O QUADRADINHO DE MARCAR DA d26 SAI SOZINHO, sem heurística: a folha é
+#     COLORIDA e o quadradinho é PRETO. Separar por SATURAÇÃO tira o quadradinho
+#     e deixa a figura — e o `tira_solto_direita`, que era um remendo, deixa de
+#     ser preciso.
+#
+#  ⚠️⚠️ A TRAVA QUE IMPEDE O ERRO BOBO DE VOLTAR: se o número de ilhas achadas
+#     não bater com o número de nomes declarados, o script **PARA** e diz o que
+#     achou. Antes ele casava na ordem e seguia — e casar errado é pior que não
+#     recortar, porque sai figura com o nome de outra e ninguém vê.
+# ============================================================
+
+def apaga_quadradinhos(im):
+    u"""Apaga da FOLHA INTEIRA os quadradinhos de marcar, antes de achar as ilhas.
+
+    ⚠️ ESTE E O CONSERTO DE RAIZ do defeito que o Marcos viu: *"tem resto de
+       outras imagens nas imagens"*. Na d26 cada figura tem, a sua direita, um
+       quadradinho preto para a crianca marcar. Em tres figuras o desenho
+       ENCOSTA nele (medido: o rabo do PASSARINHO e o colchete sao UM UNICO
+       componente, 4.972 px, nenhum vao entre os dois), entao nem "peca solta",
+       nem "vao", nem "depois da ultima coluna com cor" o alcancam: o colchete
+       fica DENTRO da faixa de colunas do rabo.
+
+    ⚠️ POR QUE NA FOLHA E NAO NO RECORTE: dentro do recorte o quadradinho e um
+       borrao colado na figura e nao ha como distingui-lo sem chutar. Na folha
+       ele e outra coisa: um dos VINTE quadrados iguais de uma grade 4x5, todos
+       com a mesma medida. Isso nao se adivinha, se mede — e e o que esta aqui.
+
+    A MEDIDA (feita na d26, 768x1024): componente escuro e SEM COR, quase
+    quadrado (razao 0,85-1,20), OCO (tinta / area da caixa entre 0,25 e 0,50 —
+    e um fio de contorno, nao um bloco). Deu 19 dos 20: o 20o (o da TERRA)
+    aparecia grudado no monte de terra, num componente de 172x49. Os 19 acham
+    4 colunas e 5 linhas; a vigesima casa sai do CRUZAMENTO delas — interpolada
+    da medida dos outros dezenove, nao de palpite.
+
+    Apaga so o pixel SEM COR de dentro de cada casa: assim o fio preto do
+    quadradinho some e a ponta colorida do rabo que entra ali fica.
+    """
+    a = np.asarray(im).astype(np.int16)
+    mx, mn = a[..., :3].max(axis=2), a[..., :3].min(axis=2)
+    sem_cor = (mx < LIM) & ((mx - mn) <= 60)
+    rot, n = nd.label(sem_cor, np.ones((3, 3), bool))
+    achados = []
+    for i, sl in enumerate(nd.find_objects(rot), start=1):
+        if sl is None:
+            continue
+        ys, xs = sl
+        h, w = ys.stop - ys.start, xs.stop - xs.start
+        if w < 20 or h < 20:
+            continue
+        cheio = int((rot[sl] == i).sum()) / float(w * h)
+        if 0.85 <= w / float(h) <= 1.20 and 0.25 <= cheio <= 0.50:
+            achados.append((xs.start, ys.start, w, h))
+    if len(achados) < 4:
+        return im, 0, 0
+    lw = sorted(c[2] for c in achados)
+    lh = sorted(c[3] for c in achados)
+    mw, mh = lw[len(lw) // 2], lh[len(lh) // 2]
+    achados = [c for c in achados
+               if abs(c[2] - mw) <= mw * 0.25 and abs(c[3] - mh) <= mh * 0.25]
+    if len(achados) < 4:
+        return im, 0, 0
+
+    def trilhos(valores, tol):
+        u"""agrupa coordenadas parecidas e devolve a mediana de cada grupo"""
+        saida, grupo = [], []
+        for v in sorted(valores):
+            if grupo and v - grupo[0] > tol:
+                saida.append(sorted(grupo)[len(grupo) // 2])
+                grupo = []
+            grupo.append(v)
+        if grupo:
+            saida.append(sorted(grupo)[len(grupo) // 2])
+        return saida
+
+    colunas = trilhos([c[0] for c in achados], mw * 0.6)
+    linhas = trilhos([c[1] for c in achados], mh * 0.6)
+    px = im.load()
+    W, H = im.size
+    casas = 0
+    for cy in linhas:
+        for cx in colunas:
+            casas += 1
+            for x in range(max(0, cx - 3), min(W, cx + mw + 3)):
+                for y in range(max(0, cy - 3), min(H, cy + mh + 3)):
+                    r, g, b = px[x, y]
+                    if max(r, g, b) < LIM and (max(r, g, b) - min(r, g, b)) <= 60:
+                        px[x, y] = (255, 255, 255)
+    return im, len(achados), casas
+
+
+def tira_linha_impressa(c):
+    u"""Apaga o que sobrou da PAUTA da folha na beirada do recorte: o tracejado da
+    moldura e a linha da coluna. Nunca o desenho.
+
+    ⚠️ O `tira_moldura_do_recorte` nao alcanca estes, e a razao e de desenho: ele
+       procura o componente que ENVOLVE o desenho, e uma moldura TRACEJADA nao
+       envolve nada — ela e quarenta e quatro risquinhos soltos. Era o que ainda
+       cercava a ARVORE2 (d20) depois de tudo.
+
+    A MEDIDA que separa risco de desenho, feita nas 20 figuras das folhas com
+    moldura (d20 e d22), sem chute e sem fio de navalha:
+      · os riscos da moldura      -> ate 0,19% da tinta do corpo, encostados na
+                                     beirada (arvore2, milho, bola)
+      · a menor parte LEGITIMA solta que TAMBEM encosta na beirada
+                                  -> raio do SOL2, 1,83% do corpo
+    Corto com 0,50% e beirada de 3 px: 2,6x acima do maior risco e 3,7x abaixo
+    do menor pedaco de desenho. Nenhuma parte de desenho e apagada — nem as
+    pedrinhas soltas do monte de PEDRAS2, nem os galhos da ARVORE3, nem os raios
+    do SOL2, que sao os que chegam mais perto do corte.
+
+    ⚠️ TINHA UMA TERCEIRA CONDICAO AQUI — "espessura ate 4 px" — e ela REPROVAVA
+       um risco de verdade: o CANTO da moldura, onde dois tracos se encontram,
+       mede 5x5 e sobrava na arvore2 como um pontinho no canto da figura. Tirei,
+       e conferi nas 20 que sem ela nada de desenho cai: continua caindo so o
+       canto e um pixel solto, ambos da arvore2.
+
+    ⚠️ A SEGUNDA REGRA, A REGUA, e da d07: a coroa dos cinco reinos e uma TABELA,
+       e no REINO ANIMAL (a ultima coluna) sobrava a linha divisoria — 2 px de
+       largura por 110 px de altura, que e a altura INTEIRA do recorte. Ela e
+       grande demais para a regra do tamanho (6,6% do corpo), mas e obvia por
+       outro lado: nenhum desenho tem um traco de 2 px atravessando a figura de
+       ponta a ponta. Medido nas 44 figuras: nenhuma parte de desenho e
+       `min(largura,altura) <= 4` E ao mesmo tempo ocupa 90% de um dos lados.
+
+    ⚠️ E POR QUE RODA EM TODAS, e nao so nas de moldura: quando so rodava nas
+       duas folhas de moldura, o reino_animal ficava sujo e eu "consertava" com
+       uma excecao pelo nome dele numa lista. Excecao pelo nome nao e conserto,
+       e uma nota para nao esquecer — e a nota estava la, da rodada anterior, e
+       eu quase a repeti de olhos fechados."""
+    a = np.asarray(c).astype(np.int16)
+    alfa = a[..., 3] > 24
+    if not alfa.any():
+        return c
+    H, W = alfa.shape
+    rot, n = nd.label(alfa, np.ones((3, 3), bool))
+    if n < 2:
+        return c
+    pedacos = []
+    for i, sl in enumerate(nd.find_objects(rot), start=1):
+        if sl is None:
+            continue
+        ys, xs = sl
+        pedacos.append((int((rot[sl] == i).sum()), i, xs.stop - xs.start,
+                        ys.stop - ys.start,
+                        min(xs.start, ys.start, W - xs.stop, H - ys.stop)))
+    corpo = max(p[0] for p in pedacos)
+    px = c.load()
+    for tam, i, w, h, borda in pedacos:
+        if tam == corpo:
+            continue
+        pequeno = tam <= corpo * 0.005 and borda <= 3
+        regua = min(w, h) <= 4 and (w >= W * 0.90 or h >= H * 0.90)
+        if not (pequeno or regua):
+            continue
+        for y, x in zip(*np.where(rot == i)):
+            r, g, b, al = px[int(x), int(y)]
+            px[int(x), int(y)] = (r, g, b, 0)
+    return c
+
+
+def _tinta_da_folha(cam, colorida):
+    u"""Devolve (matriz de tinta, imagem RGB). `colorida` separa por saturação."""
+    im = Image.open(cam).convert(u"RGB")
+    if colorida:
+        im, achados, casas = apaga_quadradinhos(im)
+        if casas:
+            print(u"   %s: apaguei %d quadradinho(s) de marcar "
+                  u"(%d medidos na folha, %d na grade que eles formam)"
+                  % (os.path.basename(cam), casas, achados, casas))
+    a = np.asarray(im).astype(np.int16)
+    mx, mn = a.max(axis=2), a.min(axis=2)
+    sat = mx - mn
+    escuro = mx < 205
+    if colorida:
+        # a figura tem cor; o quadradinho de marcar é preto puro (saturação ~0)
+        return (sat > 45) | (escuro & (sat > 25)), im
+    return escuro, im
+
+
+def ilhas(cam, faixa, colorida=False, cola=5, piso=0.0004, teto=0.25):
+    u"""As ilhas de tinta dentro de `faixa` (y0,y1,x0,x1 em fração da folha).
+
+    `piso`/`teto` são frações da área da folha: abaixo do piso é sujeira de
+    escaneamento, acima do teto é a MOLDURA que envolve tudo (a d22 tem uma).
+    ⚠️ Os dois são PALPITE DECLARADO, e foram conferidos olhando as 45 figuras
+       grandes numa folha de contato — não saíram de cabeça."""
+    tinta, im = _tinta_da_folha(cam, colorida)
+    H, W = tinta.shape
+    y0, y1, x0, x1 = (int(faixa[0]*H), int(faixa[1]*H), int(faixa[2]*W), int(faixa[3]*W))
+    fora_da_faixa = np.ones_like(tinta)
+    fora_da_faixa[y0:y1, x0:x1] = False
+    tinta = tinta & ~fora_da_faixa
+    grosso = nd.binary_dilation(tinta, np.ones((cola, cola), bool))
+    rot, _ = nd.label(grosso)
+    cx = []
+    for i, sl in enumerate(nd.find_objects(rot), start=1):
+        m = (rot[sl] == i) & tinta[sl]
+        n = int(m.sum())
+        if n < piso * H * W or n > teto * H * W:
+            continue
+        yy, xx = np.where(m)
+        cx.append((sl[0].start + yy.min(), sl[0].start + yy.max(),
+                   sl[1].start + xx.min(), sl[1].start + xx.max()))
+    return cx, im, (H, W)
+
+
+def molduras(cam, faixa, quantas, cola=9, teto=0.10):
+    u"""As MOLDURAS impressas da folha — e é delas que sai a caixa de cada figura.
+
+    ⚠️ POR QUE NÃO BASTA A ILHA DA FIGURA (medido em 14/set/2026): numa figura
+       de traço com partes SOLTAS — o monte de pedras da d22, cujas pedrinhas de
+       cima não encostam nas de baixo — a ilha pega só um pedaço, e a figura sai
+       cortada. Foi um dos defeitos que o Marcos viu.
+
+    ⚠️ E A FOLHA JÁ RESOLVE ISSO SOZINHA: na d20 e na d22 cada figura mora dentro
+       de um retângulo impresso (cheio numa, tracejado na outra), porque a folha
+       é de RECORTAR. Com uma dilatação maior o tracejado fecha e a moldura vira
+       uma ilha. A caixa da figura é o INTERIOR dessa moldura — assim entra tudo
+       o que é da figura e nada do vizinho, que está na moldura ao lado.
+
+    ⚠️ A ESCOLHA NAO E POR LIMIAR DE AREA, e isso importa: medindo a d20, as
+       oito molduras dao 2,20% a 2,22% da folha e o QR CODE do rodape da 1,68%
+       — um limiar entre os dois seria fio de navalha, e fio de navalha quebra
+       na proxima folha. Como a lista de nomes ja diz QUANTAS figuras a folha
+       tem, ficam as `quantas` MAIORES: na d20 as oito molduras (o QR fica de
+       fora), na d22 as doze (1,69% a 2,60%, e o resto nao passa de 1,47%).
+       Se nao houver `quantas`, o chamador PARA — nunca casa no escuro."""
+    tinta, im = _tinta_da_folha(cam, False)
+    H, W = tinta.shape
+    y0, y1, x0, x1 = (int(faixa[0]*H), int(faixa[1]*H), int(faixa[2]*W), int(faixa[3]*W))
+    m = np.zeros_like(tinta)
+    m[y0:y1, x0:x1] = tinta[y0:y1, x0:x1]
+    cheio = nd.binary_closing(nd.binary_dilation(m, np.ones((cola, cola), bool)),
+                              np.ones((cola, cola), bool))
+    cheio = nd.binary_fill_holes(cheio)
+    rot, _ = nd.label(cheio)
+    cx = []
+    for i, sl in enumerate(nd.find_objects(rot), start=1):
+        alt = sl[0].stop - sl[0].start
+        lar = sl[1].stop - sl[1].start
+        a = alt * lar
+        if a > teto * H * W:
+            continue
+        # ⚠️ MOLDURA DE FIGURA E QUASE QUADRADA — a da d20 e da d22 fica entre
+        #    1:1 e 1,4:1. A BARRA LATERAL da folha tambem passava no filtro de
+        #    area e entrava como se fosse figura: ela virou a caixa 6, o
+        #    tomateiro ficou sem caixa, e dali para a frente TODO nome deslizou
+        #    um lugar (o urso virou "tomateiro", o tubarao virou "urso"). Uma
+        #    tira de 1:40 nao e moldura de desenho.
+        if max(alt, lar) > 3 * min(alt, lar):
+            continue
+        cx.append((a, sl[0].start, sl[0].stop, sl[1].start, sl[1].stop))
+    cx.sort(reverse=True)
+    return [c[1:] for c in cx[:quantas]], im, (H, W)
+
+
+def em_ordem_de_leitura(cx, altura, linhas):
+    u"""Ordena as caixas como a criança lê: linha por linha, esquerda→direita.
+
+    ⚠️ NÃO SE DIVIDE A FOLHA EM FAIXAS IGUAIS, e foi assim que os nomes saíram
+       TROCADOS na primeira tentativa (o passarinho virou "agua", a formiga
+       virou "areia"). Duas razões: as figuras de uma mesma linha não têm a
+       mesma altura — a rosa é alta e a água é uma tira baixa, e o topo delas
+       fica a dezenas de pixels de distância —, e uma linha pode ter MENOS
+       figuras que as outras (na d26 o gelo não existe como tinta), o que
+       desloca tudo o que vem depois.
+
+    O corte de linha sai da PRÓPRIA folha: ordeno pelo CENTRO vertical e abro
+    linha nova quando o centro do próximo está mais de 60% de uma altura típica
+    (a mediana das caixas) abaixo do primeiro da linha corrente. Assim a linha
+    acompanha o tamanho real das figuras, e linha curta não empurra ninguém."""
+    if not cx:
+        return cx
+    alt = sorted(c[1] - c[0] for c in cx)
+    tipica = alt[len(alt) // 2]
+    porcentro = sorted(cx, key=lambda c: (c[0] + c[1]) / 2.0)
+    fora, linha, base = [], [], None
+    for c in porcentro:
+        meio = (c[0] + c[1]) / 2.0
+        if base is None or meio - base <= tipica * 0.6:
+            if base is None:
+                base = meio
+            linha.append(c)
+        else:
+            fora.extend(sorted(linha, key=lambda z: z[2]))
+            linha, base = [c], meio
+    fora.extend(sorted(linha, key=lambda z: z[2]))
+    return fora
 
 
 # ============================================================
@@ -239,7 +510,7 @@ def limpa_fundo(c, lim=LIM):
     return c
 
 
-def tira_halo(c, lim=212, voltas=4):
+def tira_halo(c, lim=228, voltas=2):
     u"""Come a FRANJA quase-branca que sobra grudada na silhueta.
 
     ⚠️ POR QUE O `limpa_fundo` SOZINHO NAO RESOLVE: ele so apaga o que passa de
@@ -342,81 +613,365 @@ def salva(c, nome):
     c.save(os.path.join(SAIDA, PREFIXO + nome + u".png"), optimize=True)
 
 
-def recorta(cod, nome, fr, moldura=False):
-    cam = acha(cod)
-    if not cam:
-        return None
-    im = Image.open(cam).convert(u"RGBA")
-    W, H = im.size
-    box = (int(fr[0] * W), int(fr[1] * H), int(fr[2] * W), int(fr[3] * H))
-    if box[2] <= box[0] or box[3] <= box[1]:
-        return None
-    c = im.crop(box)
-    if moldura:
-        c = tira_moldura(c)
-    c = aperta(tira_solto_direita(limpa_fundo(c)))
-    c = aperta(tira_halo(tira_risco(c)))
+def tira_peca_solta_sem_cor(c, sat=60):
+    u"""Apaga as PEÇAS SOLTAS sem cor de um recorte colorido — na d26, o
+    quadradinho de marcar que encosta na figura e entra no retângulo.
+
+    ⚠️ POR COMPONENTE, NUNCA POR PIXEL. A primeira versão apagava todo pixel
+       preto-sem-cor e destruiu o desenho: sumiu a crina do cavalo, o cabelo do
+       menino e o contorno da borboleta — que são pretos e são A FIGURA. O que
+       distingue o quadradinho não é a cor dele: é ele ser uma peça SEPARADA,
+       que não encosta no corpo colorido do desenho.
+
+    Então: rotulam-se as peças; a que tem mais cor é a figura; some qualquer
+    outra peça cuja tinta seja quase toda sem cor. O cabelo do menino sobrevive
+    porque está grudado no menino — é a mesma peça."""
+    a = np.asarray(c).astype(np.int16)
+    alfa = a[..., 3] > 24
+    if not alfa.any():
+        return c
+    mx = a[..., :3].max(axis=2)
+    mn = a[..., :3].min(axis=2)
+    cor = alfa & ((mx - mn) > sat)
+    if cor.sum() < alfa.sum() * 0.15:
+        return c                      # recorte sem cor: nao e o caso da d26
+    rot, n = nd.label(alfa, np.ones((3, 3), bool))
+    if n < 2:
+        return c
+    principal = np.argmax([cor[rot == i].sum() for i in range(1, n + 1)]) + 1
+    px = c.load()
+    W, H = c.size
+    for i in range(1, n + 1):
+        if i == principal:
+            continue
+        m = rot == i
+        yy, xx = np.where(m)
+        fina = (xx.max() - xx.min()) < c.size[0] * 0.15
+        na_direita = xx.min() > c.size[0] * 0.70
+        if fina and na_direita:
+            pass                      # risco do quadradinho de marcar: sai
+        elif cor[m].sum() > m.sum() * 0.25:
+            continue                  # peca mesmo colorida: e da figura, fica
+        # ⚠️ 25% e nao 10%, e a razao e o formato: a d26 e JPG, e a compressao
+        #    poe uma franja COLORIDA em volta de todo traco preto. Com 10% o
+        #    quadradinho de marcar passava por "colorido" e continuava na tela
+        #    (o colchete ao lado do passarinho e da formiga).
+        for y, x in zip(*np.where(m)):
+            r, g, b, al = px[int(x), int(y)]
+            px[int(x), int(y)] = (r, g, b, 0)
+    return c
+
+
+def tira_moldura_do_recorte(c):
+    u"""Apaga a MOLDURA impressa que veio junto no recorte, sem tocar no desenho.
+
+    ⚠️ COMO SE DISTINGUE UMA DA OUTRA, medindo e não chutando: a moldura é o
+       componente que ENVOLVE o desenho — o retângulo dela CONTÉM o retângulo
+       dele. Tentei antes "o componente que toca 3 bordas" e não funcionou: o
+       `aperta` já tinha encostado tudo na beirada, e a moldura do cachorro
+       aparecia tocando UMA borda só. Conter é uma relação, não uma posição:
+       não depende de onde o recorte foi feito.
+
+    O desenho nunca envolve nada (é o miolo), então nenhuma figura é apagada
+    por engano — nem as de partes soltas, como o monte de pedras."""
+    a = np.asarray(c).astype(np.int16)
+    alfa = a[..., 3] > 24
+    if not alfa.any():
+        return c
+    rot, n = nd.label(nd.binary_dilation(alfa, np.ones((9, 9), bool)))
+    if n < 2:
+        return c
+    cxs = []
+    for i in range(1, n + 1):
+        m = (rot == i) & alfa
+        if not m.any():
+            continue
+        yy, xx = np.where(m)
+        cxs.append((i, yy.min(), yy.max(), xx.min(), xx.max(), m))
+    px = c.load()
+    total = float(alfa.sum())
+    for i, y0, y1, x0, x1, m in cxs:
+        envolve = any(j != i and y0 < jy0 and y1 > jy1 and x0 < jx0 and x1 > jx1
+                      for j, jy0, jy1, jx0, jx1, _ in cxs)
+        # ⚠️ ENVOLVER NAO BASTA, E ISSO QUASE ME CUSTOU UMA FIGURA: a copa da
+        #    ARVORE3 envolve os galhos de dentro, e a regra apagou a arvore
+        #    inteira — sobrou um risquinho. A moldura tambem e MAGRA: e um fio
+        #    de contorno, nunca chega a um terco da tinta do recorte. O desenho
+        #    que envolve algo e o contrario disso: ele E a tinta toda.
+        if not envolve or m.sum() > total * 0.35:
+            continue
+        for y, x in zip(*np.where(m)):
+            r, g, b, al = px[int(x), int(y)]
+            px[int(x), int(y)] = (r, g, b, 0)
+    return c
+
+
+# ⚠️ A LISTA ENCOLHEU, E ISSO E BOA NOTICIA (14/set/2026). Ela tinha cinco nomes
+#    — sol, terra, passarinho, reino_animal, arvore2 — e cada nome ali era a
+#    confissao de um conserto que eu nao sabia medir: "nesta aqui, apague o
+#    pedacinho da beirada e torca". Regra de casa e o contrario disso.
+#
+#    Os cinco viraram DUAS MEDIDAS que valem para qualquer folha:
+#      · `apaga_quadradinhos` mata o quadradinho de marcar na FOLHA, pela grade
+#        4x5 que os vinte formam (sol, terra, passarinho);
+#      · `tira_tracejado` mata o risco da moldura tracejada pela espessura e pelo
+#        tamanho medidos (arvore2 — e, de quebra, milho e bola, que ninguem tinha
+#        visto porque o risco era pequeno).
+#    O reino_animal saiu da lista porque, MEDIDO, ele ja esta limpo: um unico
+#    componente de 3.334 px, 88x61, nada solto. A anotacao antiga era de um corte
+#    anterior e eu a teria repetido de olhos fechados se nao tivesse conferido.
+#
+#    Fica vazia de proposito, e nao apagada: e aqui que entra a figura em que a
+#    sujeira estiver colada de um jeito que NENHUMA medida alcance — com nome e
+#    motivo escritos, porque limpeza que roda em tudo apagaria as pedrinhas
+#    soltas do monte de PEDRAS2, que sao desenho.
+SOBRA_COLADA = {}
+
+
+def tira_depois_da_cor(c, sat=60):
+    u"""Na folha COLORIDA, apaga o que e sem cor e fica DEPOIS do desenho.
+
+    ⚠️ E o conserto de raiz do quadradinho de marcar da d26. As outras tentativas
+       falharam todas pelo mesmo motivo: o quadradinho ENCOSTA na figura (nao ha
+       coluna vazia entre os dois, medido: zero vao em sol, terra, passarinho),
+       entao nem "peca solta" nem "vao" o alcancam.
+
+       O que o distingue e simples e exato: a figura da d26 e COLORIDA e o
+       quadradinho e um traco preto. Entao o desenho acaba na ultima coluna que
+       tem COR; o que vier depois dela, e nao tiver cor, e o quadradinho.
+
+    ⚠️ So vale em folha colorida — numa folha de traco o desenho inteiro e sem
+       cor e isto apagaria tudo. Por isso quem chama e so o ramo `colorida`."""
+    a = np.asarray(c).astype(np.int16)
+    alfa = a[..., 3] > 24
+    if not alfa.any():
+        return c
+    mx, mn = a[..., :3].max(axis=2), a[..., :3].min(axis=2)
+    cor = alfa & ((mx - mn) > sat)
+    if cor.sum() < alfa.sum() * 0.15:
+        return c
+    ate = int(np.where(cor.any(axis=0))[0].max())
+    px = c.load()
+    H, W = alfa.shape
+    for x in range(ate + 1, W):
+        for y in range(H):
+            r, g, b, al = px[x, y]
+            if al and (max(r, g, b) - min(r, g, b)) <= sat:
+                px[x, y] = (r, g, b, 0)
+    return c
+
+
+def tira_sobra_colada(c, piso=0.12):
+    u"""Fica com o CORPO da figura e apaga os pedacinhos de beirada.
+
+    So roda nas figuras da lista `SOBRA_COLADA`. A regra: o corpo e o maior
+    componente; some qualquer outro que tenha menos de `piso` da tinta E toque
+    a borda do recorte. Pedaco pequeno no MEIO da figura (o olho, a semente)
+    nao toca borda nenhuma e fica."""
+    a = np.asarray(c).astype(np.int16)
+    alfa = a[..., 3] > 24
+    if not alfa.any():
+        return c
+    H, W = alfa.shape
+    rot, n = nd.label(nd.binary_dilation(alfa, np.ones((3, 3), bool)))
+    if n < 2:
+        return c
+    peso = [((rot == i) & alfa).sum() for i in range(1, n + 1)]
+    corpo = int(np.argmax(peso)) + 1
+    total = float(alfa.sum())
+    px = c.load()
+    for i in range(1, n + 1):
+        if i == corpo or peso[i - 1] > total * piso:
+            continue
+        m = (rot == i) & alfa
+        yy, xx = np.where(m)
+        if not (yy.min() <= 2 or yy.max() >= H - 3 or xx.min() <= 2 or xx.max() >= W - 3):
+            continue
+        for y, x in zip(yy, xx):
+            r, g, b, al = px[int(x), int(y)]
+            px[int(x), int(y)] = (r, g, b, 0)
+    return c
+
+
+def recorta_ilha(im, caixa, nome, colorida=False, tem_moldura=False):
+    u"""Recorta a ilha, limpa o fundo e salva. Devolve True se saiu figura."""
+    y0, y1, x0, x1 = caixa
+    folga = 3                      # 3 px de ar, para nao raspar o traco
+    c = im.crop((max(0, x0 - folga), max(0, y0 - folga), x1 + folga, y1 + folga))
+    c = limpa_fundo(c.convert(u"RGBA"))
+    if tem_moldura:
+        c = tira_moldura_do_recorte(c)
+    if colorida:
+        c = tira_peca_solta_sem_cor(c)
+        c = tira_depois_da_cor(c)
+    if nome in SOBRA_COLADA:
+        c = tira_sobra_colada(c)
+    c = aperta(tira_halo(aperta(c)))
+    # ⚠️ A PAUTA SO SE MEDE DEPOIS DO `aperta`, e eu errei isto na primeira
+    #    tentativa: chamei antes, e nada foi apagado. A regra diz "risco encostado
+    #    na beirada (ate 3 px)" — mas ANTES do aperta a beirada ainda e o papel
+    #    branco da folga do recorte, e o risco ficava a dezenas de pixels dela.
+    #    Aqui a caixa ja esta apertada na tinta, que e exatamente o estado em que
+    #    os numeros da regra foram medidos.
+    # ⚠️ EM RODADAS, ate parar de mudar. Uma passada so nao basta: o `aperta`
+    #    que vem depois da limpeza RECORTA a caixa de novo, e um pedacinho que
+    #    antes estava no meio do recorte passa a estar a 1 px da beirada nova —
+    #    ou seja, so vira "resto da pauta" na rodada seguinte. Com uma passada
+    #    ficou 1 px solto na arvore2, e foi o portao 1i6 que me mostrou.
+    for _ in range(4):
+        antes = c.size
+        c = aperta(tira_linha_impressa(c))
+        if c.size == antes:
+            break
     if c.width < 12 or c.height < 12:
-        return None
+        return False
     salva(c, nome)
-    return cod
+    return True
 
 
 def main():
     if not os.path.isdir(SAIDA):
         os.makedirs(SAIDA)
-    origem = {}
-    feitos, falhou = 0, []
-    for cod, nome, fr in CAIXAS:
-        mold = cod in (u"d20", u"d22")
-        r = recorta(cod, nome, fr, moldura=mold)
-        if r:
-            origem[PREFIXO + nome + u".png"] = u"folha:%s" % cod
-            feitos += 1
+    origem, feitos, problemas = {}, 0, []
+
+    for cod, nomes, faixa, linhas, colorida, tem_moldura in CAIXAS_POR_FOLHA:
+        cam = acha(cod)
+        if not cam:
+            problemas.append(u"%s: nao achei a folha em %s" % (cod, FOLHAS))
+            continue
+        if tem_moldura:
+            cx, im, (H, W) = molduras(cam, faixa, len(nomes))
+            # ⚠️ SO 2 px DE FOLGA AQUI. Cortar uma PORCENTAGEM para dentro (tentei
+            #    9%) tira a moldura mas tambem come o desenho que ocupa a caixa
+            #    inteira: sumiu o circulo da BOLA, o contorno do CUPCAKE e o
+            #    traco do BEBE, e sobrou so o miolo. Quem tira a moldura e o
+            #    `tira_moldura_do_recorte`, por COMPONENTE — ver ali embaixo.
+            cx = [(y0 + 2, y1 - 2, x0 + 2, x1 - 2) for y0, y1, x0, x1 in cx]
         else:
-            falhou.append((cod, nome))
-    # ⚠️ OS SELOS DA CASA TAMBEM SE DECLARAM. O trofeu e as estrelinhas do
-    #    boletim nao vieram de folha de papel nenhuma — sao peca do motor desta
-    #    casa —, e o portao 1i5 reprova qualquer PNG que esteja no disco sem
-    #    dizer de onde veio. Declarar "selo:casa" e a resposta honesta; deixar de
-    #    fora seria o portao aprovando por descuido.
+            cx, im, (H, W) = ilhas(cam, faixa, colorida=colorida)
+            # ⚠️ Na folha SEM moldura pode sobrar o ROTULO impresso ao lado da
+            #    figura (a d07 escreve "REINO MONERA" logo acima do desenho).
+            #    Quando sobra ilha, fico com as MAIORES em area — o rotulo e uma
+            #    tira fina de texto, a figura e um bloco. Isto e medida, mas nao
+            #    e prova: por isso a folha de contato no fim, para OLHAR.
+            if len(cx) > len(nomes):
+                cx = sorted(cx, key=lambda c: -((c[1]-c[0]) * (c[3]-c[2])))[:len(nomes)]
+        cx = em_ordem_de_leitura(cx, H, linhas)
+        if len(cx) != len(nomes):
+            problemas.append(
+                u"%s: achei %d caixa(s) e a lista tem %d nome(s) — NAO vou casar "
+                u"no escuro. Rode com --ver %s para olhar." % (cod, len(cx), len(nomes), cod))
+            continue
+        for caixa, nome in zip(cx, nomes):
+            if recorta_ilha(im, caixa, nome, colorida=colorida,
+                            tem_moldura=tem_moldura):
+                origem[PREFIXO + nome + u".png"] = u"folha:%s" % cod
+                feitos += 1
+            else:
+                problemas.append(u"%s/%s: a ilha saiu vazia depois de limpar o fundo" % (cod, nome))
+
+    # ⚠️ OS SELOS DA CASA TAMBEM SE DECLARAM (ver o portao 1i5).
     for selo in (u"trofeu", u"estrela", u"estrela_off"):
         if os.path.exists(os.path.join(SAIDA, PREFIXO + selo + u".png")):
             origem[PREFIXO + selo + u".png"] = u"selo:casa"
+
     cam_org = os.path.join(SAIDA, u"ORIGEM.json")
     antes = {}
     if os.path.exists(cam_org):
         antes = json.load(io.open(cam_org, encoding=u"utf-8"))
+    # tira do ORIGEM o que nao existe mais no disco (o gelo saiu da lista)
+    antes = dict((k, v) for k, v in antes.items()
+                 if os.path.exists(os.path.join(SAIDA, k)))
     antes.update(origem)
     io.open(cam_org, u"w", encoding=u"utf-8").write(
         json.dumps(antes, ensure_ascii=False, indent=1, sort_keys=True))
-    print(u"recortadas %d figura(s) das folhas de papel -> %s" % (feitos, SAIDA))
-    if falhou:
-        print(u"   nao saiu: %s" % u", ".join(u"%s/%s" % f for f in falhou))
 
-    if u"--contato" in sys.argv:
-        ims = sorted(glob.glob(os.path.join(SAIDA, PREFIXO + u"*.png")))
-        cols, th = 7, 130
-        linhas = (len(ims) + cols - 1) // cols
-        f = Image.new(u"RGBA", (cols * th, linhas * (th + 18)), (120, 170, 230, 255))
-        d = ImageDraw.Draw(f)
-        try:
-            ft = ImageFont.truetype(
-                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 11)
-        except Exception:
-            ft = ImageFont.load_default()
-        for i, cam in enumerate(ims):
-            im = Image.open(cam).convert(u"RGBA")
-            im.thumbnail((th - 12, th - 12))
-            x = (i % cols) * th + (th - im.width) // 2
-            y = (i // cols) * (th + 18) + 6
-            f.alpha_composite(im, (x, y))
-            d.text(((i % cols) * th + 4, (i // cols) * (th + 18) + th),
-                   os.path.basename(cam)[len(PREFIXO):-4][:18], font=ft, fill=(0, 0, 0, 255))
-        f.convert(u"RGB").save(os.path.join(RAIZ, u"_sequencias", u"crivo",
-                                            u"reinos-figuras.png"), optimize=True)
-        print(u"   contato-folha das figuras: _sequencias/crivo/reinos-figuras.png")
+    print(u"recortadas %d figura(s) das folhas de papel -> %s" % (feitos, SAIDA))
+    if problemas:
+        print(u"   PAROU EM:")
+        for x in problemas:
+            print(u"    x %s" % x)
+
+    # ⭐ `--ver <cod>`: desenha as caixas achadas POR CIMA da folha e salva, para
+    #    eu OLHAR em vez de adivinhar a faixa. Regra do Marcos: nao chutar.
+    if u"--ver" in sys.argv:
+        alvo = sys.argv[sys.argv.index(u"--ver") + 1]
+        for cod, nomes, faixa, linhas, colorida, tem_moldura in CAIXAS_POR_FOLHA:
+            if cod != alvo:
+                continue
+            cam = acha(cod)
+            if tem_moldura:
+                cx, im, (H, W) = molduras(cam, faixa, len(nomes))
+            else:
+                cx, im, (H, W) = ilhas(cam, faixa, colorida=colorida)
+                if len(cx) > len(nomes):
+                    cx = sorted(cx, key=lambda c: -((c[1]-c[0])*(c[3]-c[2])))[:len(nomes)]
+            cx = em_ordem_de_leitura(cx, H, linhas)
+            v = im.convert(u"RGB").copy()
+            dr = ImageDraw.Draw(v)
+            dr.rectangle([int(faixa[2]*W), int(faixa[0]*H),
+                          int(faixa[3]*W), int(faixa[1]*H)], outline=u"#0066ff", width=4)
+            for i, (y0, y1, x0, x1) in enumerate(cx):
+                dr.rectangle([x0, y0, x1, y1], outline=u"#ff0000", width=3)
+                dr.text((x0 + 3, y0 + 3), str(i), fill=u"#ff0000")
+            v.thumbnail((900, 1300))
+            saida = u"/tmp/ver_%s.png" % cod
+            v.save(saida)
+            print(u"%s: %d ilha(s) para %d nome(s) -> %s" % (cod, len(cx), len(nomes), saida))
+        return
+
+    contato()
     return 0
+
+
+def contato():
+    u"""A folha de contato das figuras — SEMPRE, e GRANDE o bastante para ver.
+
+    ⚠️ ELA JA EXISTIA E MESMO ASSIM O DEFEITO PASSOU, e o motivo e constrangedor
+       de tao simples: a miniatura tinha 130 px. Num quadradinho de 130 px o
+       colchete colado na cauda do passarinho e a moldura tracejada em volta da
+       arvore nao aparecem — eu OLHEI a folha de contato, achei tudo certo, e
+       quem viu o defeito foi o Marcos, na tela da escola. Conferir em miniatura
+       nao e conferir: e se tranquilizar.
+
+    ⚠️ E ELA SO SAIA COM `--contato`. Ou seja: a unica defesa contra as duas
+       coisas que NENHUM portao mede (o quadradinho fundido e a figura cortada)
+       dependia de eu lembrar de pedir. Agora sai sozinha, em telas de 300 px, e
+       em LOTES de 12 — porque uma folha unica com 47 figuras volta a ser
+       miniatura na hora de abrir.
+    """
+    ims = sorted(glob.glob(os.path.join(SAIDA, PREFIXO + u"*.png")))
+    dest = os.path.join(RAIZ, u"_sequencias", u"crivo")
+    if not os.path.isdir(dest):
+        os.makedirs(dest)
+    try:
+        ft = ImageFont.truetype(
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 13)
+    except Exception:
+        ft = ImageFont.load_default()
+    cols, th, lote = 6, 300, 12
+    saidas = []
+    for k in range(0, len(ims), lote):
+        grupo = ims[k:k + lote]
+        linhas = (len(grupo) + cols - 1) // cols
+        f = Image.new(u"RGBA", (cols * th, linhas * (th + 20)), (120, 170, 230, 255))
+        d = ImageDraw.Draw(f)
+        for i, cam in enumerate(grupo):
+            im = Image.open(cam).convert(u"RGBA")
+            im.thumbnail((th - 16, th - 16))
+            x = (i % cols) * th + (th - im.width) // 2
+            y = (i // cols) * (th + 20) + 8
+            f.alpha_composite(im, (x, y))
+            d.text(((i % cols) * th + 5, (i // cols) * (th + 20) + th),
+                   os.path.basename(cam)[len(PREFIXO):-4][:22], font=ft, fill=(0, 0, 0, 255))
+        nome = (u"reinos-figuras.png" if k == 0
+                else u"reinos-figuras-%d.png" % (k // lote + 1))
+        f.convert(u"RGB").save(os.path.join(dest, nome), optimize=True)
+        saidas.append(u"_sequencias/crivo/" + nome)
+    print(u"   contato-folha das figuras (300 px por tela, ABRIR e OLHAR — e a "
+          u"unica defesa contra figura cortada e quadradinho fundido):")
+    for s in saidas:
+        print(u"     %s" % s)
 
 
 if __name__ == "__main__":

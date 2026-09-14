@@ -83,6 +83,7 @@ PORTOES=(
   "0p duracao (enche a aula?)|python3 _qa/duracao.py $PASTA"
   "0o6 halo branco no recorte|python3 _qa/halo.py $PASTA"
   "1i5 figura veio da folha de papel|python3 _qa/figura_da_folha.py $PASTA"
+  "1i6 sobra da pauta da folha|python3 _qa/sobra_da_folha.py $PASTA"
   "1c resto de clone|python3 _qa/clone.py $ARQ"
   "1c2 duplicatas (mesma figura, dois nomes)|python3 _qa/duplicatas.py $PASTA"
   "1l2 ligar com rotulo repetido|python3 _qa/ligar_rotulo.py $PASTA"

@@ -96,6 +96,11 @@ PORTOES=(
   #    set/2026 e era só lembrete; lembrete depende da minha memória, que comeca
   #    do zero a cada sessao. Agora e medida.
   "1i5 figura veio da folha|python3 _qa/figura_da_folha.py $PASTA"
+  # ⭐ 1i6) a figura trouxe PAUTA da folha junto? (14/set/2026, queixa do Marcos:
+  #    "tem resto de outras imagens nas imagens"). O 1i5 pergunta se a figura veio
+  #    da folha certa; este pergunta se veio SO a figura, sem o quadradinho de
+  #    marcar, sem a moldura tracejada e sem a linha da coluna.
+  "1i6 sobra da pauta da folha|python3 _qa/sobra_da_folha.py $PASTA"
   "1l2 ligar com rotulo repetido|python3 _qa/ligar_rotulo.py $PASTA"
   # ⭐ so responde em jogo de UNO (nos outros ele sai com 2 = "nao medi")
   "3u regra da compra (UNO)|node _qa/uno.js $ARQ"
