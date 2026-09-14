@@ -938,6 +938,41 @@ porcentagem: "tem colheita e você não usou nenhuma" é linha dura, sem palpite
 Na estreia **reprovou o `_mult3`, que é meu**, e os doze cadernos de
 alfabetização saíram como NÃO MEDI (falta a declaração deles).
 
+### 🌱 O MÉTODO DA FOLHA VAI PARA O MOTOR — decisão do Marcos, 14/set/2026
+
+Observação dele: *"eu acredito que criar nesse novo modelo é bem mais fácil, até
+para as atividades antigas, estilo broto, as que a gente desenvolvia antes das
+sequências didáticas"*. Decisão: *"podemos testar a opção recomendada, caso não
+dê certo voltamos como antes, **mas por enquanto estamos criando só as
+sequências**"*.
+
+**O que foi combinado, e o que NÃO foi.** Está aprovado **testar** — quando ele
+mandar — refazer uma atividade antiga estilo Broto **no MOTOR**, usando o método
+da folha viva: colher as folhas de papel do assunto, tirar delas o gesto (o
+comando impresso) e as figuras (`recortar_das_folhas.py`). É teste com volta:
+não deu certo, volta ao jeito antigo. **Nada começa até ele pedir** — o trabalho
+de agora são as sequências.
+
+**Por que no motor e não convertendo para folha viva** (medido em 14/set/2026):
+- os **14 cadernos de folha viva não têm mascote e não têm PWA** (`sw.js` +
+  `manifest.json`) — conferido um a um;
+- e **o Broto É o mascote**: a primeira fala do Jardim é *"Oi! Eu sou o Broto. O
+  meu jardim está vazio... vem me ajudar a fazer a vida crescer?"*. Converter o
+  formato apagaria o personagem.
+
+**O que faz a folha viva ser rápida é o MÉTODO, não o formato** — e o método é
+portátil. Os dois portões da origem (**1i5** e **1i6**) leem `img/ORIGEM.json` e
+**não perguntam o formato**: já rodam em atividade de motor sem mudar uma linha.
+
+**A conta honesta dos dois formatos**, para não repetir a comparação do zero:
+| | motor | folha viva |
+|---|---|---|
+| escrita | ~1.600 linhas declaradas no `conteudo.json`, o `montar.py` gera | **6.317 linhas à mão** (`folhas.js` + `index.html`) |
+| gesto | eu escolhia — deu **84% de um gesto só** na Fábrica | o comando impresso escolhe — **13 gestos, nenhum > 20%** nos Reinos |
+| arte | gerar e esperar (a maior espera de relógio de uma atividade) | recortada da mesma folha, R$ 0,00 |
+| banca | ~10 min | 4min30, e **8 portões do motor não a alcançam** |
+| mascote / PWA | tem | **não tem** |
+
 ---
 
 ## 🎞️ O `@` QUE SOME DO CSS — e o portão 4c3 (14/set/2026)
