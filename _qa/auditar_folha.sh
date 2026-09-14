@@ -64,6 +64,10 @@ TMP="$(mktemp -d /tmp/bancafolha.XXXXXX)"
 # ------------------------------------------------------------------
 PORTOES=(
   "1a engenheiro (node --check)|node --check $PASTA/folhas.js"
+  # ⭐ 1s) o folhas.js sobe com versao no endereco? Sem isso o navegador serve
+  #     uma copia velha para sempre e a crianca ve so a faixa de cima — foi o
+  #     que o Marcos pegou no Chrome dele em 14/set/2026.
+  "1s versao do folhas.js|python3 _qa/versao_script.py $PASTA"
   "0z pre-voo (39 portoes de texto)|bash _qa/previo.sh $PASTA"
   "1z boot (abre limpa?)|node _qa/boot.js $ARQ"
   "1w andar folha (anda as 25, item por item)|node _qa/andar_folha.js $PASTA"
