@@ -13,10 +13,14 @@ Leia tudo antes de agir e responda sempre em **português**.
 > outros portões e uma banca que só os alcança pela metade. Antes de tocar em
 > qualquer um deles, ler o `SEQUENCIAS-DIDATICAS.md` inteiro.
 >
-> **Três regras de lá que valem citar aqui:** sequência tem **no mínimo 25
-> folhas** (medido: é o que enche os 55 min da criança rápida); **o fecho tem
-> que ser alcançável a qualquer momento**, senão 25 folhas castiga justamente
-> quem vai devagar; e **a banca deste formato é outra** —
+> **Três regras de lá que valem citar aqui:** sequência **nova** tem **no mínimo
+> 20 folhas** (o piso era 25 — medido, é o que enche os 55 min da criança
+> rápida — e o Marcos baixou para 20 em 14/set/2026 por velocidade de produção:
+> *"pode baixar para 20"*, *"digo nas próximas atividades"*; os cadernos que já
+> existem ficam com as 25 que têm, e piso não é teto: se o conteúdo der 25,
+> ficam 25 — o que está proibido é folha de enchimento para fechar número);
+> **o fecho tem que ser alcançável a qualquer momento**, senão o tamanho castiga
+> justamente quem vai devagar; e **a banca deste formato é outra** —
 > **`bash _qa/auditar_folha.sh <pasta>`**, 19 portões (~4 min), e NÃO a
 > `auditar.sh`, que é do motor e em folha viva reprova ou diz "não medi" por
 > desenho. Nasceu da pergunta do Marcos (13/set/2026): *"Mas tem banca para esse

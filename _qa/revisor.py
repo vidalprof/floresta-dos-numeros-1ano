@@ -93,6 +93,18 @@ def _limpa_html(s):
 def _tem_html(s):
     return bool(re.search(r"<[a-zA-Z/][^>]*>", s or "")) or bool(re.search(r"&[a-zA-Z]+;|&#\d+;", s or ""))
 
+# ⚠️ LOCUCOES COM "A" PREPOSICAO — o "a" aqui nao e artigo e nao concorda em
+#    genero, entao a regra de terminacao (-o = masculino) nao vale. Lista
+#    FECHADA e declarada: nasceu do falso-positivo "a olho nu" (Reinos,
+#    set/2026), em que o portao mandava trocar por "o olho nu".
+LOCUCAO_A = (
+    u"a olho nu", u"a pe", u"a pé", u"a cavalo", u"a bordo", u"a lapis",
+    u"a lápis", u"a dedo", u"a gosto", u"a jato", u"a peso", u"a rigor",
+    u"a seco", u"a serio", u"a sério", u"a trabalho", u"a caminho",
+    u"a proposito", u"a propósito", u"a contento", u"a esmo",
+)
+
+
 def _genero_suspeito(artigo, palavra):
     """Devolve mensagem se 'o/a <palavra>' parece concordância errada, senão ''."""
     p = palavra.lower()
@@ -174,6 +186,16 @@ def revisa_texto(t, display=False):
         # ⚠️ (set/2026, Central) "passo A passo", "dia a dia", "lado a lado": a
         #    mesma palavra dos dois lados do "a" e locucao, nao artigo+nome.
         if art == "a" and re.search(r"\b" + re.escape(pal.lower()) + r"$", antes):
+            continue
+        # ⚠️ (set/2026, Reinos) "a olho nu": LOCUCAO ADVERBIAL — o "a" e
+        #    preposicao, nao artigo, e por isso nao concorda em genero. A
+        #    heuristica de terminacao acusava *"a olho"* como erro e mandava
+        #    escrever "o olho nu", que e que estaria errado. A lista e FECHADA e
+        #    declarada: so entra expressao que exista mesmo em portugues.
+        #    Locucao nova = linha nova AQUI, nunca excecao solta no texto.
+        depois = fala[m.end():m.end() + 12].lower()
+        trecho = (art + " " + pal.lower() + depois).strip()
+        if any(trecho.startswith(x) for x in LOCUCAO_A):
             continue
         msg = _genero_suspeito(art, pal)
         if msg:

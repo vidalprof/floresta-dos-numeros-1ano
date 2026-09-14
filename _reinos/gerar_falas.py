@@ -28,9 +28,29 @@ u"""GERA O POTE E AS FALAS DA COROA DOS CINCO REINOS (seres vivos, 4º ano).
 ⚠️ E O TETO DA REDE: Blumenau, 4º ano, manda *"Seres unicelulares e
    multicelulares"*, *"Seres microscópicos (uso de lupa e microscópio)"* e
    *"Relacionar a participação de fungos e bactérias no processo de
-   decomposição"*. O critério do NÚCLEO (procarionte × eucarionte) **não** está
-   no currículo do ano: entrou por encargo do Marcos, e por isso entra em
-   linguagem de criança (o "cofrinho da receita"), nunca como palavra a decorar.
+   decomposição"*.
+
+⚠️⚠️ A ADEQUAÇÃO AO CURRÍCULO (14/set/2026) — e ela apagou duas coisas minhas.
+   O Marcos perguntou se "já foi vivo" e o "núcleo" eram do 4º ano, e mandou:
+   *"o que importa para mim é o currículo, não invenção etc, não invente ou
+   ache"*. Fui medir no bloco CIÊNCIAS – 4º ANO do currículo de Blumenau:
+
+     · "já foi vivo" .............. NÃO está (era a 3ª gaveta da folha 4)
+     · "matéria orgânica" ......... NÃO está
+     · "núcleo" ................... NÃO está (era o "cofrinho" da folha 10)
+     · "Seres unicelulares e multicelulares" .......... ESTÁ, verbatim
+     · "Seres microscópicos (uso de lupa e microscópio)" ESTÁ, verbatim
+     · "Classificação em reinos" ...................... ESTÁ, verbatim
+
+   Então: a folha 4 passou a ter DUAS gavetas (vivo × não vivo), com as peças
+   difíceis — o lápis, o lanche, o cupcake —, e o 3º critério dos reinos deixou
+   de ser o cofrinho e passou a ser **o que o currículo nomeia**: dá para ver a
+   olho nu, ou só no microscópio? Ele separa os mesmos reinos (algas e
+   bactérias de um lado), é verbatim da rede, e ainda amarra com as folhas 7 e
+   24, que já falam do microscópio.
+   ⚠️ O que NÃO se pode fazer é trocar o critério e deixar a fala velha: são
+   dezenas de falas derivadas. Por isso o dado mora só na tabela REINOS abaixo,
+   no campo `mic`, e TODA fala é montada a partir dele.
 """
 from __future__ import print_function
 
@@ -51,21 +71,27 @@ VOZ = u"pt-BR-AntonioNeural"
 # ============================================================
 REINOS = {
     u"animais":   {u"dia": u"ANIMAIS",   u"ap": u"Animalia", u"fig": u"reino_animal",
-                   u"cel": u"muitas", u"com": u"come",    u"cof": u"tem",
+                   u"cel": u"muitas", u"com": u"come",    u"mic": u"nu",
                    u"quem": u"o cachorro, a borboleta, o peixe e você"},
     u"plantas":   {u"dia": u"PLANTAS",   u"ap": u"Plantae",  u"fig": u"reino_plantae",
-                   u"cel": u"muitas", u"com": u"fabrica", u"cof": u"tem",
+                   u"cel": u"muitas", u"com": u"fabrica", u"mic": u"nu",
                    u"quem": u"a árvore, o milho, a rosa e o tomateiro"},
     u"fungos":    {u"dia": u"FUNGOS",    u"ap": u"Fungi",    u"fig": u"reino_fungi",
-                   u"cel": u"muitas", u"com": u"come",    u"cof": u"tem",
+                   u"cel": u"muitas", u"com": u"come",    u"mic": u"nu",
                    u"quem": u"o cogumelo, o bolor do pão e o fermento do bolo"},
     u"algas":     {u"dia": u"ALGAS",     u"ap": u"Protista", u"fig": u"reino_protista",
-                   u"cel": u"uma",    u"com": u"fabrica", u"cof": u"tem",
-                   u"quem": u"a ameba, o paramécio e as algas do mar"},
+                   u"cel": u"uma",    u"com": u"fabrica", u"mic": u"micro",
+                   u"quem": u"a ameba, o paramécio e as algas de uma célula só"},
     u"bacterias": {u"dia": u"BACTÉRIAS", u"ap": u"Monera",   u"fig": u"reino_monera",
-                   u"cel": u"uma",    u"com": u"come",    u"cof": u"nao",
+                   u"cel": u"uma",    u"com": u"come",    u"mic": u"micro",
                    u"quem": u"as bactérias, que só se veem no microscópio"},
 }
+# ⚠️ `mic` É COERENTE COM `cel`, E ISSO NÃO É COINCIDÊNCIA: o caderno declara
+#    algas e bactérias como seres de UMA célula só, e um ser de uma célula só
+#    não cabe no olho. Por isso o `quem` das ALGAS deixou de dizer "as algas do
+#    mar" (que são de muitas células e a criança vê na praia) e passou a dizer
+#    "as algas de uma célula só" — senão a tela ensinava uma coisa e a resposta
+#    certa cobrava a outra.
 ORDEM = [u"animais", u"plantas", u"fungos", u"algas", u"bacterias"]
 # como a voz diz o nome do reino dentro de uma frase (a tela escreve em caixa alta)
 DIZR = {u"animais": u"animais", u"plantas": u"plantas", u"fungos": u"fungos",
@@ -106,9 +132,13 @@ def ehSaoDe(nome):
 #  ⚠️ O NOME NÃO É A CHAVE DO ARQUIVO. `urso_pelucia` é o PNG; o que a criança
 #     lê e o leitor de tela anuncia é "o urso de pelúcia". Este mapa vai junto
 #     com o pote (`FIGNOME`) para a tela.
-#  ⚠️ A COLUNA `vida`: "vivo" · "foi" (já foi vivo: era madeira, era trigo) ·
-#     "nunca". Ela sai das PRÓPRIAS folhas — a d26 e a d22 já dizem quem é vivo
-#     e quem não é, e a d40 é a que abre a terceira gaveta.
+#  ⚠️ A COLUNA `vida`: "vivo" · "foi" · "nunca". Ela sai das PRÓPRIAS folhas —
+#     a d26 e a d22 já dizem quem é vivo e quem não é.
+#  ⚠️ "foi" NÃO É MAIS UMA GAVETA (14/set/2026): "já foi vivo" não está no
+#     currículo do 4º ano da rede, e a 3ª gaveta da folha 4 caiu. A coluna
+#     continua existindo porque o lápis, o lanche e o cupcake precisam de uma
+#     DICA diferente da pedra — mas nas gavetas os três vão para "não vivo",
+#     que é o que o currículo nomeia ("componentes vivos e não vivos").
 # ============================================================
 FIG = [
     # chave            nome falado            vida     reino
@@ -223,12 +253,18 @@ for i in range(10):
     pe += [[w, u"nao"] for w in gira(NUNCA, i * 2, 3)]
     IT[u"p3"].append({u"pecas": pe})
 
-# ---- folha 4: três gavetas (d40) ---------------------------------------
+# ---- folha 4: duas gavetas, as peças DIFÍCEIS ---------------------------
+#  ⚠️ ESTA FOLHA TINHA TRÊS GAVETAS (vivo · já foi vivo · nunca viveu, da folha
+#     de papel d40) e o Marcos mandou tirar a do meio: "já foi vivo" não está no
+#     currículo do 4º ano da rede. O que sobrou NÃO é a folha 3 de novo: aqui
+#     entram justamente as peças que enganam — o lápis (que veio da madeira), o
+#     lanche, o cupcake. A criança tem de perguntar "isto nasce, cresce e se
+#     alimenta?" em vez de "isto veio de bicho ou de planta?".
 IT[u"p4"] = []
 for i in range(8):
     pe = [[w, u"vivo"] for w in gira(VIVOS, i * 5, 2)]
-    pe += [[w, u"foi"] for w in gira(FOI, i, 2)]
-    pe += [[w, u"nunca"] for w in gira(NUNCA, i * 3, 2)]
+    pe += [[w, u"nao"] for w in gira(FOI, i, 2)]
+    pe += [[w, u"nao"] for w in gira(NUNCA, i * 3, 2)]
     IT[u"p4"].append({u"pecas": pe})
 
 # ---- folha 5: o ciclo de vida (d16) ------------------------------------
@@ -276,16 +312,20 @@ for i in range(8):
     pe += [[w, u"come"] for w in gira(BICHOS, i * 2, 3)]
     IT[u"p9"].append({u"pecas": pe})
 
-# ---- folha 10: o cofrinho da receita (encargo do Marcos) ---------------
+# ---- folha 10: a olho nu ou só no microscópio? (CURRÍCULO) -------------
+#  ⚠️ ERA "o cofrinho da receita" (o núcleo), que o currículo do 4º ano NÃO
+#     nomeia. Virou o critério que ele nomeia verbatim: "Seres microscópicos
+#     (uso de lupa e microscópio)". Separa os mesmos reinos e casa com as
+#     folhas 7 (o microscópio) e 24 (do menor ao maior).
 IT[u"p10"] = [
-    {u"r": u"bacterias", u"rot": u"da bactéria"},
-    {u"r": u"animais", u"rot": u"do cachorro"},
-    {u"r": u"plantas", u"rot": u"da folha da árvore"},
-    {u"r": u"fungos", u"rot": u"do cogumelo"},
-    {u"r": u"algas", u"rot": u"da ameba"},
-    {u"r": u"bacterias", u"rot": u"do leite azedo"},
-    {u"r": u"animais", u"rot": u"da borboleta"},
-    {u"r": u"plantas", u"rot": u"do pé de milho"},
+    {u"w": u"reino_monera", u"r": u"bacterias"},
+    {u"w": u"cachorro", u"r": u"animais"},
+    {u"w": u"reino_protista", u"r": u"algas"},
+    {u"w": u"reino_plantae", u"r": u"plantas"},
+    {u"w": u"reino_monera", u"r": u"bacterias"},
+    {u"w": u"reino_fungi", u"r": u"fungos"},
+    {u"w": u"reino_protista", u"r": u"algas"},
+    {u"w": u"formiga", u"r": u"animais"},
 ]
 
 # ---- folha 11: pinte por legenda (d05) ---------------------------------
@@ -343,16 +383,16 @@ IT[u"p17"] = [{u"r": k} for k in (u"algas", u"bacterias", u"plantas", u"animais"
 
 # ---- folha 18: case o reino com a descrição (d01, d19) -----------------
 DESCR = {
-    u"animais": u"Tem muitas células, precisa comer outros seres vivos e guarda "
-                u"a receita no cofrinho. Anda, nada ou voa.",
+    u"animais": u"Tem muitas células, precisa comer outros seres vivos e dá "
+                u"para ver sem aparelho nenhum. Anda, nada ou voa.",
     u"plantas": u"Tem muitas células, fabrica o próprio alimento com o Sol e "
-                u"guarda a receita no cofrinho. Fica no mesmo lugar.",
-    u"fungos": u"Tem muitas células e guarda a receita no cofrinho, mas não "
-               u"fabrica alimento: come o que está apodrecendo.",
-    u"algas": u"É feito de uma célula só, guarda a receita no cofrinho e quase "
-              u"sempre mora na água.",
-    u"bacterias": u"É feito de uma célula só e nem cofrinho tem: a receita fica "
-                  u"solta dentro dela. É o menor ser vivo de todos.",
+                u"dá para ver a olho nu. Fica no mesmo lugar.",
+    u"fungos": u"Tem muitas células e dá para ver a olho nu, mas não fabrica "
+               u"alimento: come o que está apodrecendo.",
+    u"algas": u"É feito de uma célula só, quase sempre mora na água e só "
+              u"aparece quando a gente olha no microscópio.",
+    u"bacterias": u"É feito de uma célula só e só se vê no microscópio. É o "
+                  u"menor ser vivo de todos.",
 }
 IT[u"p18"] = []
 for i, k in enumerate(ORDEM + [u"fungos", u"plantas", u"bacterias"]):
@@ -365,7 +405,7 @@ for i, k in enumerate(ORDEM + [u"fungos", u"plantas", u"bacterias"]):
 # ---- folha 19: complete o quadro (d29) ---------------------------------
 IT[u"p19"] = []
 for i, k in enumerate(ORDEM + ORDEM):
-    IT[u"p19"].append({u"r": k, u"falta": (u"cel", u"com", u"cof")[i % 3]})
+    IT[u"p19"].append({u"r": k, u"falta": (u"cel", u"com", u"mic")[i % 3]})
 
 # ---- folha 20: as cinco gavetas dos reinos (d06) -----------------------
 IT[u"p20"] = []
@@ -424,7 +464,7 @@ PISTA = {
     u"plantas": u"quem fica parado no mesmo lugar e fabrica o alimento com o Sol",
     u"fungos": u"quem come o que está apodrecendo — o cogumelo e o bolor do pão",
     u"algas": u"quem é feito de uma célula só, mora na água e fabrica o alimento",
-    u"bacterias": u"quem é feito de uma célula só e nem cofrinho tem",
+    u"bacterias": u"quem é feito de uma célula só e só se vê no microscópio",
 }
 IT[u"p23"] = [{u"r": k, u"pista": PISTA[k]} for k in ORDEM]
 
@@ -489,19 +529,17 @@ F[u"op_uma"] = u"Uma célula só."
 F[u"op_muitas"] = u"Muitas células."
 F[u"op_fabrica"] = u"Fabrica o alimento com o Sol."
 F[u"op_come"] = u"Precisa comer."
-F[u"op_cofre"] = u"Tem cofrinho."
-F[u"op_solta"] = u"A receita fica solta."
-F[u"op_tem"] = u"Guardada no cofrinho."
-F[u"op_nao"] = u"Solta na célula."
 F[u"op_sonomic"] = u"Só dá para ver no microscópio."
 F[u"op_semmic"] = u"Dá para ver sem o microscópio."
+F[u"op_micro"] = u"Só no microscópio."
+F[u"op_nu"] = u"A olho nu."
 
 # ---- enunciados
 ENUN = {
     1: u"Circule, ou toque, só os seres vivos.",
     2: u"Nesta cena, toque em tudo que está vivo.",
     3: u"Puxe cada figura para a gaveta certa: seres vivos ou não vivos.",
-    4: u"Agora são três gavetas. Olhe bem antes de puxar.",
+    4: u"Agora vêm as peças difíceis. Duas gavetas: vivo, ou não vivo?",
     5: u"Toque nas fases na ordem, do começo ao fim.",
     # ⚠️ A PALAVRA "CÉLULA" CHEGAVA COMO PERGUNTA (14/set/2026, o Marcos:
     #    *"falou de célula única etc em uma folha, não sei se isso o 4 ano já
@@ -515,7 +553,7 @@ ENUN = {
     7: u"Olhe no microscópio. Toque na lente para focar.",
     8: u"Ele fabrica o próprio alimento com o Sol, ou precisa comer?",
     9: u"Puxe cada um para a gaveta do seu alimento.",
-    10: u"A receita dele fica guardada num cofrinho, ou fica solta?",
+    10: u"Este ser dá para ver a olho nu, ou só no microscópio?",
     11: u"Pinte cada reino na cor da legenda.",
     12: u"Olhe a figura. De qual reino ela é?",
     13: u"Olhe a figura. De qual reino ela é?",
@@ -550,9 +588,13 @@ for w in set(sum([it[u"todos"] for it in IT[u"p1"]], [])):
 F[u"certo2"] = u"Você achou todos! Olho de cientista."
 for w in set(sum([it[u"todos"] for it in IT[u"p2"]], [])):
     if VIDA[w] == u"foi":
-        F[u"dica2_" + w] = (u"%s já foi de um ser vivo, mas agora não nasce nem "
-                            u"cresce mais. Procure quem ainda está vivo."
-                            % cap(NOMEF[w]))
+        # ⚠️ ESTA DICA DIZIA "já foi de um ser vivo" — e "já foi vivo" saiu do
+        #    caderno em 14/set/2026, por não estar no currículo do 4º ano. A
+        #    dica passou a usar o MESMO critério das outras: nasce? cresce?
+        #    se alimenta? O lápis continua sendo a peça difícil, mas agora é
+        #    difícil pelo motivo que a rede ensina.
+        F[u"dica2_" + w] = (u"%s não nasce, não cresce e não se alimenta. "
+                            u"Procure quem ainda está vivo." % cap(NOMEF[w]))
     elif VIDA[w] == u"nunca":
         F[u"dica2_" + w] = (u"%s nunca esteve vivo. Procure quem nasce, cresce e "
                             u"se alimenta." % cap(NOMEF[w]))
@@ -561,17 +603,18 @@ for w in set(sum([it[u"todos"] for it in IT[u"p2"]], [])):
 F[u"certo3"] = u"Gavetas certas! Ser vivo nasce, cresce, se alimenta e morre."
 F[u"dica3"] = (u"Pergunte assim: isso nasce e cresce sozinho? Se nasce, é vivo. "
                u"Se alguém fabricou, não é.")
-F[u"certo4"] = (u"Três gavetas certas! Tem coisa que está viva, tem coisa que já "
-                u"foi viva e virou outra coisa, e tem coisa que nunca viveu.")
-F[u"dica4"] = (u"Pense de onde veio: o lápis veio da madeira da árvore, então já "
-               u"foi vivo. A pedra não veio de ser vivo nenhum.")
+F[u"certo4"] = (u"Gavetas certas! Estas eram as difíceis: o lápis e o lanche "
+                u"não nascem, não crescem e não se alimentam, então não são "
+                u"seres vivos.")
+F[u"dica4"] = (u"Não pergunte de onde veio. Pergunte: isto nasce, cresce e se "
+               u"alimenta sozinho agora? Se não faz nada disso, não é um ser vivo.")
 F[u"certo9"] = (u"Isso! Quem tem folha verde fabrica o alimento com o Sol. Quem "
                 u"não tem precisa comer.")
 F[u"dica9"] = (u"Olhe se ele tem folhas verdes. Folha verde é a fábrica de "
                u"alimento que usa a luz do Sol.")
 F[u"certo20"] = u"Cinco gavetas, cinco reinos! Você classificou como um cientista."
 F[u"dica20"] = (u"Faça as três perguntas: quantas células, de onde vem o alimento "
-                u"e se a receita tem cofrinho.")
+                u"e se dá para ver a olho nu ou só no microscópio.")
 
 # ---- folha 5
 FASE = {
@@ -649,20 +692,19 @@ for it in IT[u"p8"]:
                                 plural(NOMEF[w], u"precisa", u"precisam")))
 
 # ---- folha 10
-F[u"dica10_tem"] = (u"Quase todo ser vivo guarda a receita num cofrinho dentro "
-                    u"da célula. Só um reino não guarda.")
-F[u"dica10_nao"] = (u"Este é o menor de todos e o mais simples de todos: nem "
-                    u"cofrinho ele tem.")
+F[u"dica10_nu"] = (u"Pense se você já viu um de verdade, com os seus olhos, sem "
+                   u"aparelho nenhum. Se já viu, é a olho nu.")
+F[u"dica10_micro"] = (u"Este é feito de uma célula só. Um ser de uma célula só "
+                      u"não cabe no olho: precisa do microscópio.")
 for k in ORDEM:
-    if REINOS[k][u"cof"] == u"tem":
-        F[u"certo10_" + k] = (u"Isso! A célula dos seres do reino %s guarda "
-                              u"a receita num cofrinho. Gente grande chama esse "
-                              u"cofrinho de núcleo." % reinoDe(k))
+    if REINOS[k][u"mic"] == u"nu":
+        F[u"certo10_" + k] = (u"Isso! Os seres do reino %s têm muitas células e "
+                              u"a gente vê sem aparelho nenhum." % reinoDe(k))
     else:
-        F[u"certo10_" + k] = (u"Isso! A célula das bactérias não tem cofrinho: a "
-                              u"receita fica solta lá dentro. É o único reino "
-                              u"assim, e é por isso que ele fica separado dos "
-                              u"outros quatro.")
+        F[u"certo10_" + k] = (u"Isso! Os seres do reino %s são feitos de uma "
+                              u"célula só e só aparecem no microscópio. Foi "
+                              u"para enxergar gente assim que o microscópio foi "
+                              u"inventado." % reinoDe(k))
 
 # ---- folha 11
 for it in IT[u"p11"]:
@@ -682,11 +724,12 @@ for pote in (u"p12", u"p13"):
                               % (cap(NOMEF[w]), ehSaoDe(NOMEF[w]), reinoDe(k)))
 for k in ORDEM:
     F[u"dica12_" + k] = (u"Faça as três perguntas: quantas células, de onde vem "
-                         u"o alimento e se a receita tem cofrinho. Este aqui "
-                         u"tem %s, %s o alimento e %s cofrinho."
+                         u"o alimento e se dá para ver a olho nu. Este aqui tem "
+                         u"%s, %s o alimento e %s."
                          % (u"uma célula só" if REINOS[k][u"cel"] == u"uma" else u"muitas células",
                             u"fabrica" if REINOS[k][u"com"] == u"fabrica" else u"precisa comer",
-                            u"tem" if REINOS[k][u"cof"] == u"tem" else u"não tem"))
+                            u"só aparece no microscópio" if REINOS[k][u"mic"] == u"micro"
+                            else u"dá para ver a olho nu"))
 
 # ---- folhas 14 e 15
 for pote in (u"p14", u"p15"):
@@ -706,19 +749,22 @@ for k in ORDEM:
         % (reinoDe(k),
            u"uma célula só" if R[u"cel"] == u"uma" else u"muitas células",
            u"fabrica" if R[u"com"] == u"fabrica" else u"precisa comer",
-           u"a receita fica no cofrinho" if R[u"cof"] == u"tem" else u"a receita fica solta"))
+           u"só aparece no microscópio" if R[u"mic"] == u"micro"
+           else u"dá para ver a olho nu"))
     F[u"dicacoroa_cel_" + k] = (
-        u"Pense no tamanho: %s"
-        % (u"este é tão pequeno que só se vê no microscópio."
-           if R[u"cel"] == u"uma" else u"este a gente vê sem aparelho nenhum."))
+        u"Pense no corpo dele: %s"
+        % (u"este é tão simples que o corpo inteiro é uma célula só."
+           if R[u"cel"] == u"uma"
+           else u"este tem corpo com muitas partes, feitas de muitas células."))
     F[u"dicacoroa_com_" + k] = (
         u"Pense na cor verde: %s"
         % (u"este tem verde, então fabrica alimento com o Sol."
            if R[u"com"] == u"fabrica" else u"este não tem verde, então precisa comer."))
-    F[u"dicacoroa_cof_" + k] = (
-        u"Pense no cofrinho: %s"
-        % (u"só as bactérias ficam sem ele."
-           if R[u"cof"] == u"tem" else u"este é o único reino sem cofrinho."))
+    F[u"dicacoroa_mic_" + k] = (
+        u"Pense nos seus olhos: %s"
+        % (u"este você já viu de verdade, sem aparelho nenhum."
+           if R[u"mic"] == u"nu"
+           else u"este ninguém enxerga sem o microscópio."))
 
 # ---- folha 18
 for k in ORDEM:
@@ -731,8 +777,8 @@ for k in ORDEM:
 # ---- folha 19 (o quadro)
 DIZC = {u"cel": {u"uma": u"uma célula só", u"muitas": u"muitas células"},
         u"com": {u"fabrica": u"fabrica com o Sol", u"come": u"precisa comer"},
-        u"cof": {u"tem": u"a receita no cofrinho", u"nao": u"a receita solta"}}
-ROTC = {u"cel": u"as células", u"com": u"o alimento", u"cof": u"a receita"}
+        u"mic": {u"nu": u"dá para ver a olho nu", u"micro": u"só no microscópio"}}
+ROTC = {u"cel": u"as células", u"com": u"o alimento", u"mic": u"o tamanho"}
 for it in IT[u"p19"]:
     k, c = it[u"r"], it[u"falta"]
     F[u"certoquadro_%s_%s" % (k, c)] = (

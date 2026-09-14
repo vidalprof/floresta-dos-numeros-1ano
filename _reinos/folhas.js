@@ -25,9 +25,13 @@
    ⚠️ OS TRÊS CRITÉRIOS, em linguagem de criança (folhas d15 e d29):
       · quantas células — uma só ou muitas;
       · o alimento — fabrica o próprio com o Sol, ou precisa comer;
-      · o cofrinho — a célula guarda a receita num cofrinho (núcleo), ou não.
-      Procarionte/eucarionte/autótrofo/heterótrofo aparecem uma vez, como
-      apelido de gente grande, e ficam fora do que a criança tem de acertar.
+      · o tamanho — dá para ver a olho nu, ou só no microscópio.
+      ⚠️⚠️ O TERCEIRO CRITÉRIO ERA O NÚCLEO ("o cofrinho da receita") e foi
+      TROCADO em 14/set/2026, por ordem do Marcos: *"o que importa para mim é
+      o currículo, não invenção"*. Núcleo não está no bloco CIÊNCIAS – 4º ANO
+      de Blumenau; "Seres microscópicos (uso de lupa e microscópio)" está lá
+      verbatim. O critério novo separa os mesmos reinos (algas e bactérias de
+      um lado) e amarra com as folhas 7 e 24, que já são do microscópio.
 
    ⚠️ DADO DE FOLHA MORA NO TOPO (lição paga em 13/set/2026): `function` sobe,
       `var x = ...` não.
@@ -50,19 +54,19 @@ var livro = document.getElementById("livro"), PAGEL = [];
    Os três critérios vêm das folhas d15 e d29, em linguagem de criança. */
 var REINOS = [
   {k: "animais", dia: "ANIMAIS", ap: "Animalia", fig: "reino_animal",
-   cel: "muitas", com: "come", cof: "tem",
+   cel: "muitas", com: "come", mic: "nu",
    quem: "o cachorro, a borboleta, o peixe e você"},
   {k: "plantas", dia: "PLANTAS", ap: "Plantae", fig: "reino_plantae",
-   cel: "muitas", com: "fabrica", cof: "tem",
+   cel: "muitas", com: "fabrica", mic: "nu",
    quem: "a árvore, o milho, a rosa e o tomateiro"},
   {k: "fungos", dia: "FUNGOS", ap: "Fungi", fig: "reino_fungi",
-   cel: "muitas", com: "come", cof: "tem",
+   cel: "muitas", com: "come", mic: "nu",
    quem: "o cogumelo, o bolor do pão e o fermento do bolo"},
   {k: "algas", dia: "ALGAS", ap: "Protista", fig: "reino_protista",
-   cel: "uma", com: "fabrica", cof: "tem",
-   quem: "a ameba, o paramécio e as algas do mar"},
+   cel: "uma", com: "fabrica", mic: "micro",
+   quem: "a ameba, o paramécio e as algas de uma célula só"},
   {k: "bacterias", dia: "BACTÉRIAS", ap: "Monera", fig: "reino_monera",
-   cel: "uma", com: "come", cof: "nao",
+   cel: "uma", com: "come", mic: "micro",
    quem: "as bactérias, que só se veem no microscópio"}
 ];
 /* ⚠️ O NOME DA FIGURA NÃO É A CHAVE DO ARQUIVO. `urso_pelucia` é o nome do PNG;
@@ -847,20 +851,17 @@ var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
    professor interessa o que ela domina, não em qual tela. */
 var OBJETIVOS = [
   {n: "O que é estar vivo", f: [1, 2, 3, 4, 5],
-   ok: "separa o que está vivo do que nunca viveu e do que já foi vivo, e reconhece o ciclo nascer, crescer, reproduzir e morrer",
+   ok: "separa o que está vivo do que não é vivo, mesmo nas peças difíceis, e reconhece o ciclo nascer, crescer, reproduzir e morrer",
    nao: "ainda decide pelo desenho (bicho sim, resto não) em vez de perguntar se aquilo nasce, cresce e se alimenta"},
   {n: "Contar as células: uma ou muitas", f: [6],
    ok: "diz se um ser é feito de uma célula só ou de muitas",
    nao: "ainda não usa o número de células como critério para separar os seres"},
-  {n: "Os seres que só o microscópio mostra", f: [7, 24],
-   ok: "sabe que existem seres vivos pequenos demais para o olho, e os põe no lugar certo numa fila de tamanhos",
+  {n: "Os seres que só o microscópio mostra", f: [7, 10, 24],
+   ok: "sabe que existem seres vivos pequenos demais para o olho, separa quem se vê a olho nu de quem só aparece no microscópio e os põe no lugar certo numa fila de tamanhos",
    nao: "ainda trata o mundo vivo como só aquilo que ela consegue enxergar"},
   {n: "De onde vem o alimento", f: [8, 9],
    ok: "separa quem fabrica o próprio alimento com a luz do Sol de quem precisa comer outro ser vivo",
    nao: "ainda não usa o alimento como critério, ou acha que toda planta também come"},
-  {n: "Onde a receita fica guardada", f: [10],
-   ok: "sabe que a célula guarda a receita num cofrinho, e que a bactéria é a única que não tem esse cofrinho",
-   nao: "ainda não distingue a célula da bactéria da célula dos outros reinos"},
   {n: "Os cinco reinos, um a um", f: [11, 12, 13],
    ok: "nomeia os cinco reinos e reconhece um ser de cada um deles, inclusive os que não se veem a olho nu",
    nao: "ainda troca os reinos entre si, principalmente fungos, algas e bactérias"},
@@ -868,7 +869,7 @@ var OBJETIVOS = [
    ok: "liga cada ser ao reino certo sem precisar da dica",
    nao: "ainda liga por tentativa, sem usar as características do reino"},
   {n: "Cruzar reino e característica", f: [16, 17, 18, 19],
-   ok: "diz, para cada reino, as três características ao mesmo tempo: células, alimento e cofrinho",
+   ok: "diz, para cada reino, as três características ao mesmo tempo: células, alimento e se dá para ver a olho nu",
    nao: "ainda acerta uma característica de cada vez, mas não monta o quadro inteiro do reino"},
   {n: "Classificar sozinha nos cinco reinos", f: [20, 21, 23],
    ok: "distribui os seres nas cinco gavetas, acha o intruso e escreve o nome do reino de próprio punho",
@@ -1403,23 +1404,26 @@ function f3(d, pi){
   }
 }
 
-/* 4 — TRÊS GAVETAS (papel d40: "Vivos, Já foram vivos, Nunca viveram").
-   ⭐ A VIRADA DO DEGRAU ZERO, e ela é a folha mais inteligente da colheita: a
-      madeira e o lanche não são "não vivos" — são "JÁ FORAM". Duas gavetas
-      deixam a criança achar que o mundo se divide em bicho e pedra; a terceira
-      quebra isso, e é ela que prepara o fungo que come madeira lá na frente. */
+/* 4 — DUAS GAVETAS, AS PEÇAS DIFÍCEIS.
+   ⚠️ ESTA FOLHA TINHA TRÊS GAVETAS (papel d40: "Vivos, Já foram vivos, Nunca
+      viveram") e o Marcos mandou tirar a do meio em 14/set/2026: "já foi vivo"
+      NÃO está no currículo de Ciências do 4º ano da rede, e a ordem dele foi
+      *"o que importa para mim é o currículo, não invenção"*.
+   ⚠️ E ELA NÃO VIROU A FOLHA 3 DE NOVO: o que sobrou aqui são justamente as
+      peças que enganam — o lápis (que veio da madeira), o lanche, o cupcake.
+      A criança tem de usar o critério ("isto nasce, cresce e se alimenta?") em
+      vez do palpite ("isto veio de bicho ou de planta?"). É o degrau da 3. */
 function f4(d, pi){
   faixa(d, pi, NOMES[3]);
-  enunciado(d, pi, "Agora são <b>três</b> gavetas. Olhe bem antes de puxar.", "p4enun");
+  enunciado(d, pi, "Agora vêm as peças <b>difíceis</b>. Duas gavetas: vivo, ou não vivo?", "p4enun");
   var L = ST.folha.p4;
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "n4_" + i, box = item(i + 1);
       folhaGavetas(box, pi, id,
         it.pecas.map(function(p){ return {w: p[0], k: p[1], nome: nomeDe(p[0])}; }),
-        [{k: "vivo", rot: "VIVOS", cls: "gvivo"},
-         {k: "foi", rot: "JÁ FORAM VIVOS", cls: "gfoi"},
-         {k: "nunca", rot: "NUNCA VIVERAM", cls: "gnao"}],
+        [{k: "vivo", rot: "SERES VIVOS", cls: "gvivo"},
+         {k: "nao", rot: "NÃO VIVOS", cls: "gnao"}],
         "certo4", "dica4");
       fechaItem(d, box, id);
     })(L[i], i);
@@ -1575,27 +1579,29 @@ function f9(d, pi){
   }
 }
 
-/* 10 — O COFRINHO DA RECEITA (⚠️ o critério que o currículo do 4º ano NÃO
-   nomeia: veio do encargo do Marcos, e entra assim declarado).
-   ⚠️ E entra em linguagem de criança: a célula guarda a receita num COFRINHO, e
-      a bactéria não tem cofrinho — a receita dela fica solta. As palavras
-      "procarionte" e "eucarionte" aparecem UMA vez, como apelido de gente
-      grande, e nunca são o que se cobra. */
+/* 10 — A OLHO NU OU SÓ NO MICROSCÓPIO? (CURRÍCULO: "Seres microscópicos (uso
+   de lupa e microscópio)", verbatim no bloco CIÊNCIAS – 4º ANO de Blumenau).
+   ⚠️ ESTA FOLHA ERA "o cofrinho da receita" (o NÚCLEO da célula) e foi trocada
+      em 14/set/2026 — núcleo não está no currículo do ano. O critério novo
+      separa os mesmos dois grupos (algas e bactérias de um lado; animais,
+      plantas e fungos do outro), é o terceiro critério da coroa lá na frente,
+      e recolhe o que a folha 7 (o microscópio) já plantou.
+   ⚠️ E SAIU JUNTO O DESENHO DE CSS DA CÉLULA: aqui a figura passou a ser a do
+      próprio ser, recortada da folha de papel — a regra da casa manda arte de
+      verdade na interação, não retângulo de folha de estilo. */
 function f10(d, pi){
   faixa(d, pi, NOMES[9]);
-  enunciado(d, pi, "A receita dele fica guardada num <b>cofrinho</b>, ou fica <b>solta</b>?", "p10enun");
+  enunciado(d, pi, "Este ser dá para ver a <b>olho nu</b>, ou só no <b>microscópio</b>?", "p10enun");
   var L = ST.folha.p10;
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "n10_" + i, box = item(i + 1), R = reino(it.r);
-      var cx = el("div", "celulalin");
-      cx.appendChild(el("div", "celula" + (R.cof === "tem" ? " comcofre" : ""), "<i></i>"));
-      box.appendChild(cx);
-      box.appendChild(el("div", "pedido", "a célula " + it.rot));
+      box.appendChild(el("div", "bicholin", figGrande(it.w, "figbicho")));
+      box.appendChild(el("div", "pedido", nomeDe(it.w)));
       opcoes(box, pi, id, [
-        {v: "tem", rot: "tem <b>cofrinho</b>", aria: "tem cofrinho", fala: "op_cofre"},
-        {v: "nao", rot: "a receita fica <b>solta</b>", aria: "a receita fica solta", fala: "op_solta"}
-      ], R.cof, "palbt", "certo10_" + it.r, "dica10_" + R.cof);
+        {v: "nu", rot: "a <b>olho nu</b>", aria: "a olho nu", fala: "op_nu"},
+        {v: "micro", rot: "só no <b>microscópio</b>", aria: "só no microscópio", fala: "op_micro"}
+      ], R.mic, "palbt", "certo10_" + it.r, "dica10_" + R.mic);
       fechaItem(d, box, id);
     })(L[i], i);
   }
@@ -1704,7 +1710,7 @@ function coroaDoReino(d, pi, L){
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "n" + pi + "_" + i, box = item(i + 1), R = reino(it.r);
-      registra(id, pi, R.cel + " " + R.com + " " + R.cof);
+      registra(id, pi, R.cel + " " + R.com + " " + R.mic);
       var cor = el("div", "coroa");
       cor.appendChild(el("div", "ctopo", "<i></i><i></i><i></i>"));
       cor.appendChild(el("div", "cfaixa", figGrande(R.fig, "figcoroa") +
@@ -1713,7 +1719,7 @@ function coroaDoReino(d, pi, L){
       var feitos = {};
       [["cel", "Quantas células?", [["uma", "uma só"], ["muitas", "muitas"]]],
        ["com", "O alimento?", [["fabrica", "fabrica com o Sol"], ["come", "precisa comer"]]],
-       ["cof", "A receita?", [["tem", "guardada no cofrinho"], ["nao", "solta na célula"]]]
+       ["mic", "Dá para ver?", [["nu", "a olho nu"], ["micro", "só no microscópio"]]]
       ].forEach(function(cri){
         var lin = el("div", "crilin");
         lin.appendChild(el("span", "crot", cri[1]));
@@ -1726,7 +1732,7 @@ function coroaDoReino(d, pi, L){
             sPasso(); falar("op_" + o[0]);
             if(R[cri[0]] === o[0]){
               b.className = "op cribt certa"; feitos[cri[0]] = 1;
-              if(feitos.cel && feitos.com && feitos.cof)
+              if(feitos.cel && feitos.com && feitos.mic)
                 setTimeout(function(){ acertou(id, "certocoroa_" + it.r); }, 420);
             } else {
               b.className = "op cribt erro";
@@ -1781,9 +1787,9 @@ function f19(d, pi){
       var id = "n19_" + i, box = item(i + 1), R = reino(it.r);
       var DIZ = {cel: {uma: "uma só", muitas: "muitas"},
                  com: {fabrica: "fabrica com o Sol", come: "precisa comer"},
-                 cof: {tem: "no cofrinho", nao: "solta"}};
+                 mic: {nu: "a olho nu", micro: "só no microscópio"}};
       var tab = el("div", "tabmult");
-      [["cel", "células"], ["com", "alimento"], ["cof", "receita"]].forEach(function(c){
+      [["cel", "células"], ["com", "alimento"], ["mic", "tamanho"]].forEach(function(c){
         var vaga = c[0] === it.falta;
         var cx = el("div", "tcel" + (vaga ? " vaga" : ""));
         cx.appendChild(el("span", "trot", c[1]));
@@ -1796,7 +1802,7 @@ function f19(d, pi){
         ? [["uma", "uma só"], ["muitas", "muitas"]]
         : it.falta === "com"
         ? [["fabrica", "fabrica com o Sol"], ["come", "precisa comer"]]
-        : [["tem", "no cofrinho"], ["nao", "solta"]];
+        : [["nu", "a olho nu"], ["micro", "só no microscópio"]];
       opcoes(box, pi, id, lista.map(function(o){
         return {v: o[0], rot: o[1], aria: o[1], fala: "op_" + o[0]};
       }), R[it.falta], "palbt", "certoquadro_" + it.r + "_" + it.falta,

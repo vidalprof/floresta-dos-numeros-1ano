@@ -48,10 +48,30 @@ eu digo que não dá e mostro quem pode medir. E nunca dizer que fiz o que não 
 > *O teste, antes de mandar qualquer número:* **de onde veio, e o que eu teria
 > que abrir para ele estar errado?**
 
-### REGRA DO TAMANHO — no mínimo **25 folhas** por sequência (12/set/2026)
-Palavras dele: *"eu acredito que cada sequência precise de no mínimo 25 folhas"*.
-**A medição dá razão a ele** — a conta está no §4. O mínimo é 25; a meta de
-tempo é a aula de **55 minutos**.
+### REGRA DO TAMANHO — **20 folhas** nas novas; as 25 dos cadernos já feitos ficam
+**MUDOU em 14/set/2026.** A regra nasceu em 12/set com as palavras dele: *"eu
+acredito que cada sequência precise de no mínimo 25 folhas"*, e a medição do §4
+deu razão a ele: 25 folhas é o que enche os 55 min da criança **rápida**.
+
+Em 14/set ele baixou o piso, e disse por quê: **velocidade de produção**
+(*"pode baixar para 20"*, *"torna criar mais rápido também"*, *"digo nas
+próximas atividades pode fazer com 20"*). Então, com todas as letras:
+
+| | piso |
+|---|---|
+| sequência **nova**, daqui para a frente | **20 folhas** |
+| os cadernos **que já existem** | ficam como estão — nenhum encolhe |
+
+⚠️ **O que a medição continua dizendo, e não muda por decisão:** com 20 folhas a
+criança **rápida** sobra tempo no fim da aula. Quem vai devagar não é
+prejudicado (o fecho é alcançável a qualquer momento — §4). Ou seja, o custo de
+20 é *tempo ocioso da mais rápida*, não *aula incompleta* — e foi com essa
+informação na mesa que ele decidiu.
+
+⚠️ **E o piso não vira teto ao contrário:** se o conteúdo der 25 folhas de
+verdade, ficam as 25. O que o piso de 20 proíbe é o oposto — **inventar folha
+de enchimento para fechar número**. Faltou conteúdo para 20? A resposta é
+perguntar ao Marcos, nunca preencher.
 
 ### REGRA DA ORIGEM — "veja o que as atividades pedem que o estudante FAÇA"
 Palavras dele (set/2026), e depois, mais direto: *"seria legal se vc conseguisse

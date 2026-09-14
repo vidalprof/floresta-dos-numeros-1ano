@@ -1039,17 +1039,11 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   background:#4b4570;border-radius:0 0 12px 12px;margin-top:-4px}
 .ops.escondida{display:none}
 
-/* --- a célula e o cofrinho (folha 10) --- */
-.celulalin{display:flex;align-items:center;justify-content:center;margin:6px 0 2px}
-.celula{width:clamp(110px,30vw,150px);height:clamp(80px,22vw,110px);border-radius:50%;
-  border:6px solid #6d5ae6;background:#efeaff;position:relative}
-.celula i{position:absolute;left:50%;top:50%;width:34%;height:40%;
-  -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
-  border-radius:50%;background:transparent}
-.celula.comcofre i{background:#6d5ae6;box-shadow:inset 0 0 0 5px #cfc4ff}
-/* sem cofrinho a receita fica SOLTA: riscos espalhados dentro da célula */
-.celula:not(.comcofre) i{width:70%;height:52%;border-radius:20px;
-  background:repeating-linear-gradient(38deg,#6d5ae6 0 4px,transparent 4px 13px)}
+/* ⚠️ AQUI MORAVA A CÉLULA DESENHADA EM CSS (.celula/.comcofre), da folha 10 do
+   "cofrinho da receita". A folha 10 virou "a olho nu ou só no microscópio" em
+   14/set/2026 (o núcleo não está no currículo do 4º ano) e passou a mostrar a
+   figura recortada da folha de papel. O CSS saiu junto — regra da casa: na
+   interação, arte de verdade, não retângulo de folha de estilo. */
 
 /* --- pintar por legenda (folha 11) --- */
 .legenda{font-weight:900;font-size:clamp(13px,3.4vw,16px);color:#4b4570;
@@ -1434,35 +1428,35 @@ var ITENS = {
  "p10": [
   {
    "r": "bacterias",
-   "rot": "da bactéria"
+   "w": "reino_monera"
   },
   {
    "r": "animais",
-   "rot": "do cachorro"
-  },
-  {
-   "r": "plantas",
-   "rot": "da folha da árvore"
-  },
-  {
-   "r": "fungos",
-   "rot": "do cogumelo"
+   "w": "cachorro"
   },
   {
    "r": "algas",
-   "rot": "da ameba"
-  },
-  {
-   "r": "bacterias",
-   "rot": "do leite azedo"
-  },
-  {
-   "r": "animais",
-   "rot": "da borboleta"
+   "w": "reino_protista"
   },
   {
    "r": "plantas",
-   "rot": "do pé de milho"
+   "w": "reino_plantae"
+  },
+  {
+   "r": "bacterias",
+   "w": "reino_monera"
+  },
+  {
+   "r": "fungos",
+   "w": "reino_fungi"
+  },
+  {
+   "r": "algas",
+   "w": "reino_protista"
+  },
+  {
+   "r": "animais",
+   "w": "formiga"
   }
  ],
  "p11": [
@@ -1900,7 +1894,7 @@ var ITENS = {
     "algas"
    ],
    "r": "animais",
-   "txt": "Tem muitas células, precisa comer outros seres vivos e guarda a receita no cofrinho. Anda, nada ou voa."
+   "txt": "Tem muitas células, precisa comer outros seres vivos e dá para ver sem aparelho nenhum. Anda, nada ou voa."
   },
   {
    "op": [
@@ -1909,7 +1903,7 @@ var ITENS = {
     "bacterias"
    ],
    "r": "plantas",
-   "txt": "Tem muitas células, fabrica o próprio alimento com o Sol e guarda a receita no cofrinho. Fica no mesmo lugar."
+   "txt": "Tem muitas células, fabrica o próprio alimento com o Sol e dá para ver a olho nu. Fica no mesmo lugar."
   },
   {
    "op": [
@@ -1918,7 +1912,7 @@ var ITENS = {
     "algas"
    ],
    "r": "fungos",
-   "txt": "Tem muitas células e guarda a receita no cofrinho, mas não fabrica alimento: come o que está apodrecendo."
+   "txt": "Tem muitas células e dá para ver a olho nu, mas não fabrica alimento: come o que está apodrecendo."
   },
   {
    "op": [
@@ -1927,7 +1921,7 @@ var ITENS = {
     "bacterias"
    ],
    "r": "algas",
-   "txt": "É feito de uma célula só, guarda a receita no cofrinho e quase sempre mora na água."
+   "txt": "É feito de uma célula só, quase sempre mora na água e só aparece quando a gente olha no microscópio."
   },
   {
    "op": [
@@ -1936,7 +1930,7 @@ var ITENS = {
     "bacterias"
    ],
    "r": "bacterias",
-   "txt": "É feito de uma célula só e nem cofrinho tem: a receita fica solta dentro dela. É o menor ser vivo de todos."
+   "txt": "É feito de uma célula só e só se vê no microscópio. É o menor ser vivo de todos."
   },
   {
    "op": [
@@ -1945,7 +1939,7 @@ var ITENS = {
     "bacterias"
    ],
    "r": "fungos",
-   "txt": "Tem muitas células e guarda a receita no cofrinho, mas não fabrica alimento: come o que está apodrecendo."
+   "txt": "Tem muitas células e dá para ver a olho nu, mas não fabrica alimento: come o que está apodrecendo."
   },
   {
    "op": [
@@ -1954,7 +1948,7 @@ var ITENS = {
     "algas"
    ],
    "r": "plantas",
-   "txt": "Tem muitas células, fabrica o próprio alimento com o Sol e guarda a receita no cofrinho. Fica no mesmo lugar."
+   "txt": "Tem muitas células, fabrica o próprio alimento com o Sol e dá para ver a olho nu. Fica no mesmo lugar."
   },
   {
    "op": [
@@ -1963,7 +1957,7 @@ var ITENS = {
     "bacterias"
    ],
    "r": "bacterias",
-   "txt": "É feito de uma célula só e nem cofrinho tem: a receita fica solta dentro dela. É o menor ser vivo de todos."
+   "txt": "É feito de uma célula só e só se vê no microscópio. É o menor ser vivo de todos."
   }
  ],
  "p19": [
@@ -1976,7 +1970,7 @@ var ITENS = {
    "r": "plantas"
   },
   {
-   "falta": "cof",
+   "falta": "mic",
    "r": "fungos"
   },
   {
@@ -1988,7 +1982,7 @@ var ITENS = {
    "r": "bacterias"
   },
   {
-   "falta": "cof",
+   "falta": "mic",
    "r": "animais"
   },
   {
@@ -2000,7 +1994,7 @@ var ITENS = {
    "r": "fungos"
   },
   {
-   "falta": "cof",
+   "falta": "mic",
    "r": "algas"
   },
   {
@@ -2550,7 +2544,7 @@ var ITENS = {
    "r": "algas"
   },
   {
-   "pista": "quem é feito de uma célula só e nem cofrinho tem",
+   "pista": "quem é feito de uma célula só e só se vê no microscópio",
    "r": "bacterias"
   }
  ],
@@ -2945,19 +2939,19 @@ var ITENS = {
     ],
     [
      "lapis",
-     "foi"
+     "nao"
     ],
     [
      "lanche",
-     "foi"
+     "nao"
     ],
     [
      "agua",
-     "nunca"
+     "nao"
     ],
     [
      "areia",
-     "nunca"
+     "nao"
     ]
    ]
   },
@@ -2973,19 +2967,19 @@ var ITENS = {
     ],
     [
      "lanche",
-     "foi"
+     "nao"
     ],
     [
      "cupcake",
-     "foi"
+     "nao"
     ],
     [
      "pedras2",
-     "nunca"
+     "nao"
     ],
     [
      "terra",
-     "nunca"
+     "nao"
     ]
    ]
   },
@@ -3001,19 +2995,19 @@ var ITENS = {
     ],
     [
      "cupcake",
-     "foi"
+     "nao"
     ],
     [
      "lapis",
-     "foi"
+     "nao"
     ],
     [
      "sol2",
-     "nunca"
+     "nao"
     ],
     [
      "nuvem",
-     "nunca"
+     "nao"
     ]
    ]
   },
@@ -3029,19 +3023,19 @@ var ITENS = {
     ],
     [
      "lapis",
-     "foi"
+     "nao"
     ],
     [
      "lanche",
-     "foi"
+     "nao"
     ],
     [
      "fogo",
-     "nunca"
+     "nao"
     ],
     [
      "carro",
-     "nunca"
+     "nao"
     ]
    ]
   },
@@ -3057,19 +3051,19 @@ var ITENS = {
     ],
     [
      "lanche",
-     "foi"
+     "nao"
     ],
     [
      "cupcake",
-     "foi"
+     "nao"
     ],
     [
      "tijolos",
-     "nunca"
+     "nao"
     ],
     [
      "celular",
-     "nunca"
+     "nao"
     ]
    ]
   },
@@ -3085,19 +3079,19 @@ var ITENS = {
     ],
     [
      "cupcake",
-     "foi"
+     "nao"
     ],
     [
      "lapis",
-     "foi"
+     "nao"
     ],
     [
      "urso_pelucia",
-     "nunca"
+     "nao"
     ],
     [
      "urso_pelucia2",
-     "nunca"
+     "nao"
     ]
    ]
   },
@@ -3113,19 +3107,19 @@ var ITENS = {
     ],
     [
      "lapis",
-     "foi"
+     "nao"
     ],
     [
      "lanche",
-     "foi"
+     "nao"
     ],
     [
      "areia",
-     "nunca"
+     "nao"
     ],
     [
      "pedras",
-     "nunca"
+     "nao"
     ]
    ]
   },
@@ -3141,19 +3135,19 @@ var ITENS = {
     ],
     [
      "lanche",
-     "foi"
+     "nao"
     ],
     [
      "cupcake",
-     "foi"
+     "nao"
     ],
     [
      "terra",
-     "nunca"
+     "nao"
     ],
     [
      "sol",
-     "nunca"
+     "nao"
     ]
    ]
   }
@@ -3645,11 +3639,11 @@ var FIGNOME = {
 var FALAS = {
  "capa": "A Coroa dos Cinco Reinos. Vinte e cinco folhas para descobrir como os cientistas separam todos os seres vivos do mundo em cinco grandes grupos.",
  "certo1": "Isso! Todos esses nascem, crescem e um dia morrem: estão vivos.",
- "certo10_algas": "Isso! A célula dos seres do reino das algas guarda a receita num cofrinho. Gente grande chama esse cofrinho de núcleo.",
- "certo10_animais": "Isso! A célula dos seres do reino dos animais guarda a receita num cofrinho. Gente grande chama esse cofrinho de núcleo.",
- "certo10_bacterias": "Isso! A célula das bactérias não tem cofrinho: a receita fica solta lá dentro. É o único reino assim, e é por isso que ele fica separado dos outros quatro.",
- "certo10_fungos": "Isso! A célula dos seres do reino dos fungos guarda a receita num cofrinho. Gente grande chama esse cofrinho de núcleo.",
- "certo10_plantas": "Isso! A célula dos seres do reino das plantas guarda a receita num cofrinho. Gente grande chama esse cofrinho de núcleo.",
+ "certo10_algas": "Isso! Os seres do reino das algas são feitos de uma célula só e só aparecem no microscópio. Foi para enxergar gente assim que o microscópio foi inventado.",
+ "certo10_animais": "Isso! Os seres do reino dos animais têm muitas células e a gente vê sem aparelho nenhum.",
+ "certo10_bacterias": "Isso! Os seres do reino das bactérias são feitos de uma célula só e só aparecem no microscópio. Foi para enxergar gente assim que o microscópio foi inventado.",
+ "certo10_fungos": "Isso! Os seres do reino dos fungos têm muitas células e a gente vê sem aparelho nenhum.",
+ "certo10_plantas": "Isso! Os seres do reino das plantas têm muitas células e a gente vê sem aparelho nenhum.",
  "certo11_algas": "Pintado! O reino das algas ficou com a cor da legenda.",
  "certo11_animais": "Pintado! O reino dos animais ficou com a cor da legenda.",
  "certo11_bacterias": "Pintado! O reino das bactérias ficou com a cor da legenda.",
@@ -3708,7 +3702,7 @@ var FALAS = {
  "certo22_pao": "Isso! Os fungos e as bactérias são os decompositores: eles desmancham os restos e devolvem tudo para a terra, para as plantas usarem de novo. Sem eles o mundo ficaria entulhado.",
  "certo22_planta": "Isso! Quem fabrica o próprio alimento com a luz do Sol é produtor. Toda a comida do mundo começa neles.",
  "certo22_tronco": "Isso! Os fungos e as bactérias são os decompositores: eles desmancham os restos e devolvem tudo para a terra, para as plantas usarem de novo. Sem eles o mundo ficaria entulhado.",
- "certo23_algas": "Você escreveu certo: Algas! É o reino de a ameba, o paramécio e as algas do mar.",
+ "certo23_algas": "Você escreveu certo: Algas! É o reino de a ameba, o paramécio e as algas de uma célula só.",
  "certo23_animais": "Você escreveu certo: Animais! É o reino de o cachorro, a borboleta, o peixe e você.",
  "certo23_bacterias": "Você escreveu certo: Bactérias! É o reino de as bactérias, que só se veem no microscópio.",
  "certo23_fungos": "Você escreveu certo: Fungos! É o reino de o cogumelo, o bolor do pão e o fermento do bolo.",
@@ -3720,7 +3714,7 @@ var FALAS = {
  "certo25_fungos": "A ponta do reino dos fungos está na sua coroa!",
  "certo25_plantas": "A ponta do reino das plantas está na sua coroa!",
  "certo3": "Gavetas certas! Ser vivo nasce, cresce, se alimenta e morre.",
- "certo4": "Três gavetas certas! Tem coisa que está viva, tem coisa que já foi viva e virou outra coisa, e tem coisa que nunca viveu.",
+ "certo4": "Gavetas certas! Estas eram as difíceis: o lápis e o lanche não nascem, não crescem e não se alimentam, então não são seres vivos.",
  "certo5_borboleta": "Na ordem certa! O ciclo de vida da borboleta é assim: ovo, lagarta, casulo, borboleta adulta. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
  "certo5_cachorro": "Na ordem certa! O ciclo de vida do cachorro é assim: filhote, cachorro jovem, cachorro adulto, cachorro velho. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
  "certo5_formiga": "Na ordem certa! O ciclo de vida da formiga é assim: ovo, larva, pupa, formiga adulta. Nascer, crescer e um dia morrer é o que todo ser vivo faz.",
@@ -3752,39 +3746,39 @@ var FALAS = {
  "certo8_reino_protista": "Certo! A ameba fabrica o próprio alimento usando a luz do Sol. Quem faz isso é chamado de produtor.",
  "certo8_rosa": "Certo! A rosa fabrica o próprio alimento usando a luz do Sol. Quem faz isso é chamado de produtor.",
  "certo9": "Isso! Quem tem folha verde fabrica o alimento com o Sol. Quem não tem precisa comer.",
- "certocoroa_algas": "Ponta da coroa pronta! O reino das algas: uma célula só, fabrica o alimento e a receita fica no cofrinho.",
- "certocoroa_animais": "Ponta da coroa pronta! O reino dos animais: muitas células, precisa comer o alimento e a receita fica no cofrinho.",
- "certocoroa_bacterias": "Ponta da coroa pronta! O reino das bactérias: uma célula só, precisa comer o alimento e a receita fica solta.",
- "certocoroa_fungos": "Ponta da coroa pronta! O reino dos fungos: muitas células, precisa comer o alimento e a receita fica no cofrinho.",
- "certocoroa_plantas": "Ponta da coroa pronta! O reino das plantas: muitas células, fabrica o alimento e a receita fica no cofrinho.",
+ "certocoroa_algas": "Ponta da coroa pronta! O reino das algas: uma célula só, fabrica o alimento e só aparece no microscópio.",
+ "certocoroa_animais": "Ponta da coroa pronta! O reino dos animais: muitas células, precisa comer o alimento e dá para ver a olho nu.",
+ "certocoroa_bacterias": "Ponta da coroa pronta! O reino das bactérias: uma célula só, precisa comer o alimento e só aparece no microscópio.",
+ "certocoroa_fungos": "Ponta da coroa pronta! O reino dos fungos: muitas células, precisa comer o alimento e dá para ver a olho nu.",
+ "certocoroa_plantas": "Ponta da coroa pronta! O reino das plantas: muitas células, fabrica o alimento e dá para ver a olho nu.",
  "certoquadro_algas_cel": "Quadro completo! No reino das algas, as células: uma célula só.",
- "certoquadro_algas_cof": "Quadro completo! No reino das algas, a receita: a receita no cofrinho.",
+ "certoquadro_algas_mic": "Quadro completo! No reino das algas, o tamanho: só no microscópio.",
  "certoquadro_animais_cel": "Quadro completo! No reino dos animais, as células: muitas células.",
- "certoquadro_animais_cof": "Quadro completo! No reino dos animais, a receita: a receita no cofrinho.",
+ "certoquadro_animais_mic": "Quadro completo! No reino dos animais, o tamanho: dá para ver a olho nu.",
  "certoquadro_bacterias_cel": "Quadro completo! No reino das bactérias, as células: uma célula só.",
  "certoquadro_bacterias_com": "Quadro completo! No reino das bactérias, o alimento: precisa comer.",
- "certoquadro_fungos_cof": "Quadro completo! No reino dos fungos, a receita: a receita no cofrinho.",
  "certoquadro_fungos_com": "Quadro completo! No reino dos fungos, o alimento: precisa comer.",
+ "certoquadro_fungos_mic": "Quadro completo! No reino dos fungos, o tamanho: dá para ver a olho nu.",
  "certoquadro_plantas_cel": "Quadro completo! No reino das plantas, as células: muitas células.",
  "certoquadro_plantas_com": "Quadro completo! No reino das plantas, o alimento: fabrica com o Sol.",
- "descr_algas": "É feito de uma célula só, guarda a receita no cofrinho e quase sempre mora na água.",
- "descr_animais": "Tem muitas células, precisa comer outros seres vivos e guarda a receita no cofrinho. Anda, nada ou voa.",
- "descr_bacterias": "É feito de uma célula só e nem cofrinho tem: a receita fica solta dentro dela. É o menor ser vivo de todos.",
- "descr_fungos": "Tem muitas células e guarda a receita no cofrinho, mas não fabrica alimento: come o que está apodrecendo.",
- "descr_plantas": "Tem muitas células, fabrica o próprio alimento com o Sol e guarda a receita no cofrinho. Fica no mesmo lugar.",
- "dica10_nao": "Este é o menor de todos e o mais simples de todos: nem cofrinho ele tem.",
- "dica10_tem": "Quase todo ser vivo guarda a receita num cofrinho dentro da célula. Só um reino não guarda.",
+ "descr_algas": "É feito de uma célula só, quase sempre mora na água e só aparece quando a gente olha no microscópio.",
+ "descr_animais": "Tem muitas células, precisa comer outros seres vivos e dá para ver sem aparelho nenhum. Anda, nada ou voa.",
+ "descr_bacterias": "É feito de uma célula só e só se vê no microscópio. É o menor ser vivo de todos.",
+ "descr_fungos": "Tem muitas células e dá para ver a olho nu, mas não fabrica alimento: come o que está apodrecendo.",
+ "descr_plantas": "Tem muitas células, fabrica o próprio alimento com o Sol e dá para ver a olho nu. Fica no mesmo lugar.",
+ "dica10_micro": "Este é feito de uma célula só. Um ser de uma célula só não cabe no olho: precisa do microscópio.",
+ "dica10_nu": "Pense se você já viu um de verdade, com os seus olhos, sem aparelho nenhum. Se já viu, é a olho nu.",
  "dica11_0": "A legenda pede a canetinha verde. Escolha ela no estojo antes de pintar.",
  "dica11_1": "A legenda pede a canetinha vermelha. Escolha ela no estojo antes de pintar.",
  "dica11_2": "A legenda pede a canetinha azul. Escolha ela no estojo antes de pintar.",
  "dica11_3": "A legenda pede a canetinha amarela. Escolha ela no estojo antes de pintar.",
  "dica11_4": "A legenda pede a canetinha rosa. Escolha ela no estojo antes de pintar.",
- "dica12_algas": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem uma célula só, fabrica o alimento e tem cofrinho.",
- "dica12_animais": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem muitas células, precisa comer o alimento e tem cofrinho.",
- "dica12_bacterias": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem uma célula só, precisa comer o alimento e não tem cofrinho.",
- "dica12_fungos": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem muitas células, precisa comer o alimento e tem cofrinho.",
- "dica12_plantas": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho. Este aqui tem muitas células, fabrica o alimento e tem cofrinho.",
- "dica14_algas": "Este é o reino das algas: a ameba, o paramécio e as algas do mar.",
+ "dica12_algas": "Faça as três perguntas: quantas células, de onde vem o alimento e se dá para ver a olho nu. Este aqui tem uma célula só, fabrica o alimento e só aparece no microscópio.",
+ "dica12_animais": "Faça as três perguntas: quantas células, de onde vem o alimento e se dá para ver a olho nu. Este aqui tem muitas células, precisa comer o alimento e dá para ver a olho nu.",
+ "dica12_bacterias": "Faça as três perguntas: quantas células, de onde vem o alimento e se dá para ver a olho nu. Este aqui tem uma célula só, precisa comer o alimento e só aparece no microscópio.",
+ "dica12_fungos": "Faça as três perguntas: quantas células, de onde vem o alimento e se dá para ver a olho nu. Este aqui tem muitas células, precisa comer o alimento e dá para ver a olho nu.",
+ "dica12_plantas": "Faça as três perguntas: quantas células, de onde vem o alimento e se dá para ver a olho nu. Este aqui tem muitas células, fabrica o alimento e dá para ver a olho nu.",
+ "dica14_algas": "Este é o reino das algas: a ameba, o paramécio e as algas de uma célula só.",
  "dica14_animais": "Este é o reino dos animais: o cachorro, a borboleta, o peixe e você.",
  "dica14_bacterias": "Este é o reino das bactérias: as bactérias, que só se veem no microscópio.",
  "dica14_fungos": "Este é o reino dos fungos: o cogumelo, o bolor do pão e o fermento do bolo.",
@@ -3811,7 +3805,7 @@ var FALAS = {
  "dica1_urso_pelucia": "O urso de pelúcia não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
  "dica1_urso_pelucia2": "O ursinho de pano não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
  "dica1_vento": "O vento não nasce nem cresce sozinho. Procure quem nasce, cresce e pode ter filhos.",
- "dica20": "Faça as três perguntas: quantas células, de onde vem o alimento e se a receita tem cofrinho.",
+ "dica20": "Faça as três perguntas: quantas células, de onde vem o alimento e se dá para ver a olho nu ou só no microscópio.",
  "dica21_animais": "Olhe um por um e pergunte: este fabrica o alimento com o Sol ou precisa comer? O intruso responde diferente dos outros.",
  "dica21_plantas": "Olhe um por um e pergunte: este fabrica o alimento com o Sol ou precisa comer? O intruso responde diferente dos outros.",
  "dica22_alga": "Pergunte: ele fabrica o alimento, ele come outro ser vivo, ou ele desmancha o que já morreu?",
@@ -3832,10 +3826,10 @@ var FALAS = {
  "dica2_carro": "O carro nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
  "dica2_casa": "A casa nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
  "dica2_celular": "O celular nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
- "dica2_cupcake": "O cupcake já foi de um ser vivo, mas agora não nasce nem cresce mais. Procure quem ainda está vivo.",
+ "dica2_cupcake": "O cupcake não nasce, não cresce e não se alimenta. Procure quem ainda está vivo.",
  "dica2_fogo": "O fogo nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
- "dica2_lanche": "O lanche já foi de um ser vivo, mas agora não nasce nem cresce mais. Procure quem ainda está vivo.",
- "dica2_lapis": "O lápis já foi de um ser vivo, mas agora não nasce nem cresce mais. Procure quem ainda está vivo.",
+ "dica2_lanche": "O lanche não nasce, não cresce e não se alimenta. Procure quem ainda está vivo.",
+ "dica2_lapis": "O lápis não nasce, não cresce e não se alimenta. Procure quem ainda está vivo.",
  "dica2_nuvem": "A nuvem nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
  "dica2_pedras": "As pedras nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
  "dica2_pedras2": "As pedras nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
@@ -3847,7 +3841,7 @@ var FALAS = {
  "dica2_urso_pelucia2": "O ursinho de pano nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
  "dica2_vento": "O vento nunca esteve vivo. Procure quem nasce, cresce e se alimenta.",
  "dica3": "Pergunte assim: isso nasce e cresce sozinho? Se nasce, é vivo. Se alguém fabricou, não é.",
- "dica4": "Pense de onde veio: o lápis veio da madeira da árvore, então já foi vivo. A pedra não veio de ser vivo nenhum.",
+ "dica4": "Não pergunte de onde veio. Pergunte: isto nasce, cresce e se alimenta sozinho agora? Se não faz nada disso, não é um ser vivo.",
  "dica5": "Comece pelo começo de tudo: o menorzinho, aquele que ainda vai crescer.",
  "dica6_algas": "Este é tão pequeno que só se vê no microscópio. Quem é assim costuma ter uma célula só.",
  "dica6_animais": "Este a gente vê sem microscópio nenhum. Quem é grande assim é feito de muitas células.",
@@ -3859,31 +3853,31 @@ var FALAS = {
  "dica8_come": "Ele não tem folha verde, então não consegue fabricar alimento. Quem não fabrica precisa comer.",
  "dica8_fabrica": "Procure a cor verde: é nela que a luz do Sol vira alimento dentro da folha.",
  "dica9": "Olhe se ele tem folhas verdes. Folha verde é a fábrica de alimento que usa a luz do Sol.",
- "dicacoroa_cel_algas": "Pense no tamanho: este é tão pequeno que só se vê no microscópio.",
- "dicacoroa_cel_animais": "Pense no tamanho: este a gente vê sem aparelho nenhum.",
- "dicacoroa_cel_bacterias": "Pense no tamanho: este é tão pequeno que só se vê no microscópio.",
- "dicacoroa_cel_fungos": "Pense no tamanho: este a gente vê sem aparelho nenhum.",
- "dicacoroa_cel_plantas": "Pense no tamanho: este a gente vê sem aparelho nenhum.",
- "dicacoroa_cof_algas": "Pense no cofrinho: só as bactérias ficam sem ele.",
- "dicacoroa_cof_animais": "Pense no cofrinho: só as bactérias ficam sem ele.",
- "dicacoroa_cof_bacterias": "Pense no cofrinho: este é o único reino sem cofrinho.",
- "dicacoroa_cof_fungos": "Pense no cofrinho: só as bactérias ficam sem ele.",
- "dicacoroa_cof_plantas": "Pense no cofrinho: só as bactérias ficam sem ele.",
+ "dicacoroa_cel_algas": "Pense no corpo dele: este é tão simples que o corpo inteiro é uma célula só.",
+ "dicacoroa_cel_animais": "Pense no corpo dele: este tem corpo com muitas partes, feitas de muitas células.",
+ "dicacoroa_cel_bacterias": "Pense no corpo dele: este é tão simples que o corpo inteiro é uma célula só.",
+ "dicacoroa_cel_fungos": "Pense no corpo dele: este tem corpo com muitas partes, feitas de muitas células.",
+ "dicacoroa_cel_plantas": "Pense no corpo dele: este tem corpo com muitas partes, feitas de muitas células.",
  "dicacoroa_com_algas": "Pense na cor verde: este tem verde, então fabrica alimento com o Sol.",
  "dicacoroa_com_animais": "Pense na cor verde: este não tem verde, então precisa comer.",
  "dicacoroa_com_bacterias": "Pense na cor verde: este não tem verde, então precisa comer.",
  "dicacoroa_com_fungos": "Pense na cor verde: este não tem verde, então precisa comer.",
  "dicacoroa_com_plantas": "Pense na cor verde: este tem verde, então fabrica alimento com o Sol.",
+ "dicacoroa_mic_algas": "Pense nos seus olhos: este ninguém enxerga sem o microscópio.",
+ "dicacoroa_mic_animais": "Pense nos seus olhos: este você já viu de verdade, sem aparelho nenhum.",
+ "dicacoroa_mic_bacterias": "Pense nos seus olhos: este ninguém enxerga sem o microscópio.",
+ "dicacoroa_mic_fungos": "Pense nos seus olhos: este você já viu de verdade, sem aparelho nenhum.",
+ "dicacoroa_mic_plantas": "Pense nos seus olhos: este você já viu de verdade, sem aparelho nenhum.",
  "dicaquadro_cel_algas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense as células dele.",
  "dicaquadro_cel_animais": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense as células dele.",
  "dicaquadro_cel_bacterias": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense as células dele.",
  "dicaquadro_cel_plantas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense as células dele.",
- "dicaquadro_cof_algas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense a receita dele.",
- "dicaquadro_cof_animais": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense a receita dele.",
- "dicaquadro_cof_fungos": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense a receita dele.",
  "dicaquadro_com_bacterias": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o alimento dele.",
  "dicaquadro_com_fungos": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o alimento dele.",
  "dicaquadro_com_plantas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o alimento dele.",
+ "dicaquadro_mic_algas": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o tamanho dele.",
+ "dicaquadro_mic_animais": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o tamanho dele.",
+ "dicaquadro_mic_fungos": "Olhe as duas casinhas que já estão preenchidas: elas contam quem é este reino. Agora pense o tamanho dele.",
  "escreva": "Escreva o nome do reino.",
  "fase_adulto": "Adulto.",
  "fase_bebe": "Bebê.",
@@ -3927,17 +3921,15 @@ var FALAS = {
  "frase_tronco": "Um tronco caído some devagarinho no meio do mato. Quem faz esse trabalho são os que palavra?.",
  "ligue": "Agora toque no reino a que ele pertence.",
  "novoCaderno": "Caderno novo! As figuras mudaram.",
- "op_cofre": "Tem cofrinho.",
  "op_come": "Precisa comer.",
  "op_fabrica": "Fabrica o alimento com o Sol.",
+ "op_micro": "Só no microscópio.",
  "op_muitas": "Muitas células.",
- "op_nao": "Solta na célula.",
+ "op_nu": "A olho nu.",
  "op_semmic": "Dá para ver sem o microscópio.",
- "op_solta": "A receita fica solta.",
  "op_sonomic": "Só dá para ver no microscópio.",
- "op_tem": "Guardada no cofrinho.",
  "op_uma": "Uma célula só.",
- "p10enun": "A receita dele fica guardada num cofrinho, ou fica solta?",
+ "p10enun": "Este ser dá para ver a olho nu, ou só no microscópio?",
  "p11enun": "Pinte cada reino na cor da legenda.",
  "p12enun": "Olhe a figura. De qual reino ela é?",
  "p13enun": "Olhe a figura. De qual reino ela é?",
@@ -3956,7 +3948,7 @@ var FALAS = {
  "p25enun": "Escolha um ser vivo para cada reino. A coroa fica no fim.",
  "p2enun": "Nesta cena, toque em tudo que está vivo.",
  "p3enun": "Puxe cada figura para a gaveta certa: seres vivos ou não vivos.",
- "p4enun": "Agora são três gavetas. Olhe bem antes de puxar.",
+ "p4enun": "Agora vêm as peças difíceis. Duas gavetas: vivo, ou não vivo?",
  "p5enun": "Toque nas fases na ordem, do começo ao fim.",
  "p6enun": "Todo ser vivo é feito de células — pecinhas tão pequenas que só se veem no microscópio. Este ser é feito de uma célula só, ou de muitas?",
  "p7enun": "Olhe no microscópio. Toque na lente para focar.",
@@ -3967,11 +3959,11 @@ var FALAS = {
  "pal_produtores": "Produtores.",
  "pista_algas": "Quem é feito de uma célula só, mora na água e fabrica o alimento.",
  "pista_animais": "Quem precisa comer outros seres vivos e se mexe pelo mundo.",
- "pista_bacterias": "Quem é feito de uma célula só e nem cofrinho tem.",
+ "pista_bacterias": "Quem é feito de uma célula só e só se vê no microscópio.",
  "pista_fungos": "Quem come o que está apodrecendo — o cogumelo e o bolor do pão.",
  "pista_plantas": "Quem fica parado no mesmo lugar e fabrica o alimento com o Sol.",
  "quase": "Quase! Olhe de novo e tente outra vez.",
- "reino_algas": "Reino das algas. São a ameba, o paramécio e as algas do mar.",
+ "reino_algas": "Reino das algas. São a ameba, o paramécio e as algas de uma célula só.",
  "reino_animais": "Reino dos animais. São o cachorro, a borboleta, o peixe e você.",
  "reino_bacterias": "Reino das bactérias. São as bactérias, que só se veem no microscópio.",
  "reino_fungos": "Reino dos fungos. São o cogumelo, o bolor do pão e o fermento do bolo.",
@@ -4023,7 +4015,7 @@ var FALAS = {
 };
 /*FALAS-FIM*/
 /*SILMAP-INI*/var SILMAP = {};/*SILMAP-FIM*/
-/*VOZOK-INI*/var VOZOK = {"d28uw5": 1, "1cbs2s1": 1, "wlfg1v": 1, "17z1q1x": 1, "tun5r5": 1, "178jrmb": 1, "gk82ge": 1, "uvoia8": 1, "21glva": 1, "1057r7g": 1, "xd7v0g": 1, "7zaw2l": 1, "1oxy7r3": 1, "1bsua0b": 1, "10wbbfa": 1, "1cg1z0p": 1, "uprwcr": 1, "z2e8yw": 1, "z5y4yl": 1, "u3v7pm": 1, "l3rnh8": 1, "e7o0pp": 1, "1ldwdaq": 1, "1lzmpka": 1, "bmbb37": 1, "1967lsi": 1, "iluwdm": 1, "xod7by": 1, "zwlhj0": 1, "ry54u6": 1, "8pevdw": 1, "1xopjxy": 1, "kxq0ro": 1, "7mv56x": 1, "18plers": 1, "1t93y4g": 1, "fikrif": 1, "c6kj4v": 1, "4zozee": 1, "o502de": 1, "3qctb8": 1, "750wz2": 1, "1c06fhu": 1, "12vyqgf": 1, "1jpnf86": 1, "gncxys": 1, "16eoaq1": 1, "6994my": 1, "1rossy4": 1, "1gqkabx": 1, "18kwzkr": 1, "1nlq8nr": 1, "fx5nxi": 1, "nw6shu": 1, "g71tt4": 1, "1j7z01q": 1, "1mktsmy": 1, "174brv5": 1, "11bdpsf": 1, "19tua5g": 1, "1qioibw": 1, "124tiyb": 1, "1y27w1s": 1, "ihdqli": 1, "1dyp3sc": 1, "1b39mb4": 1, "me9pm5": 1, "nssl9t": 1, "120kwx1": 1, "1czbs8l": 1, "qacp0e": 1, "6n2g2q": 1, "n726ik": 1, "h9csxc": 1, "wbet1u": 1, "27yw85": 1, "m8nhs4": 1, "1ssd3at": 1, "yr7w0m": 1, "krduh": 1, "1g8i5gg": 1, "148swe5": 1, "255zct": 1, "5ujk77": 1, "1urhv69": 1, "k45ec5": 1, "1k2ljvs": 1, "zcnr2s": 1, "q7g649": 1, "fxkwvh": 1, "115so28": 1, "1os4rtb": 1, "n9v31q": 1, "wea3ws": 1, "1o2essw": 1, "q8tq2r": 1, "equi12": 1, "rd7l81": 1, "19xcjit": 1, "1fgqapn": 1, "t0y7tc": 1, "1gpx0ul": 1, "3uixk5": 1, "iijxe3": 1, "1touwne": 1, "v2vnkg": 1, "1tovc6k": 1, "n5ua7b": 1, "3xk0qo": 1, "13jhy6y": 1, "8ejd6k": 1, "grxahn": 1, "4ys00a": 1, "1k1xkjy": 1, "x0i4zf": 1, "13v2xf9": 1, "au59e8": 1, "57htc2": 1, "1tsak2s": 1, "1rxyeim": 1, "f8r2ww": 1, "ph5ycs": 1, "rlpb2a": 1, "1rx853r": 1, "1hz6enj": 1, "9l3odj": 1, "o2x8of": 1, "zzdnw0": 1, "1004wka": 1, "1e8ziz4": 1, "xyc65x": 1, "6vn2w5": 1, "1pu85wg": 1, "1qmxybq": 1, "210s6g": 1, "1tx0l3r": 1, "dlsjx7": 1, "18wcb7p": 1, "dep4xy": 1, "1rosv2t": 1, "106orm3": 1, "1dw078q": 1, "2rgfs0": 1, "15wqhf8": 1, "jazrbv": 1, "mdgac5": 1, "1cic7sz": 1, "xl0zkp": 1, "1i5a6r2": 1, "10jmubx": 1, "1v9zgf2": 1, "v59z1r": 1, "17yhqjy": 1, "y4aoju": 1, "zdgbos": 1, "1lc4ome": 1, "qcs7y2": 1, "195zrjb": 1, "1vu683i": 1, "hdipgg": 1, "1le988c": 1, "56dvoy": 1, "1mfuf9t": 1, "uwut5u": 1, "1oveepo": 1, "1qmrv3q": 1, "12df9tp": 1, "1ty5q9d": 1, "17wict7": 1, "113yn7b": 1, "1eea5jk": 1, "1yah1d8": 1, "sdhrtu": 1, "1uwhnhj": 1, "17dpo4u": 1, "1fwrgft": 1, "1u0gp2y": 1, "1k7n237": 1, "17ppnj5": 1, "1bxm24m": 1, "13h2vxx": 1, "1rdwxx7": 1, "gkvz2o": 1, "8exzcn": 1, "1rovybt": 1, "j7wcun": 1, "1mxczni": 1, "1syfr2j": 1, "1xpx9u0": 1, "1557vuc": 1, "fuihux": 1, "ue3sk2": 1, "1c64n6": 1, "1o7talo": 1, "xl4p8f": 1, "1eb0lph": 1, "9vcsks": 1, "1k6xyk": 1, "2wiles": 1, "1dmxpqk": 1, "p1bx5b": 1, "jyk9fp": 1, "141n0l5": 1, "1h35qii": 1, "1lz5ycs": 1, "gc2ha2": 1, "r8by35": 1, "1h1dsv2": 1, "5ma8pn": 1, "1cqot33": 1, "1nkwsl": 1, "qqlr91": 1, "x9nnnr": 1, "nne3xf": 1, "15h5hfh": 1, "yj3gf1": 1, "ogfdep": 1, "1187sfw": 1, "hq5exn": 1, "33buvz": 1, "10exx8h": 1, "vwrfsa": 1, "1rtm6os": 1, "8oup33": 1, "1k0m8ga": 1, "4sjyv9": 1, "2ub4xt": 1, "1xcym5k": 1, "ydd5rz": 1, "w7zyqw": 1, "16gbegx": 1, "gtw7up": 1, "3hmnr0": 1, "1ok5r4a": 1, "1o7gbkd": 1, "roxycx": 1, "1v9gct": 1, "boz42v": 1, "19z127i": 1, "f5y71r": 1, "1eye2hu": 1, "1i2jf4v": 1, "jsn8sx": 1, "3pw2yn": 1, "139c5zq": 1, "1955tqn": 1, "lfeacj": 1, "1j4l8vn": 1, "e9i3yk": 1, "fiksua": 1, "199jvl": 1, "bipvoj": 1, "furi4l": 1, "wwc3ty": 1, "3oskfr": 1, "1icfacj": 1, "1l7iv9z": 1, "162hwi1": 1, "hkduc9": 1, "rkc48i": 1, "u5iqdw": 1, "q0fvjo": 1, "1corzb9": 1, "1ipbjy7": 1, "n18nwo": 1, "185t0i2": 1, "pw9ct2": 1, "nfu0ki": 1, "1tjaqnx": 1, "a29vag": 1, "11wadum": 1, "pdmlok": 1, "1jl5klt": 1, "vjujfs": 1, "1894ra": 1, "1jdr6g4": 1, "d6l6e6": 1, "130ic7j": 1, "14xswp3": 1, "vt4kup": 1, "a9wzcq": 1, "1csc5gf": 1, "1hh98lr": 1, "1snuove": 1, "1xh32y4": 1, "148dviw": 1, "1pazvbo": 1, "1y31sk7": 1, "ste0dn": 1, "16q4lqi": 1, "x7ltok": 1, "16ct900": 1, "hkxxe5": 1, "qqq99l": 1, "16pe36i": 1, "u7tbjm": 1, "1x2mvr8": 1, "1gsc8r2": 1, "modhm8": 1, "svturp": 1, "sbp94j": 1, "1yb5qw9": 1, "l5fbib": 1, "17ypelm": 1, "1ma0103": 1, "1rdfe6n": 1, "evwsyu": 1, "m673c": 1, "qtpii9": 1, "rey3bh": 1, "qub61y": 1, "1oz5xts": 1, "171ezwl": 1, "t3sr9l": 1, "qpm1ec": 1, "1xgekyi": 1, "1xji0nz": 1, "homiu2": 1, "1i5ixnc": 1, "3emy1i": 1, "43cdxd": 1, "14bk6de": 1, "swkns7": 1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"d28uw5": 1, "1cbs2s1": 1, "r0pn9h": 1, "jx9shc": 1, "rxl27d": 1, "cvgcfa": 1, "1yueukb": 1, "uvoia8": 1, "21glva": 1, "1057r7g": 1, "xd7v0g": 1, "7zaw2l": 1, "1oxy7r3": 1, "1bsua0b": 1, "10wbbfa": 1, "1cg1z0p": 1, "uprwcr": 1, "z2e8yw": 1, "z5y4yl": 1, "u3v7pm": 1, "l3rnh8": 1, "e7o0pp": 1, "1ldwdaq": 1, "1lzmpka": 1, "bmbb37": 1, "1967lsi": 1, "iluwdm": 1, "xod7by": 1, "zwlhj0": 1, "ry54u6": 1, "8pevdw": 1, "1xopjxy": 1, "kxq0ro": 1, "7mv56x": 1, "18plers": 1, "1t93y4g": 1, "fikrif": 1, "c6kj4v": 1, "4zozee": 1, "o502de": 1, "3qctb8": 1, "750wz2": 1, "1c06fhu": 1, "12vyqgf": 1, "1jpnf86": 1, "gncxys": 1, "16eoaq1": 1, "6994my": 1, "1rossy4": 1, "1gqkabx": 1, "18kwzkr": 1, "1nlq8nr": 1, "fx5nxi": 1, "nw6shu": 1, "g71tt4": 1, "1j7z01q": 1, "pdj0jt": 1, "174brv5": 1, "11bdpsf": 1, "19tua5g": 1, "1qioibw": 1, "124tiyb": 1, "1y27w1s": 1, "ihdqli": 1, "1dyp3sc": 1, "1b39mb4": 1, "me9pm5": 1, "nssl9t": 1, "cki0o4": 1, "1czbs8l": 1, "qacp0e": 1, "6n2g2q": 1, "n726ik": 1, "h9csxc": 1, "wbet1u": 1, "27yw85": 1, "m8nhs4": 1, "1ssd3at": 1, "yr7w0m": 1, "krduh": 1, "1g8i5gg": 1, "148swe5": 1, "255zct": 1, "5ujk77": 1, "1urhv69": 1, "k45ec5": 1, "1k2ljvs": 1, "zcnr2s": 1, "q7g649": 1, "fxkwvh": 1, "115so28": 1, "1os4rtb": 1, "n9v31q": 1, "wea3ws": 1, "1o2essw": 1, "q8tq2r": 1, "equi12": 1, "rd7l81": 1, "84xddu": 1, "o3mexn": 1, "5mjoe3": 1, "k55mgd": 1, "9h9k05": 1, "iijxe3": 1, "1ujiso2": 1, "v2vnkg": 1, "1etz9n6": 1, "n5ua7b": 1, "3xk0qo": 1, "8ejd6k": 1, "1rnznxg": 1, "grxahn": 1, "4ys00a": 1, "1jytm86": 1, "ysi1qm": 1, "14affyf": 1, "h66lq1": 1, "1319owb": 1, "a7ga2t": 1, "1nlhedj": 1, "f8r2ww": 1, "ph5ycs": 1, "rlpb2a": 1, "1rx853r": 1, "1hz6enj": 1, "1rm1c70": 1, "hwf2b": 1, "13pp5t5": 1, "1mw4dsm": 1, "povy8z": 1, "xyc65x": 1, "6vn2w5": 1, "1pu85wg": 1, "1qmxybq": 1, "210s6g": 1, "1tx0l3r": 1, "dlsjx7": 1, "18wcb7p": 1, "dep4xy": 1, "1rosv2t": 1, "106orm3": 1, "1dw078q": 1, "2rgfs0": 1, "15wqhf8": 1, "jazrbv": 1, "mdgac5": 1, "1cic7sz": 1, "xl0zkp": 1, "1i5a6r2": 1, "10jmubx": 1, "19vrk7u": 1, "v59z1r": 1, "17yhqjy": 1, "y4aoju": 1, "zdgbos": 1, "1lc4ome": 1, "qcs7y2": 1, "195zrjb": 1, "1vu683i": 1, "hdipgg": 1, "1le988c": 1, "56dvoy": 1, "1mfuf9t": 1, "uwut5u": 1, "1oveepo": 1, "1sugvjr": 1, "12df9tp": 1, "15wwr2o": 1, "1jifpyy": 1, "113yn7b": 1, "1eea5jk": 1, "1yah1d8": 1, "sdhrtu": 1, "1uwhnhj": 1, "17dpo4u": 1, "1fwrgft": 1, "1u0gp2y": 1, "1k7n237": 1, "urfu6c": 1, "1bxm24m": 1, "13h2vxx": 1, "1rdwxx7": 1, "gkvz2o": 1, "8exzcn": 1, "1rovybt": 1, "j7wcun": 1, "1mxczni": 1, "3owc9o": 1, "u1uczm": 1, "ue3sk2": 1, "1c64n6": 1, "k73g2w": 1, "1sfup05": 1, "1o7talo": 1, "1eb0lph": 1, "1rklorw": 1, "9vcsks": 1, "1k6xyk": 1, "2wiles": 1, "1dmxpqk": 1, "p1bx5b": 1, "jyk9fp": 1, "141n0l5": 1, "1h35qii": 1, "1lz5ycs": 1, "gc2ha2": 1, "r8by35": 1, "1h1dsv2": 1, "5ma8pn": 1, "1cqot33": 1, "1nkwsl": 1, "qqlr91": 1, "x9nnnr": 1, "nne3xf": 1, "15h5hfh": 1, "yj3gf1": 1, "ogfdep": 1, "1187sfw": 1, "hq5exn": 1, "33buvz": 1, "10exx8h": 1, "vwrfsa": 1, "1rtm6os": 1, "8oup33": 1, "1k0m8ga": 1, "4sjyv9": 1, "2ub4xt": 1, "1xcym5k": 1, "ydd5rz": 1, "w7zyqw": 1, "16gbegx": 1, "gtw7up": 1, "3hmnr0": 1, "1ok5r4a": 1, "1o7gbkd": 1, "roxycx": 1, "1v9gct": 1, "boz42v": 1, "19z127i": 1, "1eye2hu": 1, "1i2jf4v": 1, "1lqrbol": 1, "jsn8sx": 1, "frnwj9": 1, "139c5zq": 1, "lfeacj": 1, "e9i3yk": 1, "1gr07fd": 1, "199jvl": 1, "bipvoj": 1, "furi4l": 1, "wwc3ty": 1, "3oskfr": 1, "1icfacj": 1, "1l7iv9z": 1, "162hwi1": 1, "hkduc9": 1, "rkc48i": 1, "u5iqdw": 1, "q0fvjo": 1, "1corzb9": 1, "1ipbjy7": 1, "n18nwo": 1, "1vjnwp": 1, "pw9ct2": 1, "nfu0ki": 1, "1tjaqnx": 1, "a29vag": 1, "11wadum": 1, "pdmlok": 1, "1jl5klt": 1, "vjujfs": 1, "1894ra": 1, "1jdr6g4": 1, "1jk6tko": 1, "130ic7j": 1, "14xswp3": 1, "vt4kup": 1, "8wr1op": 1, "1csc5gf": 1, "1hh98lr": 1, "1snuove": 1, "1xh32y4": 1, "148dviw": 1, "1pazvbo": 1, "1y31sk7": 1, "ste0dn": 1, "16q4lqi": 1, "x7ltok": 1, "16ct900": 1, "hkxxe5": 1, "qqq99l": 1, "16pe36i": 1, "u7tbjm": 1, "1x2mvr8": 1, "1gsc8r2": 1, "modhm8": 1, "svturp": 1, "sbp94j": 1, "1yb5qw9": 1, "l5fbib": 1, "17ypelm": 1, "1ma0103": 1, "1rdfe6n": 1, "evwsyu": 1, "m673c": 1, "qtpii9": 1, "rey3bh": 1, "qub61y": 1, "1oz5xts": 1, "171ezwl": 1, "t3sr9l": 1, "qpm1ec": 1, "1xgekyi": 1, "1xji0nz": 1, "homiu2": 1, "1i5ixnc": 1, "3emy1i": 1, "43cdxd": 1, "14bk6de": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ---------- o nome de cada figura, para o texto alternativo ----------
    ⚠️ Aqui NAO ha sílabas: este caderno é de multiplicação, e a lista de
@@ -4076,13 +4068,13 @@ var NOMES = [
   /*  1 */ "O que está vivo?",
   /*  2 */ "Seres vivos na cena",
   /*  3 */ "Vivo ou não vivo?",
-  /*  4 */ "Vivo, já foi vivo, nunca viveu",
+  /*  4 */ "As peças difíceis",
   /*  5 */ "O ciclo de vida",
   /*  6 */ "Uma célula ou muitas?",
   /*  7 */ "O microscópio",
   /*  8 */ "De onde vem o alimento?",
   /*  9 */ "Fabrica ou come?",
-  /* 10 */ "O cofrinho da receita",
+  /* 10 */ "A olho nu ou no microscópio?",
   /* 11 */ "Pinte os cinco reinos",
   /* 12 */ "De qual reino é este ser?",
   /* 13 */ "Os reinos que não se veem",
@@ -4115,7 +4107,7 @@ var CURRICULO = {
   "As habilidades citadas neste dossiê são conferidas, palavra por palavra, contra o currículo da rede."
  ],
  "observacoes": [
-  "O critério do NÚCLEO (o \"cofrinho da receita\", folha 10) não está nos conceitos do 4º ano da rede: entrou por pedido do professor, que incluiu \"tipo de célula\" entre os critérios. Por isso ele aparece em linguagem de criança e nunca como palavra a decorar — as palavras procarionte e eucarionte são citadas uma única vez, como apelido de gente grande.",
+  "ADEQUAÇÃO AO CURRÍCULO (14/set/2026, ordem do professor: “o que importa para mim é o currículo, não invenção”). Duas coisas que não estão no bloco CIÊNCIAS – 4º ANO da rede saíram do caderno: a gaveta “já foram vivos” (folha 4, que passou a ter duas gavetas, vivo × não vivo, com as peças difíceis) e o critério do NÚCLEO, o “cofrinho da receita” (folha 10 e o terceiro critério da coroa). No lugar do núcleo entrou o critério que a rede nomeia palavra por palavra: “Seres microscópicos (uso de lupa e microscópio)” — dá para ver a olho nu, ou só no microscópio? Ele separa os mesmos reinos e amarra as folhas 7, 10 e 24.",
   "Duas folhas não vieram das folhas de papel colhidas, e sim do currículo: a 7 (o microscópio) e a 24 (do menor ao maior). Nenhuma das 40 folhas lidas põe a criança a olhar por um microscópio, e a rede pede exatamente isso.",
   "Os reinos Fungi, Protista e Monera aparecem sempre com a mesma figura — a da folha d07 —, porque é a única figura de cada um desses reinos em toda a colheita de papel."
  ],
@@ -4146,6 +4138,7 @@ var CURRICULO = {
    "objetivo": "Os seres que só o microscópio mostra",
    "folhas": [
     7,
+    10,
     24
    ],
    "pratica": "Vida e Evolução",
@@ -4161,15 +4154,6 @@ var CURRICULO = {
    "pratica": "Vida e Evolução",
    "objeto": "Cadeias alimentares simples",
    "habilidade": "HABILIDADE: \"como fonte primária de energia na produção de alimentos.\""
-  },
-  {
-   "objetivo": "Onde a receita fica guardada",
-   "folhas": [
-    10
-   ],
-   "pratica": "Vida e Evolução",
-   "objeto": "Microrganismos",
-   "habilidade": "HABILIDADE: \"Conhecer os reinos dos seres vivos, sua importância e classificação.\""
   },
   {
    "objetivo": "Os cinco reinos, um a um",
