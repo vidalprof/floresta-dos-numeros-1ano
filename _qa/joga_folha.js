@@ -57,8 +57,19 @@ if (!pasta) { console.log('uso: node _qa/joga_folha.js <pasta> [porta]'); proces
    as folhas chamam `acertou()` dentro de um `setTimeout` de 240 a 850 ms (o
    tempinho em que a peca pisca antes de fechar). 1400 ms cobre o maior deles
    com folga; abaixo disso o jogador acusaria "nao fechou" o que so estava
-   piscando — portao que reprova por causa do proprio relogio. */
+   piscando — portao que reprova por causa do proprio relogio.
+
+   ⚡ ELE E O TETO, NAO A ESPERA (14/set/2026, ordem do Marcos: "esses portoes
+   precisam ser mais rapidos"). Antes o jogador PARAVA 1400 ms em CADA item,
+   mesmo quando a folha ja tinha fechado em 300 — e o item nao fecha mais cedo
+   por isso, so o portao fica mais lento. Medido: a banca da folha viva inteira
+   levava 198 s e 193 deles eram este arquivo (102 itens x 1,4 s parado). Agora
+   ele PERGUNTA a pagina se fechou, de 60 em 60 ms, e segue no instante em que
+   fechar; os 1400 ms continuam sendo o teto, entao um item que de fato nao
+   fecha espera o mesmo de antes e reprova igual. O portao mede o mesmo — so
+   deixou de esperar o que ja aconteceu. */
 const ESPERA_FECHA = 1400;
+const PULSO = 60;
 
 (async () => {
   const srv = spawn('python3', ['-m', 'http.server', String(porta)], { stdio: 'ignore' });
@@ -99,8 +110,22 @@ const ESPERA_FECHA = 1400;
         const plano = await pg.evaluate(montaPlano, id);
         if (!plano || plano.tipo === 'nao-sei') { semJeito++; continue; }
         await executa(pg, id, plano);
-        await pg.waitForTimeout(ESPERA_FECHA);
-        const fechou = await pg.evaluate(x => !!ST.resp[x], id);
+        const fechou = await pg.waitForFunction(
+          x => !!ST.resp[x], id, { timeout: ESPERA_FECHA, polling: PULSO })
+          .then(() => true).catch(() => false);
+        /* ⚠️⚠️ ESTA LINHA E O PRECO DE TER FICADO RAPIDO, e ela custou duas
+           rodadas para aparecer. A espera de 1400 ms fazia DUAS coisas: dava
+           tempo do item fechar E separava um item do seguinte. Tirando a
+           primeira, a segunda foi junto sem eu perceber — o jogador passou a
+           clicar no item seguinte com o TECLADO do anterior ainda aberto, e
+           reprovava itens de digitar que estavam certos. O sinal era claro e
+           eu quase o li errado: os itens acusados MUDAVAM a cada rodada, e
+           defeito que muda de lugar nao e defeito da atividade, e do portao.
+           Entao agora ele espera a coisa certa, nao um relogio: o teclado ter
+           fechado (`ATIVA` vazio) antes de tocar no proximo item. */
+        await pg.waitForFunction(
+          () => typeof ATIVA === 'undefined' || !ATIVA, null,
+          { timeout: 900, polling: PULSO }).catch(() => {});
         if (fechou) { fechados++; continue; }
         /* ⚠️ ISTO AQUI É A LIÇÃO MAIS CARA DESTE ARQUIVO, e ela é de método:
            na primeira varredura o jogador REPROVOU três cadernos, e em DOIS
@@ -353,7 +378,21 @@ async function executa(pg, id, plano) {
     /* as DUAS portas: aqui vai pelo teclado DE VERDADE, que é o que o PC da
        escola tem — se só o teclado da tela funcionasse, isto reprovaria */
     for (const ch of plano.texto.split('')) { await pg.keyboard.press(ch); await pg.waitForTimeout(90); }
-    await pg.keyboard.press('Enter');
+    /* ⚠️⚠️ O ENTER SO VAI SE A FOLHA NAO TIVER CONFIRMADO SOZINHA, e esta linha
+       custou tres rodadas. O teclado do caderno confere sozinho 380 ms depois
+       que o numero fica do tamanho da resposta (`if(ATIVA.val.length >=
+       ATIVA.certa.length) setTimeout(confereNum, 380)`). Bater Enter por cima
+       disso manda conferir DUAS vezes, e a segunda pega o campo ja limpo: o
+       item nao fecha. Antes isso nao aparecia porque o jogador parava 1400 ms
+       em cada item e a corrida se acomodava sozinha — o defeito estava ali o
+       tempo todo, escondido pela lentidao.
+       ⚠️ As DUAS PORTAS continuam medidas: os digitos vao pelo teclado DE
+          VERDADE, que e o que o PC da escola tem. O Enter so entra quando a
+          folha espera por ele. */
+    const jaFechou = await pg.waitForFunction(
+      x => !!ST.resp[x], id, { timeout: 700, polling: 60 })
+      .then(() => true).catch(() => false);
+    if (!jaFechou) await pg.keyboard.press('Enter');
     return;
   }
   if (plano.tipo === 'tracar') {
