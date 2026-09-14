@@ -1,0 +1,64 @@
+name: Listar modelos de IA disponiveis (diagnostico)
+
+# ⚠️ POR QUE ESTE WORKFLOW EXISTE (14/set/2026).
+#
+# O registro da casa dizia, desde 12/ago: "O GEMINI ESTA SEM COTA — HTTP 429".
+# Em 14/set eu fui REMEDIR, como a regra manda, e o erro de hoje e OUTRO:
+#
+#   modelo gemini-2.5-flash-image-preview   -> HTTP 404 "is not found for API
+#   modelo gemini-2.0-flash-preview-image-generation -> HTTP 404  version v1beta"
+#
+# Ou seja: nao e saldo, e NOME DE MODELO. Os `preview` do Google foram
+# aposentados e o `gerar-imagens.yml` continua chamando os nomes velhos. Eu teria
+# dito ao Marcos "precisa do secret do OpenAI" em cima de um diagnostico de um
+# mes atras — e estaria errado.
+#
+# A licao que este arquivo resolve: **nome de modelo de terceiro caduca**, e
+# adivinhar qual e o novo e chute. Este workflow PERGUNTA ao proprio servico
+# quais existem hoje e quais aceitam gerar imagem. Rodar sempre que um gerador
+# comecar a dar 404.
+#
+# Nao gasta cota: `ListModels` e consulta, nao geracao.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  listar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Perguntar ao Gemini quais modelos existem hoje
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.error
+          k = os.environ.get("GEMINI_API_KEY", "")
+          if not k:
+              print("::error::GEMINI_API_KEY vazio — nao da para perguntar.")
+              raise SystemExit(1)
+          url = "https://generativelanguage.googleapis.com/v1beta/models?key=%s&pageSize=200" % k
+          try:
+              d = json.loads(urllib.request.urlopen(url, timeout=40).read().decode())
+          except urllib.error.HTTPError as e:
+              print("::error::HTTP %s: %s" % (e.code, e.read().decode("utf-8", "ignore")[:400]))
+              raise SystemExit(1)
+          ms = d.get("models", [])
+          print("== %d modelo(s) visiveis com esta chave ==" % len(ms))
+          img = []
+          for m in ms:
+              nome = m.get("name", "").replace("models/", "")
+              met = ",".join(m.get("supportedGenerationMethods", []))
+              # os que desenham trazem "image" no nome ou na descricao
+              alvo = ("image" in nome.lower()) or ("image" in (m.get("description") or "").lower())
+              if alvo:
+                  img.append((nome, met))
+              print("   %-46s %s" % (nome, met))
+          print()
+          print("== OS QUE PARECEM DESENHAR ==")
+          if not img:
+              print("   NENHUM. Com esta chave nao ha modelo de imagem — ai sim o caminho")
+              print("   e outro gerador (OPENAI_API_KEY) ou liberar o de imagem no projeto.")
+          for nome, met in img:
+              print("   %-46s %s" % (nome, met))
+          PY
