@@ -1606,13 +1606,23 @@ function montaLigar(caixa, pi, tag, pares, pagina){
 }
 
 /* ---------- o teclado da tela, e o teclado DE VERDADE ----------
+   ⚠️⚠️ O ALFABETO ESTAVA INCOMPLETO, E ISSO TRANCAVA A CRIANÇA (15/set/2026).
+   Faltavam K, W e Y — e, pior, faltavam Ê, Â, Ã, Ô, Õ, À e Ü. Quem tentasse
+   escrever PÊSSEGO no teclado da tela ou no teclado de verdade ficava com
+   "PSSEGO": a tecla não existia, a letra não entrava, e a folha NUNCA FECHAVA.
+   Não havia erro nenhum no console; a criança só tentava de novo até desistir.
+   Medido com o navegador de verdade, letra por letra, antes deste conserto.
+   ⚠️ Quem fecha esta família agora é o portão `_qa/teclado.py`: ele confere que
+      o alfabeto tem as 26 letras e os treze acentos do português, e que o
+      teclado da tela e o filtro do teclado de verdade usam o MESMO alfabeto —
+      porque dois alfabetos diferentes é o mesmo defeito com uma porta só.
    ⚠️ REGRA DAS DUAS PORTAS (Marcos, ago/2026): *"seria interessante se o aluno
    além de teclar no teclado virtual funcionasse se ele tocasse no teclado de
    verdade, as duas opções"*. No PC da escola tem teclado e a criança vai
    digitar; no celular, não tem. Nunca só uma porta. */
 (function(){
   var tk = document.getElementById("tk");
-  var letras = "ABCDEFGHIJLMNOPQRSTUVXZÇÁÉÍÓÚ".split("");
+  var letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".split("");
   letras.forEach(function(L){
     var b = el("button", null, L);
     b.setAttribute("aria-label", "Letra " + L);
@@ -1628,7 +1638,7 @@ document.addEventListener("keydown", function(ev){
   if(!CRUZ) return;
   if(document.activeElement && document.activeElement.id === "nomeIn") return;
   var k = (ev.key || "").toUpperCase();
-  if(k.length === 1 && "ABCDEFGHIJLMNOPQRSTUVXZÇÁÉÍÓÚ".indexOf(k) > -1){ ev.preventDefault(); digitaCruz(k); }
+  if(k.length === 1 && "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".indexOf(k) > -1){ ev.preventDefault(); digitaCruz(k); }
   else if(ev.key === "Backspace"){ ev.preventDefault(); digitaCruz("ap"); }
   else if(ev.key === "Enter"){ ev.preventDefault(); digitaCruz("ok"); }
   else if(ev.key === "Escape"){ fechaCruz(); }

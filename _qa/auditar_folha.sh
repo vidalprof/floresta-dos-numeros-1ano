@@ -68,6 +68,10 @@ PORTOES=(
   #     uma copia velha para sempre e a crianca ve so a faixa de cima — foi o
   #     que o Marcos pegou no Chrome dele em 14/set/2026.
   "1s versao do folhas.js|python3 _qa/versao_script.py $PASTA"
+  # ⭐ 1t) o teclado tem TODAS as letras? Faltavam K, W, Y e sete acentos, e a
+  #     crianca que tentava escrever PÊSSEGO ficava com "PSSEGO" — a folha nunca
+  #     fechava, e sem erro nenhum na tela (medido em 15/set/2026).
+  "1t teclado completo|python3 _qa/teclado.py $PASTA"
   "0z pre-voo (39 portoes de texto)|bash _qa/previo.sh $PASTA"
   "1z boot (abre limpa?)|node _qa/boot.js $ARQ"
   "1w andar folha (anda as 25, item por item)|node _qa/andar_folha.js $PASTA"
