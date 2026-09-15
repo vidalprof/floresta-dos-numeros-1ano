@@ -143,7 +143,7 @@ p(u"monte", u"Toque nas letras embaralhadas para montar a palavra.")
 p(u"ligue", u"Toque numa palavra do lado esquerdo e depois na do lado direito.")
 p(u"toque_palavra", u"Primeiro toque numa palavra ali embaixo. Depois toque na "
                     u"gaveta dela.")
-p(u"vozOn", u"Narração ligada!")
+p(u"vozOn", u"A narração está ligada!")
 
 
 # ---------------------------------------------------------------------------
@@ -226,7 +226,8 @@ p(u"p4enun", u"Folha quatro. Estas são mais difíceis. Algumas se partem em "
 for k, C in COR_.items():
     pg = u"3" if k[0] == u"d" else u"4"
     p(u"cor_" + k, C[u"p"] + u".")
-    p(u"certo" + pg + u"_" + k, u"Isso mesmo!")
+    p(u"certo" + pg + u"_" + k, u"Isso mesmo! " + C[u"p"] + u" se parte em "
+                                + ple(len(C[u"g"]) + 1) + u".")
     p(u"dica" + pg + u"_" + k, u"Diga a palavra bem devagar. Onde a sua boca "
                                u"para um pouquinho, é ali que ela se parte.")
 
@@ -327,7 +328,7 @@ _ONDE = {u"s": (u"17", u"começo"), u"t": (u"18", u"meio"), u"u": (u"19", u"fim"
 for k, FA in FAL.items():
     pg, onde = _ONDE[k[0]]
     p(u"fal_" + k, FA[u"q"] + u".")
-    p(u"certo" + pg + u"_" + k, u"Isso! " + FA[u"q"] + u".")
+    p(u"certo" + pg + u"_" + k, u"Isso! A palavra é " + FA[u"q"] + u".")
     p(u"dica" + pg + u"_" + k, u"Diga a palavra inteira e pare no pedaço do " +
                                onde + u". Qual é o som que sai?")
     for sb in FA[u"ops"]:
@@ -362,7 +363,7 @@ p(u"p23enun", u"Folha vinte e três. Aqui cada casa é uma sílaba. Ache o nome 
               u"de cada cor: toque na primeira casa e depois na última.")
 for k, C in CACA[u"pal"].items():
     p(u"caca_" + k, C[u"p"] + u".")
-    p(u"certo23_" + k, u"Achou! " + C[u"p"] + u".")
+    p(u"certo23_" + k, u"Achou! A cor " + C[u"p"] + u" estava ali.")
     p(u"dica23_" + k, u"Procure a casa que tem o começo dessa palavra.")
 
 # ---- 24 — a trilha ----
@@ -383,7 +384,7 @@ p(u"p25enun", u"Folha vinte e cinco. Olhe a figura e monte o nome dela: as "
               u"digitar.")
 for k, C in CRZ.items():
     p(u"crz_" + k, C[u"d"] + u".")
-    p(u"certo25_" + k, u"Isso! " + C[u"r"] + u".")
+    p(u"certo25_" + k, u"Isso! Você escreveu " + C[u"r"] + u".")
     p(u"dica25_" + k, u"Diga o nome da figura em voz alta e escreva a primeira "
                       u"letra que você ouvir.")
 
@@ -425,7 +426,7 @@ p(u"p31enun", u"Folha trinta e um. Leia a história. Depois ache no texto a "
 p(u"txt_tudo", u" ".join(TXT[u"linhas"]))
 for k, P in TXT[u"pede"].items():
     p(u"txtq_" + k, u"Ache no texto " + lp(P[u"q"]) + u" e toque nela.")
-    p(u"certo31_" + k, u"Isso mesmo! Essa serve.")
+    p(u"certo31_" + k, u"Isso mesmo! Essa palavra serve.")
     p(u"dica31_" + k, u"Leia a história de novo batendo palma em cada palavra.")
     for w in P[u"alvo"]:
         p(u"pal_" + ch(w), w + u".")
@@ -445,7 +446,7 @@ p(u"p33enun", u"Folha trinta e três. Neste banco há sílabas de várias "
               u"palavras. Monte a que se pede, tocando nos pedaços na ordem.")
 for k, B in BANCO[u"pal"].items():
     p(u"ban_" + k, B[u"r"] + u".")
-    p(u"certo33_" + k, u"Isso! " + B[u"r"] + u".")
+    p(u"certo33_" + k, u"Isso! Do banco saiu a palavra " + B[u"r"] + u".")
     p(u"dica33_" + k, u"Ouça a palavra e procure o pedaço em que ela começa.")
 
 # ---- 34 — o desafio ----
@@ -453,7 +454,7 @@ p(u"p34enun", u"Folha trinta e quatro. Agora é a sua vez de inventar. Escreva "
               u"uma palavra que sirva para cada pedido.")
 for k, X in DESA.items():
     p(u"des_" + k, u"Escreva " + lp(X[u"q"]) + u".")
-    p(u"certo34_" + k, u"Muito bem! Essa serve.")
+    p(u"certo34_" + k, u"Muito bem! A sua palavra serve.")
     p(u"dica34_" + k, u"Pense numa palavra e bata palma nela antes de "
                       u"escrever. O número de palmas tem que bater com o pedido.")
 
@@ -485,6 +486,31 @@ if not isinstance(F, dict):
 _ruins = [k for k, v in F.items() if not isinstance(v, type(u""))]
 if _ruins:
     raise SystemExit(u"⛔ falas que nao sao texto: %s" % u", ".join(_ruins[:6]))
+
+
+# ⚠️⚠️ FALA DE DUAS PALAVRAS SAI TORTA — e isto foi medido pelo OUVIDO da
+#    entrega, não deduzido: de "Isso! CAVALO." ele ouviu só "isso", e de
+#    "Isso! PATO." também. Duas palavras soltas não dão contexto nenhum à voz,
+#    e a criança também ganha pouco: "Isso!" já é o som de acerto, e o que
+#    ensina é a frase que diz O QUE ELA FEZ.
+#    Este guarda existe para eu não descobrir isso de novo pelo ouvido, que
+#    custa dezesseis minutos de workflow por rodada.
+# ⚠️ AS EXCEÇÕES SÃO NOMEADAS, e cada uma tem razão: são as falas que a criança
+#    ouve ao TOCAR numa peça, e que por isso têm de dizer a peça e MAIS NADA.
+#    O alto-falante de uma opção que dissesse uma frase inteira atrapalharia a
+#    escolha em vez de ajudar. Elas não são "curtas por descuido": são curtas
+#    de propósito, e por isso ficam de fora da conta.
+_SO_A_PECA = (u"num_", u"sil_", u"pal_", u"op_", u"gavn_", u"diz2_", u"ord_",
+              u"let_", u"con_", u"dit_", u"cor_", u"mar_", u"caca_", u"ban_",
+              u"jun_", u"lig_", u"ligc_", u"crz_", u"vog_", u"qz_", u"qzop_",
+              u"fal_", u"diz_", u"junr_", u"lapis_", u"cart_")
+_curtas = [(k, v) for k, v in F.items()
+           if len(v.split()) < 3 and not k.startswith(_SO_A_PECA)]
+if _curtas:
+    raise SystemExit(u"⛔ %d fala(s) com menos de 3 palavras — o ouvido nao as "
+                     u"entende e a crianca ganha pouco:\n   %s"
+                     % (len(_curtas), u"\n   ".join(
+                         u"%s -> %r" % (k, v) for k, v in _curtas[:8])))
 
 # ---------------------------------------------------------------------------
 # A SAÍDA
