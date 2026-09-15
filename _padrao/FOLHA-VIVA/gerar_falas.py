@@ -49,11 +49,43 @@ D = io.open(CAM, encoding=u"utf-8").read()
 
 
 def bloco(nome):
-    u"""Lê um objeto do bloco DADOS do index.html. Uma fonte só."""
-    m = re.search(r"var " + nome + r" = (\{.*?\n\});", D, re.S)
-    if not m:
+    u"""Lê um objeto do bloco DADOS do index.html. Uma fonte só.
+
+    ⚠️ ELE CONTA AS CHAVES, e isso foi conserto de 15/set/2026. O esqueleto
+       procurava o fim do objeto por uma marca de texto (`\n});`) — e QUALQUER
+       objeto que não terminasse exatamente assim fazia a leitura passar
+       adiante e engolir o bloco seguinte. No primeiro caderno do 2º ano os
+       vinte e três blocos falharam de uma vez, todos com o mesmo erro, e a
+       mensagem do json não dizia nada sobre a causa. Contar chave por chave
+       (pulando as que estão DENTRO de texto) acha o fim de qualquer objeto.
+    """
+    i = D.find(u"var " + nome + u" = ")
+    if i < 0:
         raise SystemExit(u"nao achei o bloco `var %s` no index.html" % nome)
-    txt = re.sub(r"/\*.*?\*/", "", m.group(1), flags=re.S)
+    i = D.index(u"{", i)
+    nivel, j, dentro, escapa = 0, i, False, False
+    while j < len(D):
+        c = D[j]
+        if dentro:
+            if escapa:
+                escapa = False
+            elif c == u"\\":
+                escapa = True
+            elif c == u'"':
+                dentro = False
+        else:
+            if c == u'"':
+                dentro = True
+            elif c == u"{":
+                nivel += 1
+            elif c == u"}":
+                nivel -= 1
+                if nivel == 0:
+                    j += 1
+                    break
+        j += 1
+    txt = D[i:j]
+    txt = re.sub(r"/\*.*?\*/", "", txt, flags=re.S)
     txt = re.sub(r'"\s*\+\s*\n\s*"', "", txt)                 # junta "a" + "b"
     txt = re.sub(r'([\{,]\s*)"?([A-Za-zÀ-ÿ_0-9]+)"?\s*:', r'\1"\2":', txt)
     txt = re.sub(r",(\s*[\}\]])", r"\1", txt)

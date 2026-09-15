@@ -56,3 +56,36 @@ de novo sem olhar isto.
    **acrescentar a linha aqui, no mesmo commit**.
 3. As mecânicas nascidas aqui não vão para o motor: a folha viva é caminho à parte
    (ver `MEMORIA-DO-PROJETO.md`, "A folha viva é um caminho à parte").
+
+---
+
+## As peças nascidas no 2º ano — degrau da SÍLABA (15/set/2026)
+
+Lidas em **89 folhas reais** de sílaba e classificação silábica
+(`_sequencias/POTE-SIL2.md`). Quatro verbos que a casa ainda não tinha:
+
+| Verbo da folha | Como aparece no papel | Aproveita o nosso? | Onde já está pronto |
+|---|---|---|---|
+| **Bater palma e contar** | *"leiam as palavras em voz alta e batam palmas, todas as vezes que abrirem a boca"* (nota ao professor da a78) | ✅ é a bolinha do `_fra1` | `_sil2` folhas 1, 2 e 26 (`filaBolinhas`) |
+| **Cortar a palavra onde ela se parte** | *"LEIA E SEPARE AS SÍLABAS"* com as caixinhas já contadas (a33, a72) | ❌ nasceu aqui | `_sil2` folhas 3, 4 e 30 (`cortaPalavra`) |
+| **Marcar vários e conferir** | *"PINTE AS SÍLABAS QUE FORMAM O NOME DAS FIGURAS"* (a12, a53, a65) | ❌ nasceu aqui | `_sil2` folhas 21 e 22 (`marqueConfira`) |
+| **Pintar pela legenda de cores** | *"Pinte a flor de acordo com a legenda"* (a35) · *"Circule as palavras da quadrinha conforme a legenda"* (a29) | ❌ nasceu aqui | `_sil2` folhas 13 e 32 (`estojo` + `pintavel`) |
+| **Montar a palavra tocando as sílabas na ordem** | *"Ordene as sílabas e forme o nome das figuras"* (a56, a42) | ❌ nasceu aqui | `_sil2` folhas 15, 16 e 33 (`montaOrdenar`) |
+| **Caça-palavras DE SÍLABAS** | *"ENCONTRE NO CAÇA-PALAVRAS DE SÍLABAS O NOME DAS CORES"* (a60) | ✅ é o `cp-<id>-a/z` da casa | `_sil2` folha 23 |
+| **Trilha: escolher o caminho** | *"Leve o pato à lagoa, pintando a trilha em que só há palavras trissílabas"* (a29) | ❌ nasceu aqui | `_sil2` folha 24 |
+| **Ditado por voz** (a palavra não aparece escrita) | *"ESCREVA AS PALAVRAS DITADAS PELA PROFESSORA NO ESPAÇO CORRETO"* (a01, b12) | ✅ é `opcoes` + alto-falante | `_sil2` folhas 28 e 29 |
+| **Escrever a PRÓPRIA palavra** (gabarito é uma lista) | *"ESCREVA UMA PALAVRA COM A QUANTIDADE PEDIDA"* por categoria (a48) | ✅ é o teclado da casa + `E.aceita` | `_sil2` folha 34 |
+
+⚠️ **Três armadilhas medidas pelo jogador da banca na estreia destas peças** — e
+as três só existiam porque a peça era nova:
+1. **`pendentes(pi)` devolve um NÚMERO, não uma lista.** Usá-lo com `.indexOf`
+   dá `TypeError` a cada toque, e nenhum portão de texto vê. Quando várias
+   perguntas dividem o mesmo texto, o que se quer é *"qual é a primeira ainda
+   aberta"* — escrever essa função, não torcer a `pendentes`.
+2. **Item que é uma CLASSE INTEIRA não fecha pelo contrato do jogador**, que
+   aponta UMA peça por item. Na cantiga eu fiz o item ser "todas as de 1
+   sílaba"; a flor da folha 13 já fazia certo (uma pétala, um item). Para a
+   criança também ficou melhor: ela vê cada palavra fechar.
+3. **Banco de sílabas compartilhado: palavra com sílaba REPETIDA não tem como
+   ser montada.** CANECA é CA-NE-CA e o banco tinha um "CA" só. O jogador disse
+   *"não resolvi"* — que é o certo, e não *"passou"*.
