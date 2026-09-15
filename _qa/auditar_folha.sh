@@ -72,7 +72,7 @@ PORTOES=(
   #     crianca que tentava escrever PÊSSEGO ficava com "PSSEGO" — a folha nunca
   #     fechava, e sem erro nenhum na tela (medido em 15/set/2026).
   "1t teclado completo|python3 _qa/teclado.py $PASTA"
-  "0z pre-voo (39 portoes de texto)|bash _qa/previo.sh $PASTA"
+  "0z pre-voo (46 portoes de texto)|bash _qa/previo.sh $PASTA"
   "1z boot (abre limpa?)|node _qa/boot.js $ARQ"
   "1w andar folha (anda as 25, item por item)|node _qa/andar_folha.js $PASTA"
   "1y conta da folha (o pote bate com os itens?)|node _qa/conta_folha.js $PASTA"

@@ -15,6 +15,110 @@
 
 ---
 
+## 0. 🧭 ROTEIRO DE BOLSO — a sequência inteira, de cabo a rabo
+
+> **Pedido do Marcos (15/set/2026):** *"deixe um documento registrado, para se é
+> que já não tem, para que qualquer sessão nova se ler saiba como fazer essas
+> nossas sequências didáticas"*.
+>
+> **O documento já era este** — ele existe desde 12/set e o `CLAUDE.md` aponta
+> para ele no topo. O que FALTAVA era isto aqui: **uma tela só, na ordem**, para
+> a sessão que precisa COMEÇAR agora e não tem como ler 1.300 linhas antes do
+> primeiro comando. As doze etapas abaixo são o caminho inteiro; cada uma diz em
+> que seção deste arquivo mora o detalhe, e o resto do documento continua sendo
+> a lei. **Este roteiro não substitui a leitura — ele diz por onde entrar.**
+
+### As sete coisas que NÃO se negociam (se alguma falhar, não é sequência didática)
+
+| # | regra | onde |
+|---|---|---|
+| 1 | **A folha de papel manda.** O gesto da tela é o **comando impresso** na folha colhida — nunca a mecânica que eu acho bonita. | §2 *Regra da origem* |
+| 2 | **A figura vem da MESMA folha**, recortada. **Nada de IA** nestes cadernos. | §2, `CLAUDE.md` |
+| 3 | **Caderno novo: no mínimo 35 folhas**, cobradas da **ponta baixa** da duração. Os que já existem **não mudam**. | §2 *Regra do tamanho*, §4 |
+| 4 | **Tudo fala** — enunciado, item, **e a opção de resposta** (portão `1o`). | §2 *Regra da voz* |
+| 5 | **Duas portas**: teclado na tela **e** teclado de verdade; arrastar **e** tocar. | §2 *Regra das duas portas* |
+| 6 | **Nasce do ESQUELETO**, nunca de um clone. | §1b |
+| 7 | **Defeito que chega ao Marcos tem conserto DUPLO**: o código **e** o portão que o pega sozinho da próxima vez. | §2 *Regra do conserto duplo* |
+
+### As doze etapas, na ordem
+
+**1 · COLHER as folhas de papel.** Workflow `buscar-fotos.yml`, input
+`imagens=<o que procurar>` + `destino=_sequencias/folhas_<assunto>` (e `minkb`
+alto quando a figura precisar ser grande). Mirar ~30 folhas.
+*O chat não tem internet: a colheita roda no GitHub Actions.*
+
+**2 · MOSTRAR as folhas ao Marcos.** ⭐ **Ordem dele, 15/set: *"sempre me mostre
+as atividades que vc colheu"*** — e ela é mais larga que a de 14/set (§2b, que
+manda mostrar **as aprovadas**, na entrega): agora mostra-se **o que foi
+colhido**, antes de escolher.
+```
+python3 _sequencias/contato_crivo.py <assunto> <pasta-das-folhas>
+```
+A imagem vai para ele **na mensagem**, não só o caminho do arquivo. Ele conhece
+a turma e o que a escola usa; já aconteceu de reprovar folha que eu aprovei.
+
+**3 · O CRIVO, folha a folha.** Ler as trinta, **uma a uma**, e escrever o
+`_sequencias/POTE-<ASSUNTO>.md`: para cada folha o **comando impresso VERBATIM**,
+o **verbo** que ele manda fazer, e o veredito (entra · é de outro degrau · fora
+do ano pelo currículo de Blumenau · é cartaz sem tarefa · ensina errado ·
+duplicata). §5 Passo 2.
+
+**4 · O ROTEIRO sai do inventário de verbos** do crivo — não do nosso cardápio.
+O que o currículo pede e nenhuma folha cobre entra **declarado** como bloco novo.
+Mecânica que repete vem em **bloco colado**, subindo um degrau (§2 *repetição
+seguida*), e a estratégia do **par de folhas** é o jeito de chegar às 35 sem
+encher (§2, e o que NÃO se dobra: cruzadinha, memória, caça-palavras, forca).
+
+**5 · NASCER.** `bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>"`.
+O script recusa prefixo já usado. O recém-nascido abre limpo e medido. §1b.
+
+**6 · RECORTAR as figuras** das próprias folhas
+(`_padrao/recorte_folha.py` / o `recortar_das_folhas.py` da pasta), gravando a
+procedência em `img/ORIGEM.json`. §3.11b–d.
+
+**7 · PREENCHER os blocos marcados** do `index.html` (`GESTOS`, `ITENS`,
+`FALAS`, `VOZOK`, `DADOS`, `NOMES`, `CURRICULO`, `novaFolha`) e escrever as
+folhas no `folhas.js`. **A POSIÇÃO É A IDENTIDADE**: a folha N usa o pote `pN`,
+os ids `nN_i` e fala `pNenun`. §6.
+
+**8 · O CURRÍCULO.** `<pasta>/curriculo.json` com a habilidade de Blumenau
+**copiada palavra por palavra** de `_curriculo/blumenau.txt`, um objetivo por
+folha, e a lista `conceitos`. Depois
+`python3 _padrao/dossie_professor.py <pasta>`.
+
+**9 · A VOZ.** `python3 <pasta>/gerar_falas.py` → escreve `falas.json` e remenda
+os blocos no `index.html`. Caderno de língua estrangeira marca `lang:"en"` nos
+itens ingleses e a voz sai bilíngue sozinha (§2c). **A lacuna não se narra e a
+correção diz a frase inteira** (§2c).
+
+**10 · MEDIR.** Nunca pular, e nesta ordem:
+```
+bash _qa/previo.sh <pasta>                  # 46 portões de texto, ~12 s
+node _qa/conta_folha.js <pasta>             # o pote bate com os itens?
+node _qa/joga_folha.js <pasta> 8794         # resolve item por item até fechar
+bash _qa/auditar_folha.sh <pasta>           # A BANCA: 25 portões, ~4 min
+```
+⚠️ **A banca da folha viva é a `auditar_folha.sh`, NÃO a `auditar.sh`** (essa é
+do motor e aqui reprova por desenho). §7.
+⚠️ **Portão que imprime NADA não é "passou"**, e "os portões do que mexi
+passaram" não é "a banca aprovou".
+
+**11 · OLHAR A TELA.** Foto de cada folha nova, no celular e no PC. **Metade dos
+defeitos da lista do §3 foi achada assim, não por portão.**
+
+**12 · PUBLICAR.** Linha nova no `ATIVIDADES.md` + `python3
+_painel/montar_painel.py` (o portão `0b6` reprova sem isso) e commit com a marca
+**`[entregar _pasta:repo]`** no assunto — o `entregar.yml` acorda sozinho, grava
+a voz que falta, publica e deixa `_status/entrega-<repo>.json`. **Conferir o
+carimbo** antes de dizer que está no ar. §5 Passo 6.
+
+### O que dizer ao Marcos quando terminar
+O **link**, o **número de folhas**, a **duração medida** (as duas pontas) e o
+que a banca **não alcançou**. Sem enfeite, e sem dizer que passou o que não
+passou — **§2 REGRA ZERO: "nunca chute nunca invente"**.
+
+---
+
 ## 1. O que é uma "folha viva"
 
 É o **caderno de folhas** que a criança vira uma a uma, como o caderno de papel
@@ -144,6 +248,29 @@ enchimento para fechar número**. Faltou conteúdo para 35? A resposta é colher
 mais folhas de papel (a colheita é barata: dois workflows) ou perguntar ao
 Marcos. Nunca preencher.
 
+#### 🧓 OS VETERANOS — e por que eles precisaram ser DECLARADOS
+
+Na mesma decisão o Marcos disse que **os cadernos que já existem não crescem nem
+encolhem**. Só que o portão `3g` não sabia disso: com o piso na ponta baixa, ele
+passou a reprovar **18 dos 19 cadernos medidos** — todos por uma regra que
+nasceu **depois** deles.
+
+**Portão que reprova tudo não é portão: é ruído**, e a lição já estava paga aqui
+mesmo (§3.10, *"portão que acusa inocente se aprende a ignorar"*). Se eu deixasse
+assim, em uma semana ninguém — nem eu — olharia mais para o `3g`, e o dia em que
+um caderno NOVO ficasse curto passaria batido.
+
+Então a lista virou arquivo: **`_qa/VETERANOS-DURACAO.txt`**, com as 18 pastas,
+a data de nascimento de cada uma **medida no `git log --diff-filter=A`** e a
+faixa medida em 15/set. O portão continua **medindo e imprimindo** a faixa delas
+— **só não reprova**, e diz em voz alta `VETERANO DECLARADO`.
+
+⚠️ **Veterano não é "passou"**, e **caderno novo não entra ali**. O `_ing8` é o
+primeiro do piso novo e cumpre a régua por conta própria (47 a 90 min). Se um dia
+o Marcos mandar refazer um veterano, tira-se a linha e o piso volta a valer.
+⚠️ E o arquivo que não existe significa **nenhum veterano**, nunca anistia geral:
+um erro de caminho não pode virar perdão para todo mundo.
+
 ### ⭐ COMO CHEGAR ÀS 35 — a estratégia do PAR DE FOLHAS (ideia do Marcos, 15/set/2026)
 
 Na mesma conversa em que subiu o piso, ele deu o caminho — e disse que era *"só
@@ -192,6 +319,22 @@ recria **o gesto** dela — não "algo inspirado nela". Ver o processo no §5.
 - **Toda tela é narrada**, com voz de verdade (Edge TTS, `pt-BR-AntonioNeural`).
 - **Alto-falante em TODA resposta que a criança toca.** Palavras dele: *"o
   alto-falante nas respostas também, para ajudar os alunos que não sabem ler"*.
+- ⭐ **E ISSO PASSOU A SER MEDIDO em 15/set/2026** — portão **`1o`
+  (`_qa/voz_opcao.py`)**, no pré-voo e na banca. Ele reprova toda opção desenhada
+  por `opcoes(...)` que não carregue o campo `fala`.
+  **Por que precisou virar portão:** a regra era da casa desde ago/2026 e o
+  Marcos teve de pedir de novo — *"precisamos pôr áudio nas opções de resposta
+  para quem não sabe ler, principalmente para os menores"*. Fui contar: **9
+  opções mudas em quatro cadernos, três deles de alfabetização.** A pior era o
+  `_rima1`, do **1º ano**, cujos dois botões são `RIMA` e `NÃO RIMA` — uma
+  criança de seis anos não lê isso, e sem voz ela escolhe pelo tamanho do botão.
+  **A folha virava sorteio para justamente quem ela deveria ajudar.** Regra que
+  não é medida é a mesma coisa que regra que não existe.
+  ⚠️ **A exceção legítima, escrita para ninguém "consertá-la" depois:** numa
+  folha de ORTOGRAFIA a voz **não distingue** as opções — *abito* e *hábito*
+  soam igual, e é exatamente por isso que a folha existe. A voz continua
+  obrigatória ali, mas para a criança **saber o que está escrito**; quem decide é
+  a letra, que ela lê.
 - **`falas.json` é a VERDADE**: texto escrito ali = voz gravada. MP3 não se lê.
 
 ### REGRA DAS DUAS PORTAS
@@ -246,6 +389,32 @@ afirmação minha; **mostrar o d29** é a evidência.
 ⚠️ E vale para o que JÁ existe: os cadernos de alfabetização foram entregues sem
 este contato-folha. Quando algum deles for mexido, o contato-folha da colheita
 dele entra junto.
+
+### ⭐⭐ 15/set/2026 — A ORDEM FICOU MAIS LARGA: **mostrar o que foi COLHIDO**
+
+**Palavras dele:** ***"sempre me mostre as atividades que vc colheu"***.
+
+A ordem de 14/set mandava mostrar **as aprovadas, na entrega**. Esta manda
+mostrar **a colheita** — e o momento é outro: **antes de escolher**, não depois.
+
+**O que fez ele repetir o pedido:** o caderno de Inglês do 8º ano nasceu de **54
+folhas colhidas**, passou pelo crivo inteiro, foi publicado — e ele **nunca viu
+nenhuma das 54**. O crivo escrito (`_sequencias/POTE-ING8.md`) diz o comando de
+cada uma, mas "está escrito no `.md`" é afirmação minha; a folha é a prova. E o
+prejuízo de mostrar tarde é real: o crivo é meu olhar de pedagogo, **o dele é de
+quem dá a aula naquela turma, naquela escola** — ele já reprovou folha que eu
+tinha aprovado, e corrigir isso depois do caderno montado custa a montagem
+inteira.
+
+**Como fica, então — as duas, em momentos diferentes:**
+
+| quando | o quê | comando |
+|---|---|---|
+| **etapa 2**, logo depois de colher | **tudo o que veio**, antes do crivo | `python3 _sequencias/contato_crivo.py <assunto> <pasta-das-folhas>` |
+| **na entrega** | só **as aprovadas**, com o que cada uma virou | idem, sobre a lista do crivo |
+
+E a imagem vai **na mensagem**, com a ferramenta de enviar arquivo — nunca só o
+caminho do arquivo, que ele não tem como abrir.
 
 ---
 
@@ -983,13 +1152,19 @@ colado (§2). **Nada de escolher do nosso cardápio: a folha é que manda.**
 
 ### Passo 5 — MEDIR (nunca pular)
 ```
-bash _qa/previo.sh <pasta>                 # 39 portões de texto, ~3 s
-node _qa/andar_folha.js <pasta>            # anda o caderno inteiro no navegador
-node _qa/leiaute_mao.js <pasta>/index.html # 6 tamanhos de tela
-python3 _qa/resposta_impressa.py <pasta>   # a legenda entrega a resposta?
-python3 _qa/duracao.py <pasta>             # enche a aula?
-python3 _qa/pedagogo_curriculo.py <pasta>  # o currículo citado existe?
+bash _qa/previo.sh <pasta>                  # 46 portões de texto, ~12 s
+node _qa/conta_folha.js <pasta>             # o pote bate com os itens da folha?
+node _qa/joga_folha.js <pasta> 8794         # resolve item por item até FECHAR
+bash _qa/auditar_folha.sh <pasta>           # A BANCA INTEIRA: 25 portões, ~4 min
 ```
+A banca já roda o pré-voo por dentro, mais o `andar_folha`, o `leiaute_mao`, o
+`resposta_impressa`, a `duracao`, o `pedagogo_curriculo`, o `voz_do_pote`, o
+`halo`, o `figura_da_folha`, o `voz_opcao` e o `catalogo`. **Rodar os quatro
+acima na ordem é o caminho barato**: o pré-voo pega o erro de 2 segundos antes de
+se gastarem os 4 minutos.
+
+⚠️ **A banca deste formato é a `auditar_folha.sh`.** A `auditar.sh` é do MOTOR e
+aqui reprova ou diz "não medi" por desenho (§7).
 **E OLHAR A TELA** — foto de cada folha nova, no celular e no PC. Metade dos
 defeitos desta lista foi achada assim, não por portão.
 

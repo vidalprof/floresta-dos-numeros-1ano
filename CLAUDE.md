@@ -13,6 +13,14 @@ Leia tudo antes de agir e responda sempre em **português**.
 > outros portões e uma banca que só os alcança pela metade. Antes de tocar em
 > qualquer um deles, ler o `SEQUENCIAS-DIDATICAS.md` inteiro.
 >
+> ⭐ **E QUEM PRECISA COMEÇAR AGORA, SEM LER AS 1.400 LINHAS: o `§0 ROTEIRO DE
+> BOLSO`**, no topo daquele arquivo — as **doze etapas na ordem**, com o comando
+> de cada uma, mais as **sete regras que não se negociam**. Nasceu do pedido do
+> Marcos (15/set/2026): *"deixe um documento registrado, para se é que já não
+> tem, para que qualquer sessão nova se ler saiba como fazer essas nossas
+> sequências didáticas"*. O documento já existia; o que faltava era a porta de
+> entrada. **O roteiro diz por onde entrar — não substitui a leitura.**
+>
 > **Três regras de lá que valem citar aqui:** sequência **nova** tem **no mínimo
 > 35 folhas** — ⭐ **e este piso é de 15/set/2026, por CRONÔMETRO NA SALA**: o
 > Marcos mediu a turma e disse *"verifiquei a execução das atividades, essas 20
@@ -31,7 +39,7 @@ Leia tudo antes de agir e responda sempre em **português**.
 > a medida de sala ganha.**
 > **o fecho tem que ser alcançável a qualquer momento**, senão o tamanho castiga
 > justamente quem vai devagar; e **a banca deste formato é outra** —
-> **`bash _qa/auditar_folha.sh <pasta>`**, 19 portões (~4 min), e NÃO a
+> **`bash _qa/auditar_folha.sh <pasta>`**, 25 portões (~4 min), e NÃO a
 > `auditar.sh`, que é do motor e em folha viva reprova ou diz "não medi" por
 > desenho. Nasceu da pergunta do Marcos (13/set/2026): *"Mas tem banca para esse
 > tipo de atividade?"* — e não tinha; a escolha dos portões dependia da minha
@@ -80,6 +88,14 @@ Leia tudo antes de agir e responda sempre em **português**.
 >
 > **Como isso vira trabalho, e não intenção:**
 > 1. Colher as folhas por workflow (`buscar-fotos.yml`, input `imagens=`).
+> 1b. ⭐ **MOSTRAR AO MARCOS O QUE FOI COLHIDO — SEMPRE, e ANTES de escolher.**
+>    Ordem dele, 15/set/2026: ***"sempre me mostre as atividades que vc colheu"***
+>    (a de 14/set mandava mostrar as APROVADAS, na entrega; esta é mais larga e
+>    vem antes). `python3 _sequencias/contato_crivo.py <assunto> <pasta>` e a
+>    **imagem vai na mensagem**, não o caminho do arquivo. O que fez ele repetir
+>    o pedido: o caderno de Inglês do 8º ano nasceu de **54 folhas** e ele não
+>    viu nenhuma. O crivo é o meu olhar; o dele é de quem dá a aula naquela
+>    turma — e corrigir depois do caderno montado custa a montagem inteira.
 > 2. **Ler as trinta, uma a uma**, e anotar em `_sequencias/POTE-<assunto>.md`,
 >    para cada folha: o **comando impresso VERBATIM**, o **verbo** que ele manda
 >    fazer, e o veredito (entra · é cartaz sem tarefa · pede desenhar, que a tela
@@ -507,6 +523,14 @@ Leia tudo antes de agir e responda sempre em **português**.
 >    voz, a criança escolhe pelo desenho e a atividade vira loteria. Regra do
 >    Marcos, ago/2026: *"o alto-falante nas respostas também, para ajudar os
 >    alunos que não sabem ler"*.
+>    ⭐ **E EM FOLHA VIVA ISSO É MEDIDO desde 15/set/2026 — portão `1o`
+>    (`_qa/voz_opcao.py`)**, no pré-voo e na banca: reprova toda opção de
+>    `opcoes(...)` sem o campo `fala`. Ele nasceu porque o Marcos teve de pedir
+>    de novo (*"precisamos pôr áudio nas opções de resposta para quem não sabe
+>    ler, principalmente para os menores"*) e a contagem deu **9 opções mudas em
+>    quatro cadernos, três de alfabetização** — a pior no `_rima1`, do 1º ano,
+>    com os botões `RIMA` e `NÃO RIMA`, que uma criança de seis anos não lê.
+>    **Regra da casa que não é medida é regra que não existe.**
 >
 > 3b. **AS DUAS PORTAS DE ENTRADA** — toda fase com **teclado na tela** (cruzadinha,
 >    forca, monte a palavra) tem que aceitar **também o teclado de verdade**
