@@ -512,6 +512,57 @@ existe resposta errada). O portão reprovava os três.
 
 ---
 
+### ⌨️ ERRO 15/set/2026 — **O TECLADO NÃO TINHA AS LETRAS ACENTUADAS** (e trancava a criança)
+
+**O que acontecia.** O teclado da folha viva monta os botões de uma string
+escrita à mão, e o filtro do teclado DE VERDADE usa a mesma string:
+
+```js
+var letras = "ABCDEFGHIJLMNOPQRSTUVXZÇÁÉÍÓÚ".split("");
+```
+
+Falta **K**, falta **W**, falta **Y** — e faltam **Ê, Â, Ã, Ô, Õ, À e Ü**.
+
+**O que a criança vive:** ela abre a folha *"escreva a palavra certa"*, ouve
+**PÊSSEGO**, digita P… e o **Ê não entra**. Nem tocando na tela (a tecla não
+existe) nem no teclado do PC da escola (o `keydown` recusa a letra). Ela fica com
+`PSSEGO`, a folha **nunca fecha**, e **não há erro nenhum no console**: o app
+está funcionando exatamente como foi escrito. Ela tenta de novo até desistir, e
+o professor vê "uma folha que travou".
+
+**Por que nenhum portão via.** O `node --check` passa. O leiaute passa. O revisor
+de texto passa. O **andarilho** (`andar_folha.js`) passa — ele ABRE a folha, não
+a resolve. Quem pegou foi o **jogador** (`joga_folha.js`), e **só porque a
+palavra sorteada naquele dia tinha acento**: com outra semente, passava batido.
+
+**O conserto tem as duas partes.** O alfabeto virou
+`ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ` nos dois lugares, e nasceu o portão
+**`_qa/teclado.py` (1t)**, no pré-voo e na banca: ele cobra as 26 letras e os 13
+sinais do português, **e** cobra que o teclado da tela e o filtro do teclado de
+verdade usem o **mesmo** alfabeto — dois alfabetos diferentes é o mesmo defeito
+com uma porta só, e a porta que sobra é justamente a do PC da escola.
+
+> ⚠️ **DOZE CADERNOS JÁ NO AR REPROVAM NESTE PORTÃO** (medido em 15/set/2026):
+> `_jogo1`, `_abc1`, `_roda1`, `_alfa1`, `_fra1`, `_ini1`, `_let1`, `_mont1`,
+> `_rima1`, `_sil1`, `_som1` e o `_reinos`. **Não foram consertados** — mexer em
+> atividade publicada é decisão do Marcos. Lá o defeito pode estar **dormindo**:
+> ele só acorda quando uma palavra com acento chega ao teclado. Consertados
+> foram os três em que eu estava trabalhando: `_ort5`, `_ort5b` e `_casa1`.
+
+### 🔇 ERRO 15/set/2026 — **A FOLHA QUE FECHAVA SEM A CRIANÇA FAZER NADA**
+
+A primeira versão do **ditado** (`_ort5b`, folha 19) fechava o item no toque da
+palavra do quadro, **sem olhar qual ditado estava valendo**. Resultado: a criança
+fechava a folha inteira tocando no quadro a esmo, sem ouvir uma palavra sequer.
+
+**Uma folha que fecha sem a criança fazer o que ela pede não mede: ela mente** —
+e mente para os dois lados, porque o relatório do professor sai dizendo que ela
+domina o objetivo. Agora são dois toques, e o número (que dita) vem primeiro.
+
+Não há portão para isto, e **é honesto dizer que não há**: nenhuma medida
+distingue "fechou porque fez" de "fechou porque tocou". Quem responde é o crivo
+e o olho de quem monta.
+
 ## 4. 📏 O TAMANHO DA SEQUÊNCIA — a conta, e por que 25 está certo
 
 ### O que foi MEDIDO (12/set/2026, com o relógio nos mp3 e o gesto lido da folha)
