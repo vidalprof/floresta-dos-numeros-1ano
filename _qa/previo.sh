@@ -136,6 +136,7 @@ PORTOES=(
   "0p game-feel|python3 _qa/gamefeel.py $ARQ"
   "0q curiosidade|python3 _qa/curiosidade.py $ARQ"
   "falas (narracao)|python3 _qa/falas.py $PASTA/falas.json"
+  "1n lingua estrangeira (lacuna, correcao, grafia)|python3 _qa/ingles.py $PASTA"
 )
 
 [ -f "$PASTA/falas.json" ] || echo "AVISO: $PASTA nao tem falas.json — a narracao nao tem como ser conferida (criar o arquivo e parte do trabalho)."

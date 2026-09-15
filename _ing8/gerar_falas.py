@@ -81,6 +81,11 @@ def lp(s):
     #    que o `_qa/revisor.py` acusa — com razao: a voz faz a pausa no lugar
     #    errado. Cola a pontuacao de volta na palavra.
     t = re.sub(r"\s+([,.;:!?])", r"\1", t)
+    # ⚠️ E A VIRGULA DA PAUSA PODE ENCOSTAR NUMA QUE JA EXISTIA (15/set/2026):
+    #    a frase "My dad, ___ travels a lot" virou "My dad,, travels a lot" —
+    #    duas virgulas coladas, que o Edge TTS le como uma pausa estranha e
+    #    longa demais. Uma so, sempre.
+    t = re.sub(r",\s*,+", u",", t)
     return t.strip()
 
 
@@ -127,10 +132,13 @@ p(u"vozOn", u"Narração ligada!")
 # ⭐ O FECHO TEM GANCHO (regra da casa): a atividade termina deixando uma
 #    pergunta ABERTA, que a crianca leva para fora da tela. Aqui ela e a ponte
 #    para o caderno de papel, onde acontece a escrita que a tela nao corrige.
+# ⚠️ o gancho TINHA reticencias soltas ("I lost a ... which ...") e o portao
+#    novo `_qa/ingles.py` acusou o espaco antes da pontuacao — a voz faria a
+#    pausa no lugar errado. Escrito como se fala.
 p(u"fim", u"Você chegou ao fim do balcão! Agora você sabe dizer quanto tem "
           u"dentro da mala e de quem ela é. E fica a pergunta: o que é que "
-          u"mais se perde na sua casa? Escreva no caderno, em inglês: I lost "
-          u"a ... which ...")
+          u"mais se perde na sua casa? Escreva no caderno uma frase em inglês "
+          u"que comece com: I lost a.")
 
 # ---------------------------------------------------------------------------
 # AS FALAS DAS FOLHAS — uma seção por folha, lendo os DADOS do index.html.
@@ -202,13 +210,37 @@ CARTAZ = bloco(u"CARTAZ")
 
 
 def lac(s):
-    u"""A LACUNA VIRA A PALAVRA `blank`, que é o que um professor de inglês diz
-    de verdade ao ler uma frase com buraco em voz alta.
-    ⚠️ E NÃO reticências: o portão `_qa/falas.py` reprova — com razão — uma fala
-       marcada `lang:"en"` que tenha `...` ou acento português, porque foi assim
-       que uma fala portuguesa saiu com sotaque americano e o Marcos ouviu
-       (*"fala rato em inglês"*)."""
-    return lp(s).replace(u"___", u"blank")
+    u"""A LACUNA NAO E NARRADA: a voz le a frase COM O QUE ELA TEM, pulando o
+    buraco.
+
+    ⭐ DECISAO DO MARCOS (15/set/2026), em duas mensagens. Primeiro:
+       *"o blank de vazio nao precisa ser narrado, melhor uma pausa curta e
+       depois dizer a frase toda em ingles na correcao nao?"*. Eu fiz a pausa
+       com virgula — e ela QUEBROU nas frases que ja tinham virgula: *"My dad,
+       ___ travels a lot"* virava *"My dad, travels a lot"*, uma frase que soa
+       COMPLETA e esconde o buraco. Ele entao resolveu melhor do que eu:
+       ***"ao invez da pausa e so nao falar nada, falar a frase com o que tem"***.
+
+    ⭐ E ISTO E MELHOR POR TRES RAZOES, nao so por ser mais simples:
+       1. funciona SEMPRE — nao depende de a frase ter ou nao pontuacao ali;
+       2. nao inventa som nenhum (a palavra `blank` so ensinava `blank`);
+       3. faz o PAR QUE ENSINA: a crianca ouve a frase SEM a palavra e, ao
+          acertar, ouve a frase COM ela (ver `certa()`). A diferenca entre as
+          duas e exatamente o conteudo da folha — e e ela que fica no ouvido.
+
+    ⚠️ E O BURACO CONTINUA A VISTA: ele esta na TELA, desenhado. O audio e
+       apoio, nao enunciado unico."""
+    return lp(lp(s).replace(u"___", u" "))
+
+
+def certa(frase, resposta):
+    u"""A FRASE COMPLETA, com a resposta no lugar do buraco — e ela e a fala do
+    ACERTO. E o modelo de pronuncia que a crianca leva: ela tentou, acertou, e
+    ouve como a frase soa inteira, em ingles, dita por voz inglesa.
+    ⚠️ O PORQUE EM PORTUGUES NAO SE PERDE: ele continua ESCRITO na tela (o
+       `nomeSecreto`, que aparece no instante do acerto), e a DICA do erro
+       continua falada em portugues — que e onde a explicacao pesa de verdade."""
+    return lp(frase).replace(u"___", resposta)
 
 
 # ---- o alto-falante de CADA resposta que a criança toca (regra do Marcos:
@@ -228,8 +260,9 @@ p(u"toque_marca", u"Primeiro escolha uma das duas marcas ali em cima.")
 p(u"p" + N(u"quant") + u"enun",
   u"Leia a frase e escolha a palavra que falta: a, ou some.")
 for k, Q in QUANT.items():
-    pe(u"frase_" + k, lp(Q[u"a"] + u" blank " + Q[u"b"]))
-    p(u"certo" + N(u"quant") + u"_" + k, u"Isso! " + lp(Q[u"pq"]))
+    pe(u"frase_" + k, lp(Q[u"a"] + u" " + Q[u"b"]))
+    pe(u"certo" + N(u"quant") + u"_" + k,
+       lp(Q[u"a"] + u" " + Q[u"r"] + u" " + Q[u"b"]))
     p(u"dica" + N(u"quant") + u"_" + k,
       u"Pense: dá para contar um, dois, três dessa coisa?")
 
@@ -278,8 +311,9 @@ for k, T in ARTIGO.items():
 p(u"p" + N(u"plural") + u"enun",
   u"Escreva a palavra do parêntese no plural.")
 for k, L in PLURAL.items():
-    pe(u"plu_" + k, lp(L[u"a"] + u" blank " + L[u"b"]))
-    p(u"certo" + N(u"plural") + u"_" + k, u"Isso! Escrito certinho.")
+    pe(u"plu_" + k, lp(L[u"a"] + u" " + L[u"b"]))
+    pe(u"certo" + N(u"plural") + u"_" + k,
+       lp(L[u"a"] + u" " + L[u"r"].lower() + u" " + L[u"b"]))
     p(u"dica" + N(u"plural") + u"_" + k,
       u"Olhe a última letra da palavra. Algumas palavras do inglês ganham um "
       u"e antes do s no plural — diga em voz baixa e veja se soa bem sem ele.")
@@ -300,14 +334,15 @@ _PQT = {u"a": u"A frase diz que TEM.", u"n": u"A frase NEGA.",
         u"p": u"A frase PERGUNTA.", u"e": u"Esta é a exceção."}
 for k, S in SOMEANY.items():
     pe(u"sa_" + k, lac(S[u"f"]))
-    p(u"certo" + N(u"someany") + u"_" + k, u"Isso! " + lp(S[u"pq"]))
+    pe(u"certo" + N(u"someany") + u"_" + k, certa(S[u"f"], S[u"r"]))
     p(u"dica" + N(u"someany") + u"_" + k,
       _PQT.get(S[u"t"], u"Leia a frase de novo.") + u" Olhe o começo dela outra vez.")
 
 p(u"p" + N(u"mala") + u"enun", u"Olhe a figura e escolha: a, an, some ou any.")
 for k, V in MALA.items():
-    pe(u"malafr_" + k, lp(V[u"a"] + u" blank " + V[u"b"]))
-    p(u"certo" + N(u"mala") + u"_" + k, u"Isso mesmo!")
+    pe(u"malafr_" + k, lp(V[u"a"] + u" " + V[u"b"]))
+    pe(u"certo" + N(u"mala") + u"_" + k,
+       lp(V[u"a"] + u" " + V[u"r"] + u" " + V[u"b"]))
     p(u"dica" + N(u"mala") + u"_" + k,
       u"Duas perguntas: essa coisa se conta? E a frase nega ou pergunta?")
 
@@ -316,7 +351,8 @@ p(u"biltit", lp(BILHETE[u"titulo"]))
 for _i, _L in enumerate(BILHETE[u"linhas"]):
     pe(u"bil_" + str(_i), lac(_L[u"t"]))
 for k, C in BILHETE[u"lac"].items():
-    p(u"certo" + N(u"bilhete") + u"_" + k, u"Isso! " + lp(C[u"pq"]))
+    pe(u"certo" + N(u"bilhete") + u"_" + k,
+       certa([_l[u"t"] for _l in BILHETE[u"linhas"] if _l[u"g"] == k][0], C[u"r"]))
     p(u"dica" + N(u"bilhete") + u"_" + k,
       u"Esta linha diz que tem, nega, ou pergunta?")
 
@@ -352,7 +388,7 @@ p(u"p" + N(u"muchmany") + u"enun",
   u"Olhe a palavra que vem depois da lacuna: ela se conta ou não?")
 for k, M in MUCHMANY.items():
     pe(u"mm_" + k, lac(M[u"f"]))
-    p(u"certo" + N(u"muchmany") + u"_" + k, u"Isso mesmo!")
+    pe(u"certo" + N(u"muchmany") + u"_" + k, certa(M[u"f"], M[u"r"]))
     p(u"dica" + N(u"muchmany") + u"_" + k,
       u"Se dá para contar, é uma. Se não dá, é a outra.")
 
@@ -362,7 +398,9 @@ p(u"dlgtit", lp(DIALOGO[u"titulo"]))
 for _i, _L in enumerate(DIALOGO[u"linhas"]):
     pe(u"dlg_" + str(_i), _L[u"q"] + u": " + lac(_L[u"t"]))
 for k, C in DIALOGO[u"lac"].items():
-    p(u"certo" + N(u"dialogo") + u"_" + k, u"Isso! " + lp(C[u"pq"]))
+    pe(u"certo" + N(u"dialogo") + u"_" + k, (lambda _L: certa(
+        _L[u"t"].replace(u"___", C[u"r"], 1) if _L.get(u"g2") else _L[u"t"], C[u"r"]))(
+        [_x for _x in DIALOGO[u"linhas"] if k in (_x.get(u"g"), _x.get(u"g2"))][0]))
     p(u"dica" + N(u"dialogo") + u"_" + k,
       u"Quem está falando: quem pergunta, quem diz que tem, ou quem nega?")
 
@@ -407,7 +445,7 @@ p(u"p" + N(u"whowhich") + u"enun",
   u"Olhe a palavra que vem antes da lacuna: é gente ou é coisa?")
 for k, P in WHOWHICH.items():
     pe(u"ww_" + k, lac(P[u"f"]))
-    p(u"certo" + N(u"whowhich") + u"_" + k, u"Isso mesmo!")
+    pe(u"certo" + N(u"whowhich") + u"_" + k, certa(P[u"f"], P[u"r"]))
     p(u"dica" + N(u"whowhich") + u"_" + k,
       u"Um dos dois é só para gente. O outro é para coisa e para bicho.")
 
@@ -415,7 +453,7 @@ p(u"p" + N(u"tres") + u"enun",
   u"Agora são três. Se a coisa depois da lacuna é de alguém, o pronome é outro.")
 for k, T in TRES.items():
     pe(u"tres_" + k, lac(T[u"f"]))
-    p(u"certo" + N(u"tres") + u"_" + k, u"Isso mesmo!")
+    pe(u"certo" + N(u"tres") + u"_" + k, certa(T[u"f"], T[u"r"]))
     p(u"dica" + N(u"tres") + u"_" + k,
       u"Depois da lacuna vem um verbo, ou vem uma coisa que é de alguém?")
 
@@ -423,14 +461,14 @@ p(u"p" + N(u"posse") + u"enun",
   u"Olhe a palavra que vem depois da lacuna: se for uma coisa de alguém, é whose.")
 for k, O in POSSE.items():
     pe(u"po_" + k, lac(O[u"f"]))
-    p(u"certo" + N(u"posse") + u"_" + k, u"Isso! Você viu de quem era a coisa.")
+    pe(u"certo" + N(u"posse") + u"_" + k, certa(O[u"f"], O[u"r"]))
     p(u"dica" + N(u"posse") + u"_" + k,
       u"Depois de whose vem sempre o nome de uma coisa. Depois de who vem sempre um verbo.")
 
 p(u"p" + N(u"quiz") + u"enun", u"Agora são quatro opções. Só uma cabe.")
 for k, C in QUIZ.items():
     pe(u"quiz_" + k, lac(C[u"f"]))
-    p(u"certo" + N(u"quiz") + u"_" + k, u"Isso mesmo!")
+    pe(u"certo" + N(u"quiz") + u"_" + k, certa(C[u"f"], C[u"r"]))
     p(u"dica" + N(u"quiz") + u"_" + k,
       u"Leia as quatro em voz baixa, uma por uma, dentro da frase. Uma delas soa certa.")
 
@@ -438,7 +476,7 @@ p(u"p" + N(u"cultura") + u"enun",
   u"Coisas da Inglaterra. Qual pronome cabe em cada frase?")
 for k, C in CULTURA.items():
     pe(u"cult_" + k, lac(C[u"f"]))
-    p(u"certo" + N(u"cultura") + u"_" + k, u"Isso mesmo!")
+    pe(u"certo" + N(u"cultura") + u"_" + k, certa(C[u"f"], C[u"r"]))
     p(u"dica" + N(u"cultura") + u"_" + k,
       u"É gente, é coisa, ou é uma coisa que pertence a alguém?")
 
@@ -496,8 +534,9 @@ p(u"p" + N(u"escreve") + u"enun",
   u"Escreva o pronome que falta. Repare: toda frase aqui tem vírgula, e depois "
   u"de vírgula o inglês nunca usa that.")
 for k, X in ESCREVE.items():
-    pe(u"esc_" + k, lp(X[u"a"] + u" blank " + X[u"b"]))
-    p(u"certo" + N(u"escreve") + u"_" + k, u"Isso! Escrito certinho.")
+    pe(u"esc_" + k, lp(X[u"a"] + u" " + X[u"b"]))
+    pe(u"certo" + N(u"escreve") + u"_" + k,
+       lp(X[u"a"] + u" " + X[u"r"].lower() + u" " + X[u"b"]))
     p(u"dica" + N(u"escreve") + u"_" + k,
       u"Depois da lacuna vem um verbo, ou vem uma coisa que é de alguém? E "
       u"lembre: aqui nunca é that.")

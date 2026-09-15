@@ -269,6 +269,66 @@ criança que ainda lê devagar escolhe **pelo som**. Sem isso, a atividade ensin
 o contrário do que diz ensinar. No *Lost & Found* são **161 falas inglesas e
 130 portuguesas**, no mesmo caderno.
 
+### ⭐⭐ A LACUNA NÃO SE NARRA — e a CORREÇÃO diz a frase INTEIRA (Marcos, 15/set/2026)
+
+Três mensagens dele, e a terceira corrigiu a minha solução para a segunda:
+
+> ***"o blank de vazio não precisa ser narrado, melhor uma pausa curta e depois
+> dizer a frase toda em inglês na correção não?"***
+>
+> ***"ao invés da pausa é só não falar nada, falar a frase com o que tem"***
+>
+> ***"depois de acertar ele fala a frase toda"***
+
+**A regra que fica, e vale para todo caderno de língua estrangeira:**
+
+| momento | o que a voz diz |
+|---|---|
+| a frase **com a lacuna** | a frase **com o que ela tem**, pulando o buraco — *"There is luggage in the car."* |
+| o **acerto** | a frase **INTEIRA**, em inglês, com voz inglesa — *"There is **some** luggage in the car."* |
+| o **erro** | a dica, **em português** — é onde a explicação pesa |
+
+**Por que isso é melhor, e não é só gosto:** o par *sem a palavra → com a
+palavra* isola exatamente o conteúdo da folha, e é o **único modelo de
+pronúncia completo** que a criança recebe. Narrar `"blank"` ensinava a palavra
+`blank` e mais nada. O buraco continua desenhado **na tela**: o áudio é apoio,
+não enunciado único.
+
+⚠️ **O caminho errado que eu tentei no meio, e por que ele quebrou:** pus uma
+**vírgula** no lugar da lacuna, para fazer a pausa. Funcionava nas frases
+simples e **sumia** justamente nas difíceis — *"My dad, ___ travels a lot"*
+virava *"My dad, travels a lot"*, uma frase que soa **completa** e esconde o
+buraco. Foi ele quem viu a saída: não falar nada. **Lição:** uma solução que
+depende de o texto ter ou não pontuação naquele ponto não é solução, é sorte.
+
+### 🔒 ERRO CORRIGIDO NÃO VOLTA — e isso é PORTÃO (`_qa/ingles.py`, 1n)
+
+Ordem do Marcos, na mesma conversa: ***"todo erro corrigido ou melhorado não
+pode voltar mais"***. É o CONSERTO DUPLO dito de outro jeito, e a metade que
+falta sem ele é sempre a mesma: o portão.
+
+O **`_qa/ingles.py`** roda no pré-voo e na banca, e guarda as quatro coisas que
+nasceram desta conversa:
+
+1. **lacuna narrada** — nenhuma fala inglesa pode conter `blank`, `mmm`, `hmm`,
+   `underscore`… (as que eu tentei antes de chegar à resposta dele);
+2. **pontuação solta** — `,,` ou espaço antes de `,.;:!?`, que nasce de montar
+   a frase juntando pedaços à mão;
+3. **duas grafias da mesma palavra** no mesmo caderno (`neighbour`/`neighbor`,
+   `colour`/`color`, `centre`/`center`… 18 pares). Não há uma certa: há **a
+   mesma em todo lugar**;
+4. **o par que ensina** — se nenhuma fala de acerto for a frase inteira em
+   inglês, reprova. É esta regra que impede a melhoria dele de ser desfeita.
+
+⚠️ **O alcance da regra 4 está declarado dentro do portão:** ela mede que o
+PADRÃO existe no caderno, não que cada folha o tenha. E ⚠️ **ele não mede se o
+inglês está CERTO** — concordância, tempo verbal e naturalidade continuam com o
+especialista da disciplina e com o professor.
+
+**Provado que ele pega a regressão:** voltei o `"blank"` à mão num `falas.json`
+de mentira e troquei um acerto pela frase inteira por *"Isso mesmo!"* — o portão
+reprovou com código 1 e apontou os dois. Depois disso o arquivo foi restaurado.
+
 **As duas armadilhas medidas, as duas em 15/set/2026:**
 
 1. **Reticência ou acento português numa fala marcada `lang:"en"` REPROVA** — e

@@ -81,6 +81,11 @@ def lp(s):
     #    que o `_qa/revisor.py` acusa — com razao: a voz faz a pausa no lugar
     #    errado. Cola a pontuacao de volta na palavra.
     t = re.sub(r"\s+([,.;:!?])", r"\1", t)
+    # ⚠️ E A VIRGULA DA PAUSA PODE ENCOSTAR NUMA QUE JA EXISTIA (15/set/2026):
+    #    a frase "My dad, ___ travels a lot" virou "My dad,, travels a lot" —
+    #    duas virgulas coladas, que o Edge TTS le como uma pausa estranha e
+    #    longa demais. Uma so, sempre.
+    t = re.sub(r",\s*,+", u",", t)
     return t.strip()
 
 
