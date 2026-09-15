@@ -233,6 +233,46 @@ function montaPlano(id) {
     }
   }
 
+  /* ⭐ A FAMÍLIA "DOIS TOQUES COM ALVO COMPARTILHADO" (15/set/2026).
+     Existe folha em que a criança PEGA uma coisa e SOLTA em outra, e em que uma
+     das duas é COMPARTILHADA pela folha inteira: a gaveta que recebe seis
+     palavras, a fila de posições da receita, o quadro de palavras que serve as
+     seis frases. Nessas o alvo NÃO pode carregar o id do item (ele é um só para
+     todos), e por isso a família "gaveta" de cima não alcança — o jogador saía
+     dizendo "não conheço a peça" em cinco folhas seguidas do caderno de
+     ortografia.
+     O contrato: o alvo se declara no nível da PÁGINA, como `alvo-<chave>`, e a
+     chave TEM DE SER ÚNICA NO DOCUMENTO INTEIRO — as folhas moram todas no
+     mesmo HTML ao mesmo tempo, só uma fica visível, e o `executa` busca o alvo
+     com `document.querySelector`. Duas folhas com `alvo-gav_s` fazem o jogador
+     clicar sempre na primeira do documento (medido: três itens da folha 5
+     "não fechavam" por causa da gaveta homônima da folha 4). O jeito simples é
+     pôr o número da folha no nome: `alvo-gav5_s`. E a
+     resposta do item diz a chave E A ORDEM dos dois toques:
+         ">chave"  = toca no item e depois no alvo   (a peça é o item)
+         "<chave"  = toca no alvo e depois no item   (a peça é o alvo)
+     A ordem importa de verdade: nessas folhas o primeiro toque MARCA e o
+     segundo SOLTA; invertido, o app só diz "toque primeiro na palavra". */
+  const mDois = certo.match(/^([<>])(\S+)$/);
+  if (mDois) {
+    const alv = 'alvo-' + mDois[2], iti = 'item-' + id;
+    if (qa.some(x => x.getAttribute('data-qa') === alv) &&
+        qa.some(x => x.getAttribute('data-qa') === iti))
+      return { tipo: 'clique', fe: 'alta',
+               alvos: mDois[1] === '>' ? [iti, alv] : [alv, iti] };
+    return { tipo: 'nao-sei' };
+  }
+
+  /* ⭐ A FAMÍLIA "CAÇA-PALAVRAS" (15/set/2026): a palavra se acha tocando na
+     PRIMEIRA e na ÚLTIMA letra dela na grade. As duas pontas se declaram como
+     `cp-<id>-a` e `cp-<id>-z`. Quando a folha não as publica (duas palavras
+     cruzando exatamente numa ponta), o jogador diz "não sei" — dívida honesta,
+     em vez de acusar de defeito uma folha boa. */
+  const cpA = qa.filter(e => e.getAttribute('data-qa') === 'cp-' + id + '-a')[0];
+  const cpZ = qa.filter(e => e.getAttribute('data-qa') === 'cp-' + id + '-z')[0];
+  if (cpA && cpZ)
+    return { tipo: 'clique', alvos: ['cp-' + id + '-a', 'cp-' + id + '-z'], fe: 'alta' };
+
   /* ⭐ A FAMÍLIA "GAVETA" (arrastar para a caixa certa) — declarada, não
      deduzida. A folha registra a resposta como `p0>vivo p1>nao ...`: qual peça
      vai em qual gaveta. O gesto tem DOIS toques (pega a peça, solta na gaveta),
@@ -377,7 +417,19 @@ async function executa(pg, id, plano) {
     await pg.waitForTimeout(260);
     /* as DUAS portas: aqui vai pelo teclado DE VERDADE, que é o que o PC da
        escola tem — se só o teclado da tela funcionasse, isto reprovaria */
-    for (const ch of plano.texto.split('')) { await pg.keyboard.press(ch); await pg.waitForTimeout(90); }
+    for (const ch of plano.texto.split('')) {
+      /* ⚠️ Ç E VOGAL ACENTUADA NÃO TÊM TECLA no teclado que o navegador de
+         teste emula: o Playwright responde "Unknown key: Ç" e a corrida MORRIA
+         ali, derrubando a medição do caderno inteiro (15/set/2026, caderno de
+         ortografia — onde a metade das palavras tem Ç ou acento). Isto não é
+         defeito da atividade: é o teclado de verdade que não tem essa tecla
+         sozinha, e é exatamente para isso que existe o teclado DA TELA. Então
+         a letra que o teclado real não alcança vai pela outra porta — e as
+         duas continuam medidas. */
+      const deu = await pg.keyboard.press(ch).then(() => true).catch(() => false);
+      if (!deu) await pg.click('#tk button[aria-label="Letra ' + ch + '"]').catch(() => {});
+      await pg.waitForTimeout(90);
+    }
     /* ⚠️⚠️ O ENTER SO VAI SE A FOLHA NAO TIVER CONFIRMADO SOZINHA, e esta linha
        custou tres rodadas. O teclado do caderno confere sozinho 380 ms depois
        que o numero fica do tamanho da resposta (`if(ATIVA.val.length >=
