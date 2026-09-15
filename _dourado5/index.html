@@ -368,7 +368,7 @@ img{-webkit-user-drag:none;user-drag:none}
   <div class="estrelas" id="estrelas"></div>
   <div class="barras" id="barras"></div>
   <p id="fimTxt" style="font-weight:700;color:#3a2600"></p>
-  <div class="medalha" id="medalha" title="Troféu"><img src="img/od_trofeu.png?v=1" alt="Troféu" draggable="false"></div>
+  <div class="medalha medal" id="medalha" title="Troféu"><img src="img/od_trofeu.png?v=1" alt="Troféu" draggable="false"></div>
   <div id="relatorio"></div>
   <button class="bt cinza" id="bRever">Rever o caderno</button>
   <button class="bt verde" id="bRecomecar">Caderno novo</button>
@@ -1860,6 +1860,15 @@ function confete(n){ var cs = ["#f5b400", "#1f6b12", "#1565c0", "#c62828", "#6a1
 /* ---------- fim ---------- */
 var _segura = null;
 function fim(){
+  /* ⭐⭐ AVISA O CONTROLE DA SALA QUE ESTA CRIANÇA TERMINOU (15/set/2026, pedido
+     do Marcos). Este caderno escapava dos DOIS caminhos que a tela do aluno do
+     laboratório usa: a espiada procura a medalha pela classe `.medal` e a daqui
+     é `.medalha`; e o aviso por `postMessage` ele não mandava. Achado pelo
+     portão `_qa/gemeo.py`, que varre o repositório atrás do mesmo defeito em
+     todo código gêmeo — este não é folha viva, é app à mão, e mesmo assim tinha.
+     Fora do laboratório não há pai nenhum escutando e a linha não faz nada. */
+  try{ if(window.parent && window.parent !== window)
+         window.parent.postMessage({eduverse: "terminou"}, "*"); }catch(e){}
   calar(); for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
   document.getElementById("teclado").className = ""; document.getElementById("barraCapa").className = ""; document.getElementById("nav").style.display = "none";
   var f = document.getElementById("fim"); f.style.display = "block"; window.scrollTo(0, 0);

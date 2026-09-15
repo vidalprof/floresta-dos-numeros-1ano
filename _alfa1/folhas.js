@@ -1210,6 +1210,29 @@ function atualizaNav(){
 
 /* ---------- fim: boletim, medalha e relatório ---------- */
 function fim(){
+  /* ⭐⭐ AVISA O CONTROLE DA SALA QUE ESTA CRIANÇA TERMINOU.
+     Pedido do Marcos (15/set/2026): *"preciso que essas atividades sequências
+     didáticas me avisem quando termino no painel de atividades, aquele que tem
+     o controle da sala, assim como as atividades que fazíamos antes"*.
+
+     ⚠️ E ELAS NÃO AVISAVAM POR CAMINHO NENHUM — conferido no código do
+     laboratório antes de escrever isto. A tela do aluno (`_lab/index.html`)
+     reconhece o fim de DOIS jeitos, e a folha viva escapava dos dois:
+       1. A ESPIADA — ela olha dentro do quadro e procura a MEDALHA do fim pela
+          CLASSE `.medal`. A folha viva chama a dela de `#medalha`, por id, e
+          portanto a espiada nunca a via;
+       2. O AVISO — o motor manda `postMessage({eduverse:"terminou"})` ao chegar
+          no fim. A folha viva não mandava nada, porque nasceu sem essa peça.
+     Agora ela manda o aviso aqui, e a medalha ganhou também a classe `medal`
+     no HTML: dois caminhos, um cobrindo o buraco do outro, que é a razão pela
+     qual o laboratório tem os dois.
+
+     ⚠️ FORA DO LABORATÓRIO NÃO HÁ PAI NENHUM ESCUTANDO e a linha não faz nada —
+     por isso ela é segura em qualquer lugar (em casa, no celular, aberta
+     direto pelo link). O `try` existe para o caso de a janela de cima ser de
+     outro domínio, quando o navegador recusa a leitura de `window.parent`. */
+  try{ if(window.parent && window.parent !== window)
+         window.parent.postMessage({eduverse: "terminou"}, "*"); }catch(e){}
   calar();
   for(var i = 0; i < PAGEL.length; i++) PAGEL[i].className = PAGEL[i].className.replace(" viva", "");
   document.getElementById("nav").style.display = "none";

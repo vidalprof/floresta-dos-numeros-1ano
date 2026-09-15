@@ -109,6 +109,23 @@ DEFEITOS = [
                       u"escrita) para a faixa livre, chamada ao abrir o teclado e "
                       u"a cada letra, mais `body.comtec` reservando a rolagem."),
     },
+    {
+        u"apelido": u"nao avisa o controle da sala que terminou",
+        u"assinatura": [u"function fim(){", u"idsDaPagina("],
+        u"marca": u'postMessage({eduverse: "terminou"}',
+        u"quando": u"15/set/2026",
+        u"historia": (u"a tela do aluno do laboratorio reconhece o fim de dois "
+                      u"jeitos — espiando a MEDALHA pela classe `.medal` dentro "
+                      u"do quadro, e ouvindo `postMessage({eduverse:\"terminou\"})`. "
+                      u"A folha viva escapava dos DOIS (a medalha dela e `#medalha`, "
+                      u"por id, e ela nao mandava aviso nenhum), entao a maquina "
+                      u"da crianca que terminava nunca aparecia na lista do "
+                      u"professor e ele nao sabia para quem mandar a proxima."),
+        u"conserto": (u"no `fim()`, antes do `calar()`, mandar o postMessage ao "
+                      u"pai (protegido por try, porque fora do laboratorio nao ha "
+                      u"pai nenhum); e dar a classe `medal` ao `#medalha` no HTML, "
+                      u"para a espiada tambem alcancar. Os dois, como no motor."),
+    },
 ]
 
 PULA = (u"node_modules", u".git", u"_qa", u"_lote", u"_recuperado", u"_pesquisa")
