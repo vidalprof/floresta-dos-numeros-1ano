@@ -1274,6 +1274,12 @@ function ativaLetras(vagas, certa, id, fc, fd){
   ATIVA = {q: fake, val: "", certa: certa, id: id, fc: fc, fd: fd, vagas: vagas};
   vagas.forEach(function(v, i){ v.className = "lq vaga" + (i === 0 ? " ativa" : ""); v.textContent = ""; });
   document.getElementById("teclado").className = "aberto";
+  /* ⚠️ ROLAR A PALAVRA PARA CIMA DO TECLADO. Sem isto a criança escreve às
+     cegas: o teclado é fixo no pé da tela e a grade fica embaixo dele (medido
+     em 360x640: a grade inteira por baixo). O `comtec` dá chão para a página
+     poder rolar; o resto é levar a primeira casinha para a faixa que sobra. */
+  document.body.className = (document.body.className.replace(/ ?comtec/, "") + " comtec").replace(/^ /, "");
+  setTimeout(rolaParaCruz, 60);
   document.getElementById("tkDica").textContent = "Escreva as duas letras do começo";
   falar("escreva");
 }
@@ -1493,6 +1499,33 @@ function montaLigar(caixa, pi, tag, pares, pagina){
   q.className = "sq vaga ativa";
   q.innerHTML = '<span class="v"></span><span class="cursor"></span>';
   document.getElementById("teclado").className = "aberto";
+  /* ⚠️ ROLAR A PALAVRA PARA CIMA DO TECLADO. Sem isto a criança escreve às
+     cegas: o teclado é fixo no pé da tela e a grade fica embaixo dele (medido
+     em 360x640: a grade inteira por baixo). O `comtec` dá chão para a página
+     poder rolar; o resto é levar a primeira casinha para a faixa que sobra. */
+  document.body.className = (document.body.className.replace(/ ?comtec/, "") + " comtec").replace(/^ /, "");
+  setTimeout(function(){
+    /* ⚠️ A PALAVRA INTEIRA, NÃO A PRIMEIRA CASINHA. Medindo só a primeira, numa
+       cruzadinha em pé ela ficava visível e o RESTO da palavra continuava
+       debaixo do teclado — e é no resto que a criança está escrevendo. Aqui se
+       mede a caixa das casinhas todas e se rola o MÍNIMO para ela caber na
+       faixa que sobra: primeiro tirar de baixo do teclado, depois, se ainda
+       estiver alta demais, descer até a faixa. */
+    var cs = (E.cels || []).filter(function(c){ return c && c.getBoundingClientRect; });
+    if(!cs.length) return;
+    var tk = document.getElementById("teclado").getBoundingClientRect();
+    var topo = 64, pe = tk.top - 12;
+    var cima = 1e9, baixo = -1e9;
+    cs.forEach(function(c){
+      var r = c.getBoundingClientRect();
+      if(r.top < cima) cima = r.top;
+      if(r.bottom > baixo) baixo = r.bottom;
+    });
+    var d = 0;
+    if(baixo > pe) d = baixo - pe;                 /* tira de baixo do teclado */
+    if(cima - d < topo) d = cima - topo;           /* mas sem subir demais     */
+    if(d) window.scrollBy(0, d);
+  }, 60);
   document.getElementById("tkDica").textContent = "Escreva a sílaba que falta";
   falar("escreva");
 }
@@ -1503,6 +1536,7 @@ function fechaAtiva(){
     else { ATIVA.q.className = "sq vaga"; ATIVA.q.textContent = ""; }
   }
   ATIVA = null; document.getElementById("teclado").className = "";
+  document.body.className = document.body.className.replace(/ ?comtec/, "");
 }
 /* pinta o que já foi digitado — num campo só, ou nos quadradinhos de letra */
 function pintaDigitado(){
@@ -1538,6 +1572,7 @@ function confereSil(){
       it = A.q.parentNode.parentNode;
     }
     ATIVA = null; document.getElementById("teclado").className = "";
+    document.body.className = document.body.className.replace(/ ?comtec/, "");
     acertou(A.id, A.fc);
     if(it && it.className.indexOf("item") === 0) it.className = "item feito";
     for(var z = 0; z < TIRAS.length; z++) TIRAS[z]();

@@ -718,6 +718,12 @@ function montaLigar(caixa, pi, tag, pares, pagina){
   q.className = "sq vaga ativa";
   q.innerHTML = '<span class="v"></span><span class="cursor"></span>';
   document.getElementById("teclado").className = "aberto";
+  /* ⚠️ ROLAR A PALAVRA PARA CIMA DO TECLADO. Sem isto a criança escreve às
+     cegas: o teclado é fixo no pé da tela e a grade fica embaixo dele (medido
+     em 360x640: a grade inteira por baixo). O `comtec` dá chão para a página
+     poder rolar; o resto é levar a primeira casinha para a faixa que sobra. */
+  document.body.className = (document.body.className.replace(/ ?comtec/, "") + " comtec").replace(/^ /, "");
+  setTimeout(rolaParaCruz, 60);
   document.getElementById("tkDica").textContent = "Escreva a sílaba que falta";
   falar("escreva");
 }
@@ -725,6 +731,7 @@ function fechaAtiva(){
   if(!ATIVA) return;
   if(!ST.resp[ATIVA.id]){ ATIVA.q.className = "sq vaga"; ATIVA.q.textContent = ""; }
   ATIVA = null; document.getElementById("teclado").className = "";
+  document.body.className = document.body.className.replace(/ ?comtec/, "");
 }
 function digita(ch){
   if(!ATIVA) return;
@@ -741,6 +748,7 @@ function confereSil(){
   if(A.val === A.certa){
     A.q.className = "sq ok"; A.q.textContent = A.certa;
     ATIVA = null; document.getElementById("teclado").className = "";
+    document.body.className = document.body.className.replace(/ ?comtec/, "");
     acertou(A.id, A.fc);
     var it = A.q.parentNode.parentNode; if(it) it.className = "item feito";
   } else {

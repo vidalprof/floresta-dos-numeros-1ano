@@ -1200,12 +1200,55 @@ function f23(d, pi){
    para um segundo defeito. O que muda entre elas é só o rótulo da tarja —
    daí o `E.rot`. */
 var CRUZ = null;
+/* ---------- ROLAR A PALAVRA PARA CIMA DO TECLADO ----------
+   ⚠️⚠️ O TECLADO TAPAVA A ATIVIDADE, e o Marcos viu no celular (15/set/2026):
+      *"ele preenche a tela e não dá para ver a atividade"*. Medido: na
+      cruzadinha de 360x640 o teclado ocupava 368 px de 640 e a grade ficava
+      INTEIRA por baixo dele — a criança escrevia às cegas.
+   ⚠️ E A REGRA TEM DOIS DEGRAUS, porque medir só um não bastou:
+      1. se a PALAVRA inteira cabe na faixa que sobra, ela sobe inteira;
+      2. se não cabe (palavra em pé, tela de 320x568 — medido), sobe a CASINHA
+         QUE ESTÁ SENDO ESCRITA, centrada na faixa. É o que um campo de texto
+         faz: mantém à vista a letra que a pessoa está digitando.
+   Por isso ela é chamada duas vezes: ao abrir o teclado e a cada letra. */
+function rolaParaCruz(){
+  if(!CRUZ || !CRUZ.E) return;
+  var cs = [], i;
+  for(i = 0; i < CRUZ.E.cels.length; i++)
+    if(CRUZ.E.cels[i] && CRUZ.E.cels[i].getBoundingClientRect) cs.push(CRUZ.E.cels[i]);
+  if(!cs.length) return;
+  var tkel = document.getElementById("teclado");
+  if(!tkel || tkel.className.indexOf("aberto") < 0) return;
+  var tk = tkel.getBoundingClientRect(), topo = 56, pe = tk.top - 10;
+  if(pe <= topo) return;
+  var cima = 1e9, baixo = -1e9;
+  for(i = 0; i < cs.length; i++){
+    var r = cs[i].getBoundingClientRect();
+    if(r.top < cima) cima = r.top;
+    if(r.bottom > baixo) baixo = r.bottom;
+  }
+  var d = 0;
+  if(baixo - cima <= pe - topo){
+    if(baixo > pe) d = baixo - pe;
+    if(cima - d < topo) d = cima - topo;
+  } else {
+    var at = cs[Math.min(CRUZ.val.length, cs.length - 1)].getBoundingClientRect();
+    d = at.top - (topo + (pe - topo) / 2 - at.height / 2);
+  }
+  if(Math.abs(d) > 2) window.scrollBy(0, d);
+}
 function abreCruz(E, pi){
   if(CRUZ) fechaCruz();
   CRUZ = {E: E, val: "", pi: pi};
   if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista ativa";
   pintaCruz();
   document.getElementById("teclado").className = "aberto";
+  /* ⚠️ ROLAR A PALAVRA PARA CIMA DO TECLADO. Sem isto a criança escreve às
+     cegas: o teclado é fixo no pé da tela e a grade fica embaixo dele (medido
+     em 360x640: a grade inteira por baixo). O `comtec` dá chão para a página
+     poder rolar; o resto é levar a primeira casinha para a faixa que sobra. */
+  document.body.className = (document.body.className.replace(/ ?comtec/, "") + " comtec").replace(/^ /, "");
+  setTimeout(rolaParaCruz, 60);
   document.getElementById("tkDica").textContent = E.rot || ("Escreva a palavra da pista " + E.n);
   falar("escreva");
 }
@@ -1217,6 +1260,7 @@ function fechaCruz(){
     if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista";
   }
   CRUZ = null; document.getElementById("teclado").className = "";
+  document.body.className = document.body.className.replace(/ ?comtec/, "");
 }
 function pintaCruz(){
   var E = CRUZ.E, v = CRUZ.val;
@@ -1235,7 +1279,7 @@ function digitaCruz(ch){
   if(ch === "ap") CRUZ.val = CRUZ.val.slice(0, -1);
   else if(ch === "ok"){ confereCruz(); return; }
   else { if(CRUZ.val.length >= E.w.length) return; CRUZ.val += ch; }
-  pintaCruz();
+  pintaCruz(); rolaParaCruz();
   if(CRUZ.val.length >= E.w.length) setTimeout(confereCruz, 380);
 }
 function confereCruz(){
@@ -1250,6 +1294,7 @@ function confereCruz(){
     });
     if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista feita";
     CRUZ = null; document.getElementById("teclado").className = "";
+  document.body.className = document.body.className.replace(/ ?comtec/, "");
     acertou(E.id, "certo" + pi + "_" + E.k);
   } else {
     CRUZ.val = ""; pintaCruz();
