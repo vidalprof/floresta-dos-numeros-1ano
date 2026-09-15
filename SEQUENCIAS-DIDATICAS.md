@@ -200,6 +200,59 @@ dele entra junto.
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o
 > Marcos, ou chegou até a criança.
 
+### 3.00000 ⭐⭐⭐ O PORTÃO QUE MEDIA NUMA PONTA E NÃO NA OUTRA — quatro publicações falharam e eu não sabia por quê
+
+**O que o Marcos viu:** a manhã inteira sem receber os consertos. Ele perguntou
+três vezes — *"já foi atualizada a horta da vovó?"*, *"então publique tudo que
+foi consertado"*, *"verifiquei agora que a Coroa dos Cinco Reinos só tem 10
+folhas"* — e eu respondia "disparei, está na fila". Quatro corridas de entrega,
+nenhuma publicou nada.
+
+**O que estava acontecendo.** No log da corrida, escrito:
+
+```
+##[error]_sil1: estatico (nome usado que nunca foi declarado) REPROVOU
+##[error]PORTÃO PRÉ-ENTREGA REPROVOU — NADA foi publicado.
+```
+
+O `rolaParaCruz` que eu tinha escrito naquela manhã testava
+`typeof CRUZ !== "undefined" && CRUZ && CRUZ.E`. O `typeof` protege só a
+**primeira** ocorrência; o `CRUZ` nu depois do `&&` é `'CRUZ' is not defined`
+para o ESLint (ele não faz análise de fluxo) em todo caderno sem cruzadinha.
+Como `CRUZ` e `ATIVA` são `var` globais, a forma que passa é `window.CRUZ`.
+
+**E por que eu não vi.** O portão `0a2 estatico` **não roda neste container**: o
+`node_modules` do ESLint não vem instalado. Ele dizia `NAO MEDI` e o pré-voo o
+listava entre os doze que não mediram — uma linha no meio de muitas, fácil de
+ler como "não se aplica a esta atividade".
+
+> ## ⚠️⚠️ A LIÇÃO, e ela vale para todo portão
+>
+> **O mesmo `0a2` roda DENTRO do `entregar.yml`, onde o ESLint existe — e lá ele
+> REPROVA E SEGURA A PUBLICAÇÃO DO REPOSITÓRIO INTEIRO.** Aqui cego, lá
+> vermelho. Eu publicava achando que estava tudo bem.
+>
+> **Portão que mede numa ponta e não na outra é pior que portão nenhum: ele dá a
+> sensação de ter passado.** Quando um portão disser `NAO MEDI`, a pergunta não é
+> "esta atividade tem isso?" — é **"ele mede na hora de publicar?"**. Se medir,
+> `NAO MEDI` aqui é uma bomba armada.
+
+**O conserto, em duas partes:** o código nos 19 cadernos, e o
+`_qa/estatico.sh`, que agora **instala o ESLint sozinho** na primeira vez e, se
+não conseguir, diz com todas as letras que isso não é "passou" e que o
+`entregar.yml` vai segurar. Testado com o `node_modules` apagado de propósito:
+ele se reinstalou e mediu.
+
+**E a dívida foi paga na hora:** varri os quinze portões que o `entregar.yml`
+roda e conferi um a um se eles medem AQUI. Quatro dizem `NAO MEDI` porque a
+peça não existe neste formato (`corta_figura`, `enunciado_bate`, `exemplo` e
+`pcruim` pedem `conteudo.json` ou FASES do motor) — inofensivos. Um depende de
+instalação como o ESLint: o **`pronuncia`**, que precisa do Vosk. Mas **ele só
+emite `::warning::` no workflow e não segura a entrega**, então não é a mesma
+armadilha. O `estatico` era o único cego aqui e bloqueante lá.
+
+---
+
 ### 3.0000 ⭐⭐ O `@` QUE SUMIU DO CSS — 36 REGRAS MORTAS NUM CADERNO NO AR
 
 **Data: 14/set/2026. Achado por mim, um dia depois de publicar — e por acaso.**
