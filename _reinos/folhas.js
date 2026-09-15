@@ -562,7 +562,7 @@ function confereLetras(){
   var tk = document.getElementById("tk");
   /* ⚠️ TODO O ALFABETO, K W Y INCLUSOS — a lição paga em 13/set/2026: o teclado
      saiu sem eles e três palavras do pote ficaram sem resposta possível. */
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").forEach(function(D){
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".split("").forEach(function(D){
     var b = el("button", null, D);
     b.setAttribute("aria-label", "Letra " + D);
     b.onclick = function(){ digita(D); };
@@ -577,7 +577,7 @@ document.addEventListener("keydown", function(ev){
   if(!ATIVA) return;
   if(document.activeElement && document.activeElement.id === "nomeIn") return;
   var k = (ev.key || "").toUpperCase();
-  if(k.length === 1 && "ABCDEFGHIJKLMNOPQRSTUVWXYZ".indexOf(k) > -1){ ev.preventDefault(); digita(k); }
+  if(k.length === 1 && "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".indexOf(k) > -1){ ev.preventDefault(); digita(k); }
   else if(ev.key === "Backspace"){ ev.preventDefault(); digita("ap"); }
   else if(ev.key === "Enter"){ ev.preventDefault(); digita("ok"); }
   else if(ev.key === "Escape"){ fechaAtiva(); }

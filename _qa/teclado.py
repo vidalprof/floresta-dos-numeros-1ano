@@ -65,6 +65,15 @@ def alfabetos(js):
         fora.append((u"teclado da tela", m.group(1)))
     for m in re.finditer(r"\"([A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ]{10,})\"\s*\.indexOf\(", js):
         fora.append((u"filtro do teclado de verdade", m.group(1)))
+    # ⚠️ BURACO QUE ESTE PORTÃO TEVE NA PRIMEIRA HORA DE VIDA (15/set/2026).
+    #    Eu só procurava os DOIS desenhos que conhecia — `var letras = "..."` e
+    #    `"...".indexOf(k)`. A forca do `_jogo1` monta o teclado DELA de um
+    #    terceiro jeito, `"ABC...".split("").forEach(...)`, dentro da própria
+    #    folha — e o portão passava por cima dizendo "ok" com um teclado sem K,
+    #    sem W, sem Y e sem Ç. Portão que só vê o que eu lembrei de escrever não
+    #    é medida: é a minha memória com roupa de portão.
+    for m in re.finditer(r"\"([A-ZÁÀÂÃÉÊÍÓÔÕÚÜÇ]{10,})\"\s*\.split\(\s*\"\"\s*\)", js):
+        fora.append((u"teclado montado dentro da folha", m.group(1)))
     return fora
 
 
