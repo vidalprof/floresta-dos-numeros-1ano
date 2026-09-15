@@ -36,8 +36,25 @@ if [ ! -f "$ARQ" ]; then echo "NAO MEDI: nao achei $ARQ"; exit 2; fi
 
 BIN="_qa/ferramentas/node_modules/.bin/eslint"
 CFG="_qa/ferramentas/eslint.config.mjs"
+# ⚠️⚠️ ELE SE INSTALA SOZINHO, e a razão é uma lição cara de 15/set/2026.
+#    O container desta sessão nasce sem o `node_modules` do ESLint, então este
+#    portão dizia "NAO MEDI" e o pré-voo o listava entre os que não mediram —
+#    uma linha no meio de doze, fácil de ler como "não se aplica".
+#    Só que ele NÃO é opcional: o mesmo portão roda DENTRO do `entregar.yml`,
+#    onde o ESLint existe, e lá ele REPROVA E SEGURA A PUBLICAÇÃO DO
+#    REPOSITÓRIO INTEIRO. Resultado no dia: quatro corridas de entrega
+#    falharam seguidas, os dezenove cadernos ficaram sem subir, e eu não
+#    entendia por quê — porque aqui ele estava cego e lá estava vermelho.
+#    Portão que mede numa ponta e não na outra é pior que portão nenhum: ele
+#    dá a sensação de ter passado. Dois minutos de `npm install` resolvem.
+if [ ! -x "$BIN" ] && [ -f "_qa/ferramentas/package.json" ]; then
+  echo "   (instalando o ESLint — so na primeira vez nesta maquina...)" >&2
+  npm install --silent --prefix _qa/ferramentas >/dev/null 2>&1 || true
+fi
 if [ ! -x "$BIN" ]; then
-  echo "NAO MEDI: o ESLint nao esta instalado. Rode: npm install --prefix _qa/ferramentas"
+  echo "NAO MEDI: o ESLint nao esta instalado e a instalacao automatica falhou."
+  echo "   ⚠️ ISTO NAO E 'passou': o MESMO portao roda dentro do entregar.yml e"
+  echo "   la ele SEGURA A PUBLICACAO. Rode a mao: npm install --prefix _qa/ferramentas"
   exit 2
 fi
 

@@ -1291,13 +1291,23 @@ function fMinhaRoda(d, pi){
       `_qa/funcoes.py`, o portão "função que não existe" — que eu não rodei. */
 function rolaParaCruz(){
   /* de quem é a vez: a fila da cruzadinha, ou a quadra única do outro teclado */
+  /* ⚠️⚠️ LÊ AS DUAS PELO `window`, e isto NÃO é preciosismo: escrito como
+     `typeof CRUZ !== "undefined" && CRUZ && CRUZ.E`, o `CRUZ` nu depois do `&&`
+     é acusado de `'CRUZ' is not defined` pelo ESLint nos cadernos que não têm
+     cruzadinha (ele não faz análise de fluxo, e o `typeof` só protege a
+     primeira ocorrência). E esse ESLint é o portão 0a2 que roda DENTRO do
+     `entregar.yml`, antes de publicar: com ele vermelho, NADA sobe. Foi assim
+     que quatro publicações minhas falharam seguidas hoje. Como `CRUZ` e `ATIVA`
+     são `var` globais, elas são propriedades de `window`, e ler por ali
+     funciona igual e é declarado. */
   var cs = [], i, andando = 0;
-  if(typeof CRUZ !== "undefined" && CRUZ && CRUZ.E && CRUZ.E.cels){
-    for(i = 0; i < CRUZ.E.cels.length; i++)
-      if(CRUZ.E.cels[i] && CRUZ.E.cels[i].getBoundingClientRect) cs.push(CRUZ.E.cels[i]);
-    andando = CRUZ.val ? CRUZ.val.length : 0;
-  } else if(typeof ATIVA !== "undefined" && ATIVA && ATIVA.q && ATIVA.q.getBoundingClientRect){
-    cs.push(ATIVA.q);
+  var _cruz = window.CRUZ, _ativa = window.ATIVA;
+  if(_cruz && _cruz.E && _cruz.E.cels){
+    for(i = 0; i < _cruz.E.cels.length; i++)
+      if(_cruz.E.cels[i] && _cruz.E.cels[i].getBoundingClientRect) cs.push(_cruz.E.cels[i]);
+    andando = _cruz.val ? _cruz.val.length : 0;
+  } else if(_ativa && _ativa.q && _ativa.q.getBoundingClientRect){
+    cs.push(_ativa.q);
   }
   if(!cs.length) return;
   var tkel = document.getElementById("teclado");
@@ -1572,7 +1582,15 @@ function montaLigar(caixa, pi, tag, pares, pagina){
        mede a caixa das casinhas todas e se rola o MÍNIMO para ela caber na
        faixa que sobra: primeiro tirar de baixo do teclado, depois, se ainda
        estiver alta demais, descer até a faixa. */
-    var cs = (E.cels || []).filter(function(c){ return c && c.getBoundingClientRect; });
+    /* ⚠️⚠️ ERA `E.cels` — a fila de casinhas da CRUZADINHA — dentro da função
+       do teclado de SÍLABA, que escreve numa quadra só (`ATIVA.q`). O `E` não
+       existe aqui: o ESLint acusava `'E' is not defined` e, com ele vermelho, o
+       portão 0a2 dentro do `entregar.yml` segurava a publicação do repositório
+       INTEIRO — quatro corridas minhas falharam por isto hoje. Na tela não dava
+       erro visível porque o `setTimeout` engolia a exceção. */
+    var _a = window.ATIVA;
+    var cs = ((_a && _a.vagas) || (_a && _a.q ? [_a.q] : []))
+             .filter(function(c){ return c && c.getBoundingClientRect; });
     if(!cs.length) return;
     var tk = document.getElementById("teclado").getBoundingClientRect();
     var topo = 64, pe = tk.top - 12;
