@@ -88,7 +88,7 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
   display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;align-items:center;-webkit-box-shadow:0 6px 14px rgba(30,50,20,.16);box-shadow:0 6px 14px rgba(30,50,20,.16)}
 .carta:active{-webkit-transform:scale(.97);transform:scale(.97)}
 .carta img{width:76px;height:76px;object-fit:contain}
-.carta .lab{font-size:13px;font-weight:700;margin-top:2px;color:var(--texto)}
+.carta .lab{font-size:13px;font-weight:700;margin-top:2px;color:#221a12}
 .carta .num{position:absolute;top:-8px;right:-8px;width:28px;height:28px;border-radius:50%;background:var(--verde);color:#fff;font-weight:700;font-size:16px;line-height:28px;-webkit-box-shadow:0 2px 5px rgba(0,0,0,.25);box-shadow:0 2px 5px rgba(0,0,0,.25)}
 .carta.ok{border-color:var(--verde);background:#eafce0}
 .carta.no{border-color:var(--coral);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
@@ -96,7 +96,7 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
 /* precisa */
 .bins{display:-webkit-box;display:flex;gap:14px;margin-top:14px}
-.bin{width:136px;padding:14px;border-radius:20px;text-align:center;font-weight:700;font-size:16px;color:#fff;cursor:pointer;-webkit-box-shadow:0 5px 0 rgba(0,0,0,.16),0 8px 14px rgba(0,0,0,.18);box-shadow:0 5px 0 rgba(0,0,0,.16),0 8px 14px rgba(0,0,0,.18)}
+.bin{width:136px;padding:14px;border-radius:20px;text-align:center;font-weight:700;font-size:16px;background:#5a4a33;color:#fff;cursor:pointer;-webkit-box-shadow:0 5px 0 rgba(0,0,0,.16),0 8px 14px rgba(0,0,0,.18);box-shadow:0 5px 0 rgba(0,0,0,.16),0 8px 14px rgba(0,0,0,.18)}
 .bin:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
 .bin.sim{background:-webkit-linear-gradient(top,#3f9a26,#256113);background:linear-gradient(#3f9a26,#256113)}
 .bin.nao{background:-webkit-linear-gradient(top,#e2503f,#b62d1e);background:linear-gradient(#e2503f,#b62d1e)}
@@ -144,7 +144,7 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .cracha .cfoto{width:62px;height:62px;-webkit-flex:none;flex:none;object-fit:contain;background:#eafce0;border:2px solid var(--verde);border-radius:50%;padding:3px}
 .cracha .ctx{text-align:left;min-width:0}
 .cracha .csel{color:#245f13 !important;font-size:11px;font-weight:700;letter-spacing:.6px}
-.cracha .cnome{font-size:20px;font-weight:700;color:var(--texto);line-height:1.15;word-break:break-word}
+.cracha .cnome{font-size:20px;font-weight:700;color:#221a12;line-height:1.15;word-break:break-word}
 .cracha .cfun{color:#6b6252 !important;font-size:12px;font-weight:600;color:#8a7f68}
 .cracha:before{content:"";position:absolute;top:-7px;left:50%;margin-left:-11px;width:22px;height:9px;border:2px solid var(--linha);border-bottom:0;border-radius:11px 11px 0 0;background:transparent}
 /* ===== ARRASTAR A LETRA (a peca vai na mao ate a lacuna) ===== */
@@ -318,7 +318,7 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .blin{margin-bottom:9px}
 .btop{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;
   -webkit-box-pack:justify;justify-content:space-between;gap:8px;margin-bottom:3px}
-.bnome{font-size:13px;font-weight:700;color:#4a4232;text-align:left;line-height:1.2}
+.bnome{font-size:13px;font-weight:700;color:var(--texto);text-align:left;line-height:1.2}
 .bestrelas{display:-webkit-box;display:-webkit-flex;display:flex;gap:3px;-webkit-flex-shrink:0;flex-shrink:0}
 .estrela{display:block;width:15px;height:15px;background:#ded6c2;
   -webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
@@ -332,10 +332,10 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .bbar i{display:block;height:100%;width:0;border-radius:999px;
   background:-webkit-linear-gradient(left,#8be05a,#2f8f18);background:linear-gradient(90deg,#8be05a,#2f8f18);
   -webkit-transition:width 1.1s cubic-bezier(.2,.9,.3,1);transition:width 1.1s cubic-bezier(.2,.9,.3,1)}
-.bplacar{margin-top:10px;text-align:center;font-size:19px;font-weight:800;color:#4a4232}
+.bplacar{margin-top:10px;text-align:center;font-size:19px;font-weight:800;color:var(--texto)}
 .bplacar b{font-size:27px;color:#2f8f18}
 .btempo{text-align:center;font-size:13px;font-weight:600;color:#6b6252;margin-top:2px}
-.bfrase{text-align:center;font-size:14.5px;font-weight:700;color:#4a4232;margin-top:8px;line-height:1.3}
+.bfrase{text-align:center;font-size:14.5px;font-weight:700;color:var(--texto);margin-top:8px;line-height:1.3}
 @media (max-height:600px){
   .boletim{padding:9px 11px;margin-top:8px;max-width:330px}
   .bnome{font-size:11.5px}.estrela{width:12px;height:12px}
@@ -481,7 +481,7 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
    pelo MIOLO medido na imagem, nunca pelo centro do retangulo.             */
 .chapatxt{position:absolute;left:46.5%;top:68.9%;
   -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
-  width:56%;color:#3a2c18;font-size:18px;font-weight:700;
+  width:56%;background:transparent;color:#3a2c18;font-size:18px;font-weight:700;
   letter-spacing:1px;text-align:center;line-height:1.25}
 .morro{-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;gap:6px}
 .morro .palavraGrande{gap:3px;margin-top:0;-webkit-flex-wrap:nowrap;flex-wrap:nowrap}

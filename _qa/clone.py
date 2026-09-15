@@ -648,7 +648,15 @@ if os.path.exists(_falasj):
                     break
             _k += 1
         _corpo = html[_ini:_k]
-        _ids = re.findall(r'falar\(\s*"([^"]+)"', _corpo)
+        # ⚠️ `depoisDaFala("x", ms, ...)` TAMBÉM É UMA FALA DESTA TELA, e ignorá-la
+        #    fazia o portão acusar inocente (15/set/2026, Oficina de Letreiros). Na
+        #    telaPlaca a narração é `depoisDaFala("lt_p1_intro", 9000, ...)` e o que
+        #    sobra para o `falar(` é a DICA que vem nove segundos depois — dica que,
+        #    por desenho, fala outra coisa. O portão via uma fala só, casava o balão
+        #    com a dica e concluía "voz e texto contam histórias diferentes".
+        #    Contando as duas, a tela cai na regra que este mesmo portão já tinha:
+        #    tela com mais de uma fala não dá para casar um a um.
+        _ids = re.findall(r'(?:falar|depoisDaFala)\(\s*"([^"]+)"', _corpo)
         _bal = re.findall(r'"balao"\s*,\s*"([^"]{25,})"', _corpo)
         if len(_ids) != 1 or not _bal:
             continue          # tela com varias falas: nao da para casar 1 a 1
