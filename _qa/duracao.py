@@ -426,7 +426,16 @@ def confere(pasta, piso_min=40.0):
     #    imprimia "duracao ok" com esse número. Portão que aprova com número
     #    errado é pior que portão nenhum. Agora ele para no `};` do próprio
     #    objeto e não se importa com o que venha depois dentro do bloco.
-    m_it = re.search(r'/\*ITENS-INI\*/\s*var\s+ITENS\s*=\s*(\{.*?\})\s*;',
+    # ⚠️⚠️ E ELE TEM DE ATRAVESSAR O COMENTÁRIO (15/set/2026, lição paga no
+    #    caderno de inglês do 8º ano). O `/*ITENS-INI*/` é um bloco MARCADO, e o
+    #    esqueleto da folha viva (`_padrao/FOLHA-VIVA/`) escreve dentro dele, de
+    #    fábrica, o aviso de que a posição é a identidade — ou seja, TODO caderno
+    #    novo nasce com um comentário entre o marcador e o `var ITENS`. Com o
+    #    `\s*` seco o casamento falhava, o portão caía no galho seguinte e media
+    #    22 itens (o tamanho do `NOMES`) onde havia 126 — e reprovava por
+    #    "não enche a aula" uma atividade de 22 folhas. Portão que mede a lista
+    #    errada não é rigor: é medida falsa, e a do lado errado.
+    m_it = re.search(r'/\*ITENS-INI\*/(?:\s|/\*.*?\*/)*var\s+ITENS\s*=\s*(\{.*?\})\s*;',
                      html, re.S)
     if m_it and not fases_m:
         try:

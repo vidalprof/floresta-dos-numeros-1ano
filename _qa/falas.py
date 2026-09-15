@@ -71,9 +71,21 @@ def checa(itens):
     achados = []
     for it in itens:
         texto = it.get("texto", "")
-        for palavra, (erro, troca) in ARMADILHAS.items():
-            if re.search(r"\b%s\b" % re.escape(palavra), texto, re.I):
-                achados.append((it.get("id", "?"), palavra, erro, troca, texto))
+        # ⚠️⚠️ AS ARMADILHAS SAO DA VOZ PORTUGUESA, E SO DELA (15/set/2026,
+        #    caderno de ingles do 8o ano). A lista existe porque o
+        #    `pt-BR-AntonioNeural` le "mouse" como "maus" e "complete" como
+        #    "complite" — o que e verdade, e por isso ela reprova. Mas a fala
+        #    marcada `lang:"en"` NAO e lida por essa voz: ela vai para o
+        #    `en-US-GuyNeural`, que diz "mouse" como se deve dizer em ingles.
+        #    Cobrar dela a troca seria o portao mandando ESTRAGAR a fala certa —
+        #    e num caderno de ingles a palavra "mouse" nao tem substituta.
+        #    ⚠️ O que continua valendo para as falas inglesas e a regra logo
+        #       abaixo (texto portugues marcado `lang:en`), que e o defeito de
+        #       verdade desta familia: ela e que o Marcos ouviu.
+        if it.get("lang") != "en":
+            for palavra, (erro, troca) in ARMADILHAS.items():
+                if re.search(r"\b%s\b" % re.escape(palavra), texto, re.I):
+                    achados.append((it.get("id", "?"), palavra, erro, troca, texto))
         # ⚠️ LICAO PAGA (ago/2026): NOME DE ARQUIVO NA FILA DE GRAVACAO.
         #    O montador tinha uma lista de "chaves que nao sao fala" com `img`
         #    dentro, mas sem `fig`/`foto`/`cena` — e a familia inteira existia,
