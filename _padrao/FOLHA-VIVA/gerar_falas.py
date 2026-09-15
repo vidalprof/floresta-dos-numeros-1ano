@@ -60,9 +60,28 @@ def bloco(nome):
     return json.loads(txt)
 
 
+# ⚠️⚠️ A ENTIDADE HTML TAMBÉM É MARCAÇÃO, e isto foi lição paga (15/set/2026,
+#    caderno de inglês do 8º ano). O `lp` tirava as TAGS e deixava as
+#    ENTIDADES, então a lista de ingredientes da pizza — escrita com `&middot;`
+#    para virar o ponto que separa os itens — ia para a fila de gravação como
+#    *"Oil and middot Tomato sauce and middot Some onions"*. O portão
+#    `_qa/revisor.py` pegou; se não pegasse, a voz teria dito isso à criança.
+_ENT = {u"&middot;": u",", u"&nbsp;": u" ", u"&amp;": u" e ", u"&mdash;": u" ",
+        u"&ndash;": u" ", u"&hellip;": u" ", u"&quot;": u'"', u"&lt;": u"",
+        u"&gt;": u"", u"&#39;": u"'", u"&apos;": u"'"}
+
+
 def lp(s):
     u"""tira a marcação e deixa o texto do jeito que a voz vai dizer"""
-    return re.sub(r"\s+", u" ", re.sub(r"<[^>]+>", "", s)).strip()
+    t = re.sub(r"<[^>]+>", " ", s or u"")
+    for _e, _v in _ENT.items():
+        t = t.replace(_e, _v)
+    t = re.sub(r"\s+", u" ", t)
+    # ⚠️ e a tag que vira espaco deixa um vao ANTES da pontuacao ("o cinema ."),
+    #    que o `_qa/revisor.py` acusa — com razao: a voz faz a pausa no lugar
+    #    errado. Cola a pontuacao de volta na palavra.
+    t = re.sub(r"\s+([,.;:!?])", r"\1", t)
+    return t.strip()
 
 
 def ch(w):

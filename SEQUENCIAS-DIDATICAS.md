@@ -103,30 +103,84 @@ eu digo que não dá e mostro quem pode medir. E nunca dizer que fiz o que não 
 > *O teste, antes de mandar qualquer número:* **de onde veio, e o que eu teria
 > que abrir para ele estar errado?**
 
-### REGRA DO TAMANHO — **20 folhas** nas novas; as 25 dos cadernos já feitos ficam
-**MUDOU em 14/set/2026.** A regra nasceu em 12/set com as palavras dele: *"eu
-acredito que cada sequência precise de no mínimo 25 folhas"*, e a medição do §4
-deu razão a ele: 25 folhas é o que enche os 55 min da criança **rápida**.
+### REGRA DO TAMANHO — **35 folhas** nas novas (15/set/2026); os cadernos que já existem ficam
 
-Em 14/set ele baixou o piso, e disse por quê: **velocidade de produção**
-(*"pode baixar para 20"*, *"torna criar mais rápido também"*, *"digo nas
-próximas atividades pode fazer com 20"*). Então, com todas as letras:
+**⭐⭐ MUDOU DE NOVO EM 15/set/2026, E DESTA VEZ POR CRONÔMETRO NA SALA.** As
+palavras dele: ***"verifiquei a execução das atividades, essas 20 25 folhas
+duram 30 minutos, precisamos elevar um pouco mais as folhas para umas 35
+folhas, as próximas atividades"***.
 
 | | piso |
 |---|---|
-| sequência **nova**, daqui para a frente | **20 folhas** |
-| os cadernos **que já existem** | ficam como estão — nenhum encolhe |
+| sequência **nova**, daqui para a frente | **35 folhas** |
+| os cadernos **que já existem** | ficam como estão — nenhum encolhe, nenhum cresce |
 
-⚠️ **O que a medição continua dizendo, e não muda por decisão:** com 20 folhas a
-criança **rápida** sobra tempo no fim da aula. Quem vai devagar não é
-prejudicado (o fecho é alcançável a qualquer momento — §4). Ou seja, o custo de
-20 é *tempo ocioso da mais rápida*, não *aula incompleta* — e foi com essa
-informação na mesa que ele decidiu.
+**A HISTÓRIA DESTA REGRA, porque ela já mudou três vezes e o motivo importa:**
 
-⚠️ **E o piso não vira teto ao contrário:** se o conteúdo der 25 folhas de
-verdade, ficam as 25. O que o piso de 20 proíbe é o oposto — **inventar folha
-de enchimento para fechar número**. Faltou conteúdo para 20? A resposta é
-perguntar ao Marcos, nunca preencher.
+| quando | piso | de onde veio |
+|---|---|---|
+| 12/set | 25 | palpite dele: *"eu acredito que cada sequência precise de no mínimo 25 folhas"* |
+| 14/set | 20 | decisão de **velocidade de produção**: *"pode baixar para 20"* |
+| **15/set** | **35** | **MEDIÇÃO COM A TURMA E O RELÓGIO**: 20–25 folhas deram **30 min** |
+
+⚠️⚠️ **E A MEDIÇÃO DELE CONSERTOU UM PORTÃO MEU.** O `_qa/duracao.py` imprimia,
+dos mesmos cadernos, faixas como *"32 a 60 min"* — e **aprovava olhando o 60**.
+Conferido depois que ele falou: `_subst5` 31–54, `_mult2` 28–62, `_reinos`
+32–59. A **ponta baixa** de todos (28 a 32 min) é exatamente o que o relógio
+dele marcou. A ponta alta é a criança que toca em TODO alto-falante — existe,
+mas é a minoria, e eu estava aprovando a atividade pela minoria mais lenta.
+**Dezenove cadernos passaram por aqui assim.** O portão agora cobra o piso da
+**ponta baixa**, e a frase dele está escrita dentro dele como âncora.
+
+⚠️ **A lição, e ela não é sobre duração:** o portão tinha DUAS pontas e eu
+escolhi a que me convinha, sem nunca ter cronometrado nada. Todo o resto daquele
+portão é palpite declarado; a medida do Marcos é o único dado com criança e
+relógio que ele tem. **Quando houver uma medida de sala e uma conta minha, a
+medida de sala ganha.**
+
+⚠️ **E o piso não vira teto ao contrário:** se o conteúdo der 40 folhas de
+verdade, ficam as 40. O que o piso proíbe é o oposto — **inventar folha de
+enchimento para fechar número**. Faltou conteúdo para 35? A resposta é colher
+mais folhas de papel (a colheita é barata: dois workflows) ou perguntar ao
+Marcos. Nunca preencher.
+
+### ⭐ COMO CHEGAR ÀS 35 — a estratégia do PAR DE FOLHAS (ideia do Marcos, 15/set/2026)
+
+Na mesma conversa em que subiu o piso, ele deu o caminho — e disse que era *"só
+uma ideia"*, o que não tira o valor dela: é a saída mais barata que existe para
+crescer sem enchimento.
+
+> ***"uma outra estratégia, seria repetir o mesmo exercício em duas folhas,
+> claro questões diferentes, isso dobraria a atividade"***
+>
+> ***"só não dobrar quando for cruzadinha, memória, caça palavras, forca, etc"***
+
+**O limite é dele e é acertado:** cruzadinha, memória, caça-palavras e forca são
+mecânicas **longas** — uma delas já come cinco minutos e, repetida, cansa em vez
+de fixar. As curtas (escolher, ligar, classificar, julgar, marcar, digitar,
+completar) é que dobram bem.
+
+⚠️ **E A CONDIÇÃO DA CASA CONTINUA POR CIMA DA IDEIA DELE:** a **segunda folha do
+par sobe um degrau**. Ele mesmo pagou a lição do outro lado — *"as crianças me
+dizem 'isso eu já fiz', tô fazendo de novo"* —, e "questões diferentes" na mesma
+tela, com o mesmo apoio e a mesma dificuldade, é justamente o que faz a criança
+dizer isso. O degrau pode ser: o apoio que some, a figura que sai, a peça que
+fica mais difícil, o mesmo conteúdo num mundo novo.
+
+**Os quatro pares do *Lost & Found*, como exemplo de como fica na prática:**
+
+| par | o que repete | **o degrau da segunda** |
+|---|---|---|
+| 30 → 31 | juntar duas frases numa só | na 30 a oração entra **no fim**; na 31, **no meio**, entre vírgulas |
+| 19 → 28 | achar dentro da frase | na 19 ela acha **o pronome**; na 28, **a oração inteira** |
+| 2 → 3 → 29 | classificar em gavetas | duas gavetas → três gavetas → gavetas de **pedaços de frase** |
+| 12 → 34 | contável × incontável | o mesmo conteúdo em **dois mundos**: o safári e o balcão |
+
+**A conta de quanto rende:** o caderno de inglês foi montado com 22 folhas e
+chegou a 35 — treze folhas novas, **nenhuma de enchimento**, todas saídas do
+mesmo crivo (`POTE-ING8.md`), de folhas de papel que tinham ficado de fora por
+falta de lugar e não por falta de valor. **Quando a colheita é grande, não falta
+material: falta ler o crivo de novo.**
 
 ### REGRA DA ORIGEM — "veja o que as atividades pedem que o estudante FAÇA"
 Palavras dele (set/2026), e depois, mais direto: *"seria legal se vc conseguisse
@@ -195,10 +249,87 @@ dele entra junto.
 
 ---
 
+## 2c. 🇬🇧 CADERNO DE LÍNGUA ESTRANGEIRA — a VOZ é bilíngue, e isso é medido
+
+> Ordem antiga do Marcos (ago/2026, no caderno de inglês do 9º ano): **"voz
+> inglesa no inglês"**. Ela JÁ ESTAVA implementada no `entregar.yml` desde
+> então, e eu quase a redescobri do zero em 15/set — este parágrafo existe para
+> a próxima sessão não gastar a mesma volta.
+
+**Como se usa.** Cada item do `falas.json` aceita o campo **`lang: "en"`**. O
+`entregar.yml` (linha ~264) lê esse campo e grava aquela fala com
+**`en-US-GuyNeural`** em vez do `pt-BR-AntonioNeural` da casa. No
+`gerar_falas.py` do caderno, a forma limpa é ter **duas funções**: `p()` para o
+português e **`pe()` para o inglês**, com um conjunto `EN` que a saída consulta
+(está escrito assim no `_ing8/gerar_falas.py` — copiar de lá).
+
+**Por que não é enfeite.** Voz portuguesa lendo *whose*, *which* e *countable*
+ensina a pronúncia errada para a turma inteira — e num caderno de língua a
+criança que ainda lê devagar escolhe **pelo som**. Sem isso, a atividade ensina
+o contrário do que diz ensinar. No *Lost & Found* são **161 falas inglesas e
+130 portuguesas**, no mesmo caderno.
+
+**As duas armadilhas medidas, as duas em 15/set/2026:**
+
+1. **Reticência ou acento português numa fala marcada `lang:"en"` REPROVA** — e
+   com razão: foi assim que uma fala portuguesa saiu com sotaque americano e o
+   Marcos ouviu (*"fala rato em inglês"*). Consequências práticas: a lacuna
+   falada **não pode** ser `"... mmm ..."`; use a palavra **`blank`**, que é o
+   que o professor de inglês diz de verdade ao ler uma frase com buraco em voz
+   alta. E **nome próprio com acento não passa**: a frase verbatim *"The player
+   who scored that goal was Pelé"* (b05) teve de sair do caderno — ou se
+   escrevia *Pele*, errando o nome dele, ou se afrouxava o portão por uma frase.
+2. **As armadilhas de pronúncia da lista do `_qa/falas.py` são da voz
+   PORTUGUESA.** Ela reprova *"mouse"* porque o `pt-BR` lê "maus" — o que é
+   verdade. Mas numa fala inglesa *mouse* é a palavra certa e não tem
+   substituta. **O portão foi consertado em 15/set** para pular a lista quando
+   `lang == "en"`; se algum dia ele voltar a cobrar isso, é regressão.
+
+---
+
 ## 3. ⚠️ OS ERROS JÁ PAGOS NESTE FORMATO — um por um
 
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o
 > Marcos, ou chegou até a criança.
+
+### 3.000000 ⭐⭐ O PORTÃO DA DURAÇÃO MEDIA A LISTA ERRADA EM TODO CADERNO NOVO (15/set/2026)
+
+**O sintoma:** o *Lost & Found*, com 22 folhas e 126 itens, reprovou no portão
+**3g duração** com *"a atividade não enche a aula: estimativa 11,4 min"*. Onze
+minutos para 22 folhas é absurdo na cara, e foi isso que salvou — se tivesse
+dado 38 min eu teria acreditado e enchido o caderno de folha de enchimento, que
+é justamente o que a regra do tamanho proíbe.
+
+**A causa.** O `_qa/duracao.py` procurava os itens com
+
+```python
+re.search(r'/\*ITENS-INI\*/\s*var\s+ITENS\s*=\s*(\{.*?\})\s*;', html, re.S)
+```
+
+— o `\s*` exige que `var ITENS` venha **colado** ao marcador. Só que o esqueleto
+`_padrao/FOLHA-VIVA/index.html` escreve, de fábrica, um comentário dentro do
+bloco (o aviso de que a posição é a identidade). Ou seja: **todo caderno que
+nasce do esqueleto cai nisso**, e o do inglês foi o primeiro a nascer assim.
+Sem casar, o portão caía num galho seguinte e media o `NOMES` — **22 itens**,
+que é o número de FOLHAS, onde havia 126.
+
+**O conserto:** o regex agora atravessa comentários
+(`(?:\s|/\*.*?\*/)*`). Depois dele: 32 a 60 min, que é a medida de verdade.
+
+**A lição, que não é sobre regex:** um portão que mede a **lista errada** não é
+rigoroso — ele é uma medida falsa, e ainda por cima falsa **para o lado de
+reprovar**, que é o lado em que a gente acredita sem conferir. Portão que
+reprova também tem de ser conferido; "reprovou, então tem defeito" é a mesma
+preguiça que "imprimiu nada, então passou".
+
+### 3.0000000 ⚠️ PREFIXO DE DUAS LETRAS NA CHAVE DE FALA COLIDE COM OUTRA ATIVIDADE (15/set/2026)
+
+Chaves de fala minhas, `fr_q1` (de *frase*) e `tr_t1` (de *três*), foram
+acusadas pelo `_qa/clone.py` (item 8, PREFIXO ALHEIO) como restos do `_fra1` e
+do `_trem`. **E ele estava certo**: de fora não há como distinguir `fr_` de
+*frase* do `fr_` de `_fra1`. O conserto foi renomear para `frase_` e `tres_`.
+**Regra:** chave de fala nunca começa com duas ou três letras + `_` — escreva a
+palavra inteira. Custa nada e some com a família toda.
 
 ### 3.00000 ⭐⭐⭐ O PORTÃO QUE MEDIA NUMA PONTA E NÃO NA OUTRA — quatro publicações falharam e eu não sabia por quê
 

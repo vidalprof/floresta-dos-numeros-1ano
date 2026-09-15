@@ -580,11 +580,28 @@ def confere(pasta, piso_min=40.0):
               % piso_min)
         return 0
 
-    if hi < piso_min:
+    # ⭐⭐ QUEM MANDA É A PONTA BAIXA, E ISSO MUDOU EM 15/set/2026 POR MEDIÇÃO DE
+    #    SALA. O Marcos cronometrou a turma usando as atividades de verdade e
+    #    disse: ***"verifiquei a execução das atividades, essas 20 25 folhas
+    #    duram 30 minutos"***.
+    #    Confrontando com o que ESTE portão vinha dizendo dos mesmos cadernos:
+    #    ele imprimia faixas como "32 a 60 min" e APROVAVA olhando o 60. A ponta
+    #    baixa (32) é a que bate com o relógio dele (30); a alta é a criança que
+    #    toca em TODO alto-falante, que existe mas é a minoria.
+    #    Ou seja: aprovar pelo `hi` era aprovar pela criança mais lenta da turma
+    #    e mandar para a escola uma atividade que a turma inteira termina em
+    #    trinta minutos — a aula tem 55. Dezenove cadernos passaram por aqui
+    #    assim. Agora o piso é cobrado da PONTA BAIXA.
+    #    ⚠️ A âncora é a única medida com CRIANÇA E RELÓGIO que este portão tem;
+    #       todo o resto dele é palpite declarado. Ela vale mais que a conta.
+    if lo < piso_min:
         # ⚠️ (set/2026) imprimia "40 min" arredondado e reprovava por 39,6 < 40 —
         #    a tela dizia uma coisa e o veredito outra. Reprova mostra o decimal.
-        print(u"   !! A ATIVIDADE NAO ENCHE A AULA (piso: %d min; estimativa exata: %.1f min)."
-              % (piso_min, mins))
+        print(u"   !! A ATIVIDADE NAO ENCHE A AULA (piso: %d min na PONTA BAIXA;"
+              u" faixa: %.1f a %.1f min)." % (piso_min, lo, hi))
+        print(u"   (a ponta baixa e a crianca que so ouve o retorno — a maioria da")
+        print(u"    turma. Foi ela que o Marcos cronometrou em 15/set: '20 25 folhas")
+        print(u"    duram 30 minutos'.)")
         print(u"   a aula do laboratorio dura 55 min. Terminando em %.1f, a turma"
               % mins)
         print(u"   fica ociosa e o professor sem plano B — foi essa a cobranca.")
