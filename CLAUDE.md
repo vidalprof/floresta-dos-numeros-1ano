@@ -14,11 +14,21 @@ Leia tudo antes de agir e responda sempre em **português**.
 > qualquer um deles, ler o `SEQUENCIAS-DIDATICAS.md` inteiro.
 >
 > **Três regras de lá que valem citar aqui:** sequência **nova** tem **no mínimo
-> 20 folhas** (o piso era 25 — medido, é o que enche os 55 min da criança
-> rápida — e o Marcos baixou para 20 em 14/set/2026 por velocidade de produção:
-> *"pode baixar para 20"*, *"digo nas próximas atividades"*; os cadernos que já
-> existem ficam com as 25 que têm, e piso não é teto: se o conteúdo der 25,
-> ficam 25 — o que está proibido é folha de enchimento para fechar número);
+> 35 folhas** — ⭐ **e este piso é de 15/set/2026, por CRONÔMETRO NA SALA**: o
+> Marcos mediu a turma e disse *"verifiquei a execução das atividades, essas 20
+> 25 folhas duram 30 minutos, precisamos elevar um pouco mais as folhas para
+> umas 35 folhas, as próximas atividades"*. (O piso já foi 25 em 12/set e 20 em
+> 14/set; os cadernos que já existem **não crescem nem encolhem**. E piso não é
+> teto: se o conteúdo der 40, ficam 40 — o proibido é folha de enchimento para
+> fechar número. **Como chegar às 35 sem encher:** a estratégia dele, *"repetir
+> o mesmo exercício em duas folhas, claro questões diferentes"*, **menos**
+> cruzadinha, memória, caça-palavras e forca, que são longas — e a segunda folha
+> do par **sobe um degrau**, senão volta o *"isso eu já fiz"*.)
+> ⚠️ **A medição dele consertou um portão meu:** o `_qa/duracao.py` imprimia
+> *"32 a 60 min"* e **aprovava olhando o 60**; a ponta BAIXA (28–32) é a que
+> bate com o relógio dele. Dezenove cadernos passaram assim. Hoje o piso é
+> cobrado da ponta baixa. **Quando houver uma medida de sala e uma conta minha,
+> a medida de sala ganha.**
 > **o fecho tem que ser alcançável a qualquer momento**, senão o tamanho castiga
 > justamente quem vai devagar; e **a banca deste formato é outra** —
 > **`bash _qa/auditar_folha.sh <pasta>`**, 19 portões (~4 min), e NÃO a
