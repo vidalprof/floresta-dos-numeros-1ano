@@ -83,16 +83,16 @@ por inteiro. O que este plano acrescenta, por ser 2º ANO:
 
 | # | caderno | colheita | crivo | montado | no ar |
 |---|---|---|---|---|---|
-| 1 | A sílaba tem sempre uma vogal | ⏳ pedida | — | — | — |
-| 2 | Quantos pedaços tem a palavra | — | — | — | — |
-| 3 | Troque um pedaço | — | — | — | — |
-| 4 | O som que sai pelo nariz | — | — | — | — |
-| 5 | O ponto que muda a voz | — | — | — | — |
-| 6 | Mesma coisa · o contrário | — | — | — | — |
-| 7 | O grandão e o pequenininho | — | — | — | — |
-| 8 | O que rima e o que não rima | — | — | — | — |
-| 9 | A história tem um problema | — | — | — | — |
-| 10 | A notícia e a manchete | — | — | — | — |
+| 1 | **O Armário das Quatro Gavetas** (`_sil2`) | ✅ 120 colhidas, 89 únicas | ✅ `POTE-SIL2.md` | ✅ 35 folhas | ⏳ |
+| 2 | Quantos pedaços tem a palavra | ✅ coberto pela colheita do degrau 1 | — | — | — |
+| 3 | Troque um pedaço | ✅ 40 em `_sequencias/folhas_troca2` | — | — | — |
+| 4 | O som que sai pelo nariz | ✅ 40 em `_sequencias/folhas_nasal2` | — | — | — |
+| 5 | O ponto que muda a voz | ✅ 40 em `_sequencias/folhas_ponto2` | — | — | — |
+| 6 | Mesma coisa · o contrário | ✅ 40 em `_sequencias/folhas_sinon2` | — | — | — |
+| 7 | O grandão e o pequenininho | ✅ 40 em `_sequencias/folhas_aumdim2` | — | — | — |
+| 8 | O que rima e o que não rima | ✅ 40 em `_sequencias/folhas_rima2` | — | — | — |
+| 9 | A história tem um problema | ✅ 40 em `_sequencias/folhas_narra2` | — | — | — |
+| 10 | A notícia e a manchete | ✅ 40 em `_sequencias/folhas_not2` | — | — | — |
 
 ⚠️ **Esta tabela se atualiza a cada caderno, no mesmo commit.** É por ela que a
 próxima sessão sabe onde parou — e é a única fonte disso.

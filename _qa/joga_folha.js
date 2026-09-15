@@ -447,7 +447,20 @@ async function executa(pg, id, plano) {
       if (!deu) {
         const achou = await pg.$('.letrabt[aria-label="Letra ' + ch + '"]:not(.usada)')
           || await pg.$('#tk button[aria-label="Letra ' + ch + '"]');
-        if (achou) await achou.click().catch(() => {});
+        if (achou) { await achou.click().catch(() => {}); }
+        else {
+          /* ⚠️⚠️ SEM TECLA E SEM BOTÃO, SOBRA A LETRA SEM ACENTO — e isso não é
+             um truque para o portão passar: é o que a CRIANÇA faz. Desde
+             15/set/2026 a atividade aceita a palavra com e sem acento (ordem do
+             Marcos: *"faça que tanto com o sem dê certo"*), justamente porque o
+             teclado de verdade do PC da escola não tem Ç nem vogal acentuada
+             numa tecla só. Digitar HABITO onde está escrito HÁBITO é o caminho
+             normal, não o caminho de teste. */
+          const semAc = { 'Á':'A','À':'A','Â':'A','Ã':'A','Ä':'A','É':'E','È':'E',
+            'Ê':'E','Ë':'E','Í':'I','Ì':'I','Î':'I','Ï':'I','Ó':'O','Ò':'O',
+            'Ô':'O','Õ':'O','Ö':'O','Ú':'U','Ù':'U','Û':'U','Ü':'U','Ç':'C' }[ch];
+          if (semAc) await pg.keyboard.press(semAc).catch(() => {});
+        }
       }
       await pg.waitForTimeout(90);
     }
