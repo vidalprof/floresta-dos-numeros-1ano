@@ -309,7 +309,11 @@ p(u"p16enun", u"Folha dezesseis. Agora são palavras compridas. Diga a palavra "
 for k, O in ORD.items():
     pg = u"15" if k[0] == u"q" else u"16"
     p(u"ord_" + k, O[u"r"] + u".")
-    p(u"certo" + pg + u"_" + k, u"Isso! " + O[u"r"] + u".")
+    # ⚠️ A FALA CURTA DEMAIS SAI TORTA, e o ouvido da entrega pegou: de
+    #   "Isso! CAVALO." ele ouviu só "isso". Duas palavras soltas não dão
+    #   à voz contexto nenhum, e a criança também ganha pouco com elas.
+    #   A frase inteira diz o que ela FEZ.
+    p(u"certo" + pg + u"_" + k, u"Isso! Você montou a palavra " + O[u"r"] + u".")
     p(u"dica" + pg + u"_" + k, u"Escute a palavra de novo e pense em qual "
                                u"pedaço ela começa.")
 
