@@ -14,7 +14,7 @@ u"""
     primeira folha dos reinos. Legenda é texto, e texto tem que ler.
 
  Uso: python3 _sequencias/contato_crivo.py <assunto> <pasta-das-folhas> \\
-          [--por-folha 4] [--cols 4]
+          [--por-folha 4] [--cols 4] [--titulo "AS %d FOLHAS COLHIDAS"]
       As legendas saem de `<assunto>.txt` ao lado (uma linha por folha:
       `d07|a COROA dos 5 reinos: marque as caracteristicas`), ou do nome do
       arquivo quando o .txt não existir.
@@ -67,6 +67,19 @@ def main():
     pasta = sys.argv[2]
     cols = 4
     por_folha = 8
+    # ⭐ --titulo (15/set/2026). A ordem do Marcos ficou mais larga: *"sempre me
+    #    mostre as atividades que vc colheu"* — ou seja, mostra-se a COLHEITA
+    #    INTEIRA, antes de escolher, e não só as aprovadas da entrega (§2b).
+    #    O título era fixo em "AS QUE PASSARAM NO CRIVO"; numa folha de contato
+    #    da colheita isso seria MENTIRA na faixa verde, bem grande. Agora o
+    #    chamador diz o que a folha é, e o padrão continua o de antes.
+    titulo = None
+    rotulo = u"aprovadas"          # entra no NOME do arquivo de saída
+    if u"--titulo" in sys.argv:
+        titulo = sys.argv[sys.argv.index(u"--titulo") + 1]
+        rotulo = u"colheita"       # senão o arquivo se chamaria "aprovadas" também
+    if u"--rotulo" in sys.argv:
+        rotulo = sys.argv[sys.argv.index(u"--rotulo") + 1]
     if u"--cols" in sys.argv:
         cols = int(sys.argv[sys.argv.index(u"--cols") + 1])
     if u"--por-folha" in sys.argv:
@@ -90,7 +103,11 @@ def main():
     if not os.path.isdir(SAIDA):
         os.makedirs(SAIDA)
 
-    CEL_W, CEL_H, LEG_H = 390, 560, 74
+    # ⚠️ LEG_H de 74 dava 3 linhas e o veredito da colheita cortava no meio de
+    #    uma palavra (medido em 15/set, contato-folha do Inglês). 4 linhas é o
+    #    que cabe um veredito inteiro; o texto completo continua no POTE.
+    CEL_W, CEL_H, LEG_H = 390, 560, 96
+    MAX_LIN = 4
     MARG, TOPO = 14, 86
     f_tit = fonte(30, True)
     f_sub = fonte(16)
@@ -123,11 +140,15 @@ def main():
         dr = ImageDraw.Draw(im)
         dr.rectangle([0, 0, W, 70], fill=u"#1f7a4d")
         dr.text((MARG + 6, 14),
-                u"AS %d FOLHAS DE PAPEL QUE PASSARAM NO CRIVO" % quantas,
+                (titulo % quantas if titulo and u"%d" in titulo
+                 else titulo or
+                 u"AS %d FOLHAS DE PAPEL QUE PASSARAM NO CRIVO" % quantas),
                 font=f_tit, fill=u"#ffffff")
         dr.text((MARG + 8, 48),
-                u"%s  ·  folha %d de %d  ·  cada uma com o que ela vira no caderno"
-                % (assunto.replace(u"-", u" "), n, len(feitas)),
+                u"%s  ·  folha %d de %d  ·  %s"
+                % (assunto.replace(u"-", u" "), n, len(feitas),
+                   u"embaixo de cada uma, o VEREDITO do crivo" if titulo
+                   else u"cada uma com o que ela vira no caderno"),
                 font=f_sub, fill=u"#d9f0e3")
         for i, (cod, cam) in enumerate(grupo):
             cx = MARG + (i % cols) * (CEL_W + MARG)
@@ -145,10 +166,10 @@ def main():
             dr.text((cx + 2, cy + CEL_H + 6), cod.upper(), font=f_cod, fill=u"#1f7a4d")
             larg = dr.textlength(cod.upper(), font=f_cod) + 10
             for k, lin in enumerate(quebra(legendas.get(cod, u""), f_leg,
-                                           CEL_W - larg - 4, dr)[:3]):
+                                           CEL_W - larg - 4, dr)[:MAX_LIN]):
                 dr.text((cx + 2 + larg, cy + CEL_H + 8 + k * 19), lin,
                         font=f_leg, fill=u"#3b4059")
-        cam_out = os.path.join(SAIDA, u"%s-aprovadas-%d.png" % (assunto, n))
+        cam_out = os.path.join(SAIDA, u"%s-%s-%d.png" % (assunto, rotulo, n))
         im.save(cam_out, optimize=True)
         saidas.append(cam_out)
         print(u"   %s" % cam_out)
