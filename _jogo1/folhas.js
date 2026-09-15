@@ -761,6 +761,67 @@ function f10(d, pi){
   d.appendChild(mural);
 }
 
+/* ---------- ROLAR A PALAVRA PARA CIMA DO TECLADO ----------
+   ⚠️⚠️ O TECLADO TAPAVA A ATIVIDADE, e o Marcos viu no celular (15/set/2026):
+      *"ele preenche a tela e não dá para ver a atividade"*. Medido: na
+      cruzadinha de 360x640 o teclado ocupava 368 px de 640 e a grade ficava
+      INTEIRA por baixo dele — a criança escrevia às cegas.
+   ⚠️ E A REGRA TEM DOIS DEGRAUS, porque medir só um não bastou:
+      1. se a PALAVRA inteira cabe na faixa que sobra, ela sobe inteira;
+      2. se não cabe (palavra em pé, tela de 320x568 — medido), sobe a CASINHA
+         QUE ESTÁ SENDO ESCRITA, centrada na faixa. É o que um campo de texto
+         faz: mantém à vista a letra que a pessoa está digitando.
+   Por isso ela é chamada duas vezes: ao abrir o teclado e a cada letra.
+   ⚠️⚠️ E ELA ATENDE OS DOIS TECLADOS DA CASA, o que é a lição paga aqui
+      (15/set/2026): há dois desenhos de teclado nos cadernos de folha viva —
+      o da CRUZADINHA, que escreve numa fila de casinhas (`CRUZ.E.cels`), e o
+      da SÍLABA/PALAVRA, que escreve numa quadra só (`ATIVA.q`). Eu escrevi
+      esta função ancorada no primeiro e a enfiei nos dezoito cadernos pelo
+      `function abreCruz(` — que só existe em TRÊS. Nos outros quinze ficou a
+      CHAMADA sem a função: `setTimeout(rolaParaCruz, 60)` estourava
+      ReferenceError e matava o resto de `ativa()`, que era justamente quem
+      escrevia a dica e falava com a criança. O teclado abria mudo.
+      O `node --check` não vê isso (a sintaxe está perfeita); quem vê é o
+      `_qa/funcoes.py`, o portão "função que não existe" — que eu não rodei. */
+function rolaParaCruz(){
+  /* de quem é a vez: a fila da cruzadinha, ou a quadra única do outro teclado */
+  var cs = [], i, andando = 0;
+  if(typeof CRUZ !== "undefined" && CRUZ && CRUZ.E && CRUZ.E.cels){
+    for(i = 0; i < CRUZ.E.cels.length; i++)
+      if(CRUZ.E.cels[i] && CRUZ.E.cels[i].getBoundingClientRect) cs.push(CRUZ.E.cels[i]);
+    andando = CRUZ.val ? CRUZ.val.length : 0;
+  } else if(typeof ATIVA !== "undefined" && ATIVA && ATIVA.q && ATIVA.q.getBoundingClientRect){
+    cs.push(ATIVA.q);
+  }
+  if(!cs.length) return;
+  var tkel = document.getElementById("teclado");
+  if(!tkel || tkel.className.indexOf("aberto") < 0) return;
+  var tk = tkel.getBoundingClientRect(), topo = 56, pe = tk.top - 10;
+  /* ⚠️ A RESERVA DE ROLAGEM SAI DA ALTURA REAL DO TECLADO, e não de um
+     número fixo. Ela nasceu como `padding-bottom:460px` no `comtec`, que
+     é certo para o teclado de LETRAS (336 px medidos a 360x640, 41
+     teclas) e exagerado para o de NÚMEROS (160 px, 12 teclas): sobravam
+     300 px de vazio para a criança rolar à toa enquanto digita. Como o
+     `comtec` sai da tag `body` ao fechar, a variável pode ficar guardada
+     sem fazer mal nenhum. */
+  document.documentElement.style.setProperty("--tech", Math.ceil(tk.height + 40) + "px");
+  if(pe <= topo) return;
+  var cima = 1e9, baixo = -1e9;
+  for(i = 0; i < cs.length; i++){
+    var r = cs[i].getBoundingClientRect();
+    if(r.top < cima) cima = r.top;
+    if(r.bottom > baixo) baixo = r.bottom;
+  }
+  var d = 0;
+  if(baixo - cima <= pe - topo){
+    if(baixo > pe) d = baixo - pe;
+    if(cima - d < topo) d = cima - topo;
+  } else {
+    var at = cs[Math.min(andando, cs.length - 1)].getBoundingClientRect();
+    d = at.top - (topo + (pe - topo) / 2 - at.height / 2);
+  }
+  if(Math.abs(d) > 2) window.scrollBy(0, d);
+}
 function montaLigar(caixa, pi, tag, pares, pagina){
   var box = el("div", "ligar"), ce = el("div", "col"), cd = el("div", "col");
   var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg"); svg.setAttribute("class", "linhas");

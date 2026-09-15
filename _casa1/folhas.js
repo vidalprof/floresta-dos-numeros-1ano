@@ -591,6 +591,19 @@ function f09(d, pi){
     chips[MAT[m].n] = {el: ch, id: id, m: m};
     if(ST.resp[id] && postas[MAT[m].n])
       postas[MAT[m].n].forEach(function(k){ cels[k].className = "dcel achada"; });
+    /* ⚠️ AS DUAS PONTAS SE DECLARAM (`cp-<id>-a` na primeira letra, `cp-<id>-z`
+       na última) para o JOGADOR DA BANCA poder resolver esta folha. Sem elas ele
+       dizia "não sei jogar esta peça" e saía como dívida — e foi exatamente por
+       isso que o beco sem saída desta folha ficou no ar até o Marcos tropeçar
+       nele na sala. Folha que o jogador não alcança é folha que ninguém mede.
+       Só se a célula ainda não tiver dono: duas palavras podem cruzar numa
+       ponta, e sobrescrever faria o jogador acusar de defeito uma folha boa. */
+    var pp = postas[MAT[m].n];
+    if(pp && pp.length){
+      var ca = cels[pp[0]], cz = cels[pp[pp.length - 1]];
+      if(ca && !ca.getAttribute("data-qa")) ca.setAttribute("data-qa", "cp-" + id + "-a");
+      if(cz && !cz.getAttribute("data-qa")) cz.setAttribute("data-qa", "cp-" + id + "-z");
+    }
     lista.appendChild(ch);
   });
   d.appendChild(lista); d.appendChild(dia);
@@ -612,8 +625,41 @@ function f09(d, pi){
     ch.el.className = "pmat achada";
     acertou(ch.id, "certo" + pi + "_" + ch.m);
   }
+  /* ⚠️⚠️ AS DUAS PORTAS ESTAVAM QUEBRADAS — E O MARCOS PEGOU NA SALA
+     (15/set/2026): *"a atividade do diagrama, a número 9 não funciona"*. Eu já
+     tinha MEDIDO este mesmo defeito no `_ort5b` no dia anterior e avisado que o
+     código gêmeo estava aqui e no `_jogo1`; ficou esperando decisão, e quem
+     pagou a espera foi a criança. Lição: código gêmeo com defeito medido se
+     conserta na mesma rodada, nos três lugares.
+     O que estava errado: o `pointerdown` zerava o começo do traço em TODA letra
+     tocada. Com isso:
+       · o toque-toque (primeira letra, última letra) nunca fechava — o segundo
+         toque virava um novo começo;
+       · o arrastar também não, porque quem fechava era o `onclick`, e num
+         arrasto de A até Z o clique não cai em Z.
+     Ou seja: a folha inteira era um beco sem saída.
+     O conserto: o toque só COMEÇA se não houver começo, e o arrasto FECHA no
+     `pointerup`, na letra em que o dedo parou. */
+  var puloClique = false;
+  function celDoPonto(ev){
+    var e = document.elementFromPoint(ev.clientX, ev.clientY);
+    while(e && e !== document.body){
+      if(e._i !== undefined && e._i !== null) return e;
+      e = e.parentNode;
+    }
+    return null;
+  }
+  function fecha(ate){
+    conclui(caminho(indo, ate));
+    indo = null; puloClique = true;
+    setTimeout(function(){ puloClique = false; }, 80);
+  }
   cels.forEach(function(c){
-    c.addEventListener("pointerdown", function(ev){ ev.preventDefault(); indo = c._i; limpa(); c.className = "dcel tracando"; });
+    c.addEventListener("pointerdown", function(ev){
+      ev.preventDefault();
+      if(indo !== null && indo !== c._i) return;   /* já há começo: este toque FECHA */
+      indo = c._i; limpa(); c.className = "dcel tracando";
+    });
     c.addEventListener("pointerenter", function(){
       if(indo === null) return;
       var cam = caminho(indo, c._i);
@@ -624,12 +670,17 @@ function f09(d, pi){
        preso no primeiro alvo). Por isso o toque também fecha por TOQUE-TOQUE:
        primeira letra, última letra. Duas portas, sempre. */
     c.onclick = function(){
+      if(puloClique) return;
       if(indo === null || indo === c._i){ indo = c._i; limpa(); c.className = "dcel tracando"; return; }
-      var cam = caminho(indo, c._i);
-      conclui(cam); indo = null;
+      fecha(c._i);
     };
   });
-  document.addEventListener("pointerup", function(){ if(indo !== null) limpa(); });
+  document.addEventListener("pointerup", function(ev){
+    if(indo === null) return;
+    var c = celDoPonto(ev);
+    if(c && c._i !== indo && caminho(indo, c._i)){ fecha(c._i); return; }
+    limpa();
+  });
 }
 
 /* ============ 10 — POR QUE É FEITA DESSE MATERIAL? ============
@@ -940,16 +991,40 @@ var CRUZ = null;
       2. se não cabe (palavra em pé, tela de 320x568 — medido), sobe a CASINHA
          QUE ESTÁ SENDO ESCRITA, centrada na faixa. É o que um campo de texto
          faz: mantém à vista a letra que a pessoa está digitando.
-   Por isso ela é chamada duas vezes: ao abrir o teclado e a cada letra. */
+   Por isso ela é chamada duas vezes: ao abrir o teclado e a cada letra.
+   ⚠️⚠️ E ELA ATENDE OS DOIS TECLADOS DA CASA, o que é a lição paga aqui
+      (15/set/2026): há dois desenhos de teclado nos cadernos de folha viva —
+      o da CRUZADINHA, que escreve numa fila de casinhas (`CRUZ.E.cels`), e o
+      da SÍLABA/PALAVRA, que escreve numa quadra só (`ATIVA.q`). Eu escrevi
+      esta função ancorada no primeiro e a enfiei nos dezoito cadernos pelo
+      `function abreCruz(` — que só existe em TRÊS. Nos outros quinze ficou a
+      CHAMADA sem a função: `setTimeout(rolaParaCruz, 60)` estourava
+      ReferenceError e matava o resto de `ativa()`, que era justamente quem
+      escrevia a dica e falava com a criança. O teclado abria mudo.
+      O `node --check` não vê isso (a sintaxe está perfeita); quem vê é o
+      `_qa/funcoes.py`, o portão "função que não existe" — que eu não rodei. */
 function rolaParaCruz(){
-  if(!CRUZ || !CRUZ.E) return;
-  var cs = [], i;
-  for(i = 0; i < CRUZ.E.cels.length; i++)
-    if(CRUZ.E.cels[i] && CRUZ.E.cels[i].getBoundingClientRect) cs.push(CRUZ.E.cels[i]);
+  /* de quem é a vez: a fila da cruzadinha, ou a quadra única do outro teclado */
+  var cs = [], i, andando = 0;
+  if(typeof CRUZ !== "undefined" && CRUZ && CRUZ.E && CRUZ.E.cels){
+    for(i = 0; i < CRUZ.E.cels.length; i++)
+      if(CRUZ.E.cels[i] && CRUZ.E.cels[i].getBoundingClientRect) cs.push(CRUZ.E.cels[i]);
+    andando = CRUZ.val ? CRUZ.val.length : 0;
+  } else if(typeof ATIVA !== "undefined" && ATIVA && ATIVA.q && ATIVA.q.getBoundingClientRect){
+    cs.push(ATIVA.q);
+  }
   if(!cs.length) return;
   var tkel = document.getElementById("teclado");
   if(!tkel || tkel.className.indexOf("aberto") < 0) return;
   var tk = tkel.getBoundingClientRect(), topo = 56, pe = tk.top - 10;
+  /* ⚠️ A RESERVA DE ROLAGEM SAI DA ALTURA REAL DO TECLADO, e não de um
+     número fixo. Ela nasceu como `padding-bottom:460px` no `comtec`, que
+     é certo para o teclado de LETRAS (336 px medidos a 360x640, 41
+     teclas) e exagerado para o de NÚMEROS (160 px, 12 teclas): sobravam
+     300 px de vazio para a criança rolar à toa enquanto digita. Como o
+     `comtec` sai da tag `body` ao fechar, a variável pode ficar guardada
+     sem fazer mal nenhum. */
+  document.documentElement.style.setProperty("--tech", Math.ceil(tk.height + 40) + "px");
   if(pe <= topo) return;
   var cima = 1e9, baixo = -1e9;
   for(i = 0; i < cs.length; i++){
@@ -962,7 +1037,7 @@ function rolaParaCruz(){
     if(baixo > pe) d = baixo - pe;
     if(cima - d < topo) d = cima - topo;
   } else {
-    var at = cs[Math.min(CRUZ.val.length, cs.length - 1)].getBoundingClientRect();
+    var at = cs[Math.min(andando, cs.length - 1)].getBoundingClientRect();
     d = at.top - (topo + (pe - topo) / 2 - at.height / 2);
   }
   if(Math.abs(d) > 2) window.scrollBy(0, d);

@@ -161,6 +161,41 @@ url
 # ---- o que é chamado (ignora metodo: algo.metodo() )
 chamadas = set(re.findall(r"(?<![\w$.])([A-Za-z_$][\w$]*)\s*\(", js))
 
+# ⚠️⚠️ LICAO PAGA, E CARA (15/set/2026) — A FUNCAO ENTREGUE SEM PARENTESES.
+#    Eu inseri `setTimeout(rolaParaCruz, 60)` em dezoito cadernos e a funcao so
+#    ficou definida em TRES. Nos outros quinze o teclado abria e estourava
+#    ReferenceError NA LINHA DA CHAMADA, matando o resto da funcao que abria o
+#    teclado — a dica sumia e a voz calava. E este portao, que existe justamente
+#    para "funcao que nao existe", disse OK nos dezoito: ele so procurava
+#    `nome(`, com parenteses, e `setTimeout(rolaParaCruz, 60)` entrega o nome
+#    NU. O `node --check` tambem passa (a sintaxe esta perfeita).
+#    Uma funcao entregue para outra executar e uma funcao chamada — o estouro e
+#    exatamente o mesmo, e chega na mao da crianca do mesmo jeito. Entao ela
+#    conta aqui. So as entregas de UM NOME SO: `function(){...}` anonima e
+#    `algo.metodo` ja sao outra coisa e ficam de fora.
+#    ⚠️ E A REGRA NASCEU LARGA DEMAIS, o que neste portao e pior que nao ter
+#       regra: na estreia ela acusou QUATRO inocentes de uma vez — `catch(e3){}`
+#       e `catch(erroMemoria){}`, que sao clausulas de try/catch e nao o metodo
+#       `.catch(fn)`, e o `null` de um `.then(null, ...)`. Portao que acusa
+#       inocente e portao que se aprende a ignorar. Por isso agora:
+#         · quem e METODO exige o PONTO na frente (`.catch`, `.forEach`);
+#         · quem e GLOBAL entra sem ponto (`setTimeout`), mas so esses;
+#         · palavra-chave e literal (`null`, `function`, `this`...) ficam fora.
+_GLOBAIS_CB = r"setTimeout|setInterval|requestAnimationFrame|queueMicrotask"
+_METODOS_CB = (r"addEventListener|removeEventListener|then|catch|forEach|map|"
+               r"filter|sort|some|every|find")
+_NAO_E_NOME = set("null undefined true false this function new typeof void "
+                  "return arguments".split())
+_entregues = set(re.findall(
+    r"(?<![\w$.])(?:" + _GLOBAIS_CB + r")\s*\(\s*([A-Za-z_$][\w$]*)\s*(?:,|\))", js))
+_entregues |= set(re.findall(
+    r"\.(?:" + _METODOS_CB + r")\s*\(\s*(?:[\"'][^\"']*[\"']\s*,\s*)?"
+    r"([A-Za-z_$][\w$]*)\s*(?:,|\))", js))
+# e a entrega por atribuicao: `x.onclick = nomeDaFuncao;`
+_entregues |= set(re.findall(
+    r"\.on[a-z]+\s*=\s*([A-Za-z_$][\w$]*)\s*[;,\n\)]", js))
+chamadas |= (_entregues - _NAO_E_NOME)
+
 # ⚠️ LICAO PAGA (ago/2026): a PECA roda sozinha na bancada, mas dentro da
 # atividade ela ganha os ajudantes do MOTOR (sPega, sPoe, mascoteFesteja...).
 # A casa ja tem o idioma certo para isso — `if(typeof sPega==="function")
