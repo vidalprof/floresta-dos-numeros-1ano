@@ -1,16 +1,29 @@
 # CLONAR UM CADERNO DE FOLHA VIVA — a lista das peças que TÊM que trocar
 
-> **Cobrança do Marcos (15/set/2026): *"todo esse processo precisa ser mais
-> preciso e rápido"*.** Ele estava certo, e este documento nasce da conta do que
-> me atrasou naquele dia. Montei A Fábrica de Nomes inteira e só *depois* fui
-> rodar os portões — nove reprovações em fila, cada uma custando uma volta. E
-> **cinco delas eram a mesma coisa**: pedaço do caderno de origem que veio junto
-> no clone e que eu esqueci de trocar.
+> # ⚠️ ISTO AQUI FICOU HISTÓRICO — **NÃO SE CLONA MAIS**
 >
-> O `_padrao/CLONAR-MOTOR.md` já faz esse papel para o motor. A folha viva não
-> tinha o dela. Agora tem — e tem script: **`bash _padrao/clonar_folha.sh
-> <origem> <nova> <prefixo>`** troca tudo o que está nesta lista e roda o
-> pré-voo. Ler isto antes de clonar à mão.
+> **A partir de 15/set/2026 o caderno novo nasce de um ESQUELETO VAZIO:**
+>
+> ```
+> bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>"
+> ```
+>
+> O `_padrao/FOLHA-VIVA/` tem a casca inteira — voz, teclado nas duas portas,
+> arrastar, gavetas, ligar, cruzadinha, boletim, relatório do professor, dossiê,
+> "continuar de onde parou" por 55 min, o aviso ao controle da sala — e
+> **conteúdo ZERO**. Não há o que esquecer de trocar, porque não há nada de
+> ninguém lá dentro. E o script recusa um prefixo já usado por outra atividade.
+>
+> **Por que mudou (pergunta do Marcos, 15/set/2026):** *"mas por que você está
+> clonando? Não é melhor colher as atividades da internet com o crivo e criar as
+> interatividades que são pedidas, sem clonar?"* — ele estava certo sobre o
+> problema. As interatividades nunca foram clonadas (o gesto sai do comando
+> impresso). O que vinha junto no clone era o **conteúdo** do caderno de origem,
+> e na Fábrica de Nomes isso respondeu por **cinco das nove reprovações**.
+>
+> **A tabela abaixo continua valendo como LISTA DE CONFERÊNCIA** para quem
+> precisar mexer num caderno antigo, e as armadilhas do fim do documento valem
+> para sempre — elas não são sobre clonar, são sobre a folha viva.
 
 ---
 

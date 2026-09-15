@@ -37,6 +37,61 @@ correspondente.
 
 ---
 
+## 1b. ⭐⭐ COMO NASCE UM CADERNO NOVO — do ESQUELETO, nunca de um clone
+
+```
+bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>"
+```
+
+**Pergunta do Marcos (15/set/2026), e ela mudou o método:** *"mas por que você
+está clonando? Não é melhor colher as atividades da internet com o crivo e criar
+as interatividades que são pedidas, sem clonar?"*
+
+Ele estava certo sobre o problema, e a conta da Fábrica de Nomes prova:
+
+| de onde veio o erro | quantos |
+|---|---|
+| a parte do método dele — colher, ler as trinta, o crivo, recortar as figuras | **0** |
+| conteúdo do caderno de origem que veio junto no clone | **5** |
+| contratos internos do motor montados errado | **3** |
+
+As **interatividades nunca foram clonadas** — o gesto sai do comando impresso na
+folha de papel, e a figura sai da mesma folha. O que se clonava era o **motor**,
+e com ele vinham os objetivos do relatório, a citação do currículo, o sorteio
+das folhas (`novaFolha`), o prefixo das figuras e da voz, o `var LIGAR`.
+
+**O `_padrao/FOLHA-VIVA/` é o motor sem conteúdo nenhum.** Vem pronto: navegação
+e progresso, voz com alto-falante em tudo, teclado de letras nas duas portas,
+arrastar com mouse/dedo/caneta, gavetas, ligar, cruzadinha, boletim da criança,
+relatório do professor pela medalha, dossiê, "continuar de onde parou" por 55
+minutos, a chave `1275@` e o aviso ao controle da sala. Vem vazio: `GESTOS`,
+`ITENS`, `DADOS`, `NOMES`, `CURRICULO`, `novaFolha()`, `OBJETIVOS` e as folhas.
+
+⚠️ **O script recusa prefixo já usado** por outra atividade — prefixo repetido
+faz dois cadernos brigarem pela mesma memória do "continuar de onde parou", e a
+criança abre um e cai no meio do outro.
+
+⚠️ **O recém-nascido JÁ ABRE LIMPO** (medido: zero erro de JS, zero 404), e o
+pré-voo reprova em três portões que dizem *"este caderno ainda está vazio"*, não
+*"o esqueleto está quebrado"*: `0b6` catálogo, `3g` duração e `1z` boot (o mp3
+da capa, que o `entregar.yml` grava). **Qualquer outra reprovação no primeiro
+minuto é defeito de verdade.**
+
+**A ordem que economiza voltas** — e foi a falta dela que custou caro em
+15/set, quando montei o caderno inteiro e só depois fui auditar:
+
+1. colher as folhas (`buscar-fotos.yml`) · 2. **ler as trinta, uma a uma**, e
+escrever o `POTE-<assunto>.md` · 3. o roteiro sai do **inventário de verbos** do
+crivo · 4. preencher os blocos marcados · 5. `gerar_falas.py` ·
+6. `bash _qa/previo.sh` · 7. **`node _qa/conta_folha.js`** ·
+8. `node _qa/joga_folha.js` · 9. `bash _qa/auditar_folha.sh`.
+
+As armadilhas medidas (nome com espaço num campo de teclado, acento no gabarito,
+chave igual à palavra da tela, o contrato do pincel) estão no
+`_padrao/CLONAR-FOLHA-VIVA.md`, que virou documento de conferência.
+
+---
+
 ## 2. ⭐⭐ AS REGRAS DO MARCOS — ditas por ele, com as palavras dele
 
 ### REGRA ZERO — "Nunca chute nunca invente" (12/set/2026)

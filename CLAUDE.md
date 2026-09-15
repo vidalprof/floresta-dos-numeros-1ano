@@ -27,6 +27,32 @@ Leia tudo antes de agir e responda sempre em **português**.
 > tipo de atividade?"* — e não tinha; a escolha dos portões dependia da minha
 > memória. Na estreia ela reprovou os ONZE cadernos, dez já no ar.
 
+> ## 🦴 CADERNO NOVO DE FOLHA VIVA NASCE DO **ESQUELETO**, NUNCA DE UM CLONE
+>
+> ```
+> bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>"
+> ```
+>
+> Pergunta do Marcos (15/set/2026): *"mas por que você está clonando? Não é
+> melhor colher as atividades da internet com o crivo e criar as interatividades
+> que são pedidas, sem clonar?"* — e a conta da Fábrica de Nomes deu razão a ele:
+> da parte do MÉTODO dele (colher, ler as trinta, o crivo, recortar as figuras)
+> saíram **zero** erros; do CONTEÚDO que veio junto no clone do motor saíram
+> **cinco** das nove reprovações, e nenhuma tinha a ver com substantivos.
+>
+> ⚠️ **As interatividades nunca foram clonadas** — o gesto sai do comando
+> impresso na folha de papel e a figura sai da mesma folha (as duas regras
+> abaixo). O que se clonava era o MOTOR, e junto vinham os objetivos do
+> relatório, a citação do currículo, o `novaFolha()`, o prefixo das figuras e da
+> voz, o `var LIGAR`. O **`_padrao/FOLHA-VIVA/`** é esse motor com **conteúdo
+> ZERO**: não há o que esquecer de trocar. O script recusa prefixo já usado
+> (prefixo repetido faz dois cadernos brigarem pela mesma memória do "continuar
+> de onde parou") e o recém-nascido **já abre limpo, medido**.
+>
+> A ordem que economiza voltas, o que um caderno vazio legitimamente reprova e
+> as armadilhas medidas estão no **`SEQUENCIAS-DIDATICAS.md §1b`** e no
+> `_padrao/CLONAR-FOLHA-VIVA.md`.
+
 > ## ✂️➡️🎮 DE ONDE VEM A INTERATIVIDADE (regra do Marcos, 13/set/2026)
 >
 > Palavras dele: *"as interatividades têm que vir das atividades que você seleciona
