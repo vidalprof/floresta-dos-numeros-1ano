@@ -79,8 +79,19 @@ def main():
     falas = json.load(io.open(fj, encoding="utf-8"))
     if isinstance(falas, dict):
         falas = falas.get("falas") or [{"id": k, "texto": v} for k, v in falas.items()]
-    itens = [(f.get("id"), f.get("texto", "")) for f in falas if isinstance(f, dict) and f.get("id")]
-    itens = [(i, t) for i, t in itens if os.path.exists(os.path.join(pasta, "audio", i + ".mp3"))]
+    # ⭐ O IDIOMA VEM DE CADA FALA (15/set/2026, caderno de ingles do 8o ano).
+    #    Este ouvido nasceu com `language="pt"` FIXO — e com ele escutando
+    #    "There is some luggage in the car" o reconhecedor devolve palavras
+    #    portuguesas parecidas e acusa a fala inteira. Seriam 349 acusacoes
+    #    falsas num caderno so, e portao que reprova por defeito PROPRIO e pior
+    #    que portao nenhum.
+    #    ⚠️ A fonte e o campo `lang` do falas.json — O MESMO que o entregar.yml
+    #       le para escolher a voz na gravacao. Uma fonte so: fala gravada com
+    #       voz inglesa e ouvida com ouvido ingles.
+    itens = [(f.get("id"), f.get("texto", ""), (f.get("lang") or "pt"))
+             for f in falas if isinstance(f, dict) and f.get("id")]
+    itens = [(i, t, g) for i, t, g in itens
+             if os.path.exists(os.path.join(pasta, "audio", i + ".mp3"))]
     # mp3 que NENHUMA fala do falas.json promete: sobra de texto que mudou (nao e defeito, e peso morto)
     pasta_audio = os.path.join(pasta, "audio")
     ids = set(i for i, _ in itens)
@@ -95,11 +106,13 @@ def main():
     t0 = time.time()
     wm = WhisperModel(modelo, device="cpu", compute_type="int8")
     ruins, conferir, ok, mudos = [], [], 0, []
-    for n, (fid, texto) in enumerate(itens):
+    for n, (fid, texto, lang) in enumerate(itens):
         cam = os.path.join(pasta, "audio", fid + ".mp3")
-        esperado = norm(numeros_por_extenso(norm(texto)))
+        # ⚠️ o `numeros_por_extenso` escreve em PORTUGUES ("vinte e quatro"):
+        #    aplicar numa fala inglesa estragaria a comparacao de proposito.
+        esperado = norm(texto if lang != "pt" else numeros_por_extenso(norm(texto)))
         try:
-            segs, info = wm.transcribe(cam, language="pt", beam_size=1, vad_filter=False)
+            segs, info = wm.transcribe(cam, language=lang, beam_size=1, vad_filter=False)
             ouvido = u" ".join(s.text for s in segs).strip()
             dur = float(getattr(info, "duration", 0) or 0)
         except Exception as e:
