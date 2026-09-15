@@ -46,6 +46,23 @@ jobs:
           print('modelo em _qa/ferramentas/modelos/pt')
           PY
 
+      - name: Modelo de voz en-US (para os cadernos de lingua estrangeira)
+        # ⭐ 15/set/2026, caderno de ingles do 8o ano. O portao nasceu ouvindo so
+        #    portugues; com o modelo pt-BR ouvindo "There is some luggage in the
+        #    car" ele acusaria as 349 falas inglesas de uma vez — um portao que
+        #    reprova por defeito PROPRIO e pior que portao nenhum.
+        #    O `pronuncia.py` escolhe o ouvido pelo campo `lang` de cada fala, o
+        #    MESMO que o `entregar.yml` usa para escolher a voz na gravacao.
+        run: |
+          curl -sSL -o /tmp/en.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+          python3 - <<'PY'
+          import zipfile, os, shutil
+          z = zipfile.ZipFile('/tmp/en.zip'); z.extractall('/tmp/vosken')
+          raiz = os.path.join('/tmp/vosken', os.listdir('/tmp/vosken')[0])
+          shutil.move(raiz, '_qa/ferramentas/modelos/en')
+          print('modelo ingles em _qa/ferramentas/modelos/en')
+          PY
+
       - name: Ouvir cada atividade
         env:
           PASTAS: ${{ inputs.pastas }}

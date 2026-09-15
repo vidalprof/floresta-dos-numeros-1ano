@@ -214,6 +214,19 @@ def confere(pasta, cam_modelo=None, limite=0):
 
     modelo = Model(cam_modelo)
 
+    # ⭐⭐ O SEGUNDO MODELO — O OUVIDO INGLÊS (15/set/2026, caderno de inglês do
+    #    8º ano). Este portão nasceu ouvindo só PORTUGUÊS, e isso bastava até
+    #    existir um caderno de língua estrangeira. Com o modelo pt-BR ouvindo
+    #    *"There is some luggage in the car"*, o reconhecedor devolve um punhado
+    #    de palavras portuguesas parecidas e o portão acusa TODAS as 349 falas
+    #    inglesas — reprovaria o caderno inteiro por um defeito que é dele
+    #    mesmo, que é a pior espécie de portão.
+    #    ⚠️ Quem manda é o campo `lang` de cada fala no `falas.json` — o MESMO
+    #       campo que o `entregar.yml` lê para escolher a voz na gravação. Uma
+    #       fonte só: a fala gravada com voz inglesa é ouvida com ouvido inglês.
+    cam_en = os.environ.get("VOSK_MODELO_EN") or "_qa/ferramentas/modelos/en"
+    modelo_en = None
+
     # ⚡ LICAO DE VELOCIDADE que a casa JA tinha pago com a voz (o entregar.yml
     #    chamava o `edge-tts` uma vez por fala: 199 falas = 7 min so de partida
     #    de processo). Eu estava repetindo o mesmo erro aqui, um `ffmpeg` por
@@ -233,32 +246,50 @@ def confere(pasta, cam_modelo=None, limite=0):
         esperado = limpa(txt)
         if not fid or not os.path.exists(mp3) or len(esperado) < MINIMO_PARA_MEDIR:
             continue
-        fila.append((fid, mp3, esperado))
+        fila.append((fid, mp3, esperado, f.get("lang") or "pt"))
         if limite and len(fila) >= limite:
             break
+
+    # ⚠️ o modelo ingles so se carrega se houver o que ouvir em ingles — ele
+    #    ocupa memoria e o caderno de portugues nao precisa dele.
+    if any(x[3] == "en" for x in fila):
+        if os.path.isdir(cam_en):
+            modelo_en = Model(cam_en)
+            print(u"   ouvido ingles ligado: %s" % cam_en)
+        else:
+            print(u"   ⚠️ ha fala em INGLES e NAO achei o modelo ingles em %s —"
+                  u" essas falas ficam SEM MEDIR (nao sao aprovadas)." % cam_en)
 
     tmpdir = os.path.join(pasta, "_pron_tmp")
     os.makedirs(tmpdir, exist_ok=True)
 
     def converte(item):
-        fid, mp3, esperado = item
+        fid, mp3, esperado, lang = item
         wav = os.path.join(tmpdir, "%s.wav" % fid)
         try:
             para_wav(ff, mp3, wav)
-            return (fid, wav, esperado)
+            return (fid, wav, esperado, lang)
         except Exception:
-            return (fid, None, esperado)
+            return (fid, None, esperado, lang)
 
     with ThreadPoolExecutor(max_workers=8) as ex:
         prontos = list(ex.map(converte, fila))
 
-    tortas, medidas = [], 0
-    for fid, wav, esperado in prontos:
+    tortas, medidas, sem_ouvido = [], 0, 0
+    for fid, wav, esperado, lang in prontos:
         if not wav:
             print(u"   (nao consegui converter %s)" % fid)
             continue
+        # ⚠️ fala inglesa SEM modelo ingles nao se mede com ouvido portugues:
+        #    seria inventar um defeito. Ela conta como NAO MEDIDA.
+        qual = modelo_en if lang == "en" else modelo
+        if qual is None:
+            sem_ouvido += 1
+            try: os.remove(wav)
+            except Exception: pass
+            continue
         try:
-            ouvido = transcreve(modelo, wav)
+            ouvido = transcreve(qual, wav)
         except Exception as e:
             print(u"   (nao consegui ouvir %s: %s)" % (fid, e))
             continue
@@ -286,6 +317,9 @@ def confere(pasta, cam_modelo=None, limite=0):
                 tortas.append((fid, esperado, ouvido, d))
         elif d > DISTANCIA_LONGA:
             tortas.append((fid, esperado, ouvido, d))
+    if sem_ouvido:
+        print(u"   ⚠️ %d fala(s) em ingles NAO foram medidas (falta o modelo "
+              u"ingles). Isto NAO e 'passou'." % sem_ouvido)
     ok = liberadas(pasta)
     perdoadas = [x for x in tortas if x[0] in ok]
     tortas = [x for x in tortas if x[0] not in ok]
