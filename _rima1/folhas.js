@@ -1265,7 +1265,14 @@ function abreMenuProf(){
       cx.appendChild(b);
     };
     mk("Capa", 0);
-    for(var k = 1; k <= 10; k++) mk(k + ". " + NOMES[k - 1], k);
+/* ⚠️ ERA `k <= 10` FIXO, e isso mentia sobre o tamanho do caderno.
+       O Marcos abriu o menu do professor da Horta do Vovô (21 folhas),
+       viu dez e perguntou: *"a horta só tem 10 páginas?"*. O caderno
+       inteiro funciona — MEDIDO, o jogador fecha as 21 de 21 —, mas
+       quem confere pelo menu não tem como saber disso. O dez é resto de
+       quando os cadernos desta casa tinham dez folhas; o piso hoje é 20.
+       Quem manda no menu é o NOMES, que é a lista de verdade. */
+    for(var k = 1; k <= NOMES.length; k++) mk(k + ". " + NOMES[k - 1], k);
   }
   calar(); document.getElementById("menuProf").className = "aberto";
 }

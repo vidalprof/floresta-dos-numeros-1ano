@@ -1087,10 +1087,29 @@ function digitaCruz(ch){
   pintaCruz(); rolaParaCruz();
   if(CRUZ.val.length >= E.w.length) setTimeout(confereCruz, 380);
 }
+/* ---------- COM OU SEM ACENTO, AS DUAS VALEM ----------
+   ⚠️ PEDIDO DO MARCOS (15/set/2026): *"na cruzadinha da atividade rua do mundo
+      pode aceitar tanto com acento como sem, corrija"*. E ele está certo pelo
+      conteúdo: esta é uma cruzadinha de GEOGRAFIA — o que está sendo medido é
+      se a criança sabe que a casa sobre estacas se chama PALAFITA, não se ela
+      acerta o acento. Um Ó recusado num caderno de moradia reprova a criança
+      por uma coisa que a folha não ensina nem pergunta.
+   ⚠️ E POR ISSO ISTO NÃO É REGRA DA CASA, é regra DESTE caderno: nos cadernos
+      de ORTOGRAFIA (`_ort5`, `_ort5b`) o acento e o cedilha SÃO a matéria —
+      aceitar CACA por CAÇA lá seria jogar a atividade inteira fora. Se um dia
+      isto virar peça do motor, vem com uma chave por caderno, nunca ligada
+      para todos.
+   ⚠️ A GRADE CONTINUA MOSTRANDO A FORMA CERTA no acerto (`E.w`, com acento):
+      aceitar sem acento é não castigar, não é ensinar errado. */
+function semAcento(s){
+  return String(s)
+    .replace(/[ÁÀÂÃÄ]/g, "A").replace(/[ÉÈÊË]/g, "E").replace(/[ÍÌÎÏ]/g, "I")
+    .replace(/[ÓÒÔÕÖ]/g, "O").replace(/[ÚÙÛÜ]/g, "U").replace(/Ç/g, "C");
+}
 function confereCruz(){
   if(!CRUZ || !CRUZ.val) return;
   var E = CRUZ.E, pi = CRUZ.pi;
-  if(CRUZ.val === E.w){
+  if(semAcento(CRUZ.val) === semAcento(E.w)){
     E.cels.forEach(function(c, i){
       if(!c) return;
       var n = c.querySelector(".cn");
