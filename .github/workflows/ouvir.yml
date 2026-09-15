@@ -9,7 +9,18 @@ name: Ouvir a voz (portão de pronúncia)
 #    ele relatou jogando com a turma, os ~70 portões da casa pegavam 2 — e os 5
 #    que escapavam eram TODOS de voz, porque nenhum portão abria o mp3.
 
+# ⚠️⚠️ POR QUE ELE TAMBEM ACORDA POR PUSH (15/set/2026, e este e o achado):
+#    o GitHub so aceita acionamento MANUAL (workflow_dispatch) de workflow que
+#    exista na branch PADRAO. Este arquivo nunca foi para a `main` — vive so na
+#    branch de trabalho. Resultado medido hoje: pedir para roda-lo devolve
+#    **404 Not Found**. Ou seja, o portao que ouve existia no repositorio e
+#    NUNCA PODE SER ACIONADO desde que foi escrito.
+#    O gatilho `push` nao tem essa limitacao: ele roda a partir da branch em que
+#    o push aconteceu. E o padrao ja usado pelo `entregar.yml`, que "acorda
+#    sozinho pela marca" — aqui a marca e `[ouvir _pasta,_outra]`.
 on:
+  push:
+    branches: ['**']
   workflow_dispatch:
     inputs:
       pastas:
@@ -25,6 +36,8 @@ on:
 jobs:
   ouvir:
     runs-on: ubuntu-latest
+    # sem a marca no assunto do commit, push nenhum dispara nada
+    if: ${{ github.event_name != 'push' || contains(github.event.head_commit.message, '[ouvir ') }}
     steps:
       - uses: actions/checkout@v4
         with: { ref: "${{ github.ref_name }}" }
@@ -67,7 +80,14 @@ jobs:
         env:
           PASTAS: ${{ inputs.pastas }}
           LIMITE: ${{ inputs.limite }}
+          MSG: ${{ github.event.head_commit.message }}
         run: |
+          # a marca do commit manda quando nao houve input (o caso do push)
+          if [ -z "$PASTAS" ]; then
+            PASTAS="$(printf '%s' "$MSG" | sed -n 's/.*\[ouvir \([^]]*\)\].*/\1/p' | head -1)"
+          fi
+          [ -z "$LIMITE" ] && LIMITE=0
+          echo "pastas: '$PASTAS' | limite: $LIMITE"
           FALHOU=0
           IFS=',' read -ra PS <<< "$PASTAS"
           for p in "${PS[@]}"; do
