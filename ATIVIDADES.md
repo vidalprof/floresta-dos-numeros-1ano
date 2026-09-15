@@ -147,7 +147,7 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 | Atividade | O que trabalha | Pasta | Link |
 |---|---|---|---|
 | **RIGHT NOW — Flagra na Cidade** | Inglês 9º: Present Continuous (a pasta publicada é `_rightnow9`; `_agora` é um rascunho anterior da mesma atividade, guardado) | `_rightnow9` | https://vidalprof.github.io/right-now-flagra-na-cidade/ |
-| **Lost & Found — o balcão dos achados e perdidos** | Inglês 8º: quantificadores (some, any, much, many) e pronomes relativos (who, which, that, whose) — sequência didática de folha viva, 22 folhas, voz bilíngue | `_ing8` | https://vidalprof.github.io/lost-and-found-8ano/ |
+| **Lost & Found — o balcão dos achados e perdidos** | Inglês 8º: quantificadores (some, any, much, many) e pronomes relativos (who, which, that, whose) — sequência didática de folha viva, 35 folhas, voz bilíngue (inglês com voz inglesa) | `_ing8` | https://vidalprof.github.io/lost-and-found-8ano/ |
 | **Relative Pronouns — Connecting Ideas** | Inglês 8º: pronomes relativos | — | https://vidalprof.github.io/InglesRelativePronouns8/ |
 
 ## Outras / diversas
