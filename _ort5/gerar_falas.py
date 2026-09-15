@@ -204,6 +204,34 @@ for n in (7, 8):
         F[u"certo%d_%s" % (n, k)] = u"Isso! %s." % D[u"c"].lower().capitalize()
         F[u"dica%d_%s" % (n, k)] = D[u"d"]
 
+# ⭐ O ALTO-FALANTE DAS OPCOES (Marcos, 15/set/2026): *"precisamos por audio nas
+#    opcoes de resposta para quem nao sabe ler, principalmente para os
+#    menores"*. Regra da casa desde ago/2026 — e que faltava em quatro peças
+#    deste caderno.
+#    ⚠️ NA FOLHA DO DETETIVE (7 e 8) A VOZ NAO DISTINGUE as duas opcoes, e e de
+#       proposito: "abito" e "hábito" soam IGUAL, e e exatamente por isso que a
+#       folha e de ORTOGRAFIA. A voz esta la para a crianca SABER O QUE ESTA
+#       ESCRITO; quem decide e a letra, que ela le.
+def _chq(w):
+    u"""o MESMO que o `chaveQuadro` do folhas.js: so as letras a-z, minusculas.
+    ⚠️ o acento SAI (a-z nao inclui á), entao "hábito" vira "hbito" nos dois
+    lados — e e isso que faz a chave da tela bater com a chave da fala."""
+    return re.sub(r"[^a-z]", u"", w.lower())
+
+
+for _n in (7, 8):
+    for _k in IT[u"p%d" % _n]:
+        _D = DET[_k]
+        for _w in [_D[u"c"]] + list(_D[u"e"]):
+            F[u"pal_%s" % _chq(_w)] = _w.lower() + u"."
+F[u"op_comh"] = u"Com agá."
+F[u"op_semh"] = u"Sem agá."
+for _i in IT[u"p14"]:
+    _P = BILHETE[u"perg"][_i]
+    F[u"frase_cert_%d" % _i] = _P[u"c"]
+    for _j, _t in enumerate(_P[u"e"]):
+        F[u"frase_err%d_%d" % (_j, _i)] = _t
+
 # ---- folha 9: tem H no começo? ---------------------------------------------
 for k in IT[u"p9"]:
     H = HAG[k]

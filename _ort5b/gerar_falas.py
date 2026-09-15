@@ -164,6 +164,13 @@ ENUN = [
 for n, t in ENUN:
     F[u"p%denun" % n] = t
 
+# ⭐ O ALTO-FALANTE DAS OPCOES (Marcos, 15/set/2026). As opcoes desta folha sao
+#    NUMEROS (2, 3, 4 silabas): sem voz, a crianca que ainda nao le numero
+#    escolhe pelo tamanho do botao.
+F[u"op_num2"] = u"Duas."
+F[u"op_num3"] = u"Três."
+F[u"op_num4"] = u"Quatro."
+
 # ---- folha 1: pinte só as escritas certas -----------------------------------
 F[u"certo1"] = (u"Isso! Você achou todas. Repare: o que engana é o som — todas elas se "
                 u"falam igual, certas ou erradas. Quem decide é a regra da escrita.")

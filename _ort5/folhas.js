@@ -386,7 +386,11 @@ function detetive(d, pi){
     lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("diz_" + k); }));
     box.appendChild(lin);
     var lista = baralha([D.c].concat(D.e)).map(function(w){
-      return {v: w, rot: w, aria: w};
+      /* ⚠️ NESTA FOLHA A VOZ NAO DISTINGUE as duas opcoes — e de proposito:
+         "abito" e "hábito" soam IGUAL, e e por isso que a folha e de
+         ortografia. A voz esta aqui para a crianca SABER O QUE ESTA ESCRITO,
+         nao para escolher por ela. Quem decide e a letra, que ela le. */
+      return {v: w, rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
     });
     opcoes(box, pi, id, lista, D.c, "circ", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
     fechaItem(d, box, id);
@@ -418,8 +422,8 @@ function f09(d, pi){
     lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("diz_" + k); }));
     c.appendChild(lin);
     box.appendChild(c);
-    var lista = [{v: "sim", rot: "COM H", aria: "Começa com H"},
-                 {v: "nao", rot: "SEM H", aria: "Não começa com H"}];
+    var lista = [{v: "sim", rot: "COM H", aria: "Começa com H", fala: "op_comh"},
+                 {v: "nao", rot: "SEM H", aria: "Não começa com H", fala: "op_semh"}];
     opcoes(box, pi, id, lista, H.r ? "sim" : "nao", "curta",
            "certo" + pi + "_" + k, "dica" + pi + "_" + k);
     fechaItem(d, box, id);
@@ -529,7 +533,7 @@ function f14(d, pi){
     var todas = [{v: "cert", t: P.c}];
     P.e.forEach(function(t, j){ todas.push({v: "err" + j, t: t}); });
     var lista = baralha(todas).map(function(o){
-      return {v: o.v, rot: o.t, aria: o.t};
+      return {v: o.v, rot: o.t, aria: o.t, fala: "frase_" + o.v + "_" + n};
     });
     opcoes(box, pi, id, lista, "cert", "frase", "certo" + pi + "_" + n, "dica" + pi + "_" + n);
     fechaItem(d, box, id);

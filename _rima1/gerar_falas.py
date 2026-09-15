@@ -98,6 +98,12 @@ for it in IT[u"p10"]:
 for w in sorted(usadas):
     F[u"pal_%s" % w] = falado(w) + u"."
 
+# ⭐ O ALTO-FALANTE DAS OPCOES (Marcos, 15/set/2026). Regra da casa desde
+#    ago/2026 ("o alto-falante nas respostas tambem, para ajudar os alunos que
+#    nao sabem ler") — e que faltava justamente aqui, no caderno de 1o ano.
+F[u"op_rima"] = u"Rima."
+F[u"op_naorima"] = u"Não rima."
+
 # ---- folha 1: rima ou não rima ------------------------------------------------
 # ⚠️ O RETORNO DIZ O PORQUÊ, não só "isso!". É o feedback específico do Hattie:
 #    a criança tem que sair sabendo ONDE olhar da próxima vez.

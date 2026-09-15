@@ -102,6 +102,9 @@ PORTOES=(
   "1l2 ligar com rotulo repetido|python3 _qa/ligar_rotulo.py $PASTA"
   "0r revisor (texto, concordancia, digitacao)|python3 _qa/revisor.py $PASTA"
   "1n lingua estrangeira (lacuna, correcao, grafia)|python3 _qa/ingles.py $PASTA"
+  # ⭐ 1o) sem voz na opcao, a crianca que ainda nao le escolhe pelo tamanho do
+  #    botao — e a folha vira sorteio para justamente quem ela deveria ajudar.
+  "1o alto-falante da resposta|python3 _qa/voz_opcao.py $PASTA"
   "0b6 catalogo + painel|python3 _qa/catalogo.py $PASTA"
 )
 

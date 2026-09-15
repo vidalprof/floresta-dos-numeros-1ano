@@ -137,6 +137,12 @@ PORTOES=(
   "0q curiosidade|python3 _qa/curiosidade.py $ARQ"
   "falas (narracao)|python3 _qa/falas.py $PASTA/falas.json"
   "1n lingua estrangeira (lacuna, correcao, grafia)|python3 _qa/ingles.py $PASTA"
+  # ⭐ 1o) o alto-falante da RESPOSTA (15/set/2026, Marcos: "precisamos por audio
+  #    nas opcoes de resposta para quem nao sabe ler, principalmente para os
+  #    menores"). Era regra da casa desde ago/2026 e NAO era medida — quando ele
+  #    pediu de novo, eu contei 9 opcoes mudas em quatro cadernos, tres de
+  #    alfabetizacao. A pior: `_rima1`, do 1o ano, com os botoes RIMA / NAO RIMA.
+  "1o alto-falante da resposta|python3 _qa/voz_opcao.py $PASTA"
 )
 
 [ -f "$PASTA/falas.json" ] || echo "AVISO: $PASTA nao tem falas.json — a narracao nao tem como ser conferida (criar o arquivo e parte do trabalho)."

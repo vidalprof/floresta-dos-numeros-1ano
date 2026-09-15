@@ -243,6 +243,24 @@ def _extrai_fases(html):
     return None
 
 
+def _veterano(pasta):
+    u"""Esta pasta foi declarada VETERANA em `_qa/VETERANOS-DURACAO.txt`?
+
+    ⚠️ Arquivo que nao existe = NENHUM veterano (e todo mundo cumpre o piso).
+       Nunca o contrario: um erro de caminho nao pode virar anistia geral.
+    """
+    cam = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                       u"VETERANOS-DURACAO.txt")
+    if not os.path.exists(cam):
+        return False
+    alvo = os.path.basename(pasta.rstrip(u"/"))
+    for linha in io.open(cam, encoding=u"utf-8"):
+        nome = linha.split(u"#")[0].strip()
+        if nome and nome == alvo:
+            return True
+    return False
+
+
 def confere(pasta, piso_min=40.0):
     pasta = pasta.rstrip(u"/")
     cam = os.path.join(pasta, u"index.html")
@@ -594,6 +612,21 @@ def confere(pasta, piso_min=40.0):
     #    assim. Agora o piso é cobrado da PONTA BAIXA.
     #    ⚠️ A âncora é a única medida com CRIANÇA E RELÓGIO que este portão tem;
     #       todo o resto dele é palpite declarado. Ela vale mais que a conta.
+    if lo < piso_min and _veterano(pasta):
+        # ⭐ VETERANO DECLARADO (15/set/2026). O Marcos subiu o piso e disse na
+        #    mesma decisão que **os cadernos que já existem não crescem nem
+        #    encolhem**. Sem esta porta, o portão reprovava 18 dos 19 cadernos
+        #    por uma regra que nasceu depois deles — e portão que reprova tudo
+        #    vira ruído (§3.10). A lista está em `_qa/VETERANOS-DURACAO.txt`,
+        #    com a data de nascimento de cada um medida no git.
+        #    ⚠️ Isto NÃO é "passou": a faixa acima foi medida e impressa.
+        print(u"   VETERANO DECLARADO: %.1f a %.1f min, abaixo do piso de %d na"
+              u" ponta baixa." % (lo, hi, piso_min))
+        print(u"   NAO reprova porque nasceu ANTES da medicao do Marcos (15/set)")
+        print(u"   e ele decidiu que os cadernos que ja existem nao mudam.")
+        print(u"   Ver `_qa/VETERANOS-DURACAO.txt`. Caderno NOVO nao entra la.")
+        return 0
+
     if lo < piso_min:
         # ⚠️ (set/2026) imprimia "40 min" arredondado e reprovava por 39,6 < 40 —
         #    a tela dizia uma coisa e o veredito outra. Reprova mostra o decimal.

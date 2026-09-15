@@ -629,7 +629,8 @@ function f14(d, pi){
     c.appendChild(lin);
     box.appendChild(c);
     var lista = [2, 3, 4].map(function(n){
-      return {v: String(n), rot: String(n), aria: n + " sílabas"};
+      return {v: String(n), rot: String(n), aria: n + " sílabas",
+              fala: "op_num" + n};
     });
     opcoes(box, pi, id, lista, String(N.n), "curta letra",
            "certo" + pi + "_" + k, "dica" + pi + "_" + k);
