@@ -9,7 +9,19 @@
 
 var livro = document.getElementById("livro"), PAGEL = [];
 /* a posição da folha de LIGAR — o único id que não nasce de `r<pi>_` */
-var LIGAR = 10;
+/* ⚠️⚠️ ERA `var LIGAR = 10;` E O NÚMERO ESTAVA TROCADO — defeito medido em
+   15/set/2026 pelo portão novo `_qa/conta_folha.js`, com o caderno JÁ NO AR.
+   Quem liga é a folha 7 ("Ligue quem rima"); a 10 é o mural. Com o 10 aqui:
+     · a folha 7 declarava três ids `r7_0..r7_2` e gravava DOZE `l7g0_*` — ou
+       seja, ela NUNCA FECHAVA: a criança ligava tudo e continuava faltando;
+     · a folha 10 caía no ramo do ligar, que procura `L[i][k].e` dentro de
+       objetos que não têm essa forma, e devolvia ZERO ids — então ela nascia
+       PRONTA, carimbava sozinha e, sendo a última, mandava o caderno direto
+       para o boletim sem a criança tocar em nada.
+   Nenhum portão via: o jogador da banca dizia "ok folha 10: 0 de 0" e o
+   andarilho contava os nove itens desenhados, cada um certo no seu canto. Só
+   cruzando os dois números é que aparece. */
+var LIGAR = [7];
 
 function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
 function aoAbrir(d, fn){ if(!d._aoAbrir) d._aoAbrir = []; d._aoAbrir.push(fn); }
@@ -892,7 +904,7 @@ function idsDaPagina(pi){
      relatório do professor saía ZERO com a folha toda respondida, sem erro
      nenhum. Agora o id nasce da posição, dentro da própria folha. */
   var ids = [], i, k, L = (ST.folha["p" + pi] || []);
-  if(pi === LIGAR){
+  if(LIGAR.indexOf(pi) > -1){
     for(i = 0; i < L.length; i++)
       for(k = 0; k < L[i].length; k++) ids.push("l" + pi + "g" + i + "_" + L[i][k].e);
     return ids;
