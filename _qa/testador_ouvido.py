@@ -94,7 +94,12 @@ def main():
              if os.path.exists(os.path.join(pasta, "audio", i + ".mp3"))]
     # mp3 que NENHUMA fala do falas.json promete: sobra de texto que mudou (nao e defeito, e peso morto)
     pasta_audio = os.path.join(pasta, "audio")
-    ids = set(i for i, _ in itens)
+    # ⚠️ 15/set/2026: eu acrescentei o IDIOMA ao item (o caderno de Inglês fala
+    #    nas duas línguas) e esqueci esta linha, que ainda desempacotava DOIS.
+    #    O ouvido estourou com `too many values to unpack` no runner, e como
+    #    quem chama é um workflow, o erro só apareceu no commit dele — nunca
+    #    aqui. Item de TRÊS: (id, texto, idioma).
+    ids = set(i for i, _t, _g in itens)
     orfaos = sorted(a[:-4] for a in os.listdir(pasta_audio) if a.endswith(".mp3") and a[:-4] not in ids) if os.path.isdir(pasta_audio) else []
     if maximo: itens = itens[:maximo]
     if not itens:
