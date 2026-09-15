@@ -80,6 +80,14 @@ def main():
         rotulo = u"colheita"       # senão o arquivo se chamaria "aprovadas" também
     if u"--rotulo" in sys.argv:
         rotulo = sys.argv[sys.argv.index(u"--rotulo") + 1]
+    # ⚠️ O SUBTÍTULO TAMBÉM MENTIA. Ele dizia sempre "embaixo de cada uma, o
+    #    VEREDITO do crivo" — e na folha de contato que vai ao Marcos ANTES do
+    #    crivo (ordem de 15/set) ainda não há veredito nenhum. Dizer que há é
+    #    exatamente o tipo de afirmação sem lastro que a REGRA ZERO proíbe, e
+    #    pior por estar impressa em cima da prova.
+    sub = None
+    if u"--sub" in sys.argv:
+        sub = sys.argv[sys.argv.index(u"--sub") + 1]
     if u"--cols" in sys.argv:
         cols = int(sys.argv[sys.argv.index(u"--cols") + 1])
     if u"--por-folha" in sys.argv:
@@ -147,8 +155,8 @@ def main():
         dr.text((MARG + 8, 48),
                 u"%s  ·  folha %d de %d  ·  %s"
                 % (assunto.replace(u"-", u" "), n, len(feitas),
-                   u"embaixo de cada uma, o VEREDITO do crivo" if titulo
-                   else u"cada uma com o que ela vira no caderno"),
+                   sub or (u"embaixo de cada uma, o VEREDITO do crivo" if titulo
+                           else u"cada uma com o que ela vira no caderno")),
                 font=f_sub, fill=u"#d9f0e3")
         for i, (cod, cam) in enumerate(grupo):
             cx = MARG + (i % cols) * (CEL_W + MARG)

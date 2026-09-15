@@ -96,3 +96,33 @@ por inteiro. O que este plano acrescenta, por ser 2º ANO:
 
 ⚠️ **Esta tabela se atualiza a cada caderno, no mesmo commit.** É por ela que a
 próxima sessão sabe onde parou — e é a única fonte disso.
+
+---
+
+## 5. 📌 O QUE VEM DEPOIS DESTES DEZ — o 1º ANO REFEITO (Marcos, 15/set/2026)
+
+**Palavras dele, no meio do trabalho do 2º ano:** *"depois pode incorporar o 1
+ano com 10 cadernos 35 folhas cada, tudo muito didático, visual e sonoro, com
+crivo dos especialistas"*.
+
+**Fica registrado aqui para não se perder, e com o que ele decide:**
+
+1. **É "DEPOIS".** A ordem dele põe o 1º ano na fila **atrás** destes dez. Não
+   se começa o 1º ano com o 2º pela metade.
+2. **Isto MUDA o que estava escrito** — e a mudança é dele, não minha. A regra
+   de 15/set dizia *"os cadernos que já existem não crescem nem encolhem"*, e é
+   por ela que existe o `_qa/VETERANOS-DURACAO.txt`. Agora ele pede o 1º ano
+   **refeito em 10 × 35**. As duas coisas convivem: o veterano continua veterano
+   (não cresce), e o 1º ano ganha **cadernos NOVOS** no tamanho novo.
+3. **⚠️ E NADA DO ANTIGO SE APAGA** (regra permanente). Os **11 cadernos atuais
+   do 1º ano seguem no ar**, nos repositórios deles. Os dez novos nascem em
+   **repositórios NOVOS**, pela `fabrica.yml`. Tirar qualquer um do ar só se ele
+   pedir com todas as letras.
+4. **Os dez degraus do 1º ano saem do currículo**, do mesmo jeito que os do 2º —
+   e o que já existe hoje (`_sequencias/ALFABETIZACAO-1ANO.md` e os `POTE-*.md`
+   de rima, sílaba, som, letra, frase, montar, roda, abc, início, jogo) é o
+   **ponto de partida do crivo**, não do clone: as folhas de papel daqueles
+   cadernos já foram colhidas e julgadas uma vez.
+5. **"Com crivo dos especialistas"** é a parte que ele sublinhou: cada folha
+   passa pelo crivo escrito (`POTE-*.md`) e pelo **pedagogo** (`0b9`), e o
+   contato-folha da colheita vai a ele **antes** de eu escolher.
