@@ -5,7 +5,17 @@ name: Injetar reset de aula (55 min) em varias atividades
 # Usa PAGES_TOKEN (Contents: Read and write). Idempotente: pula o repo que
 # ja tem o trecho (marcador __aulaInicio). Faz commit + push so quando muda.
 
+# ⚠️⚠️ POR QUE ELE TAMBEM ACORDA POR PUSH (15/set/2026). O GitHub so aceita
+#    acionamento MANUAL (workflow_dispatch) de workflow que exista na branch
+#    PADRAO. Este arquivo nunca foi para a `main` — vive so na branch de
+#    trabalho —, entao pedir para roda-lo devolvia **404 Not Found**: ele
+#    existia no repositorio e NAO EXISTIA para quem o chamava.
+#    O gatilho `push` nao tem essa limitacao (roda da branch em que o push
+#    aconteceu). A marca vai no assunto do commit: `[reset-aula]`.
+#    Achado ao procurar o portao que ouve o mp3, e valia para OITO workflows.
 on:
+  push:
+    branches: ['**']
   workflow_dispatch:
     inputs:
       repos:
@@ -17,6 +27,7 @@ on:
 jobs:
   injetar:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'push' || contains(github.event.head_commit.message, '[reset-aula]') }}
     steps:
       - name: Injetar trecho de reset em cada repo
         env:

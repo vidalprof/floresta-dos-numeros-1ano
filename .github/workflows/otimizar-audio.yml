@@ -3,7 +3,17 @@ name: Otimizar (recomprimir) audios _audio/
 # Recomprime todos os MP3 de _audio/ para bitrate baixo mono (voz fica boa,
 # arquivo bem menor) — p/ embutir muitas falas sem o HTML ficar gigante.
 
+# ⚠️⚠️ POR QUE ELE TAMBEM ACORDA POR PUSH (15/set/2026). O GitHub so aceita
+#    acionamento MANUAL (workflow_dispatch) de workflow que exista na branch
+#    PADRAO. Este arquivo nunca foi para a `main` — vive so na branch de
+#    trabalho —, entao pedir para roda-lo devolvia **404 Not Found**: ele
+#    existia no repositorio e NAO EXISTIA para quem o chamava.
+#    O gatilho `push` nao tem essa limitacao (roda da branch em que o push
+#    aconteceu). A marca vai no assunto do commit: `[otimizar-audio]`.
+#    Achado ao procurar o portao que ouve o mp3, e valia para OITO workflows.
 on:
+  push:
+    branches: ['**']
   workflow_dispatch:
     inputs:
       bitrate:
@@ -20,6 +30,7 @@ on:
 jobs:
   otimizar:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'push' || contains(github.event.head_commit.message, '[otimizar-audio]') }}
     permissions:
       contents: write
     steps:
