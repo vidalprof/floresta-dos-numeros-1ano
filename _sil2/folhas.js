@@ -345,79 +345,37 @@ var CRUZ = null;
       O `node --check` não vê isso (a sintaxe está perfeita); quem vê é o
       `_qa/funcoes.py`, o portão "função que não existe" — que eu não rodei. */
 function rolaParaCruz(){
-  /* de quem é a vez: a fila da cruzadinha, ou a quadra única do outro teclado */
-  /* ⚠️⚠️ LÊ AS DUAS PELO `window`, e isto NÃO é preciosismo: escrito como
-     `typeof CRUZ !== "undefined" && CRUZ && CRUZ.E`, o `CRUZ` nu depois do `&&`
-     é acusado de `'CRUZ' is not defined` pelo ESLint nos cadernos que não têm
-     cruzadinha (ele não faz análise de fluxo, e o `typeof` só protege a
-     primeira ocorrência). E esse ESLint é o portão 0a2 que roda DENTRO do
-     `entregar.yml`, antes de publicar: com ele vermelho, NADA sobe. Foi assim
-     que quatro publicações minhas falharam seguidas hoje, sem eu entender por
-     quê — e o pré-voo daqui não pega, porque o ESLint não está instalado no
-     container. Como `CRUZ` e `ATIVA` são `var` globais, elas são propriedades
-     de `window`, e ler por ali funciona igual e é declarado. */
-  var cs = [], i, andando = 0;
-  var _cruz = window.CRUZ, _ativa = window.ATIVA;
-  if(_cruz && _cruz.E && _cruz.E.cels){
-    for(i = 0; i < _cruz.E.cels.length; i++)
-      if(_cruz.E.cels[i] && _cruz.E.cels[i].getBoundingClientRect) cs.push(_cruz.E.cels[i]);
-    andando = _cruz.val ? _cruz.val.length : 0;
-  } else if(_ativa && _ativa.q && _ativa.q.getBoundingClientRect){
-    cs.push(_ativa.q);
-  }
-  if(!cs.length) return;
-  var tkel = document.getElementById("teclado");
-  if(!tkel || tkel.className.indexOf("aberto") < 0) return;
-  var tk = tkel.getBoundingClientRect(), topo = 56, pe = tk.top - 10;
-  /* ⚠️ A RESERVA DE ROLAGEM SAI DA ALTURA REAL DO TECLADO, e não de um
-     número fixo. Ela nasceu como `padding-bottom:460px` no `comtec`, que
-     é certo para o teclado de LETRAS (336 px medidos a 360x640, 41
-     teclas) e exagerado para o de NÚMEROS (160 px, 12 teclas): sobravam
-     300 px de vazio para a criança rolar à toa enquanto digita. Como o
-     `comtec` sai da tag `body` ao fechar, a variável pode ficar guardada
-     sem fazer mal nenhum. */
-  document.documentElement.style.setProperty("--tech", Math.ceil(tk.height + 40) + "px");
-  if(pe <= topo) return;
-  var cima = 1e9, baixo = -1e9;
-  for(i = 0; i < cs.length; i++){
-    var r = cs[i].getBoundingClientRect();
-    if(r.top < cima) cima = r.top;
-    if(r.bottom > baixo) baixo = r.bottom;
-  }
-  var d = 0;
-  if(baixo - cima <= pe - topo){
-    if(baixo > pe) d = baixo - pe;
-    if(cima - d < topo) d = cima - topo;
-  } else {
-    var at = cs[Math.min(andando, cs.length - 1)].getBoundingClientRect();
-    d = at.top - (topo + (pe - topo) / 2 - at.height / 2);
-  }
-  if(Math.abs(d) > 2) window.scrollBy(0, d);
+  /* ⚠️ VAZIA DE PROPÓSITO, e ela fica aqui em vez de sumir. Enquanto o
+     teclado era uma barra fixa nossa, esta função levava a palavra para
+     a faixa que sobrava acima dele. Agora quem abre é o teclado do
+     aparelho, e o navegador já rola a página sozinho para o campo com
+     foco. Apagá-la quebraria as chamadas que ainda existem por aí. */
 }
 function abreCruz(E, pi){
+  /* ⚠️ SEM BARRA FIXA, SEM ROLAGEM FORÇADA. O teclado da casa era fixo no pé da
+     tela e tapava a palavra que a criança escrevia — daí existir o `comtec` e o
+     `rolaParaCruz`. Agora quem abre é o teclado do APARELHO, que o próprio
+     navegador já trata: ele rola a página para deixar o campo com foco à vista.
+     Foi por isso que as duas peças saíram daqui juntas. */
   if(CRUZ) fechaCruz();
   CRUZ = {E: E, val: "", pi: pi};
   if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista ativa";
   pintaCruz();
-  document.getElementById("teclado").className = "aberto";
-  /* ⚠️ ROLAR A PALAVRA PARA CIMA DO TECLADO. Sem isto a criança escreve às
-     cegas: o teclado é fixo no pé da tela e a grade fica embaixo dele (medido
-     em 360x640: a grade inteira por baixo). O `comtec` dá chão para a página
-     poder rolar; o resto é levar a primeira casinha para a faixa que sobra. */
-  document.body.className = (document.body.className.replace(/ ?comtec/, "") + " comtec").replace(/^ /, "");
-  setTimeout(rolaParaCruz, 60);
-  document.getElementById("tkDica").textContent = E.rot || ("Escreva a palavra da pista " + E.n);
+  var grade = E.cels && E.cels[0] ? E.cels[0].parentNode : null;
+  var c = poeCampoSobre(grade);
+  c.value = "";
+  c.setAttribute("maxlength", String(E.aceita ? E.cels.length : E.w.length));
+  c.setAttribute("aria-label", E.rot || "Escreva a palavra");
+  try{ c.focus({preventScroll: false}); }catch(e){ c.focus(); }
   falar("escreva");
 }
 function fechaCruz(){
   if(!CRUZ) return;
   var E = CRUZ.E;
-  if(!ST.resp[E.id]){
-    E.cels.forEach(function(c){ if(c){ var n = c.querySelector(".cn"); c.textContent = ""; if(n) c.appendChild(n); c.className = "ccel viva"; } });
-    if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista";
-  }
-  CRUZ = null; document.getElementById("teclado").className = "";
-  document.body.className = document.body.className.replace(/ ?comtec/, "");
+  if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista";
+  CRUZ = null;
+  if(TECIN){ TECIN.value = ""; try{ TECIN.blur(); }catch(e){} }
+  pintaCruz();
 }
 function pintaCruz(){
   var E = CRUZ.E, v = CRUZ.val;
@@ -444,6 +402,27 @@ function digitaCruz(ch){
   pintaCruz(); rolaParaCruz();
   if(!E.aceita && CRUZ.val.length >= E.w.length) setTimeout(confereCruz, 380);
 }
+/* ⚠️⚠️ O ACENTO NÃO PODE REPROVAR QUEM ACERTOU A PALAVRA (ordem do Marcos,
+   15/set/2026, com a turma na sala: *"faça que tanto com o sem dê certo"*).
+   O gabarito de BACTERIAS estava sem acento e o teclado da tela TEM os acentos:
+   a criança que escrevia BACTÉRIAS — que é o certo em português — era recusada,
+   e ficava olhando para uma palavra certa marcada como errada. O contrário
+   também acontecia, em caderno cujo gabarito vinha acentuado.
+   ⚠️ E ONDE O ACENTO É O CONTEÚDO, ele continua contando: a folha declara
+      `exigeAcento` e aí a comparação é letra por letra, acento incluído. */
+function semAcento(s){
+  s = String(s || "").toUpperCase();
+  var de = "ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ", para = "AAAAAEEEEIIIIOOOOOUUUUC", i, o = "";
+  for(i = 0; i < s.length; i++){
+    var n = de.indexOf(s.charAt(i));
+    o += n > -1 ? para.charAt(n) : s.charAt(i);
+  }
+  return o;
+}
+function mesmaPalavra(a, b, exigeAcento){
+  if(exigeAcento) return String(a).toUpperCase() === String(b).toUpperCase();
+  return semAcento(a) === semAcento(b);
+}
 function confereCruz(){
   if(!CRUZ || !CRUZ.val) return;
   var E = CRUZ.E, pi = CRUZ.pi;
@@ -453,7 +432,9 @@ function confereCruz(){
      e a que fica escrita nas casas é a que ELA escreveu, não a do gabarito.
      ⚠️ E o gabarito continua existindo (`E.w` = a primeira da lista), porque é
         ele que o jogador da banca digita. */
-  var vale = E.aceita ? (E.aceita.indexOf(CRUZ.val) > -1) : (CRUZ.val === E.w);
+  var vale = E.aceita
+    ? E.aceita.some(function(w){ return mesmaPalavra(CRUZ.val, w, E.exigeAcento); })
+    : mesmaPalavra(CRUZ.val, E.w, E.exigeAcento);
   var escrita = E.aceita ? CRUZ.val : E.w;
   if(vale){
     E.cels.forEach(function(c, i){
@@ -463,8 +444,8 @@ function confereCruz(){
       c.className = "ccel viva" + (i < escrita.length ? " ok" : "");
     });
     if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista feita";
-    CRUZ = null; document.getElementById("teclado").className = "";
-  document.body.className = document.body.className.replace(/ ?comtec/, "");
+    CRUZ = null;
+    if(TECIN){ TECIN.value = ""; try{ TECIN.blur(); }catch(e){} }
     acertou(E.id, "certo" + pi + "_" + E.k);
   } else {
     CRUZ.val = ""; pintaCruz();
@@ -571,21 +552,75 @@ function montaLigar(caixa, pi, tag, pares, pagina){
    além de teclar no teclado virtual funcionasse se ele tocasse no teclado de
    verdade, as duas opções"*. No PC da escola tem teclado e a criança vai
    digitar; no celular, não tem. Nunca só uma porta. */
-(function(){
-  var tk = document.getElementById("tk");
-  var letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".split("");
-  letras.forEach(function(L){
-    var b = el("button", null, L);
-    b.setAttribute("aria-label", "Letra " + L);
-    b.onclick = function(){ digitaCruz(L); };
-    tk.appendChild(b);
+/* ============================================================
+   O TECLADO DO APARELHO — substitui o teclado de 41 teclas da casa.
+
+   ⭐ ORDEM DO MARCOS (15/set/2026): *"pode remover o teclado das atividades,
+      melhor digitar com teclado normal"*. O nosso ocupava 53% de um celular de
+      640 px, e mesmo redistribuído para 4 fileiras ainda comia 40%.
+
+   ⚠️ O QUE ELE RESOLVE E O QUE NÃO RESOLVE, dito por inteiro: no PC da escola o
+      teclado físico já funcionava (as duas portas são regra da casa desde
+      ago/2026) — o campo abaixo não muda nada lá. Ele existe pelo CELULAR, que
+      não tem teclado físico: sem um campo de verdade para focar, o aparelho não
+      abre teclado nenhum e a criança fica trancada.
+   ============================================================ */
+var TECIN = null;
+function campoTeclado(){
+  if(TECIN) return TECIN;
+  TECIN = document.createElement("input");
+  TECIN.id = "tecIn";
+  TECIN.type = "text";
+  TECIN.setAttribute("autocomplete", "off");
+  TECIN.setAttribute("autocorrect", "off");
+  TECIN.setAttribute("autocapitalize", "characters");
+  TECIN.setAttribute("spellcheck", "false");
+  TECIN.setAttribute("aria-label", "Escreva a palavra");
+  TECIN.setAttribute("inputmode", "text");
+  /* ⚠️ O EVENTO É `input`, NÃO `keydown`: no celular o teclado do sistema não
+     dispara keydown com a letra (ele "compõe" o texto), e um caderno que só
+     ouvisse keydown seria mudo justamente no aparelho para o qual este campo
+     existe. */
+  TECIN.addEventListener("input", function(){
+    if(!CRUZ) return;
+    var v = (TECIN.value || "").toUpperCase();
+    var teto = CRUZ.E.aceita ? CRUZ.E.cels.length : CRUZ.E.w.length;
+    if(v.length > teto) v = v.slice(0, teto);
+    CRUZ.val = v; TECIN.value = v;
+    pintaCruz();
+    if(!CRUZ.E.aceita && CRUZ.val.length >= CRUZ.E.w.length) setTimeout(confereCruz, 380);
   });
-  var ap = el("button", "ap", "apagar"); ap.setAttribute("aria-label", "Apagar");
-  ap.onclick = function(){ digitaCruz("ap"); }; tk.appendChild(ap);
-  var ok = el("button", "ok", "OK"); ok.setAttribute("aria-label", "Confirmar");
-  ok.onclick = function(){ digitaCruz("ok"); }; tk.appendChild(ok);
-})();
+  TECIN.addEventListener("keydown", function(ev){
+    if(ev.key === "Enter"){ ev.preventDefault(); confereCruz(); }
+    else if(ev.key === "Escape"){ fechaCruz(); }
+  });
+  TECIN.addEventListener("blur", function(){
+    /* sair do campo não perde o que já foi escrito — só fecha a caneta */
+    setTimeout(function(){ if(CRUZ && document.activeElement !== TECIN) fechaCruz(); }, 120);
+  });
+  document.body.appendChild(TECIN);
+  return TECIN;
+}
+function poeCampoSobre(grade){
+  var c = campoTeclado();
+  if(grade && grade.parentNode){
+    if(c.parentNode !== grade) grade.appendChild(c);
+    c.style.left = "0"; c.style.top = "0";
+    c.style.width = "100%"; c.style.height = "100%";
+  }
+  return c;
+}
+/* ⚠️ A FILEIRA DE LETRAS TAMBÉM OUVE O TECLADO DE VERDADE — as duas portas são
+   regra da casa, e no PC da escola a criança vai digitar. `ATIVO_LETRAS` é a
+   fileira que está esperando letra. */
+var ATIVO_LETRAS = null;
 document.addEventListener("keydown", function(ev){
+  if(ATIVO_LETRAS && !CRUZ){
+    var t = (ev.key || "").toUpperCase();
+    if(t.length === 1){ ev.preventDefault(); ATIVO_LETRAS(t); return; }
+    if(ev.key === "Backspace"){ ev.preventDefault(); ATIVO_LETRAS("ap"); return; }
+    if(ev.key === "Enter"){ ev.preventDefault(); ATIVO_LETRAS("ok"); return; }
+  }
   if(!CRUZ) return;
   if(document.activeElement && document.activeElement.id === "nomeIn") return;
   var k = (ev.key || "").toUpperCase();
@@ -1413,7 +1448,14 @@ function f05(d, pi){
           var certa = (t === V.v[n]);
           var b = el("button", "clt lt" + (ST.resp[id] && certa ? " vogal" : ""), sb.charAt(t));
           b.setAttribute("aria-label", "letra " + sb.charAt(t));
-          b.setAttribute("data-qa", (certa ? "op-" : "no-") + id + "-s" + n);
+          /* ⚠️⚠️ O NOME DA PECA ERRADA NAO PODE TERMINAR IGUAL AO DA CERTA.
+             Eu publiquei `no-<id>-s0` para as letras erradas e `op-<id>-s0`
+             para a certa — e o jogador da banca acha a peca pelo FINAL do
+             nome, entao ele clicava numa errada e a folha nunca fechava.
+             O defeito nao era da folha: era do nome que eu dei. As erradas
+             agora terminam em `-x<silaba>-<letra>`, que nunca colide. */
+          b.setAttribute("data-qa", certa ? ("op-" + id + "-s" + n)
+                                          : ("no-" + id + "-x" + n + "-" + t));
           if(certa) alvos.push("s" + n);
           b.onclick = function(){
             if(ST.resp[id]) return;
@@ -1929,8 +1971,9 @@ function f24(d, pi){
       colorido plano, fundo branco). Nada gerado por IA — regra de 14/set. */
 function f25(d, pi){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Olhe a figura e escreva o nome dela, uma letra em cada " +
-            "quadradinho.", "p" + pi + "enun");
+  enunciado(d, pi, "Olhe a figura e monte o nome dela: as letras estão " +
+            "embaralhadas ali embaixo. No computador dá para digitar.",
+            "p" + pi + "enun");
   ST.folha["p" + pi].forEach(function(k, i){
     var C = CRZ[k], id = "n" + pi + "_" + i, box = item(i + 1);
     registra(id, pi, C.r);
@@ -1946,11 +1989,17 @@ function f25(d, pi){
       c.setAttribute("aria-label", "Casa da palavra");
       cels.push(c); grade.appendChild(c);
     }
-    var E = {k: k, w: C.r, id: id, cels: cels, n: i + 1,
-             rot: "Escreva o nome da figura", bt: el("span", "pista oculta", "")};
-    cels.forEach(function(c){ c.onclick = function(){ if(!ST.resp[id]) abreCruz(E, pi); }; });
-    grade.onclick = function(){ if(!ST.resp[id]) abreCruz(E, pi); };
     box.appendChild(grade);
+    /* ⭐ A FILEIRA DE LETRAS EMBARALHADAS, no lugar do teclado de 41 teclas
+       (ideia do Marcos, 15/set): ela cabe numa linha horizontal, e o desafio
+       desta folha é ESCREVER o nome do bicho — não escolher entre grafias
+       parecidas. Nas folhas de ortografia do 5º ano ela daria a resposta, e
+       por isso lá o caminho continua sendo o teclado do aparelho. */
+    var teclar = fileiraLetras(box, id, pi, C.r, cels,
+                               "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    /* a outra porta: tocar na grade marca este item como o ativo, e o teclado
+       de verdade passa a escrever nele */
+    grade.onclick = function(){ if(!ST.resp[id]) ATIVO_LETRAS = teclar; };
     fechaItem(d, box, id);
   });
 }
@@ -2373,4 +2422,97 @@ function f35(d, pi){
     };
   });
   d.appendChild(banco);
+}
+
+/* ============================================================
+   A FILEIRA DE LETRAS EMBARALHADAS — ideia do Marcos, 15/set/2026:
+   *"ou somente colocar as letras das palavras selecionadas, embaralhadas… daí
+   ocupa menos espaço e pode ser tudo na horizontal"*.
+
+   ⭐ E ELE TEM RAZÃO NA CONTA: a fileira tem ~50 px contra os 253 px do teclado
+      redistribuído (e 336 px do que estava no ar). Numa tela de 640 é 8% contra
+      53% — é outra atividade.
+
+   ⭐ E ELA É FIEL AO PAPEL: várias das 89 folhas colhidas pedem exatamente isto
+      (*"Ordene as sílabas e forme o nome das figuras"*, a56; *"RECORTE AS
+      SÍLABAS E COLE"*, a06). O gesto existe na folha impressa.
+
+   ⚠️⚠️ ONDE ELA NÃO PODE ENTRAR, e isto é o mais importante deste comentário:
+      em folha de ORTOGRAFIA as letras SÃO a pergunta. Numa folha que mede se a
+      palavra tem Ç ou C, pôr o Ç na fileira É DAR A RESPOSTA — a folha deixa de
+      medir o que existe para medir. O mesmo vale para o H mudo, e para o S/SS.
+      Por isso esta peça entra na folha 25 (escrever o nome da figura, onde o
+      desafio é ESCREVER, não escolher entre grafias parecidas) e NÃO entra nos
+      cadernos de ortografia do 5º ano, que continuam com o teclado do aparelho.
+
+   ⚠️ E O TECLADO DE VERDADE CONTINUA VALENDO em cima dela: as duas portas são
+      regra da casa, e a criança do PC pode simplesmente digitar.
+   ⚠️ CONTRATO DO JOGADOR: cada letra publica `aria-label="Letra X"`, que é a
+      porta que o `_qa/joga_folha.js` usa quando a tecla não existe no teclado
+      emulado (Ç, vogal acentuada).
+   ============================================================ */
+function fileiraLetras(box, id, pi, palavra, cels, fCerto, fDica){
+  var val = "", feito = !!ST.resp[id];
+  function pinta(){
+    cels.forEach(function(c, i){
+      c.textContent = feito ? palavra.charAt(i) : (val.charAt(i) || "");
+      c.className = "ccel viva" + (feito ? " ok" : (val.charAt(i) ? " cheia" : ""));
+    });
+  }
+  function confere(){
+    if(mesmaPalavra(val, palavra)){
+      feito = true; pinta();
+      cx.className = "letrasfila pronta";
+      acertou(id, fCerto); box.className = "item feito";
+    } else {
+      val = ""; pinta();
+      cx.className = "letrasfila erro";
+      setTimeout(function(){ cx.className = "letrasfila"; }, 480);
+      bts.forEach(function(x){ x.b.className = "letrabt"; x.usada = false; });
+      errou(id, fDica);
+    }
+  }
+  var cx = el("div", "letrasfila"), bts = [];
+  /* ⚠️ AS LETRAS REPETIDAS APARECEM REPETIDAS (RATO tem um A; VOVÓ tem dois O):
+     dar uma letra só para duas posições deixaria a palavra impossível de
+     montar — foi o defeito que o jogador pegou no banco de sílabas, e a lição
+     serve igual aqui. */
+  baralha(palavra.split("")).forEach(function(L, n){
+    var b = el("button", "letrabt", L);
+    b.setAttribute("aria-label", "Letra " + L);
+    b.setAttribute("data-qa", "ltr-" + id + "-" + n);
+    var reg = {b: b, L: L, usada: false};
+    b.onclick = function(){
+      if(feito || reg.usada) return;
+      sTecla();
+      reg.usada = true; b.className = "letrabt usada";
+      val += L; pinta();
+      if(val.length >= palavra.length) setTimeout(confere, 320);
+    };
+    cx.appendChild(b); bts.push(reg);
+  });
+  var ap = el("button", "letrabt apagar", "apagar");
+  ap.setAttribute("aria-label", "Apagar a última letra");
+  ap.onclick = function(){
+    if(feito || !val.length) return;
+    sTecla();
+    var ult = val.charAt(val.length - 1), i;
+    val = val.slice(0, -1);
+    for(i = bts.length - 1; i >= 0; i--)
+      if(bts[i].usada && bts[i].L === ult){ bts[i].usada = false; bts[i].b.className = "letrabt"; break; }
+    pinta();
+  };
+  cx.appendChild(ap);
+  box.appendChild(cx);
+  pinta();
+  /* a outra porta: o teclado de verdade escreve na mesma fileira */
+  box._digita = function(ch){
+    if(feito) return;
+    if(ch === "ap"){ ap.onclick(); return; }
+    if(ch === "ok"){ if(val.length) confere(); return; }
+    var i;
+    for(i = 0; i < bts.length; i++)
+      if(!bts[i].usada && mesmaPalavra(bts[i].L, ch)){ bts[i].b.onclick(); return; }
+  };
+  return box._digita;
 }

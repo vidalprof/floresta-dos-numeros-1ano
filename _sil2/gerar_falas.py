@@ -139,6 +139,7 @@ def p(k, v):
 # ---------------------------------------------------------------------------
 p(u"folhaPronta", u"Folha pronta! Muito bem.")
 p(u"escreva", u"Escreva a palavra usando o teclado.")
+p(u"monte", u"Toque nas letras embaralhadas para montar a palavra.")
 p(u"ligue", u"Toque numa palavra do lado esquerdo e depois na do lado direito.")
 p(u"toque_palavra", u"Primeiro toque numa palavra ali embaixo. Depois toque na "
                     u"gaveta dela.")
@@ -373,8 +374,9 @@ for P in TRI[u"passos"]:
         p(u"pal_" + ch(o[u"p"]), o[u"p"] + u".")
 
 # ---- 25 — escrever o nome da figura ----
-p(u"p25enun", u"Folha vinte e cinco. Olhe a figura e escreva o nome dela, uma "
-              u"letra em cada quadradinho.")
+p(u"p25enun", u"Folha vinte e cinco. Olhe a figura e monte o nome dela: as "
+              u"letras estão embaralhadas ali embaixo. No computador dá para "
+              u"digitar.")
 for k, C in CRZ.items():
     p(u"crz_" + k, C[u"d"] + u".")
     p(u"certo25_" + k, u"Isso! " + C[u"r"] + u".")

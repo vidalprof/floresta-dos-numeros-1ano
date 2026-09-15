@@ -426,10 +426,31 @@ function digitaCruz(ch){
   pintaCruz(); rolaParaCruz();
   if(CRUZ.val.length >= E.w.length) setTimeout(confereCruz, 380);
 }
+/* ⚠️⚠️ O ACENTO NÃO PODE REPROVAR QUEM ACERTOU A PALAVRA (ordem do Marcos,
+   15/set/2026, com a turma na sala: *"faça que tanto com o sem dê certo"*).
+   O gabarito de BACTERIAS estava sem acento e o teclado da tela TEM os acentos:
+   a criança que escrevia BACTÉRIAS — que é o certo em português — era recusada,
+   e ficava olhando para uma palavra certa marcada como errada. O contrário
+   também acontecia, em caderno cujo gabarito vinha acentuado.
+   ⚠️ E ONDE O ACENTO É O CONTEÚDO, ele continua contando: a folha declara
+      `exigeAcento` e aí a comparação é letra por letra, acento incluído. */
+function semAcento(s){
+  s = String(s || "").toUpperCase();
+  var de = "ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ", para = "AAAAAEEEEIIIIOOOOOUUUUC", i, o = "";
+  for(i = 0; i < s.length; i++){
+    var n = de.indexOf(s.charAt(i));
+    o += n > -1 ? para.charAt(n) : s.charAt(i);
+  }
+  return o;
+}
+function mesmaPalavra(a, b, exigeAcento){
+  if(exigeAcento) return String(a).toUpperCase() === String(b).toUpperCase();
+  return semAcento(a) === semAcento(b);
+}
 function confereCruz(){
   if(!CRUZ || !CRUZ.val) return;
   var E = CRUZ.E, pi = CRUZ.pi;
-  if(CRUZ.val === E.w){
+  if(mesmaPalavra(CRUZ.val, E.w, E.exigeAcento)){
     E.cels.forEach(function(c, i){
       if(!c) return;
       var n = c.querySelector(".cn");
@@ -545,20 +566,64 @@ function montaLigar(caixa, pi, tag, pares, pagina){
    além de teclar no teclado virtual funcionasse se ele tocasse no teclado de
    verdade, as duas opções"*. No PC da escola tem teclado e a criança vai
    digitar; no celular, não tem. Nunca só uma porta. */
-(function(){
-  var tk = document.getElementById("tk");
-  var letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZÁÀÂÃÉÊÍÓÔÕÚÜÇ".split("");
-  letras.forEach(function(L){
-    var b = el("button", null, L);
-    b.setAttribute("aria-label", "Letra " + L);
-    b.onclick = function(){ digitaCruz(L); };
-    tk.appendChild(b);
+/* ============================================================
+   O TECLADO DO APARELHO — substitui o teclado de 41 teclas da casa.
+
+   ⭐ ORDEM DO MARCOS (15/set/2026): *"pode remover o teclado das atividades,
+      melhor digitar com teclado normal"*. O nosso ocupava 53% de um celular de
+      640 px, e mesmo redistribuído para 4 fileiras ainda comia 40%.
+
+   ⚠️ O QUE ELE RESOLVE E O QUE NÃO RESOLVE, dito por inteiro: no PC da escola o
+      teclado físico já funcionava (as duas portas são regra da casa desde
+      ago/2026) — o campo abaixo não muda nada lá. Ele existe pelo CELULAR, que
+      não tem teclado físico: sem um campo de verdade para focar, o aparelho não
+      abre teclado nenhum e a criança fica trancada.
+   ============================================================ */
+var TECIN = null;
+function campoTeclado(){
+  if(TECIN) return TECIN;
+  TECIN = document.createElement("input");
+  TECIN.id = "tecIn";
+  TECIN.type = "text";
+  TECIN.setAttribute("autocomplete", "off");
+  TECIN.setAttribute("autocorrect", "off");
+  TECIN.setAttribute("autocapitalize", "characters");
+  TECIN.setAttribute("spellcheck", "false");
+  TECIN.setAttribute("aria-label", "Escreva a palavra");
+  TECIN.setAttribute("inputmode", "text");
+  /* ⚠️ O EVENTO É `input`, NÃO `keydown`: no celular o teclado do sistema não
+     dispara keydown com a letra (ele "compõe" o texto), e um caderno que só
+     ouvisse keydown seria mudo justamente no aparelho para o qual este campo
+     existe. */
+  TECIN.addEventListener("input", function(){
+    if(!CRUZ) return;
+    var v = (TECIN.value || "").toUpperCase();
+    var teto = CRUZ.E.aceita ? CRUZ.E.cels.length : CRUZ.E.w.length;
+    if(v.length > teto) v = v.slice(0, teto);
+    CRUZ.val = v; TECIN.value = v;
+    pintaCruz();
+    if(!CRUZ.E.aceita && CRUZ.val.length >= CRUZ.E.w.length) setTimeout(confereCruz, 380);
   });
-  var ap = el("button", "ap", "apagar"); ap.setAttribute("aria-label", "Apagar");
-  ap.onclick = function(){ digitaCruz("ap"); }; tk.appendChild(ap);
-  var ok = el("button", "ok", "OK"); ok.setAttribute("aria-label", "Confirmar");
-  ok.onclick = function(){ digitaCruz("ok"); }; tk.appendChild(ok);
-})();
+  TECIN.addEventListener("keydown", function(ev){
+    if(ev.key === "Enter"){ ev.preventDefault(); confereCruz(); }
+    else if(ev.key === "Escape"){ fechaCruz(); }
+  });
+  TECIN.addEventListener("blur", function(){
+    /* sair do campo não perde o que já foi escrito — só fecha a caneta */
+    setTimeout(function(){ if(CRUZ && document.activeElement !== TECIN) fechaCruz(); }, 120);
+  });
+  document.body.appendChild(TECIN);
+  return TECIN;
+}
+function poeCampoSobre(grade){
+  var c = campoTeclado();
+  if(grade && grade.parentNode){
+    if(c.parentNode !== grade) grade.appendChild(c);
+    c.style.left = "0"; c.style.top = "0";
+    c.style.width = "100%"; c.style.height = "100%";
+  }
+  return c;
+}
 document.addEventListener("keydown", function(ev){
   if(!CRUZ) return;
   if(document.activeElement && document.activeElement.id === "nomeIn") return;

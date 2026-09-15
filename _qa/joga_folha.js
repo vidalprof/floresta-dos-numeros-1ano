@@ -349,14 +349,23 @@ function montaPlano(id) {
        meu seletor. É a lição do halo outra vez: quando o portão reprova em
        massa, a primeira suspeita é a régua, não a peça. */
     const alvo = '-' + String(tok).toLowerCase();
-    for (const e of qa) {
-      const orig = e.getAttribute('data-qa') || '';
-      const v = orig.toLowerCase();
-      if (usados.indexOf(orig) > -1) continue;
-      if (v.slice(-alvo.length) !== alvo) continue;
-      /* o alvo tem que ser DESTA folha: ou traz o id, ou é peça compartilhada
-         (a tira do alfabeto da folha 2, que serve a todas as perguntas) */
-      if (v.indexOf(id.toLowerCase()) > -1 || v.split('-').length === 2) return orig;
+    /* ⚠️⚠️ QUANDO DUAS PEÇAS TERMINAM IGUAL, A CERTA VEM PRIMEIRO (15/set/2026).
+       Uma folha publicou `op-<id>-s0` na letra certa e `no-<id>-s0` nas erradas;
+       eu acho a peça pelo FINAL do nome, peguei a errada e reprovei uma folha
+       que estava boa. O nome da folha foi consertado — mas a régua tinha de
+       ficar firme também, porque o próximo caderno vai repetir o nome. Duas
+       passadas: primeiro só o que começa com `op-`, depois qualquer um. */
+    for (const prefiro of [true, false]) {
+      for (const e of qa) {
+        const orig = e.getAttribute('data-qa') || '';
+        const v = orig.toLowerCase();
+        if (usados.indexOf(orig) > -1) continue;
+        if (prefiro && v.indexOf('op-') !== 0) continue;
+        if (v.slice(-alvo.length) !== alvo) continue;
+        /* o alvo tem que ser DESTA folha: ou traz o id, ou é peça compartilhada
+           (a tira do alfabeto da folha 2, que serve a todas as perguntas) */
+        if (v.indexOf(id.toLowerCase()) > -1 || v.split('-').length === 2) return orig;
+      }
     }
     return null;
   }
@@ -427,7 +436,19 @@ async function executa(pg, id, plano) {
          a letra que o teclado real não alcança vai pela outra porta — e as
          duas continuam medidas. */
       const deu = await pg.keyboard.press(ch).then(() => true).catch(() => false);
-      if (!deu) await pg.click('#tk button[aria-label="Letra ' + ch + '"]').catch(() => {});
+      /* ⚠️ A OUTRA PORTA MUDOU DE LUGAR em 15/set/2026: o teclado de 41 teclas
+         da casa saiu (ordem do Marcos — *"pode remover o teclado das
+         atividades, melhor digitar com teclado normal"*) e no lugar dele há
+         DUAS peças. A fileira de letras embaralhadas (`.letrabt`) é a que tem
+         botão por letra; onde entrou o teclado do APARELHO não há botão
+         nenhum, e aí só resta a tecla de verdade — que é o caso do Ç e das
+         vogais acentuadas, e por isso esses cadernos guardam o gabarito sem
+         acento. Procuro as duas, na ordem. */
+      if (!deu) {
+        const achou = await pg.$('.letrabt[aria-label="Letra ' + ch + '"]:not(.usada)')
+          || await pg.$('#tk button[aria-label="Letra ' + ch + '"]');
+        if (achou) await achou.click().catch(() => {});
+      }
       await pg.waitForTimeout(90);
     }
     /* ⚠️⚠️ O ENTER SO VAI SE A FOLHA NAO TIVER CONFIRMADO SOZINHA, e esta linha
