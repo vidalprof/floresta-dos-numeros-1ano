@@ -83,9 +83,14 @@ por inteiro. O que este plano acrescenta, por ser 2º ANO:
 
 | # | caderno | colheita | crivo | montado | no ar |
 |---|---|---|---|---|---|
-| 1 | **O Armário das Quatro Gavetas** (`_sil2`) | ✅ 120 colhidas, 89 únicas | ✅ `POTE-SIL2.md` | ✅ 35 folhas | ⏳ |
+| 1 | **O Armário das Quatro Gavetas** (`_sil2`) | ✅ 120 colhidas, 89 únicas | ✅ `POTE-SIL2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/o-armario-das-quatro-gavetas/) |
 | 2 | Quantos pedaços tem a palavra | ✅ coberto pela colheita do degrau 1 | — | — | — |
-| 3 | Troque um pedaço | ✅ 40 em `_sequencias/folhas_troca2` | — | — | — |
+
+⚠️ **A ORDEM DE CONSTRUÇÃO NÃO É A DOS DEGRAUS**, e é de propósito: o degrau 3
+foi o segundo a ser montado porque a colheita dele já estava crivada quando o
+caderno 1 fechou. O que a criança vê é a ORDEM DOS DEZ; o que eu construo é o
+que está pronto para construir.
+| 3 | **A Máquina de Trocar Sílabas** (`_troca2`) | ✅ 40 colhidas, 40 únicas | ✅ `POTE-TROCA2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/a-maquina-de-trocar-silabas/) |
 | 4 | O som que sai pelo nariz | ✅ 40 em `_sequencias/folhas_nasal2` | — | — | — |
 | 5 | O ponto que muda a voz | ✅ 40 em `_sequencias/folhas_ponto2` | — | — | — |
 | 6 | Mesma coisa · o contrário | ✅ 40 em `_sequencias/folhas_sinon2` | — | — | — |
