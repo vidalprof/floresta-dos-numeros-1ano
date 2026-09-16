@@ -1,0 +1,2672 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>A Casinha dos Três Pontos — Nº ano</title>
+<meta name="description" content="DESCREVER: o assunto, o ano, quantas folhas e de onde vieram as folhas de papel colhidas.">
+<!-- ============================================================
+     ESQUELETO DA FOLHA VIVA — a casca, sem conteúdo nenhum.
+
+     ⭐ POR QUE ELE EXISTE (pergunta do Marcos, 15/set/2026): *"mas por que você
+     está clonando? Não é melhor colher as atividades da internet com o crivo e
+     criar as interatividades que são pedidas, sem clonar?"*
+     Ele estava certo sobre o problema. As INTERATIVIDADES nunca foram clonadas
+     — o gesto sai do comando impresso na folha de papel. O que se clonava era o
+     MOTOR, e junto com ele vinha o CONTEÚDO do caderno de origem: os objetivos
+     do relatório, a citação do currículo, o sorteio das folhas, o prefixo das
+     figuras, o `var LIGAR`. Na Fábrica de Nomes, CINCO das nove reprovações
+     foram exatamente isso, e nenhuma tinha a ver com substantivos.
+     Aqui não há o que esquecer de trocar, porque não há nada de ninguém dentro.
+
+     ⚠️ NÃO SE COPIA ESTA PASTA À MÃO: use
+        `bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>"`,
+        que carimba o prefixo em todos os lugares de uma vez e roda o pré-voo.
+
+     O QUE JÁ VEM PRONTO, e não se reescreve: navegação e progresso, voz com
+     alto-falante em tudo, o teclado de letras nas duas portas (tela e teclado de
+     verdade), arrastar com mouse/dedo/caneta, gavetas, ligar, cruzadinha,
+     boletim da criança, relatório do professor pela medalha, dossiê pedagógico,
+     "continuar de onde parou" por 55 minutos, a chave 1275@ e o aviso ao
+     controle da sala quando a criança termina.
+
+     O QUE SE PREENCHE, e está marcado: GESTOS · ITENS · DADOS · NOMES ·
+     CURRICULO · novaFolha() · OBJETIVOS (no folhas.js) · as folhas f01..fN.
+
+     ES5 puro, um arquivo (mais o `folhas.js` ao lado), sem biblioteca.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+:root{
+  /* os tokens de cor da folha viva — sem eles o portão `_qa/cor_fixa.py` reprova
+     cor de texto cravada, que num tema diferente vira letra invisível */
+  --texto:#26201c;
+  --texto2:#3a2f27;
+  --texto3:#4a3d33;
+  /* a cor deste caderno é a TELHA: ele é sobre casas */
+  --cor:#b0562a;
+  --cor2:#8d4120;
+  --corclara:#fdf1e9;
+}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#f4efe9;color:var(--texto);padding-bottom:160px}
+#topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--cor);
+  box-shadow:0 2px 14px rgba(70,40,20,.13);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:880px;margin:0 auto}
+#topo .tit{font-weight:800;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:12px;background:#eee3d9;border-radius:8px;overflow:hidden;flex:1;min-width:60px;max-width:200px}
+.prog i{display:block;height:100%;width:0;background:var(--cor);border-radius:8px;-webkit-transition:width .5s;transition:width .5s}
+.pg{font-weight:800;font-size:14px;color:var(--cor2);white-space:nowrap}
+button{font-family:inherit;cursor:pointer}
+.bt{min-width:48px;min-height:48px;border:0;border-radius:16px;background:var(--cor);color:#fff;font-weight:800;font-size:17px;
+  padding:10px 18px;box-shadow:0 4px 0 var(--cor2);-webkit-transition:transform .08s;transition:transform .08s}
+.bt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cor2)}
+.bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
+.bt.cinza{background:#eae2da;color:#57493f;box-shadow:0 4px 0 #cdc0b4}
+.bt.verde{background:#15a34a;box-shadow:0 4px 0 #0d7736}
+.zap{width:42px;height:42px;border-radius:50%;border:0;background:var(--cor);box-shadow:0 3px 0 var(--cor2);
+  display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none}
+.zap svg{width:22px;height:22px;fill:#fff}
+.zap.off{background:#c2b6ab;box-shadow:0 3px 0 #a3968b}
+.zap.ouvir{background:#fff;box-shadow:0 3px 0 #ddd0c4;border:2px solid var(--cor)}
+.zap.ouvir svg{fill:var(--cor)}
+.zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
+@-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+
+#livro{max-width:880px;margin:12px auto 0;padding:0 10px}
+.pagina{position:relative;background:#fff;border-radius:22px;box-shadow:0 10px 34px rgba(70,40,20,.16);display:none;overflow:hidden;padding:0 0 20px}
+.pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
+@-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.faixa{background:var(--cor);color:#fff;padding:15px 18px 13px;display:flex;align-items:center;gap:12px}
+.faixa h2{margin:0;font-size:clamp(17px,4.4vw,25px);letter-spacing:.4px;text-transform:uppercase;flex:1;line-height:1.1}
+.faixa .num{background:#fff;color:var(--cor);font-weight:900;border-radius:50%;width:36px;height:36px;display:flex;
+  align-items:center;justify-content:center;font-size:18px;flex:none}
+/* uma cor por BLOCO da escada — a criança vê que mudou de assunto */
+.pagina.c1 .faixa{background:#b0562a}.pagina.c1 .faixa .num{color:#b0562a}
+.pagina.c2 .faixa{background:#1179bf}.pagina.c2 .faixa .num{color:#1179bf}
+.pagina.c3 .faixa{background:#15803d}.pagina.c3 .faixa .num{color:#15803d}
+.pagina.c4 .faixa{background:#8b5cf6}.pagina.c4 .faixa .num{color:#8b5cf6}
+.pagina.c5 .faixa{background:#b45309}.pagina.c5 .faixa .num{color:#b45309}
+.enun{margin:14px 16px 4px;font-size:clamp(15px,3.9vw,19px);font-weight:700;line-height:1.35}
+.enun b{color:var(--cor2)}
+
+.item{margin:12px 14px;padding:14px;border:2px solid #f0e6dd;border-radius:20px;background:#fffdfb}
+.item.feito{border-color:#bfe6ce;background:#f3fcf6}
+.item .n{font-weight:900;color:#b3a294;font-size:15px;margin-right:8px}
+/* ⚠️ A FIGURA TEM ALTURA FIXA: com `height:auto` cada figura entrava no seu
+   tamanho natural (o prédio com 230 px e o tijolo com 90) e, como `display:block`
+   ignora o `text-align:center` do pai, todas encostavam na esquerda. */
+.fig{display:block;width:auto;height:clamp(76px,19vw,116px);max-width:100%;
+  margin:2px auto 6px;object-fit:contain;image-rendering:auto}
+.figgrande{display:block;width:auto;height:clamp(84px,21vw,128px);max-width:100%;
+  margin:0 auto;object-fit:contain}
+.figbt{border:0;background:none;padding:4px;border-radius:16px;min-width:48px;min-height:48px}
+/* ⚠️ O ALTO-FALANTE É DESENHADO EM CSS — caixinha + triângulo + duas ondas de
+   borda arredondada. Nada de emoji (vira quadradinho nos PCs da escola) e nada
+   de SVG solto (ordem do Marcos, set/2026). */
+.som{position:relative;width:46px;height:46px;min-width:46px;border:3px solid var(--cor);
+  border-radius:50%;background:var(--corclara);padding:0;cursor:pointer;flex:none}
+.som:active{-webkit-transform:scale(.93);transform:scale(.93)}
+.som .cone{position:absolute;left:12px;top:17px;width:7px;height:10px;background:var(--cor2);
+  border-radius:2px 0 0 2px}
+.som .cone:after{content:"";position:absolute;left:6px;top:-6px;width:0;height:0;
+  border-top:11px solid transparent;border-bottom:11px solid transparent;
+  border-right:11px solid var(--cor2)}
+.som .onda{position:absolute;border:3px solid var(--cor2);border-left-color:transparent;
+  border-top-color:transparent;border-bottom-color:transparent;border-radius:50%}
+.som .o1{left:26px;top:16px;width:8px;height:12px}
+.som .o2{left:29px;top:11px;width:13px;height:22px;opacity:.65}
+.enunlin{display:flex;align-items:center;gap:10px;margin:0 2px}
+.enunlin .enun{flex:1;min-width:0}
+
+/* fileira genérica de opções */
+.ops{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.op{min-width:64px;min-height:56px;border:3px solid #e6dbd1;border-radius:16px;background:#fff;color:var(--texto);
+  font-weight:900;font-size:20px;padding:8px 14px;-webkit-transition:transform .1s;transition:transform .1s}
+.op:active{transform:scale(.94)}
+.op.certa{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.op.erro{border-color:#e0562f;background:#fdeee9}
+/* a opção que é uma FRASE (a definição, o porquê): texto corrido, alinhado à
+   esquerda, largura cheia — frase centralizada em caixinha não se lê */
+.op.frase{display:block;width:100%;max-width:420px;text-align:left;font-size:clamp(14px,3.7vw,17px);
+  font-weight:700;line-height:1.35;letter-spacing:0;min-height:52px}
+.op.curta{font-size:clamp(15px,4vw,19px);letter-spacing:.5px}
+/* a opção COM figura */
+.op.figbt{display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:96px;min-height:112px;padding:8px 10px}
+.op.figbt .figop{display:block;width:auto;height:clamp(56px,14vw,80px);max-width:100%;object-fit:contain}
+.rotop{font-weight:800;font-size:clamp(11px,2.9vw,13px);color:var(--texto2);letter-spacing:.4px;
+  line-height:1.1;word-break:break-word}
+/* ⚠️ A LEGENDA SECRETA. `visibility` e não `display`: o espaço fica guardado,
+   então a folha não pula quando a palavra aparece no acerto. */
+.segredo{visibility:hidden}
+.segredo.revelado{visibility:visible;-webkit-animation:aparece .35s;animation:aparece .35s}
+@-webkit-keyframes aparece{from{opacity:0}to{opacity:1}}
+@keyframes aparece{from{opacity:0}to{opacity:1}}
+.figsil{display:flex;flex-direction:column;align-items:center;gap:4px;margin:2px 0 6px}
+.chamlin{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.chamlin b{font-size:clamp(15px,4vw,19px);color:var(--texto2);letter-spacing:.5px}
+
+/* ---- marcar VÁRIAS certas (folha 1, da d18: "marque com x as corretas") ---- */
+.marcax{display:flex;flex-direction:column;gap:8px;align-items:center;margin-top:10px}
+.lx{display:flex;align-items:center;gap:12px;min-height:56px;border:3px solid #e6dbd1;border-radius:16px;
+  background:#fff;padding:8px 14px;font-weight:700;font-size:clamp(14px,3.7vw,17px);color:var(--texto);
+  width:100%;max-width:430px;text-align:left;line-height:1.3}
+.lx .cx{width:34px;height:34px;border:3px solid #b3a294;border-radius:8px;display:inline-flex;align-items:center;
+  justify-content:center;font-size:24px;font-weight:900;color:var(--cor);flex:none}
+.lx.marcada{border-color:var(--cor);background:var(--corclara)}
+.lx.marcada .cx{border-color:var(--cor)}
+.lx.certa{border-color:#15a34a;background:#e7f8ee}
+.lx.certa .cx{border-color:#15a34a;color:#15a34a}
+.lx.errada{border-color:#e0562f;background:#fdeee9}
+
+.alvonome.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.banconome{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 10px 10px}
+.etiq{min-height:46px;padding:8px 14px;border:3px dashed #e6dbd1;border-radius:12px;background:#fff;
+  font-weight:900;font-size:clamp(13px,3.6vw,17px);color:var(--texto3);cursor:pointer;letter-spacing:.5px;
+  -ms-touch-action:none;touch-action:none}
+.etiq.marcada{border-style:solid;border-color:var(--cor);background:var(--corclara)}
+.etiq.usada{opacity:.32;pointer-events:none;border-style:solid}
+.etiq.puxada{opacity:.35}
+
+/* ---- juntar as sílabas numeradas (folha 5, da d18 item 4) ---- */
+.tabsil{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:8px 10px 6px}
+.tsc{border:2px solid #e6dbd1;border-radius:10px;background:#fff;text-align:center;padding:5px 2px;
+  min-height:46px;display:flex;flex-direction:column;justify-content:center;cursor:pointer}
+.tsc .tsn{font-size:11px;font-weight:800;color:#b3a294;display:block;line-height:1}
+/* ⚠️ tinta PRÓPRIA, não o token do fundo da atividade: a célula pinta o
+   próprio fundo, então quem decide a cor da letra é ela (portão 4c). */
+.tsc .tss{font-size:clamp(13px,3.6vw,18px);font-weight:900;color:#4a3d33;display:block;letter-spacing:.5px}
+.tsc.usada{background:var(--corclara);border-color:var(--cor)}
+.tsc:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.montada{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;min-height:52px;align-items:center;margin:6px 0}
+.mped{font-weight:900;font-size:clamp(17px,4.6vw,24px);color:#0d7736;background:#e7f8ee;border:2px solid #15a34a;
+  border-radius:10px;padding:6px 10px;display:block}
+.montada .vazio{font-weight:900;color:#c9bcb0;font-size:clamp(15px,4vw,19px)}
+
+/* ---- ligar (folhas 8 e 22) ---- */
+.ligar{position:relative;display:flex;gap:clamp(30px,10vw,96px);justify-content:space-between;margin:14px 6px}
+.ligar .col{display:flex;flex-direction:column;gap:14px;flex:1 1 0;min-width:0}
+.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.ponta{border:3px solid #e6dbd1;border-radius:16px;background:#fff;height:92px;display:flex;align-items:center;
+  justify-content:center;font-weight:900;font-size:clamp(13px,3.4vw,17px);letter-spacing:.4px;padding:6px;
+  text-align:center;line-height:1.15;color:var(--texto2);
+  -ms-touch-action:none;touch-action:none;-webkit-transition:border-color .15s,box-shadow .15s;
+  transition:border-color .15s,box-shadow .15s}
+.ponta img{width:auto;height:70px;max-width:100%;object-fit:contain}
+@media (max-width:420px){ .ponta{height:78px} .ponta img{height:58px} }
+.ponta.marcada{border-color:var(--cor);box-shadow:0 0 0 4px rgba(176,86,42,.22)}
+.ponta.feita{border-color:#15a34a;background:#e7f8ee}
+.ponta.mostra{border-color:#f0b64a;box-shadow:0 0 0 4px rgba(240,182,74,.4)}
+.ponta.treme{-webkit-animation:treme .4s;animation:treme .4s}
+@-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ---- caça-palavras dos materiais (folha 9, da d02) ---- */
+.diagrama{display:grid;gap:2px;margin:8px auto 4px;max-width:430px;touch-action:none;
+  -webkit-user-select:none;user-select:none}
+.dcel{min-width:0;aspect-ratio:1/1;min-height:30px;border:1px solid #eee0d4;border-radius:6px;background:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;
+  font-size:clamp(11px,3.1vw,16px);color:var(--texto3);cursor:pointer;padding:0}
+.dcel.tracando{background:#ffe9d6;border-color:var(--cor)}
+.dcel.achada{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+.listamat{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 10px 4px}
+.pmat{font-weight:900;font-size:clamp(12px,3.3vw,15px);color:var(--texto3);border:2px solid #e6dbd1;
+  border-radius:10px;padding:5px 10px;background:#fff;letter-spacing:.5px}
+.pmat.achada{border-color:#15a34a;background:#e7f8ee;color:#0d7736;text-decoration:line-through}
+
+/* ---- classificar em colunas: lugares (11), vistas (19), cômodos (23) ---- */
+.colunas{display:flex;gap:clamp(4px,1.6vw,10px);justify-content:center;margin:8px 8px 4px;flex-wrap:wrap}
+.coluna{flex:1 1 28%;min-width:96px;max-width:200px;border:3px solid #e6dbd1;border-radius:14px;
+  background:#fffdfb;padding:5px;min-height:112px;cursor:pointer}
+.coluna.perto{border-color:var(--cor);background:var(--corclara)}
+.coluna.erro{border-color:#e0562f;background:#fdeee9}
+.ctit{font-weight:900;font-size:clamp(12px,3.2vw,15px);color:var(--texto2);margin-bottom:4px;
+  border-bottom:2px solid #f0e6dd;padding-bottom:3px;display:flex;align-items:center;
+  justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;line-height:1.1}
+.ctit .figmini{height:clamp(30px,7vw,40px)}
+.cdentro{display:flex;flex-direction:column;gap:3px;align-items:center;min-height:56px}
+.fdentro{font-weight:800;font-size:clamp(11px,3vw,14px);color:#0d7736;background:#e7f8ee;
+  border-radius:8px;padding:3px 6px;display:block;max-width:100%;word-break:break-word;text-align:center}
+.figmini{width:auto;height:clamp(34px,8vw,44px);max-width:100%;object-fit:contain;display:block}
+.figbanco{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 10px 10px}
+.op.fig{padding:6px;min-width:96px;min-height:96px}
+.op.fig .figmini{height:clamp(48px,12vw,64px)}
+.op.fig.marcada{border-color:var(--cor);background:var(--corclara);
+  -webkit-box-shadow:0 0 0 4px rgba(176,86,42,.18);box-shadow:0 0 0 4px rgba(176,86,42,.18)}
+.op.fig.usada{opacity:.3;pointer-events:none}
+
+/* ---- completar a lacuna (folha 15, da d23) ---- */
+.frasel{font-size:clamp(15px,4vw,19px);font-weight:700;color:var(--texto2);line-height:1.7;
+  text-align:center;margin:4px 6px 8px}
+.lacuna{display:inline-block;min-width:96px;padding:2px 10px;border-bottom:4px solid var(--cor);
+  color:var(--cor);font-weight:900;text-align:center}
+.lacuna.cheia{border-bottom-color:#1f9d55;color:#1f9d55;background:#eafaf0;border-radius:8px 8px 0 0}
+
+/* ---- cruzadinha (folha 16, da d08 reescrita) ---- */
+.cruzenv{overflow-x:auto;margin:8px 0 4px}
+.cruz{display:grid;gap:2px;margin:0 auto;width:-webkit-max-content;width:max-content}
+.ccel{width:clamp(26px,7vw,34px);height:clamp(26px,7vw,34px);border:0;background:transparent;padding:0}
+.ccel.viva{border:2px solid #d9c9bb;border-radius:5px;background:#fff;font-weight:900;
+  font-size:clamp(13px,3.6vw,18px);color:var(--texto3);cursor:pointer;position:relative}
+.ccel.viva.ativa{border-color:var(--cor);background:var(--corclara);
+  -webkit-box-shadow:0 0 0 3px rgba(176,86,42,.25);box-shadow:0 0 0 3px rgba(176,86,42,.25)}
+.ccel.viva.ok{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.ccel .cn{position:absolute;left:1px;top:0;font-size:9px;font-weight:800;color:#b3a294;line-height:1}
+.pistas{display:flex;flex-direction:column;gap:6px;margin:8px 12px 4px}
+.pista{display:flex;align-items:center;gap:8px;border:2px solid #f0e6dd;border-radius:12px;background:#fffdfb;
+  padding:6px 10px;min-height:48px;font-size:clamp(13px,3.5vw,16px);font-weight:600;color:var(--texto2);
+  line-height:1.3;cursor:pointer;text-align:left;width:100%}
+.pista .pn{font-weight:900;color:var(--cor);flex:none;min-width:18px}
+.pista.feita{border-color:#15a34a;background:#f3fcf6}
+.pista.ativa{border-color:var(--cor);background:var(--corclara)}
+
+/* ---- a imagem aérea com pontos (folha 18) ---- */
+.colho{text-align:center;margin:2px 0 4px;min-height:80px}
+.credito{font-size:11px;line-height:1.35;color:#6b5347;margin:6px 2px 0;text-align:center}
+.figolho{max-height:76px;width:auto;display:inline-block}
+.aerea{position:relative;max-width:520px;margin:8px auto 4px;width:100%}
+.aerea img{display:block;width:100%;height:auto;border-radius:16px;border:3px solid #e6dbd1}
+/* ⚠️ O ALVO DA FOLHA 18 É INVISÍVEL ATÉ SER ACHADO, e isso é a folha inteira.
+   A primeira versão pintava cada ponto com um anel branco por cima do desenho.
+   Com três alvos já era discutível; com os dezessete da praça (uma fonte,
+   quatro bancos, dez árvores e dois bebedouros) a figura virou um campo de
+   bolhas — a criança tocava em qualquer anel e acertava sem OLHAR a praça, que
+   é justamente o que a folha existe para medir. Agora o botão é só uma área de
+   toque transparente do tamanho do dedo (52px, acima do piso de 44), e o anel
+   verde só nasce quando ela acha. Achado por FOTO, 13/set/2026 — nenhum portão
+   via, porque todos os alvos estavam lá, do tamanho certo, funcionando. */
+.ponto{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;
+  border:3px solid transparent;background:transparent;cursor:pointer;padding:0}
+.ponto.certo{background:rgba(21,163,74,.55);border-color:#0d7736;
+  -webkit-box-shadow:0 2px 8px rgba(0,0,0,.3);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.ponto.errado{background:rgba(224,86,47,.5);border-color:#fff}
+.ponto:active{-webkit-transform:scale(.9);transform:scale(.9)}
+/* teclado: quem navega por TAB precisa ver onde está */
+.ponto:focus{outline:3px solid #fff;outline-offset:-3px}
+
+/* ---- ordenar as cenas / o antes e o hoje (folhas 20 e 21) ---- */
+.trilhaord{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 6px 4px}
+.slot{width:clamp(84px,23vw,124px);min-height:clamp(84px,23vw,124px);border:3px dashed var(--cor);
+  border-radius:16px;background:var(--corclara);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-weight:900;font-size:20px;color:var(--cor2);padding:4px}
+.slot .figmini{height:clamp(56px,15vw,86px)}
+.slot.perto{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.slot.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.slot .rot{font-size:clamp(10px,2.7vw,12px);font-weight:800;color:#0d7736;line-height:1.05;text-align:center}
+.sn{font-size:12px;font-weight:900;color:var(--cor2);display:block}
+
+/* ---- achar as casas dentro do poema (folha 24, da d19) ---- */
+.poema{font-size:clamp(15px,4vw,19px);line-height:1.9;text-align:center;color:var(--texto2);
+  font-weight:600;margin:8px 12px 4px}
+.poema .aut{display:block;font-size:13px;font-weight:800;color:#8a7768;margin-top:6px}
+.pw{display:inline-block;border:0;background:transparent;font:inherit;color:inherit;padding:2px 6px;
+  border-radius:8px;cursor:pointer;min-height:44px;line-height:1.4}
+.pw.achada{background:#ffe9a8;color:#6a4b00;font-weight:900;-webkit-box-shadow:0 0 0 2px #e5b93c;
+  box-shadow:0 0 0 2px #e5b93c}
+.pw.nao{-webkit-animation:treme .34s;animation:treme .34s}
+.placar{font-weight:900;color:var(--cor2);text-align:center;font-size:15px;margin:4px 0}
+
+/* ---- o mural da rua do mundo (folha 25) ---- */
+.mural{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 10px}
+.cartaocasa{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:118px;min-width:104px;
+  padding:8px 10px;border:3px solid #e6dbd1;border-radius:20px;background:#fff;cursor:pointer;
+  -webkit-transition:transform .18s,border-color .18s,background .18s;
+  transition:transform .18s,border-color .18s,background .18s}
+.cartaocasa .figop{display:block;width:auto;height:clamp(52px,13vw,72px);max-width:100%;object-fit:contain}
+.cartaocasa.escolhido{border-color:#15a34a;background:#eafaf0;-webkit-transform:scale(1.03);transform:scale(1.03)}
+.cartaocasa:focus-visible{outline:3px solid #f0b64a;outline-offset:2px}
+.rua{display:flex;gap:2px;justify-content:center;align-items:flex-end;flex-wrap:wrap;
+  border-bottom:8px solid #7b6a5c;margin:10px 12px 4px;padding-bottom:2px;min-height:60px}
+.rua img{height:clamp(44px,12vw,68px);width:auto;object-fit:contain;display:block}
+
+/* ---- carimbo, nav, capa, fim ---- */
+.carimbo{position:absolute;right:14px;top:60px;transform:rotate(-14deg) scale(.4);opacity:0;color:#15a34a;
+  border:5px solid #15a34a;border-radius:14px;padding:6px 14px;font-weight:900;font-size:20px;text-align:center;
+  line-height:1.05;pointer-events:none;-webkit-transition:all .45s;transition:all .45s}
+.pagina.pronta .carimbo{opacity:.92;transform:rotate(-14deg) scale(1)}
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:18;background:#fff;border-top:3px solid var(--cor);padding:8px 10px;
+  display:none;align-items:center;gap:10px;box-shadow:0 -3px 14px rgba(70,40,20,.14)}
+/* ⚠️ ACHADO NA FOTO, não em portão nenhum (13/set/2026): com um título
+   comprido ("Ache os materiais no diagrama") esta linha quebrava em QUATRO
+   e espremia "Anterior", "Terminar" e "Próxima" contra as bordas — e
+   "construção" ainda estourava para fora. O nome da folha já está na faixa
+   colorida do topo da página, então na tela estreita ele some daqui. */
+#nav .txt{flex:1;text-align:center;font-weight:800;color:var(--cor2);font-size:14px;
+  min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:560px){ #nav .txt{display:none} }
+/* ⭐ o botão de terminar a qualquer momento: discreto de propósito — ele existe
+   para o sinal da escola, não para tentar a criança a pular tudo */
+.bt.terminar{background:#f3ece5;color:#6b5a4d;border:2px solid #e2d6ca;
+  font-size:12px;padding:8px 10px;min-height:44px;font-weight:800;flex:0 0 auto}
+.bt.terminar:active{background:#e9dfd5}
+.barra.naoabriu{opacity:.5}
+.barra.naoabriu b{font-weight:700;font-size:12px;color:#9c8b7c}
+#barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:19;background:#fff;border-top:3px solid var(--cor);padding:10px;display:none}
+#barraCapa.aberta{display:block}
+#barraCapa .lin{display:flex;gap:10px;align-items:center;max-width:640px;margin:0 auto}
+#barraCapa label{font-weight:800;color:var(--cor2);font-size:15px;white-space:nowrap}
+#nomeIn{flex:1;min-width:0;min-height:50px;border:3px solid var(--cor);border-radius:14px;padding:0 12px;
+  font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
+#nomeIn:focus{outline:none;border-color:#1179bf;box-shadow:0 0 0 4px rgba(17,121,191,.25)}
+
+/* ================= A CAPA =================
+   O tema sai do nome: uma RUA onde as casas do mundo inteiro são vizinhas.
+   O céu com o sol, a fileira de casas subindo uma depois da outra e a calçada
+   embaixo. Só CSS e PNG: nada de SVG, nada de emoji. */
+.capa{position:relative;text-align:center;padding:18px 16px 24px;overflow:hidden;
+  background:-webkit-linear-gradient(top,#cbe7f7 0%,#fdf3ea 62%,#fff 100%);
+  background:linear-gradient(180deg,#cbe7f7 0%,#fdf3ea 62%,#fff 100%)}
+.capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
+.capa .nv{position:absolute;display:block;border-radius:50%;
+  background:-webkit-radial-gradient(circle,rgba(255,255,255,.85),rgba(255,255,255,0) 70%);
+  background:radial-gradient(circle,rgba(255,255,255,.85),rgba(255,255,255,0) 70%)}
+.capa .n1{width:220px;height:130px;left:-40px;top:14px}
+.capa .n2{width:280px;height:150px;right:-70px;top:44px}
+.capa .n3{width:170px;height:110px;left:46%;top:6px}
+.capa .sol{position:absolute;right:22px;top:16px;width:56px;height:56px;border-radius:50%;
+  background:-webkit-radial-gradient(circle at 40% 38%,#fff2b8,#f5b301);
+  background:radial-gradient(circle at 40% 38%,#fff2b8,#f5b301);
+  box-shadow:0 0 26px rgba(245,179,1,.55)}
+/* ⚠️ O SOL TAPAVA O SUBTÍTULO (achado na foto). O `.ceu` vem antes no HTML,
+   mas os filhos dele são absolutos — e elemento posicionado pinta POR CIMA
+   de irmão não posicionado, mesmo vindo antes. O conserto é levantar o
+   conteúdo, não abaixar o céu. */
+.capa .titu,.capa .sub,.capa .esteira,.capa .chamada{position:relative;z-index:1}
+.capa .chapeu{position:relative;z-index:1;width:66px;height:66px;margin:16px auto 2px;border-radius:16px;
+  background:-webkit-linear-gradient(top left,#d2703c,#8d4120);
+  background:linear-gradient(135deg,#d2703c,#8d4120);color:#fff;font-weight:900;font-size:34px;
+  line-height:66px;box-shadow:0 8px 18px rgba(141,65,32,.36)}
+.capa .chapeu:before{content:"";position:absolute;left:-9px;right:-9px;top:-15px;height:0;
+  border-left:42px solid transparent;border-right:42px solid transparent;border-bottom:18px solid #a33d1e}
+.capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+.capa .titu .lt{display:inline-block;font-size:clamp(24px,6.4vw,42px);font-weight:900;letter-spacing:0;
+  color:#8d4120;text-shadow:0 3px 0 #f6dcc8,0 5px 10px rgba(120,60,25,.2);
+  -webkit-animation:caiCasa .5s both;animation:caiCasa .5s both}
+.capa .titu .esp{display:inline-block;width:14px}
+/* ⚠️ `caiCasa` e não `cai`: o confete já tem um `@keyframes cai` que termina em
+   `opacity:0`. Nome de keyframe é global — numa outra capa desta casa a colisão
+   apagou o título inteiro, em silêncio. */
+@-webkit-keyframes caiCasa{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
+@keyframes caiCasa{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
+.capa .sub{font-weight:700;color:#8d4120;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
+.capa .esteira{max-width:660px;margin:16px auto 4px;position:relative}
+.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:6px;flex-wrap:nowrap}
+.capa .cena img{width:clamp(46px,13vw,96px);height:clamp(46px,13vw,96px);object-fit:contain;
+  -webkit-animation:sobeCasa 2.6s ease-in-out infinite;animation:sobeCasa 2.6s ease-in-out infinite}
+.capa .cena img:nth-child(2){-webkit-animation-delay:.35s;animation-delay:.35s}
+.capa .cena img:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
+.capa .cena img:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
+.capa .cena img:nth-child(5){-webkit-animation-delay:1.4s;animation-delay:1.4s}
+@-webkit-keyframes sobeCasa{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
+@keyframes sobeCasa{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.capa .cinta{display:flex;gap:6px;justify-content:center;background:#7b6a5c;border-radius:9px;
+  padding:6px 8px;margin-top:6px;box-shadow:0 6px 14px rgba(70,40,20,.22)}
+.capa .cinta i{display:block;width:26px;height:9px;background:#cbb9a8;border-radius:5px}
+.capa .chamada{margin-top:14px;font-weight:700;color:#5c4c40;font-size:clamp(13px,3.4vw,16px)}
+@media (prefers-reduced-motion: reduce){
+  .capa .titu .lt,.capa .cena img{-webkit-animation:none;animation:none}
+}
+
+#fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
+  box-shadow:0 10px 34px rgba(70,40,20,.16);text-align:center}
+#fim h2{margin:0 0 6px;color:var(--cor2);font-size:clamp(21px,5.5vw,30px)}
+.estrelas{font-size:44px;letter-spacing:8px;margin:6px 0}
+.barras{max-width:520px;margin:10px auto;text-align:left}
+.barra{display:flex;align-items:center;gap:8px;margin:6px 0;font-weight:700;font-size:14px}
+.barra span{flex:0 0 42%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barra .tr{flex:1;height:14px;background:#eee3d9;border-radius:8px;overflow:hidden}
+.barra .tr i{display:block;height:100%;width:0;background:#15a34a;-webkit-transition:width .8s;transition:width .8s}
+.barra b{flex:none;color:var(--cor2)}
+/* ⚠️ SEM EMOJI E SEM SVG na tela da criança: nos PCs da escola o emoji vira
+   quadradinho vazio, e a criança de sete anos não sabe o que é um quadradinho.
+   Troféu e selos são PNG; as setas são triângulos de CSS puro. */
+#medalha{width:132px;height:132px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe680,#e0a800);
+  margin:14px auto;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(180,140,0,.42);cursor:pointer;-ms-touch-action:none;touch-action:none}
+#medalha img{width:92px;height:92px;object-fit:contain;display:block;pointer-events:none}
+#medalha.semfig:after{content:"BOA!";font-weight:900;font-size:26px;color:#7a5600}
+.seta{display:inline-block;width:0;height:0;vertical-align:middle;
+  border-top:8px solid transparent;border-bottom:8px solid transparent}
+.seta.esq{border-right:11px solid currentColor;margin-right:7px}
+.seta.dir{border-left:11px solid currentColor;margin-left:7px}
+#estrelas img{width:52px;height:52px;object-fit:contain;display:inline-block;margin:0 3px;vertical-align:middle}
+
+#relatorio{display:none;text-align:left;background:#fbf7f3;border:2px solid #e6dbd1;border-radius:16px;padding:12px;margin-top:12px;font-size:13px}
+#relatorio table{border-collapse:collapse;width:100%;margin-top:8px}
+#relatorio th,#relatorio td{border:1px solid #e6dbd1;padding:5px 7px;text-align:left}
+#relatorio th{background:#f4ebe3}
+#relatorio table th:nth-child(4),#relatorio table td:nth-child(4){background:#f3fbf5}
+#relatorio .parecer{margin:10px 0 4px;padding:10px 12px;border-left:5px solid var(--cor);
+  background:#fff;border-radius:0 12px 12px 0;font-size:13.5px;line-height:1.55;color:var(--texto2)}
+#relatorio .comonota{margin:8px 0 0;font-size:11.5px;color:#7d6c5e;line-height:1.45}
+/* ⭐ o aviso de caderno não terminado */
+.avisoparcial{background:#fff6e5;border:2px solid #e5b93c;border-radius:10px;
+  padding:8px 10px;margin:8px 0;font-size:12.5px;line-height:1.45;color:#6a4b00}
+.notao{display:flex;align-items:center;gap:14px;background:#fff;border:3px solid var(--cor);
+  border-radius:18px;padding:10px 14px;margin:10px 0 2px}
+.notao .nn{font-size:clamp(30px,9vw,44px);font-weight:900;color:var(--cor);line-height:1;
+  font-variant-numeric:tabular-nums}
+.notao .nl{font-size:12.5px;color:#3a2f27;line-height:1.45}
+
+#menuProf{display:none;position:fixed;inset:0;z-index:60;background:rgba(45,28,16,.62);align-items:center;justify-content:center;padding:14px}
+#menuProf.aberto{display:flex}
+#menuProf .cx{background:#fff;border:4px solid var(--cor);border-radius:20px;padding:16px;max-width:520px;width:100%;
+  max-height:92vh;overflow:auto;box-shadow:0 14px 44px rgba(0,0,0,.4)}
+#menuProf h3{margin:0 0 4px;color:var(--cor2);font-size:20px}
+#menuProf p{margin:0 0 12px;font-size:13px;color:#57493f;line-height:1.4}
+#menuProf .folhas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#menuProf .folhas button{min-height:46px;border:0;border-radius:12px;background:#f4ebe3;color:#57493f;font-weight:800;
+  font-size:14px;padding:8px 12px;box-shadow:0 3px 0 #ddd0c4;flex:1 1 150px;text-align:left}
+/* ============================================================
+   O CAMPO QUE CHAMA O TECLADO DO APARELHO.
+   Ele mora EM CIMA da grade de casinhas e é praticamente invisível — mas
+   continua sendo um campo de verdade, porque campo escondido não recebe foco
+   e sem foco o teclado do celular não abre.
+   ============================================================ */
+#tecIn{position:absolute;z-index:5;border:0;background:transparent;color:transparent;
+  caret-color:transparent;opacity:.01;font-size:16px;padding:0;margin:0;outline:0;
+  -webkit-appearance:none;appearance:none}
+#tecIn:focus{outline:0}
+.cruz{position:relative}
+#confete{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.cf{position:absolute;width:9px;height:14px;opacity:.95;-webkit-animation:cai 1.5s linear forwards;animation:cai 1.5s linear forwards}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+@keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+.oculto{display:none!important}
+.ajuda{text-align:center;font-size:14px;color:#7d6c5e;margin:2px 0 6px}
+.fantasma{position:fixed;z-index:70;pointer-events:none;opacity:.92;
+  -webkit-transform:scale(1.1);transform:scale(1.1);
+  -webkit-box-shadow:0 12px 26px rgba(50,30,15,.3);box-shadow:0 12px 26px rgba(50,30,15,.3)}
+/* o cinto e o suspensório do `draggable="false"`: navegador antigo não olha o
+   atributo, mas olha esta regra */
+img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:none}
+.bt.pronto{min-height:48px;padding:0 22px;font-size:16px;margin:6px auto 0;display:block}
+
+/* =========================================================================
+   ANIMAÇÃO DAS FOLHAS — e a regra que manda é NADA ANIMA SEM FUNÇÃO.
+     · os itens ENTRAM EM CASCATA → a criança vê que a folha tem começo e ordem;
+     · a faixa do título DESLIZA → marca a troca de folha;
+     · o acerto DÁ UM PULINHO e a opção certa BRILHA → resposta tátil;
+     · o erro BALANÇA de leve → diz "de novo" sem dizer "errou".
+   `prefers-reduced-motion` desliga tudo e a folha continua inteira.
+   ========================================================================= */
+.pagina.viva .item{-webkit-animation:entraItem .42s ease-out both;animation:entraItem .42s ease-out both}
+.pagina.viva .item:nth-child(2){-webkit-animation-delay:.05s;animation-delay:.05s}
+.pagina.viva .item:nth-child(3){-webkit-animation-delay:.10s;animation-delay:.10s}
+.pagina.viva .item:nth-child(4){-webkit-animation-delay:.15s;animation-delay:.15s}
+.pagina.viva .item:nth-child(5){-webkit-animation-delay:.20s;animation-delay:.20s}
+.pagina.viva .item:nth-child(6){-webkit-animation-delay:.25s;animation-delay:.25s}
+.pagina.viva .item:nth-child(n+7){-webkit-animation-delay:.30s;animation-delay:.30s}
+@-webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pagina.viva .faixa{-webkit-animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both;
+  animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both}
+@-webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
+@keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+.op.certa,.cartaocasa.escolhido{
+  -webkit-animation:pulinho .4s cubic-bezier(.3,1.6,.5,1);animation:pulinho .4s cubic-bezier(.3,1.6,.5,1)}
+@-webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
+@keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.op.certa{position:relative;overflow:hidden}
+.op.certa::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:38%;pointer-events:none;
+  background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
+  -webkit-animation:brilhoOp .55s .1s ease-out;animation:brilhoOp .55s .1s ease-out}
+@-webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
+@keyframes brilhoOp{from{left:-40%}to{left:112%}}
+.op.erro{-webkit-animation:balanca .34s;animation:balanca .34s}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.item{-webkit-transition:border-color .4s,background .4s;transition:border-color .4s,background .4s}
+/* a figura responde ao toque — o alvo reage ao PRESSIONAR */
+.op.figbt:active,.cartaocasa:active,.celmor:active{-webkit-transform:scale(.96);transform:scale(.96)}
+@media (prefers-reduced-motion:reduce){
+  .pagina.viva .item,.pagina.viva .faixa,.op.certa,.op.erro,.cartaocasa.escolhido{
+    -webkit-animation:none!important;animation:none!important;opacity:1!important;
+    -webkit-transform:none!important;transform:none!important}
+  .op.certa::after{display:none}
+}
+/*<dossie-css>*/
+#dossie{display:none;position:fixed;inset:0;z-index:70;background:rgba(20,16,45,.72);
+  align-items:center;justify-content:center;padding:12px}
+#dossie.aberto{display:-webkit-box;display:-ms-flexbox;display:flex}
+#dossie .cx{background:#fff;border:4px solid #6d5ae6;border-radius:20px;padding:14px;
+  max-width:720px;width:100%;max-height:88vh;display:flex;flex-direction:column}
+#dossie h3{margin:0 0 6px;color:#6d5ae6;font-size:20px}
+#dsCorpo{overflow:auto;text-align:left;font-size:13px;line-height:1.5;color:var(--texto,#1e2334)}
+#dsCorpo table{border-collapse:collapse;width:100%;margin:8px 0}
+#dsCorpo th,#dsCorpo td{border:1px solid #d9ddf2;padding:6px 8px;text-align:left;vertical-align:top}
+#dsCorpo th{background:#eceefa;color:var(--texto2,#2c3350)}
+#dsCorpo .dobj{display:block;margin-top:4px;font-size:11.5px;color:var(--texto3,#3b4064)}
+#dsCorpo .dfonte{margin:0 0 6px}
+#dsCorpo .dsub{margin:12px 0 4px}
+#dsCorpo .dtxt{margin:0}
+#dsCorpo .descada,#dsCorpo .dev{margin:4px 0 0 18px;padding:0}
+#dossie #dsFechar{margin-top:10px;min-height:46px}
+.bdossie{display:block;width:100%;margin-top:10px;min-height:46px}
+/*</dossie-css>*/
+/* ---------- as peças próprias deste caderno (ortografia) ----------
+   ⚠️ Aqui não há figura para olhar: o conteúdo é PALAVRA. Então a palavra é que
+   tem de ser grande, legível e com espaço em volta — é ela que faz o papel que
+   a ilustração faz nos outros cadernos. */
+.pgrande{font-size:clamp(22px,6.4vw,32px);font-weight:900;letter-spacing:clamp(1px,.6vw,3px);
+  color:var(--texto3);text-align:center;line-height:1.25;word-break:break-word;padding:0 6px}
+.pgrande .lacuna{display:inline-block;min-width:clamp(22px,6vw,30px);vertical-align:baseline;
+  border-bottom:4px solid var(--cor);margin:0 2px}
+/* o botão de PALAVRA (gavetas e quadro): texto, não figura */
+.op.pal{min-width:clamp(88px,26vw,150px);min-height:52px;padding:8px 12px;
+  font-size:clamp(13px,3.5vw,16px);font-weight:800;letter-spacing:.4px;color:var(--texto2)}
+.op.pal.marcada{border-color:var(--cor);background:var(--corclara);
+  -webkit-transform:scale(1.04);transform:scale(1.04)}
+.op.pal.usada{opacity:.3;pointer-events:none}
+.figbanco.quadro{border:3px dashed #e0d3c6;border-radius:16px;background:#fffdfa;
+  padding:10px 8px;margin:10px}
+/* a letra sozinha do "complete com T ou D" — alvo grande, pouca letra */
+.op.letra{min-width:clamp(62px,17vw,84px);min-height:60px;font-size:clamp(20px,5.6vw,26px);
+  font-weight:900;letter-spacing:1px}
+/* o "circule a certa": o botão vira a roda de lápis em volta da palavra */
+.op.circ{border-radius:999px;padding:10px 16px;min-height:52px;
+  font-size:clamp(14px,3.9vw,18px);font-weight:800;letter-spacing:.4px}
+.op.circ.certa{-webkit-box-shadow:0 0 0 4px #bdebd0;box-shadow:0 0 0 4px #bdebd0}
+/* a palavra escrita ERRADA, quando ela precisa aparecer (folhas 12 e 19) */
+.errada{color:#b23c17;text-decoration:line-through;-webkit-text-decoration-color:#e0562f;
+  text-decoration-color:#e0562f;font-weight:900}
+/* texto corrido de gênero: recado, notícia. Alinhado à esquerda, como no papel */
+.poema.recado{text-align:left;line-height:1.65;font-size:clamp(14px,3.8vw,17px)}
+.poema .tl{margin:2px 0}
+.frases{margin:8px 0 4px}
+.lacuna.grande{min-width:clamp(120px,34vw,190px);font-size:clamp(14px,3.8vw,17px);font-weight:900}
+.lacuna.erro{border-bottom-color:#e0562f;background:#fdeee9;border-radius:8px 8px 0 0}
+/* a fila da receita: passo é FRASE, então a fila é vertical e larga */
+.trilhaord.passos{flex-direction:column;align-items:stretch;margin:8px 10px 4px}
+.trilhaord.passos .slot{width:auto;min-height:52px;flex-direction:row;gap:8px;
+  padding:8px 10px;justify-content:flex-start;text-align:left}
+.trilhaord.passos .slot .rot{text-align:left;font-size:clamp(12px,3.3vw,15px)}
+/* a linha de casas do "reescreva certo": uma palavra por vez */
+.cruz.uma{grid-auto-flow:column;justify-content:center;margin:4px auto 2px}
+.pista.oculta{display:none}
+/* o cartaz do fecho: as regras que a criança escolheu, uma embaixo da outra */
+.rua.cartaz{flex-direction:column;align-items:stretch;gap:6px;padding:10px;
+  border:3px solid #e6dbd1;border-radius:16px;background:#fffdfa;margin:0 10px 8px}
+.regral{border-left:6px solid var(--cor);border-radius:8px;background:#fff;padding:7px 10px;
+  text-align:left}
+.regral b{display:block;font-size:clamp(13px,3.5vw,16px);color:#2c3350;line-height:1.3}
+.regral i{display:block;font-style:normal;font-weight:800;font-size:clamp(11px,3vw,13px);
+  color:#8a7768;letter-spacing:.4px;margin-top:2px}
+/* a capa: os pares de letras que fazem o mesmo som são o desenho da capa */
+.dupla{display:inline-flex;align-items:center;gap:4px;background:#fff;border:3px solid #e6dbd1;
+  border-radius:14px;padding:6px 10px;margin:3px}
+.dupla b{font-size:clamp(17px,4.6vw,22px);font-weight:900;color:#3b4064}
+.dupla i{font-style:normal;font-weight:900;color:var(--cor);font-size:clamp(13px,3.4vw,16px)}
+/* ---------- as peças próprias deste caderno (a loteria do S) ---------- */
+/* a FICHA: figura + palavra, e a criança marca só as escritas certas (folha 1) */
+.marcax.fichas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lx.ficha{flex:1 1 44%;max-width:230px;flex-direction:column;align-items:center;gap:4px;
+  padding:8px 6px;text-align:center}
+.lx.ficha .figmini{display:block;width:auto;height:clamp(46px,12vw,66px);max-width:100%;object-fit:contain}
+.lx.ficha .ft{font-weight:900;font-size:clamp(13px,3.5vw,16px);letter-spacing:.5px;color:var(--texto2)}
+.lx.ficha .cx{position:absolute;left:6px;top:6px}
+.lx.ficha{position:relative}
+.lx.ficha.erroficha{border-color:#e0a05a;background:#fff7ec}
+.lx.ficha.erroficha .ft s{color:#b23c17;-webkit-text-decoration-color:#e0562f;text-decoration-color:#e0562f}
+.lx.ficha.erroficha .ft b{display:block;color:#0d7736}
+/* as SÍLABAS soltas e a palavra que se monta (folha 13) */
+.op.sil{min-width:clamp(58px,16vw,86px);min-height:52px;font-size:clamp(15px,4vw,19px);
+  font-weight:900;letter-spacing:1px}
+.op.sil.usada{border-color:#15a34a;background:#e7f8ee;color:#0d7736;pointer-events:none}
+.montada{min-height:34px;text-align:center;font-weight:900;letter-spacing:2px;
+  font-size:clamp(16px,4.4vw,21px);color:var(--texto3);margin:2px 0 4px}
+.montada[data-feito]::before{content:attr(data-feito);color:#0d7736}
+/* a FRASE GRUDADA e os vãos onde entra o espaço (folha 18) */
+.grudada{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  margin:6px 4px;padding:8px 4px;border:3px solid #e6dbd1;border-radius:14px;background:#fff}
+.gl{font-weight:900;font-size:clamp(15px,4.2vw,20px);letter-spacing:0;color:var(--texto3);line-height:1.6}
+.vao{width:14px;min-width:14px;height:42px;border:0;background:transparent;padding:0;
+  position:relative;cursor:pointer}
+.vao::after{content:"";position:absolute;left:5px;top:8px;width:3px;height:26px;border-radius:2px;
+  background:#e6dbd1}
+.vao.cortado::after{background:#15a34a;-webkit-box-shadow:0 0 0 2px #bdebd0;box-shadow:0 0 0 2px #bdebd0}
+.vao.erro::after{background:#e0562f}
+/* a VITRINE das duas figuras lado a lado (folha 16) */
+.ficha.vitrine{flex:1 1 44%;max-width:210px;display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding:8px 6px;text-align:center;border:3px solid #e6dbd1;border-radius:14px;background:#fff}
+.ficha.vitrine .figmini{display:block;width:auto;height:clamp(52px,14vw,78px);max-width:100%;object-fit:contain}
+/* ⚠️ TINTA PRÓPRIA, não o token: esta peça pinta o PRÓPRIO fundo (branco), e o
+   `--texto` é a tinta do fundo da atividade. Quem tem superfície própria tem
+   tinta própria — senão, num tema diferente, a letra some. Mede o 4c. */
+.ficha.vitrine .ft{font-weight:900;font-size:clamp(13px,3.5vw,16px);color:#3a2f27}
+/* o TEXTINHO: a frase palavra por palavra, cada uma tocável (folhas 7, 13 e 21) */
+.textinho{margin:6px 8px;padding:10px 8px;border:3px solid #e6dbd1;border-radius:14px;background:#fff;
+  line-height:2.1;text-align:left}
+.tp{border:0;background:transparent;padding:4px 3px;margin:0;font:inherit;font-weight:700;
+  font-size:clamp(15px,4vw,18px);color:#4a3d33;border-radius:7px;cursor:pointer;
+  min-height:40px;-webkit-transition:background .15s;transition:background .15s;min-width:42px;min-height:44px}
+.tp:hover{background:#f7efe7}
+.tp.achada{background:#e7f8ee;color:#0d7736;font-weight:900;
+  -webkit-box-shadow:inset 0 -3px 0 #15a34a;box-shadow:inset 0 -3px 0 #15a34a}
+.tp.marcap{background:#e8f1fb;color:#134f86;font-weight:900;
+  -webkit-box-shadow:inset 0 -3px 0 #1d6fb8;box-shadow:inset 0 -3px 0 #1d6fb8}
+.tp.marcad{background:#fdeee9;color:#8c3414;font-weight:900;
+  -webkit-box-shadow:inset 0 -3px 0 #b8471d;box-shadow:inset 0 -3px 0 #b8471d}
+.tp.nao{-webkit-animation:treme .34s;animation:treme .34s;background:#fdeee9}
+/* o TEXTÃO: a história da folha 24 */
+.textao{margin:6px 8px;padding:12px 12px;border:3px solid #e6dbd1;border-radius:14px;background:#fff;
+  line-height:1.75;font-size:clamp(14px,3.8vw,17px);color:var(--texto3);text-align:left}
+/* os LÁPIS: a cor da família (folha 20) e as duas marcas (folha 21) */
+.ops.lapis{gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 8px 6px}
+/* ⚠️ O FUNDO É DECLARADO AQUI mesmo o JS o trocando pela cor da família: sem
+   fundo próprio na regra, a tinta cravada briga com o tema (é o que o
+   `_qa/cor_fixa.py` mede). Quem crava a tinta tem de cravar o chão embaixo. */
+.op.lapiz{min-height:46px;font-weight:900;font-size:clamp(13px,3.4vw,16px);color:#26201c;
+  background:#fff;border:3px solid #e6dbd1;border-radius:12px;padding:6px 12px}
+.op.lapiz.marcada{-webkit-transform:scale(1.07);transform:scale(1.07);
+  -webkit-box-shadow:0 0 0 3px rgba(0,0,0,.18);box-shadow:0 0 0 3px rgba(0,0,0,.18)}
+.op.lapiz.marcap{background:#e8f1fb;border-color:#1d6fb8;color:#134f86}
+.op.lapiz.marcad{background:#fdeee9;border-color:#b8471d;color:#8c3414}
+/* as PALAVRAS ESPALHADAS que se pintam (folha 20) */
+.espalhadas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 8px 10px}
+.pal.solta{border:3px solid #e6dbd1;border-radius:12px;background:#fff;padding:9px 13px;
+  min-height:46px;font-weight:900;font-size:clamp(13px,3.6vw,16px);letter-spacing:.5px;
+  color:var(--texto3);cursor:pointer}
+/* ⚠️ ELA PINTA O PRÓPRIO FUNDO em tempo real (a cor da família, vinda do JS),
+   então a tinta tem de ser dela e escura o bastante para as cinco cores da
+   paleta. O token `--texto` aqui seria a tinta do fundo da ATIVIDADE, que não
+   é o fundo que está atrás desta letra. */
+.pal.solta.pintada{background:#fff;border-color:rgba(0,0,0,.2);color:#1c1611;pointer-events:none}
+.pal.solta.nao{-webkit-animation:treme .34s;animation:treme .34s;background:#fdeee9}
+.op.pal.nao{-webkit-animation:treme .34s;animation:treme .34s}
+
+/* ⚠️ PISO DE TOQUE DE 40 px (regra da casa). Estas regras vêm por último
+   de propósito: elas SOBREPÕEM o que veio antes, e é isso que se quer —
+   a casinha da cruzadinha estava com 34 px e a peça de sílaba com 21 px
+   de altura. O portão do leiaute só viu quando passou a andar folha por
+   folha; antes ele parava na sexta. */
+.ccel{width:clamp(44px,9vw,50px);height:clamp(44px,9vw,50px);min-width:44px;min-height:44px;border:0;background:transparent;padding:0}
+.sil{font:800 clamp(17px,4.6vw,22px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  min-width:52px;min-height:46px;padding:10px 14px;border-radius:12px;
+  border:2px solid #c6cde0;background:#fff;color:#243056;cursor:pointer;
+  -webkit-transition:.14s;transition:.14s}
+.sil.larga{min-width:clamp(96px,26vw,150px)}
+.sil:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.sil.marcada{background:#fff3c9;border-color:#e0ac00}
+.sil.ok,.sil.usada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
+.sil.usada{opacity:.6}
+.sil.nao{background:#ffd9d6;border-color:#e2574c;color:#9d2f26}
+
+/* ============================================================
+   AS PEÇAS DESTE CADERNO — A CASINHA DOS TRÊS PONTOS
+   ⚠️ Alvo de dedo é 44 px, sempre. Foi lição paga em 16/set/2026: o portão do
+      leiaute só alcançava a folha 6 de 35 e um caderno inteiro foi ao ar com
+      alvos de 21 px. Hoje ele mede as trinta e cinco, e a peça já NASCE em 44.
+   ============================================================ */
+
+/* o SINAL desenhado grande — é o desenho que a criança vai reconhecer na folha
+   de papel depois, não a letra */
+.sinalbt{display:inline-block;font:900 clamp(24px,7vw,34px)/1 Georgia,"Times New Roman",serif;
+  color:var(--cor);min-width:26px}
+.sinalbt.gr{font-size:clamp(30px,8vw,42px)}
+.op.sin{min-width:clamp(64px,18vw,96px);min-height:56px;padding:6px 10px}
+
+/* a FRASE grande, que é o que a criança lê e ouve */
+.frasegrande{flex:1;font:700 clamp(15px,4.2vw,19px)/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:var(--texto3);word-break:break-word}
+.frasegrande.erradinha{background:#fdf3ee;border-radius:10px;padding:6px 10px}
+.lacuna.peq{min-width:34px;margin-left:4px}
+
+/* o QUADRADINHO do "recorte e cole" (folhas 12 a 14) */
+.quadrado{display:inline-block;min-width:44px;min-height:44px;vertical-align:middle;
+  border:3px dashed var(--cor);border-radius:10px;background:#fff;
+  font:900 clamp(22px,6vw,30px)/40px Georgia,"Times New Roman",serif;
+  color:var(--cor);text-align:center}
+.quadrado.cheio{border-style:solid;border-color:#15a34a;background:#eafaf0;color:#0d7736}
+
+/* ORDENAR AS PALAVRAS (folhas 20 e 21) — a frase que se monta em cima e o
+   banco de palavras embaralhadas embaixo */
+.linhafrase{min-height:48px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;
+  margin:4px 2px 8px;padding:6px 8px;border-radius:12px;background:#fbfcff;
+  border:2px dashed #d9c9bb}
+.napalavra{font:800 clamp(14px,3.8vw,17px)/1 system-ui;color:#0d7736;background:#e7f8ee;
+  border-radius:8px;padding:6px 8px}
+.napalavra.ponto{font-family:Georgia,"Times New Roman",serif;font-size:clamp(18px,5vw,22px)}
+.palavras{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0 2px 6px}
+.palav.gr{min-width:52px;min-height:46px;font-size:clamp(14px,3.8vw,17px)}
+.ops.escondida{opacity:.35;pointer-events:none}
+
+/* LIGUE A PERGUNTA À RESPOSTA (folha 17) */
+.pergcol{display:flex;flex-direction:column;gap:8px;margin:4px 6px 10px}
+.pergunta2{display:flex;align-items:center;gap:8px;min-height:48px;padding:6px 10px;
+  border:3px dashed var(--cor);border-radius:14px;background:#fff}
+.pergunta2.erro{border-color:#e2574c;background:#fff4f3}
+.ptxt{flex:1;font:700 clamp(14px,3.8vw,17px)/1.4 system-ui;color:var(--texto3)}
+
+/* O CARTAZ QUE VOCÊ LEVA (folha 35) — o conceito por ÚLTIMO */
+.cartaz{display:flex;flex-direction:column;gap:8px;margin:4px 6px 10px}
+.cartlin{border:3px solid #d9c9bb;border-radius:16px;background:#fff;padding:8px 10px}
+.cartlin.erro{border-color:#e2574c;background:#fff4f3}
+.cartit{display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  font-size:clamp(12px,3.4vw,15px);color:var(--texto3)}
+.cartit b{font-size:clamp(14px,3.8vw,17px);color:var(--cor)}
+.cartalvo{margin-top:6px;min-height:48px;display:flex;flex-wrap:wrap;align-items:center;
+  gap:6px;padding:6px 8px;border-radius:12px;background:#fbfcff;border:2px dashed #d9c9bb}
+.cartex{font:italic 600 clamp(12px,3.4vw,15px)/1.3 system-ui;color:#8a7868}
+
+/* ---- peças que já foram medidas noutros cadernos, copiadas inteiras ---- */
+.figalvos{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:4px 0 10px}
+.figalvo{min-width:96px;min-height:104px;padding:6px;border:3px dashed var(--cor);border-radius:14px;
+  background:#fff;display:flex;flex-direction:column;align-items:center;gap:2px}
+.figalvo.gr{min-width:clamp(106px,30vw,140px)}
+.figalvo.erro{border-color:#e2574c;background:#fff4f3}
+.fdentro2{min-height:22px;display:flex;align-items:center;justify-content:center}
+
+/* ACHAR DENTRO DO TEXTO (folhas 25 e 26) */
+.texto{background:#fff;border:3px solid #d9c9bb;border-radius:16px;padding:10px 12px;margin:4px 4px 10px}
+.texto.erro{border-color:#e2574c;background:#fff4f3}
+.ttit{margin:0 0 6px;font-size:clamp(15px,4vw,19px);color:var(--cor);text-align:center}
+.tlin{margin:4px 0;line-height:2.1}
+.palav{border:0;background:#f4efe8;border-radius:8px;padding:6px 10px;min-width:42px;min-height:44px;
+  font-weight:700;font-size:clamp(13px,3.6vw,16px);color:var(--texto3);cursor:pointer}
+.palav.marcada{background:#fff0c2;box-shadow:0 0 0 3px #f5c542 inset}
+.palav.ok{background:#eafaf0;color:#0d7736;box-shadow:0 0 0 3px #7fd3a4 inset}
+.palav.nao{background:#ffd9d9;color:#8d2020}
+.palav.usada{background:#e9edf6;color:#b9c0d4}
+
+/* O CAÇA-PALAVRAS (folha 27) */
+.cpgrade{display:flex;flex-direction:column;gap:3px;align-items:center;margin:4px 0 8px}
+.cplin{display:flex;gap:3px}
+.cpcel{width:clamp(44px,9vw,50px);height:clamp(44px,9vw,50px);min-width:44px;min-height:44px;
+  border:2px solid #d9c9bb;border-radius:6px;background:#fff;font-weight:900;
+  font-size:clamp(12px,3.4vw,16px);color:var(--texto3);cursor:pointer;padding:0}
+.cpcel.pega{background:#fff0c2;border-color:#f5c542}
+.cpcel.achada{background:#eafaf0;border-color:#7fd3a4;color:#0d7736}
+.cplista{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:8px}
+.cprot{display:flex;align-items:center;gap:4px;background:#f4efe8;border-radius:10px;
+  padding:5px 8px;min-height:44px;font-weight:800;font-size:clamp(12px,3.3vw,15px);color:var(--texto3)}
+.cprot.achada{background:#eafaf0;color:#0d7736;text-decoration:line-through}
+
+/* A FILEIRA DE LETRAS EMBARALHADAS (folha 24) — CSS do `_sil2`, já medido */
+.letrasfila{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+  margin:8px 0 2px;padding:6px;border-radius:12px;background:#fbfcff;
+  border:2px solid #e5e9f4}
+.letrasfila.erro{border-color:#e2574c;background:#fff4f3}
+.letrasfila.pronta{border-color:#15a34a;background:#f3fbf6}
+.letrabt{min-width:44px;min-height:44px;padding:8px 10px;border:0;border-radius:10px;
+  background:#f4ebe3;color:var(--texto);font-weight:900;
+  font-size:clamp(17px,4.6vw,20px);box-shadow:0 3px 0 #ddd0c4;cursor:pointer}
+.letrabt:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #ddd0c4}
+.letrabt.usada{background:#e9edf6;color:#b9c0d4;box-shadow:0 3px 0 #dbe1ee}
+.letrabt.apagar{background:#fde2da;box-shadow:0 3px 0 #efc3b7;font-size:14px;
+  min-width:72px;color:#9d2f26}
+.cruz.livre .ccel{border-style:dashed}
+
+/* o botão grande de OUVIR — na folha 6 ele É a pergunta */
+.bt.grande.ouvir{display:block;margin:6px auto;min-height:52px;font-size:clamp(15px,4vw,18px)}
+</style></head><body>
+
+<div id="topo">
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir de novo"><svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v1H5v6h2v1a5 5 0 0 0 10 0v-1h2V9h-2V8a5 5 0 0 0-5-5z"/></svg></button>
+  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
+  <div class="tit">A Casinha dos Três Pontos</div>
+  <div class="prog"><i id="progI"></i></div>
+  <div class="pg" id="pg">Capa</div>
+</div>
+
+<div id="livro"></div>
+
+<div id="fim">
+  <h2 id="fimTit">Caderno completo!</h2>
+  <div class="estrelas" id="estrelas"></div>
+  <div class="barras" id="barras"></div>
+  <p id="resumo" style="font-weight:800;font-size:16px"></p>
+  <div id="medalha" class="medal" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/cs_trofeu.png?v=2" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bVoltar" style="display:none">Voltar para o caderno</button>
+    <button class="bt cinza" id="bRever">Rever o caderno</button>
+    <button class="bt verde" id="bRecomecar">Caderno novo</button>
+  </div>
+  <div id="relatorio"></div>
+</div>
+
+<div id="retomar">
+  <h2 style="color:#8d4120;margin:0 0 6px">Você estava aqui!</h2>
+  <p id="retTxt" style="font-weight:700"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bContinuar">Continuar de onde parei</button>
+    <button class="bt cinza" id="bZerar">Começar um caderno novo</button>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="bt cinza" id="bAnt"><i class="seta esq"></i>Anterior</button>
+  <div class="txt" id="navTxt"></div>
+  <!-- ⭐ O FECHO A QUALQUER MOMENTO — ver o comentário do `fim()` no folhas.js.
+       Sem ele, 25 folhas castigam justamente a criança que vai devagar: ela
+       nunca chegaria a ver o próprio boletim. -->
+  <button class="bt terminar" id="bTerminar" aria-label="Terminar agora e ver o meu boletim">Terminar</button>
+  <button class="bt" id="bProx">Próxima<i class="seta dir"></i></button>
+</div>
+
+<div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt" id="bComecar">Começar</button></div></div>
+
+<div id="menuProf" role="dialog" aria-label="Menu do professor" aria-modal="true">
+  <div class="cx">
+    <h3>Menu do professor</h3>
+    <p>Chave mestra <b>1275@</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
+    <div class="folhas" id="mpFolhas"></div>
+    <!--<dossie-bt>--><button class="bt" id="bDossie">Dossiê pedagógico (currículo da rede)</button><!--</dossie-bt>-->
+<button class="bt cinza" id="mpFechar">Fechar</button>
+  </div>
+</div>
+
+
+<div id="confete" aria-hidden="true"></div>
+
+<script>
+/* ---------- OS POTES DE CADA FOLHA (o gerar_falas.py lê este bloco) ----------
+   ⚠️ A POSIÇÃO É A IDENTIDADE: o pote `pN` é da folha N, os ids dela são
+   `nN_i` e a fala do enunciado é `pNenun`. Mudar a ordem das folhas muda tudo
+   junto — e é de propósito, porque antes eram três listas para combinar à mão
+   e o relatório saía zero com a folha inteira respondida. */
+/*GESTOS-INI*/
+/* ⚠️ O GESTO DE CADA FOLHA SAI DO COMANDO IMPRESSO na folha de papel de onde
+   ela nasceu — a marca `D##` dos DADOS diz qual. */
+var GESTOS = {
+ "f1": "ligar",
+ "f2": "escolher",
+ "f3": "escolher",
+ "f4": "escolher",
+ "f5": "escolher",
+ "f6": "ouvir a diferença",
+ "f7": "ouvir a diferença",
+ "f8": "classificar",
+ "f9": "casinha",
+ "f10": "casinha",
+ "f11": "casinha",
+ "f12": "arrastar o sinal",
+ "f13": "arrastar o sinal",
+ "f14": "arrastar o sinal",
+ "f15": "completar",
+ "f16": "completar",
+ "f17": "ligar",
+ "f18": "responder",
+ "f19": "responder",
+ "f20": "ordenar as palavras",
+ "f21": "ordenar as palavras",
+ "f22": "consertar",
+ "f23": "consertar",
+ "f24": "escrever com letras",
+ "f25": "marca-texto",
+ "f26": "marca-texto",
+ "f27": "caça-palavras",
+ "f28": "marcar",
+ "f29": "marcar",
+ "f30": "escolher",
+ "f31": "escolher",
+ "f32": "produção",
+ "f33": "escolher",
+ "f34": "escolher",
+ "f35": "cartaz"
+};
+/*GESTOS-FIM*/
+/*ITENS-INI*/
+/* ⚠️⚠️ A POSIÇÃO É A IDENTIDADE, e O POTE DIZ QUANTOS ITENS A FOLHA TEM.
+   ⚠️ As folhas 25 e 26 (achar no texto) têm UM item só — o pote vai
+      EMBRULHADO, senão elas se dariam por prontas antes da hora. */
+var ITENS = {
+ "p1": [
+  "a1",
+  "a2",
+  "a3"
+ ],
+ "p2": [
+  "b1",
+  "b2",
+  "b3",
+  "b4",
+  "b5",
+  "b6",
+  "b7"
+ ],
+ "p3": [
+  "c1",
+  "c2",
+  "c3",
+  "c4",
+  "c5",
+  "c6",
+  "c7"
+ ],
+ "p4": [
+  "d1",
+  "d2",
+  "d3",
+  "d4",
+  "d5",
+  "d6",
+  "d7"
+ ],
+ "p5": [
+  "e1",
+  "e2",
+  "e3",
+  "e4",
+  "e5",
+  "e6",
+  "e7"
+ ],
+ "p6": [
+  "f1",
+  "f2",
+  "f3",
+  "f4"
+ ],
+ "p7": [
+  "g1",
+  "g2",
+  "g3",
+  "g4"
+ ],
+ "p8": [
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "h7",
+  "h8"
+ ],
+ "p9": [
+  "i1",
+  "i2",
+  "i3",
+  "i4",
+  "i5",
+  "i6",
+  "i7"
+ ],
+ "p10": [
+  "j1",
+  "j2",
+  "j3",
+  "j4",
+  "j5",
+  "j6",
+  "j7"
+ ],
+ "p11": [
+  "k1",
+  "k2",
+  "k3",
+  "k4",
+  "k5",
+  "k6",
+  "k7"
+ ],
+ "p12": [
+  "m1",
+  "m2",
+  "m3",
+  "m4"
+ ],
+ "p13": [
+  "n1",
+  "n2",
+  "n3",
+  "n4"
+ ],
+ "p14": [
+  "o1",
+  "o2",
+  "o3",
+  "o4"
+ ],
+ "p15": [
+  "p1",
+  "p2",
+  "p3",
+  "p4",
+  "p5"
+ ],
+ "p16": [
+  "q1",
+  "q2",
+  "q3",
+  "q4",
+  "q5"
+ ],
+ "p17": [
+  "r1",
+  "r2",
+  "r3",
+  "r4",
+  "r5"
+ ],
+ "p18": [
+  "s1",
+  "s2",
+  "s3",
+  "s4"
+ ],
+ "p19": [
+  "t1",
+  "t2",
+  "t3",
+  "t4"
+ ],
+ "p20": [
+  "u1",
+  "u2",
+  "u3",
+  "u4"
+ ],
+ "p21": [
+  "v1",
+  "v2",
+  "v3",
+  "v4"
+ ],
+ "p22": [
+  "w1",
+  "w2",
+  "w3",
+  "w4"
+ ],
+ "p23": [
+  "x1",
+  "x2",
+  "x3",
+  "x4"
+ ],
+ "p24": [
+  "y1",
+  "y2",
+  "y3",
+  "y4",
+  "y5",
+  "y6"
+ ],
+ "p25": [
+  [
+   "t1"
+  ]
+ ],
+ "p26": [
+  [
+   "t2"
+  ]
+ ],
+ "p27": [
+  "A1",
+  "A2",
+  "A3",
+  "A4",
+  "A5"
+ ],
+ "p28": [
+  "B1",
+  "B2",
+  "B3",
+  "B4",
+  "B5"
+ ],
+ "p29": [
+  "C1",
+  "C2",
+  "C3",
+  "C4",
+  "C5"
+ ],
+ "p30": [
+  "D1",
+  "D2",
+  "D3",
+  "D4",
+  "D5"
+ ],
+ "p31": [
+  "E1",
+  "E2",
+  "E3",
+  "E4",
+  "E5"
+ ],
+ "p32": [
+  "F1",
+  "F2",
+  "F3",
+  "F4"
+ ],
+ "p33": [
+  "G1",
+  "G2",
+  "G3",
+  "G4"
+ ],
+ "p34": [
+  "H1",
+  "H2",
+  "H3",
+  "H4"
+ ],
+ "p35": [
+  "I1",
+  "I2",
+  "I3",
+  "I4",
+  "I5",
+  "I6"
+ ]
+};
+/*ITENS-FIM*/
+/*FALAS-INI*/
+var FALAS = {
+ "arr_m1": "Sofia gosta de ler.",
+ "arr_m2": "Onde está o meu caderno?",
+ "arr_m3": "Que flores cheirosas!",
+ "arr_m4": "O sorvete derreteu.",
+ "arr_n1": "Pedro tem um boné azul.",
+ "arr_n2": "Quantos anos você tem?",
+ "arr_n3": "Que bom ver você!",
+ "arr_n4": "Que sorte a nossa!",
+ "arr_o1": "A laranja não está doce.",
+ "arr_o2": "Como faz calor!",
+ "arr_o3": "Aonde você vai?",
+ "arr_o4": "Quem apagou a luz?",
+ "cacatoque": "Toque primeiro na primeira letra da palavra.",
+ "capa": "A Casinha dos Três Pontos. Trinta e cinco folhas sobre o ponto final, o ponto de interrogação e o ponto de exclamação. Escreva o seu nome ali embaixo e toque em Começar.",
+ "cart_excl": "Ponto de exclamação mostra espanto, susto ou alegria. Por exemplo: Que susto!",
+ "cart_final": "Ponto final diz que a ideia terminou. Por exemplo: O sol está quente hoje.",
+ "cart_inter": "Ponto de interrogação é usado em perguntas. Por exemplo: Qual é o seu nome?",
+ "cen_G1": "O cavalo corre pelo campo.",
+ "cen_G2": "Que rato pequenininho!",
+ "cen_G3": "Onde mora o veado?",
+ "cen_G4": "A couve cresceu na horta.",
+ "cen_H1": "A cidade tem muitos prédios.",
+ "cen_H2": "Você gosta de couve?",
+ "cen_H3": "Que cavalo bonito!",
+ "cen_H4": "Quem viu o rato?",
+ "cer_B1": "Que tarefa difícil!",
+ "cer_B2": "Quantos anos você tem?",
+ "cer_B3": "Anita gosta de biscoito.",
+ "cer_B4": "Como o dia está bonito!",
+ "cer_B5": "Que cheiro bom!",
+ "cer_C1": "Maria e Joana foram ao teatro.",
+ "cer_C2": "Que dia é hoje?",
+ "cer_C3": "Olha, que carro lindo!",
+ "cer_C4": "Quando ele voltará de viagem?",
+ "cer_C5": "Onde fica a biblioteca?",
+ "certo10_j1": "Isso mesmo! Quem comeu o bolo? Mora na casa do ponto de interrogação.",
+ "certo10_j2": "Muito bem! Silêncio! Mora na casa do ponto de exclamação.",
+ "certo10_j3": "Você acertou! A menina abriu a porta. Mora na casa do ponto final.",
+ "certo10_j4": "Boa! Que horas são? Mora na casa do ponto de interrogação.",
+ "certo10_j5": "Exatamente! Ui, que frio! Mora na casa do ponto de exclamação.",
+ "certo10_j6": "É isso aí! Madalena chegou cedo. Mora na casa do ponto final.",
+ "certo10_j7": "Isso mesmo! Que susto grande! Mora na casa do ponto de exclamação.",
+ "certo11_k1": "Isso mesmo! Será que Fabiana está em casa? Mora na casa do ponto de interrogação.",
+ "certo11_k2": "Muito bem! Que bonito desenho! Mora na casa do ponto de exclamação.",
+ "certo11_k3": "Você acertou! Não vou ao cinema hoje. Mora na casa do ponto final.",
+ "certo11_k4": "Boa! Quando vamos viajar? Mora na casa do ponto de interrogação.",
+ "certo11_k5": "Exatamente! Que tarefa difícil! Mora na casa do ponto de exclamação.",
+ "certo11_k6": "É isso aí! Meu vizinho tem um cachorro. Mora na casa do ponto final.",
+ "certo11_k7": "Isso mesmo! O passarinho voou da gaiola. Mora na casa do ponto final.",
+ "certo12_m1": "Isso mesmo! O quadradinho era do ponto final.",
+ "certo12_m2": "Muito bem! O quadradinho era do ponto de interrogação.",
+ "certo12_m3": "Você acertou! O quadradinho era do ponto de exclamação.",
+ "certo12_m4": "Boa! O quadradinho era do ponto final.",
+ "certo13_n1": "Isso mesmo! O quadradinho era do ponto final.",
+ "certo13_n2": "Muito bem! O quadradinho era do ponto de interrogação.",
+ "certo13_n3": "Você acertou! O quadradinho era do ponto de exclamação.",
+ "certo13_n4": "Boa! O quadradinho era do ponto de exclamação.",
+ "certo14_o1": "Isso mesmo! O quadradinho era do ponto final.",
+ "certo14_o2": "Muito bem! O quadradinho era do ponto de exclamação.",
+ "certo14_o3": "Você acertou! O quadradinho era do ponto de interrogação.",
+ "certo14_o4": "Boa! O quadradinho era do ponto de interrogação.",
+ "certo15_p1": "Isso mesmo! QUAL é a cor dos seus olhos?",
+ "certo15_p2": "Muito bem! POR QUE você está triste?",
+ "certo15_p3": "Você acertou! QUANDO é a sua festa?",
+ "certo15_p4": "Boa! QUEM pegou a borracha emprestada?",
+ "certo15_p5": "Exatamente! QUAL é o seu animal preferido?",
+ "certo16_q1": "Isso mesmo! ONDE você mora?",
+ "certo16_q2": "Muito bem! COMO você chegou até aqui?",
+ "certo16_q3": "Você acertou! O QUE você comeu no almoço?",
+ "certo16_q4": "Boa! QUEM é o seu vizinho?",
+ "certo16_q5": "Exatamente! ONDE você guardou a minha caneta?",
+ "certo17_r1": "Isso mesmo! Como leu a Cátia? A Cátia leu pela lupa.",
+ "certo17_r2": "Muito bem! A mãe come melão? Sim, a mãe come melão.",
+ "certo17_r3": "Você acertou! Como veio a Paula? A Paula veio de avião.",
+ "certo17_r4": "Boa! O Tomé leva a mala? Não, o Tomé leva a vela.",
+ "certo17_r5": "Exatamente! Onde subiu o gato? O gato subiu no telhado.",
+ "certo18_s1": "Isso mesmo! É o cavalo. A resposta acabou em ponto final.",
+ "certo18_s2": "Muito bem! É a cidade. A resposta acabou em ponto final.",
+ "certo18_s3": "Você acertou! É o veado. A resposta acabou em ponto final.",
+ "certo18_s4": "Boa! É a couve. A resposta acabou em ponto final.",
+ "certo19_t1": "Isso mesmo! É a couve. A resposta acabou em ponto final.",
+ "certo19_t2": "Muito bem! É o rato. A resposta acabou em ponto final.",
+ "certo19_t3": "Você acertou! É o veado. A resposta acabou em ponto final.",
+ "certo19_t4": "Boa! É a cidade. A resposta acabou em ponto final.",
+ "certo1_a1": "Isso mesmo! PONTO DE INTERROGAÇÃO. Serve para fazer uma pergunta.",
+ "certo1_a2": "Isso mesmo! PONTO DE EXCLAMAÇÃO. Mostra espanto, alegria ou susto.",
+ "certo1_a3": "Isso mesmo! PONTO FINAL. Diz que a frase terminou.",
+ "certo20_u1": "Isso mesmo! O homem não cortou a árvore.",
+ "certo20_u2": "Muito bem! Amanhã vou tomar um sorvete.",
+ "certo20_u3": "Você acertou! Que noite estrelada!",
+ "certo20_u4": "Boa! A chuva molhou o telhado.",
+ "certo21_v1": "Isso mesmo! Como você chegou aqui?",
+ "certo21_v2": "Muito bem! Ele não gosta de passear no parque.",
+ "certo21_v3": "Você acertou! Quero meu troco em dinheiro.",
+ "certo21_v4": "Boa! Quem chamou o meu nome?",
+ "certo22_w1": "Isso mesmo! Qual é o nome do seu vizinho? Começa com letra maiúscula.",
+ "certo22_w2": "Muito bem! Onde você foi ontem? E termina com o ponto certo.",
+ "certo22_w3": "Você acertou! Quem comeu o resto do bolo? Começa com letra maiúscula.",
+ "certo22_w4": "Boa! O sol nasceu bem cedo. Começa com letra maiúscula.",
+ "certo23_x1": "Isso mesmo! Será que amanhã vai chover? E termina com o ponto certo.",
+ "certo23_x2": "Muito bem! Quantos cadernos você tem? Começa com letra maiúscula.",
+ "certo23_x3": "Você acertou! O que tem para o almoço hoje? E termina com o ponto certo.",
+ "certo23_x4": "Boa! Você já tomou café? E termina com o ponto certo.",
+ "certo24_y1": "Isso mesmo! QUEM.",
+ "certo24_y2": "Muito bem! ONDE.",
+ "certo24_y3": "Você acertou! QUANDO.",
+ "certo24_y4": "Boa! COMO.",
+ "certo24_y5": "Exatamente! QUAL.",
+ "certo24_y6": "É isso aí! QUANTOS.",
+ "certo25_t": "Muito bem! Você achou as duas.",
+ "certo26_t": "Muito bem! Você achou as duas.",
+ "certo27_A1": "Isso mesmo! PONTO.",
+ "certo27_A2": "Muito bem! FINAL.",
+ "certo27_A3": "Você acertou! FRASE.",
+ "certo27_A4": "Boa! PERGUNTA.",
+ "certo27_A5": "Exatamente! SUSTO.",
+ "certo28_B1": "Isso mesmo! Que tarefa difícil!",
+ "certo28_B2": "Muito bem! Quantos anos você tem?",
+ "certo28_B3": "Você acertou! Anita gosta de biscoito.",
+ "certo28_B4": "Boa! Como o dia está bonito!",
+ "certo28_B5": "Exatamente! Que cheiro bom!",
+ "certo29_C1": "Isso mesmo! Maria e Joana foram ao teatro.",
+ "certo29_C2": "Muito bem! Que dia é hoje?",
+ "certo29_C3": "Você acertou! Olha, que carro lindo!",
+ "certo29_C4": "Boa! Quando ele voltará de viagem?",
+ "certo29_C5": "Exatamente! Onde fica a biblioteca?",
+ "certo2_b1": "Isso mesmo! Meu pai está lendo o jornal. Termina com ponto final.",
+ "certo2_b2": "Muito bem! Você gosta de bolo? Termina com ponto de interrogação.",
+ "certo2_b3": "Você acertou! O gato bebeu o leite. Termina com ponto final.",
+ "certo2_b4": "Boa! Qual é o teu nome? Termina com ponto de interrogação.",
+ "certo2_b5": "Exatamente! Ana gosta de tocar piano. Termina com ponto final.",
+ "certo2_b6": "É isso aí! Quantos anos você tem? Termina com ponto de interrogação.",
+ "certo2_b7": "Isso mesmo! O cachorro dormiu no tapete. Termina com ponto final.",
+ "certo30_D1": "Isso mesmo! O gato foi embora.",
+ "certo30_D2": "Muito bem! A menina abriu a porta.",
+ "certo30_D3": "Você acertou! Que calor!",
+ "certo30_D4": "Boa! Não vai ao cinema hoje.",
+ "certo30_D5": "Exatamente! O vento derrubou o guarda-chuva.",
+ "certo31_E1": "Isso mesmo! Que bonito desenho!",
+ "certo31_E2": "Muito bem! Ui, que frio!",
+ "certo31_E3": "Você acertou! Quero sair daqui.",
+ "certo31_E4": "Boa! Madalena chegou.",
+ "certo31_E5": "Exatamente! Que susto o trovão deu!",
+ "certo32_F1": "Essa vale! A palavra é sua.",
+ "certo32_F2": "Essa vale! A palavra é sua.",
+ "certo32_F3": "Essa vale! A palavra é sua.",
+ "certo32_F4": "Essa vale! A palavra é sua.",
+ "certo33_G1": "Isso mesmo! O cavalo corre pelo campo.",
+ "certo33_G2": "Muito bem! Que rato pequenininho!",
+ "certo33_G3": "Você acertou! Onde mora o veado?",
+ "certo33_G4": "Boa! A couve cresceu na horta.",
+ "certo34_H1": "Isso mesmo! A cidade tem muitos prédios.",
+ "certo34_H2": "Muito bem! Você gosta de couve?",
+ "certo34_H3": "Você acertou! Que cavalo bonito!",
+ "certo34_H4": "Boa! Quem viu o rato?",
+ "certo35_I1": "Isso mesmo! Onde você mora? É do ponto de interrogação.",
+ "certo35_I2": "Muito bem! Oba, férias! É do ponto de exclamação.",
+ "certo35_I3": "Você acertou! A menina leu o livro. É do ponto final.",
+ "certo35_I4": "Boa! Quem chegou primeiro? É do ponto de interrogação.",
+ "certo35_I5": "Exatamente! Socorro! É do ponto de exclamação.",
+ "certo35_I6": "É isso aí! O cachorro dormiu no tapete. É do ponto final.",
+ "certo3_c1": "Isso mesmo! Nossa, que susto! Termina com ponto de exclamação.",
+ "certo3_c2": "Muito bem! Quer brincar comigo? Termina com ponto de interrogação.",
+ "certo3_c3": "Você acertou! Feliz aniversário! Termina com ponto de exclamação.",
+ "certo3_c4": "Boa! Qual é o seu nome? Termina com ponto de interrogação.",
+ "certo3_c5": "Exatamente! Oba, férias! Termina com ponto de exclamação.",
+ "certo3_c6": "É isso aí! Onde está o meu caderno? Termina com ponto de interrogação.",
+ "certo3_c7": "Isso mesmo! Que legal! Termina com ponto de exclamação.",
+ "certo4_d1": "Isso mesmo! Cuidado! Termina com ponto de exclamação.",
+ "certo4_d2": "Muito bem! Você quer brincar comigo? Termina com ponto de interrogação.",
+ "certo4_d3": "Você acertou! Parabéns, Helena! Termina com ponto de exclamação.",
+ "certo4_d4": "Boa! O Sérgio escorregou no escorregador. Termina com ponto final.",
+ "certo4_d5": "Exatamente! Hoje o dia está lindo. Termina com ponto final.",
+ "certo4_d6": "É isso aí! Que flores cheirosas! Termina com ponto de exclamação.",
+ "certo4_d7": "Isso mesmo! Vamos brincar de esconde-esconde? Termina com ponto de interrogação.",
+ "certo5_e1": "Isso mesmo! Há um pássaro na árvore. Termina com ponto final.",
+ "certo5_e2": "Muito bem! Você fez um trabalho maravilhoso! Termina com ponto de exclamação.",
+ "certo5_e3": "Você acertou! Você gostaria de brincar comigo? Termina com ponto de interrogação.",
+ "certo5_e4": "Boa! Atenção! Termina com ponto de exclamação.",
+ "certo5_e5": "Exatamente! O que você está fazendo aqui? Termina com ponto de interrogação.",
+ "certo5_e6": "É isso aí! Ela tem um cachorro de estimação. Termina com ponto final.",
+ "certo5_e7": "Isso mesmo! Puxa, que pena! Termina com ponto de exclamação.",
+ "certo6_f1": "Isso mesmo! Do jeito que eu falei, a frase pede ponto de interrogação.",
+ "certo6_f2": "Muito bem! Do jeito que eu falei, a frase pede ponto de exclamação.",
+ "certo6_f3": "Você acertou! Do jeito que eu falei, a frase pede ponto final.",
+ "certo6_f4": "Boa! Do jeito que eu falei, a frase pede ponto de interrogação.",
+ "certo7_g1": "Isso mesmo! Do jeito que eu falei, a frase pede ponto de exclamação.",
+ "certo7_g2": "Muito bem! Do jeito que eu falei, a frase pede ponto de interrogação.",
+ "certo7_g3": "Você acertou! Do jeito que eu falei, a frase pede ponto final.",
+ "certo7_g4": "Boa! Do jeito que eu falei, a frase pede ponto de exclamação.",
+ "certo8_h1": "Isso mesmo! Ela acaba com ponto de exclamação.",
+ "certo8_h2": "Muito bem! Ela acaba com ponto de interrogação.",
+ "certo8_h3": "Você acertou! Ela acaba com ponto final.",
+ "certo8_h4": "Boa! Ela acaba com ponto de exclamação.",
+ "certo8_h5": "Exatamente! Ela acaba com ponto de interrogação.",
+ "certo8_h6": "É isso aí! Ela acaba com ponto final.",
+ "certo8_h7": "Isso mesmo! Ela acaba com ponto de exclamação.",
+ "certo8_h8": "Muito bem! Ela acaba com ponto de interrogação.",
+ "certo9_i1": "Isso mesmo! Como você se chama? Mora na casa do ponto de interrogação.",
+ "certo9_i2": "Muito bem! Que susto! Mora na casa do ponto de exclamação.",
+ "certo9_i3": "Você acertou! A estrela brilha no céu. Mora na casa do ponto final.",
+ "certo9_i4": "Boa! Onde está o meu lápis? Mora na casa do ponto de interrogação.",
+ "certo9_i5": "Exatamente! Que belo sapato! Mora na casa do ponto de exclamação.",
+ "certo9_i6": "É isso aí! O sol está quente hoje. Mora na casa do ponto final.",
+ "certo9_i7": "Isso mesmo! Quanto custa o sorvete? Mora na casa do ponto de interrogação.",
+ "cor_w1": "Qual é o nome do seu vizinho?",
+ "cor_w2": "Onde você foi ontem?",
+ "cor_w3": "Quem comeu o resto do bolo?",
+ "cor_w4": "O sol nasceu bem cedo.",
+ "cor_x1": "Será que amanhã vai chover?",
+ "cor_x2": "Quantos cadernos você tem?",
+ "cor_x3": "O que tem para o almoço hoje?",
+ "cor_x4": "Você já tomou café?",
+ "des_F1": "Escreva uma palavra que serve para começar uma pergunta.",
+ "des_F2": "Escreva outra palavra que serve para começar uma pergunta.",
+ "des_F3": "Escreva uma palavra de susto ou alegria, das que pedem o ponto de exclamação.",
+ "des_F4": "Escreva mais uma palavra de susto ou alegria.",
+ "dica10_j1": "Leia a frase em voz alta e escute o fim dela.",
+ "dica10_j2": "Leia a frase em voz alta e escute o fim dela.",
+ "dica10_j3": "Leia a frase em voz alta e escute o fim dela.",
+ "dica10_j4": "Leia a frase em voz alta e escute o fim dela.",
+ "dica10_j5": "Leia a frase em voz alta e escute o fim dela.",
+ "dica10_j6": "Leia a frase em voz alta e escute o fim dela.",
+ "dica10_j7": "Leia a frase em voz alta e escute o fim dela.",
+ "dica11_k1": "Leia a frase em voz alta e escute o fim dela.",
+ "dica11_k2": "Leia a frase em voz alta e escute o fim dela.",
+ "dica11_k3": "Leia a frase em voz alta e escute o fim dela.",
+ "dica11_k4": "Leia a frase em voz alta e escute o fim dela.",
+ "dica11_k5": "Leia a frase em voz alta e escute o fim dela.",
+ "dica11_k6": "Leia a frase em voz alta e escute o fim dela.",
+ "dica11_k7": "Leia a frase em voz alta e escute o fim dela.",
+ "dica12_m1": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica12_m2": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica12_m3": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica12_m4": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica13_n1": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica13_n2": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica13_n3": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica13_n4": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica14_o1": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica14_o2": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica14_o3": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica14_o4": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica15_p1": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica15_p2": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica15_p3": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica15_p4": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica15_p5": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica16_q1": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica16_q2": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica16_q3": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica16_q4": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica16_q5": "Pense no que a pergunta quer saber: uma pessoa, um lugar, um dia, ou um jeito?",
+ "dica17_r1": "Ouça a pergunta de novo e veja de que ela está falando.",
+ "dica17_r2": "Ouça a pergunta de novo e veja de que ela está falando.",
+ "dica17_r3": "Ouça a pergunta de novo e veja de que ela está falando.",
+ "dica17_r4": "Ouça a pergunta de novo e veja de que ela está falando.",
+ "dica17_r5": "Ouça a pergunta de novo e veja de que ela está falando.",
+ "dica18_s1": "Olhe bem a figura antes de escolher.",
+ "dica18_s2": "Olhe bem a figura antes de escolher.",
+ "dica18_s3": "Olhe bem a figura antes de escolher.",
+ "dica18_s4": "Olhe bem a figura antes de escolher.",
+ "dica19_t1": "Olhe bem a figura antes de escolher.",
+ "dica19_t2": "Olhe bem a figura antes de escolher.",
+ "dica19_t3": "Olhe bem a figura antes de escolher.",
+ "dica19_t4": "Olhe bem a figura antes de escolher.",
+ "dica1_a1": "Olhe bem o desenho: qual dos três sinais ele é?",
+ "dica1_a2": "Olhe bem o desenho: qual dos três sinais ele é?",
+ "dica1_a3": "Olhe bem o desenho: qual dos três sinais ele é?",
+ "dica20_u1": "Ouça a frase pronta e veja qual palavra vem primeiro.",
+ "dica20_u2": "Ouça a frase pronta e veja qual palavra vem primeiro.",
+ "dica20_u3": "Ouça a frase pronta e veja qual palavra vem primeiro.",
+ "dica20_u4": "Ouça a frase pronta e veja qual palavra vem primeiro.",
+ "dica21_v1": "Ouça a frase pronta e veja qual palavra vem primeiro.",
+ "dica21_v2": "Ouça a frase pronta e veja qual palavra vem primeiro.",
+ "dica21_v3": "Ouça a frase pronta e veja qual palavra vem primeiro.",
+ "dica21_v4": "Ouça a frase pronta e veja qual palavra vem primeiro.",
+ "dica22_w1": "Compare as duas: uma coisa muda do começo para o fim. Onde é?",
+ "dica22_w2": "Compare as duas: uma coisa muda do começo para o fim. Onde é?",
+ "dica22_w3": "Compare as duas: uma coisa muda do começo para o fim. Onde é?",
+ "dica22_w4": "Compare as duas: uma coisa muda do começo para o fim. Onde é?",
+ "dica23_x1": "Compare as duas: uma coisa muda do começo para o fim. Onde é?",
+ "dica23_x2": "Compare as duas: uma coisa muda do começo para o fim. Onde é?",
+ "dica23_x3": "Compare as duas: uma coisa muda do começo para o fim. Onde é?",
+ "dica23_x4": "Compare as duas: uma coisa muda do começo para o fim. Onde é?",
+ "dica24_y1": "Escute a pista de novo e pense na primeira letra.",
+ "dica24_y2": "Escute a pista de novo e pense na primeira letra.",
+ "dica24_y3": "Escute a pista de novo e pense na primeira letra.",
+ "dica24_y4": "Escute a pista de novo e pense na primeira letra.",
+ "dica24_y5": "Escute a pista de novo e pense na primeira letra.",
+ "dica24_y6": "Escute a pista de novo e pense na primeira letra.",
+ "dica25_t": "Olhe o último sinal de cada linha, depois da última palavra dela.",
+ "dica26_t": "Olhe o último sinal de cada linha, depois da última palavra dela.",
+ "dica27_A1": "Procure a primeira letra da palavra e siga para o lado.",
+ "dica27_A2": "Procure a primeira letra da palavra e siga para o lado.",
+ "dica27_A3": "Procure a primeira letra da palavra e siga para o lado.",
+ "dica27_A4": "Procure a primeira letra da palavra e siga para o lado.",
+ "dica27_A5": "Procure a primeira letra da palavra e siga para o lado.",
+ "dica28_B1": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica28_B2": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica28_B3": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica28_B4": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica28_B5": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica29_C1": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica29_C2": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica29_C3": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica29_C4": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica29_C5": "Ouça a frase e repare no fim: a voz sobe, desce, ou se espanta?",
+ "dica2_b1": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica2_b2": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica2_b3": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica2_b4": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica2_b5": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica2_b6": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica2_b7": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica30_D1": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica30_D2": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica30_D3": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica30_D4": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica30_D5": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica31_E1": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica31_E2": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica31_E3": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica31_E4": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica31_E5": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica32_F1": "Pense numa palavra que caiba no pedido. Vale mais de uma.",
+ "dica32_F2": "Pense numa palavra que caiba no pedido. Vale mais de uma.",
+ "dica32_F3": "Pense numa palavra que caiba no pedido. Vale mais de uma.",
+ "dica32_F4": "Pense numa palavra que caiba no pedido. Vale mais de uma.",
+ "dica33_G1": "Olhe a cena e diga a frase do jeito que ela pede. Escute a sua voz.",
+ "dica33_G2": "Olhe a cena e diga a frase do jeito que ela pede. Escute a sua voz.",
+ "dica33_G3": "Olhe a cena e diga a frase do jeito que ela pede. Escute a sua voz.",
+ "dica33_G4": "Olhe a cena e diga a frase do jeito que ela pede. Escute a sua voz.",
+ "dica34_H1": "Olhe a cena e diga a frase do jeito que ela pede. Escute a sua voz.",
+ "dica34_H2": "Olhe a cena e diga a frase do jeito que ela pede. Escute a sua voz.",
+ "dica34_H3": "Olhe a cena e diga a frase do jeito que ela pede. Escute a sua voz.",
+ "dica34_H4": "Olhe a cena e diga a frase do jeito que ela pede. Escute a sua voz.",
+ "dica35_I1": "Leia a frase até o fim e olhe o sinal que fecha ela.",
+ "dica35_I2": "Leia a frase até o fim e olhe o sinal que fecha ela.",
+ "dica35_I3": "Leia a frase até o fim e olhe o sinal que fecha ela.",
+ "dica35_I4": "Leia a frase até o fim e olhe o sinal que fecha ela.",
+ "dica35_I5": "Leia a frase até o fim e olhe o sinal que fecha ela.",
+ "dica35_I6": "Leia a frase até o fim e olhe o sinal que fecha ela.",
+ "dica3_c1": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica3_c2": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica3_c3": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica3_c4": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica3_c5": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica3_c6": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica3_c7": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica4_d1": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica4_d2": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica4_d3": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica4_d4": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica4_d5": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica4_d6": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica4_d7": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica5_e1": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica5_e2": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica5_e3": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica5_e4": "Diga a frase em voz alta. A sua voz sobe no fim, ou desce?",
+ "dica5_e5": "Escute de novo: é uma pergunta, um susto, ou só uma coisa contada?",
+ "dica5_e6": "Toque no alto-falante e ouça o fim da frase mais uma vez.",
+ "dica5_e7": "Repare no começo da frase: tem alguma palavra que pergunta?",
+ "dica6_f1": "Ouça de novo, só o fim. A minha voz sobe, desce, ou dá um susto?",
+ "dica6_f2": "Ouça de novo, só o fim. A minha voz sobe, desce, ou dá um susto?",
+ "dica6_f3": "Ouça de novo, só o fim. A minha voz sobe, desce, ou dá um susto?",
+ "dica6_f4": "Ouça de novo, só o fim. A minha voz sobe, desce, ou dá um susto?",
+ "dica7_g1": "Ouça de novo, só o fim. A minha voz sobe, desce, ou dá um susto?",
+ "dica7_g2": "Ouça de novo, só o fim. A minha voz sobe, desce, ou dá um susto?",
+ "dica7_g3": "Ouça de novo, só o fim. A minha voz sobe, desce, ou dá um susto?",
+ "dica7_g4": "Ouça de novo, só o fim. A minha voz sobe, desce, ou dá um susto?",
+ "dica8_h1": "Olhe o último sinal da frase, depois da última palavra.",
+ "dica8_h2": "Olhe o último sinal da frase, depois da última palavra.",
+ "dica8_h3": "Olhe o último sinal da frase, depois da última palavra.",
+ "dica8_h4": "Olhe o último sinal da frase, depois da última palavra.",
+ "dica8_h5": "Olhe o último sinal da frase, depois da última palavra.",
+ "dica8_h6": "Olhe o último sinal da frase, depois da última palavra.",
+ "dica8_h7": "Olhe o último sinal da frase, depois da última palavra.",
+ "dica8_h8": "Olhe o último sinal da frase, depois da última palavra.",
+ "dica9_i1": "Leia a frase em voz alta e escute o fim dela.",
+ "dica9_i2": "Leia a frase em voz alta e escute o fim dela.",
+ "dica9_i3": "Leia a frase em voz alta e escute o fim dela.",
+ "dica9_i4": "Leia a frase em voz alta e escute o fim dela.",
+ "dica9_i5": "Leia a frase em voz alta e escute o fim dela.",
+ "dica9_i6": "Leia a frase em voz alta e escute o fim dela.",
+ "dica9_i7": "Leia a frase em voz alta e escute o fim dela.",
+ "diz2_gA_i1": "Como você se chama?",
+ "diz2_gA_i2": "Que susto!",
+ "diz2_gA_i3": "A estrela brilha no céu.",
+ "diz2_gA_i4": "Onde está o meu lápis?",
+ "diz2_gA_i5": "Que belo sapato!",
+ "diz2_gA_i6": "O sol está quente hoje.",
+ "diz2_gA_i7": "Quanto custa o sorvete?",
+ "diz2_gB_j1": "Quem comeu o bolo?",
+ "diz2_gB_j2": "Silêncio!",
+ "diz2_gB_j3": "A menina abriu a porta.",
+ "diz2_gB_j4": "Que horas são?",
+ "diz2_gB_j5": "Ui, que frio!",
+ "diz2_gB_j6": "Madalena chegou cedo.",
+ "diz2_gB_j7": "Que susto grande!",
+ "diz2_gC_k1": "Será que Fabiana está em casa?",
+ "diz2_gC_k2": "Que bonito desenho!",
+ "diz2_gC_k3": "Não vou ao cinema hoje.",
+ "diz2_gC_k4": "Quando vamos viajar?",
+ "diz2_gC_k5": "Que tarefa difícil!",
+ "diz2_gC_k6": "Meu vizinho tem um cachorro.",
+ "diz2_gC_k7": "O passarinho voou da gaiola.",
+ "esc_y1": "A palavra que pergunta por uma PESSOA.",
+ "esc_y2": "A palavra que pergunta por um LUGAR.",
+ "esc_y3": "A palavra que pergunta por um DIA ou uma HORA.",
+ "esc_y4": "A palavra que pergunta pelo JEITO de fazer.",
+ "esc_y5": "A palavra que pergunta por UM ENTRE VÁRIOS.",
+ "esc_y6": "A palavra que pergunta por uma QUANTIDADE.",
+ "escreva": "Escreva a palavra usando o teclado.",
+ "fim": "Você chegou ao fim! Agora olhe o caderno de qualquer matéria e procure: quantas frases da página de hoje acabam com ponto de interrogação? E quantas acabam com ponto de exclamação?",
+ "folhaPronta": "Folha pronta! Muito bem.",
+ "fra_b1": "Meu pai está lendo o jornal.",
+ "fra_b2": "Você gosta de bolo?",
+ "fra_b3": "O gato bebeu o leite.",
+ "fra_b4": "Qual é o teu nome?",
+ "fra_b5": "Ana gosta de tocar piano.",
+ "fra_b6": "Quantos anos você tem?",
+ "fra_b7": "O cachorro dormiu no tapete.",
+ "fra_c1": "Nossa, que susto!",
+ "fra_c2": "Quer brincar comigo?",
+ "fra_c3": "Feliz aniversário!",
+ "fra_c4": "Qual é o seu nome?",
+ "fra_c5": "Oba, férias!",
+ "fra_c6": "Onde está o meu caderno?",
+ "fra_c7": "Que legal!",
+ "fra_d1": "Cuidado!",
+ "fra_d2": "Você quer brincar comigo?",
+ "fra_d3": "Parabéns, Helena!",
+ "fra_d4": "O Sérgio escorregou no escorregador.",
+ "fra_d5": "Hoje o dia está lindo.",
+ "fra_d6": "Que flores cheirosas!",
+ "fra_d7": "Vamos brincar de esconde-esconde?",
+ "fra_e1": "Há um pássaro na árvore.",
+ "fra_e2": "Você fez um trabalho maravilhoso!",
+ "fra_e3": "Você gostaria de brincar comigo?",
+ "fra_e4": "Atenção!",
+ "fra_e5": "O que você está fazendo aqui?",
+ "fra_e6": "Ela tem um cachorro de estimação.",
+ "fra_e7": "Puxa, que pena!",
+ "gav_gA_excl": "Casa do ponto de exclamação.",
+ "gav_gA_final": "Casa do ponto final.",
+ "gav_gA_inter": "Casa do ponto de interrogação.",
+ "gav_gB_excl": "Casa do ponto de exclamação.",
+ "gav_gB_final": "Casa do ponto final.",
+ "gav_gB_inter": "Casa do ponto de interrogação.",
+ "gav_gC_excl": "Casa do ponto de exclamação.",
+ "gav_gC_final": "Casa do ponto final.",
+ "gav_gC_inter": "Casa do ponto de interrogação.",
+ "his_D1": "O gato foi embora.",
+ "his_D2": "A menina abriu a porta.",
+ "his_D3": "Que calor!",
+ "his_D4": "Não vai ao cinema hoje.",
+ "his_D5": "O vento derrubou o guarda-chuva.",
+ "his_E1": "Que bonito desenho!",
+ "his_E2": "Ui, que frio!",
+ "his_E3": "Quero sair daqui.",
+ "his_E4": "Madalena chegou.",
+ "his_E5": "Que susto o trovão deu!",
+ "ligue": "Toque numa palavra do lado esquerdo e depois na do lado direito.",
+ "nom_excl": "Ponto de exclamação.",
+ "nom_final": "Ponto final.",
+ "nom_inter": "Ponto de interrogação.",
+ "ord_u1": "O homem não cortou a árvore.",
+ "ord_u1_w0": "O",
+ "ord_u1_w1": "homem",
+ "ord_u1_w2": "não",
+ "ord_u1_w3": "cortou",
+ "ord_u1_w4": "a",
+ "ord_u1_w5": "árvore",
+ "ord_u2": "Amanhã vou tomar um sorvete.",
+ "ord_u2_w0": "Amanhã",
+ "ord_u2_w1": "vou",
+ "ord_u2_w2": "tomar",
+ "ord_u2_w3": "um",
+ "ord_u2_w4": "sorvete",
+ "ord_u3": "Que noite estrelada!",
+ "ord_u3_w0": "Que",
+ "ord_u3_w1": "noite",
+ "ord_u3_w2": "estrelada",
+ "ord_u4": "A chuva molhou o telhado.",
+ "ord_u4_w0": "A",
+ "ord_u4_w1": "chuva",
+ "ord_u4_w2": "molhou",
+ "ord_u4_w3": "o",
+ "ord_u4_w4": "telhado",
+ "ord_v1": "Como você chegou aqui?",
+ "ord_v1_w0": "Como",
+ "ord_v1_w1": "você",
+ "ord_v1_w2": "chegou",
+ "ord_v1_w3": "aqui",
+ "ord_v2": "Ele não gosta de passear no parque.",
+ "ord_v2_w0": "Ele",
+ "ord_v2_w1": "não",
+ "ord_v2_w2": "gosta",
+ "ord_v2_w3": "de",
+ "ord_v2_w4": "passear",
+ "ord_v2_w5": "no",
+ "ord_v2_w6": "parque",
+ "ord_v3": "Quero meu troco em dinheiro.",
+ "ord_v3_w0": "Quero",
+ "ord_v3_w1": "meu",
+ "ord_v3_w2": "troco",
+ "ord_v3_w3": "em",
+ "ord_v3_w4": "dinheiro",
+ "ord_v4": "Quem chamou o meu nome?",
+ "ord_v4_w0": "Quem",
+ "ord_v4_w1": "chamou",
+ "ord_v4_w2": "o",
+ "ord_v4_w3": "meu",
+ "ord_v4_w4": "nome",
+ "p10enun": "Mais frases para achar a casa. Leia cada uma em voz alta.",
+ "p11enun": "Agora as frases são mais compridas. Mas o fim delas continua entregando a casa.",
+ "p12enun": "Puxe o sinal certo até o quadradinho do fim da frase. Tocar nele também vale.",
+ "p13enun": "Mais três frases esperando o sinal delas.",
+ "p14enun": "Estas são mais difíceis. Leia com calma e escute a sua própria voz.",
+ "p15enun": "Toda pergunta começa com uma palavra que pede uma coisa. Qual é a desta?",
+ "p16enun": "Mais perguntas. Repare no que a frase está querendo saber.",
+ "p17enun": "Toda pergunta tem a sua resposta. Leve cada resposta até a pergunta dela.",
+ "p18enun": "Olhe a figura e responda. Repare: a resposta termina em ponto final.",
+ "p19enun": "Mais perguntas com figura. A pergunta acaba em ponto de interrogação e a resposta em ponto final.",
+ "p1enun": "Estes são os três moradores do caderno. Leve cada nome até o desenho dele.",
+ "p20enun": "Toque nas palavras na ordem e monte a frase. No fim, não esqueça do ponto.",
+ "p21enun": "Frases mais compridas. Ouça a frase pronta antes de começar.",
+ "p22enun": "Esta frase saiu errada. Qual é a certa? Olhe a primeira letra e o fim dela.",
+ "p23enun": "Mais três para consertar. Numas falta a letra maiúscula, noutras falta o ponto.",
+ "p24enun": "Escreva a palavra tocando nas letras, ou digite no seu teclado.",
+ "p25enun": "Leia a lengalenga e toque nas palavras que terminam com ponto de interrogação. Depois confira.",
+ "p26enun": "Agora ache as que terminam com ponto de exclamação.",
+ "p27enun": "Ache cada palavra: toque na primeira letra e depois na última.",
+ "p28enun": "As duas frases têm as mesmas palavras. Só uma está com o ponto certo.",
+ "p29enun": "Mais quatro para revisar. Leia cada uma do jeito que o ponto manda.",
+ "p2enun": "Ouça a frase. Ela conta uma coisa, ou pergunta uma coisa?",
+ "p30enun": "Esta história ficou sem pontos. Feche cada frase.",
+ "p31enun": "O fim da história. Escute o jeito de falar de cada frase.",
+ "p32enun": "Agora é a sua vez de inventar. Escreva uma palavra que sirva para cada pedido.",
+ "p33enun": "Olhe a cena e a frase. Qual ponto combina com ela?",
+ "p34enun": "Mais três cenas. A mesma figura pode pedir pontos diferentes: quem manda é a frase.",
+ "p35enun": "Você já sabe tudo isto. Agora os três nomes: leve cada frase para a linha dela.",
+ "p3enun": "Agora é susto e alegria contra pergunta. Ouça o jeito de falar.",
+ "p4enun": "Os três juntos. Ouça a frase e escolha o ponto que fecha ela.",
+ "p5enun": "Mais seis frases. Diga cada uma em voz alta antes de escolher.",
+ "p6enun": "A frase é a mesma. O que muda é o jeito de falar. Ouça e escolha o ponto daquele jeito.",
+ "p7enun": "De novo a mesma frase, com outra voz. Escute com atenção.",
+ "p8enun": "A frase já vem pontuada. Ela conta, pergunta, ou se espanta?",
+ "p9enun": "Cada ponto tem a sua casinha. Leve a frase para a casa do ponto que fecha ela.",
+ "pal_acamlia": "É a camélia.",
+ "pal_acidade": "É a cidade.",
+ "pal_acouve": "É a couve.",
+ "pal_ameninaleuolivro": "A menina leu o livro.",
+ "pal_anitagostadebiscoito": "Anita gosta de biscoito?",
+ "pal_aroda": "É a roda.",
+ "pal_avaca": "É a vaca.",
+ "pal_avila": "É a vila.",
+ "pal_como": "COMO.",
+ "pal_comoodiaestbonito": "Como o dia está bonito.",
+ "pal_final": "FINAL.",
+ "pal_frase": "FRASE.",
+ "pal_mariaejoanaforamaoteatro": "Maria e Joana foram ao teatro?",
+ "pal_obafrias": "Oba, férias!",
+ "pal_ocachorrodormiunotapete": "O cachorro dormiu no tapete.",
+ "pal_ocavalo": "É o cavalo.",
+ "pal_oco": "É o cão.",
+ "pal_olhaquecarrolindo": "Olha, que carro lindo.",
+ "pal_onde": "ONDE.",
+ "pal_ondeficaabiblioteca": "Onde fica a biblioteca.",
+ "pal_ondevocfoiontem": "Onde você foi ontem?",
+ "pal_ondevocmora": "Onde você mora?",
+ "pal_oque": "O QUE.",
+ "pal_oquetemparaoalmoohoje": "O que tem para o almoço hoje?",
+ "pal_orato": "É o rato.",
+ "pal_osolnasceubemcedo": "O sol nasceu bem cedo.",
+ "pal_oveado": "É o veado.",
+ "pal_pergunta": "PERGUNTA.",
+ "pal_ponto": "PONTO.",
+ "pal_porque": "POR QUE.",
+ "pal_qual": "QUAL.",
+ "pal_qualonomedoseuvizinho": "Qual é o nome do seu vizinho?",
+ "pal_quando": "QUANDO.",
+ "pal_quandoelevoltardeviagem": "Quando ele voltará de viagem!",
+ "pal_quantosanosvoctem": "Quantos anos você tem?",
+ "pal_quantoscadernosvoctem": "Quantos cadernos você tem?",
+ "pal_quecheirobom": "Que cheiro bom?",
+ "pal_quediahoje": "Que dia é hoje?",
+ "pal_quem": "QUEM.",
+ "pal_quemchegouprimeiro": "Quem chegou primeiro?",
+ "pal_quemcomeuorestodobolo": "Quem comeu o resto do bolo?",
+ "pal_quetarefadifcil": "Que tarefa difícil?",
+ "pal_serqueamanhvaichover": "Será que amanhã vai chover?",
+ "pal_socorro": "Socorro!",
+ "pal_susto": "SUSTO.",
+ "pal_vocjtomoucaf": "Você já tomou café?",
+ "prg_r1": "Como leu a Cátia?",
+ "prg_r2": "A mãe come melão?",
+ "prg_r3": "Como veio a Paula?",
+ "prg_r4": "O Tomé leva a mala?",
+ "prg_r5": "Onde subiu o gato?",
+ "que_p1": "Falta a palavra do começo. é a cor dos seus olhos?",
+ "que_p2": "Falta a palavra do começo. você está triste?",
+ "que_p3": "Falta a palavra do começo. é a sua festa?",
+ "que_p4": "Falta a palavra do começo. pegou a borracha emprestada?",
+ "que_p5": "Falta a palavra do começo. é o seu animal preferido?",
+ "que_q1": "Falta a palavra do começo. você mora?",
+ "que_q2": "Falta a palavra do começo. você chegou até aqui?",
+ "que_q3": "Falta a palavra do começo. você comeu no almoço?",
+ "que_q4": "Falta a palavra do começo. é o seu vizinho?",
+ "que_q5": "Falta a palavra do começo. você guardou a minha caneta?",
+ "res_r1": "A Cátia leu pela lupa.",
+ "res_r2": "Sim, a mãe come melão.",
+ "res_r3": "A Paula veio de avião.",
+ "res_r4": "Não, o Tomé leva a vela.",
+ "res_r5": "O gato subiu no telhado.",
+ "rsp_s1": "É o cavalo ou a vaca?",
+ "rsp_s2": "É a cidade ou a vila?",
+ "rsp_s3": "É o veado ou o cão?",
+ "rsp_s4": "É a couve ou o rato?",
+ "rsp_t1": "É a couve ou a camélia?",
+ "rsp_t2": "É o rato ou a roda?",
+ "rsp_t3": "É o cavalo ou o veado?",
+ "rsp_t4": "É a cidade ou o cavalo?",
+ "tip_h1": "Que dia lindo!",
+ "tip_h2": "Quem quer ser meu colega?",
+ "tip_h3": "Clara é minha melhor amiga.",
+ "tip_h4": "Socorro!",
+ "tip_h5": "Onde você mora?",
+ "tip_h6": "O ônibus chegou atrasado.",
+ "tip_h7": "Que medo!",
+ "tip_h8": "Você trouxe o lanche?",
+ "toque_palavra": "Primeiro toque numa palavra ali embaixo. Depois toque na gaveta dela.",
+ "tx25_0": "Fala.",
+ "tx25_1": "Que",
+ "tx25_10": "Que",
+ "tx25_11": "é",
+ "tx25_12": "o",
+ "tx25_13": "jantar?",
+ "tx25_14": "Fala.",
+ "tx25_15": "Bordas",
+ "tx25_16": "de",
+ "tx25_17": "alguidar.",
+ "tx25_2": "é",
+ "tx25_3": "o",
+ "tx25_4": "almoço?",
+ "tx25_5": "Fala.",
+ "tx25_6": "Cascas",
+ "tx25_7": "de",
+ "tx25_8": "tremoço.",
+ "tx25_9": "Fala.",
+ "tx26_0": "Fala.",
+ "tx26_1": "Bom",
+ "tx26_10": "Que",
+ "tx26_11": "susto",
+ "tx26_12": "levei!",
+ "tx26_13": "Fala.",
+ "tx26_14": "O",
+ "tx26_15": "ônibus",
+ "tx26_16": "quase",
+ "tx26_17": "caiu.",
+ "tx26_2": "dia!",
+ "tx26_3": "Como",
+ "tx26_4": "vai?",
+ "tx26_5": "Fala.",
+ "tx26_6": "Vou",
+ "tx26_7": "bem,",
+ "tx26_8": "obrigado.",
+ "tx26_9": "Fala.",
+ "vozOn": "Narração ligada!",
+ "voz_f1": "A comida está gostosa?",
+ "voz_f2": "A comida está gostosa!",
+ "voz_f3": "O gato subiu no telhado.",
+ "voz_f4": "O gato subiu no telhado?",
+ "voz_g1": "Você viu a chuva!",
+ "voz_g2": "Você viu a chuva?",
+ "voz_g3": "A festa começou.",
+ "voz_g4": "A festa começou!"
+};
+/*FALAS-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1q458r1": 1, "1f3c2hn": 1, "pujmsf": 1, "14ihsa0": 1, "5p3bxn": 1, "v2hhpi": 1, "ym5vf8": 1, "9y10jf": 1, "1178r8d": 1, "qumrok": 1, "3457jp": 1, "12hys8p": 1, "hup8oy": 1, "x5d8gy": 1, "legowy": 1, "cl3u9o": 1, "1dspbu7": 1, "zaebz1": 1, "1in2v00": 1, "1ilwcwt": 1, "1s6jji3": 1, "faxr6j": 1, "11vr3v3": 1, "1p523pe": 1, "yt63p7": 1, "usnwtc": 1, "1pjn429": 1, "vsxa3f": 1, "ttlllr": 1, "1yrhwhf": 1, "6atlna": 1, "187req6": 1, "1vy0ab9": 1, "12lulfq": 1, "1oxmpak": 1, "1cxtnxi": 1, "pcwzbt": 1, "1k7pyai": 1, "a1mkmk": 1, "1pmwout": 1, "wsfz6i": 1, "3rx80d": 1, "lkwan": 1, "1rt4o95": 1, "1epk7cy": 1, "1o87i4r": 1, "empoy9": 1, "qs66ji": 1, "bmov13": 1, "ljn5v5": 1, "irncii": 1, "3iurwk": 1, "1xyu8n1": 1, "pphpap": 1, "1gua4je": 1, "1j8ld5p": 1, "21c7tw": 1, "659irt": 1, "13thli2": 1, "1gq1t4o": 1, "kcuet7": 1, "9so085": 1, "13ohsiu": 1, "bq8o6x": 1, "ol82vv": 1, "ojmqz8": 1, "1t5pw6s": 1, "12lgh8u": 1, "wzi12b": 1, "q1679k": 1, "c55rat": 1, "13rg5e": 1, "1gq43aj": 1, "gwgj2x": 1, "1kdo4v7": 1, "12lnqts": 1, "fe3xkz": 1, "kghdvr": 1, "13l6164": 1, "1f4oqp9": 1, "1b9toka": 1, "osniuu": 1, "1cnc5pb": 1, "sc7m6j": 1, "ewnr7m": 1, "1douplx": 1, "1i6z58v": 1, "1b79j93": 1, "1ac0rr1": 1, "twalp7": 1, "u4vj2": 1, "g4uhyk": 1, "hc69xh": 1, "i0hy9n": 1, "1twt7dv": 1, "1h4p2h4": 1, "18hfc9x": 1, "1r6plfd": 1, "1vjn5re": 1, "4731c1": 1, "cgxpd4": 1, "u7vk59": 1, "118unca": 1, "om9l3v": 1, "t4jdsv": 1, "mt3jae": 1, "1pnushu": 1, "1ha01zc": 1, "1y07e56": 1, "etc21q": 1, "1xku5af": 1, "1xyo923": 1, "18g32nq": 1, "dui4qo": 1, "1j33lot": 1, "199sbfb": 1, "1bb9zus": 1, "lmee6w": 1, "13xysrd": 1, "1qlltt1": 1, "1vdptle": 1, "1v5c849": 1, "1qh14b1": 1, "gm9152": 1, "1hx1l18": 1, "t80phm": 1, "gqq2gh": 1, "1knnnnj": 1, "13m1y64": 1, "1h1rdht": 1, "1p6bjfi": 1, "1p8s2t0": 1, "ijdbs6": 1, "1f0gaqk": 1, "12b2u7u": 1, "14i9jfg": 1, "u70dty": 1, "1sg4ajn": 1, "1eshqz5": 1, "rennfb": 1, "1zf6l2": 1, "12447xh": 1, "eb03xq": 1, "1i3j7pk": 1, "xhcpti": 1, "1t9fu5y": 1, "41wiuo": 1, "13uhefr": 1, "1at25bg": 1, "1a9czxz": 1, "pgm9r1": 1, "1mfn475": 1, "15kttav": 1, "11c5o6j": 1, "1vhfk6i": 1, "zrgtxh": 1, "1c90om9": 1, "13vrsgw": 1, "lyjkxf": 1, "1ii4e6f": 1, "1edyrvp": 1, "1asn4gy": 1, "v70tfh": 1, "1gtx39h": 1, "iu87yp": 1, "483va2": 1, "uapv90": 1, "10asxt6": 1, "1tup4pw": 1, "1sc8m35": 1, "16jn6g0": 1, "148vao9": 1, "1tss5gw": 1, "o39q33": 1, "1vdfrkt": 1, "fchuyr": 1, "1s25fbk": 1, "1k74dm7": 1, "ylqzmr": 1, "1mdy1fn": 1, "fjdp30": 1, "1diqhzi": 1, "107txio": 1, "139q1cy": 1, "1ix4ipy": 1, "6cqw1q": 1, "1de438e": 1, "r0zcn": 1, "1nj8911": 1, "37fro2": 1, "6wmy7i": 1, "5ta9eb": 1, "xykgpd": 1, "3ixd13": 1, "6r1mvm": 1, "4g6t18": 1, "o8sfjh": 1, "1s6lth2": 1, "o5djuy": 1, "75doio": 1, "ll1cnh": 1, "cil4ll": 1, "1owqgss": 1, "16zybvs": 1, "qqgo7i": 1, "16u3apd": 1, "1vedtly": 1, "7pieru": 1, "95nijn": 1, "1v6c75y": 1, "iblfi0": 1, "bxb679": 1, "1dkgjox": 1, "1n57yfb": 1, "14auiy2": 1, "2voslp": 1, "1xqtowx": 1, "iqx37j": 1, "j504j8": 1, "1uweifh": 1, "13fd0cw": 1, "10dp9ac": 1, "11nn6jb": 1, "14kthn3": 1, "1mrkuwk": 1, "rv4zjf": 1, "sp0ob4": 1, "1va5ffw": 1, "152e2ih": 1, "1iav4x": 1, "aekho9": 1, "vbog1y": 1, "2hxpwz": 1, "1yy39oe": 1, "krjc3": 1, "1h32g7": 1, "m1ppmi": 1, "19oh180": 1, "1fk2von": 1, "nd5j9m": 1, "1caavfy": 1, "n42bln": 1, "k9g3ge": 1, "rjgq5": 1, "1fhexub": 1, "6n1iys": 1, "10xzbma": 1, "17gy318": 1, "1xzoaz5": 1, "10tcs1m": 1, "s69mtb": 1, "k17edm": 1, "1d9s73k": 1, "13p2btm": 1, "1tqrvuz": 1, "9g3yc2": 1, "1sarreg": 1, "oxw8s8": 1, "18d9pat": 1, "1vgi89z": 1, "jjwmfi": 1, "1op7kop": 1, "13rtozj": 1, "fe515u": 1, "hh7jja": 1, "wp76hh": 1, "olghq": 1, "1vjeozb": 1, "1n4s5q": 1, "1ardkeb": 1, "13ksgd3": 1, "fr04w5": 1, "1eyoi6l": 1, "1t670xk": 1, "rmrlzl": 1, "wvwira": 1, "lm2tfn": 1, "f8mg4v": 1, "10zk4of": 1, "10s7652": 1, "1bkze1b": 1, "2agy6n": 1, "hw6oty": 1, "j0vnuk": 1, "1klgd7l": 1, "1ixdq52": 1, "1bx3h13": 1, "1mu8war": 1, "1oaaion": 1, "akic2c": 1, "1hnrtyl": 1, "1b9i92s": 1, "1tkqabs": 1, "3t1m": 1, "2xtadj": 1, "375qjr": 1, "pjubo5": 1, "3t1g": 1, "a3a01k": 1, "1qkx8u6": 1, "lp6ifh": 1, "375uax": 1, "314w1s": 1, "3hmm5": 1, "1bth3mx": 1, "7qvvcx": 1, "375stg": 1, "2z7y9o": 1, "mlzsfs": 1, "1dq40a7": 1, "2xfbm4": 1, "o8y1ax": 1, "u5ighm": 1, "1lv0r17": 1, "yj05u3": 1, "yj8qk5": 1, "pllnqu": 1, "yivv0p": 1, "f345hq": 1, "375cuh": 1, "2upjor": 1, "3hm6c": 1, "15old9e": 1, "3hmis": 1, "vebwiv": 1, "awjk1p": 1, "33y395": 1, "375jco": 1, "30j2g0": 1, "3hm7h": 1, "ukq8hr": 1, "egh7kg": 1, "yj7d1l": 1, "ploins": 1, "yj27cc": 1, "x2662t": 1, "13uia0q": 1, "17jl4g7": 1, "1h1ehda": 1, "1pb1yy6": 1, "1qoeem2": 1, "52y6cq": 1, "17flozx": 1, "1we47sw": 1, "1v7tv7y": 1, "12j0kl5": 1, "4vki5s": 1, "1n7kqob": 1, "1feotux": 1, "u71v3u": 1, "h6ditl": 1, "gp4zgs": 1, "plpcra": 1, "1im6bxn": 1, "j5ylga": 1, "9nbdb3": 1, "1c4okct": 1, "4yrxro": 1, "17lxhbx": 1, "t384bc": 1, "17qi1h6": 1, "encdos": 1, "k40mq2": 1, "9t9yt0": 1, "1uj1eji": 1, "ynberw": 1, "1wojxqs": 1, "1gg1pz3": 1, "awjhh2": 1, "1flmabr": 1, "bf1zfl": 1, "1u4d0t": 1, "s07ig9": 1, "t1ams7": 1, "1pjn41s": 1, "9r07rv": 1, "9ok8nq": 1, "9oec5t": 1, "2xcgxx": 1, "vsxa38": 1, "mf139j": 1, "mg339k": 1, "1yrhwgy": 1, "d957az": 1, "9jfia": 1, "187rept": 1, "2zuw17": 1, "12lulg7": 1, "1xby6z": 1, "qpk9id": 1, "9430p1": 1, "j53huc": 1, "11lfucl": 1, "vfz3j5": 1, "1vtox6v": 1, "33xzoi": 1, "1bv0y8b": 1, "1vy0aaz": 1, "ttllkx": 1, "33y2tj": 1, "kcvutu": 1, "usnwu6": 1, "pt0tyz": 1, "zeb0h1": 1, "m90rmf": 1, "1w7g8sc": 1, "wzvo89": 1, "13efql0": 1, "cat9kg": 1, "1aauzvg": 1, "1bk5hvv": 1, "g0zc3j": 1, "1fh1k3a": 1, "1gq5tc2": 1, "160shuc": 1, "jcu7t2": 1, "1fh4kuq": 1, "lcf8b9": 1, "swnfno": 1, "3e5hzs": 1, "utdh2": 1, "v90o3p": 1, "1vhq2no": 1, "2l9u2n": 1, "pj0iys": 1, "1ohz2j9": 1, "dh4vzz": 1, "1lh25j9": 1, "1hhb0ht": 1, "zzi2if": 1, "w9hd2": 1, "1bb95dr": 1, "83n4g9": 1, "yshpdr": 1, "qmu4by": 1, "1jzmhbz": 1, "k15d2e": 1, "6g5oa1": 1, "qqiw6i": 1, "2tsbk1": 1, "3sy4": 1, "1vctawo": 1, "otrq7g": 1, "p5ewoa": 1, "69k1jx": 1, "pfmusl": 1, "bbxcf6": 1, "375k11": 1, "383q97": 1, "nq56lz": 1, "h6cp02": 1, "33xzva": 1, "2x885x": 1, "yirxgo": 1, "yj8llw": 1, "yiz9lv": 1, "1h6wmls": 1, "swkns7": 1, "fl80fb": 1, "fl80ft": 1, "2l9u26": 1, "h5ylzq": 1, "h5ylzc": 1, "5gz0fq": 1, "5gz0ft": 1};/*VOZOK-FIM*/
+
+/* ============================================================
+   OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
+   ⚠️ POR QUE JSON E NÃO OBJETO SOLTO: o `gerar_falas.py` LÊ ESTE BLOCO para
+   escrever as falas. Se os dados vivessem em dois lugares (aqui e lá), a voz
+   diria uma coisa e a tela mostraria outra — que é o defeito que o `falas.json`
+   existe para matar. Um lugar só, lido pelos dois.
+   ============================================================ */
+/*DADOS-INI*/
+/* ============================================================
+   OS DADOS DAS FOLHAS — A CASINHA DOS TRÊS PONTOS (2º ano)
+
+   ⚠️ TUDO AQUI VEM DE UMA FOLHA DE PAPEL COLHIDA. O crivo das 40 está em
+      `_sequencias/POTE-PONTO2.md`; a marca `D##` diz de qual folha cada bloco
+      nasceu.
+   ⛔ E UMA LINHA DO CRIVO MANDA MAIS QUE TODAS: o currículo do 2º ano nomeia
+      TRÊS pontos — final, interrogação e exclamação — e mais a segmentação
+      entre palavras e a letra maiúscula. VÍRGULA, DOIS-PONTOS, TRAVESSÃO e
+      RETICÊNCIAS são de anos seguintes, e dezoito das quarenta folhas colhidas
+      os ensinam. Entraram só pelo GESTO; nenhum deles aparece para a criança.
+   ============================================================ */
+
+/* ⚠️ OS TRÊS PONTOS, SEMPRE NA MESMA ORDEM E COM O MESMO NOME. Eles são os
+   moradores do caderno, e a criança tem de reconhecê-los de olho fechado. */
+var SINAL = {inter: {s: "?", n: "ponto de interrogação", f: "interrogacao"},
+             excl:  {s: "!", n: "ponto de exclamação",   f: "exclamacao"},
+             final: {s: ".", n: "ponto final",           f: "final"}};
+var ORDEM3 = ["inter", "excl", "final"];
+
+/* 1 — QUEM É QUEM (D32, VERBATIM: "Una corretamente") */
+var LIGA = {
+ a1: {p: "PONTO DE INTERROGAÇÃO", f: "interrogacao", d: "Serve para fazer uma pergunta."},
+ a2: {p: "PONTO DE EXCLAMAÇÃO",   f: "exclamacao",   d: "Mostra espanto, alegria ou susto."},
+ a3: {p: "PONTO FINAL",           f: "final",        d: "Diz que a frase terminou."}};
+
+/* 2, 3, 4 e 5 — QUAL PONTO FECHA A FRASE? (D10, D09 e D05, VERBATIM: "Coloque
+   um ponto de interrogação, um ponto de exclamação ou um ponto final nas caixas
+   para finalizar as frases corretamente")
+   ⚠️ A 2 tem só . e ? — o par mais difícil, porque a diferença é só a VOZ. */
+var PON = {
+ b1: {f: "Meu pai está lendo o jornal", r: "final"},
+ b2: {f: "Você gosta de bolo", r: "inter"},
+ b3: {f: "O gato bebeu o leite", r: "final"},
+ b4: {f: "Qual é o teu nome", r: "inter"},
+ b5: {f: "Ana gosta de tocar piano", r: "final"},
+ b6: {f: "Quantos anos você tem", r: "inter"},
+ b7: {f: "O cachorro dormiu no tapete", r: "final"},
+ c1: {f: "Nossa, que susto", r: "excl"},
+ c2: {f: "Quer brincar comigo", r: "inter"},
+ c3: {f: "Feliz aniversário", r: "excl"},
+ c4: {f: "Qual é o seu nome", r: "inter"},
+ c5: {f: "Oba, férias", r: "excl"},
+ c6: {f: "Onde está o meu caderno", r: "inter"},
+ c7: {f: "Que legal", r: "excl"},
+ d1: {f: "Cuidado", r: "excl"},
+ d2: {f: "Você quer brincar comigo", r: "inter"},
+ d3: {f: "Parabéns, Helena", r: "excl"},
+ d4: {f: "O Sérgio escorregou no escorregador", r: "final"},
+ d5: {f: "Hoje o dia está lindo", r: "final"},
+ d6: {f: "Que flores cheirosas", r: "excl"},
+ d7: {f: "Vamos brincar de esconde-esconde", r: "inter"},
+ e1: {f: "Há um pássaro na árvore", r: "final"},
+ e2: {f: "Você fez um trabalho maravilhoso", r: "excl"},
+ e3: {f: "Você gostaria de brincar comigo", r: "inter"},
+ e4: {f: "Atenção", r: "excl"},
+ e5: {f: "O que você está fazendo aqui", r: "inter"},
+ e6: {f: "Ela tem um cachorro de estimação", r: "final"},
+ e7: {f: "Puxa, que pena", r: "excl"}};
+
+/* 6 e 7 — A MESMA FRASE, TRÊS VOZES (D13, VERBATIM: "Toda frase termina com um
+   ponto. Observe como a mesma frase muda quando trocamos o sinal de pontuação")
+   ⭐⭐⭐ É O CORAÇÃO DO DEGRAU. A criança OUVE as três e diz qual foi.
+   ⚠️ Aqui a voz é a pergunta: sem o áudio esta folha não existe. */
+var VOZ = {
+ f1: {b: "A comida está gostosa", pede: "inter"},
+ f2: {b: "A comida está gostosa", pede: "excl"},
+ f3: {b: "O gato subiu no telhado", pede: "final"},
+ f4: {b: "O gato subiu no telhado", pede: "inter"},
+ g1: {b: "Você viu a chuva", pede: "excl"},
+ g2: {b: "Você viu a chuva", pede: "inter"},
+ g3: {b: "A festa começou", pede: "final"},
+ g4: {b: "A festa começou", pede: "excl"}};
+
+/* 8 — QUE TIPO DE FRASE É? (D07, VERBATIM: "Escreva a qual pontuação as frases
+   se referem") */
+var TIPO = {
+ h1: {f: "Que dia lindo!", r: "excl"},
+ h2: {f: "Quem quer ser meu colega?", r: "inter"},
+ h3: {f: "Clara é minha melhor amiga.", r: "final"},
+ h4: {f: "Socorro!", r: "excl"},
+ h5: {f: "Onde você mora?", r: "inter"},
+ h6: {f: "O ônibus chegou atrasado.", r: "final"},
+ h7: {f: "Que medo!", r: "excl"},
+ h8: {f: "Você trouxe o lanche?", r: "inter"}};
+
+/* 9, 10 e 11 — A CASINHA DA PONTUAÇÃO (D28, VERBATIM: "CASINHA DA PONTUAÇÃO")
+   ⭐⭐⭐ É a casca do caderno: três casinhas, uma para cada ponto, e a criança
+      leva a frase para a casa dela. */
+var GAV = {
+ gA: {cols: [{k: "inter", n: "Casa da ?"}, {k: "excl", n: "Casa do !"}, {k: "final", n: "Casa do ."}],
+      pal: {i1: {p: "Como você se chama?", c: "inter"},
+            i2: {p: "Que susto!", c: "excl"},
+            i3: {p: "A estrela brilha no céu.", c: "final"},
+            i4: {p: "Onde está o meu lápis?", c: "inter"},
+            i5: {p: "Que belo sapato!", c: "excl"},
+            i6: {p: "O sol está quente hoje.", c: "final"},
+            i7: {p: "Quanto custa o sorvete?", c: "inter"}}},
+ gB: {cols: [{k: "inter", n: "Casa da ?"}, {k: "excl", n: "Casa do !"}, {k: "final", n: "Casa do ."}],
+      pal: {j1: {p: "Quem comeu o bolo?", c: "inter"},
+            j2: {p: "Silêncio!", c: "excl"},
+            j3: {p: "A menina abriu a porta.", c: "final"},
+            j4: {p: "Que horas são?", c: "inter"},
+            j5: {p: "Ui, que frio!", c: "excl"},
+            j6: {p: "Madalena chegou cedo.", c: "final"},
+            j7: {p: "Que susto grande!", c: "excl"}}},
+ gC: {cols: [{k: "inter", n: "Casa da ?"}, {k: "excl", n: "Casa do !"}, {k: "final", n: "Casa do ."}],
+      pal: {k1: {p: "Será que Fabiana está em casa?", c: "inter"},
+            k2: {p: "Que bonito desenho!", c: "excl"},
+            k3: {p: "Não vou ao cinema hoje.", c: "final"},
+            k4: {p: "Quando vamos viajar?", c: "inter"},
+            k5: {p: "Que tarefa difícil!", c: "excl"},
+            k6: {p: "Meu vizinho tem um cachorro.", c: "final"},
+            k7: {p: "O passarinho voou da gaiola.", c: "final"}}}};
+
+/* 12, 13 e 14 — ARRASTE O SINAL (D18, VERBATIM: "RECORTE E COLE UM PONTO FINAL,
+   PONTO DE INTERROGAÇÃO OU EXCLAMAÇÃO NO QUADRADINHO, PARA COMPLETAR AS
+   FRASES"; e D25, VERBATIM: "ARRASTE OS SINAIS E PONTUE CORRETAMENTE AS
+   FRASES" — e essa diz 2º ANO no cabeçalho)
+   ⚠️ Recortar e colar, na tela, é ARRASTAR. E o toque simples também vale. */
+var ARR = {
+ m1: {f: "Sofia gosta de ler", r: "final"},
+ m2: {f: "Onde está o meu caderno", r: "inter"},
+ m3: {f: "Que flores cheirosas", r: "excl"},
+ m4: {f: "O sorvete derreteu", r: "final"},
+ n1: {f: "Pedro tem um boné azul", r: "final"},
+ n2: {f: "Quantos anos você tem", r: "inter"},
+ n3: {f: "Que bom ver você", r: "excl"},
+ n4: {f: "Que sorte a nossa", r: "excl"},
+ o1: {f: "A laranja não está doce", r: "final"},
+ o2: {f: "Como faz calor", r: "excl"},
+ o3: {f: "Aonde você vai", r: "inter"},
+ o4: {f: "Quem apagou a luz", r: "inter"}};
+
+/* 15 e 16 — A PALAVRA QUE ABRE A PERGUNTA (D30, o cartaz da interrogação com
+   O QUÊ · QUEM · ONDE · QUANDO · POR QUÊ · COMO; e D31, VERBATIM: "Complete as
+   frases usando as palavras em destaque") */
+var QUE = {
+ p1: {a: "", z: "é a cor dos seus olhos?", r: "QUAL", ops: ["QUAL", "ONDE", "QUANDO"]},
+ p2: {a: "", z: "você está triste?", r: "POR QUE", ops: ["POR QUE", "QUEM", "QUAL"]},
+ p3: {a: "", z: "é a sua festa?", r: "QUANDO", ops: ["QUANDO", "COMO", "QUEM"]},
+ p4: {a: "", z: "pegou a borracha emprestada?", r: "QUEM", ops: ["QUEM", "ONDE", "QUANDO"]},
+ p5: {a: "", z: "é o seu animal preferido?", r: "QUAL", ops: ["QUAL", "QUANDO", "COMO"]},
+ q1: {a: "", z: "você mora?", r: "ONDE", ops: ["ONDE", "QUANDO", "O QUE"]},
+ q2: {a: "", z: "você chegou até aqui?", r: "COMO", ops: ["COMO", "QUEM", "QUAL"]},
+ q3: {a: "", z: "você comeu no almoço?", r: "O QUE", ops: ["O QUE", "ONDE", "POR QUE"]},
+ q4: {a: "", z: "é o seu vizinho?", r: "QUEM", ops: ["QUEM", "COMO", "QUANDO"]},
+ q5: {a: "", z: "você guardou a minha caneta?", r: "ONDE", ops: ["ONDE", "QUEM", "QUAL"]}};
+
+/* 17 — LIGUE A PERGUNTA À RESPOSTA (D14, VERBATIM: "Liga as perguntas às
+   respostas") */
+var PAR = {
+ r1: {p: "Como leu a Cátia?", r: "A Cátia leu pela lupa."},
+ r2: {p: "A mãe come melão?", r: "Sim, a mãe come melão."},
+ r3: {p: "Como veio a Paula?", r: "A Paula veio de avião."},
+ r4: {p: "O Tomé leva a mala?", r: "Não, o Tomé leva a vela."},
+ r5: {p: "Onde subiu o gato?", r: "O gato subiu no telhado."}};
+
+/* 18 e 19 — RESPONDA À PERGUNTA (D12, VERBATIM: "Lê as perguntas e responde.
+   Observa o exemplo." — e a resposta termina em PONTO FINAL) */
+/* ⚠️ `RESPF`, e NÃO `RESP`: o motor já tem um `RESP` global (id -> resposta
+   certa), e `monta()` o zera a cada montagem. Um bloco de dados com esse nome
+   some inteiro na primeira folha montada — as três perguntas com figura
+   abriram vazias e o caderno inteiro parou com um só `TypeError`. */
+var RESPF = {
+ s1: {p: "É o cavalo ou a vaca?", f: "cavalo", r: "É o cavalo.", ops: ["É o cavalo.", "É a vaca."]},
+ s2: {p: "É a cidade ou a vila?", f: "cidade", r: "É a cidade.", ops: ["É a cidade.", "É a vila."]},
+ s3: {p: "É o veado ou o cão?", f: "veado", r: "É o veado.", ops: ["É o veado.", "É o cão."]},
+ s4: {p: "É a couve ou o rato?", f: "couve", r: "É a couve.", ops: ["É a couve.", "É o rato."]},
+ t1: {p: "É a couve ou a camélia?", f: "couve", r: "É a couve.", ops: ["É a couve.", "É a camélia."]},
+ t2: {p: "É o rato ou a roda?", f: "rato", r: "É o rato.", ops: ["É o rato.", "É a roda."]},
+ t3: {p: "É o cavalo ou o veado?", f: "veado", r: "É o veado.", ops: ["É o veado.", "É o cavalo."]},
+ t4: {p: "É a cidade ou o cavalo?", f: "cidade", r: "É a cidade.", ops: ["É a cidade.", "É o cavalo."]}};
+
+/* 20 e 21 — ORDENE AS PALAVRAS E FORME A FRASE (D06, VERBATIM: "Ordene as
+   palavras e forme frases. Não se esqueça de colocar o sinal de pontuação!")
+   ⭐ É a SEGMENTAÇÃO ENTRE PALAVRAS que o currículo nomeia, e nenhuma outra
+      folha da colheita a cobre. */
+var ORD = {
+ u1: {r: "O homem não cortou a árvore", s: ["árvore", "cortou", "O", "homem", "a", "não"], p: "final"},
+ u2: {r: "Amanhã vou tomar um sorvete", s: ["sorvete", "vou", "tomar", "Amanhã", "um"], p: "final"},
+ u3: {r: "Que noite estrelada", s: ["estrelada", "Que", "noite"], p: "excl"},
+ u4: {r: "A chuva molhou o telhado", s: ["telhado", "A", "molhou", "chuva", "o"], p: "final"},
+ v1: {r: "Como você chegou aqui", s: ["aqui", "você", "Como", "chegou"], p: "inter"},
+ v2: {r: "Ele não gosta de passear no parque", s: ["passear", "no", "Ele", "de", "parque", "gosta", "não"], p: "final"},
+ v3: {r: "Quero meu troco em dinheiro", s: ["meu", "Quero", "em", "dinheiro", "troco"], p: "final"},
+ v4: {r: "Quem chamou o meu nome", s: ["nome", "Quem", "meu", "chamou", "o"], p: "inter"}};
+
+/* 22 e 23 — CONSERTE A FRASE (D31, VERBATIM: "Corrija as frases abaixo,
+   observando a letra maiúscula e a pontuação")
+   ⭐⭐ É a única folha da colheita que junta MAIÚSCULA e PONTO — e o currículo
+      do 2º ano nomeia as duas na mesma linha. */
+var COR_ = {
+ w1: {errada: "qual é o nome do seu vizinho", certa: "Qual é o nome do seu vizinho?", falta: "maius"},
+ w2: {errada: "Onde você foi ontem", certa: "Onde você foi ontem?", falta: "ponto"},
+ w3: {errada: "quem comeu o resto do bolo", certa: "Quem comeu o resto do bolo?", falta: "maius"},
+ w4: {errada: "o sol nasceu bem cedo", certa: "O sol nasceu bem cedo.", falta: "maius"},
+ x1: {errada: "Será que amanhã vai chover", certa: "Será que amanhã vai chover?", falta: "ponto"},
+ x2: {errada: "quantos cadernos você tem", certa: "Quantos cadernos você tem?", falta: "maius"},
+ x3: {errada: "O que tem para o almoço hoje", certa: "O que tem para o almoço hoje?", falta: "ponto"},
+ x4: {errada: "Você já tomou café", certa: "Você já tomou café?", falta: "ponto"}};
+
+/* 24 — ESCREVA A PALAVRA QUE ABRE (letras embaralhadas) */
+var ESCR = {
+ y1: {w: "QUEM", d: "A palavra que pergunta por uma PESSOA."},
+ y2: {w: "ONDE", d: "A palavra que pergunta por um LUGAR."},
+ y3: {w: "QUANDO", d: "A palavra que pergunta por um DIA ou uma HORA."},
+ y4: {w: "COMO", d: "A palavra que pergunta pelo JEITO de fazer."},
+ y5: {w: "QUAL", d: "A palavra que pergunta por UM ENTRE VÁRIOS."},
+ y6: {w: "QUANTOS", d: "A palavra que pergunta por uma QUANTIDADE."}};
+
+/* 25 e 26 — ACHE NO TEXTO (D14, VERBATIM: "Rodeia, na lengalenga, as perguntas
+   de azul e as respostas de vermelho") */
+var TXT = {
+ t1: {titulo: "A lengalenga da Cátia",
+      linhas: [["—", "Que", "é", "o", "almoço?"],
+               ["—", "Cascas", "de", "tremoço."],
+               ["—", "Que", "é", "o", "jantar?"],
+               ["—", "Bordas", "de", "alguidar."]],
+      ok: ["almoço?", "jantar?"]},
+ t2: {titulo: "Na porta da escola",
+      linhas: [["—", "Bom", "dia!", "Como", "vai?"],
+               ["—", "Vou", "bem,", "obrigado."],
+               ["—", "Que", "susto", "levei!"],
+               ["—", "O", "ônibus", "quase", "caiu."]],
+      ok: ["dia!", "levei!"]}};
+
+/* 27 — O CAÇA-PALAVRAS DOS SINAIS (D08, VERBATIM: "Encontre no diagrama abaixo
+   o nome dos sinais de pontuação") */
+var CACA = {
+ grade: [["P", "O", "N", "T", "O", "X", "K", "G"],
+         ["A", "Z", "Q", "C", "J", "S", "A", "H"],
+         ["F", "I", "N", "A", "L", "E", "B", "A"],
+         ["T", "L", "B", "G", "T", "Y", "H", "D"],
+         ["F", "R", "A", "S", "E", "F", "U", "B"],
+         ["P", "E", "R", "G", "U", "N", "T", "A"],
+         ["N", "Q", "W", "V", "H", "J", "Q", "N"],
+         ["S", "U", "S", "T", "O", "F", "Z", "M"]],
+ pal: {A1: {p: "PONTO",   a: [0, 0], z: [0, 4]},
+       A2: {p: "FINAL",   a: [2, 0], z: [2, 4]},
+       A3: {p: "FRASE",   a: [4, 0], z: [4, 4]},
+       A4: {p: "PERGUNTA", a: [5, 0], z: [5, 7]},
+       A5: {p: "SUSTO",   a: [7, 0], z: [7, 4]}}};
+
+/* 28 e 29 — QUAL ESTÁ PONTUADA CERTA? (D35, VERBATIM: "Pontue as frases
+   corretamente com os sinais de pontuação") */
+var CERT = {
+ B1: {ops: ["Que tarefa difícil!", "Que tarefa difícil?"], r: "Que tarefa difícil!"},
+ B2: {ops: ["Quantos anos você tem.", "Quantos anos você tem?"], r: "Quantos anos você tem?"},
+ B3: {ops: ["Anita gosta de biscoito.", "Anita gosta de biscoito?"], r: "Anita gosta de biscoito."},
+ B4: {ops: ["Como o dia está bonito!", "Como o dia está bonito."], r: "Como o dia está bonito!"},
+ B5: {ops: ["Que cheiro bom!", "Que cheiro bom?"], r: "Que cheiro bom!"},
+ C1: {ops: ["Maria e Joana foram ao teatro.", "Maria e Joana foram ao teatro?"], r: "Maria e Joana foram ao teatro."},
+ C2: {ops: ["Que dia é hoje!", "Que dia é hoje?"], r: "Que dia é hoje?"},
+ C3: {ops: ["Olha, que carro lindo!", "Olha, que carro lindo."], r: "Olha, que carro lindo!"},
+ C4: {ops: ["Quando ele voltará de viagem?", "Quando ele voltará de viagem!"], r: "Quando ele voltará de viagem?"},
+ C5: {ops: ["Onde fica a biblioteca?", "Onde fica a biblioteca."], r: "Onde fica a biblioteca?"}};
+
+/* 30 e 31 — PONTUE A HISTÓRIA (D23, VERBATIM: "Vamos ler as frases e colocar as
+   pontuações adequadas?") */
+var HIST = {
+ D1: {f: "O gato foi embora", r: "final"},
+ D2: {f: "A menina abriu a porta", r: "final"},
+ D3: {f: "Que calor", r: "excl"},
+ D4: {f: "Não vai ao cinema hoje", r: "final"},
+ D5: {f: "O vento derrubou o guarda-chuva", r: "final"},
+ E1: {f: "Que bonito desenho", r: "excl"},
+ E2: {f: "Ui, que frio", r: "excl"},
+ E3: {f: "Quero sair daqui", r: "final"},
+ E4: {f: "Madalena chegou", r: "final"},
+ E5: {f: "Que susto o trovão deu", r: "excl"}};
+
+/* 32 — ESCREVA A SUA PERGUNTA (D21, VERBATIM: "Desafio criativo: escreva uma
+   pergunta para um amigo")
+   ⚠️ É PRODUÇÃO: vale qualquer uma das palavras que abrem pergunta, e o que
+      fica escrito é o que a CRIANÇA escolheu. */
+var DESA = {
+ F1: {q: "uma palavra que serve para começar uma pergunta",
+      ok: ["QUEM", "ONDE", "QUANDO", "COMO", "QUAL", "QUE"]},
+ F2: {q: "outra palavra que serve para começar uma pergunta",
+      ok: ["QUEM", "ONDE", "QUANDO", "COMO", "QUAL", "QUE"]},
+ F3: {q: "uma palavra de susto ou alegria, das que pedem o ponto de exclamação",
+      ok: ["OBA", "NOSSA", "UI", "SOCORRO", "PUXA", "EBA"]},
+ F4: {q: "mais uma palavra de susto ou alegria",
+      ok: ["OBA", "NOSSA", "UI", "SOCORRO", "PUXA", "EBA"]}};
+
+/* 33 e 34 — A CENA PEDE O SINAL (D34, VERBATIM: "Observe as cenas e forme
+   frases usando cada sinal de pontuação") */
+var CENA = {
+ G1: {f: "cavalo", p: "O cavalo corre pelo campo", r: "final"},
+ G2: {f: "rato",   p: "Que rato pequenininho", r: "excl"},
+ G3: {f: "veado",  p: "Onde mora o veado", r: "inter"},
+ G4: {f: "couve",  p: "A couve cresceu na horta", r: "final"},
+ H1: {f: "cidade", p: "A cidade tem muitos prédios", r: "final"},
+ H2: {f: "couve",  p: "Você gosta de couve", r: "inter"},
+ H3: {f: "cavalo", p: "Que cavalo bonito", r: "excl"},
+ H4: {f: "rato",   p: "Quem viu o rato", r: "inter"}};
+
+/* 35 — O CARTAZ QUE VOCÊ LEVA (D37, que é o único cartaz da colheita com
+   EXATAMENTE os três pontos do 2º ano e mais nada)
+   ⭐⭐ O CONCEITO VEM POR ÚLTIMO: a criança passou trinta e quatro folhas
+      ouvindo a voz mudar; só agora ela recebe os três nomes por escrito. */
+var CART = {
+ linhas: [
+  {k: "inter", t: "Ponto de interrogação", d: "é usado em perguntas", e: "Qual é o seu nome?"},
+  {k: "excl",  t: "Ponto de exclamação",   d: "mostra espanto, susto ou alegria", e: "Que susto!"},
+  {k: "final", t: "Ponto final",           d: "diz que a ideia terminou", e: "O sol está quente hoje."}],
+ exem: {
+  I1: {p: "Onde você mora?", c: "inter"},
+  I2: {p: "Oba, férias!", c: "excl"},
+  I3: {p: "A menina leu o livro.", c: "final"},
+  I4: {p: "Quem chegou primeiro?", c: "inter"},
+  I5: {p: "Socorro!", c: "excl"},
+  I6: {p: "O cachorro dormiu no tapete.", c: "final"}}};
+/*DADOS-FIM*/
+
+/* ⚠️ A MARCA DE VERSÃO NA FIGURA. Quando eu troco uma figura, o NOME do arquivo
+   continua o mesmo — e o navegador da escola serve a cópia velha do cache.
+   REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
+var VIMG = 2;
+/* ⚠️⚠️ `draggable="false"` NÃO É DETALHE: toda imagem é arrastável de fábrica no
+   navegador, e quando a criança apertava a figura e puxava, o Chrome começava o
+   SEU arrasto nativo e disparava um `pointercancel` — o nosso arrasto morria no
+   primeiro milímetro, sem erro nenhum na tela. */
+/* ⚠️ AQUI O NOME DO ARQUIVO VEM INTEIRO, e não por prefixo. No caderno de onde
+   este motor foi clonado o `img()` colava `img/ls_` na frente e `.png` atrás, e
+   é exatamente esse tipo de peça que o `_qa/clone.py` (item 8, PREFIXO ALHEIO)
+   pega: o prefixo de outra pasta vazando para dentro desta. Aqui os DADOS já
+   declaram `sb_pato.png` por extenso, que é uma coisa a menos para desencontrar. */
+function img(f, cls, alt){
+  return '<img class="' + (cls || "fig") + '" draggable="false" src="img/' + f +
+         '?v=' + VIMG + '" alt="' + (alt || "") + '">';
+}
+
+/* ---------- estado ---------- */
+var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
+var vozLigada = true, _narr = null, vozPtBR = null, ATIVA = null;
+var CHAVE_LS = "a_casinha_dos_tr_s_pontos";
+/* ⚠️ AS 25 FOLHAS, NA ORDEM — e a ordem É a escada.
+   o mesmo ser com dois nomes (1-5) → a maiúscula e os nomes que são MEUS (6-9)
+   → uma palavra ou duas coladas (10-15) → de onde veio esta palavra (16-22) →
+   um nome para muitos (23) → o substantivo dentro de um TEXTO (24) → o cartaz
+   que a criança leva (25).
+   ⚠️ E VEM EM BLOCO, não espalhado (regra do Marcos: *"as crianças me dizem
+      'isso eu já fiz'"*): a gaveta em 2, 4 e 5 e depois na 10; o marca-texto em
+      7 e 13; o ligar em 15, 18 e 23 — colados dentro do bloco, subindo um
+      degrau, e nunca a mesma tela duas vezes seguidas com o mesmo degrau. */
+/* ⚠️ OS NOMES DAS FOLHAS, NA ORDEM — e a ordem É a escada didática.
+   ⚠️ E A REPETIÇÃO VEM EM BLOCO, não espalhada (regra do Marcos: *"as crianças
+      me dizem 'isso eu já fiz'"*): mecânica que repete vem em folhas COLADAS,
+      subindo um degrau; o que sobe é o apoio que some, não a tela.
+   ⚠️ O andarilho confere a promessa da capa contra este número: dizer "vinte e
+      cinco folhas" num caderno de vinte e duas reprova. */
+var NOMES = [
+ "Quem é quem",
+ "Ponto final ou pergunta?",
+ "Susto ou pergunta?",
+ "Os três juntos",
+ "Mais frases para fechar",
+ "A mesma frase, três vozes",
+ "Ouça de novo e escolha",
+ "Que tipo de frase é?",
+ "A casinha de cada ponto",
+ "Mais frases para morar",
+ "As frases mais compridas",
+ "Arraste o sinal",
+ "Mais sinais para arrastar",
+ "Agora sem ajuda nenhuma",
+ "A palavra que abre a pergunta",
+ "Mais palavras de pergunta",
+ "Ligue a pergunta à resposta",
+ "Responda olhando a figura",
+ "Mais respostas",
+ "As palavras se embaralharam",
+ "Frases mais compridas para ordenar",
+ "Conserte a frase",
+ "Mais frases para consertar",
+ "Escreva a palavra da pergunta",
+ "Ache as perguntas no texto",
+ "Ache as exclamações",
+ "O caça-palavras dos sinais",
+ "Qual está pontuada certa?",
+ "Mais frases para revisar",
+ "Pontue a história",
+ "O fim da história",
+ "Invente a sua palavra",
+ "A cena e o sinal",
+ "Mais cenas",
+ "O cartaz que você leva"
+];
+/*<dossie-dados>*/
+/* ⚠️ ESTE OBJETO E O `curriculo.json` SÃO A MESMA COISA, e o portão 0b9
+   (`_qa/pedagogo_curriculo.py`) reprova se divergirem. Cada habilidade tem de
+   existir PALAVRA POR PALAVRA no `_curriculo/blumenau.txt` — é a única coisa
+   que o professor não tem como conferir sozinho sem abrir 440 páginas de PDF.
+   ⚠️ E se o conteúdo for de OUTRO ANO, diga qual, aqui dentro. Foi a lição da
+   Coroa dos Cinco Reinos: dá para citar com honestidade total e mesmo assim
+   ensinar coisa que não é do ano.
+   ⚠️ O que não estiver no currículo da rede vai em `fora_do_curriculo`, com o
+   motivo — ele é IMPRESSO no dossiê em toda rodada. */
+var CURRICULO = {
+ "ano": 2,
+ "componente": "Língua Portuguesa",
+ "rede": "Currículo da Educação Básica do Sistema Municipal de Ensino de Blumenau",
+ "documento": "_curriculo/blumenau.txt",
+ "conceitos": [],
+ "fora_do_curriculo": [],
+ "degrau": 5,
+ "evidencia": [
+  "Jogado do começo ao fim no navegador, item por item, antes de publicar.",
+  "Um jogador automático resolve cada item pela resposta declarada e confere se a folha fecha.",
+  "Leiaute medido em 6 tamanhos de tela, nas 35 folhas: nenhuma figura cortada e nenhum alvo de toque menor que 40 px.",
+  "Toda tela é narrada com voz real, e cada opção de resposta tem o seu alto-falante.",
+  "A voz de cada frase é gravada COM o sinal dela, para que a entonação seja de verdade.",
+  "As 35 folhas nasceram do crivo de 40 folhas de papel reais, em `_sequencias/POTE-PONTO2.md`.",
+  "As 8 figuras foram recortadas das próprias folhas colhidas (d12 e d40); nenhuma é gerada por IA.",
+  "A habilidade citada no dossiê é conferida, palavra por palavra, contra o currículo da rede."
+ ],
+ "observacoes": [
+  "O CADERNO SÓ ENSINA OS TRÊS PONTOS QUE O 2º ANO NOMEIA — final, interrogação e exclamação — mais a letra maiúscula que abre a frase e a segmentação entre as palavras. Dezoito das quarenta folhas colhidas ensinam vírgula, dois-pontos, travessão, reticências, ponto-e-vírgula, aspas e parênteses, que em Blumenau são de anos seguintes (a folha d02 diz na própria folha “5º ano — EF05LP26”). Elas entraram AQUI SÓ PELO GESTO: nenhum desses sinais aparece para a criança.",
+  "A FOLHA 6 É O CORAÇÃO DO DEGRAU, e ela é a VOZ: a mesma frase é gravada duas vezes, com sinais diferentes, e a criança escolhe o ponto pelo jeito de falar. Sem o áudio esta folha não existe — por isso a frase vai para a fila de gravação COM o sinal, que é o que faz o Edge TTS subir a voz na pergunta.",
+  "O CONCEITO VEM POR ÚLTIMO (folha 35): a criança passa trinta e quatro folhas ouvindo a voz mudar e só no fim recebe os três nomes por escrito, no cartaz que ela leva.",
+  "O TEXTO DAS FOLHAS 25 E 26 É NOSSO. O da folha de papel (d14) é uma lengalenga com autoria: o GESTO entra, o texto não.",
+  "A CITAÇÃO DO OBJETIVO 9 E DO 10 É UM TRECHO, não a habilidade inteira, e isso está dito na própria citação. A habilidade completa do 2º ano é “Utilizar, ao produzir o texto, grafia correta de palavras conhecidas ou com estruturas silábicas já dominadas, letras maiúsculas em início de frases e em substantivos próprios, segmentação entre as palavras, ponto final, ponto de interrogação e ponto de exclamação.” — o PDF da rede quebra “cor-reta” e “es-truturas” com hífen de fim de linha, e citar a frase inteira faria o portão apontar palavras que o texto extraído não tem. O trecho citado é contíguo e verbatim.",
+  "O `conceitos` está VAZIO de propósito, e isso NÃO é “passou”: em Língua Portuguesa o documento da rede vem em faixas, sem cabeçalho por ano, e medir no documento inteiro aprovaria conteúdo de outro ano."
+ ],
+ "objetivos": [
+  {
+   "objetivo": "Reconhecer os três sinais de pontuação pelo nome",
+   "folhas": [
+    1
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Escolher o ponto final ou o de pergunta ao fim da frase",
+   "folhas": [
+    2,
+    5
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Escolher entre a pergunta e o susto",
+   "folhas": [
+    3,
+    4
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Ouvir a entonação e dizer qual sinal a frase pede",
+   "folhas": [
+    6,
+    7,
+    8
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Guardar cada frase na casinha do sinal dela",
+   "folhas": [
+    9,
+    10,
+    11
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Arrastar o sinal certo para o fim da frase",
+   "folhas": [
+    12,
+    13,
+    14
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Reconhecer as palavras que abrem uma pergunta",
+   "folhas": [
+    15,
+    16
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Responder uma pergunta com uma frase de ponto final",
+   "folhas": [
+    17,
+    18,
+    19
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Ordenar as palavras para formar a frase e fechá-la",
+   "folhas": [
+    20,
+    21
+   ],
+   "pratica": "Análise linguística/semiótica (compartilhada e autônoma)",
+   "objeto": "Construção do sistema alfabético/convenções da escrita",
+   "habilidade": "HABILIDADE: \"letras maiúsculas em início de frases e em substantivos próprios, segmentação entre as palavras, ponto final, ponto de interrogação e ponto de exclamação.\" (trecho contíguo e verbatim da habilidade do 2º ano sobre convenções da escrita; a frase inteira está nas observações)"
+  },
+  {
+   "objetivo": "Escrever a letra maiúscula que abre a frase e o ponto que a fecha",
+   "folhas": [
+    22,
+    23
+   ],
+   "pratica": "Análise linguística/semiótica (compartilhada e autônoma)",
+   "objeto": "Construção do sistema alfabético/convenções da escrita",
+   "habilidade": "HABILIDADE: \"letras maiúsculas em início de frases e em substantivos próprios, segmentação entre as palavras, ponto final, ponto de interrogação e ponto de exclamação.\" (trecho contíguo e verbatim da habilidade do 2º ano sobre convenções da escrita; a frase inteira está nas observações)"
+  },
+  {
+   "objetivo": "Escrever a palavra que abre a pergunta",
+   "folhas": [
+    24,
+    32
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Achar frases pelo sinal dentro de um texto",
+   "folhas": [
+    25,
+    26,
+    27
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Reconhecer a frase pontuada certa e consertar a errada",
+   "folhas": [
+    28,
+    29
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Pontuar um texto inteiro do começo ao fim",
+   "folhas": [
+    30,
+    31
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  },
+  {
+   "objetivo": "Escolher o sinal que a cena pede",
+   "folhas": [
+    33,
+    34,
+    35
+   ],
+   "pratica": "Análise linguística/semiótica (alfabetização)",
+   "objeto": "Pontuação",
+   "habilidade": "HABILIDADE: \"Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação.\""
+  }
+ ]
+};
+
+/*</dossie-dados>*/
+
+/* ---------- som ---------- */
+var AC = null;
+function ac(){ try{ if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); }catch(e){} return AC; }
+function bip(f, dur, tipo, vol){
+  var a = ac(); if(!a) return;
+  try{
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = tipo || "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(vol || .13, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, a.currentTime + dur);
+    o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + dur);
+  }catch(e){}
+}
+function sPasso(){ bip(560, .07, "triangle", .08); }
+function sTecla(){ bip(760, .05, "square", .05); }
+function sCerto(){ bip(680, .1, "sine", .12); setTimeout(function(){ bip(920, .14, "sine", .12); }, 95); }
+function sErro(){ bip(190, .17, "sawtooth", .07); }
+function sFesta(){ [523, 659, 784, 1047].forEach(function(f, i){ setTimeout(function(){ bip(f, .16, "sine", .12); }, i * 110); }); }
+
+/* ---------- voz ---------- */
+function chaveVoz(t){
+  t = (t || "").replace(/\s+/g, " ").trim().toLowerCase();
+  var h = 5381, i;
+  for(i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function achaVoz(){
+  try{
+    var vs = window.speechSynthesis.getVoices();
+    for(var i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt-br") === 0) return vs[i];
+    for(i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt") === 0) return vs[i];
+  }catch(e){}
+  return null;
+}
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = function(){ vozPtBR = achaVoz(); };
+function calar(){
+  try{ if(_narr){ _narr.pause(); _narr.currentTime = 0; } }catch(e){}
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir";
+}
+function falarNavegador(t){
+  if(!window.speechSynthesis) return;
+  try{
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = "pt-BR"; u.rate = .92; if(!vozPtBR) vozPtBR = achaVoz(); if(vozPtBR) u.voice = vozPtBR;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+var ultimaFala = null;
+/* ⚠️ O MP3 É O PADRÃO E O SINTETIZADOR É A RESERVA — nunca o contrário. Se a
+   criança ouvir voz de robô, o mp3 não chegou ao site: é defeito de entrega,
+   não "jeito alternativo". O portão de voz mede isso. */
+function falar(k){
+  var t = FALAS[k]; if(!t) return;
+  ultimaFala = k;
+  if(!vozLigada) return;
+  calar();
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir tocando";
+  function fim(){ var x = document.getElementById("bOuvir"); if(x) x.className = "zap ouvir"; }
+  var key = chaveVoz(t);
+  if(VOZOK[key]){
+    if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+    _narr.onended = fim; _narr.onerror = function(){ falarNavegador(t); setTimeout(fim, 2500); };
+    _narr.src = "audio/cs_" + key + ".mp3";
+    try{ _narr.currentTime = 0; }catch(e){}
+    var p = _narr.play(); if(p && p["catch"]) p["catch"](function(){ fim(); });
+    return;
+  }
+  falarNavegador(t); setTimeout(fim, Math.min(12000, 400 + t.length * 62));
+}
+/*SILMAP-INI*/var SILMAP = {};/*SILMAP-FIM*/
+/* ⚠️⚠️ A SÍLABA SAI DA PALAVRA, NÃO DO NADA — e isto é a segunda vez que a casa
+   paga por ele (set/2026 e 16/set/2026). O sintetizador de voz não lê SOM, lê
+   PALAVRA: entregue "VA" sozinho e ele soletra "vê-á"; entregue "SA" e ele diz
+   "esse-á". Não há truque de escrita que conserte isso — o remendo de escrever
+   "sã" no lugar de "çã" conserta um caso e nunca fecha a família.
+   O que funciona é o contrário: gravar a PALAVRA INTEIRA (que a voz pronuncia
+   certo, porque é palavra de verdade), alinhar letra a letra com o
+   `ctc-forced-aligner` e CORTAR a sílaba de dentro dela. Quem faz isso é o
+   `_padrao/silabas_voz.py`, no `entregar.yml`, lendo o `silabas.json`.
+   ⚠️ E NÃO HÁ FALA DE RESERVA POR SÍLABA: se o recorte faltar, ele diz a
+      PALAVRA INTEIRA. Uma reserva sintetizada seria o próprio defeito
+      voltando pela porta dos fundos — e calada, que é pior. */
+/* ⚠️⚠️ O NOME DO ARQUIVO É SEM ACENTO; a PALAVRA guarda o acento. As duas
+   coisas são diferentes e as duas importam: a voz só diz "sabão" direito se
+   receber o til, mas `..._sb_sabão_0.mp3` atravessa git, zip, servidor de
+   Pages e navegador, e em cada ponte o acento pode ser escrito com bytes
+   diferentes (NFC × NFD). A MESMA regra está no `_padrao/silabas_voz.py` (que
+   grava) e no `_qa/silabas.py` (que confere). Os três têm de concordar — se um
+   discordar, a sílaba fica MUDA sem dar erro nenhum. */
+function arqSilaba(w){
+  w = String(w || "").toLowerCase();
+  var de = "áàâãäéèêëíìîïóòôõöúùûüç", para = "aaaaaeeeeiiiiooooouuuuc", i, o = "";
+  for(i = 0; i < w.length; i++){ var n = de.indexOf(w.charAt(i)); o += n > -1 ? para.charAt(n) : w.charAt(i); }
+  return o.replace(/[^a-z0-9]/g, "");
+}
+function falarSilaba(palavra, i, silaba){
+  if(!vozLigada) return;
+  if(!palavra && silaba && SILMAP[silaba]){ palavra = SILMAP[silaba][0]; i = SILMAP[silaba][1]; }
+  if(!palavra){ return; }
+  calar();
+  if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+  _narr.onended = null;
+  _narr.onerror = function(){ falar("pal_" + palavra); };
+  _narr.src = "audio/cs_" + ("sb_" + arqSilaba(palavra) + "_" + i + ".mp3");
+  try{ _narr.currentTime = 0; }catch(e){}
+  var pr = _narr.play(); if(pr && pr["catch"]) pr["catch"](function(){ falar("pal_" + palavra); });
+}
+function falarDepois(k, ms){ setTimeout(function(){ falar(k); }, ms || 0); }
+
+/* ---------- utilidades ---------- */
+function el(tag, cls, html){ var e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+function salvar(){ try{ ST.quando = Date.now(); localStorage.setItem(CHAVE_LS, JSON.stringify(ST)); }catch(e){} }
+/* ⭐ 55 MINUTOS = A AULA. Dentro dela quem volta é a MESMA criança; passada a
+   aula, quem senta ali é da outra turma e cairia no meio da viagem de um
+   colega — por isso o convite expira sozinho. */
+function carregar(){ try{
+  var s = localStorage.getItem(CHAVE_LS); if(!s) return null;
+  var o = JSON.parse(s);
+  if(!o || !o.quando || Date.now() - o.quando > 55 * 60 * 1000 || !o.folha) return null;
+  /* ⚠️ TRAVA 1 — O POTE GUARDADO AINDA EXISTE NESTE CADERNO?
+     Sem isto, quem jogou ANTES de uma republicação volta com uma folha que não
+     existe mais, o monta() estoura e a criança fica só com a faixa de cima — e
+     por 55 minutos, que é a aula inteira. Foi o que o Marcos pegou em
+     14/set/2026 ("só aparece a faixa de cima"; "anônima foi, a normal não"). */
+  for(var i = 1; i <= NOMES.length; i++){
+    if(!o.folha["p" + i]){ try{ localStorage.removeItem(CHAVE_LS); }catch(e2){} return null; }
+  }
+  return o;
+}catch(e){ return null; } }
+function tentativa(id, ok){ if(!ST.tent[id]) ST.tent[id] = {erros: 0, ok: false}; if(ok) ST.tent[id].ok = true; else ST.tent[id].erros++; salvar(); }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function baralha(a){ var b = a.slice(), i, j, t; for(i = b.length - 1; i > 0; i--){ j = rnd(i + 1); t = b[i]; b[i] = b[j]; b[j] = t; } return b; }
+function pega(pool, qtd){ return baralha(pool).slice(0, Math.min(qtd, pool.length)); }
+function confete(n){
+  var c = document.getElementById("confete"), cores = ["#b0562a", "#f5b301", "#15a34a", "#1179bf", "#8b5cf6"], i;
+  for(i = 0; i < n; i++){
+    (function(i){
+      var d = el("div", "cf");
+      d.style.left = rnd(100) + "%"; d.style.top = "-20px";
+      d.style.background = cores[rnd(cores.length)];
+      d.style.animationDelay = (i * 26) + "ms";
+      c.appendChild(d); setTimeout(function(){ if(d.parentNode) c.removeChild(d); }, 1900 + i * 26);
+    })(i);
+  }
+}
+
+/* ---------- registro das respostas (o boletim e o relatório leem daqui) ---------- */
+var RESP = {};   /* id -> {certo, pag} */
+function registra(id, pag, certo){ RESP[id] = {certo: certo, pag: pag}; }
+function acertou(id, fala){
+  if(ST.resp[id]) return;
+  tentativa(id, true); ST.resp[id] = 1; salvar(); sCerto();
+  /* ⭐ a palavra escrita aparece AGORA, junto com o acerto — nunca antes.
+     Mostrá-la antes entrega a resposta (o defeito que o `_qa/resposta_impressa.py`
+     mede); escondê-la para sempre deixaria a criança sem saber se aquilo era
+     "oca" ou "cabana". Este é o instante certo. */
+  var segs = document.querySelectorAll('[data-nome="' + id + '"]'), sg;
+  for(sg = 0; sg < segs.length; sg++)
+    segs[sg].className = segs[sg].className.replace(/ ?revelado/, "") + " revelado";
+  if(fala) falar(fala);
+  setTimeout(function(){ confereFolha(RESP[id].pag); }, 850);
+}
+function errou(id, dica){
+  tentativa(id, false); sErro();
+  falar(ST.tent[id].erros >= 2 && dica ? dica : "quase");
+}
+
+/* ---------- o sorteio da folha do dia ----------
+   ⚠️ UMA LINHA POR FOLHA, `p1` até `pN`. Faltando uma, `ST.folha["pN"]` é
+   `undefined` e o caderno NÃO ABRE (TypeError na montagem).
+   ⚠️ O POTE PODE SER MAIOR QUE A FOLHA (`pega(ITENS.pN, 6)`): duas crianças
+   lado a lado não recebem a mesma lista, e quem refaz amanhã não recebe a de
+   hoje. Mas quando tirar uma peça desequilibra a resposta — uma gaveta de duas
+   colunas, um par que se vê — o pote vai INTEIRO, e o motivo fica escrito.
+   ⚠️ O EMBRULHO DAS FOLHAS DE LIGAR MORA NO `ITENS`, NÃO AQUI. Embrulhar de
+   novo dá três níveis e a folha não desenha.
+   Ex.:  p1: ITENS.p1.slice(0),
+         p2: pega(ITENS.p2, 6),          // sorteia 6 de um pote maior
+         p3: ITENS.p3.slice(0)           // já vem embrulhado: folha de ligar  */
+function novaFolha(){
+  return {
+    p1: ITENS.p1.slice(0),
+    p2: ITENS.p2.slice(0),
+    p3: ITENS.p3.slice(0),
+    p4: ITENS.p4.slice(0),
+    p5: ITENS.p5.slice(0),
+    p6: ITENS.p6.slice(0),
+    p7: ITENS.p7.slice(0),
+    p8: ITENS.p8.slice(0),
+    p9: ITENS.p9.slice(0),
+    p10: ITENS.p10.slice(0),
+    p11: ITENS.p11.slice(0),
+    p12: ITENS.p12.slice(0),
+    p13: ITENS.p13.slice(0),
+    p14: ITENS.p14.slice(0),
+    p15: ITENS.p15.slice(0),
+    p16: ITENS.p16.slice(0),
+    p17: ITENS.p17.slice(0),
+    p18: ITENS.p18.slice(0),
+    p19: ITENS.p19.slice(0),
+    p20: ITENS.p20.slice(0),
+    p21: ITENS.p21.slice(0),
+    p22: ITENS.p22.slice(0),
+    p23: ITENS.p23.slice(0),
+    p24: ITENS.p24.slice(0),
+    p25: ITENS.p25.slice(0),
+    p26: ITENS.p26.slice(0),
+    p27: ITENS.p27.slice(0),
+    p28: ITENS.p28.slice(0),
+    p29: ITENS.p29.slice(0),
+    p30: ITENS.p30.slice(0),
+    p31: ITENS.p31.slice(0),
+    p32: ITENS.p32.slice(0),
+    p33: ITENS.p33.slice(0),
+    p34: ITENS.p34.slice(0),
+    p35: ITENS.p35.slice(0)
+  };
+}</script>
+<!--<dossie-html>-->
+<div id="dossie" role="dialog" aria-label="Dossiê pedagógico" aria-modal="true">
+  <div class="cx">
+    <h3>Dossiê pedagógico</h3>
+    <div id="dsCorpo"></div>
+    <button class="bt cinza" id="dsFechar">Fechar</button>
+  </div>
+</div>
+<!--</dossie-html>-->
+<script src="folhas.js?v=2fd2506774"></script>
+</body></html>

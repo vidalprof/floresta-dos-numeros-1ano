@@ -813,6 +813,34 @@ folha 2, `POEMA` existia e valia `undefined` — e o caderno estourou em
   ficar no fim. E folha nova **sempre** passa pelo `andar_folha.js` antes de
   qualquer outra coisa — "compilou" não é "abre".
 
+> #### ⚠️ ACONTECEU DE NOVO — e por isso agora tem PORTÃO: `1v` (16/set/2026)
+>
+> A lição acima estava escrita desde 13/set. **Três dias depois eu repeti o
+> erro**, no caderno "A Casinha dos Três Pontos": pus `var SINAL = {...}` junto
+> das peças, no fim do `folhas.js`, e as **trinta e cinco** folhas abriram em
+> branco com um `TypeError` só. Regra escrita não basta — regra **medida**,
+> sim. E no mesmo dia apareceu a IRMÃ dela, que a §3.0 não previa:
+>
+> **NOME REPETIDO.** O bloco DADOS declarou `var RESP` para as perguntas com
+> figura. O motor **já tem** um `var RESP` (id → resposta certa) e o `monta()`
+> **o zera a cada montagem** (`RESP = {}`). Os dados sumiam na primeira folha
+> montada, e a folha 18 estourava. Também sem erro de sintaxe, também invisível
+> ao `node --check`.
+>
+> **O portão: `python3 _qa/global_atropelado.py <pasta>`** — pré-voo e banca.
+> Ele reprova (1) o mesmo nome global declarado duas vezes, somando `index.html`
+> e `folhas.js`; e (2) global declarado **depois** do `(function boot(`, quando
+> a declaração **carrega dado**. A linha que separa o erro da gaveta vazia é
+> essa última: `var ATIVO_LETRAS = null` é gaveta — quem escreve nela só roda
+> no toque da criança, muito depois do boot; `var SINAL = {inter: {...}}` é
+> DADO, e dado tem de estar pronto antes, porque o `monta()` do boot desenha as
+> 35 folhas **de uma vez**. Rodado nos oito cadernos que já existem: **zero
+> falso positivo**, e reprova os dois defeitos reais quando reintroduzidos.
+>
+> **Onde o dado de folha deve morar:** no bloco `/*DADOS-INI*/` do
+> `index.html`, que o navegador lê antes do `folhas.js`. Não no fim do
+> `folhas.js`, nem "junto da peça que usa".
+
 ### 3.1 A resposta estava IMPRESSA no enunciado — em 5 cadernos NO AR
 A figura da mola vinha com a legenda **MOLA** logo abaixo e, embaixo dela,
 `[ ][ ] L A` para a criança completar. **A resposta impressa dois centímetros

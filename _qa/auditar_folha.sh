@@ -69,6 +69,7 @@ PORTOES=(
   #     que o Marcos pegou no Chrome dele em 14/set/2026.
   "1s versao do folhas.js|python3 _qa/versao_script.py $PASTA"
   "1u elemento que nao existe|python3 _qa/elemento.py $PASTA"
+  "1v global atropelado|python3 _qa/global_atropelado.py $PASTA"
   # ⭐ 1t) o teclado tem TODAS as letras? Faltavam K, W, Y e sete acentos, e a
   #     crianca que tentava escrever PÊSSEGO ficava com "PSSEGO" — a folha nunca
   #     fechava, e sem erro nenhum na tela (medido em 15/set/2026).
