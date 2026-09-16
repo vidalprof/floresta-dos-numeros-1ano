@@ -336,6 +336,47 @@ recria **o gesto** dela — não "algo inspirado nela". Ver o processo no §5.
   obrigatória ali, mas para a criança **saber o que está escrito**; quem decide é
   a letra, que ela lê.
 - **`falas.json` é a VERDADE**: texto escrito ali = voz gravada. MP3 não se lê.
+- ⭐⭐ **SÍLABA SOLTA NUNCA SE SINTETIZA — ELA SE RECORTA DA PALAVRA.**
+  **Cobrança do Marcos (16/set/2026):** *"precisamos melhorar a questão dos
+  áudios e usar ferramentas específicas e profissionais pra isso, veja nas
+  sílabas não está bom: ao invés de falar SÁ ele fala S A, em SAPO por
+  exemplo"*. **É a segunda vez que ele pede** (a primeira foi em set/2026, nas
+  palmas das palavras) — e não porque a ferramenta faltasse: ela existe e
+  funciona. O que faltou foi **ligá-la no caderno novo**.
+  **Por que não tem conserto por texto:** o sintetizador não lê SOM, lê
+  PALAVRA. Dê "SA" a ele e ele soletra *esse-á*; "VA" vira *vê-á*; "ÇÃ" ele nem
+  tenta, porque **ç** não começa palavra em português. Escrever a sílaba "como
+  se fala" conserta um caso e nunca fecha a família.
+  **A ferramenta certa, que é a tal ferramenta profissional:** grava-se a
+  **palavra inteira** (que a voz pronuncia bem, porque é palavra de verdade),
+  alinha-se **letra a letra** com o `ctc-forced-aligner` (modelo MMS, roda na
+  CPU do próprio runner) e **corta-se a sílaba de dentro dela** com o ffmpeg —
+  `_padrao/silabas_voz.py`, no passo *"Recortar as silabas de dentro das
+  palavras"* do `entregar.yml`, lendo o `<pasta>/silabas.json`.
+  **No caderno isso é UMA linha por palavra:** `_reg(u"CAVALO", [u"CA", u"VA",
+  u"LO"])` no `gerar_falas.py`, e no app a sílaba fala **só** por
+  `falarSilaba(null, 0, "VA")` — **nunca** por `falar("sil_va")`.
+  ⚠️ **Três armadilhas medidas, e cada uma já ia passando calada:**
+  1. **A lista tem de estar NA ORDEM da palavra.** A folha de *ordenar* guarda
+     as sílabas **embaralhadas** — `["RO","CAR"]` para CARRO — e o alinhador
+     corta pelos limites das letras: sairia "ro" onde devia sair "car". Agora
+     `_reg` **recusa** qualquer lista cuja junção não dê a palavra, e `_ordena`
+     desembaralha sem inventar nada.
+  2. **Ganha a partição mais FINA.** A folha da sílaba que falta guarda a
+     palavra em três pedaços — `"PIPO"+"CA"` fecha PIPOCA sem ser separação
+     silábica nenhuma, e sobrescrevendo PI-PO-CA deixava a sílaba **PI** muda.
+  3. **A distratora também fala.** "MI", "FE", "LU" não moram em palavra
+     nenhuma do caderno — e são justamente as que a criança toca para
+     descartar. Cada uma ganha uma **palavra-carregadora** (MINUTO, FEVEREIRO,
+     LUA): palavra de verdade, registrada só para ser gravada e cortada. A
+     criança nunca ouve a palavra inteira — ouve o pedaço.
+  ⚠️ **E não há fala de reserva por sílaba.** Faltando o recorte, o app diz a
+  **palavra inteira**. Reserva sintetizada seria o defeito voltando pela porta
+  dos fundos — e calado, que é pior.
+  **Portão: `_qa/silabas.py`** — reprova sílaba falada sem recorte, e mede
+  também a **duração** (sílaba soletrada leva o dobro da falada; VA 0,66 s
+  contra LA 0,26 s — não é sutil). **E o esqueleto já nasce com tudo isto**, que
+  era o buraco real: o `_sil2` nasceu dele **sem** o `falarSilaba`.
 
 ### REGRA DAS DUAS PORTAS
 Toda folha com teclado na tela aceita **também o teclado de verdade**

@@ -235,7 +235,9 @@ for k, C in COR_.items():
 p(u"p5enun", u"Folha cinco. Em cada pedaço há uma vogal: é ela que faz a boca "
              u"abrir. Toque na vogal de cada pedaço.")
 for k, V in VOG.items():
-    p(u"vog_" + k, u", ".join(V[u"s"]) + u".")
+    # ⚠️ A PALAVRA INTEIRA, não a lista de pedaços: "BO, LA." sai da voz
+    #    como "bê-ó, éle-á". Os pedaços, quem os diz é o `falarSilaba`.
+    p(u"vog_" + k, u"".join(V[u"s"]) + u".")
     p(u"certo5_" + k, u"Isso! Toda sílaba tem uma vogal dentro.")
     p(u"dica5_" + k, u"As vogais são A, E, I, O e U. Procure uma delas nesse "
                      u"pedaço.")
@@ -331,17 +333,17 @@ for k, FA in FAL.items():
     p(u"certo" + pg + u"_" + k, u"Isso! A palavra é " + FA[u"q"] + u".")
     p(u"dica" + pg + u"_" + k, u"Diga a palavra inteira e pare no pedaço do " +
                                onde + u". Qual é o som que sai?")
-    for sb in FA[u"ops"]:
-        p(u"sil_" + ch(sb), sb + u".")
+    # ⚠️ AS OPÇÕES NÃO TÊM MAIS FALA SINTETIZADA. Era daqui que saía o
+    #    "esse-á" no lugar de SA (Marcos, 16/set/2026). Quem as diz agora é
+    #    o `falaDaSilaba`, com o pedaço recortado da palavra inteira.
 
 # ---- 20 — uma sílaba, três palavras ----
 p(u"p20enun", u"Folha vinte. Um pedaço só serve para três palavras. Junte-o a "
               u"cada final e veja o que aparece.")
 for k, J in JUN.items():
-    p(u"jun_" + k, J[u"i"] + u".")
     for n, r in enumerate(J[u"r"]):
         p(u"junr_%s_%d" % (k, n), r + u".")
-    p(u"certo20_" + k, u"Olhe só: com " + J[u"i"] + u" saíram três palavras. " +
+    p(u"certo20_" + k, u"Olhe só: com esse pedaço saíram três palavras. " +
                        u", ".join(J[u"r"]) + u".")
     p(u"dica20_" + k, u"Toque nos três, um de cada vez.")
 
@@ -475,6 +477,170 @@ for k, X in CART[u"exem"].items():
 
 
 
+
+# ==============================================================================
+#  O MAPA DAS SÍLABAS — quem recorta o quê, de qual palavra
+#
+#  ⚠️⚠️ SEGUNDA VEZ QUE A CASA PAGA POR ISTO. Marcos, 16/set/2026: *"veja nas
+#     sílabas não está bom, ao invés de falar SÁ ele fala S-A em SAPO"* — e ele
+#     já tinha ouvido o mesmo em set/2026 (*"ele está dizendo 'v a' ao invés de
+#     'va'"*). A ferramenta que conserta existe desde então
+#     (`_padrao/silabas_voz.py`, no `entregar.yml`): ela grava a PALAVRA
+#     INTEIRA, alinha letra a letra e CORTA a sílaba de dentro dela.
+#     O que faltou foi ligá-la: o ESQUELETO da folha viva nasceu sem esse
+#     pedaço, e este caderno — que fala sílaba em oito folhas — nasceu mudo
+#     para ele. Consertado aqui E no esqueleto, no mesmo commit.
+#
+#  ⚠️ POR QUE NÃO DÁ PARA SINTETIZAR A SÍLABA SOLTA: a voz não lê SOM, lê
+#     PALAVRA. "SA" sozinho ela soletra "esse-á"; "VA", "vê-á"; "ÇÃ" ela nem
+#     tenta, porque ç não começa palavra em português. Escrever a sílaba "como
+#     se fala" conserta um caso e nunca fecha a família.
+#
+#  ⚠️ E NÃO HÁ FALA DE RESERVA POR SÍLABA. Se o recorte faltar, o app diz a
+#     PALAVRA INTEIRA. Uma reserva sintetizada seria o defeito voltando pela
+#     porta dos fundos — e calada, que é pior.
+# ==============================================================================
+_SIL_DE = {}          # palavra -> [sílabas]
+_MAPA_SIL = {}        # sílaba  -> [palavra, posição]
+
+# ⚠️⚠️ O RECORTE SÓ FUNCIONA SE A LISTA ESTIVER NA ORDEM DA PALAVRA. O
+#    `ctc-forced-aligner` alinha a gravação LETRA A LETRA e corta pelos limites;
+#    se a lista vier ["RO","CAR"] para CARRO, ele corta "ro" no lugar de "car" e
+#    a criança ouve o pedaço errado — calada, sem erro nenhum na tela.
+#    Foi exatamente o que ia acontecer: a folha 15/16 guarda as sílabas
+#    EMBARALHADAS (é esse o exercício dela), e eu as registrei como se fossem a
+#    ordem da palavra. Este guarda recusa qualquer lista cuja junção não dê a
+#    palavra — nenhuma lista torta entra no `silabas.json`.
+_RECUSADAS = []
+
+def _reg(palavra, silabas):
+    silabas = list(silabas)
+    if u"".join(silabas).upper() != palavra.upper():
+        _RECUSADAS.append((palavra, silabas))
+        return
+    # ⚠️ E GANHA SEMPRE A PARTIÇÃO MAIS FINA. A folha 17/18/19 guarda a palavra
+    #    em TRÊS PEDAÇOS (o começo, a lacuna e o fim) — e "PIPO"+"CA" fecha
+    #    PIPOCA sem ser separação silábica nenhuma. Se ela sobrescrevesse a de
+    #    MAR (PI-PO-CA), a sílaba PI ficava sem casa e o botão dela emudecia.
+    velha = _SIL_DE.get(palavra.lower())
+    if velha and len(velha) >= len(silabas):
+        return
+    _SIL_DE[palavra.lower()] = silabas
+
+def _ordena(palavra, embaralhadas):
+    u"""devolve as mesmas sílabas na ORDEM em que formam a palavra — sem
+    inventar nenhuma: só encaixa as que já existem, da esquerda para a
+    direita, e desiste se não fechar exato."""
+    resto, saida, alvo = list(embaralhadas), [], palavra.upper()
+    while alvo:
+        for _i, _sb in enumerate(resto):
+            if alvo.startswith(_sb.upper()):
+                saida.append(_sb)
+                alvo = alvo[len(_sb):]
+                resto.pop(_i)
+                break
+        else:
+            return None
+    return saida if not resto else None
+
+# as palavras deste caderno que já vêm com as sílabas escritas nos DADOS
+for _B in BAT.values():
+    _reg(_B[u"p"], _B[u"s"])
+for _V in VOG.values():
+    _reg(u"".join(_V[u"s"]), _V[u"s"])
+for _O in ORD.values():
+    _ord = _ordena(_O[u"r"], _O[u"s"])
+    if _ord:
+        _reg(_O[u"r"], _ord)
+for _M in MAR.values():
+    _reg(_M[u"p"], _M[u"g"])
+for _Bp in BANCO[u"pal"].values():
+    _reg(_Bp[u"r"], _Bp[u"s"])
+for _C in CART[u"linhas"]:
+    if u"-" in _C[u"e"]:
+        _reg(_C[u"e"].replace(u"-", u""), _C[u"e"].split(u"-"))
+
+# ⚠️ AS SÍLABAS SOLTAS DAS FOLHAS 17, 18 e 19 — são as opções que a criança
+#    toca, e eram elas que saíam soletradas. Cada uma precisa de uma palavra de
+#    onde ser recortada, e a palavra da própria folha é a melhor: a criança
+#    ouve o pedaço no lugar em que ele mora.
+for _k, _F in FAL.items():
+    _q = _F[u"q"]
+    _partes = []
+    if _F[u"a"]:
+        _partes.append(_F[u"a"])
+    _partes.append(_F[u"r"])
+    if _F[u"z"]:
+        _partes.append(_F[u"z"])
+    # a palavra inteira, partida nos pedaços que a folha mostra
+    if u"".join(_partes) == _q:
+        _reg(_q, _partes)
+    for _sb in _F[u"ops"]:
+        if _sb in _partes:
+            continue
+        # a opção errada também fala — e ela tem de sair de ALGUMA palavra
+        for _w, _ss in list(_SIL_DE.items()):
+            if _sb in _ss:
+                break
+
+def _achaSilaba(s):
+    u"""a palavra de onde a sílaba será recortada. Entre as candidatas, ganha a
+    MAIS CURTA: quanto menos letras a gravação tem, menos o alinhador tem onde
+    errar, e o pedaço sai mais limpo."""
+    cand = [_w for _w in sorted(_SIL_DE) if s in _SIL_DE[_w]]
+    if not cand:
+        return None
+    _w = min(cand, key=lambda w: (len(_SIL_DE[w]), len(w), w))
+    return [_w, _SIL_DE[_w].index(s)]
+
+# toda sílaba que o app pode falar sozinha
+_soltas = set()
+for _F in FAL.values():
+    _soltas.update(_F[u"ops"])
+for _M in MAR.values():
+    _soltas.update(_M[u"g"])
+    _soltas.update(_M[u"d"])
+for _O in ORD.values():
+    _soltas.update(_O[u"s"])
+_soltas.update(BANCO[u"sil"])
+for _J in JUN.values():
+    _soltas.add(_J[u"i"])
+
+# ⚠️ SÍLABA SEM PALAVRA DE ORIGEM É SÍLABA QUE VAI SAIR SOLETRADA. Em vez de
+#    deixar passar calada, este laço INVENTA a palavra onde ela mora — usando
+#    as palavras que o próprio caderno já tem — e, se não achar nenhuma, a
+#    sílaba fica FORA do mapa e o app diz a palavra inteira.
+# ⚠️ AS SÍLABAS DISTRATORAS NÃO MORAM EM NENHUMA PALAVRA DO CADERNO — e são
+#    justamente as que a criança toca para DESCARTAR ("MI não está em TUCANO").
+#    Sem casa, o botão delas ficava MUDO, que é o pior dos mundos: a folha 21
+#    tem sete distratoras por item e metade da turma não lê o que está escrito
+#    nelas. Então cada uma ganha aqui uma PALAVRA-CARREGADORA: uma palavra de
+#    verdade, escolhida curta e com a sílaba no começo, que existe só para ser
+#    gravada e cortada. A criança nunca ouve a palavra inteira — ouve o pedaço.
+_CARREGADORAS = {
+    u"CÃO": [u"CÃO"],                 u"DEDO": [u"DE", u"DO"],
+    u"DIA": [u"DI", u"A"],            u"FEVEREIRO": [u"FE", u"VE", u"REI", u"RO"],
+    u"LUA": [u"LU", u"A"],            u"MINUTO": [u"MI", u"NU", u"TO"],
+    u"MOLA": [u"MO", u"LA"],          u"PENA": [u"PE", u"NA"],
+    u"RIO": [u"RI", u"O"],            u"SINO": [u"SI", u"NO"],
+    u"TIJOLO": [u"TI", u"JO", u"LO"], u"VIDRO": [u"VI", u"DRO"],
+}
+for _cw in sorted(_CARREGADORAS):
+    _reg(_cw, _CARREGADORAS[_cw])
+
+_ORFAS = []
+for _s in sorted(_soltas):
+    _achou = _achaSilaba(_s)
+    if _achou:
+        _MAPA_SIL[_s] = _achou
+    else:
+        _ORFAS.append(_s)
+
+# e a PALAVRA INTEIRA de cada uma precisa existir como fala, porque é dela que
+# o recorte sai — e é ela que o app diz quando o recorte falta
+for _w in sorted(_SIL_DE):
+    p(u"pal_" + ch(_w), _w.upper() + u".")
+
 # ⚠️⚠️ O GUARDA DO `F` (15/set/2026, e este erro já tinha sido pago uma vez).
 #    `F` é o dicionário das falas. Basta um `for k, F in ALGO.items()` para ele
 #    virar um item solto, e a partir dali tudo o que foi escrito some — sem erro
@@ -549,8 +715,31 @@ blocoV = (u"/*VOZOK-INI*/var VOZOK = "
           + json.dumps(dict((c, 1) for c in vistos), ensure_ascii=False) + u";/*VOZOK-FIM*/")
 novo = re.sub(r"/\*FALAS-INI\*/.*?/\*FALAS-FIM\*/", lambda m: blocoF, html, flags=re.S)
 novo = re.sub(r"/\*VOZOK-INI\*/.*?/\*VOZOK-FIM\*/", lambda m: blocoV, novo, flags=re.S)
+
+# ⭐ o `silabas.json` é o que o `entregar.yml` lê para cortar cada sílaba de
+#    dentro do mp3 da palavra inteira, e o `SILMAP` é o que o app usa para
+#    saber de qual palavra veio cada pedaço. Uma fonte só para os dois.
+io.open(os.path.join(AQUI, u"silabas.json"), u"w", encoding=u"utf-8").write(
+    json.dumps({u"prefixo": PREFIXO, u"voz": VOZ,
+                u"palavras": dict((w, _SIL_DE[w]) for w in sorted(_SIL_DE))},
+               ensure_ascii=False, indent=1))
+blocoS = (u"/*SILMAP-INI*/var SILMAP = "
+          + json.dumps(_MAPA_SIL, ensure_ascii=False, sort_keys=True) + u";/*SILMAP-FIM*/")
+novo = re.sub(r"/\*SILMAP-INI\*/.*?/\*SILMAP-FIM\*/", lambda m: blocoS, novo, flags=re.S)
 io.open(CAM, u"w", encoding=u"utf-8").write(novo)
 io.open(os.path.join(AQUI, u"falas.json"), u"w", encoding=u"utf-8").write(
     json.dumps(falas, ensure_ascii=False, indent=1))
 io.open(os.path.join(AQUI, u"voz.txt"), u"w", encoding=u"utf-8").write(VOZ + u"\n")
-print(u"FALAS: %d chaves; falas.json: %d fala(s) para gravar" % (len(F), len(falas)))
+print(u"FALAS: %d chaves; falas.json: %d fala(s) para gravar; "
+      u"silabas: %d palavra(s) para recortar, %d silaba(s) no mapa"
+      % (len(F), len(falas), len(_SIL_DE), len(_MAPA_SIL)))
+# ⚠️ NADA DISTO SAI CALADO. Sílaba órfã não é erro — ela simplesmente faz o app
+#    dizer a palavra inteira — mas se eu não a vir impressa, nunca vou saber que
+#    aquele botão não fala o pedaço.
+if _ORFAS:
+    print(u"   ⚠️ %d silaba(s) SEM palavra de origem (o app dira a palavra "
+          u"inteira): %s" % (len(_ORFAS), u", ".join(_ORFAS)))
+if _RECUSADAS:
+    print(u"   ⚠️ %d lista(s) recusada(s) por nao formarem a palavra: %s"
+          % (len(_RECUSADAS), u", ".join(
+              u"%s=%s" % (w, u"-".join(s)) for w, s in _RECUSADAS[:8])))

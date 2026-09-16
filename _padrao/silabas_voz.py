@@ -225,6 +225,22 @@ def _sem_acento(t):
                     if unicodedata.category(c) != "Mn")
 
 
+# ⚠️⚠️ O NOME DO ARQUIVO É SEM ACENTO — e a PALAVRA continua com ele.
+#    As duas coisas são diferentes e as duas importam: a voz só pronuncia
+#    "sabão" direito se receber o til, mas `audio/gv_sb_sabão_0.mp3` viaja por
+#    git, por zip, por servidor de Pages e por navegador, e em cada uma dessas
+#    pontes o acento tem um jeito diferente de ser escrito (NFC e NFD são bytes
+#    distintos para a MESMA letra). Nenhum dos nove cadernos que já cortam
+#    sílaba tem palavra acentuada — o `_sil2` é o primeiro, com SABÃO, SOFÁ,
+#    CAÇA, PÃO, PÉ e MÃO. Em vez de descobrir a ponte quebrada com a criança na
+#    frente, o acento sai do NOME e fica só no TEXTO.
+#    ⚠️ Quem lê este nome são TRÊS: esta ferramenta, o portão `_qa/silabas.py` e
+#       o `falarSilaba` do app. Mudar aqui sem mudar os outros dois emudece tudo.
+def arquivo_da_palavra(palavra):
+    import re
+    return re.sub(r"[^a-z0-9]", "", _sem_acento(palavra.lower()))
+
+
 def _fim_da_fala(ff, caminho, total):
     u"""Onde a voz PARA de falar (o resto do arquivo é silêncio).
 
@@ -340,7 +356,8 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
                 for i, s in enumerate(silabas):
                     ini, dur = cortes[i]
                     saida = os.path.join(os.path.dirname(destino_base),
-                                         "%ssb_%s_%d.mp3" % (prefixo, palavra, i))
+                                         "%ssb_%s_%d.mp3"
+                                         % (prefixo, arquivo_da_palavra(palavra), i))
                     # ⚠️ ENTRADA PRIMEIRO, DEPOIS O `-ss`, E SEMPRE RECODIFICANDO.
                     #    O jeito antigo (`-ss` antes do `-i` com `-c copy`) é o
                     #    rápido, mas em mp3 ele corta no meio do quadro e às vezes
@@ -404,14 +421,15 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
             continue
         assinatura = "|".join(sil) + "|" + voz + "|" + RATE
         prontos = all(os.path.exists(os.path.join(
-            audio, "%ssb_%s_%d.mp3" % (prefixo, palavra, i))) for i in range(len(sil)))
+            audio, "%ssb_%s_%d.mp3"
+            % (prefixo, arquivo_da_palavra(palavra), i))) for i in range(len(sil)))
         if carimbo.get(palavra) == assinatura and prontos:
             continue
         # ⭐⭐ A PALAVRA INTEIRA, e não mais "bo, la, ca".
         #    Esta linha É o conserto: a voz pronuncia bem porque "cavalo" é
         #    palavra de verdade. Quem separa as sílabas depois é o alinhamento.
         texto = u"".join(sil).lower() + u"."
-        base = os.path.join(audio, "_seq_" + palavra)
+        base = os.path.join(audio, "_seq_" + arquivo_da_palavra(palavra))
         alvos.append((palavra, assinatura, len(sil)))
         tarefas.append(_uma(sem, edge_tts, texto, voz, base, sil, prefixo, palavra))
     if not tarefas:

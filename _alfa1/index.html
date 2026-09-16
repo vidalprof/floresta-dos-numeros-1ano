@@ -1855,6 +1855,19 @@ function falar(k){
 
    Se o recorte não existir (atividade ainda sem gravar), cai para a fala de
    reserva `sb_<SÍLABA>`, que é o caminho antigo. Rede de segurança, não padrão. */
+/* ⚠️⚠️ O NOME DO ARQUIVO É SEM ACENTO; a PALAVRA guarda o acento. As duas
+   coisas são diferentes e as duas importam: a voz só diz "sabão" direito se
+   receber o til, mas `..._sb_sabão_0.mp3` atravessa git, zip, servidor de
+   Pages e navegador, e em cada ponte o acento pode ser escrito com bytes
+   diferentes (NFC × NFD). A MESMA regra está no `_padrao/silabas_voz.py` (que
+   grava) e no `_qa/silabas.py` (que confere). Os três têm de concordar — se um
+   discordar, a sílaba fica MUDA sem dar erro nenhum. */
+function arqSilaba(w){
+  w = String(w || "").toLowerCase();
+  var de = "áàâãäéèêëíìîïóòôõöúùûüç", para = "aaaaaeeeeiiiiooooouuuuc", i, o = "";
+  for(i = 0; i < w.length; i++){ var n = de.indexOf(w.charAt(i)); o += n > -1 ? para.charAt(n) : w.charAt(i); }
+  return o.replace(/[^a-z0-9]/g, "");
+}
 function falarSilaba(palavra, i, silaba){
   if(!vozLigada) return;
   if(!palavra && silaba && SILMAP[silaba]){ palavra = SILMAP[silaba][0]; i = SILMAP[silaba][1]; }
@@ -1868,7 +1881,7 @@ function falarSilaba(palavra, i, silaba){
   if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
   _narr.onended = null;
   _narr.onerror = function(){ falar("pal_" + palavra); };
-  _narr.src = "audio/al_sb_" + palavra + "_" + i + ".mp3";
+  _narr.src = "audio/al_sb_" + arqSilaba(palavra) + "_" + i + ".mp3";
   try{ _narr.currentTime = 0; }catch(e){}
   var pr = _narr.play(); if(pr && pr["catch"]) pr["catch"](function(){ falar("pal_" + palavra); });
 }

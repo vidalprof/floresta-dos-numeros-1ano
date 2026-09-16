@@ -45,6 +45,24 @@ MIN_BYTES = 300          # abaixo disso é arquivo vazio, não é áudio
 FATOR = 1.7              # acima disso a sílaba está sendo soletrada, não falada
 
 
+def _arq(palavra):
+    u"""O NOME DO ARQUIVO É SEM ACENTO; a palavra guarda o acento.
+
+    ⚠️ As duas coisas são diferentes e as duas importam: a voz só diz "sabão"
+       direito se receber o til, mas `gv_sb_sabão_0.mp3` atravessa git, zip,
+       servidor e navegador, e em cada ponte o acento pode ser escrito com
+       bytes diferentes (NFC × NFD). Nenhum dos nove cadernos que já cortam
+       sílaba tem palavra acentuada — o `_sil2` é o primeiro.
+    ⚠️ ESTA MESMA REGRA está no `_padrao/silabas_voz.py` (que grava) e no
+       `falarSilaba` do app (que toca). Os três têm de concordar, senão a
+       sílaba fica muda sem dar erro nenhum.
+    """
+    import unicodedata
+    sem = u"".join(c for c in unicodedata.normalize("NFD", palavra.lower())
+                   if unicodedata.category(c) != "Mn")
+    return re.sub(r"[^a-z0-9]", "", sem)
+
+
 def _ffmpeg():
     try:
         import imageio_ffmpeg
@@ -92,7 +110,8 @@ def _mede_duracoes(audio, mapa, prefixo):
         for i, s in enumerate(mapa[palavra]):
             if not s:
                 continue
-            f = os.path.join(audio, u"%ssb_%s_%d.mp3" % (prefixo, palavra, i))
+            f = os.path.join(audio, u"%ssb_%s_%d.mp3"
+                             % (prefixo, _arq(palavra), i))
             if not os.path.exists(f):
                 continue
             d = _dur(ff, f)
@@ -155,7 +174,8 @@ def mede(pasta):
             if not s:
                 continue
             total += 1
-            f = os.path.join(audio, u"%ssb_%s_%d.mp3" % (prefixo, palavra, i))
+            f = os.path.join(audio, u"%ssb_%s_%d.mp3"
+                             % (prefixo, _arq(palavra), i))
             if not os.path.exists(f) or os.path.getsize(f) < MIN_BYTES:
                 faltam.append(u"%s[%d]=%s" % (palavra, i, s))
 
