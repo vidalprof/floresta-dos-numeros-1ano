@@ -501,9 +501,17 @@ jobs:
         run: |
           IFS=',' read -ra ALVS <<< "$LISTA"
           ruim=0
+          # ⚠️ OS TRES CODIGOS TAMBEM AQUI: 0 passou · 1 REPROVOU · 2 NAO MEDI.
+          #    Escrito como `|| ruim=1`, o 2 virava reprovacao — e este portao
+          #    devolve 2 quando o ffmpeg falta (a medida de duracao nao roda).
+          #    No runner o ffmpeg existe, entao na pratica sai 0 ou 1; mas
+          #    portao que trata "nao medi" como "reprovou" ja travou publicacao
+          #    nesta casa duas vezes no mesmo dia. Nao se repete.
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"; [ -d "$pasta" ] || continue
-            python3 _qa/silabas.py "$pasta" || ruim=1
+            rc=0; if python3 _qa/silabas.py "$pasta"; then rc=0; else rc=$?; fi
+            if [ "$rc" = "1" ]; then ruim=1
+            elif [ "$rc" != "0" ]; then echo "::warning::$pasta: silabas — nao consegui medir (codigo $rc)"; fi
           done
           if [ "$ruim" = "1" ]; then
             echo "::error::silaba falada sem recorte — a entrega PARA aqui."

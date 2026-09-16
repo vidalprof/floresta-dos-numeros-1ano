@@ -97,18 +97,41 @@ def _mede_duracoes(audio, mapa, prefixo):
     Compara cada sílaba com a MEDIANA das sílabas de mesmo tamanho de escrita
     (duas letras com duas letras, três com três): sílaba fechada como TAR e COM
     é naturalmente um pouco mais longa que LA, e comparar tudo junto acusaria
-    falso. Se não houver ffmpeg, devolve [] — mede-se o que dá para medir, e o
-    portão não reprova por não conseguir medir."""
+    falso.
+
+    ⚠️⚠️ SEM ffmpeg ELE NÃO MEDE — E TEM DE DIZER ISSO EM VOZ ALTA. Devolve
+    `(ruins, mediu)`, e `mediu=False` quer dizer **rodei cego**: conferi que o
+    arquivo existe, e mais nada. Foi assim que eu me enganei em 16/set/2026 —
+    aqui no chat não há ffmpeg, o portão imprimiu "ok, 140 recortes", eu dei
+    por bom, e no runner (que TEM ffmpeg) a segunda medida reprovou e segurou
+    a publicação. Portão que diz "passou" quando na verdade não mediu é pior
+    que portão nenhum.
+    Conserto de quem for rodar isto na mão: `pip install imageio-ffmpeg`."""
     ff = _ffmpeg()
     try:
         if _dur(ff, os.devnull) < 0:
-            return []
+            return [], False
     except Exception:                                            # noqa: BLE001
-        return []
+        return [], False
     porTam, tudo = {}, []
     for palavra in sorted(mapa):
         for i, s in enumerate(mapa[palavra]):
             if not s:
+                continue
+            # ⚠️⚠️ SÍLABA DE UMA LETRA NÃO TEM COMO SER SOLETRADA, e por isso ela
+            #    fica FORA desta medida — inclusive da mediana.
+            #    A medida existe para pegar a voz dizendo o NOME DAS LETRAS
+            #    ("vê-á" no lugar de "va"): são duas emissões onde devia haver
+            #    uma, e por isso dobra. Numa sílaba de uma vogal só, o nome da
+            #    letra E o som são a MESMA emissão — não há segunda para dobrar.
+            #    O que ela tem, e o que me reprovou o `_sil2` em 16/set/2026, é
+            #    outra coisa: o A de ASA é TÔNICO e abre a palavra (0,30 s),
+            #    enquanto o A de DIA e o de LUA são átonos e fecham (0,16 s). O
+            #    dobro ali é PROSÓDIA, não soletração — e portão que reprova
+            #    pelo próprio erro é pior que portão nenhum.
+            #    ⚠️ Isto NÃO afrouxa a medida das outras: CV, CVC e CCV
+            #       continuam medidas, e são elas que a voz soletra.
+            if len(s) < 2:
                 continue
             f = os.path.join(audio, u"%ssb_%s_%d.mp3"
                              % (prefixo, _arq(palavra), i))
@@ -120,7 +143,7 @@ def _mede_duracoes(audio, mapa, prefixo):
             porTam.setdefault(len(s), []).append(d)
             tudo.append((s, palavra, d))
     if not tudo:
-        return []
+        return [], True
     ruins = []
     for s, palavra, d in tudo:
         base = _mediana(porTam.get(len(s), []))
@@ -130,7 +153,7 @@ def _mede_duracoes(audio, mapa, prefixo):
             continue
         if d > base * FATOR:
             ruins.append((s, palavra, d, base))
-    return sorted(ruins, key=lambda r: -r[2])
+    return sorted(ruins, key=lambda r: -r[2]), True
 
 
 def mede(pasta):
@@ -198,7 +221,7 @@ def mede(pasta):
     #  base, mas a soletração dobra em qualquer base.
     # ══════════════════════════════════════════════════════════════════
     if not faltam:
-        compridas = _mede_duracoes(audio, mapa, prefixo)
+        compridas, mediu = _mede_duracoes(audio, mapa, prefixo)
         if compridas:
             print(u"%s -> REPROVADO: %d silaba(s) SOLETRADA(S).\n"
                   u"   O recorte existe, mas dentro dele a voz diz o nome das letras\n"
@@ -210,6 +233,14 @@ def mede(pasta):
                   % (pasta, len(compridas),
                      u"; ".join(u"%s de %s (%.2fs, esperado ~%.2fs)" % c for c in compridas[:8])))
             return 1
+        if not mediu:
+            print(u"%s -> %d recorte(s) existem, mas a DURAÇÃO nao foi medida\n"
+                  u"   (sem ffmpeg aqui). Isto NAO e \"passou\": a segunda medida,\n"
+                  u"   a que pega a silaba SOLETRADA dentro do recorte, nao rodou.\n"
+                  u"   Para medir de verdade: pip install imageio-ffmpeg.\n"
+                  u"   No `entregar.yml` ela roda sempre — e la ela ja segurou\n"
+                  u"   uma publicacao minha." % (pasta, total))
+            return 2
 
     if faltam:
         log = os.path.join(audio, u"_silabas-log.txt")

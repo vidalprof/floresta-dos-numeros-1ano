@@ -377,6 +377,20 @@ recria **o gesto** dela — não "algo inspirado nela". Ver o processo no §5.
   também a **duração** (sílaba soletrada leva o dobro da falada; VA 0,66 s
   contra LA 0,26 s — não é sutil). **E o esqueleto já nasce com tudo isto**, que
   era o buraco real: o `_sil2` nasceu dele **sem** o `falarSilaba`.
+  ⚠️⚠️ **E ELE RODA CEGO AQUI NO CHAT — lição paga na mesma hora (16/set/2026).**
+  A medida da duração precisa de **ffmpeg**, que não existe neste container. O
+  portão imprimiu *"ok, 140 recortes"*, eu dei por bom e publiquei — e no
+  runner, que **tem** ffmpeg, a segunda medida **reprovou e segurou a
+  publicação**, exatamente como devia. Duas coisas mudaram por causa disso:
+  (1) sem ffmpeg o portão agora **devolve código 2 e diz que não mediu**, em vez
+  de dizer que passou; e (2) o passo do `entregar.yml` deixou de tratar o 2 como
+  reprovação. **Quem rodar na mão: `pip install imageio-ffmpeg` antes.**
+  ⚠️ E o que ela acusou era **falso, e o conserto foi no portão, não na
+  medida**: o **A de ASA** (0,30 s) contra o A átono de DIA e LUA (0,16 s) — é
+  **prosódia**, não soletração. Sílaba de **uma letra só** não tem como ser
+  soletrada: o nome da letra e o som são a mesma emissão, não há segunda para
+  dobrar. Ela saiu da conta; CV, CVC e CCV continuam medidas, que são as que a
+  voz soletra de verdade.
 
 ### REGRA DAS DUAS PORTAS
 Toda folha com teclado na tela aceita **também o teclado de verdade**
