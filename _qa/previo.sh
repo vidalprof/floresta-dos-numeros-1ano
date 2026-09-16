@@ -42,6 +42,7 @@ PY
   FALHOU=""
   for item in "1a sintaxe|node --check $TMP/app.js" "1b funcao que nao existe|python3 _qa/funcoes.py $ARQ" \
               "1s versao do folhas.js|python3 _qa/versao_script.py $PASTA" \
+              "1u elemento que nao existe|python3 _qa/elemento.py $PASTA" \
               "1t teclado completo|python3 _qa/teclado.py $PASTA" \
               "0b2 dinamicas|python3 _qa/dinamicas.py $ARQ" "4 classes sem estilo|python3 _qa/classes.py $ARQ" \
               "3b beco na peca|python3 _qa/beco_peca.py $ARQ" "4b cor cravada|python3 _qa/cor_fixa.py $ARQ" \

@@ -332,79 +332,37 @@ var CRUZ = null;
       O `node --check` não vê isso (a sintaxe está perfeita); quem vê é o
       `_qa/funcoes.py`, o portão "função que não existe" — que eu não rodei. */
 function rolaParaCruz(){
-  /* de quem é a vez: a fila da cruzadinha, ou a quadra única do outro teclado */
-  /* ⚠️⚠️ LÊ AS DUAS PELO `window`, e isto NÃO é preciosismo: escrito como
-     `typeof CRUZ !== "undefined" && CRUZ && CRUZ.E`, o `CRUZ` nu depois do `&&`
-     é acusado de `'CRUZ' is not defined` pelo ESLint nos cadernos que não têm
-     cruzadinha (ele não faz análise de fluxo, e o `typeof` só protege a
-     primeira ocorrência). E esse ESLint é o portão 0a2 que roda DENTRO do
-     `entregar.yml`, antes de publicar: com ele vermelho, NADA sobe. Foi assim
-     que quatro publicações minhas falharam seguidas hoje, sem eu entender por
-     quê — e o pré-voo daqui não pega, porque o ESLint não está instalado no
-     container. Como `CRUZ` e `ATIVA` são `var` globais, elas são propriedades
-     de `window`, e ler por ali funciona igual e é declarado. */
-  var cs = [], i, andando = 0;
-  var _cruz = window.CRUZ, _ativa = window.ATIVA;
-  if(_cruz && _cruz.E && _cruz.E.cels){
-    for(i = 0; i < _cruz.E.cels.length; i++)
-      if(_cruz.E.cels[i] && _cruz.E.cels[i].getBoundingClientRect) cs.push(_cruz.E.cels[i]);
-    andando = _cruz.val ? _cruz.val.length : 0;
-  } else if(_ativa && _ativa.q && _ativa.q.getBoundingClientRect){
-    cs.push(_ativa.q);
-  }
-  if(!cs.length) return;
-  var tkel = document.getElementById("teclado");
-  if(!tkel || tkel.className.indexOf("aberto") < 0) return;
-  var tk = tkel.getBoundingClientRect(), topo = 56, pe = tk.top - 10;
-  /* ⚠️ A RESERVA DE ROLAGEM SAI DA ALTURA REAL DO TECLADO, e não de um
-     número fixo. Ela nasceu como `padding-bottom:460px` no `comtec`, que
-     é certo para o teclado de LETRAS (336 px medidos a 360x640, 41
-     teclas) e exagerado para o de NÚMEROS (160 px, 12 teclas): sobravam
-     300 px de vazio para a criança rolar à toa enquanto digita. Como o
-     `comtec` sai da tag `body` ao fechar, a variável pode ficar guardada
-     sem fazer mal nenhum. */
-  document.documentElement.style.setProperty("--tech", Math.ceil(tk.height + 40) + "px");
-  if(pe <= topo) return;
-  var cima = 1e9, baixo = -1e9;
-  for(i = 0; i < cs.length; i++){
-    var r = cs[i].getBoundingClientRect();
-    if(r.top < cima) cima = r.top;
-    if(r.bottom > baixo) baixo = r.bottom;
-  }
-  var d = 0;
-  if(baixo - cima <= pe - topo){
-    if(baixo > pe) d = baixo - pe;
-    if(cima - d < topo) d = cima - topo;
-  } else {
-    var at = cs[Math.min(andando, cs.length - 1)].getBoundingClientRect();
-    d = at.top - (topo + (pe - topo) / 2 - at.height / 2);
-  }
-  if(Math.abs(d) > 2) window.scrollBy(0, d);
+  /* ⚠️ VAZIA DE PROPÓSITO, e ela fica aqui em vez de sumir. Enquanto o
+     teclado era uma barra fixa nossa, esta função levava a palavra para
+     a faixa que sobrava acima dele. Agora quem abre é o teclado do
+     aparelho, e o navegador já rola a página sozinho para o campo com
+     foco. Apagá-la quebraria as chamadas que ainda existem por aí. */
 }
 function abreCruz(E, pi){
+  /* ⚠️ SEM BARRA FIXA, SEM ROLAGEM FORÇADA. O teclado da casa era fixo no pé da
+     tela e tapava a palavra que a criança escrevia — daí existir o `comtec` e o
+     `rolaParaCruz`. Agora quem abre é o teclado do APARELHO, que o próprio
+     navegador já trata: ele rola a página para deixar o campo com foco à vista.
+     Foi por isso que as duas peças saíram daqui juntas. */
   if(CRUZ) fechaCruz();
   CRUZ = {E: E, val: "", pi: pi};
   if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista ativa";
   pintaCruz();
-  document.getElementById("teclado").className = "aberto";
-  /* ⚠️ ROLAR A PALAVRA PARA CIMA DO TECLADO. Sem isto a criança escreve às
-     cegas: o teclado é fixo no pé da tela e a grade fica embaixo dele (medido
-     em 360x640: a grade inteira por baixo). O `comtec` dá chão para a página
-     poder rolar; o resto é levar a primeira casinha para a faixa que sobra. */
-  document.body.className = (document.body.className.replace(/ ?comtec/, "") + " comtec").replace(/^ /, "");
-  setTimeout(rolaParaCruz, 60);
-  document.getElementById("tkDica").textContent = E.rot || ("Escreva a palavra da pista " + E.n);
+  var grade = E.cels && E.cels[0] ? E.cels[0].parentNode : null;
+  var c = poeCampoSobre(grade);
+  c.value = "";
+  c.setAttribute("maxlength", String(E.aceita ? E.cels.length : E.w.length));
+  c.setAttribute("aria-label", E.rot || "Escreva a palavra");
+  try{ c.focus({preventScroll: false}); }catch(e){ c.focus(); }
   falar("escreva");
 }
 function fechaCruz(){
   if(!CRUZ) return;
   var E = CRUZ.E;
-  if(!ST.resp[E.id]){
-    E.cels.forEach(function(c){ if(c){ var n = c.querySelector(".cn"); c.textContent = ""; if(n) c.appendChild(n); c.className = "ccel viva"; } });
-    if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista";
-  }
-  CRUZ = null; document.getElementById("teclado").className = "";
-  document.body.className = document.body.className.replace(/ ?comtec/, "");
+  if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista";
+  CRUZ = null;
+  if(TECIN){ TECIN.value = ""; try{ TECIN.blur(); }catch(e){} }
+  pintaCruz();
 }
 function pintaCruz(){
   var E = CRUZ.E, v = CRUZ.val;
@@ -420,11 +378,16 @@ function digitaCruz(ch){
   if(!CRUZ) return;
   sTecla();
   var E = CRUZ.E;
+  /* ⚠️ NA FOLHA DE PRODUÇÃO O TAMANHO NÃO É O DO GABARITO: as palavras aceitas
+     têm tamanhos diferentes, e o teto é a maior delas (`E.cels.length`). E ela
+     NÃO se confere sozinha ao encher — a criança é que diz quando acabou, no
+     botão OK. Conferir sozinho recusaria "GATO" no meio de "GATOS". */
+  var teto = E.aceita ? E.cels.length : E.w.length;
   if(ch === "ap") CRUZ.val = CRUZ.val.slice(0, -1);
   else if(ch === "ok"){ confereCruz(); return; }
-  else { if(CRUZ.val.length >= E.w.length) return; CRUZ.val += ch; }
+  else { if(CRUZ.val.length >= teto) return; CRUZ.val += ch; }
   pintaCruz(); rolaParaCruz();
-  if(CRUZ.val.length >= E.w.length) setTimeout(confereCruz, 380);
+  if(!E.aceita && CRUZ.val.length >= E.w.length) setTimeout(confereCruz, 380);
 }
 /* ⚠️⚠️ O ACENTO NÃO PODE REPROVAR QUEM ACERTOU A PALAVRA (ordem do Marcos,
    15/set/2026, com a turma na sala: *"faça que tanto com o sem dê certo"*).
@@ -450,16 +413,26 @@ function mesmaPalavra(a, b, exigeAcento){
 function confereCruz(){
   if(!CRUZ || !CRUZ.val) return;
   var E = CRUZ.E, pi = CRUZ.pi;
-  if(mesmaPalavra(CRUZ.val, E.w, E.exigeAcento)){
+  /* ⚠️⚠️ A FOLHA DE PRODUÇÃO (34) ACEITA MUITAS RESPOSTAS, e sem isto ela seria
+     uma armadilha: a criança escreveria uma palavra CERTA e o app diria que
+     está errada. Quando `E.aceita` existe, vale qualquer palavra da lista —
+     e a que fica escrita nas casas é a que ELA escreveu, não a do gabarito.
+     ⚠️ E o gabarito continua existindo (`E.w` = a primeira da lista), porque é
+        ele que o jogador da banca digita. */
+  var vale = E.aceita
+    ? E.aceita.some(function(w){ return mesmaPalavra(CRUZ.val, w, E.exigeAcento); })
+    : mesmaPalavra(CRUZ.val, E.w, E.exigeAcento);
+  var escrita = E.aceita ? CRUZ.val : E.w;
+  if(vale){
     E.cels.forEach(function(c, i){
       if(!c) return;
       var n = c.querySelector(".cn");
-      c.textContent = E.w.charAt(i); if(n) c.appendChild(n);
-      c.className = "ccel viva ok";
+      c.textContent = escrita.charAt(i); if(n) c.appendChild(n);
+      c.className = "ccel viva" + (i < escrita.length ? " ok" : "");
     });
     if(E.bt) E.bt.className = E.bt.className.indexOf("oculta") > -1 ? "pista oculta" : "pista feita";
-    CRUZ = null; document.getElementById("teclado").className = "";
-  document.body.className = document.body.className.replace(/ ?comtec/, "");
+    CRUZ = null;
+    if(TECIN){ TECIN.value = ""; try{ TECIN.blur(); }catch(e){} }
     acertou(E.id, "certo" + pi + "_" + E.k);
   } else {
     CRUZ.val = ""; pintaCruz();
