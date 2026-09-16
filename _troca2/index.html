@@ -642,7 +642,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   line-height:2.1;text-align:left}
 .tp{border:0;background:transparent;padding:4px 3px;margin:0;font:inherit;font-weight:700;
   font-size:clamp(15px,4vw,18px);color:#4a3d33;border-radius:7px;cursor:pointer;
-  min-height:40px;-webkit-transition:background .15s;transition:background .15s}
+  min-height:40px;-webkit-transition:background .15s;transition:background .15s;min-width:42px;min-height:44px}
 .tp:hover{background:#f7efe7}
 .tp.achada{background:#e7f8ee;color:#0d7736;font-weight:900;
   -webkit-box-shadow:inset 0 -3px 0 #15a34a;box-shadow:inset 0 -3px 0 #15a34a}
@@ -737,7 +737,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   gap:2px;margin:10px 0 4px}
 .clt{font:800 clamp(24px,6.6vw,34px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   color:#243056;padding:6px 2px;background:none;border:0}
-button.clt{cursor:pointer;min-width:34px;min-height:44px;border-radius:8px}
+button.clt{cursor:pointer;min-width:40px;min-height:44px;border-radius:8px}
 button.clt:active{background:#eef1f8}
 .clt.vogal{background:#ffd233;color:#5a4300;-webkit-box-shadow:0 2px 0 #c89600;box-shadow:0 2px 0 #c89600}
 .clt.nao{background:#ffd9d6;color:#9d2f26}
@@ -874,6 +874,24 @@ button.clt:active{background:#eef1f8}
 .letrabt.usada{background:#e9edf6;color:#b9c0d4;box-shadow:0 3px 0 #dbe1ee}
 .letrabt.apagar{background:#fde2da;box-shadow:0 3px 0 #efc3b7;font-size:14px;
   min-width:72px;color:#9d2f26}
+
+/* ⚠️ PISO DE TOQUE DE 40 px (regra da casa). Estas regras vêm por último
+   de propósito: elas SOBREPÕEM o que veio antes, e é isso que se quer —
+   a casinha da cruzadinha estava com 34 px e a peça de sílaba com 21 px
+   de altura. O portão do leiaute só viu quando passou a andar folha por
+   folha; antes ele parava na sexta. */
+.ccel{width:clamp(44px,9vw,50px);height:clamp(44px,9vw,50px);min-width:44px;min-height:44px;border:0;background:transparent;padding:0}
+.clt{min-width:40px;min-height:44px}
+.sil{font:800 clamp(17px,4.6vw,22px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  min-width:52px;min-height:46px;padding:10px 14px;border-radius:12px;
+  border:2px solid #c6cde0;background:#fff;color:#243056;cursor:pointer;
+  -webkit-transition:.14s;transition:.14s}
+.sil.larga{min-width:clamp(96px,26vw,150px)}
+.sil:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.sil.marcada{background:#fff3c9;border-color:#e0ac00}
+.sil.ok,.sil.usada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
+.sil.usada{opacity:.6}
+.sil.nao{background:#ffd9d6;border-color:#e2574c;color:#9d2f26}
 </style></head><body>
 
 <div id="topo">

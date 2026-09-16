@@ -165,6 +165,26 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
     try{ await p.goto(url,{waitUntil:'load',timeout:15000}); }catch(e){ mortas++; await p.close(); continue; }
     await p.waitForTimeout(900);
     await MEDE(p,vp.n+" / tela 1");
+    /* ⚠️⚠️ FOLHA VIVA: ANDAR POR BOTAO NAO ALCANCA O CADERNO. Este portao caminha
+       clicando em "proximo/continuar", ate 6 passos — num caderno de 35 folhas
+       isso chega na SEXTA e para. As outras vinte e nove nunca foram medidas, e
+       foi assim que o `_troca2` foi ao ar com botao de 21 px de altura nas
+       folhas 10, 11 e 12: metade do dedo da crianca, e o portao dizendo "ok".
+       Quem me mostrou foi o caderno seguinte, que reprovou pelo mesmo motivo.
+       Quando a pagina tem `vaiPara` e `NOMES` (a assinatura da folha viva), o
+       caminho passa a ser POR DENTRO: mede-se folha por folha, todas. */
+    const folhaViva = await p.evaluate(()=>typeof vaiPara==='function' && typeof NOMES!=='undefined' && NOMES.length>0);
+    if(folhaViva){
+      const quantas = await p.evaluate(()=>{ try{ ST.nome='Medida'; monta(); }catch(e){} return NOMES.length; });
+      for(let pi=1; pi<=quantas; pi++){
+        const foi = await p.evaluate((n)=>{ try{ vaiPara(n); return true; }catch(e){ return false; } }, pi);
+        if(!foi) break;
+        await p.waitForTimeout(220);
+        await MEDE(p, vp.n+" / folha "+pi);
+      }
+      await p.close();
+      continue;
+    }
     const vistas=new Set([await p.evaluate(()=>document.body.innerText.slice(0,400))]);
     for(let k=2;k<=passos+1;k++){
       const clicou=await p.evaluate((re)=>{

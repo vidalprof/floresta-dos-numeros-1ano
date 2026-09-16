@@ -91,7 +91,7 @@ foi o segundo a ser montado porque a colheita dele já estava crivada quando o
 caderno 1 fechou. O que a criança vê é a ORDEM DOS DEZ; o que eu construo é o
 que está pronto para construir.
 | 3 | **A Máquina de Trocar Sílabas** (`_troca2`) | ✅ 40 colhidas, 40 únicas | ✅ `POTE-TROCA2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/a-maquina-de-trocar-silabas/) |
-| 4 | O som que sai pelo nariz | ✅ 40 em `_sequencias/folhas_nasal2` | — | — | — |
+| 4 | **As Três Marcas do Nariz** (`_nasal2`) | ✅ 40 colhidas | ✅ `POTE-NASAL2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/as-tres-marcas-do-nariz/) |
 | 5 | O ponto que muda a voz | ✅ 40 em `_sequencias/folhas_ponto2` | — | — | — |
 | 6 | Mesma coisa · o contrário | ✅ 40 em `_sequencias/folhas_sinon2` | — | — | — |
 | 7 | O grandão e o pequenininho | ✅ 40 em `_sequencias/folhas_aumdim2` | — | — | — |

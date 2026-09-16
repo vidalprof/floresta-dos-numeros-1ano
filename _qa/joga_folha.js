@@ -445,10 +445,24 @@ async function executa(pg, id, plano) {
          vogais acentuadas, e por isso esses cadernos guardam o gabarito sem
          acento. Procuro as duas, na ordem. */
       if (!deu) {
-        const achou = await pg.$('.letrabt[aria-label="Letra ' + ch + '"]:not(.usada)')
-          || await pg.$('#tk button[aria-label="Letra ' + ch + '"]');
-        if (achou) { await achou.click().catch(() => {}); }
-        else {
+        /* ⚠️⚠️ A LETRA TEM DE SAIR DA FILEIRA DESTE ITEM, e não da primeira que
+           existir na página — foi assim que eu reprovei uma folha boa
+           (16/set/2026, caderno do som nasal). Aquela folha tem CINCO palavras
+           com til, cada uma com a sua fileira; eu clicava sempre no `Ã` do
+           item 0, e os outros quatro nunca fechavam. A folha estava certa: a
+           criança toca na fileira DELA. A régua é que era larga demais. */
+        const achou = await pg.evaluate(function(v){
+          var alvo = document.querySelector('[data-qa="' + v.alvo + '"]');
+          var cx = alvo && alvo.closest ? alvo.closest('.item') : null;
+          var lista = (cx || document).querySelectorAll('.letrabt');
+          for (var i = 0; i < lista.length; i++) {
+            var b = lista[i];
+            if (b.getAttribute('aria-label') === 'Letra ' + v.ch &&
+                b.className.indexOf('usada') < 0) { b.click(); return true; }
+          }
+          return false;
+        }, { alvo: plano.alvo, ch: ch });
+        if (!achou) {
           /* ⚠️⚠️ SEM TECLA E SEM BOTÃO, SOBRA A LETRA SEM ACENTO — e isso não é
              um truque para o portão passar: é o que a CRIANÇA faz. Desde
              15/set/2026 a atividade aceita a palavra com e sem acento (ordem do
