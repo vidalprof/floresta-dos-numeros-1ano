@@ -31,8 +31,15 @@ jobs:
           python -m pip install -q --upgrade pip
           python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
           python -m pip install -q edge-tts imageio-ffmpeg librosa soundfile numpy
-          python -m pip install -q ctc-forced-aligner || \
-            python -m pip install -q git+https://github.com/MahmoudAshraf97/ctc-forced-aligner.git
+          # ⚠️⚠️ TEM DE SER O DO GIT. Existe no PyPI um pacote `ctc-forced-aligner`
+          #    que e OUTRA COISA: ele instala sem erro e depois nao tem o
+          #    `load_alignment_model`. Foi assim que a primeira tentativa deste
+          #    exemplo saiu com "0 de 2 recortes" em 17/set/2026. Esta e a MESMA
+          #    linha que o `entregar.yml` usa, e ela nao se troca por comodidade.
+          python -m pip install -q "git+https://github.com/MahmoudAshraf97/ctc-forced-aligner.git"
+          # ⚠️ o alinhador chama o `ffmpeg` PELO NOME, no PATH; o runner nao tem.
+          FF=$(python3 -c "import imageio_ffmpeg;print(imageio_ffmpeg.get_ffmpeg_exe())")
+          sudo ln -sf "$FF" /usr/local/bin/ffmpeg || true
 
       # ⚠️ SEM `continue-on-error` E SEM `2>/dev/null`: este passo ja falhou em
       #    silencio uma vez e o defeito durou semanas.
