@@ -1,4 +1,4 @@
-name: Prova da silaba (gera o MESMO pedaco de varios jeitos, para ouvir e comparar)
+name: Como PEDIR a silaba (gera o mesmo pedaco de varios jeitos, para ouvir)
 
 # ⭐ ORDEM DO MARCOS (17/set/2026): *"o que eu preciso e que as palavras e
 #    silabas sejam pronunciadas corretamente"* · *"pode fazer para a gente ver
@@ -24,7 +24,15 @@ name: Prova da silaba (gera o MESMO pedaco de varios jeitos, para ouvir e compar
 # ⚠️ Ele NAO publica nada e NAO toca em atividade nenhuma. So escreve em
 #    `_prova/silabas/` e commita, sem a marca [entregar ...].
 
+# ⚠️ DISPARA TAMBEM POR PUSH, e a licao ja estava escrita no `provar-silaba.yml`
+#    desta casa: **o GitHub so aceita despachar workflow que ja existe na branch
+#    PADRAO**. Este nasceu numa branch de trabalho e o `workflow_dispatch`
+#    respondeu 404. Tocar no arquivo-marca abaixo faz a prova rodar.
 on:
+  push:
+    paths:
+      - '.github/workflows/silaba-como-pedir.yml'
+      - '_prova/PEDIR'
   workflow_dispatch:
     inputs:
       palavras:
@@ -63,6 +71,9 @@ jobs:
           python -m pip install --quiet edge-tts librosa soundfile numpy
 
       - name: Gerar os candidatos e medir
+        env:
+          PALAVRAS: ${{ inputs.palavras }}
+          VOZ: ${{ inputs.voz }}
         run: |
           mkdir -p _prova/silabas
           python3 - <<'PY'
@@ -70,8 +81,8 @@ jobs:
           import asyncio, io, json, os, re, subprocess, unicodedata
           import edge_tts, numpy as np, librosa
 
-          PALAVRAS = [w.strip().lower() for w in "${{ inputs.palavras }}".split(",") if w.strip()]
-          VOZ = "${{ inputs.voz }}"
+          PALAVRAS = [w.strip().lower() for w in (os.environ.get("PALAVRAS") or "escola,sapo,gato,macaco,boneca").split(",") if w.strip()]
+          VOZ = (os.environ.get("VOZ") or "pt-BR-AntonioNeural")
           DEST = "_prova/silabas"
 
           # a divisao vem do dicionario pt_BR, que ja e o portao 1w
@@ -135,7 +146,7 @@ jobs:
           {
             echo "## Prova da sílaba"
             echo ""
-            echo "Palavras: \`${{ inputs.palavras }}\` · voz \`${{ inputs.voz }}\`"
+            echo "Ver \`_prova/silabas/MEDIDA.json\`"
             echo ""
             echo "Arquivos em \`_prova/silabas/\` — ouvir e comparar os cinco caminhos."
           } >> "$GITHUB_STEP_SUMMARY"
