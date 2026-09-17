@@ -1,0 +1,34 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+== medida `mfcc` ==
+A. mesma silaba, palavras diferentes  n=174  mediana 3.54  p90 4.14  MAX 5.18
+B. silabas diferentes                 n=572  MIN 2.93  p10 3.62  mediana 4.07
+C. a mesma silaba SOLETRADA           n= 52  MIN 2.98  mediana 3.57
+
+   VEREDITO:
+   ❌ NAO SEPARA. O pior 'mesma silaba' (5.18) ja passa do melhor
+      'silaba diferente' (2.93) / do melhor soletrado (2.98): as faixas se sobrepoem e nao existe
+      limiar. Achar audio na internet NAO resolve, porque o gargalo
+      nao e a fonte — e a comparacao.
+      o pior caso de A: A de padaria x abacaxi = 5.18
+Loading weights:   0%|          | 0/422 [00:00<?, ?it/s]Loading weights: 100%|██████████| 422/422 [00:00<00:00, 29032.51it/s]
+[transformers] [1mWav2Vec2Model LOAD REPORT[0m from: facebook/wav2vec2-large-xlsr-53-portuguese
+Key            | Status     |  | 
+---------------+------------+--+-
+lm_head.weight | UNEXPECTED |  | 
+lm_head.bias   | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+
+== medida `w2v` ==
+A. mesma silaba, palavras diferentes  n=174  mediana 26.88  p90 33.09  MAX 36.39
+B. silabas diferentes                 n=572  MIN 20.21  p10 25.68  mediana 30.34
+C. a mesma silaba SOLETRADA           n= 52  MIN 17.38  mediana 34.10
+
+   VEREDITO:
+   ❌ NAO SEPARA. O pior 'mesma silaba' (36.39) ja passa do melhor
+      'silaba diferente' (20.21) / do melhor soletrado (17.38): as faixas se sobrepoem e nao existe
+      limiar. Achar audio na internet NAO resolve, porque o gargalo
+      nao e a fonte — e a comparacao.
+      o pior caso de A: ME de creme x mesa = 36.39
