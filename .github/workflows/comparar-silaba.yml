@@ -1,0 +1,74 @@
+name: Comparar silaba com referencia (a ideia do Marcos, medida)
+
+# 🎤 POR QUE ESTE WORKFLOW EXISTE
+#
+# O Marcos perguntou (17/set/2026): *"existem atividades na internet aos montes
+# de separacao de silabas com audio, nao? nao daria para aproveitar para
+# conferencia?"* — e insistiu: *"liveworksheets e varios outros sites tem
+# atividades com som"*.
+#
+# A ideia e do tipo certo: comparar AUDIO com AUDIO, em vez de pedir a um
+# reconhecedor que LEIA o recorte (isso ja falhou tres vezes).
+#
+# Mas a pergunta que decide nao e "existe audio na internet". E: **uma medida de
+# distancia entre dois audios consegue dizer que o recorte esta certo?** Com
+# MFCC+DTW eu medi aqui no chat e NAO separa. Falta medir a outra via, que e
+# diferente e que eu nao posso concluir pela primeira: as camadas internas do
+# wav2vec2 (isto NAO e transcrever — o modelo pode errar a letra e ainda assim
+# dar uma representacao util). Essa precisa de internet para baixar o modelo,
+# entao mora aqui.
+#
+# ⚠️ Roda por PUSH num arquivo-gatilho, nao por `workflow_dispatch`: workflow que
+#    so existe fora do ramo padrao devolve 404 no dispatch (licao paga em
+#    set/2026). Para acionar: tocar em `_pesquisa/PEDIR-COMPARACAO` e empurrar.
+
+on:
+  push:
+    paths:
+      - "_pesquisa/PEDIR-COMPARACAO"
+
+permissions:
+  contents: write
+
+jobs:
+  comparar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # ⚠️ UMA LINHA POR INDICE. Ja perdi uma rodada porque o `--index-url` da
+      #    roda do torch valia para a linha inteira e o resto nao era achado.
+      - name: Instalar
+        run: |
+          python -m pip install -q --upgrade pip
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q transformers librosa soundfile numpy
+
+      - name: Medir as duas reguas
+        run: |
+          set -o pipefail
+          python3 _qa/comparar_silaba.py \
+            _alfa1 _ini1 _mont1 _sil1 _roda1 _sil2 _troca2 _nasal2 \
+            --modo ambos 2>&1 | tee _pesquisa/prova-comparar-silaba.txt
+
+      # ⚠️ O RESULTADO VAI PARA O REPO, nao so para o log da execucao. O que o
+      #    log engole, o repo guarda — e foi assim que uma medida de 76 minutos
+      #    se perdeu em set/2026.
+      - name: Guardar o resultado
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A _pesquisa/prova-comparar-silaba.txt || true
+          git commit -q -m "pesquisa: a comparacao de audio separa ou nao?" || exit 0
+          for t in 1 2 4 8 16; do
+            git pull -q --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then exit 0; fi
+            sleep "$t"
+          done
+          echo "::error::nao consegui empurrar o resultado"
+          exit 1
