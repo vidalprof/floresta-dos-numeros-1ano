@@ -22,7 +22,7 @@ name: Como PEDIR a silaba (gera o mesmo pedaco de varios jeitos, para ouvir)
 #    varios caminhos, corta, mede e deixa os mp3 no repositorio PARA OUVIR.
 #
 # ⚠️ Ele NAO publica nada e NAO toca em atividade nenhuma. So escreve em
-#    `_prova/silabas/` e commita, sem a marca [entregar ...].
+#    `_pesquisa/silabas-prova/` e commita, sem a marca [entregar ...].
 
 # ⚠️ DISPARA TAMBEM POR PUSH, e a licao ja estava escrita no `provar-silaba.yml`
 #    desta casa: **o GitHub so aceita despachar workflow que ja existe na branch
@@ -32,7 +32,7 @@ on:
   push:
     paths:
       - '.github/workflows/silaba-como-pedir.yml'
-      - '_prova/PEDIR'
+      - '_pesquisa/PEDIR-SILABA'
   workflow_dispatch:
     inputs:
       palavras:
@@ -75,7 +75,7 @@ jobs:
           PALAVRAS: ${{ inputs.palavras }}
           VOZ: ${{ inputs.voz }}
         run: |
-          mkdir -p _prova/silabas
+          mkdir -p _pesquisa/silabas-prova
           python3 - <<'PY'
           # -*- coding: utf-8 -*-
           import asyncio, io, json, os, re, subprocess, unicodedata
@@ -83,7 +83,7 @@ jobs:
 
           PALAVRAS = [w.strip().lower() for w in (os.environ.get("PALAVRAS") or "escola,sapo,gato,macaco,boneca").split(",") if w.strip()]
           VOZ = (os.environ.get("VOZ") or "pt-BR-AntonioNeural")
-          DEST = "_prova/silabas"
+          DEST = "_pesquisa/silabas-prova"
 
           # a divisao vem do dicionario pt_BR, que ja e o portao 1w
           import importlib.util
@@ -146,9 +146,9 @@ jobs:
           {
             echo "## Prova da sílaba"
             echo ""
-            echo "Ver \`_prova/silabas/MEDIDA.json\`"
+            echo "Ver \`_pesquisa/silabas-prova/MEDIDA.json\`"
             echo ""
-            echo "Arquivos em \`_prova/silabas/\` — ouvir e comparar os cinco caminhos."
+            echo "Arquivos em \`_pesquisa/silabas-prova/\` — ouvir e comparar os cinco caminhos."
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commitar as provas
@@ -156,9 +156,15 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A _prova || true
+          git add -A _pesquisa/silabas-prova
+          # ⚠️ NADA DE `|| true` AQUI. Na estreia (17/set/2026) a pasta
+          #    `_prova/` estava no .gitignore, o `git add` recusou, o `|| true`
+          #    engoliu o aviso e o passo terminou "success" com ZERO audio
+          #    gerado. Silencio disfarcado de sucesso e o defeito que esta casa
+          #    mais combate — e fui eu que o escrevi.
           if git diff --cached --quiet; then
-            echo "nada gerado"
+            echo "::error::nada foi commitado — o audio foi gerado e perdido"
+            exit 1
           else
             git commit -m "prova: silabas geradas por varios caminhos, para ouvir"
             for i in 1 2 3 4; do git push && break || sleep $((2 ** i)); done
