@@ -329,50 +329,64 @@ def _cortes_por_alinhamento(ff, mp3, palavra, silabas):
 #  quem descobria que a silaba saiu errada era ele, na sala, com a crianca na
 #  frente. Isso nao e portao, e sorte.
 #
-#  O QUE A MEDIDA DE 17/set MOSTROU, em cinco palavras e cinco jeitos de pedir:
+#  ⚠️⚠️⚠️ A PRIMEIRA VERSAO DESTE BLOCO (17/set/2026, de manha) ESTAVA ERRADA,
+#     e o erro custou uma entrega inteira. Fica escrito porque a armadilha e
+#     bonita e eu cairia nela de novo.
 #
-#      como se pede a voz          separou as silabas certas?
-#      ------------------------    --------------------------
-#      corrida   "escola"          0 de 5   <- era o que se fazia
-#      espaco    "es co la"        5 de 5
-#      pausa     "es ... co ... la" 4 de 5
-#      virgula   "es, co, la."     4 de 5
-#      hifen     "es-co-la"        4 de 5
+#     Eu medi cinco jeitos de PEDIR a voz e contei os PEDACOS FALADOS na
+#     gravacao:
 #
-#  Na fala CORRIDA, SAPO, GATO e BONECA saem como UM BLOCO SO: a voz nao separa
-#  nada. Nao era o corte que estava torto — era a FONTE. Fatiar fala corrida
-#  nunca ia dar "ES - CO - LA" como a professora diz na aula.
+#         corrida   "escola"           1 bloco   <- "reprovado"
+#         espaco    "es co la"         3 pedacos <- "aprovado"
 #
-#  E O METODO QUE DISPENSA O OUVIDO DELE: depois de gravar, CONTAR os pedacos
-#  falados no proprio audio (picos de energia da banda da voz, com pelo menos
-#  50 ms). Se o numero nao bater com o numero de silabas, a gravacao esta errada
-#  — e os dois defeitos historicos caem nessa mesma peneira:
+#     e conclui que a fala corrida estava errada. **Estava certa.** Numa
+#     palavra falada de verdade as silabas sao COARTICULADAS: nao ha silencio
+#     entre elas, e por isso ela e um bloco so. Isso nao e defeito, e o
+#     portugues. Quem separa nao e o silencio: e o ALINHAMENTO FORCADO.
 #
-#      · a voz juntou tudo    -> pedacos DE MENOS  (o bloco unico de SAPO)
-#      · a voz SOLETROU       -> pedacos DE MAIS   ("esse-a" no lugar de "sa")
+#     Contar pedacos na GRAVACAO respondia a pergunta errada, e o preco foi
+#     exato: o caminho `espaco` venceu em 205 das 326 palavras, a voz leu cada
+#     pedaco ISOLADO, e pedaco isolado que nao e palavra do portugues ela
+#     SOLETRA — "va" virou "ve-a", com 1,22 s no lugar de 0,32 s. O portao
+#     `_qa/silabas.py` mediu a duracao, reprovou os OITO cadernos e segurou a
+#     publicacao. O portao velho salvou a crianca do meu metodo novo.
 #
-#  Entao a gravacao TENTA os caminhos em ordem e so aceita o que bate. Se
-#  nenhum bater, ela RECUSA a palavra e diz qual foi — nunca entrega audio que
-#  nao conseguiu conferir.
+#  ⭐ O QUE VALE AGORA, E A PERGUNTA E OUTRA:
 #
-#  ⚠️ Sem `librosa` a contagem nao acontece: nesse caso o codigo usa o primeiro
-#     caminho e DIZ que nao conferiu. Nao medir nunca e "passou".
+#     1. a FONTE volta a ser a PALAVRA INTEIRA (`corrida`), que a voz nunca
+#        soletra porque e palavra de verdade — e o corte e do alinhador;
+#     2. a conferencia sai de cima da GRAVACAO e vai para cima dos RECORTES
+#        PRONTOS, que e onde o defeito aparece: **toda silaba do portugues tem
+#        exatamente UMA vogal**. Recorte com DOIS nucleos e a voz soletrando
+#        ("ve-a" sao duas emissoes); com ZERO, e corte que perdeu a vogal.
+#        A invariante e da LINGUA, nao minha — e e a mesma que o portao 1x
+#        (`_qa/silaba_audio.py`) usa, medida em 882 recortes.
+#
+#     Os outros caminhos (espaco, pausa, virgula) ficam como ULTIMO RECURSO,
+#     so para a palavra em que o alinhamento nao fecha. E o recorte que sair
+#     deles tambem tem de passar na prova dos nucleos.
+#
+#  ⚠️ Sem `librosa` nao ha conferencia: nesse caso fica a PALAVRA INTEIRA (a
+#     fonte segura) e o codigo DIZ que nao conferiu. Nao medir nunca e "passou".
 # ══════════════════════════════════════════════════════════════════════
 CAMINHOS_DE_PEDIR = [
-    (u"espaco", lambda sil: u" ".join(sil).lower()),
+    (u"corrida", lambda sil: u"".join(sil).lower() + u"."),
     (u"pausa", lambda sil: u" ... ".join(sil).lower()),
     (u"virgula", lambda sil: u", ".join(sil).lower() + u"."),
-    (u"corrida", lambda sil: u"".join(sil).lower() + u"."),
+    (u"espaco", lambda sil: u" ".join(sil).lower()),
 ]
-CONFERIDAS = []          # (palavra, caminho que passou, pedacos achados)
+CONFERIDAS = []          # (palavra, caminho que passou, recortes conferidos)
 NAO_CONFERIDAS = []      # (palavra, motivo)
+MIN_NUCLEO_MS = 50       # abaixo disso e transiente (o estalo da oclusiva)
+MARGEM_DB = 6.0          # a consoante sonora (l, r, m, n) faz pico, mas FRACO
 
 
-def conta_pedacos(caminho_mp3):
-    u"""Quantos pedacos falados ha no audio. None se nao der para medir.
+def conta_nucleos(caminho_mp3):
+    u"""Quantas VOGAIS ha no recorte. None se nao der para medir.
 
-    Piso de 50 ms por pedaco: abaixo disso e transiente (o estalo da oclusiva),
-    nao silaba — medido em 882 recortes."""
+    ⚠️ Copia fiel da medida do portao 1x (`_qa/silaba_audio.py`): os dois tem
+    de concordar, senao a gravacao aprova o que a banca reprova. Mudou aqui,
+    muda la — e remede os 882 recortes."""
     try:
         import numpy as np
         import librosa
@@ -392,135 +406,202 @@ def conta_pedacos(caminho_mp3):
     db = 20 * np.log10(e / e.max() + 1e-9)
     if len(db) >= 5:
         db = np.convolve(db, np.ones(5) / 5.0, mode=u"same")
-    acima = db > -14.0
-    n, i = 0, 0
+    acima = db > -12.0
+    bl, i = [], 0
     while i < len(acima):
         if acima[i]:
             j = i
             while j < len(acima) and acima[j]:
                 j += 1
-            if (j - i) * 5 >= 50:
-                n += 1
+            bl.append((i, j))
             i = j
         else:
             i += 1
-    return n
+    bl = [(a, b) for a, b in bl if (b - a) * 5.0 >= MIN_NUCLEO_MS]
+    if not bl:
+        return 0
+    f = [bl[0]]
+    for a, b in bl[1:]:
+        pa, pb = f[-1]
+        entre = db[pb:a]
+        if len(entre) == 0 or (min(db[pa:pb].max(), db[a:b].max()) - entre.min()) < 6.0:
+            f[-1] = (pa, b)
+        else:
+            f.append((a, b))
+    topo = max(db[a:b].max() for a, b in f)
+    return len([1 for a, b in f if db[a:b].max() >= topo - MARGEM_DB])
 
 
-async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavra):
-    u"""Grava a sequência da palavra e corta cada sílaba. Devolve nº de cortes."""
+# ⚠️ ENTRADA PRIMEIRO, DEPOIS O `-ss`, E SEMPRE RECODIFICANDO.
+#    O jeito antigo (`-ss` antes do `-i` com `-c copy`) é o rápido, mas em mp3
+#    ele corta no meio do quadro e às vezes devolve arquivo quebrado — e como o
+#    corte não levantava exceção nenhuma, a falha saía como "0 de 3 sílabas" SEM
+#    motivo registrado. São pedaços de meio segundo: o custo de recodificar é
+#    nada perto de um defeito invisível.
+# ⚠️⚠️ APARAR O SILÊNCIO DO FIM DE CADA PEDAÇO. Sem isto a ÚLTIMA sílaba de cada
+#    palavra levava junto o rabo de silêncio do arquivo e saía com 1,4 s —
+#    medido em todas as 17 palavras na primeira rodada do alinhamento. O truque
+#    é o de sempre: inverte, tira o silêncio do começo (que era o do fim),
+#    desinverte. Não faz nada quando não há silêncio, então serve para todos os
+#    pedaços e não só para o último.
+# ⭐⭐ E IGUALAR A FORCA DE CADA PEDACO (17/set/2026). O DEFEITO, medido em 882
+#    recortes de oito cadernos: 35 saiam QUASE MUDOS -- pico de energia abaixo de
+#    um quarto dos vizinhos --, e quase todos eram a SILABA FINAL da palavra: o
+#    PO de SAPO (0,022 contra 0,180 de mediana), o TO de GATO, o CO de MACACO, o
+#    VO de BRAVO. A razao e da lingua, nao do corte: no portugues do Brasil a
+#    silaba final atona e dita quase sem voz -- "sapo" sai [ˈsapʊ]. Dentro da
+#    palavra ninguem nota; recortada e tocada SOZINHA, a crianca toca no PO e
+#    praticamente nao ouve nada. Numa folha de alfabetizacao isso e grave: ela
+#    escolhe pelo desenho. `loudnorm` poe todos os pedacos na mesma altura
+#    percebida (EBU R128). Medido antes de entrar: o ganho necessario chega a
+#    7,7x e o pico DEPOIS fica em 0,54 de 1,0 -- nao estoura em nenhum dos 882.
+#    ⚠️ Isto muda o pedaco TOCADO SOZINHO, nunca a gravacao da palavra inteira,
+#       que continua com a prosodia natural.
+FILTRO_CORTE = ("areverse,silenceremove=start_periods=1:"
+                "start_silence=0.03:start_threshold=-42dB,areverse,"
+                "loudnorm=I=-16:TP=-1.5:LRA=11")
+
+
+def _recorta(ff, inteiro, silabas, pasta_audio, prefixo, palavra, corrida):
+    u"""Corta o mp3 da gravação em um arquivo por sílaba. Devolve a lista deles.
+
+    A ORDEM das duas fontes de fronteira depende de COMO a palavra foi pedida,
+    e isso não é detalhe: na fala CORRIDA não existe silêncio entre as sílabas
+    (elas são coarticuladas), então quem separa é o ALINHAMENTO; nos caminhos
+    de último recurso, que pedem os pedaços apartados, o silêncio é justamente
+    a fronteira de verdade. Cada uma serve de rede para a outra."""
+    if corrida:
+        cortes = _cortes_por_alinhamento(ff, inteiro, u"".join(silabas), silabas)
+        if not cortes:
+            cortes = [(a, b + FOLGA_MS / 1000.0)
+                      for a, b in _cortes_por_silencio(ff, inteiro, len(silabas))]
+    else:
+        cortes = [(a, b + FOLGA_MS / 1000.0)
+                  for a, b in _cortes_por_silencio(ff, inteiro, len(silabas))]
+        if not cortes:
+            cortes = _cortes_por_alinhamento(ff, inteiro, u"".join(silabas), silabas)
+    if not cortes:
+        return []
+    feitos = []
+    for i, _s in enumerate(silabas):
+        ini, dur = cortes[i]
+        saida = os.path.join(pasta_audio, "%ssb_%s_%d.mp3"
+                             % (prefixo, arquivo_da_palavra(palavra), i))
+        p = subprocess.Popen(
+            [ff, "-y", "-loglevel", "error", "-i", inteiro,
+             "-ss", "%.3f" % ini, "-t", "%.3f" % dur,
+             "-af", FILTRO_CORTE,
+             "-c:a", "libmp3lame", "-q:a", "5", saida],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        _, err = p.communicate()
+        if os.path.exists(saida) and os.path.getsize(saida) > 300:
+            feitos.append(saida)
+        elif i == 0:
+            MOTIVOS.append(u"%s: ffmpeg nao cortou (%s) -- %s"
+                           % (palavra, ff,
+                              (err or b"").decode("utf-8", "replace")[:120]))
+    return feitos
+
+
+async def _grava(edge_tts, pedido, voz, inteiro):
+    com = edge_tts.Communicate(pedido, voz, rate=RATE)
+    audio = io.BytesIO()
+    async for pedaco in com.stream():
+        if pedaco["type"] == "audio":
+            audio.write(pedaco["data"])
+    dados = audio.getvalue()
+    if len(dados) < 800:
+        return False
+    open(inteiro, "wb").write(dados)
+    return True
+
+
+async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavra,
+               varias_vogais=False):
+    u"""Grava a palavra, corta as sílabas e CONFERE os recortes.
+
+    ⭐ A conferência é sobre os RECORTES PRONTOS, não sobre a gravação: cada um
+    tem de ter exatamente UMA vogal (ver o bloco "A VOZ SE CONFERE SOZINHA").
+    Dois núcleos = a voz soletrou; zero = o corte perdeu a vogal. Só se a
+    palavra inteira falhar é que se tenta um caminho de último recurso."""
     async with sem:
         for tent in (1, 2, 3):
             try:
-                # ⭐ TENTA OS CAMINHOS E SO ACEITA O QUE SE CONFERE. Ver o bloco
-                #   "A VOZ SE CONFERE SOZINHA", acima.
                 inteiro = destino_base + "_todo.mp3"
-                aceito, achou, conferiu = None, None, False
-                for nome_cam, monta in CAMINHOS_DE_PEDIR:
-                    pedido = monta(silabas)
-                    com = edge_tts.Communicate(pedido, voz, rate=RATE)
-                    audio = io.BytesIO()
-                    async for pedaco in com.stream():
-                        if pedaco["type"] == "audio":
-                            audio.write(pedaco["data"])
-                    dados = audio.getvalue()
-                    if len(dados) < 800:
-                        continue
-                    open(inteiro, "wb").write(dados)
-                    n = conta_pedacos(inteiro)
-                    if n is None:
-                        # sem librosa nao da para contar: fica o primeiro e DIZ
-                        aceito, achou, conferiu = nome_cam, None, False
-                        break
-                    if n == len(silabas):
-                        aceito, achou, conferiu = nome_cam, n, True
-                        break
-                    if aceito is None:            # guarda o 1o como ultimo caso
-                        aceito, achou = nome_cam, n
-                if aceito is None:
-                    raise RuntimeError("nenhum caminho gravou audio utilizavel")
-                if conferiu:
-                    CONFERIDAS.append((palavra, aceito, achou))
-                elif achou is None:
-                    NAO_CONFERIDAS.append((palavra, u"sem librosa: NAO CONFERI"))
-                else:
-                    NAO_CONFERIDAS.append(
-                        (palavra, u"nenhum caminho deu %d pedacos (o melhor deu "
-                                  u"%d, por `%s`)" % (len(silabas), achou, aceito)))
+                pasta_audio = os.path.dirname(destino_base)
                 ff = _ffmpeg()
-                # ⭐ 1º o ALINHAMENTO na palavra inteira (o caminho certo);
-                #    2º o silêncio, só como rede se o alinhador não estiver lá.
-                cortes = _cortes_por_alinhamento(ff, inteiro, u"".join(silabas), silabas)
-                if not cortes:
-                    cortes = _cortes_por_silencio(ff, inteiro, len(silabas))
-                    cortes = [(a, b + FOLGA_MS / 1000.0) for a, b in cortes]
-                if not cortes:
-                    try:
-                        os.remove(inteiro)
-                    except OSError:
-                        pass
-                    raise RuntimeError("nao consegui achar as fronteiras de %d silaba(s)"
-                                       % len(silabas))
-                n = 0
-                for i, s in enumerate(silabas):
-                    ini, dur = cortes[i]
-                    saida = os.path.join(os.path.dirname(destino_base),
-                                         "%ssb_%s_%d.mp3"
-                                         % (prefixo, arquivo_da_palavra(palavra), i))
-                    # ⚠️ ENTRADA PRIMEIRO, DEPOIS O `-ss`, E SEMPRE RECODIFICANDO.
-                    #    O jeito antigo (`-ss` antes do `-i` com `-c copy`) é o
-                    #    rápido, mas em mp3 ele corta no meio do quadro e às vezes
-                    #    devolve arquivo quebrado — e como o corte não levantava
-                    #    exceção nenhuma, a falha saía como "0 de 3 sílabas" SEM
-                    #    motivo registrado. São pedaços de meio segundo: o custo
-                    #    de recodificar é nada perto de um defeito invisível.
-                    # ⚠️⚠️ APARAR O SILÊNCIO DO FIM DE CADA PEDAÇO.
-                    #    Sem isto a ÚLTIMA sílaba de cada palavra levava junto o
-                    #    rabo de silêncio do arquivo e saía com 1,4 s — medido em
-                    #    todas as 17 palavras na primeira rodada do alinhamento.
-                    #    O truque é o de sempre: inverte, tira o silêncio do
-                    #    começo (que era o do fim), desinverte. Não faz nada
-                    #    quando não há silêncio, então serve para todos os
-                    #    pedaços e não só para o último.
-                    p = subprocess.Popen(
-                        [ff, "-y", "-loglevel", "error", "-i", inteiro,
-                         "-ss", "%.3f" % ini, "-t", "%.3f" % dur,
-                         # ⭐⭐ E IGUALAR A FORCA DE CADA PEDACO (17/set/2026).
-                         #    O DEFEITO, medido em 882 recortes de oito cadernos:
-                         #    35 saiam QUASE MUDOS -- pico de energia abaixo de um
-                         #    quarto dos vizinhos --, e quase todos eram a SILABA
-                         #    FINAL da palavra: o PO de SAPO (0,022 contra 0,180 de
-                         #    mediana), o TO de GATO, o CO de MACACO, o VO de BRAVO.
-                         #    A razao e da lingua, nao do corte: no portugues do
-                         #    Brasil a silaba final atona e dita quase sem voz --
-                         #    "sapo" sai [ˈsapʊ]. Dentro da palavra ninguem nota;
-                         #    recortada e tocada SOZINHA, a crianca toca no PO e
-                         #    praticamente nao ouve nada. Numa folha de
-                         #    alfabetizacao isso e grave: ela escolhe pelo desenho.
-                         #    `loudnorm` poe todos os pedacos na mesma altura
-                         #    percebida (EBU R128). Medido antes de entrar: o
-                         #    ganho necessario chega a 7,7x e o pico DEPOIS fica em
-                         #    0,54 de 1,0 -- nao estoura em nenhum dos 882.
-                         #    ⚠️ Isto muda o pedaco TOCADO SOZINHO, nunca a
-                         #       gravacao da palavra inteira, que continua com a
-                         #       prosodia natural.
-                         "-af", ("areverse,silenceremove=start_periods=1:"
-                                 "start_silence=0.03:start_threshold=-42dB,areverse,"
-                                 "loudnorm=I=-16:TP=-1.5:LRA=11"),
-                         "-c:a", "libmp3lame", "-q:a", "5", saida],
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                    _, err = p.communicate()
-                    if os.path.exists(saida) and os.path.getsize(saida) > 300:
-                        n += 1
-                    elif i == 0:
-                        MOTIVOS.append(u"%s: ffmpeg nao cortou (%s) -- %s"
-                                       % (palavra, ff,
-                                          (err or b"").decode("utf-8", "replace")[:120]))
+                base_dur, escolhido, motivo = None, None, None
+                for nome_cam, monta in CAMINHOS_DE_PEDIR:
+                    corrida = nome_cam == u"corrida"
+                    if not await _grava(edge_tts, monta(silabas), voz, inteiro):
+                        continue
+                    feitos = _recorta(ff, inteiro, silabas, pasta_audio,
+                                      prefixo, palavra, corrida)
+                    if len(feitos) != len(silabas):
+                        continue
+                    dur = sum(_duracao(ff, f) for f in feitos)
+                    if corrida:
+                        base_dur = dur
+                    # ⚠️⚠️ A TRAVA QUE FALTOU DA PRIMEIRA VEZ. Um caminho de
+                    #    último recurso pede os pedaços APARTADOS, e a voz lê
+                    #    pedaço apartado SOLETRANDO quando ele não é palavra do
+                    #    português: "va" vira "vê-á". A assinatura disso é a
+                    #    DURAÇÃO — medida em 17/set: 1,22 s onde a sílaba falada
+                    #    cabe em 0,32 s, ou seja o dobro largo. Então um caminho
+                    #    alheio só substitui a palavra inteira se, além de
+                    #    limpo, NÃO for mais comprido que ela. Sem isto o
+                    #    método troca a fonte certa por uma soletrada e ainda
+                    #    diz que se conferiu.
+                    if (not corrida) and base_dur and dur > base_dur * 1.25:
+                        motivo = (u"`%s` saiu %.0f%% mais comprido que a palavra "
+                                  u"inteira — sinal de soletracao" % (nome_cam,
+                                  (dur / base_dur - 1) * 100))
+                        continue
+                    if varias_vogais:
+                        # PEDAÇO de exercício (CENOU+RA): tem mais de uma vogal
+                        # de propósito, então a prova dos núcleos não se aplica.
+                        # Declarado em `<pasta>/silabas-ok.json`.
+                        CONFERIDAS.append((palavra, nome_cam + u" (pedaco)", len(feitos)))
+                        escolhido = (nome_cam, len(feitos))
+                        break
+                    nn = [conta_nucleos(f) for f in feitos]
+                    if any(n is None for n in nn):
+                        NAO_CONFERIDAS.append(
+                            (palavra, u"sem librosa: NAO CONFERI (ficou a palavra "
+                                      u"inteira, que e a fonte segura)"))
+                        escolhido = (nome_cam, len(feitos))
+                        break
+                    ruins = len([n for n in nn if n != 1])
+                    if ruins == 0:
+                        CONFERIDAS.append((palavra, nome_cam, len(feitos)))
+                        escolhido = (nome_cam, len(feitos))
+                        break
+                    motivo = (u"`%s`: %d recorte(s) sem UMA vogal exata (%s)"
+                              % (nome_cam, ruins,
+                                 u"+".join(u"%s=%d" % (s, n)
+                                           for s, n in zip(silabas, nn) if n != 1)))
+                if escolhido is None:
+                    # ⭐ NENHUM se conferiu: fica a PALAVRA INTEIRA, que é a
+                    #   fonte que nunca soletra, e o recibo DIZ que não conferiu
+                    #   — o portão 1y reprova e a entrega para. Nunca se
+                    #   entrega em silêncio o que não se conseguiu medir.
+                    nome_cam, monta = CAMINHOS_DE_PEDIR[0]
+                    if not await _grava(edge_tts, monta(silabas), voz, inteiro):
+                        raise RuntimeError("nenhum caminho gravou audio utilizavel")
+                    feitos = _recorta(ff, inteiro, silabas, pasta_audio,
+                                      prefixo, palavra, True)
+                    if not feitos:
+                        raise RuntimeError("nao consegui achar as fronteiras de "
+                                           "%d silaba(s)" % len(silabas))
+                    NAO_CONFERIDAS.append(
+                        (palavra, motivo or u"nenhum caminho fechou os %d recortes"
+                                            % len(silabas)))
+                    escolhido = (nome_cam, len(feitos))
                 try:
                     os.remove(inteiro)
                 except OSError:
                     pass
-                return n
+                return escolhido[1]
             except Exception as e:                               # noqa: BLE001
                 if tent == 3:
                     print(u"   ERRO em %s: %s" % (palavra, e))
@@ -542,6 +623,16 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
             carimbo = json.load(io.open(campo, encoding="utf-8"))
         except Exception:                                        # noqa: BLE001
             carimbo = {}
+    # ⚠️ PEDAÇO de exercício (CENOU+RA, CA+MA) tem mais de uma vogal de
+    #    propósito: a prova dos núcleos não se aplica a ele. Mesma lista que o
+    #    portão 1x (`_qa/silaba_audio.py`) lê.
+    pedacos = {}
+    fok = os.path.join(pasta, "silabas-ok.json")
+    if os.path.exists(fok):
+        try:
+            pedacos = json.load(io.open(fok, encoding="utf-8"))
+        except ValueError:
+            pedacos = {}
     sem = asyncio.Semaphore(PAR)
     tarefas, alvos = [], []
     for palavra in sorted(mapa):
@@ -560,7 +651,8 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
         texto = u"".join(sil).lower() + u"."
         base = os.path.join(audio, "_seq_" + arquivo_da_palavra(palavra))
         alvos.append((palavra, assinatura, len(sil)))
-        tarefas.append(_uma(sem, edge_tts, texto, voz, base, sil, prefixo, palavra))
+        tarefas.append(_uma(sem, edge_tts, texto, voz, base, sil, prefixo, palavra,
+                            palavra in pedacos or palavra.upper() in pedacos))
     if not tarefas:
         print(u"%s -> silabas: nada novo (todas ja gravadas)" % pasta)
         return 0

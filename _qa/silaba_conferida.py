@@ -10,16 +10,29 @@ u"""
  silaba saiu errada era ELE, na sala, com a crianca na frente. Isso nao e
  portao — e sorte.
 
- O METODO, em uma linha: **a gravacao conta os pedacos falados no proprio audio
- e so aceita o que bate com o numero de silabas.** Os dois defeitos historicos
- caem na mesma peneira, sem ouvido nenhum:
+ O METODO, em uma linha: **depois de cortar, a gravacao conta as VOGAIS de cada
+ recorte e so aceita quem tem exatamente uma.** A invariante e da lingua, nao
+ minha: toda silaba do portugues tem uma vogal so. Os dois defeitos historicos
+ caem nessa peneira, sem ouvido nenhum:
 
-     · a voz juntou tudo  -> pedacos DE MENOS   (SAPO saia como um bloco so)
-     · a voz SOLETROU     -> pedacos DE MAIS    ("esse-a" no lugar de "sa")
+     · a voz SOLETROU       -> DOIS nucleos  ("ve-a" no lugar de "va")
+     · o corte perdeu a voz -> ZERO nucleos
 
- Quem faz isso e o `_padrao/silabas_voz.py` na hora de gravar: ele tenta os
- caminhos (`es co la` · `es ... co ... la` · `es, co, la.` · `escola`) e para no
- primeiro que se confere. O recibo fica em `<pasta>/audio/_conferencia.json`.
+ Quem faz isso e o `_padrao/silabas_voz.py` na hora de gravar. O recibo fica em
+ `<pasta>/audio/_conferencia.json`.
+
+ ⚠️⚠️ A PRIMEIRA VERSAO DESTE PORTAO DESCREVIA OUTRO METODO, E ELE ESTAVA
+    ERRADO — fica escrito porque a armadilha e bonita. Eu contava os pedacos na
+    GRAVACAO e exigia que batessem com o numero de silabas. Isso reprova
+    justamente a fala CORRIDA, que e a unica fonte segura: numa palavra falada
+    de verdade as silabas sao COARTICULADAS, nao ha silencio entre elas, e por
+    isso ela e UM BLOCO SO. Nao e defeito, e o portugues — quem separa nao e o
+    silencio, e o alinhamento forcado. Resultado medido em 17/set/2026: o
+    caminho `es co la` venceu em 205 de 326 palavras, a voz leu cada pedaco
+    ISOLADO e SOLETROU (1,22 s onde cabiam 0,32 s), e o portao `_qa/silabas.py`
+    reprovou os OITO cadernos e segurou a publicacao. **Contar pedacos na
+    gravacao responde a pergunta errada; contar vogais no recorte responde a
+    certa.**
 
  ESTE PORTAO LE O RECIBO. Ele reprova quando:
    1. nao ha recibo (a voz foi gravada antes deste metodo existir);
@@ -27,9 +40,12 @@ u"""
    3. o recibo esta velho — ha palavra no `silabas.json` que ele nao menciona.
 
  ⚠️ O QUE ELE NAO FAZ: julgar se a pronuncia esta BONITA. Ele garante que a voz
-    disse o numero certo de pedacos, nao que o timbre agrade. Para a
+    disse UMA silaba em cada recorte, nao que o timbre agrade. Para a
     alfabetizacao e o que importa: a crianca precisa ouvir TRES pedacos em
-    ES-CO-LA, cada um com som.
+    ES-CO-LA, cada um com som e nenhum soletrado.
+    ⚠️ E ele nao substitui o `_qa/silabas.py` (duracao) nem o `_qa/silaba_audio.py`
+       (forca e silencio na frente): sao tres reguas diferentes da mesma peca, e
+       foi a de duracao que pegou o meu proprio erro de metodo em 17/set.
 
  ⚠️ E ele depende de o runner ter `librosa` na hora da gravacao. Sem ele o
     `silabas_voz.py` escreve "sem librosa: NAO CONFERI" — e isto reprova aqui,

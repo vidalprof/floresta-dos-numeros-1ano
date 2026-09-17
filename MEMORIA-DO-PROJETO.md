@@ -7679,6 +7679,53 @@ qualquer uma sozinha mata o gesto:
 
 **Ao pôr arrastar em qualquer peça nova, conferir os três.**
 
+## 🗣️🪤 CONTEI OS PEDAÇOS NA GRAVAÇÃO — E ERA A PERGUNTA ERRADA (17/set/2026)
+
+**O Marcos pediu o que estava certo:** *"eu preciso de uma ferramenta ou método
+que deixe tudo isso correto sem eu ter que precisar ouvir"*. O método que eu
+construí em cima desse pedido **estava errado, e o erro custou uma entrega
+inteira dos oito cadernos que falam sílaba.**
+
+**O que eu fiz.** Medi cinco jeitos de pedir a voz e contei os **pedaços falados
+na gravação**: `escola` deu **1 bloco**, `es co la` deu **3 pedaços**. Conclui
+que a fala corrida estava errada e pus os caminhos apartados na frente.
+
+**Por que estava errado, e é bonito de errado.** Numa palavra falada de verdade
+as sílabas são **coarticuladas** — não existe silêncio entre elas, e por isso ela
+é um bloco só. **Isso não é defeito, é o português.** Quem separa nunca foi o
+silêncio: é o **alinhamento forçado**. Contar pedaços na gravação media uma coisa
+que não tinha nada a ver com a pergunta.
+
+**O preço, medido.** O caminho `es co la` venceu em **205 de 326 palavras**. A voz
+lê pedaço apartado **ISOLADO**, e pedaço isolado que não é palavra do português
+ela **SOLETRA**: `VA` de CAVALO saiu com **1,18 s** onde a sílaba falada cabe em
+0,32 s. Ou seja: eu reintroduzi exatamente o defeito que o alinhamento forçado
+tinha curado em 10/set, e reintroduzi **em nome de conferir**.
+
+**Quem salvou a criança foi o portão velho.** O `_qa/silabas.py` (duração
+relativa, FATOR 1.7) reprovou os **oito cadernos** — 18 sílabas no `_alfa1`, 59 no
+`_troca2`, 166 no total — e **parou a publicação**. Nada disso foi ao ar: os sites
+continuaram servindo a voz anterior. O portão de set/2026 pegou o erro do método
+de 17/set.
+
+**O conserto, em três partes:**
+1. a **fonte volta a ser a palavra inteira** (`corrida` é o primeiro caminho), que
+   a voz nunca soletra porque é palavra de verdade;
+2. a **conferência muda de lugar**: sai da gravação e vai para os **recortes
+   prontos**, contando **VOGAIS** — toda sílaba do português tem exatamente uma.
+   Dois núcleos = soletrou; zero = o corte perdeu a vogal. Mesma medida do portão
+   1x, medida em 882 recortes;
+3. **a trava que faltou**: um caminho de último recurso só substitui a palavra
+   inteira se, além de limpo, **não for mais comprido que ela** (+25% no máximo).
+   A soletração dobra a duração — sem esta linha o método troca a fonte certa por
+   uma soletrada e ainda assina que conferiu.
+
+⭐ **A lição que fica, e vale para qualquer portão que eu inventar:** *uma medida
+que passa não prova nada se ela responde a pergunta errada.* Antes de confiar numa
+régua nova, perguntar o que ela mediria num caso **sabidamente bom** — se eu
+tivesse rodado a contagem de pedaços na gravação que já estava aprovada e no ar,
+ela teria dito "1 de 3" e eu teria visto na hora.
+
 ## 🗣️⭐ A SÍLABA SAI DA PALAVRA INTEIRA, POR ALINHAMENTO FORÇADO (10/set/2026)
 
 **Isto encerra a família "sílaba mal pronunciada", que custou três rodadas e o
