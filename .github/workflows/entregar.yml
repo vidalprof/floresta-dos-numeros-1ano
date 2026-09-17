@@ -237,7 +237,14 @@ jobs:
           echo "✅ Portão pré-entrega: tudo verde — pode gravar e publicar."
 
       - name: Instalar edge-tts
-        run: pip3 install --quiet edge-tts
+        run: |
+          pip3 install --quiet edge-tts
+          # ⭐ `librosa` e o que permite a voz SE CONFERIR sozinha: sem ele o
+          #   `_padrao/silabas_voz.py` nao consegue contar os pedacos falados e
+          #   registra "NAO CONFERI" — que nao e "passou". Ordem do Marcos
+          #   (17/set/2026): *"preciso de um metodo que deixe tudo correto sem
+          #   eu ter que precisar ouvir"*.
+          pip3 install --quiet librosa soundfile 2>&1 | tail -1 || true
 
       # ---------------------------------------------------------------
       # ⚡ 8 falas ao mesmo tempo, num Python so. O gargalo nunca foi a

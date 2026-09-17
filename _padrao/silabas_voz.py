@@ -320,28 +320,137 @@ def _cortes_por_alinhamento(ff, mp3, palavra, silabas):
     return cortes
 
 
+
+# ══════════════════════════════════════════════════════════════════════
+#  ⭐⭐⭐ A VOZ SE CONFERE SOZINHA — o Marcos nao pode ser o portao
+#
+#  ORDEM DELE (17/set/2026): *"eu preciso de uma ferramenta ou metodo que deixe
+#  tudo isso correto SEM EU TER QUE PRECISAR OUVIR"*. Ele esta certo: ate hoje
+#  quem descobria que a silaba saiu errada era ele, na sala, com a crianca na
+#  frente. Isso nao e portao, e sorte.
+#
+#  O QUE A MEDIDA DE 17/set MOSTROU, em cinco palavras e cinco jeitos de pedir:
+#
+#      como se pede a voz          separou as silabas certas?
+#      ------------------------    --------------------------
+#      corrida   "escola"          0 de 5   <- era o que se fazia
+#      espaco    "es co la"        5 de 5
+#      pausa     "es ... co ... la" 4 de 5
+#      virgula   "es, co, la."     4 de 5
+#      hifen     "es-co-la"        4 de 5
+#
+#  Na fala CORRIDA, SAPO, GATO e BONECA saem como UM BLOCO SO: a voz nao separa
+#  nada. Nao era o corte que estava torto — era a FONTE. Fatiar fala corrida
+#  nunca ia dar "ES - CO - LA" como a professora diz na aula.
+#
+#  E O METODO QUE DISPENSA O OUVIDO DELE: depois de gravar, CONTAR os pedacos
+#  falados no proprio audio (picos de energia da banda da voz, com pelo menos
+#  50 ms). Se o numero nao bater com o numero de silabas, a gravacao esta errada
+#  — e os dois defeitos historicos caem nessa mesma peneira:
+#
+#      · a voz juntou tudo    -> pedacos DE MENOS  (o bloco unico de SAPO)
+#      · a voz SOLETROU       -> pedacos DE MAIS   ("esse-a" no lugar de "sa")
+#
+#  Entao a gravacao TENTA os caminhos em ordem e so aceita o que bate. Se
+#  nenhum bater, ela RECUSA a palavra e diz qual foi — nunca entrega audio que
+#  nao conseguiu conferir.
+#
+#  ⚠️ Sem `librosa` a contagem nao acontece: nesse caso o codigo usa o primeiro
+#     caminho e DIZ que nao conferiu. Nao medir nunca e "passou".
+# ══════════════════════════════════════════════════════════════════════
+CAMINHOS_DE_PEDIR = [
+    (u"espaco", lambda sil: u" ".join(sil).lower()),
+    (u"pausa", lambda sil: u" ... ".join(sil).lower()),
+    (u"virgula", lambda sil: u", ".join(sil).lower() + u"."),
+    (u"corrida", lambda sil: u"".join(sil).lower() + u"."),
+]
+CONFERIDAS = []          # (palavra, caminho que passou, pedacos achados)
+NAO_CONFERIDAS = []      # (palavra, motivo)
+
+
+def conta_pedacos(caminho_mp3):
+    u"""Quantos pedacos falados ha no audio. None se nao der para medir.
+
+    Piso de 50 ms por pedaco: abaixo disso e transiente (o estalo da oclusiva),
+    nao silaba — medido em 882 recortes."""
+    try:
+        import numpy as np
+        import librosa
+    except ImportError:
+        return None
+    try:
+        y, _ = librosa.load(caminho_mp3, sr=16000, mono=True)
+    except Exception:                                            # noqa: BLE001
+        return None
+    if len(y) < 320:
+        return 0
+    S = np.abs(librosa.stft(y, n_fft=512, hop_length=80))
+    fr = librosa.fft_frequencies(sr=16000, n_fft=512)
+    e = S[(fr >= 250) & (fr <= 3000)].sum(axis=0)
+    if e.max() <= 0:
+        return 0
+    db = 20 * np.log10(e / e.max() + 1e-9)
+    if len(db) >= 5:
+        db = np.convolve(db, np.ones(5) / 5.0, mode=u"same")
+    acima = db > -14.0
+    n, i = 0, 0
+    while i < len(acima):
+        if acima[i]:
+            j = i
+            while j < len(acima) and acima[j]:
+                j += 1
+            if (j - i) * 5 >= 50:
+                n += 1
+            i = j
+        else:
+            i += 1
+    return n
+
+
 async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavra):
     u"""Grava a sequência da palavra e corta cada sílaba. Devolve nº de cortes."""
     async with sem:
         for tent in (1, 2, 3):
             try:
-                com = edge_tts.Communicate(texto, voz, rate=RATE)
-                audio = io.BytesIO()
-                marcas = []
-                async for pedaco in com.stream():
-                    if pedaco["type"] == "audio":
-                        audio.write(pedaco["data"])
-                    elif pedaco["type"] == "WordBoundary":
-                        marcas.append((pedaco["offset"], pedaco["duration"]))
-                dados = audio.getvalue()
-                if len(dados) < 800:
-                    raise RuntimeError("audio curto (%d bytes)" % len(dados))
+                # ⭐ TENTA OS CAMINHOS E SO ACEITA O QUE SE CONFERE. Ver o bloco
+                #   "A VOZ SE CONFERE SOZINHA", acima.
                 inteiro = destino_base + "_todo.mp3"
-                open(inteiro, "wb").write(dados)
+                aceito, achou, conferiu = None, None, False
+                for nome_cam, monta in CAMINHOS_DE_PEDIR:
+                    pedido = monta(silabas)
+                    com = edge_tts.Communicate(pedido, voz, rate=RATE)
+                    audio = io.BytesIO()
+                    async for pedaco in com.stream():
+                        if pedaco["type"] == "audio":
+                            audio.write(pedaco["data"])
+                    dados = audio.getvalue()
+                    if len(dados) < 800:
+                        continue
+                    open(inteiro, "wb").write(dados)
+                    n = conta_pedacos(inteiro)
+                    if n is None:
+                        # sem librosa nao da para contar: fica o primeiro e DIZ
+                        aceito, achou, conferiu = nome_cam, None, False
+                        break
+                    if n == len(silabas):
+                        aceito, achou, conferiu = nome_cam, n, True
+                        break
+                    if aceito is None:            # guarda o 1o como ultimo caso
+                        aceito, achou = nome_cam, n
+                if aceito is None:
+                    raise RuntimeError("nenhum caminho gravou audio utilizavel")
+                if conferiu:
+                    CONFERIDAS.append((palavra, aceito, achou))
+                elif achou is None:
+                    NAO_CONFERIDAS.append((palavra, u"sem librosa: NAO CONFERI"))
+                else:
+                    NAO_CONFERIDAS.append(
+                        (palavra, u"nenhum caminho deu %d pedacos (o melhor deu "
+                                  u"%d, por `%s`)" % (len(silabas), achou, aceito)))
                 ff = _ffmpeg()
                 # ⭐ 1º o ALINHAMENTO na palavra inteira (o caminho certo);
                 #    2º o silêncio, só como rede se o alinhador não estiver lá.
-                cortes = _cortes_por_alinhamento(ff, inteiro, palavra, silabas)
+                cortes = _cortes_por_alinhamento(ff, inteiro, u"".join(silabas), silabas)
                 if not cortes:
                     cortes = _cortes_por_silencio(ff, inteiro, len(silabas))
                     cortes = [(a, b + FOLGA_MS / 1000.0) for a, b in cortes]
@@ -468,6 +577,26 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
         json.dumps(carimbo, ensure_ascii=False, indent=1))
     print(u"%s -> silabas ok: %d palavra(s) gravadas, %d com falha"
           % (pasta, len(alvos) - falhou, falhou))
+    # ⭐ O RECIBO DA CONFERENCIA — e dele que o portao 1y le, e e ele que
+    #   dispensa o Marcos de ouvir. Fica NO REPOSITORIO, nao so no log da
+    #   execucao: o que o log engole, o repo guarda.
+    if CONFERIDAS or NAO_CONFERIDAS:
+        por_caminho = {}
+        for _w, _c, _n in CONFERIDAS:
+            por_caminho[_c] = por_caminho.get(_c, 0) + 1
+        print(u"   conferidas sozinhas: %d de %d (%s)"
+              % (len(CONFERIDAS), len(CONFERIDAS) + len(NAO_CONFERIDAS),
+                 u", ".join(u"%s x%d" % (k, v) for k, v in sorted(por_caminho.items()))))
+        for _w, _m in NAO_CONFERIDAS[:10]:
+            print(u"   ⚠️ %s: %s" % (_w, _m))
+        io.open(os.path.join(audio, "_conferencia.json"), "w",
+                encoding="utf-8").write(json.dumps(
+                    {u"voz": voz, u"rate": RATE,
+                     u"conferidas": [{u"palavra": w, u"caminho": c, u"pedacos": n}
+                                     for w, c, n in CONFERIDAS],
+                     u"nao_conferidas": [{u"palavra": w, u"motivo": m}
+                                         for w, m in NAO_CONFERIDAS]},
+                    ensure_ascii=False, indent=1))
     _diario(pasta, u"%d palavra(s) gravadas, %d com falha (voz %s, rate %s)\n%s"
             % (len(alvos) - falhou, falhou, voz, RATE,
                u"\n".join(u"   " + m for m in MOTIVOS[:12]) or u"   (sem motivo registrado)"))
