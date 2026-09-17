@@ -1,108 +1,177 @@
-name: Ouvir a voz (portão de pronúncia)
+name: O ouvido (escuta os mp3 e confere se a voz diz o que esta escrito)
 
-# ⭐ O PORTÃO QUE OUVE, e ele mora AQUI por um motivo simples: o modelo de
-#    reconhecimento de voz vive em alphacephei.com, que o proxy do container do
-#    Claude bloqueia. O runner do GitHub tem internet, e é também onde o mp3
-#    nasce (o `entregar.yml` grava a voz alguns passos antes).
+# ⭐ PEDIDO DO MARCOS (17/set/2026): *"o banco de audio e para comparar se a fala
+#    esta certa, e isso que quero"* · *"precisamos muito para as silabas"* ·
+#    *"deve dar para comparar em atividades online ou banco de audios"*.
+#    E, antes de tudo, a lembranca que eu precisava: ***"vc pode usar o GitHub
+#    lembra?"*** — o chat NAO tem internet, o Actions TEM. Eu disse "nao consigo
+#    ouvir" quando a resposta certa era acionar um workflow. Esta e ele.
 #
-#    Nasceu da conta que o Marcos me fez enxergar (set/2026): dos 7 defeitos que
-#    ele relatou jogando com a turma, os ~70 portões da casa pegavam 2 — e os 5
-#    que escapavam eram TODOS de voz, porque nenhum portão abria o mp3.
+# O QUE ELE MEDE, e sao duas coisas diferentes com dois aparelhos diferentes:
+#
+#  1. AS FALAS INTEIRAS (`_qa/ouvir.py`) — reconhecedor de FRASE (Whisper), que
+#     e bom com contexto. Compara o que ouviu com o `<pasta>/falas.json`.
+#
+#  2. OS RECORTES DE SILABA (`_qa/ouvir_silaba.py`) — reconhecedor por
+#     CARACTERE (wav2vec2 CTC treinado em portugues), que decide quadro a
+#     quadro e nao precisa de contexto. **E este que o Marcos mais quer**,
+#     porque foi na silaba que o defeito chegou a sala: *"ao inves de falar Sa
+#     ele fala s a em sapo"*. Ele pega corte torto (`as` em vez de `sa`) e
+#     soletracao (`esse a`), que nenhum portao via.
+#     Vai junto a medida das IRMAS: a mesma silaba vinda de duas palavras
+#     diferentes tem de soar parecida (MFCC + DTW), e essa nao depende de
+#     modelo nenhum.
+#
+# ⚠️ PRIMEIRO SE MEDE, DEPOIS SE COBRA. O input `medir=sim` (padrao na estreia)
+#    ouve tudo, escreve a distribuicao e NAO reprova. O corte que reprova sai
+#    DESSA medida — nunca de um numero que eu escolhi. Trocou o modelo, remede.
+#
+# ⚠️ Ele NAO grava voz e NAO publica nada. So escuta o que ja esta no
+#    repositorio e commita o relatorio em `_qa/_ouvido/`.
 
-# ⚠️⚠️ POR QUE ELE TAMBEM ACORDA POR PUSH (15/set/2026, e este e o achado):
-#    o GitHub so aceita acionamento MANUAL (workflow_dispatch) de workflow que
-#    exista na branch PADRAO. Este arquivo nunca foi para a `main` — vive so na
-#    branch de trabalho. Resultado medido hoje: pedir para roda-lo devolve
-#    **404 Not Found**. Ou seja, o portao que ouve existia no repositorio e
-#    NUNCA PODE SER ACIONADO desde que foi escrito.
-#    O gatilho `push` nao tem essa limitacao: ele roda a partir da branch em que
-#    o push aconteceu. E o padrao ja usado pelo `entregar.yml`, que "acorda
-#    sozinho pela marca" — aqui a marca e `[ouvir _pasta,_outra]`.
 on:
-  push:
-    branches: ['**']
   workflow_dispatch:
     inputs:
-      pastas:
-        description: "Pastas a ouvir, separadas por vírgula (ex.: _por4,_trem)"
+      alvos:
+        description: "Pastas separadas por virgula (ex: _sil2,_troca2,_nasal2)"
         required: true
         type: string
-      limite:
-        description: "Quantas falas ouvir por atividade (0 = todas; comece com 60)"
+      medir:
+        description: "sim = so mede e mostra a distribuicao, nao reprova"
         required: false
-        default: "60"
+        default: "sim"
+        type: string
+      so_silabas:
+        description: "sim = pula as falas inteiras e ouve so os recortes de silaba"
+        required: false
+        default: "nao"
+        type: string
+      modelo_frase:
+        description: "modelo do Whisper (tiny/base/small/medium)"
+        required: false
+        default: "small"
+        type: string
+      limite_frase:
+        description: "erro acima disto reprova uma FALA (0 a 1)"
+        required: false
+        default: "0.35"
+        type: string
+      limite_silaba:
+        description: "erro acima disto reprova um RECORTE (0 a 1)"
+        required: false
+        default: "0.5"
+        type: string
+      so:
+        description: "ouvir so os N primeiros de cada pasta (0 = todos)"
+        required: false
+        default: "0"
+        type: string
+      ref:
+        description: "Branch com os arquivos (vazio = branch padrao)"
+        required: false
+        default: ""
         type: string
 
 jobs:
   ouvir:
     runs-on: ubuntu-latest
-    # sem a marca no assunto do commit, push nenhum dispara nada
-    if: ${{ github.event_name != 'push' || contains(github.event.head_commit.message, '[ouvir ') }}
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v4
-        with: { ref: "${{ github.ref_name }}" }
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
-      - name: Ferramentas de escuta
-        run: |
-          pip3 install --quiet vosk imageio-ffmpeg cffi 2>&1 | tail -1 || true
-          python3 -c "import types,sys; sys.modules['srt']=types.ModuleType('srt'); import vosk; print('vosk ok')"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
-      - name: Modelo de voz pt-BR (o que o container não alcança)
-        run: |
-          mkdir -p _qa/ferramentas/modelos
-          curl -sSL -o /tmp/pt.zip https://alphacephei.com/vosk/models/vosk-model-small-pt-0.3.zip
-          python3 - <<'PY'
-          import zipfile, os, shutil
-          z = zipfile.ZipFile('/tmp/pt.zip'); z.extractall('/tmp/voskpt')
-          raiz = os.path.join('/tmp/voskpt', os.listdir('/tmp/voskpt')[0])
-          shutil.move(raiz, '_qa/ferramentas/modelos/pt')
-          print('modelo em _qa/ferramentas/modelos/pt')
-          PY
+      - name: ffmpeg (para ler os mp3)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
 
-      - name: Modelo de voz en-US (para os cadernos de lingua estrangeira)
-        # ⭐ 15/set/2026, caderno de ingles do 8o ano. O portao nasceu ouvindo so
-        #    portugues; com o modelo pt-BR ouvindo "There is some luggage in the
-        #    car" ele acusaria as 349 falas inglesas de uma vez — um portao que
-        #    reprova por defeito PROPRIO e pior que portao nenhum.
-        #    O `pronuncia.py` escolhe o ouvido pelo campo `lang` de cada fala, o
-        #    MESMO que o `entregar.yml` usa para escolher a voz na gravacao.
-        run: |
-          curl -sSL -o /tmp/en.zip https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
-          python3 - <<'PY'
-          import zipfile, os, shutil
-          z = zipfile.ZipFile('/tmp/en.zip'); z.extractall('/tmp/vosken')
-          raiz = os.path.join('/tmp/vosken', os.listdir('/tmp/vosken')[0])
-          shutil.move(raiz, '_qa/ferramentas/modelos/en')
-          print('modelo ingles em _qa/ferramentas/modelos/en')
-          PY
+      # o cache poupa ~1,5 GB de download a cada rodada
+      - name: Cache dos modelos
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface
+            ~/.cache/torch
+          key: ouvido-${{ inputs.modelo_frase }}-v1
 
-      - name: Ouvir cada atividade
-        env:
-          PASTAS: ${{ inputs.pastas }}
-          LIMITE: ${{ inputs.limite }}
-          MSG: ${{ github.event.head_commit.message }}
+      - name: Instalar o reconhecedor
         run: |
-          # a marca do commit manda quando nao houve input (o caso do push)
-          if [ -z "$PASTAS" ]; then
-            PASTAS="$(printf '%s' "$MSG" | sed -n 's/.*\[ouvir \([^]]*\)\].*/\1/p' | head -1)"
-          fi
-          [ -z "$LIMITE" ] && LIMITE=0
-          echo "pastas: '$PASTAS' | limite: $LIMITE"
-          FALHOU=0
-          IFS=',' read -ra PS <<< "$PASTAS"
-          for p in "${PS[@]}"; do
-            p="$(echo "$p" | xargs)"
-            [ -d "$p" ] || { echo "::warning::$p nao existe"; continue; }
-            echo "=================== ouvindo $p ==================="
-            # ⚠️ os TRÊS códigos (a lição do entregar.yml): 1 reprova, 2 é "não medi"
-            if python3 _qa/pronuncia.py "$p" --limite "$LIMITE"; then :; else
-              rc=$?
-              if [ "$rc" = "1" ]; then echo "::error::$p: ha fala que nao diz o que esta escrito"; FALHOU=1
-              else echo "::warning::$p: nao consegui ouvir (codigo $rc)"; fi
+          python -m pip install --quiet --upgrade pip
+          python -m pip install --quiet \
+            faster-whisper \
+            "torch==2.*" --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install --quiet transformers librosa soundfile
+
+      - name: Ouvir
+        id: ouvir
+        run: |
+          set -o pipefail
+          MEDIR=""
+          [ "${{ inputs.medir }}" = "sim" ] && MEDIR="--medir"
+          SO=""
+          [ "${{ inputs.so }}" != "0" ] && SO="--so ${{ inputs.so }}"
+          CODIGO=0
+          IFS=',' read -ra PASTAS <<< "${{ inputs.alvos }}"
+          for P in "${PASTAS[@]}"; do
+            P="$(echo "$P" | xargs)"
+            [ -d "$P" ] || { echo "::warning::pasta $P nao existe"; continue; }
+
+            if [ "${{ inputs.so_silabas }}" != "sim" ]; then
+              echo "::group::$P — as falas inteiras"
+              python3 _qa/ouvir.py "$P" --modelo "${{ inputs.modelo_frase }}" \
+                --limite "${{ inputs.limite_frase }}" $MEDIR $SO || CODIGO=1
+              echo "::endgroup::"
             fi
+
+            echo "::group::$P — os recortes de silaba"
+            python3 _qa/ouvir_silaba.py "$P" \
+              --limite "${{ inputs.limite_silaba }}" $MEDIR $SO || CODIGO=1
+            echo "::endgroup::"
           done
-          if [ "$FALHOU" != "0" ]; then
-            echo "::error::O PORTAO DA PRONUNCIA REPROVOU. Conserte no _FONETICA_VOZ do montador e rode de novo."
-            exit 1
+          echo "codigo=$CODIGO" >> "$GITHUB_OUTPUT"
+
+      - name: Resumo para quem so le o final
+        if: always()
+        run: |
+          {
+            echo "## O ouvido — $(date -u +%Y-%m-%d\ %H:%MZ)"
+            echo ""
+            echo "Modelo de frase: \`${{ inputs.modelo_frase }}\` · modo: \`${{ inputs.medir }}\`"
+            echo ""
+            for F in _qa/_ouvido/*.md; do
+              [ -f "$F" ] || continue
+              echo "### $(basename "$F" .md)"
+              head -40 "$F"
+              echo ""
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commitar o relatorio
+        if: always()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A _qa/_ouvido || true
+          if git diff --cached --quiet; then
+            echo "nada novo no relatorio"
+          else
+            # ⚠️ sem a marca [entregar ...]: este commit NAO pode acordar o
+            #    entregar.yml, senao uma escuta vira uma publicacao.
+            git commit -m "ouvido: relatorio da escuta dos mp3"
+            for i in 1 2 3 4; do
+              git push && break || sleep $((2 ** i))
+            done
           fi
-          echo "✅ a voz diz o que esta escrito"
+
+      - name: Reprovar se houve mp3 dizendo outra coisa
+        if: ${{ inputs.medir != 'sim' }}
+        run: |
+          [ "${{ steps.ouvir.outputs.codigo }}" = "0" ] || {
+            echo "::error::ha mp3 que nao diz o que esta escrito — ver _qa/_ouvido/"
+            exit 1
+          }
