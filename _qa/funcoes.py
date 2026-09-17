@@ -25,6 +25,23 @@ if not arq:
     sys.exit(2)
 
 html = open(arq, encoding="utf-8").read()
+
+# ⚠️⚠️ FORA O BASE64 ANTES DE QUALQUER COISA (set/2026, o `_trem` reprovava).
+#    A figura e o som viajam dentro do HTML como `data:image/png;base64,iVBOR...`
+#    — dezenas de milhares de letras ao acaso. Nesse lixo aparece de tudo, e
+#    apareceu: o portao acusou `mv()` e `up()` como "funcao chamada que nao
+#    existe" porque as tres letras `mv(` caem por sorte no meio de um PNG
+#    codificado. Ele dizia "estoura na mao da crianca" e apontava "linha 0" —
+#    a linha 0 era o proprio sinal de que nao havia chamada nenhuma.
+#    Portao que grita lobo por causa de base64 e portao que ninguem le mais.
+#    ⚠️ E NAO BASTA PROCURAR `data:...;base64,`: no `_trem` o som esta guardado
+#       como string CRUA (`var SOM={ping:"UklGRiQ..."}`), sem prefixo nenhum.
+#       Entao a regra e pela FORMA: literal longo (200+) so com o alfabeto do
+#       base64 e dado, nunca codigo. Nenhuma linha de JS de verdade e assim.
+html = re.sub(r"data:[^;,\"')\s]*;base64,[A-Za-z0-9+/=\s]+", "data:,", html)
+html = re.sub(r"\"[A-Za-z0-9+/=]{200,}\"", '""', html)
+html = re.sub(r"'[A-Za-z0-9+/=]{200,}'", "''", html)
+
 js = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
 
 # ⚠️ O JS DE FORA TAMBEM CONTA (set/2026, os cadernos de "folha viva").
@@ -129,6 +146,25 @@ declara |= set(re.findall(r"^\s*function\s+([A-Za-z_$][\w$]*)\s*\(",
 declara |= set(re.findall(r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*function", js))
 # var a=1,b=2 — qualquer var pode guardar função vinda de fora
 declara |= set(re.findall(r"(?:var|let|const)\s+([A-Za-z_$][\w$]*)", js))
+# ⚠️⚠️ ...MAS SO O PRIMEIRO NOME DA LISTA (set/2026, o `_trem` reprovava).
+#    `var mx=0,my=0,arr=false,mv=null,up=null;` declarava CINCO e o portao via
+#    um. Depois o codigo faz `mv=function(e){...}` e entrega em
+#    `addEventListener("mousemove",mv)` — o portao contava a entrega como
+#    chamada (e esta certo) e nao achava a declaracao, entao acusava
+#    "mv() nao existe, estoura na mao da crianca". Nao estoura: e o arrastar
+#    com mouse, que funciona. O padrao e o da casa inteira (o guarda do toque
+#    fantasma), entao o portao reprovaria toda atividade que arrasta.
+#    Duas leituras a mais, as duas so ACRESCENTAM nome — so podem apagar
+#    acusacao falsa, nunca esconder uma de verdade:
+#      1. os OUTROS nomes da mesma lista de `var`;
+#      2. o nome que RECEBE uma funcao (`mv=function(`), com ou sem `var`.
+for _lista in re.findall(r"(?:var|let|const)\s+([^;\n]{0,400})", js):
+    for _p in _lista.split(","):
+        _m = re.match(r"\s*([A-Za-z_$][\w$]*)\s*(?:=|$)", _p)
+        if _m:
+            declara.add(_m.group(1))
+declara |= set(re.findall(r"(?<![\w$.])([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?"
+                          r"(?:function\s*\(|\([^)]*\)\s*=>)", js))
 # parâmetros de função (um callback chamado dentro dela)
 for p in re.findall(r"function[^(]*\(([^)]*)\)", js):
     declara |= set(x.strip() for x in p.split(",") if x.strip())

@@ -871,7 +871,12 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-bater-silabas .bsBatida.eco{background:#f6c23a;-webkit-transform:scale(1.18);transform:scale(1.18)}
 
-.mec-bater-silabas .bsVazio{font-size:15px;color:var(--texto,#e6dcc9);opacity:.8;font-weight:600}
+/* ⚠️ TINTA CRAVADA, nao herdada (portao 4c): esta peca pinta o proprio fundo,
+   entao a cor da letra e dela — o token `--texto` e a tinta do fundo DA
+   ATIVIDADE, e quem tem fundo proprio tem de trazer a tinta propria. Aqui e a
+   mesma tinta clara da regra do `.pecabox` logo acima, que ja fecha contraste
+   sobre o `rgba(38,28,20,.78)`. */
+.mec-bater-silabas .bsVazio{font-size:15px;color:#fdf7ec;opacity:.8;font-weight:600}
 
 .mec-bater-silabas .bsBater{display:block;width:200px;max-width:86%;min-height:86px;margin:6px auto 0; border:0;border-radius:26px;background:#e8734a;color:#fff;font-size:24px;font-weight:800; letter-spacing:1px;cursor:pointer;-webkit-box-shadow:0 6px 0 #a94f31;box-shadow:0 6px 0 #a94f31}
 

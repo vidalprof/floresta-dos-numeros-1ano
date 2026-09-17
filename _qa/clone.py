@@ -283,10 +283,21 @@ if meu:
             _casa += io.open(_arq, encoding="utf-8", errors="replace").read()
         except Exception:
             pass
+    # ⚠️⚠️ `sb_<SILABA>` E CHAVE DA CASA, NAO PREFIXO ALHEIO (set/2026).
+    #    O `_alfa1` reprovava por causa de `"sb_BA": "ba."` — a chave da fala de
+    #    reserva de uma SILABA, que toda atividade que fala silaba tem. A
+    #    coincidencia e infeliz: a atividade `_subst5` tem prefixo `sb_`, entao
+    #    o item 8 lia `sb_BA` como "marca do _subst5 vazando para ca". Nao e: o
+    #    recorte de verdade se chama `<prefixo>sb_<palavra>_<i>` e ja carrega o
+    #    prefixo desta atividade na frente. O que distingue e a forma — depois
+    #    de `sb_` vem a SILABA em MAIUSCULAS, nunca um nome de peca.
+    _chave_silaba = re.compile(r"^sb_[A-ZÃÁÂÀÉÊÍÓÔÕÚÇ]+$")
     for pf, dona in sorted(alheios.items()):
         # so conta se aparecer como NOME de arquivo/identificador, nao dentro de palavra
         for m in re.finditer(r"[\"'/(]\s*(%s\w+)" % re.escape(pf), html):
             if m.group(1) in _portoes or html[max(0, m.start() - 3):m.start()] == "_qa":
+                continue
+            if _chave_silaba.match(m.group(1)):
                 continue
             if _casa and m.group(1) in _casa:
                 continue
