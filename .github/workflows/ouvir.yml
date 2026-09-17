@@ -175,9 +175,24 @@ jobs:
             # ⚠️ sem a marca [entregar ...]: este commit NAO pode acordar o
             #    entregar.yml, senao uma escuta vira uma publicacao.
             git commit -m "ouvido: relatorio da escuta dos mp3"
-            for i in 1 2 3 4; do
-              git push && break || sleep $((2 ** i))
-            done
+          # ⚠️⚠️ EMPURRAR DE VERDADE, E RECLAMAR SE NAO CONSEGUIR (17/set/2026).
+          #    Esta corrida durou 76 MINUTOS de Whisper e o relatorio foi
+          #    PERDIDO: eu continuei commitando na branch enquanto ela rodava, o
+          #    push foi rejeitado por "fetch first" quatro vezes, o laco acabou
+          #    e o passo terminou "success". Setenta e seis minutos no lixo, sem
+          #    uma linha vermelha em lugar nenhum.
+          #    Agora: rebase antes de cada tentativa, e ERRO se nenhuma passar.
+          BR="${GITHUB_REF_NAME}"
+          ok=0
+          for i in 1 2 3 4 5; do
+            git pull --rebase --autostash origin "$BR" || true
+            if git push origin "HEAD:$BR"; then ok=1; break; fi
+            sleep $((2 ** i))
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::nao consegui empurrar o relatorio — o trabalho seria perdido em silencio"
+            exit 1
+          fi
           fi
 
       - name: Reprovar se houve mp3 dizendo outra coisa
