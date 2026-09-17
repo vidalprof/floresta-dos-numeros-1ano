@@ -1,5 +1,8 @@
-[0;93m2026-09-17 18:29:55.053334872 [W:onnxruntime:Default, device_discovery.cc:146 GetPciBusId] Skipping pci_bus_id for PCI path at "/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171" because filename "5620e0c7-8062-4dce-aeb7-520c7ef76171" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+[m
-   alinhador forcado indisponivel (cannot import name 'load_alignment_model' from 'ctc_forced_aligner' (/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/ctc_forced_aligner/__init__.py)) — caindo para o silencio
-   bola: sairam 0 de 2 recortes
-   cavalo: sairam 0 de 3 recortes
-   escola: sairam 0 de 3 recortes
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/423 [00:00<?, ?it/s]Loading weights:  82%|████████▏ | 348/423 [00:00<00:00, 3471.96it/s]Loading weights: 100%|██████████| 423/423 [00:00<00:00, 3560.10it/s]
+/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/site-packages/ctc_forced_aligner/alignment_utils.py:133: UserWarning: The given buffer is not writable, and PyTorch does not support non-writable tensors. This means you can write to the underlying (supposedly non-writable) buffer using the tensor. You may want to copy the buffer to protect its data or make it writable before converting it to a tensor. This type of warning will be suppressed for the rest of this program. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/utils/tensor_new.cpp:1556.)
+  return torch.frombuffer(out, dtype=torch.int16).flatten().to(dtype).to(device) / 32768.0
+   alinhador forcado: carregado (palavra inteira -> silaba)
+   BOLA: 2 recortes (sem contraste guardado)
+   CAVALO: 3 recortes (sem contraste guardado)
+   ESCOLA: 3 recortes (sem contraste guardado)
