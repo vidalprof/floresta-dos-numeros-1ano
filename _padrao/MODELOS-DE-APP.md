@@ -99,3 +99,28 @@ O Marcos escolhe **quais** cascas (todas ou algumas) e **em qual atividade** cad
 estreia. Sugestão de estreia: Conversa na Padaria (1º), Trilha no Trem (1º), Cartas na
 Oficina das Palavras (4º), Show na Gincana da Divisão (5º), Livro na Revista (5º),
 Bancada na Feirinha (2º).
+
+---
+
+## ⛔ A CASCA "CONVERSA" FOI REPROVADA NA ESTREIA (17/set/2026)
+
+**Palavras do Marcos:** *"reverta as últimas alterações na atividade A Padaria
+das Letras, pois ela está ruim agora"*.
+
+Eu estreei a casca Conversa **na Padaria**, que é uma atividade que ele usa em
+sala — e ela piorou. Revertida: `_padaria/` voltou ao estado de `3d334975`, sem
+o campo `"casca"`, e foi republicada.
+
+**A regra que eu tinha e não cumpri**, e ela está escrita no `CLAUDE.md`:
+> *cada casca só entra no catálogo depois da cobaia + banca numa atividade real;
+> **o Marcos escolhe quais e onde**.*
+
+Eu escolhi por ele, e escolhi justamente uma atividade viva. **Casca nova
+estreia em atividade NOVA ou numa cópia de prova — nunca por cima de uma que a
+turma já usa.** Se a casca for boa, ele pede; se eu achar que é boa, eu mostro
+antes, num link separado.
+
+Os quatro commits da estreia (`b7643540`, `2e2dcaab`, `a94802fc`, `af9b8970`)
+ficam no histórico: o código da casca continua no motor, apenas nenhuma
+atividade o liga. Quando ele quiser ver, é `"casca": "conversa"` no
+`conteudo.json` de uma cópia.
