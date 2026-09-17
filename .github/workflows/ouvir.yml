@@ -102,10 +102,22 @@ jobs:
       - name: Instalar o reconhecedor
         run: |
           python -m pip install --quiet --upgrade pip
-          python -m pip install --quiet \
-            faster-whisper \
-            "torch==2.*" --index-url https://download.pytorch.org/whl/cpu
+          # ⚠️ LICAO PAGA NA ESTREIA (17/set/2026): o `--index-url` vale para a
+          #    LINHA INTEIRA, nao so para o pacote ao lado dele. Juntar o torch
+          #    com o faster-whisper numa linha so fez o pip procurar OS DOIS no
+          #    indice do PyTorch, e o faster-whisper nao mora la:
+          #      ERROR: Could not find a version that satisfies the requirement
+          #      faster-whisper (from versions: none)
+          #    Uma linha por indice, sempre.
+          python -m pip install --quiet "torch==2.*" \
+            --index-url https://download.pytorch.org/whl/cpu
           python -m pip install --quiet transformers librosa soundfile
+          # o reconhecedor de FRASE so e baixado quando ha frase para ouvir —
+          # numa rodada so de silaba ele seria 200 MB de download a toa.
+          if [ "${{ inputs.so_silabas }}" != "sim" ]; then
+            python -m pip install --quiet faster-whisper
+          fi
+          mkdir -p _qa/_ouvido
 
       - name: Ouvir
         id: ouvir
