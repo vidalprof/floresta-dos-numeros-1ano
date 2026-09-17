@@ -163,13 +163,46 @@ def confere(pasta, medir=False):
     med = picos[len(picos) // 2]
     mudos = [x for x in dados if x[u"pico"] < med * FRACO]
     tardios = [x for x in dados if x[u"frente"] >= SILENCIO_MS]
-    duplos = []
+    # ⚠️⚠️ DUAS REGUAS TEM DE CONCORDAR PARA REPROVAR POR "DUAS VOGAIS" —
+    #    aferido em 17/set/2026, nos 882 recortes JA normalizados.
+    #    O pico de energia NAO distingue uma segunda vogal de uma consoante
+    #    LIQUIDA (o /l/ de LU, o /r/ de BRI e GRA): as duas sao sonoras e as
+    #    duas enchem a banda de 250 a 3000 Hz. Medi a distancia entre o pico
+    #    principal e o segundo, e as duas populacoes se SOBREPOEM inteiras:
+    #
+    #        silabas de liquida    BRI 0,3 · LU 1,1 · LU 1,1 · GRA 2,4 dB
+    #        PEDACOS de 2 vogais   CARROÇA 0,6 · CAMALEÃO 1,3 · CASACO 2,3 dB
+    #
+    #    Nao existe limiar nesta medida que separe os dois. Baixar a margem
+    #    para aprovar o LU aprovaria junto o corte que engoliu a silaba
+    #    vizinha — portao que aprova por causa do proprio erro.
+    #
+    #    ⭐ ENTAO A SEGUNDA REGUA E A DURACAO, que e ortogonal: a voz que
+    #    SOLETRA faz DUAS emissoes onde cabia uma e leva o DOBRO do tempo
+    #    (medido: 1,22 s onde a silaba falada cabe em 0,32 s). A liquida nao
+    #    alonga nada. Entao dois nucleos so REPROVAM quando a duracao tambem
+    #    acusa; sozinhos, viram AVISO com o nome da armadilha.
+    #    ⚠️ ZERO nucleo continua reprovando na hora: recorte sem vogal e
+    #       recorte que perdeu a voz, e a duracao nao diz nada sobre isso.
+    porTam = {}
+    for x in dados:
+        porTam.setdefault(len(x[u"s"]), []).append(x[u"dur"])
+    duplos, suspeitos = [], []
     for x in dados:
         if x[u"w"].upper() in ok_dec or x[u"w"] in ok_dec:
             continue
         k = _nucleos(x[u"db"], np)
-        if k != 1:
+        if k == 1:
+            continue
+        if k == 0:
             duplos.append((x, k))
+            continue
+        iguais = sorted(porTam.get(len(x[u"s"]), []))
+        base = iguais[len(iguais) // 2] if len(iguais) >= 4 else 0.0
+        if base > 0 and x[u"dur"] > base * 1.7:
+            duplos.append((x, k))
+        else:
+            suspeitos.append((x, k, base))
 
     L = [u"   %d recorte(s) medidos · pico mediano %.3f" % (len(dados), med)]
     ruim = 0
@@ -204,11 +237,20 @@ def confere(pasta, medir=False):
         for x, k in duplos[:10]:
             L.append(u"      • %-11s silaba %d de %d: %-6s %d nucleo(s)"
                      % (x[u"w"].upper(), x[u"i"] + 1, x[u"n"], x[u"s"], k))
-        L.append(u"   conserto: dois nucleos = o corte engoliu a vizinha; zero = "
-                 u"perdeu a vogal. Se for PEDACO de exercicio, declare em "
-                 u"%s/silabas-ok.json." % pasta)
+        L.append(u"   conserto: dois nucleos COM duracao dobrada = a voz soletrou "
+                 u"ou o corte engoliu a vizinha; zero = perdeu a vogal. Se for "
+                 u"PEDACO de exercicio, declare em %s/silabas-ok.json." % pasta)
     else:
-        L.append(u"   ✓ cada recorte tem exatamente uma vogal")
+        L.append(u"   ✓ cada recorte tem uma vogal (ou a duracao garante que o "
+                 u"segundo pico e consoante)")
+    if suspeitos:
+        L.append(u"   aviso: %d recorte(s) com segundo pico de energia, mas com "
+                 u"duracao NORMAL — e a consoante liquida (l, r), nao uma "
+                 u"segunda vogal:" % len(suspeitos))
+        for x, k, base in suspeitos[:8]:
+            L.append(u"      • %-11s silaba %d de %d: %-6s %d picos, %.0f ms "
+                     u"(mediana %.0f)" % (x[u"w"].upper(), x[u"i"] + 1, x[u"n"],
+                                          x[u"s"], k, x[u"dur"], base))
     if medir:
         L.append(u"   MODO --medir: nao reprovo.")
         return 0, L

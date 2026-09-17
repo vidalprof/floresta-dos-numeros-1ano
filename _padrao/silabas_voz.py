@@ -457,9 +457,28 @@ def conta_nucleos(caminho_mp3):
 #    7,7x e o pico DEPOIS fica em 0,54 de 1,0 -- nao estoura em nenhum dos 882.
 #    ⚠️ Isto muda o pedaco TOCADO SOZINHO, nunca a gravacao da palavra inteira,
 #       que continua com a prosodia natural.
+#
+# ⚠️⚠️⚠️ E SAO DOIS PASSOS, NAO UM — licao paga em 17/set/2026, e eu tinha
+#    ANUNCIADO o conserto sem ter medido o resultado.
+#    Na primeira versao o `loudnorm` vinha no MESMO comando do corte, junto com
+#    o `-ss`. Com o `-ss` DEPOIS do `-i`, o ffmpeg manda a PALAVRA INTEIRA pelo
+#    filtro e so descarta o que esta fora da janela no fim — ou seja, o
+#    `loudnorm` media e normalizava a PALAVRA, e a silaba final continuava tao
+#    fraca quanto era. Medido, com uma "palavra" montada de proposito (SA forte
+#    + PO quase mudo):
+#
+#        pecas soltas                         SA 0,2762   PO 0,0304
+#        um passo so (-ss depois do -i)       PO -> 0,0308   <- nao fez NADA
+#        -ss antes do -i                      PO -> 0,3013
+#        DOIS PASSOS (corta, depois normaliza) PO -> 0,2932
+#
+#    Por isso o portao 1x ainda achava CEM recortes quase mudos DEPOIS do
+#    "conserto": ele nunca tinha acontecido. Agora o corte sai num comando e a
+#    normalizacao vem num segundo, sobre o pedaco JA SOZINHO — que e a unica
+#    forma de o alvo da medida ser o pedaco.
 FILTRO_CORTE = ("areverse,silenceremove=start_periods=1:"
-                "start_silence=0.03:start_threshold=-42dB,areverse,"
-                "loudnorm=I=-16:TP=-1.5:LRA=11")
+                "start_silence=0.03:start_threshold=-42dB,areverse")
+FILTRO_FORCA = "loudnorm=I=-16:TP=-1.5:LRA=11"
 
 
 def _recorta(ff, inteiro, silabas, pasta_audio, prefixo, palavra, corrida):
@@ -487,13 +506,32 @@ def _recorta(ff, inteiro, silabas, pasta_audio, prefixo, palavra, corrida):
         ini, dur = cortes[i]
         saida = os.path.join(pasta_audio, "%ssb_%s_%d.mp3"
                              % (prefixo, arquivo_da_palavra(palavra), i))
+        cru = saida[:-4] + "_cru.mp3"
         p = subprocess.Popen(
             [ff, "-y", "-loglevel", "error", "-i", inteiro,
              "-ss", "%.3f" % ini, "-t", "%.3f" % dur,
              "-af", FILTRO_CORTE,
-             "-c:a", "libmp3lame", "-q:a", "5", saida],
+             "-c:a", "libmp3lame", "-q:a", "5", cru],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         _, err = p.communicate()
+        if os.path.exists(cru) and os.path.getsize(cru) > 300:
+            # ⭐ 2º PASSO: a forca se iguala com o pedaco JA SOZINHO. Ver o
+            #   bloco do `FILTRO_FORCA`: no mesmo comando do corte isto nao
+            #   fazia nada, porque o filtro recebia a palavra inteira.
+            q = subprocess.Popen(
+                [ff, "-y", "-loglevel", "error", "-i", cru,
+                 "-af", FILTRO_FORCA, "-c:a", "libmp3lame", "-q:a", "5", saida],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            _, err2 = q.communicate()
+            if not (os.path.exists(saida) and os.path.getsize(saida) > 300):
+                os.rename(cru, saida)          # sem a forca, mas com o corte
+                MOTIVOS.append(u"%s: nao consegui igualar a forca da silaba %d"
+                               % (palavra, i))
+            else:
+                try:
+                    os.remove(cru)
+                except OSError:
+                    pass
         if os.path.exists(saida) and os.path.getsize(saida) > 300:
             feitos.append(saida)
         elif i == 0:
@@ -571,7 +609,17 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
                                       u"inteira, que e a fonte segura)"))
                         escolhido = (nome_cam, len(feitos))
                         break
-                    ruins = len([n for n in nn if n != 1])
+                    # ⚠️ DOIS PICOS SOZINHOS NAO CONDENAM: a consoante LIQUIDA
+                    #    (o /l/ de LU, o /r/ de BRI e GRA) e sonora e faz pico
+                    #    igual. Aferido em 17/set nos 882 recortes: a distancia
+                    #    entre os picos NAO separa a liquida de uma segunda
+                    #    vogal — as duas populacoes se sobrepoem inteiras. Quem
+                    #    separa e a DURACAO, porque soletrar faz duas emissoes
+                    #    e leva o dobro. Mesma regra do portao 1x.
+                    durs = [_duracao(ff, f) for f in feitos]
+                    med = sorted(durs)[len(durs) // 2] if durs else 0.0
+                    ruins = len([1 for n, d in zip(nn, durs)
+                                 if n == 0 or (n >= 2 and med > 0 and d > med * 1.7)])
                     if ruins == 0:
                         CONFERIDAS.append((palavra, nome_cam, len(feitos)))
                         escolhido = (nome_cam, len(feitos))

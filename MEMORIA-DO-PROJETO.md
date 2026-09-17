@@ -7726,6 +7726,56 @@ régua nova, perguntar o que ela mediria num caso **sabidamente bom** — se eu
 tivesse rodado a contagem de pedaços na gravação que já estava aprovada e no ar,
 ela teria dito "1 de 3" e eu teria visto na hora.
 
+### E logo atrás vinha um erro maior: **o `loudnorm` nunca tinha agido**
+
+Com a fonte consertada, rodei o portão 1x no áudio novo e ele achou **CEM
+recortes quase mudos** — o defeito que eu tinha **anunciado como resolvido** de
+manhã. Eu havia posto o `loudnorm` no comando do corte e **nunca medi o
+resultado**. Medindo (com uma "palavra" montada de propósito, SA forte + PO quase
+mudo):
+
+| como | pico do PO |
+|---|---|
+| peças soltas | SA 0,2762 · **PO 0,0304** |
+| a esteira de hoje (`-ss` **depois** do `-i`, um passo só) | **0,0308** ← não fez nada |
+| `-ss` antes do `-i` | 0,3013 |
+| **dois passos: corta, depois normaliza o pedaço** | **0,2932** |
+
+**Por quê:** com o `-ss` do lado da saída, o ffmpeg manda a **palavra inteira**
+pelo filtro e só descarta o que está fora da janela no fim. O `loudnorm` media e
+normalizava a PALAVRA — e a sílaba final átona continuava tão fraca quanto era.
+Agora o corte sai num comando e a força se iguala num segundo, sobre o pedaço já
+sozinho. Aferido depois: **zero recortes mudos nos 882**.
+
+⚠️ **A regra que isto escreve:** *filtro de ffmpeg no mesmo comando de um `-ss`
+de saída não enxerga o recorte — enxerga a mídia inteira.* E a regra pessoal:
+**não anunciar conserto sem medir o depois.**
+
+### A terceira: uma régua que não distingue, não se afrouxa
+
+Sobraram 4 recortes com "duas vogais": `LU` (×2), `BRI`, `GRA` — todos com
+**consoante líquida** (/l/, /r/), que é sonora e enche a mesma banda da vogal.
+Aferi a distância entre o pico principal e o segundo nos 882 recortes já
+normalizados, usando os **pedaços declarados** (CENOU+RA, CARRO+ÇA) como controle
+positivo: **as duas populações se sobrepõem inteiras** (líquidas 0,3–2,4 dB ·
+pedaços de duas vogais 0,6–2,3 dB). **Não existe limiar nessa medida que separe
+os dois** — baixar a margem para aprovar o LU aprovaria junto o corte que engoliu
+a sílaba vizinha.
+
+**Então entra uma segunda régua, ortogonal: a DURAÇÃO.** Soletrar faz duas
+emissões e leva o dobro do tempo; a líquida não alonga nada. Dois núcleos só
+reprovam **quando a duração também acusa**; sozinhos, viram aviso com o nome da
+armadilha. **Zero** núcleo continua reprovando na hora, porque aí a duração não
+diz nada.
+
+### E o buraco de onde tudo isso saiu: os portões não alcançavam o áudio
+
+Os portões 1x e 1y só rodavam no `previo.sh` e na `auditar_folha.sh` — **que
+correm ANTES da entrega, quando os recortes ainda não existem** (eles nascem
+dentro do `entregar.yml`, no passo da voz). A única régua que alcançava o áudio
+recém-gravado era a de duração. Ela salvou a entrega sozinha naquela manhã; não
+podia continuar sozinha. **As três agora rodam dentro do `entregar.yml`.**
+
 ## 🗣️⭐ A SÍLABA SAI DA PALAVRA INTEIRA, POR ALINHAMENTO FORÇADO (10/set/2026)
 
 **Isto encerra a família "sílaba mal pronunciada", que custou três rodadas e o

@@ -514,14 +514,26 @@ jobs:
           #    No runner o ffmpeg existe, entao na pratica sai 0 ou 1; mas
           #    portao que trata "nao medi" como "reprovou" ja travou publicacao
           #    nesta casa duas vezes no mesmo dia. Nao se repete.
+          # ⚠️⚠️ AS TRES REGUAS, E ELAS TEM DE RODAR AQUI (buraco tapado em
+          #    17/set/2026). Os portoes 1x e 1y existiam desde de manha, mas so
+          #    no `previo.sh` e na `auditar_folha.sh` — que rodam ANTES da
+          #    entrega, quando os recortes AINDA NAO EXISTEM (eles nascem neste
+          #    workflow, no passo da voz). Ou seja: a unica regua que alcancava
+          #    o audio recem-gravado era a de duracao. Ela salvou a entrega
+          #    naquela manha, sozinha; nao pode continuar sozinha.
+          #      1z duracao  (`silabas.py`)        -> a voz SOLETROU
+          #      1x fisica   (`silaba_audio.py`)   -> recorte mudo / torto / 2 vogais
+          #      1y recibo   (`silaba_conferida.py`) -> a gravacao se conferiu?
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"; [ -d "$pasta" ] || continue
-            rc=0; if python3 _qa/silabas.py "$pasta"; then rc=0; else rc=$?; fi
-            if [ "$rc" = "1" ]; then ruim=1
-            elif [ "$rc" != "0" ]; then echo "::warning::$pasta: silabas — nao consegui medir (codigo $rc)"; fi
+            for reg in _qa/silabas.py _qa/silaba_audio.py _qa/silaba_conferida.py; do
+              rc=0; if python3 "$reg" "$pasta"; then rc=0; else rc=$?; fi
+              if [ "$rc" = "1" ]; then ruim=1
+              elif [ "$rc" != "0" ]; then echo "::warning::$pasta: $reg — nao consegui medir (codigo $rc)"; fi
+            done
           done
           if [ "$ruim" = "1" ]; then
-            echo "::error::silaba falada sem recorte — a entrega PARA aqui."
+            echo "::error::silaba falada sem recorte ou sem conferencia — a entrega PARA aqui."
             exit 1
           fi
 
