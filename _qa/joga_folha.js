@@ -212,6 +212,24 @@ function montaPlano(id) {
   const cxEsc = qa.filter(e => e.getAttribute('data-qa') === 'esc-' + id)[0];
   if (cxEsc) return { tipo: 'digitar', alvo: 'esc-' + id, texto: certo, fe: 'alta' };
 
+  /* ⭐ BATER PALMA: a folha de CONTAR SÍLABAS publica `bater-<id>` e
+     `pronto-<id>`, e a resposta declarada é um NÚMERO (quantas sílabas).
+     ⚠️ SEM ISTO O JOGADOR REPROVAVA UMA FOLHA BOA — medido em 17/set/2026,
+        `_alfa1` folha 3 ("Quantas sílabas?"): 11 de 11 "não fecharam". A folha
+        estava certa; a régua é que não conhecia a peça, e o pior é que ela não
+        dizia "não medi" — dizia REPROVADO. Régua que acusa o que não entende é
+        pior que régua que se cala, porque manda consertar o que não está
+        quebrado. É a mesma lição da fileira de letras (16/set): a peça estava
+        certa, a régua era larga demais. */
+  const bat = qa.filter(e => e.getAttribute('data-qa') === 'bater-' + id)[0];
+  const prt = qa.filter(e => e.getAttribute('data-qa') === 'pronto-' + id)[0];
+  if (bat && prt) {
+    const quantas = parseInt(certo, 10);
+    if (quantas > 0 && quantas < 12)
+      return { tipo: 'palmas', alvo: 'bater-' + id, fecha: 'pronto-' + id,
+               vezes: quantas, fe: 'alta' };
+  }
+
   /* o canvas: a folha de TRAÇAR publica `traca-<id>` */
   const cv = qa.filter(e => e.getAttribute('data-qa') === 'traca-' + id)[0];
   if (cv) return { tipo: 'tracar', alvo: 'traca-' + id, fe: 'alta' };
@@ -418,6 +436,24 @@ async function executa(pg, id, plano) {
     }
     return;
   }
+  if (plano.tipo === 'palmas') {
+    /* bate uma palma por sílaba e depois confirma — é o gesto da criança */
+    for (let n = 0; n < plano.vezes; n++) {
+      await pg.evaluate(v => {
+        const e = document.querySelector('[data-qa="' + v + '"]');
+        if (e) { e.scrollIntoView({ block: 'center' }); e.click(); }
+      }, plano.alvo);
+      await pg.waitForTimeout(90);
+    }
+    await pg.waitForTimeout(160);
+    await pg.evaluate(v => {
+      const e = document.querySelector('[data-qa="' + v + '"]');
+      if (e) e.click();
+    }, plano.fecha);
+    await pg.waitForTimeout(260);
+    return;
+  }
+
   if (plano.tipo === 'digitar') {
     await pg.evaluate(v => {
       const e = document.querySelector('[data-qa="' + v + '"]');
