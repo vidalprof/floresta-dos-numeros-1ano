@@ -1,0 +1,57 @@
+name: Exemplo de silaba para o Marcos ouvir
+
+# 🔊 PEDIDO DO MARCOS (17/set/2026): *"então faça um exemplo para eu ver, uma
+#    palavra toda, e ela dividida em sílaba"*.
+#
+# ⚠️ Roda por PUSH num arquivo-gatilho, nao por `workflow_dispatch`: workflow que
+#    so existe fora do ramo padrao devolve 404 no dispatch. Acionar tocando em
+#    `_pesquisa/PEDIR-EXEMPLO`.
+
+on:
+  push:
+    paths:
+      - "_pesquisa/PEDIR-EXEMPLO"
+
+permissions:
+  contents: write
+
+jobs:
+  exemplo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # ⚠️ UMA LINHA POR INDICE (o `--index-url` vale para a linha inteira).
+      - name: Instalar
+        run: |
+          python -m pip install -q --upgrade pip
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q edge-tts imageio-ffmpeg librosa soundfile numpy
+          python -m pip install -q ctc-forced-aligner || \
+            python -m pip install -q git+https://github.com/MahmoudAshraf97/ctc-forced-aligner.git
+
+      # ⚠️ SEM `continue-on-error` E SEM `2>/dev/null`: este passo ja falhou em
+      #    silencio uma vez e o defeito durou semanas.
+      - name: Gravar o exemplo com a esteira de verdade
+        run: |
+          set -o pipefail
+          python3 _padrao/exemplo_silaba.py 2>&1 | tee _pesquisa/exemplo-silaba.txt
+
+      - name: Guardar
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A _pesquisa/exemplo-silaba _pesquisa/exemplo-silaba.txt || true
+          git commit -q -m "exemplo: a palavra inteira e ela dividida em silabas" || exit 0
+          for t in 1 2 4 8 16; do
+            git pull -q --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then exit 0; fi
+            sleep "$t"
+          done
+          echo "::error::nao consegui empurrar o exemplo"
+          exit 1
