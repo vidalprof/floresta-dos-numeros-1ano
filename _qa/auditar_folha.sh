@@ -71,6 +71,7 @@ PORTOES=(
   "1u elemento que nao existe|python3 _qa/elemento.py $PASTA"
   "1v global atropelado|python3 _qa/global_atropelado.py $PASTA"
   "1w silaba x dicionario pt_BR|python3 _qa/silaba_dicionario.py $PASTA"
+  "1x som da silaba (o recorte tem voz?)|python3 _qa/silaba_audio.py $PASTA"
   # ⭐ 1t) o teclado tem TODAS as letras? Faltavam K, W, Y e sete acentos, e a
   #     crianca que tentava escrever PÊSSEGO ficava com "PSSEGO" — a folha nunca
   #     fechava, e sem erro nenhum na tela (medido em 15/set/2026).

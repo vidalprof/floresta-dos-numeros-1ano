@@ -376,8 +376,28 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
                     p = subprocess.Popen(
                         [ff, "-y", "-loglevel", "error", "-i", inteiro,
                          "-ss", "%.3f" % ini, "-t", "%.3f" % dur,
+                         # ⭐⭐ E IGUALAR A FORCA DE CADA PEDACO (17/set/2026).
+                         #    O DEFEITO, medido em 882 recortes de oito cadernos:
+                         #    35 saiam QUASE MUDOS -- pico de energia abaixo de um
+                         #    quarto dos vizinhos --, e quase todos eram a SILABA
+                         #    FINAL da palavra: o PO de SAPO (0,022 contra 0,180 de
+                         #    mediana), o TO de GATO, o CO de MACACO, o VO de BRAVO.
+                         #    A razao e da lingua, nao do corte: no portugues do
+                         #    Brasil a silaba final atona e dita quase sem voz --
+                         #    "sapo" sai [ˈsapʊ]. Dentro da palavra ninguem nota;
+                         #    recortada e tocada SOZINHA, a crianca toca no PO e
+                         #    praticamente nao ouve nada. Numa folha de
+                         #    alfabetizacao isso e grave: ela escolhe pelo desenho.
+                         #    `loudnorm` poe todos os pedacos na mesma altura
+                         #    percebida (EBU R128). Medido antes de entrar: o
+                         #    ganho necessario chega a 7,7x e o pico DEPOIS fica em
+                         #    0,54 de 1,0 -- nao estoura em nenhum dos 882.
+                         #    ⚠️ Isto muda o pedaco TOCADO SOZINHO, nunca a
+                         #       gravacao da palavra inteira, que continua com a
+                         #       prosodia natural.
                          "-af", ("areverse,silenceremove=start_periods=1:"
-                                 "start_silence=0.03:start_threshold=-42dB,areverse"),
+                                 "start_silence=0.03:start_threshold=-42dB,areverse,"
+                                 "loudnorm=I=-16:TP=-1.5:LRA=11"),
                          "-c:a", "libmp3lame", "-q:a", "5", saida],
                         stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                     _, err = p.communicate()
