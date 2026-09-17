@@ -780,6 +780,10 @@ function f9(d, pi){
         q.id = id; q.setAttribute("role", "button"); q.setAttribute("tabindex", "0");
         q.setAttribute("data-qa", "vaga-" + id);
         q.setAttribute("aria-label", "Escreva a sílaba que falta em " + esc(it.p));
+        /* ⌨️ o ROTULO que o jogador da banca procura. Sem ele a folha de
+           DIGITAR nunca foi medida (17/set/2026): ele dizia "nao conheco a
+           peca" e seguia em frente, e "nao medi" nao e "passou". */
+        q.setAttribute("data-qa", "esc-" + id);
         q.onclick = function(){ if(ST.resp[id]) return; sPasso(); ativa(q, certa, id, "certo10_" + it.p, "dica10_" + it.p); };
         q.onkeydown = function(ev){ if(ev.key === "Enter" || ev.key === " "){ ev.preventDefault(); q.onclick(); } };
         cx.appendChild(q);

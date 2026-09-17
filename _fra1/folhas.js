@@ -561,6 +561,10 @@ function f9(d, pi){
           q = el("div", "sq larga" + (feito ? " ok" : " vaga"), feito ? certa : "");
           q.setAttribute("data-qa", "sq-" + id);
           (function(q){
+            /* ⌨️ o ROTULO que o jogador da banca procura. Sem ele a folha de
+               DIGITAR nunca foi medida (17/set/2026): ele dizia "nao conheco a
+               peca" e seguia em frente, e "nao medi" nao e "passou". */
+            q.setAttribute("data-qa", "esc-" + id);
             q.onclick = function(){ if(!ST.resp[id]) ativa(q, certa, id, "certo9_" + chave, "dica9_" + chave); };
           })(q);
           fr.appendChild(q);

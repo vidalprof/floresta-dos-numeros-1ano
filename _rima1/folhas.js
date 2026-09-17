@@ -519,7 +519,9 @@ function f9(d, pi){
       registra(id2, pi, it2.c);
       var q = el("div", "sq vaga larga" + (ST.resp[id2] ? " ok" : ""), ST.resp[id2] ? it2.c : "");
       q.id = id2; q.setAttribute("role", "button"); q.setAttribute("tabindex", "0");
-      q.setAttribute("data-qa", "vaga-" + id2);
+      /* ⌨️ `esc-`, que e o contrato do jogador da banca: com `vaga-` ele
+           dizia "nao conheco a peca" e a digitacao nunca era medida. */
+        q.setAttribute("data-qa", "esc-" + id2);
       q.setAttribute("aria-label", "Escreva a palavra que rima com " + esc(it2.f));
       q.onclick = function(){
         if(ST.resp[id2]) return;
