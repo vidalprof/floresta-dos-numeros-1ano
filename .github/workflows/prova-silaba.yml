@@ -1,0 +1,154 @@
+name: Prova da silaba (gera o MESMO pedaco de varios jeitos, para ouvir e comparar)
+
+# ⭐ ORDEM DO MARCOS (17/set/2026): *"o que eu preciso e que as palavras e
+#    silabas sejam pronunciadas corretamente"* · *"pode fazer para a gente ver
+#    como fica"*.
+#
+# ⚠️ O QUE ESTE WORKFLOW EXISTE PARA DECIDIR, dito sem rodeio:
+#
+#    Hoje a silaba nasce FATIADA de dentro da palavra inteira. Isso resolveu o
+#    defeito antigo (a voz soletrando "esse-a" quando recebia "SA" sozinho),
+#    mas trouxe outro, que o Marcos ouviu na sala: a fatia carrega a
+#    COARTICULACAO e a atonia da palavra corrida. O `PO` de SAPO sai quase sem
+#    voz porque, dentro de "sapo", ele E quase sem voz; o `ES` de ESCOLA soa
+#    "e...ss" porque, dentro de "escola", o /s/ ja esta escorregando para o /k/.
+#
+#    So que a PROFESSORA, quando separa silabas para alfabetizar, NAO fala
+#    assim: ela diz "ES - CO - LA", cada pedaco inteiro e forte. Fatiar a fala
+#    corrida e foneticamente honesto e pedagogicamente errado.
+#
+#    Entao a pergunta e: existe um jeito de PEDIR a voz que ja produza a silaba
+#    articulada, sem cair na soletracao? Este workflow gera o mesmo pedaco por
+#    varios caminhos, corta, mede e deixa os mp3 no repositorio PARA OUVIR.
+#
+# ⚠️ Ele NAO publica nada e NAO toca em atividade nenhuma. So escreve em
+#    `_prova/silabas/` e commita, sem a marca [entregar ...].
+
+on:
+  workflow_dispatch:
+    inputs:
+      palavras:
+        description: "Palavras separadas por virgula (ex: escola,sapo,gato,macaco)"
+        required: false
+        default: "escola,sapo,gato,macaco,boneca"
+        type: string
+      voz:
+        description: "Voz do Edge TTS"
+        required: false
+        default: "pt-BR-AntonioNeural"
+        type: string
+      ref:
+        description: "Branch com os arquivos"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  provar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: ffmpeg + edge-tts + medida
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg espeak-ng
+          python -m pip install --quiet edge-tts librosa soundfile numpy
+
+      - name: Gerar os candidatos e medir
+        run: |
+          mkdir -p _prova/silabas
+          python3 - <<'PY'
+          # -*- coding: utf-8 -*-
+          import asyncio, io, json, os, re, subprocess, unicodedata
+          import edge_tts, numpy as np, librosa
+
+          PALAVRAS = [w.strip().lower() for w in "${{ inputs.palavras }}".split(",") if w.strip()]
+          VOZ = "${{ inputs.voz }}"
+          DEST = "_prova/silabas"
+
+          # a divisao vem do dicionario pt_BR, que ja e o portao 1w
+          import importlib.util
+          def silabas(w):
+              try:
+                  import pyphen
+              except ImportError:
+                  subprocess.call(["python3","-m","pip","install","-q","pyphen"])
+                  import pyphen
+              return pyphen.Pyphen(lang="pt_BR").inserted(w).split("-")
+
+          # ⚠️ OS CAMINHOS QUE ESTAO EM PROVA. O 1 e o de hoje; os outros pedem a
+          #    voz de um jeito que possa articular cada pedaco.
+          def caminhos(w, sil):
+              return [
+                ("1-corrida",   w),                       # o de hoje: palavra corrida
+                ("2-espaco",    " ".join(sil)),           # "es co la"
+                ("3-hifen",     "-".join(sil)),           # "es-co-la"
+                ("4-virgula",   ", ".join(sil) + "."),    # "es, co, la."
+                ("5-pausa",     ' ... '.join(sil)),       # reticencias = pausa longa
+              ]
+
+          async def grava(texto, saida, rate):
+              c = edge_tts.Communicate(texto, VOZ, rate=rate)
+              await c.save(saida)
+
+          def mede(f):
+              y,_ = librosa.load(f, sr=16000, mono=True)
+              if len(y) < 160: return None
+              n=320; r=[float(np.sqrt((y[k:k+n]**2).mean())) for k in range(0,max(1,len(y)-n),n)]
+              return {"ms": round(1000.0*len(y)/16000), "rms": round(max(r) if r else 0,3),
+                      "pico": round(float(np.abs(y).max()),3)}
+
+          relatorio = []
+          for w in PALAVRAS:
+              sil = silabas(w)
+              for nome, texto in caminhos(w, sil):
+                  for rate in ("-25%", "-40%"):
+                      tag = "%s_%s_%s" % (w, nome, rate.replace("%","").replace("-","m"))
+                      mp3 = os.path.join(DEST, tag + ".mp3")
+                      try:
+                          asyncio.run(grava(texto, mp3, rate))
+                      except Exception as e:
+                          relatorio.append({"palavra": w, "caminho": nome, "rate": rate,
+                                            "erro": str(e)[:120]}); continue
+                      m = mede(mp3) or {}
+                      m.update({"palavra": w, "silabas": "-".join(sil), "caminho": nome,
+                                "rate": rate, "texto_pedido": texto, "arquivo": tag + ".mp3"})
+                      relatorio.append(m)
+                      print("  %-34s %-14s %s" % (tag, texto, m.get("ms")))
+
+          io.open(os.path.join(DEST, "MEDIDA.json"), "w", encoding="utf-8").write(
+              json.dumps(relatorio, ensure_ascii=False, indent=1))
+          print("gerados:", len([x for x in relatorio if "erro" not in x]))
+          PY
+
+      - name: Resumo
+        if: always()
+        run: |
+          {
+            echo "## Prova da sílaba"
+            echo ""
+            echo "Palavras: \`${{ inputs.palavras }}\` · voz \`${{ inputs.voz }}\`"
+            echo ""
+            echo "Arquivos em \`_prova/silabas/\` — ouvir e comparar os cinco caminhos."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Commitar as provas
+        if: always()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A _prova || true
+          if git diff --cached --quiet; then
+            echo "nada gerado"
+          else
+            git commit -m "prova: silabas geradas por varios caminhos, para ouvir"
+            for i in 1 2 3 4; do git push && break || sleep $((2 ** i)); done
+          fi
