@@ -1,0 +1,62 @@
+# O ouvido da sílaba — `_sil1`
+
+Modelo `jonatasgrosman/wav2vec2-large-xlsr-53-portuguese` · corte 0.50 · 56 recortes.
+
+| erro | arquivo | escrito | ouvido | de |
+|---|---|---|---|---|
+| 1.00 | `sl_sb_abelha_1.mp3` | BE | pir | ABELHA |
+| 1.00 | `sl_sb_borboleta_0.mp3` | BOR | volo | BORBOLETA |
+| 1.00 | `sl_sb_cavalo_2.mp3` | LO | — | CAVALO |
+| 1.00 | `sl_sb_foguete_1.mp3` | GUE | dei | FOGUETE |
+| 1.00 | `sl_sb_gato_0.mp3` | GA | — | GATO |
+| 1.00 | `sl_sb_gato_1.mp3` | TO | de | GATO |
+| 1.00 | `sl_sb_maca_1.mp3` | ÇÃ | so | MACA |
+| 1.00 | `sl_sb_panela_2.mp3` | LA | una | PANELA |
+| 1.00 | `sl_sb_sapo_1.mp3` | PO | — | SAPO |
+| 1.00 | `sl_sb_tartaruga_2.mp3` | RU | arul | TARTARUGA |
+| 1.00 | `sl_sb_uva_0.mp3` | U | — | UVA |
+| 1.00 | `sl_sb_vela_0.mp3` | VE | dea | VELA |
+| 1.00 | `sl_sb_xicara_0.mp3` | XÍ | he | XICARA |
+| 1.00 | `sl_sb_xicara_2.mp3` | RA | dou | XICARA |
+| 0.50 | `sl_sb_bola_0.mp3` | BO | boa | BOLA |
+| 0.50 | `sl_sb_bola_1.mp3` | LA | ulá | BOLA |
+| 0.50 | `sl_sb_boneca_0.mp3` | BO | bu | BONECA |
+| 0.50 | `sl_sb_borboleta_1.mp3` | BO | boa | BORBOLETA |
+| 0.50 | `sl_sb_borboleta_2.mp3` | LE | ler | BORBOLETA |
+| 0.50 | `sl_sb_borboleta_3.mp3` | TA | tu | BORBOLETA |
+| 0.50 | `sl_sb_bota_0.mp3` | BO | boa | BOTA |
+| 0.50 | `sl_sb_caracol_1.mp3` | RA | ara | CARACOL |
+| 0.50 | `sl_sb_cavalo_0.mp3` | CA | cao | CAVALO |
+| 0.50 | `sl_sb_computador_1.mp3` | PU | po | COMPUTADOR |
+| 0.50 | `sl_sb_foguete_2.mp3` | TE | de | FOGUETE |
+| 0.50 | `sl_sb_lata_1.mp3` | TA | tu | LATA |
+| 0.50 | `sl_sb_lupa_0.mp3` | LU | nu | LUPA |
+| 0.50 | `sl_sb_panela_1.mp3` | NE | nea | PANELA |
+| 0.50 | `sl_sb_pipa_0.mp3` | PI | pir | PIPA |
+| 0.50 | `sl_sb_tartaruga_1.mp3` | TA | a | TARTARUGA |
+| 0.50 | `sl_sb_tartaruga_3.mp3` | GA | ca | TARTARUGA |
+| 0.50 | `sl_sb_vela_1.mp3` | LA | ua | VELA |
+| 0.33 | `sl_sb_abelha_2.mp3` | LHA | lia | ABELHA |
+| 0.33 | `sl_sb_tartaruga_0.mp3` | TAR | par | TARTARUGA |
+| 0.00 | `sl_sb_abelha_0.mp3` | A | a | ABELHA |
+| 0.00 | `sl_sb_boneca_1.mp3` | NE | né | BONECA |
+| 0.00 | `sl_sb_boneca_2.mp3` | CA | ca | BONECA |
+| 0.00 | `sl_sb_bota_1.mp3` | TA | ta | BOTA |
+| 0.00 | `sl_sb_caracol_0.mp3` | CA | ca | CARACOL |
+| 0.00 | `sl_sb_caracol_2.mp3` | COL | col | CARACOL |
+| 0.00 | `sl_sb_cavalo_1.mp3` | VA | vá | CAVALO |
+| 0.00 | `sl_sb_computador_0.mp3` | COM | com | COMPUTADOR |
+| 0.00 | `sl_sb_computador_2.mp3` | TA | ta | COMPUTADOR |
+| 0.00 | `sl_sb_computador_3.mp3` | DOR | dor | COMPUTADOR |
+| 0.00 | `sl_sb_foguete_0.mp3` | FO | fo | FOGUETE |
+| 0.00 | `sl_sb_lata_0.mp3` | LA | lá | LATA |
+| 0.00 | `sl_sb_lupa_1.mp3` | PA | pa | LUPA |
+| 0.00 | `sl_sb_maca_0.mp3` | MA | ma | MACA |
+| 0.00 | `sl_sb_panela_0.mp3` | PA | pa | PANELA |
+| 0.00 | `sl_sb_pao_0.mp3` | PÃO | pão | PAO |
+| 0.00 | `sl_sb_pipa_1.mp3` | PA | pa | PIPA |
+| 0.00 | `sl_sb_sapo_0.mp3` | SA | sa | SAPO |
+| 0.00 | `sl_sb_sol_0.mp3` | SOL | sol | SOL |
+| 0.00 | `sl_sb_trem_0.mp3` | TREM | trem | TREM |
+| 0.00 | `sl_sb_uva_1.mp3` | VA | va | UVA |
+| 0.00 | `sl_sb_xicara_1.mp3` | CA | ca | XICARA |
