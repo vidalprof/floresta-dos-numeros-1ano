@@ -1620,7 +1620,20 @@ function digita(ch){
   sTecla();
   if(ch === "ap") ATIVA.val = ATIVA.val.slice(0, -1);
   else if(ch === "ok") return confereSil();
-  else { if(ATIVA.val.length >= 4) return; ATIVA.val += ch; }
+  /* ⚠️⚠️ O TETO ERA 4 LETRAS, FIXO — e isso tornava IMPOSSIVEL escrever a
+     resposta em toda palavra mais comprida. Medido em 17/set/2026 no `_rima1`,
+     folha 9 ("Escreva a palavra que rima"): as respostas incluem PANELA (6) e
+     ESTRELA (7). A crianca escrevia PANE e o app parava de aceitar letra. Ela
+     nao tinha como acertar, e a folha ficava travada para sempre.
+     Ninguem tinha visto porque o jogador da banca nao media esta folha: a
+     quadra se anunciava como `vaga-` e ele nao conhecia a peca.
+     O teto agora e o TAMANHO DA RESPOSTA. O 4 fica so de reserva, para o caso
+     de a resposta nao ter chegado. */
+  else {
+    var _teto = (ATIVA.certa && ATIVA.certa.length) ? ATIVA.certa.length : 4;
+    if(ATIVA.val.length >= _teto) return;
+    ATIVA.val += ch;
+  }
   pintaDigitado();
   if(ATIVA.val.length >= ATIVA.certa.length) setTimeout(confereSil, 380);
 }
