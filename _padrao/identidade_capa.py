@@ -93,13 +93,13 @@ ESPEC = {
     "_ini1":   dict(cor="#bf360c", cena="brota", letra="cresce",
                     figs=["in_bola", "in_bolo", "in_boneca", "in_bota", "in_boca"], rot=["BO", "BO", "BO", "BO", "BO"],
                     fundo=("#fbe2d8", "#fff8f5"), nota="a família: as palavras que começam igual brotam da mesma terra"),
-    "_jogo1":  dict(cor="#37474f", cena="rola", letra="gira",
+    "_jogo1":  dict(cor="#8e5572", cena="rola", letra="gira",
                     figs=["jg_dado", "jg_pipa", "jg_bola", "jg_peixe"], rot=None,
-                    fundo=("#e0e6ea", "#f7f9fa"), nota="o grande jogo: o dado rola e as peças pulam no tabuleiro"),
+                    fundo=("#f2e2ea", "#fbf5f8"), nota="o grande jogo: o dado rola e as peças pulam no tabuleiro"),
     "_let1":   dict(cor="#1565c0", cena="vira", letra="vira",
                     figs=["le_bola", "le_bota", "le_gato", "le_pato", "le_mala", "le_mola"], rot=["BOLA", "BOTA", "GATO", "PATO", "MALA", "MOLA"],
                     fundo=("#dbe8fa", "#f5f9ff"), nota="a letra que muda tudo: cartas que viram e trocam UMA letra"),
-    "_mont1":  dict(cor="#795548", cena="junta", letra="desliza",
+    "_mont1":  dict(cor="#8d6e63", cena="junta", letra="desliza",
                     figs=["mo_bola", "mo_gato", "mo_pipa", "mo_sino"], rot=["BO·LA", "GA·TO", "PI·PA", "SI·NO"],
                     fundo=("#ece3df", "#faf7f6"), nota="a máquina de juntar: os dois pedaços deslizam e se encaixam"),
     "_mult2":  dict(cor="#33691e", cena="brota", letra="cresce",
@@ -156,6 +156,15 @@ ESPEC = {
 ROXOS = {"#6d5ae6": "cor", "#5b4fc4": "cor2", "#4c3cbb": "cor2",
          "#f4f2ff": "corclara", "#eceefa": "corclara", "#f2efff": "corclara", "#d9ddf2": "corclara2"}
 TELHAS = {"#b0562a": "cor", "#8d4120": "cor2", "#fdf1e9": "corclara"}
+
+
+def cor_atual(html):
+    u"""a cor que o caderno tem AGORA — para trocar os literais dela na regeração"""
+    m = re.search(r"--cor\s*:\s*(#[0-9a-fA-F]{6})", html)
+    if m:
+        return m.group(1).lower()
+    m = re.search(r"#topo\{[^}]*border-bottom\s*:\s*\d+px\s+solid\s+(#[0-9a-fA-F]{6})", html)
+    return m.group(1).lower() if m else None
 
 
 # ---------------------------------------------------------------- CSS do título
@@ -328,7 +337,7 @@ def cena_brota(p, S):
 
 
 def cena_rola(p, S):
-    css = u""".capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:clamp(10px,3vw,24px);flex-wrap:nowrap;min-height:110px}
+    css = u""".capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:clamp(4px,2.5vw,24px);flex-wrap:wrap;min-height:110px;padding:0 4px}
 .capa .it{display:flex;flex-direction:column;align-items:center;-webkit-animation:rola%(S)s 2.2s ease-in-out infinite;animation:rola%(S)s 2.2s ease-in-out infinite}
 .capa .it:first-child .capfig{-webkit-animation:gira%(S)s 2.2s linear infinite;animation:gira%(S)s 2.2s linear infinite}
 .capa .tabu{max-width:620px;margin:0 auto;height:14px;border-radius:7px;background:%(cor)s;box-shadow:0 5px 12px rgba(0,0,0,.2);
@@ -442,7 +451,7 @@ def cena_roda(p, S):
     n = len(p["figs"])
     css = u""".capa .cena{position:relative;width:min(78vw,300px);height:min(78vw,300px);margin:8px auto 0}
 .capa .aro{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:50%%;border:8px dashed %(cor)s}
-.capa .orbita{position:absolute;left:0;top:0;right:0;bottom:0;-webkit-animation:roda%(S)s 16s linear infinite;animation:roda%(S)s 16s linear infinite}
+.capa .cporbe{position:absolute;left:0;top:0;right:0;bottom:0;-webkit-animation:roda%(S)s 16s linear infinite;animation:roda%(S)s 16s linear infinite}
 .capa .miolo{position:absolute;left:50%%;top:50%%;width:clamp(52px,16vw,76px);height:clamp(52px,16vw,76px);margin:calc(clamp(52px,16vw,76px) / -2) 0 0 calc(clamp(52px,16vw,76px) / -2);
   border-radius:50%%;background:%(cor)s;color:#fff;font-weight:900;font-size:clamp(26px,8vw,40px);line-height:clamp(52px,16vw,76px);box-shadow:0 6px 14px rgba(0,0,0,.25)}
 .capa .it{position:absolute;width:64px;margin-left:-32px;margin-top:-36px;display:flex;flex-direction:column;align-items:center;
@@ -458,7 +467,7 @@ def cena_roda(p, S):
         y = 50 + math.sin(math.radians(ang)) * 42
         itens.append("'<div class=\"it\" style=\"left:%.1f%%;top:%.1f%%\">' + %s + %s + '</div>'"
                      % (x, y, fig(p["figs"][i]), rot(p, i)))
-    return css, ("'<div class=\"cena\"><i class=\"aro\"></i><div class=\"miolo\">L</div><div class=\"orbita\">' + "
+    return css, ("'<div class=\"cena\"><i class=\"aro\"></i><div class=\"miolo\">L</div><div class=\"cporbe\">' + "
                  + " + ".join(itens) + " + '</div></div>'")
 
 
@@ -523,6 +532,16 @@ def aplica(pasta):
     p["corclara2"] = clareia(p["cor"], 0.72)
     if contraste_branco(p["cor"]) < 4.5:
         raise SystemExit("%s: cor %s tem contraste %.2f sobre branco (< 4,5) — escolha outra" % (pasta, p["cor"], contraste_branco(p["cor"])))
+    # ⚠️ 18/set/2026: nos cadernos antigos o literal que virou `cor2` era TINTA DE
+    #    TEXTO. Com uma cor base escura, o `cor2` sai quase preto e o
+    #    `_qa/cor_fixa.py` reprova ("tinta extrema sem fundo proprio") — aconteceu
+    #    em `_jogo1` (#37474f) e `_mont1` (#795548). A cor do caderno tem de ser
+    #    clara o bastante para o seu tom escuro ainda ser TINTA, nao breu.
+    # ⚠️ NAO INVENTAR LIMIAR AQUI. Eu tentei um piso de luminancia para o tom
+    #    escuro e ele reprovava 19 das 25 cores — porque o tom escuro so machuca
+    #    quando o caderno o usa como TINTA DE TEXTO sem fundo, e isso depende do
+    #    caderno, nao da cor. Quem sabe e' o `_qa/cor_fixa.py`, que le o arquivo
+    #    GERADO. Por isso a conferencia e' no fim de `aplica()`, com a medida dele.
     for f in p["figs"]:
         if f and not os.path.isfile(os.path.join(pasta, "img", f + ".png")):
             raise SystemExit("%s: figura %s.png nao existe em img/" % (pasta, f))
@@ -530,6 +549,7 @@ def aplica(pasta):
     ih = os.path.join(pasta, "index.html")
     jf = os.path.join(pasta, "folhas.js")
     h = io.open(ih, encoding="utf-8").read()
+    h_antes = h
     j = io.open(jf, encoding="utf-8").read()
 
     # --- 1) a cor
@@ -541,6 +561,14 @@ def aplica(pasta):
             h = re.sub(re.escape(lit), p[papel], h, flags=re.I)
     else:
         for lit, papel in ROXOS.items():
+            h = re.sub(re.escape(lit), p[papel], h, flags=re.I)
+    # ⚠️ REGERAR DUAS VEZES: na 2a passada os literais ja nao sao os roxos/telha
+    #    originais, e sim a cor que EU pus na 1a. Sem isto sobra a cor velha no
+    #    arquivo (aconteceu com `#37474f` em `_jogo1`) e o `_qa/cor_fixa.py` acusa.
+    velha = cor_atual(h_antes)
+    if velha and velha != p["cor"].lower():
+        for lit, papel in ((velha, "cor"), (escurece(velha), "cor2"),
+                           (clareia(velha), "corclara"), (clareia(velha, 0.72), "corclara2")):
             h = re.sub(re.escape(lit), p[papel], h, flags=re.I)
 
     # --- 2) o bloco da capa
@@ -619,6 +647,16 @@ def aplica(pasta):
 
     io.open(ih, "w", encoding="utf-8").write(h)
     io.open(jf, "w", encoding="utf-8").write(j)
+    # ⚠️ A MEDIDA E' DO PORTAO, nao minha: se a cor nova virou tinta extrema sem
+    #    fundo em alguma regra do caderno, o `_qa/cor_fixa.py` acusa. Aconteceu com
+    #    `_jogo1` (#37474f) e `_mont1` (#795548), cujos literais antigos eram TEXTO.
+    import subprocess
+    r = subprocess.run(["python3", "_qa/cor_fixa.py", ih], capture_output=True, text=True)
+    if r.returncode == 1:
+        linhas = [l for l in r.stdout.split("\n") if l.strip().startswith("-")][:4]
+        raise SystemExit("%s: com a cor %s o `_qa/cor_fixa.py` reprova (tinta extrema sem "
+                         "fundo proprio):\n%s\n   escolha uma cor base mais clara para este caderno."
+                         % (pasta, p["cor"], "\n".join(linhas)))
     print("%-9s cor %s  cena %-8s  letra %-8s  figs %d  -> gravado" % (pasta, p["cor"], p["cena"], p["letra"], len(p["figs"])))
 
 
