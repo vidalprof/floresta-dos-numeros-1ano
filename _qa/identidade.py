@@ -41,6 +41,7 @@ import io
 import os
 import re
 import sys
+import unicodedata
 
 ESQUELETO = "_padrao/FOLHA-VIVA"
 
@@ -152,6 +153,24 @@ def classes_da_capa(js, html):
     return chocam
 
 
+def nome_da_capa(js):
+    m = re.search(r'function f0\(d\)\{.*?nome = "([^"]*)"', js, re.S)
+    return m.group(1) if m else None
+
+
+def titulo(html):
+    m = re.search(r"<title>([^<]*)</title>", html)
+    return m.group(1) if m else None
+
+
+def _chave(t):
+    u"""só as letras, sem acento e sem caixa — para comparar nome e título"""
+    if not t:
+        return u""
+    t = unicodedata.normalize("NFKD", t).encode("ascii", "ignore").decode()
+    return re.sub(r"[^a-z]", "", t.lower())
+
+
 def ficha(pasta):
     html = le(os.path.join(pasta, "index.html"))
     js = le(os.path.join(pasta, "folhas.js"))
@@ -162,6 +181,8 @@ def ficha(pasta):
         "anim": keyframes_da_capa(html),
         "f0": estrutura_f0(js),
         "choque": classes_da_capa(js, html),
+        "nome": nome_da_capa(js),
+        "titulo": titulo(html),
     }
 
 
@@ -191,6 +212,17 @@ def main():
         return 2
     esq = ficha(ESQUELETO) if os.path.isdir(ESQUELETO) else None
     erros = []
+    # ⚠️ O NOME NA CAPA TEM DE SER O DESTE CADERNO (18/set/2026). Dois cadernos no
+    #    ar mostravam o título de OUTRO — `_roda1` abria escrito "A FAMÍLIA DAS
+    #    PALAVRAS" e `_mult2` abria "O ARMAZÉM DO MESMO TANTO". Resto de clone que
+    #    nenhum portão via, e que é justamente o que faz a criança dizer
+    #    "isso eu já fiz".
+    if eu["nome"] and eu["titulo"]:
+        # o <title> costuma ser "<Nome> — <ano>": basta que um seja PREFIXO do outro
+        alvo, meu = _chave(eu["titulo"]), _chave(eu["nome"])
+        if alvo and meu and not (alvo.startswith(meu) or meu.startswith(alvo)):
+            erros.append(u"a CAPA diz `%s` e o <title> diz `%s`: o nome na capa e de OUTRO caderno."
+                         % (eu["nome"], eu["titulo"]))
     for c in eu["choque"]:
         erros.append(u"a capa usa a classe `%s`, que TAMBEM tem regra fora da capa "
                      u"(classe do motor): o estilo do motor ganha e a peca da capa pode "

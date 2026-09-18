@@ -1324,7 +1324,7 @@ function f0(d){
   /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
      Cena: a horta: as frutas brotam da terra em fileiras. O título entra letra a letra (cresce), palavra por palavra
      (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
-  var c = el("div", "capa"), nome = "O ARMAZÉM DO MESMO TANTO", k, letras = "", pos = 0;
+  var c = el("div", "capa"), nome = "A HORTA DO VOVÔ", k, letras = "", pos = 0;
   var V = typeof VIMG !== "undefined" ? VIMG : 2;
   nome.split(" ").forEach(function(pal, w){
     var s = "";

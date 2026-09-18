@@ -250,7 +250,10 @@ for _pi, _nome in ((1, u"ACAO"), (4, u"ACAO2")):
         _X = _D[_k]
         palavras(*_X[u"ops"])
         p(u"fra_" + _k, lp(_X[u"f"]))
-        p(u"certo%d_%s" % (_pi, _k), elogio(_n) + u" " + _X[u"r"].capitalize() + u" é a ação" + (u": é o verbo." if _pi == 4 else u"."))
+        # ⚠️ a fala do acerto diz a FRASE, não a palavra solta: "Boa! cantam." foi
+        #    acusada de torta pelo portão da voz — e estava mesmo truncada.
+        p(u"certo%d_%s" % (_pi, _k), elogio(_n) + u" " + lp(_X[u"f"]) + u" " +
+          _X[u"r"].capitalize() + (u" é o verbo da frase." if _pi == 4 else u" é a ação."))
         p(u"dica%d_%s" % (_pi, _k), dicaV(_n))
 
 # --- 2 e 13: marque vários ---------------------------------------------------

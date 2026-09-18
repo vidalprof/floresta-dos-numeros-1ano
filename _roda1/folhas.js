@@ -118,7 +118,7 @@ function f0(d){
   /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
      Cena: a roda das sílabas girando com o L no meio. O título entra letra a letra (gira), palavra por palavra
      (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
-  var c = el("div", "capa"), nome = "A FAMÍLIA DAS PALAVRAS", k, letras = "", pos = 0;
+  var c = el("div", "capa"), nome = "A RODA DAS SÍLABAS", k, letras = "", pos = 0;
   var V = typeof VIMG !== "undefined" ? VIMG : 2;
   nome.split(" ").forEach(function(pal, w){
     var s = "";

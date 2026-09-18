@@ -345,7 +345,9 @@ def cena_vira(p, S):
   display:flex;flex-direction:column;align-items:center;box-shadow:0 6px 14px rgba(0,0,0,.14);
   -webkit-animation:vira%(S)s 4s ease-in-out infinite;animation:vira%(S)s 4s ease-in-out infinite}
 .capa .carta .capfig{width:clamp(44px,12vw,72px);height:clamp(44px,12vw,72px)}
-""" % dict(S=S, cor=p["cor"]) + kfs("vira" + S, "0%,40%{transform:rotateY(0)}50%{transform:rotateY(88deg)}60%,100%{transform:rotateY(0)}")
+""" % dict(S=S, cor=p["cor"]) + kfs("vira" + S, "0%,40%{transform:rotateY(0)}50%{transform:rotateY(52deg)}60%,100%{transform:rotateY(0)}")
+    # ⚠️ 52 graus e nao 88: a 88 a carta fica de perfil e some da foto (largura 3 px).
+    #    Vira o bastante para a crianca ver o gesto, sem desaparecer.
     html = " + ".join(item(p, i, cls="carta") for i in range(len(p["figs"])))
     return css, "'<div class=\"cena\">' + " + html + " + '</div>'"
 
