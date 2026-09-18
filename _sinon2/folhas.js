@@ -26,10 +26,10 @@ var livro = document.getElementById("livro"), PAGEL = [], TIRAS = [];
    apontada por engano FECHAVA SOZINHA, sem ninguém tocar nela. São as únicas
    cujos ids não nascem de `n<pi>_`, e sim dentro do `montaLigar`
    (`l<pi>g<i>_<chave>`). Conferir com `node _qa/conta_folha.js <pasta>`. */
-var LIGAR = [];
+var LIGAR = [2, 3, 9];
 /* a cor da faixa por BLOCO da escada, não por folha: a criança vê que o assunto
    mudou. Uma entrada por folha, de c1 a c5. */
-var CORES = [];
+var CORES = ["c1", "c1", "c1", "c1", "c1", "c1", "c2", "c2", "c2", "c2", "c2", "c2", "c2", "c3", "c3", "c3", "c3", "c3", "c3", "c4", "c4", "c4", "c4", "c4", "c4", "c5", "c5", "c5", "c5", "c5", "c1", "c1", "c1", "c1", "c1"];
 
 
 function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
@@ -182,7 +182,7 @@ function sobre(ev, alvo){
 function monta(){
   livro.innerHTML = ""; PAGEL = []; RESP = {}; TIRAS = [];
   /* ⚠️ UMA ENTRADA POR FOLHA, na ordem, começando pela capa `f0`. */
-  var caps = [f0], i;
+  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34, f35], i;
   for(i = 0; i < caps.length; i++){
     var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
     caps[i](d, i);
@@ -207,7 +207,7 @@ function f0(d){
   c.innerHTML =
     '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i><i class="sol"></i></div>' +
     '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Componente &middot; Nº ano &middot; N folhas sobre ASSUNTO</div>' +
+    '<div class="sub">Língua Portuguesa &middot; 2º ano &middot; 35 folhas sobre palavras que dizem a mesma coisa e palavras que dizem o contrário</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
@@ -817,7 +817,7 @@ function fim(){
   }
   var txt = "";
   if(jaSabe.length) txt = "Você já " + jaSabe.slice(0, 3).join("; ") + ".";
-  else txt = "Você começou a reparar que o mesmo som pode se escrever de cinco jeitos — e isso é o principal!";
+  else txt = "Você começou a reparar que uma palavra pode ter uma irmã que diz a mesma coisa e uma que diz o contrário — e isso é o principal!";
   if(treinar.length) txt += " Vale treinar mais: " + treinar.slice(0, 2).join(" e ") + ".";
   if(!completo)
     txt = "você fez " + abertas + " de " + NOMES.length + " folhas hoje — e olhe o "
@@ -867,7 +867,34 @@ var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
    Ex.: {n: "Distinguir X de Y", f: [1, 2, 3],
          ok:  "faz o que o objetivo pede, em palavras do professor",
          nao: "o que ainda não faz — sem a palavra 'errou'"}  */
-var OBJETIVOS = [];
+var OBJETIVOS = [
+  /* ⚠️ ESTA LISTA E O `curriculo.json` SÃO A MESMA COISA, e o portão 0b9 reprova
+     se divergirem — nome por nome e folha por folha. */
+  {n: "Reconhecer o contrário olhando o par de figuras", f: [1, 2, 3],
+   ok: "reconhece o contrário quando vê o par de figuras"},
+  {n: "Escrever o antônimo que a cena mostra", f: [4, 5],
+   ok: "escreve o contrário que a cena mostra"},
+  {n: "Decidir se duas palavras dizem a mesma coisa ou o contrário", f: [6, 12, 13],
+   ok: "decide se duas palavras dizem a mesma coisa ou o contrário"},
+  {n: "Escolher a palavra que diz a mesma coisa", f: [7, 8, 9],
+   ok: "escolhe a palavra que diz a mesma coisa"},
+  {n: "Perceber que uma palavra tem mais de um sinônimo", f: [10, 11],
+   ok: "percebe que uma palavra pode ter mais de uma irmã"},
+  {n: "Trocar a palavra pelo contrário dentro da frase", f: [14, 15, 16],
+   ok: "troca a palavra pelo contrário dentro da frase"},
+  {n: "Completar a fala com o sinônimo ou com o antônimo", f: [17, 18, 19],
+   ok: "completa a fala com a palavra irmã ou com o contrário"},
+  {n: "Achar sinônimos e antônimos nas grades de letras", f: [20, 21, 22, 23],
+   ok: "acha as palavras nas grades de letras"},
+  {n: "Reunir os pares de palavras", f: [24, 25],
+   ok: "reúne os pares de palavras irmãs"},
+  {n: "Formar o antônimo com o prefixo in-/im-", f: [26, 27, 28, 29, 30],
+   ok: "forma o contrário com o pedacinho in ou im"},
+  {n: "Achar sinônimos e antônimos dentro de um texto", f: [31, 32, 33],
+   ok: "acha as palavras irmãs e os contrários dentro de um texto"},
+  {n: "Usar sinônimos e antônimos para escrever", f: [34, 35],
+   ok: "usa as palavras irmãs e os contrários para escrever"}
+];
 
 function mede(folhas){
   var prim = 0, ajuda = 0, tot = 0, tentados = 0, k, j;
@@ -936,7 +963,7 @@ function abreRelatorio(){
   else if(domina.length)
     parecer += "já " + domina.join("; ") + ". Ainda precisa retomar: " + retomar.join(", ") + ".";
   else
-    parecer += "está começando a perceber que letras diferentes fazem o mesmo som. Nenhum " +
+    parecer += "está começando a perceber que há palavras que dizem a mesma coisa e palavras que dizem o contrário. Nenhum " +
       "objetivo chegou a 75% de acerto de primeira — vale retomar ORALMENTE, ditando cinco " +
       "palavras por dia e perguntando POR QUE se escreve com aquela letra, antes de voltar " +
       "à tela. A regra dita em voz alta fixa mais do que a palavra copiada dez vezes.";
@@ -1165,3 +1192,888 @@ function fechaDossie(){ document.getElementById("dossie").className = ""; }
     vaiPara(ST.pag || 1);
   };
 })();
+
+/* ============================================================
+   PEÇAS CLONADAS (copiadas dos cadernos que já passaram pela banca — nunca
+   reescritas): `figOu` e `noTexto` da Casinha dos Três Pontos (_ponto2),
+   `marqueConfira`, `estojo` e `pintavel` do Armário das Quatro Gavetas (_sil2),
+   a cruzadinha que se monta sozinha da Loteria do S (_ort5b), o caça-palavras
+   da Casinha (_ponto2, f27).
+   ============================================================ */
+function figOu(f, cls){ return f ? img("ec_" + f + ".png", cls || "fig", "") : ""; }
+
+/* PEÇA — MARQUE VÁRIAS E SÓ DEPOIS CONFIRA (_sil2) */
+function marqueConfira(box, id, pi, pecas, fCerto, fDica){
+  var feito = !!ST.resp[id], marcadas = {}, bts = [];
+  registra(id, pi, pecas.filter(function(p){ return p.ok; })
+                        .map(function(p){ return p.k; }).join(" "));
+  var cx = el("div", "sils");
+  pecas.forEach(function(P){
+    var b = el("button", "sil" + (feito && P.ok ? " ok" : ""), P.t);
+    b.setAttribute("aria-label", P.t);
+    b.setAttribute("data-qa", (P.ok ? "op-" : "no-") + id + "-" + P.k);
+    b.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso();
+      if(P.fala) P.fala();
+      if(marcadas[P.k]){ delete marcadas[P.k]; b.className = "sil"; }
+      else { marcadas[P.k] = 1; b.className = "sil marcada"; }
+    };
+    cx.appendChild(b); bts.push({b: b, P: P});
+  });
+  box.appendChild(cx);
+  var cf = el("button", "bt verde pronto", "Conferir");
+  cf.setAttribute("data-qa", "conferir-" + id);
+  cf.onclick = function(){
+    if(ST.resp[id]) return;
+    var certo = true;
+    bts.forEach(function(x){ if(!!marcadas[x.P.k] !== !!x.P.ok) certo = false; });
+    if(certo){
+      bts.forEach(function(x){ if(x.P.ok) x.b.className = "sil ok"; });
+      acertou(id, fCerto); box.className = "item feito"; cf.style.display = "none";
+    } else {
+      sErro(); cx.className = "sils erro";
+      setTimeout(function(){ cx.className = "sils"; }, 480);
+      errou(id, fDica);
+    }
+  };
+  if(feito) cf.style.display = "none";
+  box.appendChild(cf);
+}
+
+/* PEÇA — ACHAR DENTRO DO TEXTO (_ponto2, f25/f26) */
+function noTexto(d, pi, T, fCerto, fDica){
+  var id = "n" + pi + "_0", box = item(0);
+  registra(id, pi, T.ok.map(function(w){ return "w" + chaveQuadro(w); }).join(" "));
+  var marcadas = {}, bts = [];
+  var cx = el("div", "texto");
+  cx.appendChild(el("h3", "ttit", T.titulo));
+  var nw = 0;
+  T.linhas.forEach(function(lin){
+    var l = el("p", "tlin");
+    lin.forEach(function(w) {
+      var ok = T.ok.indexOf(w) > -1, meu = nw;
+      var b = el("button", "palav", w);
+      b.setAttribute("aria-label", w);
+      b.setAttribute("data-qa", ok ? ("op-" + id + "-w" + chaveQuadro(w))
+                                   : ("no-" + id + "-x" + meu));
+      nw++;
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); falar("tx" + pi + "_" + meu);
+        if(marcadas[w]){ delete marcadas[w]; b.className = "palav"; }
+        else { marcadas[w] = 1; b.className = "palav marcada"; }
+      };
+      l.appendChild(b); l.appendChild(document.createTextNode(" "));
+      bts.push({b: b, w: w, ok: ok});
+    });
+    cx.appendChild(l);
+  });
+  box.appendChild(cx);
+  var cf = el("button", "bt verde pronto", "Conferir");
+  cf.setAttribute("data-qa", "conferir-" + id);
+  cf.onclick = function(){
+    if(ST.resp[id]) return;
+    var certo = true;
+    bts.forEach(function(x){ if(!!marcadas[x.w] !== !!x.ok) certo = false; });
+    if(certo){
+      bts.forEach(function(x){ if(x.ok) x.b.className = "palav ok"; });
+      acertou(id, fCerto); box.className = "item feito"; cf.style.display = "none";
+    } else {
+      sErro(); cx.className = "texto erro";
+      setTimeout(function(){ cx.className = "texto"; }, 480);
+      errou(id, fDica);
+    }
+  };
+  if(ST.resp[id]) cf.style.display = "none";
+  box.appendChild(cf);
+  fechaItem(d, box, id);
+}
+
+/* PEÇA — PINTAR PELA LEGENDA (_sil2): dois toques, a canetinha e depois a palavra.
+   CONTRATO: o estojo publica `lapis-<cor>` e cada alvo `pinta-<id>-0` + `data-lapis`. */
+var LAPIS = null;
+function estojo(d, cores){
+  var cx = el("div", "estojo");
+  cores.forEach(function(C){
+    var b = el("button", "cnt cnt-" + C.k, C.n + ": irmã de " + C.de);
+    b.setAttribute("data-qa", "lapis-" + C.k);
+    b.setAttribute("aria-label", "canetinha " + C.n);
+    b.onclick = function(){
+      sPasso(); LAPIS = C.k;
+      var t = cx.querySelectorAll(".cnt"), i;
+      for(i = 0; i < t.length; i++) t[i].className = t[i].className.replace(" pega", "");
+      b.className += " pega";
+      falar("lapis_" + C.k);
+    };
+    cx.appendChild(b);
+  });
+  d.appendChild(cx);
+  return cx;
+}
+function pintavel(el2, id, pi, cor, fCerto, fDica, box){
+  el2.setAttribute("data-qa", "pinta-" + id + "-0");
+  el2.setAttribute("data-lapis", cor);
+  if(ST.resp[id]) el2.className += " pin pin-" + cor;
+  el2.onclick = function(){
+    if(ST.resp[id]) return;
+    if(!LAPIS){ sPasso(); falar("pegue_lapis"); return; }
+    sPasso();
+    if(LAPIS === cor){
+      el2.className += " pin pin-" + cor;
+      acertou(id, fCerto); if(box) box.className = "item feito";
+    } else {
+      el2.className += " sacode";
+      setTimeout(function(){ el2.className = el2.className.replace(" sacode", ""); }, 420);
+      errou(id, fDica);
+    }
+  };
+}
+
+/* PEÇA — O TECLADO NUMA FILA DE CASINHAS (_ponto2, f24/f32): a grade com o
+   número exato de letras, aberta pelo teclado do aparelho ou pelo de verdade. */
+function gradeEscrever(box, id, pi, k, w, rot, aceita){
+  registra(id, pi, aceita ? aceita[0] : w);
+  var mx = w.length, t;
+  if(aceita) aceita.forEach(function(x){ if(x.length > mx) mx = x.length; });
+  var grade = el("div", "cruz uma" + (aceita ? " livre" : "")), cels = [];
+  grade.setAttribute("data-qa", "esc-" + id);
+  for(t = 0; t < mx; t++){
+    var c = el("button", "ccel viva" + (ST.resp[id] ? " ok" : ""),
+               ST.resp[id] ? ((aceita ? aceita[0] : w).charAt(t) || "") : "");
+    c.setAttribute("aria-label", "Casa da palavra");
+    cels.push(c); grade.appendChild(c);
+  }
+  box.appendChild(grade);
+  var E = {k: k, w: aceita ? aceita[0] : w, id: id, cels: cels, rot: rot || "Escreva a palavra",
+           bt: el("span", "pista oculta", "")};
+  if(aceita) E.aceita = aceita;
+  cels.forEach(function(c){ c.onclick = function(){ if(!ST.resp[id]) abreCruz(E, pi); }; });
+  grade.onclick = function(){ if(!ST.resp[id]) abreCruz(E, pi); };
+  return E;
+}
+
+/* PEÇA — A CRUZADINHA QUE SE MONTA SOZINHA (_ort5b, f21): a primeira palavra
+   deita e as outras se penduram nela pela letra em comum. A pista aqui é TEXTO
+   (o contrário de…), não figura. */
+function cruzadinha(d, pi, DADOSC, prefFala){
+  var pool = ST.folha["p" + pi];
+  var mapa = {}, maxX = 0, maxY = 0, entradas = [];
+  function poe(w, x, y, hor){
+    var i;
+    for(i = 0; i < w.length; i++){
+      var cx = x + (hor ? i : 0), cy = y + (hor ? 0 : i);
+      mapa[cx + "," + cy] = w.charAt(i);
+      if(cx > maxX) maxX = cx;
+      if(cy > maxY) maxY = cy;
+    }
+  }
+  function cabe(w, x, y, hor){
+    var i;
+    for(i = 0; i < w.length; i++){
+      var cx = x + (hor ? i : 0), cy = y + (hor ? 0 : i);
+      var q = mapa[cx + "," + cy];
+      if(q && q !== w.charAt(i)) return false;
+      if(!q){
+        var a = hor ? mapa[cx + "," + (cy - 1)] : mapa[(cx - 1) + "," + cy];
+        var b = hor ? mapa[cx + "," + (cy + 1)] : mapa[(cx + 1) + "," + cy];
+        if(a || b) return false;
+      }
+    }
+    var antes = hor ? mapa[(x - 1) + "," + y] : mapa[x + "," + (y - 1)];
+    var dep = hor ? mapa[(x + w.length) + "," + y] : mapa[x + "," + (y + w.length)];
+    return !antes && !dep;
+  }
+  var linhaLivre = 0;
+  pool.forEach(function(k, n){
+    var w = DADOSC[k].p.replace(/[^A-ZÁÂÃÉÊÍÓÔÕÚÇ]/g, ""), col = null;
+    if(!entradas.length){ col = {x: 0, y: 0, hor: true}; }
+    else {
+      var i, j, achou = null;
+      for(i = 0; i < w.length && !achou; i++)
+        for(j = 0; j < entradas.length && !achou; j++){
+          var E = entradas[j], p;
+          for(p = 0; p < E.w.length; p++){
+            if(E.w.charAt(p) !== w.charAt(i)) continue;
+            var hor = !E.hor;
+            var x = hor ? E.x - i : E.x + p;
+            var y = hor ? E.y + p : E.y - i;
+            if(cabe(w, x, y, hor)){ achou = {x: x, y: y, hor: hor}; break; }
+          }
+        }
+      col = achou || {x: 0, y: maxY + 2 + (linhaLivre++), hor: true};
+    }
+    poe(w, col.x, col.y, col.hor);
+    entradas.push({k: k, w: w, x: col.x, y: col.y, hor: col.hor, n: n + 1});
+  });
+  var minX = 0, minY = 0, key;
+  for(key in mapa){
+    var pxy = key.split(","), px = +pxy[0], py = +pxy[1];
+    if(px < minX) minX = px;
+    if(py < minY) minY = py;
+  }
+  var env = el("div", "cruzenv"), grade = el("div", "cruz");
+  var larg = maxX - minX + 1, alt = maxY - minY + 1;
+  grade.style.gridTemplateColumns = "repeat(" + larg + ",-webkit-max-content)";
+  grade.style.gridTemplateColumns = "repeat(" + larg + ",max-content)";
+  var celula = {}, yy, xx;
+  for(yy = 0; yy < alt; yy++) for(xx = 0; xx < larg; xx++){
+    var ch = mapa[(xx + minX) + "," + (yy + minY)];
+    if(!ch){ grade.appendChild(el("span", "ccel")); continue; }
+    var c = el("button", "ccel viva", "");
+    c.setAttribute("aria-label", "Casa da cruzadinha");
+    c._x = xx + minX; c._y = yy + minY;
+    celula[c._x + "," + c._y] = c;
+    grade.appendChild(c);
+  }
+  env.appendChild(grade); d.appendChild(env);
+  var pistas = el("div", "pistas");
+  entradas.forEach(function(E, i){
+    var id = "n" + pi + "_" + i;
+    registra(id, pi, E.w);
+    E.id = id; E.cels = []; E.rot = "Escreva a palavra " + E.n;
+    var t;
+    for(t = 0; t < E.w.length; t++){
+      var cc = celula[(E.x + (E.hor ? t : 0)) + "," + (E.y + (E.hor ? 0 : t))];
+      E.cels.push(cc);
+      if(t === 0 && cc && !cc.querySelector(".cn")) cc.appendChild(el("span", "cn", E.n));
+    }
+    if(ST.resp[id]) E.cels.forEach(function(c, t2){
+      if(c){ c.className = "ccel viva ok"; c.textContent = E.w.charAt(t2);
+             if(t2 === 0) c.appendChild(el("span", "cn", E.n)); } });
+    var p = el("button", "pista" + (ST.resp[id] ? " feita" : ""),
+               '<span class="pn">' + E.n + ".</span> " + DADOSC[E.k].d);
+    p.setAttribute("data-qa", "esc-" + id);
+    p.setAttribute("aria-label", "Pista " + E.n + " da cruzadinha");
+    E.bt = p;
+    p.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso(); falar(prefFala + E.k);
+      abreCruz(E, pi);
+    };
+    pistas.appendChild(p);
+    E.cels.forEach(function(c){
+      if(!c) return;
+      c.addEventListener("click", function(){ if(!ST.resp[id]) abreCruz(E, pi); });
+    });
+  });
+  d.appendChild(pistas);
+}
+
+/* PEÇA — O CAÇA-PALAVRAS (_ponto2, f27). CONTRATO: `cp-<id>-a` e `cp-<id>-z`. */
+function cacaPalavras(d, pi, C, rotulo){
+  var cels = {};
+  var g = el("div", "cpgrade");
+  C.grade.forEach(function(lin, y){
+    var l = el("div", "cplin");
+    lin.forEach(function(L, x){
+      var b = el("button", "cpcel", L);
+      b.setAttribute("aria-label", L);
+      cels[y + "," + x] = b; l.appendChild(b);
+    });
+    g.appendChild(l);
+  });
+  d.appendChild(g);
+  var lista = el("div", "cplista");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var P = C.pal[k], id = "n" + pi + "_" + i;
+    registra(id, pi, "cpa cpz");
+    var rot = el("div", "cprot" + (ST.resp[id] ? " achada" : ""), rotulo + " <b>" + P.pista + "</b>");
+    rot.appendChild(botaoSom("Ouvir a pista", function(){ falar("cp_" + k); }));
+    lista.appendChild(rot);
+    var ca = cels[P.a[0] + "," + P.a[1]], cz = cels[P.z[0] + "," + P.z[1]];
+    ca.setAttribute("data-qa", "cp-" + id + "-a");
+    cz.setAttribute("data-qa", "cp-" + id + "-z");
+    function marca(){
+      var y = P.a[0], x;
+      for(x = P.a[1]; x <= P.z[1]; x++) cels[y + "," + x].className = "cpcel achada";
+      rot.className = "cprot achada";
+    }
+    if(ST.resp[id]) marca();
+    var passo = 0;
+    [ca, cz].forEach(function(cel, n){
+      cel.addEventListener("click", function(){
+        if(ST.resp[id]) return;
+        sPasso();
+        if(n === 0){ passo = 1; cel.className = "cpcel pega"; return; }
+        if(passo !== 1){ falar("cacatoque"); return; }
+        marca(); acertou(id, "certo" + pi + "_" + k);
+      });
+    });
+  });
+  d.appendChild(lista);
+}
+
+/* PEÇA — PEGAR E SOLTAR NUM ALVO COMPARTILHADO (_ponto2, f1): a peça é o item,
+   o alvo se declara no nível da página como `alvo-<chave>`, e a resposta do item
+   é ">chave". As duas portas: puxar OU tocar-tocar. */
+function pegaSolta(d, pi, alvosHTML, itens, chaveAlvo, falaItem, cls){
+  var alvos = [], marcada = null;
+  var linha = el("div", "figalvos");
+  baralha(alvosHTML.slice(0)).forEach(function(A){
+    var a = el("div", "figalvo gr");
+    a.innerHTML = A.html;
+    a.setAttribute("data-alvo", "1");
+    a.setAttribute("data-qa", "alvo-" + chaveAlvo + pi + "_" + A.k);
+    a._v = A.k; a._dentro = el("div", "fdentro2"); a.appendChild(a._dentro);
+    if(A.fala) a.appendChild(botaoSom("Ouvir", function(){ falar(A.fala); }));
+    alvos.push(a); linha.appendChild(a);
+  });
+  d.appendChild(linha);
+  var banco = el("div", "figbanco");
+  itens.forEach(function(I, i){
+    var id = "n" + pi + "_" + i;
+    registra(id, pi, ">" + chaveAlvo + pi + "_" + I.alvo);
+    var b = el("button", "op pal" + (cls ? " " + cls : "") + (ST.resp[id] ? " usada" : ""), I.rot);
+    b.setAttribute("aria-label", I.aria || I.rot);
+    b.setAttribute("data-qa", "item-" + id);
+    b.setAttribute("data-alvo", "1");
+    if(ST.resp[id]) alvos.forEach(function(a){ if(a._v === I.alvo) a._dentro.appendChild(el("span", "fdentro", I.rot)); });
+    function larga(a){
+      if(ST.resp[id]) return;
+      if(a._v === I.alvo){
+        b.className = "op pal" + (cls ? " " + cls : "") + " usada";
+        a._dentro.appendChild(el("span", "fdentro", I.rot));
+        if(marcada === b) marcada = null;
+        acertou(id, "certo" + pi + "_" + I.k);
+      } else {
+        a.className = "figalvo gr erro";
+        setTimeout(function(){ a.className = "figalvo gr"; }, 500);
+        errou(id, "dica" + pi + "_" + I.k);
+      }
+    }
+    b._larga = larga;
+    b.onclick = function(){
+      if(b._arrastou){ b._arrastou = false; return; }
+      if(ST.resp[id]) return;
+      sPasso(); falar(falaItem(I));
+      if(marcada === b){ b.className = "op pal" + (cls ? " " + cls : ""); marcada = null; return; }
+      if(marcada) marcada.className = "op pal" + (cls ? " " + cls : "");
+      b.className = "op pal" + (cls ? " " + cls : "") + " marcada"; marcada = b;
+    };
+    puxavel(b, alvos, function(a){ larga(a); });
+    banco.appendChild(b);
+  });
+  alvos.forEach(function(a){ a.onclick = function(){ if(marcada && marcada._larga) marcada._larga(a); }; });
+  d.appendChild(banco);
+}
+
+/* ============================================================
+   AS 35 FOLHAS — e a ordem É a escada.
+   o par que se vê (1-5) → parecido ou contrário? (6) → a mesma coisa dita de
+   outro jeito (7-11) → as duas gavetas (12-13) → o contrário dentro da frase
+   (14-19) → os jogos das palavras escondidas (20-25) → o pedacinho que vira o
+   contrário, in-/im- (26-30) → no texto e no mundo (31-35).
+   ============================================================ */
+
+/* 1 — DUAS FIGURAS, UMA PALAVRA (D37) */
+function f1(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Olhe as duas figuras. A primeira tem um nome. Escolha a " +
+            "palavra que diz o <b>contrário</b> para a segunda.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var P = PARF[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var par = el("div", "parfig");
+    par.innerHTML = figOu(P.e, "figp") + '<span class="vs">&rarr;</span>' + figOu(P.d, "figp");
+    box.appendChild(par);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "legfig", P.pal + " &middot; " + P.raiz + " "));
+    lin.lastChild.appendChild(nomeSecreto(P.r, id));
+    lin.appendChild(botaoSom("Ouvir", function(){ falar("par_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(P.ops.map(function(w){
+      return {v: chaveQuadro(w), rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
+    })), chaveQuadro(P.r), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 2 e 3 — LIGUE CADA FIGURA AO CONTRÁRIO (D11 e D06) */
+function montaLigF(d, pi){
+  var pares = ST.folha["p" + pi][0].map(function(k){
+    var L = LIGF[k];
+    return {k: k, esq: figOu(L.e, "figlig") + L.pe, dir: figOu(L.d, "figlig") + L.pd,
+            ariaE: L.pe, ariaD: L.pd, fe: "lgf_" + k + "_e", fd: "lgf_" + k + "_d",
+            fc: "certo" + pi + "_" + k, dica: "dica" + pi + "_" + k};
+  });
+  var cx = el("div", "ligcx");
+  d.appendChild(cx);
+  montaLigar(cx, pi, "g0", pares, d);
+}
+function f2(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque numa figura da esquerda e depois na figura que mostra " +
+            "o <b>contrário</b> dela.", "p" + pi + "enun");
+  montaLigF(d, pi);
+}
+function f3(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Mais cinco pares. Repare bem no desenho antes de ligar.",
+            "p" + pi + "enun");
+  montaLigF(d, pi);
+}
+
+/* 4 e 5 — ESCREVA O CONTRÁRIO DA CENA (D31 e D11) */
+function montaEscF(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = ESCF[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var par = el("div", "parfig");
+    par.innerHTML = figOu(X.e, "figp") + '<span class="vs">&rarr;</span>' + figOu(X.d, "figp");
+    box.appendChild(par);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "legfig", X.pal + " &middot; ?"));
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("esf_" + k); }));
+    box.appendChild(lin);
+    gradeEscrever(box, id, pi, k, X.w, "Escreva o contrário de " + X.pal);
+    fechaItem(d, box, id);
+  });
+}
+function f4(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "A primeira cena tem um nome. Escreva nas casinhas o nome " +
+            "da segunda: é o <b>contrário</b>. Toque nas casinhas ou digite.", "p" + pi + "enun");
+  montaEscF(d, pi);
+}
+function f5(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora sem a cena: só a figura. Escreva o contrário.",
+            "p" + pi + "enun");
+  montaEscF(d, pi);
+}
+
+/* 6, 12 e 13 — AS DUAS GAVETAS (D03/D14/D35) */
+function f6(d, pi){ gavetas(d, pi, "gA", "Leia as duas palavras de cada peça. Elas dizem a <b>mesma coisa</b> ou dizem o <b>contrário</b>? Leve a peça para a gaveta certa."); }
+function f12(d, pi){ gavetas(d, pi, "gB", "As duas gavetas de novo, com pares novos. Diga as duas palavras em voz alta antes de escolher."); }
+function f13(d, pi){ gavetas(d, pi, "gC", "Os pares mais difíceis. Pense: eu poderia trocar uma pela outra na frase?"); }
+
+/* 7 e 8 — QUAL DIZ A MESMA COISA? (D25) */
+function montaEsc3(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = ESC3[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "palgrande", X.p));
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("pal_" + chaveQuadro(X.p)); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(X.ops.map(function(w){
+      return {v: chaveQuadro(w), rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
+    })), chaveQuadro(X.r), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f7(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Leia a palavra grande. Das três embaixo, qual diz a " +
+            "<b>mesma coisa</b> que ela? Cuidado: uma delas diz o contrário.", "p" + pi + "enun");
+  montaEsc3(d, pi);
+}
+function f8(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Mais seis palavras. Se ficar em dúvida, ponha as duas numa " +
+            "frase e veja se ela continua igual.", "p" + pi + "enun");
+  montaEsc3(d, pi);
+}
+
+/* 9 — LIGUE AS PALAVRAS IRMÃS (D24/D18) */
+function f9(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque numa palavra da esquerda e depois na irmã dela, a que " +
+            "diz a <b>mesma coisa</b>.", "p" + pi + "enun");
+  var pares = ST.folha["p" + pi][0].map(function(k){
+    var L = LIGS[k];
+    return {k: k, esq: L.a, dir: L.b, ariaE: L.a, ariaD: L.b,
+            fe: "pal_" + chaveQuadro(L.a), fd: "pal_" + chaveQuadro(L.b),
+            fc: "certo" + pi + "_" + k, dica: "dica" + pi + "_" + k};
+  });
+  var cx = el("div", "ligcx");
+  d.appendChild(cx);
+  montaLigar(cx, pi, "g0", pares, d);
+}
+
+/* 10 — MARQUE TODAS AS IRMÃS (D18/D15) */
+function f10(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Uma palavra pode ter <b>mais de uma</b> irmã. Marque todas " +
+            "as que dizem a mesma coisa e depois toque em Conferir.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var M = MARQ[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "palgrande", M.p));
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("pal_" + chaveQuadro(M.p)); }));
+    box.appendChild(lin);
+    marqueConfira(box, id, pi, M.pecas.map(function(P){
+      return {k: P.k, t: P.t, ok: P.ok, fala: function(){ falar("pal_" + chaveQuadro(P.t)); }};
+    }), "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 11 — ESCREVA NA GRADE DE CASINHAS (D22/D18) */
+function f11(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "As casinhas dizem quantas letras tem a palavra irmã. Leia a " +
+            "pista e escreva.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var G = GRADE[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "palgrande", G.p));
+    lin.appendChild(botaoSom("Ouvir a pista", function(){ falar("grd_" + k); }));
+    box.appendChild(lin);
+    box.appendChild(el("div", "ajuda cent", G.d));
+    gradeEscrever(box, id, pi, k, G.w, "Escreva a palavra irmã de " + G.p);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 14 e 15 — O CONTRÁRIO DENTRO DA FRASE (D24, D35, D07) */
+function montaFrase(d, pi){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var F = FRASE[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frasegrande", F.f.replace("___", '<i class="lacuna peq"></i>')));
+    lin.appendChild(botaoSom("Ouvir a frase", function(){ falar("fra_" + k); }));
+    box.appendChild(lin);
+    var nova = el("div", "fala"); nova.appendChild(nomeSecreto(F.nova, id)); box.appendChild(nova);
+    opcoes(box, pi, id, baralha(F.ops.map(function(w){
+      return {v: chaveQuadro(w), rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
+    })), chaveQuadro(F.r), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f14(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Leia a frase. Troque a palavra <b>destacada</b> pelo " +
+            "contrário dela e veja a frase nova aparecer.", "p" + pi + "enun");
+  montaFrase(d, pi);
+}
+function f15(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora a frase tem um buraco. Preencha com o <b>contrário</b> " +
+            "da palavra que já está nela.", "p" + pi + "enun");
+  montaFrase(d, pi);
+}
+
+/* 16 — ESCREVA O CONTRÁRIO NA FRASE */
+function f16(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Sem opções desta vez: <b>escreva</b> o contrário que falta na " +
+            "frase.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var F = FRASE[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frasegrande", F.f.replace("___", '<i class="lacuna peq"></i>')));
+    lin.appendChild(botaoSom("Ouvir a frase", function(){ falar("fra_" + k); }));
+    box.appendChild(lin);
+    box.appendChild(el("div", "ajuda cent", F.d));
+    gradeEscrever(box, id, pi, k, F.w, "Escreva a palavra que falta");
+    fechaItem(d, box, id);
+  });
+}
+
+/* 17 e 18 — A CÍNTIA E O LEO (D38) */
+function f17(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "A Cíntia é exagerada: diz tudo duas vezes, com palavras irmãs. " +
+            "Preencha a fala dela.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var C = CINTIA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "fala", "<b>Cíntia:</b> " + C.f.replace("___", '<i class="lacuna peq"></i>')));
+    lin.appendChild(botaoSom("Ouvir a Cíntia", function(){ falar("cin_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(C.ops.map(function(w){
+      return {v: chaveQuadro(w), rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
+    })), chaveQuadro(C.r), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f18(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "O Leo é o contrário da Cíntia: discorda de tudo. Preencha a " +
+            "resposta dele com o <b>contrário</b>.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var L = LEO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    var duas = el("div", "");
+    duas.appendChild(el("div", "fala", "<b>Cíntia:</b> " + L.c));
+    duas.appendChild(el("div", "fala", "<b>Leo:</b> " + L.l.replace("___", '<i class="lacuna peq"></i>')));
+    lin.appendChild(duas);
+    lin.appendChild(botaoSom("Ouvir os dois", function(){ falar("leo_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(L.ops.map(function(w){
+      return {v: chaveQuadro(w), rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
+    })), chaveQuadro(L.r), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 19 — NUMERE OS PARES (D21) */
+function f19(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "A coluna da esquerda tem números. Para cada palavra da " +
+            "direita, toque no <b>número</b> da irmã dela.", "p" + pi + "enun");
+  var lista = ST.folha["p" + pi];
+  var col = el("div", "pergcol");
+  lista.forEach(function(k, n){
+    var a = el("div", "pergunta2");
+    a.appendChild(el("span", "ptxt", "<b>" + (n + 1) + ".</b> " + NUM[k].a));
+    a.appendChild(botaoSom("Ouvir", function(){ falar("pal_" + chaveQuadro(NUM[k].a)); }));
+    col.appendChild(a);
+  });
+  d.appendChild(col);
+  baralha(lista.slice(0)).forEach(function(k){
+    var i = lista.indexOf(k), id = "n" + pi + "_" + i, box = item(0);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "palgrande", NUM[k].b));
+    lin.appendChild(botaoSom("Ouvir", function(){ falar("pal_" + chaveQuadro(NUM[k].b)); }));
+    box.appendChild(lin);
+    var ops = lista.map(function(_, n){ return {v: "n" + (n + 1), rot: String(n + 1), aria: "número " + (n + 1), fala: "num_" + (n + 1)}; });
+    opcoes(box, pi, id, ops, "n" + (i + 1), "pal num", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 20 e 21 — OS DOIS CAÇAS (D20/D33) */
+function f20(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ache na grade o <b>contrário</b> de cada palavra da lista: toque " +
+            "na primeira letra e depois na última.", "p" + pi + "enun");
+  cacaPalavras(d, pi, CACA, "contrário de");
+}
+function f21(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora ache a palavra <b>irmã</b>, a que diz a mesma coisa. " +
+            "Primeira letra, depois a última.", "p" + pi + "enun");
+  cacaPalavras(d, pi, CACA2, "irmã de");
+}
+
+/* 22 e 23 — AS DUAS CRUZADINHAS (D17/D39) */
+function f22(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque numa pista, escute e escreva o <b>contrário</b> na " +
+            "cruzadinha.", "p" + pi + "enun");
+  cruzadinha(d, pi, CRZD, "crz_");
+}
+function f23(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora a palavra está <b>dentro da frase</b>. Escreva o contrário " +
+            "da palavra em letra grande.", "p" + pi + "enun");
+  cruzadinha(d, pi, CRZD2, "crz_");
+}
+
+/* 24 — ARRASTE A CARTA ATÉ O PAR (D40) */
+function f24(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Cada carta de baixo tem uma irmã em cima. <b>Puxe</b> a carta " +
+            "até o par dela, ou toque numa e depois na outra.", "p" + pi + "enun");
+  var lista = ST.folha["p" + pi];
+  pegaSolta(d, pi,
+    lista.map(function(k){ return {k: k, html: '<span class="cartex">' + PARES[k].b + "</span>", fala: "pal_" + chaveQuadro(PARES[k].b)}; }),
+    lista.map(function(k){ return {k: k, alvo: k, rot: PARES[k].a, aria: PARES[k].a}; }),
+    "par", function(I){ return "pal_" + chaveQuadro(I.rot); }, "frase");
+}
+
+/* 25 — PINTE DA MESMA COR (D19/D08) */
+function f25(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Pegue uma canetinha e pinte as palavras irmãs com a <b>mesma " +
+            "cor</b>. A legenda diz de quem é cada cor.", "p" + pi + "enun");
+  estojo(d, PINT.cores);
+  var cx = el("div", "sils");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var P = PINT.pal[k], id = "n" + pi + "_" + i;
+    registra(id, pi, P.c);
+    var b = el("button", "sil", P.p);
+    b.setAttribute("aria-label", P.p);
+    pintavel(b, id, pi, P.c, "certo" + pi + "_" + k, "dica" + pi + "_" + k, null);
+    var velho = b.onclick;
+    b.onclick = function(){ falar("pal_" + chaveQuadro(P.p)); velho(); };
+    b.setAttribute("data-qa-item", "item-" + id);
+    cx.appendChild(b);
+  });
+  d.appendChild(cx);
+}
+
+/* 26 a 30 — O PEDACINHO QUE VIRA O CONTRÁRIO (bloco declarado do currículo) */
+function f26(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Leia a frase. Uma das palavras é o contrário da palavra " +
+            "destacada, e ela ganhou um <b>pedacinho a mais</b> na frente. Qual é?", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = PREF1[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frasegrande", X.f.replace(X.raiz, "<b>" + X.raiz + "</b>").replace("___", '<i class="lacuna peq"></i>')));
+    lin.appendChild(botaoSom("Ouvir a frase", function(){ falar("pf1_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(X.ops.map(function(w){
+      return {v: chaveQuadro(w), rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
+    })), chaveQuadro(X.r), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function montaPrefixo(d, pi, DP){
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = DP[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    var pal = el("div", "palgrande");
+    var pre = el("span", "prefixo", "?"), raiz = el("span", "raiz", X.raiz);
+    pal.appendChild(pre); pal.appendChild(raiz);
+    lin.appendChild(pal);
+    lin.appendChild(botaoSom("Ouvir a palavra", function(){ falar("pal_" + chaveQuadro(X.raiz)); }));
+    box.appendChild(lin);
+    if(ST.resp[id]){ pre.textContent = X.pre.toUpperCase(); raiz.className = "raiz cheia"; }
+    opcoes(box, pi, id, [{v: "in", rot: "IN", aria: "in", fala: "pre_in"}, {v: "im", rot: "IM", aria: "im", fala: "pre_im"}],
+           X.pre, "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k,
+           function(){ pre.textContent = X.pre.toUpperCase(); raiz.className = "raiz cheia"; }, [pre]);
+    fechaItem(d, box, id);
+  });
+}
+function f27(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "O pedacinho é <b>IN</b> ou <b>IM</b>? Puxe o certo até a frente " +
+            "da palavra, ou toque nele. Diga a palavra inteira em voz alta.", "p" + pi + "enun");
+  montaPrefixo(d, pi, PREF2);
+}
+function f28(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Mais seis. Repare na <b>primeira letra</b> da palavra: quando " +
+            "é IM e quando é IN? Tem um segredo aí.", "p" + pi + "enun");
+  montaPrefixo(d, pi, PREF3);
+}
+function f29(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora escreva a palavra inteira, com o pedacinho na frente.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = PREF4[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "ajuda", X.d));
+    lin.appendChild(botaoSom("Ouvir a pista", function(){ falar("pf4_" + k); }));
+    box.appendChild(lin);
+    gradeEscrever(box, id, pi, k, X.w, "Escreva a palavra inteira");
+    fechaItem(d, box, id);
+  });
+}
+function f30(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Você já usou o pedacinho quatro folhas seguidas. Agora diga a " +
+            "<b>regra</b> que você descobriu.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = REGRA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frasegrande", X.f.replace("___", '<i class="lacuna peq"></i>')));
+    lin.appendChild(botaoSom("Ouvir", function(){ falar("reg_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, X.ops.map(function(w){
+      return {v: chaveQuadro(w), rot: w, aria: w, fala: "pal_" + chaveQuadro(w)};
+    }), chaveQuadro(X.r), "pal", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 31 e 32 — ACHE NO TEXTO */
+function f31(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Leia o texto e toque nas palavras que são " + TXT.tx1.pede +
+            ". Depois confira.", "p" + pi + "enun");
+  noTexto(d, pi, TXT.tx1, "certo" + pi + "_t", "dica" + pi + "_t");
+}
+function f32(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora toque " + TXT.tx2.pede + ". Depois confira.", "p" + pi + "enun");
+  noTexto(d, pi, TXT.tx2, "certo" + pi + "_t", "dica" + pi + "_t");
+}
+
+/* 33 — REESCREVA COM O CONTRÁRIO (D05) */
+function f33(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "A frase foi reescrita com o <b>contrário</b> da palavra destacada. " +
+            "Qual das duas ficou certa?", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var R = REESC[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frasegrande", R.f));
+    lin.appendChild(botaoSom("Ouvir a frase", function(){ falar("ree_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha([
+      {v: "certa", rot: R.certa, aria: R.certa, fala: "pal_" + chaveQuadro(R.certa)},
+      {v: "outra", rot: R.outra, aria: R.outra, fala: "pal_" + chaveQuadro(R.outra)}]),
+      "certa", "pal frase", "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 34 — ESCREVA SOBRE O SEU AMIGO (D27) — PRODUÇÃO: vale qualquer palavra da lista */
+function f34(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Pense no seu melhor amigo ou amiga. Escreva uma palavra que " +
+            "diga como ele é — e depois o contrário dela.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = PROD[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "ajuda", "Escreva " + X.q + "."));
+    lin.appendChild(botaoSom("Ouvir o pedido", function(){ falar("prd_" + k); }));
+    box.appendChild(lin);
+    gradeEscrever(box, id, pi, k, X.ok[0], "Escreva a sua palavra", X.ok);
+    fechaItem(d, box, id);
+  });
+}
+
+/* 35 — O CARTAZ DOS DOIS NOMES (D39/D12) ⭐⭐ O CONCEITO VEM POR ÚLTIMO */
+function f35(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Você já sabe tudo isto. Agora os dois nomes: leve cada par de " +
+            "palavras para a linha dele.", "p" + pi + "enun");
+  var cart = el("div", "cartaz"), linhas = {}, listaC = [];
+  CART.linhas.forEach(function(L){
+    var l = el("div", "cartlin");
+    var t = el("div", "cartit");
+    t.innerHTML = "<b>" + L.t + "</b><span>" + L.d + "</span>";
+    t.appendChild(botaoSom("Ouvir", function(){ falar("cart_" + L.k); }));
+    l.appendChild(t);
+    var alvo = el("div", "cartalvo");
+    alvo.setAttribute("data-alvo", "1");
+    alvo.setAttribute("data-qa", "alvo-cart" + pi + "_" + L.k);
+    alvo.appendChild(el("span", "cartex", L.e));
+    l.appendChild(alvo);
+    l._v = L.k; l._dentro = alvo;
+    linhas[L.k] = l; listaC.push(l);
+    cart.appendChild(l);
+  });
+  d.appendChild(cart);
+  var banco = el("div", "figbanco"), marcada = null;
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = CART.exem[k], id = "n" + pi + "_" + i;
+    registra(id, pi, ">cart" + pi + "_" + X.c);
+    var b = el("button", "op pal frase" + (ST.resp[id] ? " usada" : ""), X.p);
+    b.setAttribute("aria-label", X.p);
+    b.setAttribute("data-qa", "item-" + id);
+    b.setAttribute("data-alvo", "1");
+    if(ST.resp[id]) linhas[X.c]._dentro.appendChild(el("span", "fdentro", X.p));
+    function larga(l){
+      if(ST.resp[id]) return;
+      if(l._v === X.c){
+        b.className = "op pal frase usada";
+        l._dentro.appendChild(el("span", "fdentro", X.p));
+        if(marcada === b) marcada = null;
+        acertou(id, "certo" + pi + "_" + k);
+      } else {
+        l.className = "cartlin erro";
+        setTimeout(function(){ l.className = "cartlin"; }, 500);
+        errou(id, "dica" + pi + "_" + k);
+      }
+    }
+    b._larga = larga;
+    b.onclick = function(){
+      if(b._arrastou){ b._arrastou = false; return; }
+      if(ST.resp[id]) return;
+      sPasso(); falar("ex_" + k);
+      if(marcada === b){ b.className = "op pal frase"; marcada = null; return; }
+      if(marcada) marcada.className = "op pal frase";
+      b.className = "op pal frase marcada"; marcada = b;
+    };
+    puxavel(b, listaC, function(l){ larga(l); });
+    banco.appendChild(b);
+  });
+  listaC.forEach(function(l){ l.onclick = function(){ if(marcada && marcada._larga) marcada._larga(l); }; });
+  d.appendChild(banco);
+}

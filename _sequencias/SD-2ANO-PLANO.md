@@ -93,7 +93,7 @@ que está pronto para construir.
 | 3 | **A Máquina de Trocar Sílabas** (`_troca2`) | ✅ 40 colhidas, 40 únicas | ✅ `POTE-TROCA2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/a-maquina-de-trocar-silabas/) |
 | 4 | **As Três Marcas do Nariz** (`_nasal2`) | ✅ 40 colhidas | ✅ `POTE-NASAL2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/as-tres-marcas-do-nariz/) |
 | 5 | O ponto que muda a voz | ✅ 40 em `_sequencias/folhas_ponto2` | — | — | — |
-| 6 | Mesma coisa · o contrário | ✅ 40 em `_sequencias/folhas_sinon2` | — | — | — |
+| 6 | **O Espelho e o Contrário** (`_sinon2`) | ✅ 40 em `_sequencias/folhas_sinon2` | ✅ `POTE-SINON2.md` | ✅ 35 folhas (18/set) | ⏳ em entrega |
 | 7 | O grandão e o pequenininho | ✅ 40 em `_sequencias/folhas_aumdim2` | — | — | — |
 | 8 | O que rima e o que não rima | ✅ 40 em `_sequencias/folhas_rima2` | — | — | — |
 | 9 | A história tem um problema | ✅ 40 em `_sequencias/folhas_narra2` | — | — | — |
