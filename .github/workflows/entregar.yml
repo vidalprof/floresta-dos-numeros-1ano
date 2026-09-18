@@ -492,8 +492,16 @@ jobs:
             echo "nenhuma voz nova"
           else
             git commit -m "audio: vozes que faltavam"
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            # ⚠️ INSISTIR (18/set/2026): trinta buscas de foto empurrando na mesma
+            #    branch ao mesmo tempo fizeram um push daqui cair com "fetch first"
+            #    depois de UM rebase só. Cinco voltas, como no buscar-fotos.yml.
+            ok=0
+            for t in 2 4 8 16 30; do
+              git pull -q --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+              if git push origin "HEAD:${GITHUB_REF_NAME}"; then ok=1; break; fi
+              sleep "$t"
+            done
+            [ "$ok" = "1" ] || { echo "::error::nao consegui guardar as vozes no repo (branch em disputa)"; exit 1; }
           fi
 
       # ⚠️⚠️ E AGORA SE CONFERE, PORQUE O PASSO DE CIMA JÁ FALHOU EM SILÊNCIO
@@ -629,6 +637,15 @@ jobs:
           if git diff --cached --quiet; then echo "sem recado novo";
           else
             git commit -m "entrega: recado do que foi ao ar"
-            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-            git push origin "HEAD:${GITHUB_REF_NAME}"
+            # ⚠️ INSISTIR (18/set/2026): a corrida 35360035203 publicou os oito
+            #    cadernos, conferiu o sha de cada um no ar — e perdeu o recado aqui,
+            #    porque a branch recebeu commits de outros workflows entre o rebase
+            #    e o push. Sem recado, quem espera o carimbo conclui "nao publicou".
+            ok=0
+            for t in 2 4 8 16 30; do
+              git pull -q --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+              if git push origin "HEAD:${GITHUB_REF_NAME}"; then ok=1; break; fi
+              sleep "$t"
+            done
+            [ "$ok" = "1" ] || { echo "::error::nao consegui deixar o recado no repo (branch em disputa)"; exit 1; }
           fi

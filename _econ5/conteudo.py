@@ -108,7 +108,9 @@ SECOES = [
             u"primeiro lugar do país. Em frango, o estado é o segundo. A maior parte das granjas fica no "
             u"Oeste, em cidades como Chapecó, onde a economia gira em torno da agroindústria. A carne "
             u"suína é, junto com a madeira, o que Santa Catarina mais vende para outros países."),
-  u"credito": u""},
+  # foto: Commons "A sow nurses her litter of piglets in a clean pen" (USDA, domínio público) —
+  # o Commons não devolveu foto de granja catarinense em nenhuma das seis buscas (18/set).
+  u"credito": u"USDA · domínio público"},
 
  {u"cls": u"pri", u"tag": u"POMAR", u"img": u"ec5_maca.jpg",
   u"titulo": u"Maçã e cebola: a serra fria que dá fruta",
@@ -127,7 +129,9 @@ SECOES = [
   u"fala": (u"Metade das maçãs do Brasil nasce em Santa Catarina: quinhentas e noventa e três mil "
             u"toneladas num ano só. A maçã gosta de frio, por isso os pomares ficam na Serra, em cidades "
             u"como São Joaquim e Fraiburgo. Na cebola o estado também é o primeiro do país."),
-  u"credito": u""},
+  # foto: Commons "I read that this was a banner year for apples..." (liz west, CC BY 2.0) — macieira
+  # carregada; NÃO é pomar catarinense (o Commons devolveu 0 para São Joaquim/Fraiburgo em 4 buscas).
+  u"credito": u"liz west · CC BY 2.0"},
 
  {u"cls": u"pri", u"tag": u"MAR", u"img": u"ec5_ostras.jpg",
   u"titulo": u"Ostras e mexilhões: o mar também é lavoura",

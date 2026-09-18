@@ -8405,3 +8405,51 @@ quem lê. Mudar o critério é escolha pedagógica.
 é hipótese, não medida. **Ou se lê o CÓDIGO DE SAÍDA da ferramenta, ou se abre
 dois arquivos e se confere o padrão antes de contar.** Número de folha se conta
 no navegador (`PAGEL.length - 1`), que é onde a criança conta.
+
+## 📸🌐 FOTO DE ACERVO PARA SITE DE PESQUISA — o que o Commons devolve e o que não devolve (18/set/2026, "Santa Catarina que Produz")
+
+A atividade de 5º ano sobre a economia de SC (`_econ5`, molde do `_vale4`)
+precisou de 14 fotos reais com licença. O `buscar-fotos.yml` (input `commons=`)
+usa a busca de TEXTO do Commons (`generator=search`, namespace 6). Medido em
+**48 buscas** no mesmo dia:
+
+1. **Sem `filetype:bitmap`, a busca devolve LIXO em PDF.** "maçã", "cuca",
+   "frigorífico", "arroz" trouxeram 25 páginas escaneadas do Museu da Pessoa e
+   do Diário Oficial da União — a palavra estava DENTRO do PDF. Só `porto` e
+   `vila_germanica` (nomes próprios) vieram limpos. **Sempre** acrescentar
+   `filetype:bitmap` ao pedido.
+2. **Palavra em português com acento + várias palavras = quase sempre 0.**
+   "maçã São Joaquim", "cebola Ituporanga", "plantação de cebola Brasil",
+   "granja de frangos aviário", "celulose"... todas 0. O que funciona é nome
+   próprio ("Porto de Itajaí", "Hering Blumenau", "Oktoberfest Blumenau",
+   "Fenarreco"), ou a palavra em INGLÊS/ALEMÃO curta ("Apfelstrudel",
+   "Streuselkuchen", "pigs pen farm piglets" — que ainda assim traz metade de
+   regulamento escaneado). Foto de granja CATARINENSE não existe lá: a de suínos
+   é do USDA (domínio público) e está dito no crédito.
+3. **"Marejada" e "cuca" são palavras de outras línguas também** (marejada =
+   mar agitado em espanhol; Cuca = aldeia romena, treinador de futebol): vieram
+   25 fotos e 1 servia. Nome de festa vai sempre com a cidade.
+4. **Cada foto entra com autor + licença NA TELA** (classe `.cred` sobre a
+   foto) e em `creditos.json`; o montador (`_econ5/montar.py`) gera os dois.
+   Fotos de acervo se creditam — e "domínio público" também se escreve.
+5. **A folha de contato se OLHA antes de escolher** — e o Marcos vê a escolhida
+   (regra dele: "sempre me mostre o que vc colheu"). Eu mandei a folha das 14
+   escolhidas + as telas antes de publicar.
+
+## ⚠️🏁 TRINTA WORKFLOWS EMPURRANDO NA MESMA BRANCH DERRUBARAM O RECADO DA ENTREGA (18/set/2026)
+
+A corrida `entregar.yml` 35360035203 (os oito cadernos com a sílaba v5)
+**publicou os oito e conferiu o sha de cada um no ar** (`tentativa 1: HTTP 200,
+no ar = esperado`, li no log do job) — e o passo final, "Deixar o recado no
+repo", **falhou no push com "fetch first"**: fazia UM `pull --rebase` e UM
+`push`, e entre os dois entraram commits das trinta buscas de foto que eu
+tinha disparado ao mesmo tempo. Resultado: sites no ar, `_status/entrega-*.json`
+parados em 14:11, e meu vigia esperou 57 minutos por um carimbo que nunca viria.
+
+**Conserto duplo:** (1) os dois pushes do `entregar.yml` (vozes e recado) agora
+insistem cinco vezes com `pull --rebase` entre elas, como o `buscar-fotos.yml`
+já fazia, e falham COM `::error::` se não conseguirem; (2) regra de processo:
+**não disparar dezenas de workflows que commitam na branch enquanto uma
+entrega está rodando** — ou disparar e saber que o carimbo pode atrasar. E a
+lição de leitura: carimbo ausente não é "não publicou"; é "não sei" — quem
+responde é o log do job (`get_job_logs` com `tail_lines` pequeno).
