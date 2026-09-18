@@ -213,8 +213,8 @@ function f0(d){
   });
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Componente &middot; Nº ano &middot; N folhas sobre ASSUNTO</div>' +
-    '<div class="cena">' + '<div class="cppar">' + '<img class="capfig cppeq" draggable="false" src="img/gp_sapo_p.png?v=' + V + '" alt="">' + '<img class="capfig cpgra" draggable="false" src="img/gp_sapo_g.png?v=' + V + '" alt="">' + '</div>' + '<div class="cppar">' + '<img class="capfig cppeq" draggable="false" src="img/gp_gato_p.png?v=' + V + '" alt="">' + '<img class="capfig cpgra" draggable="false" src="img/gp_gato_g.png?v=' + V + '" alt="">' + '</div>' + '<div class="cppar">' + '<img class="capfig cppeq" draggable="false" src="img/gp_bolo_p.png?v=' + V + '" alt="">' + '<img class="capfig cpgra" draggable="false" src="img/gp_bolo_g.png?v=' + V + '" alt="">' + '</div>' + '</div>' +
+    '<div class="sub">Língua Portuguesa &middot; 2º ano &middot; 35 folhas sobre o tamanho das palavras</div>' +
+    '<div class="cena">' + '<div class="cppar">' + '<img class="capfig cppeq" draggable="false" style="height:63.5%" src="img/gp_sapo_p.png?v=' + V + '" alt="">' + '<img class="capfig cpgra" draggable="false" src="img/gp_sapo_g.png?v=' + V + '" alt="">' + '</div>' + '<div class="cppar">' + '<img class="capfig cppeq" draggable="false" style="height:70.3%" src="img/gp_gato_p.png?v=' + V + '" alt="">' + '<img class="capfig cpgra" draggable="false" src="img/gp_gato_g.png?v=' + V + '" alt="">' + '</div>' + '<div class="cppar">' + '<img class="capfig cppeq" draggable="false" style="height:66.9%" src="img/gp_bolo_p.png?v=' + V + '" alt="">' + '<img class="capfig cpgra" draggable="false" src="img/gp_bolo_g.png?v=' + V + '" alt="">' + '</div>' + '</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
@@ -1584,6 +1584,57 @@ function opsPal(ws){
   }));
 }
 
+/* ⚠️⚠️ O PAR TEM DE CHEGAR À TELA NA PROPORÇÃO REAL — e esta peça existe porque
+   a regra geral da casa faz o contrário. O `.fig`/`.figp` do CSS dá a toda
+   figura a MESMA largura, que é certo em qualquer outro caderno e é justamente
+   o defeito neste: com o sapinho e o sapão do mesmo tamanho na tela, a folha
+   deixa de ensinar o que promete, e a criança tem de adivinhar pela palavra.
+   ⚠️ A proporção não é declarada em lugar nenhum: sai do `naturalHeight` do
+      próprio arquivo, já que foi no RECORTE que o par foi reduzido pelo mesmo
+      fator. Uma fonte só, e nada para desencontrar.
+   ⚠️ E REFAZ NO `resize`: o leiaute é medido em seis tamanhos de tela, e sem
+      isso o par ficava com a medida da primeira. */
+/* ⚠️ a lista se cria DENTRO da função: este trecho do arquivo corre DEPOIS do
+   `monta()`, e um `var X = []` aqui em cima chegava `undefined` na primeira
+   folha — a folha 1 abria em branco e o cabeçalho dizia "Folha 1 de 0". */
+var PARES_NA_TELA;
+function tetoDoPar(){
+  var w = window.innerWidth || 390;
+  return Math.max(54, Math.min(104, w * 0.22));
+}
+function parProporcional(cx){
+  if(!PARES_NA_TELA) PARES_NA_TELA = [];
+  PARES_NA_TELA.push(cx);
+  var ims = cx.getElementsByTagName("img");
+  function ajusta(){
+    var maior = 0, k, teto = tetoDoPar();
+    for(k = 0; k < ims.length; k++) maior = Math.max(maior, ims[k].naturalHeight || 0);
+    if(!maior) return;
+    for(k = 0; k < ims.length; k++){
+      var nh = ims[k].naturalHeight || maior;
+      ims[k].style.maxHeight = "none";
+      ims[k].style.maxWidth = "none";
+      ims[k].style.width = "auto";
+      ims[k].style.height = (nh / maior * teto) + "px";
+    }
+  }
+  var pend = 0, i;
+  for(i = 0; i < ims.length; i++){
+    if(ims[i].complete && ims[i].naturalHeight) continue;
+    pend++;
+    ims[i].addEventListener("load", function(){ if(--pend <= 0) ajusta(); });
+    ims[i].addEventListener("error", function(){ if(--pend <= 0) ajusta(); });
+  }
+  ajusta();
+  cx._ajusta = ajusta;
+}
+window.addEventListener("resize", function(){
+  var i;
+  if(!PARES_NA_TELA) return;
+  for(i = 0; i < PARES_NA_TELA.length; i++)
+    if(PARES_NA_TELA[i]._ajusta) PARES_NA_TELA[i]._ajusta();
+});
+
 /* ---------- 1 e 2 — O PAR DE FIGURAS (d39) ----------
    O pequeno e o grande lado a lado, no tamanho de verdade: o par É o conceito,
    e por isso as duas peças foram reduzidas pelo mesmo fator no recorte. */
@@ -1593,6 +1644,7 @@ function montaPar(d, pi, DP, pede){
     var par = el("div", "parfig");
     par.innerHTML = figOu(X.fig + "_p", "figp") + '<span class="vs">e</span>' + figOu(X.fig + "_g", "figp");
     box.appendChild(par);
+    parProporcional(par);
     var lin = el("div", "enunlin");
     lin.appendChild(el("div", "legfig", pede(X)));
     lin.appendChild(botaoSom("Ouvir o que a folha pede", function(){ falar("prg_" + k); }));
@@ -1620,6 +1672,10 @@ function montaSolta(d, pi, DS){
     lista.map(function(k){ return {k: k, html: figOu(DS[k].fig, "fig"), fala: "fig_" + k}; }),
     lista.map(function(k){ return {k: k, alvo: k, rot: DS[k].rot, aria: DS[k].rot}; }),
     "tam", function(I){ return "pal_" + chavePal(I.rot); }, null);
+  /* os alvos do pega-e-solta são o MESMO desenho em dois (ou três) tamanhos:
+     valem a mesma regra da proporção real. */
+  var linha = d.getElementsByClassName("figalvos");
+  if(linha.length) parProporcional(linha[linha.length - 1]);
 }
 function f3(d, pi){
   faixa(d, pi, NOMES[pi - 1]);

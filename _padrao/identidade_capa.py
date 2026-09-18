@@ -504,26 +504,47 @@ def cena_par(p, S):
 
     ⚠️ Ela precisou existir: nas outras dezoito cenas a figura aparece UMA vez, e
        neste caderno o conceito É o par. As peças vêm aos dois: `figs` traz
-       pequeno e grande alternados, e a cena os junta dois a dois. O pequeno
-       CRESCE e volta, que é o gesto do assunto."""
-    css = u""".capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:clamp(10px,3.5vw,26px);flex-wrap:nowrap}
-.capa .cppar{display:flex;align-items:flex-end;gap:clamp(2px,1.2vw,8px);padding:0 clamp(2px,1vw,8px);
-  border-bottom:5px solid %(cor)s;border-radius:0 0 8px 8px}
-.capa .cppar .capfig{display:block;height:auto}
+       pequeno e grande alternados, e a cena os junta dois a dois.
+
+    ⚠️⚠️ E A REGRA DE ALTURA DA CAPA TEVE DE SER QUEBRADA AQUI, de propósito. O
+       `.capa .capfig` dá a TODA figura a mesma altura — o que é certo em
+       qualquer outra capa e é exatamente o defeito nesta: com os dois do mesmo
+       tamanho, a capa deste caderno deixa de dizer o que o caderno ensina. Aqui
+       a ALTURA DO PAR é que é fixa, e dentro dela cada peça entra na proporção
+       REAL do arquivo (lida do PNG, não chutada): o grande ocupa a altura toda
+       e o pequeno, a fração medida. Sem isso a capa ainda estourava a tela: as
+       peças saíam no tamanho natural (até 300 px) e o terceiro par ficava fora
+       do celular.
+    """
+    try:
+        from PIL import Image
+    except ImportError:                                    # pragma: no cover
+        raise SystemExit("cena_par precisa do Pillow para medir a proporcao do par")
+    css = u""".capa .cena{display:flex;justify-content:center;align-items:flex-end;
+  gap:clamp(8px,3vw,22px);flex-wrap:nowrap}
+.capa .cppar{display:flex;align-items:flex-end;gap:clamp(2px,1vw,7px);padding:0 clamp(3px,1vw,7px);
+  height:clamp(66px,17vw,116px);border-bottom:5px solid %(cor)s;border-radius:0 0 8px 8px}
+.capa .cppar .capfig{height:100%%;width:auto;max-width:none;display:block}
 .capa .cppeq{-webkit-animation:crescePar%(S)s 2.6s ease-in-out infinite;animation:crescePar%(S)s 2.6s ease-in-out infinite;
   -webkit-transform-origin:bottom center;transform-origin:bottom center}
-.capa .cppar:nth-child(2) .cppeq{animation-delay:.45s}
-.capa .cppar:nth-child(3) .cppeq{animation-delay:.9s}
+.capa .cena>.cppar:nth-child(2) .cppeq{-webkit-animation-delay:.45s;animation-delay:.45s}
+.capa .cena>.cppar:nth-child(3) .cppeq{-webkit-animation-delay:.9s;animation-delay:.9s}
 .capa .cpgra{-webkit-animation:pisaPar%(S)s 2.6s ease-in-out infinite;animation:pisaPar%(S)s 2.6s ease-in-out infinite;
   -webkit-transform-origin:bottom center;transform-origin:bottom center}
-.capa .cppar .rt{position:absolute}
-""" % dict(S=S, cor=p["cor"]) + kfs("crescePar" + S, "0%,100%{transform:scale(1)}50%{transform:scale(1.35)}") \
-        + kfs("pisaPar" + S, "0%,100%{transform:scale(1)}50%{transform:scale(.94)}")
-    fs = p["figs"]
-    pares = []
+""" % dict(S=S, cor=p["cor"]) + kfs("crescePar" + S, "0%,100%{transform:scale(1)}50%{transform:scale(1.18)}") \
+        + kfs("pisaPar" + S, "0%,100%{transform:scale(1)}50%{transform:scale(.95)}")
+
+    def alt(f):
+        return Image.open(os.path.join(p["pasta"], "img", f + ".png")).size[1]
+
+    fs, pares = p["figs"], []
     for i in range(0, len(fs), 2):
-        pares.append("'<div class=\"cppar\">' + " + fig(fs[i], "capfig cppeq")
-                     + " + " + fig(fs[i + 1], "capfig cpgra") + " + '</div>'")
+        peq, gra = fs[i], fs[i + 1]
+        pct = 100.0 * alt(peq) / float(alt(gra))
+        img_peq = ("'<img class=\"capfig cppeq\" draggable=\"false\" style=\"height:%.1f%%\" "
+                   "src=\"img/%s.png?v=' + V + '\" alt=\"\">'" % (pct, peq))
+        pares.append("'<div class=\"cppar\">' + " + img_peq + " + " + fig(gra, "capfig cpgra")
+                     + " + '</div>'")
     return css, "'<div class=\"cena\">' + " + " + ".join(pares) + " + '</div>'"
 
 
@@ -559,6 +580,7 @@ def sufixo(pasta):
 
 def aplica(pasta):
     p = dict(ESPEC[pasta])
+    p["pasta"] = pasta
     S = sufixo(pasta)
     p["cor2"] = escurece(p["cor"])
     p["corclara"] = clareia(p["cor"])

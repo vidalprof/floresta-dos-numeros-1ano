@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>O Grandão e o Pequenininho — Nº ano</title>
+<title>O Grandão e o Pequenininho — 2º ano</title>
 <meta name="description" content="DESCREVER: o assunto, o ano, quantas folhas e de onde vieram as folhas de papel colhidas.">
 <!-- ============================================================
      ESQUELETO DA FOLHA VIVA — a casca, sem conteúdo nenhum.
@@ -384,21 +384,21 @@ button{font-family:inherit;cursor:pointer}
   padding:8px 14px;box-shadow:0 5px 0 #82125b;letter-spacing:.02em;white-space:nowrap}
 .capa .rt{display:block;font-weight:900;font-size:clamp(12px,3.4vw,17px);color:#fff;background:#b5197e;
   border-radius:9px;padding:2px 8px;margin-top:4px;letter-spacing:.03em;white-space:nowrap}
-.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:clamp(10px,3.5vw,26px);flex-wrap:nowrap}
-.capa .cppar{display:flex;align-items:flex-end;gap:clamp(2px,1.2vw,8px);padding:0 clamp(2px,1vw,8px);
-  border-bottom:5px solid #b5197e;border-radius:0 0 8px 8px}
-.capa .cppar .capfig{display:block;height:auto}
+.capa .cena{display:flex;justify-content:center;align-items:flex-end;
+  gap:clamp(8px,3vw,22px);flex-wrap:nowrap}
+.capa .cppar{display:flex;align-items:flex-end;gap:clamp(2px,1vw,7px);padding:0 clamp(3px,1vw,7px);
+  height:clamp(66px,17vw,116px);border-bottom:5px solid #b5197e;border-radius:0 0 8px 8px}
+.capa .cppar .capfig{height:100%;width:auto;max-width:none;display:block}
 .capa .cppeq{-webkit-animation:cresceParAumdim2 2.6s ease-in-out infinite;animation:cresceParAumdim2 2.6s ease-in-out infinite;
   -webkit-transform-origin:bottom center;transform-origin:bottom center}
-.capa .cppar:nth-child(2) .cppeq{animation-delay:.45s}
-.capa .cppar:nth-child(3) .cppeq{animation-delay:.9s}
+.capa .cena>.cppar:nth-child(2) .cppeq{-webkit-animation-delay:.45s;animation-delay:.45s}
+.capa .cena>.cppar:nth-child(3) .cppeq{-webkit-animation-delay:.9s;animation-delay:.9s}
 .capa .cpgra{-webkit-animation:pisaParAumdim2 2.6s ease-in-out infinite;animation:pisaParAumdim2 2.6s ease-in-out infinite;
   -webkit-transform-origin:bottom center;transform-origin:bottom center}
-.capa .cppar .rt{position:absolute}
-@-webkit-keyframes cresceParAumdim2{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.35)}}
-@keyframes cresceParAumdim2{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
-@-webkit-keyframes pisaParAumdim2{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(.94)}}
-@keyframes pisaParAumdim2{0%,100%{transform:scale(1)}50%{transform:scale(.94)}}
+@-webkit-keyframes cresceParAumdim2{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.18)}}
+@keyframes cresceParAumdim2{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+@-webkit-keyframes pisaParAumdim2{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(.95)}}
+@keyframes pisaParAumdim2{0%,100%{transform:scale(1)}50%{transform:scale(.95)}}
 @media (prefers-reduced-motion: reduce){
   .capa *,.capa *:before,.capa *:after{-webkit-animation:none!important;animation:none!important}
 }
@@ -2192,7 +2192,7 @@ var TXT = {
                 ["E", "no", "meio", "da", "mesa", "um", "bolão", "de", "chocolate"],
                 ["O", "cachorro", "da", "festa", "era", "um", "cachorrão", "peludo"]],
        ok: ["portão", "panelão", "bolão", "cachorrão"]},
- tx3: {titulo: "⚠️ Cuidado com as parecidas", pede: "só as palavras do pequenininho",
+ tx3: {titulo: "Cuidado com as parecidas", pede: "só as palavras do pequenininho",
        linhas: [["A", "rainha", "mora", "no", "castelo"],
                 ["A", "galinha", "botou", "um", "ovinho"],
                 ["A", "vizinha", "trouxe", "farinha", "e", "um", "bolinho"],
@@ -2346,7 +2346,7 @@ var NOMES = [
  "Quando a palavra pede o Z",
  "Ligue a figura ao pequenininho",
  "Duas gavetas: com Z e sem Z",
- "⚠️ Cuidado: nem toda -inha é pequenininha",
+ "Cuidado: nem toda -inha é pequenininha",
  "O fim que faz a palavra crescer",
  "Mais palavras que crescem",
  "Escreva o grandão",
@@ -2769,5 +2769,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=eb28dcd125"></script>
+<script src="folhas.js?v=9768e32a1c"></script>
 </body></html>

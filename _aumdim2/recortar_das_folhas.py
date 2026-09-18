@@ -35,9 +35,21 @@ u"""
     só faz a criança ver um livro onde a palavra diz CASA. Conferir OLHANDO a
     folha de contato que este script gera.
 
- ⚠️ O QUE FICOU DE FORA, de propósito: o quinto par da d39 (o bicho grande com a
-    flor na mão) — não dá para dizer com honestidade se é cachorro, lobo ou
-    raposa, e figura cujo nome eu não sei é figura que ensina errado.
+ ⚠️ O QUE FICOU DE FORA, de propósito:
+    · o quinto par da d39 (o bicho grande com a flor na mão) — não dá para dizer
+      com honestidade se é cachorro, lobo ou raposa, e figura cujo nome eu não
+      sei é figura que ensina errado;
+    · o trio dos RATOS da d40 — os três se tocam (o rabo de um passa por cima do
+      vizinho) e não há corte que os separe sem cortar rabo de rato;
+    · a VACA da d02, e esta ensinou uma coisa nova: ela é um desenho claro SEM
+      contorno, então o branco do corpo e o branco do papel são a MESMA mancha —
+      a água do `limpa_fundo` entra pela perna e come metade do bicho (o portão
+      do halo acusou 6,7% de quase-branco grudado na silhueta, que era isso).
+      Desenho claro sem contorno precisa de outro recorte, e este caderno não
+      depende dela;
+    · abelha, macaco, rato colorido, ovo, avião e o gato grande do trio — bons
+      recortes, mas nenhuma folha os usa. Figura que ninguém usa é peso que a
+      criança baixa à toa.
 
  Uso:  python3 _aumdim2/recortar_das_folhas.py
 ============================================================
@@ -104,7 +116,6 @@ PECAS = [
     (u"casa3",     D40,  530, 550,  800, 772, u"casa"),
     (u"gato1",     D40,  862, 654,  982, 820, u"gatotrio"),
     (u"gato2",     D40,  986, 596, 1178, 822, u"gatotrio"),
-    (u"gato3",     D40, 1186, 512, 1434, 828, u"gatotrio"),
     (u"livro1",    D40,  215,1199,  335,1272, u"livro"),
     (u"livro2",    D40,  332,1150,  534,1298, u"livro"),
     (u"livro3",    D40,  540,1140,  808,1320, u"livro"),
@@ -125,22 +136,22 @@ PECAS = [
     # --- d34 ---------------------------------------------------------------
     (u"rato",      D34,  455, 338,  686, 521, None),
     (u"cachorro",  D34,  464, 567,  661, 746, None),
-    (u"ovo",       D34,  476, 797,  636, 993, None),
     (u"flor",      D34,  458,1035,  677,1232, None),
-    (u"aviao",     D34,  447,1268,  687,1478, None),
 
     # --- d02: a cores ------------------------------------------------------
-    (u"urso",      D02,  318, 391,  419, 516, None),
-    (u"abelha",    D02,  321, 525,  422, 616, None),
-    (u"vaca",      D02,  322, 628,  433, 717, None),
-    (u"leao",      D02,  323, 754,  418, 874, None),
-    (u"girafa",    D02,  325, 875,  418,1019, None),
+    # ⚠️ AS CAIXAS DAQUI FORAM ABERTAS DEPOIS DE UM CORTE: a primeira versão
+    #    parava no y da varredura de tinta, e a VACA saiu sem as pernas — os
+    #    cascos pretos ficam 10 px abaixo e a perna, sendo branca, não conta
+    #    como tinta na varredura. Quem acusou foi o portão do halo (8,75% de
+    #    quase-branco na silhueta: era o corte reto, não um halo). Em bicho
+    #    claro sobre papel branco, a varredura mede MENOS do que o desenho tem.
+    (u"urso",      D02,  318, 388,  425, 520, None),
+    (u"leao",      D02,  318, 752,  425, 876, None),
+    (u"girafa",    D02,  318, 872,  428,1025, None),
 
     # --- d12: a cores ------------------------------------------------------
-    (u"macaco",    D12,  611, 683,  803, 939, None),
-    (u"rato_cor",  D12,  602,1021,  803,1222, None),
-    (u"cobra",     D12,  607,1328,  796,1544, None),
-    (u"passaro",   D12,  607,1652,  799,1830, None),
+    (u"cobra",     D12,  607,1322,  803,1550, None),
+    (u"passaro",   D12,  607,1646,  803,1836, None),
 ]
 
 # de qual folha veio cada uma — vira `img/ORIGEM.json`, que o portão 1i5 lê
