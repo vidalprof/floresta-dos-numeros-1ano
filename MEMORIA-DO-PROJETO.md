@@ -961,10 +961,26 @@ atividade para ela.**
 - **Cor de texto na capa é TINTA ESCRITA** (`color:#2c3745`), não `var(--texto)`:
   a capa pinta o próprio fundo, e o `_qa/cor_fixa.py` cobra isso.
 
-**⏳ DÍVIDA DECLARADA:** os **22 cadernos no ar** continuam em duas cores. Cada um
-precisa da sua identidade (cor + capa + animação pelo assunto) e de nova entrega
-(`--reparo`). O portão já reprova qualquer um deles; a lista sai de
-`python3 _qa/identidade.py --todos`.
+**✅ DÍVIDA PAGA no mesmo dia (18/set/2026, 20:51–20:58Z).** Os **25 cadernos de
+folha viva** têm cor, cena e animação próprias, e os **24 que estavam no ar foram
+republicados** (`entregar.yml`, um só disparo). `python3 _qa/identidade.py --todos`
+imprime as 25 cores sem uma colisão. Folha de contato das 25 capas lado a lado:
+gerada das fotos de `_qa`/Chromium e enviada ao Marcos.
+
+**A conferência que vale (e é a regra desta casa):** "publiquei" não é o workflow
+ter terminado — é o **carimbo `_status/entrega-<repo>.json` trazer `noar:1` E o
+campo `index` (sha1 dos 12 primeiros do `index.html` que o SITE devolveu) bater
+com o sha1 do arquivo daqui**. Foi assim que se pegou o único engasgo da rodada:
+`lost-and-found-8ano` gravou `noar:0` na primeira corrida — o arquivo subiu (o
+hash já era o certo), mas o build do Pages ainda servia o velho. Um segundo
+disparo só daquele resolveu (`noar:1`, 20:58:48Z). **Sem essa conta, eu teria
+dito "os 24 estão no ar" com um deles servindo a capa velha.**
+
+⚠️ **E duas corridas anteriores foram desperdiçadas pelo mesmo motivo bobo:**
+disparei o `entregar.yml` **antes** de o commit das capas estar no `origin`. O
+workflow faz checkout da ref no instante do disparo — então ele publicou,
+honestamente, a versão velha. **Conferir `git log origin/<branch> -1` antes de
+disparar** é mais barato que uma corrida inteira.
 
 ## 🦠 A COROA DOS CINCO REINOS — 4º ano, Ciências (14/set/2026)
 
