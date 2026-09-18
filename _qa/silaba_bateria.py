@@ -10,7 +10,7 @@ u"""
     sobe junto). Regua que ninguem afere vai perdendo o faro sem avisar.
 
  O QUE ELE FAZ: roda as reguas de duracao de `_qa/silabas.py` (teto absoluto por
- tamanho + relativa 1,7x) sobre DOIS conjuntos que NAO MUDAM:
+ tamanho + relativa 2,0x por posicao) sobre DOIS conjuntos que NAO MUDAM:
    · CONTROLE NEGATIVO — os recortes que sairam SOLETRADOS de verdade em
      17/set, guardados em `_pesquisa/silabas-soletradas/` (52 arquivos);
    · CONTROLE POSITIVO — os recortes BONS no ar, dos oito cadernos.
@@ -42,8 +42,8 @@ CADERNOS = u"_alfa1 _ini1 _mont1 _sil1 _roda1 _sil2 _troca2 _nasal2".split()
 NEGATIVO = os.path.join(RAIZ, u"_pesquisa", u"silabas-soletradas")
 
 # Aferido em 18/set/2026 (voz pt-BR-AntonioNeural, RATE -25%):
-#   teto absoluto  -> pegou 31 dos 50 soletrados com silaba conhecida, 0 bons
-#   relativa 1,7x  -> (medida nesta bateria; ver saida)
+#   teto absoluto  -> pegou 33 dos 52 soletrados, 0 bons (remedido no audio v4)
+#   relativa 2,0x por posicao -> +1 (34/52); 1,7x sem posicao acusava SA de SACA
 MIN_TETO = 30        # abaixo disto a regua do teto perdeu o faro
 MAX_FALSOS = 0       # nenhum bom pode ser acusado
 
@@ -84,13 +84,13 @@ def main():
                 okdec[p] = set()
 
     # medianas por tamanho vem dos BONS (e a base da relativa)
-    bons = []            # (L, d, rotulo)
+    bons = []            # (L, inicial, d, rotulo)
     for (p, wb, i), (s, pref, w) in mapa.items():
         if w.upper() in okdec.get(p, set()):
             continue
         f = os.path.join(RAIZ, p, u"audio", u"%ssb_%s_%d.mp3" % (pref, wb, i))
         if os.path.exists(f):
-            bons.append((len(s), librosa.get_duration(path=f), u"%s/%s[%d]=%s" % (p, w, i, s)))
+            bons.append((len(s), i == 0, librosa.get_duration(path=f), u"%s/%s[%d]=%s" % (p, w, i, s)))
     ruins = []
     for f in sorted(glob.glob(os.path.join(NEGATIVO, u"*.mp3"))):
         nome = os.path.basename(f)[:-4]
@@ -102,30 +102,31 @@ def main():
         if chave not in mapa:
             continue
         s = mapa[chave][0]
-        ruins.append((len(s), librosa.get_duration(path=f), u"%s=%s" % (arq, s)))
+        ruins.append((len(s), chave[2] == 0, librosa.get_duration(path=f), u"%s=%s" % (arq, s)))
     if not bons or not ruins:
         print(u"NAO MEDI: bons=%d soletrados=%d" % (len(bons), len(ruins)))
         return 2
 
     porTam = {}
-    for L, d, _ in bons:
-        porTam.setdefault(L, []).append(d)
+    for L, ini, d, _ in bons:
+        porTam.setdefault((L, ini), []).append(d)
 
-    def julga(L, d):
-        u"""Devolve 'teto', 'relativa' ou None — a mesma logica do silabas.py."""
+    def julga(L, ini, d):
+        u"""Devolve 'teto', 'relativa' ou None — a mesma logica do silabas.py
+        (mediana por tamanho E posicao, desde 18/set/2026)."""
         if L in S.TETO_S and d > S.TETO_S[L]:
             return u"teto"
         if L == 1:
             return None
-        base = S._mediana(porTam.get(L, []))
-        if base > 0 and len(porTam.get(L, [])) >= 4 and d > base * S.FATOR:
+        base = S._mediana(porTam.get((L, ini), []))
+        if base > 0 and len(porTam.get((L, ini), [])) >= 4 and d > base * S.FATOR:
             return u"relativa"
         return None
 
-    peg_teto = sum(1 for L, d, _ in ruins if julga(L, d) == u"teto")
-    peg_rel = sum(1 for L, d, _ in ruins if julga(L, d) == u"relativa")
-    peg_qq = sum(1 for L, d, _ in ruins if julga(L, d))
-    falsos = [(r, julga(L, d)) for L, d, r in bons if julga(L, d)]
+    peg_teto = sum(1 for L, ini, d, _ in ruins if julga(L, ini, d) == u"teto")
+    peg_rel = sum(1 for L, ini, d, _ in ruins if julga(L, ini, d) == u"relativa")
+    peg_qq = sum(1 for L, ini, d, _ in ruins if julga(L, ini, d))
+    falsos = [(r, julga(L, ini, d)) for L, ini, d, r in bons if julga(L, ini, d)]
 
     print(u"bateria da soletracao: %d soletrados guardados x %d recortes bons"
           % (len(ruins), len(bons)))

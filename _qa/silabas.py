@@ -42,7 +42,19 @@ import re
 import sys
 
 MIN_BYTES = 300          # abaixo disso é arquivo vazio, não é áudio
-FATOR = 1.7              # acima disso a sílaba está sendo soletrada, não falada
+# ⚠️ FATOR e MEDIANA POR POSIÇÃO — remedidos em 18/set/2026, depois da regravação
+#    v4 (a 1ª sílaba passou a começar no silêncio antes da fala e ficou mais
+#    longa: mediana 0,369 s contra 0,214 s das não-iniciais, em 2 letras). Com
+#    uma mediana só e 1,7×, a régua acusou SA de SACA e LA de LAÇO — bons — e
+#    segurou a publicação de cinco cadernos. Medido nos 852 bons × 52 soletrados:
+#        1,7× por posição  → 34/52, 22 falsos     1,7× sem posição → 35/52, 2 falsos
+#        1,9× por posição  → 34/52,  0 falsos     1,9× sem posição → 33/52, 0 falsos
+#        2,0× por posição  → 34/52,  0 falsos
+#    Fica 2,0× com mediana por (tamanho, inicial/não-inicial): com 1,9× o pior
+#    recorte bom do _troca2 ficava EXATAMENTE em 1,90× — régua no fio da navalha
+#    reprova na próxima regravação por acaso. E fica dito: a relativa hoje
+#    acrescenta UMA captura ao teto absoluto (33 → 34); é a segunda rede.
+FATOR = 2.0              # acima disso a sílaba está sendo soletrada, não falada
 # ⭐ TETO ABSOLUTO por tamanho de escrita (18/set/2026) — a SEGUNDA rede.
 #    A régua relativa (FATOR sobre a mediana do caderno) tem um ponto cego
 #    medido: se o LOTE INTEIRO sair soletrado, a mediana sobe junto e ela pega
@@ -147,14 +159,14 @@ def _mede_duracoes(audio, mapa, prefixo):
             d = _dur(ff, f)
             if d <= 0:
                 continue
-            porTam.setdefault(len(s), []).append(d)
-            tudo.append((s, palavra, d))
+            porTam.setdefault((len(s), i == 0), []).append(d)
+            tudo.append((s, palavra, d, i == 0))
     if not tudo:
         return [], True
     ruins = []
     folga = 0.0            # a MAIOR razão d/base do caderno — impressa sempre
     sem_teto = set()
-    for s, palavra, d in tudo:
+    for s, palavra, d, inicial in tudo:
         # 1ª rede: o TETO ABSOLUTO, que não se move com o lote
         L = len(s)
         if L in TETO_S:
@@ -170,11 +182,13 @@ def _mede_duracoes(audio, mapa, prefixo):
         #    teto de 0,40 s pega isso com folga e a relativa so faria estrago.
         if L == 1:
             continue
-        # 2ª rede: a RELATIVA (o dobro da mediana das de mesmo tamanho)
-        base = _mediana(porTam.get(L, []))
+        # 2ª rede: a RELATIVA — contra a mediana das de mesmo tamanho E mesma
+        #    posição (inicial carrega a consoante de ataque; final é reduzida)
+        chave = (L, inicial)
+        base = _mediana(porTam.get(chave, []))
         # ⚠️ com menos de 4 exemplos daquele tamanho a mediana não vale nada:
         #    uma única sílaba soletrada viraria a própria referência.
-        if base <= 0 or len(porTam.get(L, [])) < 4:
+        if base <= 0 or len(porTam.get(chave, [])) < 4:
             continue
         folga = max(folga, d / base)
         if d > base * FATOR:

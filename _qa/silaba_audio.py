@@ -293,6 +293,13 @@ def confere(pasta, medir=False):
     #      pico. Por isso as duas diziam "esta igual" com 9,8 dB de diferenca.
     #      Alvo -18 LUFS; reprova futura: |LK - alvo| > 0,5 dB fora dos presos
     #      no teto, dispersao dentro da palavra > 2 dB, TP > -1,5 dBTP.
+    #      ⚠️ MEDIDO NO AUDIO v4 (18/set/2026): mediana -18,0 em todos os oito
+    #         cadernos, TP <= -1,5 em 100%, mas 95 de 413 recortes (todos
+    #         SILABA FINAL, curtos, ~0,16-0,19 s) ficaram 1,7-2,7 dB ABAIXO do
+    #         alvo que o proprio ganho mirou, sem estar presos no teto. A causa
+    #         nao foi achada (nao e o gate de voz: testado relativo ao pico, o
+    #         numero nao muda). Antes de virar reprovacao, achar a causa — a
+    #         tolerancia nao se afrouxa para caber no defeito.
     # ══════════════════════════════════════════════════════════════════
     LIMIAR_BORDA = 0.05
     ALVO_LK, TOL_LK, TETO_TP = -18.0, 0.5, -1.5

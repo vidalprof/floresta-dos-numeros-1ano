@@ -14,7 +14,7 @@ u"""
  O QUE ISTO MEDE: a loudness da ITU-R BS.1770 (a mesma do loudnorm) — filtro K
  (shelf de +4 dB em 1,5 kHz + passa-altas em 38 Hz), potencia media em dBFS
  com o offset de -0,691 — MAS sem o gate de 400 ms e so nas janelas de 10 ms
- em que ha voz (acima de -40 dBFS). E a loudness DO SOM, nao do arquivo com o
+ em que ha voz (ate 30 dB abaixo do pico do pedaco). E a loudness DO SOM, nao do arquivo com o
  seu silencio. Chamo de LKvoz para nao confundir com LUFS integrado.
 
  Os coeficientes do filtro K sao calculados para QUALQUER taxa de amostragem
@@ -71,8 +71,15 @@ def filtro_k(y, fs):
     return lfilter(b, a, z)
 
 
-def lkvoz(y, fs, janela_ms=10.0, piso_dbfs=-40.0):
-    u"""Loudness K-ponderada so das janelas com voz. None se nao ha voz."""
+def lkvoz(y, fs, janela_ms=10.0, piso_db=-30.0):
+    u"""Loudness K-ponderada so das janelas com voz. None se nao ha voz.
+
+    ⚠️ O "tem voz" e RELATIVO ao pico do proprio pedaco (piso_db abaixo dele),
+    nao um -40 dBFS absoluto. Medido em 18/set/2026: com o piso absoluto, a
+    medida dependia do GANHO — um pedaco fraco boostado em +15 dB passava a
+    contar as caudas quietas como "voz", a media caia, e 95 silabas finais
+    saiam 2 dB abaixo do alvo que o proprio ganho tinha mirado. Relativo ao
+    pico, a medida antes e depois do ganho e a mesma."""
     y = np.asarray(y, dtype=np.float64)
     if y.ndim > 1:
         y = y.mean(axis=1)
@@ -88,7 +95,9 @@ def lkvoz(y, fs, janela_ms=10.0, piso_dbfs=-40.0):
     # "tem voz" se mede no sinal CRU, nao no filtrado (o filtro K tira grave)
     bruto = y[:ncomp * n].reshape(ncomp, n)
     pot_bruta = (bruto ** 2).mean(axis=1)
-    com_voz = pot_bruta > 10 ** (piso_dbfs / 10.0)
+    if pot_bruta.max() <= 0:
+        return None
+    com_voz = pot_bruta > pot_bruta.max() * 10 ** (piso_db / 10.0)
     if not com_voz.any():
         return None
     media = pot[com_voz].mean()
