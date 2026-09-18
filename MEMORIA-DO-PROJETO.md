@@ -7679,6 +7679,56 @@ qualquer uma sozinha mata o gesto:
 
 **Ao pôr arrastar em qualquer peça nova, conferir os três.**
 
+## 🗣️📐 O PLANO DAS SÍLABAS — o que a banca mediu e o que entrou (18/set/2026)
+
+**Pedido do Marcos:** *"Aperfeiçoe as ferramentas ou método da pronúncia das
+sílabas"*. Sete investigadores mediram, cada um uma hipótese, nos **882 recortes
+no ar** e nos **52 soletrados guardados** (`_pesquisa/silabas-soletradas/`);
+os achados de gravidade alta passaram por cético com medida contrária; um
+engenheiro-chefe ordenou. Plano inteiro em `/tmp` na sessão; o que ficou:
+
+**Medido e confirmado (números):**
+- **Estalo na borda**: 659/882 começam ou terminam "no cheio" (onset natural do
+  TTS: 0/12). Fade de 10 ms zera; 5 ms deixa 11%; 15 ms come o estouro do /b/.
+- **Loudnorm em pedaço < 400 ms é normalizador de PICO**: 9,8 dB de diferença
+  entre recortes "iguais"; 8,3 dB dentro da mesma palavra. A medida 1 do 1x
+  (RMS máx em 20 ms) também é quase pico — duas réguas de pico dizendo "igual".
+- **A régua "dois núcleos = soletrou" não vê soletração**: 46/52 soletrados
+  têm UM núcleo. Quem separa é a **duração**: teto absoluto por tamanho
+  (0,40/0,55/0,60 s) pega 33/52 e 0/882 bons; a relativa 1,7× pega mais 7.
+- **A 1ª sílaba começava dentro do som** em 144/368 (alinhador marca a letra
+  depois do onset). **A fronteira i≥1 vem atrasada**: o CA de CAVALO leva 86%
+  do /v/; o CA de CASA sai "CAS" (onda 2, com prova de ouvido do Marcos).
+- **CHORÃO/DRAGÃO sem til** no `_troca2`: a voz lia "cho-ra-o", a tela mostrava
+  CHORAO. Nenhuma régua via — contar núcleo não vê acento.
+- **Refutado**: "MAÇÃ escrita maca" (é `maca` de propósito, jogo CAMA→MACA);
+  "sílaba final SURDA" (é periodicidade fraca de fim de frase, PB normal);
+  gravar a −40% (estica tudo ×1,24, a final continua curta).
+
+**O que entrou hoje, sem regravar:** teto absoluto + sílaba de 1 letra medida
++ folga impressa (`_qa/silabas.py`); **bateria fixa** `_qa/silaba_bateria.py`
+(52 soletrados × 852 bons, reprova a própria régua se perder o faro — no
+pré-voo, na banca e na entrega); medidas 4 (estalo) e 5 (LKvoz, `_qa/kvoz.py`)
+no 1x como AVISO até a regravação; regra ortográfica `-ão` sem til e espeak
+sobre o texto GRAVADO (`_qa/silaba_dicionario.py`); CHORÃO/DRAGÃO consertados.
+
+**O que entrou na gravação (`_padrao/silabas_voz.py`, exige regravar):** só a
+palavra inteira entrega (os caminhos apartados saíram — assinaram 358
+soletradas como "conferidas" em 17/set); conferência por teto absoluto + zero
+núcleo (dois núcleos virou aviso); **fade de 10 ms** e **ganho medido (LKvoz,
+alvo −18, teto −1,5 dBTP, pico medido DEPOIS do fade)** no lugar do loudnorm;
+1ª sílaba começa no **silêncio antes da fala**; recibo **mesclado** e com o
+detalhe de cada recorte; `METODO` na assinatura do carimbo (mudou o código,
+regrava sozinho — acabou o "apague o carimbo à mão"); 1y confere carimbo ×
+recibo. Provado localmente nas 3 palavras do exemplo: bordas ≤0,03 do pico,
+LKvoz −18 ±0,2, 24 kHz.
+
+**Pendente e é do Marcos (item 10):** a sílaba solta deve soar como sai NA
+PALAVRA (reduzida, é o que está no ar) ou como a professora diz AO SEPARAR
+(mais longa, vogal plena)? Só depois dessa resposta existe piso/esticar.
+**Pendente técnico (onda 2, item 9):** encostar a fronteira i≥1 na transição
+vogal→consoante, com portão `_qa/silaba_fronteira.py` e prova de ouvido.
+
 ## ⌨️🪤 "O ALUNO NÃO CONSEGUIA DIGITAR" — o jogador aprovava porque não fazia o gesto da criança (18/set/2026)
 
 **Palavras do Marcos:** *"verifique a página 8 da atividade do 5º ano A Fábrica de

@@ -261,6 +261,27 @@ def _fim_da_fala(ff, caminho, total):
     return total
 
 
+def _inicio_da_fala(ff, caminho):
+    u"""Onde a voz COMECA (o fim do silencio inicial), ou None.
+
+    ⭐ (18/set/2026) A primeira silaba comecava em `letras[0].start - 20 ms`, e
+    o alinhador marca a letra DEPOIS de o som ja ter comecado: 144 das 368
+    primeiras silabas comecavam dentro do som (vogal, nasal, fricativa). O
+    inicio certo e o fim do silencio que abre o arquivo — espelho do
+    `_fim_da_fala`. Medido nas tres palavras do exemplo: cai 15 a 51 ms antes
+    do onset, sem comer nada (o fim da 1a silaba nao muda)."""
+    p = subprocess.Popen(
+        [ff, "-i", caminho, "-af", "silencedetect=noise=-40dB:d=0.15", "-f", "null", "-"],
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    _, err = p.communicate()
+    txt = (err or b"").decode("utf-8", "replace")
+    pares = re.findall(r"silence_start: (-?\d+\.?\d*)\s*\n.*?silence_end: (\d+\.?\d*)", txt, re.S)
+    for ini, fim in pares:
+        if float(ini) <= 0.02:
+            return float(fim)
+    return None
+
+
 def _cortes_por_alinhamento(ff, mp3, palavra, silabas):
     u"""[(inicio, duracao)] por sílaba, a partir da PALAVRA INTEIRA falada."""
     mt = _carrega_alinhador()
@@ -309,6 +330,12 @@ def _cortes_por_alinhamento(ff, mp3, palavra, silabas):
     for s in silabas:
         inicios.append(float(letras[k]["start"]))
         k += len(_sem_acento(s))
+    # ⭐ a PRIMEIRA silaba comeca onde a fala comeca, nao onde o alinhador
+    #   marcou a primeira letra (ver `_inicio_da_fala`). Se nao houver silencio
+    #   abrindo o arquivo (nao aconteceu em 371/371), fica como era.
+    comeco = _inicio_da_fala(ff, mp3)
+    if comeco is not None and comeco < inicios[0]:
+        inicios[0] = comeco + 0.02        # a folga de 20 ms e descontada abaixo
     cortes = []
     for i, ini in enumerate(inicios):
         prox = inicios[i + 1] if i + 1 < len(inicios) else fim
@@ -368,6 +395,15 @@ def _cortes_por_alinhamento(ff, mp3, palavra, silabas):
 #
 #  ⚠️ Sem `librosa` nao ha conferencia: nesse caso fica a PALAVRA INTEIRA (a
 #     fonte segura) e o codigo DIZ que nao conferiu. Nao medir nunca e "passou".
+#
+#  ⚠️⚠️ TERCEIRA CORRECAO (18/set/2026, medida pela banca nos 52 soletrados):
+#     a prova "uma vogal por recorte" NAO enxerga soletracao — 46 dos 52
+#     soletrados tem exatamente UM nucleo (a voz diz "ve" longo, nao "ve-a").
+#     Quem separa e a DURACAO: teto absoluto por tamanho (TETO_ABS) pega 33/52
+#     e nao acusa nenhum dos 882 bons. E os caminhos apartados abaixo NAO
+#     entregam mais nada: em 17/set eles assinaram 358 soletradas como
+#     "conferidas". So `corrida` grava; os outros ficam como registro do que
+#     foi medido e por que nao servem.
 # ══════════════════════════════════════════════════════════════════════
 CAMINHOS_DE_PEDIR = [
     (u"corrida", lambda sil: u"".join(sil).lower() + u"."),
@@ -377,6 +413,18 @@ CAMINHOS_DE_PEDIR = [
 ]
 CONFERIDAS = []          # (palavra, caminho que passou, recortes conferidos)
 NAO_CONFERIDAS = []      # (palavra, motivo)
+INFO_RECORTE = {}        # caminho do mp3 -> {ini, dur, ganho_db, preso}
+# ⭐ O METODO ENTRA NA ASSINATURA DO CARIMBO (18/set/2026). Antes, toda mudanca
+#    de codigo exigia apagar `audio/_silabas.json` a mao para regravar
+#    (0789ecdb, 72af08be, 198acce4 — tres vezes em um dia). Agora o codigo que
+#    corta diz quem e; mudou o metodo, o carimbo nao bate e a palavra regrava.
+METODO = u"v4-fade10-ganho-lk-inicio-silencio"
+# ⚠️ MESMOS TETOS de `_qa/silabas.py` (TETO_S) — a gravacao e o portao tem de
+#    concordar. Aferidos em 18/set/2026: bom mais longo 0,30/0,42/0,48 s;
+#    soletrado mais curto 0,64/0,32/0,39 s por 1/2/3 letras.
+TETO_ABS = {1: 0.40, 2: 0.55, 3: 0.60}
+ALVO_LK = -18.0          # LUFS-like (LKvoz, BS.1770 sem gate) para o pedaco
+TETO_TP = -1.5           # dBTP: o mp3 ainda pode dar sobressalto acima disto
 MIN_NUCLEO_MS = 50       # abaixo disso e transiente (o estalo da oclusiva)
 MARGEM_DB = 6.0          # a consoante sonora (l, r, m, n) faz pico, mas FRACO
 
@@ -478,7 +526,53 @@ def conta_nucleos(caminho_mp3):
 #    forma de o alvo da medida ser o pedaco.
 FILTRO_CORTE = ("areverse,silenceremove=start_periods=1:"
                 "start_silence=0.03:start_threshold=-42dB,areverse")
+# ⚠️⚠️ O `loudnorm` SAIU DO 2o PASSO (18/set/2026) — e o motivo e medido: em
+#    pedaco de menos de 400 ms (a janela de integracao dele), o loudnorm vira
+#    um normalizador de PICO. Nos 882 recortes no ar: 9,8 dB de diferenca de
+#    forca entre PA de capa e LI de galinha, ate 8,3 dB DENTRO da mesma palavra
+#    — e a medida 1 do portao 1x (RMS maximo em 20 ms) e quase pico tambem, por
+#    isso as duas diziam "esta igual". O comentario acima ("todos na mesma altura
+#    percebida") foi escrito com regua de pico. Agora o ganho e CALCULADO no
+#    pedaco (LKvoz: BS.1770 sem gate, so nas janelas com voz — `_qa/kvoz.py`) e
+#    aplicado com `volume`, com teto de pico real; o loudnorm fica so como rede
+#    se o `kvoz` nao carregar (e isso vai para o recibo).
 FILTRO_FORCA = "loudnorm=I=-16:TP=-1.5:LRA=11"
+# ⭐ FADE DE 10 ms NAS DUAS PONTAS (18/set/2026). O corte cai DENTRO da fala e o
+#    audio comeca "no cheio": 659 dos 882 recortes tinham amplitude alta nos
+#    primeiros ou ultimos 0,5 ms (onset natural do TTS: 0 de 12). Medido: 5 ms
+#    deixa 11% dos estalos; 10 ms zera; 15 ms ja come o estouro do /b/ e do /d/
+#    (p10 = 11-14 ms). Vai no 2o comando, sobre o pedaco ja sozinho — no 1o
+#    (com -ss de saida) o filtro veria a palavra inteira e nao faria nada.
+FADE = "afade=t=in:st=0:d=0.010,areverse,afade=t=in:st=0:d=0.010,areverse"
+
+
+def _ganho_do_pedaco(cru):
+    u"""(ganho_dB, preso_no_teto) medidos no pedaco cortado; (None, False) sem kvoz."""
+    try:
+        import sys as _s
+        _s.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
+            os.path.abspath(__file__))), "_qa"))
+        from kvoz import ganho_para
+        import librosa
+        import numpy as np
+        y, sr = librosa.load(cru, sr=None, mono=True)
+        # ⚠️ MEDIR O PICO DEPOIS DO FADE, nao antes (18/set/2026, provado nas 3
+        #    palavras do exemplo): o pico do pedaco cru costuma ser o proprio
+        #    ESTALO da borda, que o fade de 10 ms elimina. Medindo antes, o LO de
+        #    CAVALO ficou "preso no teto" 2,6 dB abaixo do alvo sem precisar. O
+        #    ganho e aplicado antes do fade no ffmpeg; a ordem nao muda o pico
+        #    final, entao aqui a rampa entra so para medir o que vai sobrar.
+        n = min(len(y) // 2, int(sr * 0.010))
+        if n > 0:
+            rampa = np.linspace(0.0, 1.0, n)
+            y = y.copy()
+            y[:n] *= rampa
+            y[-n:] *= rampa[::-1]
+        g, preso = ganho_para(y, sr, ALVO_LK, TETO_TP)
+        return g, preso
+    except Exception as e:                                       # noqa: BLE001
+        MOTIVOS.append(u"sem kvoz/librosa para medir o ganho (%s) — caiu no loudnorm" % e)
+        return None, False
 
 
 def _recorta(ff, inteiro, silabas, pasta_audio, prefixo, palavra, corrida):
@@ -515,12 +609,19 @@ def _recorta(ff, inteiro, silabas, pasta_audio, prefixo, palavra, corrida):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         _, err = p.communicate()
         if os.path.exists(cru) and os.path.getsize(cru) > 300:
-            # ⭐ 2º PASSO: a forca se iguala com o pedaco JA SOZINHO. Ver o
-            #   bloco do `FILTRO_FORCA`: no mesmo comando do corte isto nao
-            #   fazia nada, porque o filtro recebia a palavra inteira.
+            # ⭐ 2º PASSO, sobre o pedaco JA SOZINHO (no 1o comando, com -ss de
+            #   saida, o filtro veria a palavra inteira): ganho MEDIDO + fade.
+            g, preso = _ganho_do_pedaco(cru)
+            if g is None:
+                forca = FILTRO_FORCA                 # rede: o loudnorm antigo
+            else:
+                forca = "volume=%.2fdB" % g
+            INFO_RECORTE[saida] = {u"ini": round(ini, 3), u"dur": round(dur, 3),
+                                   u"ganho_db": None if g is None else round(g, 2),
+                                   u"preso_no_teto": bool(preso)}
             q = subprocess.Popen(
                 [ff, "-y", "-loglevel", "error", "-i", cru,
-                 "-af", FILTRO_FORCA, "-c:a", "libmp3lame", "-q:a", "5", saida],
+                 "-af", forca + "," + FADE, "-c:a", "libmp3lame", "-q:a", "5", saida],
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             _, err2 = q.communicate()
             if not (os.path.exists(saida) and os.path.getsize(saida) > 300):
@@ -556,100 +657,84 @@ async def _grava(edge_tts, pedido, voz, inteiro):
 
 async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavra,
                varias_vogais=False):
-    u"""Grava a palavra, corta as sílabas e CONFERE os recortes.
+    u"""Grava a PALAVRA INTEIRA, corta as silabas e CONFERE os recortes.
 
-    ⭐ A conferência é sobre os RECORTES PRONTOS, não sobre a gravação: cada um
-    tem de ter exatamente UMA vogal (ver o bloco "A VOZ SE CONFERE SOZINHA").
-    Dois núcleos = a voz soletrou; zero = o corte perdeu a vogal. Só se a
-    palavra inteira falhar é que se tenta um caminho de último recurso."""
+    ⭐⭐ SO A PALAVRA INTEIRA ENTREGA (18/set/2026). Os caminhos apartados
+    (`pausa`, `virgula`, `espaco`) sairam do caminho de entrega: em 17/set eles
+    assinaram como "conferidas" 358 palavras SOLETRADAS, porque a trava que os
+    segurava (`+25%% sobre base_dur`) nunca rodava quando a corrida falhava
+    (base_dur ficava vazio) — e a prova dos nucleos ve UM nucleo em 46 dos 52
+    soletrados. Palavra em que a corrida nao fecha vai para NAO_CONFERIDAS,
+    NAO recebe carimbo, e o portao 1y para a entrega. E o comportamento certo
+    pela regra da casa: audio que ninguem conferiu nao vai para a crianca.
+
+    O QUE SE CONFERE, por recorte, e com que faro (aferido nos 52 soletrados
+    guardados e nos 882 bons):
+      · numero de recortes == numero de silabas          (senao, recusa)
+      · TETO ABSOLUTO de duracao por tamanho (TETO_ABS)   pega 33/52, 0 falsos
+      · ZERO nucleo de vogal = perdeu a voz               (recusa)
+      · DOIS+ nucleos                                     AVISO, nao recusa:
+        pega so 6/52 soletrados e confunde a consoante liquida (LU, BRI) com
+        vogal — ficou porque e informacao, nao porque decide.
+    A regua relativa (1,7x a mediana do caderno) fica no portao `_qa/silabas.py`,
+    que ve o caderno inteiro; aqui, palavra por palavra, ela nao tem base.
+    """
     async with sem:
         for tent in (1, 2, 3):
             try:
                 inteiro = destino_base + "_todo.mp3"
                 pasta_audio = os.path.dirname(destino_base)
                 ff = _ffmpeg()
-                base_dur, escolhido, motivo = None, None, None
-                for nome_cam, monta in CAMINHOS_DE_PEDIR:
-                    corrida = nome_cam == u"corrida"
-                    if not await _grava(edge_tts, monta(silabas), voz, inteiro):
-                        continue
-                    feitos = _recorta(ff, inteiro, silabas, pasta_audio,
-                                      prefixo, palavra, corrida)
-                    if len(feitos) != len(silabas):
-                        continue
-                    dur = sum(_duracao(ff, f) for f in feitos)
-                    if corrida:
-                        base_dur = dur
-                    # ⚠️⚠️ A TRAVA QUE FALTOU DA PRIMEIRA VEZ. Um caminho de
-                    #    último recurso pede os pedaços APARTADOS, e a voz lê
-                    #    pedaço apartado SOLETRANDO quando ele não é palavra do
-                    #    português: "va" vira "vê-á". A assinatura disso é a
-                    #    DURAÇÃO — medida em 17/set: 1,22 s onde a sílaba falada
-                    #    cabe em 0,32 s, ou seja o dobro largo. Então um caminho
-                    #    alheio só substitui a palavra inteira se, além de
-                    #    limpo, NÃO for mais comprido que ela. Sem isto o
-                    #    método troca a fonte certa por uma soletrada e ainda
-                    #    diz que se conferiu.
-                    if (not corrida) and base_dur and dur > base_dur * 1.25:
-                        motivo = (u"`%s` saiu %.0f%% mais comprido que a palavra "
-                                  u"inteira — sinal de soletracao" % (nome_cam,
-                                  (dur / base_dur - 1) * 100))
-                        continue
-                    if varias_vogais:
-                        # PEDAÇO de exercício (CENOU+RA): tem mais de uma vogal
-                        # de propósito, então a prova dos núcleos não se aplica.
-                        # Declarado em `<pasta>/silabas-ok.json`.
-                        CONFERIDAS.append((palavra, nome_cam + u" (pedaco)", len(feitos)))
-                        escolhido = (nome_cam, len(feitos))
-                        break
-                    nn = [conta_nucleos(f) for f in feitos]
-                    if any(n is None for n in nn):
-                        NAO_CONFERIDAS.append(
-                            (palavra, u"sem librosa: NAO CONFERI (ficou a palavra "
-                                      u"inteira, que e a fonte segura)"))
-                        escolhido = (nome_cam, len(feitos))
-                        break
-                    # ⚠️ DOIS PICOS SOZINHOS NAO CONDENAM: a consoante LIQUIDA
-                    #    (o /l/ de LU, o /r/ de BRI e GRA) e sonora e faz pico
-                    #    igual. Aferido em 17/set nos 882 recortes: a distancia
-                    #    entre os picos NAO separa a liquida de uma segunda
-                    #    vogal — as duas populacoes se sobrepoem inteiras. Quem
-                    #    separa e a DURACAO, porque soletrar faz duas emissoes
-                    #    e leva o dobro. Mesma regra do portao 1x.
-                    durs = [_duracao(ff, f) for f in feitos]
-                    med = sorted(durs)[len(durs) // 2] if durs else 0.0
-                    ruins = len([1 for n, d in zip(nn, durs)
-                                 if n == 0 or (n >= 2 and med > 0 and d > med * 1.7)])
-                    if ruins == 0:
-                        CONFERIDAS.append((palavra, nome_cam, len(feitos)))
-                        escolhido = (nome_cam, len(feitos))
-                        break
-                    motivo = (u"`%s`: %d recorte(s) sem UMA vogal exata (%s)"
-                              % (nome_cam, ruins,
-                                 u"+".join(u"%s=%d" % (s, n)
-                                           for s, n in zip(silabas, nn) if n != 1)))
-                if escolhido is None:
-                    # ⭐ NENHUM se conferiu: fica a PALAVRA INTEIRA, que é a
-                    #   fonte que nunca soletra, e o recibo DIZ que não conferiu
-                    #   — o portão 1y reprova e a entrega para. Nunca se
-                    #   entrega em silêncio o que não se conseguiu medir.
-                    nome_cam, monta = CAMINHOS_DE_PEDIR[0]
-                    if not await _grava(edge_tts, monta(silabas), voz, inteiro):
-                        raise RuntimeError("nenhum caminho gravou audio utilizavel")
-                    feitos = _recorta(ff, inteiro, silabas, pasta_audio,
-                                      prefixo, palavra, True)
-                    if not feitos:
-                        raise RuntimeError("nao consegui achar as fronteiras de "
-                                           "%d silaba(s)" % len(silabas))
-                    NAO_CONFERIDAS.append(
-                        (palavra, motivo or u"nenhum caminho fechou os %d recortes"
-                                            % len(silabas)))
-                    escolhido = (nome_cam, len(feitos))
+                nome_cam, monta = CAMINHOS_DE_PEDIR[0]         # corrida, e so
+                if not await _grava(edge_tts, monta(silabas), voz, inteiro):
+                    raise RuntimeError("a voz nao devolveu audio")
+                feitos = _recorta(ff, inteiro, silabas, pasta_audio, prefixo, palavra, True)
                 try:
                     os.remove(inteiro)
                 except OSError:
                     pass
-                return escolhido[1]
+                motivo = None
+                if len(feitos) != len(silabas):
+                    motivo = (u"a palavra inteira deu %d recorte(s) para %d silaba(s) "
+                              u"(o alinhador nao fechou)" % (len(feitos), len(silabas)))
+                detalhes = []
+                if motivo is None and not varias_vogais:
+                    durs = [_duracao(ff, f) for f in feitos]
+                    nn = [conta_nucleos(f) for f in feitos]
+                    ruins, avisos = [], []
+                    for i, (sil, d, n) in enumerate(zip(silabas, durs, nn)):
+                        L = len(sil)
+                        info = dict(INFO_RECORTE.get(feitos[i], {}))
+                        info.update({u"i": i, u"silaba": sil, u"dur_s": round(d, 3),
+                                     u"nucleos": n})
+                        detalhes.append(info)
+                        if L in TETO_ABS and d > TETO_ABS[L]:
+                            ruins.append(u"%s %.2fs passa do teto %.2fs (soletrada?)"
+                                         % (sil, d, TETO_ABS[L]))
+                        if n == 0:
+                            ruins.append(u"%s sem nucleo de vogal" % sil)
+                        elif n is not None and n >= 2:
+                            avisos.append(u"%s com %d picos (liquida ou vizinha)" % (sil, n))
+                    if any(n is None for n in nn):
+                        motivo = u"sem librosa: NAO CONFERI"
+                    elif ruins:
+                        motivo = u"; ".join(ruins)
+                    if avisos:
+                        for a in avisos:
+                            MOTIVOS.append(u"%s: aviso — %s" % (palavra, a))
+                elif motivo is None:
+                    for i, sil in enumerate(silabas):
+                        info = dict(INFO_RECORTE.get(feitos[i], {}))
+                        info.update({u"i": i, u"silaba": sil})
+                        detalhes.append(info)
+                if motivo is None:
+                    CONFERIDAS.append((palavra, nome_cam + (u" (pedaco)" if varias_vogais else u""),
+                                       len(feitos), detalhes))
+                    return len(feitos)
+                # ⚠️ NAO CONFERIDA: os arquivos ficam (para alguem OUVIR e decidir),
+                #    mas a palavra NAO e carimbada (devolve 0) e o recibo diz por que.
+                NAO_CONFERIDAS.append((palavra, motivo))
+                return 0
             except Exception as e:                               # noqa: BLE001
                 if tent == 3:
                     print(u"   ERRO em %s: %s" % (palavra, e))
@@ -687,7 +772,7 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
         sil = [s for s in mapa[palavra] if s]
         if not sil:
             continue
-        assinatura = "|".join(sil) + "|" + voz + "|" + RATE
+        assinatura = "|".join(sil) + "|" + voz + "|" + RATE + "|" + METODO
         prontos = all(os.path.exists(os.path.join(
             audio, "%ssb_%s_%d.mp3"
             % (prefixo, arquivo_da_palavra(palavra), i))) for i in range(len(sil)))
@@ -722,21 +807,41 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
     #   execucao: o que o log engole, o repo guarda.
     if CONFERIDAS or NAO_CONFERIDAS:
         por_caminho = {}
-        for _w, _c, _n in CONFERIDAS:
+        for _w, _c, _n, _d in CONFERIDAS:
             por_caminho[_c] = por_caminho.get(_c, 0) + 1
         print(u"   conferidas sozinhas: %d de %d (%s)"
               % (len(CONFERIDAS), len(CONFERIDAS) + len(NAO_CONFERIDAS),
                  u", ".join(u"%s x%d" % (k, v) for k, v in sorted(por_caminho.items()))))
         for _w, _m in NAO_CONFERIDAS[:10]:
             print(u"   ⚠️ %s: %s" % (_w, _m))
-        io.open(os.path.join(audio, "_conferencia.json"), "w",
-                encoding="utf-8").write(json.dumps(
-                    {u"voz": voz, u"rate": RATE,
-                     u"conferidas": [{u"palavra": w, u"caminho": c, u"pedacos": n}
-                                     for w, c, n in CONFERIDAS],
-                     u"nao_conferidas": [{u"palavra": w, u"motivo": m}
-                                         for w, m in NAO_CONFERIDAS]},
-                    ensure_ascii=False, indent=1))
+        # ⭐⭐ O RECIBO SE MESCLA, NAO SE SOBRESCREVE (18/set/2026). Antes, uma
+        #    gravacao INCREMENTAL (so a palavra nova) apagava as outras do
+        #    recibo, e o portao 1y parava a entrega de um caderno inteiro por
+        #    causa de uma palavra. Agora: le o recibo que existe, tira as
+        #    palavras desta rodada das duas listas, junta, e so guarda palavra
+        #    que ainda esta no mapa (senao acumula lixo de palavra apagada).
+        rec_cam = os.path.join(audio, "_conferencia.json")
+        velho = {u"conferidas": [], u"nao_conferidas": []}
+        if os.path.exists(rec_cam):
+            try:
+                velho = json.load(io.open(rec_cam, encoding="utf-8"))
+            except Exception:                                    # noqa: BLE001
+                pass
+        nesta = set(w for w, _c, _n, _d in CONFERIDAS) | set(w for w, _m in NAO_CONFERIDAS)
+        vivas = set(mapa)
+        conf = [x for x in (velho.get(u"conferidas") or [])
+                if x.get(u"palavra") in vivas and x.get(u"palavra") not in nesta]
+        nconf = [x for x in (velho.get(u"nao_conferidas") or [])
+                 if x.get(u"palavra") in vivas and x.get(u"palavra") not in nesta]
+        conf += [{u"palavra": w, u"caminho": c, u"pedacos": n, u"recortes": d}
+                 for w, c, n, d in CONFERIDAS]
+        nconf += [{u"palavra": w, u"motivo": m} for w, m in NAO_CONFERIDAS]
+        io.open(rec_cam, "w", encoding="utf-8").write(json.dumps(
+            {u"voz": voz, u"rate": RATE, u"metodo": METODO,
+             u"tetos_s": TETO_ABS, u"alvo_lk": ALVO_LK, u"teto_tp": TETO_TP,
+             u"conferidas": sorted(conf, key=lambda x: x[u"palavra"]),
+             u"nao_conferidas": sorted(nconf, key=lambda x: x[u"palavra"])},
+            ensure_ascii=False, indent=1))
     _diario(pasta, u"%d palavra(s) gravadas, %d com falha (voz %s, rate %s)\n%s"
             % (len(alvos) - falhou, falhou, voz, RATE,
                u"\n".join(u"   " + m for m in MOTIVOS[:12]) or u"   (sem motivo registrado)"))

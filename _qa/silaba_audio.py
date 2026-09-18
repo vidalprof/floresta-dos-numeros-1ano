@@ -68,6 +68,27 @@ def _base(p):
                   .encode(u"ascii", u"ignore").decode())
 
 
+def _bordas_e_forca(f, np, librosa):
+    u"""Medidas 4 e 5 (18/set/2026), na TAXA NATIVA do arquivo (o app toca o mp3
+    cru): (4) max|y| nos 0,5 ms iniciais e finais, relativo ao pico — o ESTALO
+    do corte; (5) LKvoz e pico real — a FORCA de verdade (BS.1770 sem gate)."""
+    try:
+        import sys as _s, os as _o
+        _s.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
+        from kvoz import lkvoz, pico_real
+    except Exception:                                            # noqa: BLE001
+        return None
+    y, sr = librosa.load(f, sr=None, mono=True)
+    if len(y) < 200:
+        return None
+    pico = float(np.abs(y).max()) or 1e-9
+    n = max(1, int(sr * 0.0005))
+    ini = float(np.abs(y[:n]).max()) / pico
+    fim = float(np.abs(y[-n:]).max()) / pico
+    lk = lkvoz(y, sr)
+    return {u"borda_ini": ini, u"borda_fim": fim, u"lk": lk, u"tp": pico_real(y, sr), u"sr": sr}
+
+
 def _analisa(f, np, librosa):
     y, _ = librosa.load(f, sr=16000, mono=True)
     if len(y) < 320:
@@ -155,6 +176,9 @@ def confere(pasta, medir=False):
         a = _analisa(f, np, librosa)
         if a:
             a.update({u"w": w, u"i": i, u"n": nn, u"s": s, u"f": f})
+            b = _bordas_e_forca(f, np, librosa)
+            if b:
+                a.update(b)
             dados.append(a)
     if not dados:
         return 2, [u"   nao consegui ler nenhum recorte: NAO MEDI"]
@@ -251,6 +275,43 @@ def confere(pasta, medir=False):
             L.append(u"      • %-11s silaba %d de %d: %-6s %d picos, %.0f ms "
                      u"(mediana %.0f)" % (x[u"w"].upper(), x[u"i"] + 1, x[u"n"],
                                           x[u"s"], k, x[u"dur"], base))
+    # ══════════════════════════════════════════════════════════════════
+    #  MEDIDAS 4 e 5 (18/set/2026) — por enquanto AVISO, nao reprovacao.
+    #  ⚠️ Por que aviso: os 882 recortes NO AR falham nas duas (659 com estalo
+    #     na borda; forca desigual em ate 9,8 dB), e o conserto exige REGRAVAR
+    #     (fade de 10 ms e ganho medido no 2o passo do `_padrao/silabas_voz.py`).
+    #     Reprovar hoje travaria os oito cadernos sem conserto disponivel. A
+    #     chave `BORDA_REPROVA`/`FORCA_REPROVA` vira no MESMO commit que trouxer
+    #     os recortes regravados — portao que avisa e ninguem le e o risco
+    #     oposto, e ele esta anotado aqui para nao ser esquecido.
+    #  (4) ESTALO NA BORDA: o corte cai dentro da fala e o audio comeca "no
+    #      cheio". Aferido: onset natural do TTS da 0,000 nos 0,5 ms iniciais
+    #      (12/12); corte duro da mediana 0,47 (145 casos). Limiar 0,05.
+    #  (5) FORCA DE VERDADE (LKvoz, BS.1770 sem gate, so nas janelas com voz):
+    #      o loudnorm em pedaco < 400 ms vira normalizador de PICO — e a medida
+    #      1 deste portao ("quase mudo", RMS maximo em 20 ms) tambem e quase
+    #      pico. Por isso as duas diziam "esta igual" com 9,8 dB de diferenca.
+    #      Alvo -18 LUFS; reprova futura: |LK - alvo| > 0,5 dB fora dos presos
+    #      no teto, dispersao dentro da palavra > 2 dB, TP > -1,5 dBTP.
+    # ══════════════════════════════════════════════════════════════════
+    LIMIAR_BORDA = 0.05
+    ALVO_LK, TOL_LK, TETO_TP = -18.0, 0.5, -1.5
+    com_borda = [x for x in dados if u"borda_ini" in x]
+    if com_borda:
+        estalo = [x for x in com_borda
+                  if x[u"borda_ini"] >= LIMIAR_BORDA or x[u"borda_fim"] >= LIMIAR_BORDA]
+        lks = [x[u"lk"] for x in com_borda if x.get(u"lk") is not None]
+        fora = [x for x in com_borda if x.get(u"lk") is not None and abs(x[u"lk"] - ALVO_LK) > TOL_LK]
+        altos = [x for x in com_borda if x.get(u"tp", -99) > TETO_TP]
+        if lks:
+            lks_s = sorted(lks)
+            L.append(u"   aviso (4) ESTALO NA BORDA: %d de %d recorte(s) comecam ou terminam "
+                     u"acima de %.2f do pico nos primeiros/ultimos 0,5 ms" % (len(estalo), len(com_borda), LIMIAR_BORDA))
+            L.append(u"   aviso (5) FORCA (LKvoz): mediana %.1f · p5 %.1f · p95 %.1f LUFS · "
+                     u"%d fora de %.1f±%.1f · %d com pico real acima de %.1f dBTP"
+                     % (lks_s[len(lks_s) // 2], lks_s[int(len(lks_s) * .05)],
+                        lks_s[int(len(lks_s) * .95)], len(fora), ALVO_LK, TOL_LK, len(altos), TETO_TP))
+            L.append(u"   (as medidas 4 e 5 viram REPROVACAO no commit da regravacao com fade + ganho medido)")
     if medir:
         L.append(u"   MODO --medir: nao reprovo.")
         return 0, L

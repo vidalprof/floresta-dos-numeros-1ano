@@ -10,13 +10,18 @@ u"""
  silaba saiu errada era ELE, na sala, com a crianca na frente. Isso nao e
  portao — e sorte.
 
- O METODO, em uma linha: **depois de cortar, a gravacao conta as VOGAIS de cada
- recorte e so aceita quem tem exatamente uma.** A invariante e da lingua, nao
- minha: toda silaba do portugues tem uma vogal so. Os dois defeitos historicos
- caem nessa peneira, sem ouvido nenhum:
+ O METODO, em uma linha (versao de 18/set/2026): **so a PALAVRA INTEIRA grava;
+ depois de cortar, cada recorte e medido — DURACAO contra um teto absoluto por
+ tamanho, e nucleo de vogal presente.** O que cada medida pega, aferido nos 52
+ soletrados guardados e nos 882 bons:
 
-     · a voz SOLETROU       -> DOIS nucleos  ("ve-a" no lugar de "va")
-     · o corte perdeu a voz -> ZERO nucleos
+     · teto de duracao (0,40/0,55/0,60 s por 1/2/3 letras) -> 33/52 soletrados, 0 bons
+     · zero nucleo de vogal -> o corte perdeu a voz        -> recusa
+     · dois+ nucleos -> so AVISO: pega 6/52 e confunde liquida (LU, BRI) com vogal
+
+ ⚠️ A versao anterior deste texto dizia que "dois nucleos = soletrou". A banca
+    mediu: 46 dos 52 soletrados tem UM nucleo (a voz diz "ve" longo, nao
+    "ve-a"). Quem separa e a duracao. Fica escrito para nao voltar.
 
  Quem faz isso e o `_padrao/silabas_voz.py` na hora de gravar. O recibo fica em
  `<pasta>/audio/_conferencia.json`.
@@ -97,7 +102,22 @@ def confere(pasta):
     faltam = [w for w in sorted(palavras)
               if w not in ok and not any(y.get(u"palavra") == w for y in ruins)]
 
-    L = [u"   recibo: voz `%s`, rate `%s`" % (R.get(u"voz"), R.get(u"rate"))]
+    L = [u"   recibo: voz `%s`, rate `%s`, metodo `%s`"
+         % (R.get(u"voz"), R.get(u"rate"), R.get(u"metodo") or u"(antigo, sem metodo)")]
+    # ⭐ CARIMBO x RECIBO (18/set/2026): palavra CARIMBADA (audio/_silabas.json,
+    #   quer dizer "gravada e aceita") que nao aparece no recibo e recibo
+    #   TRUNCADO — foi o que uma gravacao incremental fazia ate 18/set, ao
+    #   sobrescrever o recibo so com a rodada do dia. Reprova, porque "conferida"
+    #   nao pode nascer sem a medida escrita.
+    carimbo_cam = os.path.join(pasta, u"audio", u"_silabas.json")
+    carimbadas = set()
+    if os.path.exists(carimbo_cam):
+        try:
+            carimbadas = set(json.load(io.open(carimbo_cam, encoding=u"utf-8")))
+        except ValueError:
+            pass
+    sem_recibo = sorted(w for w in carimbadas if w in palavras and w not in ok
+                        and not any(y.get(u"palavra") == w for y in ruins))
     por_caminho = {}
     for x in ok.values():
         c = x.get(u"caminho")
@@ -107,6 +127,11 @@ def confere(pasta):
                  % (len(ok), u", ".join(u"`%s` x%d" % (k, v)
                                         for k, v in sorted(por_caminho.items()))))
     ruim = 0
+    if sem_recibo:
+        ruim = 1
+        L.append(u"   REPROVADO: %d palavra(s) CARIMBADA(S) como gravadas que nao "
+                 u"estao no recibo — recibo truncado (gravacao incremental "
+                 u"sobrescreveu?): %s" % (len(sem_recibo), u", ".join(sem_recibo[:10])))
     if ruins:
         ruim = 1
         L.append(u"   REPROVADO: %d palavra(s) que a gravacao NAO conseguiu "

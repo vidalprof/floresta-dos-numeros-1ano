@@ -47,6 +47,7 @@ PY
               "1w silaba x dicionario pt_BR|python3 _qa/silaba_dicionario.py $PASTA" \
               "1x som da silaba (o recorte tem voz?)|python3 _qa/silaba_audio.py $PASTA" \
               "1y a voz se conferiu sozinha?|python3 _qa/silaba_conferida.py $PASTA" \
+              "1z2 bateria: a regua da soletracao tem faro?|python3 _qa/silaba_bateria.py" \
               "1t teclado completo|python3 _qa/teclado.py $PASTA" \
               "0b2 dinamicas|python3 _qa/dinamicas.py $ARQ" "4 classes sem estilo|python3 _qa/classes.py $ARQ" \
               "3b beco na peca|python3 _qa/beco_peca.py $ARQ" "4b cor cravada|python3 _qa/cor_fixa.py $ARQ" \

@@ -152,9 +152,25 @@ def conta_espeak(pasta, ok_dec):
         return 2, [u"   (contagem) sem o `espeak-ng` (apt-get install espeak-ng): "
                    u"NAO MEDI — e isto nao e 'passou'"]
 
+    # ⭐⭐ REGRA ORTOGRAFICA DURA (18/set/2026): palavra gravada terminada em
+    #    -AO/-AOS/-OES/-AES SEM TIL. A banca achou CHORAO e DRAGAO no _troca2:
+    #    a voz le "cho-RA-o"/"dra-GA-o" e a tela mostra a palavra ERRADA para a
+    #    crianca que esta aprendendo a escrever. As duas reguas de contagem
+    #    aprovavam, porque contar nucleos nao ve acento. Ortografia se confere
+    #    por forma, nao por som — e esta forma nao tem excecao em portugues:
+    #    toda palavra terminada em -ao tonico leva til.
+    sem_til = []
+    for w in sorted(P):
+        gravado = u"".join(P[w]).lower()
+        if re.search(u"(ao|aos|oes|aes)$", gravado) and not re.search(u"[ãõ]", gravado):
+            sem_til.append((w, u"-".join(P[w])))
     grossas, declaradas, hiatos = [], [], []
     for w in sorted(P):
-        fala = _ipa(w)
+        # ⚠️ O TEXTO QUE SE GRAVA E O JOIN DAS SILABAS, nao a chave do json (a
+        #    chave e `pao`/`maca`, sem acento, para virar nome de arquivo). Medir
+        #    a chave media outra palavra — foi apontado pela banca em 18/set.
+        gravado = u"".join(P[w])
+        fala = _ipa(gravado)
         if not fala:
             continue
         n, meu = _nucleos(fala), len(P[w])
@@ -172,6 +188,13 @@ def conta_espeak(pasta, ok_dec):
             alvo.append((w, u"-".join(P[w]), meu, n, fala, False))
 
     L = []
+    if sem_til:
+        L.append(u"   (ortografia) REPROVADO: %d palavra(s) terminada(s) em -AO sem "
+                 u"TIL — a voz le 'a-o' e a tela ensina a escrita errada:" % len(sem_til))
+        for w, div in sem_til:
+            L.append(u"      • %-12s (%s)" % (w.upper(), div))
+        L.append(u"   conserto: escreva a palavra com til no `gerar_falas.py` "
+                 u"(CHORÃO -> CHO+RÃO). O nome do ARQUIVO continua sem acento.")
     duros = [x for x in grossas if not x[5]]
     if duros:
         L.append(u"   (contagem) REPROVADO: %d palavra(s) registradas com MENOS "
@@ -200,7 +223,7 @@ def conta_espeak(pasta, ok_dec):
                  u"e EU estou certo (medido): %s"
                  % (len(hiatos), u", ".join(u"%s (eu %d, ele %d)" % (w.upper(), m, n)
                                             for w, m, n, _ in hiatos)))
-    return (1 if grossas else 0), L
+    return (1 if (grossas or sem_til) else 0), L
 
 
 def _silmap(pasta):

@@ -526,7 +526,7 @@ jobs:
           #      1y recibo   (`silaba_conferida.py`) -> a gravacao se conferiu?
           for a in "${ALVS[@]}"; do
             pasta="${a%%:*}"; [ -d "$pasta" ] || continue
-            for reg in _qa/silabas.py _qa/silaba_audio.py _qa/silaba_conferida.py; do
+            for reg in _qa/silabas.py _qa/silaba_audio.py _qa/silaba_conferida.py _qa/silaba_bateria.py; do
               rc=0; if python3 "$reg" "$pasta"; then rc=0; else rc=$?; fi
               if [ "$rc" = "1" ]; then ruim=1
               elif [ "$rc" != "0" ]; then echo "::warning::$pasta: $reg — nao consegui medir (codigo $rc)"; fi

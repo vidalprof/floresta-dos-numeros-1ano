@@ -43,6 +43,20 @@ import sys
 
 MIN_BYTES = 300          # abaixo disso é arquivo vazio, não é áudio
 FATOR = 1.7              # acima disso a sílaba está sendo soletrada, não falada
+# ⭐ TETO ABSOLUTO por tamanho de escrita (18/set/2026) — a SEGUNDA rede.
+#    A régua relativa (FATOR sobre a mediana do caderno) tem um ponto cego
+#    medido: se o LOTE INTEIRO sair soletrado, a mediana sobe junto e ela pega
+#    4 dos 52. Este teto não se move. Aferido nos 882 recortes bons no ar e nos
+#    52 soletrados guardados em `_pesquisa/silabas-soletradas/`:
+#        letras   bom mais longo   soletrado mais curto / mediana
+#          1         0,30 s            0,64 / 0,64
+#          2         0,42 s            0,32 / 0,78
+#          3         0,48 s            0,39 / 0,95
+#    Pega 31 dos 50 soletrados com sílaba conhecida e acusa 0 dos 852 bons.
+#    ⚠️ Para 4+ letras NÃO HÁ soletrado guardado para aferir: o portão diz
+#       "NÃO MEDI teto" em vez de inventar número. Voz ou RATE mudou → reaferir
+#       com `python3 _qa/silaba_bateria.py`.
+TETO_S = {1: 0.40, 2: 0.55, 3: 0.60}
 
 
 def _arq(palavra):
@@ -118,21 +132,14 @@ def _mede_duracoes(audio, mapa, prefixo):
         for i, s in enumerate(mapa[palavra]):
             if not s:
                 continue
-            # ⚠️⚠️ SÍLABA DE UMA LETRA NÃO TEM COMO SER SOLETRADA, e por isso ela
-            #    fica FORA desta medida — inclusive da mediana.
-            #    A medida existe para pegar a voz dizendo o NOME DAS LETRAS
-            #    ("vê-á" no lugar de "va"): são duas emissões onde devia haver
-            #    uma, e por isso dobra. Numa sílaba de uma vogal só, o nome da
-            #    letra E o som são a MESMA emissão — não há segunda para dobrar.
-            #    O que ela tem, e o que me reprovou o `_sil2` em 16/set/2026, é
-            #    outra coisa: o A de ASA é TÔNICO e abre a palavra (0,30 s),
-            #    enquanto o A de DIA e o de LUA são átonos e fecham (0,16 s). O
-            #    dobro ali é PROSÓDIA, não soletração — e portão que reprova
-            #    pelo próprio erro é pior que portão nenhum.
-            #    ⚠️ Isto NÃO afrouxa a medida das outras: CV, CVC e CCV
-            #       continuam medidas, e são elas que a voz soletra.
-            if len(s) < 2:
-                continue
+            # ⚠️⚠️ A SÍLABA DE UMA LETRA VOLTOU A SER MEDIDA (18/set/2026).
+            #    Aqui dizia "sílaba de uma letra não tem como ser soletrada" e a
+            #    excluía. ESTAVA ERRADO, e os 52 soletrados guardados provam: há
+            #    QUATRO "A" soletrados de 0,64 a 0,81 s contra 0,30 s do maior A
+            #    bom — a voz diz o NOME da letra estendido, ou junta a vizinha.
+            #    O que era verdade é que a prosódia varia (A tônico de ASA 0,30 s
+            #    vs A átono de DIA 0,16 s): por isso ela tem a PRÓPRIA mediana
+            #    (por tamanho) e o próprio teto absoluto, e não se compara com CV.
             f = os.path.join(audio, u"%ssb_%s_%d.mp3"
                              % (prefixo, _arq(palavra), i))
             if not os.path.exists(f):
@@ -145,14 +152,35 @@ def _mede_duracoes(audio, mapa, prefixo):
     if not tudo:
         return [], True
     ruins = []
+    folga = 0.0            # a MAIOR razão d/base do caderno — impressa sempre
+    sem_teto = set()
     for s, palavra, d in tudo:
-        base = _mediana(porTam.get(len(s), []))
+        # 1ª rede: o TETO ABSOLUTO, que não se move com o lote
+        L = len(s)
+        if L in TETO_S:
+            if d > TETO_S[L]:
+                ruins.append((s, palavra, d, TETO_S[L]))
+                continue
+        elif L <= 4:
+            sem_teto.add(L)      # 5+ letras e sempre PEDACO de exercicio
+        # ⚠️ A VOGAL SOZINHA SO TEM O TETO ABSOLUTO. A relativa acusou o A de
+        #    ASA (0,30 s, tonico, abre a palavra) contra a mediana 0,16 s dos A
+        #    atonos de DIA/LUA — 1,9x, e e PROSODIA, nao soletracao. Numa vogal
+        #    so, a soletracao e o nome da letra ESTENDIDO (0,64 s ou mais): o
+        #    teto de 0,40 s pega isso com folga e a relativa so faria estrago.
+        if L == 1:
+            continue
+        # 2ª rede: a RELATIVA (o dobro da mediana das de mesmo tamanho)
+        base = _mediana(porTam.get(L, []))
         # ⚠️ com menos de 4 exemplos daquele tamanho a mediana não vale nada:
         #    uma única sílaba soletrada viraria a própria referência.
-        if base <= 0 or len(porTam.get(len(s), [])) < 4:
+        if base <= 0 or len(porTam.get(L, [])) < 4:
             continue
+        folga = max(folga, d / base)
         if d > base * FATOR:
             ruins.append((s, palavra, d, base))
+    _mede_duracoes.folga = folga
+    _mede_duracoes.sem_teto = sorted(sem_teto)
     return sorted(ruins, key=lambda r: -r[2]), True
 
 
@@ -257,7 +285,18 @@ def mede(pasta):
               % (pasta, len(faltam), total, u", ".join(faltam[:8]), recado))
         return 1
 
+    folga = getattr(_mede_duracoes, u"folga", 0.0)
+    sem_teto = getattr(_mede_duracoes, u"sem_teto", [])
     print(u"%s -> silabas ok: %d recorte(s), um para cada silaba falada." % (pasta, total))
+    if folga:
+        # ⭐ A FOLGA SE IMPRIME SEMPRE: quão perto do teto relativo (%.1f) o pior
+        #   recorte chegou. Régua que só fala quando reprova não deixa ver a
+        #   margem encolher — e em 17/set o bom passava com 2%% de folga.
+        print(u"   folga: o recorte mais longo do caderno esta a %.2fx da mediana "
+              u"(reprova a partir de %.1fx)" % (folga, FATOR))
+    for L in sem_teto:
+        print(u"   NAO MEDI teto absoluto para silabas de %d letras: nao ha soletrado "
+              u"guardado desse tamanho para aferir" % L)
     return 0
 
 
