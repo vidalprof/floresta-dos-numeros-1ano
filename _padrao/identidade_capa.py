@@ -149,6 +149,9 @@ ESPEC = {
                      figs=["gp_sapo_p", "gp_sapo_g", "gp_gato_p", "gp_gato_g", "gp_bolo_p", "gp_bolo_g"],
                      rot=None,
                      fundo=("#f9dcef", "#fef6fb"), nota="o par de tamanhos: o mesmo desenho pequeno e grande lado a lado, e o pequeno cresce e volta (figuras recortadas da folha de papel d39)"),
+    "_rima2":  dict(cor="#1560e8", cena="corrente", letra="pula",
+                    figs=["qd_cachimbo", "qd_jarro", "qd_sino", "qd_touro"], rot=None,
+                    fundo=("#d9e6fd", "#f5f9ff"), nota="a corrente de rimas: as figuras da parlenda HOJE É DOMINGO ligadas por um elo, e um pulso que corre de uma para a outra (recortadas da folha de papel d31)"),
     "_troca2": dict(cor="#c62828", cena="troca", letra="vira",
                     figs=["mq_gato", "mq_pato", "mq_lata", "mq_lama"], rot=["GA-TO", "PA-TO", "LA-TA", "LA-MA"],
                     fundo=("#fadada", "#fef5f5"), nota="a máquina de trocar: os pares trocam de lugar, uma sílaba por vez"),
@@ -548,13 +551,45 @@ def cena_par(p, S):
     return css, "'<div class=\"cena\">' + " + " + ".join(pares) + " + '</div>'"
 
 
+def cena_corrente(p, S):
+    u"""A CORRENTE DE RIMAS — a cena do caderno da parlenda.
+
+    ⚠️ Ela nasceu do assunto e não do catálogo: em *Hoje é domingo* cada verso
+       PEGA a última palavra do anterior — barro/jarro, fino/sino, ouro/touro —,
+       e é essa corrente que a capa mostra. As figuras são as próprias da
+       parlenda, recortadas do cartaz de papel (d31), ligadas por um elo, e um
+       PULSO viaja de uma para a outra: o eco da rima passando adiante."""
+    css = u""".capa .cena{display:flex;justify-content:center;align-items:center;
+  gap:0;flex-wrap:nowrap}
+.capa .it{display:flex;flex-direction:column;align-items:center;
+  -webkit-animation:ecoPar%(S)s 3.2s ease-in-out infinite;animation:ecoPar%(S)s 3.2s ease-in-out infinite}
+.capa .elo{display:inline-block;width:clamp(14px,4vw,30px);height:6px;border-radius:3px;
+  background:%(cor)s;position:relative;flex:none;
+  -webkit-animation:corre%(S)s 3.2s ease-in-out infinite;animation:corre%(S)s 3.2s ease-in-out infinite}
+.capa .elo:after{content:"";position:absolute;right:-3px;top:-3px;width:12px;height:12px;
+  border-radius:50%%;background:%(cor)s}
+.capa .cena>*:nth-child(3){-webkit-animation-delay:.4s;animation-delay:.4s}
+.capa .cena>*:nth-child(4){-webkit-animation-delay:.6s;animation-delay:.6s}
+.capa .cena>*:nth-child(5){-webkit-animation-delay:.8s;animation-delay:.8s}
+.capa .cena>*:nth-child(6){-webkit-animation-delay:1.0s;animation-delay:1.0s}
+.capa .cena>*:nth-child(7){-webkit-animation-delay:1.2s;animation-delay:1.2s}
+""" % dict(S=S, cor=p["cor"]) + kfs("ecoPar" + S, "0%,55%,100%{transform:translateY(0) scale(1)}25%{transform:translateY(-10px) scale(1.07)}") \
+        + kfs("corre" + S, "0%,55%,100%{opacity:.45}25%{opacity:1}")
+    pedacos = []
+    for i in range(len(p["figs"])):
+        if i:
+            pedacos.append("'<i class=\"elo\"></i>'")
+        pedacos.append(item(p, i))
+    return css, "'<div class=\"cena\">' + " + " + ".join(pedacos) + " + '</div>'"
+
+
 CENAS = {
     "desfile": cena_desfile, "esteira": cena_esteira, "rua": cena_rua, "tecla": cena_tecla,
     "balao": cena_balao, "balcao": lambda p, S: cena_balao(p, S, True), "brota": cena_brota,
     "rola": cena_rola, "vira": cena_vira, "junta": cena_junta, "troca": cena_troca,
     "luz": cena_luz, "lupa": lambda p, S: cena_luz(p, S, True), "gaveta": cena_gaveta,
     "casinha": cena_casinha, "coroa": cena_coroa, "roda": cena_roda, "palmas": cena_palmas,
-    "pula": cena_pula, "par": cena_par,
+    "pula": cena_pula, "par": cena_par, "corrente": cena_corrente,
 }
 
 ANTIGOS = {
