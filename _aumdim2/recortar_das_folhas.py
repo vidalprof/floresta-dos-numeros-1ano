@@ -58,7 +58,8 @@ except ImportError as e:                                   # pragma: no cover
 AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
 sys.path.insert(0, os.path.join(RAIZ, u"_padrao"))
-from recorte_folha import limpa_fundo, tira_halo, aperta   # noqa: E402
+from recorte_folha import (limpa_fundo, tira_halo, aperta,          # noqa: E402
+                           tira_linha_impressa)
 
 FOLHAS = os.path.join(RAIZ, u"_sequencias", u"folhas_aumdim2")
 DEST = os.path.join(AQUI, u"img")
@@ -210,6 +211,12 @@ def recorta(folha, x1, y1, x2, y2, limpar=False):
     c = limpa_fundo(c)
     c = tira_halo(c)
     c = aperta(c)
+    # ⚠️ A PAUTA DA FOLHA ENTRA EM TODO RECORTE, e o portão 1i6 mede: cinco das
+    #    37 saíram com um risquinho solto pendurado (a linha da tabela na casa3,
+    #    a borda da moldura no sapato grande). O `tira_linha_impressa` é a peça
+    #    da casa para isso — roda em TODAS, não só nas de tabela.
+    if c is not None:
+        c = aperta(tira_linha_impressa(c))
     if c is not None and limpar:
         c = aperta(tira_rabicho(so_a_maior_ilha(c)))
     return c

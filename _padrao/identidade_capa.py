@@ -145,6 +145,10 @@ ESPEC = {
                     figs=["vr_comer", "vr_correr", "vr_brincar", "vr_ler", "vr_estudar"],
                     rot=["come", "corre", "brincam", "lê", "anda"],
                     fundo=("#d5ebe7", "#f4faf8"), nota="o motor da frase: as crianças em ação passam na esteira, e embaixo de cada uma o verbo que a nomeia (figuras recortadas da folha de papel d33)"),
+    "_aumdim2": dict(cor="#b5197e", cena="par", letra="cresce",
+                     figs=["gp_sapo_p", "gp_sapo_g", "gp_gato_p", "gp_gato_g", "gp_bolo_p", "gp_bolo_g"],
+                     rot=None,
+                     fundo=("#f9dcef", "#fef6fb"), nota="o par de tamanhos: o mesmo desenho pequeno e grande lado a lado, e o pequeno cresce e volta (figuras recortadas da folha de papel d39)"),
     "_troca2": dict(cor="#c62828", cena="troca", letra="vira",
                     figs=["mq_gato", "mq_pato", "mq_lata", "mq_lama"], rot=["GA-TO", "PA-TO", "LA-TA", "LA-MA"],
                     fundo=("#fadada", "#fef5f5"), nota="a máquina de trocar: os pares trocam de lugar, uma sílaba por vez"),
@@ -495,12 +499,41 @@ def cena_pula(p, S):
     return css, "'<div class=\"cena\">' + " + html + " + '</div>'"
 
 
+def cena_par(p, S):
+    u"""O PAR DE TAMANHOS — a cena do caderno do grandão e do pequenininho.
+
+    ⚠️ Ela precisou existir: nas outras dezoito cenas a figura aparece UMA vez, e
+       neste caderno o conceito É o par. As peças vêm aos dois: `figs` traz
+       pequeno e grande alternados, e a cena os junta dois a dois. O pequeno
+       CRESCE e volta, que é o gesto do assunto."""
+    css = u""".capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:clamp(10px,3.5vw,26px);flex-wrap:nowrap}
+.capa .cppar{display:flex;align-items:flex-end;gap:clamp(2px,1.2vw,8px);padding:0 clamp(2px,1vw,8px);
+  border-bottom:5px solid %(cor)s;border-radius:0 0 8px 8px}
+.capa .cppar .capfig{display:block;height:auto}
+.capa .cppeq{-webkit-animation:crescePar%(S)s 2.6s ease-in-out infinite;animation:crescePar%(S)s 2.6s ease-in-out infinite;
+  -webkit-transform-origin:bottom center;transform-origin:bottom center}
+.capa .cppar:nth-child(2) .cppeq{animation-delay:.45s}
+.capa .cppar:nth-child(3) .cppeq{animation-delay:.9s}
+.capa .cpgra{-webkit-animation:pisaPar%(S)s 2.6s ease-in-out infinite;animation:pisaPar%(S)s 2.6s ease-in-out infinite;
+  -webkit-transform-origin:bottom center;transform-origin:bottom center}
+.capa .cppar .rt{position:absolute}
+""" % dict(S=S, cor=p["cor"]) + kfs("crescePar" + S, "0%,100%{transform:scale(1)}50%{transform:scale(1.35)}") \
+        + kfs("pisaPar" + S, "0%,100%{transform:scale(1)}50%{transform:scale(.94)}")
+    fs = p["figs"]
+    pares = []
+    for i in range(0, len(fs), 2):
+        pares.append("'<div class=\"cppar\">' + " + fig(fs[i], "capfig cppeq")
+                     + " + " + fig(fs[i + 1], "capfig cpgra") + " + '</div>'")
+    return css, "'<div class=\"cena\">' + " + " + ".join(pares) + " + '</div>'"
+
+
 CENAS = {
     "desfile": cena_desfile, "esteira": cena_esteira, "rua": cena_rua, "tecla": cena_tecla,
     "balao": cena_balao, "balcao": lambda p, S: cena_balao(p, S, True), "brota": cena_brota,
     "rola": cena_rola, "vira": cena_vira, "junta": cena_junta, "troca": cena_troca,
     "luz": cena_luz, "lupa": lambda p, S: cena_luz(p, S, True), "gaveta": cena_gaveta,
-    "casinha": cena_casinha, "coroa": cena_coroa, "roda": cena_roda, "palmas": cena_palmas, "pula": cena_pula,
+    "casinha": cena_casinha, "coroa": cena_coroa, "roda": cena_roda, "palmas": cena_palmas,
+    "pula": cena_pula, "par": cena_par,
 }
 
 ANTIGOS = {
