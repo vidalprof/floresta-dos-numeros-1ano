@@ -114,6 +114,7 @@ PORTOES=(
   #    Reinos foram ao ar com 54 falas erradas ("do reino DAS animais").
   "0r2 concordancia nas falas|python3 _qa/concordancia.py $PASTA"
   "1l2 ligar com rotulo repetido|python3 _qa/ligar_rotulo.py $PASTA"
+  "0b11 identidade propria (cor, capa, animacao)|python3 _qa/identidade.py $PASTA"
   # ⭐ so responde em jogo de UNO (nos outros ele sai com 2 = "nao medi")
   "3u regra da compra (UNO)|node _qa/uno.js $ARQ"
   "0c pergunta ambigua|python3 _qa/ambiguo.py $ARQ"
@@ -137,6 +138,7 @@ PORTOES=(
   #    `@keyframes`/`@media` sem o arroba — animacao morta e celular sem as
   #    regras de tela pequena, sem uma linha de erro em lugar nenhum.
   "4c3 regra-@ do CSS|python3 _qa/css_atregra.py $ARQ"
+  "4c4 regra de CSS que nao fecha|python3 _qa/css_fechado.py $ARQ"
   "4c2 design (catraca)|python3 _qa/design.py"
   "0b8 peso (orcamento)|python3 _qa/peso.py $ARQ"
   "0p game-feel|python3 _qa/gamefeel.py $ARQ"

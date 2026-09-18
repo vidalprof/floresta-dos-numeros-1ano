@@ -28,7 +28,7 @@
 > que seção deste arquivo mora o detalhe, e o resto do documento continua sendo
 > a lei. **Este roteiro não substitui a leitura — ele diz por onde entrar.**
 
-### As sete coisas que NÃO se negociam (se alguma falhar, não é sequência didática)
+### As oito coisas que NÃO se negociam (se alguma falhar, não é sequência didática)
 
 | # | regra | onde |
 |---|---|---|
@@ -39,6 +39,7 @@
 | 5 | **Duas portas**: teclado na tela **e** teclado de verdade; arrastar **e** tocar. | §2 *Regra das duas portas* |
 | 6 | **Nasce do ESQUELETO**, nunca de um clone. | §1b |
 | 7 | **Defeito que chega ao Marcos tem conserto DUPLO**: o código **e** o portão que o pega sozinho da próxima vez. | §2 *Regra do conserto duplo* |
+| 8 | ⭐ **Cada caderno tem a SUA cara** — cor pelo assunto, capa com uma cena do assunto, `@keyframes` com nome próprio (portão `0b11`, `_qa/identidade.py`). Marcos, 18/set/2026: *"os estudantes acham que é a mesma atividade, mesmo o título sendo diferente"*. A capa do esqueleto é exemplo, não padrão. | `MEMORIA` *"Cada caderno tem a sua cara"* |
 
 ### As doze etapas, na ordem
 
@@ -575,6 +576,26 @@ reprovou com código 1 e apontou os dois. Depois disso o arquivo foi restaurado.
 
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o
 > Marcos, ou chegou até a criança.
+
+### 3.0000000a ⭐⭐ DEZENOVE REGRAS DE CSS SEM `}` — e tudo dali para baixo morreu em silêncio (18/set/2026)
+
+**O que aconteceu, em `_sinon2` antes de ir ao ar:** ao colar o bloco de CSS das peças,
+dezenove regras de duas linhas perderam a segunda linha (`.cpcel{...;min-height:44px;` e,
+na linha seguinte, já `.cpcel.pega{...}`). O navegador não reclama: engole a regra seguinte
+como parte da anterior e **todo o CSS dali para baixo deixa de valer**. O `node --check`
+não olha CSS; o `classes.py` viu as classes declaradas (estavam lá, só não fechavam); o
+`4c3` só conta `@keyframes`. Quem viu: a **foto** (folhas 19, 24 e 35 sem estilo) e o
+`leiaute_mao` (64 alvos de 21 px nos dois caça-palavras). Conserto duplo: as dezenove
+caudas voltaram da atividade de origem **e nasceu o portão `4c4` — `_qa/css_fechado.py`**
+(saldo de chaves por bloco + a assinatura exata da linha perdida), no pré-voo.
+
+### 3.0000000b ⭐⭐ DUAS CORES PARA 23 CADERNOS — "os estudantes acham que é a mesma atividade" (18/set/2026)
+
+Regra 8 do §0. Palavras do Marcos e a medida do dia: 14 cadernos roxos, 9 telha, e a rua de
+casas de `_casa1` servindo de capa para sílaba, nariz, ponto e inglês. Portão **`0b11`**
+(`_qa/identidade.py`): cor, capa ou animação iguais às de outro caderno (ou ao esqueleto)
+reprovam. O primeiro com cara própria é `_sinon2`; os 22 no ar são **dívida declarada**
+(tarefa aberta). Receita completa: `MEMORIA-DO-PROJETO.md`, "Cada caderno tem a sua cara".
 
 ### 3.000000 ⭐⭐ O PORTÃO DA DURAÇÃO MEDIA A LISTA ERRADA EM TODO CADERNO NOVO (15/set/2026)
 

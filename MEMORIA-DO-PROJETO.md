@@ -858,6 +858,46 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🪞 CADA CADERNO TEM A SUA CARA — cor, capa e animação PRÓPRIAS, e isso é portão (18/set/2026)
+
+**Palavras do Marcos, com a turma na frente:** *"cada caderno precisa ter capa
+diferente, cor diferente animações etc, pois são muito parecidos e os estudantes
+acham que é a mesma atividade, mesmo o título sendo diferente"*.
+
+**O que estava medido quando ele disse (`python3 _qa/identidade.py --todos`):**
+23 cadernos de folha viva em **duas cores**: 14 com o roxo `#6d5ae6` (a família do
+1º ano) e 9 com a telha `#b0562a` (os nascidos do esqueleto — que herdaram a **rua
+de casas** de `_casa1`, com sol e nuvens, mesmo sendo sobre sílaba, nariz, ponto,
+inglês…). A criança de sete anos não lê o título antes de decidir "isso eu já
+fiz": ela olha a cor e o desenho. **Título diferente com capa igual É a mesma
+atividade para ela.**
+
+**O que virou regra medida:**
+- **Portão `0b11` — `_qa/identidade.py`**, no pré-voo e na banca de folha viva.
+  Reprova (1) `--cor` igual ao de outro caderno; (2) bloco `A CAPA` idêntico ao de
+  outro ou ao do esqueleto; (3) mesmos `@keyframes` E mesma estrutura do `f0` que
+  outro caderno (= a mesma capa com outra cor). Não mede se é bonita nem se tem a
+  ver com o assunto — isso é do Marcos.
+- **O esqueleto avisa** (`_padrao/FOLHA-VIVA/index.html`, comentários no `:root` e
+  no bloco `A CAPA`; `nova_folha_viva.sh` lista o 0b11 entre o que um caderno
+  recém-nascido legitimamente reprova). A capa do esqueleto é um EXEMPLO, não um
+  padrão.
+- **Como se desenha uma identidade (o primeiro: `_sinon2`, O Espelho e o Contrário):**
+  a cor sai do ASSUNTO (azul do vidro `#1f7a8c`, e o lado "contrário" quente
+  `--avesso:#d9622b`); a capa é uma CENA do assunto (dois lados, o vidro no meio,
+  o par ALTO/BAIXO recortado das folhas de papel — o mesmo par da folha 1); a
+  animação tem nome próprio (`viraLetra`, `balancaEsq/Dir`, `brilhaVidro`) —
+  nome de `@keyframes` é global e já apagou um título inteiro por colisão.
+  Título em `<span class="pal">` por palavra (nowrap): a foto do celular mostrou
+  o "o" de "Contrário" sozinho na linha de baixo.
+- **Cor de texto na capa é TINTA ESCRITA** (`color:#2c3745`), não `var(--texto)`:
+  a capa pinta o próprio fundo, e o `_qa/cor_fixa.py` cobra isso.
+
+**⏳ DÍVIDA DECLARADA:** os **22 cadernos no ar** continuam em duas cores. Cada um
+precisa da sua identidade (cor + capa + animação pelo assunto) e de nova entrega
+(`--reparo`). O portão já reprova qualquer um deles; a lista sai de
+`python3 _qa/identidade.py --todos`.
+
 ## 🦠 A COROA DOS CINCO REINOS — 4º ano, Ciências (14/set/2026)
 
 Caderno de **folha viva** (sem motor), 25 folhas, pasta `_reinos`, repositório

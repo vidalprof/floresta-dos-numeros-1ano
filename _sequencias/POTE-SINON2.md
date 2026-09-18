@@ -138,3 +138,32 @@ nome dele.
 
 ⚠️ **Nenhuma é gerada por IA** — todas saem das folhas colhidas, pelo
 `_padrao/recorte_folha.py`, como manda a regra da origem.
+
+---
+
+## O ROTEIRO QUE SAIU DO POTE — as 35 folhas montadas (18/set/2026)
+
+| folhas | bloco | gesto (o verbo da folha de papel) | de onde |
+|---|---|---|---|
+| 1-3 | o contrário na figura | escolher o par · ligar figura ao contrário | D06, D11, D37 |
+| 4-5 | a cena que mostra o contrário | escrever (teclado na tela e de verdade) | D31, D11 |
+| 6, 12, 13 | mesma coisa ou contrário? | duas gavetas · três gavetas · classificar | D02, D09, D18 |
+| 7-9 | a palavra irmã | escolher · marcar várias e conferir | D01, D04, D17 |
+| 10-11 | uma palavra, mais de uma irmã | marcar no texto · ligar | D13, D20 |
+| 14-16 | trocar pelo contrário na frase | completar a lacuna · escolher · reescrever | D08, D22 |
+| 17-19 | completar a fala | completar · numerar os pares | D15, D27 |
+| 20-23 | jogos | dois caça-palavras · duas cruzadinhas de pares | D19, D24 |
+| 24-25 | reunir os pares | arrastar a carta até o par · pintar por cor | D23, D33 |
+| 26-30 | o prefixo in-/im- | completar · escolher in-/im- · formar · a REGRA por último | bloco declarado (currículo) |
+| 31-33 | dentro do texto | marcar no texto (texto nosso) · reescrever | D29 (só o gesto) |
+| 34-35 | escrever com o que aprendeu | produção guiada · o cartaz dos dois nomes | D35, D40 |
+
+- **Duração medida** (`_qa/duracao.py`): 41 a 70 min — o piso de 40 cobrado da ponta baixa.
+- **O que a banca não alcança e ficou declarado:** `conceitos` do `curriculo.json` VAZIO
+  (Português vem em faixas no documento da rede) → o pedagogo diz **NÃO MEDI**, não "passou".
+- **Erros pagos nesta montagem** (para não repetir): `var CRUZ` dos dados colidiu com o estado
+  `CRUZ` do teclado da cruzadinha (TypeError em 'cr1') → dados viraram `CRZD/CRZD2`; prefixo de
+  fala `lf_` bateu com `_ing8` → `lgf_`; **19 regras de CSS do bloco das peças perderam a linha
+  final** ao serem coladas (fechavam sem `}`) — o CSS inteiro dali para baixo morreu em silêncio,
+  os alvos mediram 21 px e três folhas saíram sem estilo; só a foto e o `leiaute_mao` viram.
+- **Primeiro caderno com identidade própria medida** (portão `0b11`): azul do vidro, capa de espelho.

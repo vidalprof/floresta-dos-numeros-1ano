@@ -111,6 +111,10 @@ PORTOES=(
   # ⭐ 1o) sem voz na opcao, a crianca que ainda nao le escolhe pelo tamanho do
   #    botao — e a folha vira sorteio para justamente quem ela deveria ajudar.
   "1o alto-falante da resposta|python3 _qa/voz_opcao.py $PASTA"
+  # ⭐ 0b11) IDENTIDADE PROPRIA (Marcos, 18/set/2026: "cada caderno precisa ter capa
+  #    diferente, cor diferente, animacoes... os estudantes acham que e a mesma
+  #    atividade"). Onze cadernos no ar dividiam duas cores e duas capas.
+  "0b11 identidade propria (cor, capa, animacao)|python3 _qa/identidade.py $PASTA"
   "0b6 catalogo + painel|python3 _qa/catalogo.py $PASTA"
 )
 

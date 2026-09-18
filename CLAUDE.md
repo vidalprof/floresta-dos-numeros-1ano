@@ -71,6 +71,19 @@ Leia tudo antes de agir e responda sempre em **português**.
 > as armadilhas medidas estão no **`SEQUENCIAS-DIDATICAS.md §1b`** e no
 > `_padrao/CLONAR-FOLHA-VIVA.md`.
 
+> ## 🪞 CADA CADERNO TEM A SUA CARA — cor, capa e animação PRÓPRIAS (Marcos, 18/set/2026)
+>
+> Palavras dele: *"cada caderno precisa ter capa diferente, cor diferente
+> animações etc, pois são muito parecidos e os estudantes acham que é a mesma
+> atividade, mesmo o título sendo diferente"*. Medido no dia: 23 cadernos de
+> folha viva em DUAS cores (14 roxos, 9 telha) e duas capas — a criança olha a
+> cor e o desenho antes do título. **Virou portão: `0b11` (`_qa/identidade.py`)**,
+> no pré-voo e na banca de folha viva: reprova cor igual à de outro caderno, capa
+> igual à de outro ou à do esqueleto, e mesma animação + mesma estrutura de capa.
+> A cor sai do ASSUNTO, a capa é uma CENA do assunto (figura das folhas de papel),
+> os `@keyframes` têm nome próprio. Exemplo pronto: `_sinon2`. Receita e dívida
+> dos 22 cadernos já no ar: `MEMORIA-DO-PROJETO.md` ("CADA CADERNO TEM A SUA CARA").
+
 > ## ✂️➡️🎮 DE ONDE VEM A INTERATIVIDADE (regra do Marcos, 13/set/2026)
 >
 > Palavras dele: *"as interatividades têm que vir das atividades que você seleciona

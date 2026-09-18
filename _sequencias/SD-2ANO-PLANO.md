@@ -76,6 +76,13 @@ por inteiro. O que este plano acrescenta, por ser 2º ANO:
   porque ela é metade do enunciado.
 - **As folhas colhidas vão para o Marcos ANTES do crivo** (ordem de 15/set).
 - **Cada caderno termina no catálogo e no painel**, no mesmo commit.
+- ⭐ **CADA CADERNO TEM A SUA CARA** (Marcos, 18/set/2026: *"cada caderno precisa
+  ter capa diferente, cor diferente animações etc, pois são muito parecidos e os
+  estudantes acham que é a mesma atividade"*): cor pelo assunto, capa com uma
+  cena do assunto, `@keyframes` com nome próprio — medido pelo portão `0b11`
+  (`_qa/identidade.py`). O primeiro com identidade própria é o 6 (`_sinon2`);
+  os cadernos 1, 3, 4 e 5, já no ar, dividem a mesma telha `#b0562a` e a mesma
+  rua de casas — **dívida declarada**, a pagar com nova entrega de cada um.
 
 ---
 
@@ -92,7 +99,7 @@ caderno 1 fechou. O que a criança vê é a ORDEM DOS DEZ; o que eu construo é 
 que está pronto para construir.
 | 3 | **A Máquina de Trocar Sílabas** (`_troca2`) | ✅ 40 colhidas, 40 únicas | ✅ `POTE-TROCA2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/a-maquina-de-trocar-silabas/) |
 | 4 | **As Três Marcas do Nariz** (`_nasal2`) | ✅ 40 colhidas | ✅ `POTE-NASAL2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/as-tres-marcas-do-nariz/) |
-| 5 | O ponto que muda a voz | ✅ 40 em `_sequencias/folhas_ponto2` | — | — | — |
+| 5 | **A Casinha dos Três Pontos** (`_ponto2`) | ✅ 40 em `_sequencias/folhas_ponto2` | ✅ `POTE-PONTO2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/a-casinha-dos-tres-pontos/) (18/set, 12:49Z) |
 | 6 | **O Espelho e o Contrário** (`_sinon2`) | ✅ 40 em `_sequencias/folhas_sinon2` | ✅ `POTE-SINON2.md` | ✅ 35 folhas (18/set) | ⏳ em entrega |
 | 7 | O grandão e o pequenininho | ✅ 40 em `_sequencias/folhas_aumdim2` | — | — | — |
 | 8 | O que rima e o que não rima | ✅ 40 em `_sequencias/folhas_rima2` | — | — | — |
