@@ -208,16 +208,23 @@ function monta(){
       `img()` de outra atividade: o app abria com um quadradinho vazio e um 404
       no console, e nenhum portão de texto viu. */
 function f0(d){
-  var c = el("div", "capa"), nome = "A Máquina de Trocar Sílabas", k, letras = "";
-  for(k = 0; k < nome.length; k++){
-    var ch = nome.charAt(k);
-    letras += ch === " " ? '<span class="esp"></span>'
-      : '<span class="lt" style="animation-delay:' + (0.04 * k).toFixed(2) + 's">' + ch + '</span>';
-  }
+  /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
+     Cena: a máquina de trocar: os pares trocam de lugar, uma sílaba por vez. O título entra letra a letra (vira), palavra por palavra
+     (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
+  var c = el("div", "capa"), nome = "A Máquina de Trocar Sílabas", k, letras = "", pos = 0;
+  var V = typeof VIMG !== "undefined" ? VIMG : 2;
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++, pos++){
+      s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
+    }
+    pos++;
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+  });
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i><i class="sol"></i></div>' +
-    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Língua Portuguesa &middot; 2º ano &middot; 35 folhas sobre trocar sílabas</div>' +
+    '<div class="cena">' + '<div class="par">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/mq_gato.png?v=' + V + '" alt="">' + '<span class="rt">GA-TO</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/mq_pato.png?v=' + V + '" alt="">' + '<span class="rt">PA-TO</span>' + '</div>' + '</div>' + '<div class="par">' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/mq_lata.png?v=' + V + '" alt="">' + '<span class="rt">LA-TA</span>' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/mq_lama.png?v=' + V + '" alt="">' + '<span class="rt">LA-MA</span>' + '</div>' + '</div>' + '</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

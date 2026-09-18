@@ -84,28 +84,23 @@ function monta(){
    lado a lado, com o sinal de igual entre eles. O movimento conta a atividade:
    cada letra entra depois da outra, como num desfile. */
 function f0(d){
-  var c = el("div", "capa"), nome = "O GRANDE JOGO DAS PALAVRAS", k = 0, letras = "";
-  nome.split(" ").forEach(function(pal, pi2){
-    if(pi2) letras += '<span class="esp"></span>';
-    letras += '<span class="pv">';
-    for(var j = 0; j < pal.length; j++, k++)
-      letras += '<span class="lt" style="animation-delay:' + (0.05 * k).toFixed(2) + 's">' + pal.charAt(j) + '</span>';
-    letras += '</span>';
+  /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
+     Cena: o grande jogo: o dado rola e as peças pulam no tabuleiro. O título entra letra a letra (gira), palavra por palavra
+     (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
+  var c = el("div", "capa"), nome = "O GRANDE JOGO DAS PALAVRAS", k, letras = "", pos = 0;
+  var V = typeof VIMG !== "undefined" ? VIMG : 2;
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++, pos++){
+      s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
+    }
+    pos++;
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
   });
-  /* ⭐ A CENA É A ESCADA INTEIRA: oito degraus acendendo um depois do outro,
-     e o último com a taça. É o único caderno que pode contar essa história,
-     porque é o único que vem depois de todos. */
-  var passos = "";
-  for(k = 1; k <= 8; k++)
-    passos += '<span class="degrau d' + k + '">' + k + "</span>";
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
-    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Alfabetização &middot; 1º ano &middot; a revisão dos oito degraus</div>' +
-    '<div class="esteira">' +
-      '<div class="cena cenaescada">' + passos + '<span class="taca"></span></div>' +
-      '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
-    "</div>" +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/jg_dado.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/jg_pipa.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/jg_bola.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/jg_peixe.png?v=' + V + '" alt="">' + '' + '</div>' + '</div><div class="tabu"></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

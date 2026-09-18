@@ -1409,33 +1409,23 @@ function folhaGavetas(d, pi, id, pecas, gavetas, falaCerto, falaDica){
       cinco figuras que a folha d07 imprime no papel. Quem fez a folha reconhece
       a tela. */
 function f0(d){
-  var c = el("div", "capa"), nome = "A COROA DOS CINCO REINOS", k = 0, letras = "";
-  /* ⚠️ CADA PALAVRA NUM `<span>` QUE NÃO QUEBRA. As letras entram uma a uma
-     (cada uma é um `<span>` seu), e sem isto o navegador quebra a linha DENTRO
-     da palavra: na tela de 430 px o título sairia "A COROA DOS CINCO REIN / OS".
-     Título de capa partido no meio da palavra é a primeira coisa que o Marcos
-     vê — e não há portão que meça isso, então é olhar mesmo. */
-  nome.split(" ").forEach(function(palavra, p){
-    if(p) letras += '<span class="esp"> </span>';
-    var dentro = "";
-    palavra.split("").forEach(function(ch){
-      dentro += '<span class="lt" style="animation-delay:' + (0.05 * (k++)).toFixed(2) + 's">' +
-                ch + "</span>";
-    });
-    letras += '<span class="palcapa">' + dentro + "</span>";
+  /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
+     Cena: a coroa: os cinco reinos em arco, a coroa brilhando. O título entra letra a letra (cresce), palavra por palavra
+     (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
+  var c = el("div", "capa"), nome = "A COROA DOS CINCO REINOS", k, letras = "", pos = 0;
+  var V = typeof VIMG !== "undefined" ? VIMG : 2;
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++, pos++){
+      s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
+    }
+    pos++;
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
   });
-  var pontas = "";
-  for(k = 0; k < REINOS.length; k++){
-    pontas += '<span class="pontacapa" style="animation-delay:' +
-              (0.45 + k * 0.16).toFixed(2) + 's">' +
-              img(REINOS[k].fig, "figgr") +
-              '<span class="pnomecapa">' + REINOS[k].dia + "</span></span>";
-  }
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
-    '<h1 class="titu">' + letras + "</h1>" +
+    '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Ciências &middot; 4º ano &middot; vinte e cinco folhas sobre os seres vivos</div>' +
-    '<div class="coroacapa">' + pontas + '<div class="arocapa"></div></div>' +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/rn_reino_animal.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/rn_reino_plantae.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/rn_reino_fungi.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/rn_reino_protista.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.40s">' + '<img class="cf" draggable="false" src="img/rn_reino_monera.png?v=' + V + '" alt="">' + '' + '</div>' + '</div><div class="coroa"></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

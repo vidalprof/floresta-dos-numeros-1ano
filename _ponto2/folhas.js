@@ -200,16 +200,23 @@ function monta(){
       `img()` de outra atividade: o app abria com um quadradinho vazio e um 404
       no console, e nenhum portão de texto viu. */
 function f0(d){
-  var c = el("div", "capa"), nome = "A Casinha dos Três Pontos", k, letras = "";
-  for(k = 0; k < nome.length; k++){
-    var ch = nome.charAt(k);
-    letras += ch === " " ? '<span class="esp"></span>'
-      : '<span class="lt" style="animation-delay:' + (0.04 * k).toFixed(2) + 's">' + ch + '</span>';
-  }
+  /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
+     Cena: a casinha: três janelas, um ponto em cada, piscando. O título entra letra a letra (pula), palavra por palavra
+     (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
+  var c = el("div", "capa"), nome = "A Casinha dos Três Pontos", k, letras = "", pos = 0;
+  var V = typeof VIMG !== "undefined" ? VIMG : 2;
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++, pos++){
+      s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
+    }
+    pos++;
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+  });
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i><i class="sol"></i></div>' +
-    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Língua Portuguesa &middot; 2º ano &middot; 35 folhas sobre pontuação</div>' +
+    '<div class="cena"><div class="telhado"></div><div class="parede">' + '<div class="jan" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/cs_final.png?v=' + V + '" alt="">' + '<span class="rt">.</span>' + '</div>' + '<div class="jan" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/cs_interrogacao.png?v=' + V + '" alt="">' + '<span class="rt">?</span>' + '</div>' + '<div class="jan" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/cs_exclamacao.png?v=' + V + '" alt="">' + '<span class="rt">!</span>' + '</div>' + '</div></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

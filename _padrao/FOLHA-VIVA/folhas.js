@@ -198,16 +198,19 @@ function monta(){
       `img()` de outra atividade: o app abria com um quadradinho vazio e um 404
       no console, e nenhum portão de texto viu. */
 function f0(d){
+  /* CAPA DE ESQUELETO — por desenhar. `python3 _padrao/identidade_capa.py <pasta>` a
+     substitui pela capa com identidade própria (cor, cena, animação do assunto). */
   var c = el("div", "capa"), nome = "NOME DA ATIVIDADE", k, letras = "";
-  for(k = 0; k < nome.length; k++){
-    var ch = nome.charAt(k);
-    letras += ch === " " ? '<span class="esp"></span>'
-      : '<span class="lt" style="animation-delay:' + (0.04 * k).toFixed(2) + 's">' + ch + '</span>';
-  }
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++) s += '<span class="lt">' + pal.charAt(k) + '</span>';
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+  });
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i><i class="sol"></i></div>' +
+    '<div class="ceu"></div>' +
     '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Componente &middot; Nº ano &middot; N folhas sobre ASSUNTO</div>' +
+    '<div class="cena">capa por desenhar: _padrao/identidade_capa.py</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

@@ -79,21 +79,23 @@ function monta(){
    Tudo em CSS e PNG — nada de SVG, nada de emoji (regra do Marcos).
    As letras entram uma a uma; quem pediu menos movimento recebe tudo parado. */
 function f0(d){
-  var c = el("div", "capa"), nome = "FÁBRICA DE PALAVRAS", k, letras = "";
-  for(k = 0; k < nome.length; k++){
-    var ch = nome.charAt(k);
-    letras += ch === " " ? '<span class="esp"></span>'
-      : '<span class="lt" style="animation-delay:' + (0.05 * k).toFixed(2) + 's">' + ch + '</span>';
-  }
+  /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
+     Cena: a fábrica: esteira com roletes girando e as palavras saindo. O título entra letra a letra (desliza), palavra por palavra
+     (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
+  var c = el("div", "capa"), nome = "FÁBRICA DE PALAVRAS", k, letras = "", pos = 0;
+  var V = typeof VIMG !== "undefined" ? VIMG : 2;
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++, pos++){
+      s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
+    }
+    pos++;
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+  });
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
-    '<div class="chapeu">A</div>' +
-    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Alfabetização &middot; 1º ano &middot; onze folhas para brincar</div>' +
-    '<div class="esteira">' +
-      '<div class="cena">' + img("bola") + img("gato") + img("casa") + img("sapo") + img("uva") + '</div>' +
-      '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
-    '</div>' +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/al_bola.png?v=' + V + '" alt="">' + '<span class="rt">BOLA</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/al_bolo.png?v=' + V + '" alt="">' + '<span class="rt">BOLO</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/al_boneca.png?v=' + V + '" alt="">' + '<span class="rt">BONECA</span>' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/al_bota.png?v=' + V + '" alt="">' + '<span class="rt">BOTA</span>' + '</div>' + '</div>' + '<div class="esteira2">' + '<i class="rolo"></i>' + '<i class="rolo"></i>' + '<i class="rolo"></i>' + '<i class="rolo"></i>' + '<i class="rolo"></i>' + '<i class="rolo"></i>' + '<i class="rolo"></i>' + '</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

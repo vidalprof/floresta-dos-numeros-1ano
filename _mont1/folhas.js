@@ -84,33 +84,23 @@ function monta(){
    lado a lado, com o sinal de igual entre eles. O movimento conta a atividade:
    cada letra entra depois da outra, como num desfile. */
 function f0(d){
-  var c = el("div", "capa"), nome = "A MÁQUINA DE JUNTAR PALAVRAS", k = 0, letras = "";
-  /* ⚠️ uma PALAVRA por bloco: o título entra letra a letra, e sem isto o
-     navegador quebra a linha no meio de "PALAVRAS" (visto no contato-folha) */
-  nome.split(" ").forEach(function(pal, pi2){
-    if(pi2) letras += '<span class="esp"></span>';
-    letras += '<span class="pv">';
-    for(var j = 0; j < pal.length; j++, k++)
-      letras += '<span class="lt" style="animation-delay:' + (0.05 * k).toFixed(2) + 's">' + pal.charAt(j) + '</span>';
-    letras += '</span>';
+  /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
+     Cena: a máquina de juntar: os dois pedaços deslizam e se encaixam. O título entra letra a letra (desliza), palavra por palavra
+     (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
+  var c = el("div", "capa"), nome = "A MÁQUINA DE JUNTAR PALAVRAS", k, letras = "", pos = 0;
+  var V = typeof VIMG !== "undefined" ? VIMG : 2;
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++, pos++){
+      s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
+    }
+    pos++;
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
   });
-  /* ⭐ A CENA CONTA A ATIVIDADE, e ela é o contrário da capa do Bate-Palma: lá
-     a palavra se PARTIA em pedaços; aqui os pedaços correm um para o outro e
-     viram palavra. BO + LA = BOLA, na esteira da oficina. */
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
-    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Alfabetização &middot; 1º ano &middot; dez folhas de juntar pedaços</div>' +
-    '<div class="esteira">' +
-      '<div class="cena cenajunta">' +
-        '<span class="pedcapa pj1">BO</span>' +
-        '<span class="maiscapa">+</span>' +
-        '<span class="pedcapa pj2">LA</span>' +
-        '<span class="igualcapa">=</span>' +
-        '<span class="palcapa">BOLA</span>' +
-      "</div>" +
-      '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
-    "</div>" +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/mo_bola.png?v=' + V + '" alt="">' + '<span class="rt">BO·LA</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/mo_gato.png?v=' + V + '" alt="">' + '<span class="rt">GA·TO</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/mo_pipa.png?v=' + V + '" alt="">' + '<span class="rt">PI·PA</span>' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/mo_sino.png?v=' + V + '" alt="">' + '<span class="rt">SI·NO</span>' + '</div>' + '</div><div class="engr"></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

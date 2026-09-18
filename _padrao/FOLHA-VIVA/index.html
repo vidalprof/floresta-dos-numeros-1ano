@@ -44,12 +44,12 @@ html,body{margin:0;min-height:100%}
   --texto2:#3a2f27;
   --texto3:#4a3d33;
   /* ⚠️ IDENTIDADE PRÓPRIA (Marcos, 18/set/2026: "cada caderno precisa ter capa
-     diferente, cor diferente, animações"): esta cor é a TELHA da Rua das Casas —
-     TROCAR pela cor do ASSUNTO do caderno novo. O portão 0b11 (`_qa/identidade.py`)
+     diferente, cor diferente, animações"): este cinza é de ESQUELETO —
+     CINZA DE ESQUELETO — TROCAR pela cor do ASSUNTO do caderno novo (`_padrao/identidade_capa.py`). O portão 0b11 (`_qa/identidade.py`)
      reprova cor, capa ou animação iguais às de qualquer outro caderno ou ao esqueleto. */
-  --cor:#b0562a;
-  --cor2:#8d4120;
-  --corclara:#fdf1e9;
+  --cor:#6b6b6b;
+  --cor2:#4a4a4a;
+  --corclara:#f0f0f0;
 }
 body{font-family:"Segoe UI",Arial,sans-serif;background:#f4efe9;color:var(--texto);padding-bottom:160px}
 #topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--cor);
@@ -357,66 +357,25 @@ button{font-family:inherit;cursor:pointer}
 #nomeIn:focus{outline:none;border-color:#1179bf;box-shadow:0 0 0 4px rgba(17,121,191,.25)}
 
 /* ================= A CAPA =================
-   ⚠️ IDENTIDADE PRÓPRIA: este bloco INTEIRO (fundo, cena, @keyframes com nome próprio)
-   e o `f0` do folhas.js são REDESENHADOS a partir do assunto do caderno novo.
-   Capa igual ao esqueleto = ninguém desenhou a capa → portão 0b11 reprova.
-   Exemplo pronto: _sinon2 (o espelho: dois lados, vidro no meio, letras que viram).
-   O tema DESTE exemplo sai do nome: uma RUA onde as casas do mundo inteiro são vizinhas.
-   O céu com o sol, a fileira de casas subindo uma depois da outra e a calçada
-   embaixo. Só CSS e PNG: nada de SVG, nada de emoji. */
+   ⚠️ ESTA É A CAPA DE ESQUELETO — cinza, sem cena, POR DESENHAR. Todo caderno novo
+   recebe a SUA (cor pelo assunto, cena com as figuras dele, @keyframes com nome
+   próprio) por `python3 _padrao/identidade_capa.py <pasta>` — acrescente a linha
+   dele na tabela ESPEC de lá. O portão 0b11 (`_qa/identidade.py`) reprova capa ou
+   cor iguais a este esqueleto: a criança olha a cor e o desenho antes do título
+   (Marcos, 18/set/2026). Exemplos prontos: _sinon2 (espelho), _rima1, _roda1… */
 .capa{position:relative;text-align:center;padding:18px 16px 24px;overflow:hidden;
-  background:-webkit-linear-gradient(top,#cbe7f7 0%,#fdf3ea 62%,#fff 100%);
-  background:linear-gradient(180deg,#cbe7f7 0%,#fdf3ea 62%,#fff 100%)}
+  background:-webkit-linear-gradient(top,#e6e6e6 0%,#f7f7f7 60%,#fff 100%);
+  background:linear-gradient(180deg,#e6e6e6 0%,#f7f7f7 60%,#fff 100%)}
 .capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
-.capa .nv{position:absolute;display:block;border-radius:50%;
-  background:-webkit-radial-gradient(circle,rgba(255,255,255,.85),rgba(255,255,255,0) 70%);
-  background:radial-gradient(circle,rgba(255,255,255,.85),rgba(255,255,255,0) 70%)}
-.capa .n1{width:220px;height:130px;left:-40px;top:14px}
-.capa .n2{width:280px;height:150px;right:-70px;top:44px}
-.capa .n3{width:170px;height:110px;left:46%;top:6px}
-.capa .sol{position:absolute;right:22px;top:16px;width:56px;height:56px;border-radius:50%;
-  background:-webkit-radial-gradient(circle at 40% 38%,#fff2b8,#f5b301);
-  background:radial-gradient(circle at 40% 38%,#fff2b8,#f5b301);
-  box-shadow:0 0 26px rgba(245,179,1,.55)}
-/* ⚠️ O SOL TAPAVA O SUBTÍTULO (achado na foto). O `.ceu` vem antes no HTML,
-   mas os filhos dele são absolutos — e elemento posicionado pinta POR CIMA
-   de irmão não posicionado, mesmo vindo antes. O conserto é levantar o
-   conteúdo, não abaixar o céu. */
-.capa .titu,.capa .sub,.capa .esteira,.capa .chamada{position:relative;z-index:1}
-.capa .chapeu{position:relative;z-index:1;width:66px;height:66px;margin:16px auto 2px;border-radius:16px;
-  background:-webkit-linear-gradient(top left,#d2703c,#8d4120);
-  background:linear-gradient(135deg,#d2703c,#8d4120);color:#fff;font-weight:900;font-size:34px;
-  line-height:66px;box-shadow:0 8px 18px rgba(141,65,32,.36)}
-.capa .chapeu:before{content:"";position:absolute;left:-9px;right:-9px;top:-15px;height:0;
-  border-left:42px solid transparent;border-right:42px solid transparent;border-bottom:18px solid #a33d1e}
+.capa .titu,.capa .sub,.capa .chamada,.capa .cena{position:relative;z-index:1}
 .capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
-.capa .titu .lt{display:inline-block;font-size:clamp(24px,6.4vw,42px);font-weight:900;letter-spacing:0;
-  color:#8d4120;text-shadow:0 3px 0 #f6dcc8,0 5px 10px rgba(120,60,25,.2);
-  -webkit-animation:caiCasa .5s both;animation:caiCasa .5s both}
+.capa .titu .pal{display:inline-flex;white-space:nowrap;gap:2px}
+.capa .titu .lt{display:inline-block;font-size:clamp(22px,5.8vw,42px);font-weight:900;color:var(--cor2)}
 .capa .titu .esp{display:inline-block;width:14px}
-/* ⚠️ `caiCasa` e não `cai`: o confete já tem um `@keyframes cai` que termina em
-   `opacity:0`. Nome de keyframe é global — numa outra capa desta casa a colisão
-   apagou o título inteiro, em silêncio. */
-@-webkit-keyframes caiCasa{from{opacity:0;-webkit-transform:translateY(-26px) rotate(-8deg)}to{opacity:1;-webkit-transform:none}}
-@keyframes caiCasa{from{opacity:0;transform:translateY(-26px) rotate(-8deg)}to{opacity:1;transform:none}}
-.capa .sub{font-weight:700;color:#8d4120;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
-.capa .esteira{max-width:660px;margin:16px auto 4px;position:relative}
-.capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:6px;flex-wrap:nowrap}
-.capa .cena img{width:clamp(46px,13vw,96px);height:clamp(46px,13vw,96px);object-fit:contain;
-  -webkit-animation:sobeCasa 2.6s ease-in-out infinite;animation:sobeCasa 2.6s ease-in-out infinite}
-.capa .cena img:nth-child(2){-webkit-animation-delay:.35s;animation-delay:.35s}
-.capa .cena img:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
-.capa .cena img:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
-.capa .cena img:nth-child(5){-webkit-animation-delay:1.4s;animation-delay:1.4s}
-@-webkit-keyframes sobeCasa{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
-@keyframes sobeCasa{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-.capa .cinta{display:flex;gap:6px;justify-content:center;background:#7b6a5c;border-radius:9px;
-  padding:6px 8px;margin-top:6px;box-shadow:0 6px 14px rgba(70,40,20,.22)}
-.capa .cinta i{display:block;width:26px;height:9px;background:#cbb9a8;border-radius:5px}
-.capa .chamada{margin-top:14px;font-weight:700;color:#5c4c40;font-size:clamp(13px,3.4vw,16px)}
-@media (prefers-reduced-motion: reduce){
-  .capa .titu .lt,.capa .cena img{-webkit-animation:none;animation:none}
-}
+.capa .sub{font-weight:700;color:#2c3745;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
+.capa .cena{margin:14px auto 4px;max-width:620px;min-height:90px;border:3px dashed #9a9a9a;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#6b6b6b;font-size:14px;padding:10px}
+.capa .chamada{margin-top:14px;font-weight:700;color:#3a4658;font-size:clamp(13px,3.4vw,16px)}
 
 #fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
   box-shadow:0 10px 34px rgba(70,40,20,.16);text-align:center}

@@ -98,28 +98,23 @@ function monta(){
    lado a lado, com o sinal de igual entre eles. O movimento conta a atividade:
    cada letra entra depois da outra, como num desfile. */
 function f0(d){
-  var c = el("div", "capa"), nome = "O DESFILE DAS LETRAS", k, letras = "";
-  for(k = 0; k < nome.length; k++){
-    var ch = nome.charAt(k);
-    letras += ch === " " ? '<span class="esp"></span>'
-      : '<span class="lt" style="animation-delay:' + (0.05 * k).toFixed(2) + 's">' + ch + '</span>';
-  }
-  /* ⭐ A CENA CONTA A ATIVIDADE: as primeiras letras do alfabeto entram em fila,
-     uma depois da outra, como num desfile — que é exatamente o que a criança vai
-     aprender a fazer. Nada de figura aqui: neste caderno o conteúdo É a letra. */
-  var cena = "";
-  "ABCDEFG".split("").forEach(function(L, i){
-    cena += '<span class="ltcapa" style="animation-delay:' + (0.45 + i * 0.13).toFixed(2) + 's">' +
-            esc(L) + "</span>";
+  /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
+     Cena: o desfile: as figuras marcham no tapete, uma letra em cada uma. O título entra letra a letra (pula), palavra por palavra
+     (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
+  var c = el("div", "capa"), nome = "O DESFILE DAS LETRAS", k, letras = "", pos = 0;
+  var V = typeof VIMG !== "undefined" ? VIMG : 2;
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++, pos++){
+      s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
+    }
+    pos++;
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
   });
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i></div>' +
-    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Alfabetização &middot; 1º ano &middot; vinte e cinco folhas do alfabeto</div>' +
-    '<div class="esteira">' +
-      '<div class="cena">' + cena + '</div>' +
-      '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
-    '</div>' +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/ab_abelha.png?v=' + V + '" alt="">' + '<span class="rt">A</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/ab_bola.png?v=' + V + '" alt="">' + '<span class="rt">B</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/ab_casa.png?v=' + V + '" alt="">' + '<span class="rt">C</span>' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/ab_dado.png?v=' + V + '" alt="">' + '<span class="rt">D</span>' + '</div>' + '<div class="it" style="animation-delay:1.40s">' + '<img class="cf" draggable="false" src="img/ab_estrela.png?v=' + V + '" alt="">' + '<span class="rt">E</span>' + '</div>' + '</div><div class="tapete"></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

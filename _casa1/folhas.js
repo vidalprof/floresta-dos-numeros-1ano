@@ -101,24 +101,23 @@ function monta(){
       um `img("sapo")` de outra atividade: o app abria com um quadradinho vazio
       e um 404 no console, e nenhum portão de texto viu. */
 function f0(d){
-  var c = el("div", "capa"), nome = "A RUA DO MUNDO", k, letras = "";
-  for(k = 0; k < nome.length; k++){
-    var ch = nome.charAt(k);
-    letras += ch === " " ? '<span class="esp"></span>'
-      : '<span class="lt" style="animation-delay:' + (0.05 * k).toFixed(2) + 's">' + ch + '</span>';
-  }
-  var cena = "";
-  ["oca", "palafita", "casa", "predio", "iglu"].forEach(function(m){
-    cena += img(m, "", MOR[m].n);
+  /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
+     Cena: a rua do mundo: casas vizinhas sob o sol — é o tema DESTE caderno, os outros é que a emprestavam. O título entra letra a letra (cai), palavra por palavra
+     (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
+  var c = el("div", "capa"), nome = "A RUA DO MUNDO", k, letras = "", pos = 0;
+  var V = typeof VIMG !== "undefined" ? VIMG : 2;
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++, pos++){
+      s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
+    }
+    pos++;
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
   });
   c.innerHTML =
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="nv n3"></i><i class="sol"></i></div>' +
     '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Geografia &middot; 2º ano &middot; vinte e cinco folhas sobre onde a gente mora</div>' +
-    '<div class="esteira">' +
-      '<div class="cena">' + cena + "</div>" +
-      '<div class="cinta"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>' +
-    "</div>" +
+    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="sol"></i></div>' + '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/mo_casa.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/mo_iglu.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/mo_oca.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/mo_palafita.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.40s">' + '<img class="cf" draggable="false" src="img/mo_castelo.png?v=' + V + '" alt="">' + '' + '</div>' + '</div>' + '<div class="calcada">' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
