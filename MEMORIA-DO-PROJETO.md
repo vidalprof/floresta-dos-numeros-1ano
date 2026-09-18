@@ -982,6 +982,52 @@ workflow faz checkout da ref no instante do disparo — então ele publicou,
 honestamente, a versão velha. **Conferir `git log origin/<branch> -1` antes de
 disparar** é mais barato que uma corrida inteira.
 
+## 🔍 O GRANDÃO E O PEQUENININHO — 2º ano, degrau 7 (18/set/2026)
+
+Caderno de **folha viva**, 35 folhas, pasta `_aumdim2`, repositório
+`o-grandao-e-o-pequenininho`. Aumentativo e diminutivo, os sufixos **-ão** e
+**-inho/-zinho**. Crivo em `_sequencias/POTE-AUMDIM2.md` (26 das 40 folhas de
+papel entram inteiras — a colheita mais aproveitável até hoje, porque o assunto
+é concreto: o pequeno e o grande se desenham).
+
+**⚠️⚠️ A LIÇÃO QUE VALE PARA A CASA INTEIRA: `chaveQuadro` APAGA O ACENTO, E ISSO
+PODE FAZER A OPÇÃO ERRADA VALER COMO CERTA.** A função da casa faz
+`.replace(/[^a-z]/g,"")`, então **`gatão` e `gato` viram os dois `gato`** — e o
+mesmo em `sapão`/`sapo`, `bolão`/`bolo`, `livrão`/`livro`, `ratão`/`rato`. Numa
+folha cujo trabalho é escolher entre o grandão e a palavra de sempre, as duas
+opções passam a ter o MESMO valor: a criança toca na errada e o app diz que
+acertou. E o alto-falante de "gatão" busca `pal_gato` e diz *"Gato."*
+**Nenhum portão pega isso**: não há erro de sintaxe, não há função que falte,
+não há figura que não carregue — o app abre bonito e mente. O conserto é o
+`chavePal` (transliterar: `gatão → gatao`), que casa com o `ch()` do
+`gerar_falas.py`. ⚠️ **Todo caderno cujo conteúdo distinga palavras que só
+diferem por acento ou cedilha precisa do `chavePal`, não do `chaveQuadro`.**
+
+**A SEGUNDA, E ESTA SÓ A FOTO PEGOU: o par tem de chegar à tela na PROPORÇÃO
+REAL.** O CSS da casa (`.fig`, `.figp`, `.capa .capfig`) dá a toda figura a mesma
+largura ou a mesma altura — certo em qualquer outro caderno, e aqui é o defeito:
+com o sapinho e o sapão do mesmo tamanho, a capa e a folha 1 deixam de ensinar o
+que prometem. Dois consertos irmãos: no recorte, o par é reduzido pelo **mesmo
+fator** (senão a proporção já se perde no arquivo); na tela, o `parProporcional`
+lê o `naturalHeight` e reparte a altura do par, refazendo no `resize` porque o
+leiaute é medido em seis tamanhos.
+
+**A TERCEIRA — DESENHO CLARO SEM CONTORNO NÃO SE RECORTA COM A ÁGUA.** A vaca da
+d02 é branca e não tem linha em volta: o branco do corpo e o branco do papel são
+a MESMA mancha, então o `limpa_fundo` entra pela perna e come metade do bicho. O
+portão do halo acusou 6,7% de quase-branco grudado na silhueta — que não era
+halo, era o buraco. Ficou de fora, declarada no recortador.
+
+**E duas peças novas no `_padrao/recorte_folha.py`, nascidas dos trios da d40:**
+o `tira_rabicho` (o risquinho de 2 px que liga a figura à plaquinha impressa
+ENCOSTA no desenho, então nem o `so_a_maior_ilha` nem o `tira_linha_impressa` o
+alcançam — os dois trabalham por mancha solta; a medida que o separa é outra:
+linha de tinta com até 8 colunas pintadas não é desenho) e o `so_a_maior_ilha`
+(o rabo do vizinho que entra na caixa da peça ao lado).
+
+**Medido:** 9 gestos, o mais pesado com 34%; 44 a 81 min; 741 falas, 523 mp3.
+Banca: 27 de 32 portões, e os 4 "NÃO MEDI" estão nomeados no `curriculo.json`.
+
 ## 🦠 A COROA DOS CINCO REINOS — 4º ano, Ciências (14/set/2026)
 
 Caderno de **folha viva** (sem motor), 25 folhas, pasta `_reinos`, repositório

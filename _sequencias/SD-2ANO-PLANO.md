@@ -104,7 +104,7 @@ que está pronto para construir.
 | 4 | **As Três Marcas do Nariz** (`_nasal2`) | ✅ 40 colhidas | ✅ `POTE-NASAL2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/as-tres-marcas-do-nariz/) |
 | 5 | **A Casinha dos Três Pontos** (`_ponto2`) | ✅ 40 em `_sequencias/folhas_ponto2` | ✅ `POTE-PONTO2.md` | ✅ 35 folhas | ✅ [no ar](https://vidalprof.github.io/a-casinha-dos-tres-pontos/) (18/set, 12:49Z) |
 | 6 | **O Espelho e o Contrário** (`_sinon2`) | ✅ 40 em `_sequencias/folhas_sinon2` | ✅ `POTE-SINON2.md` | ✅ 35 folhas (18/set) | ✅ [no ar](https://vidalprof.github.io/o-espelho-e-o-contrario/) (18/set, 17:57Z) — ⭐ 1º com identidade própria (0b11) |
-| 7 | **O Grandão e o Pequenininho** (`_aumdim2`) | ✅ 40 em `_sequencias/folhas_aumdim2` | ✅ `POTE-AUMDIM2.md` (18/set) — 26 entram, 1 **ensina errado** (d15) | ✅ 35 folhas (18/set) | ⏳ a publicar |
+| 7 | **O Grandão e o Pequenininho** (`_aumdim2`) | ✅ 40 em `_sequencias/folhas_aumdim2` | ✅ `POTE-AUMDIM2.md` (18/set) — 26 entram, 1 **ensina errado** (d15) | ✅ 35 folhas (18/set) | ✅ [no ar](https://vidalprof.github.io/o-grandao-e-o-pequenininho/) (18/set, 22:20Z) |
 | 8 | O que rima e o que não rima | ✅ 40 em `_sequencias/folhas_rima2` | — | — | — |
 | 9 | A história tem um problema | ✅ 40 em `_sequencias/folhas_narra2` | — | — | — |
 | 10 | A notícia e a manchete | ✅ 40 em `_sequencias/folhas_not2` | — | — | — |
