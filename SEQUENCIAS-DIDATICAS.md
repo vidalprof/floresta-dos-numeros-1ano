@@ -577,6 +577,22 @@ reprovou com código 1 e apontou os dois. Depois disso o arquivo foi restaurado.
 > Esta lista existe para não se repetirem. Cada linha custou uma rodada com o
 > Marcos, ou chegou até a criança.
 
+### 3.00000000 ⭐⭐⭐ A FIGURA DA CAPA ESTAVA NO CÓDIGO E NÃO NA TELA (18/set/2026)
+
+A classe `cf` que o gerador dava à figura da capa é a do **confete do motor**
+(`position:absolute` + `animation:cai`, que acaba em opacidade zero e 105vh
+abaixo). As cinco figuras do caderno de verbos existiam no DOM, com o tamanho
+certo, e não apareciam. Nenhum portão via; quem viu foi a foto. Hoje as classes
+da capa têm nome próprio (`capfig`, `cptpal`, `cpesp`, `cpfila`, `cpbarra`,
+`cporbe`) e o **`0b11` mede a colisão** — só a propriedade que a capa NÃO
+declara e o motor declara, porque `.capa .lt` já ganha de `.lt` no resto.
+
+Na mesma rodada: **dois cadernos no ar abriam com o título de outro** (A Roda
+das Sílabas dizia "A FAMÍLIA DAS PALAVRAS"), e o `0b11` passou a comparar o nome
+da capa com o `<title>`. E o `novaFolha(){ return {}; }` do esqueleto, sem as 35
+linhas `pN: ITENS.pN.slice(0)`, derrubava tudo da folha 13 em diante — o
+`conta_folha` devolvia "NÃO MEDI" e hoje **reprova**.
+
 ### 3.0000000a ⭐⭐ DEZENOVE REGRAS DE CSS SEM `}` — e tudo dali para baixo morreu em silêncio (18/set/2026)
 
 **O que aconteceu, em `_sinon2` antes de ir ao ar:** ao colar o bloco de CSS das peças,

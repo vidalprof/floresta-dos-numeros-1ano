@@ -858,6 +858,74 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 👻 A FIGURA QUE ESTÁ NO CÓDIGO E NÃO ESTÁ NA TELA (18/set/2026)
+
+**O caso.** A capa do caderno de verbos mostrava as palavras e **nenhuma das
+cinco crianças**. No navegador as imagens existiam, com `naturalWidth` certo,
+`visibility:visible` e 74 px de lado. E não apareciam.
+
+**A causa, medida:** a classe que o gerador dava à figura era **`cf`** — e `.cf`
+é o **CONFETE do motor**: `position:absolute` + `animation:cai`, que termina em
+`opacity:0` e `translateY(105vh)`. A figura estava 950 px abaixo da tela, com
+opacidade zero. `.capa .cf` existia e ganhava nas propriedades que declarava,
+mas não declarava `position` nem `animation` — e nessas o motor ganhou.
+
+**O que nenhum portão via.** O `leiaute_mao` não olha a capa. O `css_atregra`
+mede animação **órfã**, não animação **alheia**. O `classes.py` viu a classe
+declarada. Quem viu foi a **FOTO**.
+
+**Conserto duplo:**
+- as classes da capa passam a ter nome próprio: `capfig`, `cptpal`, `cpesp`,
+  `cpfila`, `cpbarra`, `cporbe`;
+- o **portão `0b11`** (`_qa/identidade.py`) mede a colisão — reprova quando uma
+  classe usada na capa também tem regra fora dela declarando `position`,
+  `animation`, `opacity`, `display`, `transform` ou `visibility`. ⚠️ A primeira
+  versão reprovava QUALQUER colisão de nome e acusava 19 cadernos inocentes:
+  `.capa .lt` (0,2,0) ganha de `.lt` (0,1,0) no que declara. **Só machuca a
+  propriedade que a capa não declara.**
+
+## 🏷️ DOIS CADERNOS NO AR ABRIAM COM O TÍTULO DE OUTRO (18/set/2026)
+
+**A Roda das Sílabas** abria escrito **"A FAMÍLIA DAS PALAVRAS"**; **A Horta do
+Vovô** abria **"O ARMAZÉM DO MESMO TANTO"**. Resto de clone no `f0`, invisível
+para todos os portões — e é exatamente o defeito que faz a criança dizer *"isso
+eu já fiz"*, que era a queixa do Marcos. O `<title>` da página estava certo nos
+dois; só a capa mentia.
+
+**Virou medida:** o `0b11` compara o `nome` impresso na capa com o `<title>`
+(basta um ser prefixo do outro, porque o título costuma trazer " — 4º ano").
+
+## 🕳️ `novaFolha(){ return {}; }` — o esqueleto nasce assim, e da folha 13 em diante tudo estoura
+
+No caderno de verbos, as folhas 13 a 35 quebravam em `ST.folha["pN"].forEach`
+porque faltava a linha `pN: ITENS.pN.slice(0)` de cada folha. O `conta_folha`
+via o erro e devolvia **código 2 (NÃO MEDI)** — e "não medi" passou por "não
+tem nada errado" numa banca inteira.
+
+**Conserto duplo:** as 35 linhas no `novaFolha`, e o `_qa/conta_folha.js` passa a
+**REPROVAR (código 1)** quando há erro de JS ao desenhar as folhas, dizendo o
+primeiro suspeito. Erro de JS ao abrir a folha não é "não consegui medir": é a
+folha que a criança abre em branco.
+
+## 🧹 O GERADOR DE CAPAS APAGAVA O CSS DAS PEÇAS — e o limiar que eu inventei estava errado
+
+Duas lições de uma vez, as duas sobre **não confiar no meu próprio palpite**:
+
+1. O `identidade_capa.py` reescreve tudo entre `.capa{` e `#fim,#retomar{`. O
+   bloco `PECAS-CSS` do caderno de verbos estava nesse intervalo e **sumiu em
+   silêncio**: `.palav` e `.cpcel` deixaram de existir, os alvos viraram 21 px e
+   só o `leiaute_mao` viu. Agora o gerador **recusa** apagar um trecho que
+   contenha o marcador das peças ou mais de três seletores que não sejam `.capa`.
+2. Para impedir que a cor nova virasse tinta quase preta, inventei um piso de
+   luminância — e ele reprovava **19 das 25 cores**, porque o tom escuro só
+   machuca quando o caderno o usa como TINTA DE TEXTO, e isso depende do
+   caderno, não da cor. **Tirei o palpite:** o gerador agora roda o
+   `_qa/cor_fixa.py` no arquivo que acabou de escrever e obedece ao veredito
+   dele. Portão que mede é melhor que constante que eu escolhi.
+
+⚠️ E ele passou a trocar também os literais da **cor anterior**: na segunda
+regeração os literais já não são os originais, e sobrava a cor velha no arquivo.
+
 ## 🪞 CADA CADERNO TEM A SUA CARA — cor, capa e animação PRÓPRIAS, e isso é portão (18/set/2026)
 
 **Palavras do Marcos, com a turma na frente:** *"cada caderno precisa ter capa

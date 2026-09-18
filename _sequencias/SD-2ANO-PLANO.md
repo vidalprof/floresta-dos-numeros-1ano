@@ -80,9 +80,12 @@ por inteiro. O que este plano acrescenta, por ser 2º ANO:
   ter capa diferente, cor diferente animações etc, pois são muito parecidos e os
   estudantes acham que é a mesma atividade"*): cor pelo assunto, capa com uma
   cena do assunto, `@keyframes` com nome próprio — medido pelo portão `0b11`
-  (`_qa/identidade.py`). O primeiro com identidade própria é o 6 (`_sinon2`);
-  os cadernos 1, 3, 4 e 5, já no ar, dividem a mesma telha `#b0562a` e a mesma
-  rua de casas — **dívida declarada**, a pagar com nova entrega de cada um.
+  (`_qa/identidade.py`). **Pago em 18/set/2026:** os 25 cadernos de folha viva
+  têm hoje cor, cena e animação próprias, conferidas por foto em três tamanhos.
+  Do 2º ano: 1 = armário com as gavetas abrindo (caramelo), 3 = a máquina que
+  troca os pares (vermelho), 4 = as três marcas pulando (roxo), 5 = a casinha
+  de três janelas piscando (azul), 6 = o espelho com o par ALTO/BAIXO (azul do
+  vidro).
 
 ---
 
