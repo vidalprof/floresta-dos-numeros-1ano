@@ -152,6 +152,9 @@ ESPEC = {
     "_rima2":  dict(cor="#1560e8", cena="corrente", letra="pula",
                     figs=["qd_cachimbo", "qd_jarro", "qd_sino", "qd_touro"], rot=None,
                     fundo=("#d9e6fd", "#f5f9ff"), nota="a corrente de rimas: as figuras da parlenda HOJE É DOMINGO ligadas por um elo, e um pulso que corre de uma para a outra (recortadas da folha de papel d31)"),
+    "_narra2": dict(cor="#7a5195", cena="cenario", letra="cai",
+                    figs=["hi_castelo", "hi_menino", "hi_vaca", "hi_galinha"], rot=None,
+                    fundo=("#ece2f3", "#faf7fc"), nota="o cenário que se monta: as peças da história caem no lugar, uma depois da outra (recortadas da folha de papel d19, Montando a história)"),
     "_troca2": dict(cor="#c62828", cena="troca", letra="vira",
                     figs=["mq_gato", "mq_pato", "mq_lata", "mq_lama"], rot=["GA-TO", "PA-TO", "LA-TA", "LA-MA"],
                     fundo=("#fadada", "#fef5f5"), nota="a máquina de trocar: os pares trocam de lugar, uma sílaba por vez"),
@@ -583,13 +586,39 @@ def cena_corrente(p, S):
     return css, "'<div class=\"cena\">' + " + " + ".join(pedacos) + " + '</div>'"
 
 
+def cena_cenario(p, S):
+    u"""O CENÁRIO QUE SE MONTA — a cena do caderno da história.
+
+    ⚠️ Ela sai do assunto: a folha de papel que deu o nome à folha 34 é a
+       *"Montando a história"* (d19), um cenário vazio com peças recortáveis. A
+       capa faz o mesmo: as peças da história CAEM no lugar, uma depois da
+       outra, e param em cima do chão. É o que o caderno ensina — a história é
+       feita de peças que se encaixam."""
+    css = u""".capa .cena{display:flex;justify-content:center;align-items:flex-end;
+  gap:clamp(6px,2.5vw,18px);flex-wrap:nowrap}
+.capa .it{display:flex;flex-direction:column;align-items:center;
+  -webkit-animation:assenta%(S)s 3.4s ease-in-out infinite;animation:assenta%(S)s 3.4s ease-in-out infinite}
+.capa .cena>*:nth-child(2){-webkit-animation-delay:.35s;animation-delay:.35s}
+.capa .cena>*:nth-child(3){-webkit-animation-delay:.7s;animation-delay:.7s}
+.capa .cena>*:nth-child(4){-webkit-animation-delay:1.05s;animation-delay:1.05s}
+.capa .chao2{height:14px;max-width:620px;margin:-3px auto 0;border-radius:7px;background:%(cor)s;
+  box-shadow:0 6px 14px rgba(0,0,0,.18);position:relative;z-index:1}
+.capa .chao2:after{content:"";position:absolute;left:5%%;right:5%%;top:5px;height:4px;
+  border-radius:2px;background:rgba(255,255,255,.5)}
+""" % dict(S=S, cor=p["cor"]) + kfs("assenta" + S,
+        "0%{transform:translateY(-22px) rotate(-4deg);opacity:.35}"
+        "22%,100%{transform:translateY(0) rotate(0);opacity:1}")
+    html = " + ".join(item(p, i) for i in range(len(p["figs"])))
+    return css, "'<div class=\"cena\">' + " + html + " + '</div><div class=\"chao2\"></div>'"
+
+
 CENAS = {
     "desfile": cena_desfile, "esteira": cena_esteira, "rua": cena_rua, "tecla": cena_tecla,
     "balao": cena_balao, "balcao": lambda p, S: cena_balao(p, S, True), "brota": cena_brota,
     "rola": cena_rola, "vira": cena_vira, "junta": cena_junta, "troca": cena_troca,
     "luz": cena_luz, "lupa": lambda p, S: cena_luz(p, S, True), "gaveta": cena_gaveta,
     "casinha": cena_casinha, "coroa": cena_coroa, "roda": cena_roda, "palmas": cena_palmas,
-    "pula": cena_pula, "par": cena_par, "corrente": cena_corrente,
+    "pula": cena_pula, "par": cena_par, "corrente": cena_corrente, "cenario": cena_cenario,
 }
 
 ANTIGOS = {
