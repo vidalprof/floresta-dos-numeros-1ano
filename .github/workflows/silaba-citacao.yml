@@ -1,0 +1,59 @@
+name: Silaba em forma de citacao — como pedir sem soletrar (experimento)
+
+# 🔬 DECISAO DO MARCOS (18/set/2026): a silaba solta deve soar "como a professora
+#    separa na lousa". Isto exige pedir a palavra APARTADA a voz — e a voz
+#    soletra algumas pecas. Este experimento mede, nas 206 palavras dos oito
+#    cadernos, tres jeitos de pedir e o que um reconhecedor LE em cada peca.
+#    Ver _pesquisa/citacao_prova.py. Nada disto toca os cadernos.
+#
+# ⚠️ Roda por PUSH em `_pesquisa/PEDIR-CITACAO` (workflow fora do ramo padrao
+#    da 404 no dispatch).
+
+on:
+  push:
+    paths:
+      - "_pesquisa/PEDIR-CITACAO"
+
+permissions:
+  contents: write
+
+jobs:
+  provar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # ⚠️ UMA LINHA POR INDICE (o --index-url vale para a linha inteira).
+      - name: Instalar
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          python -m pip install -q --upgrade pip
+          python -m pip install -q torch --index-url https://download.pytorch.org/whl/cpu
+          python -m pip install -q transformers edge-tts librosa soundfile numpy scipy imageio-ffmpeg
+
+      - name: Gerar, segmentar, ouvir, medir
+        run: |
+          set -o pipefail
+          python3 _pesquisa/citacao_prova.py 2>&1 | grep -v "Loading weights\|onnxruntime" | tee _pesquisa/citacao-prova.log
+
+      # ⚠️ RESULTADO NO REPO, nao so no log — o que o log engole, o repo guarda.
+      #    Os mp3 do experimento NAO vao para o repo (600+ arquivos): so as medidas.
+      - name: Guardar
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A _pesquisa/citacao-prova.json _pesquisa/citacao-prova.txt _pesquisa/citacao-prova.log || true
+          git commit -q -m "pesquisa: a silaba em forma de citacao — o que a voz soletra e o que o reconhecedor le" || exit 0
+          for t in 1 2 4 8 16; do
+            git pull -q --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then exit 0; fi
+            sleep "$t"
+          done
+          echo "::error::nao consegui empurrar o resultado"
+          exit 1
