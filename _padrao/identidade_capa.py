@@ -141,6 +141,10 @@ ESPEC = {
     "_subst5": dict(cor="#455a64", cena="esteira", letra="desliza",
                     figs=["sb_ana", "sb_davi", "sb_brasil", "sb_pluto"], rot=["Ana", "Davi", "Brasil", "Pluto"],
                     fundo=("#e1e7ea", "#f7f9fa"), nota="a fábrica de nomes: as placas de nome saindo pela esteira"),
+    "_verbo4": dict(cor="#00695c", cena="esteira", letra="desliza",
+                    figs=["vr_comer", "vr_correr", "vr_brincar", "vr_ler", "vr_estudar"],
+                    rot=["come", "corre", "brincam", "lê", "anda"],
+                    fundo=("#d5ebe7", "#f4faf8"), nota="o motor da frase: as crianças em ação passam na esteira, e embaixo de cada uma o verbo que a nomeia (figuras recortadas da folha de papel d33)"),
     "_troca2": dict(cor="#c62828", cena="troca", letra="vira",
                     figs=["mq_gato", "mq_pato", "mq_lata", "mq_lama"], rot=["GA-TO", "PA-TO", "LA-TA", "LA-MA"],
                     fundo=("#fadada", "#fef5f5"), nota="a máquina de trocar: os pares trocam de lugar, uma sílaba por vez"),
@@ -200,6 +204,8 @@ def css_base(p, S):
 .capa .chamada{margin-top:14px;font-weight:700;color:#3a4658;font-size:clamp(13px,3.4vw,16px)}
 .capa .cena{margin:14px auto 4px;max-width:620px}
 .capa .cf{width:clamp(48px,14vw,92px);height:clamp(48px,14vw,92px);object-fit:contain;display:block}
+.capa .pl{display:block;font-weight:900;font-size:clamp(16px,4.6vw,26px);color:#fff;background:%(cor)s;border-radius:12px;
+  padding:8px 14px;box-shadow:0 5px 0 %(cor2)s;letter-spacing:.02em;white-space:nowrap}
 .capa .rt{display:block;font-weight:900;font-size:clamp(12px,3.4vw,17px);color:#fff;background:%(cor)s;
   border-radius:9px;padding:2px 8px;margin-top:4px;letter-spacing:.03em;white-space:nowrap}
 """ % dict(nota=p["nota"], S=S, f1=f1, f2=f2, cor=cor, cor2=cor2, clara=clara, anim=anim,
@@ -223,8 +229,11 @@ def rot(p, i):
 
 
 def item(p, i, cls="it", extra=""):
+    # figura None = item so de PALAVRA (caderno sem figura, como o de verbos)
+    f = p["figs"][i]
+    corpo = (fig(f) + extra) if f else "'<span class=\"pl\">' + '" + (p["rot"][i] if p.get("rot") else "") + "' + '</span>'"
     return "'<div class=\"%s\" style=\"animation-delay:%.2fs\">' + %s + %s + '</div>'" % (
-        cls, i * 0.35, fig(p["figs"][i]) + extra, rot(p, i))
+        cls, i * 0.35, corpo, rot(p, i) if f else "''")
 
 
 def cena_desfile(p, S):
@@ -508,7 +517,7 @@ def aplica(pasta):
     if contraste_branco(p["cor"]) < 4.5:
         raise SystemExit("%s: cor %s tem contraste %.2f sobre branco (< 4,5) — escolha outra" % (pasta, p["cor"], contraste_branco(p["cor"])))
     for f in p["figs"]:
-        if not os.path.isfile(os.path.join(pasta, "img", f + ".png")):
+        if f and not os.path.isfile(os.path.join(pasta, "img", f + ".png")):
             raise SystemExit("%s: figura %s.png nao existe em img/" % (pasta, f))
 
     ih = os.path.join(pasta, "index.html")
@@ -539,6 +548,21 @@ def aplica(pasta):
     fim = h.find("#fim,#retomar{", ini)
     if fim < 0:
         raise SystemExit("%s: nao achei `#fim,#retomar{` depois da capa" % pasta)
+    # ⚠️ 18/set/2026, `_verbo4`: este trecho e' APAGADO e reescrito. Se alguem
+    #    guardou o CSS das PECAS entre a capa e o `#fim`, ele some em silencio —
+    #    e foi o que aconteceu: `.palav` e `.cpcel` sumiram, os alvos viraram
+    #    21 px e so o `leiaute_mao` viu, depois da banca inteira. O bloco das
+    #    pecas mora DEPOIS do `#fim` (ou antes do `</style>`), nunca aqui.
+    trecho = h[ini:fim]
+    if "/*PECAS-CSS-INI*/" in trecho or "/*PECAS-CSS-FIM*/" in trecho:
+        raise SystemExit("%s: o bloco PECAS-CSS esta DENTRO do trecho da capa e "
+                         "seria apagado. Mova-o para depois do `#fim,#retomar{`." % pasta)
+    alheios = [m for m in re.findall(r"^([.#][\w.#\-> ]+)\{", trecho, re.M)
+               if not m.startswith(".capa") and m not in (".capa", "#fim")]
+    if len(alheios) > 3:
+        raise SystemExit("%s: o trecho da capa tem %d seletor(es) que nao sao `.capa` "
+                         "(%s...) — nao vou apagar o que nao e' capa."
+                         % (pasta, len(alheios), ", ".join(alheios[:4])))
     gen = CENAS[p["cena"]](p, S)
     css_cena, html_js = gen[0], gen[1]
     tem_ceu = len(gen) > 2

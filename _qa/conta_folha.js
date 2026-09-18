@@ -86,9 +86,16 @@ if (!fs.existsSync(pasta + '/folhas.js')) {
     await b.close(); srv.kill();
     if (!r) { console.log('NAO MEDI: o caderno nao montou as paginas.'); process.exit(2); }
     if (erros.length) {
-      console.log(`${pasta} -> NAO MEDI: houve erro de JS ao abrir as folhas:`);
+      // ⚠️ ISTO REPROVA (codigo 1), e nao "NAO MEDI" (18/set/2026, _verbo4). Erro de
+      //    JS ao desenhar a folha NAO e' "nao consegui medir": e' a folha que a
+      //    crianca abre em branco. No caderno de verbos o esqueleto nascia com
+      //    `novaFolha(){ return {}; }` e faltava a linha `pN: ITENS.pN.slice(0)`
+      //    de cada folha: da 13 em diante tudo estourava em `.forEach` de undefined,
+      //    e o codigo 2 fez isso passar por "nao medido" numa banca inteira.
+      console.log(`${pasta} -> REPROVADO: erro de JS ao abrir as folhas (a folha abre em branco):`);
       [...new Set(erros)].slice(0, 3).forEach(e => console.log('    - ' + e));
-      process.exit(2);
+      console.log('   1o suspeito: `novaFolha()` sem uma linha `pN: ITENS.pN.slice(0)` por folha.');
+      process.exit(1);
     }
     console.log(`${pasta} -> conta das folhas: ${r.length} folha(s) conferida(s)`);
     const ruins = r.filter(x => x.declarados !== x.registrados);
