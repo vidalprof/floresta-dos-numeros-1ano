@@ -7723,9 +7723,19 @@ regrava sozinho — acabou o "apague o carimbo à mão"); 1y confere carimbo ×
 recibo. Provado localmente nas 3 palavras do exemplo: bordas ≤0,03 do pico,
 LKvoz −18 ±0,2, 24 kHz.
 
-**Pendente e é do Marcos (item 10):** a sílaba solta deve soar como sai NA
-PALAVRA (reduzida, é o que está no ar) ou como a professora diz AO SEPARAR
-(mais longa, vogal plena)? Só depois dessa resposta existe piso/esticar.
+**DECIDIDO PELO MARCOS (18/set/2026, 14h): *"quero da forma correta"* → "como a
+professora separa na lousa"** — a sílaba solta soa em forma de CITAÇÃO (mais
+longa, vogal cheia), não como sai reduzida na palavra. **Método v5, híbrido:**
+grava a palavra inteira (fronteira + reserva) E a palavra apartada por vírgula
+("sa, po."); a peça apartada substitui a da palavra se passar (teto de duração
+por tamanho, uma vogal); senão fica a da palavra. Medido no experimento
+`_pesquisa/citacao_prova.py` (206 palavras): vírgula separa certo 204/206
+(espaço/hífen só ~48); 37/474 peças (8%) saem SOLETRADAS — GA, VA, VE, FO, FE,
+RO, ES, CRA, CRE, GRA, XE sempre — e **o teto pega as 37** (GRA 1,06 s lido
+"gi é ria"; VA 0,75 s lido "via"). O reconhecedor de fala NÃO serve de régua
+(lê "para" no PA de citação). Prova local: PO de SAPO 0,17 → 0,26 s, CO de
+MACACO 0,16 → 0,28 s; GA/NE recusados e mantidos na forma da palavra. O
+recibo (`_conferencia.json`) diz a forma de cada sílaba e o 1y imprime a conta.
 **Pendente técnico (onda 2, item 9):** encostar a fronteira i≥1 na transição
 vogal→consoante, com portão `_qa/silaba_fronteira.py` e prova de ouvido.
 

@@ -418,7 +418,7 @@ INFO_RECORTE = {}        # caminho do mp3 -> {ini, dur, ganho_db, preso}
 #    de codigo exigia apagar `audio/_silabas.json` a mao para regravar
 #    (0789ecdb, 72af08be, 198acce4 — tres vezes em um dia). Agora o codigo que
 #    corta diz quem e; mudou o metodo, o carimbo nao bate e a palavra regrava.
-METODO = u"v4-fade10-ganho-lk-inicio-silencio"
+METODO = u"v5-citacao-virgula-ou-palavra"
 # ⚠️ MESMOS TETOS de `_qa/silabas.py` (TETO_S) — a gravacao e o portao tem de
 #    concordar. Aferidos em 18/set/2026: bom mais longo 0,30/0,42/0,48 s;
 #    soletrado mais curto 0,64/0,32/0,39 s por 1/2/3 letras.
@@ -655,6 +655,95 @@ async def _grava(edge_tts, pedido, voz, inteiro):
     return True
 
 
+# ══════════════════════════════════════════════════════════════════════
+#  ⭐⭐ A FORMA DE CITACAO — "como a professora separa na lousa"
+#
+#  DECISAO DO MARCOS (18/set/2026), a pergunta era dele e a resposta foi dele:
+#  a silaba tocada sozinha deve soar como a professora a diz AO SEPARAR ("SA —
+#  PO": mais longa, vogal cheia), nao como sai reduzida dentro da palavra.
+#
+#  MEDIDO no experimento `_pesquisa/citacao_prova.py` (206 palavras, no runner):
+#    · pedir a palavra APARTADA por virgula ("sa, po.") separa certo em 204/206;
+#      por espaco ou hifen so em ~48 (a voz emenda as pecas);
+#    · a peca apartada E a forma de citacao: silaba final 0,29 s contra 0,21 s
+#      na palavra, F1 mais alto (vogal mais aberta);
+#    · MAS a voz SOLETRA 37 das 474 pecas (8%) — as que nao sao palavra do
+#      portugues: GA, VA, VE, FO, FE, RO, ES, CRA, CRE, GRA, XE sempre; BA, NE,
+#      CE as vezes. Soletrada, a peca dobra de tamanho (GRA 1,06 s; VA 0,75 s)
+#      e o TETO ABSOLUTO por tamanho pega TODAS as 37. (O reconhecedor de fala
+#      le "gi e ria" para GRA e "via" para VA — confirma o que sao, mas nao
+#      serve de regua: le "para" em PA de citacao.)
+#
+#  ENTAO O METODO E HIBRIDO, e cada silaba diz no recibo qual forma recebeu:
+#    1. grava a PALAVRA INTEIRA (corrida) — nunca soletra: da a fronteira pelo
+#       alinhador e e o RESERVA de toda silaba;
+#    2. grava a mesma palavra APARTADA por virgula e corta pelo silencio (tem
+#       de dar exatamente N pecas);
+#    3. para cada silaba, a peca apartada SUBSTITUI a da palavra se passar:
+#       duracao ate o teto por tamanho, UM nucleo de vogal, e ter caido na
+#       ordem certa; senao fica a da palavra inteira ("forma: palavra").
+#  Nada e inventado: as duas fontes sao a voz lendo texto. O que muda e qual
+#  das duas leituras a crianca ouve — e o recibo conta quantas de cada.
+# ══════════════════════════════════════════════════════════════════════
+def _troca_por_citacao(ff, apart, silabas, feitos, pasta_audio, prefixo, palavra):
+    u"""Substitui, silaba a silaba, o recorte da palavra pela peca apartada que
+    passar nas reguas. Devolve a lista de formas ('citacao' | 'palavra')."""
+    formas = [u"palavra"] * len(silabas)
+    cortes = _cortes_por_silencio(ff, apart, len(silabas))
+    if len(cortes) != len(silabas):
+        MOTIVOS.append(u"%s: apartada deu %d peca(s) para %d silaba(s) — ficou a palavra"
+                       % (palavra, len(cortes), len(silabas)))
+        return formas
+    for i, s in enumerate(silabas):
+        ini, dur = cortes[i]
+        tmp = os.path.join(pasta_audio, u"_cit_%s_%d.mp3" % (arquivo_da_palavra(palavra), i))
+        cru = tmp[:-4] + u"_cru.mp3"
+        p = subprocess.Popen([ff, "-y", "-loglevel", "error", "-i", apart,
+                              "-ss", "%.3f" % max(0.0, ini - 0.02), "-t", "%.3f" % (dur + 0.04),
+                              "-af", FILTRO_CORTE, "-c:a", "libmp3lame", "-q:a", "5", cru],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p.communicate()
+        if not (os.path.exists(cru) and os.path.getsize(cru) > 300):
+            continue
+        g, preso = _ganho_do_pedaco(cru)
+        forca = FILTRO_FORCA if g is None else "volume=%.2fdB" % g
+        q = subprocess.Popen([ff, "-y", "-loglevel", "error", "-i", cru,
+                              "-af", forca + "," + FADE, "-c:a", "libmp3lame", "-q:a", "5", tmp],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        q.communicate()
+        try:
+            os.remove(cru)
+        except OSError:
+            pass
+        if not (os.path.exists(tmp) and os.path.getsize(tmp) > 300):
+            continue
+        d = _duracao(ff, tmp)
+        n = conta_nucleos(tmp)
+        L = len(s)
+        teto = TETO_ABS.get(L)
+        motivo = None
+        if teto is None:
+            motivo = u"sem teto aferido para %d letras" % L
+        elif d > teto:
+            motivo = u"%.2fs passa do teto %.2fs (soletrada)" % (d, teto)
+        elif n is not None and n != 1:
+            motivo = u"%d nucleo(s) de vogal" % n
+        if motivo:
+            MOTIVOS.append(u"%s: %s apartada recusada (%s) — ficou a palavra" % (palavra, s, motivo))
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+            continue
+        os.replace(tmp, feitos[i])
+        info = INFO_RECORTE.get(feitos[i], {})
+        info.update({u"ini_apartada": round(ini, 3), u"dur": round(d, 3),
+                     u"ganho_db": None if g is None else round(g, 2), u"preso_no_teto": bool(preso)})
+        INFO_RECORTE[feitos[i]] = info
+        formas[i] = u"citacao"
+    return formas
+
+
 async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavra,
                varias_vogais=False):
     u"""Grava a PALAVRA INTEIRA, corta as silabas e CONFERE os recortes.
@@ -728,6 +817,24 @@ async def _uma(sem, edge_tts, texto, voz, destino_base, silabas, prefixo, palavr
                         info.update({u"i": i, u"silaba": sil})
                         detalhes.append(info)
                 if motivo is None:
+                    # ⭐ A FORMA DE CITACAO (ver o bloco acima): so para palavra
+                    #   que a corrida ja conferiu, e nunca para PEDACO de exercicio.
+                    formas = [u"palavra"] * len(silabas)
+                    if not varias_vogais:
+                        apart = destino_base + "_apart.mp3"
+                        if await _grava(edge_tts, u", ".join(silabas).lower() + u".", voz, apart):
+                            formas = _troca_por_citacao(ff, apart, silabas, feitos,
+                                                        pasta_audio, prefixo, palavra)
+                            try:
+                                os.remove(apart)
+                            except OSError:
+                                pass
+                        for i, dtl in enumerate(detalhes):
+                            dtl[u"forma"] = formas[i]
+                            info = INFO_RECORTE.get(feitos[i], {})
+                            if formas[i] == u"citacao":
+                                dtl.update({k: info.get(k) for k in (u"dur", u"ganho_db", u"preso_no_teto")})
+                                dtl[u"dur_s"] = info.get(u"dur")
                     CONFERIDAS.append((palavra, nome_cam + (u" (pedaco)" if varias_vogais else u""),
                                        len(feitos), detalhes))
                     return len(feitos)
@@ -812,6 +919,10 @@ async def _tudo(pasta, mapa, voz, prefixo, refazer):
         print(u"   conferidas sozinhas: %d de %d (%s)"
               % (len(CONFERIDAS), len(CONFERIDAS) + len(NAO_CONFERIDAS),
                  u", ".join(u"%s x%d" % (k, v) for k, v in sorted(por_caminho.items()))))
+        _fc = sum(1 for _w, _c, _n, _d in CONFERIDAS for x in _d if x.get(u"forma") == u"citacao")
+        _fp = sum(1 for _w, _c, _n, _d in CONFERIDAS for x in _d if x.get(u"forma") == u"palavra")
+        print(u"   forma da silaba: %d em CITACAO (como a professora separa) · %d ficaram "
+              u"como saem NA PALAVRA (a apartada soletrou ou nao fechou)" % (_fc, _fp))
         for _w, _m in NAO_CONFERIDAS[:10]:
             print(u"   ⚠️ %s: %s" % (_w, _m))
         # ⭐⭐ O RECIBO SE MESCLA, NAO SE SOBRESCREVE (18/set/2026). Antes, uma

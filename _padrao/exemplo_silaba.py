@@ -104,6 +104,12 @@ async def _uma_palavra(sv, edge_tts, palavra, silabas):
         print(u"   %s: sairam %d de %d recortes" % (palavra, len(feitos), len(silabas)))
         return 0
 
+    # ⭐ A FORMA DE CITACAO, como nos cadernos (decisao do Marcos, 18/set/2026)
+    apart = os.path.join(SAIDA, u"%s_1b_apartada.mp3" % palavra)
+    formas = [u"palavra"] * len(silabas)
+    if await sv._grava(edge_tts, u", ".join(silabas).lower() + u".", VOZ, apart):
+        formas = sv._troca_por_citacao(ff, apart, silabas, feitos, SAIDA, u"", tmp_nome(palavra))
+    print(u"   %s: formas %s" % (palavra.upper(), u", ".join(u"%s=%s" % (s, f) for s, f in zip(silabas, formas))))
     renomeados = []
     for i, s in enumerate(silabas):
         novo = os.path.join(SAIDA, u"%s_3_%d_%s.mp3" % (palavra, i + 1, s))

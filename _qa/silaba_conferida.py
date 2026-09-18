@@ -126,6 +126,15 @@ def confere(pasta):
         L.append(u"   %d palavra(s) conferidas pela propria gravacao (%s)"
                  % (len(ok), u", ".join(u"`%s` x%d" % (k, v)
                                         for k, v in sorted(por_caminho.items()))))
+    fc = sum(1 for x in ok.values() for d in (x.get(u"recortes") or []) if d.get(u"forma") == u"citacao")
+    fp = sum(1 for x in ok.values() for d in (x.get(u"recortes") or []) if d.get(u"forma") == u"palavra")
+    if fc or fp:
+        L.append(u"   forma da silaba solta: %d em CITACAO (como a professora separa) · "
+                 u"%d como saem na PALAVRA (a apartada soletrou/nao fechou)" % (fc, fp))
+        if fp:
+            quais = sorted(set(d.get(u"silaba", u"?") for x in ok.values()
+                               for d in (x.get(u"recortes") or []) if d.get(u"forma") == u"palavra"))
+            L.append(u"      silabas que ficaram na forma da palavra: %s" % u", ".join(quais[:30]))
     ruim = 0
     if sem_recibo:
         ruim = 1
