@@ -156,6 +156,13 @@ Leia tudo antes de agir e responda sempre em **português**.
 >    for o site que está subindo, ou se o `_painel/index.html` estiver atrasado —
 >    e ele roda **dentro do `entregar.yml`**, antes de publicar. Atividade fora do
 >    painel **não sobe**. (Na banca ele também aparece, como aviso: `0b6`.)
+>    ⭐ **E O PAINEL NO AR SOBE JUNTO, SOZINHO (18/set/2026)** — ordem do Marcos:
+>    *"lembre-se sempre coloque no painel de atividades"*. O portão garantia o
+>    arquivo no repo, mas o site **painel-de-atividades** ficava na versão velha
+>    até alguém lembrar de publicá-lo (aconteceu: a atividade do 5º ano foi ao ar
+>    e o painel mostrava o de dois dias antes). Agora o `entregar.yml` **acrescenta
+>    `_painel:painel-de-atividades` a toda lista de entrega** — não depende de
+>    memória. Para publicar só o painel: commit com `[entregar _painel:painel-de-atividades]`.
 >
 > **🕵️ A BANCA DE AUDITORES roda ANTES de entregar:** `bash _qa/auditar.sh <arquivo.html>`.
 > São DOZE portões, cada um nascido de um defeito que chegou perto da criança:

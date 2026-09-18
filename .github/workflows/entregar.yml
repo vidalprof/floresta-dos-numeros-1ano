@@ -96,6 +96,18 @@ jobs:
           fi
           if [ -z "$lista" ] && [ -n "$PASTA" ]; then lista="$PASTA:$REPO"; fi
           if [ -z "$lista" ]; then echo "::error::informe 'alvos' (pasta:repo,...) ou 'pasta'+'repo_name'"; exit 1; fi
+          # ⭐ O PAINEL DE LINKS SOBE JUNTO, SEMPRE (ordem do Marcos, 18/set/2026:
+          #    *"lembre-se sempre coloque no painel de atividades"*). O portao do
+          #    catalogo ja garantia que a atividade estivesse no `_painel/index.html`
+          #    do repo — mas o painel NO AR (painel-de-atividades) ficava na versao
+          #    antiga ate alguem lembrar de publicar. Aconteceu hoje: a atividade do
+          #    5o ano foi ao ar 13:00 e o painel ainda mostrava o de 16/set. Agora
+          #    toda entrega leva `_painel:painel-de-atividades` na lista, sem que
+          #    ninguem precise lembrar. (Se ja estiver na lista, nao repete.)
+          case ",$lista," in
+            *",_painel:"*) : ;;
+            *) lista="$lista,_painel:painel-de-atividades"; echo "painel de links acrescentado a lista (regra da casa)";;
+          esac
           echo "lista=$lista" >> "$GITHUB_OUTPUT"
           echo "alvos: $lista"
 

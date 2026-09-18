@@ -8453,3 +8453,17 @@ já fazia, e falham COM `::error::` se não conseguirem; (2) regra de processo:
 entrega está rodando** — ou disparar e saber que o carimbo pode atrasar. E a
 lição de leitura: carimbo ausente não é "não publicou"; é "não sei" — quem
 responde é o log do job (`get_job_logs` com `tail_lines` pequeno).
+
+## 🔗 O PAINEL NO AR SOBE JUNTO COM TODA ENTREGA (ordem do Marcos, 18/set/2026)
+
+Palavras dele, depois de a atividade do 5º ano ir ao ar: ***"lembre-se sempre
+coloque no painel de atividades"***. Eu tinha feito a linha no `ATIVIDADES.md`
+e rodado o `montar_painel.py` (o portão `_qa/catalogo.py` passou) — mas o
+**site** https://vidalprof.github.io/painel-de-atividades/ continuava na
+versão de 16/set, porque publicar o painel era um passo à parte
+(`[entregar _painel:painel-de-atividades]`) que dependia de eu lembrar.
+
+**Conserto duplo:** o `entregar.yml` agora acrescenta `_painel:painel-de-atividades`
+a TODA lista de alvos (passo "Ler a lista de alvos"), e o CLAUDE.md diz isso na
+regra do catálogo. Regra que fica: **"está no repo" não é "está no ar"** — o que o
+Marcos abre na escola é o site, e o site só muda quando alguém o publica.
