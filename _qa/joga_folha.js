@@ -455,8 +455,16 @@ async function executa(pg, id, plano) {
   }
 
   if (plano.tipo === 'digitar') {
+    /* ⚠️⚠️ CLICAR NA CASINHA, NÃO NA GRADE (18/set/2026). O Marcos viu na sala:
+       *"o aluno não conseguia digitar"* na folha 8 d'A Fábrica de Nomes. O
+       jogador dizia "4 de 4" porque clicava na GRADE (`data-qa="esc-..."`),
+       que tem UM `onclick`; a criança toca na CASINHA, que tem o dela E o da
+       grade — `abreCruz` duas vezes, a segunda fechava a primeira e o fecho
+       estourava `CRUZ.E` de null. Dez cadernos no ar, e o jogador aprovando.
+       Régua que não faz o gesto da criança não mede a criança. */
     await pg.evaluate(v => {
-      const e = document.querySelector('[data-qa="' + v + '"]');
+      const g = document.querySelector('[data-qa="' + v + '"]');
+      const e = g && (g.querySelector('.ccel, button, [role="button"]') || g);
       if (e) { e.scrollIntoView({ block: 'center' }); e.click(); }
     }, plano.alvo);
     await pg.waitForTimeout(260);

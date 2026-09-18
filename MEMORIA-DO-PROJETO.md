@@ -7679,6 +7679,47 @@ qualquer uma sozinha mata o gesto:
 
 **Ao pôr arrastar em qualquer peça nova, conferir os três.**
 
+## ⌨️🪤 "O ALUNO NÃO CONSEGUIA DIGITAR" — o jogador aprovava porque não fazia o gesto da criança (18/set/2026)
+
+**Palavras do Marcos:** *"verifique a página 8 da atividade do 5º ano A Fábrica de
+Nomes, pois me parece que o aluno não conseguia digitar"*. Ele estava certo, e o
+defeito estava em **dez cadernos no ar** — todos os que receberam o teclado do
+aparelho pelo `tirar_teclado.py` em 17/set. **O erro era meu, do dia anterior.**
+
+**O que acontecia, medido no navegador com o gesto da criança:**
+1. `fechaCruz()` fazia `CRUZ = null; pintaCruz();` — e `pintaCruz` começa lendo
+   `CRUZ.E`. **TypeError toda vez que se fechava a caneta.**
+2. A casinha E a grade tinham `onclick`. Um toque na casinha chamava `abreCruz`
+   **duas vezes**; a segunda fechava a primeira, o fecho estourava, e o
+   `abreCruz` morria antes de reabrir. A criança tocava, nada abria, digitava e
+   nada acontecia — **sem erro na tela**.
+3. Ainda por cima, `blur -> fechaCruz`: a criança tocava em **"Ouvir a frase"**
+   (que a folha convida a fazer), o foco ia para o botão, a palavra fechava, e o
+   que ela digitava depois caía no vazio.
+4. E digitar **sem** ter clicado numa casinha não fazia nada — nada dizia "toque
+   nas casinhas primeiro".
+
+**Por que o jogador da banca dizia "4 de 4":** ele clicava na **GRADE**
+(`data-qa="esc-..."`), que tem um `onclick` só. A criança toca na **CASINHA**.
+**Régua que não faz o gesto da criança não mede a criança.** Rodado o jogador
+novo sobre o código velho: `REPROVADO`, `TypeError: Cannot read properties of
+null (reading 'E')`, 4 de 4 não fecharam.
+
+**Os consertos (nos dez cadernos + o molde `_padrao/FOLHA-VIVA/folhas.js`):**
+`fechaCruz` pinta com o E guardado ANTES de zerar (`limpaCruz(E)`) e `pintaCruz`
+nunca lê CRUZ nulo; `abreCruz` é **idempotente** (mesma palavra já aberta → só
+devolve o foco); o blur **não fecha mais nada**; e **digitar sem clicar abre a
+primeira palavra vazia da folha** — as duas portas valem para o gesto também.
+O jogador (`_qa/joga_folha.js`) agora clica na casinha, como a criança.
+
+**As três lições, e as três são regras:**
+- **Depois de zerar um estado, nada lê esse estado.** `CRUZ = null` seguido de
+  qualquer função que comece por `CRUZ.E` é bug certo.
+- **Dois `onclick` no mesmo toque (filho e pai) = a mesma ação duas vezes.** Ou
+  a ação é idempotente, ou um dos dois sai.
+- **Portão que simula o usuário tem de simular o GESTO do usuário**, não o
+  atalho que é mais fácil para o programa.
+
 ## 🗣️🪤 CONTEI OS PEDAÇOS NA GRAVAÇÃO — E ERA A PERGUNTA ERRADA (17/set/2026)
 
 **O Marcos pediu o que estava certo:** *"eu preciso de uma ferramenta ou método
