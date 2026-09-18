@@ -55,12 +55,20 @@ def _base(w):
 
 
 def main():
-    try:
-        import librosa
-    except ImportError:
-        print(u"NAO MEDI: falta librosa")
-        return 2
     import silabas as S
+    # ⚠️⚠️ A MESMA REGUA DE DURACAO DO PORTAO, NAO OUTRA (18/set/2026). Esta bateria
+    #    media a duracao com a biblioteca de audio e o portao `silabas.py` com o
+    #    ffmpeg; o mp3 tem enchimento de codec e os dois discordam em ~8 ms. O PA
+    #    de TAMPA saiu com 0,550 s no ffmpeg (aceito, no fio do teto) e 0,558 na
+    #    biblioteca — a bateria acusou "bom reprovado" e SEGUROU a publicacao dos
+    #    oito cadernos. Duas reguas para a mesma coisa e uma a mais.
+    ff = S._ffmpeg()
+    try:
+        S._dur(ff, os.devnull)
+    except Exception as e:                                       # noqa: BLE001
+        print(u"NAO MEDI: sem ffmpeg (%s)" % e)
+        return 2
+    dur = lambda f: S._dur(ff, f)
     if not os.path.isdir(NEGATIVO):
         print(u"NAO MEDI: nao ha controle negativo em %s" % NEGATIVO)
         return 2
@@ -90,7 +98,7 @@ def main():
             continue
         f = os.path.join(RAIZ, p, u"audio", u"%ssb_%s_%d.mp3" % (pref, wb, i))
         if os.path.exists(f):
-            bons.append((len(s), i == 0, librosa.get_duration(path=f), u"%s/%s[%d]=%s" % (p, w, i, s)))
+            bons.append((len(s), i == 0, dur(f), u"%s/%s[%d]=%s" % (p, w, i, s)))
     ruins = []
     for f in sorted(glob.glob(os.path.join(NEGATIVO, u"*.mp3"))):
         nome = os.path.basename(f)[:-4]
@@ -102,7 +110,7 @@ def main():
         if chave not in mapa:
             continue
         s = mapa[chave][0]
-        ruins.append((len(s), chave[2] == 0, librosa.get_duration(path=f), u"%s=%s" % (arq, s)))
+        ruins.append((len(s), chave[2] == 0, dur(f), u"%s=%s" % (arq, s)))
     if not bons or not ruins:
         print(u"NAO MEDI: bons=%d soletrados=%d" % (len(bons), len(ruins)))
         return 2
