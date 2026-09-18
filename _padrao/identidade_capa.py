@@ -193,17 +193,17 @@ def css_base(p, S):
 .capa .titu,.capa .sub,.capa .chamada,.capa .cena{position:relative;z-index:1}
 .capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px;
   -webkit-perspective:600px;perspective:600px}
-.capa .titu .pal{display:inline-flex;white-space:nowrap;gap:2px}
+.capa .titu .cptpal{display:inline-flex;white-space:nowrap;gap:2px}
 .capa .titu .lt{display:inline-block;font-size:clamp(22px,5.8vw,42px);font-weight:900;letter-spacing:0;
   color:%(cor2)s;text-shadow:0 3px 0 %(clara)s,0 5px 10px rgba(0,0,0,.16);
   -webkit-animation:%(anim)s .7s both;animation:%(anim)s .7s both}
-.capa .titu .esp{display:inline-block;width:14px}
+.capa .titu .cpesp{display:inline-block;width:14px}
 @-webkit-keyframes %(anim)s{%(kfw)s}
 @keyframes %(anim)s{%(kf)s}
 .capa .sub{font-weight:700;color:#2c3745;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
 .capa .chamada{margin-top:14px;font-weight:700;color:#3a4658;font-size:clamp(13px,3.4vw,16px)}
 .capa .cena{margin:14px auto 4px;max-width:620px}
-.capa .cf{width:clamp(48px,14vw,92px);height:clamp(48px,14vw,92px);object-fit:contain;display:block}
+.capa .capfig{width:auto;height:clamp(74px,19vw,124px);max-width:100%%;object-fit:contain;display:block}
 .capa .pl{display:block;font-weight:900;font-size:clamp(16px,4.6vw,26px);color:#fff;background:%(cor)s;border-radius:12px;
   padding:8px 14px;box-shadow:0 5px 0 %(cor2)s;letter-spacing:.02em;white-space:nowrap}
 .capa .rt{display:block;font-weight:900;font-size:clamp(12px,3.4vw,17px);color:#fff;background:%(cor)s;
@@ -219,7 +219,12 @@ def kfs(nome, corpo):
 
 # ---------------------------------------------------------------- as cenas
 # cada cena devolve (css, html_js) — html_js é uma EXPRESSÃO JavaScript (string)
-def fig(f, cls="cf"):
+# ⚠️ A CLASSE DA FIGURA DA CAPA É `capfig`, E NUNCA `cf` (18/set/2026, `_verbo4`).
+#    `.cf` é o CONFETE do motor: `position:absolute` + `animation:cai`, que termina
+#    em `opacity:0` e `translateY(105vh)`. As cinco crianças da capa ficavam com
+#    opacidade ZERO e 950 px abaixo da tela — visíveis no DOM, com tamanho certo,
+#    e invisíveis na tela. Nenhum portão viu; quem viu foi a FOTO.
+def fig(f, cls="capfig"):
     return "'<img class=\"%s\" draggable=\"false\" src=\"img/%s.png?v=' + V + '\" alt=\"\">'" % (cls, f)
 
 
@@ -283,7 +288,7 @@ def cena_rua(p, S):
 
 def cena_tecla(p, S):
     css = u""".capa .cena{display:flex;flex-direction:column;align-items:center;gap:10px}
-.capa .fila{display:flex;justify-content:center;align-items:flex-end;gap:clamp(14px,5vw,40px)}
+.capa .cpfila{display:flex;justify-content:center;align-items:flex-end;gap:clamp(14px,5vw,40px)}
 .capa .it{-webkit-animation:pula%(S)s 1.8s ease-in-out infinite;animation:pula%(S)s 1.8s ease-in-out infinite}
 .capa .tecla{width:min(78%%,420px);height:46px;border-radius:12px;background:#f7f7f9;border:3px solid %(cor)s;
   box-shadow:0 7px 0 %(cor2)s,0 12px 18px rgba(0,0,0,.18);font-weight:900;color:%(cor2)s;letter-spacing:.2em;line-height:40px;
@@ -291,7 +296,7 @@ def cena_tecla(p, S):
 """ % dict(S=S, cor=p["cor"], cor2=p["cor2"]) + kfs("aperta" + S, "0%,100%{transform:translateY(0);box-shadow:0 7px 0 " + p["cor2"] + ",0 12px 18px rgba(0,0,0,.18)}50%{transform:translateY(6px);box-shadow:0 1px 0 " + p["cor2"] + ",0 4px 8px rgba(0,0,0,.18)}") \
         + kfs("pula" + S, "0%,40%,100%{transform:translateY(0)}55%{transform:translateY(-14px)}")
     html = " + ".join(item(p, i) for i in range(len(p["figs"])))
-    return css, "'<div class=\"cena\"><div class=\"fila\">' + " + html + " + '</div><div class=\"tecla\">ESPAÇO</div></div>'"
+    return css, "'<div class=\"cena\"><div class=\"cpfila\">' + " + html + " + '</div><div class=\"tecla\">ESPAÇO</div></div>'"
 
 
 def cena_balao(p, S, balcao=False):
@@ -300,7 +305,7 @@ def cena_balao(p, S, balcao=False):
   -webkit-animation:balanca%(S)s 2.8s ease-in-out infinite;animation:balanca%(S)s 2.8s ease-in-out infinite}
 .capa .it:nth-child(even){animation-direction:reverse}
 .capa .fio{display:block;width:3px;height:clamp(18px,5vw,34px);background:%(cor2)s;border-radius:2px}
-.capa .barra{max-width:620px;margin:0 auto;height:10px;border-radius:5px;background:%(cor)s;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.capa .cpbarra{max-width:620px;margin:0 auto;height:10px;border-radius:5px;background:%(cor)s;box-shadow:0 4px 10px rgba(0,0,0,.2)}
 """ % dict(S=S, cor=p["cor"], cor2=p["cor2"]) + kfs("balanca" + S, "0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}")
     if balcao:
         css += u""".capa .balcao{max-width:620px;margin:0 auto;height:34px;border-radius:0 0 12px 12px;background:%(cor)s;
@@ -308,7 +313,7 @@ def cena_balao(p, S, balcao=False):
 """ % dict(cor=p["cor"], cor2=p["cor2"])
     html = " + ".join(item(p, i, extra="", cls="it").replace("+ '<img", "+ '<i class=\"fio\"></i><img") for i in range(len(p["figs"])))
     fim = "'<div class=\"balcao\">LOST &amp; FOUND</div>'" if balcao else "''"
-    return css, "'<div class=\"barra\"></div><div class=\"cena\">' + " + html + " + '</div>' + " + fim
+    return css, "'<div class=\"cpbarra\"></div><div class=\"cena\">' + " + html + " + '</div>' + " + fim
 
 
 def cena_brota(p, S):
@@ -325,7 +330,7 @@ def cena_brota(p, S):
 def cena_rola(p, S):
     css = u""".capa .cena{display:flex;justify-content:center;align-items:flex-end;gap:clamp(10px,3vw,24px);flex-wrap:nowrap;min-height:110px}
 .capa .it{display:flex;flex-direction:column;align-items:center;-webkit-animation:rola%(S)s 2.2s ease-in-out infinite;animation:rola%(S)s 2.2s ease-in-out infinite}
-.capa .it:first-child .cf{-webkit-animation:gira%(S)s 2.2s linear infinite;animation:gira%(S)s 2.2s linear infinite}
+.capa .it:first-child .capfig{-webkit-animation:gira%(S)s 2.2s linear infinite;animation:gira%(S)s 2.2s linear infinite}
 .capa .tabu{max-width:620px;margin:0 auto;height:14px;border-radius:7px;background:%(cor)s;box-shadow:0 5px 12px rgba(0,0,0,.2);
   background-image:repeating-linear-gradient(90deg,transparent 0 22px,rgba(255,255,255,.35) 22px 24px)}
 """ % dict(S=S, cor=p["cor"]) + kfs("rola" + S, "0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}") \
@@ -339,7 +344,7 @@ def cena_vira(p, S):
 .capa .carta{width:clamp(60px,16vw,100px);border-radius:12px;background:#fff;border:3px solid %(cor)s;padding:6px 4px;
   display:flex;flex-direction:column;align-items:center;box-shadow:0 6px 14px rgba(0,0,0,.14);
   -webkit-animation:vira%(S)s 4s ease-in-out infinite;animation:vira%(S)s 4s ease-in-out infinite}
-.capa .carta .cf{width:clamp(44px,12vw,72px);height:clamp(44px,12vw,72px)}
+.capa .carta .capfig{width:clamp(44px,12vw,72px);height:clamp(44px,12vw,72px)}
 """ % dict(S=S, cor=p["cor"]) + kfs("vira" + S, "0%,40%{transform:rotateY(0)}50%{transform:rotateY(88deg)}60%,100%{transform:rotateY(0)}")
     html = " + ".join(item(p, i, cls="carta") for i in range(len(p["figs"])))
     return css, "'<div class=\"cena\">' + " + html + " + '</div>'"
@@ -348,8 +353,8 @@ def cena_vira(p, S):
 def cena_junta(p, S):
     css = u""".capa .cena{display:flex;justify-content:center;gap:clamp(6px,2vw,14px);flex-wrap:nowrap}
 .capa .it{display:flex;flex-direction:column;align-items:center}
-.capa .it .cf{-webkit-animation:junta%(S)s 2.6s ease-in-out infinite;animation:junta%(S)s 2.6s ease-in-out infinite}
-.capa .it:nth-child(even) .cf{animation-direction:reverse}
+.capa .it .capfig{-webkit-animation:junta%(S)s 2.6s ease-in-out infinite;animation:junta%(S)s 2.6s ease-in-out infinite}
+.capa .it:nth-child(even) .capfig{animation-direction:reverse}
 .capa .engr{max-width:620px;margin:0 auto;height:18px;border-radius:9px;background:%(cor)s;box-shadow:0 5px 12px rgba(0,0,0,.2);
   background-image:repeating-linear-gradient(90deg,%(cor2)s 0 10px,transparent 10px 20px)}
 """ % dict(S=S, cor=p["cor"], cor2=p["cor2"]) + kfs("junta" + S, "0%,100%{transform:translateX(-10px)}50%{transform:translateX(10px)}")
@@ -393,7 +398,7 @@ def cena_gaveta(p, S):
 .capa .gav{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px;border-radius:10px;background:%(clara)s;
   border:3px solid %(cor)s;box-shadow:inset 0 -6px 0 rgba(0,0,0,.08),0 4px 10px rgba(0,0,0,.15);
   -webkit-animation:abre%(S)s 3.2s ease-in-out infinite;animation:abre%(S)s 3.2s ease-in-out infinite}
-.capa .gav .cf{width:clamp(40px,11vw,66px);height:clamp(40px,11vw,66px)}
+.capa .gav .capfig{width:clamp(40px,11vw,66px);height:clamp(40px,11vw,66px)}
 .capa .gav .rt{margin:0}
 .capa .puxa{width:26px;height:8px;border-radius:4px;background:%(cor2)s;flex:none}
 """ % dict(S=S, cor=p["cor"], cor2=p["cor2"], clara=p["corclara"]) + kfs("abre" + S, "0%,100%{transform:translateX(0)}50%{transform:translateX(10px)}")
@@ -408,7 +413,7 @@ def cena_casinha(p, S):
 .capa .parede{background:%(clara)s;border:3px solid %(cor)s;border-top:0;border-radius:0 0 14px 14px;padding:12px 10px 14px;display:flex;justify-content:space-around;gap:8px}
 .capa .jan{width:clamp(64px,20vw,96px);border:3px solid %(cor2)s;border-radius:8px;background:#fff;padding:4px;display:flex;flex-direction:column;align-items:center;
   -webkit-animation:pisca%(S)s 3s ease-in-out infinite;animation:pisca%(S)s 3s ease-in-out infinite}
-.capa .jan .cf{width:clamp(40px,12vw,64px);height:clamp(40px,12vw,64px)}
+.capa .jan .capfig{width:clamp(40px,12vw,64px);height:clamp(40px,12vw,64px)}
 .capa .jan .rt{font-size:clamp(16px,4.6vw,24px);margin-top:2px;padding:0 10px}
 """ % dict(S=S, cor=p["cor"], cor2=p["cor2"], clara=p["corclara"]) + kfs("pisca" + S, "0%,100%{background:#fff}50%{background:#fff3b0;box-shadow:0 0 18px rgba(255,220,90,.9)}")
     html = " + ".join(item(p, i, cls="jan") for i in range(len(p["figs"])))
@@ -420,7 +425,7 @@ def cena_coroa(p, S):
 .capa .it{display:flex;flex-direction:column;align-items:center}
 .capa .it:nth-child(1),.capa .it:nth-child(5){transform:translateY(18px)}
 .capa .it:nth-child(2),.capa .it:nth-child(4){transform:translateY(8px)}
-.capa .it .cf{-webkit-animation:brilha%(S)s 2.6s ease-in-out infinite;animation:brilha%(S)s 2.6s ease-in-out infinite}
+.capa .it .capfig{-webkit-animation:brilha%(S)s 2.6s ease-in-out infinite;animation:brilha%(S)s 2.6s ease-in-out infinite}
 .capa .coroa{width:min(60%%,300px);height:34px;margin:8px auto 0;background:%(cor)s;border-radius:6px 6px 10px 10px;position:relative;
   box-shadow:0 6px 14px rgba(0,0,0,.2)}
 .capa .coroa:before{content:"";position:absolute;left:0;right:0;top:-22px;height:22px;
@@ -440,7 +445,7 @@ def cena_roda(p, S):
   border-radius:50%%;background:%(cor)s;color:#fff;font-weight:900;font-size:clamp(26px,8vw,40px);line-height:clamp(52px,16vw,76px);box-shadow:0 6px 14px rgba(0,0,0,.25)}
 .capa .it{position:absolute;width:64px;margin-left:-32px;margin-top:-36px;display:flex;flex-direction:column;align-items:center;
   -webkit-animation:roda%(S)s 16s linear infinite reverse;animation:roda%(S)s 16s linear infinite reverse}
-.capa .it .cf{width:clamp(36px,10vw,56px);height:clamp(36px,10vw,56px)}
+.capa .it .capfig{width:clamp(36px,10vw,56px);height:clamp(36px,10vw,56px)}
 .capa .it .rt{font-size:12px;padding:1px 6px}
 """ % dict(S=S, cor=p["cor"]) + kfs("roda" + S, "to{transform:rotate(360deg)}")
     itens = []
@@ -461,7 +466,7 @@ def cena_palmas(p, S):
 .capa .it:before,.capa .it:after{content:"";position:absolute;left:50%%;top:42%%;width:20px;height:20px;margin:-10px 0 0 -10px;border-radius:50%%;
   border:4px solid %(cor)s;opacity:0;-webkit-animation:onda%(S)s 1.8s ease-out infinite;animation:onda%(S)s 1.8s ease-out infinite}
 .capa .it:after{animation-delay:.6s}
-.capa .it .cf{position:relative;z-index:1;-webkit-animation:bate%(S)s 1.8s ease-in-out infinite;animation:bate%(S)s 1.8s ease-in-out infinite}
+.capa .it .capfig{position:relative;z-index:1;-webkit-animation:bate%(S)s 1.8s ease-in-out infinite;animation:bate%(S)s 1.8s ease-in-out infinite}
 """ % dict(S=S, cor=p["cor"]) + kfs("onda" + S, "0%{transform:scale(1);opacity:.8}100%{transform:scale(5.5);opacity:0}") \
         + kfs("bate" + S, "0%,100%{transform:scale(1)}12%{transform:scale(1.12)}")
     html = " + ".join(item(p, i) for i in range(len(p["figs"])))
@@ -598,7 +603,7 @@ def aplica(pasta):
       s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
     }
     pos++;
-    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+    letras += (w ? '<span class="cpesp"></span>' : '') + '<span class="cptpal">' + s + '</span>';
   });
   c.innerHTML =
     %(ceu)s'<h1 class="titu">' + letras + '</h1>' +

@@ -363,24 +363,26 @@ button{font-family:inherit;cursor:pointer}
 .capa .titu,.capa .sub,.capa .chamada,.capa .cena{position:relative;z-index:1}
 .capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px;
   -webkit-perspective:600px;perspective:600px}
-.capa .titu .pal{display:inline-flex;white-space:nowrap;gap:2px}
+.capa .titu .cptpal{display:inline-flex;white-space:nowrap;gap:2px}
 .capa .titu .lt{display:inline-block;font-size:clamp(22px,5.8vw,42px);font-weight:900;letter-spacing:0;
   color:#664216;text-shadow:0 3px 0 #f1ebe4,0 5px 10px rgba(0,0,0,.16);
   -webkit-animation:letraSil2 .7s both;animation:letraSil2 .7s both}
-.capa .titu .esp{display:inline-block;width:14px}
+.capa .titu .cpesp{display:inline-block;width:14px}
 @-webkit-keyframes letraSil2{from{opacity:0;-webkit-transform:translateX(-40px)}to{opacity:1;-webkit-transform:none}}
 @keyframes letraSil2{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:none}}
 .capa .sub{font-weight:700;color:#2c3745;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
 .capa .chamada{margin-top:14px;font-weight:700;color:#3a4658;font-size:clamp(13px,3.4vw,16px)}
 .capa .cena{margin:14px auto 4px;max-width:620px}
-.capa .cf{width:clamp(48px,14vw,92px);height:clamp(48px,14vw,92px);object-fit:contain;display:block}
+.capa .capfig{width:auto;height:clamp(74px,19vw,124px);max-width:100%;object-fit:contain;display:block}
+.capa .pl{display:block;font-weight:900;font-size:clamp(16px,4.6vw,26px);color:#fff;background:#8e5c1e;border-radius:12px;
+  padding:8px 14px;box-shadow:0 5px 0 #664216;letter-spacing:.02em;white-space:nowrap}
 .capa .rt{display:block;font-weight:900;font-size:clamp(12px,3.4vw,17px);color:#fff;background:#8e5c1e;
   border-radius:9px;padding:2px 8px;margin-top:4px;letter-spacing:.03em;white-space:nowrap}
 .capa .cena{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-width:480px}
 .capa .gav{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 10px;border-radius:10px;background:#f1ebe4;
   border:3px solid #8e5c1e;box-shadow:inset 0 -6px 0 rgba(0,0,0,.08),0 4px 10px rgba(0,0,0,.15);
   -webkit-animation:abreSil2 3.2s ease-in-out infinite;animation:abreSil2 3.2s ease-in-out infinite}
-.capa .gav .cf{width:clamp(40px,11vw,66px);height:clamp(40px,11vw,66px)}
+.capa .gav .capfig{width:clamp(40px,11vw,66px);height:clamp(40px,11vw,66px)}
 .capa .gav .rt{margin:0}
 .capa .puxa{width:26px;height:8px;border-radius:4px;background:#664216;flex:none}
 @-webkit-keyframes abreSil2{0%,100%{-webkit-transform:translateX(0)}50%{-webkit-transform:translateX(10px)}}
@@ -3019,5 +3021,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=1653de9c0b"></script>
+<script src="folhas.js?v=68ee0a0d49"></script>
 </body></html>

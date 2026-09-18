@@ -122,12 +122,12 @@ function f0(d){
       s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
     }
     pos++;
-    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+    letras += (w ? '<span class="cpesp"></span>' : '') + '<span class="cptpal">' + s + '</span>';
   });
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Língua Portuguesa &middot; 5º ano &middot; vinte e três folhas sobre as letras que soam igual</div>' +
-    '<div class="cena"><i class="foco"></i>' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/o5_sal.png?v=' + V + '" alt="">' + '<span class="rt">SAL</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/o5_sol.png?v=' + V + '" alt="">' + '<span class="rt">SOL</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/o5_anel.png?v=' + V + '" alt="">' + '<span class="rt">ANEL</span>' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/o5_anzol.png?v=' + V + '" alt="">' + '<span class="rt">ANZOL</span>' + '</div>' + '</div><div class="prat"></div>' +
+    '<div class="cena"><i class="foco"></i>' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" src="img/o5_sal.png?v=' + V + '" alt="">' + '<span class="rt">SAL</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" src="img/o5_sol.png?v=' + V + '" alt="">' + '<span class="rt">SOL</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" src="img/o5_anel.png?v=' + V + '" alt="">' + '<span class="rt">ANEL</span>' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="capfig" draggable="false" src="img/o5_anzol.png?v=' + V + '" alt="">' + '<span class="rt">ANZOL</span>' + '</div>' + '</div><div class="prat"></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

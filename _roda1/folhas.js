@@ -126,12 +126,12 @@ function f0(d){
       s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
     }
     pos++;
-    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+    letras += (w ? '<span class="cpesp"></span>' : '') + '<span class="cptpal">' + s + '</span>';
   });
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Alfabetização &middot; 1º ano &middot; quinze folhas de bater as sílabas</div>' +
-    '<div class="cena"><i class="aro"></i><div class="miolo">L</div><div class="orbita">' + '<div class="it" style="left:50.0%;top:8.0%">' + '<img class="cf" draggable="false" src="img/ro_lata.png?v=' + V + '" alt="">' + '<span class="rt">LA</span>' + '</div>' + '<div class="it" style="left:89.9%;top:37.0%">' + '<img class="cf" draggable="false" src="img/ro_leao.png?v=' + V + '" alt="">' + '<span class="rt">LE</span>' + '</div>' + '<div class="it" style="left:74.7%;top:84.0%">' + '<img class="cf" draggable="false" src="img/ro_limao.png?v=' + V + '" alt="">' + '<span class="rt">LI</span>' + '</div>' + '<div class="it" style="left:25.3%;top:84.0%">' + '<img class="cf" draggable="false" src="img/ro_lobo.png?v=' + V + '" alt="">' + '<span class="rt">LO</span>' + '</div>' + '<div class="it" style="left:10.1%;top:37.0%">' + '<img class="cf" draggable="false" src="img/ro_lupa.png?v=' + V + '" alt="">' + '<span class="rt">LU</span>' + '</div>' + '</div></div>' +
+    '<div class="cena"><i class="aro"></i><div class="miolo">L</div><div class="orbita">' + '<div class="it" style="left:50.0%;top:8.0%">' + '<img class="capfig" draggable="false" src="img/ro_lata.png?v=' + V + '" alt="">' + '<span class="rt">LA</span>' + '</div>' + '<div class="it" style="left:89.9%;top:37.0%">' + '<img class="capfig" draggable="false" src="img/ro_leao.png?v=' + V + '" alt="">' + '<span class="rt">LE</span>' + '</div>' + '<div class="it" style="left:74.7%;top:84.0%">' + '<img class="capfig" draggable="false" src="img/ro_limao.png?v=' + V + '" alt="">' + '<span class="rt">LI</span>' + '</div>' + '<div class="it" style="left:25.3%;top:84.0%">' + '<img class="capfig" draggable="false" src="img/ro_lobo.png?v=' + V + '" alt="">' + '<span class="rt">LO</span>' + '</div>' + '<div class="it" style="left:10.1%;top:37.0%">' + '<img class="capfig" draggable="false" src="img/ro_lupa.png?v=' + V + '" alt="">' + '<span class="rt">LU</span>' + '</div>' + '</div></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

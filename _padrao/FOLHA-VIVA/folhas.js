@@ -204,7 +204,7 @@ function f0(d){
   nome.split(" ").forEach(function(pal, w){
     var s = "";
     for(k = 0; k < pal.length; k++) s += '<span class="lt">' + pal.charAt(k) + '</span>';
-    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="tpal">' + s + '</span>';
   });
   c.innerHTML =
     '<div class="ceu"></div>' +

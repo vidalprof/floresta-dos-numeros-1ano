@@ -415,17 +415,19 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .capa .titu,.capa .sub,.capa .chamada,.capa .cena{position:relative;z-index:1}
 .capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px;
   -webkit-perspective:600px;perspective:600px}
-.capa .titu .pal{display:inline-flex;white-space:nowrap;gap:2px}
+.capa .titu .cptpal{display:inline-flex;white-space:nowrap;gap:2px}
 .capa .titu .lt{display:inline-block;font-size:clamp(22px,5.8vw,42px);font-weight:900;letter-spacing:0;
   color:#4c136f;text-shadow:0 3px 0 #ede4f3,0 5px 10px rgba(0,0,0,.16);
   -webkit-animation:letraRima1 .7s both;animation:letraRima1 .7s both}
-.capa .titu .esp{display:inline-block;width:14px}
+.capa .titu .cpesp{display:inline-block;width:14px}
 @-webkit-keyframes letraRima1{0%{opacity:0;-webkit-transform:translateY(30px)}60%{opacity:1;-webkit-transform:translateY(-8px)}100%{opacity:1;-webkit-transform:none}}
 @keyframes letraRima1{0%{opacity:0;transform:translateY(30px)}60%{opacity:1;transform:translateY(-8px)}100%{opacity:1;transform:none}}
 .capa .sub{font-weight:700;color:#2c3745;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
 .capa .chamada{margin-top:14px;font-weight:700;color:#3a4658;font-size:clamp(13px,3.4vw,16px)}
 .capa .cena{margin:14px auto 4px;max-width:620px}
-.capa .cf{width:clamp(48px,14vw,92px);height:clamp(48px,14vw,92px);object-fit:contain;display:block}
+.capa .capfig{width:auto;height:clamp(74px,19vw,124px);max-width:100%;object-fit:contain;display:block}
+.capa .pl{display:block;font-weight:900;font-size:clamp(16px,4.6vw,26px);color:#fff;background:#6a1b9a;border-radius:12px;
+  padding:8px 14px;box-shadow:0 5px 0 #4c136f;letter-spacing:.02em;white-space:nowrap}
 .capa .rt{display:block;font-weight:900;font-size:clamp(12px,3.4vw,17px);color:#fff;background:#6a1b9a;
   border-radius:9px;padding:2px 8px;margin-top:4px;letter-spacing:.03em;white-space:nowrap}
 .capa .cena{display:flex;justify-content:center;align-items:flex-start;gap:clamp(8px,3vw,22px);flex-wrap:nowrap;padding-top:4px}
@@ -433,7 +435,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   -webkit-animation:balancaRima1 2.8s ease-in-out infinite;animation:balancaRima1 2.8s ease-in-out infinite}
 .capa .it:nth-child(even){animation-direction:reverse}
 .capa .fio{display:block;width:3px;height:clamp(18px,5vw,34px);background:#4c136f;border-radius:2px}
-.capa .barra{max-width:620px;margin:0 auto;height:10px;border-radius:5px;background:#6a1b9a;box-shadow:0 4px 10px rgba(0,0,0,.2)}
+.capa .cpbarra{max-width:620px;margin:0 auto;height:10px;border-radius:5px;background:#6a1b9a;box-shadow:0 4px 10px rgba(0,0,0,.2)}
 @-webkit-keyframes balancaRima1{0%,100%{-webkit-transform:rotate(-5deg)}50%{-webkit-transform:rotate(5deg)}}
 @keyframes balancaRima1{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
 @media (prefers-reduced-motion: reduce){
@@ -2091,5 +2093,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=37cdb4f389"></script>
+<script src="folhas.js?v=b6f47180ac"></script>
 </body></html>

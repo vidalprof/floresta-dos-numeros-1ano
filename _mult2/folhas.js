@@ -1332,12 +1332,12 @@ function f0(d){
       s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
     }
     pos++;
-    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+    letras += (w ? '<span class="cpesp"></span>' : '') + '<span class="cptpal">' + s + '</span>';
   });
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Matemática &middot; 2º ano &middot; vinte e uma folhas de multiplicação</div>' +
-    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="cf" draggable="false" src="img/ho_morango.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="cf" draggable="false" src="img/ho_laranja.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="cf" draggable="false" src="img/ho_maca.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="cf" draggable="false" src="img/ho_pera.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.40s">' + '<img class="cf" draggable="false" src="img/ho_melancia.png?v=' + V + '" alt="">' + '' + '</div>' + '</div><div class="terra"></div>' +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" src="img/ho_morango.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" src="img/ho_laranja.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" src="img/ho_maca.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="capfig" draggable="false" src="img/ho_pera.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.40s">' + '<img class="capfig" draggable="false" src="img/ho_melancia.png?v=' + V + '" alt="">' + '' + '</div>' + '</div><div class="terra"></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

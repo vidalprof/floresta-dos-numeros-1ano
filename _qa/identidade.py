@@ -111,6 +111,47 @@ def estrutura_f0(js):
     return re.sub(r"\s+", "", corpo)
 
 
+def classes_da_capa(js, html):
+    u"""As classes que o `f0` usa DENTRO da capa, e as que têm regra fora dela.
+
+    ⚠️ LIÇÃO PAGA — 18/set/2026, `_verbo4`: a figura da capa nasceu com
+    `class="cf"`, e `.cf` é o CONFETE do motor (`position:absolute` +
+    `animation:cai`, que acaba em `opacity:0` e 105vh abaixo). As cinco figuras
+    estavam no DOM, com o tamanho certo e `visibility:visible` — e INVISÍVEIS na
+    tela. O `leiaute_mao` não olha a capa; o `css_atregra` mede animação órfã, não
+    animação ALHEIA. Quem viu foi a foto. Agora é medido.
+    """
+    m = re.search(r"function f0\(d\)\{(.*?)\n\}", js, re.S)
+    if not m:
+        return []
+    usadas = set(re.findall(r'class=\\?"([^"\\]+)', m.group(1)))
+    nomes = set()
+    for u in usadas:
+        for c in u.split():
+            if c and c != "capa":
+                nomes.add(c)
+    css = sem_comentario(html)
+    i = css.find(".capa{")
+    j = css.find("#fim,#retomar{", i) if i >= 0 else -1
+    fora = css[:i] + css[j:] if i >= 0 and j > 0 else css
+    # ⚠️ NEM TODA COLISAO ESCONDE. `.capa .lt` (0,2,0) ganha de `.lt` (0,1,0) nas
+    #    propriedades que a capa declara. O que MACHUCA e' a propriedade que a capa
+    #    NAO declara e o motor declara: `position`, `animation`, `opacity`,
+    #    `display`, `transform`, `visibility` — foi assim que `.cf` (confete) pos
+    #    `position:absolute` + `animation:cai` na figura da capa e ela sumiu.
+    PERIGO = ("position", "animation", "opacity", "display", "transform", "visibility")
+    chocam = []
+    for c in sorted(nomes):
+        for m2 in re.finditer(r"(^|[\s,}])\.%s\s*\{([^}]*)\}" % re.escape(c), fora, re.M):
+            corpo = m2.group(2)
+            props = [p for p in PERIGO
+                     if re.search(r"(^|;)\s*(-webkit-)?%s\s*:" % p, corpo)]
+            if props:
+                chocam.append("%s (o motor lhe da %s)" % (c, ", ".join(props)))
+                break
+    return chocam
+
+
 def ficha(pasta):
     html = le(os.path.join(pasta, "index.html"))
     js = le(os.path.join(pasta, "folhas.js"))
@@ -120,6 +161,7 @@ def ficha(pasta):
         "capa": bloco_capa(html),
         "anim": keyframes_da_capa(html),
         "f0": estrutura_f0(js),
+        "choque": classes_da_capa(js, html),
     }
 
 
@@ -149,6 +191,10 @@ def main():
         return 2
     esq = ficha(ESQUELETO) if os.path.isdir(ESQUELETO) else None
     erros = []
+    for c in eu["choque"]:
+        erros.append(u"a capa usa a classe `%s`, que TAMBEM tem regra fora da capa "
+                     u"(classe do motor): o estilo do motor ganha e a peca da capa pode "
+                     u"sumir — foi assim que `.cf` (o confete) apagou as figuras da capa." % c)
     for o in todos:
         if o["pasta"] == pasta:
             continue

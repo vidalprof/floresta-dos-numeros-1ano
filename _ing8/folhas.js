@@ -220,12 +220,12 @@ function f0(d){
       s += '<span class="lt" style="animation-delay:' + (0.05 * pos).toFixed(2) + 's">' + pal.charAt(k) + '</span>';
     }
     pos++;
-    letras += (w ? '<span class="esp"></span>' : '') + '<span class="pal">' + s + '</span>';
+    letras += (w ? '<span class="cpesp"></span>' : '') + '<span class="cptpal">' + s + '</span>';
   });
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Inglês &middot; 8º ano &middot; 35 folhas de some, any, much, many e os pronomes who, which, that e whose</div>' +
-    '<div class="barra"></div><div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<i class="fio"></i><img class="cf" draggable="false" src="img/lf_suitcase.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<i class="fio"></i><img class="cf" draggable="false" src="img/lf_mouse.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<i class="fio"></i><img class="cf" draggable="false" src="img/lf_tea.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<i class="fio"></i><img class="cf" draggable="false" src="img/lf_music.png?v=' + V + '" alt="">' + '' + '</div>' + '</div>' + '<div class="balcao">LOST &amp; FOUND</div>' +
+    '<div class="cpbarra"></div><div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<i class="fio"></i><img class="capfig" draggable="false" src="img/lf_suitcase.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<i class="fio"></i><img class="capfig" draggable="false" src="img/lf_mouse.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<i class="fio"></i><img class="capfig" draggable="false" src="img/lf_tea.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<i class="fio"></i><img class="capfig" draggable="false" src="img/lf_music.png?v=' + V + '" alt="">' + '' + '</div>' + '</div>' + '<div class="balcao">LOST &amp; FOUND</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
