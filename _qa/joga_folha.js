@@ -251,6 +251,30 @@ function montaPlano(id) {
     }
   }
 
+  /* ⭐ A FAMÍLIA "CORTAR A FRASE GRUDADA" (19/set/2026, com O Caderno do
+     Juquinha; a peça nasceu n'A Tecla do Espaço Quebrou, do 1º ano).
+     A folha mostra a frase SEM espaços, letra por letra, e a criança toca na
+     letra que COMEÇA cada palavra nova. Cada letra publica `lfr-<id>-<k>`, e a
+     resposta declarada é a frase COM os espaços — então dá para calcular
+     exatamente em quais letras tocar, do mesmo jeito que o `cortesDe()` do
+     caderno faz. Sem esta família o jogador dizia "não conheço a peça" em DEZ
+     folhas de 35, e isso não é "passou": é metade do caderno sem medição.
+     ⚠️ E ele tem de tocar SÓ nas letras certas: tocar numa errada conta como
+        erro na folha, e o relatório do professor sairia sujo por culpa da
+        régua. */
+  const temLfr = qa.some(e => (e.getAttribute('data-qa') || '').indexOf('lfr-' + id + '-') === 0);
+  if (temLfr && certo.indexOf(' ') > -1) {
+    const ps = certo.split(' ');
+    const alvos = [];
+    let n = 0;
+    for (let i = 0; i < ps.length - 1; i++) {
+      n += ps[i].length;
+      alvos.push('lfr-' + id + '-' + n);
+    }
+    if (alvos.every(a => qa.some(e => e.getAttribute('data-qa') === a)))
+      return { tipo: 'clique', alvos: alvos, fe: 'alta' };
+  }
+
   /* ⭐ A FAMÍLIA "DOIS TOQUES COM ALVO COMPARTILHADO" (15/set/2026).
      Existe folha em que a criança PEGA uma coisa e SOLTA em outra, e em que uma
      das duas é COMPARTILHADA pela folha inteira: a gaveta que recebe seis

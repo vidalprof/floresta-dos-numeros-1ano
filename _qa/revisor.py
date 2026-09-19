@@ -53,10 +53,13 @@ FEM_O = set("foto moto tribo libido".split())
 PULA_GENERO = set("""isso isto aquilo tudo todo toda um uma dois duas
 o a os as ao aos caixa outro outra outros outras mesmo mesma
 piloto tiracolo
-juca zeca teco nico cuca coru""".split())
+juca zeca teco nico cuca coru juquinha""".split())
 # ⚠️ nomes MASCULINOS terminados em -a (o Juca, o Zeca, o Teco...) — a heurística
 #    de -a=feminino acusava "o Juca" como concordância errada. Mascotes/nomes de
-#    menino em -a entram aqui. (Pego no portal de colonização do 4º ano, ago/2026.)
+#    menino em -a entram aqui. (Pego no portal de colonização do 4º ano, ago/2026;
+#    "juquinha" entrou em 19/set/2026, com O Caderno do Juquinha — e o nome é da
+#    folha de papel d30, não invenção minha: "Juquinha escreveu várias frases
+#    para levar na escola, mas ele não sabe escrever direito".)
 # ⚠️ "piloto" e bigenero (o/a piloto). "tiracolo" so aparece na expressao fixa
 #    "a tiracolo" (bolsa cruzada) — o "a" e da expressao, nao artigo. Falsos-
 #    positivos pegos no Detetive das Palavras (ago/2026).

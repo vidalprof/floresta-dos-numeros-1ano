@@ -75,11 +75,21 @@ if (!fs.existsSync(pasta + '/folhas.js')) {
       const out = [];
       for (let pi = 1; pi < PAGEL.length; pi++) {
         vaiPara(pi);
-        const declarados = idsDaPagina(pi).length;
-        const registrados = Object.keys(RESP || {})
-          .filter(k => (RESP[k] || {}).pag === pi).length;
+        const ids = idsDaPagina(pi);
+        const regs = Object.keys(RESP || {}).filter(k => (RESP[k] || {}).pag === pi);
+        /* ⚠️ E OS NOMES TÊM DE BATER, NÃO SÓ A CONTA (19/set/2026). O Caderno do
+           Juquinha passou aqui com 35 de 35 e mesmo assim as dez folhas de
+           cortar estavam quebradas: a peça, clonada de outro caderno, gravava
+           `e1_0` enquanto o `idsDaPagina` deste devolvia `n1_0`. Mesma
+           QUANTIDADE, nomes diferentes — e o relatório do professor, que lê
+           pelo `idsDaPagina`, teria saído ZERO nessas dez folhas com o caderno
+           inteiro respondido. Contar não basta: é preciso conferir quem é quem. */
+        const sobra = regs.filter(k => ids.indexOf(k) < 0);
+        const falta = ids.filter(k => regs.indexOf(k) < 0);
         out.push({ pi, nome: (typeof NOMES !== 'undefined' ? NOMES[pi - 1] : ''),
-                   declarados, registrados });
+                   declarados: ids.length, registrados: regs.length,
+                   sobra: sobra.slice(0, 3), falta: falta.slice(0, 3),
+                   nSobra: sobra.length, nFalta: falta.length });
       }
       return out;
     });
@@ -98,7 +108,7 @@ if (!fs.existsSync(pasta + '/folhas.js')) {
       process.exit(1);
     }
     console.log(`${pasta} -> conta das folhas: ${r.length} folha(s) conferida(s)`);
-    const ruins = r.filter(x => x.declarados !== x.registrados);
+    const ruins = r.filter(x => x.declarados !== x.registrados || x.nSobra || x.nFalta);
     if (!ruins.length) {
       console.log('   ok: em toda folha o pote e os itens registrados sao o mesmo numero.');
       process.exit(0);
@@ -106,6 +116,14 @@ if (!fs.existsSync(pasta + '/folhas.js')) {
     console.log(`   REPROVADO — ${ruins.length} folha(s) fecham na conta errada:`);
     for (const x of ruins) {
       const cedo = x.declarados < x.registrados;
+      if (x.declarados === x.registrados) {
+        console.log(`    x folha ${x.pi} (${x.nome}): a conta bate (${x.declarados}), `
+                    + `mas os NOMES nao: a folha grava ${x.sobra.join(', ')}`
+                    + ` e o idsDaPagina espera ${x.falta.join(', ')}`);
+        console.log('      o relatorio do professor le pelo idsDaPagina: esta folha '
+                    + 'sairia ZERO com tudo respondido');
+        return;
+      }
       console.log(`    x folha ${x.pi} (${x.nome}): o pote diz ${x.declarados}, `
                   + `a folha registra ${x.registrados}`);
       console.log('      ' + (cedo

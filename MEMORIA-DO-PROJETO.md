@@ -8903,3 +8903,87 @@ professor fica sem plano B, que foi exatamente a cobrança do Marcos em 15/set.
 O conserto barato existe (mais rodadas nas listas que já estão lá, sem arte nem
 voz nova) e é decisão dele, não minha: mexer no tamanho da atividade não estava
 no pedido.
+
+## 🧩 O DÉCIMO CADERNO DO 2º ANO — e três portões que estavam cegos (19/set/2026)
+
+**O Caderno do Juquinha** (`_seg2` → `o-caderno-do-juquinha`) fecha os dez
+cadernos de folha viva do 2º ano. Degrau: *"Segmentar corretamente as palavras
+ao escrever frases e textos"* — o espaço em branco dentro da frase e do texto.
+
+### A armadilha que quase me pegou, e como o crivo a evitou
+
+Das 40 folhas colhidas, **quinze** mandam a mesma coisa: *"separe as palavras da
+frase e reescreva"*. Montar por frequência daria um caderno inteiro de cortar
+frase grudada — **que é exatamente o que "A Tecla do Espaço Quebrou" (1º ano) já
+faz, e está no ar**. Uma das folhas colhidas (d09) é a premissa daquele caderno
+ao pé da letra: *"a professora foi digitar a parlenda do macaco, mas a tecla de
+espaço não funcionou"*.
+
+**O degrau estava numa palavra da própria habilidade: "ao ESCREVER".** No 1º ano
+a criança RECONHECE o espaço numa frase que alguém escreveu errado; no 2º ano ela
+segmenta o que ELA escreve, e em frases **e TEXTOS** (o plural está no currículo).
+Isso abriu três frentes que o 1º ano não tem: texto inteiro (parlenda e cantiga,
+verso a verso), a criança escrevendo (sete folhas), e a **HIPERSEGMENTAÇÃO** — o
+erro de PARTIR uma palavra que é uma só (*"a gora"*, *"com migo"*).
+
+⚠️ **A hipersegmentação entra DECLARADA:** nenhuma das quarenta folhas a cobre.
+Todas tratam só do erro de grudar. Sem ela, o "corretamente" da habilidade ficava
+pela metade. E três candidatas óbvias estavam ERRADAS e quase entraram:
+*"de repente"* e *"hoje em dia"* escrevem-se MESMO separadas (o erro da criança
+ali é o contrário, "derrepente"), e *"com tente"* não soletra "contente".
+
+⚠️ **A outra metade da linha do currículo já era do `_sil2`.** O mesmo objeto de
+conhecimento cobre a classificação silábica (monossílaba a polissílaba), que é *O
+Armário das Quatro Gavetas*. Por isso as OITO folhas de separação silábica da
+colheita ficaram de fora, apesar de boas.
+
+### ⛔ O DEFEITO MAIS CARO: a peça clonada gravava o id com a etiqueta DELA
+
+A peça de **cortar a frase** veio do `_fra1`. Lá ela grava `e1_0`, `e2_0`… porque
+LÁ o `idsDaPagina` era escrito à mão com esse prefixo. Trazida para cá sem tocar
+nisso, ela gravava `e1_0` enquanto o `idsDaPagina` deste caderno devolve `n1_0`.
+
+**O estrago não era o portão: era o RELATÓRIO DO PROFESSOR**, que lê os ids pelo
+`idsDaPagina`. Dez das 35 folhas teriam saído **ZERO com o caderno inteiro
+respondido** — e sem erro nenhum no console. É o defeito que o comentário do
+esqueleto avisa em maiúsculas, e eu o repeti na primeira peça que clonei.
+
+**E o portão que existe para isso deixou passar:** o `_qa/conta_folha.js`
+comparava a QUANTIDADE (35 de 35, ok) e não os NOMES. Agora compara os dois, e na
+prova — com o defeito reposto de propósito — ele reprova as dez folhas dizendo
+*"a conta bate (5), mas os NOMES não… esta folha sairia ZERO com tudo respondido"*.
+
+### 👁️ O ALVO CORTADO NA BEIRA — regra 5b do `_qa/leiaute_mao.js`
+
+A cruzadinha saía com **9 colunas de 46 px numa tela de 360**: a última coluna
+ficava partida na beira do cartão e a criança não tinha como tocar nela. O portão
+de leiaute mediu aquela folha e disse **"ok"**.
+
+**Por que ele não via:** a regra 1 pergunta se a PÁGINA rola de lado
+(`scrollWidth > innerWidth`). Quando o pai que estoura tem `overflow:hidden`, a
+página NÃO rola — o pedaço é cortado fora em silêncio e o `scrollWidth` continua
+igual à tela. E a regra 3 só olha `<img>`; uma casinha de cruzadinha é um
+`<button>`. A pergunta certa é a da criança: **o alvo está inteiro na tela, e
+dentro do pai que o recorta?**
+
+Na estreia a regra achou o defeito no `_seg2` (folhas 10, 25, 31 e 32) e **mais
+quatro cadernos que já estavam no ar**: `_rima2` (5 folhas), `_narra2`, `_sil2` e
+`_ing8`. Todos da mesma família — a fila de escrever (`.cruz.uma`) com
+`grid-auto-flow:column`, que cresce para a direita sem parar. **E a fila quebrada
+estava no ESQUELETO**, então todo caderno novo herdaria o defeito; o conserto foi
+no esqueleto e nos treze cadernos de uma vez.
+
+⚠️ **E o conserto da cruzadinha não foi encolher a casinha** — foi ESTREITAR A
+GRADE, como no `_not2`: o empacotador da `cruzadinha()` depende só da ordem do
+pote; rodei as 720 ordens possíveis das seis palavras e a ordem AMANHA, EMBAIXO,
+COMIGO, AGORA, DEVAGAR, TALVEZ dá **6 colunas** no lugar de 9. Encolher a casinha
+passaria o problema para o dedo.
+
+### O que ainda NÃO tem portão neste caderno
+
+O `0b9` (pedagogo, currículo) diz **NÃO MEDI** os conceitos, e a razão é do
+documento: o PDF de Blumenau só traz cabeçalho por ano em Ciências, Geografia e
+História; Português vem em faixas, e medir no documento inteiro aprovaria
+conteúdo de outro ano. A conferência foi feita **à mão**, linha por linha
+(3182-3186 do `_curriculo/blumenau.txt`), e está escrita dentro do
+`_seg2/curriculo.json`, no campo `conceitos_conferencia`.

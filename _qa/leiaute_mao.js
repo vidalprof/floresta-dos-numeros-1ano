@@ -20,6 +20,8 @@
      4. FUNDO ESTICADO — `background-size:100% 100%` com proporcao diferente
         da do arquivo (a cena toda deformada);                        REPROVA
      5. ALVO PEQUENO — botao/link/onclick visivel com menos de 40 px;  REPROVA
+     5b. ALVO CORTADO NA BEIRA — alvo que passa da tela, ou que sai do pai que
+        o recorta (a regra 1 nao ve: com overflow:hidden a pagina nao rola); REPROVA
      6. TEXTO CORTADO — caixa com `overflow:hidden` cujo texto nao cabe. AVISO
    Rolagem vertical nao e defeito.
 
@@ -146,6 +148,54 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
         if(r.width<40||r.height<40){ peq++; if(!ex) ex=nome(e)+" "+Math.round(r.width)+"x"+Math.round(r.height); }
       }
       if(peq) out.push(peq+" alvo(s) menor(es) que 40px (ex.: "+ex+")");
+      /* ⭐ 5b — ALVO CORTADO PELA BORDA (19/set/2026, O Caderno do Juquinha).
+         A cruzadinha da folha 25 saía com 9 colunas de 46 px numa tela de 360:
+         a última coluna ficava PARTIDA na beira do cartão, e a criança não tinha
+         como tocar nela. Este portão mediu aquela folha e disse "ok".
+         ⚠️ POR QUE A REGRA 1 NÃO VÊ: ela pergunta se a PÁGINA rola de lado
+            (`scrollWidth > innerWidth`). Quando o pai que estoura tem
+            `overflow:hidden`, a página NÃO rola — o pedaço é simplesmente
+            cortado fora, e o `scrollWidth` continua igual à tela. Silêncio
+            perfeito. E a regra 3 só olha `<img>`; uma casinha de cruzadinha é
+            um `<button>`.
+         ⚠️⚠️ E TRILHO QUE ROLA DE LADO NÃO É CORTE — isto custou uma volta no
+            mesmo dia. A primeira versão desta regra perguntava só "o alvo passa
+            da tela?", e reprovou a cruzadinha do `_rima2` e do `_narra2`, que
+            moram dentro de um `.cruzenv{overflow-x:auto}`: a criança arrasta e
+            alcança. Régua que acusa o que está alcançável manda consertar o que
+            não está quebrado. Agora a primeira pergunta é se existe TRILHO
+            acima do alvo; havendo, ele está alcançável e acabou.
+         A pergunta que sobra é a da criança: o alvo está inteiro na tela, e
+         dentro do pai que o recorta? Folga de 4 px para a borda arredondada. */
+      let cortados=0, exc="";
+      /* o primeiro ancestral que ROLA de lado de verdade (tem o que rolar) */
+      const trilho=e=>{ let a=e.parentElement;
+        while(a&&a!==document.documentElement){ const cs=getComputedStyle(a);
+          if(/auto|scroll/.test(cs.overflowX+cs.overflow) && a.scrollWidth>a.clientWidth+6) return a;
+          a=a.parentElement; }
+        return null; };
+      /* o primeiro ancestral que RECORTA sem deixar rolar */
+      const recorta=e=>{ let a=e.parentElement;
+        while(a&&a!==document.documentElement){ const cs=getComputedStyle(a);
+          if(/hidden|clip/.test(cs.overflowX+cs.overflow)) return a; a=a.parentElement; }
+        return null; };
+      for(const e of document.querySelectorAll("*")){
+        if(!ehAlvo(e)||!vis(e)) continue;
+        let pai=e.parentElement, dentro=false; while(pai&&pai!==document.body){ if(ehAlvo(pai)){ dentro=true; break; } pai=pai.parentElement; }
+        if(dentro) continue;
+        const r=e.getBoundingClientRect(); if(r.bottom<0||r.top>H) continue;
+        if(trilho(e)) continue;                       /* alcançável: arrasta e chega */
+        let fora=null;
+        if(r.right>W+4) fora="passa da tela em "+Math.round(r.right-W)+"px";
+        else if(r.left<-4) fora="começa "+Math.round(-r.left)+"px à esquerda da tela";
+        else { const c=recorta(e);
+          if(c){ const rc=c.getBoundingClientRect();
+            if(r.right>rc.right+4) fora="sai "+Math.round(r.right-rc.right)+"px do "+nome(c)+", que o recorta";
+            else if(r.left<rc.left-4) fora="sai "+Math.round(rc.left-r.left)+"px à esquerda do "+nome(c)+", que o recorta";
+          } }
+        if(fora){ cortados++; if(!exc) exc=nome(e)+" "+fora; }
+      }
+      if(cortados) out.push(cortados+" alvo(s) CORTADO(S) na beira — a crianca nao alcanca (ex.: "+exc+")");
       /* 6 — texto cortado */
       let tc=0;
       for(const e of document.querySelectorAll("*")){ if(!vis(e)) continue; const cs=getComputedStyle(e); if(!/hidden|clip/.test(cs.overflow+cs.overflowX)) continue; if(cs.textOverflow==="ellipsis") continue; if(e.children.length) continue; if(e.scrollWidth>e.clientWidth+6&&e.textContent.trim().length>2){ tc++; } }
