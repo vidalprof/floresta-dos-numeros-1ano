@@ -9045,3 +9045,43 @@ Nasceu a **regra 7 do `_qa/leiaute_mao.js`**: *cada ponta de um lado tem par do
 outro?* Ela não é de leiaute e mora ali de propósito — é o único portão da casa
 que abre TODAS as telas de toda atividade, folha viva e app à mão. Na prova, com
 o defeito reposto, reprova; nos seis cadernos medidos, zero falso-positivo.
+
+## 🎲 "SEMPRE VARIAR O RESULTADO FINAL" — e o teto que veio junto (19/set/2026)
+
+Marcos, sobre o "Somando com os Dedinhos": *"nessa atividade sempre variar o
+resultado final pra não repeti-los na mesma página"*. Ele está certo por duas
+razões, e a segunda é a que pega: dez somas em que a resposta é CINCO três vezes
+não só cansa — ensina a criança a **repetir o número de cima em vez de contar os
+dedos**. A repetição vira atalho para não pensar.
+
+⚠️ **E A REGRA TEM UM TETO, QUE É DAS MÃOS.** Com 1 a 5 dedos de cada lado, os
+totais que existem no mundo vão de 2 a 10: **nove resultados**. Uma página de
+somas com resultados todos diferentes não passa de nove itens — e a página das
+somas pequenas (2 a 6) não passa de **cinco**. Isso obrigou a desfazer metade do
+crescimento de uma hora antes: **41 → 35 itens, 19-26 → 15-22 min**. É o preço
+da regra, e ela vale o preço.
+
+**O sorteio mudou de método, e essa é a parte que não se esquece.** Antes ele
+tentava pares ao acaso até 500 vezes e desistia calado — se o pedido não cabia,
+a página encolhia sem avisar. Agora ele **sorteia os RESULTADOS primeiro** (que é
+o que não pode repetir), embaralha e só então acha um par para cada um. Repetir
+deixa de ser evitado e passa a ser **impossível por construção**, e a quantidade
+pedida é sempre entregue quando ela cabe. Medido: 300 sorteios seguidos, zero
+repetição e a contagem cheia em todas as cinco páginas.
+
+**Mas construção não é portão.** Quem confia só na construção descobre o defeito
+no dia em que alguém mexe no sorteio. Então a regra também é MEDIDA a cada
+abertura, pelo `confereTrabalho()`: o `TRABALHO` declara, por página, quantos
+itens ela pede (`n`) e **onde está o resultado** (`res`: a soma, o alvo ou o
+total), e o guarda grita no `console.error` se a conta não bater ou se um
+resultado repetir. ⭐ **Gritar no `console.error` é de propósito**: o portão
+`1z boot` (`_qa/boot.js`) reprova a atividade que solta um erro ao abrir — então
+o defeito nunca chega à criança sem passar por um portão que já existe. Na prova,
+com a repetição reposta de propósito, o boot reprovou com três linhas nomeando os
+resultados repetidos.
+
+**A lição geral, que serve para além desta atividade:** quando uma regra do
+Marcos é sobre o CONTEÚDO sorteado, não dá para escrever um portão externo — ele
+não sabe o que é "o resultado" naquela página. O caminho é a atividade DECLARAR
+onde está o dado (`res`) e conferir a si mesma no boot, deixando um portão que já
+existe (o `1z`) fazer o papel de juiz.
