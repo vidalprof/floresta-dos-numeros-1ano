@@ -982,6 +982,80 @@ workflow faz checkout da ref no instante do disparo — então ele publicou,
 honestamente, a versão velha. **Conferir `git log origin/<branch> -1` antes de
 disparar** é mais barato que uma corrida inteira.
 
+## 📰 JORNALISTA POR UM DIA — 2º ano, degrau 10, o último (19/set/2026)
+
+Caderno de **folha viva**, 35 folhas, pasta `_not2`, repositório
+`jornalista-por-um-dia`. A notícia e a manchete — e com ele **fecham os dez
+cadernos do 2º ano** que o Marcos pediu em 15/set.
+
+**A COLHEITA ENSINOU UMA COISA NOVA, e ela vale para as próximas: a PALAVRA
+DA BUSCA ARRASTA O MUNDO DELA.** "Notícia" é palavra de adulto antes de ser
+palavra de escola. Das 40 folhas colhidas, **quinze** trouxeram notícia de
+jornal com assunto de jornal — a morte de Bin Laden, um homem que explode o
+quintal com gasolina, uma aluna condenada a indenizar um professor, estiagem e
+desastre ambiental — e **sete** trouxeram o ano impresso nelas (5º, 7º, 8º).
+Não é colheita ruim: é colheita do assunto. **O GESTO dessas folhas entra
+inteiro** (quem · o quê · quando · onde, que quatro folhas diferentes imprimem
+com as mesmas palavras); o assunto e o texto, não. É o mesmo movimento do
+`_narra2`, onde dezoito folhas eram quadrinhos com personagem registrado — e
+das duas vezes o que salvou foi o crivo ter sido feito **antes** de montar.
+
+**⭐ E O PRESENTE VEIO NO MEIO DISSO: a FOTOLEGENDA.** Cinco folhas (d13, d24,
+d36, d37, d39) e um pedaço de uma sexta (d11) trabalham foto + legenda — que é
+a primeira coisa que a habilidade do 2º ano nomeia. Uma criança de sete anos lê
+uma FOTO antes de ler uma notícia inteira, e é por aí que o caderno começa.
+
+**🖼️ A REGRA DA FIGURA MUDOU NESTE CADERNO, e mudou por causa do assunto:
+METADE DAS FIGURAS NÃO TEM FUNDO TRANSPARENTE.** Em todos os outros cadernos a
+figura é recortada; aqui o degrau É a fotolegenda, e **foto de jornal tem
+moldura**. Um cachorro recortado flutuando não é uma foto; o mesmo cachorro
+dentro do seu retângulo, com céu e grama, é. As duas famílias convivem
+declaradas no `recortar_das_folhas.py`: **foto** (retângulo inteiro) para o que
+a criança vai legendar, **figura** (recortada) para o que ela vai arrastar,
+ligar e casar. Ficaram de fora as fotos de **pessoas reais** (d24, d34, d17,
+d22, d11): desenho a traço e clip-art de folha de atividade entram; retrato de
+gente identificável publicado em material de terceiros, não.
+
+**🩹 TRÊS CONSERTOS QUE VALEM PARA TODO CADERNO NOVO:**
+
+1. **DOIS-PONTOS DENTRO DE TEXTO QUEBRA O `gerar_falas.py`.** A opção
+   *"Ingredientes: farinha, ovo e leite."* virou uma CHAVE de JSON — o
+   `bloco()` põe aspas em `, <palavra>:` para ler o objeto, e não tem como
+   saber que aquilo estava dentro de uma frase. Os blocos falharam com um erro
+   de json que não diz nada sobre a causa. **É a mesma armadilha do `_narra2`**
+   (lá custou uma rodada). A regra: `f:`, `r:`, `ops:` e `t:` **nunca levam
+   dois-pontos seguidos de UMA palavra só**. Dois-pontos com espaço depois de
+   frase (*"Olhe a foto: quem é que pula?"*) é seguro — o perigo é a palavra
+   solta colada no `:`.
+2. **A EXPLICAÇÃO QUE VEM DEPOIS DO PONTO FINAL COMEÇA EM MAIÚSCULA.** As
+   falas de acerto montadas por concatenação (`frase + explicação`) saíam
+   *"…plantou três árvores. é notícia"*, e o portão `0o` (`_qa/revisor.py`)
+   acusou **sete de uma vez**. Quem concatena tem de capitalizar — e garantir o
+   ponto no fim da primeira parte.
+3. **HALO BRANCO: COMER MAIS FUNDO PIORA.** Tentei `tira_halo(lim=212,
+   voltas=3)` nas três figuras reprovadas e o bolo subiu de **3,07% para
+   5,29%** — comer a franja descobre o pixel de trás, que também é quase
+   branco, e a conta cresce. O que resolveu foi o que o **próprio portão já
+   mandava**: um **segundo flood-fill pela borda**, mais frouxo
+   (`limpa_fundo(lim=216)`), que entra pelo transparente que o primeiro deixou
+   e só apaga o quase-branco que ALCANÇA — o branco fechado dentro da figura (o
+   corpo do golfinho a traço) ela nunca alcança. **Ler a linha "conserto:" do
+   portão antes de inventar o meu.**
+
+**🕳️ UM PORTÃO QUE NUNCA MEDIU NADA, e está anotado como dívida:** o
+`1l2 ligar com rotulo repetido` (`_qa/ligar_rotulo.py`) diz *"NAO MEDI: nao
+achei o bloco ITENS"* em **todo** caderno de folha viva — a expressão dele pede
+`/*ITENS-INI*/ var ITENS =` colado, e o esqueleto tem um comentário no meio; e
+mesmo achando, ele procura o formato `{"g": [[chave, rotulo]]}`, que é o da
+Coroa dos Cinco Reinos e não o da folha viva. Conferi os rótulos deste caderno
+**na mão** (nenhum repetido nas três folhas de ligar) — mas conferir na mão não
+é medir, e o portão continua cego para a família inteira.
+
+**A cena da capa é nova (`jornal`):** cada foto sobe do papel e a **tarja da
+legenda desliza por baixo dela**. As tarjas são barras cegas de propósito — na
+capa a criança ainda não leu nada, e uma legenda escrita ali entregaria o jogo
+da folha 4. Cor `#1a237e`, tinta de jornal.
+
 ## 🔍 O GRANDÃO E O PEQUENININHO — 2º ano, degrau 7 (18/set/2026)
 
 Caderno de **folha viva**, 35 folhas, pasta `_aumdim2`, repositório
