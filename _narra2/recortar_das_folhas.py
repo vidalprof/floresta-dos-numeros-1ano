@@ -33,6 +33,14 @@ u"""
 
  ⚠️ E O NOME TEM DE BATER COM O DESENHO. Conferir OLHANDO a folha de contato.
 
+ ⚠️⚠️ AS QUATRO CAIXAS DA d19 FORAM CORRIGIDAS EM 19/set/2026, e elas já estavam
+    NO AR erradas: o castelo sem a torre da direita, o menino sem o topo da
+    cabeça, a galinha sem a cauda e os pés, a vaca sem as patas. Quem pegou foi
+    o portão novo `_qa/recorte_cortado.py` (1i7), que nasceu de o Marcos ver a
+    mesma coisa no `_not2`: *"está cortada aparecendo parte do irmão"*. Nenhum
+    portão via isso antes, porque o arquivo sai íntegro — o defeito só existe
+    na comparação entre o recorte e a folha de papel de onde ele veio.
+
  ⚠️ DUAS PEÇAS DA d19 FICARAM DE FORA, e as duas pela folha de contato:
     · o OVO — o contorno dele encosta na moldura tracejada, e ao tirar a moldura
       saiu meio ovo: um arco solto, que não é desenho de nada;
@@ -88,11 +96,11 @@ PECAS = [
 
     # --- d19: as peças de montar a história --------------------------------
     (u"nuvem",    D19,  574, 1172,  948, 1375),
-    (u"castelo",  D19,  977, 1165, 1235, 1546),
-    (u"menino",   D19,  109, 1500,  333, 1820),
+    (u"castelo",  D19,  981, 1188, 1276, 1522),
+    (u"menino",   D19,  127, 1464,  332, 1802),
     (u"saco",     D19,  368, 1534,  538, 1744),
-    (u"galinha",  D19,  519, 1384,  709, 1574),
-    (u"vaca",     D19,  621, 1630,  845, 1820),
+    (u"galinha",  D19,  530, 1394,  729, 1600),
+    (u"vaca",     D19,  636, 1635,  837, 1832),
 ]
 
 DE_ONDE = {

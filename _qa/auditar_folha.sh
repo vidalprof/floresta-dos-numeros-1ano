@@ -120,6 +120,17 @@ PORTOES=(
   #    aperta o alto-falante da opção e não ouve. Conserto:
   #    `python3 _padrao/voz_forca.py <pasta>`.
   "0v forca da voz (nenhuma fala abafada)|python3 _qa/voz_forca.py $PASTA"
+  # ⭐ 1i7) O RECORTE CORTOU O DESENHO? (19/set/2026, o Marcos abrindo o
+  #    *Jornalista por um Dia*: *"na imagem de a irmã deu um presente ao irmão
+  #    está cortada aparecendo parte do irmão. Esse tipo de erro não pode
+  #    acontecer"*). O arquivo sai íntegro — abre, não tem halo, não está
+  #    esticado, o jogador resolve a folha — e mesmo assim falta metade do
+  #    desenho. O defeito só existe comparando o recorte com a FOLHA DE PAPEL de
+  #    onde ele veio, e é isso que este portão faz. Na estreia achou o caso do
+  #    Marcos, mais três fotos no `_not2` e quatro peças no `_narra2`, que já
+  #    estava no ar (castelo sem torre, menino sem o topo da cabeça, galinha sem
+  #    a cauda, vaca sem as patas).
+  "1i7 recorte cortou o desenho|python3 _qa/recorte_cortado.py $PASTA"
   # ⭐ 0b11) IDENTIDADE PROPRIA (Marcos, 18/set/2026: "cada caderno precisa ter capa
   #    diferente, cor diferente, animacoes... os estudantes acham que e a mesma
   #    atividade"). Onze cadernos no ar dividiam duas cores e duas capas.

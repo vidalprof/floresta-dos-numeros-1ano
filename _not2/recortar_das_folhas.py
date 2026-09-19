@@ -78,14 +78,14 @@ D39 = u"d39_565722.jpg"
 PECAS = [
     # --- as FOTOS que a criança vai legendar --------------------------------
     (u"cachorro",   D37,   92,  262,  278,  438, u"foto"),
-    (u"parque",     D13,  374,  790,  531,  904, u"foto"),
-    (u"jornaleiro", D03,  447,  647, 1163, 1213, u"foto"),
-    (u"beijaflor",  D29,  784,  519, 1091,  740, u"foto"),
+    (u"parque",     D13,  376,  789,  558,  943, u"foto"),
+    (u"jornaleiro", D03,  447,  647, 1171, 1214, u"foto"),
+    (u"beijaflor",  D29,  809,  510, 1108,  744, u"foto"),
 
     # --- as FIGURAS recortadas ----------------------------------------------
     (u"bolo",       D37,   95,  516,  292,  692, u"figura"),
     (u"lendo",      D39,  300,  198,  502,  336, u"figura"),
-    (u"choro",      D13,  352,  565,  484,  748, u"figura"),
+    (u"choro",      D13,  352,  580,  506,  768, u"figura"),
     (u"peixe",      D18,  632,  464,  992,  686, u"figura"),
     (u"suco",       D18,  144,  702,  498,  940, u"figura"),
     (u"golfinho",   D12,   74,  652,  292,  932, u"figura"),
