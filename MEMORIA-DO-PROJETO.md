@@ -982,6 +982,90 @@ workflow faz checkout da ref no instante do disparo — então ele publicou,
 honestamente, a versão velha. **Conferir `git log origin/<branch> -1` antes de
 disparar** é mais barato que uma corrida inteira.
 
+## 🔊 A VOZ TINHA SEIS PORTÕES E NENHUM MEDIA O VOLUME (19/set/2026)
+
+Cobrança do Marcos: *"os áudios têm que ficarem perfeitos"*. Fui medir e achei
+o buraco. A casa tinha portão para a fala **que falta** (`vozfalta`), para a
+**voz-robô** (`vozrobo`), para a **palavra que a voz erra** (`falas.py`), para
+a **opção muda** (`voz_opcao`), para **tudo do pote ter voz** (`voz_do_pote`) e
+até para a **pronúncia** (o Vosk dentro do `entregar.yml`). Nenhum abria o mp3
+para ver se ele sai **audível**.
+
+**O que a medição achou:** em **23 cadernos**, **91 falas** saem cerca de
+**7 dB abaixo das irmãs** — e são sempre as mesmas: *"Livros."*, *"e."*,
+*"pipa."*, *"xis"*, *"tu"*, *"que"*. O Edge TTS dá menos energia a uma **palavra
+curta e isolada** do que a uma frase. Sete decibéis é metade da força
+percebida: no PC da escola a criança aperta o alto-falante da opção e **não
+ouve** — e escolhe pelo desenho, que é exatamente o defeito que o alto-falante
+da resposta existe para matar.
+
+**⚠️ MEDIR PELO PICO, NÃO PELA MÉDIA — e isto é medida, não preferência.** Fiz
+as duas contas nas mesmas 701 falas: pelo `mean_volume` o espalhamento dava
+**10,8 dB** e acusava falas boas (a média divide pela duração inteira, então
+fala longa com pausas mede baixo sem ser baixa); pelo **pico** dava 6 dB e
+acusava exatamente as duas que o ouvido pega. O LUFS integrado tem o mesmo
+vício pelo mesmo motivo — é a lição que o `_qa/kvoz.py` já tinha pago nos 882
+recortes de sílaba.
+
+**⚠️ E O CONSERTO É GANHO PURO, SÓ NAS QUE DESTOAM.** Nada de `loudnorm` (em
+áudio curto ele vira normalizador de pico) e nada de normalizar as 700 — isso
+reescreveria 700 binários por rodada e incharia o `.git`, que é justamente o
+que faz o build do Pages engasgar. E **nunca até o teto**: o alvo é a MEDIANA
+do caderno, porque voz saturada é pior que voz baixa.
+
+As três peças: **`_qa/voz_forca.py`** (portão **0v**, na banca de folha viva),
+**`_padrao/voz_forca.py`** (o conserto, com `--todas`) e um passo novo no
+**`entregar.yml`**, logo depois de gravar, para o próximo caderno já nascer com
+a voz pareja.
+
+## 👁️ QUATRO DEFEITOS QUE SÓ O OLHO PEGOU — e o que eles ensinam (19/set/2026)
+
+A banca do `_not2` passou em 27 de 32 portões e **mesmo assim o caderno tinha
+quatro defeitos**, os quatro achados abrindo folha por folha num print. Vale
+guardar porque três deles são de FAMÍLIA, não de caderno:
+
+1. **DUAS PEÇAS DIVIDINDO A MESMA CLASSE CSS.** O `.ccel` serve à *fila de
+   casinhas de escrever* e à *cruzadinha* — e elas querem tamanhos opostos. O
+   bloco de peças clonadas subia `.ccel` para 44 px (certo na fila), e a
+   cruzadinha de nove colunas virava 422 px num celular de 360. **Ao clonar um
+   bloco de CSS, procurar as classes que a peça nova também usa.**
+2. **ENCOLHER O ALVO NÃO É CONSERTO DE LEIAUTE** — passa o problema da tela
+   para o dedo. Encolhi a casinha para 30 px e o portão `4b` reprovou 22 alvos
+   na mesma folha, com razão. **O que encolhe é a GRADE, não o alvo.**
+3. **⭐ O EMPACOTADOR DA CRUZADINHA É DETERMINÍSTICO: ele depende SÓ DA ORDEM DO
+   POTE.** Rodei as 120 ordens possíveis das cinco palavras em Python (repetindo
+   o algoritmo do `folhas.js`): a ordem *FOTO, JORNAL, RADIO, TITULO, DATA* dá
+   **5 colunas por 11 linhas** onde *JORNAL, FOTO, RADIO, TITULO, DATA* dava
+   **9 por 7**. Cruzadinha larga demais não se conserta no CSS — conserta-se na
+   ordem do pote. Rolar para baixo a criança já faz; para o lado, não.
+4. **⭐⭐ A FOLHA DE ORDEM SAÍA FORA DE ORDEM.** O `pegaSolta` embaralha os
+   alvos, e isso é CERTO quando o alvo é uma figura (senão a lista entrega a
+   resposta). Mas numa folha que pede *"ponha as cenas na ORDEM"* o alvo **é** a
+   ordem — e a tela mostrava 2º, 5º, 1º, 4º, 3º. **A folha deixava de fazer o
+   que o comando impresso manda**, e nenhum portão vê isso: o app abre, o
+   jogador automático resolve, o leiaute passa. Agora a folha de ordem passa
+   `alvosEmOrdem`. **Regra que fica: antes de embaralhar, perguntar se a ORDEM
+   é o conteúdo.**
+
+## 🕶️ O PORTÃO 1l2 ESTAVA CEGO HÁ MESES — "NÃO MEDI" NÃO É "PASSOU" (19/set/2026)
+
+O `_qa/ligar_rotulo.py` imprimia *"NAO MEDI: nao achei o bloco ITENS"* em **todo**
+caderno de folha viva, e ninguém tinha olhado. Duas causas: (1) a expressão
+pedia `/*ITENS-INI*/ var ITENS =` **colados**, e o esqueleto tem dez linhas de
+comentário entre os dois; (2) mesmo achando, ele só entendia o formato do motor
+(`{"g": [[chave, rotulo]]}`), e na folha viva o pote é `[["c1","c2"]]` com o
+rótulo morando num bloco de DADOS que o portão não tem como adivinhar.
+
+**O conserto foi parar de adivinhar:** em folha viva ele **abre a atividade no
+navegador** e lê a coluna da direita como a criança a vê (`[data-qa*="-d-"]`),
+que é a única fonte que não mente. Rodado nos cadernos no ar: nenhum tem rótulo
+repetido — mas agora isso é medida, não suposição.
+
+⚠️ **A lição maior: portão que diz NÃO MEDI há meses é portão quebrado.** Ele
+entra na banca, sai na lista dos "não mediram", e a gente lê aquilo como ruído.
+Vale reler a lista dos NÃO MEDIRAM de vez em quando e perguntar, de cada um:
+*é dívida legítima (a atividade não tem aquilo) ou o portão ficou cego?*
+
 ## 📰 JORNALISTA POR UM DIA — 2º ano, degrau 10, o último (19/set/2026)
 
 Caderno de **folha viva**, 35 folhas, pasta `_not2`, repositório

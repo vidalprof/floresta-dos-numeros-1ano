@@ -107,7 +107,7 @@ que está pronto para construir.
 | 7 | **O Grandão e o Pequenininho** (`_aumdim2`) | ✅ 40 em `_sequencias/folhas_aumdim2` | ✅ `POTE-AUMDIM2.md` (18/set) — 26 entram, 1 **ensina errado** (d15) | ✅ 35 folhas (18/set) | ✅ [no ar](https://vidalprof.github.io/o-grandao-e-o-pequenininho/) (18/set, 22:20Z) |
 | 8 | **A Parlenda que Rima** (`_rima2`) | ✅ 40 em `_sequencias/folhas_rima2` | ✅ `POTE-RIMA2.md` (18/set) — 24 entram, 4 **têm autoria** e ficam fora do texto | ✅ 35 folhas (18/set) | ✅ [no ar](https://vidalprof.github.io/a-parlenda-que-rima/) (18/set, 23:23Z) |
 | 9 | **O Problema da História** (`_narra2`) | ✅ 40 em `_sequencias/folhas_narra2` | ✅ `POTE-NARRA2.md` (18/set) — colheita **torta**: 9 são da *disciplina* História e 18 são quadrinhos com personagem registrado | ✅ 35 folhas (18/set) | ✅ [no ar](https://vidalprof.github.io/o-problema-da-historia/) (18/set, 23:49Z) |
-| 10 | **Jornalista por um Dia** (`_not2`) | ✅ 40 em `_sequencias/folhas_not2` | ✅ `POTE-NOT2.md` (19/set) — 15 trazem assunto **adulto** e 7 trazem **outro ano** impresso; o presente foi a **fotolegenda** | ✅ 35 folhas (19/set) | ⏳ publicando |
+| 10 | **Jornalista por um Dia** (`_not2`) | ✅ 40 em `_sequencias/folhas_not2` | ✅ `POTE-NOT2.md` (19/set) — 15 trazem assunto **adulto** e 7 trazem **outro ano** impresso; o presente foi a **fotolegenda** | ✅ 35 folhas (19/set) | ✅ [no ar](https://vidalprof.github.io/jornalista-por-um-dia/) (19/set) — ⭐ **fecham os dez** |
 
 ⚠️ **Esta tabela se atualiza a cada caderno, no mesmo commit.** É por ela que a
 próxima sessão sabe onde parou — e é a única fonte disso.
