@@ -8987,3 +8987,61 @@ História; Português vem em faixas, e medir no documento inteiro aprovaria
 conteúdo de outro ano. A conferência foi feita **à mão**, linha por linha
 (3182-3186 do `_curriculo/blumenau.txt`), e está escrita dentro do
 `_seg2/curriculo.json`, no campo `conceitos_conferencia`.
+
+## ⏱️ "EXCEÇÃO OU AUMENTAR?" — e a terceira resposta, que era a medida (19/set/2026)
+
+O Marcos, sobre o "Somando com os Dedinhos" reprovado por duração: *"pode fazer
+essa atividade fica sendo uma exceção, ou pode aumentá-la"*. Duas opções — e a
+resposta certa começava por uma terceira, que ele não podia saber: **o número
+estava errado**.
+
+**O portão media 8 itens numa atividade de 20.** O `_qa/duracao.py` tem três
+galhos (motor com `FASES`, fichas com `FICHAS`, folha viva com `ITENS`) e o
+`_dedos` não é nenhum dos três: ele SORTEIA o conteúdo a cada abertura. Sem
+galho, caiu no genérico — que procura a maior `var MAIUSCULA = [...]` do arquivo
+— e pegou **`NOMES`** (os cinco TÍTULOS das páginas) e **`PELES`** (os três tons
+de pele). Oito itens. E reprovava com esse número.
+
+⚠️ **É a QUARTA vez que este portão mede a lista errada**, e as três anteriores
+estão escritas dentro dele, em maiúsculas, cada uma com a sua lição. O padrão é
+sempre o mesmo: formato novo → nenhum galho → cai no genérico → mede um título
+como se fosse trabalho da criança. A lição que faltava escrever: **o galho
+genérico não é uma rede de segurança, é uma armadilha** — ele nunca diz "não
+medi", sempre devolve um número com cara de medida.
+
+**O contrato novo para este formato** (`/*TRABALHO-INI*/`): a atividade declara
+quantos itens cada página pede e qual é o gesto, e o `novaFolha()` **lê dali** em
+vez de repetir o número. Uma fonte só. Medida verdadeira do caderno como ele
+estava: **9 a 13 min**, não 3 a 4.
+
+**Depois disso é que veio a decisão**, e foram as duas coisas:
+
+1. **Cresceu, e de graça:** 20 → 41 itens (10, 10, 5, 8, 8). Não custou voz
+   nenhuma — o banco já tinha as 25 falas de cada família (`par`, `soma`,
+   `conte`, `certo`, `fechou`) e os 10 alvos; conferido uma a uma. E o sorteio
+   foi testado 200 vezes seguidas: entrega os 41 em todas. **19 a 26 min.**
+2. **E a exceção, que não é favor:** `_dedos` nasceu em **2026-09-08**, uma
+   semana ANTES da medição de sala que subiu o piso para 40 min, e a decisão do
+   Marcos naquele dia foi que *"os cadernos que já existem não crescem nem
+   encolhem"*. É irmão do `_alfa1`, que nasceu no MESMO dia e está na lista de
+   veteranos desde o começo. Ficou de fora por omissão — e provavelmente porque,
+   com a medida errada, nem parecia do mesmo tamanho.
+
+⚠️ **Chegar aos 40 min seria TREINO, não atividade.** Depois de dobrar, faltam
+~15 min. Cobri-los exigiria mais quarenta itens da MESMA soma até dez, e uma
+criança de seis anos somando dedos por 55 minutos seguidos é o "cansativo" que
+o Marcos proíbe. O piso nasceu de cadernos de 35 FOLHAS; esta é uma folha de 5
+páginas.
+
+### E crescer quebrou uma coisa — que virou portão
+
+Ao subir a página do LIGAR de quatro para cinco pares, a coluna da esquerda
+ficou com cinco mãos e a da direita com quatro números: a ordem dos números
+estava escrita à mão como `[0, 1, 2, 3]`. **A folha nunca fechava** — a criança
+liga os quatro que dá e fica presa. Sintaxe perfeita, nada estoura, nada sai da
+tela; nenhum portão via.
+
+Nasceu a **regra 7 do `_qa/leiaute_mao.js`**: *cada ponta de um lado tem par do
+outro?* Ela não é de leiaute e mora ali de propósito — é o único portão da casa
+que abre TODAS as telas de toda atividade, folha viva e app à mão. Na prova, com
+o defeito reposto, reprova; nos seis cadernos medidos, zero falso-positivo.

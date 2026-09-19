@@ -23,6 +23,8 @@
      5b. ALVO CORTADO NA BEIRA — alvo que passa da tela, ou que sai do pai que
         o recorta (a regra 1 nao ve: com overflow:hidden a pagina nao rola); REPROVA
      6. TEXTO CORTADO — caixa com `overflow:hidden` cujo texto nao cabe. AVISO
+     7. LIGAR DESIGUAL — uma coluna com mais pontas que a outra: sobra peca
+        sem par e a folha nunca fecha;                               REPROVA
    Rolagem vertical nao e defeito.
 
    ⚠️ Ele NAO clica em qualquer coisa: so em botoes cujo texto e de ANDAR
@@ -196,6 +198,25 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
         if(fora){ cortados++; if(!exc) exc=nome(e)+" "+fora; }
       }
       if(cortados) out.push(cortados+" alvo(s) CORTADO(S) na beira — a crianca nao alcanca (ex.: "+exc+")");
+      /* ⭐ 7 — LIGAR COM AS DUAS COLUNAS DE TAMANHOS DIFERENTES (19/set/2026).
+         ⚠️ NÃO É REGRA DE LEIAUTE, e mora aqui de propósito: este é o único
+            portão da casa que ABRE TODAS AS TELAS de toda atividade — folha
+            viva e app à mão — e o defeito só existe na tela montada.
+         O que aconteceu: ao crescer o "Somando com os Dedinhos" de quatro para
+         cinco pares, a coluna da ESQUERDA passou a ter cinco mãos e a da
+         DIREITA continuou com quatro números, porque a ordem dos números estava
+         escrita à mão como `[0, 1, 2, 3]`. Um par sem para onde ir: a criança
+         liga os quatro que dá, e a folha NUNCA FECHA. Nenhum portão via — a
+         sintaxe está perfeita, nada estoura, nada sai da tela.
+         A pergunta é da criança: cada ponta de um lado tem par do outro? */
+      for(const lig of document.querySelectorAll(".ligar,.ligcx")){
+        if(!vis(lig)) continue;
+        const cols=[...lig.children].filter(c=>c.tagName!=="svg"&&vis(c)&&c.children.length);
+        if(cols.length!==2) continue;
+        const a=cols[0].children.length, z=cols[1].children.length;
+        if(a!==z) out.push("LIGAR com as colunas desiguais em "+nome(lig)+": "+a+
+          " ponta(s) de um lado e "+z+" do outro — sobra peca sem par e a folha nunca fecha");
+      }
       /* 6 — texto cortado */
       let tc=0;
       for(const e of document.querySelectorAll("*")){ if(!vis(e)) continue; const cs=getComputedStyle(e); if(!/hidden|clip/.test(cs.overflow+cs.overflowX)) continue; if(cs.textOverflow==="ellipsis") continue; if(e.children.length) continue; if(e.scrollWidth>e.clientWidth+6&&e.textContent.trim().length>2){ tc++; } }

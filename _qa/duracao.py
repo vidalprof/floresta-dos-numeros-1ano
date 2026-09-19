@@ -353,7 +353,59 @@ def confere(pasta, piso_min=40.0):
 
     itens, seg_itens, detalhe = 0, 0.0, []
     fases_m = _extrai_fases(html)
-    for nome, corpo in ([] if fases_m else
+    # 2c2) ⭐ A ATIVIDADE QUE SORTEIA O CONTEÚDO E DECLARA O TRABALHO
+    #      (19/set/2026, no "Somando com os Dedinhos").
+    #
+    #      ⚠️ É A QUARTA VEZ QUE ESTE PORTÃO MEDE A LISTA ERRADA, e as três
+    #         anteriores estão escritas aqui em cima. O `_dedos` não tem `FASES`
+    #         (não usa o motor), não tem `FICHAS` e não tem `ITENS` (o conteúdo
+    #         dele é SORTEADO a cada abertura, pelo `novaFolha`). Sem galho para
+    #         ele, o portão caía no genérico e pegava as duas maiores listas que
+    #         encontrava: `NOMES` — os cinco TÍTULOS das páginas — e `PELES`, os
+    #         três tons de pele. Dizia "8 itens para resolver" numa atividade de
+    #         20, e REPROVAVA com esse número.
+    #
+    #      O contrato para este formato: a atividade declara, num bloco marcado,
+    #      quantos itens cada página pede e qual é o gesto dela — e o `novaFolha`
+    #      LÊ DAQUI, em vez de repetir o número. Uma fonte só: se fossem duas, o
+    #      portão mediria uma coisa e a criança faria outra.
+    #
+    #          /*TRABALHO-INI*/
+    #          var TRABALHO = {"p1": {"n": 8, "gesto": "escrever"}, ...};
+    #          /*TRABALHO-FIM*/
+    #
+    #      ⚠️ O GESTO "produzir" É NOVO E O PREÇO DELE É PALPITE DECLARADO, como
+    #         todos os outros desta tabela: 20 s. É a criança que PRODUZ uma
+    #         quantidade em vez de escolher uma pronta — decide o número, reparte
+    #         entre as duas mãos, levanta um dedo de cada vez contando em voz
+    #         alta (de um a dez toques) e confirma. Custa mais que marcar (12 s)
+    #         e menos que escrever uma palavra no teclado da tela (25 s). Nunca
+    #         foi cronometrado com criança.
+    CUSTO_TRABALHO = {u"escrever": 25.0, u"ligar": 14.0, u"produzir": 20.0,
+                      u"arrastar": 14.0, u"marcar": 12.0, u"tocar": 9.0,
+                      u"procurar": 20.0, u"memoria": 20.0}
+    m_tr = re.search(r'/\*TRABALHO-INI\*/(?:\s|/\*.*?\*/)*var\s+TRABALHO\s*=\s*(\{.*?\})\s*;',
+                     html, re.S)
+    if m_tr and not fases_m:
+        try:
+            trab = json.loads(m_tr.group(1))
+        except ValueError:
+            trab = None
+        if trab:
+            itens, seg_itens, detalhe = 0, 0.0, []
+            for chave in sorted(trab.keys()):
+                d = trab[chave]
+                if not isinstance(d, dict):
+                    continue
+                n = int(d.get(u"n") or 0)
+                g = d.get(u"gesto") or u"tocar"
+                if n <= 0:
+                    continue
+                itens += n
+                seg_itens += n * CUSTO_TRABALHO.get(g, S_POR_ITEM)
+                detalhe.append((chave, n, g))
+
+    for nome, corpo in ([] if (fases_m or itens) else
                         re.findall(r'var\s+([A-Z][A-Z0-9_]{2,})\s*=\s*\[(.*?)\];',
                                    html, re.S)):
         if nome in (u"IMGS", u"VOZOK", u"FASES_MESTRE", u"MED", u"TREINO"):
