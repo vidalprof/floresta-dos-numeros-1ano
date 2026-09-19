@@ -78,7 +78,45 @@ if os.path.isdir(audio):
     ids = set(re.findall(r'falar\("([a-z0-9_]+)"\s*\)', js))
     ids |= set(re.findall(r'depoisDaFala\("([a-z0-9_]+)"\s*,', js))
     ids |= set(re.findall(r'montaBarra\("([a-z0-9_]+)"\s*,', js))
-    faltam = sorted(i for i in ids if not os.path.exists(os.path.join(audio, i + ".mp3")))
+
+    # ⚠️ DUAS CONVENCOES DE NOME DE MP3 CONVIVEM NA CASA, e ignorar a segunda
+    #    fazia este portao ACUSAR INOCENTE. No motor, o arquivo se chama como a
+    #    CHAVE da fala (`audio/digite.mp3`). Nos cadernos que gravam pelo
+    #    `falas.json` — o `_dedos` e o primeiro — o arquivo se chama pelo HASH
+    #    do TEXTO (`audio/dd_bysko6.mp3`), porque e assim que o `entregar.yml`
+    #    sabe regravar quando o texto muda. Medido em 19/set/2026: o portao
+    #    reprovava `digite`, `faltam` e `fim` no `_dedos`, e as tres tinham mp3.
+    #    Portao que mede a convencao errada e pior do que portao nenhum: ensina
+    #    a ignorar o vermelho. Agora, quando existe `falas.json`, a conferencia
+    #    passa pelo caminho de verdade: chave -> texto (FALAS) -> id -> mp3.
+    porchave = {}
+    cam_fj = os.path.join(pasta, "falas.json")
+    mF = re.search(r"var FALAS\s*=\s*\{(.*?)\};", js, re.S)
+    if os.path.exists(cam_fj) and mF:
+        try:
+            lista = json.load(io.open(cam_fj, encoding="utf-8"))
+            porid = {}
+            for x in lista:
+                if isinstance(x, dict) and "texto" in x and "id" in x:
+                    porid[x["texto"]] = x["id"]
+            for ch, txt in re.findall(r'"([A-Za-z0-9_]+)"\s*:\s*"((?:[^"\\]|\\.)*)"',
+                                      mF.group(1)):
+                try:
+                    alvo = json.loads('"%s"' % txt)
+                except ValueError:
+                    continue
+                if alvo in porid:
+                    porchave[ch] = porid[alvo]
+        except (ValueError, IOError):
+            porchave = {}
+
+    def tem_mp3(i):
+        if os.path.exists(os.path.join(audio, i + ".mp3")):
+            return True
+        alvo = porchave.get(i)
+        return bool(alvo) and os.path.exists(os.path.join(audio, alvo + ".mp3"))
+
+    faltam = sorted(i for i in ids if not tem_mp3(i))
     if faltam:
         problemas.append("%d fala(s) usada(s) sem MP3 (o mascote fica mudo ali): %s%s"
                          % (len(faltam), ", ".join(faltam[:5]), " ..." if len(faltam) > 5 else ""))

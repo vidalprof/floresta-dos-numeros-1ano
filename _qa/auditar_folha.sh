@@ -131,6 +131,12 @@ PORTOES=(
   #    estava no ar (castelo sem torre, menino sem o topo da cabeça, galinha sem
   #    a cauda, vaca sem as patas).
   "1i7 recorte cortou o desenho|python3 _qa/recorte_cortado.py $PASTA"
+  # ⭐ 1i8) A MAO DE N DEDOS E A DE N DEDOS? (19/set/2026, com a troca do desenho
+  #    de codigo pela figura recortada no `_dedos`). Numa atividade de CONTAR, o
+  #    numero de dedos nao e arte: e o conteudo. Ele NAO conta dedo — mede a
+  #    tinta crescendo de 0 a 5, figura repetida e tom que mudou a silhueta.
+  #    Nos cadernos sem a serie das maos ele sai com "NAO SE APLICA".
+  "1i8 a mao de N dedos|python3 _qa/dedos_contam.py $PASTA"
   # ⭐ 0b11) IDENTIDADE PROPRIA (Marcos, 18/set/2026: "cada caderno precisa ter capa
   #    diferente, cor diferente, animacoes... os estudantes acham que e a mesma
   #    atividade"). Onze cadernos no ar dividiam duas cores e duas capas.

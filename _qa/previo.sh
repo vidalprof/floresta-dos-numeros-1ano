@@ -109,6 +109,20 @@ PORTOES=(
   #    da folha certa; este pergunta se veio SO a figura, sem o quadradinho de
   #    marcar, sem a moldura tracejada e sem a linha da coluna.
   "1i6 sobra da pauta da folha|python3 _qa/sobra_da_folha.py $PASTA"
+  # ⭐ 1i7) o recorte CORTOU o desenho? (19/set/2026, o Marcos abrindo o
+  #    *Jornalista por um Dia*: *"na imagem de a irmã deu um presente ao irmão
+  #    está cortada aparecendo parte do irmão. Esse tipo de erro não pode
+  #    acontecer"*). Estava só na banca de folha viva; aqui custa dois segundos
+  #    e pega o defeito antes de eu gastar os dez minutos da banca inteira.
+  "1i7 recorte cortou o desenho|python3 _qa/recorte_cortado.py $PASTA"
+  # ⭐ 1i8) a mão de N dedos é a de N dedos? (19/set/2026, com a troca do vetor
+  #    pela figura recortada no `_dedos`). Numa atividade de CONTAR, o número de
+  #    dedos é o conteúdo: a figura de "três" com quatro dedos ensina errado.
+  #    Ele NAO conta dedo (impossível: na de 4 e na de 5 os dedos se encostam);
+  #    mede o que dá — a tinta crescendo de 0 a 5, nenhuma figura repetida, os
+  #    tons sendo a mesma mão. Quem confere a contagem é o olho, na folha de
+  #    contato. Nos outros cadernos ele sai com "NAO SE APLICA".
+  "1i8 a mao de N dedos|python3 _qa/dedos_contam.py $PASTA"
   # ⭐ 0r2) a criança OUVE o que está escrito no falas.json. O revisor (0r) pega
   #    digitação; a concordância de artigo e de verbo, ninguém media — e os Cinco
   #    Reinos foram ao ar com 54 falas erradas ("do reino DAS animais").

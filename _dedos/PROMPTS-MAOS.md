@@ -1,5 +1,31 @@
 # 🖐️ AS SEIS MÃOS — prompts prontos para o Marcos gerar no ChatGPT
 
+> ## ⛔ ESTE PLANO ESTÁ CANCELADO (19/set/2026) — as mãos JÁ EXISTEM, e não são de IA
+>
+> Ordem do Marcos, que **revoga** a decisão de 8/set registrada logo abaixo:
+> ***"para a atividade de contar nos dedinhos, [quero] essas imagens das mãos, dos
+> dedos na internet, pois na atividade está feio"***.
+>
+> As seis mãos (punho, 1, 2, 3, 4 e 5) foram **recortadas de uma folha de papel** —
+> a d11 da colheita `_sequencias/folhas_maos`, a única das quarenta que traz a série
+> inteira, com a mesma mão e sem marca d'água. Estão em `_dedos/img/dd_mao<N><tom>.png`,
+> em três tons de pele, e quem as recorta é **`_dedos/recortar_das_folhas.py`**.
+>
+> **Ninguém precisa gerar nada.** Se um dia faltar uma mão nova, o caminho é o mesmo
+> da regra da casa para folha viva — colher na internet (`buscar-fotos.yml`) e recortar,
+> **não** pedir à IA.
+>
+> **O que deste arquivo continua valendo, e é o motivo de ele não ser apagado:** o aviso
+> do parágrafo seguinte, sobre a CONTAGEM. Ele é verdadeiro venha a figura de onde vier,
+> e hoje tem portão: **`_qa/dedos_contam.py` (1i8)** — que, honestamente, não conta dedo
+> (na de 4 e na de 5 os dedos se encostam e a máquina não separa); ele mede a tinta
+> crescendo de 0 a 5, figura repetida e tom que mudou a silhueta. **A contagem em si
+> continua sendo trabalho do olho**, na folha de contato `_dedos/_contato.png`.
+>
+> *Daqui para baixo, é o registro do caminho que NÃO seguimos.*
+
+---
+
 **Regra desta atividade (decisão do Marcos, 8/set/2026):** *"pode recriar tudo para ser
 autoria, mas tem que usar imagem gerada pelo ChatGPT, no caso eu gero, ou utilizar o
 banco de imagem"*. O banco (`_banco/index.json`, 661 objetos) **não tem mão nenhuma** —

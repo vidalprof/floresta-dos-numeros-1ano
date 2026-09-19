@@ -8795,3 +8795,111 @@ versão de 16/set, porque publicar o painel era um passo à parte
 a TODA lista de alvos (passo "Ler a lista de alvos"), e o CLAUDE.md diz isso na
 regra do catálogo. Regra que fica: **"está no repo" não é "está no ar"** — o que o
 Marcos abre na escola é o site, e o site só muda quando alguém o publica.
+
+## 🖐️ AS MÃOS DEIXARAM DE SER DESENHO DE CÓDIGO (19/set/2026)
+
+Ordem do Marcos: ***"para a atividade de contar nos dedinhos, [quero] essas
+imagens das mãos, dos dedos na internet, pois na atividade está feio"***.
+
+**O que estava errado, e por que nenhum portão viu.** No `_dedos` a mão era
+desenhada em JavaScript — `maoSVG()`, cinco retângulos de cantos arredondados
+mais um caminho para o polegar. Passava em tudo: `node --check` aprova, o
+leiaute mede certinho, o contraste passa, o jogador resolve a folha. E era
+feia ao lado do Sr. Batata, que é arte de verdade. **Feio não tem portão** —
+tem o Marcos, e foi ele quem viu, como sempre acontece com esta família de
+defeito.
+
+**A decisão anterior, que esta revoga.** Em 8/set ele tinha dito: *"pode
+recriar tudo para ser autoria, mas tem que usar imagem gerada pelo ChatGPT, no
+caso eu gero, ou utilizar o banco de imagem"*. O `_dedos/PROMPTS-MAOS.md`
+guardava os seis prompts prontos, esperando ele gerar. **Esse plano está
+cancelado** e o arquivo diz isso no topo — documento antigo que continua
+parecendo válido é armadilha para a próxima sessão.
+
+**De onde as mãos vieram.** Quarenta folhas colhidas por `buscar-fotos.yml`
+para `_sequencias/folhas_maos`. A escolhida foi a **d11** (980×980), e o motivo
+é só um: é a **única** das quarenta que traz a série INTEIRA — **punho, 1, 2,
+3, 4 e 5** — com a mesma mão, o mesmo traço e sem marca d'água. Isso importa
+porque as seis se revezam na MESMA caixa da tela quando a criança levanta um
+dedo: vindas de folhas diferentes, a mão trocaria de dono a cada toque. (As
+bonitas que ficaram de fora e por quê: o cabeçalho do
+`_dedos/recortar_das_folhas.py`. Cinco da colheita trazem marca d'água de banco
+de imagem — dreamstime, alamy — e nenhuma delas entra em folha de criança.)
+
+**Três coisas que valem para o próximo recorte deste tipo:**
+
+1. **A MESMA TELA, ANCORADA PELO PULSO.** Recortadas justas, as seis têm
+   alturas bem diferentes (o punho tem 242 px, a mão de um dedo tem 339). Na
+   linha da soma o navegador centraliza cada uma pela metade e os PULSOS ficam
+   em alturas diferentes — as mãos parecem flutuar. Dá para empurrar com CSS
+   (caixa de altura fixa + `align-items:flex-end`), e foi o que fiz primeiro;
+   mas aí a regra tem de ser repetida em cada lugar que desenhe uma mão, e
+   basta esquecer um para o defeito voltar. **Consertei na FIGURA** (`mesma_tela`
+   no script de recorte): todas na mesma tela de 344×363, encostadas embaixo ao
+   centro. O alinhamento passa a sair de graça em todo lugar, inclusive nos que
+   ainda não existem. E de brinde a tela não pula debaixo do dedo da criança
+   quando a figura troca.
+2. **OS TONS DE PELE SAEM POR RECOLORAÇÃO, não por figura nova.** A folha traz
+   um tom só e o caderno variava a pele a cada abertura. Neste traço achatado a
+   pele é um campo de cor chapada: uma máscara simples (pixel com cor, vermelho
+   na frente do azul, longe do preto e do branco) separa a pele do contorno, das
+   unhas e do papel, e o novo tom entra por fator multiplicativo — as dobras
+   continuam sendo dobras. Três tons × seis mãos, e as silhuetas batem pixel a
+   pixel (medido pelo portão novo).
+3. **O GESTO TEVE DE MUDAR, e está declarado no código.** A mão de código tinha
+   um alvo de toque por dedo. A figura guarda a QUANTIDADE, não os dedos
+   separados — e a ordem na tela muda de figura para figura (na mão aberta o
+   polegar é o desenho mais à esquerda; nas outras é o indicador). Cinco faixas
+   de toque por cima apontariam para o dedo errado em metade dos casos, e **alvo
+   que aponta para o lugar errado é pior do que alvo nenhum**. O gesto novo é o
+   que a criança de seis anos faz: **toca na mão e sobe um dedo**, contando em
+   voz alta, com um botão `abaixar` para quando passa. Para mostrar sete, ela
+   toca sete vezes — a prática de contar de um em um, que é o conteúdo da folha,
+   ficou preservada (e o `sDedo` toca a cada uma). Enunciado e a fala `p4enun`
+   foram reescritos junto; teclado (Enter/Espaço) continua funcionando, que é a
+   regra das duas portas.
+
+### O portão que nasceu disso — 1i8, `_qa/dedos_contam.py`
+
+Numa atividade de CONTAR, o número de dedos não é arte: é o conteúdo. A figura
+de "três" com quatro dedos não fica feia, ela **ensina errado**.
+
+**E ele NÃO conta os dedos — isto é para não me iludir de novo.** Eu tentei: a
+conta natural é fatiar a figura acima dos nós e contar as corridas de tinta.
+Medido nas seis da d11, ela acerta 0, 1, 2 e 3 e **erra 4 e 5**, porque nesses
+dois desenhos os dedos se encostam e viram uma corrida só. Portão que erra um
+terço dos casos não é portão. **A contagem continua sendo trabalho do olho**, na
+folha de contato que o script imprime.
+
+O que ele mede é a falha que de fato acontece neste trabalho — **a caixa sai
+trocada**: (1) a tinta tem de CRESCER de 0 a 5 (medido: 35.978 · 41.535 ·
+48.488 · 53.649 · 57.257 · 63.513 px, a menor diferença entre vizinhas é 7%;
+corto em 3%, que é **PALPITE DECLARADO**); (2) nenhuma duas figuras iguais;
+(3) os tons têm de ser a mesma silhueta; (4) todas na mesma tela. Na prova, com
+a de 3 e a de 4 trocadas de propósito, ele reprovou por três caminhos
+diferentes. Entrou no pré-voo e na banca de folha viva; nos outros cadernos sai
+com "NÃO SE APLICA".
+
+### E um portão que estava acusando INOCENTE — 1c, regra 3
+
+Enquanto media o `_dedos`, o `_qa/clone.py` reprovava *"3 falas usadas sem MP3
+(o mascote fica mudo ali): digite, faltam, fim"*. **As três tinham mp3.**
+Convivem duas convenções de nome na casa: no motor o arquivo se chama como a
+CHAVE da fala (`audio/digite.mp3`); nos cadernos que gravam pelo `falas.json` —
+o `_dedos` é o primeiro — ele se chama pelo **hash do TEXTO**
+(`audio/dd_bysko6.mp3`), porque é assim que o `entregar.yml` sabe regravar
+quando o texto muda. O portão só conhecia a primeira. Agora, quando existe
+`falas.json`, ele confere pelo caminho de verdade: chave → texto → id → mp3.
+**Portão que mede a convenção errada é pior do que portão nenhum: ensina a
+ignorar o vermelho.** (É a segunda vez em dois dias — o 1i7 mediu o cabeçalho
+da página em vez das sopas no `_sinon2`, porque lia as caixas na ordem errada.)
+
+### Dívida declarada, que este trabalho NÃO resolveu
+
+O portão **3g (duração)** reprova o `_dedos`: a folha dura **2,9 a 4,4 min** na
+ponta baixa, contra o piso de 40. **Já reprovava antes de eu encostar nela** —
+não é defeito novo. Mas é verdade que a turma termina em quatro minutos e o
+professor fica sem plano B, que foi exatamente a cobrança do Marcos em 15/set.
+O conserto barato existe (mais rodadas nas listas que já estão lá, sem arte nem
+voz nova) e é decisão dele, não minha: mexer no tamanho da atividade não estava
+no pedido.
