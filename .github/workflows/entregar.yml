@@ -352,6 +352,31 @@ jobs:
               print("%d fala(s) nao gravaram" % erros); sys.exit(1)
           PY
 
+      # ⭐ A FORÇA DA VOZ (19/set/2026, cobrança do Marcos: "os áudios têm que
+      # ficarem perfeitos"). O Edge TTS dá MENOS energia a uma palavra curta e
+      # isolada ("Livros.", "e.") do que a uma frase — medido em cinco cadernos,
+      # 2 a 3 falas de cada um saem 7 dB abaixo das irmãs. Sete decibéis é metade
+      # da força percebida: no PC da escola a criança aperta o alto-falante da
+      # opção e não ouve — e escolhe pelo desenho, que é o defeito que o
+      # alto-falante existe para matar.
+      # ⚠️ GANHO PURO e SÓ nas que destoam: `loudnorm` em áudio curto vira
+      #    normalizador de pico (lição do `_qa/kvoz.py`), e reescrever as 700
+      #    incharia o `.git` — que é o que faz o build do Pages engasgar.
+      # Roda DEPOIS de gravar e ANTES de guardar, para o mp3 já entrar corrigido.
+      - name: Igualar a forca da voz (portao 0v)
+        continue-on-error: true
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            echo "::warning::ffmpeg nao esta aqui — a forca da voz nao foi igualada"; exit 0
+          fi
+          for par in $(echo "$LISTA" | tr ',' ' '); do
+            p="${par%%:*}"
+            [ -d "$p/audio" ] || continue
+            python3 _padrao/voz_forca.py "$p" || true
+          done
+
       # ⚠️ DEFEITO PAGO (ago/2026): aqui estava `git add -A "*/audio"`. Pathspec
       #    do git com curinga precisa casar o CAMINHO INTEIRO — `*/audio` nao
       #    casa `_naveg/audio/_carimbo.json`. Resultado: o carimbo nunca era

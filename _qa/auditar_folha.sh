@@ -111,6 +111,15 @@ PORTOES=(
   # ⭐ 1o) sem voz na opcao, a crianca que ainda nao le escolhe pelo tamanho do
   #    botao — e a folha vira sorteio para justamente quem ela deveria ajudar.
   "1o alto-falante da resposta|python3 _qa/voz_opcao.py $PASTA"
+  # ⭐ 0v) A FORÇA DA VOZ (19/set/2026, cobrança do Marcos: "os áudios têm que
+  #    ficarem perfeitos"). Havia portão para a fala que falta, para a voz-robô,
+  #    para a palavra que a voz erra e até para a pronúncia — e nenhum media a
+  #    única coisa que o ouvido sente primeiro: o VOLUME. Medido em cinco
+  #    cadernos, 2 a 3 falas de cada um saem 7 dB abaixo das irmãs, sempre
+  #    palavra curta e isolada ("Livros.", "e."). No PC da escola a criança
+  #    aperta o alto-falante da opção e não ouve. Conserto:
+  #    `python3 _padrao/voz_forca.py <pasta>`.
+  "0v forca da voz (nenhuma fala abafada)|python3 _qa/voz_forca.py $PASTA"
   # ⭐ 0b11) IDENTIDADE PROPRIA (Marcos, 18/set/2026: "cada caderno precisa ter capa
   #    diferente, cor diferente, animacoes... os estudantes acham que e a mesma
   #    atividade"). Onze cadernos no ar dividiam duas cores e duas capas.

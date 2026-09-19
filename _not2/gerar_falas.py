@@ -199,7 +199,7 @@ ENUN = [
  u"As cenas da not\u00edcia do passarinho est\u00e3o embaralhadas. Ponha cada uma no lugar dela.",
  u"Agora a not\u00edcia do golfinho. Da primeira cena \u00e0 \u00faltima.",
  u"Ache na grade a palavra que a pista descreve: toque na primeira letra e depois na \u00faltima.",
- u"Agora as palavras do jornal. Na grade n\u00e3o h\u00e1 acento: procure NOTICIA, n\u00e3o not\u00edcia.",
+ u"Agora as partes do jornal. Na grade n\u00e3o h\u00e1 acento: procure TITULO, n\u00e3o t\u00edtulo.",
  u"Toque numa pista, escute e escreva a palavra.",
  u"Nem todo texto serve para a mesma coisa. Leia e diga para que serve.",
  u"E agora o assunto: do que a not\u00edcia trata?",

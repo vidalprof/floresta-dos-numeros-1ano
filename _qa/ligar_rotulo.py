@@ -27,6 +27,20 @@ u"""
     declare em `<pasta>/LIGAR-OK.json` uma lista com os potes liberados e o
     motivo — como no HALO-OK.json. Declarado e olhado, nunca desligado.
 
+ ⚠⚠ ELE PASSOU MESES CEGO, e quem percebeu foi a banca do decimo caderno do
+    2o ano (19/set/2026): em TODO caderno de folha viva ele imprimia
+    "NAO MEDI: nao achei o bloco ITENS" — e "nao medi" nao e "passou". Duas
+    causas, as duas consertadas aqui:
+      1. a expressao pedia `/*ITENS-INI*/ var ITENS =` COLADOS, e o esqueleto
+         da folha viva tem um comentario de dez linhas entre os dois;
+      2. mesmo achando, ele so entendia o formato `{"g": [[chave, rotulo]]}`,
+         que e o da Coroa dos Cinco Reinos (motor). Na folha viva o pote e
+         `[["c1","c2","c3"]]` e o ROTULO nem mora ali — mora num bloco de
+         DADOS que o portao nao tem como adivinhar.
+    O conserto da segunda foi parar de adivinhar: em folha viva ele ABRE A
+    ATIVIDADE NO NAVEGADOR e le a coluna da direita como a crianca a ve
+    (`[data-qa*="-d-"]`), que e a unica fonte que nao mente.
+
  Uso:  python3 _qa/ligar_rotulo.py <pasta>
  Codigo 0 = ok · 1 = REPROVADO · 2 = nao deu para medir
 ============================================================
@@ -56,6 +70,92 @@ def potes_de_ligar(itens):
     return fora
 
 
+JS_FOLHA = u"""
+const { chromium } = require('%(pw)s');
+const pasta = process.argv[2], porta = process.argv[3];
+(async () => {
+  const b = await chromium.launch({ executablePath: '%(cromo)s', args: ['--no-sandbox'] });
+  const p = await b.newPage({ viewport: { width: 412, height: 900 } });
+  await p.goto('http://127.0.0.1:' + porta + '/' + pasta + '/index.html');
+  await p.waitForTimeout(1200);
+  const ok = await p.evaluate(() => typeof PAGEL !== 'undefined' && PAGEL.length > 1);
+  if (!ok) { console.log(JSON.stringify({semCaderno: true})); await b.close(); return; }
+  const out = await p.evaluate(() => {
+    const r = [];
+    for (let pi = 1; pi < PAGEL.length; pi++) {
+      vaiPara(pi);
+      const dir = PAGEL[pi].querySelectorAll('[data-qa*="-d-"]');
+      if (!dir.length) continue;
+      /* o rotulo como a crianca o ve: o texto, e o aria-label quando for figura */
+      const rots = [].map.call(dir, e =>
+        ((e.innerText || e.textContent || '').trim() || e.getAttribute('aria-label') || ''));
+      r.push({ pi: pi, nome: (typeof NOMES !== 'undefined' ? NOMES[pi - 1] : ('folha ' + pi)),
+               rots: rots });
+    }
+    return r;
+  });
+  console.log(JSON.stringify(out));
+  await b.close();
+})().catch(e => { console.log(JSON.stringify({erro: String(e)})); process.exit(3); });
+"""
+
+CROMO = u"/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
+PW = u"/opt/node22/lib/node_modules/playwright/index.js"
+
+
+def folha_viva(pasta):
+    u"""abre o caderno e confere, folha a folha, se a coluna da direita mostra a
+    mesma coisa duas vezes. ⚠️ O motor de ligar casa por CHAVE, nao pelo texto:
+    dois rotulos iguais fazem a crianca levar ERRO por ter acertado."""
+    import subprocess, tempfile, time
+    if not os.path.exists(CROMO) or not os.path.exists(PW):
+        print(u"%s -> NAO MEDI: Playwright/Chromium nao estao aqui." % pasta)
+        return 2
+    js = os.path.join(tempfile.gettempdir(), u"_qa_ligar_rotulo.js")
+    io.open(js, u"w", encoding=u"utf-8").write(JS_FOLHA % {u"pw": PW, u"cromo": CROMO})
+    porta = u"8794"
+    srv = subprocess.Popen([u"python3", u"-m", u"http.server", porta],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    time.sleep(1.1)
+    try:
+        saida = subprocess.check_output([u"node", js, pasta, porta]).decode(u"utf-8")
+    except Exception as e:
+        srv.kill()
+        print(u"%s -> NAO MEDI: o navegador nao abriu (%s)." % (pasta, e))
+        return 2
+    srv.kill()
+    linhas = [x for x in saida.strip().split(u"\n") if x.startswith(u"[") or x.startswith(u"{")]
+    if not linhas:
+        print(u"%s -> NAO MEDI: o navegador nao devolveu nada." % pasta)
+        return 2
+    dados = json.loads(linhas[-1])
+    if isinstance(dados, dict):
+        print(u"%s -> NAO MEDI: %s" % (pasta, dados.get(u"erro") or u"sem caderno"))
+        return 2
+    if not dados:
+        print(u"%s -> NAO SE APLICA: nenhuma folha de ligar." % pasta)
+        return 2
+    erros, total = [], 0
+    for f in dados:
+        rots = [r for r in f[u"rots"]]
+        total += len(rots)
+        rep = sorted(set(r for r in rots if rots.count(r) > 1 and r))
+        if rep:
+            erros.append((f[u"pi"], f[u"nome"],
+                          u" e ".join(u'"%s"' % r[:40] for r in rep)))
+    print(u"%s -> ligar: %d rotulo(s) conferido(s) em %d folha(s) de ligar"
+          % (pasta, total, len(dados)))
+    if erros:
+        print(u"   REPROVADO — a crianca leva erro por acertar:")
+        for pi, nome, rep in erros[:10]:
+            print(u"    x folha %d (%s) mostra %s duas ou mais vezes na coluna da direita"
+                  % (pi, nome, rep))
+        print(u"   conserto: um rotulo por par. O motor casa por CHAVE, nao pelo texto.")
+        return 1
+    print(u"   ok: nenhuma folha mostra o mesmo rotulo duas vezes.")
+    return 0
+
+
 def main():
     if len(sys.argv) < 2:
         print(u"uso: python3 _qa/ligar_rotulo.py <pasta>")
@@ -66,7 +166,12 @@ def main():
         print(u"%s -> NAO SE APLICA: nao e caderno de folha viva." % pasta)
         return 2
     html = io.open(cam, encoding=u"utf-8").read()
-    m = re.search(r"/\*ITENS-INI\*/\s*var\s+ITENS\s*=\s*(\{.*?\})\s*;", html, re.S)
+
+    # ---- folha viva: mede NO NAVEGADOR, que e onde o rotulo existe de verdade
+    if os.path.exists(os.path.join(pasta, u"folhas.js")):
+        return folha_viva(pasta)
+
+    m = re.search(r"/\*ITENS-INI\*/.*?var\s+ITENS\s*=\s*(\{.*?\})\s*;", html, re.S)
     if not m:
         print(u"%s -> NAO MEDI: nao achei o bloco ITENS." % pasta)
         return 2
