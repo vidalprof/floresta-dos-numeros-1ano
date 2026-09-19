@@ -152,6 +152,9 @@ ESPEC = {
     "_rima2":  dict(cor="#1560e8", cena="corrente", letra="pula",
                     figs=["qd_cachimbo", "qd_jarro", "qd_sino", "qd_touro"], rot=None,
                     fundo=("#d9e6fd", "#f5f9ff"), nota="a corrente de rimas: as figuras da parlenda HOJE É DOMINGO ligadas por um elo, e um pulso que corre de uma para a outra (recortadas da folha de papel d31)"),
+    "_not2":   dict(cor="#1a237e", cena="jornal", letra="desliza",
+                    figs=["nt_jornaleiro", "nt_golfinho", "nt_beijaflor", "nt_lendo"], rot=None,
+                    fundo=("#dde0f5", "#f4f5fc"), nota="a p\u00e1gina de jornal: cada foto sobe do papel e a tarja da legenda desliza por baixo dela (figuras recortadas das folhas de papel d03, d12, d29 e d39)"),
     "_narra2": dict(cor="#7a5195", cena="cenario", letra="cai",
                     figs=["hi_castelo", "hi_menino", "hi_vaca", "hi_galinha"], rot=None,
                     fundo=("#ece2f3", "#faf7fc"), nota="o cenário que se monta: as peças da história caem no lugar, uma depois da outra (recortadas da folha de papel d19, Montando a história)"),
@@ -612,6 +615,47 @@ def cena_cenario(p, S):
     return css, "'<div class=\"cena\">' + " + html + " + '</div><div class=\"chao2\"></div>'"
 
 
+def cena_jornal(p, S):
+    u"""A PÁGINA DE JORNAL — a cena do caderno da notícia.
+
+    ⚠️ Ela nasceu do assunto, e o assunto é exatamente este gesto: no jornal a
+       FOTO vem primeiro e a LEGENDA aparece embaixo dela, explicando o que a
+       foto mostra. A capa faz isso na frente da criança — cada foto sobe do
+       papel e, logo atrás, a tarja da legenda desliza por baixo. Nenhuma outra
+       capa da casa mostra texto ENTRANDO debaixo da figura; é a marca deste
+       caderno, e é a primeira coisa que ele ensina.
+
+    ⚠️ As tarjas são barras cegas de propósito (sem palavra dentro): na capa a
+       criança ainda não leu nada, e uma legenda escrita ali entregaria o jogo da
+       folha 4. O que a capa mostra é o LUGAR da legenda, não o texto dela."""
+    css = u""".capa .cena{display:flex;justify-content:center;align-items:flex-end;
+  gap:clamp(5px,2.2vw,16px);flex-wrap:nowrap}
+.capa .it{display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:clamp(3px,1.2vw,7px) clamp(3px,1.2vw,7px) 0;background:#fff;border-radius:6px;
+  box-shadow:0 2px 0 rgba(0,0,0,.10);
+  -webkit-animation:saiDoPapel%(S)s 3.6s ease-in-out infinite;animation:saiDoPapel%(S)s 3.6s ease-in-out infinite}
+.capa .cena>*:nth-child(2){-webkit-animation-delay:.45s;animation-delay:.45s}
+.capa .cena>*:nth-child(3){-webkit-animation-delay:.9s;animation-delay:.9s}
+.capa .cena>*:nth-child(4){-webkit-animation-delay:1.35s;animation-delay:1.35s}
+.capa .tarja{width:100%%;height:7px;border-radius:4px;background:%(cor)s;margin-bottom:5px;
+  -webkit-animation:entraTarja%(S)s 3.6s ease-in-out infinite;animation:entraTarja%(S)s 3.6s ease-in-out infinite}
+.capa .banca{height:15px;max-width:620px;margin:-4px auto 0;border-radius:3px;background:%(cor)s;
+  box-shadow:0 6px 14px rgba(0,0,0,.18);position:relative;z-index:1}
+.capa .banca:before,.capa .banca:after{content:"";position:absolute;top:4px;height:7px;
+  border-radius:2px;background:rgba(255,255,255,.55)}
+.capa .banca:before{left:7%%;width:34%%}
+.capa .banca:after{right:7%%;width:22%%}
+""" % dict(S=S, cor=p["cor"]) + kfs("saiDoPapel" + S,
+        "0%{transform:translateY(9px);opacity:.45}"
+        "25%,100%{transform:translateY(0);opacity:1}") \
+        + kfs("entraTarja" + S,
+              "0%,12%{transform:scaleX(.06);opacity:.3}"
+              "38%,100%{transform:scaleX(1);opacity:1}")
+    html = " + ".join(item(p, i, extra=" + '<i class=\"tarja\"></i>'")
+                      for i in range(len(p["figs"])))
+    return css, "'<div class=\"cena\">' + " + html + " + '</div><div class=\"banca\"></div>'"
+
+
 CENAS = {
     "desfile": cena_desfile, "esteira": cena_esteira, "rua": cena_rua, "tecla": cena_tecla,
     "balao": cena_balao, "balcao": lambda p, S: cena_balao(p, S, True), "brota": cena_brota,
@@ -619,6 +663,7 @@ CENAS = {
     "luz": cena_luz, "lupa": lambda p, S: cena_luz(p, S, True), "gaveta": cena_gaveta,
     "casinha": cena_casinha, "coroa": cena_coroa, "roda": cena_roda, "palmas": cena_palmas,
     "pula": cena_pula, "par": cena_par, "corrente": cena_corrente, "cenario": cena_cenario,
+    "jornal": cena_jornal,
 }
 
 ANTIGOS = {
