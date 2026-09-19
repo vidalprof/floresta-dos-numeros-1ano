@@ -92,7 +92,12 @@ CORTES = [
    #    enche a pasta de figura órfã — e a próxima sessão não sabe se é sobra ou
    #    se alguém esqueceu de ligar.
    u"casa":        (276, 534, 447, 692),
-   u"predio":      (500, 474, 702, 690),
+   # ⚠️ ALARGADA em 19/set/2026: a caixa antiga (500, 474, 702, 690) cortava a
+   #    BICICLETA da calçada ao meio, do lado esquerdo. Quem pegou foi o portão
+   #    novo `_qa/recorte_cortado.py` (1i7), que nasceu de o Marcos ver uma
+   #    figura cortada noutro caderno. A cena inteira — prédio, escadas,
+   #    calçada, bicicleta e o cachorro — começa em 472.
+   u"predio":      (472, 482, 687, 686),
    u"oca":         (50, 743, 244, 934),
    u"palafita":    (240, 753, 467, 930),
    u"casabarro":   (483, 780, 672, 934)}),
