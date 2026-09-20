@@ -39,7 +39,7 @@
 | 5 | **Duas portas**: teclado na tela **e** teclado de verdade; arrastar **e** tocar. | §2 *Regra das duas portas* |
 | 6 | **Nasce do ESQUELETO**, nunca de um clone. | §1b |
 | 7 | **Defeito que chega ao Marcos tem conserto DUPLO**: o código **e** o portão que o pega sozinho da próxima vez. | §2 *Regra do conserto duplo* |
-| 9 | ⭐ **O caderno PRONTO passa pelo CRIVO DO PEDAGOGO**, e ele é um DOCUMENTO escrito (`<pasta>/PARECER-PEDAGOGO.md`), não uma frase minha. Marcos, 20/set/2026: ***"o crivo que falo é o pedagogo olhando e dizendo que está tudo adequado"***. Não confundir com o crivo da COLHEITA (`POTE-*.md`), que é outro e vem antes. | etapa 11b |
+| 9 | ⭐ **O caderno PRONTO passa pelo CRIVO DO PEDAGOGO**, e ele é um DOCUMENTO escrito (`<pasta>/PARECER-PEDAGOGICO.md`), não uma frase minha. Marcos, 20/set/2026: ***"o crivo que falo é o pedagogo olhando e dizendo que está tudo adequado"***. Não confundir com o crivo da COLHEITA (`POTE-*.md`), que é outro e vem antes. | etapa 11b |
 | 8 | ⭐ **Cada caderno tem a SUA cara** — cor pelo assunto, capa com uma cena do assunto, `@keyframes` com nome próprio (portão `0b11`, `_qa/identidade.py`). Marcos, 18/set/2026: *"os estudantes acham que é a mesma atividade, mesmo o título sendo diferente"*. A capa do esqueleto é exemplo, não padrão. | `MEMORIA` *"Cada caderno tem a sua cara"* |
 
 ### As treze etapas, na ordem
@@ -108,14 +108,31 @@ passaram" não é "a banca aprovou".
 **11 · OLHAR A TELA.** Foto de cada folha nova, no celular e no PC. **Metade dos
 defeitos da lista do §3 foi achada assim, não por portão.**
 
-**11b · O CRIVO DO PEDAGOGO — no caderno PRONTO.** ⭐ **Ordem do Marcos,
+**11b · O PARECER PEDAGÓGICO — no caderno PRONTO.** ⭐ **Ordem do Marcos,
 20/set/2026: *"o crivo que falo é o pedagogo olhando e dizendo que está tudo
-adequado"*** — e ele teve de pedir DUAS vezes, porque das duas primeiras eu
-mostrei o crivo errado. **São dois, e vêm em momentos diferentes:**
+adequado"*** — e ele teve de pedir TRÊS vezes, até dizer a frase que resolve:
+***"por isso eu pedi o crivo do pedagogo, para ver se está adequado E O
+CURRÍCULO — sempre fizemos assim"***.
 
-| | o crivo da COLHEITA | o crivo do PEDAGOGO |
+⚠️ **E FIZEMOS MESMO — isto NÃO é prática nova.** O arquivo chama-se
+**`PARECER-PEDAGOGICO.md`**, mora dentro da pasta da atividade, e havia ONZE
+deles no repositório quando escrevi isto (`_abc1`, `_alfa1`, `_dourado5`,
+`_fra1`, `_ini1`, `_jogo1`, `_let1`, `_mont1`, `_rima1`, `_sil1`, `_som1`).
+**O molde é o `_rima1`**: objetivo verbatim → onde o caderno mora na escada →
+a escada folha a folha com o *por que aqui* → o crivo do conteúdo → vocabulário
+→ o relatório → ressalvas abertas → **Parecer** (ADEQUADA / NÃO ADEQUADA, com
+data e contra o que foi conferido). **Copiar a forma, não inventar outra** — eu
+inventei um nome novo (`PARECER-PEDAGOGO.md`) e um formato novo, e estava
+reescrevendo o que já existia.
+
+**Quem cobra: portão `0b12` (`_qa/parecer.py`)**, no pré-voo e na banca —
+atividade que declara `curriculo.json` e não tem parecer assinado REPROVA.
+
+**São dois crivos, e vêm em momentos diferentes:**
+
+| | o crivo da COLHEITA | o PARECER PEDAGÓGICO |
 |---|---|---|
-| onde mora | `_sequencias/POTE-<ASSUNTO>.md` | `<pasta>/PARECER-PEDAGOGO.md` |
+| onde mora | `_sequencias/POTE-<ASSUNTO>.md` | `<pasta>/PARECER-PEDAGOGICO.md` |
 | quando | ANTES de montar (etapa 3) | DEPOIS de montar (aqui) |
 | o que olha | as 30 folhas de papel colhidas | as 36 folhas da TELA, prontas |
 | a pergunta | *esta folha entra?* | *isto está adequado ao ano?* |
@@ -132,7 +149,7 @@ o veredito, o que foi consertado e o que o parecer **não** responde.
 existe e que os conceitos cabem no ano — e ele passava com nota cheia neste
 caderno enquanto a folha 9 contradizia a folha 31 e a folha 26 não chegava onde
 o próprio título prometia. **Contradição entre folhas nenhum portão mede.**
-*Exemplo pronto: `_corpo5/PARECER-PEDAGOGO.md` (quatro coisas inadequadas
+*Exemplo pronto: `_corpo5/PARECER-PEDAGOGICO.md` (quatro coisas inadequadas
 achadas com o caderno já no ar).*
 
 **12 · PUBLICAR.** Linha nova no `ATIVIDADES.md` + `python3

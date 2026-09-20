@@ -914,18 +914,45 @@ gesto. Ele reprovou a folha 20 porque a chave do par é `sangue` e o rótulo diz
 SANGUE. A ponta do ligar agora se **declara** (`data-alvo="1"`), no `_corpo5` e
 no esqueleto. Declarar o que o elemento é não é desligar portão.
 
-## 👩‍🏫 SÃO DOIS CRIVOS, E EU ENTREGUEI O ERRADO DUAS VEZES (20/set/2026)
+## 👩‍🏫 "SEMPRE FIZEMOS ASSIM" — e fizemos: eu é que tinha parado (20/set/2026)
 
-**As palavras do Marcos**, depois de eu mostrar o `POTE-CORPO5.md` pela segunda
-vez: ***"o crivo que falo é o pedagogo olhando e dizendo que está tudo
-adequado"***. Ele já tinha dito, mais curto, dois dias antes: *"crivo do pedagogo
-ou especialista eu digo"*. Duas vezes, e nas duas eu mostrei outra coisa.
+**O Marcos pediu o crivo do pedagogo TRÊS vezes na mesma semana.** Nas duas
+primeiras eu mostrei o crivo da COLHEITA. Na terceira ele disse a frase que
+resolve: ***"mas veja, por isso eu pedi o crivo do pedagogo, para ver se está
+adequado e o currículo, SEMPRE FIZEMOS ASSIM"***.
 
-**A confusão, nomeada de uma vez:**
+⚠️ **E a regra da casa manda acreditar e VERIFICAR A FUNDO quando ele diz
+"isso a gente já fez"** — foi o que eu devia ter feito na primeira vez. Ao
+procurar, a conta apareceu:
+
+- **onze `PARECER-PEDAGOGICO.md`** no repositório, um por atividade, desde as
+  de alfabetização do 1º ano, com forma própria e madura (objetivo verbatim →
+  a escada folha a folha → o crivo do conteúdo → ressalvas → **Parecer**);
+- **34 atividades** declaram currículo em `curriculo.json`, e só **10** delas
+  tinham parecer. **Vinte e quatro foram ao ar sem ninguém assinar que o
+  conteúdo é do ano** — e quatro das onze não escrevem o veredito nem a data.
+
+**A prática é dele, é antiga, e foi se perdendo à medida que eu entreguei mais
+rápido.** E eu ainda piorei: escrevi um arquivo novo, com nome novo
+(`PARECER-PEDAGOGO.md`) e formato novo, reescrevendo o que já existia — que é
+exatamente o vício que o `_padrao/DINAMICAS.md` existe para matar, agora
+aplicado a documento em vez de mecânica.
+
+**Conserto duplo:** o parecer do `_corpo5` refeito no molde do `_rima1`, e um
+portão — **`0b12` (`_qa/parecer.py`)**, no pré-voo e na banca: atividade que
+declara `curriculo.json` e não tem `PARECER-PEDAGOGICO.md` com veredito escrito
+e data REPROVA. ⚠️ Ele lê se ALGUÉM assinou, **não se assinou bem** — o
+julgamento continua sendo de quem escreve.
+
+## 👩‍🏫 O QUE O PARECER ACHOU, E QUE PORTÃO NENHUM MEDE (20/set/2026)
+
+Feito o parecer (ver a seção de cima), aqui fica **o que ele achou** — porque é
+isto que justifica a etapa existir. **A confusão que a atrasava, nomeada de uma
+vez:**
 
 | | crivo da COLHEITA | crivo do PEDAGOGO |
 |---|---|---|
-| arquivo | `_sequencias/POTE-<ASSUNTO>.md` | `<pasta>/PARECER-PEDAGOGO.md` |
+| arquivo | `_sequencias/POTE-<ASSUNTO>.md` | `<pasta>/PARECER-PEDAGOGICO.md` |
 | quando | ANTES de montar | DEPOIS de montar |
 | olha | as 30 folhas de PAPEL | as 36 folhas da TELA |
 | pergunta | *esta folha entra?* | *isto está adequado ao ano?* |

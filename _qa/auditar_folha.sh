@@ -93,6 +93,7 @@ PORTOES=(
   "4b leiaute a mao (6 tamanhos, alvo >= 40px)|node _qa/leiaute_mao.js $ARQ"
   "1i4 resposta impressa no enunciado|python3 _qa/resposta_impressa.py $PASTA"
   "0b9 pedagogo (curriculo verbatim)|python3 _qa/pedagogo_curriculo.py $PASTA"
+  "0b12 parecer do pedagogo (assinado?)|python3 _qa/parecer.py $PASTA"
   "0i2 voz do pote (tudo que sorteia fala?)|python3 _qa/voz_do_pote.py $PASTA"
   "0b7 leque e escada (gesto declarado)|python3 _qa/leque_folha.py $PASTA"
   "0p duracao (enche a aula?)|python3 _qa/duracao.py $PASTA"

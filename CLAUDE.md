@@ -21,16 +21,22 @@ Leia tudo antes de agir e responda sempre em **português**.
 > sequências didáticas"*. O documento já existia; o que faltava era a porta de
 > entrada. **O roteiro diz por onde entrar — não substitui a leitura.**
 >
-> ⭐⭐ **E SÃO DOIS CRIVOS, NÃO UM — o Marcos teve de pedir DUAS vezes**
+> ⭐⭐ **E SÃO DOIS CRIVOS, NÃO UM — o Marcos teve de pedir TRÊS vezes**
 > (20/set/2026): ***"o crivo que falo é o pedagogo olhando e dizendo que está
-> tudo adequado"***. O **`_sequencias/POTE-<ASSUNTO>.md`** é o crivo da
+> tudo adequado"*** e, na terceira, ***"por isso eu pedi o crivo do pedagogo,
+> para ver se está adequado E O CURRÍCULO — sempre fizemos assim"***. Ele
+> estava certo e eu é que não fui olhar: **há ONZE `PARECER-PEDAGOGICO.md`
+> no repositório**, um por atividade, desde as de alfabetização do 1º ano.
+> **A prática é dele, é antiga, e foi se perdendo** conforme eu entreguei mais
+> rápido — 34 atividades declaram currículo e só 10 tinham parecer.
+> **Virou portão: `0b12` (`_qa/parecer.py`)**, no pré-voo e na banca. O **`_sequencias/POTE-<ASSUNTO>.md`** é o crivo da
 > **COLHEITA** (quais folhas de papel entram), feito ANTES de montar. O
-> **`<pasta>/PARECER-PEDAGOGO.md`** é o crivo do **CADERNO PRONTO** (isto está
+> **`<pasta>/PARECER-PEDAGOGICO.md`** é o crivo do **CADERNO PRONTO** (isto está
 > adequado ao ano?), feito DEPOIS — e é esse que ele pede. Ele procura o que
 > portão nenhum mede: **contradição entre folhas**, título que promete o que a
 > folha não entrega, degrau que não sobe. No `_corpo5` ele achou QUATRO coisas
 > com o caderno já no ar, e o portão 0b9 passava com nota cheia. Etapa **11b**
-> do roteiro; exemplo pronto em `_corpo5/PARECER-PEDAGOGO.md`.
+> do roteiro; exemplo pronto em `_corpo5/PARECER-PEDAGOGICO.md`.
 >
 > **Três regras de lá que valem citar aqui:** sequência **nova** tem **no mínimo
 > 35 folhas** — ⭐ **e este piso é de 15/set/2026, por CRONÔMETRO NA SALA**: o
