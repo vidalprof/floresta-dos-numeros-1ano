@@ -14,12 +14,23 @@ Leia tudo antes de agir e responda sempre em **português**.
 > qualquer um deles, ler o `SEQUENCIAS-DIDATICAS.md` inteiro.
 >
 > ⭐ **E QUEM PRECISA COMEÇAR AGORA, SEM LER AS 1.400 LINHAS: o `§0 ROTEIRO DE
-> BOLSO`**, no topo daquele arquivo — as **doze etapas na ordem**, com o comando
-> de cada uma, mais as **sete regras que não se negociam**. Nasceu do pedido do
+> BOLSO`**, no topo daquele arquivo — as **treze etapas na ordem**, com o comando
+> de cada uma, mais as **nove regras que não se negociam**. Nasceu do pedido do
 > Marcos (15/set/2026): *"deixe um documento registrado, para se é que já não
 > tem, para que qualquer sessão nova se ler saiba como fazer essas nossas
 > sequências didáticas"*. O documento já existia; o que faltava era a porta de
 > entrada. **O roteiro diz por onde entrar — não substitui a leitura.**
+>
+> ⭐⭐ **E SÃO DOIS CRIVOS, NÃO UM — o Marcos teve de pedir DUAS vezes**
+> (20/set/2026): ***"o crivo que falo é o pedagogo olhando e dizendo que está
+> tudo adequado"***. O **`_sequencias/POTE-<ASSUNTO>.md`** é o crivo da
+> **COLHEITA** (quais folhas de papel entram), feito ANTES de montar. O
+> **`<pasta>/PARECER-PEDAGOGO.md`** é o crivo do **CADERNO PRONTO** (isto está
+> adequado ao ano?), feito DEPOIS — e é esse que ele pede. Ele procura o que
+> portão nenhum mede: **contradição entre folhas**, título que promete o que a
+> folha não entrega, degrau que não sobe. No `_corpo5` ele achou QUATRO coisas
+> com o caderno já no ar, e o portão 0b9 passava com nota cheia. Etapa **11b**
+> do roteiro; exemplo pronto em `_corpo5/PARECER-PEDAGOGO.md`.
 >
 > **Três regras de lá que valem citar aqui:** sequência **nova** tem **no mínimo
 > 35 folhas** — ⭐ **e este piso é de 15/set/2026, por CRONÔMETRO NA SALA**: o

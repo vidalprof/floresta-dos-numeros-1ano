@@ -177,7 +177,7 @@ CRZ2 = bloco(u"CRZ2")
 ITENS = bloco(u"ITENS")
 
 NOMES = [
- u"Onde tudo começa", u"Os órgãos da digestão", u"Os órgãos da digestão, de novo",
+ u"Onde tudo começa", u"Os órgãos da digestão", u"Os órgãos da digestão, sem o desenho",
  u"O caminho do alimento", u"O que cada órgão faz", u"O que cada órgão faz, de novo",
  u"Preencha o caminho", u"Caça-órgãos da digestão",
  u"Para que serve respirar", u"Os órgãos da respiração", u"O caminho do ar",
@@ -196,7 +196,7 @@ NOMES = [
 PEDE = {
  1: u"Leia a pergunta e toque na resposta certa.",
  2: u"Puxe o nome certo para cada órgão, ou toque no órgão e depois no nome.",
- 3: u"De novo os órgãos da digestão. Agora sem a ajuda da primeira vez.",
+ 3: u"Os mesmos órgãos, agora sem o desenho: leia o que cada um faz e puxe o nome certo.",
  4: u"Ponha o caminho do alimento em ordem: para cada órgão, toque no número do lugar dele.",
  5: u"Toque no órgão de um lado e no que ele faz do outro.",
  6: u"Ligue de novo. Agora entram o fígado e o pâncreas, que ajudam a digestão.",

@@ -325,10 +325,32 @@ def confere(pasta, palavras):
             else:
                 L.append(u"   ✓ os %d conceito(s) que o caderno ensina existem no bloco do "
                          u"%sº ano de %s" % (len(conceitos), d.get("ano"), d.get("componente")))
+            # ⚠️ O MOTIVO ESTAVA SENDO ENGOLIDO — e isso matava a unica garantia
+            #    desta declaracao (20/set/2026). O portao lia `porque`; as tres
+            #    atividades que declaram excecao escrevem `motivo`, e nenhuma
+            #    escreve `porque`. Resultado: TODA declaracao saia como
+            #    «termo» — , sem uma palavra de justificativa. A regra da casa e
+            #    que declarado e IMPRESSO em toda rodada, justamente para o
+            #    professor poder discordar; sem o motivo impresso, declarar
+            #    virava desligar o portao em silencio.
+            #    Agora le os dois nomes de campo E COBRA que haja motivo.
+            sem_motivo = []
             for it in fora_dec:
                 t = it.get("termo") if isinstance(it, dict) else it
-                pq = it.get("porque", u"") if isinstance(it, dict) else u""
-                L.append(u"   ⚠️ FORA DO CURRICULO, DECLARADO: «%s» — %s" % (t, pq))
+                pq = u""
+                if isinstance(it, dict):
+                    pq = (it.get("motivo") or it.get("porque") or u"").strip()
+                if not pq:
+                    sem_motivo.append(t)
+                L.append(u"   ⚠️ FORA DO CURRICULO, DECLARADO: «%s» — %s"
+                         % (t, pq or u"(SEM MOTIVO ESCRITO)"))
+            if sem_motivo:
+                ruim = 1
+                L.append(u"   REPROVADO 6b: declaracao SEM MOTIVO em `fora_do_curriculo`:")
+                for t in sem_motivo:
+                    L.append(u"      • %s" % t)
+                L.append(u"      -> declarar sem dizer por que e so desligar o portao. "
+                         u"Escreva o campo `motivo`.")
 
     # ---- 5. o dossie esta na atividade e mostra ESTES dados
     falta = []

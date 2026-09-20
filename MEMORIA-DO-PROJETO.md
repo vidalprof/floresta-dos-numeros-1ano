@@ -914,6 +914,58 @@ gesto. Ele reprovou a folha 20 porque a chave do par é `sangue` e o rótulo diz
 SANGUE. A ponta do ligar agora se **declara** (`data-alvo="1"`), no `_corpo5` e
 no esqueleto. Declarar o que o elemento é não é desligar portão.
 
+## 👩‍🏫 SÃO DOIS CRIVOS, E EU ENTREGUEI O ERRADO DUAS VEZES (20/set/2026)
+
+**As palavras do Marcos**, depois de eu mostrar o `POTE-CORPO5.md` pela segunda
+vez: ***"o crivo que falo é o pedagogo olhando e dizendo que está tudo
+adequado"***. Ele já tinha dito, mais curto, dois dias antes: *"crivo do pedagogo
+ou especialista eu digo"*. Duas vezes, e nas duas eu mostrei outra coisa.
+
+**A confusão, nomeada de uma vez:**
+
+| | crivo da COLHEITA | crivo do PEDAGOGO |
+|---|---|---|
+| arquivo | `_sequencias/POTE-<ASSUNTO>.md` | `<pasta>/PARECER-PEDAGOGO.md` |
+| quando | ANTES de montar | DEPOIS de montar |
+| olha | as 30 folhas de PAPEL | as 36 folhas da TELA |
+| pergunta | *esta folha entra?* | *isto está adequado ao ano?* |
+
+⚠️ **E o portão 0b9 não é esse crivo** — esta é a parte que interessa. O
+`pedagogo_curriculo.py` passou **com nota cheia** no `_corpo5`: as cinco
+habilidades citadas palavra por palavra, os objetivos batendo, os 11 conceitos
+dentro do bloco do 5º ano. E o caderno, no ar, tinha **quatro coisas
+inadequadas** que ele não tem como ver:
+
+1. **Contradição entre folhas.** A folha 9 ensinava que o diafragma **NÃO** é do
+   sistema respiratório; a folha 31 manda pôr o DIAFRAGMA na gaveta do
+   RESPIRATÓRIO. A criança que acreditasse na folha 9 erraria a 31 — o caderno
+   marcava como errada quem acreditasse nele mesmo. (E a distinção nem é
+   pacífica: a própria folha de papel d13 lista o diafragma entre as partes do
+   sistema.)
+2. **Título que promete o que a folha não entrega.** A folha 26 chama-se *"Do
+   prato até a CÉLULA"* e o caminho parava no CORAÇÃO. A cruzadinha e a folha 27
+   já diziam que quem recebe o nutriente no fim são as células; só o caminho não
+   chegava lá.
+3. **Quatro palavras sem acento** na tela e na voz (*saudavel, aneis, gas,
+   finissimos*) — num caderno de 5º ano o texto é modelo de escrita.
+4. **Degrau que não sobe.** As folhas 2 e 3 eram o mesmo gesto, nos mesmos
+   órgãos, com a mesma ajuda (desenho + pista juntos nas duas) — o *"isso eu já
+   fiz"*. Agora a 2 é DESENHO → nome e a 3 é FUNÇÃO → nome.
+
+**Nenhuma das quatro é mensurável por portão** (contradição entre folhas exige
+ler as 36 de uma vez, com a cabeça de quem dá a aula). Por isso o conserto não
+foi um portão novo: foi **uma ETAPA nova no roteiro** — a 11b do
+`SEQUENCIAS-DIDATICAS.md §0` — e uma **regra que não se negocia** (a 9ª). O
+parecer é um DOCUMENTO escrito, com veredito, o que foi consertado e o que ele
+NÃO responde; não é uma frase minha dizendo "está adequado".
+
+⚠️ **De quebra, um portão que aprovava por causa do próprio erro:** o 0b9 imprime
+as declarações de `fora_do_curriculo` *"para o professor poder discordar"* — e
+lia o campo `porque`, enquanto as três atividades que declaram exceção escrevem
+`motivo`. Ou seja: **nunca imprimiu um motivo sequer**, desde sempre. Saía
+`«sangue» — ` e mais nada. Declarar virava desligar o portão em silêncio. Agora
+ele lê os dois nomes e **reprova declaração sem motivo escrito**.
+
 ## 🟢❌ A ENTREGA DISSE "SUCCESS" E NÃO PUBLICOU NADA (20/set/2026)
 
 O `entregar.yml` do `_corpo5` gravou as **444 vozes**, conferiu a pronúncia das

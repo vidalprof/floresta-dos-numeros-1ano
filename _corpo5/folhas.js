@@ -1264,6 +1264,14 @@ function fArrastar(d, pi){
      lugar da figura — a criança vê isso como erro do app, não como tarefa. Quem
      não tem desenho entra com a PISTA escrita dentro do próprio alvo de soltar,
      e o enunciado muda junto para pedir o que a tela realmente mostra. */
+  /* ⚠️ E A FOLHA É INTEIRA DE UM JEITO SÓ — ou todas as caixas mostram o
+     DESENHO, ou todas mostram a PISTA. Metade e metade (crivo do pedagogo,
+     20/set/2026) fazia duas coisas ruins de uma vez: na tela, a folha 19
+     aparecia com UMA figura e cinco caixas de texto, que a criança lê como
+     figura faltando; e na didática, o par 2/3 ficava sem degrau — os mesmos
+     seis órgãos, o mesmo gesto, a mesma ajuda, e o "isso eu já fiz" que o
+     Marcos ouve das crianças. Assim a 2 é DESENHO → nome e a 3 é FUNÇÃO →
+     nome: o mesmo gesto, um degrau acima. */
   var comFig = lista.filter(function(k){ return !!ORG[k].fig; }).length === lista.length;
   enunciado(d, pi, comFig
       ? "Puxe o nome certo para cada órgão — ou toque no órgão e depois no nome."
@@ -1272,10 +1280,10 @@ function fArrastar(d, pi){
   lista.forEach(function(k, i){
     var O = ORG[k], id = "n" + pi + "_" + i, box = item(i + 1);
     var cx = el("div", "orgcx");
-    if(O.fig) cx.innerHTML = figOrg(k, "figo");
+    if(comFig) cx.innerHTML = figOrg(k, "figo");
     else cx.appendChild(el("div", "pistaorg", O.faz));
     var lin = el("div", "enunlin");
-    if(O.fig) lin.appendChild(el("div", "dica", O.faz));
+    if(comFig) lin.appendChild(el("div", "dica", O.faz));
     lin.appendChild(botaoSom("Ouvir a pista", function(){ falar("faz_" + k); }));
     box.appendChild(cx); box.appendChild(lin);
     var ops = baralha(lista.slice()).slice(0, 4);
