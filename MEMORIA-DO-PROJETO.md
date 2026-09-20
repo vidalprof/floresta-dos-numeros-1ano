@@ -9085,3 +9085,62 @@ Marcos é sobre o CONTEÚDO sorteado, não dá para escrever um portão externo 
 não sabe o que é "o resultado" naquela página. O caminho é a atividade DECLARAR
 onde está o dado (`res`) e conferir a si mesma no boot, deixando um portão que já
 existe (o `1z`) fazer o papel de juiz.
+
+## ➕ A PÁGINA DOS JEITOS — e o crivo que o Marcos exigiu (20/set/2026)
+
+*"Pode ser, tem que ser adequado e passar por crivo pedagógico."* Ele autorizou a
+segunda página de somas, mas com condição. O crivo veio ANTES do código, e o
+resultado é melhor do que a ideia que eu tinha proposto.
+
+**A habilidade existe, e é quase literal.** Currículo de Blumenau, **1º ANO,
+Matemática**, objeto *"Composição e decomposição de números naturais"* (linhas
+17675-17681 do `_curriculo/blumenau.txt`):
+
+> *"Compor e decompor números de até duas ordens, **por meio de diferentes
+> adições**, com o suporte de **material manipulável**, contribuindo para a
+> compreensão de características do sistema de numeração decimal e o
+> desenvolvimento de estratégias de cálculo."*
+
+As duas partes em negrito são a página inteira: "diferentes adições" é
+6 = 1+5 = 2+4 = 3+3, e o "material manipulável" são os dedos, que já estão na
+tela desde a página 1. ⚠️ E o que a atividade NÃO faz, dito por honestidade: ela
+fica toda na primeira ordem (até 10); a habilidade fala em "duas ordens", e a
+parte das dezenas não está aqui.
+
+### As duas regras dele brigaram, e quem desempatou foi ele
+
+A regra de véspera é que **o resultado não se repete na mesma página**. Mas uma
+página de "vários jeitos de fazer seis" mostra o seis quatro vezes — a repetição
+É a descoberta. As duas regras dele apontavam para lados opostos, e eu não tinha
+como saber qual ganhava. **Perguntei**, com as três opções desenhadas, e ele
+escolheu: *pode, e junto*.
+
+⚠️ **Essa é a forma certa de gastar uma pergunta.** Não foi "está bom assim?" —
+foi um fork real, em que qualquer suposição minha teria 50% de chance de
+construir a página errada. O que a regra dele protege continua protegido, e está
+escrito no código: a criança escreve a **parte que falta**, e essa nunca repete
+dentro do mesmo número, então não há como copiar a resposta de cima. A exceção
+está declarada no `TRABALHO` com `"res": null`, e o guarda pula a conferência
+**ali e só ali**.
+
+### A voz prometia um padrão que a tela não mostrava
+
+Primeira versão: as linhas saíam embaralhadas — 5, 4, 1, 3 — e a narração dizia
+*"repare: quando um lado sobe, o outro desce"*. **Não havia nada para reparar.**
+Ordenadas pela mão, o padrão aparece e a frase vira verdade. É a mesma família do
+"a tela diz uma coisa e a voz diz outra" que o `falas.json` existe para matar, só
+que num nível acima: não era o TEXTO que divergia, era o que a tela FAZ.
+
+### E eu repeti, uma hora depois, o defeito que tinha acabado de consertar
+
+Pus um comentário `/* ... */` **dentro** do bloco `TRABALHO`, explicando a
+exceção — e o `_qa/duracao.py` estourou no `json.loads`, caiu fora do galho e
+voltou a medir a lista errada: **"9 itens" numa atividade de 43**. O galho dos
+`ITENS` já tinha essa lição escrita em maiúsculas, do caderno de inglês; o galho
+novo nasceu sem ela.
+
+⭐ **A regra que fica: nesta casa, comentário dentro de bloco marcado é o PADRÃO,
+não a exceção** — todo bloco de dados daqui é comentado, porque é assim que a
+próxima sessão entende o porquê. Todo leitor de bloco marcado nasce sabendo
+atravessar comentário, ou nasce quebrado. E só descobri porque **re-medi depois
+de mexer**: o portão tinha dito "ok" uma hora antes.

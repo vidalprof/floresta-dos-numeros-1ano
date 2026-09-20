@@ -387,8 +387,17 @@ def confere(pasta, piso_min=40.0):
     m_tr = re.search(r'/\*TRABALHO-INI\*/(?:\s|/\*.*?\*/)*var\s+TRABALHO\s*=\s*(\{.*?\})\s*;',
                      html, re.S)
     if m_tr and not fases_m:
+        # ⚠️ E ELE TEM DE ATRAVESSAR O COMENTARIO DE DENTRO DO OBJETO
+        #    (20/set/2026). A declaracao do `_dedos` ganhou um `/* ... */`
+        #    ANTES de uma das chaves, explicando por que aquela pagina e a
+        #    excecao do Marcos — e o `json.loads` estourou, o galho caiu fora e
+        #    o portao voltou a medir a lista errada: disse "9 itens" numa
+        #    atividade de 43. Eu mesmo causei, uma hora depois de consertar
+        #    exatamente este defeito no galho dos ITENS, que ja tinha a mesma
+        #    licao escrita. Comentario dentro de bloco marcado e a REGRA nesta
+        #    casa, nao a excecao: todo bloco de dados aqui e comentado.
         try:
-            trab = json.loads(m_tr.group(1))
+            trab = json.loads(re.sub(r"/\*.*?\*/", "", m_tr.group(1), flags=re.S))
         except ValueError:
             trab = None
         if trab:

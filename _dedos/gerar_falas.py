@@ -50,6 +50,7 @@ F.update({
     "p3enun": u"Ligue cada dupla de mãos ao número de dedos. Toque nas mãos e depois no número, ou puxe uma linha.",
     "p4enun": u"Agora é você quem mostra! Toque na mão para levantar um dedo de cada vez, contando em voz alta, até chegar na quantidade que eu pedir. Depois toque em Pronto.",
     "p5enun": u"Uma mão já mostra alguns dedos. Levante dedos na outra mão até juntar a quantidade que eu pedir, e toque em Pronto.",
+    "p6enun": u"Um número pode ser feito de vários jeitos! Olhe a mão, veja quanto falta para chegar ao número da ponta e digite. Depois repare: quando um lado sobe, o outro desce.",
     "quase": u"Quase! Conte de novo, dedo por dedo.",
     "essaNao": u"Essa não. Conte os dedos das duas mãos de novo.",
     "digite": u"Toque num quadradinho e digite o número.",
