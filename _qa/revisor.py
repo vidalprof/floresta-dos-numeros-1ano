@@ -35,7 +35,19 @@ import sys, os, io, json, re
 MASC_A = set("""dia mapa planeta planetinha problema clima sistema tema poema programa dilema
 cinema mapa telefonema esquema drama panorama diagrama grama(peso) alerta guarda-chuva
 lápis(nao) sofa(nao) pijama dia maquinista salta zeca quebra-cabeça quebra-cabeças
-jota agá""".split())
+jota agá coringa colega""".split())
+# ⚠️ "coringa" é MASCULINO ("o coringa", "o coringa comprar quatro") — é o nome
+#    da carta, e o dicionário o registra no masculino. "colega" é comum de dois
+#    gêneros: "o colega" e "a colega" estão os DOIS certos, então acusar "o
+#    colega" é acusar inocente. Falsos-positivos pegos na Mesa de Jogos do Léo
+#    (set/2026), a prova de Educação Física sobre o UNO — onde as duas palavras
+#    aparecem em quase toda questão.
+# ⚠️ E O QUE ESTA LISTA CUSTA, dito sem enfeite: pôr uma palavra aqui cega o
+#    portão nos DOIS sentidos. Medido em set/2026: depois de entrar "coringa",
+#    uma fala escrita "A coringa serve para..." passa calada. Vale para toda a
+#    lista, desde sempre ("a dia" também passaria). É o preço de não acusar
+#    inocente, e é barato: o erro que sobra o professor lê na tela; a citação de
+#    currículo, que ele não tem como conferir, essa continua medida.
 # ⚠️ "jota" e "agá" são NOMES DE LETRA, e nome de letra é masculino em português:
 #    "o jota", "o agá", "o a", "o eme". Terminam em -a e não são femininos.
 #    Falso-positivo pego no Desfile das Letras (set/2026), o caderno do degrau 0

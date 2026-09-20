@@ -1,0 +1,655 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>A Mesa de Jogos do Léo — Prova de Educação Física</title>
+<style>
+/* ===== PROVA de Educação Física — 3º, 4º e 5º anos =====
+   ASSUNTO: as REGRAS OFICIAIS do UNO (texto que o professor passou à turma) e a
+   ORIGEM DO TANGRAM (o mesmo texto da nossa atividade `_tangram`).
+
+   ⚠️ POR QUE UMA PROVA SÓ PARA OS TRÊS ANOS: não é atalho meu. O currículo de
+      Blumenau trata **EDUCAÇÃO FÍSICA – 3º ao 5º ANOS** como UM bloco, com os
+      mesmos objetivos e os mesmos conteúdos para os três; e os dois jogos estão
+      escritos lá com todas as letras, na unidade "Brincadeiras e jogos":
+      *"Jogos de salão: xadrez, dama, ... cartas (jogos educativos), dominó,
+      ludo, ... torre de blocos, tangram, ..."*. A criança escolhe o ANO e a
+      LETRA na capa, e o painel do professor separa por turma.
+
+   IDENTIDADE PRÓPRIA (cada atividade tem a sua cara): MESA DE JOGO — feltro
+   verde-escuro, borda de madeira, cartas coloridas. Nada a ver com o céu e o
+   gramado da prova do 2º ano, que é a irmã dela.
+
+   AS FIGURAS SÃO SVG DESENHADO AQUI, e isso é decisão, não economia: as cartas
+   são as MESMAS do nosso jogo `_uno345` (mesmo oval inclinado, mesmos símbolos,
+   mesmas cores) — a criança reconhece na prova a carta que ela jogou na aula.
+   SVG ainda é nítido em qualquer tela e não tem como "carregar borrado".
+
+   Compatível com PC antigo (prefixos -webkit-, `var`, sem template literal). */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;min-height:100%;}
+body{
+  font-family:"Segoe UI",Verdana,Geneva,sans-serif;color:#22301f;
+  background:#1f5c3a;
+  background:-webkit-linear-gradient(top,#17492d 0%,#2a7048 55%,#17492d 100%);
+  background:linear-gradient(to bottom,#17492d 0%,#2a7048 55%,#17492d 100%);
+  min-height:100vh;-webkit-text-size-adjust:100%;
+}
+#fundo{position:fixed;inset:0;z-index:-1;background:url("img/ej_fundo.png") center bottom no-repeat;background-size:cover;opacity:.13;}
+#app{max-width:820px;margin:0 auto;padding:12px 16px 40px;min-height:100vh;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
+/* ---- o CARTÃO: carta grande em cima do feltro ---- */
+.card{position:relative;color:#22301f;background:#fffdf6;
+  border:5px solid #c98b3a;border-radius:24px;padding:14px 16px;margin:8px 0 4px;text-align:center;
+  -webkit-box-shadow:0 14px 30px rgba(0,0,0,.35), inset 0 0 0 3px #fff;
+  box-shadow:0 14px 30px rgba(0,0,0,.35), inset 0 0 0 3px #fff;
+  -webkit-animation:baixaCarta .4s ease-out;animation:baixaCarta .4s ease-out;}
+@-webkit-keyframes baixaCarta{from{opacity:0;-webkit-transform:translateY(-16px) rotate(-2deg);}to{opacity:1;-webkit-transform:none;}}
+@keyframes baixaCarta{from{opacity:0;transform:translateY(-16px) rotate(-2deg);}to{opacity:1;transform:none;}}
+
+h1{font-family:"Trebuchet MS","Segoe UI",sans-serif;font-size:27px;margin:2px 0 0;color:#c8341f;text-shadow:0 2px 0 #ffe0a8;}
+h2{font-family:"Trebuchet MS",sans-serif;font-size:18px;margin:1px 0 2px;color:#1d6a40;}
+p{font-size:17px;line-height:1.32;margin:5px 4px;}
+.grande{font-size:16px;font-weight:bold;color:#1d6a40;margin:6px 4px;}
+img{max-width:100%;}
+
+/* ---- barra de progresso: fichas ---- */
+#trilha{display:block;text-align:center;margin:2px 0 4px;font-size:16px;color:#ffe9b8;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,.5);}
+#passa{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-flex-wrap:nowrap;flex-wrap:nowrap;gap:2px;margin:2px auto 8px;max-width:380px;}
+.selo{-webkit-flex:none;flex:none;width:16px;height:16px;line-height:12px;text-align:center;border-radius:50%;
+  border:2px dashed #7fd1a0;background:rgba(255,255,255,.18);color:#eafff2;font-size:9px;font-weight:bold;}
+.selo.feito{border-style:solid;border-color:#ffd23f;background:#ffd23f;color:#5a3b00;}
+.selo.agora{border-style:solid;border-color:#fff;background:#fff;color:#1d6a40;
+  -webkit-box-shadow:0 0 0 3px rgba(255,255,255,.35);box-shadow:0 0 0 3px rgba(255,255,255,.35);
+  -webkit-animation:pulsa 1.4s ease-in-out infinite;animation:pulsa 1.4s ease-in-out infinite;}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.25);}}
+@keyframes pulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
+
+.masc-capa{height:120px;margin:0 auto;-webkit-animation:balanca 2.6s ease-in-out infinite;animation:balanca 2.6s ease-in-out infinite;}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg);}50%{-webkit-transform:rotate(3deg);}}
+@keyframes balanca{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+.formrow{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-align-items:flex-start;align-items:flex-start;margin:2px auto 0;gap:2px 22px;}
+.fcol{-webkit-box-flex:1;-webkit-flex:1 1 280px;flex:1 1 280px;max-width:360px;}
+.guia{position:absolute;right:8px;top:8px;height:66px;pointer-events:none;-webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+/* chip do assunto
+   ⚠️ O CHIP NÃO USA O AZUL E O OURO VIVOS DO UNO, e não é descuido. O texto
+      dele tem 13px: pelo WCAG isso é texto PEQUENO e precisa de 4,5 de
+      contraste. Medido: branco sobre #0099DD dá 3,18 e sobre #c98b3a dá 2,90 —
+      os dois REPROVAM. Escurecidos para #00679c (6,14) e #8a5a12 (5,91), que
+      são a mesma família e passam com folga. As LETRAS A/B/C/D das alternativas
+      seguem com a cor viva porque lá o texto tem 21px em negrito, e aí o mínimo
+      é 3,0. Cor de marca não vale mais que criança enxergar. */
+.disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:14px;padding:5px 13px;margin:2px 0 8px;color:#fff;}
+.disc.inicio{background:#1d6a40;} .disc.acao{background:#00679c;}
+.disc.desafio{background:#c8161f;} .disc.ponto{background:#7d449b;} .disc.tang{background:#8a5a12;}
+
+/* a figura da questão (SVG desenhado aqui) */
+.qfig{display:block;margin:2px auto 10px;padding:8px;background:#fff;border:3px solid #f0dcae;border-radius:16px;
+  max-width:340px;
+  -webkit-box-shadow:0 6px 14px rgba(0,0,0,.18);box-shadow:0 6px 14px rgba(0,0,0,.18);}
+.qfig svg{display:block;width:100%;height:auto;}
+
+.pergunta{font-family:"Trebuchet MS",sans-serif;font-size:22px;font-weight:bold;color:#22301f;line-height:1.3;margin:2px 8px 10px;}
+
+/* opções grandes */
+.opcoes{margin-top:2px;}
+.opc{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  width:94%;max-width:520px;margin:10px auto;padding:13px 12px;border:3px solid #ddd0ae;border-radius:18px;cursor:pointer;text-align:left;
+  font-family:"Trebuchet MS",sans-serif;font-size:19px;font-weight:bold;color:#22301f;background:#fffaee;
+  -webkit-box-shadow:0 5px 0 #e3d5b4;box-shadow:0 5px 0 #e3d5b4;}
+.opc:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 1px 0 #e3d5b4;box-shadow:0 1px 0 #e3d5b4;}
+.opc .let{-webkit-flex:none;flex:none;width:42px;height:42px;line-height:42px;text-align:center;border-radius:50%;background:#E5202E;color:#fff;font-size:21px;margin-right:12px;
+  -webkit-box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);}
+.opc.c1 .let{background:#0099DD;} .opc.c2 .let{background:#F7B500;color:#5a3b00;} .opc.c3 .let{background:#3EA72D;}
+.opc .otx{-webkit-box-flex:1;-webkit-flex:1;flex:1;padding-right:6px;}
+.ospk{-webkit-flex:none;flex:none;width:44px;height:44px;border-radius:50%;border:3px solid #1d6a40;background:#eafaf0;
+  cursor:pointer;padding:0;margin-left:4px;display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;}
+.ospk:active{background:#cdeedd;}
+.ospk svg{width:22px;height:22px;display:block;}
+
+.btn{display:inline-block;font-family:inherit;font-size:23px;font-weight:bold;border:none;border-radius:20px;padding:16px 28px;margin:8px 6px;cursor:pointer;color:#fff;background:#E5202E;-webkit-box-shadow:0 6px 0 #a8151f;box-shadow:0 6px 0 #a8151f;}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);}
+input{font-family:inherit;font-size:19px;padding:11px 10px;border:3px solid #c9b98d;border-radius:16px;width:84%;max-width:320px;margin:4px auto;display:block;text-align:center;color:#22301f;background:#fffdf6;}
+label{font-size:16px;font-weight:bold;color:#1d6a40;display:block;margin-top:8px;}
+.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
+.tbox{margin:5px;min-width:64px;padding:13px 12px;border:3px solid #c9b98d;border-radius:18px;background:#fffdf6;color:#1d6a40;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #e3d5b4;box-shadow:0 4px 0 #e3d5b4;}
+.tbox.on{background:#1d6a40;color:#fff;border-color:#134d2c;-webkit-box-shadow:0 4px 0 #134d2c;box-shadow:0 4px 0 #134d2c;}
+.tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
+#btnOuvir,#btnHist{background:#fff3d6;border:3px solid #c98b3a;color:#8a5a12;border-radius:18px;font-size:18px;font-weight:bold;padding:11px 16px;cursor:pointer;font-family:inherit;margin:4px auto 8px;min-height:44px;}
+#btnHist{margin-top:6px;-webkit-animation:pulsa 1.6s ease-in-out infinite;animation:pulsa 1.6s ease-in-out infinite;}
+.avs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 6px;max-width:560px;}
+.avbox{width:76px;height:76px;margin:5px;border-radius:50%;border:3px solid #c9b98d;background:#fffdf6;cursor:pointer;overflow:hidden;padding:0;
+  -webkit-box-shadow:0 3px 0 #e3d5b4;box-shadow:0 3px 0 #e3d5b4;}
+.avbox.on{border-color:#134d2c;-webkit-box-shadow:0 3px 0 #134d2c;box-shadow:0 3px 0 #134d2c;-webkit-transform:translateY(-2px);transform:translateY(-2px);}
+.avbox img{width:100%;height:100%;display:block;object-fit:cover;object-position:center top;}
+.qcard{padding-top:58px;}
+.cracha{position:absolute;left:8px;top:8px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  background:#fffdf6;border:3px solid #ddd0ae;border-radius:22px;padding:2px 10px 2px 2px;-webkit-box-shadow:0 2px 5px rgba(0,0,0,.15);box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.cracha .cav{width:34px;height:34px;border-radius:50%;overflow:hidden;background:#eef7f1;-webkit-flex:none;flex:none;margin-right:6px;}
+.cracha .cav img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+.cracha .cnm{font-size:13px;font-weight:bold;color:#1d6a40;max-width:104px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.medalha{position:relative;width:172px;height:196px;margin:6px auto 2px;-webkit-animation:pop .55s ease-out;animation:pop .55s ease-out;}
+@-webkit-keyframes pop{0%{-webkit-transform:scale(0) rotate(-18deg);}70%{-webkit-transform:scale(1.12);}100%{-webkit-transform:scale(1);}}
+@keyframes pop{0%{transform:scale(0) rotate(-18deg);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+.medalha .fita{position:absolute;top:0;left:50%;width:26px;height:74px;background:#E5202E;-webkit-box-shadow:inset 0 0 0 2px rgba(0,0,0,.08);box-shadow:inset 0 0 0 2px rgba(0,0,0,.08);}
+.medalha .fita.e{-webkit-transform:translateX(-26px) rotate(13deg);transform:translateX(-26px) rotate(13deg);}
+.medalha .fita.d{-webkit-transform:translateX(0) rotate(-13deg);transform:translateX(0) rotate(-13deg);}
+.medalha .disco{position:absolute;left:50%;top:52px;margin-left:-72px;width:144px;height:144px;border-radius:50%;overflow:hidden;
+  background:#f6bf31;background:-webkit-radial-gradient(36% 30%,circle,#fff0a8,#f6bf31 62%,#d68a00);background:radial-gradient(circle at 36% 30%,#fff0a8,#f6bf31 62%,#d68a00);
+  border:7px solid #ffd94a;-webkit-box-shadow:0 8px 18px rgba(120,90,0,.4),inset 0 0 18px rgba(255,255,255,.5);box-shadow:0 8px 18px rgba(120,90,0,.4),inset 0 0 18px rgba(255,255,255,.5);
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;}
+.medalha .estrela{position:absolute;width:74px;height:74px;background:#fff6cf;-webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+.medalha .mav{position:relative;width:118px;height:118px;border-radius:50%;object-fit:cover;object-position:center top;}
+#barra{position:fixed;right:8px;bottom:8px;z-index:9999;}
+@media (max-width:560px){
+  /* ⭐ Os dois botões fixos do canto caíam EM CIMA do 6º crachá na tela estreita
+     (defeito medido e pago na prova do 2º ano). Em cima não há nada para tocar. */
+  #barra{top:calc(8px + env(safe-area-inset-top));bottom:auto}
+}
+#barra .cv-bt{-webkit-appearance:none;appearance:none;width:48px;height:48px;border:3px solid #ffe9b8;border-radius:50%;background:#1d6a40;color:#ffe9b8;font-size:20px;line-height:42px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.35);box-shadow:0 2px 6px rgba(0,0,0,.35);}
+#barra .cv-bt svg{width:22px;height:22px;display:block;margin:0 auto;}
+</style>
+
+<div id="fundo"></div>
+<div id="app" class="tela"></div>
+<div id="barra">
+  <button id="btnMudo" class="cv-bt" onclick="alternarMudo()" aria-label="Ligar ou desligar a voz"></button>
+  <button class="cv-bt" onclick="repetirUltima()" aria-label="Ouvir de novo" title="Ouvir de novo">&#8635;</button>
+</div>
+
+<script>
+/* ====== CONFIG ====== */
+var ANOS=["3º","4º","5º"];
+var LETRAS=["A","B","C","D"];
+/* ⚠️ ANO + LETRA em vez de doze botões "3º A ... 5º D": sete alvos grandes no
+   lugar de doze pequenos, e a turma gravada continua sendo "4º B". */
+var AVATARES=[
+ {id:"ej_cr1.png", cor:"#3EA72D"},{id:"ej_cr2.png", cor:"#0099DD"},
+ {id:"ej_cr3.png", cor:"#E5202E"},{id:"ej_cr4.png", cor:"#9a5bb8"},
+ {id:"ej_cr5.png", cor:"#d64b7a"},{id:"ej_cr6.png", cor:"#F7B500"}
+];
+var SLUG="educacao-fisica-jogos-345";   /* caminho no Firebase: /provas/<SLUG> */
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+var URL_PLANILHA="";
+var HISTORIA="Olá! Eu sou o Léo, o treinador. Hoje a nossa aula de Educação Física é na mesa de jogos! São vinte perguntas: quinze sobre as regras oficiais do UNO, aquelas que o professor explicou para a turma, e cinco sobre a origem do Tangram, o jogo das sete peças. Eu leio cada pergunta e cada resposta em voz alta, e você toca na que achar certa. Se quiser ouvir uma resposta de novo, toque no alto-falante do lado dela. Agora escreva o seu nome, escolha o seu ano, a sua turma e o seu personagem, e toque em começar!";
+var _histTocada=false;
+
+/* ===================================================================
+   AS FIGURAS — SVG desenhado aqui, com as cores do nosso jogo `_uno345`
+   =================================================================== */
+var UCOR={v:"#E5202E", a:"#0099DD", m:"#F7B500", g:"#3EA72D", p:"#1b1b1b"};
+
+function simbPular(c){
+  return '<circle cx="50" cy="50" r="30" fill="none" stroke="'+c+'" stroke-width="11"/>'+
+         '<line x1="29" y1="29" x2="71" y2="71" stroke="'+c+'" stroke-width="11" stroke-linecap="round"/>';
+}
+function simbInverte(c){
+  return '<g stroke="'+c+'" stroke-width="9" fill="none" stroke-linecap="round"><path d="M32 38 A22 22 0 0 1 72 49"/><path d="M68 62 A22 22 0 0 1 28 51"/></g>'+
+         '<polygon points="23,33 41,33 30,49" fill="'+c+'"/><polygon points="77,67 59,67 70,51" fill="'+c+'"/>';
+}
+function simbMais2(c){
+  return '<rect x="22" y="26" width="30" height="44" rx="6" fill="#fff" stroke="'+c+'" stroke-width="5"/>'+
+         '<rect x="40" y="34" width="30" height="44" rx="6" fill="'+c+'" stroke="#fff" stroke-width="4"/>'+
+         '<text x="55" y="64" font-family="Trebuchet MS,sans-serif" font-size="22" font-weight="bold" fill="#fff" text-anchor="middle">+2</text>';
+}
+function simbCoringa(){
+  return '<circle cx="50" cy="50" r="33" fill="#fff"/>'+
+         '<path d="M50 50 L50 17 A33 33 0 0 1 83 50 Z" fill="'+UCOR.v+'"/>'+
+         '<path d="M50 50 L83 50 A33 33 0 0 1 50 83 Z" fill="'+UCOR.a+'"/>'+
+         '<path d="M50 50 L50 83 A33 33 0 0 1 17 50 Z" fill="'+UCOR.m+'"/>'+
+         '<path d="M50 50 L17 50 A33 33 0 0 1 50 17 Z" fill="'+UCOR.g+'"/>'+
+         '<circle cx="50" cy="50" r="8" fill="#fff"/>';
+}
+function simbMais4(){
+  /* ⚠️ SEM o "+4" escrito aqui dentro: ele já está nos dois cantos da carta, e
+     no meio ficava meio para fora do oval branco — parecia defeito de desenho.
+     Visto em tamanho grande; na miniatura não dava para notar. */
+  return '<g stroke="#fff" stroke-width="3">'+
+         '<rect x="28" y="28" width="21" height="28" rx="4" fill="'+UCOR.v+'"/>'+
+         '<rect x="51" y="28" width="21" height="28" rx="4" fill="'+UCOR.a+'"/>'+
+         '<rect x="28" y="58" width="21" height="28" rx="4" fill="'+UCOR.m+'"/>'+
+         '<rect x="51" y="58" width="21" height="28" rx="4" fill="'+UCOR.g+'"/></g>';
+}
+/* uma carta de UNO: o oval branco inclinado, o símbolo grande e os dois cantos.
+   `tipo`: num | pula | inverte | mais2 | coringa | mais4 */
+function carta(tipo, cor, valor, x, y, esc, gira){
+  var c=UCOR[cor]||UCOR.v, w=66, h=96, miolo=c, dentro="", canto="";
+  if(tipo==="mais4"||tipo==="coringa"){ miolo=UCOR.p; }
+  if(tipo==="num"){ dentro='<text x="50" y="68" font-family="Trebuchet MS,sans-serif" font-size="60" font-weight="bold" fill="'+c+'" text-anchor="middle">'+valor+'</text>'; canto=valor; }
+  else if(tipo==="pula"){ dentro=simbPular(c); canto=""; }
+  else if(tipo==="inverte"){ dentro=simbInverte(c); canto=""; }
+  else if(tipo==="mais2"){ dentro=simbMais2(c); canto="+2"; }
+  else if(tipo==="mais4"){ dentro=simbMais4(); canto="+4"; }
+  else { dentro=simbCoringa(); canto=""; }
+  var s=esc||1, tr='translate('+x+','+y+') scale('+s+')'+(gira?' rotate('+gira+',33,48)':'');
+  return '<g transform="'+tr+'">'+
+    '<rect x="0" y="0" width="'+w+'" height="'+h+'" rx="9" fill="#fff" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>'+
+    '<rect x="5" y="5" width="'+(w-10)+'" height="'+(h-10)+'" rx="7" fill="'+miolo+'"/>'+
+    '<ellipse cx="33" cy="48" rx="34" ry="19" fill="#fff" transform="rotate(-32,33,48)"/>'+
+    '<g transform="translate(8,23) scale(0.5)">'+dentro+'</g>'+
+    (canto?'<text x="11" y="19" font-family="Trebuchet MS,sans-serif" font-size="15" font-weight="bold" fill="#fff">'+canto+'</text>'+
+           '<text x="55" y="88" font-family="Trebuchet MS,sans-serif" font-size="15" font-weight="bold" fill="#fff" text-anchor="middle" transform="rotate(180,55,83)">'+canto+'</text>':'')+
+    '</g>';
+}
+function svgBox(vb, corpo){ return '<svg viewBox="'+vb+'" role="img" aria-hidden="true">'+corpo+'</svg>'; }
+/* verso de carta (para a mão e o monte) */
+function verso(x,y,esc,gira){
+  var s=esc||1, tr='translate('+x+','+y+') scale('+s+')'+(gira?' rotate('+gira+',33,48)':'');
+  return '<g transform="'+tr+'">'+
+   '<rect x="0" y="0" width="66" height="96" rx="9" fill="#fff" stroke="rgba(0,0,0,.25)" stroke-width="1.5"/>'+
+   '<rect x="5" y="5" width="56" height="86" rx="7" fill="#1b1b1b"/>'+
+   '<ellipse cx="33" cy="48" rx="30" ry="17" fill="'+UCOR.v+'" transform="rotate(-32,33,48)"/>'+
+   '<text x="33" y="55" font-family="Trebuchet MS,sans-serif" font-size="19" font-weight="bold" fill="#fff" text-anchor="middle" transform="rotate(-32,33,48)">UNO</text>'+
+   '</g>';
+}
+
+/* --- as figuras que as questões usam --- */
+var FIG={};
+/* leque de sete cartas na mão */
+FIG.mao7=function(){ var h="",i; for(i=0;i<7;i++){ h+=verso(10+i*38, 26+(i===3?0:Math.abs(i-3)*5), .78, (i-3)*7); }
+  return svgBox("0 0 300 120", h); };
+/* ⚠️ A FIGURA ILUSTRA, NUNCA RESPONDE — e isto aqui já respondeu. A primeira
+   versão desenhava o monte e a carta do descarte com os RÓTULOS "monte" e
+   "descarte" escritos embaixo, e ficava na questão 2, que pergunta justamente
+   *o que se faz com o resto do baralho*. A alternativa certa diz "fica virado
+   para baixo formando o monte, e a primeira carta é virada ao lado para começar
+   o descarte" — ou seja, a figura entregava a frase inteira, de graça, para
+   quem nem tivesse estudado. Prova com figura que responde não mede nada.
+   Agora são duas figuras sem rótulo nenhum: o BOLO de cartas que sobrou (q2, o
+   estado ANTES da regra) e a mesa montada (q4, contexto de quem já está jogando). */
+FIG.resto=function(){
+  var h="",i; for(i=0;i<6;i++){ h+=verso(108+i*3, 14+i*3, .95, (i%2?2:-2)); }
+  return svgBox("0 0 300 130", h);
+};
+FIG.baralho=function(){
+  return svgBox("0 0 300 130",
+   verso(24,18,.92,-4)+verso(30,14,.92,2)+verso(36,10,.92,0)+
+   carta("num","a","7",168,10,.92,0));
+};
+/* a mesa com quatro lugares — cena de jogo, SEM seta e SEM número de ordem:
+   a questão 3 pergunta quem começa e para que lado o jogo corre, e uma seta
+   amarela girando responderia por ela. */
+FIG.mesa=function(){
+  var h='<circle cx="150" cy="82" r="64" fill="#2a7048" stroke="#c98b3a" stroke-width="5"/>';
+  var pos=[[150,16],[218,82],[150,148],[82,82]], i, k;
+  for(i=0;i<4;i++){
+    h+='<circle cx="'+pos[i][0]+'" cy="'+pos[i][1]+'" r="19" fill="#fffdf6" stroke="#1d6a40" stroke-width="3"/>';
+    for(k=0;k<3;k++){ h+=verso(pos[i][0]-10+k*4, pos[i][1]-9+k*2, .19, (k-1)*10); }
+  }
+  h+=verso(128,64,.34,-6)+carta("num","m","5",152,62,.34,4);
+  return svgBox("0 0 300 168", h);
+};
+FIG.pula=function(){ return svgBox("0 0 300 120", carta("pula","v","",48,8,1.1,-5)+carta("pula","a","",160,8,1.1,5)); };
+FIG.inverte=function(){ return svgBox("0 0 300 120", carta("inverte","g","",48,8,1.1,-5)+carta("inverte","m","",160,8,1.1,5)); };
+FIG.mais2=function(){ return svgBox("0 0 300 120", carta("mais2","v","",48,8,1.1,-5)+carta("mais2","a","",160,8,1.1,5)); };
+FIG.doisMais2=function(){
+  return svgBox("0 0 300 128", carta("mais2","v","",40,12,1.05,-8)+carta("mais2","m","",110,4,1.05,0)+
+   '<text x="252" y="70" font-family="Trebuchet MS,sans-serif" font-size="48" font-weight="bold" fill="#E5202E" text-anchor="middle">?</text>');
+};
+FIG.coringa=function(){ return svgBox("0 0 300 120", carta("coringa","p","",112,8,1.15,0)); };
+FIG.mais4=function(){ return svgBox("0 0 300 120", carta("mais4","p","",112,8,1.15,0)); };
+FIG.desafio=function(){
+  return svgBox("0 0 300 128", carta("mais4","p","",26,12,.95,-6)+
+   '<text x="150" y="74" font-family="Trebuchet MS,sans-serif" font-size="34" font-weight="bold" fill="#1d6a40" text-anchor="middle">vs</text>'+
+   verso(196,12,.95,0)+verso(214,12,.95,8));
+};
+FIG.maoVazia=function(){
+  return svgBox("0 0 300 130",
+   '<path d="M110 118 L110 74 Q110 52 128 52 Q140 52 140 68 L140 44 Q140 28 154 28 Q168 28 168 44 L168 50 Q168 34 182 34 Q194 34 194 50 L194 62 Q196 46 208 48 Q218 50 216 66 L214 92 Q210 120 182 120 Z" fill="#f5cfa6" stroke="#b07c4a" stroke-width="4" stroke-linejoin="round"/>'+
+   '<text x="60" y="76" font-family="Trebuchet MS,sans-serif" font-size="44" font-weight="bold" fill="#3EA72D" text-anchor="middle">0</text>'+
+   '<text x="60" y="100" font-family="Trebuchet MS,sans-serif" font-size="14" font-weight="bold" fill="#1d6a40" text-anchor="middle">cartas</text>');
+};
+FIG.pontos=function(){
+  var h=carta("num","a","7",14,8,.8,0)+carta("mais2","v","",112,8,.8,0)+carta("coringa","p","",210,8,.8,0);
+  h+='<text x="40" y="106" font-family="Trebuchet MS,sans-serif" font-size="17" font-weight="bold" fill="#1d6a40" text-anchor="middle">?</text>';
+  h+='<text x="138" y="106" font-family="Trebuchet MS,sans-serif" font-size="17" font-weight="bold" fill="#1d6a40" text-anchor="middle">?</text>';
+  h+='<text x="236" y="106" font-family="Trebuchet MS,sans-serif" font-size="17" font-weight="bold" fill="#1d6a40" text-anchor="middle">?</text>';
+  return svgBox("0 0 300 116", h);
+};
+FIG.placar=function(){
+  return svgBox("0 0 300 120",
+   '<rect x="40" y="16" width="220" height="80" rx="14" fill="#1b1b1b"/>'+
+   '<text x="150" y="60" font-family="Trebuchet MS,sans-serif" font-size="40" font-weight="bold" fill="#ffd23f" text-anchor="middle">500</text>'+
+   '<text x="150" y="84" font-family="Trebuchet MS,sans-serif" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">pontos</text>');
+};
+
+/* --- TANGRAM: as sete peças, nas cores da nossa atividade --- */
+/* ⚠️ As sete peças de um tangram de lado 100: dois triângulos grandes, um
+   médio, dois pequenos, um quadrado e um paralelogramo. As coordenadas são as
+   do quadrado clássico — é o mesmo corte do nosso jogo `_tangram`. */
+var TCOR=["#E5202E","#0099DD","#F7B500","#3EA72D","#9a5bb8","#c98b3a","#00a89b"];
+var TANS=[
+ /* ⚠️ OS NOMES ABAIXO FORAM MEDIDOS, não escritos de memória — na primeira
+    versão eu chamei a peça 3 de "médio" e a 7 de "grande", e as duas eram o
+    contrário. A conta que decide é a ÁREA: num quadrado de lado 100 a unidade
+    do tangram vale 625, e as sete peças dão 4 + 4 + 1 + 2 + 1 + 2 + 2 = 16.
+    Conferido também por amostragem: as sete cobrem o quadrado sem UM buraco e
+    sem UMA sobreposição. É o mesmo corte do nosso jogo `_tangram`. */
+ "0,0 100,0 50,50",         /* triângulo GRANDE (4 un) */
+ "0,0 50,50 0,100",         /* triângulo GRANDE (4 un) */
+ "100,0 100,50 75,25",      /* triângulo PEQUENO (1 un) */
+ "50,50 75,25 100,50 75,75",/* QUADRADO (2 un) */
+ "0,100 25,75 50,100",      /* triângulo PEQUENO (1 un) */
+ "50,50 75,75 50,100 25,75",/* PARALELOGRAMO (2 un) */
+ "50,100 100,100 100,50"    /* triângulo MÉDIO (2 un) */
+];
+function tansSVG(espalha){
+  var h="",i,dx,dy;
+  var off=[[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]];
+  if(espalha){ off=[[-16,-12],[-22,14],[20,-16],[26,8],[-8,26],[8,2],[24,22]]; }
+  for(i=0;i<TANS.length;i++){
+    dx=off[i][0]; dy=off[i][1];
+    h+='<polygon points="'+TANS[i]+'" fill="'+TCOR[i]+'" stroke="#fffdf6" stroke-width="2" transform="translate('+dx+','+dy+')"/>';
+  }
+  return h;
+}
+FIG.tanQuadrado=function(){ return svgBox("-14 -14 128 128", tansSVG(false)); };
+FIG.tanEspalhado=function(){ return svgBox("-44 -34 188 168", tansSVG(true)); };
+FIG.tanFormas=function(){
+  return svgBox("0 0 300 110",
+   '<polygon points="20,90 70,90 45,30" fill="'+TCOR[0]+'" stroke="#fffdf6" stroke-width="3"/>'+
+   '<rect x="115" y="38" width="52" height="52" fill="'+TCOR[1]+'" stroke="#fffdf6" stroke-width="3"/>'+
+   '<polygon points="205,90 245,38 290,38 250,90" fill="'+TCOR[2]+'" stroke="#fffdf6" stroke-width="3"/>');
+};
+FIG.azulejo=function(){
+  /* o azulejo quadrado da lenda, trincado nas sete linhas do tangram */
+  var h='<rect x="0" y="0" width="100" height="100" fill="#e8eef2" stroke="#8aa0b0" stroke-width="3"/>';
+  h+='<g stroke="#8aa0b0" stroke-width="2.5" fill="none">'+
+     '<line x1="0" y1="0" x2="100" y2="100"/><line x1="100" y1="0" x2="0" y2="100"/>'+
+     '<line x1="75" y1="25" x2="100" y2="50"/><line x1="25" y1="75" x2="75" y2="75"/>'+
+     '<line x1="50" y1="100" x2="100" y2="50"/></g>';
+  return svgBox("-12 -12 124 124", h);
+};
+
+/* alto-falante desenhado (nunca emoji: aqui ele é um ALVO que a criança toca
+   o tempo todo, e emoji muda de cara — ou some — de PC para PC) */
+function svgFala(cor){
+  var c=cor||"#1d6a40";
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="'+c+'"/>'+
+    '<path d="M16.5 8.5a5 5 0 0 1 0 7" fill="none" stroke="'+c+'" stroke-width="2" stroke-linecap="round"/>'+
+    '<path d="M19 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="'+c+'" stroke-width="2" stroke-linecap="round"/></svg>';
+}
+function svgMudo(cor){
+  var c=cor||"#ffe9b8";
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="'+c+'"/>'+
+    '<line x1="16" y1="9" x2="22" y2="15" stroke="'+c+'" stroke-width="2" stroke-linecap="round"/>'+
+    '<line x1="22" y1="9" x2="16" y2="15" stroke="'+c+'" stroke-width="2" stroke-linecap="round"/></svg>';
+}
+
+/* ===================================================================
+   AS 20 QUESTÕES
+   assunto: inicio = começo da partida | acao = cartas de ação |
+            desafio = o desafio do +4 | ponto = pontos e vitória |
+            tang = a origem do Tangram
+   ⚠️ FONTE: as quinze do UNO saem, uma a uma, do texto de REGRAS OFICIAIS que o
+      professor passou à turma; as cinco do Tangram saem do texto da tela "A
+      história do Tangram" da nossa atividade `_tangram` — as mesmas palavras
+      que a criança leu e ouviu lá. Nada aqui foi inventado por mim.
+   =================================================================== */
+var QUESTOES=[
+ {disc:"inicio", fig:"mao7", pergunta:"No começo da partida de UNO, quantas cartas cada jogador recebe?",
+  opcoes:["Cinco cartas.","Sete cartas.","Dez cartas.","Doze cartas."], correta:1},
+
+ {disc:"inicio", fig:"resto", pergunta:"Depois de dar as cartas, o que se faz com o resto do baralho?",
+  opcoes:["Fica virado para baixo formando o monte, e a primeira carta é virada ao lado para começar o descarte.","É dividido igualmente entre os jogadores.","Fica todo virado para cima no meio da mesa.","Volta para a caixa até alguém precisar."], correta:0},
+
+ {disc:"inicio", fig:"mesa", pergunta:"Quem joga primeiro, e para que lado o jogo corre?",
+  opcoes:["Quem deu as cartas, no sentido anti-horário.","Quem estiver à esquerda de quem deu as cartas, no sentido horário.","O jogador mais novo, para o lado que ele escolher.","Quem tirar a carta de maior número."], correta:1},
+
+ {disc:"acao", fig:"baralho", pergunta:"Chegou a sua vez e você não tem nenhuma carta que combine com a da mesa. O que a regra manda fazer?",
+  opcoes:["Passar a vez sem fazer nada.","Pedir uma carta emprestada a outro jogador.","Comprar uma carta do monte — e, se ela servir, você já pode baixá-la na hora.","Comprar cartas do monte até conseguir uma que sirva."], correta:2},
+
+ {disc:"acao", fig:"pula", pergunta:"O que a carta PULAR faz?",
+  opcoes:["O próximo jogador perde a vez.","Todos os jogadores compram uma carta.","Muda a cor que está valendo.","O próximo jogador compra duas cartas."], correta:0},
+
+ {disc:"acao", fig:"inverte", pergunta:"O que a carta INVERTER faz?",
+  opcoes:["Faz o próximo jogador perder a vez.","Muda o sentido do jogo: quem ia para um lado passa a ir para o outro.","Troca as cartas de dois jogadores.","Devolve a carta da mesa para o monte."], correta:1},
+
+ {disc:"acao", fig:"mais2", pergunta:"Alguém baixou uma carta COMPRAR DUAS, o mais dois. O que acontece com o próximo jogador?",
+  opcoes:["Compra duas cartas e continua jogando normalmente.","Compra duas cartas e perde a vez.","Escolhe se compra duas cartas ou se perde a vez.","Passa o mais dois para o jogador seguinte."], correta:1},
+
+ {disc:"acao", fig:"doisMais2", pergunta:"Pelas REGRAS OFICIAIS, quem recebe um mais dois pode jogar outro mais dois por cima, para somar e passar adiante?",
+  opcoes:["Sim, e pode somar quantos mais dois quiser.","Sim, mas só se o mais dois for da mesma cor.","Não. Oficialmente não é permitido acumular pilhas de mais dois.","Sim, mas só até três cartas seguidas."], correta:2},
+
+ {disc:"acao", fig:"coringa", pergunta:"Para que serve a carta CORINGA, a carta preta colorida?",
+  opcoes:["Para fazer todos os jogadores comprarem uma carta.","Para quem jogou escolher a nova cor que continua o jogo.","Para jogar duas vezes seguidas.","Para inverter o sentido do jogo."], correta:1},
+
+ {disc:"acao", fig:"mais4", pergunta:"O CORINGA COMPRAR QUATRO tem uma condição para ser jogado. Qual é?",
+  opcoes:["Só pode ser jogado na última rodada da partida.","Só pode ser jogado por quem tiver mais de cinco cartas na mão.","Só pode ser jogado se você NÃO tiver nenhuma outra carta da cor que está na mesa.","Pode ser jogado a qualquer momento, sem nenhuma condição."], correta:2},
+
+ /* ⚠️ Esta questão já esteve errada, e o defeito não era a resposta: as letras A
+    e B diziam quase a mesma frase ("compra quatro cartas, e quem jogou escolhe
+    a cor" / "compra quatro cartas e escolhe a cor"). Para uma criança do 3º ano
+    isso mede LEITURA ATENTA, não a regra do jogo — e prova não é pegadinha.
+    Agora a pergunta separa o que é a regra: QUEM escolhe a cor. */
+ {disc:"acao", fig:"mais4", pergunta:"Alguém jogou o coringa comprar quatro. O próximo compra as quatro cartas — mas QUEM escolhe a cor que continua o jogo?",
+  opcoes:["Quem jogou a carta.","O próximo jogador, o que comprou as quatro cartas.","Todos os jogadores votam na cor.","Ninguém escolhe: a cor continua a mesma de antes."], correta:0},
+
+ {disc:"desafio", fig:"desafio", pergunta:"Você jogou um comprar quatro. O colega desconfia que você blefou e te DESAFIA. Você mostra as suas cartas e ele vê que você TINHA, sim, a cor da mesa. O que acontece?",
+  opcoes:["Você compra quatro cartas.","O colega compra quatro cartas.","O colega compra seis cartas.","Ninguém compra nada e o jogo segue."], correta:0},
+
+ {disc:"desafio", fig:"desafio", pergunta:"Agora o contrário: o colega te desafia, você mostra as cartas e ele vê que você NÃO tinha a cor da mesa — o seu comprar quatro era honesto. Quem compra, e quantas cartas?",
+  opcoes:["Você compra quatro cartas.","O colega compra quatro cartas.","O colega compra seis cartas: as quatro do comprar quatro mais duas de castigo.","Cada um compra duas cartas."], correta:2},
+
+ {disc:"ponto", fig:"maoVazia", pergunta:"Quando termina uma rodada de UNO?",
+  opcoes:["Quando o monte de comprar acaba.","Quando o primeiro jogador fica sem nenhuma carta na mão.","Quando todos os jogadores ficam sem cartas.","Depois de dez jogadas de cada um."], correta:1},
+
+ {disc:"ponto", fig:"pontos", pergunta:"Terminada a rodada, na contagem oficial, quanto vale cada carta que sobrou na mão dos outros jogadores?",
+  opcoes:["Todas as cartas valem dez pontos.","Carta de número vale o próprio número; mais dois, pular e inverter valem vinte; os coringas valem cinquenta.","Carta de número vale cinco; cartas de ação valem dez; os coringas valem vinte.","Carta de número vale o próprio número; todas as outras valem cem."], correta:1},
+
+ {disc:"ponto", fig:"placar", pergunta:"Quem é o vencedor FINAL do jogo, depois de várias rodadas?",
+  opcoes:["Quem ganhar três rodadas seguidas.","Quem chegar primeiro aos quinhentos pontos.","Quem terminar com menos pontos.","Quem ganhar a última rodada."], correta:1},
+
+ {disc:"tang", fig:"tanQuadrado", pergunta:"Em que país nasceu o Tangram, e há quanto tempo?",
+  opcoes:["No Japão, faz uns cem anos.","No Brasil, faz uns duzentos anos.","Na China, faz mais de mil anos.","Na Grécia, faz uns quinhentos anos."], correta:2},
+
+ {disc:"tang", fig:"tanEspalhado", pergunta:"Quantas peças tem o Tangram, e como essas peças se chamam?",
+  opcoes:["Cinco peças, chamadas tans.","Sete peças, chamadas tans.","Sete peças, chamadas tricas.","Nove peças, chamadas tans."], correta:1},
+
+ {disc:"tang", fig:"tanFormas", pergunta:"Quais são as formas das peças do Tangram?",
+  opcoes:["Sete triângulos iguais.","Cinco triângulos, um quadrado e um paralelogramo.","Três triângulos, três quadrados e um círculo.","Quatro triângulos, dois quadrados e um retângulo."], correta:1},
+
+ {disc:"tang", fig:"azulejo", pergunta:"A lenda do Tangram conta que um sábio deixou cair uma coisa, e foi assim que o jogo apareceu. O que ele deixou cair, e o que aconteceu?",
+  opcoes:["Um espelho redondo, que se quebrou em vários caquinhos pequenos.","Um azulejo quadrado, que se quebrou em sete pedaços — e, juntando de novo, ele viu que dava para formar muitas figuras.","Um saco de pedras, que se espalhou pelo chão.","Um tabuleiro de madeira, que rachou ao meio."], correta:1},
+
+ {disc:"tang", fig:"tanEspalhado", pergunta:"Qual é a regra para montar uma figura no Tangram?",
+  opcoes:["Usar quantas peças quiser, do jeito que quiser.","Usar sempre as sete peças, sem deixar uma em cima da outra.","Usar só os triângulos, deixando o quadrado de fora.","Usar as sete peças, podendo empilhar umas sobre as outras."], correta:1}
+];
+var DISCNOME={inicio:"COMEÇO DA PARTIDA", acao:"CARTAS DE AÇÃO", desafio:"O DESAFIO DO +4", ponto:"PONTOS E VITÓRIA", tang:"A ORIGEM DO TANGRAM"};
+
+/* ⚠️ A FALA DE CADA QUESTÃO É MONTADA, NÃO ESCRITA À MÃO. Era escrita à mão nas
+   provas anteriores, e uma fala escrita à mão vira mentira no dia em que se
+   mexe numa alternativa e se esquece do texto da voz. Aqui há uma fonte só:
+   a pergunta e as opções. O `falas.json` é gerado exatamente por esta conta. */
+var NUMEXT={1:"um",2:"dois",3:"três",4:"quatro",5:"cinco",6:"seis",7:"sete",8:"oito",9:"nove",10:"dez",
+ 11:"onze",12:"doze",13:"treze",14:"quatorze",15:"quinze",16:"dezesseis",17:"dezessete",18:"dezoito",19:"dezenove",20:"vinte"};
+function falaDaQuestao(i){
+  var q=QUESTOES[i], letras=["Letra A","Letra B","Letra C","Letra D"], t, k;
+  t="Pergunta "+NUMEXT[i+1]+(i===QUESTOES.length-1?", a última":"")+". "+q.pergunta;
+  for(k=0;k<q.opcoes.length;k++){ t+=" "+letras[k]+": "+q.opcoes[k]; }
+  return t;
+}
+
+/* ====== estado ====== */
+var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, anoSel="", letraSel="", avatarSel="", avatarAluno="";
+var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
+function $(id){return document.getElementById(id);}
+function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+/* ====== VOZ (arquivos audio/v<hash>.mp3) ====== */
+var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("efjogos_mudo")==="1");}catch(e){}
+var _falaAudio=null, _ultimaFala="";
+function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
+function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
+var _actx=null;
+function somToque(){
+  if(VOZ_MUDA){return;}
+  try{
+    if(!_actx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC){return;}_actx=new AC();}
+    if(_actx.state==="suspended"&&_actx.resume){_actx.resume();}
+    var t=_actx.currentTime,o=_actx.createOscillator(),g=_actx.createGain();
+    o.type="triangle";o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(760,t+0.10);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+    o.connect(g);g.connect(_actx.destination);o.start(t);o.stop(t+0.18);
+  }catch(e){}
+}
+function falar(texto,_forcar){
+  _ultimaFala=texto;
+  if(VOZ_MUDA&&!_forcar){return;}
+  pararFala();
+  try{var a=new Audio("audio/"+_chaveVoz(texto)+".mp3");_falaAudio=a;a.play();}catch(e){}
+}
+function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
+function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
+function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("efjogos_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
+function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?svgMudo():svgFala("#ffe9b8");b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
+
+/* ====== TELAS ====== */
+function telaCapa(){
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="img/ej_leo.png" alt="Léo, o leão treinador" onerror="this.style.display=\'none\'">';
+  h+='<h1>A Mesa de Jogos do Léo</h1>';
+  h+='<h2>Educação Física &middot; 3º, 4º e 5º anos</h2>';
+  h+='<p class="grande">As regras do UNO e a história do Tangram. Eu leio cada pergunta e cada resposta em voz alta — é só ouvir e tocar na certa.</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">Ouvir o Léo</button>';
+  h+='<div class="formrow">';
+  h+='<div class="fcol">';
+  h+='<label for="cNome">Qual é o seu nome?</label>';
+  h+='<input id="cNome" maxlength="26" placeholder="Escreva o seu nome">';
+  h+='<label>Qual é o seu ano?</label><div class="turmas">';
+  var i;for(i=0;i<ANOS.length;i++){h+='<button type="button" class="tbox tano" onclick="selAno(this,\''+ANOS[i]+'\')">'+ANOS[i]+'</button>';}
+  h+='</div>';
+  h+='<label>E a sua turma?</label><div class="turmas">';
+  for(i=0;i<LETRAS.length;i++){h+='<button type="button" class="tbox tlet" onclick="selLetra(this,\''+LETRAS[i]+'\')">'+LETRAS[i]+'</button>';}
+  h+='</div></div>';
+  h+='<div class="fcol">';
+  h+='<label>Escolha o seu personagem!</label><div class="avs">';
+  for(i=0;i<AVATARES.length;i++){var a=AVATARES[i];
+    h+='<button type="button" class="avbox" style="background:'+a.cor+'" onclick="selAvatar(this,\''+a.id+'\')">'+
+       '<img src="img/'+a.id+'" alt="Personagem '+(i+1)+'" onerror="this.style.display=\'none\'"></button>';}
+  h+='</div></div>';
+  h+='</div>';
+  h+='<div><button class="btn" onclick="comecar()">Começar!</button></div>';
+  h+='</div>';
+  $("app").innerHTML=h;
+}
+function ouvirHistoria(){ _histTocada=true; falar(HISTORIA,true); }
+function selAno(b,t){anoSel=t;var els=document.getElementsByClassName("tano"),i;for(i=0;i<els.length;i++){els[i].className="tbox tano";}b.className="tbox tano on";somToque();}
+function selLetra(b,t){letraSel=t;var els=document.getElementsByClassName("tlet"),i;for(i=0;i<els.length;i++){els[i].className="tbox tlet";}b.className="tbox tlet on";somToque();}
+function selAvatar(b,id){avatarSel=id;var els=document.getElementsByClassName("avbox"),i;for(i=0;i<els.length;i++){els[i].className="avbox";}b.className="avbox on";somToque();}
+function comecar(){
+  var nm=($("cNome")&&$("cNome").value||"").replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
+  if(!nm){falar("Escreva o seu nome para começar.",true);if($("cNome"))$("cNome").focus();return;}
+  if(!anoSel){falar("Escolha o seu ano.",true);return;}
+  if(!letraSel){falar("Escolha a sua turma.",true);return;}
+  if(!avatarSel){falar("Escolha o seu personagem.",true);return;}
+  nomeAluno=nm;turmaAluno=anoSel+" "+letraSel;avatarAluno=avatarSel;atual=0;somToque();telaPergunta();
+}
+function crachaHTML(){
+  return '<div class="cracha"><div class="cav"><img src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'"></div>'+
+    '<span class="cnm">'+esc(nomeAluno)+'</span></div>';
+}
+function passaporte(){
+  var h='<div id="passa">',i;
+  for(i=0;i<QUESTOES.length;i++){
+    var st=(i<atual?"feito":(i===atual?"agora":""));
+    h+='<span class="selo '+st+'"></span>';
+  }
+  return h+'</div>';
+}
+function telaPergunta(){
+  var q=QUESTOES[atual],h='';
+  h+='<div id="trilha">Pergunta '+(atual+1)+' de '+QUESTOES.length+'</div>';
+  h+=passaporte();
+  h+='<div class="card qcard">';
+  h+=crachaHTML();
+  h+='<img class="guia" src="img/ej_leo.png" alt="Léo, o leão treinador" onerror="this.style.display=\'none\'">';
+  h+='<span class="disc '+q.disc+'">'+(DISCNOME[q.disc]||"")+'</span>';
+  if(q.fig&&FIG[q.fig]){h+='<div class="qfig">'+FIG[q.fig]()+'</div>';}
+  h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
+  h+='<button id="btnOuvir" onclick="repetirUltima()">Ouvir a pergunta de novo</button>';
+  h+='<div class="opcoes">';
+  var letras=["A","B","C","D"],i;
+  for(i=0;i<q.opcoes.length;i++){
+    h+='<div class="opc c'+i+'" role="button" tabindex="0" onclick="responder('+i+')" data-qa="o'+i+'">'+
+       '<span class="let">'+letras[i]+'</span>'+
+       '<span class="otx">'+esc(q.opcoes[i])+'</span>'+
+       '<button class="ospk" aria-label="Ouvir esta resposta" onclick="event.stopPropagation();ouvirOpc('+i+')">'+svgFala()+'</button>'+
+       '</div>';
+  }
+  h+='</div></div>';
+  $("app").innerHTML=h;
+  $("app").scrollTop=0;
+  falar(falaDaQuestao(atual));
+}
+function responder(idx){
+  somToque();respostas[atual]=idx;pararFala();atual++;
+  if(atual>=QUESTOES.length){telaFinal();}
+  else{
+    var frases=["Próxima pergunta!","Vamos continuar!","Muito bem, siga em frente!","Continue!"];
+    falar(frases[atual%frases.length]);setTimeout(telaPergunta,60);
+  }
+}
+function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
+
+function medalhaHTML(){
+  return '<div class="medalha"><span class="fita e"></span><span class="fita d"></span>'+
+    '<div class="disco"><span class="estrela"></span>'+
+    (avatarAluno?'<img class="mav" src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'">':'')+
+    '</div></div>';
+}
+function telaFinal(){
+  var ac=calcularAcertos();confete();
+  var h='';
+  h+='<div class="card">';
+  h+='<h1>Prontinho!</h1>';
+  h+=medalhaHTML();
+  h+='<h2>'+esc(nomeAluno)+', você terminou a prova!</h2>';
+  h+='<p class="grande">O Léo adorou jogar com você. Parabéns!</p>';
+  h+='<p id="statusenvio"></p></div>';
+  $("app").innerHTML=h;
+  $("app").scrollTop=0;
+  falar("Prontinho! Você terminou a prova. O Léo adorou jogar com você. Parabéns!");
+  enviarResultado(ac);
+}
+
+/* ====== ENVIO (Firebase), SEM mostrar nota ao aluno ====== */
+function enviarResultado(ac){
+  if(enviado){return;}enviado=true;
+  var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":String(respostas[i]));}
+  var quando=new Date().toLocaleString("pt-BR");
+  var nota10=QUESTOES.length?Math.round(ac/QUESTOES.length*100)/10:0;
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  try{
+    var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
+    var x=new XMLHttpRequest();
+    x.open("PUT",FIREBASE_DB+"/provas/"+SLUG+"/"+chave+".json",true);
+    x.setRequestHeader("Content-Type","application/json");
+    x.send(JSON.stringify(reg));
+  }catch(e){}
+  if(URL_PLANILHA){try{
+    var dados="nome="+encodeURIComponent(nomeAluno)+"&turma="+encodeURIComponent(turmaAluno)+"&nota="+encodeURIComponent(nota10)+"&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+"&respostas="+encodeURIComponent(letras)+"&data="+encodeURIComponent(quando);
+    var y=new XMLHttpRequest();y.open("POST",URL_PLANILHA,true);y.setRequestHeader("Content-Type","application/x-www-form-urlencoded");y.send(dados);
+  }catch(e){}}
+}
+
+/* ====== confete leve ====== */
+function confete(){try{
+  var c=document.createElement("canvas");c.style.position="fixed";c.style.left=0;c.style.top=0;c.style.pointerEvents="none";c.style.zIndex=9998;
+  c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+  var x=c.getContext("2d"),ps=[],i,cores=["#E5202E","#0099DD","#F7B500","#3EA72D","#fffdf6"];
+  for(i=0;i<80;i++){ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,r:6+Math.random()*6,vy:2+Math.random()*3,co:cores[i%cores.length],vx:-1.5+Math.random()*3});}
+  var t=0,tot=140;function loop(){x.clearRect(0,0,c.width,c.height);var k;for(k=0;k<ps.length;k++){var p=ps[k];p.y+=p.vy;p.x+=p.vx;x.fillStyle=p.co;x.fillRect(p.x,p.y,p.r,p.r);}t++;if(t<tot){requestAnimationFrame(loop);}else{if(c.parentNode){c.parentNode.removeChild(c);}}}loop();
+}catch(e){}}
+
+/* ====== boot ====== */
+function boot(){attMudo();telaCapa();}
+document.addEventListener("click",function(){
+  if(_histTocada){return;}
+  if(!document.getElementById("cNome")){return;}
+  _histTocada=true;falar(HISTORIA,true);
+},false);
+boot();
+</script>
