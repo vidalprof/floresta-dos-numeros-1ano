@@ -1,881 +1,245 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UNO das Cores - Jogo para Aprender</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel — A Mesa de Jogos do Léo</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Fredoka:wght@500;600;700&display=swap');
-
-  :root{
-    --azul:#0099DD;
-    --vermelho:#E5202E;
-    --amarelo:#F7B500;
-    --verde:#3EA72D;
-    --fundo:#FFF7E6;
-    --escuro:#2B2440;
-    --branco:#FFFFFF;
-  }
-
-  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-
-  body{
-    font-family:'Fredoka',sans-serif;
-    background:
-      radial-gradient(circle at 50% 0%, #2E86C9 0, transparent 55%),
-      radial-gradient(circle at 12% 88%, #1C6BB0 0, transparent 45%),
-      radial-gradient(circle at 88% 92%, #1C6BB0 0, transparent 45%),
-      linear-gradient(180deg, #2876B8 0%, #1B5D9E 100%);
-    background-attachment:fixed;
-    min-height:100vh;
-    color:#fff;
-    overflow-x:hidden;
-  }
-
-  /* ---------- TOPO ---------- */
-  header{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 22px; gap:12px; flex-wrap:wrap;
-  }
-  .logo{
-    font-family:'Baloo 2',sans-serif; font-weight:800;
-    font-size:clamp(28px,5vw,46px); letter-spacing:1px;
-    display:flex; gap:4px; align-items:center;
-  }
-  .logo .l{ display:inline-block; padding:2px 14px; border-radius:14px; color:#fff;
-    box-shadow:0 4px 0 rgba(0,0,0,.15); transform:rotate(-3deg);}
-  .logo .l:nth-child(1){ background:var(--vermelho); transform:rotate(-4deg);}
-  .logo .l:nth-child(2){ background:var(--azul); transform:rotate(3deg);}
-  .logo .l:nth-child(3){ background:var(--verde); transform:rotate(-2deg);}
-  .logo small{ font-family:'Fredoka'; font-size:16px; color:#EAF4FF; margin-left:10px; font-weight:600;}
-
-  .btn{
-    font-family:'Baloo 2',sans-serif; font-weight:700; border:none; cursor:pointer;
-    border-radius:18px; padding:12px 22px; font-size:clamp(16px,2.4vw,22px);
-    color:#fff; box-shadow:0 5px 0 rgba(0,0,0,.18); transition:transform .08s, box-shadow .08s;
-  }
-  .btn:active{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,.18);}
-  .btn-tutorial{ background:var(--escuro); }
-  .btn-novo{ background:var(--verde); }
-  .btn-voz{ background:#7A4FC0; }
-  .btn-voz.voz-off{ background:#8A8A8A; }
-  .topo-botoes{ display:flex; gap:10px; flex-wrap:wrap;}
-
-  /* ---------- MESA ---------- */
-  .mesa{ max-width:1000px; margin:0 auto; padding:8px 16px 40px; }
-
-  .jogador-area h2, .computador-area h2{
-    font-family:'Baloo 2'; font-size:clamp(18px,3vw,26px); margin-bottom:8px;
-    display:flex; align-items:center; gap:10px;
-  }
-  .avatar{ font-size:30px;}
-
-  .computador-area{ text-align:center; margin-bottom:10px;}
-  .cartas-cpu{ display:flex; justify-content:center; gap:-20px; min-height:90px; flex-wrap:wrap;}
-  .verso{
-    width:58px; height:86px; border-radius:12px; margin:0 -14px;
-    background:repeating-linear-gradient(45deg,#5B4B8A,#5B4B8A 8px,#43386B 8px,#43386B 16px);
-    border:3px solid #fff; box-shadow:0 4px 8px rgba(0,0,0,.2);
-    display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:22px;
-    font-family:'Baloo 2';
-  }
-
-  /* centro: monte + mensagem */
-  .centro{
-    display:flex; align-items:center; justify-content:center; gap:26px;
-    margin:18px 0; flex-wrap:wrap;
-  }
-  .monte{ text-align:center;}
-  .monte .rotulo{ font-weight:600; margin-bottom:6px; font-size:15px;}
-  /* ===== ESTILO CLÁSSICO DAS CARTAS ===== */
-  /* moldura branca externa + miolo colorido + oval branco inclinado + número central
-     + números pequenos nos cantos. Tudo desenhado em CSS, sem imagens. */
-  .uno{
-    position:relative; background:#fff; border-radius:14px;
-    box-shadow:0 6px 12px rgba(0,0,0,.28); font-family:'Baloo 2'; overflow:hidden;
-  }
-  .uno .miolo{ position:absolute; inset:6%; border-radius:10px; overflow:hidden; }
-  /* oval branco inclinado característico */
-  .uno .oval{
-    position:absolute; left:50%; top:50%;
-    width:118%; height:54%;
-    background:#fff; border-radius:50%;
-    transform:translate(-50%,-50%) rotate(-32deg);
-    box-shadow:0 6px 14px rgba(0,0,0,.22) inset, 0 2px 6px rgba(0,0,0,.18);
-  }
-  /* número grande central com contorno */
-  .uno .central{
-    position:absolute; left:0; top:0; width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center;
-    font-weight:800; line-height:1; z-index:2;
-    -webkit-text-stroke:2px rgba(0,0,0,.18);
-    paint-order:stroke fill;
-  }
-  /* números pequenos nos cantos opostos */
-  .uno .canto{ position:absolute; font-weight:800; color:#fff; z-index:3; line-height:1;
-    text-shadow:0 1px 0 rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; }
-  .uno .canto.tl{ top:5%; left:7%; }
-  .uno .canto.br{ bottom:5%; right:7%; transform:rotate(180deg); }
-  .uno .canto .simb-svg{ filter:drop-shadow(0 1px 1px rgba(0,0,0,.3)); width:var(--cc); height:var(--cc); display:block; }
-  .uno .central .simb-svg{ filter:drop-shadow(0 2px 3px rgba(0,0,0,.18)); width:var(--sc); height:var(--sc); display:block; }
-  .uno .simb-c, .uno .simb-k{ display:flex; align-items:center; justify-content:center; }
-  .uno .canto-mais2{ font-weight:800; }
-
-  .carta-grande{ width:120px; height:178px; --sc:96px; --cc:30px; }
-  .carta-grande .central{ font-size:78px; }
-  .carta-grande .canto{ font-size:26px; }
-  .carta-grande .canto-mais2{ font-size:20px; }
-  .comprar{
-    width:120px; height:178px; border-radius:18px; border:6px dashed var(--escuro);
-    background:#fff; display:flex; flex-direction:column; gap:6px; align-items:center; justify-content:center;
-    cursor:pointer; font-family:'Baloo 2'; font-weight:700; font-size:18px; color:var(--escuro);
-    transition:transform .08s;
-  }
-  .comprar:hover{ transform:scale(1.05); background:#FFF3D6;}
-  .comprar .big{ font-size:46px;}
-  .comprar.destaque{ border-color:var(--amarelo); background:#FFF8E0; animation:chama 1s ease-in-out infinite; }
-  @keyframes chama{
-    0%,100%{ box-shadow:0 0 0 0 rgba(247,181,0,.6); transform:scale(1); }
-    50%{ box-shadow:0 0 0 12px rgba(247,181,0,0); transform:scale(1.05); }
-  }
-
-  /* mensagem grande */
-  .mensagem{
-    text-align:center; font-family:'Baloo 2'; font-weight:700; color:#1a1633;
-    font-size:clamp(20px,4vw,32px); min-height:48px; margin:6px 0 14px;
-    padding:10px 18px; border-radius:18px; background:#fff; box-shadow:0 4px 10px rgba(0,0,0,.1);
-    display:inline-block; max-width:90%;
-  }
-  .mensagem-wrap{ text-align:center;}
-
-  /* mão do jogador */
-  .jogador-area{ margin-top:14px;}
-  .minhas-cartas{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; padding:6px;}
-  .carta{
-    width:78px; height:116px; cursor:pointer; --sc:62px; --cc:19px;
-    transition:transform .12s, box-shadow .12s;
-  }
-  .carta .central{ font-size:48px; }
-  .carta .canto{ font-size:17px; }
-  .carta .canto-mais2{ font-size:13px; }
-  .carta.jogavel:hover{ transform:translateY(-16px) scale(1.06); box-shadow:0 14px 20px rgba(0,0,0,.3);}
-  .carta.jogavel{ outline:4px solid #FFE49B; outline-offset:1px; }
-  .carta.bloqueada{ filter:grayscale(.55) brightness(.92); cursor:not-allowed; opacity:.72;}
-
-  .c-azul .miolo{ background:var(--azul);}
-  .c-vermelho .miolo{ background:var(--vermelho);}
-  .c-amarelo .miolo{ background:var(--amarelo);}
-  .c-verde .miolo{ background:var(--verde);}
-  /* cor do número central = cor da carta (fica sobre o oval branco) */
-  .c-azul .central{ color:var(--azul);}
-  .c-vermelho .central{ color:var(--vermelho);}
-  .c-amarelo .central{ color:var(--amarelo);}
-  .c-verde .central{ color:var(--verde);}
-  .c-curinga .central{ color:#fff;}
-  /* cartas pretas (+2 e +4) */
-  .c-preta .miolo{ background:#15131F;}
-  .c-preta .central{ color:#fff;}
-
-  .dica{ text-align:center; font-size:16px; color:#EAF4FF; margin-top:8px; font-weight:600;}
-
-  /* ---------- SELETOR DE COR ---------- */
-  .overlay{
-    position:fixed; inset:0; background:rgba(58,46,92,.55); backdrop-filter:blur(3px);
-    display:none; align-items:center; justify-content:center; z-index:50; padding:20px;
-  }
-  .overlay.ativo{ display:flex; }
-  .escolher-cor{
-    background:#fff; border-radius:26px; padding:26px; text-align:center; max-width:420px; width:100%;
-    box-shadow:0 20px 40px rgba(0,0,0,.3);
-  }
-  .escolher-cor h3{ font-family:'Baloo 2'; font-size:26px; margin-bottom:16px; color:#2B2440;}
-  .cores-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px;}
-  .cor-opcao{
-    height:90px; border-radius:18px; border:4px solid rgba(0,0,0,.15); cursor:pointer; color:#111;
-    font-family:'Baloo 2'; font-weight:800; font-size:22px; box-shadow:0 5px 0 rgba(0,0,0,.18);
-    transition:transform .08s; text-shadow:0 1px 0 rgba(255,255,255,.45);
-  }
-  .cor-opcao:active{ transform:translateY(4px);}
-  .cor-opcao.c-vermelho{ background:var(--vermelho);}
-  .cor-opcao.c-azul{ background:var(--azul);}
-  .cor-opcao.c-verde{ background:var(--verde);}
-  .cor-opcao.c-amarelo{ background:var(--amarelo);}
-
-  /* ---------- TUTORIAL ---------- */
-  .tutorial{
-    position:fixed; inset:0; background:rgba(58,46,92,.92); z-index:100;
-    display:none; align-items:center; justify-content:center; padding:18px;
-  }
-  .tutorial.ativo{ display:flex; }
-  .slide-box{
-    background:var(--branco); border-radius:30px; max-width:760px; width:100%;
-    padding:30px 28px 24px; text-align:center; box-shadow:0 24px 60px rgba(0,0,0,.4);
-    position:relative;
-  }
-  .slide-num{ font-weight:700; color:#9a8fc0; font-size:16px; margin-bottom:6px;}
-  .mascote-linha{ display:flex; align-items:center; gap:18px; justify-content:center; flex-wrap:wrap;}
-  .mascote{ flex:0 0 auto; width:120px; animation:flutua 2.6s ease-in-out infinite;}
-  .mascote svg{ width:120px; height:150px; filter:drop-shadow(0 6px 8px rgba(0,0,0,.18));}
-  @keyframes flutua{ 0%,100%{ transform:translateY(0) rotate(-2deg);} 50%{ transform:translateY(-8px) rotate(2deg);} }
-  .balao{
-    position:relative; background:#F1F6FF; border:4px solid #BBD4F0; border-radius:24px;
-    padding:18px 22px; max-width:480px; flex:1 1 320px; text-align:center; color:#1a1a1a;
-  }
-  .balao::before{
-    content:""; position:absolute; left:-22px; top:50%; transform:translateY(-50%);
-    border:14px solid transparent; border-right-color:#BBD4F0;
-  }
-  .balao::after{
-    content:""; position:absolute; left:-15px; top:50%; transform:translateY(-50%);
-    border:11px solid transparent; border-right-color:#F1F6FF;
-  }
-  .slide-emoji{ font-size:54px; line-height:1; margin:0 0 6px; display:block;}
-  .slide-box h2#slideTitulo{ font-family:'Baloo 2'; font-size:clamp(22px,4vw,32px); margin-bottom:12px; color:#1a1633 !important;}
-  .slide-box p#slideTexto{ font-size:clamp(17px,2.6vw,22px); line-height:1.5; color:#23203a !important; max-width:600px; margin:0 auto;}
-  .balao h2, .balao p{ color:#23203a !important;}
-  .slide-cartinha{ display:inline-flex; gap:10px; margin:12px 0; justify-content:center; flex-wrap:wrap;}
-  @media (max-width:560px){
-    .mascote-linha{ flex-direction:column; gap:6px;}
-    .balao::before,.balao::after{ left:50%; top:-22px; transform:translateX(-50%) rotate(90deg);}
-    .mascote{ width:92px;} .mascote svg{ width:92px; height:115px;}
-  }
-  .mini{
-    width:62px; height:92px; --sc:50px; --cc:15px;
-    font-size:38px;
-  }
-  .mini .central{ font-size:38px; }
-  .mini .canto{ font-size:13px; }
-  .mini .canto-mais2{ font-size:10px; }
-  .tut-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:22px; gap:10px;}
-  .bolinhas{ display:flex; gap:8px; justify-content:center; flex:1;}
-  .bolinha{ width:13px; height:13px; border-radius:50%; background:#D8D0EE; transition:background .2s, transform .2s;}
-  .bolinha.on{ background:var(--escuro); transform:scale(1.3);}
-  .btn-nav{ background:var(--azul); }
-  .btn-fechar-tut{ background:var(--vermelho); }
-  .btn-nav:disabled{ opacity:.35; cursor:default; transform:none; box-shadow:0 5px 0 rgba(0,0,0,.18);}
-
-  /* vitória confete simples */
-  .festa{ animation:pulo .6s ease infinite alternate;}
-  @keyframes pulo{ from{transform:scale(1);} to{transform:scale(1.06) rotate(-1deg);} }
-
-  @media (max-width:560px){
-    .carta{ width:64px; height:96px; --sc:52px; --cc:16px;}
-    .carta .central{ font-size:40px;}
-    .carta .canto{ font-size:14px;}
-    .carta-grande,.comprar{ width:100px; height:150px;}
-    .carta-grande{ --sc:80px; --cc:25px;}
-    .carta-grande .central{ font-size:64px;}
-    .carta-grande .canto{ font-size:22px;}
-  }
-  @media (prefers-reduced-motion:reduce){
-    *{ animation:none !important; transition:none !important;}
-  }
+*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
+body{margin:0;background:#10301e;color:#eaf6ee;}
+.wrap{max-width:960px;margin:0 auto;padding:16px 14px 60px;}
+h1{font-size:23px;color:#ffd23f;margin:8px 0 2px;}
+.sub{color:#9dc3aa;font-size:14px;margin:0 0 12px;}
+.trava{max-width:340px;margin:60px auto;background:#17422a;border:2px solid #2f6a45;border-radius:16px;padding:22px 18px;text-align:center;}
+.trava input{font-size:18px;padding:11px 12px;border-radius:12px;border:2px solid #2f6a45;width:80%;text-align:center;background:#10301e;color:#eaf6ee;}
+.bt{font-family:inherit;font-size:15px;font-weight:bold;border:none;border-radius:12px;padding:12px 16px;min-height:40px;margin:4px 4px;cursor:pointer;color:#10301e;background:#ffd23f;}
+.bt.sec{background:#2f6a45;color:#eaf6ee;}
+.bt.on{background:#5ec26a;color:#08240f;}
+.bt.del{background:#c9463a;color:#fff;}
+.seltool{background:#3a1f1c;border:1px solid #c9463a;border-radius:12px;padding:8px 12px;margin:8px 0;font-size:14px;color:#ffd0c8;}
+td.sel,th.sel{text-align:center;width:34px;}
+td.sel input{width:20px;height:20px;}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0;}
+.stat{display:inline-block;background:#17422a;border:1px solid #2f6a45;border-radius:12px;padding:8px 12px;margin:3px 4px;font-size:14px;}
+.stat b{color:#ffd23f;font-size:18px;}
+table{width:100%;border-collapse:collapse;margin-top:8px;background:#133823;border-radius:12px;overflow:hidden;}
+th,td{padding:9px 8px;text-align:left;font-size:14px;border-bottom:1px solid #215a39;}
+th{background:#1b5034;color:#cfeddb;cursor:pointer;}
+td.num{text-align:center;font-variant-numeric:tabular-nums;}
+.pill{display:inline-block;min-width:42px;text-align:center;border-radius:10px;padding:3px 8px;font-weight:bold;color:#08240f;}
+tr:hover td{background:#1a4a2f;}
+.mut{color:#90b89f;font-size:13px;}
+select{font-size:14px;padding:6px 8px;border-radius:10px;border:2px solid #2f6a45;background:#10301e;color:#eaf6ee;}
 </style>
-</head>
-<body>
-
-<header>
-  <div class="logo">
-    <span class="l">U</span><span class="l">N</span><span class="l">O</span>
-    <small>das Cores</small>
-  </div>
-  <div class="topo-botoes">
-    <button class="btn btn-voz" id="btnVoz" onclick="alternarVoz()">🔊 Voz</button>
-    <button class="btn btn-tutorial" onclick="abrirTutorial()">📖 Tutorial</button>
-    <button class="btn btn-novo" onclick="novoJogo()">🔄 Novo Jogo</button>
-  </div>
-</header>
-
-<main class="mesa">
-
-  <section class="computador-area">
-    <h2><span class="avatar">🤖</span> Robô <span id="qtdCpu">(7 cartas)</span></h2>
-    <div class="cartas-cpu" id="cartasCpu"></div>
-  </section>
-
-  <div class="mensagem-wrap">
-    <div class="mensagem" id="mensagem">Toque em uma carta para começar!</div>
-  </div>
-
-  <section class="centro">
-    <div class="monte">
-      <div class="rotulo">Carta da mesa</div>
-      <div class="carta-grande" id="cartaMesa"><span class="num">?</span></div>
-    </div>
-    <div class="monte">
-      <div class="rotulo">Comprar</div>
-      <button class="comprar" id="btnComprar" onclick="comprarCarta()">
-        <span class="big">🃏</span>
-        <span>Pegar 1</span>
-      </button>
-    </div>
-  </section>
-
-  <section class="jogador-area">
-    <h2><span class="avatar">🧒</span> Você <span id="qtdEu">(7 cartas)</span></h2>
-    <div class="minhas-cartas" id="minhasCartas"></div>
-    <div class="dica" id="dica">As cartas que brilham são as que você pode jogar! ✨</div>
-  </section>
-
-</main>
-
-<!-- Seletor de cor (curinga) -->
-<div class="overlay" id="overlayCor">
-  <div class="escolher-cor">
-    <h3>Escolha uma cor! 🎨</h3>
-    <div class="cores-grid">
-      <button class="cor-opcao c-vermelho" onclick="escolherCor('vermelho')">Vermelho</button>
-      <button class="cor-opcao c-azul" onclick="escolherCor('azul')">Azul</button>
-      <button class="cor-opcao c-verde" onclick="escolherCor('verde')">Verde</button>
-      <button class="cor-opcao c-amarelo" onclick="escolherCor('amarelo')">Amarelo</button>
-    </div>
-  </div>
-</div>
-
-<!-- TUTORIAL -->
-<div class="tutorial" id="tutorial">
-  <div class="slide-box">
-    <div class="slide-num" id="slideNum">Passo 1 de 6</div>
-    <div class="mascote-linha">
-      <div class="mascote" id="mascote">
-        <svg viewBox="0 0 120 150" aria-hidden="true">
-          <!-- antena -->
-          <line x1="60" y1="12" x2="60" y2="30" stroke="#1B5D9E" stroke-width="5"/>
-          <circle cx="60" cy="10" r="7" fill="#E5202E"/>
-          <!-- cabeça -->
-          <rect x="22" y="28" width="76" height="62" rx="16" fill="#9FB8CC" stroke="#1B5D9E" stroke-width="5"/>
-          <!-- visor -->
-          <rect x="32" y="40" width="56" height="30" rx="10" fill="#16324B"/>
-          <circle cx="48" cy="55" r="7" fill="#56E0FF"/>
-          <circle cx="72" cy="55" r="7" fill="#56E0FF"/>
-          <circle cx="50" cy="52" r="2.4" fill="#fff"/>
-          <circle cx="74" cy="52" r="2.4" fill="#fff"/>
-          <!-- boca -->
-          <rect x="46" y="78" width="28" height="7" rx="3.5" fill="#1B5D9E"/>
-          <!-- orelhas -->
-          <rect x="14" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
-          <rect x="98" y="50" width="8" height="18" rx="3" fill="#1B5D9E"/>
-          <!-- corpo -->
-          <rect x="32" y="92" width="56" height="44" rx="12" fill="#C8D7E4" stroke="#1B5D9E" stroke-width="5"/>
-          <circle cx="60" cy="114" r="9" fill="#F7B500" stroke="#1B5D9E" stroke-width="3"/>
-        </svg>
-      </div>
-      <div class="balao">
-        <span class="slide-emoji" id="slideEmoji">👋</span>
-        <h2 id="slideTitulo"></h2>
-        <div id="slideCartas"></div>
-        <p id="slideTexto"></p>
-      </div>
-    </div>
-    <div class="tut-nav">
-      <button class="btn btn-nav" id="btnAnterior" onclick="mudarSlide(-1)">◀ Voltar</button>
-      <div class="bolinhas" id="bolinhas"></div>
-      <button class="btn btn-nav" id="btnProximo" onclick="mudarSlide(1)">Avançar ▶</button>
-      <button class="btn btn-fechar-tut" id="btnComecar" onclick="fecharTutorial()" style="display:none;">Vamos jogar! 🎉</button>
-    </div>
-  </div>
-</div>
-
+<div id="root"></div>
 <script>
-/* ============ DADOS DO JOGO ============ */
-const CORES = ['vermelho','azul','verde','amarelo'];
-const ICONES = { pula:'🚫', mais2:'➕2️⃣', curinga:'🌈' };
-let baralho = [], mao = [], cpu = [], mesa = null, corAtiva = null;
-let vezDoJogador = true, esperandoCor = false, curingaPendente = null;
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+var SLUG="educacao-fisica-jogos-345";
+/*DADOS-INI*/
+/* ⚠️ ESTE BLOCO É GERADO, NÃO EDITADO À MÃO:
+     node _qa/gabarito_painel.js _efjogos _efjogospainel --escrever
+   O GABARITO e os EIXOS saem da PRÓPRIA prova (campos `correta` e `disc`),
+   e o mesmo comando, sem `--escrever`, é o portão que reprova se um dia os
+   dois discordarem. Mexeu na prova, rode de novo. */
+var TITULO="A Mesa de Jogos do Léo · Educação Física · 3º, 4º e 5º anos";
+var TURMAS=["3º A","3º B","3º C","3º D","4º A","4º B","4º C","4º D","5º A","5º B","5º C","5º D"];
+var GABARITO=[1,0,1,2,0,1,1,2,1,2,0,2,1,1,1,2,1,1,1,1];
+var EIXOS=["COMEÇO DA PARTIDA","COMEÇO DA PARTIDA","COMEÇO DA PARTIDA","CARTAS DE AÇÃO","CARTAS DE AÇÃO","CARTAS DE AÇÃO","CARTAS DE AÇÃO","CARTAS DE AÇÃO","CARTAS DE AÇÃO","CARTAS DE AÇÃO","O DESAFIO DO +4","O DESAFIO DO +4","PONTOS E VITÓRIA","PONTOS E VITÓRIA","PONTOS E VITÓRIA","A ORIGEM DO TANGRAM","A ORIGEM DO TANGRAM","A ORIGEM DO TANGRAM","A ORIGEM DO TANGRAM","A ORIGEM DO TANGRAM"];
+var ARQCSV="ef-jogos-345-notas.csv";
+var CURRICULO={"_leia":"O QUE ESTA PROVA MEDE, dito no vocabulário do currículo de Blumenau — e não no meu. Cada objetivo aponta as questões que o medem e cita a habilidade COPIADA do _curriculo/blumenau.txt. O portão `_qa/curriculo_verbatim.py` confere palavra por palavra: citação que o documento não tem como ter dito reprova. É a única coisa que o professor não consegue auditar sozinho sem abrir 440 páginas de PDF.","ano":"3º, 4º e 5º anos","componente":"Educação Física","rede":"Rede Municipal de Ensino de Blumenau","documento":"Currículo da Educação Básica do Sistema Municipal de Ensino de Blumenau — Educação Física, 3º ao 5º anos, unidade temática Brincadeiras e Jogos (páginas 222-223 do PDF; linhas 10902-10935 do _curriculo/blumenau.txt)","instrumento":"Avaliação · 20 questões objetivas narradas · aplicação individual no laboratório de informática","_por_que_um_so_ano":"O currículo de Blumenau NÃO separa 3º, 4º e 5º ano em Educação Física: o bloco se chama, com todas as letras, 'EDUCAÇÃO FÍSICA – 3º ao 5º ANOS' e traz os MESMOS objetivos e os MESMOS conteúdos para os três. Por isso esta é UMA prova para as três turmas, e não três provas. A criança escolhe o ano e a letra na capa; o painel separa.","_onde_os_dois_jogos_aparecem":"Os dois jogos desta prova estão escritos no documento, na lista de POSSIBILIDADES METODOLÓGICAS – 3º ao 5º ANOS: 'Jogos de salão: xadrez, dama, mini tênis de mesa (tênis de mesa adaptado), cartas (jogos educativos), dominó, ludo, pedra, papel e tesoura, pega vareta, torre de blocos, tangram, jogo da velha (Chung Toi), dama chinesa, solitário (resta um), salto de qualidade, trilha.' O UNO é o 'cartas (jogos educativos)'; o tangram está nomeado.","objetivos":[{"objetivo":"Reconhecer como uma partida de UNO começa: quantas cartas cada um recebe, o monte, o descarte e o sentido do jogo","questoes":[1,2,3],"unidade":"Brincadeiras e jogos","objeto":"Brincadeiras e jogos populares do Brasil e do mundo","habilidade":"HABILIDADE: \"Jogos de salão/raciocínio lógico.\""},{"objetivo":"Saber o que faz cada carta de ação do UNO — comprar do monte, pular, inverter, mais dois, coringa e coringa comprar quatro","questoes":[4,5,6,7,8,9,10],"unidade":"Brincadeiras e jogos","objeto":"Brincadeiras e jogos populares do Brasil e do mundo","habilidade":"HABILIDADE: \"Experimentar e fruir brincadeiras e jogos populares do Brasil e do mundo, incluindo aqueles de matriz indígena e africana, e recriá-los, valorizando a importância desse patrimônio histórico e cultural.\""},{"objetivo":"Aplicar a regra do desafio do comprar quatro, que é a regra do jogo limpo: quem blefa compra, quem desafia à toa também","questoes":[11,12],"unidade":"Brincadeiras e jogos","objeto":"Brincadeiras e jogos populares do Brasil e do mundo","habilidade":"HABILIDADE: \"Planejar e utilizar estratégias para possibilitar a participação segura de todos os estudantes em brincadeiras e jogos populares do Brasil e de matriz indígena e africana.\""},{"objetivo":"Fazer a contagem oficial de pontos do UNO e dizer quem é o vencedor final","questoes":[13,14,15],"unidade":"Brincadeiras e jogos","objeto":"Brincadeiras e jogos populares do Brasil e do mundo","habilidade":"HABILIDADE: \"Iniciação a jogos de competição.\""},{"objetivo":"Contar a origem do Tangram: o país, a idade, as sete peças e a regra de montar","questoes":[16,17,18,19,20],"unidade":"Brincadeiras e jogos","objeto":"Brincadeiras e jogos populares do Brasil e do mundo","habilidade":"HABILIDADE: \"Recriar, individual e coletivamente, e experimentar, na escola e fora dela, brincadeiras e jogos populares do Brasil e do mundo, incluindo aqueles de matriz indígena e africana, e demais práticas corporais tematizadas na escola, adequando-as aos espaços públicos disponíveis.\""}],"conferencia_a_mao":{"_leia":"⚠️ O PORTÃO `curriculo_verbatim.py` PROCURA AS PALAVRAS NO DOCUMENTO INTEIRO, não no bloco deste ano e deste componente. Isso é bom o bastante para pegar citação INVENTADA, que era o defeito que ele nasceu para fechar, mas NÃO prova que a frase é do bloco certo. Então esta conferência foi feita à mão, olhando as linhas: cada citação acima foi localizada DENTRO do bloco 'EDUCAÇÃO FÍSICA – 3º ao 5º ANOS', unidade temática 'BRINCADEIRAS E JOGOS'. Os números são de linha do _curriculo/blumenau.txt e podem ser conferidos com `sed -n 'N,Mp'`.","bloco":"linhas 10902 a 10935","Jogos de salão/raciocínio lógico.":"linha 10918, coluna CONCEITOS/CONTEÚDOS","Iniciação a jogos de competição.":"linha 10917, coluna CONCEITOS/CONTEÚDOS","Experimentar e fruir brincadeiras e jogos populares do Brasil e do mundo...":"linhas 10909-10911, coluna OBJETIVOS DE APRENDIZAGEM E DESENVOLVIMENTO (a frase chega quebrada em três linhas porque o PDF foi extraído com -layout e a tabela tem colunas)","Planejar e utilizar estratégias para possibilitar a participação segura...":"linhas 10914-10916, mesma coluna","Recriar, individual e coletivamente, e experimentar, na escola e fora dela...":"linhas 10919-10922, mesma coluna","tangram e cartas (jogos educativos)":"linha 10938, POSSIBILIDADES METODOLÓGICAS – 3º ao 5º ANOS, item 'Jogos de salão'"},"_quantas":"20 questões, por pedido do Marcos (20/set): *\"Faça a prova com 20 questões pode ser?\"*. São 15 do UNO (início da partida, cada carta de ação, os dois lados do desafio do +4, a contagem oficial e os 500 pontos) e 5 do Tangram (país e idade, quantas peças e o nome delas, as formas, a lenda do azulejo e a regra de montar). A versão anterior tinha 21: saiu a que perguntava quem escolhe a cor no coringa comprar quatro, por ser a única cujo conteúdo já aparecia em duas irmãs (a do coringa e as do desafio). Nenhuma regra que o professor passou ficou sem ser cobrada."};
+/*DADOS-FIM*/
+var SENHA="1275";          /* atalho do professor (nao e seguranca, so um portao) */
+var dados=[], ordem="chegada", filtroTurma="", timer=null, selMode=false, sel={};
+function $(id){return document.getElementById(id);}
+function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
-function criarBaralho(){
-  const b = [];
-  CORES.forEach(cor=>{
-    // um 0 por cor; dois de cada número 1 a 9
-    b.push({cor, tipo:'num', valor:0});
-    for(let n=1;n<=9;n++){ b.push({cor, tipo:'num', valor:n}); b.push({cor, tipo:'num', valor:n}); }
-    // duas de cada carta de ação por cor
-    for(let k=0;k<2;k++){
-      b.push({cor, tipo:'pula'});
-      b.push({cor, tipo:'inverte'});
-      b.push({cor, tipo:'mais2'});
+function telaTrava(){
+  $("root").innerHTML='<div class="wrap"><div class="trava"><h1>Painel do Professor</h1>'+
+   '<p class="sub">'+esc(TITULO)+'</p>'+
+   '<input id="s" type="password" placeholder="senha" onkeydown="if(event.keyCode===13)destravar()">'+
+   '<div><button class="bt" onclick="destravar()">Entrar</button></div></div></div>';
+}
+function destravar(){ if($("s").value===SENHA){ telaPainel(); pintarCurriculo(); carregar(); if(!timer)timer=setInterval(carregar,10000);} else { $("s").value=""; $("s").placeholder="senha errada"; } }
+
+function telaPainel(){
+  $("root").innerHTML='<div class="wrap"><h1>&#128202; '+esc(TITULO)+' &middot; Notas</h1>'+
+   '<p class="sub">Regras do UNO e origem do Tangram &middot; a lista atualiza sozinha a cada 10 segundos.</p>'+
+   '<div class="bar">Ordenar: '+
+     '<button class="bt sec" id="o_chegada" onclick="setOrdem(\'chegada\')">Chegada</button>'+
+     '<button class="bt sec" id="o_nome" onclick="setOrdem(\'nome\')">Nome A→Z</button>'+
+     '<button class="bt sec" id="o_nota" onclick="setOrdem(\'nota\')">Maior nota</button>'+
+     ' &nbsp;Turma: <select id="fturma" onchange="filtroTurma=this.value;pintar()"><option value="">todas</option>'+TURMAS.map(function(x){return "<option>"+esc(x)+"</option>";}).join("")+'</select>'+
+     ' &nbsp;<button class="bt" onclick="baixarCSV()">Baixar CSV</button>'+
+     '<button class="bt sec" onclick="window.print()">Imprimir / PDF</button>'+
+     '<button class="bt sec" onclick="carregar()">Atualizar</button>'+
+     '<button class="bt del" id="btDel" onclick="toggleSel()">&#128465; Remover provas de teste</button></div>'+
+   '<div id="seltool"></div>'+
+   '<div id="stats"></div><div id="tabela"><p class="mut">Carregando…</p></div>'+
+   '<div id="analise"></div><div id="curric"></div></div>';
+  setOrdem(ordem);
+}
+function setOrdem(o){ ordem=o; ["chegada","nome","nota"].forEach(function(k){var b=$("o_"+k);if(b)b.className="bt "+(k===o?"on":"sec");}); pintar(); }
+
+function carregar(){
+  try{
+    var x=new XMLHttpRequest();
+    x.open("GET",FIREBASE_DB+"/provas/"+SLUG+".json",true);
+    x.onreadystatechange=function(){ if(x.readyState===4){
+      var d=[]; try{ var o=JSON.parse(x.responseText||"null"); if(o){ for(var k in o){ if(o.hasOwnProperty(k)){ var r=o[k]||{}; r._k=k; d.push(r); } } } }catch(e){}
+      dados=d; pintar();
+    }};
+    x.send();
+  }catch(e){}
+}
+function corNota(n){ n=parseFloat(n)||0; if(n>=8.5)return "#8ee79a"; if(n>=6)return "#ffe08a"; return "#ffb0a6"; }
+function pintar(){
+  if(!$("tabela"))return;
+  var lista=dados.slice();
+  if(filtroTurma){ lista=lista.filter(function(r){return (r.turma||"")===filtroTurma;}); }
+  if(ordem==="nome"){ lista.sort(function(a,b){return (""+(a.nome||"")).localeCompare(""+(b.nome||""),"pt");}); }
+  else if(ordem==="nota"){ lista.sort(function(a,b){return (parseFloat(b.nota)||0)-(parseFloat(a.nota)||0);}); }
+  else { lista.sort(function(a,b){return (""+(a.data||"")).localeCompare(""+(b.data||""));}); }
+  var n=lista.length, soma=0, i; for(i=0;i<lista.length;i++){ soma+=parseFloat(lista[i].nota)||0; }
+  var media=n?(soma/n):0;
+  $("stats").innerHTML='<span class="stat">Provas: <b>'+n+'</b></span>'+
+    '<span class="stat">Média da turma: <b>'+(n?media.toFixed(1):"—")+'</b></span>';
+  pintarSeltool();
+  if(!n){ $("tabela").innerHTML='<p class="mut">Nenhuma prova enviada ainda. Assim que um aluno terminar, a nota aparece aqui.</p>'; pintarAnalise([]); return; }
+  var cab=selMode?'<th class="sel">&#10003;</th>':'';
+  var h='<table><tr>'+cab+'<th>#</th><th>Nome</th><th>Turma</th><th>Nota</th><th>Acertos</th><th>Quando</th></tr>';
+  for(i=0;i<lista.length;i++){ var r=lista[i];
+    var cb=selMode?'<td class="sel"><input type="checkbox" onchange="selToggle(\''+r._k+'\',this.checked)"'+(sel[r._k]?' checked':'')+'></td>':'';
+    h+='<tr>'+cb+'<td class="num">'+(i+1)+'</td><td>'+esc(r.nome||"—")+'</td><td>'+esc(r.turma||"—")+'</td>'+
+       '<td class="num"><span class="pill" style="background:'+corNota(r.nota)+'">'+esc((r.nota===0||r.nota)?r.nota:"—")+'</span></td>'+
+       '<td class="num">'+esc(r.acertos||"—")+'</td><td class="mut">'+esc(r.data||"")+'</td></tr>';
+  }
+  h+='</table>';
+  $("tabela").innerHTML=h;
+  pintarAnalise(lista);
+}
+/* ====== ONDE A TURMA TROPEÇOU ======================================
+   Uma nota de 6,5 não diz ao professor o que reensinar. Isto diz: questão a
+   questão, quantos por cento da turma acertaram — e o mesmo somado por eixo
+   (relevo, clima, cartografia...). É a diferença entre "medir" e "avaliar".
+   ⚠️ Conta só quem respondeu: `respostas` guarda o ÍNDICE escolhido, e "-"
+      é questão deixada em branco. Somar branco como erro inflaria o problema.  */
+function pintarAnalise(lista){
+  var el=$("analise"); if(!el){return;}
+  if(!lista.length||!GABARITO.length){ el.innerHTML=""; return; }
+  var q,i,r,certo=[],resp=[];
+  for(q=0;q<GABARITO.length;q++){certo.push(0);resp.push(0);}
+  for(i=0;i<lista.length;i++){
+    r=""+(lista[i].respostas||"");
+    for(q=0;q<GABARITO.length;q++){
+      var ch=r.charAt(q); if(ch===""||ch==="-"){continue;}
+      resp[q]++; if(parseInt(ch,10)===GABARITO[q]){certo[q]++;}
     }
+  }
+  var porEixo={},ordemEixo=[];
+  for(q=0;q<GABARITO.length;q++){
+    var e=EIXOS[q]||"—";
+    if(!porEixo[e]){porEixo[e]={c:0,t:0};ordemEixo.push(e);}
+    porEixo[e].c+=certo[q]; porEixo[e].t+=resp[q];
+  }
+  var h='<h1 style="font-size:19px;margin-top:26px">&#128269; Onde a turma tropeçou</h1>'+
+        '<p class="sub">Percentual de acerto de cada questão, contando só quem respondeu.</p>';
+  h+='<table><tr><th>#</th><th>O que a questão mede</th><th>Certa</th><th>Acertos</th><th>Da turma</th></tr>';
+  for(q=0;q<GABARITO.length;q++){
+    var pc=resp[q]?Math.round(certo[q]/resp[q]*100):0;
+    var cor=pc>=70?"#8ee79a":(pc>=50?"#ffe08a":"#ffb0a6");
+    h+='<tr><td class="num">'+(q+1)+'</td><td>'+esc(EIXOS[q]||"—")+'</td>'+
+       '<td class="num"><b style="color:#ffd23f">'+"ABCD".charAt(GABARITO[q])+'</b></td>'+
+       '<td class="num">'+certo[q]+'/'+resp[q]+'</td>'+
+       '<td><span style="display:inline-block;height:13px;border-radius:7px;background:'+cor+';width:'+
+       Math.max(pc,3)+'%;vertical-align:middle"></span> <span class="mut">'+(resp[q]?pc+"%":"—")+'</span></td></tr>';
+  }
+  h+='</table>';
+  h+='<h1 style="font-size:19px;margin-top:22px">&#129517; Por assunto</h1><table>'+
+     '<tr><th>Assunto</th><th>Acertos</th><th>Da turma</th></tr>';
+  for(i=0;i<ordemEixo.length;i++){
+    var k=ordemEixo[i],d=porEixo[k],p2=d.t?Math.round(d.c/d.t*100):0;
+    var c2=p2>=70?"#8ee79a":(p2>=50?"#ffe08a":"#ffb0a6");
+    h+='<tr><td>'+esc(k)+'</td><td class="num">'+d.c+'/'+d.t+'</td>'+
+       '<td><span style="display:inline-block;height:13px;border-radius:7px;background:'+c2+';width:'+
+       Math.max(p2,3)+'%;vertical-align:middle"></span> <span class="mut">'+(d.t?p2+"%":"—")+'</span></td></tr>';
+  }
+  el.innerHTML=h+'</table>';
+}
+/* ====== O QUE ESTA PROVA MEDE, NO VOCABULÁRIO DO CURRÍCULO ==========
+   Pedido do Marcos: "preciso que quando um professor olhe e analise a atividade
+   ele veja que está ótima". Um professor não julga uma prova pela tela bonita:
+   ele quer saber a QUE habilidade cada questão responde — e quer a habilidade
+   escrita como o documento da rede escreve, não parafraseada por mim.
+   ⚠️ Cada citação daqui foi conferida palavra por palavra contra o
+      `_curriculo/blumenau.txt` pelo portão `_qa/curriculo_verbatim.py`.       */
+/* o `curriculo.json` guarda a citacao com a etiqueta HABILIDADE: "..." porque
+   e assim que o portao `_qa/curriculo_verbatim.py` a reconhece. Na tela do
+   professor a etiqueta so atrapalha: a coluna ja diz o que aquilo e.       */
+function soAFrase(s){
+  return (""+(s||"")).replace(/^\s*HABILIDADE\s*:\s*/,"").replace(/^[\u201c"]|[\u201d"]\s*$/g,"");
+}
+function pintarCurriculo(){
+  var el=$("curric"); if(!el||!CURRICULO){return;}
+  var h='<h1 style="font-size:19px;margin-top:26px">&#128218; O que esta prova mede</h1>'+
+        '<p class="sub">'+esc(CURRICULO.documento)+'</p><table>'+
+        '<tr><th>Objetivo</th><th>Questões</th><th>Unidade temática</th>'+
+        '<th>Habilidade, copiada do currículo</th></tr>';
+  var i,o;
+  for(i=0;i<CURRICULO.objetivos.length;i++){
+    o=CURRICULO.objetivos[i];
+    h+='<tr><td>'+esc(o.objetivo)+'</td>'+
+       '<td class="num">'+o.questoes.join(", ")+'</td>'+
+       '<td class="mut">'+esc(o.unidade)+'<br>'+esc(o.objeto)+'</td>'+
+       '<td class="mut">&ldquo;'+esc(soAFrase(o.habilidade))+'&rdquo;</td></tr>';
+  }
+  el.innerHTML=h+'</table>';
+}
+function nSel(){ var n=0,z; for(z in sel){ if(sel.hasOwnProperty(z))n++; } return n; }
+function pintarSeltool(){
+  var el=$("seltool"); if(!el)return;
+  var b=$("btDel"); if(b)b.className="bt "+(selMode?"on":"del");
+  if(!selMode){ el.innerHTML=""; return; }
+  el.innerHTML='<div class="seltool">Marque as provas de TESTE que quer apagar (a atualização automática fica pausada). '+
+    '<button class="bt del" onclick="removerSelecionadas()">Remover selecionadas (<b id="selN">'+nSel()+'</b>)</button>'+
+    '<button class="bt sec" onclick="toggleSel()">Cancelar</button></div>';
+}
+function selToggle(k,c){ if(c)sel[k]=1; else delete sel[k]; var b=$("selN"); if(b)b.textContent=nSel(); }
+function toggleSel(){
+  selMode=!selMode; sel={};
+  if(selMode){ if(timer){clearInterval(timer);timer=null;} }
+  else { if(!timer)timer=setInterval(carregar,10000); }
+  pintar();
+}
+function removerSelecionadas(){
+  var ks=[],k; for(k in sel){ if(sel.hasOwnProperty(k))ks.push(k); }
+  if(!ks.length){ alert("Marque ao menos uma prova para remover."); return; }
+  if(!confirm("Remover "+ks.length+" prova(s)? Isso apaga do painel para sempre e não dá para desfazer."))return;
+  var falta=ks.length, erros=0;
+  ks.forEach(function(k){
+    try{
+      var x=new XMLHttpRequest();
+      x.open("DELETE",FIREBASE_DB+"/provas/"+SLUG+"/"+encodeURIComponent(k)+".json",true);
+      x.onreadystatechange=function(){ if(x.readyState===4){
+        if(x.status<200||x.status>=300)erros++;
+        falta--;
+        if(falta===0){ sel={}; selMode=false; if(!timer)timer=setInterval(carregar,10000); carregar();
+          if(erros)alert(erros+" prova(s) não puderam ser removidas (verifique a conexão)."); }
+      }};
+      x.send();
+    }catch(e){ falta--; erros++; if(falta===0){ sel={}; selMode=false; carregar(); } }
   });
-  // quatro coringas e quatro +4
-  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'curinga'});
-  for(let i=0;i<4;i++) b.push({cor:'curinga', tipo:'mais4'});
-  return embaralhar(b);
 }
-function embaralhar(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-
-function novoJogo(){
-  baralho = criarBaralho();
-  mao = baralho.splice(0,7);
-  cpu = baralho.splice(0,7);
-  // primeira carta da mesa precisa ser número simples
-  let i = baralho.findIndex(c=>c.tipo==='num');
-  mesa = baralho.splice(i,1)[0];
-  corAtiva = mesa.cor;
-  esperandoCor=false;
-  render();
-  vezDoJogadorComMensagem('');
+/* as respostas ficam gravadas como ÍNDICE (0..3); o professor lê LETRA. */
+function letrasDe(s){
+  s=""+(s||"");var o="",i;
+  for(i=0;i<s.length;i++){var ch=s.charAt(i);o+=(ch==="-"?"-":"ABCD".charAt(parseInt(ch,10))||"?");}
+  return o;
 }
-
-/* ============ REGRAS ============ */
-function podeJogar(carta){
-  if(carta.tipo==='curinga' || carta.tipo==='mais4') return true;
-  if(carta.cor===corAtiva) return true;
-  if(carta.tipo==='num' && mesa.tipo==='num' && carta.valor===mesa.valor) return true;
-  if(carta.tipo!=='num' && carta.tipo===mesa.tipo) return true;
-  return false;
+function baixarCSV(){
+  var lista=dados.slice(); if(filtroTurma){ lista=lista.filter(function(r){return (r.turma||"")===filtroTurma;}); }
+  lista.sort(function(a,b){return (""+(a.nome||"")).localeCompare(""+(b.nome||""),"pt");});
+  function cel(v){ v=""+(v==null?"":v); if(/^[=+\-@\t\r]/.test(v))v="'"+v; if(/[",;\n]/.test(v))v='"'+v.replace(/"/g,'""')+'"'; return v; }
+  var lin=["Nome;Turma;Nota;Acertos;Respostas;Quando"],i;
+  for(i=0;i<lista.length;i++){ var r=lista[i]; lin.push([cel(r.nome),cel(r.turma),cel(r.nota),cel(r.acertos),cel(letrasDe(r.respostas)),cel(r.data)].join(";")); }
+  var blob=new Blob(["﻿"+lin.join("\r\n")],{type:"text/csv;charset=utf-8;"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=ARQCSV; document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
-
-/* ============ JOGADAS DO JOGADOR ============ */
-function jogarCarta(idx){
-  if(!vezDoJogador || esperandoCor) return;
-  const carta = mao[idx];
-  if(!podeJogar(carta)){
-    setMensagem('Essa não dá! Escolha uma que brilha. 😊');
-    return;
-  }
-  var btnC = document.getElementById('btnComprar');
-  if(btnC) btnC.classList.remove('destaque');
-  mao.splice(idx,1);
-  mesa = carta;
-  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
-    esperandoCor = true;
-    curingaPendente = carta.tipo; // lembra se foi curinga simples ou +4
-    render();
-    document.getElementById('overlayCor').classList.add('ativo');
-    return;
-  }
-  corAtiva = carta.cor;
-  aplicarEfeito(carta,'jogador');
-}
-
-function escolherCor(cor){
-  corAtiva = cor;
-  const eraMais4 = (curingaPendente==='mais4');
-  mesa = {cor, tipo: curingaPendente, valorCor:cor};
-  curingaPendente = null;
-  document.getElementById('overlayCor').classList.remove('ativo');
-  esperandoCor = false;
-
-  if(mao.length===0){ render(); return vitoria('jogador'); }
-
-  if(eraMais4){
-    comprarParaCpu(4);
-    setMensagem('Você escolheu '+cor+' e o robô pegou 4 cartas! 🌈➕');
-  }else{
-    setMensagem('Você escolheu '+cor+'! 🎨');
-  }
-  render();
-  setTimeout(passarVezParaCpu, 800);
-}
-
-function aplicarEfeito(carta, quem){
-  render();
-  if(mao.length===0) return vitoria('jogador');
-  if(cpu.length===0) return vitoria('robo');
-
-  if(carta.tipo==='pula'){
-    if(temJogada()) setMensagem('Você pulou o robô! Jogue de novo. 🚫');
-    else setMensagem('Você pulou o robô! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
-    return; // jogador joga de novo
-  }
-  if(carta.tipo==='inverte'){
-    if(temJogada()) setMensagem('Você girou o jogo! Jogue de novo. 🔄');
-    else setMensagem('Você girou o jogo! Não tem carta pra jogar, toque em "Pegar 1". 🃏');
-    return; // com 2 jogadores, inverter = jogar de novo
-  }
-  if(carta.tipo==='mais2'){
-    comprarParaCpu(2);
-    setMensagem('O robô pegou 2 cartas! 😄');
-    setTimeout(passarVezParaCpu, 900);
-    return;
-  }
-  setMensagem('Boa! Agora é a vez do robô. 🤖');
-  setTimeout(passarVezParaCpu, 800);
-}
-
-function comprarCarta(){
-  if(!vezDoJogador || esperandoCor) return;
-  if(baralho.length===0) reabastecer();
-  const c = baralho.pop();
-  mao.push(c);
-  render();
-  if(podeJogar(c)){
-    setMensagem('Você pegou uma carta que dá pra jogar! Toque nela. ✨');
-  }else{
-    setMensagem('Essa não deu pra jogar. Agora é a vez do robô. 🤖');
-    vezDoJogador = false;
-    setTimeout(passarVezParaCpu, 1100);
-  }
-}
-
-/* ============ VEZ DO ROBÔ ============ */
-function passarVezParaCpu(){
-  vezDoJogador = false;
-  var btn = document.getElementById('btnComprar');
-  if(btn) btn.classList.remove('destaque');
-  render();
-  setTimeout(cpuJoga, 600);
-}
-
-function cpuJoga(){
-  // procura uma carta jogável
-  let idx = cpu.findIndex(c=>podeJogar(c));
-  if(idx===-1){
-    if(baralho.length===0) reabastecer();
-    const c = baralho.pop(); cpu.push(c);
-    if(podeJogar(c)){ idx = cpu.length-1; }
-    else{
-      vezDoJogadorComMensagem('O robô pegou uma carta.');
-      return;
-    }
-  }
-  const carta = cpu.splice(idx,1)[0];
-  mesa = carta;
-  if(carta.tipo==='curinga' || carta.tipo==='mais4'){
-    corAtiva = corMaisComumCpu();
-    mesa = {cor:corAtiva, tipo:carta.tipo, valorCor:corAtiva};
-    setMensagem('O robô escolheu '+corAtiva+'! 🎨');
-  }else{
-    corAtiva = carta.cor;
-  }
-  render();
-  if(cpu.length===0) return vitoria('robo');
-
-  if(carta.tipo==='pula'){
-    setMensagem('O robô te pulou! Ele joga de novo. 🚫');
-    setTimeout(cpuJoga, 1000); return;
-  }
-  if(carta.tipo==='inverte'){
-    setMensagem('O robô girou o jogo! Ele joga de novo. 🔄');
-    setTimeout(cpuJoga, 1000); return;
-  }
-  if(carta.tipo==='mais2'){
-    for(let k=0;k<2;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
-    vezDoJogadorComMensagem('Você pegou 2 cartas.');
-    return;
-  }
-  if(carta.tipo==='mais4'){
-    for(let k=0;k<4;k++){ if(baralho.length===0) reabastecer(); mao.push(baralho.pop()); }
-    vezDoJogadorComMensagem('O robô jogou +4! Você pegou 4 cartas.');
-    return;
-  }
-  vezDoJogadorComMensagem('');
-}
-
-function corMaisComumCpu(){
-  const cont = {vermelho:0,azul:0,verde:0,amarelo:0};
-  cpu.forEach(c=>{ if(c.cor!=='curinga') cont[c.cor]++; });
-  return Object.keys(cont).sort((a,b)=>cont[b]-cont[a])[0];
-}
-function comprarParaCpu(n){ for(let k=0;k<n;k++){ if(baralho.length===0) reabastecer(); cpu.push(baralho.pop()); } }
-function reabastecer(){ baralho = criarBaralho(); }
-
-// devolve true se o jogador tem ao menos uma carta jogável
-function temJogada(){ return mao.some(function(c){ return podeJogar(c); }); }
-
-// passa a vez ao jogador com a mensagem certa (jogar OU comprar)
-function vezDoJogadorComMensagem(prefixo){
-  vezDoJogador = true;
-  render();
-  var ini = prefixo ? (prefixo + ' ') : '';
-  var btn = document.getElementById('btnComprar');
-  if(temJogada()){
-    if(btn) btn.classList.remove('destaque');
-    setMensagem(ini + 'Sua vez! Toque numa carta que brilha. ✨');
-  }else{
-    if(btn) btn.classList.add('destaque');
-    setMensagem(ini + 'Você não tem carta para jogar. Toque em "Pegar 1" para comprar uma carta! 🃏');
-  }
-}
-
-/* ============ FIM ============ */
-function vitoria(quem){
-  vezDoJogador=false;
-  if(quem==='jogador'){
-    setMensagem('🎉 VOCÊ GANHOU! Parabéns! 🎉');
-  }else{
-    setMensagem('🤖 O robô ganhou! Tente de novo, você consegue! 💪');
-  }
-  document.getElementById('mensagem').classList.add('festa');
-  render();
-}
-
-/* ============ DESENHAR NA TELA ============ */
-/* ============ NARRAÇÃO POR VOZ ============ */
-var vozLigada = true;
-var vozPtBR = null;
-
-function carregarVoz(){
-  if(!('speechSynthesis' in window)) return;
-  var vozes = window.speechSynthesis.getVoices();
-  // procura uma voz em português do Brasil
-  for(var i=0;i<vozes.length;i++){
-    if(vozes[i].lang && vozes[i].lang.toLowerCase().indexOf('pt-br')>-1){ vozPtBR = vozes[i]; return; }
-  }
-  for(var j=0;j<vozes.length;j++){
-    if(vozes[j].lang && vozes[j].lang.toLowerCase().indexOf('pt')>-1){ vozPtBR = vozes[j]; return; }
-  }
-}
-if('speechSynthesis' in window){
-  carregarVoz();
-  window.speechSynthesis.onvoiceschanged = carregarVoz;
-}
-
-// remove emojis para a fala não "ler" símbolos estranhos
-function limparTexto(t){
-  return t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{2190}-\u{21FF}]/gu,'').replace(/\s+/g,' ').trim();
-}
-
-function falar(texto){
-  if(!vozLigada || !('speechSynthesis' in window)) return;
-  var limpo = limparTexto(texto);
-  if(!limpo) return;
-  window.speechSynthesis.cancel();
-  var u = new SpeechSynthesisUtterance(limpo);
-  u.lang = 'pt-BR';
-  if(vozPtBR) u.voice = vozPtBR;
-  u.rate = 0.95; u.pitch = 1.05;
-  window.speechSynthesis.speak(u);
-}
-
-function alternarVoz(){
-  vozLigada = !vozLigada;
-  var b = document.getElementById('btnVoz');
-  if(vozLigada){ b.innerHTML = '🔊 Voz'; b.classList.remove('voz-off'); falar('Narração ligada!'); }
-  else{ b.innerHTML = '🔇 Voz'; b.classList.add('voz-off'); if('speechSynthesis' in window) window.speechSynthesis.cancel(); }
-}
-
-function setMensagem(t){
-  const m=document.getElementById('mensagem');
-  m.textContent=t; m.classList.remove('festa');
-  falar(t);
-}
-
-function corClasse(cor){ return 'c-'+cor; }
-const HEX = { vermelho:'#E5202E', azul:'#0099DD', amarelo:'#F7B500', verde:'#3EA72D' };
-
-// símbolos desenhados em SVG (estilo clássico, arte própria)
-// "color" controla a cor do traço quando o símbolo fica sobre o oval branco.
-function svgPular(color){
-  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
-    <circle cx="50" cy="50" r="38" fill="none" stroke="${color}" stroke-width="13"/>
-    <line x1="24" y1="24" x2="76" y2="76" stroke="${color}" stroke-width="13" stroke-linecap="round"/>
-  </svg>`;
-}
-function svgMais2(color){
-  // duas cartinhas sobrepostas (visíveis em qualquer fundo)
-  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
-    <rect x="20" y="22" width="34" height="50" rx="6" fill="#fff" stroke="${color}" stroke-width="6"/>
-    <rect x="40" y="32" width="34" height="50" rx="6" fill="${color}" stroke="#fff" stroke-width="5"/>
-    <text x="57" y="64" font-family="'Baloo 2',sans-serif" font-size="26" font-weight="800" fill="#fff" text-anchor="middle">+2</text>
-  </svg>`;
-}
-function svgCuringa(){
-  // pinwheel de quatro cores
-  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
-    <circle cx="50" cy="50" r="40" fill="#fff"/>
-    <path d="M50 50 L50 10 A40 40 0 0 1 90 50 Z" fill="var(--vermelho)"/>
-    <path d="M50 50 L90 50 A40 40 0 0 1 50 90 Z" fill="var(--azul)"/>
-    <path d="M50 50 L50 90 A40 40 0 0 1 10 50 Z" fill="var(--amarelo)"/>
-    <path d="M50 50 L10 50 A40 40 0 0 1 50 10 Z" fill="var(--verde)"/>
-    <circle cx="50" cy="50" r="9" fill="#fff"/>
-  </svg>`;
-}
-function svgInverte(color){
-  // duas setas curvas em sentidos opostos
-  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
-    <g stroke="${color}" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M30 35 A26 26 0 0 1 76 48"/>
-      <path d="M70 65 A26 26 0 0 1 24 52"/>
-    </g>
-    <polygon points="20,30 40,30 28,48" fill="${color}"/>
-    <polygon points="80,70 60,70 72,52" fill="${color}"/>
-  </svg>`;
-}
-function svgMais4(){
-  // quatro cores em bloco + indicação de +4
-  return `<svg class="simb-svg" viewBox="0 0 100 100" aria-hidden="true">
-    <g stroke="#fff" stroke-width="4">
-      <rect x="30" y="22" width="20" height="30" rx="4" fill="var(--vermelho)"/>
-      <rect x="50" y="22" width="20" height="30" rx="4" fill="var(--azul)"/>
-      <rect x="30" y="50" width="20" height="30" rx="4" fill="var(--amarelo)"/>
-      <rect x="50" y="50" width="20" height="30" rx="4" fill="var(--verde)"/>
-    </g>
-  </svg>`;
-}
-
-// monta o INTERIOR clássico de uma carta: miolo, oval, número central e cantos
-function conteudoCarta(carta, corTraço){
-  const cor = corTraço || '#333';
-  let central, canto;
-  if(carta.tipo==='num'){
-    central = `<span>${carta.valor}</span>`;
-    canto = `${carta.valor}`;
-  }else if(carta.tipo==='mais2'){
-    central = `<span class="simb-c">${svgMais2(cor)}</span>`;
-    canto = `<span class="canto-mais2">+2</span>`;
-  }else if(carta.tipo==='pula'){
-    central = `<span class="simb-c">${svgPular(cor)}</span>`;
-    canto = `<span class="simb-k">${svgPular('#fff')}</span>`;
-  }else if(carta.tipo==='inverte'){
-    central = `<span class="simb-c">${svgInverte(cor)}</span>`;
-    canto = `<span class="simb-k">${svgInverte('#fff')}</span>`;
-  }else if(carta.tipo==='mais4'){
-    central = `<span class="simb-c">${svgMais4()}</span>`;
-    canto = `<span class="canto-mais2">+4</span>`;
-  }else{ // curinga
-    central = `<span class="simb-c">${svgCuringa()}</span>`;
-    canto = `<span class="simb-k">${svgCuringa()}</span>`;
-  }
-  return `
-    <div class="miolo"><div class="oval"></div></div>
-    <div class="canto tl">${canto}</div>
-    <div class="central">${central}</div>
-    <div class="canto br">${canto}</div>`;
-}
-
-function render(){
-  // mesa
-  const cm = document.getElementById('cartaMesa');
-  const ehCuringaPuro = (mesa.tipo==='curinga');
-  const ehPreta = (mesa.tipo==='mais4');
-  if(ehPreta){
-    cm.className = 'uno carta-grande c-preta';
-    cm.innerHTML = conteudoCarta(mesa, '#fff');
-  }else if(ehCuringaPuro && mesa.valorCor){
-    // curinga já transformado numa cor escolhida
-    cm.className = 'uno carta-grande '+corClasse(corAtiva);
-    cm.innerHTML = conteudoCarta({tipo:'curinga'});
-    cm.querySelector('.central').style.color='#fff';
-  }else if(ehCuringaPuro){
-    cm.className = 'uno carta-grande c-curinga';
-    cm.innerHTML = conteudoCarta(mesa);
-    cm.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
-    cm.querySelector('.central').style.color='#fff';
-  }else{
-    cm.className = 'uno carta-grande '+corClasse(mesa.cor);
-    cm.innerHTML = conteudoCarta(mesa, HEX[mesa.cor]);
-  }
-
-  // robô
-  const cc = document.getElementById('cartasCpu'); cc.innerHTML='';
-  for(let i=0;i<cpu.length;i++){ const v=document.createElement('div'); v.className='verso'; v.textContent='UNO'; cc.appendChild(v); }
-  document.getElementById('qtdCpu').textContent = `(${cpu.length} carta${cpu.length!==1?'s':''})`;
-
-  // minhas cartas
-  const mc = document.getElementById('minhasCartas'); mc.innerHTML='';
-  mao.forEach((carta,idx)=>{
-    const d=document.createElement('div');
-    const ehCuringa = (carta.tipo==='curinga');
-    const ehPreta = (carta.tipo==='mais4');
-    let cor;
-    if(ehPreta) cor='c-preta';
-    else if(ehCuringa) cor='c-curinga';
-    else cor=corClasse(carta.cor);
-    const jogavel = vezDoJogador && !esperandoCor && podeJogar(carta);
-    d.className='uno carta '+cor+(jogavel?' jogavel':' bloqueada');
-    // cor do símbolo: cartas coloridas usam a própria cor; +4 e curinga usam branco
-    const corSimb = (ehCuringa || ehPreta) ? '#fff' : HEX[carta.cor];
-    d.innerHTML=conteudoCarta(carta, corSimb);
-    if(ehCuringa){
-      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
-      d.querySelector('.central').style.color='#fff';
-    }
-    d.onclick=()=>jogarCarta(idx);
-    mc.appendChild(d);
-  });
-  document.getElementById('qtdEu').textContent = `(${mao.length} carta${mao.length!==1?'s':''})`;
-}
-
-/* ============ TUTORIAL ============ */
-const slides = [
-  { emoji:'👋', titulo:'Oi! Eu sou o Robô!',
-    texto:'Bem-vindos ao UNO das Cores! Eu vou jogar com você e te ensinar tudo. Quem ficar sem cartas primeiro vence!' },
-  { emoji:'🎯', titulo:'Nosso objetivo',
-    texto:'Você e eu começamos com 7 cartas cada um. Vá jogando suas cartas na mesa até a sua mão ficar vazia!' },
-  { emoji:'🌈', titulo:'A regra das cores e números', cartas:'cores',
-    texto:'Você só pode jogar uma carta da MESMA COR ou do MESMO NÚMERO da carta que está na mesa. Igualzinho!' },
-  { emoji:'✨', titulo:'As cartas que brilham',
-    texto:'As cartas que você PODE jogar ficam brilhando e crescem quando você passa o dedo. As apagadas, não dá!' },
-  { emoji:'🃏', titulo:'Minhas cartas especiais', cartas:'especiais',
-    texto:'Pular: eu perco a vez. Mais 2: eu pego 2 cartas. Girar: você joga de novo. Cuidado, eu também posso usá-las em você!' },
-  { emoji:'🌈', titulo:'As cartas coringa', cartas:'coringas',
-    texto:'Arco-íris: você escolhe a cor que quiser! Mais 4: você escolhe a cor E eu pego 4 cartas!' },
-  { emoji:'🏆', titulo:'Como ganhar de mim',
-    texto:'Se não puder jogar, toque em "Pegar 1" para comprar uma carta. Ficou sem cartas? VOCÊ GANHOU! 🎉' }
-];
-let slideAtual = 0;
-
-function abrirTutorial(){ slideAtual=0; montarBolinhas(); mostrarSlide(); document.getElementById('tutorial').classList.add('ativo'); }
-function fecharTutorial(){ document.getElementById('tutorial').classList.remove('ativo'); }
-function montarBolinhas(){
-  const b=document.getElementById('bolinhas'); b.innerHTML='';
-  slides.forEach((_,i)=>{ const o=document.createElement('div'); o.className='bolinha'+(i===0?' on':''); b.appendChild(o); });
-}
-function mostrarSlide(){
-  const s=slides[slideAtual];
-  document.getElementById('slideNum').textContent=`Passo ${slideAtual+1} de ${slides.length}`;
-  document.getElementById('slideEmoji').textContent=s.emoji;
-  const elTit=document.getElementById('slideTitulo');
-  const elTxt=document.getElementById('slideTexto');
-  elTit.textContent=s.titulo; elTit.style.color='#1a1633';
-  elTxt.textContent=s.texto; elTxt.style.color='#23203a';
-  falar(s.titulo + '. ' + s.texto);
-
-  // cartinhas de exemplo (usam a mesma estrutura clássica das cartas reais)
-  const cont=document.getElementById('slideCartas'); cont.innerHTML='';
-  function miniCarta(corNome, carta){
-    const d=document.createElement('div');
-    const isCuringa = (carta.tipo==='curinga');
-    const isPreta = (carta.tipo==='mais4');
-    let cls;
-    if(isPreta) cls='c-preta';
-    else if(isCuringa) cls='c-curinga';
-    else cls=corClasse(corNome);
-    d.className='uno mini '+cls;
-    const corSimb = (isCuringa || isPreta) ? '#fff' : HEX[corNome];
-    d.innerHTML=conteudoCarta(carta, corSimb);
-    if(isCuringa){
-      d.querySelector('.miolo').style.background='conic-gradient(var(--vermelho) 0 25%,var(--amarelo) 0 50%,var(--verde) 0 75%,var(--azul) 0)';
-      d.querySelector('.central').style.color='#fff';
-    }
-    return d;
-  }
-  if(s.cartas==='cores'){
-    const box=document.createElement('div'); box.className='slide-cartinha';
-    [['vermelho',5],['azul',5],['verde',3],['amarelo',5]].forEach(([c,n])=>{
-      box.appendChild(miniCarta(c,{tipo:'num',valor:n}));
-    });
-    cont.appendChild(box);
-  }
-  if(s.cartas==='especiais'){
-    const box=document.createElement('div'); box.className='slide-cartinha';
-    box.appendChild(miniCarta('vermelho',{tipo:'pula'}));
-    box.appendChild(miniCarta('azul',{tipo:'mais2'}));
-    box.appendChild(miniCarta('verde',{tipo:'inverte'}));
-    cont.appendChild(box);
-  }
-  if(s.cartas==='coringas'){
-    const box=document.createElement('div'); box.className='slide-cartinha';
-    box.appendChild(miniCarta('',{tipo:'curinga'}));
-    box.appendChild(miniCarta('',{tipo:'mais4'}));
-    cont.appendChild(box);
-  }
-
-  // bolinhas + botões
-  document.querySelectorAll('.bolinha').forEach((b,i)=>b.classList.toggle('on',i===slideAtual));
-  document.getElementById('btnAnterior').disabled = slideAtual===0;
-  const ultimo = slideAtual===slides.length-1;
-  document.getElementById('btnProximo').style.display = ultimo?'none':'';
-  document.getElementById('btnComecar').style.display = ultimo?'':'none';
-}
-function mudarSlide(d){
-  slideAtual=Math.max(0,Math.min(slides.length-1,slideAtual+d));
-  mostrarSlide();
-}
-
-/* iniciar */
-novoJogo();
+telaTrava();
 </script>
-</body>
-</html>
