@@ -914,6 +914,39 @@ gesto. Ele reprovou a folha 20 porque a chave do par é `sangue` e o rótulo diz
 SANGUE. A ponta do ligar agora se **declara** (`data-alvo="1"`), no `_corpo5` e
 no esqueleto. Declarar o que o elemento é não é desligar portão.
 
+## 🟢❌ A ENTREGA DISSE "SUCCESS" E NÃO PUBLICOU NADA (20/set/2026)
+
+O `entregar.yml` do `_corpo5` gravou as **444 vozes**, conferiu a pronúncia das
+120 falas, atualizou o painel, deixou o recado em `_status/voz-_corpo5.json` — e
+terminou com **`conclusion: success`** sem ter publicado o caderno. O carimbo
+`_status/entrega-a-viagem-dentro-de-voce.json`, que é o que eu leio para dizer
+ao Marcos "está no ar", simplesmente **não existia**.
+
+**A causa.** O repositório de destino ainda não existia — atividade nova nasce
+pela `fabrica.yml`, e eu tinha ido direto para a marca `[entregar ...]`. No
+passo de publicar, a linha era:
+
+```
+git clone ... || { echo "::error::clone falhou em $DEST"; continue; }
+```
+
+O `::error::` escrito de dentro de um `run:` é só uma anotação **vermelha na
+tela**: ele NÃO derruba o passo. O `continue` pulou o alvo, o laço terminou sem
+nenhum destino, e o último comando do script saiu 0. **Verde por fora, nada por
+dentro.**
+
+**O conserto, em duas partes.** (1) Rodar a `fabrica.yml` para criar o
+repositório e só então entregar. (2) O passo de publicar agora junta os alvos
+que falharam num `FALHOU=()` e **sai com código 1** — uma entrega que não
+acontece derruba a corrida, e o resumo diz qual destino ficou de fora.
+
+⚠️ **E a lição maior, que já está escrita lá em cima de outro jeito:** `success`
+do GitHub Actions **não é** "foi ao ar". Quem responde isso é o carimbo em
+`_status/entrega-<repo>.json`, com a data, o sha e o `noar:1`. Eu só descobri
+porque fui buscar o carimbo e ele não estava lá. Se eu tivesse olhado o verdinho
+da corrida, teria dito ao Marcos que o caderno estava no ar — e ele abriria um
+404.
+
 ## 🕳️ MAIS TRÊS PORTÕES CEGOS NO MESMO CADERNO — e um deles escondia uma folha sem resposta (20/set/2026)
 
 Depois dos dois de cima, a banca do `_corpo5` fechou com **zero reprovações e

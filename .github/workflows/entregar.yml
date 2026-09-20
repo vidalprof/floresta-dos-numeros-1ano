@@ -610,13 +610,27 @@ jobs:
           #    por atividade porque quase sempre o Pages ja trocou na 1a pergunta;
           #    as duas voltas so protegem o dia em que ele demorar.
           #    A licao: numero que eu nao li no log nao entra em comentario nenhum.
-          SRCS=(); DESTS=(); MARCAS=()
+          # ⚠️ PUBLICACAO QUE NAO ACONTECE TEM DE DERRUBAR A CORRIDA (20/set/2026).
+          #    A corrida 35537418887 gravou as 444 vozes do `_corpo5`, conferiu a
+          #    pronuncia, subiu o painel... e NAO publicou o caderno, porque o
+          #    repositorio de destino ainda nao existia. O `clone` falhou, o
+          #    `continue` pulou o alvo, nenhum carimbo foi escrito em `_status/` —
+          #    e o workflow terminou com **conclusion: success**, porque o
+          #    `::error::` de dentro de um `run:` nao derruba o passo. Quem lesse o
+          #    "success" concluiria que estava no ar. Agora cada alvo que nao
+          #    publica entra em FALHOU e a corrida termina com codigo 1.
+          SRCS=(); DESTS=(); MARCAS=(); FALHOU=()
           for par in $(echo "$LISTA" | tr ',' ' '); do
             SRC="${par%%:*}"; DEST="${par#*:}"
             SRC="${SRC%/}"
             echo "=== $SRC -> $OWNER/$DEST ==="
             tmp=$(mktemp -d)
-            git clone --depth 1 "https://x-access-token:$GH_TOKEN@github.com/$OWNER/$DEST.git" "$tmp" || { echo "::error::clone falhou em $DEST"; continue; }
+            if ! git clone --depth 1 "https://x-access-token:$GH_TOKEN@github.com/$OWNER/$DEST.git" "$tmp"; then
+              echo "::error::clone falhou em $DEST — o repositorio existe? atividade NOVA nasce pela fabrica.yml"
+              FALHOU+=("$DEST")
+              rm -rf "$tmp"
+              continue
+            fi
             find "$tmp" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
             cp -r "$SRC/." "$tmp/"
             rm -f "$tmp"/*.md "$tmp"/*.py "$tmp"/falas.json "$tmp"/audio/_carimbo.json
@@ -634,6 +648,12 @@ jobs:
             gh api -X POST "repos/$OWNER/$DEST/pages/builds" >/dev/null 2>&1 || true
             SRCS+=("$SRC"); DESTS+=("$DEST"); MARCAS+=("$(sha1sum "$SRC/index.html" | cut -c1-12)")
           done
+
+          if [ "${#FALHOU[@]}" -gt 0 ]; then
+            echo "::error::nao publiquei: ${FALHOU[*]}"
+            echo "- ⛔ NAO publicado: ${FALHOU[*]}" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
 
           # ---- 2a volta: agora sim, PERGUNTAR AO SITE
           # ⚠️ O STATUS DO BUILD MENTE; O SITE NAO. Ja aconteceu de o build dizer
