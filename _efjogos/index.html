@@ -484,6 +484,26 @@ var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
 function $(id){return document.getElementById(id);}
 function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
+/* ====== COMO A VOZ LÊ (a tela escreve certo, a voz lê certo) ==========
+   ⚠️ O Edge TTS lê "Tangram" com a ênfase errada — defeito que o MARCOS ouviu
+      e pegou em ago/2026, e que está na lista do portão `_qa/falas.py`. A cura
+      da casa é escrever **tângram**, com circunflexo, SÓ NA VOZ: é o que a
+      nossa atividade `_tangram` faz nas 93 falas dela.
+   ⚠️ A grafia certa é "Tangram", sem acento, e é ela que fica na TELA. Trocar o
+      texto escrito para agradar o sintetizador seria ensinar a palavra errada a
+      quem está aprendendo a ler — que é exatamente o público desta prova.
+   ⚠️ E A CONVERSÃO MORA DENTRO DO `falar()`, de propósito. Se ela ficasse só no
+      gerador do `falas.json`, o app pediria o mp3 pela chave do texto ORIGINAL
+      e o arquivo estaria gravado sob a chave do texto convertido: alto-falante
+      mudo, sem erro nenhum no console. Há um caminho só, e todo mundo passa
+      por ele. */
+var PRONUNCIA = [[/[Tt]angram/g, "tângram"]];
+function paraVoz(t){
+  var s = "" + t, i;
+  for(i = 0; i < PRONUNCIA.length; i++){ s = s.replace(PRONUNCIA[i][0], PRONUNCIA[i][1]); }
+  return s;
+}
+
 /* ====== VOZ (arquivos audio/v<hash>.mp3) ====== */
 var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("efjogos_mudo")==="1");}catch(e){}
 var _falaAudio=null, _ultimaFala="";
@@ -505,7 +525,8 @@ function falar(texto,_forcar){
   _ultimaFala=texto;
   if(VOZ_MUDA&&!_forcar){return;}
   pararFala();
-  try{var a=new Audio("audio/"+_chaveVoz(texto)+".mp3");_falaAudio=a;a.play();}catch(e){}
+  /* a chave sai do texto COMO A VOZ LÊ — é sob ela que o mp3 foi gravado */
+  try{var a=new Audio("audio/"+_chaveVoz(paraVoz(texto))+".mp3");_falaAudio=a;a.play();}catch(e){}
 }
 function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
 function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
