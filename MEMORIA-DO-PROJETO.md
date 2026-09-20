@@ -858,6 +858,140 @@
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
 >>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
 
+## 🕶️ DOIS PORTÕES LIAM METADE DO ARQUIVO — e por isso aprovavam (20/set/2026)
+
+Os dois foram achados montando o **`_corpo5`** ("A Viagem Dentro de Você", 5º
+ano). Os dois diziam **ok** com o defeito na frente deles. A lição é a mesma
+das outras vezes, e ela merece ficar escrita de novo: **portão que lê metade do
+que existe não aprova — ele se cala, e o silêncio dele tem a mesma cara do
+"passou"**.
+
+**1) `_qa/classes.py` (o designer) lia só o `index.html`.** Em caderno de folha
+viva metade do código mora no **`folhas.js` ao lado**, carregado por
+`<script src="folhas.js">`. O portão anunciava *"4 classes usadas no JS, todas
+têm regra"* enquanto o `_corpo5` tinha **doze classes sem uma linha de CSS**: a
+grade inteira do caça-palavras de duas folhas, os alvos de outra, a caixa do
+órgão — e essa última, sem regra, mostraria a figura do estômago com os **454 px
+do arquivo** dentro do item, no celular. Agora ele lê todo `<script src>` local
+que estiver ao lado do HTML.
+Junto vieram três consertos de pontaria, porque ler mais também acusa mais:
+- o regex do `el(...)` exigia `el("div","x")` **coladinho**, e o estilo da casa
+  em folha viva é `el("div", "x")` com espaço — essas nunca eram vistas;
+- **literal que termina colado num `+` é PREFIXO, não classe**: em
+  `el("button", "op curta lapiz marca" + m[0])` as classes reais são `marcaA` e
+  `marcaB`, e o portão mandava escrever `.marca`. Quatro dos seis cadernos que
+  ele acusou na estreia eram só isso;
+- **mas nem todo `+` cola**: em `"cruz uma" + (aceita ? " livre" : "")` o
+  pedaço seguinte começa com espaço, então `uma` e `livre` são classes
+  inteiras. A regra que separa os dois casos é olhar o **próximo literal**. Sem
+  ela eu teria perdido o `.cruz.livre .ccel{border-style:dashed}`, que faltava
+  de verdade no clone da cruzadinha — a grade "livre" ficava igual à normal e a
+  criança não via onde podia escrever.
+- E uma **colisão** que o próprio portão nomeia no cabeçalho: eu criei `.pista`
+  para a pista do órgão sem ver que `.pista` já é o botão da cruzadinha. Duas
+  regras com o mesmo nome não se somam — a de baixo ganha. Virou `.pistaorg`.
+
+⚠️ **O que sobrou medido, e não consertado:** com o portão enxergando o
+`folhas.js`, **treze cadernos já no ar** acusam uma classe sem CSS cada um (a
+mais comum é `.ligcx`, que é só um `<div>` embrulho do ligar e não muda nada na
+tela). Não mexi neles nesta rodada — é conserto de outra tarefa, e está aqui
+escrito para não sumir.
+
+**2) `_qa/boot.js` dizia perdoar mp3 que falta, e nunca perdoou.** A lista de
+ruído tinha `/Failed to load resource.*\.mp3/i` — mas no `requestfailed` chega a
+**URL** (que não tem a frase) e no console chega a **frase** (que não tem o
+`.mp3`). Nenhuma das duas casava. Ninguém viu porque **o `_corpo5` foi o
+primeiro caderno auditado ANTES da primeira entrega**: nos outros a banca só
+rodou depois, com o áudio já no disco. E a regra certa não é perdoar sempre —
+é perdoar **só quando não há um mp3 sequer na pasta** (a voz é gravada pelo
+`entregar.yml`, na hora de publicar). Com a voz gravada, mp3 que falta é defeito
+de verdade: a criança toca o alto-falante e ouve silêncio. E mesmo perdoando,
+**sai impresso** na tela do portão: *"não medi a voz"* não é *"passou"*.
+
+**3) De quebra, o 1i4 (`resposta_impressa.py`) acusou um inocente** — e o
+remédio já existia. No **LIGAR** as duas colunas estão à vista de propósito: é o
+gesto. Ele reprovou a folha 20 porque a chave do par é `sangue` e o rótulo diz
+SANGUE. A ponta do ligar agora se **declara** (`data-alvo="1"`), no `_corpo5` e
+no esqueleto. Declarar o que o elemento é não é desligar portão.
+
+## 🕳️ MAIS TRÊS PORTÕES CEGOS NO MESMO CADERNO — e um deles escondia uma folha sem resposta (20/set/2026)
+
+Depois dos dois de cima, a banca do `_corpo5` fechou com **zero reprovações e
+seis "NÃO MEDI"**. Como manda a casa, fui conferir os seis na mão. Três eram
+dívida legítima (não há recorte de sílaba, não há inglês, não há mp3 antes de
+publicar). Os outros três eram **portão cego**, e o que eles escondiam:
+
+**`_qa/leque_folha.py` (0b7) — "achei 0 folha(s)".** Ele procura
+`function f1`, `function f2`… uma por folha. O `_corpo5` usa a outra anatomia,
+que é a melhor das duas: funções GENÉRICAS (`fEscolher`, `fArrastar`, `fLigar`)
+e uma lista `var caps = [...]` dizendo qual monta cada folha. Resultado: o
+**leque de gestos**, que é regra da casa desde ago/2026 (nenhum gesto acima de
+40%, no mínimo 4 gestos), ficou **sem medida nenhuma num caderno de 36 folhas**.
+Ensinado a ler o `caps`, ele mediu: 7 gestos, o maior com 28%, escada que não
+desce. Passou — mas passou MEDIDO, que é outra coisa.
+
+⭐ **E foi ele que achou o defeito mais feio do caderno.** Ao imprimir a lista
+folha a folha, apareceu a folha **35, "Ache o órgão na grade"**. As cinco
+perguntas dela são *"em qual quadrinho está o estômago?"* — e **não havia
+quadrinho nenhum na tela**. A grade vinha da folha d44 e eu a tinha deixado de
+fora por causa da família de arte (ícones coloridos, contra um caderno todo a
+traço preto). O que eu tinha rejeitado, com razão, era recortar as OITO FICHAS
+dela uma a uma; o TABULEIRO INTEIRO, com as letras A–E e os números 1–5, é
+outra coisa — não é ilustração de órgão, é o material do exercício. Entrou
+assim, num pedaço só (491 × 496 px, mostrado com 440 px de largura). **A lição:
+pergunta e material são a mesma peça; separar os dois produz uma folha sem
+resposta possível, e nenhum portão de texto vê isso.**
+
+**`_qa/recorte_cortado.py` (1i7) — "não achei caixa nenhuma (formato novo?
+avise)".** Este é o portão que existe exatamente para pegar figura partida ao
+meio — o defeito que o Marcos viu no *Jornalista por um Dia*. E ele estava
+calado justamente no caderno em que eu cortei o coração e o menino do
+respiratório. Ensinado o quinto formato de declaração, mediu as 12 caixas e
+achou mais DUAS que eu não tinha visto: o esôfago e o corpo do digestório, os
+dois com a borda de cima passando por cima do desenho. As outras duas que ele
+acusa são de propósito (a moldura impressa dos alvéolos e a linha da própria
+grade) e estão declaradas em `RECORTE-OK.json`, com o motivo.
+
+**`_qa/acento.py` (0j2) — "sem conteudo.json, NÃO MEDI (fora do padrão)".**
+Caderno de folha viva NÃO TEM `conteudo.json`: em todos eles, sempre, ele
+respondeu isso. E o que ele deixou passar aqui foram **cinquenta frases** na
+tela e na voz sem acento — *"por onde a digestao comeca"*, *"o orgao que tem
+parte delgada"*, *"Isso! O CORACAO bombeia o sangue"*. Quem achou fui eu,
+olhando uma foto da folha 8. Ele ganhou um segundo olho (`checa_prosa`) que faz
+a pergunta INVERSA da original: na grade, palavra crua é o certo; na PROSA,
+palavra crua é defeito. ⚠️ **E esse segundo olho AVISA, não reprova** — medido
+nos 30 cadernos, ele achou 11 palavras, das quais 3 eram defeito real
+(LAMPADA, XICARA, AMANHA) e 8 eram inocentes de famílias que nenhuma contagem
+separa: nome de letra ("jota"), sílaba solta ("lan"), homógrafo legítimo ("os
+pais"), terminação citada ("terminam com ate") e frase em outra língua
+("sailed to America"). Portão que acusa inocente é portão que a gente aprende
+a pular.
+
+⚠️ **O que ficou de dívida, medido e não consertado:** cinco cadernos
+(`_ing8`, `_mult3`, `_ort5`, `_ort5b`, `_reinos`) continuam com "formato novo"
+no 1i7 — declaram as caixas em formato de GRADE calculada, e o portão não as
+alcança.
+
+## 🫀 O RECORTE QUE FUGIA DO RÓTULO E DECEPAVA O DESENHO (20/set/2026)
+
+Também do `_corpo5`, e vale como receita. A folha **c08** ("TUM TUM BATE
+CORAÇÃO") tem nove rótulos em volta do órgão, ligados por linhas finas. Eu
+apertei a caixa do recorte para fugir deles — e o coração saiu **sem a veia cava
+inferior, com o átrio direito pela metade e sem a ponta de baixo**, que ficou
+solta como um risco pendurado. Quem acusou foi o portão 1i6
+(`sobra_da_folha.py`), dizendo *"pauta da folha dentro"*: não era pauta, era o
+próprio órgão decepado. **A ordem certa é a inversa**: primeiro a caixa que pega
+o DESENHO inteiro, depois tantas caixas de `APAGAR` quantas forem precisas para
+os rótulos que caírem dentro dela. E as caixas de apagar se **medem** contra o
+desenho antes de entrar — em x=492 a curva do ápice passa em y=911 e o texto só
+começa em y=924; a caixa cabe entre os dois, em 918. Duas vezes eu chutei de
+olho a posição e duas vezes comi um pedaço do contorno.
+O mesmo valeu para os **alvéolos** (folha d25): eu tinha recortado uma FATIA
+arbitrária do meio do desenho. A folha os desenha dentro de uma **moldura** (x
+723..1008, y 1223..1524, medida, não estimada); o recorte entra 3 px para dentro
+dela, e saem a palavra "Alvéolos" (figura com o nome escrito é gabarito de
+graça) e a ponta da seta de chamada (sem o resto da folha ela aponta para nada).
+
 ## 👻 A FIGURA QUE ESTÁ NO CÓDIGO E NÃO ESTÁ NA TELA (18/set/2026)
 
 **O caso.** A capa do caderno de verbos mostrava as palavras e **nenhuma das

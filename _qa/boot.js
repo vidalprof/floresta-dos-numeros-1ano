@@ -88,6 +88,13 @@ const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
   if (!arquivo) { console.log('uso: node _qa/boot.js <arquivo.html>'); process.exit(2); }
 
   const problemas = [];
+  /* a voz ja foi gravada? (o `entregar.yml` grava ao publicar) */
+  const fs = require('fs');
+  const pastaAudio = path.join(path.dirname(path.resolve(arquivo)), 'audio');
+  let semVoz = true, faltouMp3 = 0;
+  try {
+    semVoz = !fs.readdirSync(pastaAudio).some(f => /\.mp3$/i.test(f));
+  } catch (e) { semVoz = true; }
   let b, p;
   try {
     b = await chromium.launch({executablePath: CROMO, args: ['--no-sandbox', '--disable-gpu']});
@@ -106,11 +113,25 @@ const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
   p.on('console', m => {
     if (m.type() !== 'error') return;
     const t = m.text();
+    if (semVoz && /Failed to load resource/i.test(t)) { faltouMp3++; return; }
     if (!ehRuido(t)) problemas.push('console.error: ' + t.slice(0, 200));
   });
   /* 3) arquivo que a propria atividade pede e nao existe */
   p.on('requestfailed', r => {
     const u = r.url();
+    /* ⚠️ MP3 QUE FALTA: depende de a VOZ JA TER SIDO GRAVADA.
+       A linha `/Failed to load resource.*\.mp3/i` da lista de ruido dizia
+       perdoar isso e NUNCA perdoou nada: aqui chega a URL (que nao tem a frase
+       "Failed to load resource") e no console chega a frase (que nao tem o
+       ".mp3"). Nenhuma das duas casava. Descoberto no `_corpo5`, o primeiro
+       caderno auditado ANTES da primeira entrega — nos outros a banca so rodou
+       depois, com o audio ja no disco, e por isso ninguem viu.
+       A regra certa nao e perdoar sempre: e perdoar SO quando nao ha um mp3
+       sequer na pasta (a voz e gravada pelo `entregar.yml`, no momento de
+       publicar). Com a voz gravada, mp3 que falta e defeito de verdade — a
+       crianca toca o alto-falante e ouve silencio — e continua reprovando.
+       E mesmo perdoando, sai IMPRESSO: "nao medi a voz" nao e "passou". */
+    if (semVoz && /\.mp3(\?|$)/i.test(u)) { faltouMp3++; return; }
     if (!ehRuido(u) && !ehRuido(String(r.failure() && r.failure().errorText))) {
       problemas.push('recurso nao carregou: ' + u.split('/').slice(-1)[0]);
     }
@@ -224,6 +245,14 @@ const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
   }
 
   await b.close();
+
+  /* ⚠️ PERDAO DECLARADO, NUNCA CALADO: se a voz ainda nao foi gravada, os mp3
+     que faltaram foram perdoados aqui — e isso tem de APARECER, porque "nao
+     medi a voz" nao e "a voz esta boa". */
+  if (semVoz && faltouMp3) {
+    console.log('   (voz ainda nao gravada: ' + faltouMp3 + ' pedido(s) de mp3 sem arquivo — ' +
+                'NAO MEDI a voz; o entregar.yml grava ao publicar)');
+  }
 
   /* um erro repetido 40x e UM defeito, nao 40 */
   const unicos = [...new Set(problemas)];

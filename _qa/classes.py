@@ -18,6 +18,7 @@ Uso:  python3 _qa/classes.py _nomes/index.html
 Sai com 1 se achar problema.
 """
 import io
+import os
 import re
 import sys
 
@@ -36,19 +37,96 @@ def sem_media(css):
     return re.sub(r"@media[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}", "", css, flags=re.S)
 
 
+def recolhe(usadas, txt):
+    u"""Recolhe nomes de classe dos literais de `txt` (uma EXPRESSAO de classe).
+
+    ⚠️ LITERAL QUE TERMINA COLADO NUM `+` E PREFIXO, NAO CLASSE — e este foi o
+       falso alarme que apareceu quando o portao passou a ler o `folhas.js`
+       (20/set/2026). Em `el("button", "op curta lapiz marca" + m[0], ...)` as
+       classes de verdade sao `marcaA` e `marcaB`; o pedaco `marca` sozinho nao
+       existe em CSS nenhum, e o portao mandava escrever uma regra para ele. O
+       mesmo em `"lente foco" + Math.min(focos,3)` (as reais sao `foco1..3`).
+       Quatro dos seis cadernos acusados eram so isto.
+
+    ⚠️ MAS NEM TODO `+` COLA: em `"cruz uma" + (aceita ? " livre" : "")` o que
+       vem depois COMECA COM ESPACO, entao `uma` e classe inteira e `livre`
+       tambem. A regra que separa os dois casos e olhar o PROXIMO literal: se
+       ele comeca com espaco (ou esta vazio), o pedaco anterior esta fechado.
+       Sem isto o portao perderia `.cruz.livre` — que era um buraco de verdade,
+       herdado do clone da cruzadinha.
+    """
+    lits = [(m.group(1), m.end()) for m in re.finditer(r'"([^"]*)"', txt)]
+    for i, (lit, fim) in enumerate(lits):
+        partes = lit.split()
+        if partes and not lit.endswith(" ") and txt[fim:].lstrip().startswith("+"):
+            prox = lits[i + 1][0] if i + 1 < len(lits) else None
+            if prox is None or (prox != "" and not prox.startswith(" ")):
+                partes = partes[:-1]
+        for c in partes:
+            usadas.setdefault(c, 0)
+
+
+def arg2(js, i):
+    u"""Devolve o SEGUNDO ARGUMENTO de uma chamada, a partir da posicao `i`.
+
+    ⚠️ Janela de N caracteres nao serve. Na primeira tentativa eu li 24 letras
+       depois do literal e a janela entrava na chamada SEGUINTE — o portao
+       recolheu `div` (o nome da tag do `el("div", ...)` de baixo) e mandou
+       escrever `.div` no CSS. Aqui o argumento e lido de verdade: conta
+       parenteses e colchetes e para na virgula de nivel zero.
+    """
+    d, ini, n = 0, i, len(js)
+    while i < n:
+        c = js[i]
+        if c in '"\'':
+            i += 1
+            while i < n and js[i] != c:
+                i += 2 if js[i] == "\\" else 1
+        elif c in "([{":
+            d += 1
+        elif c in ")]}":
+            if d == 0:
+                return js[ini:i]
+            d -= 1
+        elif c == "," and d == 0:
+            return js[ini:i]
+        elif c in ";\n" and d == 0:
+            return js[ini:i]
+        i += 1
+    return js[ini:i]
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
         return 2
     h = io.open(sys.argv[1], encoding="utf-8").read()
     js = "\n".join(re.findall(r"<script>(.*?)</script>", h, re.S))
+    # ⚠️ O JS DE FORA DO HTML TAMBEM CONTA — e esta linha custou caro
+    #    (20/set/2026). Em CADERNO DE FOLHA VIVA metade do codigo mora no
+    #    `folhas.js` ao lado do index, carregado por <script src="folhas.js">.
+    #    O portao lia so o que estava DENTRO das tags e anunciava, todo
+    #    contente, "4 classes usadas no JS, todas tem regra" — enquanto o
+    #    `_corpo5` tinha DOZE classes sem uma linha de CSS: a grade inteira do
+    #    caca-palavras de duas folhas, os alvos de outra, a caixa do orgao (que
+    #    sem regra mostrava a figura do estomago com os 454 px do arquivo
+    #    dentro do item). Portao que le metade do codigo aprova por ignorancia.
+    aqui = os.path.dirname(os.path.abspath(sys.argv[1]))
+    for src in re.findall(r'<script[^>]+src="([^"?]+\.js)', h):
+        if src.startswith("http") or src.startswith("/"):
+            continue
+        cam = os.path.join(aqui, src)
+        if os.path.exists(cam):
+            js += "\n" + io.open(cam, encoding="utf-8").read()
     css = re.search(r"<style>(.*?)</style>", h, re.S).group(1)
     base = sem_media(css)
 
     usadas = {}
-    for m in re.finditer(r'el\("[a-z0-9]+","([^"]+)"', js):
-        for c in m.group(1).split():
-            usadas.setdefault(c, 0)
+    # ⚠️ COM ESPAÇO DEPOIS DA VÍRGULA TAMBÉM. O regex antigo exigia `el("div","x"`
+    #    coladinho, e em caderno de folha viva o estilo da casa é `el("div", "x")`
+    #    — o portão simplesmente não via essas classes.
+    for m in re.finditer(r'el\(\s*"[a-z0-9]+"\s*,\s*(?=")', js):
+        recolhe(usadas, arg2(js, m.end()))
     # ⚠️ classe passada como ARGUMENTO de funcao (cenaImg(nome,"jimg"),
     #    imgEl(nome,"pecaimg")). O portao so olhava el(...) e className= — e
     #    deixou passar a .jimg sem regra: a figura do mapa vinha no tamanho
@@ -81,10 +159,8 @@ def main():
         #    direito de uma COMPARACAO nunca e classe: e o valor comparado.
         #    Some com eles antes de recolher (o mesmo remedio do `getAttribute`).
         trecho = re.sub(r'[=!]==?\s*"[^"]*"', ' ', trecho)
-        for lit in re.findall(r'"([^"]*)"', trecho):
-            for c in lit.split():
-                usadas.setdefault(c, 0)
-    for m in re.finditer(r'class="([^"]+)"', js):
+        recolhe(usadas, trecho)
+    for m in re.finditer(r'class=[\\]?"([^"\\]+)', js):
         for c in m.group(1).split():
             usadas.setdefault(c, 0)
 

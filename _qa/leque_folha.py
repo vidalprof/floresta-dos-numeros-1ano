@@ -108,6 +108,78 @@ def folhas_do_js(js):
     return sorted(fora)
 
 
+def corpo_de(js, nome):
+    u"""O corpo da funcao `nome` dentro de `js` (vazio se nao houver)."""
+    m = re.search(r"\nfunction %s\s*\(" % re.escape(nome), u"\n" + js)
+    if not m:
+        return u""
+    i, d, ini = m.end(), 0, None
+    while i < len(js):
+        c = js[i]
+        if c == u"{":
+            d += 1
+            if ini is None:
+                ini = i
+        elif c == u"}":
+            d -= 1
+            if d == 0 and ini is not None:
+                return js[ini:i + 1]
+        i += 1
+    return u""
+
+
+def folhas_do_caps(js):
+    u"""[(numero, corpo)] quando o caderno monta as folhas por uma LISTA `caps`.
+
+    ⚠️ HA DUAS ANATOMIAS DE CADERNO DE FOLHA VIVA, e o portao so conhecia uma.
+       A primeira escreve `function f1(...)`, `function f2(...)`, uma por folha.
+       A segunda — a do `_corpo5`, e e a melhor das duas — escreve funcoes
+       GENERICAS (`fEscolher`, `fArrastar`, `fLigar`...) e uma lista
+       `var caps = [f0, fEscolher, fArrastar, function(d,p){fLigar(d,p,"g1");}, ...]`
+       que diz qual monta cada folha. Sem ler essa lista o portao respondia
+       "achei 0 folha(s)" e devolvia NAO MEDI — e o leque de gestos, que e
+       regra da casa (nenhum gesto acima de 40%, no minimo 4 gestos), ficava
+       sem medida nenhuma num caderno de 36 folhas.
+       A posicao na lista E o numero da folha; o indice 0 e a capa.
+    """
+    m = re.search(r"var caps = \[", js)
+    if not m:
+        return []
+    i, d, ini = m.end() - 1, 0, None
+    while i < len(js):
+        c = js[i]
+        if c in u"[({":
+            d += 1
+            if ini is None:
+                ini = i + 1
+        elif c in u"])}":
+            d -= 1
+            if d == 0:
+                break
+        i += 1
+    if ini is None:
+        return []
+    corpo_lista, partes, d, ini2 = js[ini:i], [], 0, 0
+    for j, c in enumerate(corpo_lista):
+        if c in u"[({":
+            d += 1
+        elif c in u"])}":
+            d -= 1
+        elif c == u"," and d == 0:
+            partes.append(corpo_lista[ini2:j])
+            ini2 = j + 1
+    partes.append(corpo_lista[ini2:])
+    fora = []
+    for n, txt in enumerate(partes):
+        if n == 0:
+            continue                       # a capa
+        corpo = txt
+        for nome in re.findall(r"\bf[A-Z][A-Za-z0-9_]*", txt):
+            corpo += u"\n" + corpo_de(js, nome)
+        fora.append((n, corpo))
+    return fora
+
+
 def main():
     if len(sys.argv) < 2:
         print(u"uso: python3 _qa/leque_folha.py <pasta>")
@@ -119,6 +191,8 @@ def main():
         return 2
     js = io.open(cam_js, encoding=u"utf-8").read()
     folhas = folhas_do_js(js)
+    if len(folhas) < 4:
+        folhas = folhas_do_caps(js)        # a outra anatomia — ver o comentario la em cima
     if len(folhas) < 4:
         print(u"%s -> NAO MEDI: achei %d folha(s) no folhas.js." % (pasta, len(folhas)))
         return 2

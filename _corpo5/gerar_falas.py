@@ -42,7 +42,7 @@ import unicodedata
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
 CAM = os.path.join(AQUI, u"index.html")
-PREFIXO = u"xx_"                     # <- o prefixo desta atividade
+PREFIXO = u"vd_"                     # <- o prefixo desta atividade
 VOZ = u"pt-BR-AntonioNeural"
 
 D = io.open(CAM, encoding=u"utf-8").read()
@@ -61,7 +61,7 @@ def bloco(nome):
     """
     i = D.find(u"var " + nome + u" = ")
     if i < 0:
-        raise SystemExit(u"nao achei o bloco `var %s` no index.html" % nome)
+        raise SystemExit(u"não achei o bloco `var %s` no index.html" % nome)
     i = D.index(u"{", i)
     nivel, j, dentro, escapa = 0, i, False, False
     while j < len(D):
@@ -146,27 +146,185 @@ def p(k, v):
 # ---------------------------------------------------------------------------
 # AS FALAS DO MOTOR — estas toda folha viva tem
 # ---------------------------------------------------------------------------
-p(u"capa", u"NOME DA ATIVIDADE. N folhas sobre ASSUNTO. Escreva o seu nome ali "
-           u"embaixo e toque em Começar.")
+p(u"capa", u"A Viagem Dentro de Você. Trinta e seis folhas sobre o caminho que o alimento, "
+           u"o ar e o sangue fazem dentro do seu corpo. Escreva o seu nome ali embaixo e "
+           u"toque em Começar.")
 p(u"folhaPronta", u"Folha pronta! Muito bem.")
 p(u"escreva", u"Escreva a palavra usando o teclado.")
 p(u"ligue", u"Toque numa palavra do lado esquerdo e depois na do lado direito.")
 p(u"toque_palavra", u"Primeiro toque numa palavra ali embaixo. Depois toque na "
                     u"gaveta dela.")
 p(u"vozOn", u"Narração ligada!")
-p(u"fim", u"Você chegou ao fim! " +
-          u"E o GANCHO: uma pergunta aberta que a criança leva para fora da tela.")
+p(u"fim", u"Você chegou ao fim da viagem! Agora você sabe o caminho do alimento, do ar e "
+          u"do sangue. E fica uma pergunta para você pensar: enquanto você lia esta "
+          u"frase, o seu coração bateu umas dez vezes e você respirou umas duas. "
+          u"Quantas vezes será que ele bate enquanto você dorme a noite inteira?")
 
 # ---------------------------------------------------------------------------
-# AS FALAS DAS FOLHAS — uma seção por folha, lendo os DADOS
-#
-#   FOO = bloco(u"FOO")
-#   p(u"p1enun", u"Folha um: o que ela pede.")
-#   for k, X in FOO.items():
-#       p(u"diz_" + k, X[u"p"] + u".")
-#       p(u"certo1_" + k, u"Isso! …")
-#       p(u"dica1_" + k, u"… uma pista, NUNCA a resposta.")
+# AS FALAS DAS FOLHAS — lidas dos DADOS, uma fonte só
 # ---------------------------------------------------------------------------
+
+ORG = bloco(u"ORG")
+PERG = bloco(u"PERG")
+LIGPARES = bloco(u"LIGPARES")
+GAV = bloco(u"GAV")
+ORDEM = bloco(u"ORDEM")
+ESCR = bloco(u"ESCR")
+CACA1 = bloco(u"CACA1")
+CACA2 = bloco(u"CACA2")
+CRZ1 = bloco(u"CRZ1")
+CRZ2 = bloco(u"CRZ2")
+ITENS = bloco(u"ITENS")
+
+NOMES = [
+ u"Onde tudo começa", u"Os órgãos da digestão", u"Os órgãos da digestão, de novo",
+ u"O caminho do alimento", u"O que cada órgão faz", u"O que cada órgão faz, de novo",
+ u"Preencha o caminho", u"Caça-órgãos da digestão",
+ u"Para que serve respirar", u"Os órgãos da respiração", u"O caminho do ar",
+ u"O caminho do ar, de novo", u"O que cada órgão do ar faz", u"Nariz ou boca?",
+ u"Puxo o ar, solto o ar", u"Cruza-respiração",
+ u"A bomba do corpo", u"O que o sangue leva", u"Coração, veia e artéria",
+ u"Os vasos e o que fazem", u"Preencha: o sangue", u"O caminho do sangue",
+ u"É verdade ou é falso?", u"Caça-palavras da circulação",
+ u"Respirar enquanto come", u"Do prato até a célula", u"Preencha: a viagem do nutriente",
+ u"Onde o nutriente entra", u"Por onde sai o que não serve", u"Os rins e a água",
+ u"De que sistema é cada um?",
+ u"Pedro correu no recreio", u"O que acontece quando corro", u"O alimento é o combustível",
+ u"Ache o órgão na grade", u"Cruzadinha dos três sistemas"]
+
+# ---- o enunciado de cada folha ----
+PEDE = {
+ 1: u"Leia a pergunta e toque na resposta certa.",
+ 2: u"Puxe o nome certo para cada órgão, ou toque no órgão e depois no nome.",
+ 3: u"De novo os órgãos da digestão. Agora sem a ajuda da primeira vez.",
+ 4: u"Ponha o caminho do alimento em ordem: para cada órgão, toque no número do lugar dele.",
+ 5: u"Toque no órgão de um lado e no que ele faz do outro.",
+ 6: u"Ligue de novo. Agora entram o fígado e o pâncreas, que ajudam a digestão.",
+ 7: u"Preencha a palavra que falta. Dá para usar o teclado da tela ou o de verdade.",
+ 8: u"Ache na grade o nome de cada órgão da digestão.",
+ 9: u"Leia a pergunta sobre a respiração e toque na resposta certa.",
+ 10: u"Leia o que cada parte da respiração faz e puxe o nome certo.",
+ 11: u"Ponha em ordem o caminho do ar, de onde ele entra até onde ele chega.",
+ 12: u"O caminho do ar de novo, agora até os alvéolos, lá no fundo do pulmão.",
+ 13: u"Ligue cada órgão do ar ao que ele faz.",
+ 14: u"Preencha as frases sobre o ar que entra no corpo.",
+ 15: u"Cada frase é de quando o ar ENTRA ou de quando o ar SAI? Leve para a gaveta certa.",
+ 16: u"Leia a pista e preencha a palavra na cruzadinha da respiração.",
+ 17: u"Leia a pergunta sobre o coração e o sangue e toque na resposta certa.",
+ 18: u"Preencha as frases sobre o que o sangue faz.",
+ 19: u"Leia o que cada parte do sistema circulatório faz e puxe o nome certo.",
+ 20: u"Ligue cada vaso ao que ele faz.",
+ 21: u"Preencha as frases sobre a energia e o que o sangue carrega.",
+ 22: u"Ponha em ordem o caminho do sangue, saindo do coração e voltando para ele.",
+ 23: u"Leia cada frase e leve para a gaveta: é verdade ou é falso?",
+ 24: u"Ache na grade as palavras da circulação.",
+ 25: u"Agora os três sistemas juntos. Leia e toque na resposta certa.",
+ 26: u"Ponha em ordem a viagem do nutriente, do prato até a célula.",
+ 27: u"Preencha as frases sobre a viagem do nutriente.",
+ 28: u"Onde cada coisa entra no sangue? Toque na resposta certa.",
+ 29: u"E o que o corpo não quer mais, por onde sai? Toque na resposta certa.",
+ 30: u"Pense no que acontece quando falta água no corpo.",
+ 31: u"De que sistema é cada órgão? Leve cada um para a gaveta dele.",
+ 32: u"Pedro correu no recreio. Leia e toque na resposta certa.",
+ 33: u"Ligue o que acontece no corpo de quem corre ao motivo disso.",
+ 34: u"De onde vem a energia do corpo? Toque na resposta certa.",
+ 35: u"Olhe a grade de quadrinhos e diga onde está cada órgão.",
+ 36: u"A cruzadinha do fim: pistas dos três sistemas juntos."}
+for i in range(1, 37):
+    p(u"p%denun" % i, u"Folha %d: %s. %s" % (i, NOMES[i - 1], PEDE[i]))
+
+# ---- os órgãos: o nome e o que ele faz ----
+# ⚠️ A FAMÍLIA É `org_`, NÃO `nome_`: o `_anim` já usa `nome_` para os mp3 dos
+#    nomes das crianças (nome_agatha, nome_alexandre...), e o portão 1c acusou
+#    com razão — duas atividades brigando pela mesma família de arquivo.
+for k, O in ORG.items():
+    p(u"org_" + k, O[u"n"] + u".")
+    p(u"faz_" + k, O[u"n"] + u": " + O[u"faz"] + u".")
+    p(u"certo_org_" + k, u"Isso! " + O[u"n"] + u": " + O[u"faz"] + u".")
+    p(u"dica_org_" + k, u"Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.")
+
+# ---- as perguntas de escolher ----
+for k, Q in PERG.items():
+    p(u"perg_" + k, Q[u"p"])
+    certa = u""
+    for o in Q[u"o"]:
+        p(u"op_%s_%s" % (k, o[0]), o[1])
+        if o[0] == Q[u"c"]:
+            certa = o[1]
+    p(u"certo_" + k, u"Isso mesmo! " + certa)
+    p(u"dica_" + k, u"Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.")
+
+# ---- numerar o caminho ----
+for n in range(1, 8):
+    p(u"num_" + str(n), u"Número %d." % n)
+for kO, O in ORDEM.items():
+    for k in O[u"v"]:
+        # ⚠️ AQUI NAO HA SAIDA DE EMERGENCIA, de proposito: todo item de um
+        #    caminho TEM de estar no ORG (e a mesma regra do `fNumerar`, que
+        #    deixou vazar a chave `cora2` para a voz quando tinha fallback).
+        #    Se faltar, este gerador quebra alto — que e o que se quer.
+        nm = ORG[k][u"n"]
+        art = ORG[k][u"art"].upper()
+        p(u"certo_ord_" + k, u"Isso! " + art + u" " + nm + u" está no lugar certo.")
+        p(u"dica_ord_" + k, u"Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.")
+
+# ---- ligar: a fala do acerto e do erro, por folha ----
+LIGDE = {5: u"g1", 6: u"g2", 13: u"g3", 20: u"g4", 33: u"g5"}
+for pi, gk in LIGDE.items():
+    for par in LIGPARES[gk]:
+        k, oque = par[0], par[1]
+        # o 3o campo do par e o ROTULO (ver o comentario do `fLigar` no
+        # folhas.js): chave e identificador, rotulo e o que a crianca le e a
+        # voz diz. Sem ele saia "MUSCULO", sem acento, na tela e na voz.
+        nm = ORG[k][u"n"] if k in ORG else (par[2] if len(par) > 2 else k.upper())
+        p(u"certo%d_%s" % (pi, k), u"Isso! " + nm + u": " + oque + u".")
+        p(u"dica%d_%s" % (pi, k), u"Ainda não. Leia de novo o que está escrito do outro lado.")
+        if k not in ORG:
+            p(u"org_" + k, nm + u".")
+            p(u"faz_" + k, oque + u".")
+
+# ---- escrever no teclado ----
+for k, E in ESCR.items():
+    p(u"fras_" + k, E[u"fr"].replace(u"…", u"que palavra?"))
+    # ⚠️ A VOZ LE A FORMA ACENTUADA, a tela mostra a crua. O `w` e a palavra
+    #    da GRADE DE DIGITAR, que nao carrega acento nem cedilha ("ESOFAGO",
+    #    "CORACAO"). Se a confirmacao falada usasse esse `w`, a voz diria
+    #    "co-ra-ca-o" — o defeito que o portao 0j2 (`acento.py`) nomeia. O campo
+    #    `ac` ja traz as formas aceitas; a ACENTUADA e a que se fala.
+    falada = E[u"w"]
+    for forma in E.get(u"ac", []):
+        if any(c in forma for c in u"ÁÀÂÃÉÊÍÓÔÕÚÜÇáàâãéêíóôõúüç"):
+            falada = forma
+            break
+    p(u"certo_" + k, u"Isso! " + E[u"fr"].replace(u"…", falada))
+    p(u"dica_" + k, u"Escute a frase inteira de novo e pense em que palavra cabe ali.")
+
+# ---- gavetas ----
+GNOME = {u"ar": u"o ar entrando e saindo", u"vf": u"verdade e mentira", u"sis": u"os três sistemas"}
+for gk, G in GAV.items():
+    for C in G[u"cols"]:
+        p(u"gav_%s_%s" % (gk, C[u"k"]), C[u"n"] + u".")
+    for n, X in G[u"pal"].items():
+        p(u"diz2_%s_%s" % (gk, n), X[u"p"] + u".")
+        col = [c for c in G[u"cols"] if c[u"k"] == X[u"c"]][0]
+        pag = {u"ar": 15, u"vf": 23, u"sis": 31}[gk]
+        p(u"certo%d_%s" % (pag, n), u"Isso! " + X[u"p"] + u": " + col[u"n"].lower() + u".")
+        p(u"dica%d_%s" % (pag, n), u"Leia a frase de novo e pense em qual gaveta ela cabe.")
+
+# ---- caça-palavras ----
+p(u"cacatoque", u"Toque na primeira letra da palavra e depois na última.")
+for pag, C in ((8, CACA1), (24, CACA2)):
+    for k, X in C[u"pal"].items():
+        p(u"cp_" + k, X[u"pista"])
+        p(u"certo%d_%s" % (pag, k), u"Achou! " + X[u"pista"] + u".")
+        p(u"dica%d_%s" % (pag, k), u"Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.")
+
+# ---- cruzadinha ----
+for pag, C in ((16, CRZ1), (36, CRZ2)):
+    for k, X in C.items():
+        p(u"crz_" + k, X[u"d"])
+        p(u"certo%d_%s" % (pag, k), u"Isso! " + X[u"d"])
+        p(u"dica%d_%s" % (pag, k), u"Leia a pista de novo. Conte quantas casinhas tem a palavra.")
 
 
 # ==============================================================================

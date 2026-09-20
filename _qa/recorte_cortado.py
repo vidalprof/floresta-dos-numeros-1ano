@@ -116,6 +116,22 @@ def le_pecas(pasta, dir_folhas):
     except SyntaxError as e:
         return None, u"o recortar_das_folhas.py nao compila (%s)" % e
 
+    # ⚠️ AS CONSTANTES DE PASTA (5o formato, o do `_corpo5`): nele cada recorte
+    #    diz de QUAL COLHEITA vem, porque o caderno colheu em duas pastas
+    #    (`folhas_corpo5` e `folhas_corpo5circ`). A linha e
+    #    `FOLHAS = os.path.join(BASE, "_sequencias", "folhas_corpo5")`.
+    pastas = {}
+    for no in ast.walk(arv):
+        if isinstance(no, ast.Assign) and len(no.targets) == 1 \
+                and isinstance(no.targets[0], ast.Name) \
+                and isinstance(no.value, ast.Call):
+            partes = [_txt(a) for a in no.value.args]
+            seq = [x for x in partes if x]
+            if len(seq) >= 2 and seq[-2] == u"_sequencias":
+                cam = os.path.join(u"_sequencias", seq[-1])
+                if os.path.isdir(cam):
+                    pastas[no.targets[0].id] = cam
+
     # 1) as constantes que guardam nome de folha: D31 = "d31_bb11a2.png"
     const = {}
     for no in ast.walk(arv):
@@ -153,6 +169,19 @@ def le_pecas(pasta, dir_folhas):
                 and el[1].id in const:
             cx = _quatro(ast.Tuple(elts=list(el[2:6]), ctx=ast.Load()))
             guarda(const[el[1].id], _txt(el[0]), cx, _txt(el[6]) if len(el) == 7 else u"figura")
+            continue
+        # ⚠️ 5o FORMATO — (PASTA, "d29", nome, (x1,y1,x2,y2), u"o que e"), do
+        #    `_corpo5`. Sem ele o portao dizia "nao achei caixa nenhuma (formato
+        #    novo? avise, para o portao aprender)" — e avisar e isto aqui. E o
+        #    silencio dele custou caro nesse caderno: DUAS figuras foram ao
+        #    recorte partidas ao meio (o coracao sem a veia cava e sem a ponta,
+        #    o menino do respiratorio com meia cabeca) e quem as achou fui eu,
+        #    olhando. E exatamente o defeito que este portao existe para pegar.
+        if len(el) == 5 and isinstance(el[0], ast.Name) and el[0].id in pastas \
+                and _txt(el[1]) and _txt(el[2]) and isinstance(el[3], (ast.Tuple, ast.List)):
+            dd = pastas[el[0].id]
+            folha = _folha_real(dd, _txt(el[1]))
+            guarda(folha, _txt(el[2]), _quatro(el[3]), pasta_folha=dd)
             continue
         # (nome, (x1,y1,x2,y2))  — precisa do "arquivo" do dict que a contem
         # (pasta, "d22", {nome: caixa})

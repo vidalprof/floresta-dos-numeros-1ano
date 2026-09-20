@@ -1,0 +1,2916 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>A Viagem Dentro de Você — Nº ano</title>
+<meta name="description" content="DESCREVER: o assunto, o ano, quantas folhas e de onde vieram as folhas de papel colhidas.">
+<!-- ============================================================
+     ESQUELETO DA FOLHA VIVA — a casca, sem conteúdo nenhum.
+
+     ⭐ POR QUE ELE EXISTE (pergunta do Marcos, 15/set/2026): *"mas por que você
+     está clonando? Não é melhor colher as atividades da internet com o crivo e
+     criar as interatividades que são pedidas, sem clonar?"*
+     Ele estava certo sobre o problema. As INTERATIVIDADES nunca foram clonadas
+     — o gesto sai do comando impresso na folha de papel. O que se clonava era o
+     MOTOR, e junto com ele vinha o CONTEÚDO do caderno de origem: os objetivos
+     do relatório, a citação do currículo, o sorteio das folhas, o prefixo das
+     figuras, o `var LIGAR`. Na Fábrica de Nomes, CINCO das nove reprovações
+     foram exatamente isso, e nenhuma tinha a ver com substantivos.
+     Aqui não há o que esquecer de trocar, porque não há nada de ninguém dentro.
+
+     ⚠️ NÃO SE COPIA ESTA PASTA À MÃO: use
+        `bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>"`,
+        que carimba o prefixo em todos os lugares de uma vez e roda o pré-voo.
+
+     O QUE JÁ VEM PRONTO, e não se reescreve: navegação e progresso, voz com
+     alto-falante em tudo, o teclado de letras nas duas portas (tela e teclado de
+     verdade), arrastar com mouse/dedo/caneta, gavetas, ligar, cruzadinha,
+     boletim da criança, relatório do professor pela medalha, dossiê pedagógico,
+     "continuar de onde parou" por 55 minutos, a chave 1275@ e o aviso ao
+     controle da sala quando a criança termina.
+
+     O QUE SE PREENCHE, e está marcado: GESTOS · ITENS · DADOS · NOMES ·
+     CURRICULO · novaFolha() · OBJETIVOS (no folhas.js) · as folhas f01..fN.
+
+     ES5 puro, um arquivo (mais o `folhas.js` ao lado), sem biblioteca.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+:root{
+  /* os tokens de cor da folha viva — sem eles o portão `_qa/cor_fixa.py` reprova
+     cor de texto cravada, que num tema diferente vira letra invisível */
+  --texto:#26201c;
+  --texto2:#3a2f27;
+  --texto3:#4a3d33;
+  /* ⚠️ IDENTIDADE PRÓPRIA (Marcos, 18/set/2026: "cada caderno precisa ter capa
+     diferente, cor diferente, animações"): este cinza é de ESQUELETO —
+     CINZA DE ESQUELETO — TROCAR pela cor do ASSUNTO do caderno novo (`_padrao/identidade_capa.py`). O portão 0b11 (`_qa/identidade.py`)
+     reprova cor, capa ou animação iguais às de qualquer outro caderno ou ao esqueleto. */
+  /* ⚠️ A COR SAI DO ASSUNTO, e esta é a do sangue — o fio que costura os três
+     sistemas deste caderno. Conferida contra os 30 cadernos: nenhum outro usa.
+     (Portão 0b11, Marcos 18/set: "os estudantes acham que é a mesma atividade,
+     mesmo o título sendo diferente".) */
+  --cor:#a51c30;
+  --cor2:#7a1523;
+  --corclara:#fdecef;
+}
+body{font-family:"Segoe UI",Arial,sans-serif;background:#fbf3f2;color:var(--texto);padding-bottom:160px}
+#topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--cor);
+  box-shadow:0 2px 14px rgba(70,40,20,.13);padding:8px 10px;display:flex;align-items:center;gap:10px;max-width:880px;margin:0 auto}
+#topo .tit{font-weight:800;font-size:15px;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog{height:12px;background:#eee3d9;border-radius:8px;overflow:hidden;flex:1;min-width:60px;max-width:200px}
+.prog i{display:block;height:100%;width:0;background:var(--cor);border-radius:8px;-webkit-transition:width .5s;transition:width .5s}
+.pg{font-weight:800;font-size:14px;color:var(--cor2);white-space:nowrap}
+button{font-family:inherit;cursor:pointer}
+.bt{min-width:48px;min-height:48px;border:0;border-radius:16px;background:var(--cor);color:#fff;font-weight:800;font-size:17px;
+  padding:10px 18px;box-shadow:0 4px 0 var(--cor2);-webkit-transition:transform .08s;transition:transform .08s}
+.bt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--cor2)}
+.bt[disabled]{opacity:.45;cursor:default;box-shadow:none}
+.bt.cinza{background:#eae2da;color:#57493f;box-shadow:0 4px 0 #cdc0b4}
+.bt.verde{background:#15a34a;box-shadow:0 4px 0 #0d7736}
+.zap{width:42px;height:42px;border-radius:50%;border:0;background:var(--cor);box-shadow:0 3px 0 var(--cor2);
+  display:inline-flex;align-items:center;justify-content:center;padding:0;flex:none}
+.zap svg{width:22px;height:22px;fill:#fff}
+.zap.off{background:#c2b6ab;box-shadow:0 3px 0 #a3968b}
+.zap.ouvir{background:#fff;box-shadow:0 3px 0 #ddd0c4;border:2px solid var(--cor)}
+.zap.ouvir svg{fill:var(--cor)}
+.zap.ouvir.tocando{-webkit-animation:pulsa 1s infinite;animation:pulsa 1s infinite}
+@-webkit-keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+
+#livro{max-width:880px;margin:12px auto 0;padding:0 10px}
+.pagina{position:relative;background:#fff;border-radius:22px;box-shadow:0 10px 34px rgba(70,40,20,.16);display:none;overflow:hidden;padding:0 0 20px}
+.pagina.viva{display:block;-webkit-animation:entra .35s ease-out;animation:entra .35s ease-out}
+@-webkit-keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes entra{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.faixa{background:var(--cor);color:#fff;padding:15px 18px 13px;display:flex;align-items:center;gap:12px}
+.faixa h2{margin:0;font-size:clamp(17px,4.4vw,25px);letter-spacing:.4px;text-transform:uppercase;flex:1;line-height:1.1}
+.faixa .num{background:#fff;color:var(--cor);font-weight:900;border-radius:50%;width:36px;height:36px;display:flex;
+  align-items:center;justify-content:center;font-size:18px;flex:none}
+/* uma cor por BLOCO da escada — a criança vê que mudou de assunto */
+.pagina.c1 .faixa{background:#b0562a}.pagina.c1 .faixa .num{color:#b0562a}
+.pagina.c2 .faixa{background:#1179bf}.pagina.c2 .faixa .num{color:#1179bf}
+.pagina.c3 .faixa{background:#15803d}.pagina.c3 .faixa .num{color:#15803d}
+.pagina.c4 .faixa{background:#8b5cf6}.pagina.c4 .faixa .num{color:#8b5cf6}
+.pagina.c5 .faixa{background:#b45309}.pagina.c5 .faixa .num{color:#b45309}
+.enun{margin:14px 16px 4px;font-size:clamp(15px,3.9vw,19px);font-weight:700;line-height:1.35}
+.enun b{color:var(--cor2)}
+
+.item{margin:12px 14px;padding:14px;border:2px solid #f0e6dd;border-radius:20px;background:#fffdfb}
+.item.feito{border-color:#bfe6ce;background:#f3fcf6}
+.item .n{font-weight:900;color:#b3a294;font-size:15px;margin-right:8px}
+/* ⚠️ A FIGURA TEM ALTURA FIXA: com `height:auto` cada figura entrava no seu
+   tamanho natural (o prédio com 230 px e o tijolo com 90) e, como `display:block`
+   ignora o `text-align:center` do pai, todas encostavam na esquerda. */
+.fig{display:block;width:auto;height:clamp(76px,19vw,116px);max-width:100%;
+  margin:2px auto 6px;object-fit:contain;image-rendering:auto}
+.figgrande{display:block;width:auto;height:clamp(84px,21vw,128px);max-width:100%;
+  margin:0 auto;object-fit:contain}
+.figbt{border:0;background:none;padding:4px;border-radius:16px;min-width:48px;min-height:48px}
+/* ⚠️ O ALTO-FALANTE É DESENHADO EM CSS — caixinha + triângulo + duas ondas de
+   borda arredondada. Nada de emoji (vira quadradinho nos PCs da escola) e nada
+   de SVG solto (ordem do Marcos, set/2026). */
+.som{position:relative;width:46px;height:46px;min-width:46px;border:3px solid var(--cor);
+  border-radius:50%;background:var(--corclara);padding:0;cursor:pointer;flex:none}
+.som:active{-webkit-transform:scale(.93);transform:scale(.93)}
+.som .cone{position:absolute;left:12px;top:17px;width:7px;height:10px;background:var(--cor2);
+  border-radius:2px 0 0 2px}
+.som .cone:after{content:"";position:absolute;left:6px;top:-6px;width:0;height:0;
+  border-top:11px solid transparent;border-bottom:11px solid transparent;
+  border-right:11px solid var(--cor2)}
+.som .onda{position:absolute;border:3px solid var(--cor2);border-left-color:transparent;
+  border-top-color:transparent;border-bottom-color:transparent;border-radius:50%}
+.som .o1{left:26px;top:16px;width:8px;height:12px}
+.som .o2{left:29px;top:11px;width:13px;height:22px;opacity:.65}
+/* ⚠️ A LINHA DO ENUNCIADO TEM DE QUEBRAR (19/set/2026, achado pela regra 5b).
+   Sem `flex-wrap`, quando o texto ao lado é comprido o ALTO-FALANTE é empurrado
+   para fora da tela — no `_nasal2`, folha 7, ele saía 47 px além da borda num
+   celular pequeno, e a criança que não sabe ler ficava sem o botão que existe
+   justamente para ela. Com wrap ele desce uma linha e continua ali. */
+.enunlin{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 2px}
+.enunlin .enun{flex:1;min-width:0}
+
+/* fileira genérica de opções */
+.ops{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+.op{min-width:64px;min-height:56px;border:3px solid #e6dbd1;border-radius:16px;background:#fff;color:var(--texto);
+  font-weight:900;font-size:20px;padding:8px 14px;-webkit-transition:transform .1s;transition:transform .1s}
+.op:active{transform:scale(.94)}
+.op.certa{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.op.erro{border-color:#e0562f;background:#fdeee9}
+/* a opção que é uma FRASE (a definição, o porquê): texto corrido, alinhado à
+   esquerda, largura cheia — frase centralizada em caixinha não se lê */
+.op.frase{display:block;width:100%;max-width:420px;text-align:left;font-size:clamp(14px,3.7vw,17px);
+  font-weight:700;line-height:1.35;letter-spacing:0;min-height:52px}
+.op.curta{font-size:clamp(15px,4vw,19px);letter-spacing:.5px}
+/* a opção COM figura */
+.op.figbt{display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:96px;min-height:112px;padding:8px 10px}
+.op.figbt .figop{display:block;width:auto;height:clamp(56px,14vw,80px);max-width:100%;object-fit:contain}
+.rotop{font-weight:800;font-size:clamp(11px,2.9vw,13px);color:var(--texto2);letter-spacing:.4px;
+  line-height:1.1;word-break:break-word}
+/* ⚠️ A LEGENDA SECRETA. `visibility` e não `display`: o espaço fica guardado,
+   então a folha não pula quando a palavra aparece no acerto. */
+.segredo{visibility:hidden}
+.segredo.revelado{visibility:visible;-webkit-animation:aparece .35s;animation:aparece .35s}
+@-webkit-keyframes aparece{from{opacity:0}to{opacity:1}}
+@keyframes aparece{from{opacity:0}to{opacity:1}}
+/* ============================================================
+   ⚠️ AS PEÇAS QUE VIERAM DO `folhas.js` E FICARAM SEM ROUPA
+   Lição paga neste caderno (20/set/2026), e ela ensina onde o portão não
+   enxerga: o `_qa/classes.py` (o "designer") lê SÓ o `index.html`, e em folha
+   viva metade do JS mora no `folhas.js` ao lado. Ele disse "4 classes usadas
+   no JS, todas têm regra" — e havia DOZE classes sem uma linha de CSS: a grade
+   inteira do caça-palavras (folhas 8 e 24), os alvos da folha 35, a pergunta
+   do escolher e a caixa do órgão. Sem regra, a figura do estômago (454 px de
+   largura no arquivo) sairia no tamanho natural dentro do item.
+   As regras do caça-palavras e dos alvos são CLONADAS do `_aumdim2`, que é
+   onde a versão corrigida mora — não reescritas.
+   ============================================================ */
+/* a pergunta do ESCOLHER e a pista do ARRASTAR */
+.perg{flex:1;min-width:0;font-size:clamp(15px,3.9vw,18px);font-weight:800;line-height:1.35;
+  color:var(--texto2)}
+.dica{flex:1;min-width:0;font-size:clamp(14px,3.6vw,17px);font-weight:700;line-height:1.35;
+  color:var(--texto3);font-style:italic}
+/* a caixa do órgão: é FIGURA quando o desenho existe na folha de papel, e é a
+   PISTA escrita quando não existe (respiratório e circulatório não têm órgão
+   isolado nas 78 folhas). Nos dois casos ela é o ALVO de soltar. */
+.orgcx{display:flex;align-items:center;justify-content:center;min-height:96px;padding:10px 12px;
+  border:3px dashed #e3c3c9;border-radius:16px;background:#fff;margin:2px 0 8px}
+.figo{display:block;width:auto;height:clamp(84px,21vw,120px);max-width:100%;object-fit:contain}
+.figp{display:block;width:auto;height:clamp(48px,12vw,64px);max-width:100%;object-fit:contain}
+/* o esquema pulmão ↔ coração ↔ corpo (folha 22): ele tem PALAVRAS escritas
+   dentro (PULMÃO, CORPO), então vai por LARGURA, senão sai ilegível — a
+   primeira versão, por altura (190 px), deixava a letra com 5 px. */
+.figint{display:block;width:100%;max-width:320px;height:auto;margin:6px auto 10px}
+/* a GRADE de coordenadas da folha 35: tem de dar para LER as letras A–E e os
+   números 1–5, então ela vai por LARGURA (até 440 px, 0,9× do arquivo), e não
+   por altura como as outras figuras. Abaixo de 440 px de tela ela acompanha. */
+.figgrade{display:block;width:100%;max-width:440px;height:auto;margin:6px auto 10px;
+  border:2px solid #efe3dd;border-radius:12px;background:#fff}
+/* ⚠️ O NOME NÃO PODE SER `.pista`: essa classe JÁ É do botão de pista da
+   cruzadinha (`.pista`, `.pista.feita`, `.pista.oculta`, lá embaixo). Duas
+   regras com o mesmo nome não se somam — a de baixo ganha, e a pista do órgão
+   sairia com a moldura do botão da cruzadinha. É a "colisão com o motor" que o
+   `_qa/classes.py` nomeia no cabeçalho dele.
+   ⚠️ E a tinta vai em TOKEN: quem pinta o fundo aqui é o `.orgcx`, não esta
+   regra — peça que não pinta fundo segue o tema da atividade, senão aposta
+   numa cor de fundo que pode mudar (portão 4c). */
+.pistaorg{text-align:center;font-weight:800;font-size:clamp(15px,3.9vw,18px);line-height:1.35;
+  color:var(--texto2)}
+/* o caça-palavras (clone do _aumdim2) */
+.cpgrade{display:flex;flex-direction:column;gap:3px;margin:4px auto 8px;
+  align-items:flex-start;width:-webkit-max-content;width:max-content;max-width:100%;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:2px}
+.cpgrade .cplin{flex:none}
+.cplin{display:flex;gap:3px}
+.cpcel{width:clamp(44px,9vw,50px);height:clamp(44px,9vw,50px);min-width:44px;min-height:44px;
+  border:2px solid #d9c9bb;border-radius:6px;background:#fff;font-weight:900;
+  font-size:clamp(12px,3.4vw,16px);color:var(--texto3);cursor:pointer;padding:0}
+.cpcel.pega{background:#fff0c2;border-color:#f5c542}
+.cpcel.achada{background:#eafaf0;border-color:#7fd3a4;color:#0d7736}
+.cplista{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:8px}
+.cprot{display:flex;align-items:center;gap:4px;background:#f6efec;border-radius:10px;
+  padding:5px 8px;min-height:44px;font-weight:800;font-size:clamp(12px,3.3vw,15px);color:var(--texto3)}
+.cprot.achada{background:#eafaf0;color:#0d7736;text-decoration:line-through}
+/* os alvos da folha 35 (clone do _aumdim2) */
+.figalvos{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:4px 0 10px}
+.figalvo{min-width:96px;min-height:104px;padding:6px;border:3px dashed var(--cor);border-radius:14px;
+  background:#fff;display:flex;flex-direction:column;align-items:center;gap:2px}
+.figalvo.gr{min-width:clamp(106px,30vw,140px)}
+.figalvo.erro{border-color:#e2574c;background:#fff4f3}
+.fdentro2{min-height:22px;display:flex;align-items:center;justify-content:center}
+.figsil{display:flex;flex-direction:column;align-items:center;gap:4px;margin:2px 0 6px}
+.chamlin{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.chamlin b{font-size:clamp(15px,4vw,19px);color:var(--texto2);letter-spacing:.5px}
+
+/* ---- marcar VÁRIAS certas (folha 1, da d18: "marque com x as corretas") ---- */
+.marcax{display:flex;flex-direction:column;gap:8px;align-items:center;margin-top:10px}
+.lx{display:flex;align-items:center;gap:12px;min-height:56px;border:3px solid #e6dbd1;border-radius:16px;
+  background:#fff;padding:8px 14px;font-weight:700;font-size:clamp(14px,3.7vw,17px);color:var(--texto);
+  width:100%;max-width:430px;text-align:left;line-height:1.3}
+.lx .cx{width:34px;height:34px;border:3px solid #b3a294;border-radius:8px;display:inline-flex;align-items:center;
+  justify-content:center;font-size:24px;font-weight:900;color:var(--cor);flex:none}
+.lx.marcada{border-color:var(--cor);background:var(--corclara)}
+.lx.marcada .cx{border-color:var(--cor)}
+.lx.certa{border-color:#15a34a;background:#e7f8ee}
+.lx.certa .cx{border-color:#15a34a;color:#15a34a}
+.lx.errada{border-color:#e0562f;background:#fdeee9}
+
+.alvonome.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.banconome{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 10px 10px}
+.etiq{min-height:46px;padding:8px 14px;border:3px dashed #e6dbd1;border-radius:12px;background:#fff;
+  font-weight:900;font-size:clamp(13px,3.6vw,17px);color:var(--texto3);cursor:pointer;letter-spacing:.5px;
+  -ms-touch-action:none;touch-action:none}
+.etiq.marcada{border-style:solid;border-color:var(--cor);background:var(--corclara)}
+.etiq.usada{opacity:.32;pointer-events:none;border-style:solid}
+.etiq.puxada{opacity:.35}
+
+/* ---- juntar as sílabas numeradas (folha 5, da d18 item 4) ---- */
+.tabsil{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin:8px 10px 6px}
+.tsc{border:2px solid #e6dbd1;border-radius:10px;background:#fff;text-align:center;padding:5px 2px;
+  min-height:46px;display:flex;flex-direction:column;justify-content:center;cursor:pointer}
+.tsc .tsn{font-size:11px;font-weight:800;color:#b3a294;display:block;line-height:1}
+/* ⚠️ tinta PRÓPRIA, não o token do fundo da atividade: a célula pinta o
+   próprio fundo, então quem decide a cor da letra é ela (portão 4c). */
+.tsc .tss{font-size:clamp(13px,3.6vw,18px);font-weight:900;color:#4a3d33;display:block;letter-spacing:.5px}
+.tsc.usada{background:var(--corclara);border-color:var(--cor)}
+.tsc:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.montada{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;min-height:52px;align-items:center;margin:6px 0}
+.mped{font-weight:900;font-size:clamp(17px,4.6vw,24px);color:#0d7736;background:#e7f8ee;border:2px solid #15a34a;
+  border-radius:10px;padding:6px 10px;display:block}
+.montada .vazio{font-weight:900;color:#c9bcb0;font-size:clamp(15px,4vw,19px)}
+
+/* ---- ligar (folhas 8 e 22) ---- */
+.ligar{position:relative;display:flex;gap:clamp(30px,10vw,96px);justify-content:space-between;margin:14px 6px}
+.ligar .col{display:flex;flex-direction:column;gap:14px;flex:1 1 0;min-width:0}
+.linhas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.ponta{border:3px solid #e6dbd1;border-radius:16px;background:#fff;height:92px;display:flex;align-items:center;
+  /* flex-wrap: com figura + palavra comprida (ENSOLARADO a 320 px) a figura era
+     empurrada para fora da caixa pela esquerda; embrulhando, ela sobe e a palavra
+     fica embaixo (medido pelo leiaute_mao, _sinon2 folha 3) */
+  flex-wrap:wrap;justify-content:center;font-weight:900;font-size:clamp(13px,3.4vw,17px);letter-spacing:.4px;padding:6px;
+  text-align:center;line-height:1.15;color:var(--texto2);
+  -ms-touch-action:none;touch-action:none;-webkit-transition:border-color .15s,box-shadow .15s;
+  transition:border-color .15s,box-shadow .15s}
+.ponta img{width:auto;height:70px;max-width:100%;object-fit:contain}
+@media (max-width:420px){ .ponta{height:auto;min-height:78px} .ponta img{height:58px} }
+.ponta.marcada{border-color:var(--cor);box-shadow:0 0 0 4px rgba(176,86,42,.22)}
+.ponta.feita{border-color:#15a34a;background:#e7f8ee}
+.ponta.mostra{border-color:#f0b64a;box-shadow:0 0 0 4px rgba(240,182,74,.4)}
+.ponta.treme{-webkit-animation:treme .4s;animation:treme .4s}
+@-webkit-keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes treme{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* ---- caça-palavras dos materiais (folha 9, da d02) ---- */
+.diagrama{display:grid;gap:2px;margin:8px auto 4px;max-width:430px;touch-action:none;
+  -webkit-user-select:none;user-select:none}
+.dcel{min-width:0;aspect-ratio:1/1;min-height:30px;border:1px solid #eee0d4;border-radius:6px;background:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:900;
+  font-size:clamp(11px,3.1vw,16px);color:var(--texto3);cursor:pointer;padding:0}
+.dcel.tracando{background:#ffe9d6;border-color:var(--cor)}
+.dcel.achada{background:#e7f8ee;border-color:#15a34a;color:#0d7736}
+.listamat{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:6px 10px 4px}
+.pmat{font-weight:900;font-size:clamp(12px,3.3vw,15px);color:var(--texto3);border:2px solid #e6dbd1;
+  border-radius:10px;padding:5px 10px;background:#fff;letter-spacing:.5px}
+.pmat.achada{border-color:#15a34a;background:#e7f8ee;color:#0d7736;text-decoration:line-through}
+
+/* ---- classificar em colunas: lugares (11), vistas (19), cômodos (23) ---- */
+.colunas{display:flex;gap:clamp(4px,1.6vw,10px);justify-content:center;margin:8px 8px 4px;flex-wrap:wrap}
+.coluna{flex:1 1 28%;min-width:96px;max-width:200px;border:3px solid #e6dbd1;border-radius:14px;
+  background:#fffdfb;padding:5px;min-height:112px;cursor:pointer}
+.coluna.perto{border-color:var(--cor);background:var(--corclara)}
+.coluna.erro{border-color:#e0562f;background:#fdeee9}
+.ctit{font-weight:900;font-size:clamp(12px,3.2vw,15px);color:var(--texto2);margin-bottom:4px;
+  border-bottom:2px solid #f0e6dd;padding-bottom:3px;display:flex;align-items:center;
+  justify-content:center;gap:4px;flex-wrap:wrap;text-align:center;line-height:1.1}
+.ctit .figmini{height:clamp(30px,7vw,40px)}
+.cdentro{display:flex;flex-direction:column;gap:3px;align-items:center;min-height:56px}
+.fdentro{font-weight:800;font-size:clamp(11px,3vw,14px);color:#0d7736;background:#e7f8ee;
+  border-radius:8px;padding:3px 6px;display:block;max-width:100%;word-break:break-word;text-align:center}
+.figmini{width:auto;height:clamp(34px,8vw,44px);max-width:100%;object-fit:contain;display:block}
+.figbanco{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 10px 10px}
+.op.fig{padding:6px;min-width:96px;min-height:96px}
+.op.fig .figmini{height:clamp(48px,12vw,64px)}
+.op.fig.marcada{border-color:var(--cor);background:var(--corclara);
+  -webkit-box-shadow:0 0 0 4px rgba(176,86,42,.18);box-shadow:0 0 0 4px rgba(176,86,42,.18)}
+.op.fig.usada{opacity:.3;pointer-events:none}
+
+/* ---- completar a lacuna (folha 15, da d23) ---- */
+.frasel{font-size:clamp(15px,4vw,19px);font-weight:700;color:var(--texto2);line-height:1.7;
+  text-align:center;margin:4px 6px 8px}
+.lacuna{display:inline-block;min-width:96px;padding:2px 10px;border-bottom:4px solid var(--cor);
+  color:var(--cor);font-weight:900;text-align:center}
+.lacuna.cheia{border-bottom-color:#1f9d55;color:#1f9d55;background:#eafaf0;border-radius:8px 8px 0 0}
+
+/* ---- cruzadinha (folha 16, da d08 reescrita) ---- */
+.cruzenv{overflow-x:auto;margin:8px 0 4px}
+.cruz{display:grid;gap:2px;margin:0 auto;width:-webkit-max-content;width:max-content}
+.ccel{width:clamp(26px,7vw,34px);height:clamp(26px,7vw,34px);border:0;background:transparent;padding:0}
+.ccel.viva{border:2px solid #d9c9bb;border-radius:5px;background:#fff;font-weight:900;
+  font-size:clamp(13px,3.6vw,18px);color:var(--texto3);cursor:pointer;position:relative}
+.ccel.viva.ativa{border-color:var(--cor);background:var(--corclara);
+  -webkit-box-shadow:0 0 0 3px rgba(176,86,42,.25);box-shadow:0 0 0 3px rgba(176,86,42,.25)}
+.ccel.viva.ok{border-color:#15a34a;background:#e7f8ee;color:#0d7736}
+.ccel .cn{position:absolute;left:1px;top:0;font-size:9px;font-weight:800;color:#b3a294;line-height:1}
+.pistas{display:flex;flex-direction:column;gap:6px;margin:8px 12px 4px}
+.pista{display:flex;align-items:center;gap:8px;border:2px solid #f0e6dd;border-radius:12px;background:#fffdfb;
+  padding:6px 10px;min-height:48px;font-size:clamp(13px,3.5vw,16px);font-weight:600;color:var(--texto2);
+  line-height:1.3;cursor:pointer;text-align:left;width:100%}
+.pista .pn{font-weight:900;color:var(--cor);flex:none;min-width:18px}
+.pista.feita{border-color:#15a34a;background:#f3fcf6}
+.pista.ativa{border-color:var(--cor);background:var(--corclara)}
+
+/* ---- a imagem aérea com pontos (folha 18) ---- */
+.colho{text-align:center;margin:2px 0 4px;min-height:80px}
+.credito{font-size:11px;line-height:1.35;color:#6b5347;margin:6px 2px 0;text-align:center}
+.figolho{max-height:76px;width:auto;display:inline-block}
+.aerea{position:relative;max-width:520px;margin:8px auto 4px;width:100%}
+.aerea img{display:block;width:100%;height:auto;border-radius:16px;border:3px solid #e6dbd1}
+/* ⚠️ O ALVO DA FOLHA 18 É INVISÍVEL ATÉ SER ACHADO, e isso é a folha inteira.
+   A primeira versão pintava cada ponto com um anel branco por cima do desenho.
+   Com três alvos já era discutível; com os dezessete da praça (uma fonte,
+   quatro bancos, dez árvores e dois bebedouros) a figura virou um campo de
+   bolhas — a criança tocava em qualquer anel e acertava sem OLHAR a praça, que
+   é justamente o que a folha existe para medir. Agora o botão é só uma área de
+   toque transparente do tamanho do dedo (52px, acima do piso de 44), e o anel
+   verde só nasce quando ela acha. Achado por FOTO, 13/set/2026 — nenhum portão
+   via, porque todos os alvos estavam lá, do tamanho certo, funcionando. */
+.ponto{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;
+  border:3px solid transparent;background:transparent;cursor:pointer;padding:0}
+.ponto.certo{background:rgba(21,163,74,.55);border-color:#0d7736;
+  -webkit-box-shadow:0 2px 8px rgba(0,0,0,.3);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.ponto.errado{background:rgba(224,86,47,.5);border-color:#fff}
+.ponto:active{-webkit-transform:scale(.9);transform:scale(.9)}
+/* teclado: quem navega por TAB precisa ver onde está */
+.ponto:focus{outline:3px solid #fff;outline-offset:-3px}
+
+/* ---- ordenar as cenas / o antes e o hoje (folhas 20 e 21) ---- */
+.trilhaord{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 6px 4px}
+.slot{width:clamp(84px,23vw,124px);min-height:clamp(84px,23vw,124px);border:3px dashed var(--cor);
+  border-radius:16px;background:var(--corclara);display:flex;flex-direction:column;align-items:center;
+  justify-content:center;font-weight:900;font-size:20px;color:var(--cor2);padding:4px}
+.slot .figmini{height:clamp(56px,15vw,86px)}
+.slot.perto{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.slot.cheia{border-style:solid;border-color:#15a34a;background:#e7f8ee}
+.slot .rot{font-size:clamp(10px,2.7vw,12px);font-weight:800;color:#0d7736;line-height:1.05;text-align:center}
+.sn{font-size:12px;font-weight:900;color:var(--cor2);display:block}
+
+/* ---- achar as casas dentro do poema (folha 24, da d19) ---- */
+.poema{font-size:clamp(15px,4vw,19px);line-height:1.9;text-align:center;color:var(--texto2);
+  font-weight:600;margin:8px 12px 4px}
+.poema .aut{display:block;font-size:13px;font-weight:800;color:#8a7768;margin-top:6px}
+.pw{display:inline-block;border:0;background:transparent;font:inherit;color:inherit;padding:2px 6px;
+  border-radius:8px;cursor:pointer;min-height:44px;line-height:1.4}
+.pw.achada{background:#ffe9a8;color:#6a4b00;font-weight:900;-webkit-box-shadow:0 0 0 2px #e5b93c;
+  box-shadow:0 0 0 2px #e5b93c}
+.pw.nao{-webkit-animation:treme .34s;animation:treme .34s}
+.placar{font-weight:900;color:var(--cor2);text-align:center;font-size:15px;margin:4px 0}
+
+/* ---- o mural da rua do mundo (folha 25) ---- */
+.mural{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 10px}
+.cartaocasa{display:flex;flex-direction:column;align-items:center;gap:3px;min-height:118px;min-width:104px;
+  padding:8px 10px;border:3px solid #e6dbd1;border-radius:20px;background:#fff;cursor:pointer;
+  -webkit-transition:transform .18s,border-color .18s,background .18s;
+  transition:transform .18s,border-color .18s,background .18s}
+.cartaocasa .figop{display:block;width:auto;height:clamp(52px,13vw,72px);max-width:100%;object-fit:contain}
+.cartaocasa.escolhido{border-color:#15a34a;background:#eafaf0;-webkit-transform:scale(1.03);transform:scale(1.03)}
+.cartaocasa:focus-visible{outline:3px solid #f0b64a;outline-offset:2px}
+.rua{display:flex;gap:2px;justify-content:center;align-items:flex-end;flex-wrap:wrap;
+  border-bottom:8px solid #7b6a5c;margin:10px 12px 4px;padding-bottom:2px;min-height:60px}
+.rua img{height:clamp(44px,12vw,68px);width:auto;object-fit:contain;display:block}
+
+/* ---- carimbo, nav, capa, fim ---- */
+.carimbo{position:absolute;right:14px;top:60px;transform:rotate(-14deg) scale(.4);opacity:0;color:#15a34a;
+  border:5px solid #15a34a;border-radius:14px;padding:6px 14px;font-weight:900;font-size:20px;text-align:center;
+  line-height:1.05;pointer-events:none;-webkit-transition:all .45s;transition:all .45s}
+.pagina.pronta .carimbo{opacity:.92;transform:rotate(-14deg) scale(1)}
+#nav{position:fixed;left:0;right:0;bottom:0;z-index:18;background:#fff;border-top:3px solid var(--cor);padding:8px 10px;
+  display:none;align-items:center;gap:10px;box-shadow:0 -3px 14px rgba(70,40,20,.14)}
+/* ⚠️ ACHADO NA FOTO, não em portão nenhum (13/set/2026): com um título
+   comprido ("Ache os materiais no diagrama") esta linha quebrava em QUATRO
+   e espremia "Anterior", "Terminar" e "Próxima" contra as bordas — e
+   "construção" ainda estourava para fora. O nome da folha já está na faixa
+   colorida do topo da página, então na tela estreita ele some daqui. */
+#nav .txt{flex:1;text-align:center;font-weight:800;color:var(--cor2);font-size:14px;
+  min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:560px){ #nav .txt{display:none} }
+/* ⭐ o botão de terminar a qualquer momento: discreto de propósito — ele existe
+   para o sinal da escola, não para tentar a criança a pular tudo */
+.bt.terminar{background:#f3ece5;color:#6b5a4d;border:2px solid #e2d6ca;
+  font-size:12px;padding:8px 10px;min-height:44px;font-weight:800;flex:0 0 auto}
+.bt.terminar:active{background:#e9dfd5}
+.barra.naoabriu{opacity:.5}
+.barra.naoabriu b{font-weight:700;font-size:12px;color:#9c8b7c}
+#barraCapa{position:fixed;left:0;right:0;bottom:0;z-index:19;background:#fff;border-top:3px solid var(--cor);padding:10px;display:none}
+#barraCapa.aberta{display:block}
+#barraCapa .lin{display:flex;gap:10px;align-items:center;max-width:640px;margin:0 auto}
+#barraCapa label{font-weight:800;color:var(--cor2);font-size:15px;white-space:nowrap}
+#nomeIn{flex:1;min-width:0;min-height:50px;border:3px solid var(--cor);border-radius:14px;padding:0 12px;
+  font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
+#nomeIn:focus{outline:none;border-color:#1179bf;box-shadow:0 0 0 4px rgba(17,121,191,.25)}
+
+/* ================= A CAPA =================
+   ⚠️ ESTA É A CAPA DE ESQUELETO — cinza, sem cena, POR DESENHAR. Todo caderno novo
+   recebe a SUA (cor pelo assunto, cena com as figuras dele, @keyframes com nome
+   próprio) por `python3 _padrao/identidade_capa.py <pasta>` — acrescente a linha
+   dele na tabela ESPEC de lá. O portão 0b11 (`_qa/identidade.py`) reprova capa ou
+   cor iguais a este esqueleto: a criança olha a cor e o desenho antes do título
+   (Marcos, 18/set/2026). Exemplos prontos: _sinon2 (espelho), _rima1, _roda1… */
+/* ⭐ A CAPA DESTE CADERNO — a cena é o CORPO com o coração batendo, e a
+   animação tem nome próprio (`vdBate`, `vdSobe`): é o batimento cardíaco, que é
+   o assunto. Nenhuma outra capa da casa tem isto. */
+.capa{position:relative;text-align:center;padding:18px 16px 24px;overflow:hidden;
+  background:-webkit-linear-gradient(top,#fdecef 0%,#fbf3f2 58%,#fff 100%);
+  background:linear-gradient(180deg,#fdecef 0%,#fbf3f2 58%,#fff 100%)}
+/* as pulsações que sobem pelo fundo, como num monitor de batimento */
+@-webkit-keyframes vdBate{0%,100%{-webkit-transform:scale(1)}18%{-webkit-transform:scale(1.11)}32%{-webkit-transform:scale(1)}46%{-webkit-transform:scale(1.06)}}
+@keyframes vdBate{0%,100%{transform:scale(1)}18%{transform:scale(1.11)}32%{transform:scale(1)}46%{transform:scale(1.06)}}
+@-webkit-keyframes vdSobe{0%{-webkit-transform:translateY(16px);opacity:0}30%{opacity:.5}100%{-webkit-transform:translateY(-120px);opacity:0}}
+@keyframes vdSobe{0%{transform:translateY(16px);opacity:0}30%{opacity:.5}100%{transform:translateY(-120px);opacity:0}}
+.capa .gota{position:absolute;bottom:-16px;width:10px;height:10px;border-radius:50% 50% 50% 0;
+  background:var(--cor);opacity:0;-webkit-transform:rotate(-45deg);transform:rotate(-45deg);
+  -webkit-animation:vdSobe 6s linear infinite;animation:vdSobe 6s linear infinite}
+.capa .cora{width:clamp(96px,26vw,148px);height:auto;display:block;margin:0 auto;
+  -webkit-animation:vdBate 1.6s ease-in-out infinite;animation:vdBate 1.6s ease-in-out infinite}
+.capa .corpo{width:clamp(70px,19vw,104px);height:auto;display:block;opacity:.85}
+.capa .trio{display:flex;align-items:center;justify-content:center;gap:clamp(6px,3vw,22px);flex-wrap:nowrap}
+.capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
+.capa .titu,.capa .sub,.capa .chamada,.capa .cena{position:relative;z-index:1}
+.capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
+.capa .titu .tpal{display:inline-flex;white-space:nowrap;gap:2px}
+.capa .titu .lt{display:inline-block;font-size:clamp(22px,5.8vw,42px);font-weight:900;color:var(--cor2);
+  text-shadow:0 2px 0 #fdecef}
+.capa .titu .esp{display:inline-block;width:14px}
+.capa .sub{font-weight:700;color:#2c3745;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
+.capa .cena{margin:14px auto 4px;max-width:620px;min-height:90px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;padding:10px 6px}
+.capa .chamada{margin-top:14px;font-weight:700;color:#3a4658;font-size:clamp(13px,3.4vw,16px)}
+
+#fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
+  box-shadow:0 10px 34px rgba(70,40,20,.16);text-align:center}
+#fim h2{margin:0 0 6px;color:var(--cor2);font-size:clamp(21px,5.5vw,30px)}
+.estrelas{font-size:44px;letter-spacing:8px;margin:6px 0}
+.barras{max-width:520px;margin:10px auto;text-align:left}
+.barra{display:flex;align-items:center;gap:8px;margin:6px 0;font-weight:700;font-size:14px}
+.barra span{flex:0 0 42%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barra .tr{flex:1;height:14px;background:#eee3d9;border-radius:8px;overflow:hidden}
+.barra .tr i{display:block;height:100%;width:0;background:#15a34a;-webkit-transition:width .8s;transition:width .8s}
+.barra b{flex:none;color:var(--cor2)}
+/* ⚠️ SEM EMOJI E SEM SVG na tela da criança: nos PCs da escola o emoji vira
+   quadradinho vazio, e a criança de sete anos não sabe o que é um quadradinho.
+   Troféu e selos são PNG; as setas são triângulos de CSS puro. */
+#medalha{width:132px;height:132px;border-radius:50%;background:radial-gradient(circle at 34% 30%,#ffe680,#e0a800);
+  margin:14px auto;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 22px rgba(180,140,0,.42);cursor:pointer;-ms-touch-action:none;touch-action:none}
+#medalha img{width:92px;height:92px;object-fit:contain;display:block;pointer-events:none}
+#medalha.semfig:after{content:"BOA!";font-weight:900;font-size:26px;color:#7a5600}
+.seta{display:inline-block;width:0;height:0;vertical-align:middle;
+  border-top:8px solid transparent;border-bottom:8px solid transparent}
+.seta.esq{border-right:11px solid currentColor;margin-right:7px}
+.seta.dir{border-left:11px solid currentColor;margin-left:7px}
+#estrelas img{width:52px;height:52px;object-fit:contain;display:inline-block;margin:0 3px;vertical-align:middle}
+
+#relatorio{display:none;text-align:left;background:#fbf7f3;border:2px solid #e6dbd1;border-radius:16px;padding:12px;margin-top:12px;font-size:13px}
+#relatorio table{border-collapse:collapse;width:100%;margin-top:8px}
+#relatorio th,#relatorio td{border:1px solid #e6dbd1;padding:5px 7px;text-align:left}
+#relatorio th{background:#f4ebe3}
+#relatorio table th:nth-child(4),#relatorio table td:nth-child(4){background:#f3fbf5}
+#relatorio .parecer{margin:10px 0 4px;padding:10px 12px;border-left:5px solid var(--cor);
+  background:#fff;border-radius:0 12px 12px 0;font-size:13.5px;line-height:1.55;color:var(--texto2)}
+#relatorio .comonota{margin:8px 0 0;font-size:11.5px;color:#7d6c5e;line-height:1.45}
+/* ⭐ o aviso de caderno não terminado */
+.avisoparcial{background:#fff6e5;border:2px solid #e5b93c;border-radius:10px;
+  padding:8px 10px;margin:8px 0;font-size:12.5px;line-height:1.45;color:#6a4b00}
+.notao{display:flex;align-items:center;gap:14px;background:#fff;border:3px solid var(--cor);
+  border-radius:18px;padding:10px 14px;margin:10px 0 2px}
+.notao .nn{font-size:clamp(30px,9vw,44px);font-weight:900;color:var(--cor);line-height:1;
+  font-variant-numeric:tabular-nums}
+.notao .nl{font-size:12.5px;color:#3a2f27;line-height:1.45}
+
+#menuProf{display:none;position:fixed;inset:0;z-index:60;background:rgba(45,28,16,.62);align-items:center;justify-content:center;padding:14px}
+#menuProf.aberto{display:flex}
+#menuProf .cx{background:#fff;border:4px solid var(--cor);border-radius:20px;padding:16px;max-width:520px;width:100%;
+  max-height:92vh;overflow:auto;box-shadow:0 14px 44px rgba(0,0,0,.4)}
+#menuProf h3{margin:0 0 4px;color:var(--cor2);font-size:20px}
+#menuProf p{margin:0 0 12px;font-size:13px;color:#57493f;line-height:1.4}
+#menuProf .folhas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+#menuProf .folhas button{min-height:46px;border:0;border-radius:12px;background:#f4ebe3;color:#57493f;font-weight:800;
+  font-size:14px;padding:8px 12px;box-shadow:0 3px 0 #ddd0c4;flex:1 1 150px;text-align:left}
+/* ============================================================
+   O CAMPO QUE CHAMA O TECLADO DO APARELHO.
+   Ele mora EM CIMA da grade de casinhas e é praticamente invisível — mas
+   continua sendo um campo de verdade, porque campo escondido não recebe foco
+   e sem foco o teclado do celular não abre.
+   ============================================================ */
+#tecIn{position:absolute;z-index:5;border:0;background:transparent;color:transparent;
+  caret-color:transparent;opacity:.01;font-size:16px;padding:0;margin:0;outline:0;
+  -webkit-appearance:none;appearance:none}
+#tecIn:focus{outline:0}
+.cruz{position:relative}
+#confete{position:fixed;inset:0;pointer-events:none;z-index:50;overflow:hidden}
+.cf{position:absolute;width:9px;height:14px;opacity:.95;-webkit-animation:cai 1.5s linear forwards;animation:cai 1.5s linear forwards}
+@-webkit-keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+@keyframes cai{to{transform:translateY(105vh) rotate(560deg);opacity:0}}
+.oculto{display:none!important}
+.ajuda{text-align:center;font-size:14px;color:#7d6c5e;margin:2px 0 6px}
+.fantasma{position:fixed;z-index:70;pointer-events:none;opacity:.92;
+  -webkit-transform:scale(1.1);transform:scale(1.1);
+  -webkit-box-shadow:0 12px 26px rgba(50,30,15,.3);box-shadow:0 12px 26px rgba(50,30,15,.3)}
+/* o cinto e o suspensório do `draggable="false"`: navegador antigo não olha o
+   atributo, mas olha esta regra */
+img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:none}
+.bt.pronto{min-height:48px;padding:0 22px;font-size:16px;margin:6px auto 0;display:block}
+
+/* =========================================================================
+   ANIMAÇÃO DAS FOLHAS — e a regra que manda é NADA ANIMA SEM FUNÇÃO.
+     · os itens ENTRAM EM CASCATA → a criança vê que a folha tem começo e ordem;
+     · a faixa do título DESLIZA → marca a troca de folha;
+     · o acerto DÁ UM PULINHO e a opção certa BRILHA → resposta tátil;
+     · o erro BALANÇA de leve → diz "de novo" sem dizer "errou".
+   `prefers-reduced-motion` desliga tudo e a folha continua inteira.
+   ========================================================================= */
+.pagina.viva .item{-webkit-animation:entraItem .42s ease-out both;animation:entraItem .42s ease-out both}
+.pagina.viva .item:nth-child(2){-webkit-animation-delay:.05s;animation-delay:.05s}
+.pagina.viva .item:nth-child(3){-webkit-animation-delay:.10s;animation-delay:.10s}
+.pagina.viva .item:nth-child(4){-webkit-animation-delay:.15s;animation-delay:.15s}
+.pagina.viva .item:nth-child(5){-webkit-animation-delay:.20s;animation-delay:.20s}
+.pagina.viva .item:nth-child(6){-webkit-animation-delay:.25s;animation-delay:.25s}
+.pagina.viva .item:nth-child(n+7){-webkit-animation-delay:.30s;animation-delay:.30s}
+@-webkit-keyframes entraItem{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+@keyframes entraItem{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.pagina.viva .faixa{-webkit-animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both;
+  animation:deslizaFaixa .4s cubic-bezier(.2,.9,.3,1) both}
+@-webkit-keyframes deslizaFaixa{from{opacity:0;-webkit-transform:translateX(-22px)}to{opacity:1;-webkit-transform:none}}
+@keyframes deslizaFaixa{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+.op.certa,.cartaocasa.escolhido{
+  -webkit-animation:pulinho .4s cubic-bezier(.3,1.6,.5,1);animation:pulinho .4s cubic-bezier(.3,1.6,.5,1)}
+@-webkit-keyframes pulinho{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.09)}100%{-webkit-transform:scale(1)}}
+@keyframes pulinho{0%{transform:scale(1)}45%{transform:scale(1.09)}100%{transform:scale(1)}}
+.op.certa{position:relative;overflow:hidden}
+.op.certa::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:38%;pointer-events:none;
+  background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75),rgba(255,255,255,0));
+  -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
+  -webkit-animation:brilhoOp .55s .1s ease-out;animation:brilhoOp .55s .1s ease-out}
+@-webkit-keyframes brilhoOp{from{left:-40%}to{left:112%}}
+@keyframes brilhoOp{from{left:-40%}to{left:112%}}
+.op.erro{-webkit-animation:balanca .34s;animation:balanca .34s}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes balanca{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.item{-webkit-transition:border-color .4s,background .4s;transition:border-color .4s,background .4s}
+/* a figura responde ao toque — o alvo reage ao PRESSIONAR */
+.op.figbt:active,.cartaocasa:active,.celmor:active{-webkit-transform:scale(.96);transform:scale(.96)}
+@media (prefers-reduced-motion:reduce){
+  .pagina.viva .item,.pagina.viva .faixa,.op.certa,.op.erro,.cartaocasa.escolhido{
+    -webkit-animation:none!important;animation:none!important;opacity:1!important;
+    -webkit-transform:none!important;transform:none!important}
+  .op.certa::after{display:none}
+}
+/*<dossie-css>*/
+#dossie{display:none;position:fixed;inset:0;z-index:70;background:rgba(20,16,45,.72);
+  align-items:center;justify-content:center;padding:12px}
+#dossie.aberto{display:-webkit-box;display:-ms-flexbox;display:flex}
+#dossie .cx{background:#fff;border:4px solid #6d5ae6;border-radius:20px;padding:14px;
+  max-width:720px;width:100%;max-height:88vh;display:flex;flex-direction:column}
+#dossie h3{margin:0 0 6px;color:#6d5ae6;font-size:20px}
+#dsCorpo{overflow:auto;text-align:left;font-size:13px;line-height:1.5;color:var(--texto,#1e2334)}
+#dsCorpo table{border-collapse:collapse;width:100%;margin:8px 0}
+#dsCorpo th,#dsCorpo td{border:1px solid #d9ddf2;padding:6px 8px;text-align:left;vertical-align:top}
+#dsCorpo th{background:#eceefa;color:var(--texto2,#2c3350)}
+#dsCorpo .dobj{display:block;margin-top:4px;font-size:11.5px;color:var(--texto3,#3b4064)}
+#dsCorpo .dfonte{margin:0 0 6px}
+#dsCorpo .dsub{margin:12px 0 4px}
+#dsCorpo .dtxt{margin:0}
+#dsCorpo .descada,#dsCorpo .dev{margin:4px 0 0 18px;padding:0}
+#dossie #dsFechar{margin-top:10px;min-height:46px}
+.bdossie{display:block;width:100%;margin-top:10px;min-height:46px}
+/*</dossie-css>*/
+/* ---------- as peças próprias deste caderno (ortografia) ----------
+   ⚠️ Aqui não há figura para olhar: o conteúdo é PALAVRA. Então a palavra é que
+   tem de ser grande, legível e com espaço em volta — é ela que faz o papel que
+   a ilustração faz nos outros cadernos. */
+.pgrande{font-size:clamp(22px,6.4vw,32px);font-weight:900;letter-spacing:clamp(1px,.6vw,3px);
+  color:var(--texto3);text-align:center;line-height:1.25;word-break:break-word;padding:0 6px}
+.pgrande .lacuna{display:inline-block;min-width:clamp(22px,6vw,30px);vertical-align:baseline;
+  border-bottom:4px solid var(--cor);margin:0 2px}
+/* o botão de PALAVRA (gavetas e quadro): texto, não figura */
+.op.pal{min-width:clamp(88px,26vw,150px);min-height:52px;padding:8px 12px;
+  font-size:clamp(13px,3.5vw,16px);font-weight:800;letter-spacing:.4px;color:var(--texto2)}
+.op.pal.marcada{border-color:var(--cor);background:var(--corclara);
+  -webkit-transform:scale(1.04);transform:scale(1.04)}
+.op.pal.usada{opacity:.3;pointer-events:none}
+.figbanco.quadro{border:3px dashed #e0d3c6;border-radius:16px;background:#fffdfa;
+  padding:10px 8px;margin:10px}
+/* a letra sozinha do "complete com T ou D" — alvo grande, pouca letra */
+.op.letra{min-width:clamp(62px,17vw,84px);min-height:60px;font-size:clamp(20px,5.6vw,26px);
+  font-weight:900;letter-spacing:1px}
+/* o "circule a certa": o botão vira a roda de lápis em volta da palavra */
+.op.circ{border-radius:999px;padding:10px 16px;min-height:52px;
+  font-size:clamp(14px,3.9vw,18px);font-weight:800;letter-spacing:.4px}
+.op.circ.certa{-webkit-box-shadow:0 0 0 4px #bdebd0;box-shadow:0 0 0 4px #bdebd0}
+/* a palavra escrita ERRADA, quando ela precisa aparecer (folhas 12 e 19) */
+.errada{color:#b23c17;text-decoration:line-through;-webkit-text-decoration-color:#e0562f;
+  text-decoration-color:#e0562f;font-weight:900}
+/* texto corrido de gênero: recado, notícia. Alinhado à esquerda, como no papel */
+.poema.recado{text-align:left;line-height:1.65;font-size:clamp(14px,3.8vw,17px)}
+.poema .tl{margin:2px 0}
+.frases{margin:8px 0 4px}
+.lacuna.grande{min-width:clamp(120px,34vw,190px);font-size:clamp(14px,3.8vw,17px);font-weight:900}
+.lacuna.erro{border-bottom-color:#e0562f;background:#fdeee9;border-radius:8px 8px 0 0}
+/* a fila da receita: passo é FRASE, então a fila é vertical e larga */
+.trilhaord.passos{flex-direction:column;align-items:stretch;margin:8px 10px 4px}
+.trilhaord.passos .slot{width:auto;min-height:52px;flex-direction:row;gap:8px;
+  padding:8px 10px;justify-content:flex-start;text-align:left}
+.trilhaord.passos .slot .rot{text-align:left;font-size:clamp(12px,3.3vw,15px)}
+/* a linha de casas do "reescreva certo": uma palavra por vez */
+/* ⚠️ A FILA DE ESCREVER NÃO PODE CRESCER SÓ PARA A DIREITA (lição paga no
+   `_not2`, 19/set/2026, e repetida no `_seg2` no mesmo dia porque o conserto
+   tinha ficado só lá). Com `grid-auto-flow:column` a fila cresce sem parar:
+   GOLFINHO (8 letras) já saltava do cartão no celular, e CACHORRINHO (11)
+   passava 46 px da tela — a criança escrevia às cegas nas últimas casinhas.
+   Flex com `wrap` desce para a segunda linha, que é o que a folha de papel faz. */
+.cruz.uma{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;
+  width:auto;max-width:100%;margin:4px auto 2px}
+.cruz.uma .ccel{width:clamp(42px,9vw,50px);height:clamp(42px,9vw,50px);
+  min-width:42px;min-height:42px;flex:none}
+.pista.oculta{display:none}
+/* ⚠️ VEIO FALTANDO DO CLONE DA CRUZADINHA (achado pelo `_qa/classes.py` depois
+   que ele passou a ler o `folhas.js`): a grade "livre" — a que aceita a palavra
+   em qualquer casinha — marca as casas com borda tracejada. Sem esta linha ela
+   ficava igual à grade normal, e a criança não via que ali podia escrever. */
+.cruz.livre .ccel{border-style:dashed}
+/* o cartaz do fecho: as regras que a criança escolheu, uma embaixo da outra */
+.rua.cartaz{flex-direction:column;align-items:stretch;gap:6px;padding:10px;
+  border:3px solid #e6dbd1;border-radius:16px;background:#fffdfa;margin:0 10px 8px}
+.regral{border-left:6px solid var(--cor);border-radius:8px;background:#fff;padding:7px 10px;
+  text-align:left}
+.regral b{display:block;font-size:clamp(13px,3.5vw,16px);color:#2c3350;line-height:1.3}
+.regral i{display:block;font-style:normal;font-weight:800;font-size:clamp(11px,3vw,13px);
+  color:#8a7768;letter-spacing:.4px;margin-top:2px}
+/* a capa: os pares de letras que fazem o mesmo som são o desenho da capa */
+.dupla{display:inline-flex;align-items:center;gap:4px;background:#fff;border:3px solid #e6dbd1;
+  border-radius:14px;padding:6px 10px;margin:3px}
+.dupla b{font-size:clamp(17px,4.6vw,22px);font-weight:900;color:#3b4064}
+.dupla i{font-style:normal;font-weight:900;color:var(--cor);font-size:clamp(13px,3.4vw,16px)}
+/* ---------- as peças próprias deste caderno (a loteria do S) ---------- */
+/* a FICHA: figura + palavra, e a criança marca só as escritas certas (folha 1) */
+.marcax.fichas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.lx.ficha{flex:1 1 44%;max-width:230px;flex-direction:column;align-items:center;gap:4px;
+  padding:8px 6px;text-align:center}
+.lx.ficha .figmini{display:block;width:auto;height:clamp(46px,12vw,66px);max-width:100%;object-fit:contain}
+.lx.ficha .ft{font-weight:900;font-size:clamp(13px,3.5vw,16px);letter-spacing:.5px;color:var(--texto2)}
+.lx.ficha .cx{position:absolute;left:6px;top:6px}
+.lx.ficha{position:relative}
+.lx.ficha.erroficha{border-color:#e0a05a;background:#fff7ec}
+.lx.ficha.erroficha .ft s{color:#b23c17;-webkit-text-decoration-color:#e0562f;text-decoration-color:#e0562f}
+.lx.ficha.erroficha .ft b{display:block;color:#0d7736}
+/* as SÍLABAS soltas e a palavra que se monta (folha 13) */
+.op.sil{min-width:clamp(58px,16vw,86px);min-height:52px;font-size:clamp(15px,4vw,19px);
+  font-weight:900;letter-spacing:1px}
+.op.sil.usada{border-color:#15a34a;background:#e7f8ee;color:#0d7736;pointer-events:none}
+.montada{min-height:34px;text-align:center;font-weight:900;letter-spacing:2px;
+  font-size:clamp(16px,4.4vw,21px);color:var(--texto3);margin:2px 0 4px}
+.montada[data-feito]::before{content:attr(data-feito);color:#0d7736}
+/* a FRASE GRUDADA e os vãos onde entra o espaço (folha 18) */
+.grudada{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  margin:6px 4px;padding:8px 4px;border:3px solid #e6dbd1;border-radius:14px;background:#fff}
+.gl{font-weight:900;font-size:clamp(15px,4.2vw,20px);letter-spacing:0;color:var(--texto3);line-height:1.6}
+.vao{width:14px;min-width:14px;height:42px;border:0;background:transparent;padding:0;
+  position:relative;cursor:pointer}
+.vao::after{content:"";position:absolute;left:5px;top:8px;width:3px;height:26px;border-radius:2px;
+  background:#e6dbd1}
+.vao.cortado::after{background:#15a34a;-webkit-box-shadow:0 0 0 2px #bdebd0;box-shadow:0 0 0 2px #bdebd0}
+.vao.erro::after{background:#e0562f}
+/* a VITRINE das duas figuras lado a lado (folha 16) */
+.ficha.vitrine{flex:1 1 44%;max-width:210px;display:flex;flex-direction:column;align-items:center;
+  gap:4px;padding:8px 6px;text-align:center;border:3px solid #e6dbd1;border-radius:14px;background:#fff}
+.ficha.vitrine .figmini{display:block;width:auto;height:clamp(52px,14vw,78px);max-width:100%;object-fit:contain}
+/* ⚠️ TINTA PRÓPRIA, não o token: esta peça pinta o PRÓPRIO fundo (branco), e o
+   `--texto` é a tinta do fundo da atividade. Quem tem superfície própria tem
+   tinta própria — senão, num tema diferente, a letra some. Mede o 4c. */
+.ficha.vitrine .ft{font-weight:900;font-size:clamp(13px,3.5vw,16px);color:#3a2f27}
+/* o TEXTINHO: a frase palavra por palavra, cada uma tocável (folhas 7, 13 e 21) */
+.textinho{margin:6px 8px;padding:10px 8px;border:3px solid #e6dbd1;border-radius:14px;background:#fff;
+  line-height:2.1;text-align:left}
+.tp{border:0;background:transparent;padding:4px 3px;margin:0;font:inherit;font-weight:700;
+  font-size:clamp(15px,4vw,18px);color:#4a3d33;border-radius:7px;cursor:pointer;
+  min-height:40px;-webkit-transition:background .15s;transition:background .15s;min-width:42px;min-height:44px}
+.tp:hover{background:#f7efe7}
+.tp.achada{background:#e7f8ee;color:#0d7736;font-weight:900;
+  -webkit-box-shadow:inset 0 -3px 0 #15a34a;box-shadow:inset 0 -3px 0 #15a34a}
+.tp.marcap{background:#e8f1fb;color:#134f86;font-weight:900;
+  -webkit-box-shadow:inset 0 -3px 0 #1d6fb8;box-shadow:inset 0 -3px 0 #1d6fb8}
+.tp.marcad{background:#fdeee9;color:#8c3414;font-weight:900;
+  -webkit-box-shadow:inset 0 -3px 0 #b8471d;box-shadow:inset 0 -3px 0 #b8471d}
+.tp.nao{-webkit-animation:treme .34s;animation:treme .34s;background:#fdeee9}
+/* o TEXTÃO: a história da folha 24 */
+.textao{margin:6px 8px;padding:12px 12px;border:3px solid #e6dbd1;border-radius:14px;background:#fff;
+  line-height:1.75;font-size:clamp(14px,3.8vw,17px);color:var(--texto3);text-align:left}
+/* os LÁPIS: a cor da família (folha 20) e as duas marcas (folha 21) */
+.ops.lapis{gap:6px;flex-wrap:wrap;justify-content:center;margin:4px 8px 6px}
+/* ⚠️ O FUNDO É DECLARADO AQUI mesmo o JS o trocando pela cor da família: sem
+   fundo próprio na regra, a tinta cravada briga com o tema (é o que o
+   `_qa/cor_fixa.py` mede). Quem crava a tinta tem de cravar o chão embaixo. */
+.op.lapiz{min-height:46px;font-weight:900;font-size:clamp(13px,3.4vw,16px);color:#26201c;
+  background:#fff;border:3px solid #e6dbd1;border-radius:12px;padding:6px 12px}
+.op.lapiz.marcada{-webkit-transform:scale(1.07);transform:scale(1.07);
+  -webkit-box-shadow:0 0 0 3px rgba(0,0,0,.18);box-shadow:0 0 0 3px rgba(0,0,0,.18)}
+.op.lapiz.marcap{background:#e8f1fb;border-color:#1d6fb8;color:#134f86}
+.op.lapiz.marcad{background:#fdeee9;border-color:#b8471d;color:#8c3414}
+/* as PALAVRAS ESPALHADAS que se pintam (folha 20) */
+.espalhadas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 8px 10px}
+.pal.solta{border:3px solid #e6dbd1;border-radius:12px;background:#fff;padding:9px 13px;
+  min-height:46px;font-weight:900;font-size:clamp(13px,3.6vw,16px);letter-spacing:.5px;
+  color:var(--texto3);cursor:pointer}
+/* ⚠️ ELA PINTA O PRÓPRIO FUNDO em tempo real (a cor da família, vinda do JS),
+   então a tinta tem de ser dela e escura o bastante para as cinco cores da
+   paleta. O token `--texto` aqui seria a tinta do fundo da ATIVIDADE, que não
+   é o fundo que está atrás desta letra. */
+.pal.solta.pintada{background:#fff;border-color:rgba(0,0,0,.2);color:#1c1611;pointer-events:none}
+.pal.solta.nao{-webkit-animation:treme .34s;animation:treme .34s;background:#fdeee9}
+.op.pal.nao{-webkit-animation:treme .34s;animation:treme .34s}
+
+/* ⚠️ PISO DE TOQUE DE 40 px (regra da casa). Estas regras vêm por último
+   de propósito: elas SOBREPÕEM o que veio antes, e é isso que se quer —
+   a casinha da cruzadinha estava com 34 px e a peça de sílaba com 21 px
+   de altura. O portão do leiaute só viu quando passou a andar folha por
+   folha; antes ele parava na sexta. */
+.ccel{width:clamp(44px,9vw,50px);height:clamp(44px,9vw,50px);min-width:44px;min-height:44px;border:0;background:transparent;padding:0}
+.sil{font:800 clamp(17px,4.6vw,22px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  min-width:52px;min-height:46px;padding:10px 14px;border-radius:12px;
+  border:2px solid #c6cde0;background:#fff;color:#243056;cursor:pointer;
+  -webkit-transition:.14s;transition:.14s}
+.sil.larga{min-width:clamp(96px,26vw,150px)}
+.sil:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.sil.marcada{background:#fff3c9;border-color:#e0ac00}
+.sil.ok,.sil.usada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
+.sil.usada{opacity:.6}
+.sil.nao{background:#ffd9d6;border-color:#e2574c;color:#9d2f26}
+</style></head><body>
+
+<div id="topo">
+  <button class="zap ouvir" id="bOuvir" aria-label="Ouvir de novo"><svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v1H5v6h2v1a5 5 0 0 0 10 0v-1h2V9h-2V8a5 5 0 0 0-5-5z"/></svg></button>
+  <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
+  <div class="tit">A Viagem Dentro de Você</div>
+  <div class="prog"><i id="progI"></i></div>
+  <div class="pg" id="pg">Capa</div>
+</div>
+
+<div id="livro"></div>
+
+<div id="fim">
+  <h2 id="fimTit">Caderno completo!</h2>
+  <div class="estrelas" id="estrelas"></div>
+  <div class="barras" id="barras"></div>
+  <p id="resumo" style="font-weight:800;font-size:16px"></p>
+  <div id="medalha" class="medal" role="button" tabindex="0" aria-label="Troféu. Segure dois segundos para abrir o relatório do professor"><img src="img/vd_trofeu.png?v=2" alt="Troféu" draggable="false" onerror="this.style.display='none';this.parentNode.className='semfig'"></div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bVoltar" style="display:none">Voltar para o caderno</button>
+    <button class="bt cinza" id="bRever">Rever o caderno</button>
+    <button class="bt verde" id="bRecomecar">Caderno novo</button>
+  </div>
+  <div id="relatorio"></div>
+</div>
+
+<div id="retomar">
+  <h2 style="color:#8d4120;margin:0 0 6px">Você estava aqui!</h2>
+  <p id="retTxt" style="font-weight:700"></p>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+    <button class="bt verde" id="bContinuar">Continuar de onde parei</button>
+    <button class="bt cinza" id="bZerar">Começar um caderno novo</button>
+  </div>
+</div>
+
+<div id="nav">
+  <button class="bt cinza" id="bAnt"><i class="seta esq"></i>Anterior</button>
+  <div class="txt" id="navTxt"></div>
+  <!-- ⭐ O FECHO A QUALQUER MOMENTO — ver o comentário do `fim()` no folhas.js.
+       Sem ele, 25 folhas castigam justamente a criança que vai devagar: ela
+       nunca chegaria a ver o próprio boletim. -->
+  <button class="bt terminar" id="bTerminar" aria-label="Terminar agora e ver o meu boletim">Terminar</button>
+  <button class="bt" id="bProx">Próxima<i class="seta dir"></i></button>
+</div>
+
+<div id="barraCapa"><div class="lin"><label for="nomeIn">Seu nome:</label><input id="nomeIn" type="text" maxlength="24" autocomplete="off" spellcheck="false" placeholder="escreva aqui"><button class="bt" id="bComecar">Começar</button></div></div>
+
+<div id="menuProf" role="dialog" aria-label="Menu do professor" aria-modal="true">
+  <div class="cx">
+    <h3>Menu do professor</h3>
+    <p>Chave mestra <b>1275@</b>. Abra qualquer folha para conferir; o trabalho da criança não se apaga.</p>
+    <div class="folhas" id="mpFolhas"></div>
+    <!--<dossie-bt>--><button class="bt" id="bDossie">Dossiê pedagógico (currículo da rede)</button><!--</dossie-bt>-->
+<button class="bt cinza" id="mpFechar">Fechar</button>
+  </div>
+</div>
+
+
+<div id="confete" aria-hidden="true"></div>
+
+<script>
+/* ---------- OS POTES DE CADA FOLHA (o gerar_falas.py lê este bloco) ----------
+   ⚠️ A POSIÇÃO É A IDENTIDADE: o pote `pN` é da folha N, os ids dela são
+   `nN_i` e a fala do enunciado é `pNenun`. Mudar a ordem das folhas muda tudo
+   junto — e é de propósito, porque antes eram três listas para combinar à mão
+   e o relatório saía zero com a folha inteira respondida. */
+/*GESTOS-INI*/
+/* ⚠️ O GESTO DE CADA FOLHA, DECLARADO À MÃO — uma palavra: o que a criança FAZ
+   com o dedo, não o que o código parece. Ele existe porque o portão 0b7 tentou
+   ADIVINHAR isto do código e errou feio.
+   ⚠️ E O GESTO NÃO SE ESCOLHE DO NOSSO CARDÁPIO: ele sai do COMANDO IMPRESSO na
+      folha de papel de onde a folha nasceu (regra do Marcos, 13/set/2026: *"as
+      interatividades têm que vir das atividades que você seleciona na internet,
+      o que as atividades pedem para o aluno fazer"*). "Recorte e cole na coluna
+      correta" dá gaveta; "grife os substantivos compostos" dá marca-texto;
+      "pinte com a mesma cor" dá pintar. Anotar o comando verbatim no POTE.
+   ⚠️ Folha nova = linha nova AQUI, no mesmo commit.
+   Ex.: {"f1": "escolher", "f2": "classificar", "f3": "ligar"} */
+var GESTOS = {
+ "f1": "escolher",
+ "f2": "arrastar",
+ "f3": "arrastar",
+ "f4": "numerar",
+ "f5": "ligar",
+ "f6": "ligar",
+ "f7": "escrever",
+ "f8": "procurar",
+ "f9": "escolher",
+ "f10": "arrastar",
+ "f11": "numerar",
+ "f12": "numerar",
+ "f13": "ligar",
+ "f14": "escrever",
+ "f15": "classificar",
+ "f16": "escrever",
+ "f17": "escolher",
+ "f18": "escrever",
+ "f19": "arrastar",
+ "f20": "ligar",
+ "f21": "escrever",
+ "f22": "numerar",
+ "f23": "classificar",
+ "f24": "procurar",
+ "f25": "escolher",
+ "f26": "numerar",
+ "f27": "escrever",
+ "f28": "escolher",
+ "f29": "escolher",
+ "f30": "escolher",
+ "f31": "classificar",
+ "f32": "escolher",
+ "f33": "ligar",
+ "f34": "escolher",
+ "f35": "escolher",
+ "f36": "escrever"
+};
+/*GESTOS-FIM*/
+/*ITENS-INI*/
+/* ⚠️⚠️ A POSIÇÃO É A IDENTIDADE. A folha da posição 7 usa o pote `p7`, grava os
+   ids `n7_*` e fala `p7enun`. Não há segunda lista para desencontrar — isso já
+   fez o relatório sair ZERO com a folha inteira respondida.
+   ⚠️⚠️ E O POTE DIZ QUANTOS ITENS A FOLHA TEM: o `idsDaPagina` conta pelo
+   tamanho dele. Se a folha desenha uma peça por PALAVRA, o pote lista as
+   palavras — não as famílias delas. Errar isso faz a folha se dar por PRONTA
+   cedo demais e pular com itens ainda na tela, sem erro nenhum no console.
+   Quem mede é `node _qa/conta_folha.js <pasta>`; rodar SEMPRE.
+   ⚠️ Folha de LIGAR e folha de UM ITEM SÓ guardam o pote EMBRULHADO:
+      "p7": [["chave1","chave2","chave3"]] */
+var ITENS = {
+ "p1": [
+  "q1",
+  "q2",
+  "q3",
+  "q4"
+ ],
+ "p2": [
+  "esof",
+  "esto",
+  "idel",
+  "igro",
+  "figa",
+  "panc"
+ ],
+ "p3": [
+  "boca",
+  "esof",
+  "esto",
+  "idel",
+  "igro",
+  "panc"
+ ],
+ "p4": [
+  "boca",
+  "esof",
+  "esto",
+  "idel",
+  "igro"
+ ],
+ "p5": [
+  [
+   "esto",
+   "esof",
+   "idel",
+   "igro",
+   "boca"
+  ]
+ ],
+ "p6": [
+  [
+   "figa",
+   "panc",
+   "idel",
+   "esto",
+   "igro"
+  ]
+ ],
+ "p7": [
+  "e1",
+  "e2",
+  "e3",
+  "e4",
+  "e5"
+ ],
+ "p8": [
+  "kk1",
+  "kk2",
+  "kk3",
+  "kk4",
+  "kk5",
+  "kk6"
+ ],
+ "p9": [
+  "q5",
+  "q6",
+  "q7",
+  "q8"
+ ],
+ "p10": [
+  "nariz",
+  "traq",
+  "bron",
+  "pulm",
+  "alveo",
+  "diaf"
+ ],
+ "p11": [
+  "nariz",
+  "faringe",
+  "laringe",
+  "traq",
+  "bron",
+  "pulm"
+ ],
+ "p12": [
+  "nariz",
+  "traq",
+  "bron",
+  "pulm",
+  "alveo"
+ ],
+ "p13": [
+  [
+   "nariz",
+   "traq",
+   "pulm",
+   "laringe",
+   "diaf"
+  ]
+ ],
+ "p14": [
+  "e6",
+  "e7",
+  "e8",
+  "e9",
+  "e10"
+ ],
+ "p15": [
+  "a1",
+  "a2",
+  "a3",
+  "a4",
+  "a5",
+  "a6",
+  "a7",
+  "a8"
+ ],
+ "p16": [
+  "zz1",
+  "zz2",
+  "zz3",
+  "zz4",
+  "zz5",
+  "zz6"
+ ],
+ "p17": [
+  "q9",
+  "q10",
+  "q11",
+  "q12"
+ ],
+ "p18": [
+  "e14",
+  "e11",
+  "e12",
+  "e13",
+  "e15"
+ ],
+ "p19": [
+  "cora",
+  "arte",
+  "veia",
+  "capi",
+  "sangue",
+  "rins"
+ ],
+ "p20": [
+  [
+   "cora",
+   "arte",
+   "veia",
+   "capi",
+   "sangue"
+  ]
+ ],
+ "p21": [
+  "e16",
+  "e17",
+  "e18",
+  "e19",
+  "e20"
+ ],
+ "p22": [
+  "cora",
+  "arte",
+  "capi",
+  "veia",
+  "cora2"
+ ],
+ "p23": [
+  "v1",
+  "v2",
+  "v3",
+  "v4",
+  "v5",
+  "v6",
+  "v7",
+  "v8"
+ ],
+ "p24": [
+  "kk7",
+  "kk8",
+  "kk9",
+  "kk10",
+  "kk11",
+  "kk12"
+ ],
+ "p25": [
+  "q13",
+  "q14"
+ ],
+ "p26": [
+  "boca",
+  "esto",
+  "idel",
+  "sangue",
+  "cora"
+ ],
+ "p27": [
+  "e19",
+  "e17",
+  "e14",
+  "e16",
+  "e18"
+ ],
+ "p28": [
+  "q15",
+  "q16"
+ ],
+ "p29": [
+  "q17",
+  "q18"
+ ],
+ "p30": [
+  "q19"
+ ],
+ "p31": [
+  "s1",
+  "s2",
+  "s3",
+  "s4",
+  "s5",
+  "s6",
+  "s7",
+  "s8",
+  "s9"
+ ],
+ "p32": [
+  "q20",
+  "q21"
+ ],
+ "p33": [
+  [
+   "corre",
+   "ofega",
+   "musculo",
+   "energia",
+   "descansa"
+  ]
+ ],
+ "p34": [
+  "q22",
+  "q23"
+ ],
+ "p35": [
+  "q24",
+  "q25",
+  "q26",
+  "q27",
+  "q28"
+ ],
+ "p36": [
+  "zz7",
+  "zz8",
+  "zz9",
+  "zz10",
+  "zz11",
+  "zz12"
+ ]
+};
+/*ITENS-FIM*/
+/*FALAS-INI*/
+var FALAS = {
+ "cacatoque": "Toque na primeira letra da palavra e depois na última.",
+ "capa": "A Viagem Dentro de Você. Trinta e seis folhas sobre o caminho que o alimento, o ar e o sangue fazem dentro do seu corpo. Escreva o seu nome ali embaixo e toque em Começar.",
+ "certo13_diaf": "Isso! DIAFRAGMA: o músculo que puxa e empurra o ar.",
+ "certo13_laringe": "Isso! LARINGE: aqui ficam as pregas vocais.",
+ "certo13_nariz": "Isso! NARIZ: filtra, aquece e umedece o ar.",
+ "certo13_pulm": "Isso! PULMÕES: aqui o oxigênio passa para o sangue.",
+ "certo13_traq": "Isso! TRAQUEIA: tubo de anéis que leva o ar para baixo.",
+ "certo15_a1": "Isso! o ar entra pelo nariz: quando puxo o ar.",
+ "certo15_a2": "Isso! o peito aumenta: quando puxo o ar.",
+ "certo15_a3": "Isso! o oxigênio chega aos pulmões: quando puxo o ar.",
+ "certo15_a4": "Isso! o diafragma desce: quando puxo o ar.",
+ "certo15_a5": "Isso! o ar sai pelo nariz: quando solto o ar.",
+ "certo15_a6": "Isso! o peito diminui: quando solto o ar.",
+ "certo15_a7": "Isso! o gás carbônico deixa o corpo: quando solto o ar.",
+ "certo15_a8": "Isso! o diafragma sobe: quando solto o ar.",
+ "certo16_zz1": "Isso! órgão onde o oxigênio passa para o sangue",
+ "certo16_zz2": "Isso! por onde e mais saudavel respirar",
+ "certo16_zz3": "Isso! tubo de aneis que leva o ar para baixo",
+ "certo16_zz4": "Isso! músculo abaixo dos pulmões que ajuda o ar a entrar",
+ "certo16_zz5": "Isso! o gas que o corpo pega do ar",
+ "certo16_zz6": "Isso! bolsinha do pulmão onde o ar encontra o sangue",
+ "certo20_arte": "Isso! ARTÉRIAS: levam o sangue do coração para o corpo.",
+ "certo20_capi": "Isso! CAPILARES: vasos finíssimos onde a troca acontece.",
+ "certo20_cora": "Isso! CORAÇÃO: bombeia o sangue.",
+ "certo20_sangue": "Isso! SANGUE: leva oxigênio e nutrientes.",
+ "certo20_veia": "Isso! VEIAS: trazem o sangue de volta ao coração.",
+ "certo23_v1": "Isso! o sangue leva oxigênio para as células: é verdade.",
+ "certo23_v2": "Isso! os nutrientes chegam às células pelo sangue: é verdade.",
+ "certo23_v3": "Isso! os rins ajudam a limpar o sangue: é verdade.",
+ "certo23_v4": "Isso! o coração bombeia o sangue sem parar: é verdade.",
+ "certo23_v5": "Isso! o sistema circulatório funciona sozinho, sem os outros: é falso.",
+ "certo23_v6": "Isso! os pulmões digerem o alimento: é falso.",
+ "certo23_v7": "Isso! o estômago enche-se de ar quando respiramos: é falso.",
+ "certo23_v8": "Isso! o intestino grosso bombeia o sangue: é falso.",
+ "certo24_kk10": "Achou! levam o sangue do coração para o corpo.",
+ "certo24_kk11": "Achou! filtram o sangue.",
+ "certo24_kk12": "Achou! vasos finissimos onde a troca acontece.",
+ "certo24_kk7": "Achou! a bomba que empurra o sangue.",
+ "certo24_kk8": "Achou! leva oxigênio e nutrientes.",
+ "certo24_kk9": "Achou! trazem o sangue de volta ao coração.",
+ "certo31_s1": "Isso! ESTÔMAGO: digestório.",
+ "certo31_s2": "Isso! INTESTINO DELGADO: digestório.",
+ "certo31_s3": "Isso! ESÔFAGO: digestório.",
+ "certo31_s4": "Isso! PULMÕES: respiratório.",
+ "certo31_s5": "Isso! TRAQUEIA: respiratório.",
+ "certo31_s6": "Isso! DIAFRAGMA: respiratório.",
+ "certo31_s7": "Isso! CORAÇÃO: circulatório.",
+ "certo31_s8": "Isso! VEIAS: circulatório.",
+ "certo31_s9": "Isso! ARTÉRIAS: circulatório.",
+ "certo33_corre": "Isso! CORRE: o coração bate mais rápido.",
+ "certo33_descansa": "Isso! DESCANSA: tudo volta devagar ao normal.",
+ "certo33_energia": "Isso! ENERGIA: sai do alimento queimado com o oxigênio.",
+ "certo33_musculo": "Isso! MÚSCULO: recebe mais oxigênio pelo sangue.",
+ "certo33_ofega": "Isso! OFEGA: a respiração fica mais funda e mais rápida.",
+ "certo36_zz10": "Isso! quem recebe o nutriente no fim da viagem",
+ "certo36_zz11": "Isso! o que o corpo tira do alimento com o oxigênio",
+ "certo36_zz12": "Isso! filtram o sangue e tiram o que não serve",
+ "certo36_zz7": "Isso! a bomba que empurra o sangue",
+ "certo36_zz8": "Isso! leva oxigênio e nutrientes a todo o corpo",
+ "certo36_zz9": "Isso! intestino onde o nutriente entra no sangue",
+ "certo5_boca": "Isso! BOCA: onde a digestão começa.",
+ "certo5_esof": "Isso! ESÔFAGO: o tubo que leva o alimento ao estômago.",
+ "certo5_esto": "Isso! ESTÔMAGO: onde o alimento vira uma papa.",
+ "certo5_idel": "Isso! INTESTINO DELGADO: onde os nutrientes passam para o sangue.",
+ "certo5_igro": "Isso! INTESTINO GROSSO: onde se formam as fezes.",
+ "certo6_esto": "Isso! ESTÔMAGO: mistura o alimento com o suco do estômago.",
+ "certo6_figa": "Isso! FÍGADO: ajuda a digerir a gordura.",
+ "certo6_idel": "Isso! INTESTINO DELGADO: aqui o nutriente entra no sangue.",
+ "certo6_igro": "Isso! INTESTINO GROSSO: aproveita a água que sobrou.",
+ "certo6_panc": "Isso! PÂNCREAS: produz um suco que termina a digestão.",
+ "certo8_kk1": "Achou! por onde a digestão começa.",
+ "certo8_kk2": "Achou! o tubo que leva o alimento ao estômago.",
+ "certo8_kk3": "Achou! onde o alimento vira uma papa.",
+ "certo8_kk4": "Achou! ajuda a digerir a gordura.",
+ "certo8_kk5": "Achou! produz um suco que termina a digestão.",
+ "certo8_kk6": "Achou! o órgão que tem parte delgada e parte grossa.",
+ "certo_e1": "Isso! O alimento sai da boca e desce pelo ESÔFAGO",
+ "certo_e10": "Isso! O músculo abaixo dos pulmões chama-se DIAFRAGMA",
+ "certo_e11": "Isso! O CORAÇÃO bombeia o sangue para o corpo todo.",
+ "certo_e12": "Isso! As ARTÉRIAS levam o sangue do coração para o corpo.",
+ "certo_e13": "Isso! As VEIAS trazem o sangue de volta ao coração.",
+ "certo_e14": "Isso! O SANGUE leva oxigênio e nutrientes a todas as células.",
+ "certo_e15": "Isso! Os RINS filtram o sangue e tiram o que não serve.",
+ "certo_e16": "Isso! A energia do corpo vem do ALIMENTO que comemos.",
+ "certo_e17": "Isso! Para queimar o alimento o corpo precisa de OXIGÊNIO",
+ "certo_e18": "Isso! O gás que soltamos quando expiramos é o gás CARBÔNICO",
+ "certo_e19": "Isso! Os nutrientes são entregues às CÉLULAS",
+ "certo_e2": "Isso! No ESTÔMAGO o alimento é misturado e vira uma papa.",
+ "certo_e20": "Isso! As bolsinhas onde o ar encontra o sangue são os ALVÉOLOS",
+ "certo_e3": "Isso! Os nutrientes passam para o sangue no intestino DELGADO",
+ "certo_e4": "Isso! As fezes se formam no intestino GROSSO",
+ "certo_e5": "Isso! O FÍGADO produz um líquido que ajuda a digerir a gordura.",
+ "certo_e6": "Isso! É mais saudável respirar pelo NARIZ",
+ "certo_e7": "Isso! Os PELINHOS do nariz seguram a sujeira do ar.",
+ "certo_e8": "Isso! O ar desce por um tubo de anéis chamado TRAQUÉIA",
+ "certo_e9": "Isso! O oxigênio passa para o sangue dentro dos PULMÕES",
+ "certo_ord_alveo": "Isso! O ALVÉOLOS está no lugar certo.",
+ "certo_ord_arte": "Isso! A ARTÉRIAS está no lugar certo.",
+ "certo_ord_boca": "Isso! A BOCA está no lugar certo.",
+ "certo_ord_bron": "Isso! O BRÔNQUIOS está no lugar certo.",
+ "certo_ord_capi": "Isso! O CAPILARES está no lugar certo.",
+ "certo_ord_cora": "Isso! O CORAÇÃO está no lugar certo.",
+ "certo_ord_cora2": "Isso! O CORAÇÃO, DE VOLTA está no lugar certo.",
+ "certo_ord_esof": "Isso! O ESÔFAGO está no lugar certo.",
+ "certo_ord_esto": "Isso! O ESTÔMAGO está no lugar certo.",
+ "certo_ord_faringe": "Isso! A FARINGE está no lugar certo.",
+ "certo_ord_idel": "Isso! O INTESTINO DELGADO está no lugar certo.",
+ "certo_ord_igro": "Isso! O INTESTINO GROSSO está no lugar certo.",
+ "certo_ord_laringe": "Isso! A LARINGE está no lugar certo.",
+ "certo_ord_nariz": "Isso! O NARIZ está no lugar certo.",
+ "certo_ord_pulm": "Isso! O PULMÕES está no lugar certo.",
+ "certo_ord_sangue": "Isso! O SANGUE está no lugar certo.",
+ "certo_ord_traq": "Isso! A TRAQUEIA está no lugar certo.",
+ "certo_ord_veia": "Isso! A VEIAS está no lugar certo.",
+ "certo_org_alveo": "Isso! ALVÉOLOS: as bolsinhas onde o ar encontra o sangue.",
+ "certo_org_arte": "Isso! ARTÉRIAS: levam o sangue do coração para o corpo.",
+ "certo_org_boca": "Isso! BOCA: onde a digestão começa: os dentes trituram e a saliva umedece o alimento.",
+ "certo_org_bron": "Isso! BRÔNQUIOS: os dois tubos que levam o ar para dentro de cada pulmão.",
+ "certo_org_capi": "Isso! CAPILARES: vasos finíssimos onde a troca acontece.",
+ "certo_org_cora": "Isso! CORAÇÃO: a bomba que empurra o sangue para o corpo inteiro.",
+ "certo_org_cora2": "Isso! CORAÇÃO, DE VOLTA: o sangue volta para o coração e a viagem recomeça.",
+ "certo_org_diaf": "Isso! DIAFRAGMA: o músculo abaixo dos pulmões que puxa e empurra o ar.",
+ "certo_org_esof": "Isso! ESÔFAGO: o tubo que leva o alimento da boca até o estômago.",
+ "certo_org_esto": "Isso! ESTÔMAGO: onde o alimento é misturado e vira uma papa.",
+ "certo_org_faringe": "Isso! FARINGE: o cruzamento por onde passam o ar e o alimento.",
+ "certo_org_figa": "Isso! FÍGADO: produz um líquido que ajuda a digerir a gordura.",
+ "certo_org_idel": "Isso! INTESTINO DELGADO: onde os nutrientes passam do alimento para o sangue.",
+ "certo_org_igro": "Isso! INTESTINO GROSSO: onde a água é aproveitada e se formam as fezes.",
+ "certo_org_laringe": "Isso! LARINGE: onde ficam as pregas vocais, que fazem a voz.",
+ "certo_org_nariz": "Isso! NARIZ: filtra, aquece e umedece o ar que entra.",
+ "certo_org_panc": "Isso! PÂNCREAS: produz um suco que ajuda a terminar a digestão.",
+ "certo_org_pulm": "Isso! PULMÕES: onde o oxigênio do ar passa para o sangue.",
+ "certo_org_rins": "Isso! RINS: filtram o sangue e tiram o que não serve mais.",
+ "certo_org_sangue": "Isso! SANGUE: leva oxigênio e nutrientes e recolhe o que não serve.",
+ "certo_org_traq": "Isso! TRAQUEIA: um tubo de anéis que leva o ar até os brônquios.",
+ "certo_org_veia": "Isso! VEIAS: trazem o sangue do corpo de volta ao coração.",
+ "certo_q1": "Isso mesmo! Pela BOCA",
+ "certo_q10": "Isso mesmo! Transportar nutrientes, gases e resíduos pelo corpo",
+ "certo_q11": "Isso mesmo! Bombeia o sangue para todo o corpo",
+ "certo_q12": "Isso mesmo! Oxigênio e nutrientes",
+ "certo_q13": "Isso mesmo! Porque o corpo precisa do oxigênio para usar a energia do alimento",
+ "certo_q14": "Isso mesmo! Porque cada sistema faz uma parte, e os três trabalham juntos",
+ "certo_q15": "Isso mesmo! No INTESTINO DELGADO",
+ "certo_q16": "Isso mesmo! Nos PULMÕES",
+ "certo_q17": "Isso mesmo! Os RINS",
+ "certo_q18": "Isso mesmo! Gás carbônico, que o corpo não quer mais",
+ "certo_q19": "Isso mesmo! Porque os rins precisam de água para filtrar o sangue",
+ "certo_q2": "Isso mesmo! Para triturar o alimento em pedaços pequenos",
+ "certo_q20": "Isso mesmo! Mais oxigênio e nutrientes",
+ "certo_q21": "Isso mesmo! Para levar o sangue mais depressa até os músculos",
+ "certo_q22": "Isso mesmo! Do alimento que comemos, queimado com o oxigênio",
+ "certo_q23": "Isso mesmo! Recebe energia, mas o corpo também precisa de movimento para ficar saudável",
+ "certo_q24": "Isso mesmo! 1E",
+ "certo_q25": "Isso mesmo! 1A",
+ "certo_q26": "Isso mesmo! 4D",
+ "certo_q27": "Isso mesmo! 3A",
+ "certo_q28": "Isso mesmo! 5C, o cérebro",
+ "certo_q3": "Isso mesmo! Para o corpo receber energia e crescer",
+ "certo_q4": "Isso mesmo! Umedece o alimento e ajuda a engolir",
+ "certo_q5": "Isso mesmo! Para pegar o oxigênio do ar e soltar o gás carbônico",
+ "certo_q6": "Isso mesmo! Pelo nariz, porque ele filtra, aquece e umedece o ar",
+ "certo_q7": "Isso mesmo! Seguram a sujeira e as impurezas do ar",
+ "certo_q8": "Isso mesmo! Não: é um MÚSCULO que ajuda o ar a entrar e a sair",
+ "certo_q9": "Isso mesmo! O CORAÇÃO",
+ "cp_kk1": "por onde a digestão começa",
+ "cp_kk10": "levam o sangue do coração para o corpo",
+ "cp_kk11": "filtram o sangue",
+ "cp_kk12": "vasos finissimos onde a troca acontece",
+ "cp_kk2": "o tubo que leva o alimento ao estômago",
+ "cp_kk3": "onde o alimento vira uma papa",
+ "cp_kk4": "ajuda a digerir a gordura",
+ "cp_kk5": "produz um suco que termina a digestão",
+ "cp_kk6": "o órgão que tem parte delgada e parte grossa",
+ "cp_kk7": "a bomba que empurra o sangue",
+ "cp_kk8": "leva oxigênio e nutrientes",
+ "cp_kk9": "trazem o sangue de volta ao coração",
+ "crz_zz1": "órgão onde o oxigênio passa para o sangue",
+ "crz_zz10": "quem recebe o nutriente no fim da viagem",
+ "crz_zz11": "o que o corpo tira do alimento com o oxigênio",
+ "crz_zz12": "filtram o sangue e tiram o que não serve",
+ "crz_zz2": "por onde e mais saudavel respirar",
+ "crz_zz3": "tubo de aneis que leva o ar para baixo",
+ "crz_zz4": "músculo abaixo dos pulmões que ajuda o ar a entrar",
+ "crz_zz5": "o gas que o corpo pega do ar",
+ "crz_zz6": "bolsinha do pulmão onde o ar encontra o sangue",
+ "crz_zz7": "a bomba que empurra o sangue",
+ "crz_zz8": "leva oxigênio e nutrientes a todo o corpo",
+ "crz_zz9": "intestino onde o nutriente entra no sangue",
+ "dica13_diaf": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica13_laringe": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica13_nariz": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica13_pulm": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica13_traq": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica15_a1": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica15_a2": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica15_a3": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica15_a4": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica15_a5": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica15_a6": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica15_a7": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica15_a8": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica16_zz1": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica16_zz2": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica16_zz3": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica16_zz4": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica16_zz5": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica16_zz6": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica20_arte": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica20_capi": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica20_cora": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica20_sangue": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica20_veia": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica23_v1": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica23_v2": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica23_v3": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica23_v4": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica23_v5": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica23_v6": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica23_v7": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica23_v8": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica24_kk10": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica24_kk11": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica24_kk12": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica24_kk7": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica24_kk8": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica24_kk9": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica31_s1": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica31_s2": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica31_s3": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica31_s4": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica31_s5": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica31_s6": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica31_s7": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica31_s8": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica31_s9": "Leia a frase de novo e pense em qual gaveta ela cabe.",
+ "dica33_corre": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica33_descansa": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica33_energia": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica33_musculo": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica33_ofega": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica36_zz10": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica36_zz11": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica36_zz12": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica36_zz7": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica36_zz8": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica36_zz9": "Leia a pista de novo. Conte quantas casinhas tem a palavra.",
+ "dica5_boca": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica5_esof": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica5_esto": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica5_idel": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica5_igro": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica6_esto": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica6_figa": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica6_idel": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica6_igro": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica6_panc": "Ainda não. Leia de novo o que está escrito do outro lado.",
+ "dica8_kk1": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica8_kk2": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica8_kk3": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica8_kk4": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica8_kk5": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica8_kk6": "Olhe linha por linha. As palavras estão deitadas, da esquerda para a direita.",
+ "dica_e1": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e10": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e11": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e12": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e13": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e14": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e15": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e16": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e17": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e18": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e19": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e2": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e20": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e3": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e4": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e5": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e6": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e7": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e8": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_e9": "Escute a frase inteira de novo e pense em que palavra cabe ali.",
+ "dica_ord_alveo": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_arte": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_boca": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_bron": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_capi": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_cora": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_cora2": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_esof": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_esto": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_faringe": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_idel": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_igro": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_laringe": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_nariz": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_pulm": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_sangue": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_traq": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_ord_veia": "Pense: o que vem ANTES dele nesse caminho? Comece pelo começo.",
+ "dica_org_alveo": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_arte": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_boca": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_bron": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_capi": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_cora": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_cora2": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_diaf": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_esof": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_esto": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_faringe": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_figa": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_idel": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_igro": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_laringe": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_nariz": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_panc": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_pulm": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_rins": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_sangue": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_traq": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_org_veia": "Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.",
+ "dica_q1": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q10": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q11": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q12": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q13": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q14": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q15": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q16": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q17": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q18": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q19": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q2": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q20": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q21": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q22": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q23": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q24": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q25": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q26": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q27": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q28": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q3": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q4": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q5": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q6": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q7": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q8": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "dica_q9": "Ainda não. Leia a pergunta de novo com calma e pense no que aquele órgão FAZ.",
+ "diz2_ar_a1": "o ar entra pelo nariz.",
+ "diz2_ar_a2": "o peito aumenta.",
+ "diz2_ar_a3": "o oxigênio chega aos pulmões.",
+ "diz2_ar_a4": "o diafragma desce.",
+ "diz2_ar_a5": "o ar sai pelo nariz.",
+ "diz2_ar_a6": "o peito diminui.",
+ "diz2_ar_a7": "o gás carbônico deixa o corpo.",
+ "diz2_ar_a8": "o diafragma sobe.",
+ "diz2_sis_s1": "ESTÔMAGO.",
+ "diz2_sis_s2": "INTESTINO DELGADO.",
+ "diz2_sis_s3": "ESÔFAGO.",
+ "diz2_sis_s4": "PULMÕES.",
+ "diz2_sis_s5": "TRAQUEIA.",
+ "diz2_sis_s6": "DIAFRAGMA.",
+ "diz2_sis_s7": "CORAÇÃO.",
+ "diz2_sis_s8": "VEIAS.",
+ "diz2_sis_s9": "ARTÉRIAS.",
+ "diz2_vf_v1": "o sangue leva oxigênio para as células.",
+ "diz2_vf_v2": "os nutrientes chegam às células pelo sangue.",
+ "diz2_vf_v3": "os rins ajudam a limpar o sangue.",
+ "diz2_vf_v4": "o coração bombeia o sangue sem parar.",
+ "diz2_vf_v5": "o sistema circulatório funciona sozinho, sem os outros.",
+ "diz2_vf_v6": "os pulmões digerem o alimento.",
+ "diz2_vf_v7": "o estômago enche-se de ar quando respiramos.",
+ "diz2_vf_v8": "o intestino grosso bombeia o sangue.",
+ "escreva": "Escreva a palavra usando o teclado.",
+ "faz_alveo": "ALVÉOLOS: as bolsinhas onde o ar encontra o sangue.",
+ "faz_arte": "ARTÉRIAS: levam o sangue do coração para o corpo.",
+ "faz_boca": "BOCA: onde a digestão começa: os dentes trituram e a saliva umedece o alimento.",
+ "faz_bron": "BRÔNQUIOS: os dois tubos que levam o ar para dentro de cada pulmão.",
+ "faz_capi": "CAPILARES: vasos finíssimos onde a troca acontece.",
+ "faz_cora": "CORAÇÃO: a bomba que empurra o sangue para o corpo inteiro.",
+ "faz_cora2": "CORAÇÃO, DE VOLTA: o sangue volta para o coração e a viagem recomeça.",
+ "faz_corre": "o coração bate mais rápido.",
+ "faz_descansa": "tudo volta devagar ao normal.",
+ "faz_diaf": "DIAFRAGMA: o músculo abaixo dos pulmões que puxa e empurra o ar.",
+ "faz_energia": "sai do alimento queimado com o oxigênio.",
+ "faz_esof": "ESÔFAGO: o tubo que leva o alimento da boca até o estômago.",
+ "faz_esto": "ESTÔMAGO: onde o alimento é misturado e vira uma papa.",
+ "faz_faringe": "FARINGE: o cruzamento por onde passam o ar e o alimento.",
+ "faz_figa": "FÍGADO: produz um líquido que ajuda a digerir a gordura.",
+ "faz_idel": "INTESTINO DELGADO: onde os nutrientes passam do alimento para o sangue.",
+ "faz_igro": "INTESTINO GROSSO: onde a água é aproveitada e se formam as fezes.",
+ "faz_laringe": "LARINGE: onde ficam as pregas vocais, que fazem a voz.",
+ "faz_musculo": "recebe mais oxigênio pelo sangue.",
+ "faz_nariz": "NARIZ: filtra, aquece e umedece o ar que entra.",
+ "faz_ofega": "a respiração fica mais funda e mais rápida.",
+ "faz_panc": "PÂNCREAS: produz um suco que ajuda a terminar a digestão.",
+ "faz_pulm": "PULMÕES: onde o oxigênio do ar passa para o sangue.",
+ "faz_rins": "RINS: filtram o sangue e tiram o que não serve mais.",
+ "faz_sangue": "SANGUE: leva oxigênio e nutrientes e recolhe o que não serve.",
+ "faz_traq": "TRAQUEIA: um tubo de anéis que leva o ar até os brônquios.",
+ "faz_veia": "VEIAS: trazem o sangue do corpo de volta ao coração.",
+ "fim": "Você chegou ao fim da viagem! Agora você sabe o caminho do alimento, do ar e do sangue. E fica uma pergunta para você pensar: enquanto você lia esta frase, o seu coração bateu umas dez vezes e você respirou umas duas. Quantas vezes será que ele bate enquanto você dorme a noite inteira?",
+ "folhaPronta": "Folha pronta! Muito bem.",
+ "fras_e1": "O alimento sai da boca e desce pelo que palavra?",
+ "fras_e10": "O músculo abaixo dos pulmões chama-se que palavra?",
+ "fras_e11": "O que palavra? bombeia o sangue para o corpo todo.",
+ "fras_e12": "As que palavra? levam o sangue do coração para o corpo.",
+ "fras_e13": "As que palavra? trazem o sangue de volta ao coração.",
+ "fras_e14": "O que palavra? leva oxigênio e nutrientes a todas as células.",
+ "fras_e15": "Os que palavra? filtram o sangue e tiram o que não serve.",
+ "fras_e16": "A energia do corpo vem do que palavra? que comemos.",
+ "fras_e17": "Para queimar o alimento o corpo precisa de que palavra?",
+ "fras_e18": "O gás que soltamos quando expiramos é o gás que palavra?",
+ "fras_e19": "Os nutrientes são entregues às que palavra?",
+ "fras_e2": "No que palavra? o alimento é misturado e vira uma papa.",
+ "fras_e20": "As bolsinhas onde o ar encontra o sangue são os que palavra?",
+ "fras_e3": "Os nutrientes passam para o sangue no intestino que palavra?",
+ "fras_e4": "As fezes se formam no intestino que palavra?",
+ "fras_e5": "O que palavra? produz um líquido que ajuda a digerir a gordura.",
+ "fras_e6": "É mais saudável respirar pelo que palavra?",
+ "fras_e7": "Os que palavra? do nariz seguram a sujeira do ar.",
+ "fras_e8": "O ar desce por um tubo de anéis chamado que palavra?",
+ "fras_e9": "O oxigênio passa para o sangue dentro dos que palavra?",
+ "gav_ar_exp": "QUANDO SOLTO O AR.",
+ "gav_ar_ins": "QUANDO PUXO O AR.",
+ "gav_sis_cir": "CIRCULATÓRIO.",
+ "gav_sis_dig": "DIGESTÓRIO.",
+ "gav_sis_res": "RESPIRATÓRIO.",
+ "gav_vf_nao": "É FALSO.",
+ "gav_vf_sim": "É VERDADE.",
+ "ligue": "Toque numa palavra do lado esquerdo e depois na do lado direito.",
+ "num_1": "Número 1.",
+ "num_2": "Número 2.",
+ "num_3": "Número 3.",
+ "num_4": "Número 4.",
+ "num_5": "Número 5.",
+ "num_6": "Número 6.",
+ "num_7": "Número 7.",
+ "op_q10_a": "Transformar o alimento em nutrientes",
+ "op_q10_b": "Transportar nutrientes, gases e resíduos pelo corpo",
+ "op_q10_c": "Captar o oxigênio do ar",
+ "op_q11_a": "Bombeia o sangue para todo o corpo",
+ "op_q11_b": "Guarda o alimento que comemos",
+ "op_q11_c": "Enche-se de ar quando respiramos",
+ "op_q12_a": "Só água",
+ "op_q12_b": "Oxigênio e nutrientes",
+ "op_q12_c": "Só o ar que respiramos",
+ "op_q13_a": "Porque o ar empurra o alimento para baixo",
+ "op_q13_b": "Porque o corpo precisa do oxigênio para usar a energia do alimento",
+ "op_q13_c": "Porque a respiração esfria o estômago",
+ "op_q14_a": "Porque cada sistema faz uma parte, e os três trabalham juntos",
+ "op_q14_b": "Porque um deles descansa enquanto o outro trabalha",
+ "op_q14_c": "Porque só o coração é importante",
+ "op_q15_a": "No ESTÔMAGO",
+ "op_q15_b": "No INTESTINO DELGADO",
+ "op_q15_c": "Nos PULMÕES",
+ "op_q16_a": "Nos PULMÕES",
+ "op_q16_b": "No CORAÇÃO",
+ "op_q16_c": "No ESTÔMAGO",
+ "op_q17_a": "Os PULMÕES",
+ "op_q17_b": "O ESTÔMAGO",
+ "op_q17_c": "Os RINS",
+ "op_q18_a": "Gás carbônico, que o corpo não quer mais",
+ "op_q18_b": "Nutrientes que sobraram",
+ "op_q18_c": "Sangue velho",
+ "op_q19_a": "Porque os rins precisam de água para filtrar o sangue",
+ "op_q19_b": "Porque o coração para de bombear",
+ "op_q19_c": "Porque a comida fica presa no estômago",
+ "op_q1_a": "Pela BOCA",
+ "op_q1_b": "Pelo ESTÔMAGO",
+ "op_q1_c": "Pelo INTESTINO",
+ "op_q20_a": "Menos oxigênio e nutrientes",
+ "op_q20_b": "Mais oxigênio e nutrientes",
+ "op_q20_c": "Apenas água",
+ "op_q21_a": "Para levar o sangue mais depressa até os músculos",
+ "op_q21_b": "Para esfriar o sangue",
+ "op_q21_c": "Para o alimento descer mais rápido",
+ "op_q22_a": "Do alimento que comemos, queimado com o oxigênio",
+ "op_q22_b": "Do ar, sozinho",
+ "op_q22_c": "Da água que bebemos",
+ "op_q23_a": "Não precisa de oxigênio nenhum",
+ "op_q23_b": "Recebe energia, mas o corpo também precisa de movimento para ficar saudável",
+ "op_q23_c": "Não digere o alimento",
+ "op_q24_a": "1A",
+ "op_q24_b": "1E",
+ "op_q24_c": "3A",
+ "op_q25_a": "1A",
+ "op_q25_b": "4B",
+ "op_q25_c": "2D",
+ "op_q26_a": "4D",
+ "op_q26_b": "3E",
+ "op_q26_c": "5C",
+ "op_q27_a": "2D",
+ "op_q27_b": "3A",
+ "op_q27_c": "4B",
+ "op_q28_a": "5C, o cérebro",
+ "op_q28_b": "3E, o fígado",
+ "op_q28_c": "2D, o intestino delgado",
+ "op_q2_a": "Para triturar o alimento em pedaços pequenos",
+ "op_q2_b": "Para empurrar o alimento até o pulmão",
+ "op_q2_c": "Para produzir o sangue",
+ "op_q3_a": "Só porque a comida é gostosa",
+ "op_q3_b": "Para o corpo receber energia e crescer",
+ "op_q3_c": "Para encher o estômago de ar",
+ "op_q4_a": "Deixa o alimento seco e duro",
+ "op_q4_b": "Umedece o alimento e ajuda a engolir",
+ "op_q4_c": "Separa o ar do alimento",
+ "op_q5_a": "Para pegar o oxigênio do ar e soltar o gás carbônico",
+ "op_q5_b": "Para esquentar o corpo por dentro",
+ "op_q5_c": "Para triturar o alimento",
+ "op_q6_a": "Pela boca, porque entra mais ar de uma vez",
+ "op_q6_b": "Pelo nariz, porque ele filtra, aquece e umedece o ar",
+ "op_q6_c": "Tanto faz: os dois são iguais",
+ "op_q7_a": "Deixam o ar mais gelado",
+ "op_q7_b": "Seguram a sujeira e as impurezas do ar",
+ "op_q7_c": "Empurram o ar até o estômago",
+ "op_q8_a": "É, e é ele que guarda o ar",
+ "op_q8_b": "Não: é um MÚSCULO que ajuda o ar a entrar e a sair",
+ "op_q8_c": "É, e fica dentro do pulmão",
+ "op_q9_a": "O PULMÃO",
+ "op_q9_b": "O ESTÔMAGO",
+ "op_q9_c": "O CORAÇÃO",
+ "org_alveo": "ALVÉOLOS.",
+ "org_arte": "ARTÉRIAS.",
+ "org_boca": "BOCA.",
+ "org_bron": "BRÔNQUIOS.",
+ "org_capi": "CAPILARES.",
+ "org_cora": "CORAÇÃO.",
+ "org_cora2": "CORAÇÃO, DE VOLTA.",
+ "org_corre": "CORRE.",
+ "org_descansa": "DESCANSA.",
+ "org_diaf": "DIAFRAGMA.",
+ "org_energia": "ENERGIA.",
+ "org_esof": "ESÔFAGO.",
+ "org_esto": "ESTÔMAGO.",
+ "org_faringe": "FARINGE.",
+ "org_figa": "FÍGADO.",
+ "org_idel": "INTESTINO DELGADO.",
+ "org_igro": "INTESTINO GROSSO.",
+ "org_laringe": "LARINGE.",
+ "org_musculo": "MÚSCULO.",
+ "org_nariz": "NARIZ.",
+ "org_ofega": "OFEGA.",
+ "org_panc": "PÂNCREAS.",
+ "org_pulm": "PULMÕES.",
+ "org_rins": "RINS.",
+ "org_sangue": "SANGUE.",
+ "org_traq": "TRAQUEIA.",
+ "org_veia": "VEIAS.",
+ "p10enun": "Folha 10: Os órgãos da respiração. Leia o que cada parte da respiração faz e puxe o nome certo.",
+ "p11enun": "Folha 11: O caminho do ar. Ponha em ordem o caminho do ar, de onde ele entra até onde ele chega.",
+ "p12enun": "Folha 12: O caminho do ar, de novo. O caminho do ar de novo, agora até os alvéolos, lá no fundo do pulmão.",
+ "p13enun": "Folha 13: O que cada órgão do ar faz. Ligue cada órgão do ar ao que ele faz.",
+ "p14enun": "Folha 14: Nariz ou boca?. Preencha as frases sobre o ar que entra no corpo.",
+ "p15enun": "Folha 15: Puxo o ar, solto o ar. Cada frase é de quando o ar ENTRA ou de quando o ar SAI? Leve para a gaveta certa.",
+ "p16enun": "Folha 16: Cruza-respiração. Leia a pista e preencha a palavra na cruzadinha da respiração.",
+ "p17enun": "Folha 17: A bomba do corpo. Leia a pergunta sobre o coração e o sangue e toque na resposta certa.",
+ "p18enun": "Folha 18: O que o sangue leva. Preencha as frases sobre o que o sangue faz.",
+ "p19enun": "Folha 19: Coração, veia e artéria. Leia o que cada parte do sistema circulatório faz e puxe o nome certo.",
+ "p1enun": "Folha 1: Onde tudo começa. Leia a pergunta e toque na resposta certa.",
+ "p20enun": "Folha 20: Os vasos e o que fazem. Ligue cada vaso ao que ele faz.",
+ "p21enun": "Folha 21: Preencha: o sangue. Preencha as frases sobre a energia e o que o sangue carrega.",
+ "p22enun": "Folha 22: O caminho do sangue. Ponha em ordem o caminho do sangue, saindo do coração e voltando para ele.",
+ "p23enun": "Folha 23: É verdade ou é falso?. Leia cada frase e leve para a gaveta: é verdade ou é falso?",
+ "p24enun": "Folha 24: Caça-palavras da circulação. Ache na grade as palavras da circulação.",
+ "p25enun": "Folha 25: Respirar enquanto come. Agora os três sistemas juntos. Leia e toque na resposta certa.",
+ "p26enun": "Folha 26: Do prato até a célula. Ponha em ordem a viagem do nutriente, do prato até a célula.",
+ "p27enun": "Folha 27: Preencha: a viagem do nutriente. Preencha as frases sobre a viagem do nutriente.",
+ "p28enun": "Folha 28: Onde o nutriente entra. Onde cada coisa entra no sangue? Toque na resposta certa.",
+ "p29enun": "Folha 29: Por onde sai o que não serve. E o que o corpo não quer mais, por onde sai? Toque na resposta certa.",
+ "p2enun": "Folha 2: Os órgãos da digestão. Puxe o nome certo para cada órgão, ou toque no órgão e depois no nome.",
+ "p30enun": "Folha 30: Os rins e a água. Pense no que acontece quando falta água no corpo.",
+ "p31enun": "Folha 31: De que sistema é cada um?. De que sistema é cada órgão? Leve cada um para a gaveta dele.",
+ "p32enun": "Folha 32: Pedro correu no recreio. Pedro correu no recreio. Leia e toque na resposta certa.",
+ "p33enun": "Folha 33: O que acontece quando corro. Ligue o que acontece no corpo de quem corre ao motivo disso.",
+ "p34enun": "Folha 34: O alimento é o combustível. De onde vem a energia do corpo? Toque na resposta certa.",
+ "p35enun": "Folha 35: Ache o órgão na grade. Olhe a grade de quadrinhos e diga onde está cada órgão.",
+ "p36enun": "Folha 36: Cruzadinha dos três sistemas. A cruzadinha do fim: pistas dos três sistemas juntos.",
+ "p3enun": "Folha 3: Os órgãos da digestão, de novo. De novo os órgãos da digestão. Agora sem a ajuda da primeira vez.",
+ "p4enun": "Folha 4: O caminho do alimento. Ponha o caminho do alimento em ordem: para cada órgão, toque no número do lugar dele.",
+ "p5enun": "Folha 5: O que cada órgão faz. Toque no órgão de um lado e no que ele faz do outro.",
+ "p6enun": "Folha 6: O que cada órgão faz, de novo. Ligue de novo. Agora entram o fígado e o pâncreas, que ajudam a digestão.",
+ "p7enun": "Folha 7: Preencha o caminho. Preencha a palavra que falta. Dá para usar o teclado da tela ou o de verdade.",
+ "p8enun": "Folha 8: Caça-órgãos da digestão. Ache na grade o nome de cada órgão da digestão.",
+ "p9enun": "Folha 9: Para que serve respirar. Leia a pergunta sobre a respiração e toque na resposta certa.",
+ "perg_q1": "Por onde a digestão começa?",
+ "perg_q10": "O sistema circulatório tem como principal função:",
+ "perg_q11": "O que o coração faz o dia inteiro, sem parar?",
+ "perg_q12": "O que o sangue leva para todas as partes do corpo?",
+ "perg_q13": "Por que é importante respirar enquanto o corpo digere o alimento?",
+ "perg_q14": "Um sozinho não dá conta. Por quê?",
+ "perg_q15": "Onde os nutrientes do alimento passam para o sangue?",
+ "perg_q16": "Onde o oxigênio do ar passa para o sangue?",
+ "perg_q17": "Qual órgão filtra o sangue e ajuda a eliminar o que não serve?",
+ "perg_q18": "O que sai do corpo quando soltamos o ar?",
+ "perg_q19": "Quando bebemos pouca água, os rins têm mais dificuldade. Por quê?",
+ "perg_q2": "Para que servem os dentes?",
+ "perg_q20": "Pedro correu no recreio e ficou ofegante. Isso aconteceu porque o corpo precisou de:",
+ "perg_q21": "Correndo, o coração de Pedro bate mais rápido. Para quê?",
+ "perg_q22": "De onde vem a energia que você usa para correr e pensar?",
+ "perg_q23": "Uma criança que come bem mas quase não se mexe:",
+ "perg_q24": "Na grade, em qual quadrinho está o órgão por onde se inicia a digestão?",
+ "perg_q25": "Na grade, em qual quadrinho está o ESTÔMAGO?",
+ "perg_q26": "Na grade, em qual quadrinho está o CORAÇÃO?",
+ "perg_q27": "Na grade, em qual quadrinho estão os PULMÕES?",
+ "perg_q28": "Na grade, qual quadrinho tem um órgão que NÃO é dos três sistemas?",
+ "perg_q3": "Por que precisamos comer?",
+ "perg_q4": "O que a saliva faz com o alimento na boca?",
+ "perg_q5": "Para que serve a respiração?",
+ "perg_q6": "É mais saudável respirar pelo nariz ou pela boca?",
+ "perg_q7": "O que os pelinhos do nariz fazem?",
+ "perg_q8": "O diafragma é um órgão do sistema respiratório?",
+ "perg_q9": "Qual é o principal órgão do sistema circulatório?",
+ "toque_palavra": "Primeiro toque numa palavra ali embaixo. Depois toque na gaveta dela.",
+ "vozOn": "Narração ligada!"
+};
+/*FALAS-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1j9m7w": 1, "7b7qwt": 1, "3bna8i": 1, "on8wrl": 1, "3h9rzp": 1, "1x6vlgf": 1, "49rs8l": 1, "1ub3nn4": 1, "1b1a47": 1, "11d62gu": 1, "6sgj8x": 1, "ghwsam": 1, "1j1ibqq": 1, "1qzvv9l": 1, "75173b": 1, "1yve756": 1, "l788xp": 1, "dpk8qr": 1, "19hxlwp": 1, "z28au4": 1, "1bc8jkb": 1, "1cvsmdx": 1, "1jzozau": 1, "1jmkwq1": 1, "t3gsm8": 1, "1afjgk4": 1, "ak3yme": 1, "fl0ail": 1, "golvdk": 1, "1mzeext": 1, "6pzjax": 1, "hlyw4w": 1, "82px5y": 1, "v47r34": 1, "13czdq6": 1, "1slpo1j": 1, "1b74d3g": 1, "tncshd": 1, "1fs4qbr": 1, "150q6sw": 1, "zidcqz": 1, "1qeuygw": 1, "1cqskhg": 1, "yf565o": 1, "1j1saud": 1, "1os500p": 1, "j0g48i": 1, "7wth1q": 1, "4rqdz5": 1, "h47m8x": 1, "1osh15b": 1, "1ikk3p2": 1, "pj63fl": 1, "md32lj": 1, "1d2lucu": 1, "twburv": 1, "132gtjm": 1, "10eka95": 1, "1c6l7b4": 1, "ihfekc": 1, "fv55cu": 1, "squf2l": 1, "1a00hjb": 1, "1fgt2gl": 1, "1cjcodn": 1, "1qmlkga": 1, "q8e8c5": 1, "1g6ybtw": 1, "tazrwd": 1, "fks71w": 1, "h2qhbk": 1, "pw3kgc": 1, "n8x08p": 1, "1sty8m7": 1, "1q171z6": 1, "1n4sgc2": 1, "juyw33": 1, "183rd2o": 1, "14zwtgg": 1, "11cd50d": 1, "1e5lzuk": 1, "ptcecm": 1, "1n7uv9i": 1, "154xxnw": 1, "p0tsb": 1, "ftuzjp": 1, "1s206oe": 1, "1yve6vy": 1, "1ecqr47": 1, "1eg28g0": 1, "5iq40u": 1, "o3znq0": 1, "yzp5wk": 1, "pk4knj": 1, "6qigxt": 1, "owcl89": 1, "62ywby": 1, "1l9vhqi": 1, "1w6wjc2": 1, "cc95so": 1, "1c22nn5": 1, "1z4jiv": 1, "1dcaf2y": 1, "3nr49a": 1, "2ufjrl": 1, "18h50wt": 1, "ofjdkq": 1, "18jws3z": 1, "xfa6c7": 1, "1acsi0d": 1, "1cdsuqs": 1, "xzvwlk": 1, "m41n2b": 1, "1hdm8h1": 1, "15cwm9c": 1, "1b2gutp": 1, "1do5zv": 1, "7sogh3": 1, "av8hua": 1, "1bixrtd": 1, "xf5a0q": 1, "1g31eat": 1, "1oo82ok": 1, "jjtne5": 1, "1r4bdk7": 1, "qaddf6": 1, "zzvduf": 1, "gs6u2g": 1, "1moez0c": 1, "10vhbxn": 1, "1q9wh92": 1, "1qzq7r8": 1, "1hfflrd": 1, "1jlvcam": 1, "fzjpsc": 1, "15byaj3": 1, "pqwvm4": 1, "2obtnc": 1, "1gqke69": 1, "nk3w4t": 1, "1jdchhf": 1, "1t2eapa": 1, "17prv9d": 1, "1in6ipz": 1, "10r110c": 1, "1jcuvhh": 1, "m5jhce": 1, "1ql1nj6": 1, "uj6lt7": 1, "8wuq5f": 1, "yc18lr": 1, "yc18ln": 1, "yc18ob": 1, "yc18g9": 1, "124s3d8": 1, "1ze6l2": 1, "skaqpo": 1, "l10l0x": 1, "x5mrnm": 1, "10dx7b6": 1, "hfuvyv": 1, "mgn28": 1, "1antd0v": 1, "12eiu3l": 1, "1153qrs": 1, "1lyq2qb": 1, "1l8oqfn": 1, "qo2nhi": 1, "1k19hhc": 1, "139q2nx": 1, "ejrf1p": 1, "1rszpvy": 1, "12r5flk": 1, "1g799an": 1, "1hg42p9": 1, "61yc3t": 1, "19my8ng": 1, "oy7bjp": 1, "goae62": 1, "19ftvfo": 1, "twnuku": 1, "lvbqpn": 1, "1uhydv0": 1, "b4w8w7": 1, "gv6kbf": 1, "zhlqsa": 1, "10mgphx": 1, "k31n85": 1, "f6wl93": 1, "19bk2k4": 1, "13pia7j": 1, "9v8kyj": 1, "6of7qe": 1, "1k7nvcz": 1, "opfqtg": 1, "1vq431": 1, "1ay2yq": 1, "1xw35ro": 1, "1yoti9k": 1, "f1qh0j": 1, "rq27xp": 1, "zy6ji1": 1, "10e5a1e": 1, "tbuj8m": 1, "13d4p8s": 1, "c0w8h1": 1, "c76mm1": 1, "1g6k5of": 1, "wpd88z": 1, "1scjyjw": 1, "172h0t3": 1, "peh4z0": 1, "1ot1ybt": 1, "eyu1sg": 1, "ihp2y": 1, "1mhz8oj": 1, "rd2w6d": 1, "17spu1v": 1, "s69mtb": 1, "1i6j393": 1, "1mfsz6a": 1, "1c9seve": 1, "ljxoyk": 1, "1dj5pu9": 1, "rw06zk": 1, "hzeh79": 1, "1cl9kd1": 1, "qy8532": 1, "7mwuye": 1, "1qpil3s": 1, "1jb1zlp": 1, "k10ps2": 1, "yv8otv": 1, "1xt4j62": 1, "1ba0e3k": 1, "d5ptbp": 1, "159bsog": 1, "l1txu5": 1, "6wa7z": 1, "1o5e8s0": 1, "164khmj": 1, "1hbszzg": 1, "kkos8h": 1, "3w0sn7": 1, "16akpa": 1, "tkarx5": 1, "d4o9il": 1, "1d9s73k": 1, "het6q": 1, "f9qjfm": 1, "1ueyzo4": 1, "6l3pmi": 1, "dczp9w": 1, "yspc3x": 1, "sn0e5c": 1, "1spfbw5": 1, "8bih3k": 1, "1gr7oyg": 1, "yhmo8z": 1, "1bwvuj0": 1, "68msq": 1, "rolli8": 1, "1qzksyz": 1, "1dca85a": 1, "72s9ai": 1, "1g3tg5h": 1, "1gp40gz": 1, "1ihfhvi": 1, "c7o7jw": 1, "1x5b1l1": 1, "1nfzgaj": 1, "1ayrip0": 1, "3ljul2": 1, "4us785": 1, "luen53": 1, "1oaaion": 1, "1gy5wjf": 1, "1gy5wig": 1, "1gy5wl5": 1, "1gy5wda": 1, "1gy5wfz": 1, "1gy5wf0": 1, "1gy5whp": 1, "1nvu46x": 1, "wrmnht": 1, "1qxvpdo": 1, "1lfdv76": 1, "jjxzpf": 1, "1u27kuu": 1, "lzr52v": 1, "1my1xly": 1, "19ta9d3": 1, "1s1ih8w": 1, "l8eadb": 1, "6k4l7e": 1, "t6p0nn": 1, "m7wduo": 1, "13bn0u0": 1, "1jm3rkm": 1, "1en2119": 1, "14bbx74": 1, "1t9s1gw": 1, "ke9oda": 1, "8pdyjc": 1, "bdmlvj": 1, "1ys4we1": 1, "14imy6i": 1, "1dejqd2": 1, "1t7syxu": 1, "1lhx285": 1, "b87mry": 1, "cjztyq": 1, "4sbu5d": 1, "btiqay": 1, "jwlkvw": 1, "syo300": 1, "1g1y18f": 1, "1kbafmk": 1, "zr54fv": 1, "1cgtczk": 1, "7x8xp1": 1, "1e2e0k7": 1, "1rd78de": 1, "1h6f1pz": 1, "16wnh25": 1, "9f4k95": 1, "3hl6d": 1, "3hl69": 1, "3hl4n": 1, "3hl1v": 1, "3hl3n": 1, "3hl1x": 1, "3hl4j": 1, "3hl2r": 1, "1dj6euq": 1, "sor3sm": 1, "5kybqh": 1, "9kgxln": 1, "w6yu6s": 1, "a4gxa6": 1, "ayshdq": 1, "o23joo": 1, "1bmfiov": 1, "16ufg1d": 1, "7c7xhe": 1, "1yi2hz3": 1, "fi3ndb": 1, "18iqhuk": 1, "hml1we": 1, "i3b1wq": 1, "1amdc1o": 1, "3co1e8": 1, "kfpi47": 1, "5l0vlo": 1, "1t2fyxl": 1, "q4y93t": 1, "1b0v5nt": 1, "16a5yzx": 1, "10cqmo2": 1, "va4bjy": 1, "tmytom": 1, "2wkdqc": 1, "2cojw0": 1, "k0sizd": 1, "3ukhgy": 1, "pju3uq": 1, "92pllz": 1, "4jv3yw": 1, "xcw5ff": 1, "1802tf1": 1, "1i1u9t3": 1, "15lga41": 1, "1awsbmi": 1, "rg7ev9": 1, "rztz35": 1, "fpdl81": 1, "382571": 1, "18bgpnk": 1, "zjen50": 1, "hvi1tz": 1, "1p9g0ky": 1, "zzvmge": 1, "vuzsjy": 1, "1i9jmth": 1, "1he07tp": 1, "1c3t1v0": 1, "sz7exg": 1, "94bo1h": 1, "14a8ko8": 1, "t5up7": 1, "2glcih": 1, "1c1ve4x": 1, "xuekxr": 1, "tmss7v": 1, "bwoxf": 1, "1yk2ddb": 1, "1bhc8xz": 1, "9lm87o": 1, "9qrrbv": 1, "12s56gl": 1, "1faiyq1": 1, "14cgylp": 1, "eb6jg1": 1, "1xuz53g": 1, "t386vq": 1, "1p6qvge": 1, "1kuzimp": 1, "vfic18": 1, "4qe7xn": 1, "1m8wvve": 1, "18uj987": 1, "1ond4j0": 1, "1ce2un8": 1, "rf6op9": 1, "1c6jsc0": 1, "64rrj6": 1, "1xusd4k": 1, "jb1i48": 1, "1tmcxgb": 1, "fulwd5": 1, "11wr6j6": 1, "jdf2rk": 1, "11qmexw": 1, "1avajl9": 1, "hrzzv7": 1, "1722q6q": 1, "1slls3n": 1, "c0f6z": 1, "fsxlba": 1, "jos6qd": 1, "1i4w19f": 1, "1p6xjs0": 1, "125cd46": 1, "ih7g7f": 1, "1qrfx4i": 1, "ja6owe": 1, "n36ddr": 1, "11d7twq": 1, "1whock1": 1, "vuuhyq": 1, "qfu88u": 1, "anfq5e": 1, "qqiw6i": 1, "swkns7": 1};/*VOZOK-FIM*/
+
+/* ============================================================
+   OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
+   ⚠️ POR QUE JSON E NÃO OBJETO SOLTO: o `gerar_falas.py` LÊ ESTE BLOCO para
+   escrever as falas. Se os dados vivessem em dois lugares (aqui e lá), a voz
+   diria uma coisa e a tela mostraria outra — que é o defeito que o `falas.json`
+   existe para matar. Um lugar só, lido pelos dois.
+   ============================================================ */
+/*DADOS-INI*/
+/* ============================================================
+   OS DADOS DAS FOLHAS — o conteúdo deste caderno, e só dele.
+
+   ⚠️ TUDO AQUI VEIO DE UMA FOLHA DE PAPEL COLHIDA. O crivo — comando impresso
+      VERBATIM, verbo e o parecer do pedagogo de cada uma das 78 — mora em
+      `_sequencias/POTE-CORPO5.md`. Ao lado de cada bloco está a folha de onde
+      ele saiu (d04, c24…). Os três blocos que NÃO vieram do papel estão
+      marcados com ⭐NOVO e o motivo escrito, como manda a regra.
+
+   ⚠️ A FAIXA DO CONTEÚDO É O NÚCLEO DO CURRÍCULO: função dos órgãos, caminho do
+      alimento, do ar e do sangue, e a integração entre os três sistemas. Fora
+      ficaram sístole/diástole, válvulas por nome, enzimas por nome, doenças e
+      histologia — nenhum desses termos existe no currículo de Blumenau, em ano
+      nenhum (contagem no POTE §1).
+   ============================================================ */
+
+/* OS ÓRGÃOS — nome, a que sistema pertence, a figura recortada e O QUE FAZ.
+   O "faz" é a coluna que o currículo cobra: *"a função de cada um de seus
+   órgãos"*. Escrito em linguagem de 5º ano, sem termo de bioquímica. */
+/* ⚠️ O CAMPO `art` É O ARTIGO, e ele existe porque a voz dizia "o BOCA" e "o
+   TRAQUEIA". As falas são MONTADAS a partir do nome do órgão, e um "O " fixo na
+   frente acerta em estômago e erra em boca, faringe, laringe, traqueia,
+   artérias e veias — metade dos órgãos deste caderno. Quem pegou foi o
+   `_qa/revisor.py`, antes de qualquer criança ouvir. */
+var ORG = {
+  "boca":   {"art": "a", "n": "BOCA", "s": "dig", "fig": "", "faz": "onde a digestão começa: os dentes trituram e a saliva umedece o alimento"},
+  "esof":   {"art": "o", "n": "ESÔFAGO", "s": "dig", "fig": "vd_esofago", "faz": "o tubo que leva o alimento da boca até o estômago"},
+  "esto":   {"art": "o", "n": "ESTÔMAGO", "s": "dig", "fig": "vd_estomago", "faz": "onde o alimento é misturado e vira uma papa"},
+  "idel":   {"art": "o", "n": "INTESTINO DELGADO", "s": "dig", "fig": "vd_intdelgado", "faz": "onde os nutrientes passam do alimento para o sangue"},
+  "igro":   {"art": "o", "n": "INTESTINO GROSSO", "s": "dig", "fig": "vd_intgrosso", "faz": "onde a água é aproveitada e se formam as fezes"},
+  "figa":   {"art": "o", "n": "FÍGADO", "s": "dig", "fig": "vd_figado", "faz": "produz um líquido que ajuda a digerir a gordura"},
+  "panc":   {"art": "o", "n": "PÂNCREAS", "s": "dig", "fig": "vd_pancreas", "faz": "produz um suco que ajuda a terminar a digestão"},
+  "nariz":  {"art": "o", "n": "NARIZ", "s": "res", "fig": "", "faz": "filtra, aquece e umedece o ar que entra"},
+  "faringe":{"art": "a", "n": "FARINGE", "s": "res", "fig": "", "faz": "o cruzamento por onde passam o ar e o alimento"},
+  "laringe":{"art": "a", "n": "LARINGE", "s": "res", "fig": "", "faz": "onde ficam as pregas vocais, que fazem a voz"},
+  "traq":   {"art": "a", "n": "TRAQUEIA", "s": "res", "fig": "", "faz": "um tubo de anéis que leva o ar até os brônquios"},
+  "bron":   {"art": "o", "n": "BRÔNQUIOS", "s": "res", "fig": "", "faz": "os dois tubos que levam o ar para dentro de cada pulmão"},
+  "pulm":   {"art": "o", "n": "PULMÕES", "s": "res", "fig": "vd_corpores", "faz": "onde o oxigênio do ar passa para o sangue"},
+  "alveo":   {"art": "o", "n": "ALVÉOLOS", "s": "res", "fig": "vd_alveolos", "faz": "as bolsinhas onde o ar encontra o sangue"},
+  "diaf":   {"art": "o", "n": "DIAFRAGMA", "s": "res", "fig": "", "faz": "o músculo abaixo dos pulmões que puxa e empurra o ar"},
+  "cora":   {"art": "o", "n": "CORAÇÃO", "s": "cir", "fig": "vd_coracao", "faz": "a bomba que empurra o sangue para o corpo inteiro"},
+  "sangue": {"art": "o", "n": "SANGUE", "s": "cir", "fig": "", "faz": "leva oxigênio e nutrientes e recolhe o que não serve"},
+  "arte":   {"art": "a", "n": "ARTÉRIAS", "s": "cir", "fig": "", "faz": "levam o sangue do coração para o corpo"},
+  "veia":   {"art": "a", "n": "VEIAS", "s": "cir", "fig": "", "faz": "trazem o sangue do corpo de volta ao coração"},
+  "capi":   {"art": "o", "n": "CAPILARES", "s": "cir", "fig": "", "faz": "vasos finíssimos onde a troca acontece"},
+  "rins":   {"art": "o", "n": "RINS", "s": "cir", "fig": "", "faz": "filtram o sangue e tiram o que não serve mais"},
+  "cora2":  {"art": "o", "n": "CORAÇÃO, DE VOLTA", "s": "cir", "fig": "vd_coracao", "faz": "o sangue volta para o coração e a viagem recomeça"}
+};
+
+/* AS PERGUNTAS DE ESCOLHER — `p` é o que se pergunta, `o` as opções e `c` a
+   certa. A chave é número (q1, q2…), NUNCA a palavra: o portão
+   `resposta_impressa.py` lê a resposta declarada dentro do texto e acusa.
+   ⚠️ As opções erradas NÃO são bobas. Cada uma é um engano que a criança de 5º
+      ano comete de verdade (confundir o órgão, trocar o sistema, achar que o
+      pulmão manda o ar direto para o corpo). Opção boba vira loteria. */
+/* ⚠️ OS COMENTÁRIOS FICAM AQUI FORA, E ISSO NÃO É ESTILO: o leitor do
+   `gerar_falas.py` lê este bloco com `json.loads`, e JSON não tem
+   comentario. Um comentario de barra-asterisco dentro do objeto derruba a
+   leitura inteira — e note a ironia: escrever o simbolo de FECHAR comentario
+   aqui dentro fechou ESTE comentario cedo, e o resto do texto virou codigo.
+   O boot acusou na hora: "Unexpected identifier '_dedos'". Por isso o
+   simbolo esta escrito por extenso —
+   foi o que aconteceu aqui, e é a mesma armadilha que me mordeu no `_dedos`
+   ontem, com o bloco TRABALHO.
+   DE ONDE VEIO CADA PERGUNTA:
+     q1–q4   f1  · d37 ("Para que servem os dentes?", "Por que razão
+                   precisamos de alimentos?") e d44 ("o órgão por onde se
+                   inicia a digestão")
+     q5–q8   f9  · d28 ("A respiração é a forma pela qual obtemos gás
+                   oxigênio…") e d19 ("o diafragma não é um órgão do sistema
+                   respiratório, mas um músculo")
+     q9–q12  f17/f18 · c01 ("identifique o principal órgão", "tem como
+                   principal função")
+     q13–q14 f25 · d04, pergunta 5 VERBATIM: "por que é importante respirar
+                   enquanto nosso corpo digere os alimentos?"
+     q15–q18 f28/f29 · c24 ("marque um X onde ocorre a absorção") e c05
+                   ("qual órgão filtra o sangue")
+     q19     f30 · c05, situação-problema VERBATIM dos rins e da água
+     q20–q21 f32 · c24, situação-problema VERBATIM: "Pedro correu no recreio
+                   e ficou ofegante"
+     q22–q23 f34 · ⭐NOVO — o currículo pede "Os alimentos como fonte de
+                   energia" e NENHUMA das 78 folhas trata disso
+     q24–q28 f35 · d44, o gesto da grade de coordenadas
+   ⚠️ AS OPÇÕES ERRADAS NÃO SÃO BOBAS: cada uma é um engano que a criança de
+      5º ano comete de verdade. Opção boba vira loteria. */
+var PERG = {
+  "q1": {"p": "Por onde a digestão começa?", "o": [["a", "Pela BOCA"], ["b", "Pelo ESTÔMAGO"], ["c", "Pelo INTESTINO"]], "c": "a"},
+  "q2": {"p": "Para que servem os dentes?", "o": [["a", "Para triturar o alimento em pedaços pequenos"], ["b", "Para empurrar o alimento até o pulmão"], ["c", "Para produzir o sangue"]], "c": "a"},
+  "q3": {"p": "Por que precisamos comer?", "o": [["a", "Só porque a comida é gostosa"], ["b", "Para o corpo receber energia e crescer"], ["c", "Para encher o estômago de ar"]], "c": "b"},
+  "q4": {"p": "O que a saliva faz com o alimento na boca?", "o": [["a", "Deixa o alimento seco e duro"], ["b", "Umedece o alimento e ajuda a engolir"], ["c", "Separa o ar do alimento"]], "c": "b"},
+  "q5": {"p": "Para que serve a respiração?", "o": [["a", "Para pegar o oxigênio do ar e soltar o gás carbônico"], ["b", "Para esquentar o corpo por dentro"], ["c", "Para triturar o alimento"]], "c": "a"},
+  "q6": {"p": "É mais saudável respirar pelo nariz ou pela boca?", "o": [["a", "Pela boca, porque entra mais ar de uma vez"], ["b", "Pelo nariz, porque ele filtra, aquece e umedece o ar"], ["c", "Tanto faz: os dois são iguais"]], "c": "b"},
+  "q7": {"p": "O que os pelinhos do nariz fazem?", "o": [["a", "Deixam o ar mais gelado"], ["b", "Seguram a sujeira e as impurezas do ar"], ["c", "Empurram o ar até o estômago"]], "c": "b"},
+  "q8": {"p": "O diafragma é um órgão do sistema respiratório?", "o": [["a", "É, e é ele que guarda o ar"], ["b", "Não: é um MÚSCULO que ajuda o ar a entrar e a sair"], ["c", "É, e fica dentro do pulmão"]], "c": "b"},
+  "q9": {"p": "Qual é o principal órgão do sistema circulatório?", "o": [["a", "O PULMÃO"], ["b", "O ESTÔMAGO"], ["c", "O CORAÇÃO"]], "c": "c"},
+  "q10": {"p": "O sistema circulatório tem como principal função:", "o": [["a", "Transformar o alimento em nutrientes"], ["b", "Transportar nutrientes, gases e resíduos pelo corpo"], ["c", "Captar o oxigênio do ar"]], "c": "b"},
+  "q11": {"p": "O que o coração faz o dia inteiro, sem parar?", "o": [["a", "Bombeia o sangue para todo o corpo"], ["b", "Guarda o alimento que comemos"], ["c", "Enche-se de ar quando respiramos"]], "c": "a"},
+  "q12": {"p": "O que o sangue leva para todas as partes do corpo?", "o": [["a", "Só água"], ["b", "Oxigênio e nutrientes"], ["c", "Só o ar que respiramos"]], "c": "b"},
+  "q13": {"p": "Por que é importante respirar enquanto o corpo digere o alimento?", "o": [["a", "Porque o ar empurra o alimento para baixo"], ["b", "Porque o corpo precisa do oxigênio para usar a energia do alimento"], ["c", "Porque a respiração esfria o estômago"]], "c": "b"},
+  "q14": {"p": "Um sozinho não dá conta. Por quê?", "o": [["a", "Porque cada sistema faz uma parte, e os três trabalham juntos"], ["b", "Porque um deles descansa enquanto o outro trabalha"], ["c", "Porque só o coração é importante"]], "c": "a"},
+  "q15": {"p": "Onde os nutrientes do alimento passam para o sangue?", "o": [["a", "No ESTÔMAGO"], ["b", "No INTESTINO DELGADO"], ["c", "Nos PULMÕES"]], "c": "b"},
+  "q16": {"p": "Onde o oxigênio do ar passa para o sangue?", "o": [["a", "Nos PULMÕES"], ["b", "No CORAÇÃO"], ["c", "No ESTÔMAGO"]], "c": "a"},
+  "q17": {"p": "Qual órgão filtra o sangue e ajuda a eliminar o que não serve?", "o": [["a", "Os PULMÕES"], ["b", "O ESTÔMAGO"], ["c", "Os RINS"]], "c": "c"},
+  "q18": {"p": "O que sai do corpo quando soltamos o ar?", "o": [["a", "Gás carbônico, que o corpo não quer mais"], ["b", "Nutrientes que sobraram"], ["c", "Sangue velho"]], "c": "a"},
+  "q19": {"p": "Quando bebemos pouca água, os rins têm mais dificuldade. Por quê?", "o": [["a", "Porque os rins precisam de água para filtrar o sangue"], ["b", "Porque o coração para de bombear"], ["c", "Porque a comida fica presa no estômago"]], "c": "a"},
+  "q20": {"p": "Pedro correu no recreio e ficou ofegante. Isso aconteceu porque o corpo precisou de:", "o": [["a", "Menos oxigênio e nutrientes"], ["b", "Mais oxigênio e nutrientes"], ["c", "Apenas água"]], "c": "b"},
+  "q21": {"p": "Correndo, o coração de Pedro bate mais rápido. Para quê?", "o": [["a", "Para levar o sangue mais depressa até os músculos"], ["b", "Para esfriar o sangue"], ["c", "Para o alimento descer mais rápido"]], "c": "a"},
+  "q22": {"p": "De onde vem a energia que você usa para correr e pensar?", "o": [["a", "Do alimento que comemos, queimado com o oxigênio"], ["b", "Do ar, sozinho"], ["c", "Da água que bebemos"]], "c": "a"},
+  "q23": {"p": "Uma criança que come bem mas quase não se mexe:", "o": [["a", "Não precisa de oxigênio nenhum"], ["b", "Recebe energia, mas o corpo também precisa de movimento para ficar saudável"], ["c", "Não digere o alimento"]], "c": "b"},
+  "q24": {"p": "Na grade, em qual quadrinho está o órgão por onde se inicia a digestão?", "o": [["a", "1A"], ["b", "1E"], ["c", "3A"]], "c": "b"},
+  "q25": {"p": "Na grade, em qual quadrinho está o ESTÔMAGO?", "o": [["a", "1A"], ["b", "4B"], ["c", "2D"]], "c": "a"},
+  "q26": {"p": "Na grade, em qual quadrinho está o CORAÇÃO?", "o": [["a", "4D"], ["b", "3E"], ["c", "5C"]], "c": "a"},
+  "q27": {"p": "Na grade, em qual quadrinho estão os PULMÕES?", "o": [["a", "2D"], ["b", "3A"], ["c", "4B"]], "c": "b"},
+  "q28": {"p": "Na grade, qual quadrinho tem um órgão que NÃO é dos três sistemas?", "o": [["a", "5C, o cérebro"], ["b", "3E, o fígado"], ["c", "2D, o intestino delgado"]], "c": "a"}
+};
+
+/* OS PARES DE LIGAR — esquerda a direita. Sai de d14 ("Associe o órgão à sua
+   função na digestão"), d05 ("Numere as afirmativas de acordo com os órgãos"),
+   c01 ("RELACIONE CORRETAMENTE") e c21 ("LIGUE OS VASOS SANGUÍNEOS ÀS SUAS
+   CARACTERÍSTICAS"). A chave é número; o texto dos dois lados sai do ORG. */
+var LIGPARES = {
+  "g1": [["esto", "onde o alimento vira uma papa"], ["esof", "o tubo que leva o alimento ao estômago"], ["idel", "onde os nutrientes passam para o sangue"], ["igro", "onde se formam as fezes"], ["boca", "onde a digestão começa"]],
+  "g2": [["figa", "ajuda a digerir a gordura"], ["panc", "produz um suco que termina a digestão"], ["idel", "aqui o nutriente entra no sangue"], ["esto", "mistura o alimento com o suco do estômago"], ["igro", "aproveita a água que sobrou"]],
+  "g3": [["nariz", "filtra, aquece e umedece o ar"], ["traq", "tubo de anéis que leva o ar para baixo"], ["pulm", "aqui o oxigênio passa para o sangue"], ["laringe", "aqui ficam as pregas vocais"], ["diaf", "o músculo que puxa e empurra o ar"]],
+  "g4": [["cora", "bombeia o sangue"], ["arte", "levam o sangue do coração para o corpo"], ["veia", "trazem o sangue de volta ao coração"], ["capi", "vasos finíssimos onde a troca acontece"], ["sangue", "leva oxigênio e nutrientes"]],
+  "g5": [["corre", "o coração bate mais rápido"], ["ofega", "a respiração fica mais funda e mais rápida"], ["musculo", "recebe mais oxigênio pelo sangue", "MÚSCULO"], ["energia", "sai do alimento queimado com o oxigênio"], ["descansa", "tudo volta devagar ao normal"]]
+};
+
+/* AS GAVETAS — classificar em colunas. De d22 ("inspiração e expiração") e das
+   frases de verdadeiro/falso de c01, c05 e c24. */
+var GAV = {
+  "ar": {"cols": [{"k": "ins", "n": "QUANDO PUXO O AR"}, {"k": "exp", "n": "QUANDO SOLTO O AR"}],
+         "pal": {"a1": {"p": "o ar entra pelo nariz", "c": "ins"}, "a2": {"p": "o peito aumenta", "c": "ins"}, "a3": {"p": "o oxigênio chega aos pulmões", "c": "ins"}, "a4": {"p": "o diafragma desce", "c": "ins"}, "a5": {"p": "o ar sai pelo nariz", "c": "exp"}, "a6": {"p": "o peito diminui", "c": "exp"}, "a7": {"p": "o gás carbônico deixa o corpo", "c": "exp"}, "a8": {"p": "o diafragma sobe", "c": "exp"}}},
+  "vf": {"cols": [{"k": "sim", "n": "É VERDADE"}, {"k": "nao", "n": "É FALSO"}],
+         "pal": {"v1": {"p": "o sangue leva oxigênio para as células", "c": "sim"}, "v2": {"p": "os nutrientes chegam às células pelo sangue", "c": "sim"}, "v3": {"p": "os rins ajudam a limpar o sangue", "c": "sim"}, "v4": {"p": "o coração bombeia o sangue sem parar", "c": "sim"}, "v5": {"p": "o sistema circulatório funciona sozinho, sem os outros", "c": "nao"}, "v6": {"p": "os pulmões digerem o alimento", "c": "nao"}, "v7": {"p": "o estômago enche-se de ar quando respiramos", "c": "nao"}, "v8": {"p": "o intestino grosso bombeia o sangue", "c": "nao"}}},
+  "sis": {"cols": [{"k": "dig", "n": "DIGESTÓRIO"}, {"k": "res", "n": "RESPIRATÓRIO"}, {"k": "cir", "n": "CIRCULATÓRIO"}],
+          "pal": {"s1": {"p": "ESTÔMAGO", "c": "dig"}, "s2": {"p": "INTESTINO DELGADO", "c": "dig"}, "s3": {"p": "ESÔFAGO", "c": "dig"}, "s4": {"p": "PULMÕES", "c": "res"}, "s5": {"p": "TRAQUEIA", "c": "res"}, "s6": {"p": "DIAFRAGMA", "c": "res"}, "s7": {"p": "CORAÇÃO", "c": "cir"}, "s8": {"p": "VEIAS", "c": "cir"}, "s9": {"p": "ARTÉRIAS", "c": "cir"}}}
+};
+
+/* AS SEQUÊNCIAS DE NUMERAR — de d04 ("NUMERE DE 1 A 5 O CAMINHO DO ALIMENTO"),
+   d19 ("Siga as setas do percurso do ar") e c24 (o caminho do nutriente). */
+/* ⚠️ QUAL CAMINHO CADA FOLHA DE NUMERAR USA. O pote (`ITENS`) lista os ITENS,
+   porque é pelo tamanho dele que o `idsDaPagina` conta — guardar ali a chave do
+   caminho fazia a folha se dar por PRONTA com um item respondido e pular com
+   quatro ainda na tela. Quem pegou foi o `node _qa/conta_folha.js`. */
+var ORDDE = {"p4": "o1", "p11": "o2", "p12": "o3", "p22": "o5", "p26": "o4"};
+var ORDEM = {
+  "o1": {"t": "o caminho do ALIMENTO", "v": ["boca", "esof", "esto", "idel", "igro"]},
+  "o2": {"t": "o caminho do AR quando entra", "v": ["nariz", "faringe", "laringe", "traq", "bron", "pulm"]},
+  "o3": {"t": "o caminho do AR, de novo", "v": ["nariz", "traq", "bron", "pulm", "alveo"]},
+  "o4": {"t": "do PRATO até a CÉLULA", "v": ["boca", "esto", "idel", "sangue", "cora"]},
+  "o5": {"t": "o caminho do SANGUE", "v": ["cora", "arte", "capi", "veia", "cora2"]}
+};
+
+/* AS PALAVRAS DE ESCREVER no teclado — uma palavra só, sem espaço (o teclado da
+   casa não tem barra de espaço). De d28 ("COMPLETE AS FRASES COM AS PALAVRAS
+   ABAIXO"), c03 e c24. */
+var ESCR = {
+  "e1": {"fr": "O alimento sai da boca e desce pelo …", "w": "ESOFAGO", "ac": ["ESOFAGO", "ESÔFAGO"]},
+  "e2": {"fr": "No … o alimento é misturado e vira uma papa.", "w": "ESTOMAGO", "ac": ["ESTOMAGO", "ESTÔMAGO"]},
+  "e3": {"fr": "Os nutrientes passam para o sangue no intestino …", "w": "DELGADO", "ac": ["DELGADO"]},
+  "e4": {"fr": "As fezes se formam no intestino …", "w": "GROSSO", "ac": ["GROSSO"]},
+  "e5": {"fr": "O … produz um líquido que ajuda a digerir a gordura.", "w": "FIGADO", "ac": ["FIGADO", "FÍGADO"]},
+  "e6": {"fr": "É mais saudável respirar pelo …", "w": "NARIZ", "ac": ["NARIZ"]},
+  "e7": {"fr": "Os … do nariz seguram a sujeira do ar.", "w": "PELINHOS", "ac": ["PELINHOS", "PELOS"]},
+  "e8": {"fr": "O ar desce por um tubo de anéis chamado …", "w": "TRAQUEIA", "ac": ["TRAQUEIA", "TRAQUÉIA"]},
+  "e9": {"fr": "O oxigênio passa para o sangue dentro dos …", "w": "PULMOES", "ac": ["PULMOES", "PULMÕES"]},
+  "e10": {"fr": "O músculo abaixo dos pulmões chama-se …", "w": "DIAFRAGMA", "ac": ["DIAFRAGMA"]},
+  "e11": {"fr": "O … bombeia o sangue para o corpo todo.", "w": "CORACAO", "ac": ["CORACAO", "CORAÇÃO"]},
+  "e12": {"fr": "As … levam o sangue do coração para o corpo.", "w": "ARTERIAS", "ac": ["ARTERIAS", "ARTÉRIAS"]},
+  "e13": {"fr": "As … trazem o sangue de volta ao coração.", "w": "VEIAS", "ac": ["VEIAS"]},
+  "e14": {"fr": "O … leva oxigênio e nutrientes a todas as células.", "w": "SANGUE", "ac": ["SANGUE"]},
+  "e15": {"fr": "Os … filtram o sangue e tiram o que não serve.", "w": "RINS", "ac": ["RINS"]},
+  "e16": {"fr": "A energia do corpo vem do … que comemos.", "w": "ALIMENTO", "ac": ["ALIMENTO"]},
+  "e17": {"fr": "Para queimar o alimento o corpo precisa de …", "w": "OXIGENIO", "ac": ["OXIGENIO", "OXIGÊNIO"]},
+  "e18": {"fr": "O gás que soltamos quando expiramos é o gás …", "w": "CARBONICO", "ac": ["CARBONICO", "CARBÔNICO"]},
+  "e19": {"fr": "Os nutrientes são entregues às …", "w": "CELULAS", "ac": ["CELULAS", "CÉLULAS"]},
+  "e20": {"fr": "As bolsinhas onde o ar encontra o sangue são os …", "w": "ALVEOLOS", "ac": ["ALVEOLOS", "ALVÉOLOS"]}
+};
+
+/* OS CAÇA-PALAVRAS e as CRUZADINHAS, no formato das peças copiadas.
+   De d21 ("Caça-órgãos — encontre os nomes dos órgãos"), d31, c20, d34
+   ("Cruza-respiração") e c23 ("Cruza-corações").
+   ⚠️ A grade foi montada por script com SEMENTE FIXA (20260920): ela é sempre a
+      mesma, dá para conferir com o olho, e não muda sozinha entre uma abertura
+      e outra — caça-palavras que embaralha a cada vez tira da criança a chance
+      de voltar e terminar o que começou. */
+var CACA1 = {
+ "grade": [
+  [
+   "B",
+   "O",
+   "C",
+   "A",
+   "D",
+   "C",
+   "G",
+   "I",
+   "O",
+   "F",
+   "N"
+  ],
+  [
+   "Q",
+   "Q",
+   "S",
+   "H",
+   "F",
+   "I",
+   "G",
+   "A",
+   "D",
+   "O",
+   "L"
+  ],
+  [
+   "V",
+   "R",
+   "Q",
+   "M",
+   "P",
+   "H",
+   "S",
+   "O",
+   "U",
+   "G",
+   "B"
+  ],
+  [
+   "E",
+   "I",
+   "N",
+   "T",
+   "E",
+   "S",
+   "T",
+   "I",
+   "N",
+   "O",
+   "M"
+  ],
+  [
+   "P",
+   "T",
+   "Z",
+   "S",
+   "U",
+   "C",
+   "Z",
+   "J",
+   "I",
+   "F",
+   "G"
+  ],
+  [
+   "H",
+   "J",
+   "E",
+   "S",
+   "T",
+   "O",
+   "M",
+   "A",
+   "G",
+   "O",
+   "G"
+  ],
+  [
+   "Z",
+   "H",
+   "C",
+   "H",
+   "Z",
+   "R",
+   "I",
+   "B",
+   "C",
+   "Q",
+   "A"
+  ],
+  [
+   "Q",
+   "I",
+   "O",
+   "P",
+   "Z",
+   "C",
+   "T",
+   "Z",
+   "P",
+   "S",
+   "N"
+  ],
+  [
+   "J",
+   "V",
+   "T",
+   "P",
+   "A",
+   "N",
+   "C",
+   "R",
+   "E",
+   "A",
+   "S"
+  ],
+  [
+   "G",
+   "Q",
+   "C",
+   "J",
+   "A",
+   "F",
+   "Q",
+   "F",
+   "Q",
+   "J",
+   "P"
+  ],
+  [
+   "C",
+   "E",
+   "S",
+   "O",
+   "F",
+   "A",
+   "G",
+   "O",
+   "U",
+   "J",
+   "Q"
+  ]
+ ],
+ "pal": {
+  "kk1": {
+   "pista": "por onde a digestão começa",
+   "a": [
+    0,
+    0
+   ],
+   "z": [
+    0,
+    3
+   ]
+  },
+  "kk2": {
+   "pista": "o tubo que leva o alimento ao estômago",
+   "a": [
+    10,
+    1
+   ],
+   "z": [
+    10,
+    7
+   ]
+  },
+  "kk3": {
+   "pista": "onde o alimento vira uma papa",
+   "a": [
+    5,
+    2
+   ],
+   "z": [
+    5,
+    9
+   ]
+  },
+  "kk4": {
+   "pista": "ajuda a digerir a gordura",
+   "a": [
+    1,
+    4
+   ],
+   "z": [
+    1,
+    9
+   ]
+  },
+  "kk5": {
+   "pista": "produz um suco que termina a digestão",
+   "a": [
+    8,
+    3
+   ],
+   "z": [
+    8,
+    10
+   ]
+  },
+  "kk6": {
+   "pista": "o órgão que tem parte delgada e parte grossa",
+   "a": [
+    3,
+    1
+   ],
+   "z": [
+    3,
+    9
+   ]
+  }
+ }
+};
+var CACA2 = {
+ "grade": [
+  [
+   "I",
+   "E",
+   "P",
+   "I",
+   "M",
+   "F",
+   "A",
+   "O",
+   "H",
+   "L",
+   "Q"
+  ],
+  [
+   "V",
+   "B",
+   "Q",
+   "J",
+   "V",
+   "E",
+   "I",
+   "A",
+   "S",
+   "A",
+   "U"
+  ],
+  [
+   "L",
+   "B",
+   "Z",
+   "C",
+   "V",
+   "M",
+   "C",
+   "C",
+   "A",
+   "S",
+   "C"
+  ],
+  [
+   "A",
+   "R",
+   "T",
+   "E",
+   "R",
+   "I",
+   "A",
+   "S",
+   "U",
+   "J",
+   "H"
+  ],
+  [
+   "L",
+   "L",
+   "N",
+   "C",
+   "G",
+   "I",
+   "V",
+   "D",
+   "U",
+   "O",
+   "P"
+  ],
+  [
+   "U",
+   "A",
+   "D",
+   "R",
+   "I",
+   "N",
+   "S",
+   "R",
+   "V",
+   "S",
+   "B"
+  ],
+  [
+   "R",
+   "J",
+   "V",
+   "J",
+   "U",
+   "U",
+   "G",
+   "Q",
+   "G",
+   "Z",
+   "G"
+  ],
+  [
+   "Q",
+   "V",
+   "T",
+   "C",
+   "O",
+   "R",
+   "A",
+   "C",
+   "A",
+   "O",
+   "C"
+  ],
+  [
+   "S",
+   "A",
+   "N",
+   "G",
+   "U",
+   "E",
+   "L",
+   "I",
+   "R",
+   "D",
+   "B"
+  ],
+  [
+   "G",
+   "J",
+   "U",
+   "R",
+   "B",
+   "P",
+   "V",
+   "M",
+   "M",
+   "U",
+   "M"
+  ],
+  [
+   "H",
+   "I",
+   "C",
+   "A",
+   "P",
+   "I",
+   "L",
+   "A",
+   "R",
+   "E",
+   "S"
+  ]
+ ],
+ "pal": {
+  "kk7": {
+   "pista": "a bomba que empurra o sangue",
+   "a": [
+    7,
+    3
+   ],
+   "z": [
+    7,
+    9
+   ]
+  },
+  "kk8": {
+   "pista": "leva oxigênio e nutrientes",
+   "a": [
+    8,
+    0
+   ],
+   "z": [
+    8,
+    5
+   ]
+  },
+  "kk9": {
+   "pista": "trazem o sangue de volta ao coração",
+   "a": [
+    1,
+    4
+   ],
+   "z": [
+    1,
+    8
+   ]
+  },
+  "kk10": {
+   "pista": "levam o sangue do coração para o corpo",
+   "a": [
+    3,
+    0
+   ],
+   "z": [
+    3,
+    7
+   ]
+  },
+  "kk11": {
+   "pista": "filtram o sangue",
+   "a": [
+    5,
+    3
+   ],
+   "z": [
+    5,
+    6
+   ]
+  },
+  "kk12": {
+   "pista": "vasos finissimos onde a troca acontece",
+   "a": [
+    10,
+    2
+   ],
+   "z": [
+    10,
+    10
+   ]
+  }
+ }
+};
+var CRZ1 = {
+ "zz1": {
+  "p": "PULMAO",
+  "d": "órgão onde o oxigênio passa para o sangue"
+ },
+ "zz2": {
+  "p": "NARIZ",
+  "d": "por onde e mais saudavel respirar"
+ },
+ "zz3": {
+  "p": "TRAQUEIA",
+  "d": "tubo de aneis que leva o ar para baixo"
+ },
+ "zz4": {
+  "p": "DIAFRAGMA",
+  "d": "músculo abaixo dos pulmões que ajuda o ar a entrar"
+ },
+ "zz5": {
+  "p": "OXIGENIO",
+  "d": "o gas que o corpo pega do ar"
+ },
+ "zz6": {
+  "p": "ALVEOLO",
+  "d": "bolsinha do pulmão onde o ar encontra o sangue"
+ }
+};
+var CRZ2 = {
+ "zz7": {
+  "p": "CORACAO",
+  "d": "a bomba que empurra o sangue"
+ },
+ "zz8": {
+  "p": "SANGUE",
+  "d": "leva oxigênio e nutrientes a todo o corpo"
+ },
+ "zz9": {
+  "p": "DELGADO",
+  "d": "intestino onde o nutriente entra no sangue"
+ },
+ "zz10": {
+  "p": "CELULAS",
+  "d": "quem recebe o nutriente no fim da viagem"
+ },
+ "zz11": {
+  "p": "ENERGIA",
+  "d": "o que o corpo tira do alimento com o oxigênio"
+ },
+ "zz12": {
+  "p": "RINS",
+  "d": "filtram o sangue e tiram o que não serve"
+ }
+};
+/* ⚠️ A FIGURA QUE MOSTRA OS TRÊS JUNTOS — e ela mora AQUI, no bloco de dados,
+   não no `folhas.js`. A folha c26 traz o esquema pulmão ↔ coração ↔ corpo, o
+   único desenho das 78 em que os três sistemas aparecem ligados; ele entra na
+   folha do CAMINHO DO SANGUE, que é exatamente o que o desenho conta (nas
+   outras seria enfeite).
+   ⚠️ POR QUE AQUI: o `boot()` roda assim que o navegador acaba de ler o
+   arquivo e o `monta()` dele desenha as 36 folhas de uma vez. Um `var` escrito
+   no `folhas.js` depois disso sobe por içamento, mas o VALOR não sobe — na hora
+   da montagem ele ainda é `undefined`, e a figura simplesmente não aparece, sem
+   erro nenhum no console. Quem mede é o portão 1v (`global_atropelado.py`). */
+var FIGFOLHA = {
+  22: {f: "vd_integra", cls: "figint",
+       alt: "o pulmão, o coração e o corpo ligados pelo caminho do sangue"},
+  /* ⚠️ SEM ESTA GRADE A FOLHA 35 NÃO TEM RESPOSTA. As cinco perguntas dela
+     são "em qual quadrinho está o estômago?" — vieram da folha d44, que é
+     um tabuleiro A–E × 1–5 com um órgão em oito casinhas. Eu tinha posto as
+     perguntas e esquecido o tabuleiro: a criança leria a pergunta e não
+     teria onde procurar. Quem me mostrou foi o portao 0b7, que comecou a
+     enxergar este caderno e imprimiu a folha 35 com o nome "Ache o orgao
+     na grade" — e grade nenhuma no codigo. */
+  35: {f: "vd_grade", cls: "figgrade",
+       alt: "a grade de cinco colunas (A a E) por cinco linhas (1 a 5), com um órgão desenhado em oito quadrinhos"}
+};
+/*DADOS-FIM*/
+
+/* ⚠️ A MARCA DE VERSÃO NA FIGURA. Quando eu troco uma figura, o NOME do arquivo
+   continua o mesmo — e o navegador da escola serve a cópia velha do cache.
+   REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
+var VIMG = 5;
+/* ⚠️⚠️ `draggable="false"` NÃO É DETALHE: toda imagem é arrastável de fábrica no
+   navegador, e quando a criança apertava a figura e puxava, o Chrome começava o
+   SEU arrasto nativo e disparava um `pointercancel` — o nosso arrasto morria no
+   primeiro milímetro, sem erro nenhum na tela. */
+/* ⚠️ AQUI O NOME DO ARQUIVO VEM INTEIRO, e não por prefixo. No caderno de onde
+   este motor foi clonado o `img()` colava `img/ls_` na frente e `.png` atrás, e
+   é exatamente esse tipo de peça que o `_qa/clone.py` (item 8, PREFIXO ALHEIO)
+   pega: o prefixo de outra pasta vazando para dentro desta. Aqui os DADOS já
+   declaram `sb_pato.png` por extenso, que é uma coisa a menos para desencontrar. */
+function img(f, cls, alt){
+  return '<img class="' + (cls || "fig") + '" draggable="false" onload="naoAmplia(this)" src="img/' + f +
+         '?v=' + VIMG + '" alt="' + (alt || "") + '">';
+}
+/* ⭐ A FIGURA NUNCA E MOSTRADA MAIOR QUE O PROPRIO ARQUIVO (regra do Marcos, 14/set/2026:
+   "nunca ampliar, nunca gerar"). O CSS da peca da o TETO (clamp); o arquivo da o
+   teto de verdade. Sem isto, um recorte de 88 px saia a 120 px e borrado — o
+   leiaute_mao reprova acima de 1,35x (medido em _sinon2, folha 5). */
+function naoAmplia(im){
+  if(!im || !im.naturalWidth) return;
+  im.style.maxWidth = im.naturalWidth + "px";
+  im.style.maxHeight = im.naturalHeight + "px";
+}
+
+/* ---------- estado ---------- */
+var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
+var vozLigada = true, _narr = null, vozPtBR = null, ATIVA = null;
+var CHAVE_LS = "a_viagem_dentro_de_voc";
+/* ⚠️ AS 25 FOLHAS, NA ORDEM — e a ordem É a escada.
+   o mesmo ser com dois nomes (1-5) → a maiúscula e os nomes que são MEUS (6-9)
+   → uma palavra ou duas coladas (10-15) → de onde veio esta palavra (16-22) →
+   um nome para muitos (23) → o substantivo dentro de um TEXTO (24) → o cartaz
+   que a criança leva (25).
+   ⚠️ E VEM EM BLOCO, não espalhado (regra do Marcos: *"as crianças me dizem
+      'isso eu já fiz'"*): a gaveta em 2, 4 e 5 e depois na 10; o marca-texto em
+      7 e 13; o ligar em 15, 18 e 23 — colados dentro do bloco, subindo um
+      degrau, e nunca a mesma tela duas vezes seguidas com o mesmo degrau. */
+/* ⚠️ OS NOMES DAS FOLHAS, NA ORDEM — e a ordem É a escada didática.
+   ⚠️ E A REPETIÇÃO VEM EM BLOCO, não espalhada (regra do Marcos: *"as crianças
+      me dizem 'isso eu já fiz'"*): mecânica que repete vem em folhas COLADAS,
+      subindo um degrau; o que sobe é o apoio que some, não a tela.
+   ⚠️ O andarilho confere a promessa da capa contra este número: dizer "vinte e
+      cinco folhas" num caderno de vinte e duas reprova. */
+var NOMES = [
+ "Onde tudo começa",
+ "Os órgãos da digestão",
+ "Os órgãos da digestão, de novo",
+ "O caminho do alimento",
+ "O que cada órgão faz",
+ "O que cada órgão faz, de novo",
+ "Preencha o caminho",
+ "Caça-órgãos da digestão",
+ "Para que serve respirar",
+ "Os órgãos da respiração",
+ "O caminho do ar",
+ "O caminho do ar, de novo",
+ "O que cada órgão do ar faz",
+ "Nariz ou boca?",
+ "Puxo o ar, solto o ar",
+ "Cruza-respiração",
+ "A bomba do corpo",
+ "O que o sangue leva",
+ "Coração, veia e artéria",
+ "Os vasos e o que fazem",
+ "Preencha: o sangue",
+ "O caminho do sangue",
+ "É verdade ou é falso?",
+ "Caça-palavras da circulação",
+ "Respirar enquanto come",
+ "Do prato até a célula",
+ "Preencha: a viagem do nutriente",
+ "Onde o nutriente entra",
+ "Por onde sai o que não serve",
+ "Os rins e a água",
+ "De que sistema é cada um?",
+ "Pedro correu no recreio",
+ "O que acontece quando corro",
+ "O alimento é o combustível",
+ "Ache o órgão na grade",
+ "Cruzadinha dos três sistemas"
+];
+/*<dossie-dados>*/
+var CURRICULO = {
+ "_leia": "O QUE ESTE CADERNO ENSINA, dito no vocabulário do currículo de Blumenau. O portão 0b9 (_qa/pedagogo_curriculo.py) confere cinco coisas: que a citação existe palavra por palavra no _curriculo/blumenau.txt, que os objetivos daqui e os do relatório batem, que toda folha tem um objetivo que a mede, que o dossiê está dentro da atividade — e que os CONCEITOS que a atividade ensina cabem no ano.",
+ "ano": "5",
+ "componente": "Ciências",
+ "rede": "Rede Municipal de Ensino de Blumenau",
+ "documento": "Currículo da Educação Básica do Sistema Municipal de Ensino de Blumenau — Ciências, Anos Iniciais, 5º ano, unidade temática Vida e Evolução (linhas 16586-16607 do _curriculo/blumenau.txt)",
+ "instrumento": "Sequência didática de folha viva · 36 folhas · 156 itens · aplicação individual no laboratório",
+ "objetivos": [
+  {
+   "objetivo": "Reconhecer os órgãos do sistema digestório e o que cada um faz, seguindo o caminho do alimento",
+   "folhas": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "unidade": "Vida e Evolução",
+   "objeto": "Nutrição do organismo",
+   "habilidade": "HABILIDADE: \"Sistema digestório e a função de cada um de seus órgãos.\""
+  },
+  {
+   "objetivo": "Reconhecer os órgãos do sistema respiratório e o que cada um faz, seguindo o caminho do ar",
+   "folhas": [
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16
+   ],
+   "unidade": "Vida e Evolução",
+   "objeto": "Nutrição do organismo",
+   "habilidade": "HABILIDADE: \"Sistema respiratório e a função de cada um dos seus órgãos.\""
+  },
+  {
+   "objetivo": "Reconhecer o coração, o sangue e os vasos, e o que o sistema circulatório faz pelo corpo",
+   "folhas": [
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+   ],
+   "unidade": "Vida e Evolução",
+   "objeto": "Nutrição do organismo",
+   "habilidade": "HABILIDADE: \"Sistema circulatório e manutenção do organismo.\""
+  },
+  {
+   "objetivo": "Justificar por que os sistemas digestório e respiratório são corresponsáveis pela nutrição",
+   "folhas": [
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31
+   ],
+   "unidade": "Vida e Evolução",
+   "objeto": "Integração entre os sistemas digestório, respiratório e circulatório",
+   "habilidade": "HABILIDADE: \"Selecionar argumentos que justifiquem por que os sistemas digestório e respiratório são considerados corresponsáveis pelo processo de nutrição do organismo, com base na identificação das funções desses sistemas.\""
+  },
+  {
+   "objetivo": "Relacionar o circulatório com a distribuição dos nutrientes e a eliminação dos resíduos, no corpo que se mexe",
+   "folhas": [
+    32,
+    33,
+    34,
+    35,
+    36
+   ],
+   "unidade": "Vida e Evolução",
+   "objeto": "Integração entre os sistemas digestório, respiratório e circulatório",
+   "habilidade": "HABILIDADE: \"Justificar a relação entre o funcionamento do sistema circulatório, a distribuição dos nutrientes pelo organismo e a eliminação dos resíduos produzidos.\""
+  }
+ ],
+ "conceitos": [
+  "digestório",
+  "respiratório",
+  "circulatório",
+  "nutriente",
+  "nutrição",
+  "oxigênio",
+  "energia",
+  "alimento",
+  "sangue",
+  "resíduos",
+  "organismo"
+ ],
+ "fora_do_curriculo": [
+  {
+   "termo": "sangue",
+   "motivo": "O currículo pede 'Sistema circulatório e manutenção do organismo' e 'a distribuição dos nutrientes pelo organismo'. Não há como ensinar isso sem nomear o que faz a distribuição. A palavra não aparece no bloco do 5º ano, mas o conteúdo que ela nomeia é o próprio objetivo da rede."
+  },
+  {
+   "termo": "oxigênio",
+   "motivo": "Idem: o currículo pede a função do sistema respiratório e a corresponsabilidade dele na nutrição. O que o respiratório entrega ao corpo é o oxigênio; sem a palavra, a habilidade fica sem objeto."
+  },
+  {
+   "termo": "boca · esôfago · estômago · intestino delgado · intestino grosso · fígado · pâncreas",
+   "motivo": "São os ÓRGÃOS do digestório. O currículo pede, com todas as letras, 'a função de cada um de seus órgãos' — sem nomeá-los seria impossível cumprir a habilidade. Todos aparecem nas folhas de 5º ano colhidas."
+  },
+  {
+   "termo": "nariz · faringe · laringe · traqueia · brônquios · pulmões · alvéolos · diafragma",
+   "motivo": "Idem para o respiratório: 'a função de cada um dos seus órgãos'."
+  },
+  {
+   "termo": "coração · artérias · veias · capilares · rins",
+   "motivo": "Idem para o circulatório. Artéria, veia e capilar entram como descrição simples do que cada um faz (leva, traz, troca), vindos da folha c21, que é material de 5º ano."
+  },
+  {
+   "termo": "gás carbônico",
+   "motivo": "Vem da folha d28, de 5º ano, na frase sobre o que o corpo elimina ao expirar."
+  },
+  {
+   "termo": "células",
+   "motivo": "Onde o nutriente é entregue no fim da viagem. Vem da folha c24, de 5º ano."
+  },
+  {
+   "termo": "O QUE FICOU DE FORA, por decisão do crivo",
+   "motivo": "NÃO entraram: sístole, diástole, átrio, ventrículo, aorta, válvula, miocárdio, arteríola, hemácia, plasma, túnica, enzima, ptialina, quimo, bile, movimento peristáltico, nem as doenças do sistema (infarto, arteriosclerose, varizes, enfisema). Nenhum desses termos existe no currículo de Blumenau, em ano nenhum — a contagem está no POTE-CORPO5 §1."
+  }
+ ],
+ "conferencia_a_mao": {
+  "_leia": "⚠️ O portão curriculo_verbatim.py procura as palavras no documento INTEIRO, não no bloco deste ano. Então esta conferência foi feita à mão: cada citação foi localizada DENTRO do bloco 'CIÊNCIAS – ANOS INICIAIS – 5º ANO', unidade 'Vida e Evolução'.",
+  "bloco": "linhas 16586 a 16607",
+  "Sistema digestório e a função de cada um de seus órgãos.": "linha 16590, coluna CONCEITOS/CONTEÚDOS",
+  "Sistema respiratório e a função de cada um dos seus órgãos.": "linha 16591, mesma coluna",
+  "Sistema circulatório e manutenção do organismo.": "linha 16594, mesma coluna",
+  "Selecionar argumentos que justifiquem por que os sistemas digestório e respiratório...": "linhas 16588-16590, coluna OBJETIVOS DE APRENDIZAGEM E DESENVOLVIMENTO",
+  "Justificar a relação entre o funcionamento do sistema circulatório...": "linhas 16594-16596, mesma coluna",
+  "Integração entre os sistemas digestório, respiratório e circulatório": "linha 16606, coluna OBJETO DE CONHECIMENTO — é o nome do objeto, e é exatamente o pedido do Marcos"
+ },
+ "_ano_por_extenso": "5º ano — o campo `ano` guarda só o dígito porque é assim que o portão 0b9 casa com o cabeçalho do PDF da rede (\"CIÊNCIAS – ANOS INICIAIS – 5º ANO\"). Com \"5º ano\" ele montava «5º anoº ANO», não achava bloco nenhum e dizia NÃO MEDI — que não é passou."
+};
+/*</dossie-dados>*/
+
+/* ---------- som ---------- */
+var AC = null;
+function ac(){ try{ if(!AC) AC = new (window.AudioContext || window.webkitAudioContext)(); if(AC.state === "suspended") AC.resume(); }catch(e){} return AC; }
+function bip(f, dur, tipo, vol){
+  var a = ac(); if(!a) return;
+  try{
+    var o = a.createOscillator(), g = a.createGain();
+    o.type = tipo || "sine"; o.frequency.value = f;
+    g.gain.setValueAtTime(vol || .13, a.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001, a.currentTime + dur);
+    o.connect(g); g.connect(a.destination); o.start(); o.stop(a.currentTime + dur);
+  }catch(e){}
+}
+function sPasso(){ bip(560, .07, "triangle", .08); }
+function sTecla(){ bip(760, .05, "square", .05); }
+function sCerto(){ bip(680, .1, "sine", .12); setTimeout(function(){ bip(920, .14, "sine", .12); }, 95); }
+function sErro(){ bip(190, .17, "sawtooth", .07); }
+function sFesta(){ [523, 659, 784, 1047].forEach(function(f, i){ setTimeout(function(){ bip(f, .16, "sine", .12); }, i * 110); }); }
+
+/* ---------- voz ---------- */
+function chaveVoz(t){
+  t = (t || "").replace(/\s+/g, " ").trim().toLowerCase();
+  var h = 5381, i;
+  for(i = 0; i < t.length; i++) h = ((h * 33) ^ t.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+function achaVoz(){
+  try{
+    var vs = window.speechSynthesis.getVoices();
+    for(var i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt-br") === 0) return vs[i];
+    for(i = 0; i < vs.length; i++) if((vs[i].lang || "").toLowerCase().indexOf("pt") === 0) return vs[i];
+  }catch(e){}
+  return null;
+}
+if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = function(){ vozPtBR = achaVoz(); };
+function calar(){
+  try{ if(_narr){ _narr.pause(); _narr.currentTime = 0; } }catch(e){}
+  try{ window.speechSynthesis.cancel(); }catch(e){}
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir";
+}
+function falarNavegador(t){
+  if(!window.speechSynthesis) return;
+  try{
+    var u = new SpeechSynthesisUtterance(t);
+    u.lang = "pt-BR"; u.rate = .92; if(!vozPtBR) vozPtBR = achaVoz(); if(vozPtBR) u.voice = vozPtBR;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+var ultimaFala = null;
+/* ⚠️ O MP3 É O PADRÃO E O SINTETIZADOR É A RESERVA — nunca o contrário. Se a
+   criança ouvir voz de robô, o mp3 não chegou ao site: é defeito de entrega,
+   não "jeito alternativo". O portão de voz mede isso. */
+function falar(k){
+  var t = FALAS[k]; if(!t) return;
+  ultimaFala = k;
+  if(!vozLigada) return;
+  calar();
+  var b = document.getElementById("bOuvir"); if(b) b.className = "zap ouvir tocando";
+  function fim(){ var x = document.getElementById("bOuvir"); if(x) x.className = "zap ouvir"; }
+  var key = chaveVoz(t);
+  if(VOZOK[key]){
+    if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+    _narr.onended = fim; _narr.onerror = function(){ falarNavegador(t); setTimeout(fim, 2500); };
+    _narr.src = "audio/vd_" + key + ".mp3";
+    try{ _narr.currentTime = 0; }catch(e){}
+    var p = _narr.play(); if(p && p["catch"]) p["catch"](function(){ fim(); });
+    return;
+  }
+  falarNavegador(t); setTimeout(fim, Math.min(12000, 400 + t.length * 62));
+}
+/*SILMAP-INI*/var SILMAP = {};/*SILMAP-FIM*/
+/* ⚠️⚠️ A SÍLABA SAI DA PALAVRA, NÃO DO NADA — e isto é a segunda vez que a casa
+   paga por ele (set/2026 e 16/set/2026). O sintetizador de voz não lê SOM, lê
+   PALAVRA: entregue "VA" sozinho e ele soletra "vê-á"; entregue "SA" e ele diz
+   "esse-á". Não há truque de escrita que conserte isso — o remendo de escrever
+   "sã" no lugar de "çã" conserta um caso e nunca fecha a família.
+   O que funciona é o contrário: gravar a PALAVRA INTEIRA (que a voz pronuncia
+   certo, porque é palavra de verdade), alinhar letra a letra com o
+   `ctc-forced-aligner` e CORTAR a sílaba de dentro dela. Quem faz isso é o
+   `_padrao/silabas_voz.py`, no `entregar.yml`, lendo o `silabas.json`.
+   ⚠️ E NÃO HÁ FALA DE RESERVA POR SÍLABA: se o recorte faltar, ele diz a
+      PALAVRA INTEIRA. Uma reserva sintetizada seria o próprio defeito
+      voltando pela porta dos fundos — e calada, que é pior. */
+/* ⚠️⚠️ O NOME DO ARQUIVO É SEM ACENTO; a PALAVRA guarda o acento. As duas
+   coisas são diferentes e as duas importam: a voz só diz "sabão" direito se
+   receber o til, mas `..._sb_sabão_0.mp3` atravessa git, zip, servidor de
+   Pages e navegador, e em cada ponte o acento pode ser escrito com bytes
+   diferentes (NFC × NFD). A MESMA regra está no `_padrao/silabas_voz.py` (que
+   grava) e no `_qa/silabas.py` (que confere). Os três têm de concordar — se um
+   discordar, a sílaba fica MUDA sem dar erro nenhum. */
+function arqSilaba(w){
+  w = String(w || "").toLowerCase();
+  var de = "áàâãäéèêëíìîïóòôõöúùûüç", para = "aaaaaeeeeiiiiooooouuuuc", i, o = "";
+  for(i = 0; i < w.length; i++){ var n = de.indexOf(w.charAt(i)); o += n > -1 ? para.charAt(n) : w.charAt(i); }
+  return o.replace(/[^a-z0-9]/g, "");
+}
+function falarSilaba(palavra, i, silaba){
+  if(!vozLigada) return;
+  if(!palavra && silaba && SILMAP[silaba]){ palavra = SILMAP[silaba][0]; i = SILMAP[silaba][1]; }
+  if(!palavra){ return; }
+  calar();
+  if(!_narr){ _narr = new Audio(); _narr.preload = "auto"; }
+  _narr.onended = null;
+  _narr.onerror = function(){ falar("pal_" + palavra); };
+  _narr.src = "audio/vd_" + ("sb_" + arqSilaba(palavra) + "_" + i + ".mp3");
+  try{ _narr.currentTime = 0; }catch(e){}
+  var pr = _narr.play(); if(pr && pr["catch"]) pr["catch"](function(){ falar("pal_" + palavra); });
+}
+function falarDepois(k, ms){ setTimeout(function(){ falar(k); }, ms || 0); }
+
+/* ---------- utilidades ---------- */
+function el(tag, cls, html){ var e = document.createElement(tag); if(cls) e.className = cls; if(html != null) e.innerHTML = html; return e; }
+function salvar(){ try{ ST.quando = Date.now(); localStorage.setItem(CHAVE_LS, JSON.stringify(ST)); }catch(e){} }
+/* ⭐ 55 MINUTOS = A AULA. Dentro dela quem volta é a MESMA criança; passada a
+   aula, quem senta ali é da outra turma e cairia no meio da viagem de um
+   colega — por isso o convite expira sozinho. */
+function carregar(){ try{
+  var s = localStorage.getItem(CHAVE_LS); if(!s) return null;
+  var o = JSON.parse(s);
+  if(!o || !o.quando || Date.now() - o.quando > 55 * 60 * 1000 || !o.folha) return null;
+  /* ⚠️ TRAVA 1 — O POTE GUARDADO AINDA EXISTE NESTE CADERNO?
+     Sem isto, quem jogou ANTES de uma republicação volta com uma folha que não
+     existe mais, o monta() estoura e a criança fica só com a faixa de cima — e
+     por 55 minutos, que é a aula inteira. Foi o que o Marcos pegou em
+     14/set/2026 ("só aparece a faixa de cima"; "anônima foi, a normal não"). */
+  for(var i = 1; i <= NOMES.length; i++){
+    if(!o.folha["p" + i]){ try{ localStorage.removeItem(CHAVE_LS); }catch(e2){} return null; }
+  }
+  return o;
+}catch(e){ return null; } }
+function tentativa(id, ok){ if(!ST.tent[id]) ST.tent[id] = {erros: 0, ok: false}; if(ok) ST.tent[id].ok = true; else ST.tent[id].erros++; salvar(); }
+function rnd(n){ return Math.floor(Math.random() * n); }
+function baralha(a){ var b = a.slice(), i, j, t; for(i = b.length - 1; i > 0; i--){ j = rnd(i + 1); t = b[i]; b[i] = b[j]; b[j] = t; } return b; }
+function pega(pool, qtd){ return baralha(pool).slice(0, Math.min(qtd, pool.length)); }
+function confete(n){
+  var c = document.getElementById("confete"), cores = ["#b0562a", "#f5b301", "#15a34a", "#1179bf", "#8b5cf6"], i;
+  for(i = 0; i < n; i++){
+    (function(i){
+      var d = el("div", "cf");
+      d.style.left = rnd(100) + "%"; d.style.top = "-20px";
+      d.style.background = cores[rnd(cores.length)];
+      d.style.animationDelay = (i * 26) + "ms";
+      c.appendChild(d); setTimeout(function(){ if(d.parentNode) c.removeChild(d); }, 1900 + i * 26);
+    })(i);
+  }
+}
+
+/* ---------- registro das respostas (o boletim e o relatório leem daqui) ---------- */
+var RESP = {};   /* id -> {certo, pag} */
+function registra(id, pag, certo){ RESP[id] = {certo: certo, pag: pag}; }
+function acertou(id, fala){
+  if(ST.resp[id]) return;
+  tentativa(id, true); ST.resp[id] = 1; salvar(); sCerto();
+  /* ⭐ a palavra escrita aparece AGORA, junto com o acerto — nunca antes.
+     Mostrá-la antes entrega a resposta (o defeito que o `_qa/resposta_impressa.py`
+     mede); escondê-la para sempre deixaria a criança sem saber se aquilo era
+     "oca" ou "cabana". Este é o instante certo. */
+  var segs = document.querySelectorAll('[data-nome="' + id + '"]'), sg;
+  for(sg = 0; sg < segs.length; sg++)
+    segs[sg].className = segs[sg].className.replace(/ ?revelado/, "") + " revelado";
+  if(fala) falar(fala);
+  setTimeout(function(){ confereFolha(RESP[id].pag); }, 850);
+}
+function errou(id, dica){
+  tentativa(id, false); sErro();
+  falar(ST.tent[id].erros >= 2 && dica ? dica : "quase");
+}
+
+/* ---------- o sorteio da folha do dia ----------
+   ⚠️ UMA LINHA POR FOLHA, `p1` até `pN`. Faltando uma, `ST.folha["pN"]` é
+   `undefined` e o caderno NÃO ABRE (TypeError na montagem).
+   ⚠️ O POTE PODE SER MAIOR QUE A FOLHA (`pega(ITENS.pN, 6)`): duas crianças
+   lado a lado não recebem a mesma lista, e quem refaz amanhã não recebe a de
+   hoje. Mas quando tirar uma peça desequilibra a resposta — uma gaveta de duas
+   colunas, um par que se vê — o pote vai INTEIRO, e o motivo fica escrito.
+   ⚠️ O EMBRULHO DAS FOLHAS DE LIGAR MORA NO `ITENS`, NÃO AQUI. Embrulhar de
+   novo dá três níveis e a folha não desenha.
+   Ex.:  p1: ITENS.p1.slice(0),
+         p2: pega(ITENS.p2, 6),          // sorteia 6 de um pote maior
+         p3: ITENS.p3.slice(0)           // já vem embrulhado: folha de ligar  */
+function novaFolha(){
+  /* ⚠️ ESTE CADERNO NÃO SORTEIA. O pote de cada folha é o que está em ITENS, na
+     ordem em que foi crivado — porque o conteúdo é o CAMINHO do alimento, do ar
+     e do sangue, e caminho embaralhado deixa de ser caminho. O que varia entre
+     uma abertura e outra é a ordem das OPÇÕES e das colunas do ligar, que as
+     próprias peças embaralham. */
+  var o = {}, k;
+  for(k in ITENS) if(ITENS.hasOwnProperty(k)) o[k] = ITENS[k];
+  return o;
+}</script>
+<!--<dossie-html>-->
+<div id="dossie" role="dialog" aria-label="Dossiê pedagógico" aria-modal="true">
+  <div class="cx">
+    <h3>Dossiê pedagógico</h3>
+    <div id="dsCorpo"></div>
+    <button class="bt cinza" id="dsFechar">Fechar</button>
+  </div>
+</div>
+<!--</dossie-html>-->
+<script src="folhas.js?v=b0d260daec"></script>
+</body></html>

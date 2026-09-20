@@ -242,11 +242,22 @@ function montaPlano(id) {
         a peça". Só quebrava quando a chave da figura TEM sublinhado — que é o
         caso de `reino_fungi`, `reino_monera`, `urso_pelucia`… Régua errada, e a
         folha estava certa. */
-  const mLig = id.match(/^l\d+(.+?)_(.+)$/);
+  /* ⚠️ DUAS FORMAS, e a ordem importa. Desde 20/set/2026 o motor publica o
+     NÚMERO DA FOLHA no data-qa (`lig<pi><tag>-e-<k>`), porque sem ele duas
+     folhas de LIGAR no mesmo html publicavam a mesma etiqueta e o clique ia
+     sempre para a primeira — a segunda não fechava nem com a resposta certa.
+     A forma ANTIGA (`lig<tag>-e-<k>`) continua aceita: os cadernos que já
+     estão no ar foram montados com ela, e um portão que passa a reprovar o
+     que está publicado e correto não mede nada, só atrapalha. */
+  const mLig = id.match(/^l(\d+)(.+?)_(.+)$/);
   if (mLig) {
-    const e = 'lig' + mLig[1] + '-e-' + mLig[2], d = 'lig' + mLig[1] + '-d-' + mLig[2];
-    if (qa.some(x => x.getAttribute('data-qa') === e) &&
-        qa.some(x => x.getAttribute('data-qa') === d)) {
+    const formas = [['lig' + mLig[1] + mLig[2] + '-e-' + mLig[3], 'lig' + mLig[1] + mLig[2] + '-d-' + mLig[3]],
+                    ['lig' + mLig[2] + '-e-' + mLig[3], 'lig' + mLig[2] + '-d-' + mLig[3]]];
+    const achou = formas.find(([e, d]) =>
+      qa.some(x => x.getAttribute('data-qa') === e) &&
+      qa.some(x => x.getAttribute('data-qa') === d));
+    if (achou) {
+      const [e, d] = achou;
       return { tipo: 'ligar', alvos: [e, d], fe: 'alta' };
     }
   }

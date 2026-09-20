@@ -122,6 +122,109 @@ def checa_conteudo(conteudo, mp=None, cru=None):
     return achados
 
 
+def constroi_vocabulario_fora(pasta):
+    u"""o vocabulario do projeto SEM a pasta que esta sendo medida.
+
+    ⚠️ Sem isto o portao se envenena: as proprias falas cruas do caderno em
+       exame entram na contagem `cru` e passam a defender o erro que ele devia
+       acusar. Quanto mais palavra errada, menos o portao reclama.
+    """
+    import glob as _g
+    raiz = _raiz()
+    alvo = os.path.normpath(os.path.abspath(pasta))
+    mp = collections.defaultdict(collections.Counter)
+    cru = collections.Counter()
+    arqs = (_g.glob(os.path.join(raiz, "_*", "falas.json")) +
+            _g.glob(os.path.join(raiz, "_*", "conteudo.json")))
+    for a in arqs:
+        if os.path.normpath(os.path.dirname(os.path.abspath(a))) == alvo:
+            continue
+        try:
+            txt = io.open(a, encoding="utf-8").read()
+        except Exception:                                      # noqa: BLE001
+            continue
+        for w in _PAL.findall(txt):
+            wu = w.upper()
+            if _ACENTO.search(w):
+                mp[_tira(wu)][wu] += 1
+            else:
+                cru[wu] += 1
+    return mp, cru
+
+
+def checa_prosa(pasta):
+    u"""FOLHA VIVA: a PROSA que a crianca le e a voz diz esta acentuada?
+
+    ⚠️ POR QUE ESTE SEGUNDO OLHO EXISTE (20/set/2026). O portao nasceu olhando
+       a GRADE — palavra crua num caca-palavras, que a voz lia errado. Mas ele
+       so sabe ler `conteudo.json`, e CADERNO DE FOLHA VIVA NAO TEM
+       `conteudo.json`: em todos eles ele respondia "NAO MEDI (fora do
+       padrao)". Resultado medido no `_corpo5`: CINQUENTA frases foram para a
+       tela e para a voz sem acento — "por onde a digestao comeca", "o orgao
+       que tem parte delgada", "Isso! O CORACAO bombeia o sangue". Quem achou
+       fui eu, OLHANDO uma foto da folha 8 — nenhum dos 35 portoes viu.
+       Aqui a pergunta e a inversa da outra: na grade, palavra crua e o certo
+       (a grade nao carrega acento); na PROSA, palavra crua e defeito.
+       A regra de prova e a mesma da outra metade: so acusa quando a forma
+       acentuada e a REGRA no resto do projeto (>=2 usos) e a crua nao e mais
+       comum que ela — assim "para", "e", "ate mais" e companhia nao viram
+       alarme falso.
+    """
+    cam = os.path.join(pasta, "falas.json")
+    if not os.path.exists(cam):
+        return None
+    try:
+        falas = json.load(io.open(cam, encoding="utf-8"))
+    except Exception:                                          # noqa: BLE001
+        return None
+    if not isinstance(falas, list):
+        return None
+    mp, cru = constroi_vocabulario_fora(pasta)
+    achados, vistos = [], set()
+    for it in falas:
+        txt = it.get("texto") if isinstance(it, dict) else None
+        if not txt:
+            continue
+        # ⚠️ A FALA QUE FALA DA GRADE cita a forma crua DE PROPOSITO — "na grade
+        #    as palavras estao sem o til: procure PORTAO". Acusar isso seria
+        #    mandar consertar o que esta certo. (Mede-se: dos onze achados da
+        #    estreia, tres eram exatamente este caso.)
+        baixo = txt.lower()
+        if (u"na grade" in baixo or u"sem acento" in baixo or u"sem o til" in baixo
+                or u"sem acentos" in baixo or u"nao ha acento" in baixo
+                or u"não há acento" in baixo):
+            continue
+        for w in _PAL.findall(txt):
+            if _ACENTO.search(w):
+                continue
+            wu = w.upper()
+            if wu in vistos:
+                continue
+            cand = mp.get(_tira(wu))
+            if not cand:
+                continue
+            acent = cand.most_common(1)[0][0]
+            if acent == wu:
+                continue
+            n_ac = sum(cand.values())
+            n_cru = cru.get(wu, 0)
+            # ⚠️ O LIMIAR SAIU DE MEDIDA, nao de cabeca (20/set/2026, contado no
+            #    projeto inteiro menos a pasta em exame). A palavra so e acusada
+            #    quando a forma crua e RARA ao lado da acentuada — ate 5%:
+            #      NAO  1442 acentuadas x    8 cruas (0,6%)   -> acusa, e certo
+            #      ATE   355 x 2 (0,6%) · TRES 1497 x 3 (0,2%) · SAO 1023 x 1
+            #      AGUA  170 x 1 (0,6%) · VOCE 2024 x 0 · CORACAO 30 x 0
+            #    e nao e acusada quando as DUAS formas sao palavra de verdade:
+            #      ESTA 1069 acentuadas x 340 cruas (32%) — "esta frase" existe
+            #      PORQUE   3 x 304 — "porque" e a forma comum
+            #    A folga entre os dois grupos e de 50x (0,6% contra 32%): nao e
+            #    fio de navalha. Lista de excecao a mao envelhece; conta, nao.
+            if n_ac >= 2 and n_cru <= 0.05 * n_ac:
+                vistos.add(wu)
+                achados.append((it.get("id", "?"), wu, acent, txt[:70]))
+    return achados
+
+
 def _acha_conteudo(alvo):
     u"""aceita pasta, conteudo.json ou index.html e devolve o conteudo.json."""
     if os.path.isdir(alvo):
@@ -137,11 +240,40 @@ def main():
     if len(sys.argv) < 2:
         print(u"uso: python3 _qa/acento.py <pasta|conteudo.json|index.html>")
         return 2
-    cj = _acha_conteudo(sys.argv[1])
+    alvo = sys.argv[1].rstrip(u"/")
+    cj = _acha_conteudo(alvo)
     if not os.path.exists(cj):
-        # sem conteudo.json (atividade fora do padrao) — nao ha o que medir
-        print(u"acento: sem conteudo.json em %s — NAO MEDI (fora do padrao)." % sys.argv[1])
-        return 2
+        # sem conteudo.json: pode ser CADERNO DE FOLHA VIVA — ali o que se mede
+        # e a PROSA (ver `checa_prosa`), nao a grade.
+        pasta = alvo if os.path.isdir(alvo) else os.path.dirname(os.path.abspath(alvo))
+        pr = checa_prosa(pasta)
+        if pr is None:
+            print(u"acento: sem conteudo.json e sem falas.json em %s — NAO MEDI." % alvo)
+            return 2
+        if not pr:
+            print(u"   acento ok: a prosa que a voz le esta acentuada")
+            return 0
+        # ⚠️ ISTO E AVISO, NAO REPROVACAO — e a razao esta medida. Rodado nos 30
+        #    cadernos de folha viva, este olho achou onze palavras: TRES eram
+        #    defeito de verdade (LAMPADA, XICARA, AMANHA — a voz le errado) e as
+        #    outras oito eram inocentes de quatro familias que ele ainda nao sabe
+        #    separar: o nome da LETRA ("jota"), a SILABA solta ("lan"), o
+        #    HOMOGRAFO legitimo ("os pais" != "o pais"), a terminacao citada
+        #    ("as duas terminam com ate") e a frase em OUTRA LINGUA ("sailed to
+        #    America"). Nenhuma contagem separa os dois grupos — a razao entre
+        #    forma crua e acentuada e praticamente a mesma nos dois (0,00 a 0,05).
+        #    Portao que acusa inocente e portao que a gente aprende a pular
+        #    (regra da casa), entao aqui ele FALA e nao barra. O que ele resolve
+        #    e o caso que me custou caro no `_corpo5`: CINQUENTA frases inteiras
+        #    sem acento, que nenhum outro portao viu e so o olho pegou.
+        print(u"   AVISO (nao reprova): %d palavra(s) de prosa podem estar sem acento —" % len(pr))
+        print(u"   OLHAR uma a uma. Ha inocentes conhecidos: nome de letra, silaba")
+        print(u"   solta, homografo ('os pais'), terminacao citada e outra lingua.")
+        for fid, crua, acent, trecho in pr[:20]:
+            print(u'      %s: "%s" -> "%s"?   (%s)' % (fid, crua, acent, trecho))
+        if len(pr) > 20:
+            print(u"      ... e mais %d" % (len(pr) - 20))
+        return 0
     try:
         conteudo = json.load(io.open(cj, encoding="utf-8"))
     except Exception as e:                                     # noqa: BLE001

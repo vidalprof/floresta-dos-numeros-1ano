@@ -31,11 +31,26 @@ Sai 0 se não achou ERRO; 1 se achou; 2 se não teve o que medir.
 """
 import sys, os, io, json, re
 
+# ⚠️ AS CLASSES DE LETRA LEVAM AS MAIÚSCULAS ACENTUADAS, e isto foi conserto de
+#    20/set/2026. Elas tinham só as minúsculas (`ãáâàéêíóôõúüç`), então uma
+#    palavra escrita em CAIXA ALTA parava no primeiro acento: "CORAÇÃO" era
+#    lida como "CORA" e o portão reprovava "o CORA — palavra terminada em -a
+#    costuma ser feminina". O texto estava certo; a régua é que era curta.
+#    Vale para toda palavra maiúscula com acento — PULMÕES, ESTÔMAGO, ÓRGÃO —,
+#    e cadernos que escrevem o nome das coisas em caixa alta são a regra nesta
+#    casa, não a exceção. Pego na Viagem Dentro de Você (Ciências, 5º ano).
+
 # palavras terminadas em -a que são MASCULINAS (não reprovar "o dia")
 MASC_A = set("""dia mapa planeta planetinha problema clima sistema tema poema programa dilema
 cinema mapa telefonema esquema drama panorama diagrama grama(peso) alerta guarda-chuva
 lápis(nao) sofa(nao) pijama dia maquinista salta zeca quebra-cabeça quebra-cabeças
-jota agá coringa colega""".split())
+jota agá coringa colega diafragma""".split())
+# ⚠️ "diafragma" é MASCULINO ("o diafragma"), como todo -ma de origem grega
+#    (problema, sistema, tema). Pego na Viagem Dentro de Você (set/2026).
+#    ⭐ "coração" NÃO entrou aqui de propósito: ele era acusado como "CORA"
+#       porque a régua do portão parava no Ç maiúsculo. Isso era defeito da
+#       REGRA, não da palavra — e foi consertado na classe de letra, lá em cima.
+#       Exceção esconde o defeito; consertar a régua o resolve para todas.
 # ⚠️ "coringa" é MASCULINO ("o coringa", "o coringa comprar quatro") — é o nome
 #    da carta, e o dicionário o registra no masculino. "colega" é comum de dois
 #    gêneros: "o colega" e "a colega" estão os DOIS certos, então acusar "o
@@ -161,7 +176,7 @@ def revisa_texto(t, display=False):
         achados.append(("ERRO", u'marca de HTML na fala: %r' % cru[:60]))
 
     # 2) palavra repetida ("a a", "de de") — ignora números/siglas de 1 letra? não.
-    for m in re.finditer(r"\b([a-zA-Zãáâàéêíóôõúüç]{1,})\s+\1\b", fala, re.I):
+    for m in re.finditer(r"\b([a-zA-ZãáâàéêíóôõúüçÃÁÂÀÉÊÍÓÔÕÚÜÇ]{1,})\s+\1\b", fala, re.I):
         w = m.group(1).lower()
         if w in ("que","the"):  # "que que" às vezes é fala real; the=inglês
             continue
@@ -188,7 +203,7 @@ def revisa_texto(t, display=False):
             achados.append(("ERRO", u'pontuação dobrada: "%s"' % seq))
 
     # 6) concordância artigo↔nome ("o jibóia")
-    for m in re.finditer(r"\b([Oo]|[Aa])\s+([A-Za-zãáâàéêíóôõúüç][A-Za-zãáâàéêíóôõúüç-]{2,})", fala):
+    for m in re.finditer(r"\b([Oo]|[Aa])\s+([A-Za-zãáâàéêíóôõúüçÃÁÂÀÉÊÍÓÔÕÚÜÇ][A-Za-zãáâàéêíóôõúüçÃÁÂÀÉÊÍÓÔÕÚÜÇ-]{2,})", fala):
         art = m.group(1).lower()
         pal = m.group(2)
         # ⚠️ (set/2026) "igual A bo-lo": o "a" e PREPOSICAO (igual a, junto a,
@@ -220,7 +235,7 @@ def revisa_texto(t, display=False):
     #     "o dourado é UMA peixe" — peixe termina em -e e é MASCULINO; a heurística
     #     de -a/-o não pega). Dicionário explícito, casando artigo DEFINIDO e
     #     INDEFINIDO. Palavra que o revisor errar aqui entra/sai deste dicionário.
-    for m in re.finditer(r"\b(um|uma|[oa])\s+([A-Za-zãáâàéêíóôõúüç-]{2,})", fala, re.I):
+    for m in re.finditer(r"\b(um|uma|[oa])\s+([A-Za-zãáâàéêíóôõúüçÃÁÂÀÉÊÍÓÔÕÚÜÇ-]{2,})", fala, re.I):
         art = m.group(1).lower(); pal = m.group(2).lower()
         base = re.sub(r"[^a-zãáâàéêíóôõúüç-]", "", pal)
         g = GEN_FIXO.get(base)

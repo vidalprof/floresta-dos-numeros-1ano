@@ -26,10 +26,10 @@ var livro = document.getElementById("livro"), PAGEL = [], TIRAS = [];
    apontada por engano FECHAVA SOZINHA, sem ninguém tocar nela. São as únicas
    cujos ids não nascem de `n<pi>_`, e sim dentro do `montaLigar`
    (`l<pi>g<i>_<chave>`). Conferir com `node _qa/conta_folha.js <pasta>`. */
-var LIGAR = [];
+var LIGAR = [5, 6, 13, 20, 33];
 /* a cor da faixa por BLOCO da escada, não por folha: a criança vê que o assunto
    mudou. Uma entrada por folha, de c1 a c5. */
-var CORES = [];
+var CORES = ["c1", "c1", "c1", "c1", "c1", "c1", "c1", "c1", "c2", "c2", "c2", "c2", "c2", "c2", "c2", "c2", "c3", "c3", "c3", "c3", "c3", "c3", "c3", "c3", "c4", "c4", "c4", "c4", "c4", "c4", "c4", "c5", "c5", "c5", "c5", "c5"];
 
 
 function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
@@ -182,7 +182,27 @@ function sobre(ev, alvo){
 function monta(){
   livro.innerHTML = ""; PAGEL = []; RESP = {}; TIRAS = [];
   /* ⚠️ UMA ENTRADA POR FOLHA, na ordem, começando pela capa `f0`. */
-  var caps = [f0], i;
+  /* ⚠️ UMA ENTRADA POR FOLHA, na ordem, começando pela capa `f0`.
+     A função é a da FAMÍLIA do gesto; o que muda de uma folha para a outra é o
+     POTE (`ITENS`), e é o pote que diz o conteúdo. */
+  var caps = [f0,
+    fEscolher, fArrastar, fArrastar, fNumerar,
+    function(d, p){ fLigar(d, p, "g1"); }, function(d, p){ fLigar(d, p, "g2"); },
+    fEscrever, function(d, p){ fCaca(d, p, CACA1); },
+    fEscolher, fArrastar, fNumerar, fNumerar,
+    function(d, p){ fLigar(d, p, "g3"); }, fEscrever,
+    function(d, p){ fGaveta(d, p, "ar", "Cada frase é de quando o ar ENTRA ou de quando o ar SAI? Leve para a gaveta certa."); },
+    function(d, p){ fCruz(d, p, CRZ1); },
+    fEscolher, fEscrever, fArrastar,
+    function(d, p){ fLigar(d, p, "g4"); },
+    fEscrever, fNumerar,
+    function(d, p){ fGaveta(d, p, "vf", "Leia cada frase e leve para a gaveta: é verdade ou é falso?"); },
+    function(d, p){ fCaca(d, p, CACA2); },
+    fEscolher, fNumerar, fEscrever, fEscolher, fEscolher, fEscolher,
+    function(d, p){ fGaveta(d, p, "sis", "De que sistema é cada órgão? Leve cada um para a gaveta dele."); },
+    fEscolher, function(d, p){ fLigar(d, p, "g5"); }, fEscolher, fEscolher,
+    function(d, p){ fCruz(d, p, CRZ2); }
+  ], i;
   for(i = 0; i < caps.length; i++){
     var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
     caps[i](d, i);
@@ -198,20 +218,32 @@ function monta(){
       `img()` de outra atividade: o app abria com um quadradinho vazio e um 404
       no console, e nenhum portão de texto viu. */
 function f0(d){
-  /* CAPA DE ESQUELETO — por desenhar. `python3 _padrao/identidade_capa.py <pasta>` a
-     substitui pela capa com identidade própria (cor, cena, animação do assunto). */
-  var c = el("div", "capa"), nome = "NOME DA ATIVIDADE", k, letras = "";
+  /* ⭐ A CENA DA CAPA: o corpo com o caminho do ar, o coração batendo e o corpo
+     com o caminho do alimento — os TRÊS sistemas do caderno, lado a lado, nas
+     figuras recortadas das próprias folhas de papel. O coração pulsa com o
+     `vdBate` e as gotas sobem com o `vdSobe`: animação com nome próprio, que é
+     o que o portão 0b11 pede. */
+  var c = el("div", "capa"), nome = "A Viagem Dentro de Você", k, letras = "";
   nome.split(" ").forEach(function(pal, w){
     var s = "";
     for(k = 0; k < pal.length; k++) s += '<span class="lt">' + pal.charAt(k) + '</span>';
     letras += (w ? '<span class="esp"></span>' : '') + '<span class="tpal">' + s + '</span>';
   });
+  var gotas = "", gi;
+  for(gi = 0; gi < 7; gi++)
+    gotas += '<i class="gota" style="left:' + (7 + gi * 13) + '%;animation-delay:' +
+             (gi * 0.8) + 's;-webkit-animation-delay:' + (gi * 0.8) + 's"></i>';
   c.innerHTML =
-    '<div class="ceu"></div>' +
+    '<div class="ceu">' + gotas + '</div>' +
     '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Componente &middot; Nº ano &middot; N folhas sobre ASSUNTO</div>' +
-    '<div class="cena">capa por desenhar: _padrao/identidade_capa.py</div>' +
-    '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
+    '<div class="sub">Ciências &middot; 5º ano &middot; 36 folhas sobre o corpo por dentro</div>' +
+    '<div class="cena"><div class="trio">' +
+      '<img class="corpo" src="img/vd_corpores.png?v=' + VIMG + '" alt="o corpo e o caminho do ar">' +
+      '<img class="cora" src="img/vd_coracao.png?v=' + VIMG + '" alt="o coração">' +
+      '<img class="corpo" src="img/vd_corpodig.png?v=' + VIMG + '" alt="o corpo e o caminho do alimento">' +
+    '</div></div>' +
+    '<div class="chamada">O alimento, o ar e o sangue fazem uma viagem dentro de você.<br>' +
+    'Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
 function gavetas(d, pi, gk, pede){
@@ -797,7 +829,7 @@ function fim(){
   var pc = tot ? prim / tot : 0;
   var cheias = pc >= .85 ? 3 : pc >= .6 ? 2 : 1, est = "", ke;
   for(ke = 0; ke < 3; ke++)
-    est += '<img src="img/sb_selo' + (ke < cheias ? "" : "_off") + '.png?v=' + VIMG + '" alt="" draggable="false">';
+    est += '<img src="img/vd_selo' + (ke < cheias ? "" : "_off") + '.png?v=' + VIMG + '" alt="" draggable="false">';
   document.getElementById("estrelas").innerHTML = est;
   document.getElementById("estrelas").setAttribute("aria-label", cheias + " de 3 estrelas");
   var bar = document.getElementById("barras"); bar.innerHTML = "";
@@ -885,7 +917,28 @@ var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
    Ex.: {n: "Distinguir X de Y", f: [1, 2, 3],
          ok:  "faz o que o objetivo pede, em palavras do professor",
          nao: "o que ainda não faz — sem a palavra 'errou'"}  */
-var OBJETIVOS = [];
+var OBJETIVOS = [
+  {n: "Reconhecer os órgãos do sistema digestório e o que cada um faz, seguindo o caminho do alimento",
+   f: [1, 2, 3, 4, 5, 6, 7, 8],
+   ok: "nomeia os órgãos da digestão, põe o caminho do alimento em ordem e diz o que cada um faz",
+   nao: "ainda troca os órgãos de lugar ou não liga cada um à função dele"},
+  {n: "Reconhecer os órgãos do sistema respiratório e o que cada um faz, seguindo o caminho do ar",
+   f: [9, 10, 11, 12, 13, 14, 15, 16],
+   ok: "segue o caminho do ar do nariz até os alvéolos e sabe por que se respira pelo nariz",
+   nao: "ainda se perde no percurso do ar ou confunde o diafragma com um órgão"},
+  {n: "Reconhecer o coração, o sangue e os vasos, e o que o sistema circulatório faz pelo corpo",
+   f: [17, 18, 19, 20, 21, 22, 23, 24],
+   ok: "sabe que o coração bombeia, que as artérias levam e as veias trazem, e o que o sangue carrega",
+   nao: "ainda confunde o que leva com o que traz, ou o que o sangue transporta"},
+  {n: "Justificar por que os sistemas digestório e respiratório são corresponsáveis pela nutrição",
+   f: [25, 26, 27, 28, 29, 30, 31],
+   ok: "explica por que precisa respirar enquanto digere e mostra onde o nutriente entra no sangue",
+   nao: "ainda vê os três sistemas como coisas separadas, uma sem a outra"},
+  {n: "Relacionar o circulatório com a distribuição dos nutrientes e a eliminação dos resíduos, no corpo que se mexe",
+   f: [32, 33, 34, 35, 36],
+   ok: "explica por que fica ofegante ao correr e de onde vem a energia do corpo",
+   nao: "ainda não liga o esforço do corpo à necessidade de mais oxigênio"}
+];
 
 function mede(folhas){
   var prim = 0, ajuda = 0, tot = 0, tentados = 0, k, j;
@@ -1166,6 +1219,444 @@ function fechaDossie(){ document.getElementById("dossie").className = ""; }
   }
 }());
 /*</dossie-js>*/
+
+/* ============================================================
+   AS FOLHAS — uma função por FAMÍLIA de gesto, não uma por folha.
+   ⚠️ A POSIÇÃO É A IDENTIDADE: a folha da posição N usa o pote `pN`, grava os
+      ids `nN_i` e fala `pNenun`. Quem confere é `node _qa/conta_folha.js`.
+   ============================================================ */
+
+/* figura de um órgão, quando ele tem uma recortada da folha de papel */
+function figOrg(k, cls){
+  var O = ORG[k];
+  if(!O || !O.fig) return "";
+  return '<img class="' + (cls || "figo") + '" src="img/' + O.fig + '.png?v=' + VIMG +
+         '" alt="' + O.n + '">';
+}
+
+/* ---------- ESCOLHER (de PERG) ---------- */
+function fEscolher(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Leia a pergunta e toque na resposta certa.", "p" + pi + "enun");
+  figFolha(d, pi);
+  ST.folha["p" + pi].forEach(function(k, i){
+    var Q = PERG[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "perg", Q.p));
+    lin.appendChild(botaoSom("Ouvir a pergunta", function(){ falar("perg_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(Q.o.map(function(o){
+      return {v: o[0], rot: o[1], aria: o[1], fala: "op_" + k + "_" + o[0]};
+    })), Q.c, "frase", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- ARRASTAR o nome até a figura (de d08/d14: "arraste os nomes
+     correspondentes a cada órgão") ---------- */
+function fArrastar(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  var lista = ST.folha["p" + pi];
+  /* ⚠️ NEM TODO ÓRGÃO TEM DESENHO PRÓPRIO, e isso não é descuido: nas 78 folhas
+     colhidas o digestório vem em fichas recortáveis, uma por órgão, mas o
+     respiratório e o circulatório vêm sempre como UM esquema do corpo inteiro
+     (a traqueia não existe sozinha em folha nenhuma). Antes eu punha um "?" no
+     lugar da figura — a criança vê isso como erro do app, não como tarefa. Quem
+     não tem desenho entra com a PISTA escrita dentro do próprio alvo de soltar,
+     e o enunciado muda junto para pedir o que a tela realmente mostra. */
+  var comFig = lista.filter(function(k){ return !!ORG[k].fig; }).length === lista.length;
+  enunciado(d, pi, comFig
+      ? "Puxe o nome certo para cada órgão — ou toque no órgão e depois no nome."
+      : "Leia o que cada parte faz e puxe o nome certo — ou toque na pista e depois no nome.",
+            "p" + pi + "enun");
+  lista.forEach(function(k, i){
+    var O = ORG[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var cx = el("div", "orgcx");
+    if(O.fig) cx.innerHTML = figOrg(k, "figo");
+    else cx.appendChild(el("div", "pistaorg", O.faz));
+    var lin = el("div", "enunlin");
+    if(O.fig) lin.appendChild(el("div", "dica", O.faz));
+    lin.appendChild(botaoSom("Ouvir a pista", function(){ falar("faz_" + k); }));
+    box.appendChild(cx); box.appendChild(lin);
+    var ops = baralha(lista.slice()).slice(0, 4);
+    if(ops.indexOf(k) < 0){ ops[0] = k; ops = baralha(ops); }
+    opcoes(box, pi, id, ops.map(function(w){
+      return {v: w, rot: ORG[w].n, aria: ORG[w].n, fala: "org_" + w};
+    }), k, "pal", "certo_org_" + k, "dica_org_" + k, null, [cx]);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- NUMERAR o caminho (de d04 "NUMERE DE 1 A 5 O CAMINHO DO ALIMENTO"
+     e d19 "Siga as setas do percurso do ar") ---------- */
+function figFolha(d, pi){
+  var F = FIGFOLHA[pi];
+  if(!F) return;
+  var im = document.createElement("img");
+  im.className = F.cls; im.draggable = false;
+  im.src = "img/" + F.f + ".png?v=" + VIMG;
+  im.alt = F.alt;
+  d.appendChild(im);
+}
+
+function fNumerar(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  var O = ORDEM[ORDDE["p" + pi]];
+  enunciado(d, pi, "Ponha em ordem " + O.t + ": para cada um, toque no número do lugar dele.",
+            "p" + pi + "enun");
+  figFolha(d, pi);
+  var emb = baralha(O.v.map(function(k, i){ return {k: k, n: i + 1}; }));
+  emb.forEach(function(P, i){
+    var id = "n" + pi + "_" + i, box = item(null);
+    /* ⚠️ SEM SAÍDA DE EMERGÊNCIA AQUI. Antes isto era
+         `ORG[P.k] ? ORG[P.k].n : P.k.toUpperCase()...`
+       e a chave `cora2`, que eu não tinha declarado, vazou para a TELA e para a
+       VOZ: a criança ouviria "O CORA2 está no lugar certo". Quem pegou foi o
+       `_qa/revisor.py`. Agora todo item do caminho tem de estar no ORG — se
+       faltar, o caderno quebra alto no boot em vez de falar bobagem baixinho. */
+    var nomeOrg = ORG[P.k].n;
+    var lin = el("div", "enunlin");
+    if(ORG[P.k] && ORG[P.k].fig) lin.innerHTML = figOrg(P.k, "figp");
+    lin.appendChild(el("div", "pal", nomeOrg));
+    lin.appendChild(botaoSom("Ouvir", function(){ falar("org_" + P.k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, O.v.map(function(_, j){
+      return {v: "n" + (j + 1), rot: String(j + 1), aria: "número " + (j + 1), fala: "num_" + (j + 1)};
+    }), "n" + P.n, "num", "certo_ord_" + P.k, "dica_ord_" + P.k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- LIGAR (de d14, d05, c01, c21) ---------- */
+function fLigar(d, pi, gk){
+  faixa(d, pi, NOMES[pi - 1]);
+  /* ⚠️ NEM TODA FOLHA DE LIGAR É DE ÓRGÃO. A folha 33 liga o que ACONTECE no
+     corpo de quem corre ao motivo disso — e o enunciado fixo dizia "toque no
+     órgão", que ali é falso. A voz (o `PEDE` do gerar_falas) já dizia a coisa
+     certa; era a TELA que mentia. */
+  var deOrgao = LIGPARES[gk].every(function(P){ return !!ORG[P[0]]; });
+  enunciado(d, pi, deOrgao
+      ? "Toque no órgão de um lado e no que ele faz do outro."
+      : "Toque de um lado e depois no que combina com ele do outro lado.",
+            "p" + pi + "enun");
+  var pares = LIGPARES[gk].map(function(P){
+    /* ⚠️ O TERCEIRO CAMPO DO PAR É O RÓTULO, quando a chave não é um órgão.
+       Sem ele a tela escrevia a CHAVE em caixa alta — "MUSCULO", sem acento,
+       e a voz lia isso. Chave é identificador; rótulo é o que a criança lê. */
+    var nome = P[2] || (ORG[P[0]] ? ORG[P[0]].n : P[0].toUpperCase());
+    /* ⚠️ OS NOMES DOS CAMPOS SÃO OS QUE O `montaLigar` LÊ: esq/dir (o texto dos
+       dois lados), ariaE/ariaD (o que o leitor de tela diz), fe/fd (a fala de
+       cada ponta), fc (a fala do acerto) e dica (a do erro). Inventar nome aqui
+       deixa a ponta MUDA, sem erro nenhum no console. */
+    return {k: P[0], esq: nome, dir: P[1],
+            ariaE: nome, ariaD: P[1],
+            fe: "org_" + P[0], fd: "faz_" + P[0],
+            fc: "certo" + pi + "_" + P[0], dica: "dica" + pi + "_" + P[0]};
+  });
+  /* ⚠️ O ÚLTIMO ARGUMENTO É A PÁGINA (o elemento), não o número dela: o
+     `montaLigar` pendura nela o `aoAbrir` que redesenha as linhas quando a
+     folha aparece. Passar o número derruba o caderno inteiro no boot. */
+  /* ⚠️ A TAG É "g0", NÃO "g": o `idsDaPagina` monta o id como
+     l<pagina>g<indice-do-grupo>_<chave>, e esta folha tem um grupo só (o 0).
+     Com a tag "g" a folha gravava `l5g_esto` e o relatório procurava
+     `l5g0_esto` — a folha sairia ZERO com tudo respondido, e sem erro nenhum
+     no console. Quem pegou foi o `node _qa/conta_folha.js`. */
+  montaLigar(d, pi, "g0", pares, d);
+}
+
+/* ---------- ESCREVER no teclado (de d28 "COMPLETE AS FRASES", c03, c24) ---------- */
+function fEscrever(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Preencha a palavra que falta. Dá para usar o teclado da tela ou o de verdade.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var E = ESCR[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", E.fr));
+    lin.appendChild(botaoSom("Ouvir a frase", function(){ falar("fras_" + k); }));
+    box.appendChild(lin);
+    gradeEscrever(box, id, pi, k, E.w, E.fr, E.ac);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- CLASSIFICAR em gavetas (de d22, e do verdadeiro/falso de c01/c05) ---------- */
+function fGaveta(d, pi, gk, pede){ gavetas(d, pi, gk, pede); }
+
+/* ---------- PROCURAR no caça-palavras (de d21 "Caça-órgãos") ---------- */
+function fCaca(d, pi, C){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ache cada palavra na grade: toque na primeira letra e depois na última.",
+            "p" + pi + "enun");
+  cacaPalavras(d, pi, C, "Ache a palavra");
+}
+
+/* ---------- CRUZADINHA (de d34 "Cruza-respiração", c23 "Cruza-corações") ---------- */
+function fCruz(d, pi, C){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Leia a pista e preencha a palavra na cruzadinha.", "p" + pi + "enun");
+  cruzadinha(d, pi, C, "crz_");
+}
+
+/* ============================================================
+   PEÇAS COPIADAS (a mecânica já existe — copie, não reescreva)
+   Vindas do `_seg2/folhas.js`, que já passou pela banca de folha viva.
+   São MOTOR, não conteúdo: não trazem fala, figura nem prefixo de ninguém.
+   ============================================================ */
+
+/* PEÇA — O TECLADO NUMA FILA DE CASINHAS (_ponto2, f24/f32): a grade com o
+   número exato de letras, aberta pelo teclado do aparelho ou pelo de verdade. */
+function gradeEscrever(box, id, pi, k, w, rot, aceita){
+  registra(id, pi, aceita ? aceita[0] : w);
+  var mx = w.length, t;
+  if(aceita) aceita.forEach(function(x){ if(x.length > mx) mx = x.length; });
+  var grade = el("div", "cruz uma" + (aceita ? " livre" : "")), cels = [];
+  grade.setAttribute("data-qa", "esc-" + id);
+  for(t = 0; t < mx; t++){
+    var c = el("button", "ccel viva" + (ST.resp[id] ? " ok" : ""),
+               ST.resp[id] ? ((aceita ? aceita[0] : w).charAt(t) || "") : "");
+    c.setAttribute("aria-label", "Casa da palavra");
+    cels.push(c); grade.appendChild(c);
+  }
+  box.appendChild(grade);
+  var E = {k: k, w: aceita ? aceita[0] : w, id: id, cels: cels, rot: rot || "Escreva a palavra",
+           bt: el("span", "pista oculta", "")};
+  if(aceita) E.aceita = aceita;
+  cels.forEach(function(c){ c.onclick = function(){ if(!ST.resp[id]) abreCruz(E, pi); }; });
+  grade.onclick = function(){ if(!ST.resp[id]) abreCruz(E, pi); };
+  return E;
+}
+
+/* PEÇA — A CRUZADINHA QUE SE MONTA SOZINHA (_ort5b, f21): a primeira palavra
+   deita e as outras se penduram nela pela letra em comum. A pista aqui é TEXTO
+   (o contrário de…), não figura. */
+function cruzadinha(d, pi, DADOSC, prefFala){
+  var pool = ST.folha["p" + pi];
+  var mapa = {}, maxX = 0, maxY = 0, entradas = [];
+  function poe(w, x, y, hor){
+    var i;
+    for(i = 0; i < w.length; i++){
+      var cx = x + (hor ? i : 0), cy = y + (hor ? 0 : i);
+      mapa[cx + "," + cy] = w.charAt(i);
+      if(cx > maxX) maxX = cx;
+      if(cy > maxY) maxY = cy;
+    }
+  }
+  function cabe(w, x, y, hor){
+    var i;
+    for(i = 0; i < w.length; i++){
+      var cx = x + (hor ? i : 0), cy = y + (hor ? 0 : i);
+      var q = mapa[cx + "," + cy];
+      if(q && q !== w.charAt(i)) return false;
+      if(!q){
+        var a = hor ? mapa[cx + "," + (cy - 1)] : mapa[(cx - 1) + "," + cy];
+        var b = hor ? mapa[cx + "," + (cy + 1)] : mapa[(cx + 1) + "," + cy];
+        if(a || b) return false;
+      }
+    }
+    var antes = hor ? mapa[(x - 1) + "," + y] : mapa[x + "," + (y - 1)];
+    var dep = hor ? mapa[(x + w.length) + "," + y] : mapa[x + "," + (y + w.length)];
+    return !antes && !dep;
+  }
+  var linhaLivre = 0;
+  pool.forEach(function(k, n){
+    var w = DADOSC[k].p.replace(/[^A-ZÁÂÃÉÊÍÓÔÕÚÇ]/g, ""), col = null;
+    if(!entradas.length){ col = {x: 0, y: 0, hor: true}; }
+    else {
+      var i, j, achou = null;
+      for(i = 0; i < w.length && !achou; i++)
+        for(j = 0; j < entradas.length && !achou; j++){
+          var E = entradas[j], p;
+          for(p = 0; p < E.w.length; p++){
+            if(E.w.charAt(p) !== w.charAt(i)) continue;
+            var hor = !E.hor;
+            var x = hor ? E.x - i : E.x + p;
+            var y = hor ? E.y + p : E.y - i;
+            if(cabe(w, x, y, hor)){ achou = {x: x, y: y, hor: hor}; break; }
+          }
+        }
+      col = achou || {x: 0, y: maxY + 2 + (linhaLivre++), hor: true};
+    }
+    poe(w, col.x, col.y, col.hor);
+    entradas.push({k: k, w: w, x: col.x, y: col.y, hor: col.hor, n: n + 1});
+  });
+  var minX = 0, minY = 0, key;
+  for(key in mapa){
+    var pxy = key.split(","), px = +pxy[0], py = +pxy[1];
+    if(px < minX) minX = px;
+    if(py < minY) minY = py;
+  }
+  var env = el("div", "cruzenv"), grade = el("div", "cruz");
+  var larg = maxX - minX + 1, alt = maxY - minY + 1;
+  grade.style.gridTemplateColumns = "repeat(" + larg + ",-webkit-max-content)";
+  grade.style.gridTemplateColumns = "repeat(" + larg + ",max-content)";
+  var celula = {}, yy, xx;
+  for(yy = 0; yy < alt; yy++) for(xx = 0; xx < larg; xx++){
+    var ch = mapa[(xx + minX) + "," + (yy + minY)];
+    if(!ch){ grade.appendChild(el("span", "ccel")); continue; }
+    var c = el("button", "ccel viva", "");
+    c.setAttribute("aria-label", "Casa da cruzadinha");
+    c._x = xx + minX; c._y = yy + minY;
+    celula[c._x + "," + c._y] = c;
+    grade.appendChild(c);
+  }
+  env.appendChild(grade); d.appendChild(env);
+  var pistas = el("div", "pistas");
+  entradas.forEach(function(E, i){
+    var id = "n" + pi + "_" + i;
+    registra(id, pi, E.w);
+    E.id = id; E.cels = []; E.rot = "Escreva a palavra " + E.n;
+    var t;
+    for(t = 0; t < E.w.length; t++){
+      var cc = celula[(E.x + (E.hor ? t : 0)) + "," + (E.y + (E.hor ? 0 : t))];
+      E.cels.push(cc);
+      if(t === 0 && cc && !cc.querySelector(".cn")) cc.appendChild(el("span", "cn", E.n));
+    }
+    if(ST.resp[id]) E.cels.forEach(function(c, t2){
+      if(c){ c.className = "ccel viva ok"; c.textContent = E.w.charAt(t2);
+             if(t2 === 0) c.appendChild(el("span", "cn", E.n)); } });
+    var p = el("button", "pista" + (ST.resp[id] ? " feita" : ""),
+               '<span class="pn">' + E.n + ".</span> " + DADOSC[E.k].d);
+    p.setAttribute("data-qa", "esc-" + id);
+    p.setAttribute("aria-label", "Pista " + E.n + " da cruzadinha");
+    E.bt = p;
+    p.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso(); falar(prefFala + E.k);
+      abreCruz(E, pi);
+    };
+    pistas.appendChild(p);
+    E.cels.forEach(function(c){
+      if(!c) return;
+      c.addEventListener("click", function(){ if(!ST.resp[id]) abreCruz(E, pi); });
+    });
+  });
+  d.appendChild(pistas);
+}
+
+/* PEÇA — O CAÇA-PALAVRAS (_ponto2, f27). CONTRATO: `cp-<id>-a` e `cp-<id>-z`. */
+function cacaPalavras(d, pi, C, rotulo){
+  var cels = {};
+  var g = el("div", "cpgrade");
+  C.grade.forEach(function(lin, y){
+    var l = el("div", "cplin");
+    lin.forEach(function(L, x){
+      var b = el("button", "cpcel", L);
+      b.setAttribute("aria-label", L);
+      cels[y + "," + x] = b; l.appendChild(b);
+    });
+    g.appendChild(l);
+  });
+  d.appendChild(g);
+  var lista = el("div", "cplista");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var P = C.pal[k], id = "n" + pi + "_" + i;
+    registra(id, pi, "cpa cpz");
+    var rot = el("div", "cprot" + (ST.resp[id] ? " achada" : ""), rotulo + " <b>" + P.pista + "</b>");
+    rot.appendChild(botaoSom("Ouvir a pista", function(){ falar("cp_" + k); }));
+    lista.appendChild(rot);
+    var ca = cels[P.a[0] + "," + P.a[1]], cz = cels[P.z[0] + "," + P.z[1]];
+    ca.setAttribute("data-qa", "cp-" + id + "-a");
+    cz.setAttribute("data-qa", "cp-" + id + "-z");
+    function marca(){
+      var y = P.a[0], x;
+      for(x = P.a[1]; x <= P.z[1]; x++) cels[y + "," + x].className = "cpcel achada";
+      rot.className = "cprot achada";
+    }
+    if(ST.resp[id]) marca();
+    var passo = 0;
+    [ca, cz].forEach(function(cel, n){
+      cel.addEventListener("click", function(){
+        if(ST.resp[id]) return;
+        sPasso();
+        if(n === 0){ passo = 1; cel.className = "cpcel pega"; return; }
+        if(passo !== 1){ falar("cacatoque"); return; }
+        marca(); acertou(id, "certo" + pi + "_" + k);
+      });
+    });
+  });
+  d.appendChild(lista);
+}
+
+/* PEÇA — PEGAR E SOLTAR NUM ALVO COMPARTILHADO (_ponto2, f1): a peça é o item,
+   o alvo se declara no nível da página como `alvo-<chave>`, e a resposta do item
+   é ">chave". As duas portas: puxar OU tocar-tocar. */
+function pegaSolta(d, pi, alvosHTML, itens, chaveAlvo, falaItem, cls, alvosEmOrdem){
+  var alvos = [], marcada = null;
+  var linha = el("div", "figalvos");
+  /* ⚠️ OS ALVOS SAEM EMBARALHADOS — MENOS NA FOLHA DE ORDEM (19/set/2026).
+     Embaralhar o alvo é o certo quando ele é uma FIGURA: senão a ordem da lista
+     entrega a resposta. Mas numa folha que pede "ponha as cenas na ORDEM" o
+     alvo É a ordem — e a tela mostrava 2º, 5º, 1º, 4º, 3º. A criança não tem
+     como pôr em ordem uma fila que já está fora de ordem: a folha deixa de
+     fazer o que o comando impresso manda. Quem passa `alvosEmOrdem` é a folha
+     de ordem, e só ela. */
+  (alvosEmOrdem ? alvosHTML.slice(0) : baralha(alvosHTML.slice(0))).forEach(function(A){
+    var a = el("div", "figalvo gr");
+    a.innerHTML = A.html;
+    a.setAttribute("data-alvo", "1");
+    a.setAttribute("data-qa", "alvo-" + chaveAlvo + pi + "_" + A.k);
+    a._v = A.k; a._dentro = el("div", "fdentro2"); a.appendChild(a._dentro);
+    if(A.fala) a.appendChild(botaoSom("Ouvir", function(){ falar(A.fala); }));
+    alvos.push(a); linha.appendChild(a);
+  });
+  d.appendChild(linha);
+  var banco = el("div", "figbanco");
+  itens.forEach(function(I, i){
+    var id = "n" + pi + "_" + i;
+    registra(id, pi, ">" + chaveAlvo + pi + "_" + I.alvo);
+    var b = el("button", "op pal" + (cls ? " " + cls : "") + (ST.resp[id] ? " usada" : ""), I.rot);
+    b.setAttribute("aria-label", I.aria || I.rot);
+    b.setAttribute("data-qa", "item-" + id);
+    b.setAttribute("data-alvo", "1");
+    if(ST.resp[id]) alvos.forEach(function(a){ if(a._v === I.alvo) a._dentro.appendChild(el("span", "fdentro", I.rot)); });
+    function larga(a){
+      if(ST.resp[id]) return;
+      if(a._v === I.alvo){
+        b.className = "op pal" + (cls ? " " + cls : "") + " usada";
+        a._dentro.appendChild(el("span", "fdentro", I.rot));
+        if(marcada === b) marcada = null;
+        acertou(id, "certo" + pi + "_" + I.k);
+      } else {
+        a.className = "figalvo gr erro";
+        setTimeout(function(){ a.className = "figalvo gr"; }, 500);
+        errou(id, "dica" + pi + "_" + I.k);
+      }
+    }
+    b._larga = larga;
+    b.onclick = function(){
+      if(b._arrastou){ b._arrastou = false; return; }
+      if(ST.resp[id]) return;
+      sPasso(); falar(falaItem(I));
+      if(marcada === b){ b.className = "op pal" + (cls ? " " + cls : ""); marcada = null; return; }
+      if(marcada) marcada.className = "op pal" + (cls ? " " + cls : "");
+      b.className = "op pal" + (cls ? " " + cls : "") + " marcada"; marcada = b;
+    };
+    puxavel(b, alvos, function(a){ larga(a); });
+    banco.appendChild(b);
+  });
+  alvos.forEach(function(a){ a.onclick = function(){ if(marcada && marcada._larga) marcada._larga(a); }; });
+  d.appendChild(banco);
+}
+
+/* ============================================================
+   AS 35 FOLHAS — e a ordem É a escada (ver o comentário dos DADOS).
+
+   ⚠️ O gesto de cada folha saiu do COMANDO IMPRESSO na folha de papel, e o
+      comando está copiado verbatim no `_sequencias/POTE-NOT2.md`, ao lado do
+      veredito de cada uma das quarenta. Exemplos: *"ARRASTE OS NOMES DAS PARTES
+      DA NOTÍCIA ATÉ OS LOCAIS ADEQUADOS"* (d01) → arrastar; *"RECORTE AS
+      LEGENDAS ABAIXO, RECORTE E COLE NO LUGAR CERTO"* (d36) → puxar e soltar;
+      *"VAMOS ESCOLHER UMA MANCHETE PARA ESSA FOTOLEGENDA?"* (d11) → escolher com
+      a foto na frente.
+   ============================================================ */
+
+function chavePal(w){
+  return String(w).toLowerCase()
+    .replace(/[áàâãä]/g, "a").replace(/[éèêë]/g, "e").replace(/[íìîï]/g, "i")
+    .replace(/[óòôõö]/g, "o").replace(/[úùûü]/g, "u").replace(/ç/g, "c")
+    .replace(/[^a-z]/g, "");
+}
 
 /* ⭐ o botão "Terminar" e o "Voltar para o caderno" — ver o comentário do fim() */
 (function(){
