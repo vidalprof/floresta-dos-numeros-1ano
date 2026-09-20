@@ -914,6 +914,44 @@ gesto. Ele reprovou a folha 20 porque a chave do par é `sangue` e o rótulo diz
 SANGUE. A ponta do ligar agora se **declara** (`data-alvo="1"`), no `_corpo5` e
 no esqueleto. Declarar o que o elemento é não é desligar portão.
 
+## 🔊 O ALTO-FALANTE DA RESPOSTA EXISTIA E NÃO SERVIA PARA NADA (20/set/2026)
+
+**Pergunta do Marcos:** *"a atividade tem áudio para ajudar os que não sabem
+ler? O alto-falante discreto para clicar caso o estudante queira ouvir"*.
+
+**A resposta honesta era NÃO** — e o pior é que o portão dizia que sim.
+
+**O que havia.** Toda opção carregava o campo `fala`, e o portão `1o`
+(`_qa/voz_opcao.py`) media exatamente isso: *"ok: toda opção carrega o campo
+`fala` — nenhuma é muda"*, em **todos** os cadernos. Mas o motor tocava essa
+fala **dentro do `responde()`**, ou seja **depois do clique**: para ouvir a
+resposta, a criança tinha de **escolher** a resposta — e aí já tinha respondido.
+
+**Campo preenchido não é criança ouvindo.** A ordem dele era de ago/2026 (*"o
+alto-falante nas respostas também, para ajudar os alunos que não sabem ler"*), e
+eu tinha medido a metade errada dela por um mês. O portão nasceu de uma cobrança
+dele e ainda assim ficou olhando para o lado.
+
+**O conserto.** Cada opção ganhou um alto-falante **IRMÃO** (`.somop`, 42 px,
+borda clara, opacidade .85 — o "discreto" que ele pediu é a borda e a
+opacidade, **não o tamanho**: abaixo de 40 px o portão de leiaute reprova e o
+dedo da criança não acerta). Botão irmão e nunca aninhado: botão dentro de botão
+é HTML inválido e o clique vaza para a resposta.
+
+**Medido depois, no navegador:** tocar só o alto-falante fala `op_q1_a` e o item
+**continua aberto**; tocar a resposta fala a mesma coisa e marca `certa`. O
+jogador automático continua resolvendo as 36 folhas, e o leiaute passa nos 6
+tamanhos.
+
+**Conserto duplo:** o portão `1o` agora faz DUAS perguntas — (1) a opção tem
+`fala`? (2) o `opcoes()` **desenha** o alto-falante ao lado dela? A segunda é a
+que importa para quem não lê.
+
+⚠️ **Dívida medida:** **31 cadernos de folha viva** estão sem o alto-falante na
+opção — só o `_corpo5` e o esqueleto têm. O `opcoes()` é peça clonada e idêntica
+nos 31, então o remendo é mecânico; o que custa é **republicar os 31** com a
+banca de cada um. Não fiz por conta própria.
+
 ## 🏷️ "A VIAGEM DENTRO DE VOCÊ" NÃO DIZIA NADA (20/set/2026)
 
 **Palavras do Marcos**, abrindo o caderno do corpo humano: ***"mude o título,

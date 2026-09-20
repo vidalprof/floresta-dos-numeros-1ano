@@ -15,10 +15,20 @@ u"""
     seis anos não lê isso, e sem voz ela escolhe pelo tamanho do botão. A
     atividade virava sorteio para justamente quem ela deveria ajudar.
 
- O QUE ELE MEDE: toda opção desenhada por `opcoes(...)` tem de carregar o campo
- `fala`. É esse campo que o motor toca quando a criança encosta no botão — sem
- ele, o botão é mudo, e nenhum outro portão vê, porque o app funciona
- perfeitamente.
+ O QUE ELE MEDE, e são DUAS coisas:
+
+ 1. toda opção desenhada por `opcoes(...)` carrega o campo `fala`;
+ 2. ⭐ **o motor desenha um ALTO-FALANTE ao lado de cada opção** — quer dizer, a
+    criança consegue OUVIR ANTES DE ESCOLHER.
+
+ ⚠️ A SEGUNDA ENTROU EM 20/set/2026, e ela é a metade que faltava. O Marcos
+    perguntou: *"a atividade tem áudio para ajudar os que não sabem ler? O
+    alto-falante discreto para clicar caso o estudante queira ouvir"* — e a
+    resposta honesta era NÃO. Todas as opções tinham `fala` (este portão dizia
+    "ok" em todos os cadernos), mas o motor só tocava a fala DEPOIS do clique:
+    **para ouvir, a criança tinha de escolher — e aí já tinha respondido.**
+    Ou seja, o portão media o campo existir e não o que a ordem de ago/2026
+    pedia. Campo preenchido não é criança ouvindo.
 
  ⚠️ O QUE ELE NÃO MEDE: se a fala DIZ a coisa certa (isso é do `_qa/falas.py` e
     do ouvido) e se o mp3 existe (o `entregar.yml` grava). Ele mede o mudo.
@@ -72,9 +82,42 @@ def main():
     if not total:
         print(u"   NAO SE APLICA: nenhuma opcao desenhada.")
         return 2
-    if not mudas:
-        print(u"   ok: toda opcao carrega o campo `fala` — nenhuma e muda.")
+    # ⚠️ 2a PERGUNTA: o motor DESENHA o alto-falante ao lado da opcao?
+    #    Procura, dentro do corpo de `opcoes(...)`, a criacao de um botao de som
+    #    amarrado ao campo `fala` da opcao.
+    corpo = u""
+    i = js.find(u"function opcoes(")
+    if i >= 0:
+        d, ini = 0, None
+        for j in range(i, len(js)):
+            c = js[j]
+            if c == u"{":
+                d += 1
+                if ini is None:
+                    ini = j
+            elif c == u"}":
+                d -= 1
+                if d == 0 and ini is not None:
+                    corpo = js[ini:j + 1]
+                    break
+    sem_botao = bool(corpo) and not (u"botaoSom" in corpo and u"o.fala" in corpo)
+
+    if not mudas and not sem_botao:
+        print(u"   ok: toda opcao carrega `fala` E tem alto-falante ao lado "
+              u"(a crianca ouve ANTES de escolher).")
         return 0
+
+    if sem_botao:
+        print(u"   REPROVADO: as opcoes tem `fala`, mas o `opcoes()` NAO desenha")
+        print(u"   alto-falante nenhum ao lado delas — a fala so toca DEPOIS do")
+        print(u"   clique, e para ouvir a crianca tem de escolher. Quem nao le")
+        print(u"   continua escolhendo no escuro.")
+        print(u"   Conserto: o botao IRMAO do `.op`, como no `_corpo5`:")
+        print(u"     if(o.fala){ var w = el(\"div\", \"opw\"); w.appendChild(b);")
+        print(u"       w.appendChild(botaoSom(\"Ouvir esta resposta\",")
+        print(u"         function(){ falar(o.fala); }, \"som somop\")); box.appendChild(w); }")
+        if not mudas:
+            return 1
 
     print(u"   REPROVADO — %d opcao(oes) MUDAS:" % len(mudas))
     for linha, trecho in mudas:

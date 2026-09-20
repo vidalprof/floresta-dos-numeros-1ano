@@ -133,6 +133,22 @@ button{font-family:inherit;cursor:pointer}
 
 /* fileira genérica de opções */
 .ops{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+/* ⚠️ O ALTO-FALANTE DA RESPOSTA — DISCRETO, e é regra do Marcos (20/set/2026):
+   *"o alto-falante discreto para clicar caso o estudante queira ouvir"*. Ele
+   vem AO LADO de cada opção, antes da escolha, para quem ainda não lê.
+   ⚠️ 42 px e não menos: o portão de leiaute reprova alvo abaixo de 40 px, e
+   dedo de criança não acerta menor que isso. "Discreto" aqui é a BORDA clara e
+   a opacidade, não o tamanho. */
+.opw{display:flex;align-items:center;gap:6px}
+.opw.larga{width:100%;max-width:440px}
+.opw.larga .op.frase{flex:1;width:auto;max-width:none}
+.som.somop{width:42px;height:42px;min-width:42px;height:42px;border-width:2px;
+  border-color:#e3d6ce;opacity:.85}
+.som.somop:active{opacity:1}
+.som.somop .cone{left:11px;top:15px}
+.som.somop .o1{left:24px;top:14px}
+.som.somop .o2{left:27px;top:9px}
+
 .op{min-width:64px;min-height:56px;border:3px solid #e6dbd1;border-radius:16px;background:#fff;color:var(--texto);
   font-weight:900;font-size:20px;padding:8px 14px;-webkit-transition:transform .1s;transition:transform .1s}
 .op:active{transform:scale(.94)}
@@ -2940,5 +2956,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=ec566f117f"></script>
+<script src="folhas.js?v=ee9f1265ed"></script>
 </body></html>

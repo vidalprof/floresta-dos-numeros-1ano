@@ -590,7 +590,18 @@ Leia tudo antes de agir e responda sempre em **português**.
 >    alunos que não sabem ler"*.
 >    ⭐ **E EM FOLHA VIVA ISSO É MEDIDO desde 15/set/2026 — portão `1o`
 >    (`_qa/voz_opcao.py`)**, no pré-voo e na banca: reprova toda opção de
->    `opcoes(...)` sem o campo `fala`. Ele nasceu porque o Marcos teve de pedir
+>    `opcoes(...)` sem o campo `fala`.
+>    ⭐⭐ **E DESDE 20/set/2026 ELE COBRA A METADE QUE FALTAVA: a criança tem
+>    de poder OUVIR ANTES DE ESCOLHER.** Pergunta do Marcos: *"a atividade tem
+>    áudio para ajudar os que não sabem ler? O alto-falante discreto para clicar
+>    caso o estudante queira ouvir"* — e a resposta era NÃO. Todas as opções
+>    tinham `fala` e o portão dizia "ok" em todos os cadernos, mas o motor só
+>    tocava a fala **depois do clique**: para ouvir, a criança tinha de
+>    ESCOLHER — e aí já tinha respondido. **Campo preenchido não é criança
+>    ouvindo.** Agora cada opção leva um alto-falante IRMÃO (`.somop`, 42 px,
+>    borda clara) e o portão reprova o `opcoes()` que não o desenhe.
+>    ⚠️ Medido no dia: **31 cadernos de folha viva** estão sem ele — só o
+>    `_corpo5` e o esqueleto têm. É dívida declarada, não "está feito". Ele nasceu porque o Marcos teve de pedir
 >    de novo (*"precisamos pôr áudio nas opções de resposta para quem não sabe
 >    ler, principalmente para os menores"*) e a contagem deu **9 opções mudas em
 >    quatro cadernos, três de alfabetização** — a pior no `_rima1`, do 1º ano,
