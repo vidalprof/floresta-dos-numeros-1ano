@@ -146,7 +146,7 @@ def p(k, v):
 # ---------------------------------------------------------------------------
 # AS FALAS DO MOTOR — estas toda folha viva tem
 # ---------------------------------------------------------------------------
-p(u"capa", u"A Viagem Dentro de Você. Trinta e seis folhas sobre o caminho que o alimento, "
+p(u"capa", u"Aprendendo os sistemas digestório, respiratório e circulatório. Trinta e seis folhas sobre o caminho que o alimento, "
            u"o ar e o sangue fazem dentro do seu corpo. Escreva o seu nome ali embaixo e "
            u"toque em Começar.")
 p(u"folhaPronta", u"Folha pronta! Muito bem.")

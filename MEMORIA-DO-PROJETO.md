@@ -860,7 +860,7 @@
 
 ## 🕶️ DOIS PORTÕES LIAM METADE DO ARQUIVO — e por isso aprovavam (20/set/2026)
 
-Os dois foram achados montando o **`_corpo5`** ("A Viagem Dentro de Você", 5º
+Os dois foram achados montando o **`_corpo5`** ("Aprendendo os sistemas digestório, respiratório e circulatório", 5º
 ano). Os dois diziam **ok** com o defeito na frente deles. A lição é a mesma
 das outras vezes, e ela merece ficar escrita de novo: **portão que lê metade do
 que existe não aprova — ele se cala, e o silêncio dele tem a mesma cara do
@@ -913,6 +913,46 @@ remédio já existia. No **LIGAR** as duas colunas estão à vista de propósito
 gesto. Ele reprovou a folha 20 porque a chave do par é `sangue` e o rótulo diz
 SANGUE. A ponta do ligar agora se **declara** (`data-alvo="1"`), no `_corpo5` e
 no esqueleto. Declarar o que o elemento é não é desligar portão.
+
+## 🏷️ "A VIAGEM DENTRO DE VOCÊ" NÃO DIZIA NADA (20/set/2026)
+
+**Palavras do Marcos**, abrindo o caderno do corpo humano: ***"mude o título,
+sempre coloque algo como APRENDENDO O SISTEMA DIGESTÓRIO etc"***.
+
+**Por que ele tem razão, e não é gosto.** Ele abre o **painel com 99
+atividades** na escola, na frente da turma, e precisa saber **o que é antes de
+clicar**. A criança também: é pelo título que ela reconhece, no dia seguinte,
+que já fez aquela. *"A Viagem Dentro de Você"* obriga os dois a adivinhar —
+e eu tinha escolhido esse nome porque era bonito, não porque servia a alguém.
+
+Virou **"Aprendendo os sistemas digestório, respiratório e circulatório"**, nos
+seis lugares onde o título mora: `<title>`, a capa, a faixa do topo, a narração
+da capa, o `ATIVIDADES.md` e o painel. Na capa ele quebra em três linhas e
+continua legível (fotografado antes de subir).
+
+⚠️ **O ENDEREÇO NÃO MUDOU** — continua `a-viagem-dentro-de-voce`. Link que já
+foi para a escola não se quebra. Título e URL podem divergir; se ele quiser o
+endereço novo, nasce repositório novo e o antigo fica.
+
+**Conserto duplo — portão `0b13` (`_qa/titulo.py`)**, no pré-voo e na banca:
+1. `<title>` com **"Nº ano"** reprova. E ao escrever o portão apareceu o
+   defeito que ninguém tinha visto: **quatro cadernos no ar** (`_nasal2`,
+   `_ponto2`, `_sil2`, `_troca2`) mostravam literalmente *"Nº ano"* na aba do
+   navegador. A raiz era o `nova_folha_viva.sh`, que trocava o NOME DA ATIVIDADE
+   do esqueleto e deixava o "Nº ano" — agora ele pede o **ano** como 4º
+   argumento. Os quatro foram corrigidos.
+2. Título em que **nenhuma palavra aparece nos objetivos do `curriculo.json`**
+   reprova. ⚠️ O portão pega o título que não diz NADA do assunto; se o título é
+   BOM, quem decide é o Marcos — "O Bando das Rimas" passa por causa de "Rimas"
+   e ainda assim é mais figurado do que ele pediu.
+
+**Medido nas 34 atividades que declaram currículo:** 25 já nomeiam o assunto e
+**NOVE não** — `_dedos` (*Somando com os Dedinhos*), `_ing8` (*Lost & Found*),
+`_mult2` (*A Horta do Vovô*), `_ort5` (*O Caso dos Sons Iguais*), `_ort5b`
+(*A Loteria do S*), `_seg2` (*O Caderno do Juquinha*), `_sil2` (*O Armário das
+Quatro Gavetas*), `_subst5` (*A Fábrica de Nomes*) e `_verbo4` (*O Motor da
+Frase*). **Não renomeei nenhuma por conta própria** — título de atividade no ar
+é decisão dele, e o portão as segura até ele dizer.
 
 ## 👩‍🏫 "SEMPRE FIZEMOS ASSIM" — e fizemos: eu é que tinha parado (20/set/2026)
 

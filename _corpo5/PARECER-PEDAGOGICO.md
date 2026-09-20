@@ -1,4 +1,4 @@
-# Parecer pedagógico — A Viagem Dentro de Você (5º ano)
+# Parecer pedagógico — Aprendendo os sistemas digestório, respiratório e circulatório (5º ano)
 
 > Ordem do Marcos (set/2026): *"é muito imperativo que essas atividades passem
 > pelo pedagogo"*. 5º ano é anos iniciais → quem assina é o **pedagogo**.

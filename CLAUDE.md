@@ -15,7 +15,7 @@ Leia tudo antes de agir e responda sempre em **português**.
 >
 > ⭐ **E QUEM PRECISA COMEÇAR AGORA, SEM LER AS 1.400 LINHAS: o `§0 ROTEIRO DE
 > BOLSO`**, no topo daquele arquivo — as **treze etapas na ordem**, com o comando
-> de cada uma, mais as **nove regras que não se negociam**. Nasceu do pedido do
+> de cada uma, mais as **dez regras que não se negociam**. Nasceu do pedido do
 > Marcos (15/set/2026): *"deixe um documento registrado, para se é que já não
 > tem, para que qualquer sessão nova se ler saiba como fazer essas nossas
 > sequências didáticas"*. O documento já existia; o que faltava era a porta de
@@ -61,6 +61,34 @@ Leia tudo antes de agir e responda sempre em **português**.
 > desenho. Nasceu da pergunta do Marcos (13/set/2026): *"Mas tem banca para esse
 > tipo de atividade?"* — e não tinha; a escolha dos portões dependia da minha
 > memória. Na estreia ela reprovou os ONZE cadernos, dez já no ar.
+
+> ## 🏷️ O TÍTULO DIZ O QUE SE APRENDE — nada de nome só bonito (Marcos, 20/set/2026)
+>
+> Palavras dele, abrindo o caderno do corpo humano: ***"mude o título, sempre
+> coloque algo como APRENDENDO O SISTEMA DIGESTÓRIO etc"***. O caderno chamava-se
+> *"A Viagem Dentro de Você"* — bonito, e não dizia nada.
+>
+> **Por que isso é sério e não gosto:** ele abre o **painel com 99 atividades**
+> na escola, na frente da turma, e precisa saber **o que é antes de clicar**. A
+> criança também: é pelo título que ela reconhece, no dia seguinte, que já fez
+> aquela. Título figurado obriga os dois a adivinhar.
+>
+> **A regra:** o título **nomeia o assunto**, no vocabulário do currículo —
+> *"Aprendendo os sistemas digestório, respiratório e circulatório"*, não *"A
+> Viagem Dentro de Você"*. Vale no `<title>`, na **capa**, na faixa do topo, na
+> **narração da capa**, no `ATIVIDADES.md` e no painel — os seis lugares.
+>
+> **Virou portão: `0b13` (`_qa/titulo.py`)**, no pré-voo e na banca. Ele reprova
+> (1) `<title>` com **"Nº ano"**, que é resto do esqueleto — achado ao escrever
+> o portão: **quatro cadernos no ar** mostravam isso na aba do navegador; e
+> (2) título em que **nenhuma palavra aparece nos objetivos do `curriculo.json`**.
+> ⚠️ Ele pega o título que não diz NADA do assunto; se o título é BOM, quem
+> decide é o Marcos. E o `nova_folha_viva.sh` agora pede o **ano** como 4º
+> argumento, que era a raiz do "Nº ano".
+>
+> ⚠️ **O endereço (o repositório) NÃO muda junto** — link que já foi para a
+> escola não se quebra. Título e URL podem divergir; se ele quiser o endereço
+> novo, nasce repositório novo e o antigo fica (regra "nada do antigo se apaga").
 
 > ## 🦴 CADERNO NOVO DE FOLHA VIVA NASCE DO **ESQUELETO**, NUNCA DE UM CLONE
 >

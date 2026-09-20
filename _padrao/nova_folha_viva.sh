@@ -20,14 +20,23 @@
 #  Ex.:  bash _padrao/nova_folha_viva.sh _verbo5 vb_ "A Oficina dos Verbos"
 # ============================================================
 set -e
-PASTA="${1%/}"; PRE="$2"; TITULO="$3"
+PASTA="${1%/}"; PRE="$2"; TITULO="$3"; ANO="$4"
 BASE="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$BASE"
 
 if [ -z "$PASTA" ] || [ -z "$PRE" ] || [ -z "$TITULO" ]; then
-  echo 'uso: bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>"'
-  echo 'ex.: bash _padrao/nova_folha_viva.sh _verbo5 vb_ "A Oficina dos Verbos"'
+  echo 'uso: bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>" <ano>'
+  echo 'ex.: bash _padrao/nova_folha_viva.sh _corpo5 vd_ "Aprendendo o sistema digestório" 5'
   exit 2
+fi
+# ⚠️ O ANO É O 4º ARGUMENTO, e ele existe por um defeito que passou em QUATRO
+#    cadernos (20/set/2026): o esqueleto traz `<title>NOME DA ATIVIDADE — Nº ano`
+#    e este script só trocava o NOME. O "Nº ano" ficava, e a aba do navegador da
+#    escola mostrava literalmente isso. Quem pega agora é o portão 0b13
+#    (`_qa/titulo.py`); aqui a gente evita que aconteça.
+if [ -z "$ANO" ]; then
+  echo '⚠️  sem o ANO (4º argumento): o <title> vai ficar com "Nº ano" e o portão'
+  echo '    0b13 (_qa/titulo.py) reprova. Passe o ano: ... "<Título>" 5'
 fi
 [ -e "$PASTA" ] && { echo "⛔ $PASTA já existe — não vou escrever por cima."; exit 1; }
 case "$PRE" in *_) ;; *) echo "⛔ o prefixo tem de terminar com _ (ex.: vb_)"; exit 1;; esac
@@ -56,10 +65,11 @@ io.open(pasta + "/img/ORIGEM.json", "w", encoding="utf-8").write(json.dumps({
   pre + "selo_off.png": "banco:selo"}, indent=1, sort_keys=True, ensure_ascii=False))
 PYIMG
 
-python3 - "$PASTA" "$PRE" "$TITULO" <<'PY'
+python3 - "$PASTA" "$PRE" "$TITULO" "$ANO" <<'PY'
 # -*- coding: utf-8 -*-
 import io, re, sys
 pasta, pre, titulo = sys.argv[1], sys.argv[2], sys.argv[3]
+ano = sys.argv[4] if len(sys.argv) > 4 else ""
 chave = re.sub(r"[^a-z0-9]+", "_", titulo.lower()).strip("_")
 
 h = io.open(pasta + "/index.html", encoding="utf-8").read()
@@ -68,6 +78,8 @@ h = h.replace('"audio/xx_"', '"audio/%s"' % pre)
 h = re.sub(r'img/\w+_trofeu\.png', 'img/%strofeu.png' % pre, h)
 h = re.sub(r'var CHAVE_LS = "[^"]*";', 'var CHAVE_LS = "%s";' % chave, h)
 h = h.replace("NOME DA ATIVIDADE", titulo)
+if ano:
+    h = h.replace(u"\u2014 N\u00ba ano</title>", u"\u2014 %s\u00ba ano</title>" % ano, 1)
 io.open(pasta + "/index.html", "w", encoding="utf-8").write(h)
 
 j = io.open(pasta + "/folhas.js", encoding="utf-8").read()

@@ -28,7 +28,7 @@
 > que seção deste arquivo mora o detalhe, e o resto do documento continua sendo
 > a lei. **Este roteiro não substitui a leitura — ele diz por onde entrar.**
 
-### As nove coisas que NÃO se negociam (se alguma falhar, não é sequência didática)
+### As dez coisas que NÃO se negociam (se alguma falhar, não é sequência didática)
 
 | # | regra | onde |
 |---|---|---|
@@ -39,6 +39,7 @@
 | 5 | **Duas portas**: teclado na tela **e** teclado de verdade; arrastar **e** tocar. | §2 *Regra das duas portas* |
 | 6 | **Nasce do ESQUELETO**, nunca de um clone. | §1b |
 | 7 | **Defeito que chega ao Marcos tem conserto DUPLO**: o código **e** o portão que o pega sozinho da próxima vez. | §2 *Regra do conserto duplo* |
+| 10 | 🏷️ **O TÍTULO diz o que se aprende**, no vocabulário do currículo (*"Aprendendo os sistemas digestório, respiratório e circulatório"*, não *"A Viagem Dentro de Você"*). Marcos, 20/set/2026: ***"sempre coloque algo como aprendendo o sistema digestório etc"***. Ele abre o painel com 99 atividades na frente da turma. Portão `0b13` (`_qa/titulo.py`). | etapa 5 |
 | 9 | ⭐ **O caderno PRONTO passa pelo CRIVO DO PEDAGOGO**, e ele é um DOCUMENTO escrito (`<pasta>/PARECER-PEDAGOGICO.md`), não uma frase minha. Marcos, 20/set/2026: ***"o crivo que falo é o pedagogo olhando e dizendo que está tudo adequado"***. Não confundir com o crivo da COLHEITA (`POTE-*.md`), que é outro e vem antes. | etapa 11b |
 | 8 | ⭐ **Cada caderno tem a SUA cara** — cor pelo assunto, capa com uma cena do assunto, `@keyframes` com nome próprio (portão `0b11`, `_qa/identidade.py`). Marcos, 18/set/2026: *"os estudantes acham que é a mesma atividade, mesmo o título sendo diferente"*. A capa do esqueleto é exemplo, não padrão. | `MEMORIA` *"Cada caderno tem a sua cara"* |
 
@@ -71,7 +72,11 @@ Mecânica que repete vem em **bloco colado**, subindo um degrau (§2 *repetiçã
 seguida*), e a estratégia do **par de folhas** é o jeito de chegar às 35 sem
 encher (§2, e o que NÃO se dobra: cruzadinha, memória, caça-palavras, forca).
 
-**5 · NASCER.** `bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>"`.
+**5 · NASCER.** `bash _padrao/nova_folha_viva.sh <pasta> <prefixo> "<Título>" <ano>`.
+🏷️ **O TÍTULO diz o assunto** — *"Aprendendo o sistema digestório"*, não um nome
+só bonito (regra 10; portão `0b13`). **E o ANO é o 4º argumento**: sem ele o
+`<title>` fica com o *"Nº ano"* do molde e a aba do navegador da escola mostra
+isso — aconteceu em quatro cadernos.
 O script recusa prefixo já usado. O recém-nascido abre limpo e medido. §1b.
 
 **6 · RECORTAR as figuras** das próprias folhas

@@ -223,7 +223,12 @@ function f0(d){
      figuras recortadas das próprias folhas de papel. O coração pulsa com o
      `vdBate` e as gotas sobem com o `vdSobe`: animação com nome próprio, que é
      o que o portão 0b11 pede. */
-  var c = el("div", "capa"), nome = "A Viagem Dentro de Você", k, letras = "";
+  /* ⚠️ O TÍTULO DIZ O QUE SE APRENDE (ordem do Marcos, 20/set/2026:
+     *"mude o título, sempre coloque algo como aprendendo o sistema digestório
+     etc"*). "A Viagem Dentro de Você" era bonito e não dizia nada: o professor
+     que abre o painel com 99 atividades precisa saber o que é ANTES de clicar,
+     e a criança também. */
+  var c = el("div", "capa"), nome = "Aprendendo os sistemas digestório, respiratório e circulatório", k, letras = "";
   nome.split(" ").forEach(function(pal, w){
     var s = "";
     for(k = 0; k < pal.length; k++) s += '<span class="lt">' + pal.charAt(k) + '</span>';

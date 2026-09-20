@@ -95,6 +95,7 @@ PORTOES=(
   "0a2 estatico (nome nao declarado)|bash _qa/estatico.sh $ARQ"
   "0b9 pedagogo (curriculo)|python3 _qa/pedagogo_curriculo.py $PASTA"
   "0b12 parecer do pedagogo (assinado?)|python3 _qa/parecer.py $PASTA"
+  "0b13 titulo diz o assunto|python3 _qa/titulo.py $PASTA"
   # ⚠️ nasceu de "cita laranja e aparece lata": a silaba saia da palavra errada
   "0b10 fonte da silaba|python3 _qa/silaba_fonte.py $PASTA"
   # ⭐ 1i2) palavra do pote SEM figura no disco — a familia do dia em que o
