@@ -418,14 +418,21 @@ var QUESTOES=[
  {disc:"acao", fig:"mais4", pergunta:"O CORINGA COMPRAR QUATRO tem uma condição para ser jogado. Qual é?",
   opcoes:["Só pode ser jogado na última rodada da partida.","Só pode ser jogado por quem tiver mais de cinco cartas na mão.","Só pode ser jogado se você NÃO tiver nenhuma outra carta da cor que está na mesa.","Pode ser jogado a qualquer momento, sem nenhuma condição."], correta:2},
 
- /* ⚠️ Esta questão já esteve errada, e o defeito não era a resposta: as letras A
-    e B diziam quase a mesma frase ("compra quatro cartas, e quem jogou escolhe
-    a cor" / "compra quatro cartas e escolhe a cor"). Para uma criança do 3º ano
-    isso mede LEITURA ATENTA, não a regra do jogo — e prova não é pegadinha.
-    Agora a pergunta separa o que é a regra: QUEM escolhe a cor. */
- {disc:"acao", fig:"mais4", pergunta:"Alguém jogou o coringa comprar quatro. O próximo compra as quatro cartas — mas QUEM escolhe a cor que continua o jogo?",
-  opcoes:["Quem jogou a carta.","O próximo jogador, o que comprou as quatro cartas.","Todos os jogadores votam na cor.","Ninguém escolhe: a cor continua a mesma de antes."], correta:0},
-
+ /* ✂️ AQUI HAVIA UMA 21ª QUESTÃO, e ela saiu a pedido do Marcos (20/set):
+    *"Faça a prova com 20 questões pode ser?"*. Ela perguntava QUEM escolhe a
+    cor quando alguém joga o coringa comprar quatro.
+    ⚠️ POR QUE SAIU ESTA E NÃO OUTRA: era a única cujo conteúdo já aparecia em
+       duas irmãs. A questão do CORINGA (a 9) ensina que a carta preta serve
+       para quem a joga escolher a cor, e as duas do DESAFIO (agora 11 e 12)
+       deixam claro que quem compra as quatro é o próximo jogador. Assim nenhuma
+       REGRA que o professor passou ficou sem ser cobrada — cortar qualquer
+       outra teria tirado uma regra inteira da prova.
+    ⚠️ E CORTAR UMA QUESTÃO RENUMERA TODAS AS SEGUINTES, inclusive na voz
+       ("Pergunta doze" vira "Pergunta onze"). Isso não é problema aqui porque a
+       fala é MONTADA da pergunta pelo `falaDaQuestao`, e o `falas.json` é
+       gerado desse mesmo código: a voz se renumera sozinha. Se a fala fosse
+       escrita à mão, como era nas provas anteriores, este corte deixaria dez
+       narrações mentindo o número da questão. */
  {disc:"desafio", fig:"desafio", pergunta:"Você jogou um comprar quatro. O colega desconfia que você blefou e te DESAFIA. Você mostra as suas cartas e ele vê que você TINHA, sim, a cor da mesa. O que acontece?",
   opcoes:["Você compra quatro cartas.","O colega compra quatro cartas.","O colega compra seis cartas.","Ninguém compra nada e o jogo segue."], correta:0},
 
