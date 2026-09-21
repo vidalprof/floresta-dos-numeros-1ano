@@ -121,7 +121,12 @@ CEDULAS = [
 #     produto de mercado E preço COM CENTAVOS (5,30 · 4,50 · 9,00 · 6,30 · 7,00),
 #     que é o degrau do 5º ano. O arquivo tem 2480x3509: dá recorte grande.
 PRODUTOS = [
-    (u"c01", u"arroz",     0.085, 0.2325, 0.215, 0.3236),
+        # ⚠️ A CAIXA DO ARROZ É MAIS APERTADA QUE A DOS OUTROS, de propósito: o
+    #    desenho da folha é uma aquarela cuja BORDA é um respingo branco e rosa
+    #    irregular. Recortado inteiro, ele fica com uma franja esfarrapada sobre
+    #    o fundo colorido do caderno — e não é halo de recorte, é o desenho. A
+    #    caixa para no retângulo verde, que é a embalagem de verdade.
+    (u"c01", u"arroz",     0.094, 0.2500, 0.206, 0.3080, u"contorno-fixo"),
     (u"c01", u"macarrao",  0.255, 0.2325, 0.385, 0.3236),
     (u"c01", u"feijaolata", 0.435, 0.2325, 0.555, 0.3236),
     (u"c01", u"atum",      0.595, 0.2325, 0.730, 0.3236),
@@ -132,7 +137,7 @@ PRODUTOS = [
     (u"c35", u"cafe",      0.410, 0.320, 0.495, 0.412),
     (u"c35", u"leite",     0.675, 0.330, 0.750, 0.412, u"contorno"),
     (u"c35", u"margarina", 0.305, 0.450, 0.415, 0.522),
-    (u"c35", u"carne",     0.580, 0.455, 0.705, 0.522),
+    (u"c35", u"carne",     0.580, 0.455, 0.705, 0.522, u"contorno"),
     # --- c24: os oito brinquedos com etiqueta (a lojinha de brinquedos)
     (u"c24", u"urso",      0.100, 0.220, 0.250, 0.340),
     (u"c24", u"dado",      0.520, 0.220, 0.670, 0.330),
@@ -140,7 +145,7 @@ PRODUTOS = [
     (u"c24", u"domino",    0.515, 0.420, 0.695, 0.510),
     (u"c24", u"boneca",    0.125, 0.610, 0.255, 0.725),
     (u"c24", u"peteca",    0.540, 0.600, 0.665, 0.720),
-    (u"c24", u"boliche",   0.095, 0.805, 0.260, 0.925),
+    (u"c24", u"boliche",   0.095, 0.805, 0.260, 0.925, u"contorno"),
     (u"c24", u"bola",      0.525, 0.815, 0.665, 0.920),
 ]
 
@@ -231,14 +236,17 @@ def recorta_por_contorno(c, lim=244):
 def recorta_moeda(folha, nome, cx, cy, r):
     u"""Recorta UMA moeda pelo círculo dela — centro e raio, não caixa.
 
-    A borda ganha uma casquinha de 3 px de folga (a moeda tem relevo e sombra
-    própria) e sai suavizada, para não ficar serrilhada na tela.
+    ⚠️ A MARGEM É DE 1 px, NÃO DE 3, e isto foi medido pelo portão 0o6
+    (`_qa/halo.py`): com 3 px de folga entrava PAPEL BRANCO junto com a moeda,
+    e quatro das cinco saíram com 1,8% a 3,2% de halo — na folha colorida isso
+    é um anel branco em volta da moeda. E mesmo com 1 px sobra a franja de
+    antialiasing do escaneamento, que só o `tira_halo` come.
     """
     import numpy as np
     cam = os.path.join(RAIZ, u"_sequencias", F[folha])
     im = Image.open(cam).convert(u"RGB")
     W, H = im.size
-    R = r * W + 3
+    R = r * W + 1
     cxp, cyp = cx * W, cy * H
     cx0, cy0 = int(cxp - R), int(cyp - R)
     c = im.crop((cx0, cy0, int(cxp + R), int(cyp + R))).convert(u"RGBA")
@@ -248,20 +256,103 @@ def recorta_moeda(folha, nome, cx, cy, r):
     alfa = np.clip((R - dist) / 1.5, 0, 1) * 255
     a = np.array(c)
     a[:, :, 3] = alfa.astype(np.uint8)
-    return Image.fromarray(a, u"RGBA")
+    return tira_halo(Image.fromarray(a, u"RGBA"), voltas=3)
+
+
+# ⚠️ A CAIXA EM PIXELS FICA GUARDADA, e não só a fração: é ela que o portão
+#    `1i7` (`_qa/recorte_cortado.py`) usa para conferir, na folha de papel, se o
+#    desenho continua PARA FORA do corte (figura partida ao meio). Com a fração
+#    ele não tem como recortar a folha — e com a fração sozinha ele ficou mudo.
+PIX = {}
+
+
+def cresce_caixa(im, cx, teto=2.4, lim=244):
+    u"""Abre a caixa até a TINTA do desenho acabar — sem engolir a folha.
+
+    ⚠️ POR QUE ELA EXISTE (21/set/2026). Eu marquei as caixas a olho sobre uma
+    grade de 5% e as figuras SAÍRAM bonitas: o `aperta` corta o branco de sobra,
+    então o PNG parece inteiro. Só que o que ele apertou foi o pedaço que coube
+    na caixa — a lata de atum perdeu a borda direita, a bandeja do dominó perdeu
+    o fundo e a caixa de leite perdeu metade da vaca. Quem viu foi o portão
+    `1i7`, comparando o recorte com a FOLHA DE PAPEL: *"o desenho atravessa a
+    borda num trecho contínuo de 160 pixels"*. **Figura cortada não se vê no
+    recorte: vê-se na folha de onde ela saiu.**
+
+    A conta: a mancha de tinta que ENCOSTA na caixa inicial é o desenho; a união
+    das manchas dela é a caixa de verdade. Mancha que cresceria mais de `teto`
+    vezes o lado inicial é a GRADE DA TABELA ou a moldura da página — essas
+    atravessam a folha toda e ficam de fora.
+    """
+    import numpy as np
+    from scipy import ndimage as nd
+    x0, y0, x1, y1 = cx
+    m = 70                                    # o quanto se olha em volta
+    ax0, ay0 = max(0, x0 - m), max(0, y0 - m)
+    ax1, ay1 = min(im.width, x1 + m), min(im.height, y1 + m)
+    sub = np.asarray(im.crop((ax0, ay0, ax1, ay1)).convert(u"RGB")).mean(axis=2)
+    marca, quantas = nd.label(sub < lim)
+    if not quantas:
+        return cx
+    # ⚠️ "ENCOSTAR" NA CAIXA NÃO BASTA — TEM DE ESTAR DENTRO DELA (segunda
+    #    volta, 21/set/2026). Na primeira versão bastava a mancha aparecer
+    #    dentro da caixa para ela puxar a caixa até o seu tamanho; resultado: o
+    #    contorno arredondado do cartão da folha c24, que passa raspando pelo
+    #    pião e pelo dado, arrastou a caixa até engolir o texto "Valor: R$ /
+    #    Pagou / Troco:". A figura final continuava certa (o `so_a_maior` joga
+    #    a letra fora), mas a CAIXA declarada ficou mentindo, e o portão 1i7
+    #    acusava — com razão. Agora a mancha só conta se a MAIOR PARTE dela
+    #    (60%) estiver dentro da caixa inicial: a bola de boliche conta, a
+    #    moldura do cartão não.
+    jan = marca[y0 - ay0:y1 - ay0, x0 - ax0:x1 - ax0]
+    dentro = set()
+    for i in np.unique(jan):
+        if not i:
+            continue
+        if (jan == i).sum() >= 0.60 * (marca == i).sum():
+            dentro.add(int(i))
+    lw, lh = x1 - x0, y1 - y0
+    nx0, ny0, nx1, ny1 = x0, y0, x1, y1
+    for fat in nd.find_objects(marca):
+        pass
+    caixas = nd.find_objects(marca)
+    for i in sorted(dentro):
+        sl = caixas[i - 1]
+        if sl is None:
+            continue
+        cy, cxs = sl
+        bx0, by0 = ax0 + cxs.start, ay0 + cy.start
+        bx1, by1 = ax0 + cxs.stop, ay0 + cy.stop
+        if (bx1 - bx0) > teto * lw or (by1 - by0) > teto * lh:
+            continue                          # grade da tabela / moldura
+        nx0, ny0 = min(nx0, bx0), min(ny0, by0)
+        nx1, ny1 = max(nx1, bx1), max(ny1, by1)
+    return (max(0, nx0 - 2), max(0, ny0 - 2),
+            min(im.width, nx1 + 2), min(im.height, ny1 + 2))
 
 
 def recorta(folha, nome, x0, y0, x1, y1, fundo=True):
     cam = os.path.join(RAIZ, u"_sequencias", F[folha])
     im = Image.open(cam).convert(u"RGB")
     W, H = im.size
-    c = im.crop((int(x0 * W), int(y0 * H), int(x1 * W), int(y1 * H)))
-    if fundo == u"contorno":
+    cx = (int(x0 * W), int(y0 * H), int(x1 * W), int(y1 * H))
+    # ⚠️ "-fixo" = esta caixa NÃO cresce, e o motivo vai declarado no
+    #    RECORTE-OK.json. É o caso do arroz: a borda do desenho é um respingo
+    #    de aquarela irregular, e deixar a caixa crescer até ele devolve uma
+    #    franja esfarrapada sobre o fundo colorido do caderno.
+    if not (isinstance(fundo, type(u"")) and fundo.endswith(u"-fixo")):
+        cx = cresce_caixa(im, cx)
+    PIX[nome] = list(cx)
+    c = im.crop(cx)
+    if isinstance(fundo, type(u"")) and fundo.startswith(u"contorno"):
         c = recorta_por_contorno(c)
+        c = tira_halo(c, voltas=7)
         c = aperta(c)
     elif fundo:
         c = limpa_fundo(c)
-        c = tira_halo(c)
+        # ⚠️ TRÊS VOLTAS, NÃO DUAS: com duas, o boliche ficou com 9,45% de halo
+        #    e o arroz com 6,60% (portão 0o6). São figuras de traço claro sobre
+        #    papel claro, e a franja de antialiasing delas é mais larga.
+        c = tira_halo(c, voltas=3)
         c = so_a_maior(c)
         c = aperta(c)
     else:
@@ -298,7 +389,8 @@ def main():
         dest, tam = recorta(folha, nome, x0, y0, x1, y1, fundo)
         origem[PREFIXO + nome + u".png"] = u"folha:" + folha
         detalhe[PREFIXO + nome + u".png"] = {
-            u"folha": F[folha], u"caixa": [x0, y0, x1, y1], u"tamanho": list(tam)}
+            u"folha": F[folha], u"caixa": PIX[nome],
+            u"caixa_fracao": [x0, y0, x1, y1], u"tamanho": list(tam)}
         print(u"%-18s %s" % (os.path.basename(dest), tam))
     for cam, dados in ((u"ORIGEM.json", origem), (u"RECORTE.json", detalhe)):
         cam = os.path.join(SAIDA, cam)

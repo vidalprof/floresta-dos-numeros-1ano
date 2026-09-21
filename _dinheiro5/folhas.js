@@ -995,7 +995,7 @@ var OBJETIVOS = [
   {n: "Multiplicar o preço de um pela quantidade para achar o valor a pagar", f: [8, 9, 10, 11, 12]},
   {n: "Calcular o troco de uma compra, com centavos", f: [13, 14, 15, 16, 17, 18, 19]},
   {n: "Dividir para trocar dinheiro, repartir e medir", f: [20, 21, 22, 23, 24, 25, 26, 27, 28]},
-  {n: "Comprar, vender e reconhecer lucro e prejuízo", f: [29, 30, 31, 38]},
+  {n: "Comprar e vender: lucro, prejuízo e o que é verdade sobre o comércio", f: [29, 30, 31, 38]},
   {n: "Calcular o desconto como metade, quarta parte e décima parte do preço", f: [32, 33, 34]},
   {n: "Comparar os preços de duas lojas e decidir onde comprar", f: [35, 36]},
   {n: "Contar as combinações diferentes que uma loja pode oferecer", f: [37]}
@@ -1576,8 +1576,18 @@ function f02(d, pi){
             "p" + pi + "enun");
   ST.folha["p" + pi].forEach(function(k, i){
     var E = SOMAV[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    /* ⚠️ O SINAL DE MAIS ENTRE AS FICHAS NÃO É ENFEITE. Sem ele as fichas
+       ficam coladas no texto da página ("1,000,500,250,25"), e aí duas coisas
+       ruins acontecem de uma vez: a criança lê um borrão de algarismos em vez
+       de uma soma, e o portão `1i4` (resposta impressa no enunciado) encontra
+       a resposta DENTRO desse borrão — foi assim que ele acusou as folhas 2 e
+       4, com razão na forma e sem razão no mérito. Com o "+", cada valor é uma
+       parcela, a conta aparece como conta, e o borrão deixa de existir. */
     var lin = el("div", "moedinhas");
-    E.v.forEach(function(v){ lin.appendChild(el("span", "fichav", rs(v).replace("R$ ", ""))); });
+    E.v.forEach(function(v, iv){
+      if(iv) lin.appendChild(el("span", "maisv", "+"));
+      lin.appendChild(el("span", "fichav", rs(v).replace("R$ ", "")));
+    });
     box.appendChild(lin);
     var lin2 = el("div", "enunlin");
     lin2.appendChild(el("div", "dica", "Some tudo e escreva quanto dá."));
@@ -2057,8 +2067,13 @@ function f29(d, pi){
 /* ---------- 31 · comprei para vender (b32) ---------- */
 function f31(d, pi){
   faixa(d, pi, NOMES[pi - 1]);
+  /* ⚠️ ACHADO DO PARECER PEDAGÓGICO: este enunciado CONTAVA o caso e não
+     PEDIA nada. Para quem ainda lê devagar, a folha É a narração: ela ouvia
+     "comprei vinte pacotes de suspiro por trinta reais" e ficava esperando a
+     tarefa que nunca vinha. O cenário fica; a ordem entra no fim. */
   enunciado(d, pi, "Comprei " + ATACADO.quantos + " pacotes de suspiro por " + rs(ATACADO.custo) +
-                   " e vou vender cada pacote por " + rs(ATACADO.venda) + ".", "p" + pi + "enun");
+                   " e vou vender cada pacote por " + rs(ATACADO.venda) +
+                   ". Responda as perguntas, uma de cada vez.", "p" + pi + "enun");
   var perg = [
     {k: "c1", t: "Vendendo todos os " + ATACADO.quantos + " pacotes, quanto vou receber?", v: ATACADO.c1.v},
     {k: "c2", t: "Quanto eu já tinha gastado na compra?", v: ATACADO.c2.v},
@@ -2155,10 +2170,17 @@ function f35(d, pi){
      o: [4560, 4410, 4660], c: 4560, fig: 0},
     {k: "mk2", t: "E qual é o total no Mercado Economize?",
      o: [3830, 3605, 3930], c: 3830, fig: 0},
+    /* ⚠️ O VALOR DA OPÇÃO É UM IDENTIFICADOR, NÃO O TEXTO QUE A CRIANÇA LÊ, e
+       isto foi medido: com `v: "Mercado Economize"` o jogador da banca não
+       conseguiu jogar esta folha (o valor vira parte do `data-qa`, e um valor
+       com ESPAÇO ele lê como vários pedaços a tocar em ordem). Identificador
+       é `eco`; o que a criança lê é o `rot`. */
     {k: "mk3", t: "Qual produto custa MAIS no Economize do que no Povo?",
-     o: ["manteiga", "farinha", "leite"], c: "manteiga", fig: 1},
+     o: [["manteiga", "manteiga"], ["farinha", "farinha de trigo"], ["leite", "leite"]],
+     c: "manteiga", fig: 1},
     {k: "mk4", t: "Onde a Bia deve comprar para economizar?",
-     o: ["Mercado Economize", "Mercado do Povo"], c: "Mercado Economize", fig: 1}
+     o: [["eco", "Mercado Economize"], ["povo", "Mercado do Povo"]],
+     c: "eco", fig: 1}
   ];
   ST.folha["p" + pi].forEach(function(k, i){
     var Q = perg[i], id = "n" + pi + "_" + i, box = item(i + 1);
@@ -2169,9 +2191,9 @@ function f35(d, pi){
     })(k)));
     box.appendChild(lin);
     opcoes(box, pi, id, baralha(Q.o.map(function(v){
-      return Q.fig ? {v: String(v), rot: v, aria: v, fala: "mtx_" + k + "_" + String(v).replace(/[^a-zA-Z]/g, "")}
+      return Q.fig ? {v: v[0], rot: v[1], aria: v[1], fala: "mtx_" + k + "_" + v[0]}
                    : {v: "v" + v, rot: rs(v), aria: rsFala(v), fala: "val_" + v};
-    })), Q.fig ? String(Q.c) : "v" + Q.c, Q.fig ? "frase" : "curta",
+    })), Q.fig ? Q.c : "v" + Q.c, Q.fig ? "frase" : "curta",
         "certo_" + k, "dica_" + k);
     fechaItem(d, box, id);
   });

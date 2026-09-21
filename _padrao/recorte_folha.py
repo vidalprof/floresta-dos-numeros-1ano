@@ -69,6 +69,14 @@ def tira_halo(c, lim=228, voltas=2):
        entraria pela beirada e comeria a nuvem inteira. Esta versao so morde o
        que ENCOSTA no transparente, e no maximo `voltas` pixels para dentro: a
        franja sai, o corpo fica."""
+    # ⚠️ `.copy()`: imagem que vem de `Image.fromarray` é SOMENTE LEITURA, e
+    #    aqui se escreve pixel a pixel. Sem isto o recorte morre com
+    #    "ValueError: image is readonly" — e morreu duas vezes no mesmo dia,
+    #    no _dinheiro5, porque as peças novas (o corte circular da moeda e o
+    #    corte por contorno) passam por numpy antes de chegar aqui. A correção
+    #    é na FERRAMENTA, não em cada caderno: o próximo que usar numpy não
+    #    paga de novo.
+    c = c.copy()
     W, H = c.size
     px = c.load()
     for _ in range(voltas):

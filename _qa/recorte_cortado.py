@@ -159,6 +159,38 @@ def le_pecas(pasta, dir_folhas):
             achadas.append((nome, os.path.join(pasta_folha, folha) if pasta_folha
                             else folha, cx[0], cx[1], cx[2], cx[3], modo))
 
+    # ⭐ 1b) O CAMINHO CURTO: `<pasta>/img/RECORTE.json` (21/set/2026).
+    #    Ate aqui este portao so sabia LER PYTHON: ele analisa a arvore do
+    #    `recortar_das_folhas.py` de cada caderno procurando os formatos de
+    #    caixa que ja viu. Funciona, e ja aprendeu cinco formatos — mas toda vez
+    #    que um caderno escreve as caixas de um jeito novo ele fica CEGO, e a
+    #    cegueira dele custou duas figuras partidas ao meio no `_corpo5`.
+    #    O `_dinheiro5` escreve as caixas tambem em JSON, ao recortar:
+    #        {"dn5_arroz.png": {"folha": "folhas_dinheiro5c/d01_...jpg",
+    #                           "caixa": [x0, y0, x1, y1]}}
+    #    Isso e o que o script REALMENTE cortou, nao o que eu deduzi do codigo
+    #    dele — e vale para qualquer formato de caixa que venha depois, inclusive
+    #    o corte CIRCULAR da moeda, que nao e caixa nenhuma e por isso fica de
+    #    fora (quem tem "circulo" em vez de "caixa" nao entra aqui).
+    cam_rec = os.path.join(pasta, u"img", u"RECORTE.json")
+    if os.path.exists(cam_rec):
+        try:
+            import json as _json
+            rec = _json.load(io.open(cam_rec, encoding=u"utf-8"))
+        except Exception as e:                                  # noqa: BLE001
+            print(u"%s -> NAO MEDI: %s nao e JSON valido (%s)." % (pasta, cam_rec, e))
+            return None, u"RECORTE.json ilegivel"
+        for nome_png, d in sorted(rec.items()):
+            if not isinstance(d, dict):
+                continue
+            cx = d.get(u"caixa")
+            folha = d.get(u"folha")
+            if not folha or not isinstance(cx, list) or len(cx) != 4:
+                continue
+            nome = re.sub(r"\.png$", u"", nome_png)
+            achadas.append((nome, os.path.join(u"_sequencias", folha),
+                            cx[0], cx[1], cx[2], cx[3], u"figura"))
+
     # 2) varre toda tupla/lista procurando os tres formatos
     for no in ast.walk(arv):
         if not isinstance(no, (ast.Tuple, ast.List)):

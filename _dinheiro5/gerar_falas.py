@@ -551,7 +551,7 @@ for k, L in LUCRO.items():
 # ---- folha 31 — comprei para vender ---------------------------------------
 p(u"p31enun", u"Folha trinta e um. Comprei " + str(ATACADO[u"quantos"]) + u" pacotes de "
               u"suspiro por " + rsf(ATACADO[u"custo"]) + u" e vou vender cada pacote por " +
-              rsf(ATACADO[u"venda"]) + u".")
+              rsf(ATACADO[u"venda"]) + u". Responda as perguntas, uma de cada vez.")
 _ATA = {
   u"c1": (u"Vendendo todos os " + str(ATACADO[u"quantos"]) + u" pacotes, quanto vou receber?",
           ATACADO[u"c1"][u"v"],
@@ -631,8 +631,8 @@ for k, (t, ce, dc) in _MK.items():
 p(u"mtx_mk3_manteiga", u"Manteiga.")
 p(u"mtx_mk3_farinha", u"Farinha de trigo.")
 p(u"mtx_mk3_leite", u"Leite.")
-p(u"mtx_mk4_MercadoEconomize", u"Mercado Economize.")
-p(u"mtx_mk4_MercadodoPovo", u"Mercado do Povo.")
+p(u"mtx_mk4_eco", u"Mercado Economize.")
+p(u"mtx_mk4_povo", u"Mercado do Povo.")
 _EC = {
   u"ec1": (u"Na lista inteira, quanto a Bia economiza comprando no Economize?",
            MERCADO[u"economia"],
