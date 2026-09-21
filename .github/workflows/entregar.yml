@@ -168,6 +168,28 @@ jobs:
             exit 1
           fi
 
+          # ⚠️⚠️ O CARIMBO VELHO MENTE (21/set/2026). O carimbo
+          #    `_status/entrega-<repo>.json` so e escrito NO FIM, quando a
+          #    publicacao deu certo. Se a corrida morre no meio, o carimbo da
+          #    corrida ANTERIOR fica la, dizendo `"noar":1` — e quem le so o
+          #    `noar` conclui que a versao nova esta no ar. Aconteceu comigo
+          #    hoje: li `noar:1` de um carimbo das 12:47 e quase mandei o link
+          #    dizendo que as folhas novas estavam no ar.
+          #    Agora, ANTES de comecar, cada alvo desta corrida tem o seu
+          #    carimbo marcado como `rodando`, com o sha que se espera ver.
+          #    Assim um carimbo nunca pode ser lido como de uma corrida que
+          #    nao terminou.
+          #    ⭐ E fica a regra de leitura: conferir o campo `index` contra o
+          #      sha1 do proprio `<pasta>/index.html`, nunca so o `noar`.
+          mkdir -p _status
+          for par in $(echo "$LISTA" | tr ',' ' '); do
+            SRC="${par%%:*}"; DEST="${par#*:}"; SRC="${SRC%/}"
+            [ -f "$SRC/index.html" ] || continue
+            printf '{"pasta":"%s","destino":"%s","noar":0,"estado":"rodando","index":"%s","quando":"%s"}\n' \
+              "$SRC" "$DEST" "$(sha1sum "$SRC/index.html" | cut -c1-12)" \
+              "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "_status/entrega-$DEST.json"
+          done
+
       # ---------------------------------------------------------------
       # 🛡️ PORTÃO PRÉ-ENTREGA (Marcos, ago/2026: "faça algo para esses erros bobos
       #    que acontecem toda hora não se repetirem"). Antes de gravar voz OU
