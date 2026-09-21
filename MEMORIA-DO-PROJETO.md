@@ -1162,6 +1162,57 @@ maior (`buscar-fotos.yml`, `minkb` alto), OLHAR a folha de contato, recortar com
 o `_padrao/recorte_folha.py`. **Nunca ampliar, nunca gerar por IA.** Se a
 internet não der versão maior, a saída honesta é mostrar a figura no tamanho dela.
 
+## 📋 O PAINEL PASSOU A DAR O PLANO DE AULA (21/set/2026)
+
+Pedido do Marcos: ***"em cada atividade criada, lá no painel, ter o tema e
+objetivo da aula, para que eu possa copiar e colocar no planejamento online da
+agenda de aulas, quando o professor não o faz"***, e em seguida ***"lembrando
+que isso é referente ao currículo de Blumenau"***.
+
+**O que ele resolve, na vida real:** o planejamento online da agenda tem os
+campos `Tema da aula` e `Objetivo`, e há professor que não os preenche. Ele
+preenche por cima. Até agora isso significava escrever o objetivo na mão, para
+uma atividade cujo currículo já estava declarado no repositório.
+
+**Como ficou.** Botão **"Plano de aula"** em cada cartão, **fechado por
+padrão** (o painel é varredura: 99 atividades, ele procura uma). Aberto, mostra
+`Tema da aula` e `Objetivo`, cada um com o seu Copiar.
+
+**Três decisões que valem reler:**
+
+1. **O formato segue os CAMPOS DA AGENDA, não o meu gosto.** Fui olhar o
+   `_agenda/index.html`: `Tema da aula` é `<input>` de uma linha, `Objetivo` é
+   `<textarea>`, e **disciplina e turma são campos separados**. Por isso o tema
+   não repete *"Ciências, 5º ano"* — ele já preenche isso ao lado.
+2. **A abertura do objetivo depende do que os objetivos SÃO.** Em alguns
+   cadernos são frases de ação (*"reconhecer os órgãos do sistema digestório…"*)
+   e em outros são **rótulos de bloco** do relatório (*"as quatro tabuadas do
+   ano"*). Escrever *"o estudante deverá ser capaz de: as quatro tabuadas do
+   ano"* seria eu dando cara de objetivo a uma coisa que não é. Então a fórmula
+   só sai quando **todos** começam com verbo no infinitivo; senão sai *"O que a
+   aula trabalha:"*. É regra zero em miniatura.
+3. **O que não é conferido se declara.** Das 99, **36 têm
+   `curriculo.json`** e o objetivo sai de lá com a habilidade **verbatim** de
+   Blumenau (a mesma que o `0b9` confere palavra por palavra). Nas **63**
+   restantes o texto é o do `ATIVIDADES.md`, e o painel avisa em amarelo:
+   *"ainda não declara o currículo de Blumenau — não é citação conferida"*.
+   Sem esse aviso ele colaria no plano uma frase minha achando que era do
+   documento da rede.
+
+⚠️ **Duas armadilhas medidas ao escrever isto:**
+· **As aspas vêm de duas formas** nos `curriculo.json` — retas (`"`) nos novos e
+  **curvas** (`“ ”`) nos que nasceram de copiar-e-colar do PDF. Procurando só as
+  retas, a citação saía com **aspas dobradas** no plano.
+· **O texto copiado sai dos DADOS, não do que está na tela.** A caixa do objetivo
+  rola; copiar o `innerText` dela traria o objetivo **cortado** para dentro do
+  planejamento.
+
+⭐ **E VIROU CONTA, no portão `0b6` (`_qa/catalogo.py`):** tema e objetivo entram
+na comparação painel × fonte. Antes ele só olhava o `ATIVIDADES.md` — mexer numa
+habilidade do `curriculo.json` deixava o painel no ar com o objetivo velho e
+**nenhum portão via**. Conferido nos dois sentidos: com o `curriculo.json`
+mexido ele reprova (código 1), restaurado volta a 0.
+
 ## ✅ AS DUAS DÍVIDAS DE LEIAUTE — pagas em 21/set/2026
 
 Ordem do Marcos, três palavras: ***"corrija e publique"***. As duas dívidas da

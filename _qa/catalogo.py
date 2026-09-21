@@ -67,6 +67,13 @@ def _itens():
     itens = montar_painel.le_catalogo()
     if itens is None:
         return None, u"nao achei o %s" % CATALOGO
+    # ⭐ o TEMA e o OBJETIVO de cada aula entram na conta (21/set/2026). Eles
+    #    saem do `<pasta>/curriculo.json`, que NÃO é o `ATIVIDADES.md`: sem isto,
+    #    trocar uma habilidade do currículo de Blumenau deixava o painel no ar
+    #    com o objetivo velho e nenhum portão via — e é esse texto que o Marcos
+    #    copia para o planejamento da agenda.
+    for a in itens:
+        a.update(montar_painel.plano_de_aula(a))
     return itens, None
 
 
@@ -87,7 +94,8 @@ def _dados_do_painel():
 
 def _chave(a):
     return (a.get("turma", ""), a.get("nome", ""), a.get("pasta", ""),
-            a.get("trabalha", ""), a.get("link", ""), a.get("painel", ""))
+            a.get("trabalha", ""), a.get("link", ""), a.get("painel", ""),
+            a.get("tema", ""), a.get("objetivo", ""))
 
 
 def confere(pasta=None, destino=None):

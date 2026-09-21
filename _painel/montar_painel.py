@@ -71,6 +71,135 @@ def links_da_celula(cel):
     return principal, painel
 
 
+def _so_a_citacao(hab):
+    u"""`HABILIDADE: "texto"` ou `HABILIDADE (linha 17670-17672): “texto”` -> texto.
+
+    ⚠️ As ASPAS VÊM DAS DUAS FORMAS nos arquivos da casa: retas (`"`) nos mais
+    novos e curvas (`“ ”`) nos que nasceram de copiar-e-colar do PDF. Procurar
+    só as retas fazia o texto sair com aspas DOBRADAS no plano de aula.
+    """
+    if not hab:
+        return u""
+    m = re.search(u'[“"]([^”"]+)[”"]', hab)
+    if m:
+        return m.group(1).strip()
+    return re.sub(r"^HABILIDADE[^:]*:\s*", u"", hab).strip().strip(u'“”"')
+
+
+def _assunto(nome):
+    u"""o TEMA da aula a partir do nome da atividade.
+
+    ⭐ A regra do título (Marcos, 20/set/2026) manda o nome DIZER o assunto —
+    *"Aprendendo os sistemas digestório, respiratório e circulatório"*. Então o
+    tema é esse nome sem o *"Aprendendo"* e sem o parêntese de catálogo
+    (*"(5º ano · folha viva)"*), com a primeira letra em maiúscula.
+    ⚠️ Nome de enredo (*"A Padaria das Letras"*) não vira tema nenhum — quem
+    resolve esses é o texto do catálogo, no `plano_de_aula()`.
+    """
+    s = re.sub(r"\s*\([^()]*\)\s*$", u"", nome).strip()
+    s = re.sub(r"^Aprendendo\s+", u"", s, flags=re.I).strip()
+    s = re.sub(r"^[·\-—\s]+", u"", s)
+    return (s[:1].upper() + s[1:]) if s else nome
+
+
+def plano_de_aula(item):
+    u"""TEMA e OBJETIVO prontos para colar no planejamento da agenda.
+
+    ⭐ PEDIDO DO MARCOS (21/set/2026): *"em cada atividade criada, lá no painel,
+       ter o tema e objetivo da aula, para que eu possa copiar e colocar no
+       planejamento online da agenda de aulas, quando o professor não o faz"*.
+
+    ⚠️ O FORMATO SEGUE OS CAMPOS DA AGENDA, não o meu gosto: lá existe um
+       **`Tema da aula`** (uma linha, `<input>`) e um **`Objetivo`** (várias
+       linhas, `<textarea>`), e disciplina e turma são campos SEPARADOS — por
+       isso o tema não repete "Ciências, 5º ano", que ele já preenche ao lado.
+
+    ⚠️⚠️ E NADA AQUI É INVENTADO (regra zero). Quando a atividade tem
+       `curriculo.json`, o objetivo sai dali: os objetivos em português claro,
+       as habilidades COPIADAS VERBATIM do currículo de Blumenau (as mesmas que
+       o portão `0b9` confere palavra por palavra) e o objeto de conhecimento.
+       Quando NÃO tem, o texto é o do `ATIVIDADES.md`, sem enfeite, e o painel
+       DIZ que não há currículo declarado — para ele não colar no plano uma
+       citação que ninguém conferiu.
+    """
+    link = item.get("link") or u""
+    pasta = item.get("pasta") or u""
+    cam = os.path.join(RAIZ, pasta, "curriculo.json") if pasta else u""
+    dados = None
+    if cam and os.path.exists(cam):
+        try:
+            dados = json.load(io.open(cam, encoding="utf-8"))
+        except Exception:
+            dados = None
+
+    if not dados:
+        tema = _assunto(item["nome"])
+        corpo = item.get("trabalha") or u""
+        # o catálogo costuma vir como "Matemática: adição até 10 …" — o
+        # componente já é campo separado na agenda, então sai da frente.
+        corpo = re.sub(r"^[A-ZÀ-Ü][^:]{2,30}:\s*", u"", corpo).strip()
+        if corpo:
+            tema = corpo.split(u" — ")[0].split(u";")[0].strip()[:90] or tema
+        partes = []
+        if item.get("trabalha"):
+            partes.append(item["trabalha"])
+        if link:
+            partes.append(u"Atividade: " + link)
+        return {"tema": tema, "objetivo": u"\n\n".join(partes), "curriculo": 0}
+
+    comp = (dados.get("componente") or u"").strip()
+    ano = str(dados.get("ano") or u"").strip()
+    if ano and not ano.endswith(u"ano"):
+        ano = ano + u"º ano"
+    objs = dados.get("objetivos") or []
+
+    tema = _assunto(item["nome"])
+
+    # ⚠️ A ABERTURA DEPENDE DO QUE OS OBJETIVOS SÃO DE VERDADE, e isto é regra
+    #    zero em miniatura: em alguns cadernos eles são frases de ação
+    #    ("reconhecer os órgãos do sistema digestório…") e em outros são RÓTULOS
+    #    de bloco do relatório ("as quatro tabuadas do ano"). Escrever
+    #    *"o estudante deverá ser capaz de: as quatro tabuadas do ano"* seria eu
+    #    dando cara de objetivo a uma coisa que não é. Então: só uso a fórmula
+    #    quando TODOS começam com verbo no infinitivo; senão digo o que é —
+    #    o que a aula trabalha. Nos dois casos a habilidade do currículo vem
+    #    logo abaixo, e ela é o objetivo formal.
+    textos = [(o.get("objetivo") or u"").strip().rstrip(u".;") for o in objs]
+    textos = [t for t in textos if t]
+    verbo = bool(textos) and all(
+        re.match(u"^[a-zà-úA-ZÀ-Ú]+(ar|er|ir|or)\\b", t) for t in textos)
+    linhas = []
+    if textos:
+        linhas.append(u"Ao final da aula, o estudante deverá ser capaz de:"
+                      if verbo else u"O que a aula trabalha:")
+        for i, t in enumerate(textos):
+            if verbo:
+                t = t[:1].lower() + t[1:]
+            linhas.append(u"• " + t + (u"." if i == len(textos) - 1 else u";"))
+
+    cabeca = u" · ".join([x for x in [comp, ano] if x])
+    trilha = []
+    for o in objs:
+        for k in ("unidade", "pratica", "objeto"):
+            v = (o.get(k) or u"").strip()
+            if v and v not in trilha:
+                trilha.append(v)
+    if cabeca or trilha:
+        linhas.append(u"")
+        linhas.append(u"Currículo de Blumenau — "
+                      + u" · ".join([x for x in [cabeca] + trilha if x]))
+    vistas = []
+    for o in objs:
+        c = _so_a_citacao(o.get("habilidade"))
+        if c and c not in vistas:
+            vistas.append(c)
+            linhas.append(u'“' + c + u'”')
+    if link:
+        linhas.append(u"")
+        linhas.append(u"Atividade: " + link)
+    return {"tema": tema, "objetivo": u"\n".join(linhas).strip(), "curriculo": 1}
+
+
 def le_catalogo():
     if not os.path.exists(CATALOGO):
         print(u"NAO MEDI: nao achei %s" % CATALOGO)
@@ -262,6 +391,23 @@ h2:first-of-type{margin-top:4px}
 .bt.prof{flex:0 0 auto;min-width:0;color:var(--azul-c)}
 .bt.copiado{background:var(--ok);color:#fff;border-color:var(--ok)}
 .semlink{color:var(--fraco);font-size:13.5px;font-style:italic}
+/* ⭐ O PLANO DE AULA (pedido do Marcos, 21/set/2026: *"ter o tema e objetivo da
+   aula, para que eu possa copiar e colocar no planejamento online da agenda de
+   aulas, quando o professor não o faz"*).
+   ⚠️ NASCE FECHADO, de propósito. O painel é a tela que ele varre de cima para
+   baixo procurando UMA atividade entre 99; se cada cartão abrisse com dez linhas
+   de objetivo, a varredura morria. Aberto, ele só existe no cartão que ele
+   escolheu. */
+.plano{display:none;margin-top:9px;border-top:1px dashed var(--linha);padding-top:9px}
+.plano.aberto{display:block}
+.pcampo{margin-bottom:9px}
+.prot{font-size:11.5px;text-transform:uppercase;letter-spacing:1px;
+  color:var(--fraco);font-weight:700;margin-bottom:3px}
+.ptxt{background:#fbf8f2;border:1px solid var(--linha);border-radius:9px;
+  padding:9px 10px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;
+  word-wrap:break-word;overflow-wrap:break-word;max-height:220px;overflow:auto}
+.ptxt.uma{white-space:normal;font-weight:600}
+.semcur{color:#8a5a1d;font-size:12.5px;margin-bottom:8px;line-height:1.4}
 #vazio{display:none;text-align:center;color:var(--fraco);padding:30px 10px}
 #rodape{color:var(--fraco);font-size:12px;text-align:center;margin-top:22px}
 @media (min-width:640px){ .bt{flex:0 0 auto;min-width:150px} }
@@ -269,7 +415,7 @@ h2:first-of-type{margin-top:4px}
 </head>
 <body>
 <header>
-  <h1>Atividades <small>E.B.M. Vidal Ramos &middot; @@TOTAL@@ atividades &middot; toque em COPIAR para pegar o link</small></h1>
+  <h1>Atividades <small>E.B.M. Vidal Ramos &middot; @@TOTAL@@ atividades &middot; COPIAR pega o link &middot; PLANO DE AULA traz o tema e o objetivo</small></h1>
   <input id="busca" type="search" placeholder="Buscar por nome ou pelo que trabalha…" autocomplete="off">
   <div id="chips"></div>
 </header>
@@ -368,12 +514,49 @@ function desenha(){
     }else{
       h+='<span class="semlink">ainda não publicada</span>';
     }
-    h+="</div></div>";
+    if(a.tema||a.objetivo) h+='<button class="bt" data-plano="'+i+'">Plano de aula</button>';
+    h+="</div>";
+    /* o tema e o objetivo, prontos para colar no planejamento da agenda */
+    if(a.tema||a.objetivo){
+      h+='<div class="plano" id="pl'+i+'">';
+      if(!a.curriculo)
+        h+='<div class="semcur">⚠️ Esta atividade ainda <b>não declara o currículo de Blumenau</b>. '
+          +'O texto abaixo é o do catálogo — serve para o plano, mas <b>não é citação conferida</b>.</div>';
+      if(a.tema){
+        h+='<div class="pcampo"><div class="prot">Tema da aula</div>'
+          +'<div class="ptxt uma">'+esc(a.tema)+'</div></div>';
+      }
+      if(a.objetivo){
+        h+='<div class="pcampo"><div class="prot">Objetivo</div>'
+          +'<div class="ptxt">'+esc(a.objetivo)+'</div></div>';
+      }
+      h+='<div class="acoes">';
+      if(a.tema) h+='<button class="bt" data-cp="'+i+'" data-campo="tema">Copiar tema</button>';
+      if(a.objetivo) h+='<button class="bt" data-cp="'+i+'" data-campo="objetivo">Copiar objetivo</button>';
+      h+='</div></div>';
+    }
+    h+="</div>";
   }
   alvo.innerHTML=h;
   document.getElementById("vazio").style.display = n? "none":"block";
   var bs=alvo.querySelectorAll("[data-copiar]");
   for(var k=0;k<bs.length;k++) bs[k].onclick=function(){ copiar(this.getAttribute("data-copiar"), this); };
+  /* ⚠️ O TEXTO COPIADO SAI DOS DADOS, não do que está desenhado na tela: o
+     `innerText` de uma caixa que rola pode vir cortado ou com a quebra de linha
+     do navegador, e aí o objetivo chegaria truncado no planejamento. */
+  var cs=alvo.querySelectorAll("[data-cp]");
+  for(var c=0;c<cs.length;c++) cs[c].onclick=function(){
+    var d=DADOS[parseInt(this.getAttribute("data-cp"),10)];
+    copiar(d[this.getAttribute("data-campo")]||"", this);
+  };
+  var ps=alvo.querySelectorAll("[data-plano]");
+  for(var p=0;p<ps.length;p++) ps[p].onclick=function(){
+    var cx=document.getElementById("pl"+this.getAttribute("data-plano"));
+    if(!cx) return;
+    var abrindo = cx.className.indexOf("aberto")<0;
+    cx.className = abrindo ? "plano aberto" : "plano";
+    this.textContent = abrindo ? "Fechar o plano" : "Plano de aula";
+  };
 }
 
 document.getElementById("busca").oninput=function(){ filtro=this.value; desenha(); };
@@ -392,6 +575,10 @@ def main():
         print(u"NAO MEDI: o catalogo nao tem nenhuma linha de atividade.")
         return 2
     itens.sort(key=lambda a: (a["pos"], a["nome"].lower()))
+    # ⭐ o TEMA e o OBJETIVO de cada aula, prontos para colar no planejamento
+    #    da agenda (pedido do Marcos, 21/set/2026) — ver `plano_de_aula()`.
+    for a in itens:
+        a.update(plano_de_aula(a))
     import datetime
     import hashlib
     # a marca do iframe = impressão digital do controle publicado. Mudou o

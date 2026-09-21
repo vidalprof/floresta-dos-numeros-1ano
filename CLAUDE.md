@@ -149,6 +149,45 @@ Leia tudo antes de agir e responda sempre em **português**.
 >   **onze cadernos corretos**; a colisão de verdade (o selo da medalha chamado
 >   `estrela`) mora fora da capa e continua sendo pega — medido nos dois sentidos.
 
+> ## 📋 O PAINEL DÁ O **TEMA** E O **OBJETIVO** DA AULA, PRONTOS PARA COLAR (Marcos, 21/set/2026)
+>
+> Palavras dele: ***"em cada atividade criada, lá no painel, ter o tema e
+> objetivo da aula, para que eu possa copiar e colocar no planejamento online da
+> agenda de aulas, quando o professor não o faz"*** — e, logo depois:
+> ***"lembrando que isso é referente ao currículo de Blumenau"***.
+>
+> **Como funciona.** Cada cartão do painel ganhou o botão **"Plano de aula"**,
+> que abre **Tema da aula** (uma linha) e **Objetivo** (várias), cada um com o
+> seu **Copiar**. Nasce **fechado**: o painel é a tela que ele varre procurando
+> uma atividade entre 99, e dez linhas de objetivo em cada cartão matariam a
+> varredura.
+>
+> ⚠️ **O FORMATO SEGUE OS CAMPOS DA AGENDA, não o meu gosto:** lá existem
+> `Tema da aula` (`<input>`) e `Objetivo` (`<textarea>`), e **disciplina e turma
+> são campos SEPARADOS** — por isso o tema não repete "Ciências, 5º ano".
+>
+> ⚠️⚠️ **E NADA ALI É INVENTADO (regra zero).** Quando a atividade tem
+> `<pasta>/curriculo.json`, o objetivo sai dali: os objetivos em português claro
+> + a **habilidade COPIADA VERBATIM do currículo de Blumenau** (a mesma que o
+> portão `0b9` confere palavra por palavra contra o `_curriculo/blumenau.txt`) +
+> o objeto de conhecimento. Quando **não tem**, o texto é o do `ATIVIDADES.md` e
+> **o painel DIZ, em amarelo, que não há currículo declarado** — para ele não
+> colar no plano uma citação que ninguém conferiu. Hoje: **36 das 99 com citação
+> verbatim, 63 sem** (tarefa aberta).
+>
+> ⚠️ **A abertura do objetivo muda conforme o que os objetivos SÃO.** Em alguns
+> cadernos eles são frases de ação (*"reconhecer os órgãos do sistema
+> digestório…"*) e em outros são **rótulos de bloco** do relatório (*"as quatro
+> tabuadas do ano"*). Só sai *"Ao final da aula, o estudante deverá ser capaz
+> de:"* quando **todos** começam com verbo no infinitivo; senão sai *"O que a
+> aula trabalha:"*. Dar cara de objetivo ao que não é seria inventar.
+>
+> ⭐ **E ISSO ENTROU NO PORTÃO `0b6` (`_qa/catalogo.py`):** o tema e o objetivo
+> agora fazem parte da comparação painel × fonte. Antes ele só olhava o
+> `ATIVIDADES.md`; mexer numa habilidade do `curriculo.json` deixava o painel no
+> ar com o objetivo velho e **nenhum portão via** — e é justamente esse texto que
+> ele copia para o planejamento. Conferido nos dois sentidos.
+
 > ## 🔍🚫 A FIGURA NUNCA É MOSTRADA MAIOR QUE O ARQUIVO — portão `1i9` (21/set/2026)
 >
 > **Era regra da casa com CÓDIGO e sem CONTA — que é a mesma coisa que não ser
