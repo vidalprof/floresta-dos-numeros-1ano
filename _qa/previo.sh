@@ -97,6 +97,14 @@ PORTOES=(
   "0b12 parecer do pedagogo (assinado?)|python3 _qa/parecer.py $PASTA"
   "0b13 titulo diz o assunto|python3 _qa/titulo.py $PASTA"
   "0b14 duas folhas com a mesma narracao|python3 _qa/enunciado_repetido.py $PASTA"
+  # ⚠️ O `1s` MORAVA SO NA BANCA, e por isso me escapou (20/set/2026). Eu
+  #    mexi no `folhas.js` de DEZESSETE cadernos, rodei o pre-voo em todos,
+  #    publiquei — e o carimbo `?v=` do endereco continuou o velho. Quem
+  #    nunca abriu o caderno recebe o arquivo novo; quem JA abriu recebe a
+  #    copia do cache, e o conserto nao chega justamente a quem esta no meio
+  #    da sequencia. Portao de texto, roda em milissegundos: nao ha motivo
+  #    para ele esperar a banca de quatro minutos.
+  "1s versao do folhas.js|python3 _qa/versao_script.py $PASTA"
   # ⚠️ nasceu de "cita laranja e aparece lata": a silaba saia da palavra errada
   "0b10 fonte da silaba|python3 _qa/silaba_fonte.py $PASTA"
   # ⭐ 1i2) palavra do pote SEM figura no disco — a familia do dia em que o

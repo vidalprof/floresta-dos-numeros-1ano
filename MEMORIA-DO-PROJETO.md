@@ -1099,6 +1099,36 @@ colisão. Reprovava **onze cadernos corretos**. A colisão de verdade (o selo da
 medalha chamado `estrela`) mora fora da capa e continua sendo pega — medido nos
 dois sentidos, com cópia rigada.
 
+## 🏷️🕳️ MEXI NO `folhas.js` DE DEZESSETE CADERNOS E NÃO RECARIMBEI (20/set/2026)
+
+O portão **`1s` (`_qa/versao_script.py`)** existe desde antes e faz exatamente a
+pergunta certa: *o `?v=` do `<script src="folhas.js?v=...">` bate com o conteúdo
+do arquivo?* Ele me pegou — mas **só na banca**, que eu rodei depois de já ter
+publicado dois lotes.
+
+**O que isso custa, e é fino:** quem **nunca** abriu o caderno recebe o arquivo
+novo (a query string não seleciona versão nenhuma: o servidor manda o arquivo que
+está lá). Quem **já abriu** tem `folhas.js?v=<velho>` no cache e continua com a
+**cópia velha**. Ou seja, o conserto não chega justamente a quem está no meio da
+sequência — a criança que voltou.
+
+Dezessete cadernos ficaram assim depois dos ajustes de objetivo e de enunciado:
+`_casa1`, `_ing8`, `_mult2`, `_mult3`, `_narra2`, `_nasal2`, `_not2`, `_ort5`,
+`_ort5b`, `_ponto2`, `_reinos`, `_seg2`, `_sil2`, `_sinon2`, `_subst5`,
+`_troca2`, `_verbo4`. Recarimbados com `python3 _padrao/versionar.py <pasta>` e
+republicados.
+
+⚠️ **CONSERTO DUPLO: o `1s` passou a rodar no PRÉ-VOO**, e não só na banca. Ele
+mora num `for` que só valia para `_padrao/pecas/*.html`; agora está na lista dos
+cadernos de folha viva. É portão de texto, roda em milissegundos — **não havia
+motivo para ele esperar os quatro minutos da banca**, e foi essa espera que
+deixou dois lotes irem ao ar com o carimbo velho.
+
+⚠️ **A lição maior:** *"o pré-voo passou"* não é *"a banca aprovou"* — isso já
+estava escrito no `CLAUDE.md`, e mesmo assim eu publiquei com base no pré-voo.
+Quando o portão que falta é de TEXTO, a resposta certa não é lembrar de rodar a
+banca: é **mover o portão para o pré-voo**.
+
 ## 🧱 O QUE FICOU MEDIDO E NÃO CONSERTADO (20/set/2026)
 
 Duas coisas, escritas para não passarem por "está tudo bem":
