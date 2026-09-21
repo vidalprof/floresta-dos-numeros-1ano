@@ -1800,9 +1800,19 @@ function f11(d, pi){
 /* 12 e 13 — QUAL É O REINO DESTE SER (papéis d04 "MARQUE CONFORME A
    CLASSIFICAÇÃO DO SEU REINO" e d03 "Os cinco reinos são"). Em BLOCO, colado:
    mecânica que repete vem junta, nunca espalhada. */
-function escolheReino(d, pi, L){
+/* ⚠️ A SEGUNDA FOLHA DO PAR TEM DE DIZER O QUE MUDOU (20/set/2026, achado
+   ao ler o caderno folha a folha para o parecer). Tres pares — 12/13,
+   14/15 e 16/17 — tinham a narracao IDENTICA, palavra por palavra. Para
+   quem nao le, a folha e a narracao: duas folhas seguidas dizendo a
+   mesma frase sao, para a crianca, a mesma folha de novo — o "isso eu ja
+   fiz" que o Marcos ouve da turma. E pior: o degrau EXISTE nos tres pares
+   (a 13 sao os reinos que so o microscopio mostra, a 15 poe planta e
+   minusculos juntos, a 17 e a coroa dos minusculos) e a crianca nao era
+   avisada dele. Agora cada funcao recebe o enunciado, e o da segunda
+   folha nomeia a diferenca. */
+function escolheReino(d, pi, L, txt){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Olhe a figura. De qual <b>reino</b> ela é?", "p" + pi + "enun");
+  enunciado(d, pi, txt, "p" + pi + "enun");
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "n" + pi + "_" + i, box = item(i + 1);
@@ -1816,15 +1826,17 @@ function escolheReino(d, pi, L){
     })(L[i], i);
   }
 }
-function f12(d, pi){ escolheReino(d, pi, ST.folha.p12); }
-function f13(d, pi){ escolheReino(d, pi, ST.folha.p13); }
+function f12(d, pi){ escolheReino(d, pi, ST.folha.p12,
+  "Olhe a figura. De qual <b>reino</b> ela é?"); }
+function f13(d, pi){ escolheReino(d, pi, ST.folha.p13,
+  "Agora os reinos que <b>não se veem</b> a olho nu. De qual deles é este ser?"); }
 
 /* 14 e 15 — LIGUE (papéis d09 "¿A qué reino pertenecen? Relaciona", d08 "UNE
    SEGUNDO CORRESPONDA" e d25 "Une cada organismo con el reino"). Seis folhas da
    colheita pedem este gesto — é o segundo mais pedido de todos. */
-function ligaReino(d, pi, L, tag){
+function ligaReino(d, pi, L, tag, txt){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Ligue cada ser vivo ao <b>reino</b> dele.", "p" + pi + "enun");
+  enunciado(d, pi, txt, "p" + pi + "enun");
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var box = item(0), pares = it.g.map(function(par){
@@ -1841,15 +1853,17 @@ function ligaReino(d, pi, L, tag){
     })(L[i], i);
   }
 }
-function f14(d, pi){ ligaReino(d, pi, ST.folha.p14, "a"); }
-function f15(d, pi){ ligaReino(d, pi, ST.folha.p15, "b"); }
+function f14(d, pi){ ligaReino(d, pi, ST.folha.p14, "a",
+  "Ligue cada ser vivo ao <b>reino</b> dele."); }
+function f15(d, pi){ ligaReino(d, pi, ST.folha.p15, "b",
+  "Agora a <b>planta</b> e os <b>minúsculos</b> na mesma folha. Ligue cada um ao reino dele."); }
 
 /* 16 e 17 — A COROA (papel d07: "MARQUE AS CARACTERÍSTICAS ENCONTRADAS EM CADA
    REINO"). ⭐ É a folha que dá o NOME do caderno, e é o encargo do Marcos
    inteiro numa tela: os três critérios cruzados com o reino. */
-function coroaDoReino(d, pi, L){
+function coroaDoReino(d, pi, L, txt){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Marque as <b>três características</b> deste reino.", "p" + pi + "enun");
+  enunciado(d, pi, txt, "p" + pi + "enun");
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "n" + pi + "_" + i, box = item(i + 1), R = reino(it.r);
@@ -1891,8 +1905,10 @@ function coroaDoReino(d, pi, L){
     })(L[i], i);
   }
 }
-function f16(d, pi){ coroaDoReino(d, pi, ST.folha.p16); }
-function f17(d, pi){ coroaDoReino(d, pi, ST.folha.p17); }
+function f16(d, pi){ coroaDoReino(d, pi, ST.folha.p16,
+  "Marque as <b>três características</b> deste reino."); }
+function f17(d, pi){ coroaDoReino(d, pi, ST.folha.p17,
+  "Agora a coroa dos <b>minúsculos</b>. Marque as três características deste reino."); }
 
 /* 18 — CASE O REINO COM A DESCRIÇÃO (papéis d01 "Enumere os reinos de acordo
    com as informações" e d19 "numere a 1ª coluna, a dos Reinos, de acordo com a

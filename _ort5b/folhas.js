@@ -1728,7 +1728,7 @@ var OBJETIVOS = [
   {n: "Marcar a letra e escrever a palavra sem modelo à vista", f: [10, 11, 19],
    ok: "escreve a palavra inteira sem ter nenhum modelo na tela para copiar",
    nao: "ainda reconhece a forma certa, mas não a escreve sozinha"},
-  {n: "Separar a palavra em sílabas, contar e pôr em ordem", f: [13, 14, 15, 18],
+  {n: "Separar em sílabas e em palavras, contar e pôr em ordem", f: [13, 14, 15, 18],
    ok: "separa a palavra em sílabas, conta quantas são e usa a ordem alfabética",
    nao: "ainda não separa a palavra em pedaços nem acha onde ela acaba"},
   {n: "Usar a palavra certa dentro da frase e do texto", f: [16, 17, 20, 21, 22],

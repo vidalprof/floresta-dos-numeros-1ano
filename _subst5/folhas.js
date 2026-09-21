@@ -1827,7 +1827,7 @@ var OBJETIVOS = [
   {n: "Reconhecer a palavra primitiva e a que nasceu dela", f: [16, 17, 18, 19, 20, 21, 22],
    ok: "acha a palavra-mãe dentro da palavra comprida e junta a família",
    nao: "ainda não enxerga a palavra menor escondida dentro da maior"},
-  {n: "Nomear com uma palavra só um grupo inteiro", f: [23],
+  {n: "Nomear com uma palavra só um grupo inteiro (coletivo — fora do currículo, declarado)", f: [23],
    ok: "usa uma palavra no singular para nomear muitos da mesma espécie",
    nao: "ainda não liga o grupo à palavra que o nomeia"},
   {n: "Achar e classificar os substantivos dentro de um texto lido", f: [24, 25],

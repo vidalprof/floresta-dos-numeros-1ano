@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-u"""GERA O POTE E AS FALAS DO ARMAZÉM DO MESMO TANTO (multiplicação, 3º ano).
+u"""GERA O POTE E AS FALAS DAPRENDENDO A MULTIPLICAÇÃO: PARCELAS IGUAIS, FILEIRAS E COMBINAÇÕES (multiplicação, 3º ano).
 
 ⚠️ REGRA DA CASA: o `falas.json` é a VERDADE. Texto escrito aqui = voz gravada;
    texto mudou = voz regravada. MP3 não se lê, então é este arquivo que permite
@@ -273,7 +273,7 @@ IT[u"p25"] = [{u"w": fig(i), u"q": q, u"n": n}
 F = {}
 
 # ---- a casa
-F[u"capa"] = (u"O Armazém do Mesmo Tanto. Vinte e cinco folhas para descobrir que "
+F[u"capa"] = (u"Aprendendo a multiplicação: parcelas iguais, fileiras e combinações. Vinte e cinco folhas para descobrir que "
               u"multiplicar é somar quantidades iguais. Escreva o seu nome ali "
               u"embaixo e toque em Começar.")
 F[u"fim"] = (u"Você chegou ao fim do Armazém do Mesmo Tanto! Agora você sabe que "
@@ -302,15 +302,15 @@ F[u"p9enun"] = u"A mesma cena. Agora escreva o total da conta de vezes."
 F[u"p10enun"] = u"Preencha a tabela. Uma casinha de cada linha está vazia."
 for pote, f in MAQ:
     F[pote + u"enun"] = (u"A máquina multiplica por %s. O que sai?" % dz(f))
-F[u"p16enun"] = u"Toque nos números na ordem, do menor para o maior."
-F[u"p17enun"] = F[u"p16enun"]
+F[u"p16enun"] = u"Conte de 2 em 2 e de 3 em 3: toque nos números na ordem, do menor para o maior."
+F[u"p17enun"] = u"Agora os saltos são maiores: de 5 em 5 e de 10 em 10. Toque na ordem."
 F[u"p18enun"] = u"Conte as fileiras e quantos tem em cada uma. Qual é a conta?"
 F[u"p19enun"] = u"Pinte na malha o tapete que o pedido manda. Toque num quadradinho."
 F[u"p20enun"] = u"Se eu girar o tapete, o total vai mudar? Aposte primeiro!"
 F[u"p21enun"] = u"Cada cesta leva uma fruta e um doce. Ache a cesta que falta."
 F[u"p22enun"] = u"Quantas cestas diferentes dá para montar? Escreva."
 F[u"p23enun"] = u"Leia, ou ouça, o problema e escreva a resposta."
-F[u"p24enun"] = F[u"p23enun"]
+F[u"p24enun"] = u"Agora os problemas misturam fileiras, cestas e grupos iguais. Leia com calma antes de escrever."
 F[u"p25enun"] = u"Toque nas contas que você quer no seu cartaz. Ele fica guardado no fim."
 
 # ---- os números soltos (o alto-falante de cada opção)

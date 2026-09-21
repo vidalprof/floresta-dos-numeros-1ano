@@ -680,6 +680,15 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
   -webkit-transform:scale(1.06);transform:scale(1.06)}
 .op.dit.usada{opacity:.35;pointer-events:none}
 .op.pal.nao{-webkit-animation:treme .34s;animation:treme .34s}
+
+/* ⚠️ PISO DE TOQUE DE 44 px NA CASINHA DA CRUZADINHA (20/set/2026).
+   A regra vem por ULTIMO de proposito: ela SOBREPOE a de cima, que
+   deixava a casinha em 26 px no celular — dois tercos de um dedo de
+   crianca. A cruzadinha mora dentro de `.cruzenv{overflow-x:auto}`,
+   entao crescer nao a corta: ela passa a rolar de lado, e o portao do
+   leiaute aceita o que esta alcancavel por arrasto.
+   Copiado do `_rima2`, que ja tinha o conserto — nao reescrito. */
+.ccel{width:clamp(44px,9vw,50px);height:clamp(44px,9vw,50px);min-width:44px;min-height:44px;border:0;background:transparent;padding:0}
 </style></head><body>
 
 <div id="topo">
@@ -1960,7 +1969,7 @@ var CURRICULO = {
    "habilidade": "HABILIDADE: \"Grafar palavras utilizando regras de correspondência fonema-grafema regulares, contextuais e morfológicas e palavras de uso frequente com correspondências irregulares.\""
   },
   {
-   "objetivo": "Separar a palavra em sílabas, contar e pôr em ordem",
+   "objetivo": "Separar em sílabas e em palavras, contar e pôr em ordem",
    "folhas": [
     13,
     14,

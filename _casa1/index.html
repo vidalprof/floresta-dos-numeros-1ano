@@ -576,6 +576,15 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 #dossie #dsFechar{margin-top:10px;min-height:46px}
 .bdossie{display:block;width:100%;margin-top:10px;min-height:46px}
 /*</dossie-css>*/
+
+/* ⚠️ PISO DE TOQUE DE 44 px NA CASINHA DA CRUZADINHA (20/set/2026).
+   A regra vem por ULTIMO de proposito: ela SOBREPOE a de cima, que
+   deixava a casinha em 26 px no celular — dois tercos de um dedo de
+   crianca. A cruzadinha mora dentro de `.cruzenv{overflow-x:auto}`,
+   entao crescer nao a corta: ela passa a rolar de lado, e o portao do
+   leiaute aceita o que esta alcancavel por arrasto.
+   Copiado do `_rima2`, que ja tinha o conserto — nao reescrito. */
+.ccel{width:clamp(44px,9vw,50px);height:clamp(44px,9vw,50px);min-width:44px;min-height:44px;border:0;background:transparent;padding:0}
 </style></head><body>
 
 <div id="topo">

@@ -100,3 +100,34 @@ criança o encontra, e assinou.
 os que já estão no ar não crescem nem encolhem, porque mexer no número de folhas
 mexe no "continuar de onde parou" de quem está no meio. Registrado para não
 parecer esquecimento.
+
+---
+
+## Anexo — o leiaute, medido em 20/set/2026
+
+`node _qa/leiaute_mao.js` abre o caderno em seis tamanhos de tela e anda pelas
+25 folhas. Depois do conserto da cruzadinha (casinha de 26 px para 44 px,
+copiado do `_rima2`), sobra **uma coisa medida e não consertada**, declarada
+aqui para não passar por "está tudo bem":
+
+**A grade do caça-palavras (`.dcel`) fica com 30 a 37 px por casa no celular**,
+abaixo do piso de 40 px da casa. Não é descuido — é uma tensão de desenho que eu
+não quis resolver às pressas:
+
+- a grade tem dez colunas e `max-width:430px`; numa tela de 320 px cada casa cai
+  para 30 px;
+- crescer a casa para 44 px faria a grade ter 440 px e passar da tela;
+- pôr a grade dentro de um rolador horizontal esbarra no `touch-action:none`,
+  que existe ali de propósito: é ele que permite **arrastar o dedo sobre as
+  letras** para marcar a palavra. Trocar isso pode quebrar a mecânica no celular,
+  e mecânica quebrada é pior que alvo apertado.
+
+**O que segura a criança enquanto isso:** o enunciado oferece os dois caminhos —
+*"arraste o dedo sobre as letras, ou toque na primeira e na última"* —, e o
+arrasto não depende de acertar uma casa de 30 px, depende de passar por cima
+dela. Quem precisa de precisão é o toque, e para esse o caminho do arrasto está
+sempre aberto.
+
+**Conserto de verdade (fila):** ou a grade encolhe o número de colunas no
+celular, ou o rolador entra com a mecânica reescrita em pointer events e uma
+prova de sala. Está na lista de tarefas, com esta medição.

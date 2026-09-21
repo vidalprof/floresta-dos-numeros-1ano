@@ -1,5 +1,5 @@
 /* ============================================================
-   O ARMAZÉM DO MESMO TANTO — as vinte e cinco folhas (multiplicação, 3º ano).
+   APRENDENDO A MULTIPLICAÇÃO: PARCELAS IGUAIS, FILEIRAS E COMBINAÇÕES — as vinte e cinco folhas (multiplicação, 3º ano).
 
    Cada folha nasceu de um VERBO impresso numa folha real de matemática — as 40
    colhidas em `_sequencias/folhas_mult/` e lidas uma a uma no crivo
@@ -1247,7 +1247,7 @@ function fechaDossie(){ document.getElementById("dossie").className = ""; }
 })();
 
 /* ============================================================
-   AS 25 FOLHAS DO ARMAZÉM DO MESMO TANTO — multiplicação, 3º ano
+   AS 25 FOLHAS DAPRENDENDO A MULTIPLICAÇÃO: PARCELAS IGUAIS, FILEIRAS E COMBINAÇÕES — multiplicação, 3º ano
 
    ⭐ Pedido do Marcos (13/set/2026): *"uma atividade de multiplicação para o
       terceiro ano. Objetivo: fazer o aluno entender que multiplicar é o mesmo
@@ -1348,7 +1348,7 @@ function f0(d){
   /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
      Cena: o armazém: prateleira com grupos do mesmo tanto e o foco de luz varrendo. O título entra letra a letra (cai), palavra por palavra
      (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
-  var c = el("div", "capa"), nome = "O ARMAZÉM DO MESMO TANTO", k, letras = "", pos = 0;
+  var c = el("div", "capa"), nome = "APRENDENDO A MULTIPLICAÇÃO: PARCELAS IGUAIS, FILEIRAS E COMBINAÇÕES", k, letras = "", pos = 0;
   var V = typeof VIMG !== "undefined" ? VIMG : 2;
   nome.split(" ").forEach(function(pal, w){
     var s = "";
@@ -1675,9 +1675,13 @@ function f15(d, pi){ maquina(d, pi, ST.folha.p15, 4,  "p15"); }
    são justamente de 2 em 2, 3 em 3, 4 em 4, 5 em 5 e 10 em 10, os cinco fatores
    da rede; também no d22: "Complete na sequência: 5×1, 5×2, 5×3…"). É a ponte entre contar e multiplicar: a criança que conta de 5 em 5
    já tem a tabuada do 5 na boca antes de decorar coisa nenhuma. */
-function sequencia(d, pi, L){
+/* ⚠️ A SEGUNDA FOLHA DO PAR TEM DE DIZER O QUE MUDOU (20/set/2026).
+   Para quem ainda nao le, a folha E a narracao: duas folhas seguidas
+   dizendo a MESMA frase sao, para a crianca, a mesma folha de novo.
+   Portao que cobra isto: `_qa/enunciado_repetido.py` (0b14). */
+function sequencia(d, pi, L, txt){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Toque nos números <b>na ordem</b>, do menor para o maior.", "p" + pi + "enun");
+  enunciado(d, pi, txt, "p" + pi + "enun");
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "n" + pi + "_" + i, box = item(i + 1);
@@ -1710,8 +1714,10 @@ function sequencia(d, pi, L){
     })(L[i], i);
   }
 }
-function f16(d, pi){ sequencia(d, pi, ST.folha.p16); }
-function f17(d, pi){ sequencia(d, pi, ST.folha.p17); }
+function f16(d, pi){ sequencia(d, pi, ST.folha.p16,
+  "Conte <b>de 2 em 2</b> e <b>de 3 em 3</b>: toque nos números na ordem, do menor para o maior."); }
+function f17(d, pi){ sequencia(d, pi, ST.folha.p17,
+  "Agora os saltos são maiores: <b>de 5 em 5</b> e <b>de 10 em 10</b>. Toque na ordem."); }
 
 /* 18 — O TAPETE (papel d19: "OBSERVE OS TAPETES. CONTE A QUANTIDADE DE
    QUADRADINHOS NA VERTICAL E NA HORIZONTAL… ESCREVA A MULTIPLICAÇÃO"; e o d21,
@@ -1925,9 +1931,9 @@ function f22(d, pi){
    ⚠️ O ENUNCIADO É FALADO, sempre. No 3º ano ainda tem criança que lê devagar, e
       problema é a hora em que ler devagar vira "não sei matemática". A voz não
       dá a resposta: ela lê o que está escrito, palavra por palavra. */
-function problemas(d, pi, L, chave){
+function problemas(d, pi, L, chave, txt){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Leia (ou ouça) o problema e <b>escreva</b> a resposta.", "p" + pi + "enun");
+  enunciado(d, pi, txt, "p" + pi + "enun");
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "n" + pi + "_" + i, box = item(i + 1), tot = String(it.q * it.n);
@@ -1953,8 +1959,10 @@ function problemas(d, pi, L, chave){
     })(L[i], i);
   }
 }
-function f23(d, pi){ problemas(d, pi, ST.folha.p23, "prob23"); }
-function f24(d, pi){ problemas(d, pi, ST.folha.p24, "prob24"); }
+function f23(d, pi){ problemas(d, pi, ST.folha.p23, "prob23",
+  "Leia (ou ouça) o problema e <b>escreva</b> a resposta."); }
+function f24(d, pi){ problemas(d, pi, ST.folha.p24, "prob24",
+  "Agora os problemas misturam <b>fileiras</b>, <b>cestas</b> e grupos iguais. Leia com calma antes de escrever."); }
 
 /* 25 — O CARTAZ DO ARMAZÉM (o fecho com gancho)
    ⭐ A criança escolhe as contas que ela quer pendurar no cartaz do armazém, e

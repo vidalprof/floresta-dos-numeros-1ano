@@ -1667,9 +1667,15 @@ function f14(d, pi){ maquina(d, pi, ST.folha.p14, 5, "p14"); }
    são justamente de 2 em 2, 3 em 3, 4 em 4, 5 em 5 e 10 em 10 — aqui ficam as
    quatro primeiras, que são os fatores do 2º ano; também no d22: "Complete na sequência: 5×1, 5×2, 5×3…"). É a ponte entre contar e multiplicar: a criança que conta de 5 em 5
    já tem a tabuada do 5 na boca antes de decorar coisa nenhuma. */
-function sequencia(d, pi, L){
+/* ⚠️ A SEGUNDA FOLHA DO PAR TEM DE DIZER O QUE MUDOU (20/set/2026).
+   Para quem ainda nao le, a folha E a narracao: duas folhas seguidas
+   dizendo a MESMA frase sao, para a crianca, a mesma folha de novo — o
+   "isso eu ja fiz" que o Marcos ouve da turma. O degrau existia (aqui
+   mudam os saltos da contagem) e a crianca nao era avisada dele.
+   Portao que cobra isto: `_qa/enunciado_repetido.py` (0b14). */
+function sequencia(d, pi, L, txt){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Toque nos números <b>na ordem</b>, do menor para o maior.", "p" + pi + "enun");
+  enunciado(d, pi, txt, "p" + pi + "enun");
   for(var i = 0; i < L.length; i++){
     (function(it, i){
       var id = "n" + pi + "_" + i, box = item(i + 1);
@@ -1702,8 +1708,10 @@ function sequencia(d, pi, L){
     })(L[i], i);
   }
 }
-function f15(d, pi){ sequencia(d, pi, ST.folha.p15); }
-function f16(d, pi){ sequencia(d, pi, ST.folha.p16); }
+function f15(d, pi){ sequencia(d, pi, ST.folha.p15,
+  "Conte <b>de 2 em 2</b> e <b>de 3 em 3</b>: toque nos números na ordem, do menor para o maior."); }
+function f16(d, pi){ sequencia(d, pi, ST.folha.p16,
+  "Agora os saltos são maiores: <b>de 4 em 4</b> e <b>de 5 em 5</b>. Toque na ordem."); }
 
 /* 17, 18 e 19 — DOBRO, METADE e TRIPLO
    ⚠️⚠️ ESTE BLOCO NÃO EXISTE NO CADERNO DO 3º ANO. Ele é a SEGUNDA habilidade

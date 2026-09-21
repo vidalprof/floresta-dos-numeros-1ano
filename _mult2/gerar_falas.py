@@ -285,8 +285,8 @@ F[u"p9enun"] = u"A mesma cena. Agora escreva o total da conta de vezes."
 F[u"p10enun"] = u"Preencha a tabela. Uma casinha de cada linha está vazia."
 for pote, f in MAQ:
     F[pote + u"enun"] = (u"A máquina multiplica por %s. O que sai?" % dz(f))
-F[u"p15enun"] = u"Toque nos números na ordem, do menor para o maior."
-F[u"p16enun"] = F[u"p15enun"]
+F[u"p15enun"] = u"Conte de 2 em 2 e de 3 em 3: toque nos números na ordem, do menor para o maior."
+F[u"p16enun"] = u"Agora os saltos são maiores: de 4 em 4 e de 5 em 5. Toque na ordem."
 F[u"p17enun"] = u"O vovô dobrou a colheita. Quanto ficou?"
 F[u"p18enun"] = u"Agora ele repartiu em duas partes iguais. Quanto ficou em cada uma?"
 F[u"p19enun"] = u"Três canteiros com o mesmo tanto. Escreva o triplo."
