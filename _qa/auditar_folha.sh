@@ -132,6 +132,16 @@ PORTOES=(
   #    `_troca2` e `_nasal2` pediam `fim` (a festa do fim do caderno era muda) e
   #    `_abc1` e `_rima1` pediam `folhaPronta` (o elogio de cada folha).
   "1q fala pedida existe|python3 _qa/fala_pedida.py $PASTA"
+  # ⭐⭐ 1r) DIGITAR NAO PODE DEPENDER DO ENTER (21/set/2026, o Marcos usando o
+  #    caderno dos sistemas do 5o ano: "tem uma atividade onde o estudante digita
+  #    e tem que clicar enter para confirmar, melhor nao precisar do enter" e
+  #    "corrija isso em qualquer atividade que tenha isso"). A grade de tamanho
+  #    FIXO ja fechava sozinha; a grade LIVRE (folha de producao) nao tinha como
+  #    saber que a crianca terminou e so o ENTER confirmava — tecla que muda de
+  #    nome em cada celular e que a crianca de 10 anos nao adivinha. Estava em
+  #    OITO cadernos no ar. Hoje: fecha sozinho quando a palavra bate, botao
+  #    PRONTO para a palavra de fora da lista, e o Enter como terceira porta.
+  "1r digitar sem depender do Enter|python3 _qa/sem_enter.py $PASTA"
   # ⭐ 1i9) A FIGURA NUNCA E MOSTRADA MAIOR QUE O ARQUIVO (21/set/2026). Era
   #    regra da casa com CODIGO (`naoAmplia`) e sem CONTA: o guarda nasceu no
   #    esqueleto e os 23 cadernos anteriores nunca o receberam. Nove deles
