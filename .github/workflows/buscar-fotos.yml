@@ -153,8 +153,13 @@ jobs:
           # busca de IMAGEM acha a folha em si. Fluxo conhecido do DDG: pegar o token
           # `vqd` na pagina de resultados e chamar o i.js, que devolve JSON com a URL
           # da imagem e da pagina de origem (fica no relatorio, para o credito).
-          busca_img = os.environ.get("IMAGENS", "").strip()
-          if busca_img:
+          # ⚠️ A VIRGULA SEPARA BUSCAS (21/set/2026). Antes o campo inteiro virava UMA
+          #    busca: seis termos separados por virgula viraram uma frase de 200
+          #    caracteres, o DuckDuckGo nao achou nada e a colheita voltou VAZIA — sem
+          #    erro, sem aviso, so uma pasta que nao existe. Um campo que PARECE aceitar
+          #    lista (porque o `paginas=` do lado aceita) tem de aceitar lista.
+          for _nb, busca_img in enumerate([b.strip() for b in os.environ.get("IMAGENS", "").split(",") if b.strip()], 1):
+              print("=== busca %d: %s" % (_nb, busca_img))
               q = urllib.parse.quote_plus(busca_img)
               vqd = None
               try:
@@ -187,7 +192,7 @@ jobs:
                       if len(dados) < minkb * 1024: continue
                       ext = ".jpg" if b"\xff\xd8" == dados[:2] else (".png" if dados[1:4] == b"PNG" else "")
                       if not ext: continue
-                      nome = "d%02d_%s%s" % (baixadas + 1, hashlib.md5(url.encode()).hexdigest()[:6], ext)
+                      nome = "d%02db%d_%s%s" % (baixadas + 1, _nb, hashlib.md5(url.encode()).hexdigest()[:6], ext)
                       open(os.path.join(dest, nome), "wb").write(dados)
                       baixadas += 1
                       relatorio.append({"arquivo": nome, "url": url, "pagina": r.get("url", ""),
