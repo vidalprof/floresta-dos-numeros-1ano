@@ -261,6 +261,20 @@ jobs:
           json.dump(relatorio, open(os.path.join(dest, "fotos.json"), "w", encoding="utf-8"),
                     ensure_ascii=False, indent=1)
           print("\n>>> %d imagem(ns) baixada(s) em %s" % (baixadas, dest))
+          # ⚠️ ZERO IMAGEM E DEFEITO, NAO "nada a commitar". Ver o comentario no
+          #    topo deste passo: a corrida vazia saia VERDE e so aparecia meia hora
+          #    depois, numa pasta que nao existia.
+          if baixadas == 0:
+              with open(os.environ.get("GITHUB_STEP_SUMMARY", os.devnull), "a") as _s:
+                  _s.write("## \u26d4 A colheita voltou VAZIA\n\n"
+                           "Nenhuma imagem passou pelos filtros. O que olhar, nesta ordem:\n\n"
+                           "1. **O termo da busca** \u2014 um termo por busca, separados por v\u00edrgula. "
+                           "Frase longa demais o buscador nao acha (medido em 21/set/2026).\n"
+                           "2. **`minkb`** \u2014 esta em %s KB; baixe se as folhas sao leves.\n"
+                           "3. **O log acima** \u2014 se aparece `sem token vqd`, o buscador mudou a pagina.\n"
+                           % os.environ.get("MINKB", "?"))
+              print("!! ZERO imagens: a colheita falhou. Veja o resumo da execucao.")
+              raise SystemExit(1)   # o `sys` nao esta importado neste script
           PY
 
       - name: Commitar
