@@ -178,10 +178,20 @@ COR1 = bloco(u"COR1"); COR2 = bloco(u"COR2")
 BAL1 = bloco(u"BAL1"); BAL2 = bloco(u"BAL2")
 ITENS = bloco(u"ITENS")
 
+# o artigo de cada figura: a fala do Pre e FRASE INTEIRA, nao palavra solta
+_ART = {u"bic": u"a", u"bic2": u"a", u"mot": u"a", u"ska": u"o", u"pat": u"o",
+        u"lim": u"o", u"bet": u"a", u"amo": u"a", u"mel": u"a", u"tom": u"o",
+        u"lar": u"a"}
+
+
+def _nome(k):
+    return _ART.get(k, u"o") + u" " + FIG[k][u"n"]
+
+
 # o nome de cada figura — a crianca toca e OUVE o que e
 for _k, _F in FIG.items():
-    p(u"fig_" + _k, _F[u"n"][0].upper() + _F[u"n"][1:] + u".")
-    p(u"memok_" + _k, u"Achou o par! " + _F[u"n"][0].upper() + _F[u"n"][1:] + u".")
+    p(u"fig_" + _k, u"É " + _nome(_k) + u".")
+    p(u"memok_" + _k, u"Achou o par! São duas vezes " + _nome(_k) + u".")
 
 ENUN = {
  1:  u"Folha um. Toque numa figura e depois na figura igual a ela.",
@@ -210,7 +220,7 @@ _DICAS_LIG = {
 }
 for _pi in (1, 2, 3, 4):
     for _k in ITENS[u"p%d" % _pi][0]:
-        p(u"certo%d_%s" % (_pi, _k), u"Isso! " + FIG[_k][u"n"][0].upper() + FIG[_k][u"n"][1:] + u".")
+        p(u"certo%d_%s" % (_pi, _k), u"Isso! É " + _nome(_k) + u".")
         p(u"dica%d_%s" % (_pi, _k), _DICAS_LIG[_pi])
 
 # 5 e 6 — o diferente
@@ -219,7 +229,7 @@ for _pi, _D, _dica in ((5, DIF1, u"Tres deles sao o mesmo desenho. Ache o que na
     for _k, _X in _D.items():
         _certo = _X[u"pecas"][_X[u"r"]]
         p(u"certo%d_%s" % (_pi, _k),
-          u"Isso! O diferente era " + FIG[_certo][u"n"] + u".")
+          u"Isso! O diferente era " + _nome(_certo) + u".")
         p(u"dica%d_%s" % (_pi, _k), _dica)
 
 # 7 e 8 — o que vem depois
@@ -227,7 +237,7 @@ for _pi, _S, _dica in ((7, SEQ1, u"Diga a fila em voz alta, do comeco. O que vem
                        (8, SEQ2, u"Conte de tres em tres: um, dois, tres, e comeca de novo.")):
     for _k, _X in _S.items():
         p(u"certo%d_%s" % (_pi, _k),
-          u"Isso! Depois vem " + FIG[_X[u"r"]][u"n"] + u".")
+          u"Isso! Depois vem " + _nome(_X[u"r"]) + u".")
         p(u"dica%d_%s" % (_pi, _k), _dica)
 
 # 9 e 10 — pintar pela legenda
