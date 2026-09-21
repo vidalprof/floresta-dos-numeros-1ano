@@ -58,6 +58,7 @@ Sai 0 se enche a aula, 1 se ficou CURTA, 2 se não deu para medir. Passar dos
 ============================================================
 """
 import io
+import unicodedata
 import json
 import os
 import re
@@ -261,8 +262,34 @@ def _veterano(pasta):
     return False
 
 
+def piso_da_etapa(pasta, piso_min):
+    u"""O PRE tem piso proprio, e ele sai da medida do Marcos, nao de palpite.
+
+    Quem declara e o `<pasta>/curriculo.json` (campo `ano`). Sem curriculo.json,
+    nada muda: o piso continua o de sempre."""
+    cam = os.path.join(pasta, u"curriculo.json")
+    if not os.path.exists(cam):
+        return piso_min, None
+    try:
+        ano = (json.load(io.open(cam, encoding=u"utf-8")).get(u"ano") or u"")
+    except Exception:
+        return piso_min, None
+    a = unicodedata.normalize(u"NFD", u"%s" % ano)
+    a = u"".join(c for c in a if unicodedata.category(c) != u"Mn").lower().strip()
+    if a in (u"pre", u"pre-escola", u"educacao infantil"):
+        return 12.0, (u"PISO DO PRE: 12 min, e nao os %.0f de sempre. O piso grande "
+                      u"nasceu do cronometro do Marcos na turma do 1o ano em diante "
+                      u"(20 a 25 folhas = 30 min); em 21/set/2026 ele fixou o Pre em "
+                      u"10 a 15 folhas. A mesma medida dele, aplicada a 10 folhas, da "
+                      u"12 a 15 min — fica a ponta baixa." % piso_min)
+    return piso_min, None
+
+
 def confere(pasta, piso_min=40.0):
     pasta = pasta.rstrip(u"/")
+    piso_min, recado_etapa = piso_da_etapa(pasta, piso_min)
+    if recado_etapa:
+        print(u"   \u2b50 %s" % recado_etapa)
     cam = os.path.join(pasta, u"index.html")
     if not os.path.exists(cam):
         print(u"%s -> sem index.html. NAO MEDI." % pasta)

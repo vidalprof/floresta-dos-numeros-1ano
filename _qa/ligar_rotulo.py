@@ -103,7 +103,15 @@ const pasta = process.argv[2], porta = process.argv[3];
         if (!caixas.has(cx)) caixas.set(cx, []);
         /* o rotulo como a crianca o ve: o texto, e o aria-label quando for figura */
         caixas.get(cx).push(
-          ((e.innerText || e.textContent || '').trim() || e.getAttribute('aria-label') || ''));
+          ((e.innerText || e.textContent || '').trim() || e.getAttribute('aria-label') ||
+           /* ⚠️ EM FOLHA DE PRE O ROTULO E A FIGURA, nao o texto (21/set/2026).
+              Sem esta queda o portao lia '' nas quatro pontas e reprovava um
+              caderno correto, dizendo que ele mostrava "undefined" duas vezes.
+              A identidade de uma ponta-figura e o alt; e, se nem alt houver, o
+              arquivo — que e o que a crianca de fato distingue. */
+           (function(){ var im = e.querySelector('img');
+                        return im ? (im.getAttribute('alt') || im.getAttribute('src') || '') : ''; })()
+           || ''));
       }
       r.push({ pi: pi, nome: (typeof NOMES !== 'undefined' ? NOMES[pi - 1] : ('folha ' + pi)),
                caixas: [...caixas.values()] });
