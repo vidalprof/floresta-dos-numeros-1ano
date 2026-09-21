@@ -28,7 +28,7 @@
 > que seção deste arquivo mora o detalhe, e o resto do documento continua sendo
 > a lei. **Este roteiro não substitui a leitura — ele diz por onde entrar.**
 
-### As doze coisas que NÃO se negociam (se alguma falhar, não é sequência didática)
+### As treze coisas que NÃO se negociam (se alguma falhar, não é sequência didática)
 
 | # | regra | onde |
 |---|---|---|
@@ -43,6 +43,7 @@
 | 9 | ⭐ **O caderno PRONTO passa pelo CRIVO DO PEDAGOGO**, e ele é um DOCUMENTO escrito (`<pasta>/PARECER-PEDAGOGICO.md`), não uma frase minha. Marcos, 20/set/2026: ***"o crivo que falo é o pedagogo olhando e dizendo que está tudo adequado"***. Não confundir com o crivo da COLHEITA (`POTE-*.md`), que é outro e vem antes. **Ferramenta: `python3 _qa/folha_a_folha.py <pasta>`** põe o caderno inteiro numa folha só (objetivos × folhas, e folha a folha o enunciado que a criança OUVE) — é a mesa posta para quem vai assinar. Portão `0b12` (`_qa/parecer.py`). | etapa 11b |
 | 11 | 🔁🔊 **DUAS FOLHAS NÃO DIZEM A MESMA FRASE.** Para quem ainda não lê, **a folha É a narração**: duas folhas seguidas com o mesmo enunciado são, para a criança, a mesma folha de novo — o *"isso eu já fiz"*. A segunda do par **nomeia o que mudou** (*"agora os saltos são maiores"*, *"agora sem figura"*). Portão `0b14` (`_qa/enunciado_repetido.py`); repetição de propósito se declara em `ENUNCIADO-OK.json`. | §2, `MEMORIA` |
 | 12 | 🔍 **A FIGURA NUNCA APARECE MAIOR QUE O ARQUIVO.** O `clamp` do CSS não sabe quantos pixels o arquivo tem; quem sabe é o guarda `naoAmplia()`, amarrado no `onload` de **toda** figura — as do `img()` **e as da CAPA**, que não passam por ele. Segura os **dois** lados, e a largura com **`min(100%, …)`**: `max-width` de linha vence o `max-width:100%` do CSS e a figura estoura a tela. Quando a internet não der versão maior, **mostre no tamanho dela** — nunca amplie, nunca gere. Portão `1i9` (`_qa/nao_amplia.py`). | §2, `CLAUDE.md` |
+| 13 | 🔇 **SILÊNCIO É DEFEITO.** `falar(k)` volta CALADO quando a chave não existe — sem erro, sem 404, sem aparecer em print. Toda chave que o código pede tem de ter texto (portão `1q`), e a palavra que a criança vê tem de ter a voz DELA (portão `1p`): o acento some de um jeito só, o mesmo do `ch()` do gerador. ⚠️ Havia portão para a metade errada — o `0i` vai do TEXTO para o ÁUDIO; ninguém perguntava o contrário. **Quando um portão cobre um sentido de uma relação, perguntar o INVERSO custa cinco minutos e vale um defeito.** | §2, `CLAUDE.md` |
 | 8 | ⭐ **Cada caderno tem a SUA cara** — cor pelo assunto, capa com uma cena do assunto, `@keyframes` com nome próprio (portão `0b11`, `_qa/identidade.py`). Marcos, 18/set/2026: *"os estudantes acham que é a mesma atividade, mesmo o título sendo diferente"*. A capa do esqueleto é exemplo, não padrão. | `MEMORIA` *"Cada caderno tem a sua cara"* |
 
 ### As treze etapas, na ordem

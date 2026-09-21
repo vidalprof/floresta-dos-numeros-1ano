@@ -1162,6 +1162,98 @@ maior (`buscar-fotos.yml`, `minkb` alto), OLHAR a folha de contato, recortar com
 o `_padrao/recorte_folha.py`. **Nunca ampliar, nunca gerar por IA.** Se a
 internet não der versão maior, a saída honesta é mostrar a figura no tamanho dela.
 
+## 🔇 A VOZ QUE A CRIANÇA NÃO OUVIA — 21 palavras e falas mudas (21/set/2026)
+
+O Marcos trouxe da sala o que os estudantes disseram: ***"na atividade do 2º
+ano, a máquina de trocar sílabas, as palavras estão sendo ditas erradas"***, e
+depois ***"tem palavras sendo ditas diferente do que é mostrado"*** ·
+***"isso não pode acontecer em atividade nenhuma"*** · ***"é grave"***.
+
+**Não era pronúncia errada: era voz NENHUMA.** O motor faz exatamente isto:
+
+```js
+function falar(k){ var t = FALAS[k]; if(!t) return; ... }
+```
+
+**Chave que não existe volta calado.** Sem erro no console, sem 404, sem
+aparecer em print, sem derrubar portão nenhum. **O silêncio é o único defeito
+que não deixa marca** — e por isso ficou no ar até a criança reclamar.
+
+### 1. O acento sumia de dois jeitos — 17 palavras mudas
+
+A chave da fala de uma palavra é o nome dela sem acento, e os dois lados
+tiravam o acento de maneiras diferentes:
+
+| quem | como | resultado |
+|---|---|---|
+| **grava** (`gerar_falas.py`, `ch()`) | NFKD: `ã`→`a`, `ç`→`c` | arquiva em `pal_aviao`, `pal_laco` |
+| **pede** (`chaveQuadro`, `folhas.js`) | **apagava** a letra | pedia `pal_avio`, `pal_lao` |
+
+Mudas no ar: **AVIÃO, CAMALEÃO, CARROÇA, CHORÃO, DOMINÓ, DRAGÃO, LAÇO, LEÃO,
+POÇO** (`_troca2`), **CÃO, MÃO, PÃO, PÉ, SABÃO, SOFÁ, CAÇA** (`_sil2`) e
+**TAMBÉM** (`_nasal2`). São todas com **til ou cedilha** — e no 2º ano é
+justamente essa família que a criança precisa OUVIR para aprender a escrever.
+
+⚠️⚠️ **E JÁ TINHA SIDO CONSERTADO UMA VEZ.** No `_aumdim2` existe a
+`chavePal()`, correta, com o comentário certo escrito por mim: *"as pontas têm
+de casar, senão a voz procura um mp3 que não existe"*. **Consertei num caderno
+e não levei aos outros dezesseis.** É a segunda vez que a casa paga por eu não
+propagar conserto de código gêmeo — a primeira foi a folha do diagrama, em
+15/set, e naquele dia eu escrevi a lição que não segui.
+
+### 2. Quatro falas que o código pedia e que nunca existiram
+
+`_troca2` e `_nasal2` pediam **`fim`**: a criança termina o caderno inteiro,
+vem o confete — e a festa era muda. `_abc1` e `_rima1` pediam
+**`folhaPronta`**: o elogio ao fechar **cada** folha nunca existiu.
+
+### Os dois portões que faltavam
+
+- **`1p` (`_qa/voz_da_palavra.py`)** — a palavra que a criança vê tem voz, e é
+  a dela: a chave existe, a fala diz a mesma palavra, e duas palavras não caem
+  na mesma chave.
+- **`1q` (`_qa/fala_pedida.py`)** — toda chave literal que o código pede tem
+  texto no `FALAS`.
+
+⚠️ **HAVIA PORTÃO PARA A METADE ERRADA, e é a lição que fica.** O
+`_qa/vozfalta.py` (0i) pergunta *"esta fala, que tem TEXTO, ganhou MP3?"* — vai
+do texto para o áudio. **Ninguém perguntava o contrário**, e é do outro lado que
+mora o silêncio. Quando um portão cobre um sentido de uma relação, perguntar
+qual é o **sentido inverso** é trabalho de cinco minutos e vale um defeito.
+
+⚠️ **Três armadilhas medidas ao escrever os portões:**
+· o `1p` nasceu comparando a palavra letra a letra e acusou **doze palavras
+  corretas** em cinco cadernos — o `silabas.json` guarda `maca`, `jacare`,
+  `leao` (dali sai o nome do arquivo) e o `falas.json` guarda `maçã.`,
+  `jacaré.`, `leão.` (a voz lê com acento). A comparação é **sem acento**;
+  quem diz que são a mesma palavra é a chave.
+· o `1q` acusaria o `_roda1` sem razão: o `falar()` dele **intercepta** a
+  família `sb1_` antes de olhar o `FALAS`. O portão lê os `indexOf("...")===0`
+  do próprio caderno.
+· o `_roda1` carrega, num comentário, o mesmo defeito já pago: *"`falar("sb1_LA")`
+  iria pelo mapa global, e foi assim que a folha mostrou LATA e disse LARANJA"*.
+
+### O que a varredura mediu, e o que era falso alarme
+
+✅ **Nada mais mudo nas atividades publicadas.** Varri as 35 com `var FALAS` e
+as 40 com `falas.json`: nenhuma outra chave pedida sem texto, nenhum mp3
+faltando, nenhuma colisão de chave entre duas palavras.
+
+⚠️ **E CORRIJO UMA COISA QUE EU DISSE AO MARCOS.** Anunciei "35 falas sem mp3 no
+`_agora`" como achado. **`_agora` é RASCUNHO** — o `ATIVIDADES.md` diz, com
+todas as letras, que a publicada é a `_rightnow9` e que *"`_agora` é um rascunho
+anterior da mesma atividade, guardado"*. Aquelas 35 falas **não chegam a criança
+nenhuma**. Mesma coisa com o `folhaPronta` do `_novo`, que é a pasta de
+montagem da Fábrica. **Achado em rascunho não é defeito no ar, e dizer que é
+gasta o susto do Marcos à toa.**
+
+### O ouvido existia e eu não tinha usado
+
+O `ouvir.yml` — que baixa os mp3 e confere se a voz diz o que está escrito —
+existe desde 17/set. Fui contar: **tinha rodado em 5 dos 31 cadernos**, e
+`_troca2` não era um deles. Ferramenta que depende da minha memória para ser
+usada é ferramenta que não existe.
+
 ## 📋 O PAINEL PASSOU A DAR O PLANO DE AULA (21/set/2026)
 
 Pedido do Marcos: ***"em cada atividade criada, lá no painel, ter o tema e

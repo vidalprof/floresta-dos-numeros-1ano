@@ -149,6 +149,51 @@ Leia tudo antes de agir e responda sempre em **português**.
 >   **onze cadernos corretos**; a colisão de verdade (o selo da medalha chamado
 >   `estrela`) mora fora da capa e continua sendo pega — medido nos dois sentidos.
 
+> ## 🔇 SILÊNCIO É DEFEITO, E É O ÚNICO QUE NÃO DEIXA MARCA — portões `1p` e `1q` (21/set/2026)
+>
+> Os estudantes disseram ao Marcos: ***"na atividade do 2º ano, a máquina de
+> trocar sílabas, as palavras estão sendo ditas erradas"***, e ele: ***"tem
+> palavras sendo ditas diferente do que é mostrado"*** · ***"isso não pode
+> acontecer em atividade nenhuma"*** · ***"é grave"***.
+>
+> **Não era pronúncia: era voz NENHUMA.** `function falar(k){ var t = FALAS[k];
+> if(!t) return; }` — **chave inexistente volta calada**, sem erro, sem 404, sem
+> aparecer em print, sem derrubar portão. Ficou no ar até a criança reclamar.
+>
+> **1. O acento sumia de dois jeitos — 17 palavras mudas.** Quem **grava**
+> (`gerar_falas.py`, `ch()`) usa NFKD e arquiva em `pal_aviao`; quem **pede**
+> (`chaveQuadro`) **apagava** a letra e pedia `pal_avio`. Mudas: AVIÃO,
+> CAMALEÃO, CARROÇA, CHORÃO, DOMINÓ, DRAGÃO, LAÇO, LEÃO, POÇO (`_troca2`); CÃO,
+> MÃO, PÃO, PÉ, SABÃO, SOFÁ, CAÇA (`_sil2`); TAMBÉM (`_nasal2`) — **todas com
+> til ou cedilha**, que no 2º ano é a família que ela mais precisa ouvir.
+> ⚠️⚠️ **E já estava consertado no `_aumdim2`**, com outro nome (`chavePal`) e o
+> comentário certo. Consertei num caderno e não levei aos dezesseis outros.
+>
+> **2. Quatro falas que o código pedia e nunca existiram:** `fim` no `_troca2` e
+> no `_nasal2` (a festa do fim do caderno era muda) e `folhaPronta` no `_abc1` e
+> no `_rima1` (o elogio de cada folha).
+>
+> ⭐ **A LIÇÃO QUE VALE ALÉM DA VOZ:** havia portão para a **metade errada**. O
+> `_qa/vozfalta.py` (0i) vai do **TEXTO para o ÁUDIO**; ninguém perguntava o
+> contrário, e é do outro lado que mora o silêncio. **Quando um portão cobre um
+> sentido de uma relação, perguntar o sentido INVERSO custa cinco minutos e vale
+> um defeito.**
+>
+> **Portões novos, no pré-voo e na banca:** `1p` (`_qa/voz_da_palavra.py`) — a
+> palavra que a criança vê tem voz, é a dela, e duas palavras não caem na mesma
+> chave; `1q` (`_qa/fala_pedida.py`) — toda chave literal pedida tem texto. Os
+> dois reprovam a versão que estava no ar e passam na consertada.
+>
+> ⚠️ **A tabela de acentos do `chaveQuadro` e o `ch()` do gerador são a MESMA
+> regra escrita duas vezes.** Mexeu numa, mexe na outra — o `1p` reprova se
+> desencontrarem.
+>
+> ⚠️ **ACHADO EM RASCUNHO NÃO É DEFEITO NO AR.** Anunciei "35 falas mudas no
+> `_agora`" e o `_agora` é rascunho (o publicado é o `_rightnow9`, e o próprio
+> `ATIVIDADES.md` diz isso). Mesma coisa com o `_novo`, que é a pasta de montagem
+> da Fábrica. **Antes de dar um achado como defeito, conferir no catálogo se
+> aquilo está no ar** — susto gasto à toa custa a confiança do próximo aviso.
+
 > ## 📋 O PAINEL DÁ O **TEMA** E O **OBJETIVO** DA AULA, PRONTOS PARA COLAR (Marcos, 21/set/2026)
 >
 > Palavras dele: ***"em cada atividade criada, lá no painel, ter o tema e
