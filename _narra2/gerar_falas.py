@@ -279,6 +279,11 @@ def semLacuna(s):
 
 
 ENUN = [
+ # ⚠️ as tres folhas que CONTAM a fabula (portão 0b14: cada uma nomeia a sua,
+ #    senao, para quem ainda nao le, sao a mesma folha tres vezes)
+ u"Toque em Ouvir a história e escute a fábula do leão e do ratinho até o fim. Depois responda a pergunta.",
+ u"Toque em Ouvir a história e escute a fábula da pomba e da formiga até o fim. Depois responda a pergunta.",
+ u"Toque em Ouvir a história e escute a fábula da lebre e da tartaruga até o fim. Depois responda a pergunta.",
  u"Toda história tem gente ou bichos dentro dela. Olhe a figura e diga se ele está nessa história.",
  u"Marque todos os que estão na história e toque em Conferir. Cuidado com os que não estão.",
  u"Toque numa figura e depois na história em que ela aparece.",
@@ -317,7 +322,7 @@ ENUN = [
  u"Agora a história é sua. Cada figura tem um papel: puxe o papel para a figura "
  u"que você escolher para ele.",
  u"Você já fez tudo isto sem os nomes. Agora eles: leve cada exemplo para a linha dele."]
-assert len(ENUN) == 35, len(ENUN)
+assert len(ENUN) == 38, len(ENUN)
 for _i, _t in enumerate(ENUN):
     p(u"p%denun" % (_i + 1), _t)
 
@@ -352,10 +357,46 @@ def palavras(*ws):
             p(u"pal_" + ch(_w), _t if _t[-1:] in u".!?" else _t + u".")
 
 
+# --- 1, 2 e 3: AS FABULAS CONTADAS ------------------------------------------
+# ⭐ Pedido do Marcos (21/set/2026): *"acho que ficou dificil nessa atividade sem
+#    as historias para eles ouvirem primeiro"*. A historia inteira vira UMA fala
+#    (`histN`) e cada linha vira a sua (`linN_i`), para a crianca voltar num
+#    pedaco sem escutar tudo de novo.
+# ⚠️ O TEXTO SAI DO MESMO `TXT` QUE A TELA MOSTRA. Escrever a fabula de novo
+#    aqui seria abrir a porta para a voz dizer uma coisa e a folha mostrar outra
+#    — que e exatamente o defeito que o falas.json existe para matar.
+TXT = bloco(u"TXT")
+PERG3 = {
+ 1: (u"tx1", u"ratinho",
+     u"Isso! O ratinho roeu as cordas e salvou o le\u00e3o. Quem ajuda um dia \u00e9 ajudado.",
+     u"Ou\u00e7a de novo o fim da f\u00e1bula: quem roeu as cordas da rede?",
+     [(u"ratinho", u"O ratinho"), (u"pomba", u"A pomba"), (u"cacador", u"O ca\u00e7ador")]),
+ 2: (u"tx2", u"folha",
+     u"Isso! A pomba jogou uma folha, e a formiga subiu nela e se salvou.",
+     u"Ou\u00e7a de novo a terceira linha: o que a pomba jogou na \u00e1gua?",
+     [(u"folha", u"Uma folha"), (u"pedra", u"Uma pedra"), (u"corda", u"Uma corda")]),
+ 3: (u"tx3", u"dormiu",
+     u"Isso! A lebre parou para dormir e a tartaruga passou na frente.",
+     u"Ou\u00e7a de novo: o que a lebre fez achando que ia ganhar f\u00e1cil?",
+     [(u"dormiu", u"Porque parou para dormir"), (u"machucou", u"Porque se machucou"),
+      (u"devagar", u"Porque andava devagar")]),
+}
+for _pi in (1, 2, 3):
+    _tk, _r, _certo, _dica, _ops = PERG3[_pi]
+    _T = TXT[_tk]
+    p(u"hist%d" % _pi, _T[u"titulo"] + u". " +
+      u" ".join(u" ".join(_l) + u"." for _l in _T[u"linhas"]))
+    for _i, _l in enumerate(_T[u"linhas"]):
+        p(u"lin%d_%d" % (_pi, _i), u" ".join(_l) + u".")
+    p(u"certo%d_q" % _pi, _certo)
+    p(u"dica%d_q" % _pi, _dica)
+    for _v, _rot in _ops:
+        p(u"op%d_%s" % (_pi, _v), _rot + u".")
+
 # --- as folhas de PERGUNTA ---------------------------------------------------
-for _pi, _nome in ((1, u"QUEM"), (4, u"ONDE"), (9, u"ANTES"), (10, u"PROB1"), (11, u"PROB2"),
-                   (13, u"RESOL1"), (14, u"RESOL2"), (16, u"COMOE"), (19, u"SENTE"),
-                   (22, u"TEMPO"), (30, u"MORAL")):
+for _pi, _nome in ((4, u"QUEM"), (7, u"ONDE"), (12, u"ANTES"), (13, u"PROB1"), (14, u"PROB2"),
+                   (16, u"RESOL1"), (17, u"RESOL2"), (19, u"COMOE"), (22, u"SENTE"),
+                   (25, u"TEMPO"), (33, u"MORAL")):
     _D = bloco(_nome)
     for _n, _k in enumerate(pote(_pi)):
         _X = _D[_k]
@@ -367,7 +408,7 @@ for _pi, _nome in ((1, u"QUEM"), (4, u"ONDE"), (9, u"ANTES"), (10, u"PROB1"), (1
 
 # --- 33: qual frase reconta certo ---------------------------------------------
 RECONTO = bloco(u"RECONTO")
-for _n, _k in enumerate(pote(33)):
+for _n, _k in enumerate(pote(36)):
     _R = RECONTO[_k]
     p(u"prg_" + _k, lp(_R[u"f"]))
     p(u"frs_%s_c" % _k, lp(_R[u"certa"]))
@@ -376,7 +417,7 @@ for _n, _k in enumerate(pote(33)):
     p(u"dica33_" + _k, u"Leia as duas com calma. Uma delas troca quem fez o quê.")
 
 # --- 2 e 23: marque vários ----------------------------------------------------
-for _pi, _nome in ((2, u"MARQ"), (23, u"MARQ2")):
+for _pi, _nome in ((5, u"MARQ"), (26, u"MARQ2")):
     _D = bloco(_nome)
     for _n, _k in enumerate(pote(_pi)):
         _M = _D[_k]
@@ -388,14 +429,14 @@ for _pi, _nome in ((2, u"MARQ"), (23, u"MARQ2")):
 
 # --- 3, 20 e 21: ligar --------------------------------------------------------
 LIGP = bloco(u"LIGP")
-for _n, _k in enumerate(pote(3)):
+for _n, _k in enumerate(pote(6)):
     _L = LIGP[_k]
     p(u"fig_" + _k, _L[u"n"][0].upper() + _L[u"n"][1:] + u".")
     p(u"lg_" + _k + u"_d", lp(_L[u"b"])[0].upper() + lp(_L[u"b"])[1:] + u".")
     p(u"certo3_" + _k, elogio(_n) + u" " + _L[u"n"][0].upper() + _L[u"n"][1:] +
       u" está em " + _L[u"b"] + u".")
     p(u"dica3_" + _k, u"Lembre em qual fábula você viu esse bicho.")
-for _pi, _nome in ((20, u"LIGS"), (21, u"LIGF")):
+for _pi, _nome in ((23, u"LIGS"), (24, u"LIGF")):
     _D = bloco(_nome)
     for _n, _k in enumerate(pote(_pi)):
         _L = _D[_k]
@@ -406,13 +447,13 @@ for _pi, _nome in ((20, u"LIGS"), (21, u"LIGF")):
 
 # --- 5, 7, 8 e 34: puxar e soltar ----------------------------------------------
 SOLTA1 = bloco(u"SOLTA1")
-for _n, _k in enumerate(pote(5)):
+for _n, _k in enumerate(pote(8)):
     _X = SOLTA1[_k]
     p(u"vrs_" + _k, lp(_X[u"v"]) + u".")
     p(u"rot_" + _k, lp(_X[u"rot"])[0].upper() + lp(_X[u"rot"])[1:] + u".")
     p(u"certo5_" + _k, elogio(_n) + u" " + lp(_X[u"v"]) + u" acontece " + _X[u"rot"] + u".")
     p(u"dica5_" + _k, dica(_n))
-for _pi, _nome in ((7, u"ORDEM1"), (8, u"ORDEM2")):
+for _pi, _nome in ((10, u"ORDEM1"), (11, u"ORDEM2")):
     _D = bloco(_nome)
     for _n, _k in enumerate(pote(_pi)):
         _X = _D[_k]
@@ -421,7 +462,7 @@ for _pi, _nome in ((7, u"ORDEM1"), (8, u"ORDEM2")):
         p(u"certo%d_%s" % (_pi, _k), elogio(_n) + u" " + _X[u"pos"] + u": " + lp(_X[u"v"]) + u".")
         p(u"dica%d_%s" % (_pi, _k), u"Conte a fábula do começo. O que aconteceu antes disto?")
 MONTA = bloco(u"MONTA")
-for _n, _k in enumerate(pote(34)):
+for _n, _k in enumerate(pote(37)):
     _X = MONTA[_k]
     p(u"fig_" + _k, u"Figura: " + _X[u"fig"] + u".")
     p(u"rot_" + _k, lp(_X[u"rot"])[0].upper() + lp(_X[u"rot"])[1:] + u".")
@@ -430,7 +471,7 @@ for _n, _k in enumerate(pote(34)):
                        u"e leve o papel até ela.")
 
 # --- 6, 15, 24, 31: escrever nas casinhas --------------------------------------
-for _pi, _nome in ((6, u"GRD1"), (15, u"GRD2"), (24, u"GRD3"), (31, u"GRD4")):
+for _pi, _nome in ((9, u"GRD1"), (18, u"GRD2"), (27, u"GRD3"), (34, u"GRD4")):
     _D = bloco(_nome)
     for _n, _k in enumerate(pote(_pi)):
         _G = _D[_k]
@@ -441,7 +482,7 @@ for _pi, _nome in ((6, u"GRD1"), (15, u"GRD2"), (24, u"GRD3"), (31, u"GRD4")):
 
 # --- 32: o título é seu --------------------------------------------------------
 PROD = bloco(u"PROD")
-for _n, _k in enumerate(pote(32)):
+for _n, _k in enumerate(pote(35)):
     _X = PROD[_k]
     p(u"prd_" + _k, u"Escreva " + _X[u"q"] + u".")
     p(u"certo32_" + _k, elogio(_n) + u" O título é seu e combina com a história.")
@@ -450,7 +491,7 @@ for _n, _k in enumerate(pote(32)):
 
 # --- 12, 28 e 29: achar no texto ------------------------------------------------
 TXT = bloco(u"TXT")
-for _pi, _tk in ((12, u"tx1"), (28, u"tx2"), (29, u"tx3")):
+for _pi, _tk in ((15, u"tx1"), (31, u"tx2"), (32, u"tx3")):
     _T = TXT[_tk]
     _nw = 0
     for _lin in _T[u"linhas"]:
@@ -472,7 +513,7 @@ _GAVCERTO = {u"l": u" é da lebre.", u"t": u" é da tartaruga.",
              u"p": u" é o problema.", u"s": u" é a solução."}
 _GAVDICA = {u"gA": u"Quem corria depressa e quem andava devagar? Volte à corrida.",
             u"gB": u"Pergunte: isto é a coisa que deu errado, ou é a saída que apareceu depois?"}
-for _pi, _gk in ((17, u"gA"), (18, u"gB")):
+for _pi, _gk in ((20, u"gA"), (21, u"gB")):
     for _n, _k in enumerate(pote(_pi)):
         _X = GAV[_gk][u"pal"][_k]
         p(u"diz2_%s_%s" % (_gk, _k), lp(_X[u"p"])[0].upper() + lp(_X[u"p"])[1:] + u".")
@@ -481,7 +522,7 @@ for _pi, _gk in ((17, u"gA"), (18, u"gB")):
         p(u"dica%d_%s" % (_pi, _k), _GAVDICA[_gk])
 
 # --- 25 e 26: os caça-palavras --------------------------------------------------
-for _pi, _nome in ((25, u"CACA"), (26, u"CACA2")):
+for _pi, _nome in ((28, u"CACA"), (29, u"CACA2")):
     _C = bloco(_nome)
     for _n, _k in enumerate(pote(_pi)):
         _P = _C[u"pal"][_k]
@@ -490,7 +531,7 @@ for _pi, _nome in ((25, u"CACA"), (26, u"CACA2")):
 
 # --- 27: a cruzadinha -----------------------------------------------------------
 CRZD = bloco(u"CRZD")
-for _n, _k in enumerate(pote(27)):
+for _n, _k in enumerate(pote(30)):
     _P = CRZD[_k]
     p(u"crz_" + _k, lp(_P[u"d"]) + u".")
     p(u"certo27_" + _k, elogio(_n) + u" " + lp(_P[u"d"]) + u": " + _P[u"p"].capitalize() + u".")
@@ -504,7 +545,7 @@ _CARTCERTO = {u"p": u" é um personagem: quem está na história.",
               u"l": u" é o lugar: onde a história acontece.",
               u"c": u" é o problema: o que dá errado.",
               u"s": u" é a solução: como o problema se resolve."}
-for _n, _k in enumerate(pote(35)):
+for _n, _k in enumerate(pote(38)):
     _X = CART[u"exem"][_k]
     p(u"ex_" + _k, lp(_X[u"p"])[0].upper() + lp(_X[u"p"])[1:] + u".")
     p(u"certo35_" + _k, elogio(_n) + u" " + lp(_X[u"p"])[0].upper() + lp(_X[u"p"])[1:] + _CARTCERTO[_X[u"c"]])
