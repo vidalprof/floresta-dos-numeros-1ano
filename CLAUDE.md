@@ -38,6 +38,36 @@ Leia tudo antes de agir e responda sempre em **português**.
 > com o caderno já no ar, e o portão 0b9 passava com nota cheia. Etapa **11b**
 > do roteiro; exemplo pronto em `_corpo5/PARECER-PEDAGOGICO.md`.
 >
+> ⭐⭐ **FECHOU EM 20/set/2026: 34 de 34 atividades assinadas.** As trinta e
+> quatro que declaram currículo têm hoje o seu `PARECER-PEDAGOGICO.md`. A
+> leitura folha a folha achou **treze defeitos que portão nenhum pega**, todos
+> consertados no mesmo dia:
+> · **Enunciado de outra matéria no fecho** — a folha 35 do `_sil2` e a do
+>   `_troca2` mandavam separar *"as palavras que dão nome"* (substantivo) numa
+>   folha que classifica sílabas e noutra que nomeia as quatro mexidas. É a
+>   mesma peça de cartaz clonada em dez cadernos, e estas vieram com o texto de
+>   outro. Era a última coisa que a criança ouvia.
+> · **Sete objetivos que não descreviam a folha** (`_casa1` 23, `_narra2` 18 e
+>   21, `_ponto2` 32, `_seg2` 29, `_ort5b` 18, `_sil2` 25, `_not2` 5, `_verbo4`
+>   33, `_nasal2`/`_sinon2` o cartaz final). O relatório do professor dizia que
+>   a criança cumpre uma habilidade que ela não cumpriu.
+> · **`_subst5` folha 23 (o coletivo)** vinha com a citação de uma habilidade
+>   que ela não cumpre — o coletivo está declarado FORA do currículo. Hoje o
+>   nome do objetivo carrega o aviso, para o professor vê-lo onde vê a nota.
+> · **Três pares de folhas com a MESMA narração** — ver o portão `0b14` abaixo.
+>
+> ⚠️ **NADA DISSO O `0b9` VÊ, e não é descuido dele:** ele confere que cada folha
+> tem **algum** objetivo e que os nomes batem nos dois lugares — não que o
+> objetivo seja o **certo**, nem que o enunciado descreva a folha. Essas duas
+> perguntas são de quem lê, e é para elas que o parecer existe.
+>
+> 🛠️ **A FERRAMENTA QUE TORNA ISSO VIÁVEL: `python3 _qa/folha_a_folha.py <pasta>`**
+> — põe o caderno inteiro numa folha só: título, ano, conceitos, cada objetivo
+> com as folhas que ele diz medir, e **folha a folha, na ordem, o nome e o
+> enunciado que a criança OUVE**, mais o que não fecha (folha sem objetivo,
+> objetivo sem folha). Não é portão e não julga nada: é a mesa posta para quem
+> vai assinar. Os treze defeitos acima apareceram lendo essa saída.
+>
 > **Três regras de lá que valem citar aqui:** sequência **nova** tem **no mínimo
 > 35 folhas** — ⭐ **e este piso é de 15/set/2026, por CRONÔMETRO NA SALA**: o
 > Marcos mediu a turma e disse *"verifiquei a execução das atividades, essas 20
@@ -61,6 +91,63 @@ Leia tudo antes de agir e responda sempre em **português**.
 > desenho. Nasceu da pergunta do Marcos (13/set/2026): *"Mas tem banca para esse
 > tipo de atividade?"* — e não tinha; a escolha dos portões dependia da minha
 > memória. Na estreia ela reprovou os ONZE cadernos, dez já no ar.
+
+> ## 🔁🔊 DUAS FOLHAS NÃO PODEM DIZER A MESMA FRASE — portão `0b14` (20/set/2026)
+>
+> **Para quem ainda não lê, a folha É a narração.** A criança do 1º e do 2º ano
+> não lê a faixa do topo: ela escuta. Duas folhas seguidas dizendo a mesma frase
+> são, para ela, **a mesma folha outra vez** — o *"isso eu já fiz, tô fazendo de
+> novo"* que o Marcos ouve da turma.
+>
+> Achado lendo *A Coroa dos Cinco Reinos* folha a folha para o parecer: **três
+> pares** (12/13, 14/15, 16/17) tinham a narração idêntica, palavra por palavra.
+> O nome na faixa era diferente e **o degrau existia** — a 13 traz os reinos que
+> só o microscópio mostra, a 15 põe planta e minúsculos juntos, a 17 é a coroa
+> dos minúsculos. O caderno não estava repetindo nada; ele é que não avisava.
+> Mais três casos no `_mult2` (15/16) e no `_mult3` (16/17 e 23/24).
+>
+> **A regra:** a segunda folha do par **nomeia o que mudou** — *"agora os reinos
+> que não se veem a olho nu"*, *"agora os saltos são maiores: de 5 em 5 e de 10
+> em 10"*, *"agora sem figura nenhuma"*. É a mesma regra do degrau que sobe, dita
+> em voz alta para quem só tem o ouvido.
+>
+> **Portão `0b14` (`_qa/enunciado_repetido.py`)**, no pré-voo e na banca de folha
+> viva: compara os `pNenun` entre si, desconta o *"Folha tal."* e o negrito, e
+> reprova duas folhas com a mesma frase. Repetição de propósito (o aquecimento)
+> se declara em `<pasta>/ENUNCIADO-OK.json` com o motivo, que ele imprime.
+> ⚠️ Nenhum portão via isto: o de duplicata compara ITENS, o de falas mede
+> pronúncia, o do leque conta GESTOS — e dois gestos iguais são legítimos.
+> Ninguém comparava o TEXTO que a criança ouve.
+
+> ## 📏 TRÊS RÉGUAS QUE MEDIAM ERRADO — consertadas em 20/set/2026
+>
+> **Portão que manda consertar o que não está quebrado custa tão caro quanto
+> portão cego: gasta o dia e ensina a ignorar a saída.**
+>
+> · **`_qa/leiaute_mao.js` media só ACIMA da dobra e SORTEAVA o conteúdo.** As
+>   duas coisas juntas faziam ele dar **duas respostas para o mesmo arquivo**:
+>   rodei quatro vezes o `_reinos` e duas disseram "leiaute ok", duas acharam a
+>   árvore da folha 25 com 400 px de largura numa tela de 320. Agora o acaso é
+>   **semeado** (mesma rodada, seis sorteios; duas rodadas, os mesmos seis) e o
+>   que está abaixo da dobra também se mede, porque **rolar para baixo não
+>   conserta nada na horizontal**.
+> · **Alvo dentro de TEXTO CORRIDO não cabe na régua de 40 px.** Há folhas em que
+>   a criança toca numa PALAVRA no meio de uma frase, e há a **fresta entre duas
+>   letras** das folhas de segmentação. Numa palavra de dezesseis letras, exigir
+>   24 px por fresta daria 360 px só de frestas numa tela de 320: a palavra não
+>   caberia. **Largura impossível não se exige** — piso declarado 14×40, aviso de
+>   14 a 24, e GRID (cruzadinha, caça-palavras) fica de fora porque ali o alvo
+>   **pode** crescer. Só no `_subst5` isso derrubou 30 reprovações para 6 — e as
+>   6 que ficaram são figura borrada de verdade.
+> · **`_qa/ligar_rotulo.py` contava os rótulos da FOLHA inteira.** Numa folha com
+>   seis exercícios de ligar independentes, "ANIMAIS" aparece seis vezes de
+>   direito, uma em cada caixa. Ele reprovava as folhas 14 e 15 do `_reinos`, que
+>   estão corretas. Agora a conta é **por caixa**.
+> · **`_qa/duplicatas.py` chamava a CAPA de peça de interface.** A regra da casa
+>   manda que a capa seja uma cena feita com as figuras do próprio caderno, então
+>   `img/ab_abelha.png` escrito à mão na capa é a mesma abelha do pote. Reprovava
+>   **onze cadernos corretos**; a colisão de verdade (o selo da medalha chamado
+>   `estrela`) mora fora da capa e continua sendo pega — medido nos dois sentidos.
 
 > ## 🏷️ O TÍTULO DIZ O QUE SE APRENDE — nada de nome só bonito (Marcos, 20/set/2026)
 >
@@ -89,6 +176,29 @@ Leia tudo antes de agir e responda sempre em **português**.
 > ⚠️ **O endereço (o repositório) NÃO muda junto** — link que já foi para a
 > escola não se quebra. Título e URL podem divergir; se ele quiser o endereço
 > novo, nasce repositório novo e o antigo fica (regra "nada do antigo se apaga").
+>
+> ⭐ **DEZ TÍTULOS JÁ TROCADOS (20/set/2026)** — e a lista fica aqui porque quem
+> abrir o painel amanhã precisa saber que o nome mudou e o endereço não:
+> *Somando com os Dedinhos* → **Aprendendo a somar até dez com os dedos** ·
+> *Lost & Found* → **Aprendendo some, any, much, many e os pronomes relativos** ·
+> *A Horta do Vovô* → **Aprendendo a multiplicação, o dobro, a metade e o triplo** ·
+> *O Armazém do Mesmo Tanto* → **Aprendendo a multiplicação: parcelas iguais,
+> fileiras e combinações** · *O Caso dos Sons Iguais* → **Aprendendo a ortografia:
+> letras diferentes para o mesmo som** · *A Loteria do S* → **Aprendendo a
+> ortografia do S, SS, C, Ç, SC, X e Z** · *O Caderno do Juquinha* → **Aprendendo
+> a separar as palavras na frase e no texto** · *O Armário das Quatro Gavetas* →
+> **Aprendendo a separar as palavras em sílabas** · *A Fábrica de Nomes* →
+> **Aprendendo os substantivos e a formação de palavras** · *O Motor da Frase* →
+> **Aprendendo o verbo e a concordância verbal**.
+> ⚠️ **O ENREDO FICA.** O Juquinha continua sendo o Juquinha, a horta continua
+> sendo do vovô, o detetive continua conduzindo as folhas 7, 8 e 23. Quem diz o
+> assunto é o NOME do caderno, não a história dentro dele.
+> ⚠️⚠️ **E SÃO SEIS LUGARES, NÃO CINCO** (lição paga no dia): o `<title>`, a
+> capa, **a PALAVRA ANIMADA da capa** (`var nome = "A HORTA DO VOVÔ"` no
+> `folhas.js`, em caixa alta), a narração da capa, o `ATIVIDADES.md` e o painel.
+> Esqueci a palavra animada em quatro cadernos e eles continuaram estampando o
+> nome velho em letras grandes; quem pegou não foi o `0b13` — foi o **`0b11`
+> (identidade)**, que compara a capa com o `<title>`.
 
 > ## 🦴 CADERNO NOVO DE FOLHA VIVA NASCE DO **ESQUELETO**, NUNCA DE UM CLONE
 >
@@ -600,8 +710,14 @@ Leia tudo antes de agir e responda sempre em **português**.
 >    ESCOLHER — e aí já tinha respondido. **Campo preenchido não é criança
 >    ouvindo.** Agora cada opção leva um alto-falante IRMÃO (`.somop`, 42 px,
 >    borda clara) e o portão reprova o `opcoes()` que não o desenhe.
->    ⚠️ Medido no dia: **31 cadernos de folha viva** estão sem ele — só o
->    `_corpo5` e o esqueleto têm. É dívida declarada, não "está feito". Ele nasceu porque o Marcos teve de pedir
+>    ✅ **PAGO EM 20/set/2026: os 31 cadernos e o esqueleto têm o alto-falante
+>    irmão em TODA opção** (`.somop`, 42 px, borda clara, opacidade .85 —
+>    "discreto" é a borda, não o tamanho; abaixo de 40 px o portão do leiaute
+>    reprova e o dedo da criança não acerta). Irmão e **nunca dentro** do
+>    botão: botão dentro de botão é HTML inválido e o clique some no borbulhar.
+>    O portão `1o` passa nos 31, e a única coisa que o meu remendo quebrou foi
+>    uma opção do `_reinos` que passava 20 px da tela — pega pelo portão de
+>    leiaute, consertada com `flex-wrap:wrap;max-width:100%` na `.opw`. Ele nasceu porque o Marcos teve de pedir
 >    de novo (*"precisamos pôr áudio nas opções de resposta para quem não sabe
 >    ler, principalmente para os menores"*) e a contagem deu **9 opções mudas em
 >    quatro cadernos, três de alfabetização** — a pior no `_rima1`, do 1º ano,

@@ -1022,6 +1022,158 @@ declara `curriculo.json` e não tem `PARECER-PEDAGOGICO.md` com veredito escrito
 e data REPROVA. ⚠️ Ele lê se ALGUÉM assinou, **não se assinou bem** — o
 julgamento continua sendo de quem escreve.
 
+## 🔁🔊 DUAS FOLHAS DIZENDO A MESMA FRASE — portão `0b14` (20/set/2026)
+
+Lendo *A Coroa dos Cinco Reinos* folha a folha para o parecer, três pares de
+folhas — 12/13, 14/15 e 16/17 — tinham a narração **idêntica, palavra por
+palavra**: *"Olhe a figura. De qual reino ela é?"*
+
+O nome na faixa do topo era diferente **e o degrau existia**: a 13 traz os reinos
+que só o microscópio mostra, a 15 põe planta e minúsculos na mesma folha, a 17 é
+a coroa dos minúsculos. O caderno não estava repetindo nada. Ele é que **não
+avisava**.
+
+⚠️ **E isso é sério porque, para quem ainda não lê, A FOLHA É A NARRAÇÃO.** A
+criança do 1º e do 2º ano não lê a faixa do topo: ela escuta. Duas folhas
+seguidas com a mesma frase são, para ela, a mesma folha outra vez — o *"isso eu
+já fiz, tô fazendo de novo"* que o Marcos ouve da turma, e que aqui apareceria
+**sem o caderno estar repetindo coisa nenhuma**.
+
+**Conserto:** a segunda folha do par nomeia o que mudou (*"agora os reinos que
+não se veem a olho nu"*, *"agora os saltos são maiores: de 5 em 5 e de 10 em
+10"*). Mais três casos no `_mult2` (15/16) e no `_mult3` (16/17 e 23/24) — e
+eram todos: rodado nos 31 cadernos, nenhum outro.
+
+**Conserto duplo: `_qa/enunciado_repetido.py` (portão `0b14`)**, no pré-voo e na
+banca de folha viva. Compara os `pNenun` entre si, desconta o *"Folha tal."* e o
+negrito, reprova duas folhas com a mesma frase. Repetição de propósito (o
+aquecimento) se declara em `ENUNCIADO-OK.json` com o motivo, que ele imprime.
+
+⚠️ **Nenhum portão via:** o de duplicata compara ITENS, o de falas mede
+pronúncia, o do leque conta GESTOS — e dois gestos iguais são legítimos. **Ninguém
+comparava o TEXTO que a criança ouve.**
+
+## 📏 TRÊS RÉGUAS QUE MEDIAM ERRADO (20/set/2026)
+
+**Portão que manda consertar o que não está quebrado custa tão caro quanto portão
+cego: gasta o dia e ensina a ignorar a saída.** Os três, achados no mesmo dia:
+
+**1. O `_qa/leiaute_mao.js` dava DUAS respostas para o MESMO arquivo.** Rodei
+quatro vezes o `_reinos`: duas disseram *"leiaute ok"*, duas acharam a árvore da
+folha 25 com **400 px de largura numa tela de 320** — quarenta pixels para fora
+de cada lado. Duas causas somadas:
+- ele **sorteava** o conteúdo (o mural da folha 25 tira 7 de 11 seres vivos), e o
+  defeito só aparecia quando a árvore saía;
+- e ele só media **acima da dobra** (`if(r.bottom<0||r.top>H) continue`). Isso
+  vale para o que está ACIMA (imagem estacionada fora da tela); **não vale para o
+  que está abaixo — rolar para baixo não conserta nada na horizontal.**
+⚠️ **Portão que depende de sorte não é portão.** Agora `Math.random` é um gerador
+semeado via `addInitScript`, e a semente muda por tamanho de tela: a mesma rodada
+vê seis sorteios diferentes, e duas rodadas seguidas veem exatamente os mesmos
+seis. **Reprovou uma vez, reprova sempre** — que é o mínimo para dar para
+consertar.
+
+**2. Alvo dentro de TEXTO CORRIDO não cabe na régua de 40 px.** Há folhas em que
+a criança toca numa PALAVRA no meio de uma frase (`.tp`, 14 px para "o" e "a") e
+há a **fresta entre duas letras** das folhas de segmentação (`.vao`, 14 px). Numa
+palavra de dezesseis letras, exigir 24 px por fresta daria **360 px só de frestas
+numa tela de 320**: a palavra não caberia e a folha deixaria de existir.
+**Largura impossível não se exige.** Piso declarado **14×40**, aviso de 14 a 24,
+e GRID (cruzadinha, caça-palavras) fica de fora **de propósito** — ali o alvo
+PODE crescer, ou o pai pode rolar de lado. Só no `_subst5` isso derrubou 30
+reprovações para 6, e as 6 que ficaram são figura borrada de verdade.
+⚠️ E "texto corrido" inclui o **flex que quebra linha**: a peça `.grudada` põe
+cada letra num `<span>` e cada fresta num `<button>` dentro de um
+`display:flex;flex-wrap:wrap`. Visualmente é uma palavra; para o CSS é uma linha
+de flex. Deixar o flex de fora fazia a regra enxergar metade dos casos.
+
+**3. O `_qa/ligar_rotulo.py` contava os rótulos da FOLHA inteira.** Numa folha com
+seis exercícios de ligar independentes, "ANIMAIS" aparece seis vezes de direito,
+uma em cada caixa, e dentro de cada caixa é única. Ele reprovava as folhas 14 e
+15 do `_reinos`, **que estão corretas**. Agora agrupa por `.ligar`.
+
+**4. O `_qa/duplicatas.py` chamava a CAPA de peça de interface.** A regra da casa
+manda que a capa seja uma cena feita com as figuras do próprio caderno, então
+`img/ab_abelha.png` escrito à mão na capa **é a mesma abelha do pote**, não uma
+colisão. Reprovava **onze cadernos corretos**. A colisão de verdade (o selo da
+medalha chamado `estrela`) mora fora da capa e continua sendo pega — medido nos
+dois sentidos, com cópia rigada.
+
+## 🧱 O QUE FICOU MEDIDO E NÃO CONSERTADO (20/set/2026)
+
+Duas coisas, escritas para não passarem por "está tudo bem":
+
+**A grade do CAÇA-PALAVRAS (`.dcel`) fica com 30 a 37 px por casa no celular** —
+`_casa1` folha 9, `_ort5` folha 21, `_ort5b` folha 20. A grade tem dez colunas e
+`max-width:430px`; numa tela de 320 cada casa cai para 30. Crescer para 44 faria
+a grade ter 440 px e passar da tela; pôr num rolador horizontal esbarra no
+`touch-action:none` da `.diagrama`, que é **justamente o que permite arrastar o
+dedo sobre as letras**. Não mexi às pressas: **mecânica quebrada é pior que alvo
+apertado**. Conserto de verdade: ou a grade encolhe as colunas no celular, ou o
+rolador entra com a mecânica reescrita em pointer events — e com prova de sala.
+✅ A **cruzadinha** (`.ccel`) do mesmo lote FOI consertada: 26 px → 44 px,
+copiando o conserto que o `_rima2` já tinha (ela mora dentro de
+`.cruzenv{overflow-x:auto}`, então crescer não a corta: ela rola de lado).
+
+**Quinze figuras aparecem acima de 1,35× da própria resolução e saem borradas.**
+A pior família é a **FACA (260×71 px, clonada em sete cadernos**: `_abc1`,
+`_alfa1`, `_jogo1`, `_let1`, `_mont1`, `_sil1`, `_som1`), mostrada até 469×128.
+As outras: `ho_laranja` 81×82→122×111, `ls_dinossauro` 208×90→296×128,
+`o5_anzol` 35×74→59×124, `o5_sol` 75×89→104×124, `sb_brasil` 81×83→125×128.
+**Conserto (regra do Marcos, 14/set):** recolher de novo da internet em resolução
+maior (`buscar-fotos.yml`, `minkb` alto), OLHAR a folha de contato, recortar com
+o `_padrao/recorte_folha.py`. **Nunca ampliar, nunca gerar por IA.** Se a
+internet não der versão maior, a saída honesta é mostrar a figura no tamanho dela.
+
+## ✅ O CRIVO DO PEDAGOGO FECHOU: 34 DE 34 (20/set/2026)
+
+Todas as atividades que declaram currículo têm hoje o seu
+`PARECER-PEDAGOGICO.md`. Eram **onze para trinta e quatro** quando o Marcos
+cobrou pela terceira vez. **O que a leitura achou — treze defeitos que portão
+nenhum pega:**
+
+| onde | o defeito |
+|---|---|
+| `_sil2` f35, `_troca2` f35 | o **fecho do caderno** mandava separar *"as palavras que dão nome"* (substantivo) numa folha que classifica sílabas e noutra que nomeia as quatro mexidas. Resto de clone do cartaz, que mora em dez cadernos |
+| `_casa1` f23 | *"em que cômodo fica cada coisa"* declarada em **"comparar como era antes e como é hoje"**. Pôr o sofá na sala não mede tempo nenhum |
+| `_narra2` f18 e f21 | problema×solução dentro de "como o personagem é"; a lição da fábula dentro de "o que o personagem sente" |
+| `_ponto2` f32 | pede palavras de pergunta **e** de susto; o objetivo só falava da pergunta |
+| `_sil2` f25 · `_ort5b` f18 · `_not2` f5 · `_seg2` f29 · `_verbo4` f33 | o objetivo dizia um verbo e a folha fazia outro (escrever×achar, sílaba×palavra, escrever×arrastar) |
+| `_nasal2`, `_sinon2`, `_verbo4` | o **cartaz final** pendurado num objetivo de ESCRITA, e ele não escreve nada |
+| `_subst5` f23 | o **coletivo**, declarado FORA do currículo, vinha com a citação de uma habilidade que não o cobre. Hoje o nome do objetivo carrega o aviso, no mesmo lugar em que o professor vê a nota |
+| `_reinos`, `_mult2`, `_mult3` | **três pares de folhas com a MESMA narração** → virou o portão `0b14` |
+
+⚠️ **POR QUE O `0b9` NÃO VÊ NADA DISSO, e não é descuido dele:** ele confere que
+cada folha tem **algum** objetivo e que os nomes batem nos dois lugares. Não que
+o objetivo seja o **certo**, nem que o enunciado descreva a folha. São duas
+perguntas de leitura, e nenhuma conta as alcança.
+
+🛠️ **A FERRAMENTA QUE TORNOU ISSO VIÁVEL — `python3 _qa/folha_a_folha.py <pasta>`.**
+Ler um caderno de 35 folhas abrindo `folhas.js`, `falas.json` e `curriculo.json`
+de um lado para o outro leva meia hora e ainda deixa passar o que mais importa.
+Este script põe tudo numa folha só, **na ordem em que a criança encontra**:
+título, ano, conceitos, cada objetivo com as folhas que ele diz medir, e folha a
+folha o nome e **o enunciado que a criança OUVE**, mais o que não fecha. Não é
+portão, não julga nada, não tem código de reprovação: é a mesa posta para quem
+vai assinar. **Os treze defeitos acima apareceram lendo essa saída.** ⚠️ Ele lê
+o enunciado do bloco `FALAS` do `index.html`, e **não** do `falas.json` — lá cada
+fala tem um `id` embaralhado (`gv_38njv4`) que serve ao gravador e não diz de que
+folha é.
+
+⚠️ **TRÊS ATIVIDADES QUE O `0b9` NEM ALCANÇA** (`_dedos`, `_geo5`, `_efjogos`,
+`_econ5`): ele só sabe ler caderno de folha viva (`index.html` + `folhas.js`).
+Nelas o parecer é o ÚNICO crivo, e os objetivos sequer declaram quais perguntas
+medem — a correspondência ficou escrita dentro de cada parecer, que é o único
+lugar onde cabe hoje. **`_geo5` e `_econ5` são de Geografia**, uma das três
+disciplinas em que o PDF da rede traz cabeçalho por ano: ali **daria para medir**
+os conceitos se o `0b9` soubesse ler este formato. É a dívida que mais vale pagar.
+
+⚠️ **E UMA RESSALVA QUE EU NÃO ESCONDO:** o `_econ5` está cheio de números (97%
+do milho, 58% do PIB, 102 mil pessoas na primeira Oktoberfest). Há um
+`creditos.json`, mas **o parecer não conferiu número por número contra a fonte**.
+Li a adequação pedagógica; a auditoria dos números é um **segundo crivo, em
+aberto**. Regra zero: nunca dizer que fiz o que não fiz.
+
 ## 👩‍🏫 O QUE O PARECER ACHOU, E QUE PORTÃO NENHUM MEDE (20/set/2026)
 
 Feito o parecer (ver a seção de cima), aqui fica **o que ele achou** — porque é
