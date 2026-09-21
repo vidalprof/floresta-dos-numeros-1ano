@@ -257,7 +257,7 @@ def p(k, v):
 # ---------------------------------------------------------------------------
 # AS FALAS DO MOTOR — estas toda folha viva tem
 # ---------------------------------------------------------------------------
-p(u"capa", u"O Problema da História. Trinta e cinco folhas sobre as histórias: quem está nelas, onde acontecem, qual é o problema e como ele se resolve. Escreva o seu nome ali embaixo e toque em Começar.")
+p(u"capa", u"O Problema da História. Trinta e oito folhas sobre as histórias: quem está nelas, onde acontecem, qual é o problema e como ele se resolve. Escreva o seu nome ali embaixo e toque em Começar.")
 p(u"folhaPronta", u"Folha pronta! Muito bem.")
 p(u"escreva", u"Escreva a palavra usando o teclado.")
 p(u"ligue", u"Toque numa peça do lado esquerdo e depois na do lado direito.")

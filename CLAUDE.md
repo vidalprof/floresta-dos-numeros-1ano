@@ -69,7 +69,12 @@ Leia tudo antes de agir e responda sempre em **português**.
 > vai assinar. Os treze defeitos acima apareceram lendo essa saída.
 >
 > **Três regras de lá que valem citar aqui:** sequência **nova** tem **no mínimo
-> 35 folhas** — ⭐ **e este piso é de 15/set/2026, por CRONÔMETRO NA SALA**: o
+> 35 folhas** — ⚠️ **MENOS NO PRÉ, que são 10 a 15** (decisão do Marcos,
+> 21/set/2026: *"eu sei que as atividades são 35 folhas, mas para o pré 10 a 15
+> está ótimo"*). O piso de 35 nasceu do cronômetro na turma do 1º ano em diante;
+> a criança do Pré não sustenta trinta minutos na mesma atividade, e esticar o
+> caderno para bater número ali seria o oposto do que o piso quer. **Piso por
+> etapa, não piso único.** — ⭐ **e o piso de 35 é de 15/set/2026, por CRONÔMETRO NA SALA**: o
 > Marcos mediu a turma e disse *"verifiquei a execução das atividades, essas 20
 > 25 folhas duram 30 minutos, precisamos elevar um pouco mais as folhas para
 > umas 35 folhas, as próximas atividades"*. (O piso já foi 25 em 12/set e 20 em
