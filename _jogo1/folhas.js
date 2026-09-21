@@ -100,7 +100,7 @@ function f0(d){
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Alfabetização &middot; 1º ano &middot; a revisão dos oito degraus</div>' +
-    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" src="img/jg_dado.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" src="img/jg_pipa.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" src="img/jg_bola.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="capfig" draggable="false" src="img/jg_peixe.png?v=' + V + '" alt="">' + '' + '</div>' + '</div><div class="tabu"></div>' +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/jg_dado.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/jg_pipa.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/jg_bola.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/jg_peixe.png?v=' + V + '" alt="">' + '' + '</div>' + '</div><div class="tabu"></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
@@ -519,7 +519,9 @@ function f4(d, pi){
           })(lin, col);
         }
       }
-      box.appendChild(gr);
+      /* a grade vai dentro de um TRILHO que rola de lado — ver a nota do
+         `.cprolo` no estilo: oito casas de 40 px não cabem em 300 px. */
+      var rolo = el("div", "cprolo"); rolo.appendChild(gr); box.appendChild(rolo);
       /* o que já estava achado de uma sessão anterior volta pintado */
       palavras.forEach(function(w){ if(achadas[w]) pintaCaminho(onde[w], cels, i); });
       box.setAttribute("data-qa", "caca-" + i);

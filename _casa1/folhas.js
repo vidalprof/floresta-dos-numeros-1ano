@@ -117,7 +117,7 @@ function f0(d){
   c.innerHTML =
     '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Geografia &middot; 2º ano &middot; vinte e cinco folhas sobre onde a gente mora</div>' +
-    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="sol"></i></div>' + '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" src="img/mo_casa.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" src="img/mo_iglu.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" src="img/mo_oca.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="capfig" draggable="false" src="img/mo_palafita.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.40s">' + '<img class="capfig" draggable="false" src="img/mo_castelo.png?v=' + V + '" alt="">' + '' + '</div>' + '</div>' + '<div class="calcada">' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '</div>' +
+    '<div class="ceu"><i class="nv n1"></i><i class="nv n2"></i><i class="sol"></i></div>' + '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/mo_casa.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/mo_iglu.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/mo_oca.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.05s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/mo_palafita.png?v=' + V + '" alt="">' + '' + '</div>' + '<div class="it" style="animation-delay:1.40s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/mo_castelo.png?v=' + V + '" alt="">' + '' + '</div>' + '</div>' + '<div class="calcada">' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '<i></i>' + '</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
@@ -563,37 +563,53 @@ function f09(d, pi){
   enunciado(d, pi, "Arraste o dedo sobre as letras para achar os <b>materiais</b>. " +
             "Eles estão deitados ou em pé.", "p" + pi + "enun");
   var palavras = ST.folha["p" + pi].map(function(m){ return MAT[m].n; });
-  var N = 9, g = [], y, x;
-  for(y = 0; y < N; y++){ g[y] = []; for(x = 0; x < N; x++) g[y][x] = ""; }
-  var postas = {};
-  palavras.forEach(function(w){
-    var t, ok = false;
-    for(t = 0; t < 260 && !ok; t++){
-      var hor = rnd(2) === 0;
-      var lx = hor ? rnd(N - w.length + 1) : rnd(N);
-      var ly = hor ? rnd(N) : rnd(N - w.length + 1);
-      var i, bate = true;
-      for(i = 0; i < w.length; i++){
-        var cy = ly + (hor ? 0 : i), cx2 = lx + (hor ? i : 0);
-        if(g[cy][cx2] && g[cy][cx2] !== w.charAt(i)){ bate = false; break; }
+  /* ⚠️ A GRADE É MAIS ALTA DO QUE LARGA, E ISSO É DE PROPÓSITO (21/set/2026).
+     Quem manda no tamanho da CASA é o número de COLUNAS: a largura da tela se
+     divide por elas, e a linha não custa largura nenhuma. Com 9 colunas a casa
+     saía com 32 px no celular pequeno — abaixo do piso de 40 px que o dedo da
+     criança precisa, e o portão de leiaute reprovava com razão. Encolher a
+     grade em LINHAS não resolveria e ainda apertaria a palavra; então as
+     colunas caem para 7 (casa de 41 px a 320 px, 47 px a 360 px) e as linhas
+     sobem. Palavra maior que 7 letras entra OBRIGATORIAMENTE em pé. */
+  var NC = 7, NL = 8, g = [], y, x, postas = {}, volta;
+  /* ⚠️ REDESENHA A GRADE INTEIRA quando alguma palavra não acha lugar. Antes o
+     sorteio tinha 260 tentativas POR PALAVRA e, esgotadas, desistia em
+     silêncio: a palavra ficava na lista e não existia na grade — beco sem
+     saída que só apareceria com a criança na frente. */
+  for(volta = 0; volta < 40; volta++){
+    g = []; postas = {};
+    for(y = 0; y < NL; y++){ g[y] = []; for(x = 0; x < NC; x++) g[y][x] = ""; }
+    palavras.forEach(function(w){
+      var t, ok = false;
+      for(t = 0; t < 260 && !ok; t++){
+        var hor = w.length <= NC && rnd(2) === 0;
+        if(!hor && w.length > NL) break;
+        var lx = hor ? rnd(NC - w.length + 1) : rnd(NC);
+        var ly = hor ? rnd(NL) : rnd(NL - w.length + 1);
+        var i, bate = true;
+        for(i = 0; i < w.length; i++){
+          var cy = ly + (hor ? 0 : i), cx2 = lx + (hor ? i : 0);
+          if(g[cy][cx2] && g[cy][cx2] !== w.charAt(i)){ bate = false; break; }
+        }
+        if(!bate) continue;
+        var pos = [];
+        for(i = 0; i < w.length; i++){
+          var cy2 = ly + (hor ? 0 : i), cx3 = lx + (hor ? i : 0);
+          g[cy2][cx3] = w.charAt(i); pos.push(cy2 * NC + cx3);
+        }
+        postas[w] = pos; ok = true;
       }
-      if(!bate) continue;
-      var cels = [];
-      for(i = 0; i < w.length; i++){
-        var cy2 = ly + (hor ? 0 : i), cx3 = lx + (hor ? i : 0);
-        g[cy2][cx3] = w.charAt(i); cels.push(cy2 * N + cx3);
-      }
-      postas[w] = cels; ok = true;
-    }
-  });
+    });
+    if(palavras.every(function(w){ return postas[w]; })) break;
+  }
   var enche = "ABCDEFGHIJLMNOPQRSTUVXZ";
-  for(y = 0; y < N; y++) for(x = 0; x < N; x++) if(!g[y][x]) g[y][x] = enche.charAt(rnd(enche.length));
-  var dia = el("div", "diagrama"); dia.style.gridTemplateColumns = "repeat(" + N + ",1fr)";
+  for(y = 0; y < NL; y++) for(x = 0; x < NC; x++) if(!g[y][x]) g[y][x] = enche.charAt(rnd(enche.length));
+  var dia = el("div", "diagrama"); dia.style.gridTemplateColumns = "repeat(" + NC + ",1fr)";
   var cels = [];
-  for(y = 0; y < N; y++) for(x = 0; x < N; x++){
+  for(y = 0; y < NL; y++) for(x = 0; x < NC; x++){
     var c = el("button", "dcel", g[y][x]);
     c.setAttribute("aria-label", "Letra " + g[y][x]);
-    c._i = y * N + x; cels.push(c); dia.appendChild(c);
+    c._i = y * NC + x; cels.push(c); dia.appendChild(c);
   }
   var lista = el("div", "listamat"), chips = {};
   ST.folha["p" + pi].forEach(function(m, i){
@@ -628,9 +644,9 @@ function f09(d, pi){
   var indo = null;
   function limpa(){ cels.forEach(function(c){ if(c.className === "dcel tracando") c.className = "dcel"; }); }
   function caminho(a, b){
-    var ay = Math.floor(a / N), ax = a % N, by = Math.floor(b / N), bx = b % N, out = [], i;
-    if(ay === by){ var p = Math.min(ax, bx), q = Math.max(ax, bx); for(i = p; i <= q; i++) out.push(ay * N + i); if(ax > bx) out.reverse(); return out; }
-    if(ax === bx){ var r = Math.min(ay, by), s = Math.max(ay, by); for(i = r; i <= s; i++) out.push(i * N + ax); if(ay > by) out.reverse(); return out; }
+    var ay = Math.floor(a / NC), ax = a % NC, by = Math.floor(b / NC), bx = b % NC, out = [], i;
+    if(ay === by){ var p = Math.min(ax, bx), q = Math.max(ax, bx); for(i = p; i <= q; i++) out.push(ay * NC + i); if(ax > bx) out.reverse(); return out; }
+    if(ax === bx){ var r = Math.min(ay, by), s = Math.max(ay, by); for(i = r; i <= s; i++) out.push(i * NC + ax); if(ay > by) out.reverse(); return out; }
     return null;
   }
   function conclui(cam){

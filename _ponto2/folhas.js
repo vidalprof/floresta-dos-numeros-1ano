@@ -234,7 +234,7 @@ function f0(d){
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Língua Portuguesa &middot; 2º ano &middot; 35 folhas sobre pontuação</div>' +
-    '<div class="cena"><div class="telhado"></div><div class="parede">' + '<div class="jan" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" src="img/cs_final.png?v=' + V + '" alt="">' + '<span class="rt">.</span>' + '</div>' + '<div class="jan" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" src="img/cs_interrogacao.png?v=' + V + '" alt="">' + '<span class="rt">?</span>' + '</div>' + '<div class="jan" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" src="img/cs_exclamacao.png?v=' + V + '" alt="">' + '<span class="rt">!</span>' + '</div>' + '</div></div>' +
+    '<div class="cena"><div class="telhado"></div><div class="parede">' + '<div class="jan" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/cs_final.png?v=' + V + '" alt="">' + '<span class="rt">.</span>' + '</div>' + '<div class="jan" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/cs_interrogacao.png?v=' + V + '" alt="">' + '<span class="rt">?</span>' + '</div>' + '<div class="jan" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/cs_exclamacao.png?v=' + V + '" alt="">' + '<span class="rt">!</span>' + '</div>' + '</div></div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

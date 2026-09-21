@@ -114,6 +114,13 @@ PORTOES=(
   # ⭐ 1o) sem voz na opcao, a crianca que ainda nao le escolhe pelo tamanho do
   #    botao — e a folha vira sorteio para justamente quem ela deveria ajudar.
   "1o alto-falante da resposta|python3 _qa/voz_opcao.py $PASTA"
+  # ⭐ 1i9) A FIGURA NUNCA E MOSTRADA MAIOR QUE O ARQUIVO (21/set/2026). Era
+  #    regra da casa com CODIGO (`naoAmplia`) e sem CONTA: o guarda nasceu no
+  #    esqueleto e os 23 cadernos anteriores nunca o receberam. Nove deles
+  #    mostravam a mesma faca de 260x71 px esticada ate 1,80x. Quem pegava era
+  #    o `leiaute_mao.js`, que abre o navegador e custa dez minutos por caderno;
+  #    este le o texto e responde em milissegundos.
+  "1i9 figura nunca ampliada|python3 _qa/nao_amplia.py $PASTA"
   # ⭐ 0v) A FORÇA DA VOZ (19/set/2026, cobrança do Marcos: "os áudios têm que
   #    ficarem perfeitos"). Havia portão para a fala que falta, para a voz-robô,
   #    para a palavra que a voz erra e até para a pronúncia — e nenhum media a

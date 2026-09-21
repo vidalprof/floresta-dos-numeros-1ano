@@ -176,6 +176,13 @@ PORTOES=(
   #    pediu de novo, eu contei 9 opcoes mudas em quatro cadernos, tres de
   #    alfabetizacao. A pior: `_rima1`, do 1o ano, com os botoes RIMA / NAO RIMA.
   "1o alto-falante da resposta|python3 _qa/voz_opcao.py $PASTA"
+  # ⭐ 1i9) A FIGURA NUNCA E MOSTRADA MAIOR QUE O ARQUIVO (21/set/2026). Era
+  #    regra da casa com CODIGO (`naoAmplia`) e sem CONTA: o guarda nasceu no
+  #    esqueleto e os 23 cadernos anteriores nunca o receberam. Nove deles
+  #    mostravam a mesma faca de 260x71 px esticada ate 1,80x. Quem pegava era
+  #    o `leiaute_mao.js`, que abre o navegador e custa dez minutos por caderno;
+  #    este le o texto e responde em milissegundos.
+  "1i9 figura nunca ampliada|python3 _qa/nao_amplia.py $PASTA"
 )
 
 [ -f "$PASTA/falas.json" ] || echo "AVISO: $PASTA nao tem falas.json — a narracao nao tem como ser conferida (criar o arquivo e parte do trabalho)."

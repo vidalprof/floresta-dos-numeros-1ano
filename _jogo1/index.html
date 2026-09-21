@@ -810,7 +810,17 @@ body.comtec{padding-bottom:460px;padding-bottom:var(--tech,460px)}
   -webkit-box-align:center;align-items:center;gap:2px}
 .cpalvo img{width:auto;height:clamp(44px,11vw,58px);max-width:100%;object-fit:contain;display:block}
 .cpalvo.achado{border-color:#1f9d55;background:#eafaf0}
-.cpgrade{display:grid;gap:3px;justify-content:center;margin:4px auto 6px;max-width:100%}
+/* ⚠️ TRILHO QUE ROLA DE LADO — e o motivo é aritmética, não gosto (21/set/2026).
+   A grade tem OITO colunas e a casa não pode encolher abaixo de 40 px (é o piso
+   do dedo da criança). Oito casas de 40 px mais sete frestas de 3 px dão 341 px,
+   e num celular pequeno sobram 300 px. Antes a grade simplesmente transbordava e
+   32 casas ficavam FORA da tela, inalcançáveis — o portão de leiaute pegou.
+   Aqui a casa é TOCADA (primeira letra, última letra), nunca arrastada, então
+   rolar de lado não briga com o gesto; num caça-palavras de arrastar brigaria, e
+   por isso lá a saída foi outra (menos colunas, mais linhas). */
+.cprolo{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:3px}
+.cpgrade{display:grid;gap:3px;justify-content:center;margin:4px auto 6px;
+  width:-webkit-max-content;width:max-content;max-width:none}
 .cpcel{min-width:40px;min-height:40px;border:2px solid #e6e9f8;border-radius:8px;background:#fff;
   font-weight:900;font-size:clamp(15px,4vw,20px);color:#3b3f63;cursor:pointer;padding:0}
 .cpcel.marcada{border-color:#8e5572;background:#f2f0ff;color:#663d52}
@@ -2569,7 +2579,32 @@ var VIMG = 2;
    a figura e puxava, o Chrome começava o SEU arrasto nativo do `<img>` e
    disparava um `pointercancel` — o nosso arrasto morria no primeiro milímetro,
    sem erro nenhum na tela. Com isto desligado, o gesto é nosso. */
-function img(w, cls){ return '<img class="' + (cls || "fig") + '" draggable="false" src="img/jg_' + w + '.png?v=' + VIMG + '" alt="' + esc(w) + '">'; }
+function img(w, cls){ return '<img class="' + (cls || "fig") + '" draggable="false" onload="naoAmplia(this)" src="img/jg_' + w + '.png?v=' + VIMG + '" alt="' + esc(w) + '">'; }
+/* ⭐ A FIGURA NUNCA É MOSTRADA MAIOR QUE O PRÓPRIO ARQUIVO (regra do Marcos,
+   14/set/2026: *"nunca ampliar, nunca gerar"*). O CSS da peça dá o TETO (o
+   `clamp`); o arquivo dá o teto DE VERDADE. Sem isto um recorte de 71 px de
+   altura saía a 104 px e borrado, e o portão de leiaute reprovava acima de
+   1,35x. Este guarda já existia no esqueleto e nos cadernos novos; os antigos
+   nasceram sem ele e foram ao ar assim — medido em 21/set/2026, nove cadernos
+   mostravam a mesma faca de 260x71 px esticada até 1,80x. */
+function naoAmplia(im){
+  if(!im || !im.naturalWidth) return;
+  /* ⚠️⚠️ DUAS LINHAS PARA CADA LADO, E AS DUAS SÃO NECESSÁRIAS (21/set/2026).
+     · Por que os DOIS lados: há peça com a altura mandando (`height:clamp(),
+       width:auto`) e peça com a largura mandando (`width:clamp(), height:auto`).
+       Segurar só a altura numa peça do segundo tipo quebra a proporção e a figura
+       sai ESTICADA — medido no _sinon2, folha 5, até 71%.
+     · Por que o `min(100%, ...)`: `max-width` em ESTILO DE LINHA vence o
+       `max-width:100%` da folha de estilo — vence por ser de linha, não por ser
+       menor. Com o valor cru, uma figura larga deixava de encolher e ESTOURAVA a
+       lateral da tela no celular (medido no _casa1, folha 19).
+     · A linha crua vem ANTES de propósito: navegador velho que não entende
+       `min()` recusa a segunda e fica com a primeira, que é o que já está no ar. */
+  im.style.maxWidth = im.naturalWidth + "px";
+  im.style.maxWidth = "min(100%, " + im.naturalWidth + "px)";
+  im.style.maxHeight = im.naturalHeight + "px";
+}
+
 
 /* ---------- estado ---------- */
 var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
@@ -2853,5 +2888,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=f942b344ba"></script>
+<script src="folhas.js?v=b874cd8895"></script>
 </body></html>

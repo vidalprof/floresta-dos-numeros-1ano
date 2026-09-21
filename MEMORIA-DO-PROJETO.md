@@ -1131,6 +1131,13 @@ banca: é **mover o portão para o pré-voo**.
 
 ## 🧱 O QUE FICOU MEDIDO E NÃO CONSERTADO (20/set/2026)
 
+> ✅ **AS DUAS FORAM CONSERTADAS EM 21/set/2026** — o Marcos leu a lista e disse
+> *"corrija e publique"*. O relato do conserto é a seção seguinte
+> ("AS DUAS DÍVIDAS DE LEIAUTE"); o texto abaixo fica como estava, porque o
+> raciocínio que me travou naquele dia é a parte que vale reler: eu achava que
+> a casa do caça-palavras só podia crescer com a mecânica reescrita, e estava
+> olhando para o lado errado da grade.
+
 Duas coisas, escritas para não passarem por "está tudo bem":
 
 **A grade do CAÇA-PALAVRAS (`.dcel`) fica com 30 a 37 px por casa no celular** —
@@ -1154,6 +1161,99 @@ As outras: `ho_laranja` 81×82→122×111, `ls_dinossauro` 208×90→296×128,
 maior (`buscar-fotos.yml`, `minkb` alto), OLHAR a folha de contato, recortar com
 o `_padrao/recorte_folha.py`. **Nunca ampliar, nunca gerar por IA.** Se a
 internet não der versão maior, a saída honesta é mostrar a figura no tamanho dela.
+
+## ✅ AS DUAS DÍVIDAS DE LEIAUTE — pagas em 21/set/2026
+
+Ordem do Marcos, três palavras: ***"corrija e publique"***. As duas dívidas da
+seção acima estão fechadas, e os **31 cadernos de folha viva medem hoje
+`leiaute ok`** — **4.722 telas**, seis tamanhos cada, **zero defeito**. Era a
+primeira vez que a conta fechava inteira. O que se aprendeu:
+
+### 1. A CASA DO CAÇA-PALAVRAS: quem manda no tamanho é a COLUNA, não a grade
+
+**Eu estava olhando para o lado errado.** Na véspera escrevi que crescer a casa
+faria "a grade ter 440 px e passar da tela" — e a frase é verdadeira só se a
+grade for **quadrada**. Não precisa ser. Numa grade, a largura da tela se divide
+pelas **COLUNAS**; a **LINHA não custa largura nenhuma**.
+
+Então o conserto não foi reescrever mecânica nem espremer ninguém: **as colunas
+caíram de 9/10 para 7 e as linhas subiram** (`_casa1` 7×8, `_ort5` e `_ort5b`
+7×10). A casa saltou de **30 px para 41 px** no celular pequeno e 47 px no
+comum — acima do piso de 40 — e o `touch-action:none` que permite arrastar o
+dedo **não foi tocado**. O jogador da banca resolve as três folhas (5 de 5, 6 de
+6, 6 de 6).
+
+⚠️ **O que mudar de colunas traz de brinde, e que quase me escapou:** com 7
+colunas, uma palavra de 8 letras (**AMBIENTE**) não cabe deitada. Ela agora entra
+**obrigatoriamente em pé**, e isso é regra no código, não sorte.
+
+⚠️⚠️ **E ACHEI UM BECO QUE JÁ EXISTIA:** o sorteio tinha 260 a 400 tentativas
+**por palavra** e, esgotadas, **desistia em silêncio** — a palavra ficava na lista
+e não existia na grade. A criança procuraria para sempre. Hoje, se qualquer
+palavra não acha lugar, **a grade inteira é redesenhada** (até 40 voltas). Medido
+com 4.000 sorteios por caderno: **zero falhas**, pior caso 10 voltas.
+
+⚠️ **A cruzadinha do `_jogo1` (folha 4) pediu a saída OPOSTA, e a diferença é o
+GESTO.** Ali são 8 colunas fixas (as palavras se cruzam, não dá para tirar
+coluna) e 8 × 40 px + frestas = 341 px numa tela de 300: 32 casas ficavam fora da
+tela. Mas naquela folha a casa é **TOCADA** (primeira letra, última letra), nunca
+arrastada — então entrou num **trilho que rola de lado**, que no caça-palavras de
+arrastar quebraria tudo. **Mesma aritmética, gestos diferentes, consertos
+diferentes.**
+
+### 2. A FIGURA BORRADA: a regra tinha CÓDIGO e não tinha CONTA
+
+O guarda que impede mostrar a figura maior que o arquivo (`naoAmplia`) **já
+existia** — no esqueleto e nos 8 cadernos nascidos depois dele. Os **23 cadernos
+anteriores nunca o receberam**, e ninguém conferia. Daí a faca de 260×71 px
+esticada até **1,80x** em sete cadernos.
+
+**Virou portão: `1i9` (`_qa/nao_amplia.py`)**, no pré-voo e na banca de folha
+viva. Ele responde em milissegundos o que o `leiaute_mao.js` só responde abrindo
+o navegador por dez minutos: o guarda existe? segura os dois lados? é chamado em
+**toda** figura, inclusive nas da **capa** (que não passam pelo `img()` — foi por
+ali que o `_mult2` e o `_subst5` mostravam a capa a 1,49x)?
+
+⚠️⚠️ **E ELE PEGOU OS MEUS DOIS ERROS DO DIA, que é o teste de que serve:**
+
+- **Guardei só a altura** → numa peça em que a **largura** manda
+  (`width:clamp(), height:auto`) a proporção quebra e a figura sai **ESTICADA**
+  (medido no `_sinon2`, folha 5, até **71%**).
+- **Guardei a largura com o valor cru** → `max-width` em **estilo de linha vence
+  o `max-width:100%` da folha de estilo — vence por ser de linha, não por ser
+  menor**. A figura larga deixou de encolher e **estourou a lateral** da tela
+  (medido no `_casa1`, folha 19). A forma certa é
+  `max-width: min(100%, <natural>px)`, com a linha crua ANTES como queda para
+  navegador velho.
+
+⚠️ **E o portão nasceu cego, na primeira versão.** Ele procurava a frase
+`min(100%` no texto do arquivo — e **o comentário que explica a regra cita
+`min(100%` em português**. Resultado: ele lia o próprio comentário e aprovava
+exatamente o caderno em que eu tinha apagado a linha. Hoje ele **apaga os
+comentários antes de contar**. *Portão que lê o próprio comentário não mede nada
+— e essa é a família de erro do "medir metade do arquivo" de 20/set.*
+
+### 3. A COLHEITA: três figuras trocadas, uma não
+
+Colhi da internet (`buscar-fotos.yml`, quatro buscas, 96 imagens) e OLHEI as
+quatro folhas de contato. Entraram três, todas linha preta de folha de colorir,
+recortadas e com fundo tirado:
+
+| figura | era | ficou |
+|---|---|---|
+| `o5_anzol` | 35×74 px | **255×400** |
+| `o5_sol` | 75×89 px | **394×400** |
+| `ls_dinossauro` | 208×90 px | **495×400** |
+
+⚠️ **A FACA NÃO FOI TROCADA, e o motivo fica escrito para ninguém refazer a
+busca achando que eu esqueci.** As 24 facas colhidas se dividem em duas: as
+bonitas e do estilo certo vêm de banco de imagem **com marca-d'água estampada no
+desenho** ("Magnific"), e as limpas são de estilo realista, que não combina com o
+barro 3D dos cadernos de alfabetização. **Marca-d'água não vai para a criança**, e
+gerar por IA está proibido em folha viva (regra dele, 14/set). Então valeu a
+**saída honesta que a própria regra nomeia: mostrar a figura no tamanho dela.**
+A faca hoje aparece a 260×71 px — menor que antes e **nítida**. Se um dia
+aparecer uma faca grande, limpa e no estilo, é só trocar o arquivo.
 
 ## ✅ O CRIVO DO PEDAGOGO FECHOU: 34 DE 34 (20/set/2026)
 

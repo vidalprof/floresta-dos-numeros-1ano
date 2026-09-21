@@ -247,7 +247,7 @@ button{font-family:inherit;cursor:pointer}
 /* ---- caça-palavras dos materiais (folha 9, da d02) ---- */
 .diagrama{display:grid;gap:2px;margin:8px auto 4px;max-width:430px;touch-action:none;
   -webkit-user-select:none;user-select:none}
-.dcel{min-width:0;aspect-ratio:1/1;min-height:30px;border:1px solid #eee0d4;border-radius:6px;background:#fff;
+.dcel{min-width:0;aspect-ratio:1/1;min-height:40px;border:1px solid #eee0d4;border-radius:6px;background:#fff;
   display:flex;align-items:center;justify-content:center;font-weight:900;
   font-size:clamp(11px,3.1vw,16px);color:var(--texto3);cursor:pointer;padding:0}
 .dcel.tracando{background:#ffe9d6;border-color:var(--cor)}
@@ -1612,9 +1612,34 @@ var VIMG = 3;
    SEU arrasto nativo e disparava um `pointercancel` — o nosso arrasto morria no
    primeiro milímetro, sem erro nenhum na tela. */
 function img(f, cls, alt){
-  return '<img class="' + (cls || "fig") + '" draggable="false" src="img/mo_' + f +
+  return '<img class="' + (cls || "fig") + '" draggable="false" onload="naoAmplia(this)" src="img/mo_' + f +
          '.png?v=' + VIMG + '" alt="' + (alt || "") + '">';
 }
+/* ⭐ A FIGURA NUNCA É MOSTRADA MAIOR QUE O PRÓPRIO ARQUIVO (regra do Marcos,
+   14/set/2026: *"nunca ampliar, nunca gerar"*). O CSS da peça dá o TETO (o
+   `clamp`); o arquivo dá o teto DE VERDADE. Sem isto um recorte de 71 px de
+   altura saía a 104 px e borrado, e o portão de leiaute reprovava acima de
+   1,35x. Este guarda já existia no esqueleto e nos cadernos novos; os antigos
+   nasceram sem ele e foram ao ar assim — medido em 21/set/2026, nove cadernos
+   mostravam a mesma faca de 260x71 px esticada até 1,80x. */
+function naoAmplia(im){
+  if(!im || !im.naturalWidth) return;
+  /* ⚠️⚠️ DUAS LINHAS PARA CADA LADO, E AS DUAS SÃO NECESSÁRIAS (21/set/2026).
+     · Por que os DOIS lados: há peça com a altura mandando (`height:clamp(),
+       width:auto`) e peça com a largura mandando (`width:clamp(), height:auto`).
+       Segurar só a altura numa peça do segundo tipo quebra a proporção e a figura
+       sai ESTICADA — medido no _sinon2, folha 5, até 71%.
+     · Por que o `min(100%, ...)`: `max-width` em ESTILO DE LINHA vence o
+       `max-width:100%` da folha de estilo — vence por ser de linha, não por ser
+       menor. Com o valor cru, uma figura larga deixava de encolher e ESTOURAVA a
+       lateral da tela no celular (medido no _casa1, folha 19).
+     · A linha crua vem ANTES de propósito: navegador velho que não entende
+       `min()` recusa a segunda e fica com a primeira, que é o que já está no ar. */
+  im.style.maxWidth = im.naturalWidth + "px";
+  im.style.maxWidth = "min(100%, " + im.naturalWidth + "px)";
+  im.style.maxHeight = im.naturalHeight + "px";
+}
+
 function nomeM(k){ return MOR[k] ? MOR[k].n : (MAT[k] ? MAT[k].n : k.toUpperCase()); }
 
 /* ---------- estado ---------- */
@@ -1946,5 +1971,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=178cbce98a"></script>
+<script src="folhas.js?v=d929eed4e4"></script>
 </body></html>

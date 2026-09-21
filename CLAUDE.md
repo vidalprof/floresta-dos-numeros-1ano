@@ -149,6 +149,72 @@ Leia tudo antes de agir e responda sempre em **português**.
 >   **onze cadernos corretos**; a colisão de verdade (o selo da medalha chamado
 >   `estrela`) mora fora da capa e continua sendo pega — medido nos dois sentidos.
 
+> ## 🔍🚫 A FIGURA NUNCA É MOSTRADA MAIOR QUE O ARQUIVO — portão `1i9` (21/set/2026)
+>
+> **Era regra da casa com CÓDIGO e sem CONTA — que é a mesma coisa que não ser
+> regra.** O guarda `naoAmplia()` (o `onload` de toda figura, que trava
+> `max-width`/`max-height` no tamanho do arquivo) nasceu no esqueleto, e por isso
+> os cadernos NOVOS já vinham com ele. Os **23 anteriores nunca o receberam** e
+> foram ao ar sem ele: nove cadernos mostravam a mesma **faca de 260×71 px
+> esticada até 1,80×**. Quem pegava era o `leiaute_mao.js`, que abre o navegador
+> e custa dez minutos por caderno. O **`_qa/nao_amplia.py` responde em
+> milissegundos**, lendo o texto: o guarda existe? segura os DOIS lados? é
+> chamado em **toda** figura — inclusive nas da **CAPA**, que não passam pelo
+> `img()` (foi por ali que `_mult2` e `_subst5` mostravam a capa a 1,49×)?
+>
+> ⚠️ **A FORMA CERTA DO GUARDA, e as duas maneiras de errá-la** (paguei as duas
+> no mesmo dia):
+> ```js
+> im.style.maxWidth  = im.naturalWidth + "px";                    /* queda p/ navegador velho */
+> im.style.maxWidth  = "min(100%, " + im.naturalWidth + "px)";
+> im.style.maxHeight = im.naturalHeight + "px";
+> ```
+> · **Só a altura** → numa peça em que a **largura** manda (`width:clamp(),
+>   height:auto`) a proporção quebra e a figura sai **ESTICADA** (`_sinon2` f5,
+>   até 71%).
+> · **A largura no valor cru** → `max-width` de **linha vence o
+>   `max-width:100%` do CSS — por ser de linha, não por ser menor** — e a figura
+>   larga para de encolher e **estoura a lateral** (`_casa1` f19).
+>
+> ⚠️ **E ESTE PORTÃO NASCEU CEGO:** ele procurava `min(100%` no arquivo, e **o
+> comentário que explica a regra cita `min(100%`**. Lia o próprio comentário e
+> aprovava o caderno em que eu tinha apagado a linha. Hoje **apaga comentários
+> antes de contar**. *Portão que lê o próprio comentário não mede nada.*
+>
+> ⭐ **QUANDO A INTERNET NÃO DER VERSÃO MAIOR, MOSTRE NO TAMANHO DELA.** Colhi 96
+> imagens em quatro buscas: entraram `o5_anzol` (35×74 → **255×400**), `o5_sol`
+> (75×89 → **394×400**) e `ls_dinossauro` (208×90 → **495×400**). **A faca não
+> entrou** — as bonitas do estilo certo vêm com **marca-d'água estampada no
+> desenho** e as limpas são realistas demais para o barro 3D da alfabetização.
+> Marca-d'água não vai para a criança e IA está proibida aqui; então a faca
+> aparece a 260×71 px, **menor e nítida**. Isso é conserto, não desistência.
+
+> ## 📐 CAÇA-PALAVRAS: QUEM MANDA NO TAMANHO DA CASA É A **COLUNA** (21/set/2026)
+>
+> A casa ficava com **30 px** no celular — abaixo do piso de 40 px do dedo da
+> criança — e eu tinha registrado que só dava para consertar reescrevendo a
+> mecânica. **Estava olhando para o lado errado da grade.** Numa grade a largura
+> da tela se divide pelas **COLUNAS**; a **LINHA não custa largura nenhuma**.
+>
+> Conserto: **colunas de 9/10 para 7, linhas para cima** (`_casa1` 7×8, `_ort5` e
+> `_ort5b` 7×10). Casa de **30 → 41 px** (47 px no celular comum), e o
+> `touch-action:none` que permite arrastar o dedo **não foi tocado**.
+>
+> ⚠️ **Palavra maior que o número de colunas entra OBRIGATORIAMENTE EM PÉ** —
+> AMBIENTE tem oito letras e não cabe deitada em sete colunas. É regra no código.
+>
+> ⚠️⚠️ **E HAVIA UM BECO ALI DESDE SEMPRE:** o sorteio tentava 260–400 vezes
+> **por palavra** e, esgotadas, **desistia calado** — a palavra ficava na lista e
+> **não existia na grade**. Hoje, se qualquer palavra não acha lugar, **a grade
+> inteira é redesenhada** (até 40 voltas). Medido: 4.000 sorteios por caderno,
+> **zero falhas**, pior caso 10 voltas.
+>
+> ⚠️ **A CRUZADINHA PEDE A SAÍDA OPOSTA, E A DIFERENÇA É O GESTO.** No `_jogo1`
+> f4 são 8 colunas fixas (as palavras se cruzam) e 32 casas ficavam fora da tela
+> — mas ali a casa é **TOCADA**, nunca arrastada, então entrou num **trilho que
+> rola de lado**, que no caça-palavras de arrastar quebraria tudo. Mesma
+> aritmética, gestos diferentes, consertos diferentes.
+
 > ## 🏷️ O TÍTULO DIZ O QUE SE APRENDE — nada de nome só bonito (Marcos, 20/set/2026)
 >
 > Palavras dele, abrindo o caderno do corpo humano: ***"mude o título, sempre

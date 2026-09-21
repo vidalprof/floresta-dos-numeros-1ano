@@ -240,7 +240,7 @@ function f0(d){
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Língua Portuguesa &middot; 2º ano &middot; 35 folhas sobre o som nasal</div>' +
-    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" src="img/nz_elefante.png?v=' + V + '" alt="">' + '<span class="rt">~</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" src="img/nz_bombom.png?v=' + V + '" alt="">' + '<span class="rt">M</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" src="img/nz_tambor.png?v=' + V + '" alt="">' + '<span class="rt">N</span>' + '</div>' + '</div>' +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/nz_elefante.png?v=' + V + '" alt="">' + '<span class="rt">~</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/nz_bombom.png?v=' + V + '" alt="">' + '<span class="rt">M</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/nz_tambor.png?v=' + V + '" alt="">' + '<span class="rt">N</span>' + '</div>' + '</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }

@@ -662,9 +662,15 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 /* o TEXTINHO: a frase palavra por palavra, cada uma tocável (folhas 7, 13 e 21) */
 .textinho{margin:6px 8px;padding:10px 8px;border:3px solid #e6dbd1;border-radius:14px;background:#fff;
   line-height:2.1;text-align:left}
+/* ⚠️ `min-width` NÃO é enfeite (21/set/2026): a palavra clicável mais curta do
+   texto em inglês é de UMA letra ("I", "a"), e com 3 px de folga de cada lado
+   ela media 10 px de largura — abaixo do piso de 14 px que vale para alvo
+   dentro de texto corrido, e o portão de leiaute reprovava as folhas 19 e 28.
+   Dentro de uma frase o alvo não pode crescer à vontade (senão a linha
+   desmancha), mas 18 px cabem sem empurrar nada. */
 .tp{border:0;background:transparent;padding:4px 3px;margin:0;font:inherit;font-weight:700;
   font-size:clamp(15px,4vw,18px);color:#4a3d33;border-radius:7px;cursor:pointer;
-  min-height:40px;-webkit-transition:background .15s;transition:background .15s}
+  min-width:18px;min-height:40px;-webkit-transition:background .15s;transition:background .15s}
 .tp:hover{background:#f7efe7}
 .tp.achada{background:#e7f8ee;color:#0d7736;font-weight:900;
   -webkit-box-shadow:inset 0 -3px 0 #15a34a;box-shadow:inset 0 -3px 0 #15a34a}
@@ -2518,9 +2524,34 @@ var VIMG = 2;
    pega: o prefixo de outra pasta vazando para dentro desta. Aqui os DADOS já
    declaram `sb_pato.png` por extenso, que é uma coisa a menos para desencontrar. */
 function img(f, cls, alt){
-  return '<img class="' + (cls || "fig") + '" draggable="false" src="img/' + f +
+  return '<img class="' + (cls || "fig") + '" draggable="false" onload="naoAmplia(this)" src="img/' + f +
          '?v=' + VIMG + '" alt="' + (alt || "") + '">';
 }
+/* ⭐ A FIGURA NUNCA É MOSTRADA MAIOR QUE O PRÓPRIO ARQUIVO (regra do Marcos,
+   14/set/2026: *"nunca ampliar, nunca gerar"*). O CSS da peça dá o TETO (o
+   `clamp`); o arquivo dá o teto DE VERDADE. Sem isto um recorte de 71 px de
+   altura saía a 104 px e borrado, e o portão de leiaute reprovava acima de
+   1,35x. Este guarda já existia no esqueleto e nos cadernos novos; os antigos
+   nasceram sem ele e foram ao ar assim — medido em 21/set/2026, nove cadernos
+   mostravam a mesma faca de 260x71 px esticada até 1,80x. */
+function naoAmplia(im){
+  if(!im || !im.naturalWidth) return;
+  /* ⚠️⚠️ DUAS LINHAS PARA CADA LADO, E AS DUAS SÃO NECESSÁRIAS (21/set/2026).
+     · Por que os DOIS lados: há peça com a altura mandando (`height:clamp(),
+       width:auto`) e peça com a largura mandando (`width:clamp(), height:auto`).
+       Segurar só a altura numa peça do segundo tipo quebra a proporção e a figura
+       sai ESTICADA — medido no _sinon2, folha 5, até 71%.
+     · Por que o `min(100%, ...)`: `max-width` em ESTILO DE LINHA vence o
+       `max-width:100%` da folha de estilo — vence por ser de linha, não por ser
+       menor. Com o valor cru, uma figura larga deixava de encolher e ESTOURAVA a
+       lateral da tela no celular (medido no _casa1, folha 19).
+     · A linha crua vem ANTES de propósito: navegador velho que não entende
+       `min()` recusa a segunda e fica com a primeira, que é o que já está no ar. */
+  im.style.maxWidth = im.naturalWidth + "px";
+  im.style.maxWidth = "min(100%, " + im.naturalWidth + "px)";
+  im.style.maxHeight = im.naturalHeight + "px";
+}
+
 
 /* ---------- estado ---------- */
 var ST = {pag: 0, nome: "", folha: null, resp: {}, lig: {}, tent: {}, prontas: {}, inicio: 0};
@@ -2885,5 +2916,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=3f08db730d"></script>
+<script src="folhas.js?v=9b267e8c81"></script>
 </body></html>

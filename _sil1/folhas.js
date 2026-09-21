@@ -101,7 +101,7 @@ function f0(d){
   c.innerHTML =
     '<div class="ceu"></div>' + '<h1 class="titu">' + letras + '</h1>' +
     '<div class="sub">Alfabetização &middot; 1º ano &middot; dez folhas de contar pedaços</div>' +
-    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" src="img/sl_bola.png?v=' + V + '" alt="">' + '<span class="rt">2</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" src="img/sl_borboleta.png?v=' + V + '" alt="">' + '<span class="rt">4</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" src="img/sl_flor.png?v=' + V + '" alt="">' + '<span class="rt">1</span>' + '</div>' + '</div>' +
+    '<div class="cena">' + '<div class="it" style="animation-delay:0.00s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/sl_bola.png?v=' + V + '" alt="">' + '<span class="rt">2</span>' + '</div>' + '<div class="it" style="animation-delay:0.35s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/sl_borboleta.png?v=' + V + '" alt="">' + '<span class="rt">4</span>' + '</div>' + '<div class="it" style="animation-delay:0.70s">' + '<img class="capfig" draggable="false" onload="naoAmplia(this)" src="img/sl_flor.png?v=' + V + '" alt="">' + '<span class="rt">1</span>' + '</div>' + '</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
