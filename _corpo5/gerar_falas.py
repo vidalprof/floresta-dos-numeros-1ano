@@ -146,7 +146,7 @@ def p(k, v):
 # ---------------------------------------------------------------------------
 # AS FALAS DO MOTOR — estas toda folha viva tem
 # ---------------------------------------------------------------------------
-p(u"capa", u"Aprendendo os sistemas digestório, respiratório e circulatório. Trinta e seis folhas sobre o caminho que o alimento, "
+p(u"capa", u"Aprendendo os sistemas digestório, respiratório e circulatório. Trinta e nove folhas sobre o caminho que o alimento, "
            u"o ar e o sangue fazem dentro do seu corpo. Escreva o seu nome ali embaixo e "
            u"toque em Começar.")
 p(u"folhaPronta", u"Folha pronta! Muito bem.")
@@ -175,6 +175,7 @@ CACA2 = bloco(u"CACA2")
 CRZ1 = bloco(u"CRZ1")
 CRZ2 = bloco(u"CRZ2")
 ITENS = bloco(u"ITENS")
+SIMU = bloco(u"SIMU")
 
 NOMES = [
  u"Onde tudo começa", u"Os órgãos da digestão", u"Os órgãos da digestão, sem o desenho",
@@ -190,7 +191,9 @@ NOMES = [
  u"Onde o nutriente entra", u"Por onde sai o que não serve", u"Os rins e a água",
  u"De que sistema é cada um?",
  u"Pedro correu no recreio", u"O que acontece quando corro", u"O alimento é o combustível",
- u"Ache o órgão na grade", u"Cruzadinha dos três sistemas"]
+ u"Ache o órgão na grade", u"Cruzadinha dos três sistemas",
+ u"Memória dos órgãos da digestão", u"A forca do sistema respiratório",
+ u"O simulador da respiração"]
 
 # ---- o enunciado de cada folha ----
 PEDE = {
@@ -229,8 +232,11 @@ PEDE = {
  33: u"Ligue o que acontece no corpo de quem corre ao motivo disso.",
  34: u"De onde vem a energia do corpo? Toque na resposta certa.",
  35: u"Olhe a grade de quadrinhos e diga onde está cada órgão.",
- 36: u"A cruzadinha do fim: pistas dos três sistemas juntos."}
-for i in range(1, 37):
+ 36: u"A cruzadinha do fim: pistas dos três sistemas juntos.",
+ 37: u"Vire duas cartas e ache o órgão e o nome dele. As figuras são as mesmas das folhas de papel.",
+ 38: u"Leia o que o órgão faz e adivinhe o nome dele, letra por letra. A cada erro o fôlego acaba um pouco.",
+ 39: u"Arraste o controle e veja o diafragma trabalhar. Ele é o músculo que puxa e empurra o ar."}
+for i in range(1, 40):
     p(u"p%denun" % i, u"Folha %d: %s. %s" % (i, NOMES[i - 1], PEDE[i]))
 
 # ---- os órgãos: o nome e o que ele faz ----
@@ -242,6 +248,23 @@ for k, O in ORG.items():
     p(u"faz_" + k, O[u"n"] + u": " + O[u"faz"] + u".")
     p(u"certo_org_" + k, u"Isso! " + O[u"n"] + u": " + O[u"faz"] + u".")
     p(u"dica_org_" + k, u"Leia de novo a pista embaixo da figura. Ela diz o que esse órgão FAZ.")
+
+# ---- 37, 38 e 39: o bloco de jogo ----
+# ⚠️ A VOZ DO ACERTO DIZ O QUE SE APRENDEU, não "muito bem": o elogio vazio não
+#    ensina nada, e aqui a criança acabou de ganhar o direito de ouvir a função
+#    do órgão inteira. É o instante em que ela presta mais atenção.
+p(u"memdica", u"Ainda não é esse par. Olhe bem a figura antes de virar a segunda carta.")
+p(u"memfim", u"Tabuleiro limpo! Você achou todos os órgãos da digestão pelo desenho.")
+for k, O in ORG.items():
+    p(u"memok_" + k, u"Achou! " + O[u"n"] + u": " + O[u"faz"] + u".")
+    p(u"foco_" + k, u"Isso! " + O[u"n"] + u": " + O[u"faz"] + u".")
+    p(u"fopou_" + k, u"O fôlego acabou desta vez. A palavra era " + O[u"n"]
+                     + u": " + O[u"faz"] + u". Vamos para a próxima.")
+    p(u"fodica_" + k, u"Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.")
+for k, S in SIMU.items():
+    p(u"diafr_" + k, S[u"pede"])
+    p(u"diafrok_" + k, S[u"certo"])
+    p(u"diafrdica_" + k, S[u"dica"])
 
 # ---- as perguntas de escolher ----
 for k, Q in PERG.items():

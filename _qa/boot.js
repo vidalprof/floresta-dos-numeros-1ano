@@ -95,6 +95,28 @@ const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
   try {
     semVoz = !fs.readdirSync(pastaAudio).some(f => /\.mp3$/i.test(f));
   } catch (e) { semVoz = true; }
+  /* ⚠️ E HA UM TERCEIRO ESTADO, que eu descobri ao FAZER CRESCER um caderno já
+     publicado (20/set/2026, `_corpo5` de 36 para 39 folhas): a voz ESTÁ
+     gravada — a pasta tem centenas de mp3 —, mas as falas NOVAS ainda não. A
+     regra de cima só conhecia "nenhum mp3" (perdoa) e "mp3 gravado" (reprova),
+     e neste estado ela acusava um defeito que não existe: o `entregar.yml`
+     grava as que faltam no ato de publicar, e é assim que a casa funciona.
+     ⚠️ Perdoar sempre seria pior. O que distingue um mp3 PENDENTE de um mp3
+        PERDIDO é o `falas.json`: ele é a verdade da casa (texto escrito ali =
+        voz gravada). Id que está no `falas.json` e ainda não tem arquivo está
+        na fila; id que NÃO está lá e mesmo assim é pedido é defeito de
+        verdade — a criança toca o alto-falante e ouve silêncio para sempre.
+     E o perdão sai IMPRESSO, com os nomes: "não medi a voz" não é "passou". */
+  const pendentes = new Set();
+  try {
+    const fj = path.join(path.dirname(path.resolve(arquivo)), 'falas.json');
+    for (const f of JSON.parse(fs.readFileSync(fj, 'utf8'))) {
+      if (!f || !f.id) continue;
+      try { fs.accessSync(path.join(pastaAudio, f.id + '.mp3')); } catch (e) { pendentes.add(f.id); }
+    }
+  } catch (e) { /* sem falas.json: fica só a regra antiga */ }
+  const naFila = [];
+  let consoleMp3 = 0;
   let b, p;
   try {
     b = await chromium.launch({executablePath: CROMO, args: ['--no-sandbox', '--disable-gpu']});
@@ -114,6 +136,15 @@ const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
     if (m.type() !== 'error') return;
     const t = m.text();
     if (semVoz && /Failed to load resource/i.test(t)) { faltouMp3++; return; }
+    /* ⚠️ O MESMO SUMIÇO CHEGA DUAS VEZES, por duas portas que não se parecem:
+       o `requestfailed` traz a URL (com o `.mp3`) e o console traz a frase
+       "Failed to load resource" (SEM o `.mp3`). Perdoar só a primeira deixava
+       a segunda reprovando sozinha — foi o que aconteceu ao fazer o `_corpo5`
+       crescer: a fala nova estava perdoada na porta da URL e acusada na porta
+       do console, pelo mesmo arquivo. Então a frase genérica só é perdoada na
+       MEDIDA em que houve mp3 perdoado neste boot: uma por uma, nunca em
+       bloco. Sobrou console.error sem mp3 correspondente? Reprova. */
+    if (/Failed to load resource/i.test(t) && naFila.length > consoleMp3) { consoleMp3++; return; }
     if (!ehRuido(t)) problemas.push('console.error: ' + t.slice(0, 200));
   });
   /* 3) arquivo que a propria atividade pede e nao existe */
@@ -132,6 +163,8 @@ const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
        crianca toca o alto-falante e ouve silencio — e continua reprovando.
        E mesmo perdoando, sai IMPRESSO: "nao medi a voz" nao e "passou". */
     if (semVoz && /\.mp3(\?|$)/i.test(u)) { faltouMp3++; return; }
+    const mid = /([^/]+)\.mp3(\?|$)/i.exec(u);
+    if (mid && pendentes.has(mid[1])) { if (naFila.indexOf(mid[1]) < 0) naFila.push(mid[1]); return; }
     if (!ehRuido(u) && !ehRuido(String(r.failure() && r.failure().errorText))) {
       problemas.push('recurso nao carregou: ' + u.split('/').slice(-1)[0]);
     }
@@ -252,6 +285,11 @@ const ehRuido = (t) => RUIDO.some(r => r.test(String(t)));
   if (semVoz && faltouMp3) {
     console.log('   (voz ainda nao gravada: ' + faltouMp3 + ' pedido(s) de mp3 sem arquivo — ' +
                 'NAO MEDI a voz; o entregar.yml grava ao publicar)');
+  }
+  if (naFila.length) {
+    console.log('   (voz NA FILA: ' + naFila.length + ' fala(s) novas declaradas no falas.json e ' +
+                'ainda sem mp3 — o entregar.yml grava ao publicar: ' + naFila.slice(0, 6).join(', ') +
+                (naFila.length > 6 ? ', ...' : '') + ')');
   }
 
   /* um erro repetido 40x e UM defeito, nao 40 */

@@ -145,8 +145,10 @@ professor (chave `1275@`) e mostra as cinco citações verbatim.
    caderno todo a traço preto. Entrou porque sem ele a folha pergunta *"em qual
    quadrinho está o estômago?"* para quem não tem quadrinho na tela. Se o Marcos
    achar que destoa, dá para redesenhar a grade em HTML com os nomes.
-3. **O tempo de sala não foi medido.** São 36 folhas e 158 itens; o piso de 35
-   está cumprido, mas **quem mede a aula é o relógio dele**.
+3. **O tempo de sala não foi medido.** São 39 folhas e 185 itens; o piso de 35
+   está cumprido com folga, mas **quem mede a aula é o relógio dele** — e com
+   três folhas a mais do que na primeira entrega, essa medição passou a
+   importar mais, não menos.
 4. **A ordem dos três sistemas** é digestório → respiratório → circulatório, que
    é a das folhas colhidas e a do currículo. Se ele ensina em outra ordem, dá
    para trocar os blocos sem tocar no conteúdo.
@@ -167,3 +169,60 @@ de papel, nenhuma de IA.
 
 _Conferido em 20/set/2026, contra `_curriculo/blumenau.txt` (5º ano, Ciências) e
 as 78 folhas de origem em `_sequencias/folhas_corpo5/` e `folhas_corpo5circ/`._
+
+---
+
+## Anexo — as três folhas de jogo (37, 38 e 39), acrescentadas em 20/set/2026
+
+O caderno foi ao ar com 36 folhas e **sete gestos**. O Marcos perguntou se as
+atividades têm interatividades variadas; a conta do `_qa/leque_folha.py` dizia
+que sim (nenhum gesto acima de 28%, a regra da casa é 40%), mas dizia também
+que **três dos clássicos que ele nomeou não estavam aqui**: memória, forca e
+simulador. As três entraram, e o caderno passou a ter **dez gestos**, o mais
+pesado com 26%.
+
+**Por que elas vêm no FIM, e não no meio.** São revisão — e revisão só vale
+depois de haver o que revisar. Cada uma retoma um bloco que o caderno já
+ensinou, com um gesto que a criança ainda não fez aqui: é prática de
+recuperação (Roediger), não conteúdo novo empurrado para o fim.
+
+| folha | o que é | o que ela revisa | objetivo |
+|---|---|---|---|
+| 37 · Memória dos órgãos da digestão | par **figura ↔ nome**, dois tabuleiros de três pares | a folha 2 (reconhecer o órgão pelo desenho), agora de memória | 1 — digestório |
+| 38 · A forca do sistema respiratório | a pista é **o que o órgão faz**; a criança escreve o nome letra por letra | a folha 13 (ligar órgão ↔ função), agora sem as duas colunas para ajudar | 2 — respiratório |
+| 39 · O simulador da respiração | a criança **move o diafragma** e vê o pulmão encher e esvaziar | a folha 15 (puxo o ar, solto o ar), agora vendo acontecer | 2 — respiratório |
+
+**A folha 39 é a única do caderno que o papel não conseguiria dar.** O currículo
+pede *"a função de cada um dos seus órgãos"*, e o diafragma é o único órgão
+cuja função é um **movimento**. Uma folha impressa só pode descrevê-lo; a tela
+deixa a criança fazê-lo e ver o resultado. A cena é desenhada em CSS — e isso
+não fere a regra da figura vir da folha de papel: a mesma regra reserva o CSS
+para **o que precisa se mexer em tempo real** (a água que sobe, a carta que
+gira), e aqui tudo se mexe.
+
+⚠️ **De onde veio o gesto destas três, com todas as letras.** A regra da casa é
+que o gesto saia do **comando impresso** na folha colhida. Aqui não saiu: das
+78 folhas do pote, nenhuma pede memória, forca ou simulador. As três entram
+**declaradas**, como os quatro blocos que o caderno de moradia tirou do
+currículo — duas como revisão (37 e 38) e uma porque o conteúdo do currículo
+(o movimento do diafragma, que a folha d22 do pote trata em texto e a d19
+comenta) só se ensina de verdade mostrando. Fica escrito aqui e no
+`_sequencias/POTE-CORPO5.md` para ninguém supor que veio do papel.
+
+⚠️ **Um defeito meu que quase foi ao ar, e o que o pegou.** Eu registrei os
+itens das três folhas com ids próprios (`m37_0_0`, `fo38_0`, `si39_0`) — e o
+`idsDaPagina` deste caderno **não lê o RESP: ele deduz o id da posição no
+pote** (`n<pi>_<i>`). As três folhas nunca fechariam, e o relatório sairia zero
+com o tabuleiro todo resolvido. Quem pegou foi o **jogador automático da
+banca**, dizendo "não conheço a peça" — e eu li a mensagem dele como dívida em
+vez de defeito, o que custou uma volta. Os ids passaram a ser os previstos, e
+as três folhas fecham: `39 de 39`.
+
+## Veredito, depois das três folhas
+
+**ADEQUADA ao 5º ano**, e mais completa do que na primeira entrega. Conferido
+de novo em **20 de setembro de 2026**: os cinco objetivos continuam cobrindo as
+38 folhas de trabalho sem sobra nem buraco (a 37 no digestório, a 38 e a 39 no
+respiratório), o conteúdo das três folhas novas é o mesmo que o caderno já
+ensinava, e a banca de folha viva passou nos 35 portões que alcançam este
+formato, sem nenhuma reprovação.

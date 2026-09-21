@@ -250,3 +250,41 @@ caderno, e nenhum inventado por mim.
 - [ ] `curriculo.json` com as habilidades verbatim **e a lista `conceitos`**,
       para o portão `0b9` medir de verdade (hoje 13 dos 14 cadernos dizem "não
       medi" por falta dela — este não vai ser o décimo quarto).
+
+---
+
+## 6. 🎮 AS TRÊS FOLHAS QUE **NÃO** VIERAM DO PAPEL (37, 38 e 39 — 20/set/2026)
+
+A regra da casa é que **o gesto sai do comando impresso** na folha colhida.
+Estas três não saíram, e isso fica escrito aqui em vez de ser escondido —
+como os quatro blocos que o caderno de moradia tirou do currículo.
+
+**Procurei antes de decidir.** Nas 78 folhas do pote não há **nenhum** comando
+de memória, de forca ou de simulação. O que há é:
+
+- **d22** — *"Marque a alternativa correta"* sobre inspiração e expiração serem
+  movimento involuntário;
+- **d19** — *"VOCÊ SABIA? O diafragma não é um órgão do sistema respiratório,
+  mas um músculo."*
+
+Ou seja: **o conteúdo está no pote; o gesto não podia estar**, porque o papel
+não se mexe.
+
+| folha | por que entra | de onde vem |
+|---|---|---|
+| 37 · memória (figura ↔ nome) | revisão da d13/d35/d36 (*"recorte e cole os nomes de cada parte"*), com um gesto novo | **do cardápio da casa**, declarado — nenhuma folha pede memória |
+| 38 · forca (a pista é a função) | revisão da d05 (*"numere as afirmativas de acordo com os órgãos"*), sem as duas colunas para ajudar | **do cardápio da casa**, declarado |
+| 39 · simulador do diafragma | o currículo pede *"a função de cada um dos seus órgãos"*, e a do diafragma **é um movimento** | **do CURRÍCULO + d22 + d19**, declarado |
+
+⚠️ **O que isso custa, e por que eu aceito o custo.** A regra da origem existe
+para a criança reconhecer na tela a atividade que a professora dá no papel — e
+nestas três ela não reconhece, porque não há papel igual. Em troca, o caderno
+passou de **sete para dez gestos** (o Marcos nomeou memória, forca e simulador
+entre os que têm de estar no cardápio) e a folha 39 ensina, mostrando, a única
+função deste caderno que o papel só consegue descrever.
+
+⚠️ **E as figuras continuam vindo da folha.** As cartas da memória usam os
+recortes das folhas de papel (`vd_esofago`, `vd_estomago`, `vd_intdelgado`,
+`vd_intgrosso`, `vd_figado`, `vd_pancreas`) — nenhuma imagem nova, nenhuma IA.
+A única coisa desenhada em CSS é a cena que **se mexe** na folha 39, que é o
+caso que a regra da casa reserva para o CSS.

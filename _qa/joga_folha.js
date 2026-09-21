@@ -316,6 +316,55 @@ function montaPlano(id) {
     return { tipo: 'nao-sei' };
   }
 
+  /* ⭐ A FAMÍLIA "MEMÓRIA" (20/set/2026, `_corpo5` folha 37). O par publica as
+     duas cartas com o ID DO ITEM dentro do `data-qa` (`mem-<id>-fig` e
+     `mem-<id>-nome`), e não a posição na grade — é isso que permite ao jogador
+     saber QUAIS duas cartas formam o par sem adivinhar pela ordem.
+     ⚠️ Sem esta família o jogador dizia "não conheço a peça" e a folha ficava
+        como dívida — e dívida numa folha boa é o mesmo que reprovar sem
+        motivo (lição paga no `_alfa1`, 17/set). */
+  if (qa.some(e => (e.getAttribute('data-qa') || '').indexOf('mem-' + id + '-') === 0)) {
+    /* o ITEM é o tabuleiro inteiro; a resposta declarada lista as chaves dos
+       pares, separadas por espaço. Para cada chave, as duas cartas. */
+    const alvos = [];
+    for (const k of certo.split(/\s+/)) {
+      const f = 'mem-' + id + '-' + k + '-fig', nm = 'mem-' + id + '-' + k + '-nome';
+      if (qa.some(e => e.getAttribute('data-qa') === f) &&
+          qa.some(e => e.getAttribute('data-qa') === nm)) alvos.push(f, nm);
+    }
+    if (alvos.length) return { tipo: 'clique', alvos: alvos, espera: 1300, fe: 'alta' };
+  }
+
+  /* ⭐ A FAMÍLIA "FORCA" (20/set/2026, `_corpo5` folha 38): a resposta declarada
+     é a PALAVRA, e o teclado publica uma tecla por letra (`tf-<id>-<LETRA>`).
+     O jogador toca nas letras DISTINTAS da palavra, na ordem em que aparecem —
+     que é o caminho de quem já sabe a resposta. */
+  if (/^[A-ZÀ-Ü]{3,}$/.test(certo) &&
+      qa.some(e => (e.getAttribute('data-qa') || '').indexOf('tf-' + id + '-') === 0)) {
+    const letras = [], vistas = {};
+    for (const L of certo.split('')) {
+      if (vistas[L]) continue;
+      vistas[L] = 1;
+      if (qa.some(e => e.getAttribute('data-qa') === 'tf-' + id + '-' + L))
+        letras.push('tf-' + id + '-' + L);
+    }
+    if (letras.length) return { tipo: 'clique', alvos: letras, fe: 'alta' };
+  }
+
+  /* ⭐ A FAMÍLIA "SIMULADOR" (20/set/2026, `_corpo5` folha 39): a resposta É o
+     gesto — a criança arrasta um controle até a posição pedida e o item fecha
+     sozinho, sem botão de confirmar. O controle publica `sim-<id>` e a
+     resposta declarada é a CHAVE do passo (`baixo`/`cima`), que o próprio
+     `SIMU` traduz em valor.
+     ⚠️ Não basta escrever o `value`: um `input[type=range]` só avisa a página
+        pelo evento `input`. Sem disparar o evento, o jogador mexeria no
+        controle sem que nada na tela soubesse — e acusaria a folha de não
+        fechar. */
+  const sl = qa.filter(e => e.getAttribute('data-qa') === 'sim-' + id)[0];
+  if (sl && sl.getAttribute('data-vai') != null)
+    return { tipo: 'simular', alvo: 'sim-' + id,
+             valor: parseInt(sl.getAttribute('data-vai'), 10), fe: 'alta' };
+
   /* ⭐ A FAMÍLIA "CAÇA-PALAVRAS" (15/set/2026): a palavra se acha tocando na
      PRIMEIRA e na ÚLTIMA letra dela na grade. As duas pontas se declaram como
      `cp-<id>-a` e `cp-<id>-z`. Quando a folha não as publica (duas palavras
@@ -467,8 +516,21 @@ async function executa(pg, id, plano) {
         e.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
         if (typeof e.click === 'function') e.click();
       }, qa);
-      await pg.waitForTimeout(220);
+      await pg.waitForTimeout(plano.espera || 220);
     }
+    return;
+  }
+  if (plano.tipo === 'simular') {
+    /* arrasta o controle até o valor pedido e AVISA a página (evento `input`) */
+    await pg.evaluate(o => {
+      const e = document.querySelector('[data-qa="' + o.qa + '"]');
+      if (!e) return;
+      e.scrollIntoView({ block: 'center' });
+      e.value = String(o.v);
+      e.dispatchEvent(new Event('input', { bubbles: true }));
+      e.dispatchEvent(new Event('change', { bubbles: true }));
+    }, { qa: plano.alvo, v: plano.valor });
+    await pg.waitForTimeout(320);
     return;
   }
   if (plano.tipo === 'palmas') {

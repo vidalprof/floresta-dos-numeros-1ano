@@ -94,6 +94,7 @@ button{font-family:inherit;cursor:pointer}
 .pagina.c3 .faixa{background:#15803d}.pagina.c3 .faixa .num{color:#15803d}
 .pagina.c4 .faixa{background:#8b5cf6}.pagina.c4 .faixa .num{color:#8b5cf6}
 .pagina.c5 .faixa{background:#b45309}.pagina.c5 .faixa .num{color:#b45309}
+.pagina.c6 .faixa{background:#a51c30}.pagina.c6 .faixa .num{color:#a51c30}
 .enun{margin:14px 16px 4px;font-size:clamp(15px,3.9vw,19px);font-weight:700;line-height:1.35}
 .enun b{color:var(--cor2)}
 
@@ -788,6 +789,117 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .sil.ok,.sil.usada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
 .sil.usada{opacity:.6}
 .sil.nao{background:#ffd9d6;border-color:#e2574c;color:#9d2f26}
+
+/* ============================================================
+   BLOCO DE JOGO — folhas 37, 38 e 39 (memória, forca, simulador)
+   ⚠️ MECÂNICA COPIADA, NÃO REESCRITA (regra da casa, `_padrao/DINAMICAS.md`):
+      a memória e a forca vêm do `_jogo1/index.html`, que já passou pela banca
+      de folha viva. O que mudou aqui foi só a TINTA e o ADEREÇO, porque o
+      portão 0b11 (identidade) reprova animação e cara iguais às de outro
+      caderno — e porque o adereço tem de ser do ASSUNTO: no `_jogo1` o erro
+      faz um BALÃO descer; aqui ele gasta o FÔLEGO, que é do que o caderno fala.
+   ============================================================ */
+
+/* ---------- 37 · MEMÓRIA (do _jogo1, tinta do sangue) ---------- */
+.mcartas{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  flex-wrap:wrap;gap:8px;max-width:430px;width:100%;margin:8px auto 4px}
+.mcarta{width:46%;max-width:200px;min-width:130px;min-height:118px;cursor:pointer;
+  -webkit-perspective:700px;perspective:700px}
+.mgira{position:relative;width:100%;height:100%;min-height:118px;
+  -webkit-transition:-webkit-transform .45s;transition:transform .45s;
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d}
+.mcarta.aberta .mgira,.mcarta.achada .mgira{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mface{position:absolute;left:0;right:0;top:0;bottom:0;border-radius:16px;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
+  display:-webkit-box;display:flex;-webkit-box-orient:vertical;flex-direction:column;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+  gap:4px;padding:6px;overflow:hidden}
+.mverso{background:-webkit-linear-gradient(top,#a51c30,#7a1523);
+  background:linear-gradient(180deg,#a51c30,#7a1523);
+  -webkit-box-shadow:0 4px 0 #5c1019;box-shadow:0 4px 0 #5c1019}
+.minterro{color:#fff;font-weight:900;font-size:32px;opacity:.9;
+  background:rgba(255,255,255,.16);border-radius:50%;width:52px;height:52px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center}
+.mbrilho{position:absolute;top:-60%;left:-60%;width:60%;height:220%;
+  background:rgba(255,255,255,.2);-webkit-transform:rotate(22deg);transform:rotate(22deg);
+  -webkit-animation:vdCorre 2.6s linear infinite;animation:vdCorre 2.6s linear infinite}
+@-webkit-keyframes vdCorre{0%{left:-60%}60%,100%{left:140%}}
+@keyframes vdCorre{0%{left:-60%}60%,100%{left:140%}}
+.mfrente{background:#fff;border:3px solid #eccfd4;
+  -webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mfig{display:block;width:auto;height:clamp(56px,15vw,76px);max-width:100%;object-fit:contain}
+.mrot{font-weight:900;font-size:clamp(12px,3.2vw,15px);color:var(--texto2);letter-spacing:.5px;
+  text-align:center;line-height:1.2}
+.mcarta.achada .mfrente{border-color:#1f9d55;background:#eafaf0;
+  -webkit-animation:vdBateCarta .6s ease-out;animation:vdBateCarta .6s ease-out}
+@-webkit-keyframes vdBateCarta{0%,100%{-webkit-transform:rotateY(180deg) scale(1)}
+  50%{-webkit-transform:rotateY(180deg) scale(1.06)}}
+@keyframes vdBateCarta{0%,100%{transform:rotateY(180deg) scale(1)}
+  50%{transform:rotateY(180deg) scale(1.06)}}
+@media (min-width:760px){ .mcartas{max-width:680px} .mcarta{width:30%} }
+
+/* ---------- 38 · FORCA — e aqui o que se gasta é o FÔLEGO ----------
+   ⚠️ O ADEREÇO É DO ASSUNTO, e não é enfeite: no `_jogo1` o erro faz um balão
+      descer, o que ali combina (o caderno é de palavras). Num caderno de corpo
+      humano, o que acaba quando se erra é o AR — e isso mantém a criança dentro
+      do tema enquanto joga. Portão 0b11 também pede animação própria. */
+.folego{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  gap:8px;max-width:260px;margin:6px auto 4px}
+.folego .rot{font-weight:900;font-size:13px;color:var(--texto3);white-space:nowrap}
+.folegobar{position:relative;-webkit-box-flex:1;flex:1;height:18px;border-radius:9px;
+  background:#f3e3e6;overflow:hidden;border:2px solid #eccfd4}
+.folegobar i{display:block;height:100%;width:100%;border-radius:7px;
+  background:-webkit-linear-gradient(left,#1179bf,#6fc0f2);
+  background:linear-gradient(90deg,#1179bf,#6fc0f2);
+  -webkit-transition:width .4s ease-out;transition:width .4s ease-out}
+.folegobar.vazio i{background:#d9b3b9}
+.letfila{display:-webkit-box;display:flex;flex-wrap:wrap;gap:5px;
+  -webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;
+  margin:6px 0 4px}
+.vagalet{min-width:52px;min-height:52px;border:3px dashed #a51c30;border-radius:14px;
+  background:#fdecef;color:#a51c30;font-weight:900;font-size:clamp(21px,5.4vw,28px);
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;padding:4px 10px}
+.vagalet.cheia{border-style:solid;border-color:#1f9d55;background:#eafaf0;color:#127a41}
+.vagalet.revelada{border-style:solid;border-color:#d9c9bb;background:#f6f1ee;color:#8a7a6c}
+.tecforca{display:-webkit-box;display:flex;flex-wrap:wrap;gap:4px;
+  -webkit-box-pack:center;justify-content:center;margin:6px 0 2px}
+.tf{min-width:40px;min-height:44px;border:2px solid #eccfd4;border-radius:10px;background:#fff;
+  font-weight:900;font-size:clamp(15px,4vw,19px);color:var(--texto2);cursor:pointer;padding:0}
+.tf.boa{border-color:#1f9d55;background:#eafaf0;color:#127a41;pointer-events:none}
+.tf.ruim{border-color:#e2574c;background:#fdeceb;color:#b5352b;opacity:.55;pointer-events:none}
+
+/* ---------- 39 · O SIMULADOR DA RESPIRAÇÃO ----------
+   ⚠️ POR QUE ESTA CENA É DESENHADA EM CSS, e não recortada de uma folha de
+      papel: a regra da casa manda a figura vir da folha (e as 47 figuras deste
+      caderno vêm), MAS a mesma regra diz que o CSS entra no que PRECISA SE
+      MEXER EM TEMPO REAL — a água que sobe, a carta que gira. Aqui tudo se
+      mexe: o pulmão que enche, o diafragma que desce, a seta do ar. Uma foto
+      de folha não faz isso, e a folha de papel também não fazia — é
+      justamente o que a tela acrescenta ao caderno impresso. */
+.simcena{position:relative;width:100%;max-width:300px;height:210px;margin:6px auto 2px;
+  border-radius:18px;border:3px solid #eccfd4;overflow:hidden;
+  background:-webkit-linear-gradient(top,#fdf5f6,#fbeaed);
+  background:linear-gradient(180deg,#fdf5f6,#fbeaed)}
+.simtronco{position:absolute;left:50%;margin-left:-84px;top:12px;width:168px;height:150px;
+  border:4px solid #c98d97;border-radius:44px 44px 30px 30px;background:#fff}
+.simpul{position:absolute;top:26px;width:54px;background:#e07a8a;border:3px solid #a51c30;
+  -webkit-transition:height .3s,top .3s;transition:height .3s,top .3s}
+.simpul.esq{left:26px;border-radius:26px 14px 22px 22px}
+.simpul.dir{right:26px;border-radius:14px 26px 22px 22px}
+.simdiaf{position:absolute;left:18px;right:18px;height:12px;border-radius:0 0 40px 40px;
+  background:#7a1523;-webkit-transition:top .3s;transition:top .3s}
+.simar{position:absolute;left:50%;margin-left:-13px;top:-4px;width:26px;height:26px;
+  color:#1179bf;font-weight:900;font-size:24px;line-height:26px;text-align:center;
+  -webkit-transition:opacity .25s;transition:opacity .25s;opacity:0}
+.simdiz{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-weight:900;
+  font-size:clamp(14px,3.8vw,17px);color:var(--texto2)}
+.simdiz b{color:#1179bf}
+.simdiz.sai b{color:#a51c30}
+.simctl{display:block;width:92%;max-width:300px;margin:4px auto 2px;height:48px;cursor:pointer}
+.simrot{display:-webkit-box;display:flex;-webkit-box-pack:justify;justify-content:space-between;
+  width:92%;max-width:300px;margin:0 auto 6px;font-weight:800;font-size:13px;color:var(--texto3)}
 </style></head><body>
 
 <div id="topo">
@@ -902,7 +1014,10 @@ var GESTOS = {
  "f33": "ligar",
  "f34": "escolher",
  "f35": "escolher",
- "f36": "escrever"
+ "f36": "escrever",
+ "f37": "memória",
+ "f38": "forca",
+ "f39": "simulador"
 };
 /*GESTOS-FIM*/
 /*ITENS-INI*/
@@ -1176,13 +1291,34 @@ var ITENS = {
   "zz10",
   "zz11",
   "zz12"
+ ],
+ "p37": [
+  [
+   "esof",
+   "esto",
+   "idel"
+  ],
+  [
+   "igro",
+   "figa",
+   "panc"
+  ]
+ ],
+ "p38": [
+  "traq",
+  "faringe",
+  "laringe"
+ ],
+ "p39": [
+  "baixo",
+  "cima"
  ]
 };
 /*ITENS-FIM*/
 /*FALAS-INI*/
 var FALAS = {
  "cacatoque": "Toque na primeira letra da palavra e depois na última.",
- "capa": "Aprendendo os sistemas digestório, respiratório e circulatório. Trinta e seis folhas sobre o caminho que o alimento, o ar e o sangue fazem dentro do seu corpo. Escreva o seu nome ali embaixo e toque em Começar.",
+ "capa": "Aprendendo os sistemas digestório, respiratório e circulatório. Trinta e nove folhas sobre o caminho que o alimento, o ar e o sangue fazem dentro do seu corpo. Escreva o seu nome ali embaixo e toque em Começar.",
  "certo13_diaf": "Isso! DIAFRAGMA: o músculo que puxa e empurra o ar.",
  "certo13_laringe": "Isso! LARINGE: aqui ficam as pregas vocais.",
  "certo13_nariz": "Isso! NARIZ: filtra, aquece e umedece o ar.",
@@ -1371,6 +1507,12 @@ var FALAS = {
  "crz_zz7": "a bomba que empurra o sangue",
  "crz_zz8": "leva oxigênio e nutrientes a todo o corpo",
  "crz_zz9": "intestino onde o nutriente entra no sangue",
+ "diafr_baixo": "Puxe o diafragma para BAIXO e faça o ar ENTRAR.",
+ "diafr_cima": "Agora empurre o diafragma para CIMA e faça o ar SAIR.",
+ "diafrdica_baixo": "O diafragma é o músculo abaixo dos pulmões. Arraste o controle para o lado de BAIXO.",
+ "diafrdica_cima": "Para o ar sair, o peito precisa ficar menor. Arraste o controle para o lado de CIMA.",
+ "diafrok_baixo": "Isso! O diafragma desceu, o peito ficou maior e o ar ENTROU.",
+ "diafrok_cima": "Isso! O diafragma subiu, o peito ficou menor e o ar SAIU.",
  "dica13_diaf": "Ainda não. Leia de novo o que está escrito do outro lado.",
  "dica13_laringe": "Ainda não. Leia de novo o que está escrito do outro lado.",
  "dica13_nariz": "Ainda não. Leia de novo o que está escrito do outro lado.",
@@ -1590,7 +1732,76 @@ var FALAS = {
  "faz_traq": "TRAQUEIA: um tubo de anéis que leva o ar até os brônquios.",
  "faz_veia": "VEIAS: trazem o sangue do corpo de volta ao coração.",
  "fim": "Você chegou ao fim da viagem! Agora você sabe o caminho do alimento, do ar e do sangue. E fica uma pergunta para você pensar: enquanto você lia esta frase, o seu coração bateu umas dez vezes e você respirou umas duas. Quantas vezes será que ele bate enquanto você dorme a noite inteira?",
+ "foco_alveo": "Isso! ALVÉOLOS: as bolsinhas onde o ar encontra o sangue.",
+ "foco_arte": "Isso! ARTÉRIAS: levam o sangue do coração para o corpo.",
+ "foco_boca": "Isso! BOCA: onde a digestão começa: os dentes trituram e a saliva umedece o alimento.",
+ "foco_bron": "Isso! BRÔNQUIOS: os dois tubos que levam o ar para dentro de cada pulmão.",
+ "foco_capi": "Isso! CAPILARES: vasos finíssimos onde a troca acontece.",
+ "foco_celu": "Isso! CÉLULAS: recebem o nutriente e o oxigênio no fim da viagem.",
+ "foco_cora": "Isso! CORAÇÃO: a bomba que empurra o sangue para o corpo inteiro.",
+ "foco_cora2": "Isso! CORAÇÃO, DE VOLTA: o sangue volta para o coração e a viagem recomeça.",
+ "foco_diaf": "Isso! DIAFRAGMA: o músculo abaixo dos pulmões que puxa e empurra o ar.",
+ "foco_esof": "Isso! ESÔFAGO: o tubo que leva o alimento da boca até o estômago.",
+ "foco_esto": "Isso! ESTÔMAGO: onde o alimento é misturado e vira uma papa.",
+ "foco_faringe": "Isso! FARINGE: o cruzamento por onde passam o ar e o alimento.",
+ "foco_figa": "Isso! FÍGADO: produz um líquido que ajuda a digerir a gordura.",
+ "foco_idel": "Isso! INTESTINO DELGADO: onde os nutrientes passam do alimento para o sangue.",
+ "foco_igro": "Isso! INTESTINO GROSSO: onde a água é aproveitada e se formam as fezes.",
+ "foco_laringe": "Isso! LARINGE: onde ficam as pregas vocais, que fazem a voz.",
+ "foco_nariz": "Isso! NARIZ: filtra, aquece e umedece o ar que entra.",
+ "foco_panc": "Isso! PÂNCREAS: produz um suco que ajuda a terminar a digestão.",
+ "foco_pulm": "Isso! PULMÕES: onde o oxigênio do ar passa para o sangue.",
+ "foco_rins": "Isso! RINS: filtram o sangue e tiram o que não serve mais.",
+ "foco_sangue": "Isso! SANGUE: leva oxigênio e nutrientes e recolhe o que não serve.",
+ "foco_traq": "Isso! TRAQUEIA: um tubo de anéis que leva o ar até os brônquios.",
+ "foco_veia": "Isso! VEIAS: trazem o sangue do corpo de volta ao coração.",
+ "fodica_alveo": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_arte": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_boca": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_bron": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_capi": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_celu": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_cora": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_cora2": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_diaf": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_esof": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_esto": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_faringe": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_figa": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_idel": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_igro": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_laringe": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_nariz": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_panc": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_pulm": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_rins": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_sangue": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_traq": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
+ "fodica_veia": "Leia a pista de novo: ela diz onde esse órgão fica e o que ele faz.",
  "folhaPronta": "Folha pronta! Muito bem.",
+ "fopou_alveo": "O fôlego acabou desta vez. A palavra era ALVÉOLOS: as bolsinhas onde o ar encontra o sangue. Vamos para a próxima.",
+ "fopou_arte": "O fôlego acabou desta vez. A palavra era ARTÉRIAS: levam o sangue do coração para o corpo. Vamos para a próxima.",
+ "fopou_boca": "O fôlego acabou desta vez. A palavra era BOCA: onde a digestão começa: os dentes trituram e a saliva umedece o alimento. Vamos para a próxima.",
+ "fopou_bron": "O fôlego acabou desta vez. A palavra era BRÔNQUIOS: os dois tubos que levam o ar para dentro de cada pulmão. Vamos para a próxima.",
+ "fopou_capi": "O fôlego acabou desta vez. A palavra era CAPILARES: vasos finíssimos onde a troca acontece. Vamos para a próxima.",
+ "fopou_celu": "O fôlego acabou desta vez. A palavra era CÉLULAS: recebem o nutriente e o oxigênio no fim da viagem. Vamos para a próxima.",
+ "fopou_cora": "O fôlego acabou desta vez. A palavra era CORAÇÃO: a bomba que empurra o sangue para o corpo inteiro. Vamos para a próxima.",
+ "fopou_cora2": "O fôlego acabou desta vez. A palavra era CORAÇÃO, DE VOLTA: o sangue volta para o coração e a viagem recomeça. Vamos para a próxima.",
+ "fopou_diaf": "O fôlego acabou desta vez. A palavra era DIAFRAGMA: o músculo abaixo dos pulmões que puxa e empurra o ar. Vamos para a próxima.",
+ "fopou_esof": "O fôlego acabou desta vez. A palavra era ESÔFAGO: o tubo que leva o alimento da boca até o estômago. Vamos para a próxima.",
+ "fopou_esto": "O fôlego acabou desta vez. A palavra era ESTÔMAGO: onde o alimento é misturado e vira uma papa. Vamos para a próxima.",
+ "fopou_faringe": "O fôlego acabou desta vez. A palavra era FARINGE: o cruzamento por onde passam o ar e o alimento. Vamos para a próxima.",
+ "fopou_figa": "O fôlego acabou desta vez. A palavra era FÍGADO: produz um líquido que ajuda a digerir a gordura. Vamos para a próxima.",
+ "fopou_idel": "O fôlego acabou desta vez. A palavra era INTESTINO DELGADO: onde os nutrientes passam do alimento para o sangue. Vamos para a próxima.",
+ "fopou_igro": "O fôlego acabou desta vez. A palavra era INTESTINO GROSSO: onde a água é aproveitada e se formam as fezes. Vamos para a próxima.",
+ "fopou_laringe": "O fôlego acabou desta vez. A palavra era LARINGE: onde ficam as pregas vocais, que fazem a voz. Vamos para a próxima.",
+ "fopou_nariz": "O fôlego acabou desta vez. A palavra era NARIZ: filtra, aquece e umedece o ar que entra. Vamos para a próxima.",
+ "fopou_panc": "O fôlego acabou desta vez. A palavra era PÂNCREAS: produz um suco que ajuda a terminar a digestão. Vamos para a próxima.",
+ "fopou_pulm": "O fôlego acabou desta vez. A palavra era PULMÕES: onde o oxigênio do ar passa para o sangue. Vamos para a próxima.",
+ "fopou_rins": "O fôlego acabou desta vez. A palavra era RINS: filtram o sangue e tiram o que não serve mais. Vamos para a próxima.",
+ "fopou_sangue": "O fôlego acabou desta vez. A palavra era SANGUE: leva oxigênio e nutrientes e recolhe o que não serve. Vamos para a próxima.",
+ "fopou_traq": "O fôlego acabou desta vez. A palavra era TRAQUEIA: um tubo de anéis que leva o ar até os brônquios. Vamos para a próxima.",
+ "fopou_veia": "O fôlego acabou desta vez. A palavra era VEIAS: trazem o sangue do corpo de volta ao coração. Vamos para a próxima.",
  "fras_e1": "O alimento sai da boca e desce pelo que palavra?",
  "fras_e10": "O músculo abaixo dos pulmões chama-se que palavra?",
  "fras_e11": "O que palavra? bombeia o sangue para o corpo todo.",
@@ -1619,6 +1830,31 @@ var FALAS = {
  "gav_vf_nao": "É FALSO.",
  "gav_vf_sim": "É VERDADE.",
  "ligue": "Toque numa palavra do lado esquerdo e depois na do lado direito.",
+ "memdica": "Ainda não é esse par. Olhe bem a figura antes de virar a segunda carta.",
+ "memfim": "Tabuleiro limpo! Você achou todos os órgãos da digestão pelo desenho.",
+ "memok_alveo": "Achou! ALVÉOLOS: as bolsinhas onde o ar encontra o sangue.",
+ "memok_arte": "Achou! ARTÉRIAS: levam o sangue do coração para o corpo.",
+ "memok_boca": "Achou! BOCA: onde a digestão começa: os dentes trituram e a saliva umedece o alimento.",
+ "memok_bron": "Achou! BRÔNQUIOS: os dois tubos que levam o ar para dentro de cada pulmão.",
+ "memok_capi": "Achou! CAPILARES: vasos finíssimos onde a troca acontece.",
+ "memok_celu": "Achou! CÉLULAS: recebem o nutriente e o oxigênio no fim da viagem.",
+ "memok_cora": "Achou! CORAÇÃO: a bomba que empurra o sangue para o corpo inteiro.",
+ "memok_cora2": "Achou! CORAÇÃO, DE VOLTA: o sangue volta para o coração e a viagem recomeça.",
+ "memok_diaf": "Achou! DIAFRAGMA: o músculo abaixo dos pulmões que puxa e empurra o ar.",
+ "memok_esof": "Achou! ESÔFAGO: o tubo que leva o alimento da boca até o estômago.",
+ "memok_esto": "Achou! ESTÔMAGO: onde o alimento é misturado e vira uma papa.",
+ "memok_faringe": "Achou! FARINGE: o cruzamento por onde passam o ar e o alimento.",
+ "memok_figa": "Achou! FÍGADO: produz um líquido que ajuda a digerir a gordura.",
+ "memok_idel": "Achou! INTESTINO DELGADO: onde os nutrientes passam do alimento para o sangue.",
+ "memok_igro": "Achou! INTESTINO GROSSO: onde a água é aproveitada e se formam as fezes.",
+ "memok_laringe": "Achou! LARINGE: onde ficam as pregas vocais, que fazem a voz.",
+ "memok_nariz": "Achou! NARIZ: filtra, aquece e umedece o ar que entra.",
+ "memok_panc": "Achou! PÂNCREAS: produz um suco que ajuda a terminar a digestão.",
+ "memok_pulm": "Achou! PULMÕES: onde o oxigênio do ar passa para o sangue.",
+ "memok_rins": "Achou! RINS: filtram o sangue e tiram o que não serve mais.",
+ "memok_sangue": "Achou! SANGUE: leva oxigênio e nutrientes e recolhe o que não serve.",
+ "memok_traq": "Achou! TRAQUEIA: um tubo de anéis que leva o ar até os brônquios.",
+ "memok_veia": "Achou! VEIAS: trazem o sangue do corpo de volta ao coração.",
  "num_1": "Número 1.",
  "num_2": "Número 2.",
  "num_3": "Número 3.",
@@ -1767,6 +2003,9 @@ var FALAS = {
  "p34enun": "Folha 34: O alimento é o combustível. De onde vem a energia do corpo? Toque na resposta certa.",
  "p35enun": "Folha 35: Ache o órgão na grade. Olhe a grade de quadrinhos e diga onde está cada órgão.",
  "p36enun": "Folha 36: Cruzadinha dos três sistemas. A cruzadinha do fim: pistas dos três sistemas juntos.",
+ "p37enun": "Folha 37: Memória dos órgãos da digestão. Vire duas cartas e ache o órgão e o nome dele. As figuras são as mesmas das folhas de papel.",
+ "p38enun": "Folha 38: A forca do sistema respiratório. Leia o que o órgão faz e adivinhe o nome dele, letra por letra. A cada erro o fôlego acaba um pouco.",
+ "p39enun": "Folha 39: O simulador da respiração. Arraste o controle e veja o diafragma trabalhar. Ele é o músculo que puxa e empurra o ar.",
  "p3enun": "Folha 3: Os órgãos da digestão, sem o desenho. Os mesmos órgãos, agora sem o desenho: leia o que cada um faz e puxe o nome certo.",
  "p4enun": "Folha 4: O caminho do alimento. Ponha o caminho do alimento em ordem: para cada órgão, toque no número do lugar dele.",
  "p5enun": "Folha 5: O que cada órgão faz. Toque no órgão de um lado e no que ele faz do outro.",
@@ -1806,7 +2045,7 @@ var FALAS = {
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {"1j9m7w": 1, "krvnra": 1, "3bna8i": 1, "on8wrl": 1, "3h9rzp": 1, "1x6vlgf": 1, "49rs8l": 1, "1ub3nn4": 1, "1b1a47": 1, "11d62gu": 1, "6sgj8x": 1, "ghwsam": 1, "1j1ibqq": 1, "1qzvv9l": 1, "75173b": 1, "1yve756": 1, "l788xp": 1, "dpk8qr": 1, "19hxlwp": 1, "z28au4": 1, "1bc8jkb": 1, "1cvsmdx": 1, "1jzozau": 1, "1jmkwq1": 1, "t3gsm8": 1, "1afjgk4": 1, "ak3yme": 1, "fl0ail": 1, "golvdk": 1, "1mzeext": 1, "6pzjax": 1, "hlyw4w": 1, "82px5y": 1, "v47r34": 1, "13czdq6": 1, "1slpo1j": 1, "1b74d3g": 1, "tncshd": 1, "1fs4qbr": 1, "150q6sw": 1, "zidcqz": 1, "1qeuygw": 1, "1cqskhg": 1, "yf565o": 1, "1j1saud": 1, "1os500p": 1, "j0g48i": 1, "7wth1q": 1, "4rqdz5": 1, "h47m8x": 1, "1osh15b": 1, "1ikk3p2": 1, "pj63fl": 1, "md32lj": 1, "1d2lucu": 1, "twburv": 1, "132gtjm": 1, "10eka95": 1, "1c6l7b4": 1, "ihfekc": 1, "fv55cu": 1, "squf2l": 1, "1a00hjb": 1, "1fgt2gl": 1, "1cjcodn": 1, "1qmlkga": 1, "q8e8c5": 1, "1g6ybtw": 1, "tazrwd": 1, "fks71w": 1, "h2qhbk": 1, "pw3kgc": 1, "n8x08p": 1, "1sty8m7": 1, "1q171z6": 1, "1n4sgc2": 1, "juyw33": 1, "183rd2o": 1, "14zwtgg": 1, "11cd50d": 1, "1e5lzuk": 1, "ptcecm": 1, "1n7uv9i": 1, "154xxnw": 1, "p0tsb": 1, "ftuzjp": 1, "1s206oe": 1, "1yve6vy": 1, "1ecqr47": 1, "1eg28g0": 1, "5iq40u": 1, "o3znq0": 1, "yzp5wk": 1, "pk4knj": 1, "6qigxt": 1, "owcl89": 1, "62ywby": 1, "1l9vhqi": 1, "1w6wjc2": 1, "cc95so": 1, "1c22nn5": 1, "g8ippc": 1, "1z4jiv": 1, "1dcaf2y": 1, "3nr49a": 1, "2ufjrl": 1, "18h50wt": 1, "ofjdkq": 1, "18jws3z": 1, "xfa6c7": 1, "1acsi0d": 1, "1cdsuqs": 1, "xzvwlk": 1, "m41n2b": 1, "1hdm8h1": 1, "15cwm9c": 1, "1b2gutp": 1, "1do5zv": 1, "1qn0ngn": 1, "7sogh3": 1, "av8hua": 1, "1bixrtd": 1, "xf5a0q": 1, "1g31eat": 1, "1oo82ok": 1, "jjtne5": 1, "1r4bdk7": 1, "qaddf6": 1, "zzvduf": 1, "gs6u2g": 1, "1moez0c": 1, "10vhbxn": 1, "1q9wh92": 1, "1qzq7r8": 1, "1hfflrd": 1, "1jlvcam": 1, "fzjpsc": 1, "15byaj3": 1, "pqwvm4": 1, "2obtnc": 1, "1gqke69": 1, "nk3w4t": 1, "1jdchhf": 1, "1t2eapa": 1, "17prv9d": 1, "1in6ipz": 1, "10r110c": 1, "1jcuvhh": 1, "m5jhce": 1, "1ql1nj6": 1, "uj6lt7": 1, "8wuq5f": 1, "yc18lr": 1, "yc18ln": 1, "yc18ob": 1, "yc18g9": 1, "124s3d8": 1, "1ze6l2": 1, "skaqpo": 1, "l10l0x": 1, "x5mrnm": 1, "10dx7b6": 1, "1bql4s4": 1, "mgn28": 1, "1antd0v": 1, "12eiu3l": 1, "1153qrs": 1, "1lyq2qb": 1, "1l8oqfn": 1, "qo2nhi": 1, "1k19hhc": 1, "139q2nx": 1, "ejrf1p": 1, "1rszpvy": 1, "12r5flk": 1, "1g799an": 1, "1hg42p9": 1, "61yc3t": 1, "19my8ng": 1, "oy7bjp": 1, "goae62": 1, "19ftvfo": 1, "twnuku": 1, "lvbqpn": 1, "1uhydv0": 1, "b4w8w7": 1, "gv6kbf": 1, "zhlqsa": 1, "10mgphx": 1, "k31n85": 1, "f6wl93": 1, "19bk2k4": 1, "13pia7j": 1, "9v8kyj": 1, "6of7qe": 1, "1k7nvcz": 1, "opfqtg": 1, "1vq431": 1, "1ay2yq": 1, "1xw35ro": 1, "1yoti9k": 1, "f1qh0j": 1, "rq27xp": 1, "zy6ji1": 1, "10e5a1e": 1, "tbuj8m": 1, "13d4p8s": 1, "c0w8h1": 1, "c76mm1": 1, "1g6k5of": 1, "wpd88z": 1, "1scjyjw": 1, "172h0t3": 1, "peh4z0": 1, "1ot1ybt": 1, "eyu1sg": 1, "ihp2y": 1, "1mhz8oj": 1, "rd2w6d": 1, "17spu1v": 1, "s69mtb": 1, "1i6j393": 1, "1mfsz6a": 1, "1c9seve": 1, "ljxoyk": 1, "1dj5pu9": 1, "kx6r28": 1, "rw06zk": 1, "hzeh79": 1, "1cl9kd1": 1, "qy8532": 1, "7mwuye": 1, "1qpil3s": 1, "1jb1zlp": 1, "k10ps2": 1, "yv8otv": 1, "1xt4j62": 1, "1ba0e3k": 1, "d5ptbp": 1, "159bsog": 1, "l1txu5": 1, "6wa7z": 1, "1o5e8s0": 1, "164khmj": 1, "1hbszzg": 1, "kkos8h": 1, "3w0sn7": 1, "16akpa": 1, "tkarx5": 1, "d4o9il": 1, "1d9s73k": 1, "het6q": 1, "f9qjfm": 1, "1ueyzo4": 1, "6l3pmi": 1, "dczp9w": 1, "yspc3x": 1, "sn0e5c": 1, "1spfbw5": 1, "8bih3k": 1, "1gr7oyg": 1, "yhmo8z": 1, "1bwvuj0": 1, "68msq": 1, "rolli8": 1, "1qzksyz": 1, "1dca85a": 1, "72s9ai": 1, "1g3tg5h": 1, "1gp40gz": 1, "1ihfhvi": 1, "c7o7jw": 1, "1x5b1l1": 1, "1nfzgaj": 1, "1ayrip0": 1, "3ljul2": 1, "4us785": 1, "luen53": 1, "1oaaion": 1, "1gy5wjf": 1, "1gy5wig": 1, "1gy5wl5": 1, "1gy5wda": 1, "1gy5wfz": 1, "1gy5wf0": 1, "1gy5whp": 1, "1nvu46x": 1, "wrmnht": 1, "1qxvpdo": 1, "1lfdv76": 1, "jjxzpf": 1, "1u27kuu": 1, "lzr52v": 1, "1my1xly": 1, "19ta9d3": 1, "1s1ih8w": 1, "l8eadb": 1, "6k4l7e": 1, "t6p0nn": 1, "m7wduo": 1, "13bn0u0": 1, "1jm3rkm": 1, "1en2119": 1, "14bbx74": 1, "1t9s1gw": 1, "ke9oda": 1, "8pdyjc": 1, "bdmlvj": 1, "1ys4we1": 1, "14imy6i": 1, "1dejqd2": 1, "1t7syxu": 1, "1lhx285": 1, "b87mry": 1, "cjztyq": 1, "4sbu5d": 1, "btiqay": 1, "jwlkvw": 1, "syo300": 1, "1g1y18f": 1, "1kbafmk": 1, "zr54fv": 1, "1cgtczk": 1, "7x8xp1": 1, "1e2e0k7": 1, "1rd78de": 1, "1h6f1pz": 1, "16wnh25": 1, "9f4k95": 1, "3hl6d": 1, "3hl69": 1, "3hl4n": 1, "3hl1v": 1, "3hl3n": 1, "3hl1x": 1, "3hl4j": 1, "3hl2r": 1, "1dj6euq": 1, "sor3sm": 1, "5kybqh": 1, "9kgxln": 1, "w6yu6s": 1, "a4gxa6": 1, "ayshdq": 1, "o23joo": 1, "1bmfiov": 1, "16ufg1d": 1, "7c7xhe": 1, "1yi2hz3": 1, "fi3ndb": 1, "18iqhuk": 1, "hml1we": 1, "i3b1wq": 1, "1amdc1o": 1, "3co1e8": 1, "kfpi47": 1, "5l0vlo": 1, "1t2fyxl": 1, "1qboney": 1, "1df5c0o": 1, "lhgxk6": 1, "10cqmo2": 1, "va4bjy": 1, "tmytom": 1, "2wkdqc": 1, "2cojw0": 1, "k0sizd": 1, "1aewsqu": 1, "3ukhgy": 1, "pju3uq": 1, "92pllz": 1, "4jv3yw": 1, "xcw5ff": 1, "1802tf1": 1, "1i1u9t3": 1, "15lga41": 1, "1awsbmi": 1, "rg7ev9": 1, "rztz35": 1, "fpdl81": 1, "382571": 1, "18bgpnk": 1, "zjen50": 1, "hvi1tz": 1, "1p9g0ky": 1, "zzvmge": 1, "vuzsjy": 1, "1i9jmth": 1, "1he07tp": 1, "1c3t1v0": 1, "sz7exg": 1, "94bo1h": 1, "14a8ko8": 1, "t5up7": 1, "2glcih": 1, "1c1ve4x": 1, "xuekxr": 1, "tmss7v": 1, "bwoxf": 1, "1yk2ddb": 1, "1bhc8xz": 1, "9lm87o": 1, "9qrrbv": 1, "12s56gl": 1, "1faiyq1": 1, "14cgylp": 1, "eb6jg1": 1, "1xuz53g": 1, "t386vq": 1, "1p6qvge": 1, "1kuzimp": 1, "1bjwhpu": 1, "4qe7xn": 1, "1m8wvve": 1, "18uj987": 1, "1ond4j0": 1, "1ce2un8": 1, "rf6op9": 1, "1c6jsc0": 1, "64rrj6": 1, "1xusd4k": 1, "jb1i48": 1, "1tmcxgb": 1, "fulwd5": 1, "11wr6j6": 1, "jdf2rk": 1, "11qmexw": 1, "1avajl9": 1, "hrzzv7": 1, "1722q6q": 1, "1slls3n": 1, "c0f6z": 1, "fsxlba": 1, "jos6qd": 1, "1i4w19f": 1, "1p6xjs0": 1, "125cd46": 1, "ih7g7f": 1, "1qrfx4i": 1, "ja6owe": 1, "n36ddr": 1, "11d7twq": 1, "1whock1": 1, "vuuhyq": 1, "fyd30h": 1, "anfq5e": 1, "qqiw6i": 1, "swkns7": 1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"1j9m7w": 1, "1pfhniw": 1, "3bna8i": 1, "on8wrl": 1, "3h9rzp": 1, "1x6vlgf": 1, "49rs8l": 1, "1ub3nn4": 1, "1b1a47": 1, "11d62gu": 1, "6sgj8x": 1, "ghwsam": 1, "1j1ibqq": 1, "1qzvv9l": 1, "75173b": 1, "1yve756": 1, "l788xp": 1, "dpk8qr": 1, "19hxlwp": 1, "z28au4": 1, "1bc8jkb": 1, "1cvsmdx": 1, "1jzozau": 1, "1jmkwq1": 1, "t3gsm8": 1, "1afjgk4": 1, "ak3yme": 1, "fl0ail": 1, "golvdk": 1, "1mzeext": 1, "6pzjax": 1, "hlyw4w": 1, "82px5y": 1, "v47r34": 1, "13czdq6": 1, "1slpo1j": 1, "1b74d3g": 1, "tncshd": 1, "1fs4qbr": 1, "150q6sw": 1, "zidcqz": 1, "1qeuygw": 1, "1cqskhg": 1, "yf565o": 1, "1j1saud": 1, "1os500p": 1, "j0g48i": 1, "7wth1q": 1, "4rqdz5": 1, "h47m8x": 1, "1osh15b": 1, "1ikk3p2": 1, "pj63fl": 1, "md32lj": 1, "1d2lucu": 1, "twburv": 1, "132gtjm": 1, "10eka95": 1, "1c6l7b4": 1, "ihfekc": 1, "fv55cu": 1, "squf2l": 1, "1a00hjb": 1, "1fgt2gl": 1, "1cjcodn": 1, "1qmlkga": 1, "q8e8c5": 1, "1g6ybtw": 1, "tazrwd": 1, "fks71w": 1, "h2qhbk": 1, "pw3kgc": 1, "n8x08p": 1, "1sty8m7": 1, "1q171z6": 1, "1n4sgc2": 1, "juyw33": 1, "183rd2o": 1, "14zwtgg": 1, "11cd50d": 1, "1e5lzuk": 1, "ptcecm": 1, "1n7uv9i": 1, "154xxnw": 1, "p0tsb": 1, "ftuzjp": 1, "1s206oe": 1, "1yve6vy": 1, "1ecqr47": 1, "1eg28g0": 1, "5iq40u": 1, "o3znq0": 1, "yzp5wk": 1, "pk4knj": 1, "6qigxt": 1, "owcl89": 1, "62ywby": 1, "1l9vhqi": 1, "1w6wjc2": 1, "cc95so": 1, "1c22nn5": 1, "g8ippc": 1, "1z4jiv": 1, "1dcaf2y": 1, "3nr49a": 1, "2ufjrl": 1, "18h50wt": 1, "ofjdkq": 1, "18jws3z": 1, "xfa6c7": 1, "1acsi0d": 1, "1cdsuqs": 1, "xzvwlk": 1, "m41n2b": 1, "1hdm8h1": 1, "15cwm9c": 1, "1b2gutp": 1, "1do5zv": 1, "1qn0ngn": 1, "7sogh3": 1, "av8hua": 1, "1bixrtd": 1, "xf5a0q": 1, "1g31eat": 1, "1oo82ok": 1, "jjtne5": 1, "1r4bdk7": 1, "qaddf6": 1, "zzvduf": 1, "gs6u2g": 1, "1moez0c": 1, "10vhbxn": 1, "1q9wh92": 1, "1qzq7r8": 1, "1hfflrd": 1, "1jlvcam": 1, "fzjpsc": 1, "15byaj3": 1, "pqwvm4": 1, "2obtnc": 1, "1gqke69": 1, "nk3w4t": 1, "1jdchhf": 1, "1t2eapa": 1, "17prv9d": 1, "1in6ipz": 1, "10r110c": 1, "1jcuvhh": 1, "m5jhce": 1, "1ql1nj6": 1, "uj6lt7": 1, "8wuq5f": 1, "yc18lr": 1, "yc18ln": 1, "yc18ob": 1, "yc18g9": 1, "124s3d8": 1, "1ze6l2": 1, "skaqpo": 1, "l10l0x": 1, "x5mrnm": 1, "10dx7b6": 1, "1bql4s4": 1, "mgn28": 1, "1antd0v": 1, "12eiu3l": 1, "1153qrs": 1, "1lyq2qb": 1, "1l8oqfn": 1, "qo2nhi": 1, "1k19hhc": 1, "139q2nx": 1, "ejrf1p": 1, "1rszpvy": 1, "12r5flk": 1, "1g799an": 1, "1hg42p9": 1, "61yc3t": 1, "19my8ng": 1, "oy7bjp": 1, "goae62": 1, "19ftvfo": 1, "twnuku": 1, "lvbqpn": 1, "1uhydv0": 1, "b4w8w7": 1, "gv6kbf": 1, "hnx307": 1, "11jaos1": 1, "13bsyr8": 1, "1nr8cpa": 1, "1a63w44": 1, "1aw6wpj": 1, "zhlqsa": 1, "10mgphx": 1, "k31n85": 1, "f6wl93": 1, "19bk2k4": 1, "13pia7j": 1, "9v8kyj": 1, "6of7qe": 1, "1k7nvcz": 1, "opfqtg": 1, "1vq431": 1, "1ay2yq": 1, "1xw35ro": 1, "1yoti9k": 1, "f1qh0j": 1, "rq27xp": 1, "zy6ji1": 1, "10e5a1e": 1, "tbuj8m": 1, "13d4p8s": 1, "c0w8h1": 1, "c76mm1": 1, "1g6k5of": 1, "wpd88z": 1, "1scjyjw": 1, "172h0t3": 1, "peh4z0": 1, "1ot1ybt": 1, "eyu1sg": 1, "ihp2y": 1, "1mhz8oj": 1, "rd2w6d": 1, "17spu1v": 1, "s69mtb": 1, "1i6j393": 1, "1mfsz6a": 1, "1c9seve": 1, "ljxoyk": 1, "1dj5pu9": 1, "kx6r28": 1, "rw06zk": 1, "hzeh79": 1, "1cl9kd1": 1, "qy8532": 1, "7mwuye": 1, "1qpil3s": 1, "1jb1zlp": 1, "k10ps2": 1, "yv8otv": 1, "1xt4j62": 1, "1ba0e3k": 1, "d5ptbp": 1, "159bsog": 1, "l1txu5": 1, "6wa7z": 1, "1o5e8s0": 1, "164khmj": 1, "1hbszzg": 1, "kkos8h": 1, "3w0sn7": 1, "16akpa": 1, "tkarx5": 1, "d4o9il": 1, "rxjtlh": 1, "1d9s73k": 1, "q3r6rd": 1, "yfufto": 1, "1f1zgec": 1, "6ffrm": 1, "i9vef3": 1, "181t1ce": 1, "o9qqb2": 1, "2y7063": 1, "1n57spk": 1, "10nfcj7": 1, "1i7kq4": 1, "76c13x": 1, "shogis": 1, "wtl8a6": 1, "i6zo57": 1, "192gan2": 1, "18k2t0x": 1, "19iur1x": 1, "vzcnz6": 1, "poc0v": 1, "z7q9sd": 1, "oxdjds": 1, "1n2biwn": 1, "het6q": 1, "f9qjfm": 1, "1ueyzo4": 1, "6l3pmi": 1, "dczp9w": 1, "yspc3x": 1, "sn0e5c": 1, "1spfbw5": 1, "8bih3k": 1, "1gr7oyg": 1, "yhmo8z": 1, "1bwvuj0": 1, "68msq": 1, "rolli8": 1, "1qzksyz": 1, "1dca85a": 1, "72s9ai": 1, "1g3tg5h": 1, "1gp40gz": 1, "1ihfhvi": 1, "c7o7jw": 1, "1x5b1l1": 1, "1nfzgaj": 1, "1ayrip0": 1, "3ljul2": 1, "4us785": 1, "luen53": 1, "1oaaion": 1, "g481ek": 1, "1n8dolp": 1, "jm49eu": 1, "1r3r6ir": 1, "1vxcior": 1, "m8xwwd": 1, "87ibq8": 1, "1qmb3v5": 1, "l6sl0x": 1, "1bq6wxw": 1, "1qizupz": 1, "12qhk6k": 1, "pcpdo3": 1, "7b36f6": 1, "nt54zf": 1, "s4b5rl": 1, "jj49t0": 1, "5nh1mp": 1, "1pn6vji": 1, "zq776y": 1, "5nv3y5": 1, "kv7egw": 1, "199t9zm": 1, "p4gnun": 1, "1auaz3c": 1, "1gy5wjf": 1, "1gy5wig": 1, "1gy5wl5": 1, "1gy5wda": 1, "1gy5wfz": 1, "1gy5wf0": 1, "1gy5whp": 1, "1nvu46x": 1, "wrmnht": 1, "1qxvpdo": 1, "1lfdv76": 1, "jjxzpf": 1, "1u27kuu": 1, "lzr52v": 1, "1my1xly": 1, "19ta9d3": 1, "1s1ih8w": 1, "l8eadb": 1, "6k4l7e": 1, "t6p0nn": 1, "m7wduo": 1, "13bn0u0": 1, "1jm3rkm": 1, "1en2119": 1, "14bbx74": 1, "1t9s1gw": 1, "ke9oda": 1, "8pdyjc": 1, "bdmlvj": 1, "1ys4we1": 1, "14imy6i": 1, "1dejqd2": 1, "1t7syxu": 1, "1lhx285": 1, "b87mry": 1, "cjztyq": 1, "4sbu5d": 1, "btiqay": 1, "jwlkvw": 1, "syo300": 1, "1g1y18f": 1, "1kbafmk": 1, "zr54fv": 1, "1cgtczk": 1, "7x8xp1": 1, "1e2e0k7": 1, "1rd78de": 1, "1h6f1pz": 1, "16wnh25": 1, "9f4k95": 1, "3hl6d": 1, "3hl69": 1, "3hl4n": 1, "3hl1v": 1, "3hl3n": 1, "3hl1x": 1, "3hl4j": 1, "3hl2r": 1, "1dj6euq": 1, "sor3sm": 1, "5kybqh": 1, "9kgxln": 1, "w6yu6s": 1, "a4gxa6": 1, "ayshdq": 1, "o23joo": 1, "1bmfiov": 1, "16ufg1d": 1, "7c7xhe": 1, "1yi2hz3": 1, "fi3ndb": 1, "18iqhuk": 1, "hml1we": 1, "i3b1wq": 1, "1amdc1o": 1, "3co1e8": 1, "kfpi47": 1, "5l0vlo": 1, "1t2fyxl": 1, "1qboney": 1, "1df5c0o": 1, "lhgxk6": 1, "10cqmo2": 1, "va4bjy": 1, "tmytom": 1, "2wkdqc": 1, "2cojw0": 1, "k0sizd": 1, "1aewsqu": 1, "3ukhgy": 1, "pju3uq": 1, "92pllz": 1, "4jv3yw": 1, "xcw5ff": 1, "1802tf1": 1, "1i1u9t3": 1, "15lga41": 1, "1awsbmi": 1, "rg7ev9": 1, "rztz35": 1, "fpdl81": 1, "382571": 1, "18bgpnk": 1, "zjen50": 1, "hvi1tz": 1, "1p9g0ky": 1, "zzvmge": 1, "vuzsjy": 1, "1i9jmth": 1, "1he07tp": 1, "1c3t1v0": 1, "sz7exg": 1, "94bo1h": 1, "14a8ko8": 1, "t5up7": 1, "2glcih": 1, "1c1ve4x": 1, "xuekxr": 1, "tmss7v": 1, "bwoxf": 1, "1yk2ddb": 1, "1bhc8xz": 1, "9lm87o": 1, "9qrrbv": 1, "12s56gl": 1, "1faiyq1": 1, "14cgylp": 1, "eb6jg1": 1, "1xuz53g": 1, "t386vq": 1, "1p6qvge": 1, "1kuzimp": 1, "14xomve": 1, "h3ld73": 1, "1tp4p41": 1, "1bjwhpu": 1, "4qe7xn": 1, "1m8wvve": 1, "18uj987": 1, "1ond4j0": 1, "1ce2un8": 1, "rf6op9": 1, "1c6jsc0": 1, "64rrj6": 1, "1xusd4k": 1, "jb1i48": 1, "1tmcxgb": 1, "fulwd5": 1, "11wr6j6": 1, "jdf2rk": 1, "11qmexw": 1, "1avajl9": 1, "hrzzv7": 1, "1722q6q": 1, "1slls3n": 1, "c0f6z": 1, "fsxlba": 1, "jos6qd": 1, "1i4w19f": 1, "1p6xjs0": 1, "125cd46": 1, "ih7g7f": 1, "1qrfx4i": 1, "ja6owe": 1, "n36ddr": 1, "11d7twq": 1, "1whock1": 1, "vuuhyq": 1, "fyd30h": 1, "anfq5e": 1, "qqiw6i": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ============================================================
    OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
@@ -2512,7 +2751,7 @@ var CRZ2 = {
    folha do CAMINHO DO SANGUE, que é exatamente o que o desenho conta (nas
    outras seria enfeite).
    ⚠️ POR QUE AQUI: o `boot()` roda assim que o navegador acaba de ler o
-   arquivo e o `monta()` dele desenha as 36 folhas de uma vez. Um `var` escrito
+   arquivo e o `monta()` dele desenha as 39 folhas de uma vez. Um `var` escrito
    no `folhas.js` depois disso sobe por içamento, mas o VALOR não sobe — na hora
    da montagem ele ainda é `undefined`, e a figura simplesmente não aparece, sem
    erro nenhum no console. Quem mede é o portão 1v (`global_atropelado.py`). */
@@ -2528,6 +2767,26 @@ var FIGFOLHA = {
      na grade" — e grade nenhuma no codigo. */
   35: {f: "vd_grade", cls: "figgrade",
        alt: "a grade de cinco colunas (A a E) por cinco linhas (1 a 5), com um órgão desenhado em oito quadrinhos"}
+};
+
+/* ---------- 39 · O SIMULADOR DA RESPIRAÇÃO ----------
+   ⚠️ NÃO É BRINQUEDO SEM TAREFA: cada passo é um ITEM do relatório, e ele
+      fecha SOZINHO quando a criança leva o diafragma até a posição pedida —
+      não há botão de "pronto" para clicar por acaso. A resposta É o gesto.
+   `alvo` é o valor do controle (0 = diafragma em cima, 100 = em baixo) e
+   `zona` é a folga aceita: perto o bastante conta, porque o dedo de uma
+   criança não acerta um pixel. */
+var SIMU = {
+ "baixo": {"pede": "Puxe o diafragma para BAIXO e faça o ar ENTRAR.",
+           "estado": "pulmão cheio",
+           "alvo": 100, "zona": 22,
+           "certo": "Isso! O diafragma desceu, o peito ficou maior e o ar ENTROU.",
+           "dica": "O diafragma é o músculo abaixo dos pulmões. Arraste o controle para o lado de BAIXO."},
+ "cima":  {"pede": "Agora empurre o diafragma para CIMA e faça o ar SAIR.",
+           "estado": "pulmão vazio",
+           "alvo": 0, "zona": 22,
+           "certo": "Isso! O diafragma subiu, o peito ficou menor e o ar SAIU.",
+           "dica": "Para o ar sair, o peito precisa ficar menor. Arraste o controle para o lado de CIMA."}
 };
 /*DADOS-FIM*/
 
@@ -2613,7 +2872,10 @@ var NOMES = [
  "O que acontece quando corro",
  "O alimento é o combustível",
  "Ache o órgão na grade",
- "Cruzadinha dos três sistemas"
+ "Cruzadinha dos três sistemas",
+  "Memória dos órgãos da digestão",
+  "A forca do sistema respiratório",
+  "O simulador da respiração"
 ];
 /*<dossie-dados>*/
 var CURRICULO = {
@@ -2622,7 +2884,7 @@ var CURRICULO = {
  "componente": "Ciências",
  "rede": "Rede Municipal de Ensino de Blumenau",
  "documento": "Currículo da Educação Básica do Sistema Municipal de Ensino de Blumenau — Ciências, Anos Iniciais, 5º ano, unidade temática Vida e Evolução (linhas 16586-16607 do _curriculo/blumenau.txt)",
- "instrumento": "Sequência didática de folha viva · 36 folhas · 158 itens · aplicação individual no laboratório",
+ "instrumento": "Sequência didática de folha viva · 39 folhas · 185 itens · aplicação individual no laboratório",
  "objetivos": [
   {
    "objetivo": "Reconhecer os órgãos do sistema digestório e o que cada um faz, seguindo o caminho do alimento",
@@ -2634,7 +2896,8 @@ var CURRICULO = {
     5,
     6,
     7,
-    8
+    8,
+    37
    ],
    "unidade": "Vida e Evolução",
    "objeto": "Nutrição do organismo",
@@ -2650,7 +2913,9 @@ var CURRICULO = {
     13,
     14,
     15,
-    16
+    16,
+    38,
+    39
    ],
    "unidade": "Vida e Evolução",
    "objeto": "Nutrição do organismo",
@@ -2961,5 +3226,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=ee9f1265ed"></script>
+<script src="folhas.js?v=f6ef5799b7"></script>
 </body></html>
