@@ -158,8 +158,15 @@ jobs:
           #    caracteres, o DuckDuckGo nao achou nada e a colheita voltou VAZIA — sem
           #    erro, sem aviso, so uma pasta que nao existe. Um campo que PARECE aceitar
           #    lista (porque o `paginas=` do lado aceita) tem de aceitar lista.
-          for _nb, busca_img in enumerate([b.strip() for b in os.environ.get("IMAGENS", "").split(",") if b.strip()], 1):
-              print("=== busca %d: %s" % (_nb, busca_img))
+          _buscas = [b.strip() for b in os.environ.get("IMAGENS", "").split(",") if b.strip()]
+          for _nb, busca_img in enumerate(_buscas, 1):
+              # ⚠️ COTA POR BUSCA. Com teto so global, a primeira busca da lista come
+              #    tudo e as outras nem rodam — foi o que aconteceu na estreia da lista
+              #    (seis termos, max=120, 120 imagens do primeiro). A cota e o teto
+              #    dividido pelo numero de buscas, e o que uma nao usa sobra para as
+              #    seguintes, porque o `maxn` global continua valendo por cima.
+              _cota = baixadas + max(1, (maxn - baixadas) // (len(_buscas) - _nb + 1))
+              print("=== busca %d de %d: %s   (ate %d imagens)" % (_nb, len(_buscas), busca_img, _cota - baixadas))
               q = urllib.parse.quote_plus(busca_img)
               vqd = None
               try:
@@ -172,7 +179,7 @@ jobs:
                   print("!! sem token vqd: a busca de imagens nao rodou")
               prox = "https://duckduckgo.com/i.js?l=br-pt&o=json&q=%s&vqd=%s&f=,,,,,&p=1" % (q, vqd) if vqd else None
               paginas_ddg = 0
-              while prox and baixadas < maxn and paginas_ddg < 6:
+              while prox and baixadas < _cota and paginas_ddg < 6:
                   paginas_ddg += 1
                   try:
                       req = urllib.request.Request(prox, headers={"User-Agent": UA, "Accept": "application/json",
@@ -181,7 +188,7 @@ jobs:
                   except Exception as e:
                       print("!! i.js falhou:", e); break
                   for r in js.get("results", []):
-                      if baixadas >= maxn: break
+                      if baixadas >= _cota: break
                       url = r.get("image") or ""
                       if not url or url in vistos: continue
                       vistos.add(url)
