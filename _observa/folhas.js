@@ -265,7 +265,7 @@ function f0(d){
   c.innerHTML =
     '<div class="ceu"><i></i><i></i><i></i></div>' +
     '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Pr\u00e9 &middot; 12 folhas: as iguais, a sombra, o diferente e o que vem depois</div>' +
+    '<div class="sub">Pr\u00e9 &middot; 13 folhas: as iguais, a sombra, o diferente e o que vem depois</div>' +
     '<div class="cena">' + cx + '</div>' +
     '<i class="lupa"></i>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Come\u00e7ar</b>.</div>';

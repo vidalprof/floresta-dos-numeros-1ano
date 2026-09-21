@@ -794,7 +794,14 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 @keyframes obBrilho{0%{left:-40%}100%{left:130%}}
 .mfrente{background:#fff;border:3px solid #ded8f7;-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
 .mcarta.achada .mfrente{border-color:#15a34a;background:#eafaf0}
-.mfig{max-width:84%;max-height:84%;width:auto;height:auto;object-fit:contain}
+/* ⚠⚠ A FIGURA DA CARTA PRECISA DE CAIXA DEFINIDA, nao de `max-`.
+   O guarda `naoAmplia()` escreve `max-width`/`max-height` EM LINHA com o
+   tamanho do arquivo, e estilo de linha vence a folha de estilo POR SER DE
+   LINHA, nao por ser menor. Com `max-height:84%` aqui, o limao (197 px de
+   altura) estourava a carta de 118 px em seis tamanhos de tela, e o portao 4b
+   pegou. Com `width`/`height` definidos, o `max-` de linha apenas limita algo
+   que ja e menor, e nao manda mais. */
+.mfig{width:84%;height:84%;object-fit:contain}
 @media (min-width:760px){ .mcartas{max-width:680px} .mcarta{width:30%} }
 
 /* --- 12: o cartaz --- */
@@ -1568,5 +1575,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=b445a1816d"></script>
+<script src="folhas.js?v=5fde1d5217"></script>
 </body></html>
