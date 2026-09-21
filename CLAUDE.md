@@ -149,6 +149,31 @@ Leia tudo antes de agir e responda sempre em **português**.
 >   **onze cadernos corretos**; a colisão de verdade (o selo da medalha chamado
 >   `estrela`) mora fora da capa e continua sendo pega — medido nos dois sentidos.
 
+> ## 🔢🗣️ O NÚMERO ESCRITO E O NÚMERO FALADO SÃO DUAS ESCRITAS — `_qa/ouvir.py` (21/set/2026)
+>
+> **A quarta régua que media errado, e esta BARROU UMA ENTREGA.** O portão do
+> ouvido (que ouve os mp3 e compara com o texto) reprovou **12 falas do caderno
+> do dinheiro do 5º ano** com 46% a 56% de diferença. **As doze estavam certas.**
+> O texto dizia *"Isso! Dá 520 reais."*, a voz leu **"quinhentos e vinte reais"**
+> — que é o certo — e o reconhecedor devolveu as palavras, porque **reconhecedor
+> nenhum devolve algarismo**. A régua não estava medindo o mp3: estava medindo a
+> distância entre **duas escritas do mesmo número**. O `entregar.yml` parou no
+> código 1 e o caderno ficou no repositório sem ir ao ar.
+>
+> **Conserto:** o `achata()` agora passa os dois lados por **número por extenso**
+> antes da régua — o dinheiro primeiro, enquanto o `R$` e a vírgula ainda
+> existem (`R$ 97,50` → *"noventa e sete reais e cinquenta centavos"*), e depois
+> todo algarismo solto. As doze caem de 46–56% para **0–12%**.
+>
+> ⭐ **A REGRA QUE FICA, e vale muito além da voz:** *quando os dois lados de uma
+> comparação podem escrever a mesma coisa de formas diferentes, a normalização
+> vai ANTES da régua — senão o portão acusa o próprio alfabeto.* É a irmã da
+> lição dos acentos (`1p`): lá quem gravava e quem pedia escreviam o til de dois
+> jeitos; aqui quem escreve e quem ouve escrevem o número de dois jeitos.
+>
+> ⚠️ E vale a de sempre: **portão vermelho não é defeito até eu abrir o que ele
+> aponta.** Bastou ler as doze linhas para ver que o áudio estava impecável.
+
 > ## 🔇 SILÊNCIO É DEFEITO, E É O ÚNICO QUE NÃO DEIXA MARCA — portões `1p` e `1q` (21/set/2026)
 >
 > Os estudantes disseram ao Marcos: ***"na atividade do 2º ano, a máquina de
@@ -232,6 +257,45 @@ Leia tudo antes de agir e responda sempre em **português**.
 > `ATIVIDADES.md`; mexer numa habilidade do `curriculo.json` deixava o painel no
 > ar com o objetivo velho e **nenhum portão via** — e é justamente esse texto que
 > ele copia para o planejamento. Conferido nos dois sentidos.
+
+> ## ✂️👁️ FIGURA CORTADA NÃO SE VÊ NO RECORTE — VÊ-SE NA FOLHA DE ONDE ELA SAIU (21/set/2026)
+>
+> **O recorte MENTE de boa-fé.** O `aperta()` tira o branco de sobra, então o
+> PNG sempre sai justinho e com cara de figura inteira — mesmo quando a caixa
+> comeu metade do desenho. No `_dinheiro5` eu marquei 21 caixas a olho sobre uma
+> grade de 5%, olhei as 21 numa folha de contato e aprovei todas. **Dez estavam
+> cortadas:** a lata de atum sem a borda direita, a bandeja do dominó sem o
+> fundo, a caixa de leite sem metade da vaca. Quem viu foi o portão **`1i7`
+> (`_qa/recorte_cortado.py`)**, que não olha o PNG: ele volta à **folha de
+> papel** e mede se a tinta do desenho continua para fora da caixa.
+>
+> **A regra:** caixa de recorte se confere **na folha de origem**, nunca no
+> resultado. E a caixa não se marca a olho — ela **CRESCE até a tinta acabar**
+> (`cresce_caixa()` do `_dinheiro5/recortar_das_folhas.py`: a mancha de tinta
+> que encosta na caixa é o desenho; a união das manchas é a caixa de verdade).
+> ⚠️ **Com um porém que custou uma segunda volta:** a mancha só conta se **60%
+> dela estiver DENTRO** da caixa inicial. Sem isso, o contorno arredondado do
+> cartão da folha arrastou a caixa até engolir o texto *"Valor / Pagou / Troco"*.
+>
+> ⭐ **E O PORTÃO APRENDEU A LER ARQUIVO, NÃO CÓDIGO.** O `1i7` analisava a
+> **árvore do Python** do `recortar_das_folhas.py` de cada caderno, procurando os
+> formatos de caixa que já tinha visto — e ficava **cego a cada formato novo**.
+> Essa cegueira já custou duas figuras partidas ao meio no `_corpo5`. Agora ele
+> lê o **`<pasta>/img/RECORTE.json`**, que o próprio script escreve ao cortar
+> (`{"dn5_atum.png": {"folha": "...", "caixa": [x0,y0,x1,y1]}}`): é **o que foi
+> cortado de verdade**, não o que o portão deduziu do código. **Caderno novo:
+> escrever o `RECORTE.json` — sai de graça e o portão enxerga.**
+>
+> ⚠️ Corte de propósito se declara em `<pasta>/RECORTE-OK.json` com o motivo
+> (no `_dinheiro5` é o pacote de arroz, cuja borda é um respingo de aquarela que
+> chega à tela esfarrapado).
+> ⚠️ **E três coisas sobre recortar que se pagam uma vez:** cédula (retângulo de
+> miolo claro) **não** passa pelo `limpa_fundo` — a água entra pela borda e come
+> o meio da nota; figura de **miolo branco** (a caixa de leite) se corta pelo
+> **contorno** (fechar o traço, tapar os buracos, ficar com a maior ilha); e
+> peça **redonda que encosta na vizinha** (as moedas) se separa pelo **centro**,
+> por transformada de distância — a razão entre os raios achados confere com o
+> diâmetro real das moedas, e é assim que a medida se prova sozinha.
 
 > ## 🔍🚫 A FIGURA NUNCA É MOSTRADA MAIOR QUE O ARQUIVO — portão `1i9` (21/set/2026)
 >

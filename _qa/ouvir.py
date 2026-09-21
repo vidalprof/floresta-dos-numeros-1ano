@@ -59,10 +59,75 @@ SAIDA = os.path.join(AQUI, u"_ouvido")
 
 
 # ---------------------------------------------------------------------------
+# o numero escrito e o numero FALADO sao duas escritas diferentes
+# ---------------------------------------------------------------------------
+# ⚠️⚠️ LICAO PAGA EM 21/set/2026, no caderno do dinheiro do 5o ano: o portao
+#    acusou 12 falas de "tortas" e as doze estavam CERTAS. O texto dizia
+#    "isso da 520 reais", a voz leu "quinhentos e vinte reais" — que e o certo —
+#    e o reconhecedor devolveu as palavras, porque reconhecedor nenhum devolve
+#    algarismo. Comparar "520" com "quinhentos e vinte" nao mede o mp3: mede a
+#    distancia entre DUAS ESCRITAS do mesmo numero, e da 56% de diferenca num
+#    audio impecavel. Entrega barrada por defeito que nao existia.
+#    A regra que fica: quando os dois lados da comparacao podem escrever a mesma
+#    coisa de formas diferentes, a normalizacao vai ANTES da regua — senao o
+#    portao acusa o proprio alfabeto.
+UNI = [u"zero", u"um", u"dois", u"tres", u"quatro", u"cinco", u"seis",
+       u"sete", u"oito", u"nove", u"dez", u"onze", u"doze", u"treze",
+       u"quatorze", u"quinze", u"dezesseis", u"dezessete", u"dezoito",
+       u"dezenove"]
+DEZ = [u"", u"", u"vinte", u"trinta", u"quarenta", u"cinquenta", u"sessenta",
+       u"setenta", u"oitenta", u"noventa"]
+CEM = [u"", u"cento", u"duzentos", u"trezentos", u"quatrocentos",
+       u"quinhentos", u"seiscentos", u"setecentos", u"oitocentos",
+       u"novecentos"]
+
+
+def extenso(n):
+    u"""Inteiro por extenso em portugues, ate 999.999 — sem acento, porque o
+    `achata` ja tirou os acentos dos dois lados."""
+    n = int(n)
+    if n < 0:
+        return u"menos " + extenso(-n)
+    if n < 20:
+        return UNI[n]
+    if n < 100:
+        d, u_ = divmod(n, 10)
+        return DEZ[d] + (u" e " + UNI[u_] if u_ else u"")
+    if n == 100:
+        return u"cem"
+    if n < 1000:
+        c, r = divmod(n, 100)
+        return CEM[c] + (u" e " + extenso(r) if r else u"")
+    if n < 1000000:
+        m, r = divmod(n, 1000)
+        cab = u"mil" if m == 1 else extenso(m) + u" mil"
+        if not r:
+            return cab
+        return cab + (u" e " if r < 100 or r % 100 == 0 else u" ") + extenso(r)
+    # acima de um milhao nenhuma fala nossa chega; devolver o algarismo aqui
+    # seria voltar ao defeito, entao quebra-se em blocos de mil.
+    m, r = divmod(n, 1000000)
+    cab = u"um milhao" if m == 1 else extenso(m) + u" milhoes"
+    return cab + (u" e " + extenso(r) if r else u"")
+
+
+def _dinheiro(m):
+    u"""`R$ 97,50` -> `noventa e sete reais e cinquenta centavos`, que e o que a
+    voz de verdade le."""
+    inteiro, cent = int(m.group(1)), int(m.group(2))
+    partes = []
+    if inteiro or not cent:
+        partes.append(extenso(inteiro) + (u" real" if inteiro == 1 else u" reais"))
+    if cent:
+        partes.append(extenso(cent) + (u" centavo" if cent == 1 else u" centavos"))
+    return u" " + u" e ".join(partes) + u" "
+
+
+# ---------------------------------------------------------------------------
 # achatar: o que entra na comparacao
 # ---------------------------------------------------------------------------
 def achata(s):
-    u"""minuscula, sem acento, sem pontuacao, um espaco so.
+    u"""minuscula, sem acento, sem pontuacao, numero por extenso, um espaco so.
 
     ⚠️ Isto NAO e frouxidao: o reconhecedor devolve "salao" para "SALÃO" e
     "voce" para "você" conforme o modelo, e comparar acento a acento faria o
@@ -70,7 +135,12 @@ def achata(s):
     s = unicodedata.normalize(u"NFD", s or u"")
     s = u"".join(c for c in s if unicodedata.category(c) != u"Mn")
     s = s.lower().replace(u"ç", u"c")
-    s = re.sub(r"[^a-z0-9 ]+", u" ", s)
+    # o dinheiro PRIMEIRO, enquanto o `R$` e a virgula ainda existem
+    s = re.sub(r"r\$?\s*(\d+)[,.](\d{2})\b", _dinheiro, s)
+    s = re.sub(r"\b(\d+)[,.](\d{2})\s*(reais|real)\b", _dinheiro, s)
+    # e depois todo algarismo solto que tenha sobrado
+    s = re.sub(r"\d+", lambda m: u" " + extenso(m.group(0)) + u" ", s)
+    s = re.sub(r"[^a-z ]+", u" ", s)
     return re.sub(r"\s+", u" ", s).strip()
 
 
