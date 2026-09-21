@@ -1233,27 +1233,47 @@ exatamente o caderno em que eu tinha apagado a linha. Hoje ele **apaga os
 comentários antes de contar**. *Portão que lê o próprio comentário não mede nada
 — e essa é a família de erro do "medir metade do arquivo" de 20/set.*
 
-### 3. A COLHEITA: três figuras trocadas, uma não
+### 3. A COLHEITA: quatro figuras trocadas — e a lição é que eu quase parei cedo
 
-Colhi da internet (`buscar-fotos.yml`, quatro buscas, 96 imagens) e OLHEI as
-quatro folhas de contato. Entraram três, todas linha preta de folha de colorir,
-recortadas e com fundo tirado:
+Colhi da internet (`buscar-fotos.yml`, **seis buscas, 156 imagens**) e OLHEI as
+seis folhas de contato. Entraram quatro, recortadas e com o fundo tirado:
 
-| figura | era | ficou |
-|---|---|---|
-| `o5_anzol` | 35×74 px | **255×400** |
-| `o5_sol` | 75×89 px | **394×400** |
-| `ls_dinossauro` | 208×90 px | **495×400** |
+| figura | era | ficou | de onde |
+|---|---|---|---|
+| `o5_anzol` | 35×74 px | **255×400** | vecteezy (vetor gratuito) |
+| `o5_sol` | 75×89 px | **394×400** | `amocolorir.com.br` |
+| `ls_dinossauro` | 208×90 px | **495×400** | `daquidali.com.br` |
+| **`*_faca`** (10 cadernos) | 260×71 px | **325×400** | `br.freepik.com/vetores/desenho-faca` |
 
-⚠️ **A FACA NÃO FOI TROCADA, e o motivo fica escrito para ninguém refazer a
-busca achando que eu esqueci.** As 24 facas colhidas se dividem em duas: as
-bonitas e do estilo certo vêm de banco de imagem **com marca-d'água estampada no
-desenho** ("Magnific"), e as limpas são de estilo realista, que não combina com o
-barro 3D dos cadernos de alfabetização. **Marca-d'água não vai para a criança**, e
-gerar por IA está proibido em folha viva (regra dele, 14/set). Então valeu a
-**saída honesta que a própria regra nomeia: mostrar a figura no tamanho dela.**
-A faca hoje aparece a 260×71 px — menor que antes e **nítida**. Se um dia
-aparecer uma faca grande, limpa e no estilo, é só trocar o arquivo.
+⚠️⚠️ **EU IA PARAR NA FACA, E O MARCOS NÃO DEIXOU.** Na primeira rodada as 24
+facas colhidas se dividiam em duas famílias: as **bonitas e do estilo certo**
+vinham com **marca-d'água estampada em cima do desenho** ("Magnific"), e as
+**limpas** eram realistas demais para o barro 3D da alfabetização. Eu escrevi a
+justificativa, apoiei-a na regra ("mostrar no tamanho dela") e fechei o assunto.
+Ele respondeu: ***"busque outros desenhos em atividades da internet se não for
+possível consertar"*** — e **duas buscas depois a faca estava lá**: cabo de
+madeira, lâmina clara, contorno grosso, sem marca-d'água, 579×626.
+
+**A lição não é sobre facas.** A saída honesta que a regra nomeia ("mostrar no
+tamanho dela") é o **último** degrau, não o segundo. Entre "a primeira busca não
+deu" e "não dá" cabem **outros termos de busca** — e foi trocar
+*"clipart colorido"* por *"desenho para colorir atividade"* e *"png fundo
+transparente infantil"* para o resultado mudar. **Uma busca que falha mede o
+termo, não a internet.**
+
+⚠️ **E a faca nova ficou melhor por um motivo que eu não tinha visto:** a velha
+era uma **tira deitada** (260×71, três vezes e meia mais larga que alta) e
+destoava das vizinhas, que são quase quadradas. A nova é 325×400, do mesmo feitio
+da abelha e da bota.
+
+⚠️ **O QUE FICA DECLARADO, porque eu não tenho como conferir daqui:** a página é
+uma **categoria de download gratuito** do Freepik, mas o endereço do arquivo é de
+**prévia de acervo pago** (`img.freepik.com/vetores-premium/...`). Não há
+marca-d'água nenhuma nela. Está dito ao Marcos, e a alternativa de procedência
+estrita já está colhida (`faca2/d02_c4fcc0`, de `desenharecolorir.com.br`, um
+desenho de atividade de verdade — porém em **linha preta**, que ficaria em preto
+e branco no meio de cem figuras coloridas). Detalhes em
+`_sequencias/COLHEITA-FIGURAS-21SET.md`.
 
 ## ✅ O CRIVO DO PEDAGOGO FECHOU: 34 DE 34 (20/set/2026)
 

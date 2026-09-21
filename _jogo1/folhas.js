@@ -522,6 +522,28 @@ function f4(d, pi){
       /* a grade vai dentro de um TRILHO que rola de lado — ver a nota do
          `.cprolo` no estilo: oito casas de 40 px não cabem em 300 px. */
       var rolo = el("div", "cprolo"); rolo.appendChild(gr); box.appendChild(rolo);
+      /* ⚠️ AS DUAS PONTAS SE DECLARAM (`cp-<id>-a` na primeira letra, `cp-<id>-z`
+         na última), como no `_casa1` e no `_ort5`. Sem elas o JOGADOR DA BANCA
+         dizia "não conheço a peça" e a folha saía como DÍVIDA a cada rodada —
+         e folha que o jogador não alcança é folha que ninguém mede. Medido em
+         21/set/2026: a grade publicava `cp-<i>-<lin>-<col>`, que é o endereço da
+         CASA, e o jogador procura o endereço da PALAVRA. Só marca a célula que
+         ainda não tem dono: duas palavras podem cruzar exatamente numa ponta, e
+         sobrescrever faria o jogador acusar de defeito uma folha boa.
+         ⚠️ A casa nasce com `data-qa="cp-<i>-<lin>-<col>"`, que é o endereço da
+         CASA e ninguém lê (conferido: só o `joga_folha.js` procura `cp-`, e ele
+         procura o endereço da PALAVRA). Nas pontas esse endereço dá lugar ao da
+         palavra; no meio da grade ele fica como está. */
+      var tomadas = {};
+      palavras.forEach(function(w){
+        var cam = onde[w];
+        if(!cam || !cam.length) return;
+        var ka = cam[0][0] + "_" + cam[0][1];
+        var kz = cam[cam.length - 1][0] + "_" + cam[cam.length - 1][1];
+        var idw = "g4_" + i + "_" + w;
+        if(cels[ka] && !tomadas[ka]){ cels[ka].setAttribute("data-qa", "cp-" + idw + "-a"); tomadas[ka] = 1; }
+        if(cels[kz] && !tomadas[kz]){ cels[kz].setAttribute("data-qa", "cp-" + idw + "-z"); tomadas[kz] = 1; }
+      });
       /* o que já estava achado de uma sessão anterior volta pintado */
       palavras.forEach(function(w){ if(achadas[w]) pintaCaminho(onde[w], cels, i); });
       box.setAttribute("data-qa", "caca-" + i);

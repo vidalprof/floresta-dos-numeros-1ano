@@ -181,13 +181,24 @@ Leia tudo antes de agir e responda sempre em **português**.
 > aprovava o caderno em que eu tinha apagado a linha. Hoje **apaga comentários
 > antes de contar**. *Portão que lê o próprio comentário não mede nada.*
 >
-> ⭐ **QUANDO A INTERNET NÃO DER VERSÃO MAIOR, MOSTRE NO TAMANHO DELA.** Colhi 96
-> imagens em quatro buscas: entraram `o5_anzol` (35×74 → **255×400**), `o5_sol`
-> (75×89 → **394×400**) e `ls_dinossauro` (208×90 → **495×400**). **A faca não
-> entrou** — as bonitas do estilo certo vêm com **marca-d'água estampada no
-> desenho** e as limpas são realistas demais para o barro 3D da alfabetização.
-> Marca-d'água não vai para a criança e IA está proibida aqui; então a faca
-> aparece a 260×71 px, **menor e nítida**. Isso é conserto, não desistência.
+> ⭐ **"MOSTRAR NO TAMANHO DELA" É O ÚLTIMO DEGRAU, NÃO O SEGUNDO** (lição paga
+> em 21/set/2026). Colhi 96 imagens em quatro buscas, troquei `o5_anzol` (35×74 →
+> **255×400**), `o5_sol` (75×89 → **394×400**) e `ls_dinossauro` (208×90 →
+> **495×400**) — e **desisti da faca**, porque as bonitas do estilo certo vinham
+> com **marca-d'água estampada no desenho** e as limpas eram realistas demais
+> para o barro 3D da alfabetização. Escrevi a justificativa apoiada nesta própria
+> regra e fechei o assunto. O Marcos respondeu: ***"busque outros desenhos em
+> atividades da internet se não for possível consertar"*** — e **duas buscas
+> depois a faca estava lá** (cabo de madeira, lâmina clara, sem marca-d'água,
+> 579×626 → **325×400** nos dez cadernos). **Uma busca que falha mede o TERMO,
+> não a internet:** bastou trocar *"clipart colorido"* por *"desenho para colorir
+> atividade"* e *"png fundo transparente infantil"*. Só depois de esgotar os
+> termos é que vale mostrar a figura no tamanho dela.
+> ⚠️ **Procedência declarada, porque daqui eu não confiro licença:** a página é
+> categoria gratuita do Freepik, o arquivo é prévia de acervo pago, e não tem
+> marca-d'água. Dito ao Marcos; a alternativa de procedência estrita está colhida
+> (`faca2/d02_c4fcc0`, de `desenharecolorir.com.br`, porém em linha preta).
+> Registro completo: `_sequencias/COLHEITA-FIGURAS-21SET.md`.
 
 > ## 📐 CAÇA-PALAVRAS: QUEM MANDA NO TAMANHO DA CASA É A **COLUNA** (21/set/2026)
 >

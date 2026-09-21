@@ -34,22 +34,39 @@ professora entrega no papel, que é exatamente o que a regra da origem protege.
 O `VIMG` dos dois cadernos subiu para `3`, senão o navegador da criança
 continuaria servindo a figura pequena do cache.
 
-## 3. O que NÃO entrou — a faca, e o motivo
+## 3. A faca — a primeira busca não serviu, a segunda sim
 
-**A faca continua a de sempre (260×71 px), agora mostrada no tamanho dela.**
-Isto está escrito aqui para ninguém refazer a busca achando que eu esqueci:
+**Na primeira rodada eu ia deixar a faca velha** (260×71 px) mostrada no tamanho
+dela, porque das 24 colhidas as **bonitas e do estilo certo vinham com
+marca-d'água estampada em cima do desenho** ("Magnific") e as **limpas eram
+realistas demais** para o barro 3D dos cadernos de alfabetização (abelha,
+abóbora, bota, caneca — ver `_alfa1/img/`).
 
-- as facas **bonitas e do estilo certo** das 24 colhidas vêm de banco de imagem
-  **com marca-d'água estampada em cima do desenho** ("Magnific") — e
-  **marca-d'água não vai para a criança**;
-- as **limpas** são de estilo realista, que briga com o barro 3D dos cadernos de
-  alfabetização (abelha, abóbora, bota, caneca — ver `_alfa1/img/`);
-- **gerar por IA está proibido** em folha viva, por ordem dele.
+**O Marcos não aceitou parar aí:** ***"busque outros desenhos em atividades da
+internet se não for possível consertar"***. Duas buscas novas, **60 imagens**:
 
-Então valeu a saída que a própria regra nomeia. Com o guarda `naoAmplia()` (hoje
-portão `1i9`), a faca aparece a 260×71 px: **menor do que aparecia e nítida**,
-nos sete cadernos em que ela mora (`_abc1`, `_alfa1`, `_jogo1`, `_let1`,
-`_mont1`, `_sil1`, `_som1`).
+| busca | termo | destino |
+|---|---|---|
+| faca2 | `faca desenho para colorir atividade alfabetizacao` | `_sequencias/figuras_21set/faca2` |
+| faca3 | `faca talher desenho png fundo transparente infantil` | `_sequencias/figuras_21set/faca3` |
 
-**Se um dia aparecer uma faca grande, limpa e no estilo do barro 3D**, é só
-trocar o arquivo e subir o `VIMG` dos sete — nada mais precisa mudar.
+**Entrou a `faca3/d07_e2758e`** (579×626): faca de desenho, **cabo de madeira,
+lâmina clara, contorno grosso, sem marca-d'água** — a mais parecida com a que
+estava lá. Recortada e posta com **325×400 px** nos **dez** cadernos em que a
+faca mora (`_abc1`, `_alfa1`, `_ini1`, `_jogo1`, `_let1`, `_mont1`, `_rima1`,
+`_roda1`, `_sil1`, `_som1`) e no `_banco`. O `VIMG` dos dez subiu.
+
+⚠️ **E ela mudou de proporção para melhor:** a velha era uma tira deitada
+(260×71, três vezes e meia mais larga que alta) e destoava das vizinhas, que são
+quase quadradas. A nova é 325×400 — do mesmo feitio da abelha e da bota.
+
+⚠️ **O QUE FICA DECLARADO SOBRE A PROCEDÊNCIA, e é do Marcos decidir:** a página
+de origem é `br.freepik.com/vetores/desenho-faca` (categoria de download
+gratuito), mas o endereço do arquivo é de **prévia de acervo pago**
+(`img.freepik.com/vetores-premium/...`). Não há marca-d'água nenhuma nela, e daqui
+eu **não tenho como conferir a licença** — então digo em vez de fingir que
+conferi. Se ele preferir procedência estrita, a alternativa já está colhida e
+pronta: **`faca2/d02_c4fcc0`** (1414×2000), de
+`desenharecolorir.com.br/divertido-desenho-de-faca-para-colorir/` — é desenho de
+atividade de verdade, mas é **linha preta**, e aí a faca ficaria em preto e
+branco no meio de cem figuras coloridas.
