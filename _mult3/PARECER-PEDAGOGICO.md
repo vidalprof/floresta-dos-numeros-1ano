@@ -91,3 +91,21 @@ significados que o 3º ano acrescenta estão todos presentes.
 ⚠️ **O que este parecer NÃO diz.** Ele não é um portão: nenhuma conta mediu o
 julgamento acima. Ele diz que alguém leu o caderno inteiro, na ordem em que a
 criança o encontra, e assinou.
+
+---
+
+## Anexo — a única coisa que o pré-voo reprova neste caderno (20/set/2026)
+
+**Portão `1i5` (figura veio da folha): REPROVADO.** Há colheita de folhas de
+papel em `_sequencias/folhas_mult` e **nenhuma das 20 figuras foi recortada
+dela** — as vinte vieram do banco de imagens.
+
+É a regra da origem da casa: *a figura vem da MESMA folha de onde veio o gesto,
+para a criança reconhecer a atividade que a professora dá no papel*. Aqui os
+gestos saíram do crivo (`_sequencias/POTE-MULT.md`) e as figuras não.
+
+**Não é inadequação pedagógica** — as figuras são corretas, legíveis e do
+assunto, e o conteúdo é do 3º ano; por isso o veredito acima continua de pé. É
+uma dívida de **procedência**, que o portão mede e eu declaro aqui em vez de
+deixar passar por silêncio. Conserto: recortar as figuras da própria colheita com
+o `_padrao/recorte_folha.py`, como nos cadernos de alfabetização.
