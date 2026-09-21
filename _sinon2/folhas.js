@@ -924,7 +924,7 @@ var OBJETIVOS = [
    ok: "forma o contrário com o pedacinho in ou im"},
   {n: "Achar sinônimos e antônimos dentro de um texto", f: [31, 32, 33],
    ok: "acha as palavras irmãs e os contrários dentro de um texto"},
-  {n: "Usar sinônimos e antônimos para escrever", f: [34, 35],
+  {n: "Usar sinônimos e antônimos para escrever, e nomeá-los", f: [34, 35],
    ok: "usa as palavras irmãs e os contrários para escrever"}
 ];
 

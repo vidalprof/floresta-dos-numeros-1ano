@@ -2,7 +2,7 @@
 <html lang="pt-BR"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Lost & Found — o balcão dos achados e perdidos — 8º ano</title>
+<title>Aprendendo some, any, much, many e os pronomes relativos — 8º ano</title>
 <meta name="description" content="DESCREVER: o assunto, o ano, quantas folhas e de onde vieram as folhas de papel colhidas.">
 <!-- ============================================================
      ESQUELETO DA FOLHA VIVA — a casca, sem conteúdo nenhum.
@@ -704,7 +704,7 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 <div id="topo">
   <button class="zap ouvir" id="bOuvir" aria-label="Ouvir de novo"><svg viewBox="0 0 24 24"><path d="M12 3a5 5 0 0 0-5 5v1H5v6h2v1a5 5 0 0 0 10 0v-1h2V9h-2V8a5 5 0 0 0-5-5z"/></svg></button>
   <button class="zap" id="bVoz" aria-label="Ligar ou desligar a narração"><svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg></button>
-  <div class="tit">Lost & Found — o balcão dos achados e perdidos</div>
+  <div class="tit">Aprendendo some, any, much, many e os pronomes relativos</div>
   <div class="prog"><i id="progI"></i></div>
   <div class="pg" id="pg">Capa</div>
 </div>
@@ -2558,15 +2558,6 @@ var NOMES = [
  "Mark every uncountable", "O cartaz que eu levo"
 ];
 /*<dossie-dados>*/
-/* ⚠️ ESTE OBJETO E O `curriculo.json` SÃO A MESMA COISA, e o portão 0b9
-   (`_qa/pedagogo_curriculo.py`) reprova se divergirem. Cada habilidade tem de
-   existir PALAVRA POR PALAVRA no `_curriculo/blumenau.txt` — é a única coisa
-   que o professor não tem como conferir sozinho sem abrir 440 páginas de PDF.
-   ⚠️ E se o conteúdo for de OUTRO ANO, diga qual, aqui dentro. Foi a lição da
-   Coroa dos Cinco Reinos: dá para citar com honestidade total e mesmo assim
-   ensinar coisa que não é do ano.
-   ⚠️ O que não estiver no currículo da rede vai em `fora_do_curriculo`, com o
-   motivo — ele é IMPRESSO no dossiê em toda rodada. */
 var CURRICULO = {
  "ano": 8,
  "componente": "Língua Inglesa",
@@ -2614,7 +2605,8 @@ var CURRICULO = {
   "POR QUE O 'THAT' É MEDIDO EM POUCAS FOLHAS, E QUAIS. Em toda frase de 'escolha o pronome' das 54 folhas colhidas, onde cabe 'who' também cabe 'that', e onde cabe 'which' também cabe 'that'. Pôr os quatro na mesma fileira de opções reprovaria a criança por ter escolhido uma resposta CERTA — por isso as folhas 20, 21 e 22 não o oferecem. Ele aparece e é medido nos quatro lugares em que é indiscutível: folha 19 (ela o ACHA dentro da frase pronta), folha 27 ('This is the bank that was robbed yesterday' está certa), folha 23 (o quiz da b09, cujo item c4 não traz 'which' entre as quatro alternativas) e folha 24 ('the most famous novel that Lewis Carroll wrote' — depois de superlativo, o inglês pede 'that'). E na folha 32, em que a criança DIGITA, as seis frases têm vírgula: depois de vírgula o inglês não aceita 'that', e por isso o gabarito é único.",
   "AS DUAS EXCEÇÕES DO 'SOME' ESTÃO ENSINADAS, NÃO ESCONDIDAS. 'Can I have some water?' e 'Would you like some sugar?' levam 'some' apesar de serem perguntas, porque são PEDIDO e OFERTA. Está no cartaz da folha d07 colhida ('some — It is also used in questions for offers and requests') e é o uso que o aluno mais precisa na vida. As duas entram na folha 8 com o porquê escrito.",
   "POR QUE 35 FOLHAS. O Marcos cronometrou a turma em 15/set/2026 e disse: \"verifiquei a execução das atividades, essas 20 25 folhas duram 30 minutos, precisamos elevar um pouco mais as folhas para umas 35 folhas\". A aula do laboratório tem 55 min. Este caderno foi montado com 22 folhas e CRESCEU para 35 antes de ir ao ar — e nenhuma das treze que entraram é folha de enchimento: todas saíram do mesmo crivo, de folhas de papel que tinham ficado de fora por falta de lugar (a receita da pizza, o safári, o cardápio do restaurante, a cultura britânica, a tabela que desmonta a frase em peças, o quiz de quatro alternativas).",
-  "A ESTRATÉGIA DO PAR DE FOLHAS, e o limite dela. Ideia do Marcos, na mesma conversa: \"repetir o mesmo exercício em duas folhas, claro questões diferentes\" — \"só não dobrar quando for cruzadinha, memória, caça palavras, forca\". Ela está usada aqui com uma condição que a casa já tinha: a SEGUNDA folha do par sobe um degrau, senão a criança diz \"isso eu já fiz\". Os pares deste caderno: 30 e 31 (na 30 a parte que explica entra no fim da frase; na 31, no meio, entre vírgulas); 19 e 28 (na 19 ela acha o pronome; na 28, a oração inteira); 2, 3 e 29 (duas gavetas, três gavetas, e depois gavetas de pedaços de frase); 12 e 34 (contável e incontável no safári e no balcão)."
+  "A ESTRATÉGIA DO PAR DE FOLHAS, e o limite dela. Ideia do Marcos, na mesma conversa: \"repetir o mesmo exercício em duas folhas, claro questões diferentes\" — \"só não dobrar quando for cruzadinha, memória, caça palavras, forca\". Ela está usada aqui com uma condição que a casa já tinha: a SEGUNDA folha do par sobe um degrau, senão a criança diz \"isso eu já fiz\". Os pares deste caderno: 30 e 31 (na 30 a parte que explica entra no fim da frase; na 31, no meio, entre vírgulas); 19 e 28 (na 19 ela acha o pronome; na 28, a oração inteira); 2, 3 e 29 (duas gavetas, três gavetas, e depois gavetas de pedaços de frase); 12 e 34 (contável e incontável no safári e no balcão).",
+  "⚠️ A CITAÇÃO DOS PRONOMES RELATIVOS PARA NO MEIO, e não é erro de cópia: no PDF da rede essa habilidade está dentro de uma TABELA, e o texto extraído intercala o cabeçalho da coluna no meio da frase (linhas 8436 a 8439 do _curriculo/blumenau.txt): \"Língua Inglesa: construir períodos com-/postos por subordinação para empregar os\" · \"Pronomes relativos\" · \"pronomes relativos (who, which, that, whose)\". A regra da casa manda citar VERBATIM e contíguo, então a citação para onde o documento a interrompe. A frase inteira da rede é: \"construir períodos compostos por subordinação para empregar os pronomes relativos (who, which, that, whose)\" — e é essa que o caderno cumpre. Registrado em 20/set/2026, no parecer pedagógico, para o professor não ler uma frase cortada e achar que falta alguma coisa."
  ],
  "objetivos": [
   {

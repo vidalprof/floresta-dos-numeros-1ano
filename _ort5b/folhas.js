@@ -125,7 +125,7 @@ function f0(d){
   /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
      Cena: a loteria: as bolas com S rolando no globo. O título entra letra a letra (gira), palavra por palavra
      (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
-  var c = el("div", "capa"), nome = "A LOTERIA DO S", k, letras = "", pos = 0;
+  var c = el("div", "capa"), nome = "APRENDENDO A ORTOGRAFIA DO S, SS, C, Ç, SC, X E Z", k, letras = "", pos = 0;
   var V = typeof VIMG !== "undefined" ? VIMG : 2;
   nome.split(" ").forEach(function(pal, w){
     var s = "";

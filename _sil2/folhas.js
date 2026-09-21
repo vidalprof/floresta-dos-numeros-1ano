@@ -246,7 +246,7 @@ function f0(d){
   /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
      Cena: o armário: as gavetas abrindo com uma sílaba em cada. O título entra letra a letra (desliza), palavra por palavra
      (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
-  var c = el("div", "capa"), nome = "O Armário das Quatro Gavetas", k, letras = "", pos = 0;
+  var c = el("div", "capa"), nome = "Aprendendo a separar as palavras em sílabas", k, letras = "", pos = 0;
   var V = typeof VIMG !== "undefined" ? VIMG : 2;
   nome.split(" ").forEach(function(pal, w){
     var s = "";
@@ -937,7 +937,7 @@ var OBJETIVOS = [
   {n: "Não confundir letra com sílaba", f: [6, 7, 8, 27]},
   {n: "Classificar a palavra pelo número de sílabas", f: [9, 10, 11, 12, 13, 14, 28, 29, 35]},
   {n: "Mexer nas sílabas: tirar, pôr e trocar para formar palavras", f: [15, 16, 17, 18, 19, 20, 33]},
-  {n: "Achar a sílaba certa no meio de muitas", f: [21, 22, 23, 24, 25]},
+  {n: "Achar a sílaba certa no meio de muitas, e escrever a palavra inteira", f: [21, 22, 23, 24, 25]},
   {n: "Separar as palavras dentro da frase e do texto", f: [30, 31, 32]},
   {n: "Escrever a própria palavra com o número de sílabas pedido", f: [34]}
 ];
@@ -2446,8 +2446,8 @@ function f34(d, pi){
       linha. O cartaz que ela leva para o caderno é o que ela construiu. */
 function f35(d, pi){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Você já sabe fazer tudo isto. Agora as palavras que dão " +
-            "nome: leve cada exemplo para a linha dele.", "p" + pi + "enun");
+  enunciado(d, pi, "Você já sabe fazer tudo isto. Agora monte o cartaz: " +
+            "leve cada palavra para a linha do número de sílabas dela.", "p" + pi + "enun");
   var cart = el("div", "cartaz"), linhas = {};
   CART.linhas.forEach(function(L){
     var l = el("div", "cartlin");

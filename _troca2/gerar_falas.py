@@ -407,8 +407,8 @@ for k, Dt in DIT.items():
                       u"verdade?")
 
 # ---- 35 — o cartaz que você leva ----
-p(u"p35enun", u"Folha trinta e cinco. Você já sabe fazer tudo isto. Agora as "
-              u"palavras que dão nome: leve cada exemplo para a linha dele.")
+p(u"p35enun", u"Folha trinta e cinco. Você já sabe fazer tudo isto. Agora os "
+              u"nomes das quatro mexidas: leve cada exemplo para a linha dele.")
 for L in CART[u"linhas"]:
     p(u"cart_" + L[u"k"], L[u"t"] + u" é " + L[u"d"] + u". Por exemplo: " +
                           L[u"e"].replace(u"→", u"vira") + u".")

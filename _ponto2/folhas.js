@@ -907,7 +907,7 @@ var OBJETIVOS = [
   {n: "Responder uma pergunta com uma frase de ponto final", f: [17, 18, 19]},
   {n: "Ordenar as palavras para formar a frase e fechá-la", f: [20, 21]},
   {n: "Escrever a letra maiúscula que abre a frase e o ponto que a fecha", f: [22, 23]},
-  {n: "Escrever a palavra que abre a pergunta", f: [24, 32]},
+  {n: "Escrever a palavra que abre a pergunta e a que traz o susto", f: [24, 32]},
   {n: "Achar frases pelo sinal dentro de um texto", f: [25, 26, 27]},
   {n: "Reconhecer a frase pontuada certa e consertar a errada", f: [28, 29]},
   {n: "Pontuar um texto inteiro do começo ao fim", f: [30, 31]},

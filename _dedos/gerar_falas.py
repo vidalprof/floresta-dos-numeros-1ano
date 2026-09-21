@@ -42,7 +42,7 @@ def chave(s):
 F = {}
 # ---- fixas
 F.update({
-    "capa": u"Somando com os dedinhos! Escreva o seu nome ali embaixo e toque em Começar.",
+    "capa": u"Aprendendo a somar até dez com os dedos. Escreva o seu nome ali embaixo e toque em Começar.",
     "nomeOk": u"Que nome bonito! Agora toque em Começar.",
     "vozOn": u"Narração ligada!",
     "p1enun": u"Conte os dedos das duas mãos e digite quantos são ao todo. Toque no quadradinho para escrever.",

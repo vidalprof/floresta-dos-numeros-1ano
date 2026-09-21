@@ -897,7 +897,7 @@ var OBJETIVOS = [
    ok: "olha a foto e diz o que ela mostra, sem ler nada escrito"},
   {n: "Reconhecer a legenda que explica a foto", f: [3, 4],
    ok: "escolhe e liga a legenda que combina com cada foto"},
-  {n: "Escrever a legenda de uma foto", f: [5, 6],
+  {n: "Casar a legenda com a foto, e escrever a que falta", f: [5, 6],
    ok: "põe e escreve a legenda certa embaixo da foto"},
   {n: "Reconhecer a manchete: a frase curta que chama", f: [7, 8, 9],
    ok: "separa manchete de outros textos e escolhe a manchete da foto"},

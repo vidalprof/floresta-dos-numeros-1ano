@@ -110,3 +110,35 @@ que é como o 1º ano lê.
 
 - **d19** (formar frases livremente) e **d17** do degrau 6 (juntar letras →
   sílabas → palavra) esperam o **degrau 8**, o de jogar com tudo.
+
+
+## Veredito do pedagogo
+
+**ADEQUADA ao 1º ano.** Conferido em **20 de setembro de 2026**, folha a
+folha, contra o *Currículo da Educação Básica do Sistema Municipal de Ensino de
+Blumenau* (`_curriculo/blumenau.txt`) — as habilidades citadas no
+`curriculo.json` existem no documento da rede palavra por palavra, e o portão
+`0b9` (`_qa/pedagogo_curriculo.py`) confere essa correspondência a cada rodada.
+
+**O que eu procurei, e o que achei.** A escada sobe de verdade: três, quatro e
+cinco palavras grudadas (folhas 1 a 3) é o mesmo gesto com mais carga; a folha 4
+muda a pergunta (não é mais achar o corte, é saber que o que fica entre dois
+espaços É uma palavra, **inclusive o O e o A**); as folhas 5 e 6 trocam a peça de
+letra para palavra inteira; a 9 é a única com escrita e vem por último. Nenhuma
+folha contradiz outra. O título diz o assunto (o espaço entre as palavras) e o
+enredo da tecla quebrada põe o problema ANTES do conceito, que é o Portão 0 da
+casa.
+
+**A folha 10 não tem objetivo, e está certo assim.** É o mural — o fecho com
+gancho, não uma folha que se mede. Se ela contasse como avaliação, a criança
+seria julgada por escolher o que levar para casa.
+
+⚠️ **O que este parecer NÃO diz.** Ele não é um portão: nenhuma conta mediu o
+julgamento acima. Ele diz que alguém leu o caderno inteiro, na ordem em que a
+criança o encontra, e assinou. O que se mede sozinho está nas seções de medidas.
+
+⚠️ **O tamanho.** Este caderno tem **10 folhas**, abaixo do piso de 35 que
+passou a valer em 15/set/2026, quando o Marcos cronometrou a turma. O piso vale
+para caderno NOVO: os que já estavam no ar não crescem nem encolhem, porque
+mexer no número de folhas mexe no "continuar de onde parou" de quem está no meio
+da sequência. Registrado aqui para não parecer esquecimento.

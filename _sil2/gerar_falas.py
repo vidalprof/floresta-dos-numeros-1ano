@@ -461,8 +461,8 @@ for k, X in DESA.items():
                       u"escrever. O número de palmas tem que bater com o pedido.")
 
 # ---- 35 — o cartaz ----
-p(u"p35enun", u"Folha trinta e cinco. Você já sabe fazer tudo isto. Agora as "
-              u"palavras que dão nome: leve cada exemplo para a linha dele.")
+p(u"p35enun", u"Folha trinta e cinco. Você já sabe fazer tudo isto. Agora monte o "
+              u"cartaz: leve cada palavra para a linha do número de sílabas dela.")
 for L in CART[u"linhas"]:
     p(u"cart_" + L[u"k"], L[u"t"] + u": " + L[u"d"] + u". Por exemplo, " +
                           L[u"e"].replace(u"-", u", ") + u".")

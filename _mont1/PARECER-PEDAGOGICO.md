@@ -93,3 +93,31 @@ responde pelo desenho e a folha vira loteria.
   degrau 8, quando a escrita já estiver de pé.
 - **"Pinte as sílabas que formam o nome"** (d14, d21) é a primeira candidata a
   folha extra, se o Marcos quiser uma a mais.
+
+
+## Veredito do pedagogo
+
+**ADEQUADA ao 1º ano.** Conferido em **20 de setembro de 2026**, folha a
+folha, contra o *Currículo da Educação Básica do Sistema Municipal de Ensino de
+Blumenau* (`_curriculo/blumenau.txt`) — as habilidades citadas no
+`curriculo.json` existem no documento da rede palavra por palavra, e o portão
+`0b9` (`_qa/pedagogo_curriculo.py`) confere essa correspondência a cada rodada.
+
+**O que eu procurei, e o que achei.** A progressão é de ouvido para escrita: a
+criança primeiro JUNTA dois pedaços que ouve, depois acha o pedaço que falta,
+depois reconhece a palavra escrita em pedaços, e só no fim escreve o pedaço. É a
+ordem concreto → figural → simbólico, e ela não pula. O recorte de voz (100
+recortes em 36 palavras) é o que sustenta a folha 1: sem ouvir os pedaços
+separados, "juntar" seria adivinhação visual.
+
+**A folha 10 não tem objetivo, e está certo assim** — é o mural do fecho.
+
+⚠️ **O que este parecer NÃO diz.** Ele não é um portão: nenhuma conta mediu o
+julgamento acima. Ele diz que alguém leu o caderno inteiro, na ordem em que a
+criança o encontra, e assinou. O que se mede sozinho está nas seções de medidas.
+
+⚠️ **O tamanho.** Este caderno tem **10 folhas**, abaixo do piso de 35 que
+passou a valer em 15/set/2026, quando o Marcos cronometrou a turma. O piso vale
+para caderno NOVO: os que já estavam no ar não crescem nem encolhem, porque
+mexer no número de folhas mexe no "continuar de onde parou" de quem está no meio
+da sequência. Registrado aqui para não parecer esquecimento.

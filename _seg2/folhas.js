@@ -221,7 +221,7 @@ function f0(d){
      abrem devagar até os espaços aparecerem, e fecham de novo. A criança vê o
      problema antes de ler o título — o problema primeiro, o conceito por
      último (Portão 0 da filosofia da casa). */
-  var c = el("div", "capa"), nome = "O Caderno do Juquinha", k, letras = "";
+  var c = el("div", "capa"), nome = "Aprendendo a separar as palavras na frase e no texto", k, letras = "";
   nome.split(" ").forEach(function(pal, w){
     var s = "";
     for(k = 0; k < pal.length; k++) s += '<span class="lt">' + pal.charAt(k) + '</span>';

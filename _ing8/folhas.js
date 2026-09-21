@@ -230,7 +230,7 @@ function f0(d){
   /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
      Cena: o balcão de achados e perdidos com as etiquetas penduradas balançando. O título entra letra a letra (desliza), palavra por palavra
      (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
-  var c = el("div", "capa"), nome = "Lost & Found — o balcão dos achados e perdidos", k, letras = "", pos = 0;
+  var c = el("div", "capa"), nome = "Aprendendo some, any, much, many e os pronomes relativos", k, letras = "", pos = 0;
   var V = typeof VIMG !== "undefined" ? VIMG : 2;
   nome.split(" ").forEach(function(pal, w){
     var s = "";

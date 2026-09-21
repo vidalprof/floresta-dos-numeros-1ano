@@ -93,7 +93,7 @@ function f0(d){
   /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
      Cena: a fábrica de nomes: as placas de nome saindo pela esteira. O título entra letra a letra (desliza), palavra por palavra
      (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
-  var c = el("div", "capa"), nome = "A FÁBRICA DE NOMES", k, letras = "", pos = 0;
+  var c = el("div", "capa"), nome = "APRENDENDO OS SUBSTANTIVOS E A FORMAÇÃO DE PALAVRAS", k, letras = "", pos = 0;
   var V = typeof VIMG !== "undefined" ? VIMG : 2;
   nome.split(" ").forEach(function(pal, w){
     var s = "";
@@ -1340,7 +1340,7 @@ function abreCruz(E, pi){
 }
 function fechaCruz(){
   /* ⚠️⚠️ LIÇÃO PAGA — "O ALUNO NÃO CONSEGUIA DIGITAR" (Marcos, 18/set/2026, na
-     folha 8 d'A Fábrica de Nomes). Aqui estava `CRUZ = null; pintaCruz();` — e
+     folha 8 d'Aprendendo os substantivos e a formação de palavras). Aqui estava `CRUZ = null; pintaCruz();` — e
      `pintaCruz` começa lendo `CRUZ.E`. Estourava TypeError toda vez que se
      fechava a caneta. Como a casinha E a grade tinham `onclick`, um toque na
      casinha chamava `abreCruz` duas vezes: a segunda fechava a primeira, o

@@ -147,7 +147,7 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
         else if(/cover/.test(g.s)&&dif>0.6&&r.width>200) av.push("fundo em cover com proporcao muito diferente ("+Math.round(dif*100)+"%) em "+nome(g.e)+": some mais da metade da cena");
       }
       /* 5 — alvos pequenos */
-      let peq=0, ex="";
+      let peq=0, ex="", apertados=0;
       /* alvo = botao/link/input/onclick E TAMBEM qualquer coisa com cursor:pointer (os
          apps a mao ligam o clique por JS, sem atributo — as bolinhas de cor do Pixel
          Art, 20px, escapavam por isso). Filho de alvo nao conta duas vezes. */
@@ -157,9 +157,54 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
         let pai=e.parentElement, dentro=false; while(pai&&pai!==document.body){ if(ehAlvo(pai)){ dentro=true; break; } pai=pai.parentElement; }
         if(dentro) continue;
         const r=e.getBoundingClientRect(); if(r.bottom<0||r.top>H) continue;
-        if(r.width<40||r.height<40){ peq++; if(!ex) ex=nome(e)+" "+Math.round(r.width)+"x"+Math.round(r.height); }
+        /* ⚠️ PALAVRA DENTRO DE TEXTO CORRIDO NAO CABE NA REGUA DE 40 px
+           (20/set/2026). Ha folhas em que a crianca toca numa PALAVRA no meio
+           de uma frase — "toque nas palavras que dizem qual era o problema".
+           Cada palavra e um <button> inline dentro de um paragrafo, e palavras
+           como "o", "a" e "e" tem 14 px de largura. Exigir 40 px ali obrigaria
+           a abrir buracos entre as palavras e a frase deixaria de ser uma
+           frase: a regua mandaria consertar destruindo a folha. O que a
+           crianca precisa e de ALTURA para o dedo (o `line-height:2.1` ja da
+           40 px) e de uma largura que nao seja um fio. Piso: 24 x 40.
+           ⚠️⚠️ E HA UM CASO AINDA MAIS APERTADO, que eu tentei reprovar e
+              tive de aceitar: o CORTE ENTRE DUAS LETRAS (a peca `.vao` das
+              folhas de segmentacao — "OGATOCOMEUOPEIXE", e a crianca toca na
+              fresta onde a palavra se parte). Ali o alvo mora ENTRE dois
+              caracteres: a largura dele E o espaco entre as letras. Numa
+              palavra de dezesseis letras, exigir 24 px por fresta daria 360 px
+              so de frestas numa tela de 320 — a palavra nao caberia, e a folha
+              deixaria de existir. Larguras impossiveis nao se exigem: mede-se o
+              que da para consertar e AVISA-SE o resto.
+           Por isso o piso do alvo inline em texto e 14 x 40 (reprova abaixo) e
+           de 14 a 24 sai AVISO com a contagem. O que segura o dedo ali e a
+           ALTURA (42 px), a marca visivel da fresta e o erro que responde com
+           dica em vez de castigo.
+           ⚠️ PALPITE DECLARADO: 14 e 24 sao juizo, nao medida. Quem tiver
+              crianca na frente e um cronometro, que meca e aperte.
+           So vale para alvo INLINE dentro de um pai de texto: botao de
+           verdade, casinha de cruzadinha e tecla continuam valendo 40. */
+        const cs=getComputedStyle(e), pai2=e.parentElement;
+        const csp=pai2?getComputedStyle(pai2):null;
+        /* ⚠️ "texto corrido" aqui e o paragrafo E TAMBEM a palavra montada em
+           FLEX QUE QUEBRA LINHA — a peca `.grudada` das folhas de segmentacao
+           poe cada letra num <span> e cada fresta num <button> dentro de um
+           `display:flex;flex-wrap:wrap`. Visualmente e uma palavra; para o CSS
+           e uma linha de flex. Deixar o flex de fora fazia a regra enxergar
+           metade dos casos. GRID fica de fora de proposito: cruzadinha e
+           caca-palavras sao grade, e ali o alvo PODE crescer (ou o pai pode
+           rolar de lado), entao vale o piso cheio de 40 px. */
+        const linhaDeTexto = csp && (/^(block|list-item|inline|inline-block)$/.test(csp.display) ||
+          (csp.display==="flex" && /wrap/.test(csp.flexWrap) && !/column/.test(csp.flexDirection)));
+        const naFrase = linhaDeTexto &&
+                        [...pai2.children].filter(c=>ehAlvo(c)).length>=4;
+        const pisoL = naFrase?14:40;
+        /* meio pixel de folga: altura 39,6 arredonda para 40 na mensagem e
+           reprovava dizendo "40x40", que e recado que ninguem consegue seguir */
+        if(r.width<pisoL-0.5||r.height<39.5){ peq++; if(!ex) ex=nome(e)+" "+Math.round(r.width)+"x"+Math.round(r.height)+(naFrase?" (dentro de texto corrido: piso 14x40)":""); }
+        else if(naFrase&&r.width<24) apertados++;
       }
       if(peq) out.push(peq+" alvo(s) menor(es) que 40px (ex.: "+ex+")");
+      if(apertados) av.push(apertados+" alvo(s) dentro de texto corrido com menos de 24px de largura (palavra curta ou fresta entre letras): passa pelo piso declarado de 14px, mas e aperto de verdade para o dedo — ver a nota da regra 5");
       /* ⭐ 5b — ALVO CORTADO PELA BORDA (19/set/2026, O Caderno do Juquinha).
          A cruzadinha da folha 25 saía com 9 colunas de 46 px numa tela de 360:
          a última coluna ficava PARTIDA na beira do cartão, e a criança não tinha

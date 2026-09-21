@@ -219,7 +219,7 @@ function f0(d){
   /* CAPA COM IDENTIDADE PRÓPRIA — gerada por _padrao/identidade_capa.py (editar lá).
      Cena: o motor da frase: as crianças em ação passam na esteira, e embaixo de cada uma o verbo que a nomeia (figuras recortadas da folha de papel d33). O título entra letra a letra (desliza), palavra por palavra
      (nowrap, para não quebrar no meio); as figuras são as do próprio caderno. */
-  var c = el("div", "capa"), nome = "O Motor da Frase", k, letras = "", pos = 0;
+  var c = el("div", "capa"), nome = "Aprendendo o verbo e a concordância verbal", k, letras = "", pos = 0;
   var V = typeof VIMG !== "undefined" ? VIMG : 2;
   nome.split(" ").forEach(function(pal, w){
     var s = "";
@@ -917,7 +917,7 @@ var OBJETIVOS = [
    ok: "escolhe o verbo de dizer pelo sentido da fala"},
   {n: "Achar as formas do verbo nas grades de letras", f: [29, 30, 31, 32],
    ok: "acha as formas do verbo nas grades de letras"},
-  {n: "Usar o verbo que combina para escrever", f: [33, 34, 35],
+  {n: "Escrever com o verbo que combina, e nomear o que aprendeu", f: [33, 34, 35],
    ok: "usa o verbo que combina para escrever"}
 ];
 

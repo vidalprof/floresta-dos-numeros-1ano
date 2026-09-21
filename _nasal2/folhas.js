@@ -914,7 +914,7 @@ var OBJETIVOS = [
   {n: "Achar a palavra da regra em jogo, em lista e em cena", f: [21, 22, 23, 24, 25, 28]},
   {n: "Separar as palavras pela vogal que vem antes da marca", f: [26, 27]},
   {n: "Achar a palavra da regra dentro de um texto e de uma frase", f: [30, 31, 32]},
-  {n: "Escrever o nome da figura aplicando a regra", f: [34, 35]}
+  {n: "Escrever aplicando a regra, e nomear as quatro regras", f: [34, 35]}
 ];
 
 function mede(folhas){

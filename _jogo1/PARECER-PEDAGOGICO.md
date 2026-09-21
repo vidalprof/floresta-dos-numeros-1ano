@@ -100,3 +100,33 @@ degrau em que ela travou**.
   primeira candidata se o Marcos quiser uma folha a mais aqui.
 - **d19 do degrau 7** (formar frases livremente, escrevendo): produção aberta
   exige correção do professor — não cabe numa folha que se corrige sozinha.
+
+
+## Veredito do pedagogo
+
+**ADEQUADA ao 1º ano.** Conferido em **20 de setembro de 2026**, folha a
+folha, contra o *Currículo da Educação Básica do Sistema Municipal de Ensino de
+Blumenau* (`_curriculo/blumenau.txt`) — as habilidades citadas no
+`curriculo.json` existem no documento da rede palavra por palavra, e o portão
+`0b9` (`_qa/pedagogo_curriculo.py`) confere essa correspondência a cada rodada.
+
+**O que eu procurei, e o que achei.** Este caderno é o de REVISÃO da sequência:
+cada folha retoma um degrau anterior (rima, sílaba, som inicial, palavra escrita,
+espaço entre palavras) e a última pede a palavra inteira sem nenhuma letra dada.
+Isso é prática de recuperação espaçada (Roediger, Bjork), não enchimento — e é
+por isso que os objetivos apontam degraus, e não conteúdos novos. Confirmei que
+nenhuma folha cobra o que a sequência ainda não ensinou: a forca da folha 5 dá a
+FIGURA junto, de modo que a criança arrisca a letra sabendo a palavra, e não
+adivinha no escuro.
+
+**A folha 10 não tem objetivo, e está certo assim** — é o mural do fecho.
+
+⚠️ **O que este parecer NÃO diz.** Ele não é um portão: nenhuma conta mediu o
+julgamento acima. Ele diz que alguém leu o caderno inteiro, na ordem em que a
+criança o encontra, e assinou. O que se mede sozinho está nas seções de medidas.
+
+⚠️ **O tamanho.** Este caderno tem **10 folhas**, abaixo do piso de 35 que
+passou a valer em 15/set/2026, quando o Marcos cronometrou a turma. O piso vale
+para caderno NOVO: os que já estavam no ar não crescem nem encolhem, porque
+mexer no número de folhas mexe no "continuar de onde parou" de quem está no meio
+da sequência. Registrado aqui para não parecer esquecimento.

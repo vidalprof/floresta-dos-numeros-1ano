@@ -915,7 +915,7 @@ var OBJETIVOS = [
   {n: "Acrescentar uma sílaba no começo ou no fim", f: [23, 24]},
   {n: "Ler por blocos: achar a sílaba pelo número no quadro", f: [27, 28, 29, 30]},
   {n: "Reconhecer a sílaba inicial, medial e final", f: [32, 34]},
-  {n: "Levar a palavra montada para dentro de uma frase", f: [33, 35]}
+  {n: "Levar a palavra para dentro da frase, e nomear as quatro mexidas", f: [33, 35]}
 ];
 
 function mede(folhas){
@@ -2291,8 +2291,8 @@ function f34(d, pi){
       caderno é o que ela construiu. */
 function f35(d, pi){
   faixa(d, pi, NOMES[pi - 1]);
-  enunciado(d, pi, "Você já sabe fazer tudo isto. Agora as palavras que dão " +
-            "nome: leve cada exemplo para a linha dele.", "p" + pi + "enun");
+  enunciado(d, pi, "Você já sabe fazer tudo isto. Agora os <b>nomes</b> das " +
+            "quatro mexidas: leve cada exemplo para a linha dele.", "p" + pi + "enun");
   var cart = el("div", "cartaz"), linhas = {}, listaC = [];
   CART.linhas.forEach(function(L){
     var l = el("div", "cartlin");

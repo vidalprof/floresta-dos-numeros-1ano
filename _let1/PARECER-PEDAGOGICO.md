@@ -105,3 +105,32 @@ pelo desenho e a folha vira loteria.
 - **d19 e d21** (frase) esperam o degrau 7 — espaços entre palavras.
 - **d17** (letras → sílabas → palavra) espera o degrau 8, como revisão que
   atravessa os dois degraus.
+
+
+## Veredito do pedagogo
+
+**ADEQUADA ao 1º ano.** Conferido em **20 de setembro de 2026**, folha a
+folha, contra o *Currículo da Educação Básica do Sistema Municipal de Ensino de
+Blumenau* (`_curriculo/blumenau.txt`) — as habilidades citadas no
+`curriculo.json` existem no documento da rede palavra por palavra, e o portão
+`0b9` (`_qa/pedagogo_curriculo.py`) confere essa correspondência a cada rodada.
+
+**O que eu procurei, e o que achei.** O caderno inteiro gira em torno de uma só
+ideia — trocar uma letra muda a palavra — e ela aparece primeiro como BRINQUEDO
+(folha 1: a criança toca e vê a palavra mudar) e só depois como tarefa. A posição
+da letra que falta anda de propósito: começo (2), meio e fim (3). As folhas 6 e 7
+são o mesmo gesto com um degrau a mais (uma letra sobra), coladas, como manda a
+regra da repetição seguida. Nada aqui é do 2º ano: não se pede sílaba
+classificada nem separação silábica, só o fonema e a letra que o escreve.
+
+**A folha 10 não tem objetivo, e está certo assim** — é o mural do fecho.
+
+⚠️ **O que este parecer NÃO diz.** Ele não é um portão: nenhuma conta mediu o
+julgamento acima. Ele diz que alguém leu o caderno inteiro, na ordem em que a
+criança o encontra, e assinou. O que se mede sozinho está nas seções de medidas.
+
+⚠️ **O tamanho.** Este caderno tem **10 folhas**, abaixo do piso de 35 que
+passou a valer em 15/set/2026, quando o Marcos cronometrou a turma. O piso vale
+para caderno NOVO: os que já estavam no ar não crescem nem encolhem, porque
+mexer no número de folhas mexe no "continuar de onde parou" de quem está no meio
+da sequência. Registrado aqui para não parecer esquecimento.

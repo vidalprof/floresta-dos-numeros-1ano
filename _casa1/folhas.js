@@ -2063,8 +2063,8 @@ var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
    e as folhas não baterem um a um. Os números são POSIÇÕES de folha: mudou a
    ordem, mudam aqui e no `curriculo.json`, no mesmo commit. */
 var OBJETIVOS = [
-  {n: "Entender para que serve uma moradia", f: [1],
-   ok: "sabe dizer para que serve uma casa e o que ela precisa ter",
+  {n: "Entender para que serve a moradia, e cada cômodo dela", f: [1, 23],
+   ok: "sabe dizer para que serve uma casa, e o que fica em cada cômodo",
    nao: "ainda não separa o que uma casa serve do que ela não serve"},
   {n: "Reconhecer e nomear os tipos de moradia", f: [2, 3, 4, 5],
    ok: "reconhece e nomeia oca, palafita, iglu, tenda, prédio e sobrado",
@@ -2081,7 +2081,7 @@ var OBJETIVOS = [
   {n: "Reconhecer a visão frontal, a vertical e a oblíqua", f: [17, 18, 19],
    ok: "reconhece a mesma coisa na visão frontal, na vertical e na oblíqua",
    nao: "ainda não reconhece as coisas vistas de cima"},
-  {n: "Comparar como era antes e como é hoje, e quem constrói", f: [20, 21, 22, 23],
+  {n: "Comparar como era antes e como é hoje, e quem constrói", f: [20, 21, 22],
    ok: "compara o mesmo lugar em dois tempos e conhece quem faz a obra",
    nao: "ainda não compara o antes e o depois do mesmo lugar"},
   {n: "Achar as moradias no poema e montar a rua do mundo", f: [24, 25],
