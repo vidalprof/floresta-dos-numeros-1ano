@@ -26,10 +26,10 @@ var livro = document.getElementById("livro"), PAGEL = [], TIRAS = [];
    apontada por engano FECHAVA SOZINHA, sem ninguém tocar nela. São as únicas
    cujos ids não nascem de `n<pi>_`, e sim dentro do `montaLigar`
    (`l<pi>g<i>_<chave>`). Conferir com `node _qa/conta_folha.js <pasta>`. */
-var LIGAR = [];
+var LIGAR = [6, 9, 27];
 /* a cor da faixa por BLOCO da escada, não por folha: a criança vê que o assunto
    mudou. Uma entrada por folha, de c1 a c5. */
-var CORES = [];
+var CORES = ["c1", "c1", "c1", "c1", "c1", "c2", "c2", "c2", "c2", "c2", "c2", "c2", "c3", "c3", "c3", "c3", "c3", "c3", "c3", "c3", "c3", "c4", "c4", "c4", "c4", "c4", "c4", "c4", "c5", "c5", "c5", "c5", "c5", "c5", "c5", "c5", "c5", "c5"];
 
 
 function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
@@ -220,7 +220,15 @@ function sobre(ev, alvo){
 function monta(){
   livro.innerHTML = ""; PAGEL = []; RESP = {}; TIRAS = [];
   /* ⚠️ UMA ENTRADA POR FOLHA, na ordem, começando pela capa `f0`. */
-  var caps = [f0], i;
+  var caps = [f0,
+    f01, f02, f03, f04, f05, f06,
+    f07, f08, f09, f10, f11, f12,
+    f13, f14, f15, f16, f17, f18,
+    f19, f20, f21, f22, f23, f24,
+    f25, f26, f27, f28, f29, f30,
+    f31, f32, f33, f34, f35, f36,
+    f37, f38];
+  var i;
   for(i = 0; i < caps.length; i++){
     var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
     caps[i](d, i);
@@ -236,19 +244,43 @@ function monta(){
       `img()` de outra atividade: o app abria com um quadradinho vazio e um 404
       no console, e nenhum portão de texto viu. */
 function f0(d){
-  /* CAPA DE ESQUELETO — por desenhar. `python3 _padrao/identidade_capa.py <pasta>` a
-     substitui pela capa com identidade própria (cor, cena, animação do assunto). */
-  var c = el("div", "capa"), nome = "Aprendendo a multiplicação, a divisão e o dinheiro: compra, venda e troco", k, letras = "";
+  /* ⭐ A CENA É DO ASSUNTO, e as figuras dela vêm das folhas de papel colhidas:
+     a fachada do MERCADINHO sai da folha c35 e as notas e moedas que caem saem
+     da c30. Nada aqui foi gerado por IA — regra do Marcos, 14/set/2026.
+     ⚠️ E A PALAVRA ANIMADA É O TÍTULO DE VERDADE (lição paga em 20/set/2026):
+        quatro cadernos trocaram de nome e continuaram estampando o antigo em
+        letras grandes porque o `var nome` ficou para trás. Quem pegou foi o
+        portão 0b11, não o 0b13. */
+  var c = el("div", "capa"),
+      nome = "APRENDENDO A MULTIPLICAÇÃO, A DIVISÃO E O DINHEIRO",
+      k, letras = "";
   nome.split(" ").forEach(function(pal, w){
     var s = "";
     for(k = 0; k < pal.length; k++) s += '<span class="lt">' + pal.charAt(k) + '</span>';
     letras += (w ? '<span class="esp"></span>' : '') + '<span class="tpal">' + s + '</span>';
   });
+  /* a chuva de troco: seis peças, cada uma na sua faixa e com o seu atraso.
+     ⚠️ SEM SORTEIO AQUI: a capa tem de sair igual em toda foto, senão o portão
+        das fotos (5c) acusa mudança que não houve. */
+  var chuva = [["c5", 6, 0], ["m100", 20, 1.4], ["c10", 38, 2.9],
+               ["m25", 58, 0.7], ["c2", 74, 3.8], ["m50", 88, 2.2]],
+      ceu = "";
+  chuva.forEach(function(P){
+    ceu += '<img class="moe" draggable="false" onload="naoAmplia(this)" src="img/' +
+           DIN[P[0]].f + '?v=' + VIMG + '" alt="" style="left:' + P[1] + '%;' +
+           '-webkit-animation-delay:' + P[2] + 's;animation-delay:' + P[2] + 's">';
+  });
   c.innerHTML =
-    '<div class="ceu"></div>' +
+    '<div class="ceu">' + ceu + '</div>' +
     '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Componente &middot; Nº ano &middot; N folhas sobre ASSUNTO</div>' +
-    '<div class="cena">capa por desenhar: _padrao/identidade_capa.py</div>' +
+    '<div class="sub">Matemática &middot; 5º ano &middot; 38 folhas sobre compra, venda, troco e desconto</div>' +
+    '<div class="cena">' +
+      '<img class="loja" draggable="false" onload="naoAmplia(this)" src="img/dn5_mercadinho.png?v=' + VIMG + '" alt="O mercadinho">' +
+      '<div class="balcao">' +
+        img("dn5_c50.png", "", "") + img("dn5_c10.png", "", "") +
+        img("dn5_m100.png", "", "") + img("dn5_m25.png", "", "") +
+      '</div>' +
+    '</div>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
   d.appendChild(c);
 }
@@ -958,7 +990,16 @@ var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
    Ex.: {n: "Distinguir X de Y", f: [1, 2, 3],
          ok:  "faz o que o objetivo pede, em palavras do professor",
          nao: "o que ainda não faz — sem a palavra 'errou'"}  */
-var OBJETIVOS = [];
+var OBJETIVOS = [
+  {n: "Ler, escrever, comparar e ordenar preços com vírgula", f: [1, 2, 3, 4, 5, 6, 7]},
+  {n: "Multiplicar o preço de um pela quantidade para achar o valor a pagar", f: [8, 9, 10, 11, 12]},
+  {n: "Calcular o troco de uma compra, com centavos", f: [13, 14, 15, 16, 17, 18, 19]},
+  {n: "Dividir para trocar dinheiro, repartir e medir", f: [20, 21, 22, 23, 24, 25, 26, 27, 28]},
+  {n: "Comprar, vender e reconhecer lucro e prejuízo", f: [29, 30, 31, 38]},
+  {n: "Calcular o desconto como metade, quarta parte e décima parte do preço", f: [32, 33, 34]},
+  {n: "Comparar os preços de duas lojas e decidir onde comprar", f: [35, 36]},
+  {n: "Contar as combinações diferentes que uma loja pode oferecer", f: [37]}
+];
 
 function mede(folhas){
   var prim = 0, ajuda = 0, tot = 0, tentados = 0, k, j;
@@ -1256,3 +1297,959 @@ function fechaDossie(){ document.getElementById("dossie").className = ""; }
     vaiPara(ST.pag || 1);
   };
 })();
+
+/* ============================================================
+   AS PEÇAS DESTE CADERNO
+
+   ⚠️ O QUE FOI CLONADO, e de onde: o `marqueConfira` vem do `_aumdim2`
+      (que por sua vez o herdou do `_sil2`) — é a peça "marque vários e só
+      depois confira", já corrigida lá. Regra da casa: a mecânica existe,
+      copie, não reescreva.
+   ⚠️ O QUE É NOVO, e por quê: o CAMPO DE VALOR. O motor da folha viva só sabe
+      digitar LETRAS (`abreCruz`/`digitaCruz` andam sobre
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZ"), e este caderno precisa que a criança
+      escreva R$ 12,30. Não dava para clonar o que não existe.
+   ============================================================ */
+
+/* ---------- dinheiro em texto ----------
+   ⚠️ TUDO É CENTAVOS ATÉ AQUI. Esta é a ÚNICA porta de saída para a tela e
+      para a voz: assim não há dois jeitos de escrever o mesmo preço. */
+function rs(c){
+  var neg = c < 0; c = Math.abs(c);
+  var r = Math.floor(c / 100), ct = c % 100;
+  return (neg ? "−" : "") + "R$ " + r.toLocaleString("pt-BR") + "," +
+         (ct < 10 ? "0" : "") + ct;
+}
+/* o mesmo valor do jeito que a VOZ diz — e ela não lê "R$" nem a vírgula */
+function rsFala(c){
+  var r = Math.floor(c / 100), ct = c % 100, s = "";
+  if(r) s += r + (r === 1 ? " real" : " reais");
+  if(r && ct) s += " e ";
+  if(ct) s += ct + (ct === 1 ? " centavo" : " centavos");
+  return s || "zero real";
+}
+function figDin(k, cls){ return img(DIN[k].f, cls || "fdin", DIN[k].n); }
+function figProd(k, cls){ return img(PROD[k].f, cls || "fprod", PROD[k].n); }
+function tiraDin(lista, cls){
+  var d = el("div", "dinlin");
+  lista.forEach(function(k){ d.innerHTML += figDin(k, cls || "fdin"); });
+  return d;
+}
+
+/* ============================================================
+   O CAMPO DE VALOR — a caixa registradora
+
+   ⭐ POR QUE ELE EXISTE: o teclado do motor da folha viva escreve PALAVRA,
+      letra a letra, sobre um alfabeto de letras. Aqui a criança escreve
+      NÚMERO — e, na maior parte das folhas, número com vírgula. Não havia o
+      que clonar.
+
+   ⚠️⚠️ E ELE DIGITA COMO UMA CAIXA REGISTRADORA, de propósito: a criança tecla
+      só ALGARISMOS e a vírgula anda sozinha, da direita para a esquerda
+      (1 vira 0,01 · 12 vira 0,12 · 123 vira 1,23 · 1230 vira 12,30).
+      Três motivos, e os três foram pensados antes de escrever:
+      1. **Didático.** Num caderno cujo assunto é décimo e centésimo, ver a
+         vírgula ANDAR a cada algarismo é a própria lição aparecendo.
+      2. **Não há tecla de vírgula para acertar.** No celular o teclado
+         numérico de alguns aparelhos nem tem vírgula; no PC ela está em dois
+         lugares diferentes (a do teclado e a do bloco numérico, que em
+         português manda PONTO). Qualquer um deles emudeceria a folha.
+      3. **A banca alcança.** O jogador do `_qa/joga_folha.js` digita o
+         gabarito tecla a tecla com o teclado de verdade; só algarismo garante
+         que ele consegue.
+
+   ⚠️ AS TRÊS PORTAS: o teclado do aparelho (o campo tem `inputmode`), o
+      teclado de verdade (a tecla cai no mesmo campo) e o botão **PRONTO**,
+      para quem quer confirmar sem esperar. A regra das duas portas é da casa
+      desde ago/2026; aqui saiu uma a mais porque o campo fecha sozinho quando
+      o valor bate, e quem erra precisa de um jeito de dizer "é esse mesmo".
+   ============================================================ */
+var VALOR = null;          /* o campo aberto agora */
+var VALIN = null;          /* o <input> invisível que chama o teclado */
+
+function campoValorIn(){
+  if(VALIN) return VALIN;
+  VALIN = document.createElement("input");
+  VALIN.id = "valIn";
+  VALIN.type = "text";
+  VALIN.setAttribute("inputmode", "numeric");
+  VALIN.setAttribute("autocomplete", "off");
+  VALIN.setAttribute("aria-label", "Escreva o valor");
+  VALIN.addEventListener("input", function(){
+    if(!VALOR) return;
+    /* ⚠️ SÓ ALGARISMO ENTRA, e o que o aparelho mandar de vírgula, ponto ou
+       espaço some aqui — não adianta proibir no teclado do sistema. */
+    var v = (VALIN.value || "").replace(/[^0-9]/g, "");
+    if(v.length > VALOR.max) v = v.slice(0, VALOR.max);
+    VALIN.value = v; VALOR.val = v;
+    pintaValor();
+    confereValorAuto();
+  });
+  VALIN.addEventListener("keydown", function(ev){
+    if(ev.key === "Enter"){ ev.preventDefault(); confereValor(); }
+    else if(ev.key === "Escape"){ fechaValor(); }
+  });
+  document.body.appendChild(VALIN);
+  return VALIN;
+}
+function abreValor(E){
+  if(VALOR && VALOR.E === E){ try{ VALIN && VALIN.focus(); }catch(e){} return; }
+  VALOR = {E: E, val: "", max: E.max};
+  var c = campoValorIn();
+  if(c.parentNode !== E.cx) E.cx.appendChild(c);
+  c.value = "";
+  c.setAttribute("maxlength", String(E.max));
+  try{ c.focus({preventScroll: false}); }catch(e){ c.focus(); }
+  pintaValor();
+  falar("digite");
+}
+function fechaValor(){
+  if(!VALOR) return;
+  VALOR.E.cx.className = "valcx";
+  VALOR = null;
+  try{ VALIN && VALIN.blur(); }catch(e){}
+}
+function textoValor(E, dig){
+  if(E.modo === "int") return dig || "0";
+  var n = parseInt(dig || "0", 10);
+  return rs(n).replace("R$ ", "");
+}
+function pintaValor(){
+  if(!VALOR) return;
+  var E = VALOR.E;
+  E.mostra.innerHTML = textoValor(E, VALOR.val);
+  E.cx.className = "valcx ativo";
+}
+function confereValorAuto(){
+  if(!VALOR) return;
+  var E = VALOR.E, dig = VALOR.val;
+  if(!dig) return;
+  /* fecha sozinha quando o valor BATE — sem tecla nenhuma */
+  if(parseInt(dig, 10) === E.certo){ confereValor(); return; }
+  /* e avisa quando já passou do tamanho da resposta: continuar digitando não
+     vai mais acertar, e deixar a criança digitando no vazio é pior que dizer */
+  if(dig.length >= String(E.certo).length && dig.length >= E.max) confereValor();
+}
+function confereValor(){
+  if(!VALOR) return;
+  var E = VALOR.E, dig = VALOR.val;
+  if(!dig){ falar("digite"); return; }
+  if(parseInt(dig, 10) === E.certo){
+    E.mostra.innerHTML = textoValor(E, String(E.certo));
+    E.cx.className = "valcx ok";
+    VALOR = null;
+    try{ VALIN && VALIN.blur(); }catch(e){}
+    acertou(E.id, E.fc);
+  } else {
+    E.cx.className = "valcx erro";
+    setTimeout(function(){ if(VALOR && VALOR.E === E) E.cx.className = "valcx ativo"; }, 520);
+    errou(E.id, E.fd);
+    VALOR.val = ""; if(VALIN) VALIN.value = "";
+    E.mostra.innerHTML = textoValor(E, "");
+  }
+}
+/* ⭐ DIGITAR SEM TER TOCADO ABRE O PRIMEIRO CAMPO VAZIO DA FOLHA — a mesma
+   regra que o motor já tem para as letras. No PC da escola a criança vê a
+   caixa e começa a teclar; nada na tela diz "toque aqui primeiro". */
+document.addEventListener("keydown", function(ev){
+  if(document.activeElement && document.activeElement.id === "nomeIn") return;
+  if(VALOR || CRUZ) return;
+  if((ev.key || "").length !== 1 || "0123456789".indexOf(ev.key) < 0) return;
+  var todos = document.querySelectorAll('.pagina.viva [data-qa^="esc-"]'), i;
+  for(i = 0; i < todos.length; i++){
+    var idq = todos[i].getAttribute("data-qa").slice(4);
+    if(!ST.resp[idq]){
+      var alvo = todos[i].querySelector(".valcel") || todos[i];
+      alvo.click();
+      return;
+    }
+  }
+});
+
+/* a peça: desenha a caixa, o PRONTO e registra o gabarito */
+function campoValor(box, pi, id, certo, modo, fc, fd){
+  registra(id, pi, String(certo));
+  var pronto = !!ST.resp[id];
+  var cx = el("div", "valcx" + (pronto ? " ok" : ""));
+  cx.setAttribute("data-qa", "esc-" + id);
+  var rot = el("span", "valrs", modo === "int" ? "" : "R$");
+  var mostra = el("b", "valcel", pronto ? textoValor({modo: modo}, String(certo))
+                                        : (modo === "int" ? "0" : "0,00"));
+  mostra.setAttribute("role", "button");
+  mostra.setAttribute("aria-label", "Escreva o valor");
+  cx.appendChild(rot); cx.appendChild(mostra);
+  var E = {id: id, cx: cx, mostra: mostra, certo: certo, modo: modo,
+           max: modo === "int" ? String(certo).length + 2 : 7, fc: fc, fd: fd};
+  cx.onclick = function(){ if(ST.resp[id]) return; abreValor(E); };
+  box.appendChild(cx);
+  if(!pronto){
+    var bt = el("button", "prontobt", "PRONTO");
+    bt.setAttribute("data-qa", "pronto-" + id);
+    bt.onclick = function(ev){
+      ev.stopPropagation();
+      if(ST.resp[id]) return;
+      if(!VALOR || VALOR.E !== E){ abreValor(E); return; }
+      confereValor();
+    };
+    box.appendChild(bt);
+  }
+}
+
+/* ---------- MARQUE VÁRIOS E SÓ DEPOIS CONFIRA ----------
+   ⚠️ CLONADA DO `_aumdim2` (`marqueConfira`), que a herdou do `_sil2`. Não
+      reescrevi nada: o contrato com o jogador da banca (`op-<id>-<k>` nas
+      certas, `no-<id>-<k>` nas erradas e `conferir-<id>` no botão) é o que ele
+      procura, e inventar outro deixaria a folha sem medida. */
+function marqueConfira(box, id, pi, pecas, fCerto, fDica){
+  var feito = !!ST.resp[id], marcadas = {}, bts = [];
+  registra(id, pi, pecas.filter(function(p){ return p.ok; })
+                        .map(function(p){ return p.k; }).join(" "));
+  var cx = el("div", "marcas");
+  pecas.forEach(function(P){
+    var b = el("button", "marca" + (feito && P.ok ? " ok" : ""), P.t);
+    b.setAttribute("aria-label", P.aria || P.t);
+    b.setAttribute("data-qa", (P.ok ? "op-" : "no-") + id + "-" + P.k);
+    b.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso();
+      if(P.fala) falar(P.fala);
+      if(marcadas[P.k]){ delete marcadas[P.k]; b.className = "marca"; }
+      else { marcadas[P.k] = 1; b.className = "marca marcada"; }
+    };
+    if(P.fala){
+      var w = el("div", "opw");
+      w.appendChild(b);
+      /* ⚠️ A CLASSE É "som somop", COM AS DUAS PALAVRAS, e isto foi medido:
+         o CSS da casa é `.som.somop{width:42px;height:42px}` — exige as duas.
+         Escrevendo só "somop" o botão saiu com 16 por 6 pixels, que é um risco
+         cinzento no meio da folha: ninguém acerta com o dedo e ninguém entende
+         o que é. A regra do alto-falante irmão (Marcos, 20/set/2026) pede 42 px
+         e o portão do leiaute cobra 40. */
+      w.appendChild(botaoSom("Ouvir esta opção", function(){ falar(P.fala); }, "som somop"));
+      cx.appendChild(w);
+    } else cx.appendChild(b);
+    bts.push({b: b, P: P});
+  });
+  box.appendChild(cx);
+  if(!feito){
+    var cf = el("button", "prontobt", "CONFERIR");
+    cf.setAttribute("data-qa", "conferir-" + id);
+    cf.onclick = function(){
+      if(ST.resp[id]) return;
+      var certo = true;
+      bts.forEach(function(x){ if(!!marcadas[x.P.k] !== !!x.P.ok) certo = false; });
+      if(certo){
+        bts.forEach(function(x){ if(x.P.ok) x.b.className = "marca ok"; });
+        acertou(id, fCerto); cf.style.display = "none";
+      } else {
+        cx.className = "marcas erro";
+        setTimeout(function(){ cx.className = "marcas"; }, 480);
+        errou(id, fDica);
+      }
+    };
+    box.appendChild(cf);
+  }
+}
+
+/* ============================================================
+   OS CONSTRUTORES DE FOLHA
+   ============================================================ */
+
+/* ---------- 1 · quanto tem na mão (c08, c02) ---------- */
+function f01(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Conte o dinheiro de cada mão e toque no valor certo.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var Q = PUNHO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    box.appendChild(tiraDin(Q.pc));
+    opcoes(box, pi, id, Q.o.map(function(v){
+      return {v: "v" + v, rot: rs(v), aria: rsFala(v), fala: "val_" + v};
+    }), "v" + Q.v, "curta", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 2 · o mesmo, só com o valor escrito (c38) ---------- */
+function f02(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora sem figura de dinheiro: some os valores escritos e preencha o total.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var E = SOMAV[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "moedinhas");
+    E.v.forEach(function(v){ lin.appendChild(el("span", "fichav", rs(v).replace("R$ ", ""))); });
+    box.appendChild(lin);
+    var lin2 = el("div", "enunlin");
+    lin2.appendChild(el("div", "dica", "Some tudo e escreva quanto dá."));
+    lin2.appendChild(botaoSom("Ouvir a conta", function(){ falar("soma_" + k); }));
+    box.appendChild(lin2);
+    campoValor(box, pi, id, E.r, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 3 · cem centavos fazem um real (c34, a40) ---------- */
+function f03(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Marque <b>todos</b> os grupos de moedas que juntas dão <b>R$ 1,00</b>. Depois toque em CONFERIR.",
+            "p" + pi + "enun");
+  var id = "n" + pi + "_0", box = item(null);
+  marqueConfira(box, id, pi, CEM.s.map(function(S){
+    return {k: S.k, t: "", ok: !!S.c, fala: "grupo_" + S.k,
+            aria: S.pc.length + " moedas"};
+  }), "certo_cem", "dica_cem");
+  /* as moedas de cada grupo entram DENTRO do botão que a criança marca */
+  CEM.s.forEach(function(S){
+    var b = box.querySelector('[data-qa="' + (S.c ? "op-" : "no-") + id + "-" + S.k + '"]');
+    if(b) b.innerHTML = S.pc.map(function(k){ return figDin(k, "fmoe"); }).join("");
+  });
+  fechaItem(d, box, id);
+}
+
+/* ---------- 4 · qual vale mais (c03, c10, c15) ---------- */
+function f04(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Olhe bem a vírgula: toque no preço que vale <b>mais</b>.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var C = COMPARA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    opcoes(box, pi, id, [
+      {v: "a", rot: rs(C.a), aria: rsFala(C.a), fala: "val_" + C.a},
+      {v: "b", rot: rs(C.b), aria: rsFala(C.b), fala: "val_" + C.b}
+    ], C.c, "curta", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 5 · do mais barato ao mais caro (c14, c21) ---------- */
+function f05(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ponha os preços em ordem, " + ORDENA.t + ": toque no número do lugar de cada um.",
+            "p" + pi + "enun");
+  var emb = baralha(ORDENA.v.map(function(v, i){ return {v: v, n: i + 1}; }));
+  emb.forEach(function(P, i){
+    var id = "n" + pi + "_" + i, box = item(null);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "pal", rs(P.v)));
+    lin.appendChild(botaoSom("Ouvir", function(){ falar("val_" + P.v); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, ORDENA.v.map(function(_, j){
+      return {v: "n" + (j + 1), rot: String(j + 1), aria: "lugar " + (j + 1), fala: "num_" + (j + 1)};
+    }), "n" + P.n, "num", "certo_ord_" + P.v, "dica_ord_" + P.v);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 6 · o preço e o jeito de dizer (a25) ---------- */
+function f06(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque num preço de um lado e no jeito de dizer ele do outro lado.", "p" + pi + "enun");
+  var pares = ST.folha["p" + pi][0].map(function(k){
+    var D = DIZER[k];
+    return {k: k, esq: rs(D.v), dir: D.t, ariaE: rsFala(D.v), ariaD: D.t,
+            fe: "val_" + D.v, fd: "diz_" + k,
+            fc: "certo" + pi + "_" + k, dica: "dica" + pi + "_" + k};
+  });
+  montaLigar(d, pi, "g0", pares, d);
+}
+
+/* ---------- 7 · escreva o preço que você ouve (a33) ---------- */
+function f07(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Ouça o preço e escreva com algarismos. A vírgula anda sozinha.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var W = ESCUTA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", W.t));
+    lin.appendChild(botaoSom("Ouvir o preço", function(){ falar("ouca_" + k); }));
+    box.appendChild(lin);
+    campoValor(box, pi, id, W.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 8 e 9 · preço de um × quantidade (c35 e c01) ---------- */
+function fUnit(d, pi, tab, comCentavos){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, comCentavos
+      ? "Agora os preços têm <b>centavos</b>: multiplique o preço de um pela quantidade e escreva o total."
+      : "Multiplique o preço de um produto pela quantidade e escreva o total a pagar.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var U = tab[k], P = PROD[U.p], id = "n" + pi + "_" + i, box = item(i + 1);
+    var cx = el("div", "prodlin");
+    cx.innerHTML = figProd(U.p, "fprod");
+    var txt = el("div", "prodtxt");
+    txt.appendChild(el("div", "pal", P.n));
+    txt.appendChild(el("div", "dica", "cada um custa " + rs(P.p) + " &middot; levar " + U.q));
+    cx.appendChild(txt);
+    cx.appendChild(botaoSom("Ouvir o preço e a quantidade", function(){ falar("uni_" + k); }));
+    box.appendChild(cx);
+    campoValor(box, pi, id, U.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 9 · ligar quantidade e preço ao total ---------- */
+function f09(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora os preços têm <b>centavos</b>. Toque na compra de um lado e no total dela do outro.",
+            "p" + pi + "enun");
+  var pares = ST.folha["p" + pi][0].map(function(k){
+    var U = UNITC[k], P = PROD[U.p];
+    return {k: k, esq: U.q + " × " + P.n + " (" + rs(P.p) + ")", dir: rs(U.v),
+            ariaE: U.q + " vezes " + P.n, ariaD: rsFala(U.v),
+            fe: "unic_" + k, fd: "val_" + U.v,
+            fc: "certo" + pi + "_" + k, dica: "dica" + pi + "_" + k};
+  });
+  montaLigar(d, pi, "g0", pares, d);
+}
+
+/* ---------- 10 · o carrinho do mercado (c01) ---------- */
+function f10(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Some o que está em cada carrinho e toque no total certo.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var C = CARRO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var cx = el("div", "carrinho");
+    C.p.forEach(function(pk){
+      var c = el("div", "carritem");
+      c.innerHTML = figProd(pk, "fprod") + '<span class="pr">' + rs(PROD[pk].p) + "</span>";
+      cx.appendChild(c);
+    });
+    box.appendChild(cx);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "dica", "Quanto custa este carrinho?"));
+    lin.appendChild(botaoSom("Ouvir o carrinho", function(){ falar("carr_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, C.o.map(function(v){
+      return {v: "v" + v, rot: rs(v), aria: rsFala(v), fala: "val_" + v};
+    }), "v" + C.v, "curta", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 11 · puxe o total até o carrinho (c03 manda arrastar) ---------- */
+function f11(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Puxe o total certo até o carrinho — ou toque nele, se preferir.",
+            "p" + pi + "enun");
+  var lista = ST.folha["p" + pi];
+  var totais = lista.map(function(k){ return CARROB[k].v; });
+  lista.forEach(function(k, i){
+    var C = CARROB[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var cx = el("div", "carrinho alvo");
+    C.p.forEach(function(pk){
+      var c = el("div", "carritem");
+      c.innerHTML = figProd(pk, "fprod") + '<span class="pr">' + rs(PROD[pk].p) + "</span>";
+      cx.appendChild(c);
+    });
+    cx.setAttribute("data-alvo", "1");
+    box.appendChild(cx);
+    var ops = baralha(totais.slice());
+    opcoes(box, pi, id, ops.map(function(v){
+      return {v: "v" + v, rot: rs(v), aria: rsFala(v), fala: "val_" + v};
+    }), "v" + C.v, "curta", "certo_" + k, "dica_" + k, null, [cx]);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 12 · a conta da nota fiscal (b19, a16, b13, b02) ---------- */
+function f12(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Leia a compra, faça as contas e escreva quanto foi gasto ao todo.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var N = NOTA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", N.fr));
+    lin.appendChild(botaoSom("Ouvir o problema", function(){ falar("nota_" + k); }));
+    box.appendChild(lin);
+    campoValor(box, pi, id, N.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 13 · qual é a conta que acha o troco (a14, c12) ---------- */
+function f13(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Antes de calcular: toque na <b>conta</b> que descobre o troco.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var Y = QUALCONTA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", "A compra custou " + rs(Y.preco) +
+                                       " e você pagou com " + rs(Y.pago) + "."));
+    lin.appendChild(botaoSom("Ouvir a compra", function(){ falar("conta_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha([
+      {v: "sub", rot: rs(Y.pago) + " − " + rs(Y.preco), aria: "subtrair", fala: "opc_" + k + "_sub"},
+      {v: "som", rot: rs(Y.pago) + " + " + rs(Y.preco), aria: "somar", fala: "opc_" + k + "_som"},
+      {v: "inv", rot: rs(Y.preco) + " − " + rs(Y.pago), aria: "inverso", fala: "opc_" + k + "_inv"}
+    ]), "sub", "frase", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 14 · o troco, com preço redondo (c24) ---------- */
+function f14(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Veja o preço do brinquedo e o que foi dado na mão do caixa. Escreva o troco.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var T = TROCO[k], P = PROD[T.p], id = "n" + pi + "_" + i, box = item(i + 1);
+    var cx = el("div", "prodlin");
+    cx.innerHTML = figProd(T.p, "fprod");
+    var txt = el("div", "prodtxt");
+    txt.appendChild(el("div", "pal", P.n + " — " + rs(P.p)));
+    txt.appendChild(el("div", "dica", "pagou com " + rs(T.pago)));
+    cx.appendChild(txt);
+    cx.appendChild(botaoSom("Ouvir a compra", function(){ falar("tro_" + k); }));
+    box.appendChild(cx);
+    campoValor(box, pi, id, T.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 15 · o troco com centavos (c04) ---------- */
+function f15(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora os preços têm <b>centavos</b>. Escreva o troco de cada compra.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var Z = TROCOC[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", Z.fr));
+    lin.appendChild(botaoSom("Ouvir a compra", function(){ falar("troc_" + k); }));
+    box.appendChild(lin);
+    campoValor(box, pi, id, Z.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 16 · qual é o troco, entre quatro (a38, a20) ---------- */
+function f16(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Cuidado: uma das respostas é a <b>soma</b>, não o troco. Toque no troco certo.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var K = TROCO4[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", "Comprou " + K.nome + " por " + rs(K.preco) +
+                                       " e pagou com " + rs(K.pago) + "."));
+    lin.appendChild(botaoSom("Ouvir a compra", function(){ falar("q4_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, K.o.map(function(v){
+      return {v: "v" + v, rot: rs(v), aria: rsFala(v), fala: "val_" + v};
+    }), "v" + K.v, "curta", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 17 · qual punhado é o troco (a13, a06) ---------- */
+function f17(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "O troco foi este valor. Puxe para a mão o punhado de dinheiro que vale o mesmo — ou toque nele.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var H = TROCOP[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var mao = el("div", "mao alvo", '<span class="maotx">troco de ' + rs(H.v) + "</span>");
+    mao.setAttribute("data-alvo", "1");
+    box.appendChild(mao);
+    opcoes(box, pi, id, H.o.map(function(gr, j){
+      return {v: "g" + j, rot: gr.map(function(dk){ return figDin(dk, "fmoe"); }).join(""),
+              aria: "punhado " + (j + 1), fala: "pun_" + k + "_" + j};
+    }), "g" + H.c, "fig", "certo_" + k, "dica_" + k, null, [mao]);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 18 · pagar sem receber troco (a37) ---------- */
+function f18(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Marque as notas e moedas que juntas dão o valor <b>exato</b> da compra — sem sobrar troco. Depois toque em CONFERIR.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var X = SEMTROCO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", "A compra custou " + rs(X.alvo) + "."));
+    lin.appendChild(botaoSom("Ouvir o valor da compra", function(){ falar("ex_" + k); }));
+    box.appendChild(lin);
+    marqueConfira(box, id, pi, X.pc.map(function(dk, j){
+      /* ⚠️ a chave leva o ÍNDICE junto (`c20_0`) porque duas peças da mesma
+         folha podem ser da mesma cédula — e chave repetida faria o CONFERIR
+         achar que a criança marcou as duas quando marcou uma. */
+      return {k: dk + "_" + j, t: "", ok: X.c.indexOf(dk) > -1,
+              fala: "din_" + dk, aria: DIN[dk].n};
+    }), "certo_" + k, "dica_" + k);
+    X.pc.forEach(function(dk, j){
+      var b = box.querySelector('[data-qa$="-' + id + "-" + dk + "_" + j + '"]');
+      if(b) b.innerHTML = figDin(dk, "fmoe");
+    });
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 19 · quanto falta, e com que cédula (c25) ---------- */
+function f19(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque na cédula que dá <b>exatamente</b> o que falta para a compra.", "p" + pi + "enun");
+  var todas = ["c2", "c5", "c10", "c20", "c50", "c100"];
+  ST.folha["p" + pi].forEach(function(k, i){
+    var G = FALTA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", "Tem " + rs(G.tem) + " e precisa de " + rs(G.quer) + "."));
+    lin.appendChild(botaoSom("Ouvir", function(){ falar("fal_" + k); }));
+    box.appendChild(lin);
+    var ops = baralha(todas.slice()).slice(0, 4);
+    if(ops.indexOf(G.v) < 0){ ops[0] = G.v; ops = baralha(ops); }
+    opcoes(box, pi, id, ops.map(function(dk){
+      return {v: dk, rot: figDin(dk, "fmoe"), aria: DIN[dk].n, fala: "din_" + dk};
+    }), G.v, "fig", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 20 · trocar a cédula (c39) ---------- */
+function f20(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Puxe o número certo até a cédula trocada — ou toque nele.", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var R = TROCA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var cx = el("div", "trocalin alvo");
+    cx.innerHTML = figDin(R.de, "fdin") + '<span class="seta">→</span>' + figDin(R.por, "fdin");
+    cx.setAttribute("data-alvo", "1");
+    box.appendChild(cx);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "dica", "Trocou a " + DIN[R.de].n + " por " + DIN[R.por].n +
+                                      ". Quantas recebeu?"));
+    lin.appendChild(botaoSom("Ouvir a troca", function(){ falar("trc_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, R.o.map(function(n){
+      return {v: "n" + n, rot: String(n), aria: n + " cédulas", fala: "num_" + n};
+    }), "n" + R.v, "num", "certo_" + k, "dica_" + k, null, [cx]);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 21 · quantas moedas (a37, a08) ---------- */
+function f21(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Só há moedas desta: quantas são precisas para dar o valor?", "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var A = MOEDAS[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var cx = el("div", "prodlin");
+    cx.innerHTML = figDin(A.moeda, "fmoe");
+    var txt = el("div", "prodtxt");
+    txt.appendChild(el("div", "pal", rs(A.total)));
+    txt.appendChild(el("div", "dica", "só com " + DIN[A.moeda].n));
+    cx.appendChild(txt);
+    cx.appendChild(botaoSom("Ouvir", function(){ falar("moe_" + k); }));
+    box.appendChild(cx);
+    opcoes(box, pi, id, A.o.map(function(n){
+      return {v: "n" + n, rot: String(n), aria: n + " moedas", fala: "num_" + n};
+    }), "n" + A.v, "num", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 22 · a divisão no comércio (b40, b16) ---------- */
+function fProb(d, pi, tab, pede, chv, modo){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, pede, "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var N = tab[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", N.fr));
+    lin.appendChild(botaoSom("Ouvir o problema", (function(kk){
+      return function(){ falar(chv + "_" + kk); };
+    })(k)));
+    box.appendChild(lin);
+    campoValor(box, pi, id, N.v, modo || "int", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 23 · o preço dividido nas prestações (b10, a24) ---------- */
+function f23(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "O preço foi dividido em prestações iguais. Escreva quanto é <b>cada prestação</b>.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var B = PRESTA[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", "Comprou " + B.o + " por " + rs(B.total) +
+                                       ", em " + B.n + " prestações iguais."));
+    lin.appendChild(botaoSom("Ouvir a compra", function(){ falar("pre_" + k); }));
+    box.appendChild(lin);
+    campoValor(box, pi, id, B.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 24 · quantos foram vendidos (b10, b35) ---------- */
+function f24(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Sabendo o preço de um e quanto foi arrecadado, toque em quantos foram vendidos.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var S = VENDIDOS[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", "Cada " + S.coisa.replace(/s$/, "") + " custa " +
+                                       rs(S.preco) + ". A venda arrecadou " + rs(S.total) + "."));
+    lin.appendChild(botaoSom("Ouvir a venda", function(){ falar("ven_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, S.o.map(function(n){
+      return {v: "n" + n, rot: String(n), aria: n + " " + S.coisa, fala: "num_" + n};
+    }), "n" + S.v, "num", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 26 · e quanto sobra (b21, b06) ---------- */
+function f26(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Estas divisões não dão certinho. Escreva quanto <b>sobra</b> em cada uma.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var O = RESTO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", O.fr + " — " + O.a + " ÷ " + O.b +
+                                       " dá " + O.q + " para cada um."));
+    lin.appendChild(botaoSom("Ouvir a divisão", function(){ falar("res_" + k); }));
+    box.appendChild(lin);
+    campoValor(box, pi, id, O.r, "int", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 27 · a prova real (b38, b32) ---------- */
+function f27(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque numa divisão de um lado e, do outro, na multiplicação que prova que ela está certa.",
+            "p" + pi + "enun");
+  var pares = ST.folha["p" + pi][0].map(function(k){
+    var V = PROVA[k];
+    return {k: k, esq: V.a + " ÷ " + V.b + " = " + V.q, dir: V.q + " × " + V.b + " = " + V.a,
+            ariaE: V.a + " dividido por " + V.b, ariaD: V.q + " vezes " + V.b,
+            fe: "div_" + k, fd: "mul_" + k,
+            fc: "certo" + pi + "_" + k, dica: "dica" + pi + "_" + k};
+  });
+  montaLigar(d, pi, "g0", pares, d);
+}
+
+/* ---------- 29 · o lucro (a21, b32) ---------- */
+function f29(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "O <b>lucro</b> é o que sobra: o que vendeu menos o que pagou. Escreva o lucro de cada venda.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var L = LUCRO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", "Comprou " + L.coisa + " por " + rs(L.c) +
+                                       " e vendeu por " + rs(L.v) + "."));
+    lin.appendChild(botaoSom("Ouvir a venda", function(){ falar("luc_" + k); }));
+    box.appendChild(lin);
+    campoValor(box, pi, id, L.r, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 31 · comprei para vender (b32) ---------- */
+function f31(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Comprei " + ATACADO.quantos + " pacotes de suspiro por " + rs(ATACADO.custo) +
+                   " e vou vender cada pacote por " + rs(ATACADO.venda) + ".", "p" + pi + "enun");
+  var perg = [
+    {k: "c1", t: "Vendendo todos os " + ATACADO.quantos + " pacotes, quanto vou receber?", v: ATACADO.c1.v},
+    {k: "c2", t: "Quanto eu já tinha gastado na compra?", v: ATACADO.c2.v},
+    {k: "c3", t: "Então, qual foi o lucro?", v: ATACADO.c3.v},
+    {k: "c4", t: "E se cada pacote fosse vendido por " + rs(ATACADO.vendabaixa) + ", quanto eu receberia?", v: ATACADO.c4.v}
+  ];
+  ST.folha["p" + pi].forEach(function(k, i){
+    var Q = perg[i], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", Q.t));
+    lin.appendChild(botaoSom("Ouvir a pergunta", (function(kk){
+      return function(){ falar("ata_" + kk); };
+    })(k)));
+    box.appendChild(lin);
+    campoValor(box, pi, id, Q.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 32 · o desconto é a metade ---------- */
+function f32(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Hoje a loja dá <b>metade</b> de desconto. Escreva quanto se paga agora.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var M = METADE[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", "Sem desconto, " + M.coisa + " custa " + rs(M.p) + "."));
+    lin.appendChild(botaoSom("Ouvir o preço", function(){ falar("met_" + k); }));
+    box.appendChild(lin);
+    campoValor(box, pi, id, M.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 33 · a quarta parte e a décima parte ---------- */
+function f33(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Cada etiqueta diz quanto de desconto. Toque no preço que a pessoa vai <b>pagar</b>.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var F = PARTE[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", F.coisa.charAt(0).toUpperCase() + F.coisa.slice(1) +
+                                       " custa " + rs(F.p) + ", com " + F.pc + " de desconto — " +
+                                       F.nome + " do preço."));
+    lin.appendChild(botaoSom("Ouvir o desconto", function(){ falar("par_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, F.o.map(function(v){
+      return {v: "v" + v, rot: rs(v), aria: rsFala(v), fala: "val_" + v};
+    }), "v" + F.v, "curta", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 34 · desconto e depois o troco (a03) ---------- */
+function f34(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Duas contas, uma de cada vez: tire o desconto e depois descubra o troco.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var E = DUAS[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", E.coisa.charAt(0).toUpperCase() + E.coisa.slice(1) +
+                                       " custa " + rs(E.p) + " e tem " + rs(E.desc) +
+                                       " de desconto. Pagou com " + rs(E.pago) + "."));
+    lin.appendChild(botaoSom("Ouvir a compra", function(){ falar("dua_" + k); }));
+    box.appendChild(lin);
+    box.appendChild(el("div", "dica", "Escreva o <b>troco</b>."));
+    campoValor(box, pi, id, E.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 35 e 36 · os dois mercados (c26) ---------- */
+function tabelaMercado(d){
+  var t = el("table", "merc");
+  var cab = el("tr", null, "<th>o que a Bia precisa</th><th>Mercado do Povo</th><th>Mercado Economize</th>");
+  t.appendChild(cab);
+  MERCADO.itens.forEach(function(I){
+    var tr = el("tr", null,
+      "<td>" + I.n + "</td><td>" + rs(I.pv) + "</td><td>" + rs(I.ev) + "</td>");
+    t.appendChild(tr);
+  });
+  d.appendChild(t);
+}
+function f35(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "A Bia vai fazer um bolo. Some a lista dela nos dois mercados e responda.",
+            "p" + pi + "enun");
+  tabelaMercado(d);
+  var perg = [
+    {k: "mk1", t: "Qual é o total no Mercado do Povo?",
+     o: [4560, 4410, 4660], c: 4560, fig: 0},
+    {k: "mk2", t: "E qual é o total no Mercado Economize?",
+     o: [3830, 3605, 3930], c: 3830, fig: 0},
+    {k: "mk3", t: "Qual produto custa MAIS no Economize do que no Povo?",
+     o: ["manteiga", "farinha", "leite"], c: "manteiga", fig: 1},
+    {k: "mk4", t: "Onde a Bia deve comprar para economizar?",
+     o: ["Mercado Economize", "Mercado do Povo"], c: "Mercado Economize", fig: 1}
+  ];
+  ST.folha["p" + pi].forEach(function(k, i){
+    var Q = perg[i], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "perg", Q.t));
+    lin.appendChild(botaoSom("Ouvir a pergunta", (function(kk){
+      return function(){ falar("mer_" + kk); };
+    })(k)));
+    box.appendChild(lin);
+    opcoes(box, pi, id, baralha(Q.o.map(function(v){
+      return Q.fig ? {v: String(v), rot: v, aria: v, fala: "mtx_" + k + "_" + String(v).replace(/[^a-zA-Z]/g, "")}
+                   : {v: "v" + v, rot: rs(v), aria: rsFala(v), fala: "val_" + v};
+    })), Q.fig ? String(Q.c) : "v" + Q.c, Q.fig ? "frase" : "curta",
+        "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+function f36(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Agora a conta da economia: escreva quanto a Bia deixa de gastar em cada coisa.",
+            "p" + pi + "enun");
+  tabelaMercado(d);
+  var perg = [
+    {k: "ec1", t: "Na lista inteira, quanto a Bia economiza comprando no Economize?", v: 730},
+    {k: "ec2", t: "Só nos 3 ovos, quanto ela economiza?", v: 225},
+    {k: "ec3", t: "E na farinha de trigo?", v: 165},
+    {k: "ec4", t: "E no litro de leite?", v: 240},
+    {k: "ec5", t: "A manteiga é mais cara no Economize. Quanto a mais?", v: 35}
+  ];
+  ST.folha["p" + pi].forEach(function(k, i){
+    var Q = perg[i], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", Q.t));
+    lin.appendChild(botaoSom("Ouvir a pergunta", (function(kk){
+      return function(){ falar("eco_" + kk); };
+    })(k)));
+    box.appendChild(lin);
+    campoValor(box, pi, id, Q.v, "reais", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 37 · o combo do balcão (b26, Saresp) ---------- */
+function f37(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Quantas combinações diferentes a loja consegue oferecer? Toque no número certo.",
+            "p" + pi + "enun");
+  ST.folha["p" + pi].forEach(function(k, i){
+    var B = COMBO[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var lin = el("div", "enunlin");
+    lin.appendChild(el("div", "frase", B.fr));
+    lin.appendChild(botaoSom("Ouvir o problema", function(){ falar("cmb_" + k); }));
+    box.appendChild(lin);
+    opcoes(box, pi, id, B.o.map(function(n){
+      return {v: "n" + n, rot: String(n), aria: n + " combinações", fala: "num_" + n};
+    }), "n" + B.v, "num", "certo_" + k, "dica_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- 38 · o cartaz da loja (fecho) ---------- */
+function f38(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Para o cartaz da lojinha da turma: marque <b>tudo o que é verdade</b> sobre comprar e vender. Depois toque em CONFERIR.",
+            "p" + pi + "enun");
+  var id = "n" + pi + "_0", box = item(null);
+  marqueConfira(box, id, pi, CARTAZ.frases.map(function(F){
+    return {k: F.k, t: F.t, ok: !!F.c, fala: "car_" + F.k, aria: F.t};
+  }), "certo_cartaz", "dica_cartaz");
+  fechaItem(d, box, id);
+}
+
+/* ---------- os invólucros das folhas que compartilham construtor ----------
+   ⚠️ A POSIÇÃO É A IDENTIDADE: a folha N usa o pote pN. Estes invólucros
+      existem para que a lista do `monta()` tenha uma entrada por folha, na
+      ordem, sem `if` no meio. */
+function f08(d, pi){ fUnit(d, pi, UNIT, false); }
+function f22(d, pi){
+  fProb(d, pi, DIVCOM,
+        "Quantos pacotes, caixas ou sacos dá para fazer? Escreva o número.",
+        "pro", "int");
+}
+function f25(d, pi){
+  gavetas(d, pi, "resto",
+          "Leia cada divisão e ponha na gaveta certa: dá certinho, ou sobra alguma coisa?");
+}
+function f28(d, pi){
+  gavetas(d, pi, "partes",
+          "Cada palavra é o nome de uma parte da conta. Ponha na gaveta da operação dela.");
+}
+function f30(d, pi){
+  gavetas(d, pi, "ganho",
+          "Compare o que pagou com o que recebeu e ponha cada venda na gaveta certa.");
+}

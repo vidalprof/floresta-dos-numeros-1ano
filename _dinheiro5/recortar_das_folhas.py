@@ -278,29 +278,36 @@ def recorta(folha, nome, x0, y0, x1, y1, fundo=True):
 def main():
     if not os.path.isdir(SAIDA):
         os.makedirs(SAIDA)
-    origem = {}
+    # ⚠️ DOIS ARQUIVOS, E ISSO NÃO É CAPRICHO. O `ORIGEM.json` é um CONTRATO da
+    #    casa que o portão 1i5 (`_qa/figura_da_folha.py`) lê: uma linha por
+    #    figura, e o valor é TEXTO no formato "folha:d26" · "banco:maca" ·
+    #    "gerada:pollinations". Eu escrevi um objeto ali com a caixa do recorte
+    #    dentro, e o portão morreu com AttributeError em vez de medir. A caixa
+    #    do recorte é informação MINHA, para refazer o corte depois; ela mora no
+    #    `RECORTE.json`, que portão nenhum lê.
+    origem, detalhe = {}, {}
     for nome, cx, cy, r in MOEDAS:
         c = recorta_moeda(u"c30", nome, cx, cy, r)
         dest = os.path.join(SAIDA, PREFIXO + nome + u".png")
         c.save(dest, optimize=True)
-        origem[PREFIXO + nome + u".png"] = {
+        origem[PREFIXO + nome + u".png"] = u"folha:c30"
+        detalhe[PREFIXO + nome + u".png"] = {
             u"folha": F[u"c30"], u"circulo": [cx, cy, r], u"tamanho": list(c.size)}
         print(u"%-18s %s  (circulo)" % (os.path.basename(dest), c.size))
     for folha, nome, x0, y0, x1, y1, fundo in CAIXAS:
         dest, tam = recorta(folha, nome, x0, y0, x1, y1, fundo)
-        origem[PREFIXO + nome + u".png"] = {
-            u"folha": F[folha],
-            u"caixa": [x0, y0, x1, y1],
-            u"tamanho": list(tam),
-        }
+        origem[PREFIXO + nome + u".png"] = u"folha:" + folha
+        detalhe[PREFIXO + nome + u".png"] = {
+            u"folha": F[folha], u"caixa": [x0, y0, x1, y1], u"tamanho": list(tam)}
         print(u"%-18s %s" % (os.path.basename(dest), tam))
-    cam = os.path.join(SAIDA, u"ORIGEM.json")
-    ja = {}
-    if os.path.exists(cam):
-        ja = json.loads(io.open(cam, encoding=u"utf-8").read())
-    ja.update(origem)
-    io.open(cam, u"w", encoding=u"utf-8").write(
-        json.dumps(ja, ensure_ascii=False, indent=1, sort_keys=True))
+    for cam, dados in ((u"ORIGEM.json", origem), (u"RECORTE.json", detalhe)):
+        cam = os.path.join(SAIDA, cam)
+        ja = {}
+        if os.path.exists(cam):
+            ja = json.loads(io.open(cam, encoding=u"utf-8").read())
+        ja.update(dados)
+        io.open(cam, u"w", encoding=u"utf-8").write(
+            json.dumps(ja, ensure_ascii=False, indent=1, sort_keys=True))
     print(u"\n%d figuras -> %s" % (len(origem), SAIDA))
 
 

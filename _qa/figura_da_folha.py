@@ -119,6 +119,16 @@ def main():
         if not de:
             erros.append(u"a figura %s esta no disco e nao foi declarada" % f)
             continue
+        # ⚠️ DECLARAÇÃO QUE NÃO É TEXTO NÃO PODE MATAR O PORTÃO (21/set/2026).
+        #    O `_dinheiro5` escreveu aqui um objeto com a caixa do recorte
+        #    dentro — o que era erro dele — e este portão estourou com
+        #    AttributeError, derrubando a linha inteira do pré-voo em vez de
+        #    dizer o que estava errado. Portão que morre não mede, e ainda leva
+        #    junto a informação de que havia algo a consertar.
+        if not isinstance(de, type(u"")):
+            erros.append(u"a figura %s foi declarada com um objeto; aqui o valor "
+                         u"tem de ser texto, como \"folha:d26\"" % f)
+            continue
         tipo = de.split(u":")[0]
         contas[tipo] = contas.get(tipo, 0) + 1
     for f in org:
