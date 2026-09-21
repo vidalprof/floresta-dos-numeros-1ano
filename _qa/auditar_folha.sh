@@ -114,6 +114,24 @@ PORTOES=(
   # ⭐ 1o) sem voz na opcao, a crianca que ainda nao le escolhe pelo tamanho do
   #    botao — e a folha vira sorteio para justamente quem ela deveria ajudar.
   "1o alto-falante da resposta|python3 _qa/voz_opcao.py $PASTA"
+  # ⭐⭐ 1p) A PALAVRA QUE A CRIANCA VE TEM VOZ, E E A DELA (21/set/2026).
+  #    Defeito que chegou a SALA: "as palavras estao sendo ditas erradas" ·
+  #    "tem palavras sendo ditas diferente do que e mostrado". A chave da fala
+  #    e o nome da palavra sem acento, e os DOIS LADOS tiravam o acento de
+  #    jeitos diferentes: o gravador trocava (a-til -> A) e o app APAGAVA.
+  #    O `falar()` volta calado quando a chave nao existe -> 17 palavras MUDAS
+  #    em tres cadernos no ar, todas com til ou cedilha, que sao justamente as
+  #    que a crianca mais precisa ouvir. E ja tinha sido consertado no
+  #    `_aumdim2` com outro nome, e eu nao levei aos outros dezesseis.
+  "1p voz da palavra (as pontas casam)|python3 _qa/voz_da_palavra.py $PASTA"
+  # ⭐⭐ 1q) A FALA QUE O CODIGO PEDE EXISTE? (21/set/2026). Havia portao para a
+  #    metade errada: o `vozfalta.py` (0i) vai do TEXTO para o AUDIO. Ninguem
+  #    perguntava o contrario, e e ai que mora o silencio: `falar(k)` faz
+  #    `var t = FALAS[k]; if(!t) return;` — chave inexistente volta CALADO, sem
+  #    erro, sem 404, sem aparecer em print nenhum. Medido com o codigo no ar:
+  #    `_troca2` e `_nasal2` pediam `fim` (a festa do fim do caderno era muda) e
+  #    `_abc1` e `_rima1` pediam `folhaPronta` (o elogio de cada folha).
+  "1q fala pedida existe|python3 _qa/fala_pedida.py $PASTA"
   # ⭐ 1i9) A FIGURA NUNCA E MOSTRADA MAIOR QUE O ARQUIVO (21/set/2026). Era
   #    regra da casa com CODIGO (`naoAmplia`) e sem CONTA: o guarda nasceu no
   #    esqueleto e os 23 cadernos anteriores nunca o receberam. Nove deles

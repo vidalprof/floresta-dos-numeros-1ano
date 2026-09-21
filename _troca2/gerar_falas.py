@@ -138,6 +138,12 @@ def p(k, v):
 # AS FALAS DO MOTOR — estas toda folha viva tem
 # ---------------------------------------------------------------------------
 p(u"folhaPronta", u"Folha pronta! Muito bem.")
+
+# ⚠️ ESTA FALA FALTAVA E O APP A PEDIA — medido em 21/set/2026, depois de o
+#    Marcos trazer da sala *"as palavras estão sendo ditas erradas"*. O
+#    `falar()` volta CALADO quando a chave não existe: era silêncio no lugar
+#    exato em que a criança espera ser elogiada.
+p(u"fim", u"Você chegou ao fim da máquina de trocar sílabas! Agora você sabe que trocar, tirar, juntar ou inverter um pedaço faz nascer uma palavra nova. Olhe as palavras à sua volta e veja quantas mudam com um pedaço só.")
 p(u"escreva", u"Escreva a palavra usando o teclado.")
 p(u"monte", u"Toque nas letras embaralhadas para montar a palavra.")
 p(u"ligue", u"Toque numa palavra do lado esquerdo e depois na do lado direito.")

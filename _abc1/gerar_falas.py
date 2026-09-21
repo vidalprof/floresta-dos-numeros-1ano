@@ -66,6 +66,12 @@ F[u"fim"] = (u"Você chegou ao fim do Desfile das Letras! Agora você conhece a 
 F[u"escreva"] = u"Escreva a letra."
 F[u"vozOn"] = u"Narração ligada!"
 
+# ⚠️ ESTA FALA FALTAVA E O APP A PEDIA — medido em 21/set/2026, depois de o
+#    Marcos trazer da sala *"as palavras estão sendo ditas erradas"*. O
+#    `falar()` volta CALADO quando a chave não existe: era silêncio no lugar
+#    exato em que a criança espera ser elogiada.
+F[u"folhaPronta"] = u"Folha pronta! Muito bem."
+
 # ---- os enunciados das 25 folhas ---------------------------------------------
 # ⚠️ O texto aqui tem que dizer O MESMO que o `enunciado(...)` da folha em
 #    `folhas.js`. Se a tela disser uma coisa e a voz outra, a criança que não lê

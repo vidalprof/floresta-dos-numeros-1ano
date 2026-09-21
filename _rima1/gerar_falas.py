@@ -51,6 +51,12 @@ F[u"fim"] = (u"Você chegou ao fim do Bando das Rimas! Agora você sabe ouvir o 
 F[u"escreva"] = u"Escreva a palavra que rima."
 F[u"vozOn"] = u"Narração ligada!"
 
+# ⚠️ ESTA FALA FALTAVA E O APP A PEDIA — medido em 21/set/2026, depois de o
+#    Marcos trazer da sala *"as palavras estão sendo ditas erradas"*. O
+#    `falar()` volta CALADO quando a chave não existe: era silêncio no lugar
+#    exato em que a criança espera ser elogiada.
+F[u"folhaPronta"] = u"Folha pronta! Muito bem."
+
 # ---- os enunciados de cada folha ---------------------------------------------
 F[u"p1enun"] = u"Ouça as duas palavras. Elas terminam com o mesmo som?"
 F[u"p2enun"] = u"Toque na figura que rima com a de cima."
