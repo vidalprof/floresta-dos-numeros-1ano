@@ -112,6 +112,63 @@ jobs:
           echo "alvos: $lista"
 
       # ---------------------------------------------------------------
+      # 🏚️ O DESTINO EXISTE? — PERGUNTAR AGORA, NAO DEPOIS DA VOZ (21/set/2026)
+      #
+      # ⚠️ Isto ja custou DUAS corridas inteiras: o `_corpo5` em 20/set e o
+      #    `_dinheiro5` em 21/set. Nos dois casos o caderno estava pronto e a
+      #    banca aprovada; o que faltava era o REPOSITORIO, que nasce pela
+      #    `fabrica.yml`. A corrida gravava as centenas de vozes (o passo mais
+      #    caro: 68% do relogio), conferia a pronuncia, recortava silabas — e so
+      #    la na frente, no passo de publicar, o `git clone` do destino falhava.
+      #    Quinze minutos de runner por uma pergunta que custa UM segundo.
+      #
+      # ⚠️⚠️ E o pior nao e o tempo: e que o carimbo `_status/entrega-<repo>.json`
+      #    nunca chega, e quem espera por ele nao sabe DE QUE morreu. O log dizia
+      #    a verdade, mas ninguem le log de quinze minutos para achar a linha.
+      #    Aqui a corrida para na primeira tela, com o nome do repositorio que
+      #    falta e o comando que o cria.
+      #
+      # A regra que fica: PRE-CONDICAO QUE NAO DEPENDE DO TRABALHO SE CONFERE
+      # ANTES DO TRABALHO. Nada do que este workflow faz muda a existencia do
+      # repositorio de destino — entao perguntar no fim e so pagar para descobrir.
+      - name: O repositorio de destino existe?
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          faltam=()
+          for par in $(echo "$LISTA" | tr ',' ' '); do
+            DEST="${par#*:}"
+            if gh api "repos/$OWNER/$DEST" >/dev/null 2>&1; then
+              echo "  ok   $OWNER/$DEST"
+            else
+              echo "  ⛔   $OWNER/$DEST — nao existe (ou o token nao o alcanca)"
+              faltam+=("$DEST")
+            fi
+          done
+          if [ "${#faltam[@]}" -gt 0 ]; then
+            echo "::error::o destino nao existe: ${faltam[*]}"
+            {
+              echo "## ⛔ A entrega parou antes de comecar"
+              echo ""
+              echo "Estes repositorios de destino nao existem: \`${faltam[*]}\`"
+              echo ""
+              echo "Atividade NOVA nasce pela **fabrica.yml** (ela cria o repo, publica e liga o Pages):"
+              echo ""
+              echo '```'
+              echo "workflow: fabrica.yml"
+              echo "  repo_name  = ${faltam[0]}"
+              echo "  source_dir = <a pasta da atividade, ex. _dinheiro5>"
+              echo "  ref        = <a branch onde ela esta>"
+              echo '```'
+              echo ""
+              echo "Depois disso, esta entrega roda normalmente."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+      # ---------------------------------------------------------------
       # 🛡️ PORTÃO PRÉ-ENTREGA (Marcos, ago/2026: "faça algo para esses erros bobos
       #    que acontecem toda hora não se repetirem"). Antes de gravar voz OU
       #    publicar, rodam os portões RÁPIDOS (sem navegador) em cada pasta. Se
