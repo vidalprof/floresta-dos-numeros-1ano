@@ -139,7 +139,12 @@ button{font-family:inherit;cursor:pointer}
    ⚠️ 42 px e não menos: o portão de leiaute reprova alvo abaixo de 40 px, e
    dedo de criança não acerta menor que isso. "Discreto" aqui é a BORDA clara e
    a opacidade, não o tamanho. */
-.opw{display:flex;align-items:center;gap:6px}
+/* ⚠️ `wrap` e `max-width` NÃO são enfeite: sem eles a opção + o alto-falante
+   passavam 20 px da tela do celular no `_reinos` (folha 25), e o portão de
+   leiaute pegou — alvo cortado na beira é alvo que a criança não alcança.
+   Com `wrap`, quando não cabe lado a lado o alto-falante desce para baixo
+   da resposta em vez de empurrá-la para fora. */
+.opw{display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:100%}
 .opw.larga{width:100%;max-width:440px}
 .opw.larga .op.frase{flex:1;width:auto;max-width:none}
 .som.somop{width:42px;height:42px;min-width:42px;height:42px;border-width:2px;

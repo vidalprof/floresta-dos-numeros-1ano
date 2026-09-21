@@ -86,11 +86,27 @@ const pasta = process.argv[2], porta = process.argv[3];
       vaiPara(pi);
       const dir = PAGEL[pi].querySelectorAll('[data-qa*="-d-"]');
       if (!dir.length) continue;
-      /* o rotulo como a crianca o ve: o texto, e o aria-label quando for figura */
-      const rots = [].map.call(dir, e =>
-        ((e.innerText || e.textContent || '').trim() || e.getAttribute('aria-label') || ''));
+      /* ⚠️ A CONTA E POR CAIXA DE LIGAR, NAO POR FOLHA (20/set/2026).
+         A primeira versao juntava a folha inteira e perguntava se algum
+         rotulo aparecia duas vezes. Numa folha com SEIS exercicios de ligar
+         — seis `montaLigar` independentes, tres pares em cada, como nas
+         folhas 14 e 15 dos Cinco Reinos — "ANIMAIS" aparece seis vezes de
+         direito: uma em cada caixa, e dentro de cada caixa ela e unica. O
+         portao reprovava conteudo correto, que e tao ruim quanto passar
+         conteudo errado: mandar consertar o que nao esta quebrado gasta o
+         dia e ensina a ignorar o portao.
+         A pergunta da crianca e dentro da caixa em que ela esta ligando:
+         nesta coluna, ha duas caixas que dizem a mesma coisa? */
+      const caixas = new Map();
+      for (const e of dir) {
+        const cx = e.closest('.ligar') || PAGEL[pi];
+        if (!caixas.has(cx)) caixas.set(cx, []);
+        /* o rotulo como a crianca o ve: o texto, e o aria-label quando for figura */
+        caixas.get(cx).push(
+          ((e.innerText || e.textContent || '').trim() || e.getAttribute('aria-label') || ''));
+      }
       r.push({ pi: pi, nome: (typeof NOMES !== 'undefined' ? NOMES[pi - 1] : ('folha ' + pi)),
-               rots: rots });
+               caixas: [...caixas.values()] });
     }
     return r;
   });
@@ -135,24 +151,25 @@ def folha_viva(pasta):
     if not dados:
         print(u"%s -> NAO SE APLICA: nenhuma folha de ligar." % pasta)
         return 2
-    erros, total = [], 0
+    erros, total, caixas = [], 0, 0
     for f in dados:
-        rots = [r for r in f[u"rots"]]
-        total += len(rots)
-        rep = sorted(set(r for r in rots if rots.count(r) > 1 and r))
-        if rep:
-            erros.append((f[u"pi"], f[u"nome"],
-                          u" e ".join(u'"%s"' % r[:40] for r in rep)))
-    print(u"%s -> ligar: %d rotulo(s) conferido(s) em %d folha(s) de ligar"
-          % (pasta, total, len(dados)))
+        for rots in f.get(u"caixas") or []:
+            caixas += 1
+            total += len(rots)
+            rep = sorted(set(r for r in rots if rots.count(r) > 1 and r))
+            if rep:
+                erros.append((f[u"pi"], f[u"nome"],
+                              u" e ".join(u'"%s"' % r[:40] for r in rep)))
+    print(u"%s -> ligar: %d rotulo(s) em %d caixa(s) de ligar, em %d folha(s)"
+          % (pasta, total, caixas, len(dados)))
     if erros:
         print(u"   REPROVADO — a crianca leva erro por acertar:")
         for pi, nome, rep in erros[:10]:
-            print(u"    x folha %d (%s) mostra %s duas ou mais vezes na coluna da direita"
-                  % (pi, nome, rep))
+            print(u"    x folha %d (%s): uma MESMA caixa de ligar mostra %s duas ou"
+                  u" mais vezes na coluna da direita" % (pi, nome, rep))
         print(u"   conserto: um rotulo por par. O motor casa por CHAVE, nao pelo texto.")
         return 1
-    print(u"   ok: nenhuma folha mostra o mesmo rotulo duas vezes.")
+    print(u"   ok: nenhuma caixa de ligar mostra o mesmo rotulo duas vezes.")
     return 0
 
 

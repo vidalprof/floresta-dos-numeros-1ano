@@ -58,10 +58,22 @@ def recolhe(usadas, txt):
     lits = [(m.group(1), m.end()) for m in re.finditer(r'"([^"]*)"', txt)]
     for i, (lit, fim) in enumerate(lits):
         partes = lit.split()
-        if partes and not lit.endswith(" ") and txt[fim:].lstrip().startswith("+"):
-            prox = lits[i + 1][0] if i + 1 < len(lits) else None
-            if prox is None or (prox != "" and not prox.startswith(" ")):
-                partes = partes[:-1]
+        if partes and not lit.endswith(" "):
+            resto = txt[fim:].lstrip()
+            if resto.startswith("+"):
+                # ⚠️ SÓ CONTINUA A PALAVRA SE O QUE VEM DEPOIS DO `+` FOR OUTRO
+                #    LITERAL, coladinho. Com uma VARIÁVEL no meio —
+                #    `"... lapiz marca" + m[0] + " marcada"` — o pedaço `marca`
+                #    É prefixo (as classes reais são `marcaA`, `marcaB`), e olhar
+                #    só "o próximo literal do trecho" fazia o portão achar o
+                #    `" marcada"` lá adiante, ver o espaço e manter `marca`.
+                #    Foi assim que `.marca` apareceu como classe sem CSS no
+                #    `_ing8` e no `_subst5` (20/set/2026).
+                dep = resto[1:].lstrip()
+                colado = not (dep.startswith('"') and
+                              (dep[1:2] == " " or dep[1:2] == '"'))
+                if colado:
+                    partes = partes[:-1]
         for c in partes:
             usadas.setdefault(c, 0)
 
@@ -160,8 +172,15 @@ def main():
         #    Some com eles antes de recolher (o mesmo remedio do `getAttribute`).
         trecho = re.sub(r'[=!]==?\s*"[^"]*"', ' ', trecho)
         recolhe(usadas, trecho)
+    # ⚠️ `class="..."` DENTRO DE UM TEXTO MONTADO não acaba na aspa: em
+    #    `'<span class="lt' + (pos < meio ? " q" : "") + '">'` o que vem depois
+    #    do `lt` é CÓDIGO, não classe. O portão lia a expressão inteira e
+    #    recolhia `meio` (uma variável de contagem) como se fosse classe — e
+    #    acusava `.meio` sem CSS no `_sinon2` (20/set/2026). Corta no primeiro
+    #    sinal de que o literal acabou.
     for m in re.finditer(r'class=[\\]?"([^"\\]+)', js):
-        for c in m.group(1).split():
+        lit = re.split(r"['+<>?{}]", m.group(1))[0]
+        for c in lit.split():
             usadas.setdefault(c, 0)
 
     # as camadas do mascote ("lay base" / "lay fala" / "lay pisca") sao

@@ -135,11 +135,31 @@ m_pal = re.search(r"var PAL\s*=\s*\{(.*?)\n\};", fontes, re.S)
 if m_pal:
     pote = set(re.findall(r'(\w+)\s*:\s*\[', m_pal.group(1)))
 
+# ⚠️ A CAPA NAO CONTA (20/set/2026, falso alarme medido em ONZE cadernos).
+#    A regra da casa manda que a capa seja uma CENA feita com as figuras do
+#    proprio caderno ("a capa e uma CENA do assunto, figura das folhas de
+#    papel"). Entao a capa do `_abc1` escreve `img/ab_abelha.png` a mao para
+#    montar a fila A-B-C-D-E, e este portao chamava isso de "peca de interface
+#    colidindo com a palavra abelha" — e reprovava. Sao o MESMO desenho: a
+#    crianca ve a abelha nos dois lugares, que e o que se quer.
+#    O defeito de verdade (o selo dourado da medalha chamado `xx_estrela`)
+#    mora fora da capa, e continua sendo pego.
+#    ⚠️ Portao que manda consertar o que nao esta quebrado e tao caro quanto
+#       portao cego: gasta o dia e ensina a ignorar a saida.
+fontes_interface = fontes
+m_capa = re.search(r"\nfunction (?:f0|capa)\s*\(", fontes_interface)
+if m_capa:
+    resto = fontes_interface[m_capa.end():]
+    m_fim = re.search(r"\nfunction ", resto)
+    fim = m_capa.end() + (m_fim.start() if m_fim else len(resto))
+    fontes_interface = fontes_interface[:m_capa.start()] + fontes_interface[fim:]
+
 colisoes = []
 if pote:
     vistos = set()
     for bruto, _off in re.findall(
-            r'''["']img/([A-Za-z0-9_]+?)(_off)?(?:\.png|\.jpg|\.jpeg|\.webp|["'])''', fontes):
+            r'''["']img/([A-Za-z0-9_]+?)(_off)?(?:\.png|\.jpg|\.jpeg|\.webp|["'])''',
+            fontes_interface):
         if bruto.endswith("_"):          # `img/mo_` + palavra -> figura do pote, nao interface
             continue
         nu = re.sub(r"^[A-Za-z]{1,4}_", "", bruto)

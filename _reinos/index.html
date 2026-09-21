@@ -303,6 +303,27 @@ button{font-family:inherit;cursor:pointer}
 
 /* fileira genérica de opções */
 .ops{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:10px}
+/* ⚠️ O ALTO-FALANTE DA RESPOSTA — DISCRETO, e é regra do Marcos (20/set/2026):
+   *"o alto-falante discreto para clicar caso o estudante queira ouvir"*. Ele
+   vem AO LADO de cada opção, antes da escolha, para quem ainda não lê.
+   ⚠️ 42 px e não menos: o portão de leiaute reprova alvo abaixo de 40 px, e
+   dedo de criança não acerta menor que isso. "Discreto" aqui é a BORDA clara e
+   a opacidade, não o tamanho. */
+/* ⚠️ `wrap` e `max-width` NÃO são enfeite: sem eles a opção + o alto-falante
+   passavam 20 px da tela do celular no `_reinos` (folha 25), e o portão de
+   leiaute pegou — alvo cortado na beira é alvo que a criança não alcança.
+   Com `wrap`, quando não cabe lado a lado o alto-falante desce para baixo
+   da resposta em vez de empurrá-la para fora. */
+.opw{display:flex;flex-wrap:wrap;align-items:center;gap:6px;max-width:100%}
+.opw.larga{width:100%;max-width:440px}
+.opw.larga .op.frase{flex:1;width:auto;max-width:none}
+.som.somop{width:42px;height:42px;min-width:42px;border-width:2px;
+  border-color:#e3d6ce;opacity:.85}
+.som.somop:active{opacity:1}
+.som.somop .cone{left:11px;top:15px}
+.som.somop .o1{left:24px;top:14px}
+.som.somop .o2{left:27px;top:9px}
+
 .op{min-width:64px;min-height:56px;border:3px solid #dfc2e7;border-radius:16px;background:#fff;color:var(--texto);
   font-weight:900;font-size:22px;padding:8px 14px;-webkit-transition:transform .1s;transition:transform .1s}
 .op:active{transform:scale(.94)}
@@ -913,8 +934,18 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .problin{display:flex;align-items:flex-start;gap:10px;margin:4px 0 8px}
 .prob{margin:0;font-weight:700;font-size:17px;line-height:1.45;color:var(--texto,#3b4059)}
 /* o cartaz */
-.cartazbt{display:flex;align-items:center;gap:10px;min-height:56px}
-.cartazfig{display:flex;align-items:center}
+.cartazbt{display:flex;align-items:center;gap:10px;min-height:56px;max-width:100%;
+          flex-wrap:wrap;justify-content:center}
+.cartazfig{display:flex;align-items:center;max-width:100%}
+/* ⚠️ A FIGURA DO MURAL PRECISA DE TETO PRÓPRIO (20/set/2026).
+   Sem esta regra a figura caía no teto do arquivo (`img[src*="rn_arvore.png"]
+   {max-height:286px}`): a árvore entrava com 286 px de altura, a largura
+   natural vinha junto e o botão inteiro passava da tela de 320 px — a criança
+   não alcançava o alvo. Só aparecia quando o sorteio do mural puxava a árvore,
+   por isso ficou escondido. Teto em vw: cabe em qualquer tela. */
+.cartazbt .figop{display:block;width:auto;height:clamp(46px,12vw,66px);
+                 max-width:100%;object-fit:contain}
+.mural .item.solto{max-width:100%}
 .item.solto{border:0;background:none;padding:0;margin:0}
 /* a capa */
 /* ⚠️ A REGRA DA CENA DA CAPA GANHA DA MINHA: `.capa .cena img` (tres nomes)
@@ -4383,5 +4414,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=4eff658463"></script>
+<script src="folhas.js?v=fe405bef20"></script>
 </body></html>

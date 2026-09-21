@@ -74,7 +74,17 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
       /* 2/3 — as <img> */
       for(const im of document.images){
         if(!vis(im)||!im.naturalWidth||!im.naturalHeight) continue;
-        const r=im.getBoundingClientRect(); if(r.bottom<0||r.top>H) continue;   // fora da dobra: rola ate ela
+        /* ⚠️ ABAIXO DA DOBRA TAMBEM SE MEDE (20/set/2026, licao paga no `_reinos`).
+           Aqui dizia `if(r.bottom<0||r.top>H) continue` — "fora da dobra: rola
+           ate ela". Vale para o que esta ACIMA (imagem estacionada fora da
+           tela), NAO para o que esta ABAIXO: rolar para baixo nao conserta
+           nada na horizontal. O mural da folha 25 do `_reinos` tem sete
+           cartazes empilhados; a arvore, quando o sorteio a punha no fim,
+           ficava abaixo da dobra com 400 px de largura numa tela de 320 —
+           quarenta pixels para fora de cada lado — e este portao dizia
+           "leiaute ok". Quando o sorteio a punha no comeco, ele reprovava.
+           O mesmo arquivo, o mesmo defeito, duas respostas. */
+        const r=im.getBoundingClientRect(); if(r.bottom<0) continue;   // estacionada acima da tela
         const cs=getComputedStyle(im), fit=cs.objectFit||"fill";
         const an=im.naturalWidth/im.naturalHeight, ar=r.width/r.height, dif=Math.abs(ar-an)/an;
         const src=String(im.getAttribute("src")||"").split("/").slice(-1)[0].slice(0,40);
@@ -185,7 +195,9 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
         if(!ehAlvo(e)||!vis(e)) continue;
         let pai=e.parentElement, dentro=false; while(pai&&pai!==document.body){ if(ehAlvo(pai)){ dentro=true; break; } pai=pai.parentElement; }
         if(dentro) continue;
-        const r=e.getBoundingClientRect(); if(r.bottom<0||r.top>H) continue;
+        /* ⚠️ tambem abaixo da dobra — ver a nota na regra das <img>: rolar para
+           baixo nao muda nada na horizontal. */
+        const r=e.getBoundingClientRect(); if(r.bottom<0) continue;
         if(trilho(e)) continue;                       /* alcançável: arrasta e chega */
         let fora=null;
         if(r.right>W+4) fora="passa da tela em "+Math.round(r.right-W)+"px";
@@ -228,9 +240,31 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
     for(const x of r.av) avisos.push(rot+": "+x);
   };
 
+  let iVp=0;
   for(const vp of TAMANHOS){
     const p=await b.newPage({viewport:{width:vp.w,height:vp.h}});
     let morta=false; p.on('pageerror',()=>{ morta=true; });
+    /* ⚠️ O ACASO TEM DE SER SEMEADO (20/set/2026, lição paga no `_reinos`).
+       O mural da folha 25 sorteia quais seres vivos entram. Rodei o portão
+       quatro vezes no MESMO arquivo: duas disseram "leiaute ok" e duas
+       acharam a árvore estourando 33 px para fora da tela de 320 px. O
+       defeito era real e antigo — só não aparecia quando o sorteio não
+       puxava a árvore. Portão que depende de sorte não é portão: aprova por
+       acaso e reprova por acaso, e nos dois casos não dá para confiar nele.
+       Agora `Math.random` é um gerador semeado, e a semente MUDA por tamanho
+       de tela: a mesma rodada vê seis sorteios diferentes, e duas rodadas
+       seguidas veem exatamente os mesmos seis. Reprovou uma vez, reprova
+       sempre — que é o mínimo para eu poder consertar. */
+    const semente = 20260920 + (iVp++) * 7919;
+    await p.addInitScript((s)=>{
+      let x = s >>> 0;
+      Math.random = function(){
+        x ^= x << 13; x >>>= 0;
+        x ^= x >> 17;
+        x ^= x << 5;  x >>>= 0;
+        return x / 4294967296;
+      };
+    }, semente);
     /* rede travada no container: Firebase/CDN nao respondem — nao pode segurar a medicao */
     await p.route('**/*',route=>{ const u=route.request().url(); if(u.startsWith('file://')) route.continue(); else route.abort(); });
     try{ await p.goto(url,{waitUntil:'load',timeout:15000}); }catch(e){ mortas++; await p.close(); continue; }
