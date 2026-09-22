@@ -402,7 +402,13 @@ def main():
         return 2
     palavras = None
     if os.path.exists(CURRICULO):
-        palavras = set(achata(io.open(CURRICULO, encoding="utf-8").read()).split())
+        _cru = io.open(CURRICULO, encoding="utf-8").read()
+        palavras = set(achata(_cru).split())
+        # ⚠️ AS PALAVRAS QUEBRADAS NO FIM DA LINHA (ver o comentario no topo):
+        #    «grafia cor-\n reta de palavras» tem de dar tambem "correta",
+        #    senao o portao reprova a transcricao FIEL e aprova o caco.
+        for _a, _b in re.findall(r"(\w+)-\s*\n\s*(\w+)", _cru):
+            palavras.add(achata(_a + _b).strip())
     pior = 0
     for pasta in sys.argv[1:]:
         c, linhas = confere(pasta, palavras)
