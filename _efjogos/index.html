@@ -55,7 +55,14 @@ img{max-width:100%;}
 #trilha{display:block;text-align:center;margin:2px 0 4px;font-size:16px;color:#ffe9b8;font-weight:bold;text-shadow:0 1px 2px rgba(0,0,0,.5);}
 #passa{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
   -webkit-flex-wrap:nowrap;flex-wrap:nowrap;gap:2px;margin:2px auto 8px;max-width:380px;}
-.selo{-webkit-flex:none;flex:none;width:16px;height:16px;line-height:12px;text-align:center;border-radius:50%;
+/* ⚠️ O SELO ENCOLHE, e isto é conserto de defeito MEDIDO (22/set/2026): com
+   `flex:none` os VINTE selos da prova somavam 358 px numa tela de 320 e a
+   fileira sangrava pelos dois lados — o 1º selo começava em -21 px e o 20º
+   terminava em 341. Estava no ar assim desde a estreia, e nenhum portão via:
+   o `leiaute_mao.js` mede a PRIMEIRA tela, e a primeira tela é a capa, que não
+   tem fileira. Agora eles têm permissão de encolher (`0 1 16px`), com um piso
+   de 5 px para não sumirem. Nas 12 fichas nada encolhe: 12 cabem folgados. */
+.selo{-webkit-flex:0 1 16px;flex:0 1 16px;min-width:5px;width:16px;height:16px;line-height:12px;text-align:center;border-radius:50%;
   border:2px dashed #7fd1a0;background:rgba(255,255,255,.18);color:#eafff2;font-size:9px;font-weight:bold;}
 .selo.feito{border-style:solid;border-color:#ffd23f;background:#ffd23f;color:#5a3b00;}
 .selo.agora{border-style:solid;border-color:#fff;background:#fff;color:#1d6a40;
@@ -146,9 +153,54 @@ label{font-size:16px;font-weight:bold;color:#1d6a40;display:block;margin-top:8px
   /* ⭐ Os dois botões fixos do canto caíam EM CIMA do 6º crachá na tela estreita
      (defeito medido e pago na prova do 2º ano). Em cima não há nada para tocar. */
   #barra{top:calc(8px + env(safe-area-inset-top));bottom:auto}
+  /* ⚠️ ...e ao subirem eles passaram a cobrir a FAIXA e as FICHINHAS de progresso.
+     Medido em 22/set/2026, e valia também para a prova que já estava no ar: a
+     320 px, "Pergunta 20 de 20" chegava a 228 px e o botão começava em 200.
+     Empurrar a faixa para BAIXO dos botões é o conserto que serve aos dois — e
+     serve a qualquer texto, hoje ou amanhã. Só a faixa desce: a capa não tem
+     `#trilha`, então ela não ganha buraco nenhum no topo. */
+  #trilha{margin-top:64px;padding:2px 8px 0;}
 }
 #barra .cv-bt{-webkit-appearance:none;appearance:none;width:48px;height:48px;border:3px solid #ffe9b8;border-radius:50%;background:#1d6a40;color:#ffe9b8;font-size:20px;line-height:42px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.35);box-shadow:0 2px 6px rgba(0,0,0,.35);}
 #barra .cv-bt svg{width:22px;height:22px;display:block;margin:0 auto;}
+
+/* ============ AS FICHAS DE ESTUDO (ler e ouvir ANTES de responder) ============
+   ⚠️ POR QUE ISTO EXISTE. Ordem do Marcos (22/set/2026): *"na prova do uno e
+      tangram, precisamos dos textos e sons antes de começar as perguntas da
+      prova, para os estudantes ouvirem e lerem, para saber responder a prova"*.
+      É o mesmo defeito que ele pegou no caderno `_narra2`: a criança era
+      perguntada sobre histórias que ela nunca tinha ouvido. Prova que cobra o
+      que a tela nunca ensinou não mede aprendizagem — mede quem lembrou da aula.
+
+   ⚠️ A FICHA É IRMÃ DA PERGUNTA, DE PROPÓSITO: mesmo cartão, mesmo chip de
+      assunto, mesmas figuras SVG, mesmo alto-falante redondo. A criança
+      reconhece na pergunta a ficha que acabou de ouvir. */
+/* ⚠️ o seletor é `.etit` SOLTO, não `.eficha .etit`: o título também aparece
+   dentro da PERGUNTA, quando a criança abre "ver a ficha" — e lá não há
+   `.eficha`. Preso ao pai, o título saía sem estilo nenhum bem na hora em que
+   ela mais precisa reconhecê-lo. */
+.etit{font-family:"Trebuchet MS",sans-serif;font-size:22px;font-weight:bold;color:#22301f;line-height:1.3;margin:2px 8px 10px;}
+/* a ficha aberta DENTRO da pergunta: fundo próprio, para não virar enunciado */
+#cxficha{background:#f2f8f3;border:3px dashed #7fb894;border-radius:18px;padding:6px 4px 10px;margin:8px auto 4px;max-width:580px;}
+#cxficha .etit{font-size:19px;margin-top:6px;color:#1d6a40;}
+.efigs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:6px;}
+.efigs .qfig{-webkit-box-flex:1;-webkit-flex:1 1 210px;flex:1 1 210px;max-width:300px;margin:2px auto 8px;}
+/* a linha da ficha: o alto-falante é IRMÃO do texto, nunca dentro dele */
+.elin{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  width:94%;max-width:560px;margin:9px auto;padding:12px;border:3px solid #ddd0ae;border-radius:18px;text-align:left;
+  font-size:19px;line-height:1.34;color:#22301f;background:#fffaee;
+  -webkit-box-shadow:0 4px 0 #e3d5b4;box-shadow:0 4px 0 #e3d5b4;}
+.elin .etx{-webkit-box-flex:1;-webkit-flex:1;flex:1;padding-right:6px;}
+.elin b{color:#1d6a40;}
+.enav{margin-top:8px;}
+.bsec{display:inline-block;font-family:inherit;font-size:19px;font-weight:bold;border:3px solid #c9b98d;border-radius:18px;
+  padding:13px 20px;margin:6px;cursor:pointer;color:#1d6a40;background:#fffdf6;min-height:48px;
+  -webkit-box-shadow:0 4px 0 #e3d5b4;box-shadow:0 4px 0 #e3d5b4;}
+.bsec:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
+.bsec[disabled]{opacity:.45;cursor:default;}
+.bprova{background:#1d6a40;-webkit-box-shadow:0 6px 0 #134d2c;box-shadow:0 6px 0 #134d2c;}
 </style>
 
 <div id="fundo"></div>
@@ -172,7 +224,11 @@ var AVATARES=[
 var SLUG="educacao-fisica-jogos-345";   /* caminho no Firebase: /provas/<SLUG> */
 var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 var URL_PLANILHA="";
-var HISTORIA="Olá! Eu sou o Léo, o treinador. Hoje a nossa aula de Educação Física é na mesa de jogos! São vinte perguntas: quinze sobre as regras oficiais do UNO, aquelas que o professor explicou para a turma, e cinco sobre a origem do Tangram, o jogo das sete peças. Eu leio cada pergunta e cada resposta em voz alta, e você toca na que achar certa. Se quiser ouvir uma resposta de novo, toque no alto-falante do lado dela. Agora escreva o seu nome, escolha o seu ano, a sua turma e o seu personagem, e toque em começar!";
+/* ⚠️ ESTA FALA MUDOU em 22/set/2026 e a mudança NÃO é enfeite: antes ela dizia
+   "São vinte perguntas" logo de cara, e agora a prova começa pelas FICHAS de
+   estudo. Voz que anuncia uma coisa e a tela faz outra é o defeito que esta
+   casa mais paga caro — a criança fica esperando a pergunta que não vem. */
+var HISTORIA="Olá! Eu sou o Léo, o treinador. Hoje a nossa aula de Educação Física é na mesa de jogos! Primeiro eu vou te contar, numa ficha de cada vez, as regras do UNO e a história do Tangram. Você pode ler junto comigo e ouvir quantas vezes quiser, e cada frase tem o seu alto-falante do lado. Depois das fichas é que vêm as vinte perguntas: quinze sobre as regras do UNO e cinco sobre o Tangram. Aí eu leio cada pergunta e cada resposta em voz alta, e você toca na que achar certa. Agora escreva o seu nome, escolha o seu ano, a sua turma e o seu personagem, e toque em começar!";
 var _histTocada=false;
 
 /* ===================================================================
@@ -388,34 +444,34 @@ function svgMudo(cor){
       que a criança leu e ouviu lá. Nada aqui foi inventado por mim.
    =================================================================== */
 var QUESTOES=[
- {disc:"inicio", fig:"mao7", pergunta:"No começo da partida de UNO, quantas cartas cada jogador recebe?",
+ {ficha:0, disc:"inicio", fig:"mao7", pergunta:"No começo da partida de UNO, quantas cartas cada jogador recebe?",
   opcoes:["Cinco cartas.","Sete cartas.","Dez cartas.","Doze cartas."], correta:1},
 
- {disc:"inicio", fig:"resto", pergunta:"Depois de dar as cartas, o que se faz com o resto do baralho?",
+ {ficha:0, disc:"inicio", fig:"resto", pergunta:"Depois de dar as cartas, o que se faz com o resto do baralho?",
   opcoes:["Fica virado para baixo formando o monte, e a primeira carta é virada ao lado para começar o descarte.","É dividido igualmente entre os jogadores.","Fica todo virado para cima no meio da mesa.","Volta para a caixa até alguém precisar."], correta:0},
 
- {disc:"inicio", fig:"mesa", pergunta:"Quem joga primeiro, e para que lado o jogo corre?",
+ {ficha:1, disc:"inicio", fig:"mesa", pergunta:"Quem joga primeiro, e para que lado o jogo corre?",
   opcoes:["Quem deu as cartas, no sentido anti-horário.","Quem estiver à esquerda de quem deu as cartas, no sentido horário.","O jogador mais novo, para o lado que ele escolher.","Quem tirar a carta de maior número."], correta:1},
 
- {disc:"acao", fig:"baralho", pergunta:"Chegou a sua vez e você não tem nenhuma carta que combine com a da mesa. O que a regra manda fazer?",
+ {ficha:2, disc:"acao", fig:"baralho", pergunta:"Chegou a sua vez e você não tem nenhuma carta que combine com a da mesa. O que a regra manda fazer?",
   opcoes:["Passar a vez sem fazer nada.","Pedir uma carta emprestada a outro jogador.","Comprar uma carta do monte — e, se ela servir, você já pode baixá-la na hora.","Comprar cartas do monte até conseguir uma que sirva."], correta:2},
 
- {disc:"acao", fig:"pula", pergunta:"O que a carta PULAR faz?",
+ {ficha:3, disc:"acao", fig:"pula", pergunta:"O que a carta PULAR faz?",
   opcoes:["O próximo jogador perde a vez.","Todos os jogadores compram uma carta.","Muda a cor que está valendo.","O próximo jogador compra duas cartas."], correta:0},
 
- {disc:"acao", fig:"inverte", pergunta:"O que a carta INVERTER faz?",
+ {ficha:3, disc:"acao", fig:"inverte", pergunta:"O que a carta INVERTER faz?",
   opcoes:["Faz o próximo jogador perder a vez.","Muda o sentido do jogo: quem ia para um lado passa a ir para o outro.","Troca as cartas de dois jogadores.","Devolve a carta da mesa para o monte."], correta:1},
 
- {disc:"acao", fig:"mais2", pergunta:"Alguém baixou uma carta COMPRAR DUAS, o mais dois. O que acontece com o próximo jogador?",
+ {ficha:4, disc:"acao", fig:"mais2", pergunta:"Alguém baixou uma carta COMPRAR DUAS, o mais dois. O que acontece com o próximo jogador?",
   opcoes:["Compra duas cartas e continua jogando normalmente.","Compra duas cartas e perde a vez.","Escolhe se compra duas cartas ou se perde a vez.","Passa o mais dois para o jogador seguinte."], correta:1},
 
- {disc:"acao", fig:"doisMais2", pergunta:"Pelas REGRAS OFICIAIS, quem recebe um mais dois pode jogar outro mais dois por cima, para somar e passar adiante?",
+ {ficha:4, disc:"acao", fig:"doisMais2", pergunta:"Pelas REGRAS OFICIAIS, quem recebe um mais dois pode jogar outro mais dois por cima, para somar e passar adiante?",
   opcoes:["Sim, e pode somar quantos mais dois quiser.","Sim, mas só se o mais dois for da mesma cor.","Não. Oficialmente não é permitido acumular pilhas de mais dois.","Sim, mas só até três cartas seguidas."], correta:2},
 
- {disc:"acao", fig:"coringa", pergunta:"Para que serve a carta CORINGA, a carta preta colorida?",
+ {ficha:5, disc:"acao", fig:"coringa", pergunta:"Para que serve a carta CORINGA, a carta preta colorida?",
   opcoes:["Para fazer todos os jogadores comprarem uma carta.","Para quem jogou escolher a nova cor que continua o jogo.","Para jogar duas vezes seguidas.","Para inverter o sentido do jogo."], correta:1},
 
- {disc:"acao", fig:"mais4", pergunta:"O CORINGA COMPRAR QUATRO tem uma condição para ser jogado. Qual é?",
+ {ficha:5, disc:"acao", fig:"mais4", pergunta:"O CORINGA COMPRAR QUATRO tem uma condição para ser jogado. Qual é?",
   opcoes:["Só pode ser jogado na última rodada da partida.","Só pode ser jogado por quem tiver mais de cinco cartas na mão.","Só pode ser jogado se você NÃO tiver nenhuma outra carta da cor que está na mesa.","Pode ser jogado a qualquer momento, sem nenhuma condição."], correta:2},
 
  /* ✂️ AQUI HAVIA UMA 21ª QUESTÃO, e ela saiu a pedido do Marcos (20/set):
@@ -433,37 +489,119 @@ var QUESTOES=[
        gerado desse mesmo código: a voz se renumera sozinha. Se a fala fosse
        escrita à mão, como era nas provas anteriores, este corte deixaria dez
        narrações mentindo o número da questão. */
- {disc:"desafio", fig:"desafio", pergunta:"Você jogou um comprar quatro. O colega desconfia que você blefou e te DESAFIA. Você mostra as suas cartas e ele vê que você TINHA, sim, a cor da mesa. O que acontece?",
+ {ficha:6, disc:"desafio", fig:"desafio", pergunta:"Você jogou um comprar quatro. O colega desconfia que você blefou e te DESAFIA. Você mostra as suas cartas e ele vê que você TINHA, sim, a cor da mesa. O que acontece?",
   opcoes:["Você compra quatro cartas.","O colega compra quatro cartas.","O colega compra seis cartas.","Ninguém compra nada e o jogo segue."], correta:0},
 
- {disc:"desafio", fig:"desafio", pergunta:"Agora o contrário: o colega te desafia, você mostra as cartas e ele vê que você NÃO tinha a cor da mesa — o seu comprar quatro era honesto. Quem compra, e quantas cartas?",
+ {ficha:6, disc:"desafio", fig:"desafio", pergunta:"Agora o contrário: o colega te desafia, você mostra as cartas e ele vê que você NÃO tinha a cor da mesa — o seu comprar quatro era honesto. Quem compra, e quantas cartas?",
   opcoes:["Você compra quatro cartas.","O colega compra quatro cartas.","O colega compra seis cartas: as quatro do comprar quatro mais duas de castigo.","Cada um compra duas cartas."], correta:2},
 
- {disc:"ponto", fig:"maoVazia", pergunta:"Quando termina uma rodada de UNO?",
+ {ficha:7, disc:"ponto", fig:"maoVazia", pergunta:"Quando termina uma rodada de UNO?",
   opcoes:["Quando o monte de comprar acaba.","Quando o primeiro jogador fica sem nenhuma carta na mão.","Quando todos os jogadores ficam sem cartas.","Depois de dez jogadas de cada um."], correta:1},
 
- {disc:"ponto", fig:"pontos", pergunta:"Terminada a rodada, na contagem oficial, quanto vale cada carta que sobrou na mão dos outros jogadores?",
+ {ficha:8, disc:"ponto", fig:"pontos", pergunta:"Terminada a rodada, na contagem oficial, quanto vale cada carta que sobrou na mão dos outros jogadores?",
   opcoes:["Todas as cartas valem dez pontos.","Carta de número vale o próprio número; mais dois, pular e inverter valem vinte; os coringas valem cinquenta.","Carta de número vale cinco; cartas de ação valem dez; os coringas valem vinte.","Carta de número vale o próprio número; todas as outras valem cem."], correta:1},
 
- {disc:"ponto", fig:"placar", pergunta:"Quem é o vencedor FINAL do jogo, depois de várias rodadas?",
+ {ficha:9, disc:"ponto", fig:"placar", pergunta:"Quem é o vencedor FINAL do jogo, depois de várias rodadas?",
   opcoes:["Quem ganhar três rodadas seguidas.","Quem chegar primeiro aos quinhentos pontos.","Quem terminar com menos pontos.","Quem ganhar a última rodada."], correta:1},
 
- {disc:"tang", fig:"tanQuadrado", pergunta:"Em que país nasceu o Tangram, e há quanto tempo?",
+ {ficha:10, disc:"tang", fig:"tanQuadrado", pergunta:"Em que país nasceu o Tangram, e há quanto tempo?",
   opcoes:["No Japão, faz uns cem anos.","No Brasil, faz uns duzentos anos.","Na China, faz mais de mil anos.","Na Grécia, faz uns quinhentos anos."], correta:2},
 
- {disc:"tang", fig:"tanEspalhado", pergunta:"Quantas peças tem o Tangram, e como essas peças se chamam?",
+ {ficha:10, disc:"tang", fig:"tanEspalhado", pergunta:"Quantas peças tem o Tangram, e como essas peças se chamam?",
   opcoes:["Cinco peças, chamadas tans.","Sete peças, chamadas tans.","Sete peças, chamadas tricas.","Nove peças, chamadas tans."], correta:1},
 
- {disc:"tang", fig:"tanFormas", pergunta:"Quais são as formas das peças do Tangram?",
+ {ficha:10, disc:"tang", fig:"tanFormas", pergunta:"Quais são as formas das peças do Tangram?",
   opcoes:["Sete triângulos iguais.","Cinco triângulos, um quadrado e um paralelogramo.","Três triângulos, três quadrados e um círculo.","Quatro triângulos, dois quadrados e um retângulo."], correta:1},
 
- {disc:"tang", fig:"azulejo", pergunta:"A lenda do Tangram conta que um sábio deixou cair uma coisa, e foi assim que o jogo apareceu. O que ele deixou cair, e o que aconteceu?",
+ {ficha:11, disc:"tang", fig:"azulejo", pergunta:"A lenda do Tangram conta que um sábio deixou cair uma coisa, e foi assim que o jogo apareceu. O que ele deixou cair, e o que aconteceu?",
   opcoes:["Um espelho redondo, que se quebrou em vários caquinhos pequenos.","Um azulejo quadrado, que se quebrou em sete pedaços — e, juntando de novo, ele viu que dava para formar muitas figuras.","Um saco de pedras, que se espalhou pelo chão.","Um tabuleiro de madeira, que rachou ao meio."], correta:1},
 
- {disc:"tang", fig:"tanEspalhado", pergunta:"Qual é a regra para montar uma figura no Tangram?",
+ {ficha:11, disc:"tang", fig:"tanEspalhado", pergunta:"Qual é a regra para montar uma figura no Tangram?",
   opcoes:["Usar quantas peças quiser, do jeito que quiser.","Usar sempre as sete peças, sem deixar uma em cima da outra.","Usar só os triângulos, deixando o quadrado de fora.","Usar as sete peças, podendo empilhar umas sobre as outras."], correta:1}
 ];
 var DISCNOME={inicio:"COMEÇO DA PARTIDA", acao:"CARTAS DE AÇÃO", desafio:"O DESAFIO DO +4", ponto:"PONTOS E VITÓRIA", tang:"A ORIGEM DO TANGRAM"};
+
+/* ===================================================================
+   AS 12 FICHAS DE ESTUDO — o que a criança LÊ E OUVE antes da prova
+
+   ⭐ DE ONDE SAI CADA FRASE, e isto é a regra zero da casa ("nunca chute
+      nunca invente"): **da RESPOSTA CERTA das próprias questões acima**.
+      Não há um segundo texto que eu tenha escrito de cabeça, e não há como
+      a ficha ensinar uma coisa e a prova cobrar outra — a resposta certa é a
+      fonte das duas. As quatro fichas do Tangram vêm, além disso, do mesmo
+      `HIST_HTML` da nossa atividade `_tangram`, palavra por palavra.
+
+   ⚠️ COBERTURA: as 12 fichas cobrem as 20 questões, sem sobra nem buraco. É
+      isso que faz a prova ser respondível por quem prestou atenção AQUI —
+      que é o que o Marcos pediu. Questão nova exige ficha nova; o portão
+      `_qa/prova_promete.py` e o parecer pedagógico são quem confere.
+
+   ⚠️ UMA IDEIA POR FICHA (carga cognitiva, Sweller), e a ficha é CURTA: são
+      ~3 minutos de estudo no total. Ficha longa antes de prova longa cansa
+      a criança justamente onde ela vai precisar de atenção.
+
+   ⚠️ O QUE EU ACRESCENTEI E NÃO ESTÁ NA PROVA: só glosas que explicam a
+      palavra, nunca conteúdo novo — "sentido horário: o mesmo sentido dos
+      ponteiros do relógio" e "pela cor, pelo número ou pelo tipo" (que é
+      como o nosso próprio jogo `_uno1` descreve a combinação). Estão aqui
+      declaradas para o pedagogo conferir. */
+var ESTUDO=[
+ {disc:"inicio", figs:["mao7"], titulo:"Como começa a partida",
+  linhas:["Cada jogador recebe <b>sete cartas</b>.",
+          "O resto do baralho fica virado para baixo no meio da mesa: é o <b>monte</b> de comprar.",
+          "A primeira carta do monte é virada ao lado dele — e é ela que começa o <b>descarte</b>."]},
+
+ {disc:"inicio", figs:["mesa"], titulo:"Quem joga primeiro, e para que lado",
+  linhas:["Começa quem está <b>à esquerda</b> de quem deu as cartas.",
+          "E o jogo corre no <b>sentido horário</b>: o mesmo sentido dos ponteiros do relógio."]},
+
+ {disc:"acao", figs:["baralho"], titulo:"Quando você não tem carta para jogar",
+  linhas:["Na sua vez você baixa uma carta que <b>combine</b> com a da mesa: pela cor, pelo número ou pelo tipo.",
+          "Se você não tiver nenhuma que combine, você <b>compra uma carta do monte</b>.",
+          "Se a carta que você comprou servir, pode baixá-la na hora. É <b>uma carta só</b>: não se compra até achar."]},
+
+ {disc:"acao", figs:["pula","inverte"], titulo:"As cartas PULAR e INVERTER",
+  linhas:["A carta <b>PULAR</b> faz o próximo jogador <b>perder a vez</b>.",
+          "A carta <b>INVERTER</b> muda o sentido do jogo: quem ia para um lado passa a ir para o outro."]},
+
+ {disc:"acao", figs:["mais2","doisMais2"], titulo:"A carta COMPRAR DUAS",
+  linhas:["A carta <b>COMPRAR DUAS</b>, o mais dois, faz o próximo jogador <b>comprar duas cartas e perder a vez</b>.",
+          "Muita gente joga um mais dois em cima do outro, para somar e passar adiante.",
+          "Mas atenção: pelas <b>regras oficiais</b> isso não vale. <b>Não se acumulam</b> pilhas de mais dois."]},
+
+ {disc:"acao", figs:["coringa","mais4"], titulo:"O CORINGA e o CORINGA COMPRAR QUATRO",
+  linhas:["O <b>CORINGA</b>, a carta preta colorida, serve para <b>quem jogou escolher a nova cor</b> que continua o jogo.",
+          "O <b>CORINGA COMPRAR QUATRO</b> faz o próximo jogador comprar quatro cartas, e quem jogou também escolhe a cor.",
+          "Mas ele tem uma <b>condição</b>: só pode ser jogado se você <b>não tiver nenhuma outra carta da cor que está na mesa</b>."]},
+
+ {disc:"desafio", figs:["desafio"], titulo:"O desafio do comprar quatro",
+  linhas:["Quando alguém joga um comprar quatro, o colega pode <b>DESAFIAR</b>, se desconfiar que houve blefe.",
+          "Aí você mostra as suas cartas para ele.",
+          "Se você <b>TINHA</b> a cor da mesa, você blefou: <b>você</b> compra quatro cartas.",
+          "Se você <b>NÃO tinha</b> a cor da mesa, o seu comprar quatro era honesto: <b>o colega compra seis</b> — as quatro do comprar quatro mais duas de castigo."]},
+
+ {disc:"ponto", figs:["maoVazia"], titulo:"Quando a rodada termina",
+  linhas:["A rodada termina quando o <b>primeiro jogador fica sem nenhuma carta</b> na mão."]},
+
+ {disc:"ponto", figs:["pontos"], titulo:"A contagem dos pontos",
+  linhas:["Terminada a rodada, contam-se as cartas que <b>sobraram na mão dos outros</b>.",
+          "Carta de número vale o <b>próprio número</b>.",
+          "Mais dois, pular e inverter valem <b>vinte</b> pontos cada uma.",
+          "Os coringas valem <b>cinquenta</b> pontos cada um."]},
+
+ {disc:"ponto", figs:["placar"], titulo:"Quem ganha o jogo todo",
+  linhas:["O jogo tem várias rodadas. Ganha quem chegar primeiro aos <b>quinhentos pontos</b>."]},
+
+ {disc:"tang", figs:["tanQuadrado","tanFormas"], titulo:"O Tangram: onde nasceu e as sete peças",
+  linhas:["O <b>Tangram</b> nasceu na <b>China</b>, faz <b>mais de mil anos</b>.",
+          "Ele tem <b>sete peças</b>, e juntas elas se chamam <b>tans</b>.",
+          "São <b>cinco triângulos, um quadrado e um paralelogramo</b>."]},
+
+ {disc:"tang", figs:["azulejo","tanEspalhado"], titulo:"A lenda do azulejo, e a regra de montar",
+  linhas:["Uma antiga lenda conta que um sábio deixou cair um <b>azulejo quadrado</b>.",
+          "Ele se quebrou em <b>sete pedaços</b> — e, juntando de novo, o sábio viu que dava para formar <b>muitas figuras diferentes</b>.",
+          "A regra é simples: usar <b>sempre as sete peças</b>, sem deixar uma em cima da outra."]}
+];
 
 /* ⚠️ A FALA DE CADA QUESTÃO É MONTADA, NÃO ESCRITA À MÃO. Era escrita à mão nas
    provas anteriores, e uma fala escrita à mão vira mentira no dia em que se
@@ -478,8 +616,20 @@ function falaDaQuestao(i){
   return t;
 }
 
+/* ⚠️ O NEGRITO É DA TELA, NÃO DA VOZ. A ficha escreve <b>sete cartas</b> para o
+   olho; a voz tem de receber "sete cartas" limpo, senão o mp3 é gravado sob a
+   chave errada e o alto-falante fica MUDO — sem erro nenhum no console, que é o
+   defeito mais caro desta casa. Há um caminho só: `semTag()`. */
+function semTag(s){ return (""+s).replace(/<[^>]*>/g, ""); }
+function falaDaFicha(i){
+  var f=ESTUDO[i], t, k;
+  t="Ficha "+NUMEXT[i+1]+" de "+NUMEXT[ESTUDO.length]+". "+f.titulo+".";
+  for(k=0;k<f.linhas.length;k++){ t+=" "+semTag(f.linhas[k]); }
+  return t;
+}
+
 /* ====== estado ====== */
-var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, anoSel="", letraSel="", avatarSel="", avatarAluno="";
+var atual=0, fichaAtual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, anoSel="", letraSel="", avatarSel="", avatarAluno="";
 var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
 function $(id){return document.getElementById(id);}
 function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
@@ -529,6 +679,7 @@ function falar(texto,_forcar){
   try{var a=new Audio("audio/"+_chaveVoz(paraVoz(texto))+".mp3");_falaAudio=a;a.play();}catch(e){}
 }
 function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
+function ouvirLinha(k){ pararFala(); falar(semTag(ESTUDO[fichaAtual].linhas[k]),true); }
 function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
 function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("efjogos_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
 function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?svgMudo():svgFala("#ffe9b8");b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
@@ -540,7 +691,7 @@ function telaCapa(){
   h+='<img class="masc-capa" src="img/ej_leo.png" alt="Léo, o leão treinador" onerror="this.style.display=\'none\'">';
   h+='<h1>A Mesa de Jogos do Léo</h1>';
   h+='<h2>Educação Física &middot; 3º, 4º e 5º anos</h2>';
-  h+='<p class="grande">As regras do UNO e a história do Tangram. Eu leio cada pergunta e cada resposta em voz alta — é só ouvir e tocar na certa.</p>';
+  h+='<p class="grande">Primeiro a gente aprende: doze fichas com figuras e voz, sobre as regras do UNO e a história do Tangram. Depois vêm as vinte perguntas — e eu leio todas em voz alta.</p>';
   h+='<button id="btnHist" onclick="ouvirHistoria()">Ouvir o Léo</button>';
   h+='<div class="formrow">';
   h+='<div class="fcol">';
@@ -573,8 +724,56 @@ function comecar(){
   if(!anoSel){falar("Escolha o seu ano.",true);return;}
   if(!letraSel){falar("Escolha a sua turma.",true);return;}
   if(!avatarSel){falar("Escolha o seu personagem.",true);return;}
-  nomeAluno=nm;turmaAluno=anoSel+" "+letraSel;avatarAluno=avatarSel;atual=0;somToque();telaPergunta();
+  /* ⚠️ AQUI ELA NÃO VAI MAIS DIRETO PARA A PRIMEIRA PERGUNTA. Primeiro as fichas
+     de estudo — ordem do Marcos (22/set/2026). Ver o comentário do `ESTUDO`. */
+  nomeAluno=nm;turmaAluno=anoSel+" "+letraSel;avatarAluno=avatarSel;atual=0;fichaAtual=0;somToque();telaEstudo();
 }
+
+/* ====== AS FICHAS: ilustradas e sonoras, uma de cada vez ====== */
+function telaEstudo(){
+  var f=ESTUDO[fichaAtual],h='',k;
+  /* ⚠️ TEXTO CURTO DE PROPÓSITO. "Ficha 5 de 12 · antes da prova" media 230 px e
+     o seu fim ia parar embaixo dos dois botões de voz, que no celular sobem
+     para o canto direito. Quem diz que isto é o antes da prova são a capa, a
+     fala do Léo e o próprio botão do fim — a faixa só precisa contar. */
+  h+='<div id="trilha">Ficha '+(fichaAtual+1)+' de '+ESTUDO.length+'</div>';
+  h+='<div id="passa">';
+  for(k=0;k<ESTUDO.length;k++){
+    h+='<span class="selo '+(k<fichaAtual?"feito":(k===fichaAtual?"agora":""))+'"></span>';
+  }
+  h+='</div>';
+  h+='<div class="card qcard eficha">';
+  h+=crachaHTML();
+  h+='<img class="guia" src="img/ej_leo.png" alt="Léo, o leão treinador" onerror="this.style.display=\'none\'">';
+  h+='<span class="disc '+f.disc+'">'+(DISCNOME[f.disc]||"")+'</span>';
+  if(f.figs&&f.figs.length){
+    h+='<div class="efigs">';
+    for(k=0;k<f.figs.length;k++){ if(FIG[f.figs[k]]){ h+='<div class="qfig">'+FIG[f.figs[k]]()+'</div>'; } }
+    h+='</div>';
+  }
+  h+='<p class="etit">'+esc(f.titulo)+'</p>';
+  h+='<button id="btnOuvir" onclick="repetirUltima()">Ouvir a ficha de novo</button>';
+  for(k=0;k<f.linhas.length;k++){
+    /* ⚠️ o alto-falante é IRMÃO do texto: botão dentro de botão é HTML inválido
+       e o clique some no borbulhar (lição paga nos cadernos de folha viva). */
+    h+='<div class="elin"><span class="etx">'+f.linhas[k]+'</span>'+
+       '<button class="ospk" aria-label="Ouvir esta frase" onclick="ouvirLinha('+k+')">'+svgFala()+'</button></div>';
+  }
+  h+='<div class="enav">';
+  h+='<button type="button" class="bsec" onclick="fichaVolta()"'+(fichaAtual===0?' disabled':'')+'>Voltar</button>';
+  if(fichaAtual<ESTUDO.length-1){
+    h+='<button type="button" class="bsec bprova" style="color:#fff" onclick="fichaProx()">Próxima ficha</button>';
+  }else{
+    h+='<button type="button" class="btn" onclick="comecarProva()">Agora sim: começar a prova!</button>';
+  }
+  h+='</div></div>';
+  $("app").innerHTML=h;
+  $("app").scrollTop=0;
+  falar(falaDaFicha(fichaAtual));
+}
+function fichaProx(){ if(fichaAtual>=ESTUDO.length-1){return;} somToque(); pararFala(); fichaAtual++; telaEstudo(); }
+function fichaVolta(){ if(fichaAtual<=0){return;} somToque(); pararFala(); fichaAtual--; telaEstudo(); }
+function comecarProva(){ somToque(); pararFala(); atual=0; telaPergunta(); }
 function crachaHTML(){
   return '<div class="cracha"><div class="cav"><img src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'"></div>'+
     '<span class="cnm">'+esc(nomeAluno)+'</span></div>';
@@ -598,6 +797,14 @@ function telaPergunta(){
   if(q.fig&&FIG[q.fig]){h+='<div class="qfig">'+FIG[q.fig]()+'</div>';}
   h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
   h+='<button id="btnOuvir" onclick="repetirUltima()">Ouvir a pergunta de novo</button>';
+  /* ⭐ O ANDAIME: "não lembro, quero ver a ficha". Ordem do Marcos (22/set/2026):
+     *"faça a prova de um jeito que não fique difícil para os estudantes tirarem
+     uma nota boa, pois são estudantes do 3, 4 e 5 anos"*. Ver o comentário
+     grande do `verFicha()` — inclusive o que ISTO CUSTA ao professor. */
+  if(typeof q.ficha==="number"&&ESTUDO[q.ficha]){
+    h+='<div><button type="button" class="bsec" id="btnFicha" onclick="verFicha()">Não lembro — ver a ficha</button></div>';
+    h+='<div id="cxficha" style="display:none"></div>';
+  }
   h+='<div class="opcoes">';
   var letras=["A","B","C","D"],i;
   for(i=0;i<q.opcoes.length;i++){
@@ -612,6 +819,47 @@ function telaPergunta(){
   $("app").scrollTop=0;
   falar(falaDaQuestao(atual));
 }
+/* ====== "NÃO LEMBRO — VER A FICHA": o andaime da prova ======================
+   ⭐ POR QUE ELE EXISTE. Ordem do Marcos (22/set/2026): *"faça a prova de um
+      jeito que não fique difícil para os estudantes tirarem uma nota boa, pois
+      são estudantes do 3, 4 e 5 anos"*.
+
+   ⭐ POR QUE ESTE E NÃO OUTRO CAMINHO. Havia três jeitos de baixar a
+      dificuldade, e dois eram ruins:
+        · tirar as regras difíceis (o "não se acumula +2", os dois lados do
+          desafio do +4) — seria apagar justamente o que o professor ensinou;
+        · deixar as alternativas erradas obviamente bobas — a criança acerta
+          sem saber nada, e o painel do professor passa a mentir.
+      O terceiro é este: **a resposta continua exigindo saber, mas a criança tem
+      onde ir buscar** — a mesma ficha que ela leu e ouviu minutos antes. É o
+      andaime da casa (dica → apoio concreto → revelar) e é o que Bjork chama de
+      dificuldade DESEJÁVEL: ela ainda tem de ler a ficha e escolher.
+
+   ⚠️ E ISTO TEM UM PREÇO, QUE FICA DITO: com a ficha à mão, a nota mede
+      "sabe procurar e entender" e já não mede "decorou". Por isso a prova
+      GRAVA quantas vezes cada criança abriu a ficha (campo `dicas`), para o
+      professor ler a nota sabendo disso. Uma prova que parece medir uma coisa
+      e mede outra seria pior do que uma prova difícil. */
+var dicasUsadas=0;
+function verFicha(){
+  var q=QUESTOES[atual], f=ESTUDO[q.ficha], cx=$("cxficha"), h='', k;
+  if(!cx||!f){return;}
+  if(cx.style.display!=="none"){ cx.style.display="none"; pararFala(); somToque(); return; }
+  dicasUsadas++;
+  h+='<p class="etit" style="margin-top:10px">'+esc(f.titulo)+'</p>';
+  if(f.figs&&f.figs.length){
+    h+='<div class="efigs">';
+    for(k=0;k<f.figs.length;k++){ if(FIG[f.figs[k]]){ h+='<div class="qfig">'+FIG[f.figs[k]]()+'</div>'; } }
+    h+='</div>';
+  }
+  for(k=0;k<f.linhas.length;k++){
+    h+='<div class="elin"><span class="etx">'+f.linhas[k]+'</span>'+
+       '<button class="ospk" aria-label="Ouvir esta frase" onclick="ouvirLinhaFicha('+q.ficha+','+k+')">'+svgFala()+'</button></div>';
+  }
+  cx.innerHTML=h; cx.style.display="block"; somToque();
+  falar(falaDaFicha(q.ficha),true);
+}
+function ouvirLinhaFicha(fi,k){ pararFala(); falar(semTag(ESTUDO[fi].linhas[k]),true); }
 function responder(idx){
   somToque();respostas[atual]=idx;pararFala();atual++;
   if(atual>=QUESTOES.length){telaFinal();}
@@ -649,7 +897,10 @@ function enviarResultado(ac){
   var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":String(respostas[i]));}
   var quando=new Date().toLocaleString("pt-BR");
   var nota10=QUESTOES.length?Math.round(ac/QUESTOES.length*100)/10:0;
-  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  /* ⚠️ `dicas` é campo NOVO (22/set/2026): quantas vezes a criança abriu a ficha
+     durante a prova. O painel do professor lê chaves pelo nome, então acrescentar
+     uma não quebra nada — e sem ela a nota não conta a história inteira. */
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,dicas:dicasUsadas,data:quando};
   try{
     var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
     var x=new XMLHttpRequest();

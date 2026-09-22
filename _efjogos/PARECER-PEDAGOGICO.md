@@ -79,6 +79,59 @@ em problema geométrico.
 3. O `curriculo.json` **não traz a lista `conceitos`**, então não há como um
    portão conferir se os termos cabem no ano. Dívida declarada.
 
+## 5b. ⭐ O QUE MUDOU EM 22/set/2026, e por quê — a prova agora ENSINA antes
+
+Duas ordens do professor Marcos, no mesmo dia, e as duas apontavam para o mesmo
+buraco:
+
+> *"na prova do uno e tangram, precisamos dos textos e sons antes de começar as
+> perguntas da prova, para os estudantes ouvirem e lerem, para saber responder a
+> prova"* · *"fichas vêm ilustradas e sonoras"* · *"faça a prova de um jeito que
+> não fique difícil para os estudantes tirarem uma nota boa, pois são estudantes
+> do 3, 4 e 5 anos"*
+
+**Ele estava certo, e o §4 deste parecer estava incompleto.** Eu tinha escrito
+ali que a prova é justa porque *"tudo o que se pergunta foi feito na aula"* — e
+isso é verdade, mas **fiava-se inteiramente na memória da aula**. Quem faltou no
+dia, quem não pegou as regras do +4 de primeira, ou quem simplesmente esqueceu
+(que é o comum com nove anos), não tinha a que recorrer: a tela nunca tinha dito
+aquilo. **Prova que só mede quem lembrou da aula não mede aprendizagem.** É o
+mesmo defeito que ele pegou no caderno `_narra2`, onde a criança era perguntada
+sobre fábulas que nunca tinha ouvido.
+
+**O que passou a existir:**
+
+1. **Doze fichas antes da primeira pergunta.** Cada uma tem **uma ideia só**
+   (Sweller), as **figuras SVG** das próprias cartas e do tangram, o Léo lendo a
+   ficha inteira ao abrir, e **um alto-falante por frase** para ouvir de novo.
+   São ~3 minutos.
+2. **Em cada pergunta, o botão "Não lembro — ver a ficha"**, que reabre a ficha
+   que ensina aquela regra, com figura e voz.
+
+⚠️ **DE ONDE SAI O TEXTO DAS FICHAS — e isto é a regra zero da casa.** Da
+**resposta certa das próprias questões**, mais o `HIST_HTML` da nossa atividade
+`_tangram` para as quatro fichas do tangram. Não há um segundo texto escrito de
+cabeça; a ficha e a pergunta têm **a mesma fonte**, e por isso é impossível a
+ficha ensinar uma coisa e a prova cobrar outra. As únicas palavras minhas são
+duas glosas, declaradas no código: *"sentido horário: o mesmo sentido dos
+ponteiros do relógio"* e *"pela cor, pelo número ou pelo tipo"* — que é como o
+nosso próprio jogo `_uno1` descreve a combinação.
+
+⚠️⚠️ **O QUE ISTO CUSTA, e fica dito com todas as letras.** Com a ficha à mão, a
+nota passa a medir **"sabe procurar e entender"** e já não mede **"decorou"**. As
+duas coisas são legítimas aos nove anos — a primeira é até mais útil — mas são
+**diferentes**, e o professor precisa saber qual está lendo. Por isso a prova
+agora **grava quantas vezes cada criança abriu a ficha** (campo `dicas` no
+registro). Uma prova que parece medir uma coisa e mede outra seria pior do que
+uma prova difícil.
+⚠️ **O painel do professor ainda NÃO mostra esse número** — ele grava, o painel
+ignora. Dívida declarada; mostrar é trabalho no `_efjogospainel`.
+
+⚠️ **O QUE EU NÃO FIZ, de propósito:** não tirei nenhuma regra difícil (o *"não
+se acumula +2"*, os dois lados do desafio do +4) nem deixei as alternativas
+erradas bobas. Essas duas saídas também baixariam a dificuldade — e as duas
+apagariam justamente o que o professor ensinou, ou fariam o painel mentir.
+
 ## 6. Veredito do pedagogo
 
 **ADEQUADA ao 3º, 4º e 5º ano.** Conferida em **20 de setembro de 2026**,
@@ -87,6 +140,10 @@ de Ensino de Blumenau* (`_curriculo/blumenau.txt`). Os objetivos cobrem as vinte
 perguntas, o conteúdo é o dos jogos que a turma jogou, e a prova mede — além das
 regras — **a regra do jogo limpo**, que é o que a Educação Física quer de um jogo
 de mesa.
+
+⭐ **Relido em 22 de setembro de 2026**, com as doze fichas de estudo no lugar
+(§5b). O veredito continua o mesmo, e agora com a condição que faltava: **a
+criança tem onde aprender o que a prova cobra, dentro da própria prova.**
 
 ⚠️ **O que este parecer NÃO diz.** Ele não é um portão. Ele diz que alguém leu a
 prova inteira, na ordem em que o aluno a encontra, e assinou.
