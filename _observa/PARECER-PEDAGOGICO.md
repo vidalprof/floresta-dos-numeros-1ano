@@ -1,6 +1,6 @@
 # Parecer pedagógico — Aprendendo a observar (Pré)
 
-> Caderno de folha viva, **13 folhas**. Educação Infantil — crianças pequenas
+> Caderno de folha viva, **14 folhas**. Educação Infantil — crianças pequenas
 > (4 anos a 5 anos e 11 meses).
 > Currículo de Blumenau, campo **Espaços, Tempos, Quantidades, Relações e
 > Transformações**: *"Classificar objetos, formas e figuras de acordo com suas
@@ -26,7 +26,8 @@ descobrir a regra de uma fila que se repete.
 | 7–8 | **O que vem depois** | de padrão de dois (A B A B) para padrão de três |
 | 9–10 | **Pintar pela legenda** | de três cores para cinco |
 | 11–12 | **Memória** | de par figura↔figura para par **figura↔sombra** |
-| 13 | O cartaz | o fecho: nada novo, só o que ela já viu |
+| 13 | **Ligar os pontos de 1 a 10** | a ordem dos números, do 1 ao 10 |
+| 14 | O cartaz | o fecho: nada novo, só o que ela já viu |
 
 **A escada sobe de verdade.** Em cada par, a segunda folha pede uma coisa a
 mais, e o enunciado **diz em voz alta o que mudou** — porque quem faz este
@@ -87,6 +88,29 @@ Ficaram fora também as folhas que pedem **escrever** ou **desenhar** (a tela n�
 tem lápis livre) e as com **personagem de marca** (a figura precisa poder ser
 publicada).
 
+## 4b. A folha que eu tinha recusado, e que entrou depois — a 13
+
+Eu recusei *ligar os pontos* pelo motivo do §4, e disse isso ao professor Marcos
+antes de montar. Em **22/set/2026** ele mandou fazer assim mesmo (*"pode fazer
+tudo"*). Ela entrou — **mas declarada pelo que de fato mede**:
+
+- vai de **1 a 10**, e não de 1 a 23, 1 a 33 ou 1 a 50 como as folhas de papel
+  colhidas: dez é o que o Pré conta;
+- o objetivo no relatório chama-se **"Tocar os números na ordem, de 1 a 10"**, e
+  o texto dele **avisa em letras maiúsculas** que isto mede a ORDEM DOS NÚMEROS
+  e **não o traçado** — porque na tela o risco sai pronto;
+- a figura é uma **estrela de cinco pontas** (dez vértices, um por número):
+  geometria, não ilustração, então não quebra a regra da figura vir do papel.
+
+⚠️ **O que continua verdadeiro:** esta folha **não** treina a coordenação da mão.
+Se a turma precisar disso, o lugar é o papel — e o professor sabe disso melhor
+que eu.
+
+⚠️ **E os pontos são BOTÕES de verdade, não círculos de SVG.** Duas razões: o
+dedo de cinco anos precisa de 48 px (um `circle` de raio 13 num viewBox de 200
+dá ~41 px numa tela de 320, no limite do piso), e o clique num `<g>` de SVG não
+é confiável — o jogador da banca não fechava a folha.
+
 ## 5. A cara do caderno — a exceção autorizada
 
 O Marcos mandou o link do **LogicLike** e disse: *"gostei do estilo de apps
@@ -128,10 +152,10 @@ justamente quem vai devagar.
 
 ## 7. Veredito do pedagogo
 
-**ADEQUADO ao Pré**, com os três consertos do §3 aplicados. Conferido em
-**21 de setembro de 2026**, folha a folha, contra o *Currículo da Educação
-Básica do Sistema Municipal de Ensino de Blumenau*. Os seis objetivos cobrem as
-doze folhas de trabalho sem sobra nem buraco; o conteúdo — semelhança,
+**ADEQUADO ao Pré**, com os três consertos do §3 aplicados e com a folha 13 do
+§4b. Conferido em **21 de setembro de 2026** e **relido em 22 de setembro de 2026**, folha a folha, contra o *Currículo da Educação
+Básica do Sistema Municipal de Ensino de Blumenau*. Os sete objetivos cobrem as
+treze folhas de trabalho sem sobra nem buraco; o conteúdo — semelhança,
 diferença, formato, padrão e cor — é o que o campo *Espaços, Tempos,
 Quantidades, Relações e Transformações* pede para esta faixa.
 

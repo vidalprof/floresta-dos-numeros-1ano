@@ -813,6 +813,19 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .mit.vista{border-color:#15a34a;background:#eafaf0;-webkit-box-shadow:0 4px 0 #0d7736;box-shadow:0 4px 0 #0d7736}
 @media (prefers-reduced-motion:reduce){.mbrilho{-webkit-animation:none;animation:none}}
 
+
+/* --- 13: ligar os pontos (a estrela de 1 a 10) --- */
+.pontos{position:relative;width:min(100%,340px);margin:6px auto 10px}
+.pontos:before{content:"";display:block;padding-top:100%}
+.pontos svg{position:absolute;left:0;top:0;width:100%;height:100%}
+.ptraco{stroke:var(--cor);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.pbola{position:absolute;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  width:48px;height:48px;border-radius:50%;border:3px solid #ded8f7;background:#fff;
+  color:var(--cor2);font-weight:800;font-size:19px;cursor:pointer;
+  -webkit-box-shadow:0 3px 0 #cfc7ef;box-shadow:0 3px 0 #cfc7ef}
+.pbola.ok{background:#eafaf0;border-color:#15a34a;color:#0d7736}
+.pbola.treme{-webkit-animation:obSacode .4s;animation:obSacode .4s}
+
 </style></head><body>
 
 <div id="topo">
@@ -904,7 +917,8 @@ var GESTOS = {
  "f10": "pintar",
  "f11": "memoria",
  "f12": "memoria",
- "f13": "cartaz"
+ "f13": "tocar na ordem",
+ "f14": "cartaz"
 };
 /*GESTOS-FIM*/
 /*ITENS-INI*/
@@ -931,12 +945,13 @@ var ITENS = {
  "p10": ["c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"],
  "p11": ["m1"],
  "p12": ["m2"],
- "p13": ["z1"]
+ "p13": ["q1"],
+ "p14": ["z1"]
 };
 /*ITENS-FIM*/
 /*FALAS-INI*/
 var FALAS = {
- "capa": "Aprendendo a observar. Treze folhas para olhar com atenção: achar as iguais, achar a sombra, achar o diferente, descobrir o que vem depois, pintar e jogar a memória. Escreva o seu nome ali embaixo e toque em Começar.",
+ "capa": "Aprendendo a observar. Catorze folhas para olhar com atenção: achar as iguais, achar a sombra, achar o diferente, descobrir o que vem depois, pintar e jogar a memória. Escreva o seu nome ali embaixo e toque em Começar.",
  "certo10_c1": "Isso! O numero quatro e verde.",
  "certo10_c2": "Isso! O numero cinco e roxo.",
  "certo10_c3": "Isso! O numero dois e azul.",
@@ -945,7 +960,8 @@ var FALAS = {
  "certo10_c6": "Isso! O numero quatro e verde.",
  "certo10_c7": "Isso! O numero cinco e roxo.",
  "certo10_c8": "Isso! O numero dois e azul.",
- "certo13_z1": "Parabens! Voce olhou com muita atencao o caderno inteiro.",
+ "certo13_q1": "Voce conseguiu! Os dez pontos na ordem certa formaram uma estrela.",
+ "certo14_z1": "Parabens! Voce olhou com muita atencao o caderno inteiro.",
  "certo1_bic": "Isso! É a bicicleta.",
  "certo1_lar": "Isso! É a laranja.",
  "certo1_lim": "Isso! É o limao.",
@@ -1004,7 +1020,8 @@ var FALAS = {
  "dica10_c6": "Olhe a legenda: procure o numero deste balao e veja a cor do lado.",
  "dica10_c7": "Olhe a legenda: procure o numero deste balao e veja a cor do lado.",
  "dica10_c8": "Olhe a legenda: procure o numero deste balao e veja a cor do lado.",
- "dica13_z1": "Toque nas figuras e depois em Terminei.",
+ "dica13_q1": "Este nao e o proximo. Procure o numero que vem logo depois do ultimo que voce tocou.",
+ "dica14_z1": "Toque nas figuras e depois em Terminei.",
  "dica1_bic": "Olhe o desenho com calma e procure ele do outro lado.",
  "dica1_lar": "Olhe o desenho com calma e procure ele do outro lado.",
  "dica1_lim": "Olhe o desenho com calma e procure ele do outro lado.",
@@ -1056,17 +1073,17 @@ var FALAS = {
  "dica9_b7": "Olhe a legenda: procure o numero deste balao e veja a cor do lado.",
  "dica9_b8": "Olhe a legenda: procure o numero deste balao e veja a cor do lado.",
  "escreva": "Escreva a palavra usando o teclado.",
- "fig_amo": "É a amora.",
- "fig_bet": "É a beterraba.",
- "fig_bic": "É a bicicleta.",
- "fig_bic2": "É a bicicleta antiga.",
- "fig_lar": "É a laranja.",
- "fig_lim": "É o limao.",
- "fig_mel": "É a melancia.",
- "fig_mot": "É a motoneta.",
- "fig_pat": "É o patinete.",
- "fig_ska": "É o skate.",
- "fig_tom": "É o tomate.",
+ "fig_amo": "Esta figura é a amora.",
+ "fig_bet": "Esta figura é a beterraba.",
+ "fig_bic": "Esta figura é a bicicleta.",
+ "fig_bic2": "Esta figura é a bicicleta antiga.",
+ "fig_lar": "Esta figura é a laranja.",
+ "fig_lim": "Esta figura é o limao.",
+ "fig_mel": "Esta figura é a melancia.",
+ "fig_mot": "Esta figura é a motoneta.",
+ "fig_pat": "Esta figura é o patinete.",
+ "fig_ska": "Esta figura é o skate.",
+ "fig_tom": "Esta figura é o tomate.",
  "fim": "Você chegou ao fim! Agora olhe em volta da sala: dá para achar duas coisas iguais? E alguma coisa que não é da família das outras?",
  "folhaPronta": "Folha pronta! Muito bem.",
  "lapis_am": "Amarelo.",
@@ -1088,10 +1105,21 @@ var FALAS = {
  "memok_pat": "Achou o par! São duas vezes o patinete.",
  "memok_ska": "Achou o par! São duas vezes o skate.",
  "memok_tom": "Achou o par! São duas vezes o tomate.",
+ "num_1": "Um.",
+ "num_10": "Dez.",
+ "num_2": "Dois.",
+ "num_3": "Tres.",
+ "num_4": "Quatro.",
+ "num_5": "Cinco.",
+ "num_6": "Seis.",
+ "num_7": "Sete.",
+ "num_8": "Oito.",
+ "num_9": "Nove.",
  "p10enun": "Folha dez. Agora sao cinco cores. Olhe a legenda antes de pintar.",
  "p11enun": "Folha onze. Vire duas cartas e ache as duas iguais. Sao cinco pares.",
  "p12enun": "Folha doze. Agora o par e a figura e a sombra dela. Sao quatro pares.",
- "p13enun": "Folha treze. Voce aprendeu a olhar com atencao. Toque em cada figura para ouvir o nome dela.",
+ "p13enun": "Folha treze. Toque no numero um, depois no dois, e va ate o dez. Veja o que aparece!",
+ "p14enun": "Folha catorze. Voce aprendeu a olhar com atencao. Toque em cada figura para ouvir o nome dela.",
  "p1enun": "Folha um. Toque numa figura e depois na figura igual a ela.",
  "p2enun": "Folha dois. Agora sao seis. Ligue cada figura a sua igual.",
  "p3enun": "Folha tres. A sombra e a figura sem a cor. Ligue cada uma a sua sombra.",
@@ -1106,7 +1134,7 @@ var FALAS = {
  "vozOn": "Narração ligada!"
 };
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {"188uqsw": 1, "ij5dt0": 1, "vi373e": 1, "cp16cb": 1, "2eiwyp": 1, "mtmt2q": 1, "v0qwmv": 1, "eejjsq": 1, "1lbcau7": 1, "1s952r0": 1, "1yfg7r6": 1, "tihxws": 1, "pmzw9g": 1, "1yk8dww": 1, "1aiv3gk": 1, "51fsz": 1, "152ybto": 1, "q199ga": 1, "gcteay": 1, "1owatde": 1, "lpxwvp": 1, "5z0qpy": 1, "8tys38": 1, "108ceea": 1, "1s8cm5l": 1, "1gurskf": 1, "1q3pi7d": 1, "1wxczcn": 1, "1grwln5": 1, "11esr0": 1, "1h4asp3": 1, "1pa9hib": 1, "10hpdj2": 1, "1qnyqik": 1, "1ec2ze4": 1, "1o016in": 1, "gm9bw0": 1, "1qini2e": 1, "4v8gov": 1, "1n74nje": 1, "ul16lk": 1, "1w77xs4": 1, "s69mtb": 1, "o5sss3": 1, "gu7dqv": 1, "lmuspp": 1, "16vz8uh": 1, "jn94ag": 1, "houd8r": 1, "1x2bypv": 1, "31uef8": 1, "1n5315n": 1, "hgzip1": 1, "1c50iuj": 1, "b5uusb": 1, "1d9s73k": 1, "1cuiocy": 1, "2tjxvt": 1, "37uetd": 1, "wor0rv": 1, "1lnxl49": 1, "dudk3k": 1, "158guex": 1, "1h1u2kd": 1, "1i4w7j8": 1, "mlebcw": 1, "tychhm": 1, "1avf0la": 1, "p9avhr": 1, "gp6yu4": 1, "1ewrd10": 1, "vd2i0j": 1, "7xp38s": 1, "76i5pu": 1, "1dr0f6k": 1, "yngeko": 1, "40k1fj": 1, "1yw7j7n": 1, "xet3av": 1, "9qx631": 1, "1i6uuc6": 1, "1a4w74i": 1, "1sqt3ja": 1, "195dbgh": 1, "1y90rsu": 1, "fywpj2": 1, "j2z6f0": 1, "1bck2i0": 1, "1fd7hla": 1, "qqiw6i": 1, "swkns7": 1};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"c3xliw": 1, "ij5dt0": 1, "vi373e": 1, "cp16cb": 1, "2eiwyp": 1, "mtmt2q": 1, "m2ovwm": 1, "v0qwmv": 1, "eejjsq": 1, "1lbcau7": 1, "1s952r0": 1, "1yfg7r6": 1, "tihxws": 1, "pmzw9g": 1, "1yk8dww": 1, "1aiv3gk": 1, "51fsz": 1, "152ybto": 1, "q199ga": 1, "gcteay": 1, "1owatde": 1, "lpxwvp": 1, "5z0qpy": 1, "8tys38": 1, "108ceea": 1, "1s8cm5l": 1, "1gurskf": 1, "1q3pi7d": 1, "1wxczcn": 1, "1grwln5": 1, "11esr0": 1, "1h4asp3": 1, "1pa9hib": 1, "10hpdj2": 1, "bugd16": 1, "1qnyqik": 1, "1ec2ze4": 1, "1o016in": 1, "gm9bw0": 1, "1qini2e": 1, "4v8gov": 1, "1n74nje": 1, "ul16lk": 1, "1w77xs4": 1, "s69mtb": 1, "pogupq": 1, "3cc9ne": 1, "1j8urio": 1, "16q0tyc": 1, "13r7jcl": 1, "ae4w3q": 1, "5yqsdq": 1, "j1fr8p": 1, "fkl4ty": 1, "st7gh4": 1, "1qt5gli": 1, "b5uusb": 1, "1d9s73k": 1, "1cuiocy": 1, "2tjxvt": 1, "37uetd": 1, "wor0rv": 1, "1lnxl49": 1, "dudk3k": 1, "158guex": 1, "1h1u2kd": 1, "1i4w7j8": 1, "mlebcw": 1, "tychhm": 1, "1avf0la": 1, "p9avhr": 1, "gp6yu4": 1, "1ewrd10": 1, "vd2i0j": 1, "7xp38s": 1, "76i5pu": 1, "1dr0f6k": 1, "375qb7": 1, "yiruog": 1, "2puaqi": 1, "30iuij": 1, "1bv29l3": 1, "pkns3n": 1, "38fthj": 1, "38fiq4": 1, "2zw63a": 1, "2z80nt": 1, "yngeko": 1, "40k1fj": 1, "1yw7j7n": 1, "x2ph1o": 1, "8pf8xr": 1, "9qx631": 1, "1i6uuc6": 1, "1a4w74i": 1, "1sqt3ja": 1, "195dbgh": 1, "1y90rsu": 1, "fywpj2": 1, "j2z6f0": 1, "1bck2i0": 1, "1fd7hla": 1, "qqiw6i": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ============================================================
    OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
@@ -1229,6 +1257,8 @@ var MEM = {m1: ["tom", "bic", "mel", "pat", "lim"]};
 var MEMS = {m2: ["bic", "mot", "mel", "tom"]};
 
 /* --- 12: O CARTAZ (fecho, alcancavel a qualquer momento) --- */
+/* os dez pontos da estrela, na ordem em que a crianca toca */
+var PONTOS = {q1: [[100.0, 18.0], [121.2, 70.9], [178.0, 74.7], [134.2, 111.1], [148.2, 166.3], [100.0, 136.0], [51.8, 166.3], [65.8, 111.1], [22.0, 74.7], [78.8, 70.9]]};
 var CARTAZ = {z1: ["bic", "pat", "tom", "mel", "lim", "amo"]};
 /*DADOS-FIM*/
 
@@ -1303,6 +1333,7 @@ var NOMES = [
  "Pinte com cinco cores",
  "Jogo da memória",
  "Memória das sombras",
+ "Ligue os pontos de 1 a 10",
  "O cartaz do que você aprendeu"
 ];
 /*<dossie-dados>*/
@@ -1374,6 +1405,16 @@ var CURRICULO = {
    "pratica": "Espaços, Tempos, Quantidades, Relações e Transformações",
    "objeto": "Objetivos de aprendizagem e desenvolvimento — crianças pequenas",
    "habilidade": "HABILIDADE: \"Classificar objetos, formas e figuras de acordo com suas semelhanças e diferenças.\""
+  },
+  {
+   "objetivo": "Tocar os números na ordem, de 1 a 10",
+   "folhas": [
+    13
+   ],
+   "pratica": "Espaços, Tempos, Quantidades, Relações e Transformações",
+   "objeto": "Objetivos de aprendizagem e desenvolvimento — crianças pequenas",
+   "habilidade": "HABILIDADE: \"Relacionar números às suas respectivas quantidades e identificar o antes, o entre e o depois em\numa sequência.\"",
+   "_o_que_isto_NAO_mede": "NÃO mede o traçado. No papel, ligar os pontos treina a coordenação da mão; na tela a criança toca e o risco sai pronto. O que esta folha mede é a ORDEM DOS NÚMEROS até dez — e é só isso que o relatório do professor diz. Ela entrou a pedido do professor Marcos (22/set/2026) depois de eu ter recusado a mecânica pelo motivo acima."
   }
  ]
 };
@@ -1575,5 +1616,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=5fde1d5217"></script>
+<script src="folhas.js?v=3009c58f2e"></script>
 </body></html>

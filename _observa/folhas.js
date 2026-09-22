@@ -29,7 +29,7 @@ var livro = document.getElementById("livro"), PAGEL = [], TIRAS = [];
 var LIGAR = [1, 2, 3, 4];
 /* a cor da faixa por BLOCO da escada, não por folha: a criança vê que o assunto
    mudou. Uma entrada por folha, de c1 a c5. */
-var CORES = ["c1", "c1", "c2", "c2", "c3", "c3", "c4", "c4", "c5", "c5", "c1", "c1", "c2"];
+var CORES = ["c1", "c1", "c2", "c2", "c3", "c3", "c4", "c4", "c5", "c5", "c1", "c1", "c3", "c2"];
 
 
 function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
@@ -220,7 +220,7 @@ function sobre(ev, alvo){
 function monta(){
   livro.innerHTML = ""; PAGEL = []; RESP = {}; TIRAS = [];
   /* ⚠️ UMA ENTRADA POR FOLHA, na ordem, começando pela capa `f0`. */
-  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13], i;
+  var caps = [f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14], i;
   for(i = 0; i < caps.length; i++){
     var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
     caps[i](d, i);
@@ -265,7 +265,7 @@ function f0(d){
   c.innerHTML =
     '<div class="ceu"><i></i><i></i><i></i></div>' +
     '<h1 class="titu">' + letras + '</h1>' +
-    '<div class="sub">Pr\u00e9 &middot; 13 folhas: as iguais, a sombra, o diferente e o que vem depois</div>' +
+    '<div class="sub">Pr\u00e9 &middot; 14 folhas: as iguais, a sombra, o diferente e o que vem depois</div>' +
     '<div class="cena">' + cx + '</div>' +
     '<i class="lupa"></i>' +
     '<div class="chamada">Escreva o seu nome ali embaixo e toque em <b>Come\u00e7ar</b>.</div>';
@@ -930,7 +930,12 @@ var OBJETIVOS = [
   {n: "Pintar seguindo a legenda das cores", f: [9, 10],
    ok: "casa o número com a cor que a legenda manda"},
   {n: "Lembrar onde estava a figura", f: [11, 12],
-   ok: "acha os quatro pares do jogo da memória"}
+   ok: "acha os quatro pares do jogo da memória"},
+  /* ⚠️ O TEXTO DESTE OBJETIVO AVISA O QUE ELE NÃO MEDE, e de propósito: o
+     professor lê isto no relatório, ao lado da nota. Na tela o risco sai pronto,
+     então esta folha mede a ORDEM DOS NÚMEROS, nunca o traçado. */
+  {n: "Tocar os números na ordem, de 1 a 10", f: [13],
+   ok: "toca os números de 1 a 10 na ordem (ATENÇÃO: isto mede a ORDEM DOS NÚMEROS, não o traçado — na tela o risco sai pronto)"}
 ];
 
 function mede(folhas){
@@ -1496,11 +1501,81 @@ function f12(d, pi){
   fMemoria(d, pi, MEMS, "Agora o par é a figura e a <b>sombra</b> dela. São quatro pares.", true);
 }
 
-/* --- 13 · O CARTAZ ------------------------------------------
+/* --- 13 · LIGAR OS PONTOS, DE 1 A 10 ------------------------
+   ⚠️⚠️ ESTA FOLHA ENTROU DECLARADA PELO QUE ELA MEDE, e nao pelo que a folha de
+      papel mede. No papel o valor esta no LAPIS atravessando a folha — é
+      coordenação motora fina; aqui a criança toca e o traço aparece pronto.
+      O que ela treina é a ORDEM DOS NÚMEROS até dez, que é do Pré e está no
+      currículo, e é isso (e só isso) que o relatório do professor diz.
+   ⚠️ Por isso vai de 1 a 10. As folhas colhidas pedem de 1 a 23, 1 a 33 e até
+      1 a 50 — fora do Pré. */
+function f13(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Toque no <b>1</b>, depois no <b>2</b>, e vá até o <b>10</b>. " +
+            "Veja o que aparece!", "p" + pi + "enun");
+  var id = "n" + pi + "_0", box = item(0);
+  var pts = PONTOS[ST.folha["p" + pi][0]], feito = !!ST.resp[id];
+  /* a resposta declarada são os dez pedaços na ordem — o contrato que o jogador
+     da banca conhece (ele toca um a um, na ordem escrita). */
+  registra(id, pi, pts.map(function(_, i){ return "p" + (i + 1); }).join(" "));
+
+  var cx = el("div", "pontos");
+  var ns = "http://www.w3.org/2000/svg";
+  var svg = document.createElementNS(ns, "svg");
+  svg.setAttribute("viewBox", "0 0 200 200");
+  svg.setAttribute("aria-hidden", "true");
+  var linha = document.createElementNS(ns, "path");
+  linha.setAttribute("class", "ptraco");
+  linha.setAttribute("fill", "none");
+  svg.appendChild(linha);
+  cx.appendChild(svg);
+
+  var proximo = 0, bolas = [];
+  function desenha(ate){
+    var dd = "", i;
+    for(i = 0; i < ate; i++) dd += (i ? " L" : "M") + pts[i][0] + "," + pts[i][1];
+    if(ate >= pts.length) dd += " Z";
+    linha.setAttribute("d", dd);
+  }
+  /* ⚠️ BOTÃO DE VERDADE, não `<circle>`: o dedo de cinco anos precisa de 48 px,
+     e o clique num `<g>` de SVG não é confiável (o jogador da banca não fechava
+     a folha). O SVG fica só para desenhar o traço. */
+  pts.forEach(function(P, i){
+    var b = el("button", "pbola" + (feito ? " ok" : ""), String(i + 1));
+    b.style.left = (P[0] / 2) + "%";
+    b.style.top = (P[1] / 2) + "%";
+    b.setAttribute("data-qa", "op-" + id + "-p" + (i + 1));
+    b.setAttribute("aria-label", "ponto " + (i + 1));
+    b.onclick = function(){
+      if(ST.resp[id]) return;
+      if(i !== proximo){
+        sErro();
+        b.className = "pbola treme";
+        setTimeout(function(){ b.className = "pbola"; }, 450);
+        errou(id, "dica" + pi + "_q1");
+        return;
+      }
+      sPasso(); falar("num_" + (i + 1));
+      b.className = "pbola ok";
+      proximo++; desenha(proximo);
+      if(proximo === pts.length){
+        bolas.forEach(function(x){ x.className = "pbola ok"; });
+        acertou(id, "certo" + pi + "_q1");
+      }
+    };
+    bolas.push(b);
+    cx.appendChild(b);
+  });
+  if(feito){ proximo = pts.length; desenha(proximo); }
+  box.appendChild(cx);
+  fechaItem(d, box, id);
+}
+
+/* --- 14 · O CARTAZ ------------------------------------------
    ⭐ O FECHO TEM DE SER ALCANÇÁVEL A QUALQUER MOMENTO (regra do formato): ele
       não pede nada novo, só junta o que a criança já viu. Assim o tamanho do
       caderno não castiga quem vai devagar. */
-function f13(d, pi){
+function f14(d, pi){
   faixa(d, pi, NOMES[pi - 1]);
   enunciado(d, pi, "Você aprendeu a olhar com atenção! Toque em cada figura para ouvir o nome dela.",
             "p" + pi + "enun");

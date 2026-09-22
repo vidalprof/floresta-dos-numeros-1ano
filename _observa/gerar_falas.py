@@ -146,7 +146,7 @@ def p(k, v):
 # ---------------------------------------------------------------------------
 # AS FALAS DO MOTOR — estas toda folha viva tem
 # ---------------------------------------------------------------------------
-p(u"capa", u"Aprendendo a observar. Treze folhas para olhar com atenção: achar as iguais, achar a sombra, achar o diferente, descobrir o que vem depois, pintar e jogar a memória. Escreva o seu nome ali embaixo e toque em Começar.")
+p(u"capa", u"Aprendendo a observar. Catorze folhas para olhar com atenção: achar as iguais, achar a sombra, achar o diferente, descobrir o que vem depois, pintar e jogar a memória. Escreva o seu nome ali embaixo e toque em Começar.")
 p(u"folhaPronta", u"Folha pronta! Muito bem.")
 p(u"escreva", u"Escreva a palavra usando o teclado.")
 p(u"ligue", u"Toque numa figura do lado esquerdo e depois na do lado direito.")
@@ -190,7 +190,9 @@ def _nome(k):
 
 # o nome de cada figura — a crianca toca e OUVE o que e
 for _k, _F in FIG.items():
-    p(u"fig_" + _k, u"É " + _nome(_k) + u".")
+    # clipe de meio segundo e o pior caso para qualquer reconhecedor, e frase
+    # inteira e melhor fala para quem tem cinco anos
+    p(u"fig_" + _k, u"Esta figura é " + _nome(_k) + u".")
     p(u"memok_" + _k, u"Achou o par! São duas vezes " + _nome(_k) + u".")
 
 ENUN = {
@@ -206,7 +208,8 @@ ENUN = {
  10: u"Folha dez. Agora sao cinco cores. Olhe a legenda antes de pintar.",
  11: u"Folha onze. Vire duas cartas e ache as duas iguais. Sao cinco pares.",
  12: u"Folha doze. Agora o par e a figura e a sombra dela. Sao quatro pares.",
- 13: u"Folha treze. Voce aprendeu a olhar com atencao. Toque em cada figura para ouvir o nome dela.",
+ 13: u"Folha treze. Toque no numero um, depois no dois, e va ate o dez. Veja o que aparece!",
+ 14: u"Folha catorze. Voce aprendeu a olhar com atencao. Toque em cada figura para ouvir o nome dela.",
 }
 for _i, _t in ENUN.items():
     p(u"p%denun" % _i, _t)
@@ -253,13 +256,21 @@ for _pi, _B, _C in ((9, BAL1, COR1), (10, BAL2, COR2)):
         p(u"dica%d_%s" % (_pi, _k),
           u"Olhe a legenda: procure o numero deste balao e veja a cor do lado.")
 
+# 13 — ligar os pontos de 1 a 10
+_DEZ = [u"um", u"dois", u"tres", u"quatro", u"cinco",
+        u"seis", u"sete", u"oito", u"nove", u"dez"]
+for _i, _n in enumerate(_DEZ, 1):
+    p(u"num_%d" % _i, _n[0].upper() + _n[1:] + u".")
+p(u"certo13_q1", u"Voce conseguiu! Os dez pontos na ordem certa formaram uma estrela.")
+p(u"dica13_q1", u"Este nao e o proximo. Procure o numero que vem logo depois do ultimo que voce tocou.")
+
 # 11 — a memoria
 p(u"memdica", u"Nao era o par. Guarde onde estavam e tente outra vez.")
 p(u"memfim", u"Voce achou os quatro pares! Que memoria boa.")
 
 # 12 — o cartaz
-p(u"certo13_z1", u"Parabens! Voce olhou com muita atencao o caderno inteiro.")
-p(u"dica13_z1", u"Toque nas figuras e depois em Terminei.")
+p(u"certo14_z1", u"Parabens! Voce olhou com muita atencao o caderno inteiro.")
+p(u"dica14_z1", u"Toque nas figuras e depois em Terminei.")
 
 
 # ==============================================================================
