@@ -103,12 +103,26 @@ function pintar(){
   pintarSeltool();
   if(!n){ $("tabela").innerHTML='<p class="mut">Nenhuma prova enviada ainda. Assim que um aluno terminar, a nota aparece aqui.</p>'; pintarAnalise([]); return; }
   var cab=selMode?'<th class="sel">&#10003;</th>':'';
-  var h='<table><tr>'+cab+'<th>#</th><th>Nome</th><th>Turma</th><th>Nota</th><th>Acertos</th><th>Quando</th></tr>';
+  /* ⭐ A COLUNA "VOLTOU AO TEXTO" (22/set/2026). Desde que a prova passou a
+     comecar pelos dois textos (as regras do UNO e a historia do Tangram), cada
+     questao tem o botao "Nao lembro — ver no texto". Isso e bom para a crianca
+     E MUDA O QUE A NOTA SIGNIFICA: com o texto a mao ela mede "sabe procurar e
+     entender", nao "decorou". As duas sao legitimas aos nove anos, mas sao
+     DIFERENTES — e o professor tem de saber qual esta lendo.
+     ⚠️ E NAO e para castigar ninguem: quem voltou ao texto seis vezes e
+        acertou dezoito leu e entendeu, o que e exatamente o que se quer. O
+        numero esta aqui para LER A NOTA, nao para descontar dela. */
+  var h='<table><tr>'+cab+'<th>#</th><th>Nome</th><th>Turma</th><th>Nota</th><th>Acertos</th>'+
+        '<th title="Quantas vezes abriu o texto durante a prova">Voltou ao texto</th><th>Quando</th></tr>';
   for(i=0;i<lista.length;i++){ var r=lista[i];
     var cb=selMode?'<td class="sel"><input type="checkbox" onchange="selToggle(\''+r._k+'\',this.checked)"'+(sel[r._k]?' checked':'')+'></td>':'';
     h+='<tr>'+cb+'<td class="num">'+(i+1)+'</td><td>'+esc(r.nome||"—")+'</td><td>'+esc(r.turma||"—")+'</td>'+
        '<td class="num"><span class="pill" style="background:'+corNota(r.nota)+'">'+esc((r.nota===0||r.nota)?r.nota:"—")+'</span></td>'+
-       '<td class="num">'+esc(r.acertos||"—")+'</td><td class="mut">'+esc(r.data||"")+'</td></tr>';
+       '<td class="num">'+esc(r.acertos||"—")+'</td>'+
+       /* ⚠️ o travessao NAO e zero: prova feita antes de 22/set/2026 nao tem o
+          campo, e dizer "0" ali seria inventar que a crianca nao consultou. */
+       '<td class="num mut">'+(typeof r.dicas==="number"?esc(r.dicas):"—")+'</td>'+
+       '<td class="mut">'+esc(r.data||"")+'</td></tr>';
   }
   h+='</table>';
   $("tabela").innerHTML=h;
@@ -236,8 +250,8 @@ function baixarCSV(){
   var lista=dados.slice(); if(filtroTurma){ lista=lista.filter(function(r){return (r.turma||"")===filtroTurma;}); }
   lista.sort(function(a,b){return (""+(a.nome||"")).localeCompare(""+(b.nome||""),"pt");});
   function cel(v){ v=""+(v==null?"":v); if(/^[=+\-@\t\r]/.test(v))v="'"+v; if(/[",;\n]/.test(v))v='"'+v.replace(/"/g,'""')+'"'; return v; }
-  var lin=["Nome;Turma;Nota;Acertos;Respostas;Quando"],i;
-  for(i=0;i<lista.length;i++){ var r=lista[i]; lin.push([cel(r.nome),cel(r.turma),cel(r.nota),cel(r.acertos),cel(letrasDe(r.respostas)),cel(r.data)].join(";")); }
+  var lin=["Nome;Turma;Nota;Acertos;Voltou ao texto;Respostas;Quando"],i;
+  for(i=0;i<lista.length;i++){ var r=lista[i]; lin.push([cel(r.nome),cel(r.turma),cel(r.nota),cel(r.acertos),cel(typeof r.dicas==="number"?r.dicas:""),cel(letrasDe(r.respostas)),cel(r.data)].join(";")); }
   var blob=new Blob(["﻿"+lin.join("\r\n")],{type:"text/csv;charset=utf-8;"});
   var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=ARQCSV; document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
