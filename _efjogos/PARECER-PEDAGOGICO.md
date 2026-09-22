@@ -101,27 +101,37 @@ sobre fábulas que nunca tinha ouvido.
 
 **O que passou a existir:**
 
-1. **Doze fichas antes da primeira pergunta.** Cada uma tem **uma ideia só**
-   (Sweller), as **figuras SVG** das próprias cartas e do tangram, o Léo lendo a
-   ficha inteira ao abrir, e **um alto-falante por frase** para ouvir de novo.
-   São ~3 minutos.
-2. **Em cada pergunta, o botão "Não lembro — ver a ficha"**, que reabre a ficha
+1. **Dois textos antes da primeira pergunta** — *As regras do UNO* e *A história
+   do Tangram*. Cada um vem inteiro, rolando, com **subtítulo e figura SVG** em
+   cada assunto, **um alto-falante por frase** e um botão **"Ouvir o texto todo"**
+   que lê de cabo a rabo (e para quando a criança quiser).
+2. **Em cada pergunta, o botão "Não lembro — ver no texto"**, que reabre o trecho
    que ensina aquela regra, com figura e voz.
 
-⚠️ **DE ONDE SAI O TEXTO DAS FICHAS — e isto é a regra zero da casa.** Da
+⚠️ **ISTO JÁ FOI DOZE TELAS, e o professor Marcos corrigiu no mesmo dia:**
+*"meu pedido foi colocar o TEXTO com as regras do uno e a história do tangram,
+antes, para os estudantes lerem e ouvirem"* · *"isso faça dois textos"*.
+Eu tinha picado o conteúdo em doze fichas de uma ideia cada, pela regra da carga
+cognitiva — que é boa regra e **não era a pergunta**. O custo que eu não pesei:
+**onze toques** até a primeira pergunta, e o texto **nunca aparecendo inteiro**.
+A criança não via *"as regras do UNO"*; via doze telinhas. **Quem decide entre
+duas leituras legítimas é quem dá a aula.** O conteúdo não mudou uma vírgula:
+os doze blocos viraram os subtítulos dos dois textos.
+
+⚠️ **DE ONDE SAI O TEXTO — e isto é a regra zero da casa.** Da
 **resposta certa das próprias questões**, mais o `HIST_HTML` da nossa atividade
-`_tangram` para as quatro fichas do tangram. Não há um segundo texto escrito de
-cabeça; a ficha e a pergunta têm **a mesma fonte**, e por isso é impossível a
-ficha ensinar uma coisa e a prova cobrar outra. As únicas palavras minhas são
+`_tangram` para os dois blocos do tangram. Não há um segundo texto escrito de
+cabeça; o texto e a pergunta têm **a mesma fonte**, e por isso é impossível o
+texto ensinar uma coisa e a prova cobrar outra. As únicas palavras minhas são
 duas glosas, declaradas no código: *"sentido horário: o mesmo sentido dos
 ponteiros do relógio"* e *"pela cor, pelo número ou pelo tipo"* — que é como o
 nosso próprio jogo `_uno1` descreve a combinação.
 
-⚠️⚠️ **O QUE ISTO CUSTA, e fica dito com todas as letras.** Com a ficha à mão, a
+⚠️⚠️ **O QUE ISTO CUSTA, e fica dito com todas as letras.** Com o texto à mão, a
 nota passa a medir **"sabe procurar e entender"** e já não mede **"decorou"**. As
 duas coisas são legítimas aos nove anos — a primeira é até mais útil — mas são
 **diferentes**, e o professor precisa saber qual está lendo. Por isso a prova
-agora **grava quantas vezes cada criança abriu a ficha** (campo `dicas` no
+agora **grava quantas vezes cada criança voltou ao texto** (campo `dicas` no
 registro). Uma prova que parece medir uma coisa e mede outra seria pior do que
 uma prova difícil.
 ⚠️ **O painel do professor ainda NÃO mostra esse número** — ele grava, o painel
@@ -141,7 +151,7 @@ perguntas, o conteúdo é o dos jogos que a turma jogou, e a prova mede — alé
 regras — **a regra do jogo limpo**, que é o que a Educação Física quer de um jogo
 de mesa.
 
-⭐ **Relido em 22 de setembro de 2026**, com as doze fichas de estudo no lugar
+⭐ **Relido em 22 de setembro de 2026**, com os dois textos de estudo no lugar
 (§5b). O veredito continua o mesmo, e agora com a condição que faltava: **a
 criança tem onde aprender o que a prova cobra, dentro da própria prova.**
 

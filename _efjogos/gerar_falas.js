@@ -75,10 +75,20 @@ poe(caixa.HISTORIA, "capa");
 ["Escreva o seu nome para começar.", "Escolha o seu ano.",
  "Escolha a sua turma.", "Escolha o seu personagem."].forEach(function (t) { poe(t, "capa/aviso"); });
 
-/* 3. AS FICHAS: a ficha inteira + cada frase sozinha (o alto-falante da linha) */
+/* 3. OS DOIS TEXTOS.
+   ⚠️ São QUATRO coisas faladas em cada texto, e esquecer uma deixa um botão
+      mudo sem dar erro nenhum:
+        · a abertura que o Léo diz ao abrir o texto (`PARTES[n].abre`);
+        · o SUBTÍTULO sozinho — é o que a leitura corrida (`lerTextoTodo`) diz
+          ao entrar em cada assunto, e ele não aparece em nenhum outro lugar;
+        · o bloco inteiro (título + frases), que é o que o botão "ver no texto"
+          da prova toca;
+        · cada frase sozinha, que é o alto-falante ao lado dela. */
+caixa.PARTES.forEach(function (P, n) { poe(P.abre, "texto" + (n + 1) + "/abertura"); });
 caixa.ESTUDO.forEach(function (f, i) {
-  poe(caixa.falaDaFicha(i), "ficha" + (i + 1));
-  f.linhas.forEach(function (l, k) { poe(l, "ficha" + (i + 1) + "/linha" + (k + 1)); });
+  poe(f.titulo + ".", "bloco" + (i + 1) + "/subtitulo");
+  poe(caixa.falaDaFicha(i), "bloco" + (i + 1));
+  f.linhas.forEach(function (l, k) { poe(l, "bloco" + (i + 1) + "/frase" + (k + 1)); });
 });
 
 /* 4. AS QUESTÕES: a pergunta com as quatro letras + cada alternativa sozinha */
@@ -98,4 +108,4 @@ fs.writeFileSync(path.join(AQUI, "falas.json"),
   "utf8");
 
 console.log(falas.length + " falas em _efjogos/falas.json");
-console.log("   " + caixa.ESTUDO.length + " fichas de estudo, " + caixa.QUESTOES.length + " questoes");
+console.log("   " + caixa.PARTES.length + " textos (" + caixa.ESTUDO.length + " blocos), " + caixa.QUESTOES.length + " questoes");
