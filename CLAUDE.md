@@ -603,9 +603,22 @@ Leia tudo antes de agir e responda sempre em **português**.
 > "célula" existe no 3º e no 6º ano). Termo que não estiver lá **reprova**, a
 > menos que esteja em `fora_do_curriculo` com o motivo — e aí ele é IMPRESSO em
 > toda rodada. ⚠️ Sem `conceitos`, o portão diz **NÃO MEDI**, que não é "passou"
-> — e hoje 13 dos 14 cadernos com `curriculo.json` estão assim (o PDF só traz
-> cabeçalho por ano em Ciências, Geografia e História; Português e Matemática
-> vêm em faixas, e medir no documento inteiro aprovaria conteúdo de outro ano).
+> — e hoje 13 dos 14 cadernos com `curriculo.json` estão assim.
+> ⚠️⚠️ **E A RAZÃO QUE ESTAVA ESCRITA AQUI ERA FALSA (medido em 23/set/2026).**
+> Dizia-se que *"Português e Matemática vêm em faixas"*. **Não vêm.** O PDF traz
+> **bloco «3º ANO» de Língua Portuguesa** (a partir da linha 3917 do
+> `_curriculo/blumenau.txt`) **e bloco «3º ANO» de Matemática** (a partir da
+> 17937, com as unidades Números, Álgebra, Geometria, Grandezas e medidas,
+> Probabilidade e Estatística, objetivo por objetivo). Eu dei como impossível
+> uma coisa que eu nunca tinha procurado, e isso custou: catorze cadernos com o
+> conteúdo sem medida nenhuma.
+> ⚠️ **O QUE CONTINUA VERDADE, e é outra coisa:** o portão `0b9` não ACHA esses
+> blocos, porque ele procura o cabeçalho `COMPONENTE – ANOS INICIAIS – Nº ANO` e
+> o bloco de Matemática é um `3º ANO` solto (quem prova que é Matemática é o
+> CONTEÚDO — *"números naturais de até quatro ordens"*, *"reta numérica"* —, não
+> um cabeçalho). **Enquanto o `bloco_do_ano` não aprender esta segunda forma, o
+> portão continua dizendo NÃO MEDI** — e aí é dívida de ferramenta, não do
+> documento. Não confundir as duas.
 > O dossiê se injeta com
 > `python3 _padrao/dossie_professor.py <pasta>` (fonte:
 > `_padrao/dossie-professor.js`) e abre pelo menu do professor (chave `1275@`) e
