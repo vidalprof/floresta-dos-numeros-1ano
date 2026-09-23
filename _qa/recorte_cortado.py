@@ -188,7 +188,17 @@ def le_pecas(pasta, dir_folhas):
             if not folha or not isinstance(cx, list) or len(cx) != 4:
                 continue
             nome = re.sub(r"\.png$", u"", nome_png)
-            achadas.append((nome, os.path.join(u"_sequencias", folha),
+            # ⚠️ O CAMINHO DA FOLHA VEM DE DOIS JEITOS, e um deles fazia o
+            #    portao ficar CEGO EM SILENCIO. O `_dinheiro5` escreve a folha
+            #    relativa a `_sequencias/` (`folhas_dinheiro5c/d01.jpg`) e o
+            #    `_sil3` escreve relativa a RAIZ (`_sequencias/colheita/...`).
+            #    Grudar `_sequencias/` na frente das duas dava
+            #    `_sequencias/_sequencias/...`, arquivo que nao existe — e o
+            #    portao pulava as 17 caixas e imprimia "ok". Agora ele aceita as
+            #    duas escritas, e prefere a que existe no disco.
+            cams = [folha, os.path.join(u"_sequencias", folha)]
+            cam_folha = next((c for c in cams if os.path.exists(c)), cams[-1])
+            achadas.append((nome, cam_folha,
                             cx[0], cx[1], cx[2], cx[3], u"figura"))
 
     # 2) varre toda tupla/lista procurando os tres formatos
@@ -475,6 +485,17 @@ def main():
 
     print(u"%s -> recorte: %d caixa(s) conferida(s) contra a folha de papel"
           % (pasta, medidos))
+    # ⚠️ ZERO CAIXA CONFERIDA NAO E "OK" — E "RODEI CEGO". Foi assim que este
+    #    portao aprovou o `_sil3` com as 17 caixas fora da conta (caminho de
+    #    folha que nao existia). Regra da casa: portao que imprime NADA nao
+    #    passou, so rodou. Codigo 2 = nao medi, que e diferente de 0.
+    if not medidos and (achadas or os.path.exists(
+            os.path.join(pasta, u"img", u"RECORTE.json"))):
+        print(u"   NAO MEDI: ha caixa declarada e nenhuma foi conferida — "
+              u"a folha de origem nao abriu. Isto NAO e 'passou'.")
+        for nome, por in naomedi[:8]:
+            print(u"    ? %-12s %s" % (nome, por))
+        return 2
     print(u"   PALPITE DECLARADO (nunca medido com crianca): margem %d px, vao de %d px "
           u"que nao conta, trecho minimo de %d px atravessando e %d%% do lado."
           % (MARGEM, VAO, TRECHO_MIN, round(FRACAO_MIN * 100)))
