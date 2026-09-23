@@ -148,7 +148,12 @@ jobs:
             fi
           done
           if [ "${#faltam[@]}" -gt 0 ]; then
-            echo "::error::o destino nao existe: ${faltam[*]}"
+            # ⚠️ O CONSERTO VAI NA PROPRIA LINHA DE ERRO, e nao so no resumo.
+            #    Quem le isto daqui le o FIM DO LOG (`get_job_logs` com
+            #    `tail_lines`), porque o resumo custa caro de buscar — e o fim
+            #    do log dizia so "o destino nao existe", sem o que fazer.
+            #    Mensagem de erro que nao diz o conserto gasta a volta inteira.
+            echo "::error::o destino nao existe: ${faltam[*]} — atividade NOVA nasce pela fabrica.yml (inputs: repo_name=<destino>, source_dir=<pasta>), e so DEPOIS o entregar.yml grava a voz e publica"
             {
               echo "## ⛔ A entrega parou antes de comecar"
               echo ""
