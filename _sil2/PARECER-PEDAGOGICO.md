@@ -93,3 +93,109 @@ passa do que o 2º ano pede.
 ⚠️ **O que este parecer NÃO diz.** Ele não é um portão: nenhuma conta mediu o
 julgamento acima. Ele diz que alguém leu o caderno inteiro, na ordem em que a
 criança o encontra, e assinou.
+
+## ⭐ 23/set/2026 — OS LEMBRETES (o post-it com áudio) e a capa nova
+
+### A ideia, e de quem é
+
+Do professor Marcos: *"em nossas sequências didáticas, o que acha de post-its
+com áudio ou coisa do tipo ensinando o que vai ser cobrado na atividade? Para
+ajudar o estudante. Seria uma melhoria nos cadernos."* Este caderno é a
+**experiência** que ele autorizou (*"sim, faça em um caderno"*) — não é regra da
+casa ainda, e só vira se funcionar na turma dele.
+
+### O buraco que ele viu e eu não
+
+Os cadernos de folha viva **ensinam fazendo**. A criança separa sílaba folha
+após folha e **em lugar nenhum deste caderno estava escrito o que é uma
+sílaba**. Quem esqueceu tinha a dica do item — que resolve *aquele* item — e
+nenhum lugar para reaprender a regra. É um buraco de verdade, e ele estava aqui
+desde a primeira versão.
+
+### O que entrou
+
+**Sete lembretes**, um por conceito, cada um acompanhando as folhas do seu bloco:
+
+| Lembrete | Folhas |
+|---|---|
+| O que é uma sílaba | 1, 2, 26 |
+| Toda sílaba tem uma vogal | 3, 4, 5 |
+| Letra não é sílaba | 6, 7, 8, 27 |
+| As quatro gavetas | 9 a 14, 28, 29, 34 |
+| Tirar, pôr e trocar sílabas | 15 a 20, 33 |
+| Montar a palavra com as sílabas | 21 a 25 |
+| Onde uma palavra acaba e a outra começa | 30, 31, 32 |
+
+Cada um é um bilhete amarelo, com a regra em três ou quatro frases e **um
+alto-falante por frase**. A folha 35 **não tem** — ela é o cartaz, e o cartaz já
+é o resumo.
+
+### ⚠️⚠️ Por que ele nasce FECHADO — e isto é a parte pedagógica da decisão
+
+A lei do EduVerso diz: **o problema vem primeiro e o conceito por ÚLTIMO**. Um
+lembrete aberto de cara entregaria a regra antes de a criança tentar, mataria a
+lacuna de curiosidade (Loewenstein) e **a folha viraria cópia**. Fechado, o
+problema continua vindo primeiro e o conceito fica **disponível** — nunca
+imposto. É a mesma decisão do botão *"ver no texto"* da prova de Ed. Física, e
+pela mesma razão.
+
+**Ele se abre sozinho uma única vez, e só depois do SEGUNDO erro na mesma
+folha.** A conta é por folha e não por item, de propósito: dois tropeços no
+mesmo item podem ser distração; dois na mesma folha são o conceito que não
+entrou — que é exatamente o que o lembrete tem para dar. Antes disso seria
+entregar; nunca seria abandonar quem travou.
+
+### De onde saiu o texto (regra zero)
+
+Do que **este caderno já ensina**: os objetivos declarados no `curriculo.json` e
+os exemplos que já estão nos DADOS — BOLA, SOL, GATO, GALINHA, PA-NE-LA,
+BOR-BO-LE-TA, COLA. Não há uma palavra que eu tenha escolhido de cabeça, e não
+há um segundo texto que possa desencontrar do caderno.
+
+### O que o professor ganha, e é novo
+
+O relatório passa a ter **"Onde a criança foi buscar a regra"**: qual lembrete
+ela abriu e quantas vezes. Até hoje o relatório dizia **quanto** ela acertou por
+objetivo; agora diz **onde ela sentiu que não sabia** — que é a coisa que o
+professor não consegue ver com trinta crianças na sala.
+
+⚠️ **Só conta o que ELA abriu.** O que o caderno abriu sozinho não entra: ali
+quem decidiu foi o caderno, e misturar os dois faria o relatório dizer uma coisa
+que não aconteceu.
+
+⚠️ **E abrir o lembrete NÃO é erro** — está escrito no próprio relatório, para
+que ninguém leia aquele número como demérito. É a criança percebendo que não
+lembrava e indo atrás, que é o comportamento que se quer ensinar.
+
+### A capa
+
+Ordem dele no mesmo pedido: *"lembrando a capa deve ficar fantástica"*. A capa
+anterior era honesta e chapada — quatro pílulas com um bicho e uma sílaba. **O
+caderno chama-se O Armário das Quatro Gavetas e não havia armário nenhum nela.**
+Agora há: um móvel de madeira com tampo, laterais, pés e quatro gavetas que
+**deslizam para fora**, uma depois da outra, sob uma luz quente. E cada gaveta
+mostra **a palavra partida em sílabas** (GA | TO), que é o assunto do caderno
+dito na primeira tela.
+
+⚠️ **As figuras deste caderno são RGB com fundo branco** (recortadas das folhas
+de papel, sem canal alfa). Dentro da gaveta isso aparecia como um quadrado
+branco; em vez de mexer nos PNG — que são os mesmos das 35 folhas — o branco
+virou **etiqueta**, de propósito. Tirar o fundo de todos é outro trabalho, com
+outro risco, e fica anotado.
+
+### O que este acréscimo NÃO resolve
+
+- ⚠️ **Não sei se a criança vai abrir.** O post-it fechado é a decisão certa
+  pedagogicamente e é também a que corre o risco de nunca ser tocada. **Quem
+  mede isso é o professor Marcos, com a turma** — e o relatório foi feito
+  justamente para ele poder medir.
+- ⚠️ **Não sei se três ou quatro frases é o tamanho certo** para quem tem sete
+  anos. Foi escolha minha, apoiada na regra de uma ideia por vez.
+- ⚠️ **Os outros 32 cadernos continuam sem.** É de propósito: é uma experiência
+  em um caderno, como ele pediu.
+
+### Veredito
+
+**ADEQUADO ao 2º ano**, com os sete lembretes e a capa nova. Conferido em
+**23 de setembro de 2026**. Nada do conteúdo das 35 folhas mudou: o que entrou
+foi um lugar onde a regra está escrita — e que até ontem não existia.

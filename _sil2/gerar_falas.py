@@ -460,6 +460,22 @@ for k, X in DESA.items():
     p(u"dica34_" + k, u"Pense numa palavra e bata palma nela antes de "
                       u"escrever. O número de palmas tem que bater com o pedido.")
 
+# ---- 📝 OS LEMBRETES (o post-it) ----
+# ⚠️ SAEM DO PROPRIO `var LEMB` do index.html — uma fonte so. Escritos a mao
+#    aqui, uma frase corrigida na tela deixaria o mp3 gravado sob a chave velha
+#    e o alto-falante ficaria MUDO, sem erro nenhum no console. E o "silencio",
+#    o unico defeito desta casa que nao deixa marca.
+# ⚠️ SAO DUAS COISAS POR LEMBRETE, e esquecer uma deixa um botao mudo:
+#      · `lemb_<k>`       -> o lembrete inteiro (titulo + frases), que e o que
+#                            toca quando ele ABRE, na mao ou sozinho;
+#      · `lembl_<k>_<i>`  -> cada frase sozinha, o alto-falante ao lado dela.
+LEMB = bloco(u"LEMB")
+for _k in sorted(LEMB):
+    _L = LEMB[_k]
+    p(u"lemb_" + _k, _L[u"t"] + u". " + u" ".join(_L[u"l"]))
+    for _i, _ln in enumerate(_L[u"l"]):
+        p(u"lembl_%s_%d" % (_k, _i), _ln)
+
 # ---- 35 — o cartaz ----
 p(u"p35enun", u"Folha trinta e cinco. Você já sabe fazer tudo isto. Agora monte o "
               u"cartaz: leve cada palavra para a linha do número de sílabas dela.")
