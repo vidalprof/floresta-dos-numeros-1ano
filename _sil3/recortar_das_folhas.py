@@ -257,7 +257,14 @@ def pecas():
 def main():
     if not os.path.isdir(IMG):
         os.makedirs(IMG)
-    abertas, origem, recorte = {}, {}, {}
+    # ⚠️ AS TRÊS PEÇAS DE INTERFACE VÊM DO ESQUELETO e NÃO saem de folha de
+    #    papel nenhuma — o selo aceso, o selo apagado e o troféu do fim. Elas
+    #    se declaram `banco:` (é a convenção dos outros cadernos), senão o
+    #    portão 1i5 diz, com razão, que há figura no disco sem procedência.
+    abertas, recorte = {}, {}
+    origem = {u"s3_selo.png": u"banco:selo",
+              u"s3_selo_off.png": u"banco:selo",
+              u"s3_trofeu.png": u"banco:trofeu"}
     for nome, folha, cel, frac in pecas():
         cam = FOLHAS[folha]
         if folha not in abertas:
