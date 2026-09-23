@@ -492,18 +492,14 @@ ul.lembrel li{margin:3px 0}
   -webkit-animation:abreSil2 .85s cubic-bezier(.22,1.2,.36,1) both;
   animation:abreSil2 .85s cubic-bezier(.22,1.2,.36,1) both}
 .capa .gav:last-child{margin-bottom:0}
-/* ⚠️ AS FIGURAS DESTE CADERNO SÃO RGB COM FUNDO BRANCO (recortadas das folhas
-   de papel, sem canal alfa). Dentro da gaveta creme isso aparecia como um
-   QUADRADO BRANCO atrás do bicho, e parecia defeito. Aqui o branco passa a
-   ser de propósito: uma ETIQUETA de canto redondo, com moldura e sombrinha,
-   como se o que está na gaveta viesse numa ficha.
-   ⚠️ Não mexi nos PNG: eles são os mesmos das 35 folhas, e tirar o fundo de
-      todos é outro trabalho, com outro risco. Fica anotado.
-   ⚠️ Em navegador muito antigo o `border-radius` não recorta a imagem e a
-      etiqueta fica quadrada — que continua sendo uma etiqueta. */
+/* ⭐ SEM ETIQUETA, e isso é conserto e não simplificação (Marcos, 23/set/2026:
+   *"acho que se as imagens fosse sem fundo ficaria melhor"*). Aqui havia um
+   cartão branco de canto redondo, inventado para DISFARÇAR o quadrado branco
+   dos PNG. Ele disfarçava na capa e não consertava as 35 folhas. As nove
+   figuras passaram pelo `_sil2/tirar_fundo.py` e hoje têm fundo de verdade:
+   o bicho pousa na madeira da gaveta. */
 .capa .gav .capfig{width:clamp(42px,11.5vw,62px);height:clamp(42px,11.5vw,62px);flex:none;
-  background:#fff;border:2px solid #e2d3b6;border-radius:10px;
-  box-shadow:0 2px 4px rgba(60,35,5,.20)}
+  filter:drop-shadow(0 2px 3px rgba(60,35,5,.35))}
 /* os pedaços da palavra, um por sílaba, com uma FRESTA entre eles: é a
    fresta que a criança vai aprender a achar nas folhas 3 e 4. */
 .capa .silgrupo{display:flex;align-items:center;gap:7px;flex:1;justify-content:center;
@@ -2845,7 +2841,7 @@ var LEMB = {
 /* ⚠️ A MARCA DE VERSÃO NA FIGURA. Quando eu troco uma figura, o NOME do arquivo
    continua o mesmo — e o navegador da escola serve a cópia velha do cache.
    REGRA: mexeu em figura, sobe o VIMG no mesmo commit. */
-var VIMG = 2;
+var VIMG = 3;
 /* ⚠️⚠️ `draggable="false"` NÃO É DETALHE: toda imagem é arrastável de fábrica no
    navegador, e quando a criança apertava a figura e puxava, o Chrome começava o
    SEU arrasto nativo e disparava um `pointercancel` — o nosso arrasto morria no

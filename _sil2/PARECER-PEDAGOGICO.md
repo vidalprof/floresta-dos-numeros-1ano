@@ -177,11 +177,23 @@ Agora há: um móvel de madeira com tampo, laterais, pés e quatro gavetas que
 mostra **a palavra partida em sílabas** (GA | TO), que é o assunto do caderno
 dito na primeira tela.
 
-⚠️ **As figuras deste caderno são RGB com fundo branco** (recortadas das folhas
-de papel, sem canal alfa). Dentro da gaveta isso aparecia como um quadrado
-branco; em vez de mexer nos PNG — que são os mesmos das 35 folhas — o branco
-virou **etiqueta**, de propósito. Tirar o fundo de todos é outro trabalho, com
-outro risco, e fica anotado.
+⭐ **E AS FIGURAS PERDERAM O FUNDO — o Marcos não aceitou o meu contorno.** Elas
+eram RGB com fundo branco (recortadas das folhas de papel, sem canal alfa) e
+dentro da gaveta isso aparecia como um quadrado branco. A minha primeira saída
+foi transformar o branco em "etiqueta", o que **disfarçava na capa e não
+consertava as 35 folhas**. Ele olhou e disse: *"acho que se as imagens fosse sem
+fundo ficaria melhor"*. As nove figuras passaram pelo `_sil2/tirar_fundo.py` e
+hoje o bicho pousa direto na madeira.
+
+⚠️ **Por que isso é seguro:** a água entra pelas quatro BORDAS, então o branco de
+DENTRO do desenho — a cara da vaca, as orelhas do porco, a barriga do rato — a
+água nunca alcança. Conferido olhando as nove sobre o marrom do caderno: nenhum
+desenho foi comido. E medido: as figuras carregam nas 35 folhas, em três
+tamanhos de tela, nenhuma ampliada e nenhuma estourando.
+
+⚠️ **A lição, e ela é minha:** eu vi o defeito, achei que consertá-lo era caro, e
+inventei um enfeite que o escondia. Disfarce passa em portão e não passa no
+professor.
 
 ### O que este acréscimo NÃO resolve
 
