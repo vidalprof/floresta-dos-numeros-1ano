@@ -130,20 +130,42 @@ Cada um é um bilhete amarelo, com a regra em três ou quatro frases e **um
 alto-falante por frase**. A folha 35 **não tem** — ela é o cartaz, e o cartaz já
 é o resumo.
 
-### ⚠️⚠️ Por que ele nasce FECHADO — e isto é a parte pedagógica da decisão
+### ⚠️⚠️ Ele fica ABERTO — e essa decisão é do professor, não minha
 
-A lei do EduVerso diz: **o problema vem primeiro e o conceito por ÚLTIMO**. Um
-lembrete aberto de cara entregaria a regra antes de a criança tentar, mataria a
-lacuna de curiosidade (Loewenstein) e **a folha viraria cópia**. Fechado, o
-problema continua vindo primeiro e o conceito fica **disponível** — nunca
-imposto. É a mesma decisão do botão *"ver no texto"* da prova de Ed. Física, e
-pela mesma razão.
+Eu fiz fechado, e o argumento era a lei do EduVerso: **o problema vem primeiro e
+o conceito por último**; aberto, a regra chega antes de a criança tentar e parte
+da lacuna de curiosidade se perde. Disse isso a ele. Ele decidiu **aberto**:
+*"digo na forma de post-it, mas tem que estar aberto"*.
 
-**Ele se abre sozinho uma única vez, e só depois do SEGUNDO erro na mesma
-folha.** A conta é por folha e não por item, de propósito: dois tropeços no
-mesmo item podem ser distração; dois na mesma folha são o conceito que não
-entrou — que é exatamente o que o lembrete tem para dar. Antes disso seria
-entregar; nunca seria abandonar quem travou.
+**E ele tem uma razão que eu não tinha pesado:** o post-it fechado alcança só
+quem toca nele. No 2º ano existe a criança que **nunca** tocaria num botão — e é
+justamente a que mais precisa da regra. Fechado, a decisão pedagógica é mais
+elegante e deixa essa criança de fora.
+
+**O que se ganha:** alcança todo mundo.
+**O que se perde:** parte do "descobrir sozinho".
+**Quem decide isso é quem dá a aula.**
+
+### ⚠️ E é por isso que o texto encolheu para UMA frase
+
+Ordem dele no mesmo pedido: *"tem que ser explicação de forma resumida,
+objetiva, para não cansar o estudante"*. E a coisa é mais funda do que gosto:
+
+Fechado, o lembrete podia ter quatro frases — quem abriu, abriu **porque quis
+ler**. **Aberto, ele está na frente de toda criança em toda folha**, e aí texto
+comprido não é generosidade: é a parede que ela pula por cima. Uma frase, com o
+exemplo dentro dela (*"Letra o olho vê; sílaba a boca faz. GATO tem quatro
+letras e duas sílabas: GA-TO."*). Sem isso, "aberto" viraria ruído trinta e
+quatro vezes.
+
+⚠️ **A abertura automática no 2º erro morreu junto**, e é coerente: não há o que
+abrir. O contador de erros por folha ficou, porque é ele que diz em que folha
+ela tropeçou.
+
+⚠️ **A etiqueta do post-it é fixa — "LEMBRE" — e não o nome do conceito.** Na
+folha 6 a faixa já diz LETRA NÃO É SÍLABA, e o post-it dizia a mesma frase um
+centímetro abaixo: uma linha gasta para repetir. O nome do conceito continua
+existindo onde serve — no relatório, que precisa nomear o que ela foi ouvir.
 
 ### De onde saiu o texto (regra zero)
 
@@ -154,14 +176,15 @@ há um segundo texto que possa desencontrar do caderno.
 
 ### O que o professor ganha, e é novo
 
-O relatório passa a ter **"Onde a criança foi buscar a regra"**: qual lembrete
-ela abriu e quantas vezes. Até hoje o relatório dizia **quanto** ela acertou por
-objetivo; agora diz **onde ela sentiu que não sabia** — que é a coisa que o
-professor não consegue ver com trinta crianças na sala.
+O relatório passa a ter **"Que regra a criança quis OUVIR de novo"**: qual
+post-it ela tocou e quantas vezes. Até hoje ele dizia **quanto** ela acertou por
+objetivo; agora diz também a que conceito ela voltou.
 
-⚠️ **Só conta o que ELA abriu.** O que o caderno abriu sozinho não entra: ali
-quem decidiu foi o caderno, e misturar os dois faria o relatório dizer uma coisa
-que não aconteceu.
+⚠️⚠️ **E este número diz menos do que eu queria que dissesse.** Enquanto o
+post-it era fechado, ele significava *"ela sentiu falta e foi atrás"* — que é a
+informação boa. **Aberto, não há o que abrir**: ele conta apenas quem pediu o
+**áudio**. Quem só leu não aparece. Continuar chamando isso de *"abriu"* seria
+mentir no relatório do professor, então o texto do próprio relatório avisa.
 
 ⚠️ **E abrir o lembrete NÃO é erro** — está escrito no próprio relatório, para
 que ninguém leia aquele número como demérito. É a criança percebendo que não

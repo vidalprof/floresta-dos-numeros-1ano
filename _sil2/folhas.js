@@ -1092,9 +1092,11 @@ function abreRelatorio(){
      coisa, e é a que o professor não consegue ver na sala: ONDE ela sentiu que
      não sabia, e voltou para ler. Uma criança com 8,5 que abriu quatro vezes o
      lembrete da vogal aprendeu — e aprendeu ALI.
-     ⚠️ SÓ CONTA O QUE ELA ABRIU. O que o caderno abriu sozinho (no 2º erro) não
-        entra: ali quem decidiu foi o caderno, e misturar os dois faria este
-        parágrafo dizer uma coisa que não aconteceu. */
+     ⚠️ E ELE CONTA O QUE EXISTE, NÃO O QUE EU QUERIA MEDIR. Enquanto o post-it
+        era fechado, este número dizia "ela sentiu falta e foi atrás" — que é a
+        informação boa. Aberto (ordem do Marcos, 23/set), não há o que abrir:
+        ele conta quem pediu para OUVIR. Diz menos, e é o que há. Continuar
+        chamando isto de "abriu" seria mentir no relatório do professor. */
   function blocoLembretes(){
     if(typeof LEMB === "undefined" || !ST.lembAbriu) return "";
     var k, lin = [], n = 0;
@@ -1104,15 +1106,17 @@ function abreRelatorio(){
         q + (q === 1 ? " vez" : " vezes") + "</li>"); }
     }
     if(!lin.length){
-      return "<p class='lembrel'><b>Lembretes:</b> " + nome + " não precisou abrir " +
-             "nenhum. (O caderno tem um bilhete com a regra em cada bloco de folhas, " +
-             "fechado, que a criança abre quando quer.)</p>";
+      return "<p class='lembrel'><b>Post-its:</b> " + nome + " não pediu para ouvir " +
+             "nenhum. (Cada bloco de folhas traz um post-it aberto com a regra em uma " +
+             "frase, e um alto-falante ao lado.)</p>";
     }
-    return "<p class='lembrel'><b>Onde " + nome + " foi buscar a regra</b> &mdash; abriu o " +
-           "bilhete do lembrete " + n + (n === 1 ? " vez" : " vezes") + ":</p><ul class='lembrel'>" +
-           lin.join("") + "</ul><p class='lembrel mini'>Abrir o lembrete não é erro: é a " +
-           "criança percebendo que não lembrava e indo atrás. O que este quadro mostra é " +
-           "<b>qual conceito</b> vale retomar com a turma.</p>";
+    return "<p class='lembrel'><b>Que regra " + nome + " quis OUVIR de novo</b> &mdash; tocou " +
+           "o alto-falante do post-it " + n + (n === 1 ? " vez" : " vezes") + ":</p><ul class='lembrel'>" +
+           lin.join("") + "</ul><p class='lembrel mini'>Pedir para ouvir não é erro: é a " +
+           "criança voltando à regra por conta própria. O que este quadro mostra é " +
+           "<b>qual conceito</b> vale retomar com a turma. ⚠️ O post-it fica <b>aberto</b> " +
+           "na folha, então este número conta quem pediu o ÁUDIO — quem só leu não aparece " +
+           "aqui.</p>";
   }
   if(domina.length && !retomar.length && !naoAlcancou.length)
     parecer += "domina os objetivos avaliados: " + domina.join("; ") + ".";
