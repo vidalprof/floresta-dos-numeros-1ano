@@ -194,6 +194,17 @@ PORTOES=(
   #    `_troca2` e `_nasal2` pediam `fim` (a festa do fim do caderno era muda) e
   #    `_abc1` e `_rima1` pediam `folhaPronta` (o elogio de cada folha).
   "1q fala pedida existe|python3 _qa/fala_pedida.py $PASTA"
+  # ⭐⭐ 1q2) E O TEXTO QUE EU MANDEI GRAVAR VIROU ARQUIVO? (23/set/2026). O 0i
+  #    vai do CODIGO para o falas.json; o 1q do falas.json para o CODIGO. Faltava
+  #    o terceiro lado: do falas.json para o DISCO. O `_sil2` foi ao ar com o
+  #    texto novo e CATORZE falas sem mp3 — entreguei a mesma pasta duas vezes em
+  #    quatro minutos e as corridas se atropelaram. E o carimbo disse `noar:1`
+  #    com o sha certo, porque o carimbo mede a PAGINA e nao a VOZ.
+  # ⚠️ AQUI ELE E AVISO, NAO PORTAO, e de proposito: no meio do trabalho a ordem
+  #    normal e gerar as falas e so depois entregar, entao ficar vermelho aqui
+  #    seria ficar vermelho sempre. Quem REPROVA e o mesmo portao dentro do
+  #    `entregar.yml`, logo antes de publicar — que e onde o defeito mordeu.
+  "1q2 toda fala tem mp3 (aviso)|python3 _qa/voz_gravada.py $PASTA || true"
   # ⭐⭐ 1r) DIGITAR NAO PODE DEPENDER DO ENTER (21/set/2026, o Marcos usando o
   #    caderno dos sistemas do 5o ano: "tem uma atividade onde o estudante digita
   #    e tem que clicar enter para confirmar, melhor nao precisar do enter" e

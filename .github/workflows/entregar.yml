@@ -620,6 +620,41 @@ jobs:
             [ "$ok" = "1" ] || { echo "::error::nao consegui guardar as vozes no repo (branch em disputa)"; exit 1; }
           fi
 
+      # ⭐⭐ PORTÃO 1q2 — TODA FALA DO `falas.json` VIROU MP3? (23/set/2026)
+      # Nasceu de um defeito que TODOS os portões desta casa deixaram passar: o
+      # `_sil2` foi ao ar com o texto novo e CATORZE falas sem mp3. Entreguei a
+      # mesma pasta duas vezes em quatro minutos; a causa exata eu não confirmei
+      # (duas corridas ao mesmo tempo é a explicação provável), e este portão não
+      # conserta a causa — conserta a MEDIDA, que é o que faltava.
+      # ⚠️ E O CARIMBO DISSE `"noar":1` COM O SHA CERTO — porque o sha do
+      #    `index.html` estava certo mesmo. **O carimbo mede a PÁGINA, não a
+      #    VOZ.** Quem descobriria seria a criança, tocando o alto-falante e não
+      #    ouvindo nada: `new Audio` de arquivo que não existe não estoura, não
+      #    aparece em print e não derruba portão nenhum.
+      # Roda AQUI, depois de gravar e guardar e ANTES de publicar: fala muda não
+      # vai ao ar. E o conserto é o próprio workflow rodar de novo.
+      - name: Conferir que toda fala tem mp3 (portao 1q2)
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          IFS=',' read -ra ALVS <<< "$LISTA"
+          ruim=0
+          for par in "${ALVS[@]}"; do
+            p="${par%%:*}"; p="${p%/}"
+            [ -d "$p" ] || continue
+            python3 _qa/voz_gravada.py "$p"; c=$?
+            # os tres codigos: 0 passou · 1 REPROVOU · 2 nao medi (sem falas.json)
+            if [ "$c" = "1" ]; then ruim=1; fi
+          done
+          if [ "$ruim" = "1" ]; then
+            echo "::error::ha fala sem mp3 — nao publico com alto-falante mudo"
+            { echo "### Voz faltando"
+              echo "Uma ou mais falas do \`falas.json\` nao tem o mp3 gravado."
+              echo "Acione este mesmo workflow de novo para esta pasta — e nao"
+              echo "entregue a mesma pasta duas vezes em poucos minutos."; } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
       # ⚠️⚠️ E AGORA SE CONFERE, PORQUE O PASSO DE CIMA JÁ FALHOU EM SILÊNCIO
       # (set/2026 — o Marcos ouviu "vê-á" no lugar de "va"). O `continue-on-error`
       # ali em cima é de propósito: quero chegar AQUI com o recado da ferramenta.
