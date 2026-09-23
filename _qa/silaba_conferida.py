@@ -80,10 +80,23 @@ def confere(pasta):
         return 0, [u"   nenhuma palavra registrada: nada a conferir"]
 
     rec = os.path.join(pasta, u"audio", u"_conferencia.json")
+    dir_audio = os.path.join(pasta, u"audio")
     if not os.path.exists(rec):
-        if not os.path.isdir(os.path.join(pasta, u"audio")):
+        if not os.path.isdir(dir_audio):
             return 2, [u"   a voz ainda nao foi gravada (sem pasta `audio/`): "
                        u"NAO MEDI. Ela nasce no `entregar.yml`."]
+        # ⚠️ PASTA `audio/` VAZIA NAO E "GRAVOU SEM RECIBO" — e "ainda nao
+        #    gravou". O esqueleto (`nova_folha_viva.sh`) ja cria a pasta, entao
+        #    todo caderno RECEM-NASCIDO caia na mensagem de baixo, que diz
+        #    "esta voz foi gravada ANTES de a gravacao se conferir sozinha" e
+        #    manda regravar. Nada tinha sido gravado. Portao que conta historia
+        #    errada custa o dia de quem vai atras dela.
+        if not [a for a in os.listdir(dir_audio) if a.startswith(u"sb_")
+                and a.endswith(u".mp3")]:
+            return 2, [u"   a voz ainda nao foi gravada (a pasta `audio/` esta "
+                       u"sem recorte de silaba): NAO MEDI. O recibo nasce no "
+                       u"`entregar.yml`, junto com o mp3 — conferir DEPOIS de "
+                       u"publicar. Isto NAO e 'passou'."]
         return 1, [u"   REPROVADO: nao ha recibo de conferencia "
                    u"(`audio/_conferencia.json`).",
                    u"   Esta voz foi gravada ANTES de a gravacao passar a se "

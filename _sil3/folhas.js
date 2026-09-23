@@ -1002,10 +1002,10 @@ var OBJETIVOS = [
      professor mede, e é ela que o dossiê mostra ao lado da habilidade citada. */
   {n: "Contar as sílabas de uma palavra", f: [1, 2, 3, 4, 5, 6, 19]},
   {n: "Saber os quatro nomes: monossílaba, dissílaba, trissílaba e polissílaba", f: [7, 8, 35]},
-  {n: "Classificar a palavra pelo número de sílabas", f: [9, 10, 11, 12, 13, 14, 25, 26, 33, 34]},
-  {n: "Montar e escrever a palavra, e contar os pedaços dela", f: [15, 16, 29, 30, 31, 32]},
+  {n: "Classificar a palavra pelo número de sílabas", f: [9, 10, 11, 12, 13, 14, 22, 25, 26, 33, 34]},
+  {n: "Montar, achar e escrever a palavra pelos pedaços dela", f: [15, 16, 29, 30, 31, 32]},
   {n: "Classificar ouvindo, sem ver a palavra escrita", f: [17, 18]},
-  {n: "Achar e classificar a palavra dentro de um texto", f: [20, 21, 22, 23, 24]},
+  {n: "Achar e classificar a palavra dentro de um texto", f: [20, 21, 23, 24]},
   {n: "Não se enganar com o til, o ditongo e o hiato", f: [27, 28]}
 ];
 
@@ -2094,8 +2094,8 @@ function f25(d, pi){
   folhaQuiz(d, pi, "Olhe a figura, diga o nome dela e escolha a gaveta.", 0);
 }
 function f26(d, pi){
-  folhaQuiz(d, pi, "<b>Agora sem figura, e as palavras se parecem.</b> PANO, " +
-    "PANELA e PANELINHA começam igual — conte os pedaços.", 0);
+  folhaQuiz(d, pi, "<b>Agora ninguém arrasta nada: só a palavra escrita e os " +
+    "quatro nomes.</b> E ela cresce diante de você — PÃO, PÃOZINHO. Conte outra vez.", 0);
 }
 function f27(d, pi){
   folhaQuiz(d, pi, "<b>Cuidado com estas.</b> Elas têm muitas letras e a boca " +
@@ -2231,7 +2231,15 @@ function f32(d, pi){
     cels.forEach(function(c2){
       c2.addEventListener("click", function(){ if(!ST.resp[id]) abreCruz(E, pi); });
     });
-    box.appendChild(el("div", "ajuda cent", "banco: " + D.aceita.join(" &middot; ")));
+    /* ⚠️ O BANCO FICA À VISTA DE PROPÓSITO, e por isso ele se DECLARA alvo
+       (`data-alvo`): o portão 1i4 leu, com razão, "a resposta está impressa
+       na tela". Está — e tem de estar. Esta folha não mede se a criança
+       lembra de uma palavra: mede se ela ESCOLHE uma do tamanho pedido e a
+       escreve. Pedir "qualquer palavra de três sílabas" sem dar de onde
+       tirar castiga quem tem menos palavra na cabeça. */
+    var bco = el("div", "ajuda cent", "banco: " + D.aceita.join(" &middot; "));
+    bco.setAttribute("data-alvo", "1");
+    box.appendChild(bco);
     fechaItem(d, box, id);
   });
 }

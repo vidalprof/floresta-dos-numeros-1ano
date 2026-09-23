@@ -479,8 +479,9 @@ p(u"dica24_a", u"Bata palma em cada palavra do quadro. Marque só as que passare
 QUI = bloco(u"QUI")
 p(u"p25enun", u"Folha vinte e cinco. Olhe a figura, diga o nome dela e escolha a "
               u"gaveta.")
-p(u"p26enun", u"Folha vinte e seis. Agora sem figura, e as palavras se parecem. "
-              u"Pano, panela e panelinha começam igual: conte os pedaços.")
+p(u"p26enun", u"Folha vinte e seis. Agora ninguém arrasta nada: só a palavra "
+              u"escrita e os quatro nomes. E ela cresce diante de você: pão, "
+              u"pãozinho. Conte outra vez.")
 p(u"p27enun", u"Folha vinte e sete. Cuidado com estas. Elas têm muitas letras e a "
               u"boca abre poucas vezes. Escolha, e depois veja por quê.")
 p(u"p28enun", u"Folha vinte e oito. E agora o contrário. Estas parecem curtas e "

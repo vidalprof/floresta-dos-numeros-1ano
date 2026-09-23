@@ -162,3 +162,50 @@ erro que a criança comete.
 contato; a escolha de quais entram foi minha. Ele vê o caderno pronto — e o
 **`PARECER-PEDAGOGICO.md`** (o outro crivo, o do caderno montado) é onde se
 pergunta se está adequado ao 3º ano.
+
+---
+
+## 6. O QUE MUDOU DEPOIS DE O CADERNO ESTAR MONTADO (23/set/2026)
+
+O roteiro do §4 previa 35 folhas em vinte blocos. O caderno ficou com 35 folhas
+e **dezesseis gestos**, o maior com 4 de 35 (11%). Três mudanças em relação ao
+que estava escrito ali, e as três têm motivo:
+
+1. **A folha "letra × sílaba" (5 no roteiro) virou a folha 6 e mudou de gesto.**
+   Ela ia ser um quiz de duas perguntas por animal; virou CORTAR a palavra com o
+   número de letras impresso ao lado. A razão é o bloco: um quiz ali deixaria o
+   gesto "escolher" espalhado em vez de colado, que é o que o Marcos proibiu
+   (*"as crianças me dizem 'isso eu já fiz'"*). Cortando, ela fica dentro do
+   bloco 4-5-6 e o degrau é real — a criança VÊ que oito letras dão três
+   sílabas.
+
+2. **As folhas 33 e 34 do roteiro (a pegadinha) viraram 27 e 28**, coladas ao
+   bloco do quiz. Mesmo motivo: gesto repetido vem em bloco.
+
+3. ⭐ **TAMANDUÁ SAIU DO CADERNO, e este é o achado que vale registrar.**
+   Ela estava em cinco folhas e tem figura recortada da d11. O portão `1w`
+   (sílaba × dicionário pt_BR) acusou: eu conto quatro (TA-MAN-DU-Á, que é a
+   divisão da gramática escolar) e o `espeak-ng` pronuncia três
+   (`tˌæmɐ̃ŋdwˈa` — o U cola no Á). **As duas contagens têm defesa.**
+
+   E é por isso que ela é um item ruim AQUI e não em qualquer caderno: este
+   manda a criança **bater palma e contar**, e bater palma em tamanduá dá três.
+   Ela acertaria o gesto e a folha diria que errou.
+
+   ⚠️ **Não confundir com MÃE e SAÚDE** (folhas 27 e 28), que existem de
+   propósito: ali a contagem é pacífica e quem engana é a LETRA — três letras e
+   uma sílaba, cinco letras e três sílabas. O caderno ENSINA a não se enganar.
+   Em tamanduá não há o que ensinar: diverge a própria divisão.
+
+   **A regra que fica, e ela serve a todo caderno de sílaba:
+   palavra de divisão contestada não entra em folha que mede contagem.**
+   A figura continua no disco, recortada e declarada — e o professor lê o
+   porquê no `PARECER-PEDAGOGICO.md`.
+
+4. **O caça-palavras ficou com SEIS colunas, não sete.** A regra de 21/set/2026
+   ("quem manda no tamanho da casa é a coluna") continua valendo; o que muda é
+   a conta. Lá o piso de sete nasceu de uma grade de LETRAS; aqui cada casa é
+   uma SÍLABA de até três letras e precisa ser mais larga. Sete casas de 44 px
+   com 4 px de vão dão 332 px numa tela de 320 — o portão `4b` pegou doze alvos
+   começando fora da tela. **O número de colunas que cabe depende do tamanho da
+   CASA, não é um número fixo.**
