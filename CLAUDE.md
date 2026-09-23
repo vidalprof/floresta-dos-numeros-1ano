@@ -612,13 +612,25 @@ Leia tudo antes de agir e responda sempre em **português**.
 > Probabilidade e Estatística, objetivo por objetivo). Eu dei como impossível
 > uma coisa que eu nunca tinha procurado, e isso custou: catorze cadernos com o
 > conteúdo sem medida nenhuma.
-> ⚠️ **O QUE CONTINUA VERDADE, e é outra coisa:** o portão `0b9` não ACHA esses
-> blocos, porque ele procura o cabeçalho `COMPONENTE – ANOS INICIAIS – Nº ANO` e
-> o bloco de Matemática é um `3º ANO` solto (quem prova que é Matemática é o
-> CONTEÚDO — *"números naturais de até quatro ordens"*, *"reta numérica"* —, não
-> um cabeçalho). **Enquanto o `bloco_do_ano` não aprender esta segunda forma, o
-> portão continua dizendo NÃO MEDI** — e aí é dívida de ferramenta, não do
-> documento. Não confundir as duas.
+> ⭐ **E O PORTÃO JÁ APRENDEU (mesmo dia).** Ele conhece hoje **três** formas de
+> cabeçalho: a completa `COMPONENTE – ANOS INICIAIS – Nº ANO`, **o ano abrindo
+> cada LINHA da tabela** (Língua Portuguesa) e **o ano SOZINHO, em corrida
+> crescente de blocos** (Matemática). ⚠️ As duas últimas **não dizem a que
+> componente pertencem**, então a região só é aceita se trouxer as MARCAS
+> daquele componente — sem isso o atalho aprovaria conteúdo do componente
+> errado. Placar: de 7 passaram / 2 reprovaram (falso) / 24 não mediram → **10
+> passaram / 0 reprovaram / 23 não mediram**, e 21 dos 23 são por não declararem
+> `conceitos` (dívida de CONTEÚDO, não de ferramenta).
+> ⚠️⚠️ **E TRÊS ARMADILHAS QUE ISSO DESTAMPOU, todas achadas MEDINDO:**
+> (1) **bloco CORTADO é pior que NÃO MEDI** — a 1ª versão pegava só a primeira
+> linha de cada fileira e teria reprovado "polissílabas" no 3º ano, que é do 3º
+> ano; (2) **conteúdo de ano ANTERIOR sempre cabe** — o portão reprovou o
+> `_ort5b` por "sílabas" e o `_subst5` por "letras maiúsculas", dois cadernos
+> corretos do 5º ano usando o que se aprendeu no 1º; a pergunta é *"cabe no
+> ano?"*, e o que veio de antes cabe por definição; (3) **o portão estava lento
+> desde sempre** — 316 mil chamadas de regex somando 45 s, por um
+> `[letras]{4,40}?` preguiçoso que retrocede em cada uma das vinte mil linhas.
+> Duas buscas de substring antes do regex: **46 s → 0,46 s**.
 > O dossiê se injeta com
 > `python3 _padrao/dossie_professor.py <pasta>` (fonte:
 > `_padrao/dossie-professor.js`) e abre pelo menu do professor (chave `1275@`) e
