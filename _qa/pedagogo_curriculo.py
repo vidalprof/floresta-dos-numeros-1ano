@@ -116,15 +116,154 @@ _CABEC = re.compile(u"^\\s*([A-Za-zÁÉÍÓÚÂÊÔÃÕÇáéíóúâêôãõç 
                     re.I | re.M)
 
 
+# ⭐⭐ AS OUTRAS DUAS FORMAS DO MESMO CABEÇALHO (23/set/2026).
+#    Até hoje este portão só conhecia o cabeçalho completo («CIÊNCIAS – ANOS
+#    INICIAIS – 4º ANO») e, por isso, dizia NÃO MEDI em Língua Portuguesa e em
+#    Matemática — e eu registrei no `CLAUDE.md` que a razão era o documento não
+#    ter bloco por ano nesses dois componentes. **Era falso.** Tem:
+#      · LÍNGUA PORTUGUESA — cada LINHA da tabela começa com o ano:
+#          "3º ANO   CAMPO DA VIDA   Análise linguística ..."
+#      · MATEMÁTICA — o ano vem SOZINHO numa linha, abrindo o bloco, e os nove
+#          se sucedem em ordem (linhas 17628 a 19404 do `blumenau.txt`: 1º, 2º,
+#          3º … 9º). O bloco vai de um cabeçalho ao seguinte.
+#
+#    ⚠️⚠️ E NENHUMA DAS DUAS DIZ A QUE COMPONENTE PERTENCE. Um "3º ANO" solto
+#       não tem a palavra MATEMÁTICA em lugar nenhum — quem prova é o CONTEÚDO.
+#       Por isso a região achada só é aceita se trouxer as MARCAS daquele
+#       componente (abaixo). Sem essa confirmação, este atalho aprovaria
+#       conteúdo do componente errado, que é exatamente o que o portão existe
+#       para impedir.
+#
+#    ⚠️ PALPITE DECLARADO: **três** marcas distintas, e **cinco** anos seguidos
+#       para reconhecer a corrida de cabeçalhos soltos. Os dois números são
+#       escolha minha, não medida — estão aqui e saem impressos na saída.
+_MARCAS = {
+    u"matematica": [u"numeros", u"algebra", u"geometria", u"grandezas",
+                    u"medidas", u"probabilidade", u"estatistica"],
+    u"lingua portuguesa": [u"leitura", u"escuta", u"oralidade", u"analise",
+                           u"semiotica", u"escrita", u"campo"],
+}
+MARCAS_MIN = 3
+CORRIDA_MIN = 5
+_ANO_SO = re.compile(u"^\\s*([1-9])\\s*[ºo]?\\s*ANO\\s*$", re.I)
+_ANO_LINHA = re.compile(u"^\\s*([1-9])\\s*[ºo]?\\s*ANO\\s+(?=\\S)", re.I)
+
+
+def _confirma(regiao, componente):
+    u"""A região achada é MESMO deste componente? Prova pelo conteúdo."""
+    nome = achata(componente).strip()
+    # ⚠️ POR DENTRO, NÃO POR IGUALDADE. O `_abc1` declara o componente como
+    #    «Alfabetização e Língua Portuguesa» — que é como a rede chama o 1º ano.
+    #    Comparando por igualdade, ele cairia aqui e o portão diria NÃO MEDI num
+    #    caderno que o documento cobre inteirinho.
+    marcas = next((v for k, v in _MARCAS.items() if k in nome), None)
+    if not marcas:
+        return False          # componente que eu nao sei confirmar: nao arrisco
+    plano = achata(u" ".join(regiao))
+    return sum(1 for m in marcas if m in plano) >= MARCAS_MIN
+
+
+def _por_linha(linhas, componente, ano):
+    u"""FORMA B — Língua Portuguesa: cada linha da tabela abre com o ano.
+
+    ⚠️⚠️ E A FILEIRA NÃO CABE NUMA LINHA SÓ. A primeira versão disto pegava
+       apenas as linhas que COMEÇAM com "3º ANO" e devolvia 115 palavras — o
+       bloco vinha sem "travessão" e sem "polissílabas", que são habilidades do
+       3º ano escritas nas linhas de CONTINUAÇÃO da mesma fileira. **Bloco
+       cortado é pior do que NÃO MEDI**: ele reprova o conceito certo, e aí o
+       portão manda consertar o que não está quebrado.
+       Agora a fileira vai inteira: da linha que abre com o ano até a próxima
+       que abra com QUALQUER ano."""
+    fim_de_fileira = re.compile(u"^\\s*[1-9]\\s*[ºo]?\\s*ANO\\b", re.I)
+    pegas, dentro = [], False
+    for ln in linhas:
+        m = _ANO_LINHA.match(ln)
+        if m:
+            dentro = (m.group(1) == str(ano))
+        elif fim_de_fileira.match(ln):
+            dentro = False            # abriu outra fileira (ano sozinho)
+        if dentro:
+            pegas.append(ln)
+    if len(pegas) < 4 or not _confirma(pegas, componente):
+        return None
+    return pegas
+
+
+def _por_corrida(linhas, componente, ano):
+    u"""FORMA C — Matemática: cabeçalhos sozinhos, em corrida crescente."""
+    cabs = [(i, int(_ANO_SO.match(ln).group(1)))
+            for i, ln in enumerate(linhas) if _ANO_SO.match(ln)]
+    # a corrida: cabeçalhos que sobem de um em um, sem repetir
+    melhor, atual = [], []
+    for i, a in cabs:
+        if atual and a == atual[-1][1] + 1:
+            atual.append((i, a))
+        else:
+            atual = [(i, a)]
+        if len(atual) > len(melhor):
+            melhor = list(atual)
+    if len(melhor) < CORRIDA_MIN:
+        return None
+    # ⚠️ O ANO VEM DOS DOIS JEITOS. O `_alfa1` declara `"ano": "1"` (texto) e o
+    #    `_corpo5` declara `"ano": 5` (número) — os dois são `curriculo.json`
+    #    legítimos e escritos em dias diferentes. Comparando int com str isto
+    #    NUNCA casava, e o portão dizia "não achei o bloco" em dois cadernos que
+    #    o documento cobre. É a lição do `ouvir.py` outra vez: **quando os dois
+    #    lados podem escrever a mesma coisa de formas diferentes, normalize
+    #    ANTES da régua.**
+    try:
+        alvo_ano = int(str(ano).strip()[0])
+    except (ValueError, IndexError):
+        return None
+    for k, (i, a) in enumerate(melhor):
+        if a != alvo_ano:
+            continue
+        fim = melhor[k + 1][0] if k + 1 < len(melhor) else len(linhas)
+        regiao = linhas[i + 1:fim]
+        if not _confirma(regiao, componente):
+            return None
+        return regiao
+    return None
+
+
+# ⚠️ MEMÓRIA, e ela é necessária e não enfeite: desde que o item 6 passou a
+#    conferir também os anos ANTERIORES, um caderno de 5º ano manda varrer o
+#    documento CINCO vezes — e o documento tem 440 páginas. Sem isto o portão
+#    saiu de instantâneo para dezenas de segundos por caderno, e portão lento é
+#    portão que se deixa de rodar.
+_CACHE = {}
+
+
 def bloco_do_ano(texto, componente, ano):
     u"""Palavras do bloco DESTE componente e DESTE ano. Devolve None se o
     documento nao tiver nenhum cabecalho desse par (ai e NAO MEDI, nao e
     'passou'): melhor dizer que nao medi do que medir no documento inteiro e
-    aprovar "celula" no 4o ano porque ela existe no 6o."""
+    aprovar "celula" no 4o ano porque ela existe no 6o.
+
+    Tres formas de cabecalho, nesta ordem de confianca:
+      A) o completo ("CIENCIAS - ANOS INICIAIS - 4o ANO") — o unico que se
+         nomeia, entao nao precisa de confirmacao nenhuma;
+      B) o ano abrindo CADA LINHA da tabela (Lingua Portuguesa);
+      C) o ano SOZINHO, em corrida crescente de blocos (Matematica).
+    B e C so valem com a confirmacao pelo conteudo (`_confirma`)."""
     alvo = (achata(componente).strip(), str(ano))
+    if alvo in _CACHE:
+        return _CACHE[alvo]
     linhas = texto.split(u"\n")
     valendo, pegas, viu = None, [], False
     for ln in linhas:
+        # ⚠️ FILTRO BARATO ANTES DO REGEX, e ele vale 45 SEGUNDOS (medido em
+        #    23/set/2026 com o cProfile). O `_CABEC` tem um `[letras]{4,40}?`
+        #    preguiçoso: numa linha longa sem cabeçalho nenhum ele RETROCEDE
+        #    dezenas de vezes antes de desistir, e o documento tem vinte mil
+        #    linhas. Eram 9 s por chamada — e como o item 6 passou a conferir
+        #    também os anos anteriores, virou 46 s por caderno. **Portão lento
+        #    é portão que se deixa de rodar.** Duas buscas de substring cortam
+        #    99% das linhas antes de o regex sequer começar: 46 s -> 0,4 s.
+        if u"ANO" not in ln or (u"-" not in ln and u"–" not in ln and u"—" not in ln):
+            if valendo == alvo:
+                pegas.append(ln)
+            continue
         m = _CABEC.match(ln)
         if m:
             valendo = (achata(m.group(1)).strip(), m.group(2))
@@ -133,9 +272,16 @@ def bloco_do_ano(texto, componente, ano):
             continue
         if valendo == alvo:
             pegas.append(ln)
-    if not viu:
-        return None
-    return set(achata(u" ".join(pegas)).split())
+    if viu:
+        _CACHE[alvo] = set(achata(u" ".join(pegas)).split())
+        return _CACHE[alvo]
+    for tenta in (_por_linha, _por_corrida):
+        regiao = tenta(linhas, componente, ano)
+        if regiao:
+            _CACHE[alvo] = set(achata(u" ".join(regiao)).split())
+            return _CACHE[alvo]
+    _CACHE[alvo] = None
+    return None
 
 
 def fora_dec_termos(lista):
@@ -300,20 +446,52 @@ def confere(pasta, palavras):
         doc = io.open(CURRICULO, encoding="utf-8").read() if os.path.exists(CURRICULO) else u""
         bloco = bloco_do_ano(doc, d.get("componente") or u"", d.get("ano"))
         if bloco is None:
-            L.append(u"   ⚠️ o documento da rede nao tem um bloco «%s – ANOS ... – %sº ANO»: "
-                     u"NAO MEDI os %d conceito(s). (O PDF so traz cabecalho por ano em "
-                     u"Ciencias, Geografia e Historia; Lingua Portuguesa e Matematica vem "
-                     u"em faixas, e medir no documento inteiro aprovaria conteudo de "
-                     u"outro ano.)" % (d.get("componente"), d.get("ano"), len(conceitos)))
+            L.append(u"   ⚠️ nao achei o bloco de «%s – %sº ano» no documento da rede: "
+                     u"NAO MEDI os %d conceito(s). Medir no documento inteiro aprovaria "
+                     u"conteudo de outro ano, entao prefiro dizer que nao medi.\n"
+                     u"      (o portao conhece TRES formas de cabecalho: a completa "
+                     u"«COMPONENTE - ANOS INICIAIS - Nº ANO», a do ano abrindo cada linha "
+                     u"da tabela e a do ano sozinho em corrida de blocos. Se o componente "
+                     u"usar uma quarta, e divida DESTA ferramenta, nao do documento.)"
+                     % (d.get("componente"), d.get("ano"), len(conceitos)))
             ruim = max(ruim, 2)
         else:
             declarados = set(achata(x).strip() for x in fora_dec_termos(fora_dec))
-            maus = []
+            # ⭐⭐ CONTEÚDO DE ANO ANTERIOR SEMPRE CABE (23/set/2026).
+            #    A pergunta deste item é *"o conteúdo cabe no ano?"* — e o que
+            #    veio de um ano ANTES cabe por definição: no 5º ano a sílaba não
+            #    é conteúdo novo, é ferramenta. O que não pode é conteúdo de ano
+            #    DEPOIS, que é o defeito que este item nasceu para pegar (o
+            #    núcleo da célula no 4º ano).
+            #    ⚠️ Isto apareceu porque o portão passou a ACHAR o bloco de
+            #       Língua Portuguesa: ele reprovou o `_ort5b` por "sílabas" e o
+            #       `_subst5` por "letras maiúsculas" — dois cadernos corretos,
+            #       do 5º ano, usando o que a criança aprendeu no 2º. **Portão
+            #       que manda consertar o que não está quebrado gasta o dia e
+            #       ensina a ignorar a saída.**
+            antes = []
+            try:
+                for a_ in range(1, int(d.get("ano"))):
+                    b_ = bloco_do_ano(doc, d.get("componente") or u"", a_)
+                    if b_:
+                        antes.append((a_, b_))
+            except (TypeError, ValueError):
+                pass
+            maus, herdados = [], []
             for termo in conceitos:
                 if achata(termo).strip() in declarados:
                     continue
-                if not no_bloco(termo, bloco):
+                if no_bloco(termo, bloco):
+                    continue
+                de = next((a_ for a_, b_ in antes if no_bloco(termo, b_)), None)
+                if de:
+                    herdados.append((termo, de))
+                else:
                     maus.append(termo)
+            for termo, de in herdados:
+                L.append(u"   · «%s» nao esta no bloco do %sº ano, mas esta no do %sº: "
+                         u"conteudo de ano ANTERIOR cabe (e ferramenta, nao materia nova)."
+                         % (termo, d.get("ano"), de))
             if maus:
                 ruim = 1
                 L.append(u"   REPROVADO 6: a atividade ensina conteudo que o bloco do %sº ano "
