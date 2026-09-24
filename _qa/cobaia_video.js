@@ -100,6 +100,27 @@ function servidor() {
   exige(!(await eu(() => document.getElementById('veu').classList.contains('on'))),
     'a tela de boas-vindas nao fecha no botao');
 
+  /* ---- 1b. MEDIR A MAQUINA sem material nenhum ----
+     ⚠️ o Marcos apontou que, para saber se o PC aguenta, era preciso montar um
+     projeto antes. Este passo prova que nao e mais: com a fita VAZIA, o botao
+     do canto da previa mede e devolve um numero. */
+  await pg.click('[data-qa="medir"]');
+  await pg.waitForTimeout(3400);
+  const medidaVazia = await eu(() => document.getElementById('medidorFps').textContent);
+  exige(/\d+ fps/.test(medidaVazia),
+    'medir a maquina com a fita vazia nao devolveu numero (' + medidaVazia + ')');
+  notas.push('prova da maquina com a fita vazia: ' + medidaVazia);
+  if (await eu(() => document.getElementById('veu').classList.contains('on')))
+    await pg.click('#mdOk');
+  await pg.waitForTimeout(150);
+
+  /* ---- 1c. o play no vazio ABRE a porta em vez de so reclamar ---- */
+  await eu(() => { fechaGaveta(); });
+  await pg.click('[data-qa="tocar"]');
+  await pg.waitForTimeout(200);
+  exige(await eu(() => gavetaAberta === 'acervo'),
+    'tocar com a fita vazia nao abriu o Acervo — so reclamou');
+
   /* ---- 2. o clipe de exemplo (exercita MediaRecorder de saida) ---- */
   await pg.click('[data-qa="f-material"]');
   await pg.waitForTimeout(150);
@@ -349,7 +370,7 @@ function servidor() {
 
 async function fim(b, srv) {
   await b.close(); srv.close();
-  console.log(alvo + ' -> cobaia de video: 21 passos de uso real');
+  console.log(alvo + ' -> cobaia de video: 23 passos de uso real');
   notas.forEach(n => console.log('   . ' + n));
   if (!falhas.length) {
     console.log('   cobaia ok: apara, corta, congela, arrasta, compoe som, EXPORTA e guarda rascunho');

@@ -134,9 +134,15 @@ a{color:var(--acento2)}
   max-width:100%;max-height:100%;background:#000;touch-action:none}
 .selo{position:absolute;right:7px;top:7px;font-size:10.5px;color:#ffffffaa;
   background:#00000077;padding:2px 7px;border-radius:99px;pointer-events:none}
-.fps{position:absolute;left:7px;top:7px;font-size:10.5px;color:#ffffffaa;
-  background:#00000077;padding:2px 7px;border-radius:99px;pointer-events:none;
-  font-variant-numeric:tabular-nums}
+/* ⚠️ o medidor e BOTAO, nao enfeite: da para medir a maquina sem montar
+   projeto nenhum. Piso de dedo de 40 px como qualquer alvo da casa. */
+.fps{position:absolute;left:7px;top:7px;font-size:11px;color:#fff;
+  background:#000000aa;border:1px solid #ffffff44;padding:0 11px;border-radius:99px;
+  min-height:40px;display:inline-flex;align-items:center;cursor:pointer;
+  font-variant-numeric:tabular-nums;font-weight:600;z-index:2;
+  -webkit-tap-highlight-color:transparent}
+.fps:hover{background:#000000cc;border-color:var(--acento2)}
+.fps:focus-visible{outline:3px solid var(--acento2);outline-offset:2px}
 
 /* ---------- transporte ---------- */
 .transp{display:flex;align-items:center;gap:6px;padding:4px 8px;background:#101219;
@@ -344,7 +350,7 @@ input[type=color]{width:44px;height:38px;padding:0;border:1px solid var(--linha)
     <div class="palco">
       <canvas id="tela" width="360" height="640" aria-label="Prévia do vídeo"></canvas>
       <div class="selo" id="selo">9:16</div>
-      <div class="fps" id="medidorFps" title="Quadros por segundo da prévia — toque em tocar para medir">toque ▶ para medir</div>
+      <button type="button" class="fps" id="medidorFps" data-qa="medir" title="Medir este computador">medir este computador</button>
     </div>
 
     <div class="transp">
@@ -2152,7 +2158,11 @@ var ultimoT = 0, fpsAcc = 0, fpsN = 0, fpsMost = 0;
 function tocar(){
   if(TOCANDO) return;
   if(!PROJ.clipes.length && !PROJ.audios.length){
-    recado("Traga um vídeo ou uma foto primeiro — o botão está em <b>Material</b>.", "erro");
+    /* ⚠️ recado que só diz "faltou" e não mostra a porta obriga a pessoa a
+       procurar. Aqui o programa ABRE a gaveta do acervo junto com o aviso. */
+    abreGaveta("acervo");
+    recado("Ainda não há nada para tocar. <b>Não precisa subir arquivo:</b> " +
+           "escolha um vídeo do <b>Acervo</b>, que o programa desenha na hora.", "erro");
     return;
   }
   audioCtx();
@@ -4115,6 +4125,7 @@ function iniciar(){
 
   /* ---- o botão do tamanho ---- */
   $("btPerfil").onclick = telaPerfil;
+  $("medidorFps").onclick = medirMaquina;
 
   /* ---- abas do caderno ---- */
   var abas = document.querySelectorAll(".aba"), j;
@@ -4206,6 +4217,116 @@ function telaPerfil(){
   };
 }
 
+/* ============================================================
+   MEDIR ESTE COMPUTADOR — sem precisar trazer material nenhum.
+   ⚠️ NASCEU DE UMA FRASE DO MARCOS (24/set/2026): ***"precisa subir algo para
+   esse play funcionar"***. Não precisa — o Acervo desenha o clipe sozinho —,
+   mas ele tem razão no que importa: **para saber se o computador aguenta, a
+   pessoa estava tendo que montar um projeto antes**. Isso é pedir trabalho
+   para responder uma pergunta que o programa pode responder sozinho.
+
+   ⚠️ E A PROVA TEM DE SER HONESTA, senão não serve para decidir nada: ela
+   desenha no TAMANHO DE SAÍDA escolhido e inclui a passada por pixel do fundo
+   verde, que é a conta mais cara do editor. Uma prova que só pinta retângulos
+   diria "80 quadros por segundo" num computador que engasga na primeira
+   camada com chroma.
+   ============================================================ */
+var provando = false;
+function medirMaquina(){
+  if(provando) return;
+  if(TOCANDO) pausar();
+  provando = true;
+  var m = medidaDaSaida(), W = m[0], H = m[1];
+  var aux = document.createElement("canvas"), axc;
+  try{ axc = aux.getContext("2d", {willReadFrequently: true}); }
+  catch(e){ axc = aux.getContext("2d"); }
+  aux.width = 320; aux.height = Math.round(320 * H / W);
+
+  var q = 0, t0 = performance.now(), fim = t0 + 2500;
+  var e = $("medidorFps");
+  function passo(){
+    var agora = performance.now();
+    if(agora >= fim || !provando){
+      var fps = Math.round(q / ((agora - t0) / 1000));
+      provando = false;
+      desenha(TEMPO);
+      if(e){ e.textContent = fps + " fps";
+             e.style.color = fps < 15 ? "#ff9a9a" : (fps < 24 ? "#f2d06b" : "#ffffffaa"); }
+      contaDaProva(fps, W, H);
+      return;
+    }
+    var p = (agora - t0) / 2500;
+    /* 1. um fundo que muda (o navegador não pode guardar o quadro anterior) */
+    var g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, "#1b3a5c"); g.addColorStop(1, p > 0.5 ? "#5c2b3a" : "#2b5c3a");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    /* 2. figuras em movimento */
+    var i;
+    for(i = 0; i < 9; i++){
+      var a = p * 6.28 + i;
+      ctx.fillStyle = ["#ff5b6e","#3fc4b4","#f2c14e","#7d8cff","#5ec27a"][i % 5];
+      ctx.beginPath();
+      ctx.arc(W/2 + Math.cos(a) * W * 0.3, H/2 + Math.sin(a * 1.3) * H * 0.3, W * 0.06, 0, 6.29);
+      ctx.fill();
+    }
+    /* 3. a conta cara: uma passada por pixel, como o fundo verde faz */
+    axc.fillStyle = "#00c853"; axc.fillRect(0, 0, aux.width, aux.height);
+    try{
+      var d = axc.getImageData(0, 0, aux.width, aux.height), k = d.data, j;
+      for(j = 0; j < k.length; j += 4) if(k[j+1] > 110) k[j+3] = 0;
+      axc.putImageData(d, 0, 0);
+      ctx.globalAlpha = 0.5; ctx.drawImage(aux, 0, 0, W, H); ctx.globalAlpha = 1;
+    }catch(err){}
+    /* 4. e um texto com contorno, como as legendas */
+    ctx.font = "800 " + Math.round(W * 0.09) + "px Segoe UI, sans-serif";
+    ctx.textAlign = "center";
+    ctx.lineWidth = Math.max(2, W * 0.012); ctx.strokeStyle = "#000";
+    ctx.strokeText("medindo…", W/2, H * 0.5);
+    ctx.fillStyle = "#fff"; ctx.fillText("medindo…", W/2, H * 0.5);
+    ctx.textAlign = "start";
+    q++;
+    requestAnimationFrame(passo);
+  }
+  if(e) e.textContent = "medindo…";
+  requestAnimationFrame(passo);
+}
+
+function contaDaProva(fps, W, H){
+  var bom = fps >= 24, meio = fps >= 15 && fps < 24;
+  modal("<h2>Este computador desenha " + fps + " quadros por segundo</h2>" +
+    "<p>Medido agora, em <b>" + W + "×" + H + "</b> (perfil <b>" +
+    (PERFIS[PROJ.perfil] || PERFIS.leve).rot + "</b>), com tudo o que o editor tem de mais " +
+    "pesado ligado: fundo que muda, figuras em movimento, uma passada por pixel como a do " +
+    "fundo verde e texto com contorno.</p>" +
+    (bom
+      ? "<div class='aviso bom'><b>Está bom.</b> Acima de 24 quadros por segundo o olho não " +
+        "percebe solavanco. Pode dar a aula neste tamanho.</div>"
+      : meio
+        ? "<div class='aviso'><b>Dá para trabalhar, um pouco duro.</b> Entre 15 e 24 a prévia " +
+          "treme um pouco — mas <b>o arquivo exportado sai perfeito de qualquer jeito</b>, " +
+          "porque ele é calculado quadro a quadro, não filmado da tela.</div>"
+        : "<div class='aviso erro'><b>Está pesado para esta máquina.</b> Abaixo de 15 a prévia " +
+          "fica difícil de usar. Escolha um tamanho menor aqui embaixo — e, de novo: " +
+          "<b>o arquivo exportado não herda esse tropeço</b>.</div>") +
+    "<div class='linha' id='grPerfil2'>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "leve" ? " lig" : "") + "' data-p='leve'>Leve</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "normal" ? " lig" : "") + "' data-p='normal'>Normal</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "alta" ? " lig" : "") + "' data-p='alta'>Alta (HD)</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "fullhd" ? " lig" : "") + "' data-p='fullhd'>Full HD</button>" +
+    "</div>" +
+    "<p style='font-size:12.5px;color:var(--fraco)'>Trocou o tamanho? Toque de novo no " +
+    "número, no canto da prévia, para medir outra vez.</p>");
+  $("grPerfil2").onclick = function(ev){
+    var b = ev.target.closest ? ev.target.closest("[data-p]") : null;
+    if(!b) return;
+    guardaPasso();
+    PROJ.perfil = b.getAttribute("data-p");
+    aplicaRazao(); tudo(); fechaModal();
+    recado("Tamanho agora: " + medidaDaSaida().join("×") + ". Toque no número da prévia " +
+           "para medir de novo.", "bom");
+  };
+}
+
 /* ---------------- a primeira tela ---------------- */
 function primeiraVez(){
   modal("<h2>A Oficina de Vídeo</h2>" +
@@ -4217,9 +4338,10 @@ function primeiraVez(){
     "sozinhas conforme você trabalha.</p>" +
     "<div class='aviso'><b>Nada sai deste computador</b> e nada fica salvo: o projeto " +
     "vive nesta aba. Quando terminar, <b>exporte</b> — é o botão do canto de cima.</div>" +
-    "<p style='font-size:12.8px;color:var(--fraco)'>Sem arquivo para trazer? " +
-    "<b>Material → Clipe de exemplo</b> desenha três segundos na hora. E em " +
-    "<b>Acervo</b> há vídeos, fotos, trilhas e efeitos feitos pelo próprio programa.</p>");
+    "<div class='aviso'><b>Não precisa trazer arquivo para começar.</b> O <b>Acervo</b> " +
+    "tem vídeos, fotos, trilhas e efeitos que o próprio programa desenha e compõe na hora. " +
+    "E, para saber se este computador aguenta, toque em <b>medir este computador</b>, no " +
+    "canto da prévia — isso não precisa de material nenhum.</div>");
   temRascunho().then(function(tem){
     if(!tem) return;
     var d = $("cxmodal");
