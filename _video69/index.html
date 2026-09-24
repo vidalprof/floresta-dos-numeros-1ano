@@ -108,6 +108,12 @@ a{color:var(--acento2)}
 .topo .nome{flex:1;min-width:0;font-weight:700;font-size:13.5px;white-space:nowrap;
   overflow:hidden;text-overflow:ellipsis}
 .topo .nome b{color:var(--acento)}
+/* ⚠️⚠️ O CARIMBO DE VERSÃO, e ele nasceu de um prejuízo concreto: em uma tarde
+   o professor relatou TRÊS vezes um defeito que já estava consertado, porque o
+   navegador dele servia a página guardada. Sem um número à vista, nem ele nem
+   eu tínhamos como saber se estávamos falando do mesmo programa — e cada volta
+   dessas custa uma hora. Agora a versão está na barra de cima, ao lado do nome. */
+.versao{font-weight:600;font-size:10.5px;color:var(--fraco);letter-spacing:0}
 .icb{min-width:var(--toque);min-height:var(--toque);border:0;background:transparent;
   border-radius:var(--raio2);cursor:pointer;display:inline-flex;align-items:center;
   justify-content:center;font-size:17px;-webkit-tap-highlight-color:transparent}
@@ -354,7 +360,7 @@ input[type=color]{width:44px;height:38px;padding:0;border:1px solid var(--linha)
     <div class="topo">
       <button type="button" class="icb" id="btDesfazer" title="Desfazer (Ctrl+Z)" aria-label="Desfazer"><svg width="20" height="20" aria-hidden="true"><use href="#i-voltar"/></svg></button>
       <button type="button" class="icb" id="btRefazer" title="Refazer (Ctrl+Y)" aria-label="Refazer"><svg width="20" height="20" aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-voltar"/></svg></button>
-      <div class="nome">A <b>Oficina de Vídeo</b></div>
+      <div class="nome">A <b>Oficina de Vídeo</b> <small class="versao" id="versao"></small></div>
       <button type="button" class="chip" id="btPerfil" title="Tamanho do vídeo — toque para mudar">—</button>
       <button type="button" class="expo" id="btExportar" data-qa="exportar"><svg width="16" height="16" aria-hidden="true"><use href="#i-baixar"/></svg> Exportar</button>
     </div>
@@ -2692,6 +2698,9 @@ function telaAjuda(){
     "conseguindo desenhar neste computador. Abaixo de 15 ele fica vermelho: aí vale " +
     "baixar o tamanho no botão ao lado de <i>Exportar</i>. A prévia pode tropeçar; " +
     "<b>o arquivo exportado não herda esse tropeço</b>, porque é gravado no ritmo do relógio.</p>" +
+    "<div class='aviso'><b>Versão desta página: " + esc(VERSAO) + ".</b> " +
+    "Se alguma coisa aqui não bater com o que lhe disseram, o navegador pode estar " +
+    "mostrando uma cópia guardada: aperte <b>Ctrl+F5</b> uma vez.</div>" +
     "<p style='color:var(--fraco);font-size:12.8px'>Atalhos: <b>barra de espaço</b> toca " +
     "e pausa · <b>S</b> divide · <b>Delete</b> apaga o escolhido · <b>Ctrl+Z</b> desfaz " +
     "· <b>←</b> e <b>→</b> andam um décimo de segundo · <b>F</b> congela o quadro · " +
@@ -4613,7 +4622,12 @@ function ctx2d(c, freq){
   catch(e){ return c.getContext("2d"); }
 }
 
+var VERSAO = "24/09-22c37e";
 function iniciar(){
+  var vv = $("versao");
+  if(vv){ vv.textContent = "v" + VERSAO;
+          vv.title = "Versão desta página. Se o professor pedir para atualizar e " +
+                     "este número não mudar, aperte Ctrl+F5."; }
   cv = $("tela"); ctx = ctx2d(cv, false);
   cvAux = document.createElement("canvas"); ctxAux = ctx2d(cvAux, true);
   cvBorr = document.createElement("canvas"); ctxBorr = ctx2d(cvBorr, false);
