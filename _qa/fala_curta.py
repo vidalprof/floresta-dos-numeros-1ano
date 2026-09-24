@@ -116,7 +116,19 @@ def main():
             continue
         txt = falado(f[u"texto"])
         h = hashlib.md5(io.open(cam, u"rb").read()).hexdigest()
-        porhash.setdefault(h, []).append((f[u"id"], f[u"texto"]))
+        # ⚠️⚠️ O QUE CONTA E O TEXTO FALADO, NAO O ESCRITO — e eu quebrei esta
+        #    regra na primeira versao deste portao, no mesmo dia em que a
+        #    escrevi noutro lugar. Comparando o texto CRU, ele apontou como
+        #    defeito «Oito.» e «oito», «Á» e «á», «pão» e «pao», «ele» e
+        #    «ele✓», «to» e «-to»: dezesseis pares em seis cadernos, todos
+        #    CERTOS — sao a mesma coisa dita, e o gravador normaliza antes de
+        #    sintetizar, entao um arquivo so e o correto.
+        #    Sobrou o que importa: «te.» e «ti.» com o MESMO mp3 no caderno de
+        #    alfabetizacao do 1o ano, que sao sons diferentes.
+        #    A licao, outra vez: quando os dois lados podem escrever a mesma
+        #    coisa de formas diferentes, a normalizacao vai ANTES da regua —
+        #    senao o portao acusa o proprio alfabeto.
+        porhash.setdefault(h, []).append((f[u"id"], f[u"texto"], falado(f[u"texto"])))
         if len(txt) < CURTO:
             continue
         s = duracao(cam)
@@ -139,8 +151,8 @@ def main():
     # ⭐ os gemeos: dois TEXTOS diferentes no mesmo arquivo
     gemeos = []
     for h, lista in porhash.items():
-        textos = set(t for _i, t in lista)
-        if len(lista) > 1 and len(textos) > 1:
+        falados = set(fa for _i, _t, fa in lista)
+        if len(lista) > 1 and len(falados) > 1:
             gemeos.append(lista)
 
     razoes.sort()
@@ -168,9 +180,9 @@ def main():
         print(u"   %d ARQUIVO(S) SERVINDO A MAIS DE UM TEXTO (mesmo mp3, byte a byte):"
               % len(gemeos))
         for lista in gemeos:
-            print(u"    x " + u", ".join(i for i, _t in lista))
-            for _i, t in lista:
-                print(u"        %s" % t[:80])
+            print(u"    x " + u", ".join(i for i, _t, _f in lista))
+            for _i, t, fa in lista:
+                print(u"        %-40s  (a voz leria: %s)" % (t[:40], fa[:40]))
     print(u"   conserto: apagar esses mp3 E a linha deles no "
           u"`<pasta>/audio/_carimbo.json`, e rodar o entregar.yml de novo — "
           u"o carimbo sha1 e quem decide se a voz se regrava.")
