@@ -109,6 +109,11 @@ const PULSO = 60;
 
         const plano = await pg.evaluate(montaPlano, id);
         if (!plano || plano.tipo === 'nao-sei') { semJeito++; continue; }
+        if (plano.tipo === 'sem-opcao') {
+          presos.push(id + ' [a resposta declarada «' + plano.certo + '» nao esta '
+                      + 'entre as ' + plano.tinha + ' opcoes da tela]');
+          continue;
+        }
         await executa(pg, id, plano);
         const fechou = await pg.waitForFunction(
           x => !!ST.resp[x], id, { timeout: ESPERA_FECHA, polling: PULSO })
@@ -316,6 +321,36 @@ function montaPlano(id) {
     return { tipo: 'nao-sei' };
   }
 
+  /* ⭐ A FAMÍLIA "REPARTE" (24/set/2026, `_div3` — a bancada de potes). A peça
+     não tem UM toque: a criança distribui N peças em K potes, `cada` em cada
+     pote, e o item só fecha quando a última peça cai. O jogador dizia "não
+     fecha nem com a resposta certa" em SEIS folhas do caderno da divisão — e a
+     peça estava certa; quem não sabia jogar era ele.
+     O contrato:
+       · a resposta declarada é `rep:<potes>x<cada>`;
+       · cada peça publica `item-<id>-<n>`, n de 0 a potes*cada - 1;
+       · cada pote publica `pote-<id>-<j>`, j de 0 a potes - 1.
+     ⚠️ E O POTE PODE AINDA NÃO EXISTIR na hora de montar o plano: na divisão
+        por MEDIDA ele nasce quando o anterior enche (senão contar os potes
+        daria a resposta de graça). Por isso esta família NÃO exige que os
+        potes estejam no documento — exige a primeira peça e o primeiro pote, e
+        o resto vem pelo nome. Dá certo porque o `executa` busca cada alvo com
+        `querySelector` NA HORA do clique, não no plano. */
+  const mRep = certo.match(/^rep:(\d+)x(\d+)$/);
+  if (mRep) {
+    const potes = parseInt(mRep[1], 10), cada = parseInt(mRep[2], 10);
+    const temPeca = qa.some(x => x.getAttribute('data-qa') === 'item-' + id + '-0');
+    const temPote = qa.some(x => x.getAttribute('data-qa') === 'pote-' + id + '-0');
+    if (potes > 0 && cada > 0 && temPeca && temPote) {
+      const alvos = [];
+      let n = 0;
+      for (let j = 0; j < potes; j++)
+        for (let t = 0; t < cada; t++) alvos.push('item-' + id + '-' + (n++), 'pote-' + id + '-' + j);
+      return { tipo: 'clique', alvos: alvos, fe: 'alta' };
+    }
+    return { tipo: 'nao-sei' };
+  }
+
   /* ⭐ A FAMÍLIA "MEMÓRIA" (20/set/2026, `_corpo5` folha 37). O par publica as
      duas cartas com o ID DO ITEM dentro do `data-qa` (`mem-<id>-fig` e
      `mem-<id>-nome`), e não a posição na grade — é isso que permite ao jogador
@@ -326,11 +361,18 @@ function montaPlano(id) {
   if (qa.some(e => (e.getAttribute('data-qa') || '').indexOf('mem-' + id + '-') === 0)) {
     /* o ITEM é o tabuleiro inteiro; a resposta declarada lista as chaves dos
        pares, separadas por espaço. Para cada chave, as duas cartas. */
+    /* ⚠️ OS DOIS LADOS NÃO SE CHAMAM SEMPRE `fig` E `nome` (24/set/2026): no
+       caderno da divisão a memória casa a CONTA com o RESULTADO, e os lados
+       são `conta` e `res`. O portão exigia os dois nomes de sempre e dizia
+       "não conheço a peça" numa folha correta — dívida numa folha boa é o
+       mesmo que reprovar sem motivo. Agora os lados saem do PRÓPRIO
+       documento: para cada chave, as duas cartas que a carregam. */
     const alvos = [];
     for (const k of certo.split(/\s+/)) {
-      const f = 'mem-' + id + '-' + k + '-fig', nm = 'mem-' + id + '-' + k + '-nome';
-      if (qa.some(e => e.getAttribute('data-qa') === f) &&
-          qa.some(e => e.getAttribute('data-qa') === nm)) alvos.push(f, nm);
+      const pref = 'mem-' + id + '-' + k + '-';
+      const lados = qa.map(e => e.getAttribute('data-qa') || '')
+                      .filter(v => v.indexOf(pref) === 0);
+      if (lados.length === 2) alvos.push(lados[0], lados[1]);
     }
     if (alvos.length) return { tipo: 'clique', alvos: alvos, espera: 1300, fe: 'alta' };
   }
@@ -431,6 +473,25 @@ function montaPlano(id) {
     if (bol) return { tipo: 'clique', fe: 'alta',
                       alvos: [bol.getAttribute('data-qa'), fecha.getAttribute('data-qa')] };
     return { tipo: 'nao-sei' };
+  }
+
+  /* ⭐⭐ A RESPOSTA CERTA NÃO ESTÁ ENTRE AS OPÇÕES (24/set/2026, `_div3` folha
+     14). O item desenha um leque de opções (`op-<id>-<v>`) e a resposta
+     declarada NÃO É NENHUMA DELAS: a criança não tem como acertar, por mais
+     que leia. Foi o que aconteceu com *"48 bolinhos, 2 em cada caixa"* — a
+     resposta é 24 e o leque ia de 1 a 12.
+     ⚠️ E ISTO TINHA DE DEIXAR DE SER DÍVIDA: o jogador saía com "não conheço a
+        peça" (código 2, "não medi"), que é o mesmo recado que ele dá para uma
+        peça nova e correta. Um item impossível não é ignorância da régua — é
+        defeito da atividade, e reprova.
+     Só vale quando há LEQUE e a resposta é um pedaço SÓ: as folhas de marcar
+     vários publicam `op-` em cada peça certa e a resposta é uma lista. */
+  if (certo.indexOf(' ') === -1) {
+    const leque = qa.map(e => e.getAttribute('data-qa') || '')
+                    .filter(v => v.indexOf('op-' + id + '-') === 0);
+    if (leque.length > 1 &&
+        !leque.some(v => v.toLowerCase() === ('op-' + id + '-' + certo).toLowerCase()))
+      return { tipo: 'sem-opcao', certo: certo, tinha: leque.length };
   }
 
   /* ⚠️ OS PEDAÇOS DA RESPOSTA, e a ambiguidade que precisou de MEDIDA e não de

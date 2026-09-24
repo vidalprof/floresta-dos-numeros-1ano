@@ -647,8 +647,25 @@ jobs:
           for par in "${ALVS[@]}"; do
             p="${par%%:*}"; p="${p%/}"
             [ -d "$p" ] || continue
-            python3 _qa/voz_gravada.py "$p"; c=$?
+            # ⚠️⚠️ `|| c=$?`, NUNCA `; c=$?` — e esta linha parou TODA a fabrica
+            #    (achado em 24/set/2026, lendo o log da corrida 35938911118).
+            #    O passo roda com `shell: bash -e`: o `;` separa dois comandos, e
+            #    o `set -e` derruba o passo no PRIMEIRO que falha, antes de
+            #    `c=$?` existir. Como este workflow ACRESCENTA `_painel` a toda
+            #    lista de entrega (regra de 18/set) e o painel nao tem
+            #    `falas.json`, o portao devolvia 2 ("nao medi") no ULTIMO alvo de
+            #    toda corrida — e a corrida morria ali, ANTES de publicar.
+            #    Sintoma: o carimbo parava em `"estado":"rodando"`, o site
+            #    continuava servindo a versao velha e o workflow terminava em
+            #    "failure" sem uma linha dizendo o que havia de errado com o
+            #    caderno. Nao havia nada errado com o caderno.
+            #    ⚠️ E A LICAO JA ESTAVA ESCRITA NESTE MESMO ARQUIVO, no passo de
+            #       ouvir a voz ("o `|| rc=$?` protege"). Eu a paguei de novo no
+            #       passo seguinte, escrito um mes depois. Licao registrada num
+            #       passo nao protege o passo vizinho.
             # os tres codigos: 0 passou · 1 REPROVOU · 2 nao medi (sem falas.json)
+            c=0
+            python3 _qa/voz_gravada.py "$p" || c=$?
             if [ "$c" = "1" ]; then ruim=1; fi
           done
           if [ "$ruim" = "1" ]; then

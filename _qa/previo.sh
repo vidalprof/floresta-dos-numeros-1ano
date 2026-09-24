@@ -81,6 +81,7 @@ PORTOES=(
   "0b padrao da casa|python3 _qa/padrao.py $ARQ"
   "0b2 dinamicas|python3 _qa/dinamicas.py $ARQ"
   "0b6 catalogo/painel|python3 _qa/catalogo.py $PASTA"
+  "0w bash -e derruba o passo (cmd; rc=$?)|python3 _qa/bash_e.py"
   # ⭐ o PEDAGOGO virou medida (set/2026): habilidade citada existe mesmo no
   #    curriculo da rede, os objetivos do relatorio batem com ela um a um, e o
   #    professor ve o dossie DENTRO da atividade. Em pasta que nao e caderno de

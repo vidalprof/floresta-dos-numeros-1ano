@@ -99,6 +99,41 @@ def tira_halo(c, lim=228, voltas=2):
     return c
 
 
+def tira_fundo_claro(c, lim=222, sat=30):
+    u"""Apaga o fundo QUASE-BRANCO que o `limpa_fundo` nao alcancou, entrando
+    pela beirada por um caminho de {transparente OU quase-branco SEM COR}.
+
+    ⚠️ POR QUE FOI PRECISO (24/set/2026, a bala do `_div3`): a bala esta no
+       MEIO DE UM MONTE e o papel em volta dela chegou ao scan com um veu
+       amarelado — 252,244,231 de um lado, 246,243,238 de outro. O
+       `limpa_fundo` corta em 238 no canal mais escuro e nao encostou nisso;
+       o `tira_halo` so morde `voltas` pixels para dentro, e aqui a mancha tem
+       trinta. Resultado: 17% da figura era papel opaco, e o portao 0o6 via
+       5,66% de halo.
+
+    ⚠️ E POR QUE ISTO E OPCIONAL, peca a peca: ha figuras cujo CORPO e branco —
+       a caixa de leite, a nuvem, o gelo. Nelas este flood entra pela beirada e
+       come o desenho. A regra da casa continua: `limpa_fundo` + `tira_halo`
+       para todo mundo; ISTO so onde a folha veio com veu, e declarado.
+
+    O criterio e claridade E FALTA DE COR (`sat`): o papel envelhecido e claro
+    e quase cinza; o amarelo da bala e claro e MUITO colorido (a diferenca
+    entre o maior e o menor canal passa de 100). Por isso o flood para na bala.
+    """
+    a = np.asarray(c).astype(np.int16).copy()
+    H, W = a.shape[0], a.shape[1]
+    claro = ((a[..., :3].min(2) >= lim) &
+             ((a[..., :3].max(2) - a[..., :3].min(2)) <= sat))
+    vazio = a[..., 3] < 24
+    anda = claro | vazio
+    semente = np.zeros((H, W), bool)
+    semente[0, :] = anda[0, :]; semente[-1, :] = anda[-1, :]
+    semente[:, 0] = anda[:, 0]; semente[:, -1] = anda[:, -1]
+    alcancado = nd.binary_propagation(semente, mask=anda)
+    a[alcancado & ~vazio, 3] = 0
+    return Image.fromarray(a.astype(np.uint8))
+
+
 def aperta(c):
     u"""anda de fora para dentro até achar tinta (usa o alfa já limpo)."""
     bb = c.getbbox()
