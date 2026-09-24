@@ -110,7 +110,51 @@ def confere(pasta=None, destino=None):
     if pasta:
         p = pasta.strip().rstrip("/")
         linha = [a for a in itens if a["pasta"] == p]
-        if not linha:
+        # ⭐⭐ O ACESSORIO: uma pasta que sobe junto e NAO e atividade
+        #    (24/set/2026). O painel do professor da prova de Ed. Fisica
+        #    (`_efjogospainel`) travou a entrega da PROVA inteira porque este
+        #    portao exigia uma linha dele no ATIVIDADES.md — e ele nao pode ter
+        #    uma: o catalogo lista o que a CRIANCA abre, e nenhuma crianca abre
+        #    um painel de notas. Escrever uma linha falsa para calar o portao
+        #    seria pior que o portao errado.
+        #    ⚠️ E NAO E UMA PORTA ABERTA: o acessorio declara em
+        #    `<pasta>/ACESSORIO.json` de QUEM ele e, e o portao continua
+        #    cobrando as duas coisas que importam — que a atividade DONA esteja
+        #    no catalogo, e que a linha dela MOSTRE este link ao professor.
+        #    Assim nada sobe as escondidas, que e o que o portao existe para
+        #    impedir.
+        acess = None
+        cam_ac = os.path.join(p, u"ACESSORIO.json")
+        if not linha and os.path.exists(cam_ac):
+            try:
+                acess = json.load(io.open(cam_ac, encoding=u"utf-8"))
+            except Exception as e:                               # noqa: BLE001
+                problemas.append(u"`%s/ACESSORIO.json` nao e JSON valido (%s)."
+                                 % (p, e))
+                acess = None
+        if acess is not None:
+            dono = (acess.get(u"de") or u"").strip().rstrip("/")
+            ldono = [a for a in itens if a["pasta"] == dono]
+            if not dono or not ldono:
+                problemas.append(
+                    u"`%s` se declara acessorio de `%s`, e essa atividade NAO "
+                    u"esta no ATIVIDADES.md. O acessorio nao dispensa o dono do "
+                    u"catalogo — dispensa so a linha propria." % (p, dono or u"?"))
+            else:
+                meu = (acess.get(u"link") or u"").strip()
+                juntos = u" ".join((a.get("link") or u"") + u" " +
+                                   (a.get("painel") or u"") for a in ldono)
+                if not meu or meu.split(u"?")[0].rstrip(u"/") not in juntos:
+                    problemas.append(
+                        u"`%s` e acessorio de `%s`, mas o link dele (%s) nao "
+                        u"aparece na linha do dono no ATIVIDADES.md. O professor "
+                        u"tem de achar o painel onde acha a atividade."
+                        % (p, dono, meu or u"(nao declarado)"))
+                else:
+                    print(u"   `%s` e ACESSORIO de `%s` (%s) — sem linha propria "
+                          u"no catalogo, e esta certo assim."
+                          % (p, dono, acess.get(u"o_que") or u"?"))
+        elif not linha:
             problemas.append(
                 u"A pasta `%s` NAO esta no ATIVIDADES.md. Toda atividade nova "
                 u"entra no catalogo — uma linha na tabela do ANO (o titulo `## "
