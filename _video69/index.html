@@ -464,7 +464,12 @@ var RAZOES = {
 var PERFIS = {
   leve:   {f: 0.5,  rot: "Leve — PC da escola"},
   normal: {f: 0.75, rot: "Normal"},
-  alta:   {f: 1,    rot: "Alta (HD)"}
+  alta:   {f: 1,    rot: "Alta (HD)"},
+  /* ⚠️ FULL HD existe porque o aplicativo original exporta em 1080p e o vídeo
+     pode ir para o YouTube da escola. Mas ele NÃO é oferecido sozinho: 1080×1920
+     são 2 milhões de pixels por quadro, **nove vezes** o do perfil leve, e no
+     FX-4300 de 2012 isso não anda. Quem escolhe é a pessoa, avisada. */
+  fullhd: {f: 1.5,  rot: "Full HD (1080p) — só em PC bom"}
 };
 
 /* A máquina se apresenta sozinha. `hardwareConcurrency` existe em todo lado;
@@ -576,6 +581,15 @@ function encaixa(lw, lh, W, H, modo){
 function pintaFundo(fonte, lw, lh){
   var W = cv.width, H = cv.height;
   if(PROJ.fundo === "cor"){ ctx.fillStyle = PROJ.corFundo; ctx.fillRect(0,0,W,H); return; }
+  /* ⭐ DEGRADÊ — o fundo que o aplicativo original também oferece. A segunda cor
+     nasce da primeira, escurecida: duas cores escolhidas a esmo brigam, e uma
+     sozinha, esmaecendo, sempre combina. */
+  if(PROJ.fundo === "degrade"){
+    var c2 = escurece(PROJ.corFundo, 0.45);
+    var g = ctx.createLinearGradient(0, 0, W * 0.35, H);
+    g.addColorStop(0, PROJ.corFundo); g.addColorStop(1, c2);
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); return;
+  }
   ctx.fillStyle = "#000"; ctx.fillRect(0,0,W,H);
   if(PROJ.fundo !== "desfoque" || !fonte) return;
 
@@ -722,6 +736,11 @@ function pintaClipe(c, fonte, alfa, transicao, p, andar){
   /* ⚠️ a transição DESLIZA/ZOOM mexe na matriz, não na imagem: é mais barato e
      não estica pixel nenhum. */
   if(transicao === "deslizar"){ ctx.translate(W * (1 - p), 0); }
+  /* ⭐ FALHA (glitch) — a transição que a turma pede pelo nome. Ela é o desenho
+     em FATIAS horizontais deslocadas ao acaso, e o acaso é SEMEADO pelo próprio
+     instante: duas passadas do mesmo quadro tremem igual, senão a exportação
+     sairia diferente da prévia. É desenhada fora daqui, em `pintaFalha`. */
+  if(transicao === "falha"){ ctx.translate((sorteioFixo(Math.round(p*90)) - 0.5) * W * 0.16 * (1-p), 0); }
   if(transicao === "zoom"){
     ctx.translate(W/2, H/2); ctx.scale(0.6 + 0.4*p, 0.6 + 0.4*p); ctx.translate(-W/2, -H/2);
   }
@@ -756,6 +775,9 @@ function pintaClipe(c, fonte, alfa, transicao, p, andar){
    ------------------------------------------------------------ */
 var MISTURAS = {normal:"source-over", tela:"screen", multiplicar:"multiply",
   sobrepor:"overlay", clarear:"lighten", escurecer:"darken", diferenca:"difference"};
+/* ⚠️ acaso SEMEADO: a mesma entrada devolve sempre o mesmo número. Sem isto a
+   prévia e o arquivo exportado tremeriam de jeitos diferentes. */
+function sorteioFixo(n){ return ((n * 9301 + 49297) % 233280) / 233280; }
 function entre(a, b, p){ return a + (b - a) * p; }
 function estadoPip(o, t){
   var ks = o.keys || [];
@@ -903,6 +925,14 @@ function tiraVerde(el, lw, lh, ch){
   }
   ctxAux.putImageData(d, 0, 0);
   return cvAux;
+}
+function escurece(h, q){
+  var c = hex2rgb(h), i, o = "#";
+  for(i = 0; i < 3; i++){
+    var v = Math.max(0, Math.round(c[i] * (1 - q)));
+    o += (v < 16 ? "0" : "") + v.toString(16);
+  }
+  return o;
 }
 function hex2rgb(h){
   h = (h || "#000").replace("#","");
@@ -1573,7 +1603,8 @@ GAVETAS.tela = function(){
       '<option value="cobre">Preenche cortando</option></select></div>' +
     '<div class="linha"><label for="selFundo">Fundo</label>' +
       '<select id="selFundo"><option value="desfoque">Cópia desfocada</option>' +
-      '<option value="cor">Cor sólida</option><option value="preto">Preto</option></select>' +
+      '<option value="cor">Cor sólida</option><option value="degrade">Degradê</option>' +
+      '<option value="preto">Preto</option></select>' +
       '<input type="color" id="corFundo" value="' + PROJ.corFundo + '" aria-label="Cor do fundo"></div>' +
     hFaixa("mdL", "Moldura", 0, 12, PROJ.borda.larg, 0.5, "%") +
     '<div class="linha"><label for="mdC">Cor da moldura</label>' +
@@ -1698,7 +1729,7 @@ GAVETAS.transic = function(){
   g.innerHTML = cab("Transição — entrada do clipe " + (i + 1)) +
     hGrade("grTr", [
       {v:"corte", n:"Corte seco"}, {v:"fade", n:"Esmaecer"},
-      {v:"deslizar", n:"Deslizar"}, {v:"zoom", n:"Aproximar"}
+      {v:"deslizar", n:"Deslizar"}, {v:"zoom", n:"Aproximar"}, {v:"falha", n:"Falha"}
     ], c.transicao.tipo) +
     hFaixa("trD", "Duração", 0.2, 2, c.transicao.dur, 0.1, " s") +
     '<div class="aviso" style="margin-bottom:0">O <b>corte seco</b> é a transição mais ' +
@@ -2554,6 +2585,23 @@ function montaLimites(){
     'uso de obra alheia. Por isso as quatro trilhas e os seis efeitos do <b>Acervo</b> ' +
     'são <b>compostos aqui dentro</b>, por osciladores: podem ser usados sem pedir ' +
     'licença a ninguém.</div>' +
+
+    '<div class="aviso bom"><b>O que este editor faz igual ao aplicativo de celular</b> ' +
+    '— e foi <b>medido pixel a pixel</b>, não só programado: aparar, dividir, duplicar, ' +
+    'reordenar, congelar, cortar o quadro, cinco formatos de tela, fundo (desfocado, cor, ' +
+    'degradê, preto), moldura, cinco filtros, brilho · contraste · saturação · temperatura, ' +
+    'velocidade de 0,25× a 4×, zoom lento, girar, espelhar, cinco transições, texto com ' +
+    'tempo e animação de entrada e saída, figuras de anotação, camada por cima com fundo ' +
+    'verde · máscara · mistura · <b>keyframes</b>, música com aparo e fade, efeitos sonoros, ' +
+    'narração, rascunho e exportação até <b>1080p</b>.</div>' +
+
+    '<div class="aviso"><b>O que o aplicativo de celular faz e este NÃO faz.</b> ' +
+    'A lista completa, sem esconder nada: <b>inverter o vídeo</b>; <b>rampa de velocidade</b> ' +
+    'dentro de um clipe só (aqui a velocidade é uma por pedaço); <b>legenda automática</b>, ' +
+    '<b>recorte de fundo</b> e <b>efeitos por inteligência artificial</b>; a <b>biblioteca ' +
+    'gigante</b> de figurinhas, trilhas e modelos prontos (aqui são 6 vídeos, 4 fotos, ' +
+    '4 trilhas e 6 efeitos, todos feitos pelo próprio programa); <b>colagem</b> e retoque de ' +
+    'foto; <b>nitidez</b> no ajuste fino; efeitos de <b>flash e tremida</b>; e <b>4K</b>.</div>' +
 
     '<div class="aviso"><b>Não dá para inverter o vídeo (tocar de trás para frente).</b> ' +
     'Para isso seria preciso guardar todos os quadros do clipe na memória ao mesmo ' +
@@ -4143,7 +4191,11 @@ function telaPerfil(){
       "<button type='button' class='bt" + (PROJ.perfil === "leve" ? " lig" : "") + "' data-p='leve'>Leve</button>" +
       "<button type='button' class='bt" + (PROJ.perfil === "normal" ? " lig" : "") + "' data-p='normal'>Normal</button>" +
       "<button type='button' class='bt" + (PROJ.perfil === "alta" ? " lig" : "") + "' data-p='alta'>Alta (HD)</button>" +
-    "</div>");
+      "<button type='button' class='bt" + (PROJ.perfil === "fullhd" ? " lig" : "") + "' data-p='fullhd'>Full HD</button>" +
+    "</div>" +
+    "<div class='aviso'><b>Full HD (1080p)</b> tem <b>nove vezes</b> mais pixels que o " +
+    "perfil leve. É o tamanho do YouTube — e é o que trava um computador antigo. " +
+    "Ligue, toque a prévia e olhe o número de quadros por segundo antes de decidir.</div>");
   $("grPerfil").onclick = function(ev){
     var b = ev.target.closest ? ev.target.closest("[data-p]") : null;
     if(!b) return;
