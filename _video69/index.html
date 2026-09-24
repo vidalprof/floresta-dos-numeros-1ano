@@ -4435,6 +4435,70 @@ GAVETAS.efeitos = function(){
 var COMMONS = "https://commons.wikimedia.org/w/api.php";
 var achados = [];
 
+/* ============================================================
+   ⚠️⚠️ QUEM DIGITA A BUSCA NÃO É A CRIANÇA — decisão do Marcos (24/set/2026):
+   ***"meu medo é digitarem algo impróprio no campo busca"***. O medo é certo e
+   eu deveria ter previsto: o Wikimedia Commons é um **arquivo público** e, como
+   qualquer arquivo público, **tem material adulto e imagens cruas**. Um campo
+   de texto aberto numa sala de 6º ano é um convite.
+
+   A SAÍDA, em três camadas — e nenhuma delas é "confiar":
+   1. **O aluno não digita.** Ele escolhe entre ASSUNTOS PRONTOS, escritos aqui,
+      pensados para aula (célula, planta, vulcão, sistema solar…). É a mesma
+      ideia do professor que entrega a pasta de figuras em vez de soltar a
+      turma no navegador.
+   2. **O campo livre existe, mas é do professor**, atrás da chave da casa
+      (`1275@`, a mesma de todas as atividades). Ele destranca pela aula e
+      pronto.
+   3. **Um filtro de palavras** barra o termo ANTES de sair o pedido, e ainda
+      peneira o NOME do arquivo que volta — porque o assunto pode ser inocente
+      e a foto não.
+
+   ⚠️⚠️ E A RESSALVA HONESTA, que vai escrita na tela: **filtro nenhum é
+   garantia.** Isto é uma barreira, não uma muralha. Num arquivo com centenas
+   de milhões de imagens, o professor continua sendo o adulto da sala. Prometer
+   "seguro" seria a pior coisa que eu poderia fazer aqui.
+   ============================================================ */
+var ASSUNTOS = [
+  {g:"Ciências", t:["célula", "esqueleto humano", "coração humano", "pulmão",
+                    "microscópio", "átomo", "sistema solar", "planeta",
+                    "vulcão", "fóssil", "dinossauro", "energia solar"]},
+  {g:"Natureza", t:["floresta", "árvore", "flor", "folha", "rio", "oceano",
+                    "montanha", "chuva", "borboleta", "pássaro", "peixe",
+                    "abelha"]},
+  {g:"Escola e cidade", t:["escola", "biblioteca", "livro", "mapa do Brasil",
+                           "bandeira do Brasil", "cidade", "ponte", "trem",
+                           "reciclagem", "horta", "museu", "laboratório"]}
+];
+
+/* ⚠️ lista de barragem: termos que não entram numa busca de sala de aula.
+   Ela é curta de propósito — lista longa dá falso positivo em palavra comum
+   (e "seio", em Ciências, é palavra de anatomia). Ela barra o óbvio; o resto é
+   a camada 1 (o aluno não digita) e o professor. */
+var BARRADOS = ("sexo sexual sexy porn porno pornografia nu nua nude naked nudez pelada pelado " +
+  "erotic erotica peito peitos bunda genital genitalia penis pênis vagina vulva masturb " +
+  "prostitu drogas maconha cocaina cocaína crack heroina heroína arma armas pistola revolver " +
+  "revólver fuzil suicidio suicídio suicide matar morto cadaver cadáver sangue gore tortura " +
+  "nazi nazista hitler racis").split(" ");
+
+function termoProibido(t){
+  var a = achataBusca(t), k;
+  for(k = 0; k < BARRADOS.length; k++){
+    if(!BARRADOS[k]) continue;
+    if(a.indexOf(BARRADOS[k]) >= 0) return BARRADOS[k];
+  }
+  return null;
+}
+/* sem acento e em minúsculas, senão "pênis" passaria e "penis" não */
+function achataBusca(t){
+  t = String(t || "").toLowerCase();
+  try{
+    t = t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }catch(e){}
+  return " " + t.replace(/[^a-z0-9]+/g, " ") + " ";
+}
+var PROF_LIBEROU = false;
+
 /* ⚠️ o campo de autor do Commons vem com HTML dentro (links, itálicos). Vai
    para a tela como TEXTO, sempre — nunca como HTML. */
 function soTexto(h){
@@ -4444,6 +4508,13 @@ function soTexto(h){
 }
 
 function buscarCommons(termo, tipo){
+  var mau = termoProibido(termo);
+  if(mau){
+    $("resBusca").innerHTML = '<div class="aviso erro"><b>Essa palavra não é para a aula.</b> ' +
+      'Escolha um dos assuntos acima — eles foram preparados para o trabalho de vocês.</div>';
+    recado("Busca recusada.", "erro");
+    return;
+  }
   var filtro = tipo === "som" ? "filetype:audio" : "filetype:bitmap";
   var u = COMMONS + "?action=query&format=json&origin=*" +
     "&generator=search&gsrnamespace=6&gsrlimit=18" +
@@ -4473,8 +4544,12 @@ function buscarCommons(termo, tipo){
       var p = paginas[k], i = p.imageinfo && p.imageinfo[0];
       if(!i) continue;
       var m = i.extmetadata || {};
+      var nomeArq = (p.title || "").replace(/^File:/, "");
+      /* ⚠️ peneira tambem o que VOLTA: o assunto pode ser inocente e o arquivo
+         nao. É barato e pega o caso mais comum, que é o nome descritivo. */
+      if(termoProibido(nomeArq)) continue;
       achados.push({
-        nome: (p.title || "").replace(/^File:/, ""),
+        nome: nomeArq,
         mini: i.thumburl || i.url,
         arquivo: (tipo === "som") ? i.url : (i.thumburl || i.url),
         autor: soTexto(m.Artist && m.Artist.value) || "autor não declarado",
@@ -4581,10 +4656,23 @@ function poeCreditos(){
 /* ---------------- a gaveta ---------------- */
 GAVETAS.buscar = function(){
   var g = $("gaveta");
+  var ha = "", gi, ti;
+  for(gi = 0; gi < ASSUNTOS.length; gi++){
+    ha += '<h4 style="margin-top:8px">' + esc(ASSUNTOS[gi].g) + '</h4><div class="glos">';
+    for(ti = 0; ti < ASSUNTOS[gi].t.length; ti++)
+      ha += '<b data-t="' + esc(ASSUNTOS[gi].t[ti]) + '">' + esc(ASSUNTOS[gi].t[ti]) + '</b>';
+    ha += '</div>';
+  }
   g.innerHTML = cab("Buscar material de licença livre") +
-    '<div class="linha"><input type="text" id="qBusca" placeholder="o que você procura…" ' +
-      'aria-label="O que procurar">' +
-      '<button type="button" class="bt pri" id="btBuscar" data-qa="buscar">Buscar</button></div>' +
+    '<div class="aviso" style="margin-top:0"><b>Escolha um assunto.</b> Eles foram ' +
+    'preparados para a aula — o campo de escrever é do professor.</div>' +
+    '<div id="assuntos">' + ha + '</div>' +
+    (PROF_LIBEROU
+      ? '<div class="linha"><input type="text" id="qBusca" placeholder="buscar (professor)" ' +
+        'aria-label="O que procurar"><button type="button" class="bt pri" id="btBuscar" ' +
+        'data-qa="buscar">Buscar</button></div>'
+      : '<div class="linha"><button type="button" class="bt mini" id="btProf" ' +
+        'data-qa="destrancar">Sou o professor — quero escrever a busca</button></div>') +
     hGrade("grTipoB", [{v:"imagem", n:"Imagens"}, {v:"som", n:"Sons"}], "imagem") +
     '<div id="resBusca"></div>' +
     '<div class="linha"><button type="button" class="bt mini" id="btCreditos">' +
@@ -4594,17 +4682,38 @@ GAVETAS.buscar = function(){
     'O que se acha por lá tem dono, e usar sem permissão num vídeo publicado é uso de obra ' +
     'alheia. Aqui o acervo é o da <b>Wikipédia</b>: tudo de licença livre, com autor e ' +
     'licença à vista. ⚠️ Esta é a <b>única parte que precisa de internet</b> — se a rede da ' +
-    'escola bloquear, use o <b>Acervo</b>, que é feito aqui dentro.</div>';
+    'escola bloquear, use o <b>Acervo</b>, que é feito aqui dentro.</div>' +
+    '<div class="aviso erro" style="margin-bottom:0"><b>Aviso ao professor.</b> O Commons é ' +
+    'um arquivo público de centenas de milhões de imagens e, como qualquer arquivo público, ' +
+    '<b>tem material adulto</b>. Por isso o aluno escolhe entre assuntos prontos, o campo ' +
+    'livre pede a chave e há um filtro de palavras. <b>Nada disso é garantia</b> — é ' +
+    'barreira. Numa busca aberta, quem decide continua sendo o adulto da sala.</div>';
   $("gFecha").onclick = fechaGaveta;
   var tipo = "imagem";
   ligaGrade("grTipoB", function(v){ tipo = v; });
-  function vai(){
-    var t = $("qBusca").value.trim();
-    if(!t){ recado("Escreva o que você procura.", ""); return; }
-    buscarCommons(t, tipo);
+  $("assuntos").onclick = function(ev){
+    var b = ev.target.closest ? ev.target.closest("[data-t]") : null;
+    if(b) buscarCommons(b.getAttribute("data-t"), tipo);
+  };
+  if(PROF_LIBEROU){
+    var vai = function(){
+      var t = $("qBusca").value.trim();
+      if(!t){ recado("Escreva o que você procura.", ""); return; }
+      buscarCommons(t, tipo);
+    };
+    $("btBuscar").onclick = vai;
+    $("qBusca").onkeydown = function(ev){ if(ev.key === "Enter") vai(); };
+  } else {
+    /* ⚠️ a mesma chave de todas as atividades da casa (`1275@`). Não é
+       segurança — está no código-fonte — é um PORTÃO DE SALA: impede o acesso
+       distraído, não o determinado. E é exatamente isso que se precisa aqui. */
+    $("btProf").onclick = function(){
+      var k = prompt("Chave do professor:");
+      if(k === "1275@"){ PROF_LIBEROU = true; abreGaveta("buscar");
+        recado("Campo de busca liberado para esta sessão.", "bom"); }
+      else if(k !== null) recado("Chave errada.", "erro");
+    };
   }
-  $("btBuscar").onclick = vai;
-  $("qBusca").onkeydown = function(ev){ if(ev.key === "Enter") vai(); };
   $("btCreditos").onclick = function(){ poeCreditos(); var n = $("nCred");
     if(n) n.textContent = (PROJ.creditos || []).length; };
 };

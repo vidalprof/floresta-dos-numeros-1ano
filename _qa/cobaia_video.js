@@ -489,10 +489,43 @@ function servidor() {
     };
   });
   await pg.click('[data-qa="f-buscar"]');
-  await pg.waitForTimeout(200);
+  await pg.waitForTimeout(250);
+
+  /* ⚠️⚠️ A TRAVA E O QUE MAIS IMPORTA AQUI. O professor disse: "meu medo e
+     digitarem algo improprio no campo busca". O Commons e arquivo publico e tem
+     material adulto. Entao o aluno NAO PODE ter campo de texto: se um dia
+     alguem mexer nisso sem perceber, este passo reprova. */
+  exige((await pg.locator('#qBusca').count()) === 0,
+    'o ALUNO tem campo de busca livre — era para ser so os assuntos prontos');
+  exige((await pg.locator('#assuntos [data-t]').count()) > 10,
+    'os assuntos prontos nao apareceram');
+  notas.push('busca: aluno sem campo livre, ' +
+    (await pg.locator('#assuntos [data-t]').count()) + ' assuntos prontos');
+
+  /* palavra barrada nao chega a sair pedido nenhum */
+  await eu(() => { window.__pediu = 0;
+    const f = window.fetch;
+    window.fetch = function (u) { window.__pediu++; return f.apply(this, arguments); }; });
+  await eu(() => buscarCommons('foto de sexo', 'imagem'));
+  await pg.waitForTimeout(300);
+  exige(await eu(() => window.__pediu === 0),
+    'uma palavra barrada AINDA saiu para a internet');
+  exige(await eu(() => /nao e para a aula|não é para a aula/i.test($('resBusca').innerHTML)),
+    'a palavra barrada nao mostrou o aviso');
+  notas.push('busca: palavra impropria e barrada ANTES de sair o pedido');
+
+  /* a chave do professor destranca o campo */
+  pg.once('dialog', d => d.accept('1275@'));
+  await pg.click('[data-qa="destrancar"]');
+  await pg.waitForTimeout(400);
+  exige((await pg.locator('#qBusca').count()) === 1,
+    'a chave do professor nao destrancou o campo de busca');
+  notas.push('busca: a chave 1275@ destranca o campo para o professor');
+
+  /* e ai, com o campo do professor, a busca de verdade */
   await pg.fill('#qBusca', 'folha');
   await pg.click('[data-qa="buscar"]');
-  await pg.waitForTimeout(600);
+  await pg.waitForTimeout(700);
   const leu = await eu(() => achados.length ? {
     nome: achados[0].nome, autor: achados[0].autor, lic: achados[0].licenca } : null);
   exige(!!leu, 'a busca nao leu nenhum resultado da resposta');
