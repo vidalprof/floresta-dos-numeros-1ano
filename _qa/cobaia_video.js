@@ -114,12 +114,35 @@ function servidor() {
     await pg.click('#mdOk');
   await pg.waitForTimeout(150);
 
-  /* ---- 1c. o play no vazio ABRE a porta em vez de so reclamar ---- */
-  await eu(() => { fechaGaveta(); });
+  /* ---- 1c. O EDITOR NAO ABRE VAZIO, e o play toca no primeiro toque ----
+     ⚠️ o Marcos teve de dizer TRES vezes que o play pedia arquivo. Este passo
+     existe para isso nunca mais voltar calado: ao abrir ja ha material, e um
+     clique em tocar faz o tempo ANDAR. */
+  exige(await eu(() => PROJ.clipes.length >= 1),
+    'o editor abriu com a fita VAZIA — o play vai pedir arquivo de novo');
+  /* ⚠️ e a foto de partida NAO pode marcar missao nenhuma: senao o relatorio
+     diz que a crianca trouxe material sem ela ter encostado em nada. */
+  exige(await eu(() => { confereMissoes();
+    return document.querySelectorAll('#listaM .missao.feita').length === 0; }),
+    'a foto de partida marcou missao sozinha (' +
+    (await eu(() => document.querySelectorAll('#listaM .missao.feita').length)) + ' marcada(s))');
+  await eu(() => { fechaGaveta(); TEMPO = 0; });
   await pg.click('[data-qa="tocar"]');
-  await pg.waitForTimeout(200);
-  exige(await eu(() => gavetaAberta === 'acervo'),
-    'tocar com a fita vazia nao abriu o Acervo — so reclamou');
+  await pg.waitForTimeout(1200);
+  exige(await eu(() => TOCANDO && TEMPO > 0.3),
+    'o play nao tocou no primeiro clique (TOCANDO=' +
+    (await eu(() => String(TOCANDO))) + ', tempo=' +
+    (await eu(() => Math.round(TEMPO * 10) / 10)) + ')');
+  await eu(() => pausar());
+
+  /* e se a pessoa apagar tudo, tocar repoe material em vez de reclamar */
+  await eu(() => { PROJ.clipes.length = 0; PROJ.audios.length = 0; tudo(); });
+  await pg.click('[data-qa="tocar"]');
+  await pg.waitForTimeout(1200);
+  exige(await eu(() => PROJ.clipes.length >= 1),
+    'com a fita vazia, tocar so reclamou em vez de pôr material');
+  await eu(() => { pausar(); PROJ.clipes.length = 0; PROJ.textos.length = 0;
+                   PROJ.audios.length = 0; PROJ.pip.length = 0; tudo(); });
 
   /* ---- 2. o clipe de exemplo (exercita MediaRecorder de saida) ---- */
   await pg.click('[data-qa="f-material"]');

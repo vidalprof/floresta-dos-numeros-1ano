@@ -2164,11 +2164,19 @@ var ultimoT = 0, fpsAcc = 0, fpsN = 0, fpsMost = 0;
 function tocar(){
   if(TOCANDO) return;
   if(!PROJ.clipes.length && !PROJ.audios.length){
-    /* ⚠️ recado que só diz "faltou" e não mostra a porta obriga a pessoa a
-       procurar. Aqui o programa ABRE a gaveta do acervo junto com o aviso. */
-    abreGaveta("acervo");
-    recado("Ainda não há nada para tocar. <b>Não precisa subir arquivo:</b> " +
-           "escolha um vídeo do <b>Acervo</b>, que o programa desenha na hora.", "erro");
+    /* ⚠️⚠️ AQUI ESTAVA O MEU ERRO, e o Marcos teve de dizer TRÊS vezes
+       (24/set/2026: *"precisa subir algo para esse play funcionar"*, depois
+       *"quando eu clico ele diz pra subir algo"*, depois *"ele fala que precisa
+       de arquivo para tocar quando clico no play"*).
+       Eu tinha melhorado o RECADO duas vezes — primeiro o texto, depois abrindo
+       a gaveta junto — e as duas vezes errei o alvo: **o problema não era o
+       recado, era o botão brigar em vez de funcionar.** Botão de tocar toca.
+       Agora ele põe material e toca; o aviso vem DEPOIS, contando o que
+       aconteceu, e não antes, pedindo trabalho.
+       ⚠️ E o material é uma FOTO, não um dos vídeos do acervo: foto se desenha
+       num piscar, e vídeo leva os seus 3 segundos de gravação — botão de tocar
+       que faz esperar é o mesmo defeito com outra roupa. */
+    semeiaMaterial();
     return;
   }
   audioCtx();
@@ -2406,7 +2414,9 @@ var MISSOES = [
      "inclusive um clipe de <b>fundo verde</b> para treinar chroma sem cartolina.",
    p:"Editar é escolher entre o que se tem. O editor não cria imagem: ele decide " +
      "o que entra, em que ordem e por quanto tempo.",
-   ok:function(){ return PROJ.clipes.length > 0; }},
+   ok:function(){
+     var k; for(k = 0; k < PROJ.clipes.length; k++) if(!PROJ.clipes[k].semente) return true;
+     return false; }},
 
   {t:"Aparar — tirar o que não presta",
    f:"Escolha um clipe na fita, abra <b>Aparar</b> e mexa em <i>Começa em</i> e " +
@@ -2418,6 +2428,7 @@ var MISSOES = [
    ok:function(){
      var k; for(k = 0; k < PROJ.clipes.length; k++){
        var c = PROJ.clipes[k];
+       if(c.semente) continue;                 /* a foto de partida não conta */
        if(c.ini > 0.05 || c.fim < c.fonteDur - 0.05) return true;
      } return false; }},
 
@@ -4182,6 +4193,9 @@ function iniciar(){
     return "";
   });
 
+  /* ⚠️ semeia SEM tocar: som que começa sozinho é proibido pelo navegador e
+     indelicado com a sala. A foto entra, o ▶ fica pronto. */
+  semeiaMaterial(false);
   primeiraVez();
 }
 
@@ -4331,6 +4345,37 @@ function contaDaProva(fps, W, H){
     recado("Tamanho agora: " + medidaDaSaida().join("×") + ". Toque no número da prévia " +
            "para medir de novo.", "bom");
   };
+}
+
+/* ⭐ O EDITOR NUNCA FICA VAZIO. Ele nasce com uma foto do próprio acervo na
+   fita, para que o ▶ funcione no primeiro toque e a pessoa veja o programa
+   andando antes de ter de decidir qualquer coisa.
+   ⚠️ É a lição que o Marcos me ensinou três vezes num dia só: **tela vazia com
+   instrução não é começo, é obstáculo.** */
+function semeiaMaterial(tocarDepois){
+  var f = null, k;
+  for(k = 0; k < FOTOS.length; k++) if(FOTOS[k].k === "paisagem") f = FOTOS[k];
+  if(!f) f = FOTOS[0];
+  if(!f) return;
+  fazFoto(f, false);
+  /* `fazFoto` termina no `onload` da imagem, que é o próximo quadro */
+  setTimeout(function(){
+    if(PROJ.clipes.length){
+      PROJ.clipes[0].fim = 4; PROJ.clipes[0].fonteDur = 30;
+      PROJ.clipes[0].zoom = {de: 1, para: 1.18};   /* para a prévia ter movimento */
+      /* ⚠️ A FOTO DE PARTIDA NÃO CONTA MISSÃO, e isto importa: sem a marca, ela
+         dava as duas primeiras por cumpridas assim que a página abria — o
+         relatório diria que a criança trouxe material e aparou um clipe sem
+         ela ter encostado em nada. Missão que se marca sozinha por causa do
+         cenário mede o programa, não o aluno. A marca nunca se apaga. */
+      PROJ.clipes[0].semente = true;
+      tudo();
+      recado("Comecei com uma foto do <b>Acervo</b> para você poder tocar já. " +
+             "Traga o seu material em <b>Material</b> e apague esta em " +
+             "<b>Aparar → Apagar</b>.", "bom");
+      if(tocarDepois !== false) tocar();
+    }
+  }, 120);
 }
 
 /* ---------------- a primeira tela ---------------- */
