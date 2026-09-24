@@ -1,77 +1,154 @@
 name: Diagnostico e deploy do Pages
 
-# Verifica o estado real do GitHub Pages de um repositorio de destino
-# (ultimo commit, arquivos no ar, status do build) e forca um novo deploy
-# a partir da branch main. Usa o PAGES_TOKEN (precisa de Pages: write).
+# Verifica o estado REAL do GitHub Pages de um repositorio de destino, forca um
+# novo build a partir da main e — o que mudou em 24/set/2026 — DEIXA UM CARIMBO
+# legivel neste repositorio, em `_status/pages-<destino>.json`.
+#
+# ⚠️⚠️ POR QUE O CARIMBO. Este workflow imprimia tudo no log e mais nada. Do
+# chat a rede e travada (curl responde 000), entao a unica forma de eu saber se
+# o site subiu era chamar `actions_list` — que devolve 55 mil caracteres e come
+# a conversa — ou pedir ao Marcos que abrisse o link. Um `git fetch` e 200 bytes
+# resolvem, e e a MESMA licao ja paga no `entregar.yml`:
+#   *evidencia que o robo nao consegue ler barato e evidencia que ele nao le.*
+#
+# ⚠️ E o carimbo nasce "rodando" ANTES de qualquer coisa e e reescrito no fim,
+# inclusive quando a corrida morre no meio — senao um carimbo velho seria lido
+# como recado desta corrida (erro que ja custou caro: anunciei trinta entregas
+# que nao tinham acontecido).
 
 on:
   workflow_dispatch:
     inputs:
       repo_name:
-        description: "Repositorio de destino (ex: mundo-das-atividades)"
+        description: "Repositorio de destino (ex: a-oficina-de-video)"
         required: true
+        type: string
+      marca:
+        description: "Texto que TEM que aparecer no index.html servido (opcional)"
+        required: false
+        default: ""
+        type: string
+      sha_esperado:
+        description: "sha1 (12 primeiros) do index.html que deveria estar no ar (opcional)"
+        required: false
+        default: ""
         type: string
 
 jobs:
   pages:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Diagnosticar e forcar deploy do Pages
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Carimbo "rodando" (antes de qualquer coisa)
+        env:
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          mkdir -p _status
+          printf '{"destino":"%s","estado":"rodando","quando":"%s","corrida":"%s"}\n' \
+            "$DEST" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            > "_status/pages-$DEST.json"
+
+      - name: Diagnosticar, forcar deploy e perguntar ao proprio site
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
           OWNER: vidalprof
           DEST: ${{ inputs.repo_name }}
+          MARCA: ${{ inputs.marca }}
+          SHA_ESP: ${{ inputs.sha_esperado }}
         run: |
           set +e
-          echo "=== ULTIMO COMMIT NA MAIN ==="
-          gh api "repos/$OWNER/$DEST/commits/main" \
-            --jq '.sha[0:7] + "  " + .commit.author.date + "  " + .commit.message' 2>&1 | head -3
+          echo "=== ULTIMO COMMIT NA MAIN DO DESTINO ==="
+          COMMIT=$(gh api "repos/$OWNER/$DEST/commits/main" --jq '.sha[0:7]' 2>/dev/null)
+          echo "  $COMMIT"
 
-          echo ""
-          echo "=== ARQUIVOS DA ATIVIDADE 8 ANO NO REPO ==="
-          gh api "repos/$OWNER/$DEST/contents/atividades/ingles-relative-pronouns-8ano" \
-            --jq '.[].name' 2>&1 | head
-
-          echo ""
-          echo "=== index.html DO REPO MENCIONA aventureiros:8ano e no-cache? ==="
-          gh api "repos/$OWNER/$DEST/contents/index.html" -H "Accept: application/vnd.github.raw" 2>/dev/null \
-            | grep -o 'aventureiros:8ano\|no-cache\|Relative Pronouns' | sort | uniq -c
-
-          echo ""
           echo "=== CONFIG DO PAGES ==="
           gh api "repos/$OWNER/$DEST/pages" \
             --jq '"build_type=" + (.build_type // "?") + "  source=" + ((.source.branch // "?") + ":" + (.source.path // "?")) + "  status=" + (.status // "?") + "  url=" + (.html_url // "?")' 2>&1 | head -3
 
-          echo ""
-          echo "=== ULTIMO BUILD DO PAGES (status/erro) ==="
-          gh api "repos/$OWNER/$DEST/pages/builds/latest" \
-            --jq '"status=" + (.status // "?") + "  erro=" + ((.error.message) // "nenhum") + "  commit=" + (.commit[0:7] // "?") + "  em=" + (.created_at // "?")' 2>&1 | head -3
-
-          echo ""
           echo "=== GARANTINDO DEPLOY A PARTIR DA MAIN (build_type=legacy) ==="
           gh api -X PUT "repos/$OWNER/$DEST/pages" \
             -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/" 2>&1 | head -c 300
           echo ""
 
-          echo "=== FORCANDO NOVO BUILD DO PAGES ==="
+          echo "=== FORCANDO NOVO BUILD ==="
           gh api -X POST "repos/$OWNER/$DEST/pages/builds" \
             --jq '"build disparado: status=" + (.status // "?")' 2>&1 | head -3
-          echo ""
-          # ⚠️ O QUE O SITE ESTA SERVINDO DE VERDADE (ago/2026). O status do
-          # build dizia "errored" e nao havia como saber, daqui do chat (a rede
-          # e travada), se a crianca estava recebendo a versao nova ou a velha.
-          # Perguntar ao proprio site e a unica resposta honesta.
-          echo "=== O SITE NO AR RESPONDE? ==="
-          URL="https://$OWNER.github.io/$DEST"
-          for f in "" "index.html" "img/mp_grade.jpg" "img/mp_pmapa.jpg" "audio/mp_coord_q5.mp3"; do
-            code=$(curl -s -o /dev/null -w "%{http_code}" "$URL/$f?v=$RANDOM")
-            echo "  $code  $URL/$f"
-          done
-          echo "  --- a versao no ar tem as coisas novas? ---"
-          curl -s "$URL/index.html?v=$RANDOM" > /tmp/no_ar.html
-          for marca in "mp_grade" "introEPergunta" "PGRADE" "vagam" "mp_planta_papel"; do
-            n=$(grep -c "$marca" /tmp/no_ar.html)
-            echo "  $marca: $n ocorrencia(s)"
+
+          # ⚠️ O build do Pages e assincrono: perguntar o status no segundo
+          # seguinte devolve "building" e nao diz nada. Esperamos ate 4 minutos.
+          ESTADO="?"; ERRO="nenhum"
+          for i in $(seq 1 24); do
+            sleep 10
+            ESTADO=$(gh api "repos/$OWNER/$DEST/pages/builds/latest" --jq '.status // "?"' 2>/dev/null)
+            ERRO=$(gh api "repos/$OWNER/$DEST/pages/builds/latest" --jq '(.error.message) // "nenhum"' 2>/dev/null)
+            echo "  tentativa $i: status=$ESTADO  erro=$ERRO"
+            [ "$ESTADO" = "built" ] && break
+            [ "$ESTADO" = "errored" ] && break
           done
 
-          echo "=== FIM ==="
+          # ⚠️ O STATUS DO BUILD NAO BASTA (licao de ago/2026): ja aconteceu de
+          # ele dizer "built" e o site servir a versao velha. Quem responde de
+          # verdade e o proprio site.
+          echo "=== O SITE NO AR RESPONDE? ==="
+          URL="https://$OWNER.github.io/$DEST"
+          CODE=000; NOAR=0; TEM_MARCA=0; SHA_NOAR=""
+          for i in $(seq 1 18); do
+            CODE=$(curl -s -o /tmp/no_ar.html -w "%{http_code}" -L "$URL/index.html?v=$RANDOM")
+            echo "  tentativa $i: http $CODE"
+            [ "$CODE" = "200" ] && break
+            sleep 10
+          done
+          if [ "$CODE" = "200" ]; then
+            NOAR=1
+            SHA_NOAR=$(sha1sum /tmp/no_ar.html | cut -c1-12)
+            echo "  sha do que esta no ar: $SHA_NOAR"
+            if [ -n "$MARCA" ]; then
+              if grep -q -- "$MARCA" /tmp/no_ar.html; then TEM_MARCA=1; fi
+              echo "  marca \"$MARCA\": $TEM_MARCA"
+            fi
+            if [ -n "$SHA_ESP" ] && [ "$SHA_NOAR" != "$SHA_ESP" ]; then
+              echo "  ⚠️ o sha no ar ($SHA_NOAR) NAO bate com o esperado ($SHA_ESP)"
+              NOAR=0
+            fi
+          fi
+
+          printf '{"destino":"%s","estado":"%s","quando":"%s","build":"%s","erro":"%s","http":"%s","noar":%s,"index":"%s","marca":%s,"commit":"%s","url":"%s","corrida":"%s"}\n' \
+            "$DEST" "$([ "$NOAR" = "1" ] && echo pronto || echo falhou)" \
+            "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$ESTADO" "$ERRO" "$CODE" "$NOAR" \
+            "$SHA_NOAR" "$TEM_MARCA" "$COMMIT" "$URL/" \
+            "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            > "_status/pages-$DEST.json"
+          cat "_status/pages-$DEST.json"
+
+      - name: O carimbo nao pode mentir (a corrida morreu no meio)
+        if: failure()
+        env:
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          mkdir -p _status
+          printf '{"destino":"%s","estado":"falhou","quando":"%s","motivo":"a corrida parou antes do fim","corrida":"%s"}\n' \
+            "$DEST" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+            "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+            > "_status/pages-$DEST.json"
+
+      - name: Guardar o carimbo
+        if: always()
+        env:
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add "_status/pages-$DEST.json"
+          git diff --cached --quiet && exit 0
+          git commit -m "pages: carimbo de $DEST"
+          # ⚠️ outra corrida pode ter commitado no meio: rebase e tenta de novo.
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 3))
+          done
+          exit 1
