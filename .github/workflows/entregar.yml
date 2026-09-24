@@ -131,6 +131,28 @@ jobs:
       # A regra que fica: PRE-CONDICAO QUE NAO DEPENDE DO TRABALHO SE CONFERE
       # ANTES DO TRABALHO. Nada do que este workflow faz muda a existencia do
       # repositorio de destino — entao perguntar no fim e so pagar para descobrir.
+      # ⭐⭐ O CARIMBO NASCE ANTES DE TUDO (24/set/2026). Ele morava dentro do
+      # passo que confere o destino — e por isso, quando a corrida morria ALI
+      # (ou em qualquer coisa antes), NENHUM carimbo era escrito: nem "rodando",
+      # nem "falhou". Silencio total, igual ao de antes do conserto.
+      # Foi o que aconteceu com dois lotes da fila de consertos presos: eu
+      # esperei vinte e cinco minutos por uma corrida que nao existia.
+      # ⚠️ A LICAO: **rede de seguranca que so cobre o meio da corrida nao e rede.**
+      # O carimbo tem de existir a partir do primeiro passo que pode falhar.
+      - name: Carimbo "rodando" (antes de qualquer portao)
+        if: ${{ inputs.so_voz != 'sim' }}
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          mkdir -p _status
+          for par in $(echo "$LISTA" | tr ',' ' '); do
+            SRC="${par%%:*}"; DEST="${par#*:}"; SRC="${SRC%/}"
+            [ -f "$SRC/index.html" ] || continue
+            printf '{"pasta":"%s","destino":"%s","noar":0,"estado":"rodando","index":"%s","quando":"%s"}\n' \
+              "$SRC" "$DEST" "$(sha1sum "$SRC/index.html" | cut -c1-12)" \
+              "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "_status/entrega-$DEST.json"
+          done
+
       - name: O repositorio de destino existe?
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
@@ -186,14 +208,6 @@ jobs:
           #    nao terminou.
           #    ⭐ E fica a regra de leitura: conferir o campo `index` contra o
           #      sha1 do proprio `<pasta>/index.html`, nunca so o `noar`.
-          mkdir -p _status
-          for par in $(echo "$LISTA" | tr ',' ' '); do
-            SRC="${par%%:*}"; DEST="${par#*:}"; SRC="${SRC%/}"
-            [ -f "$SRC/index.html" ] || continue
-            printf '{"pasta":"%s","destino":"%s","noar":0,"estado":"rodando","index":"%s","quando":"%s"}\n' \
-              "$SRC" "$DEST" "$(sha1sum "$SRC/index.html" | cut -c1-12)" \
-              "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "_status/entrega-$DEST.json"
-          done
 
       # ---------------------------------------------------------------
       # 🛡️ PORTÃO PRÉ-ENTREGA (Marcos, ago/2026: "faça algo para esses erros bobos
@@ -878,8 +892,9 @@ jobs:
           for par in $(echo "$LISTA" | tr ',' ' '); do
             SRC="${par%%:*}"; DEST="${par#*:}"; SRC="${SRC%/}"
             f="_status/entrega-$DEST.json"
-            [ -f "$f" ] || continue
-            grep -q '"estado":"rodando"' "$f" || continue
+            # ⚠️ se nem carimbo existe, a corrida morreu antes de tudo — e e
+            #    JUSTAMENTE esse o caso que ficava mudo. Escreve do mesmo jeito.
+            if [ -f "$f" ]; then grep -q '"estado":"rodando"' "$f" || continue; fi
             printf '{"pasta":"%s","destino":"%s","noar":0,"estado":"falhou","motivo":"%s","corrida":"%s","quando":"%s"}\n' \
               "$SRC" "$DEST" "$motivo" \
               "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
