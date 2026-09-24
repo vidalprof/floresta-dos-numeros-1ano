@@ -1211,7 +1211,12 @@ function redesenhaFita(){
   var total = Math.max(durTotal(), 1);
   var larg = Math.round(total * PXS);
   var tira = $("tira"), rolo = $("rolo");
-  var respiro = Math.round(rolo.clientWidth / 2);
+  /* ⚠️ O RESPIRO SÓ FAZ SENTIDO QUANDO HÁ FITA. Com o projeto vazio ele
+     empurrava os avisos das faixas ("traga um vídeo…") para depois do meio da
+     tela, onde eles apareciam espremidos em 58 px e cortados. Vazio, a fita
+     começa na beirada. */
+  var nada = !PROJ.clipes.length && !PROJ.pip.length && !PROJ.textos.length && !PROJ.audios.length;
+  var respiro = nada ? 8 : Math.round(rolo.clientWidth / 2);
   tira.style.paddingLeft = respiro + "px";
   tira.style.paddingRight = respiro + "px";
 
@@ -1263,7 +1268,8 @@ function vazioSe(faixa, txt){
   if(faixa.children.length) return;
   var d = document.createElement("div");
   d.className = "pedaco vaz";
-  d.style.left = "0"; d.style.width = "100%";
+  d.style.left = "0";
+  d.style.width = Math.max(270, Math.round($("rolo").clientWidth * 0.6)) + "px";
   d.innerHTML = '<div class="rot" style="color:#7b8593;font-weight:600">' + esc(txt) + '</div>';
   faixa.appendChild(d);
 }
