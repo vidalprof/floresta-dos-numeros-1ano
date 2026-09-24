@@ -173,11 +173,13 @@ jobs:
               o.temBotao = (await pg.locator('[data-qa="f-buscar"]').count()) > 0;
               if (!o.temBotao) throw new Error('a barra nao tem o botao Buscar');
               await pg.click('[data-qa="f-buscar"]');
-              await pg.waitForTimeout(400);
-              o.abriuGaveta = (await pg.locator('#qBusca').count()) > 0;
-              if (!o.abriuGaveta) throw new Error('a gaveta da busca nao abriu');
-              await pg.fill('#qBusca', 'floresta');
-              await pg.click('[data-qa="buscar"]');
+              await pg.waitForTimeout(500);
+              // ⚠️ o ALUNO nao tem campo de texto (o professor pediu isso): quem
+              // busca e o assunto pronto. O teste clica num deles, como a turma fara.
+              o.assuntos = await pg.locator('#assuntos [data-t]').count();
+              o.campoLivreDoAluno = (await pg.locator('#qBusca').count()) > 0;
+              if (!o.assuntos) throw new Error('nao apareceram os assuntos prontos');
+              await pg.click('#assuntos [data-t="floresta"]');
               await pg.waitForTimeout(15000);
               o.achados = await pg.evaluate(() =>
                 (typeof achados !== 'undefined' && achados) ? achados.length : -1);
