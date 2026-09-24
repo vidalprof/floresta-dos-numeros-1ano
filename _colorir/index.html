@@ -961,6 +961,13 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
   .mec-pintar-canvas .pintawrap{max-width:min(420px,58vh)}
 }
 
+/* ⭐ A GALERIA DO QUE A CRIANCA FEZ (`telaFim` / `guardaArtefato`) — trazida do
+   `_trem`, que e o modelo da casa. Cartoes brancos, figura inteira (contain),
+   rotulo curto; cabem 3 por linha no celular. */
+.galeria{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;gap:8px;margin:10px 0 6px}
+.gfig{margin:0;width:104px;background:#fffdf6;color:#3a2a14;border-radius:14px;padding:6px;box-shadow:0 4px 10px rgba(0,0,0,.22)}
+.gfig img{display:block;width:100%;height:88px;object-fit:contain;border-radius:10px;background:#fff}
+.gcap{font-size:12px;font-weight:800;text-align:center;margin-top:4px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style></head>
 <body>
 
@@ -2157,6 +2164,18 @@ function crachaEl(funcao){
   return d;
 }
 
+/* ⭐⭐ O ARTEFATO — a obra da crianca chega ao fim da atividade (regra 11 da
+   pesquisa: fecho com o que ELA fez a vista, reconhecimento endogeno). Esta
+   atividade e anterior a peca e ficou sem ela: a crianca pintava e o desenho
+   sumia na virada da folha. Achado pelo portao `0b2` (dinamicas) ao remedir a
+   fila dos consertos presos em 24/set/2026 — e ele estava certo: era o unico
+   dos 31 que apontava defeito de verdade.
+   Copiado do `_trem`, que e o modelo da casa (regra: COPIE, nao reescreva). */
+var ARTEFATOS=[];
+function guardaArtefato(rotulo,src){
+  if(!src||typeof src!=="string"||src.indexOf("data:")!==0) return;
+  try{ ARTEFATOS.push({r:rotulo||"",s:src}); while(ARTEFATOS.length>6) ARTEFATOS.shift(); }catch(e){}
+}
 function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
   var m=imgEl("med_"+ID.pre,"medal"); c.appendChild(m); segredoRelatorio(m);
   /* ⚠️ LICAO PAGA: aqui era texto CRAVADO do Jardim ("Jardineiro Mestre!",
@@ -2166,6 +2185,18 @@ function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div",
   c.appendChild(el("h1","",FIM.titulo));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", ":"")+FIM.texto));
   c.appendChild(crachaEl(FIM.cracha));
+  /* a galeria do que ela fez (ver `guardaArtefato`) — so aparece quando ha obra */
+  if(typeof ARTEFATOS!=="undefined" && ARTEFATOS.length){
+    var ga=el("div","galeria"), gi, gf, gim;
+    for(gi=0;gi<ARTEFATOS.length;gi++){
+      gf=el("figure","gfig");
+      gim=document.createElement("img"); gim.src=ARTEFATOS[gi].s; gim.alt=""; gim.draggable=false;
+      gf.appendChild(gim);
+      if(ARTEFATOS[gi].r) gf.appendChild(el("figcaption","gcap",ARTEFATOS[gi].r));
+      ga.appendChild(gf);
+    }
+    c.appendChild(ga);
+  }
   resumoAnimado(c);
   if(fracos().length){
     var bt=el("button","btntreino","Treinar o que faltou<small>s&#243; as partes que voc&#234; quer melhorar</small>");
@@ -3166,7 +3197,18 @@ function limpar(){ sTap(); if(_ctx){ _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0
   if(_img&&_img.complete){ _ctx.drawImage(_img,0,0,CW,CH); } else if(!(_img)){ desenhaReserva(_ctx); }
   capturaMascara(); }
   fala("Limpei o desenho! Pode pintar de novo."); }
-function pronto(){ sTap(); di++; pintarCanvas(); }
+/* ⭐ O ARTEFATO: antes de virar a folha, a pintura vai para a galeria da tela
+   final. ⚠️ Canvas manchado por origem (figura de outro dominio, ou `file://`
+   na bancada) estoura no `toDataURL` — por isso o try: a foto falha em
+   silencio e a fase segue normal. */
+function guardaPintura(){
+  try{
+    if(typeof guardaArtefato!=="function"||!_ctx||!_ctx.canvas) return;
+    var d0=(typeof PINTAR!=="undefined"&&PINTAR[di])||{};
+    guardaArtefato(d0.nome||"", _ctx.canvas.toDataURL("image/png"));
+  }catch(e){}
+}
+function pronto(){ sTap(); guardaPintura(); di++; pintarCanvas(); }
     if(f && f.dados) PINTAR = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.TINTAS !== undefined) TINTAS = _d.TINTAS;
