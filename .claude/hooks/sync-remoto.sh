@@ -100,4 +100,18 @@ if [ -f _qa/publicado.py ]; then
     echo "$SAIDA_PUB"
   fi
 fi
+
+# ⛔ [o carimbo nao pode mentir] avisa entrega que MORREU no meio — o carimbo
+# nasce "rodando" e so e reescrito no fim, entao corrida que cai deixa um
+# "rodando" eterno, e quem le conclui "ainda esta publicando". Aconteceu quatro
+# vezes em 24/set/2026 e o Marcos teve de dizer "esses erros nao podem
+# acontecer" — lembrando, com razao, que ja havia mencionado antes.
+# Este aviso e a primeira coisa que a sessao le, e custa um `ls` em _status.
+if [ -f _qa/entrega_parada.py ]; then
+  SAIDA_ENT="$(python3 _qa/entrega_parada.py 2>/dev/null)"
+  if printf '%s' "$SAIDA_ENT" | grep -qE "A CORRIDA FALHOU|carimbo parado"; then
+    echo "⛔ ENTREGA PARADA NO MEIO (o carimbo diz que a corrida nao chegou ao fim):"
+    printf '%s\n' "$SAIDA_ENT"
+  fi
+fi
 exit 0

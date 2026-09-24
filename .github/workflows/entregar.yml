@@ -209,7 +209,7 @@ jobs:
         env:
           LISTA: ${{ steps.alvos.outputs.lista }}
         run: |
-          FALHOU=0
+          FALHOU=0; MOTIVOS=""
           # ⭐⭐ OS TRES CODIGOS, EM UM LUGAR SO (set/2026 — lição paga duas vezes
           # no mesmo dia). A casa combinou faz tempo: 0 = mediu e passou ·
           # 1 = REPROVOU · 2 = NAO CONSEGUI MEDIR. A banca (_qa/auditar.sh) ja
@@ -235,7 +235,11 @@ jobs:
             local rc=0
             if "$@"; then rc=0; else rc=$?; fi
             if [ "$rc" = "0" ]; then return 0; fi
-            if [ "$rc" = "1" ]; then echo "::error::$pasta: $nome REPROVOU"; FALHOU=1; return 0; fi
+            if [ "$rc" = "1" ]; then
+              echo "::error::$pasta: $nome REPROVOU"
+              MOTIVOS="$MOTIVOS$pasta: $nome REPROVOU; "
+              FALHOU=1; return 0
+            fi
             echo "::warning::$pasta: $nome nao conseguiu medir aqui (codigo $rc) — nao segura a entrega"
             return 0
           }
@@ -328,8 +332,21 @@ jobs:
           done
           if [ "$FALHOU" != "0" ]; then
             echo "::error::PORTÃO PRÉ-ENTREGA REPROVOU — NADA foi publicado. Conserte os erros acima e rode de novo."
+            # ⭐⭐ O MOTIVO TEM DE SAIR DO LOG (24/set/2026, ordem do Marcos:
+            #    *"esses erros não podem acontecer"* — e ele tinha razão de
+            #    dizer que já havia mencionado). O `::error::` só existe dentro
+            #    do log do Actions, e ler log daqui custa caro: na prática eu
+            #    NÃO lia, e ficava olhando um carimbo que dizia "rodando".
+            #    Agora o motivo vira arquivo, do tamanho de um recado.
+            mkdir -p _status
+            printf '{"passo":"portao pre-entrega","quando":"%s","corrida":"%s","motivo":%s}\n' \
+              "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+              "$(printf '%s' "$MOTIVOS" | head -c 1200 | python3 -c 'import json,sys;print(json.dumps(sys.stdin.read()))')" \
+              > _status/FALHA-ENTREGA.json
             exit 1
           fi
+          rm -f _status/FALHA-ENTREGA.json
           echo "✅ Portão pré-entrega: tudo verde — pode gravar e publicar."
 
       - name: Instalar edge-tts
@@ -830,6 +847,44 @@ jobs:
             printf '{"pasta":"%s","destino":"%s","noar":%s,"index":"%s","quando":"%s"}\n' \
               "$SRC" "$DEST" "$ok" "$marca" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
               > "_status/entrega-$DEST.json"
+          done
+
+      # ⭐⭐ O CARIMBO NÃO PODE MENTIR — e era isto que estava por trás de todos
+      # os sustos de 24/set/2026. Ordem do Marcos: ***"esses erros não podem
+      # acontecer"***, e ele lembrou, com razão, que **já havia mencionado
+      # antes**.
+      #
+      # O QUE ACONTECIA: o carimbo nasce `"estado":"rodando"` logo no começo e
+      # só é reescrito NO FIM, pelo passo que publica. Se a corrida morria no
+      # meio — um portão reprovando, um `bash -e` derrubando o passo —, o
+      # carimbo **ficava "rodando" para sempre**. Quem o lesse (eu, a próxima
+      # sessão, o hook de início) concluía "ainda está publicando" e esperava
+      # uma corrida que já tinha morrido. Aconteceu TRÊS vezes no mesmo dia, e
+      # nas três eu só descobri indo cavar o log do Actions.
+      #
+      # AGORA: se o job falhou, todo carimbo que ainda estiver "rodando" vira
+      # `"estado":"falhou"`, com o endereço da corrida e o passo que caiu. A
+      # falha passa a chegar sozinha, num arquivo de 200 bytes, em vez de ficar
+      # escondida num log de 500 linhas.
+      # ⚠️ `if: failure()` e ANTES do recado, para o commit levar isto junto.
+      - name: O carimbo nao pode mentir (a corrida morreu no meio)
+        if: ${{ failure() && inputs.so_voz != 'sim' }}
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
+        run: |
+          mkdir -p _status
+          motivo="a corrida falhou antes de publicar"
+          [ -f _status/FALHA-ENTREGA.json ] && motivo="reprovou no portao pre-entrega (veja _status/FALHA-ENTREGA.json)"
+          for par in $(echo "$LISTA" | tr ',' ' '); do
+            SRC="${par%%:*}"; DEST="${par#*:}"; SRC="${SRC%/}"
+            f="_status/entrega-$DEST.json"
+            [ -f "$f" ] || continue
+            grep -q '"estado":"rodando"' "$f" || continue
+            printf '{"pasta":"%s","destino":"%s","noar":0,"estado":"falhou","motivo":"%s","corrida":"%s","quando":"%s"}\n' \
+              "$SRC" "$DEST" "$motivo" \
+              "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+              "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$f"
+            echo "carimbo de $DEST: rodando -> falhou"
           done
 
       - name: Deixar o recado no repo
