@@ -30,7 +30,14 @@ catch (e) {
 const path = require('path'), fs = require('fs'), http = require('http');
 const CROMO = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 
-const alvo = process.argv[2] || '_video69/index.html';
+/* ⚠️ MODO CELULAR (`--celular`): o professor de Ciencias vai dar a aula com os
+   estudantes filmando NO TELEFONE deles, e passar a midia para o PC e o
+   gargalo. A saida honesta e editar no proprio telefone — mas "e responsivo"
+   nao e prova. Aqui a cobaia inteira roda numa tela de 390x780 com TOQUE (sem
+   mouse), e so passa se der para trazer arquivo, aparar, dividir, arrastar na
+   previa e EXPORTAR com o dedo. */
+const CELULAR = process.argv.indexOf('--celular') >= 0;
+const alvo = process.argv.filter(a => a !== '--celular')[2] || '_video69/index.html';
 const abs = path.resolve(alvo);
 if (!fs.existsSync(abs)) { console.log('cobaia video: NAO MEDI (nao achei ' + alvo + ')'); process.exit(2); }
 
@@ -67,7 +74,12 @@ function servidor() {
       '--use-fake-device-for-media-stream',
       '--autoplay-policy=no-user-gesture-required']
   });
-  const pg = await b.newPage({ viewport: { width: 1366, height: 768 } });
+  const pg = await b.newPage(CELULAR
+    ? { viewport: { width: 390, height: 780 }, hasTouch: true, isMobile: true,
+        deviceScaleFactor: 2,
+        userAgent: 'Mozilla/5.0 (Linux; Android 12; Pixel 5) AppleWebKit/537.36 ' +
+                   '(KHTML, like Gecko) Chrome/109.0.0.0 Mobile Safari/537.36' }
+    : { viewport: { width: 1366, height: 768 } });
 
   const erros = [];
   pg.on('pageerror', e => erros.push(String(e.message || e)));
@@ -324,12 +336,46 @@ function servidor() {
       anim: 'nenhuma', animSai: 'nenhuma', t0: 0, t1: 99});
     TEMPO = 0.4; selecionar('textos', 0); desenha(TEMPO);
   });
+  /* ⚠️ no celular a pagina e uma coluna so, e a essa altura da corrida ela ja
+     rolou: o palco pode estar ACIMA da janela. O toque iria para coordenada
+     negativa e cairia no vazio — o teste acusaria o programa por um descuido
+     dele proprio. Subir a pagina faz parte do gesto. */
+  await eu(() => window.scrollTo(0, 0));
+  await pg.waitForTimeout(200);
   const cx0 = await eu(() => { const r = cv.getBoundingClientRect();
     return [r.left + r.width * 0.5, r.top + r.height * 0.5]; });
-  await pg.mouse.move(cx0[0], cx0[1]);
-  await pg.mouse.down();
-  await pg.mouse.move(cx0[0] + 40, cx0[1] - 30, { steps: 6 });
-  await pg.mouse.up();
+  if (CELULAR) {
+    /* ⚠️ com o dedo os eventos sao `pointer*` do tipo touch — e por isso que o
+       editor foi escrito com pointerdown/move/up e setPointerCapture, e nao
+       com mousedown. Este passo e o que prova que a escolha valeu. */
+    const cdp = await pg.context().newCDPSession(pg);
+    const toque = (tipo, x, y) => cdp.send('Input.dispatchTouchEvent', {
+      type: tipo,
+      /* ⚠️ o `id` NAO e opcional: sem ele o navegador trata cada evento como um
+         DEDO NOVO e nunca gera o `pointermove` — o teste acusaria o programa
+         por um defeito do proprio teste. */
+      touchPoints: tipo === 'touchEnd' ? []
+        : [{ x: Math.round(x), y: Math.round(y), id: 1, radiusX: 8, radiusY: 8, force: 1 }]
+    });
+    /* ⚠️ COM UM INTERVALO ENTRE OS TOQUES. Disparar os tres no mesmo instante
+       reprovava o programa — e o programa estava certo: medido a parte, o texto
+       andava de 0,50 para 0,80. Dedo nenhum se move em zero milissegundo, e
+       entrada sintetica sem tempo entre os passos nao e dedo: e um piscar que o
+       navegador junta num evento so. *Teste que nao respeita o tempo do gesto
+       mede o teste, nao o programa.* */
+    await toque('touchStart', cx0[0], cx0[1]);
+    await pg.waitForTimeout(60);
+    await toque('touchMove', cx0[0] + 20, cx0[1] - 15);
+    await pg.waitForTimeout(60);
+    await toque('touchMove', cx0[0] + 44, cx0[1] - 32);
+    await pg.waitForTimeout(60);
+    await toque('touchEnd', cx0[0] + 44, cx0[1] - 32);
+  } else {
+    await pg.mouse.move(cx0[0], cx0[1]);
+    await pg.mouse.down();
+    await pg.mouse.move(cx0[0] + 40, cx0[1] - 30, { steps: 6 });
+    await pg.mouse.up();
+  }
   await pg.waitForTimeout(200);
   exige(await eu(() => PROJ.textos[0].x > 0.53 && PROJ.textos[0].y < 0.47),
     'arrastar o texto na previa nao mexeu nele (x=' +
@@ -407,6 +453,82 @@ function servidor() {
       'o rascunho voltou SEM o arquivo por tras (o blob: morreu com a aba)');
   }
 
+  /* ---- 11d. O BUSCADOR DE MATERIAL LIVRE ----
+     ⚠️ O QUE ESTE PASSO MEDE E O QUE ELE NAO MEDE. Ele NAO prova que a rede da
+     escola deixa alcancar o Commons — isso so o PC do laboratorio responde.
+     Ele prova o que esta do lado de ca: que a resposta e lida certo (nome,
+     autor e licenca, com o HTML do campo de autor virando TEXTO), que o
+     arquivo entra na fita, que o credito e guardado e escrito, e que a
+     FALHA DE REDE mostra o aviso certo em vez de deixar a crianca esperando.
+     Para isso o `fetch` e trocado por um de mentira — de mentira e de
+     proposito: e a unica forma de medir a leitura sem depender de rede. */
+  await eu(() => {
+    window.__fetchReal = window.fetch;
+    window.__pngFalso = null;
+    const c = document.createElement('canvas'); c.width = 40; c.height = 40;
+    const x = c.getContext('2d'); x.fillStyle = '#2e7d32'; x.fillRect(0, 0, 40, 40);
+    return new Promise(ok => c.toBlob(b => { window.__pngFalso = b; ok(true); }, 'image/png'));
+  });
+  await eu(() => {
+    window.fetch = function (u) {
+      if (String(u).indexOf('commons.wikimedia.org') >= 0) {
+        return Promise.resolve({ ok: true, json: function () { return Promise.resolve({
+          query: { pages: { '1': { title: 'File:Folha verde.jpg', imageinfo: [{
+            /* ⚠️ miniatura em `data:` — um endereco inventado (`blob:falso`)
+               o navegador recusa carregar, e o console cuspia um erro que era
+               do TESTE, nao do programa. */
+            thumburl: 'data:image/gif;base64,R0lGODlhAQABAIAAAC4uLgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
+            url: 'data:image/gif;base64,R0lGODlhAQABAIAAAC4uLgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
+            descriptionurl: 'https://commons.wikimedia.org/wiki/File:Folha_verde.jpg',
+            extmetadata: {
+              Artist: { value: '<a href="/wiki/User:Fulano">Fulano <i>de Tal</i></a>' },
+              LicenseShortName: { value: 'CC BY-SA 4.0' } } }] } } } }); } });
+      }
+      return Promise.resolve({ ok: true, blob: function () {
+        return Promise.resolve(window.__pngFalso); } });
+    };
+  });
+  await pg.click('[data-qa="f-buscar"]');
+  await pg.waitForTimeout(200);
+  await pg.fill('#qBusca', 'folha');
+  await pg.click('[data-qa="buscar"]');
+  await pg.waitForTimeout(600);
+  const leu = await eu(() => achados.length ? {
+    nome: achados[0].nome, autor: achados[0].autor, lic: achados[0].licenca } : null);
+  exige(!!leu, 'a busca nao leu nenhum resultado da resposta');
+  if (leu) {
+    exige(leu.autor === 'Fulano de Tal',
+      'o autor nao foi limpo do HTML (veio "' + leu.autor + '")');
+    exige(leu.lic === 'CC BY-SA 4.0', 'a licenca nao foi lida');
+    exige(leu.nome === 'Folha verde.jpg', 'o nome do arquivo nao foi lido');
+    notas.push('busca: leu "' + leu.nome + '" de ' + leu.autor + ' (' + leu.lic + ')');
+  }
+  const antesB = await eu(() => PROJ.clipes.length);
+  await pg.click('#grAchados [data-i="0"]');
+  await pg.waitForTimeout(1600);
+  exige(await eu(a2 => PROJ.clipes.length === a2 + 1, antesB),
+    'o material escolhido na busca nao entrou na fita');
+  exige(await eu(() => (PROJ.creditos || []).length === 1), 'o credito nao foi guardado');
+  exige(await eu(() => { try { ctx.getImageData(0, 0, 1, 1); return true; }
+                         catch (e) { return false; } }),
+    'o palco ficou CONTAMINADO depois da busca — a exportacao quebraria');
+  await eu(() => { PROJ.textos.length = 0; poeCreditos(); });
+  exige(await eu(() => PROJ.textos.length === 1 &&
+    /Fulano de Tal/.test(PROJ.textos[0].txt) && /CC BY-SA/.test(PROJ.textos[0].txt)),
+    'os creditos nao foram escritos no video');
+  notas.push('busca: o credito entrou no video sozinho');
+
+  /* e a rede caindo tem de AVISAR, nao deixar esperando */
+  await eu(() => { window.fetch = function () { return Promise.reject(new Error('rede')); }; });
+  await pg.fill('#qBusca', 'outra coisa');
+  await pg.click('[data-qa="buscar"]');
+  await pg.waitForTimeout(700);
+  exige(await eu(() => /bloqueia|n[aã]o consegui alcan/i.test($('resBusca').innerHTML)),
+    'com a rede fora, a busca nao avisou nada');
+  notas.push('busca: com a rede fora, avisa e manda usar o Acervo');
+  await eu(() => { window.fetch = window.__fetchReal;
+                   PROJ.textos.length = 0; PROJ.creditos = []; tudo(); });
+
   /* ---- 12. nenhum erro de JavaScript no caminho ---- */
   const limpos = erros.filter(e => !/favicon|Download is not|net::ERR_ABORTED/i.test(e));
   if (limpos.length) falhas.push('erro de JavaScript: ' + limpos.slice(0, 3).join(' | '));
@@ -419,7 +541,8 @@ function servidor() {
 
 async function fim(b, srv) {
   await b.close(); srv.close();
-  console.log(alvo + ' -> cobaia de video: 23 passos de uso real');
+  console.log(alvo + ' -> cobaia de video: 26 passos de uso real' +
+              (CELULAR ? ' NO CELULAR (390x780, com o dedo)' : ''));
   notas.forEach(n => console.log('   . ' + n));
   if (!falhas.length) {
     console.log('   cobaia ok: apara, corta, congela, arrasta, compoe som, EXPORTA e guarda rascunho');
