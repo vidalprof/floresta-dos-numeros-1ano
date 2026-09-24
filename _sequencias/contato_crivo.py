@@ -105,8 +105,31 @@ def main():
             legendas[cod.strip()] = rot.strip()
             ordem.append(cod.strip())
     if not ordem:
-        print(u"NAO MEDI: sem %s — nao sei quais folhas passaram no crivo." % cam_txt)
-        return 2
+        # ⭐ A COLHEITA CRUA TAMBEM SE MOSTRA (24/set/2026). A ordem do Marcos de
+        #    15/set e mais larga que a de 14/set: *"sempre me mostre as
+        #    atividades que vc colheu"* — e ela vem ANTES de escolher, quando o
+        #    `<assunto>.txt` do crivo ainda NAO EXISTE. O arquivo ja prometia
+        #    isto no cabecalho (*"ou do nome do arquivo quando o .txt nao
+        #    existir"*) e o codigo devolvia 2. Prometido e nao feito e pior que
+        #    nao prometido: eu mostrava o contato-folha so na entrega, que e
+        #    tarde — foi por isso que o caderno de Ingles nasceu de 54 folhas
+        #    que ele nunca viu.
+        #    ⚠️ E A LEGENDA DIZ QUE E CRUA, com todas as letras: quem olhar tem
+        #       de saber que ninguem leu estas folhas ainda.
+        ordem = sorted(set(os.path.basename(f).split(u"_")[0]
+                           for f in glob.glob(os.path.join(pasta, u"*"))
+                           if os.path.splitext(f)[1].lower()
+                           in (u".jpg", u".jpeg", u".png", u".webp", u".gif")))
+        legendas = dict((c, u"ainda NAO lida — colheita crua") for c in ordem)
+        if not sub:
+            sub = (u"COLHEITA CRUA: estas %d folhas acabaram de chegar e AINDA "
+                   u"NAO passaram pelo crivo." % len(ordem))
+        if not ordem:
+            print(u"NAO MEDI: sem %s e sem imagem nenhuma em %s."
+                  % (cam_txt, pasta))
+            return 2
+        print(u"   (sem %s: mostrando a COLHEITA CRUA, %d folha(s))"
+              % (os.path.basename(cam_txt), len(ordem)))
 
     if not os.path.isdir(SAIDA):
         os.makedirs(SAIDA)
