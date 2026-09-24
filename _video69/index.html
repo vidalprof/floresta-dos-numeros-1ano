@@ -1,0 +1,3631 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="data:,">
+<title>Aprendendo a editar vídeo: linha do tempo, camadas e exportação</title>
+<meta name="description" content="Editor de vídeo que roda no navegador com a mesma planta de tela do InShot — prévia, fita de tempo com agulha fixa e barra de ferramentas — mais uma trilha de missões que ensina o vocabulário do ofício. 6º ao 9º ano.">
+<!-- ============================================================
+  A OFICINA DE VÍDEO — 6º ao 9º ano
+  Pedido do Marcos (24/set/2026): *"consegue fazer um site com todos recursos
+  do InShot? preciso dos mesmos recursos, para eles aprenderem a mexer, pois o
+  professor quer fazer uma atividade com eles"*; ao escolher o alvo: ***"preciso
+  do programa funcional, que exporte, e que seja instrutivo para ensinar,
+  precisa ter todos recursos"***; e, fechando: ***"gostaria da ferramenta bem
+  igual o InShot"***.
+
+  ⭐ "BEM IGUAL" É A PLANTA DA TELA, e ela está copiada de propósito:
+   · coluna em formato de celular, centrada no escuro;
+   · prévia em cima, ocupando quase tudo;
+   · **a fita de tempo com a AGULHA PARADA NO MEIO** — quem anda é a fita. Este
+     é O gesto do InShot, e é o que a criança vai reencontrar no celular dela;
+   · barra de ferramentas embaixo, rolando de lado, com ícone + nome;
+   · cada ferramenta abre uma **gavetinha** que sobe por cima da fita;
+   · o ⬇ de exportar no canto de cima, à direita.
+
+  ⚠️⚠️ O NOME É NOSSO, e a razão é de sala de aula, não jurídica só: o que a
+  criança leva de uma aula de edição não é o nome do aplicativo — é o **gesto e
+  o vocabulário** (aparar, dividir, camada, transição, keyframe, exportar), que
+  são os MESMOS no InShot, no CapCut e no Premiere. A trilha de missões chama
+  cada coisa pelo nome do ofício, e por isso quem aprende aqui senta em qualquer
+  um deles.
+
+  ⚠️ O QUE ESTE EDITOR NÃO FAZ IGUAL — dito na cara do aluno, não escondido:
+   · exporta em TEMPO REAL (3 min de vídeo levam 3 min) e em `.webm` quando o
+     navegador não deixa gravar `.mp4` — ver `formatoDeGravacao()`;
+   · não tem legenda automática por IA: isso mandaria a voz da criança para um
+     serviço de fora, e essa decisão é da escola, não minha;
+   · não remove fundo por IA — no lugar há **fundo verde (chroma key)**, que é
+     leve e ensina o PORQUÊ da coisa em vez de escondê-lo.
+
+  ⭐⭐ O ALVO DE MÁQUINA ESTÁ MEDIDO (MEMORIA-DO-PROJETO.md, 17/jul/2026):
+  **AMD FX-4300 de 2012 · 3,5 GB de RAM · Windows 7 · Chrome 109 · 1366×768.**
+  Editar vídeo é a coisa mais pesada que já pusemos nesse computador, então o
+  editor NASCE pequeno (360×640) e CRESCE se a máquina aguentar — ele pergunta
+  à máquina, mostra a resposta e deixa trocar na mão. Ver `PERFIS`.
+
+  ⭐ E NADA SAI DO COMPUTADOR DA CRIANÇA. Os arquivos entram por
+  `<input type="file">`, viram `blob:` na memória da aba e são desenhados num
+  canvas. Não há upload, não há servidor, não há conta. Fecha a aba e acabou.
+============================================================ -->
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --fundo:#0b0c10; --barra:#14161c; --painel:#1a1d25; --painel2:#232732; --linha:#2d323e;
+  --texto:#eef1f6; --fraco:#98a1b0; --acento:#ff5b6e; --acento2:#3fc4b4;
+  --perigo:#e2564d; --ok:#5ec27a;
+  --raio:12px; --raio2:8px;
+  --toque:44px;              /* piso do dedo — regra da casa é 40px; aqui 44 */
+  --fita:104px;              /* altura da fita de tempo */
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;min-height:100%}
+body{
+  font-family:"Segoe UI",Roboto,Verdana,Geneva,sans-serif;
+  background:var(--fundo); color:var(--texto);
+  -webkit-text-size-adjust:100%; font-size:15px; line-height:1.45;
+}
+/* ⚠️ QUEM ROLA É A PÁGINA, não uma caixa centrada — senão a barra de rolagem
+   nasce no MEIO da tela (portão 4c, achado pelo Marcos em 24/set/2026). */
+#app{max-width:1180px;margin:0 auto;padding:0 0 30px;min-height:100vh}
+button{font-family:inherit;font-size:14px;color:inherit}
+h1,h2,h3{margin:0 0 6px;line-height:1.15}
+a{color:var(--acento2)}
+.oculto{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ============ A SALA: o "celular" + o caderno de missões ============ */
+.sala{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:14px;
+  align-items:start;padding:8px 10px}
+@media(max-width:860px){.sala{grid-template-columns:1fr;padding:0}}
+
+/* o aparelho: coluna escura de cantos redondos, como a tela do aplicativo */
+.aparelho{background:var(--barra);border:1px solid var(--linha);border-radius:16px;
+  overflow:hidden;display:flex;flex-direction:column;min-height:520px}
+@media(max-width:860px){.aparelho{border-radius:0;border-left:0;border-right:0}}
+/* ⭐ NO PC O APARELHO FICA GRUDADO e as missões é que passam por ele.
+   ⚠️ Sem isto, rolar para ler a missão 7 tira o editor da tela — e a criança
+   lê a ordem de serviço sem ter onde executá-la. O `align-items:start` da
+   grade é o que permite o `sticky` funcionar aqui.
+   ⚠️ Quem rola continua sendo A PÁGINA (portão 4c): a barra fica na beirada
+   da janela, não no meio da tela. */
+/* ⚠️⚠️ E O `max-height` VEM JUNTO, senão o grude vira armadilha: um elemento
+   preso no topo que é MAIS ALTO que a janela tem o rodapé em lugar nenhum —
+   rolar a página não o traz, porque ele não anda. No monitor 1366×768 da
+   escola era exatamente a BARRA DE FERRAMENTAS que ficava fora do alcance.
+   Com o teto, quem cede é a gaveta (que tem rolagem própria) e a barra de
+   baixo fica sempre à mão. */
+@media(min-width:861px){
+  .aparelho{position:-webkit-sticky;position:sticky;top:8px;
+    max-height:calc(100vh - 16px);overflow:hidden}
+  .gaveta{max-height:32vh}
+}
+
+/* ---------- barra de cima: voltar · nome · tamanho · exportar ---------- */
+.topo{display:flex;align-items:center;gap:6px;padding:6px 8px;background:#101219;
+  border-bottom:1px solid var(--linha)}
+.topo .nome{flex:1;min-width:0;font-weight:700;font-size:13.5px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.topo .nome b{color:var(--acento)}
+.icb{min-width:var(--toque);min-height:var(--toque);border:0;background:transparent;
+  border-radius:var(--raio2);cursor:pointer;display:inline-flex;align-items:center;
+  justify-content:center;font-size:17px;-webkit-tap-highlight-color:transparent}
+.icb:hover{background:#20242e}
+.icb:focus-visible{outline:3px solid var(--acento2);outline-offset:-3px}
+.chip{min-height:40px;min-width:40px;padding:0 12px;justify-content:center;border-radius:99px;border:1px solid var(--linha);
+  background:var(--painel2);color:var(--fraco);font-size:12px;font-weight:700;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px}
+.chip.on{border-color:var(--acento);color:var(--acento)}
+.expo{min-height:42px;padding:0 14px;border-radius:99px;border:0;background:var(--acento);
+  color:#2a0b10;font-weight:800;font-size:13.5px;cursor:pointer;display:inline-flex;
+  align-items:center;gap:6px}
+.expo:hover{background:#ff7385}
+.expo[disabled]{opacity:.5;cursor:not-allowed}
+
+/* ---------- o palco ---------- */
+/* ⚠️ `min-height:0` é obrigatório: item de flex não encolhe abaixo do próprio
+   conteúdo sem isso, e o palco empurrava a barra de ferramentas para fora.
+   E a prévia é ABSOLUTA dentro dele — só assim o `max-height:100%` tem contra
+   o que medir, e a imagem encolhe em vez de ser cortada no topo. */
+.palco{background:#000;flex:1 1 auto;min-height:132px;height:150px;
+  position:relative;overflow:hidden}
+#tela{position:absolute;left:0;right:0;top:0;bottom:0;margin:auto;display:block;
+  max-width:100%;max-height:100%;background:#000;touch-action:none}
+.selo{position:absolute;right:7px;top:7px;font-size:10.5px;color:#ffffffaa;
+  background:#00000077;padding:2px 7px;border-radius:99px;pointer-events:none}
+.fps{position:absolute;left:7px;top:7px;font-size:10.5px;color:#ffffffaa;
+  background:#00000077;padding:2px 7px;border-radius:99px;pointer-events:none;
+  font-variant-numeric:tabular-nums}
+
+/* ---------- transporte ---------- */
+.transp{display:flex;align-items:center;gap:6px;padding:4px 8px;background:#101219;
+  border-top:1px solid var(--linha);border-bottom:1px solid var(--linha)}
+.relogio{font-variant-numeric:tabular-nums;font-size:12px;color:var(--fraco);flex:1}
+.relogio b{color:var(--texto)}
+
+/* ============ A FITA DE TEMPO — a agulha fica PARADA NO MEIO ============ */
+/* ⭐ É O gesto do InShot e a coisa mais copiada aqui de propósito: a criança
+   arrasta a FITA, não o cursor. Quem estiver debaixo da agulha é o "agora".
+   ⚠️ O truque que faz isso funcionar: a fita tem um respiro de 50% da largura
+   em cada ponta (`.tira` com padding), senão o primeiro e o último quadro
+   nunca alcançariam o meio da tela. */
+.ldt{position:relative;flex:none;background:var(--painel);border-bottom:1px solid var(--linha);
+  padding:4px 0 2px}
+.rolo{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+  scrollbar-width:thin;touch-action:pan-x}
+.tira{display:flex;flex-direction:column;gap:3px;padding:2px 0;width:max-content;min-width:100%}
+/* ⭐ A faixa VAZIA encolhe e a faixa com conteúdo abre no piso do dedo (40 px).
+   Assim a fita não gasta 190 px de altura mostrando três faixas vazias, e o
+   pedaço de verdade nunca fica menor que o dedo que vai tocá-lo. */
+.faixa{position:relative;min-height:22px}
+.faixa.cheia{min-height:42px}
+.faixa.pri{min-height:22px}
+.faixa.pri.cheia{min-height:58px}
+.pedaco{position:absolute;top:1px;bottom:1px;border-radius:5px;border:2px solid transparent;
+  background:#39414f;color:#fff;font-size:10.5px;padding:2px 4px;cursor:pointer;
+  display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;
+  min-width:26px;background-size:cover;background-position:center}
+.pedaco .rot{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px #000}
+.faixa:not(.pri) .pedaco .dur{display:none}
+.pedaco .dur{opacity:.85;font-variant-numeric:tabular-nums;text-shadow:0 1px 3px #000}
+.pedaco.sel{border-color:var(--acento);box-shadow:0 0 0 2px #ff5b6e55}
+.pedaco.tx{background:#453a5e}
+.pedaco.au{background:#1f4650}
+.pedaco.pip{background:#5a4230}
+.pedaco.vaz{background:transparent;cursor:default}
+.agulha{position:absolute;left:50%;top:0;bottom:0;width:2px;background:#fff;
+  transform:translateX(-1px);pointer-events:none;z-index:4;box-shadow:0 0 6px #000}
+.agulha::before{content:"";position:absolute;top:0;left:-4px;border:5px solid transparent;
+  border-top-color:#fff}
+.dica{color:var(--fraco);font-size:11.5px;padding:3px 8px 1px;display:flex;
+  align-items:center;gap:8px;justify-content:center}
+.dica span{flex:1;text-align:center}
+
+/* ============ A GAVETA (sub-painel que sobe) ============ */
+.gaveta{background:var(--painel);border-top:1px solid var(--linha);padding:8px 10px 10px;
+  max-height:260px;overflow-y:auto;flex:0 1 auto}
+.gaveta h4{margin:0 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;
+  color:var(--fraco);display:flex;align-items:center;gap:6px}
+.gaveta h4 button{margin-left:auto}
+.linha{display:flex;align-items:center;gap:7px;margin:6px 0;flex-wrap:wrap}
+.linha label{font-size:12.5px;color:var(--fraco);min-width:70px}
+.bt{min-height:var(--toque);padding:0 13px;border-radius:var(--raio2);
+  border:1px solid var(--linha);background:var(--painel2);color:var(--texto);
+  cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  font-weight:600;-webkit-tap-highlight-color:transparent}
+.bt:hover{background:#2b3140}
+.bt:focus-visible{outline:3px solid var(--acento2);outline-offset:2px}
+.bt.pri{background:var(--acento);border-color:var(--acento);color:#2a0b10}
+.bt.ok2{background:var(--acento2);border-color:var(--acento2);color:#06201d}
+.bt.mini{min-height:40px;padding:0 11px;font-size:12.5px}
+.bt.lig{background:#33394a;border-color:var(--acento2)}
+.bt[disabled]{opacity:.45;cursor:not-allowed}
+input[type=range]{flex:1;min-width:100px;height:var(--toque);accent-color:var(--acento)}
+input[type=text],input[type=number],select,textarea{background:var(--painel2);color:var(--texto);
+  border:1px solid var(--linha);border-radius:var(--raio2);min-height:38px;padding:6px 8px;
+  flex:1;min-width:88px;font-family:inherit;font-size:14px}
+textarea{resize:vertical;min-height:52px}
+input[type=color]{width:44px;height:38px;padding:0;border:1px solid var(--linha);
+  border-radius:var(--raio2);background:var(--painel2);flex:none}
+.val{font-variant-numeric:tabular-nums;font-size:11.5px;color:var(--fraco);min-width:42px;text-align:right}
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px}
+.grade .bt{min-height:56px;flex-direction:column;gap:2px;font-size:11.5px;padding:4px}
+.grade .bt i{font-style:normal;font-size:17px}
+
+/* ============ A BARRA DE FERRAMENTAS (embaixo, rolando de lado) ============ */
+.ferr{display:flex;gap:2px;flex:none;overflow-x:auto;overflow-y:hidden;background:#101219;
+  border-top:1px solid var(--linha);padding:4px 4px 5px;touch-action:pan-x;
+  -webkit-overflow-scrolling:touch}
+.fer{flex:none;min-width:62px;min-height:var(--toque);border:0;background:transparent;
+  color:var(--fraco);border-radius:var(--raio2);cursor:pointer;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  font-size:10.5px;font-weight:600;padding:4px 2px;-webkit-tap-highlight-color:transparent}
+.fer i{font-style:normal;font-size:19px;line-height:1}
+.fer:hover{background:#1b1f28;color:var(--texto)}
+.fer.on{color:var(--acento);background:#221820}
+.fer:focus-visible{outline:3px solid var(--acento2);outline-offset:-3px}
+
+/* ============ O CADERNO (missões · glossário · avisos) ============ */
+.caderno{display:flex;flex-direction:column;gap:10px;padding:2px 2px 0}
+@media(max-width:860px){.caderno{padding:10px}}
+.painel{background:var(--painel);border:1px solid var(--linha);border-radius:var(--raio);
+  padding:10px 12px}
+.painel h3{font-size:12.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--fraco)}
+.abas{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:2px}
+.aba{min-height:40px;padding:0 13px;border-radius:99px;border:1px solid var(--linha);
+  background:var(--painel2);color:var(--fraco);cursor:pointer;font-weight:700;font-size:12.5px;
+  display:inline-flex;align-items:center}
+.aba.on{background:var(--acento);border-color:var(--acento);color:#2a0b10}
+
+.missao{background:linear-gradient(180deg,#1d212b,#171a22);
+  border:1px solid #2f3540;border-left:4px solid var(--acento2);
+  border-radius:var(--raio);padding:10px 11px;margin-bottom:8px}
+.missao .cab{display:flex;align-items:center;gap:8px}
+.missao .n{background:var(--acento2);color:#06201d;font-weight:800;font-size:12px;
+  min-width:25px;height:25px;border-radius:99px;display:grid;place-items:center;flex:none}
+.missao .tit{font-weight:700;font-size:14.5px}
+.missao p{margin:5px 0 0;font-size:13px;color:#ccd5e0}
+.missao .porque{font-size:12.5px;color:var(--fraco);border-left:2px solid var(--linha);
+  padding-left:8px;margin-top:6px}
+.missao.feita{border-left-color:var(--ok)}
+.missao.feita .n{background:var(--ok)}
+.missao.feita .n::after{content:"✓"}
+.missao.feita .n span{display:none}
+.progresso{height:8px;background:var(--painel2);border-radius:99px;overflow:hidden;margin:6px 0 10px}
+.progresso i{display:block;height:100%;background:var(--acento2);width:0;transition:width .35s}
+.glos{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.glos b{background:var(--painel2);border:1px solid var(--linha);border-radius:99px;
+  padding:4px 11px;font-size:12px;font-weight:600;cursor:pointer;min-height:40px;
+  display:inline-flex;align-items:center}
+.glos b:hover{border-color:var(--acento2)}
+
+.aviso{background:#2a2118;border:1px solid #5a4423;border-radius:var(--raio2);
+  padding:9px 11px;font-size:12.8px;color:#f0d6ac;margin:8px 0}
+.aviso b{color:var(--acento)}
+.aviso.erro{background:#2c1a19;border-color:#6a2f2a;color:#f3c3bf}
+.aviso.bom{background:#16271c;border-color:#2f5a3c;color:#c6e9d1}
+
+/* recado que aparece sobre o palco */
+/* ⚠️ o recado ficava no meio de baixo e cobria justamente a barra de
+   ferramentas. No PC ele vai para o canto direito (longe do aparelho); no
+   celular, para o alto, onde não há botão. */
+.recado{position:fixed;right:16px;bottom:16px;z-index:60;max-width:min(420px,92vw);
+  background:#1d2230;border:1px solid var(--linha);border-radius:99px;padding:9px 16px;
+  font-size:13px;max-width:92vw;box-shadow:0 8px 26px #000a}
+.recado.erro{background:#3a1e1c;border-color:#7a3a33}
+.recado.bom{background:#172b1f;border-color:#2f6040}
+@media(max-width:860px){.recado{left:8px;right:8px;bottom:auto;top:8px;max-width:none;
+  border-radius:var(--raio);text-align:center}}
+
+/* ============ MODAL ============ */
+.veu{position:fixed;inset:0;background:#000000cc;display:none;place-items:center;z-index:70;padding:14px}
+.veu.on{display:grid}
+.cxmodal{background:var(--painel);border:1px solid var(--linha);border-radius:var(--raio);
+  padding:16px;max-width:560px;width:100%;max-height:86vh;overflow:auto}
+.cxmodal h2{font-size:17px;margin-bottom:8px}
+.cxmodal p,.cxmodal li{font-size:13.5px;color:#ccd5e0}
+</style>
+</head>
+<body>
+<div id="app">
+<!-- ============================================================
+  OS ÍCONES SÃO DESENHADOS (SVG), NÃO EMOJI.
+  ⚠️ Duas razões, e as duas valem: (1) a regra da casa proíbe emoji na tela da
+  criança — ele muda de desenho em cada sistema e o leitor de tela o lê em voz
+  alta como frase; (2) editor de verdade tem traço próprio, e é isso que o
+  Marcos pediu com *"quero algo bem profissional"*. Um `<symbol>` por ícone,
+  usado com `<use>`: pesa uma vez e serve a tela inteira.
+============================================================ -->
+<svg class="sr" aria-hidden="true" focusable="false"><defs>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h3.2v14H7zm6.8 0H17v14h-3.2z"/></symbol>
+<symbol id="i-inicio" viewBox="0 0 24 24"><path d="M7 5h2.2v14H7zm11 0v14l-9-7z"/></symbol>
+<symbol id="i-baixar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 19h16"/></symbol>
+<symbol id="i-cortar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="6.5" cy="18" r="2.6"/><circle cx="17.5" cy="18" r="2.6"/><path d="M8.4 16.1 19 3.5M15.6 16.1 5 3.5"/></symbol>
+<symbol id="i-quadro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v15h15M2 7h15v15"/></symbol>
+<symbol id="i-filtro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="9" cy="9.5" r="5.6"/><circle cx="15" cy="14.5" r="5.6"/></symbol>
+<symbol id="i-ajuste" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 12h4M12 12h8M4 17h9M17 17h3"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="15" cy="17" r="2"/></symbol>
+<symbol id="i-musica" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.6"/><circle cx="17.5" cy="16" r="2.6"/></symbol>
+<symbol id="i-voz" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3.5"/></symbol>
+<symbol id="i-texto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 6h14M12 6v13M9 19h6"/></symbol>
+<symbol id="i-figura" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="m12 3 2.6 5.6 6.1.8-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.4l6.1-.8z"/></symbol>
+<symbol id="i-pip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><rect x="12" y="11" width="8" height="7" rx="1.4"/></symbol>
+<symbol id="i-veloc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18a9 9 0 1 1 16 0"/><path d="m12 14 4.5-4.8"/><circle cx="12" cy="15" r="1.6" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-girar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4.5V11h-6.4"/></symbol>
+<symbol id="i-transic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="2.5" y="5.5" width="8.5" height="13" rx="1.5"/><path d="M13 5.5h8.5v13H13" stroke-dasharray="3 2.6"/></symbol>
+<symbol id="i-fundo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m2.5 16 5-4.5 4 3.5 4.5-5 5.5 5.2"/><circle cx="8.5" cy="9" r="1.5"/></symbol>
+<symbol id="i-lixo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16M9.5 6.5V4h5v2.5M6.5 6.5 7.6 20h8.8l1.1-13.5M10 10v6.5M14 10v6.5"/></symbol>
+<symbol id="i-copia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M15.5 5.5h-11a2 2 0 0 0-2 2v11"/></symbol>
+<symbol id="i-chave" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="m12 3 6 9-6 9-6-9z"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><rect x="2.5" y="6" width="13" height="12" rx="2"/><path d="m15.5 11.5 6-3.5v8l-6-3.5z"/></symbol>
+<symbol id="i-mais" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-fechar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+<symbol id="i-ajuda" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.3a2.7 2.7 0 1 1 3.4 3.1c-.6.2-.8.7-.8 1.3v.4"/><circle cx="12" cy="17.2" r="1" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-acervo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="6" width="8" height="12" rx="1.6"/><rect x="12.5" y="6" width="4" height="12" rx="1.2"/><path d="M18.4 6.6 21.6 17a1.2 1.2 0 0 1-.8 1.5l-.6.2"/></symbol>
+<symbol id="i-recorte" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/></symbol>
+<symbol id="i-efeito" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 12h2.5l3-6 4 12 3-9 1.5 3H21"/></symbol>
+<symbol id="i-voltar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h11a5 5 0 0 1 0 10h-6M4 9.5 8.5 5M4 9.5 8.5 14"/></symbol>
+</defs></svg>
+
+<div class="sala">
+
+  <!-- ==================== O APARELHO ==================== -->
+  <div class="aparelho">
+
+    <div class="topo">
+      <button type="button" class="icb" id="btDesfazer" title="Desfazer (Ctrl+Z)" aria-label="Desfazer"><svg width="20" height="20" aria-hidden="true"><use href="#i-voltar"/></svg></button>
+      <button type="button" class="icb" id="btRefazer" title="Refazer (Ctrl+Y)" aria-label="Refazer"><svg width="20" height="20" aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-voltar"/></svg></button>
+      <div class="nome">A <b>Oficina de Vídeo</b></div>
+      <button type="button" class="chip" id="btPerfil" title="Tamanho do vídeo e da prévia">—</button>
+      <button type="button" class="expo" id="btExportar" data-qa="exportar"><svg width="16" height="16" aria-hidden="true"><use href="#i-baixar"/></svg> Exportar</button>
+    </div>
+
+    <div class="palco">
+      <canvas id="tela" width="360" height="640" aria-label="Prévia do vídeo"></canvas>
+      <div class="selo" id="selo">9:16</div>
+      <div class="fps" id="medidorFps" title="Quadros por segundo da prévia">—</div>
+    </div>
+
+    <div class="transp">
+      <button type="button" class="icb" id="btInicio" title="Voltar ao começo" aria-label="Voltar ao começo"><svg width="19" height="19" aria-hidden="true"><use href="#i-inicio"/></svg></button>
+      <button type="button" class="icb" id="btTocar" data-qa="tocar" title="Tocar (barra de espaço)" aria-label="Tocar"><svg width="21" height="21" aria-hidden="true"><use href="#i-play"/></svg></button>
+      <span class="relogio" id="relogio"><b>0,0</b> / 0,0 s</span>
+      <button type="button" class="icb" id="btAjuda" data-qa="ajuda" title="O que é cada coisa" aria-label="Ajuda"><svg width="19" height="19" aria-hidden="true"><use href="#i-ajuda"/></svg></button>
+    </div>
+
+    <!-- ---------- a fita de tempo, com a agulha parada no meio ---------- -->
+    <div class="ldt">
+      <div class="rolo" id="rolo">
+        <div class="tira" id="tira">
+          <div class="faixa pri" id="trVideo"></div>
+          <div class="faixa" id="trPip"></div>
+          <div class="faixa" id="trTexto"></div>
+          <div class="faixa" id="trAudio"></div>
+        </div>
+      </div>
+      <div class="agulha"></div>
+    </div>
+    <div class="dica">
+      <button type="button" class="chip" id="btMenos" title="Afastar" aria-label="Afastar a fita">−</button>
+      <span id="dicaFita">Arraste a fita: quem estiver sob a agulha é o agora.</span>
+      <button type="button" class="chip" id="btMais" title="Aproximar" aria-label="Aproximar a fita">+</button>
+    </div>
+
+    <!-- ---------- a gaveta da ferramenta escolhida ---------- -->
+    <div class="gaveta oculto" id="gaveta"></div>
+
+    <!-- ---------- a barra de ferramentas ---------- -->
+    <div class="ferr" id="ferr" role="toolbar" aria-label="Ferramentas"></div>
+  </div>
+
+  <!-- ==================== O CADERNO ==================== -->
+  <div class="caderno">
+    <div class="abas" role="tablist">
+      <button type="button" class="aba on" data-painel="missoes" role="tab">Missões</button>
+      <button type="button" class="aba" data-painel="palavras" role="tab">Palavras do ofício</button>
+      <button type="button" class="aba" data-painel="limites" role="tab">Limites e cuidados</button>
+    </div>
+
+    <div class="painel" id="pMissoes">
+      <h3>A trilha do ofício</h3>
+      <p style="margin:4px 0 2px;font-size:13px;color:#ccd5e0">
+        Onze missões, na ordem em que um editor de verdade aprende. Cada uma diz
+        <b>o que fazer</b> e — o que importa mais — <b>por que aquilo existe</b>.
+        Elas se marcam sozinhas quando você faz a coisa no editor.
+      </p>
+      <div class="progresso"><i id="barraM"></i></div>
+      <div id="listaM"></div>
+    </div>
+
+    <div class="painel oculto" id="pPalavras">
+      <h3>O vocabulário que serve em qualquer editor</h3>
+      <p style="margin:4px 0;font-size:12.5px;color:var(--fraco)">
+        Toque numa palavra. São as mesmas no InShot, no CapCut, no Clipchamp e no
+        Premiere — é isto que você leva da aula, não o nome do aplicativo.
+      </p>
+      <div class="glos" id="glossario"></div>
+      <div id="glosTxt" class="aviso oculto"></div>
+    </div>
+
+    <div class="painel oculto" id="pLimites">
+      <h3>O que este editor faz, e o que não faz</h3>
+      <div id="txtLimites"></div>
+    </div>
+  </div>
+</div>
+
+<div class="veu" id="veu"><div class="cxmodal" id="cxmodal"></div></div>
+</div>
+
+<script>
+/* ============================================================
+   O PROJETO — tudo o que a criança montou mora aqui dentro.
+   ⚠️ Nada de estado espalhado: a linha do tempo, o palco, os painéis e as
+      missões LEEM daqui e só. Foi assim que o editor ficou possível num
+      arquivo só: uma verdade, muitos leitores.
+   ============================================================ */
+var PROJ = {
+  razao: "9:16",
+  perfil: "leve",             /* leve | normal | alta — ver PERFIS */
+  fundo: "desfoque",          /* desfoque | cor | preto */
+  borda: {larg: 0, cor: "#ffffff"},
+  corFundo: "#101820",
+  encaixe: "contem",          /* contem | cobre */
+  clipes: [],                 /* faixa principal, em sequência */
+  pip: [],                    /* camada de cima */
+  textos: [],
+  audios: []
+};
+
+var RAZOES = {
+  "9:16": [720, 1280], "1:1": [720, 720], "16:9": [1280, 720],
+  "4:5": [720, 900], "4:3": [960, 720]
+};
+
+/* ============================================================
+   ⭐⭐ O TAMANHO DE TRABALHO SAI DA MÁQUINA — e isto NÃO é chute.
+   O PC da escola está MEDIDO no repositório desde 17/jul/2026 (o Marcos mandou
+   a tela de sistema): **AMD FX-4300 quad-core de 2012, 3,5 GB de RAM, Windows 7,
+   Chrome 109**. Editar vídeo é a coisa mais pesada que já pusemos nesse
+   computador, então o editor NÃO nasce grande e encolhe depois: ele nasce no
+   tamanho que a máquina aguenta e CRESCE se a máquina for boa.
+
+   Os três perfis dão medidas de vídeo de verdade em qualquer razão, porque são
+   metade, três quartos e o inteiro:
+     leve   360×640 · 640×360 · 360×360     (o FX-4300)
+     normal 540×960 · 960×540
+     alta   720×1280 · 1280×720 (HD)
+   ⚠️ A conta que manda é o número de pixels por quadro: 720×1280 são 921.600
+   pixels, 360×640 são 230.400 — **quatro vezes menos** para o processador
+   desenhar, para o chroma percorrer e para o gravador comprimir. É a diferença
+   entre a prévia andando e a prévia tropeçando.
+   ============================================================ */
+var PERFIS = {
+  leve:   {f: 0.5,  rot: "Leve — PC da escola"},
+  normal: {f: 0.75, rot: "Normal"},
+  alta:   {f: 1,    rot: "Alta (HD)"}
+};
+
+/* A máquina se apresenta sozinha. `hardwareConcurrency` existe em todo lado;
+   `deviceMemory` existe no Chrome (109 inclusive) e não no Firefox — por isso
+   os dois, e o mais pessimista ganha. O FX-4300 tem 4 núcleos e 3,5 GB: cai em
+   "leve" pelos dois caminhos. ⚠️ Isto é um PALPITE DECLARADO sobre a máquina, e
+   está à vista do aluno no painel, que pode trocar o perfil na mão. */
+function perfilDaMaquina(){
+  var n = navigator.hardwareConcurrency || 2;
+  var m = navigator.deviceMemory || 0;
+  if(m && m <= 4) return "leve";
+  if(n <= 4) return "leve";
+  if(n <= 8) return "normal";
+  return "alta";
+}
+
+var SEL = null;               /* {faixa:"clipes"|"pip"|"textos"|"audios", i} */
+var TEMPO = 0;                /* segundo atual na linha do tempo */
+var TOCANDO = false;
+var GRAVANDO = false;
+var cv, ctx;                  /* o palco */
+var cvAux, ctxAux;            /* apoio do fundo verde (chroma) */
+var cvBorr, ctxBorr;          /* apoio do fundo desfocado — minúsculo de propósito */
+var IDN = 1;                  /* contador de ids */
+
+function $(id){ return document.getElementById(id); }
+function novoId(){ return "p" + (IDN++); }
+function num(v, min, max){ v = parseFloat(v); if(isNaN(v)) v = min;
+  return Math.max(min, Math.min(max, v)); }
+function seg(s){ return (Math.round(s * 10) / 10).toFixed(1).replace(".", ",") + " s"; }
+
+/* ------------------------------------------------------------
+   A CONTA DO TEMPO. Cada clipe tem um pedaço da fonte (ini..fim) e uma
+   velocidade; o que ele OCUPA na linha do tempo é (fim-ini)/velocidade.
+   ⚠️ É aqui que mora o erro clássico de quem monta editor: usar a duração do
+      ARQUIVO em vez da duração APARADA. Toda a régua do projeto passa por
+      estas duas funções, para não haver duas contas diferentes.
+   ------------------------------------------------------------ */
+function durClipe(c){ return Math.max(0.04, (c.fim - c.ini) / (c.vel || 1)); }
+function inicioDe(i){
+  var t = 0, k;
+  for(k = 0; k < i; k++) t += durClipe(PROJ.clipes[k]);
+  return t;
+}
+function durTotal(){
+  var t = 0, k;
+  for(k = 0; k < PROJ.clipes.length; k++) t += durClipe(PROJ.clipes[k]);
+  /* uma camada de cima, um texto ou um áudio podem passar do fim do vídeo —
+     o projeto dura o que durar a coisa mais longa */
+  function estica(lista){
+    var j; for(j = 0; j < lista.length; j++){
+      var f = lista[j].t1 !== undefined ? lista[j].t1 : (lista[j].t0 + (lista[j].dur || 0));
+      if(f > t) t = f;
+    }
+  }
+  estica(PROJ.pip); estica(PROJ.textos); estica(PROJ.audios);
+  return t;
+}
+function clipeEm(t){
+  var acc = 0, k;
+  for(k = 0; k < PROJ.clipes.length; k++){
+    var d = durClipe(PROJ.clipes[k]);
+    if(t < acc + d || k === PROJ.clipes.length - 1) return {i: k, local: t - acc};
+    acc += d;
+  }
+  return null;
+}
+
+/* ------------------------------------------------------------
+   O TAMANHO DO PALCO — muda com a razão escolhida.
+   ⚠️ O canvas tem o tamanho REAL da exportação (720×1280 etc.); quem encolhe
+      para caber na tela é o CSS (`max-width:100%`). Desenhar num canvas
+      pequeno e exportar grande deixaria o texto borrado.
+   ------------------------------------------------------------ */
+function par(n){ n = Math.round(n); return n % 2 ? n + 1 : n; }   /* medida ímpar quebra codificador */
+function medidaDaSaida(){
+  var r = RAZOES[PROJ.razao] || RAZOES["9:16"];
+  var f = (PERFIS[PROJ.perfil] || PERFIS.leve).f;
+  return [par(r[0] * f), par(r[1] * f)];
+}
+function aplicaRazao(){
+  var m = medidaDaSaida();
+  cv.width = m[0]; cv.height = m[1];
+  $("selo").textContent = PROJ.razao + " · " + m[0] + "×" + m[1];
+  if($("btPerfil")) $("btPerfil").textContent = m[1] + "p";
+  /* a altura visível: cabe na janela sem empurrar a fita para fora */
+  /* ⚠️ O palco pede altura mínima ao conteúdo, e é o CSS que manda no teto.
+     Antes eu travava a altura aqui em `vh` e o resultado brigava com o flex:
+     a prévia ficava cortada no topo. Quem decide o tamanho é a caixa. */
+  $("tela").parentNode.style.height = Math.max(150, Math.round(window.innerHeight * 0.34)) + "px";
+  desenha(TEMPO);
+}
+
+/* ------------------------------------------------------------
+   O ENCAIXE: onde a figura cai dentro do quadro.
+   "contém" deixa ela inteira (sobra espaço); "cobre" preenche cortando.
+   Devolve {x,y,w,h} já com a rotação e o corte aplicados.
+   ------------------------------------------------------------ */
+function encaixa(lw, lh, W, H, modo){
+  var e = (modo === "cobre") ? Math.max(W / lw, H / lh) : Math.min(W / lw, H / lh);
+  var w = lw * e, h = lh * e;
+  return {x: (W - w) / 2, y: (H - h) / 2, w: w, h: h};
+}
+
+/* ⭐ O FUNDO DESFOCADO — é a marca registrada deste tipo de editor, e é o que
+   faz um vídeo deitado caber num quadro em pé sem tarja preta. A conta é
+   simples e vale entender: desenha-se a MESMA imagem em modo "cobre" (ela
+   transborda), com um `filter:blur` pesado e um véu escuro por cima. */
+function pintaFundo(fonte, lw, lh){
+  var W = cv.width, H = cv.height;
+  if(PROJ.fundo === "cor"){ ctx.fillStyle = PROJ.corFundo; ctx.fillRect(0,0,W,H); return; }
+  ctx.fillStyle = "#000"; ctx.fillRect(0,0,W,H);
+  if(PROJ.fundo !== "desfoque" || !fonte) return;
+
+  /* ⚠️⚠️ O DESFOQUE **NÃO** USA `ctx.filter:blur()`, e a razão é o FX-4300.
+     Um `blur(32px)` sobre o quadro inteiro é o efeito mais caro que existe em
+     canvas 2D — ele relê cada pixel dezenas de vezes, e em máquina de 2012 come
+     a prévia sozinho. O caminho barato é o truque clássico: **encolher a imagem
+     até ficar minúscula e mandar o navegador esticá-la de volta**. Quem borra é
+     a interpolação da placa, de graça, e o resultado é indistinguível a olho
+     porque um fundo desfocado é, por definição, uma mancha de cor.
+     ⭐ De quebra, funciona no navegador que não tem `ctx.filter` — a queda que
+     eu teria de escrever de qualquer jeito vira o caminho principal. */
+  var pw = 32, ph = Math.max(8, Math.round(pw * lh / lw));
+  if(cvBorr.width !== pw || cvBorr.height !== ph){ cvBorr.width = pw; cvBorr.height = ph; }
+  try{ ctxBorr.drawImage(fonte, 0, 0, pw, ph); }catch(e){ return; }
+  var c = encaixa(lw, lh, W, H, "cobre");
+  ctx.save();
+  ctx.globalAlpha = 0.88;
+  try{ ctx.drawImage(cvBorr, c.x, c.y, c.w, c.h); }catch(e){}
+  ctx.restore();
+  ctx.fillStyle = "rgba(0,0,0,.30)"; ctx.fillRect(0,0,W,H);   /* o véu que separa o fundo do assunto */
+}
+
+/* ⚠️ O `ctx.filter` NÃO EXISTE em navegador antigo (e é justamente o PC da
+   escola). Sem queda, o vídeo sai sem filtro nenhum e ninguém entende por quê.
+   Medimos uma vez e guardamos. */
+var TEMFILTRO = (function(){
+  try{ var c = document.createElement("canvas").getContext("2d");
+       c.filter = "blur(2px)"; return c.filter !== "none" && c.filter !== ""; }
+  catch(e){ return false; }
+})();
+
+function filtroDe(c){
+  if(!TEMFILTRO) return "none";
+  var f = [];
+  if(c.brilho !== 100) f.push("brightness(" + (c.brilho/100) + ")");
+  if(c.contraste !== 100) f.push("contrast(" + (c.contraste/100) + ")");
+  if(c.satur !== 100) f.push("saturate(" + (c.satur/100) + ")");
+  if(c.calor) f.push("sepia(" + Math.abs(c.calor)/100 + ")" +
+                     (c.calor < 0 ? " hue-rotate(160deg)" : ""));
+  if(c.filtro === "pb") f.push("grayscale(1)");
+  if(c.filtro === "vintage") f.push("sepia(.45) contrast(1.1) saturate(.85)");
+  if(c.filtro === "frio") f.push("hue-rotate(-12deg) saturate(1.15)");
+  if(c.filtro === "quente") f.push("sepia(.22) saturate(1.2)");
+  return f.length ? f.join(" ") : "none";
+}
+
+/* ------------------------------------------------------------
+   DESENHAR UM QUADRO. Esta função é o coração: ela recebe um instante da
+   linha do tempo e pinta o palco inteiro — fundo, clipe, transição, camada
+   de cima e textos. A prévia e a EXPORTAÇÃO chamam a mesma função, e é por
+   isso que o que a criança vê é o que sai no arquivo.
+   ------------------------------------------------------------ */
+function desenha(t, soClipe){
+  if(!ctx) return;
+  var W = cv.width, H = cv.height;
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = "#000"; ctx.fillRect(0,0,W,H);
+
+  var em = clipeEm(t);
+  if(em && PROJ.clipes.length){
+    var c = PROJ.clipes[em.i];
+    var fonte = fonteDe(c, em.local);
+    var lw = larguraDe(c), lh = alturaDe(c);
+    pintaFundo(fonte, lw, lh);
+    pintaClipe(c, fonte, 1, null, 0, em.local / durClipe(c));
+
+    /* ⭐ A TRANSIÇÃO acontece no ÚLTIMO pedaço de um clipe: os dois aparecem ao
+       mesmo tempo, e é por isso que ela parece "costura" e não "corte". */
+    var prox = PROJ.clipes[em.i + 1];
+    if(prox && prox.transicao && prox.transicao.tipo !== "corte"){
+      var td = prox.transicao.dur || 0.5;
+      var restante = durClipe(c) - em.local;
+      if(restante < td){
+        var p = 1 - (restante / td);       /* 0 -> 1 */
+        var f2 = fonteDe(prox, 0.02);
+        pintaClipe(prox, f2, p, prox.transicao.tipo, p);
+      }
+    }
+  } else {
+    ctx.fillStyle = "#0b0f14"; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle = "#6b7b8c";
+    ctx.font = "600 " + Math.round(W*0.042) + "px Segoe UI, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("traga um vídeo ou uma foto", W/2, H/2);
+    ctx.textAlign = "start";
+  }
+
+  if(soClipe) return;          /* o congelado leva só a imagem do clipe */
+  pintaPip(t);
+  pintaTextos(t);
+  pintaMoldura();
+}
+
+/* ⭐ A MOLDURA — a borda de cor em volta do quadro inteiro.
+   ⚠️ Ela é a ÚLTIMA coisa desenhada de propósito: moldura que fica por baixo
+      do texto não é moldura, é retângulo. E ela desenha POR DENTRO da borda do
+      quadro (não aumenta o vídeo), como em qualquer editor. */
+function pintaMoldura(){
+  var b = PROJ.borda;
+  if(!b || !b.larg) return;
+  var W = cv.width, H = cv.height, e = Math.round(Math.min(W, H) * b.larg / 100);
+  if(e < 1) return;
+  ctx.save();
+  ctx.fillStyle = b.cor || "#ffffff";
+  ctx.fillRect(0, 0, W, e); ctx.fillRect(0, H - e, W, e);
+  ctx.fillRect(0, 0, e, H); ctx.fillRect(W - e, 0, e, H);
+  ctx.restore();
+}
+
+function larguraDe(c){ return c.tipo === "foto" ? c.el.naturalWidth : (c.el.videoWidth || 720); }
+function alturaDe(c){ return c.tipo === "foto" ? c.el.naturalHeight : (c.el.videoHeight || 1280); }
+
+/* devolve o elemento pronto para ser desenhado naquele instante do clipe */
+function fonteDe(c, local){
+  if(c.tipo === "foto") return c.el;
+  if(!c.el || !c.el.videoWidth) return null;
+  if(!TOCANDO && !GRAVANDO){
+    var alvo = c.ini + local * (c.vel || 1);
+    if(Math.abs(c.el.currentTime - alvo) > 0.06){
+      try{ c.el.currentTime = Math.min(alvo, (c.el.duration || alvo) - 0.02); }catch(e){}
+    }
+  }
+  return c.el;
+}
+
+function pintaClipe(c, fonte, alfa, transicao, p, andar){
+  if(!fonte) return;
+  var W = cv.width, H = cv.height;
+  var lw = larguraDe(c), lh = alturaDe(c);
+  if(!lw || !lh) return;
+
+  /* o CORTE de quadro (crop) é uma janela dentro da fonte */
+  var cx = c.crop ? c.crop.x * lw : 0, cy = c.crop ? c.crop.y * lh : 0;
+  var cw = c.crop ? c.crop.w * lw : lw, ch = c.crop ? c.crop.h * lh : lh;
+  var girado = (c.girar === 90 || c.girar === 270);
+  var e = encaixa(girado ? ch : cw, girado ? cw : ch, W, H, PROJ.encaixe);
+
+  ctx.save();
+  ctx.globalAlpha = alfa;
+  ctx.filter = filtroDe(c);
+
+  /* ⚠️ a transição DESLIZA/ZOOM mexe na matriz, não na imagem: é mais barato e
+     não estica pixel nenhum. */
+  if(transicao === "deslizar"){ ctx.translate(W * (1 - p), 0); }
+  if(transicao === "zoom"){
+    ctx.translate(W/2, H/2); ctx.scale(0.6 + 0.4*p, 0.6 + 0.4*p); ctx.translate(-W/2, -H/2);
+  }
+
+  /* ⭐ O ZOOM LENTO ("efeito Ken Burns") — a foto parada que respira.
+     ⚠️ É o truque mais barato do ofício e o que mais disfarça material pobre:
+     uma foto imóvel na tela por 4 segundos parece um erro; a mesma foto
+     crescendo 15% ao longo dos 4 segundos parece cinema. Aqui ele é a escala
+     indo de `zoom.de` a `zoom.para` conforme o pedaço anda — de novo mexendo
+     na MATRIZ, nunca na imagem. */
+  if(c.zoom && (c.zoom.de !== 1 || c.zoom.para !== 1)){
+    var q = Math.max(0, Math.min(1, andar || 0));
+    var z = c.zoom.de + (c.zoom.para - c.zoom.de) * q;
+    ctx.translate(W/2, H/2); ctx.scale(z, z); ctx.translate(-W/2, -H/2);
+  }
+
+  ctx.translate(e.x + e.w/2, e.y + e.h/2);
+  if(c.girar) ctx.rotate(c.girar * Math.PI / 180);
+  if(c.espelho) ctx.scale(-1, 1);
+  var dw = girado ? e.h : e.w, dh = girado ? e.w : e.h;
+  try{ ctx.drawImage(fonte, cx, cy, cw, ch, -dw/2, -dh/2, dw, dh); }catch(err){}
+  ctx.restore();
+  ctx.filter = "none";
+  ctx.globalAlpha = 1;
+}
+
+/* ------------------------------------------------------------
+   A CAMADA DE CIMA (PIP) — com keyframes e fundo verde.
+   ⭐ KEYFRAME, em uma frase: você marca COMO a coisa está em dois instantes, e
+      o programa inventa todos os instantes do meio. É o conceito que separa
+      "editar" de "animar", e é por isso que ele tem missão própria.
+   ------------------------------------------------------------ */
+var MISTURAS = {normal:"source-over", tela:"screen", multiplicar:"multiply",
+  sobrepor:"overlay", clarear:"lighten", escurecer:"darken", diferenca:"difference"};
+function entre(a, b, p){ return a + (b - a) * p; }
+function estadoPip(o, t){
+  var ks = o.keys || [];
+  if(ks.length < 2) return {x:o.x, y:o.y, esc:o.esc, op:o.op};
+  var i, A = ks[0], B = ks[ks.length-1];
+  for(i = 0; i < ks.length - 1; i++){
+    if(t >= ks[i].t && t <= ks[i+1].t){ A = ks[i]; B = ks[i+1]; break; }
+  }
+  var d = Math.max(0.001, B.t - A.t);
+  var p = Math.max(0, Math.min(1, (t - A.t) / d));
+  return {x: entre(A.x,B.x,p), y: entre(A.y,B.y,p),
+          esc: entre(A.esc,B.esc,p), op: entre(A.op,B.op,p)};
+}
+
+function pintaPip(t){
+  var k;
+  for(k = 0; k < PROJ.pip.length; k++){
+    var o = PROJ.pip[k];
+    if(t < o.t0 || t > o.t1) continue;
+    if(o.forma){ pintaForma(o, estadoPip(o, t)); continue; }
+    var el = o.el; if(!el) continue;
+    if(o.tipo === "video" && !TOCANDO && !GRAVANDO){
+      try{ el.currentTime = Math.min(t - o.t0, (el.duration || 1) - 0.02); }catch(e){}
+    }
+    var lw = o.tipo === "foto" ? el.naturalWidth : el.videoWidth;
+    var lh = o.tipo === "foto" ? el.naturalHeight : el.videoHeight;
+    if(!lw || !lh) continue;
+    var st = estadoPip(o, t);
+    var W = cv.width, H = cv.height;
+    var w = W * st.esc, h = w * (lh / lw);
+    var fonte = el;
+    if(o.chroma && o.chroma.on) fonte = tiraVerde(el, lw, lh, o.chroma);
+    ctx.save();
+    ctx.globalAlpha = st.op;
+    /* ⭐ MISTURA (blend) — a mesma lista de nomes dos programas grandes.
+       `tela` (screen) clareia e serve para fogo, fumaça e faísca sobre fundo
+       preto; `multiplicar` escurece e serve para sombra e textura. */
+    if(o.mistura && o.mistura !== "normal"){
+      try{ ctx.globalCompositeOperation = MISTURAS[o.mistura] || "source-over"; }catch(e){}
+    }
+    /* ⭐ MÁSCARA — recorta a camada num círculo ou num coração de cantos macios.
+       ⚠️ Feita com `clip()`, que é da placa de vídeo: custa quase nada, ao
+       contrário do chroma, que passa pixel a pixel. */
+    if(o.mascara && o.mascara !== "nenhuma"){
+      var mx = st.x * W, my = st.y * H;
+      ctx.beginPath();
+      if(o.mascara === "circulo") ctx.arc(mx, my, Math.min(w, h) / 2, 0, 6.29);
+      else if(o.mascara === "quadrado") ctx.rect(mx - Math.min(w,h)/2, my - Math.min(w,h)/2,
+                                                 Math.min(w,h), Math.min(w,h));
+      else { var r = Math.min(w, h) * 0.18;   /* cantos macios */
+             ctx.moveTo(mx - w/2 + r, my - h/2);
+             ctx.arcTo(mx + w/2, my - h/2, mx + w/2, my + h/2, r);
+             ctx.arcTo(mx + w/2, my + h/2, mx - w/2, my + h/2, r);
+             ctx.arcTo(mx - w/2, my + h/2, mx - w/2, my - h/2, r);
+             ctx.arcTo(mx - w/2, my - h/2, mx + w/2, my - h/2, r); }
+      ctx.closePath(); ctx.clip();
+    }
+    try{ ctx.drawImage(fonte, st.x * W - w/2, st.y * H - h/2, w, h); }catch(e){}
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = "source-over";
+  }
+}
+
+/* ------------------------------------------------------------
+   AS FIGURAS DE ANOTAÇÃO — seta, círculo, caixa, balão, estrela, tarja.
+   ⚠️ São VETOR, desenhadas na hora: ficam nítidas em 360 px e em 1280 px, não
+      pesam byte nenhum de arquivo e não dependem de licença de imagem. E o
+      papel delas é apontar, não enfeitar — inclusive a TARJA, que é a
+      ferramenta de esconder o rosto ou o nome de quem não pode aparecer.
+   ------------------------------------------------------------ */
+function pintaForma(o, st){
+  var W = cv.width, H = cv.height;
+  var s = W * st.esc;                       /* o "tamanho" é fração da largura */
+  ctx.save();
+  ctx.globalAlpha = st.op;
+  ctx.translate(st.x * W, st.y * H);
+  if(o.giro) ctx.rotate(o.giro * Math.PI / 180);
+  ctx.strokeStyle = o.cor; ctx.fillStyle = o.cor;
+  ctx.lineWidth = Math.max(2, s * 0.09);
+  ctx.lineJoin = "round"; ctx.lineCap = "round";
+  var f = o.forma;
+  if(f === "seta"){
+    ctx.beginPath(); ctx.moveTo(-s/2, 0); ctx.lineTo(s/2, 0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(s/2, 0); ctx.lineTo(s*0.2, -s*0.22);
+    ctx.lineTo(s*0.2, s*0.22); ctx.closePath(); ctx.fill();
+  } else if(f === "circulo"){
+    ctx.beginPath(); ctx.ellipse(0, 0, s/2, s/2 * 0.78, 0, 0, 6.29); ctx.stroke();
+  } else if(f === "caixa"){
+    ctx.strokeRect(-s/2, -s/2 * 0.7, s, s * 0.7);
+  } else if(f === "balao"){
+    var r = s * 0.12, w = s, h = s * 0.62;
+    ctx.beginPath();
+    ctx.moveTo(-w/2 + r, -h/2);
+    ctx.arcTo(w/2, -h/2, w/2, h/2, r); ctx.arcTo(w/2, h/2, -w/2, h/2, r);
+    ctx.lineTo(-w*0.12, h/2); ctx.lineTo(-w*0.22, h/2 + s*0.2); ctx.lineTo(-w*0.3, h/2);
+    ctx.arcTo(-w/2, h/2, -w/2, -h/2, r); ctx.arcTo(-w/2, -h/2, w/2, -h/2, r);
+    ctx.closePath(); ctx.fill();
+  } else if(f === "estrela"){
+    var i; ctx.beginPath();
+    for(i = 0; i < 10; i++){
+      var ang = -Math.PI/2 + i * Math.PI/5, rr = (i % 2 ? s*0.22 : s*0.5);
+      ctx[i ? "lineTo" : "moveTo"](Math.cos(ang)*rr, Math.sin(ang)*rr);
+    }
+    ctx.closePath(); ctx.fill();
+  } else if(f === "tarja"){
+    ctx.fillRect(-s/2, -s*0.13, s, s*0.26);
+  }
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+
+/* ⭐ FUNDO VERDE (chroma key) no lugar da "IA que apaga o fundo".
+   ⚠️ E ELE ENSINA MAIS: a criança vê que o computador não "entende" a pessoa —
+      ele só apaga os pixels parecidos com a cor escolhida. Quem usa camiseta
+      verde some junto, e descobrir isso na prática vale uma aula inteira.
+   Custa um canvas de apoio e uma passada por pixel; por isso só roda na camada
+   de cima, que é pequena. */
+var CHROMA_LARG = 320;   /* ⬅ o teto que salva a prévia — ver abaixo */
+function tiraVerde(el, lw, lh, ch){
+  /* ⚠️⚠️ O TETO DE LARGURA É O QUE TORNA ISTO POSSÍVEL NO PC DA ESCOLA.
+     A conta, sem chute: um vídeo de 720×1280 tem 921.600 pixels, e este laço
+     passa em CADA um, 30 vezes por segundo — 27 milhões de voltas por segundo
+     em JavaScript, num processador de 2012. Não anda.
+     Fazendo o recorte numa cópia de **320 px de largura** (320×569 = 182 mil
+     pixels), são 5,4 milhões — cinco vezes menos —, e o resultado é desenhado
+     esticado por cima. Perde-se nitidez NA BORDA do recorte, que é justamente
+     onde o chroma key é impreciso de qualquer jeito.
+     ⭐ E o `willReadFrequently` deste contexto (ver o boot) vale tanto quanto o
+     teto: sem ele, cada `getImageData` obriga a placa a devolver a imagem para
+     a memória e o navegador engasga sozinho. */
+  var e = Math.min(1, CHROMA_LARG / lw);
+  var w = Math.max(2, Math.round(lw * e)), h = Math.max(2, Math.round(lh * e));
+  if(cvAux.width !== w || cvAux.height !== h){ cvAux.width = w; cvAux.height = h; }
+  ctxAux.clearRect(0, 0, w, h);
+  try{ ctxAux.drawImage(el, 0, 0, w, h); }catch(err){ return el; }
+  var d;
+  try{ d = ctxAux.getImageData(0, 0, w, h); }catch(err){ return el; }   /* canvas sujo */
+  var a = d.data, i, alvo = hex2rgb(ch.cor || "#00ff00"), tol = (ch.tol || 40) * 3;
+  var r0 = alvo[0], g0 = alvo[1], b0 = alvo[2], meia = tol * 0.5, quase = tol * 1.5;
+  for(i = 0; i < a.length; i += 4){
+    var dist = Math.abs(a[i]-r0) + Math.abs(a[i+1]-g0) + Math.abs(a[i+2]-b0);
+    if(dist < tol) a[i+3] = 0;
+    else if(dist < quase) a[i+3] = (a[i+3] * (dist - tol) / meia) | 0;
+  }
+  ctxAux.putImageData(d, 0, 0);
+  return cvAux;
+}
+function hex2rgb(h){
+  h = (h || "#000").replace("#","");
+  if(h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  return [parseInt(h.substr(0,2),16), parseInt(h.substr(2,2),16), parseInt(h.substr(4,2),16)];
+}
+
+/* ------------------------------------------------------------
+   O TEXTO — com tempo próprio e animação de entrada.
+   ⚠️ O contorno vem ANTES do preenchimento: ao contrário, a borda come a letra.
+   ------------------------------------------------------------ */
+function pintaTextos(t){
+  var k, W = cv.width, H = cv.height;
+  for(k = 0; k < PROJ.textos.length; k++){
+    var x = PROJ.textos[k];
+    if(t < x.t0 || t > x.t1) continue;
+    var dentro = t - x.t0, fora = x.t1 - t, op = 1, dx = 0, esc = 1;
+    if(x.anim === "aparecer"){ op = Math.min(1, dentro/0.35) * Math.min(1, fora/0.35); }
+    if(x.anim === "deslizar"){ dx = (1 - Math.min(1, dentro/0.4)) * W * 0.4; }
+    if(x.anim === "pulo"){ esc = dentro < 0.3 ? (0.6 + 1.6*dentro) : 1; }
+    /* a SAÍDA tem tempo próprio, medido a partir do fim — e existe porque texto
+       que some de estalo chama mais atenção do que o vídeo. */
+    var dy = 0;
+    if(x.animSai === "sumir"){ op = Math.min(op, Math.min(1, fora/0.4)); }
+    if(x.animSai === "subir" && fora < 0.45){ dy = -(1 - fora/0.45) * H * 0.08;
+                                              op = Math.min(op, Math.max(0, fora/0.45)); }
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, op);
+    ctx.translate(x.x * W + dx, x.y * H + dy);
+    ctx.scale(esc, esc);
+    var tam = Math.round(W * (x.tam / 100));
+    ctx.font = (x.negrito ? "800 " : "600 ") + tam + "px " + (x.fonte || "Segoe UI, sans-serif");
+    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    var linhas = (x.txt || "").split("\n"), j;
+    for(j = 0; j < linhas.length; j++){
+      var yy = (j - (linhas.length - 1)/2) * tam * 1.16;
+      if(x.contorno){
+        ctx.lineWidth = Math.max(2, tam * 0.13); ctx.strokeStyle = x.corContorno || "#000";
+        ctx.lineJoin = "round"; ctx.strokeText(linhas[j], 0, yy);
+      }
+      ctx.fillStyle = x.cor || "#fff";
+      ctx.fillText(linhas[j], 0, yy);
+    }
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+}
+/* ============================================================
+   TRAZER MATERIAL — arquivo, câmera e o clipe de exemplo.
+   ⚠️ TUDO POR `blob:`. O arquivo NÃO é lido para a memória nem convertido: o
+      navegador dá um endereço interno e o elemento <video> lê dali. É por isso
+      que um vídeo de 200 MB abre na hora e nada sobe para lugar nenhum — e é
+      por isso que isto cabe nos 3,5 GB do PC da escola.
+   ============================================================ */
+function elementoDe(arq){
+  return new Promise(function(ok, falha){
+    var url = URL.createObjectURL(arq);
+    var foto = /^image\//.test(arq.type);
+    if(foto){
+      var im = new Image();
+      /* ⚠️ a foto não tem duração própria: quem decide é o editor. O molde é
+         3 s, mas o limite vai a 30 s — senão a régua de aparar trava em 3 e a
+         criança não consegue segurar a imagem pelo tempo da narração. */
+      im.onload = function(){ ok({tipo:"foto", el:im, dur:3, nome:arq.name, url:url, max:30}); };
+      im.onerror = function(){ falha(arq.name); };
+      im.src = url;
+    } else {
+      var v = document.createElement("video");
+      v.preload = "auto"; v.playsInline = true; v.muted = false;
+      v.setAttribute("playsinline", "");
+      v.onloadedmetadata = function(){
+        /* ⚠️ duração Infinity acontece com vídeo gravado pela própria câmera
+           (webm sem índice). O truque conhecido: pular para o fim e voltar. */
+        if(!isFinite(v.duration)){
+          v.currentTime = 1e6;
+          v.ontimeupdate = function(){
+            v.ontimeupdate = null; v.currentTime = 0;
+            ok({tipo:"video", el:v, dur: v.duration || 5, nome:arq.name, url:url});
+          };
+          return;
+        }
+        ok({tipo:"video", el:v, dur:v.duration, nome:arq.name, url:url});
+      };
+      v.onerror = function(){ falha(arq.name); };
+      v.src = url;
+    }
+  });
+}
+
+function novoClipe(m){
+  return {
+    id: novoId(), tipo: m.tipo, el: m.el, url: m.url, nome: m.nome || "clipe",
+    fonteDur: m.max || m.dur, ini: 0, fim: m.dur, vel: 1,
+    girar: 0, espelho: false, crop: null, mini: null, zoom: {de: 1, para: 1},
+    filtro: "nenhum", brilho: 100, contraste: 100, satur: 100, calor: 0,
+    volume: 100, transicao: {tipo: "corte", dur: 0.5}
+  };
+}
+
+/* ⭐ A MINIATURA da fita — um quadro do clipe, de 72 px, desenhado uma vez só e
+   guardado como `data:`. ⚠️ Sem ela a fita é uma fileira de retângulos cinzentos
+   e a criança não acha o pedaço que quer; com ela, a fita vira o filme.
+   Custa UM seek por clipe, feito depois que tudo já está na tela. */
+function fazMini(c){
+  if(c.mini || !c.el) return;
+  var w = 72, h = 96;
+  var cc = document.createElement("canvas"); cc.width = w; cc.height = h;
+  var xx = cc.getContext("2d");
+  function pinta(){
+    var lw = larguraDe(c), lh = alturaDe(c);
+    if(!lw || !lh) return;
+    var e = Math.max(w/lw, h/lh);
+    try{ xx.drawImage(c.el, (w - lw*e)/2, (h - lh*e)/2, lw*e, lh*e); }catch(err){ return; }
+    try{ c.mini = cc.toDataURL("image/jpeg", 0.6); }catch(err){ c.mini = null; }
+    redesenhaFita();
+  }
+  if(c.tipo === "foto"){ pinta(); return; }
+  var v = c.el, alvo = Math.min(c.ini + 0.1, (v.duration || 1) - 0.05);
+  var uma = function(){ v.removeEventListener("seeked", uma); pinta(); };
+  v.addEventListener("seeked", uma);
+  try{ v.currentTime = Math.max(0, alvo); }catch(err){ v.removeEventListener("seeked", uma); }
+}
+
+function trazArquivos(lista){
+  var k = 0, erros = [];
+  function proximo(){
+    if(k >= lista.length){
+      if(erros.length) recado("Não consegui abrir: " + erros.join(", ") +
+        ". O navegador não lê todo formato — tente MP4 ou WEBM.", "erro");
+      if(PROJ.clipes.length) selecionar("clipes", PROJ.clipes.length - 1);
+      tudo();
+      var j; for(j = 0; j < PROJ.clipes.length; j++) fazMini(PROJ.clipes[j]);
+      return;
+    }
+    var arq = lista[k++];
+    elementoDe(arq).then(function(m){
+      var c = novoClipe(m);
+      /* ⚠️ o ARQUIVO de origem fica guardado à parte, fora do projeto: é dele
+         que o rascunho precisa, porque o `blob:` morre com a aba. */
+      poeArquivo(c.el, arq);
+      PROJ.clipes.push(c); proximo();
+    }, function(nome){ erros.push(nome); proximo(); });
+  }
+  guardaPasso();
+  proximo();
+}
+
+/* ⭐ O CLIPE DE EXEMPLO é DESENHADO NA HORA, não é arquivo baixado.
+   ⚠️ Duas razões, e as duas são de princípio: (1) a casa não põe no ar arte de
+      procedência duvidosa, e vídeo de banco pede licença; (2) sem exemplo, a
+      criança que esqueceu o material fica sem aula. Este nasce de um canvas
+      animado gravado pelo MediaRecorder — e ensina de quebra que vídeo é uma
+      sequência de quadros, porque o número do quadro está escrito nele. */
+function clipeExemplo(){
+  var m = medidaDaSaida();
+  var c = document.createElement("canvas"); c.width = m[0]; c.height = m[1];
+  var x = c.getContext("2d"), quadros = 0, W = m[0], H = m[1];
+  var st, mr, tipo = formatoDeGravacao();
+  try{ st = c.captureStream(30); mr = new MediaRecorder(st, tipo ? {mimeType: tipo} : {}); }
+  catch(e){ recado("Este navegador não sabe gravar vídeo — o exemplo não dá. " +
+                   "Traga um arquivo pelo botão de material.", "erro"); return; }
+  var pedacos = [];
+  mr.ondataavailable = function(ev){ if(ev.data && ev.data.size) pedacos.push(ev.data); };
+  mr.onstop = function(){
+    var b = new Blob(pedacos, {type: tipo || "video/webm"});
+    trazArquivos([new File([b], "exemplo." + (/mp4/.test(tipo) ? "mp4" : "webm"), {type: b.type})]);
+    recado("Pronto: 3 segundos feitos na hora. Repare no número do quadro — " +
+           "vídeo é exatamente isso, uma pilha de desenhos passando depressa.", "bom");
+  };
+  recado("Desenhando 3 segundos…", "");
+  mr.start();
+  var t0 = performance.now();
+  (function passo(){
+    var p = (performance.now() - t0) / 3000;
+    if(p >= 1){ try{ mr.stop(); }catch(e){} return; }
+    quadros++;
+    var g = x.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#15243a"); g.addColorStop(1, "#0a1119");
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    var i, cores = ["#ff5b6e","#3fc4b4","#f2c14e","#7d8cff","#5ec27a","#e07be0","#4aa3e0"];
+    for(i = 0; i < 7; i++){
+      var a = p * 6.28 + i * 0.9;
+      x.fillStyle = cores[i];
+      x.beginPath();
+      x.arc(W/2 + Math.cos(a) * W * (0.17 + i * 0.036),
+            H/2 + Math.sin(a * 1.3) * H * (0.14 + i * 0.017),
+            W * (0.036 + i * 0.006), 0, 6.29);
+      x.fill();
+    }
+    x.fillStyle = "#fff"; x.textAlign = "center";
+    x.font = "800 " + Math.round(W*0.081) + "px Segoe UI, sans-serif";
+    x.fillText("quadro " + quadros, W/2, H*0.16);
+    x.font = "600 " + Math.round(W*0.042) + "px Segoe UI, sans-serif"; x.fillStyle = "#9fd8ff";
+    x.fillText("um vídeo é uma pilha de quadros", W/2, H*0.20);
+    requestAnimationFrame(passo);
+  })();
+}
+
+/* ⭐ GRAVAR PELA CÂMERA — resolve a aula em que ninguém trouxe material.
+   ⚠️ O navegador SÓ dá a câmera em `https://` (ou `localhost`); no `file://` ele
+      nega, e o recado diz isso em vez de falhar calado. */
+var camStream = null, camMR = null;
+function gravarCamera(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    recado("Este navegador não dá acesso à câmera.", "erro"); return;
+  }
+  if(camMR && camMR.state === "recording"){ camMR.stop(); return; }
+  var m = medidaDaSaida();
+  navigator.mediaDevices.getUserMedia({video:{width:m[0], height:m[1]}, audio:true})
+    .then(function(s){
+      camStream = s;
+      var tipo = formatoDeGravacao(), pedacos = [];
+      camMR = new MediaRecorder(s, tipo ? {mimeType: tipo} : {});
+      camMR.ondataavailable = function(e){ if(e.data && e.data.size) pedacos.push(e.data); };
+      camMR.onstop = function(){
+        s.getTracks().forEach(function(t){ t.stop(); });
+        camStream = null;
+        var b = new Blob(pedacos, {type: tipo || "video/webm"});
+        trazArquivos([new File([b], "camera.webm", {type: b.type})]);
+        marcaCamera(false);
+      };
+      camMR.start();
+      marcaCamera(true);
+      recado("Gravando. Toque de novo no botão para parar.", "");
+    })
+    .catch(function(){
+      recado("Não consegui abrir a câmera. Se a página estiver em <b>file://</b>, " +
+             "o navegador não permite — precisa estar num endereço https.", "erro");
+    });
+}
+/* ⚠️ o botão mora dentro de uma gaveta que pode ter sido fechada durante a
+   gravação — por isso a checagem antes de tocar nele. */
+function marcaCamera(lig){
+  var b = $("btCamera"); if(!b) return;
+  b.classList[lig ? "add" : "remove"]("lig");
+  b.lastChild.nodeValue = lig ? " Parar" : " Gravar pela câmera";
+}
+/* ============================================================
+   A FITA DE TEMPO — e o gesto que é a marca deste tipo de editor.
+   ⭐⭐ A AGULHA NÃO ANDA: ELA FICA PARADA NO MEIO DA TELA E A FITA É QUE ROLA.
+   Quem já usou o aplicativo no celular conhece este gesto de cor, e ele é bom
+   por uma razão que vale explicar ao aluno: o dedo dele fica SEMPRE no mesmo
+   lugar confortável, e o instante que ele quer vem até o dedo. Na linha do
+   tempo de cursor que anda, a criança persegue um risquinho de 2 px.
+
+   ⚠️ O TRUQUE QUE FAZ ISSO FUNCIONAR é o respiro: a fita leva meia largura da
+   tela de espaço vazio de cada lado. Sem ele, o primeiro e o último quadro
+   NUNCA alcançariam o meio — o vídeo começaria travado no segundo 2.
+
+   ⚠️ A LARGURA DO PEDAÇO É PROPORCIONAL À DURAÇÃO. Parece enfeite e não é: é
+   isso que faz a criança VER que aparar encurta. Fita com todos os blocos do
+   mesmo tamanho não ensina nada.
+   ============================================================ */
+var PXS = 58;            /* pixels por segundo — quanto a fita "abre" */
+var alvoRolagem = -1;    /* onde EU pus a fita; o que chegar diferente disto é o dedo dele */
+
+function bloco(faixa, rot, t0, dur, classe, sel, mini){
+  var d = document.createElement("div");
+  d.className = "pedaco " + (classe || "") + (sel ? " sel" : "");
+  d.style.left = Math.round(t0 * PXS) + "px";
+  d.style.width = Math.max(18, Math.round(dur * PXS) - 2) + "px";
+  if(mini) d.style.backgroundImage = "url(" + mini + ")";
+  d.innerHTML = '<div class="rot">' + esc(rot) + '</div>' +
+                (dur * PXS > 52 ? '<div class="dur">' + seg(dur) + '</div>' : '');
+  faixa.appendChild(d);
+  return d;
+}
+
+function redesenhaFita(){
+  var total = Math.max(durTotal(), 1);
+  var larg = Math.round(total * PXS);
+  var tira = $("tira"), rolo = $("rolo");
+  var respiro = Math.round(rolo.clientWidth / 2);
+  tira.style.paddingLeft = respiro + "px";
+  tira.style.paddingRight = respiro + "px";
+
+  var faixas = {clipes: $("trVideo"), pip: $("trPip"), textos: $("trTexto"), audios: $("trAudio")};
+  var k;
+  for(k in faixas){ if(faixas.hasOwnProperty(k)){
+    faixas[k].innerHTML = ""; faixas[k].style.width = larg + "px";
+  }}
+
+  var t = 0;
+  for(k = 0; k < PROJ.clipes.length; k++){
+    var c = PROJ.clipes[k], d = durClipe(c);
+    (function(i){
+      bloco(faixas.clipes, c.nome, t, d, "", SEL && SEL.faixa === "clipes" && SEL.i === i,
+            c.mini).onclick = function(){ selecionar("clipes", i); };
+    })(k);
+    t += d;
+  }
+  camada("pip", faixas.pip, "pip", function(o){ return o.nome || "camada"; });
+  camada("textos", faixas.textos, "tx", function(o){ return o.txt || "texto"; });
+  camada("audios", faixas.audios, "au", function(o){ return o.nome || "áudio"; });
+
+  /* faixa vazia ainda precisa de uma palavra, senão parece quebrada */
+  vazioSe(faixas.clipes, "toque em Material e traga um vídeo ou uma foto");
+  vazioSe(faixas.pip, "camada de cima (PIP)");
+  vazioSe(faixas.textos, "textos");
+  vazioSe(faixas.audios, "música, efeito ou a sua voz");
+  faixas.clipes.classList[PROJ.clipes.length ? "add" : "remove"]("cheia");
+  faixas.pip.classList[PROJ.pip.length ? "add" : "remove"]("cheia");
+  faixas.textos.classList[PROJ.textos.length ? "add" : "remove"]("cheia");
+  faixas.audios.classList[PROJ.audios.length ? "add" : "remove"]("cheia");
+  agulhaPara(TEMPO);
+}
+
+function camada(nome, faixa, classe, rotulo){
+  var j;
+  for(j = 0; j < PROJ[nome].length; j++){
+    var o = PROJ[nome][j];
+    (function(i, ob){
+      bloco(faixa, rotulo(ob), ob.t0, Math.max(0.2, ob.t1 - ob.t0), classe,
+            SEL && SEL.faixa === nome && SEL.i === i,
+            nome === "pip" ? ob.mini : null)
+        .onclick = function(){ selecionar(nome, i); };
+    })(j, o);
+  }
+}
+
+function vazioSe(faixa, txt){
+  if(faixa.children.length) return;
+  var d = document.createElement("div");
+  d.className = "pedaco vaz";
+  d.style.left = "0"; d.style.width = "100%";
+  d.innerHTML = '<div class="rot" style="color:#7b8593;font-weight:600">' + esc(txt) + '</div>';
+  faixa.appendChild(d);
+}
+
+/* ---- a ponte entre o tempo e a rolagem, nos dois sentidos ---- */
+/* ⚠️⚠️ ERRO PAGO NA COBAIA (24/set/2026), e vale além deste editor:
+   **trava por TEMPO não serve para distinguir o meu gesto do gesto do usuário.**
+   A primeira versão erguia uma bandeira, mexia na rolagem e a baixava num
+   `setTimeout(0)`. Só que o evento `scroll` do navegador chega num quadro
+   FUTURO — depois da bandeira ter baixado. Então a fita concluía que fora o
+   dedo do aluno e chamava `pausar()`… trinta vezes por segundo. O botão
+   ▶ acendia e o vídeo não andava, sem erro nenhum no console.
+   O conserto é comparar o VALOR, não cronometrar: eu sei onde pus a fita; o que
+   chegar diferente disso é que é dele. (E guardo o valor DEPOIS de atribuir,
+   porque o navegador limita a rolagem nas pontas e devolve outro número.) */
+function agulhaPara(t){
+  var rolo = $("rolo");
+  rolo.scrollLeft = Math.round(t * PXS);
+  alvoRolagem = rolo.scrollLeft;
+}
+function fitaRolou(){
+  if(Math.abs($("rolo").scrollLeft - alvoRolagem) <= 1) return;   /* fui eu */
+  var t = $("rolo").scrollLeft / PXS;
+  TEMPO = Math.max(0, Math.min(durTotal(), t));
+  if(TOCANDO) pausar();
+  sincronizaAudio();
+  desenha(TEMPO);
+  relogio();
+}
+function zoom(d){
+  PXS = Math.max(14, Math.min(220, Math.round(PXS * d)));
+  redesenhaFita(); agulhaPara(TEMPO);
+  recado(PXS > 100 ? "Fita aberta: cada segundo ocupa muito espaço — bom para cortar no ponto certo."
+                   : "Fita fechada: dá para ver o filme inteiro de uma vez.", "");
+}
+
+/* ---- escolher um pedaço ---- */
+function selecionar(f, i){
+  SEL = (f === null) ? null : {faixa: f, i: i};
+  redesenhaFita();
+  if(gavetaAberta) abreGaveta(gavetaAberta);   /* a gaveta fala do escolhido */
+}
+function selObj(){
+  if(!SEL) return null;
+  var l = PROJ[SEL.faixa];
+  return l && l[SEL.i] ? l[SEL.i] : null;
+}
+function esc(s){ return String(s == null ? "" : s)
+  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+  .replace(/"/g,"&quot;"); }
+
+/* ============================================================
+   AS TRÊS TESOURAS — dividir, apagar, duplicar.
+   ⚠️ DIVIDIR não corta arquivo nenhum: ele faz DOIS clipes que apontam para o
+      MESMO vídeo, um com o pedaço de antes e outro com o pedaço de depois. É a
+      ideia central da edição não-destrutiva, e é por isso que dá para desfazer.
+   ============================================================ */
+function dividir(){
+  var em = clipeEm(TEMPO);
+  if(!em || !PROJ.clipes.length){ recado("Não há clipe sob a agulha.", "erro"); return; }
+  var c = PROJ.clipes[em.i];
+  var ponto = c.ini + em.local * (c.vel || 1);
+  if(ponto <= c.ini + 0.08 || ponto >= c.fim - 0.08){
+    recado("A agulha está bem na ponta do clipe — leve a fita para o meio dele.", "erro");
+    return;
+  }
+  guardaPasso();
+  var b = {}, k;
+  for(k in c){ if(c.hasOwnProperty(k)) b[k] = c[k]; }
+  b.id = novoId(); b.transicao = {tipo:"corte", dur:0.5};
+  c.fim = ponto; b.ini = ponto;
+  PROJ.clipes.splice(em.i + 1, 0, b);
+  selecionar("clipes", em.i + 1);
+  marca("dividiu");
+  recado("Dividido. Repare: continua sendo <b>um arquivo só</b> — o editor " +
+         "apenas guardou onde cada pedaço começa e termina.", "bom");
+  tudo();
+}
+
+function apagarSel(){
+  var o = selObj(); if(!o){ recado("Escolha um pedaço na fita.", "erro"); return; }
+  guardaPasso();
+  if(SEL.faixa === "audios" && o.el){ try{ o.el.pause(); }catch(e){} }
+  PROJ[SEL.faixa].splice(SEL.i, 1);
+  selecionar(null);
+  tudo();
+}
+
+function duplicarSel(){
+  var o = selObj(); if(!o){ recado("Escolha um pedaço na fita.", "erro"); return; }
+  guardaPasso();
+  var b = {}, k;
+  for(k in o){ if(o.hasOwnProperty(k)) b[k] = o[k]; }
+  b.id = novoId();
+  if(b.t0 !== undefined){ var d = b.t1 - b.t0; b.t0 = b.t1; b.t1 = b.t0 + d; }
+  PROJ[SEL.faixa].splice(SEL.i + 1, 0, b);
+  selecionar(SEL.faixa, SEL.i + 1);
+  tudo();
+}
+
+function mover(d){
+  if(!SEL || SEL.faixa !== "clipes"){ recado("Mover de lugar é na faixa de vídeo.", "erro"); return; }
+  var i = SEL.i, j = i + d;
+  if(j < 0 || j >= PROJ.clipes.length) return;
+  guardaPasso();
+  var tmp = PROJ.clipes[i]; PROJ.clipes[i] = PROJ.clipes[j]; PROJ.clipes[j] = tmp;
+  selecionar("clipes", j);
+  tudo();
+}
+
+/* ============================================================
+   DESFAZER — e por que ele é barato aqui.
+   ⚠️ O projeto é um objeto de DESCRIÇÕES (que arquivo, de que segundo a que
+      segundo, com que cor), nunca de pixels. Então guardar um passo é guardar
+      um punhado de números — e é isso que torna o "Ctrl+Z" possível num editor
+      de vídeo dentro do navegador, sem cópia de arquivo nenhuma.
+   ⚠️ Os elementos <video>/<audio> NÃO entram na cópia: eles são o material, não
+      o projeto. Por isso a cópia guarda a lista e devolve os elementos.
+   ============================================================ */
+var HIST = [], HIST_MAX = 30;
+function retrato(){
+  var mapa = [], r = JSON.stringify(PROJ, function(k, v){
+    /* ⚠️ o elemento <video> e a miniatura (um data: de alguns KB) ficam FORA
+       do texto: vão para um mapa por referência. Sem isso, trinta passos de
+       desfazer guardariam trinta cópias das miniaturas. */
+    if(k.charAt(0) === "_") return undefined;   /* apoio vivo (nós de áudio), não projeto */
+    if(k === "el" || k === "mini"){ mapa.push(v); return "#el" + (mapa.length - 1); }
+    return v;
+  });
+  return {txt: r, els: mapa};
+}
+function guardaPasso(){
+  try{
+    HIST.push(retrato());
+    if(HIST.length > HIST_MAX) HIST.shift();
+    /* ⚠️ passo novo apaga o futuro: quem desfez três vezes e então mudou outra
+       coisa não tem mais para onde refazer. */
+    REFAZ.length = 0;
+    marcaBotoesHistoria();
+  }catch(e){}
+}
+function desfazer(){
+  if(!HIST.length){ recado("Não há mais nada para desfazer.", ""); return; }
+  REFAZ.push(retrato());
+  aplicaRetrato(HIST.pop());
+  recado("Desfeito.", "");
+  marcaBotoesHistoria();
+}
+/* ============================================================
+   A BARRA DE FERRAMENTAS E AS GAVETAS.
+   ⭐ A ORDEM DOS ÍCONES É A DO APLICATIVO DE CELULAR, de propósito: material,
+   aparar, tela, filtro, ajuste, velocidade, girar, transição, texto, figura,
+   camada, música, voz. A criança que já mexeu no celular acha tudo no lugar
+   onde a mão dela procura — e a que aprender aqui vai achar lá.
+   ⚠️ Cada ferramenta abre UMA gaveta e fecha as outras. Editor com dez painéis
+   abertos ao mesmo tempo é o que faz a turma se perder na primeira aula.
+   ============================================================ */
+var gavetaAberta = null;
+
+var FERRAS = [
+  {k:"material", n:"Material", i:"i-mais"},
+  {k:"acervo",   n:"Acervo",   i:"i-acervo"},
+  {k:"aparar",   n:"Aparar",   i:"i-cortar"},
+  {k:"cortar",   n:"Cortar",   i:"i-recorte"},
+  {k:"tela",     n:"Tela",     i:"i-quadro"},
+  {k:"filtro",   n:"Filtro",   i:"i-filtro"},
+  {k:"ajuste",   n:"Ajuste",   i:"i-ajuste"},
+  {k:"veloc",    n:"Velocidade", i:"i-veloc"},
+  {k:"girar",    n:"Girar",    i:"i-girar"},
+  {k:"transic",  n:"Transição", i:"i-transic"},
+  {k:"texto",    n:"Texto",    i:"i-texto"},
+  {k:"figura",   n:"Figura",   i:"i-figura"},
+  {k:"pip",      n:"Camada",   i:"i-pip"},
+  {k:"musica",   n:"Música",   i:"i-musica"},
+  {k:"efeitos",  n:"Efeitos",  i:"i-efeito"},
+  {k:"voz",      n:"Voz",      i:"i-voz"}
+];
+
+function montaFerramentas(){
+  var f = $("ferr"), h = "", k;
+  for(k = 0; k < FERRAS.length; k++){
+    h += '<button type="button" class="fer" data-f="' + FERRAS[k].k + '" data-qa="f-' +
+         FERRAS[k].k + '"><i><svg width="20" height="20" aria-hidden="true"><use href="#' +
+         FERRAS[k].i + '"/></svg></i>' + FERRAS[k].n + '</button>';
+  }
+  f.innerHTML = h;
+  f.onclick = function(ev){
+    var b = ev.target.closest ? ev.target.closest(".fer") : null;
+    if(b) abreGaveta(b.getAttribute("data-f"));
+  };
+}
+
+function abreGaveta(k){
+  var g = $("gaveta"), b = $("ferr").querySelectorAll(".fer"), j;
+  if(gavetaAberta === k && !g.classList.contains("oculto") && k === null) return;
+  gavetaAberta = k;
+  for(j = 0; j < b.length; j++)
+    b[j].classList[b[j].getAttribute("data-f") === k ? "add" : "remove"]("on");
+  if(!k){ g.classList.add("oculto"); g.innerHTML = ""; return; }
+  g.classList.remove("oculto");
+  (GAVETAS[k] || function(){ g.innerHTML = ""; })();
+}
+function fechaGaveta(){ abreGaveta(null); }
+
+/* ---------- peças de formulário, para não repetir HTML ---------- */
+function cab(titulo){
+  return '<h4>' + esc(titulo) + '<button type="button" class="icb" id="gFecha" ' +
+    'aria-label="Fechar"><svg width="16" height="16" aria-hidden="true">' +
+    '<use href="#i-fechar"/></svg></button></h4>';
+}
+function hFaixa(id, rot, min, max, val, passo, suf){
+  return '<div class="linha"><label for="' + id + '">' + esc(rot) + '</label>' +
+    '<input type="range" id="' + id + '" min="' + min + '" max="' + max + '" step="' + passo +
+    '" value="' + val + '"><span class="val" id="' + id + 'v">' + val + (suf || "") + '</span></div>';
+}
+function ligaFaixa(id, suf, fn){
+  var e = $(id); if(!e) return;
+  e.onpointerdown = guardaPasso;                 /* um passo por arrasto, não por pixel */
+  e.oninput = function(){
+    var r = $(id + "v"); if(r) r.textContent = e.value + (suf || "");
+    fn(parseFloat(e.value)); desenha(TEMPO);
+  };
+  e.onchange = function(){ tudo(); };
+}
+function hGrade(id, itens, atual){
+  var h = '<div class="grade" id="' + id + '">', k;
+  for(k = 0; k < itens.length; k++){
+    h += '<button type="button" class="bt' + (itens[k].v === atual ? " lig" : "") +
+         '" data-v="' + esc(itens[k].v) + '">' +
+         (itens[k].i ? '<i><svg width="18" height="18" aria-hidden="true"><use href="#' +
+          itens[k].i + '"/></svg></i>' : "") + esc(itens[k].n) + '</button>';
+  }
+  return h + '</div>';
+}
+function ligaGrade(id, fn){
+  var g = $(id); if(!g) return;
+  g.onclick = function(ev){
+    var b = ev.target.closest ? ev.target.closest("[data-v]") : null;
+    if(!b) return;
+    guardaPasso();
+    var f = g.querySelectorAll("[data-v]"), j;
+    for(j = 0; j < f.length; j++) f[j].classList.remove("lig");
+    b.classList.add("lig");
+    fn(b.getAttribute("data-v"));
+    desenha(TEMPO); tudo();
+  };
+}
+function precisaClipe(){
+  var g = $("gaveta");
+  g.innerHTML = cab("Escolha um pedaço") +
+    '<div class="aviso">Toque num pedaço da <b>fita de tempo</b> — as ferramentas ' +
+    'trabalham sempre sobre o pedaço escolhido. É assim em qualquer editor: ' +
+    'primeiro se escolhe <i>o que</i>, depois se diz <i>o quê fazer</i>.</div>';
+  $("gFecha").onclick = fechaGaveta;
+}
+function clipeSel(){
+  if(SEL && SEL.faixa === "clipes") return PROJ.clipes[SEL.i] || null;
+  var em = clipeEm(TEMPO);
+  return em ? PROJ.clipes[em.i] : null;
+}
+
+/* ============================================================
+   AS GAVETAS, uma por ferramenta.
+   ============================================================ */
+var GAVETAS = {};
+
+/* ---------------- MATERIAL ---------------- */
+GAVETAS.material = function(){
+  var g = $("gaveta");
+  g.innerHTML = cab("Trazer material") +
+    '<div class="grade">' +
+      '<button type="button" class="bt" id="btArquivo" data-qa="trazer"><i><svg width="18" height="18"><use href="#i-mais"/></svg></i>Vídeo ou foto</button>' +
+      '<button type="button" class="bt" id="btCamera" data-qa="camera"><i><svg width="18" height="18"><use href="#i-camera"/></svg></i> Gravar pela câmera</button>' +
+      '<button type="button" class="bt" id="btExemplo" data-qa="exemplo"><i><svg width="18" height="18"><use href="#i-figura"/></svg></i>Clipe de exemplo</button>' +
+    '</div>' +
+    '<input type="file" id="fArquivo" accept="video/*,image/*" multiple class="oculto">' +
+    '<h4 style="margin-top:8px">Rascunho</h4>' +
+    '<div class="grade">' +
+      '<button type="button" class="bt" id="btSalvar" data-qa="salvar">Guardar rascunho</button>' +
+      '<button type="button" class="bt" id="btAbrir" data-qa="abrir">Abrir rascunho</button>' +
+    '</div>' +
+    '<div class="aviso">O rascunho guarda o projeto <b>e os arquivos</b> neste ' +
+    'computador e neste navegador — não é nuvem e não segue você para casa. ' +
+    'Teto de 300 MB.</div>' +
+    '<div class="aviso" style="margin-bottom:0"><b>Nada sai daqui.</b> O arquivo fica ' +
+    'só na memória desta aba — não sobe para servidor nenhum e não existe conta. ' +
+    'Fechou a aba, acabou: por isso, <b>exporte antes de sair</b>.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  $("btArquivo").onclick = function(){ $("fArquivo").click(); };
+  $("fArquivo").onchange = function(){
+    if(this.files && this.files.length) trazArquivos(this.files);
+    this.value = "";
+  };
+  $("btCamera").onclick = gravarCamera;
+  $("btExemplo").onclick = clipeExemplo;
+  $("btSalvar").onclick = salvarRascunho;
+  $("btAbrir").onclick = abrirRascunho;
+  marcaCamera(camMR && camMR.state === "recording");
+};
+
+/* ---------------- APARAR ---------------- */
+/* ⚠️ APARAR é a primeira coisa que se ensina, e a que a turma mais erra: elas
+   pensam que "cortar" apaga o arquivo. Aqui os dois números são o COMEÇO e o
+   FIM do pedaço que se usa — o resto do vídeo continua inteiro, esperando. */
+GAVETAS.aparar = function(){
+  var c = clipeSel(); if(!c) return precisaClipe();
+  var g = $("gaveta"), D = c.fonteDur;
+  g.innerHTML = cab("Aparar · " + c.nome) +
+    hFaixa("apIni", "Começa em", 0, Math.max(0.1, D - 0.1), Math.round(c.ini*10)/10, 0.1, " s") +
+    hFaixa("apFim", "Termina em", 0.1, D, Math.round(c.fim*10)/10, 0.1, " s") +
+    '<div class="linha"><span class="val" style="min-width:0">Fica com ' +
+      '<b id="apDur">' + seg(durClipe(c)) + '</b> de ' + seg(D) + ' do arquivo</span></div>' +
+    '<div class="grade">' +
+      '<button type="button" class="bt" id="btDividir" data-qa="dividir"><i><svg width="18" height="18"><use href="#i-cortar"/></svg></i>Dividir aqui</button>' +
+      '<button type="button" class="bt" id="btDupl"><i><svg width="18" height="18"><use href="#i-copia"/></svg></i>Duplicar</button>' +
+      '<button type="button" class="bt" id="btApagar" data-qa="apagar"><i><svg width="18" height="18"><use href="#i-lixo"/></svg></i>Apagar</button>' +
+      '<button type="button" class="bt" id="btCongela"><i><svg width="18" height="18"><use href="#i-quadro"/></svg></i>Congelar</button>' +
+      '<button type="button" class="bt" id="btEsq">◀ Mover</button>' +
+      '<button type="button" class="bt" id="btDir">Mover ▶</button>' +
+    '</div>';
+  $("gFecha").onclick = fechaGaveta;
+  function conta(){ var e = $("apDur"); if(e) e.textContent = seg(durClipe(c)); }
+  ligaFaixa("apIni", " s", function(v){ c.ini = Math.min(v, c.fim - 0.1); conta(); });
+  ligaFaixa("apFim", " s", function(v){ c.fim = Math.max(v, c.ini + 0.1); conta(); });
+  $("btDividir").onclick = dividir;
+  $("btDupl").onclick = duplicarSel;
+  $("btCongela").onclick = congelar;
+  $("btApagar").onclick = apagarSel;
+  $("btEsq").onclick = function(){ mover(-1); };
+  $("btDir").onclick = function(){ mover(1); };
+};
+
+/* ---------------- TELA (razão + fundo + encaixe) ---------------- */
+GAVETAS.tela = function(){
+  var g = $("gaveta");
+  g.innerHTML = cab("Formato da tela") +
+    hGrade("grRazao", [
+      {v:"9:16", n:"9:16 em pé"}, {v:"1:1", n:"1:1 quadrado"},
+      {v:"16:9", n:"16:9 deitado"}, {v:"4:5", n:"4:5"}, {v:"4:3", n:"4:3"}
+    ], PROJ.razao) +
+    '<div class="linha"><label for="selEncaixe">Encaixe</label>' +
+      '<select id="selEncaixe"><option value="contem">Cabe inteiro</option>' +
+      '<option value="cobre">Preenche cortando</option></select></div>' +
+    '<div class="linha"><label for="selFundo">Fundo</label>' +
+      '<select id="selFundo"><option value="desfoque">Cópia desfocada</option>' +
+      '<option value="cor">Cor sólida</option><option value="preto">Preto</option></select>' +
+      '<input type="color" id="corFundo" value="' + PROJ.corFundo + '" aria-label="Cor do fundo"></div>' +
+    hFaixa("mdL", "Moldura", 0, 12, PROJ.borda.larg, 0.5, "%") +
+    '<div class="linha"><label for="mdC">Cor da moldura</label>' +
+      '<input type="color" id="mdC" value="' + PROJ.borda.cor + '"></div>' +
+    '<div class="aviso" style="margin-bottom:0">O formato <b>9:16</b> é o do celular em pé ' +
+    '(vídeo curto de rede social); o <b>16:9</b> é o da televisão e do projetor da sala. ' +
+    'Escolher errado é o que faz o vídeo aparecer com tarjas pretas.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  $("selEncaixe").value = PROJ.encaixe;
+  $("selFundo").value = PROJ.fundo;
+  ligaGrade("grRazao", function(v){ PROJ.razao = v; aplicaRazao(); marca("formato"); });
+  $("selEncaixe").onchange = function(){ guardaPasso(); PROJ.encaixe = this.value; desenha(TEMPO); tudo(); };
+  $("selFundo").onchange = function(){ guardaPasso(); PROJ.fundo = this.value; marca("formato"); desenha(TEMPO); tudo(); };
+  $("corFundo").oninput = function(){ PROJ.corFundo = this.value; desenha(TEMPO); };
+  ligaFaixa("mdL", "%", function(v){ PROJ.borda.larg = v; });
+  $("mdC").oninput = function(){ PROJ.borda.cor = this.value; desenha(TEMPO); };
+};
+
+/* ---------------- FILTRO ---------------- */
+GAVETAS.filtro = function(){
+  var c = clipeSel(); if(!c) return precisaClipe();
+  var g = $("gaveta");
+  g.innerHTML = cab("Filtro") +
+    hGrade("grFiltro", [
+      {v:"nenhum", n:"Nenhum"}, {v:"pb", n:"Preto e branco"}, {v:"vintage", n:"Antigo"},
+      {v:"frio", n:"Frio"}, {v:"quente", n:"Quente"}
+    ], c.filtro) +
+    (TEMFILTRO ? "" :
+      '<div class="aviso erro">Este navegador não tem filtro de canvas — os filtros ' +
+      'aparecem desligados. Nada quebrou: é limitação do navegador antigo.</div>') +
+    '<div class="aviso" style="margin-bottom:0">Filtro é <b>cor</b>, e cor conta história: ' +
+    'o antigo diz "isto foi há muito tempo", o frio diz "de noite, na rua". ' +
+    'Use um só no vídeo inteiro — filtro diferente em cada pedaço é o erro mais comum.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  ligaGrade("grFiltro", function(v){ c.filtro = v; });
+};
+
+/* ---------------- AJUSTE ---------------- */
+GAVETAS.ajuste = function(){
+  var c = clipeSel(); if(!c) return precisaClipe();
+  var g = $("gaveta");
+  g.innerHTML = cab("Ajuste fino") +
+    hFaixa("ajB", "Brilho", 40, 180, c.brilho, 1, "%") +
+    hFaixa("ajC", "Contraste", 40, 180, c.contraste, 1, "%") +
+    hFaixa("ajS", "Saturação", 0, 200, c.satur, 1, "%") +
+    hFaixa("ajT", "Temperatura", -60, 60, c.calor, 1, "") +
+    '<div class="linha"><button type="button" class="bt mini" id="ajZera">Voltar ao normal</button></div>';
+  $("gFecha").onclick = fechaGaveta;
+  ligaFaixa("ajB", "%", function(v){ c.brilho = v; });
+  ligaFaixa("ajC", "%", function(v){ c.contraste = v; });
+  ligaFaixa("ajS", "%", function(v){ c.satur = v; });
+  ligaFaixa("ajT", "", function(v){ c.calor = v; });
+  $("ajZera").onclick = function(){
+    guardaPasso();
+    c.brilho = 100; c.contraste = 100; c.satur = 100; c.calor = 0;
+    abreGaveta("ajuste"); desenha(TEMPO);
+  };
+};
+
+/* ---------------- VELOCIDADE ---------------- */
+GAVETAS.veloc = function(){
+  var c = clipeSel(); if(!c) return precisaClipe();
+  var g = $("gaveta");
+  g.innerHTML = cab("Velocidade") +
+    hGrade("grVel", [
+      {v:"0.25", n:"0,25× lento"}, {v:"0.5", n:"0,5×"}, {v:"1", n:"1× normal"},
+      {v:"2", n:"2×"}, {v:"4", n:"4× rápido"}
+    ], String(c.vel)) +
+    hFaixa("velF", "Exato", 0.25, 4, c.vel, 0.05, "×") +
+    '<div class="linha"><span class="val" style="min-width:0">O pedaço passa a durar ' +
+      '<b id="velDur">' + seg(durClipe(c)) + '</b></span></div>' +
+    '<h4 style="margin-top:8px">Zoom lento (a imagem respira)</h4>' +
+    hFaixa("zmDe", "Começa em", 1, 2, (c.zoom||{de:1}).de, 0.01, "×") +
+    hFaixa("zmPara", "Termina em", 1, 2, (c.zoom||{para:1}).para, 0.01, "×") +
+    '<div class="aviso">É o truque mais barato do ofício: uma foto parada 4 segundos ' +
+    'parece erro; a mesma foto crescendo 15% nos 4 segundos parece cinema.</div>' +
+    '<div class="aviso" style="margin-bottom:0">Acelerar <b>não corta</b>: os mesmos quadros ' +
+    'passam em menos tempo. Por isso o som fica agudo — e por isso 4× de um vídeo ' +
+    'tremido fica ainda mais tremido.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  function conta(){ var e = $("velDur"); if(e) e.textContent = seg(durClipe(c)); }
+  ligaGrade("grVel", function(v){ c.vel = parseFloat(v); $("velF").value = v; conta(); });
+  ligaFaixa("velF", "×", function(v){ c.vel = v; conta(); });
+  if(!c.zoom) c.zoom = {de: 1, para: 1};
+  ligaFaixa("zmDe", "×", function(v){ c.zoom.de = v; });
+  ligaFaixa("zmPara", "×", function(v){ c.zoom.para = v; });
+};
+
+/* ---------------- GIRAR / ESPELHAR ---------------- */
+GAVETAS.girar = function(){
+  var c = clipeSel(); if(!c) return precisaClipe();
+  var g = $("gaveta");
+  g.innerHTML = cab("Girar e espelhar") +
+    '<div class="grade">' +
+      '<button type="button" class="bt" id="gr90"><i><svg width="18" height="18"><use href="#i-girar"/></svg></i>Girar 90°</button>' +
+      '<button type="button" class="bt" id="grEsp">Espelhar</button>' +
+      '<button type="button" class="bt" id="grZera">Endireitar</button>' +
+    '</div>' +
+    '<div class="aviso" style="margin-bottom:0">Girar serve para o vídeo que foi ' +
+    'filmado com o celular deitado. <b>Espelhar</b> é outra coisa: troca a esquerda ' +
+    'pela direita — e delata qualquer palavra escrita que apareça na cena.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  $("gr90").onclick = function(){ guardaPasso(); c.girar = (c.girar + 90) % 360; desenha(TEMPO); tudo(); };
+  $("grEsp").onclick = function(){ guardaPasso(); c.espelho = !c.espelho; desenha(TEMPO); tudo(); };
+  $("grZera").onclick = function(){ guardaPasso(); c.girar = 0; c.espelho = false; desenha(TEMPO); tudo(); };
+};
+
+/* ---------------- TRANSIÇÃO ---------------- */
+/* ⚠️ A transição pertence ao clipe que CHEGA, não ao que sai — é ele que entra
+   por cima. Ficou assim porque é como os editores de verdade fazem, e porque
+   assim ela sobrevive quando a criança troca os clipes de ordem. */
+GAVETAS.transic = function(){
+  if(PROJ.clipes.length < 2){
+    var g0 = $("gaveta");
+    g0.innerHTML = cab("Transição") +
+      '<div class="aviso">Transição é a costura <b>entre dois clipes</b> — traga pelo ' +
+      'menos mais um, ou use <b>Dividir</b> para partir este em dois.</div>';
+    $("gFecha").onclick = fechaGaveta; return;
+  }
+  var i = (SEL && SEL.faixa === "clipes" && SEL.i > 0) ? SEL.i : 1;
+  var c = PROJ.clipes[i], g = $("gaveta");
+  g.innerHTML = cab("Transição — entrada do clipe " + (i + 1)) +
+    hGrade("grTr", [
+      {v:"corte", n:"Corte seco"}, {v:"fade", n:"Esmaecer"},
+      {v:"deslizar", n:"Deslizar"}, {v:"zoom", n:"Aproximar"}
+    ], c.transicao.tipo) +
+    hFaixa("trD", "Duração", 0.2, 2, c.transicao.dur, 0.1, " s") +
+    '<div class="aviso" style="margin-bottom:0">O <b>corte seco</b> é a transição mais ' +
+    'usada do cinema, e quase ninguém repara nele — que é exatamente a intenção. ' +
+    'Efeito em toda emenda cansa: guarde-o para quando o tempo ou o lugar mudam.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  ligaGrade("grTr", function(v){ c.transicao.tipo = v; });
+  ligaFaixa("trD", " s", function(v){ c.transicao.dur = v; });
+};
+
+/* ---------------- TEXTO ---------------- */
+GAVETAS.texto = function(){
+  var g = $("gaveta"), novo = !(SEL && SEL.faixa === "textos");
+  if(novo){
+    g.innerHTML = cab("Texto") +
+      '<div class="linha"><button type="button" class="bt pri" id="txNovo" style="flex:1" data-qa="texto">' +
+      '<svg width="17" height="17"><use href="#i-texto"/></svg> Acrescentar um texto aqui</button></div>' +
+      (PROJ.textos.length ? '<div class="aviso" style="margin-bottom:0">Para mudar um texto que já existe, ' +
+        'toque nele na <b>faixa de texto</b> da fita.</div>' : '') ;
+    $("gFecha").onclick = fechaGaveta;
+    $("txNovo").onclick = function(){
+      guardaPasso();
+      PROJ.textos.push({
+        id: novoId(), txt: "escreva aqui", x: 0.5, y: 0.18, tam: 7, animSai: "sumir",
+        cor: "#ffffff", contorno: true, corContorno: "#000000", negrito: true,
+        fonte: "Segoe UI, sans-serif", anim: "aparecer",
+        t0: Math.round(TEMPO*10)/10, t1: Math.round(TEMPO*10)/10 + 3
+      });
+      selecionar("textos", PROJ.textos.length - 1);
+      abreGaveta("texto"); tudo();
+    };
+    return;
+  }
+  var x = PROJ.textos[SEL.i];
+  g.innerHTML = cab("Texto") +
+    '<div class="linha"><textarea id="txT" rows="2" aria-label="O texto">' + esc(x.txt) + '</textarea></div>' +
+    hFaixa("txTam", "Tamanho", 3, 18, x.tam, 0.5, "%") +
+    '<div class="linha"><label>Cores</label>' +
+      '<input type="color" id="txCor" value="' + x.cor + '" aria-label="Cor da letra">' +
+      '<input type="color" id="txCC" value="' + x.corContorno + '" aria-label="Cor do contorno">' +
+      '<button type="button" class="bt mini' + (x.contorno ? " lig" : "") + '" id="txOut">Contorno</button>' +
+      '<button type="button" class="bt mini' + (x.negrito ? " lig" : "") + '" id="txNeg">Negrito</button></div>' +
+    '<div class="linha"><label for="txFonte">Letra</label><select id="txFonte">' +
+      '<option value="Segoe UI, sans-serif">Sem serifa</option>' +
+      '<option value="Georgia, serif">Com serifa</option>' +
+      '<option value="Impact, Haettenschweiler, sans-serif">Pesada</option>' +
+      '<option value="Courier New, monospace">Máquina</option></select></div>' +
+    '<div class="linha"><label for="txAnim">Entrada</label><select id="txAnim">' +
+      '<option value="nenhuma">Nenhuma</option><option value="aparecer">Aparecer</option>' +
+      '<option value="deslizar">Deslizar</option><option value="pulo">Pulo</option></select></div>' +
+    '<div class="linha"><label for="txSai">Saída</label><select id="txSai">' +
+      '<option value="nenhuma">Nenhuma</option><option value="sumir">Sumir</option>' +
+      '<option value="subir">Subir</option></select></div>' +
+    hFaixa("txX", "Esquerda↔", 0, 1, x.x, 0.01, "") +
+    hFaixa("txY", "Cima↕", 0, 1, x.y, 0.01, "") +
+    hFaixa("txT0", "Entra em", 0, Math.max(1, durTotal()), x.t0, 0.1, " s") +
+    hFaixa("txT1", "Sai em", 0.2, Math.max(1.2, durTotal() + 3), x.t1, 0.1, " s") +
+    '<div class="linha"><button type="button" class="bt mini" id="txApaga">Apagar este texto</button></div>' +
+    '<div class="aviso" style="margin-bottom:0">O <b>contorno</b> não é enfeite: é o que ' +
+    'mantém a letra legível quando o fundo do vídeo muda de claro para escuro no meio da cena.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  $("txT").oninput = function(){ x.txt = this.value; desenha(TEMPO); };
+  $("txT").onchange = function(){ tudo(); };
+  $("txT").onfocus = guardaPasso;
+  $("txCor").oninput = function(){ x.cor = this.value; desenha(TEMPO); };
+  $("txCC").oninput = function(){ x.corContorno = this.value; desenha(TEMPO); };
+  $("txOut").onclick = function(){ x.contorno = !x.contorno; this.classList.toggle("lig"); desenha(TEMPO); };
+  $("txNeg").onclick = function(){ x.negrito = !x.negrito; this.classList.toggle("lig"); desenha(TEMPO); };
+  $("txFonte").value = x.fonte; $("txAnim").value = x.anim;
+  $("txFonte").onchange = function(){ x.fonte = this.value; desenha(TEMPO); };
+  $("txAnim").onchange = function(){ x.anim = this.value; desenha(TEMPO); };
+  $("txSai").value = x.animSai || "nenhuma";
+  $("txSai").onchange = function(){ x.animSai = this.value; desenha(TEMPO); };
+  ligaFaixa("txTam", "%", function(v){ x.tam = v; });
+  ligaFaixa("txX", "", function(v){ x.x = v; });
+  ligaFaixa("txY", "", function(v){ x.y = v; });
+  ligaFaixa("txT0", " s", function(v){ x.t0 = Math.min(v, x.t1 - 0.2); });
+  ligaFaixa("txT1", " s", function(v){ x.t1 = Math.max(v, x.t0 + 0.2); });
+  $("txApaga").onclick = apagarSel;
+};
+
+/* ---------------- FIGURA (a camada de anotação) ---------------- */
+/* ⚠️ As figuras são DESENHADAS por código, e isto é escolha, não preguiça: seta,
+   círculo, balão e destaque são ferramentas de ANOTAÇÃO — elas existem para
+   apontar alguma coisa dentro do vídeo. Como são vetor, ficam nítidas em
+   qualquer tamanho de saída e não pesam um byte de arquivo. */
+GAVETAS.figura = function(){
+  var g = $("gaveta"), novo = !(SEL && SEL.faixa === "pip" && PROJ.pip[SEL.i] &&
+                                PROJ.pip[SEL.i].forma);
+  if(novo){
+    g.innerHTML = cab("Figura") +
+      hGrade("grForma", [
+        {v:"seta", n:"Seta"}, {v:"circulo", n:"Círculo"}, {v:"caixa", n:"Caixa"},
+        {v:"balao", n:"Balão"}, {v:"estrela", n:"Estrela"}, {v:"tarja", n:"Tarja"}
+      ], "") +
+      '<div class="aviso" style="margin-bottom:0">Estas figuras servem para <b>apontar</b>: ' +
+      'a seta mostra onde olhar, a tarja esconde um rosto ou um nome que não pode aparecer. ' +
+      'Esconder o que identifica alguém é parte do ofício, não detalhe.</div>';
+    $("gFecha").onclick = fechaGaveta;
+    ligaGrade("grForma", function(v){
+      guardaPasso();
+      PROJ.pip.push({
+        id: novoId(), forma: v, nome: v, cor: "#ff5b6e", x: 0.5, y: 0.5,
+        esc: 0.3, op: 1, giro: 0, keys: [],
+        t0: Math.round(TEMPO*10)/10, t1: Math.round(TEMPO*10)/10 + 3
+      });
+      selecionar("pip", PROJ.pip.length - 1);
+      abreGaveta("figura"); tudo();
+    });
+    return;
+  }
+  var o = PROJ.pip[SEL.i];
+  g.innerHTML = cab("Figura · " + o.forma) +
+    '<div class="linha"><label for="fgCor">Cor</label><input type="color" id="fgCor" value="' + o.cor + '"></div>' +
+    hFaixa("fgEsc", "Tamanho", 0.05, 1.4, o.esc, 0.01, "") +
+    hFaixa("fgX", "Esquerda↔", 0, 1, o.x, 0.01, "") +
+    hFaixa("fgY", "Cima↕", 0, 1, o.y, 0.01, "") +
+    hFaixa("fgGiro", "Giro", -180, 180, o.giro || 0, 1, "°") +
+    hFaixa("fgOp", "Opacidade", 0.1, 1, o.op, 0.05, "") +
+    hFaixa("fgT0", "Entra em", 0, Math.max(1, durTotal()), o.t0, 0.1, " s") +
+    hFaixa("fgT1", "Sai em", 0.2, Math.max(1.2, durTotal() + 3), o.t1, 0.1, " s") +
+    '<div class="linha"><button type="button" class="bt mini" id="fgApaga">Apagar</button></div>';
+  $("gFecha").onclick = fechaGaveta;
+  $("fgCor").oninput = function(){ o.cor = this.value; desenha(TEMPO); };
+  ligaFaixa("fgEsc", "", function(v){ o.esc = v; });
+  ligaFaixa("fgX", "", function(v){ o.x = v; });
+  ligaFaixa("fgY", "", function(v){ o.y = v; });
+  ligaFaixa("fgGiro", "°", function(v){ o.giro = v; });
+  ligaFaixa("fgOp", "", function(v){ o.op = v; });
+  ligaFaixa("fgT0", " s", function(v){ o.t0 = Math.min(v, o.t1 - 0.2); });
+  ligaFaixa("fgT1", " s", function(v){ o.t1 = Math.max(v, o.t0 + 0.2); });
+  $("fgApaga").onclick = apagarSel;
+};
+
+/* ---------------- CAMADA DE CIMA (PIP) + CHROMA + KEYFRAMES ---------------- */
+GAVETAS.pip = function(){
+  var g = $("gaveta");
+  var temSel = SEL && SEL.faixa === "pip" && PROJ.pip[SEL.i] && !PROJ.pip[SEL.i].forma;
+  if(!temSel){
+    g.innerHTML = cab("Camada de cima (PIP)") +
+      '<div class="linha"><button type="button" class="bt pri" id="btPip" style="flex:1" data-qa="pip">' +
+      '<svg width="17" height="17"><use href="#i-pip"/></svg> Pôr um vídeo ou foto por cima</button>' +
+      '<input type="file" id="fPip" accept="video/*,image/*" class="oculto"></div>' +
+      '<div class="aviso" style="margin-bottom:0"><b>PIP</b> quer dizer <i>picture in picture</i>: ' +
+      'uma imagem dentro da outra. É com isto que se faz o quadradinho do apresentador ' +
+      'no canto, ou a reação em cima do jogo.</div>';
+    $("gFecha").onclick = fechaGaveta;
+    $("btPip").onclick = function(){ $("fPip").click(); };
+    $("fPip").onchange = function(){
+      var arq = this.files && this.files[0]; this.value = "";
+      if(!arq) return;
+      elementoDe(arq).then(function(m){
+        guardaPasso();
+        poeArquivo(m.el, arq);
+        PROJ.pip.push({
+          id: novoId(), tipo: m.tipo, el: m.el, url: m.url, nome: m.nome, mini: null,
+          x: 0.72, y: 0.74, esc: 0.34, op: 1, keys: [],
+          mistura: "normal", mascara: "nenhuma",
+          chroma: {on: false, cor: "#00c853", tol: 40},
+          t0: Math.round(TEMPO*10)/10, t1: Math.round(TEMPO*10)/10 + Math.min(6, m.dur || 4)
+        });
+        selecionar("pip", PROJ.pip.length - 1);
+        abreGaveta("pip"); tudo();
+      }, function(){ recado("Não consegui abrir esse arquivo.", "erro"); });
+    };
+    return;
+  }
+  var o = PROJ.pip[SEL.i];
+  g.innerHTML = cab("Camada · " + (o.nome || "")) +
+    hFaixa("ppEsc", "Tamanho", 0.08, 1.2, o.esc, 0.01, "") +
+    hFaixa("ppX", "Esquerda↔", 0, 1, o.x, 0.01, "") +
+    hFaixa("ppY", "Cima↕", 0, 1, o.y, 0.01, "") +
+    hFaixa("ppOp", "Opacidade", 0.1, 1, o.op, 0.05, "") +
+    hFaixa("ppT0", "Entra em", 0, Math.max(1, durTotal()), o.t0, 0.1, " s") +
+    hFaixa("ppT1", "Sai em", 0.2, Math.max(1.2, durTotal() + 6), o.t1, 0.1, " s") +
+    '<div class="linha"><button type="button" class="bt mini' + (o.chroma && o.chroma.on ? " lig" : "") +
+      '" id="ppCh" data-qa="chroma">Fundo verde</button>' +
+      '<input type="color" id="ppChC" value="' + (o.chroma ? o.chroma.cor : "#00c853") + '" aria-label="Cor a apagar"></div>' +
+    hFaixa("ppTol", "Tolerância", 5, 120, o.chroma ? o.chroma.tol : 40, 1, "") +
+    '<div class="linha"><label for="ppMasc">Recorte</label><select id="ppMasc">' +
+      '<option value="nenhuma">Retângulo inteiro</option><option value="circulo">Círculo</option>' +
+      '<option value="quadrado">Quadrado</option><option value="macio">Cantos macios</option></select></div>' +
+    '<div class="linha"><label for="ppMist">Mistura</label><select id="ppMist">' +
+      '<option value="normal">Normal</option><option value="tela">Tela (clareia)</option>' +
+      '<option value="multiplicar">Multiplicar (escurece)</option><option value="sobrepor">Sobrepor</option>' +
+      '<option value="clarear">Clarear</option><option value="escurecer">Escurecer</option>' +
+      '<option value="diferenca">Diferença</option></select></div>' +
+    '<div class="linha"><button type="button" class="bt mini" id="ppKey" data-qa="keyframe">' +
+      '<svg width="15" height="15"><use href="#i-chave"/></svg> Marcar keyframe aqui</button>' +
+      '<span class="val" id="ppKn">' + ((o.keys && o.keys.length) || 0) + '</span>' +
+      '<button type="button" class="bt mini" id="ppKz">Limpar</button></div>' +
+    '<div class="linha"><button type="button" class="bt mini" id="ppApaga">Apagar camada</button></div>' +
+    '<div class="aviso" style="margin-bottom:0"><b>Keyframe</b> é a palavra que separa ' +
+    '"editar" de "animar": você marca <b>como a coisa está</b> em dois instantes, e o programa ' +
+    'inventa sozinho todos os instantes do meio. Marque um no começo e outro no fim, ' +
+    'com a camada em lugares diferentes, e ela atravessa a tela.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  ligaFaixa("ppEsc", "", function(v){ o.esc = v; });
+  ligaFaixa("ppX", "", function(v){ o.x = v; });
+  ligaFaixa("ppY", "", function(v){ o.y = v; });
+  ligaFaixa("ppOp", "", function(v){ o.op = v; });
+  ligaFaixa("ppT0", " s", function(v){ o.t0 = Math.min(v, o.t1 - 0.2); });
+  ligaFaixa("ppT1", " s", function(v){ o.t1 = Math.max(v, o.t0 + 0.2); });
+  ligaFaixa("ppTol", "", function(v){ if(o.chroma) o.chroma.tol = v; });
+  $("ppMasc").value = o.mascara || "nenhuma";
+  $("ppMist").value = o.mistura || "normal";
+  $("ppMasc").onchange = function(){ guardaPasso(); o.mascara = this.value; desenha(TEMPO); tudo(); };
+  $("ppMist").onchange = function(){ guardaPasso(); o.mistura = this.value; desenha(TEMPO); tudo(); };
+  $("ppCh").onclick = function(){
+    guardaPasso();
+    if(!o.chroma) o.chroma = {on:false, cor:"#00c853", tol:40};
+    o.chroma.on = !o.chroma.on;
+    this.classList.toggle("lig");
+    if(o.chroma.on) recado("Fundo verde ligado. Repare: quem estiver de camiseta " +
+      "verde some junto — o computador não entende a pessoa, ele só apaga a cor.", "");
+    desenha(TEMPO); tudo();
+  };
+  $("ppChC").oninput = function(){ if(o.chroma) o.chroma.cor = this.value; desenha(TEMPO); };
+  $("ppKey").onclick = function(){
+    guardaPasso();
+    if(!o.keys) o.keys = [];
+    o.keys.push({t: TEMPO, x: o.x, y: o.y, esc: o.esc, op: o.op});
+    o.keys.sort(function(a,b){ return a.t - b.t; });
+    $("ppKn").textContent = o.keys.length;
+    recado(o.keys.length < 2 ? "Um keyframe marcado. Leve a fita para outro instante, " +
+      "mude o lugar da camada e marque o segundo." :
+      "Dois ou mais: agora a camada se move sozinha entre eles. Toque em tocar e veja.", "bom");
+    tudo();
+  };
+  $("ppKz").onclick = function(){ guardaPasso(); o.keys = []; $("ppKn").textContent = "0"; tudo(); };
+  $("ppApaga").onclick = apagarSel;
+};
+
+/* ---------------- MÚSICA ---------------- */
+GAVETAS.musica = function(){
+  var g = $("gaveta");
+  var temSel = SEL && SEL.faixa === "audios" && PROJ.audios[SEL.i];
+  var h = cab("Som") +
+    '<div class="linha"><button type="button" class="bt pri" id="btMusica" style="flex:1">' +
+    '<svg width="17" height="17"><use href="#i-musica"/></svg> Trazer música ou efeito</button>' +
+    '<input type="file" id="fMusica" accept="audio/*" class="oculto"></div>';
+  if(temSel){
+    var a = PROJ.audios[SEL.i];
+    h += '<h4 style="margin-top:8px">' + esc(a.nome) + '</h4>' +
+      hFaixa("muVol", "Volume", 0, 200, a.volume, 1, "%") +
+      hFaixa("muIni", "Começa do", 0, Math.max(0.1, (a.dur || 10) - 0.1), a.ini || 0, 0.1, " s") +
+      hFaixa("muT0", "Entra em", 0, Math.max(1, durTotal()), a.t0, 0.1, " s") +
+      hFaixa("muIn", "Abre em", 0, 5, a.fadeIn || 0, 0.1, " s") +
+      hFaixa("muOut", "Fecha em", 0, 5, a.fadeOut || 0, 0.1, " s") +
+      '<div class="linha"><button type="button" class="bt mini" id="muApaga">Apagar</button></div>';
+  }
+  h += '<h4 style="margin-top:8px">Som do vídeo escolhido</h4>';
+  var c = clipeSel();
+  if(c) h += hFaixa("clVol", "Volume", 0, 200, c.volume, 1, "%") +
+    '<div class="linha"><button type="button" class="bt mini' + (c.volume === 0 ? " lig" : "") +
+    '" id="clMudo">Silenciar este clipe</button></div>';
+  else h += '<div class="aviso">Escolha um clipe na fita para mexer no som dele.</div>';
+  h += '<div class="aviso" style="margin-bottom:0"><b>Abrir</b> e <b>fechar</b> o som ' +
+       '(o <i>fade</i>) é o que separa um vídeo caseiro de um vídeo cuidado: música que ' +
+       'começa e termina de estalo incomoda quem ouve, mesmo sem a pessoa saber por quê.</div>';
+  g.innerHTML = h;
+  $("gFecha").onclick = fechaGaveta;
+  $("btMusica").onclick = function(){ $("fMusica").click(); };
+  $("fMusica").onchange = function(){
+    var arq = this.files && this.files[0]; this.value = "";
+    if(arq) trazAudio(arq, "musica");
+  };
+  if(temSel){
+    var a2 = PROJ.audios[SEL.i];
+    ligaFaixa("muVol", "%", function(v){ a2.volume = v; if(a2.el) a2.el.volume = Math.min(1, v/100); });
+    /* ⚠️ APARAR A TRILHA é escolher de que segundo DELA a música entra — quase
+       toda música leva uns segundos para "começar de verdade", e esses
+       segundos mudos no começo do vídeo é o que mais soa amador. */
+    ligaFaixa("muIni", " s", function(v){ a2.ini = v; });
+    ligaFaixa("muT0", " s", function(v){ var d = a2.t1 - a2.t0; a2.t0 = v; a2.t1 = v + d; });
+    ligaFaixa("muIn", " s", function(v){ a2.fadeIn = v; });
+    ligaFaixa("muOut", " s", function(v){ a2.fadeOut = v; });
+    $("muApaga").onclick = apagarSel;
+  }
+  if(c){
+    ligaFaixa("clVol", "%", function(v){ c.volume = v; if(c.el) c.el.volume = Math.min(1, v/100); });
+    $("clMudo").onclick = function(){
+      guardaPasso();
+      c.volume = c.volume === 0 ? 100 : 0;
+      abreGaveta("musica");
+      recado(c.volume === 0 ? "Clipe silenciado — é o que se faz quando a trilha " +
+        "vai por cima e o barulho do lugar atrapalha." : "Som do clipe de volta.", "");
+    };
+  }
+};
+
+/* ---------------- VOZ (narração) ---------------- */
+GAVETAS.voz = function(){
+  var g = $("gaveta");
+  g.innerHTML = cab("Narrar com a sua voz") +
+    '<div class="linha"><button type="button" class="bt pri" id="btNarrar" style="flex:1" data-qa="narrar">' +
+    '<svg width="17" height="17"><use href="#i-voz"/></svg> Começar a narrar</button></div>' +
+    '<div class="aviso">A gravação começa no instante em que a <b>agulha</b> está agora ' +
+    '(' + seg(TEMPO) + ') e o vídeo toca enquanto você fala — é assim que se narra: ' +
+    'olhando a imagem, não o relógio.</div>' +
+    '<div class="aviso" style="margin-bottom:0"><b>A sua voz não sai daqui.</b> Ela vira ' +
+    'um som na memória desta aba, como os outros arquivos. Nenhum serviço de fora ' +
+    'escuta nada — e é por isso que este editor não tem legenda automática.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  $("btNarrar").onclick = gravarNarracao;
+  marcaNarracao(vozMR && vozMR.state === "recording");
+};
+/* ============================================================
+   O SOM — e a razão de ele passar pelo Web Audio mesmo na prévia.
+   ⚠️ Um `<video>` tocando manda o som direto para a caixa de som, e o gravador
+      NÃO o alcança: exportaria um vídeo mudo. Por isso todo elemento entra numa
+      MESA: `createMediaElementSource` → um botão de volume próprio → a mesa →
+      (a) a caixa de som e (b) a saída do gravador. Prévia e exportação ouvem
+      exatamente a mesma coisa.
+   ⚠️⚠️ `createMediaElementSource` só pode ser chamado UMA VEZ por elemento — na
+      segunda, o navegador lança erro e o som some. Como o "desfazer" troca os
+      objetos do projeto mas mantém os elementos, a mesa é guardada por
+      ELEMENTO, nunca pelo objeto. Foi por aqui que o som sumiria depois do
+      primeiro Ctrl+Z.
+   ⚠️ E o AudioContext só nasce DEPOIS de um toque: navegador nenhum deixa som
+      começar sozinho (regra de segurança, não defeito).
+   ============================================================ */
+var AC = null, MESA = null, SAIDA = null, GANHOS = [];
+
+function audioCtx(){
+  if(AC) return AC;
+  try{
+    var C = window.AudioContext || window.webkitAudioContext;
+    if(!C) return null;
+    AC = new C();
+    MESA = AC.createGain(); MESA.connect(AC.destination);
+    SAIDA = AC.createMediaStreamDestination(); MESA.connect(SAIDA);
+  }catch(e){ AC = null; }
+  return AC;
+}
+function ganhoDe(el){
+  if(!el) return null;
+  var i; for(i = 0; i < GANHOS.length; i++) if(GANHOS[i].el === el) return GANHOS[i].g;
+  var ac = audioCtx(); if(!ac) return null;
+  try{
+    var g = ac.createGain();
+    ac.createMediaElementSource(el).connect(g);
+    g.connect(MESA);
+    GANHOS.push({el: el, g: g});
+    return g;
+  }catch(e){ return null; }
+}
+function poeVolume(el, v){
+  var g = ganhoDe(el);
+  if(g){ try{ g.gain.value = v; }catch(e){} }
+  else { try{ el.volume = Math.max(0, Math.min(1, v)); }catch(e){} }   /* queda sem Web Audio */
+}
+
+/* ---------------- trazer som ---------------- */
+function trazAudio(arq, marca){
+  var url = URL.createObjectURL(arq);
+  var a = document.createElement("audio");
+  a.preload = "auto";
+  a.onloadedmetadata = function(){
+    var d = isFinite(a.duration) ? a.duration : 30;
+    guardaPasso();
+    poeArquivo(a, arq);
+    PROJ.audios.push({
+      id: novoId(), el: a, url: url, nome: arq.name || marca, tipo: marca,
+      t0: Math.round(TEMPO*10)/10, t1: Math.round(TEMPO*10)/10 + d, dur: d, ini: 0,
+      volume: 100, fadeIn: 0.3, fadeOut: 0.6
+    });
+    selecionar("audios", PROJ.audios.length - 1);
+    if(gavetaAberta) abreGaveta(gavetaAberta);
+    tudo();
+  };
+  a.onerror = function(){ recado("Não consegui abrir esse som.", "erro"); };
+  a.src = url;
+}
+
+/* ---------------- narrar ---------------- */
+var vozMR = null;
+function marcaNarracao(lig){
+  var b = $("btNarrar"); if(!b) return;
+  b.classList[lig ? "add" : "remove"]("lig");
+  b.lastChild.nodeValue = lig ? " Parar de narrar" : " Começar a narrar";
+}
+function gravarNarracao(){
+  if(vozMR && vozMR.state === "recording"){ vozMR.stop(); pausar(); return; }
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    recado("Este navegador não dá acesso ao microfone.", "erro"); return;
+  }
+  var quando = TEMPO;
+  navigator.mediaDevices.getUserMedia({audio: true}).then(function(s){
+    var pedacos = [];
+    try{ vozMR = new MediaRecorder(s); }
+    catch(e){ recado("Não consegui gravar o som deste microfone.", "erro"); return; }
+    vozMR.ondataavailable = function(e){ if(e.data && e.data.size) pedacos.push(e.data); };
+    vozMR.onstop = function(){
+      s.getTracks().forEach(function(t){ t.stop(); });
+      var b = new Blob(pedacos, {type: "audio/webm"});
+      TEMPO = quando;                       /* a narração entra onde ela começou */
+      trazAudio(new File([b], "minha-voz.webm", {type: b.type}), "voz");
+      marcaNarracao(false);
+      recado("Narração posta na fita, começando em " + seg(quando) + ".", "bom");
+    };
+    vozMR.start();
+    marcaNarracao(true);
+    tocar();
+  }).catch(function(){
+    recado("Não consegui abrir o microfone. Em <b>file://</b> o navegador não " +
+           "permite — precisa estar num endereço https.", "erro");
+  });
+}
+
+/* ============================================================
+   TOCAR — e por que o relógio é o TEMPO REAL, nunca a contagem de quadros.
+   ⚠️ Regra antiga da casa, paga em outras atividades: o PC da escola roda a 18
+      quadros por segundo num dia e a 60 no outro. Quem conta quadros faz o
+      vídeo andar mais devagar na máquina lenta — e aí a narração descola da
+      imagem. Aqui quem manda é `performance.now()`.
+   ============================================================ */
+var ultimoT = 0, fpsAcc = 0, fpsN = 0, fpsMost = 0;
+
+function tocar(){
+  if(TOCANDO) return;
+  if(!PROJ.clipes.length && !PROJ.audios.length){
+    recado("Traga um vídeo ou uma foto primeiro — o botão está em <b>Material</b>.", "erro");
+    return;
+  }
+  audioCtx();
+  if(AC && AC.state === "suspended"){ try{ AC.resume(); }catch(e){} }
+  if(TEMPO >= durTotal() - 0.05) TEMPO = 0;
+  TOCANDO = true;
+  ultimoT = performance.now();
+  botaoTocar();
+  requestAnimationFrame(laco);
+}
+function pausar(){
+  TOCANDO = false;
+  paraTudoQueSoa();
+  botaoTocar();
+}
+function botaoTocar(){
+  var u = $("btTocar").querySelector("use");
+  if(u) u.setAttribute("href", TOCANDO ? "#i-pause" : "#i-play");
+  $("btTocar").setAttribute("aria-label", TOCANDO ? "Pausar" : "Tocar");
+}
+function paraTudoQueSoa(){
+  var k;
+  for(k = 0; k < PROJ.clipes.length; k++) if(PROJ.clipes[k].el && PROJ.clipes[k].el.pause)
+    try{ PROJ.clipes[k].el.pause(); }catch(e){}
+  for(k = 0; k < PROJ.pip.length; k++) if(PROJ.pip[k].el && PROJ.pip[k].el.pause)
+    try{ PROJ.pip[k].el.pause(); }catch(e){}
+  for(k = 0; k < PROJ.audios.length; k++) if(PROJ.audios[k].el)
+    try{ PROJ.audios[k].el.pause(); }catch(e){}
+}
+
+function laco(agora){
+  if(!TOCANDO && !GRAVANDO) return;
+  var dt = Math.min(0.25, (agora - ultimoT) / 1000);   /* teto: aba que dormiu não pula o filme */
+  ultimoT = agora;
+  TEMPO += dt;
+
+  var fim = durTotal();
+  if(TEMPO >= fim){
+    TEMPO = fim;
+    desenha(TEMPO); relogio(); agulhaPara(TEMPO);
+    if(GRAVANDO){ pararExportacao(); return; }
+    pausar(); return;
+  }
+
+  sincronizaAudio();
+  desenha(TEMPO);
+  relogio();
+  agulhaPara(TEMPO);
+
+  /* o medidor de fps fica à vista DE PROPÓSITO: é a régua que o professor abre
+     no PC da escola e me diz o número — eu não consigo medir isso daqui. */
+  fpsAcc += dt; fpsN++;
+  if(fpsAcc >= 0.5){
+    fpsMost = Math.round(fpsN / fpsAcc);
+    var e = $("medidorFps");
+    if(e){ e.textContent = fpsMost + " fps";
+           e.style.color = fpsMost < 15 ? "#ff9a9a" : (fpsMost < 24 ? "#f2d06b" : "#ffffffaa"); }
+    fpsAcc = 0; fpsN = 0;
+  }
+  requestAnimationFrame(laco);
+}
+
+/* põe cada elemento no lugar certo do tempo e com o volume certo */
+function sincronizaAudio(){
+  var t = TEMPO, k, em = clipeEm(t);
+  for(k = 0; k < PROJ.clipes.length; k++){
+    var c = PROJ.clipes[k];
+    if(!c.el || c.tipo === "foto") continue;
+    var ativo = em && em.i === k;
+    if(ativo && (TOCANDO || GRAVANDO)){
+      var alvo = c.ini + em.local * (c.vel || 1);
+      try{ c.el.playbackRate = Math.max(0.25, Math.min(4, c.vel || 1)); }catch(e){}
+      if(Math.abs(c.el.currentTime - alvo) > 0.30){ try{ c.el.currentTime = alvo; }catch(e){} }
+      poeVolume(c.el, (c.volume || 0) / 100);
+      if(c.el.paused) { var p = c.el.play(); if(p && p.catch) p.catch(function(){}); }
+    } else if(!c.el.paused){ try{ c.el.pause(); }catch(e){} }
+  }
+  for(k = 0; k < PROJ.pip.length; k++){
+    var o = PROJ.pip[k];
+    if(!o.el || o.tipo !== "video") continue;
+    if(t >= o.t0 && t <= o.t1 && (TOCANDO || GRAVANDO)){
+      if(Math.abs(o.el.currentTime - (t - o.t0)) > 0.30){
+        try{ o.el.currentTime = t - o.t0; }catch(e){}
+      }
+      poeVolume(o.el, 0.7);
+      if(o.el.paused){ var p2 = o.el.play(); if(p2 && p2.catch) p2.catch(function(){}); }
+    } else if(!o.el.paused){ try{ o.el.pause(); }catch(e){} }
+  }
+  for(k = 0; k < PROJ.audios.length; k++){
+    var a = PROJ.audios[k];
+    if(!a.el) continue;
+    if(t >= a.t0 && t <= a.t1 && (TOCANDO || GRAVANDO)){
+      var local = t - a.t0 + (a.ini || 0);
+      if(Math.abs(a.el.currentTime - local) > 0.30){ try{ a.el.currentTime = local; }catch(e){} }
+      /* ⭐ o fade: abre no começo e fecha no fim, e é o que separa um vídeo
+         caseiro de um vídeo cuidado. */
+      var v = (a.volume || 0) / 100;
+      if(a.fadeIn > 0) v *= Math.min(1, local / a.fadeIn);
+      if(a.fadeOut > 0) v *= Math.min(1, (a.t1 - t) / a.fadeOut);
+      poeVolume(a.el, Math.max(0, v));
+      if(a.el.paused){ var p3 = a.el.play(); if(p3 && p3.catch) p3.catch(function(){}); }
+    } else if(!a.el.paused){ try{ a.el.pause(); }catch(e){} }
+  }
+}
+
+/* ============================================================
+   EXPORTAR — e a verdade sobre o formato, dita na cara do aluno.
+   ⚠️ A exportação aqui é EM TEMPO REAL: o computador toca o vídeo inteiro e
+      grava a tela do palco enquanto ele passa. Três minutos de vídeo levam três
+      minutos. Programa de computador de verdade exporta mais rápido porque
+      calcula quadro a quadro sem tocar — o navegador não dá essa porta ao
+      `MediaRecorder`, e prometer o contrário seria mentira.
+   ⚠️ O FORMATO depende do navegador. O Chrome grava `.webm`; alguns navegadores
+      novos gravam `.mp4`. Pedimos o melhor que houver e DIZEMOS qual saiu.
+   ============================================================ */
+function formatoDeGravacao(){
+  var op = ["video/mp4;codecs=avc1.42E01E,mp4a.40.2", "video/mp4",
+            "video/webm;codecs=vp9,opus", "video/webm;codecs=vp8,opus", "video/webm"];
+  var k;
+  if(!window.MediaRecorder || !MediaRecorder.isTypeSupported) return "";
+  for(k = 0; k < op.length; k++) if(MediaRecorder.isTypeSupported(op[k])) return op[k];
+  return "";
+}
+
+var expMR = null, expPed = [], expTipo = "";
+function exportar(){
+  if(GRAVANDO){ pararExportacao(); return; }
+  if(!PROJ.clipes.length){
+    recado("Não há nada para exportar ainda.", "erro"); return;
+  }
+  if(!window.MediaRecorder || !cv.captureStream){
+    recado("Este navegador não sabe gravar vídeo. No Chrome ou no Firefox funciona.", "erro");
+    return;
+  }
+  audioCtx();
+  if(AC && AC.state === "suspended"){ try{ AC.resume(); }catch(e){} }
+
+  var fluxo;
+  try{ fluxo = cv.captureStream(30); }
+  catch(e){ recado("Não consegui capturar o palco.", "erro"); return; }
+  if(SAIDA && SAIDA.stream){
+    var faixas = SAIDA.stream.getAudioTracks(), j;
+    for(j = 0; j < faixas.length; j++) fluxo.addTrack(faixas[j]);
+  }
+  expTipo = formatoDeGravacao();
+  var m = medidaDaSaida();
+  var taxa = Math.round(m[0] * m[1] * 30 * 0.09);     /* ~0,09 bit por pixel por quadro */
+  try{
+    expMR = new MediaRecorder(fluxo, expTipo ?
+      {mimeType: expTipo, videoBitsPerSecond: taxa} : {videoBitsPerSecond: taxa});
+  }catch(e){ recado("Este navegador recusou gravar: " + e.message, "erro"); return; }
+
+  expPed = [];
+  expMR.ondataavailable = function(ev){ if(ev.data && ev.data.size) expPed.push(ev.data); };
+  expMR.onstop = salvaArquivo;
+
+  TEMPO = 0; agulhaPara(0);
+  GRAVANDO = true; TOCANDO = false;
+  ultimoT = performance.now();
+  $("btExportar").lastChild.nodeValue = " Parar";
+  $("btExportar").classList.add("lig");
+  recado("Exportando em tempo real — o vídeo está sendo tocado e gravado. " +
+         "<b>Não feche nem troque de aba.</b>", "");
+  expMR.start(1000);
+  requestAnimationFrame(laco);
+}
+
+function pararExportacao(){
+  GRAVANDO = false;
+  paraTudoQueSoa();
+  try{ if(expMR && expMR.state !== "inactive") expMR.stop(); }catch(e){}
+  $("btExportar").lastChild.nodeValue = " Exportar";
+  $("btExportar").classList.remove("lig");
+}
+
+function salvaArquivo(){
+  var mp4 = /mp4/.test(expTipo);
+  var b = new Blob(expPed, {type: expTipo || "video/webm"});
+  expPed = [];
+  var url = URL.createObjectURL(b);
+  var a = document.createElement("a");
+  a.href = url; a.download = "meu-video." + (mp4 ? "mp4" : "webm");
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 4000);
+  var mb = Math.round(b.size / 104857.6) / 10;
+  marca("exportou");
+  modal("<h2>Vídeo exportado</h2>" +
+    "<p>Saiu um arquivo <b>." + (mp4 ? "mp4" : "webm") + "</b> de <b>" + mb + " MB</b>, " +
+    "em " + medidaDaSaida()[0] + "×" + medidaDaSaida()[1] + ". Ele foi para a pasta de " +
+    "downloads deste computador.</p>" +
+    (mp4 ? "" :
+     "<div class='aviso'><b>Sobre o .webm:</b> este navegador só sabe gravar neste " +
+     "formato. Ele abre no Chrome, no Firefox, no celular e no YouTube — mas o " +
+     "PowerPoint e o reprodutor do Windows 7 <b>não</b> abrem. Para mostrar no " +
+     "projetor da sala, abra o arquivo pelo navegador, ou converta para .mp4 num " +
+     "conversor da escola.</div>") +
+    "<p style='font-size:12.8px;color:var(--fraco)'>Um editor de computador exporta " +
+    "mais rápido porque calcula quadro a quadro sem tocar o vídeo. O navegador não " +
+    "abre essa porta — por isso aqui leva o tempo do próprio vídeo. Saber a diferença " +
+    "entre <i>renderizar</i> e <i>gravar a tela</i> é parte do ofício.</p>");
+}
+
+/* ---------------- recados, relógio e o "redesenha tudo" ---------------- */
+var recTimer = null;
+function recado(txt, tipo){
+  var d = $("recado");
+  if(!d){ d = document.createElement("div"); d.id = "recado"; document.body.appendChild(d); }
+  d.className = "recado " + (tipo || "");
+  d.innerHTML = txt;
+  d.style.display = "block";
+  if(recTimer) clearTimeout(recTimer);
+  recTimer = setTimeout(function(){ d.style.display = "none"; }, 7000);
+}
+function relogio(){
+  var e = $("relogio");
+  if(e) e.innerHTML = "<b>" + seg(TEMPO).replace(" s","") + "</b> / " + seg(durTotal());
+}
+function tudo(){
+  redesenhaFita(); desenha(TEMPO); relogio(); confereMissoes();
+}
+/* ============================================================
+   A CAMADA QUE ENSINA — e a razão de ela existir separada do editor.
+   ⭐ Pedido do Marcos: *"que seja instrutivo para ensinar"*. Um editor solto na
+   mão da turma vira meia hora de mexer em filtro. O que faz virar AULA é ter,
+   ao lado, uma ordem de serviço curta — e, em cada uma, **por que aquilo
+   existe**. O "porquê" é o que sobra quando o aplicativo mudar de nome.
+   ⚠️ As missões se marcam sozinhas LENDO O PROJETO — não há botão de "já fiz".
+   Botão de "já fiz" mede a honestidade da criança, não o trabalho dela.
+   ============================================================ */
+var FEITO = {};
+function marca(k){ FEITO[k] = 1; confereMissoes(); }
+
+var MISSOES = [
+  {t:"Trazer o material",
+   f:"Toque em <b>Material</b> e traga um vídeo ou uma foto. Se ninguém tiver arquivo, " +
+     "o <b>Acervo</b> tem vídeos, fotos, trilhas e efeitos feitos pelo próprio programa — " +
+     "inclusive um clipe de <b>fundo verde</b> para treinar chroma sem cartolina.",
+   p:"Editar é escolher entre o que se tem. O editor não cria imagem: ele decide " +
+     "o que entra, em que ordem e por quanto tempo.",
+   ok:function(){ return PROJ.clipes.length > 0; }},
+
+  {t:"Aparar — tirar o que não presta",
+   f:"Escolha um clipe na fita, abra <b>Aparar</b> e mexa em <i>Começa em</i> e " +
+     "<i>Termina em</i> até sobrar só o pedaço bom.",
+   p:"É a ferramenta mais usada de todas, e a que mais melhora um vídeo. Quase " +
+     "todo vídeo caseiro é longo demais — o começo antes da ação e o fim depois " +
+     "dela é o que faz quem assiste desistir. E repare: <b>o arquivo continua " +
+     "inteiro</b>. Chama-se edição não-destrutiva, e é por isso que dá para voltar atrás.",
+   ok:function(){
+     var k; for(k = 0; k < PROJ.clipes.length; k++){
+       var c = PROJ.clipes[k];
+       if(c.ini > 0.05 || c.fim < c.fonteDur - 0.05) return true;
+     } return false; }},
+
+  {t:"Dividir e mudar a ordem",
+   f:"Leve a fita até o meio de um clipe, use <b>Dividir aqui</b> e depois " +
+     "<b>Mover</b> para trocar os pedaços de lugar.",
+   p:"A ordem é a narrativa. Os mesmos três pedaços contam histórias diferentes " +
+     "conforme quem vem primeiro — isso se chama montagem, e é a coisa mais " +
+     "antiga do cinema.",
+   ok:function(){ return !!FEITO.dividiu; }},
+
+  {t:"Escolher o formato da tela",
+   f:"Abra <b>Tela</b> e experimente 9:16, 1:1 e 16:9. Veja o que acontece com o " +
+     "fundo quando o vídeo não cabe.",
+   p:"Formato não é gosto: é onde o vídeo vai ser visto. 9:16 é o celular em pé; " +
+     "16:9 é o projetor da sala. Vídeo no formato errado aparece com tarjas pretas " +
+     "ou com a cabeça das pessoas cortada.",
+   ok:function(){ return !!FEITO.formato; }},
+
+  {t:"Escrever na tela",
+   f:"Abra <b>Texto</b>, acrescente um título e ajuste <i>Entra em</i> e <i>Sai em</i> " +
+     "para ele aparecer só no começo.",
+   p:"Texto em vídeo tem tempo próprio — e é isso que a turma mais demora a " +
+     "entender. Ele não fica o vídeo todo: entra, é lido, sai. Ligue o <b>contorno</b> " +
+     "e veja por quê: sem ele, a letra branca some num fundo claro.",
+   ok:function(){ return PROJ.textos.length > 0; }},
+
+  {t:"Emendar com uma transição",
+   f:"Com dois clipes na fita, abra <b>Transição</b> e experimente <i>Esmaecer</i>. " +
+     "Depois volte ao <i>Corte seco</i> e compare.",
+   p:"O corte seco é a transição mais usada do cinema — e ninguém repara nele, que " +
+     "é a intenção. Efeito em toda emenda cansa; guarde-o para quando o tempo ou o " +
+     "lugar mudam de verdade.",
+   ok:function(){
+     var k; for(k = 1; k < PROJ.clipes.length; k++)
+       if(PROJ.clipes[k].transicao && PROJ.clipes[k].transicao.tipo !== "corte") return true;
+     return false; }},
+
+  {t:"Mexer na velocidade",
+   f:"Abra <b>Velocidade</b> e ponha um clipe em 2× e outro em 0,5×. Olhe a fita: " +
+     "o pedaço mudou de largura.",
+   p:"Acelerar não corta nada — os mesmos quadros passam em menos tempo, e por isso " +
+     "o som fica agudo. É a ferramenta do <i>timelapse</i> e da câmera lenta, " +
+     "e mostra que tempo, no vídeo, é uma coisa que se manipula.",
+   ok:function(){
+     var k; for(k = 0; k < PROJ.clipes.length; k++)
+       if(Math.abs((PROJ.clipes[k].vel || 1) - 1) > 0.01) return true;
+     return false; }},
+
+  {t:"Pôr uma camada por cima (PIP)",
+   f:"Abra <b>Camada</b>, traga um segundo vídeo ou foto e ponha num canto. " +
+     "Se tiver um vídeo gravado em frente a uma parede verde, ligue o <b>fundo verde</b>.",
+   p:"PIP é <i>picture in picture</i>. E o fundo verde ensina uma coisa que vale por " +
+     "uma aula inteira: o computador <b>não entende</b> a pessoa — ele apaga os pixels " +
+     "parecidos com a cor escolhida. Quem estiver de camiseta verde some junto.",
+   ok:function(){
+     var k; for(k = 0; k < PROJ.pip.length; k++) if(PROJ.pip[k].el) return true;
+     return false; }},
+
+  {t:"Animar com keyframes",
+   f:"Com uma camada escolhida, marque um <b>keyframe</b> num instante, leve a fita " +
+     "para outro, mude o lugar dela e marque o segundo.",
+   p:"Esta é a palavra que separa <i>editar</i> de <i>animar</i>. Você diz como a coisa " +
+     "está em dois instantes e o programa inventa todos os do meio — chama-se " +
+     "interpolação, e é a mesma ideia em qualquer programa de animação do mundo.",
+   ok:function(){
+     var k; for(k = 0; k < PROJ.pip.length; k++)
+       if(PROJ.pip[k].keys && PROJ.pip[k].keys.length >= 2) return true;
+     return false; }},
+
+  {t:"Cuidar do som",
+   f:"Abra <b>Música</b> e traga uma trilha, ou <b>Voz</b> e narre por cima do vídeo. " +
+     "Depois ajuste <i>Abre em</i> e <i>Fecha em</i>.",
+   p:"Metade de um vídeo é o som — e é a metade que a turma esquece. Música que " +
+     "começa e termina de estalo incomoda quem assiste sem que a pessoa saiba por quê; " +
+     "o <i>fade</i> conserta isso em dois segundos.",
+   ok:function(){ return PROJ.audios.length > 0; }},
+
+  {t:"Exportar",
+   f:"Toque em <b>Exportar</b> e espere. O vídeo vai ser tocado inteiro enquanto é gravado.",
+   p:"Até aqui você tinha um <b>projeto</b>: uma lista de decisões. Exportar é o que " +
+     "transforma isso num <b>arquivo</b> que alguém pode assistir. E o tempo que leva " +
+     "ensina o resto — aqui se grava em tempo real; um editor de computador calcula " +
+     "quadro a quadro e por isso é mais rápido.",
+   ok:function(){ return !!FEITO.exportou; }}
+];
+
+var ultimoPlacar = -1;
+function confereMissoes(){
+  var feitas = 0, h = "", k;
+  for(k = 0; k < MISSOES.length; k++){
+    var m = MISSOES[k], ok = false;
+    try{ ok = !!m.ok(); }catch(e){ ok = false; }
+    if(ok) feitas++;
+    h += '<div class="missao' + (ok ? " feita" : "") + '">' +
+         '<div class="cab"><div class="n"><span>' + (k+1) + '</span></div>' +
+         '<div class="tit">' + m.t + '</div></div>' +
+         '<p>' + m.f + '</p>' +
+         '<div class="porque"><b>Por que isto existe:</b> ' + m.p + '</div></div>';
+  }
+  if(feitas === ultimoPlacar) return;      /* não repintar à toa durante a prévia */
+  ultimoPlacar = feitas;
+  $("listaM").innerHTML = h;
+  $("barraM").style.width = Math.round(feitas / MISSOES.length * 100) + "%";
+  if(feitas === MISSOES.length)
+    recado("As onze missões fechadas. Você sabe editar vídeo — em qualquer programa.", "bom");
+}
+
+/* ============================================================
+   AS PALAVRAS DO OFÍCIO — o que de fato sobra da aula.
+   ============================================================ */
+var GLOS = [
+  ["linha do tempo", "A fita onde o vídeo é montado, da esquerda para a direita. Cada pedaço ocupa um espaço proporcional ao tempo que dura."],
+  ["clipe", "Um pedaço de vídeo dentro do projeto. Dois clipes podem vir do mesmo arquivo — cada um com o seu começo e o seu fim."],
+  ["aparar (trim)", "Escolher o começo e o fim do pedaço que se usa, sem apagar nada do arquivo."],
+  ["dividir (split)", "Partir um clipe em dois no ponto onde está a agulha."],
+  ["edição não-destrutiva", "O editor guarda DECISÕES, não pixels: por isso dá para desfazer, e por isso o arquivo original nunca é estragado."],
+  ["faixa (track)", "Uma camada da linha do tempo. Aqui são quatro: vídeo, camada de cima, texto e som."],
+  ["camada / PIP", "Uma imagem por cima da outra — <i>picture in picture</i>."],
+  ["transição", "A costura entre dois clipes: corte seco, esmaecer, deslizar."],
+  ["keyframe", "Uma marca que diz COMO a coisa está num instante. Com dois, o programa inventa todos os instantes do meio."],
+  ["interpolação", "Justamente esse inventar do meio, entre dois keyframes."],
+  ["chroma key", "Apagar uma cor inteira da imagem — o tal fundo verde. O computador não reconhece a pessoa: ele só apaga a cor."],
+  ["proporção (razão)", "O formato do quadro: 9:16 em pé, 16:9 deitado, 1:1 quadrado."],
+  ["resolução", "Quantos pixels tem cada quadro. 1280×720 é HD; 360×640 é leve e roda em computador antigo."],
+  ["quadros por segundo (fps)", "Quantos desenhos passam em um segundo. Abaixo de uns 24, o olho percebe os solavancos."],
+  ["taxa de bits (bitrate)", "Quanto de dado cada segundo de vídeo gasta. Mais taxa, mais nítido e mais pesado."],
+  ["fade", "Abrir ou fechar aos poucos — o som ou a imagem."],
+  ["renderizar × gravar a tela", "Renderizar é calcular quadro a quadro, mais rápido que o vídeo. Gravar a tela é filmar a prévia em tempo real — é o que este editor faz."],
+  ["codec e contêiner", "O codec comprime (H.264, VP8); o contêiner embrulha (.mp4, .webm). Um arquivo .mp4 pode ter codecs diferentes dentro."]
+];
+function montaGlossario(){
+  var h = "", k;
+  for(k = 0; k < GLOS.length; k++) h += '<b data-g="' + k + '">' + GLOS[k][0] + '</b>';
+  $("glossario").innerHTML = h;
+  $("glossario").onclick = function(ev){
+    var b = ev.target.closest ? ev.target.closest("[data-g]") : null;
+    if(!b) return;
+    var i = parseInt(b.getAttribute("data-g"), 10);
+    var d = $("glosTxt");
+    d.classList.remove("oculto");
+    d.innerHTML = "<b>" + GLOS[i][0] + ":</b> " + GLOS[i][1];
+  };
+}
+
+/* ============================================================
+   LIMITES E CUIDADOS — dito na cara do aluno, não escondido.
+   ⚠️ Esta tela é de princípio: um editor que esconde o que não faz ensina a
+      criança a achar que computador é mágica. Dizer o limite é ensinar como a
+      coisa funciona por dentro.
+   ============================================================ */
+function montaLimites(){
+  $("txtLimites").innerHTML =
+    '<div class="aviso bom"><b>Nada sai deste computador.</b> Os arquivos entram, ' +
+    'viram um endereço interno da aba e são desenhados na tela. Não há upload, não há ' +
+    'servidor, não há conta. Como consequência: <b>fechou a aba, o projeto some</b> — ' +
+    'exporte antes de sair.</div>' +
+
+    '<div class="aviso"><b>A exportação é em tempo real.</b> Três minutos de vídeo levam ' +
+    'três minutos, porque o navegador grava a prévia enquanto ela toca. Um editor de ' +
+    'computador calcula quadro a quadro e por isso termina antes.</div>' +
+
+    '<div class="aviso"><b>Não há legenda automática.</b> Isso exigiria mandar a voz da ' +
+    'criança para um serviço de fora reconhecer. Essa decisão é da escola e da família, ' +
+    'não de um programa — então aqui a legenda se escreve com a ferramenta de <b>Texto</b>.</div>' +
+
+    '<div class="aviso"><b>Não há "apagar o fundo por inteligência artificial".</b> No ' +
+    'lugar há o <b>fundo verde</b>, que é honesto: ele mostra que a máquina só apaga uma ' +
+    'cor. Uma parede, um lençol ou uma cartolina verde resolvem na sala de aula.</div>' +
+
+    '<div class="aviso"><b>Cuidado com quem aparece.</b> Filmar e publicar colega, ' +
+    'professor ou criança pede autorização — é a lei, e é respeito. A ferramenta ' +
+    '<b>Figura → Tarja</b> existe para esconder rosto e nome quando for preciso.</div>' +
+
+    '<div class="aviso"><b>Música tem dono.</b> Trilha de rádio num vídeo publicado é ' +
+    'uso de obra alheia. Por isso as quatro trilhas e os seis efeitos do <b>Acervo</b> ' +
+    'são <b>compostos aqui dentro</b>, por osciladores: podem ser usados sem pedir ' +
+    'licença a ninguém.</div>' +
+
+    '<div class="aviso"><b>Não dá para inverter o vídeo (tocar de trás para frente).</b> ' +
+    'Para isso seria preciso guardar todos os quadros do clipe na memória ao mesmo ' +
+    'tempo — num vídeo de 30 segundos são quase mil imagens, e o computador da escola ' +
+    'tem 3,5 GB. É limite de máquina, não de vontade.</div>' +
+
+    '<div class="aviso"><b>O rascunho é deste computador.</b> Guardar (em ' +
+    '<b>Material → Guardar rascunho</b>) põe o projeto e os arquivos no banco deste ' +
+    'navegador, até 300 MB. Não é nuvem: em outro PC, ou com o histórico apagado, ' +
+    'o rascunho não está lá. O que viaja é o <b>arquivo exportado</b>.</div>' +
+
+    '<div class="aviso"><b>Também não há modelos prontos nem marca-d\'água para tirar.</b> ' +
+    'O vídeo sai como vocês montaram, limpo, e nada aqui cobra nada.</div>';
+}
+
+/* ---------------- o modal ---------------- */
+function modal(html){
+  $("cxmodal").innerHTML = html +
+    '<div class="linha" style="justify-content:flex-end;margin-bottom:0">' +
+    '<button type="button" class="bt pri" id="mdOk">Entendi</button></div>';
+  $("veu").classList.add("on");
+  $("mdOk").onclick = fechaModal;
+  $("mdOk").focus();
+}
+function fechaModal(){ $("veu").classList.remove("on"); }
+
+function telaAjuda(){
+  modal("<h2>O que é cada coisa nesta tela</h2>" +
+    "<p><b>O palco</b> (em cima) mostra o instante que está sob a agulha. É " +
+    "exatamente o que vai sair no arquivo exportado — mesma conta, mesmo desenho.</p>" +
+    "<p><b>A fita</b> (no meio) é a linha do tempo. A <b>agulha branca fica parada no " +
+    "meio</b> e quem anda é a fita: arraste-a com o dedo ou com o mouse. Quatro " +
+    "faixas, de cima para baixo: vídeo, camada de cima, texto e som.</p>" +
+    "<p><b>A barra de baixo</b> são as ferramentas, na mesma ordem dos aplicativos de " +
+    "celular. Toque numa e ela abre a sua gavetinha. <b>Primeiro se escolhe o pedaço " +
+    "na fita, depois a ferramenta.</b></p>" +
+    "<p><b>O número no canto do palco</b> é quantos quadros por segundo a prévia está " +
+    "conseguindo desenhar neste computador. Abaixo de 15 ele fica vermelho: aí vale " +
+    "baixar o tamanho no botão ao lado de <i>Exportar</i>. A prévia pode tropeçar; " +
+    "<b>o arquivo exportado não herda esse tropeço</b>, porque é gravado no ritmo do relógio.</p>" +
+    "<p style='color:var(--fraco);font-size:12.8px'>Atalhos: <b>barra de espaço</b> toca " +
+    "e pausa · <b>S</b> divide · <b>Delete</b> apaga o escolhido · <b>Ctrl+Z</b> desfaz " +
+    "· <b>←</b> e <b>→</b> andam um décimo de segundo · <b>F</b> congela o quadro · " +
+    "<b>Ctrl+Y</b> refaz. Na prévia: <b>arraste</b> o texto ou a camada com o dedo/mouse " +
+    "e use a <b>roda do mouse</b> para aumentar e diminuir.</p>");
+}
+
+/* ============================================================
+   O ACERVO — material de sobra para a aula, feito pelo próprio programa.
+   ⭐ PEDIDO DO MARCOS (24/set/2026): ***"seria legal se ele tivesse áudios e
+   vídeos como funciona no InShot, para que pudessem ser editados"***. E ele
+   está certo pelo motivo mais prático que existe: na aula de laboratório
+   sempre há quem não trouxe arquivo nenhum, e sem material não há aula.
+
+   ⚠️⚠️ POR QUE O ACERVO É **GERADO**, E NÃO BAIXADO — e isto é decisão, não
+   limitação. Vídeo e música de banco têm DONO. Pôr num site da escola um
+   trecho de trilha comercial é exatamente o que a própria tela "Limites e
+   cuidados" ensina a não fazer — o programa estaria desmentindo a aula. Aqui,
+   cada peça é desenhada e sintetizada na hora pelo navegador: **pesa zero byte
+   de download, não tem licença de terceiro, e é do aluno**.
+
+   ⭐ E o acervo foi ESCOLHIDO PARA ENSINAR, não para encher:
+     · o clipe de **FUNDO VERDE** existe para treinar chroma key sem precisar
+       de cartolina verde na sala;
+     · a **CENA DIA** e a **CENA NOITE** existem porque transição só se entende
+       comparando duas imagens muito diferentes;
+     · a **CONTAGEM 3-2-1** existe porque aparar no ponto certo se aprende com
+       um alvo exato;
+     · as **BARRAS DE COR** são o padrão de teste que a televisão usa desde
+       sempre, e servem para ver o que o filtro faz com cada cor.
+   ============================================================ */
+
+/* ---------- as cenas de vídeo (desenhadas quadro a quadro) ---------- */
+var CENAS = [
+  {k:"quadros", n:"Contador de quadros", dur:3,
+   d:function(x,W,H,p,q){
+     var g = x.createLinearGradient(0,0,0,H);
+     g.addColorStop(0,"#15243a"); g.addColorStop(1,"#0a1119");
+     x.fillStyle=g; x.fillRect(0,0,W,H);
+     var i, cor=["#ff5b6e","#3fc4b4","#f2c14e","#7d8cff","#5ec27a","#e07be0","#4aa3e0"];
+     for(i=0;i<7;i++){ var a=p*6.28+i*0.9; x.fillStyle=cor[i]; x.beginPath();
+       x.arc(W/2+Math.cos(a)*W*(0.17+i*0.036), H/2+Math.sin(a*1.3)*H*(0.14+i*0.017),
+             W*(0.036+i*0.006),0,6.29); x.fill(); }
+     x.fillStyle="#fff"; x.textAlign="center";
+     x.font="800 "+Math.round(W*0.081)+"px Segoe UI, sans-serif";
+     x.fillText("quadro "+q, W/2, H*0.16);
+     x.font="600 "+Math.round(W*0.042)+"px Segoe UI, sans-serif"; x.fillStyle="#9fd8ff";
+     x.fillText("um vídeo é uma pilha de quadros", W/2, H*0.20);
+   }},
+
+  {k:"verde", n:"Fundo verde (para chroma)", dur:4,
+   d:function(x,W,H,p,q){
+     /* ⚠️ o verde é o `#00c853`, o MESMO que a ferramenta de chroma traz por
+        padrão — assim a primeira tentativa da criança dá certo, e só depois
+        ela mexe na tolerância para entender o que o número faz. */
+     x.fillStyle="#00c853"; x.fillRect(0,0,W,H);
+     var a=p*6.28;
+     x.fillStyle="#ffffff"; x.beginPath();
+     x.arc(W*(0.5+Math.cos(a)*0.28), H*(0.5+Math.sin(a*1.7)*0.22), W*0.13, 0, 6.29); x.fill();
+     x.fillStyle="#1b2a3a"; x.textAlign="center";
+     x.font="800 "+Math.round(W*0.062)+"px Segoe UI, sans-serif";
+     x.fillText("ponha isto POR CIMA", W/2, H*0.13);
+     x.font="600 "+Math.round(W*0.038)+"px Segoe UI, sans-serif";
+     x.fillText("e ligue o fundo verde", W/2, H*0.185);
+   }},
+
+  {k:"dia", n:"Cena A — dia", dur:3,
+   d:function(x,W,H,p,q){
+     var g=x.createLinearGradient(0,0,0,H*0.7);
+     g.addColorStop(0,"#7cc7f0"); g.addColorStop(1,"#ffd9a0");
+     x.fillStyle=g; x.fillRect(0,0,W,H);
+     x.fillStyle="#fff3b0"; x.beginPath();
+     x.arc(W*0.74, H*(0.20-p*0.02), W*0.10, 0, 6.29); x.fill();
+     x.fillStyle="#3f8f57";
+     x.beginPath(); x.moveTo(0,H*0.72);
+     x.quadraticCurveTo(W*0.3,H*0.58,W*0.62,H*0.70);
+     x.quadraticCurveTo(W*0.85,H*0.78,W,H*0.66); x.lineTo(W,H); x.lineTo(0,H);
+     x.closePath(); x.fill();
+     x.fillStyle="#2f6e43";
+     x.beginPath(); x.moveTo(0,H*0.84);
+     x.quadraticCurveTo(W*0.45,H*0.74,W,H*0.86); x.lineTo(W,H); x.lineTo(0,H);
+     x.closePath(); x.fill();
+     var i; x.fillStyle="#ffffffcc";
+     for(i=0;i<3;i++){ var nx=((p*0.06+i*0.35)%1.2-0.1)*W;
+       x.beginPath(); x.ellipse(nx, H*(0.18+i*0.07), W*0.11, W*0.045, 0, 0, 6.29); x.fill(); }
+   }},
+
+  {k:"noite", n:"Cena B — noite", dur:3,
+   d:function(x,W,H,p,q){
+     var g=x.createLinearGradient(0,0,0,H);
+     g.addColorStop(0,"#0b1030"); g.addColorStop(1,"#241a3a");
+     x.fillStyle=g; x.fillRect(0,0,W,H);
+     var i; x.fillStyle="#ffffff";
+     for(i=0;i<60;i++){
+       var sx=((i*97)%100)/100*W, sy=((i*53)%70)/100*H;
+       var br=0.35+0.65*Math.abs(Math.sin(p*6.28+i));
+       x.globalAlpha=br; x.fillRect(sx, sy, W*0.006, W*0.006);
+     }
+     x.globalAlpha=1;
+     x.fillStyle="#e8e6d0"; x.beginPath(); x.arc(W*0.26,H*0.18,W*0.075,0,6.29); x.fill();
+     x.fillStyle="#141a30";
+     x.beginPath(); x.moveTo(0,H*0.78);
+     x.quadraticCurveTo(W*0.35,H*0.60,W*0.7,H*0.76);
+     x.quadraticCurveTo(W*0.9,H*0.84,W,H*0.72); x.lineTo(W,H); x.lineTo(0,H);
+     x.closePath(); x.fill();
+   }},
+
+  {k:"contagem", n:"Contagem 3 · 2 · 1", dur:4,
+   d:function(x,W,H,p,q){
+     var n=Math.max(1, 4-Math.ceil(p*4+0.0001));
+     var dentro=(p*4)%1;
+     x.fillStyle="#12151c"; x.fillRect(0,0,W,H);
+     x.strokeStyle="#2a3140"; x.lineWidth=Math.max(2,W*0.006);
+     var i; for(i=1;i<4;i++){ x.beginPath(); x.moveTo(i*W/4,0); x.lineTo(i*W/4,H); x.stroke();
+                              x.beginPath(); x.moveTo(0,i*H/4); x.lineTo(W,i*H/4); x.stroke(); }
+     x.strokeStyle="#ff5b6e"; x.lineWidth=Math.max(3,W*0.018);
+     x.beginPath(); x.arc(W/2,H/2,W*0.26,-1.57,-1.57+6.283*(1-dentro)); x.stroke();
+     x.fillStyle="#ffffff"; x.textAlign="center"; x.textBaseline="middle";
+     x.font="800 "+Math.round(W*0.30)+"px Segoe UI, sans-serif";
+     x.fillText(String(n), W/2, H/2);
+     x.textBaseline="alphabetic";
+     x.font="600 "+Math.round(W*0.040)+"px Segoe UI, sans-serif"; x.fillStyle="#9aa8b8";
+     x.fillText("apare exatamente no 1", W/2, H*0.88);
+   }},
+
+  {k:"barras", n:"Barras de cor (padrão de teste)", dur:3,
+   d:function(x,W,H,p,q){
+     var c=["#c0c0c0","#c0c000","#00c0c0","#00c000","#c000c0","#c00000","#0000c0"], i;
+     for(i=0;i<7;i++){ x.fillStyle=c[i]; x.fillRect(i*W/7, 0, W/7+1, H*0.78); }
+     x.fillStyle="#101010"; x.fillRect(0,H*0.78,W,H*0.22);
+     for(i=0;i<8;i++){ var v=Math.round(255*i/7);
+       x.fillStyle="rgb("+v+","+v+","+v+")"; x.fillRect(i*W/8, H*0.82, W/8+1, H*0.10); }
+     x.fillStyle="#fff"; x.textAlign="center";
+     x.font="600 "+Math.round(W*0.034)+"px Segoe UI, sans-serif";
+     x.fillText("ligue um filtro e veja o que ele faz com cada cor", W/2, H*0.97);
+   }}
+];
+
+/* ---------- as fotos (instantâneas: não precisam de gravador) ---------- */
+var FOTOS = [
+  {k:"titulo", n:"Cartão de título",
+   d:function(x,W,H){
+     var g=x.createLinearGradient(0,0,W,H);
+     g.addColorStop(0,"#1d2b53"); g.addColorStop(1,"#7e2553");
+     x.fillStyle=g; x.fillRect(0,0,W,H);
+     x.strokeStyle="#ffffff55"; x.lineWidth=W*0.008;
+     x.strokeRect(W*0.08,H*0.08,W*0.84,H*0.84);
+     x.fillStyle="#fff"; x.textAlign="center";
+     x.font="800 "+Math.round(W*0.10)+"px Georgia, serif";
+     x.fillText("O TÍTULO", W/2, H*0.48);
+     x.font="600 "+Math.round(W*0.045)+"px Segoe UI, sans-serif"; x.fillStyle="#ffd9a0";
+     x.fillText("escreva o seu por cima", W/2, H*0.57);
+   }},
+  {k:"grade", n:"Grade de referência",
+   d:function(x,W,H){
+     x.fillStyle="#16202b"; x.fillRect(0,0,W,H);
+     var i; x.strokeStyle="#33475c"; x.lineWidth=Math.max(1,W*0.004);
+     for(i=1;i<3;i++){ x.beginPath(); x.moveTo(i*W/3,0); x.lineTo(i*W/3,H); x.stroke();
+                       x.beginPath(); x.moveTo(0,i*H/3); x.lineTo(W,i*H/3); x.stroke(); }
+     x.fillStyle="#7fd4c8"; x.textAlign="center";
+     x.font="600 "+Math.round(W*0.038)+"px Segoe UI, sans-serif";
+     x.fillText("regra dos terços", W/2, H*0.08);
+     x.font="500 "+Math.round(W*0.030)+"px Segoe UI, sans-serif"; x.fillStyle="#8d9db0";
+     x.fillText("o assunto fica num cruzamento,", W/2, H*0.93);
+     x.fillText("não no meio", W/2, H*0.97);
+   }},
+  {k:"paisagem", n:"Paisagem",
+   d:function(x,W,H){
+     var g=x.createLinearGradient(0,0,0,H*0.65);
+     g.addColorStop(0,"#ff9a5b"); g.addColorStop(1,"#ffd9a0");
+     x.fillStyle=g; x.fillRect(0,0,W,H);
+     x.fillStyle="#ff7a45"; x.beginPath(); x.arc(W*0.5,H*0.52,W*0.16,0,6.29); x.fill();
+     x.fillStyle="#6b3f5e";
+     x.beginPath(); x.moveTo(0,H*0.66); x.lineTo(W*0.28,H*0.44); x.lineTo(W*0.52,H*0.66);
+     x.lineTo(W*0.74,H*0.48); x.lineTo(W,H*0.68); x.lineTo(W,H); x.lineTo(0,H);
+     x.closePath(); x.fill();
+     x.fillStyle="#3a2338";
+     x.beginPath(); x.moveTo(0,H*0.80); x.quadraticCurveTo(W*0.5,H*0.68,W,H*0.82);
+     x.lineTo(W,H); x.lineTo(0,H); x.closePath(); x.fill();
+   }},
+  {k:"retrato", n:"Figura geométrica",
+   d:function(x,W,H){
+     x.fillStyle="#0f1620"; x.fillRect(0,0,W,H);
+     var i, c=["#ff5b6e","#3fc4b4","#f2c14e","#7d8cff"];
+     for(i=0;i<4;i++){
+       x.fillStyle=c[i]; x.globalAlpha=0.85;
+       x.beginPath();
+       x.arc(W*(0.32+0.12*i), H*(0.40+0.06*(i%2)), W*0.17, 0, 6.29);
+       x.fill();
+     }
+     x.globalAlpha=1;
+   }}
+];
+
+/* ---------- desenhar uma cena e gravá-la como vídeo ---------- */
+function fazCena(cena){
+  var m = medidaDaSaida();
+  var c = document.createElement("canvas"); c.width = m[0]; c.height = m[1];
+  var x = c.getContext("2d"), q = 0, W = m[0], H = m[1];
+  var st, mr, tipo = formatoDeGravacao();
+  try{ st = c.captureStream(30); mr = new MediaRecorder(st, tipo ? {mimeType: tipo} : {}); }
+  catch(e){ recado("Este navegador não sabe gravar vídeo — o acervo de vídeo não dá aqui. " +
+                   "As fotos e os sons continuam funcionando.", "erro"); return; }
+  var ped = [];
+  mr.ondataavailable = function(ev){ if(ev.data && ev.data.size) ped.push(ev.data); };
+  mr.onstop = function(){
+    var b = new Blob(ped, {type: tipo || "video/webm"});
+    trazArquivos([new File([b], cena.n + (/mp4/.test(tipo) ? ".mp4" : ".webm"), {type: b.type})]);
+  };
+  recado("Desenhando “" + cena.n + "” — " + cena.dur + " segundos…", "");
+  mr.start();
+  var t0 = performance.now();
+  (function passo(){
+    var p = (performance.now() - t0) / (cena.dur * 1000);
+    if(p >= 1){ try{ mr.stop(); }catch(e){} return; }
+    q++;
+    x.save(); x.textBaseline = "alphabetic"; x.textAlign = "start";
+    cena.d(x, W, H, p, q);
+    x.restore();
+    requestAnimationFrame(passo);
+  })();
+}
+
+/* ⚠️ o que o programa DESENHA também precisa virar arquivo, senão o rascunho
+   volta sem o acervo e sem os congelados. `data:` -> Blob em quatro linhas. */
+function dataParaBlob(d){
+  try{
+    var p = d.split(","), bin = atob(p[1]), n = bin.length, a = new Uint8Array(n), i;
+    for(i = 0; i < n; i++) a[i] = bin.charCodeAt(i);
+    return new Blob([a], {type: (p[0].match(/:(.*?);/) || [,"image/jpeg"])[1]});
+  }catch(e){ return null; }
+}
+function fazFoto(f, paraPip){
+  var m = medidaDaSaida();
+  var c = document.createElement("canvas"); c.width = m[0]; c.height = m[1];
+  var x = c.getContext("2d");
+  f.d(x, m[0], m[1]);
+  var url;
+  try{ url = c.toDataURL("image/jpeg", 0.88); }
+  catch(e){ recado("Não consegui gerar a foto.", "erro"); return; }
+  var im = new Image();
+  im.onload = function(){
+    guardaPasso();
+    if(paraPip){
+      var blF = dataParaBlob(url);
+      if(blF) poeArquivo(im, new File([blF], f.n + ".jpg", {type: "image/jpeg"}));
+      PROJ.pip.push({id: novoId(), tipo: "foto", el: im, url: url, nome: f.n, mini: url,
+        x: 0.5, y: 0.5, esc: 0.5, op: 1, keys: [], mistura: "normal", mascara: "nenhuma",
+        chroma: {on: false, cor: "#00c853", tol: 40},
+        t0: Math.round(TEMPO*10)/10, t1: Math.round(TEMPO*10)/10 + 4});
+      selecionar("pip", PROJ.pip.length - 1);
+    } else {
+      var cl = novoClipe({tipo: "foto", el: im, dur: 3, max: 30, nome: f.n, url: url});
+      cl.mini = url;
+      var bl = dataParaBlob(url);
+      if(bl) poeArquivo(im, new File([bl], f.n + ".jpg", {type: "image/jpeg"}));
+      PROJ.clipes.push(cl);
+      selecionar("clipes", PROJ.clipes.length - 1);
+    }
+    tudo();
+  };
+  im.src = url;
+}
+
+/* ============================================================
+   OS SONS — sintetizados, não gravados.
+   ⚠️ Mesma razão do vídeo: música tem dono. Estas quatro trilhas e estes seis
+   efeitos nascem de osciladores dentro do próprio navegador, num
+   `OfflineAudioContext` (que calcula o som mais rápido que o tempo real) e
+   viram um arquivo WAV na memória. Não há download, não há licença, e a
+   criança pode usar o resultado onde quiser.
+   ⚠️ São MONO e a 22.050 amostras por segundo: um minuto assim pesa ~2,5 MB,
+   contra 10 MB em estéreo de 44.100. No PC de 3,5 GB isso importa.
+   ============================================================ */
+var TAXA = 22050;
+
+function paraWav(buf){
+  var n = buf.length, d = buf.getChannelData(0);
+  var ab = new ArrayBuffer(44 + n * 2), v = new DataView(ab), i;
+  function txt(p, s){ for(i = 0; i < s.length; i++) v.setUint8(p + i, s.charCodeAt(i)); }
+  txt(0, "RIFF"); v.setUint32(4, 36 + n * 2, true); txt(8, "WAVEfmt ");
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, buf.sampleRate, true); v.setUint32(28, buf.sampleRate * 2, true);
+  v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  txt(36, "data"); v.setUint32(40, n * 2, true);
+  for(i = 0; i < n; i++){
+    var a = Math.max(-1, Math.min(1, d[i]));
+    v.setInt16(44 + i * 2, a < 0 ? a * 0x8000 : a * 0x7FFF, true);
+  }
+  return new Blob([ab], {type: "audio/wav"});
+}
+
+function offline(dur){
+  var C = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if(!C) return null;
+  try{ return new C(1, Math.ceil(TAXA * dur), TAXA); }catch(e){ return null; }
+}
+
+/* uma nota: oscilador + envelope. É o tijolo de todas as trilhas. */
+function nota(ac, dest, tipo, freq, t, dur, vol, ataque){
+  var o = ac.createOscillator(), g = ac.createGain();
+  o.type = tipo; o.frequency.value = freq;
+  var a = ataque === undefined ? 0.01 : ataque;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + a);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(dest);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+function ruido(ac, dest, t, dur, vol, corte){
+  var n = Math.ceil(TAXA * dur), b = ac.createBuffer(1, n, TAXA), d = b.getChannelData(0), i;
+  for(i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  var s = ac.createBufferSource(); s.buffer = b;
+  var f = ac.createBiquadFilter(); f.type = "lowpass"; f.frequency.value = corte || 6000;
+  var g = ac.createGain(); g.gain.value = vol;
+  s.connect(f); f.connect(g); g.connect(dest);
+  s.start(t);
+}
+
+var TRILHAS = [
+  {k:"calma", n:"Calma", dur:16, bpm:72, esc:[0,3,5,7,10], onda:"sine", pad:true},
+  {k:"alegre", n:"Alegre", dur:16, bpm:120, esc:[0,2,4,7,9], onda:"triangle", pad:false},
+  {k:"aventura", n:"Aventura", dur:16, bpm:104, esc:[0,2,3,5,7,10], onda:"sawtooth", pad:false},
+  {k:"suspense", n:"Suspense", dur:16, bpm:60, esc:[0,1,5,6,8], onda:"sine", pad:true}
+];
+
+function fazTrilha(t){
+  var ac = offline(t.dur);
+  if(!ac){ recado("Este navegador não sabe sintetizar som.", "erro"); return; }
+  var mest = ac.createGain(); mest.gain.value = 0.9; mest.connect(ac.destination);
+  var comp = ac.createDynamicsCompressor ? ac.createDynamicsCompressor() : null;
+  if(comp){ comp.connect(ac.destination); mest.disconnect(); mest.connect(comp); }
+
+  var bat = 60 / t.bpm, base = 220, i, passo = 0;
+  /* ⚠️ o acaso aqui é SEMEADO por uma conta simples, não por Math.random: duas
+     gerações da mesma trilha têm de soar iguais, senão a criança grava uma
+     versão e recupera outra. */
+  function sorte(n){ return ((n * 9301 + 49297) % 233280) / 233280; }
+  for(i = 0; i * bat < t.dur - 0.4; i++){
+    var tt = i * bat;
+    /* grave (o "chão" da música) */
+    if(i % 2 === 0) nota(ac, mest, "sine", base / 2 * Math.pow(2, t.esc[0] / 12), tt, bat * 1.8, 0.22, 0.02);
+    /* melodia */
+    var gr = t.esc[Math.floor(sorte(i + 7) * t.esc.length)];
+    nota(ac, mest, t.onda, base * Math.pow(2, gr / 12), tt, bat * 0.9, 0.16, 0.015);
+    if(!t.pad && i % 2 === 1){
+      var g2 = t.esc[Math.floor(sorte(i + 31) * t.esc.length)];
+      nota(ac, mest, t.onda, base * 2 * Math.pow(2, g2 / 12), tt + bat * 0.5, bat * 0.4, 0.09, 0.01);
+    }
+    /* marcação: bumbo e chimbal */
+    if(!t.pad){
+      ruido(ac, mest, tt, 0.10, 0.10, 2200);
+      if(i % 2 === 1) ruido(ac, mest, tt + bat * 0.5, 0.05, 0.05, 9000);
+    }
+    passo++;
+  }
+  /* almofada de fundo, longa, para as trilhas calmas */
+  if(t.pad){
+    nota(ac, mest, "sine", base / 2, 0, t.dur - 0.2, 0.10, 1.2);
+    nota(ac, mest, "sine", base / 2 * Math.pow(2, t.esc[2] / 12), 0, t.dur - 0.2, 0.07, 2.0);
+  }
+  recado("Compondo “" + t.n + "”…", "");
+  ac.startRendering().then(function(buf){
+    var b = paraWav(buf);
+    trazAudio(new File([b], "trilha-" + t.k + ".wav", {type: "audio/wav"}), "musica");
+    recado("Trilha “" + t.n + "” na fita. Ela foi COMPOSTA agora, aqui dentro — " +
+           "por isso pode ser usada sem pedir licença a ninguém.", "bom");
+  }, function(){ recado("Não consegui compor a trilha.", "erro"); });
+}
+
+var EFEITOS = [
+  {k:"pop", n:"Pop"}, {k:"ding", n:"Ding"}, {k:"vento", n:"Vento (whoosh)"},
+  {k:"tambor", n:"Tambor"}, {k:"clique", n:"Clique"}, {k:"palmas", n:"Palmas"}
+];
+function fazEfeito(k){
+  var dur = k === "palmas" ? 1.6 : (k === "vento" ? 0.8 : 0.6);
+  var ac = offline(dur);
+  if(!ac){ recado("Este navegador não sabe sintetizar som.", "erro"); return; }
+  var g = ac.createGain(); g.gain.value = 0.9; g.connect(ac.destination);
+  if(k === "pop"){
+    var o = ac.createOscillator(), gg = ac.createGain();
+    o.type = "sine"; o.frequency.setValueAtTime(760, 0);
+    o.frequency.exponentialRampToValueAtTime(180, 0.12);
+    gg.gain.setValueAtTime(0.5, 0); gg.gain.exponentialRampToValueAtTime(0.001, 0.16);
+    o.connect(gg); gg.connect(g); o.start(0); o.stop(0.2);
+  } else if(k === "ding"){
+    nota(ac, g, "sine", 1318, 0, 0.5, 0.35, 0.004);
+    nota(ac, g, "sine", 1975, 0.005, 0.45, 0.18, 0.004);
+  } else if(k === "vento"){
+    ruido(ac, g, 0, 0.75, 0.45, 1200);
+    ruido(ac, g, 0.05, 0.6, 0.30, 5200);
+  } else if(k === "tambor"){
+    var o2 = ac.createOscillator(), g2 = ac.createGain();
+    o2.type = "sine"; o2.frequency.setValueAtTime(160, 0);
+    o2.frequency.exponentialRampToValueAtTime(42, 0.35);
+    g2.gain.setValueAtTime(0.7, 0); g2.gain.exponentialRampToValueAtTime(0.001, 0.5);
+    o2.connect(g2); g2.connect(g); o2.start(0); o2.stop(0.55);
+  } else if(k === "clique"){
+    ruido(ac, g, 0, 0.04, 0.5, 8000);
+  } else {
+    var i;
+    for(i = 0; i < 14; i++) ruido(ac, g, i * 0.085 + (i % 3) * 0.012, 0.09, 0.22, 4200);
+  }
+  ac.startRendering().then(function(buf){
+    trazAudio(new File([paraWav(buf)], "efeito-" + k + ".wav", {type: "audio/wav"}), "efeito");
+  }, function(){ recado("Não consegui gerar o efeito.", "erro"); });
+}
+
+/* ============================================================
+   CONGELAR O QUADRO — a foto tirada de dentro do próprio vídeo.
+   ⚠️ Ela captura SÓ A IMAGEM DO CLIPE, sem os textos e sem as camadas: um
+      congelado que trouxesse a legenda junto ficaria com a legenda impressa
+      "duas vezes" quando o texto continuasse passando por cima.
+   ============================================================ */
+function congelar(){
+  var em = clipeEm(TEMPO);
+  if(!em || !PROJ.clipes.length){ recado("Não há clipe sob a agulha.", "erro"); return; }
+  desenha(TEMPO, true);          /* só o clipe */
+  var url;
+  try{ url = cv.toDataURL("image/jpeg", 0.92); }
+  catch(e){ desenha(TEMPO); recado("Não consegui congelar este quadro.", "erro"); return; }
+  desenha(TEMPO);
+  var im = new Image();
+  im.onload = function(){
+    guardaPasso();
+    var c = novoClipe({tipo: "foto", el: im, dur: 2, max: 30, nome: "congelado", url: url});
+    c.mini = url;
+    var bc = dataParaBlob(url);
+    if(bc) poeArquivo(im, new File([bc], "congelado.jpg", {type: "image/jpeg"}));
+    PROJ.clipes.splice(em.i + 1, 0, c);
+    selecionar("clipes", em.i + 1);
+    tudo();
+    recado("Quadro congelado e posto logo depois. É assim que se dá tempo para " +
+           "o espectador ler um texto ou olhar um detalhe.", "bom");
+  };
+  im.src = url;
+}
+
+/* ============================================================
+   ARRASTAR DIRETO NA PRÉVIA — e por que isto não é conforto, é o gesto.
+   ⭐ No aplicativo de celular ninguém posiciona um texto com um controle
+   deslizante: pega-se o texto com o dedo e leva-se para o lugar. Sem isto, o
+   editor "parece" o original mas não se USA como ele.
+   ⚠️ `setPointerCapture` é o que faz a peça continuar seguindo o dedo mesmo
+   quando ele sai de cima dela — regra da casa, paga caro em outra atividade.
+   ⚠️ E as coordenadas vêm do `getBoundingClientRect`, nunca do tamanho do
+   canvas: o palco é mostrado ENCOLHIDO pelo CSS, e usar `cv.width` aqui faria
+   a peça andar três vezes mais que o dedo.
+   ============================================================ */
+function caixaDe(o, t){
+  var W = cv.width, H = cv.height;
+  if(o.forma){
+    var s = W * o.esc;
+    return {w: s / W, h: (s * 0.7) / H};
+  }
+  if(o.txt !== undefined){
+    var tam = Math.round(W * (o.tam / 100));
+    ctx.save();
+    ctx.font = (o.negrito ? "800 " : "600 ") + tam + "px " + (o.fonte || "sans-serif");
+    var linhas = String(o.txt || "").split("\n"), larg = 10, j;
+    for(j = 0; j < linhas.length; j++) larg = Math.max(larg, ctx.measureText(linhas[j]).width);
+    ctx.restore();
+    return {w: larg / W, h: (linhas.length * tam * 1.16) / H};
+  }
+  var el = o.el; if(!el) return {w: 0.2, h: 0.2};
+  var lw = o.tipo === "foto" ? el.naturalWidth : el.videoWidth;
+  var lh = o.tipo === "foto" ? el.naturalHeight : el.videoHeight;
+  var w = W * o.esc, h = w * ((lh || 1) / (lw || 1));
+  return {w: w / W, h: h / H};
+}
+function achaNoPalco(nx, ny){
+  var listas = [["textos", PROJ.textos], ["pip", PROJ.pip]], j, k;
+  var achado = null;
+  for(j = 0; j < listas.length; j++){
+    var nome = listas[j][0], L = listas[j][1];
+    for(k = 0; k < L.length; k++){
+      var o = L[k];
+      if(TEMPO < o.t0 || TEMPO > o.t1) continue;
+      var st = (nome === "pip") ? estadoPip(o, TEMPO) : o;
+      var c = caixaDe(o, TEMPO);
+      var meia = Math.max(0.04, c.w / 2), meib = Math.max(0.04, c.h / 2);
+      if(Math.abs(nx - st.x) <= meia && Math.abs(ny - st.y) <= meib)
+        achado = {faixa: nome, i: k, o: o};     /* o último que casa é o de cima */
+    }
+  }
+  return achado;
+}
+function ligaPalco(){
+  var pega = null, dx = 0, dy = 0, mexeu = false;
+  function loc(ev){
+    var r = cv.getBoundingClientRect();
+    return {x: (ev.clientX - r.left) / r.width, y: (ev.clientY - r.top) / r.height};
+  }
+  cv.addEventListener("pointerdown", function(ev){
+    var p = loc(ev), a = achaNoPalco(p.x, p.y);
+    if(!a) return;
+    pega = a; mexeu = false;
+    dx = p.x - a.o.x; dy = p.y - a.o.y;
+    selecionar(a.faixa, a.i);
+    try{ cv.setPointerCapture(ev.pointerId); }catch(e){}
+    ev.preventDefault();
+  });
+  cv.addEventListener("pointermove", function(ev){
+    if(!pega) return;
+    if(!mexeu){ guardaPasso(); mexeu = true; }
+    var p = loc(ev);
+    pega.o.x = Math.max(0, Math.min(1, p.x - dx));
+    pega.o.y = Math.max(0, Math.min(1, p.y - dy));
+    desenha(TEMPO);
+  });
+  function solta(){
+    if(!pega) return;
+    pega = null;
+    tudo();
+    if(gavetaAberta) abreGaveta(gavetaAberta);
+  }
+  cv.addEventListener("pointerup", solta);
+  cv.addEventListener("pointercancel", solta);
+
+  /* a roda do mouse redimensiona o que estiver escolhido — no PC da escola é o
+     equivalente do "pinçar com dois dedos" do celular. */
+  cv.addEventListener("wheel", function(ev){
+    var o = selObj();
+    if(!o || (SEL.faixa !== "textos" && SEL.faixa !== "pip")) return;
+    ev.preventDefault();
+    var f = ev.deltaY < 0 ? 1.06 : 0.94;
+    if(o.tam !== undefined) o.tam = num(o.tam * f, 3, 18);
+    else o.esc = num(o.esc * f, 0.05, 1.4);
+    desenha(TEMPO);
+    if(gavetaAberta) abreGaveta(gavetaAberta);
+  }, {passive: false});
+}
+
+/* ============================================================
+   REFAZER — o irmão do desfazer, e ele custa cinco linhas.
+   ⚠️ A pilha de refazer se ESVAZIA a cada passo novo, e tem de ser assim: se
+      a criança desfaz três vezes e então muda outra coisa, o futuro que ela
+      tinha desfeito deixou de existir.
+   ============================================================ */
+var REFAZ = [];
+function refazer(){
+  if(!REFAZ.length){ recado("Não há nada para refazer.", ""); return; }
+  var p = REFAZ.pop();
+  HIST.push(retrato());
+  aplicaRetrato(p);
+  recado("Refeito.", "");
+  marcaBotoesHistoria();
+}
+function aplicaRetrato(p){
+  var novo = JSON.parse(p.txt, function(k, v){
+    if(typeof v === "string" && /^#el\d+$/.test(v)) return p.els[parseInt(v.slice(3), 10)];
+    return v;
+  });
+  var k;
+  for(k in novo){ if(novo.hasOwnProperty(k)) PROJ[k] = novo[k]; }
+  selecionar(null);
+  aplicaRazao(); tudo();
+}
+function marcaBotoesHistoria(){
+  var a = $("btDesfazer"), b = $("btRefazer");
+  if(a) a.disabled = !HIST.length;
+  if(b) b.disabled = !REFAZ.length;
+}
+
+/* ---------------- ACERVO (o material que o programa faz) ---------------- */
+GAVETAS.acervo = function(){
+  var g = $("gaveta"), h = cab("Acervo — feito aqui dentro"), k;
+  h += '<h4>Vídeos</h4><div class="grade" id="acCenas">';
+  for(k = 0; k < CENAS.length; k++)
+    h += '<button type="button" class="bt" data-v="' + CENAS[k].k + '">' +
+         esc(CENAS[k].n) + '<i style="font-size:11px;opacity:.7">' + CENAS[k].dur + ' s</i></button>';
+  h += '</div><h4>Fotos</h4><div class="grade" id="acFotos">';
+  for(k = 0; k < FOTOS.length; k++)
+    h += '<button type="button" class="bt" data-v="' + FOTOS[k].k + '">' + esc(FOTOS[k].n) + '</button>';
+  h += '</div><h4>Trilhas</h4><div class="grade" id="acTrilhas">';
+  for(k = 0; k < TRILHAS.length; k++)
+    h += '<button type="button" class="bt" data-v="' + TRILHAS[k].k + '">' + esc(TRILHAS[k].n) + '</button>';
+  h += '</div><h4>Efeitos</h4><div class="grade" id="acEfeitos">';
+  for(k = 0; k < EFEITOS.length; k++)
+    h += '<button type="button" class="bt" data-v="' + EFEITOS[k].k + '">' + esc(EFEITOS[k].n) + '</button>';
+  h += '</div><div class="aviso" style="margin-bottom:0"><b>Nada disto foi baixado.</b> ' +
+       'Os vídeos são desenhados quadro a quadro e as trilhas são <b>compostas</b> por ' +
+       'osciladores, agora, dentro do navegador. Por isso podem ser usados sem pedir ' +
+       'licença a ninguém — ao contrário de uma música de rádio.</div>';
+  g.innerHTML = h;
+  $("gFecha").onclick = fechaGaveta;
+  function acha(L, v){ var j; for(j = 0; j < L.length; j++) if(L[j].k === v) return L[j]; return null; }
+  function liga(id, fn){
+    $(id).onclick = function(ev){
+      var b = ev.target.closest ? ev.target.closest("[data-v]") : null;
+      if(b) fn(b.getAttribute("data-v"));
+    };
+  }
+  liga("acCenas", function(v){ var c = acha(CENAS, v); if(c) fazCena(c); });
+  liga("acFotos", function(v){ var f = acha(FOTOS, v); if(f) fazFoto(f, false); });
+  liga("acTrilhas", function(v){ var t = acha(TRILHAS, v); if(t) fazTrilha(t); });
+  liga("acEfeitos", function(v){ fazEfeito(v); });
+};
+
+/* ---------------- CORTAR O QUADRO (crop) ---------------- */
+/* ⚠️ Cortar é diferente de aparar, e confundir os dois é o erro clássico de
+   quem começa: APARAR mexe no TEMPO (que pedaço do vídeo entra); CORTAR mexe
+   no ESPAÇO (que pedaço da imagem entra). A gaveta diz isso com todas as
+   letras, porque a palavra "cortar" em português serve para as duas coisas. */
+GAVETAS.cortar = function(){
+  var c = clipeSel(); if(!c) return precisaClipe();
+  if(!c.crop) c.crop = {x: 0, y: 0, w: 1, h: 1};
+  var g = $("gaveta"), q = c.crop;
+  g.innerHTML = cab("Cortar o quadro · " + c.nome) +
+    hGrade("grCrop", [
+      {v:"livre", n:"Inteiro"}, {v:"centro", n:"Centro 80%"},
+      {v:"cima", n:"Metade de cima"}, {v:"baixo", n:"Metade de baixo"},
+      {v:"quadrado", n:"Quadrado"}
+    ], "") +
+    hFaixa("crX", "Esquerda", 0, 0.9, q.x, 0.01, "") +
+    hFaixa("crY", "Topo", 0, 0.9, q.y, 0.01, "") +
+    hFaixa("crW", "Largura", 0.1, 1, q.w, 0.01, "") +
+    hFaixa("crH", "Altura", 0.1, 1, q.h, 0.01, "") +
+    '<div class="aviso" style="margin-bottom:0"><b>Cortar não é aparar.</b> ' +
+    'Aparar mexe no <b>tempo</b> — que pedaço do vídeo entra. Cortar mexe no ' +
+    '<b>espaço</b> — que pedaço da imagem entra. Em português a mesma palavra ' +
+    'serve para as duas, e é por isso que se confunde.</div>';
+  $("gFecha").onclick = fechaGaveta;
+  ligaGrade("grCrop", function(v){
+    if(v === "livre") c.crop = {x:0, y:0, w:1, h:1};
+    else if(v === "centro") c.crop = {x:0.1, y:0.1, w:0.8, h:0.8};
+    else if(v === "cima") c.crop = {x:0, y:0, w:1, h:0.5};
+    else if(v === "baixo") c.crop = {x:0, y:0.5, w:1, h:0.5};
+    else c.crop = {x:0.125, y:0, w:0.75, h:0.75};
+    abreGaveta("cortar");
+  });
+  ligaFaixa("crX", "", function(v){ c.crop.x = Math.min(v, 1 - c.crop.w); });
+  ligaFaixa("crY", "", function(v){ c.crop.y = Math.min(v, 1 - c.crop.h); });
+  ligaFaixa("crW", "", function(v){ c.crop.w = Math.min(v, 1 - c.crop.x); });
+  ligaFaixa("crH", "", function(v){ c.crop.h = Math.min(v, 1 - c.crop.y); });
+};
+
+/* ---------------- EFEITOS SONOROS (atalho do acervo) ---------------- */
+GAVETAS.efeitos = function(){
+  var g = $("gaveta"), h = cab("Efeitos sonoros"), k;
+  h += '<div class="grade" id="efG">';
+  for(k = 0; k < EFEITOS.length; k++)
+    h += '<button type="button" class="bt" data-v="' + EFEITOS[k].k + '">' + esc(EFEITOS[k].n) + '</button>';
+  h += '</div><div class="aviso" style="margin-bottom:0">O efeito entra na fita no ' +
+       'instante em que a agulha está (' + seg(TEMPO) + '). ' +
+       '<b>Um efeito bem posto vale por um corte:</b> o "pop" na hora exata em que a ' +
+       'palavra aparece faz o espectador olhar para ela sem perceber que foi mandado.</div>';
+  g.innerHTML = h;
+  $("gFecha").onclick = fechaGaveta;
+  $("efG").onclick = function(ev){
+    var b = ev.target.closest ? ev.target.closest("[data-v]") : null;
+    if(b) fazEfeito(b.getAttribute("data-v"));
+  };
+};
+
+
+/* ============================================================
+   O RASCUNHO — guardar o trabalho e voltar na aula seguinte.
+   ⭐ É o problema mais real da sala: o sinal toca no meio da edição. Sem
+   rascunho, a criança perde tudo e a aula seguinte começa do zero — e isso,
+   na prática, mata o projeto de vídeo antes do segundo encontro.
+
+   ⚠️⚠️ AQUI OS ARQUIVOS PRECISAM SER GUARDADOS DE VERDADE, e isto é diferente
+   de todo o resto do programa. Durante a edição o vídeo vive como `blob:` — um
+   endereço para uma coisa na memória da aba, que **morre com a aba**. Guardar
+   o endereço não guarda nada: ao voltar, o endereço aponta para o vazio e a
+   fita fica com pedaços que não abrem. Por isso o rascunho guarda os
+   **arquivos** (os `File`/`Blob` originais) num banco do navegador
+   (IndexedDB), e refaz os `blob:` na volta.
+
+   ⚠️ TETO DE TAMANHO, declarado: 300 MB. O PC da escola tem 3,5 GB de memória
+   e o navegador dá uma cota de disco limitada; acima disso o banco recusa a
+   gravação — e recusar com aviso é melhor do que gravar pela metade e a
+   criança descobrir na aula seguinte.
+
+   ⚠️ E o rascunho é DESTE COMPUTADOR e DESTE NAVEGADOR. Não é nuvem, não tem
+   conta, não segue o aluno para casa. Está dito na tela.
+   ============================================================ */
+var TETO_RASCUNHO = 300 * 1024 * 1024;
+var CAIRAM = [];   /* o que o rascunho não conseguiu devolver */
+var DIAG = {};     /* id -> o que aconteceu com cada peça ao reabrir */
+/* ⚠️⚠️ DEFEITO PAGO NA COBAIA (24/set/2026), e a lição é a MESMA do som:
+   **o registro se guarda pelo ELEMENTO, nunca pelo id do pedaço.**
+   A primeira versão guardava `ARQUIVOS[pedaco.id] = arquivo`. Só que DIVIDIR
+   e DUPLICAR criam um pedaço com id NOVO apontando para o MESMO vídeo — é essa
+   a graça da edição não-destrutiva. O id novo não tinha entrada nenhuma, e o
+   rascunho voltava **sem o pedaço dividido**, calado. Como quase todo projeto
+   tem um corte, quase todo rascunho voltaria quebrado.
+   Guardando por elemento, o arquivo segue o material: os dois pedaços da
+   divisão acham o mesmo vídeo, e de quebra ele é gravado UMA vez só no banco
+   em vez de duas. (Foi exatamente assim que o `ganhoDe` do som teve de ser
+   escrito, pelo mesmo motivo: o objeto do projeto se copia, o elemento não.) */
+var ARQEL = [];         /* [{el, arq}] — o material e o arquivo que o originou */
+function poeArquivo(el, arq){
+  if(!el || !arq) return;
+  var i; for(i = 0; i < ARQEL.length; i++) if(ARQEL[i].el === el){ ARQEL[i].arq = arq; return; }
+  ARQEL.push({el: el, arq: arq});
+}
+function arquivoDe(el){
+  var i; for(i = 0; i < ARQEL.length; i++) if(ARQEL[i].el === el) return ARQEL[i].arq;
+  return null;
+}
+var BD = null;
+
+function banco(){
+  return new Promise(function(ok, nao){
+    if(BD) return ok(BD);
+    if(!window.indexedDB) return nao("sem banco");
+    var r;
+    try{ r = indexedDB.open("oficina-video", 1); }catch(e){ return nao("sem banco"); }
+    r.onupgradeneeded = function(){
+      var d = r.result;
+      if(!d.objectStoreNames.contains("rascunho")) d.createObjectStore("rascunho");
+    };
+    r.onsuccess = function(){ BD = r.result; ok(BD); };
+    r.onerror = function(){ nao("o navegador recusou abrir o banco"); };
+  });
+}
+function bdPoe(chave, valor){
+  return banco().then(function(d){
+    return new Promise(function(ok, nao){
+      var t = d.transaction("rascunho", "readwrite");
+      t.objectStore("rascunho").put(valor, chave);
+      t.oncomplete = function(){ ok(true); };
+      t.onerror = function(){ nao(t.error && t.error.name === "QuotaExceededError" ?
+        "não cabe no espaço que o navegador reserva" : "o navegador recusou gravar"); };
+    });
+  });
+}
+function bdPega(chave){
+  return banco().then(function(d){
+    return new Promise(function(ok, nao){
+      var t = d.transaction("rascunho", "readonly");
+      var q = t.objectStore("rascunho").get(chave);
+      q.onsuccess = function(){ ok(q.result); };
+      q.onerror = function(){ nao("não consegui ler"); };
+    });
+  });
+}
+
+/* junta todas as peças que têm arquivo por trás */
+function pecasComArquivo(){
+  var L = [], k;
+  for(k = 0; k < PROJ.clipes.length; k++) L.push(PROJ.clipes[k]);
+  for(k = 0; k < PROJ.pip.length; k++) if(!PROJ.pip[k].forma) L.push(PROJ.pip[k]);
+  for(k = 0; k < PROJ.audios.length; k++) L.push(PROJ.audios[k]);
+  return L;
+}
+
+function salvarRascunho(){
+  if(!PROJ.clipes.length){ recado("Não há projeto para guardar ainda.", "erro"); return; }
+  var pecas = pecasComArquivo(), unicos = [], mapa = {}, peso = 0, faltando = 0, k, j;
+  for(k = 0; k < pecas.length; k++){
+    var a = arquivoDe(pecas[k].el);
+    if(!a){ faltando++; continue; }
+    var achou = -1;
+    for(j = 0; j < unicos.length; j++) if(unicos[j] === a){ achou = j; break; }
+    if(achou < 0){ achou = unicos.length; unicos.push(a); peso += a.size || 0; }
+    mapa[pecas[k].id] = achou;      /* dois pedaços do mesmo corte: o MESMO material */
+  }
+  if(peso > TETO_RASCUNHO){
+    recado("O material soma " + Math.round(peso/1048576) + " MB e o teto do rascunho é 300 MB. " +
+           "<b>Exporte o vídeo</b> — esse arquivo, sim, fica guardado no computador.", "erro");
+    return;
+  }
+  var r = retrato();
+  bdPoe("projeto", {txt: r.txt, mapa: mapa,
+                    arquivos: unicos, quando: new Date().toISOString(),
+                    /* ⚠️ as miniaturas viajam à parte: elas são `data:` e não
+                       sobrevivem ao mapa de elementos do retrato. */
+                    minis: pecas.reduce(function(m, p){ if(p.mini) m[p.id] = p.mini; return m; }, {})})
+    .then(function(){
+      marca("guardou");
+      recado("Rascunho guardado <b>neste computador e neste navegador</b> (" +
+             Math.round(peso/1048576) + " MB)" +
+             (faltando ? " — " + faltando + " peça(s) sem arquivo de origem não entraram" : "") +
+             ". Na próxima aula, abra a página e toque em <b>Abrir rascunho</b>.", "bom");
+    }, function(por){
+      recado("Não consegui guardar: " + por + ". <b>Exporte o vídeo</b> para não perder o trabalho.", "erro");
+    });
+}
+
+function abrirRascunho(){
+  bdPega("projeto").then(function(d){
+    if(!d){ recado("Não há rascunho guardado neste navegador.", ""); return; }
+    /* refaz os elementos a partir dos arquivos guardados */
+    var mapa = d.mapa || {}, arqs = d.arquivos || [], prontos = {}, resta = 0, k, fechou = false;
+    CAIRAM = []; DIAG = {};
+    /* ⚠️⚠️ CÃO DE GUARDA — regra da casa, paga em outras atividades: **evento de
+       mídia que não chega trava tudo para sempre**. Um arquivo meio gravado, um
+       codec que o navegador aceita e depois desiste, e o `onloadedmetadata`
+       simplesmente nunca dispara: sem teto, o rascunho ficaria carregando
+       calado até a criança fechar a aba. Com teto, o que chegou entra, o que
+       faltou é NOMEADO, e a aula continua. */
+    var guarda = setTimeout(function(){ if(!fechou) fecha(); }, 12000);
+    function fecha(){
+      if(fechou) return;
+      fechou = true;
+      clearTimeout(guarda);
+      var novo = JSON.parse(d.txt, function(kk, v){
+        if(typeof v === "string" && /^#el\d+$/.test(v)) return null;
+        return v;
+      });
+      var l, listas = [novo.clipes || [], novo.pip || [], novo.audios || []];
+      for(l = 0; l < listas.length; l++){
+        var L = listas[l], j;
+        for(j = 0; j < L.length; j++){
+          var o = L[j];
+          if(o.forma) continue;
+          var e = prontos[mapa[o.id]];
+          /* ⚠️ peça sem arquivo não entra QUEBRADA na fita — mas também não
+             some calada: o aluno tem de saber que faltou alguma coisa, senão
+             ele acha que o rascunho voltou inteiro. */
+          if(!e){ CAIRAM.push((o.nome || o.id) + " (" + (o.el === null ? "arquivo não voltou" : "sem arquivo guardado") + ")");
+                  L.splice(j, 1); j--; continue; }
+          o.el = e.el; o.url = e.url;
+          if(d.minis && d.minis[o.id]) o.mini = d.minis[o.id];
+          poeArquivo(e.el, e.arq);   /* o rascunho reaberto já pode ser reguardado */
+        }
+      }
+      var kk;
+      for(kk in novo){ if(novo.hasOwnProperty(kk)) PROJ[kk] = novo[kk]; }
+      HIST.length = 0; REFAZ.length = 0; marcaBotoesHistoria();
+      selecionar(null); TEMPO = 0;
+      aplicaRazao(); tudo(); agulhaPara(0);
+      recado("Rascunho de " + (d.quando || "").slice(0, 16).replace("T", " às ") + " aberto." +
+        (CAIRAM.length ? " <b>Ficaram de fora " + CAIRAM.length + ":</b> " +
+         esc(CAIRAM.join(", ")) : ""), CAIRAM.length ? "erro" : "bom");
+    }
+    for(k = 0; k < arqs.length; k++){
+      var arq = arqs[k];
+      if(!arq) continue;
+      resta++;
+      (function(id, a){
+        var url = URL.createObjectURL(a);
+        if(/^audio\//.test(a.type)){
+          var au = document.createElement("audio"); au.preload = "auto";
+          au.onloadedmetadata = function(){ prontos[id] = {el: au, url: url, arq: a};
+            DIAG[id] = 'audio ok'; if(!--resta) fecha(); };
+          au.onerror = function(){ DIAG[id] = 'audio ERRO'; if(!--resta) fecha(); };
+          au.src = url;
+        } else if(/^image\//.test(a.type)){
+          var im = new Image();
+          im.onload = function(){ prontos[id] = {el: im, url: url, arq: a};
+            DIAG[id] = 'foto ok'; if(!--resta) fecha(); };
+          im.onerror = function(){ DIAG[id] = 'foto ERRO'; if(!--resta) fecha(); };
+          im.src = url;
+        } else {
+          var v = document.createElement("video");
+          v.preload = "auto"; v.playsInline = true; v.setAttribute("playsinline", "");
+          v.onloadedmetadata = function(){
+            /* mesmo remendo da primeira carga: vídeo gravado pela própria
+               página volta sem índice e com duração Infinity. */
+            if(!isFinite(v.duration)){
+              v.currentTime = 1e6;
+              v.ontimeupdate = function(){ v.ontimeupdate = null; v.currentTime = 0; };
+            }
+            prontos[id] = {el: v, url: url, arq: a};
+            DIAG[id] = 'video ok'; if(!--resta) fecha(); };
+          v.onerror = function(){ DIAG[id] = 'video ERRO ' + (v.error && v.error.code);
+            if(!--resta) fecha(); };
+          v.src = url;
+        }
+      })(k, arq);
+    }
+    if(!resta) fecha();
+  }, function(por){ recado("Não consegui abrir o rascunho: " + por, "erro"); });
+}
+
+function temRascunho(){
+  return bdPega("projeto").then(function(d){ return !!d; }, function(){ return false; });
+}
+
+/* ============================================================
+   O BOOT — e a ordem importa.
+   ⚠️ O canvas de apoio do chroma nasce com `willReadFrequently:true`. Sem essa
+      palavra, cada `getImageData` obriga a placa de vídeo a devolver a imagem
+      para a memória do processador, e o navegador engasga sozinho na primeira
+      camada com fundo verde. Ela é a diferença entre "funciona" e "funciona no
+      PC da escola".
+   ============================================================ */
+function ctx2d(c, freq){
+  try{ return c.getContext("2d", freq ? {willReadFrequently: true} : undefined); }
+  catch(e){ return c.getContext("2d"); }
+}
+
+function iniciar(){
+  cv = $("tela"); ctx = ctx2d(cv, false);
+  cvAux = document.createElement("canvas"); ctxAux = ctx2d(cvAux, true);
+  cvBorr = document.createElement("canvas"); ctxBorr = ctx2d(cvBorr, false);
+
+  PROJ.perfil = perfilDaMaquina();
+  aplicaRazao();
+
+  montaFerramentas();
+  montaGlossario();
+  montaLimites();
+  redesenhaFita();
+  relogio();
+  confereMissoes();
+  abreGaveta("material");
+
+  /* ---- transporte ---- */
+  $("btTocar").onclick = function(){ TOCANDO ? pausar() : tocar(); };
+  $("btInicio").onclick = function(){ pausar(); TEMPO = 0; agulhaPara(0); desenha(0); relogio(); };
+  $("btExportar").onclick = exportar;
+  $("btAjuda").onclick = telaAjuda;
+  $("btDesfazer").onclick = desfazer;
+  $("btRefazer").onclick = refazer;
+  marcaBotoesHistoria();
+  ligaPalco();
+  $("btMenos").onclick = function(){ zoom(0.7); };
+  $("btMais").onclick = function(){ zoom(1.4); };
+
+  /* ---- a fita: rolar é andar no tempo ---- */
+  $("rolo").addEventListener("scroll", fitaRolou);
+
+  /* ---- o botão do tamanho ---- */
+  $("btPerfil").onclick = telaPerfil;
+
+  /* ---- abas do caderno ---- */
+  var abas = document.querySelectorAll(".aba"), j;
+  for(j = 0; j < abas.length; j++){
+    abas[j].onclick = function(){
+      var k = this.getAttribute("data-painel"), i, a = document.querySelectorAll(".aba");
+      for(i = 0; i < a.length; i++) a[i].classList.remove("on");
+      this.classList.add("on");
+      $("pMissoes").classList[k === "missoes" ? "remove" : "add"]("oculto");
+      $("pPalavras").classList[k === "palavras" ? "remove" : "add"]("oculto");
+      $("pLimites").classList[k === "limites" ? "remove" : "add"]("oculto");
+    };
+  }
+
+  $("veu").onclick = function(ev){ if(ev.target === this) fechaModal(); };
+
+  /* ---- as duas portas: o teclado de verdade também abre tudo ----
+     ⚠️ Regra da casa, paga caro em outras atividades: no PC da escola há
+     teclado e o aluno vai usá-lo. Ferramenta que só responde ao clique perde
+     metade da turma. */
+  document.addEventListener("keydown", function(ev){
+    var alvo = ev.target && ev.target.tagName;
+    if(alvo === "INPUT" || alvo === "TEXTAREA" || alvo === "SELECT") return;
+    if(ev.key === " " || ev.code === "Space"){ ev.preventDefault(); TOCANDO ? pausar() : tocar(); }
+    else if(ev.key === "s" || ev.key === "S"){ dividir(); }
+    else if(ev.key === "Delete" || ev.key === "Backspace"){ ev.preventDefault(); apagarSel(); }
+    else if(ev.key === "z" && (ev.ctrlKey || ev.metaKey)){ ev.preventDefault();
+      if(ev.shiftKey) refazer(); else desfazer(); }
+    else if(ev.key === "y" && (ev.ctrlKey || ev.metaKey)){ ev.preventDefault(); refazer(); }
+    else if(ev.key === "f" || ev.key === "F"){ congelar(); }
+    else if(ev.key === "ArrowLeft"){ ev.preventDefault(); anda(-0.1); }
+    else if(ev.key === "ArrowRight"){ ev.preventDefault(); anda(0.1); }
+    else if(ev.key === "Escape"){ fechaModal(); fechaGaveta(); }
+  });
+
+  /* ---- a tela mudou de tamanho: o respiro da fita depende da largura ---- */
+  var t = null;
+  window.addEventListener("resize", function(){
+    if(t) clearTimeout(t);
+    t = setTimeout(function(){ aplicaRazao(); redesenhaFita(); agulhaPara(TEMPO); }, 160);
+  });
+
+  /* ⚠️ sair sem exportar é a perda mais cara possível aqui: o projeto vive na
+     aba. O navegador só deixa avisar depois de a pessoa ter mexido em algo. */
+  window.addEventListener("beforeunload", function(ev){
+    if(!PROJ.clipes.length || FEITO.exportou || FEITO.guardou) return;
+    ev.preventDefault(); ev.returnValue = "";
+    return "";
+  });
+
+  primeiraVez();
+}
+
+function anda(d){
+  pausar();
+  TEMPO = Math.max(0, Math.min(durTotal(), TEMPO + d));
+  agulhaPara(TEMPO); desenha(TEMPO); relogio();
+}
+
+/* ---------------- o tamanho do vídeo, à vista ---------------- */
+function telaPerfil(){
+  var m = medidaDaSaida();
+  var n = navigator.hardwareConcurrency || "?";
+  var g = navigator.deviceMemory ? (navigator.deviceMemory + " GB") : "não informa";
+  modal("<h2>Tamanho do vídeo</h2>" +
+    "<p>Este computador diz ter <b>" + n + " núcleos</b> de processador e <b>" + g +
+    "</b> de memória, então o editor escolheu o perfil <b>" +
+    (PERFIS[PROJ.perfil] || PERFIS.leve).rot + "</b> — " + m[0] + "×" + m[1] + ".</p>" +
+    "<p>Quanto maior o vídeo, mais nítido e mais pesado: <b>720×1280 tem quatro vezes " +
+    "mais pixels que 360×640</b>, e é isso que o processador precisa desenhar trinta " +
+    "vezes por segundo. Se a prévia tropeçar (o número no canto do palco ficar vermelho), " +
+    "baixe o perfil.</p>" +
+    "<div class='linha' id='grPerfil'>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "leve" ? " lig" : "") + "' data-p='leve'>Leve</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "normal" ? " lig" : "") + "' data-p='normal'>Normal</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "alta" ? " lig" : "") + "' data-p='alta'>Alta (HD)</button>" +
+    "</div>");
+  $("grPerfil").onclick = function(ev){
+    var b = ev.target.closest ? ev.target.closest("[data-p]") : null;
+    if(!b) return;
+    guardaPasso();
+    PROJ.perfil = b.getAttribute("data-p");
+    aplicaRazao(); tudo(); fechaModal();
+    recado("Tamanho agora: " + medidaDaSaida().join("×") + ".", "bom");
+  };
+}
+
+/* ---------------- a primeira tela ---------------- */
+function primeiraVez(){
+  modal("<h2>A Oficina de Vídeo</h2>" +
+    "<p>Este é um editor de vídeo de verdade, com a mesma planta dos aplicativos de " +
+    "celular: <b>prévia em cima</b>, <b>fita de tempo no meio</b> — com a agulha parada " +
+    "e a fita andando — e as <b>ferramentas embaixo</b>.</p>" +
+    "<p>Ao lado (ou abaixo, no celular) ficam as <b>onze missões</b>: elas dizem o que " +
+    "fazer e, principalmente, <b>por que cada ferramenta existe</b>. Elas se marcam " +
+    "sozinhas conforme você trabalha.</p>" +
+    "<div class='aviso'><b>Nada sai deste computador</b> e nada fica salvo: o projeto " +
+    "vive nesta aba. Quando terminar, <b>exporte</b> — é o botão do canto de cima.</div>" +
+    "<p style='font-size:12.8px;color:var(--fraco)'>Sem arquivo para trazer? " +
+    "<b>Material → Clipe de exemplo</b> desenha três segundos na hora. E em " +
+    "<b>Acervo</b> há vídeos, fotos, trilhas e efeitos feitos pelo próprio programa.</p>");
+  temRascunho().then(function(tem){
+    if(!tem) return;
+    var d = $("cxmodal");
+    if(!d || !$("veu").classList.contains("on")) return;
+    var a = document.createElement("div");
+    a.className = "aviso bom";
+    a.innerHTML = "<b>Há um rascunho guardado neste computador.</b> Para continuar " +
+      "de onde parou: <b>Material → Abrir rascunho</b>.";
+    d.insertBefore(a, d.lastChild);
+  });
+}
+
+if(document.readyState === "loading")
+  document.addEventListener("DOMContentLoaded", iniciar);
+else iniciar();
+</script>
+</body>
+</html>

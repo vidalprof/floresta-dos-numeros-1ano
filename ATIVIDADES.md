@@ -190,6 +190,21 @@ painel virou portão — `_qa/catalogo.py` no `entregar.yml`).
 | **Poli e o Tesouro do Mar** | — | — | https://vidalprof.github.io/poli-tesouro-do-mar/ |
 | **A Vila do Miau** | — | — | https://vidalprof.github.io/vila-dos-livros-miau/ |
 
+## Ferramentas de aula (6º ao 9º) — **não são atividade de currículo**
+
+> ⚠️ **DECISÃO DO MARCOS (24/set/2026), e ela vale para esta seção inteira:**
+> ***"o professor quer usar na aula de ciências, mas acredito que esse app não
+> precise estar dentro do currículo, só tem que ser funcional como o original,
+> é uma exceção de aula"***. O que está aqui é **programa**, não sequência
+> didática: não tem `curriculo.json`, não tem `PARECER-PEDAGOGICO.md` e **não
+> deve ganhar um** numa sessão futura "para consertar". O critério de aprovação
+> é outro — **funcionar como o original funciona** —, e é medido por robô que
+> usa o programa (`_qa/cobaia_video.js`), não pelo pedagogo.
+
+| Atividade | O que trabalha | Pasta | Link |
+|---|---|---|---|
+| **A Oficina de Vídeo** (6º ao 9º) | Editor de vídeo **funcional** no navegador, com a planta de tela do InShot: prévia em cima, fita de tempo com a **agulha parada no meio** (a fita é que rola) e barra de ferramentas embaixo. **Quinze ferramentas**: material (arquivo · câmera · clipe de exemplo · **rascunho**), **acervo**, aparar/dividir/duplicar/reordenar/**congelar**, **cortar o quadro**, formato da tela (9:16 · 1:1 · 16:9 · 4:5 · 4:3) com fundo desfocado e **moldura**, filtro, ajuste fino, velocidade 0,25×–4× com **zoom lento (Ken Burns)**, girar/espelhar, transição, texto com tempo próprio e animação de entrada e saída, figuras de anotação (seta · círculo · balão · **tarja** para esconder rosto), camada de cima (PIP) com **fundo verde**, **máscara**, **mistura** e **keyframes**, música com aparo e fade, **efeitos sonoros** e **narração pelo microfone** — e **EXPORTA arquivo de verdade** (.mp4 ou .webm, conforme o navegador). Arrasta-se o texto e a camada **direto na prévia**; desfazer e refazer; **rascunho guardado no próprio navegador** (projeto + arquivos, até 300 MB) para a aula seguinte. ⭐ **ACERVO GERADO PELO PRÓPRIO PROGRAMA** (nada baixado, nenhuma licença de terceiro): 6 vídeos desenhados quadro a quadro — inclusive um de **fundo verde** para treinar chroma sem cartolina e um par **dia/noite** para entender transição —, 4 fotos, **4 trilhas compostas por osciladores** e 6 efeitos sonoros. ⭐ Ao lado, **onze missões** que dizem o que fazer e **por que cada ferramenta existe**, um glossário do ofício e a tela **Limites e cuidados** (direito de imagem, música com dono, o que o programa não faz). ⭐ **Nada sai do computador**: os arquivos viram `blob:` na memória da aba, sem upload e sem conta. ⭐ **Feito para o PC da escola** (AMD FX-4300 de 2012 · 3,5 GB · Chrome 109): nasce em 360×640 e cresce se a máquina aguentar, com **medidor de fps à vista**; o desfoque de fundo é por encolher-e-esticar (nunca `blur`) e o chroma tem teto de 320 px. **Não faz** legenda por IA, remoção de fundo por IA, inverter o vídeo nem modelos prontos — e diz isso ao aluno. Medido por robô que USA o programa: `node _qa/cobaia_video.js` (20 passos, exporta arquivo de verdade) | `_video69` | https://vidalprof.github.io/a-oficina-de-video/ |
+
 ## Ferramentas do professor
 
 | Atividade | O que trabalha | Pasta | Link |

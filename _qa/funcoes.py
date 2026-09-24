@@ -186,6 +186,14 @@ console document window navigator localStorage sessionStorage location history s
 # de graca desde sempre. Lista de globais incompleta acusa inocente; toda vez que
 # uma API nova entrar no motor, ela entra AQUI no mesmo commit.
 getComputedStyle matchMedia scrollTo scrollBy getSelection structuredClone queueMicrotask
+# ⚠️ LICAO PAGA DE NOVO (24/set/2026), e e a MESMA de cima: a Oficina de Video
+# (`_video69`) grava tela e microfone, e este portao acusou `MediaRecorder()` e
+# `File()` como "funcao que nao existe". As duas sao API de navegador desde
+# sempre — o Chrome 109 do PC da escola tem as duas. A familia inteira de midia
+# entra aqui de uma vez, para nao voltar peca por peca a cada ferramenta nova.
+MediaRecorder File FileList MediaStream MediaStreamTrack MediaSource
+ImageData ImageBitmap createImageBitmap OffscreenCanvas Path2D DOMMatrix
+AbortController Response Request Headers FormData ClipboardItem
 # ⚠️ `url` NAO e funcao de JS: e funcao de CSS (`background-image:url("data:...")`),
 # e chega aqui porque o limpador perde o fio nos literais de regex e deixa
 # escapar pedaco de CSS que mora dentro de string. Enquanto o limpador nao
