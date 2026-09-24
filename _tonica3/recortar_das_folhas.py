@@ -84,6 +84,35 @@ PECAS = [
     (u"t3_mochila",  u"d04b1", 0.165, 0.745, 0.305, 0.850),
     (u"t3_sofa",     u"d04b1", 0.420, 0.740, 0.635, 0.845),
     (u"t3_lampada",  u"d04b1", 0.850, 0.742, 0.945, 0.820),
+    # ---- d08: duas colunas, o desenho à esquerda e a palavra numa caixa ----
+    #  ⚠️ estas oito foram achadas MEDINDO a folha (mancha colorida dilatada),
+    #     não a olho: aqui o desenho é colorido e o texto é preto, então a
+    #     saturação separa bem. Na d04 o mesmo método achava seis de nove.
+    (u"t3_lancheira", u"d08b1", 0.108, 0.315, 0.262, 0.428),
+    (u"t3_tesoura",   u"d08b1", 0.529, 0.464, 0.670, 0.588),
+    (u"t3_livro",     u"d08b1", 0.106, 0.486, 0.264, 0.567),
+    (u"t3_banana",    u"d08b1", 0.531, 0.626, 0.665, 0.740),
+    (u"t3_casa",      u"d08b1", 0.108, 0.628, 0.262, 0.737),
+    (u"t3_chave",     u"d08b1", 0.122, 0.781, 0.247, 0.896),
+    (u"t3_borracha",  u"d08b1", 0.530, 0.786, 0.676, 0.894),
+    # ---- d11: cinco quadros em coluna, o desenho à direita ----
+    #  ⚠️ estas cinco são LINHA PRETA e a saturação não as vê. A caixa sai do
+    #     passo da grade, que é regular: 0,134 da altura da folha entre um
+    #     quadro e o seguinte — medido nos dois primeiros e conferido nos cinco.
+    #  ⚠️⚠️ E AQUI A REGRA DA MAIOR MANCHA TEM DE SER DESLIGADA (7º campo).
+    #     Desenho de LINHA é feito de traços SOLTOS: a laranja é o círculo,
+    #     mais o cabinho, mais duas folhas — quatro manchas que não se tocam.
+    #     Ficar só com a maior deixou a laranja com 53x40 px (o circulozinho),
+    #     o cadeado com o buraco da fechadura e o esquilo com um risco. Aqui a
+    #     caixa já isola a figura, porque a palavra escrita fica longe, à
+    #     esquerda — então não há o que descartar.
+    #     **Regra que só serve para desenho cheio não serve para desenho de
+    #     linha: quem escolhe é quem conhece a folha.**
+    (u"t3_laranja",   u"d11b1", 0.725, 0.242, 0.862, 0.352, 0),
+    (u"t3_tambor",    u"d11b1", 0.722, 0.376, 0.865, 0.488, 0),
+    (u"t3_esquilo",   u"d11b1", 0.722, 0.510, 0.865, 0.622, 0),
+    (u"t3_espelho",   u"d11b1", 0.722, 0.644, 0.865, 0.756, 0),
+    (u"t3_cadeado",   u"d11b1", 0.722, 0.778, 0.865, 0.890, 0),
 ]
 
 
@@ -145,7 +174,13 @@ def tira_moldura(im):
              (a[:, :, 0] < 190) & (a[:, :, 1] < 140))
     if not lilas.any():
         return im
-    marca, n = ndimage.label(ndimage.binary_dilation(lilas, iterations=2))
+    # ⚠️ SEM DILATAR ANTES DE ROTULAR, e isto foi conserto medido: a bolinha
+    #    da antena do robô é quase da cor da moldura e encosta nela. Dilatando
+    #    2 px antes, as duas viram uma mancha só, a mancha passa do piso de
+    #    300 px de lado e a bolinha é apagada junto — o portão `1i7` acusou o
+    #    robô cortado em 19 px. Rotula-se a tinta CRUA; só o que for moldura
+    #    de verdade é que engorda, na hora de virar branco.
+    marca, n = ndimage.label(lilas)
     fora = np.zeros_like(lilas)
     for i, sl in enumerate(ndimage.find_objects(marca)):
         if sl is None:
@@ -224,7 +259,9 @@ def main():
     origem = {u"t3_selo.png": u"banco:selo",
               u"t3_selo_off.png": u"banco:selo",
               u"t3_trofeu.png": u"banco:trofeu"}
-    for nome, pref, fx0, fy0, fx1, fy1 in PECAS:
+    for peca in PECAS:
+        nome, pref, fx0, fy0, fx1, fy1 = peca[:6]
+        so_maior = peca[6] if len(peca) > 6 else 1
         cam = folha(pref)
         if pref not in abertas:
             abertas[pref] = tira_moldura(Image.open(cam).convert("RGB"))
@@ -232,7 +269,8 @@ def main():
         W, H = f.size
         cx = (int(fx0 * W), int(fy0 * H), int(fx1 * W), int(fy1 * H))
         cx = cresce_caixa(f, cx)
-        c = limpa_fundo(so_o_desenho(f, cx).convert("RGBA"))
+        peca_img = so_o_desenho(f, cx) if so_maior else f.crop(cx)
+        c = limpa_fundo(peca_img.convert("RGBA"))
         c = tira_halo(c, voltas=2)
         c = aperta(c)
         c.thumbnail((400, 400))
