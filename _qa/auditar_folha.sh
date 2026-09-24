@@ -181,6 +181,7 @@ PORTOES=(
   "0b11 identidade propria (cor, capa, animacao)|python3 _qa/identidade.py $PASTA"
   "0b6 catalogo + painel|python3 _qa/catalogo.py $PASTA"
   "0w bash -e derruba o passo (cmd; rc=$?)|python3 _qa/bash_e.py"
+  "1q3 fala curta demais / mp3 repetido|python3 _qa/fala_curta.py $PASTA"
 )
 
 # ------------------------------------------------------------------

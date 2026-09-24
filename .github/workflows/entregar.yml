@@ -667,6 +667,17 @@ jobs:
             c=0
             python3 _qa/voz_gravada.py "$p" || c=$?
             if [ "$c" = "1" ]; then ruim=1; fi
+            # ⭐⭐ PORTAO 1q3 — O MP3 TEM TAMANHO DE FALA? (24/set/2026)
+            #    O 1q2 acima pergunta se o arquivo EXISTE. Sete falas do caderno
+            #    da divisao existiam e tinham 0,36 segundo — uma delas no lugar
+            #    de uma frase de cinco segundos, e TRES eram o mesmo arquivo byte
+            #    a byte. A crianca tocaria o alto-falante e ouviria um caco de
+            #    som. Nenhum portao via: existir nao e dizer.
+            #    Roda AQUI, depois de gravar e antes de publicar — e com
+            #    `|| c=$?`, pela licao do passo de cima.
+            c=0
+            python3 _qa/fala_curta.py "$p" || c=$?
+            if [ "$c" = "1" ]; then ruim=1; fi
           done
           if [ "$ruim" = "1" ]; then
             echo "::error::ha fala sem mp3 — nao publico com alto-falante mudo"

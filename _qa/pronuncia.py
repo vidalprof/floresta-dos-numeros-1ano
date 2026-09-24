@@ -82,11 +82,38 @@ def sem_acento(t):
     return u"".join(c for c in t if unicodedata.category(c) != "Mn")
 
 
+# ⚠️⚠️ O NUMERO ESCRITO E O NUMERO FALADO SAO DUAS ESCRITAS — e esta licao ja
+#    estava paga, no OUTRO ouvido. Em 21/set/2026 o `_qa/ouvir.py` ganhou o
+#    `extenso()` porque acusou 12 falas impecaveis do caderno do dinheiro: o
+#    texto dizia "520 reais", a voz leu "quinhentos e vinte reais" — que e o
+#    certo — e reconhecedor nenhum devolve algarismo.
+#    **O `pronuncia.py` NAO ganhou, e e ELE que o `entregar.yml` roda.** Em
+#    24/set/2026 o caderno da divisao veio com 25 falas "tortas" e a esmagadora
+#    maioria era isto outra vez: "isso 48 dividido por 2 e 24" contra "isso
+#    quarenta e oito dividido por dois e vinte e quatro" — 60% de diferenca num
+#    audio impecavel.
+#    ⚠️ A REGRA QUE FICA: consertar a regua num arquivo nao conserta a regua
+#       IRMA. Quando duas ferramentas medem a mesma coisa, o conserto vai na
+#       que as duas usam — por isso aqui se IMPORTA o `achata` do `ouvir.py` em
+#       vez de copiar a tabela de numeros para o segundo lugar.
+def _extenso_tambem(t):
+    u"""Numero por extenso, usando a MESMA tabela do `_qa/ouvir.py`. Se o import
+    falhar (ouvir.py mexido, pasta diferente), devolve o texto como estava e a
+    medida so fica mais rigorosa — nunca mais frouxa."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        from ouvir import extenso
+    except Exception:                                            # noqa: BLE001
+        return t
+    return re.sub(r"\d+", lambda m: u" " + extenso(m.group(0)) + u" ", t)
+
+
 def limpa(t):
     u"""deixa só o que a voz de fato pronuncia."""
     t = re.sub(r"<[^>]*>", u" ", u"%s" % t)
     t = re.sub(r"&[a-z]+;|&#\d+;", u" ", t)
     t = sem_acento(t).lower()
+    t = _extenso_tambem(t)
     t = re.sub(r"[^a-z0-9 ]+", u" ", t)
     return re.sub(r"\s+", u" ", t).strip()
 
