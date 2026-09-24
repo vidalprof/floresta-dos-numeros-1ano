@@ -34,7 +34,7 @@ body{
   min-height:100vh;-webkit-text-size-adjust:100%;
 }
 #fundo{position:fixed;inset:0;z-index:-1;background:url("img/ej_fundo.png") center bottom no-repeat;background-size:cover;opacity:.13;}
-#app{max-width:820px;margin:0 auto;padding:12px 16px 40px;min-height:100vh;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+#app{max-width:820px;margin:0 auto;padding:12px 16px 40px;min-height:100vh;}
 
 /* ---- o CARTÃO: carta grande em cima do feltro ---- */
 .card{position:relative;color:#22301f;background:#fffdf6;
@@ -241,6 +241,28 @@ var _histTocada=false;
    AS FIGURAS — SVG desenhado aqui, com as cores do nosso jogo `_uno345`
    =================================================================== */
 var UCOR={v:"#E5202E", a:"#0099DD", m:"#F7B500", g:"#3EA72D", p:"#1b1b1b"};
+
+/* ⭐⭐ A BARRA DE ROLAGEM NO MEIO DA TELA — achado pelo Marcos (24/set/2026):
+   *"vi que nessa prova a barra de rolagem fica no meio da prova, favor
+   concertar e jogar lá no canto"*.
+   A CAUSA: o `#app` tinha `height:100vh; overflow-y:auto` E `max-width:820px;
+   margin:0 auto`. Quem rolava era a CAIXA, não a página — e a barra de uma
+   caixa centrada de 820 px nasce na BORDA DELA, que numa tela de PC fica no
+   meio do feltro. A página, essa, nunca rolava.
+   O CONSERTO: quem rola é a PÁGINA. A barra volta para a beirada da janela,
+   onde o navegador a põe, e some no celular (que não desenha barra).
+   ⚠️ E O `scrollTop` TINHA DE IR JUNTO: com a caixa fora do jogo,
+   `$("app").scrollTop = 0` vira um comando que não faz nada, e a criança
+   veria a pergunta seguinte já rolada pela metade. Por isso este `aoTopo()`,
+   que sobe a JANELA (e ainda zera a caixa, para o caso de alguém devolver o
+   `overflow` um dia). */
+function aoTopo(){
+  try{ window.scrollTo(0, 0); }catch(e){}
+  if(document.documentElement) document.documentElement.scrollTop = 0;
+  if(document.body) document.body.scrollTop = 0;   /* Safari e Chrome antigos */
+  var a = document.getElementById("app");
+  if(a && a.scrollTop) a.scrollTop = 0;
+}
 
 function simbPular(c){
   return '<circle cx="50" cy="50" r="30" fill="none" stroke="'+c+'" stroke-width="11"/>'+
@@ -799,7 +821,7 @@ function telaEstudo(){
   }
   h+='</div></div>';
   $("app").innerHTML=h;
-  $("app").scrollTop=0;
+  aoTopo();
   falar(P.abre);
 }
 function partePara(n){ if(n<0||n>=PARTES.length){return;} somToque(); pararSeq(); parteAtual=n; telaEstudo(); }
@@ -883,7 +905,7 @@ function telaPergunta(){
   }
   h+='</div></div>';
   $("app").innerHTML=h;
-  $("app").scrollTop=0;
+  aoTopo();
   falar(falaDaQuestao(atual));
 }
 /* ====== "NÃO LEMBRO — VER A FICHA": o andaime da prova ======================
@@ -953,7 +975,7 @@ function telaFinal(){
   h+='<p class="grande">O Léo adorou jogar com você. Parabéns!</p>';
   h+='<p id="statusenvio"></p></div>';
   $("app").innerHTML=h;
-  $("app").scrollTop=0;
+  aoTopo();
   falar("Prontinho! Você terminou a prova. O Léo adorou jogar com você. Parabéns!");
   enviarResultado(ac);
 }

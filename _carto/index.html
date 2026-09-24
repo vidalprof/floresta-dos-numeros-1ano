@@ -17,7 +17,7 @@ body{
   background:linear-gradient(to bottom,#1f4e79 0%,#2a7d9b 55%,#e9dcc3 100%);
   min-height:100vh;-webkit-text-size-adjust:100%;
 }
-#app{max-width:900px;margin:0 auto;min-height:100vh;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 30px;position:relative;}
+#app{max-width:900px;margin:0 auto;min-height:100vh;padding:0 0 30px;position:relative;}
 #topbar{position:fixed;left:0;top:0;height:6px;width:0;z-index:9997;background:#e07a3f;background:-webkit-linear-gradient(left,#f2c14e,#e07a3f);background:linear-gradient(to right,#f2c14e,#e07a3f);-webkit-transition:width .2s;transition:width .2s;}
 
 /* ---- cartão genérico (capa/quiz/jogos) ---- */
@@ -215,6 +215,28 @@ var TXT_QUIZINTRO="Desafio um: o quiz. Vamos ver o que você descobriu sobre os 
 var TXT_CACAINTRO="Desafio dois: caça-palavras. Ache as palavras dos mapas. Toque na primeira e na última letra de cada palavra. Elas estão deitadas ou em pé.";
 var TXT_DIGINTRO="Desafio três: digitar. Agora escreva as palavras. Você pode tocar no teclado da tela ou usar o teclado de verdade.";
 var TXT_QUASEDIG="Quase! Confira as letras e tente de novo.";
+/* ⭐⭐ A BARRA DE ROLAGEM NO MEIO DA TELA — achado pelo Marcos (24/set/2026):
+   *"vi que nessa prova a barra de rolagem fica no meio da prova, favor
+   concertar e jogar lá no canto"*.
+   A CAUSA: o `#app` tinha `height:100vh; overflow-y:auto` E `max-width:820px;
+   margin:0 auto`. Quem rolava era a CAIXA, não a página — e a barra de uma
+   caixa centrada de 820 px nasce na BORDA DELA, que numa tela de PC fica no
+   meio do feltro. A página, essa, nunca rolava.
+   O CONSERTO: quem rola é a PÁGINA. A barra volta para a beirada da janela,
+   onde o navegador a põe, e some no celular (que não desenha barra).
+   ⚠️ E O `scrollTop` TINHA DE IR JUNTO: com a caixa fora do jogo,
+   `$("app").scrollTop = 0` vira um comando que não faz nada, e a criança
+   veria a pergunta seguinte já rolada pela metade. Por isso este `aoTopo()`,
+   que sobe a JANELA (e ainda zera a caixa, para o caso de alguém devolver o
+   `overflow` um dia). */
+function aoTopo(){
+  try{ window.scrollTo(0, 0); }catch(e){}
+  if(document.documentElement) document.documentElement.scrollTop = 0;
+  if(document.body) document.body.scrollTop = 0;   /* Safari e Chrome antigos */
+  var a = document.getElementById("app");
+  if(a && a.scrollTop) a.scrollTop = 0;
+}
+
 function falaQuiz(q,n){return "Pergunta "+n+". "+q.pergunta+" Ouça as respostas e toque na certa.";}
 function falaDigitar(q,n){return "Palavra "+n+". "+q.pergunta;}
 function falaAchou(w){return "Achou! "+w+".";}
@@ -335,7 +357,7 @@ function telaCapa(){
   for(i=0;i<AVATARES.length;i++){h+='<button type="button" class="avbox opt" onclick="selAvatar(this,\''+AVATARES[i].id+'\')"><img src="img/'+AVATARES[i].id+'" alt="Personagem '+(i+1)+'" onerror="this.style.display=\'none\'"></button>';}
   h+='</div></div></div>';
   h+='<div><button class="btn" onclick="comecar()">Abrir o livro!</button></div></div>';
-  $("app").innerHTML=h;$("app").scrollTop=0;setBarra(0);
+  $("app").innerHTML=h;aoTopo();setBarra(0);
 }
 function ouvirHistoria(){_histTocada=true;falar(HISTORIA,true);}
 function selTurma(b,t){turmaSel=t;var e=document.getElementsByClassName("tbox"),i;for(i=0;i<e.length;i++){e[i].className="tbox opt";}b.className="tbox opt on";somToque();}
@@ -368,7 +390,7 @@ function telaLivro(dir){
   if(paginaAtual<PAGINAS.length-1){h+='<button class="navb opt" onclick="virarPagina(1)">Próxima &#9654;</button>';}
   else{h+='<button class="navb opt" style="background:#2e9e57;-webkit-box-shadow:0 4px 0 #22773f;box-shadow:0 4px 0 #22773f" onclick="irJogos()">Aos desafios! &#127942;</button>';}
   h+='</div>';
-  $("app").innerHTML=h;$("app").scrollTop=0;
+  $("app").innerHTML=h;aoTopo();
   setBarra((paginaAtual+1)/(PAGINAS.length+3));
   falar(p.fala);
 }
@@ -389,7 +411,7 @@ function telaQuizIntro(){
   var h='<div class="card"><h1>Desafio 1: Quiz</h1>'+crachaHTML().replace('cracha','cracha')+
     '<p class="grande">Vamos ver o que você descobriu sobre os mapas! São 10 perguntas. A Cartô lê cada uma.</p>'+
     '<button class="btn verde" onclick="telaPergunta()">Começar o quiz!</button></div>';
-  $("app").innerHTML=h;$("app").scrollTop=0;falar(TXT_QUIZINTRO);
+  $("app").innerHTML=h;aoTopo();falar(TXT_QUIZINTRO);
 }
 function passaporte(){var h='<div id="passa">',i;for(i=0;i<QUIZ.length;i++){var st=(i<atual?"feito":(i===atual?"agora":""));h+='<span class="selo '+st+'">'+(i<atual?"&#10003;":(i+1))+'</span>';}return h+'</div>';}
 function telaPergunta(){
@@ -404,7 +426,7 @@ function telaPergunta(){
   var letras=["A","B","C"],i;
   for(i=0;i<q.opcoes.length;i++){h+='<div class="opc c'+i+' opt" role="button" tabindex="0"'+(i===q.correta?' data-qa="1"':'')+' onclick="responder('+i+')"><span class="let">'+letras[i]+'</span><span class="otx">'+esc(q.opcoes[i])+'</span><button class="ospk" title="Ouvir" onclick="event.stopPropagation();ouvirOpc('+i+')">&#128266;</button></div>';}
   h+='</div></div>';
-  $("app").innerHTML=h;$("app").scrollTop=0;falar(falaQuiz(q,atual+1));
+  $("app").innerHTML=h;aoTopo();falar(falaQuiz(q,atual+1));
 }
 function responder(idx){somToque();respostas[atual]=idx;pararFala();atual++;if(atual>=QUIZ.length){telaCaca();}else{falar(FRASES_NEXT[atual%FRASES_NEXT.length]);setTimeout(telaPergunta,60);}}
 
@@ -426,7 +448,7 @@ function telaCaca(){
   h+='</div><div class="palavras">';
   for(i=0;i<CACA.length;i++){h+='<span class="pchip" id="chip'+i+'" data-qa="'+CACA[i].p+'">'+CACA[i].p+'</span>';}
   h+='</div><p id="cacamsg" class="grande" style="min-height:22px"></p></div>';
-  $("app").innerHTML=h;$("app").scrollTop=0;
+  $("app").innerHTML=h;aoTopo();
   falar(TXT_CACAINTRO);
 }
 var cacaSel=null;
@@ -459,7 +481,7 @@ function telaDigitarIntro(){
   var h='<div class="card"><h1>Desafio 3: Digitar</h1>'+crachaHTML()+
     '<p class="grande">Agora escreva as palavras! Você pode tocar no teclado da tela OU usar o teclado de verdade.</p>'+
     '<button class="btn verde" onclick="startDigitar()">Vamos digitar!</button></div>';
-  $("app").innerHTML=h;$("app").scrollTop=0;falar(TXT_DIGINTRO);
+  $("app").innerHTML=h;aoTopo();falar(TXT_DIGINTRO);
 }
 function startDigitar(){digAtual=0;somToque();telaDigitar();}
 function telaDigitar(){
@@ -477,7 +499,7 @@ function telaDigitar(){
   h+='<button class="tec apaga" onclick="apagaDig()">&#9003;</button>';
   h+='<button class="tec ok" onclick="confereDig()">OK</button>';
   h+='</div><p id="digmsg" class="grande" style="min-height:22px"></p></div>';
-  $("app").innerHTML=h;$("app").scrollTop=0;
+  $("app").innerHTML=h;aoTopo();
   falar(falaDigitar(q,digAtual+1));
   attDigCampo();
 }
@@ -518,7 +540,7 @@ function telaFinal(){
     '<h2>'+esc(nomeAluno)+', você é um(a) cartógrafo(a)!</h2>'+
     '<p class="grande">Você leu O Livro dos Mapas e venceu os três desafios. Parabéns!</p>'+
     '<p id="statusenvio"></p></div>';
-  $("app").innerHTML=h;$("app").scrollTop=0;setBarra(1);
+  $("app").innerHTML=h;aoTopo();setBarra(1);
   falar(TXT_FINAL);enviarResultado(ac);
 }
 function enviarResultado(ac){

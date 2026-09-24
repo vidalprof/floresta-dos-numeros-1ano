@@ -82,6 +82,7 @@ PORTOES=(
   "0b2 dinamicas|python3 _qa/dinamicas.py $ARQ"
   "0b6 catalogo/painel|python3 _qa/catalogo.py $PASTA"
   "0w bash -e derruba o passo (cmd; rc=$?)|python3 _qa/bash_e.py"
+  "4c barra de rolagem no meio da tela|python3 _qa/barra_no_meio.py $PASTA"
   "1q3 fala curta demais / mp3 repetido|python3 _qa/fala_curta.py $PASTA"
   # ⭐ o PEDAGOGO virou medida (set/2026): habilidade citada existe mesmo no
   #    curriculo da rede, os objetivos do relatorio batem com ela um a um, e o

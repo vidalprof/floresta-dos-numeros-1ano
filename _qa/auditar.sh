@@ -463,6 +463,7 @@ portao "0b7 invisivel" python3 _qa/invisivel.py
 
 echo "--- 0b6) CATALOGO/PAINEL (a atividade esta no painel de links?) -"
 portao "0b6 catalogo/painel" python3 _qa/catalogo.py "$PASTA"
+portao "4c barra de rolagem no meio da tela" python3 _qa/barra_no_meio.py "$ARQ"
 
 # ⭐ 0b9) O PEDAGOGO VIROU MEDIDA (set/2026 — pergunta do Marcos: *"o pedagogo
 #    esta bem criterioso quanto ao curriculo e didatica? ele esta especialista?
