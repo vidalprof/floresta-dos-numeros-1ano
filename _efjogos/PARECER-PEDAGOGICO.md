@@ -134,8 +134,11 @@ duas coisas são legítimas aos nove anos — a primeira é até mais útil — 
 agora **grava quantas vezes cada criança voltou ao texto** (campo `dicas` no
 registro). Uma prova que parece medir uma coisa e mede outra seria pior do que
 uma prova difícil.
-⚠️ **O painel do professor ainda NÃO mostra esse número** — ele grava, o painel
-ignora. Dívida declarada; mostrar é trabalho no `_efjogospainel`.
+⚠️ ~~**O painel do professor ainda NÃO mostra esse número**~~ — **PAGO em
+22/set/2026**: o `_efjogospainel` ganhou a coluna **"Voltou ao texto"**, ao lado
+da nota, e ela sai também no CSV. Conferido em 24/set: o número viaja no
+registro do Firebase (`dicas`), que é de onde o painel lê. (A planilha opcional
+`URL_PLANILHA` continua sem ele — dívida menor, e declarada.)
 
 ⚠️ **O QUE EU NÃO FIZ, de propósito:** não tirei nenhuma regra difícil (o *"não
 se acumula +2"*, os dois lados do desafio do +4) nem deixei as alternativas
