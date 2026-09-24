@@ -33,11 +33,6 @@ on:
         required: false
         default: ""
         type: string
-      testar_busca:
-        description: "Abrir o site num navegador de verdade e USAR a busca (sim/nao)"
-        required: false
-        default: "nao"
-        type: string
 
 jobs:
   pages:
@@ -130,93 +125,6 @@ jobs:
             > "_status/pages-$DEST.json"
           cat "_status/pages-$DEST.json"
 
-      # ⚠️⚠️ POR QUE ESTE PASSO MORA AQUI, e nao num workflow proprio: o GitHub
-      # so aceita acionar um workflow que ja exista na branch PADRAO, e criar um
-      # arquivo novo la exigiria sair da branch de trabalho. Este workflow ja e o
-      # portao do "o site no ar funciona?" — perguntar "e a busca funciona?" e a
-      # mesma familia.
-      #
-      # ⚠️ E ELE EXISTE PORQUE EU NAO CONSIGO MEDIR ISSO DE OUTRO JEITO: do chat
-      # a rede e travada (o proxy nega `commons.wikimedia.org` com 403), entao a
-      # cobaia testa a busca com um `fetch` de MENTIRA. Isso prova a leitura e a
-      # importacao, e nao prova NADA sobre a rede — que e onde a falha pode
-      # estar. Aqui o runner abre o site publicado num navegador de verdade.
-      - name: Usar a busca num navegador de verdade
-        if: ${{ inputs.testar_busca == 'sim' }}
-        env:
-          URL: https://vidalprof.github.io/${{ inputs.repo_name }}/
-        run: |
-          npm i -D playwright@1.47.0 >/dev/null 2>&1
-          npx playwright install --with-deps chromium >/dev/null 2>&1
-          cat > /tmp/teste.js <<'JS'
-          const { chromium } = require('playwright');
-          (async () => {
-            const url = process.env.URL;
-            const b = await chromium.launch();
-            const pg = await b.newPage({ viewport: { width: 1366, height: 768 } });
-            const erros = [], rede = [];
-            pg.on('pageerror', e => erros.push('pageerror: ' + (e.message || e)));
-            pg.on('console', m => { if (m.type() === 'error') erros.push('console: ' + m.text()); });
-            pg.on('response', r => { if (r.url().indexOf('wikimedia') >= 0)
-              rede.push(r.status() + ' ' + r.url().slice(0, 110)); });
-            pg.on('requestfailed', r => { if (r.url().indexOf('wikimedia') >= 0)
-              rede.push('FALHOU ' + (r.failure() && r.failure().errorText) + ' ' +
-                        r.url().slice(0, 110)); });
-            const o = { url: url, quando: new Date().toISOString() };
-            try {
-              await pg.goto(url + '?v=' + Date.now(), { waitUntil: 'load', timeout: 60000 });
-              await pg.waitForTimeout(1500);
-              o.versao = await pg.evaluate(() =>
-                (typeof VERSAO !== 'undefined') ? VERSAO : 'sem carimbo');
-              if (await pg.locator('#mdOk').count()) await pg.click('#mdOk');
-              await pg.waitForTimeout(300);
-              o.temBotao = (await pg.locator('[data-qa="f-buscar"]').count()) > 0;
-              if (!o.temBotao) throw new Error('a barra nao tem o botao Buscar');
-              await pg.click('[data-qa="f-buscar"]');
-              await pg.waitForTimeout(500);
-              // ⚠️ o ALUNO nao tem campo de texto (o professor pediu isso): quem
-              // busca e o assunto pronto. O teste clica num deles, como a turma fara.
-              o.assuntos = await pg.locator('#assuntos [data-t]').count();
-              o.campoLivreDoAluno = (await pg.locator('#qBusca').count()) > 0;
-              if (!o.assuntos) throw new Error('nao apareceram os assuntos prontos');
-              await pg.click('#assuntos [data-t="floresta"]');
-              await pg.waitForTimeout(15000);
-              o.achados = await pg.evaluate(() =>
-                (typeof achados !== 'undefined' && achados) ? achados.length : -1);
-              o.tela = (await pg.locator('#resBusca').innerText()).slice(0, 220);
-              o.miniaturas = await pg.locator('#grAchados .achado').count();
-              if (o.miniaturas > 0) {
-                const antes = await pg.evaluate(() => PROJ.clipes.length);
-                await pg.click('#grAchados [data-i="0"]');
-                await pg.waitForTimeout(8000);
-                o.entrou = await pg.evaluate(a => PROJ.clipes.length > a, antes);
-                o.credito = await pg.evaluate(() => (PROJ.creditos || [])[0] || null);
-                o.palcoLimpo = await pg.evaluate(() => {
-                  try { ctx.getImageData(0, 0, 1, 1); return true; } catch (e) { return false; } });
-              }
-            } catch (e) { o.erro = String(e.message || e); }
-            o.rede = rede.slice(0, 6);
-            o.erros = erros.slice(0, 6);
-            o.veredito = (o.miniaturas > 0)
-              ? (o.entrou ? 'A BUSCA FUNCIONA' : 'ACHOU MAS NAO TROUXE')
-              : 'NAO ACHOU NADA';
-            require('fs').writeFileSync('_status/busca-oficina.json', JSON.stringify(o, null, 1));
-            console.log(JSON.stringify(o, null, 1));
-            await b.close();
-          })().catch(e => {
-            require('fs').writeFileSync('_status/busca-oficina.json',
-              JSON.stringify({ veredito: 'NAO MEDI', erro: String(e && e.message) }, null, 1));
-          });
-          JS
-          mkdir -p _status
-          node /tmp/teste.js || true
-          {
-            echo "## Teste da busca"
-            echo '```json'
-            cat _status/busca-oficina.json
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
       - name: O carimbo nao pode mentir (a corrida morreu no meio)
         if: failure()
         env:
@@ -235,8 +143,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add "_status/pages-$DEST.json" _status/busca-oficina.json 2>/dev/null || \
-            git add "_status/pages-$DEST.json"
+          git add "_status/pages-$DEST.json"
           git diff --cached --quiet && exit 0
           git commit -m "pages: carimbo de $DEST"
           # ⚠️ outra corrida pode ter commitado no meio: rebase e tenta de novo.

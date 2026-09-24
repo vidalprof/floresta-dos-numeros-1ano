@@ -453,115 +453,6 @@ function servidor() {
       'o rascunho voltou SEM o arquivo por tras (o blob: morreu com a aba)');
   }
 
-  /* ---- 11d. O BUSCADOR DE MATERIAL LIVRE ----
-     ⚠️ O QUE ESTE PASSO MEDE E O QUE ELE NAO MEDE. Ele NAO prova que a rede da
-     escola deixa alcancar o Commons — isso so o PC do laboratorio responde.
-     Ele prova o que esta do lado de ca: que a resposta e lida certo (nome,
-     autor e licenca, com o HTML do campo de autor virando TEXTO), que o
-     arquivo entra na fita, que o credito e guardado e escrito, e que a
-     FALHA DE REDE mostra o aviso certo em vez de deixar a crianca esperando.
-     Para isso o `fetch` e trocado por um de mentira — de mentira e de
-     proposito: e a unica forma de medir a leitura sem depender de rede. */
-  await eu(() => {
-    window.__fetchReal = window.fetch;
-    window.__pngFalso = null;
-    const c = document.createElement('canvas'); c.width = 40; c.height = 40;
-    const x = c.getContext('2d'); x.fillStyle = '#2e7d32'; x.fillRect(0, 0, 40, 40);
-    return new Promise(ok => c.toBlob(b => { window.__pngFalso = b; ok(true); }, 'image/png'));
-  });
-  await eu(() => {
-    window.fetch = function (u) {
-      if (String(u).indexOf('commons.wikimedia.org') >= 0) {
-        return Promise.resolve({ ok: true, json: function () { return Promise.resolve({
-          query: { pages: { '1': { title: 'File:Folha verde.jpg', imageinfo: [{
-            /* ⚠️ miniatura em `data:` — um endereco inventado (`blob:falso`)
-               o navegador recusa carregar, e o console cuspia um erro que era
-               do TESTE, nao do programa. */
-            thumburl: 'data:image/gif;base64,R0lGODlhAQABAIAAAC4uLgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
-            url: 'data:image/gif;base64,R0lGODlhAQABAIAAAC4uLgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==',
-            descriptionurl: 'https://commons.wikimedia.org/wiki/File:Folha_verde.jpg',
-            extmetadata: {
-              Artist: { value: '<a href="/wiki/User:Fulano">Fulano <i>de Tal</i></a>' },
-              LicenseShortName: { value: 'CC BY-SA 4.0' } } }] } } } }); } });
-      }
-      return Promise.resolve({ ok: true, blob: function () {
-        return Promise.resolve(window.__pngFalso); } });
-    };
-  });
-  await pg.click('[data-qa="f-buscar"]');
-  await pg.waitForTimeout(250);
-
-  /* ⚠️⚠️ A TRAVA E O QUE MAIS IMPORTA AQUI. O professor disse: "meu medo e
-     digitarem algo improprio no campo busca". O Commons e arquivo publico e tem
-     material adulto. Entao o aluno NAO PODE ter campo de texto: se um dia
-     alguem mexer nisso sem perceber, este passo reprova. */
-  exige((await pg.locator('#qBusca').count()) === 0,
-    'o ALUNO tem campo de busca livre — era para ser so os assuntos prontos');
-  exige((await pg.locator('#assuntos [data-t]').count()) > 10,
-    'os assuntos prontos nao apareceram');
-  notas.push('busca: aluno sem campo livre, ' +
-    (await pg.locator('#assuntos [data-t]').count()) + ' assuntos prontos');
-
-  /* palavra barrada nao chega a sair pedido nenhum */
-  await eu(() => { window.__pediu = 0;
-    const f = window.fetch;
-    window.fetch = function (u) { window.__pediu++; return f.apply(this, arguments); }; });
-  await eu(() => buscarCommons('foto de sexo', 'imagem'));
-  await pg.waitForTimeout(300);
-  exige(await eu(() => window.__pediu === 0),
-    'uma palavra barrada AINDA saiu para a internet');
-  exige(await eu(() => /nao e para a aula|não é para a aula/i.test($('resBusca').innerHTML)),
-    'a palavra barrada nao mostrou o aviso');
-  notas.push('busca: palavra impropria e barrada ANTES de sair o pedido');
-
-  /* a chave do professor destranca o campo */
-  pg.once('dialog', d => d.accept('1275@'));
-  await pg.click('[data-qa="destrancar"]');
-  await pg.waitForTimeout(400);
-  exige((await pg.locator('#qBusca').count()) === 1,
-    'a chave do professor nao destrancou o campo de busca');
-  notas.push('busca: a chave 1275@ destranca o campo para o professor');
-
-  /* e ai, com o campo do professor, a busca de verdade */
-  await pg.fill('#qBusca', 'folha');
-  await pg.click('[data-qa="buscar"]');
-  await pg.waitForTimeout(700);
-  const leu = await eu(() => achados.length ? {
-    nome: achados[0].nome, autor: achados[0].autor, lic: achados[0].licenca } : null);
-  exige(!!leu, 'a busca nao leu nenhum resultado da resposta');
-  if (leu) {
-    exige(leu.autor === 'Fulano de Tal',
-      'o autor nao foi limpo do HTML (veio "' + leu.autor + '")');
-    exige(leu.lic === 'CC BY-SA 4.0', 'a licenca nao foi lida');
-    exige(leu.nome === 'Folha verde.jpg', 'o nome do arquivo nao foi lido');
-    notas.push('busca: leu "' + leu.nome + '" de ' + leu.autor + ' (' + leu.lic + ')');
-  }
-  const antesB = await eu(() => PROJ.clipes.length);
-  await pg.click('#grAchados [data-i="0"]');
-  await pg.waitForTimeout(1600);
-  exige(await eu(a2 => PROJ.clipes.length === a2 + 1, antesB),
-    'o material escolhido na busca nao entrou na fita');
-  exige(await eu(() => (PROJ.creditos || []).length === 1), 'o credito nao foi guardado');
-  exige(await eu(() => { try { ctx.getImageData(0, 0, 1, 1); return true; }
-                         catch (e) { return false; } }),
-    'o palco ficou CONTAMINADO depois da busca — a exportacao quebraria');
-  await eu(() => { PROJ.textos.length = 0; poeCreditos(); });
-  exige(await eu(() => PROJ.textos.length === 1 &&
-    /Fulano de Tal/.test(PROJ.textos[0].txt) && /CC BY-SA/.test(PROJ.textos[0].txt)),
-    'os creditos nao foram escritos no video');
-  notas.push('busca: o credito entrou no video sozinho');
-
-  /* e a rede caindo tem de AVISAR, nao deixar esperando */
-  await eu(() => { window.fetch = function () { return Promise.reject(new Error('rede')); }; });
-  await pg.fill('#qBusca', 'outra coisa');
-  await pg.click('[data-qa="buscar"]');
-  await pg.waitForTimeout(700);
-  exige(await eu(() => /bloqueia|n[aã]o consegui alcan/i.test($('resBusca').innerHTML)),
-    'com a rede fora, a busca nao avisou nada');
-  notas.push('busca: com a rede fora, avisa e manda usar o Acervo');
-  await eu(() => { window.fetch = window.__fetchReal;
-                   PROJ.textos.length = 0; PROJ.creditos = []; tudo(); });
-
   /* ---- 12. nenhum erro de JavaScript no caminho ---- */
   const limpos = erros.filter(e => !/favicon|Download is not|net::ERR_ABORTED/i.test(e));
   if (limpos.length) falhas.push('erro de JavaScript: ' + limpos.slice(0, 3).join(' | '));
@@ -574,7 +465,7 @@ function servidor() {
 
 async function fim(b, srv) {
   await b.close(); srv.close();
-  console.log(alvo + ' -> cobaia de video: 26 passos de uso real' +
+  console.log(alvo + ' -> cobaia de video: 23 passos de uso real' +
               (CELULAR ? ' NO CELULAR (390x780, com o dedo)' : ''));
   notas.forEach(n => console.log('   . ' + n));
   if (!falhas.length) {

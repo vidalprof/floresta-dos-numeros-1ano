@@ -224,16 +224,6 @@ input[type=color]{width:44px;height:38px;padding:0;border:1px solid var(--linha)
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px}
 .grade .bt{min-height:56px;flex-direction:column;gap:2px;font-size:11.5px;padding:4px}
 .grade .bt i{font-style:normal;font-size:17px}
-/* a grade de resultados da busca */
-.achados{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px;margin:6px 0}
-.achado{position:relative;min-height:88px;padding:0;border:1px solid var(--linha);
-  border-radius:var(--raio2);background:var(--painel2);cursor:pointer;overflow:hidden;
-  display:block;-webkit-tap-highlight-color:transparent}
-.achado:hover{border-color:var(--acento2)}
-.achado img{width:100%;height:88px;object-fit:cover;display:block}
-.achado .somico{display:grid;place-items:center;height:88px;color:var(--acento2)}
-.achado .cred{position:absolute;left:0;right:0;bottom:0;background:#000000bb;color:#fff;
-  font-size:9.5px;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* ============ A BARRA DE FERRAMENTAS (embaixo, rolando de lado) ============ */
 .ferr{display:flex;gap:2px;flex:none;overflow-x:auto;overflow-y:hidden;background:#101219;
@@ -344,7 +334,6 @@ input[type=color]{width:44px;height:38px;padding:0;border:1px solid var(--linha)
 <symbol id="i-mais" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
 <symbol id="i-fechar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
 <symbol id="i-ajuda" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.3a2.7 2.7 0 1 1 3.4 3.1c-.6.2-.8.7-.8 1.3v.4"/><circle cx="12" cy="17.2" r="1" fill="currentColor" stroke="none"/></symbol>
-<symbol id="i-lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.4 15.4 5.1 5.1"/></symbol>
 <symbol id="i-acervo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="6" width="8" height="12" rx="1.6"/><rect x="12.5" y="6" width="4" height="12" rx="1.2"/><path d="M18.4 6.6 21.6 17a1.2 1.2 0 0 1-.8 1.5l-.6.2"/></symbol>
 <symbol id="i-recorte" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/></symbol>
 <symbol id="i-faisca" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/><circle cx="12" cy="12" r="3.1"/></symbol>
@@ -457,7 +446,6 @@ var PROJ = {
   corFundo: "#101820",
   encaixe: "contem",          /* contem | cobre */
   clipes: [],                 /* faixa principal, em sequência */
-  creditos: [],               /* autor e licença do que veio de fora */
   pip: [],                    /* camada de cima */
   textos: [],
   audios: []
@@ -1459,7 +1447,6 @@ var gavetaAberta = null;
 var FERRAS = [
   {k:"material", n:"Material", i:"i-mais"},
   {k:"acervo",   n:"Acervo",   i:"i-acervo"},
-  {k:"buscar",   n:"Buscar",   i:"i-lupa"},
   {k:"aparar",   n:"Aparar",   i:"i-cortar"},
   {k:"cortar",   n:"Cortar",   i:"i-recorte"},
   {k:"tela",     n:"Tela",     i:"i-quadro"},
@@ -4405,320 +4392,6 @@ GAVETAS.efeitos = function(){
 
 
 /* ============================================================
-   BUSCAR MATERIAL DE LICENÇA LIVRE — o substituto honesto do "baixar do
-   YouTube" e do "buscador do Google".
-   ⚠️ POR QUE NÃO É O GOOGLE NEM O YOUTUBE (pedido do Marcos, 24/set/2026):
-   · o Google não tem porta pública para busca de imagens, e raspar a página
-     dele contraria os termos deles — além de o resultado ser, na maioria,
-     material COM DONO, que o aluno acharia sem saber que não pode usar;
-   · baixar do YouTube contraria os termos do próprio YouTube e põe obra alheia
-     num trabalho publicado. A tela "Limites e cuidados" deste editor ensina
-     exatamente o contrário — o programa não pode desmentir a própria aula.
-
-   ⭐ O QUE ENTRA NO LUGAR: o acervo do **Wikimedia Commons**, que é a mediateca
-   da Wikipédia. Tudo lá é de licença livre, tem **autor e licença declarados**,
-   e a porta é pública e sem chave. E o editor **escreve o crédito sozinho** —
-   é o que transforma a busca em conteúdo de aula em vez de contorno dela.
-
-   ⚠️ POR QUE SÓ ESTA FONTE, e não o Openverse também: a pesquisa por workflow
-   (`_pesquisa/web/buscar-midia-livre-no-navegador.md`) confirmou o Commons
-   respondendo **HTTP 200** com `origin=*`, e o Openverse voltou **bloqueado ou
-   vazio**. Não ponho no ar fonte que eu não consegui ver responder.
-
-   ⚠️⚠️ E ESTA É A ÚNICA PARTE DO EDITOR QUE PRECISA DE INTERNET. O professor
-   avisou que **o sinal de wifi da escola não é bom**: por isso a busca pede
-   MINIATURAS (uns 300 px, dezenas de KB) e não os arquivos originais, que no
-   Commons chegam a dezenas de MB. E se a rede bloquear, o aviso diz isso com
-   todas as letras e o resto do editor continua funcionando — o **Acervo**, que
-   é desenhado aqui dentro, não depende de rede nenhuma.
-   ============================================================ */
-var COMMONS = "https://commons.wikimedia.org/w/api.php";
-var achados = [];
-
-/* ============================================================
-   ⚠️⚠️ QUEM DIGITA A BUSCA NÃO É A CRIANÇA — decisão do Marcos (24/set/2026):
-   ***"meu medo é digitarem algo impróprio no campo busca"***. O medo é certo e
-   eu deveria ter previsto: o Wikimedia Commons é um **arquivo público** e, como
-   qualquer arquivo público, **tem material adulto e imagens cruas**. Um campo
-   de texto aberto numa sala de 6º ano é um convite.
-
-   A SAÍDA, em três camadas — e nenhuma delas é "confiar":
-   1. **O aluno não digita.** Ele escolhe entre ASSUNTOS PRONTOS, escritos aqui,
-      pensados para aula (célula, planta, vulcão, sistema solar…). É a mesma
-      ideia do professor que entrega a pasta de figuras em vez de soltar a
-      turma no navegador.
-   2. **O campo livre existe, mas é do professor**, atrás da chave da casa
-      (`1275@`, a mesma de todas as atividades). Ele destranca pela aula e
-      pronto.
-   3. **Um filtro de palavras** barra o termo ANTES de sair o pedido, e ainda
-      peneira o NOME do arquivo que volta — porque o assunto pode ser inocente
-      e a foto não.
-
-   ⚠️⚠️ E A RESSALVA HONESTA, que vai escrita na tela: **filtro nenhum é
-   garantia.** Isto é uma barreira, não uma muralha. Num arquivo com centenas
-   de milhões de imagens, o professor continua sendo o adulto da sala. Prometer
-   "seguro" seria a pior coisa que eu poderia fazer aqui.
-   ============================================================ */
-var ASSUNTOS = [
-  {g:"Ciências", t:["célula", "esqueleto humano", "coração humano", "pulmão",
-                    "microscópio", "átomo", "sistema solar", "planeta",
-                    "vulcão", "fóssil", "dinossauro", "energia solar"]},
-  {g:"Natureza", t:["floresta", "árvore", "flor", "folha", "rio", "oceano",
-                    "montanha", "chuva", "borboleta", "pássaro", "peixe",
-                    "abelha"]},
-  {g:"Escola e cidade", t:["escola", "biblioteca", "livro", "mapa do Brasil",
-                           "bandeira do Brasil", "cidade", "ponte", "trem",
-                           "reciclagem", "horta", "museu", "laboratório"]}
-];
-
-/* ⚠️ lista de barragem: termos que não entram numa busca de sala de aula.
-   Ela é curta de propósito — lista longa dá falso positivo em palavra comum
-   (e "seio", em Ciências, é palavra de anatomia). Ela barra o óbvio; o resto é
-   a camada 1 (o aluno não digita) e o professor. */
-var BARRADOS = ("sexo sexual sexy porn porno pornografia nu nua nude naked nudez pelada pelado " +
-  "erotic erotica peito peitos bunda genital genitalia penis pênis vagina vulva masturb " +
-  "prostitu drogas maconha cocaina cocaína crack heroina heroína arma armas pistola revolver " +
-  "revólver fuzil suicidio suicídio suicide matar morto cadaver cadáver sangue gore tortura " +
-  "nazi nazista hitler racis").split(" ");
-
-function termoProibido(t){
-  var a = achataBusca(t), k;
-  for(k = 0; k < BARRADOS.length; k++){
-    if(!BARRADOS[k]) continue;
-    if(a.indexOf(BARRADOS[k]) >= 0) return BARRADOS[k];
-  }
-  return null;
-}
-/* sem acento e em minúsculas, senão "pênis" passaria e "penis" não */
-function achataBusca(t){
-  t = String(t || "").toLowerCase();
-  try{
-    t = t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  }catch(e){}
-  return " " + t.replace(/[^a-z0-9]+/g, " ") + " ";
-}
-var PROF_LIBEROU = false;
-
-/* ⚠️ o campo de autor do Commons vem com HTML dentro (links, itálicos). Vai
-   para a tela como TEXTO, sempre — nunca como HTML. */
-function soTexto(h){
-  var d = document.createElement("div");
-  d.innerHTML = String(h || "");
-  return (d.textContent || d.innerText || "").replace(/\s+/g, " ").trim();
-}
-
-function buscarCommons(termo, tipo){
-  var mau = termoProibido(termo);
-  if(mau){
-    $("resBusca").innerHTML = '<div class="aviso erro"><b>Essa palavra não é para a aula.</b> ' +
-      'Escolha um dos assuntos acima — eles foram preparados para o trabalho de vocês.</div>';
-    recado("Busca recusada.", "erro");
-    return;
-  }
-  var filtro = tipo === "som" ? "filetype:audio" : "filetype:bitmap";
-  var u = COMMONS + "?action=query&format=json&origin=*" +
-    "&generator=search&gsrnamespace=6&gsrlimit=18" +
-    "&gsrsearch=" + encodeURIComponent(filtro + " " + termo) +
-    "&prop=imageinfo&iiprop=url%7Cextmetadata%7Cmime%7Csize&iiurlwidth=320";
-  var alvo = $("resBusca");
-  alvo.innerHTML = '<div class="aviso">Procurando…</div>';
-  /* ⚠️ prazo: em rede ruim um pedido pode ficar pendurado para sempre, e a
-     criança fica olhando "Procurando…" sem saber que já era. */
-  var morreu = false;
-  var relogio = setTimeout(function(){
-    morreu = true;
-    alvo.innerHTML = '<div class="aviso erro"><b>A busca não respondeu a tempo.</b> ' +
-      'Pode ser o sinal de internet da escola, ou a rede pode estar bloqueando este ' +
-      'endereço. Use o <b>Acervo</b> — ele é feito aqui dentro e não precisa de rede.</div>';
-  }, 12000);
-
-  fetch(u).then(function(r){ return r.json(); }).then(function(d){
-    if(morreu) return;
-    clearTimeout(relogio);
-    var paginas = d && d.query && d.query.pages;
-    if(!paginas){ alvo.innerHTML = '<div class="aviso">Nada encontrado para “' +
-      esc(termo) + '”. Tente uma palavra mais simples, ou em inglês.</div>'; return; }
-    achados = [];
-    var k;
-    for(k in paginas){ if(paginas.hasOwnProperty(k)){
-      var p = paginas[k], i = p.imageinfo && p.imageinfo[0];
-      if(!i) continue;
-      var m = i.extmetadata || {};
-      var nomeArq = (p.title || "").replace(/^File:/, "");
-      /* ⚠️ peneira tambem o que VOLTA: o assunto pode ser inocente e o arquivo
-         nao. É barato e pega o caso mais comum, que é o nome descritivo. */
-      if(termoProibido(nomeArq)) continue;
-      achados.push({
-        nome: nomeArq,
-        mini: i.thumburl || i.url,
-        arquivo: (tipo === "som") ? i.url : (i.thumburl || i.url),
-        autor: soTexto(m.Artist && m.Artist.value) || "autor não declarado",
-        licenca: soTexto(m.LicenseShortName && m.LicenseShortName.value) || "ver no Commons",
-        pagina: i.descriptionurl || "",
-        tipo: tipo
-      });
-    }}
-    mostraAchados(tipo);
-  }).catch(function(){
-    if(morreu) return;
-    clearTimeout(relogio);
-    alvo.innerHTML = '<div class="aviso erro"><b>Não consegui alcançar o acervo.</b> ' +
-      'Ou a internet caiu, ou a rede da escola bloqueia este endereço ' +
-      '(<code>commons.wikimedia.org</code>) — quem pode liberar é quem cuida da rede. ' +
-      'Enquanto isso, o <b>Acervo</b> funciona sem internet nenhuma.</div>';
-  });
-}
-
-function mostraAchados(tipo){
-  var alvo = $("resBusca"), h = "", k;
-  if(!achados.length){
-    alvo.innerHTML = '<div class="aviso">Nada encontrado.</div>'; return;
-  }
-  h = '<div class="achados" id="grAchados">';
-  for(k = 0; k < achados.length; k++){
-    var a = achados[k];
-    h += '<button type="button" class="achado" data-i="' + k + '" title="' +
-         esc(a.nome + " · " + a.autor + " · " + a.licenca) + '">' +
-         (tipo === "som"
-           ? '<span class="somico"><svg width="22" height="22"><use href="#i-musica"/></svg></span>'
-           : '<img src="' + esc(a.mini) + '" alt="" loading="lazy">') +
-         '<span class="cred">' + esc(a.licenca) + '</span></button>';
-  }
-  h += '</div><div class="aviso" style="margin-bottom:0">Toque para trazer. ' +
-       '<b>O crédito (autor e licença) é guardado sozinho</b> — e o botão ' +
-       '<b>Pôr os créditos no fim</b> escreve todos no vídeo.</div>';
-  alvo.innerHTML = h;
-  $("grAchados").onclick = function(ev){
-    var b = ev.target.closest ? ev.target.closest("[data-i]") : null;
-    if(b) trazDoAcervoLivre(achados[parseInt(b.getAttribute("data-i"), 10)]);
-  };
-}
-
-/* ⚠️⚠️ O PERIGO ESCONDIDO: imagem de outro site desenhada no canvas **contamina**
-   o canvas, e a partir daí o navegador PROÍBE ler os pixels — o que quebra a
-   exportação, o congelar e as miniaturas, tudo de uma vez, e só na hora de
-   salvar. Por isso o arquivo é trazido por `fetch` e vira `blob:` local (que é
-   da própria página, e não contamina nada); e por isso, logo depois, o
-   programa TENTA LER UM PIXEL para conferir. Se não conseguir, tira o material
-   e avisa, em vez de deixar a criança descobrir na hora de exportar. */
-function palcoLimpo(){
-  try{ ctx.getImageData(0, 0, 1, 1); return true; }
-  catch(e){ return false; }
-}
-
-function trazDoAcervoLivre(a){
-  if(!a) return;
-  recado("Trazendo “" + esc(a.nome) + "”…", "");
-  fetch(a.arquivo).then(function(r){
-    if(!r.ok) throw new Error("resposta " + r.status);
-    return r.blob();
-  }).then(function(b){
-    var ext = (a.nome.match(/\.[a-z0-9]+$/i) || [".jpg"])[0];
-    var arq = new File([b], a.nome || ("livre" + ext), {type: b.type});
-    if(!PROJ.creditos) PROJ.creditos = [];
-    PROJ.creditos.push(a.nome + " — " + a.autor + " (" + a.licenca + ")");
-    if(a.tipo === "som") trazAudio(arq, "musica");
-    else trazArquivos([arq]);
-    setTimeout(function(){
-      desenha(TEMPO);
-      if(!palcoLimpo()){
-        recado("Este arquivo não deixou o editor ler a imagem (regra de segurança " +
-               "do navegador) e quebraria a exportação. Tirei da fita.", "erro");
-        PROJ.clipes.pop(); PROJ.creditos.pop(); tudo();
-      }
-    }, 600);
-    recado("Pronto. O crédito ficou guardado: <b>" + esc(a.autor) + "</b> (" +
-           esc(a.licenca) + ").", "bom");
-  }).catch(function(e){
-    recado("Não consegui baixar este arquivo (" + esc(String(e.message || e)) +
-           "). Escolha outro, ou use o <b>Acervo</b>.", "erro");
-  });
-}
-
-function poeCreditos(){
-  var c = PROJ.creditos || [];
-  if(!c.length){ recado("Ainda não há nada de fora para creditar.", ""); return; }
-  guardaPasso();
-  var fim = durTotal();
-  PROJ.textos.push({
-    id: novoId(),
-    txt: "Créditos\n" + c.join("\n"),
-    x: 0.5, y: 0.5, tam: 3.2, cor: "#ffffff", contorno: true, corContorno: "#000000",
-    negrito: false, fonte: "Segoe UI, sans-serif", anim: "aparecer", animSai: "sumir",
-    t0: Math.max(0, fim - 4), t1: fim + 2
-  });
-  selecionar("textos", PROJ.textos.length - 1);
-  tudo();
-  recado("Créditos escritos no fim do vídeo. <b>Dar o nome de quem fez é parte " +
-         "do trabalho</b>, não formalidade.", "bom");
-}
-
-/* ---------------- a gaveta ---------------- */
-GAVETAS.buscar = function(){
-  var g = $("gaveta");
-  var ha = "", gi, ti;
-  for(gi = 0; gi < ASSUNTOS.length; gi++){
-    ha += '<h4 style="margin-top:8px">' + esc(ASSUNTOS[gi].g) + '</h4><div class="glos">';
-    for(ti = 0; ti < ASSUNTOS[gi].t.length; ti++)
-      ha += '<b data-t="' + esc(ASSUNTOS[gi].t[ti]) + '">' + esc(ASSUNTOS[gi].t[ti]) + '</b>';
-    ha += '</div>';
-  }
-  g.innerHTML = cab("Buscar material de licença livre") +
-    '<div class="aviso" style="margin-top:0"><b>Escolha um assunto.</b> Eles foram ' +
-    'preparados para a aula — o campo de escrever é do professor.</div>' +
-    '<div id="assuntos">' + ha + '</div>' +
-    (PROF_LIBEROU
-      ? '<div class="linha"><input type="text" id="qBusca" placeholder="buscar (professor)" ' +
-        'aria-label="O que procurar"><button type="button" class="bt pri" id="btBuscar" ' +
-        'data-qa="buscar">Buscar</button></div>'
-      : '<div class="linha"><button type="button" class="bt mini" id="btProf" ' +
-        'data-qa="destrancar">Sou o professor — quero escrever a busca</button></div>') +
-    hGrade("grTipoB", [{v:"imagem", n:"Imagens"}, {v:"som", n:"Sons"}], "imagem") +
-    '<div id="resBusca"></div>' +
-    '<div class="linha"><button type="button" class="bt mini" id="btCreditos">' +
-      'Pôr os créditos no fim</button>' +
-      '<span class="val" id="nCred">' + ((PROJ.creditos || []).length) + '</span></div>' +
-    '<div class="aviso" style="margin-bottom:0"><b>Por que não é o Google nem o YouTube.</b> ' +
-    'O que se acha por lá tem dono, e usar sem permissão num vídeo publicado é uso de obra ' +
-    'alheia. Aqui o acervo é o da <b>Wikipédia</b>: tudo de licença livre, com autor e ' +
-    'licença à vista. ⚠️ Esta é a <b>única parte que precisa de internet</b> — se a rede da ' +
-    'escola bloquear, use o <b>Acervo</b>, que é feito aqui dentro.</div>' +
-    '<div class="aviso erro" style="margin-bottom:0"><b>Aviso ao professor.</b> O Commons é ' +
-    'um arquivo público de centenas de milhões de imagens e, como qualquer arquivo público, ' +
-    '<b>tem material adulto</b>. Por isso o aluno escolhe entre assuntos prontos, o campo ' +
-    'livre pede a chave e há um filtro de palavras. <b>Nada disso é garantia</b> — é ' +
-    'barreira. Numa busca aberta, quem decide continua sendo o adulto da sala.</div>';
-  $("gFecha").onclick = fechaGaveta;
-  var tipo = "imagem";
-  ligaGrade("grTipoB", function(v){ tipo = v; });
-  $("assuntos").onclick = function(ev){
-    var b = ev.target.closest ? ev.target.closest("[data-t]") : null;
-    if(b) buscarCommons(b.getAttribute("data-t"), tipo);
-  };
-  if(PROF_LIBEROU){
-    var vai = function(){
-      var t = $("qBusca").value.trim();
-      if(!t){ recado("Escreva o que você procura.", ""); return; }
-      buscarCommons(t, tipo);
-    };
-    $("btBuscar").onclick = vai;
-    $("qBusca").onkeydown = function(ev){ if(ev.key === "Enter") vai(); };
-  } else {
-    /* ⚠️ a mesma chave de todas as atividades da casa (`1275@`). Não é
-       segurança — está no código-fonte — é um PORTÃO DE SALA: impede o acesso
-       distraído, não o determinado. E é exatamente isso que se precisa aqui. */
-    $("btProf").onclick = function(){
-      var k = prompt("Chave do professor:");
-      if(k === "1275@"){ PROF_LIBEROU = true; abreGaveta("buscar");
-        recado("Campo de busca liberado para esta sessão.", "bom"); }
-      else if(k !== null) recado("Chave errada.", "erro");
-    };
-  }
-  $("btCreditos").onclick = function(){ poeCreditos(); var n = $("nCred");
-    if(n) n.textContent = (PROJ.creditos || []).length; };
-};
-
-/* ============================================================
    O BOOT — e a ordem importa.
    ⚠️ O canvas de apoio do chroma nasce com `willReadFrequently:true`. Sem essa
       palavra, cada `getImageData` obriga a placa de vídeo a devolver a imagem
@@ -4731,7 +4404,7 @@ function ctx2d(c, freq){
   catch(e){ return c.getContext("2d"); }
 }
 
-var VERSAO = "24/09-22c37e";
+var VERSAO = "24/09-df592b";
 function iniciar(){
   var vv = $("versao");
   if(vv){ vv.textContent = "v" + VERSAO;
