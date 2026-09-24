@@ -330,6 +330,7 @@ input[type=color]{width:44px;height:38px;padding:0;border:1px solid var(--linha)
 <symbol id="i-ajuda" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9.4 9.3a2.7 2.7 0 1 1 3.4 3.1c-.6.2-.8.7-.8 1.3v.4"/><circle cx="12" cy="17.2" r="1" fill="currentColor" stroke="none"/></symbol>
 <symbol id="i-acervo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="6" width="8" height="12" rx="1.6"/><rect x="12.5" y="6" width="4" height="12" rx="1.2"/><path d="M18.4 6.6 21.6 17a1.2 1.2 0 0 1-.8 1.5l-.6.2"/></symbol>
 <symbol id="i-recorte" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 2v14a2 2 0 0 0 2 2h14M2 6h14a2 2 0 0 1 2 2v14"/></symbol>
+<symbol id="i-faisca" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M12 2.5v4M12 17.5v4M2.5 12h4M17.5 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/><circle cx="12" cy="12" r="3.1"/></symbol>
 <symbol id="i-efeito" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 12h2.5l3-6 4 12 3-9 1.5 3H21"/></symbol>
 <symbol id="i-voltar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h11a5 5 0 0 1 0 10h-6M4 9.5 8.5 5M4 9.5 8.5 14"/></symbol>
 </defs></svg>
@@ -662,7 +663,9 @@ function desenha(t, soClipe){
     var fonte = fonteDe(c, em.local);
     var lw = larguraDe(c), lh = alturaDe(c);
     pintaFundo(fonte, lw, lh);
-    pintaClipe(c, fonte, 1, null, 0, em.local / durClipe(c));
+    var andar = em.local / durClipe(c);
+    pintaClipe(c, fonte, 1, null, 0, andar);
+    efeitoDepois(c, andar);
 
     /* ⭐ A TRANSIÇÃO acontece no ÚLTIMO pedaço de um clipe: os dois aparecem ao
        mesmo tempo, e é por isso que ela parece "costura" e não "corte". */
@@ -762,6 +765,11 @@ function pintaClipe(c, fonte, alfa, transicao, p, andar){
     var z = c.zoom.de + (c.zoom.para - c.zoom.de) * q;
     ctx.translate(W/2, H/2); ctx.scale(z, z); ctx.translate(-W/2, -H/2);
   }
+
+  /* ⚠️ os efeitos que MEXEM NA CÂMERA (tremida, pulso, batida) entram aqui,
+     junto com o zoom: são matriz, não pixel — de graça. Os que se desenham por
+     cima entram depois, no `efeitoDepois`. */
+  efeitoAntes(c, andar);
 
   ctx.translate(e.x + e.w/2, e.y + e.h/2);
   if(c.girar) ctx.rotate(c.girar * Math.PI / 180);
@@ -1033,6 +1041,7 @@ function novoClipe(m){
     id: novoId(), tipo: m.tipo, el: m.el, url: m.url, nome: m.nome || "clipe",
     fonteDur: m.max || m.dur, ini: 0, fim: m.dur, vel: 1,
     girar: 0, espelho: false, crop: null, mini: null, zoom: {de: 1, para: 1},
+    efeito: "nenhum", forca: 50,
     filtro: "nenhum", brilho: 100, contraste: 100, satur: 100, calor: 0,
     volume: 100, transicao: {tipo: "corte", dur: 0.5}
   };
@@ -1436,6 +1445,7 @@ var FERRAS = [
   {k:"cortar",   n:"Cortar",   i:"i-recorte"},
   {k:"tela",     n:"Tela",     i:"i-quadro"},
   {k:"filtro",   n:"Filtro",   i:"i-filtro"},
+  {k:"efeitos",  n:"Efeitos",  i:"i-faisca"},
   {k:"ajuste",   n:"Ajuste",   i:"i-ajuste"},
   {k:"veloc",    n:"Velocidade", i:"i-veloc"},
   {k:"girar",    n:"Girar",    i:"i-girar"},
@@ -1444,7 +1454,7 @@ var FERRAS = [
   {k:"figura",   n:"Figura",   i:"i-figura"},
   {k:"pip",      n:"Camada",   i:"i-pip"},
   {k:"musica",   n:"Música",   i:"i-musica"},
-  {k:"efeitos",  n:"Efeitos",  i:"i-efeito"},
+  {k:"som",      n:"Som",      i:"i-efeito"},
   {k:"voz",      n:"Voz",      i:"i-voz"}
 ];
 
@@ -3039,12 +3049,33 @@ function fazTrilha(t){
   }, function(){ recado("Não consegui compor a trilha.", "erro"); });
 }
 
+/* ⚠️ UM AJUDANTE A MAIS: a nota que VARRE de uma frequência a outra. Metade
+   dos efeitos de vídeo é isso — o laser desce, a moeda sobe, a gota sobe
+   depressa. Sem varredura, só dá para fazer apito. */
+function varre(ac, dest, tipo, f0, f1, t, dur, vol){
+  var o = ac.createOscillator(), g = ac.createGain();
+  o.type = tipo;
+  o.frequency.setValueAtTime(f0, t);
+  o.frequency.exponentialRampToValueAtTime(Math.max(20, f1), t + dur);
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.0002, vol), t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(dest);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+
 var EFEITOS = [
   {k:"pop", n:"Pop"}, {k:"ding", n:"Ding"}, {k:"vento", n:"Vento (whoosh)"},
-  {k:"tambor", n:"Tambor"}, {k:"clique", n:"Clique"}, {k:"palmas", n:"Palmas"}
+  {k:"tambor", n:"Tambor"}, {k:"clique", n:"Clique"}, {k:"palmas", n:"Palmas"},
+  {k:"sino", n:"Sino"}, {k:"laser", n:"Laser"}, {k:"explosao", n:"Explosão"},
+  {k:"moeda", n:"Moeda"}, {k:"erro", n:"Erro"}, {k:"vitoria", n:"Vitória"},
+  {k:"sirene", n:"Sirene"}, {k:"gota", n:"Gota"}, {k:"coracao", n:"Coração"},
+  {k:"harpa", n:"Harpa"}
 ];
+var DUR_EFEITO = {palmas:1.6, vento:0.8, sino:2.2, explosao:1.6, vitoria:1.4,
+                  sirene:1.8, coracao:1.4, harpa:1.4, laser:0.7, erro:0.8};
 function fazEfeito(k){
-  var dur = k === "palmas" ? 1.6 : (k === "vento" ? 0.8 : 0.6);
+  var dur = DUR_EFEITO[k] || 0.6;
   var ac = offline(dur);
   if(!ac){ recado("Este navegador não sabe sintetizar som.", "erro"); return; }
   var g = ac.createGain(); g.gain.value = 0.9; g.connect(ac.destination);
@@ -3068,6 +3099,60 @@ function fazEfeito(k){
     o2.connect(g2); g2.connect(g); o2.start(0); o2.stop(0.55);
   } else if(k === "clique"){
     ruido(ac, g, 0, 0.04, 0.5, 8000);
+
+  } else if(k === "sino"){
+    /* três parciais que não são múltiplos inteiros: é isso que faz soar metal
+       em vez de flauta. */
+    nota(ac, g, "sine", 880, 0, 2.1, 0.30, 0.003);
+    nota(ac, g, "sine", 2110, 0, 1.6, 0.13, 0.003);
+    nota(ac, g, "sine", 3400, 0, 0.9, 0.07, 0.003);
+
+  } else if(k === "laser"){
+    varre(ac, g, "sawtooth", 1800, 120, 0, 0.55, 0.32);
+    varre(ac, g, "square", 900, 90, 0.02, 0.4, 0.12);
+
+  } else if(k === "explosao"){
+    ruido(ac, g, 0, 1.5, 0.55, 900);
+    varre(ac, g, "sine", 120, 28, 0, 1.0, 0.45);
+
+  } else if(k === "moeda"){
+    nota(ac, g, "square", 988, 0, 0.09, 0.22, 0.003);
+    nota(ac, g, "square", 1319, 0.08, 0.35, 0.22, 0.003);
+
+  } else if(k === "erro"){
+    nota(ac, g, "square", 196, 0, 0.18, 0.30, 0.004);
+    nota(ac, g, "square", 165, 0.24, 0.32, 0.30, 0.004);
+
+  } else if(k === "vitoria"){
+    var fs = [523, 659, 784, 1046], i2;
+    for(i2 = 0; i2 < 4; i2++)
+      nota(ac, g, "triangle", fs[i2], i2 * 0.13, i2 === 3 ? 0.75 : 0.22, 0.28, 0.006);
+
+  } else if(k === "sirene"){
+    var o3 = ac.createOscillator(), g3 = ac.createGain(), i3;
+    o3.type = "sine";
+    o3.frequency.setValueAtTime(620, 0);
+    for(i3 = 0; i3 < 4; i3++){
+      o3.frequency.linearRampToValueAtTime(i3 % 2 ? 620 : 950, (i3 + 1) * 0.42);
+    }
+    g3.gain.setValueAtTime(0.26, 0);
+    g3.gain.setValueAtTime(0.26, 1.5);
+    g3.gain.exponentialRampToValueAtTime(0.001, 1.75);
+    o3.connect(g3); g3.connect(g); o3.start(0); o3.stop(1.78);
+
+  } else if(k === "gota"){
+    varre(ac, g, "sine", 420, 1400, 0, 0.16, 0.34);
+    nota(ac, g, "sine", 1600, 0.14, 0.2, 0.10, 0.003);
+
+  } else if(k === "coracao"){
+    varre(ac, g, "sine", 90, 38, 0, 0.22, 0.5);
+    varre(ac, g, "sine", 86, 36, 0.34, 0.26, 0.42);
+
+  } else if(k === "harpa"){
+    var esc = [523, 587, 659, 784, 880, 1046, 1175, 1318], i4;
+    for(i4 = 0; i4 < 8; i4++)
+      nota(ac, g, "triangle", esc[i4], i4 * 0.055, 0.85 - i4 * 0.04, 0.16, 0.004);
+
   } else {
     var i;
     for(i = 0; i < 14; i++) ruido(ac, g, i * 0.085 + (i % 3) * 0.012, 0.09, 0.22, 4200);
@@ -3307,7 +3392,7 @@ GAVETAS.cortar = function(){
 };
 
 /* ---------------- EFEITOS SONOROS (atalho do acervo) ---------------- */
-GAVETAS.efeitos = function(){
+GAVETAS.som = function(){
   var g = $("gaveta"), h = cab("Efeitos sonoros"), k;
   h += '<div class="grade" id="efG">';
   for(k = 0; k < EFEITOS.length; k++)
@@ -4096,6 +4181,206 @@ function contaFim(b, ext, rapido){
     "dois usou.</p>");
 }
 
+
+/* ============================================================
+   OS EFEITOS VISUAIS — a aba que o aplicativo de celular chama de "Efeitos".
+   ⚠️⚠️ ERRO DE NOME QUE CUSTOU UMA PERGUNTA DO MARCOS (24/set/2026): ***"e os
+   efeitos não funcionam? tem como ter mais efeitos?"***. Funcionavam — os
+   filtros e o resto estão medidos pixel a pixel no portão `_qa/efeitos_video.js`
+   — mas **o botão chamado "Efeitos" na barra abria os efeitos SONOROS**. Quem
+   toca nele procurando tremida e flash encontra "pop" e "ding" e conclui, com
+   razão, que não há efeito nenhum. *Nome errado num botão é defeito, não
+   detalhe: ele manda a pessoa para o lugar errado e ela culpa o programa.*
+
+   ⭐ A DIFERENÇA ENTRE FILTRO E EFEITO, que vale dizer ao aluno: **filtro é
+   parado** (muda a cor e fica assim), **efeito é no tempo** (ele acontece —
+   treme, pisca, estoura, passa). Por isso são duas abas separadas aqui e lá.
+
+   ⚠️ TODOS ANIMAM PELO "ANDAR" DO PEDAÇO (0 no começo, 1 no fim) e não pelo
+   relógio da máquina: assim a exportação sai idêntica à prévia, mesmo que a
+   prévia tenha tropeçado. É a mesma regra do acaso semeado.
+   ============================================================ */
+var EFEITOS_V = [
+  {k:"nenhum",  n:"Nenhum"},
+  {k:"tremida", n:"Tremida"},
+  {k:"pulso",   n:"Pulso"},
+  {k:"batida",  n:"Batida"},
+  {k:"flash",   n:"Flash"},
+  {k:"piscar",  n:"Piscar"},
+  {k:"falha",   n:"Falha"},
+  {k:"vinheta", n:"Vinheta"},
+  {k:"filme",   n:"Filme antigo"},
+  {k:"luz",     n:"Raio de luz"},
+  {k:"espelho", n:"Espelho"},
+  {k:"onda",    n:"Onda"}
+];
+
+/* o que cada um é, em uma frase — aparece na gaveta */
+var EFEITO_DIZ = {
+  nenhum:  "A imagem como ela é.",
+  tremida: "A câmera treme. Use em pancada, susto ou corrida — e pouco: tremida demais embrulha.",
+  pulso:   "A imagem respira, crescendo e voltando. Dá vida a uma foto parada.",
+  batida:  "Um salto seco e curto, como no ritmo da música. Serve para marcar o compasso.",
+  flash:   "Um estouro de luz branca. É a emenda mais antiga do videoclipe.",
+  piscar:  "A imagem aparece e some depressa. Chama atenção — e cansa rápido.",
+  falha:   "Fatias da imagem escorregam de lado, como sinal de TV com defeito.",
+  vinheta: "Escurece as bordas e empurra o olho para o meio. É o mais discreto e o mais útil.",
+  filme:   "Grão, risco e tom amarelado: a imagem fica com cara de filme velho.",
+  luz:     "Uma faixa de luz quente atravessa a tela, como sol batendo na lente.",
+  espelho: "A metade da esquerda é copiada invertida na direita. Fica simétrico e estranho.",
+  onda:    "A imagem ondula em faixas, como reflexo na água."
+};
+
+/* ⚠️ O GRÃO DO FILME É DESENHADO UMA VEZ SÓ, num azulejo de 128 px, e depois
+   repetido. Sortear pixel a pixel em cada quadro custaria mais que o resto do
+   editor inteiro. */
+var azulejoGrao = null;
+function grao(){
+  if(azulejoGrao) return azulejoGrao;
+  var c = document.createElement("canvas"); c.width = 128; c.height = 128;
+  var x = c.getContext("2d");
+  var d = x.createImageData(128, 128), a = d.data, i;
+  for(i = 0; i < a.length; i += 4){
+    var v = 110 + Math.round(sorteioFixo(i) * 90);
+    a[i] = a[i+1] = a[i+2] = v; a[i+3] = 255;
+  }
+  x.putImageData(d, 0, 0);
+  azulejoGrao = c;
+  return c;
+}
+
+var cvTmp, ctxTmp;   /* cópia do quadro, para os efeitos que redesenham a tela */
+function copiaQuadro(){
+  if(!cvTmp){ cvTmp = document.createElement("canvas"); ctxTmp = cvTmp.getContext("2d"); }
+  if(cvTmp.width !== cv.width || cvTmp.height !== cv.height){
+    cvTmp.width = cv.width; cvTmp.height = cv.height;
+  }
+  ctxTmp.clearRect(0, 0, cv.width, cv.height);
+  try{ ctxTmp.drawImage(cv, 0, 0); }catch(e){}
+  return cvTmp;
+}
+
+/* ---- a parte do efeito que mexe na MATRIZ, antes de desenhar o clipe ---- */
+function efeitoAntes(c, andar){
+  if(!c.efeito || c.efeito === "nenhum") return;
+  var W = cv.width, H = cv.height, f = (c.forca === undefined ? 50 : c.forca) / 50;
+  var t = andar || 0;
+  if(c.efeito === "tremida"){
+    var n1 = sorteioFixo(Math.round(t * 900)) - 0.5;
+    var n2 = sorteioFixo(Math.round(t * 900) + 77) - 0.5;
+    ctx.translate(n1 * W * 0.02 * f, n2 * H * 0.02 * f);
+  } else if(c.efeito === "pulso"){
+    var z = 1 + 0.05 * f * Math.sin(t * 6.283 * 3);
+    ctx.translate(W/2, H/2); ctx.scale(z, z); ctx.translate(-W/2, -H/2);
+  } else if(c.efeito === "batida"){
+    var fase = (t * 8) % 1;
+    var z2 = 1 + 0.09 * f * Math.max(0, 1 - fase * 4);
+    ctx.translate(W/2, H/2); ctx.scale(z2, z2); ctx.translate(-W/2, -H/2);
+  }
+}
+
+/* ---- a parte que se desenha POR CIMA (ou redesenha a tela) ---- */
+function efeitoDepois(c, andar){
+  if(!c.efeito || c.efeito === "nenhum") return;
+  var W = cv.width, H = cv.height, f = (c.forca === undefined ? 50 : c.forca) / 50;
+  var t = andar || 0, e = c.efeito;
+
+  if(e === "flash"){
+    var fase = (t * 4) % 1;
+    var a = Math.max(0, 1 - fase * 6) * 0.75 * f;
+    if(a > 0.002){ ctx.fillStyle = "rgba(255,255,255," + a + ")"; ctx.fillRect(0, 0, W, H); }
+
+  } else if(e === "piscar"){
+    if(((t * 12) % 1) > 0.5){
+      ctx.fillStyle = "rgba(0,0,0," + (0.55 * f) + ")"; ctx.fillRect(0, 0, W, H);
+    }
+
+  } else if(e === "vinheta"){
+    var g = ctx.createRadialGradient(W/2, H/2, Math.min(W,H) * 0.28,
+                                     W/2, H/2, Math.max(W,H) * 0.72);
+    g.addColorStop(0, "rgba(0,0,0,0)");
+    g.addColorStop(1, "rgba(0,0,0," + Math.min(0.9, 0.75 * f) + ")");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+  } else if(e === "luz"){
+    var x0 = (t * 1.6 - 0.3) * W;
+    var g2 = ctx.createLinearGradient(x0 - W * 0.25, 0, x0 + W * 0.25, H);
+    g2.addColorStop(0, "rgba(255,180,90,0)");
+    g2.addColorStop(0.5, "rgba(255,205,130," + (0.42 * f) + ")");
+    g2.addColorStop(1, "rgba(255,180,90,0)");
+    ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
+
+  } else if(e === "filme"){
+    var az = grao(), passo = Math.round(t * 600);
+    ctx.save();
+    ctx.globalAlpha = 0.16 * f;
+    ctx.globalCompositeOperation = "overlay";
+    var dx = -(sorteioFixo(passo) * 128), dy = -(sorteioFixo(passo + 31) * 128), i, j;
+    for(i = dx; i < W; i += 128) for(j = dy; j < H; j += 128) ctx.drawImage(az, i, j);
+    ctx.restore();
+    ctx.fillStyle = "rgba(190,150,80," + (0.16 * f) + ")"; ctx.fillRect(0, 0, W, H);
+    /* um risco vertical, de vez em quando */
+    if(sorteioFixo(passo + 5) > 0.72){
+      ctx.fillStyle = "rgba(255,255,255,.22)";
+      ctx.fillRect(Math.round(sorteioFixo(passo + 9) * W), 0, Math.max(1, W * 0.003), H);
+    }
+
+  } else if(e === "espelho"){
+    var cp = copiaQuadro();
+    ctx.save();
+    ctx.translate(W, 0); ctx.scale(-1, 1);
+    ctx.beginPath(); ctx.rect(0, 0, W/2, H); ctx.clip();
+    try{ ctx.drawImage(cp, 0, 0); }catch(err){}
+    ctx.restore();
+
+  } else if(e === "falha"){
+    var cp2 = copiaQuadro(), k, fatias = 7;
+    for(k = 0; k < fatias; k++){
+      var s = Math.round(sorteioFixo(Math.round(t * 400) + k * 13) * (fatias - 1));
+      var y = Math.round(H * s / fatias), h = Math.ceil(H / fatias);
+      var off = (sorteioFixo(Math.round(t * 400) + k * 7) - 0.5) * W * 0.12 * f;
+      try{ ctx.drawImage(cp2, 0, y, W, h, off, y, W, h); }catch(err){}
+    }
+
+  } else if(e === "onda"){
+    var cp3 = copiaQuadro(), faixas = 22, hh = Math.ceil(H / faixas), q;
+    for(q = 0; q < faixas; q++){
+      var yy = q * hh;
+      var d2 = Math.sin(t * 6.283 * 2 + q * 0.55) * W * 0.02 * f;
+      try{ ctx.drawImage(cp3, 0, yy, W, hh, d2, yy, W, hh); }catch(err){}
+    }
+  }
+}
+
+/* ---------------- a gaveta ---------------- */
+GAVETAS.efeitos = function(){
+  var c = clipeSel(); if(!c) return precisaClipe();
+  if(!c.efeito) c.efeito = "nenhum";
+  if(c.forca === undefined) c.forca = 50;
+  var g = $("gaveta"), k, h = cab("Efeitos — o que acontece no tempo");
+  h += '<div class="grade" id="grEfeito">';
+  for(k = 0; k < EFEITOS_V.length; k++)
+    h += '<button type="button" class="bt' + (EFEITOS_V[k].k === c.efeito ? " lig" : "") +
+         '" data-v="' + EFEITOS_V[k].k + '">' + esc(EFEITOS_V[k].n) + '</button>';
+  h += '</div>' +
+    hFaixa("efF", "Força", 10, 100, c.forca, 1, "%") +
+    '<div class="aviso" id="efDiz">' + esc(EFEITO_DIZ[c.efeito] || "") + '</div>' +
+    '<div class="aviso" style="margin-bottom:0"><b>Filtro é parado; efeito é no tempo.</b> ' +
+    'O filtro muda a cor e fica assim; o efeito <b>acontece</b> — treme, pisca, passa. ' +
+    'Por isso são duas ferramentas. ⚠️ E vale a regra de sempre: <b>um efeito por vídeo, ' +
+    'no momento em que ele significa alguma coisa</b>. Efeito em tudo vira barulho e ' +
+    'ninguém olha mais para o assunto.</div>';
+  g.innerHTML = h;
+  $("gFecha").onclick = fechaGaveta;
+  ligaGrade("grEfeito", function(v){
+    c.efeito = v;
+    var d = $("efDiz"); if(d) d.textContent = EFEITO_DIZ[v] || "";
+    if(v !== "nenhum" && !TOCANDO)
+      recado("Toque em ▶ para ver — efeito só existe em movimento.", "");
+  });
+  ligaFaixa("efF", "%", function(v){ c.forca = v; });
+};
+
 /* ============================================================
    O BOOT — e a ordem importa.
    ⚠️ O canvas de apoio do chroma nasce com `willReadFrequently:true`. Sem essa
@@ -4143,6 +4428,12 @@ function iniciar(){
   /* ---- o botão do tamanho ---- */
   $("btPerfil").onclick = telaPerfil;
   $("medidorFps").onclick = medirMaquina;
+  (function(){
+    var v = medidaGuardada(), e = $("medidorFps");
+    if(!v || !e) return;
+    e.textContent = v[0] + " fps (medido antes)";
+    e.style.color = v[0] < 15 ? "#ff9a9a" : (v[0] < 24 ? "#f2d06b" : "#fff");
+  })();
 
   /* ---- abas do caderno ---- */
   var abas = document.querySelectorAll(".aba"), j;
@@ -4197,6 +4488,17 @@ function iniciar(){
      indelicado com a sala. A foto entra, o ▶ fica pronto. */
   semeiaMaterial(false);
   primeiraVez();
+  /* e a prova corre por trás da tela de boas-vindas, enquanto a pessoa lê */
+  escolhePelaMedida().then(function(r){
+    if(!r) return;
+    var e = $("medidorFps");
+    if(e){ e.textContent = r.fps + " fps";
+           e.style.color = r.fps < 15 ? "#ff9a9a" : (r.fps < 24 ? "#f2d06b" : "#fff"); }
+    if(r.perfil !== "leve")
+      recado("Medi este computador: ele aguenta <b>" +
+             (PERFIS[r.perfil] || {}).rot + "</b> (" + medidaDaSaida().join("×") +
+             "). Já deixei nesse tamanho.", "bom");
+  });
 }
 
 function anda(d){
@@ -4272,6 +4574,7 @@ function medirMaquina(){
       desenha(TEMPO);
       if(e){ e.textContent = fps + " fps";
              e.style.color = fps < 15 ? "#ff9a9a" : (fps < 24 ? "#f2d06b" : "#ffffffaa"); }
+      guardaMedida(fps);
       contaDaProva(fps, W, H);
       return;
     }
@@ -4311,8 +4614,119 @@ function medirMaquina(){
   requestAnimationFrame(passo);
 }
 
+/* ============================================================
+   A PROVA CEGA — o programa mede a máquina em vez de adivinhar pela ficha.
+   ⭐⭐ VIROU NECESSÁRIO PORQUE A SALA DESMENTIU A MINHA CONTA (Marcos,
+   24/set/2026): ***"foi 60 também"*** · ***"mesmo nos pcs dos alunos"***. Eu
+   escolhia o tamanho pela FICHA do processador — 4 núcleos, 3,5 GB, um chip de
+   2012 — e mandava todo mundo para o degrau mais baixo (360×640). Os
+   computadores da escola bateram no teto da tela. **Ficha não é medida**, e a
+   regra da casa é clara: quando houver uma medida de sala e uma conta minha, a
+   medida de sala ganha.
+
+   Então, na primeira vez que o editor abre neste computador, ele roda uma prova
+   de 1,2 s POR TRÁS DA TELA DE BOAS-VINDAS — enquanto a pessoa lê — e escolhe o
+   tamanho pelo que mediu. Nas vezes seguintes usa o que guardou.
+
+   ⚠️ A prova é feita num canvas fora da tela, do TAMANHO ALVO, com a mesma
+   conta cara do editor (a passada por pixel do fundo verde). Ela mede o CUSTO
+   DE DESENHAR, que é o que decide a prévia. O medidor do canto, que a pessoa
+   toca, continua sendo o definitivo: aquele mede a tela de verdade.
+   ============================================================ */
+function provaCega(W, H, ms){
+  return new Promise(function(ok){
+    var c = document.createElement("canvas"); c.width = W; c.height = H;
+    var x = c.getContext("2d");
+    var aux = document.createElement("canvas"), ax;
+    try{ ax = aux.getContext("2d", {willReadFrequently: true}); }
+    catch(e){ ax = aux.getContext("2d"); }
+    aux.width = 320; aux.height = Math.round(320 * H / W);
+    var q = 0, t0 = performance.now(), fim = t0 + (ms || 1200);
+    (function passo(){
+      var agora = performance.now();
+      if(agora >= fim){ ok(Math.round(q / ((agora - t0) / 1000))); return; }
+      var p = (agora - t0) / (ms || 1200), i;
+      var g = x.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, "#1b3a5c"); g.addColorStop(1, "#5c2b3a");
+      x.fillStyle = g; x.fillRect(0, 0, W, H);
+      for(i = 0; i < 9; i++){
+        var a = p * 6.28 + i;
+        x.fillStyle = "#ff5b6e";
+        x.beginPath();
+        x.arc(W/2 + Math.cos(a) * W * 0.3, H/2 + Math.sin(a * 1.3) * H * 0.3, W * 0.06, 0, 6.29);
+        x.fill();
+      }
+      ax.fillStyle = "#00c853"; ax.fillRect(0, 0, aux.width, aux.height);
+      try{
+        var d = ax.getImageData(0, 0, aux.width, aux.height), k = d.data, j;
+        for(j = 0; j < k.length; j += 4) if(k[j+1] > 110) k[j+3] = 0;
+        ax.putImageData(d, 0, 0);
+        x.drawImage(aux, 0, 0, W, H);
+      }catch(err){}
+      q++;
+      requestAnimationFrame(passo);
+    })();
+  });
+}
+
+/* Escolhe o degrau pela prova, não pela ficha. Prova no tamanho ALTO: se
+   aguentar lá, aguenta em qualquer um abaixo. */
+function escolhePelaMedida(){
+  if(medidaGuardada()) return Promise.resolve(null);
+  var r = RAZOES[PROJ.razao] || RAZOES["9:16"];
+  return provaCega(par(r[0]), par(r[1]), 1200).then(function(fps){
+    var novo = fps >= 30 ? "alta" : (fps >= 20 ? "normal" : "leve");
+    /* ⚠️ nunca REBAIXA o que a pessoa escolheu de propósito; isto só roda na
+       primeira abertura, quando ninguém escolheu nada ainda. */
+    PROJ.perfil = novo;
+    guardaMedida(fps);
+    aplicaRazao(); tudo();
+    return {fps: fps, perfil: novo};
+  }).catch(function(){ return null; });
+}
+
+/* A LINHA QUE O PROFESSOR COLA. ⚠️ Tudo aqui é o que a PRÓPRIA máquina declara
+   (`navigator`), nunca palpite meu — e o que ela não informa sai como "?" em
+   vez de um número inventado. */
+function recibo(fps, W, H){
+  var n = navigator.hardwareConcurrency || "?";
+  var m = navigator.deviceMemory ? navigator.deviceMemory + "GB" : "?";
+  var tela = (screen && screen.width ? screen.width + "x" + screen.height : "?");
+  var nav = "outro";
+  var ua = navigator.userAgent || "";
+  var mm = ua.match(/(Chrome|Firefox|Edg|Safari)\/(\d+)/);
+  if(mm) nav = (mm[1] === "Edg" ? "Edge" : mm[1]) + " " + mm[2];
+  return "Oficina de Video | " + fps + " fps | " + W + "x" + H + " (" +
+    (PERFIS[PROJ.perfil] || PERFIS.leve).rot.split(" ")[0] + ") | " + n +
+    " nucleos | " + m + " memoria | tela " + tela + " | " + nav;
+}
+
+/* ⭐ A MEDIDA FICA GUARDADA NESTA MÁQUINA. Assim, ao reabrir, o botão já diz o
+   que ele mediu da última vez em vez de pedir tudo de novo.
+   ⚠️ `localStorage` estoura em navegador com armazenamento bloqueado — por isso
+   as duas pontas vêm embrulhadas, e a falta dele não quebra nada. */
+function guardaMedida(fps){
+  try{ localStorage.setItem("oficina-fps", fps + "|" + PROJ.perfil); }catch(e){}
+}
+function medidaGuardada(){
+  try{
+    var v = localStorage.getItem("oficina-fps");
+    return v ? v.split("|") : null;
+  }catch(e){ return null; }
+}
+
+/* a ordem dos tamanhos, do mais leve ao mais pesado — para saber qual é "o de cima" */
+var ESCADA = ["leve", "normal", "alta", "fullhd"];
 function contaDaProva(fps, W, H){
   var bom = fps >= 24, meio = fps >= 15 && fps < 24;
+  /* ⭐ SOBRAR MÁQUINA TAMBÉM É INFORMAÇÃO, e eu só ia dar a metade ruim.
+     ⚠️ 60 quadros por segundo quase nunca quer dizer "a máquina é 60 vezes
+     rápida": é o **teto da tela**, que atualiza 60 vezes por segundo e não
+     mais. Quem bate no teto não estava se esforçando — e continuar no tamanho
+     pequeno é jogar fora nitidez de graça. Por isso, batendo no teto, o
+     programa OFERECE subir, em vez de esperar a pessoa desconfiar. */
+  var subiu = ESCADA.indexOf(PROJ.perfil), podeSubir = fps >= 50 && subiu >= 0 && subiu < 3;
+  var proximo = podeSubir ? ESCADA[subiu + 1] : null;
   modal("<h2>Este computador desenha " + fps + " quadros por segundo</h2>" +
     "<p>Medido agora, em <b>" + W + "×" + H + "</b> (perfil <b>" +
     (PERFIS[PROJ.perfil] || PERFIS.leve).rot + "</b>), com tudo o que o editor tem de mais " +
@@ -4328,14 +4742,49 @@ function contaDaProva(fps, W, H){
         : "<div class='aviso erro'><b>Está pesado para esta máquina.</b> Abaixo de 15 a prévia " +
           "fica difícil de usar. Escolha um tamanho menor aqui embaixo — e, de novo: " +
           "<b>o arquivo exportado não herda esse tropeço</b>.</div>") +
+    (podeSubir
+      ? "<div class='aviso bom'><b>E sobrou máquina.</b> " + fps + " quadros por segundo " +
+        "costuma ser o <b>teto da tela</b> (ela atualiza 60 vezes por segundo e não mais) — " +
+        "quer dizer que este computador nem se esforçou. <b>Vale subir para " +
+        (PERFIS[proximo] || {}).rot + "</b>: o vídeo sai mais nítido pelo mesmo trabalho. " +
+        "Suba, meça de novo e, se continuar acima de 24, fique nele.</div>"
+      : "") +
     "<div class='linha' id='grPerfil2'>" +
-      "<button type='button' class='bt" + (PROJ.perfil === "leve" ? " lig" : "") + "' data-p='leve'>Leve</button>" +
-      "<button type='button' class='bt" + (PROJ.perfil === "normal" ? " lig" : "") + "' data-p='normal'>Normal</button>" +
-      "<button type='button' class='bt" + (PROJ.perfil === "alta" ? " lig" : "") + "' data-p='alta'>Alta (HD)</button>" +
-      "<button type='button' class='bt" + (PROJ.perfil === "fullhd" ? " lig" : "") + "' data-p='fullhd'>Full HD</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "leve" ? " lig" : "") +
+        (proximo === "leve" ? " pri" : "") + "' data-p='leve'>Leve</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "normal" ? " lig" : "") +
+        (proximo === "normal" ? " pri" : "") + "' data-p='normal'>Normal</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "alta" ? " lig" : "") +
+        (proximo === "alta" ? " pri" : "") + "' data-p='alta'>Alta (HD)</button>" +
+      "<button type='button' class='bt" + (PROJ.perfil === "fullhd" ? " lig" : "") +
+        (proximo === "fullhd" ? " pri" : "") + "' data-p='fullhd'>Full HD</button>" +
     "</div>" +
     "<p style='font-size:12.5px;color:var(--fraco)'>Trocou o tamanho? Toque de novo no " +
-    "número, no canto da prévia, para medir outra vez.</p>");
+    "número, no canto da prévia, para medir outra vez. O tamanho é do <b>arquivo que sai</b>, " +
+    "não só da prévia.</p>" +
+    /* ⭐ PARA QUEM VAI MEDIR MÁQUINA POR MÁQUINA. O professor disse que ia
+       testar nos computadores do laboratório, que são mais fracos que o dele.
+       Andar com vinte números na cabeça é o jeito de perder dezoito: aqui a
+       linha sai pronta para colar, e leva junto o que a máquina diz de si —
+       núcleos, memória, tela e navegador —, que é o que permite comparar um
+       PC com outro depois. */
+    "<h4 style='margin-top:10px'>Vai medir vários computadores?</h4>" +
+    "<div class='linha'><input type='text' id='recibo' readonly value=\"" +
+      esc(recibo(fps, W, H)) + "\">" +
+      "<button type='button' class='bt mini' id='btCopiar'>Copiar</button></div>" +
+    "<p style='font-size:12.2px;color:var(--fraco)'>Cole essa linha numa mensagem. " +
+    "Repita em cada máquina: um toque no número, um toque em Copiar.</p>");
+  $("btCopiar").onclick = function(){
+    var e = $("recibo");
+    e.select(); e.setSelectionRange(0, 999);
+    var deu = false;
+    try{ deu = document.execCommand("copy"); }catch(err){}
+    if(!deu && navigator.clipboard){
+      try{ navigator.clipboard.writeText(e.value); deu = true; }catch(err){}
+    }
+    recado(deu ? "Copiado. Cole numa mensagem." :
+      "Não consegui copiar sozinho — o texto já está selecionado, use Ctrl+C.", deu ? "bom" : "");
+  };
   $("grPerfil2").onclick = function(ev){
     var b = ev.target.closest ? ev.target.closest("[data-p]") : null;
     if(!b) return;

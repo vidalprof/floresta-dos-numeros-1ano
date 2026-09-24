@@ -338,16 +338,100 @@ window.__centroVerde = function(t){
   notas.push('perfis: ' + antesHD + ' -> ' + depoisHD + ' em Full HD');
   await eu(() => { PROJ.perfil = 'leve'; aplicaRazao(); });
 
+  /* ---------- 15. OS EFEITOS VISUAIS: cada um muda o quadro, e nenhum e igual ao outro ----
+     ⚠️ tres instantes por efeito, porque alguns (flash, piscar) passam por um
+     momento em que, de proposito, nao se ve nada — exigir diferenca num
+     instante so reprovaria efeito correto. */
+  await eu(() => {
+    PROJ.clipes.length = 0; PROJ.textos.length = 0; PROJ.pip.length = 0;
+    PROJ.razao = '9:16'; PROJ.fundo = 'preto'; aplicaRazao();
+  });
+  await pg.click('[data-qa="f-acervo"]');
+  await pg.waitForTimeout(180);
+  await pg.click('#acFotos [data-v="paisagem"]');
+  await pg.waitForTimeout(900);
+  await eu(() => { PROJ.clipes[0].fim = 4; PROJ.clipes[0].fonteDur = 30;
+                   PROJ.clipes[0].semente = false; selecionar('clipes', 0); tudo(); });
+
+  const listaEf = await eu(() => EFEITOS_V.map(e => e.k));
+  notas.push('efeitos visuais no cardapio: ' + listaEf.length);
+  const assEf = {};
+  for (const k of listaEf) {
+    assEf[k] = await eu(v => {
+      PROJ.clipes[0].efeito = v; PROJ.clipes[0].forca = 90;
+      return [__assinatura(0.6), __assinatura(1.7), __assinatura(3.1)].join('/');
+    }, k);
+  }
+  for (const k of listaEf) {
+    if (k === 'nenhum') continue;
+    exige(assEf[k] !== assEf.nenhum, 'o efeito ' + k.toUpperCase() + ' nao mudou o quadro');
+  }
+  const distintos = new Set(Object.values(assEf));
+  exige(distintos.size === listaEf.length,
+    'dois efeitos visuais desenham exatamente a mesma coisa (' + distintos.size +
+    ' resultados diferentes para ' + listaEf.length + ' efeitos)');
+  notas.push('os ' + (listaEf.length - 1) + ' efeitos visuais mudam o quadro, e nenhum repete outro');
+  await eu(() => { PROJ.clipes[0].efeito = 'nenhum'; });
+
+  /* ---------- 16. OS EFEITOS SONOROS: cada um SOA ----
+     ⚠️ esta e a irma da regra dos visuais, e a mais traicoeira: um som mal
+     sintetizado gera um WAV do tamanho certo, entra na fita, mostra a duracao
+     certa — e e SILENCIO. Ninguem ve, so se ouve. Aqui o arquivo e decodificado
+     de volta e mede-se o PICO da onda. */
+  const listaSom = await eu(() => EFEITOS.map(e => e.k));
+  notas.push('efeitos sonoros no cardapio: ' + listaSom.length);
+  const mudos = [], curtos = [];
+  for (const k of listaSom) {
+    const r = await eu(kk => new Promise(ok => {
+      const antes = PROJ.audios.length;
+      let tentativas = 0;
+      fazEfeito(kk);
+      (function espera() {
+        if (PROJ.audios.length > antes) {
+          const a = PROJ.audios[PROJ.audios.length - 1];
+          const arq = arquivoDe(a.el);
+          if (!arq) { ok({erro: 'sem arquivo'}); return; }
+          arq.arrayBuffer().then(ab => {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            const ac = new AC();
+            ac.decodeAudioData(ab, buf => {
+              const d = buf.getChannelData(0);
+              let pico = 0, soma = 0, n = 0, i;
+              for (i = 0; i < d.length; i += 5) {
+                const v = Math.abs(d[i]);
+                if (v > pico) pico = v;
+                soma += v * v; n++;
+              }
+              ok({dur: buf.duration, pico: pico, forca: Math.sqrt(soma / n)});
+            }, () => ok({erro: 'nao decodificou'}));
+          }, () => ok({erro: 'nao li o arquivo'}));
+          return;
+        }
+        if (++tentativas > 80) { ok({erro: 'nao gerou'}); return; }
+        setTimeout(espera, 100);
+      })();
+    }), k);
+    if (r.erro) { mudos.push(k + ' (' + r.erro + ')'); continue; }
+    if (r.pico < 0.02) mudos.push(k + ' (pico ' + r.pico.toFixed(3) + ')');
+    if (r.dur < 0.15) curtos.push(k + ' (' + r.dur.toFixed(2) + ' s)');
+  }
+  exige(!mudos.length, 'efeito(s) sonoro(s) SEM SOM: ' + mudos.join(', '));
+  exige(!curtos.length, 'efeito(s) sonoro(s) curtos demais para ouvir: ' + curtos.join(', '));
+  if (!mudos.length && !curtos.length)
+    notas.push('os ' + listaSom.length + ' efeitos sonoros soam de verdade (pico medido no WAV)');
+  await eu(() => { PROJ.audios.length = 0; tudo(); });
+
   /* ---------- 14. nenhum erro de JavaScript ---------- */
   const limpos = erros.filter(e => !/favicon|net::ERR_ABORTED/i.test(e));
   if (limpos.length) falhas.push('erro de JavaScript: ' + limpos.slice(0, 3).join(' | '));
 
   await b.close(); srv.close();
-  console.log(alvo + ' -> efeitos: 16 medicoes de pixel');
+  console.log(alvo + ' -> efeitos: 18 medicoes (pixel e onda sonora)');
   notas.forEach(n => console.log('   . ' + n));
   if (!falhas.length) {
-    console.log('   efeitos ok: filtro, ajuste, chroma, mascara, mistura, keyframe, ' +
-                'transicao, zoom, animacao de texto e fundo desfocado MUDAM o quadro');
+    console.log('   efeitos ok: filtro, ajuste, chroma, mascara, mistura, keyframe, transicao, ' +
+                'zoom, texto e fundo MUDAM o quadro; os efeitos visuais mudam e nao se ' +
+                'repetem; os sonoros SOAM');
     process.exit(0);
   }
   console.log('  ' + falhas.length + ' DEFEITO(S):');

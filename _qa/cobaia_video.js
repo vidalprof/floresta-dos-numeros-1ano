@@ -104,12 +104,38 @@ function servidor() {
      ⚠️ o Marcos apontou que, para saber se o PC aguenta, era preciso montar um
      projeto antes. Este passo prova que nao e mais: com a fita VAZIA, o botao
      do canto da previa mede e devolve um numero. */
+  /* ---- 1a2. A PROVA CEGA DA ABERTURA escolheu o tamanho pela MEDIDA ----
+     ⚠️ a sala desmentiu a ficha: os PCs da escola bateram 60 fps e eu os
+     mandava para 360x640 por causa do processador de 2012. Este passo prova
+     que a escolha agora vem do que foi medido, e que ela fica guardada. */
+  await pg.waitForTimeout(2200);
+  const escolhido = await eu(() => PROJ.perfil);
+  const lembrado = await eu(() => { try { return localStorage.getItem('oficina-fps'); }
+                                    catch (e) { return null; } });
+  exige(!!lembrado, 'a prova da abertura nao guardou a medida nesta maquina');
+  notas.push('prova da abertura: escolheu o perfil "' + escolhido + '" (guardou ' +
+             lembrado + ')');
+  exige(escolhido !== 'leve',
+    'neste computador rapido a prova ainda escolheu o perfil mais baixo');
+
+  await eu(() => { PROJ.perfil = 'leve'; aplicaRazao(); });   /* mede sempre do mesmo degrau */
   await pg.click('[data-qa="medir"]');
   await pg.waitForTimeout(3400);
   const medidaVazia = await eu(() => document.getElementById('medidorFps').textContent);
   exige(/\d+ fps/.test(medidaVazia),
     'medir a maquina com a fita vazia nao devolveu numero (' + medidaVazia + ')');
   notas.push('prova da maquina com a fita vazia: ' + medidaVazia);
+  /* ⚠️ maquina folgada tem de OUVIR que pode subir: 60 fps quase sempre e o
+     teto da tela, nao a forca do computador. Sem este aviso, quem tem PC bom
+     fica no tamanho pequeno por falta de saber. */
+  const folga = await eu(() => fpsMost >= 50);
+  if (folga) {
+    const ofereceu = await eu(() =>
+      /sobrou m[aá]quina/i.test(document.getElementById('cxmodal').innerHTML));
+    exige(ofereceu, 'com ' + (await eu(() => fpsMost)) +
+      ' fps o programa NAO ofereceu subir o tamanho');
+    notas.push('maquina folgada: o programa ofereceu subir o tamanho');
+  }
   if (await eu(() => document.getElementById('veu').classList.contains('on')))
     await pg.click('#mdOk');
   await pg.waitForTimeout(150);
