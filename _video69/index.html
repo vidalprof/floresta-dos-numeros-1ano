@@ -337,14 +337,14 @@ input[type=color]{width:44px;height:38px;padding:0;border:1px solid var(--linha)
       <button type="button" class="icb" id="btDesfazer" title="Desfazer (Ctrl+Z)" aria-label="Desfazer"><svg width="20" height="20" aria-hidden="true"><use href="#i-voltar"/></svg></button>
       <button type="button" class="icb" id="btRefazer" title="Refazer (Ctrl+Y)" aria-label="Refazer"><svg width="20" height="20" aria-hidden="true" style="transform:scaleX(-1)"><use href="#i-voltar"/></svg></button>
       <div class="nome">A <b>Oficina de Vídeo</b></div>
-      <button type="button" class="chip" id="btPerfil" title="Tamanho do vídeo e da prévia">—</button>
+      <button type="button" class="chip" id="btPerfil" title="Tamanho do vídeo — toque para mudar">—</button>
       <button type="button" class="expo" id="btExportar" data-qa="exportar"><svg width="16" height="16" aria-hidden="true"><use href="#i-baixar"/></svg> Exportar</button>
     </div>
 
     <div class="palco">
       <canvas id="tela" width="360" height="640" aria-label="Prévia do vídeo"></canvas>
       <div class="selo" id="selo">9:16</div>
-      <div class="fps" id="medidorFps" title="Quadros por segundo da prévia">—</div>
+      <div class="fps" id="medidorFps" title="Quadros por segundo da prévia — toque em tocar para medir">toque ▶ para medir</div>
     </div>
 
     <div class="transp">
@@ -2208,7 +2208,7 @@ function laco(agora){
   if(fpsAcc >= 0.5){
     fpsMost = Math.round(fpsN / fpsAcc);
     var e = $("medidorFps");
-    if(e){ e.textContent = fpsMost + " fps";
+    if(e){ e.textContent = fpsMost + " fps" + (fpsMost < 15 ? " — baixe o tamanho" : "");
            e.style.color = fpsMost < 15 ? "#ff9a9a" : (fpsMost < 24 ? "#f2d06b" : "#ffffffaa"); }
     fpsAcc = 0; fpsN = 0;
   }
