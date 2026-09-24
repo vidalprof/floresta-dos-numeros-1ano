@@ -2252,6 +2252,23 @@ function exportar(){
   if(!PROJ.clipes.length){
     recado("Não há nada para exportar ainda.", "erro"); return;
   }
+  /* ⭐ PRIMEIRO O MOTOR PROFISSIONAL. Se o navegador tiver o codificador
+     embutido (Chrome 94+), o vídeo sai em .mp4 e sem esperar o filme tocar.
+     Só se ele NÃO tiver é que se grava a tela em tempo real, como antes —
+     e o Firefox da escola (106) cai nesse caminho. */
+  if(podeRapido()){
+    $("btExportar").classList.add("lig");
+    avisoExp(0);
+    recado("Exportando quadro a quadro pelo codificador do navegador. " +
+           "Leva mais ou menos o tempo do vídeo — mas o arquivo sai perfeito " +
+           "mesmo se a prévia tropeçar.", "");
+    exportarRapido().then(function(deu){ if(!deu) exportarGravando(); });
+    return;
+  }
+  exportarGravando();
+}
+
+function exportarGravando(){
   if(!window.MediaRecorder || !cv.captureStream){
     recado("Este navegador não sabe gravar vídeo. No Chrome ou no Firefox funciona.", "erro");
     return;
@@ -2298,32 +2315,13 @@ function pararExportacao(){
 }
 
 function salvaArquivo(){
-  var mp4 = /mp4/.test(expTipo);
+  var ehMp4 = /mp4/.test(expTipo);
   var b = new Blob(expPed, {type: expTipo || "video/webm"});
   expPed = [];
-  var url = URL.createObjectURL(b);
-  var a = document.createElement("a");
-  a.href = url; a.download = "meu-video." + (mp4 ? "mp4" : "webm");
-  document.body.appendChild(a); a.click();
-  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 4000);
-  var mb = Math.round(b.size / 104857.6) / 10;
+  baixaBlob(b, "meu-video." + (ehMp4 ? "mp4" : "webm"));
   marca("exportou");
-  modal("<h2>Vídeo exportado</h2>" +
-    "<p>Saiu um arquivo <b>." + (mp4 ? "mp4" : "webm") + "</b> de <b>" + mb + " MB</b>, " +
-    "em " + medidaDaSaida()[0] + "×" + medidaDaSaida()[1] + ". Ele foi para a pasta de " +
-    "downloads deste computador.</p>" +
-    (mp4 ? "" :
-     "<div class='aviso'><b>Sobre o .webm:</b> este navegador só sabe gravar neste " +
-     "formato. Ele abre no Chrome, no Firefox, no celular e no YouTube — mas o " +
-     "PowerPoint e o reprodutor do Windows 7 <b>não</b> abrem. Para mostrar no " +
-     "projetor da sala, abra o arquivo pelo navegador, ou converta para .mp4 num " +
-     "conversor da escola.</div>") +
-    "<p style='font-size:12.8px;color:var(--fraco)'>Um editor de computador exporta " +
-    "mais rápido porque calcula quadro a quadro sem tocar o vídeo. O navegador não " +
-    "abre essa porta — por isso aqui leva o tempo do próprio vídeo. Saber a diferença " +
-    "entre <i>renderizar</i> e <i>gravar a tela</i> é parte do ofício.</p>");
+  contaFim(b, ehMp4 ? "mp4" : "webm", false);
 }
-
 /* ---------------- recados, relógio e o "redesenha tudo" ---------------- */
 var recTimer = null;
 function recado(txt, tipo){
@@ -2454,9 +2452,11 @@ var MISSOES = [
   {t:"Exportar",
    f:"Toque em <b>Exportar</b> e espere. O vídeo vai ser tocado inteiro enquanto é gravado.",
    p:"Até aqui você tinha um <b>projeto</b>: uma lista de decisões. Exportar é o que " +
-     "transforma isso num <b>arquivo</b> que alguém pode assistir. E o tempo que leva " +
-     "ensina o resto — aqui se grava em tempo real; um editor de computador calcula " +
-     "quadro a quadro e por isso é mais rápido.",
+     "transforma isso num <b>arquivo</b> que alguém pode assistir. Repare no aviso do " +
+     "fim: se o navegador tem codificador embutido, cada quadro é <b>calculado</b> e sai " +
+     "um <b>.mp4</b>; se não tem, a prévia é <b>filmada</b> e sai um <b>.webm</b> que " +
+     "carrega junto qualquer engasgo da tela. É a diferença entre <i>renderizar</i> e " +
+     "<i>gravar a tela</i>.",
    ok:function(){ return !!FEITO.exportou; }}
 ];
 
@@ -2531,9 +2531,12 @@ function montaLimites(){
     'servidor, não há conta. Como consequência: <b>fechou a aba, o projeto some</b> — ' +
     'exporte antes de sair.</div>' +
 
-    '<div class="aviso"><b>A exportação é em tempo real.</b> Três minutos de vídeo levam ' +
-    'três minutos, porque o navegador grava a prévia enquanto ela toca. Um editor de ' +
-    'computador calcula quadro a quadro e por isso termina antes.</div>' +
+    '<div class="aviso"><b>A exportação leva mais ou menos o tempo do vídeo.</b> ' +
+    'Três minutos de vídeo, três minutos de espera — isso foi medido, não é estimativa. ' +
+    'Mas há dois caminhos, e a tela do fim diz qual foi usado: <b>quadro a quadro</b> ' +
+    '(o navegador tem codificador embutido → sai <b>.mp4</b> e o arquivo não herda os ' +
+    'engasgos da prévia) ou <b>gravação da tela</b> (sai <b>.webm</b> e o que a tela ' +
+    'tropeçar vai para o arquivo).</div>' +
 
     '<div class="aviso"><b>Não há legenda automática.</b> Isso exigiria mandar a voz da ' +
     'criança para um serviço de fora reconhecer. Essa decisão é da escola e da família, ' +
@@ -3462,6 +3465,560 @@ function abrirRascunho(){
 
 function temRascunho(){
   return bdPega("projeto").then(function(d){ return !!d; }, function(){ return false; });
+}
+
+
+/* ============================================================
+   O EMBRULHO MP4 — escrito à mão, e a razão está na pergunta do Marcos.
+   Ele perguntou (24/set/2026): ***"você não consegue colocar motores prontos e
+   ferramentas prontas profissionais para facilitar seu trabalho?"***. Consegue,
+   e o motor profissional entrou: é o **WebCodecs**, o codificador de vídeo que
+   já vem dentro do Chrome 109 do PC da escola — o mesmo que os programas
+   grandes usam, com aceleração de hardware quando a máquina tem.
+
+   ⚠️ MAS O WEBCODECS SÓ COMPRIME OS QUADROS; ele não monta o ARQUIVO. Quem
+   monta é o "muxer", e aí havia duas saídas:
+     · pegar uma biblioteca pronta (mp4-muxer, mediabunny) — mas viria de um
+       CDN, e **a rede da escola é filtrada**: o dia em que o CDN não carregar,
+       o editor não exporta e ninguém entende por quê. Embutir o arquivo
+       minificado seria pôr no ar 15 KB que eu não sei ler;
+     · escrever o embrulho aqui, em código legível, e **PROVAR que funciona**
+       abrindo o arquivo exportado de volta num `<video>` — que é o que a
+       cobaia faz no passo 21.
+   A casa manda na segunda: um HTML só, sem biblioteca, e nada que eu não possa
+   conferir.
+
+   ⚠️ E POR QUE ISTO IMPORTA MAIS DO QUE PARECE: o Chrome 109 **não sabe gravar
+   .mp4** pelo MediaRecorder (só versões bem mais novas). No PC da escola o
+   arquivo sairia `.webm`, que o PowerPoint e o reprodutor do Windows 7 não
+   abrem — justamente onde o vídeo vai ser mostrado. Por este caminho sai
+   `.mp4` de verdade, e sai mais rápido que o próprio vídeo.
+
+   A planta de um MP4, que é uma cebola de caixas:
+     ftyp   quem é este arquivo
+     mdat   os bytes dos quadros e do som, um atrás do outro
+     moov   o índice: que quadro começa em que byte e dura quanto
+   ============================================================ */
+
+function Bytes(){ this.p = []; this.n = 0; }
+Bytes.prototype.u8 = function(v){ this.p.push(new Uint8Array([v & 255])); this.n += 1; return this; };
+Bytes.prototype.u16 = function(v){ this.p.push(new Uint8Array([(v>>8)&255, v&255])); this.n += 2; return this; };
+Bytes.prototype.u24 = function(v){ this.p.push(new Uint8Array([(v>>16)&255,(v>>8)&255,v&255])); this.n += 3; return this; };
+Bytes.prototype.u32 = function(v){
+  this.p.push(new Uint8Array([(v>>>24)&255,(v>>>16)&255,(v>>>8)&255,v&255])); this.n += 4; return this; };
+Bytes.prototype.txt = function(s){
+  var a = new Uint8Array(s.length), i;
+  for(i = 0; i < s.length; i++) a[i] = s.charCodeAt(i) & 255;
+  this.p.push(a); this.n += a.length; return this; };
+Bytes.prototype.cru = function(a){ this.p.push(a); this.n += a.length; return this; };
+Bytes.prototype.zeros = function(k){ this.p.push(new Uint8Array(k)); this.n += k; return this; };
+Bytes.prototype.junta = function(){
+  var t = new Uint8Array(this.n), o = 0, i;
+  for(i = 0; i < this.p.length; i++){ t.set(this.p[i], o); o += this.p[i].length; }
+  return t;
+};
+
+/* uma CAIXA: tamanho + nome + conteúdo. Toda a estrutura do MP4 é isto. */
+function caixa(nome, dentro){
+  var b = new Bytes();
+  b.u32(8 + (dentro ? dentro.length : 0)).txt(nome);
+  if(dentro) b.cru(dentro);
+  return b.junta();
+}
+function caixas(nome){
+  var partes = Array.prototype.slice.call(arguments, 1), n = 0, i;
+  for(i = 0; i < partes.length; i++) n += partes[i].length;
+  var t = new Uint8Array(n), o = 0;
+  for(i = 0; i < partes.length; i++){ t.set(partes[i], o); o += partes[i].length; }
+  return caixa(nome, t);
+}
+
+/* ⚠️ A MATRIZ DE IDENTIDADE em ponto fixo 16.16. Ela diz "não gire nada". Se
+   vier zerada, alguns reprodutores mostram a tela preta — já é um clássico. */
+function matriz(){
+  var b = new Bytes();
+  b.u32(0x00010000).u32(0).u32(0).u32(0).u32(0x00010000).u32(0).u32(0).u32(0).u32(0x40000000);
+  return b.junta();
+}
+
+function mvhd(escala, dur, trilhas){
+  var b = new Bytes();
+  b.u32(0).u32(0).u32(0).u32(escala).u32(dur).u32(0x00010000).u16(0x0100).u16(0).u32(0).u32(0)
+   .cru(matriz()).zeros(24).u32(trilhas + 1);
+  return caixa("mvhd", b.junta());
+}
+function tkhd(id, dur, larg, alt, ehVideo){
+  var b = new Bytes();
+  b.u32(0x00000007).u32(0).u32(0).u32(id).u32(0).u32(dur).u32(0).u32(0)
+   .u16(0).u16(0).u16(ehVideo ? 0 : 0x0100).u16(0).cru(matriz())
+   .u32((larg | 0) * 65536).u32((alt | 0) * 65536);
+  return caixa("tkhd", b.junta());
+}
+function mdhd(escala, dur){
+  var b = new Bytes();
+  b.u32(0).u32(0).u32(0).u32(escala).u32(dur).u16(0x55C4).u16(0);   /* 0x55C4 = "und" */
+  return caixa("mdhd", b.junta());
+}
+function hdlr(tipo, nome){
+  var b = new Bytes();
+  b.u32(0).u32(0).txt(tipo).u32(0).u32(0).u32(0).txt(nome).u8(0);
+  return caixa("hdlr", b.junta());
+}
+function dinf(){
+  var url = caixa("url ", new Bytes().u32(0x00000001).junta());
+  var dref = caixa("dref", (function(){ var b = new Bytes(); b.u32(0).u32(1).cru(url); return b.junta(); })());
+  return caixas("dinf", dref);
+}
+
+/* ---- as tabelas do índice: qual quadro, quando, onde e de que tamanho ---- */
+function stts(duracoes){
+  var b = new Bytes(), grupos = [], i;
+  for(i = 0; i < duracoes.length; i++){
+    var u = grupos[grupos.length - 1];
+    if(u && u[1] === duracoes[i]) u[0]++;
+    else grupos.push([1, duracoes[i]]);
+  }
+  b.u32(0).u32(grupos.length);
+  for(i = 0; i < grupos.length; i++) b.u32(grupos[i][0]).u32(grupos[i][1]);
+  return caixa("stts", b.junta());
+}
+function stss(chaves){
+  var b = new Bytes(), i;
+  b.u32(0).u32(chaves.length);
+  for(i = 0; i < chaves.length; i++) b.u32(chaves[i]);
+  return caixa("stss", b.junta());
+}
+function stsc(){
+  /* ⚠️ Um pedaço (chunk) por amostra: é o arranjo mais burro e o mais seguro.
+     Índice maior em bytes, zero chance de errar a conta. */
+  var b = new Bytes();
+  b.u32(0).u32(1).u32(1).u32(1).u32(1);
+  return caixa("stsc", b.junta());
+}
+function stsz(tamanhos){
+  var b = new Bytes(), i;
+  b.u32(0).u32(0).u32(tamanhos.length);
+  for(i = 0; i < tamanhos.length; i++) b.u32(tamanhos[i]);
+  return caixa("stsz", b.junta());
+}
+function stco(offsets){
+  var b = new Bytes(), i;
+  b.u32(0).u32(offsets.length);
+  for(i = 0; i < offsets.length; i++) b.u32(offsets[i]);
+  return caixa("stco", b.junta());
+}
+
+function stsdVideo(larg, alt, avcC){
+  /* cabeçalho de amostra visual + o avcC que o codificador entregou */
+  var v = new Bytes();
+  v.zeros(6).u16(1)
+   .u16(0).u16(0).u32(0).u32(0).u32(0)
+   .u16(larg).u16(alt).u32(0x00480000).u32(0x00480000).u32(0).u16(1)
+   .zeros(32).u16(0x0018).u16(0xFFFF)
+   .cru(caixa("avcC", avcC));
+  var avc1 = caixa("avc1", v.junta());
+  var s = new Bytes();
+  s.u32(0).u32(1).cru(avc1);
+  return caixa("stsd", s.junta());
+}
+
+/* ⚠️ O `esds` do AAC é a caixa mais chata do formato: são descritores
+   encaixados, cada um com uma etiqueta e um tamanho. O `description` que o
+   AudioEncoder devolve é exatamente o AudioSpecificConfig que vai lá dentro. */
+function esds(asc, taxaBits){
+  function desc(tag, dentro){
+    var b = new Bytes();
+    b.u8(tag);
+    var n = dentro.length;
+    b.u8(0x80 | ((n >> 21) & 0x7F)).u8(0x80 | ((n >> 14) & 0x7F))
+     .u8(0x80 | ((n >> 7) & 0x7F)).u8(n & 0x7F).cru(dentro);
+    return b.junta();
+  }
+  var dec = new Bytes();
+  dec.u8(0x40).u8(0x15).u24(0).u32(taxaBits || 128000).u32(taxaBits || 128000);
+  var dsi = desc(0x05, asc);
+  var dcd = desc(0x04, (function(){ var b = new Bytes(); b.cru(dec.junta()).cru(dsi); return b.junta(); })());
+  var sl = desc(0x06, new Uint8Array([0x02]));
+  var es = desc(0x03, (function(){
+    var b = new Bytes(); b.u16(1).u8(0).cru(dcd).cru(sl); return b.junta(); })());
+  var f = new Bytes(); f.u32(0).cru(es);
+  return caixa("esds", f.junta());
+}
+function stsdAudio(canais, taxa, asc){
+  var a = new Bytes();
+  a.zeros(6).u16(1).u32(0).u32(0)
+   .u16(canais).u16(16).u16(0).u16(0).u32(taxa * 65536)
+   .cru(esds(asc, 128000));
+  var mp4a = caixa("mp4a", a.junta());
+  var s = new Bytes(); s.u32(0).u32(1).cru(mp4a);
+  return caixa("stsd", s.junta());
+}
+
+function trak(id, escala, dur, larg, alt, ehVideo, stsd, duracoes, tamanhos, offsets, chaves){
+  var tabelas = [stsd, stts(duracoes), stsc(), stsz(tamanhos), stco(offsets)];
+  if(ehVideo && chaves && chaves.length) tabelas.splice(2, 0, stss(chaves));
+  var stbl = caixas.apply(null, ["stbl"].concat(tabelas));
+  var minf = ehVideo
+    ? caixas("minf", caixa("vmhd", new Bytes().u32(0x00000001).u16(0).u16(0).u16(0).u16(0).junta()), dinf(), stbl)
+    : caixas("minf", caixa("smhd", new Bytes().u32(0).u16(0).u16(0).junta()), dinf(), stbl);
+  var mdia = caixas("mdia", mdhd(escala, dur), hdlr(ehVideo ? "vide" : "soun",
+                    ehVideo ? "VideoHandler" : "SoundHandler"), minf);
+  return caixas("trak", tkhd(id, dur, larg, alt, ehVideo), mdia);
+}
+
+/* ============================================================
+   MONTAR O ARQUIVO.
+   `v` = {larg, alt, escala, amostras:[{bytes, dur, chave}], avcC}
+   `a` = {taxa, canais, amostras:[{bytes, dur}], asc}  (pode ser nulo)
+   ============================================================ */
+function montaMp4(v, a){
+  var i;
+  /* 1. os bytes, um atrás do outro, e onde cada um caiu */
+  var corpo = new Bytes(), offV = [], offA = [];
+  var base = 0;    /* preenchido depois: o mdat começa depois do ftyp */
+  for(i = 0; i < v.amostras.length; i++){ offV.push(corpo.n); corpo.cru(v.amostras[i].bytes); }
+  if(a) for(i = 0; i < a.amostras.length; i++){ offA.push(corpo.n); corpo.cru(a.amostras[i].bytes); }
+  var dados = corpo.junta();
+
+  var ftyp = caixa("ftyp", (function(){
+    var b = new Bytes(); b.txt("isom").u32(512).txt("isom").txt("iso2").txt("avc1").txt("mp41");
+    return b.junta(); })());
+  base = ftyp.length + 8;      /* 8 = cabeçalho do próprio mdat */
+  for(i = 0; i < offV.length; i++) offV[i] += base;
+  for(i = 0; i < offA.length; i++) offA[i] += base;
+
+  var durV = 0, dursV = [], tamsV = [], chaves = [];
+  for(i = 0; i < v.amostras.length; i++){
+    dursV.push(v.amostras[i].dur); tamsV.push(v.amostras[i].bytes.length);
+    durV += v.amostras[i].dur;
+    if(v.amostras[i].chave) chaves.push(i + 1);
+  }
+  var trakV = trak(1, v.escala, durV, v.larg, v.alt, true,
+                   stsdVideo(v.larg, v.alt, v.avcC), dursV, tamsV, offV, chaves);
+
+  var trilhas = [trakV], durFilme = Math.round(durV / v.escala * 1000);
+  if(a && a.amostras.length){
+    var durA = 0, dursA = [], tamsA = [];
+    for(i = 0; i < a.amostras.length; i++){
+      dursA.push(a.amostras[i].dur); tamsA.push(a.amostras[i].bytes.length);
+      durA += a.amostras[i].dur;
+    }
+    trilhas.push(trak(2, a.taxa, durA, 0, 0, false,
+                      stsdAudio(a.canais, a.taxa, a.asc), dursA, tamsA, offA, null));
+    durFilme = Math.max(durFilme, Math.round(durA / a.taxa * 1000));
+  }
+  var moov = caixas.apply(null, ["moov", mvhd(1000, durFilme, trilhas.length)].concat(trilhas));
+
+  var mdat = new Bytes();
+  mdat.u32(8 + dados.length).txt("mdat").cru(dados);
+  var tudoB = new Bytes();
+  tudoB.cru(ftyp).cru(mdat.junta()).cru(moov);
+  return new Blob([tudoB.junta()], {type: "video/mp4"});
+}
+
+/* ============================================================
+   EXPORTAÇÃO RÁPIDA — o motor profissional que já mora no navegador.
+   ⭐ Resposta à pergunta do Marcos sobre usar ferramentas prontas: a ferramenta
+   pronta é o **WebCodecs**, o mesmo codificador H.264 que os programas grandes
+   usam, embutido no Chrome desde a versão 94 (o da escola é a 109). Não pesa
+   um byte de download e usa o hardware quando a máquina tem.
+
+   O QUE MUDA PARA A AULA — e ⚠️ **NÃO É A VELOCIDADE**, que eu cheguei a
+   escrever aqui antes de medir. Medi (24/set/2026, neste contêiner): 10 s de
+   vídeo saíram em 10,1 s e 3 s saíram em 3,5 s — **o mesmo tempo do caminho
+   antigo**. O gargalo não é comprimir: é tirar cada quadro do canvas. Fica o
+   registro para ninguém prometer ao professor uma espera menor que a real.
+
+   O que muda de verdade são duas coisas, e as duas valem mais que velocidade:
+   1. **SAI `.mp4` DE VERDADE.** Pelo caminho antigo (MediaRecorder), o Chrome
+      109 só sabe gravar `.webm` — que o PowerPoint e o reprodutor do Windows 7
+      **não abrem**, justamente onde o vídeo vai ser mostrado na escola.
+   2. **O VÍDEO NÃO HERDA O ENGASGO DA MÁQUINA.** O caminho antigo FILMA a
+      prévia: se o PC de 2012 desenhar a 12 quadros por segundo, é isso que vai
+      para o arquivo, com quadros repetidos e som picotado. Aqui cada quadro é
+      calculado e numerado um a um — a prévia pode tropeçar à vontade que **o
+      arquivo sai perfeito**. Num computador fraco isto é o que separa um vídeo
+      apresentável de um vídeo estragado.
+
+   ⚠️ E O SOM É CALCULADO FORA DO TEMPO (`OfflineAudioContext`), amostra por
+   amostra, em vez de gravado da caixa de som — pelo mesmo motivo: engasgo de
+   máquina não entra no arquivo.
+
+   ⚠️⚠️ O QUE EU **NÃO** CONSIGO MEDIR DAQUI: se o Chrome 109 daquele PC aceita
+   codificar H.264 (ele pode não ter o codificador por software no pacote do
+   Windows 7). Por isso o programa PERGUNTA ao navegador antes
+   (`VideoEncoder.isConfigSupported`) e cai no caminho antigo se a resposta for
+   não — e a tela do fim DIZ qual caminho foi usado, para o professor me contar.
+   ============================================================ */
+
+function podeRapido(){
+  return !!(window.VideoEncoder && window.AudioEncoder && window.VideoFrame &&
+            window.AudioData && cv && cv.getContext);
+}
+
+/* ---------- desenhar um instante EXATO (esperando o vídeo chegar lá) ----------
+   ⚠️ `currentTime = x` não é instantâneo: o navegador vai buscar o quadro e
+   avisa depois, no evento `seeked`. Desenhar sem esperar exporta o quadro
+   ANTERIOR — o vídeo sai "atrasado" de um jeito que ninguém explica. */
+function vaiPara(el, t){
+  return new Promise(function(ok){
+    if(!el || !el.duration){ ok(); return; }
+    var alvo = Math.max(0, Math.min(t, el.duration - 0.02));
+    if(Math.abs(el.currentTime - alvo) < 0.005){ ok(); return; }
+    var guarda = setTimeout(function(){ el.removeEventListener("seeked", uma); ok(); }, 1500);
+    function uma(){ clearTimeout(guarda); el.removeEventListener("seeked", uma); ok(); }
+    el.addEventListener("seeked", uma);
+    try{ el.currentTime = alvo; }catch(e){ clearTimeout(guarda); ok(); }
+  });
+}
+function desenhaExato(t){
+  var espera = [], em = clipeEm(t), k;
+  if(em && PROJ.clipes[em.i]){
+    var c = PROJ.clipes[em.i];
+    if(c.tipo === "video") espera.push(vaiPara(c.el, c.ini + em.local * (c.vel || 1)));
+    var prox = PROJ.clipes[em.i + 1];
+    if(prox && prox.transicao && prox.transicao.tipo !== "corte" &&
+       durClipe(c) - em.local < (prox.transicao.dur || 0.5) && prox.tipo === "video")
+      espera.push(vaiPara(prox.el, prox.ini + 0.02));
+  }
+  for(k = 0; k < PROJ.pip.length; k++){
+    var o = PROJ.pip[k];
+    if(!o.forma && o.tipo === "video" && t >= o.t0 && t <= o.t1) espera.push(vaiPara(o.el, t - o.t0));
+  }
+  return Promise.all(espera).then(function(){ desenha(t); });
+}
+
+/* ---------- a mistura de som, calculada fora do tempo ---------- */
+function decodificaArquivo(ac, arq){
+  return arq.arrayBuffer().then(function(ab){
+    return new Promise(function(ok){
+      try{ ac.decodeAudioData(ab, ok, function(){ ok(null); }); }
+      catch(e){ ok(null); }
+    });
+  }).catch(function(){ return null; });
+}
+
+function misturaOffline(dur){
+  var C = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+  if(!C) return Promise.resolve(null);
+  var taxa = 44100;
+  var ac;
+  try{ ac = new C(2, Math.max(1, Math.ceil(taxa * dur)), taxa); }
+  catch(e){ return Promise.resolve(null); }
+
+  /* cada material é decodificado UMA vez, mesmo que apareça em vários pedaços */
+  var pecas = [], k;
+  for(k = 0; k < PROJ.clipes.length; k++)
+    pecas.push({o: PROJ.clipes[k], quando: inicioDe(k), de: PROJ.clipes[k].ini,
+                quanto: durClipe(PROJ.clipes[k]), vel: PROJ.clipes[k].vel || 1,
+                vol: (PROJ.clipes[k].volume || 0) / 100, fi: 0, fo: 0});
+  for(k = 0; k < PROJ.pip.length; k++){
+    var p = PROJ.pip[k];
+    if(p.forma || p.tipo !== "video") continue;
+    pecas.push({o: p, quando: p.t0, de: 0, quanto: p.t1 - p.t0, vel: 1, vol: 0.7, fi: 0, fo: 0});
+  }
+  for(k = 0; k < PROJ.audios.length; k++){
+    var a = PROJ.audios[k];
+    pecas.push({o: a, quando: a.t0, de: a.ini || 0, quanto: a.t1 - a.t0, vel: 1,
+                vol: (a.volume || 0) / 100, fi: a.fadeIn || 0, fo: a.fadeOut || 0});
+  }
+
+  var unicos = [], i;
+  for(i = 0; i < pecas.length; i++){
+    var arq = arquivoDe(pecas[i].o.el);
+    pecas[i].arq = arq;
+    if(arq && unicos.indexOf(arq) < 0) unicos.push(arq);
+  }
+  return Promise.all(unicos.map(function(a){ return decodificaArquivo(ac, a); }))
+    .then(function(bufs){
+      var j;
+      for(j = 0; j < pecas.length; j++){
+        var pe = pecas[j];
+        var idx = unicos.indexOf(pe.arq);
+        var buf = idx >= 0 ? bufs[idx] : null;
+        if(!buf || pe.vol <= 0 || pe.quanto <= 0) continue;   /* material sem som: segue */
+        var s = ac.createBufferSource(); s.buffer = buf;
+        s.playbackRate.value = Math.max(0.25, Math.min(4, pe.vel));
+        var g = ac.createGain();
+        g.gain.setValueAtTime(pe.vol, Math.max(0, pe.quando));
+        /* ⚠️ o fade do som é o mesmo da prévia, escrito como rampas: aqui ele
+           sai exato, porque não depende de quantos quadros a tela desenhou. */
+        if(pe.fi > 0){
+          g.gain.setValueAtTime(0.0001, Math.max(0, pe.quando));
+          g.gain.linearRampToValueAtTime(pe.vol, Math.max(0, pe.quando) + pe.fi);
+        }
+        if(pe.fo > 0){
+          var fim = pe.quando + pe.quanto;
+          g.gain.setValueAtTime(pe.vol, Math.max(0, fim - pe.fo));
+          g.gain.linearRampToValueAtTime(0.0001, Math.max(0.001, fim));
+        }
+        s.connect(g); g.connect(ac.destination);
+        try{ s.start(Math.max(0, pe.quando), pe.de, pe.quanto * pe.vel); }catch(e){}
+      }
+      return ac.startRendering();
+    }).catch(function(){ return null; });
+}
+
+/* ---------- a corrida ---------- */
+var RAPIDO_CANCELA = false;
+function exportarRapido(){
+  var m = medidaDaSaida(), larg = m[0], alt = m[1];
+  var fps = 30, total = durTotal();
+  if(total < 0.2){ recado("Não há nada para exportar.", "erro"); return Promise.resolve(false); }
+  var nQuadros = Math.max(1, Math.round(total * fps));
+  var cfg = {codec: "avc1.42001f", width: larg, height: alt, framerate: fps,
+             bitrate: Math.round(larg * alt * fps * 0.09), avc: {format: "avc"}};
+
+  return VideoEncoder.isConfigSupported(cfg).then(function(r){
+    if(!r || !r.supported) return false;
+
+    GRAVANDO = true; RAPIDO_CANCELA = false;
+    var amostrasV = [], avcC = null, erro = null;
+    var enc = new VideoEncoder({
+      output: function(chunk, meta){
+        if(meta && meta.decoderConfig && meta.decoderConfig.description && !avcC)
+          avcC = new Uint8Array(meta.decoderConfig.description);
+        var b = new Uint8Array(chunk.byteLength);
+        chunk.copyTo(b);
+        amostrasV.push({bytes: b, dur: Math.round(90000 / fps), chave: chunk.type === "key"});
+      },
+      error: function(e){ erro = e; }
+    });
+    enc.configure(cfg);
+
+    var passo = 0;
+    function proximo(){
+      if(erro || RAPIDO_CANCELA) return Promise.resolve();
+      if(passo >= nQuadros) return Promise.resolve();
+      var t = passo / fps;
+      return desenhaExato(Math.min(t, total - 0.001)).then(function(){
+        var vf;
+        try{
+          vf = new VideoFrame(cv, {timestamp: Math.round(passo * 1e6 / fps),
+                                   duration: Math.round(1e6 / fps)});
+        }catch(e){ erro = e; return; }
+        try{ enc.encode(vf, {keyFrame: passo % 60 === 0}); }catch(e){ erro = e; }
+        vf.close();
+        passo++;
+        if(passo % 10 === 0){
+          avisoExp(Math.round(passo / nQuadros * 100));
+          /* ⚠️ devolver a vez ao navegador de dez em dez quadros: sem isto a
+             aba congela e o Windows mostra "não está respondendo". */
+          return new Promise(function(ok){ setTimeout(ok, 0); }).then(proximo);
+        }
+        return proximo();
+      });
+    }
+
+    return proximo()
+      .then(function(){ return enc.flush(); })
+      .then(function(){ try{ enc.close(); }catch(e){} })
+      .then(function(){
+        if(erro || !amostrasV.length || !avcC) throw (erro || new Error("sem quadros"));
+        avisoExp(100, "montando o som…");
+        return misturaOffline(total);
+      })
+      .then(function(buf){ return codificaAac(buf); })
+      .then(function(som){
+        var b = montaMp4({larg: larg, alt: alt, escala: 90000,
+                          amostras: amostrasV, avcC: avcC}, som);
+        GRAVANDO = false;
+        baixaBlob(b, "meu-video.mp4");
+        marca("exportou");
+        contaFim(b, "mp4", true);
+        return true;
+      })
+      .catch(function(e){
+        GRAVANDO = false;
+        try{ enc.close(); }catch(e2){}
+        recado("O caminho rápido falhou (" + (e && e.message ? e.message : e) +
+               "). Vou gravar pelo caminho antigo.", "erro");
+        return false;
+      });
+  }).catch(function(){ return false; });
+}
+
+/* ---------- o som em AAC ---------- */
+function codificaAac(buf){
+  if(!buf || !window.AudioEncoder) return Promise.resolve(null);
+  return new Promise(function(ok){
+    var amostras = [], asc = null, morreu = false;
+    var enc;
+    try{
+      enc = new AudioEncoder({
+        output: function(chunk, meta){
+          if(meta && meta.decoderConfig && meta.decoderConfig.description && !asc)
+            asc = new Uint8Array(meta.decoderConfig.description);
+          var b = new Uint8Array(chunk.byteLength);
+          chunk.copyTo(b);
+          amostras.push({bytes: b, dur: 1024});
+        },
+        error: function(){ morreu = true; }
+      });
+      enc.configure({codec: "mp4a.40.2", sampleRate: buf.sampleRate,
+                     numberOfChannels: Math.min(2, buf.numberOfChannels), bitrate: 128000});
+    }catch(e){ ok(null); return; }
+
+    var canais = Math.min(2, buf.numberOfChannels), N = buf.length, bloco = 1024, i = 0;
+    var planos = [], c;
+    for(c = 0; c < canais; c++) planos.push(buf.getChannelData(c));
+    while(i < N && !morreu){
+      var n = Math.min(bloco, N - i);
+      var dados = new Float32Array(n * canais);
+      for(c = 0; c < canais; c++) dados.set(planos[c].subarray(i, i + n), c * n);
+      try{
+        var ad = new AudioData({format: "f32-planar", sampleRate: buf.sampleRate,
+          numberOfFrames: n, numberOfChannels: canais,
+          timestamp: Math.round(i / buf.sampleRate * 1e6), data: dados});
+        enc.encode(ad); ad.close();
+      }catch(e){ morreu = true; }
+      i += n;
+    }
+    if(morreu){ try{ enc.close(); }catch(e){} ok(null); return; }
+    enc.flush().then(function(){
+      try{ enc.close(); }catch(e){}
+      ok(asc && amostras.length ? {taxa: buf.sampleRate, canais: canais,
+                                   amostras: amostras, asc: asc} : null);
+    }, function(){ ok(null); });
+  });
+}
+
+/* ---------- peças compartilhadas com o caminho antigo ---------- */
+function baixaBlob(b, nome){
+  var url = URL.createObjectURL(b);
+  var a = document.createElement("a");
+  a.href = url; a.download = nome;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 4000);
+}
+function avisoExp(pct, txt){
+  var b = $("btExportar");
+  if(b) b.lastChild.nodeValue = " " + (txt || (pct + "%"));
+}
+function contaFim(b, ext, rapido){
+  var m = medidaDaSaida(), mb = Math.round(b.size / 104857.6) / 10;
+  var bt = $("btExportar");
+  if(bt){ bt.lastChild.nodeValue = " Exportar"; bt.classList.remove("lig"); }
+  modal("<h2>Vídeo exportado</h2>" +
+    "<p>Saiu um <b>." + ext + "</b> de <b>" + mb + " MB</b>, em " + m[0] + "×" + m[1] +
+    ". Ele foi para a pasta de downloads deste computador.</p>" +
+    (rapido
+      ? "<div class='aviso bom'><b>Quadro a quadro (WebCodecs).</b> Este navegador tem o " +
+        "codificador de vídeo profissional embutido, então cada quadro foi calculado e " +
+        "numerado um a um — <b>o arquivo não herda os engasgos da prévia</b>, mesmo num " +
+        "computador lento. E saiu em <b>.mp4</b>, que abre no PowerPoint, no reprodutor " +
+        "do Windows, no celular e no YouTube.</div>"
+      : "<div class='aviso'><b>Caminho antigo (gravação da tela).</b> Este navegador não " +
+        "tem o codificador embutido, então o vídeo foi <b>tocado e gravado em tempo real</b> " +
+        (ext === "webm"
+          ? "e saiu em <b>.webm</b> — que abre no Chrome, no Firefox, no celular e no " +
+            "YouTube, mas <b>não</b> no PowerPoint nem no reprodutor do Windows 7. Para o " +
+            "projetor da sala, abra o arquivo pelo navegador."
+          : ".") + "</div>") +
+    "<p style='font-size:12.8px;color:var(--fraco)'><b>Renderizar</b> é calcular quadro a " +
+    "quadro, mais depressa que o vídeo; <b>gravar a tela</b> é filmar a prévia em tempo " +
+    "real. Saber a diferença é parte do ofício — e é por isso que o programa diz qual dos " +
+    "dois usou.</p>");
 }
 
 /* ============================================================

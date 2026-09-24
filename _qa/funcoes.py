@@ -192,6 +192,14 @@ getComputedStyle matchMedia scrollTo scrollBy getSelection structuredClone queue
 # sempre — o Chrome 109 do PC da escola tem as duas. A familia inteira de midia
 # entra aqui de uma vez, para nao voltar peca por peca a cada ferramenta nova.
 MediaRecorder File FileList MediaStream MediaStreamTrack MediaSource
+# ⚠️ E a familia WebCodecs entrou no mesmo dia, pelo mesmo motivo: a Oficina de
+# Video exporta pelo codificador embutido do navegador (Chrome 94+), e o portao
+# acusava `VideoEncoder`, `AudioEncoder` e `VideoFrame` como funcao inexistente.
+VideoEncoder VideoDecoder AudioEncoder AudioDecoder VideoFrame AudioData
+EncodedVideoChunk EncodedAudioChunk OfflineAudioContext webkitOfflineAudioContext
+# ⚠️ `throw` e palavra-chave da linguagem e cai aqui porque `throw (erro || new
+# Error(...))` tem parentese logo depois. Nao e chamada de funcao.
+throw
 ImageData ImageBitmap createImageBitmap OffscreenCanvas Path2D DOMMatrix
 AbortController Response Request Headers FormData ClipboardItem
 # ⚠️ `url` NAO e funcao de JS: e funcao de CSS (`background-image:url("data:...")`),

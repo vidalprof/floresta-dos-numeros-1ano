@@ -80,8 +80,9 @@ function servidor() {
     try {
       const p = path.join(require('os').tmpdir(), 'cobaia-' + d.suggestedFilename());
       await d.saveAs(p);
-      baixado = { nome: d.suggestedFilename(), bytes: fs.statSync(p).size };
-      fs.unlinkSync(p);
+      /* ⚠️ o arquivo FICA: o passo 21 abre ele de volta num <video>, e e esse
+         passo que prova que o embrulho MP4 escrito a mao esta certo. */
+      baixado = { nome: d.suggestedFilename(), bytes: fs.statSync(p).size, caminho: p };
     } catch (e) { baixado = { nome: d.suggestedFilename(), bytes: -1 }; }
   });
 
@@ -165,6 +166,11 @@ function servidor() {
   notas.push('prevía neste computador: ' + fps + ' fps (o PC da escola e mais lento)');
   await eu(() => pausar());
 
+  /* ---- 9b. o caminho RAPIDO existe neste navegador? ---- */
+  const rapido = await eu(() => podeRapido());
+  notas.push(rapido ? 'caminho rapido (WebCodecs) disponivel: sim'
+                    : 'caminho rapido indisponivel — sera medido o caminho antigo');
+
   /* ---- 10. EXPORTAR — a prova de fogo ---- */
   await eu(() => {
     /* encurta o projeto para o teste nao levar minutos: a exportacao e em
@@ -174,8 +180,11 @@ function servidor() {
     PROJ.clipes[0].vel = 1;
     PROJ.textos.length = 0; tudo();
   });
+  const relogio0 = Date.now();
   await pg.click('[data-qa="exportar"]');
-  await pg.waitForTimeout(6000);
+  for (let i = 0; i < 40 && !baixado; i++) await pg.waitForTimeout(500);
+  const gastou = (Date.now() - relogio0) / 1000;
+  notas.push('exportacao de 2 s de video levou ' + gastou.toFixed(1) + ' s');
   exige(!!baixado, 'a exportacao nao produziu arquivo nenhum');
   if (baixado) {
     exige(baixado.bytes > 2000, 'o arquivo exportado saiu vazio (' + baixado.bytes + ' bytes)');
@@ -256,6 +265,37 @@ function servidor() {
     'arrastar o texto na previa nao mexeu nele (x=' +
     (await eu(() => Math.round(PROJ.textos[0].x * 100) / 100)) + ')');
 
+  /* ---- 10a. O ARQUIVO EXPORTADO ABRE DE VOLTA? ----
+     ⚠️ ESTE e o passo que justifica ter escrito o embrulho MP4 a mao em vez de
+     pegar uma biblioteca: um arquivo com o indice errado SAI do mesmo jeito,
+     com o mesmo tamanho, e so nao toca. Aqui ele volta para dentro de um
+     <video> e tem de declarar duracao e largura. */
+  if (baixado && baixado.caminho && fs.existsSync(baixado.caminho)) {
+    const b64 = fs.readFileSync(baixado.caminho).toString('base64');
+    const tipo = /mp4$/.test(baixado.nome) ? 'video/mp4' : 'video/webm';
+    const volta = await pg.evaluate(([b64, tipo]) => new Promise(ok => {
+      const bin = atob(b64), n = bin.length, a = new Uint8Array(n);
+      for (let i = 0; i < n; i++) a[i] = bin.charCodeAt(i);
+      const v = document.createElement('video');
+      v.preload = 'auto';
+      const guarda = setTimeout(() => ok({erro: 'nao carregou em 10 s'}), 10000);
+      v.onloadedmetadata = () => { clearTimeout(guarda);
+        ok({dur: v.duration, w: v.videoWidth, h: v.videoHeight}); };
+      v.onerror = () => { clearTimeout(guarda);
+        ok({erro: 'codigo ' + (v.error && v.error.code)}); };
+      v.src = URL.createObjectURL(new Blob([a], {type: tipo}));
+    }), [b64, tipo]);
+    if (volta.erro) falhas.push('o arquivo exportado NAO abre de volta: ' + volta.erro);
+    else {
+      notas.push('o arquivo reabre: ' + volta.w + 'x' + volta.h + ', ' +
+                 (Math.round(volta.dur * 10) / 10) + ' s');
+      exige(volta.w > 0 && volta.h > 0, 'o arquivo exportado abriu sem imagem (0x0)');
+      exige(volta.dur > 1 && volta.dur < 6,
+        'a duracao do arquivo exportado esta errada (' + volta.dur + ' s para 2 s de projeto)');
+    }
+    try { fs.unlinkSync(baixado.caminho); } catch (e) {}
+  }
+
   /* ---- 11. desfazer devolve o projeto ---- */
   const quantos = await eu(() => PROJ.clipes.length);
   await eu(() => { guardaPasso(); PROJ.clipes.length = 0; tudo(); desfazer(); });
@@ -309,7 +349,7 @@ function servidor() {
 
 async function fim(b, srv) {
   await b.close(); srv.close();
-  console.log(alvo + ' -> cobaia de video: 20 passos de uso real');
+  console.log(alvo + ' -> cobaia de video: 21 passos de uso real');
   notas.forEach(n => console.log('   . ' + n));
   if (!falhas.length) {
     console.log('   cobaia ok: apara, corta, congela, arrasta, compoe som, EXPORTA e guarda rascunho');
