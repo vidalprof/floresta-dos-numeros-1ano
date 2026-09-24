@@ -1,5 +1,49 @@
 # 🧠 MEMÓRIA DO PROJETO — ler no INÍCIO de CADA sessão
 
+> ## ⛔⚙️ `cmd; rc=$?` DENTRO DE `bash -e` MATA O PASSO — e parou a fábrica inteira (24/set/2026)
+>
+> **Duas entregas seguidas do 3º ano terminaram com o carimbo em
+> `"estado":"rodando"`.** O `entregar.yml` gravava as vozes, conferia a
+> pronúncia, guardava tudo no repo — e **não publicava**. O site continuava
+> servindo a versão velha e o workflow terminava em `failure` **sem uma linha
+> dizendo o que havia de errado com o caderno**. Não havia nada errado com o
+> caderno. A linha era esta, no portão 1q2:
+>
+> ```
+> python3 _qa/voz_gravada.py "$p"; c=$?
+> ```
+>
+> Os passos do Actions rodam com `shell: bash -e`. O `;` separa **dois
+> comandos**, e o `set -e` derruba o passo no primeiro que devolve != 0 —
+> **antes de `c=$?` existir**. Quem escreve assim ACHA que está guardando o
+> código para decidir depois; o que está fazendo é garantir que nunca vai
+> decidir. E o estrago foi grande porque o `entregar.yml` **acrescenta
+> `_painel` a toda lista de entrega** (regra de 18/set) e o painel não tem
+> `falas.json`: o portão devolvia **2 ("não medi") no ÚLTIMO alvo** e **toda**
+> corrida morria ali.
+>
+> **A forma certa:** `rc=0; cmd || rc=$?` · `if cmd; then rc=0; else rc=$?; fi`
+> · `set +e; cmd; rc=$?; set -e`.
+>
+> ⚠️⚠️ **E A LIÇÃO JÁ ESTAVA ESCRITA NO PRÓPRIO ARQUIVO**, num passo anterior
+> (*"o `|| rc=$?` protege"*), de um mês antes. Eu a paguei de novo no passo
+> seguinte. **Lição registrada num passo não protege o passo vizinho** — por
+> isso virou **portão `0w` (`_qa/bash_e.py`)**, no pré-voo e na banca de folha
+> viva: ele lê o `shell:` de cada passo dos 50 workflows e reprova `cmd; rc=$?`
+> dentro de `bash -e`. Provado nos dois sentidos — reprova a versão quebrada,
+> passa na consertada.
+>
+> ⚠️ **E O SINTOMA ENSINA MAIS QUE O DEFEITO:** *workflow que falha sem falar do
+> conteúdo é suspeito do PRÓPRIO WORKFLOW.* Eu passei duas corridas relendo os
+> portões do caderno porque o carimbo dizia "rodando"; a resposta estava a um
+> `get_job_logs` de distância. **Quando o carimbo para no meio, ler o log é o
+> primeiro passo, não o último.**
+>
+> ⚠️ **ISTO PODE EXPLICAR A FILA DE "CONSERTO PRESO"** que o hook de início de
+> sessão lista (trinta atividades commitadas e não publicadas). Remedir depois
+> de o conserto estar no ar.
+
+
 > ## 🚫🎲 REGRA PERMANENTE — **"NUNCA CHUTE NUNCA INVENTE"** (Marcos, 12/set/2026)
 >
 > Palavras dele, exatamente estas quatro. Está no topo deste arquivo porque é a
