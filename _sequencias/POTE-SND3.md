@@ -247,3 +247,93 @@ O roteiro das 35 folhas sai **deste inventário de verbos**, mas quem assina se
 o caderno está adequado ao ano é o **`_snd3/PARECER-PEDAGOGICO.md`**, escrito
 DEPOIS, com o caderno pronto e a saída de `_qa/folha_a_folha.py` aberta ao lado.
 São dois crivos, não um — ordem do Marcos, repetida três vezes em 20/set/2026.
+
+---
+
+## 8. O ROTEIRO DAS 35 FOLHAS — saído do inventário de verbos acima
+
+> ⚠️ **Escrito na etapa 4 do roteiro de bolso**, antes de montar. Cada folha diz
+> de onde veio (a folha de papel, ou o bloco declarado do §2.2) e qual gesto o
+> comando impresso manda fazer. **Mecânica que repete vem em BLOCO COLADO, e a
+> segunda do par SOBE UM DEGRAU** — é a estratégia que chega às 35 sem encher, e
+> o degrau tem de estar dito no enunciado (portão `0b14`).
+
+### Bloco A — o agrupamento e o material dourado (1 a 8)
+
+| # | o que a criança faz | gesto | vem de |
+|---|---|---|---|
+| 1 | Ligar cada peça do material dourado ao seu valor | ligar | d52, d56 |
+| 2 | ⭐ **Juntar dez cubinhos e vê-los virarem UMA barra** | arrastar | **bloco declarado §2.2-1** |
+| 3 | ⭐ Degrau: **dez barras viram UMA placa** — e o enunciado diz que agora é a ordem de cima | arrastar | **bloco declarado §2.2-1** |
+| 4 | Escrever quantas placas, barras e cubinhos há | escrever | d41, d44 |
+| 5 | Degrau: escrever o **número** que as peças formam | escrever | d45, d51 |
+| 6 | Montar com peças o número pedido | arrastar | d47, d59 |
+| 7 | Degrau: montar um número **com zero numa ordem** | arrastar | d51 + §2.2-2 |
+| 8 | Marcar **todos** os conjuntos que valem o mesmo número | marcar vários | d46, d60 |
+
+### Bloco B — o quadro valor de lugar e o valor posicional (9 a 14)
+
+| # | o que a criança faz | gesto | vem de |
+|---|---|---|---|
+| 9 | Completar o quadro C · D · U | teclado | d19, d21, d23 |
+| 10 | Degrau: número **com zero**, e o quadro mostra por que a casa não fica vazia | teclado | d21 + §2.2-2 |
+| 11 | Qual é o **valor** do algarismo destacado | escolher | d27, d30 |
+| 12 | Degrau: **o mesmo algarismo** em lugares diferentes (o 5 de 253 e o de 523) | escolher | d31, d34 |
+| 13 | ⭐ **O zero guarda-lugar**: 205 e 25 — por que o zero precisa estar ali | escolher | **bloco declarado §2.2-2** |
+| 14 | Degrau: 305, 350 e 35 — qual é qual | escolher | **bloco declarado §2.2-2** |
+
+### Bloco C — compor e decompor (15 a 21)
+
+| # | o que a criança faz | gesto | vem de |
+|---|---|---|---|
+| 15 | Decompor: 356 = 300 + 50 + 6 | montar a soma | d61, d64 |
+| 16 | Degrau: decompor um número **com zero** (508) | montar a soma | d61, d76 |
+| 17 | Compor: 400 + 70 + 2 = ? | escrever | d67, d71 |
+| 18 | Degrau: as parcelas vêm **fora de ordem** (70 + 400 + 2) | escrever | d72 |
+| 19 | ⭐ **Escrever é da esquerda; decompor, da direita** — a folha que confronta as duas ordens | montar a soma | **bloco declarado §2.2-4** (d70) |
+| 20 | 1 centena = 10 dezenas = 100 unidades | teclado | d73 |
+| 21 | Degrau: **quantas dezenas cabem em 340** | teclado | d74 |
+
+### Bloco D — antecessor, sucessor e o ditado (22 a 27)
+
+| # | o que a criança faz | gesto | vem de |
+|---|---|---|---|
+| 22 | Antecessor e sucessor | teclado | d81, d84 |
+| 23 | Degrau: a passagem que **muda de ordem** (199 → 200, 999 → 1.000) | teclado | d88, d94 |
+| 24 | Pôr os vizinhos na fila, em ordem | arrastar | d86, d100 |
+| 25 | Verdadeiro ou falso — **inclusive o item falso de propósito** do crivo (§5) | escolher | d94 |
+| 26 | ⭐ **Ditado numérico** — a professora dita, a criança escreve | escrever | **bloco declarado §2.2-3** (d75) |
+| 27 | Degrau: ditado **com zero no meio** | escrever | **bloco declarado §2.2-3** |
+
+### Bloco E — a reta numérica, comparar e ordenar (28 a 33)
+
+| # | o que a criança faz | gesto | vem de |
+|---|---|---|---|
+| 28 | Onde cai o número na reta | escolher | d101, d105 |
+| 29 | Degrau: a reta **anda de 10 em 10 e de 100 em 100** | escolher | d110, d114 |
+| 30 | Comparar com **maior, menor ou igual** | escolher | d107, d112 |
+| 31 | Ordenar do menor ao maior | ordenar | d116, d118 |
+| 32 | Caça-números | caça | d117 |
+| 33 | Cruzadinha dos números por extenso | cruzadinha | d113 |
+
+### Fecho (34 e 35)
+
+| # | o que a criança faz | gesto | vem de |
+|---|---|---|---|
+| 34 | O cartaz do que ficou: marcar tudo o que é verdade sobre um número | marcar vários | revisão |
+| 35 | O desafio final — um número para ler, decompor e situar | escolher | revisão |
+
+### A conta do leque (regra: nenhum gesto acima de 40%)
+
+| gesto | folhas | % |
+|---|---|---|
+| escrever / teclado | 4, 5, 9, 10, 17, 18, 20, 21, 22, 23, 26, 27 | **34%** |
+| escolher | 11, 12, 13, 14, 25, 28, 29, 30, 35 | 26% |
+| arrastar | 2, 3, 6, 7, 24 | 14% |
+| montar a soma | 15, 16, 19 | 9% |
+| marcar vários | 8, 34 | 6% |
+| ligar · ordenar · caça · cruzadinha | 1 · 31 · 32 · 33 | 3% cada |
+
+⚠️ **O maior é 34%, abaixo do teto de 40%** — e ele é o maior porque é o maior
+no PAPEL também (24 folhas de "complete o quadro" + 22 de "escreva"). O leque
+saiu do papel, não do meu cardápio.
