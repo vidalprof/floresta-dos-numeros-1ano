@@ -212,7 +212,7 @@ th{background:#eef3f9}
 <div class="topo">
   <h1>Aprendendo a dar instruções à máquina</h1>
   <span class="selo" id="selo"></span>
-  <button class="bt claro" id="btmaq" type="button">Este computador aqui</button>
+  <button class="bt claro" id="btmaq" type="button">Este computador aqui</button>\n  <button class="bt claro" id="btprof" type="button">Ver tudo (professor)</button>
 </div>
 
 <div class="env" id="raiz"></div>
@@ -224,7 +224,7 @@ th{background:#eef3f9}
       gravado a partir dele. Mudou o texto, regrava a voz.
    ⚠️ Cada desafio DIZ o que mudou em relação ao anterior (portão 0b14).
    ================================================================== */
-var VERSAO = "25/09-325463";
+var VERSAO = "25/09-282ff5";
 
 var FALAS = {
   d0:"Esta é uma máquina de vidro. Você pode ver tudo o que acontece dentro dela. "+
@@ -251,45 +251,63 @@ var FALAS = {
 var COLS = 5, LINS = 4;
 
 var DESAFIOS = [
-  { id:"d1", nome:"Duas casas para a frente", fala:"d1",
+  { id:"d1", nome:"Duas casas para o lado", fala:"d1",
     rob:{c:0,l:3,d:0}, caixa:{c:2,l:3}, paredes:[],
-    leque:["andar"], prog:[], mostraLinha:true,
-    dica:"A caixa está a duas casas. Cada ANDAR move uma casa." },
+    leque:["dir","cim"], prog:[], mostraLinha:true,
+    dica:"A caixa esta a duas casas para a direita. Cada seta anda uma casa." },
 
-  { id:"d2", nome:"Agora ela precisa virar", fala:"d2",
+  { id:"d2", nome:"Agora ela precisa subir", fala:"d2",
     rob:{c:0,l:3,d:0}, caixa:{c:2,l:1}, paredes:[],
-    leque:["andar","esq","dir"], prog:[], mostraLinha:true,
-    dica:"Ande até ficar embaixo da caixa. Depois vire para cima e ande." },
+    leque:["dir","cim","esq","bai"], prog:[], mostraLinha:true,
+    dica:"Primeiro ande para a direita ate ficar embaixo da caixa. Depois suba." },
 
   { id:"d3", nome:"Diga antes de rodar", fala:"d3", prever:true,
     rob:{c:1,l:0,d:0}, caixa:{c:2,l:1}, paredes:[],
-    leque:[], prog:["andar","dir","andar"], mostraLinha:true,
+    leque:[], prog:["dir","bai"], mostraLinha:true,
     opcoes:[{t:"Na casa da caixa",ok:true},{t:"Uma casa antes",ok:false},
             {t:"Fora da grade",ok:false}],
-    dica:"Siga com o dedo: anda, vira para a direita, anda." },
+    dica:"Siga com o dedo: uma para a direita, uma para baixo." },
 
   { id:"d4", nome:"Ache o erro", fala:"d4",
     rob:{c:0,l:3,d:0}, caixa:{c:3,l:3}, paredes:[],
-    leque:["andar","esq","dir"], prog:["andar","dir","andar","andar"], mostraLinha:true,
-    dica:"A caixa está na mesma linha do robô. Ele precisa virar?" },
+    leque:["dir","cim","esq","bai"], prog:["dir","bai","dir","dir"], mostraLinha:true,
+    dica:"A caixa esta na MESMA linha do robo. Alguma seta esta mandando sair dela?" },
 
   { id:"d5", nome:"Agora sem pista", fala:"d5",
     rob:{c:0,l:0,d:0}, caixa:{c:2,l:2}, paredes:[],
-    leque:["andar","esq","dir"], prog:["andar","andar","esq","andar","andar"],
+    leque:["dir","cim","esq","bai"], prog:["dir","dir","cim","bai","bai"],
     mostraLinha:false,
-    dica:"A caixa está para BAIXO do robô. Virar para a esquerda leva para cima." },
+    dica:"A caixa esta para BAIXO do robo. Ha alguma seta mandando para cima?" },
 
   { id:"d6", nome:"O caminho longo", fala:"d6",
     rob:{c:0,l:0,d:0}, caixa:{c:4,l:3}, paredes:[{c:2,l:1},{c:3,l:1}],
-    leque:["andar","esq","dir"], prog:[], mostraLinha:true,
-    dica:"Ande até a beirada, vire para baixo e desça." }
+    leque:["dir","cim","esq","bai"], prog:[], mostraLinha:true,
+    dica:"Ande ate a beirada da direita e depois desca ate embaixo." }
 ];
 
 var BLOCOS = {
-  andar:{ rot:"ANDAR", fala:"andar" },
-  dir:  { rot:"VIRAR À DIREITA", fala:"virar à direita" },
-  esq:  { rot:"VIRAR À ESQUERDA", fala:"virar à esquerda" }
+  /* ⚠️⚠️ LICAO PAGA (Marcos, 25/set/2026, olhando o desafio 2): *"o robo so tem
+     virar a direita esquerda e andar, ele precisa ir para cima"*.
+     Ele estava certo, e o erro era de DESENHO, nao de codigo: o giro era
+     RELATIVO (virar sobre o proprio eixo) e a crianca ve a tela em ABSOLUTO
+     (cima, baixo, lado). Converter um no outro e mudanca de perspectiva — uma
+     habilidade de OUTRO ano — e eu a empilhei em cima do que a aula queria
+     ensinar, que e SEQUENCIA e ORDEM. O curriculo do 3o ano nao pede giro em
+     lugar nenhum: pede "criar e simular algoritmos com sequencias e repeticoes
+     simples com condicao".
+     *Carga que o objetivo nao pede e carga que atrapalha* (Sweller).
+     O giro volta depois, como aula PROPRIA, quando ele for o assunto. */
+  dir: {rot:"PARA A DIREITA", d:0, seta:"M6 20 H30 M24 13 L31 20 L24 27"},
+  bai: {rot:"PARA BAIXO",     d:1, seta:"M20 6 V30 M13 24 L20 31 L27 24"},
+  esq: {rot:"PARA A ESQUERDA",d:2, seta:"M34 20 H10 M16 13 L9 20 L16 27"},
+  cim: {rot:"PARA CIMA",      d:3, seta:"M20 34 V10 M13 16 L20 9 L27 16"}
 };
+
+function svgSeta(k){
+  return '<svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true" '+
+    'style="vertical-align:-6px"><path d="'+BLOCOS[k].seta+'" stroke="#062430" '+
+    'stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
 
 /* a folha das peças — é ela que MEDE o objetivo de hardware e software */
 var PECAS = [
@@ -421,7 +439,7 @@ function maquina(o){
     h += '<div class="leque">';
     for(i=0;i<o.leque.length;i++){
       h += '<button class="blo" type="button" data-b="'+o.leque[i]+'">'+
-           esc(BLOCOS[o.leque[i]].rot)+'</button>';
+           svgSeta(o.leque[i])+' '+esc(BLOCOS[o.leque[i]].rot)+'</button>';
     }
     h += '</div>';
   }
@@ -459,7 +477,7 @@ function pintaMemoria(editavel, agora){
   for(i=0;i<prog.length;i++){
     h += '<li class="'+(agora===i?"agora":"")+'">'+
       '<span class="end">'+i+'</span>'+
-      '<span class="instr">'+esc(BLOCOS[prog[i]].rot)+'</span>'+
+      '<span class="instr">'+svgSeta(prog[i])+' '+esc(BLOCOS[prog[i]].rot)+'</span>'+
       (editavel?'<button class="x" type="button" data-i="'+i+'" aria-label="Tirar">&times;</button>':'')+
       '</li>';
   }
@@ -578,9 +596,9 @@ function roda(d){
     pintaMemoria(true, i);
     proc("Lendo o endereço <b>"+i+"</b>: "+esc(BLOCOS[prog[i]].rot));
     var k = prog[i], nc = rob.c, nl = rob.l;
-    if(k === "dir"){ rob.d = (rob.d+1)%4; }
-    else if(k === "esq"){ rob.d = (rob.d+3)%4; }
-    else {
+    {
+      /* a seta DIZ para onde ir: o robo so vira a carinha para la, e anda. */
+      rob.d = BLOCOS[k].d;
       if(rob.d===0) nc++; else if(rob.d===1) nl++;
       else if(rob.d===2) nc--; else nl--;
       if(nc<0 || nc>=COLS || nl<0 || nl>=LINS){ acaba(d, {tipo:"fora", linha:i}); return; }
@@ -614,6 +632,13 @@ function acaba(d, erro){
       '<div class="acoes"><button class="bt" id="prox" type="button">'+
       (iDes+1 < DESAFIOS.length ? "Próximo desafio" : "Ver as peças da máquina")+
       '</button></div>';
+    // ⚠️ LICAO PAGA (Marcos, 25/set/2026): *"tinha mais desafios na maquina de
+    //    vidro? so vi um"*. Havia seis, e o arquivo no ar era o certo (o sha
+    //    bateu) — o que faltava era CHEGAR neles. O aviso e o botao "proximo"
+    //    nascem ABAIXO da maquina, e numa tela de 1366x768 a maquina ja ocupa
+    //    quase tudo: quem acerta nao VE que ha um proximo. Botao que a pessoa
+    //    nao ve e botao que nao existe.
+    try{ el("resp").scrollIntoView({behavior:"smooth", block:"center"}); }catch(e){}
     el("prox").onclick = function(){
       if(iDes+1 < DESAFIOS.length){ iDes++; desafio(); } else { telaPecas(); }
     };
@@ -655,7 +680,7 @@ function telaPecas(){
       '</div></div><div id="resp"></div>';
   el("raiz").innerHTML = h;
   pintaGrade(d);
-  prog = ["andar","andar","andar","andar","dir","andar","andar","andar"];
+  prog = ["dir","dir","dir","dir","bai","bai","bai"];
   pintaMemoria(false);
   proc("Parado. O programa continua guardado.");
   falar("d7");
@@ -898,8 +923,55 @@ function painelReal(){
 /* ==================================================================
    9. PARTIDA
    ================================================================== */
+/* ==================================================================
+   10. A CHAVE DO PROFESSOR — `1275@`
+   ⚠️ Esta chave existe em TODA atividade da casa e eu a esqueci neste
+      prototipo. Ela nao e seguranca (esta no codigo-fonte): e o atalho para
+      quem precisa VER a atividade inteira sem jogar — o professor na sala, e o
+      Marcos avaliando. Sem ela, ele abriu, viu o desafio 1 e nao tinha como
+      saber que havia mais cinco.
+   ================================================================== */
+var _teclas = "";
+document.addEventListener("keydown", function(ev){
+  if(ev.key && ev.key.length === 1){
+    _teclas = (_teclas + ev.key).slice(-6);
+    if(_teclas === "1275@"){ _teclas = ""; menuProf(); }
+  }
+});
+
+function menuProf(){
+  var h = '<div class="cart"><h2>Menu do professor</h2>'+
+    '<p class="mini">Atalho da casa (chave <b>1275@</b>). O aluno nao ve isto; '+
+    'serve para conferir qualquer parte sem precisar jogar ate la.</p>'+
+    '<div class="acoes" style="flex-wrap:wrap">';
+  var i;
+  for(i=0;i<DESAFIOS.length;i++){
+    h += '<button class="bt claro" type="button" data-d="'+i+'">'+
+         (i+1)+'. '+esc(DESAFIOS[i].nome)+'</button>';
+  }
+  h += '<button class="bt claro" id="mp" type="button">7. As pecas da maquina</button>'+
+       '<button class="bt claro" id="mf" type="button">Fecho (a palavra)</button>'+
+       '<button class="bt claro" id="mr" type="button">Relatorio descritivo</button>'+
+       '<button class="bt" id="mv" type="button">Voltar ao comeco</button>'+
+       '</div></div>';
+  el("raiz").innerHTML = h;
+  var bs = document.querySelectorAll("[data-d]"), j;
+  for(j=0;j<bs.length;j++){
+    bs[j].onclick = function(){
+      iDes = parseInt(this.getAttribute("data-d"), 10); desafio();
+    };
+  }
+  el("mp").onclick = telaPecas;
+  el("mf").onclick = telaFim;
+  el("mr").onclick = relatorio;
+  el("mv").onclick = abertura;
+}
+
 el("selo").textContent = "v " + VERSAO;
 el("btmaq").onclick = painelReal;
+/* ⚠️ a chave 1275@ continua valendo, mas um botao a vista e o que resolve
+   para quem NAO sabe que a chave existe — que era o caso. */
+el("btprof").onclick = menuProf;
 abertura();
 </script>
 </body>

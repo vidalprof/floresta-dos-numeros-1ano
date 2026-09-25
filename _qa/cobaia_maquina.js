@@ -10,11 +10,14 @@ const CROMO = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
 const path = require("path");
 const ARQ = "file://" + path.resolve("_comp3/index.html");
 const SOL = {
-  1:["ANDAR","ANDAR"],
-  2:["ANDAR","ANDAR","VIRAR À ESQUERDA","ANDAR","ANDAR"],
-  4:["ANDAR","ANDAR","ANDAR"],
-  5:["ANDAR","ANDAR","VIRAR À DIREITA","ANDAR","ANDAR"],
-  6:["ANDAR","ANDAR","ANDAR","ANDAR","VIRAR À DIREITA","ANDAR","ANDAR","ANDAR"]
+  // setas ABSOLUTAS (o giro relativo saiu em 25/set/2026 — ver o comentario em
+  // BLOCOS no index.html). A cobaia clica pelo `data-b`, nao pelo texto: o botao
+  // agora tem um SVG dentro e casar por texto quebraria a cada mudanca de rotulo.
+  1:["dir","dir"],
+  2:["dir","dir","cim","cim"],
+  4:["dir","dir","dir"],
+  5:["dir","dir","bai","bai"],
+  6:["dir","dir","dir","dir","bai","bai","bai"]
 };
 (async () => {
   const b = await chromium.launch({ executablePath:CROMO, args:["--no-sandbox","--disable-gpu"] });
@@ -34,6 +37,25 @@ const SOL = {
   });
   await p.goto(ARQ);
 
+  // ⚠️ LICAO PAGA (Marcos, 25/set/2026): *"tinha mais desafios na maquina de
+  //    vidro? so vi um"*. Havia seis e o arquivo no ar era o certo — o sha bateu.
+  //    O que faltava era CHEGAR neles: so se avanca resolvendo, e nao havia menu
+  //    nenhum. Esta cobaia PROVAVA que os seis funcionam JOGANDO ate eles, entao
+  //    ela nunca notou que quem nao joga nao os alcanca.
+  //    *Conteudo que existe e conteudo que se alcanca sao coisas diferentes, e so
+  //    a primeira estava medida.* Agora o menu do professor e medido primeiro.
+  await p.click("#btprof"); await p.waitForTimeout(200);
+  {
+    const bs = await p.$$("[data-d]");
+    if (bs.length < 6) throw new Error("o menu do professor so oferece " + bs.length + " desafio(s)");
+    await p.click('[data-d="5"]'); await p.waitForTimeout(250);
+    const passo = await p.textContent(".passo");
+    if (!passo.includes("Desafio 6")) throw new Error("o menu nao levou ao desafio 6: " + passo);
+    console.log("  menu do professor: alcanca os " + bs.length + " desafios sem jogar");
+    await p.click("#btprof"); await p.waitForTimeout(200);
+    await p.click("#mv"); await p.waitForTimeout(250);   // volta ao comeco
+  }
+
   // abertura: o problema
   await p.click("#pedir"); await p.waitForTimeout(150);
   await p.click("#vai");   await p.waitForTimeout(250);
@@ -45,7 +67,7 @@ const SOL = {
     if (SOL[n]) {
       await p.click("#limpar"); await p.waitForTimeout(80);
       for (const r of SOL[n]) {
-        await p.click(`.blo:text-is("${r}")`); await p.waitForTimeout(50);
+        await p.click(`.blo[data-b="${r}"]`); await p.waitForTimeout(50);
       }
     }
     if (n === 3) { await p.click('.opb:text-is("Na casa da caixa")'); await p.waitForTimeout(120); }
