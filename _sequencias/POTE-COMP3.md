@@ -129,3 +129,65 @@ tamanho, tinha título e **parecia resultado**. Consertado passando `r.content`
 **Nenhuma das três se responde com a minha opinião.** As duas primeiras saem da
 leitura que continua; a terceira só se resolve de um jeito, e é o jeito da casa:
 **cronômetro e olho na turma**.
+
+---
+
+## §7 ⭐ DESPLUGADA → PLUGADA: a regra de conversão
+
+> Pergunta do Marcos (25/set/2026): ***"veja que nas colheitas de folhas vc pode
+> pegar atividades desplugadas e transformar em plugadas certo?"***
+>
+> **Certo — e é o mecanismo que a casa já tem.** Uma atividade desplugada É uma
+> folha de papel com **comando impresso**, que é exatamente de onde a regra da
+> origem manda tirar o gesto. Some a incompatibilidade que eu tinha temido: o
+> Marcos não quer dar aula desplugada, e não vai dar — **o papel é a minha
+> matéria-prima e nunca chega à criança.**
+
+### 7.1 ⚠️ MAS A CONVERSÃO NÃO É AUTOMÁTICA — a pergunta que decide
+
+Para cada atividade colhida, uma pergunta antes de converter:
+
+> **O gesto do corpo é O QUE ENSINA, ou é só o jeito de entregar?**
+
+- Se o gesto é **entrega** (marcar, contar, escolher, ordenar no papel), a tela
+  faz igual ou melhor — e ganha resposta imediata, voz e relatório.
+- Se o gesto **é a aula** (as crianças andando pela sala, combinando regras entre
+  grupos, negociando em voz alta), **converter destrói o que ensinava**. Na tela
+  aquilo vira animação para assistir, e assistir não é fazer.
+
+⚠️ **Essa segunda linha é honesta e custa:** há atividades boas que NÃO devem
+virar tela. Para elas o veredito é *"fica para o professor"* — e isso se declara,
+não se disfarça de folha.
+
+### 7.2 O crivo, atividade por atividade (da coleção da UNICAMP)
+
+| Atividade desplugada | Vira o quê na máquina de vidro | Veredito |
+|---|---|---|
+| **Números binários** | fileira de lâmpadas que a criança acende e apaga, com o número aparecendo | ⭐ **melhora** — ela testa dezenas de números em minutos, com resposta na hora |
+| **Representação de imagens** (colorir por números) | a **grade de pixels** da máquina: ela digita os números e o desenho aparece | ⭐⭐ **melhora muito** — e é literalmente a *matriz* do 4º ano |
+| **Compressão de texto** | marcar o trecho repetido e ver o texto **encolher**, com contador de letras | ⭐ **melhora** — o ganho fica medido na hora |
+| **Seguindo instruções** (desenho por instrução falada) | é a **nossa folha 1** — a máquina que não entende "vá até a caixa" | **empata**, e nós ganhamos a narração para quem não lê |
+| **Ordenação** (o mais leve e o mais pesado) | balança na tela contando as comparações | **empata** ⚠️ mas perde o movimento, que em turma pequena é metade da graça |
+| **Redes de ordenação** (seja o mais rápido) | — | ⛔ **perde**: o ponto é várias crianças andando pela grade ao mesmo tempo |
+| **Tábuas de pedra** (protocolos de rede) | — | ⛔ **perde**: é negociação entre grupos, em voz alta |
+| **Cidade enlameada** (grafos) | o mapa da rede de máquinas, ligando com o menor custo | ⭐ **melhora** — guardado para o 5º ano |
+
+### 7.3 ⭐ A MÁQUINA DE VIDRO É UMA ROTA DE CONVERSÃO QUE UM QUIZ NÃO TEM
+
+Boa parte das atividades desplugadas de Computação é sobre um **processo de
+máquina** — ordenar, buscar, comprimir, rotear, detectar erro, guardar arquivo.
+Transformar isso em pergunta de múltipla escolha seria trair a atividade. Na
+máquina de vidro elas viram **a peça fazendo aquilo, à vista** — que é mais perto
+do que a atividade original queria do que qualquer quiz.
+
+### 7.4 ⚠️ O QUE SE APROVEITA É A IDEIA, NUNCA O MATERIAL
+
+- Aproveita-se: **a ordem didática**, **a tarefa** e **o aviso de onde a turma
+  trava**. Isso é o que um professor faz ao preparar aula.
+- **Não** se copia: texto, enunciado, folha de impressão, tabela nem ilustração
+  de terceiro para dentro dos nossos cadernos. **Enunciado nosso, narração nossa,
+  figura nossa** (recortada das folhas colhidas, pela regra da origem).
+- ⚠️ **E a licença se confere antes de reaproveitar qualquer coisa além da
+  ideia.** A coleção da UNICAMP se anuncia livre e gratuita, mas *"livre"* na
+  página não me diz os termos — **não afirmo licença que não li**. Na dúvida:
+  só a ideia.
