@@ -102,23 +102,57 @@ body{
 /* tela (a grade) */
 .tela{-webkit-box-flex:1;flex:1 1 300px;min-width:min(100%,288px)}
 .grade{
-  display:grid;gap:4px;background:#0a1626;border-radius:10px;padding:6px;
+  position:relative;                      /* o robo flutua POR CIMA das casas */
+  display:grid;gap:5px;border-radius:12px;padding:7px;
+  background:-webkit-linear-gradient(#0c1c30,#081322);
+  background:linear-gradient(#0c1c30,#081322);
   border:2px solid #2b4d77;
+  -webkit-box-shadow:inset 0 2px 14px rgba(0,0,0,.45);
+  box-shadow:inset 0 2px 14px rgba(0,0,0,.45);
 }
 .cel{
-  position:relative;background:#16304d;border-radius:6px;
+  position:relative;border-radius:8px;
   min-width:44px;min-height:44px;aspect-ratio:1/1;
+  background:-webkit-linear-gradient(#1a3857,#142c47);
+  background:linear-gradient(#1a3857,#142c47);
+  -webkit-box-shadow:inset 0 1px 0 rgba(143,220,239,.10);
+  box-shadow:inset 0 1px 0 rgba(143,220,239,.10);
 }
-.cel.parede{background:#3d2b1a;border:2px solid #6b4a25}
+.cel.parede{
+  background:-webkit-linear-gradient(#4a3420,#33230f);
+  background:linear-gradient(#4a3420,#33230f);
+  border:2px solid #6b4a25;
+}
 .cel svg{position:absolute;left:8%;top:8%;width:84%;height:84%}
-.rob{transition:-webkit-transform .18s;transition:transform .18s}
-.d0{-webkit-transform:rotate(0deg);transform:rotate(0deg)}
-.d1{-webkit-transform:rotate(90deg);transform:rotate(90deg)}
-.d2{-webkit-transform:rotate(180deg);transform:rotate(180deg)}
-.d3{-webkit-transform:rotate(270deg);transform:rotate(270deg)}
+.cel.alvo svg{-webkit-animation:respira 2.2s ease-in-out infinite;
+              animation:respira 2.2s ease-in-out infinite}
+@-webkit-keyframes respira{50%{-webkit-transform:scale(1.07)}}
+@keyframes respira{50%{-webkit-transform:scale(1.07);transform:scale(1.07)}}
+
+/* ⚠️ O ROBO NAO E MAIS REDESENHADO DENTRO DA CASA (25/set/2026, Marcos: *"o
+   movimento do robo nao deveria ser mais natural e nao tao duro?"*). Antes cada
+   passo apagava a grade inteira e desenhava o robo na casa seguinte — um SALTO,
+   sem caminho. Agora ele e UMA peca que flutua sobre a grade e desliza ate a
+   casa, com um passinho de leve. Andar tem de PARECER andar. */
+#roboc{
+  position:absolute;left:0;top:0;z-index:3;pointer-events:none;
+  -webkit-transition:-webkit-transform .34s cubic-bezier(.34,1.22,.64,1);
+  transition:transform .34s cubic-bezier(.34,1.22,.64,1);
+}
+#roboc svg{position:absolute;left:7%;top:7%;width:86%;height:86%;
+  -webkit-transition:-webkit-transform .24s ease;transition:transform .24s ease}
+#roboc.passo svg{-webkit-animation:passinho .34s ease;animation:passinho .34s ease}
+@-webkit-keyframes passinho{45%{-webkit-transform:translateY(-9%)}}
+@keyframes passinho{45%{-webkit-transform:translateY(-9%);transform:translateY(-9%)}}
+.memL li .instr{white-space:nowrap;font-size:13px;letter-spacing:.01em}
+.memL li.feita{opacity:.5}
+/* ⚠️ o "ja fiz" tem de ser LEGIVEL, nao so mais claro: criança de oito anos nao
+   le opacidade. Um tique fecha a linha. */
+.memL li.feita .instr::after{content:" \2713";color:#7ee0b0;font-weight:700}
+.memL li.feita .end{background:#25507c}
 
 /* memória */
-.mem{flex:0 0 232px;min-width:min(100%,232px)}
+.mem{flex:0 0 250px;min-width:min(100%,250px)}
 .memL{
   list-style:none;margin:0;padding:0;background:#0a1626;border:2px solid #2b4d77;
   border-radius:10px;overflow:hidden;min-height:60px;
@@ -224,7 +258,7 @@ th{background:#eef3f9}
       gravado a partir dele. Mudou o texto, regrava a voz.
    ⚠️ Cada desafio DIZ o que mudou em relação ao anterior (portão 0b14).
    ================================================================== */
-var VERSAO = "25/09-282ff5";
+var VERSAO = "25/09-023b88";
 
 var FALAS = {
   d0:"Esta é uma máquina de vidro. Você pode ver tudo o que acontece dentro dela. "+
@@ -456,18 +490,41 @@ function pintaGrade(o){
       par = false;
       if(o.paredes){ for(k=0;k<o.paredes.length;k++){
         if(o.paredes[k].c===c && o.paredes[k].l===l) par = true; } }
-      p = "";
-      if(o.caixa && o.caixa.c===c && o.caixa.l===l) p = svgCaixa();
-      if(rob && rob.c===c && rob.l===l) p = svgRobo();
-      h += '<div class="cel'+(par?' parede':'')+'">'+p+'</div>';
+      p = ""; var alvo = "";
+      if(o.caixa && o.caixa.c===c && o.caixa.l===l){ p = svgCaixa(); alvo = " alvo"; }
+      h += '<div class="cel'+(par?' parede':'')+alvo+'">'+p+'</div>';
     }
   }
-  g.innerHTML = h;
-  var r = g.querySelector(".rob");
-  if(r) r.className = "rob d"+rob.d;
+  g.innerHTML = h + '<div id="roboc">'+svgRobo()+'</div>';
+  poeRobo(false);
 }
 
-function pintaMemoria(editavel, agora){
+/* Onde o robo esta — em pixels, medidos da propria casa, para nao depender de
+   conta de gap nem de padding (que mudam com o tamanho da tela). */
+function poeRobo(anima){
+  var g = el("grade"); if(!g) return;
+  var rc = el("roboc"); if(!rc || !rob) return;
+  var cels = g.querySelectorAll(".cel");
+  var cel = cels[rob.l * COLS + rob.c]; if(!cel) return;
+  rc.style.width = cel.offsetWidth + "px";
+  rc.style.height = cel.offsetHeight + "px";
+  if(!anima){ rc.style.transition = "none"; rc.style.webkitTransition = "none"; }
+  var mv = "translate(" + cel.offsetLeft + "px," + cel.offsetTop + "px)";
+  rc.style.webkitTransform = mv; rc.style.transform = mv;
+  if(!anima){ void rc.offsetWidth; rc.style.transition = ""; rc.style.webkitTransition = ""; }
+  var s = rc.querySelector("svg");
+  if(s){ var gr = "rotate(" + (rob.d * 90) + "deg)";
+         s.style.webkitTransform = gr; s.style.transform = gr; }
+  if(anima){ rc.className = ""; void rc.offsetWidth; rc.className = "passo"; }
+}
+
+/* ⚠️ Marcos (25/set/2026): *"a memoria nao deveria ficar limpa a cada
+   instrucao?"*. Agora fica: enquanto a maquina roda, a linha JA CUMPRIDA
+   apaga e a de agora acende — a crianca ve o programa sendo consumido, que e
+   o que o processador faz de verdade. No fim, tudo volta ao normal, porque
+   ela precisa do programa inteiro a vista para achar o erro (desafios 4 e 5).
+   Apagar de vez levaria embora justamente o que ela tem de ler. */
+function pintaMemoria(editavel, agora, feitas){
   var u = el("memL"), h = "", i;
   if(!u) return;
   if(!prog.length){
@@ -475,7 +532,7 @@ function pintaMemoria(editavel, agora){
     return;
   }
   for(i=0;i<prog.length;i++){
-    h += '<li class="'+(agora===i?"agora":"")+'">'+
+    h += '<li class="'+(agora===i?"agora":(feitas!==undefined && i<feitas?"feita":""))+'">'+
       '<span class="end">'+i+'</span>'+
       '<span class="instr">'+svgSeta(prog[i])+' '+esc(BLOCOS[prog[i]].rot)+'</span>'+
       (editavel?'<button class="x" type="button" data-i="'+i+'" aria-label="Tirar">&times;</button>':'')+
@@ -587,13 +644,14 @@ function roda(d){
   rodando = true;
   reg(d.id).rodou++;
   rob = {c:d.rob.c, l:d.rob.l, d:d.rob.d};
+  poeRobo(false);                 /* volta ao ponto de partida sem deslizar */
   el("resp").innerHTML = "";
   el("rodar").disabled = true;
   var i = 0;
 
   function passo(){
     if(i >= prog.length){ acaba(d, null); return; }
-    pintaMemoria(true, i);
+    pintaMemoria(true, i, i);
     proc("Lendo o endereço <b>"+i+"</b>: "+esc(BLOCOS[prog[i]].rot));
     var k = prog[i], nc = rob.c, nl = rob.l;
     {
@@ -610,7 +668,7 @@ function roda(d){
       }
       rob.c = nc; rob.l = nl;
     }
-    pintaGrade(d);
+    poeRobo(true);
     i++;
     setTimeout(passo, 430);
   }
