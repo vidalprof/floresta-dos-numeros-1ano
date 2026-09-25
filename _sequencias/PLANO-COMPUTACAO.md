@@ -25,8 +25,11 @@
    monta a sequência e algo a cumpre na frente dela) e o **SIMULADOR DE TELA**
    (uma tela digital de faz-de-conta — navegador, área de trabalho, conversa —
    onde ela age e a tela reage).
-3. **Um caderno por ano** cobre o ano inteiro de Computação: 6 a 11 objetivos
-   cabem em 35 folhas, em **três blocos**, um por eixo.
+3. ⚠️ **ISTO ESTAVA ERRADO E FOI CORRIGIDO — ver §4.2.** Eu escrevi aqui *"um
+   caderno por ano cobre o ano inteiro"*. **Não cobre:** um caderno de 35 folhas
+   dura ~30 minutos, que é o bloco de máquina de **UMA aula**. Um ano são ~40
+   aulas de 55 min. O certo é **um caderno por SEQUÊNCIA** (~9 no ano), cada um
+   com uma etapa por aula.
 4. **20 dos 41 objetivos de 1º a 5º ano** já são alcançados pelos gestos que a
    folha viva **tem hoje** — zero engenharia nova.
 5. **A bancada carrega 10, o simulador 8, e os 3 que restam são a Oficina de
@@ -312,14 +315,63 @@ dois eixos o gesto sai do **verbo do objetivo** e da **situação**, e isso tem 
 ser dito no `POTE-<ASSUNTO>.md` com todas as letras — bloco declarado, como se
 fez na moradia com os quatro que nenhuma folha cobria.
 
-### 4.2 O caderno é UM POR ANO, em três blocos
+### 4.2 ⚠️ A UNIDADE É A **AULA DE 55 MINUTOS**, NÃO O CADERNO
 
-| Bloco | Eixo | Folhas (num caderno de 35) |
+**Este parágrafo é um conserto, e o erro era grande.** Eu tinha escrito *"um
+caderno por ano cobre o ano inteiro de Computação"*. O Marcos perguntou
+(25/set/2026): ***"mas vc entende que são sequências didáticas para cobrir o ano
+inteiro de aulas? e cada aula dura 55 minutos?"*** — e a resposta é que **eu não
+tinha entendido**. Eu dimensionei para uma ATIVIDADE e chamei de ano.
+
+**A conta, com o número que a própria casa mediu:** o cronômetro do Marcos diz que
+**20 a 25 folhas duram 30 minutos**. Então um caderno de 35 folhas é **o bloco de
+máquina de UMA aula**, não de um ano.
+
+| | |
+|---|---|
+| 1 aula | **55 min** |
+| dentro dela, na máquina | **~30 min** (os outros 25 são chegar e ligar, o problema coletivo e o fecho — isso **é** a aula, não é desperdício) |
+| 1 caderno de 35 folhas | **≈ os 30 min de máquina de uma aula** |
+| objetivos do 3º ano | **9** |
+| aulas no ano (1 por semana) | **~40** |
+| logo, por objetivo | **~4 a 5 aulas** |
+
+### ⭐ A ESTRUTURA CERTA, ENTÃO
+
+> **SEQUÊNCIA DIDÁTICA = 1 objetivo do currículo, desenvolvido em 4 a 5 aulas de
+> 55 minutos.**
+> **ANO = ~9 sequências** (uma por objetivo) **= ~40 aulas.**
+> **1 caderno por SEQUÊNCIA**, dividido em **etapas, uma por aula** — e o
+> professor abre na etapa do dia pelo menu dele (senha `1275@`), que já existe.
+
+⚠️⚠️ **E O PISO DE 35 FOLHAS NÃO TRANSFERE PARA COMPUTAÇÃO.** Ele nasceu da
+alfabetização, onde **a folha é um exercício de ~45 segundos**. Aqui a unidade é
+um **desafio**: fazer um programa funcionar leva minutos, e a criança tenta,
+erra, conserta. Uma etapa de 30 minutos pode ser **6 desafios**, não 25 folhas.
+**Piso por etapa, não piso único** — a mesma decisão que o Marcos já tomou para o
+Pré (10 a 15 folhas em vez de 35).
+
+⚠️ **E isso tem de ser CRONOMETRADO na turma, não estimado por mim.** O piso de 35
+folhas só existe porque ele mediu a turma com o relógio na mão; o número de
+desafios por etapa nasce do mesmo jeito. **Enquanto não for medido, é palpite
+declarado** — e a regra da casa diz que, quando houver uma medida de sala e uma
+conta minha, **a medida de sala ganha**.
+
+### 4.2b Os três eixos, ao longo do ANO (não dentro de um caderno)
+
+Os blocos A · B · C do §5 continuam valendo como **anatomia de uma sequência**;
+o que muda é que eles se espalham pelo ano, sequência a sequência:
+
+| Sequências | Eixo | Aulas (de ~40) |
 |---|---|---|
-| A | Pensamento Computacional — a bancada | ~15 |
-| B | Mundo Digital — classificar e decodificar | ~10 |
-| C | Cultura Digital — as cenas | ~8 |
-| fecho | o cartaz que amarra os três | ~2 |
+| ~4 | Pensamento Computacional | ~18 |
+| ~3 | Mundo Digital | ~11 |
+| ~2 a 3 | Cultura Digital | ~11 |
+
+⭐ **E o Marcos já escolheu por onde começar** (25/set/2026): *"acredito que eu
+irei começar com pensamento computacional"* — que é também a ordem que o modelo
+pede, porque a primeira sequência **constrói a máquina de vidro**, e as outras
+abrem as portas dela.
 
 A proporção segue o peso do eixo no ano, não um número fixo. E vale a regra do
 leque: **nenhum gesto acima de 40%**, mínimo 4 gestos — a bancada é UM gesto, por
@@ -583,3 +635,55 @@ quatro anos, que aí são clonagem de molde e não invenção.
 ⚠️ **Peça nova nesta casa custa historicamente duas rodadas de conserto.** Por isso
 as duas nascem num caderno só. Prometer os cinco anos para a mesma semana seria o
 tipo de promessa que a casa já pagou caro.
+
+---
+
+## §9 ⭐ O QUE ELE RECEBE DE VERDADE: **O ANO PLANEJADO**, não um pacote de atividades
+
+Quando a unidade passou a ser a **aula de 55 minutos** (§4.2), o entregável mudou
+de natureza — e para muito melhor, porque é isto que responde ao pedido dele:
+***"facilitar minha vida"*** e ***"convencer minha coordenadora"***.
+
+### 9.1 A anatomia de UMA aula de 55 minutos
+
+| Minutos | O que acontece | Onde |
+|---|---|---|
+| 0–5 | chegar, sentar, ligar as máquinas | a sala |
+| 5–15 | **o problema**, coletivo — a máquina não faz o que se quer, e ninguém sabe ainda por quê | projetor |
+| 15–45 | **a criança na máquina** — a etapa do caderno daquele dia | cada PC |
+| 45–55 | **o fecho** — o que descobrimos, e o gancho para a aula seguinte | projetor |
+
+⚠️ **Os 25 minutos fora da máquina não são desperdício: são a aula.** É onde o
+problema nasce e onde a descoberta é dita em voz alta. Uma aula de informática que
+é 55 minutos de clique é justamente a que cansa.
+
+### 9.2 Os ~40 planos de aula — e eles são GERADOS
+
+Para cada uma das ~40 aulas do ano, uma linha pronta para colar na agenda
+on-line da escola, nos campos que ela tem:
+
+- **Tema da aula** (uma linha)
+- **Objetivo** (a habilidade **verbatim** do currículo de Blumenau + o que a
+  criança faz nesta aula)
+- **o link da etapa** do caderno
+- **o que fazer nos 55 minutos** (a anatomia acima, preenchida)
+
+⚠️⚠️ **GERADOS do `curriculo.json`, nunca digitados.** Plano digitado envelhece no
+primeiro conserto e aí passa a mentir para a coordenadora — pior que não existir.
+É a mesma lição do painel: *evidência que a máquina não mantém é evidência que
+ninguém mantém.* O painel já faz metade disso hoje (o botão **"Plano de aula"**,
+com Tema e Objetivo por atividade); o que falta é ele descer ao nível da **aula**.
+
+### 9.3 O pacote do ano, por ano
+
+| Peça | Quantas |
+|---|---|
+| sequências didáticas (1 por objetivo) | ~9 |
+| cadernos (1 por sequência, em etapas) | ~9 |
+| aulas planejadas de 55 min | ~40 |
+| mapa de cobertura objetivo × aula | 1, gerado |
+
+⚠️ **O número de aulas depende de quantas aulas de Computação há por semana** — com
+1 por semana são ~40 no ano; com 2, ~80, e aí cada objetivo ganha ~9 aulas em vez
+de ~4. **Isso muda o tamanho de cada sequência e tem de ser perguntado ao Marcos
+antes de montar a primeira.** Número de aula não se chuta.
