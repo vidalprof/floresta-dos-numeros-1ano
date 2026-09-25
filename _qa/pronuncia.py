@@ -118,6 +118,44 @@ def limpa(t):
     return re.sub(r"\s+", u" ", t).strip()
 
 
+def soa(t):
+    u"""Como a palavra SOA, nao como se escreve.
+
+    ⚠️ POR QUE ISTO EXISTE (25/set/2026). Este portao comparava LETRA por letra,
+       e em portugues varias letras dao o mesmo som. Num caderno cujo ASSUNTO e
+       exatamente esse (a ortografia do S, SS, C, C-cedilha, SC, X e Z), a regua
+       de letra faz o portao acusar o proprio alfabeto: o reconhecedor escreve o
+       que OUVE, entao "laco" volta "Lasso" e "casaco" volta "Cazaco" — audio
+       impecavel, portao vermelho. E portao que grita no caso normal ensina a
+       ignorar o portao; foi assim que "cigano" saindo "cigrano" ficou escondido
+       no meio de 69 alarmes, ate a turma reclamar.
+
+    ⭐ E a mesma licao ja paga no `ouvir.py` com os numeros ("520" x "quinhentos
+       e vinte"): quando os dois lados podem escrever a mesma coisa de formas
+       diferentes, a NORMALIZACAO vai ANTES da regua.
+
+    ⚠️ MEDIDO, nao chutado: nos 336 pares que o ouvido gravou do `_ort5b`, a
+       regua de letra reprovava 17 e a fonetica reprova 16 — calando "missa" x
+       "Misa" e "casaco" x "Cazaco", e MANTENDO "cigano" x "Cigrano". Ganho
+       pequeno e real; nao resolve o caso da FRASE longa, que continua passando
+       pela folga dos 45% (por isso a fila poe palavra sozinha primeiro).
+    """
+    # ⚠️ o CEDILHA primeiro, e a ordem nao e detalhe: `sem_acento` trata a
+    #    cedilha como acento e devolve um "c" limpo, e dai "laco" viraria
+    #    "lako". Trocar antes e o que faz "laco" soar "laso", como soa.
+    s = (t or u"").lower().replace(u"\u00e7", u"s")
+    s = sem_acento(s)
+    s = re.sub(u"[^a-z ]", u"", s)
+    s = s.replace(u"ch", u"\x01").replace(u"lh", u"\x02").replace(u"nh", u"\x03")
+    s = re.sub(u"c([ei])", u"s\\1", s)
+    s = s.replace(u"c", u"k").replace(u"q", u"k")
+    s = s.replace(u"z", u"s").replace(u"x", u"s")
+    s = s.replace(u"\x01", u"x").replace(u"\x02", u"lh").replace(u"\x03", u"nh")
+    s = s.replace(u"h", u"")
+    s = re.sub(u"(.)\\1+", u"\\1", s)
+    return re.sub(u"\\s+", u" ", s).strip()
+
+
 def distancia(a, b):
     u"""Levenshtein normalizado, 0 = igual, 1 = nada a ver."""
     if a == b:
@@ -274,8 +312,26 @@ def confere(pasta, cam_modelo=None, limite=0):
         if not fid or not os.path.exists(mp3) or len(esperado) < MINIMO_PARA_MEDIR:
             continue
         fila.append((fid, mp3, esperado, f.get("lang") or "pt"))
-        if limite and len(fila) >= limite:
-            break
+
+    # ⚠️⚠️ LICAO PAGA (Marcos, 25/set/2026, urgente): *"na atividade do 5 ano
+    #    aprendendo a ortografia a palavra cigano esta sendo dita cigrano"*.
+    #    A voz errava DESDE A ESTREIA e este portao nunca a ouviu — nao por causa
+    #    do limiar, mas porque ele cortava a fila NA ORDEM DO ARQUIVO: ouvia as
+    #    primeiras N e parava. Num caderno de ortografia com 336 falas e orcamento
+    #    de 40, as PALAVRAS SOLTAS (que sao o conteudo do caderno) ficavam de fora.
+    #    Agora a fila e ORDENADA antes de cortar: palavra sozinha primeiro, porque
+    #    e ali que UMA letra trocada ja e a palavra errada (LETRAS_SOZINHA = 1) e
+    #    e ali que mora o que a atividade ensina. Frase longa depois, onde o
+    #    reconhecedor troca palavrinha a toa e a regua e folgada de proposito.
+    fila.sort(key=lambda x: (" " in x[2], len(x[2])))
+    if limite and len(fila) > limite:
+        # ⚠️ corte declarado, nunca calado: limite que nao aparece no log vira
+        #    "ouvi tudo" na cabeca de quem le.
+        fora = len(fila) - limite
+        sos = sum(1 for x in fila[limite:] if " " not in x[2])
+        print(u"   ⚠️ orcamento de %d: %d fala(s) NAO serao ouvidas (%d delas sao "
+              u"palavra sozinha). Isto NAO e 'passou'." % (limite, fora, sos))
+        fila = fila[:limite]
 
     # ⚠️ o modelo ingles so se carrega se houver o que ouvir em ingles — ele
     #    ocupa memoria e o caderno de portugues nao precisa dele.
@@ -335,11 +391,14 @@ def confere(pasta, cam_modelo=None, limite=0):
                                u"(NADA — ou o mp3 esta mudo, ou e curto demais para o "
                                u"reconhecedor: OUCA este)", 1.0))
             continue
-        d = distancia(esperado, ouvido)
+        # ⚠️ a regua mede o SOM, nao a grafia — ver soa(). O que se guarda
+        #    para imprimir continua sendo o texto de verdade, porque e ele
+        #    que o humano vai conferir com o ouvido.
+        d = distancia(soa(esperado), soa(ouvido))
         uma_palavra = (" " not in esperado)
         if uma_palavra:
             # conta em LETRAS: numa palavra solta, uma letra trocada é a palavra errada
-            letras = round(d * max(len(esperado), len(ouvido)))
+            letras = round(d * max(len(soa(esperado)), len(soa(ouvido))))
             if letras >= LETRAS_SOZINHA:
                 tortas.append((fid, esperado, ouvido, d))
         elif d > DISTANCIA_LONGA:

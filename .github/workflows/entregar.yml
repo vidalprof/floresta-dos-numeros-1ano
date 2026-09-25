@@ -383,6 +383,17 @@ jobs:
           python3 - <<'PY'
           import os, json, hashlib, asyncio, sys
           import edge_tts
+          # ⚠️ A TABELA DE PRONUNCIA DA FOLHA VIVA (25/set/2026). O motor ja tinha a
+          #    dele desde ago/2026; a folha viva nunca teve, e por isso o Marcos ouviu
+          #    "cigrano" no caderno de ortografia do 5o ano sem que houvesse onde
+          #    consertar. A troca vale SO para o texto que vai ao TTS: o `id` do mp3
+          #    sai do texto da TELA, e mexer nele faria a crianca ouvir SILENCIO.
+          sys.path.insert(0, "_padrao")
+          try:
+              from fonetica_folha import aplica as _diz
+          except Exception as _e:
+              print("::warning::tabela de pronuncia nao carregou (%s) — gravando o texto cru" % _e)
+              _diz = lambda x: x
 
           # ⭐⭐ A VOZ SEGUE O MASCOTE, e nao o contrario (cobranca do Marcos,
           #    ago/2026: *"o mascote sera feminino? melhor tracar para masculino
@@ -442,7 +453,11 @@ jobs:
               #    feminino para masculino NAO regravaria nada: o texto e o mesmo,
               #    o mp3 existe, e a atividade continuaria com a voz errada — o
               #    defeito exato que o Marcos acabou de pegar, so que invisivel.
-              sel = lambda f: hashlib.sha1((vozf(f) + "|" + f["texto"]).encode("utf-8")).hexdigest()[:12]
+              # ⚠️ o carimbo carimba o texto QUE FOI FALADO (ja com a pronuncia
+              #    aplicada). Sem isso, corrigir uma pronuncia nao regravaria nada:
+              #    o texto da tela e o mesmo, o mp3 existe, e a crianca continuaria
+              #    ouvindo errado — invisivel, que e o pior tipo de defeito.
+              sel = lambda f: hashlib.sha1((vozf(f) + "|" + _diz(f["texto"])).encode("utf-8")).hexdigest()[:12]
               faltam = [f for f in falas
                         if not os.path.exists(os.path.join(audio, f["id"] + ".mp3"))
                         or carimbo.get(f["id"]) != sel(f)]
@@ -450,7 +465,7 @@ jobs:
               if not faltam: return
               sem = asyncio.Semaphore(PAR)
               res = await asyncio.gather(*[
-                  grava(sem, f["texto"], os.path.join(audio, f["id"] + ".mp3"), vozf(f)) for f in faltam])
+                  grava(sem, _diz(f["texto"]), os.path.join(audio, f["id"] + ".mp3"), vozf(f)) for f in faltam])
               ok = 0
               for f, r in zip(faltam, res):
                   if r: carimbo[f["id"]] = sel(f); ok += 1
