@@ -338,11 +338,36 @@ máquina de UMA aula**, não de um ano.
 
 ### ⭐ A ESTRUTURA CERTA, ENTÃO
 
-> **SEQUÊNCIA DIDÁTICA = 1 objetivo do currículo, desenvolvido em 4 a 5 aulas de
-> 55 minutos.**
-> **ANO = ~9 sequências** (uma por objetivo) **= ~40 aulas.**
-> **1 caderno por SEQUÊNCIA**, dividido em **etapas, uma por aula** — e o
+> ⚠️ **CORRIGIDO PELO MARCOS na mesma conversa** — ***"serão várias sequências
+> didáticas, 8 aulas para atender alguns objetivos etc"***. Eu havia posto
+> *"1 objetivo em 4 a 5 aulas"*; o certo é o que ele disse:
+>
+> **SEQUÊNCIA DIDÁTICA = 8 aulas de 55 min, atendendo um GRUPO de objetivos.**
+> **ANO = 5 sequências = 40 aulas** (com 1 aula de Computação por semana).
+> **1 caderno por SEQUÊNCIA**, dividido em **8 etapas, uma por aula** — e o
 > professor abre na etapa do dia pelo menu dele (senha `1275@`), que já existe.
+>
+> ⭐ **E os objetivos se agrupam por PARENTESCO, nunca por sobra.** A coordenadora
+> vai perguntar exatamente isso: *por que estes dois juntos?* Cada par tem de ter
+> resposta — e no 3º ano ela existe para os cinco (§4.2c).
+
+### 4.2c O ANO DO 3º, sequência por sequência — 5 × 8 aulas
+
+| # | Sequência | Objetivos | Por que estes juntos |
+|---|---|---|---|
+| **S1** | **Construir a máquina e mandar nela** | PC3 *(sequência, ordem, depurar)* + **MD3** *(hardware × software)* | É montando o programa que ela vê a diferença entre **as peças** e **o que está dentro delas**. Ensinar hardware/software longe da máquina é o que torna isso decorebа. |
+| **S2** | **Decidir: verdadeiro, falso e o NÃO** | **PC1** *(V/F com negação)* + PC3 *(repetição com condição)* | Não existe *"repita até **não** ter parede"* sem a lógica do "não". A negação **é** a peça que faz o laço parar. |
+| **S3** | **Dividir o problema** | **PC2** *(decomposição)* + **MD1** *(informação × dado)* | Dar nome a um pedaço da memória é, literalmente, transformar **dado** em **informação**. O mesmo gesto ensina os dois. |
+| **S4** | **Guardar e mostrar** | **MD2** *(formatos)* + **CD2** *(expressar-se em formatos digitais)* | O formato em que ela **salva** é o formato em que ela **se expressa**. Separar os dois obrigaria a ensinar formato duas vezes. |
+| **S5** | **Ligar na rede** | **CD1** *(navegador e busca)* + **CD3** *(informação pessoal)* | São a mesma porta da máquina: o que **entra** pelo cabo (e se dá para confiar) e o que **sai** (e não volta). |
+
+✅ **9 objetivos, 5 sequências, 40 aulas.** O PC3 atravessa S1 e S2 — é o maior
+objetivo do ano (*"sequências E repetições com condição"*) e não cabe honestamente
+em oito aulas.
+
+⚠️ **Com 2 aulas de Computação por semana a conta dobra**: ~80 aulas no ano, 10
+sequências, e cada grupo de objetivos ganha o dobro de fôlego. **Este número tem
+de vir do Marcos** — número de aula não se chuta.
 
 ⚠️⚠️ **E O PISO DE 35 FOLHAS NÃO TRANSFERE PARA COMPUTAÇÃO.** Ele nasceu da
 alfabetização, onde **a folha é um exercício de ~45 segundos**. Aqui a unidade é
@@ -687,3 +712,95 @@ com Tema e Objetivo por atividade); o que falta é ele descer ao nível da **aul
 1 por semana são ~40 no ano; com 2, ~80, e aí cada objetivo ganha ~9 aulas em vez
 de ~4. **Isso muda o tamanho de cada sequência e tem de ser perguntado ao Marcos
 antes de montar a primeira.** Número de aula não se chuta.
+
+---
+
+## §10 📋 O RELATÓRIO DESCRITIVO — **por AULA e por OBJETIVO**
+
+> Ordem do Marcos (25/set/2026): ***"lembrando que todas essas aulas precisam ter
+> um relatório descritivo, para analisar se o estudante conseguiu alcançar os
+> objetivos"***.
+
+### 10.1 O que já existe (e é mais do que parece)
+
+Todo caderno de folha viva já traz o **relatório do professor**, escondido do
+aluno (abre segurando a medalha 2 s), com **objetivo × acerto**, o **parecer em
+palavras** (Dominou · Está construindo · Precisa retomar) e o **"treinar o que
+faltou"**. E o motor já **guarda o que a criança fez folha a folha** — tentativas,
+dicas pedidas, o que consertou. **O relatório descritivo é, em boa parte, um jeito
+novo de desenhar dado que já está lá.** Isso é barato.
+
+### 10.2 O que muda para Computação
+
+| Hoje | Precisa ser |
+|---|---|
+| um relatório por **caderno** | um por **AULA** (a etapa do dia) |
+| objetivo × porcentagem | objetivo × **frase que descreve o que ela fez** |
+| foto de um momento | **linha do tempo do objetivo ao longo das 8 aulas** |
+
+**A frase, e é isto que o Marcos vai ler:** não *"70%"*, e sim *"montou 5 dos 6
+programas sozinha; nos dois com repetição precisou da dica uma vez cada; consertou
+sem ajuda o programa que vinha errado"*. Nota nunca; **evidência sempre** — é a
+regra da casa e é o que permite a ele analisar se o objetivo foi alcançado.
+
+### 10.3 ⚠️ O OBSTÁCULO HONESTO: o motor esquece depois de 55 minutos
+
+E esquece **de propósito**: o "continuar de onde parou" expira em 55 min porque,
+passada a aula, quem senta ali é da **outra turma** e cairia no meio do trabalho de
+um colega. Para a **linha do tempo das 8 aulas**, o dado tem de sobreviver entre
+aulas — e não há servidor nem conta de criança. As saídas, com o custo de cada uma:
+
+| Caminho | Funciona? | Custo honesto |
+|---|---|---|
+| **1. Mesma máquina** (localStorage por PC, com o nome que ela digita) | sim, **se o lugar for fixo** | de graça e imediato. **Quebra se ela trocar de computador**, e é por máquina, não por criança |
+| **2. O professor copia o resultado** a cada aula | sim | 25 crianças × 8 aulas de trabalho manual — **é o contrário de "facilitar minha vida"**. Descartado |
+| **3. Firebase** (a casa JÁ tem, é o da agenda) | sim, e some a fragilidade | robusto, e daria um painel com a turma inteira. **Mas é dado de criança em banco, e essa decisão é do Marcos, não minha** — inclusive porque é o próprio assunto do eixo Cultura Digital |
+
+**Minha recomendação:** começar pelo **relatório por aula (grátis, imediato, e é o
+que ele pediu)** e pelo caminho **1** para a linha do tempo. O caminho **3** só com
+decisão explícita dele. ⚠️ **Não vou pôr nome de criança em banco de dados por
+iniciativa própria.**
+
+---
+
+## §11 🔎 COLHER SEQUÊNCIAS DA INTERNET — sim, e é mais valioso aqui que colher folhas
+
+> Pergunta do Marcos (25/set/2026): ***"é possível colher essas aulas, ou seja
+> sequências da internet como folha viva, para vc ter um norte?"***
+
+**Sim — e a diferença entre as duas colheitas importa:**
+
+| Colher **folha** de papel | Colher **sequência didática** |
+|---|---|
+| dá o **comando impresso** → e dele sai o GESTO | dá a **PROGRESSÃO** → a ordem em que os conceitos entram, quantas aulas cada um leva, onde a turma trava |
+| resolve *"que gesto esta folha pede?"* | resolve *"em que ORDEM se ensina isto?"* |
+
+⭐ **E é justamente a segunda que me falta.** Gesto de bloco eu sei fazer. **Ordem
+didática de Computação eu não sei** — não sou professor de Computação, e o erro de
+degrau aqui é fácil de não ver. A sequência colhida é escrita por quem deu a aula:
+ela traz a **ordem testada** e, o que vale ouro, **o erro clássico da turma naquele
+ponto**.
+
+**Onde procurar (e o `pesquisar.yml` já está rodando com isto):** currículos de
+referência brasileiros de Computação com **plano de aula por ano e por eixo**,
+material da comunidade de Computação na Educação Básica, e sequências de
+pensamento computacional para os anos iniciais em português.
+
+**O que cada sequência colhida tem de deixar registrado no
+`_sequencias/POTE-COMP3.md`** — o crivo, igual ao das folhas:
+
+1. **a fonte** e o ano a que ela se diz destinada;
+2. **quantas aulas** ela usa e **quais objetivos** diz cumprir;
+3. ⭐ **a ORDEM dos conceitos** — que é o que eu vim buscar;
+4. **o erro que ela avisa** que a turma comete naquele ponto;
+5. **o veredito:** a ordem entra · a ordem contradiz o currículo de Blumenau ·
+   é aula desplugada e só serve como ordem, não como tarefa · ensina errado.
+
+⚠️ **E o item 5 tem um filtro que vale dizer:** boa parte do material bom de
+Computação para os anos iniciais **é desplugado**. Isso **não** o desqualifica —
+eu colho dele a **ordem**, que é o que interessa, e a tarefa vira tela. O Marcos
+não quer dar aula desplugada; isso não impede que a melhor ordem didática venha de
+quem deu.
+
+⚠️ **E antes de eu escolher qualquer coisa, ele vê o que foi colhido** — ordem dele
+(15/set/2026): *"sempre me mostre as atividades que vc colheu"*.
