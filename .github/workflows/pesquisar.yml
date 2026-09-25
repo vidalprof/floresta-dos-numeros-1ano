@@ -121,7 +121,16 @@ jobs:
               try:
                   r = requests.post("https://html.duckduckgo.com/html/",
                                     data={"q": termo}, headers=UA, timeout=25)
-                  s = BeautifulSoup(r.text, "lxml")
+                  # ⚠️ LICAO PAGA (25/set/2026): aqui estava `r.text`, e o `requests`,
+                  #    quando a resposta nao declara charset no cabecalho, ADIVINHA
+                  #    ISO-8859-1 — e a pagina de atividades da Computacao Desplugada
+                  #    (UTF-8, declarado so no <meta>) voltou inteira embaralhada:
+                  #    "ComputaÃ§Ã£o Desplugada", "nÃºmeros binÃ¡rios". O arquivo tinha
+                  #    tamanho, tinha titulo e PARECIA resultado — o mesmo jeito de
+                  #    mentir da pagina bloqueada logo abaixo.
+                  #    Passando `r.content` (bytes crus), o lxml le o <meta charset>
+                  #    da propria pagina e acerta. Texto ilegivel nao e materia-prima.
+                  s = BeautifulSoup(r.content, "lxml")
                   achados = []
                   for a in s.select("a.result__a"):
                       href = a.get("href", "")
