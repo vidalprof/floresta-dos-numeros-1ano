@@ -89,6 +89,36 @@ import sys
 import unicodedata
 
 CURRICULO = "_curriculo/blumenau.txt"
+# ⚠️⚠️ COMPUTACAO TEM DOCUMENTO PROPRIO (25/set/2026). O Marcos enviou o
+#    «Curriculo de Computacao da Educacao Basica do Sistema Municipal de
+#    Ensino de Blumenau» — 76 paginas, Educacao Infantil ao 9o ano, com o
+#    Quadro Organizador de cada ano nos tres eixos. Ele NAO esta dentro do
+#    `blumenau.txt`, e enquanto este portao so abria aquele arquivo, todo
+#    caderno de Computacao dizia "NAO MEDI" — que nao e "passou".
+CURRICULO_COMP = "_curriculo/computacao-blumenau.txt"
+_PALAVRAS = {}
+
+
+def arquivo_do(componente):
+    u"""Qual documento da rede confere ESTE componente."""
+    return CURRICULO_COMP if u"computacao" in achata(componente or u"") else CURRICULO
+
+
+def palavras_de(caminho):
+    u"""Todas as palavras do documento, achatadas — e as QUEBRADAS no fim da
+    linha remontadas, senao o portao reprova a transcricao fiel e aprova o
+    caco (mesma regra do `main`, agora em um lugar so)."""
+    if caminho in _PALAVRAS:
+        return _PALAVRAS[caminho]
+    if not os.path.exists(caminho):
+        _PALAVRAS[caminho] = None
+        return None
+    cru = io.open(caminho, encoding="utf-8").read()
+    ps = set(achata(cru).split())
+    for _a, _b in re.findall(r"(\w+)-\s*\n\s*(\w+)", cru):
+        ps.add(achata(_a + _b).strip())
+    _PALAVRAS[caminho] = ps
+    return ps
 TAMANHO_MINIMO = 5
 
 # rótulo nosso ao redor da citação, que legitimamente pode não estar no documento
@@ -142,11 +172,22 @@ _MARCAS = {
                     u"medidas", u"probabilidade", u"estatistica"],
     u"lingua portuguesa": [u"leitura", u"escuta", u"oralidade", u"analise",
                            u"semiotica", u"escrita", u"campo"],
+    # ⚠️ Computacao se prova pelos TRES EIXOS, que abrem todo quadro do
+    #    documento e nao aparecem em componente nenhum dos outros.
+    u"computacao": [u"pensamento", u"computacional", u"mundo", u"digital",
+                    u"cultura", u"algoritmos", u"eixo"],
 }
 MARCAS_MIN = 3
 CORRIDA_MIN = 5
-_ANO_SO = re.compile(u"^\\s*([1-9])\\s*[ºo]?\\s*ANO\\s*$", re.I)
-_ANO_LINHA = re.compile(u"^\\s*([1-9])\\s*[ºo]?\\s*ANO\\s+(?=\\S)", re.I)
+# ⚠️ O GRAU E O ORDINAL SAO LETRAS DIFERENTES, e o PDF mistura os dois.
+#    Medido em 25/set/2026 no documento de Computacao: o 1o ano vem escrito
+#    "1° ANO" (sinal de GRAU, U+00B0) e os demais "2º ANO" (indicador
+#    ORDINAL, U+00BA). A classe aceitava so o ordinal, entao o bloco do 1o ano
+#    simplesmente nao existia para o portao — e Computacao do 1o ano diria
+#    "NAO MEDI" para sempre, sem ninguem entender por que.
+#    Dois caracteres que o olho nao distingue derrubam um ano inteiro.
+_ANO_SO = re.compile(u"^\\s*([1-9])\\s*[º°o]?\\s*ANO\\s*$", re.I)
+_ANO_LINHA = re.compile(u"^\\s*([1-9])\\s*[º°o]?\\s*ANO\\s+(?=\\S)", re.I)
 
 
 def _confirma(regiao, componente):
@@ -355,10 +396,14 @@ def confere(pasta, palavras):
     d = json.load(io.open(cj, encoding="utf-8"))
     objs = d.get("objetivos") or []
     ruim = 0
+    # ⚠️ o documento da rede depende do COMPONENTE: Computacao tem o seu.
+    arq = arquivo_do(d.get("componente"))
+    if arq != CURRICULO:
+        palavras = palavras_de(arq)
 
     # ---- 2. a citacao existe no curriculo?
     if palavras is None:
-        L.append(u"   ⚠️ nao achei %s: NAO conferi as citacoes" % CURRICULO)
+        L.append(u"   ⚠️ nao achei %s: NAO conferi as citacoes" % arq)
         ruim = max(ruim, 2)
     else:
         maus = []
@@ -443,7 +488,7 @@ def confere(pasta, palavras):
                  u"no topo deste arquivo.")
         ruim = max(ruim, 2)
     else:
-        doc = io.open(CURRICULO, encoding="utf-8").read() if os.path.exists(CURRICULO) else u""
+        doc = io.open(arq, encoding="utf-8").read() if os.path.exists(arq) else u""
         bloco = bloco_do_ano(doc, d.get("componente") or u"", d.get("ano"))
         if bloco is None:
             L.append(u"   ⚠️ nao achei o bloco de «%s – %sº ano» no documento da rede: "
