@@ -18,6 +18,52 @@
 > **O modelo:** `_sequencias/PLANO-COMPUTACAO.md`. **O currículo:**
 > `_curriculo/computacao-blumenau.txt`.
 
+## ⚠️ DUAS CORREÇÕES, DEPOIS DE ESCRITO (25/set/2026)
+
+### 1. O TAMANHO: isto é o MAPA DE COBERTURA, não o caderno
+
+Quando escrevi estas 35 folhas, eu achava que **um caderno cobria o ano**. O
+Marcos corrigiu — *"são sequências didáticas para cobrir o ano inteiro de aulas,
+e cada aula dura 55 minutos"*, e depois *"8 aulas para atender alguns
+objetivos"*. Então o ano é **5 sequências × 8 aulas**, e estas 35 folhas se
+**distribuem** por elas (o agrupamento está no `PLANO-COMPUTACAO.md §4.2c`).
+O que este arquivo continua provando, e é para isso que ele serve: **todo
+objetivo do 3º ano tem folha que o mede, e toda folha tem objetivo.**
+
+### 2. UM CONTEÚDO DECLARADO QUE NENHUM OBJETIVO NOMEIA — **interface física**
+
+Achado conferindo a primeira sequência colhida da internet (`pesquisar.yml`), que
+citava a habilidade da BNCC sobre *interfaces físicas (entrada e saída)*. Fui ao
+quadro de Blumenau linha por linha:
+
+- **Os 9 objetivos do meu mapa estão certos** — o quadro do 3º ano tem exatamente
+  essas nove frases, nem uma a mais.
+- **Mas a coluna CONCEITO/CONTEÚDO do 3º ano lista «Interface física»**, e
+  **nenhum dos nove objetivos a nomeia.** Um caderno que ignorasse isso deixaria
+  de fora um conteúdo que o município declara para o ano.
+- (E o contrário também acontece: o objetivo de *hardware × software* não tem
+  rótulo correspondente na coluna de conteúdos. O quadro não é um-para-um.)
+
+**A decisão, que é a regra da casa:** o que o currículo pede e nenhuma folha
+cobre **entra declarado como bloco novo** — foi assim na moradia, com quatro.
+Aqui entram **duas folhas**, e elas caem redondas na máquina de vidro, porque
+entrada e saída **são peças dela**:
+
+| # | O que a criança faz | Peça da máquina | Gesto | Conteúdo |
+|---|---|---|---|---|
+| 19b | **O que ENTRA e o que SAI:** o bloco que ela toca é entrada; o robô que anda e o texto do processador são saída. Ela marca cada um. | portas da máquina | classificar | interface física |
+| 19c | *"Agora na máquina de verdade"* — teclado e mouse entram, tela e caixa de som saem. Onde entra o toque do dedo? | painel *Este computador aqui* | classificar | interface física |
+
+⚠️ **Fica declarado no `curriculo.json` como conteúdo do ano SEM objetivo próprio
+no quadro** — não invento uma citação que não existe (regra zero). O portão `0b9`
+confere citação verbatim; conteúdo sem objetivo se declara, não se cita.
+
+⭐ **E a lição da colheita, já na primeira leitura:** a sequência de terceiro não
+me deu uma folha nem um gesto — me fez **reler o currículo e achar um buraco no
+meu próprio mapa**. Era exatamente para isso que ela servia.
+
+---
+
 ## Os 9 objetivos do 3º ano (resumidos; o verbatim está no currículo)
 
 | Sigla | Eixo | Objetivo |
