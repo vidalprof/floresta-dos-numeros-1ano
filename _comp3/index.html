@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aprendendo a dar instruções à máquina</title>
+<!--
+=====================================================================
+ A MÁQUINA DE VIDRO — EXEMPLO: S1, AULA 1 (Computação, 3º ano)
+
+ ⚠️ O QUE ESTE ARQUIVO É, e o que ele NÃO é.
+    É o EXEMPLO que o Marcos pediu em 25/set/2026 ("certo monte para eu ver
+    como fica e ter 1 exemplo"): UMA aula — o bloco de ~30 minutos de máquina
+    de uma aula de 55 min — para ele decidir o rumo clicando, não lendo.
+    NÃO é ainda o caderno da sequência (8 aulas), nem passou pela banca.
+
+ A IDEIA: um computador com as paredes de vidro. A criança não faz exercício
+ SOBRE computador: ela opera um. E o miolo é uma frase — A MEMÓRIA DA MÁQUINA
+ É O PROGRAMA DELA: os blocos que ela escolhe CAEM dentro da memória, com
+ endereço, e o ponteiro do processador anda por eles à vista.
+ Por isso "hardware x software" (objetivo MD3 do 3º ano) deixa de ser decoreba:
+ as peças de vidro são o hardware, o que está dentro da memória é o software,
+ e as duas coisas estão na mesma tela.
+
+ REGRAS DA CASA cumpridas aqui:
+  · o PROBLEMA vem primeiro e o CONCEITO por último (a palavra "algoritmo" só
+    aparece no fim, depois de ela ter montado seis programas);
+  · a mecânica repete em BLOCO, subindo degrau, e cada desafio DIZ o que mudou
+    (portão 0b14: para quem não lê, a narração É a folha);
+  · alvo de toque nunca abaixo de 40px;
+  · nada de emoji para criança — o robô e a caixa são desenho próprio em SVG;
+  · relatório do professor DESCRITIVO, sem nota e sem a palavra "errou";
+  · nenhum dado sai desta página (e isso é ensinado, no painel da máquina real).
+
+ ⚠️ VOZ: as falas estão escritas em FALAS e aparecem na tela. O mp3 é gravado
+    depois, pelo entregar.yml, que lê o falas.json — voz sem mp3 aqui é
+    informação, não defeito (regra do pré-voo).
+=====================================================================
+-->
+<style>
+:root{
+  --tinta:#0e1a2b; --vidro:#8fdcef; --vidro-fundo:#13263d; --ambar:#f2a733;
+  --papel:#eef3f9; --papel2:#ffffff; --linha:#c6d3e2; --verde:#2f9e6b;
+  --texto:#0e1a2b; --fraco:#4a5a70;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--papel);color:var(--texto);
+  font-family:"Segoe UI",Tahoma,Verdana,sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+.topo{
+  background:var(--tinta);color:#fff;padding:10px 16px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  flex-wrap:wrap;gap:8px;
+}
+.topo h1{font-size:17px;margin:0;-webkit-box-flex:1;flex:1 1 auto;line-height:1.25}
+.selo{font-size:11px;color:var(--vidro);font-family:monospace;white-space:nowrap}
+.bt{
+  font:inherit;font-weight:700;cursor:pointer;border:0;border-radius:10px;
+  min-height:44px;padding:10px 16px;background:var(--ambar);color:#231502;
+  -webkit-tap-highlight-color:transparent;
+}
+.bt:active{-webkit-transform:translateY(1px);transform:translateY(1px)}
+.bt.claro{background:#dce7f3;color:var(--tinta)}
+.bt.escuro{background:#21395a;color:#fff}
+.bt[disabled]{opacity:.45;cursor:default}
+.env{max-width:1040px;margin:0 auto;padding:16px}
+
+/* ---- a faixa que narra (o que a criança OUVE) ---- */
+.fala{
+  background:var(--papel2);border:2px solid var(--linha);border-left:8px solid var(--ambar);
+  border-radius:12px;padding:12px 14px;margin:0 0 14px;
+  display:-webkit-box;display:flex;gap:10px;-webkit-box-align:start;align-items:flex-start;
+}
+.fala p{margin:0;font-size:16px;line-height:1.45;-webkit-box-flex:1;flex:1 1 auto}
+.fala b{color:#8a5a00}
+.som{
+  min-width:44px;min-height:44px;border-radius:50%;border:2px solid var(--linha);
+  background:#fff;cursor:pointer;font-size:19px;line-height:1;color:var(--tinta);
+}
+.passo{font-size:12px;color:var(--fraco);letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px}
+
+/* ---- A MÁQUINA DE VIDRO ---- */
+.maq{
+  background:var(--vidro-fundo);border:3px solid #27466e;border-radius:16px;
+  padding:12px;position:relative;
+  -webkit-box-shadow:inset 0 0 40px rgba(143,220,239,.14);
+  box-shadow:inset 0 0 40px rgba(143,220,239,.14);
+}
+.maqg{display:-webkit-box;display:flex;gap:12px;flex-wrap:wrap}
+.peca{position:relative;border:2px dashed transparent;border-radius:12px;padding:6px}
+.peca.mostra{border-color:var(--vidro)}
+.rot{
+  display:none;position:absolute;top:-11px;left:8px;background:var(--vidro);
+  color:#062430;font-size:10px;font-weight:700;padding:2px 7px;border-radius:7px;
+  letter-spacing:.05em;
+}
+.peca.mostra .rot{display:block}
+
+/* tela (a grade) */
+.tela{-webkit-box-flex:1;flex:1 1 300px;min-width:min(100%,288px)}
+.grade{
+  display:grid;gap:4px;background:#0a1626;border-radius:10px;padding:6px;
+  border:2px solid #2b4d77;
+}
+.cel{
+  position:relative;background:#16304d;border-radius:6px;
+  min-width:44px;min-height:44px;aspect-ratio:1/1;
+}
+.cel.parede{background:#3d2b1a;border:2px solid #6b4a25}
+.cel svg{position:absolute;left:8%;top:8%;width:84%;height:84%}
+.rob{transition:-webkit-transform .18s;transition:transform .18s}
+.d0{-webkit-transform:rotate(0deg);transform:rotate(0deg)}
+.d1{-webkit-transform:rotate(90deg);transform:rotate(90deg)}
+.d2{-webkit-transform:rotate(180deg);transform:rotate(180deg)}
+.d3{-webkit-transform:rotate(270deg);transform:rotate(270deg)}
+
+/* memória */
+.mem{flex:0 0 232px;min-width:min(100%,232px)}
+.memL{
+  list-style:none;margin:0;padding:0;background:#0a1626;border:2px solid #2b4d77;
+  border-radius:10px;overflow:hidden;min-height:60px;
+}
+.memL li{
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;gap:8px;
+  padding:5px 7px;border-bottom:1px solid #16304d;color:#dff4fb;font-size:14px;
+}
+.memL li:last-child{border-bottom:0}
+.memL li.agora{background:var(--ambar);color:#231502;font-weight:700}
+.end{
+  font-family:monospace;font-size:11px;background:#1d3b5e;color:var(--vidro);
+  border-radius:5px;padding:2px 5px;min-width:26px;text-align:center;
+}
+.memL li.agora .end{background:#231502;color:var(--ambar)}
+.instr{-webkit-box-flex:1;flex:1 1 auto}
+.x{
+  min-width:40px;min-height:40px;border:0;border-radius:8px;background:#22405f;
+  color:#cfe6f2;font-size:17px;cursor:pointer;font-weight:700;
+}
+.memL li.agora .x{background:#c98a1c;color:#231502}
+.vazia{color:#7fa4c4;font-size:13px;padding:14px 10px;text-align:center}
+.proc{
+  margin-top:8px;background:#0a1626;border:2px solid #2b4d77;border-radius:10px;
+  padding:8px 10px;color:#dff4fb;font-size:13px;min-height:44px;
+}
+.proc b{color:var(--ambar)}
+
+/* leque de blocos */
+.leque{margin-top:12px;display:-webkit-box;display:flex;gap:8px;flex-wrap:wrap}
+.blo{
+  font:inherit;font-weight:700;font-size:15px;cursor:pointer;border:0;
+  min-height:48px;padding:10px 14px;border-radius:12px;background:var(--vidro);
+  color:#062430;-webkit-tap-highlight-color:transparent;
+}
+.blo:active{-webkit-transform:translateY(1px);transform:translateY(1px)}
+.acoes{margin-top:12px;display:-webkit-box;display:flex;gap:8px;flex-wrap:wrap}
+
+/* respostas de escolher / classificar */
+.opw{display:-webkit-box;display:flex;gap:10px;flex-wrap:wrap;max-width:100%;margin-top:4px}
+.opc{
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;gap:8px;
+  background:#fff;border:2px solid var(--linha);border-radius:12px;padding:6px 8px;
+}
+.opb{
+  font:inherit;font-weight:700;font-size:15px;min-height:44px;padding:8px 12px;
+  border:0;border-radius:9px;background:#e8eff7;color:var(--tinta);cursor:pointer;
+}
+.opc.ok{border-color:var(--verde);background:#eefbf4}
+.opc.nao{border-color:#c9a227;background:#fdf7e6}
+.gav{display:-webkit-box;display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.gv{
+  -webkit-box-flex:1;flex:1 1 180px;background:#fff;border:2px solid var(--linha);
+  border-radius:12px;padding:10px;min-height:96px;
+}
+.gv h4{margin:0 0 6px;font-size:14px;color:var(--fraco);text-transform:uppercase;letter-spacing:.05em}
+.fic{
+  display:inline-block;margin:3px;min-height:44px;padding:10px 12px;border-radius:10px;
+  border:2px solid var(--linha);background:#f6f9fc;font-weight:700;font-size:14px;cursor:pointer;
+}
+.fic.posta{border-color:var(--verde);background:#eefbf4;cursor:default}
+
+/* avisos, relatório, painel */
+.aviso{
+  margin-top:12px;border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.45;
+  border:2px solid var(--linha);background:#fff;
+}
+.aviso.bom{border-color:var(--verde);background:#eefbf4}
+.aviso.pensa{border-color:#c9a227;background:#fdf7e6}
+.barra{height:10px;background:#dce7f3;border-radius:6px;overflow:hidden;margin:14px 0 0}
+.barra i{display:block;height:100%;background:var(--ambar);width:0;transition:width .3s}
+.cart{background:#fff;border:2px solid var(--linha);border-radius:14px;padding:16px;margin-top:14px}
+.cart h2{margin:0 0 4px;font-size:19px}
+.cart h3{margin:16px 0 6px;font-size:15px;color:var(--fraco);text-transform:uppercase;letter-spacing:.05em}
+.cart p{line-height:1.5;margin:6px 0}
+.cit{border-left:4px solid var(--vidro);padding-left:10px;color:var(--fraco);font-size:14px;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:14px;margin-top:6px}
+th,td{border:1px solid var(--linha);padding:7px 8px;text-align:left;vertical-align:top}
+th{background:#eef3f9}
+.tag{display:inline-block;border-radius:7px;padding:2px 8px;font-size:12px;font-weight:700}
+.tag.d{background:#d9f2e6;color:#1d6b49}
+.tag.c{background:#fdf0cf;color:#7a5a00}
+.tag.r{background:#f6dede;color:#8a2b2b}
+.esc{display:none}
+.mini{font-size:13px;color:var(--fraco);line-height:1.5}
+@media (min-width:760px){ .topo h1{font-size:19px} }
+</style>
+</head>
+<body>
+
+<div class="topo">
+  <h1>Aprendendo a dar instruções à máquina</h1>
+  <span class="selo" id="selo"></span>
+  <button class="bt claro" id="btmaq" type="button">Este computador aqui</button>
+</div>
+
+<div class="env" id="raiz"></div>
+
+<script>
+/* ==================================================================
+   1. O QUE A CRIANÇA OUVE
+   ⚠️ Texto aqui é a VERDADE da voz: o falas.json sai daqui e o mp3 é
+      gravado a partir dele. Mudou o texto, regrava a voz.
+   ⚠️ Cada desafio DIZ o que mudou em relação ao anterior (portão 0b14).
+   ================================================================== */
+var VERSAO = "25/09-325463";
+
+var FALAS = {
+  d0:"Esta é uma máquina de vidro. Você pode ver tudo o que acontece dentro dela. "+
+     "O robô precisa chegar até a caixa. Peça para ele ir.",
+  d0erro:"A máquina não entende palavras. Ela só entende instruções, uma de cada vez.",
+  d1:"Agora você tem instruções. Toque em ANDAR e veja onde ela guarda o que você escolheu.",
+  d2:"Agora a caixa não está mais na frente. O robô vai precisar virar.",
+  d3:"Agora o programa já vem montado. Antes de rodar, diga onde você acha que o robô vai parar.",
+  d4:"Agora tem um erro no programa. Ache a linha que está sobrando.",
+  d5:"Agora a máquina não vai mostrar onde parou. Leia o programa e descubra.",
+  d6:"Agora o caminho é longo. Monte o programa inteiro.",
+  d7:"Olhe a máquina por fora e por dentro. O que é peça, e o que é o que você escreveu?",
+  fim:"Você montou seis programas. Cada um deles tem um nome: algoritmo.",
+  certo:"Isso! O robô chegou.",
+  bateu:"O robô parou aqui. Olhe a linha que estava acesa.",
+  pronta:"Muito bem. Vamos para a próxima."
+};
+
+/* ==================================================================
+   2. OS SEIS DESAFIOS DESTA AULA (+ a folha das peças)
+   A grade é 5 colunas x 4 linhas. Direção: 0 leste, 1 sul, 2 oeste, 3 norte.
+   `dica` é o andaime; `mostraLinha` é o que muda do desafio 4 para o 5.
+   ================================================================== */
+var COLS = 5, LINS = 4;
+
+var DESAFIOS = [
+  { id:"d1", nome:"Duas casas para a frente", fala:"d1",
+    rob:{c:0,l:3,d:0}, caixa:{c:2,l:3}, paredes:[],
+    leque:["andar"], prog:[], mostraLinha:true,
+    dica:"A caixa está a duas casas. Cada ANDAR move uma casa." },
+
+  { id:"d2", nome:"Agora ela precisa virar", fala:"d2",
+    rob:{c:0,l:3,d:0}, caixa:{c:2,l:1}, paredes:[],
+    leque:["andar","esq","dir"], prog:[], mostraLinha:true,
+    dica:"Ande até ficar embaixo da caixa. Depois vire para cima e ande." },
+
+  { id:"d3", nome:"Diga antes de rodar", fala:"d3", prever:true,
+    rob:{c:1,l:0,d:0}, caixa:{c:2,l:1}, paredes:[],
+    leque:[], prog:["andar","dir","andar"], mostraLinha:true,
+    opcoes:[{t:"Na casa da caixa",ok:true},{t:"Uma casa antes",ok:false},
+            {t:"Fora da grade",ok:false}],
+    dica:"Siga com o dedo: anda, vira para a direita, anda." },
+
+  { id:"d4", nome:"Ache o erro", fala:"d4",
+    rob:{c:0,l:3,d:0}, caixa:{c:3,l:3}, paredes:[],
+    leque:["andar","esq","dir"], prog:["andar","dir","andar","andar"], mostraLinha:true,
+    dica:"A caixa está na mesma linha do robô. Ele precisa virar?" },
+
+  { id:"d5", nome:"Agora sem pista", fala:"d5",
+    rob:{c:0,l:0,d:0}, caixa:{c:2,l:2}, paredes:[],
+    leque:["andar","esq","dir"], prog:["andar","andar","esq","andar","andar"],
+    mostraLinha:false,
+    dica:"A caixa está para BAIXO do robô. Virar para a esquerda leva para cima." },
+
+  { id:"d6", nome:"O caminho longo", fala:"d6",
+    rob:{c:0,l:0,d:0}, caixa:{c:4,l:3}, paredes:[{c:2,l:1},{c:3,l:1}],
+    leque:["andar","esq","dir"], prog:[], mostraLinha:true,
+    dica:"Ande até a beirada, vire para baixo e desça." }
+];
+
+var BLOCOS = {
+  andar:{ rot:"ANDAR", fala:"andar" },
+  dir:  { rot:"VIRAR À DIREITA", fala:"virar à direita" },
+  esq:  { rot:"VIRAR À ESQUERDA", fala:"virar à esquerda" }
+};
+
+/* a folha das peças — é ela que MEDE o objetivo de hardware e software */
+var PECAS = [
+  { t:"A tela", hw:true }, { t:"A memória", hw:true },
+  { t:"O processador", hw:true }, { t:"O programa que você montou", hw:false },
+  { t:"O cabo", hw:true }, { t:"A ordem das instruções", hw:false }
+];
+
+/* ==================================================================
+   3. O QUE O RELATÓRIO PRECISA SABER
+   ⚠️ Nada de nota. Guardamos O QUE ELA FEZ: quantas vezes rodou, se pediu
+      dica, se consertou um programa que já vinha errado. É disso que sai a
+      FRASE que o professor lê.
+   ================================================================== */
+var REG = { desafios:{}, pecas:{certas:0,total:0}, previu:null, inicio:Date.now() };
+
+function reg(id){
+  if(!REG.desafios[id]) REG.desafios[id] = {rodou:0, dica:false, feito:false};
+  return REG.desafios[id];
+}
+
+/* ==================================================================
+   4. VOZ
+   O mp3 é gravado depois, pelo entregar.yml. Enquanto não existe, o texto
+   está na tela — nunca há informação só no áudio (regra da casa).
+   ⚠️ E nunca falar por chave inexistente em silêncio: aqui a chave é
+      conferida e o defeito aparece no console, não some (lição dos
+      portões 1p/1q, set/2026).
+   ================================================================== */
+var AUDIO = {};
+function falar(k){
+  var t = FALAS[k];
+  if(!t){ if(window.console) console.warn("FALA QUE NAO EXISTE: "+k); return; }
+  try{
+    if(!AUDIO[k]){ AUDIO[k] = new Audio("audio/cp3_"+k+".mp3"); }
+    var p = AUDIO[k].play();
+    if(p && p.catch) p.catch(function(){});
+  }catch(e){}
+}
+
+/* ==================================================================
+   5. DESENHO PRÓPRIO (SVG) — nada de emoji para criança
+   ================================================================== */
+function svgRobo(){
+  return '<svg class="rob d0" viewBox="0 0 40 40" aria-hidden="true">'+
+    '<rect x="9" y="12" width="20" height="17" rx="4" fill="#8fdcef" stroke="#0e1a2b" stroke-width="2"/>'+
+    '<rect x="14" y="5" width="10" height="7" rx="2" fill="#f2a733" stroke="#0e1a2b" stroke-width="2"/>'+
+    '<circle cx="15" cy="20" r="2.4" fill="#0e1a2b"/><circle cx="23" cy="20" r="2.4" fill="#0e1a2b"/>'+
+    '<rect x="14" y="24" width="10" height="2.4" rx="1.2" fill="#0e1a2b"/>'+
+    '<path d="M29 20 L37 20 M33 16 L37 20 L33 24" stroke="#f2a733" stroke-width="3" '+
+    'fill="none" stroke-linecap="round"/></svg>';
+}
+function svgCaixa(){
+  return '<svg viewBox="0 0 40 40" aria-hidden="true">'+
+    '<rect x="8" y="14" width="24" height="18" rx="2" fill="#d9a05b" stroke="#6b4a25" stroke-width="2"/>'+
+    '<path d="M8 20 H32" stroke="#6b4a25" stroke-width="2"/>'+
+    '<path d="M20 14 V32" stroke="#6b4a25" stroke-width="2"/>'+
+    '<path d="M14 14 L20 8 L26 14" fill="#f0c48a" stroke="#6b4a25" stroke-width="2"/></svg>';
+}
+
+/* ==================================================================
+   6. ESTADO DA TELA
+   ================================================================== */
+var iDes = 0;          /* qual desafio */
+var prog = [];         /* o programa que está na memória */
+var rob = null;        /* posição e direção do robô */
+var rodando = false;
+var TELA = "abertura"; /* abertura | desafio | pecas | relatorio */
+
+function el(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+/* ------------------------------------------------------------------
+   6.1 A ABERTURA — o PROBLEMA antes de qualquer conceito.
+   Ela pede em português, e a máquina não entende. É daí que nasce a
+   necessidade da instrução (e o nome "algoritmo" só vem no fim).
+   ------------------------------------------------------------------ */
+function abertura(){
+  TELA = "abertura";
+  var d = DESAFIOS[0];
+  rob = {c:d.rob.c, l:d.rob.l, d:d.rob.d};
+  el("raiz").innerHTML =
+    '<p class="passo">Aula 1 de 8 &middot; sequência: construir a máquina e mandar nela</p>'+
+    faixa("d0")+
+    maquina({leque:[], caixa:d.caixa, paredes:[]})+
+    '<div class="acoes">'+
+      '<button class="bt" id="pedir" type="button">Robô, vá até a caixa</button>'+
+    '</div>'+
+    '<div id="resp"></div>';
+  pintaGrade({caixa:d.caixa, paredes:[]});
+  pintaMemoria(false);
+  falar("d0");
+  el("pedir").onclick = function(){
+    falar("d0erro");
+    el("resp").innerHTML =
+      '<div class="aviso pensa"><b>A máquina não entendeu.</b> Ela não sabe o que é '+
+      '&ldquo;vá até a caixa&rdquo;. Ela só entende <b>instruções</b>, uma de cada vez, '+
+      'e guarda cada uma na <b>memória</b>.</div>'+
+      '<div class="acoes"><button class="bt" id="vai" type="button">'+
+      'Então me dê as instruções</button></div>';
+    el("vai").onclick = function(){ iDes = 0; desafio(); };
+  };
+}
+
+function faixa(k){
+  return '<div class="fala">'+
+    '<button class="som" type="button" onclick="falar(\''+k+'\')" '+
+    'aria-label="Ouvir">&#9834;</button>'+
+    '<p>'+esc(FALAS[k])+'</p></div>';
+}
+
+/* ------------------------------------------------------------------
+   6.2 A MÁQUINA — tela, memória e processador, cada peça rotulável.
+   ⚠️ É aqui que hardware e software ficam visíveis ao mesmo tempo:
+      as peças de vidro x o que está DENTRO da memória.
+   ------------------------------------------------------------------ */
+function maquina(o){
+  var i, h = '<div class="maq" id="maq"><div class="maqg">'+
+    '<div class="peca tela" id="pcTela"><span class="rot">TELA</span>'+
+      '<div class="grade" id="grade"></div></div>'+
+    '<div class="peca mem" id="pcMem"><span class="rot">MEMÓRIA</span>'+
+      '<ul class="memL" id="memL"></ul>'+
+      '<div class="peca proc" id="pcProc"><span class="rot">PROCESSADOR</span>'+
+        '<span id="procT">Parado. Nada para ler.</span></div>'+
+    '</div></div>';
+  if(o.leque && o.leque.length){
+    h += '<div class="leque">';
+    for(i=0;i<o.leque.length;i++){
+      h += '<button class="blo" type="button" data-b="'+o.leque[i]+'">'+
+           esc(BLOCOS[o.leque[i]].rot)+'</button>';
+    }
+    h += '</div>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function pintaGrade(o){
+  var g = el("grade"), h = "", c, l, p, k, par;
+  if(!g) return;
+  g.style.gridTemplateColumns = "repeat("+COLS+",1fr)";
+  for(l=0;l<LINS;l++){
+    for(c=0;c<COLS;c++){
+      par = false;
+      if(o.paredes){ for(k=0;k<o.paredes.length;k++){
+        if(o.paredes[k].c===c && o.paredes[k].l===l) par = true; } }
+      p = "";
+      if(o.caixa && o.caixa.c===c && o.caixa.l===l) p = svgCaixa();
+      if(rob && rob.c===c && rob.l===l) p = svgRobo();
+      h += '<div class="cel'+(par?' parede':'')+'">'+p+'</div>';
+    }
+  }
+  g.innerHTML = h;
+  var r = g.querySelector(".rob");
+  if(r) r.className = "rob d"+rob.d;
+}
+
+function pintaMemoria(editavel, agora){
+  var u = el("memL"), h = "", i;
+  if(!u) return;
+  if(!prog.length){
+    u.innerHTML = '<li class="vazia">A memória está vazia. Escolha uma instrução.</li>';
+    return;
+  }
+  for(i=0;i<prog.length;i++){
+    h += '<li class="'+(agora===i?"agora":"")+'">'+
+      '<span class="end">'+i+'</span>'+
+      '<span class="instr">'+esc(BLOCOS[prog[i]].rot)+'</span>'+
+      (editavel?'<button class="x" type="button" data-i="'+i+'" aria-label="Tirar">&times;</button>':'')+
+      '</li>';
+  }
+  u.innerHTML = h;
+  if(editavel){
+    var bs = u.querySelectorAll(".x"), j;
+    for(j=0;j<bs.length;j++){
+      bs[j].onclick = function(){
+        if(rodando) return;
+        prog.splice(parseInt(this.getAttribute("data-i"),10),1);
+        pintaMemoria(true);
+      };
+    }
+  }
+}
+
+function proc(t){ var p = el("procT"); if(p) p.innerHTML = t; }
+
+/* ------------------------------------------------------------------
+   6.3 UM DESAFIO
+   ------------------------------------------------------------------ */
+function desafio(){
+  TELA = "desafio";
+  var d = DESAFIOS[iDes];
+  rob = {c:d.rob.c, l:d.rob.l, d:d.rob.d};
+  prog = d.prog.slice();
+  rodando = false;
+  reg(d.id);
+
+  var h = '<p class="passo">Desafio '+(iDes+1)+' de '+DESAFIOS.length+
+          ' &middot; '+esc(d.nome)+'</p>'+
+          faixa(d.fala)+
+          maquina({leque:d.leque, caixa:d.caixa, paredes:d.paredes});
+
+  if(d.prever){
+    h += '<div class="aviso"><b>Onde o robô vai parar?</b><div class="opw" id="opw"></div></div>';
+  }
+  h += '<div class="acoes">'+
+       '<button class="bt" id="rodar" type="button">RODAR</button>'+
+       '<button class="bt claro" id="limpar" type="button">Limpar a memória</button>'+
+       '<button class="bt claro" id="bdica" type="button">Preciso de uma ideia</button>'+
+       '</div><div id="resp"></div>';
+  h += '<div class="barra"><i style="width:'+
+       Math.round(iDes/DESAFIOS.length*100)+'%"></i></div>';
+  el("raiz").innerHTML = h;
+
+  pintaGrade(d);
+  pintaMemoria(true);
+  proc("Parado. A memória tem <b>"+prog.length+"</b> instrução(ões).");
+  falar(d.fala);
+
+  var bs = document.querySelectorAll(".blo"), i;
+  for(i=0;i<bs.length;i++){
+    bs[i].onclick = function(){
+      if(rodando) return;
+      prog.push(this.getAttribute("data-b"));
+      pintaMemoria(true);
+      proc("Parado. A memória tem <b>"+prog.length+"</b> instrução(ões).");
+    };
+  }
+  el("limpar").onclick = function(){
+    if(rodando) return;
+    prog = []; pintaMemoria(true); proc("Memória vazia.");
+  };
+  el("bdica").onclick = function(){
+    reg(d.id).dica = true;
+    el("resp").innerHTML = '<div class="aviso pensa"><b>Uma ideia:</b> '+esc(d.dica)+'</div>';
+  };
+  el("rodar").onclick = function(){ roda(d); };
+
+  if(d.prever){
+    var w = el("opw"), hh = "", j;
+    for(j=0;j<d.opcoes.length;j++){
+      hh += '<span class="opc"><button class="som" type="button" '+
+            'aria-label="Ouvir">&#9834;</button>'+
+            '<button class="opb" data-j="'+j+'" type="button">'+
+            esc(d.opcoes[j].t)+'</button></span>';
+    }
+    w.innerHTML = hh;
+    var ob = w.querySelectorAll(".opb"), q;
+    for(q=0;q<ob.length;q++){
+      ob[q].onclick = function(){
+        var ok = d.opcoes[parseInt(this.getAttribute("data-j"),10)].ok;
+        REG.previu = ok;
+        this.parentNode.className = "opc "+(ok?"ok":"nao");
+        el("resp").innerHTML = '<div class="aviso '+(ok?"bom":"pensa")+'">'+
+          (ok? "<b>Você disse onde ela ia parar.</b> Agora rode e confira."
+             : "<b>Guarde o seu palpite.</b> Rode e veja o que a máquina faz — "+
+               "é assim que se descobre.")+'</div>';
+      };
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   6.4 RODAR — o processador lê a memória, uma linha por vez, À VISTA.
+   ⚠️ É este passo a passo que faz "simular" ser diferente de "ordenar":
+      a criança VÊ a instrução sendo cumprida e vê ONDE parou.
+   ------------------------------------------------------------------ */
+function roda(d){
+  if(rodando) return;
+  if(!prog.length){
+    el("resp").innerHTML = '<div class="aviso pensa">A memória está vazia. '+
+      'Escolha ao menos uma instrução.</div>';
+    return;
+  }
+  rodando = true;
+  reg(d.id).rodou++;
+  rob = {c:d.rob.c, l:d.rob.l, d:d.rob.d};
+  el("resp").innerHTML = "";
+  el("rodar").disabled = true;
+  var i = 0;
+
+  function passo(){
+    if(i >= prog.length){ acaba(d, null); return; }
+    pintaMemoria(true, i);
+    proc("Lendo o endereço <b>"+i+"</b>: "+esc(BLOCOS[prog[i]].rot));
+    var k = prog[i], nc = rob.c, nl = rob.l;
+    if(k === "dir"){ rob.d = (rob.d+1)%4; }
+    else if(k === "esq"){ rob.d = (rob.d+3)%4; }
+    else {
+      if(rob.d===0) nc++; else if(rob.d===1) nl++;
+      else if(rob.d===2) nc--; else nl--;
+      if(nc<0 || nc>=COLS || nl<0 || nl>=LINS){ acaba(d, {tipo:"fora", linha:i}); return; }
+      var w;
+      for(w=0; w<d.paredes.length; w++){
+        if(d.paredes[w].c===nc && d.paredes[w].l===nl){
+          acaba(d, {tipo:"parede", linha:i}); return;
+        }
+      }
+      rob.c = nc; rob.l = nl;
+    }
+    pintaGrade(d);
+    i++;
+    setTimeout(passo, 430);
+  }
+  setTimeout(passo, 220);
+}
+
+function acaba(d, erro){
+  rodando = false;
+  var b = el("rodar"); if(b) b.disabled = false;
+  pintaMemoria(true);
+  var chegou = (rob.c === d.caixa.c && rob.l === d.caixa.l);
+
+  if(chegou){
+    reg(d.id).feito = true;
+    proc("Parou. Chegou na caixa.");
+    falar("certo");
+    el("resp").innerHTML = '<div class="aviso bom"><b>O robô chegou.</b> '+
+      'A máquina fez exatamente o que estava escrito na memória.</div>'+
+      '<div class="acoes"><button class="bt" id="prox" type="button">'+
+      (iDes+1 < DESAFIOS.length ? "Próximo desafio" : "Ver as peças da máquina")+
+      '</button></div>';
+    el("prox").onclick = function(){
+      if(iDes+1 < DESAFIOS.length){ iDes++; desafio(); } else { telaPecas(); }
+    };
+    return;
+  }
+
+  var onde = erro ? (erro.tipo === "fora" ? "tentou sair da grade"
+                                          : "bateu na parede") : "parou no fim do programa";
+  proc("Parou. "+onde+".");
+  falar("bateu");
+  el("resp").innerHTML = '<div class="aviso pensa"><b>O robô '+onde+'.</b> '+
+    (d.mostraLinha && erro
+      ? 'Foi na instrução do endereço <b>'+erro.linha+'</b> &mdash; '+
+        esc(BLOCOS[prog[erro.linha]].rot)+'.'
+      : 'A máquina não vai dizer onde. <b>Leia o programa</b> e siga com o dedo.')+
+    ' Conserte e rode outra vez.</div>';
+}
+
+/* ------------------------------------------------------------------
+   6.5 A FOLHA DAS PEÇAS — mede hardware x software.
+   O botão "ver as peças" acende os rótulos DENTRO da máquina; a criança
+   então classifica. Não é pergunta solta: é sobre a máquina que ela usou.
+   ------------------------------------------------------------------ */
+function telaPecas(){
+  TELA = "pecas";
+  var d = DESAFIOS[DESAFIOS.length-1], i, h;
+  rob = {c:d.caixa.c, l:d.caixa.l, d:0};
+  h = '<p class="passo">Desafio 7 de 7 &middot; a máquina por fora e por dentro</p>'+
+      faixa("d7")+
+      maquina({leque:[], caixa:d.caixa, paredes:d.paredes})+
+      '<div class="acoes"><button class="bt claro" id="vp" type="button">'+
+      'Acender os rótulos</button></div>'+
+      '<div class="aviso"><b>Arraste com o dedo ou toque:</b> o que é '+
+      '<b>peça</b> (dá para tocar) e o que é <b>programa</b> (é o que você escreveu)?'+
+      '<div id="fichas" style="margin-top:8px"></div>'+
+      '<div class="gav">'+
+        '<div class="gv" id="gvhw"><h4>Peça &mdash; hardware</h4></div>'+
+        '<div class="gv" id="gvsw"><h4>Programa &mdash; software</h4></div>'+
+      '</div></div><div id="resp"></div>';
+  el("raiz").innerHTML = h;
+  pintaGrade(d);
+  prog = ["andar","andar","andar","andar","dir","andar","andar","andar"];
+  pintaMemoria(false);
+  proc("Parado. O programa continua guardado.");
+  falar("d7");
+
+  el("vp").onclick = function(){
+    var ps = document.querySelectorAll(".peca"), j;
+    for(j=0;j<ps.length;j++){ ps[j].className += " mostra"; }
+    this.disabled = true;
+  };
+
+  var f = "", ordem = [3,0,5,1,4,2];   /* embaralhado à mão, sem sorteio */
+  for(i=0;i<ordem.length;i++){
+    f += '<button class="fic" type="button" data-p="'+ordem[i]+'">'+
+         esc(PECAS[ordem[i]].t)+'</button>';
+  }
+  el("fichas").innerHTML = f;
+  REG.pecas.total = PECAS.length;
+
+  var fs = document.querySelectorAll(".fic"), k;
+  for(k=0;k<fs.length;k++){
+    fs[k].onclick = function(){
+      var p = PECAS[parseInt(this.getAttribute("data-p"),10)];
+      var alvo = el(p.hw ? "gvhw" : "gvsw");
+      this.className = "fic posta";
+      this.onclick = null;
+      alvo.appendChild(this);
+      REG.pecas.certas++;
+      if(REG.pecas.certas >= REG.pecas.total){
+        el("resp").innerHTML = '<div class="aviso bom">'+
+          '<b>É isso.</b> As peças você poderia tocar com a mão. O programa não: '+
+          'ele é a <b>ordem</b> que você escreveu, guardada dentro da peça.</div>'+
+          '<div class="acoes"><button class="bt" id="fim" type="button">'+
+          'Terminar a aula</button></div>';
+        el("fim").onclick = telaFim;
+      }
+    };
+  }
+}
+
+/* ------------------------------------------------------------------
+   6.6 O FECHO — e só AQUI a palavra chega.
+   ------------------------------------------------------------------ */
+function telaFim(){
+  /* ⚠️ DIZER EM QUE TELA ESTAMOS NAO E ENFEITE. Esta linha faltava, e a cobaia
+     pegou: voltando do painel "este computador", o programa redesenhava a folha
+     das pecas em vez do fecho, e o botao do relatorio desaparecia. Toda tela
+     nova marca TELA — senao a volta do painel cai na tela errada. */
+  TELA = "fim";
+  falar("fim");
+  el("raiz").innerHTML =
+    '<div class="cart">'+
+      '<h2>A palavra de hoje</h2>'+
+      '<p>Você montou <b>seis programas</b>. Uma lista de instruções em ordem, '+
+      'que resolve um problema, tem um nome:</p>'+
+      '<p style="font-size:26px;font-weight:700;color:#8a5a00;margin:10px 0">ALGORITMO</p>'+
+      '<p>Você já fez seis antes de saber o nome.</p>'+
+      '<h3>E a próxima aula?</h3>'+
+      '<p>No último desafio você tocou <b>ANDAR</b> quatro vezes seguidas. '+
+      'Deu trabalho, não deu? Na próxima aula a máquina aprende uma instrução nova: '+
+      '<b>REPETIR</b>.</p>'+
+      '<div class="barra"><i style="width:100%"></i></div>'+
+    '</div>'+
+    '<div class="acoes">'+
+      '<button class="bt claro" id="rel" type="button">Relatório do professor</button>'+
+    '</div>'+
+    '<p class="mini">No caderno de verdade este botão não fica à vista: o professor '+
+    'abre segurando a medalha por 2 segundos, como nas outras atividades da casa. '+
+    'Aqui está à mostra só para o senhor conferir.</p>';
+  el("rel").onclick = relatorio;
+}
+
+/* ==================================================================
+   7. O RELATÓRIO DESCRITIVO
+   ⚠️ Ordem do Marcos (25/set/2026): "todas essas aulas precisam ter um
+      relatório descritivo, para analisar se o estudante conseguiu
+      alcançar os objetivos".
+   Então: NADA de nota e nada de porcentagem sozinha. Sai uma FRASE que
+   descreve o que a criança fez — e a frase é MONTADA do que foi medido
+   (quantas vezes rodou, se pediu ideia, se consertou o que vinha errado).
+   ================================================================== */
+function frase(ids){
+  var i, d, fez=0, semDica=0, primeira=0, total=ids.length, tent=0;
+  for(i=0;i<ids.length;i++){
+    d = reg(ids[i]);
+    if(d.feito) fez++;
+    if(d.feito && !d.dica) semDica++;
+    if(d.feito && d.rodou===1) primeira++;
+    tent += d.rodou;
+  }
+  var t = "Montou e fez funcionar <b>"+fez+" de "+total+"</b> programas";
+  if(semDica===fez && fez>0) t += ", todos sem pedir ideia";
+  else if(fez-semDica>0) t += ", pedindo uma ideia em "+(fez-semDica);
+  t += ". Acertou de primeira em <b>"+primeira+"</b>";
+  if(tent>fez) t += " e usou o RODAR "+tent+" vezes no total, corrigindo entre uma e outra";
+  return t+".";
+}
+
+function parecer(ids){
+  var i, fez=0;
+  for(i=0;i<ids.length;i++){ if(reg(ids[i]).feito) fez++; }
+  var p = ids.length ? fez/ids.length : 0;
+  if(p >= 0.85) return {t:"Dominou", c:"d"};
+  if(p >= 0.5)  return {t:"Está construindo", c:"c"};
+  return {t:"Precisa retomar", c:"r"};
+}
+
+function relatorio(){
+  TELA = "relatorio";
+  var pcAll = ["d1","d2","d3","d4","d5","d6"];
+  var pcMont = ["d1","d2","d6"], pcDep = ["d4","d5"];
+  var a = parecer(pcAll), b = parecer(pcMont), c = parecer(pcDep);
+  var min = Math.max(1, Math.round((Date.now()-REG.inicio)/60000));
+  var hw = REG.pecas.total && REG.pecas.certas >= REG.pecas.total;
+
+  el("raiz").innerHTML =
+  '<div class="cart">'+
+    '<h2>Relatório descritivo &mdash; Aula 1 de 8</h2>'+
+    '<p class="mini">Sequência 1: <b>Construir a máquina e mandar nela</b> &middot; '+
+    'Computação &middot; 3º ano &middot; tempo na máquina: cerca de '+min+' min</p>'+
+
+    '<h3>Objetivo 1 &mdash; Pensamento Computacional</h3>'+
+    '<div class="cit">&ldquo;Criar e simular algoritmos representados em linguagem oral, '+
+    'escrita ou pictográfica, que incluam sequências e repetições simples com condição&rdquo; '+
+    '<br>(Currículo de Computação de Blumenau, 3º ano &mdash; parte de <b>sequências</b>; '+
+    'a <b>repetição com condição</b> é da aula 4 em diante)</div>'+
+    '<p><span class="tag '+a.c+'">'+a.t+'</span></p>'+
+    '<p>'+frase(pcAll)+'</p>'+
+    '<table><tr><th>O que foi olhado</th><th>Nesta aula</th></tr>'+
+    '<tr><td>Montar um programa do zero (desafios 1, 2 e 6)</td>'+
+      '<td><span class="tag '+b.c+'">'+b.t+'</span><br>'+frase(pcMont)+'</td></tr>'+
+    '<tr><td>Achar o erro num programa já montado (desafios 4 e 5)</td>'+
+      '<td><span class="tag '+c.c+'">'+c.t+'</span><br>'+frase(pcDep)+'</td></tr>'+
+    '<tr><td>Prever onde a máquina para, antes de rodar (desafio 3)</td>'+
+      '<td>'+(REG.previu===null ? "Não respondeu."
+             : (REG.previu ? "Disse corretamente onde o robô ia parar, antes de rodar."
+                           : "Errou o palpite e, depois de rodar, viu onde parava."))+
+      '</td></tr></table>'+
+
+    '<h3>Objetivo 2 &mdash; Mundo Digital</h3>'+
+    '<div class="cit">&ldquo;Diferenciar componentes físicos (hardware) e programas que '+
+    'fornecem as instruções (software) para o hardware&rdquo;<br>'+
+    '(Currículo de Computação de Blumenau, 3º ano)</div>'+
+    '<p><span class="tag '+(hw?"d":"c")+'">'+(hw?"Dominou":"Está construindo")+'</span></p>'+
+    '<p>'+(hw
+      ? "Separou as seis fichas entre peça e programa olhando a máquina que ela mesma "+
+        "acabara de usar &mdash; incluindo as duas difíceis, <b>o cabo</b> (peça) e "+
+        "<b>a ordem das instruções</b> (programa)."
+      : "Ainda não terminou de separar as fichas entre peça e programa.")+'</p>'+
+
+    '<h3>Para a próxima aula</h3>'+
+    '<p>'+(c.c==="d"
+      ? "Consertou programas alheios com facilidade: na aula 2 pode ir direto para a "+
+        "repetição, e vale dar a ela um programa errado mais longo."
+      : "Vale retomar, no começo da aula 2, um desafio de achar o erro &mdash; foi onde "+
+        "ela gastou mais tentativas.")+'</p>'+
+
+    '<h3>Para colar no planejamento</h3>'+
+    '<p class="mini"><b>Tema da aula:</b> Instruções em ordem: dando comandos a uma máquina<br>'+
+    '<b>Objetivo:</b> Criar e simular algoritmos com sequências de instruções, identificando '+
+    'onde a execução falha; e diferenciar componentes físicos (hardware) dos programas '+
+    '(software).</p>'+
+  '</div>'+
+  '<div class="acoes">'+
+    '<button class="bt claro" id="volta" type="button">Voltar ao começo</button>'+
+  '</div>';
+  el("volta").onclick = abertura;
+}
+
+/* ==================================================================
+   8. "ESTE COMPUTADOR AQUI" — a máquina de vidro ao lado da máquina REAL
+   ⚠️ A ideia é do 5º ano ("identificar os componentes principais de um
+      computador") mas o painel já vive aqui porque é o que dá sentido a
+      tudo: a criança compara a máquina de brinquedo com a de verdade.
+   ⚠️ E é também aula de Cultura Digital: a página descobre isto sozinha,
+      e NÃO manda para ninguém. Está dito na tela, com essas palavras.
+   ⚠️ NUNCA inventar número: o que o navegador não conta, a tela diz que
+      não conta. Memória vem arredondada pelo próprio navegador — então
+      o rótulo diz "aproximadamente", que é a verdade.
+   ================================================================== */
+function real(){
+  var n = navigator, l = [];
+  function add(t,v){ l.push([t, (v===undefined||v===null||v==="") ? "o navegador não conta" : v]); }
+
+  add("Núcleos do processador", n.hardwareConcurrency ? n.hardwareConcurrency+" núcleos" : null);
+  add("Memória (aproximada)", n.deviceMemory ? "cerca de "+n.deviceMemory+" GB" : null);
+  add("Tela", screen.width+" x "+screen.height+" pontos");
+  add("Janela agora", window.innerWidth+" x "+window.innerHeight+" pontos");
+  add("Pontos por ponto de tela", window.devicePixelRatio || 1);
+  var ua = n.userAgent, so = "não deu para dizer";
+  if(ua.indexOf("Windows NT 6.1")>=0) so = "Windows 7";
+  else if(ua.indexOf("Windows NT 10")>=0) so = "Windows 10 ou 11";
+  else if(ua.indexOf("Windows")>=0) so = "Windows";
+  else if(ua.indexOf("Android")>=0) so = "Android";
+  else if(ua.indexOf("Mac")>=0) so = "macOS";
+  else if(ua.indexOf("Linux")>=0) so = "Linux";
+  add("Sistema", so);
+  var m = ua.match(/(Chrome|Firefox|Edg)\/(\d+)/);
+  add("Navegador", m ? (m[1]==="Edg"?"Edge":m[1])+" "+m[2] : "não deu para dizer");
+  add("Toque na tela", ("ontouchstart" in window) ? "sim" : "não");
+  if(n.connection && n.connection.effectiveType) add("Internet", n.connection.effectiveType);
+
+  var h = '<table><tr><th>O que a página consegue ver</th><th>Neste computador</th></tr>';
+  var i; for(i=0;i<l.length;i++){ h += '<tr><td>'+esc(l[i][0])+'</td><td><b>'+esc(l[i][1])+'</b></td></tr>'; }
+  h += '</table>';
+  return h;
+}
+
+function painelReal(){
+  var antes = el("raiz").innerHTML;
+  el("raiz").innerHTML =
+    '<div class="cart">'+
+      '<h2>Este computador aqui</h2>'+
+      '<p>A máquina de vidro é de brinquedo. <b>Esta é a de verdade</b> &mdash; a que '+
+      'você está usando agora. Quem contou tudo isto foi o próprio computador, '+
+      'quando esta página perguntou.</p>'+
+      real()+
+      '<div class="aviso pensa" style="margin-top:14px">'+
+      '<b>Repare em duas coisas.</b> A primeira: esta página descobriu tudo isso '+
+      '<b>sozinha</b>, sem você digitar nada. A segunda: ela <b>não mandou para '+
+      'ninguém</b> &mdash; ficou aqui na tela e vai embora quando você fechar. '+
+      'Saber o que uma página vê sobre você é o começo de se cuidar na internet.</div>'+
+      '<p class="mini">A memória vem arredondada pelo navegador, por isso está escrito '+
+      '&ldquo;aproximada&rdquo;. O que o navegador não conta, a tabela diz que não conta '+
+      '&mdash; aqui não se inventa número.</p>'+
+    '</div>'+
+    '<div class="acoes"><button class="bt" id="fechar" type="button">Voltar</button></div>';
+  el("fechar").onclick = function(){
+    el("raiz").innerHTML = antes;
+    /* ⚠️ voltar de um painel NÃO pode deixar a tela morta: os botões da tela
+       anterior perderam os seus onclick junto com o innerHTML, então a tela é
+       REDESENHADA, não colada de volta. (Lição paga na Oficina de Vídeo.) */
+    if(TELA === "abertura") abertura();
+    else if(TELA === "desafio") desafio();
+    else if(TELA === "pecas") telaPecas();
+    else if(TELA === "fim") telaFim();
+    else relatorio();
+  };
+}
+
+/* ==================================================================
+   9. PARTIDA
+   ================================================================== */
+el("selo").textContent = "v " + VERSAO;
+el("btmaq").onclick = painelReal;
+abertura();
+</script>
+</body>
+</html>
