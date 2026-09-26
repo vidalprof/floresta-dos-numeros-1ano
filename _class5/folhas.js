@@ -1371,6 +1371,33 @@ function escreve(box, pi, id, gabarito, falaCerto, falaDica, dica){
      no navegador e REPROVARAM na banca: o defeito estava na porta, nao no
      campo. */
   inp.onclick = function(){ try{ inp.focus(); }catch(e){} };
+  /* ⚠️⚠️ AS DUAS PORTAS, e esta faltava. Palavras como CASARÃO e NARIGÃO têm Ã —
+     e o Ã não é uma TECLA: no teclado brasileiro ele sai de til + A, e o
+     navegador de teste responde "Unknown key". Resultado: as folhas de escrever
+     com til REPROVAVAM na banca e, na sala, qualquer criança num teclado que
+     não ajude ficaria trancada do mesmo jeito. Então as letras que o teclado não
+     alcança ganham botão — é a mesma solução que o motor já usa (`.letrabt`), e
+     é regra da casa desde ago/2026: nunca uma porta só. */
+  var dificeis = [];
+  gabarito.toUpperCase().split("").forEach(function(ch){
+    if(!/[A-Z0-9\- ]/.test(ch) && dificeis.indexOf(ch) < 0) dificeis.push(ch);
+  });
+  if(dificeis.length){
+    var fila = el("div", "letras");
+    dificeis.forEach(function(ch){
+      var lb = el("button", "letrabt", ch);
+      lb.setAttribute("data-qa", "letra-" + id + "-" + ch);
+      lb.setAttribute("aria-label", "Letra " + ch);
+      lb.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); inp.value = (inp.value || "") + ch;
+        try{ inp.focus(); }catch(e){}
+        if(inp.dispatchEvent) inp.dispatchEvent(new Event("input", {bubbles: true}));
+      };
+      fila.appendChild(lb);
+    });
+    box._filaLetras = fila;      /* anexada logo depois do campo, abaixo */
+  }
   bt.onclick = confere;
   inp.onkeydown = function(ev){ if(ev.key === "Enter"){ ev.preventDefault(); confere(); } };
   /* ⚠️ CONFERIR SOZINHO quando a palavra fica do tamanho certo — e isto e
@@ -1385,6 +1412,7 @@ function escreve(box, pi, id, gabarito, falaCerto, falaDica, dica){
   });
   cx.appendChild(inp); cx.appendChild(bt);
   box.appendChild(cx);
+  if(box._filaLetras){ box.appendChild(box._filaLetras); box._filaLetras = null; }
 }
 
 /* ---------- marcar palavras dentro da frase ---------- */
@@ -1424,14 +1452,18 @@ function montaSilabas(d, pi, pede, bloco){
   ST.folha["p" + pi].forEach(function(k, i){
     var dado = B[k], id = "n" + pi + "_" + i, box = item(i + 1);
     var de = dado[0], alvo = dado[1], sil = dado[2];
-    registra(id, pi, alvo);
+    /* ⚠️ A RESPOSTA DECLARADA E A ORDEM DAS SILABAS, nao a palavra inteira: e
+       assim que o motor le folha de montar (pedaços separados por espaço), e foi
+       so por isso que o jogador da banca saiu com "nao conheco a peca" — que NAO
+       e "passou". A palavra inteira nao existe como botao; as silabas existem. */
+    registra(id, pi, sil.join(" "));
     box.appendChild(el("div", "dizde", "de <b>" + de + "</b> vem…"));
     var linha = el("div", "montada"), banco = el("div", "silbanco"), posto = [];
     function pinta(){ linha.textContent = posto.join("") || "…"; }
     pinta();
     baralha(sil.slice(0)).forEach(function(s, j){
       var b = el("button", "op sil", s);
-      b.setAttribute("data-qa", "sil-" + id + "-" + j);
+      b.setAttribute("data-qa", "op-" + id + "-" + s);
       b.onclick = function(){
         if(ST.resp[id]) return;
         sPasso(); posto.push(s); b.className = "op sil usada"; b.disabled = true; pinta();
@@ -1654,7 +1686,7 @@ function f12(d, pi){
   d.appendChild(box);
 }
 function f13(d, pi){
-  escolhe(d, pi, "O adjetivo tem <b>graus</b>. Em que grau está o desta frase?", "P13",
+  escolhe(d, pi, "O adjetivo tem <b>graus</b>. Em que grau está o adjetivo desta frase?", "P13",
     function(x, k){ return {rot: x[0], cls: "frase",
       ops: [{v:"comparativo", rot:"COMPARATIVO", fala:"diz_comp"},
             {v:"superlativo", rot:"SUPERLATIVO", fala:"diz_sup"}],

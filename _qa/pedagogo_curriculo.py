@@ -432,7 +432,19 @@ def confere(pasta, palavras):
 
     # ---- 3. relatorio x curriculo, um a um
     nrel = [n for n, _ in rel]
-    ncur = [o.get("objetivo") for o in objs]
+    # ⚠️ PORTAO QUE ESTOURA NAO MEDE NADA. Aqui era `o.get("objetivo")` cru: o
+    #    `curriculo.json` que usasse outro nome de campo (e e facil escrever
+    #    "nome", que e como o relatorio chama) devolvia None, e o portao morria
+    #    com TypeError la embaixo, sem dizer UMA palavra sobre a causa. Quem
+    #    lesse aquilo nao tinha como saber o que consertar.
+    #    Agora o campo que falta e DITO, com o numero do objetivo.
+    ncur = []
+    for _i, _o in enumerate(objs):
+        _n = _o.get("objetivo")
+        if _n is None:
+            _n = u"(objetivo %d SEM o campo `objetivo` no curriculo.json — "
+            _n = (_n % (_i + 1)) + u"campos achados: %s)" % u", ".join(sorted(_o.keys()))
+        ncur.append(_n)
     if nrel != ncur:
         ruim = 1
         L.append(u"   REPROVADO 3: os objetivos do relatorio e os do curriculo.json nao batem.")
