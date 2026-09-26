@@ -1458,7 +1458,7 @@ function montaSilabas(d, pi, pede, bloco){
        e "passou". A palavra inteira nao existe como botao; as silabas existem. */
     registra(id, pi, sil.join(" "));
     box.appendChild(el("div", "dizde", "de <b>" + de + "</b> vem…"));
-    var linha = el("div", "montada"), banco = el("div", "silbanco"), posto = [];
+    var linha = el("div", "montapal"), banco = el("div", "silbanco"), posto = [];
     function pinta(){ linha.textContent = posto.join("") || "…"; }
     pinta();
     baralha(sil.slice(0)).forEach(function(s, j){
