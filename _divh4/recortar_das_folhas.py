@@ -93,7 +93,8 @@ PECAS = [
     (u"dh4_balao",    u"A32", 500, 710, 735, 1056, 0),
     (u"dh4_pirulitos", u"A32", 1255, 898, 1548, 1150, 0),
     (u"dh4_pirulito", u"A32", 1250, 948, 1319, 1060, 2),
-    (u"dh4_pipoca",   u"A32", 1284, 1880, 1537, 2214, 0),
+    # dh4_pipoca (A32) saiu: as listras brancas do balde tocam a borda e o
+    # portão 0o6 as lê como halo; apagá-las estragaria o desenho.
     # ---- F24: "Observe este relógio. As pétalas marcam os minutos." ----
     (u"dh4_flor", u"F24", 60, 80, 1044, 1046, 0),
     # ---- D02: a rotina da Beatriz ----

@@ -86,7 +86,12 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
            O mesmo arquivo, o mesmo defeito, duas respostas. */
         const r=im.getBoundingClientRect(); if(r.bottom<0) continue;   // estacionada acima da tela
         const cs=getComputedStyle(im), fit=cs.objectFit||"fill";
-        const an=im.naturalWidth/im.naturalHeight, ar=r.width/r.height, dif=Math.abs(ar-an)/an;
+        /* ⚠️ A PROPORÇÃO SE MEDE NA CAIXA DE LEIAUTE, NÃO NA GIRADA (26/set/2026).
+           O `getBoundingClientRect` devolve a caixa DEPOIS do `transform`: o
+           ponteiro do relógio do `_divh4`, rodado 90°, tinha caixa de pé e saía
+           "ESTICADO 90%" estando perfeito. `offsetWidth/Height` ignoram o giro. */
+        const lw=im.offsetWidth||r.width, lh=im.offsetHeight||r.height;
+        const an=im.naturalWidth/im.naturalHeight, ar=lw/lh, dif=Math.abs(ar-an)/an;
         const src=String(im.getAttribute("src")||"").split("/").slice(-1)[0].slice(0,40);
         /* FUNDO: figura que cobre >= 60% da tela e cenario de fundo — `cover` ali e de
            proposito (a cena estica ate as bordas). Vira aviso, nao reprovacao. */
@@ -142,7 +147,12 @@ const ANDAR=/^(come[cç]ar|jogar|iniciar|entrar|pr[óo]xim[oa]|continuar|vamos|o
       for(const g of bgs.slice(0,40)){
         const r=g.e.getBoundingClientRect(); if(r.width<40||r.height<40) continue;
         const im=await carrega(g.u); if(!im||!im.naturalWidth) continue;
-        const an=im.naturalWidth/im.naturalHeight, ar=r.width/r.height, dif=Math.abs(ar-an)/an;
+        /* ⚠️ A PROPORÇÃO SE MEDE NA CAIXA DE LEIAUTE, NÃO NA GIRADA (26/set/2026).
+           O `getBoundingClientRect` devolve a caixa DEPOIS do `transform`: o
+           ponteiro do relógio do `_divh4`, rodado 90°, tinha caixa de pé e saía
+           "ESTICADO 90%" estando perfeito. `offsetWidth/Height` ignoram o giro. */
+        const lw=im.offsetWidth||r.width, lh=im.offsetHeight||r.height;
+        const an=im.naturalWidth/im.naturalHeight, ar=lw/lh, dif=Math.abs(ar-an)/an;
         if(/100%\s+100%/.test(g.s)&&dif>0.12) out.push("fundo ESTICADO "+Math.round(dif*100)+"% (background-size:100% 100% em "+nome(g.e)+")");
         else if(/cover/.test(g.s)&&dif>0.6&&r.width>200) av.push("fundo em cover com proporcao muito diferente ("+Math.round(dif*100)+"%) em "+nome(g.e)+": some mais da metade da cena");
       }
