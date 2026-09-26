@@ -311,6 +311,22 @@ function montaPlano(id) {
          "<chave"  = toca no alvo e depois no item   (a peça é o alvo)
      A ordem importa de verdade: nessas folhas o primeiro toque MARCA e o
      segundo SOLTA; invertido, o app só diz "toque primeiro na palavra". */
+  /* ⭐ A FAMÍLIA "SEQUÊNCIA DECLARADA" (26/set/2026, `_divh4` — a mesa do
+     MATERIAL DOURADO). A peça tem vários gestos de tipos diferentes no mesmo
+     item: levar placas, barras e cubinhos para os grupos e, no meio, TROCAR uma
+     barra por dez cubinhos (os cubinhos novos só nascem depois da troca). Não
+     há como o jogador deduzir essa ordem — então a folha a DECLARA:
+         certo = "seq:<data-qa> <data-qa> …"
+     e o jogador toca um a um, na ordem. O `executa` busca cada alvo NA HORA do
+     clique, então o que ainda não existe quando o plano é montado (os cubinhos
+     da troca) é achado quando chega a vez dele. */
+  if (certo.indexOf('seq:') === 0) {
+    const alvos = certo.slice(4).split(/\s+/).filter(Boolean);
+    if (alvos.length && qa.some(x => x.getAttribute('data-qa') === alvos[0]))
+      return { tipo: 'clique', alvos: alvos, fe: 'alta' };
+    return { tipo: 'nao-sei' };
+  }
+
   const mDois = certo.match(/^([<>])(\S+)$/);
   if (mDois) {
     const alv = 'alvo-' + mDois[2], iti = 'item-' + id;

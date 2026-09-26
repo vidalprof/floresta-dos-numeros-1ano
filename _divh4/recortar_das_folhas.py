@@ -53,7 +53,8 @@ from recorte_folha import (limpa_fundo, tira_halo, aperta,        # noqa: E402
 
 IMG = os.path.join(AQUI, "img")
 COL = os.path.join(RAIZ, "_sequencias", "colheita")
-PASTA = {"A": "divh4a", "B": "divh4b", "C": "divh4c", "D": "divh4d", "F": "divh4fig"}
+PASTA = {"A": "divh4a", "B": "divh4b", "C": "divh4c", "D": "divh4d", "F": "divh4fig",
+         "E": "divh4e", "G": "divh4g"}
 
 
 def folha(cod):
@@ -100,6 +101,12 @@ PECAS = [
     (u"dh4_licoes",   u"D02", 211, 331, 367, 440, 1),
     (u"dh4_lanche",   u"D02", 379, 331, 534, 440, 1),
     (u"dh4_higiene",  u"D02", 547, 331, 702, 440, 1),
+    # ---- G06: o material dourado (pedido do Marcos, 26/set/2026) ----
+    #  ⭐ UNIDADE, DEZENA e CENTENA da mesma folha, no mesmo traço: a criança vê
+    #     que a barra É dez cubinhos empilhados e a placa É dez barras.
+    (u"dh4_cubo",  u"G06", 250, 329, 485, 560, 0),
+    (u"dh4_barra", u"G06", 1218, 139, 1308, 752, 0),
+    (u"dh4_placa", u"G06", 137, 1307, 600, 1765, 0),
     # ---- C11: o filme da Maria ----
     (u"dh4_familia",  u"C11", 518, 826, 722, 1010, 0),
 ]
