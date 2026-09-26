@@ -377,6 +377,74 @@ button{font-family:inherit;cursor:pointer}
   font-family:"Comic Sans MS","Chalkboard SE","Segoe Print",cursive;font-weight:700;font-size:22px;color:#1d4ed8;background:#fff}
 #nomeIn:focus{outline:none;border-color:#1179bf;box-shadow:0 0 0 4px rgba(17,121,191,.25)}
 
+/* ============ AS PEÇAS PRÓPRIAS DESTE CADERNO ============
+   ⚠️⚠️ LIÇÃO PAGA NA BANCA: eu escrevi cinco peças novas (campo de escrita,
+   palavra dentro da frase, sílaba solta, fila das letras, cartaz) e NÃO LHES DEI
+   ESTILO NENHUM. Elas funcionavam — o jogador fechava os 35 itens — e mesmo
+   assim o caderno estava errado: o campo tinha 21 px de altura e a palavra da
+   frase, 25x21. O piso do dedo da criança é 40 px, e 21 não é "um pouco menos":
+   é a criança tocando três vezes e achando que ELA errou.
+   *Peça que funciona não é peça pronta.* O portão que mede isto é o 4b, e ele
+   abre o caderno em seis tamanhos de tela — inclusive o 1366x768 da escola. */
+.pergunta{font-size:clamp(15px,3.9vw,18px);font-weight:700;color:#24313f;margin:2px 0 8px;line-height:1.45}
+.pergunta .qtxt{display:block;font-size:14px;font-weight:700;color:#4a5a6b;margin-top:4px}
+svg.figdes{width:76px;height:76px;display:block;margin:0 auto 2px}
+.dizde{font-size:15px;color:#3a4a5a;margin:0 0 8px;font-weight:600}
+
+/* o campo de escrever — alvo de dedo, não de mouse */
+.escrevelin{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:4px 0 2px}
+.escreve{
+  min-height:48px;min-width:150px;flex:1 1 170px;max-width:100%;
+  font:inherit;font-size:19px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  padding:10px 14px;border:3px solid var(--cor);border-radius:12px;background:#fff;color:#12574e;
+}
+.escreve:focus{outline:3px solid #f0a733;outline-offset:2px}
+.escreve.ok{background:#e9f8f1;border-color:#15a34a;color:#12603a}
+.escreve.erro{border-color:#c9553d;background:#fdeeea}
+.escreve[disabled]{opacity:1}
+.bt.mini.conf{min-height:48px;padding:10px 18px;font-size:16px}
+/* a OUTRA PORTA: as letras que o teclado não alcança */
+.letras{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+.letrabt{
+  min-width:48px;min-height:48px;font:inherit;font-size:20px;font-weight:800;
+  border:2px solid var(--cor);border-radius:12px;background:var(--corclara);color:#12574e;cursor:pointer;
+}
+.letrabt:active{transform:translateY(1px)}
+
+/* a palavra DENTRO da frase — piso 14x40, que é o da peça em texto corrido */
+.frasemarca{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:6px 0;line-height:1}
+.pmarca{
+  min-height:44px;min-width:16px;padding:8px 10px;font:inherit;font-size:clamp(16px,4.2vw,19px);
+  font-weight:700;border:2px solid transparent;border-radius:10px;background:#f2f5f8;color:#24313f;cursor:pointer;
+}
+.pmarca.marcada{background:#fde9b8;border-color:#d9a017;color:#5a3d00}
+.pmarca.marcada2{background:#d9edff;border-color:#2f7fc0;color:#123a5a}
+.pmarca.marcada3{background:#e2f7e2;border-color:#3f9e4a;color:#1d5426}
+.pmarca.czs{background:#fde9b8;border-color:#d9a017}
+.pmarca.cza{background:#d9edff;border-color:#2f7fc0}
+.pmarca.czv{background:#e2f7e2;border-color:#3f9e4a}
+.pmarca.nao{background:#fdeeea;border-color:#c9553d}
+
+/* montar a palavra com as sílabas */
+.montada{min-height:48px;display:flex;align-items:center;justify-content:center;
+  font-size:23px;font-weight:900;letter-spacing:.08em;color:#12574e;
+  background:var(--corclara);border-radius:12px;padding:6px 12px;margin:4px 0}
+.silbanco{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.op.sil{min-height:48px;font-size:19px;font-weight:800;letter-spacing:.06em;padding:10px 16px}
+.op.sil.usada{opacity:.4}
+.op.pal.nao{background:#fdeeea;border-color:#c9553d}
+
+/* o cartaz do fecho */
+.cartaz{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.cartaz .cz{flex:1 1 150px;border-radius:12px;padding:8px 10px;text-align:center}
+.cartaz .cz b{display:block;font-size:14px;letter-spacing:.04em}
+.cartaz .cz span{font-size:12px;font-weight:600}
+.cartaz .cz.s{background:#fde9b8;color:#5a3d00}
+.cartaz .cz.a{background:#d9edff;color:#123a5a}
+.cartaz .cz.v{background:#e2f7e2;color:#1d5426}
+.gancho{margin-top:12px;padding:10px 12px;border-left:6px solid var(--cor);
+  background:var(--corclara);border-radius:10px;font-weight:700;color:#12574e;line-height:1.45}
+
 /* ================= A CAPA — identidade deste caderno =================
    A COR vem do ASSUNTO: verde-petróleo, a cor das gavetas onde as palavras se
    guardam — e nenhum outro caderno da casa a usa (portão 0b11).
