@@ -19,6 +19,44 @@
      · navegação, boletim, relatório do professor, dossiê, retomar 55 min
    ============================================================ */
 
+/* ⚠️⚠️ LICAO PAGA AO MONTAR ESTE CADERNO: os desenhos estavam no FIM do
+   arquivo, como `var DES = {...}`, e o caderno abria com ZERO folhas.
+   `function` e icada; `var` NAO — o motor chama `monta()` la em cima, a capa
+   pede o desenho, e naquele instante `DES` ainda e `undefined`. Estourava
+   "Cannot read properties of undefined" e a pagina ficava VAZIA, sem nada na
+   tela que dissesse o porque — o pior tipo de defeito. Peca que a CAPA usa se
+   declara ANTES do motor. */
+/* ---------- as quatro figuras do caderno ---------- */
+var DES = {
+  casa: '<path d="M8 30 L24 14 L40 30" fill="none" stroke="#7a3b16" stroke-width="3.5" stroke-linejoin="round"/>' +
+        '<rect x="13" y="29" width="22" height="15" rx="1.5" fill="#f3d9b1" stroke="#7a3b16" stroke-width="3"/>' +
+        '<rect x="21" y="35" width="7" height="9" fill="#7a3b16"/>',
+  gato: '<circle cx="24" cy="30" r="12" fill="#c9c2bb" stroke="#4a4340" stroke-width="3"/>' +
+        '<path d="M14 21 L12 11 L21 16 Z M34 21 L36 11 L27 16 Z" fill="#c9c2bb" stroke="#4a4340" stroke-width="3" stroke-linejoin="round"/>' +
+        '<circle cx="20" cy="29" r="1.8" fill="#4a4340"/><circle cx="28" cy="29" r="1.8" fill="#4a4340"/>' +
+        '<path d="M24 33 l-3 3 M24 33 l3 3" stroke="#4a4340" stroke-width="2.4" fill="none" stroke-linecap="round"/>',
+  flor: '<path d="M24 30 V44" stroke="#3f7d3a" stroke-width="3" stroke-linecap="round"/>' +
+        '<path d="M24 38 q7 -1 9 -6 q-7 -1 -9 6Z" fill="#3f7d3a"/>' +
+        '<circle cx="24" cy="15" r="5.5" fill="#f0b429"/>' +
+        '<circle cx="15" cy="22" r="5.5" fill="#e0607e"/><circle cx="33" cy="22" r="5.5" fill="#e0607e"/>' +
+        '<circle cx="19" cy="31" r="5.5" fill="#e0607e"/><circle cx="29" cy="31" r="5.5" fill="#e0607e"/>' +
+        '<circle cx="24" cy="24" r="5" fill="#f0b429" stroke="#8a5a00" stroke-width="2"/>',
+  livro:'<path d="M7 13 h15 a3 3 0 0 1 2 3 v24 a3 3 0 0 0 -2 -3 H7Z" fill="#5c8fd6" stroke="#22406e" stroke-width="2.6" stroke-linejoin="round"/>' +
+        '<path d="M41 13 h-15 a3 3 0 0 0 -2 3 v24 a3 3 0 0 1 2 -3 h15Z" fill="#8fb6ec" stroke="#22406e" stroke-width="2.6" stroke-linejoin="round"/>' +
+        '<path d="M24 16 V40" stroke="#22406e" stroke-width="2.6"/>'
+};
+/* ⚠️ O ROTULO MORA COM O DESENHO, e isto e conserto de um defeito real: o
+   `fig()` lia o nome em `D.FIG`, e na CAPA ele roda antes de esse bloco estar
+   pronto — a pagina estourava com "Cannot read properties of undefined" e o
+   caderno abria com ZERO folhas. Peca de desenho nao deve depender do bloco de
+   dados das folhas: sao coisas de tempos diferentes. */
+var DESNOME = {casa: "CASA", gato: "GATO", flor: "FLOR", livro: "LIVRO"};
+function fig(k, cls){
+  return '<svg class="' + (cls || "figdes") + '" viewBox="0 0 48 48" role="img" aria-label="' +
+         (DESNOME[k] || k) + '">' + (DES[k] || "") + '</svg>';
+}
+
+
 var livro = document.getElementById("livro"), PAGEL = [], TIRAS = [];
 /* ⚠️⚠️ AS FOLHAS DE LIGAR SE DECLARAM AQUI, e o número errado quebra DUAS
    folhas de uma vez — medido no `_rima1`, que estava no ar: a folha que liga
@@ -26,10 +64,10 @@ var livro = document.getElementById("livro"), PAGEL = [], TIRAS = [];
    apontada por engano FECHAVA SOZINHA, sem ninguém tocar nela. São as únicas
    cujos ids não nascem de `n<pi>_`, e sim dentro do `montaLigar`
    (`l<pi>g<i>_<chave>`). Conferir com `node _qa/conta_folha.js <pasta>`. */
-var LIGAR = [];
+var LIGAR = [12];
 /* a cor da faixa por BLOCO da escada, não por folha: a criança vê que o assunto
    mudou. Uma entrada por folha, de c1 a c5. */
-var CORES = [];
+var CORES = ["c1", "c1", "c1", "c1", "c1", "c1", "c1", "c2", "c2", "c2", "c2", "c2", "c2", "c2", "c3", "c3", "c3", "c3", "c3", "c3", "c3", "c4", "c4", "c4", "c4", "c4", "c4", "c4", "c5", "c5", "c5", "c5", "c5", "c5", "c5"];
 
 
 function faixa(d, i, titulo){ d.appendChild(el("div", "faixa", '<div class="num">' + i + '</div><h2>' + titulo + '</h2>')); }
@@ -220,7 +258,13 @@ function sobre(ev, alvo){
 function monta(){
   livro.innerHTML = ""; PAGEL = []; RESP = {}; TIRAS = [];
   /* ⚠️ UMA ENTRADA POR FOLHA, na ordem, começando pela capa `f0`. */
-  var caps = [f0], i;
+  var caps = [f0,
+    f01, f02, f03, f04, f05, f06, f07,        /*  1-7   o substantivo   */
+    f08, f09, f10, f11, f12, f13, f14,        /*  8-14  o adjetivo      */
+    f15, f16, f17, f18, f19, f20, f21,        /* 15-21  o verbo         */
+    f22, f23, f24, f25, f26, f27, f28,        /* 22-28  grande e pequeno*/
+    f29, f30, f31, f32, f33, f34,             /* 29-34  um e muitos     */
+    f35], i;                                  /* 35     o cartaz        */
   for(i = 0; i < caps.length; i++){
     var d = el("div", "pagina" + (i > 0 ? " " + CORES[i - 1] : "")); d.setAttribute("data-pag", i);
     caps[i](d, i);
@@ -958,7 +1002,26 @@ var PESO_PRIMEIRA = 1.0, PESO_COM_AJUDA = 0.6;
    Ex.: {n: "Distinguir X de Y", f: [1, 2, 3],
          ok:  "faz o que o objetivo pede, em palavras do professor",
          nao: "o que ainda não faz — sem a palavra 'errou'"}  */
-var OBJETIVOS = [];
+var OBJETIVOS = [
+  {n: "Reconhecer e classificar o substantivo", f: [1, 2, 3, 4, 5, 6, 7],
+   ok: "separa gente, coisa e lugar, vê a letra maiúscula do nome próprio e monta palavra derivada e composta",
+   nao: "ainda não separa o nome próprio do comum nem vê de onde a palavra nasceu"},
+  {n: "Usar o adjetivo e descobrir a classe pelo uso", f: [8, 9, 10, 11, 12, 13, 14],
+   ok: "dá característica ao substantivo, troca a locução pelo adjetivo e percebe que a MESMA palavra muda de classe conforme a frase",
+   nao: "ainda decide a classe pela palavra sozinha, sem olhar a frase em que ela está"},
+  {n: "Reconhecer o verbo e mudar o tempo", f: [15, 16, 17, 18, 19, 20, 21],
+   ok: "acha o verbo na frase, separa ação de estado e de fenômeno da natureza e passa a frase para ontem e para amanhã",
+   nao: "ainda troca o tempo do verbo sem olhar quando a ação acontece"},
+  {n: "Formar o aumentativo e o diminutivo", f: [22, 23, 24, 25, 26, 27, 28],
+   ok: "forma o grau pelas terminações e não cai na armadilha das palavras que terminam em -inho sem ser diminutivo",
+   nao: "ainda marca como diminutivo toda palavra terminada em -inho"},
+  {n: "Flexionar em número e fazer a concordância", f: [29, 30, 31, 32, 33, 34],
+   ok: "forma o plural pelas terminações -ão e -l e faz a frase INTEIRA concordar, com artigo e adjetivo",
+   nao: "ainda põe o s só no substantivo e deixa o resto da frase no singular"},
+  {n: "Amarrar as classes de palavras num quadro", f: [35],
+   ok: "desmonta uma frase em substantivo, adjetivo e verbo",
+   nao: "ainda não separa as classes dentro de uma frase inteira"}
+];
 
 function mede(folhas){
   var prim = 0, ajuda = 0, tot = 0, tentados = 0, k, j;
@@ -1256,3 +1319,490 @@ function fechaDossie(){ document.getElementById("dossie").className = ""; }
     vaiPara(ST.pag || 1);
   };
 })();
+
+/* ============================================================
+   AS 35 FOLHAS DO `_class5`
+
+   O roteiro e o crivo estão em `_sequencias/POTE-CLASS5.md`: cada folha nasce
+   de um VERBO que apareceu impresso numa das 123 folhas de papel colhidas.
+   Cinco blocos colados, cada um subindo um degrau, e o conceito sempre DEPOIS
+   do problema.
+
+   ⚠️ AS FIGURAS SÃO DESENHO PRÓPRIO, em vetor, dentro do arquivo. Não há PNG
+      para carregar (nenhum 404 possível), não borra em tela nenhuma e não
+      depende de recorte. Foram feitas para este caderno.
+   ============================================================ */
+
+/* ---------- escrever a resposta (as DUAS portas) ----------
+   ⚠️ Teclado de verdade e teclado do aparelho, regra da casa desde ago/2026: no
+      PC da escola a criança digita; no celular não há teclado físico, e sem um
+      campo de VERDADE para focar o aparelho não abre teclado nenhum. Este é um
+      <input> comum — o navegador cuida das duas portas sozinho. */
+function escreve(box, pi, id, gabarito, falaCerto, falaDica, dica){
+  registra(id, pi, gabarito);
+  var cx = el("div", "escrevelin");
+  var inp = document.createElement("input");
+  inp.type = "text"; inp.className = "escreve";
+  inp.setAttribute("autocomplete", "off"); inp.setAttribute("autocorrect", "off");
+  inp.setAttribute("autocapitalize", "characters"); inp.setAttribute("spellcheck", "false");
+  inp.setAttribute("aria-label", dica || "Escreva a palavra");
+  inp.setAttribute("data-qa", "esc-" + id);
+  inp.setAttribute("data-resp", gabarito);
+  if(ST.resp[id]){ inp.value = gabarito; inp.disabled = true; inp.className = "escreve ok"; }
+  var bt = el("button", "bt mini conf", "Conferir");
+  bt.setAttribute("data-qa", "conf-" + id);
+  function confere(){
+    if(ST.resp[id]) return;
+    var v = (inp.value || "").toUpperCase().replace(/\s+/g, "");
+    if(!v) return;
+    if(v === gabarito.toUpperCase()){
+      inp.value = gabarito; inp.disabled = true; inp.className = "escreve ok";
+      acertou(id, falaCerto);
+    } else {
+      inp.className = "escreve erro";
+      setTimeout(function(){ inp.className = "escreve"; }, 600);
+      errou(id, falaDica);
+    }
+  }
+  /* ⚠️ FOCO EXPLICITO NO CLIQUE. Um toque de dedo foca o campo sozinho; um
+     clique PROGRAMATICO (o do jogador da banca, e o de qualquer leitor de tela
+     que dispare click) NAO foca — e aí a letra digitada nao vai para lugar
+     nenhum e a folha nunca fecha. Foi assim que as folhas de escrever passaram
+     no navegador e REPROVARAM na banca: o defeito estava na porta, nao no
+     campo. */
+  inp.onclick = function(){ try{ inp.focus(); }catch(e){} };
+  bt.onclick = confere;
+  inp.onkeydown = function(ev){ if(ev.key === "Enter"){ ev.preventDefault(); confere(); } };
+  /* ⚠️ CONFERIR SOZINHO quando a palavra fica do tamanho certo — e isto e
+     conserto de defeito que o jogador da banca pegou: ele DIGITA e nao aperta
+     botao nenhum, entao as folhas de escrever nunca fechavam para ele. E nao e
+     so a regua: a criança tambem escreve e fica olhando, esperando. O botao
+     Conferir continua ali para quem quiser, e o Enter tambem. */
+  inp.addEventListener("input", function(){
+    if(ST.resp[id]) return;
+    var v = (inp.value || "").toUpperCase().replace(/\s+/g, "");
+    if(v.length >= gabarito.replace(/\s+/g, "").length) setTimeout(confere, 320);
+  });
+  cx.appendChild(inp); cx.appendChild(bt);
+  box.appendChild(cx);
+}
+
+/* ---------- marcar palavras dentro da frase ---------- */
+function marcaFrase(d, pi, pede, bloco, cls2){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, pede, "p" + pi + "enun");
+  var B = D[bloco], id = "n" + pi + "_0", box = item(0);
+  registra(id, pi, B.marcar.join(" "));
+  var linha = el("div", "frasemarca"), postas = {};
+  B.frase.forEach(function(pal, i){
+    var alvo = B.marcar.indexOf(i) > -1;
+    var b = el("button", "pmarca", pal);
+    b.setAttribute("data-qa", "op-" + id + "-" + i);
+    b.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso();
+      if(!alvo){
+        b.className = "pmarca nao";
+        setTimeout(function(){ b.className = "pmarca"; }, 500);
+        errou(id, "dica" + pi + "_0"); return;
+      }
+      if(postas[i]) return;
+      postas[i] = 1; b.className = "pmarca " + (cls2 || "marcada");
+      if(Object.keys(postas).length === B.marcar.length) acertou(id, "certo" + pi + "_0");
+    };
+    linha.appendChild(b);
+  });
+  box.appendChild(linha);
+  fechaItem(d, box, id);
+}
+
+/* ---------- montar a palavra com as sílabas soltas ---------- */
+function montaSilabas(d, pi, pede, bloco){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, pede, "p" + pi + "enun");
+  var B = D[bloco];
+  ST.folha["p" + pi].forEach(function(k, i){
+    var dado = B[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    var de = dado[0], alvo = dado[1], sil = dado[2];
+    registra(id, pi, alvo);
+    box.appendChild(el("div", "dizde", "de <b>" + de + "</b> vem…"));
+    var linha = el("div", "montada"), banco = el("div", "silbanco"), posto = [];
+    function pinta(){ linha.textContent = posto.join("") || "…"; }
+    pinta();
+    baralha(sil.slice(0)).forEach(function(s, j){
+      var b = el("button", "op sil", s);
+      b.setAttribute("data-qa", "sil-" + id + "-" + j);
+      b.onclick = function(){
+        if(ST.resp[id]) return;
+        sPasso(); posto.push(s); b.className = "op sil usada"; b.disabled = true; pinta();
+        if(posto.length === sil.length){
+          if(posto.join("") === alvo){ acertou(id, "certo" + pi + "_" + k); }
+          else {
+            errou(id, "dica" + pi + "_" + k);
+            posto = []; pinta();
+            linha.parentNode.querySelectorAll(".op.sil").forEach(function(x){
+              x.className = "op sil"; x.disabled = false; });
+          }
+        }
+      };
+      banco.appendChild(b);
+    });
+    box.appendChild(linha); box.appendChild(banco);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- escolher entre duas ou três (o molde mais usado) ----------
+   `linhas(dado)` devolve {rot, ops:[{v,rot,fala}], certa} para cada item. */
+function escolhe(d, pi, pede, bloco, linhas){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, pede, "p" + pi + "enun");
+  var B = D[bloco];
+  ST.folha["p" + pi].forEach(function(k, i){
+    var L = linhas(B[k], k), id = "n" + pi + "_" + i, box = item(i + 1);
+    box.appendChild(el("div", "pergunta", L.rot));
+    /* ⚠️ A RESPOSTA CERTA NAO PODE FICAR SEMPRE NO MESMO LUGAR. Escrevendo as
+       folhas eu deixei a certa em primeiro em TODAS — e aí a criança aprende a
+       posição, não o conteúdo, e o jogador da banca passa sem medir nada.
+       O acaso é SEMEADO pela folha e pelo item: a mesma criança que volta
+       encontra a mesma ordem (senão "continuar de onde parou" embaralharia o
+       que ela já tinha visto), e folhas diferentes não ficam iguais. */
+    opcoes(box, pi, id, baralha(L.ops.slice(0)), L.certa, L.cls || "curta",
+           "certo" + pi + "_" + k, "dica" + pi + "_" + k);
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- escrever a palavra (folha inteira) ---------- */
+function folhaEscreve(d, pi, pede, bloco, rot, gab, ajuda){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, pede, "p" + pi + "enun");
+  var B = D[bloco];
+  ST.folha["p" + pi].forEach(function(k, i){
+    var dado = B[k], id = "n" + pi + "_" + i, box = item(i + 1);
+    box.appendChild(el("div", "pergunta", rot(dado, k)));
+    escreve(box, pi, id, gab(dado, k), "certo" + pi + "_" + k, "dica" + pi + "_" + k,
+            ajuda ? ajuda(dado, k) : "Escreva a palavra");
+    fechaItem(d, box, id);
+  });
+}
+
+/* ---------- marcar num banco de palavras (achar os que são) ---------- */
+function achaNoBanco(d, pi, pede, certos, distratores){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, pede, "p" + pi + "enun");
+  var id = "n" + pi + "_0", box = item(0);
+  registra(id, pi, certos.join(" "));
+  var banco = el("div", "figbanco"), postas = {};
+  baralha(certos.concat(distratores)).forEach(function(w, j){
+    var b = el("button", "op pal", w);
+    /* ⚠️ O CONTRATO DO `data-qa` E DO MOTOR, nao meu: folha de marcar varios
+       publica `op-<id>-<pedaco>`, e o pedaco tem de ser o MESMO texto que o
+       `registra` guardou. Eu tinha inventado `ach-<id>-<n>` e o jogador da banca
+       saiu com "nao conheco a peca" — que nao e "passou". */
+    b.setAttribute("data-qa", "op-" + id + "-" + w);
+    b.onclick = function(){
+      if(ST.resp[id]) return;
+      sPasso();
+      if(certos.indexOf(w) < 0){
+        b.className = "op pal nao";
+        setTimeout(function(){ b.className = "op pal"; }, 520);
+        errou(id, "dica" + pi + "_0"); return;
+      }
+      if(postas[w]) return;
+      postas[w] = 1; b.className = "op pal usada";
+      if(Object.keys(postas).length === certos.length) acertou(id, "certo" + pi + "_0");
+    };
+    banco.appendChild(b);
+  });
+  box.appendChild(banco);
+  fechaItem(d, box, id);
+}
+
+/* ---------- duas cores na mesma frase ---------- */
+function duasCores(d, pi, pede, bloco){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, pede, "p" + pi + "enun");
+  var B = D[bloco], id = "n" + pi + "_0", box = item(0);
+  registra(id, pi, B.subst.concat(B.adj).join(" "));
+  var aviso = el("div", "dizde", "Toque nos <b>substantivos</b> e nos <b>adjetivos</b>.");
+  var linha = el("div", "frasemarca"), postas = {}, alvo = B.subst.length + B.adj.length;
+  B.frase.forEach(function(pal, i){
+    var eS = B.subst.indexOf(i) > -1, eA = B.adj.indexOf(i) > -1;
+    var b = el("button", "pmarca", pal);
+    b.setAttribute("data-qa", "op-" + id + "-" + i);
+    b.onclick = function(){
+      if(ST.resp[id] || postas[i]) return;
+      sPasso();
+      if(!eS && !eA){
+        b.className = "pmarca nao";
+        setTimeout(function(){ b.className = "pmarca"; }, 500);
+        errou(id, "dica" + pi + "_0"); return;
+      }
+      postas[i] = 1; b.className = "pmarca " + (eS ? "marcada" : "marcada2");
+      if(Object.keys(postas).length === alvo) acertou(id, "certo" + pi + "_0");
+    };
+    linha.appendChild(b);
+  });
+  box.appendChild(aviso); box.appendChild(linha);
+  fechaItem(d, box, id);
+}
+
+/* ============================================================
+   A CAPA — cena própria deste caderno, desenhada aqui.
+   O problema do caderno está na cena: as MESMAS coisas do mundo, e embaixo
+   delas as palavras que as nomeiam, as que dizem como elas são e as que dizem
+   o que elas fazem. É disso que o caderno trata.
+   ============================================================ */
+function f0(d){
+  var c = el("div", "capa"), nome = "CLASSES DE PALAVRAS", k, letras = "";
+  nome.split(" ").forEach(function(pal, w){
+    var s = "";
+    for(k = 0; k < pal.length; k++) s += '<span class="lt">' + pal.charAt(k) + '</span>';
+    letras += (w ? '<span class="esp"></span>' : '') + '<span class="tpal">' + s + '</span>';
+  });
+  c.innerHTML =
+    '<div class="ceu"></div>' +
+    '<h1 class="titu">' + letras + '</h1>' +
+    '<div class="sub">Língua Portuguesa &middot; 5º ano &middot; 35 folhas</div>' +
+    '<div class="cena capacena">' +
+      '<div class="cpeca">' + fig("casa", "figcapa") + '<b>CASA</b><i>ALTA</i></div>' +
+      '<div class="cpeca">' + fig("gato", "figcapa") + '<b>GATO</b><i>PELUDO</i></div>' +
+      '<div class="cpeca">' + fig("flor", "figcapa") + '<b>FLOR</b><i>CHEIROSA</i></div>' +
+      '<div class="cpeca">' + fig("livro", "figcapa") + '<b>LIVRO</b><i>GROSSO</i></div>' +
+    '</div>' +
+    '<div class="chamada">Toda palavra tem um lugar. Vamos descobrir o de cada uma?<br>' +
+    'Escreva o seu nome ali embaixo e toque em <b>Começar</b>.</div>';
+  d.appendChild(c);
+}
+
+/* ====================== BLOCO A — O SUBSTANTIVO ====================== */
+function f01(d, pi){
+  folhaEscreve(d, pi, "Estas coisas existem. Escreva o <b>nome</b> de cada uma.", "FIG",
+    function(x, k){ return fig(k) + '<span class="qtxt">Que coisa é esta?</span>'; },
+    function(x){ return x.t; }, function(x){ return "Escreva " + x.t; });
+}
+function f02(d, pi){
+  gavetas(d, pi, "quem", "Todo substantivo dá nome a alguma coisa. Ponha cada um na gaveta: <b>gente</b>, <b>coisa</b> ou <b>lugar</b>.");
+}
+function f03(d, pi){
+  escolhe(d, pi, "Agora olhe a <b>letra do começo</b>. Qual das duas é nome <b>próprio</b>?", "P3",
+    function(x){ return {rot: "Qual é o nome PRÓPRIO?",
+      ops: [{v:"pr", rot:x[1], fala:"diz_" + x[0]}, {v:"co", rot:x[2], fala:"diz2_" + x[0]}],
+      certa: "pr"}; });
+}
+function f04(d, pi){
+  montaSilabas(d, pi, "De uma palavra nasce outra. Monte a palavra <b>derivada</b> com as sílabas.", "P4");
+}
+function f05(d, pi){
+  escolhe(d, pi, "Agora <b>duas palavras viram uma</b>. Qual é a palavra composta certa?", "P5",
+    function(x, k){ return {rot: x[0] + " + " + x[1] + " = ?",
+      ops: [{v:"ok", rot:x[2], fala:"diz_" + k}, {v:"x", rot:x[1] + x[0], fala:"diz2_" + k}],
+      certa: "ok"}; });
+}
+function f06(d, pi){
+  marcaFrase(d, pi, "Os substantivos estão escondidos na frase. Toque em <b>cada um</b> deles.", "P6");
+}
+function f07(d, pi){
+  achaNoBanco(d, pi, "Ache <b>todos os substantivos</b> — e só eles.",
+    D.P7, ["ALTO", "CORRER", "BONITO", "PULAR", "VERDE", "DORMIR"]);
+}
+
+/* ====================== BLOCO B — O ADJETIVO ====================== */
+function f08(d, pi){
+  folhaEscreve(d, pi, "Agora não é o nome: é <b>como a coisa é</b>. Escreva uma característica.", "FIG",
+    function(x, k){ return fig(k) + '<span class="qtxt">Como é este(a) ' + x.t.toLowerCase() + '?</span>'; },
+    function(x){ return x.adj; }, function(x){ return "Escreva " + x.adj; });
+}
+function f09(d, pi){
+  escolhe(d, pi, "Qual adjetivo <b>combina</b> com a coisa?", "P9",
+    function(x, k){ return {rot: x[0] + " …",
+      ops: [{v:"a", rot:x[1], fala:"diz_" + k + "a"}, {v:"b", rot:x[2], fala:"diz_" + k + "b"},
+            {v:"c", rot:x[3], fala:"diz_" + k + "c"}],
+      certa: "a"}; });
+}
+function f10(d, pi){
+  duasCores(d, pi, "Agora as <b>duas classes juntas</b> na mesma frase.", "P10");
+}
+function f11(d, pi){
+  escolhe(d, pi, "Agora a <b>MESMA palavra</b>. O que ela é <b>nesta frase</b>?", "P11",
+    function(x, k){ return {rot: x[0], cls: "frase",
+      ops: [{v:"substantivo", rot:"SUBSTANTIVO", fala:"diz_subst"},
+            {v:"adjetivo", rot:"ADJETIVO", fala:"diz_adj"}],
+      certa: x[1]}; });
+}
+function f12(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Às vezes o adjetivo vem em <b>duas palavras</b>. Ligue cada uma ao adjetivo que vale o mesmo.", "p" + pi + "enun");
+  /* ⚠️ O `montaLigar` le OBJETOS, nao listas: ele grava `l<pi><tag>_<P.k>` e
+     desenha `P.esq` e `P.dir`. Passando lista, `P.k` sai `undefined` e a folha
+     registra UM item so — ela NUNCA fecharia, e a criança ligaria tudo
+     continuando a faltar. Foi o `conta_folha` que pegou, antes de ir ao ar. */
+  var box = item(0), pares = [];
+  ST.folha["p" + pi][0].forEach(function(k){
+    var L = D.P12[k];
+    pares.push({k: k, esq: L[0], dir: L[1],
+                fe: "diz_" + k + "e", fd: "diz_" + k + "d",
+                fc: "certo" + pi + "_" + k, dica: "dica" + pi + "_" + k,
+                ariaE: L[0], ariaD: L[1]});
+  });
+  /* ⚠️ a etiqueta e "g0", nao um nome qualquer: o `idsDaPagina` monta o id como
+     `l<folha>g<i>_<chave>`, e e POR ELE que o relatorio do professor conta. Com
+     outra etiqueta a folha funciona na tela e sai ZERO no relatorio — defeito
+     que so aparece no papel do professor, nunca na mao da crianca. */
+  montaLigar(box, pi, "g0", pares, d);
+  d.appendChild(box);
+}
+function f13(d, pi){
+  escolhe(d, pi, "O adjetivo tem <b>graus</b>. Em que grau está o desta frase?", "P13",
+    function(x, k){ return {rot: x[0], cls: "frase",
+      ops: [{v:"comparativo", rot:"COMPARATIVO", fala:"diz_comp"},
+            {v:"superlativo", rot:"SUPERLATIVO", fala:"diz_sup"}],
+      certa: x[1]}; });
+}
+function f14(d, pi){
+  folhaEscreve(d, pi, "Escreva o adjetivo que a dica pede.", "P14",
+    function(x){ return x[1]; }, function(x){ return x[0]; },
+    function(x){ return "Escreva " + x[0]; });
+}
+
+/* ====================== BLOCO C — O VERBO DE AÇÃO ====================== */
+function f15(d, pi){
+  folhaEscreve(d, pi, "O verbo diz <b>o que se faz</b>. Complete a frase com o verbo.", "P15",
+    function(x){ return x[0]; }, function(x){ return x[1]; },
+    function(x){ return "Escreva " + x[1]; });
+}
+function f16(d, pi){
+  gavetas(d, pi, "verbo", "Nem todo verbo é ação. Ponha cada um na gaveta certa.");
+}
+function f17(d, pi){
+  marcaFrase(d, pi, "Agora ache os <b>verbos</b> escondidos na frase.", "P17", "marcada3");
+}
+function f18(d, pi){
+  escolhe(d, pi, "A mesma ação em <b>três tempos</b>. Qual forma cabe em cada um?", "P18",
+    function(x, k){ return {rot: x[0] + " …", cls: "frase",
+      ops: [{v:"a", rot:x[1], fala:"diz_" + k + "a"}, {v:"b", rot:x[2], fala:"diz_" + k + "b"}],
+      certa: "a"}; });
+}
+function f19(d, pi){
+  escolhe(d, pi, "Agora passe a frase para <b>ontem</b>.", "P19",
+    function(x, k){ return {rot: x[0] + " &rarr; ontem…", cls: "frase",
+      ops: [{v:"a", rot:x[1], fala:"diz_" + k + "a"}, {v:"b", rot:x[2], fala:"diz_" + k + "b"}],
+      certa: "a"}; });
+}
+function f20(d, pi){
+  escolhe(d, pi, "Agora para <b>amanhã</b>.", "P20",
+    function(x, k){ return {rot: x[0] + " &rarr; amanhã…", cls: "frase",
+      ops: [{v:"a", rot:x[1], fala:"diz_" + k + "a"}, {v:"b", rot:x[2], fala:"diz_" + k + "b"}],
+      certa: "a"}; });
+}
+function f21(d, pi){
+  escolhe(d, pi, "Quem faz a ação <b>manda no verbo</b>. Complete.", "P21",
+    function(x, k){ return {rot: x[0], cls: "frase",
+      ops: [{v:"a", rot:x[1], fala:"diz_" + k + "a"}, {v:"b", rot:x[2], fala:"diz_" + k + "b"}],
+      certa: "a"}; });
+}
+
+/* ================ BLOCO D — AUMENTATIVO E DIMINUTIVO ================ */
+function f22(d, pi){
+  escolhe(d, pi, "Toda palavra pode ficar <b>pequena</b> ou <b>grande</b>. Qual destas é o aumentativo?", "P22",
+    function(x, k){ return {rot: "O normal é <b>" + x[1] + "</b>. E o aumentativo?",
+      ops: [{v:"a", rot:x[2], fala:"diz_" + k + "a"}, {v:"b", rot:x[0], fala:"diz_" + k + "b"}],
+      certa: "a"}; });
+}
+function f23(d, pi){
+  folhaEscreve(d, pi, "Escreva a palavra no <b>diminutivo</b>.", "P23",
+    function(x){ return x[0] + " &rarr; pequeno(a)…"; }, function(x){ return x[1]; },
+    function(x){ return "Escreva " + x[1]; });
+}
+function f24(d, pi){
+  folhaEscreve(d, pi, "Agora no <b>aumentativo</b>.", "P24",
+    function(x){ return x[0] + " &rarr; grande…"; }, function(x){ return x[1]; },
+    function(x){ return "Escreva " + x[1]; });
+}
+function f25(d, pi){
+  achaNoBanco(d, pi, "Ache <b>todas</b> as palavras que estão no diminutivo.",
+    [D.P25.palavras[0], D.P25.palavras[2], D.P25.palavras[4]],
+    [D.P25.palavras[1], D.P25.palavras[3], D.P25.palavras[5]]);
+}
+function f26(d, pi){
+  gavetas(d, pi, "grau", "São as <b>terminações</b> que fazem o grau. Ponha cada uma na gaveta.");
+}
+function f27(d, pi){
+  escolhe(d, pi, "Cuidado: nem tudo que acaba em <b>-inho</b> é diminutivo!", "P27",
+    function(x, k){ return {rot: "<b>" + x[0] + "</b> é diminutivo?",
+      ops: [{v:"sim", rot:"SIM", fala:"diz_sim"}, {v:"nao", rot:"NÃO", fala:"diz_nao"}],
+      certa: x[1]}; });
+}
+function f28(d, pi){
+  folhaEscreve(d, pi, "Escreva a palavra que a dica descreve.", "P28",
+    function(x){ return x[1]; }, function(x){ return x[0]; },
+    function(x){ return "Escreva " + x[0]; });
+}
+
+/* ================ BLOCO E — SINGULAR E PLURAL ================ */
+function f29(d, pi){
+  folhaEscreve(d, pi, "Uma coisa vira <b>muitas</b>. Escreva no plural.", "P29",
+    function(x){ return "uma " + x[0] + " &rarr; muitas…"; }, function(x){ return x[1]; },
+    function(x){ return "Escreva " + x[1]; });
+}
+function f30(d, pi){
+  escolhe(d, pi, "Agora as palavras terminadas em <b>-ÃO</b> — e elas não fazem todas igual.", "P30",
+    function(x, k){ return {rot: "um " + x[0] + " &rarr; muitos…",
+      ops: [{v:"a", rot:x[1], fala:"diz_" + k + "a"}, {v:"b", rot:x[2], fala:"diz_" + k + "b"}],
+      certa: "a"}; });
+}
+function f31(d, pi){
+  escolhe(d, pi, "Agora as terminadas em <b>-L</b>.", "P31",
+    function(x, k){ return {rot: "um " + x[0] + " &rarr; muitos…",
+      ops: [{v:"a", rot:x[1], fala:"diz_" + k + "a"}, {v:"b", rot:x[2], fala:"diz_" + k + "b"}],
+      certa: "a"}; });
+}
+function f32(d, pi){
+  gavetas(d, pi, "plural", "Cada palavra faz o plural de um jeito. Ponha cada uma no seu.");
+}
+function f33(d, pi){
+  escolhe(d, pi, "No plural, <b>a frase inteira muda</b> — não só o substantivo.", "P33",
+    function(x, k){ return {rot: x[0] + " &rarr; no plural…", cls: "frase",
+      ops: [{v:"a", rot:x[1], fala:"diz_" + k + "a"}, {v:"b", rot:x[2], fala:"diz_" + k + "b"}],
+      certa: "a"}; });
+}
+function f34(d, pi){
+  gavetas(d, pi, "numero", "Última gaveta: esta palavra está no <b>singular</b> ou no <b>plural</b>?");
+}
+
+/* ====================== O FECHO ====================== */
+function f35(d, pi){
+  faixa(d, pi, NOMES[pi - 1]);
+  enunciado(d, pi, "Uma frase, três classes. Toque em cada palavra e diga o que ela é.", "p" + pi + "enun");
+  var id = "n" + pi + "_0", box = item(0);
+  var FR = [["A", null], ["FLOR", "s"], ["CHEIROSA", "a"], ["ABRIU", "v"], ["hoje", null], [".", null]];
+  var alvos = [], k;
+  for(k = 0; k < FR.length; k++) if(FR[k][1]) alvos.push(k);
+  registra(id, pi, alvos.join(" "));
+  var quadro = el("div", "cartaz",
+    '<div class="cz s"><b>SUBSTANTIVO</b><span>dá o nome</span></div>' +
+    '<div class="cz a"><b>ADJETIVO</b><span>diz como é</span></div>' +
+    '<div class="cz v"><b>VERBO</b><span>diz o que faz</span></div>');
+  var linha = el("div", "frasemarca"), postas = {};
+  FR.forEach(function(par, i){
+    var b = el("button", "pmarca", par[0]);
+    b.setAttribute("data-qa", "op-" + id + "-" + i);
+    b.onclick = function(){
+      if(ST.resp[id] || postas[i]) return;
+      sPasso();
+      if(!par[1]){
+        b.className = "pmarca nao";
+        setTimeout(function(){ b.className = "pmarca"; }, 500);
+        errou(id, "dica" + pi + "_0"); return;
+      }
+      postas[i] = 1; b.className = "pmarca cz" + par[1];
+      if(Object.keys(postas).length === alvos.length) acertou(id, "certo" + pi + "_0");
+    };
+    linha.appendChild(b);
+  });
+  box.appendChild(quadro); box.appendChild(linha);
+  box.appendChild(el("div", "gancho",
+    "E a palavra que <b>muda de classe</b> conforme a frase — você lembra qual era?"));
+  fechaItem(d, box, id);
+}

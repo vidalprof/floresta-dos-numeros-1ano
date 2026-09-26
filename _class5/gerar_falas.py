@@ -146,16 +146,14 @@ def p(k, v):
 # ---------------------------------------------------------------------------
 # AS FALAS DO MOTOR — estas toda folha viva tem
 # ---------------------------------------------------------------------------
-p(u"capa", u"Aprendendo substantivos, adjetivos, verbos e a flexão das palavras. N folhas sobre ASSUNTO. Escreva o seu nome ali "
-           u"embaixo e toque em Começar.")
+p(u"capa", u"Classes de palavras. Trinta e cinco folhas sobre substantivo, adjetivo, verbo, aumentativo, diminutivo, singular e plural. Escreva o seu nome ali embaixo e toque em Começar.")
 p(u"folhaPronta", u"Folha pronta! Muito bem.")
 p(u"escreva", u"Escreva a palavra usando o teclado.")
 p(u"ligue", u"Toque numa palavra do lado esquerdo e depois na do lado direito.")
 p(u"toque_palavra", u"Primeiro toque numa palavra ali embaixo. Depois toque na "
                     u"gaveta dela.")
 p(u"vozOn", u"Narração ligada!")
-p(u"fim", u"Você chegou ao fim! " +
-          u"E o GANCHO: uma pergunta aberta que a criança leva para fora da tela.")
+p(u"fim", u"Você chegou ao fim! Agora você sabe o lugar de cada palavra. E fica a pergunta: você lembra qual era a palavra que mudava de classe conforme a frase?")
 
 # ---------------------------------------------------------------------------
 # AS FALAS DAS FOLHAS — uma seção por folha, lendo os DADOS
@@ -168,6 +166,133 @@ p(u"fim", u"Você chegou ao fim! " +
 #       p(u"dica1_" + k, u"… uma pista, NUNCA a resposta.")
 # ---------------------------------------------------------------------------
 
+
+
+# ---------------------------------------------------------------------------
+#  AS FALAS DAS FOLHAS — uma seção por folha, lendo os DADOS.
+#  ⚠️ A DICA NUNCA ENTREGA A RESPOSTA: ela diz ONDE OLHAR. Regra da casa.
+# ---------------------------------------------------------------------------
+# ⚠️ o `bloco()` procura `var <nome>`; as listas deste caderno moram DENTRO
+#    de `var D`, entao o bloco que se le e o D e as listas saem dele.
+DADOS = bloco(u"D")
+FIG = DADOS[u"FIG"]
+GAVB = bloco(u"GAV")
+
+ENUN = {
+ 1: u"Folha um. Estas coisas existem. Escreva o nome de cada uma.",
+ 2: u"Folha dois. Todo substantivo dá nome a alguma coisa. Ponha cada um na gaveta: gente, coisa ou lugar.",
+ 3: u"Folha três. Agora olhe a letra do começo. Qual das duas é nome próprio?",
+ 4: u"Folha quatro. De uma palavra nasce outra. Monte a palavra derivada com as sílabas.",
+ 5: u"Folha cinco. Agora duas palavras viram uma. Qual é a palavra composta certa?",
+ 6: u"Folha seis. Os substantivos estão escondidos na frase. Toque em cada um deles.",
+ 7: u"Folha sete. Ache todos os substantivos, e só eles.",
+ 8: u"Folha oito. Agora não é o nome: é como a coisa é. Escreva uma característica.",
+ 9: u"Folha nove. Qual adjetivo combina com a coisa?",
+ 10: u"Folha dez. Agora as duas classes juntas na mesma frase.",
+ 11: u"Folha onze. Agora a mesma palavra. O que ela é nesta frase?",
+ 12: u"Folha doze. Às vezes o adjetivo vem em duas palavras. Ligue cada uma ao adjetivo que vale o mesmo.",
+ 13: u"Folha treze. O adjetivo tem graus. Em que grau está o desta frase?",
+ 14: u"Folha catorze. Escreva o adjetivo que a dica pede.",
+ 15: u"Folha quinze. O verbo diz o que se faz. Complete a frase com o verbo.",
+ 16: u"Folha dezesseis. Nem todo verbo é ação. Ponha cada um na gaveta certa.",
+ 17: u"Folha dezessete. Agora ache os verbos escondidos na frase.",
+ 18: u"Folha dezoito. A mesma ação em três tempos. Qual forma cabe em cada um?",
+ 19: u"Folha dezenove. Agora passe a frase para ontem.",
+ 20: u"Folha vinte. Agora para amanhã.",
+ 21: u"Folha vinte e um. Quem faz a ação manda no verbo. Complete.",
+ 22: u"Folha vinte e dois. Toda palavra pode ficar pequena ou grande. Qual destas é o aumentativo?",
+ 23: u"Folha vinte e três. Escreva a palavra no diminutivo.",
+ 24: u"Folha vinte e quatro. Agora no aumentativo.",
+ 25: u"Folha vinte e cinco. Ache todas as palavras que estão no diminutivo.",
+ 26: u"Folha vinte e seis. São as terminações que fazem o grau. Ponha cada uma na gaveta.",
+ 27: u"Folha vinte e sete. Cuidado: nem tudo que acaba em inho é diminutivo!",
+ 28: u"Folha vinte e oito. Escreva a palavra que a dica descreve.",
+ 29: u"Folha vinte e nove. Uma coisa vira muitas. Escreva no plural.",
+ 30: u"Folha trinta. Agora as palavras terminadas em ão. E elas não fazem todas igual.",
+ 31: u"Folha trinta e um. Agora as terminadas em L.",
+ 32: u"Folha trinta e dois. Cada palavra faz o plural de um jeito. Ponha cada uma no seu.",
+ 33: u"Folha trinta e três. No plural, a frase inteira muda, não só o substantivo.",
+ 34: u"Folha trinta e quatro. Última gaveta: esta palavra está no singular ou no plural?",
+ 35: u"Folha trinta e cinco. Uma frase, três classes. Toque em cada palavra e diga o que ela é.",
+}
+for _n, _txt in ENUN.items():
+    p(u"p%denun" % _n, _txt)
+
+CERTO = {
+ 1: (u"Isso! É o nome dela.", u"Olhe o desenho e diga o nome em voz alta."),
+ 2: (u"Isso! Está na gaveta certa.", u"Pergunte: isto é gente, é coisa ou é lugar?"),
+ 3: (u"Isso! Nome próprio começa com letra maiúscula.", u"Qual das duas começa com letra grande?"),
+ 4: (u"Isso! Uma palavra nasceu da outra.", u"Comece pelo pedaço que é igual ao da primeira palavra."),
+ 5: (u"Isso! Duas palavras, uma só.", u"Junte na ordem em que você ouve a palavra."),
+ 6: (u"Isso! Este dá nome a alguma coisa.", u"Substantivo dá NOME. Procure quem tem nome na frase."),
+ 7: (u"Isso! Este é substantivo.", u"Se dá para pôr o ou a na frente, é substantivo."),
+ 8: (u"Isso! Você disse como ela é.", u"Não é o nome: é como ela é."),
+ 9: (u"Isso! Combina mesmo.", u"Pense na coisa e em como ela é de verdade."),
+ 10: (u"Isso!", u"Substantivo dá o nome; adjetivo diz como é."),
+ 11: (u"Isso! Quem decide é a frase.", u"Veja se a palavra está dando o NOME ou dizendo COMO É."),
+ 12: (u"Isso! As duas dizem a mesma coisa.", u"Pense em que palavra cabe no lugar das duas."),
+ 13: (u"Isso!", u"Compara duas coisas ou diz que é o máximo?"),
+ 14: (u"Isso!", u"Pense no contrário do que a dica diz."),
+ 15: (u"Isso! Este é o verbo.", u"O que a pessoa está fazendo?"),
+ 16: (u"Isso! Está na gaveta certa.", u"É alguém fazendo, é um jeito de ser, ou é o tempo lá fora?"),
+ 17: (u"Isso! Este é verbo.", u"Verbo é o que se faz ou o que acontece."),
+ 18: (u"Isso! Este é o tempo certo.", u"Já aconteceu, acontece agora, ou vai acontecer?"),
+ 19: (u"Isso! Está no passado.", u"Ontem já passou: o verbo tem de mudar."),
+ 20: (u"Isso! Está no futuro.", u"Amanhã ainda não chegou: o verbo tem de mudar."),
+ 21: (u"Isso! O verbo foi junto com quem faz.", u"Quantos são? O verbo acompanha."),
+ 22: (u"Isso! Este é o maior.", u"Qual dos dois deixa a palavra GRANDE?"),
+ 23: (u"Isso! Ficou pequenininha.", u"Ponha inho ou zinho no fim da palavra."),
+ 24: (u"Isso! Ficou enorme.", u"Ponha ão, arra ou aça no fim da palavra."),
+ 25: (u"Isso! Está no diminutivo.", u"Procure as que deixam a coisa pequena."),
+ 26: (u"Isso! Esta terminação faz isso mesmo.", u"Esta terminação deixa a palavra maior ou menor?"),
+ 27: (u"Isso!", u"Pergunte: é um moinho pequeno, ou é outra coisa?"),
+ 28: (u"Isso!", u"Leia a dica de novo, devagar."),
+ 29: (u"Isso! Agora são muitos.", u"Muitas vezes basta o s no fim."),
+ 30: (u"Isso! Este ão faz assim.", u"Diga em voz alta: soa melhor de que jeito?"),
+ 31: (u"Isso! O L sai e entram is.", u"O L do fim não fica: pense em animais."),
+ 32: (u"Isso! Este é o plural dela.", u"Diga a palavra no plural em voz alta primeiro."),
+ 33: (u"Isso! A frase inteira foi junto.", u"O artigo e o adjetivo também mudam."),
+ 34: (u"Isso!", u"É uma coisa só ou são várias?"),
+ 35: (u"Isso! Você achou as três classes.", u"Uma dá o nome, outra diz como é, outra diz o que faz."),
+}
+for _n, (_c, _d) in CERTO.items():
+    p(u"certo%d_0" % _n, _c)
+    p(u"dica%d_0" % _n, _d)
+
+# as chaves por ITEM, que o motor pede uma a uma
+ITENSB = bloco(u"ITENS")
+for _n in range(1, 36):
+    _lista = ITENSB.get(u"p%d" % _n) or []
+    if _lista and isinstance(_lista[0], list):
+        _lista = _lista[0]
+    for _k in _lista:
+        p(u"certo%d_%s" % (_n, _k), CERTO[_n][0])
+        p(u"dica%d_%s" % (_n, _k), CERTO[_n][1])
+
+# as vozes das gavetas (a gaveta diz a REGRA dela, nunca a resposta)
+REGRA = {
+ u"gente": u"Gaveta gente: nomes de pessoas.",
+ u"coisa": u"Gaveta coisa: nomes de objetos.",
+ u"lugar": u"Gaveta lugar: nomes de lugares.",
+ u"acao": u"Gaveta ação: o que alguém faz.",
+ u"estado": u"Gaveta estado: um jeito de ser ou de estar.",
+ u"natureza": u"Gaveta natureza: o que acontece no tempo lá fora.",
+ u"dim": u"Gaveta diminutivo: deixa a palavra pequena.",
+ u"aum": u"Gaveta aumentativo: deixa a palavra grande.",
+ u"oes": u"Gaveta ões.", u"aes": u"Gaveta ães.", u"aos": u"Gaveta ãos.",
+ u"sing": u"Gaveta singular: uma coisa só.",
+ u"plur": u"Gaveta plural: várias coisas.",
+}
+for _gk, _G in GAVB.items():
+    for _C in _G[u"cols"]:
+        p(u"gav_%s_%s" % (_gk, _C[u"k"]), REGRA.get(_C[u"k"], _C[u"n"] + u"."))
+    for _k, _P in _G[u"pal"].items():
+        p(u"diz2_%s_%s" % (_gk, _k), _P[u"p"] + u".")
+
+# a voz de cada figura e de cada resposta escrita
+for _k, _X in FIG.items():
+    p(u"diz_" + _k, _X[u"t"] + u".")
+    p(u"diz2_" + _k, _X[u"adj"] + u".")
 
 # ==============================================================================
 #  AS SÍLABAS FALADAS — e este bloco é obrigatório em caderno que fale sílaba

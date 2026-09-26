@@ -771,7 +771,43 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
       "pinte com a mesma cor" dá pintar. Anotar o comando verbatim no POTE.
    ⚠️ Folha nova = linha nova AQUI, no mesmo commit.
    Ex.: {"f1": "escolher", "f2": "classificar", "f3": "ligar"} */
-var GESTOS = {};
+var GESTOS = {
+"f1": "escrever",
+"f2": "classificar",
+"f3": "decidir",
+"f4": "montar palavra",
+"f5": "montar palavra",
+"f6": "marca-texto",
+"f7": "caca-palavras",
+"f8": "escrever",
+"f9": "escolher",
+"f10": "marca-texto",
+"f11": "decidir",
+"f12": "ligar",
+"f13": "escolher",
+"f14": "cruzadinha",
+"f15": "escrever",
+"f16": "classificar",
+"f17": "marca-texto",
+"f18": "ordenar",
+"f19": "escolher",
+"f20": "escolher",
+"f21": "completar",
+"f22": "escrever",
+"f23": "escrever",
+"f24": "escrever",
+"f25": "marcar varios",
+"f26": "classificar",
+"f27": "decidir",
+"f28": "forca",
+"f29": "escrever",
+"f30": "escolher",
+"f31": "escolher",
+"f32": "arrastar",
+"f33": "completar",
+"f34": "classificar",
+"f35": "cartaz"
+};
 /*GESTOS-FIM*/
 /*ITENS-INI*/
 /* ⚠️⚠️ A POSIÇÃO É A IDENTIDADE. A folha da posição 7 usa o pote `p7`, grava os
@@ -784,15 +820,645 @@ var GESTOS = {};
    Quem mede é `node _qa/conta_folha.js <pasta>`; rodar SEMPRE.
    ⚠️ Folha de LIGAR e folha de UM ITEM SÓ guardam o pote EMBRULHADO:
       "p7": [["chave1","chave2","chave3"]] */
-var ITENS = {};
+var ITENS = {
+"p1": [
+"casa",
+"gato",
+"flor",
+"livro"
+],
+"p2": [
+"a1",
+"a2",
+"b1",
+"b2",
+"c1",
+"c2"
+],
+"p3": [
+"d1",
+"d2",
+"d3",
+"d4"
+],
+"p4": [
+"e1",
+"e2",
+"e3",
+"e4"
+],
+"p5": [
+"f1",
+"f2",
+"f3",
+"f4"
+],
+"p6": [
+[
+"g1"
+]
+],
+"p7": [
+[
+"h1"
+]
+],
+"p8": [
+"casa",
+"gato",
+"flor",
+"livro"
+],
+"p9": [
+"i1",
+"i2",
+"i3",
+"i4"
+],
+"p10": [
+[
+"j1"
+]
+],
+"p11": [
+"k1",
+"k2",
+"k3",
+"k4"
+],
+"p12": [
+[
+"m1",
+"m2",
+"m3",
+"m4"
+]
+],
+"p13": [
+"n1",
+"n2",
+"n3",
+"n4"
+],
+"p14": [
+"o1",
+"o2",
+"o3",
+"o4"
+],
+"p15": [
+"q1",
+"q2",
+"q3",
+"q4"
+],
+"p16": [
+"r1",
+"r2",
+"r3",
+"r4",
+"r5",
+"r6"
+],
+"p17": [
+[
+"s1"
+]
+],
+"p18": [
+"t1",
+"t2",
+"t3"
+],
+"p19": [
+"u1",
+"u2",
+"u3",
+"u4"
+],
+"p20": [
+"v1",
+"v2",
+"v3",
+"v4"
+],
+"p21": [
+"w1",
+"w2",
+"w3",
+"w4"
+],
+"p22": [
+"x1",
+"x2",
+"x3",
+"x4"
+],
+"p23": [
+"y1",
+"y2",
+"y3",
+"y4"
+],
+"p24": [
+"z1",
+"z2",
+"z3",
+"z4"
+],
+"p25": [
+[
+"aa1"
+]
+],
+"p26": [
+"ab1",
+"ab2",
+"ab3",
+"ab4",
+"ab5",
+"ab6"
+],
+"p27": [
+"ac1",
+"ac2",
+"ac3",
+"ac4"
+],
+"p28": [
+"ad1",
+"ad2"
+],
+"p29": [
+"ae1",
+"ae2",
+"ae3",
+"ae4"
+],
+"p30": [
+"af1",
+"af2",
+"af3",
+"af4"
+],
+"p31": [
+"ag1",
+"ag2",
+"ag3",
+"ag4"
+],
+"p32": [
+"ah1",
+"ah2",
+"ah3",
+"ah4",
+"ah5",
+"ah6"
+],
+"p33": [
+"ai1",
+"ai2",
+"ai3"
+],
+"p34": [
+"aj1",
+"aj2",
+"aj3",
+"aj4",
+"aj5",
+"aj6"
+],
+"p35": [
+[
+"ak1"
+]
+]
+};
 /*ITENS-FIM*/
 /*FALAS-INI*/
-/* ⚠️ NÃO SE ESCREVE AQUI À MÃO: este bloco é REESCRITO por
-   `python3 <pasta>/gerar_falas.py`, que lê os DADOS lá embaixo. Uma fonte só —
-   é isso que acaba com "a tela diz uma coisa e a voz diz outra". */
-var FALAS = {};
+var FALAS = {
+ "capa": "Classes de palavras. Trinta e cinco folhas sobre substantivo, adjetivo, verbo, aumentativo, diminutivo, singular e plural. Escreva o seu nome ali embaixo e toque em Começar.",
+ "certo10_0": "Isso!",
+ "certo10_j1": "Isso!",
+ "certo11_0": "Isso! Quem decide é a frase.",
+ "certo11_k1": "Isso! Quem decide é a frase.",
+ "certo11_k2": "Isso! Quem decide é a frase.",
+ "certo11_k3": "Isso! Quem decide é a frase.",
+ "certo11_k4": "Isso! Quem decide é a frase.",
+ "certo12_0": "Isso! As duas dizem a mesma coisa.",
+ "certo12_m1": "Isso! As duas dizem a mesma coisa.",
+ "certo12_m2": "Isso! As duas dizem a mesma coisa.",
+ "certo12_m3": "Isso! As duas dizem a mesma coisa.",
+ "certo12_m4": "Isso! As duas dizem a mesma coisa.",
+ "certo13_0": "Isso!",
+ "certo13_n1": "Isso!",
+ "certo13_n2": "Isso!",
+ "certo13_n3": "Isso!",
+ "certo13_n4": "Isso!",
+ "certo14_0": "Isso!",
+ "certo14_o1": "Isso!",
+ "certo14_o2": "Isso!",
+ "certo14_o3": "Isso!",
+ "certo14_o4": "Isso!",
+ "certo15_0": "Isso! Este é o verbo.",
+ "certo15_q1": "Isso! Este é o verbo.",
+ "certo15_q2": "Isso! Este é o verbo.",
+ "certo15_q3": "Isso! Este é o verbo.",
+ "certo15_q4": "Isso! Este é o verbo.",
+ "certo16_0": "Isso! Está na gaveta certa.",
+ "certo16_r1": "Isso! Está na gaveta certa.",
+ "certo16_r2": "Isso! Está na gaveta certa.",
+ "certo16_r3": "Isso! Está na gaveta certa.",
+ "certo16_r4": "Isso! Está na gaveta certa.",
+ "certo16_r5": "Isso! Está na gaveta certa.",
+ "certo16_r6": "Isso! Está na gaveta certa.",
+ "certo17_0": "Isso! Este é verbo.",
+ "certo17_s1": "Isso! Este é verbo.",
+ "certo18_0": "Isso! Este é o tempo certo.",
+ "certo18_t1": "Isso! Este é o tempo certo.",
+ "certo18_t2": "Isso! Este é o tempo certo.",
+ "certo18_t3": "Isso! Este é o tempo certo.",
+ "certo19_0": "Isso! Está no passado.",
+ "certo19_u1": "Isso! Está no passado.",
+ "certo19_u2": "Isso! Está no passado.",
+ "certo19_u3": "Isso! Está no passado.",
+ "certo19_u4": "Isso! Está no passado.",
+ "certo1_0": "Isso! É o nome dela.",
+ "certo1_casa": "Isso! É o nome dela.",
+ "certo1_flor": "Isso! É o nome dela.",
+ "certo1_gato": "Isso! É o nome dela.",
+ "certo1_livro": "Isso! É o nome dela.",
+ "certo20_0": "Isso! Está no futuro.",
+ "certo20_v1": "Isso! Está no futuro.",
+ "certo20_v2": "Isso! Está no futuro.",
+ "certo20_v3": "Isso! Está no futuro.",
+ "certo20_v4": "Isso! Está no futuro.",
+ "certo21_0": "Isso! O verbo foi junto com quem faz.",
+ "certo21_w1": "Isso! O verbo foi junto com quem faz.",
+ "certo21_w2": "Isso! O verbo foi junto com quem faz.",
+ "certo21_w3": "Isso! O verbo foi junto com quem faz.",
+ "certo21_w4": "Isso! O verbo foi junto com quem faz.",
+ "certo22_0": "Isso! Este é o maior.",
+ "certo22_x1": "Isso! Este é o maior.",
+ "certo22_x2": "Isso! Este é o maior.",
+ "certo22_x3": "Isso! Este é o maior.",
+ "certo22_x4": "Isso! Este é o maior.",
+ "certo23_0": "Isso! Ficou pequenininha.",
+ "certo23_y1": "Isso! Ficou pequenininha.",
+ "certo23_y2": "Isso! Ficou pequenininha.",
+ "certo23_y3": "Isso! Ficou pequenininha.",
+ "certo23_y4": "Isso! Ficou pequenininha.",
+ "certo24_0": "Isso! Ficou enorme.",
+ "certo24_z1": "Isso! Ficou enorme.",
+ "certo24_z2": "Isso! Ficou enorme.",
+ "certo24_z3": "Isso! Ficou enorme.",
+ "certo24_z4": "Isso! Ficou enorme.",
+ "certo25_0": "Isso! Está no diminutivo.",
+ "certo25_aa1": "Isso! Está no diminutivo.",
+ "certo26_0": "Isso! Esta terminação faz isso mesmo.",
+ "certo26_ab1": "Isso! Esta terminação faz isso mesmo.",
+ "certo26_ab2": "Isso! Esta terminação faz isso mesmo.",
+ "certo26_ab3": "Isso! Esta terminação faz isso mesmo.",
+ "certo26_ab4": "Isso! Esta terminação faz isso mesmo.",
+ "certo26_ab5": "Isso! Esta terminação faz isso mesmo.",
+ "certo26_ab6": "Isso! Esta terminação faz isso mesmo.",
+ "certo27_0": "Isso!",
+ "certo27_ac1": "Isso!",
+ "certo27_ac2": "Isso!",
+ "certo27_ac3": "Isso!",
+ "certo27_ac4": "Isso!",
+ "certo28_0": "Isso!",
+ "certo28_ad1": "Isso!",
+ "certo28_ad2": "Isso!",
+ "certo29_0": "Isso! Agora são muitos.",
+ "certo29_ae1": "Isso! Agora são muitos.",
+ "certo29_ae2": "Isso! Agora são muitos.",
+ "certo29_ae3": "Isso! Agora são muitos.",
+ "certo29_ae4": "Isso! Agora são muitos.",
+ "certo2_0": "Isso! Está na gaveta certa.",
+ "certo2_a1": "Isso! Está na gaveta certa.",
+ "certo2_a2": "Isso! Está na gaveta certa.",
+ "certo2_b1": "Isso! Está na gaveta certa.",
+ "certo2_b2": "Isso! Está na gaveta certa.",
+ "certo2_c1": "Isso! Está na gaveta certa.",
+ "certo2_c2": "Isso! Está na gaveta certa.",
+ "certo30_0": "Isso! Este ão faz assim.",
+ "certo30_af1": "Isso! Este ão faz assim.",
+ "certo30_af2": "Isso! Este ão faz assim.",
+ "certo30_af3": "Isso! Este ão faz assim.",
+ "certo30_af4": "Isso! Este ão faz assim.",
+ "certo31_0": "Isso! O L sai e entram is.",
+ "certo31_ag1": "Isso! O L sai e entram is.",
+ "certo31_ag2": "Isso! O L sai e entram is.",
+ "certo31_ag3": "Isso! O L sai e entram is.",
+ "certo31_ag4": "Isso! O L sai e entram is.",
+ "certo32_0": "Isso! Este é o plural dela.",
+ "certo32_ah1": "Isso! Este é o plural dela.",
+ "certo32_ah2": "Isso! Este é o plural dela.",
+ "certo32_ah3": "Isso! Este é o plural dela.",
+ "certo32_ah4": "Isso! Este é o plural dela.",
+ "certo32_ah5": "Isso! Este é o plural dela.",
+ "certo32_ah6": "Isso! Este é o plural dela.",
+ "certo33_0": "Isso! A frase inteira foi junto.",
+ "certo33_ai1": "Isso! A frase inteira foi junto.",
+ "certo33_ai2": "Isso! A frase inteira foi junto.",
+ "certo33_ai3": "Isso! A frase inteira foi junto.",
+ "certo34_0": "Isso!",
+ "certo34_aj1": "Isso!",
+ "certo34_aj2": "Isso!",
+ "certo34_aj3": "Isso!",
+ "certo34_aj4": "Isso!",
+ "certo34_aj5": "Isso!",
+ "certo34_aj6": "Isso!",
+ "certo35_0": "Isso! Você achou as três classes.",
+ "certo35_ak1": "Isso! Você achou as três classes.",
+ "certo3_0": "Isso! Nome próprio começa com letra maiúscula.",
+ "certo3_d1": "Isso! Nome próprio começa com letra maiúscula.",
+ "certo3_d2": "Isso! Nome próprio começa com letra maiúscula.",
+ "certo3_d3": "Isso! Nome próprio começa com letra maiúscula.",
+ "certo3_d4": "Isso! Nome próprio começa com letra maiúscula.",
+ "certo4_0": "Isso! Uma palavra nasceu da outra.",
+ "certo4_e1": "Isso! Uma palavra nasceu da outra.",
+ "certo4_e2": "Isso! Uma palavra nasceu da outra.",
+ "certo4_e3": "Isso! Uma palavra nasceu da outra.",
+ "certo4_e4": "Isso! Uma palavra nasceu da outra.",
+ "certo5_0": "Isso! Duas palavras, uma só.",
+ "certo5_f1": "Isso! Duas palavras, uma só.",
+ "certo5_f2": "Isso! Duas palavras, uma só.",
+ "certo5_f3": "Isso! Duas palavras, uma só.",
+ "certo5_f4": "Isso! Duas palavras, uma só.",
+ "certo6_0": "Isso! Este dá nome a alguma coisa.",
+ "certo6_g1": "Isso! Este dá nome a alguma coisa.",
+ "certo7_0": "Isso! Este é substantivo.",
+ "certo7_h1": "Isso! Este é substantivo.",
+ "certo8_0": "Isso! Você disse como ela é.",
+ "certo8_casa": "Isso! Você disse como ela é.",
+ "certo8_flor": "Isso! Você disse como ela é.",
+ "certo8_gato": "Isso! Você disse como ela é.",
+ "certo8_livro": "Isso! Você disse como ela é.",
+ "certo9_0": "Isso! Combina mesmo.",
+ "certo9_i1": "Isso! Combina mesmo.",
+ "certo9_i2": "Isso! Combina mesmo.",
+ "certo9_i3": "Isso! Combina mesmo.",
+ "certo9_i4": "Isso! Combina mesmo.",
+ "dica10_0": "Substantivo dá o nome; adjetivo diz como é.",
+ "dica10_j1": "Substantivo dá o nome; adjetivo diz como é.",
+ "dica11_0": "Veja se a palavra está dando o NOME ou dizendo COMO É.",
+ "dica11_k1": "Veja se a palavra está dando o NOME ou dizendo COMO É.",
+ "dica11_k2": "Veja se a palavra está dando o NOME ou dizendo COMO É.",
+ "dica11_k3": "Veja se a palavra está dando o NOME ou dizendo COMO É.",
+ "dica11_k4": "Veja se a palavra está dando o NOME ou dizendo COMO É.",
+ "dica12_0": "Pense em que palavra cabe no lugar das duas.",
+ "dica12_m1": "Pense em que palavra cabe no lugar das duas.",
+ "dica12_m2": "Pense em que palavra cabe no lugar das duas.",
+ "dica12_m3": "Pense em que palavra cabe no lugar das duas.",
+ "dica12_m4": "Pense em que palavra cabe no lugar das duas.",
+ "dica13_0": "Compara duas coisas ou diz que é o máximo?",
+ "dica13_n1": "Compara duas coisas ou diz que é o máximo?",
+ "dica13_n2": "Compara duas coisas ou diz que é o máximo?",
+ "dica13_n3": "Compara duas coisas ou diz que é o máximo?",
+ "dica13_n4": "Compara duas coisas ou diz que é o máximo?",
+ "dica14_0": "Pense no contrário do que a dica diz.",
+ "dica14_o1": "Pense no contrário do que a dica diz.",
+ "dica14_o2": "Pense no contrário do que a dica diz.",
+ "dica14_o3": "Pense no contrário do que a dica diz.",
+ "dica14_o4": "Pense no contrário do que a dica diz.",
+ "dica15_0": "O que a pessoa está fazendo?",
+ "dica15_q1": "O que a pessoa está fazendo?",
+ "dica15_q2": "O que a pessoa está fazendo?",
+ "dica15_q3": "O que a pessoa está fazendo?",
+ "dica15_q4": "O que a pessoa está fazendo?",
+ "dica16_0": "É alguém fazendo, é um jeito de ser, ou é o tempo lá fora?",
+ "dica16_r1": "É alguém fazendo, é um jeito de ser, ou é o tempo lá fora?",
+ "dica16_r2": "É alguém fazendo, é um jeito de ser, ou é o tempo lá fora?",
+ "dica16_r3": "É alguém fazendo, é um jeito de ser, ou é o tempo lá fora?",
+ "dica16_r4": "É alguém fazendo, é um jeito de ser, ou é o tempo lá fora?",
+ "dica16_r5": "É alguém fazendo, é um jeito de ser, ou é o tempo lá fora?",
+ "dica16_r6": "É alguém fazendo, é um jeito de ser, ou é o tempo lá fora?",
+ "dica17_0": "Verbo é o que se faz ou o que acontece.",
+ "dica17_s1": "Verbo é o que se faz ou o que acontece.",
+ "dica18_0": "Já aconteceu, acontece agora, ou vai acontecer?",
+ "dica18_t1": "Já aconteceu, acontece agora, ou vai acontecer?",
+ "dica18_t2": "Já aconteceu, acontece agora, ou vai acontecer?",
+ "dica18_t3": "Já aconteceu, acontece agora, ou vai acontecer?",
+ "dica19_0": "Ontem já passou: o verbo tem de mudar.",
+ "dica19_u1": "Ontem já passou: o verbo tem de mudar.",
+ "dica19_u2": "Ontem já passou: o verbo tem de mudar.",
+ "dica19_u3": "Ontem já passou: o verbo tem de mudar.",
+ "dica19_u4": "Ontem já passou: o verbo tem de mudar.",
+ "dica1_0": "Olhe o desenho e diga o nome em voz alta.",
+ "dica1_casa": "Olhe o desenho e diga o nome em voz alta.",
+ "dica1_flor": "Olhe o desenho e diga o nome em voz alta.",
+ "dica1_gato": "Olhe o desenho e diga o nome em voz alta.",
+ "dica1_livro": "Olhe o desenho e diga o nome em voz alta.",
+ "dica20_0": "Amanhã ainda não chegou: o verbo tem de mudar.",
+ "dica20_v1": "Amanhã ainda não chegou: o verbo tem de mudar.",
+ "dica20_v2": "Amanhã ainda não chegou: o verbo tem de mudar.",
+ "dica20_v3": "Amanhã ainda não chegou: o verbo tem de mudar.",
+ "dica20_v4": "Amanhã ainda não chegou: o verbo tem de mudar.",
+ "dica21_0": "Quantos são? O verbo acompanha.",
+ "dica21_w1": "Quantos são? O verbo acompanha.",
+ "dica21_w2": "Quantos são? O verbo acompanha.",
+ "dica21_w3": "Quantos são? O verbo acompanha.",
+ "dica21_w4": "Quantos são? O verbo acompanha.",
+ "dica22_0": "Qual dos dois deixa a palavra GRANDE?",
+ "dica22_x1": "Qual dos dois deixa a palavra GRANDE?",
+ "dica22_x2": "Qual dos dois deixa a palavra GRANDE?",
+ "dica22_x3": "Qual dos dois deixa a palavra GRANDE?",
+ "dica22_x4": "Qual dos dois deixa a palavra GRANDE?",
+ "dica23_0": "Ponha inho ou zinho no fim da palavra.",
+ "dica23_y1": "Ponha inho ou zinho no fim da palavra.",
+ "dica23_y2": "Ponha inho ou zinho no fim da palavra.",
+ "dica23_y3": "Ponha inho ou zinho no fim da palavra.",
+ "dica23_y4": "Ponha inho ou zinho no fim da palavra.",
+ "dica24_0": "Ponha ão, arra ou aça no fim da palavra.",
+ "dica24_z1": "Ponha ão, arra ou aça no fim da palavra.",
+ "dica24_z2": "Ponha ão, arra ou aça no fim da palavra.",
+ "dica24_z3": "Ponha ão, arra ou aça no fim da palavra.",
+ "dica24_z4": "Ponha ão, arra ou aça no fim da palavra.",
+ "dica25_0": "Procure as que deixam a coisa pequena.",
+ "dica25_aa1": "Procure as que deixam a coisa pequena.",
+ "dica26_0": "Esta terminação deixa a palavra maior ou menor?",
+ "dica26_ab1": "Esta terminação deixa a palavra maior ou menor?",
+ "dica26_ab2": "Esta terminação deixa a palavra maior ou menor?",
+ "dica26_ab3": "Esta terminação deixa a palavra maior ou menor?",
+ "dica26_ab4": "Esta terminação deixa a palavra maior ou menor?",
+ "dica26_ab5": "Esta terminação deixa a palavra maior ou menor?",
+ "dica26_ab6": "Esta terminação deixa a palavra maior ou menor?",
+ "dica27_0": "Pergunte: é um moinho pequeno, ou é outra coisa?",
+ "dica27_ac1": "Pergunte: é um moinho pequeno, ou é outra coisa?",
+ "dica27_ac2": "Pergunte: é um moinho pequeno, ou é outra coisa?",
+ "dica27_ac3": "Pergunte: é um moinho pequeno, ou é outra coisa?",
+ "dica27_ac4": "Pergunte: é um moinho pequeno, ou é outra coisa?",
+ "dica28_0": "Leia a dica de novo, devagar.",
+ "dica28_ad1": "Leia a dica de novo, devagar.",
+ "dica28_ad2": "Leia a dica de novo, devagar.",
+ "dica29_0": "Muitas vezes basta o s no fim.",
+ "dica29_ae1": "Muitas vezes basta o s no fim.",
+ "dica29_ae2": "Muitas vezes basta o s no fim.",
+ "dica29_ae3": "Muitas vezes basta o s no fim.",
+ "dica29_ae4": "Muitas vezes basta o s no fim.",
+ "dica2_0": "Pergunte: isto é gente, é coisa ou é lugar?",
+ "dica2_a1": "Pergunte: isto é gente, é coisa ou é lugar?",
+ "dica2_a2": "Pergunte: isto é gente, é coisa ou é lugar?",
+ "dica2_b1": "Pergunte: isto é gente, é coisa ou é lugar?",
+ "dica2_b2": "Pergunte: isto é gente, é coisa ou é lugar?",
+ "dica2_c1": "Pergunte: isto é gente, é coisa ou é lugar?",
+ "dica2_c2": "Pergunte: isto é gente, é coisa ou é lugar?",
+ "dica30_0": "Diga em voz alta: soa melhor de que jeito?",
+ "dica30_af1": "Diga em voz alta: soa melhor de que jeito?",
+ "dica30_af2": "Diga em voz alta: soa melhor de que jeito?",
+ "dica30_af3": "Diga em voz alta: soa melhor de que jeito?",
+ "dica30_af4": "Diga em voz alta: soa melhor de que jeito?",
+ "dica31_0": "O L do fim não fica: pense em animais.",
+ "dica31_ag1": "O L do fim não fica: pense em animais.",
+ "dica31_ag2": "O L do fim não fica: pense em animais.",
+ "dica31_ag3": "O L do fim não fica: pense em animais.",
+ "dica31_ag4": "O L do fim não fica: pense em animais.",
+ "dica32_0": "Diga a palavra no plural em voz alta primeiro.",
+ "dica32_ah1": "Diga a palavra no plural em voz alta primeiro.",
+ "dica32_ah2": "Diga a palavra no plural em voz alta primeiro.",
+ "dica32_ah3": "Diga a palavra no plural em voz alta primeiro.",
+ "dica32_ah4": "Diga a palavra no plural em voz alta primeiro.",
+ "dica32_ah5": "Diga a palavra no plural em voz alta primeiro.",
+ "dica32_ah6": "Diga a palavra no plural em voz alta primeiro.",
+ "dica33_0": "O artigo e o adjetivo também mudam.",
+ "dica33_ai1": "O artigo e o adjetivo também mudam.",
+ "dica33_ai2": "O artigo e o adjetivo também mudam.",
+ "dica33_ai3": "O artigo e o adjetivo também mudam.",
+ "dica34_0": "É uma coisa só ou são várias?",
+ "dica34_aj1": "É uma coisa só ou são várias?",
+ "dica34_aj2": "É uma coisa só ou são várias?",
+ "dica34_aj3": "É uma coisa só ou são várias?",
+ "dica34_aj4": "É uma coisa só ou são várias?",
+ "dica34_aj5": "É uma coisa só ou são várias?",
+ "dica34_aj6": "É uma coisa só ou são várias?",
+ "dica35_0": "Uma dá o nome, outra diz como é, outra diz o que faz.",
+ "dica35_ak1": "Uma dá o nome, outra diz como é, outra diz o que faz.",
+ "dica3_0": "Qual das duas começa com letra grande?",
+ "dica3_d1": "Qual das duas começa com letra grande?",
+ "dica3_d2": "Qual das duas começa com letra grande?",
+ "dica3_d3": "Qual das duas começa com letra grande?",
+ "dica3_d4": "Qual das duas começa com letra grande?",
+ "dica4_0": "Comece pelo pedaço que é igual ao da primeira palavra.",
+ "dica4_e1": "Comece pelo pedaço que é igual ao da primeira palavra.",
+ "dica4_e2": "Comece pelo pedaço que é igual ao da primeira palavra.",
+ "dica4_e3": "Comece pelo pedaço que é igual ao da primeira palavra.",
+ "dica4_e4": "Comece pelo pedaço que é igual ao da primeira palavra.",
+ "dica5_0": "Junte na ordem em que você ouve a palavra.",
+ "dica5_f1": "Junte na ordem em que você ouve a palavra.",
+ "dica5_f2": "Junte na ordem em que você ouve a palavra.",
+ "dica5_f3": "Junte na ordem em que você ouve a palavra.",
+ "dica5_f4": "Junte na ordem em que você ouve a palavra.",
+ "dica6_0": "Substantivo dá NOME. Procure quem tem nome na frase.",
+ "dica6_g1": "Substantivo dá NOME. Procure quem tem nome na frase.",
+ "dica7_0": "Se dá para pôr o ou a na frente, é substantivo.",
+ "dica7_h1": "Se dá para pôr o ou a na frente, é substantivo.",
+ "dica8_0": "Não é o nome: é como ela é.",
+ "dica8_casa": "Não é o nome: é como ela é.",
+ "dica8_flor": "Não é o nome: é como ela é.",
+ "dica8_gato": "Não é o nome: é como ela é.",
+ "dica8_livro": "Não é o nome: é como ela é.",
+ "dica9_0": "Pense na coisa e em como ela é de verdade.",
+ "dica9_i1": "Pense na coisa e em como ela é de verdade.",
+ "dica9_i2": "Pense na coisa e em como ela é de verdade.",
+ "dica9_i3": "Pense na coisa e em como ela é de verdade.",
+ "dica9_i4": "Pense na coisa e em como ela é de verdade.",
+ "diz2_casa": "ALTA.",
+ "diz2_flor": "CHEIROSA.",
+ "diz2_gato": "PELUDO.",
+ "diz2_grau_ab1": "-INHO.",
+ "diz2_grau_ab2": "-ZINHO.",
+ "diz2_grau_ab3": "-ITO.",
+ "diz2_grau_ab4": "-ÃO.",
+ "diz2_grau_ab5": "-ARRA.",
+ "diz2_grau_ab6": "-AÇA.",
+ "diz2_livro": "GROSSO.",
+ "diz2_numero_aj1": "CASA.",
+ "diz2_numero_aj2": "FLORES.",
+ "diz2_numero_aj3": "LIVROS.",
+ "diz2_numero_aj4": "GATO.",
+ "diz2_numero_aj5": "PAPÉIS.",
+ "diz2_numero_aj6": "ANIMAL.",
+ "diz2_plural_ah1": "AVIÃO.",
+ "diz2_plural_ah2": "CORAÇÃO.",
+ "diz2_plural_ah3": "PÃO.",
+ "diz2_plural_ah4": "CÃO.",
+ "diz2_plural_ah5": "IRMÃO.",
+ "diz2_plural_ah6": "MÃO.",
+ "diz2_quem_a1": "MÉDICA.",
+ "diz2_quem_a2": "PADEIRO.",
+ "diz2_quem_b1": "TESOURA.",
+ "diz2_quem_b2": "JANELA.",
+ "diz2_quem_c1": "PRAÇA.",
+ "diz2_quem_c2": "ESCOLA.",
+ "diz2_verbo_r1": "CORRER.",
+ "diz2_verbo_r2": "PULAR.",
+ "diz2_verbo_r3": "SER.",
+ "diz2_verbo_r4": "PARECER.",
+ "diz2_verbo_r5": "CHOVER.",
+ "diz2_verbo_r6": "NEVAR.",
+ "diz_casa": "CASA.",
+ "diz_flor": "FLOR.",
+ "diz_gato": "GATO.",
+ "diz_livro": "LIVRO.",
+ "escreva": "Escreva a palavra usando o teclado.",
+ "fim": "Você chegou ao fim! Agora você sabe o lugar de cada palavra. E fica a pergunta: você lembra qual era a palavra que mudava de classe conforme a frase?",
+ "folhaPronta": "Folha pronta! Muito bem.",
+ "gav_grau_aum": "Gaveta aumentativo: deixa a palavra grande.",
+ "gav_grau_dim": "Gaveta diminutivo: deixa a palavra pequena.",
+ "gav_numero_plur": "Gaveta plural: várias coisas.",
+ "gav_numero_sing": "Gaveta singular: uma coisa só.",
+ "gav_plural_aes": "Gaveta ães.",
+ "gav_plural_aos": "Gaveta ãos.",
+ "gav_plural_oes": "Gaveta ões.",
+ "gav_quem_coisa": "Gaveta coisa: nomes de objetos.",
+ "gav_quem_gente": "Gaveta gente: nomes de pessoas.",
+ "gav_quem_lugar": "Gaveta lugar: nomes de lugares.",
+ "gav_verbo_acao": "Gaveta ação: o que alguém faz.",
+ "gav_verbo_estado": "Gaveta estado: um jeito de ser ou de estar.",
+ "gav_verbo_natureza": "Gaveta natureza: o que acontece no tempo lá fora.",
+ "ligue": "Toque numa palavra do lado esquerdo e depois na do lado direito.",
+ "p10enun": "Folha dez. Agora as duas classes juntas na mesma frase.",
+ "p11enun": "Folha onze. Agora a mesma palavra. O que ela é nesta frase?",
+ "p12enun": "Folha doze. Às vezes o adjetivo vem em duas palavras. Ligue cada uma ao adjetivo que vale o mesmo.",
+ "p13enun": "Folha treze. O adjetivo tem graus. Em que grau está o desta frase?",
+ "p14enun": "Folha catorze. Escreva o adjetivo que a dica pede.",
+ "p15enun": "Folha quinze. O verbo diz o que se faz. Complete a frase com o verbo.",
+ "p16enun": "Folha dezesseis. Nem todo verbo é ação. Ponha cada um na gaveta certa.",
+ "p17enun": "Folha dezessete. Agora ache os verbos escondidos na frase.",
+ "p18enun": "Folha dezoito. A mesma ação em três tempos. Qual forma cabe em cada um?",
+ "p19enun": "Folha dezenove. Agora passe a frase para ontem.",
+ "p1enun": "Folha um. Estas coisas existem. Escreva o nome de cada uma.",
+ "p20enun": "Folha vinte. Agora para amanhã.",
+ "p21enun": "Folha vinte e um. Quem faz a ação manda no verbo. Complete.",
+ "p22enun": "Folha vinte e dois. Toda palavra pode ficar pequena ou grande. Qual destas é o aumentativo?",
+ "p23enun": "Folha vinte e três. Escreva a palavra no diminutivo.",
+ "p24enun": "Folha vinte e quatro. Agora no aumentativo.",
+ "p25enun": "Folha vinte e cinco. Ache todas as palavras que estão no diminutivo.",
+ "p26enun": "Folha vinte e seis. São as terminações que fazem o grau. Ponha cada uma na gaveta.",
+ "p27enun": "Folha vinte e sete. Cuidado: nem tudo que acaba em inho é diminutivo!",
+ "p28enun": "Folha vinte e oito. Escreva a palavra que a dica descreve.",
+ "p29enun": "Folha vinte e nove. Uma coisa vira muitas. Escreva no plural.",
+ "p2enun": "Folha dois. Todo substantivo dá nome a alguma coisa. Ponha cada um na gaveta: gente, coisa ou lugar.",
+ "p30enun": "Folha trinta. Agora as palavras terminadas em ão. E elas não fazem todas igual.",
+ "p31enun": "Folha trinta e um. Agora as terminadas em L.",
+ "p32enun": "Folha trinta e dois. Cada palavra faz o plural de um jeito. Ponha cada uma no seu.",
+ "p33enun": "Folha trinta e três. No plural, a frase inteira muda, não só o substantivo.",
+ "p34enun": "Folha trinta e quatro. Última gaveta: esta palavra está no singular ou no plural?",
+ "p35enun": "Folha trinta e cinco. Uma frase, três classes. Toque em cada palavra e diga o que ela é.",
+ "p3enun": "Folha três. Agora olhe a letra do começo. Qual das duas é nome próprio?",
+ "p4enun": "Folha quatro. De uma palavra nasce outra. Monte a palavra derivada com as sílabas.",
+ "p5enun": "Folha cinco. Agora duas palavras viram uma. Qual é a palavra composta certa?",
+ "p6enun": "Folha seis. Os substantivos estão escondidos na frase. Toque em cada um deles.",
+ "p7enun": "Folha sete. Ache todos os substantivos, e só eles.",
+ "p8enun": "Folha oito. Agora não é o nome: é como a coisa é. Escreva uma característica.",
+ "p9enun": "Folha nove. Qual adjetivo combina com a coisa?",
+ "toque_palavra": "Primeiro toque numa palavra ali embaixo. Depois toque na gaveta dela.",
+ "vozOn": "Narração ligada!"
+};
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"16w4814": 1, "2z6dhe": 1, "1pbmvi9": 1, "1cqjl4z": 1, "1n7g6jl": 1, "177s34x": 1, "59wccu": 1, "1k225j5": 1, "zlqqfp": 1, "1k3i6of": 1, "fxg4bl": 1, "1l6va51": 1, "1mhft3p": 1, "s0k06h": 1, "1jau8tg": 1, "87wmt4": 1, "1jfs2r2": 1, "1mszrio": 1, "1o9jndr": 1, "1a83uh6": 1, "1hyaz87": 1, "z5yu08": 1, "rsbqx": 1, "tr5ze": 1, "tobsvv": 1, "ezpb1s": 1, "1eeem02": 1, "16hmive": 1, "1vb04l7": 1, "9jysk0": 1, "h27znp": 1, "4bfbua": 1, "1o2vf9m": 1, "1jws9jf": 1, "pva2kl": 1, "1io33n4": 1, "1f33104": 1, "gzm9mz": 1, "yzk2qk": 1, "1ewj471": 1, "4tbpwv": 1, "z9nkpm": 1, "y1igcd": 1, "1payv54": 1, "1mms0to": 1, "jijl81": 1, "w1coqt": 1, "1bfnnre": 1, "1loyd89": 1, "1y3ze37": 1, "v7t3kp": 1, "i3m78z": 1, "9pcsuh": 1, "zgn2kh": 1, "ioxup7": 1, "q14g14": 1, "6nfn8m": 1, "1gb5s2t": 1, "jljdyo": 1, "7ku7yq": 1, "bedivx": 1, "1h4lm2g": 1, "hfyr04": 1, "1d300d6": 1, "1fxa5a0": 1, "2t6xyr": 1, "1ryapwj": 1, "13izt64": 1, "1k97612": 1, "jbbigs": 1, "1pdjmc": 1, "yhlbt6": 1, "1kex9qe": 1, "1pmao1": 1, "1ep604e": 1, "2x8g63": 1, "vbhb1m": 1, "1t15dxy": 1, "2uezfa": 1, "15nr8vt": 1, "4z62y5": 1, "ludng9": 1, "1g6k5of": 1, "yja3cn": 1, "yix37o": 1, "r30ewh": 1, "yivq6i": 1, "nqwww": 1, "udk0en": 1, "1q1tae8": 1, "1vcg752": 1, "v1cj9q": 1, "2tz8cc": 1, "1puczsg": 1, "v0o841": 1, "yjc8z3": 1, "q92yex": 1, "1r781la": 1, "riy6px": 1, "2u06e4": 1, "nhtr51": 1, "s69mtb": 1, "3tnt9x": 1, "1d9s73k": 1, "1vhprsw": 1, "1rbjnud": 1, "1uf0sl9": 1, "1ooigo6": 1, "1jnk9ry": 1, "1jnkbn8": 1, "1jnp5ig": 1, "a6w25z": 1, "4ncif3": 1, "p4but8": 1, "14o1u6r": 1, "1c3z1mb": 1, "1trdsik": 1, "1oaaion": 1, "c59aul": 1, "1xsx5q4": 1, "6t8zwk": 1, "1arshvp": 1, "yv5kxe": 1, "z9wy03": 1, "1k91com": 1, "l4slko": 1, "xiz3ev": 1, "o6eek6": 1, "1bzm2ws": 1, "kpbx15": 1, "1vjxh4z": 1, "vrr9pi": 1, "1rt9fux": 1, "9s0zug": 1, "1ovppye": 1, "1h86658": 1, "6q906t": 1, "19aoubq": 1, "mqcq4n": 1, "gnyc04": 1, "12reop": 1, "bg9ws2": 1, "3sqf25": 1, "o7dvvq": 1, "8bkfpw": 1, "y1rhcy": 1, "gtutb0": 1, "1q88zw0": 1, "gq0kdw": 1, "1lakk3d": 1, "1w4ogb7": 1, "1uw8p2r": 1, "f9sli7": 1, "qqiw6i": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ============================================================
    OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
@@ -802,19 +1468,892 @@ var FALAS = {};
    existe para matar. Um lugar só, lido pelos dois.
    ============================================================ */
 /*DADOS-INI*/
-/* ============================================================
-   OS DADOS DAS FOLHAS — o conteúdo deste caderno, e só dele.
-
-   ⚠️ TUDO O QUE ENTRAR AQUI TEM DE VIR DE UMA FOLHA DE PAPEL COLHIDA, e o crivo
-      (comando impresso VERBATIM + veredito de cada uma das trinta) mora em
-      `_sequencias/POTE-<assunto>.md`. Bloco que NÃO vier do papel entra
-      declarado, com o motivo escrito ao lado dele.
-   ⚠️ E A CHAVE NÃO PODE SER A PALAVRA QUE APARECE NA TELA: o portão
-      `_qa/resposta_impressa.py` lê a resposta declarada dentro do texto visível
-      e acusa, com razão. Chave é `c1`, `g3`, `j2` — número, não palavra.
-   ⚠️ CAMPO DE TECLADO: gabarito de UMA palavra só (o teclado da casa não tem
-      barra de espaço) e sem acento, se o que a folha mede não for o acento.
-   ============================================================ */
+var D = {
+ "FIG": {
+  "casa": {
+   "t": "CASA",
+   "adj": "ALTA"
+  },
+  "gato": {
+   "t": "GATO",
+   "adj": "PELUDO"
+  },
+  "flor": {
+   "t": "FLOR",
+   "adj": "CHEIROSA"
+  },
+  "livro": {
+   "t": "LIVRO",
+   "adj": "GROSSO"
+  }
+ },
+ "P2": {
+  "a1": [
+   "MÉDICA",
+   "gente"
+  ],
+  "a2": [
+   "PADEIRO",
+   "gente"
+  ],
+  "b1": [
+   "TESOURA",
+   "coisa"
+  ],
+  "b2": [
+   "JANELA",
+   "coisa"
+  ],
+  "c1": [
+   "PRAÇA",
+   "lugar"
+  ],
+  "c2": [
+   "ESCOLA",
+   "lugar"
+  ]
+ },
+ "P3": {
+  "d1": [
+   "blumenau",
+   "BLUMENAU",
+   "cidade"
+  ],
+  "d2": [
+   "ana",
+   "ANA",
+   "menina"
+  ],
+  "d3": [
+   "itajaí",
+   "ITAJAÍ",
+   "rio"
+  ],
+  "d4": [
+   "brasil",
+   "BRASIL",
+   "país"
+  ]
+ },
+ "P4": {
+  "e1": [
+   "PEDRA",
+   "PEDREIRO",
+   [
+    "PE",
+    "DREI",
+    "RO"
+   ]
+  ],
+  "e2": [
+   "LIVRO",
+   "LIVRARIA",
+   [
+    "LI",
+    "VRA",
+    "RI",
+    "A"
+   ]
+  ],
+  "e3": [
+   "FERRO",
+   "FERREIRO",
+   [
+    "FER",
+    "REI",
+    "RO"
+   ]
+  ],
+  "e4": [
+   "JARDIM",
+   "JARDINEIRO",
+   [
+    "JAR",
+    "DI",
+    "NEI",
+    "RO"
+   ]
+  ]
+ },
+ "P5": {
+  "f1": [
+   "GUARDA",
+   "CHUVA",
+   "GUARDA-CHUVA"
+  ],
+  "f2": [
+   "BEIJA",
+   "FLOR",
+   "BEIJA-FLOR"
+  ],
+  "f3": [
+   "GIRA",
+   "SOL",
+   "GIRASSOL"
+  ],
+  "f4": [
+   "PASSA",
+   "TEMPO",
+   "PASSATEMPO"
+  ]
+ },
+ "P6": {
+  "frase": [
+   "O",
+   "MENINO",
+   "abriu",
+   "a",
+   "JANELA",
+   "e",
+   "viu",
+   "a",
+   "CHUVA",
+   "na",
+   "RUA",
+   "."
+  ],
+  "marcar": [
+   1,
+   4,
+   8,
+   10
+  ]
+ },
+ "P7": [
+  "CASA",
+  "GATO",
+  "FLOR",
+  "LIVRO",
+  "RUA",
+  "PONTE"
+ ],
+ "P9": {
+  "i1": [
+   "O gelo está",
+   "GELADO",
+   "QUENTE",
+   "MOLHADO"
+  ],
+  "i2": [
+   "A pena é",
+   "LEVE",
+   "PESADA",
+   "AZEDA"
+  ],
+  "i3": [
+   "O limão é",
+   "AZEDO",
+   "DOCE",
+   "MACIO"
+  ],
+  "i4": [
+   "A pedra é",
+   "DURA",
+   "MACIA",
+   "FOFA"
+  ]
+ },
+ "P10": {
+  "frase": [
+   "A",
+   "MENINA",
+   "ALTA",
+   "comprou",
+   "um",
+   "livro",
+   "NOVO",
+   "."
+  ],
+  "subst": [
+   1,
+   5
+  ],
+  "adj": [
+   2,
+   6
+  ]
+ },
+ "P11": {
+  "k1": [
+   "O <b>velho</b> levanta-se cedo.",
+   "substantivo"
+  ],
+  "k2": [
+   "Aquele <b>velho</b> homem levanta-se cedo.",
+   "adjetivo"
+  ],
+  "k3": [
+   "O <b>brasileiro</b> gosta de festa.",
+   "substantivo"
+  ],
+  "k4": [
+   "O povo <b>brasileiro</b> gosta de festa.",
+   "adjetivo"
+  ]
+ },
+ "P12": {
+  "m1": [
+   "de chuva",
+   "PLUVIAL"
+  ],
+  "m2": [
+   "de mãe",
+   "MATERNO"
+  ],
+  "m3": [
+   "de criança",
+   "INFANTIL"
+  ],
+  "m4": [
+   "de cidade",
+   "URBANO"
+  ]
+ },
+ "P13": {
+  "n1": [
+   "Esta torre é mais alta que a outra.",
+   "comparativo"
+  ],
+  "n2": [
+   "Esta torre é altíssima.",
+   "superlativo"
+  ],
+  "n3": [
+   "Este doce é mais doce que o outro.",
+   "comparativo"
+  ],
+  "n4": [
+   "Este doce é docíssimo.",
+   "superlativo"
+  ]
+ },
+ "P14": {
+  "o1": [
+   "ALTO",
+   "O contrário de baixo."
+  ],
+  "o2": [
+   "NOVO",
+   "O contrário de velho."
+  ],
+  "o3": [
+   "LEVE",
+   "O contrário de pesado."
+  ],
+  "o4": [
+   "DOCE",
+   "O contrário de azedo."
+  ]
+ },
+ "P15": {
+  "q1": [
+   "A menina ____ na piscina.",
+   "NADA"
+  ],
+  "q2": [
+   "O menino ____ o bolo.",
+   "COME"
+  ],
+  "q3": [
+   "O gato ____ no sofá.",
+   "DORME"
+  ],
+  "q4": [
+   "A turma ____ no pátio.",
+   "CORRE"
+  ]
+ },
+ "P16": {
+  "r1": [
+   "CORRER",
+   "acao"
+  ],
+  "r2": [
+   "PULAR",
+   "acao"
+  ],
+  "r3": [
+   "SER",
+   "estado"
+  ],
+  "r4": [
+   "PARECER",
+   "estado"
+  ],
+  "r5": [
+   "CHOVER",
+   "natureza"
+  ],
+  "r6": [
+   "NEVAR",
+   "natureza"
+  ]
+ },
+ "P17": {
+  "frase": [
+   "O",
+   "sol",
+   "NASCEU",
+   "e",
+   "a",
+   "turma",
+   "SAIU",
+   "para",
+   "o",
+   "pátio",
+   "."
+  ],
+  "marcar": [
+   2,
+   6
+  ]
+ },
+ "P18": {
+  "t1": [
+   "ONTEM eu",
+   "ESTUDEI",
+   "ESTUDAREI"
+  ],
+  "t2": [
+   "HOJE eu",
+   "ESTUDO",
+   "ESTUDEI"
+  ],
+  "t3": [
+   "AMANHÃ eu",
+   "ESTUDAREI",
+   "ESTUDO"
+  ]
+ },
+ "P19": {
+  "u1": [
+   "Eu canto.",
+   "CANTEI",
+   "CANTAREI"
+  ],
+  "u2": [
+   "Ela corre.",
+   "CORREU",
+   "CORRERÁ"
+  ],
+  "u3": [
+   "Nós comemos.",
+   "COMEMOS",
+   "COMEREMOS"
+  ],
+  "u4": [
+   "Eles partem.",
+   "PARTIRAM",
+   "PARTIRÃO"
+  ]
+ },
+ "P20": {
+  "v1": [
+   "Eu canto.",
+   "CANTAREI",
+   "CANTEI"
+  ],
+  "v2": [
+   "Ela corre.",
+   "CORRERÁ",
+   "CORREU"
+  ],
+  "v3": [
+   "Nós comemos.",
+   "COMEREMOS",
+   "COMEMOS"
+  ],
+  "v4": [
+   "Eles partem.",
+   "PARTIRÃO",
+   "PARTIRAM"
+  ]
+ },
+ "P21": {
+  "w1": [
+   "Um menino ____.",
+   "CORRE",
+   "CORREM"
+  ],
+  "w2": [
+   "Dois meninos ____.",
+   "CORREM",
+   "CORRE"
+  ],
+  "w3": [
+   "A flor ____ bonita.",
+   "É",
+   "SÃO"
+  ],
+  "w4": [
+   "As flores ____ bonitas.",
+   "SÃO",
+   "É"
+  ]
+ },
+ "P22": {
+  "x1": [
+   "GATINHO",
+   "GATO",
+   "GATÃO"
+  ],
+  "x2": [
+   "CASINHA",
+   "CASA",
+   "CASARÃO"
+  ],
+  "x3": [
+   "LIVRINHO",
+   "LIVRO",
+   "LIVRÃO"
+  ],
+  "x4": [
+   "FLORZINHA",
+   "FLOR",
+   "FLORÃO"
+  ]
+ },
+ "P23": {
+  "y1": [
+   "SAPATO",
+   "SAPATINHO"
+  ],
+  "y2": [
+   "MENINO",
+   "MENININHO"
+  ],
+  "y3": [
+   "CARRO",
+   "CARRINHO"
+  ],
+  "y4": [
+   "PAPEL",
+   "PAPELZINHO"
+  ]
+ },
+ "P24": {
+  "z1": [
+   "CASA",
+   "CASARÃO"
+  ],
+  "z2": [
+   "NARIZ",
+   "NARIGÃO"
+  ],
+  "z3": [
+   "BOCA",
+   "BOCARRA"
+  ],
+  "z4": [
+   "SAPATO",
+   "SAPATÃO"
+  ]
+ },
+ "P25": {
+  "palavras": [
+   "GATINHO",
+   "CARRÃO",
+   "CASINHA",
+   "NARIGÃO",
+   "FLORZINHA",
+   "BOLÃO"
+  ],
+  "marcar": [
+   0,
+   2,
+   4
+  ]
+ },
+ "P26": {
+  "ab1": [
+   "-INHO",
+   "dim"
+  ],
+  "ab2": [
+   "-ZINHO",
+   "dim"
+  ],
+  "ab3": [
+   "-ITO",
+   "dim"
+  ],
+  "ab4": [
+   "-ÃO",
+   "aum"
+  ],
+  "ab5": [
+   "-ARRA",
+   "aum"
+  ],
+  "ab6": [
+   "-AÇA",
+   "aum"
+  ]
+ },
+ "P27": {
+  "ac1": [
+   "MOINHO",
+   "nao"
+  ],
+  "ac2": [
+   "GATINHO",
+   "sim"
+  ],
+  "ac3": [
+   "REDEMOINHO",
+   "nao"
+  ],
+  "ac4": [
+   "CASINHA",
+   "sim"
+  ]
+ },
+ "P28": {
+  "ad1": [
+   "CASARÃO",
+   "Uma casa muito grande."
+  ],
+  "ad2": [
+   "GATINHO",
+   "Um gato bem pequeno."
+  ]
+ },
+ "P29": {
+  "ae1": [
+   "CASA",
+   "CASAS"
+  ],
+  "ae2": [
+   "FLOR",
+   "FLORES"
+  ],
+  "ae3": [
+   "LIVRO",
+   "LIVROS"
+  ],
+  "ae4": [
+   "MULHER",
+   "MULHERES"
+  ]
+ },
+ "P30": {
+  "af1": [
+   "AVIÃO",
+   "AVIÕES",
+   "AVIÃOS"
+  ],
+  "af2": [
+   "PÃO",
+   "PÃES",
+   "PÃOS"
+  ],
+  "af3": [
+   "IRMÃO",
+   "IRMÃOS",
+   "IRMÕES"
+  ],
+  "af4": [
+   "CORAÇÃO",
+   "CORAÇÕES",
+   "CORAÇÃOS"
+  ]
+ },
+ "P31": {
+  "ag1": [
+   "FUNIL",
+   "FUNIS",
+   "FUNILS"
+  ],
+  "ag2": [
+   "PAPEL",
+   "PAPÉIS",
+   "PAPELS"
+  ],
+  "ag3": [
+   "ANIMAL",
+   "ANIMAIS",
+   "ANIMALS"
+  ],
+  "ag4": [
+   "FÓSSIL",
+   "FÓSSEIS",
+   "FÓSSILS"
+  ]
+ },
+ "P32": {
+  "ah1": [
+   "AVIÃO",
+   "oes"
+  ],
+  "ah2": [
+   "CORAÇÃO",
+   "oes"
+  ],
+  "ah3": [
+   "PÃO",
+   "aes"
+  ],
+  "ah4": [
+   "CÃO",
+   "aes"
+  ],
+  "ah5": [
+   "IRMÃO",
+   "aos"
+  ],
+  "ah6": [
+   "MÃO",
+   "aos"
+  ]
+ },
+ "P33": {
+  "ai1": [
+   "O menino alto correu.",
+   "OS",
+   "O"
+  ],
+  "ai2": [
+   "O livro novo chegou.",
+   "OS LIVROS NOVOS CHEGARAM",
+   "OS LIVRO NOVO CHEGARAM"
+  ],
+  "ai3": [
+   "A flor bonita abriu.",
+   "AS FLORES BONITAS",
+   "AS FLOR BONITA"
+  ]
+ },
+ "P34": {
+  "aj1": [
+   "CASA",
+   "sing"
+  ],
+  "aj2": [
+   "FLORES",
+   "plur"
+  ],
+  "aj3": [
+   "LIVROS",
+   "plur"
+  ],
+  "aj4": [
+   "GATO",
+   "sing"
+  ],
+  "aj5": [
+   "PAPÉIS",
+   "plur"
+  ],
+  "aj6": [
+   "ANIMAL",
+   "sing"
+  ]
+ }
+};
+var GAV = {
+ "quem": {
+  "cols": [
+   {
+    "k": "gente",
+    "n": "GENTE"
+   },
+   {
+    "k": "coisa",
+    "n": "COISA"
+   },
+   {
+    "k": "lugar",
+    "n": "LUGAR"
+   }
+  ],
+  "pal": {
+   "a1": {
+    "p": "MÉDICA",
+    "c": "gente"
+   },
+   "a2": {
+    "p": "PADEIRO",
+    "c": "gente"
+   },
+   "b1": {
+    "p": "TESOURA",
+    "c": "coisa"
+   },
+   "b2": {
+    "p": "JANELA",
+    "c": "coisa"
+   },
+   "c1": {
+    "p": "PRAÇA",
+    "c": "lugar"
+   },
+   "c2": {
+    "p": "ESCOLA",
+    "c": "lugar"
+   }
+  }
+ },
+ "verbo": {
+  "cols": [
+   {
+    "k": "acao",
+    "n": "AÇÃO"
+   },
+   {
+    "k": "estado",
+    "n": "ESTADO"
+   },
+   {
+    "k": "natureza",
+    "n": "NATUREZA"
+   }
+  ],
+  "pal": {
+   "r1": {
+    "p": "CORRER",
+    "c": "acao"
+   },
+   "r2": {
+    "p": "PULAR",
+    "c": "acao"
+   },
+   "r3": {
+    "p": "SER",
+    "c": "estado"
+   },
+   "r4": {
+    "p": "PARECER",
+    "c": "estado"
+   },
+   "r5": {
+    "p": "CHOVER",
+    "c": "natureza"
+   },
+   "r6": {
+    "p": "NEVAR",
+    "c": "natureza"
+   }
+  }
+ },
+ "grau": {
+  "cols": [
+   {
+    "k": "dim",
+    "n": "DIMINUTIVO"
+   },
+   {
+    "k": "aum",
+    "n": "AUMENTATIVO"
+   }
+  ],
+  "pal": {
+   "ab1": {
+    "p": "-INHO",
+    "c": "dim"
+   },
+   "ab2": {
+    "p": "-ZINHO",
+    "c": "dim"
+   },
+   "ab3": {
+    "p": "-ITO",
+    "c": "dim"
+   },
+   "ab4": {
+    "p": "-ÃO",
+    "c": "aum"
+   },
+   "ab5": {
+    "p": "-ARRA",
+    "c": "aum"
+   },
+   "ab6": {
+    "p": "-AÇA",
+    "c": "aum"
+   }
+  }
+ },
+ "plural": {
+  "cols": [
+   {
+    "k": "oes",
+    "n": "-ÕES"
+   },
+   {
+    "k": "aes",
+    "n": "-ÃES"
+   },
+   {
+    "k": "aos",
+    "n": "-ÃOS"
+   }
+  ],
+  "pal": {
+   "ah1": {
+    "p": "AVIÃO",
+    "c": "oes"
+   },
+   "ah2": {
+    "p": "CORAÇÃO",
+    "c": "oes"
+   },
+   "ah3": {
+    "p": "PÃO",
+    "c": "aes"
+   },
+   "ah4": {
+    "p": "CÃO",
+    "c": "aes"
+   },
+   "ah5": {
+    "p": "IRMÃO",
+    "c": "aos"
+   },
+   "ah6": {
+    "p": "MÃO",
+    "c": "aos"
+   }
+  }
+ },
+ "numero": {
+  "cols": [
+   {
+    "k": "sing",
+    "n": "SINGULAR"
+   },
+   {
+    "k": "plur",
+    "n": "PLURAL"
+   }
+  ],
+  "pal": {
+   "aj1": {
+    "p": "CASA",
+    "c": "sing"
+   },
+   "aj2": {
+    "p": "FLORES",
+    "c": "plur"
+   },
+   "aj3": {
+    "p": "LIVROS",
+    "c": "plur"
+   },
+   "aj4": {
+    "p": "GATO",
+    "c": "sing"
+   },
+   "aj5": {
+    "p": "PAPÉIS",
+    "c": "plur"
+   },
+   "aj6": {
+    "p": "ANIMAL",
+    "c": "sing"
+   }
+  }
+ }
+};
 /*DADOS-FIM*/
 
 /* ⚠️ A MARCA DE VERSÃO NA FIGURA. Quando eu troco uma figura, o NOME do arquivo
@@ -875,7 +2414,43 @@ var CHAVE_LS = "aprendendo_substantivos_adjetivos_verbos_e_a_flex_o_das_palavras
       subindo um degrau; o que sobe é o apoio que some, não a tela.
    ⚠️ O andarilho confere a promessa da capa contra este número: dizer "vinte e
       cinco folhas" num caderno de vinte e duas reprova. */
-var NOMES = [];
+var NOMES = [
+"O nome das coisas",
+"Gente, coisa e lugar",
+"Comum ou próprio",
+"De onde a palavra nasceu",
+"Duas palavras viram uma",
+"Os nomes escondidos",
+"Caça aos substantivos",
+"Como a coisa é",
+"Qual combina",
+"Duas cores, duas classes",
+"A mesma palavra muda",
+"Em duas palavras",
+"Mais, o mais, muito",
+"Cruzadinha dos adjetivos",
+"O que se faz",
+"Ação, estado e natureza",
+"Os verbos escondidos",
+"Ontem, hoje e amanhã",
+"Passe para ontem",
+"Passe para amanhã",
+"Quem manda no verbo",
+"Pequeno, normal e grande",
+"O diminutivo",
+"O aumentativo",
+"Ache os diminutivos",
+"As terminações",
+"A armadilha do -inho",
+"Forca do grau",
+"Um e muitos",
+"O plural do -ÃO",
+"O plural do -L",
+"Cada um no seu plural",
+"A frase inteira muda",
+"Singular ou plural",
+"O cartaz das palavras"
+];
 /*<dossie-dados>*/
 /* ⚠️ ESTE OBJETO E O `curriculo.json` SÃO A MESMA COISA, e o portão 0b9
    (`_qa/pedagogo_curriculo.py`) reprova se divergirem. Cada habilidade tem de
@@ -886,7 +2461,110 @@ var NOMES = [];
    ensinar coisa que não é do ano.
    ⚠️ O que não estiver no currículo da rede vai em `fora_do_curriculo`, com o
    motivo — ele é IMPRESSO no dossiê em toda rodada. */
-var CURRICULO = {};
+var CURRICULO = {
+ "ano": 5,
+ "componente": "Língua Portuguesa",
+ "rede": "Currículo da Educação Básica do Sistema Municipal de Ensino de Blumenau",
+ "documento": "_curriculo/blumenau.txt",
+ "conceitos": [
+  "classes de palavras",
+  "substantivo",
+  "adjetivo",
+  "verbo",
+  "aumentativo",
+  "diminutivo",
+  "morfologia",
+  "concordância"
+ ],
+ "fora_do_curriculo": [],
+ "degrau": 1,
+ "evidencia": [
+  "Jogado do começo ao fim no navegador, item por item, antes de publicar.",
+  "Um jogador automático resolve cada item pela resposta declarada e confere se a folha fecha.",
+  "Leiaute medido em 6 tamanhos de tela: nenhum alvo de toque menor que 40 px.",
+  "Toda tela é narrada com voz real, e o texto de cada fala sai do mesmo lugar que a tela lê.",
+  "As figuras são desenho vetorial próprio, feito para este caderno — nítidas em qualquer tela."
+ ],
+ "objetivos": [
+  {
+   "nome": "Reconhecer e classificar o substantivo",
+   "folhas": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "habilidade": "HABILIDADE: “Morfologia de substantivos, de adjetivos e de verbos”",
+   "objeto_de_conhecimento": "Morfologia e classes de palavras"
+  },
+  {
+   "nome": "Usar o adjetivo e descobrir a classe pelo uso",
+   "folhas": [
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "habilidade": "HABILIDADE: “adjetivo (atribuição de propriedade ao substantivo)”",
+   "objeto_de_conhecimento": "Morfologia e classes de palavras"
+  },
+  {
+   "nome": "Reconhecer o verbo e mudar o tempo",
+   "folhas": [
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21
+   ],
+   "habilidade": "HABILIDADE: “Morfologia de substantivos, de adjetivos e de verbos”",
+   "objeto_de_conhecimento": "Morfologia e classes de palavras"
+  },
+  {
+   "nome": "Formar o aumentativo e o diminutivo",
+   "folhas": [
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28
+   ],
+   "habilidade": "HABILIDADE: “Formar o aumentativo e o diminutivo”",
+   "objeto_de_conhecimento": "Morfologia e classes de palavras"
+  },
+  {
+   "nome": "Flexionar em número e fazer a concordância",
+   "folhas": [
+    29,
+    30,
+    31,
+    32,
+    33,
+    34
+   ],
+   "habilidade": "HABILIDADE: “mecanismos de concordância nominal e verbal”",
+   "objeto_de_conhecimento": "Morfologia e classes de palavras"
+  },
+  {
+   "nome": "Amarrar as classes de palavras num quadro",
+   "folhas": [
+    35
+   ],
+   "habilidade": "HABILIDADE: “Conhecer as classes de palavras abertas (substantivos, verbos, adjetivos e advérbios)”",
+   "objeto_de_conhecimento": "Morfologia e classes de palavras"
+  }
+ ]
+};
 /*</dossie-dados>*/
 
 /* ---------- som ---------- */
@@ -1070,7 +2748,11 @@ function errou(id, dica){
          p2: pega(ITENS.p2, 6),          // sorteia 6 de um pote maior
          p3: ITENS.p3.slice(0)           // já vem embrulhado: folha de ligar  */
 function novaFolha(){
-  return {};
+  /* ⚠️ o pote de cada folha: `ITENS` diz QUANTOS itens ela tem, e o motor conta
+     por aqui. Folha de um item só e folha de ligar vêm EMBRULHADAS no ITENS. */
+  var o = {}, k;
+  for(k in ITENS){ if(ITENS.hasOwnProperty(k)) o[k] = ITENS[k].slice(0); }
+  return o;
 }</script>
 <!--<dossie-html>-->
 <div id="dossie" role="dialog" aria-label="Dossiê pedagógico" aria-modal="true">
