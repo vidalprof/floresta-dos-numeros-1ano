@@ -245,7 +245,7 @@ p(u"vozOn", u"Narração ligada!")
 p(u"novoCaderno", u"Caderno novo! Vamos começar.")
 p(u"fim", u"Você chegou ao fim! Agora você reparte com o material dourado, arma a "
           u"conta na chave, sabe o que sobra e lê o relógio. E fica a pergunta: "
-          u"quantas horas tem a semana inteira?")
+          u"quantos minutos você passa na escola numa semana inteira?")
 
 # ---------- 1 — repartir os pirulitos ----------
 REP = bloco(u"REP")
@@ -398,9 +398,9 @@ for _nome, _pi in ((u"ORD", 9), (u"TROC", 10), (u"REST", 11)):
 p(u"p9enun", folha(9) + u" A mesma divisão, agora na chave. O material está ali: "
              u"divida as placas, depois as barras, depois os cubinhos, uma ordem de "
              u"cada vez, e escreva o quociente embaixo do divisor.")
-p(u"p10enun", folha(10) + u" Agora com troca, e sem o material: quando a barra não "
-              u"dá para repartir, ela vira dez cubinhos e se junta aos outros, igual "
-              u"à casa da troca. Escreva o quociente.")
+p(u"p10enun", folha(10) + u" Agora com troca, e sem o material: quando a placa ou a "
+              u"barra não dá para repartir, ela é trocada por dez peças menores, que se "
+              u"juntam às outras, igual à casa da troca. Escreva o quociente.")
 p(u"p11enun", folha(11) + u" Agora a conta sobra. Escreva o quociente embaixo do "
               u"divisor e, depois, o resto embaixo do dividendo. O resto é sempre "
               u"menor que o divisor.")

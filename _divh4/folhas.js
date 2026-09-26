@@ -981,8 +981,9 @@ function f09(d, pi){
     "o quociente embaixo do divisor.", ORD, 0, 1, 1);
 }
 function f10(d, pi){
-  folhaChave(d, pi, "<b>Agora com troca, e sem o material:</b> quando a barra não dá para repartir, ela " +
-    "vira dez cubinhos e se junta aos outros — igual à casa da troca. Escreva o quociente.", TROC, 0, 0);
+  folhaChave(d, pi, "<b>Agora com troca, e sem o material:</b> quando a placa ou a barra não dá para " +
+    "repartir, ela é trocada por dez peças menores, que se juntam às outras — igual à casa " +
+    "da troca. Escreva o quociente.", TROC, 0, 0);
 }
 function f11(d, pi){
   folhaChave(d, pi, "<b>Agora a conta sobra.</b> Escreva o quociente embaixo do divisor " +
@@ -1495,7 +1496,8 @@ function f35(d, pi){
   d.appendChild(cx);
   d.appendChild(el("div", "ajuda cent",
     "Pronto: agora você reparte, mede, arma a conta na chave, sabe o que sobra e lê o " +
-    "relógio. E fica a pergunta: <b>quantas horas tem a semana inteira?</b> (Dica: 7 × 24.)"));
+    "relógio. E fica a pergunta: <b>quantos minutos você passa na escola numa semana " +
+    "inteira?</b> (Comece pelo horário de entrada e de saída de um dia.)"));
 }
 
 /* ============================================================
