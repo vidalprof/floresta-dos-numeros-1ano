@@ -3,7 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Aprendendo a divisão e as horas — 4º ano</title>
-<meta name="description" content="DESCREVER: o assunto, o ano, quantas folhas e de onde vieram as folhas de papel colhidas.">
+<meta name="description" content="Aprendendo a divisão e as horas — 4º ano, Matemática. 35 folhas: dividir com o material dourado e na chave, o divisor de dois algarismos, os restos iguais, ler o relógio e calcular a duração. Nasceu do crivo de 190 folhas de papel colhidas na internet; as figuras são recortadas delas.">
 <!-- ============================================================
      ESQUELETO DA FOLHA VIVA — a casca, sem conteúdo nenhum.
 
@@ -43,13 +43,12 @@ html,body{margin:0;min-height:100%}
   --texto:#26201c;
   --texto2:#3a2f27;
   --texto3:#4a3d33;
-  /* ⚠️ IDENTIDADE PRÓPRIA (Marcos, 18/set/2026: "cada caderno precisa ter capa
-     diferente, cor diferente, animações"): este cinza é de ESQUELETO —
-     CINZA DE ESQUELETO — TROCAR pela cor do ASSUNTO do caderno novo (`_padrao/identidade_capa.py`). O portão 0b11 (`_qa/identidade.py`)
-     reprova cor, capa ou animação iguais às de qualquer outro caderno ou ao esqueleto. */
-  --cor:#6b6b6b;
-  --cor2:#4a4a4a;
-  --corclara:#f0f0f0;
+  /* ⭐ IDENTIDADE PRÓPRIA (0b11): o laranja-cobre do MATERIAL DOURADO e do
+     mostrador de madeira — as duas peças que a criança pega na mão neste
+     caderno. Nenhum outro caderno usa esta cor. */
+  --cor:#c2410c;
+  --cor2:#7c2d12;
+  --corclara:#fff1e6;
 }
 body{font-family:"Segoe UI",Arial,sans-serif;background:#f4efe9;color:var(--texto);padding-bottom:160px}
 #topo{position:-webkit-sticky;position:sticky;top:0;z-index:20;background:#fff;border-bottom:3px solid var(--cor);
@@ -378,25 +377,39 @@ button{font-family:inherit;cursor:pointer}
 #nomeIn:focus{outline:none;border-color:#1179bf;box-shadow:0 0 0 4px rgba(17,121,191,.25)}
 
 /* ================= A CAPA =================
-   ⚠️ ESTA É A CAPA DE ESQUELETO — cinza, sem cena, POR DESENHAR. Todo caderno novo
-   recebe a SUA (cor pelo assunto, cena com as figuras dele, @keyframes com nome
-   próprio) por `python3 _padrao/identidade_capa.py <pasta>` — acrescente a linha
-   dele na tabela ESPEC de lá. O portão 0b11 (`_qa/identidade.py`) reprova capa ou
-   cor iguais a este esqueleto: a criança olha a cor e o desenho antes do título
-   (Marcos, 18/set/2026). Exemplos prontos: _sinon2 (espelho), _rima1, _roda1… */
+   ⭐ A CENA É O CADERNO NUMA OLHADA: 46 ÷ 2 com o material dourado repartido
+   em dois grupos (as peças recortadas do G06) e o relógio da F08 marcando
+   10h10. Os grupos pulam um depois do outro (`pulaDh4`) e o relógio balança
+   de leve (`balDh4`) — `@keyframes` com nome próprio, como o 0b11 pede. */
 .capa{position:relative;text-align:center;padding:18px 16px 24px;overflow:hidden;
-  background:-webkit-linear-gradient(top,#e6e6e6 0%,#f7f7f7 60%,#fff 100%);
-  background:linear-gradient(180deg,#e6e6e6 0%,#f7f7f7 60%,#fff 100%)}
+  background:-webkit-linear-gradient(top,#ffe3cc 0%,#fff4ea 60%,#fff 100%);
+  background:linear-gradient(180deg,#ffe3cc 0%,#fff4ea 60%,#fff 100%)}
 .capa .ceu{position:absolute;left:0;right:0;top:0;bottom:0;pointer-events:none;overflow:hidden}
 .capa .titu,.capa .sub,.capa .chamada,.capa .cena{position:relative;z-index:1}
 .capa h1.titu{margin:12px 0 4px;line-height:1;display:flex;flex-wrap:wrap;justify-content:center;gap:2px}
 .capa .titu .tpal{display:inline-flex;white-space:nowrap;gap:2px}
-.capa .titu .lt{display:inline-block;font-size:clamp(22px,5.8vw,42px);font-weight:900;color:var(--cor2)}
-.capa .titu .esp{display:inline-block;width:14px}
-.capa .sub{font-weight:700;color:#2c3745;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
-.capa .cena{margin:14px auto 4px;max-width:620px;min-height:90px;border:3px dashed #9a9a9a;border-radius:16px;
-  display:flex;align-items:center;justify-content:center;font-weight:800;color:#6b6b6b;font-size:14px;padding:10px}
-.capa .chamada{margin-top:14px;font-weight:700;color:#3a4658;font-size:clamp(13px,3.4vw,16px)}
+.capa .titu .lt{display:inline-block;font-size:clamp(20px,5.2vw,38px);font-weight:900;color:var(--cor2)}
+.capa .titu .esp{display:inline-block;width:12px}
+.capa .sub{font-weight:700;color:#5a2a12;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
+.capa .cena{margin:16px auto 4px;max-width:620px;padding:6px 0 10px}
+.capdh4{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-box-align:center;align-items:center;gap:clamp(8px,3vw,22px);flex-wrap:wrap}
+.capgrupo{display:-webkit-box;display:flex;-webkit-box-align:end;align-items:flex-end;gap:4px;
+  padding:10px 10px 26px;border:3px solid var(--cor);border-top:0;border-radius:0 0 18px 18px;
+  background:#fffaf2;position:relative;-webkit-animation:pulaDh4 2.4s ease-in-out infinite;
+  animation:pulaDh4 2.4s ease-in-out infinite}
+.capgrupo:last-child{-webkit-animation-delay:1.2s;animation-delay:1.2s}
+.capgrupo b{position:absolute;left:0;right:0;bottom:4px;font:900 clamp(13px,3.4vw,16px)/1 system-ui;color:var(--cor2)}
+.capgrupo .cbarra{height:clamp(50px,13vw,70px);width:auto}
+.capgrupo .ccubo{height:clamp(14px,3.6vw,18px);width:auto}
+.caprel{-webkit-transform-origin:50% 0;transform-origin:50% 0;
+  -webkit-animation:balDh4 3.2s ease-in-out infinite;animation:balDh4 3.2s ease-in-out infinite}
+@-webkit-keyframes pulaDh4{0%,100%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-7px)}}
+@keyframes pulaDh4{0%,100%{transform:translateY(0)}40%{transform:translateY(-7px)}}
+@-webkit-keyframes balDh4{0%,100%{-webkit-transform:rotate(-3deg)}50%{-webkit-transform:rotate(3deg)}}
+@keyframes balDh4{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@media (prefers-reduced-motion:reduce){ .capgrupo,.caprel{-webkit-animation:none;animation:none} }
+.capa .chamada{margin-top:16px;font-weight:700;color:#5a2a12;font-size:clamp(13px,3.4vw,16px)}
 
 #fim,#retomar{display:none;max-width:880px;margin:12px auto;background:#fff;border-radius:22px;padding:20px 16px;
   box-shadow:0 10px 34px rgba(70,40,20,.16);text-align:center}
@@ -994,6 +1007,123 @@ button.clt:active{background:#eef1f8}
 .sil.ok,.sil.usada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
 .sil.usada{opacity:.6}
 .sil.nao{background:#ffd9d6;border-color:#e2574c;color:#9d2f26}
+
+/* ============================================================
+   ⭐ AS PEÇAS DESTE CADERNO — o relógio, a chave e o material dourado
+   ============================================================ */
+/* ---- o relógio de ponteiros (F08) ----
+   ⚠️⚠️ OS PONTEIROS SAEM DO PAPEL COM O TAMANHO TROCADO: na F08 o ponteiro das
+      HORAS (rosa) tem 540 px e o dos MINUTOS (azul) 442 px — o das horas é o
+      MAIOR, que é o contrário do relógio de verdade e do que a folha 21 ensina.
+      Aqui cada um tem a SUA largura: o das horas 32% do mostrador, o dos minutos
+      44%. As duas figuras têm 420 px no arquivo e aparecem sempre MENORES. */
+.relog{position:relative;width:clamp(110px,30vw,150px);flex:none;margin:0 auto}
+.relog .mostr{display:block;width:100%;height:auto}
+.relog .pont{position:absolute;left:49.9%;top:49.9%;pointer-events:none}
+.relog .ponth{width:32%}
+.relog .pontm{width:44%}
+.relog .pontimg{display:block;width:100%;height:auto}
+.relog .pino{position:absolute;left:49.9%;top:49.9%;width:7%;height:7%;margin:-3.5% 0 0 -3.5%;
+  border-radius:50%;background:#3b2a20}
+.relog.mini{width:clamp(84px,22vw,104px)}
+.relog.grande{width:clamp(190px,58vw,260px)}
+.relog.capa{width:clamp(120px,32vw,176px)}
+.relcx{flex:none}
+.relgira{display:-webkit-box;display:flex;-webkit-box-orient:vertical;flex-direction:column;
+  -webkit-box-align:center;align-items:center;gap:8px;margin:6px 0}
+.relgira .relcx{cursor:grab;touch-action:none}
+.reldig{font:700 clamp(14px,3.8vw,17px)/1.2 system-ui;color:var(--texto2)}
+.reldig b{color:var(--cor2);font-size:1.2em}
+.relbts{display:-webkit-box;display:flex;flex-wrap:wrap;gap:6px;-webkit-box-pack:center;justify-content:center}
+.relbt{min-width:64px;padding:8px 10px;font-size:15px}
+.relreg{width:100%;max-width:280px;min-height:40px;accent-color:var(--cor)}
+/* o relógio digital, do jeito que a folha de papel o desenha */
+.dig{display:inline-block;font:800 clamp(17px,4.6vw,22px)/1 "Courier New",monospace;
+  letter-spacing:.06em;color:#ffcf8a;background:#241a14;border-radius:8px;padding:6px 9px}
+.doisp{font:900 clamp(22px,6vw,28px)/1 system-ui;color:var(--cor2);margin:0 1px}
+
+/* ---- a chave (A01, A11, A16, E30…): o dividendo à esquerda, o divisor
+   dentro da chave, o quociente embaixo do divisor, o resto embaixo do
+   dividendo ---- */
+.chave{display:-ms-grid;display:grid;grid-template-columns:auto auto;width:-webkit-max-content;
+  width:max-content;max-width:100%;margin:10px auto 4px;
+  font:900 clamp(24px,6.4vw,32px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#2b2320}
+.chdiv{padding:8px 14px 8px 4px;text-align:right;letter-spacing:.08em}
+.chdsr{padding:8px 12px;border-left:4px solid #2b2320;border-bottom:4px solid #2b2320;letter-spacing:.08em}
+.chres{padding:8px 10px 0 0;display:-webkit-box;display:flex;gap:3px;-webkit-box-pack:end;justify-content:flex-end;
+  -webkit-box-align:center;align-items:center;cursor:pointer}
+.chquo{padding:8px 0 0 8px;display:-webkit-box;display:flex;gap:3px;cursor:pointer}
+.chrot{font:700 12px/1 system-ui;color:var(--texto3);margin-right:4px}
+.chave .ccel{border:3px dashed var(--cor);border-radius:10px;background:var(--corclara);
+  font:900 clamp(20px,5.4vw,26px)/1 system-ui;color:var(--cor2)}
+.chave .ccel.ok{border-style:solid;border-color:#15a34a;background:#eafaf0;color:#0d6b33}
+
+/* ---- o material dourado (G06): placa = 100, barra = 10, cubinho = 1 ----
+   ⚠️ A ESCALA NÃO É A REAL, DE PROPÓSITO: na peça de verdade o cubinho é um
+      décimo da barra, e na tela isso daria 6 px — ninguém conta nem toca
+      nisso. A placa e a barra ficam do mesmo tamanho (dez barras formam a
+      placa) e o cubinho cresce o bastante para ser contado. */
+.mdcx{flex:1;min-width:0}
+.mdmat{display:-webkit-box;display:flex;flex-wrap:wrap;gap:5px;-webkit-box-align:end;align-items:flex-end;
+  -webkit-box-pack:center;justify-content:center;padding:6px;background:#fffaf2;
+  border:2px solid #f0dcc4;border-radius:12px}
+.mdplaca{height:clamp(46px,12vw,60px);width:auto}
+.mdbarra{height:clamp(46px,12vw,60px);width:auto}
+.mdcubo{height:clamp(14px,3.6vw,17px);width:auto}
+.mdmesa{display:-webkit-box;display:flex;flex-wrap:wrap;gap:8px;-webkit-box-align:stretch;align-items:stretch;margin:6px 0}
+.mdmesa .mdgrupos{-webkit-box-flex:3;flex:3 1 220px;margin:0}
+.coluna.pote.mdtroca{-webkit-box-flex:1;flex:1 1 110px;border:3px dashed #e0870a;background:#fff4e0}
+.coluna.pote.mdtroca .ctit{color:#8a4b00}
+.coluna.pote.mdtroca small{display:block;font-weight:700;color:#8a4b00}
+.coluna.pote.mdtroca.feita{border-style:solid;border-color:#15a34a;background:#eafaf0}
+.coluna.pote.mdtroca.erro{border-color:#e2574c;background:#fdeceb}
+.mdbanco{gap:6px}
+.op.figbt.mdp,.op.figbt.mdb,.op.figbt.mdu{min-width:48px;min-height:52px;padding:4px}
+.mdpimg,.mdbimg{height:44px;width:auto;pointer-events:none}
+.mduimg{height:22px;width:auto;pointer-events:none}
+.mdpmini,.mdbmini{height:30px;width:auto;vertical-align:bottom}
+.mdumini{height:12px;width:auto;vertical-align:bottom}
+.cdentro .fdentro{background:transparent;padding:0}
+.cent{text-align:center;margin-left:auto;margin-right:auto}
+
+/* ---- o quebra-cabeça (A10): o tabuleiro colhido com as casas por cima ---- */
+.qcbase{position:relative;width:100%;max-width:420px;margin:8px auto}
+.qcbase .qctab{display:block;width:100%;height:auto}
+.qccasa{position:absolute;width:33.333%;height:33.333%;border:2px dashed rgba(124,45,18,.35);
+  -webkit-box-sizing:border-box;box-sizing:border-box;cursor:pointer;background:rgba(255,255,255,.05)}
+.qccasa.cheia{border:0}
+.qccasa.erro{background:rgba(226,87,76,.25);border-color:#e2574c}
+.qccasa .qcfig{display:block;width:100%;height:100%;-o-object-fit:fill;object-fit:fill}
+.qcbanco{gap:8px}
+.op.qcpeca{display:-webkit-box;display:flex;-webkit-box-orient:vertical;flex-direction:column;
+  -webkit-box-align:center;align-items:center;gap:4px;padding:5px;min-width:84px}
+.qcmini{height:clamp(44px,12vw,56px);width:auto;pointer-events:none}
+.qcconta{font:900 clamp(14px,3.8vw,17px)/1 system-ui;color:var(--cor2)}
+.op.qcpeca.usada{opacity:.35;pointer-events:none}
+.op.qcpeca.marcada{border-color:var(--cor);background:var(--corclara)}
+
+/* ---- a trilha do Hulk (A31) ---- */
+.trpont{text-align:center}
+.trpont .fig{display:inline-block;height:clamp(70px,18vw,96px)}
+/* ---- a flor dos minutos (F24) ---- */
+.figflor{display:block;width:clamp(150px,44vw,220px);height:auto;margin:4px auto}
+.figcx{flex:none}
+
+/* ---- a rotina em ordem (D02, D06, D21) ---- */
+.rotlinha{display:-webkit-box;display:flex;flex-wrap:wrap;gap:6px;-webkit-box-pack:center;justify-content:center;
+  min-height:56px;border:2px dashed #e7c9b4;border-radius:12px;padding:6px;margin:6px 0}
+.rotchips{display:-webkit-box;display:flex;flex-wrap:wrap;gap:8px;-webkit-box-pack:center;justify-content:center}
+.rotchip{display:-webkit-box;display:flex;-webkit-box-orient:vertical;flex-direction:column;-webkit-box-align:center;align-items:center;
+  gap:4px;min-width:96px;min-height:48px;padding:6px 8px;border:2px solid #e2cfc2;border-radius:12px;background:#fff;cursor:pointer;
+  font:700 clamp(12px,3.4vw,14px)/1.2 system-ui;color:var(--texto2)}
+.rotchip.ok{border-color:#15a34a;background:#eafaf0;cursor:default}
+.rotchip.nao{border-color:#e2574c;background:#fdeceb}
+.rotfig{height:48px;width:auto;pointer-events:none}
+.rotchip .dig{font-size:15px;padding:4px 6px}
+
+/* ---- o cartaz e a memória ---- */
+.mfrente .relog.mini{width:clamp(80px,20vw,96px)}
+.mrot.dig{font-size:clamp(18px,5vw,24px)}
 </style></head><body>
 
 <div id="topo">
@@ -1072,7 +1202,43 @@ button.clt:active{background:#eef1f8}
       "pinte com a mesma cor" dá pintar. Anotar o comando verbatim no POTE.
    ⚠️ Folha nova = linha nova AQUI, no mesmo commit.
    Ex.: {"f1": "escolher", "f2": "classificar", "f3": "ligar"} */
-var GESTOS = {};
+var GESTOS = {
+ "f1": "arrastar",
+ "f2": "escolher",
+ "f3": "escolher",
+ "f4": "escolher",
+ "f5": "escolher",
+ "f6": "escrever",
+ "f7": "arrastar",
+ "f8": "arrastar",
+ "f9": "escrever",
+ "f10": "escrever",
+ "f11": "escrever",
+ "f12": "escolher",
+ "f13": "ligar",
+ "f14": "ligar",
+ "f15": "classificar",
+ "f16": "escrever",
+ "f17": "caminho",
+ "f18": "marcar",
+ "f19": "montar",
+ "f20": "escolher",
+ "f21": "escolher",
+ "f22": "escrever",
+ "f23": "girar",
+ "f24": "girar",
+ "f25": "ligar",
+ "f26": "classificar",
+ "f27": "escrever",
+ "f28": "escolher",
+ "f29": "escrever",
+ "f30": "escrever",
+ "f31": "escolher",
+ "f32": "escolher",
+ "f33": "ordenar",
+ "f34": "memoria",
+ "f35": "fecho"
+};
 /*GESTOS-FIM*/
 /*ITENS-INI*/
 /* ⚠️⚠️ A POSIÇÃO É A IDENTIDADE. A folha da posição 7 usa o pote `p7`, grava os
@@ -1085,15 +1251,1259 @@ var GESTOS = {};
    Quem mede é `node _qa/conta_folha.js <pasta>`; rodar SEMPRE.
    ⚠️ Folha de LIGAR e folha de UM ITEM SÓ guardam o pote EMBRULHADO:
       "p7": [["chave1","chave2","chave3"]] */
-var ITENS = {};
+var ITENS = {
+ "p1": [
+  "a1",
+  "a2"
+ ],
+ "p2": [
+  "r1",
+  "r2",
+  "r3",
+  "r4",
+  "r5",
+  "r6",
+  "r7",
+  "r8",
+  "r9"
+ ],
+ "p3": [
+  "m1",
+  "m2",
+  "m3",
+  "m4",
+  "m5",
+  "m6",
+  "m7",
+  "m8"
+ ],
+ "p4": [
+  "j1",
+  "j2",
+  "j3",
+  "j4",
+  "j5",
+  "j6"
+ ],
+ "p5": [
+  "t1",
+  "t2",
+  "t3",
+  "t4",
+  "t5",
+  "t6",
+  "t7",
+  "t8"
+ ],
+ "p6": [
+  "d1",
+  "d2",
+  "d3",
+  "d4",
+  "d5",
+  "d6",
+  "d7"
+ ],
+ "p7": [
+  "s468",
+  "s369",
+  "s84",
+  "s96",
+  "s286",
+  "s55"
+ ],
+ "p8": [
+  "t52",
+  "t72",
+  "t45",
+  "t96",
+  "t54",
+  "t75"
+ ],
+ "p9": [
+  "o1",
+  "o2",
+  "o3",
+  "o4",
+  "o5",
+  "o6",
+  "o7",
+  "o8"
+ ],
+ "p10": [
+  "c1",
+  "c2",
+  "c3",
+  "c4",
+  "c5",
+  "c6",
+  "c7",
+  "c8",
+  "c9",
+  "c10"
+ ],
+ "p11": [
+  "s1",
+  "s2",
+  "s3",
+  "s4",
+  "s5",
+  "s6",
+  "s7",
+  "s8",
+  "s9",
+  "s10"
+ ],
+ "p12": [
+  "e1",
+  "e2",
+  "e3",
+  "e4",
+  "e5",
+  "e6",
+  "e7",
+  "e8",
+  "e9",
+  "e10"
+ ],
+ "p13": [
+  [
+   "k1",
+   "k2",
+   "k3",
+   "k4",
+   "k5"
+  ]
+ ],
+ "p14": [
+  [
+   "w1",
+   "w2",
+   "w3",
+   "w4",
+   "w5"
+  ]
+ ],
+ "p15": [
+  "x1",
+  "x2",
+  "x3",
+  "x4",
+  "x5",
+  "x6",
+  "x7",
+  "x8"
+ ],
+ "p16": [
+  "i1",
+  "i2",
+  "i3",
+  "i4",
+  "i5",
+  "i6",
+  "i7",
+  "i8"
+ ],
+ "p17": [
+  "p1",
+  "p2",
+  "p3",
+  "p4",
+  "p5",
+  "p6"
+ ],
+ "p18": [
+  "u3",
+  "u4"
+ ],
+ "p19": [
+  "q1",
+  "q2",
+  "q3",
+  "q4",
+  "q5",
+  "q6",
+  "q7",
+  "q8",
+  "q9"
+ ],
+ "p20": [
+  "l1",
+  "l2",
+  "l3",
+  "l4"
+ ],
+ "p21": [
+  "n3",
+  "n4",
+  "n7",
+  "n9",
+  "n11",
+  "n6",
+  "n2",
+  "n8"
+ ],
+ "p22": [
+  "v1",
+  "v2",
+  "v3",
+  "v4",
+  "v5",
+  "v6",
+  "v7",
+  "v8",
+  "v9"
+ ],
+ "p23": [
+  "y1",
+  "y2",
+  "y3",
+  "y4",
+  "y5",
+  "y6",
+  "y7"
+ ],
+ "p24": [
+  "x1",
+  "x2",
+  "x3",
+  "x4",
+  "x5",
+  "x6",
+  "x7"
+ ],
+ "p25": [
+  [
+   "b1",
+   "b2",
+   "b3",
+   "b4",
+   "b5"
+  ]
+ ],
+ "p26": [
+  "h1",
+  "h2",
+  "h3",
+  "h4",
+  "h5",
+  "h6",
+  "h7",
+  "h8"
+ ],
+ "p27": [
+  "u1",
+  "u2",
+  "u3",
+  "u4",
+  "u5",
+  "u6",
+  "u7",
+  "u8",
+  "u9"
+ ],
+ "p28": [
+  "w120",
+  "w180",
+  "w240",
+  "w90",
+  "w150",
+  "w135",
+  "w65"
+ ],
+ "p29": [
+  "a1",
+  "a2",
+  "a3",
+  "a4",
+  "a5",
+  "a6"
+ ],
+ "p30": [
+  "b1",
+  "b2",
+  "b3",
+  "b4",
+  "b5",
+  "b6",
+  "b7",
+  "b8"
+ ],
+ "p31": [
+  "d1",
+  "d2",
+  "d3",
+  "d4",
+  "d5",
+  "d6",
+  "d7"
+ ],
+ "p32": [
+  "k1",
+  "k2",
+  "k3",
+  "k4",
+  "k5",
+  "k6"
+ ],
+ "p33": [
+  "z1",
+  "z2"
+ ],
+ "p34": [
+  [
+   "me1",
+   "me2",
+   "me3",
+   "me4"
+  ]
+ ],
+ "p35": [
+  "G1",
+  "G2",
+  "G3",
+  "G4",
+  "G5",
+  "G6"
+ ]
+};
 /*ITENS-FIM*/
 /*FALAS-INI*/
-/* ⚠️ NÃO SE ESCREVE AQUI À MÃO: este bloco é REESCRITO por
-   `python3 <pasta>/gerar_falas.py`, que lê os DADOS lá embaixo. Uma fonte só —
-   é isso que acaba com "a tela diz uma coisa e a voz diz outra". */
-var FALAS = {};
+var FALAS = {
+ "ad_b1": "Agora são 8 horas. 15 minutos antes, que horas são?",
+ "ad_b2": "Agora são 8 horas. Meia hora depois, que horas são?",
+ "ad_b3": "Agora são 10 horas e 20 minutos. 15 minutos antes, que horas são?",
+ "ad_b4": "Agora são 10 horas e 20 minutos. Meia hora depois, que horas são?",
+ "ad_b5": "Agora são 12 horas e 30 minutos. Meia hora depois, que horas são?",
+ "ad_b6": "Agora são 15 horas e 40 minutos. 15 minutos antes, que horas são?",
+ "ad_b7": "Agora são 15 horas e 40 minutos. Meia hora depois, que horas são?",
+ "ad_b8": "Agora são 19 horas e 35 minutos. Meia hora depois, que horas são?",
+ "capa": "Aprendendo a divisão e as horas. Trinta e cinco folhas para dividir com o material dourado e na chave, e para ler e contar as horas. Escreva o seu nome ali embaixo e toque em Começar.",
+ "cartaz_G1": "Repartir: 84 lápis para 7 mesas: quantos em cada mesa?",
+ "cartaz_G2": "Medir: 60 ovos em caixas de 12: quantas caixas?",
+ "cartaz_G3": "O resto: 17 balas para 3 amigos.",
+ "cartaz_G4": "A conta de volta: a multiplicação confere a divisão.",
+ "cartaz_G5": "Minutos em horas: 1 hora tem 60 minutos.",
+ "cartaz_G6": "Quanto durou: das 7 horas e 30 minutos às 7 horas e 50 minutos.",
+ "certo10_c1": "Isso! 76 dividido por 2 é 38.",
+ "certo10_c10": "Isso! 699 dividido por 3 é 233.",
+ "certo10_c2": "Isso! 84 dividido por 3 é 28.",
+ "certo10_c3": "Isso! 450 dividido por 5 é 90.",
+ "certo10_c4": "Isso! 120 dividido por 6 é 20.",
+ "certo10_c5": "Isso! 88 dividido por 4 é 22.",
+ "certo10_c6": "Isso! 100 dividido por 4 é 25.",
+ "certo10_c7": "Isso! 116 dividido por 4 é 29.",
+ "certo10_c8": "Isso! 255 dividido por 5 é 51.",
+ "certo10_c9": "Isso! 405 dividido por 3 é 135.",
+ "certo11_s1": "Isso! 689 dividido por 9 dá 76 e sobram 5.",
+ "certo11_s10": "Isso! 77 dividido por 5 dá 15 e sobram 2.",
+ "certo11_s2": "Isso! 821 dividido por 2 dá 410 e sobram 1.",
+ "certo11_s3": "Isso! 175 dividido por 3 dá 58 e sobram 1.",
+ "certo11_s4": "Isso! 944 dividido por 5 dá 188 e sobram 4.",
+ "certo11_s5": "Isso! 119 dividido por 8 dá 14 e sobram 7.",
+ "certo11_s6": "Isso! 674 dividido por 9 dá 74 e sobram 8.",
+ "certo11_s7": "Isso! 318 dividido por 8 dá 39 e sobram 6.",
+ "certo11_s8": "Isso! 976 dividido por 7 dá 139 e sobram 3.",
+ "certo11_s9": "Isso! 87 dividido por 2 dá 43 e sobram 1.",
+ "certo12_e1": "Isso! 2 vezes 34 é 68, então 68 dividido por 34 é 2.",
+ "certo12_e10": "Isso! 2 vezes 14 é 28, então 28 dividido por 14 é 2.",
+ "certo12_e2": "Isso! 3 vezes 23 é 69, então 69 dividido por 23 é 3.",
+ "certo12_e3": "Isso! 4 vezes 21 é 84, então 84 dividido por 21 é 4.",
+ "certo12_e4": "Isso! 3 vezes 32 é 96, então 96 dividido por 32 é 3.",
+ "certo12_e5": "Isso! 3 vezes 20 é 60, então 60 dividido por 20 é 3.",
+ "certo12_e6": "Isso! 4 vezes 20 é 80, então 80 dividido por 20 é 4.",
+ "certo12_e7": "Isso! 4 vezes 12 é 48, então 48 dividido por 12 é 4.",
+ "certo12_e8": "Isso! 5 vezes 11 é 55, então 55 dividido por 11 é 5.",
+ "certo12_e9": "Isso! 2 vezes 31 é 62, então 62 dividido por 31 é 2.",
+ "certo13_k1": "Isso! 333 dividido por 3 é 111.",
+ "certo13_k2": "Isso! 244 dividido por 2 é 122.",
+ "certo13_k3": "Isso! 100 dividido por 5 é 20.",
+ "certo13_k4": "Isso! 255 dividido por 5 é 51.",
+ "certo13_k5": "Isso! 116 dividido por 4 é 29.",
+ "certo14_w1": "Isso! 570 dividido por 19 é 30.",
+ "certo14_w2": "Isso! 104 dividido por 13 é 8.",
+ "certo14_w3": "Isso! 180 dividido por 12 é 15.",
+ "certo14_w4": "Isso! 144 dividido por 16 é 9.",
+ "certo14_w5": "Isso! 170 dividido por 17 é 10.",
+ "certo15_x1": "Isso! 48 dividido por 4 é 12 certinho: é exata.",
+ "certo15_x2": "Isso! 53 dividido por 4 sobra 1: não é exata.",
+ "certo15_x3": "Isso! 240 dividido por 6 é 40 certinho: é exata.",
+ "certo15_x4": "Isso! 245 dividido por 6 sobra 5: não é exata.",
+ "certo15_x5": "Isso! 96 dividido por 3 é 32 certinho: é exata.",
+ "certo15_x6": "Isso! 97 dividido por 3 sobra 1: não é exata.",
+ "certo15_x7": "Isso! 128 dividido por 8 é 16 certinho: é exata.",
+ "certo15_x8": "Isso! 130 dividido por 8 sobra 2: não é exata.",
+ "certo16_i1": "Isso! 6 vezes 14 é 84, então 84 dividido por 6 é 14.",
+ "certo16_i2": "Isso! 8 vezes 12 é 96, então 96 dividido por 8 é 12.",
+ "certo16_i3": "Isso! 5 vezes 15 é 75, então 75 dividido por 5 é 15.",
+ "certo16_i4": "Isso! 7 vezes 13 é 91, então 91 dividido por 7 é 13.",
+ "certo16_i5": "Isso! 4 vezes 21 é 84, então 84 dividido por 4 é 21.",
+ "certo16_i6": "Isso! 4 vezes 25 é 100, então 100 dividido por 4 é 25.",
+ "certo16_i7": "Isso! 6 vezes 16 é 96, então 96 dividido por 6 é 16.",
+ "certo16_i8": "Isso! 9 vezes 11 é 99, então 99 dividido por 9 é 11.",
+ "certo17_p1": "Isso! 22 dividido por 7 sobra 1. O Hulk andou!",
+ "certo17_p2": "Isso! 33 dividido por 4 sobra 1. O Hulk andou!",
+ "certo17_p3": "Isso! 46 dividido por 5 sobra 1. O Hulk andou!",
+ "certo17_p4": "Isso! 55 dividido por 9 sobra 1. O Hulk andou!",
+ "certo17_p5": "Isso! 49 dividido por 8 sobra 1. O Hulk andou!",
+ "certo17_p6": "Isso! 19 dividido por 6 sobra 1. O Hulk andou!",
+ "certo18_u3": "Isso! Eles vão de 3 em 3: somar 3 não muda o resto.",
+ "certo18_u4": "Isso! Eles vão de 4 em 4: somar 4 não muda o resto.",
+ "certo19_q1": "Isso! 96 dividido por 12 é 8.",
+ "certo19_q2": "Isso! 75 dividido por 15 é 5.",
+ "certo19_q3": "Isso! 99 dividido por 11 é 9.",
+ "certo19_q4": "Isso! 84 dividido por 14 é 6.",
+ "certo19_q5": "Isso! 120 dividido por 12 é 10.",
+ "certo19_q6": "Isso! 64 dividido por 16 é 4.",
+ "certo19_q7": "Isso! 38 dividido por 19 é 2.",
+ "certo19_q8": "Isso! 91 dividido por 13 é 7.",
+ "certo19_q9": "Isso! 45 dividido por 15 é 3.",
+ "certo20_l1": "Isso! A divisão responde: 96 dividido por 8 é 12 páginas.",
+ "certo20_l2": "Isso! A divisão responde: 180 dividido por 4 é 45 alunos em cada ônibus.",
+ "certo20_l3": "Isso! A divisão responde: 120 dividido por 60 é 2 horas.",
+ "certo20_l4": "Isso! A divisão responde: 84 dividido por 7 é 12 lápis em cada mesa.",
+ "certo21_n11": "Isso! No 11 são 55 minutos: 11 vezes 5.",
+ "certo21_n2": "Isso! No 2 são 10 minutos: 2 vezes 5.",
+ "certo21_n3": "Isso! No 3 são 15 minutos: 3 vezes 5.",
+ "certo21_n4": "Isso! No 4 são 20 minutos: 4 vezes 5.",
+ "certo21_n6": "Isso! No 6 são 30 minutos: 6 vezes 5.",
+ "certo21_n7": "Isso! No 7 são 35 minutos: 7 vezes 5.",
+ "certo21_n8": "Isso! No 8 são 40 minutos: 8 vezes 5.",
+ "certo21_n9": "Isso! No 9 são 45 minutos: 9 vezes 5.",
+ "certo22_v1": "Isso! São 3 horas e 25 minutos.",
+ "certo22_v2": "Isso! São 4 horas e 40 minutos.",
+ "certo22_v3": "Isso! São 8 horas e 35 minutos.",
+ "certo22_v4": "Isso! São 4 horas e 55 minutos.",
+ "certo22_v5": "Isso! São 7 horas e 40 minutos.",
+ "certo22_v6": "Isso! São 2 horas e 55 minutos.",
+ "certo22_v7": "Isso! São 10 horas e 5 minutos.",
+ "certo22_v8": "Isso! São 6 horas e 20 minutos.",
+ "certo22_v9": "Isso! São 11 horas e 45 minutos.",
+ "certo23_y1": "Isso! O relógio marca 10 horas e 45 minutos.",
+ "certo23_y2": "Isso! O relógio marca 9 horas e 10 minutos.",
+ "certo23_y3": "Isso! O relógio marca 11 horas e 30 minutos.",
+ "certo23_y4": "Isso! O relógio marca 8 horas e 15 minutos.",
+ "certo23_y5": "Isso! O relógio marca uma hora e 50 minutos.",
+ "certo23_y6": "Isso! O relógio marca 4 horas e 30 minutos.",
+ "certo23_y7": "Isso! O relógio marca 11 horas e 10 minutos.",
+ "certo24_x1": "Isso! O relógio marca 3 horas e 20 minutos.",
+ "certo24_x2": "Isso! O relógio marca 9 horas e 15 minutos.",
+ "certo24_x3": "Isso! O relógio marca uma hora e 10 minutos.",
+ "certo24_x4": "Isso! O relógio marca 4 horas e 20 minutos.",
+ "certo24_x5": "Isso! O relógio marca 10 horas e 45 minutos.",
+ "certo24_x6": "Isso! O relógio marca 2 horas e 55 minutos.",
+ "certo24_x7": "Isso! O relógio marca 11 horas e 20 minutos.",
+ "certo25_b1": "Isso! Os dois marcam 2 horas e 20 minutos.",
+ "certo25_b2": "Isso! Os dois marcam 5 horas e 15 minutos.",
+ "certo25_b3": "Isso! Os dois marcam 3 horas e 40 minutos.",
+ "certo25_b4": "Isso! Os dois marcam 6 horas e 45 minutos.",
+ "certo25_b5": "Isso! Os dois marcam 6 horas.",
+ "certo26_h1": "Isso! 7 horas e 30 minutos é de manhã.",
+ "certo26_h2": "Isso! 10 horas e 45 minutos é de manhã.",
+ "certo26_h3": "Isso! 13 horas e 10 minutos é de tarde.",
+ "certo26_h4": "Isso! 15 horas e 20 minutos é de tarde.",
+ "certo26_h5": "Isso! 19 horas e 30 minutos é de noite.",
+ "certo26_h6": "Isso! 21 horas e 15 minutos é de noite.",
+ "certo26_h7": "Isso! 3 horas é de madrugada.",
+ "certo26_h8": "Isso! Meia-noite e 30 minutos é de madrugada.",
+ "certo27_u1": "Isso! 1 hora tem 60 minutos.",
+ "certo27_u2": "Isso! Meia hora tem 30 minutos.",
+ "certo27_u3": "Isso! Um quarto de hora tem 15 minutos.",
+ "certo27_u4": "Isso! 1 minuto tem 60 segundos.",
+ "certo27_u5": "Isso! 1 dia tem 24 horas.",
+ "certo27_u6": "Isso! 2 horas têm 120 minutos.",
+ "certo27_u7": "Isso! 4 minutos têm 240 segundos.",
+ "certo27_u8": "Isso! Uma semana tem 168 horas.",
+ "certo27_u9": "Isso! 1 hora tem 3600 segundos.",
+ "certo28_w120": "Isso! 120 dividido por 60 é 2: 2 horas.",
+ "certo28_w135": "Isso! 135 dividido por 60 é 2 e sobram 15: 2 horas e 15 minutos.",
+ "certo28_w150": "Isso! 150 dividido por 60 é 2 e sobram 30: 2 horas e 30 minutos.",
+ "certo28_w180": "Isso! 180 dividido por 60 é 3: 3 horas.",
+ "certo28_w240": "Isso! 240 dividido por 60 é 4: 4 horas.",
+ "certo28_w65": "Isso! 65 dividido por 60 é 1 e sobram 5: uma hora e 5 minutos.",
+ "certo28_w90": "Isso! 90 dividido por 60 é 1 e sobram 30: uma hora e 30 minutos.",
+ "certo29_a1": "Isso! Serão 16 horas.",
+ "certo29_a2": "Isso! Serão 10 horas e 15 minutos.",
+ "certo29_a3": "Isso! Serão 21 horas e 5 minutos.",
+ "certo29_a4": "Isso! Serão 8 horas e 15 minutos.",
+ "certo29_a5": "Isso! Serão 11 horas e 25 minutos.",
+ "certo29_a6": "Isso! Serão 12 horas e 20 minutos.",
+ "certo2_r1": "Isso! 180 dividido por 9 é 20.",
+ "certo2_r2": "Isso! 150 dividido por 5 é 30.",
+ "certo2_r3": "Isso! 72 dividido por 6 é 12.",
+ "certo2_r4": "Isso! 119 dividido por 7 é 17.",
+ "certo2_r5": "Isso! 108 dividido por 6 é 18.",
+ "certo2_r6": "Isso! 963 dividido por 9 é 107.",
+ "certo2_r7": "Isso! 784 dividido por 7 é 112.",
+ "certo2_r8": "Isso! 90 dividido por 6 é 15.",
+ "certo2_r9": "Isso! 56 dividido por 7 é 8.",
+ "certo30_b1": "Isso! 15 minutos antes: 7 horas e 45 minutos.",
+ "certo30_b2": "Isso! Meia hora depois: 8 horas e 30 minutos.",
+ "certo30_b3": "Isso! 15 minutos antes: 10 horas e 5 minutos.",
+ "certo30_b4": "Isso! Meia hora depois: 10 horas e 50 minutos.",
+ "certo30_b5": "Isso! Meia hora depois: 13 horas.",
+ "certo30_b6": "Isso! 15 minutos antes: 15 horas e 25 minutos.",
+ "certo30_b7": "Isso! Meia hora depois: 16 horas e 10 minutos.",
+ "certo30_b8": "Isso! Meia hora depois: 20 horas e 5 minutos.",
+ "certo31_d1": "Isso! 20 minutos.",
+ "certo31_d2": "Isso! 15 minutos.",
+ "certo31_d3": "Isso! 50 minutos.",
+ "certo31_d4": "Isso! 40 minutos.",
+ "certo31_d5": "Isso! 5 horas.",
+ "certo31_d6": "Isso! 45 minutos.",
+ "certo31_d7": "Isso! 9 horas.",
+ "certo32_k1": "Isso! Não, porque o filme acaba às 21 horas e 10 minutos.",
+ "certo32_k2": "Isso! Sim, porque ela chega às 7 horas e 45 minutos.",
+ "certo32_k3": "Isso! Às 17 horas.",
+ "certo32_k4": "Isso! Às 13 horas.",
+ "certo32_k5": "Isso! Às 17 horas e 15 minutos.",
+ "certo32_k6": "Isso! Às 9 horas e 10 minutos.",
+ "certo33_z1": "Isso! Tudo em ordem, do mais cedo ao mais tarde.",
+ "certo33_z2": "Isso! Tudo em ordem, do mais cedo ao mais tarde.",
+ "certo35_G1": "Isso! Repartir: 84 dividido por 7 = 12 lápis em cada mesa.",
+ "certo35_G2": "Isso! Medir: 60 dividido por 12 = 5 caixas.",
+ "certo35_G3": "Isso! O resto: 5 para cada um e sobram 2.",
+ "certo35_G4": "Isso! A conta de volta: 6 vezes 14 = 84, então 84 dividido por 6 = 14.",
+ "certo35_G5": "Isso! Minutos em horas: 150 minutos = 2 horas e 30 minutos.",
+ "certo35_G6": "Isso! Quanto durou: 20 minutos.",
+ "certo3_m1": "Isso! 45 dividido por 9 é 5.",
+ "certo3_m2": "Isso! 64 dividido por 8 é 8.",
+ "certo3_m3": "Isso! 56 dividido por 4 é 14.",
+ "certo3_m4": "Isso! 368 dividido por 8 é 46.",
+ "certo3_m5": "Isso! 468 dividido por 6 é 78.",
+ "certo3_m6": "Isso! 126 dividido por 14 é 9.",
+ "certo3_m7": "Isso! 174 dividido por 6 é 29.",
+ "certo3_m8": "Isso! 150 dividido por 5 é 30.",
+ "certo4_j1": "Isso! Está errado: 9 vezes 8 é 72, e ainda sobram 48 figurinhas. O certo é 15 para cada um.",
+ "certo4_j2": "Isso! Está errado: o resto 5 é maior que o divisor 3, então ainda dava para repartir. O certo é 139 e sobra 2.",
+ "certo4_j3": "Isso! Está errado: o resto 7 é maior que o divisor 5. O certo é 39 e sobra 2.",
+ "certo4_j4": "Isso! Está certo: 5 vezes 3 é 15, mais 2 dá 17.",
+ "certo4_j5": "Isso! Está certo: 13 vezes 4 é 52, mais 1 dá 53.",
+ "certo4_j6": "Isso! Está certo: 12 vezes 4 é 48 certinho.",
+ "certo5_t1": "Isso! O dividendo é 48.",
+ "certo5_t2": "Isso! O divisor é 7.",
+ "certo5_t3": "Isso! O resto é 1.",
+ "certo5_t4": "Isso! O quociente é 5.",
+ "certo5_t5": "Isso! O resto é 2.",
+ "certo5_t6": "Isso! O divisor é 8.",
+ "certo5_t7": "Isso! O quociente é 15.",
+ "certo5_t8": "Isso! O dividendo é 86.",
+ "certo6_d1": "Isso! 3 barras e 4 cubinhos formam 34.",
+ "certo6_d2": "Isso! 1 placa e 1 cubinho formam 101.",
+ "certo6_d3": "Isso! 2 placas e 5 cubinhos formam 205.",
+ "certo6_d4": "Isso! 5 barras e 2 cubinhos formam 52.",
+ "certo6_d5": "Isso! 3 placas e 3 cubinhos formam 303.",
+ "certo6_d6": "Isso! 2 barras e 6 cubinhos formam 26.",
+ "certo6_d7": "Isso! 1 placa, 4 barras e 3 cubinhos formam 143.",
+ "certo9_o1": "Isso! 482 dividido por 2 é 241.",
+ "certo9_o2": "Isso! 693 dividido por 3 é 231.",
+ "certo9_o3": "Isso! 848 dividido por 4 é 212.",
+ "certo9_o4": "Isso! 555 dividido por 5 é 111.",
+ "certo9_o5": "Isso! 936 dividido por 3 é 312.",
+ "certo9_o6": "Isso! 684 dividido por 2 é 342.",
+ "certo9_o7": "Isso! 996 dividido por 3 é 332.",
+ "certo9_o8": "Isso! 488 dividido por 4 é 122.",
+ "certomd7_s286": "Isso! Cada grupo ficou com 143. 286 dividido por 2 é 143.",
+ "certomd7_s369": "Isso! Cada grupo ficou com 123. 369 dividido por 3 é 123.",
+ "certomd7_s468": "Isso! Cada grupo ficou com 234. 468 dividido por 2 é 234.",
+ "certomd7_s55": "Isso! Cada grupo ficou com 11. 55 dividido por 5 é 11.",
+ "certomd7_s84": "Isso! Cada grupo ficou com 21. 84 dividido por 4 é 21.",
+ "certomd7_s96": "Isso! Cada grupo ficou com 32. 96 dividido por 3 é 32.",
+ "certomd8_t45": "Isso! Cada grupo ficou com 15. 45 dividido por 3 é 15.",
+ "certomd8_t52": "Isso! Cada grupo ficou com 13. 52 dividido por 4 é 13.",
+ "certomd8_t54": "Isso! Cada grupo ficou com 27. 54 dividido por 2 é 27.",
+ "certomd8_t72": "Isso! Cada grupo ficou com 24. 72 dividido por 3 é 24.",
+ "certomd8_t75": "Isso! Cada grupo ficou com 15. 75 dividido por 5 é 15.",
+ "certomd8_t96": "Isso! Cada grupo ficou com 24. 96 dividido por 4 é 24.",
+ "certorep1_a1": "Isso! Cada caixa ficou com 4. 12 dividido por 3 é 4.",
+ "certorep1_a2": "Isso! Cada caixa ficou com 5. 20 dividido por 4 é 5.",
+ "conta_100_4": "100 dividido por 4.",
+ "conta_100_5": "100 dividido por 5.",
+ "conta_104_13": "104 dividido por 13.",
+ "conta_116_4": "116 dividido por 4.",
+ "conta_119_8": "119 dividido por 8.",
+ "conta_120_12": "120 dividido por 12.",
+ "conta_120_6": "120 dividido por 6.",
+ "conta_144_16": "144 dividido por 16.",
+ "conta_170_17": "170 dividido por 17.",
+ "conta_175_3": "175 dividido por 3.",
+ "conta_180_12": "180 dividido por 12.",
+ "conta_18_6": "18 dividido por 6.",
+ "conta_19_6": "19 dividido por 6.",
+ "conta_21_7": "21 dividido por 7.",
+ "conta_22_6": "22 dividido por 6.",
+ "conta_22_7": "22 dividido por 7.",
+ "conta_244_2": "244 dividido por 2.",
+ "conta_24_7": "24 dividido por 7.",
+ "conta_255_5": "255 dividido por 5.",
+ "conta_28_14": "28 dividido por 14.",
+ "conta_318_8": "318 dividido por 8.",
+ "conta_32_4": "32 dividido por 4.",
+ "conta_333_3": "333 dividido por 3.",
+ "conta_33_4": "33 dividido por 4.",
+ "conta_35_4": "35 dividido por 4.",
+ "conta_38_19": "38 dividido por 19.",
+ "conta_405_3": "405 dividido por 3.",
+ "conta_450_5": "450 dividido por 5.",
+ "conta_45_15": "45 dividido por 15.",
+ "conta_45_5": "45 dividido por 5.",
+ "conta_46_5": "46 dividido por 5.",
+ "conta_482_2": "482 dividido por 2.",
+ "conta_488_4": "488 dividido por 4.",
+ "conta_48_12": "48 dividido por 12.",
+ "conta_48_5": "48 dividido por 5.",
+ "conta_48_8": "48 dividido por 8.",
+ "conta_49_8": "49 dividido por 8.",
+ "conta_51_8": "51 dividido por 8.",
+ "conta_54_9": "54 dividido por 9.",
+ "conta_555_5": "555 dividido por 5.",
+ "conta_55_11": "55 dividido por 11.",
+ "conta_55_9": "55 dividido por 9.",
+ "conta_570_19": "570 dividido por 19.",
+ "conta_58_9": "58 dividido por 9.",
+ "conta_60_20": "60 dividido por 20.",
+ "conta_62_31": "62 dividido por 31.",
+ "conta_64_16": "64 dividido por 16.",
+ "conta_674_9": "674 dividido por 9.",
+ "conta_684_2": "684 dividido por 2.",
+ "conta_689_9": "689 dividido por 9.",
+ "conta_68_34": "68 dividido por 34.",
+ "conta_693_3": "693 dividido por 3.",
+ "conta_699_3": "699 dividido por 3.",
+ "conta_69_23": "69 dividido por 23.",
+ "conta_75_15": "75 dividido por 15.",
+ "conta_76_2": "76 dividido por 2.",
+ "conta_77_5": "77 dividido por 5.",
+ "conta_80_20": "80 dividido por 20.",
+ "conta_821_2": "821 dividido por 2.",
+ "conta_848_4": "848 dividido por 4.",
+ "conta_84_14": "84 dividido por 14.",
+ "conta_84_21": "84 dividido por 21.",
+ "conta_84_3": "84 dividido por 3.",
+ "conta_87_2": "87 dividido por 2.",
+ "conta_88_4": "88 dividido por 4.",
+ "conta_91_13": "91 dividido por 13.",
+ "conta_936_3": "936 dividido por 3.",
+ "conta_944_5": "944 dividido por 5.",
+ "conta_96_12": "96 dividido por 12.",
+ "conta_96_32": "96 dividido por 32.",
+ "conta_976_7": "976 dividido por 7.",
+ "conta_996_3": "996 dividido por 3.",
+ "conta_99_11": "99 dividido por 11.",
+ "dica10_c1": "Comece pelas centenas: quantas vezes o 2 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c10": "Comece pelas centenas: quantas vezes o 3 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c2": "Comece pelas centenas: quantas vezes o 3 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c3": "Comece pelas centenas: quantas vezes o 5 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c4": "Comece pelas centenas: quantas vezes o 6 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c5": "Comece pelas centenas: quantas vezes o 4 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c6": "Comece pelas centenas: quantas vezes o 4 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c7": "Comece pelas centenas: quantas vezes o 4 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c8": "Comece pelas centenas: quantas vezes o 5 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica10_c9": "Comece pelas centenas: quantas vezes o 3 cabe? O que não coube desce e se junta às dezenas. Depois as unidades.",
+ "dica11_s1": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s10": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s2": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s3": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s4": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s5": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s6": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s7": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s8": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica11_s9": "Divida ordem por ordem, e no fim olhe o que sobrou: o resto tem de ser menor que o divisor. Escreva primeiro o quociente e depois o resto.",
+ "dica12_e1": "Arredonde o 34 para a dezena mais perto e veja quantas vezes ela cabe no 68. Depois confira multiplicando.",
+ "dica12_e10": "Arredonde o 14 para a dezena mais perto e veja quantas vezes ela cabe no 28. Depois confira multiplicando.",
+ "dica12_e2": "Arredonde o 23 para a dezena mais perto e veja quantas vezes ela cabe no 69. Depois confira multiplicando.",
+ "dica12_e3": "Arredonde o 21 para a dezena mais perto e veja quantas vezes ela cabe no 84. Depois confira multiplicando.",
+ "dica12_e4": "Arredonde o 32 para a dezena mais perto e veja quantas vezes ela cabe no 96. Depois confira multiplicando.",
+ "dica12_e5": "Arredonde o 20 para a dezena mais perto e veja quantas vezes ela cabe no 60. Depois confira multiplicando.",
+ "dica12_e6": "Arredonde o 20 para a dezena mais perto e veja quantas vezes ela cabe no 80. Depois confira multiplicando.",
+ "dica12_e7": "Arredonde o 12 para a dezena mais perto e veja quantas vezes ela cabe no 48. Depois confira multiplicando.",
+ "dica12_e8": "Arredonde o 11 para a dezena mais perto e veja quantas vezes ela cabe no 55. Depois confira multiplicando.",
+ "dica12_e9": "Arredonde o 31 para a dezena mais perto e veja quantas vezes ela cabe no 62. Depois confira multiplicando.",
+ "dica13_k1": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica13_k2": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica13_k3": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica13_k4": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica13_k5": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica14_w1": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica14_w2": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica14_w3": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica14_w4": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica14_w5": "Multiplique o número da direita pelo divisor. Tem de dar o dividendo, certinho.",
+ "dica15_x1": "Faça a conta até o fim e olhe o que ficou: sobrou alguma coisa ou não sobrou nada?",
+ "dica15_x2": "Faça a conta até o fim e olhe o que ficou: sobrou alguma coisa ou não sobrou nada?",
+ "dica15_x3": "Faça a conta até o fim e olhe o que ficou: sobrou alguma coisa ou não sobrou nada?",
+ "dica15_x4": "Faça a conta até o fim e olhe o que ficou: sobrou alguma coisa ou não sobrou nada?",
+ "dica15_x5": "Faça a conta até o fim e olhe o que ficou: sobrou alguma coisa ou não sobrou nada?",
+ "dica15_x6": "Faça a conta até o fim e olhe o que ficou: sobrou alguma coisa ou não sobrou nada?",
+ "dica15_x7": "Faça a conta até o fim e olhe o que ficou: sobrou alguma coisa ou não sobrou nada?",
+ "dica15_x8": "Faça a conta até o fim e olhe o que ficou: sobrou alguma coisa ou não sobrou nada?",
+ "dica16_i1": "Vá multiplicando o 6 por 10, por 11, por 12, e veja qual chega no 84.",
+ "dica16_i2": "Vá multiplicando o 8 por 10, por 11, por 12, e veja qual chega no 96.",
+ "dica16_i3": "Vá multiplicando o 5 por 10, por 11, por 12, e veja qual chega no 75.",
+ "dica16_i4": "Vá multiplicando o 7 por 10, por 11, por 12, e veja qual chega no 91.",
+ "dica16_i5": "Vá multiplicando o 4 por 10, por 11, por 12, e veja qual chega no 84.",
+ "dica16_i6": "Vá multiplicando o 4 por 10, por 11, por 12, e veja qual chega no 100.",
+ "dica16_i7": "Vá multiplicando o 6 por 10, por 11, por 12, e veja qual chega no 96.",
+ "dica16_i8": "Vá multiplicando o 9 por 10, por 11, por 12, e veja qual chega no 99.",
+ "dica17_p1": "Faça as três contas e olhe o resto de cada uma. Uma fecha certinho, uma sobra 1 e uma sobra mais. O Hulk quer a do 1.",
+ "dica17_p2": "Faça as três contas e olhe o resto de cada uma. Uma fecha certinho, uma sobra 1 e uma sobra mais. O Hulk quer a do 1.",
+ "dica17_p3": "Faça as três contas e olhe o resto de cada uma. Uma fecha certinho, uma sobra 1 e uma sobra mais. O Hulk quer a do 1.",
+ "dica17_p4": "Faça as três contas e olhe o resto de cada uma. Uma fecha certinho, uma sobra 1 e uma sobra mais. O Hulk quer a do 1.",
+ "dica17_p5": "Faça as três contas e olhe o resto de cada uma. Uma fecha certinho, uma sobra 1 e uma sobra mais. O Hulk quer a do 1.",
+ "dica17_p6": "Faça as três contas e olhe o resto de cada uma. Uma fecha certinho, uma sobra 1 e uma sobra mais. O Hulk quer a do 1.",
+ "dica18_u3": "Faça a conta de um número de cada vez. Achou um que serve? Some 3 a ele e teste o próximo.",
+ "dica18_u4": "Faça a conta de um número de cada vez. Achou um que serve? Some 4 a ele e teste o próximo.",
+ "dica19_q1": "Estime: arredonde o 12 e veja quantas vezes cabe no 96. Depois confira multiplicando.",
+ "dica19_q2": "Estime: arredonde o 15 e veja quantas vezes cabe no 75. Depois confira multiplicando.",
+ "dica19_q3": "Estime: arredonde o 11 e veja quantas vezes cabe no 99. Depois confira multiplicando.",
+ "dica19_q4": "Estime: arredonde o 14 e veja quantas vezes cabe no 84. Depois confira multiplicando.",
+ "dica19_q5": "Estime: arredonde o 12 e veja quantas vezes cabe no 120. Depois confira multiplicando.",
+ "dica19_q6": "Estime: arredonde o 16 e veja quantas vezes cabe no 64. Depois confira multiplicando.",
+ "dica19_q7": "Estime: arredonde o 19 e veja quantas vezes cabe no 38. Depois confira multiplicando.",
+ "dica19_q8": "Estime: arredonde o 13 e veja quantas vezes cabe no 91. Depois confira multiplicando.",
+ "dica19_q9": "Estime: arredonde o 15 e veja quantas vezes cabe no 45. Depois confira multiplicando.",
+ "dica20_l1": "Qual pergunta se responde com os números da história? As outras pedem coisas que a história não conta.",
+ "dica20_l2": "Qual pergunta se responde com os números da história? As outras pedem coisas que a história não conta.",
+ "dica20_l3": "Qual pergunta se responde com os números da história? As outras pedem coisas que a história não conta.",
+ "dica20_l4": "Qual pergunta se responde com os números da história? As outras pedem coisas que a história não conta.",
+ "dica21_n11": "Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no número em que o ponteiro azul parou.",
+ "dica21_n2": "Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no número em que o ponteiro azul parou.",
+ "dica21_n3": "Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no número em que o ponteiro azul parou.",
+ "dica21_n4": "Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no número em que o ponteiro azul parou.",
+ "dica21_n6": "Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no número em que o ponteiro azul parou.",
+ "dica21_n7": "Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no número em que o ponteiro azul parou.",
+ "dica21_n8": "Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no número em que o ponteiro azul parou.",
+ "dica21_n9": "Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no número em que o ponteiro azul parou.",
+ "dica22_v1": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica22_v2": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica22_v3": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica22_v4": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica22_v5": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica22_v6": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica22_v7": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica22_v8": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica22_v9": "Primeiro o ponteiro rosa: ele já passou de qual número? Essa é a hora. Depois o azul: conte de 5 em 5.",
+ "dica23_y1": "Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica23_y2": "Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica23_y3": "Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica23_y4": "Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica23_y5": "Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica23_y6": "Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica23_y7": "Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica24_x1": "15 horas no relógio de ponteiros é o 3. Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica24_x2": "21 horas no relógio de ponteiros é o 9. Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica24_x3": "13 horas no relógio de ponteiros é o 1. Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica24_x4": "16 horas no relógio de ponteiros é o 4. Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica24_x5": "22 horas no relógio de ponteiros é o 10. Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica24_x6": "14 horas no relógio de ponteiros é o 2. Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica24_x7": "23 horas no relógio de ponteiros é o 11. Ponha primeiro o ponteiro azul nos minutos, contando de 5 em 5. Depois acerte a hora com os botões de uma hora.",
+ "dica25_b1": "No relógio de ponteiros, o rosa diz a hora e o azul os minutos. Leia os dois e procure o digital igual.",
+ "dica25_b2": "No relógio de ponteiros, o rosa diz a hora e o azul os minutos. Leia os dois e procure o digital igual.",
+ "dica25_b3": "No relógio de ponteiros, o rosa diz a hora e o azul os minutos. Leia os dois e procure o digital igual.",
+ "dica25_b4": "No relógio de ponteiros, o rosa diz a hora e o azul os minutos. Leia os dois e procure o digital igual.",
+ "dica25_b5": "No relógio de ponteiros, o rosa diz a hora e o azul os minutos. Leia os dois e procure o digital igual.",
+ "dica26_h1": "Olhe só a hora, antes dos dois-pontos, e procure em que faixa ela cabe: de 6 a 11 é manhã, de 12 a 17 é tarde, de 18 a 23 é noite, e de 0 a 5 é madrugada.",
+ "dica26_h2": "Olhe só a hora, antes dos dois-pontos, e procure em que faixa ela cabe: de 6 a 11 é manhã, de 12 a 17 é tarde, de 18 a 23 é noite, e de 0 a 5 é madrugada.",
+ "dica26_h3": "Olhe só a hora, antes dos dois-pontos, e procure em que faixa ela cabe: de 6 a 11 é manhã, de 12 a 17 é tarde, de 18 a 23 é noite, e de 0 a 5 é madrugada.",
+ "dica26_h4": "Olhe só a hora, antes dos dois-pontos, e procure em que faixa ela cabe: de 6 a 11 é manhã, de 12 a 17 é tarde, de 18 a 23 é noite, e de 0 a 5 é madrugada.",
+ "dica26_h5": "Olhe só a hora, antes dos dois-pontos, e procure em que faixa ela cabe: de 6 a 11 é manhã, de 12 a 17 é tarde, de 18 a 23 é noite, e de 0 a 5 é madrugada.",
+ "dica26_h6": "Olhe só a hora, antes dos dois-pontos, e procure em que faixa ela cabe: de 6 a 11 é manhã, de 12 a 17 é tarde, de 18 a 23 é noite, e de 0 a 5 é madrugada.",
+ "dica26_h7": "Olhe só a hora, antes dos dois-pontos, e procure em que faixa ela cabe: de 6 a 11 é manhã, de 12 a 17 é tarde, de 18 a 23 é noite, e de 0 a 5 é madrugada.",
+ "dica26_h8": "Olhe só a hora, antes dos dois-pontos, e procure em que faixa ela cabe: de 6 a 11 é manhã, de 12 a 17 é tarde, de 18 a 23 é noite, e de 0 a 5 é madrugada.",
+ "dica27_u1": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica27_u2": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica27_u3": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica27_u4": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica27_u5": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica27_u6": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica27_u7": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica27_u8": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica27_u9": "Lembre: uma hora tem 60 minutos, um minuto tem 60 segundos e um dia tem 24 horas. Quando são várias, multiplique.",
+ "dica28_w120": "Quantas vezes o 60 cabe no 120? Esse número são as horas. O que sobrar são os minutos.",
+ "dica28_w135": "Quantas vezes o 60 cabe no 135? Esse número são as horas. O que sobrar são os minutos.",
+ "dica28_w150": "Quantas vezes o 60 cabe no 150? Esse número são as horas. O que sobrar são os minutos.",
+ "dica28_w180": "Quantas vezes o 60 cabe no 180? Esse número são as horas. O que sobrar são os minutos.",
+ "dica28_w240": "Quantas vezes o 60 cabe no 240? Esse número são as horas. O que sobrar são os minutos.",
+ "dica28_w65": "Quantas vezes o 60 cabe no 65? Esse número são as horas. O que sobrar são os minutos.",
+ "dica28_w90": "Quantas vezes o 60 cabe no 90? Esse número são as horas. O que sobrar são os minutos.",
+ "dica29_a1": "Some 15 aos minutos. Se passar de 60, tire 60 dos minutos e ponha uma hora a mais.",
+ "dica29_a2": "Some 15 aos minutos. Se passar de 60, tire 60 dos minutos e ponha uma hora a mais.",
+ "dica29_a3": "Some 15 aos minutos. Se passar de 60, tire 60 dos minutos e ponha uma hora a mais.",
+ "dica29_a4": "Some 15 aos minutos. Se passar de 60, tire 60 dos minutos e ponha uma hora a mais.",
+ "dica29_a5": "Some 15 aos minutos. Se passar de 60, tire 60 dos minutos e ponha uma hora a mais.",
+ "dica29_a6": "Some 15 aos minutos. Se passar de 60, tire 60 dos minutos e ponha uma hora a mais.",
+ "dica2_r1": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica2_r2": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica2_r3": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica2_r4": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica2_r5": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica2_r6": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica2_r7": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica2_r8": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica2_r9": "Descubra quem é o total e em quantas partes ele se reparte. Depois pense: que número, vezes o número de partes, dá o total?",
+ "dica30_b1": "Tire 15 dos minutos. Se não der, a hora volta uma e os minutos ficam 60 menos o que faltou.",
+ "dica30_b2": "Meia hora são 30 minutos. Some aos minutos; se passar de 60, a hora anda uma.",
+ "dica30_b3": "Tire 15 dos minutos. Se não der, a hora volta uma e os minutos ficam 60 menos o que faltou.",
+ "dica30_b4": "Meia hora são 30 minutos. Some aos minutos; se passar de 60, a hora anda uma.",
+ "dica30_b5": "Meia hora são 30 minutos. Some aos minutos; se passar de 60, a hora anda uma.",
+ "dica30_b6": "Tire 15 dos minutos. Se não der, a hora volta uma e os minutos ficam 60 menos o que faltou.",
+ "dica30_b7": "Meia hora são 30 minutos. Some aos minutos; se passar de 60, a hora anda uma.",
+ "dica30_b8": "Meia hora são 30 minutos. Some aos minutos; se passar de 60, a hora anda uma.",
+ "dica31_d1": "Conte do começo até a próxima hora cheia, e depois da hora cheia até o fim. Some os dois pedaços.",
+ "dica31_d2": "Conte do começo até a próxima hora cheia, e depois da hora cheia até o fim. Some os dois pedaços.",
+ "dica31_d3": "Conte do começo até a próxima hora cheia, e depois da hora cheia até o fim. Some os dois pedaços.",
+ "dica31_d4": "Conte do começo até a próxima hora cheia, e depois da hora cheia até o fim. Some os dois pedaços.",
+ "dica31_d5": "Conte do começo até a próxima hora cheia, e depois da hora cheia até o fim. Some os dois pedaços.",
+ "dica31_d6": "Conte do começo até a próxima hora cheia, e depois da hora cheia até o fim. Some os dois pedaços.",
+ "dica31_d7": "Conte do começo até a próxima hora cheia, e depois da hora cheia até o fim. Some os dois pedaços.",
+ "dica32_k1": "Some a duração ao horário do começo: primeiro as horas, depois os minutos. Se os minutos passarem de 60, a hora anda uma.",
+ "dica32_k2": "Some a duração ao horário do começo: primeiro as horas, depois os minutos. Se os minutos passarem de 60, a hora anda uma.",
+ "dica32_k3": "Some a duração ao horário do começo: primeiro as horas, depois os minutos. Se os minutos passarem de 60, a hora anda uma.",
+ "dica32_k4": "Some a duração ao horário do começo: primeiro as horas, depois os minutos. Se os minutos passarem de 60, a hora anda uma.",
+ "dica32_k5": "Some a duração ao horário do começo: primeiro as horas, depois os minutos. Se os minutos passarem de 60, a hora anda uma.",
+ "dica32_k6": "Some a duração ao horário do começo: primeiro as horas, depois os minutos. Se os minutos passarem de 60, a hora anda uma.",
+ "dica33_z1": "Compare primeiro as horas. Se a hora for a mesma, quem tem menos minutos vem antes.",
+ "dica33_z2": "Compare primeiro as horas. Se a hora for a mesma, quem tem menos minutos vem antes.",
+ "dica35_G1": "Leia o nome da linha de novo e procure o exemplo que faz exatamente isso.",
+ "dica35_G2": "Leia o nome da linha de novo e procure o exemplo que faz exatamente isso.",
+ "dica35_G3": "Leia o nome da linha de novo e procure o exemplo que faz exatamente isso.",
+ "dica35_G4": "Leia o nome da linha de novo e procure o exemplo que faz exatamente isso.",
+ "dica35_G5": "Leia o nome da linha de novo e procure o exemplo que faz exatamente isso.",
+ "dica35_G6": "Leia o nome da linha de novo e procure o exemplo que faz exatamente isso.",
+ "dica3_m1": "Aqui o tamanho de cada grupo já está dito. Pergunte: quantas vezes esse tamanho cabe no total?",
+ "dica3_m2": "Aqui o tamanho de cada grupo já está dito. Pergunte: quantas vezes esse tamanho cabe no total?",
+ "dica3_m3": "Aqui o tamanho de cada grupo já está dito. Pergunte: quantas vezes esse tamanho cabe no total?",
+ "dica3_m4": "Aqui o tamanho de cada grupo já está dito. Pergunte: quantas vezes esse tamanho cabe no total?",
+ "dica3_m5": "Aqui o tamanho de cada grupo já está dito. Pergunte: quantas vezes esse tamanho cabe no total?",
+ "dica3_m6": "Aqui o tamanho de cada grupo já está dito. Pergunte: quantas vezes esse tamanho cabe no total?",
+ "dica3_m7": "Aqui o tamanho de cada grupo já está dito. Pergunte: quantas vezes esse tamanho cabe no total?",
+ "dica3_m8": "Aqui o tamanho de cada grupo já está dito. Pergunte: quantas vezes esse tamanho cabe no total?",
+ "dica4_j1": "Faça a conta de volta: multiplique o resultado pelo divisor e some o que sobrou. Dá o número do começo? E o resto é menor que o divisor?",
+ "dica4_j2": "Faça a conta de volta: multiplique o resultado pelo divisor e some o que sobrou. Dá o número do começo? E o resto é menor que o divisor?",
+ "dica4_j3": "Faça a conta de volta: multiplique o resultado pelo divisor e some o que sobrou. Dá o número do começo? E o resto é menor que o divisor?",
+ "dica4_j4": "Faça a conta de volta: multiplique o resultado pelo divisor e some o que sobrou. Dá o número do começo? E o resto é menor que o divisor?",
+ "dica4_j5": "Faça a conta de volta: multiplique o resultado pelo divisor e some o que sobrou. Dá o número do começo? E o resto é menor que o divisor?",
+ "dica4_j6": "Faça a conta de volta: multiplique o resultado pelo divisor e some o que sobrou. Dá o número do começo? E o resto é menor que o divisor?",
+ "dica5_t1": "O dividendo é o número que se divide. Procure esse número na conta.",
+ "dica5_t2": "O divisor é o número que diz em quantas partes. Procure esse número na conta.",
+ "dica5_t3": "O resto é o que sobra. Procure esse número na conta.",
+ "dica5_t4": "O quociente é o resultado. Procure esse número na conta.",
+ "dica5_t5": "O resto é o que sobra. Procure esse número na conta.",
+ "dica5_t6": "O divisor é o número que diz em quantas partes. Procure esse número na conta.",
+ "dica5_t7": "O quociente é o resultado. Procure esse número na conta.",
+ "dica5_t8": "O dividendo é o número que se divide. Procure esse número na conta.",
+ "dica6_d1": "Conte primeiro as placas: cada uma vale cem. Depois as barras, de dez em dez. Por último os cubinhos, de um em um.",
+ "dica6_d2": "Conte primeiro as placas: cada uma vale cem. Depois as barras, de dez em dez. Por último os cubinhos, de um em um.",
+ "dica6_d3": "Conte primeiro as placas: cada uma vale cem. Depois as barras, de dez em dez. Por último os cubinhos, de um em um.",
+ "dica6_d4": "Conte primeiro as placas: cada uma vale cem. Depois as barras, de dez em dez. Por último os cubinhos, de um em um.",
+ "dica6_d5": "Conte primeiro as placas: cada uma vale cem. Depois as barras, de dez em dez. Por último os cubinhos, de um em um.",
+ "dica6_d6": "Conte primeiro as placas: cada uma vale cem. Depois as barras, de dez em dez. Por último os cubinhos, de um em um.",
+ "dica6_d7": "Conte primeiro as placas: cada uma vale cem. Depois as barras, de dez em dez. Por último os cubinhos, de um em um.",
+ "dica9_o1": "Olhe o material: divida as placas, depois as barras, depois os cubinhos. Cada ordem dá um algarismo do quociente.",
+ "dica9_o2": "Olhe o material: divida as placas, depois as barras, depois os cubinhos. Cada ordem dá um algarismo do quociente.",
+ "dica9_o3": "Olhe o material: divida as placas, depois as barras, depois os cubinhos. Cada ordem dá um algarismo do quociente.",
+ "dica9_o4": "Olhe o material: divida as placas, depois as barras, depois os cubinhos. Cada ordem dá um algarismo do quociente.",
+ "dica9_o5": "Olhe o material: divida as placas, depois as barras, depois os cubinhos. Cada ordem dá um algarismo do quociente.",
+ "dica9_o6": "Olhe o material: divida as placas, depois as barras, depois os cubinhos. Cada ordem dá um algarismo do quociente.",
+ "dica9_o7": "Olhe o material: divida as placas, depois as barras, depois os cubinhos. Cada ordem dá um algarismo do quociente.",
+ "dica9_o8": "Olhe o material: divida as placas, depois as barras, depois os cubinhos. Cada ordem dá um algarismo do quociente.",
+ "dicamd7_b": "Esse grupo já tem as barras dele. Olhe os outros grupos: se todos já têm o mesmo tanto, a barra que sobrou vai para a casa da troca.",
+ "dicamd7_b0": "Uma barra só não dá para todos os grupos. Leve-a para a casa da troca.",
+ "dicamd7_p": "Esse grupo já tem as placas dele. Leve esta placa para um grupo que ainda tem menos.",
+ "dicamd7_u": "Esse grupo já tem os cubinhos dele. Dê a volta: um cubinho em cada grupo.",
+ "dicamd8_b": "Esse grupo já tem as barras dele. Olhe os outros grupos: se todos já têm o mesmo tanto, a barra que sobrou vai para a casa da troca.",
+ "dicamd8_b0": "Uma barra só não dá para todos os grupos. Leve-a para a casa da troca.",
+ "dicamd8_p": "Esse grupo já tem as placas dele. Leve esta placa para um grupo que ainda tem menos.",
+ "dicamd8_u": "Esse grupo já tem os cubinhos dele. Dê a volta: um cubinho em cada grupo.",
+ "dicarep1_a1": "Essa caixa já está cheia. Ponha um pirulito em cada caixa e vá dando a volta: assim elas acabam iguais.",
+ "dicarep1_a2": "Essa caixa já está cheia. Ponha um pirulito em cada caixa e vá dando a volta: assim elas acabam iguais.",
+ "dicatroca1_8": "Na casa da troca só entra a barra: é ela que vira dez cubinhos.",
+ "dicatroca2_8": "Ainda não! Primeiro dê as barras aos grupos, uma para cada. Só a barra que sobrar vai para a troca.",
+ "diz2_dia_h1": "7 horas e 30 minutos.",
+ "diz2_dia_h2": "10 horas e 45 minutos.",
+ "diz2_dia_h3": "13 horas e 10 minutos.",
+ "diz2_dia_h4": "15 horas e 20 minutos.",
+ "diz2_dia_h5": "19 horas e 30 minutos.",
+ "diz2_dia_h6": "21 horas e 15 minutos.",
+ "diz2_dia_h7": "3 horas.",
+ "diz2_dia_h8": "meia-noite e 30 minutos.",
+ "diz2_ex_x1": "48 dividido por 4.",
+ "diz2_ex_x2": "53 dividido por 4.",
+ "diz2_ex_x3": "240 dividido por 6.",
+ "diz2_ex_x4": "245 dividido por 6.",
+ "diz2_ex_x5": "96 dividido por 3.",
+ "diz2_ex_x6": "97 dividido por 3.",
+ "diz2_ex_x7": "128 dividido por 8.",
+ "diz2_ex_x8": "130 dividido por 8.",
+ "du_d1": "Leitura da professora: das 7 horas e 30 minutos às 7 horas e 50 minutos.",
+ "du_d2": "Leitura de parlenda: das 8 horas e 20 minutos às 8 horas e 35 minutos.",
+ "du_d3": "Matemática: das 10 horas e 20 minutos às 11 horas e 10 minutos.",
+ "du_d4": "Artes: das 11 horas e 10 minutos às 11 horas e 50 minutos.",
+ "du_d5": "A aula de Pedro começa às 8 horas e termina às 13 horas.",
+ "du_d6": "Pedro saiu de casa às 8 horas e 15 minutos e chegou ao trabalho às 9 horas.",
+ "du_d7": "A mãe de Carlos saiu às 8 horas da manhã e voltou às 17 horas.",
+ "du_op_d1_0": "20 minutos",
+ "du_op_d1_1": "30 minutos",
+ "du_op_d1_2": "50 minutos",
+ "du_op_d2_0": "15 minutos",
+ "du_op_d2_1": "35 minutos",
+ "du_op_d2_2": "25 minutos",
+ "du_op_d3_0": "50 minutos",
+ "du_op_d3_1": "90 minutos",
+ "du_op_d3_2": "1 hora e 10 minutos",
+ "du_op_d4_0": "40 minutos",
+ "du_op_d4_1": "50 minutos",
+ "du_op_d4_2": "1 hora",
+ "du_op_d5_0": "5 horas",
+ "du_op_d5_1": "13 horas",
+ "du_op_d5_2": "4 horas",
+ "du_op_d6_0": "45 minutos",
+ "du_op_d6_1": "15 minutos",
+ "du_op_d6_2": "1 hora e 15 minutos",
+ "du_op_d7_0": "9 horas",
+ "du_op_d7_1": "8 horas",
+ "du_op_d7_2": "25 horas",
+ "el_l1": "Tenho 96 figurinhas e vou colar 8 em cada página do álbum.",
+ "el_l2": "A escola levou 180 alunos ao passeio em 4 ônibus iguais.",
+ "el_l3": "Um filme tem 120 minutos.",
+ "el_l4": "Uma caixa tem 84 lápis para repartir igualmente entre 7 mesas.",
+ "elop_l1_0": "Quantas páginas vou usar?",
+ "elop_l1_1": "Quantas figurinhas eu ganhei de presente?",
+ "elop_l1_2": "Quantos anos tem o álbum?",
+ "elop_l2_0": "Quantos alunos foram em cada ônibus?",
+ "elop_l2_1": "Quantos ônibus a cidade tem?",
+ "elop_l2_2": "Quanto custou o passeio?",
+ "elop_l3_0": "Quantas horas dura o filme?",
+ "elop_l3_1": "Quantos filmes eu já vi?",
+ "elop_l3_2": "Quanto custa o ingresso?",
+ "elop_l4_0": "Quantos lápis ficam em cada mesa?",
+ "elop_l4_1": "Quantas cores tem a caixa?",
+ "elop_l4_2": "Quem comprou os lápis?",
+ "escreva": "Escreva o número usando o teclado.",
+ "ex_G1": "84 dividido por 7 = 12 lápis em cada mesa.",
+ "ex_G2": "60 dividido por 12 = 5 caixas.",
+ "ex_G3": "5 para cada um e sobram 2.",
+ "ex_G4": "6 vezes 14 = 84, então 84 dividido por 6 = 14.",
+ "ex_G5": "150 minutos = 2 horas e 30 minutos.",
+ "ex_G6": "20 minutos.",
+ "fim": "Você chegou ao fim! Agora você reparte com o material dourado, arma a conta na chave, sabe o que sobra e lê o relógio. E fica a pergunta: quantas horas tem a semana inteira?",
+ "folhaPronta": "Folha pronta! Muito bem.",
+ "gav_dia_ma": "Manhã.",
+ "gav_dia_md": "Madrugada.",
+ "gav_dia_no": "Noite.",
+ "gav_dia_ta": "Tarde.",
+ "gav_ex_e": "Exata: não sobra nada.",
+ "gav_ex_n": "Não exata: sobra resto.",
+ "gi_y1": "Marque 10 horas e 45 minutos.",
+ "gi_y2": "Marque 9 horas e 10 minutos.",
+ "gi_y3": "Marque 11 horas e 30 minutos.",
+ "gi_y4": "Marque 8 horas e 15 minutos.",
+ "gi_y5": "Marque uma hora e 50 minutos.",
+ "gi_y6": "Marque 4 horas e 30 minutos.",
+ "gi_y7": "Marque 11 horas e 10 minutos.",
+ "gj_x1": "Marque 15 horas e 20 minutos.",
+ "gj_x2": "Marque 21 horas e 15 minutos.",
+ "gj_x3": "Marque 13 horas e 10 minutos.",
+ "gj_x4": "Marque 16 horas e 20 minutos.",
+ "gj_x5": "Marque 22 horas e 45 minutos.",
+ "gj_x6": "Marque 14 horas e 55 minutos.",
+ "gj_x7": "Marque 23 horas e 20 minutos.",
+ "hora_10_45": "10 horas e 45 minutos.",
+ "hora_2_20": "2 horas e 20 minutos.",
+ "hora_3_25": "3 horas e 25 minutos.",
+ "hora_3_40": "3 horas e 40 minutos.",
+ "hora_5_15": "5 horas e 15 minutos.",
+ "hora_6_0": "6 horas.",
+ "hora_6_20": "6 horas e 20 minutos.",
+ "hora_6_45": "6 horas e 45 minutos.",
+ "hora_8_35": "8 horas e 35 minutos.",
+ "iv_i1": "6 vezes quanto é 84? Então 84 dividido por 6 é quanto?",
+ "iv_i2": "8 vezes quanto é 96? Então 96 dividido por 8 é quanto?",
+ "iv_i3": "5 vezes quanto é 75? Então 75 dividido por 5 é quanto?",
+ "iv_i4": "7 vezes quanto é 91? Então 91 dividido por 7 é quanto?",
+ "iv_i5": "4 vezes quanto é 84? Então 84 dividido por 4 é quanto?",
+ "iv_i6": "4 vezes quanto é 100? Então 100 dividido por 4 é quanto?",
+ "iv_i7": "6 vezes quanto é 96? Então 96 dividido por 6 é quanto?",
+ "iv_i8": "9 vezes quanto é 99? Então 99 dividido por 9 é quanto?",
+ "jg_j1": "Bia tinha 120 figurinhas para 8 colegas. Deu 9 para cada um e disse que acabou.",
+ "jg_j2": "419 dividido por 3 dá 138 e sobra 5.",
+ "jg_j3": "197 dividido por 5 dá 38 e sobra 7.",
+ "jg_j4": "17 dividido por 3 dá 5 e sobra 2.",
+ "jg_j5": "53 dividido por 4 dá 13 e sobra 1.",
+ "jg_j6": "48 dividido por 4 dá 12 e não sobra nada.",
+ "ligue": "Toque num item do lado esquerdo e depois no seu par do lado direito.",
+ "ma_a1": "Agora são 15 horas e 45 minutos. Daqui a 15 minutos, que horas serão?",
+ "ma_a2": "Agora são 10 horas. Daqui a 15 minutos, que horas serão?",
+ "ma_a3": "Agora são 20 horas e 50 minutos. Daqui a 15 minutos, que horas serão?",
+ "ma_a4": "Agora são 8 horas. Daqui a 15 minutos, que horas serão?",
+ "ma_a5": "Agora são 11 horas e 10 minutos. Daqui a 15 minutos, que horas serão?",
+ "ma_a6": "Agora são 12 horas e 5 minutos. Daqui a 15 minutos, que horas serão?",
+ "md_s286": "286 dividido por 2: reparta as peças em 2 grupos iguais.",
+ "md_s369": "369 dividido por 3: reparta as peças em 3 grupos iguais.",
+ "md_s468": "468 dividido por 2: reparta as peças em 2 grupos iguais.",
+ "md_s55": "55 dividido por 5: reparta as peças em 5 grupos iguais.",
+ "md_s84": "84 dividido por 4: reparta as peças em 4 grupos iguais.",
+ "md_s96": "96 dividido por 3: reparta as peças em 3 grupos iguais.",
+ "md_t45": "45 dividido por 3: reparta as peças em 3 grupos iguais.",
+ "md_t52": "52 dividido por 4: reparta as peças em 4 grupos iguais.",
+ "md_t54": "54 dividido por 2: reparta as peças em 2 grupos iguais.",
+ "md_t72": "72 dividido por 3: reparta as peças em 3 grupos iguais.",
+ "md_t75": "75 dividido por 5: reparta as peças em 5 grupos iguais.",
+ "md_t96": "96 dividido por 4: reparta as peças em 4 grupos iguais.",
+ "mdn_d1": "Quantas placas, quantas barras e quantos cubinhos? Conte e escreva o número.",
+ "mdn_d2": "Quantas placas, quantas barras e quantos cubinhos? Conte e escreva o número.",
+ "mdn_d3": "Quantas placas, quantas barras e quantos cubinhos? Conte e escreva o número.",
+ "mdn_d4": "Quantas placas, quantas barras e quantos cubinhos? Conte e escreva o número.",
+ "mdn_d5": "Quantas placas, quantas barras e quantos cubinhos? Conte e escreva o número.",
+ "mdn_d6": "Quantas placas, quantas barras e quantos cubinhos? Conte e escreva o número.",
+ "mdn_d7": "Quantas placas, quantas barras e quantos cubinhos? Conte e escreva o número.",
+ "memdica": "Guarde onde cada carta estava: elas voltam para baixo no mesmo lugar.",
+ "memfim": "Tabuleiro limpo! Você achou todos os pares.",
+ "memok": "Par! Os dois marcam a mesma hora.",
+ "mn_n11": "O ponteiro azul está no 11. Quantos minutos?",
+ "mn_n2": "O ponteiro azul está no 2. Quantos minutos?",
+ "mn_n3": "O ponteiro azul está no 3. Quantos minutos?",
+ "mn_n4": "O ponteiro azul está no 4. Quantos minutos?",
+ "mn_n6": "O ponteiro azul está no 6. Quantos minutos?",
+ "mn_n7": "O ponteiro azul está no 7. Quantos minutos?",
+ "mn_n8": "O ponteiro azul está no 8. Quantos minutos?",
+ "mn_n9": "O ponteiro azul está no 9. Quantos minutos?",
+ "ms_u3": "Divididos por 3, quais sobram 2?",
+ "ms_u4": "Divididos por 4, quais sobram 1?",
+ "novoCaderno": "Caderno novo! Vamos começar.",
+ "num_0": "0.",
+ "num_1": "1.",
+ "num_10": "10.",
+ "num_102": "102.",
+ "num_103": "103.",
+ "num_104": "104.",
+ "num_105": "105.",
+ "num_106": "106.",
+ "num_107": "107.",
+ "num_108": "108.",
+ "num_109": "109.",
+ "num_11": "11.",
+ "num_110": "110.",
+ "num_111": "111.",
+ "num_112": "112.",
+ "num_113": "113.",
+ "num_114": "114.",
+ "num_115": "115.",
+ "num_116": "116.",
+ "num_12": "12.",
+ "num_122": "122.",
+ "num_13": "13.",
+ "num_14": "14.",
+ "num_15": "15.",
+ "num_16": "16.",
+ "num_17": "17.",
+ "num_18": "18.",
+ "num_19": "19.",
+ "num_2": "2.",
+ "num_20": "20.",
+ "num_21": "21.",
+ "num_22": "22.",
+ "num_23": "23.",
+ "num_24": "24.",
+ "num_25": "25.",
+ "num_26": "26.",
+ "num_27": "27.",
+ "num_28": "28.",
+ "num_29": "29.",
+ "num_3": "3.",
+ "num_30": "30.",
+ "num_31": "31.",
+ "num_32": "32.",
+ "num_33": "33.",
+ "num_34": "34.",
+ "num_35": "35.",
+ "num_4": "4.",
+ "num_40": "40.",
+ "num_41": "41.",
+ "num_42": "42.",
+ "num_43": "43.",
+ "num_44": "44.",
+ "num_45": "45.",
+ "num_46": "46.",
+ "num_47": "47.",
+ "num_48": "48.",
+ "num_49": "49.",
+ "num_5": "5.",
+ "num_50": "50.",
+ "num_51": "51.",
+ "num_53": "53.",
+ "num_55": "55.",
+ "num_6": "6.",
+ "num_63": "63.",
+ "num_7": "7.",
+ "num_73": "73.",
+ "num_74": "74.",
+ "num_75": "75.",
+ "num_76": "76.",
+ "num_77": "77.",
+ "num_78": "78.",
+ "num_79": "79.",
+ "num_8": "8.",
+ "num_80": "80.",
+ "num_81": "81.",
+ "num_82": "82.",
+ "num_86": "86.",
+ "num_9": "9.",
+ "num_96": "96.",
+ "op_certo": "Está certo.",
+ "op_errado": "Está errado.",
+ "p10enun": "Folha dez. Agora com troca, e sem o material: quando a barra não dá para repartir, ela vira dez cubinhos e se junta aos outros, igual à casa da troca. Escreva o quociente.",
+ "p11enun": "Folha onze. Agora a conta sobra. Escreva o quociente embaixo do divisor e, depois, o resto embaixo do dividendo. O resto é sempre menor que o divisor.",
+ "p12enun": "Folha doze. O divisor agora tem dois algarismos. Antes de fazer a conta, estime: arredonde o divisor para a dezena mais perto e pense quantas vezes ele cabe no dividendo.",
+ "p13enun": "Folha treze. Resolva cada divisão, num papel se quiser, e ligue a conta ao seu quociente: toque na conta e depois no número.",
+ "p14enun": "Folha catorze. Agora o divisor tem dois algarismos. Estime primeiro, confira com a multiplicação e ligue cada conta ao seu quociente.",
+ "p15enun": "Folha quinze. Faça cada conta e ponha na gaveta certa: exata, quando não sobra nada, ou não exata, quando sobra resto. Toque na conta e depois na gaveta, ou arraste.",
+ "p16enun": "Folha dezesseis. A conta de volta, do jeito do modelo: 5 vezes 3 é 15, então 15 dividido por 3 é 5. Descubra o número que falta: ele é a resposta das duas contas.",
+ "p17enun": "Folha dezessete. O cachorro Hulk quer chegar à casinha. Em cada passo há três casas; ele só pisa na casa em que a divisão sobra exatamente 1.",
+ "p18enun": "Folha dezoito. Uma investigação. Marque todos os números que, divididos pelo número pedido, deixam o resto pedido. Depois toque em Conferir, e repare na distância entre eles.",
+ "p19enun": "Folha dezenove. Resolva a conta de cada peça e leve a peça até o seu resultado no tabuleiro. No fim, a figura aparece inteira.",
+ "p1enun": "Folha um. Arraste cada pirulito para uma caixa, até todas ficarem iguais. No computador dá para arrastar; no celular, toque no pirulito e depois na caixa.",
+ "p20enun": "Folha vinte. Agora o problema é seu. Cada história tem os números, mas falta a pergunta. Escolha a pergunta que a divisão responde: é assim que se inventa um problema.",
+ "p21enun": "Folha vinte e um. No relógio, o ponteiro azul e comprido marca os minutos, e cada número vale 5 minutos. A flor ajuda: as pétalas marcam os minutos. Onde o ponteiro azul parou, quantos minutos são?",
+ "p22enun": "Folha vinte e dois. Agora sem a flor. Leia o relógio: o ponteiro rosa e curto marca a hora, o azul marca os minutos. Escreva a hora nas casinhas.",
+ "p23enun": "Folha vinte e três. O seu relógio de ponteiros. Gire o ponteiro azul com o dedo, ou use os botões, até marcar a hora pedida. O ponteiro rosa anda junto, como num relógio de verdade. Depois toque em Conferir.",
+ "p24enun": "Folha vinte e quatro. Agora a hora da tarde e da noite. O horário vem como no relógio digital, de 0 a 23 horas. Tire 12 da hora e marque no relógio de ponteiros.",
+ "p25enun": "Folha vinte e cinco. Ligue o relógio de ponteiros ao relógio digital que marca o mesmo horário: toque no relógio e depois no horário.",
+ "p26enun": "Folha vinte e seis. Cada horário foi lido num relógio digital. Ponha na gaveta da parte do dia: manhã, das 6 às 11 e 59; tarde, das 12 às 17 e 59; noite, das 18 às 23 e 59; ou madrugada, da meia-noite às 5 e 59.",
+ "p27enun": "Folha vinte e sete. Preencha os espaços: quanto tempo cabe em quanto? Escreva o número nas casinhas.",
+ "p28enun": "Folha vinte e oito. A divisão encontra o relógio. Uma hora tem 60 minutos, então para saber quantas horas cabem em muitos minutos é só dividir por 60. E quando sobra, o resto são os minutos: 150 dividido por 60 é 2 e sobram 30.",
+ "p29enun": "Folha vinte e nove. O relógio digital diz a hora de agora. Escreva que horas serão daqui a 15 minutos. Cuidado quando os minutos passam de 60: a hora muda!",
+ "p2enun": "Folha dois. Leia ou ouça cada problema e escolha quantos ficam para cada um. Os números são maiores que no terceiro ano: vale fazer a conta num papel.",
+ "p30enun": "Folha trinta. Agora para trás e para a frente: 15 minutos antes, ou meia hora depois. Leia bem o que cada linha pede.",
+ "p31enun": "Folha trinta e um. A agenda diz quando cada coisa começa e quando termina. Quanto tempo durou? Conte do começo até o fim: primeiro até a hora cheia, depois o resto.",
+ "p32enun": "Folha trinta e dois. Agora a pergunta é outra: dá tempo? A que horas termina? Some a duração ao horário de começo e depois compare.",
+ "p33enun": "Folha trinta e três. Os horários do dia estão misturados. Toque em cada um na ordem em que acontecem, do mais cedo ao mais tarde.",
+ "p34enun": "Folha trinta e quatro. Vire duas cartas e ache o relógio de ponteiros e o horário digital que marcam a mesma hora.",
+ "p35enun": "Folha trinta e cinco. Este cartaz é seu. Em cada linha, escolha o exemplo que cabe naquele nome, e leve os seis na cabeça.",
+ "p3enun": "Folha três. Agora a pergunta mudou. O problema já diz quanto vai em cada grupo e pergunta quantos grupos dão. A conta continua sendo de dividir.",
+ "p4enun": "Folha quatro. Cada criança fez uma divisão e disse o resultado. Está certo ou está errado? Confira com a multiplicação antes de responder.",
+ "p5enun": "Folha cinco. Toda divisão tem quatro números com nome. Em 35 dividido por 8 igual a 4 e sobram 3: 35 é o dividendo, o que se divide; 8 é o divisor; 4 é o quociente, o resultado; e 3 é o resto. Agora toque no número que tem o nome pedido.",
+ "p6enun": "Folha seis. O material dourado. O cubinho vale 1, a barra vale 10, porque são dez cubinhos, e a placa vale 100, porque são dez barras. Conte as peças e escreva o número que elas formam.",
+ "p7enun": "Folha sete. Leve cada peça para um grupo, dando a volta, até os grupos ficarem iguais. Comece pelas peças grandes: placas, depois barras, depois cubinhos. No computador dá para arrastar; no celular, toque na peça e depois no grupo.",
+ "p8enun": "Folha oito. Agora sobra uma barra que não dá para pôr inteira em todos os grupos. Leve essa barra para a casa da troca: ela vira dez cubinhos, e aí dá para repartir.",
+ "p9enun": "Folha nove. A mesma divisão, agora na chave. O material está ali: divida as placas, depois as barras, depois os cubinhos, uma ordem de cada vez, e escreva o quociente embaixo do divisor.",
+ "pb_r1": "Na festa junina foram feitas 180 tortas para 9 barracas. Quantas tortas em cada barraca?",
+ "pb_r2": "Um mercado tem 150 laranjas para pôr em 5 caixas iguais. Quantas laranjas em cada caixa?",
+ "pb_r3": "Bernardo tem um pacote com 72 balas e vai dividir em 6 potes. Quantas balas em cada pote?",
+ "pb_r4": "Rebeca tinha 119 pirulitos e repartiu em 7 saquinhos iguais. Quantos pirulitos em cada saquinho?",
+ "pb_r5": "Beatriz vai distribuir 108 figurinhas em 6 álbuns. Quantas figurinhas em cada álbum?",
+ "pb_r6": "Uma fila de 963 pessoas foi dividida em 9 filas novas. Quantas pessoas em cada fila?",
+ "pb_r7": "Quero dividir 784 doces em 7 caixas. Quantos doces em cada caixa?",
+ "pb_r8": "A diretora levou 90 alunos em 6 ônibus iguais. Quantos alunos em cada ônibus?",
+ "pb_r9": "Duas amigas compraram 56 pirulitos e distribuíram igualmente em 7 caixas. Quantos pirulitos em cada caixa?",
+ "pc_b": "Barra: vale dez.",
+ "pc_p": "Placa: vale cem.",
+ "pc_u": "Cubinho: vale um.",
+ "pm_m1": "Maria tem 45 chocolates e põe 9 em cada caixa. Quantas caixas ela precisa?",
+ "pm_m2": "Numa fazenda há 64 galinhas, 8 em cada gaiola. Quantas gaiolas são precisas?",
+ "pm_m3": "Uma loja tem 56 lápis para pôr 4 em cada caixa. Quantas caixas serão necessárias?",
+ "pm_m4": "Uma fazenda tem 368 galinhas, 8 em cada cercado. Quantos cercados?",
+ "pm_m5": "Carla tem 468 adesivos e põe 6 em cada envelope. Quantos envelopes?",
+ "pm_m6": "Uma loja tem 126 chocolates para pôr 14 em cada caixa. Quantas caixas?",
+ "pm_m7": "Um grupo juntou 174 revistas usadas. Cada 6 usadas valem 1 nova. Quantas revistas novas?",
+ "pm_m8": "Um teatro tem 150 lugares, com 5 poltronas em cada fileira. Quantas fileiras há?",
+ "pt_w120": "Beatriz fez 4 tarefas de 30 minutos: 120 minutos ao todo. Quanto tempo é isso?",
+ "pt_w135": "Uma festa durou 135 minutos. Quanto tempo é isso?",
+ "pt_w150": "Uma viagem durou 150 minutos. Quanto tempo é isso?",
+ "pt_w180": "Um passeio durou 180 minutos. Quanto tempo é isso?",
+ "pt_w240": "A aula de artes somou 240 minutos no mês. Quanto tempo é isso?",
+ "pt_w65": "O ensaio da banda durou 65 minutos. Quanto tempo é isso?",
+ "pt_w90": "Um jogo de futebol tem 90 minutos. Quanto tempo é isso?",
+ "ptop_w120_0": "2 horas",
+ "ptop_w120_1": "12 horas",
+ "ptop_w120_2": "uma hora e 20 minutos",
+ "ptop_w135_0": "2 horas e 15 minutos",
+ "ptop_w135_1": "uma hora e 35 minutos",
+ "ptop_w135_2": "13 horas e 5 minutos",
+ "ptop_w150_0": "2 horas e 30 minutos",
+ "ptop_w150_1": "uma hora e 50 minutos",
+ "ptop_w150_2": "15 horas",
+ "ptop_w180_0": "3 horas",
+ "ptop_w180_1": "18 horas",
+ "ptop_w180_2": "uma hora e 80 minutos",
+ "ptop_w240_0": "4 horas",
+ "ptop_w240_1": "24 horas",
+ "ptop_w240_2": "2 horas e 40 minutos",
+ "ptop_w65_0": "uma hora e 5 minutos",
+ "ptop_w65_1": "6 horas e 5 minutos",
+ "ptop_w65_2": "uma hora e 65 minutos",
+ "ptop_w90_0": "uma hora e 30 minutos",
+ "ptop_w90_1": "9 horas",
+ "ptop_w90_2": "uma hora e 50 minutos",
+ "quase": "Quase! Olhe de novo.",
+ "quehoras": "Que horas o relógio está marcando?",
+ "rep1_a1": "12 pirulitos para 3 caixas. Reparta em partes iguais.",
+ "rep1_a2": "20 pirulitos para 4 caixas. Reparta em partes iguais.",
+ "rl2_u1": "1 hora tem quantos minutos?",
+ "rl2_u2": "Meia hora tem quantos minutos?",
+ "rl2_u3": "Um quarto de hora tem quantos minutos?",
+ "rl2_u4": "1 minuto tem quantos segundos?",
+ "rl2_u5": "1 dia tem quantos horas?",
+ "rl2_u6": "2 horas têm quantos minutos?",
+ "rl2_u7": "4 minutos têm quantos segundos?",
+ "rl2_u8": "Uma semana tem quantos horas?",
+ "rl2_u9": "1 hora tem quantos segundos?",
+ "rl_b1": "Relógio de ponteiros. Que horas ele marca?",
+ "rl_b2": "Relógio de ponteiros. Que horas ele marca?",
+ "rl_b3": "Relógio de ponteiros. Que horas ele marca?",
+ "rl_b4": "Relógio de ponteiros. Que horas ele marca?",
+ "rl_b5": "Relógio de ponteiros. Que horas ele marca?",
+ "ro_z1": "A manhã da Beatriz.",
+ "ro_z2": "O dia da Júlia na escola.",
+ "roe_artes": "Artes, às 11 horas e 10 minutos.",
+ "roe_higiene": "Cuidar da higiene, às 9 horas e 30 minutos.",
+ "roe_lanche": "Lanchar, às 9 horas.",
+ "roe_leitura": "Leitura da professora, às 7 horas e 30 minutos.",
+ "roe_licoes": "Fazer lições, às 8 horas e 30 minutos.",
+ "roe_limpar": "Limpar a sala, às 8 horas.",
+ "roe_matematica": "Matemática, às 10 horas e 20 minutos.",
+ "roe_parlenda": "Leitura de parlenda, às 8 horas e 20 minutos.",
+ "roe_recreio": "Recreio, às 10 horas.",
+ "te_k1": "O filme começa às 19 horas e 20 minutos e dura 1 hora e 50 minutos. Maria dorme às 20 horas e 50 minutos. Ela consegue ver o filme inteiro?",
+ "te_k2": "Luísa saiu de casa às 7 horas e 15 minutos e leva meia hora até a escola. A aula começa às 8 horas e 10 minutos. Dá tempo?",
+ "te_k3": "A vovó saiu às 15 horas e 15 minutos e voltou 1 hora e 45 minutos depois. A que horas ela voltou?",
+ "te_k4": "O remédio é de 6 em 6 horas. A primeira dose foi às 7 horas da manhã. Quando é a próxima?",
+ "te_k5": "João chega ao trabalho às 7 horas e 15 minutos, trabalha 8 horas e tem 2 horas de almoço. A que horas ele sai?",
+ "te_k6": "Saí de casa às 8 horas e 25 minutos e voltei 45 minutos depois. A que horas voltei?",
+ "te_op_k1_0": "Não, porque o filme acaba às 21 horas e 10 minutos",
+ "te_op_k1_1": "Sim, porque o filme acaba às 20 horas e 10 minutos",
+ "te_op_k1_2": "Sim, porque o filme acaba às 20 horas e 50 minutos",
+ "te_op_k2_0": "Sim, porque ela chega às 7 horas e 45 minutos",
+ "te_op_k2_1": "Não, porque ela chega às 8 horas e 15 minutos",
+ "te_op_k2_2": "Não, porque ela chega às 8 horas e 45 minutos",
+ "te_op_k3_0": "Às 17 horas",
+ "te_op_k3_1": "Às 16 horas e 45 minutos",
+ "te_op_k3_2": "Às 17 horas e 15 minutos",
+ "te_op_k4_0": "Às 13 horas",
+ "te_op_k4_1": "Às 12 horas",
+ "te_op_k4_2": "À 1 hora",
+ "te_op_k5_0": "Às 17 horas e 15 minutos",
+ "te_op_k5_1": "Às 15 horas e 15 minutos",
+ "te_op_k5_2": "Às 16 horas e 15 minutos",
+ "te_op_k6_0": "Às 9 horas e 10 minutos",
+ "te_op_k6_1": "Às 9 horas e 25 minutos",
+ "te_op_k6_2": "Às 8 horas e 45 minutos",
+ "tm_t1": "48 dividido por 4 é 12 e não sobra nada. Toque no dividendo.",
+ "tm_t2": "63 dividido por 7 é 9 e não sobra nada. Toque no divisor.",
+ "tm_t3": "53 dividido por 4 é 13 e sobram 1. Toque no resto.",
+ "tm_t4": "40 dividido por 8 é 5 e não sobra nada. Toque no quociente.",
+ "tm_t5": "77 dividido por 5 é 15 e sobram 2. Toque no resto.",
+ "tm_t6": "96 dividido por 8 é 12 e não sobra nada. Toque no divisor.",
+ "tm_t7": "75 dividido por 5 é 15 e não sobra nada. Toque no quociente.",
+ "tm_t8": "86 dividido por 3 é 28 e sobram 2. Toque no dividendo.",
+ "toque_palavra": "Primeiro toque numa das fichas ali embaixo. Depois toque na gaveta dela.",
+ "toque_peca": "Primeiro toque numa peça ali embaixo. Depois toque no lugar dela.",
+ "trocou": "Trocou! A barra virou dez cubinhos. Agora reparta os cubinhos também.",
+ "vozOn": "Narração ligada!"
+};
 /*FALAS-FIM*/
-/*VOZOK-INI*/var VOZOK = {};/*VOZOK-FIM*/
+/*VOZOK-INI*/var VOZOK = {"ovqvb9": 1, "baizkb": 1, "1cswm98": 1, "11q5y1u": 1, "mlnow1": 1, "1nv0ybz": 1, "1le71z5": 1, "1ibitf3": 1, "o84fq9": 1, "1xj0zxc": 1, "10b74nd": 1, "1fyz95h": 1, "8hm4o": 1, "1nfrtt": 1, "1f2i4d7": 1, "8eo9b8": 1, "1hukcaz": 1, "7qt2g9": 1, "lg2eoh": 1, "1rdfqnv": 1, "1ch06lk": 1, "nnk5lq": 1, "126ojdh": 1, "qimg67": 1, "1xrici1": 1, "ao6y1b": 1, "106jw9i": 1, "exynrs": 1, "hh8i7d": 1, "1xbbiik": 1, "nk2ysm": 1, "16cmma": 1, "1664k4r": 1, "15fcjma": 1, "yjh3oe": 1, "1u5ge8l": 1, "1idjsr9": 1, "1sgj979": 1, "1fwyg7p": 1, "10gr7o5": 1, "1pkhmwl": 1, "lrwk51": 1, "9fo0lx": 1, "9ru6r9": 1, "1412qid": 1, "1wzzqjx": 1, "12bq72l": 1, "ab14fu": 1, "1bkpiyt": 1, "1j50b1v": 1, "1bv42wy": 1, "er8jn7": 1, "1yymhcd": 1, "18s4pkt": 1, "g8w5ab": 1, "94u9mq": 1, "1pao90w": 1, "1u3le63": 1, "1s5jubw": 1, "1l3o4iq": 1, "fisnw8": 1, "1j0sek5": 1, "ji054l": 1, "nigzed": 1, "1d9t5x1": 1, "tzegl": 1, "jtxxdh": 1, "1d2ee5x": 1, "1x91zg5": 1, "12y54xn": 1, "17vtego": 1, "1pvsptn": 1, "3mqnth": 1, "1uzcx3t": 1, "14173si": 1, "1u4vf9g": 1, "5wv0f7": 1, "1dym8w8": 1, "b5k1wv": 1, "1n2kazp": 1, "1pwb6bn": 1, "1ajto8d": 1, "1fzz9ot": 1, "1b84v8t": 1, "1mrva9": 1, "75bnze": 1, "18q69xl": 1, "1szmctc": 1, "16ld0e": 1, "12srtx0": 1, "7db4s5": 1, "1d0onec": 1, "1xexip": 1, "34wufr": 1, "1arklyu": 1, "1gtbsvn": 1, "fnlo7l": 1, "kj5jmc": 1, "1wo5onm": 1, "ftodrq": 1, "1vqzwuw": 1, "2aldaq": 1, "1e9kdrp": 1, "159h9n8": 1, "1366cb6": 1, "6bmvn6": 1, "1ftpk87": 1, "1iz5xqb": 1, "fclsmz": 1, "jp8j4w": 1, "daf6jj": 1, "n0dvik": 1, "19c4oj8": 1, "1y3fqle": 1, "18ruib6": 1, "369r8e": 1, "138oszs": 1, "1emw8qd": 1, "zy9pap": 1, "1bcyn6p": 1, "wm7gyd": 1, "5u9850": 1, "1ml12fm": 1, "128i4mq": 1, "vnuvpd": 1, "1rfngbw": 1, "1wdkpzs": 1, "11mz3sk": 1, "105a769": 1, "1b12nr7": 1, "b228lr": 1, "b4zy9o": 1, "5o7nm5": 1, "1r0mg4": 1, "ua0ak0": 1, "16j67b6": 1, "pse4oh": 1, "1sw6dws": 1, "1gvdlfy": 1, "13vqty0": 1, "bl9xno": 1, "1jkytya": 1, "1oul0z8": 1, "1rmu7uv": 1, "1rykpk4": 1, "gf06hq": 1, "1yyc4j5": 1, "154bew8": 1, "rwep9e": 1, "1bgl2p0": 1, "g5jfzo": 1, "u80k7b": 1, "fojbfx": 1, "17qbcqe": 1, "ba885s": 1, "gignum": 1, "11kfsla": 1, "1vsrujw": 1, "ydb59w": 1, "1qagl2y": 1, "17rtwlr": 1, "1wzep0i": 1, "18ur0sn": 1, "pc5yz4": 1, "kues5n": 1, "1cf0drc": 1, "7emkax": 1, "iwf7nb": 1, "1j7mwrn": 1, "1irtahq": 1, "1v7wp9x": 1, "1r1b2ys": 1, "1guir15": 1, "1vwjkov": 1, "1f9fvxa": 1, "yecsf3": 1, "zpaiym": 1, "1xurika": 1, "3wm0oi": 1, "9yda6m": 1, "1ofryx7": 1, "eerwla": 1, "10h8vui": 1, "1r49uw8": 1, "1lz2acy": 1, "1ejnzb1": 1, "1dubrkz": 1, "32vwj8": 1, "2qj5yx": 1, "1042u9k": 1, "1t7hd4k": 1, "exioyy": 1, "kff6vl": 1, "aodqu6": 1, "kf6ucu": 1, "1vbzwsb": 1, "15s7bq7": 1, "716ik5": 1, "1317pzn": 1, "15lacpu": 1, "1eap5a6": 1, "1ae200s": 1, "1bjse2t": 1, "t77jh1": 1, "1opuxw7": 1, "gd9dc": 1, "h7lbtt": 1, "1pzwfgk": 1, "6f6ozo": 1, "1pzwfhj": 1, "h7lbf2": 1, "1xuwwk5": 1, "gdcky": 1, "1gw3i91": 1, "bkc1oo": 1, "ccmll4": 1, "4lpwo5": 1, "1koybjc": 1, "1er36th": 1, "f6oa5y": 1, "s8y3lz": 1, "11ytf9f": 1, "1wtzvfx": 1, "qrxup9": 1, "1fe8jur": 1, "1baqnpd": 1, "458jm3": 1, "ctdtsd": 1, "3s4vwz": 1, "1l5dcky": 1, "ugyvit": 1, "1ivvgko": 1, "p649ad": 1, "1h11f9d": 1, "1ghjyen": 1, "13bzxhq": 1, "prxfym": 1, "dr2rwr": 1, "9evrmy": 1, "1e0zj2e": 1, "pcpug0": 1, "1eqtqti": 1, "nvraon": 1, "nvrapi": 1, "1q7myg5": 1, "1gt79yo": 1, "q93k4z": 1, "gsz1xe": 1, "fkr0bb": 1, "3p8sg4": 1, "13q2z4y": 1, "607e4y": 1, "cl5wco": 1, "18dqhwt": 1, "1u42vxo": 1, "51js2u": 1, "icazic": 1, "icazl1": 1, "1xmq6mq": 1, "1tqbajn": 1, "wjz6mt": 1, "1hgizct": 1, "dyivcg": 1, "1ih1hgn": 1, "mnkhci": 1, "165v5ba": 1, "16a01pc": 1, "x95b4h": 1, "wvzxyo": 1, "1pve5cm": 1, "b96ilz": 1, "1i5hg4m": 1, "571np": 1, "hbu23i": 1, "1u3snm": 1, "19im33x": 1, "1tyawiz": 1, "1tyawjq": 1, "w58mkn": 1, "kctnfy": 1, "1gwoz9m": 1, "7nhhsi": 1, "1c2fk36": 1, "3lxbd7": 1, "s34b6w": 1, "uwg5ty": 1, "z4fdh2": 1, "idddxw": 1, "1epovqv": 1, "10dmpy6": 1, "h8at96": 1, "12xa130": 1, "ysq1h7": 1, "11fxfa5": 1, "znlb87": 1, "5deerg": 1, "1m3mbck": 1, "o8utb5": 1, "bxogzr": 1, "1ybhywo": 1, "eowyxn": 1, "b1qb0y": 1, "1iq8liz": 1, "1iq8km5": 1, "ekmtf1": 1, "z0fyq7": 1, "10kvn0m": 1, "1kycny0": 1, "1c5ldi5": 1, "lhvtdq": 1, "1hwltmm": 1, "1hwls1o": 1, "16id25": 1, "1myaa1j": 1, "1la22gi": 1, "1m36d9x": 1, "9oc638": 1, "1k5wm1e": 1, "pax3ch": 1, "14m7h4j": 1, "1cq0g1q": 1, "wjh1h5": 1, "amih6n": 1, "v89nzy": 1, "10kwh27": 1, "10qjif2": 1, "nutcb8": 1, "4jwvmi": 1, "16bia2n": 1, "14r9t3k": 1, "1ij03p2": 1, "i87sxs": 1, "xw8vr7": 1, "qgvw3w": 1, "2horep": 1, "eyhphd": 1, "1a3upvt": 1, "qkwqvi": 1, "ostic3": 1, "qgvv9r": 1, "1pwdn7z": 1, "18awvic": 1, "1cofro5": 1, "c960xe": 1, "1dbbd3p": 1, "8a580v": 1, "fjh1sp": 1, "31ltw0": 1, "1rph6p5": 1, "13eybj0": 1, "bohebe": 1, "o2cwsz": 1, "19paye4": 1, "kcrsdr": 1, "h5ourv": 1, "ke9hhz": 1, "1cnx667": 1, "1s3lqfd": 1, "16s2wg4": 1, "1mf0t8t": 1, "nguhsd": 1, "s7ca9r": 1, "3u6bgp": 1, "kx9cv3": 1, "1xwdhr4": 1, "oe7arx": 1, "hamrxm": 1, "b4ol3s": 1, "1m0tnjw": 1, "1h7jr7j": 1, "s0k0wi": 1, "vu4ggt": 1, "1buj78o": 1, "1yzdhe": 1, "3hhyh0": 1, "m1ma2l": 1, "jg0fu": 1, "pfpd5y": 1, "1wjkmh7": 1, "1dydcr5": 1, "iwzybw": 1, "xf56c6": 1, "154j5ys": 1, "18so5zg": 1, "duemru": 1, "1c403au": 1, "fpx8i2": 1, "x9efq9": 1, "1lgbj3s": 1, "10zm5ni": 1, "1qkg6yq": 1, "8su5ib": 1, "tyq1lo": 1, "1ymmvr": 1, "14tluhm": 1, "18ga98f": 1, "1e2o8id": 1, "1u7qkp6": 1, "1d8rs9q": 1, "eg9b0d": 1, "4bpce0": 1, "1dzhkol": 1, "ayv2gp": 1, "1a6t9nj": 1, "1c0gcy6": 1, "1tyawga": 1, "1eugfvk": 1, "fcigsy": 1, "ztnwk7": 1, "xx4oni": 1, "vqr8r3": 1, "1bupwr5": 1, "y20mew": 1, "1rvytyv": 1, "11m05pe": 1, "1c21bjs": 1, "1vh3add": 1, "1kh5qob": 1, "2l64pk": 1, "tr60qq": 1, "n4t2k0": 1, "svnd75": 1, "c26o2f": 1, "194pija": 1, "a2dtqs": 1, "y9j52t": 1, "kblwij": 1, "bn1r5f": 1, "6bcdfa": 1, "1qv21y8": 1, "69ul3": 1, "1mrm04g": 1, "1f3l0d2": 1, "amro6r": 1, "7bmgdy": 1, "172ou8r": 1, "myvy1m": 1, "1rfsqit": 1, "xaq66n": 1, "sqhcpo": 1, "1iso1j4": 1, "1xuggxl": 1, "wy194d": 1, "n28bw6": 1, "1sd7nce": 1, "119ifss": 1, "1b4u2t9": 1, "1hhdnrw": 1, "1wvelzq": 1, "dssm85": 1, "uizlkd": 1, "1extykr": 1, "110ujyo": 1, "tjs45w": 1, "mr4jih": 1, "d7np5x": 1, "ok0ta6": 1, "16hr61g": 1, "mx9riq": 1, "jrq0wh": 1, "1h3iske": 1, "1twimw9": 1, "1d9s73k": 1, "o7ktxe": 1, "l71k7b": 1, "r96cuq": 1, "st4fe5": 1, "dstsql": 1, "628aeg": 1, "1h5vs2p": 1, "1r7n0rd": 1, "1p607cy": 1, "wtneil": 1, "1ohiqlq": 1, "1hemahi": 1, "1rdv8hs": 1, "17wapjb": 1, "1s28pom": 1, "fv8kzm": 1, "bigngk": 1, "1nr5n28": 1, "wm2sro": 1, "g80w82": 1, "1nn3m1a": 1, "ddbr1m": 1, "1ve71hl": 1, "lbrpm7": 1, "181t86y": 1, "1o1q0cq": 1, "1m7m5ex": 1, "txksgw": 1, "19cf8vk": 1, "41xzg0": 1, "1oe6tcg": 1, "yyarww": 1, "6fgc4w": 1, "18ui7v4": 1, "t2bhio": 1, "f7fok0": 1, "172zku1": 1, "yad4rj": 1, "f4fn2h": 1, "1nvlfl9": 1, "wlvcpq": 1, "n4king": 1, "k5res4": 1, "nbbuxl": 1, "1u1lqa7": 1, "1donjq3": 1, "ihq76e": 1, "b6x9vh": 1, "qbidgq": 1, "1lrsvur": 1, "1tidu3n": 1, "cv2k05": 1, "97957j": 1, "11m9tw3": 1, "12hv9bk": 1, "fw58ta": 1, "37au3c": 1, "x4u6vy": 1, "as0y62": 1, "c40pwd": 1, "12receo": 1, "l1u8qx": 1, "bhnba3": 1, "cwiars": 1, "1xdgvuf": 1, "1d0ncij": 1, "18wvgqx": 1, "xpxk5k": 1, "1axfk7j": 1, "wax71": 1, "1oqh2ks": 1, "1sh8v7n": 1, "a6or7m": 1, "duv77m": 1, "1n4ohhi": 1, "ql0ul0": 1, "3hl3v": 1, "3hl4q": 1, "374cqy": 1, "yhvn20": 1, "yhvn15": 1, "yhvmwu": 1, "yhvmvz": 1, "yhvmyk": 1, "yhvmxp": 1, "yhvn76": 1, "yhvn6b": 1, "374ctn": 1, "yhvph7": 1, "yhvpei": 1, "yhvpix": 1, "yhvpg8": 1, "yhvpdr": 1, "yhvpb2": 1, "yhvpfh": 1, "374cso": 1, "yhvomy": 1, "374cvd": 1, "374cni": 1, "374cq7": 1, "374cp8": 1, "374crx": 1, "374cxu": 1, "374d0j": 1, "3hl5l": 1, "374dmx": 1, "374dns": 1, "374dl7": 1, "374dm2": 1, "374djh": 1, "374dkc": 1, "374dhr": 1, "374dim": 1, "374dtt": 1, "374duo": 1, "3hl6g": 1, "374efc": 1, "374ei1": 1, "374edm": 1, "374egb": 1, "374ebw": 1, "374eel": 1, "3hl0f": 1, "3748lr": 1, "3748mm": 1, "3748nh": 1, "3748oc": 1, "3748p7": 1, "3748q2": 1, "3748qx": 1, "3748rs": 1, "3748sn": 1, "3748ti": 1, "3hl1a": 1, "3749e6": 1, "3749gv": 1, "3749il": 1, "3749kb": 1, "3hl25": 1, "374a9a": 1, "3hl30": 1, "374b3j": 1, "374b60": 1, "374b8p": 1, "374b4a": 1, "374b6z": 1, "374b9g": 1, "374bc5": 1, "3hlar": 1, "374io3": 1, "374ioy": 1, "374ipt": 1, "374imd": 1, "3hlbm": 1, "374jes": 1, "1v0aah3": 1, "12taalj": 1, "ybjhgm": 1, "1l3vqsg": 1, "hpa74f": 1, "1hcglpc": 1, "m43g1z": 1, "5o6jdk": 1, "kqin91": 1, "cd6tj": 1, "nuu57h": 1, "14qelrp": 1, "19k5t76": 1, "q7uunl": 1, "1w54u5u": 1, "1qgsnee": 1, "1jsjs8c": 1, "osor0u": 1, "1yyy760": 1, "o2jlkd": 1, "1xszdot": 1, "1g5ekaw": 1, "1kn659j": 1, "1ihmf80": 1, "16rho0x": 1, "pkhw6d": 1, "1tn4ef6": 1, "1rgineb": 1, "ft3rkx": 1, "1djp6qm": 1, "l4roiq": 1, "103rvxx": 1, "17orygu": 1, "pdwq0i": 1, "amtjcb": 1, "br4j1l": 1, "dr8wxz": 1, "1bft5cx": 1, "hfpqpb": 1, "1t9h3b6": 1, "th1hr0": 1, "1g3mdld": 1, "1vq2urx": 1, "15yrt3y": 1, "j69wqh": 1, "6tqlvt": 1, "1otceuu": 1, "13fwjtn": 1, "1yi3ter": 1, "1o4vf6q": 1, "99uta2": 1, "g0bddt": 1, "1uofbib": 1, "qo9b3n": 1, "5fzaej": 1, "rsmtbx": 1, "163pnxc": 1, "uv4xpx": 1, "1g9et2l": 1, "z9uii": 1, "1vg1no5": 1, "1xnyvgf": 1, "lxcczc": 1, "3xi0ql": 1, "119a3gw": 1, "1v1xgo1": 1, "jhsfnc": 1, "1jj72h2": 1, "6fd6u4": 1, "1qqdn2f": 1, "e7lha9": 1, "8f615r": 1, "1q9v6u": 1, "1ld2zo1": 1, "1grjb8r": 1, "h3v0c2": 1, "17c5tfo": 1, "lql15y": 1, "12f386n": 1, "1drylwz": 1, "16yjegp": 1, "p8mqah": 1, "1h02q32": 1, "2wt8zk": 1, "13lyr4d": 1, "1naa18r": 1, "1liko2f": 1, "1r88j5y": 1, "1wqb19v": 1, "1yjdkci": 1, "qbhwxr": 1, "twa7u0": 1, "1pnh8yj": 1, "19qm06m": 1, "1jekfle": 1, "14363nx": 1, "1fvfdkl": 1, "1ksvloh": 1, "1jvud3l": 1, "4ajanr": 1, "1g90ywh": 1, "wtt1ps": 1, "8jbbo1": 1, "1e8tgim": 1, "1luih2k": 1, "nhonl5": 1, "10bb6pj": 1, "nyutn3": 1, "1kuld74": 1, "2cuwzd": 1, "13t9xbh": 1, "1455r61": 1, "t3cghf": 1, "1a3ioqv": 1, "gawcr7": 1, "14gz4lz": 1, "getf7m": 1, "1x06i8t": 1, "1ahp9a0": 1, "e5elsn": 1, "1fllffp": 1, "exnlk1": 1, "sjqy8j": 1, "8g415e": 1, "8d8k68": 1, "10kd82r": 1, "13qh0e8": 1, "1cg1lsr": 1, "19o3qkd": 1, "v6v42i": 1, "afy14z": 1, "1gqeq55": 1, "1swmenp": 1, "iwvhwc": 1, "1dfrgzb": 1, "mfr7vq": 1, "1poum7a": 1, "c711ug": 1, "ali7df": 1, "6d08zn": 1, "7gaf1e": 1, "swkns7": 1};/*VOZOK-FIM*/
 
 /* ============================================================
    OS DADOS DO CADERNO — tudo em JSON puro, num bloco marcado.
@@ -1106,16 +2516,392 @@ var FALAS = {};
 /* ============================================================
    OS DADOS DAS FOLHAS — o conteúdo deste caderno, e só dele.
 
-   ⚠️ TUDO O QUE ENTRAR AQUI TEM DE VIR DE UMA FOLHA DE PAPEL COLHIDA, e o crivo
-      (comando impresso VERBATIM + veredito de cada uma das trinta) mora em
-      `_sequencias/POTE-<assunto>.md`. Bloco que NÃO vier do papel entra
-      declarado, com o motivo escrito ao lado dele.
-   ⚠️ E A CHAVE NÃO PODE SER A PALAVRA QUE APARECE NA TELA: o portão
-      `_qa/resposta_impressa.py` lê a resposta declarada dentro do texto visível
-      e acusa, com razão. Chave é `c1`, `g3`, `j2` — número, não palavra.
-   ⚠️ CAMPO DE TECLADO: gabarito de UMA palavra só (o teclado da casa não tem
-      barra de espaço) e sem acento, se o que a folha mede não for o acento.
+   ⚠️ TUDO O QUE ESTÁ AQUI SAIU DE UMA FOLHA DE PAPEL COLHIDA (26/set/2026).
+      O crivo das 190 — comando VERBATIM e veredito — está em
+      `_sequencias/POTE-DIVH4.md`, e cada bloco abaixo diz de qual veio. O
+      código é a busca + o número: `A32` = `colheita/divh4a/d32b1_*`.
+
+   ⚠️⚠️ OS LIMITES QUE O CURRÍCULO DO 4º ANO ESCREVE (Blumenau, Matemática):
+      1. **«divisor … no máximo dois algarismos»** — `5580 ÷ 154` (A05, B12)
+         ficou FORA; `570 ÷ 19` (A13) está DENTRO.
+      2. **«algoritmos»** — no 3º ano a chave ficou de fora; no 4º ela é o
+         conteúdo (folhas 7 a 13).
+      3. **«horas, minutos e segundos … início e término … duração»** — ler o
+         relógio é retomada do 3º; o que é do 4º é o INTERVALO (29 a 33).
+
+   ⚠️ NENHUM TEXTO AQUI TEM "vírgula, palavra, dois-pontos" (`, 10:45`). O
+      `gerar_falas.py` lê este bloco trocando `chave:` por `"chave":` — e a
+      troca casaria dentro do texto. Horário vai como NÚMERO (`h`, `m`) e o
+      JS o escreve; no texto corrido ele vai como a folha de papel escreve:
+      `7h15`.
    ============================================================ */
+
+/* ---------- 1 — REPARTIR ARRASTANDO (A04 + a figura do A32) ----------
+   ⭐ A04 manda, VERBATIM: *"Reparta em partes iguais 12 peixes em 4 aquários"*
+      e *"Distribua igualmente 9 bolas em três potes"*. É a retomada do 3º ano,
+      DECLARADA: o 4º começa aqui para lembrar o que é dividir antes de armar
+      a conta. A peça é o pirulito dos problemas da festa junina (A32). */
+var REP = {
+ a1: {n: 12, k: 3, f: "dh4_pirulito.png", q: "pirulitos", w: "caixas"},
+ a2: {n: 20, k: 4, f: "dh4_pirulito.png", q: "pirulitos", w: "caixas"}
+};
+
+/* ---------- 2 — REPARTIR: quantos para cada um? ----------
+   A02, A03, A08, A32 (= B23), A33 e B32. Números das folhas, sem mexer. */
+var REPT = {
+ r1: {a: 180, b: 9, f: "dh4_balao.png", t: "Na festa junina foram feitas 180 tortas para 9 barracas. Quantas tortas em cada barraca?"},
+ r2: {a: 150, b: 5, t: "Um mercado tem 150 laranjas para pôr em 5 caixas iguais. Quantas laranjas em cada caixa?"},
+ r3: {a: 72, b: 6, t: "Bernardo tem um pacote com 72 balas e vai dividir em 6 potes. Quantas balas em cada pote?"},
+ r4: {a: 119, b: 7, t: "Rebeca tinha 119 pirulitos e repartiu em 7 saquinhos iguais. Quantos pirulitos em cada saquinho?"},
+ r5: {a: 108, b: 6, t: "Beatriz vai distribuir 108 figurinhas em 6 álbuns. Quantas figurinhas em cada álbum?"},
+ r6: {a: 963, b: 9, t: "Uma fila de 963 pessoas foi dividida em 9 filas novas. Quantas pessoas em cada fila?"},
+ r7: {a: 784, b: 7, t: "Quero dividir 784 doces em 7 caixas. Quantos doces em cada caixa?"},
+ r8: {a: 90, b: 6, t: "A diretora levou 90 alunos em 6 ônibus iguais. Quantos alunos em cada ônibus?"},
+ r9: {a: 56, b: 7, f: "dh4_pirulitos.png", t: "Duas amigas compraram 56 pirulitos e distribuíram igualmente em 7 caixas. Quantos pirulitos em cada caixa?"}
+};
+
+/* ---------- 3 — MEDIR: quantos grupos dão? ----------
+   ⭐ A07: *"Maria tem 45 chocolates e quer colocá-los em caixas com 9
+      chocolates em cada uma. Quantas caixas ela precisa?"* — a pergunta é
+      OUTRA e a conta é a mesma. A17, B32 e o teatro do A32. */
+var MED = {
+ m1: {a: 45, b: 9, t: "Maria tem 45 chocolates e põe 9 em cada caixa. Quantas caixas ela precisa?"},
+ m2: {a: 64, b: 8, t: "Numa fazenda há 64 galinhas, 8 em cada gaiola. Quantas gaiolas são precisas?"},
+ m3: {a: 56, b: 4, t: "Uma loja tem 56 lápis para pôr 4 em cada caixa. Quantas caixas serão necessárias?"},
+ m4: {a: 368, b: 8, t: "Uma fazenda tem 368 galinhas, 8 em cada cercado. Quantos cercados?"},
+ m5: {a: 468, b: 6, t: "Carla tem 468 adesivos e põe 6 em cada envelope. Quantos envelopes?"},
+ m6: {a: 126, b: 14, t: "Uma loja tem 126 chocolates para pôr 14 em cada caixa. Quantas caixas?"},
+ m7: {a: 174, b: 6, t: "Um grupo juntou 174 revistas usadas. Cada 6 usadas valem 1 nova. Quantas revistas novas?"},
+ m8: {a: 150, b: 5, f: "dh4_pipoca.png", t: "Um teatro tem 150 lugares, com 5 poltronas em cada fileira. Quantas fileiras há?"}
+};
+
+/* ---------- 4 — O RACIOCÍNIO ESTÁ CERTO? ----------
+   ⭐⭐ A32: *"Bia queria distribuir igualmente entre 8 colegas 120
+      figurinhas. Ela deu 9 figurinhas para cada um e disse que a distribuição
+      já estava terminada… O raciocínio de Bia está correto? Por quê?"*
+   ⭐ B40 traz DUAS CONTAS ERRADAS DE PROPÓSITO (419 ÷ 3 = 138 resto 5;
+      197 ÷ 5 = 38 resto 7): o resto nunca pode ser maior que o divisor.
+      B02 e B31 dão as certas. `ok` = a conta/o raciocínio está certo. */
+var JULG = {
+ j1: {t: "Bia tinha 120 figurinhas para 8 colegas. Deu 9 para cada um e disse que acabou.", ok: 0,
+      pq: "9 vezes 8 é 72, e ainda sobram 48 figurinhas. O certo é 15 para cada um"},
+ j2: {t: "419 ÷ 3 dá 138 e sobra 5.", ok: 0,
+      pq: "o resto 5 é maior que o divisor 3, então ainda dava para repartir. O certo é 139 e sobra 2"},
+ j3: {t: "197 ÷ 5 dá 38 e sobra 7.", ok: 0,
+      pq: "o resto 7 é maior que o divisor 5. O certo é 39 e sobra 2"},
+ j4: {t: "17 ÷ 3 dá 5 e sobra 2.", ok: 1,
+      pq: "5 vezes 3 é 15, mais 2 dá 17"},
+ j5: {t: "53 ÷ 4 dá 13 e sobra 1.", ok: 1,
+      pq: "13 vezes 4 é 52, mais 1 dá 53"},
+ j6: {t: "48 ÷ 4 dá 12 e não sobra nada.", ok: 1,
+      pq: "12 vezes 4 é 48 certinho"}
+};
+
+/* ---------- 5 — OS NOMES DA DIVISÃO (B13) ----------
+   ⭐ VERBATIM: *"Nomeie cada termo da operação abaixo"*. Na tela ela TOCA no
+      número que tem aquele nome. `p` = qual das quatro partes é a pedida:
+      0 dividendo · 1 divisor · 2 quociente · 3 resto. */
+var TERM = {
+ t1: {a: 48, b: 4, p: 0}, t2: {a: 63, b: 7, p: 1}, t3: {a: 53, b: 4, p: 3},
+ t4: {a: 40, b: 8, p: 2}, t5: {a: 77, b: 5, p: 3}, t6: {a: 96, b: 8, p: 1},
+ t7: {a: 75, b: 5, p: 2}, t8: {a: 86, b: 3, p: 0}
+};
+
+/* ---------- 6 a 8 — ⭐⭐ O MATERIAL DOURADO (E e G) ----------
+   Pedido do Marcos (26/set/2026): *"Divisão com ajuda do material dourado"*.
+   `MDN` — que número as peças formam (G14 e G19 ligam o NÚMERO ao MATERIAL:
+   34, 101, 205, 52, 7, 303, 26 — os números são os da folha).
+   `MDS` — repartir SEM troca: cada ordem se divide inteira.
+   `MDT` — repartir COM a troca de UMA barra (ou duas) por dez cubinhos. */
+var MDN = {
+ d1: {n: 34}, d2: {n: 101}, d3: {n: 205}, d4: {n: 52}, d5: {n: 303}, d6: {n: 26}, d7: {n: 143}
+};
+var MDS = {
+ s468: {a: 468, b: 2}, s369: {a: 369, b: 3}, s84: {a: 84, b: 4}, s96: {a: 96, b: 3},
+ s286: {a: 286, b: 2}, s55: {a: 55, b: 5}
+};
+var MDT = {
+ t52: {a: 52, b: 4}, t72: {a: 72, b: 3}, t45: {a: 45, b: 3}, t96: {a: 96, b: 4},
+ t54: {a: 54, b: 2}, t75: {a: 75, b: 5}
+};
+
+/* ---------- 9 — ORDEM POR ORDEM (B06, B07) ----------
+   ⭐ B06: *"Veja como podemos calcular… 4C : 2 = 2C · 8D : 2 = 4D"*. Contas
+      SEM troca: cada ordem se divide sozinha. */
+var ORD = {
+ o1: {a: 482, b: 2}, o2: {a: 693, b: 3}, o3: {a: 848, b: 4}, o4: {a: 555, b: 5},
+ o5: {a: 936, b: 3}, o6: {a: 684, b: 2}, o7: {a: 996, b: 3}, o8: {a: 488, b: 4}
+};
+
+/* ---------- 10 — A CHAVE COM TROCA (A16, A37, A11, A39) ---------- */
+var TROC = {
+ c1: {a: 76, b: 2}, c2: {a: 84, b: 3}, c3: {a: 450, b: 5}, c4: {a: 120, b: 6},
+ c5: {a: 88, b: 4}, c6: {a: 100, b: 4}, c7: {a: 116, b: 4}, c8: {a: 255, b: 5},
+ c9: {a: 405, b: 3}, c10: {a: 699, b: 3}
+};
+
+/* ---------- 11 — QUANDO SOBRA: O RESTO (A01, A25, B29) ---------- */
+var REST = {
+ s1: {a: 689, b: 9}, s2: {a: 821, b: 2}, s3: {a: 175, b: 3}, s4: {a: 944, b: 5},
+ s5: {a: 119, b: 8}, s6: {a: 674, b: 9}, s7: {a: 318, b: 8}, s8: {a: 976, b: 7},
+ s9: {a: 87, b: 2}, s10: {a: 77, b: 5}
+};
+
+/* ---------- 12 — ESTIMAR (A28 = B39) ----------
+   Divisor de DOIS algarismos com quociente de UM: é onde a estimativa
+   trabalha — «cálculo por estimativa», que o currículo nomeia. */
+var EST = {
+ e1: {a: 68, b: 34}, e2: {a: 69, b: 23}, e3: {a: 84, b: 21}, e4: {a: 96, b: 32},
+ e5: {a: 60, b: 20}, e6: {a: 80, b: 20}, e7: {a: 48, b: 12}, e8: {a: 55, b: 11},
+ e9: {a: 62, b: 31}, e10: {a: 28, b: 14}
+};
+
+/* ---------- 13 e 14 — LIGAR AO QUOCIENTE ----------
+   ⭐ A39: *"Resolva as divisões e ligue ao seu quociente"* (divisor de 1).
+   ⭐ A13: *"Resolva as divisões por dois algarismos e ligue ao seu
+      quociente"*. Todos os quocientes conferidos na leitura. */
+var LIG1 = {
+ k1: {a: 333, b: 3}, k2: {a: 244, b: 2}, k3: {a: 100, b: 5}, k4: {a: 255, b: 5}, k5: {a: 116, b: 4}
+};
+var LIG2 = {
+ w1: {a: 570, b: 19}, w2: {a: 104, b: 13}, w3: {a: 180, b: 12}, w4: {a: 144, b: 16}, w5: {a: 170, b: 17}
+};
+
+/* ---------- 15 — EXATA OU NÃO EXATA? (B40, B31) ----------
+   ⭐ B40: *"Determine o quociente e o resto de cada divisão e confirme se é
+      uma divisão EXATA ou NÃO EXATA"*. B31: *"Essa divisão é exata porque o
+      resto é zero."* A gaveta é a do esqueleto (`gavetas`). */
+var GAV = {
+ ex: {cols: [{k: "e", n: "Exata: não sobra nada"}, {k: "n", n: "Não exata: sobra resto"}],
+      pal: {
+       x1: {p: "48 ÷ 4", c: "e", a: 48, b: 4}, x2: {p: "53 ÷ 4", c: "n", a: 53, b: 4},
+       x3: {p: "240 ÷ 6", c: "e", a: 240, b: 6}, x4: {p: "245 ÷ 6", c: "n", a: 245, b: 6},
+       x5: {p: "96 ÷ 3", c: "e", a: 96, b: 3}, x6: {p: "97 ÷ 3", c: "n", a: 97, b: 3},
+       x7: {p: "128 ÷ 8", c: "e", a: 128, b: 8}, x8: {p: "130 ÷ 8", c: "n", a: 130, b: 8}
+      }},
+ dia: {cols: [{k: "ma", n: "Manhã"}, {k: "ta", n: "Tarde"}, {k: "no", n: "Noite"}, {k: "md", n: "Madrugada"}],
+      pal: {
+       h1: {p: "07:30", c: "ma", h: 7, m: 30}, h2: {p: "10:45", c: "ma", h: 10, m: 45},
+       h3: {p: "13:10", c: "ta", h: 13, m: 10}, h4: {p: "15:20", c: "ta", h: 15, m: 20},
+       h5: {p: "19:30", c: "no", h: 19, m: 30}, h6: {p: "21:15", c: "no", h: 21, m: 15},
+       h7: {p: "03:00", c: "md", h: 3, m: 0}, h8: {p: "00:30", c: "md", h: 0, m: 30}
+      }}
+};
+
+/* ---------- 16 — A CONTA DE VOLTA (A20 = B17) ----------
+   ⭐ VERBATIM: *"Vamos fazer de acordo com o modelo. 5 x 3 = 15, então
+      15 ÷ 3 = 5"*. `x` é o número escondido, `y` o que está à vista. */
+var INV = {
+ i1: {x: 14, y: 6}, i2: {x: 12, y: 8}, i3: {x: 15, y: 5}, i4: {x: 13, y: 7},
+ i5: {x: 21, y: 4}, i6: {x: 25, y: 4}, i7: {x: 16, y: 6}, i8: {x: 11, y: 9}
+};
+
+/* ---------- 17 — O CAMINHO DO RESTO (A31) ----------
+   ⭐ VERBATIM: *"O cachorro Hulk quer encontrar sua casinha… traçando o
+      caminho somente pelas casas em que as divisões sobram resto"*.
+   ⭐⭐ O DEGRAU DO 4º ANO: não basta sobrar — a casa certa é a que sobra
+      EXATAMENTE 1. As três casas de cada passo são o mesmo divisor: uma
+      fecha certinho, uma sobra 1, uma sobra outra coisa. É a investigação
+      dos «restos iguais» que o currículo pede (e que nenhuma folha traz). */
+var TRILHA = {
+ p1: {ops: [{a: 21, b: 7}, {a: 22, b: 7}, {a: 24, b: 7}]},
+ p2: {ops: [{a: 35, b: 4}, {a: 32, b: 4}, {a: 33, b: 4}]},
+ p3: {ops: [{a: 46, b: 5}, {a: 45, b: 5}, {a: 48, b: 5}]},
+ p4: {ops: [{a: 54, b: 9}, {a: 58, b: 9}, {a: 55, b: 9}]},
+ p5: {ops: [{a: 49, b: 8}, {a: 51, b: 8}, {a: 48, b: 8}]},
+ p6: {ops: [{a: 18, b: 6}, {a: 19, b: 6}, {a: 22, b: 6}]}
+};
+
+/* ---------- 18 — OS NÚMEROS DO MESMO RESTO (declarado) ----------
+   ⭐⭐ Álgebra, 4º ano: *"Reconhecer, por meio de investigações, que há grupos
+      de números naturais para os quais as divisões por um determinado número
+      resultam em restos iguais, identificando regularidades."* NENHUMA das
+      160 folhas colhidas faz isso. `b` divisor, `r` resto pedido. */
+var MESMO = {
+ u3: {b: 3, r: 2, nums: [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17, 20]},
+ u4: {b: 4, r: 1, nums: [5, 6, 8, 9, 10, 12, 13, 15, 17, 18, 21, 22]}
+};
+
+/* ---------- 19 — O QUEBRA-CABEÇA (A10 = B21) ----------
+   ⭐⭐ VERBATIM: *"Resolva as divisões do final da página. Depois, recorte as
+      figuras de cada quadro e cole-as sobre o resultado de cada operação. Ao
+      final, você terá um lindo quebra-cabeça montado."*
+   ⚠️ As PEÇAS e o TABULEIRO são os da folha (recortados), então o resultado
+      de cada peça não se troca — a peça do 6 é a que cobre o 6. O que sobe
+      para o 4º ano são as CONTAS: no papel eram fatos da tabuada (36 ÷ 6); aqui
+      o divisor tem dois algarismos, que é onde o 4º ano está. */
+var PUZ = {
+ q1: {r: 8, a: 96, b: 12}, q2: {r: 5, a: 75, b: 15}, q3: {r: 9, a: 99, b: 11},
+ q4: {r: 6, a: 84, b: 14}, q5: {r: 10, a: 120, b: 12}, q6: {r: 4, a: 64, b: 16},
+ q7: {r: 2, a: 38, b: 19}, q8: {r: 7, a: 91, b: 13}, q9: {r: 3, a: 45, b: 15}
+};
+
+/* ---------- 20 — AGORA O PROBLEMA É SEU (declarado) ----------
+   ⭐ O currículo diz *"Resolver E ELABORAR problemas de divisão"* e nenhuma
+      folha manda a criança formular um. O primeiro degrau de elaborar é saber
+      QUAL PERGUNTA aquela história responde — e é o que a folha pede. */
+var ELAB = {
+ l1: {t: "Tenho 96 figurinhas e vou colar 8 em cada página do álbum.", a: 96, b: 8, u: "páginas",
+      ops: ["Quantas páginas vou usar?", "Quantas figurinhas eu ganhei de presente?", "Quantos anos tem o álbum?"]},
+ l2: {t: "A escola levou 180 alunos ao passeio em 4 ônibus iguais.", a: 180, b: 4, u: "alunos em cada ônibus",
+      ops: ["Quantos alunos foram em cada ônibus?", "Quantos ônibus a cidade tem?", "Quanto custou o passeio?"]},
+ l3: {t: "Um filme tem 120 minutos.", a: 120, b: 60, u: "horas",
+      ops: ["Quantas horas dura o filme?", "Quantos filmes eu já vi?", "Quanto custa o ingresso?"]},
+ l4: {t: "Uma caixa tem 84 lápis para repartir igualmente entre 7 mesas.", a: 84, b: 7, u: "lápis em cada mesa",
+      ops: ["Quantos lápis ficam em cada mesa?", "Quantas cores tem a caixa?", "Quem comprou os lápis?"]}
+};
+
+/* ---------- 21 — OS MINUTOS NO RELÓGIO (C09 = D34, e a flor do F24) ----------
+   ⭐ C09: *"Quantos espaços há entre o 12 e o 1?"*. F24: *"Observe este
+      relógio. As pétalas marcam os minutos."* `n` = o número em que o
+      ponteiro dos minutos para; `h` = a hora, só para o desenho. */
+var MINU = {
+ n3: {n: 3, h: 4}, n4: {n: 4, h: 7}, n7: {n: 7, h: 2}, n9: {n: 9, h: 10},
+ n11: {n: 11, h: 5}, n6: {n: 6, h: 8}, n2: {n: 2, h: 9}, n8: {n: 8, h: 1}
+};
+
+/* ---------- 22 — QUE HORAS SÃO? (C27 = D39) ----------
+   ⭐ VERBATIM: *"Escreva a hora em que cada relógio está marcando"* — 3:25,
+      4:40, 8:35, 4:55, 7:40, 2:55. Os outros vêm da C11 e da C31. */
+var LER = {
+ v1: {h: 3, m: 25}, v2: {h: 4, m: 40}, v3: {h: 8, m: 35}, v4: {h: 4, m: 55},
+ v5: {h: 7, m: 40}, v6: {h: 2, m: 55}, v7: {h: 10, m: 5}, v8: {h: 6, m: 20}, v9: {h: 11, m: 45}
+};
+
+/* ---------- 23 e 24 — GIRE OS PONTEIROS (C11, D20, D35, C05 + a peça F08) ----------
+   ⭐ C11: *"MARQUE NOS RELÓGIOS ABAIXO AS HORAS INDICADAS: 10H 45MIN, 09H
+      10MIN, 11H 30MIN, 08H 15MIN"*. D35: *"desenhando os ponteiros em cada
+      relógio"* — 15:20, 21:15. E a peça é a da F08, *"Faça seu próprio
+      relógio… fixe os ponteiros"*: na tela, a criança GIRA o ponteiro.
+   ⚠️ O relógio da tela anda de 5 em 5 minutos (ver POTE §6). */
+var GIRA = {
+ y1: {h: 10, m: 45}, y2: {h: 9, m: 10}, y3: {h: 11, m: 30}, y4: {h: 8, m: 15},
+ y5: {h: 1, m: 50}, y6: {h: 4, m: 30}, y7: {h: 11, m: 10}
+};
+var GIRA24 = {
+ x1: {h: 15, m: 20}, x2: {h: 21, m: 15}, x3: {h: 13, m: 10}, x4: {h: 16, m: 20},
+ x5: {h: 22, m: 45}, x6: {h: 14, m: 55}, x7: {h: 23, m: 20}
+};
+
+/* ---------- 25 — LIGUE O RELÓGIO AO HORÁRIO (C06) ----------
+   ⭐ VERBATIM: *"LIGUE O RELÓGIO ANALÓGICO AO RELÓGIO DIGITAL QUE ESTÁ
+      MARCANDO O MESMO HORÁRIO"* — 2:20, 5:15, 3:40, 6:45, 6:00. */
+var LIG3 = {
+ b1: {h: 2, m: 20}, b2: {h: 5, m: 15}, b3: {h: 3, m: 40}, b4: {h: 6, m: 45}, b5: {h: 6, m: 0}
+};
+
+/* ---------- 27 — QUANTO TEMPO CABE EM QUANTO (D01, D27, D09, D07) ----------
+   ⭐ D01: *"COMPLETE OS ESPAÇOS: MEIA HORA TEM ___ MINUTOS … 240 MINUTOS
+      CORRESPONDEM A ___ HORAS"*. D27: *"Uma hora tem ___ segundos"*. */
+var REL = {
+ u1: {t: "1 hora tem", r: 60, u: "minutos"}, u2: {t: "Meia hora tem", r: 30, u: "minutos"},
+ u3: {t: "Um quarto de hora tem", r: 15, u: "minutos"}, u4: {t: "1 minuto tem", r: 60, u: "segundos"},
+ u5: {t: "1 dia tem", r: 24, u: "horas"}, u6: {t: "2 horas têm", r: 120, u: "minutos"},
+ u7: {t: "4 minutos têm", r: 240, u: "segundos"}, u8: {t: "Uma semana tem", r: 168, u: "horas"},
+ u9: {t: "1 hora tem", r: 3600, u: "segundos"}
+};
+
+/* ---------- 28 — ⭐⭐ MINUTOS EM HORAS É DIVIDIR POR 60 (D02, D11, D21) ----------
+   ⭐ D02: *"LIMPAR A SALA POR 30 MINUTOS, FAZER LIÇÕES POR 30 MINUTOS,
+      LANCHAR POR 30 MINUTOS E CUIDAR DA HIGIENE PESSOAL POR 30 MINUTOS …
+      QUAL FOI O TEMPO TOTAL DAS ATIVIDADES EM HORAS?"*. D21: *"Você sabe
+      transformar horas em minutos? Ligue os equivalentes"* (1h30min = 90 min).
+   É a folha que junta os dois assuntos: quando a divisão por 60 não fecha,
+   o RESTO são os minutos. `ops` = as opções; a primeira é a certa (o motor
+   embaralha). */
+var PONT = {
+ w120: {min: 120, f: "dh4_licoes.png", t: "Beatriz fez 4 tarefas de 30 minutos: 120 minutos ao todo.", ops: ["2 h", "12 h", "1 h 20 min"]},
+ w180: {min: 180, t: "Um passeio durou 180 minutos.", ops: ["3 h", "18 h", "1 h 80 min"]},
+ w240: {min: 240, t: "A aula de artes somou 240 minutos no mês.", ops: ["4 h", "24 h", "2 h 40 min"]},
+ w90: {min: 90, t: "Um jogo de futebol tem 90 minutos.", ops: ["1 h 30 min", "9 h", "1 h 50 min"]},
+ w150: {min: 150, t: "Uma viagem durou 150 minutos.", ops: ["2 h 30 min", "1 h 50 min", "15 h"]},
+ w135: {min: 135, t: "Uma festa durou 135 minutos.", ops: ["2 h 15 min", "1 h 35 min", "13 h 5 min"]},
+ w65: {min: 65, t: "O ensaio da banda durou 65 minutos.", ops: ["1 h 5 min", "6 h 5 min", "1 h 65 min"]}
+};
+
+/* ---------- 29 — DAQUI A 15 MINUTOS (C13 = D03) ----------
+   ⭐ VERBATIM: *"AGORA SÃO / DAQUI A 15 MINUTOS SERÁ"* — 15:45, 10:00,
+      20:50, 08:00, 11:10, 12:05. As três que viram a hora são o degrau. */
+var MAIS = {
+ a1: {h: 15, m: 45}, a2: {h: 10, m: 0}, a3: {h: 20, m: 50}, a4: {h: 8, m: 0},
+ a5: {h: 11, m: 10}, a6: {h: 12, m: 5}
+};
+
+/* ---------- 30 — ANTES E DEPOIS (C20) ----------
+   ⭐ VERBATIM: *"15 MINUTOS ANTES / HORA ATUAL / MEIA HORA DEPOIS"* —
+      08:00, 10:20, 12:30, 15:40, 19:35. `d` = quantos minutos a somar (+) ou
+      tirar (−). */
+var ANDE = {
+ b1: {h: 8, m: 0, d: -15}, b2: {h: 8, m: 0, d: 30}, b3: {h: 10, m: 20, d: -15},
+ b4: {h: 10, m: 20, d: 30}, b5: {h: 12, m: 30, d: 30}, b6: {h: 15, m: 40, d: -15},
+ b7: {h: 15, m: 40, d: 30}, b8: {h: 19, m: 35, d: 30}
+};
+
+/* ---------- 31 — QUANTO TEMPO DUROU? (D21, D01, D33, D14, D07) ----------
+   ⭐ D21: *"Qual foi o tempo de duração de cada atividade?"* — a agenda do dia
+      da Júlia (7h30min às 7h50min…). `ops`: a primeira é a certa. */
+var DUR = {
+ d1: {t: "Leitura da professora: das 7h30 às 7h50.", ops: ["20 minutos", "30 minutos", "50 minutos"]},
+ d2: {t: "Leitura de parlenda: das 8h20 às 8h35.", ops: ["15 minutos", "35 minutos", "25 minutos"]},
+ d3: {t: "Matemática: das 10h20 às 11h10.", ops: ["50 minutos", "90 minutos", "1 hora e 10 minutos"]},
+ d4: {t: "Artes: das 11h10 às 11h50.", ops: ["40 minutos", "50 minutos", "1 hora"]},
+ d5: {t: "A aula de Pedro começa às 8 horas e termina às 13 horas.", ops: ["5 horas", "13 horas", "4 horas"]},
+ d6: {t: "Pedro saiu de casa às 8h15 e chegou ao trabalho às 9h00.", ops: ["45 minutos", "15 minutos", "1 hora e 15 minutos"]},
+ d7: {t: "A mãe de Carlos saiu às 8 horas da manhã e voltou às 17 horas.", ops: ["9 horas", "8 horas", "25 horas"]}
+};
+
+/* ---------- 32 — DÁ TEMPO? A QUE HORAS TERMINA? ----------
+   ⭐⭐ C11: *"HOJE, ÀS 19H E 20 MIN, PASSARÁ NA TELEVISÃO UM FILME… O FILME TEM
+      1H E 50 MINUTOS DE DURAÇÃO. COMO O HORÁRIO DE MARIA DORMIR É ÀS 20 HORAS E
+      50 MINUTOS, ELA CONSEGUIRÁ ASSISTIR AO FILME INTEIRO? POR QUÊ?"*
+   D32 (Luísa), D27 (a vovó), D07 (o remédio), D33 (João), D11 (saí às 8h25). */
+var TEMPO = {
+ k1: {f: "dh4_familia.png", t: "O filme começa às 19h20 e dura 1 hora e 50 minutos. Maria dorme às 20h50. Ela consegue ver o filme inteiro?",
+      ops: ["Não, porque o filme acaba às 21h10", "Sim, porque o filme acaba às 20h10", "Sim, porque o filme acaba às 20h50"]},
+ k2: {t: "Luísa saiu de casa às 7h15 e leva meia hora até a escola. A aula começa às 8h10. Dá tempo?",
+      ops: ["Sim, porque ela chega às 7h45", "Não, porque ela chega às 8h15", "Não, porque ela chega às 8h45"]},
+ k3: {t: "A vovó saiu às 15h15 e voltou 1 hora e 45 minutos depois. A que horas ela voltou?",
+      ops: ["Às 17h00", "Às 16h45", "Às 17h15"]},
+ k4: {t: "O remédio é de 6 em 6 horas. A primeira dose foi às 7 horas da manhã. Quando é a próxima?",
+      ops: ["Às 13 horas", "Às 12 horas", "À 1 hora"]},
+ k5: {t: "João chega ao trabalho às 7h15, trabalha 8 horas e tem 2 horas de almoço. A que horas ele sai?",
+      ops: ["Às 17h15", "Às 15h15", "Às 16h15"]},
+ k6: {t: "Saí de casa às 8h25 e voltei 45 minutos depois. A que horas voltei?",
+      ops: ["Às 9h10", "Às 9h25", "Às 8h45"]}
+};
+
+/* ---------- 33 — A ROTINA EM ORDEM (D06, D02, D21) ----------
+   ⭐ D06: *"VAMOS MARCAR O HORÁRIO DO SINAL DA ESCOLA"*; D02: a rotina da
+      Beatriz com as QUATRO CENAS (recortadas); D21: a agenda da Júlia.
+   `ord` = as etapas NA ORDEM CERTA; o motor embaralha na tela. */
+var ROT = {
+ z1: {t: "A manhã da Beatriz", ord: [
+      {k: "limpar", n: "Limpar a sala", h: 8, m: 0, f: "dh4_limpar.png"},
+      {k: "licoes", n: "Fazer lições", h: 8, m: 30, f: "dh4_licoes.png"},
+      {k: "lanche", n: "Lanchar", h: 9, m: 0, f: "dh4_lanche.png"},
+      {k: "higiene", n: "Cuidar da higiene", h: 9, m: 30, f: "dh4_higiene.png"}]},
+ z2: {t: "O dia da Júlia na escola", ord: [
+      {k: "leitura", n: "Leitura da professora", h: 7, m: 30},
+      {k: "parlenda", n: "Leitura de parlenda", h: 8, m: 20},
+      {k: "recreio", n: "Recreio", h: 10, m: 0},
+      {k: "matematica", n: "Matemática", h: 10, m: 20},
+      {k: "artes", n: "Artes", h: 11, m: 10}]}
+};
+
+/* ---------- 34 — A MEMÓRIA DAS HORAS ---------- */
+var MEM = {
+ me1: {h: 3, m: 25}, me2: {h: 8, m: 35}, me3: {h: 10, m: 45}, me4: {h: 6, m: 20}
+};
+
+/* ---------- 35 — O CARTAZ ---------- */
+var CARTAZ = {
+ G1: {n: "Repartir", d: "84 lápis para 7 mesas: quantos em cada mesa?", ex: "84 ÷ 7 = 12 lápis em cada mesa"},
+ G2: {n: "Medir", d: "60 ovos em caixas de 12: quantas caixas?", ex: "60 ÷ 12 = 5 caixas"},
+ G3: {n: "O resto", d: "17 balas para 3 amigos.", ex: "5 para cada um e sobram 2"},
+ G4: {n: "A conta de volta", d: "a multiplicação confere a divisão.", ex: "6 × 14 = 84, então 84 ÷ 6 = 14"},
+ G5: {n: "Minutos em horas", d: "1 hora tem 60 minutos.", ex: "150 minutos = 2 horas e 30 minutos"},
+ G6: {n: "Quanto durou", d: "das 7h30 às 7h50.", ex: "20 minutos"}
+};
 /*DADOS-FIM*/
 
 /* ⚠️ A MARCA DE VERSÃO NA FIGURA. Quando eu troco uma figura, o NOME do arquivo
@@ -1176,18 +2962,209 @@ var CHAVE_LS = "aprendendo_a_divis_o_e_as_horas";
       subindo um degrau; o que sobe é o apoio que some, não a tela.
    ⚠️ O andarilho confere a promessa da capa contra este número: dizer "vinte e
       cinco folhas" num caderno de vinte e duas reprova. */
-var NOMES = [];
+var NOMES = [
+  "Repartir os pirulitos",
+  "Quantos para cada um?",
+  "Quantos grupos dão?",
+  "Está certo ou errado?",
+  "Os nomes da divisão",
+  "Conhecer o material dourado",
+  "Repartir com o material dourado",
+  "A casa da troca",
+  "A conta na chave, com o material",
+  "A chave com troca",
+  "A chave com resto",
+  "Estimar: o divisor de dois algarismos",
+  "Ligar a conta ao quociente",
+  "Ligar: o divisor de dois algarismos",
+  "Exata ou não exata?",
+  "A conta de volta",
+  "O caminho do resto 1",
+  "Os restos iguais",
+  "O quebra-cabeça da divisão",
+  "Qual é a pergunta?",
+  "Os minutos no relógio",
+  "Que horas são?",
+  "Girar os ponteiros",
+  "Girar: as horas da tarde e da noite",
+  "Ligar o relógio ao horário",
+  "As partes do dia",
+  "Hora, minuto e segundo",
+  "Minutos em horas: dividir por 60",
+  "Daqui a 15 minutos",
+  "Antes e depois",
+  "Quanto tempo durou?",
+  "Dá tempo?",
+  "A rotina em ordem",
+  "A memória dos relógios",
+  "O cartaz da divisão e das horas"
+];
 /*<dossie-dados>*/
-/* ⚠️ ESTE OBJETO E O `curriculo.json` SÃO A MESMA COISA, e o portão 0b9
-   (`_qa/pedagogo_curriculo.py`) reprova se divergirem. Cada habilidade tem de
-   existir PALAVRA POR PALAVRA no `_curriculo/blumenau.txt` — é a única coisa
-   que o professor não tem como conferir sozinho sem abrir 440 páginas de PDF.
-   ⚠️ E se o conteúdo for de OUTRO ANO, diga qual, aqui dentro. Foi a lição da
-   Coroa dos Cinco Reinos: dá para citar com honestidade total e mesmo assim
-   ensinar coisa que não é do ano.
-   ⚠️ O que não estiver no currículo da rede vai em `fora_do_curriculo`, com o
-   motivo — ele é IMPRESSO no dossiê em toda rodada. */
-var CURRICULO = {};
+var CURRICULO = {
+ "ano": 4,
+ "componente": "Matemática",
+ "rede": "Currículo da Educação Básica do Sistema Municipal de Ensino de Blumenau",
+ "documento": "_curriculo/blumenau.txt",
+ "conceitos": [
+  "divisão",
+  "divisor",
+  "dividendo",
+  "resto",
+  "estimativa",
+  "algoritmo",
+  "cálculo mental",
+  "repartição",
+  "medida",
+  "multiplicação",
+  "regularidades",
+  "horas",
+  "minutos",
+  "segundos",
+  "relógio",
+  "duração",
+  "intervalo"
+ ],
+ "fora_do_curriculo": [
+  {
+   "termo": "material dourado",
+   "motivo": "O nome não aparece no bloco do 4º ano: é RECURSO, não conteúdo. Entrou por pedido do Marcos (26/set/2026: «Divisão com ajuda do material dourado») como o degrau CONCRETO antes da chave — o currículo pede «estratégias diversas» e «algoritmos», e é com as placas, barras e cubinhos que a troca da conta armada deixa de ser mágica. As peças são recortadas das folhas colhidas (G06)."
+  }
+ ],
+ "degrau": 4,
+ "evidencia": [
+  "Jogado do começo ao fim no navegador, item por item, antes de publicar.",
+  "Um jogador automático resolve cada item pela resposta declarada e confere se a folha fecha.",
+  "Leiaute medido em 6 tamanhos de tela: nenhuma figura cortada e nenhum alvo de toque menor que 40 px.",
+  "Toda tela é narrada com voz real, e cada opção de resposta tem o seu alto-falante.",
+  "As 35 folhas nasceram do crivo de 255 folhas de papel reais (190 de divisão e horas e 65 de material dourado), em `_sequencias/POTE-DIVH4.md`.",
+  "As figuras foram recortadas das próprias folhas de papel, e o portão 1i7 confere cada caixa contra a folha de origem.",
+  "As quatro habilidades citadas no dossiê são conferidas, palavra por palavra, contra o currículo da rede."
+ ],
+ "observacoes": [
+  "O DIVISOR VAI ATÉ DOIS ALGARISMOS E NÃO PASSA DISSO, porque o currículo do 4º ano escreve «cujo divisor tenha no máximo dois algarismos». Contas como 5580 ÷ 154 (A05, B12) ficaram de fora.",
+  "O MATERIAL DOURADO VEIO ANTES DA CHAVE (folhas 6 a 9), a pedido do Marcos. Nenhuma das 65 folhas colhidas sobre o material reparte peças em grupos: quase todas são de valor posicional. O gesto de repartir e trocar entrou como bloco declarado, apoiado na E31 («dividir por 2 é repartir em 2 grupos»), na E28 (a troca escrita) e na E30 (a conta na chave).",
+  "OS RESTOS IGUAIS (folhas 17 e 18) SÃO DA ÁLGEBRA DO 4º ANO e nenhuma folha colhida os trata como investigação: a trilha do Hulk (A31) só pede «sobra resto»; aqui a casa certa é a que sobra EXATAMENTE 1, e a folha 18 manda reparar na distância entre os números.",
+  "O RELÓGIO DA TELA ANDA DE 5 EM 5 MINUTOS: o mostrador colhido (F08) não tem os risquinhos dos minutos. A leitura minuto a minuto fica com o relógio da sala.",
+  "A F08 desenha o ponteiro das HORAS maior que o dos MINUTOS. Na tela cada ponteiro tem a sua largura, e o dos minutos é o comprido."
+ ],
+ "objetivos": [
+  {
+   "objetivo": "Repartir e medir: as duas perguntas da divisão",
+   "folhas": [
+    1,
+    2,
+    3,
+    20
+   ],
+   "pratica": "Números",
+   "objeto": "Problemas envolvendo diferentes significados da multiplicação e da divisão: adição de parcelas iguais, configuração retangular, combinação de possibilidades, proporcionalidade, repartição equitativa e medida",
+   "habilidade": "HABILIDADE: \"Resolver e elaborar problemas de divisão cujo divisor tenha no máximo dois algarismos, envolvendo os significados de repartição equitativa e de medida, utilizando estratégias diversas, como cálculo por estimativa, cálculo mental e algoritmos.\""
+  },
+  {
+   "objetivo": "Dividir com o material dourado, trocando a barra",
+   "folhas": [
+    6,
+    7,
+    8
+   ],
+   "pratica": "Números",
+   "objeto": "Problemas envolvendo diferentes significados da multiplicação e da divisão: adição de parcelas iguais, configuração retangular, combinação de possibilidades, proporcionalidade, repartição equitativa e medida",
+   "habilidade": "HABILIDADE: \"Resolver e elaborar problemas de divisão cujo divisor tenha no máximo dois algarismos, envolvendo os significados de repartição equitativa e de medida, utilizando estratégias diversas, como cálculo por estimativa, cálculo mental e algoritmos.\""
+  },
+  {
+   "objetivo": "Armar a divisão na chave, com e sem resto",
+   "folhas": [
+    5,
+    9,
+    10,
+    11,
+    15
+   ],
+   "pratica": "Números",
+   "objeto": "Problemas envolvendo diferentes significados da multiplicação e da divisão: adição de parcelas iguais, configuração retangular, combinação de possibilidades, proporcionalidade, repartição equitativa e medida",
+   "habilidade": "HABILIDADE: \"Resolver e elaborar problemas de divisão cujo divisor tenha no máximo dois algarismos, envolvendo os significados de repartição equitativa e de medida, utilizando estratégias diversas, como cálculo por estimativa, cálculo mental e algoritmos.\""
+  },
+  {
+   "objetivo": "Estimar e dividir por um número de dois algarismos",
+   "folhas": [
+    12,
+    13,
+    14,
+    19
+   ],
+   "pratica": "Números",
+   "objeto": "Problemas envolvendo diferentes significados da multiplicação e da divisão: adição de parcelas iguais, configuração retangular, combinação de possibilidades, proporcionalidade, repartição equitativa e medida",
+   "habilidade": "HABILIDADE: \"Resolver e elaborar problemas de divisão cujo divisor tenha no máximo dois algarismos, envolvendo os significados de repartição equitativa e de medida, utilizando estratégias diversas, como cálculo por estimativa, cálculo mental e algoritmos.\""
+  },
+  {
+   "objetivo": "Conferir a divisão com a multiplicação",
+   "folhas": [
+    4,
+    16
+   ],
+   "pratica": "Números",
+   "objeto": "Relações existentes entre as operações de multiplicação e divisão",
+   "habilidade": "HABILIDADE: \"Compreender as relações existentes entre as operações de multiplicação e divisão, aplicando-as na resolução e elaboração de problemas.\""
+  },
+  {
+   "objetivo": "Achar os números que deixam o mesmo resto",
+   "folhas": [
+    17,
+    18
+   ],
+   "pratica": "Álgebra",
+   "objeto": "Sequência numérica recursiva formada por números que deixam o mesmo resto ao ser divididos por um mesmo número natural diferente de zero",
+   "habilidade": "HABILIDADE: \"Reconhecer, por meio de investigações, que há grupos de números naturais para os quais as divisões por um determinado número resultam em restos iguais, identificando regularidades.\""
+  },
+  {
+   "objetivo": "Ler as horas no relógio de ponteiros e no digital",
+   "folhas": [
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    34
+   ],
+   "pratica": "Grandezas e medidas",
+   "objeto": "Medidas de tempo: leitura de horas em relógios digitais e analógicos, duração de eventos e relações entre unidades de medida de tempo",
+   "habilidade": "HABILIDADE: \"Ler e registrar medidas e intervalos de tempo em horas, minutos e segundos em situações relacionadas ao seu cotidiano, como informar os horários de início e término de realização de uma tarefa e sua duração.\""
+  },
+  {
+   "objetivo": "Relacionar horas, minutos e segundos",
+   "folhas": [
+    27,
+    28
+   ],
+   "pratica": "Grandezas e medidas",
+   "objeto": "Medidas de tempo: leitura de horas em relógios digitais e analógicos, duração de eventos e relações entre unidades de medida de tempo",
+   "habilidade": "HABILIDADE: \"Ler e registrar medidas e intervalos de tempo em horas, minutos e segundos em situações relacionadas ao seu cotidiano, como informar os horários de início e término de realização de uma tarefa e sua duração.\""
+  },
+  {
+   "objetivo": "Calcular o início, o término e a duração",
+   "folhas": [
+    29,
+    30,
+    31,
+    32,
+    33
+   ],
+   "pratica": "Grandezas e medidas",
+   "objeto": "Medidas de tempo: leitura de horas em relógios digitais e analógicos, duração de eventos e relações entre unidades de medida de tempo",
+   "habilidade": "HABILIDADE: \"Ler e registrar medidas e intervalos de tempo em horas, minutos e segundos em situações relacionadas ao seu cotidiano, como informar os horários de início e término de realização de uma tarefa e sua duração.\""
+  },
+  {
+   "objetivo": "Levar o cartaz: a divisão e as horas",
+   "folhas": [
+    35
+   ],
+   "pratica": "Números",
+   "objeto": "Problemas envolvendo diferentes significados da multiplicação e da divisão: adição de parcelas iguais, configuração retangular, combinação de possibilidades, proporcionalidade, repartição equitativa e medida",
+   "habilidade": "HABILIDADE: \"Resolver e elaborar problemas de divisão cujo divisor tenha no máximo dois algarismos, envolvendo os significados de repartição equitativa e de medida, utilizando estratégias diversas, como cálculo por estimativa, cálculo mental e algoritmos.\""
+  }
+ ]
+};
 /*</dossie-dados>*/
 
 /* ---------- som ---------- */
@@ -1371,7 +3348,37 @@ function errou(id, dica){
          p2: pega(ITENS.p2, 6),          // sorteia 6 de um pote maior
          p3: ITENS.p3.slice(0)           // já vem embrulhado: folha de ligar  */
 function novaFolha(){
-  return {};
+  /* ⚠️ O SAQUE É O TAMANHO DA AULA, medido na PONTA BAIXA (o cronômetro do
+     Marcos, 15/set/2026), nunca no teto.
+     ⚠️ O QUE NÃO SE SORTEIA, por razão de desenho:
+       · a folha 1 (dois tabuleiros de repartir) e as MESAS do material dourado
+         (7 e 8) sorteiam pouco porque cada item é uma mesa inteira de peças;
+       · as de LIGAR (13, 14, 25) e a MEMÓRIA (34) vão embrulhadas e inteiras;
+       · as GAVETAS (15, 26) vão inteiras: tirar uma conta desequilibra a gaveta;
+       · a TRILHA (17) é um caminho — passo faltando não chega à casinha;
+       · o QUEBRA-CABEÇA (19) é a figura inteira: faltando peça, falta pedaço;
+       · os RESTOS IGUAIS (18), ELABORAR (20), a ROTINA (33) e o CARTAZ (35)
+         vão inteiros — em todos o conjunto é a peça. */
+  return {
+    p1: ITENS.p1.slice(0),    p2: pega(ITENS.p2, 4),
+    p3: pega(ITENS.p3, 4),    p4: pega(ITENS.p4, 4),
+    p5: pega(ITENS.p5, 4),    p6: pega(ITENS.p6, 4),
+    p7: pega(ITENS.p7, 2),    p8: pega(ITENS.p8, 2),
+    p9: pega(ITENS.p9, 3),    p10: pega(ITENS.p10, 4),
+    p11: pega(ITENS.p11, 4),  p12: pega(ITENS.p12, 5),
+    p13: ITENS.p13.slice(0),  p14: ITENS.p14.slice(0),
+    p15: ITENS.p15.slice(0),  p16: pega(ITENS.p16, 5),
+    p17: ITENS.p17.slice(0),  p18: ITENS.p18.slice(0),
+    p19: ITENS.p19.slice(0),  p20: ITENS.p20.slice(0),
+    p21: pega(ITENS.p21, 5),  p22: pega(ITENS.p22, 5),
+    p23: pega(ITENS.p23, 4),  p24: pega(ITENS.p24, 4),
+    p25: ITENS.p25.slice(0),  p26: ITENS.p26.slice(0),
+    p27: pega(ITENS.p27, 6),  p28: pega(ITENS.p28, 5),
+    p29: pega(ITENS.p29, 5),  p30: pega(ITENS.p30, 5),
+    p31: pega(ITENS.p31, 5),  p32: pega(ITENS.p32, 4),
+    p33: ITENS.p33.slice(0),  p34: ITENS.p34.slice(0),
+    p35: ITENS.p35.slice(0)
+  };
 }</script>
 <!--<dossie-html>-->
 <div id="dossie" role="dialog" aria-label="Dossiê pedagógico" aria-modal="true">
