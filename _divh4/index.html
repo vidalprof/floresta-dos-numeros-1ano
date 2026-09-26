@@ -693,6 +693,307 @@ img{-webkit-user-drag:none;-khtml-user-drag:none;-moz-user-drag:none;user-drag:n
 .sil.ok,.sil.usada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
 .sil.usada{opacity:.6}
 .sil.nao{background:#ffd9d6;border-color:#e2574c;color:#9d2f26}
+/* ============================================================
+   AS PEÇAS DESTE CADERNO — o CSS veio JUNTO COM A PEÇA, não reescrito.
+   Do `_sil2` (caderno de sílaba do 2º ano): bolinhas, cortar, sílabas soltas,
+   estojo de canetinhas, caça-palavras, trilha e cartaz. Do `_corpo5`: a
+   memória e a forca. Clonar a peça e redesenhar o CSS dela seria arrumar lugar
+   para um defeito já pago noutro caderno.
+   ============================================================ */
+.perg{flex:1;min-width:0;font-size:clamp(15px,3.9vw,18px);font-weight:800;line-height:1.35;
+  color:var(--texto2)}
+.dica{flex:1;min-width:0;font-size:clamp(14px,3.6vw,17px);font-weight:700;line-height:1.35;
+  color:var(--texto3);font-style:italic}
+/* ---- bolinhas (contar), clonadas do _fra1 ---- */
+.bolinhas{display:flex;gap:clamp(8px,2.4vw,12px);justify-content:center;margin:8px 0 6px;flex-wrap:wrap}
+.bolinha{width:clamp(42px,11vw,52px);height:clamp(42px,11vw,52px);min-width:42px;min-height:42px;
+  border-radius:50%;border:3px solid #b9c0d4;background:#fff;cursor:pointer;
+  -webkit-transition:.15s;transition:.15s}
+.bolinha.cheia{background:#ffd233;border-color:#e0ac00;
+  -webkit-box-shadow:0 2px 0 #c89600;box-shadow:0 2px 0 #c89600}
+.bolinha:active{-webkit-transform:scale(.9);transform:scale(.9)}
+.bolinhas.erro .bolinha{border-color:#e2574c}
+.pronto{display:block;margin:6px auto 0}
+
+/* ---- cortar a palavra (separar em sílabas) ---- */
+.cortar{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+  gap:2px;margin:10px 0 4px}
+.clt{font:800 clamp(24px,6.6vw,34px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color:#243056;padding:6px 2px;background:none;border:0}
+button.clt{cursor:pointer;min-width:40px;min-height:44px;border-radius:8px}
+button.clt:active{background:#eef1f8}
+.clt.vogal{background:#ffd233;color:#5a4300;-webkit-box-shadow:0 2px 0 #c89600;box-shadow:0 2px 0 #c89600}
+.clt.nao{background:#ffd9d6;color:#9d2f26}
+.pedaco{display:inline-flex;align-items:center;border:2px dashed #c6cde0;
+  border-radius:10px;padding:0 3px}
+.tra{font:800 clamp(20px,5vw,28px)/1 system-ui;color:#8a93ad;margin:0 2px}
+.fresta{width:clamp(22px,6vw,30px);min-width:22px;height:clamp(44px,11vw,54px);min-height:44px;
+  border:0;background:none;cursor:pointer;border-radius:8px;position:relative;min-width:40px;min-height:44px}
+.fresta:before{content:"";position:absolute;left:50%;top:18%;width:3px;height:64%;
+  margin-left:-1.5px;background:#dde2ee;border-radius:2px}
+.fresta:active:before{background:#b9c0d4}
+.fresta.cortada:before{background:#15a34a;width:4px;margin-left:-2px}
+.fresta.cortada:after{content:"";position:absolute;left:50%;top:2px;width:14px;height:14px;
+  margin-left:-7px;border-radius:50%;background:#15a34a}
+.fresta.nao:before{background:#e2574c}
+
+/* ---- as sílabas soltas (marcar, montar, trilha) ---- */
+.sils{display:flex;flex-wrap:wrap;gap:clamp(6px,2vw,10px);justify-content:center;margin:8px 0}
+.sils.erro .sil{border-color:#e2574c}
+.sil{font:800 clamp(17px,4.6vw,22px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  min-width:52px;min-height:46px;padding:10px 14px;border-radius:12px;
+  border:2px solid #c6cde0;background:#fff;color:#243056;cursor:pointer;
+  -webkit-transition:.14s;transition:.14s}
+.sil.larga{min-width:clamp(96px,26vw,150px)}
+.sil:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.sil.marcada{background:#fff3c9;border-color:#e0ac00}
+.sil.ok,.sil.usada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
+.sil.usada{opacity:.6}
+.sil.nao{background:#ffd9d6;border-color:#e2574c;color:#9d2f26}
+
+/* ---- as vagas onde a palavra se monta ---- */
+.vagas{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}
+.cxs2{display:inline-block;min-width:clamp(46px,12vw,62px);min-height:clamp(42px,11vw,52px);
+  border:2px dashed #b9c0d4;border-radius:10px;background:#fbfcff;
+  font:800 clamp(17px,4.6vw,22px)/clamp(42px,11vw,52px) system-ui;color:#243056;text-align:center}
+.cxs2.cheia{border-style:solid;border-color:#15a34a;background:#eafaf0}
+
+/* ---- as duas linhas (letras x sílabas) ---- */
+.duaslinhas{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;
+  margin:8px auto;max-width:520px}
+.rotlin{font:700 clamp(12px,3.2vw,14px)/1 system-ui;color:#6b748f;text-align:right}
+.linhacx{display:flex;flex-wrap:wrap;gap:4px}
+.cxl{display:inline-block;min-width:clamp(30px,8vw,38px);min-height:clamp(34px,9vw,42px);
+  border:2px solid #c6cde0;border-radius:7px;background:#fff;
+  font:800 clamp(15px,4vw,19px)/clamp(34px,9vw,42px) system-ui;color:#243056;text-align:center}
+
+/* ---- o estojo de canetinhas (pintar pela legenda) ---- */
+.estojo{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0 12px}
+/* ⚠️ o FUNDO vem junto com a cor do texto, e de propósito: sem ele, o dia em
+   que a classe da cor não pegasse deixaria letra branca em fundo branco. */
+.cnt{font:700 clamp(12px,3.2vw,15px)/1 system-ui;min-height:44px;padding:10px 14px;
+  border-radius:12px;border:3px solid transparent;cursor:pointer;
+  color:#fff;background:#6b748f;
+  -webkit-transition:.14s;transition:.14s}
+.cnt:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.cnt.pega{border-color:#243056;-webkit-box-shadow:0 0 0 3px #fff inset;box-shadow:0 0 0 3px #fff inset}
+.cnt-m{background:#1179bf}.cnt-d{background:#15a34a}
+.cnt-t{background:#e0870a}.cnt-p{background:#8b5cf6}
+.petala{font:800 clamp(13px,3.6vw,16px)/1 system-ui;min-width:clamp(88px,24vw,120px);
+  min-height:46px;padding:12px 10px;border-radius:999px;border:2px solid #c6cde0;
+  background:#fff;color:#243056;cursor:pointer}
+.petala:active{-webkit-transform:scale(.95);transform:scale(.95)}
+.pin{color:#fff!important;background:#6b748f!important;border-color:transparent!important}
+.pin-m{background:#1179bf!important}.pin-d{background:#15a34a!important}
+.pin-t{background:#e0870a!important}.pin-p{background:#8b5cf6!important}
+.sacode{-webkit-animation:sac .38s;animation:sac .38s}
+@-webkit-keyframes sac{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
+@keyframes sac{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+/* ---- uma sílaba, três palavras ---- */
+.juntas{display:flex;flex-direction:column;gap:8px;align-items:center;margin:8px 0}
+.juntalin{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.seta{font:800 20px/1 system-ui;color:#8a93ad}
+.saida{font:800 clamp(18px,5vw,24px)/1 system-ui;color:#0d6b33;min-width:6em}
+
+/* ---- caça-palavras de sílabas ---- */
+.cpgrade{display:flex;flex-direction:column;gap:4px;align-items:center;margin:10px 0}
+.cplin{display:flex;gap:3px}
+.cpcel{font:800 clamp(12px,3.4vw,16px)/1 system-ui;min-width:clamp(44px,12vw,58px);
+  min-height:clamp(44px,12vw,54px);border:2px solid #c6cde0;border-radius:8px;
+  background:#fff;color:#243056;cursor:pointer;padding:0 2px}
+.cpcel.pega{background:#fff3c9;border-color:#e0ac00}
+.cpcel.achada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
+.cplista{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:8px 0}
+.cprot{display:flex;align-items:center;gap:6px;font:700 clamp(13px,3.6vw,16px)/1 system-ui;
+  color:#243056;border:2px solid #c6cde0;border-radius:999px;padding:8px 12px;min-height:44px}
+.cprot.achada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33;text-decoration:line-through}
+
+/* ---- a trilha ---- */
+.trilha{display:flex;flex-direction:column;gap:10px;margin:8px 0}
+.passo{border:2px dashed #c6cde0;border-radius:14px;padding:8px}
+.passo.andado{border-style:solid;border-color:#15a34a;background:#f3fbf6}
+.pnum{font:700 clamp(12px,3.2vw,14px)/1 system-ui;color:#6b748f;text-align:center;margin-bottom:4px}
+
+/* ---- o texto e a cantiga ---- */
+.textocx{background:#fbfcff;border:2px solid #e5e9f4;border-radius:14px;padding:10px;margin:8px 0}
+.textolin{margin:2px 0;line-height:1.9}
+.tp{font:700 clamp(14px,3.9vw,18px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  min-height:44px;min-width:42px;padding:8px 6px;border:0;border-radius:8px;background:none;
+  color:#243056;cursor:pointer}
+.tp.grande{font-size:clamp(18px,5vw,24px);min-width:56px}
+.tp:active{background:#eef1f8}
+.tp.achada{background:#d8f3e2;color:#0d6b33}
+.tp.nao{background:#ffd9d6;color:#9d2f26}
+.cantiga{background:#fff8e6;border:2px solid #ffe2a1;border-radius:14px;padding:12px;
+  margin:8px 0;text-align:center}
+.cantlin{margin:4px 0}
+
+/* ---- o cartaz do fim ---- */
+.cartaz{display:flex;flex-direction:column;gap:8px;margin:8px 0}
+.cartlin{display:flex;flex-wrap:wrap;align-items:center;gap:10px;border:2px solid #e5e9f4;
+  border-radius:14px;padding:10px;background:#fbfcff}
+.cartlin.erro{border-color:#e2574c;background:#fff4f3}
+.cartit{display:flex;align-items:center;gap:8px;flex:1;min-width:210px;flex-wrap:wrap}
+.cartit b{font:800 clamp(14px,3.8vw,17px)/1.2 system-ui;color:#243056}
+.cartit span{font:600 clamp(12px,3.2vw,14px)/1.2 system-ui;color:#6b748f}
+.cartalvo{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:46px;
+  min-width:clamp(120px,32vw,190px);border:2px dashed #b9c0d4;border-radius:10px;padding:6px}
+.mcartas{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  flex-wrap:wrap;gap:8px;max-width:430px;width:100%;margin:8px auto 4px}
+.mcarta{width:46%;max-width:200px;min-width:130px;min-height:118px;cursor:pointer;
+  -webkit-perspective:700px;perspective:700px}
+.mgira{position:relative;width:100%;height:100%;min-height:118px;
+  -webkit-transition:-webkit-transform .45s;transition:transform .45s;
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d}
+.mcarta.aberta .mgira,.mcarta.achada .mgira{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mface{position:absolute;left:0;right:0;top:0;bottom:0;border-radius:16px;
+  -webkit-backface-visibility:hidden;backface-visibility:hidden;
+  display:-webkit-box;display:flex;-webkit-box-orient:vertical;flex-direction:column;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+  gap:4px;padding:6px;overflow:hidden}
+.mverso{background:-webkit-linear-gradient(top,#a51c30,#7a1523);
+  background:linear-gradient(180deg,#a51c30,#7a1523);
+  -webkit-box-shadow:0 4px 0 #5c1019;box-shadow:0 4px 0 #5c1019}
+.minterro{color:#fff;font-weight:900;font-size:32px;opacity:.9;
+  background:rgba(255,255,255,.16);border-radius:50%;width:52px;height:52px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center}
+.mbrilho{position:absolute;top:-60%;left:-60%;width:60%;height:220%;
+  background:rgba(255,255,255,.2);-webkit-transform:rotate(22deg);transform:rotate(22deg);
+  -webkit-animation:vdCorre 2.6s linear infinite;animation:vdCorre 2.6s linear infinite}
+@-webkit-keyframes vdCorre{0%{left:-60%}60%,100%{left:140%}}
+@keyframes vdCorre{0%{left:-60%}60%,100%{left:140%}}
+.mfrente{background:#fff;border:3px solid #eccfd4;
+  -webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mfig{display:block;width:auto;height:clamp(56px,15vw,76px);max-width:100%;object-fit:contain}
+.mrot{font-weight:900;font-size:clamp(12px,3.2vw,15px);color:var(--texto2);letter-spacing:.5px;
+  text-align:center;line-height:1.2}
+.mcarta.achada .mfrente{border-color:#1f9d55;background:#eafaf0;
+  -webkit-animation:vdBateCarta .6s ease-out;animation:vdBateCarta .6s ease-out}
+@-webkit-keyframes vdBateCarta{0%,100%{-webkit-transform:rotateY(180deg) scale(1)}
+  50%{-webkit-transform:rotateY(180deg) scale(1.06)}}
+@keyframes vdBateCarta{0%,100%{transform:rotateY(180deg) scale(1)}
+  50%{transform:rotateY(180deg) scale(1.06)}}
+@media (min-width:760px){ .mcartas{max-width:680px} .mcarta{width:30%} }
+
+/* ---------- 38 · FORCA — e aqui o que se gasta é o FÔLEGO ----------
+   ⚠️ O ADEREÇO É DO ASSUNTO, e não é enfeite: no `_jogo1` o erro faz um balão
+      descer, o que ali combina (o caderno é de palavras). Num caderno de corpo
+      humano, o que acaba quando se erra é o AR — e isso mantém a criança dentro
+      do tema enquanto joga. Portão 0b11 também pede animação própria. */
+.folego{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  gap:8px;max-width:260px;margin:6px auto 4px}
+.folego .rot{font-weight:900;font-size:13px;color:var(--texto3);white-space:nowrap}
+.folegobar{position:relative;-webkit-box-flex:1;flex:1;height:18px;border-radius:9px;
+  background:#f3e3e6;overflow:hidden;border:2px solid #eccfd4}
+.folegobar i{display:block;height:100%;width:100%;border-radius:7px;
+  background:-webkit-linear-gradient(left,#1179bf,#6fc0f2);
+  background:linear-gradient(90deg,#1179bf,#6fc0f2);
+  -webkit-transition:width .4s ease-out;transition:width .4s ease-out}
+.folegobar.vazio i{background:#d9b3b9}
+.letfila{display:-webkit-box;display:flex;flex-wrap:wrap;gap:5px;
+  -webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;
+  margin:6px 0 4px}
+.vagalet{min-width:52px;min-height:52px;border:3px dashed #a51c30;border-radius:14px;
+  background:#fdecef;color:#a51c30;font-weight:900;font-size:clamp(21px,5.4vw,28px);
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;padding:4px 10px}
+.vagalet.cheia{border-style:solid;border-color:#1f9d55;background:#eafaf0;color:#127a41}
+.vagalet.revelada{border-style:solid;border-color:#d9c9bb;background:#f6f1ee;color:#8a7a6c}
+.tecforca{display:-webkit-box;display:flex;flex-wrap:wrap;gap:4px;
+  -webkit-box-pack:center;justify-content:center;margin:6px 0 2px}
+.tf{min-width:40px;min-height:44px;border:2px solid #eccfd4;border-radius:10px;background:#fff;
+  font-weight:900;font-size:clamp(15px,4vw,19px);color:var(--texto2);cursor:pointer;padding:0}
+.tf.boa{border-color:#1f9d55;background:#eafaf0;color:#127a41;pointer-events:none}
+.tf.ruim{border-color:#e2574c;background:#fdeceb;color:#b5352b;opacity:.55;pointer-events:none}
+
+/* ---- a figura que vira peça de arrastar (folhas 13 e 14) ---- */
+.figbt{padding:6px;min-width:84px;min-height:84px;display:-webkit-box;display:flex;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
+.figbt .figmini{display:block;width:auto;height:clamp(52px,14vw,70px);max-width:100%;
+  object-fit:contain;pointer-events:none}
+/* ---- o texto das folhas 23 e 24 ---- */
+.textocx{flex:1;min-width:0;font:700 clamp(14px,3.8vw,17px)/1.5 system-ui,-apple-system,
+  "Segoe UI",Roboto,sans-serif;color:var(--texto2);background:#fffdf5;
+  border:2px solid #e6dcc4;border-radius:12px;padding:10px 12px;letter-spacing:.02em}
+
+
+/* ---- o número de trás para a frente, dentro da peça da sílaba (folhas 9 e 10) ----
+   ⚠️ Ele é a régua da folha d01 virando coisa que se VÊ: a criança conta a
+      partir da última, e o número está ali para ela não perder a conta. */
+.sil .tras{display:inline-block;margin-left:6px;font:900 11px/1 system-ui;
+  color:#fff;background:#8a93ad;border-radius:8px;padding:2px 5px;vertical-align:.25em;
+  font-style:normal}
+.op.sil{font:800 clamp(15px,4.2vw,20px)/1 system-ui;letter-spacing:.06em}
+/* ⚠️ ESTA PEÇA É TOCADA, e por isso ela tem o piso do dedo. No caderno de
+   sílabas o `.clt` nunca foi alvo: lá a criança toca na FRESTA entre as
+   letras. Aqui ela toca na SÍLABA — o alvo mudou de dono e eu tinha deixado
+   o tamanho de antes (52x24). **Peça herdada muda de regra quando muda de
+   gesto.** */
+.clt.larga{min-width:52px;min-height:46px;padding:0 10px;cursor:pointer;
+  display:-webkit-inline-box;display:inline-flex;-webkit-box-align:center;
+  align-items:center;-webkit-box-pack:center;justify-content:center}
+
+
+/* ---- ⭐ OS POTES DA DIVISÃO (a peça nova deste caderno) ----
+   ⚠️ O POTE É UM ALVO DE SOLTAR e precisa caber na tela pequena com três ou
+      quatro irmãos ao lado: por isso `flex:1 1 0` com piso de 88 px, e não
+      largura fixa. Com largura fixa, quatro potes davam 4x110 px e estouravam
+      os 320 px do celular — o mesmo defeito que o caça-palavras já cobrou
+      duas vezes nesta casa. */
+.colunas.potes{gap:clamp(5px,1.6vw,10px)}
+.coluna.pote{flex:1 1 0;min-width:88px;padding:6px 4px 8px}
+.coluna.pote .ctit{min-height:52px;display:-webkit-box;display:flex;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;
+  justify-content:center;font-size:clamp(11px,3vw,13px)}
+.coluna.pote .ctit .figmini{height:clamp(38px,11vw,54px);width:auto;max-width:100%}
+.coluna.pote .cdentro{min-height:56px;display:-webkit-box;display:flex;
+  flex-wrap:wrap;gap:3px;-webkit-box-pack:center;justify-content:center;
+  -webkit-box-align:center;align-items:center}
+.figmicro{display:inline-block;height:clamp(22px,6vw,30px);width:auto;
+  max-width:100%;object-fit:contain;vertical-align:middle;pointer-events:none}
+/* ---- os grupos já feitos (folhas 4, 5, 18 e 20) ---- */
+.grupos{display:-webkit-box;display:flex;flex-wrap:wrap;gap:clamp(6px,2vw,12px);
+  -webkit-box-pack:center;justify-content:center;margin:8px 0}
+.grupo{border:2px dashed #b9c0d4;border-radius:12px;padding:6px 8px;
+  display:-webkit-box;display:flex;flex-wrap:wrap;gap:3px;max-width:150px;
+  -webkit-box-pack:center;justify-content:center}
+.grupo.sobra{border-color:#e0870a;background:#fff7e8}
+/* ---- a conta e o fato (folhas 6 e 7) ---- */
+.frasefato{font:700 clamp(14px,3.8vw,17px)/1.4 system-ui;color:var(--texto2);
+  text-align:center;margin:6px 0}
+.contafato{display:-webkit-box;display:flex;-webkit-box-align:center;
+  align-items:center;-webkit-box-pack:center;justify-content:center;gap:6px;
+  flex-wrap:wrap;margin:8px 0}
+.contafato .cf{font:900 clamp(20px,5.4vw,28px)/1 system-ui;color:var(--cor2)}
+/* ---- o número como resposta (o leque de 1 a 12) ---- */
+.op.num{font:900 clamp(17px,4.6vw,22px)/1 system-ui;min-width:52px}
+.sussurro{display:block;font:600 clamp(12px,3.2vw,14px)/1.3 system-ui;
+  color:var(--texto3);font-style:italic;margin-top:3px}
+/* ---- a mensagem secreta (folha 27) ---- */
+.segredo{display:-webkit-box;display:flex;flex-wrap:wrap;gap:5px;
+  -webkit-box-pack:center;justify-content:center;margin:12px 0 4px}
+.letrasec{min-width:40px;min-height:46px;border:3px dashed #b9c0d4;border-radius:10px;
+  font:900 clamp(18px,5vw,24px)/46px system-ui;text-align:center;color:#b9c0d4}
+.letrasec.cheia{border-style:solid;border-color:#15a34a;background:#eafaf0;color:#0d6b33}
+
+/* ⚠️ PISO DE TOQUE DE 40 px (regra da casa). Estas regras vêm por último
+   de propósito: elas SOBREPÕEM o que veio antes, e é isso que se quer —
+   a casinha da cruzadinha estava com 34 px e a peça de sílaba com 21 px
+   de altura. O portão do leiaute só viu quando passou a andar folha por
+   folha; antes ele parava na sexta. */
+.ccel{width:clamp(44px,9vw,50px);height:clamp(44px,9vw,50px);min-width:44px;min-height:44px;border:0;background:transparent;padding:0}
+.sil{font:800 clamp(17px,4.6vw,22px)/1 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  min-width:52px;min-height:46px;padding:10px 14px;border-radius:12px;
+  border:2px solid #c6cde0;background:#fff;color:#243056;cursor:pointer;
+  -webkit-transition:.14s;transition:.14s}
+.sil.larga{min-width:clamp(96px,26vw,150px)}
+.sil:active{-webkit-transform:scale(.94);transform:scale(.94)}
+.sil.marcada{background:#fff3c9;border-color:#e0ac00}
+.sil.ok,.sil.usada{background:#d8f3e2;border-color:#15a34a;color:#0d6b33}
+.sil.usada{opacity:.6}
+.sil.nao{background:#ffd9d6;border-color:#e2574c;color:#9d2f26}
 </style></head><body>
 
 <div id="topo">
