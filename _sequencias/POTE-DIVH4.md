@@ -120,65 +120,76 @@ gesto passa de 40% (a conta do leque está em §4).
 
 ## §4 O ROTEIRO DAS 35 FOLHAS
 
-Seis blocos **colados**, cada um subindo degrau. O problema vem antes do nome:
-*dividendo, divisor, quociente e resto* só aparecem na folha 6, depois de a
-criança já ter repartido, medido e julgado contas; *1 hora = 60 minutos* vira
-conta de dividir só na 28, depois de ela ter lido e girado o relógio.
+> ⭐ **REFEITO EM 26/set/2026 com o MATERIAL DOURADO**, a pedido do Marcos:
+> *"Divisão com ajuda do material dourado"*. Entraram quatro folhas (6 a 9: as
+> peças, repartir, a casa da troca, a chave com o material ao lado) e saíram
+> três do roteiro de antes, que o material tornou redundantes: **"Da figura
+> para a conta"** (A04 — o material faz a mesma ponte, com mais força),
+> **"Descubra o número escondido"** (A30 — a folha 16 já é o número que falta)
+> e **"Maior, menor ou igual?"** (A20 — comparar quocientes não é habilidade do
+> ano; saiu sem perda). O crivo das 65 folhas do material está no §8.
+
+O problema vem antes do nome: *dividendo, divisor, quociente e resto* só
+aparecem na folha 5, depois de a criança ter repartido, medido e julgado; a
+chave só aparece na 9, **depois** de ela ter repartido as peças com a mão e
+trocado a barra por dez cubinhos; *1 hora = 60 minutos* vira conta de dividir
+só na 28, depois de ela ter lido e girado o relógio.
 
 | Folha | Nome na faixa | Gesto | Nasce de |
 |---|---|---|---|
-| **A · DIVIDIR: O QUE JÁ SABEMOS** (retomada + problemas do 4º) ||||
-| 1 | Reparta os pirulitos | arrastar | A04 *"Reparta em partes iguais"* + figura A32 |
-| 2 | Da figura para a conta | escrever | A04 *"complete a frase e escreva o fato correspondente"* |
-| 3 | Quantos para cada um? | escolher | A02, A03, A08, A32, A33, B32 |
-| 4 | Quantos grupos dão? | escolher | A07, A17, B32, A32 (teatro) |
-| 5 | O raciocínio está certo? | julgar | A32 (Bia), B40 (contas erradas de propósito), B02, B31 |
-| 6 | Os nomes da divisão | apontar | B13 *"Nomeie cada termo da operação"* |
-| **B · A CONTA ARMADA NA CHAVE** ||||
-| 7 | Divida ordem por ordem | escrever | B06 (482 ÷ 2: *"4C : 2 = 2C"*), B07 |
-| 8 | Agora com troca | escrever | A16, A37, A11, A39 |
-| 9 | Quando sobra: o resto | escrever | A01, A25, B29 |
-| 10 | Estime antes de dividir | escolher | A28/B39 (divisor de 2 algarismos) |
-| 11 | Ligue a conta ao quociente | ligar | A39 |
-| 12 | Agora o divisor tem dois algarismos | ligar | A13 |
-| 13 | Exata ou não exata? | gavetas | B40, B31 |
-| **C · A DIVISÃO E A MULTIPLICAÇÃO** ||||
-| 14 | A conta de volta | escrever | A20 *"5 x 3 = 15, então 15 ÷ 3 = 5"* |
-| 15 | Descubra o número escondido | escolher | A30 |
-| 16 | Maior, menor ou igual? | escolher | A20 *"complete com > (maior), < (menor) ou = (igual)"* |
-| 17 | O caminho do resto | caminho | A31 *"somente pelas casas em que as divisões sobram resto"* |
-| 18 | Os números do mesmo resto | marcar | ⭐ declarado (Álgebra) |
+| **A · DIVIDIR: O QUE JÁ SABEMOS** ||||
+| 1 | Repartir os pirulitos | arrastar | A04 *"Reparta em partes iguais"* + figura A32 |
+| 2 | Quantos para cada um? | escolher | A02, A03, A08, A32, A33, B32 |
+| 3 | Quantos grupos dão? | escolher | A07, A17, B32, A32 (teatro) |
+| 4 | Está certo ou errado? | escolher | A32 (Bia), B40 (contas erradas de propósito), B02, B31 |
+| 5 | Os nomes da divisão | escolher | B13 *"Nomeie cada termo da operação"* |
+| **B · O MATERIAL DOURADO E A CHAVE** ||||
+| 6 | Conhecer o material dourado | escrever | E28/G17 *"Escreva os numerais representados pelo material dourado"* + as peças do G06 |
+| 7 | Repartir com o material dourado | arrastar | ⭐ declarado, apoiado na E31 *"DIVIDIR POR 2 É REPARTIR EM 2 GRUPOS"* |
+| 8 | A casa da troca | arrastar | E28 *"3 barras possuem ____ cubinhos"*, E31 *"1 Dezena = 10 Unidades"*, E37 (a troca desenhada) |
+| 9 | A conta na chave, com o material | escrever | B06 (482 ÷ 2: *"4C : 2 = 2C"*), B07 + o material ao lado |
+| 10 | A chave com troca | escrever | A16, A37, A11, A39 |
+| 11 | A chave com resto | escrever | E30 *"Pratique a divisão efetuando os cálculos abaixo"*, A01, A25, B29 |
+| 12 | Estimar: o divisor de dois algarismos | escolher | A28/B39 |
+| 13 | Ligar a conta ao quociente | ligar | A39 |
+| 14 | Ligar: o divisor de dois algarismos | ligar | A13 |
+| 15 | Exata ou não exata? | gavetas | B40, B31 |
+| **C · A DIVISÃO E A MULTIPLICAÇÃO, OS RESTOS** ||||
+| 16 | A conta de volta | escrever | A20 *"5 x 3 = 15, então 15 ÷ 3 = 5"* |
+| 17 | O caminho do resto 1 | caminho | A31 *"somente pelas casas em que as divisões sobram resto"* |
+| 18 | Os restos iguais | marcar | ⭐ declarado (Álgebra) |
 | 19 | O quebra-cabeça da divisão | montar | A10 (as peças e o tabuleiro da própria folha) |
-| 20 | Agora o problema é seu | escolher | ⭐ declarado (*"resolver e elaborar"*) |
+| 20 | Qual é a pergunta? | escolher | ⭐ declarado (*"resolver e elaborar"*) |
 | **D · LER AS HORAS** ||||
 | 21 | Os minutos no relógio | escolher | C09 *"Quantos espaços há entre o 12 e o 1?"* + F24 |
 | 22 | Que horas são? | escrever | C27 *"Escreva a hora em que cada relógio está marcando"* |
-| 23 | Gire os ponteiros | girar | C11 *"MARQUE NOS RELÓGIOS ABAIXO AS HORAS INDICADAS"* + F08 |
-| 24 | Agora a hora da tarde e da noite | girar | D35 (15:20, 21:15), C05 |
-| 25 | Ligue o relógio ao horário | ligar | C06 *"LIGUE O RELÓGIO ANALÓGICO AO RELÓGIO DIGITAL"* |
-| 26 | Manhã, tarde, noite ou madrugada? | gavetas | D10 *"Ligue o horário à parte do dia"*, D17 |
+| 23 | Girar os ponteiros | girar | C11 *"MARQUE NOS RELÓGIOS ABAIXO AS HORAS INDICADAS"* + F08 |
+| 24 | Girar: as horas da tarde e da noite | girar | D35 (15:20, 21:15), C05 |
+| 25 | Ligar o relógio ao horário | ligar | C06 *"LIGUE O RELÓGIO ANALÓGICO AO RELÓGIO DIGITAL"* |
+| 26 | As partes do dia | gavetas | D10 *"Ligue o horário à parte do dia"*, D17 |
 | **E · HORA, MINUTO, SEGUNDO** ||||
-| 27 | Quanto tempo cabe em quanto | escrever | D01 *"COMPLETE OS ESPAÇOS"*, D27, D09, D07 |
-| 28 | ⭐ Minutos em horas é dividir por 60 | escolher | D02, D11, D21 — a PONTE |
+| 27 | Hora, minuto e segundo | escrever | D01 *"COMPLETE OS ESPAÇOS"*, D27, D09, D07 |
+| 28 | ⭐ Minutos em horas: dividir por 60 | escolher | D02, D11, D21 — a PONTE |
 | **F · QUANTO TEMPO PASSOU?** ||||
 | 29 | Daqui a 15 minutos | escrever | C13 *"AGORA SÃO / DAQUI A 15 MINUTOS SERÁ"* |
 | 30 | Antes e depois | escrever | C20 *"15 MINUTOS ANTES / HORA ATUAL / MEIA HORA DEPOIS"* |
 | 31 | Quanto tempo durou? | escolher | D21 (a agenda), D01, D33, D14 |
-| 32 | Dá tempo? A que horas termina? | escolher | C11 (o filme), D32, D27, D07, D33 |
+| 32 | Dá tempo? | escolher | C11 (o filme), D32, D27, D07, D33 |
 | 33 | A rotina em ordem | ordenar | D06 *"VAMOS MARCAR O HORÁRIO DO SINAL DA ESCOLA"*, D02 |
 | **FECHO** ||||
-| 34 | A memória das horas | memória | C06/C27 (relógio ↔ horário) |
-| 35 | O cartaz que você leva | fecho | — |
+| 34 | A memória dos relógios | memória | C06/C27 (relógio ↔ horário) |
+| 35 | O cartaz da divisão e das horas | fecho | — |
 
-**O leque:** escrever 9 (26%), escolher 10 (29%), ligar 3, gavetas 2, girar 2 e
-um de cada — arrastar, julgar, apontar, caminho, marcar, montar, ordenar,
-memória, fecho. **Catorze gestos, nenhum acima de 40%.**
+**O leque:** escolher 11 (31%), escrever 9 (26%), arrastar 3, ligar 3, gavetas 2,
+girar 2 e um de cada — caminho, marcar, montar, ordenar, memória, fecho. **Doze
+gestos, nenhum acima de 40%.**
 
-**Os pares de folha (a regra do Marcos para chegar a 35 sem encher), e o degrau
-de cada segunda:** 3→4 *a pergunta muda* (quantos para cada um → quantos grupos) ·
-7→8 *agora com troca* · 8→9 *agora sobra* · 11→12 *o divisor ganha um algarismo* ·
-23→24 *o horário vem na forma de 24 horas* · 29→30 *para trás e para a frente,
-e meia hora*. Cada segunda folha **diz em voz alta** o que mudou (portão `0b14`).
+**Os pares de folha e o degrau de cada segunda:** 2→3 *a pergunta muda* ·
+7→8 *agora sobra uma barra: a troca* · 9→10 *agora com troca, e sem o material*
+· 10→11 *agora sobra* · 13→14 *o divisor ganha um algarismo* · 23→24 *o
+horário vem na forma de 24 horas* · 29→30 *para trás e para a frente, e meia
+hora* · 31→32 *a pergunta é outra: dá tempo?*. Cada segunda folha **diz em voz
+alta** o que mudou (portão `0b14`).
 
 ---
 
@@ -407,3 +418,174 @@ papel de C40, maior) dá o mostrador e os dois ponteiros; **F24** (*"Observe est
 relógio. As pétalas marcam os minutos."*) dá a flor dos minutos da folha 21. As
 outras 28 são repetições do mesmo gesto (marcar/escrever horas) já coberto por C
 e D, ou relógios com ponteiros fixos que não servem de peça.
+
+---
+
+## §8 O MATERIAL DOURADO — mais 65 folhas (26/set/2026)
+
+Pedido do Marcos, depois de o roteiro pronto: *"Divisão com ajuda do material
+dourado"*. Duas buscas novas: `colheita/divh4e` (40, E01–E40) e
+`colheita/divh4g` (25, G01–G25), contato em `_sequencias/crivo/divh4e-*` e
+`divh4g-*`. Lidas as 65, uma a uma.
+
+**O achado que mudou o desenho:** quase todas são de **valor posicional** (contar
+as peças e escrever o número, do 1º ao 3º ano). **Nenhuma** reparte, por
+exemplo, 48 em 2 grupos com barras e cubinhos. Por isso as folhas 7 e 8 entram
+como **bloco declarado**, apoiadas nas quatro que tocam o gesto:
+**E31** (*"DIVIDIR POR 2 É REPARTIR EM 2 GRUPOS"* + *"1 Dezena = 10 Unidades"*),
+**E28/G17** (*"3 barras possuem ____ cubinhos"* — a troca escrita), **E37** (a
+troca desenhada, na subtração) e **E30** (*"Pratique a divisão efetuando os
+cálculos abaixo"* — dez contas de 4º ano na chave, conferidas uma a uma; elas
+são as contas da folha 11). A folha 6 é o verbo dominante da colheita (~22
+folhas): contar as peças e escrever o número.
+
+**As peças:** placa, barra e cubinho do **G06** (1448×2048, a irmã sem números
+do E10), recortadas com a caixa medida por script e sem tinta num anel de 12 px
+em volta. Um jogo só de peças no caderno inteiro — o do E32/G11/E02 (isométrico,
+traço fino) ficou de fora para não misturar dois desenhos da mesma peça.
+
+**Erro achado no papel e na figura:** a **F08** (o relógio de montar) desenha o
+ponteiro das HORAS (540 px) **maior** que o dos MINUTOS (442 px). Na tela cada
+ponteiro tem a sua largura, e o dos minutos é o comprido.
+
+### Crivo — divisão com material dourado (4º ano) · colheitas `divh4e` e `divh4g`
+
+Lidas as 65 imagens, uma a uma, com a ferramenta Read. As caixas das figuras marcadas como **(medida)** foram conferidas por script, e não só a olho: a caixa cresce até onde a tinta acaba, e depois se conta a tinta num anel de 12 px ao redor. **anel=0** quer dizer que a figura está isolada, sem encostar em nada. As demais caixas são estimativa visual, com margem de ±10 px. Todas as coordenadas estão no **tamanho natural** do arquivo.
+
+**Achado central:** das 40 folhas de `divh4e`, **quase nenhuma é de divisão com material dourado**. Apenas quatro tocam o assunto: E30 (conta armada na chave, mas sem material), E31 (repartir 1 dezena em 2 grupos, que é um slide, não uma folha), E40 (agrupar cubinhos "2 em 2… 10 em 10", que é divisão por medida, com resto) e E37 (subtração com troca, que usa o gesto da TROCA). A busca devolveu sobretudo **valor posicional** (ler e escrever o número a partir das peças), do 1º ao 3º ano.
+
+### Tabela A — `divh4e` (40 imagens)
+
+| código | comando impresso VERBATIM | verbo | conteúdo concreto | figuras aproveitáveis (tamanho natural · caixa x0,y0,x1,y1) | observações |
+|---|---|---|---|---|---|
+| E01 | "OBSERVE OS MATERIAIS DOURADOS E PREENCHA AS LACUNAS:" | contar as peças e escrever C/D/U | 1 placa + 3 barras + 5 cubinhos = 135 · 1 placa + 5 barras + 4 cubinhos = 154 · 2 placas + 2 barras + 2 cubinhos = 222 | 1414×2000 · placa 3D ouro isométrica (160,661,355,937) 196×277, anel 0 **(medida)** · barra (397,680,440,937) 44×258, anel 0 **(medida)** · cubinho (656,710,723,779) 68×70, anel 24 (vizinho próximo) | educador.com.br, logotipo no rodapé. Nível 2º/3º ano. Mesmo estilo de E02, E08 e E20. |
+| E02 | (cartões de recorte, sem comando; tesoura no topo) | ligar número × material (recortar) | 1.000 = cubão · 34 = 3 barras + 4 cubinhos · 101 = 1 placa + 1 cubinho · 205 = 2 placas + 5 cubinhos | 1414×2000 · **cubão** (846,109,1200,462) 355×354 · barra (792,614,851,957) 60×344 · cubinho (1122,595,1199,675) 78×81 · placa (774,1069,1041,1445) 268×377 — todas com anel 0 **(medida)** | Aritmética correta. **Duplicata exata de G14** (mesmo md5). Moldura tracejada ao redor, mas afastada das figuras. |
+| E03 | "RECORTE E BRINQUE" | recortar | 6 placas e 6 cubões para recortar | 1414×2000 · placa amarela lisa, 3D leve, ~360×340 (80,315,441,655) · cubão ~370×370 | ieducacao. **Marca-d'água** (logotipo "i" grande, desbotado) atrás das figuras. Sem tarefa. |
+| E04 | "Qual é o número?" | contar e escrever o número e por extenso | 3 barras + 3 cubinhos = 33 · 1 placa + 4 barras + 9 cubinhos = 149 · cubão + placa + barra + cubinho = 1111 · 5 placas + 6 cubinhos = 506 | 1117×1600 · preto e branco, figuras pequenas | Educação e Transformação. Nível 2º/3º ano. |
+| E05 | "- Observe o número representado com o material dourado abaixo e complete." (a–g: número, sucessor, antecessor, valor relativo, "A metade é:", "O triplo deste número é:", "subtraindo … deste número, o resto será?") | contar as peças e escrever · calcular | 3 cubões + 4 placas + 5 barras + cerca de 7 cubinhos (≈3457; contei os cubinhos na tela, sem ampliar) | 1131×1600 · preto e branco | **Marca-d'água "amorensina" DENTRO das figuras.** Só o item "e) A metade é" toca a divisão. |
+| E06 | "RECORTE E BRINQUE" | recortar | 8 cubinhos grandes + 7 barras | 1414×2000 · cubinho amarelo de traço grosso (115,304,365,552) 251×249 · barra (86,886,207,1829) 122×944 **(medida)**; o anel tem tinta (as linhas tracejadas de corte encostam) | Marca-d'água atrás. O traço é grosso, estilo cartoon. |
+| E07 | "REPRESENTE COM NUMERAIS DE ACORDO COM A QUANTIDADE DE PEÇAS DO MATERIAL DOURADO." | contar e escrever o número | 36 · 35 · 38 · 34 · 32 · 37 · 33 · 39 | 1132×1600 · preto e branco | Israela Kotona. 1º ano. |
+| E08 | "VAMOS REALIZAR AS MULTIPLICAÇÕES COM O MATERIAL DOURADO?" | multiplicar (escrever o resultado) | 1 placa × 2 = 200 · 5 barras × 4 = 200 · 3 barras × 5 = 150 | 1414×2000 · placa ouro 3D (198,635,416,941) 219×307, anel 0 **(medida)** · barras (178,1082,216,1296) ~38×214 | educador. Multiplicação, que é a operação inversa: serve para a prova real da divisão. |
+| E09 | "Observe os valores correspondentes às peças do Material Dourado." · "1 – ESCREVA OS VALORES CORRESPONDENTES AS PEÇAS DO MATERIAL DOURADO." | contar e escrever | 110 · 320 · 270 · 550 · 830 · 460 · 600 ("NÚMEROS DE 100 ATÉ 900") | 1169×826 · preto e branco, pequenas | varaldeatividades. 2º/3º ano. |
+| E10 | (cartaz: "UNIDADE = 1", "DEZENA = 10", "CENTENA = 100", "UNIDADE DE MILHAR = 1000") | observar (cartaz) | as quatro peças com o valor | **1600×2263** · cubinho 3D, face ocre, topo amarelo, lado laranja (284,371,530,612) **247×242** · barra (1353,160,1439,823) 87×664 · placa (160,1453,654,1943) 495×491 · cubão (843,1402,1395,1943) 553×542 — anel 0 em todas **(medida)** | pontodoconhecimento. **O melhor jogo de peças, na maior resolução.** Irmã de G06 (sem os números). Cartaz sem tarefa. |
+| E11 | "ADICIONANDO COM MATERIAL DOURADO" | somar (C/D/U) | 12 contas de adição com placas, barras e cubinhos planos | 819×1024 · **foto** de folha impressa, em perspectiva | Adição. Não aproveitar as figuras. |
+| E12 | "FORMANDO 10" · "1 Pinte os quadrados para formar 10. Depois, complete as frases." · "2 Resolva o problema." | pintar · completar | 1+9 · 2+8 … · "Tatiana tem 10 camisetas. Somente 4 dessas camisetas são brancas…" | — | Livro do 1º ano. **Não é material dourado.** Fora. |
+| E13 | "PINTE AS PEÇAS DO MATERIAL DOURADO DE ACORDO COM O NUMERAL INDICADO." | pintar | 14 · 25 · 17 · 22 · 30 · 23 (cada quadro com 5 barras e 9 cubinhos) | 1132×1600 · preto e branco | 1º ano. |
+| E14 | "ESCREVA COM ALGARISMOS AS QUANTIDADES REPRESENTADAS COM PEÇAS DO MATERIAL DOURADO." | contar e escrever D/U | 34 · 23 · 28 · 27 · 32 · 24 … | 1132×1600 · preto e branco | 1º ano. |
+| E15 | "VOCÊ CONHECE O MATERIAL DOURADO? VEJA AS IMAGENS COM MUITA ATENÇÃO:" · "AGORA, RESPONDA AS QUESTÕES A SEGUIR:" | ligar valor ao nome (UNIDADE=, 1 DEZENA=…) | 1 · 10 · 100 · 1000 | 1414×2000 · amarelo vivo, 3D: cubinho (207,427,267,488) 61×62 · barra (379,365,423,711) 45×347 · placa (520,365,880,707) 361×343 · cubão (925,352,1287,706) 363×355 **(medida)**; o anel tem tinta (rótulos logo abaixo e marca-d'água) | ieducacao, **marca-d'água** atrás. 2º ano. |
+| E16 | "ESCREVA AS UNIDADES E DEZENAS UTILIZANDO A MATERIAL DOURADO" · "CAPRICHE NA ATIVIDADE!" | contar e escrever D/U | 23 · 15 · 21 · 41 · 54 · 70 · 38 · 53 | 1414×2000 · barras e cubinhos amarelos, ~35×270 e ~45×45 | Marca-d'água. 1º ano. |
+| E17 | "Entendendo o Material Dourado" · "- Escreva o número representado." | contar e escrever | 3 placas + 2 barras + 3 cubinhos = 323 · 1 cubão + 3 barras = 1030 · 1 cubão + 4 placas + 2 cubinhos = 1402 (outro quadro com cubinhos pequenos demais para contar com segurança) | 724×1024 · preto e branco | **Marca-d'água "amorensina" dentro das figuras.** |
+| E18 | "QUAL É O NÚMERO?" | contar e escrever | 142 · 241 · 341 · 421 · 214 | 1080×1541 · preto e branco | Bom par de "mesmos algarismos, ordem diferente". 2º/3º ano. |
+| E19 | "→ COM BASE NA LEITURA DO QUADRO ACIMA, LIGUE O QUE CADA PEÇA DO MATERIAL DOURADO REPRESENTA:" | ligar | cubinho / barra / placa / cubo × 1 unidade, 1 dezena, 1 centena, 1 milhar | 768×1024 · preto e branco | Ideias e Saberes. 2º ano. |
+| E20 | (cartões de recorte, sem comando) | ligar número × material | 52 = 5 barras + 2 cubinhos · 7 = 7 cubinhos · 303 = 3 placas + 3 cubinhos · 26 = 2 barras + 6 cubinhos | 1414×2000 · **barra grande** (775,1551,840,1934) 66×384, anel 0 · cubinho (1036,1568,1114,1649) 79×82, anel 0 · placa (753,1213,930,1463) 178×251, com anel 699 (encosta nos cubinhos de baixo) **(medida)** | Aritmética correta. Irmã de E02. Duplicata menor em G19. |
+| E21 | "REPRESENTE COM ALGARISMOS AS QUANTIDADES REPRESENTADAS EM CADA CONJUNTO DE PEÇAS DO MATERIAL DOURADO E ESCREVA POR EXTENSO." | contar, escrever e escrever por extenso | 127 · 140 · 109 · 163 · 134 · 126 · 152 · 187 (contagem visual) | 1130×1600 · preto e branco | 3º ano. |
+| E22 | "1º)Observe o exemplo e continue o exercício." | decompor (100 + 30 + 4) e escrever C/D/U e por extenso | exemplo: 134 = 100 + 30 + 4, "cento e trinta e quatro"; os demais com 3–5 placas empilhadas | 835×1064 · placa amarela plana, pequena e de baixa resolução | 3º ano. |
+| E23 | "Escreva o numeral que foi representado com a utilização do material dourado:" | contar e escrever C/D/U | 321 · 183 · 311 · 154 · 461 · 240 | 709×1024 · preto e branco | borboletakids. 3º ano. |
+| E24 | "1 LIGUE O "MATERIAL DOURADO" COM OS RESULTADOS CORRESPONDENTES." | ligar | 48 (4 barras + 8) · 19 · 23 · 32 · 35 … (alvos 32, 24, 19, 35, 48) | 480×683 · bege 3D, minúsculo | Arquivo pequeno. BNCC impressa: EF03MA07, EF01MA05, EF02MA04. |
+| E25 | "RESOLVA A ADIÇÃO UTILIZANDO O MATERIAL DOURADO:" | somar (dezenas + unidades) | exemplo 20 + 2 = 22 · 20 + 9 · 30 + 5 · 80 + 6 · 60 + 4 | 1414×2000 · **barra DEITADA** amarela (295,366,568,401) 274×36, anel 0 **(medida)** | Marca-d'água no resto da folha. 1º/2º ano. |
+| E26 | "1 ESCREVA OS NÚMEROS CORRESPONDÊNTES AO "MATERIAL DOURADO" ABAIXO DE CADA EXERCÍCIO, DEPOIS PINTE OS NÚMEROS QUE FORAM USADOS." | contar, escrever e pintar | 5 (exemplo) e 11 quadros; banco: 5, 49, 10, 50, 17, 19, 29, 12, 23, 47, 36, 11, 34, 24, 66, 15 | 480×675 · minúsculo | "CORRESPONDÊNTES" com acento errado no original. |
+| E27 | "A PROFESSORA CAROL DITOU A SEUS ALUNOS O NÚMERO 354 E PEDIU PARA QUE ELES FIZESSEM A SUA DECOMPOSIÇÃO USANDO O MATERIAL DOURADO. VEJA COMO ALGUNS ALUNOS FIZERAM ESTA REPRESENTAÇÃO. ASSINALE COM UM X O ALUNO QUE REALIZOU A DECOMPOSIÇÃO CORRETAMENTE." | assinalar a certa (achar o erro) | 34 · 350 · 225 · 54 · **354** (só a última está certa) | 1166×1600 · preto e branco, plano | Bom gesto de "julgar a representação do colega". 3º ano. |
+| E28 | "Observe:" · "Escreva os numerais representados pelo material dourado:" · "Complete escrevendo os números:" (a) 2 placas possuem__ barras … b) 3 barras possuem ____ cubinhos … i) 6 placas + 8 barras + 3 cubinhos) | contar e escrever · **trocar** (placa→barras, barra→cubinhos, cubo→placas) | 31 · 106 · 111 · 254 · 1130 · "3 barras possuem 30 cubinhos" | 736×1046 · preto e branco | Os itens a–c **são a troca**, pré-requisito da divisão. Versão maior em G17. |
+| E29 | "1. A GALINHA ESTÁ TRISTE, POIS AINDA NÃO SABE CONTAR OBSERVANDO O MATERIAL DOURADO.VAMOS AJUDÁ-LA?" | contar e escrever D/U | 25 · 22 · 13 · 26 · 12 · 21 | 1145×1600 · preto e branco | Personagem de marca (Galinha Pintadinha). 1º ano. |
+| E30 | "DIVISÃO" · "Pratique a divisão efetuando os cálculos abaixo:" | **armar e efetuar a conta na chave** | 689÷9 · 821÷2 · 175÷3 · 224÷2 · 942÷3 · 435÷5 · 944÷5 · 119÷8 · 674÷9 · 318÷8 | 1414×2000 · só o sinal "÷" decorativo (madeira) | **Conferi as contas:** 689÷9 = 76 r5 · 821÷2 = 410 r1 · 175÷3 = 58 r1 · 224÷2 = 112 · 942÷3 = 314 · 435÷5 = 87 · 944÷5 = 188 r4 · 119÷8 = 14 r7 · 674÷9 = 74 r8 · 318÷8 = 39 r6. Todas válidas. **Sem material dourado**, e vem com ZERO no quociente (821÷2 → 410): nível 4º/5º ano. Selo no canto. |
+| E31 | "DIVIDIR POR 2 É REPARTIR EM 2 GRUPOS." ("1 Dezena = 10 Unidades"; conta "10 ⌊2") | **trocar a barra por 10 cubinhos e repartir em 2 grupos** | 10 ÷ 2: a barra vira 10 unidades numeradas, e duas caixas esperam os grupos | 1024×1024 · barra vermelha com olhos (personagem); fundo azul em degradê | **É o gesto central do caderno** (troca + repartir + chave). Porém é um SLIDE, não uma folha, e a barra é vermelha e numerada, não é peça do material dourado. Pedagogia 1.5. |
+| E32 | (cartaz: "1 UNIDADE", "1 DEZENA 10 UNIDADES", "1 CENTENA 10 DEZENAS 100 UNIDADES", "1 MILHAR 10 CENTENAS 100 DEZENAS 1000 UNIADES") | observar | as quatro peças com as equivalências | 1600×900 · cubinho ouro 3D (103,320,184,405) 82×86 · barra (298,139,382,623) 85×485 · placa (657,90,942,490) 286×401 · cubão (1140,69,1546,473) 407×405 — anel 0 em todas **(medida)** | Erro de digitação no original: "UNIADES". Duplicata exata de G12. educador. |
+| E33 | "1-QUAL É O NÚMERO? COMPLETE A TABELA:" | contar, escrever e escrever por extenso | 33 · 146 · 111 · 1032 · 504 | 1000×1426 · amarelo plano, pequeno | 2º/3º ano. |
+| E34 | "1- De acordo com o material dourado, escreva o número correspondente e, em seguida, escreva-o por extenso:" · "2- Decomponha os números, conforme o exemplo:" | contar, escrever e decompor | exemplo: "146 → 1 centena, 4 dezenas e 6 unidades" · 164 · 652 · 987 · 285; quadros com 2–4 cubões (≈2148, 4026 — cubinhos pequenos demais para contar com certeza) | 1116×1600 · cinza, baixa resolução | 3º/4º ano (milhar). |
+| E35 | "PINTE O MATERIAL DOURADO DE ACORDO COM A NUMERAÇÃO INDICADA:" | pintar | 20 · 14 · 33 · 25 · 42 · 60 | 1414×2000 · traço, sem cor | Marca-d'água. 1º ano. |
+| E36 | "MATEMÁTICA Centena" · "Observe a representação com o material dourado:" · "1- Complete a sequência até completar uma centena:" · "Uma centena é formada por _____ dezenas." | completar a sequência (+10) | 10, 20 … 100 · 10 dezenas = 1 centena | 1190×1682 · barra e placa amarelas, contorno irregular | Traz uma foto de bolinhas (outro material). 2º ano. |
+| E37 | "ATIVIDADE DE SUBTRAÇÃO COM EMPRÉSTIMO USANDO O MATERIAL DOURADO" · "1 RESOLVA AS SUBTRAÇÕES COM EMPRÉSTIMO USANDO O "MATERIAL DOURADO" PINTE O "MATERIAL DOURADO" CONFORME O EXERCÍCIO." · "APÓS EMPRESTAR, BASTA SUBTRAIR" | pintar · **trocar 1 barra por 10 cubinhos** · subtrair | exemplo 23 − 14 = 09 (confere) · 24 − 17 · 27 − 18 | 624×884 · peças minúsculas, em traço | A TROCA está desenhada em duas linhas, "EXERCÍCIO" e "EMPRÉSTIMO". BNCC impressa: EF01MA02, EF02MA02, EF03MA04. Arquivo pequeno. |
+| E38 | (prévia de produto: "MATERIAL DOURADO", Educador) | — | mostra os cartões de E02 e E20 | 1500×1000 · montagem | **Duplicata** (propaganda). Fora. |
+| E39 | "1º)Escreva os valores correspondentes as peças do material dourado." | contar e escrever | 2 cubões + 5 placas + 4 barras = 2540 · 3410 · 4250 … (milhares) | 862×1242 · cubões com fundo amarelo-claro; placas com linha grossa em cruz no meio (desenho estranho) | 4º ano (milhar). |
+| E40 | "Agrupe os cubinhos:" ("2 em 2", "3 em 3", "4 em 4", "5 em 5", "9 em 9", "10 em 10") · "ESCREVA O VALOR CORRESPONDENTE AO MATERIAL DOURADO E DEPOIS ESCREVA-OS EM ORDEM CRESCENTE (DO MENOR PARA O MAIOR)." | **agrupar (circular grupos iguais)** · contar e ordenar | contei ampliando: 19 cubinhos em 2 em 2 (9 grupos, sobra 1) · 19 em 3 em 3 (6, sobra 1) · 19 em 4 em 4 (4, sobra 3) · 25 em 5 em 5 (5) · 25 em 9 em 9 (2, sobra 7) · 40 em 10 em 10 (4); valores: 22 · 27 · 25 · 28 · 24 · 26 · 23 · 21 | 822×1200 · preto e branco | **Divisão por medida, com RESTO**, sem nomeá-la. A 2ª parte é do 1º ano. |
+
+### Tabela B — `divh4g` (25 imagens, colhidas para achar figuras)
+
+| código | comando impresso VERBATIM | verbo | conteúdo concreto | figuras aproveitáveis (tamanho natural · caixa x0,y0,x1,y1) | observações |
+|---|---|---|---|---|---|
+| G01 | (foto: cartões "1000", "21", "20", "18", "24", "53", "800", "19") | — | peças coloridas recortadas sobre a mesa | 1080×1080 · foto em perspectiva, peças tortas | Tudo para o Professor. Não serve para recorte. |
+| G02 | (sem texto: folha de recorte) | recortar | 26 cubinhos, 20 barras, 2 placas | 1024×1449 · amarelo **PLANO** quadriculado · cubinho ~(80,53,118,92) 38×39 · barra ~(88,195,127,560) 39×365 · placa ~(95,1028,461,1394) 366×366 | Linhas-guia cinzentas saem das peças. Visual (não medido). |
+| G03 | "Tempo Pedagógico MATERIAL DOURADO" | recortar | 20 barras | 1080×1528 · barra 3D, face ocre, topo amarelo, lado laranja (22,228,102,839) **81×612**, anel 0 **(medida)** | Mesmo estilo de E10/G06. |
+| G04 | "MATERIAL DOURADO EXPLICADO PARA IMPRIMIR" | — | miniaturas das folhas de E10/G06 | 768×402 · pequenas demais | Banner de propaganda. Fora. |
+| G05 | "MATERIAL DOURADO" (cartaz 1…1000; "1 UNIDADE", "10 UNIDADES OU 1 DEZENA", "1 CENTENA OU 10 DEZENAS OU 100 UNIDADES", "1 MILHAR OU …") | observar | 1 a 9 cubinhos, 10 a 90 barras, 100, 1000 | 1200×1591 · textura de madeira, **plano** · cubinho ~(113,170,216,265) · versão azul lisa na última linha | Fundo azul-claro. |
+| G06 | (cartaz: "UNIDADE", "DEZENA", "CENTENA", "UNIDADE DE MILHAR") | observar | as quatro peças | **1448×2048** · cubinho (257,335,480,554) 224×220 · barra (1224,144,1302,745) 79×602 · placa (144,1315,592,1758) 449×444 · cubão (763,1268,1263,1758) 501×491 — anel 0 em todas **(medida)** | Irmã de E10, sem os valores. pontodoconhecimento. |
+| G07 | "CUBÃO PLACA BARRA CUBINHO" | — | 1 placa, 4 barras, 8 cubinhos | 800×336 · **foto de livro**, marrom e borrada | Fora. |
+| G08 | "UNIDADE" · "DEZENA" · "CENTENA" | observar | as três peças | 1536×864 · dourado em degradê, **PLANO** · cubinho (197,360,274,436) 78×77, anel 0 · barra (428,25,504,783) 77×759 · placa (619,25,1377,782) 759×758 **(medida)**; barra e placa com anel de ~170–230 (rótulo e vizinha perto) | Educador. Bom para a versão "chapada" (vista de cima). |
+| G09 | "Atividade" · "Escreva o número do valor correspondente ao material dourado:" | contar e escrever | 122 · 233 · 280 · 155 · 300 · 1061 · 1053 · 1009 · 2000 · 1036 (contagem visual) | 1650×1275 · preto e branco | 3º/4º ano. |
+| G10 | (recorte de G05) | — | 1 a 30 | 1200×630 | Duplicata parcial de G05. |
+| G11 | "MILHAR" | observar | um cubão | 1920×1080 · **cubão** ouro 3D (513,31,1504,1019) **992×989**, anel 0 **(medida)** | Educador. O maior cubão, com logo e rótulo afastados. |
+| G12 | = E32 | — | — | 1600×900 | **Duplicata exata** de E32 (mesmo md5). |
+| G13 | "Material Dourado para imprimir e montar" | montar (planificação) | moldes do cubo, da placa e da barra | 768×768 · montagem com foto | Fora. |
+| G14 | = E02 | — | — | 1414×2000 | **Duplicata exata** de E02 (mesmo md5). |
+| G15 | (foto) | — | cubinho, barra, placa e cubão de madeira real, sobre fundo azul | 1840×790 · foto realista | Estilo realista; não combina. Fora. |
+| G16 | "cubinho 1 unidade 1" · "barra 1 dezena 10" · "placa 1 centena 100" · "Classe das Unidades Simples" | observar | quadro de ordens | 1122×768 · figuras bege, minúsculas | Diário da Tia Mari. |
+| G17 | (= E28 em resolução maior) "Observe:" · "Escreva os numerais representados pelo material dourado:" · "Complete escrevendo os números:" | contar, escrever e trocar | idem E28 | 1125×1600 · preto e branco | Versão melhor de E28. |
+| G18 | "RECORTE E COLE MATERIAL DOURADO" | recortar | 12 placas | 768×1024 · traço preto e branco | Fora (sem cor). |
+| G19 | (= E20 em tamanho menor) | ligar | 52 · 7 · 303 · 26 | 724×1024 | Duplicata de E20. |
+| G20 | "ANOTE O NÚMERO REPRESENTADO PELO MATERIAL DOURADO." | contar e escrever | 55 · 72 · 87 · 90 · 94 · 77 | 1654×2339 · amarelo-claro 3D · barra (98,612,158,970) 61×359 · cubinho (432,758,491,825) 60×68 **(medida)**, os dois com anel alto (encostam nos vizinhos) | Mestre do Saber. 1º/2º ano. |
+| G21 | (= E01 reduzida) | — | — | 450×636 | Duplicata de E01. |
+| G22 | "Material Dourado" (cartaz 1…1000, verde na última linha) | observar | 1…9, 10…90, 100, 1000 | 622×888 · bege, com fundo em degradê (não é branco) | Pequeno. |
+| G23 | "ADIÇÃO COM MATERIAL DOURADO" | — | foto de cards de adição | 768×960 · foto | Propaganda. Fora. |
+| G24 | (foto de livro) | — | 10 placas, 10 barras, cubinhos | 800×248 · foto borrada, marrom | Fora. |
+| G25 | "M C D U" (foto de quadro-valor-de-lugar em cartolina) | posicionar no quadro | 1 placa, 2 barras, 8 cubinhos | 720×960 · foto | Ideia de gesto (arrastar para a casa), mas a figura não serve. |
+
+### Resumo dos verbos (divh4e, contando cada folha pelo verbo principal)
+
+- **Contar as peças e escrever o número (C/D/U, por extenso):** 22 — E01, E04, E05, E07, E09, E14, E16, E17, E18, E21, E22, E23, E26, E28, E29, E33, E34, E39 e mais E36/E15 (completar)
+- **Pintar as peças conforme o número:** 3 — E13, E35, E37
+- **Ligar número × peças / peça × nome:** 5 — E02, E20, E19, E24, E15
+- **Recortar (sem tarefa):** 2 — E03, E06
+- **Cartaz para observar:** 3 — E10, E32, E38 (propaganda)
+- **Somar:** 2 — E11, E25 · **Multiplicar:** 1 — E08 · **Subtrair com troca:** 1 — E37
+- **Assinalar a representação certa:** 1 — E27
+- **Agrupar em grupos iguais (divisão por medida):** 1 — E40
+- **Trocar barra ↔ cubinhos (escrito):** 2 — E28 (itens a–c), E31
+- **Repartir em grupos (divisão partitiva):** 1 — E31 (slide)
+- **Armar a conta na chave:** 1 — E30 (sem material)
+- **Fora do assunto:** E12
+
+**Nenhuma folha de papel da colheita traz "repartir 48 em 2 grupos com barras e cubinhos".** O bloco central do caderno (repartir as peças, trocar quando não dá e registrar na chave) vai entrar como **bloco novo declarado**, apoiado em E31, E40, E28 e E30.
+
+### Melhores folhas para o 4º ano, e por quê
+
+1. **E30**: é a própria conta armada na chave, no nível do 4º ano (dividendo de 3 algarismos, divisor de 1, quociente com zero, restos). Conferi as dez contas. É o degrau final (simbólico).
+2. **E31**: o único material que mostra *"dividir por 2 é repartir em 2 grupos"* junto com *"1 dezena = 10 unidades"* e a chave. É a ponte concreto → chave, e o modelo do gesto (trocar e depois repartir).
+3. **E40**: "Agrupe os cubinhos 2 em 2 … 10 em 10", com quantidades que deixam **resto** (19 em 4 em 4 dá 4 grupos e sobram 3). Dá o gesto de circular grupos iguais e apresenta o resto no concreto.
+4. **E28 / G17** (itens a–c): "3 barras possuem ___ cubinhos" é a **troca** escrita, o pré-requisito que a divisão exige.
+5. **E37**: a troca desenhada ("empréstimo": 1 barra → 10 cubinhos). O gesto é o mesmo da divisão quando a dezena não se reparte.
+6. **E27**: julgar qual colega representou 354 certo. Bom para uma folha de "achar o erro" na representação do dividendo.
+7. **E08**: multiplicação com o material, útil para a prova real da divisão.
+
+As folhas E07, E13, E14, E16, E29 e E35 são do 1º ano, e E12 está fora do assunto.
+
+### Figuras isoladas: as melhores (limpas, coloridas, sem encostar em texto)
+
+| peça | código | tamanho natural da imagem | caixa x0,y0,x1,y1 | tamanho da peça | estilo |
+|---|---|---|---|---|---|
+| **cubinho** | E10 | 1600×2263 | 284,371,530,612 | 247×242 | 3D, contorno grosso, topo amarelo, lado laranja |
+| cubinho | G06 | 1448×2048 | 257,335,480,554 | 224×220 | idem (irmã de E10) |
+| cubinho | E02 | 1414×2000 | 1122,595,1199,675 | 78×81 | 3D isométrico ouro, traço fino |
+| cubinho | E20 | 1414×2000 | 1036,1568,1114,1649 | 79×82 | idem E02 |
+| cubinho | E32 | 1600×900 | 103,320,184,405 | 82×86 | idem E02 |
+| **barra** | E10 | 1600×2263 | 1353,160,1439,823 | 87×664 | estilo de E10 |
+| barra | G03 | 1080×1528 | 22,228,102,839 | 81×612 | estilo de E10 (há 20 iguais na folha) |
+| barra | G06 | 1448×2048 | 1224,144,1302,745 | 79×602 | estilo de E10 |
+| barra | E32 | 1600×900 | 298,139,382,623 | 85×485 | isométrico ouro |
+| barra | E20 | 1414×2000 | 775,1551,840,1934 | 66×384 | isométrico ouro |
+| barra deitada | E25 | 1414×2000 | 295,366,568,401 | 274×36 | amarela; há marca-d'água no resto da folha, mas o anel está limpo |
+| **placa** | E10 | 1600×2263 | 160,1453,654,1943 | 495×491 | estilo de E10, de frente |
+| placa | G06 | 1448×2048 | 144,1315,592,1758 | 449×444 | idem |
+| placa | E32 | 1600×900 | 657,90,942,490 | 286×401 | isométrica ouro (em pé, de lado) |
+| placa | E02 | 1414×2000 | 774,1069,1041,1445 | 268×377 | isométrica ouro |
+| placa | E01 | 1414×2000 | 160,661,355,937 | 196×277 | isométrica ouro |
+| **cubão** | G11 | 1920×1080 | 513,31,1504,1019 | 992×989 | isométrico ouro |
+| cubão | E10 | 1600×2263 | 843,1402,1395,1943 | 553×542 | estilo de E10 |
+| cubão | E32 | 1600×900 | 1140,69,1546,473 | 407×405 | isométrico ouro |
+| cubão | E02 | 1414×2000 | 846,109,1200,462 | 355×354 | isométrico ouro |
+
+**Dois jogos coerentes para escolher um só.** Não convém misturar os estilos.
+- **Jogo A, estilo "pontodoconhecimento"** (E10, G06 e G03): contorno grosso, lado laranja. É o de maior resolução. G03 dá 20 barras idênticas, e E10 dá o cubinho a 247 px.
+- **Jogo B, estilo "Educador" isométrico** (E32, E02, E20, E01 e G11): traço fino. As quatro peças saem de E32 numa folha só, e G11 dá o cubão enorme.
+
+**Evitar:** E03, E06, E15 e E16 (marca-d'água ieducacao atrás), E05 e E17 (marca-d'água dentro do desenho), fotos (G01, G07, G15, G24, G25, E11) e G20 (as peças encostam nas vizinhas).
+

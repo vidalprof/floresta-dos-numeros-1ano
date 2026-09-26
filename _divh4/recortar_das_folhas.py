@@ -76,7 +76,7 @@ PECAS = [
     (u"dh4_ponthora",  u"F08", 106, 1650, 662, 1800, 0),
     (u"dh4_pontmin",   u"F08", 834, 1650, 1290, 1800, 0),
     # ---- A10: o quebra-cabeça (peças por dentro do tracejado) ----
-    (u"dh4_qctab", u"A10", 121, 595, 813, 1180, 1),
+    (u"dh4_qctab",    u"A10", 118, 592, 815, 1183, 1),
     (u"dh4_qc6",  u"A10", 996, 611, 1219, 801, 1),
     (u"dh4_qc5",  u"A10", 997, 911, 1217, 1099, 1),
     (u"dh4_qc7",  u"A10", 113, 1229, 335, 1418, 1),
@@ -92,7 +92,7 @@ PECAS = [
     # ---- A32: a festa junina ----
     (u"dh4_balao",    u"A32", 500, 710, 735, 1056, 0),
     (u"dh4_pirulitos", u"A32", 1255, 898, 1548, 1150, 0),
-    (u"dh4_pirulito", u"A32", 1250, 948, 1312, 1046, 2),
+    (u"dh4_pirulito", u"A32", 1250, 948, 1319, 1060, 2),
     (u"dh4_pipoca",   u"A32", 1284, 1880, 1537, 2214, 0),
     # ---- F24: "Observe este relógio. As pétalas marcam os minutos." ----
     (u"dh4_flor", u"F24", 60, 80, 1044, 1046, 0),
@@ -108,7 +108,7 @@ PECAS = [
     (u"dh4_barra", u"G06", 1218, 139, 1308, 752, 0),
     (u"dh4_placa", u"G06", 137, 1307, 600, 1765, 0),
     # ---- C11: o filme da Maria ----
-    (u"dh4_familia",  u"C11", 518, 826, 722, 1010, 0),
+    (u"dh4_familia",  u"C11", 518, 826, 722, 1014, 0),
 ]
 
 

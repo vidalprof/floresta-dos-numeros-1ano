@@ -603,7 +603,12 @@ def _sem_licoes(t):
     saida, i = [], 0
     for m in re.finditer(r"/\*.*?\*/", t, re.S):
         bloco = m.group(0)
-        if "\u26a0" in bloco or "LICAO" in bloco.upper() or "LI\u00c7\u00c3O" in bloco.upper():
+        # ⭐ e os blocos que CITAM a folha de papel VERBATIM (26/set/2026): no
+        #    `_divh4` o crivo cita a A04 — *"Reparta em partes iguais 12 peixes
+        #    em 4 aquários"* — e o portão acusou "peixe" de enfeite clonado. A
+        #    citação é a etiqueta de origem do CONTEÚDO, não de enfeite nenhum.
+        if ("\u26a0" in bloco or "LICAO" in bloco.upper() or "LI\u00c7\u00c3O" in bloco.upper()
+                or "VERBATIM" in bloco.upper()):
             saida.append(t[i:m.start()]); i = m.end()
     saida.append(t[i:])
     fora = "".join(saida)

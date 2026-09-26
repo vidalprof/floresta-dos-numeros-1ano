@@ -545,8 +545,8 @@ for _k, _M in MINU.items():
         num(_n)
     p(u"mn_" + _k, u"O ponteiro azul está no %d. Quantos minutos?" % _M[u"n"])
     p(u"certo21_" + _k, u"Isso! No %d são %d minutos: %d vezes 5." % (_M[u"n"], _mm, _M[u"n"]))
-    p(u"dica21_" + _k, u"Conte de 5 em 5, começando do 1: 5, 10, 15... até chegar no "
-                       u"número em que o ponteiro azul parou.")
+    p(u"dica21_" + _k, u"Conte de 5 em 5, começando do 1: 5, 10, 15, e assim até chegar "
+                       u"no número em que o ponteiro azul parou.")
 
 # ---------- 22 — que horas são? ----------
 LER = bloco(u"LER")
@@ -586,8 +586,8 @@ for _k, _H in LIG3.items():
     p(u"rl_" + _k, u"Relógio de ponteiros. Que horas ele marca?")
     p(u"hora_%d_%d" % (_H[u"h"], _H[u"m"]), hfala(_H[u"h"], _H[u"m"]) + u".")
     p(u"certo25_" + _k, u"Isso! Os dois marcam %s." % hfala(_H[u"h"], _H[u"m"]))
-    p(u"dica25_" + _k, u"No relógio de ponteiros, o rosa diz a hora e o azul os "
-                       u"minutos. Leia os dois e procure o digital igual.")
+    p(u"dica25_" + _k, u"No relógio de ponteiros, o ponteiro rosa diz a hora e o "
+                       u"ponteiro azul diz os minutos. Leia os dois e procure o digital igual.")
 p(u"p34enun", folha(34) + u" Vire duas cartas e ache o relógio de ponteiros e o "
               u"horário digital que marcam a mesma hora.")
 for _k, _H in MEM.items():
