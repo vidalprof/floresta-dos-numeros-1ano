@@ -392,16 +392,16 @@ button{font-family:inherit;cursor:pointer}
 .capa .titu .esp{display:inline-block;width:12px}
 .capa .sub{font-weight:700;color:#5a2a12;font-size:clamp(13px,3.6vw,18px);margin:6px 0 4px}
 .capa .cena{margin:16px auto 4px;max-width:620px;padding:6px 0 10px}
-.capdh4{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
-  -webkit-box-align:center;align-items:center;gap:clamp(8px,3vw,22px);flex-wrap:wrap}
+.capdh4{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;flex-wrap:nowrap;
+  -webkit-box-align:center;align-items:center;gap:clamp(6px,2.4vw,22px)}
 .capgrupo{display:-webkit-box;display:flex;-webkit-box-align:end;align-items:flex-end;gap:4px;
-  padding:10px 10px 26px;border:3px solid var(--cor);border-top:0;border-radius:0 0 18px 18px;
+  padding:8px clamp(5px,1.6vw,10px) 26px;border:3px solid var(--cor);border-top:0;border-radius:0 0 18px 18px;
   background:#fffaf2;position:relative;-webkit-animation:pulaDh4 2.4s ease-in-out infinite;
   animation:pulaDh4 2.4s ease-in-out infinite}
 .capgrupo:last-child{-webkit-animation-delay:1.2s;animation-delay:1.2s}
 .capgrupo b{position:absolute;left:0;right:0;bottom:4px;font:900 clamp(13px,3.4vw,16px)/1 system-ui;color:var(--cor2)}
-.capgrupo .cbarra{height:clamp(50px,13vw,70px);width:auto}
-.capgrupo .ccubo{height:clamp(14px,3.6vw,18px);width:auto}
+.capgrupo .cbarra{height:clamp(42px,11vw,70px);width:auto}
+.capgrupo .ccubo{height:clamp(12px,3.2vw,18px);width:auto}
 .caprel{-webkit-transform-origin:50% 0;transform-origin:50% 0;
   -webkit-animation:balDh4 3.2s ease-in-out infinite;animation:balDh4 3.2s ease-in-out infinite}
 @-webkit-keyframes pulaDh4{0%,100%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-7px)}}
@@ -1027,7 +1027,7 @@ button.clt:active{background:#eef1f8}
   border-radius:50%;background:#3b2a20}
 .relog.mini{width:clamp(84px,22vw,104px)}
 .relog.grande{width:clamp(190px,58vw,260px)}
-.relog.capa{width:clamp(120px,32vw,176px)}
+.relog.rcapa{width:clamp(96px,27vw,176px)}
 .relcx{flex:none}
 .relgira{display:-webkit-box;display:flex;-webkit-box-orient:vertical;flex-direction:column;
   -webkit-box-align:center;align-items:center;gap:8px;margin:6px 0}
@@ -3389,5 +3389,5 @@ function novaFolha(){
   </div>
 </div>
 <!--</dossie-html>-->
-<script src="folhas.js?v=4f99a08900"></script>
+<script src="folhas.js?v=47610c4162"></script>
 </body></html>

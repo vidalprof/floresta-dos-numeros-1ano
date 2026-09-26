@@ -254,7 +254,7 @@ function f0(d){
       'material dourado e na chave, e para ler e contar as horas</div>' +
     '<div class="cena capdh4">' +
       '<div class="capgrupo">' + grupo + '<b>23</b></div>' +
-      '<div class="caprel">' + relogioHTML(10, 10, "capa") + '</div>' +
+      '<div class="caprel">' + relogioHTML(10, 10, "rcapa") + '</div>' +
       '<div class="capgrupo">' + grupo + '<b>23</b></div>' +
     '</div>' +
     '<div class="chamada">46 ÷ 2 = 23: duas barras e três cubinhos em cada grupo. ' +
