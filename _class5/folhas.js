@@ -52,8 +52,10 @@ var DES = {
    dados das folhas: sao coisas de tempos diferentes. */
 var DESNOME = {casa: "CASA", gato: "GATO", flor: "FLOR", livro: "LIVRO"};
 function fig(k, cls){
-  return '<svg class="' + (cls || "figdes") + '" viewBox="0 0 48 48" role="img" aria-label="' +
-         (DESNOME[k] || k) + '">' + (DES[k] || "") + '</svg>';
+  /* ⚠️ A FIGURA VEM DO NOSSO BANCO (regra do Marcos: consultar o banco antes de
+     qualquer arte nova). O `img()` traz junto o `naoAmplia`, que trava a figura
+     no tamanho do arquivo — foi o que resolveu o borrado dos Cinco Reinos. */
+  return img("cl5_" + k + ".png", cls || "figdes", DESNOME[k] || k);
 }
 
 
